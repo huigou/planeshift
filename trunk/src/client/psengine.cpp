@@ -198,6 +198,7 @@ if (!myref)                                                  \
 #include "gui/pawsbankwindow.h"
 #include "gui/pawsconfigchatbubbles.h"
 #include "gui/pawsconfigshadows.h"
+#include "gui/pawsconfiggeneric.h"
 #include "gui/pawsnpcdialog.h"
 #include "gui/bartender.h"
 #include "gui/pawsconfigspellchecker.h"
@@ -765,6 +766,8 @@ void psEngine::LoadLogSettings()
 
 void psEngine::DeclareExtraFactories()
 {
+    Debug1(LOG_PAWS,0,"psEngine::DeclareExtraFactories.");
+
     pawsWidgetFactory* factory;
 
     RegisterFactory (pawsInventoryDollViewFactory);
@@ -848,6 +851,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory (pawsBankWindowFactory);
     RegisterFactory (pawsConfigChatBubblesFactory);
     RegisterFactory (pawsConfigShadowsFactory);
+    RegisterFactory (pawsConfigGenericFactory);
     RegisterFactory (pawsNpcDialogWindowFactory);
     RegisterFactory (pawsBartenderWindowFactory);
     RegisterFactory (pawsCraftCancelWindowFactory);    

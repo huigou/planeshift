@@ -40,6 +40,7 @@
 #include "gui/pawscontrolwindow.h"
 #include "paws/pawsyesnobox.h"
 #include "paws/pawsokbox.h"
+#include "gui/pawsconfiggeneric.h"
 
 #define TREE_FILE_NAME "configtree.xml"
 #define RESET_OPTIONS_CONFIRM_TEXT "Do you really want to reset these settings to default values?"
@@ -136,7 +137,7 @@ bool pawsConfigWindow::OnButtonReleased(int /*mouseButton*/, int keyModifier, pa
 
 bool pawsConfigWindow::OnSelected(pawsWidget* widget)
 {
-    csString sectName, factory;
+    csString sectName, factory, textName;
     pawsTreeNode * node;
     pawsWidget * sectWndAsWidget;
     pawsConfigSectionWindow * newCurrSectWnd;
@@ -150,6 +151,7 @@ bool pawsConfigWindow::OnSelected(pawsWidget* widget)
     }
 
     sectName = node->GetAttr("SectionName");
+    textName = node->GetAttr("TextName");
     if (sectName.IsEmpty())
         return false;    // .... this tree node does not invoke any configuration section
     
@@ -183,6 +185,19 @@ bool pawsConfigWindow::OnSelected(pawsWidget* widget)
         {
             Error1("pawsConfigSectionWindow failed to initialize");
             return false;
+        }
+
+        // additional parameter for pawsConfigGeneric
+        if (!textName.IsEmpty()) {
+            pawsConfigGeneric *configGeneric = dynamic_cast<pawsConfigGeneric*>(newCurrSectWnd);
+            if (newCurrSectWnd == NULL)
+            {
+                Error1("Widget is not pawsConfigGeneric");
+                return false;
+            }
+            else {
+                configGeneric->setTextName(&textName);
+            }
         }
 
 		// Ignore sizing info loaded from file and override to fit tab here
