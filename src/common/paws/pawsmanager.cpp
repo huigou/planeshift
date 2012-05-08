@@ -149,12 +149,14 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     float screenHeight = cfg->GetFloat( "Video.ScreenHeight", 600.0f );
     fontFactor = min(( screenWidth  / 800.0f ), ( screenHeight /  600.0f ));
 
+    Debug1(LOG_PAWS,0,"Registering Factories.");
     RegisterFactories();
 
     mainWidget = new pawsMainWidget();
 
     textureManager = new pawsTextureManager( objectReg );
 
+    Debug1(LOG_PAWS,0,"Loading Pref Manager.");
     prefs = new pawsPrefManager();
 
     csString prefsFile = cfg->GetStr("PlaneShift.GUI.PrefsFile", "/this/data/prefs.xml");
@@ -162,6 +164,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
     styles = new pawsStyles( objectReg );
 
+    Debug1(LOG_PAWS,0,"Loading Skins Definitions.");
     if(!LoadSkinDefinition(skin))
     {
         Error2("Failed to load skin %s!", skin);
@@ -179,6 +182,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     // Mount base skin to satisfy unskinned elements
     if(skinBase)
     {
+        Debug1(LOG_PAWS,0,"Mount base skin.");
         if(!LoadSkinDefinition(skinBase))
         {
             Error2("Couldn't load base skin '%s'!", skinBase);
@@ -232,6 +236,7 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
 
     // Load tooltip settings from file
     // Check if custom tooltips.xml was created. If not load defaults from skin.zip or data/options.
+    Debug1(LOG_PAWS,0,"Loading Tooltips.");
     if(vfs->Exists(CONFIG_TOOLTIPS_FILE_NAME))
        LoadTooltips(CONFIG_TOOLTIPS_FILE_NAME);          // custom file
     else if (vfs->Exists(GetLocalization()->FindLocalizedFile("tooltips.xml")))
@@ -855,6 +860,8 @@ void PawsManager::Draw3D()
 
 void PawsManager::RegisterWidgetFactory( pawsWidgetFactory* fact )
 {
+    Debug2(LOG_PAWS,0,"Registering Factory %s.",fact->GetName());
+
     factories.Push( fact );
 }
 
@@ -863,6 +870,7 @@ csRef<iDocumentNode> PawsManager::ParseWidgetFile( const char* widgetFile )
     csRef<iDocument> doc;
     const char* error;
 
+    Debug2(LOG_PAWS,0,"Parsing Widget file %s.",widgetFile);
     csRef<iDataBuffer> buff = vfs->ReadFile(widgetFile);
     if (buff == NULL)
     {
@@ -1026,6 +1034,7 @@ bool PawsManager::LoadObjectViews()
 
 pawsWidget* PawsManager::CreateWidget( const char* factoryName, const pawsWidget* origin)
 {
+    Debug2(LOG_PAWS,0,"Creating Widget %s from origin",factoryName);
     csString factory(factoryName);
     for (size_t x = 0; x < factories.GetSize(); x++)
     {
@@ -1043,7 +1052,7 @@ pawsWidget* PawsManager::CreateWidget( const char* factoryName, const pawsWidget
 
 pawsWidget* PawsManager::CreateWidget( const char* factoryName )
 {
-
+    Debug2(LOG_PAWS,0,"Creating Widget %s",factoryName);
     csString factory( factoryName );
     for ( size_t x = 0; x < factories.GetSize(); x++ )
     {
