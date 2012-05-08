@@ -33,35 +33,6 @@ You can also change the commands sent by each mouse button."/>
                 </widget>
             </widget>
 
-            <widget factory="pawsSimpleTreeNode" label="Graphics">
-                    <attr name="SectionName" value="GraphicsGeneral"/>
-                    <attr name="factory" value="pawsConfigGeneric"/>
-                    <attr name="TextName" value="IMPORTANT: The following graphical options are available ONLY in the PlaneShift launcher. If you want to change any of those, you need to close this client, and relaunch PlaneShift. In the Launcher window, click on 'Settings' and 'Settings/Graphics'.
-
-- Full screen or windowed mode (launcher only)
-- Resolution of the screen (launcher only)
-- Increase or lower graphical quality (launcher only)
-
-We suggest you to try different settings and see what's best for your hardware."/>
-
-                <widget factory="pawsSimpleTreeNode" label="Camera">
-                    <attr name="SectionName" value="camera"/>
-                    <attr name="factory" value="pawsConfigCamera"/>
-                </widget>
-                <widget factory="pawsSimpleTreeNode" label="Details">
-                    <attr name="SectionName" value="details"/>
-                    <attr name="factory" value="pawsConfigDetails"/>
-                </widget>
-                <widget factory="pawsSimpleTreeNode" label="Labels">
-                    <attr name="SectionName" value="entitylabels"/>
-                    <attr name="factory" value="pawsConfigEntityLabels"/>
-                </widget>
-                <widget factory="pawsSimpleTreeNode" label="Shadows">
-                    <attr name="SectionName" value="shadows"/>
-                    <attr name="factory" value="pawsConfigShadows"/>
-                </widget>
-            </widget>
-
             <widget factory="pawsSimpleTreeNode" label="Sound">
                     <attr name="SectionName" value="SoundGeneral"/>
                     <attr name="factory" value="pawsConfigGeneric"/>
@@ -75,20 +46,28 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
                 </widget>
             </widget>
 
-            <widget factory="pawsSimpleTreeNode" label="Confirmations">
-                    <attr name="SectionName" value="ConfirmationsGeneral"/>
+            <widget factory="pawsSimpleTreeNode" label="Graphics">
+                    <attr name="SectionName" value="GraphicsGeneral"/>
                     <attr name="factory" value="pawsConfigGeneric"/>
-                    <attr name="TextName" value="IMPORTANT: By default in PlaneShift you cannot be attacked by other people without your approval. This is to ensure a smooth experience in the game.
+                    <attr name="TextName" value="IMPORTANT: The following graphical options are available ONLY in the PlaneShift launcher. If you want to change any of those, you need to close this client, and relaunch PlaneShift. In the Launcher window, click on 'Settings' and 'Settings/Graphics'.
 
-If you change the PvP setting, you may be attacked at any time."/>
-                    
-                <widget factory="pawsSimpleTreeNode" label="PvP">
-                    <attr name="SectionName" value="configpvp"/>
-                    <attr name="factory" value="pawsConfigPvP"/>
+- Full screen or windowed mode (launcher only)
+- Resolution of the screen (launcher only)
+- Increase or lower graphical quality (launcher only)
+
+We suggest you to try different settings and see what's best for your hardware."/>
+
+                <widget factory="pawsSimpleTreeNode" label="Details">
+                    <attr name="SectionName" value="details"/>
+                    <attr name="factory" value="pawsConfigDetails"/>
                 </widget>
-                <widget factory="pawsSimpleTreeNode" label="Marriage">
-                    <attr name="SectionName" value="configmarriage"/>
-                    <attr name="factory" value="pawsConfigMarriage"/>
+                <widget factory="pawsSimpleTreeNode" label="Labels">
+                    <attr name="SectionName" value="entitylabels"/>
+                    <attr name="factory" value="pawsConfigEntityLabels"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Shadows">
+                    <attr name="SectionName" value="shadows"/>
+                    <attr name="factory" value="pawsConfigShadows"/>
                 </widget>
             </widget>
 
@@ -121,6 +100,23 @@ Changing the language can be done ONLY in the PlaneShift Launcher. To do this yo
                 </widget>
             </widget>
 
+            <widget factory="pawsSimpleTreeNode" label="Confirmations">
+                    <attr name="SectionName" value="ConfirmationsGeneral"/>
+                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="TextName" value="IMPORTANT: By default in PlaneShift you cannot be attacked by other people without your approval. This is to ensure a smooth experience in the game.
+
+If you change the PvP setting, you may be attacked at any time."/>
+                    
+                <widget factory="pawsSimpleTreeNode" label="PvP">
+                    <attr name="SectionName" value="configpvp"/>
+                    <attr name="factory" value="pawsConfigPvP"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Marriage">
+                    <attr name="SectionName" value="configmarriage"/>
+                    <attr name="factory" value="pawsConfigMarriage"/>
+                </widget>
+            </widget>
+
             <widget factory="pawsSimpleTreeNode" label="Interface - Advanced">
                 <widget factory="pawsSimpleTreeNode" label="Chat">
                     <attr name="SectionName" value="chat"/>
@@ -145,6 +141,10 @@ Changing the language can be done ONLY in the PlaneShift Launcher. To do this yo
                <widget factory="pawsSimpleTreeNode" label="Autoexec">
                     <attr name="SectionName" value="autoexec"/>
                     <attr name="factory" value="pawsConfigAutoexec"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Camera">
+                    <attr name="SectionName" value="camera"/>
+                    <attr name="factory" value="pawsConfigCamera"/>
                 </widget>
             </widget>
 
