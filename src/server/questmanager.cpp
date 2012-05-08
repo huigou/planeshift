@@ -337,17 +337,22 @@ bool QuestManager::HandleScriptCommand(csString& block,
             AutocompleteQuestName(questname, mainQuest);
             op.Format("<complete quest_id=\"%s\"/>",questname.GetData());
         }
-        else if (!strncasecmp(block,"Uncomplete",8))
+        else if (!strncasecmp(block,"Uncomplete", 10))
         {
-            csString questname = block.Slice(8,block.Length()-1).Trim();
+            csString questname = block.Slice(10, block.Length()-1).Trim();
             AutocompleteQuestName(questname, mainQuest);
             op.Format("<uncomplete quest_id=\"%s\"/>",questname.GetData());
         }
-        else if (!strncasecmp(block,"setvariable", 10))
+        else if (!strncasecmp(block,"setvariable", 11))
         {
-            csString variableData = block.Slice(12, block.Length()).Trim();
+            csString variableData = block.Slice(11, block.Length()).Trim();
             csArray<csString> variableinfo = psSplit(variableData, ' ');
             op.Format("<setvariable name=\"%s\" value=\"%s\" />", variableinfo[0].GetData(),variableinfo[1].GetData());
+        }
+        else if (!strncasecmp(block,"unsetvariable", 13))
+        {
+            csString variableName = block.Slice(13, block.Length()).Trim();
+            op.Format("<unsetvariable name=\"%s\" />", variableName.GetData());
         }
         else if (!strncasecmp(block,"Give",4))
         {
