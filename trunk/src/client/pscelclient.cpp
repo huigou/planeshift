@@ -470,8 +470,10 @@ void psCelClient::RemoveObject(GEMClientObject* entity)
         if(widget)
         {
             widget->Hide();
-            psengine->GetCharManager()->SetTarget(NULL, "select");
         }
+        //we need to forcefully unlock the target as this is going to get deleted.
+        psengine->GetCharManager()->LockTarget(false);
+        psengine->GetCharManager()->SetTarget(NULL, "select");
     }
 
     entityLabels->RemoveObject(entity);
