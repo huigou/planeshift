@@ -10,6 +10,16 @@
     <region map="guildsimple" />
   </zone>
 
+  <!-- guildsimple -->
+  <zone sector="guildgug" loadimage="Loading Background">
+    <region map="guildgug" />
+  </zone>
+
+  <!-- guildoja -->
+  <zone sector="guildoja" loadimage="Loading Background">
+    <region map="guildoja" />
+  </zone>
+
   <!-- tutorial -->
   <zone sector="tutorial" loadimage="Loading Background">
     <region map="hydlaa_common" />
@@ -265,6 +275,12 @@
     <region map="blackflame" />
   </zone>
   
+  <!-- hydlaa_smith -->
+  <zone sector="hydlaa_smith" loadimage="Loading Background">
+    <region map="hydlaa_common" />
+    <region map="hydlaa_smith" />
+  </zone>
+
   <!-- hybdr -->
   <zone sector="hybdr1" loadimage="Loading Background">
     <region map="terr_common" />
@@ -346,6 +362,11 @@
     <region map="caves02" />
   </zone>
 
+  <!-- cave03 -->
+  <zone sector="caves03" loadimage="Loading Caves Background">
+    <region map="caves03" />
+  </zone>
+
   <!-- korogan -->
   <zone sector="kor01" loadimage="Loading Terrain Background">
     <region map="terr_common" />
@@ -416,39 +437,15 @@
   </zone>
 
   <!-- arena -->
-  <zone sector="hall" loadimage="Loading Arena Background">
+  <zone sector="arenainner" loadimage="Loading Arena Background">
     <region map="arena" />
     <region map="hyarena" />
   </zone>
-  <zone sector="trans1" loadimage="Loading Arena Background">
+  <zone sector="arenaupper" loadimage="Loading Arena Background">
     <region map="arena" />
     <region map="hyarena" />
   </zone>
-  <zone sector="dngn" loadimage="Loading Arena Background">
-    <region map="arena" />
-    <region map="hyarena" />
-  </zone>
-  <zone sector="cntr" loadimage="Loading Arena Background">
-    <region map="arena" />
-    <region map="hyarena" />
-  </zone>
-  <zone sector="trans2" loadimage="Loading Arena Background">
-    <region map="arena" />
-    <region map="hyarena" />
-  </zone>
-  <zone sector="merc" loadimage="Loading Arena Background">
-    <region map="arena" />
-    <region map="hyarena" />
-  </zone>
-  <zone sector="upper" loadimage="Loading Arena Background">
-    <region map="arena" />
-    <region map="hyarena" />
-  </zone>
-  <zone sector="entr" loadimage="Loading Arena Background">
-    <region map="arena" />
-    <region map="hyarena" />
-  </zone>
-  <zone sector="outer" loadimage="Loading Arena Background">
+  <zone sector="arenaouter" loadimage="Loading Arena Background">
     <region map="arena" />
     <region map="hyarena" />
   </zone>
@@ -582,6 +579,12 @@
   <zone sector="hydlaa_winch" loadimage="Loading Winch Background">
     <region map="hydlaa_common" />
     <region map="hydlaa_winch" />
+  </zone>
+
+  <!-- amdeneir -->
+  <zone sector="amdeneir" loadimage="Loading Amdeneir Background">
+    <region map="terr_common" />
+    <region map="amdeneir" />
   </zone>
 
 </zonelist>
