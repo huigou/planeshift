@@ -329,7 +329,9 @@ function Onload(){
     <a href="#compile">Compile Sources</a><br />
     <a href="#server">Setup Server</a> <i>(optional)</i><br />
     <span class="Linux"><a href="#scripts">Mini Scripts</a> <i>(optional)</i><br /></span>
-    <a href="#mounts">Mounting External Art</a> <i>(optional)</i><br />
+    <a href="#server">Get the Server Running</a><br />
+    <a href="#npcserver">Get the NPC Server Running</a><br />
+    <a href="#client">Get the Client Running</a><br />
     <a href="#help">Getting Help</a>
 </p>
 
@@ -1946,9 +1948,23 @@ is located somewhere else or you want to connect to somebody's else server, you 
 <!--************************************************************************************************-->
 <!--************************************************************************************************-->
 
-<h2><a name="mounts">Mounting External Art</a></h2>
-<i>Optional section</i>
+<h2><a name="runclient">Get the Client Running</a></h2>
 <p>
+    To have the client running you need at least two parts, described in the next chapters:<br />
+    - ensure you are using the Crystal Space base configuration files<br />
+    - ensure you are using some client art, better if the released art.<br />
+
+<h3>Pointing to Crystal Space configuration files</h3>
+    For the first point you need to open the vfs.cfg in your planeshift directory and change this line: <br />
+<p><i class="command">VFS.Mount.config = $@data$/config-plugins$/</i></p>
+    by adding the path to your crystal space configuration files, example: <br />
+<p><i class="command">VFS.Mount.config = $@data$/config-plugins$/,$/development$/CS$/data$/config-plugins$/</i></p>
+    <div class="Windows">
+        <p>On Windows VFS.Mount.config = $@data$/config-plugins$/,c:$/development$/CS$/ </p>
+    </div>
+
+<h3>Pointing to PlaneShift release art files</h3>
+
     If you plan to do development work, or would just like to not need to copy over most of the
     art, you can mount the data straight from its existing location.  This is highly recommended
     for developers using the internal SVN art.
