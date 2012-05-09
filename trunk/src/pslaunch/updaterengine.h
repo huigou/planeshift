@@ -34,13 +34,13 @@
 #include "util/singleton.h"
 
 /* To be incremented every time we want to make an update. */
-#define UPDATER_VERSION 3.01
+#define UPDATER_VERSION 3.02
 
 struct iConfigManager;
 struct iVFS;
 
 #define UPDATER_VERSION_MAJOR 3
-#define UPDATER_VERSION_MINOR 01
+#define UPDATER_VERSION_MINOR 02
 
 #ifdef CS_PLATFORM_WIN32
 	#define SELFUPDATER_TEMPFILE_POSTFIX ".tmp.exe"
@@ -212,6 +212,8 @@ public:
 
     /* Return VFS */
     csRef<iVFS> GetVFS() const { return vfs; }
+
+    csString GetCurrentClientVersion();
 
     // Find the config node given an xml file name.
     csRef<iDocumentNode> GetRootNode(const char* fileName, csRef<iDocument>* document = 0);

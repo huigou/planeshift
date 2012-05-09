@@ -539,6 +539,7 @@ int main(int argc, char* argv[])
 
                 // Start GUI.
                 psLauncherGUI* gui = new psLauncherGUI(object_reg, infoShare, &execPSClient);
+                gui->SetCurrentClientVersion(engine->GetCurrentClientVersion());
                 gui->Run();
 
                 // Free GUI.

@@ -471,6 +471,47 @@ bool UpdaterEngine::CheckGeneral()
     return false;
 }
 
+
+csString UpdaterEngine::GetCurrentClientVersion() {
+    csString clientVersion = csString("?");
+
+    csRef<iDocumentNode> root = GetRootNode(UPDATERINFO_CURRENT_FILENAME);
+    if(!root)
+    {
+        PrintOutput("Unable to get root node\n");
+        return clientVersion.GetData();
+    }
+
+    csRef<iDocumentNode> confignode = root->GetNode("config");
+    if (!confignode)
+    {
+        PrintOutput("Couldn't find config node in configfile!\n");
+        return clientVersion.GetData();
+    }
+
+    // Get client versions.
+    csRef<iDocumentNode> clientNode = confignode->GetNode("client");
+    if(clientNode)
+    {
+        csRef<iDocumentNodeIterator> nodeItr = clientNode->GetNodes();
+        while(nodeItr->HasNext())
+        {
+            csRef<iDocumentNode> cNode = nodeItr->Next();
+            if(!strcmp(cNode->GetValue(),"version"))
+            {
+                clientVersion = csString(cNode->GetAttributeValue("name"));
+            }
+        }
+    }
+    else
+    {
+        PrintOutput("Unable to load client info!\n");
+        return clientVersion.GetData();
+    }
+
+    return clientVersion.GetData();
+}
+
 csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDocument>* document)
 {
     // Load xml.
