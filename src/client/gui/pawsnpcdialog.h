@@ -164,6 +164,7 @@ private:
     pawsEditTextBox* textBox;
     pawsButton* closeBubble;
     csTicks         ticks;
+    EID targetEID; ///< The eid of the current target used to hide the dialog if the actor is removed.
 };
 
 

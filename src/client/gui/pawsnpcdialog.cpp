@@ -43,8 +43,9 @@
  * -need to move the catch of npc text from chatbubbles to an inner implementation here
  *  so the two classes aren't interwingled
  */
+ 
 
-pawsNpcDialogWindow::pawsNpcDialogWindow()
+pawsNpcDialogWindow::pawsNpcDialogWindow() : targetEID(0)
 {
     responseList = NULL;
     speechBubble = NULL;
@@ -60,6 +61,7 @@ bool pawsNpcDialogWindow::PostSetup()
 {
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_DIALOG_MENU );
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CHAT);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_REMOVE_OBJECT);
 
     responseList = dynamic_cast<pawsListBox*>(FindWidget("ResponseList"));
     speechBubble = FindWidget("SpeechBubble");
@@ -215,7 +217,8 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
             {
                 Hide();
             }
-            else if (name == "SpeechBubble") {
+            else if (name == "SpeechBubble")
+            {
                 clickedOnResponseBubble = true;
             }
             else
@@ -432,7 +435,9 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
 
         AdjustForPromptWindow();
         Show();
-    } else if(me->GetType() == MSGTYPE_CHAT) {
+    }
+    else if(me->GetType() == MSGTYPE_CHAT)
+    {
 
         psChatMessage chatMsg(me);
 
@@ -446,6 +451,19 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
         //checks if the NPC Dialogue is displayed, in this case don't show the normal overhead bubble
         if (IsVisible())
             return;
+    }
+    else if(me->GetType() == MSGTYPE_REMOVE_OBJECT)
+    {
+        psRemoveObject mesg(me);
+        //if the current target is being removed hide this window
+        if(targetEID.IsValid() && mesg.objectEID.IsValid() && mesg.objectEID == targetEID)
+        {
+            Hide();
+            //In these cases something might have gone wrong with the camera
+            //eg: the character is being teleported. So we need to have it reset
+            //correctly.
+            psengine->GetPSCamera()->ResetCameraPositioning();
+        }
     }
 }
 
@@ -631,6 +649,7 @@ void pawsNpcDialogWindow::Show()
              dynamic_cast<GEMClientActor *>(cobj)->GetLastPosition(p2,rot,isect);
              dynamic_cast<GEMClientActor *>(cobj)->SetPosition(p2,nyaw+3.1415f,isect);
              psengine->GetPSCamera()->SetCameraMode(0); //set the camera to the first person mode
+             targetEID = cobj->GetEID();
           }
           enabledChatBubbles = psengine->GetChatBubbles()->isEnabled();
           //psengine->GetChatBubbles()->setEnabled(false);
