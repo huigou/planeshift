@@ -92,6 +92,14 @@ void pawsLauncherWindow::UpdateNews()
 
     ifstream newsFile(newsPath->GetData(), ifstream::in);
     csString buffer;
+
+    buffer.Append("Your client version is ");
+    buffer.Append(psLaunchGUI->GetCurrentClientVersion());
+    buffer.Append("\n");
+    buffer.Append("Your launcher version is ");
+    buffer.Append(UPDATER_VERSION);
+    buffer.Append("\n\n");
+
     while(newsFile.good())
     {
         buffer.Append((char)newsFile.get());

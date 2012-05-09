@@ -88,11 +88,15 @@ private:
     /* True if we've already been told there's an update available. */
     bool updateTold;
 
+    csString currentClientVersion;
+
 public:
     /* Quit the application */
     void Quit();
 
     void ExecClient(bool value) { *execPSClient = value; }
+
+    void SetCurrentClientVersion(csString value) { currentClientVersion = value; }
 
     psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient);
 
@@ -109,6 +113,8 @@ public:
     void CancelUpdater() { infoShare->SetCancelUpdater(true); }
 
     bool UpdateChecked() { return infoShare->GetUpdateChecked(); }
+
+    csString GetCurrentClientVersion() { return currentClientVersion; }
 
     // Run.
     void Run();
