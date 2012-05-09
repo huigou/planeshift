@@ -1526,6 +1526,9 @@ void UpdaterEngine::CheckAndUpdate(iDocumentNode* md5sums, csString baseurl, boo
                     infoShare->Sync();
                 }
             }
+
+            infoShare->SetCurrentClientVersion(GetCurrentClientVersion());
+            infoShare->Sync();
         }
     }
 }

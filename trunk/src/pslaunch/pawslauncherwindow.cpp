@@ -105,6 +105,7 @@ void pawsLauncherWindow::UpdateNews()
         buffer.Append((char)newsFile.get());
     }
     buffer.Truncate(buffer.Length()-1);
+    serverNews->Clear();
     serverNews->AddMessage(buffer.GetDataSafe());
     newsFile.close();
     psLaunchGUI->GetFileUtil()->RemoveFile("/planeshift/userdata/servernews", true);
@@ -172,6 +173,7 @@ bool pawsLauncherWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
     }
     else if(ID == UPDATER_OK_BUTTON)
     {
+        UpdateNews();
         FindWidget("UpdaterNoButton")->Hide();
         FindWidget("UpdaterYesButton")->Hide();
         widget->Hide();
