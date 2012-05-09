@@ -1664,9 +1664,10 @@ The SVN artwork is rather incomplete and it doesn't contain any fancy piece of a
 to have one or the other if you want to run your client.
 
 <h3>Minimal Art from SVN</h3>
+<b>IMPORTANT: At this time SVN art is broken, so you need PS released art to run your compiled client.</b><br>
 
 If you want just to have your client running with minimal art you can to do this by fetching the SVN art. You need to collect it from SVN and put it in
-a <i>art</i> subdirectory in your PlaneShift directory.</p>
+a <i>art</i> subdirectory in your PlaneShift directory. </p>
 
 <div class="Linux">
 <p><i class="command">$HOME/development/planeshift$ svn co https://planeshift.svn.sourceforge.net/svnroot/planeshift/art</i></p>
@@ -1687,6 +1688,8 @@ If you want your compiled client to have all art (icons, skins, characters, ...)
 If you have previously downloaded a release package, you can use it to get the needed files. The files are in the "art" and
 "data" directories. However you should keep the following folders in data because the contents from the SVN are
 usually more recent and updated: gui, shader, shader-snippets and renderlayers.
+
+See 
 </p>
 
 <!--************************************************************************************************-->
@@ -1951,9 +1954,8 @@ is located somewhere else or you want to connect to somebody's else server, you 
     for developers using the internal SVN art.
 </p>
 
-<h3>Mount the VFS Paths</h3>
 <p>
-    Open up the vfs.cfg file in the PlaneShift dir.  Find the list of mount points (VFS.Mount.* lines)
+    1) Open up the <b>vfs.cfg</b> file in the PlaneShift dir.  Find the list of mount points (VFS.Mount.* lines)
     and add a mount for each custom dir you wish to use.  For this example, I will mount a pre-installed
     package.  Using the VFS syntax key at the top, add a mount as follows:
 </p>
@@ -1961,83 +1963,49 @@ is located somewhere else or you want to connect to somebody's else server, you 
 <div>
     I have named the mount "bins" and the dir I am using is at "/development/PSbins/".
     <div class="Windows">
-        <p>On Windows this will be equivalent to C:\development\PSbins\</p>
+        <p>On Windows VFS.Mount.bins = c:$/development$/PSbins$/ will be equivalent to C:\development\PSbins\</p>
     </div>
+    You wil use the mapping in psclient.cfg, but in vfs.cfg you HAVE TO point to a physical path manually, so proceed by doing this:
+    <p class="commandBox">
+    VFS.Mount.planeshift/materials = $/development$/PSbins$/art/materials.zip<br />
+    VFS.Mount.planeshift/meshes = $/development$/PSbins$/art/meshes.zip<br />
+    VFS.Mount.planeshift/world = $/development$/PSbins$/art/world.zip<br />
+    </p>
 </div>
 
-<h3>Use the Mounts</h3>
 <p>
-    Open the cfg file of the PS application you want to use a mount.  To continue the above example,
-    I can set the SVN build client to use the installed package's maps by editing the PlaneShift.Mount.zipmapdir
-    line in psclient.cfg:
+    2) Open <b>psclient.cfg</b> (or the cfg file of the PS application you want to use a mount).  To continue the above example,
+    I can set the SVN build client to use the installed package's maps by editing the following in 
+    psclient.cfg:
 </p>
-<p><i class="command">PlaneShift.Mount.zipmapdir = /bins/art/world/</i></p>
+<p class="commandBox">
+  Planeshift.GUI.Skin.Base = /bins/art/skins/base/client_base.zip<br />
+  PlaneShift.GUI.Skin.Dir = /bins/art/skins/<br />
+</p>
 <p>
     If you wish the server and NPC client to use these as well, modify/add that line to their cfg files too.
 </p>
-<div>
-    You can use the same mount as many times as needed, using different sub-dirs:
-    <p class="commandBox">
-        PlaneShift.Mount.npcszip = /bins/art/npcs.zip<br />
-        PlaneShift.Mount.weaponzip = /bins/art/things/weapons.zip<br />
-    </p>
-</div>
 <p>
-    PS mounts such as PlaneShift.Mount.characterszip take a VFS path to a ZIP file, as opposed to a dir.
-    If you wish to mount from an uncompressed dir, you need to add a slash to the end of the path:
+    Note: PS mounts such as Planeshift.GUI.Skin.Base take a VFS path to a ZIP file, as opposed to a dir.
+    If you wish to mount from an <b>uncompressed dir</b>, you need to add a slash to the end of the path:
 </p>
 <div class="Windows">
     On Windows it will be a backslash, not a forwardslash.<br />
-    <span class="commandBox">PlaneShift.Mount.characterszip = /svn/planeshift/art/characters.zip\</span>
+    <span class="commandBox">Planeshift.GUI.Skin.Base = /svn/planeshift/art/skins/base/client_base.zip\</span>
 </div>
 <div class="Linux">
     On Linux it will be a forwardslash.
-    <p><i class="command">PlaneShift.Mount.characterszip = /svn/planeshift/art/characters.zip/</i></p>
+    <p><i class="command">Planeshift.GUI.Skin.Base = /svn/planeshift/art/skins/base/client_base.zip/</i></p>
 </div>
 <div class="FreeBSD">
     On FreeBSD it will be a forwardslash.
-    <p><i class="command">PlaneShift.Mount.characterszip = /svn/planeshift/art/characters.zip/</i></p>
+    <p><i class="command">Planeshift.GUI.Skin.Base = /svn/planeshift/art/skins/base/client_base.zip/</i></p>
 </div>
 <div class="MacOSX">
     On Mac it will be a forwardslash.
-    <p><i class="command">PlaneShift.Mount.characterszip = /svn/planeshift/art/characters.zip/</i></p>
+    <p><i class="command">Planeshift.GUI.Skin.Base = /svn/planeshift/art/skins/base/client_base.zip/</i></p>
 </div>
 
-<h3>Mount List</h3>
-<div>
-    You can use the above method to easily mount most art.  The full list of mounts used is as follows:
-    <p><i>
-        Planeshift.Mount.zipmapdir<br />
-        Planeshift.Mount.characterszip<br />
-        Planeshift.Mount.npcszip<br />
-        Planeshift.Mount.weaponzip<br />
-        Planeshift.Mount.itemzip<br />
-        Planeshift.Mount.azurezip<br />
-        Planeshift.Mount.bluezip<br />
-        Planeshift.Mount.brownzip<br />
-        Planeshift.Mount.crystalzip<br />
-        Planeshift.Mount.darkzip<br />
-        Planeshift.Mount.redzip<br />
-        Planeshift.Mount.potionszip<br />
-        Planeshift.Mount.moneyzip<br />
-        Planeshift.Mount.bookszip<br />
-        Planeshift.Mount.shieldszip<br />
-        Planeshift.Mount.toolszip<br />
-        Planeshift.Mount.naturalreszip<br />
-        Planeshift.Mount.foodzip<br />
-        Planeshift.Mount.helmszip<br />
-        Planeshift.Mount.jewelryzip<br />
-        Planeshift.GUI.Skin.Base<br />
-        Planeshift.GUI.Skin.Dir
-    </i></p>
-    <p>
-        Note that the first and last mount to a directory, while the others must mount to a ZIP file unless
-        the trailing slash is added as stated above.  Also note that this isn't everything; you will still
-        have to copy some files from the package or updater, namely your data dir and all art not mounted.
-        This includes effects, music, sounds, apps.zip, soundlib.xml, etc.  However, these things change less
-        often than the above, and mounting the main portion of the art makes keeping things in sync much easier.
-    </p>
-</div>
 
 <!--************************************************************************************************-->
 <!--************************************************************************************************-->
