@@ -537,9 +537,10 @@ int main(int argc, char* argv[])
                 csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
                         CS_REQUEST_OPENGL3D, CS_REQUEST_END);
 
+                infoShare->SetCurrentClientVersion(engine->GetCurrentClientVersion());
+
                 // Start GUI.
                 psLauncherGUI* gui = new psLauncherGUI(object_reg, infoShare, &execPSClient);
-                gui->SetCurrentClientVersion(engine->GetCurrentClientVersion());
                 gui->Run();
 
                 // Free GUI.

@@ -78,6 +78,7 @@ private:
     /* Set to true if the updaterinfo.xml gets out of sync. */
     volatile bool outOfSync;
 
+    csString currentClientVersion;
     /* Safety. */
     CS::Threading::Mutex mutex;
 
@@ -111,6 +112,7 @@ public:
     inline void SetCancelUpdater(bool v) { cancelUpdater = v; }
     inline void SetOutOfSync(bool v) { outOfSync = v; }
     inline void SetUpdateChecked(bool v) { updateChecked = v; }
+    inline void SetCurrentClientVersion(csString v) { currentClientVersion = v; }
     inline void Sync()
     {
         CS::Threading::MutexScopedLock lock(mutex);
@@ -134,6 +136,7 @@ public:
     inline bool GetCancelUpdater() { return cancelUpdater; }
     inline bool GetOutOfSync() { return outOfSync; }
     inline bool GetUpdateChecked() { return updateChecked; }
+    inline csString GetCurrentClientVersion() { return currentClientVersion; }
 
     inline void EmptyConsole()
     {
