@@ -456,7 +456,7 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
     {
         psRemoveObject mesg(me);
         //if the current target is being removed hide this window
-        if(targetEID.IsValid() && mesg.objectEID.IsValid() && mesg.objectEID == targetEID)
+        if(IsVisible() && targetEID.IsValid() && mesg.objectEID.IsValid() && mesg.objectEID == targetEID)
         {
             Hide();
             //In these cases something might have gone wrong with the camera
