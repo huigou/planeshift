@@ -448,7 +448,7 @@ void pawsLauncherWindow::LoadSettings()
 
     // Full screen
     pawsCheckBox* fullscreen = (pawsCheckBox*)FindWidget("Fullscreen");
-    if(configUser->KeyExists("PlaneShift.Video.FullScreen"))
+    if(configUser->KeyExists("Video.FullScreen"))
     {
         fullscreen->SetState(configUser->GetBool("Video.FullScreen"));
     }
@@ -1070,7 +1070,7 @@ void pawsLauncherWindow::SaveSettings()
 
     // Full screen
     pawsCheckBox* fullscreen = (pawsCheckBox*)FindWidget("Fullscreen");
-    configUser->SetBool("PlaneShift.Video.FullScreen", fullscreen->GetState());
+    configUser->SetBool("Video.FullScreen", fullscreen->GetState());
 
     // Sound
     pawsCheckBox* enableSound = (pawsCheckBox*)FindWidget("EnableSound");
