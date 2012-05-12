@@ -28,6 +28,7 @@
   <item orig="Guild info" trans="Info Gilda" />
   <item orig="Buy" trans="Compra" />
   <item orig="Guild message of the day (A short message):" trans="Messaggio del giorno della gilda:" />
+  <item orig="Petition" trans="" />
   <item orig="Modifiers" trans="Modificatori" />
   <item orig="Actions sounds" trans="Suoni Azioni" />
   <item orig="Combine items in container" trans="" />
@@ -42,8 +43,9 @@
   <item orig="Buffs" trans="" />
   <item orig="Creatures" trans="Creature" />
   <item orig="Dismiss" trans="" />
-  <item orig="Stack Count" trans="" />
   <item orig="Spell Casting" trans="" />
+  <item orig="Stack Count" trans="" />
+  <item orig="Last online" trans="" />
   <item orig="Torso" trans="Torso" />
   <item orig="Examine" trans="Esamina" />
   <item orig=" unanswered petitions." trans=" petizioni non risposte." />
@@ -82,6 +84,7 @@
   <item orig="P. stamina" trans="Resistenza F." />
   <item orig="Magic Skills List:" trans="" />
   <item orig="Quest" trans="" />
+  <item orig="Pos" trans="" />
   <item orig="House:" trans="Casa:" />
   <item orig="First name must contain more than two letters" trans="" />
   <item orig="System Base" trans="Sistema Base" />
@@ -177,6 +180,14 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Autoexec" trans="" />
   <item orig="NPC_my Alignment" trans="Allineamento NPC_my" />
   <item orig="Skin Colour" trans="Colore Pelle" />
+  <item orig="IMPORTANT: The following graphical options are available ONLY in the PlaneShift launcher. If you want to change any of those, you need to close this client, and relaunch PlaneShift. In the Launcher window, click on &apos;Settings&apos; and &apos;Settings/Graphics&apos;.
+
+- Full screen or windowed mode (launcher only)
+- Resolution of the screen (launcher only)
+- Increase or lower graphical quality (launcher only)
+
+We suggest you to try different settings and see what&apos;s best for your hardware." trans="" />
+  <item orig="Effects sounds" trans="" />
   <item orig="Master:" trans="" />
   <item orig="Last name must contain more than two letters" trans="" />
   <item orig="View Stats" trans="" />
@@ -208,6 +219,7 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Spell Description:" trans="Descrizione magia:" />
   <item orig="Petition Info" trans="Informazioni sulla petizione" />
   <item orig="%s has invited you to join a group. Click Yes to accept or No to reject." trans="%s ti ha invitato ad aggregarti a un gruppo. Clicca Sì per accettare e No per rifiutare." />
+  <item orig="Glyph" trans="" />
   <item orig="You must select a petition from the list in order to cancel it." trans="Devi selezionare una petizione della lista per poterla cancellare." />
   <item orig="Alliance" trans="Alleanza" />
   <item orig="Are you sure you want to upload?  " trans="" />
@@ -232,6 +244,7 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="
 Do you really wish to leave Yliakum?" trans="
 Vuoi veramente lasciare Yliakum?" />
+  <item orig="Last Name" trans="" />
   <item orig="Count" trans="Conto" />
   <item orig="Enter the command(s):" trans="Inserire i comandi:" />
   <item orig="Month:" trans="Mese:" />
@@ -277,6 +290,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Exchange all items" trans="" />
   <item orig="Add Linked" trans="Aggiungi collegato" />
   <item orig="keyboard" trans="Tastiera" />
+  <item orig="Type" trans="" />
   <item orig="Research Magic" trans="" />
   <item orig="The number of trias you wish to withdraw." trans="" />
   <item orig="Activity:" trans="Attività:" />
@@ -308,6 +322,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Physical Stamina" trans="Resistenza Fisica" />
   <item orig="You have entered edit mode." trans="" />
   <item orig="%s shouts: %s" trans="%s urla: %s" />
+  <item orig="Leader" trans="" />
   <item orig="Quality:" trans="Qualità:" />
   <item orig="No server running at the moment" trans="Non ci sono server attivi in questo momento" />
   <item orig="Chat - TabCompletion" trans="" />
@@ -317,6 +332,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Glyphs" trans="Glyph" />
   <item orig="Alliance:" trans="Alleanza:" />
   <item orig="Various Skill description:" trans="" />
+  <item orig="First Name" trans="" />
   <item orig="Buddy list" trans="Lista amici" />
   <item orig="100%" trans="" />
   <item orig="Strength on the lock" trans="" />
@@ -369,6 +385,7 @@ chiamato " />
   <item orig="Active Magic" trans="Magia Attiva" />
   <item orig="Normal" trans="" />
   <item orig="Insert Measure" trans="" />
+  <item orig="Level" trans="" />
   <item orig="Quest Testing" trans="Quest test" />
   <item orig="alliance Alignment" trans="Allineamento alleanza" />
   <item orig="Year:" trans="Anno:" />
@@ -387,6 +404,7 @@ chiamato " />
   <item orig="shouts" trans="" />
   <item orig="Others&apos; attacks that are dodged" trans="" />
   <item orig="Basic chat" trans="" />
+  <item orig="Mesh" trans="" />
   <item orig="Combat music" trans="Musica di combattimento" />
   <item orig="Enable shout" trans="" />
   <item orig="Own attacks (Successful ones)" trans="" />
@@ -450,6 +468,7 @@ chiamato " />
   <item orig="Eighth" trans="" />
   <item orig="Sharp" trans="" />
   <item orig="Convert password" trans="" />
+  <item orig="Created Date" trans="" />
   <item orig="Auction shadow colour" trans="" />
   <item orig="OOC" trans="" />
   <item orig="List Attributes" trans="Elenca attributi" />
@@ -479,6 +498,7 @@ chiamato " />
   <item orig="The number of hexas that you may exchange." trans="" />
   <item orig="%s asks: %s" trans="%s chiede: %s" />
   <item orig="Play/Stop" trans="" />
+  <item orig="Lvl" trans="" />
   <item orig="1" trans="" />
   <item orig="Invisible" trans="Invisibile" />
   <item orig="CHARACTER SELECT" trans="SELEZIONE PERSONAGGIO" />
@@ -540,6 +560,7 @@ chiamato " />
 Changing the language can be done ONLY in the PlaneShift Launcher. To do this you should close this client, and relaunch PlaneShift. In the Launcher you should change the &apos;Language&apos; dropdown." trans="" />
   <item orig="Back_inv" trans="Schiena" />
   <item orig="Crafting" trans="" />
+  <item orig="Gnd" trans="" />
   <item orig="DescOC" trans="" />
   <item orig="Welcome to PlaneShift!" trans="Benvenuto su PlaneShift!" />
   <item orig="Delete" trans="Cancella" />
@@ -584,6 +605,7 @@ Changing the language can be done ONLY in the PlaneShift Launcher. To do this yo
   <item orig="NPC" trans="" />
   <item orig="Music Volume" trans="Volume Musica" />
   <item orig="Mother:" trans="" />
+  <item orig="Online" trans="" />
   <item orig="Defend me !" trans="Difendimi!" />
   <item orig="Spell List:" trans="" />
   <item orig="FPS cap:" trans="" />
@@ -638,6 +660,7 @@ Changing the language can be done ONLY in the PlaneShift Launcher. To do this yo
   <item orig="Fade Speed:" trans="" />
   <item orig="My Alignment" trans="Mio allineamento" />
   <item orig="Labels visibility" trans="" />
+  <item orig="Player" trans="" />
   <item orig="Trigger:" trans="" />
   <item orig="Refresh List" trans="Aggiorna lista" />
   <item orig="Character Name" trans="Nome Personaggio" />
@@ -745,6 +768,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Assemble Slot" trans="" />
   <item orig="set givekillexp" trans="" />
   <item orig="Add Petition" trans="" />
+  <item orig="Login_top" trans="Connessione" />
   <item orig="You can not ignore yourself." trans="Non puoi ignorare te stesso.." />
   <item orig="Members" trans="Membri" />
   <item orig="Shout text colour" trans="" />
@@ -769,6 +793,9 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Char Name" trans="Nome personaggio" />
   <item orig="Create Text (t)" trans="" />
   <item orig="Number of Siblings" trans="" />
+  <item orig="In this section you can configure the keys associated to actions, for example the keys used for movement.
+
+You can also change the commands sent by each mouse button." trans="" />
   <item orig="New Character" trans="Nuovo Personaggio" />
   <item orig="Magic Skill description:" trans="" />
   <item orig="npcinternal Alignment" trans="" />
@@ -801,6 +828,7 @@ Per disabilitare questa funzione cancella tutto in questa finestra usando il bot
   <item orig="Quest Responses" trans="" />
   <item orig="Next Icon (PgDn)" trans="" />
   <item orig="Instance:" trans="" />
+  <item orig="Warning! this will PERMANENTLY DELETE your character.  Are you sure you want to continue?" trans="" />
   <item orig="Actions" trans="" />
   <item orig="Chat - Filters" trans="Chat - Filtri" />
   <item orig="Amount to withdraw" trans="Ammonto da ritirare" />
@@ -861,6 +889,8 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
   <item orig="Game Board" trans="" />
   <item orig="Delete Selected (del)" trans="" />
   <item orig="each values 50 Tria" trans="" />
+  <item orig="Status" trans="" />
+  <item orig="Id" trans="" />
   <item orig="Name:" trans="Nome:" />
   <item orig="Discard" trans="" />
   <item orig="Y:" trans="S:" />
@@ -910,11 +940,13 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
   <item orig="npcinternal text colour" trans="" />
   <item orig="Boots" trans="" />
   <item orig="Allow the client to send a newly hashed password to the server (check: http://tinyurl.com/5smsz5l )" trans="" />
+  <item orig="Poly" trans="" />
   <item orig="Completed" trans="completate" />
   <item orig="none" trans="niente" />
   <item orig="Alternates" trans="" />
   <item orig="Skills and stats" trans="Abilità" />
   <item orig="Save (s)" trans="" />
+  <item orig="Sector" trans="" />
   <item orig="Save MOTD" trans="salva MOTD" />
   <item orig="network" trans="network" />
   <item orig="Interface" trans="Interfaccia" />
@@ -928,6 +960,7 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
   <item orig="Failed" trans="" />
   <item orig="Welcome to" trans="" />
   <item orig="Enable spell checker in chat window" trans="" />
+  <item orig="GM" trans="" />
   <item orig="Realm" trans="Reame" />
   <item orig="cancelled." trans="cancellata." />
   <item orig="closed." trans="chiusa." />

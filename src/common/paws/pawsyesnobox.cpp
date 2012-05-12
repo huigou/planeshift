@@ -157,7 +157,7 @@ pawsYesNoBox * pawsYesNoBox::Create(pawsWidget * notify, const csString & text,
 {
     pawsYesNoBox* dialog = dynamic_cast <pawsYesNoBox*> (PawsManager::GetSingleton().FindWidget("YesNoWindow"));
     dialog->SetNotify( notify );
-    dialog->SetText( text );
+    dialog->SetText( PawsManager::GetSingleton().Translate(text) );
     dialog->SetID( yesID, noID );
     dialog->Show();
     PawsManager::GetSingleton().SetModalWidget( dialog );
