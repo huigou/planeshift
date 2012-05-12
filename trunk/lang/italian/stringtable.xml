@@ -43,6 +43,7 @@
   <item orig="Creatures" trans="Creature" />
   <item orig="Dismiss" trans="" />
   <item orig="Stack Count" trans="" />
+  <item orig="Spell Casting" trans="" />
   <item orig="Torso" trans="Torso" />
   <item orig="Examine" trans="Esamina" />
   <item orig=" unanswered petitions." trans=" petizioni non risposte." />
@@ -200,7 +201,7 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Resolution" trans="Risoluzione" />
   <item orig="Gender:" trans="Sesso:" />
   <item orig="Refresh MOTD" trans="Aggiorna MOTD" />
-  <item orig="Login" trans="" />
+  <item orig="Login" trans="Connetti" />
   <item orig="Z:" trans="" />
   <item orig="Sounds are not active!" trans="" />
   <item orig="Use basic chat window (need reload)" trans="" />
@@ -289,7 +290,7 @@ Vuoi veramente lasciare Yliakum?" />
   <item orig="Say outline colour" trans="" />
   <item orig="Path" trans="Via" />
   <item orig="each values 1 Tria" trans="" />
-  <item orig="Delete Selected Character" trans="" />
+  <item orig="Delete Selected Character" trans="Cancella il Personaggio" />
   <item orig="Kill Player" trans="Uccidi giocatore" />
   <item orig="%s says: %s" trans="%s dice: %s" />
   <item orig="Full" trans="" />
@@ -463,6 +464,7 @@ chiamato " />
   <item orig="set infinitemana" trans="" />
   <item orig="Rename" trans="" />
   <item orig="Enables the logging of the selected chat type" trans="" />
+  <item orig="Song Title" trans="" />
   <item orig="0" trans="" />
   <item orig="disabled" trans="disabilitato" />
   <item orig="Tells" trans="" />
@@ -536,6 +538,8 @@ chiamato " />
   <item orig="You can change the language of PlaneShift to have the user interface displayed in your language. We support Cesky, Dutch, French, Italian, German, Romanian, Russian, Swedish, and more. Please note pubic dialogues in game between players should  be in English.
 
 Changing the language can be done ONLY in the PlaneShift Launcher. To do this you should close this client, and relaunch PlaneShift. In the Launcher you should change the &apos;Language&apos; dropdown." trans="" />
+  <item orig="Back_inv" trans="Schiena" />
+  <item orig="Crafting" trans="" />
   <item orig="DescOC" trans="" />
   <item orig="Welcome to PlaneShift!" trans="Benvenuto su PlaneShift!" />
   <item orig="Delete" trans="Cancella" />
@@ -832,6 +836,7 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
   <item orig="Study notes:" trans="" />
   <item orig="Selected Target" trans="Oggetto selezionato" />
   <item orig="Save this book" trans="" />
+  <item orig="Modify description" trans="" />
   <item orig="Chat - Tabs" trans="Chat - Linguette" />
   <item orig="Makes the server log what target player is saying." trans="Fa loggare al server ciò che il giocare selezionato sta dicendo." />
   <item orig="New Account" trans="Nuovo Account" />
@@ -870,7 +875,7 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
   <item orig="Join" trans="Entra" />
   <item orig="Enable say" trans="" />
   <item orig="Use simplified chat window" trans="" />
-  <item orig="Click a character name below, then click Join. Or click New Character." trans="" />
+  <item orig="Click a character name below, then click Join. Or click New Character." trans="Seleziona un personaggio e clicca Entra oppure clicca Nuovo Personaggio." />
   <item orig="Quarter" trans="" />
   <item orig="Assigned GM:" trans="Assegnato al GM:" />
   <item orig="Lockable" trans="" />
@@ -899,7 +904,7 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
   <item orig="Sound" trans="Suono" />
   <item orig="Background music" trans="" />
   <item orig="Group text colour" trans="" />
-  <item orig="Choose Your Character" trans="" />
+  <item orig="Choose Your Character" trans="Scegli un personaggio" />
   <item orig="Uncompleted" trans="incomplete" />
   <item orig="Petitons are waiting." trans="Ci sono delle petizioni in attesa." />
   <item orig="npcinternal text colour" trans="" />

@@ -179,7 +179,7 @@
                 <subscribe data="invslot_6" />
             </subscriptions>
         </widget>
-        <widget name="back" factory="pawsSlot" tooltip="Back">
+        <widget name="back" factory="pawsSlot" tooltip="Back_inv">
             <frame x="0" y="0" width="48" height="48" />
             <bgimage resource="InventoryBack" alpha="0"/>
             <subscriptions>

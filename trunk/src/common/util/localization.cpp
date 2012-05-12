@@ -114,7 +114,7 @@ void psLocalization::SetLanguage(const csString & _lang)
         stringTbl.Put(itemData->original.GetData(), itemData);
         i++;
     }
-    printf("-----------------------------------\nLoaded %d translation entries.\n-----------------------------------\n", i);
+    printf("--------------------------------\nLoaded %d translation entries for %s.\n--------------------------------\n", i, language.GetData());
 }
 
 

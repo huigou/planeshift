@@ -779,9 +779,6 @@ void pawsLauncherWindow::LoadSettings()
     // Fill the languages
     pawsComboBox* languages = (pawsComboBox*)FindWidget("Languages");
     languages->Clear();
-
-    //add english: it's the default embedded in binary language
-    languages->NewOption("english");
     
     csRef<iStringArray> langfiles = psLaunchGUI->GetVFS()->FindFiles(languagepath); //find the folders with languages
     for (size_t i = 0; i < langfiles->GetSize(); i++)

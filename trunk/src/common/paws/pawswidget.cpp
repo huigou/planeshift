@@ -610,7 +610,7 @@ bool pawsWidget::LoadAttributes( iDocumentNode* node )
     csRef<iDocumentNode> titleNode = node->GetNode("title");
     if (titleNode)
     {
-        csString title = titleNode->GetAttributeValue("text");
+        csString title = PawsManager::GetSingleton().Translate(titleNode->GetAttributeValue("text"));
         csString image = titleNode->GetAttributeValue("resource");
         csString align = titleNode->GetAttributeValue("align");
         csString close = titleNode->GetAttributeValue("close_button");
