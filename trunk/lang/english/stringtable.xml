@@ -42,8 +42,8 @@
   <item orig="Dismiss" trans="" />
   <item orig="Spell Casting" trans="" />
   <item orig="Stack Count" trans="" />
+  <item orig="Examine" trans="" />
   <item orig="Torso" trans="" />
-  <item orig="Examine" trans="Esamina" />
   <item orig=" unanswered petitions." trans="" />
   <item orig="Talk to people in your sector." trans="" />
   <item orig="Right Finger" trans="" />
@@ -54,26 +54,26 @@
   <item orig="Tellself outline colour" trans="" />
   <item orig="Log Out" trans="" />
   <item orig="male " trans="" />
-  <item orig="Description" trans="" />
-  <item orig="alliance text colour" trans="" />
   <item orig="Active" trans="" />
+  <item orig="alliance text colour" trans="" />
+  <item orig="Description" trans="" />
   <item orig="Creatures:" trans="" />
   <item orig="says" trans="dice" />
   <item orig="Chose Color (c)" trans="" />
   <item orig="View" trans="" />
   <item orig="PATHS" trans="" />
   <item orig="Wait" trans="" />
-  <item orig="Previous Icon (PgUp)" trans="" />
   <item orig="Shadows" trans="" />
+  <item orig="Previous Icon (PgUp)" trans="" />
   <item orig="Unclaim" trans="" />
   <item orig="Server:" trans="" />
-  <item orig="Enable Shadows" trans="" />
   <item orig="Exit PlaneShift" trans="" />
+  <item orig="Enable Shadows" trans="" />
   <item orig="Escalation Level:" trans="" />
-  <item orig="Insert Note" trans="" />
   <item orig="Notify when members login/logout" trans="" />
-  <item orig="Talk to someone privately." trans="" />
+  <item orig="Insert Note" trans="" />
   <item orig="P. stamina" trans="" />
+  <item orig="Talk to someone privately." trans="" />
   <item orig="Magic Skills List:" trans="" />
   <item orig="Quest" trans="" />
   <item orig="House:" trans="" />
@@ -118,8 +118,8 @@
   <item orig="each values 250 Tria" trans="" />
   <item orig="npcinternal outline colour" trans="" />
   <item orig="Merchant" trans="" />
-  <item orig="Account User Name:" trans="" />
   <item orig="Auction" trans="" />
+  <item orig="Account User Name:" trans="" />
   <item orig="set invisible" trans="" />
   <item orig="You currently have no petitions." trans="" />
   <item orig="Edit Mode (F2)" trans="" />
@@ -134,8 +134,8 @@
   <item orig="The server is locked!" trans="" />
   <item orig="Weak Pickupable" trans="" />
   <item orig="Mount" trans="" />
-  <item orig="Quest &amp; Events Notebook" trans="" />
   <item orig="Are you sure you want to upload?  You have 2 CP left." trans="" />
+  <item orig="Quest &amp; Events Notebook" trans="" />
   <item orig="You will now ignore %s." trans="" />
   <item orig="Study" trans="" />
   <item orig="Private notes" trans="" />
@@ -143,8 +143,8 @@
   <item orig="Tell Alignment" trans="" />
   <item orig="Enable NPC" trans="" />
   <item orig="Change name" trans="" />
-  <item orig="set invincible" trans="" />
   <item orig="Getting Characters" trans="" />
+  <item orig="set invincible" trans="" />
   <item orig="Introduce yourself" trans="" />
   <item orig="Main tab" trans="" />
   <item orig="Unknown command" trans="" />
@@ -182,8 +182,8 @@
   <item orig="Mesh:" trans="" />
   <item orig="Right Hand" trans="" />
   <item orig="Resolution" trans="" />
-  <item orig="Gender:" trans="" />
   <item orig="Refresh MOTD" trans="" />
+  <item orig="Gender:" trans="" />
   <item orig="Login" trans="" />
   <item orig="Z:" trans="" />
   <item orig="Use basic chat window (need reload)" trans="" />
@@ -197,8 +197,8 @@
   <item orig="NPC_my text colour" trans="" />
   <item orig="Full Mesh" trans="" />
   <item orig="NPC_narrate shadow colour" trans="" />
-  <item orig="alliance outline colour" trans="" />
   <item orig="I am leaving" trans="" />
+  <item orig="alliance outline colour" trans="" />
   <item orig="Circles available to deposit." trans="" />
   <item orig="Train" trans="" />
   <item orig="Exchange items" trans="" />
@@ -213,8 +213,8 @@ Do you really wish to leave Yliakum?" trans="
 " />
   <item orig="Count" trans="" />
   <item orig="Enter the command(s):" trans="" />
-  <item orig="Month:" trans="" />
   <item orig="Chat" trans="" />
+  <item orig="Month:" trans="" />
   <item orig="NPC_me outline colour" trans="" />
   <item orig="Mute on focus loss" trans="" />
   <item orig="Aggressive" trans="" />
@@ -225,8 +225,8 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Rank" trans="" />
   <item orig="Spawn item" trans="" />
   <item orig="Enable guild" trans="" />
-  <item orig="Group stats" trans="" />
   <item orig="o&amp;clock" trans="" />
+  <item orig="Group stats" trans="" />
   <item orig="Construct" trans="" />
   <item orig="Give Kill Experience" trans="" />
   <item orig="Own combat stance changes" trans="" />
@@ -243,8 +243,8 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Tria" trans="" />
   <item orig="Group text color" trans="" />
   <item orig="1 Tria" trans="" />
-  <item orig="The number of trias that you may exchange." trans="" />
   <item orig="No Petitions." trans="" />
+  <item orig="The number of trias that you may exchange." trans="" />
   <item orig="Filter" trans="" />
   <item orig="New" trans="" />
   <item orig="Mute sounds on focus loss" trans="" />
@@ -261,8 +261,8 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Say Alignment" trans="" />
   <item orig="set viewall" trans="" />
   <item orig="Combat" trans="" />
-  <item orig="Default last chat" trans="" />
   <item orig="Say outline colour" trans="" />
+  <item orig="Default last chat" trans="" />
   <item orig="Path" trans="" />
   <item orig="each values 1 Tria" trans="" />
   <item orig="Delete Selected Character" trans="" />
@@ -271,11 +271,11 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Are you sure you want to upload your character?" trans="" />
   <item orig="Enable Chat Bubbles" trans="" />
   <item orig="Transfer to inventory" trans="" />
-  <item orig="Get Reward" trans="Ottieni ricompensa" />
-  <item orig="Magic" trans="" />
   <item orig="Own attacks that fail to penetrate the armor" trans="" />
-  <item orig="Credits" trans="" />
+  <item orig="Magic" trans="" />
+  <item orig="Get Reward" trans="Ottieni ricompensa" />
   <item orig="You have " trans="" />
+  <item orig="Credits" trans="" />
   <item orig="details" trans="" />
   <item orig="HP" trans="" />
   <item orig="Physical Stamina" trans="" />
@@ -286,8 +286,8 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Chat - TabCompletion" trans="" />
   <item orig=" " trans="" />
   <item orig="CHARACTER CREATION" trans="" />
-  <item orig="Glyphs" trans="" />
   <item orig="Alliance:" trans="" />
+  <item orig="Glyphs" trans="" />
   <item orig="Various Skill description:" trans="" />
   <item orig="Buddy list" trans="" />
   <item orig="100%" trans="" />
@@ -322,8 +322,8 @@ of you named " trans="
   <item orig="tells you" trans="" />
   <item orig="Ambiguous name:" trans="" />
   <item orig="Load (l)" trans="" />
-  <item orig="Life" trans="" />
   <item orig="Password:" trans="" />
+  <item orig="Life" trans="" />
   <item orig="female " trans="" />
   <item orig="ALL" trans="" />
   <item orig="Currently, there are no petitions." trans="" />
@@ -693,6 +693,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Main chat brackets" trans="" />
   <item orig="Assemble Slot" trans="" />
   <item orig="set givekillexp" trans="" />
+  <item orig="Login_top" trans="Login" />
   <item orig="You can not ignore yourself." trans="" />
   <item orig="Members" trans="" />
   <item orig="Shout text colour" trans="" />

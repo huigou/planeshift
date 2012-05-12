@@ -1545,8 +1545,10 @@ void pawsListBoxRow::AddTitleColumn( int column, ColumnDef* def )
     // create the real title widget
     pawsTextBox *innerWidget = new pawsTextBox;
 
-    innerWidget->SetName( def[column].widgetNode->GetAttributeValue("name") );
-    innerWidget->SetText( def[column].widgetNode->GetAttributeValue("name") );
+    csString name = def[column].widgetNode->GetAttributeValue("name");
+    name = PawsManager::GetSingleton().Translate(name);
+    innerWidget->SetName( name );
+    innerWidget->SetText( name );
 
     csRef<iDocumentAttribute> atr = def[column].widgetNode->GetAttribute("visible");
     if (atr)

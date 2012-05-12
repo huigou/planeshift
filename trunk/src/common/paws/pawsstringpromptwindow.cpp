@@ -57,7 +57,7 @@ void pawsStringPromptWindow::Initialize(const csString & label, const csString &
         inputWidget = new pawsMultilineEditTextBox();
         pawsMultilineEditTextBox *editBox = dynamic_cast<pawsMultilineEditTextBox*> (inputWidget);
         editBox->SetRelativeFrameSize(width, height);
-        editBox->SetText(string);
+        editBox->SetText(PawsManager::GetSingleton().Translate(string));
         if(maxlen)
             editBox->SetMaxLength(maxlen);
     }
