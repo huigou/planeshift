@@ -51,7 +51,11 @@ INSERT INTO `natural_resources` VALUES (1,3,-80.00,0.00,-145.00,40.00,50.00,0.99
 INSERT INTO `natural_resources` VALUES (2,3,-93.00,0.00,-212.00,40.00,50.00,0.990000,37,50,6,0.500000,'greet',10,103,'coal','dig',NULL,0,0);
 INSERT INTO `natural_resources` VALUES (3,3,-93.00,0.00,-186.00,40.00,50.00,0.990000,37,50,6,0.500000,'greet',10,9002,'silver','dig',NULL,0,0);
 INSERT INTO `natural_resources` VALUES (4,3,-37.00,0.00,-212.00,20.00,50.00,0.990000,37,50,6,0.500000,'greet',10,9003,'tin','dig',NULL,0,0);
-INSERT INTO `natural_resources` VALUES (5,3,-28.00,0.00,-170.00,20.00,50.00,0.990000,37,50,6,0.500000,'greet',10,9004,'platinum','dig',NULL,0,0);-- Natural resource with hunt location spawnINSERT INTO `natural_resources` VALUES (6,3,28.00,0.00,-165.00,10.00,12.00,0.990000,37,1,6,0.500000,'greet',10,85,'gold','dig',3,4000,0);
+INSERT INTO `natural_resources` VALUES (5,3,-28.00,0.00,-170.00,20.00,50.00,0.990000,37,50,6,0.500000,'greet',10,9004,'platinum','dig',NULL,0,0);
+
+-- Natural resource with hunt location spawn
+INSERT INTO `natural_resources` VALUES (6,3,28.00,0.00,-165.00,10.00,12.00,0.990000,37,1,6,0.500000,'greet',10,85,'gold','dig',3,4000,0);
+
 /*!40000 ALTER TABLE `natural_resources` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
