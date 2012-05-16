@@ -176,11 +176,11 @@ The kran looks at the written page, tilting his head a bit and scratching the to
       </Contents>
       <branch name="Chat Window">
         <Contents>
-          <content type="text">The chat windows is probably the most important windows of PlaneShift. Good part of the interaction between players is done with this window. Also all commands can be executed by typing them in this window. (Useful for commands you seldom use and didn't create an own shortcut for). The chat window supports several chat tabs. Which tabs are shown can be configured in the in-game options: Options->Interface->Chat Tabs. The currently selected chat tab is highlighted and text that doesn't start with a specific command to say otherwise will be send to currently active chat tab. Chat tab also "flash" in case of a new, unread message in them. (This can be changed too in the in-game options).</content>
+          <content type="text">The chat windows is probably the most important windows of PlaneShift. Good part of the interaction between players is done with this window. Commands can be executed by typing them in this window. You can configure which which tabs are shown in the in-game options: Options->Interface->Chat Tabs. You can also configure which messages are sent in the main tab. The currently selected chat tab is highlighted, and the tab will "flash" in case of a new, unread message arrives.</content>
         </Contents>
         <topic name="Tab Completion">
           <Contents>
-            <content type="text">The chat windows supports tab-completion for names, commands and some worlds. To make use of this just start writing the first letters of a name, command or specified word then press the tab-key on your keyboard. In case there are more than one possible words that could be completed all of them will be written to the system chat tab. You can specify in the in-game options which words your want to include in tab-completion. All names on your buddy list and names of characters that said something in chat will be included in the completion. All chat commands are included in the completion. Tab-completion is independent of your current chat tab.</content>
+            <content type="text">The chat windows supports tab-completion for names, commands and some words. To make use of this just start writing the first letters of a name, command or specified word then press the tab-key on your keyboard. In case there are more than one possible words that could be completed all of them will be written to the system chat tab. You can specify in the in-game options additional words your want to include in tab-completion. All names on your buddy list, names of characters that said something in chat, and all chat commands are automatically included in the completion. Tab-completion is independent of your current selected chat tab.</content>
           </Contents>
         </topic>
         <topic name="Spellchecker">
@@ -194,52 +194,52 @@ The kran looks at the written page, tilting his head a bit and scratching the to
           </Contents>
           <topic name="Main">
             <Contents>
-              <content type="text">As the name already says this is the main chat tab. It's intended for interaction between characters. Everything typed here has a limited saying-range and only people within that range can see what you typed. This tab is In-Character (IC), meaning this is the voice of your character, not you. Your character has no clue about what music you listen to at the moment or even that PlaneShift is just a game. For short Out-of-character (OOC) announcements like "afk" please use brackets: "[afk]" or "[brb, phone]"</content>
+              <content type="text">As the name already says this is the main chat tab. It's intended for interaction between characters. Everything typed here has a limited saying-range and only people within that range can see what you typed. This tab is In-Character (IC), meaning this is the voice of your character, not you. Your character has no clue about what music you listen to at the moment or even that PlaneShift is just a game. For short Out-of-character (OOC) announcements like "afk" please use brackets: "[afk]" or "[brb, phone]". You can filter the information displayed in this tab by going to Options->Interface->Chat Tabs and check/uncheck the "Main Tab" options.</content>
             </Contents>
           </topic>
           <topic name="Chat">
             <Contents>
-              <content type="text">This chat tab is for chat channels. You can join different channels with /join and leave them again with /leave. By default you are in the "gossip" channel which is meant for Out-of-character chatting. If you are only in one channel you can just type while this chat tab is selected and your text will be send to the channel upon pressing return. In case you are in more than one channel you have to start your line with /1, /2, /3, .../NUMBER-OF-CHANNEL. This chat tab has no range limit and people all over the server can see your message.</content>
+              <content type="text">This chat tab is used primarly for the "gossip" channel, which is meant for Out-of-character chatting. This chat tab has no range limit and people all over the server can see your message. You can also join and leave different channels with /join and /leave. If you are only in one channel text will be send to the channel upon pressing return. In case you are in more than one channel you have to start your line with /1, /2, /3, .../NUMBER-OF-CHANNEL. </content>
             </Contents>
           </topic>
           <topic name="NPC">
             <Contents>
-              <content type="text">This chat tab is for the interaction with NPCs (Non-Player-Characters). Though most quests are done with the new interface now it's still possible to communicate with NPCs by writing in this chat tab. Also you can always read back here what a NPC told you during a quest. Other players can not see what you type in this tab. You need to have a NPC selected to talk to them.</content>
+              <content type="text">This chat tab is for the interaction with NPCs (Non-Player-Characters). Though most quests are done with the new interface, it's still possible to communicate with NPCs by writing in this chat tab. Also you can always read back here what a NPC told you during a quest. Other players can not see what you type in this tab. You need to have a NPC selected to talk to them.</content>
             </Contents>
           </topic>
           <topic name="Whisper">
             <Contents>
-              <content type="text">Whatever you type in this tab will be heard only by the player you send a tell to. There is no range limit so you can talk to all players on the server. Normally all chat in this tab is OOC but it's accepted to roleplay whispering to other characters with this tab after making clear in the main chat that your character whispers to another one (What is visible for all people near by). Be careful when using this tab. Your message will be always send to the last person that sent a tell to you. So if you get a tell from another person just before pressing enter it's most likely the wrong person will get your message. To prevent this you can always start your tells with "/tell CHARNAME" or by pressing the f-key which will start a tell to the person who just sent you one.</content>
+              <content type="text">This tab is for private one to one communications. Whatever you type in this tab will be heard only by the player you send a tell to. There is no range limit so you can talk to all players on the server. Normally all chat in this tab is OOC but it's accepted to roleplay whispering to other characters with this tab after making clear in the main chat that your character whispers to another one (What is visible for all people near by). Be careful when using this tab. Your message will be always send to the last person that sent a tell to you. So if you get a tell from another person just before pressing enter it's most likely the wrong person will get your message. To prevent this you can always start your tells with "/tell CHARNAME" or by pressing the f-key which will start a tell to the person who just sent you one.</content>
             </Contents>
           </topic>
           <topic name="Guild">
             <Contents>
-              <content type="text">If you are in a guild you can use this chat tab to communicate with your guild mates. This is usually an Out-of-Character chat tab. There is no range limit and all people in your guild can read your messages. If you don't see this tab, enable it from Options->Interface->Chat Tabs</content>
+              <content type="text">If you are in a guild you can use this chat tab to communicate with your guild mates. In-Character chat is preferred but not enforced. There is no range limit and all people in your guild can read your messages. If you don't see this tab, enable it from Options->Interface->Chat Tabs</content>
             </Contents>
           </topic>
           <topic name="Group">
             <Contents>
-              <content type="text">This chat tab is for chatting with people in your current group. There is no range limit so you can talk to all people in the same group as you everywhere on the server. This chat tab is used both for Out-of-character as well as In-Character communication. For example it can be used to Roleplay in a closed room when nobody outside should be able to hear what is said.</content>
+              <content type="text">This chat tab is for chatting with people in your current group. There is no range limit so you can talk to all people in the same group as you everywhere on the server. In-Character chat is preferred but not enforced. For example it can be used to Roleplay in a closed room when nobody outside should be able to hear what is said.</content>
             </Contents>
           </topic>
           <topic name="Alliance">
             <Contents>
-              <content type="text">If you are in a guild and your guild is part of an alliance you can use this chat tab to talk to all allies. This is a Out-of-character chat tab and has no range limit.</content>
+              <content type="text">If you are in a guild and your guild is part of an alliance you can use this chat tab to talk to all allies. In-Character chat is preferred but not enforced.</content>
             </Contents>
           </topic>
           <topic name="Auction">
             <Contents>
-              <content type="text">This chat tab is used for selling and buying goods. This is an In-character chat tab so please avoid Out-of-character text here or at least mark it with [brackets]. No character has a clue about weapon statistics and qualities so if you absolutely need them put them in [brackets] as well. The Range limit of the auction tab is about the same as the /shout range of the main tab.</content>
+              <content type="text">This chat tab is used for selling and buying goods. This is an In-character chat tab (enforced) so please avoid Out-of-character text here or if really needed mark it with [brackets]. No character has a clue about weapon statistics and qualities so if you absolutely need them put them in [brackets] as well. The Range limit of the auction tab is about the same as the /shout range of the main tab.</content>
             </Contents>
           </topic>
           <topic name="System">
             <Contents>
-              <content type="text">The system tab is no real chat tab as you can't send any text to it. It's for system messages like combat damage, crafting progress or the output of some chat commands like /who.</content>
+              <content type="text">The system tab it's for system messages like combat damage, crafting progress or the output of some chat commands like /who. Through Options menu you can redirect some of this messages to Main tab if you want.</content>
             </Contents>
           </topic>
           <topic name="Help">
             <Contents>
-              <content type="text">The Help chat tab is a bit special. If you are no advisor everything you type here will be visible for any advisor online. Then once an advisor answers to you it behaves a bit like the whisper chat tab. Everything said after that is only visible for you and the advisor (and GMs who monitor the help channel for abuse) until the help-session times out. This chat tab is ONLY for question about the game mechanics and how to play the game. No advisor is allowed to give out spoilers like where to find a specific trainer or how to solve a quest. And while GMs usually roam this channel it's also not a good place to ask for GM help as normal players can act as advisors too. And once a normal player replied to you there is no way to get a GM to take over the help session. For further information about becoming an advisor yourself check the documentation of the /advisor chat command.</content>
+              <content type="text">The Help chat tab is where you can get help if you are having issues with the game. Everything you type here will be visible for any "advisor" online and GMs. Remember advisors can also be other players, and may not have GM powers. Once an advisor answers, everything you type in the chat is only visible for you and the advisor until the help-session times out. This chat tab is for question about the game mechanics and how to play the game. No advisor is allowed to give out spoilers like where to find a specific trainer or how to solve a quest. For further information about becoming an advisor yourself check the documentation of the /advisor chat command.</content>
             </Contents>
           </topic>
         </branch>
@@ -251,16 +251,16 @@ The kran looks at the written page, tilting his head a bit and scratching the to
 The info window gives you an overview about your own character and your current target as well as some other important information about Yliakum. It also allows you to influence some of your characters behaviors.
 
 The first line shows the name of your current target. 
-The bar bellow show the health of your current target.
+The bar just below show the health of your current target.
 
 The next line tells you what's the current time in Yliakum.
 
-Bellow the time are several icons for the different stances you can take during combat. If you are in combat you can click on any of the icons to change to that stance. Stances from left to right: Stop attack, Full Defensive, Defensive, Normal, Aggressive, Bloody.
+Below the time are several icons for the different stances you can take during combat. Stances represent the combat style of your character in melee. If you are in combat you can click on any of the icons to change to that stance. The first icon stops the attack. Stances from left to right: Full Defensive, Defensive, Normal, Aggressive, Bloody.
 
-Bellow the stances is a slider that allows you to specify how much power you want to put in the next magic spell you cast. More power you channel, more chances there are for it being unpredictable or fizzling, but its effects will be stronger.
+Below the stances is a slider that allows you to specify how much power you want to channel in the next magic spell you cast. The more power you channel, the more chances there are for it being unpredictable or fizzling, but its effects will be stronger.
 
 The large red bar below shows your current health.
-The smaller red bar shows your current Physical stamina
+The smaller red bar shows your current Physical stamina.
 
 The large blue bar shows your current Mana.
 The smaller blue bar bellow shows your current mental stamina.</content>
@@ -274,11 +274,11 @@ This windows shows all stats and skills of your character.
 
 At the top you can see the current Health, Physical Stamina, Mana and Mental Stamina values of your character.
 
-Below you can see all the stats, skills and factions of your character. You can switch between the different tabs to she the values of a specific category. Number in brackets mean that this stats is affected by magic means (Items, spells...) and the value in brackets is the one that is actually used at the moment. If you select one of the skills you can see a description of it in the text window bellow.
+Next you can see all the stats, skills and factions of your character. You can switch between the different tabs to see the values of a specific category. If you see a number in brackets mean this stats is affected by magic means (Items, spells...) and the value in brackets is the current modified one. If you select one of the skills you can see its description in the text window below.
 
-At the bottom you can see the amount of Progress Points (PPs) your character currently posses, the amount of tria (coins) he owns, How much more experience you need to get a new Progress Point and two buttons for training.
+At the bottom you can see the amount of Progress Points (PPs) your character currently possess, and how much more experience you need to get a new Progress Point. These are important to understand the progression of your character. Next you have the amount of tria (coins) you own, and two buttons for training.
 
-Training only works if you have a NPC selected that actually is capable to train your char. To train with that NPC select the skill you want to train and click "Buy Skill" to spend a single Progress Point for training (and the necessary tria for the training of course) of "Buy Skill Level" to spend as many Progress Points as needed to train the current skill level completely.</content>
+Training only works if you have a NPC selected that actually is capable to train your char. To train with that NPC select the skill you want to train and click "Buy Skill" to spend a single Progress Point for training (and the necessary tria for the training of course) of "Buy Skill Rank" to spend as many Progress Points are needed to train the current skill rank completely.</content>
         </Contents>
       </topic>
       <topic name="Inventory Window">
@@ -287,29 +287,29 @@ Training only works if you have a NPC selected that actually is capable to train
 
 The inventory windows allows you to manage the belongings of your character and to equip and unequip items.
 
-At the you can see what items are currently equipped. You can also change the equipment here by dragging items to or from the equipment-slots. Each equipment slots can hold a specific kind of items. To get the name of the different slots just move your mouse above them.
+In the left part you can see what items are currently equipped. You can also change the equipment here by dragging items to or from the equipment-slots. Each equipment slots can hold a specific kind of items. To get the name of the different slots just move your mouse above them.
 
-Right Hand: For equipping tools, beer, books, shields, weapons and all other items you want to hold in your right hand
-Hand Left: Same as for the right hand. But for some actions the corresponding tool must be equipped in your right hand. So if you run into crafting problems try using the other hand.
+Hand Left, Right Hand: For equipping tools, shields, weapons and all other items you want to hold. Please note many crafting techniques require you to hold the tool in your right hand.
 Helm: For caps and helms. 
 Mind: This is for equipping crafting books. You need to have the book for your current crafting task equipped in this slot to be able to perform the task.
-Right Finger: For rings.
-Left Finger: For rings.
+Right, Left Finger: For rings.
 Neck: For necklaces and amulets.
 Gloves: For gloves.
 Torso: For torso armor.
 Bracers: For bracers.
 Back: For robes.
-Arms: For all kind of arms armor.
-Boots: For all kind of boots.
+Arms: For arms armor.
+Boots: For boots.
 Legs: For pants.
 Belt: For belts.
 
-Below the equipment area you can see all the others items your character is currently carrying. Each stack of item needs one inventory slot. You can stack up to 65 items in one slot. Not all items are stack-able, books or containers can't be put in stacks for example. If the available slots are not enough for you you can extend your inventory with containers. If you right-click a container a new window with a few more slots will show up. But be careful, each container also has just a limited capacity.
+Below the equipment area you can see all the others items your character is currently carrying. Each stack of item needs one inventory slot. You can stack up to 65 items in one slot. Not all items are stack-able, books or containers can't be put in stacks for example. If the available slots are not enough, you can extend your inventory with containers (example a chest or a pouch). If you right-click a container a new window with a few more slots will show up. Each container has also a limited capacity.
 
-At the bottom you can see how much weight you carry at the moment and how much you could carry at all. Below you can see the same for Capacity. Each item has also a Capacity value in addition to it's weight. This represents how much space the item takes. And last but not least you can see how much money you are currently carrying.
+At the bottom you can see how much weight you carry at the moment and how much you could carry at maximum. Next it's Capacity. Each item has also a Capacity value in addition to it's weight. This represents how much space the item takes. And last but not least you can see how much money you are currently carrying.
 
 The inventory also allows dropping of items. If you want to drop an item just drag it from the inventory to the place you want to drop it. If you want to drop money use the icons for the different coins at the bottom. After clicking them you are asked how much coins you want to take. Afterwards you can drop them just the same way as items.
+
+When you drop an item you can use right mouse button to rotate it on one axis, and shift + right mouse button to rotate it on the other axis.
 
 At last it's worth mentioning that there are shortkeys for taking one item of a stack or taking the whole stack, If you click on a stack of items while holding the shift-key one of the items is taken. If you hold the ctrl-key the whole stack is taken.</content>
         </Contents>
@@ -1705,7 +1705,7 @@ Usage:
         </topic>
         <topic name="/construct">
           <Contents>
-            <content type="text">[I have no idea]</content>
+            <content type="text">[to be described]</content>
           </Contents>
         </topic>
         <topic name="/dig">
@@ -2518,7 +2518,7 @@ Linux: ~/.PlaneShift
         </Contents>
         <topic name="options.cfg">
           <Contents>
-            <content type="text">[Sorry, I really have no real clue what this file is for]
+            <content type="text">[to be described]
 Looks like some basic camera related options.</content>
           </Contents>
         </topic>
