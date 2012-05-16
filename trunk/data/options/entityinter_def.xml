@@ -1,8 +1,8 @@
 <EntityInteraction>
-	<items value='2'/>
-	<players value='0'/>
-	<merchants value='0'/>
-	<aliveNPCs value='3'/>
-	<deadNPCs value='0'/>
-    <imperviousNpcs value='2' />
+	<items value='1'/>
+	<players value='1'/>
+	<merchants value='1'/>
+	<aliveNPCs value='1'/>
+	<deadNPCs value='1'/>
+    <imperviousNpcs value='1' />
 </EntityInteraction>
