@@ -57,6 +57,11 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
 
 We suggest you to try different settings and see what's best for your hardware."/>
 
+                <widget factory="pawsSimpleTreeNode" label="Brightness">
+                    <attr name="SectionName" value="BrightnessGeneral"/>
+                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="TextName" value="You can change the brightness/gamma of the game by pressing F11 to reduce the brightness, F12 to increase the brightness, and F10 to reset to default value."/>
+                </widget>
                 <widget factory="pawsSimpleTreeNode" label="Details">
                     <attr name="SectionName" value="details"/>
                     <attr name="factory" value="pawsConfigDetails"/>
