@@ -2,7 +2,7 @@
 
     <widget name="ControlWindow" factory="pawsControlWindow"
             visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="no">
-        <frame x="0" y="0" width="960" height="70" border="no" />
+        <frame x="0" y="0" width="1024" height="70" border="no" />
         <minframe width="360" height="30" />
 
         <widget name="ShowButtonUp" factory="pawsButton" id="10" tooltip="Hide Toolbar/Change Style" >
@@ -172,6 +172,17 @@
         <widget name="SkillsButton" factory="pawsButton" id="1400" tooltip="Skills and stats" sound="gui.toolbar">
             <frame x="896" y="1" width="64" height="64" />
             <bgimage resource="SkillsButton" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_BOTTOM" />
+                <attach point="PROPORTIONAL_TOP" />
+            </attachpoints>
+        </widget>
+
+        <widget name="HotBarButton" factory="pawsButton" id="1500" tooltip="Quick Bar" sound="gui.toolbar">
+            <frame x="960" y="1" width="64" height="64" />
+            <bgimage resource="HotBarButton" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />

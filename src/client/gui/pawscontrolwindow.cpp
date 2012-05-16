@@ -91,6 +91,7 @@ bool pawsControlWindow::PostSetup()
     AddWindow( "InfoWindow" ,        "InfoButton" );
     AddWindow( "HelpWindow" ,        "HelpButton" );
     AddWindow( "ShortcutWindow" ,    "ShortcutButton" );
+    AddWindow( "HotBar" ,            "HotBarButton" );
     AddWindow( "BuddyWindow" ,       "BuddyButton" );
     AddWindow( "GroupWindow" ,       "GroupButton" );
     AddWindow( "PetitionWindow" ,    "PetitionButton" );
