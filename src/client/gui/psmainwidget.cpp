@@ -212,6 +212,7 @@ bool psMainWidget::OnDoubleClick( int button, int keyModifier, int x, int y )
     {
         GEMClientObject* over = FindMouseOverObject( x, y );
 
+        Debug2(LOG_PAWS, 0, "Double Click on %s", (over?over->GetName():"nothing"));
         if ( psengine->GetMouseBinds()->CheckBind( "EntitySelect", button, keyModifier) )
         {
             if ( over )
@@ -378,6 +379,8 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
         {
             psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
         }
+
+        Debug2(LOG_PAWS, 0, "Click on %s", (over?over->GetName():"nothing"));
 
         if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, keyModifier))
         {
