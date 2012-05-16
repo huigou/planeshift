@@ -24,6 +24,7 @@
 // Library Includes
 //=============================================================================
 #include "paws/pawswidget.h"
+#include "gui/pawscontrolwindow.h"
 
 //=============================================================================
 // Forward Declarations
@@ -41,7 +42,7 @@
 /**
  *
  */
-class pawsBartenderWindow :public pawsWidget
+class pawsBartenderWindow : public pawsControlledWindow
 {
 public:
     ///Constructor

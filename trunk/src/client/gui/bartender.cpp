@@ -133,6 +133,7 @@ pawsBartenderWindow::~pawsBartenderWindow()
     doc->Write(vfs, BARTENDER_FILE);
 }
 
+
 void pawsBartenderWindow::SetLock(bool state)
 {
     locked = state;
