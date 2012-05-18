@@ -58,7 +58,7 @@
   <item orig="alliance text colour" trans="" />
   <item orig="Description" trans="" />
   <item orig="Creatures:" trans="" />
-  <item orig="says" trans="dice" />
+  <item orig="says" trans="" />
   <item orig="Chose Color (c)" trans="" />
   <item orig="View" trans="" />
   <item orig="PATHS" trans="" />
@@ -273,7 +273,7 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Transfer to inventory" trans="" />
   <item orig="Own attacks that fail to penetrate the armor" trans="" />
   <item orig="Magic" trans="" />
-  <item orig="Get Reward" trans="Ottieni ricompensa" />
+  <item orig="Get Reward" trans="" />
   <item orig="You have " trans="" />
   <item orig="Credits" trans="" />
   <item orig="details" trans="" />
@@ -391,7 +391,7 @@ of you named " trans="
   <item orig="Public notes" trans="" />
   <item orig="Confirmation" trans="" />
   <item orig="Master Volume" trans="" />
-  <item orig="Channels" trans="Canali" />
+  <item orig="Channels" trans="" />
   <item orig="Withdraw and Deposit" trans="" />
   <item orig="Whole" trans="" />
   <item orig="Group outline colour" trans="" />
@@ -859,7 +859,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Alternates" trans="" />
   <item orig="Skills and stats" trans="" />
   <item orig="Save (s)" trans="" />
-  <item orig="Save MOTD" trans="salva MOTD" />
+  <item orig="Save MOTD" trans="" />
   <item orig="network" trans="" />
   <item orig="Interface" trans="" />
   <item orig="Loop background music" trans="" />
