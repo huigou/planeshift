@@ -32,6 +32,7 @@
   <item orig="Randomize" trans="" />
   <item orig="Create alliance" trans="" />
   <item orig="Third Person Lara" trans="" />
+  <item orig="Petition" trans="" />
   <item orig="Disband" trans="" />
   <item orig="Edit" trans="" />
   <item orig="System" trans="" />
@@ -42,8 +43,9 @@
   <item orig="Dismiss" trans="" />
   <item orig="Spell Casting" trans="" />
   <item orig="Stack Count" trans="" />
-  <item orig="Examine" trans="" />
+  <item orig="Last online" trans="" />
   <item orig="Torso" trans="" />
+  <item orig="Examine" trans="" />
   <item orig=" unanswered petitions." trans="" />
   <item orig="Talk to people in your sector." trans="" />
   <item orig="Right Finger" trans="" />
@@ -54,26 +56,26 @@
   <item orig="Tellself outline colour" trans="" />
   <item orig="Log Out" trans="" />
   <item orig="male " trans="" />
-  <item orig="Active" trans="" />
-  <item orig="alliance text colour" trans="" />
   <item orig="Description" trans="" />
+  <item orig="alliance text colour" trans="" />
+  <item orig="Active" trans="" />
   <item orig="Creatures:" trans="" />
   <item orig="says" trans="" />
   <item orig="Chose Color (c)" trans="" />
   <item orig="View" trans="" />
   <item orig="PATHS" trans="" />
   <item orig="Wait" trans="" />
-  <item orig="Shadows" trans="" />
   <item orig="Previous Icon (PgUp)" trans="" />
+  <item orig="Shadows" trans="" />
   <item orig="Unclaim" trans="" />
   <item orig="Server:" trans="" />
-  <item orig="Exit PlaneShift" trans="" />
   <item orig="Enable Shadows" trans="" />
+  <item orig="Exit PlaneShift" trans="" />
   <item orig="Escalation Level:" trans="" />
-  <item orig="Notify when members login/logout" trans="" />
   <item orig="Insert Note" trans="" />
-  <item orig="P. stamina" trans="" />
+  <item orig="Notify when members login/logout" trans="" />
   <item orig="Talk to someone privately." trans="" />
+  <item orig="P. stamina" trans="" />
   <item orig="Magic Skills List:" trans="" />
   <item orig="Quest" trans="" />
   <item orig="House:" trans="" />
@@ -85,6 +87,7 @@
   <item orig="Instant Cast" trans="" />
   <item orig="H:" trans="" />
   <item orig="Marry" trans="" />
+  <item orig="Pos" trans="" />
   <item orig="View Item" trans="" />
   <item orig="Please enter a full name" trans="" />
   <item orig="Testers" trans="" />
@@ -118,8 +121,8 @@
   <item orig="each values 250 Tria" trans="" />
   <item orig="npcinternal outline colour" trans="" />
   <item orig="Merchant" trans="" />
-  <item orig="Auction" trans="" />
   <item orig="Account User Name:" trans="" />
+  <item orig="Auction" trans="" />
   <item orig="set invisible" trans="" />
   <item orig="You currently have no petitions." trans="" />
   <item orig="Edit Mode (F2)" trans="" />
@@ -134,8 +137,8 @@
   <item orig="The server is locked!" trans="" />
   <item orig="Weak Pickupable" trans="" />
   <item orig="Mount" trans="" />
-  <item orig="Are you sure you want to upload?  You have 2 CP left." trans="" />
   <item orig="Quest &amp; Events Notebook" trans="" />
+  <item orig="Are you sure you want to upload?  You have 2 CP left." trans="" />
   <item orig="You will now ignore %s." trans="" />
   <item orig="Study" trans="" />
   <item orig="Private notes" trans="" />
@@ -143,8 +146,8 @@
   <item orig="Tell Alignment" trans="" />
   <item orig="Enable NPC" trans="" />
   <item orig="Change name" trans="" />
-  <item orig="Getting Characters" trans="" />
   <item orig="set invincible" trans="" />
+  <item orig="Getting Characters" trans="" />
   <item orig="Introduce yourself" trans="" />
   <item orig="Main tab" trans="" />
   <item orig="Unknown command" trans="" />
@@ -182,8 +185,8 @@
   <item orig="Mesh:" trans="" />
   <item orig="Right Hand" trans="" />
   <item orig="Resolution" trans="" />
-  <item orig="Refresh MOTD" trans="" />
   <item orig="Gender:" trans="" />
+  <item orig="Refresh MOTD" trans="" />
   <item orig="Login" trans="" />
   <item orig="Z:" trans="" />
   <item orig="Use basic chat window (need reload)" trans="" />
@@ -193,12 +196,14 @@
   <item orig="You must select a petition from the list in order to cancel it." trans="" />
   <item orig="Alliance" trans="" />
   <item orig="Are you sure you want to upload?  " trans="" />
+  <item orig="Quick Bar" trans="" />
+  <item orig="Glyph" trans="" />
   <item orig="Dynamic Follow" trans="" />
   <item orig="NPC_my text colour" trans="" />
   <item orig="Full Mesh" trans="" />
   <item orig="NPC_narrate shadow colour" trans="" />
-  <item orig="I am leaving" trans="" />
   <item orig="alliance outline colour" trans="" />
+  <item orig="I am leaving" trans="" />
   <item orig="Circles available to deposit." trans="" />
   <item orig="Train" trans="" />
   <item orig="Exchange items" trans="" />
@@ -209,12 +214,12 @@
   <item orig="Action:" trans="" />
   <item orig="Never tired" trans="" />
   <item orig="
-Do you really wish to leave Yliakum?" trans="
-" />
+Do you really wish to leave Yliakum?" trans="" />
+  <item orig="Last Name" trans="" />
   <item orig="Count" trans="" />
   <item orig="Enter the command(s):" trans="" />
-  <item orig="Chat" trans="" />
   <item orig="Month:" trans="" />
+  <item orig="Chat" trans="" />
   <item orig="NPC_me outline colour" trans="" />
   <item orig="Mute on focus loss" trans="" />
   <item orig="Aggressive" trans="" />
@@ -225,8 +230,8 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Rank" trans="" />
   <item orig="Spawn item" trans="" />
   <item orig="Enable guild" trans="" />
-  <item orig="o&amp;clock" trans="" />
   <item orig="Group stats" trans="" />
+  <item orig="o&amp;clock" trans="" />
   <item orig="Construct" trans="" />
   <item orig="Give Kill Experience" trans="" />
   <item orig="Own combat stance changes" trans="" />
@@ -243,8 +248,8 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Tria" trans="" />
   <item orig="Group text color" trans="" />
   <item orig="1 Tria" trans="" />
-  <item orig="No Petitions." trans="" />
   <item orig="The number of trias that you may exchange." trans="" />
+  <item orig="No Petitions." trans="" />
   <item orig="Filter" trans="" />
   <item orig="New" trans="" />
   <item orig="Mute sounds on focus loss" trans="" />
@@ -255,14 +260,15 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Research Magic" trans="" />
   <item orig="The number of trias you wish to withdraw." trans="" />
   <item orig="Activity:" trans="" />
+  <item orig="Type" trans="" />
   <item orig="Choose your birthday:" trans="" />
   <item orig="Chat - Spellchecker" trans="" />
   <item orig="You have been assigned to the selected petition." trans="" />
   <item orig="Say Alignment" trans="" />
   <item orig="set viewall" trans="" />
   <item orig="Combat" trans="" />
-  <item orig="Say outline colour" trans="" />
   <item orig="Default last chat" trans="" />
+  <item orig="Say outline colour" trans="" />
   <item orig="Path" trans="" />
   <item orig="each values 1 Tria" trans="" />
   <item orig="Delete Selected Character" trans="" />
@@ -271,11 +277,11 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Are you sure you want to upload your character?" trans="" />
   <item orig="Enable Chat Bubbles" trans="" />
   <item orig="Transfer to inventory" trans="" />
-  <item orig="Own attacks that fail to penetrate the armor" trans="" />
-  <item orig="Magic" trans="" />
   <item orig="Get Reward" trans="" />
-  <item orig="You have " trans="" />
+  <item orig="Magic" trans="" />
+  <item orig="Own attacks that fail to penetrate the armor" trans="" />
   <item orig="Credits" trans="" />
+  <item orig="You have " trans="" />
   <item orig="details" trans="" />
   <item orig="HP" trans="" />
   <item orig="Physical Stamina" trans="" />
@@ -284,12 +290,14 @@ Do you really wish to leave Yliakum?" trans="
   <item orig="Quality:" trans="" />
   <item orig="No server running at the moment" trans="" />
   <item orig="Chat - TabCompletion" trans="" />
+  <item orig="Leader" trans="" />
   <item orig=" " trans="" />
   <item orig="CHARACTER CREATION" trans="" />
-  <item orig="Alliance:" trans="" />
   <item orig="Glyphs" trans="" />
+  <item orig="Alliance:" trans="" />
   <item orig="Various Skill description:" trans="" />
   <item orig="Buddy list" trans="" />
+  <item orig="First Name" trans="" />
   <item orig="100%" trans="" />
   <item orig="Strength on the lock" trans="" />
   <item orig="Edit level" trans="" />
@@ -322,14 +330,15 @@ of you named " trans="
   <item orig="tells you" trans="" />
   <item orig="Ambiguous name:" trans="" />
   <item orig="Load (l)" trans="" />
-  <item orig="Password:" trans="" />
   <item orig="Life" trans="" />
+  <item orig="Password:" trans="" />
   <item orig="female " trans="" />
   <item orig="ALL" trans="" />
   <item orig="Currently, there are no petitions." trans="" />
   <item orig="Set" trans="" />
   <item orig="Dot" trans="" />
   <item orig="Grouped with you and the same guild" trans="" />
+  <item orig="Buy Skill Rank" trans="" />
   <item orig="View al.Chat" trans="" />
   <item orig="First name is invalid" trans="" />
   <item orig="Actions Volume" trans="" />
@@ -337,6 +346,7 @@ of you named " trans="
   <item orig="Active Magic" trans="" />
   <item orig="Normal" trans="" />
   <item orig="Insert Measure" trans="" />
+  <item orig="Level" trans="" />
   <item orig="Quest Testing" trans="" />
   <item orig="alliance Alignment" trans="" />
   <item orig="Year:" trans="" />
@@ -355,6 +365,7 @@ of you named " trans="
   <item orig="shouts" trans="" />
   <item orig="Others&apos; attacks that are dodged" trans="" />
   <item orig="Basic chat" trans="" />
+  <item orig="Mesh" trans="" />
   <item orig="Combat music" trans="" />
   <item orig="Enable shout" trans="" />
   <item orig="Own attacks (Successful ones)" trans="" />
@@ -394,6 +405,7 @@ of you named " trans="
   <item orig="Channels" trans="" />
   <item orig="Withdraw and Deposit" trans="" />
   <item orig="Whole" trans="" />
+  <item orig="Brightness" trans="" />
   <item orig="Group outline colour" trans="" />
   <item orig="Guild shadow colour" trans="" />
   <item orig="Labels" trans="" />
@@ -415,6 +427,7 @@ of you named " trans="
   <item orig="Convert password" trans="" />
   <item orig="Eighth" trans="" />
   <item orig="Sharp" trans="" />
+  <item orig="Created Date" trans="" />
   <item orig="Auction shadow colour" trans="" />
   <item orig="OOC" trans="" />
   <item orig="List Attributes" trans="" />
@@ -443,6 +456,7 @@ of you named " trans="
   <item orig="The number of hexas that you may exchange." trans="" />
   <item orig="%s asks: %s" trans="" />
   <item orig="Play/Stop" trans="" />
+  <item orig="Lvl" trans="" />
   <item orig="1" trans="" />
   <item orig="Invisible" trans="" />
   <item orig="CHARACTER SELECT" trans="" />
@@ -500,6 +514,7 @@ of you named " trans="
   <item orig="The number of circles you wish to deposit." trans="" />
   <item orig="Crafting" trans="" />
   <item orig="Back_inv" trans="Back" />
+  <item orig="Gnd" trans="" />
   <item orig="DescOC" trans="" />
   <item orig="Welcome to PlaneShift!" trans="" />
   <item orig="Delete" trans="" />
@@ -542,6 +557,7 @@ of you named " trans="
   <item orig="NPC" trans="" />
   <item orig="Music Volume" trans="" />
   <item orig="Mother:" trans="" />
+  <item orig="Online" trans="" />
   <item orig="Defend me !" trans="" />
   <item orig="Spell List:" trans="" />
   <item orig="FPS cap:" trans="" />
@@ -594,6 +610,7 @@ of you named " trans="
   <item orig="Fade Speed:" trans="" />
   <item orig="My Alignment" trans="" />
   <item orig="Labels visibility" trans="" />
+  <item orig="Player" trans="" />
   <item orig="Trigger:" trans="" />
   <item orig="Refresh List" trans="" />
   <item orig="Character Name" trans="" />
@@ -805,6 +822,8 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Game Board" trans="" />
   <item orig="Delete Selected (del)" trans="" />
   <item orig="each values 50 Tria" trans="" />
+  <item orig="Status" trans="" />
+  <item orig="Id" trans="" />
   <item orig="Name:" trans="" />
   <item orig="Discard" trans="" />
   <item orig="Y:" trans="" />
@@ -854,11 +873,13 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="npcinternal text colour" trans="" />
   <item orig="Boots" trans="" />
   <item orig="Allow the client to send a newly hashed password to the server (check: http://tinyurl.com/5smsz5l )" trans="" />
+  <item orig="Poly" trans="" />
   <item orig="Completed" trans="" />
   <item orig="none" trans="" />
   <item orig="Alternates" trans="" />
   <item orig="Skills and stats" trans="" />
   <item orig="Save (s)" trans="" />
+  <item orig="Sector" trans="" />
   <item orig="Save MOTD" trans="" />
   <item orig="network" trans="" />
   <item orig="Interface" trans="" />
@@ -871,6 +892,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Left Finger" trans="" />
   <item orig="Failed" trans="" />
   <item orig="Welcome to" trans="" />
+  <item orig="GM" trans="" />
   <item orig="Realm" trans="" />
   <item orig="cancelled." trans="" />
   <item orig="closed." trans="" />
