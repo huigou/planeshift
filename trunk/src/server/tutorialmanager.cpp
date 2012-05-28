@@ -191,6 +191,8 @@ void TutorialManager::HandleScriptMessage(uint32_t client, int which)
     if(which < tutorialMsg.GetSize())
     {
         SendTutorialMessage(which, client, tutorialMsg[which]);
+    } else {
+        Error2("Tip %d doesn't exist in the database.",which+1001);
     }
 }
 
