@@ -81,6 +81,8 @@ public:
     bool OnMouseDown( int button, int modifiers, int x , int y );
     bool OnButtonPressed( int button, int keyModifier, pawsWidget* widget );
 
+    // This window should always stay on the background
+    virtual void BringToTop( pawsWidget* widget ) {};
 
     /**
      * @brief Load quest info from xmlbinding message

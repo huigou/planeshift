@@ -184,8 +184,9 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
     if(useBubbles)
     {
         if(widget)
-        {//process the left/right arrow clicking event
+        {
             csString name = widget->GetName();
+            // process clicking on bubbles, but allow click-through on empty space
             if(name.StartsWith("Bubble"))
             {
                 //get the trigger which was selected. we should never get out of bounds
@@ -221,6 +222,7 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
             {
                 clickedOnResponseBubble = true;
             }
+            // process the left/right arrow clicking event
             else
             {
                 if(name == "LeftArrow")
@@ -680,6 +682,7 @@ void pawsNpcDialogWindow::Show()
 
        SetupWindowWidgets();
     }
+    SendToBottom(this);
 }
 
 void pawsNpcDialogWindow::Hide()
