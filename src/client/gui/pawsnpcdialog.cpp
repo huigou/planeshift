@@ -445,7 +445,30 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
         if (!actor)
             return;
 
-        csString inText = chatMsg.sText;
+        // handle the basic action types, in the future we could play an animation as well
+        csString inText ;
+        switch( chatMsg.iChatType )
+        {
+            case CHAT_NPC_ME:
+            {
+                inText.Format("(%s %s)", (const char *)chatMsg.sPerson, ((const char *)chatMsg.sText));
+                break;
+            }
+
+            case CHAT_NPC_MY:
+            {
+                inText.Format("(%s's %s)", (const char *)chatMsg.sPerson, ((const char *)chatMsg.sText));
+                break;
+            }
+
+            case CHAT_NPC_NARRATE:
+            {
+                inText.Format("(%s)", (const char *)chatMsg.sText);
+                break;
+            }
+            default:
+                inText = chatMsg.sText;
+        }
         NpcSays(inText, actor);
 
         //checks if the NPC Dialogue is displayed, in this case don't show the normal overhead bubble
