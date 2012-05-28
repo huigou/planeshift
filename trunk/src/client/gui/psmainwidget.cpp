@@ -344,7 +344,7 @@ bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
 
     // Close interact menu automatically
     pawsWidget* interactWindow = FindWidget("InteractWindow");
-    if (interactWindow)
+    if (interactWindow->IsVisible())
         interactWindow->Hide();
  	// KL: Not need here anymore. Now correctly handled in psmovement/HandleZoom
  	//     because Zoom in and Zoom out are now treated as psControl::NORMAL.
