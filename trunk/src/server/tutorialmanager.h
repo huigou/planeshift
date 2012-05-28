@@ -96,7 +96,14 @@ protected:
     void SendTutorialMessage(int which, uint32_t clientnum, const char *instrs);
 
     ClientConnectionSet* clients;
-    csArray<csString> tutorialMsg;  // can hardcode for now because 32 bitflags is most possible
+
+    /**
+     * Stores all the messages in the database above id 1001 (biased to 1001 so
+     * 1001 is 0).
+     * @note Not all messages are handled directly by the tutorial manager,
+     *       only the first 32.
+     */
+    csArray<csString> tutorialMsg;
 };
 
 #endif
