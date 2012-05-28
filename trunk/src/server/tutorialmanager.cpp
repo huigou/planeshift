@@ -45,8 +45,6 @@
 #include "netmanager.h"
 #include "globals.h"
 
-#define TIPSAMOUNT 33
-
 TutorialManager::TutorialManager(ClientConnectionSet *pCCS)
 {
     clients = pCCS;
@@ -66,7 +64,7 @@ TutorialManager::~TutorialManager()
 
 bool TutorialManager::LoadTutorialStrings()
 {
-    Result result(db->Select("select * from tips where id>1000 and id<1033"));
+    Result result(db->Select("select * from tips where id>1000"));
     if (!result.IsValid() )
     {
         Error2("Could not load tutorial strings due to database error: %s\n",
@@ -77,7 +75,8 @@ bool TutorialManager::LoadTutorialStrings()
     for ( unsigned long i=0; i < result.Count(); i++ )
     {
         int id = result[i].GetInt("id") - 1001;
-        tutorialMsg[id] = result[i]["tip"];
+        csString tip = result[i]["tip"];
+        tutorialMsg.GetExtend(id) = tip;
     }
     return true;
 }
@@ -189,7 +188,7 @@ void TutorialManager::HandleDamage(MsgEntry *me,Client *client)
 /// Specifically handle the message sent by a script
 void TutorialManager::HandleScriptMessage(uint32_t client, int which)
 {
-    if(which < TIPSAMOUNT)
+    if(which < tutorialMsg.GetSize())
     {
         SendTutorialMessage(which, client, tutorialMsg[which]);
     }
