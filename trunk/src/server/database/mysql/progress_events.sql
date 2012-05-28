@@ -244,3 +244,6 @@ INSERT INTO progression_events VALUES("vegeta",
        </if>
      </script>');
 
+INSERT INTO progression_events VALUES("send_tutorial_msg",
+    '<script><let vars="TipNum=Param0"><tutorialmsg aim="Target" num="TipNum"/></let></script>');
+    
