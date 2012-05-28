@@ -96,7 +96,7 @@ protected:
     void SendTutorialMessage(int which, uint32_t clientnum, const char *instrs);
 
     ClientConnectionSet* clients;
-    csString tutorialMsg[32];  // can hardcode for now because 32 bitflags is most possible
+    csArray<csString> tutorialMsg;  // can hardcode for now because 32 bitflags is most possible
 };
 
 #endif
