@@ -160,6 +160,7 @@ private:
     int             loadOnce;     ///< Stores if bubbles has been loaded
     bool enabledChatBubbles;      ///< Stores the state of chat bubbles.
     bool clickedOnResponseBubble;  ///< flag when player clicks on the response bubble
+    bool gotNewMenu;              ///< keeps track of the incoming new menu message
 
     pawsListBox* responseList;
     pawsWidget* speechBubble;

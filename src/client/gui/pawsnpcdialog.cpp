@@ -55,6 +55,7 @@ pawsNpcDialogWindow::pawsNpcDialogWindow() : targetEID(0)
     loadOnce = 0;
     enabledChatBubbles = true;
     clickedOnResponseBubble = false;
+    gotNewMenu = false;
 }
 
 bool pawsNpcDialogWindow::PostSetup()
@@ -85,9 +86,11 @@ bool pawsNpcDialogWindow::PostSetup()
 
 void pawsNpcDialogWindow::Draw()
 {
-    if(useBubbles && ticks != 0 && csGetTicks()-ticks > 12000)
-    {//let this dialog invisible after 12 secs when npc finishes his speech
-     //equal to the long chatbubble longphrase lenght for now.
+    if(useBubbles && ticks != 0 && csGetTicks()-ticks > 12000 && !gotNewMenu)
+    {   //let this dialog invisible after 12 secs when npc finishes his speech
+        //equal to the long chatbubble longphrase lenght for now.
+        //if we got a new psDialogMenuMessage we don't need to ask for a new menu (gotNewMenu)
+        Debug1(LOG_PAWS,0,"Hiding NPC speech and asking for another set of possible questions.");
         speechBubble->Hide();
         FindWidget("FreeBubble")->Show();
         psengine->GetCmdHandler()->Execute("/npcmenu");
@@ -213,9 +216,12 @@ bool pawsNpcDialogWindow::OnButtonPressed( int button, int keyModifier, pawsWidg
                 DisplayTextBubbles(text.GetData());
                 CleanBubbles();
                 PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
+                gotNewMenu = false;
+                ticks = csGetTicks(); // reset time, so we can wait for the next server response
             }
             else if(name == "CloseBubble")
             {
+                gotNewMenu = false;
                 Hide();
             }
             else if (name == "SpeechBubble")
@@ -431,8 +437,10 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
 
         if(useBubbles)
         {
+           speechBubble->Hide(); // hide previous npc say response
            LoadQuest(mesg.xml);
            DisplayQuest(displayIndex);
+           gotNewMenu = true;
         }
 
         AdjustForPromptWindow();
@@ -440,8 +448,8 @@ void pawsNpcDialogWindow::HandleMessage( MsgEntry* me )
     }
     else if(me->GetType() == MSGTYPE_CHAT)
     {
-
         psChatMessage chatMsg(me);
+        Debug2(LOG_QUESTS, 0,"Got Chat message from NPC: %s\n", (const char *)chatMsg.sText );
 
         GEMClientActor* actor = dynamic_cast<GEMClientActor*> (psengine->GetCelClient()->FindObject(chatMsg.actor));
         if (!actor)
@@ -581,6 +589,8 @@ void pawsNpcDialogWindow::OnStringEntered(const char* name, int /*param*/, const
     cmd.Format("/tellnpc %s", value );
     psengine->GetCmdHandler()->Publish(cmd);
     DisplayTextBubbles(value);
+    gotNewMenu = false;
+    ticks = csGetTicks(); // reset time, so we can wait for the next server response
 }
 
 void pawsNpcDialogWindow::SetupWindowWidgets()
