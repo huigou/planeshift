@@ -925,6 +925,7 @@ bool pawsWidget::LoadChildren( iDocumentNode* node )
 
 void pawsWidget::ShowBehind()
 {
+    //printf("Called pawsWidget::ShowBehind on %s \n",this->GetName());
     visible = true;
     if ( border ) border->Show();
 
@@ -942,6 +943,7 @@ void pawsWidget::ShowBehind()
 
 void pawsWidget::Show()
 {
+    //printf("Called pawsWidget::Show on %s \n",this->GetName());
     visible = true;
     if ( border ) border->Show();
     BringToTop( this );
@@ -950,6 +952,7 @@ void pawsWidget::Show()
 
 void pawsWidget::Hide()
 {
+    //printf("Called pawsWidget::Hide on %s \n",this->GetName());
     visible = false;
     if ( border )
         border->Hide();
@@ -1371,6 +1374,7 @@ void pawsWidget::DrawChildren()
 
 int pawsWidget::CalcChildPosition(pawsWidget * child)
 {
+    //printf("Called pawsWidget::CalcChildPosition on %s \n",(child ? child->GetName(): "NULL"));
     int pos;
 
     pos = 0;
@@ -1385,6 +1389,7 @@ int pawsWidget::CalcChildPosition(pawsWidget * child)
 
 void pawsWidget::BringToTop( pawsWidget* widget )
 {
+    //printf("Called pawsWidget::BringToTop on %s \n",(widget ? widget->GetName(): "NULL"));
     for (size_t x = 0; x < children.GetSize(); x++ )
     {
         if ( children[x] == widget )
@@ -1397,6 +1402,21 @@ void pawsWidget::BringToTop( pawsWidget* widget )
 
     if ( parent )
         parent->BringToTop( this );
+}
+
+void pawsWidget::SendToBottom( pawsWidget* widget )
+{
+    //printf("Called pawsWidget::SendToBottom on %s \n",(widget ? widget->GetName(): "NULL"));
+    for (size_t x = 0; x < children.GetSize(); x++ )
+    {
+        if ( children[x] == widget )
+        {
+            //printf("Called pawsWidget::SendToBottom removing element %d \n",x);
+            children.DeleteIndex(x);
+            children.Push(widget);
+            break;
+        }
+    }
 }
 
 void pawsWidget::SetTitle(const char *title)

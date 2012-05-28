@@ -189,7 +189,7 @@ protected:
     /// Enforce keeping the default aspect ratio when resizing.
     bool keepaspect;
     
-    /// Is this windows painted on top of other windows (of the same parent) ?
+    /// Is this windows painted on top of other windows
     bool alwaysOnTop;
 
     /// Defines the minimum width that the widget can be.
@@ -779,6 +779,11 @@ public:
      */
     virtual void BringToTop( pawsWidget* widget );
 
+    /** Move this widget down the z order to the bottom
+     * @param widget Widget to bring forward.
+     */
+    virtual void SendToBottom( pawsWidget* widget );
+
     /// Get the name of this widget.
     const char* GetName()  { return name; }
 
@@ -958,7 +963,7 @@ public:
         if (parent)
             parent->BringToTop(this); 
     }
-    
+
     /** Makes a widget movable.
      * @param bool
      */
