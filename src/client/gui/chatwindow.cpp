@@ -1955,7 +1955,6 @@ void pawsChatWindow::Show()
     {
         children[x]->Show();
     }
-    BringToTop(inputText);
 }
 
 
