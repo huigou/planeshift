@@ -33,7 +33,6 @@ public:
     const char* HandleCommand(const char* cmd);
 
     bool PostSetup();
-    virtual void Show();
 
     bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
 

@@ -72,14 +72,6 @@ const char* pawsQuestRewardWindow::HandleCommand(const char* /*cmd*/)
     return NULL;
 }
 
-void pawsQuestRewardWindow::Show()
-{
-    pawsWidget::Show();
-
-    //we would like this window to stay always on top of others
-    SetModalState(true);
-}
-
 void pawsQuestRewardWindow::HandleMessage ( MsgEntry* me )
 {
     psQuestRewardMessage message(me);
