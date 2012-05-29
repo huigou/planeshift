@@ -457,30 +457,35 @@ protected:
     bool IsIngredient(uint32 patternId, uint32 targetId);
 
     /**
-     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
      */
-    psItem* TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
+    psItem* TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
 
     /**
-     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
      */
-    psItem* TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
+    psItem* TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
     psItem* CombineContainedItem(uint32 newId, int newQty, float itemQuality, psItem* containerItem);
 
     /**
-     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
      */
-    psItem* TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
+    psItem* TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
 
     /**
-     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
      */
-    psItem* TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
+    psItem* TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
 
     /**
-     *  @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param process The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
      */
-    psItem* TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process);
+    psItem* TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
     void TransformTargetItemToNpc(psItem* workItem, Client* client);
 
     /**
@@ -496,8 +501,9 @@ protected:
      * @param newItem The newly created item.
      * @param worker  The actor which is working on the item.
      * @param process The process applied to create the new item by the worker.
+     * @param trans   The transform applied to create the new item by the worker.
      */
-    void ApplyProcessScript(psItem* oldItem, psItem* newItem, gemActor* worker, psTradeProcesses* process);
+    void ApplyProcessScript(psItem* oldItem, psItem* newItem, gemActor* worker, psTradeProcesses* process, psTradeTransformations* trans);
 //    bool TransformHandItem(uint32 newId, int newQty, float itemQuality);
     //bool SendItemUpdate( INVENTORY_SLOT_NUMBER slotID, psItem *newItem );
 
