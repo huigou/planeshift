@@ -4848,6 +4848,8 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cm
                   info += " 'collide'";
               if ( flags & PSITEM_FLAG_SETTINGITEM)
                   info += " 'settingitem'";
+              if ( flags & PSITEM_FLAG_NPCOWNED)
+                  info += " 'npcowned'";
           }
 
           psserver->SendSystemInfo(client->GetClientNum(),info);
