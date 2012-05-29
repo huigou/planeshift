@@ -54,4 +54,4 @@ INSERT INTO trade_processes VALUES(11,0,"Wayout Baking","","",0,0,'',75,1,39,0,1
 INSERT INTO trade_processes VALUES(12,0,"Flaming weapon","","",0,0,'',75,1,0,0,0,0,0,0,0,0,0,0,'Apply Post Trade Process','Flame on.');
 
 -- Advanced crafting
-INSERT INTO `trade_processes` VALUES (652,0,'Enchant','cast','',4928,0,'',0,1,-1,0,0,0,0,-1,0,0,0,0,'trade_enchant_gem','Enchant gems');
+INSERT INTO `trade_processes` VALUES (652,0,'Enchant','cast','',4928,0,'',0,1,11,0,100,1,50,-1,0,0,0,0,'trade_enchant_gem','Enchant gems');
