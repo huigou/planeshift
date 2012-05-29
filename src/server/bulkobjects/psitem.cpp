@@ -2296,6 +2296,28 @@ double psItem::CalcFunction(MathEnvironment* env, const char * functionName, con
         return (double) modifierIds[int(params[0])];
     }
 
+    //Sets the quality of the item
+    if(function == "SetQuality")
+    {
+        float quality = params[0];
+        if(quality > 0 && quality <= 300)
+        {
+            SetItemQuality(quality);
+        }
+        return (double) 0.0f;
+    }
+
+    //Sets the quality of the item
+    if(function == "SetMaxQuality")
+    {
+        double quality = params[0];
+        if(quality > 0 && quality <= 300)
+        {
+            SetMaxItemQuality(quality);
+        }
+        return (double) 0.0f;
+    }
+
     CPrintf(CON_ERROR, "psItem::CalcFunction(%s) failed\n", functionName);
     return 0;
 }
