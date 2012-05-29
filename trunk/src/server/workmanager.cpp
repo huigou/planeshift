@@ -3654,15 +3654,15 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     else
     {
         psItemStats* resultStats = cacheManager->GetBasicItemStatsByID( result );
-        if (resultStats)
+        psItem* newItem = workEvent->GetTranformationItem();
+        if(resultStats && newItem)
         {
-            //we clamp the quality to the maximum allowed by the system
-            psserver->SendSystemOK(clientNum,"You made %i %s with quality %.0f.", resultQty, resultStats->GetName(), currentQuality > 300 ? 300.0f : currentQuality );
+                psserver->SendSystemOK(clientNum, "You made %i %s with quality %.0f.", resultQty, resultStats->GetName(), newItem->GetItemQuality());
         }
         else
         {
-            Error2("HandleWorkEvent() could not get result item stats for item ID #%u.", result);
-            if (secure) psserver->SendSystemInfo(clientNum,"HandleWorkEvent() could not get result item stats for item ID #%u.", result);
+            Error2("HandleWorkEvent() could not get result item or item stats for item ID #%u.", result);
+            if (secure) psserver->SendSystemInfo(clientNum,"HandleWorkEvent() could not get result item or stats for item ID #%u.", result);
             owner->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
             return;
