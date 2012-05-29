@@ -295,7 +295,7 @@ PriPoints = Process:PrimarySkillPracticePoints;
 Worker:CalculateAddExperience(PriSkill, PriPoints, 1);
 if(Secure)
 {
-    Worker:SendSystemInfo('Giving practice points %d to skill %d.', 2, PriPoints, PriSkill);
+    Worker:SendSystemInfo('Giving practice points %f to skill %f.', 2, PriPoints, PriSkill);
 }
 
 " );
@@ -524,15 +524,37 @@ INSERT INTO math_scripts VALUES( "NocturnalNight",
 }" );
 
 INSERT INTO math_scripts VALUES( "trade_enchant_gem",
-"// arrow glyph
+"
 CurrentGlyph = Worker:GetItem(0);
 CurrentGlyphItem = CurrentGlyph:GetBaseItem();
 CurrentGlyphId = CurrentGlyphItem:Id;
 WorkItem=OldItem:GetBaseItem();
 WorkItemId=WorkItem:Id;
+Executed=0;
 Worker:SendSystemInfo('GLYPH ID %f. Object ID: %f', 2, CurrentGlyphId, WorkItemId);
+
+// arrow glyph
 if (CurrentGlyphId=13) {
-NewItem:SetItemModifier(0,12);
-NewItem:SetItemModifier(1,14);
-NewItem:SetItemModifier(2,13);
-}" );
+  NewItem:SetItemModifier(0,12);
+  NewItem:SetItemModifier(1,14);
+  NewItem:SetItemModifier(2,13);
+  Worker:SendSystemInfo('Found transform with GLYPH 13', 0);
+  Executed=1;
+}
+
+// cannot enchant an already enchanted gem
+if (OldItem:GetItemModifier(0)) { Executed=0; }
+if (OldItem:GetItemModifier(1)) { Executed=0; }
+if (OldItem:GetItemModifier(2)) { Executed=0; }
+
+// do not change quality or modifiers if nothing happened
+if (Executed=0) {
+  Worker:SendSystemInfo('Setting quality BACK to original %f / %f', 2, OldItem:Quality, OldItem:MaxQuality);
+  NewItem:SetQuality(10);
+  NewItem:SetMaxQuality(10);
+  NewItem:SetItemModifier(0, OldItem:GetItemModifier(0));
+  NewItem:SetItemModifier(1, OldItem:GetItemModifier(1));
+  NewItem:SetItemModifier(2, OldItem:GetItemModifier(2));
+}
+
+" );
