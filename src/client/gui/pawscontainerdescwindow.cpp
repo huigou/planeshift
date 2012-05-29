@@ -275,6 +275,10 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
         psUserActionMessage setoldtarget(0, oldID, "select");
         setoldtarget.SendMessage();
     }
+    else if(widgetName == "UseContainer")
+    {
+        psengine->GetCmdHandler()->Execute("/use");
+    }
 
     // Check to see if this was the view button.
     if ( widget->GetID() == VIEW_BUTTON )

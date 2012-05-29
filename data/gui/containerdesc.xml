@@ -34,6 +34,11 @@
             <bgimage resource="ButtonCombine" />
         </widget>
 
+        <widget name="UseContainer" factory="pawsButton" id="12" tooltip="Use the container">
+            <frame x="10" y="36'" width="48" height="48" />
+            <bgimage resource="ExchangeAccept" />
+        </widget>
+
 
 
         <widget name="ItemImage" factory="pawsWidget" visible="yes" >
