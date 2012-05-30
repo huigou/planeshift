@@ -47,9 +47,9 @@ public:
     pawsNpcDialogWindow();
 
     bool PostSetup();
-    void HandleMessage( MsgEntry* me );
+    void HandleMessage(MsgEntry* me);
 
-    void OnListAction( pawsListBox* widget, int status );
+    void OnListAction(pawsListBox* widget, int status);
 
     void OnStringEntered(const char *name,int param,const char *value);
 
@@ -71,18 +71,23 @@ public:
     void CleanBubbles();
 
     /**
+     * Hides all bubbles except freetext and bye.
+     */
+    void ShowOnlyFreeText();
+
+    /**
      * Shows the window and applies some special handling to fix up the window
      * Behaviour and graphics correctly depending if we use the classic menu
      * or the bubble menu
      */
     virtual void Show();
     virtual void Hide();
-    bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers );
-    bool OnMouseDown( int button, int modifiers, int x , int y );
-    bool OnButtonPressed( int button, int keyModifier, pawsWidget* widget );
+    bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers);
+    bool OnMouseDown(int button, int modifiers, int x , int y);
+    bool OnButtonPressed(int button, int keyModifier, pawsWidget* widget);
 
     // This window should always stay on the background
-    virtual void BringToTop( pawsWidget* widget ) {};
+    virtual void BringToTop(pawsWidget* widget) {};
 
     /**
      * @brief Load quest info from xmlbinding message
@@ -98,7 +103,7 @@ public:
      * @param index From which index in questInfo array the quest info will be displayed in bubbles.
      *
      */
-    void DisplayQuest(unsigned int index);
+    void DisplayQuestBubbles(unsigned int index);
 
     /**
      * @brief Display NPC's chat text
@@ -125,13 +130,19 @@ public:
      * @return TRUE if we are using the bubbles based npc dialog interface
      *         FALSE if we are using the menu based npc dialog interface
      */
-    bool GetUseBubbles() { return useBubbles; }
+    bool GetUseBubbles()
+    {
+        return useBubbles;
+    }
     /**
      * Sets if we have to use the bubbles based npc dialog interface (true)
      * or the classic menu based one (false).
      * @note This doesn't reconfigure the widgets for the new modality.
      */
-    void SetUseBubbles(bool useBubblesNew) { useBubbles = useBubblesNew; }
+    void SetUseBubbles(bool useBubblesNew)
+    {
+        useBubbles = useBubblesNew;
+    }
 
 
     /**
@@ -149,18 +160,20 @@ public:
 private:
     void AdjustForPromptWindow();
     /**
-     * Handles the inner display of text bubbles from the player
+     * Handles the display of player text in chat
      */
-    void DisplayTextBubbles(const char *sayWhat);
+    void DisplayTextInChat(const char *sayWhat);
+
     bool useBubbles; ///< Stores which modality should be used for the npcdialog (bubbles/menus)
 
-    csArray<QuestInfo> questInfo; ///< Stores all the quest info and triggers parsed from xml binding.
-    unsigned int    displayIndex; ///< Index to display which quests
-    int             cameraMode;   ///< Stores the camera mode
-    int             loadOnce;     ///< Stores if bubbles has been loaded
-    bool enabledChatBubbles;      ///< Stores the state of chat bubbles.
+    csArray<QuestInfo> questInfo;  ///< Stores all the quest info and triggers parsed from xml binding.
+    unsigned int    displayIndex;  ///< Index to display which quests
+    int             cameraMode;    ///< Stores the camera mode
+    int             loadOnce;      ///< Stores if bubbles has been loaded
+    bool enabledChatBubbles;       ///< Stores the state of chat bubbles.
     bool clickedOnResponseBubble;  ///< flag when player clicks on the response bubble
-    bool gotNewMenu;              ///< keeps track of the incoming new menu message
+    bool gotNewMenu;               ///< keeps track of the incoming new menu message
+    int timeDelay;                 ///< calculates the time needed to read the last npc say
 
     pawsListBox* responseList;
     pawsWidget* speechBubble;
@@ -171,5 +184,5 @@ private:
 };
 
 
-CREATE_PAWS_FACTORY( pawsNpcDialogWindow );
+CREATE_PAWS_FACTORY(pawsNpcDialogWindow);
 #endif
