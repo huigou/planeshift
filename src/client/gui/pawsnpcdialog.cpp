@@ -245,8 +245,8 @@ bool pawsNpcDialogWindow::OnButtonPressed(int button, int keyModifier, pawsWidge
 
                 DisplayQuestBubbles(displayIndex);
 
-                pawsWidget *pw1 = FindWidget("LeftArrow");
-                pawsWidget *pw2 = FindWidget("RightArrow");
+                pawsWidget* pw1 = FindWidget("LeftArrow");
+                pawsWidget* pw2 = FindWidget("RightArrow");
 
                 if(displayIndex < 3)
                     pw1->Hide();
@@ -289,9 +289,9 @@ void pawsNpcDialogWindow::DisplayQuestBubbles(unsigned int index)
     {
         bname = "Bubble";
         bname.Append(c);
-        pawsButton * pb = dynamic_cast<pawsButton*>(FindWidget(bname));
-        pawsTextBox * qn = dynamic_cast<pawsTextBox*>(pb->FindWidget("QuestName"));
-        pawsMultiLineTextBox * qt = dynamic_cast<pawsMultiLineTextBox *>(pb->FindWidget("QuestText"));
+        pawsButton* pb = dynamic_cast<pawsButton*>(FindWidget(bname));
+        pawsTextBox* qn = dynamic_cast<pawsTextBox*>(pb->FindWidget("QuestName"));
+        pawsMultiLineTextBox* qt = dynamic_cast<pawsMultiLineTextBox*>(pb->FindWidget("QuestText"));
 
         qn->SetText(questInfo[i].title);
         qt->SetText(questInfo[i].text);
@@ -303,7 +303,7 @@ void pawsNpcDialogWindow::DisplayQuestBubbles(unsigned int index)
     {
         bname = "Bubble";
         bname.Append(c);
-        pawsButton * pb = dynamic_cast<pawsButton*>(FindWidget(bname));
+        pawsButton* pb = dynamic_cast<pawsButton*>(FindWidget(bname));
         pb->Hide();
     }
 
@@ -318,7 +318,7 @@ void pawsNpcDialogWindow::LoadQuest(csString xmlstr)
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
 
     csRef<iDocument> doc= xml->CreateDocument();
-    const char *error = doc->Parse(xmlstr);
+    const char* error = doc->Parse(xmlstr);
     if(error)
     {
         Error2("%s\n", error);
@@ -354,8 +354,8 @@ void pawsNpcDialogWindow::LoadQuest(csString xmlstr)
         }
     }
 
-    pawsWidget * pw1 = FindWidget("LeftArrow");
-    pawsWidget * pw2 = FindWidget("RightArrow");
+    pawsWidget* pw1 = FindWidget("LeftArrow");
+    pawsWidget* pw2 = FindWidget("RightArrow");
 
     pw1->Hide();
 
@@ -369,7 +369,7 @@ void pawsNpcDialogWindow::OnListAction(pawsListBox* widget, int status)
 {
     if(status == LISTBOX_HIGHLIGHTED)
     {
-        pawsTextBox *fld = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
+        pawsTextBox* fld = dynamic_cast<pawsTextBox*>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
         Debug2(LOG_QUESTS, 0, "Pressed: %s\n",fld->GetText());
     }
     else if(status == LISTBOX_SELECTED)
@@ -378,9 +378,9 @@ void pawsNpcDialogWindow::OnListAction(pawsListBox* widget, int status)
         if(!widget->GetSelectedRow())
             return;
 
-        pawsTextBox *fld  = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
+        pawsTextBox* fld  = dynamic_cast<pawsTextBox*>(widget->GetSelectedRow()->FindWidgetXMLBinding("text"));
         Debug2(LOG_QUESTS, 0,"Player chose '%s'.\n", fld->GetText());
-        pawsTextBox *trig = dynamic_cast<pawsTextBox *>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
+        pawsTextBox* trig = dynamic_cast<pawsTextBox*>(widget->GetSelectedRow()->FindWidgetXMLBinding("trig"));
         Debug2(LOG_QUESTS, 0,"Player says '%s'.\n", trig->GetText());
 
         csString trigger(trig->GetText());
@@ -411,7 +411,7 @@ void pawsNpcDialogWindow::OnListAction(pawsListBox* widget, int status)
     }
 }
 
-void pawsNpcDialogWindow::DisplayTextInChat(const char *sayWhat)
+void pawsNpcDialogWindow::DisplayTextInChat(const char* sayWhat)
 {
     // Now send the message to the NPC
     csString text(sayWhat);
@@ -455,7 +455,7 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
     else if(me->GetType() == MSGTYPE_CHAT)
     {
         psChatMessage chatMsg(me);
-        Debug2(LOG_QUESTS, 0,"Got Chat message from NPC: %s\n", (const char *)chatMsg.sText);
+        Debug2(LOG_QUESTS, 0,"Got Chat message from NPC: %s\n", (const char*)chatMsg.sText);
 
         GEMClientActor* actor = dynamic_cast<GEMClientActor*>(psengine->GetCelClient()->FindObject(chatMsg.actor));
         if(!actor)
@@ -467,19 +467,19 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
         {
             case CHAT_NPC_ME:
             {
-                inText.Format("(%s %s)", (const char *)chatMsg.sPerson, ((const char *)chatMsg.sText));
+                inText.Format("(%s %s)", (const char*)chatMsg.sPerson, ((const char*)chatMsg.sText));
                 break;
             }
 
             case CHAT_NPC_MY:
             {
-                inText.Format("(%s's %s)", (const char *)chatMsg.sPerson, ((const char *)chatMsg.sText));
+                inText.Format("(%s's %s)", (const char*)chatMsg.sPerson, ((const char*)chatMsg.sText));
                 break;
             }
 
             case CHAT_NPC_NARRATE:
             {
-                inText.Format("(%s)", (const char *)chatMsg.sText);
+                inText.Format("(%s)", (const char*)chatMsg.sText);
                 break;
             }
             default:
@@ -506,7 +506,7 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
     }
 }
 
-void pawsNpcDialogWindow::NpcSays(csString& inText,GEMClientActor *actor)
+void pawsNpcDialogWindow::NpcSays(csString& inText,GEMClientActor* actor)
 {
     //this is used only when using the chat bubbles interface
     if(!useBubbles)
@@ -548,7 +548,7 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
         size_t where = str.Find("?=");
         if(where != SIZET_NOT_FOUND)  // we have a prompt choice
         {
-            pawsTextBox *hidden = (pawsTextBox*)responseList->GetRow(i)->GetColumn(1);
+            pawsTextBox* hidden = (pawsTextBox*)responseList->GetRow(i)->GetColumn(1);
             if(where != SIZET_NOT_FOUND)
             {
                 str.DeleteAt(where,1); // take out the ?
@@ -557,7 +557,7 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
                 str.DeleteAt(where,1); // take out the =
 
                 // now change the visible menu choice to something better
-                pawsTextBox *prompt = (pawsTextBox*)responseList->GetRow(i)->GetColumn(0);
+                pawsTextBox* prompt = (pawsTextBox*)responseList->GetRow(i)->GetColumn(0);
 
                 csString menuPrompt(str);
                 menuPrompt.Insert(where,"<Answer ");
@@ -570,7 +570,7 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
     // this part is used only with bubbles npc dialogue
     for(size_t i = 0 ; i < questInfo.GetSize(); i++)
     {
-        QuestInfo & qi = questInfo[i];
+        QuestInfo& qi = questInfo[i];
         str = qi.text;
         size_t where = str.Find("?=");
         if(where != SIZET_NOT_FOUND)
@@ -605,8 +605,8 @@ void pawsNpcDialogWindow::OnStringEntered(const char* name, int /*param*/, const
 
 void pawsNpcDialogWindow::SetupWindowWidgets()
 {
-    pawsWidget *lists = FindWidget("Lists");
-    pawsWidget *bubbles = FindWidget("Bubbles");
+    pawsWidget* lists = FindWidget("Lists");
+    pawsWidget* bubbles = FindWidget("Bubbles");
     if(useBubbles)
     {
         if(border) border->Hide();
@@ -663,7 +663,7 @@ void pawsNpcDialogWindow::ShowOnlyFreeText()
     {
         bname = "Bubble";
         bname.Append(c);
-        pawsButton * pb = dynamic_cast<pawsButton*>(FindWidget(bname));
+        pawsButton* pb = dynamic_cast<pawsButton*>(FindWidget(bname));
         pb->Hide();
     }
 
@@ -697,7 +697,7 @@ void pawsNpcDialogWindow::Show()
             {
                 //let the camera focus upon the target npc
                 csRef<psCelClient> celclient = psengine->GetCelClient();
-                GEMClientObject * mobj = celclient->GetMainPlayer();
+                GEMClientObject* mobj = celclient->GetMainPlayer();
                 csVector3 p1 = cobj->GetPosition();
                 csVector3 p2 = mobj->GetPosition();
                 csVector3 direction = p1 - p2;
@@ -707,11 +707,11 @@ void pawsNpcDialogWindow::Show()
 
                 csVector3 pos;
                 float yrot,rot;
-                iSector * isect;
-                dynamic_cast<GEMClientActor *>(mobj)->GetLastPosition(p1,yrot,isect);
-                dynamic_cast<GEMClientActor *>(mobj)->SetPosition(p1,nyaw,isect);
-                dynamic_cast<GEMClientActor *>(cobj)->GetLastPosition(p2,rot,isect);
-                dynamic_cast<GEMClientActor *>(cobj)->SetPosition(p2,nyaw+3.1415f,isect);
+                iSector* isect;
+                dynamic_cast<GEMClientActor*>(mobj)->GetLastPosition(p1,yrot,isect);
+                dynamic_cast<GEMClientActor*>(mobj)->SetPosition(p1,nyaw,isect);
+                dynamic_cast<GEMClientActor*>(cobj)->GetLastPosition(p2,rot,isect);
+                dynamic_cast<GEMClientActor*>(cobj)->SetPosition(p2,nyaw+3.1415f,isect);
                 psengine->GetPSCamera()->SetCameraMode(0); //set the camera to the first person mode
                 targetEID = cobj->GetEID();
             }
