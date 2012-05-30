@@ -421,10 +421,11 @@ bool psEngine::Initialize (int level)
 
         soundOn = true; // FIXMESOUND is this variable REALLY needed and if not how do we handle this in future? 
 
+        // Load Logger settings
+        LoadLogSettings();
+
         // Initialize sound
         SoundManager->InitializeSectors();
-
-        LoadLogSettings();
 
         // Mount the selected gui first to allow overwriting of certain elements
         csString skinPath;
