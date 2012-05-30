@@ -96,7 +96,7 @@
 class AreaTargetConfirm : public PendingQuestion
 {
 public:
-    AreaTargetConfirm(AdminManager* msgmanager, const csString in_msg, csString in_player, const csString& question, Client* in_client)
+    AreaTargetConfirm(AdminManager* msgmanager, const csString in_msg, csString in_player, const csString &question, Client* in_client)
         : PendingQuestion(in_client->GetClientNum(),question, psQuestionMessage::generalConfirm)
     {
         //save variables for later use
@@ -107,7 +107,7 @@ public:
     }
 
     /// Handles the user choice
-    virtual void HandleAnswer(const csString& answer)
+    virtual void HandleAnswer(const csString &answer)
     {
         if(answer != "yes")    //if we haven't got a confirm just get out of here
         {
@@ -225,7 +225,7 @@ AdminCmdData* Class::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdm
 }
 
 
-AdminCmdData::AdminCmdData(csString commandName, WordArray& words)
+AdminCmdData::AdminCmdData(csString commandName, WordArray &words)
     : command(commandName), help(false), valid(true)
 {
     // when help is requested, return immediate
@@ -239,7 +239,7 @@ AdminCmdData::AdminCmdData(csString commandName, WordArray& words)
     }
 }
 
-AdminCmdData* AdminCmdData::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdData* AdminCmdData::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
 {
     return new AdminCmdData(command, words);
 }
@@ -348,7 +348,7 @@ csString AdminCmdTargetParser::GetHelpMessagePartForTarget()
     return help;
 }
 
-bool AdminCmdTargetParser::GetPlayerAccountIDByPID(size_t gmClientNum, const csString& word)
+bool AdminCmdTargetParser::GetPlayerAccountIDByPID(size_t gmClientNum, const csString &word)
 {
     // just to make the whole pid story quite clear
     // getting players by pid in this place should only be used when the player is offline
@@ -415,7 +415,7 @@ AccountID AdminCmdTargetParser::GetAccountID(size_t gmClientNum)
     return targetAccountID;
 }
 
-bool AdminCmdTargetParser::GetPlayerAccountIDByName(size_t gmClientNum, const csString& word, bool reporterror)
+bool AdminCmdTargetParser::GetPlayerAccountIDByName(size_t gmClientNum, const csString &word, bool reporterror)
 {
     //first of all check if db hits are allowed. most commands don't
     //work with the database so there is no use to hit the db for that.
@@ -461,7 +461,7 @@ bool AdminCmdTargetParser::GetPlayerAccountIDByName(size_t gmClientNum, const cs
     return true;
 }
 
-bool AdminCmdTargetParser::GetPlayerAccountIDByPIDFromName(size_t gmClientNum, const csString& word, bool reporterror)
+bool AdminCmdTargetParser::GetPlayerAccountIDByPIDFromName(size_t gmClientNum, const csString &word, bool reporterror)
 {
     if(GetPlayerAccountIDByName(gmClientNum, word, reporterror))
     {
@@ -474,7 +474,7 @@ bool AdminCmdTargetParser::GetPlayerAccountIDByPIDFromName(size_t gmClientNum, c
 
 
 
-bool AdminCmdTargetParser::GetPlayerClient(AdminManager* msgManager, size_t gmClientNum, const csString& playerName, bool allowduplicate)
+bool AdminCmdTargetParser::GetPlayerClient(AdminManager* msgManager, size_t gmClientNum, const csString &playerName, bool allowduplicate)
 {
     targetClient = msgManager->FindPlayerClient(playerName); // Other player?
     if(targetClient)
@@ -507,7 +507,7 @@ void AdminCmdTargetParser::Reset()
     targetAccountID = 0;
 }
 
-bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, csString word)
+bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, csString word)
 {
     // flag to try the client target when everything fails
     bool tryClientTarget = false;
@@ -801,7 +801,7 @@ csString AdminCmdSubCommandParser::GetHelpMessage()
     return help;
 }
 
-csString AdminCmdSubCommandParser::GetHelpMessage(const csString& subcommand)
+csString AdminCmdSubCommandParser::GetHelpMessage(const csString &subcommand)
 {
     // if help not found the default is to return an error msg
     // actually this should never happen
@@ -809,7 +809,7 @@ csString AdminCmdSubCommandParser::GetHelpMessage(const csString& subcommand)
     return subcommand + " " + subCommands.Get(subcommand, emptyHelp);
 }
 
-bool AdminCmdSubCommandParser::IsSubCommand(const csString& word)
+bool AdminCmdSubCommandParser::IsSubCommand(const csString &word)
 {
     return subCommands.In(word);
 }
@@ -831,7 +831,7 @@ AdminCmdRewardParser::AdminCmdRewardParser()
     rewardTypes.Push("faction","<factionname> <value>");
 }
 
-bool AdminCmdRewardParser::ParseWords(size_t index, const WordArray& words)
+bool AdminCmdRewardParser::ParseWords(size_t index, const WordArray &words)
 {
     // temporary variables for the loop
     csString subCmd;
@@ -928,7 +928,7 @@ AdminCmdOnOffToggleParser::AdminCmdOnOffToggleParser(ADMINCMD_SETTING_ONOFF defa
 {
 }
 
-bool AdminCmdOnOffToggleParser::ParseWord(const csString& word)
+bool AdminCmdOnOffToggleParser::ParseWord(const csString &word)
 {
     // check if the word is valid for setting
     // and store the appropriate value
@@ -973,7 +973,7 @@ csString AdminCmdOnOffToggleParser::GetHelpMessage()
     return "on|off|toggle";
 }
 
-AdminCmdDataTarget::AdminCmdDataTarget(csString commandName, int targetTypes, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataTarget::AdminCmdDataTarget(csString commandName, int targetTypes, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData(commandName), AdminCmdTargetParser(targetTypes)
 {
     size_t index = 1;
@@ -995,7 +995,7 @@ AdminCmdDataTarget::AdminCmdDataTarget(csString commandName, int targetTypes, Ad
     }
 }
 
-AdminCmdData* AdminCmdDataTarget::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdData* AdminCmdDataTarget::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
 {
     return new AdminCmdDataTarget(command, allowedTargetTypes, msgManager, me, msg, client, words);
 }
@@ -1010,7 +1010,7 @@ bool AdminCmdDataTarget::LogGMCommand(Client* gmClient, const char* cmd)
     return AdminCmdData::LogGMCommand(gmClient, targetID, cmd);
 }
 
-AdminCmdDataTargetReason::AdminCmdDataTargetReason(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataTargetReason::AdminCmdDataTargetReason(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget(commandName, ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -1057,7 +1057,7 @@ csString AdminCmdDataTargetReason::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() +" reason\"";
 }
 
-AdminCmdDataDeath::AdminCmdDataDeath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataDeath::AdminCmdDataDeath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/death",  ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
 {
     size_t index = 1;
@@ -1093,7 +1093,7 @@ AdminCmdDataDeath::AdminCmdDataDeath(AdminManager* msgManager, MsgEntry* me, psA
     }
 }
 
-AdminCmdData* AdminCmdDataDeath::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdData* AdminCmdDataDeath::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
 {
     return new AdminCmdDataDeath(msgManager, me, msg, client, words);
 }
@@ -1103,7 +1103,7 @@ csString AdminCmdDataDeath::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() +" requestor\"";
 }
 
-AdminCmdDataDeleteChar::AdminCmdDataDeleteChar(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataDeleteChar::AdminCmdDataDeleteChar(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/deletechar", ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID), requestor(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
 {
     size_t index = 1;
@@ -1137,7 +1137,7 @@ AdminCmdDataDeleteChar::AdminCmdDataDeleteChar(AdminManager* msgManager, MsgEntr
     }
 }
 
-AdminCmdData* AdminCmdDataDeleteChar::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdData* AdminCmdDataDeleteChar::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
 {
     return new AdminCmdDataDeleteChar(msgManager, me, msg, client, words);
 }
@@ -1148,7 +1148,7 @@ csString AdminCmdDataDeleteChar::GetHelpMessage()
 }
 
 
-AdminCmdDataUpdateRespawn::AdminCmdDataUpdateRespawn(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataUpdateRespawn::AdminCmdDataUpdateRespawn(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/updaterespawn", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -1184,7 +1184,7 @@ AdminCmdDataUpdateRespawn::AdminCmdDataUpdateRespawn(AdminManager* msgManager, M
     }
 }
 
-AdminCmdData* AdminCmdDataUpdateRespawn::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdData* AdminCmdDataUpdateRespawn::CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
 {
     return new AdminCmdDataUpdateRespawn(msgManager, me, msg, client, words);
 }
@@ -1194,7 +1194,7 @@ csString AdminCmdDataUpdateRespawn::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [here]\"";
 }
 
-AdminCmdDataBan::AdminCmdDataBan(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataBan::AdminCmdDataBan(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/ban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
 {
     size_t index = 1;
@@ -1265,7 +1265,7 @@ csString AdminCmdDataBan::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [mins hours days] [IP] reason\"";
 }
 
-AdminCmdDataKillNPC::AdminCmdDataKillNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataKillNPC::AdminCmdDataKillNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), reload(false)
 {
     size_t index = 1;
@@ -1308,7 +1308,7 @@ csString AdminCmdDataKillNPC::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [reload]\"";
 }
 
-AdminCmdDataPercept::AdminCmdDataPercept(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataPercept::AdminCmdDataPercept(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/percept", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -1353,7 +1353,7 @@ csString AdminCmdDataPercept::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [percept] [type]\"";
 }
 
-AdminCmdDataChangeNPCType::AdminCmdDataChangeNPCType(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataChangeNPCType::AdminCmdDataChangeNPCType(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/changenpctype", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), npcType("")
 {
     size_t index = 1;
@@ -1401,7 +1401,7 @@ csString AdminCmdDataChangeNPCType::GetHelpMessage()
 }
 
 
-AdminCmdDataSetStackable::AdminCmdDataSetStackable(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSetStackable::AdminCmdDataSetStackable(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/setstackable", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET), subCommandList("info on off reset help")
 {
     size_t index = 1;
@@ -1456,7 +1456,7 @@ csString AdminCmdDataSetStackable::GetHelpMessage()
 }
 
 // loadquest is only responsible for loading and reloading quests
-AdminCmdDataLoadQuest::AdminCmdDataLoadQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataLoadQuest::AdminCmdDataLoadQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/loadquest")
 {
     size_t index = 1;
@@ -1487,7 +1487,7 @@ csString AdminCmdDataLoadQuest::GetHelpMessage()
     return "Syntax: \"" + command + " <questname>\"";
 }
 
-AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50)
 {
     size_t index = 1;
@@ -1543,7 +1543,7 @@ csString AdminCmdDataItem::GetHelpMessage()
     return "Syntax: \"" + command + " <name>|help [random] <quality>\"";
 }
 
-AdminCmdDataKey::AdminCmdDataKey(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataKey::AdminCmdDataKey(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/key", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_CLIENTTARGET),
       subCommandList("make makemaster copy clearlocks skel"),
       subTargetCommandList("changelock makeunlockable securitylockable addlock removelock")
@@ -1593,7 +1593,7 @@ csString AdminCmdDataKey::GetHelpMessage()
     return "Syntax: \"" + command + " [" + subCommandList.GetHelpMessage() + subTargetCommandList.GetHelpMessage() + "]\"";
 }
 
-AdminCmdDataRunScript::AdminCmdDataRunScript(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataRunScript::AdminCmdDataRunScript(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/runscript", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET), origObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -1641,7 +1641,7 @@ csString AdminCmdDataRunScript::GetHelpMessage()
     return "Syntax: \"" + command + " <scriptname> " + GetHelpMessagePartForTarget() + " [origin: " + origObj.GetHelpMessagePartForTarget() +"]\"";
 }
 
-AdminCmdDataCrystal::AdminCmdDataCrystal(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataCrystal::AdminCmdDataCrystal(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/crystal", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING)
 {
     // when help is requested, return immediate
@@ -1669,7 +1669,7 @@ csString AdminCmdDataCrystal::GetHelpMessage()
     return "Syntax: \"" + command + "<interval> <random> <amount> <range> <itemname>\"";
 }
 
-AdminCmdDataTeleport::AdminCmdDataTeleport(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataTeleport::AdminCmdDataTeleport(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/teleport", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_DATABASE), destList("here there last spawn restore"), destObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM)
 {
     destList.Push("map", "(<map name>|here) | (<sector name> <x> <y> <z>) [<instance>]");
@@ -1765,7 +1765,7 @@ csString AdminCmdDataTeleport::GetHelpMessage()
            "             restore";
 }
 
-AdminCmdDataSlide::AdminCmdDataSlide(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSlide::AdminCmdDataSlide(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/slide", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -1800,7 +1800,7 @@ csString AdminCmdDataSlide::GetHelpMessage()
            " [direction] [distance]\nAllowed directions: U D L R F B T I";
 }
 
-AdminCmdDataChangeName::AdminCmdDataChangeName(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataChangeName::AdminCmdDataChangeName(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/changename", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), uniqueName(true), uniqueFirstName(true)
 {
     size_t index = 1;
@@ -1867,7 +1867,7 @@ csString AdminCmdDataChangeName::GetHelpMessage()
            " [force|forceall] <NewName> [NewLastName]\"";
 }
 
-AdminCmdDataChangeGuildName::AdminCmdDataChangeGuildName(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataChangeGuildName::AdminCmdDataChangeGuildName(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/changeguildname")
 {
     // when help is requested, return immediate
@@ -1892,7 +1892,7 @@ csString AdminCmdDataChangeGuildName::GetHelpMessage()
     return "Syntax: \"" + command + " <guildname> <newguildname>\"";
 }
 
-AdminCmdDataChangeGuildLeader::AdminCmdDataChangeGuildLeader(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataChangeGuildLeader::AdminCmdDataChangeGuildLeader(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/changeguildleader", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
 {
     size_t index = 1;
@@ -1926,7 +1926,7 @@ csString AdminCmdDataChangeGuildLeader::GetHelpMessage()
     return "Syntax: \"" + command + " {target|player} <guildname>\"";
 }
 
-AdminCmdDataPetition::AdminCmdDataPetition(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataPetition::AdminCmdDataPetition(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/petition")
 {
     // when help is requested, return immediate
@@ -1951,7 +1951,7 @@ csString AdminCmdDataPetition::GetHelpMessage()
     return "Syntax: \"" + command + " <petition question/description>\"";
 }
 
-AdminCmdDataImpersonate::AdminCmdDataImpersonate(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataImpersonate::AdminCmdDataImpersonate(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/impersonate", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT)
 {
     size_t index = 1;
@@ -2014,7 +2014,7 @@ csString AdminCmdDataImpersonate::GetHelpMessage()
            "If name is \"text\" the given text is used as it is.";
 }
 
-AdminCmdDataDeputize::AdminCmdDataDeputize(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataDeputize::AdminCmdDataDeputize(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/deputize", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -2050,7 +2050,7 @@ csString AdminCmdDataDeputize::GetHelpMessage()
            "Different gm levels can be attained by using gm1..gm5 instead of gm.";
 }
 
-AdminCmdDataAward::AdminCmdDataAward(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataAward::AdminCmdDataAward(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/award", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -2081,7 +2081,7 @@ csString AdminCmdDataAward::GetHelpMessage()
            rewardList.GetHelpMessage();
 }
 
-AdminCmdDataItemTarget::AdminCmdDataItemTarget(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataItemTarget::AdminCmdDataItemTarget(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget(commandName, ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA |ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET), stackCount(0)
 {
     size_t index = 1;
@@ -2133,7 +2133,7 @@ csString AdminCmdDataItemTarget::GetHelpMessage()
     return "Syntax: \"" + command + " [" + GetHelpMessagePartForTarget() + "] [quantity|'all'|''] [item|tria]\"";
 }
 
-AdminCmdDataCheckItem::AdminCmdDataCheckItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataCheckItem::AdminCmdDataCheckItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataItemTarget("/checkitem", msgManager, me, msg, client, words)
 {
     /*
@@ -2170,7 +2170,7 @@ csString AdminCmdDataCheckItem::GetHelpMessage()
     return "Syntax: \"" + command + " [" + GetHelpMessagePartForTarget() + "] [quantity|''] [item|tria]\"";
 }
 
-AdminCmdDataSectorTarget::AdminCmdDataSectorTarget(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSectorTarget::AdminCmdDataSectorTarget(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData(commandName), isClientSector(false), sectorInfo(NULL)
 {
     // when help is requested, return immediate
@@ -2188,7 +2188,7 @@ AdminCmdDataSectorTarget::AdminCmdDataSectorTarget(csString commandName, AdminMa
     }
 }
 
-bool AdminCmdDataSectorTarget::ParseTarget(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, csString target)
+bool AdminCmdDataSectorTarget::ParseTarget(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, csString target)
 {
     bool targetIsSector = false;
 
@@ -2253,7 +2253,7 @@ bool AdminCmdDataSectorTarget::GetSectorOfClient(Client* client)
 }
 
 
-AdminCmdDataWeather::AdminCmdDataWeather(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataWeather::AdminCmdDataWeather(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataSectorTarget("/weather"), enabled(false)
 {
     size_t index = 1;
@@ -2331,7 +2331,7 @@ csString AdminCmdDataWeather::GetHelpMessage()
     return "Syntax: \"" + command + " [<sector>] on|off <type>\"";
 }
 
-AdminCmdDataWeatherEffect::AdminCmdDataWeatherEffect(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataWeatherEffect::AdminCmdDataWeatherEffect(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataSectorTarget(commandName), enabled(false), particleCount(4000), interval(600000), fadeTime(10000)
 {
     size_t index = 1;
@@ -2392,7 +2392,7 @@ csString AdminCmdDataWeatherEffect::GetHelpMessage()
     return "Syntax: \"" + command + " [sector] [[drops length fade]|stop]\"";
 }
 
-AdminCmdDataFog::AdminCmdDataFog(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataFog::AdminCmdDataFog(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataSectorTarget("/fog"), enabled(false), density(200), fadeTime(10000), interval(600000), r(200), g(200), b(200)
 {
     size_t index = 1;
@@ -2456,7 +2456,7 @@ csString AdminCmdDataFog::GetHelpMessage()
     return "Syntax: \"" + command + " [sector] [density [r g b lenght fade]|stop]\"";
 }
 
-AdminCmdDataModify::AdminCmdDataModify(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataModify::AdminCmdDataModify(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/modify", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), attributeList("pickupable unpickable transient npcowned collide settingitem pickupableweak")
 {
     size_t index = 1;
@@ -2556,7 +2556,7 @@ csString AdminCmdDataModify::GetHelpMessage()
            "ATTRIBUTE: " + attributeList.GetHelpMessage();
 }
 
-AdminCmdDataMorph::AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataMorph::AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/morph", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
 {
     size_t index = 1;
@@ -2618,7 +2618,7 @@ csString AdminCmdDataMorph::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + "\" racename|list|reset [gender]";
 }
 
-AdminCmdDataSetSkill::AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSetSkill::AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/setskill", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), sourcePlayer(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), subCommand(),  skillData("",0,0,false)
 {
     size_t index = 1;
@@ -2685,7 +2685,7 @@ csString AdminCmdDataSetSkill::GetHelpMessage()
            "TARGET: " + GetHelpMessagePartForTarget();
 }
 
-AdminCmdDataSet::AdminCmdDataSet(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSet::AdminCmdDataSet(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/set", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME), subCommandList("list gm player"), attributeList("invincible invincibility invisibility invisible viewall nevertired nofalldamage infiniteinventory questtester infinitemana instantcast givekillexp attackable buddyhide"), setting(AdminCmdOnOffToggleParser::ADMINCMD_SETTING_TOGGLE)
 {
     size_t index = 1;
@@ -2752,7 +2752,7 @@ csString AdminCmdDataSet::GetHelpMessage()
            setting.GetHelpMessage() + "]\"";
 }
 
-AdminCmdDataSetLabelColor::AdminCmdDataSetLabelColor(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSetLabelColor::AdminCmdDataSetLabelColor(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/setlabelcolor", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA  | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_EID), labelTypeList("normal alive dead npc tester gm gm1 player")
 {
     size_t index = 1;
@@ -2800,7 +2800,7 @@ csString AdminCmdDataSetLabelColor::GetHelpMessage()
            " " + labelTypeList.GetHelpMessage() + "\"";
 }
 
-AdminCmdDataAction::AdminCmdDataAction(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataAction::AdminCmdDataAction(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataSectorTarget("/action"), subCommandList("create_entrance")
 {
     size_t index = 1;
@@ -2848,7 +2848,7 @@ csString AdminCmdDataAction::GetHelpMessage()
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " <sector> <guildname> <description>\"";
 }
 
-AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataPath::AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/path"), aliasSubCommandList("add remove rotation"), wpList("waypoints points"), subCmd(), defaultRadius(2.0),radius(0.0)
 {
     // register sub commands with their extended help message
@@ -3134,7 +3134,7 @@ csString AdminCmdDataPath::GetHelpMessage()
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
 }
 
-AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataLocation::AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/location")
 {
 
@@ -3266,7 +3266,7 @@ csString AdminCmdDataLocation::GetHelpMessage()
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
 }
 
-AdminCmdDataGameMasterEvent::AdminCmdDataGameMasterEvent(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataGameMasterEvent::AdminCmdDataGameMasterEvent(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/event"), subCommandList("help list"), subCmd(), player(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET)
 {
     // register subcommands along with their help message
@@ -3419,7 +3419,7 @@ csString AdminCmdDataGameMasterEvent::GetHelpMessage()
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
 }
 
-AdminCmdDataBadText::AdminCmdDataBadText(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataBadText::AdminCmdDataBadText(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/badtext", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -3477,7 +3477,7 @@ csString AdminCmdDataBadText::GetHelpMessage()
     return "Syntax: \"" + command + " [target|npc] <first> <last>\"";
 }
 
-AdminCmdDataQuest::AdminCmdDataQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataQuest::AdminCmdDataQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/quest", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE),
       subCommandList("complete list discard assign")
 {
@@ -3536,7 +3536,7 @@ csString AdminCmdDataQuest::GetHelpMessage()
            "] [questname]\"\n";
 }
 
-AdminCmdDataSetQuality::AdminCmdDataSetQuality(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSetQuality::AdminCmdDataSetQuality(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/setquality", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA |ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -3588,7 +3588,7 @@ csString AdminCmdDataSetQuality::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <quality> [<qualityMax>]\"";
 }
 
-AdminCmdDataSetTrait::AdminCmdDataSetTrait(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSetTrait::AdminCmdDataSetTrait(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/settrait", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -3665,7 +3665,7 @@ csString AdminCmdDataSetTrait::GetHelpMessage()
            + command + " list <race> <gender>";
 }
 
-AdminCmdDataSetItem::AdminCmdDataSetItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSetItem::AdminCmdDataSetItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/setitemname", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
 
 {
@@ -3717,7 +3717,7 @@ csString AdminCmdDataSetItem::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <newname> [<newdescription>]\"";
 }
 
-AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/reload"), itemID(0)
 {
     subCommandList.Push("item","<itemID> - reloads the specified item");
@@ -3758,7 +3758,7 @@ csString AdminCmdDataReload::GetHelpMessage()
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + "\"";
 }
 
-AdminCmdDataListWarnings::AdminCmdDataListWarnings(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataListWarnings::AdminCmdDataListWarnings(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/listwarnings", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
 {
     size_t index = 1;
@@ -3786,7 +3786,7 @@ csString AdminCmdDataListWarnings::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + "\"";
 }
 
-AdminCmdDataDisableQuest::AdminCmdDataDisableQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataDisableQuest::AdminCmdDataDisableQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/disablequest")
 {
     size_t index = 1;
@@ -3816,7 +3816,7 @@ csString AdminCmdDataDisableQuest::GetHelpMessage()
     return "Syntax: \"" + command + " <questname> [save]\"";
 }
 
-AdminCmdDataSetKillExp::AdminCmdDataSetKillExp(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSetKillExp::AdminCmdDataSetKillExp(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/setkillexp", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -3859,7 +3859,7 @@ csString AdminCmdDataSetKillExp::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [<exp>]\"";
 }
 
-AdminCmdDataAssignFaction::AdminCmdDataAssignFaction(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataAssignFaction::AdminCmdDataAssignFaction(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/assignfaction", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
 {
     size_t index = 1;
@@ -3908,7 +3908,7 @@ csString AdminCmdDataAssignFaction::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <factionname> <points>\"";
 }
 
-AdminCmdDataServerQuit::AdminCmdDataServerQuit(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataServerQuit::AdminCmdDataServerQuit(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/serverquit")
 {
     // when help is requested, return immediate
@@ -3936,7 +3936,7 @@ csString AdminCmdDataServerQuit::GetHelpMessage()
     return "Syntax: \"" + command + " [-1/time] <reason>\"";
 }
 
-AdminCmdDataNPCClientQuit::AdminCmdDataNPCClientQuit(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataNPCClientQuit::AdminCmdDataNPCClientQuit(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/npcclientquit")
 {
     // when help is requested, return immediate
@@ -3951,7 +3951,7 @@ csString AdminCmdDataNPCClientQuit::GetHelpMessage()
     return "Syntax: \"" + command + "\"";
 }
 
-AdminCmdDataSimple::AdminCmdDataSimple(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataSimple::AdminCmdDataSimple(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData(commandName)
 {
     // when help is requested, return immediate
@@ -3966,7 +3966,7 @@ csString AdminCmdDataSimple::GetHelpMessage()
     return "Syntax: \"" + command + "\"";
 }
 
-AdminCmdDataRndMsgTest::AdminCmdDataRndMsgTest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataRndMsgTest::AdminCmdDataRndMsgTest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/rndmsgtest")
 {
     size_t index = 1;
@@ -3996,7 +3996,7 @@ csString AdminCmdDataRndMsgTest::GetHelpMessage()
     return "Syntax: \"" + command + " [ordered]\"";
 }
 
-AdminCmdDataList::AdminCmdDataList(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataList::AdminCmdDataList(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/list"), subCommandList("map")
 {
     size_t index = 1;
@@ -4019,7 +4019,7 @@ csString AdminCmdDataList::GetHelpMessage()
 }
 
 
-AdminCmdDataTime::AdminCmdDataTime(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client* client, WordArray& words)
+AdminCmdDataTime::AdminCmdDataTime(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdData("/time")
 {
     // register sub commands with their extended help message
@@ -4234,7 +4234,7 @@ AdminManager::~AdminManager()
 }
 
 
-bool AdminManager::IsReseting(const csString& command)
+bool AdminManager::IsReseting(const csString &command)
 {
     // Grab the first 8 characters after the command and see if we're resetting ourself
     // Everyone is allowed to reset themself via /deputize (should probably use this for other commands, too)
@@ -4596,7 +4596,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
         delete data;
 }
 
-void AdminManager::HandleList(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::HandleList(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     csString map;
     size_t pos =0;
@@ -4624,7 +4624,7 @@ void AdminManager::HandleList(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     while(next < mapnames.Length());
 }
 
-void AdminManager::HandleTime(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::HandleTime(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataTime* data = dynamic_cast<AdminCmdDataTime*>(cmddata);
 
@@ -4648,7 +4648,7 @@ void AdminManager::HandleTime(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 }
 
 
-void AdminManager::HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleLoadQuest(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataLoadQuest* data = dynamic_cast<AdminCmdDataLoadQuest*>(cmddata);
     uint32 questID = (uint32)-1;
@@ -4682,7 +4682,7 @@ void AdminManager::HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData* cmddata
     }
 }
 
-void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
@@ -4714,7 +4714,7 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
             psserver->SendSystemInfo(client->GetClientNum(), "Characters on this account:");
             for(int i = 0; i < (int)result2.Count(); i++)
             {
-                iResultRow& row = result2[i];
+                iResultRow &row = result2[i];
                 psserver->SendSystemInfo(client->GetClientNum(), "Player ID: %d, %s %s, last login: %s",
                                          row.GetUInt32("id"), row["name"], row["lastname"], row["last_login"]);
             }
@@ -4735,7 +4735,7 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage& msg, AdminCmd
     }
 }
 
-void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
@@ -4994,7 +4994,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cm
         }
         else
         {
-            iResultRow& row = result[0];
+            iResultRow &row = result[0];
             name = row["name"];
             if(row["lastname"] && strcmp(row["lastname"],""))
             {
@@ -5150,7 +5150,7 @@ void AdminManager::SendGMAttribs(Client* client)
     gmMsg.SendMessage();
 }
 
-void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataCrystal* data = dynamic_cast<AdminCmdDataCrystal*>(cmddata);
 
@@ -5229,7 +5229,7 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage& msg, Admin
     psserver->SendSystemInfo(me->clientnum,"New hunt location created!");
 }
 
-void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataSet* data = dynamic_cast<AdminCmdDataSet*>(cmddata);
     gemActor* actor;
@@ -5463,7 +5463,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData*
     SendGMAttribs(client);
 }
 
-void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataSetLabelColor* data = dynamic_cast<AdminCmdDataSetLabelColor*>(cmddata);
     int mask = 0;
@@ -5585,7 +5585,7 @@ void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData* cmddata)
         married = (result.IsValid() && result.Count() != 0);
         if(married)
         {
-            iResultRow& row = result[0];
+            iResultRow &row = result[0];
             spouse = row["name"];
         }
 
@@ -5655,7 +5655,7 @@ void AdminManager::TeleportOfflineCharacter(Client* client, AdminCmdDataTeleport
     }
 }
 
-void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client) //, gemObject* subject)
+void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client) //, gemObject* subject)
 {
     AdminCmdDataTeleport* data = dynamic_cast<AdminCmdDataTeleport*>(cmddata);
 
@@ -5780,7 +5780,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* 
     }
 }
 
-void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataAction* data = dynamic_cast<AdminCmdDataAction*>(cmddata);
 
@@ -5941,7 +5941,7 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, Ad
     }
 }
 
-int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, csString& sectorName)
+int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3 &pos, csString &sectorName)
 {
     const char* fieldnames[]=
     {
@@ -5978,7 +5978,7 @@ int AdminManager::PathPointCreate(int pathID, int prevPointId, csVector3& pos, c
     return id;
 }
 
-void AdminManager::FindPath(csVector3& pos, iSector* sector, float radius,
+void AdminManager::FindPath(csVector3 &pos, iSector* sector, float radius,
                             Waypoint** wp, float* rangeWP,
                             psPath** path, float* rangePath, int* indexPath, float* fraction,
                             psPath** pointPath, float* rangePoint, int* indexPoint)
@@ -6286,7 +6286,7 @@ void AdminManager::UpdateDisplayWaypoint(Waypoint* wp)
     }
 }
 
-void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataPath* data = dynamic_cast<AdminCmdDataPath*>(cmddata);
 
@@ -7097,7 +7097,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 }
 
 
-int AdminManager::LocationCreate(int typeID, csVector3& pos, csString& sectorName, csString& name, int radius)
+int AdminManager::LocationCreate(int typeID, csVector3 &pos, csString &sectorName, csString &name, int radius)
 {
     const char* fieldnames[]=
     {
@@ -7257,7 +7257,7 @@ void AdminManager::UpdateDisplayLocation(Location* location)
     }
 }
 
-void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataLocation* data = dynamic_cast<AdminCmdDataLocation*>(cmddata);
 
@@ -7482,7 +7482,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
 }
 
 
-bool AdminManager::GetTargetOfTeleport(Client* client, psAdminCmdMessage& msg, AdminCmdData* cmddata, iSector*& targetSector,  csVector3& targetPoint, float& yRot, gemObject* subject, InstanceID& instance)
+bool AdminManager::GetTargetOfTeleport(Client* client, psAdminCmdMessage &msg, AdminCmdData* cmddata, iSector* &targetSector,  csVector3 &targetPoint, float &yRot, gemObject* subject, InstanceID &instance)
 {
     AdminCmdDataTeleport* data = dynamic_cast<AdminCmdDataTeleport*>(cmddata);
 
@@ -7595,7 +7595,7 @@ bool AdminManager::GetTargetOfTeleport(Client* client, psAdminCmdMessage& msg, A
     return true;
 }
 
-bool AdminManager::GetStartOfMap(int clientnum, const csString& map, iSector*& targetSector, csVector3& targetPoint)
+bool AdminManager::GetStartOfMap(int clientnum, const csString &map, iSector* &targetSector, csVector3 &targetPoint)
 {
     iEngine* engine = EntityManager::GetSingleton().GetEngine();
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psserver->GetObjectReg());
@@ -7614,7 +7614,7 @@ bool AdminManager::GetStartOfMap(int clientnum, const csString& map, iSector*& t
     return false;
 }
 
-void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataSlide* data = dynamic_cast<AdminCmdDataSlide*>(cmddata);
 
@@ -7698,7 +7698,7 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmd
     }
 }
 
-bool AdminManager::MoveObject(Client* client, gemObject* target, csVector3& pos, float yrot, iSector* sector, InstanceID instance)
+bool AdminManager::MoveObject(Client* client, gemObject* target, csVector3 &pos, float yrot, iSector* sector, InstanceID instance)
 {
     // This is a powerful feature; not everyone is allowed to use all of it
     csString response;
@@ -7760,7 +7760,7 @@ bool AdminManager::MoveObject(Client* client, gemObject* target, csVector3& pos,
     return true;
 }
 
-void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
     gemActor* basis = data->targetActor;
@@ -7848,7 +7848,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* 
     psserver->SendSystemOK(me->clientnum, "New NPC created!");
 }
 
-void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataItem* data = dynamic_cast<AdminCmdDataItem*>(cmddata);
 
@@ -7897,7 +7897,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     SpawnItemInv(me, spawnMsg, client);
 }
 
-void AdminManager::RunScript(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::RunScript(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataRunScript* data = dynamic_cast<AdminCmdDataRunScript*>(cmddata);
 
@@ -7921,7 +7921,7 @@ void AdminManager::RunScript(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData*
     script->Run(&env);
 }
 
-void AdminManager::ModifyKey(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::ModifyKey(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataKey* data = dynamic_cast<AdminCmdDataKey*>(cmddata);
 
@@ -8009,7 +8009,7 @@ void AdminManager::ModifyKey(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData*
     }
 }
 
-void AdminManager::CopyKey(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client, psItem* key)
+void AdminManager::CopyKey(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client, psItem* key)
 {
     // check if item is master key
     if(!key->GetIsMasterKey())
@@ -8074,7 +8074,7 @@ void AdminManager::CopyKey(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* d
     psserver->GetCharManager()->UpdateItemViews(me->clientnum);
 }
 
-void AdminManager::MakeUnlockable(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client)
+void AdminManager::MakeUnlockable(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client)
 {
     // check if player has something targeted
     gemObject* target = client->GetTargetObject();
@@ -8125,7 +8125,7 @@ void AdminManager::MakeUnlockable(MsgEntry* me, psAdminCmdMessage& msg, AdminCmd
     }
 }
 
-void AdminManager::MakeSecurity(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client)
+void AdminManager::MakeSecurity(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client)
 {
     // check if player has something targeted
     gemObject* target = client->GetTargetObject();
@@ -8176,7 +8176,7 @@ void AdminManager::MakeSecurity(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     }
 }
 
-void AdminManager::MakeKey(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client, bool masterkey)
+void AdminManager::MakeKey(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client, bool masterkey)
 {
     psItem* key = client->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
     if(!key)
@@ -8209,7 +8209,7 @@ void AdminManager::MakeKey(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* d
     key->Save(false);
 }
 
-void AdminManager::AddRemoveLock(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client, psItem* key)
+void AdminManager::AddRemoveLock(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client, psItem* key)
 {
     AdminCmdDataKey* data = dynamic_cast<AdminCmdDataKey*>(cmddata);
     // check if player has something targeted
@@ -8272,7 +8272,7 @@ void AdminManager::AddRemoveLock(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     }
 }
 
-void AdminManager::ChangeLock(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client)
+void AdminManager::ChangeLock(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client)
 {
     // check if player has something targeted
     gemObject* target = client->GetTargetObject();
@@ -8363,7 +8363,7 @@ void AdminManager::ChangeLock(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     psserver->SendSystemInfo(me->clientnum, "You changed the lock on %s", oldLock->GetName());
 }
 
-void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataKillNPC* data = dynamic_cast<AdminCmdDataKillNPC*>(cmddata);
 
@@ -8409,7 +8409,7 @@ void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* c
     psserver->SendSystemError(me->clientnum, "No NPC found to kill.");
 }
 
-void AdminManager::Percept(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Percept(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataPercept* data = dynamic_cast<AdminCmdDataPercept*>(cmddata);
 
@@ -8427,7 +8427,7 @@ void AdminManager::Percept(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* c
     psserver->SendSystemError(me->clientnum, "No NPC found to percept.");
 }
 
-void AdminManager::ChangeNPCType(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::ChangeNPCType(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataChangeNPCType* data = dynamic_cast<AdminCmdDataChangeNPCType*>(cmddata);
 
@@ -8466,7 +8466,7 @@ void AdminManager::Admin(int clientnum, Client* client, int requestedLevel)
     admin.SendMessage();
 }
 
-void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataTargetReason* data = dynamic_cast<AdminCmdDataTargetReason*>(cmddata);
     if(!data->targetClient)
@@ -8498,7 +8498,7 @@ void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
 }
 
 
-void AdminManager::KickPlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::KickPlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataTargetReason* data = dynamic_cast<AdminCmdDataTargetReason*>(cmddata);
 
@@ -8520,7 +8520,7 @@ void AdminManager::KickPlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     psserver->SendSystemInfo(me->clientnum,"You kicked '%s' off the server.",(const char*)data->target);
 }
 
-void AdminManager::Death(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Death(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataDeath* data = dynamic_cast<AdminCmdDataDeath*>(cmddata);
 
@@ -8557,7 +8557,7 @@ void AdminManager::Death(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmd
 }
 
 
-void AdminManager::Impersonate(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Impersonate(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataImpersonate* data = dynamic_cast<AdminCmdDataImpersonate*>(cmddata);
     if(data->text.IsEmpty())
@@ -8616,7 +8616,7 @@ void AdminManager::Impersonate(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
         psserver->GetEventManager()->Broadcast(newMsg.msg, NetBase::BC_EVERYONE);
 }
 
-void AdminManager::MutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::MutePlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
@@ -8633,7 +8633,7 @@ void AdminManager::MutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 }
 
 
-void AdminManager::UnmutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::UnmutePlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
@@ -8650,7 +8650,7 @@ void AdminManager::UnmutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
 }
 
 
-void AdminManager::HandleAddPetition(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::HandleAddPetition(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataPetition* data = dynamic_cast<AdminCmdDataPetition*>(cmddata);
 
@@ -8679,7 +8679,7 @@ void AdminManager::BroadcastDirtyPetitions(int clientNum, bool includeSelf)
     }
 }
 
-bool AdminManager::GetPetitionsArray(csArray<psPetitionInfo>& petitions, Client* client, bool IsGMrequest)
+bool AdminManager::GetPetitionsArray(csArray<psPetitionInfo> &petitions, Client* client, bool IsGMrequest)
 {
     // Try and grab the result set from the database
     // NOTE: As there are differences between the normal use and the gm use we manage them here
@@ -8728,7 +8728,7 @@ bool AdminManager::GetPetitionsArray(csArray<psPetitionInfo>& petitions, Client*
     return false;
 }
 
-void AdminManager::ListPetitions(MsgEntry* me, psPetitionRequestMessage& msg,Client* client)
+void AdminManager::ListPetitions(MsgEntry* me, psPetitionRequestMessage &msg,Client* client)
 {
     csArray<psPetitionInfo> petitions;
     // Try and grab the result set from the database
@@ -8747,7 +8747,7 @@ void AdminManager::ListPetitions(MsgEntry* me, psPetitionRequestMessage& msg,Cli
     }
 }
 
-void AdminManager::CancelPetition(MsgEntry* me, psPetitionRequestMessage& msg,Client* client)
+void AdminManager::CancelPetition(MsgEntry* me, psPetitionRequestMessage &msg,Client* client)
 {
     // Tell the database to change the status of this petition:
     if(!CancelPetition(client->GetPID(), msg.id))
@@ -8773,7 +8773,7 @@ void AdminManager::CancelPetition(MsgEntry* me, psPetitionRequestMessage& msg,Cl
     BroadcastDirtyPetitions(me->clientnum);
 }
 
-void AdminManager::ChangePetition(MsgEntry* me, psPetitionRequestMessage& msg, Client* client)
+void AdminManager::ChangePetition(MsgEntry* me, psPetitionRequestMessage &msg, Client* client)
 {
     // Tell the database to change the status of this petition:
     if(!ChangePetition(client->GetPID(), msg.id, msg.desc))
@@ -8787,7 +8787,7 @@ void AdminManager::ChangePetition(MsgEntry* me, psPetitionRequestMessage& msg, C
     ListPetitions(me, msg, client);
 }
 
-void AdminManager::GMListPetitions(MsgEntry* me, psPetitionRequestMessage& msg,Client* client)
+void AdminManager::GMListPetitions(MsgEntry* me, psPetitionRequestMessage &msg,Client* client)
 {
     // Check to see if this client has GM level access
     if(client->GetSecurityLevel() < GM_LEVEL_0)
@@ -8815,7 +8815,7 @@ void AdminManager::GMListPetitions(MsgEntry* me, psPetitionRequestMessage& msg,C
     }
 }
 
-void AdminManager::GMHandlePetition(MsgEntry* me, psPetitionRequestMessage& msg,Client* client)
+void AdminManager::GMHandlePetition(MsgEntry* me, psPetitionRequestMessage &msg,Client* client)
 {
     // Check to see if this client has GM level access
     if(client->GetSecurityLevel() < GM_LEVEL_0)
@@ -8890,7 +8890,7 @@ void AdminManager::GMHandlePetition(MsgEntry* me, psPetitionRequestMessage& msg,
     BroadcastDirtyPetitions(me->clientnum);
 }
 
-void AdminManager::SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg,Client* client)
+void AdminManager::SendGMPlayerList(MsgEntry* me, psGMGuiMessage &msg,Client* client)
 {
     if(client->GetSecurityLevel() < GM_LEVEL_1  &&
             client->GetSecurityLevel() > GM_LEVEL_9  && !client->IsSuperClient())
@@ -9146,7 +9146,7 @@ const char* AdminManager::GetLastSQLError()
     return db->GetLastError();
 }
 
-void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataDeleteChar* data = dynamic_cast<AdminCmdDataDeleteChar*>(cmddata);
     if(data->IsTargetType(ADMINCMD_TARGET_PLAYER))
@@ -9173,7 +9173,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
             return;
         }
 
-        iResultRow& row = result[0];
+        iResultRow &row = result[0];
         data->target = row["name"];
         unsigned int charType = row.GetUInt32("character_type");
         unsigned int masterID = row.GetUInt32("npc_master_id");
@@ -9211,7 +9211,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage& msg, AdminCm
     }
 }
 
-void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataChangeName* data = dynamic_cast<AdminCmdDataChangeName*>(cmddata);
     Client* target = NULL;
@@ -9281,7 +9281,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         }
         else
         {
-            iResultRow& row = result[0];
+            iResultRow &row = result[0];
             prevFirstName = row["name"];
             prevLastName = row["lastname"];
             pid = PID(row.GetUInt32("id"));
@@ -9419,7 +9419,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     {
         psUpdateObjectNameMessage newNameMsg(0, actorId, fullName);
 
-        csArray<PublishDestination>& clients = data->targetObject->GetActorPtr()->GetMulticastClients();
+        csArray<PublishDestination> &clients = data->targetObject->GetActorPtr()->GetMulticastClients();
         newNameMsg.Multicast(clients, 0, PROX_LIST_ANY_RANGE);
     }
 
@@ -9475,7 +9475,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
         {
             for(unsigned long j=0; j<result2.Count(); j++)
             {
-                iResultRow& row = result2[j];
+                iResultRow &row = result2[j];
                 buddyid = row.GetUInt32("character_id");
                 buddy = clients->FindPlayer(buddyid);
                 if(buddy && buddy->IsReady())
@@ -9490,7 +9490,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     }
 }
 
-void AdminManager::BanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::BanName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
     if(!data->target.Length())
@@ -9515,7 +9515,7 @@ void AdminManager::BanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* c
     psserver->SendSystemInfo(me->clientnum, "You banned the name '%s'", data->target.GetDataSafe());
 }
 
-void AdminManager::UnBanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::UnBanName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
@@ -9529,7 +9529,7 @@ void AdminManager::UnBanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData*
     psserver->SendSystemInfo(me->clientnum,"You unbanned the name '%s'",data->target.GetDataSafe());
 }
 
-void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* client)
+void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
     AdminCmdDataBan* data = dynamic_cast<AdminCmdDataBan*>(cmddata);
     const time_t year = 31536000UL; //one year should be enough
@@ -9637,7 +9637,7 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData*
     psserver->SendSystemInfo(me->clientnum,notify);
 }
 
-void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* gm)
+void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* gm)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
     if(data->IsTargetTypeUnknown())
@@ -9697,7 +9697,7 @@ void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
         psserver->SendSystemError(me->clientnum, "%s is not banned", user.GetData());
 }
 
-void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* gm)
+void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* gm)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
@@ -9737,7 +9737,7 @@ void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     psserver->SendSystemResult(me->clientnum, "%s has been banned from advising.", data->target.GetData());
 }
 
-void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata,Client* gm)
+void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* gm)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
@@ -9777,7 +9777,7 @@ void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     psserver->SendSystemResult(me->clientnum, "%s has been unbanned from advising.", data->target.GetData());
 }
 
-void AdminManager::SendSpawnTypes(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data,Client* client)
+void AdminManager::SendSpawnTypes(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data,Client* client)
 {
     csArray<csString> itemCat;
     unsigned int size = 0;
@@ -9874,7 +9874,7 @@ void AdminManager::SpawnItemInv(MsgEntry* me, Client* client)
     SpawnItemInv(me, msg, client);
 }
 
-void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem& msg, Client* client)
+void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem &msg, Client* client)
 {
     if(!psserver->CheckAccess(client, "/item"))
     {
@@ -10245,7 +10245,7 @@ void AdminManager::AdjustFactionStandingOfTarget(int gmClientnum, Client* target
                                   target->GetName(), faction->name.GetData());
 }
 
-void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
+void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage &msg,
                                 AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataItemTarget* data = dynamic_cast<AdminCmdDataItemTarget*>(cmddata);
@@ -10420,7 +10420,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage& msg,
     }
 }
 
-void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata)
+void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata)
 {
     AdminCmdDataCheckItem* data = dynamic_cast<AdminCmdDataCheckItem*>(cmddata);
     Client* targetClient = data->targetClient;
@@ -10489,7 +10489,7 @@ void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData*
     }
 }
 
-void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
@@ -10512,7 +10512,7 @@ void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     psserver->SendSystemInfo(me->clientnum, "You froze '%s'.",(const char*)data->target);
 }
 
-void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
     if(!data->targetClient)
@@ -10534,7 +10534,7 @@ void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
     psserver->SendSystemInfo(me->clientnum, "You released '%s'.",(const char*)data->target);
 }
 
-void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataSetSkill* data = dynamic_cast<AdminCmdDataSetSkill*>(cmddata);
 
@@ -10723,7 +10723,7 @@ void AdminManager::UpdateRespawn(AdminCmdData* cmddata, Client* client)
 }
 
 
-void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
     if(!data->targetActor)
@@ -10778,7 +10778,7 @@ void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* c
         psserver->SendSystemInfo(me->clientnum,"(none)");
 }
 
-void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataChangeGuildName* data = dynamic_cast<AdminCmdDataChangeGuildName*>(cmddata);
     psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(data->guildName);
@@ -10834,7 +10834,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDat
     psserver->GetEventManager()->Broadcast(newNameMsg.msg,NetBase::BC_EVERYONE);
 }
 
-void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataChangeGuildLeader* data = dynamic_cast<AdminCmdDataChangeGuildLeader*>(cmddata);
     psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(data->guildName);
@@ -10884,7 +10884,7 @@ void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage& msg, Admin
         psserver->GetChatManager()->SendGuild("server", 0, guild, guildmsg);
 }
 
-void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataSectorTarget* data = dynamic_cast<AdminCmdDataSectorTarget*>(cmddata);
 
@@ -10903,7 +10903,7 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* c
 
 }
 
-void AdminManager::Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Fog(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataFog* data = dynamic_cast<AdminCmdDataFog*>(cmddata);
 
@@ -10934,7 +10934,7 @@ void AdminManager::Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmdda
 
 }
 
-void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataWeather* data = dynamic_cast<AdminCmdDataWeather*>(cmddata);
 
@@ -10969,7 +10969,7 @@ void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* c
     }
 }
 
-void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataWeatherEffect* data = dynamic_cast<AdminCmdDataWeatherEffect*>(cmddata);
 
@@ -11007,7 +11007,7 @@ void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmdd
     }
 }
 
-void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataWeatherEffect* data = dynamic_cast<AdminCmdDataWeatherEffect*>(cmddata);
 
@@ -11045,7 +11045,7 @@ void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmdd
 }
 
 
-void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataModify* data = dynamic_cast<AdminCmdDataModify*>(cmddata);
 
@@ -11236,7 +11236,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 }
 
 #define MORPH_FAKE_ACTIVESPELL ((ActiveSpell*) 0x447)
-void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataMorph* data = dynamic_cast<AdminCmdDataMorph*>(cmddata);
     if(data->subCommand == "list")
@@ -11300,7 +11300,7 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmd
     }
 }
 
-void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataDeputize* data = dynamic_cast<AdminCmdDataDeputize*>(cmddata);
 
@@ -11420,7 +11420,7 @@ int AdminManager::GetTrueSecurityLevel(AccountID accountID)
         return result[0].GetUInt32("security_level");
 }
 
-void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataGameMasterEvent* data = dynamic_cast<AdminCmdDataGameMasterEvent*>(cmddata);
     bool gmeventResult;
@@ -11503,7 +11503,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     }
 }
 
-void AdminManager::HandleBadText(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleBadText(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataBadText* data = dynamic_cast<AdminCmdDataBadText*>(cmddata);
 
@@ -11533,7 +11533,7 @@ void AdminManager::HandleBadText(psAdminCmdMessage& msg, AdminCmdData* cmddata, 
     psserver->SendSystemInfo(client->GetClientNum(), "--------------------------------------");
 }
 
-void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataQuest* data = dynamic_cast<AdminCmdDataQuest*>(cmddata);
     Client* subject = data->targetClient;
@@ -11689,7 +11689,7 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, Admi
         {
 
 
-            csArray<QuestAssignment*>& quests = target->GetCharacterData()->GetQuestMgr().GetAssignedQuests();
+            csArray<QuestAssignment*> &quests = target->GetCharacterData()->GetQuestMgr().GetAssignedQuests();
             for(size_t i = 0; i < quests.GetSize(); i++)
             {
                 QuestAssignment* currassignment = quests.Get(i);
@@ -11767,7 +11767,7 @@ void AdminManager::ItemStackable(MsgEntry* me, AdminCmdData* cmddata, Client* cl
     }
 }
 
-void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleSetQuality(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataSetQuality* data = dynamic_cast<AdminCmdDataSetQuality*>(cmddata);
     if(!data->targetObject)
@@ -11794,7 +11794,7 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData* cmddat
     psserver->SendSystemOK(client->GetClientNum(), "Quality changed successfully to: %f/%f", item->GetItemQuality(), item->GetMaxItemQuality());
 }
 
-void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleSetTrait(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataSetTrait* data = dynamic_cast<AdminCmdDataSetTrait*>(cmddata);
 
@@ -11886,7 +11886,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData* cmddata,
     psserver->SendSystemError(client->GetClientNum(), "Trait not found");
 }
 
-void AdminManager::HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleSetItemName(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataSetItem* data = dynamic_cast<AdminCmdDataSetItem*>(cmddata);
 
@@ -11912,7 +11912,7 @@ void AdminManager::HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData* cmdda
     psserver->SendSystemOK(client->GetClientNum(), "Name changed successfully");
 }
 
-void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleReload(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataReload* data = dynamic_cast<AdminCmdDataReload*>(cmddata);
 
@@ -11976,7 +11976,7 @@ void AdminManager::HandleReload(psAdminCmdMessage& msg, AdminCmdData* cmddata, C
     }
 }
 
-void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleListWarnings(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataListWarnings* data = dynamic_cast<AdminCmdDataListWarnings*>(cmddata);
     AccountID accountID;
@@ -12004,7 +12004,7 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData* cmdd
         psserver->SendSystemError(client->GetClientNum(), "Target wasn't found.");
 }
 
-void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::CheckTarget(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
 
@@ -12018,7 +12018,7 @@ void AdminManager::CheckTarget(psAdminCmdMessage& msg, AdminCmdData* cmddata, Cl
                              data->targetID.Show().GetData(), aid.Show().GetData(), data->IsOnline() ? "yes" : "no");
 }
 
-void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataDisableQuest* data = dynamic_cast<AdminCmdDataDisableQuest*>(cmddata);
     psQuest* quest = psserver->GetCacheManager()->GetQuestByName(data->questName);  //get the quest associated by name
@@ -12060,7 +12060,7 @@ void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdDa
     psserver->SendSystemInfo(client->GetClientNum(),"The quest %s was %s successfully.", quest->GetName(), quest->Active() ? "enabled" : "disabled");
 }
 
-void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataSetKillExp* data = dynamic_cast<AdminCmdDataSetKillExp*>(cmddata);
     gemActor* target = data->targetActor;
@@ -12099,7 +12099,7 @@ void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData
 }
 
 //This is used as a wrapper for the command version of adjustfactionstanding.
-void AdminManager::AssignFaction(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::AssignFaction(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataAssignFaction* data = dynamic_cast<AdminCmdDataAssignFaction*>(cmddata);
     psRewardDataFaction rewardData(data->factionName, data->factionPoints);
@@ -12107,7 +12107,7 @@ void AdminManager::AssignFaction(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdD
     AwardToTarget(me->clientnum, data->targetClient, &rewardData);
 }
 
-void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataServerQuit* data = dynamic_cast<AdminCmdDataServerQuit*>(cmddata);
     if(data->time < -1)
@@ -12125,7 +12125,7 @@ void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminC
     psserver->QuitServer(data->time, client);
 }
 
-void AdminManager::HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     //AdminCmdDataNPCClientQuit* data = dynamic_cast<AdminCmdDataNPCClientQuit*>(cmddata);
 
@@ -12135,7 +12135,7 @@ void AdminManager::HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage& msg, Adm
 }
 
 
-void AdminManager::HandleVersion(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleVersion(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     //    AdminCmdDataSimple* data = dynamic_cast<AdminCmdDataSimple*>(cmddata);
 

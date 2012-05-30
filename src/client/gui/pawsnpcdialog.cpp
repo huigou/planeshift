@@ -506,7 +506,7 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
     }
 }
 
-void pawsNpcDialogWindow::NpcSays(csString& inText,GEMClientActor* actor)
+void pawsNpcDialogWindow::NpcSays(csString &inText,GEMClientActor* actor)
 {
     //this is used only when using the chat bubbles interface
     if(!useBubbles)
@@ -570,7 +570,7 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
     // this part is used only with bubbles npc dialogue
     for(size_t i = 0 ; i < questInfo.GetSize(); i++)
     {
-        QuestInfo& qi = questInfo[i];
+        QuestInfo &qi = questInfo[i];
         str = qi.text;
         size_t where = str.Find("?=");
         if(where != SIZET_NOT_FOUND)
