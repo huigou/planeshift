@@ -2617,7 +2617,7 @@ int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psTradePr
 void WorkManager::ApplyProcessScript(psItem* oldItem, psItem* newItem, gemActor* worker, psTradeProcesses* process, psTradeTransformations* trans)
 {
     //Check if the process is valid (not null) and that the scriptname contains something and
-    //it's not an empty string
+    //it's not an empty string. Default in the db is "Apply Post Trade Process"
     if(process && process->GetScriptName().Length())
     {
         //Checks if there is need to load the script
