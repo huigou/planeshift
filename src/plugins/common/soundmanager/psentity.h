@@ -180,6 +180,14 @@ public:
     bool CanPlay(int time, float range) const;
 
     /**
+     * Gets the state of the entity
+     */
+    uint GetState()
+    {
+        return state;
+    };
+
+    /**
      * Set the new state for the entity. If the given state is undefined for
      * this entity the change of state is not forced, the state does not change.
      * On the other hand if the change is forced the entity's state becomes

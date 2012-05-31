@@ -231,26 +231,27 @@ bool psEntity::CanPlay(int time, float range) const
     entityState = states.Get(state, 0);
     if(entityState == 0)
     {
-        Debug2(LOG_SOUND, 0, "psEntity::CanPlay %s undefined state.", entityName.GetData());
+        Debug3(LOG_SOUND, 0, "psEntity::CanPlay %s meshid: %u undefined state.", entityName.GetData(), GetMeshID());
         return false;
     }
 
     // checking time, range and delay
     if(range < minRange || range > maxRange)
     {
-        Debug5(LOG_SOUND, 0, "psEntity::CanPlay %s range %f %f %f", entityName.GetData(),minRange, range, maxRange);
+        Debug6(LOG_SOUND, 0, "psEntity::CanPlay %s meshid: %u range %f %f %f", entityName.GetData(),GetMeshID(), minRange, range, maxRange);
         return false;
     }
     else if(time < entityState->timeOfDayStart || entityState->timeOfDayEnd < time)
     {
-        Debug5(LOG_SOUND, 0, "psEntity::CanPlay %s time of day %d %d %d", entityName.GetData(),entityState->timeOfDayStart,time,entityState->timeOfDayEnd);
+        Debug6(LOG_SOUND, 0, "psEntity::CanPlay %s meshid: %u time of day %d %d %d", entityName.GetData(),GetMeshID(), entityState->timeOfDayStart,time,entityState->timeOfDayEnd);
         return false;
     }
     else if(when <= 0)
     {
-        Debug3(LOG_SOUND, 0, "psEntity::CanPlay TRUE %s when <0 : %d", entityName.GetData(),when);
+        Debug4(LOG_SOUND, 0, "psEntity::CanPlay TRUE %s meshid: %u when <0 : %d", entityName.GetData(),GetMeshID(), when);
         return true;
     }
+    Debug4(LOG_SOUND, 0, "psEntity::CanPlay %s meshid: %u when : %d", entityName.GetData(),GetMeshID(), when);
 
     return false;
 }
@@ -264,13 +265,13 @@ void psEntity::SetState(uint newState, bool forceChange)
 {
     EntityState* entityState;
 
-    Debug3(LOG_SOUND, 0, "psEntity::SetState entity: %s state: %u",entityName.GetData(),newState);
-
     // check if it's already in this state or if it's defined
     if(state == newState)
     {
         return;
     }
+
+    Debug3(LOG_SOUND, 0, "psEntity::SetState entity: %s state: %u",entityName.GetData(),newState);
 
     // setting state
     entityState = states.Get(newState, 0);
@@ -309,7 +310,7 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
     {
         int resourceNumber = SoundManager::randomGen.Get() * entityState->resources.GetSize();
 
-        Debug3(LOG_SOUND, 0, "psEntity::Play() PLAYS! %s",entityName.GetData(),entityState->resources[resourceNumber]);
+        Debug4(LOG_SOUND, 0, "psEntity::Play() %s PLAYS %s meshid: %u",entityName.GetData(),entityState->resources[resourceNumber],GetMeshID());
 
         if(SoundSystemManager::GetSingleton().Play3DSound(entityState->resources[resourceNumber], DONT_LOOP, 0, 0,
                 entityState->volume, ctrl, entityPosition, 0, minRange, maxRange,
