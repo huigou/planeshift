@@ -85,7 +85,8 @@ public:
     bool ReloadSectors();
 
     /**
-     * Update the active sector.
+     * Update the active sector. This is called every x milliseconds by SoundManager::Update()
+     * It updates Emitters and Entities
      */
     void Update();
 
@@ -93,7 +94,10 @@ public:
      * Checks if the background music loop is allowed.
      * @return true if the background music loop is allowed, false otherwise.
      */
-    bool IsLoopBGMOn() const { return loopBGM; }
+    bool IsLoopBGMOn() const
+    {
+        return loopBGM;
+    }
 
     /**
      * Toggles the background music.
@@ -105,7 +109,10 @@ public:
      * Checks if the combat music is activated.
      * @return true if the combat music is activated, false otherwise.
      */
-    bool IsCombatMusicOn() const { return isCombatMusicOn; }
+    bool IsCombatMusicOn() const
+    {
+        return isCombatMusicOn;
+    }
 
     /**
      * Toggles the combat music.
@@ -117,7 +124,10 @@ public:
      * Gets the common sector.
      * @return the common sector.
      */
-    psSoundSector* GetCommonSector() { return commonSector; }
+    psSoundSector* GetCommonSector()
+    {
+        return commonSector;
+    }
 
     /**
      * Sets the current active sector to the one with the given name and deactivate
@@ -131,7 +141,10 @@ public:
      * Gets the current combat stance.
      * @return the current combat stance.
      */
-    int GetCombatStance() const { return combatStance; }
+    int GetCombatStance() const
+    {
+        return combatStance;
+    }
 
     /**
      * Sets the current combat stance.
@@ -143,7 +156,10 @@ public:
      * Gets the time of the day.
      * @return the time of the day.
      */
-    int GetTimeOfDay() const { return timeOfDay; }
+    int GetTimeOfDay() const
+    {
+        return timeOfDay;
+    }
 
     /**
      * Sets the current time of the day.
@@ -215,13 +231,13 @@ private:
     psSoundSector* commonSector;       ///< sector that keeps features common to all sectors.
     csArray<psSoundSector*> sectors;   ///< array which contains all sectors.
 
-   /**
-    * Load all sectors from the XML definition; areasPath and commonName must
-    * have been initialized before calling this method. If a sector is defined
-    * twice, the new definition is "appended" to the old one so it is possible
-    * to split a sector definition in more than a file.
-    * @return true if the loading was successful, false otherwise.
-    */
+    /**
+     * Load all sectors from the XML definition; areasPath and commonName must
+     * have been initialized before calling this method. If a sector is defined
+     * twice, the new definition is "appended" to the old one so it is possible
+     * to split a sector definition in more than a file.
+     * @return true if the loading was successful, false otherwise.
+     */
     bool LoadSectors();
 
     /**

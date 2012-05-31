@@ -324,13 +324,13 @@ class MsgHandler;
 class psMessageCracker
 {
 public:
-    static MsgHandler *msghandler;
+    static MsgHandler* msghandler;
 
     csRef<MsgEntry> msg;
     bool valid;
 
     psMessageCracker()
-    : msg(NULL),valid(true)
+        : msg(NULL),valid(true)
     {}
 
     virtual ~psMessageCracker() {}
@@ -343,7 +343,7 @@ public:
     /**
      * @brief Multicasts the message to all current connections.
      */
-    void Multicast(csArray<PublishDestination>& multi, int except, float range);
+    void Multicast(csArray<PublishDestination> &multi, int except, float range);
 
     /**
      * @brief Publishes the message to the local program.
@@ -446,9 +446,9 @@ int psfMsgType(const char* msgTypeName);
 class psMarriageMsgPropose : public psMessageCracker
 {
 public:
-    psMarriageMsgPropose( const char* charName, const char* proposeMessage,
-        uint32_t clientNum = 0 );
-    psMarriageMsgPropose( MsgEntry* message );
+    psMarriageMsgPropose(const char* charName, const char* proposeMessage,
+                         uint32_t clientNum = 0);
+    psMarriageMsgPropose(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -468,8 +468,8 @@ public:
 class psMarriageMsgDivorce : public psMessageCracker
 {
 public:
-    psMarriageMsgDivorce( const char* divorceMessage, uint32_t clientNum = 0 );
-    psMarriageMsgDivorce( MsgEntry* message );
+    psMarriageMsgDivorce(const char* divorceMessage, uint32_t clientNum = 0);
+    psMarriageMsgDivorce(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -488,8 +488,8 @@ public:
 class psMarriageMsgDivorceConfirm : public psMessageCracker
 {
 public:
-    psMarriageMsgDivorceConfirm( uint32_t clientNum = 0 );
-    psMarriageMsgDivorceConfirm( MsgEntry* message );
+    psMarriageMsgDivorceConfirm(uint32_t clientNum = 0);
+    psMarriageMsgDivorceConfirm(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -510,8 +510,8 @@ public:
 class psCharDeleteMessage : public psMessageCracker
 {
 public:
-    psCharDeleteMessage( const char* charNameToDel, uint32_t clientNum );
-    psCharDeleteMessage( MsgEntry* message );
+    psCharDeleteMessage(const char* charNameToDel, uint32_t clientNum);
+    psCharDeleteMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -544,7 +544,7 @@ public:
      * to provide more easily usable fields.  It is intended for use on
      * incoming messages.
      */
-    psPreAuthenticationMessage(MsgEntry *message);
+    psPreAuthenticationMessage(MsgEntry* message);
 
 
     PSF_DECLARE_MSG_FACTORY();
@@ -577,15 +577,15 @@ public:
      * password to send out. This would be used for outgoing, new message
      * creation when a user wants to log in.
      */
-    psAuthenticationMessage(uint32_t clientnum,const char *userid,
-        const char *password, const char *os, const char *gfxcard, const char *gfxversion, const char *sPassword256 = "", uint32_t version=PS_NETVERSION);
+    psAuthenticationMessage(uint32_t clientnum,const char* userid,
+                            const char* password, const char* os, const char* gfxcard, const char* gfxversion, const char* sPassword256 = "", uint32_t version=PS_NETVERSION);
 
     /**
      * This constructor receives a PS Message struct and cracks it apart
      * to provide more easily usable fields.  It is intended for use on
      * incoming messages.
      */
-    psAuthenticationMessage(MsgEntry *message);
+    psAuthenticationMessage(MsgEntry* message);
 
 
     PSF_DECLARE_MSG_FACTORY();
@@ -604,8 +604,8 @@ public:
 class psCharacterPickerMessage : public psMessageCracker
 {
 public:
-    psCharacterPickerMessage( const char* character );
-    psCharacterPickerMessage( MsgEntry* message );
+    psCharacterPickerMessage(const char* character);
+    psCharacterPickerMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -625,7 +625,7 @@ class psCharacterApprovedMessage : public psMessageCracker
 {
 public:
     psCharacterApprovedMessage(uint32_t clientnum);
-    psCharacterApprovedMessage( MsgEntry* message );
+    psCharacterApprovedMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -650,7 +650,7 @@ public:
     psPreAuthApprovedMessage(uint32_t clientnum);
 
     /** Crack incoming psMessageBytes struct for inbound use */
-    psPreAuthApprovedMessage(MsgEntry *message);
+    psPreAuthApprovedMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -689,15 +689,15 @@ public:
     psAuthApprovedMessage(uint32_t clientnum, PID playerID, uint8_t numCharacters);
 
     /** Crack incoming psMessageBytes struct for inbound use */
-    psAuthApprovedMessage(MsgEntry *message);
+    psAuthApprovedMessage(MsgEntry* message);
 
     /// Add another character definition to the buffer
-    void AddCharacter(const char *fullname, const char *race,
-                      const char *mesh, const char *traits, const char *equipment);
+    void AddCharacter(const char* fullname, const char* race,
+                      const char* mesh, const char* traits, const char* equipment);
 
     /// Get the next character definition from the MsgEntry buffer
-    void GetCharacter(MsgEntry *message,csString& fullname, csString& race,
-                      csString& mesh, csString& traits,csString& equipment);
+    void GetCharacter(MsgEntry* message,csString &fullname, csString &race,
+                      csString &mesh, csString &traits,csString &equipment);
 
     /// Build the message
     void ConstructMsg();
@@ -727,10 +727,10 @@ public:
     csString msgReason;
 
     /// Create psMessageBytes struct for outbound use
-    psAuthRejectedMessage(uint32_t clientToken,const char *reason);
+    psAuthRejectedMessage(uint32_t clientToken,const char* reason);
 
     /// Crack incoming psMessageBytes struct for inbound use
-    psAuthRejectedMessage(MsgEntry *message);
+    psAuthRejectedMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -744,7 +744,8 @@ public:
 
 };
 
-enum {
+enum
+{
     CHAT_SYSTEM,
     CHAT_COMBAT,
     CHAT_SAY,
@@ -809,14 +810,14 @@ public:
     /** This function creates a PS Message struct given a chat text to send
      * out. This would be used for outgoing, new message creation
      */
-    psChatMessage(uint32_t cnum, EID actorid, const char *person, const char * other, const char *chatMessage,
-          uint8_t type, bool translate, uint16_t channelID = 0);
+    psChatMessage(uint32_t cnum, EID actorid, const char* person, const char* other, const char* chatMessage,
+                  uint8_t type, bool translate, uint16_t channelID = 0);
 
     /** This constructor receives a PS Message struct and cracks it apart
      * to provide more easily usable fields.  It is intended for use on
      * incoming messages.
      */
-    psChatMessage(MsgEntry *message);
+    psChatMessage(MsgEntry* message);
 
 
     PSF_DECLARE_MSG_FACTORY();
@@ -830,7 +831,7 @@ public:
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
     /** Translate type code into words.  Could be multilingual in future. */
-    const char *GetTypeText();
+    const char* GetTypeText();
 };
 
 /**
@@ -841,7 +842,7 @@ class psChannelJoinMessage : public psMessageCracker
 public:
     csString channel;
     psChannelJoinMessage(const char* name);
-    psChannelJoinMessage(MsgEntry *message);
+    psChannelJoinMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -863,7 +864,7 @@ public:
     uint16_t id;
     csString channel;
     psChannelJoinedMessage(uint32_t clientnum, const char* name, uint16_t id);
-    psChannelJoinedMessage(MsgEntry *message);
+    psChannelJoinedMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -884,7 +885,7 @@ class psChannelLeaveMessage : public psMessageCracker
 public:
     uint16_t chanID;
     psChannelLeaveMessage(uint16_t id);
-    psChannelLeaveMessage(MsgEntry *message);
+    psChannelLeaveMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -907,14 +908,14 @@ public:
 class psSystemMessage : public psMessageCracker
 {
 protected:
-    psSystemMessage(){}
+    psSystemMessage() {}
 public:
     csString msgline;
     uint32_t type;
 
-    psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char *fmt, ... );
-    psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char *fmt, va_list args );
-    psSystemMessage(MsgEntry *message);
+    psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char* fmt, ...);
+    psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char* fmt, va_list args);
+    psSystemMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -935,7 +936,7 @@ class psSystemMessageSafe : public psSystemMessage
 {
 public:
     psSystemMessageSafe(uint32_t clientnum, uint32_t msgtype,
-            const char *text );
+                        const char* text);
 };
 
 /**
@@ -956,7 +957,8 @@ struct psPetitionInfo
     bool online;            ///< is the player online?
 };
 
-enum {
+enum
+{
     PETITION_LIST = 0,      ///< Server is returning a list of petitions
     PETITION_CANCEL = 1,    ///< Server sends back result of cancel petition
     PETITION_CLOSE = 2,     ///< Server sends back result of close petition
@@ -980,10 +982,13 @@ public:
     int msgType;
     bool isGM;
 
-    psPetitionMessage() { msgType = PETITION_LIST; }
-    psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo> *petitionArray, const char* errMsg,
-                bool succeed = true, int type = PETITION_LIST, bool gm = false);
-    psPetitionMessage(MsgEntry *message);
+    psPetitionMessage()
+    {
+        msgType = PETITION_LIST;
+    }
+    psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>* petitionArray, const char* errMsg,
+                      bool succeed = true, int type = PETITION_LIST, bool gm = false);
+    psPetitionMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1019,7 +1024,7 @@ public:
     int id;
 
     psPetitionRequestMessage(bool gm, const char* requestCmd, int petitionID = -1, const char* petDesc = "");
-    psPetitionRequestMessage(MsgEntry *message);
+    psPetitionRequestMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1041,26 +1046,27 @@ public:
 
     struct PlayerInfo
     {
-      csString name;
-      csString lastName;
-      int gender;
-      csString guild;
-      csString sector;
+        csString name;
+        csString lastName;
+        int gender;
+        csString guild;
+        csString sector;
     };
 
     int gmSettings;
     csArray<PlayerInfo> players;
     int type;
 
-    enum {
+    enum
+    {
         TYPE_QUERYPLAYERLIST,
         TYPE_PLAYERLIST,
         TYPE_GETGMSETTINGS
     };
 
     psGMGuiMessage(uint32_t clientnum, int gmSets);
-    psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerArray, int type);
-    psGMGuiMessage(MsgEntry *message);
+    psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo>* playerArray, int type);
+    psGMGuiMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1085,8 +1091,8 @@ public:
     int level;
 
 
-    psGuildCmdMessage(const char *cmd);
-    psGuildCmdMessage(MsgEntry *message);
+    psGuildCmdMessage(const char* cmd);
+    psGuildCmdMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1111,10 +1117,10 @@ class psGUIGuildMessage : public psMessageCracker
 {
 public:
     enum Command { SUBSCRIBE_GUILD_DATA,       ///< Client asks server to send guild data (GUILD_DATA,LEVELS_DATA,MEMBERS_DATA msgs)
-                                               ///<     and also to send it when it changes
+                   ///<     and also to send it when it changes
                    UNSUBSCRIBE_GUILD_DATA,     ///< Client asks server not to send guild data updates any more
                    SET_ONLINE,                 ///< Cliens asks server to change 'onlineOnly' attribute of its subscription
-                                               ///<     server will reply with new MEMBERS_DATA message
+                   ///<     server will reply with new MEMBERS_DATA message
 
                    GUILD_DATA,                 ///< Server sends client basic data about guild
                    LEVEL_DATA,                 ///< Server sends client data about guild levels
@@ -1124,7 +1130,7 @@ public:
                    CLOSE_WINDOW,               ///< server tells client to close GuildWindow
 
                    NOT_IN_GUILD,               ///< Server tells client that player is not in a guild
-                                               ///<        so the guild data cannot be sent
+                   ///<        so the guild data cannot be sent
 
                    SET_LEVEL_RIGHT,            ///< Clients changes right for guild level
 
@@ -1135,7 +1141,7 @@ public:
 
                    SET_GUILD_NOTIFICATION,      ///< Clients asks server to change the guild member login/logout notification setting
                    SET_ALLIANCE_NOTIFICATION      ///< Clients asks server to change the alliance member login/logout notification setting
-                };
+                 };
 
     /** @brief Constuct a new equipment message to go on the network.
      *
@@ -1147,15 +1153,15 @@ public:
      * @param commandData XML string with command data
      *
      */
-    psGUIGuildMessage( uint32_t command,
-                       csString commandData);
+    psGUIGuildMessage(uint32_t command,
+                      csString commandData);
 
-    psGUIGuildMessage( uint32_t clientNum,
-                       uint32_t command,
-                       csString commandData);
+    psGUIGuildMessage(uint32_t clientNum,
+                      uint32_t command,
+                      csString commandData);
 
     /// Crack this message off the network.
-    psGUIGuildMessage( MsgEntry* message );
+    psGUIGuildMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1181,9 +1187,9 @@ class psGroupCmdMessage : public psMessageCracker
 public:
     csString command,player,accept;
 
-    psGroupCmdMessage(const char *cmd);
-    psGroupCmdMessage(uint32_t clientnum,const char *cmd);
-    psGroupCmdMessage(MsgEntry *message);
+    psGroupCmdMessage(const char* cmd);
+    psGroupCmdMessage(uint32_t clientnum,const char* cmd);
+    psGroupCmdMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1210,8 +1216,8 @@ public:
     int level;
     csString stance;
 
-    psUserCmdMessage(const char *cmd);
-    psUserCmdMessage(MsgEntry *message);
+    psUserCmdMessage(const char* cmd);
+    psUserCmdMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1239,8 +1245,8 @@ public:
 
     csString repairSlotName;        ///< The name of the slot to repair.
 
-    psWorkCmdMessage(const char *cmd);
-    psWorkCmdMessage(MsgEntry *message);
+    psWorkCmdMessage(const char* cmd);
+    psWorkCmdMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1264,10 +1270,10 @@ class psAdminCmdMessage : public psMessageCracker
 public:
     csString cmd;
 
-    psAdminCmdMessage(const char *cmd);
-    psAdminCmdMessage(const char *cmd, uint32_t client = 0);
+    psAdminCmdMessage(const char* cmd);
+    psAdminCmdMessage(const char* cmd, uint32_t client = 0);
 
-    psAdminCmdMessage(MsgEntry *message);
+    psAdminCmdMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1291,10 +1297,10 @@ class psGenericCmdMessage : public psMessageCracker
 public:
     csString cmd;
 
-    psGenericCmdMessage(const char *cmd);
-    psGenericCmdMessage(const char *cmd, uint32_t client = 0);
+    psGenericCmdMessage(const char* cmd);
+    psGenericCmdMessage(const char* cmd, uint32_t client = 0);
 
-    psGenericCmdMessage(MsgEntry *message);
+    psGenericCmdMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1314,8 +1320,8 @@ public:
     EID actor;
     csString msgReason;
 
-    psDisconnectMessage(uint32_t clientnum, EID actorid, const char *reason);
-    psDisconnectMessage(MsgEntry *message);
+    psDisconnectMessage(uint32_t clientnum, EID actorid, const char* reason);
+    psDisconnectMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1337,8 +1343,8 @@ public:
     csString action;
     csString dfltBehaviors;
 
-    psUserActionMessage(uint32_t clientnum, EID target, const char *action, const char *dfltBehaviors="");
-    psUserActionMessage(MsgEntry *message);
+    psUserActionMessage(uint32_t clientnum, EID target, const char* action, const char* dfltBehaviors="");
+    psUserActionMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1436,10 +1442,10 @@ public:
     csStringFast<1024> actionXML;
 
     // ctor
-    psMapActionMessage( uint32_t clientnum, uint32_t cmd, const char *xml );
+    psMapActionMessage(uint32_t clientnum, uint32_t cmd, const char* xml);
 
     // cracker
-    psMapActionMessage( MsgEntry *message );
+    psMapActionMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1483,7 +1489,9 @@ public:
         EXHAUSTED,
         DEFEATED,
         STATUE,
-        PLAY
+        PLAY,
+        WALK,
+        RUN
     };
 
 public:
@@ -1553,7 +1561,7 @@ public:
     };
 
     psWeatherMessage(uint32_t client, psWeatherMessage::NetWeatherInfo info , uint clientnum = 0);
-    psWeatherMessage(uint32_t client, int minute, int hour, int day, int month, int year );
+    psWeatherMessage(uint32_t client, int minute, int hour, int day, int month, int year);
     psWeatherMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1633,20 +1641,20 @@ public:
      * @param maxWeight The max weight the player can carry.
      * @param cache_version Inventory cache version we're gonna build in this message.
      */
-    psGUIInventoryMessage( uint32_t clientnum,
-                           uint8_t command,
-                           uint32_t totalItems,
-                           uint32_t totalEmptiedSlots,
-                           float maxWeight,
-                           uint32_t cache_version,
-                           size_t msgsize);
+    psGUIInventoryMessage(uint32_t clientnum,
+                          uint8_t command,
+                          uint32_t totalItems,
+                          uint32_t totalEmptiedSlots,
+                          float maxWeight,
+                          uint32_t cache_version,
+                          size_t msgsize);
 
 
     /** Crack open the message.
      * This is a switch statement that fills in particular data members
      * depending on the command that is given.
      */
-    psGUIInventoryMessage(MsgEntry *message, NetBase::AccessPointers* accessPointers);
+    psGUIInventoryMessage(MsgEntry* message, NetBase::AccessPointers* accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1660,23 +1668,23 @@ public:
 
 
     /// Add an item to the output message buffer
-    void AddItem(   const char* name,
-                    const char* meshName,
-                    const char* materialName,
-                    int containerID,
-                    int slot,
-                    int stackcount,
-                    float weight,
-                    float size,
-                    const char* icon,
-                    int purifyStatus,
-                    csStringSet* msgstrings );
+    void AddItem(const char* name,
+                 const char* meshName,
+                 const char* materialName,
+                 int containerID,
+                 int slot,
+                 int stackcount,
+                 float weight,
+                 float size,
+                 const char* icon,
+                 int purifyStatus,
+                 csStringSet* msgstrings);
 
     /// Add a newly emptied slot to output message buffer.
-    void AddEmptySlot( int containerID, int slotID );
+    void AddEmptySlot(int containerID, int slotID);
 
     /// Add money to the output message buffer
-    void AddMoney( const psMoney & money);
+    void AddMoney(const psMoney &money);
 
     // Used in a move message.
 
@@ -1710,7 +1718,7 @@ public:
 class psNewSectorMessage : public psMessageCracker
 {
 public:
-    psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos);
+    psNewSectorMessage(const csString &oldSector, const csString &newSector, csVector3 pos);
     psNewSectorMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1777,7 +1785,7 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-    void Populate(EID entity, csString & lootstr, int cnum);
+    void Populate(EID entity, csString &lootstr, int cnum);
 
     EID entity_id;
     csString lootxml;
@@ -1802,7 +1810,7 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-    void Populate(csString& queststr, int cnum);
+    void Populate(csString &queststr, int cnum);
 
     csString questxml;
 };
@@ -1819,7 +1827,7 @@ public:
         CMD_INFO,
         CMD_DISCARD
     };
-    psQuestInfoMessage(int cnum, int cmd, int id, const char *name,const char *info);
+    psQuestInfoMessage(int cnum, int cmd, int id, const char* name,const char* info);
     psQuestInfoMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1842,7 +1850,7 @@ public:
 class psOverrideActionMessage : public psMessageCracker
 {
 public:
-    psOverrideActionMessage(int client, EID entity, const char *action, int duration = 0);
+    psOverrideActionMessage(int client, EID entity, const char* action, int duration = 0);
     psOverrideActionMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1893,19 +1901,19 @@ public:
      *
      * If the type is DEEQUIP the meshName is ignored and sent as ""
      */
-    psEquipmentMessage( uint32_t clientNum,
-                        EID actorid,
-                        uint8_t type,
-                        int slot,
-                        csString& mesh,
-                        csString& part,
-                        csString& texture,
-                        csString& partMesh,
-                        csString& removedMesh);
+    psEquipmentMessage(uint32_t clientNum,
+                       EID actorid,
+                       uint8_t type,
+                       int slot,
+                       csString &mesh,
+                       csString &part,
+                       csString &texture,
+                       csString &partMesh,
+                       csString &removedMesh);
 
 
     /// Crack this message off the network.
-    psEquipmentMessage( MsgEntry* message );
+    psEquipmentMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -1954,7 +1962,8 @@ public:
                    BUY,
                    SELL,
                    VIEW,
-                   CANCEL};
+                   CANCEL
+                 };
 
     /** @brief Constuct a new equipment message to go on the network.
      *
@@ -1966,15 +1975,15 @@ public:
      * @param commandData XML string with command data
      *
      */
-    psGUIMerchantMessage( uint32_t clientNum,
-                          uint8_t command,
-                          csString commandData);
+    psGUIMerchantMessage(uint32_t clientNum,
+                         uint8_t command,
+                         csString commandData);
 
-    psGUIMerchantMessage( uint8_t command,
-                          csString commandData);
+    psGUIMerchantMessage(uint8_t command,
+                         csString commandData);
 
     /// Crack this message off the network.
-    psGUIMerchantMessage( MsgEntry* message );
+    psGUIMerchantMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2008,7 +2017,8 @@ public:
                    WITHDRAW,
                    STORE,
                    VIEW,
-                   CANCEL};
+                   CANCEL
+                 };
 
     /** @brief Constuct a new equipment message to go on the network.
      *
@@ -2020,15 +2030,15 @@ public:
      * @param commandData XML string with command data
      *
      */
-    psGUIStorageMessage( uint32_t clientNum,
-                          uint8_t command,
-                          csString commandData);
+    psGUIStorageMessage(uint32_t clientNum,
+                        uint8_t command,
+                        csString commandData);
 
-    psGUIStorageMessage( uint8_t command,
-                          csString commandData);
+    psGUIStorageMessage(uint8_t command,
+                        csString commandData);
 
     /// Crack this message off the network.
-    psGUIStorageMessage( MsgEntry* message );
+    psGUIStorageMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2056,7 +2066,8 @@ class psGUIGroupMessage : public psMessageCracker
 public:
     enum Command { GROUP,
                    MEMBERS,
-                   LEAVE};
+                   LEAVE
+                 };
 
     /** @brief Constucts a new equipment message to go on the network.
      *
@@ -2068,15 +2079,15 @@ public:
      * @param commandData XML string with command data
      *
      */
-    psGUIGroupMessage( uint32_t clientNum,
-                       uint8_t command,
-                       csString commandData);
+    psGUIGroupMessage(uint32_t clientNum,
+                      uint8_t command,
+                      csString commandData);
 
-    psGUIGroupMessage( uint8_t command,
-                       csString commandData);
+    psGUIGroupMessage(uint8_t command,
+                      csString commandData);
 
     /// Crack this message off the network.
-    psGUIGroupMessage( MsgEntry* message );
+    psGUIGroupMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2101,7 +2112,7 @@ public:
         msg->SetType(MSGTYPE_SPELL_CANCEL);
         msg->clientnum = 0;
     }
-    psSpellCancelMessage( MsgEntry* /*message*/ ){};
+    psSpellCancelMessage(MsgEntry* /*message*/) {};
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2117,7 +2128,7 @@ public:
 //--------------------------------------------------------------------------
 /** Spell Cancel Message
 * This message is used to send a cancel message, and to
-* send the time left before the item is crafted 
+* send the time left before the item is crafted
 */
 class psCraftCancelMessage : public psMessageCracker
 {
@@ -2128,13 +2139,13 @@ public:
         msg->SetType(MSGTYPE_CRAFT_CANCEL);
         msg->clientnum = 0;
     }
-    psCraftCancelMessage( MsgEntry * message )
+    psCraftCancelMessage(MsgEntry* message)
     {
         craftTime = message->GetInt32();
     }
-    
+
     PSF_DECLARE_MSG_FACTORY();
-    
+
     /**
     This makes a message from the craft time and the client who are crafting
     */
@@ -2165,8 +2176,8 @@ public:
     };
 
     psSpellBookMessage();
-    psSpellBookMessage( uint32_t client );
-    psSpellBookMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers );
+    psSpellBookMessage(uint32_t client);
+    psSpellBookMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2178,7 +2189,7 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-    void AddSpell(const csString& name, const csString& description, const csString& way, int realm, const csString& glyph0, const csString& glyph1, const csString& glyph2, const csString& glyph3, const csString& image);
+    void AddSpell(const csString &name, const csString &description, const csString &way, int realm, const csString &glyph0, const csString &glyph1, const csString &glyph2, const csString &glyph3, const csString &image);
     void Construct(csStringSet* msgstrings);
 
     csArray<NetworkSpell> spells;
@@ -2193,8 +2204,8 @@ private:
 class psPurifyGlyphMessage : public psMessageCracker
 {
 public:
-    psPurifyGlyphMessage( uint32_t glyphID );
-    psPurifyGlyphMessage( MsgEntry* me );
+    psPurifyGlyphMessage(uint32_t glyphID);
+    psPurifyGlyphMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2217,8 +2228,8 @@ public:
 class psSpellCastMessage : public psMessageCracker
 {
 public:
-    psSpellCastMessage( csString &spellName, float kFactor );
-    psSpellCastMessage( MsgEntry* me );
+    psSpellCastMessage(csString &spellName, float kFactor);
+    psSpellCastMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2241,12 +2252,12 @@ class psGlyphAssembleMessage : public psMessageCracker
 public:
     psGlyphAssembleMessage() {}
 
-    psGlyphAssembleMessage( int slot0, int slot1, int slot2, int slot3, bool info = false );
-    psGlyphAssembleMessage( uint32_t clientNum,
-                            csString spellName, csString image, csString description );
-    psGlyphAssembleMessage( MsgEntry* me );
-    void FromClient( MsgEntry* me );
-    void FromServer( MsgEntry* me );
+    psGlyphAssembleMessage(int slot0, int slot1, int slot2, int slot3, bool info = false);
+    psGlyphAssembleMessage(uint32_t clientNum,
+                           csString spellName, csString image, csString description);
+    psGlyphAssembleMessage(MsgEntry* me);
+    void FromClient(MsgEntry* me);
+    void FromServer(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2283,8 +2294,8 @@ public:
     };
 
 
-    psRequestGlyphsMessage( uint32_t client = 0 );
-    psRequestGlyphsMessage( MsgEntry* me );
+    psRequestGlyphsMessage(uint32_t client = 0);
+    psRequestGlyphsMessage(MsgEntry* me);
     virtual ~psRequestGlyphsMessage();
 
     PSF_DECLARE_MSG_FACTORY();
@@ -2297,8 +2308,8 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-    void AddGlyph( csString name, csString image, int purifiedStatus,
-                   int way, int statID );
+    void AddGlyph(csString name, csString image, int purifiedStatus,
+                  int way, int statID);
 
     void Construct();
 
@@ -2311,10 +2322,10 @@ private:
 
 
 //--------------------------------------------------------------------------
- class psStopEffectMessage : public psMessageCracker
- {
- public:
-    psStopEffectMessage( uint32_t clientNum, uint32_t uid )
+class psStopEffectMessage : public psMessageCracker
+{
+public:
+    psStopEffectMessage(uint32_t clientNum, uint32_t uid)
     {
         msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
@@ -2324,7 +2335,7 @@ private:
         valid = !(msg->overrun);
     }
 
-    psStopEffectMessage( uint32_t uid )
+    psStopEffectMessage(uint32_t uid)
     {
         msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
@@ -2336,7 +2347,7 @@ private:
 
     psStopEffectMessage(MsgEntry* message)
     {
-        if (!message)
+        if(!message)
             return;
 
         uid = message->GetUInt32();
@@ -2351,7 +2362,7 @@ private:
     }
 
     uint32_t uid;
- };
+};
 
 
 /** Effect Message
@@ -2359,7 +2370,7 @@ private:
  * This message is used to manage any effect the server wants to send to the
  * clients.  psClientCharManager handles this clientside
  */
- class psEffectMessage : public psMessageCracker
+class psEffectMessage : public psMessageCracker
 {
 public:
 
@@ -2437,7 +2448,7 @@ public:
      * @param targetName  Name of the new target to display.
      */
     psGUITargetUpdateMessage(uint32_t client_num, EID target_id);
-    psGUITargetUpdateMessage(MsgEntry *message);
+    psGUITargetUpdateMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2470,14 +2481,14 @@ public:
     psMsgStringsMessage();
 
     /** Create psMessageBytes struct for outbound use */
-    psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& digest);
+    psMsgStringsMessage(uint32_t clientnum, csMD5::Digest &digest);
 
     /** Create psMessageBytes struct for outbound use */
-    psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& digest, char* stringsdata,
-        unsigned long size, uint32_t num_strings);
+    psMsgStringsMessage(uint32_t clientnum, csMD5::Digest &digest, char* stringsdata,
+                        unsigned long size, uint32_t num_strings);
 
     /** Crack incoming psMessageBytes struct for inbound use */
-    psMsgStringsMessage(MsgEntry *message);
+    psMsgStringsMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2518,7 +2529,7 @@ public:
                            csString equipment);
 
     /** Crack incoming psMessageBytes struct for inbound use */
-    psCharacterDataMessage(MsgEntry *message);
+    psCharacterDataMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2570,7 +2581,7 @@ public:
     void SetClientNum(int cnum);
 
     /** Crack incoming psMessageBytes struct for inbound use */
-    psCombatEventMessage(MsgEntry *message);
+    psCombatEventMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2600,7 +2611,7 @@ public:
     psSoundEventMessage(uint32_t clientnum, uint32_t type);
 
     /** Crack incoming psMessageBytes struct for inbound use */
-    psSoundEventMessage(MsgEntry *message);
+    psSoundEventMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2658,10 +2669,10 @@ public:
      *  @param maxWeight The maximum weight that this character can carry.
      *  @param maxCapacity The maximum capacity of items that this character can carry.
      */
-    psStatsMessage( uint32_t client, float maxHP, float maxMana, float maxWeight, float maxCapacity );
+    psStatsMessage(uint32_t client, float maxHP, float maxMana, float maxWeight, float maxCapacity);
 
     /** Crack open the message from the server. */
-    psStatsMessage( MsgEntry* me );
+    psStatsMessage(MsgEntry* me);
 
     /** Send a request to the server for the stats */
     psStatsMessage();
@@ -2702,7 +2713,8 @@ public:
                    SKILL_LIST,
                    SKILL_SELECTED,
                    DESCRIPTION,
-                   QUIT};
+                   QUIT
+                 };
 
     /** @brief Constucts a new equipment message to go on the network.
      *
@@ -2715,34 +2727,34 @@ public:
      * @param commandData XML string with command data
      *
      */
-    psGUISkillMessage( uint8_t command,
-                       csString commandData);
+    psGUISkillMessage(uint8_t command,
+                      csString commandData);
 
-    psGUISkillMessage( uint32_t clientNum,
-                        uint8_t command,
-                        csString commandData,
-                        psSkillCache *skills,
-                        uint32_t str,
-                        uint32_t end,
-                        uint32_t agi,
-                        uint32_t inl,
-                        uint32_t wil,
-                        uint32_t chr,
-                        uint32_t hp,
-                        uint32_t man,
-                        uint32_t physSta,
-                        uint32_t menSta,
-                        uint32_t hpMax,
-                        uint32_t manMax,
-                        uint32_t physStaMax,
-                        uint32_t menStaMax,
-                        bool open,
-                        int32_t focus,
-                        int32_t selSkillCat,
-                        bool isTraining);
+    psGUISkillMessage(uint32_t clientNum,
+                      uint8_t command,
+                      csString commandData,
+                      psSkillCache* skills,
+                      uint32_t str,
+                      uint32_t end,
+                      uint32_t agi,
+                      uint32_t inl,
+                      uint32_t wil,
+                      uint32_t chr,
+                      uint32_t hp,
+                      uint32_t man,
+                      uint32_t physSta,
+                      uint32_t menSta,
+                      uint32_t hpMax,
+                      uint32_t manMax,
+                      uint32_t physStaMax,
+                      uint32_t menStaMax,
+                      bool open,
+                      int32_t focus,
+                      int32_t selSkillCat,
+                      bool isTraining);
 
     /// Crack this message off the network.
-    psGUISkillMessage( MsgEntry* message );
+    psGUISkillMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2797,7 +2809,8 @@ public:
     enum Command { WITHDRAWFUNDS,
                    DEPOSITFUNDS,
                    EXCHANGECOINS,
-                   VIEWBANK };
+                   VIEWBANK
+                 };
 
     psGUIBankingMessage(uint32_t clientNum,
                         uint8_t command,
@@ -2830,7 +2843,7 @@ public:
                         int coin);
 
     /// Crack this message off the network.
-    psGUIBankingMessage( MsgEntry* message );
+    psGUIBankingMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2882,7 +2895,8 @@ public:
                    SKILL_LIST,
                    SKILL_SELECTED,
                    DESCRIPTION,
-                   QUIT };
+                   QUIT
+                 };
 
     /** @brief Constucts a new equipment message to go on the network.
      *
@@ -2895,31 +2909,31 @@ public:
      * @param commandData XML string with command data
      *
      */
-    psPetSkillMessage( uint8_t command,
-                       csString commandData);
+    psPetSkillMessage(uint8_t command,
+                      csString commandData);
 
-    psPetSkillMessage( uint32_t clientNum,
-                        uint8_t command,
-                        csString commandData,
-                        uint32_t str,
-                        uint32_t end,
-                        uint32_t agi,
-                        uint32_t inl,
-                        uint32_t wil,
-                        uint32_t chr,
-                        uint32_t hp,
-                        uint32_t man,
-                        uint32_t physSta,
-                        uint32_t menSta,
-                        uint32_t hpMax,
-                        uint32_t manMax,
-                        uint32_t physStaMax,
-                        uint32_t menStaMax,
-                        bool open,
-                        int32_t focus);
+    psPetSkillMessage(uint32_t clientNum,
+                      uint8_t command,
+                      csString commandData,
+                      uint32_t str,
+                      uint32_t end,
+                      uint32_t agi,
+                      uint32_t inl,
+                      uint32_t wil,
+                      uint32_t chr,
+                      uint32_t hp,
+                      uint32_t man,
+                      uint32_t physSta,
+                      uint32_t menSta,
+                      uint32_t hpMax,
+                      uint32_t manMax,
+                      uint32_t physStaMax,
+                      uint32_t menStaMax,
+                      bool open,
+                      int32_t focus);
 
     /// Crack this message off the network.
-    psPetSkillMessage( MsgEntry* message );
+    psPetSkillMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -2962,12 +2976,12 @@ class psDRMessage : public psMessageCracker
 {
 protected:
     void WriteDRInfo(uint32_t client, EID mappedid,
-                    bool on_ground, uint8_t mode, uint8_t counter,
-                    const csVector3& pos, float yrot, iSector *sector,
-                    csString sectorName, const csVector3& vel, csVector3& worldVel,
-                    float ang_vel, csStringSet* msgstrings, bool donewriting=true);
-    void ReadDRInfo( MsgEntry* me, NetBase::AccessPointers* accessPointers );
-    void CreateMsgEntry(uint32_t client, NetBase::AccessPointers* accessPointers, iSector *sector, csString sectorName);
+                     bool on_ground, uint8_t mode, uint8_t counter,
+                     const csVector3 &pos, float yrot, iSector* sector,
+                     csString sectorName, const csVector3 &vel, csVector3 &worldVel,
+                     float ang_vel, csStringSet* msgstrings, bool donewriting=true);
+    void ReadDRInfo(MsgEntry* me, NetBase::AccessPointers* accessPointers);
+    void CreateMsgEntry(uint32_t client, NetBase::AccessPointers* accessPointers, iSector* sector, csString sectorName);
 
     /// Flags indicating what components are packed in this message
     enum DRDataFlags
@@ -2986,7 +3000,7 @@ protected:
 
     enum { ON_GOUND = 128 }; ///< Use last bit of mode to indicate on/off ground
 
-    static uint8_t GetDataFlags(const csVector3& v, const csVector3& wv, float yrv, uint8_t mode);
+    static uint8_t GetDataFlags(const csVector3 &v, const csVector3 &wv, float yrv, uint8_t mode);
 
 public:
     uint8_t counter;        ///< sequence checker byte
@@ -2996,7 +3010,7 @@ public:
               vel,          ///< Body Velocity vector
               worldVel;     ///< World velocity vector
     float yrot;             ///< Rotation around Y-axis in radians
-    iSector *sector;        ///< Ptr to sector for mesh
+    iSector* sector;        ///< Ptr to sector for mesh
     csString sectorName;    ///< Name of the sector
     float ang_vel;          ///< Angular velocity of Yrot member changing
     EID entityid;           ///< The mapped id of the entity in question
@@ -3004,21 +3018,21 @@ public:
     psDRMessage() { }
     psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
                 NetBase::AccessPointers* accessPointers,
-                psLinearMovement *linmove, uint8_t mode=0);
+                psLinearMovement* linmove, uint8_t mode=0);
     psDRMessage(uint32_t client, EID mappedid,
                 bool on_ground, uint8_t mode, uint8_t counter,
-                const csVector3& pos, float yrot, iSector *sector, csString sectorName,
-                const csVector3& vel, csVector3& worldVel, float ang_vel,
+                const csVector3 &pos, float yrot, iSector* sector, csString sectorName,
+                const csVector3 &vel, csVector3 &worldVel, float ang_vel,
                 NetBase::AccessPointers* accessPointers);
-    psDRMessage(void *data, int size, NetBase::AccessPointers* accessPointers );
-    psDRMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers );
+    psDRMessage(void* data, int size, NetBase::AccessPointers* accessPointers);
+    psDRMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
     /// Returns true if this message is newer than the passed DR sequence value
     bool IsNewerThan(uint8_t oldCounter);
 
     PSF_DECLARE_MSG_FACTORY();
 
-    void operator=(psDRMessage& other);
+    void operator=(psDRMessage &other);
 
     /**
      * @brief Converts the message into human readable string.
@@ -3036,7 +3050,7 @@ class psForcePositionMessage : public psMessageCracker
 public:
     csVector3 pos;           ///< Position vector
     float yrot;              ///< Rotation around Y-axis in radians
-    iSector *sector;         ///< Ptr to sector for mesh
+    iSector* sector;         ///< Ptr to sector for mesh
     csString sectorName;     ///< Name of the sector
     csString backgroundname; ///< Name of the background to use instead of the normal one in delay.
     uint32_t loadTime;       ///< time to wait even if there is no need to load
@@ -3046,13 +3060,13 @@ public:
 
     psForcePositionMessage() { }
     psForcePositionMessage(uint32_t client, uint8_t sequence,
-                           const csVector3& pos, float yRot, iSector *sector,
-                           csStringSet *msgstrings, uint32_t time = 0, csString loadBackground = "", csVector2 start = 0, csVector2 dest = 0, csString loadWidget = "");
-    psForcePositionMessage(MsgEntry *me, NetBase::AccessPointers* accessPointers );
+                           const csVector3 &pos, float yRot, iSector* sector,
+                           csStringSet* msgstrings, uint32_t time = 0, csString loadBackground = "", csVector2 start = 0, csVector2 dest = 0, csString loadWidget = "");
+    psForcePositionMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
-    void operator=(psForcePositionMessage& other);
+    void operator=(psForcePositionMessage &other);
 
     /**
      * @brief Converts the message into human readable string.
@@ -3069,7 +3083,7 @@ class psPersistWorldRequest : public psMessageCracker
 {
 public:
     psPersistWorldRequest();
-    psPersistWorldRequest( MsgEntry * message );
+    psPersistWorldRequest(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3086,7 +3100,7 @@ class psRequestAllObjects : public psMessageCracker
 {
 public:
     psRequestAllObjects();
-    psRequestAllObjects( MsgEntry * message );
+    psRequestAllObjects(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3102,8 +3116,8 @@ public:
 class psPersistWorld : public psMessageCracker
 {
 public:
-    psPersistWorld( uint32_t clientNum, csVector3 pos, const char* sectorName);
-    psPersistWorld( MsgEntry* me );
+    psPersistWorld(uint32_t clientNum, csVector3 pos, const char* sectorName);
+    psPersistWorld(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3129,7 +3143,7 @@ public:
         msg->clientnum  = 0;
     }
 
-    psPersistActorRequest( MsgEntry* me );
+    psPersistActorRequest(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3154,7 +3168,7 @@ public:
         msg->clientnum  = client;
     }
 
-    psPersistAllEntities( MsgEntry* me );
+    psPersistAllEntities(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3172,14 +3186,14 @@ public:
      * @param newEnt Pointer to psPersistActor message to append.
      * @return Returns true if adding was successful, false if the current msg is full and it fails.
      */
-    bool AddEntityMessage(MsgEntry *newEnt);
+    bool AddEntityMessage(MsgEntry* newEnt);
 
     /**
      * @brief Creates a new entity persist message from the next slot in the inbound buffer.
      *
      * @return Returns a psPersistActor MsgEntry structure if one is still in the message, or NULL if this message is complete.
      */
-    MsgEntry *GetEntityMessage();
+    MsgEntry* GetEntityMessage();
 };
 
 
@@ -3190,42 +3204,42 @@ public:
     {
         NONE            = 0,
         INVISIBLE       = 1 << 0, ///< Used to inform super client. Clients will not get this
-                                  ///< since actor is removed when invisible.
+        ///< since actor is removed when invisible.
         INVINCIBLE      = 1 << 1, ///< Used to inform super client.
         NPC             = 1 << 2, ///< Set for NPCs
         NAMEKNOWN       = 1 << 3, ///< Used to tell the client if he knows this actor
         IS_ALIVE        = 1 << 4  ///< Used to tell the clients that this actor is alive
     };
 
-    psPersistActor( uint32_t clientnum,
-                    int type,
-                    int masqueradeType,
-                    bool control,
-                    const char* name,
-                    const char* guild,
-                    const char* factname,
-                    const char* matname,
-                    const char* race,
-                    const char* mountFactname,
-                    const char* MounterAnim,
-                    unsigned short int gender,
-                    float scale,
-                    float mountscale,
-                    const char* helmGroup,
-                    const char* BracerGroup,
-                    const char* BeltGroup,
-                    const char* CloakGroup,
-                    csVector3 collTop, csVector3 collBottom, csVector3 collOffset,
-                    const char* texParts,
-                    const char* equipmentParts,
-                    uint8_t counter,
-                    EID mappedid, csStringSet* msgstrings, psLinearMovement *linmove,
-                    uint8_t movementMode,
-                    uint8_t serverMode,
-                    PID playerID = 0, uint32_t groupID = 0, EID ownerEID = 0,
-                    uint32_t flags = NONE, PID masterID = 0, bool forNPClient = false);
+    psPersistActor(uint32_t clientnum,
+                   int type,
+                   int masqueradeType,
+                   bool control,
+                   const char* name,
+                   const char* guild,
+                   const char* factname,
+                   const char* matname,
+                   const char* race,
+                   const char* mountFactname,
+                   const char* MounterAnim,
+                   unsigned short int gender,
+                   float scale,
+                   float mountscale,
+                   const char* helmGroup,
+                   const char* BracerGroup,
+                   const char* BeltGroup,
+                   const char* CloakGroup,
+                   csVector3 collTop, csVector3 collBottom, csVector3 collOffset,
+                   const char* texParts,
+                   const char* equipmentParts,
+                   uint8_t counter,
+                   EID mappedid, csStringSet* msgstrings, psLinearMovement* linmove,
+                   uint8_t movementMode,
+                   uint8_t serverMode,
+                   PID playerID = 0, uint32_t groupID = 0, EID ownerEID = 0,
+                   uint32_t flags = NONE, PID masterID = 0, bool forNPClient = false);
 
-    psPersistActor( MsgEntry* me, NetBase::AccessPointers* accessPointers, bool forNPClient = false );
+    psPersistActor(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool forNPClient = false);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3286,23 +3300,23 @@ public:
         TRIBEID         = 1 << 2
     };
 
-    psPersistItem(  uint32_t clientnum,
-                    EID id,
-                    int type,
-                    const char* name,
-                    const char* factname,
-                    const char* matname,
-                    const char* sector,
-                    csVector3 pos,
-                    float xRot,
-                    float yRot,
-                    float zRot,
-                    uint32_t flags,
-                    csStringSet* msgstrings,
-                    uint32_t tribeid = 0
+    psPersistItem(uint32_t clientnum,
+                  EID id,
+                  int type,
+                  const char* name,
+                  const char* factname,
+                  const char* matname,
+                  const char* sector,
+                  csVector3 pos,
+                  float xRot,
+                  float yRot,
+                  float zRot,
+                  uint32_t flags,
+                  csStringSet* msgstrings,
+                  uint32_t tribeid = 0
                  );
 
-    psPersistItem( MsgEntry* me, NetBase::AccessPointers* accessPointers );
+    psPersistItem(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3331,15 +3345,15 @@ public:
 class psPersistActionLocation : public psMessageCracker
 {
 public:
-    psPersistActionLocation( uint32_t clientNum,
-                                EID eid,
-                                int type,
-                                const char* name,
-                                const char* sector,
-                                const char* mesh
-                               );
+    psPersistActionLocation(uint32_t clientNum,
+                            EID eid,
+                            int type,
+                            const char* name,
+                            const char* sector,
+                            const char* mesh
+                           );
 
-    psPersistActionLocation( MsgEntry* me );
+    psPersistActionLocation(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3362,7 +3376,7 @@ class psRemoveObject : public psMessageCracker
 {
 public:
     psRemoveObject(uint32_t clientNum, EID objectEID);
-    psRemoveObject( MsgEntry* me );
+    psRemoveObject(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3388,8 +3402,8 @@ public:
         bool online;
     };
 
-    psBuddyListMsg( uint32_t clientNum, int totalBuddies );
-    psBuddyListMsg( MsgEntry* me );
+    psBuddyListMsg(uint32_t clientNum, int totalBuddies);
+    psBuddyListMsg(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3401,7 +3415,7 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-    void AddBuddy( int num, const char* name, bool onlineStatus );
+    void AddBuddy(int num, const char* name, bool onlineStatus);
     void Build();
 
     csArray<BuddyData> buddies;
@@ -3412,18 +3426,18 @@ public:
 class psBuddyStatus : public psMessageCracker
 {
 public:
-    psBuddyStatus( uint32_t clientNum, csString& buddyName, bool online )
+    psBuddyStatus(uint32_t clientNum, csString &buddyName, bool online)
     {
-        msg.AttachNew(new MsgEntry( buddyName.Length()+1 + sizeof(bool) ));
+        msg.AttachNew(new MsgEntry(buddyName.Length()+1 + sizeof(bool)));
 
         msg->SetType(MSGTYPE_BUDDY_STATUS);
         msg->clientnum = clientNum;
 
-        msg->Add( buddyName );
-        msg->Add( online );
+        msg->Add(buddyName);
+        msg->Add(online);
     }
 
-    psBuddyStatus( MsgEntry* me )
+    psBuddyStatus(MsgEntry* me)
     {
         buddy        = me->GetStr();
         onlineStatus = me->GetBool();
@@ -3446,20 +3460,20 @@ public:
 class psMOTDMessage : public psMessageCracker
 {
 public:
-    psMOTDMessage(uint32_t clientNum, const csString& tipMsg, const csString& motdMsg, const csString& guildMsg, const csString& guild)
+    psMOTDMessage(uint32_t clientNum, const csString &tipMsg, const csString &motdMsg, const csString &guildMsg, const csString &guild)
     {
-        msg.AttachNew(new MsgEntry( tipMsg.Length()+1 + motdMsg.Length()+1 + guildMsg.Length()+1 + guild.Length() +1 ));
+        msg.AttachNew(new MsgEntry(tipMsg.Length()+1 + motdMsg.Length()+1 + guildMsg.Length()+1 + guild.Length() +1));
 
         msg->SetType(MSGTYPE_MOTD);
         msg->clientnum = clientNum;
 
-        msg->Add( tipMsg );
-        msg->Add( motdMsg );
-        msg->Add( guildMsg );
-        msg->Add( guild );
+        msg->Add(tipMsg);
+        msg->Add(motdMsg);
+        msg->Add(guildMsg);
+        msg->Add(guild);
     }
 
-    psMOTDMessage( MsgEntry* me )
+    psMOTDMessage(MsgEntry* me)
     {
         tip        = me->GetStr();
         motd       = me->GetStr();
@@ -3492,7 +3506,7 @@ public:
         msg->SetType(MSGTYPE_MOTDREQUEST);
         msg->clientnum  = 0;
     }
-    psMOTDRequestMessage( MsgEntry* /*me*/ ) {}
+    psMOTDRequestMessage(MsgEntry* /*me*/) {}
 
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3512,15 +3526,15 @@ public:
     uint32_t questionID;
     csString answer;
 
-    psQuestionResponseMsg(int clientnum,uint32_t questionID,const csString & answer)
+    psQuestionResponseMsg(int clientnum,uint32_t questionID,const csString &answer)
     {
-        msg.AttachNew(new MsgEntry( sizeof(questionID)+answer.Length()+1 ));
+        msg.AttachNew(new MsgEntry(sizeof(questionID)+answer.Length()+1));
         msg->SetType(MSGTYPE_QUESTIONRESPONSE);
         msg->clientnum  = clientnum;
         msg->Add(questionID);
         msg->Add(answer);
     }
-    psQuestionResponseMsg(MsgEntry *me)
+    psQuestionResponseMsg(MsgEntry* me)
     {
         questionID = me->GetUInt32();
         answer     = me->GetStr();
@@ -3560,10 +3574,10 @@ public:
 
     psQuestionMessage(int clientnum,
                       uint32_t questionID,
-                      const char *question,
+                      const char* question,
                       questionType_t type)
     {
-        msg.AttachNew(new MsgEntry( sizeof(questionID) +strlen(question)+1 +2 ));
+        msg.AttachNew(new MsgEntry(sizeof(questionID) +strlen(question)+1 +2));
         msg->SetType(MSGTYPE_QUESTION);
         msg->clientnum  = clientnum;
 
@@ -3572,11 +3586,11 @@ public:
         msg->Add((uint16_t)type);
         valid=!(msg->overrun);
     }
-    psQuestionMessage(MsgEntry *me)
+    psQuestionMessage(MsgEntry* me)
     {
         questionID  =       me->GetUInt32();
         question    =       me->GetStr();
-        type        =       (questionType_t)me->GetInt16();
+        type        = (questionType_t)me->GetInt16();
         valid = true;
     }
 
@@ -3598,22 +3612,22 @@ public:
     csString sTarget;
     csString sMessage;
 
-    psAdviceMessage( int clientNum, const char *command, const char *target, const char *message )
+    psAdviceMessage(int clientNum, const char* command, const char* target, const char* message)
     {
         size_t msgSize = 0;
 
-        if ( message ) msgSize = strlen( message );
+        if(message) msgSize = strlen(message);
 
-        msg.AttachNew(new MsgEntry( strlen( command ) + strlen( target ) + msgSize + 3));
+        msg.AttachNew(new MsgEntry(strlen(command) + strlen(target) + msgSize + 3));
         msg->SetType(MSGTYPE_ADVICE);
         msg->clientnum  = clientNum;
-        msg->Add( command );
-        msg->Add( target );
-        msg->Add( message?message:"" );
+        msg->Add(command);
+        msg->Add(target);
+        msg->Add(message?message:"");
         valid = !(msg->overrun);
     };
 
-    psAdviceMessage( MsgEntry *me )
+    psAdviceMessage(MsgEntry* me)
     {
         sCommand = me->GetStr();
         sTarget  = me->GetStr();
@@ -3647,9 +3661,9 @@ public:
     psGUIActiveMagicMessage(uint32_t clientNum,
                             commandType cmd,
                             SPELL_TYPE type,
-                            const csString & name)
+                            const csString &name)
     {
-        msg.AttachNew(new MsgEntry( sizeof(bool) + +sizeof(uint8_t) + sizeof(int32_t) + name.Length() + 1));
+        msg.AttachNew(new MsgEntry(sizeof(bool) + +sizeof(uint8_t) + sizeof(int32_t) + name.Length() + 1));
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
         msg->Add((uint8_t)cmd);
@@ -3659,7 +3673,7 @@ public:
     }
 
     /// Crack this message off the network.
-    psGUIActiveMagicMessage( MsgEntry* message )
+    psGUIActiveMagicMessage(MsgEntry* message)
     {
         command = (commandType) message->GetUInt8();
         type = (SPELL_TYPE) message->GetUInt8();
@@ -3686,56 +3700,56 @@ public:
 class psSlotMovementMsg : public psMessageCracker
 {
 public:
-    psSlotMovementMsg( int fromContainerID,
-                       int fromSlotID,
-                       int toContainerID,
-                       int toSlotID,
-                       int stackCount,
-                       csVector3 *pt3d=NULL,
-                       csVector3 *rot=NULL,
-                       bool guarded=true,
-                       bool inplace=true)
+    psSlotMovementMsg(int fromContainerID,
+                      int fromSlotID,
+                      int toContainerID,
+                      int toSlotID,
+                      int stackCount,
+                      csVector3* pt3d=NULL,
+                      csVector3* rot=NULL,
+                      bool guarded=true,
+                      bool inplace=true)
     {
-        msg.AttachNew(new MsgEntry( sizeof( int32_t ) * 5 + 3 * sizeof(float) + 3 * sizeof(float) + 2 * sizeof(bool) ));
+        msg.AttachNew(new MsgEntry(sizeof(int32_t) * 5 + 3 * sizeof(float) + 3 * sizeof(float) + 2 * sizeof(bool)));
 
         msg->SetType(MSGTYPE_SLOT_MOVEMENT);
         msg->clientnum  = 0;
 
-        msg->Add( (int32_t) fromContainerID );
-        msg->Add( (int32_t) fromSlotID );
-        msg->Add( (int32_t) toContainerID );
-        msg->Add( (int32_t) toSlotID );
-        msg->Add( (int32_t) stackCount );
-        if (pt3d != NULL)
-            msg->Add( *pt3d );
+        msg->Add((int32_t) fromContainerID);
+        msg->Add((int32_t) fromSlotID);
+        msg->Add((int32_t) toContainerID);
+        msg->Add((int32_t) toSlotID);
+        msg->Add((int32_t) stackCount);
+        if(pt3d != NULL)
+            msg->Add(*pt3d);
         else
         {
             csVector3 v = 0;
             msg->Add(v);  // Add dummy zeroes if not specified.
         }
-        if (rot != NULL)
+        if(rot != NULL)
         {
-            msg->Add( rot->y );
+            msg->Add(rot->y);
         }
         else
         {
             msg->Add(0.f); // Add 0 rotation if not specified.
         }
-        msg->Add( guarded );
-        msg->Add( inplace );
-        if (rot != NULL)
+        msg->Add(guarded);
+        msg->Add(inplace);
+        if(rot != NULL)
         {
-            msg->Add( rot->x );
-            msg->Add( rot->z );
+            msg->Add(rot->x);
+            msg->Add(rot->z);
         }
         else
         {
-            msg->Add( 0.f );
-            msg->Add( 0.f );
+            msg->Add(0.f);
+            msg->Add(0.f);
         }
     }
 
-    psSlotMovementMsg( MsgEntry* me )
+    psSlotMovementMsg(MsgEntry* me)
     {
         fromContainer = me->GetInt32();
         fromSlot      = me->GetInt32();
@@ -3774,8 +3788,8 @@ public:
 class psCmdDropMessage : public psMessageCracker
 {
 public:
-    psCmdDropMessage( int quantity, csString &itemName, bool container, bool guarded, bool inplace);
-    psCmdDropMessage( MsgEntry* me );
+    psCmdDropMessage(int quantity, csString &itemName, bool container, bool guarded, bool inplace);
+    psCmdDropMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3802,13 +3816,13 @@ public:
 
     psQuestionCancelMessage(int clientnum, uint32_t id)
     {
-        msg.AttachNew(new MsgEntry( sizeof(id) ));
+        msg.AttachNew(new MsgEntry(sizeof(id)));
         msg->SetType(MSGTYPE_QUESTIONCANCEL);
         msg->clientnum  = clientnum;
 
         msg->Add(id);
     }
-    psQuestionCancelMessage(MsgEntry *me)
+    psQuestionCancelMessage(MsgEntry* me)
     {
         questionID = me->GetUInt32();
         valid = true;
@@ -3828,23 +3842,23 @@ public:
 class psGuildMOTDSetMessage : public psMessageCracker
 {
 public:
-    psGuildMOTDSetMessage( csString& guildMsg,csString& guild)
+    psGuildMOTDSetMessage(csString &guildMsg,csString &guild)
     {
-        msg.AttachNew(new MsgEntry( guildMsg.Length()+1 + guild.Length() +1 ));
+        msg.AttachNew(new MsgEntry(guildMsg.Length()+1 + guild.Length() +1));
 
         msg->SetType(MSGTYPE_GUILDMOTDSET);
         msg->clientnum = 0;
-        msg->Add( guildMsg );
-        msg->Add( guild );
+        msg->Add(guildMsg);
+        msg->Add(guild);
     }
 
-    psGuildMOTDSetMessage( MsgEntry* me )
+    psGuildMOTDSetMessage(MsgEntry* me)
     {
         guildmotd  = me->GetStr();
-        if (!guildmotd.Length())
+        if(!guildmotd.Length())
             guildmotd = "(No message of the day.)";
         guild      = me->GetStr();
-        if (!guild.Length())
+        if(!guild.Length())
             valid = false;
     }
 
@@ -3871,9 +3885,9 @@ public:
         csString text;
     };
 
-    psCharacterDetailsMessage( int clientnum, const csString& name2s,unsigned short int gender2s,const csString& race2s,
-                               const csString& desc2s, const csArray<NetworkDetailSkill>& skills2s, const csString& desc_ooc, const csString& creationinfo, const csString& requestor);
-    psCharacterDetailsMessage( MsgEntry* me );
+    psCharacterDetailsMessage(int clientnum, const csString &name2s,unsigned short int gender2s,const csString &race2s,
+                              const csString &desc2s, const csArray<NetworkDetailSkill> &skills2s, const csString &desc_ooc, const csString &creationinfo, const csString &requestor);
+    psCharacterDetailsMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -3899,12 +3913,12 @@ public:
 class psCharacterDetailsRequestMessage : public psMessageCracker
 {
 public:
-    psCharacterDetailsRequestMessage( bool myself, bool simple, const csString & requestor)
+    psCharacterDetailsRequestMessage(bool myself, bool simple, const csString &requestor)
     {
         //If myself = true, the server sends the information about the player
         //If myself = false, the server sends the information about the target
 
-        msg.AttachNew(new MsgEntry( sizeof(myself) + sizeof(simple) + requestor.Length() + 1 ));
+        msg.AttachNew(new MsgEntry(sizeof(myself) + sizeof(simple) + requestor.Length() + 1));
         msg->SetType(MSGTYPE_CHARDETAILSREQUEST);
         msg->clientnum  = 0;
         msg->Add(myself);
@@ -3912,7 +3926,7 @@ public:
         msg->Add(requestor.GetData());
     }
 
-    psCharacterDetailsRequestMessage(MsgEntry *me)
+    psCharacterDetailsRequestMessage(MsgEntry* me)
     {
         isMe       =  me->GetBool();
         isSimple   =  me->GetBool();
@@ -3944,21 +3958,21 @@ enum DESCTYPE
 class psCharacterDescriptionUpdateMessage : public psMessageCracker
 {
 public:
-    psCharacterDescriptionUpdateMessage(csString& newValue, DESCTYPE desctype)
+    psCharacterDescriptionUpdateMessage(csString &newValue, DESCTYPE desctype)
     {
 
-        msg.AttachNew(new MsgEntry( newValue.Length() +1 + sizeof(uint8_t) ));
+        msg.AttachNew(new MsgEntry(newValue.Length() +1 + sizeof(uint8_t)));
         msg->SetType(MSGTYPE_CHARDESCUPDATE);
 
         msg->clientnum  = 0;
         msg->Add(newValue);
-        msg->Add( (uint8_t)desctype);
+        msg->Add((uint8_t)desctype);
     }
 
-    psCharacterDescriptionUpdateMessage(MsgEntry *me)
+    psCharacterDescriptionUpdateMessage(MsgEntry* me)
     {
         newValue    =  me->GetStr();
-        desctype    =  (DESCTYPE) me->GetUInt8();
+        desctype    = (DESCTYPE) me->GetUInt8();
     }
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3993,8 +4007,8 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-    const char *name;
-    const char *description;
+    const char* name;
+    const char* description;
 };
 
 //------------------------------------------------------------------------------
@@ -4035,14 +4049,14 @@ public:
       * @param icon The 2D gui image to draw for this item.
       * @param isContainer True if this item is a container.
       */
-    psViewItemDescription( uint32_t to, const char *itemName, const char *Description, const char *icon,
-                           uint32_t stackCount, bool isContainer = false );
+    psViewItemDescription(uint32_t to, const char* itemName, const char* Description, const char* icon,
+                          uint32_t stackCount, bool isContainer = false);
 
     /** Crack out the details from the message.
       * This will look at the packet and figure out if it is a single item or a container.
       * If it is a container it will populate it's internal array of data.
       */
-    psViewItemDescription( MsgEntry* me, NetBase::AccessPointers* accessPointers);
+    psViewItemDescription(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4055,13 +4069,13 @@ public:
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
     /// The name of the item or container.
-    const char *itemName;
+    const char* itemName;
 
     /// The description of this item or container.
-    const char *itemDescription;
+    const char* itemDescription;
 
     /// The 2D graphic GUI image.
-    const char *itemIcon;
+    const char* itemIcon;
 
     /// Stack count of the item.
     uint32_t stackCount;
@@ -4085,7 +4099,7 @@ public:
     int to;
 
     /// Add a item to this message ( assumes the base item is a container )
-    void AddContents(const char *name, const char* meshName, const char* materialName, const char *icon, int purifyStatus, int slot, int stack);
+    void AddContents(const char* name, const char* meshName, const char* materialName, const char* icon, int purifyStatus, int slot, int stack);
 
     /// Build the message ( assumes base item is a container ).
     void ConstructMsg(csStringSet* msgstrings);
@@ -4129,10 +4143,10 @@ public:
       * @param stackCount The number of items in the stack.
       * @param ownerEID The GEM entity ID of the owner
       */
-    psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot, const char *itemName, const char *icon, const char *meshName, const char *materialName, uint32_t stackCount, EID ownerID, csStringSet* msgstrings);
+    psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot, const char* itemName, const char* icon, const char* meshName, const char* materialName, uint32_t stackCount, EID ownerID, csStringSet* msgstrings);
 
     /// Crack out the details from the message.
-    psViewItemUpdate( MsgEntry* me, NetBase::AccessPointers* accessPointers );
+    psViewItemUpdate(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4174,21 +4188,21 @@ public:
      * 'Request to Write' message, from client to server.
      *
      */
-    psWriteBookMessage( int slotID, int containerID);
+    psWriteBookMessage(int slotID, int containerID);
     /**
      * 'Request to Save' message, from client to server
      */
-    psWriteBookMessage( int slotID, int containerID, csString& title, csString& content);
+    psWriteBookMessage(int slotID, int containerID, csString &title, csString &content);
     /**
      * Response from server, if success is false then content is the error message
      */
-    psWriteBookMessage( uint32_t clientNum, csString& title, csString& content, bool success,  int slotID, int containerID);
+    psWriteBookMessage(uint32_t clientNum, csString &title, csString &content, bool success,  int slotID, int containerID);
     /**
      * Response to Save from server to client.
      */
-    psWriteBookMessage( uint32_t clientNum, csString& title, bool success);
+    psWriteBookMessage(uint32_t clientNum, csString &title, bool success);
 
-    psWriteBookMessage( MsgEntry *me);
+    psWriteBookMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4200,24 +4214,25 @@ public:
     int containerID;
     bool success;
 
-    enum {
-       REQUEST,
-       RESPONSE,
-       SAVE,
-       SAVERESPONSE
+    enum
+    {
+        REQUEST,
+        RESPONSE,
+        SAVE,
+        SAVERESPONSE
     };
 };
 
 class psReadBookTextMessage : public psMessageCracker
 {
 public:
-   psReadBookTextMessage(uint32_t clientNum, csString& itemName, csString& bookText, bool canWrite, int slotID, int containerID, csString backgroundImg);
+    psReadBookTextMessage(uint32_t clientNum, csString &itemName, csString &bookText, bool canWrite, int slotID, int containerID, csString backgroundImg);
 
     /** Crack out the details from the message.
       * This will look at the packet and figure out if it is a single item or a container.
       * If it is a container it will populate it's internal array of data.
       */
-    psReadBookTextMessage( MsgEntry* me );
+    psReadBookTextMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4251,16 +4266,16 @@ public:
         selectReward
     };
 
-    psQuestRewardMessage(uint32_t clientnum, csString& newValue, uint8_t type)
+    psQuestRewardMessage(uint32_t clientnum, csString &newValue, uint8_t type)
     {
-        msg.AttachNew(new MsgEntry( newValue.Length() + 1 + sizeof(uint8_t) ));
+        msg.AttachNew(new MsgEntry(newValue.Length() + 1 + sizeof(uint8_t)));
         msg->SetType(MSGTYPE_QUESTREWARD);
         msg->clientnum  = clientnum;
         msg->Add(newValue);
         msg->Add(type);
     }
 
-    psQuestRewardMessage(MsgEntry *me)
+    psQuestRewardMessage(MsgEntry* me)
     {
         newValue    = me->GetStr();
         msgType     = me->GetUInt8();
@@ -4285,10 +4300,10 @@ public:
 class psExchangeMoneyMsg : public psMessageCracker
 {
 public:
-    psExchangeMoneyMsg( uint32_t client, int container,
-                        int trias, int hexas, int circles,int octas );
+    psExchangeMoneyMsg(uint32_t client, int container,
+                       int trias, int hexas, int circles,int octas);
 
-    psExchangeMoneyMsg( MsgEntry* me );
+    psExchangeMoneyMsg(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4316,10 +4331,10 @@ public:
     /** Request to start an exchange.
       * This is created on the client and is for the server.
       */
-    psExchangeRequestMsg( bool withPlayer );
+    psExchangeRequestMsg(bool withPlayer);
 
     /// From the server to the client.
-    psExchangeRequestMsg( uint32_t client, csString& name, bool withPlayer );
+    psExchangeRequestMsg(uint32_t client, csString &name, bool withPlayer);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4332,7 +4347,7 @@ public:
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
 
-    psExchangeRequestMsg( MsgEntry* me );
+    psExchangeRequestMsg(MsgEntry* me);
 
     csString player;
     bool withPlayer;
@@ -4345,17 +4360,17 @@ public:
 class psExchangeAddItemMsg : public psMessageCracker
 {
 public:
-    psExchangeAddItemMsg(   uint32_t clientNum,
-                            const csString& name,
-                            const csString& meshFactName,
-                            const csString& materialName,
-                            int containerID,
-                            int slot,
-                            int stackcount,
-                            const csString& icon,
-                            csStringSet* msgstrings );
+    psExchangeAddItemMsg(uint32_t clientNum,
+                         const csString &name,
+                         const csString &meshFactName,
+                         const csString &materialName,
+                         int containerID,
+                         int slot,
+                         int stackcount,
+                         const csString &icon,
+                         csStringSet* msgstrings);
 
-    psExchangeAddItemMsg( MsgEntry* me, NetBase::AccessPointers* accessPointers );
+    psExchangeAddItemMsg(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4384,8 +4399,8 @@ public:
 class psExchangeRemoveItemMsg : public psMessageCracker
 {
 public:
-    psExchangeRemoveItemMsg( uint32_t client, int container, int slot, int newStack );
-    psExchangeRemoveItemMsg( MsgEntry* me );
+    psExchangeRemoveItemMsg(uint32_t client, int container, int slot, int newStack);
+    psExchangeRemoveItemMsg(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4407,8 +4422,8 @@ public:
 class psExchangeAcceptMsg : public psMessageCracker
 {
 public:
-    psExchangeAcceptMsg( uint32_t client = 0);
-    psExchangeAcceptMsg( MsgEntry* me );
+    psExchangeAcceptMsg(uint32_t client = 0);
+    psExchangeAcceptMsg(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4426,8 +4441,8 @@ public:
 class psExchangeStatusMsg : public psMessageCracker
 {
 public:
-    psExchangeStatusMsg( uint32_t client, bool playerAccept, bool otherPlayerAccept );
-    psExchangeStatusMsg( MsgEntry* me );
+    psExchangeStatusMsg(uint32_t client, bool playerAccept, bool otherPlayerAccept);
+    psExchangeStatusMsg(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4448,8 +4463,8 @@ public:
 class psExchangeEndMsg : public psMessageCracker
 {
 public:
-    psExchangeEndMsg( uint32_t client = 0 );
-    psExchangeEndMsg( MsgEntry* me );
+    psExchangeEndMsg(uint32_t client = 0);
+    psExchangeEndMsg(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4469,7 +4484,7 @@ class psUpdateObjectNameMessage : public psMessageCracker
 {
 public:
     psUpdateObjectNameMessage(uint32_t client, EID eid, const char* newName);
-    psUpdateObjectNameMessage( MsgEntry* me );
+    psUpdateObjectNameMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4490,7 +4505,7 @@ class psUpdatePlayerGuildMessage : public psMessageCracker
 public:
     psUpdatePlayerGuildMessage(uint32_t client, int total,  const char* newGuild);
     psUpdatePlayerGuildMessage(uint32_t client, EID entity, const char* newGuild); // shortcut for only 1 entity
-    psUpdatePlayerGuildMessage( MsgEntry* me );
+    psUpdatePlayerGuildMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4513,7 +4528,7 @@ class psUpdatePlayerGroupMessage : public psMessageCracker
 {
 public:
     psUpdatePlayerGroupMessage(int clientnum, EID objectID, uint32_t groupID);
-    psUpdatePlayerGroupMessage( MsgEntry* me );
+    psUpdatePlayerGroupMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4536,8 +4551,8 @@ public:
 class psNameCheckMessage : public psMessageCracker
 {
 public:
-    psNameCheckMessage(){}
-    psNameCheckMessage( const char* name );
+    psNameCheckMessage() {}
+    psNameCheckMessage(const char* name);
     /** Constructor.
      *  Prepares a message to be sent to the server with a first and last name.
      *  This is done to ask the server if the choosen name is usable.
@@ -4545,11 +4560,11 @@ public:
      *  @param lastName The last name to be tried.
      */
     psNameCheckMessage(const char* firstName, const char* lastName);
-    psNameCheckMessage( uint32_t client, bool accepted, const char* reason );
-    psNameCheckMessage( MsgEntry* me );
+    psNameCheckMessage(uint32_t client, bool accepted, const char* reason);
+    psNameCheckMessage(MsgEntry* me);
 
-    void FromClient( MsgEntry* me );
-    void FromServer( MsgEntry* me );
+    void FromClient(MsgEntry* me);
+    void FromServer(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4580,8 +4595,8 @@ private:
 class psPingMsg : public psMessageCracker
 {
 public:
-    psPingMsg( uint32_t client, uint32_t id, uint8_t flags );
-    psPingMsg( MsgEntry* me );
+    psPingMsg(uint32_t client, uint32_t id, uint8_t flags);
+    psPingMsg(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4602,8 +4617,8 @@ public:
 class psHeartBeatMsg : public psMessageCracker
 {
 public:
-    psHeartBeatMsg( uint32_t client );
-    psHeartBeatMsg( MsgEntry* me );
+    psHeartBeatMsg(uint32_t client);
+    psHeartBeatMsg(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4621,8 +4636,8 @@ public:
 class psLockpickMessage : public psMessageCracker
 {
 public:
-    psLockpickMessage( const char* password ); // Password is for future use
-    psLockpickMessage( MsgEntry* me );
+    psLockpickMessage(const char* password);   // Password is for future use
+    psLockpickMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4642,9 +4657,9 @@ public:
 class psGMSpawnItems : public psMessageCracker
 {
 public:
-    psGMSpawnItems( uint32_t client,const char* type,unsigned int size );
-    psGMSpawnItems( const char* type);
-    psGMSpawnItems( MsgEntry* me );
+    psGMSpawnItems(uint32_t client,const char* type,unsigned int size);
+    psGMSpawnItems(const char* type);
+    psGMSpawnItems(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4673,8 +4688,8 @@ public:
 class psGMSpawnTypes : public psMessageCracker
 {
 public:
-    psGMSpawnTypes( uint32_t client,unsigned int size );
-    psGMSpawnTypes( MsgEntry* me );
+    psGMSpawnTypes(uint32_t client,unsigned int size);
+    psGMSpawnTypes(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4709,7 +4724,7 @@ public:
         bool random = false,
         float quality = 0.0f);
 
-    psGMSpawnItem( MsgEntry* me );
+    psGMSpawnItem(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4734,8 +4749,8 @@ public:
 class psLootRemoveMessage : public psMessageCracker
 {
 public:
-    psLootRemoveMessage( uint32_t client,int item );
-    psLootRemoveMessage( MsgEntry* me );
+    psLootRemoveMessage(uint32_t client,int item);
+    psLootRemoveMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -4753,28 +4768,28 @@ public:
 class psCharCreateTraitsMessage : public psMessageCracker
 {
 public:
-    psCharCreateTraitsMessage( uint32_t client, csString& string)
+    psCharCreateTraitsMessage(uint32_t client, csString &string)
     {
-        msg.AttachNew(new MsgEntry( string.Length()+1 ));
+        msg.AttachNew(new MsgEntry(string.Length()+1));
 
         msg->SetType(MSGTYPE_CHAR_CREATE_TRAITS);
         msg->clientnum = client;
-        msg->Add( string );
+        msg->Add(string);
     }
 
-    psCharCreateTraitsMessage( csString& string)
+    psCharCreateTraitsMessage(csString &string)
     {
-        msg.AttachNew(new MsgEntry( string.Length()+1 ));
+        msg.AttachNew(new MsgEntry(string.Length()+1));
 
         msg->SetType(MSGTYPE_CHAR_CREATE_TRAITS);
         msg->clientnum = 0;
-        msg->Add( string );
+        msg->Add(string);
     }
 
-    psCharCreateTraitsMessage( MsgEntry* me )
+    psCharCreateTraitsMessage(MsgEntry* me)
     {
         string  = me->GetStr();
-        if (!string.Length())
+        if(!string.Length())
             valid = false;
     }
 
@@ -4788,7 +4803,7 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-    const csString& GetString() const
+    const csString &GetString() const
     {
         return string;
     }
@@ -4833,7 +4848,7 @@ public:
         PUSH        ///< Execute this movement once
     };
 
-    psMoveModMsg(uint32_t client, ModType type, const csVector3& move, float Yrot);
+    psMoveModMsg(uint32_t client, ModType type, const csVector3 &move, float Yrot);
     psMoveModMsg(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -4906,23 +4921,23 @@ class psMsgCraftingInfo : public psMessageCracker
 public:
     psMsgCraftingInfo()
     {
-        msg.AttachNew(new MsgEntry( 1 ));
+        msg.AttachNew(new MsgEntry(1));
         msg->SetType(MSGTYPE_CRAFT_INFO);
     }
 
-    psMsgCraftingInfo( uint32_t client, csString craftinfo )
+    psMsgCraftingInfo(uint32_t client, csString craftinfo)
     {
-        msg.AttachNew(new MsgEntry( craftinfo.Length()+1 ));
+        msg.AttachNew(new MsgEntry(craftinfo.Length()+1));
 
         msg->SetType(MSGTYPE_CRAFT_INFO);
         msg->clientnum = client;
-        msg->Add( craftinfo.GetData() );
+        msg->Add(craftinfo.GetData());
     }
 
-    psMsgCraftingInfo( MsgEntry* me )
+    psMsgCraftingInfo(MsgEntry* me)
     {
         craftInfo = me->GetStr();
-        if (!craftInfo.Length())
+        if(!craftInfo.Length())
             valid = false;
     }
 
@@ -4947,21 +4962,21 @@ public:
 class psTraitChangeMessage : public psMessageCracker
 {
 public:
-    psTraitChangeMessage(uint32_t client, EID targetID, csString & string)
+    psTraitChangeMessage(uint32_t client, EID targetID, csString &string)
     {
-        msg.AttachNew(new MsgEntry( string.Length()+1 + sizeof(uint32_t) ));
+        msg.AttachNew(new MsgEntry(string.Length()+1 + sizeof(uint32_t)));
 
         msg->SetType(MSGTYPE_CHANGE_TRAIT);
         msg->clientnum = client;
         msg->Add(targetID.Unbox());
-        msg->Add( string );
+        msg->Add(string);
     }
 
-    psTraitChangeMessage( MsgEntry* me )
+    psTraitChangeMessage(MsgEntry* me)
     {
         target = EID(me->GetUInt32());
         string  = me->GetStr();
-        if (!string.Length())
+        if(!string.Length())
             valid = false;
     }
 
@@ -4987,17 +5002,17 @@ public:
 class psTutorialMessage : public psMessageCracker
 {
 public:
-    psTutorialMessage( uint32_t client, uint32_t which, const char *instructions)
+    psTutorialMessage(uint32_t client, uint32_t which, const char* instructions)
     {
-        msg.AttachNew(new MsgEntry( sizeof(uint32_t) + strlen(instructions)+1 ));
+        msg.AttachNew(new MsgEntry(sizeof(uint32_t) + strlen(instructions)+1));
 
         msg->SetType(MSGTYPE_TUTORIAL);
         msg->clientnum = client;
-        msg->Add( which );
-        msg->Add( instructions );
+        msg->Add(which);
+        msg->Add(instructions);
     }
 
-    psTutorialMessage( MsgEntry* me )
+    psTutorialMessage(MsgEntry* me)
     {
         whichMessage = me->GetUInt32();
         instrs = me->GetStr();
@@ -5023,22 +5038,22 @@ public:
 class psSketchMessage : public psMessageCracker
 {
 public:
-    psSketchMessage( uint32_t client, uint32_t itemID, uint8_t flags, const char *limitxml,const char *sketch_def, bool rightToEditFlag, const char *sketch_name, const char *backgroundImg)
+    psSketchMessage(uint32_t client, uint32_t itemID, uint8_t flags, const char* limitxml,const char* sketch_def, bool rightToEditFlag, const char* sketch_name, const char* backgroundImg)
     {
-        msg.AttachNew(new MsgEntry( sizeof(uint32_t)+1+strlen(limitxml)+1+strlen(sketch_def)+1+sizeof(bool)+strlen(sketch_name)+1+strlen(backgroundImg)+1 ));
+        msg.AttachNew(new MsgEntry(sizeof(uint32_t)+1+strlen(limitxml)+1+strlen(sketch_def)+1+sizeof(bool)+strlen(sketch_name)+1+strlen(backgroundImg)+1));
 
         msg->SetType(MSGTYPE_VIEW_SKETCH);
         msg->clientnum = client;
         msg->Add(itemID);
         msg->Add(flags);
         msg->Add(limitxml);
-        msg->Add( sketch_def );
+        msg->Add(sketch_def);
         msg->Add(rightToEditFlag);
         msg->Add(sketch_name);
         msg->Add(backgroundImg);
     }
 
-    psSketchMessage( MsgEntry* me )
+    psSketchMessage(MsgEntry* me)
     {
         ItemID = me->GetUInt32();
         Flags  = me->GetUInt8();
@@ -5127,7 +5142,7 @@ public:
      * @param musicalScore the musical sheet to play.
      */
     psPlaySongMessage(uint32_t client, uint32_t songID, bool toPlayer,
-        float minimumDuration, const char* instrName, uint32_t scoreSize, const char* musicalScore);
+                      float minimumDuration, const char* instrName, uint32_t scoreSize, const char* musicalScore);
 
     /**
      * Constructor from a MsgEntry.
@@ -5209,23 +5224,23 @@ public:
 class psMGStartStopMessage : public psMessageCracker
 {
 
-    public:
-        psMGStartStopMessage(uint32_t client, bool start);
+public:
+    psMGStartStopMessage(uint32_t client, bool start);
 
-        psMGStartStopMessage(MsgEntry *me);
+    psMGStartStopMessage(MsgEntry* me);
 
-        PSF_DECLARE_MSG_FACTORY();
+    PSF_DECLARE_MSG_FACTORY();
 
-        /**
-         * @brief Converts the message into human readable string.
-         *
-         * @param accessPointers A struct to a number of access pointers
-         * @return A human readable string for the message
-         */
-        virtual csString ToString(NetBase::AccessPointers* accessPointers);
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers
+     * @return A human readable string for the message
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-        /// Indicates that this is a request to start the game
-        bool msgStart;
+    /// Indicates that this is a request to start the game
+    bool msgStart;
 };
 
 /**
@@ -5234,56 +5249,56 @@ class psMGStartStopMessage : public psMessageCracker
 class psMGBoardMessage : public psMessageCracker
 {
 
-    public:
-        psMGBoardMessage(uint32_t client, uint8_t counter,
-                         uint32_t gameID, uint16_t options, int8_t cols, int8_t rows, uint8_t *layout,
-                         uint8_t numOfPieces, uint8_t *pieces);
+public:
+    psMGBoardMessage(uint32_t client, uint8_t counter,
+                     uint32_t gameID, uint16_t options, int8_t cols, int8_t rows, uint8_t* layout,
+                     uint8_t numOfPieces, uint8_t* pieces);
 
-        psMGBoardMessage(MsgEntry *me);
+    psMGBoardMessage(MsgEntry* me);
 
-        PSF_DECLARE_MSG_FACTORY();
+    PSF_DECLARE_MSG_FACTORY();
 
-        /**
-         * @brief Converts the message into human readable string.
-         *
-         * @param accessPointers A struct to a number of access pointers
-         * @return A human readable string for the message
-         */
-        virtual csString ToString(NetBase::AccessPointers* accessPointers);
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers
+     * @return A human readable string for the message
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-        /// Returns true if this message recent compared to the passed sequence value
-        bool IsNewerThan(uint8_t oldCounter);
+    /// Returns true if this message recent compared to the passed sequence value
+    bool IsNewerThan(uint8_t oldCounter);
 
-        /// Message counter for versioning
-        uint8_t msgCounter;
+    /// Message counter for versioning
+    uint8_t msgCounter;
 
-        /// Game ID (from action location ID).
-        uint32_t msgGameID;
+    /// Game ID (from action location ID).
+    uint32_t msgGameID;
 
-        /// Game options
-        uint16_t msgOptions;
+    /// Game options
+    uint16_t msgOptions;
 
-        /// Number of columns
-        int8_t msgCols;
+    /// Number of columns
+    int8_t msgCols;
 
-        /// Number of rows
-        int8_t msgRows;
+    /// Number of rows
+    int8_t msgRows;
 
-        /**
-         * Array with the game board layout.
-         *
-         * Every byte in this array defines two game tiles.
-         * 0 - Empty
-         * 1..14 - Game pieces
-         * 15 - Disabled
-         */
-        uint8_t *msgLayout;
+    /**
+     * Array with the game board layout.
+     *
+     * Every byte in this array defines two game tiles.
+     * 0 - Empty
+     * 1..14 - Game pieces
+     * 15 - Disabled
+     */
+    uint8_t* msgLayout;
 
-        /// Number of available pieces.
-        uint8_t msgNumOfPieces;
+    /// Number of available pieces.
+    uint8_t msgNumOfPieces;
 
-        /// Available pieces (both white and black).
-        uint8_t *msgPieces;
+    /// Available pieces (both white and black).
+    uint8_t* msgPieces;
 
 };
 
@@ -5293,41 +5308,41 @@ class psMGBoardMessage : public psMessageCracker
 class psMGUpdateMessage : public psMessageCracker
 {
 
-    public:
-        psMGUpdateMessage(uint32_t client, uint8_t counter,
-                          uint32_t gameID, uint8_t numUpdates, uint8_t *updates);
+public:
+    psMGUpdateMessage(uint32_t client, uint8_t counter,
+                      uint32_t gameID, uint8_t numUpdates, uint8_t* updates);
 
-        psMGUpdateMessage(MsgEntry *me);
+    psMGUpdateMessage(MsgEntry* me);
 
-        PSF_DECLARE_MSG_FACTORY();
+    PSF_DECLARE_MSG_FACTORY();
 
-        /**
-         * @brief Converts the message into human readable string.
-         *
-         * @param accessPointers A struct to a number of access pointers
-         * @return A human readable string for the message
-         */
-        virtual csString ToString(NetBase::AccessPointers* accessPointers);
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers
+     * @return A human readable string for the message
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-        /// Returns true if this message is newer than the passed sequence value
-        bool IsNewerThan(uint8_t oldCounter);
+    /// Returns true if this message is newer than the passed sequence value
+    bool IsNewerThan(uint8_t oldCounter);
 
-        /// Message counter for versioning
-        uint8_t msgCounter;
+    /// Message counter for versioning
+    uint8_t msgCounter;
 
-        /// Game ID (from the action location ID)
-        uint32_t msgGameID;
+    /// Game ID (from the action location ID)
+    uint32_t msgGameID;
 
-        /// Number of updates in this message
-        uint8_t msgNumUpdates;
+    /// Number of updates in this message
+    uint8_t msgNumUpdates;
 
-        /**
-         * Array with updates for the game board.
-         *
-         * Updates are packed into two sequential bytes. The first byte defines the column and row,
-         * the second byte defines the game tile.
-         */
-        uint8_t *msgUpdates;
+    /**
+     * Array with updates for the game board.
+     *
+     * Updates are packed into two sequential bytes. The first byte defines the column and row,
+     * the second byte defines the game tile.
+     */
+    uint8_t* msgUpdates;
 };
 
 /**
@@ -5336,28 +5351,28 @@ class psMGUpdateMessage : public psMessageCracker
 class psEntranceMessage : public psMessageCracker
 {
 
-    public:
-        /**
-         * @brief Constructor for message for entering.
-         *
-         * @param gem entity ID
-         */
-        psEntranceMessage(EID entranceID);
+public:
+    /**
+     * @brief Constructor for message for entering.
+     *
+     * @param gem entity ID
+     */
+    psEntranceMessage(EID entranceID);
 
-        psEntranceMessage( MsgEntry* me );
+    psEntranceMessage(MsgEntry* me);
 
-        PSF_DECLARE_MSG_FACTORY();
+    PSF_DECLARE_MSG_FACTORY();
 
-        /**
-         * @brief Converts the message into human readable string.
-         *
-         * @param accessPointers A struct to a number of access pointers
-         * @return A human readable string for the message
-         */
-        virtual csString ToString(NetBase::AccessPointers* accessPointers);
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers
+     * @return A human readable string for the message
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-        /// The gem entity ID of the entrance object
-        EID entranceID;
+    /// The gem entity ID of the entrance object
+    EID entranceID;
 };
 
 //--------------------------------------------------------------------------
@@ -5374,11 +5389,11 @@ class psGMEventListMessage : public psMessageCracker
 public:
 
     psGMEventListMessage();
-    psGMEventListMessage(MsgEntry *me);
+    psGMEventListMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
-    void Populate(csString& gmeventStr, int clientnum);
+    void Populate(csString &gmeventStr, int clientnum);
 
     /**
      * @brief Converts the message into human readable string.
@@ -5404,7 +5419,7 @@ public:
         CMD_DISCARD, ///< command to discard an event
         CMD_EVAL     ///< command to send an evaluation of the event
     };
-    psGMEventInfoMessage(int cnum, int cmd, int id, const char *name,const char *info, bool Evaluatable = false);
+    psGMEventInfoMessage(int cnum, int cmd, int id, const char* name,const char* info, bool Evaluatable = false);
     psGMEventInfoMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -5444,17 +5459,17 @@ public:
         MSG_UPDATE              // Data is an update faction list.
     };
 
-   /** @brief Construct the faction message.
-     * @param cnum The client destination for the message.
-     * @param cmd  What the data inside will be. [ MSG_FULL_LIST | MSG_UPDATE ]
-     */
+    /** @brief Construct the faction message.
+      * @param cnum The client destination for the message.
+      * @param cmd  What the data inside will be. [ MSG_FULL_LIST | MSG_UPDATE ]
+      */
     psFactionMessage(int cnum, int cmd);
 
     /** @brief Adds a faction to the list to deliver.
      *  @param factionName The name of the faction.
      *  @param rating The rating with that faction.
      */
-    void AddFaction( csString factionName, int rating );
+    void AddFaction(csString factionName, int rating);
 
     /// Build the messasge to prepare for it to be sent.
     void BuildMsg();
@@ -5482,7 +5497,7 @@ public:
         CMD_STOP = 2,
         CMD_LOOP = 3
     };
-    psSequenceMessage(int cnum, const char * name, int cmd, int count);
+    psSequenceMessage(int cnum, const char* name, int cmd, int count);
     psSequenceMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -5515,7 +5530,7 @@ public:
     psPlaySoundMessage(uint32_t clientnum, csString snd);
 
     /** Crack incoming psMessageBytes struct for inbound use */
-    psPlaySoundMessage(MsgEntry *message);
+    psPlaySoundMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
     /**
@@ -5535,8 +5550,8 @@ public:
 class psCharCreateCPMessage : public psMessageCracker
 {
 public:
-    psCharCreateCPMessage(  uint32_t client, int32_t rID, int32_t CPVal );
-    psCharCreateCPMessage( MsgEntry* message );
+    psCharCreateCPMessage(uint32_t client, int32_t rID, int32_t CPVal);
+    psCharCreateCPMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -5560,8 +5575,8 @@ public:
 class psCharIntroduction : public psMessageCracker
 {
 public:
-    psCharIntroduction( );
-    psCharIntroduction( MsgEntry* message );
+    psCharIntroduction();
+    psCharIntroduction(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -5585,8 +5600,8 @@ public:
     csString hash;
     csRef<iDataBuffer> databuf;
 
-    psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents);
-    psCachedFileMessage( MsgEntry* me );
+    psCachedFileMessage(uint32_t client, uint8_t sequence, const char* pathname, iDataBuffer* contents);
+    psCachedFileMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -5614,7 +5629,7 @@ public:
     csString xml;
 
     psDialogMenuMessage();
-    psDialogMenuMessage( MsgEntry* message );
+    psDialogMenuMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -5637,7 +5652,7 @@ public:
         uint32_t flags;
     };
 
-    void AddResponse( uint32_t id, const csString& menuText, const csString& triggerText, uint32_t flags = 0x00 );
+    void AddResponse(uint32_t id, const csString &menuText, const csString &triggerText, uint32_t flags = 0x00);
 
     csArray<DialogResponse> responses;
 };
@@ -5651,8 +5666,8 @@ class psSimpleStringMessage : public psMessageCracker
 public:
     csString str;
 
-    psSimpleStringMessage( uint32_t client,MSG_TYPES type, const char *string);
-    psSimpleStringMessage( MsgEntry* me );
+    psSimpleStringMessage(uint32_t client,MSG_TYPES type, const char* string);
+    psSimpleStringMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -5682,8 +5697,8 @@ public:
     uint16_t            count; /// The total number of meshes in this collection
     csSimpleRenderMesh simpleRenderMesh;
 
-    psSimpleRenderMeshMessage( uint32_t client, NetBase::AccessPointers* accessPointers, const char* name, uint16_t index, uint16_t count, const iSector* sector, const csSimpleRenderMesh& simpleRenderMesh );
-    psSimpleRenderMeshMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers );
+    psSimpleRenderMeshMessage(uint32_t client, NetBase::AccessPointers* accessPointers, const char* name, uint16_t index, uint16_t count, const iSector* sector, const csSimpleRenderMesh &simpleRenderMesh);
+    psSimpleRenderMeshMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -5705,8 +5720,8 @@ class psOrderedMessage : public psMessageCracker
 public:
     int value;
 
-    psOrderedMessage( uint32_t client, int valueToSend, int sequenceNumber);
-    psOrderedMessage( MsgEntry* me );
+    psOrderedMessage(uint32_t client, int valueToSend, int sequenceNumber);
+    psOrderedMessage(MsgEntry* me);
 
     PSF_DECLARE_MSG_FACTORY();
 

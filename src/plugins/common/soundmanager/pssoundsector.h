@@ -44,7 +44,7 @@ struct iDocumentNode;
 /**
  * work in progress - Looks like a mishap. I hope find a object where i
  * can merge this into
- */ 
+ */
 class psSoundSector
 {
 public:
@@ -84,10 +84,35 @@ public:
     void AddMusic(csRef<iDocumentNode> Node);
     void UpdateMusic(bool loopToggle, int type, SoundControl* &ctrl);
     void DeleteMusic(psMusic* &music);
+
+    /**
+     * Adds one emitter from the current array of known emitters
+     * @param ctrl The sound control to be used to handle the update.
+     */
     void AddEmitter(csRef<iDocumentNode> Node);
-    void UpdateEmitter(SoundControl* &ctrl);
+
+    /**
+     * Start/stops all emitters based on distance and time of the day
+     * @param ctrl The sound control to be used to handle the update.
+     */
+    void UpdateAllEmitters(SoundControl* &ctrl);
+
+    /**
+     * Update all entities times, and based on their status generate a sound.
+     * @param ctrl The sound control to be used to handle the update.
+     */
+    void UpdateAllEntities(SoundControl* &ctrl);
+
+    /**
+     * Deletes one emitter from the current array of known emitters
+     * @param ctrl The sound control to be used to handle the update.
+     */
     void DeleteEmitter(psEmitter* &emitter);
-    void AddEntity(csRef<iDocumentNode> entityNode);
+    /**
+     * Loads an ENTITY entry from an xml file and generates an entity sound definition
+     * @param entityNode xml node to load
+     */
+    void AddEntityDefinition(csRef<iDocumentNode> entityNode);
 
     /**
      * Updates an object entity managed from the sector.
@@ -112,7 +137,7 @@ public:
      */
     void RemoveObjectEntity(iMeshWrapper* mesh, const char* meshName);
 
-    
+
 
     /**
      * Sets the new state for the entity associated to the given mesh. If
