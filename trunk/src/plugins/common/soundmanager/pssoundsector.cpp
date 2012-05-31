@@ -342,7 +342,6 @@ void psSoundSector::UpdateAllEntities(SoundControl* &ctrl)
 
         float range;
         csVector3 rangeVec;
-        iMeshWrapper* mesh;
 
         rangeVec = entity->GetPosition() - listenerPos;
         range = rangeVec.Norm();
@@ -554,12 +553,14 @@ void psSoundSector::SetEntityState(int state, iMeshWrapper* mesh, const char* ac
     uint meshID;
     psEntity* entity;
 
-    Debug3(LOG_SOUND, 0, "psSoundSector::SetEntityState START state: %d meshid: %u",state, mesh->QueryObject()->GetID());
     entity = GetAssociatedEntity(mesh, actorName);
     if(entity == 0)
     {
         return;
     }
+
+    if(state!=entity->GetState())
+        Debug4(LOG_SOUND, 0, "psSoundSector::SetEntityState %s state: %d meshid: %u",entity->GetEntityName().GetData(),state, mesh->QueryObject()->GetID());
 
     meshID = mesh->QueryObject()->GetID();
 
@@ -590,7 +591,7 @@ void psSoundSector::Load(csRef<iDocumentNode> sectorNode)
     // if the sector is already defined the name is overwritten
     name = sectorNode->GetAttributeValue("NAME");
 
-    Debug2(LOG_SOUND, 0, "Loading sector data for %s",name.GetData());
+    Debug2(LOG_SOUND, 0, "Loading sound sector data for %s",name.GetData());
 
     nodeIter = sectorNode->GetNodes("AMBIENT");
     while(nodeIter->HasNext())
