@@ -27,6 +27,8 @@
 
 #include "pssoundsector.h"
 
+#include "net/messages.h"
+
 #include "manager.h"
 #include "psmusic.h"
 #include "psentity.h"
@@ -34,6 +36,7 @@
 #include "soundctrl.h"
 #include "sectormngr.h"
 #include "soundmanager.h"
+
 
 psSoundSector::psSoundSector(iObjectRegistry* objReg)
 {
@@ -102,9 +105,9 @@ void psSoundSector::UpdateAmbient(int type, SoundControl* &ctrl)
 
         // check parameters against our world, is this the track we are searching?
         if(ambient->CheckType(type) == true
-            && active == true
-            && ctrl->GetToggle() == true
-            && ambient->CheckTimeOfDay(timeOfDay) == true)
+                && active == true
+                && ctrl->GetToggle() == true
+                && ambient->CheckTimeOfDay(timeOfDay) == true)
         {
             if(ambient->active == true)
             {
@@ -126,7 +129,7 @@ void psSoundSector::UpdateAmbient(int type, SoundControl* &ctrl)
         {
             // state doesnt matter, this handle will be stopped
             ambient->FadeDownAndStop();
-            
+
             if(activeambient == ambient)
             {
                 activeambient = NULL;
@@ -169,7 +172,7 @@ void psSoundSector::AddMusic(csRef<iDocumentNode> Node)
 }
 
 void psSoundSector::UpdateMusic(bool loopToggle, int type,
-                                 SoundControl* &ctrl)
+                                SoundControl* &ctrl)
 {
     psMusic* music;
     int timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
@@ -180,9 +183,9 @@ void psSoundSector::UpdateMusic(bool loopToggle, int type,
 
         // check parameters against our world, is this the track we are searching?
         if(music->CheckType(type) == true
-            && active == true
-            && ctrl->GetToggle() == true
-            && music->CheckTimeOfDay(timeOfDay) == true)
+                && active == true
+                && ctrl->GetToggle() == true
+                && music->CheckTimeOfDay(timeOfDay) == true)
         {
             if(music->active == true)
             {
@@ -226,7 +229,7 @@ void psSoundSector::UpdateMusic(bool loopToggle, int type,
         {
             // state doesnt matter, this handle will be stopped
             music->FadeDownAndStop();
-            
+
             if(activemusic == music)
             {
                 activemusic = NULL;
@@ -244,7 +247,7 @@ void psSoundSector::DeleteMusic(psMusic* &music)
 void psSoundSector::AddEmitter(csRef<iDocumentNode> Node)
 {
     psEmitter* emitter;
-    
+
     emitter = new psEmitter;
 
     emitter->resource       = Node->GetAttributeValue("RESOURCE");
@@ -278,13 +281,13 @@ void psSoundSector::AddEmitter(csRef<iDocumentNode> Node)
     {
         emitter->timeofday = 0;
         emitter->timeofdayrange = 24;
-    }    
+    }
     emitterarray.Push(emitter);
 }
 
 
 //update on position change
-void psSoundSector::UpdateEmitter(SoundControl* &ctrl)
+void psSoundSector::UpdateAllEmitters(SoundControl* &ctrl)
 {
     psEmitter* emitter;
     int timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
@@ -296,9 +299,9 @@ void psSoundSector::UpdateEmitter(SoundControl* &ctrl)
         emitter = emitterarray[i];
 
         if(emitter->CheckRange(listenerPos) == true
-           && active == true
-           && ctrl->GetToggle() == true
-           && emitter->CheckTimeOfDay(timeOfDay) == true)
+                && active == true
+                && ctrl->GetToggle() == true
+                && emitter->CheckTimeOfDay(timeOfDay) == true)
         {
             if(emitter->active == true)
             {
@@ -323,13 +326,45 @@ void psSoundSector::UpdateEmitter(SoundControl* &ctrl)
     }
 }
 
+void psSoundSector::UpdateAllEntities(SoundControl* &ctrl)
+{
+    psEntity* entity;
+    int timeOfDay;
+    csVector3 listenerPos;
+
+    listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
+    timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
+
+    csHash<psEntity*, uint>::GlobalIterator tempEntityIter(tempEntities.GetIterator());
+    while(tempEntityIter.HasNext())
+    {
+        entity = tempEntityIter.Next();
+
+        float range;
+        csVector3 rangeVec;
+        iMeshWrapper* mesh;
+
+        rangeVec = entity->GetPosition() - listenerPos;
+        range = rangeVec.Norm();
+
+        // this update the delay and fallback state, play if it can and
+        // set itself as active when appropriate. Only temporary entities
+        // should be updated
+        if(entity->IsTemporary())
+        {
+            entity->Update(timeOfDay, range, SoundManager::updateTime, ctrl, entity->GetPosition());
+        }
+    }
+
+}
+
 void psSoundSector::DeleteEmitter(psEmitter* &emitter)
 {
     emitterarray.Delete(emitter);
     delete emitter;
 }
 
-void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
+void psSoundSector::AddEntityDefinition(csRef<iDocumentNode> entityNode)
 {
     float minRange;
     float maxRange;
@@ -339,7 +374,7 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
     psEntity* entity;
     csRef<iDocumentNodeIterator> stateItr;
 
-    Debug1(LOG_SOUND, 0, "psSoundSector::AddEntity START");
+    Debug1(LOG_SOUND, 0, "psSoundSector::AddEntityDefinition START");
 
     // determining if this is a mesh entity or a factory entity
     meshName = entityNode->GetAttributeValue("MESH", 0);
@@ -379,13 +414,13 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
         {
             entity = new psEntity(true, factoryName);
             factories.Put(factoryName, entity);
-            Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity FACTORY %s",entity->GetEntityName().GetData());
+            Debug2(LOG_SOUND, 0, "psSoundSector::AddEntityDefinition FACTORY %s",entity->GetEntityName().GetData());
         }
         else // mesh entity
         {
             entity = new psEntity(false, meshName);
             meshes.Put(meshName, entity);
-            Debug2(LOG_SOUND, 0, "psSoundSector::AddEntity MESH %s",entity->GetEntityName().GetData());
+            Debug2(LOG_SOUND, 0, "psSoundSector::AddEntityDefinition MESH %s",entity->GetEntityName().GetData());
         }
     }
 
@@ -399,6 +434,9 @@ void psSoundSector::AddEntity(csRef<iDocumentNode> entityNode)
     {
         entity->DefineState(stateItr->Next());
     }
+
+    // entities have a default state as idle
+    entity->SetState(psModeMessage::PEACE,1);
 }
 
 void psSoundSector::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
@@ -408,7 +446,7 @@ void psSoundSector::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
     psEntity* entity;
     int timeOfDay;
     csVector3 listenerPos;
-    
+
     if(mesh == 0 || meshName == 0)
     {
         return;
@@ -427,6 +465,8 @@ void psSoundSector::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
     // actually play something
     rangeVec = mesh->GetMovable()->GetFullPosition() - listenerPos;
     range = rangeVec.Norm();
+
+    Debug4(LOG_SOUND, 0, "psSoundSector::AddObjectEntity MESH %s ID %d temp %s",entity->GetEntityName().GetData(), entity->GetMeshID(), entity->IsTemporary()?"true":"false");
 
     if(!entity->IsTemporary() && entity->CanPlay(timeOfDay, range))
     {
@@ -449,6 +489,7 @@ void psSoundSector::RemoveObjectEntity(iMeshWrapper* mesh, const char* meshName)
     }
     if(entity->IsTemporary())
     {
+        Debug3(LOG_SOUND, 0, "psSoundSector::RemoveObjectEntity MESH %s ID %d",entity->GetEntityName().GetData(), entity->GetMeshID());
         DeleteEntity(entity);
     }
 }
@@ -472,6 +513,8 @@ void psSoundSector::UpdateEntity(iMeshWrapper* mesh, const char* meshName, Sound
         return;
     }
 
+    Debug4(LOG_SOUND, 0, "psSoundSector::UpdateEntity MESH %s ID %d temp %s",entity->GetEntityName().GetData(), entity->GetMeshID(), entity->IsTemporary()?"true":"false");
+
     listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
     timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
 
@@ -486,85 +529,6 @@ void psSoundSector::UpdateEntity(iMeshWrapper* mesh, const char* meshName, Sound
         csVector3 entityPosition = mesh->GetMovable()->GetFullPosition();
         entity->Update(timeOfDay, range, SoundManager::updateTime, ctrl, entityPosition);
     }
-
-    
-    /*int timeOfDay;
-    csVector3 listenerPos;
-
-    psEntity* entity;
-
-    listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
-    timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
-
-    const csPDelArray<GEMClientObject>& entities = psengine->GetCelClient()->GetEntities();
-
-    for(size_t a = 0; a < entities.GetSize(); a++)
-    {
-		// filter actors only
-        GEMClientObject* object = entities[a];
-        GEMClientActor* act = dynamic_cast<GEMClientActor*>(object);
-        if(!act)
-            continue;
-
-        float range;
-        csVector3 rangeVec;
-        iMeshWrapper* mesh;
-
-        mesh = act->GetMesh();
-        if(mesh == 0)
-        {
-            continue;
-        }
-
-        // retrieving the entity associated to the mesh (if any)
-        entity = GetAssociatedEntity(mesh, act->race);
-        if(entity == 0)
-        {
-            continue;
-        }
-
-        // if this isn't a temporary entity, create one only if it can
-        // actually play something
-        rangeVec = mesh->GetMovable()->GetFullPosition() - listenerPos;
-        range = rangeVec.Norm();
-
-        if(!entity->IsTemporary() && entity->CanPlay(timeOfDay, range))
-        {
-            entity = new psEntity(entity);
-            entity->SetMeshID(mesh->QueryObject()->GetID());
-            tempEntities.Put(entity->GetMeshID(), entity);
-        }
-
-        // this update the delay and fallback state, play if it can and
-        // set itself as active when appropriate. Only temporary entities
-        // should be updated
-        if(entity->IsTemporary())
-        {
-            csVector3 entityPosition = mesh->GetMovable()->GetFullPosition();
-            entity->Update(timeOfDay, range, SoundManager::updateTime, ctrl, entityPosition);
-        }
-    }
-
-    // Cleaning up temporary entities (common sector doesn't have them)
-    csArray<psEntity*> tempEnt = tempEntities.GetAll();
-    size_t tempEntSize = tempEnt.GetSize();
-    
-    for(size_t i = 0; i < tempEntSize; i++)
-    {
-        entity = tempEnt[i];
-
-        if(entity->IsActive())
-        {
-            // by setting here the entity as unactive we can check if the
-            // entity has been touched or not in the next update
-            entity->SetActive(false);
-        }
-        else
-        {
-            DeleteEntity(entity);
-            continue;
-        }
-    }*/
 }
 
 void psSoundSector::DeleteEntity(psEntity* &entity)
@@ -590,7 +554,7 @@ void psSoundSector::SetEntityState(int state, iMeshWrapper* mesh, const char* ac
     uint meshID;
     psEntity* entity;
 
-	Debug3(LOG_SOUND, 0, "psSoundSector::SetEntityState START state: %d meshid: %u",state, mesh->QueryObject()->GetID());
+    Debug3(LOG_SOUND, 0, "psSoundSector::SetEntityState START state: %d meshid: %u",state, mesh->QueryObject()->GetID());
     entity = GetAssociatedEntity(mesh, actorName);
     if(entity == 0)
     {
@@ -622,9 +586,11 @@ void psSoundSector::SetEntityState(int state, iMeshWrapper* mesh, const char* ac
 void psSoundSector::Load(csRef<iDocumentNode> sectorNode)
 {
     csRef<iDocumentNodeIterator> nodeIter;
- 
+
     // if the sector is already defined the name is overwritten
     name = sectorNode->GetAttributeValue("NAME");
+
+    Debug2(LOG_SOUND, 0, "Loading sector data for %s",name.GetData());
 
     nodeIter = sectorNode->GetNodes("AMBIENT");
     while(nodeIter->HasNext())
@@ -637,17 +603,17 @@ void psSoundSector::Load(csRef<iDocumentNode> sectorNode)
     {
         AddMusic(nodeIter->Next());
     }
-    
+
     nodeIter = sectorNode->GetNodes("EMITTER");
     while(nodeIter->HasNext())
     {
         AddEmitter(nodeIter->Next());
-    }                
+    }
 
     nodeIter = sectorNode->GetNodes("ENTITY");
     while(nodeIter->HasNext())
     {
-        AddEntity(nodeIter->Next());
+        AddEntityDefinition(nodeIter->Next());
     }
 }
 
@@ -663,7 +629,7 @@ void psSoundSector::Delete()
     {
         DeleteMusic(musicarray[i]);
     }
-    
+
     for(size_t i = 0; i< ambientarray.GetSize(); i++)
     {
         DeleteAmbient(ambientarray[i]);

@@ -241,7 +241,11 @@ void SoundSectorManager::Update()
         return;
     }
 
-    activeSector->UpdateEmitter(ambientSndCtrl);
+    // update Emitters
+    activeSector->UpdateAllEmitters(ambientSndCtrl);
+
+    // update Entities
+    activeSector->UpdateAllEntities(ambientSndCtrl);
 }
 
 void SoundSectorManager::SetLoopBGMToggle(bool toggle)
@@ -342,7 +346,7 @@ void SoundSectorManager::UpdateSector(psSoundSector* sector)
 {
     sector->UpdateMusic(loopBGM, combatStance, musicSndCtrl);
     sector->UpdateAmbient(weather, ambientSndCtrl);
-    sector->UpdateEmitter(ambientSndCtrl);
+    sector->UpdateAllEmitters(ambientSndCtrl);
 }
 
 void SoundSectorManager::ConvertFactoriesToEmitter(psSoundSector* sndSector)
@@ -429,7 +433,7 @@ void SoundSectorManager::ConvertFactoriesToEmitter(psSoundSector* sndSector)
 * all we do is copy the address
 */
 void SoundSectorManager::TransferHandles(psSoundSector* oldSector,
-                                   psSoundSector* newSector)
+        psSoundSector* newSector)
 {
     for(size_t j = 0; j< newSector->musicarray.GetSize(); j++)
     {
@@ -439,7 +443,7 @@ void SoundSectorManager::TransferHandles(psSoundSector* oldSector,
         }
 
         if(csStrCaseCmp(newSector->musicarray[j]->resource,
-           oldSector->activemusic->resource) == 0)
+                        oldSector->activemusic->resource) == 0)
         {
             /* yay active resource with the same name - steal the handle*/
             newSector->musicarray[j]->handle = oldSector->activemusic->handle;
@@ -465,7 +469,7 @@ void SoundSectorManager::TransferHandles(psSoundSector* oldSector,
         }
 
         if(csStrCaseCmp(newSector->ambientarray[j]->resource,
-           oldSector->activeambient->resource) == 0)
+                        oldSector->activeambient->resource) == 0)
         {
             /* yay active resource with the same name - steal the handle*/
             newSector->ambientarray[j]->handle = oldSector->activeambient->handle;

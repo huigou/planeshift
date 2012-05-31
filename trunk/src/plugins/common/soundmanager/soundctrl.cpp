@@ -96,33 +96,33 @@ bool SoundControl::GetToggle() const
 
 void SoundControl::VolumeDampening(float dampPercent)
 {
-	/**
-	 * If the volume should be dampened we try to lower the volume percent with
-	 * 5% each time until we are at a level of 'dampPercent' volume. When we want
-	 * to restore the volume to full we restore it with 1% change each iteration.
-	 */
-	if(dampPercent < 1.0)
-	{
-		if(volumeDamp > dampPercent)
-		{
-			volumeDamp -= 0.05f;
-		}
-		else
-		{
-			isDampened = true;
-		}
-	}
-	else
-	{
-		if(volumeDamp < 1.0)
-		{
-			volumeDamp += 0.01f;
-		}
-		else
-		{
-			isDampened = false;
-		}
-	}
+    /**
+     * If the volume should be dampened we try to lower the volume percent with
+     * 5% each time until we are at a level of 'dampPercent' volume. When we want
+     * to restore the volume to full we restore it with 1% change each iteration.
+     */
+    if(dampPercent < 1.0)
+    {
+        if(volumeDamp > dampPercent)
+        {
+            volumeDamp -= 0.05f;
+        }
+        else
+        {
+            isDampened = true;
+        }
+    }
+    else
+    {
+        if(volumeDamp < 1.0)
+        {
+            volumeDamp += 0.01f;
+        }
+        else
+        {
+            isDampened = false;
+        }
+    }
 }
 
 bool SoundControl::IsDampened() const

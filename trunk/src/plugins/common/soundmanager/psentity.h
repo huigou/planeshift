@@ -35,7 +35,7 @@
  * associated to a mesh object, or a factory entity if it is associated to a mesh factory.
  *
  * @see psSoundSector psEntity main user.
- */ 
+ */
 class psEntity
 {
 public:
@@ -65,14 +65,20 @@ public:
      * Return true if this is a factory entity.
      * @return true if this is a factory entity, false otherwise.
      */
-    bool IsFactoryEntity() const { return isFactoryEntity; }
+    bool IsFactoryEntity() const
+    {
+        return isFactoryEntity;
+    }
 
     /**
      * Gets the entity name associated to this object. Use IsFactoryEntity() to check
      * if this name is a mesh name or a factory name.
      * @return the entity name.
      */
-    const csString &GetEntityName() const { return entityName; }
+    const csString &GetEntityName() const
+    {
+        return entityName;
+    }
 
     /**
      * Sets this object as a mesh entity.
@@ -90,7 +96,10 @@ public:
      * Gets the maximum distance at which this entity can be heard.
      * @return the maximum distance at which this entity can be heard.
      */
-    float GetMaxRange() const { return maxRange; }
+    float GetMaxRange() const
+    {
+        return maxRange;
+    }
 
     /**
      * Sets the range for this entity.
@@ -112,6 +121,14 @@ public:
     void SetMeshID(uint id);
 
     /**
+     * Returns the 3d position of this entity.
+     */
+    csVector3 GetPosition()
+    {
+        return position;
+    };
+
+    /**
      * Create a new state from an XML <state> node.
      * @param stateNode the state node.
      * @return true if the state could be created, false otherwise.
@@ -122,13 +139,19 @@ public:
      * Check if this entity is active.
      * @return true if this is active, false otherwise.
      */
-    bool IsActive() const { return isActive; }
+    bool IsActive() const
+    {
+        return isActive;
+    }
 
     /**
      * Activate or deactivate this entity.
      * @param toggle true to activate this entity, false to deactivate it.
      */
-    void SetActive(bool toggle) { isActive = toggle; }
+    void SetActive(bool toggle)
+    {
+        isActive = toggle;
+    }
 
     /**
      * Used to determine if this is a temporary entity associated to a specific mesh
@@ -155,7 +178,7 @@ public:
      * range. False otherwise.
      */
     bool CanPlay(int time, float range) const;
-    
+
     /**
      * Set the new state for the entity. If the given state is undefined for
      * this entity the change of state is not forced, the state does not change.
@@ -220,6 +243,7 @@ private:
     uint id;                            ///< the id of the mesh object whose sound is controlled by this entity.
     float minRange;                     ///< minimum distance at which this entity can be heard
     float maxRange;                     ///< maximum distance at which this entity can be heard
+    csVector3      position;            ///< position of the entity
 
     SoundHandle* handle;                ///< pointer to the SoundHandle if playing
     csHash<EntityState*, uint> states;  ///< entity states hash mapped by their ID.

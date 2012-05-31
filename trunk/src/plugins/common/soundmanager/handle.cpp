@@ -42,7 +42,7 @@ SoundHandle::SoundHandle()
     fadeSteps = 0;
     fadeStop = false;
     maxDistance = -1;
-    
+
     hasCallback = false;
 
     autoremove = true;
@@ -84,7 +84,10 @@ SoundHandle::~SoundHandle()
     }
 
     // unsubscribing to SoundControls' events
-    sndCtrl->Unsubscribe(this);
+    if(sndCtrl != NULL)
+    {
+        sndCtrl->Unsubscribe(this);
+    }
     SoundSystemManager::GetSingleton().mainSndCtrl->Unsubscribe(this);
 }
 
@@ -94,8 +97,8 @@ SoundHandle::~SoundHandle()
  * all we do is handle results
  *
  * the soundhandles which contain all our precious informations
- * are created here. Not that those are NOT pushed into the array!
- * Thats done within the Play*D functions before the sounds are unpaused
+ * are created here. Note that those are NOT pushed into the array!
+ * Thats done within the Play3D functions before the sounds are unpaused
  */
 
 bool SoundHandle::Init(const char* resname, bool loop, float volumePreset,
@@ -144,17 +147,17 @@ bool SoundHandle::Perform(iTimerEvent* /*ev*/)
     return false;
 }
 
- /*
-  * This is a utility function to calculate fading
-  *
-  * fading is done in ten steps per second
-  * we calculate the number of steps and the volume for each step
-  * FIXME csticks
-  *
-  * fading parameters of the given handle are updated.
-  * Fading is done by sndSysMgr::UpdateSound
-  *
-  */
+/*
+ * This is a utility function to calculate fading
+ *
+ * fading is done in ten steps per second
+ * we calculate the number of steps and the volume for each step
+ * FIXME csticks
+ *
+ * fading parameters of the given handle are updated.
+ * Fading is done by sndSysMgr::UpdateSound
+ *
+ */
 
 
 void SoundHandle::Fade(float volume, int time, int direction)
@@ -249,24 +252,24 @@ void SoundHandle::FadeStep()
     }
 }
 
- /*
-  * Convert To 3D ;)
-  * adds a 3D Source and a Directional 3D Source if theres a rad bigger 0
-  */
+/*
+ * Convert To 3D ;)
+ * adds a 3D Source and a Directional 3D Source if theres a rad bigger 0
+ */
 
 void SoundHandle::ConvertTo3D(float mindist, float maxdist, csVector3 pos,
-                               csVector3 dir, float rad)
+                              csVector3 dir, float rad)
 {
     maxDistance = maxdist;
 
     SoundSystemManager::GetSingleton().GetSoundSystem()->Create3DSource(sndsource, sndsource3d, mindist, maxdist,
-                                 pos);
+            pos);
 
     /* create a directional source if rad > 0 */
     if(rad > 0)
     {
         SoundSystemManager::GetSingleton().GetSoundSystem()->CreateDirectional3DSource(sndsource3d, sndsourcedir,
-                                                dir, rad);
+                dir, rad);
     }
 }
 
@@ -329,11 +332,11 @@ void SoundHandle::UnpauseAfterDelay(unsigned int delay)
     }
 }
 
-void SoundHandle::SetCallback(void (*object), void (*function) (void *))
+void SoundHandle::SetCallback(void (*object), void (*function)(void*))
 {
     callbackobject = object;
     callbackfunction = function;
-    hasCallback = true; 
+    hasCallback = true;
 }
 
 void SoundHandle::Callback()

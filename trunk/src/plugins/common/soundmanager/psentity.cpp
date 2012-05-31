@@ -38,17 +38,18 @@ psEntity::psEntity(bool isFactory, const char* name)
     state = DEFAULT_ENTITY_STATE;
     id = 0;
     handle = 0;
+    position = csVector3(0);
 
     minRange = 0.0f;
     maxRange = 0.0f;
 }
 
-psEntity::psEntity(psEntity* const& entity)
+psEntity::psEntity(psEntity* const &entity)
 {
     isFactoryEntity = entity->isFactoryEntity;
     entityName = entity->entityName;
 
-	Debug2(LOG_SOUND, 0, "psEntity::psEntity %s",entityName.GetData());
+    Debug2(LOG_SOUND, 0, "psEntity::psEntity %s",entityName.GetData());
 
     states = csHash<EntityState*, uint>(entity->states);
 
@@ -67,6 +68,7 @@ psEntity::psEntity(psEntity* const& entity)
     state = entity->state;
     id = entity->id;
     handle = 0;
+    position = entity->position;
 
     minRange = entity->minRange;
     maxRange = entity->maxRange;
@@ -148,7 +150,7 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
 
     // checking if the state ID is legal
     stateID = stateNode->GetAttributeValueAsInt("ID", -1);
-	Debug4(LOG_SOUND, 0, "psEntity::DefineState %s state %d meshid %u",entityName.GetData(),stateID,id);
+    Debug4(LOG_SOUND, 0, "psEntity::DefineState %s state %d meshid %u",entityName.GetData(),stateID,id);
     if(stateID < 0)
     {
         return false;
@@ -161,7 +163,7 @@ bool psEntity::DefineState(csRef<iDocumentNode> stateNode)
     {
         return false;
     }
-    
+
     entityState = new EntityState();
 
     // initializing resources
@@ -229,20 +231,24 @@ bool psEntity::CanPlay(int time, float range) const
     entityState = states.Get(state, 0);
     if(entityState == 0)
     {
+        Debug2(LOG_SOUND, 0, "psEntity::CanPlay %s undefined state.", entityName.GetData());
         return false;
     }
 
     // checking time, range and delay
     if(range < minRange || range > maxRange)
     {
+        Debug5(LOG_SOUND, 0, "psEntity::CanPlay %s range %f %f %f", entityName.GetData(),minRange, range, maxRange);
         return false;
     }
     else if(time < entityState->timeOfDayStart || entityState->timeOfDayEnd < time)
     {
+        Debug5(LOG_SOUND, 0, "psEntity::CanPlay %s time of day %d %d %d", entityName.GetData(),entityState->timeOfDayStart,time,entityState->timeOfDayEnd);
         return false;
     }
     else if(when <= 0)
     {
+        Debug3(LOG_SOUND, 0, "psEntity::CanPlay TRUE %s when <0 : %d", entityName.GetData(),when);
         return true;
     }
 
@@ -258,14 +264,14 @@ void psEntity::SetState(uint newState, bool forceChange)
 {
     EntityState* entityState;
 
-	Debug3(LOG_SOUND, 0, "psEntity::SetState entity: %s state: %u",entityName.GetData(),newState);
+    Debug3(LOG_SOUND, 0, "psEntity::SetState entity: %s state: %u",entityName.GetData(),newState);
 
     // check if it's already in this state or if it's defined
     if(state == newState)
     {
         return;
     }
-    
+
     // setting state
     entityState = states.Get(newState, 0);
     if(entityState == 0)
@@ -303,18 +309,18 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
     {
         int resourceNumber = SoundManager::randomGen.Get() * entityState->resources.GetSize();
 
-		Debug2(LOG_SOUND, 0, "psEntity::Play() PLAYS! %s",entityState->resources[resourceNumber]);
+        Debug3(LOG_SOUND, 0, "psEntity::Play() PLAYS! %s",entityName.GetData(),entityState->resources[resourceNumber]);
 
         if(SoundSystemManager::GetSingleton().Play3DSound(entityState->resources[resourceNumber], DONT_LOOP, 0, 0,
-            entityState->volume, ctrl, entityPosition, 0, minRange, maxRange,
-            VOLUME_ZERO, CS_SND3D_ABSOLUTE, handle))
+                entityState->volume, ctrl, entityPosition, 0, minRange, maxRange,
+                VOLUME_ZERO, CS_SND3D_ABSOLUTE, handle))
         {
             when = entityState->delay;
             handle->SetCallback(this, &StopCallback);
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -323,6 +329,7 @@ void psEntity::Update(int time, float distance, int interval, SoundControl* &ctr
 {
     EntityState* currentState = states.Get(state, 0);
 
+    position = entityPosition;
     if(IsPlaying())
     {
         isActive = true;
