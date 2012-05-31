@@ -17,12 +17,12 @@ CREATE TABLE  `sc_npctypes` (
 #
 # Dumping data for table 'sc_npctypes'
 #
-INSERT INTO sc_npctypes VALUES("1","DoNothing","","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("1","DoNothing","",0,"","","","","","1",
 '<behavior name="DoNothing" decay="0" growth="0" initial="50">
    <wait duration="1" anim="stand" />
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("2","GoHomeOnTeleport","","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("2","GoHomeOnTeleport","",0,"","","","","","1",
 '<behavior name="Teleported" completion_decay="-1" growth="0" initial="0">
    <locate obj="perception" />
    <teleport />                              <!-- Teleport to located position --> 
@@ -35,7 +35,7 @@ INSERT INTO sc_npctypes VALUES("2","GoHomeOnTeleport","","","","","","","","1",
 
 <react event="teleported" behavior="Teleported" />');
 
-INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","","1",
+INSERT INTO sc_npctypes VALUES("3","InRegion","",0,"","","out of bounds","","","1",
 '<behavior name="GoToRegion" completion_decay="-1" resume="yes" initial="0">
    <locate obj="region" destination="Move"/>
    <percept event="move" />      <!-- navigate, wander, navigate -->
@@ -62,7 +62,7 @@ INSERT INTO sc_npctypes VALUES("3","InRegion","","","","","out of bounds","","",
 <react event="move back in region" behavior="MoveBackInRegion" do_not_interrupt="GoToRegion,Move" />
 <react event="out of bounds"       behavior="MoveBackInRegion" do_not_interrupt="GoToRegion,Move" />');
 
-INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("4","Fight","",0,"","","","","","1",
 '<behavior name="Fight"   initial="0" growth="0" decay="0" completion_decay="-1" >
    <locate obj="target"  range="20" />
    <rotate type="locatedest" anim="walk" ang_vel="120" />
@@ -97,7 +97,7 @@ INSERT INTO sc_npctypes VALUES("4","Fight","","","","","","","","1",
 
 <react event="death"               behavior="Fight" absolute="0" />');
 
-INSERT INTO sc_npctypes VALUES("5","TurnToSensedPlayer","","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("5","TurnToSensedPlayer","",0,"","","","","","0",
 '<behavior name="TurnToFacePlayer" completion_decay="-1" growth="0" initial="0">
    <locate obj="perception" />
    <rotate type="locatedest" anim="walk" ang_vel="60" />
@@ -105,12 +105,12 @@ INSERT INTO sc_npctypes VALUES("5","TurnToSensedPlayer","","","","","","","","0"
 
 <react event="player sensed"       behavior="TurnToFacePlayer" delta="100" inactive_only="yes" />');
 
-INSERT INTO sc_npctypes VALUES("6","Fighter","DoNothing,InRegion,Fight","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("6","Fighter","DoNothing,InRegion,Fight",0,"","","","","","0",
 '<behavior name="Init" completion_decay="-1" initial="1000" >
   <percept event="GoToRegion" />
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("7","Wanderer","Fighter","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("7","Wanderer","Fighter",0,"","","","","","0",
 '<behavior name="Walk" decay="0" growth="0" initial="75">
    <loop>
       <locate obj="region" static="no" />                    <!-- Locate random point within region -->
@@ -121,7 +121,7 @@ INSERT INTO sc_npctypes VALUES("7","Wanderer","Fighter","","","","","","","0",
 </behavior>');
 
 
-INSERT INTO sc_npctypes VALUES("8","On Sight Fighter","TurnToSensedPlayer,Fighter","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("8","On Sight Fighter","TurnToSensedPlayer,Fighter",0,"","","","","","1",
 '<behavior name="FightDefencive"   initial="0" growth="0" decay="0" completion_decay="-1" >
    <locate obj="target"  range="20" />
    <talk text="$race attacked by $target" target="false" /> 
@@ -169,7 +169,7 @@ INSERT INTO sc_npctypes VALUES("8","On Sight Fighter","TurnToSensedPlayer,Fighte
 <react event="$target stronger"    behavior="AssessStronger" />
 <react event="$target powerfull"   behavior="AssessPowerfull" />');
 
-INSERT INTO sc_npctypes VALUES("9","Answerer","DoNothing","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("9","Answerer","DoNothing",0,"","","","","","1",
 '<behavior name="turn to face" completion_decay="-1" growth="0" initial="0" >
    <locate obj="perception" />
    <rotate type="locatedest" anim="walk" ang_vel="20" />
@@ -179,7 +179,7 @@ INSERT INTO sc_npctypes VALUES("9","Answerer","DoNothing","","","","","","","1",
 
 <react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />');
 
-INSERT INTO sc_npctypes VALUES("10","PoliteSitting","","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("10","PoliteSitting","",0,"","","","","","1",
 '<behavior name="Init" completion_decay="-1" initial="1000" >
   <sit />
 </behavior>
@@ -192,7 +192,7 @@ INSERT INTO sc_npctypes VALUES("10","PoliteSitting","","","","","","","","1",
 <react event="stand" behavior="Stand" />
 <react event="player adjacent" inactive_only="yes" behavior="Stand"  when_invisible="yes" when_invincible="yes" />');
 
-INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("11","Move","",0,"","","","","","1",
 '<!-- Fail safe move operation. Target position taken from the "Move" locate.  -->
 <!-- Will move to the nearest waypoint. Than to the waypoint next to          -->
 <!-- destination. Than local navigation will be used to the destination.      -->
@@ -248,7 +248,7 @@ INSERT INTO sc_npctypes VALUES("11","Move","","","","","","","","1",
 <react event="move_failed" behavior="MoveFailed" />');
 
 
-INSERT INTO sc_npctypes VALUES("12","SpokenTo","","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("12","SpokenTo","",0,"","","","","","1",
 '<behavior name="SpokenTo" loop="Yes" interrupt="spoken_to_interrupted">
    <wait duration="10" />
  </behavior>
@@ -261,7 +261,7 @@ INSERT INTO sc_npctypes VALUES("12","SpokenTo","","","","","","","","1",
  <react event="spoken_to" type="false" behavior="SpokenTo" absolute="0" />
 ');
 
-INSERT INTO sc_npctypes VALUES("13","Sleep","","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("13","Sleep","",0,"","","","","","1",
 '<!-- Require Idle behavior when composed into a complete behavior -->
 <!--  Activate this behavior by <percept event="sleep" />
 
@@ -287,7 +287,7 @@ INSERT INTO sc_npctypes VALUES("13","Sleep","","","","","","","","1",
 <react event="sleep" behavior="AtSleep" />
 ');
 
-INSERT INTO sc_npctypes VALUES("14","Diurnal","Sleep,InRegion","","","$run","","","","1",
+INSERT INTO sc_npctypes VALUES("14","Diurnal","Sleep,InRegion",0,"","$run","","","","1",
 '<!-- Active by day. Sleeping/Hiding during night 22:00-06:00 -->
 <!--  Require Idle behavior when composed into a complete behavior -->
 
@@ -314,7 +314,7 @@ INSERT INTO sc_npctypes VALUES("14","Diurnal","Sleep,InRegion","","","$run","","
 <react event="time" value="6,0,,," random=",5,,,"  behavior="GoToRegion" /> 
 ');
 
-INSERT INTO sc_npctypes VALUES("15","Nocturnal","Sleep,InRegion","","$walk","","","","","1",
+INSERT INTO sc_npctypes VALUES("15","Nocturnal","Sleep,InRegion",0,"$walk","","","","","1",
 '<!-- Moving about during night. Sleeping/Hiding during day 08:00-18:00 -->
 <!--  Require Idle behavior when composed into a complete behavior -->
 
@@ -340,7 +340,7 @@ INSERT INTO sc_npctypes VALUES("15","Nocturnal","Sleep,InRegion","","$walk","","
 <react event="time" value="18,0,,," random=",5,,,"  behavior="GoToRegion" /> 
 ');
 
-INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport,DoNothing","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport,DoNothing",0,"","","","","","0",
 '<behavior name="go_climbing1" initial="0" completion_decay="20" loop="no"> 
    <moveto x="-53.6003" y="0.0" z="-155.041" anim="walk" />
    <moveto x="-8.89576" y="0.0" z="-162.498" anim="walk" />
@@ -443,13 +443,13 @@ INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport,DoNothing","","",
 <react event="time" value="12,0,,,"  behavior="go_obstacles1" delta="20" /> 
 <react event="time" value="14,0,,,"  behavior="go_climbing1" delta="20" />');
 
-INSERT INTO sc_npctypes VALUES("101","QuestMaster1","DoNothing,SpokenTo,PoliteSitting","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("101","QuestMaster1","DoNothing,SpokenTo,PoliteSitting",0,"","","","","","0",
 '<empty/>');
 
-INSERT INTO sc_npctypes VALUES("102","QuestMaster2","DoNothing,SpokenTo,PoliteSitting","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("102","QuestMaster2","DoNothing,SpokenTo,PoliteSitting",0,"","","","","","0",
 '<empty/>');
 
-INSERT INTO sc_npctypes VALUES("103","DictMaster1","DoNothing,Answerer","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("103","DictMaster1","DoNothing,Answerer",0,"","","","","","0",
 '<behavior name="Sit" >
    <busy/>
    <sit/>
@@ -459,10 +459,10 @@ INSERT INTO sc_npctypes VALUES("103","DictMaster1","DoNothing,Answerer","","",""
 </behavior>
 <react event="sit" behavior="Sit" />');
 
-INSERT INTO sc_npctypes VALUES("104","DictMaster2","DoNothing,Answerer","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("104","DictMaster2","DoNothing,Answerer",0,"","","","","","0",
 '<empty/>');
 
-INSERT INTO sc_npctypes VALUES("106","ChaseTest1","DoNothing","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("106","ChaseTest1","DoNothing",0,"","","","","","0",
 '<behavior name="init" initial="1000" completion_decay="-1" >
    <!--debug level="0" /-->
    <nop/>
@@ -476,7 +476,7 @@ INSERT INTO sc_npctypes VALUES("106","ChaseTest1","DoNothing","","","","","","",
 <react event="player nearby" behavior="chase" delta="100" /> <!-- Nearby(<10) -->
 <react event="nearest_actor out of chase" behavior="chase" absolute="0" />');
 
-INSERT INTO sc_npctypes VALUES("107","ChaseTest2","DoNothing","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("107","ChaseTest2","DoNothing",0,"","","","","","0",
 '<behavior name="init" initial="1000" completion_decay="-1" >
    <!--debug level="0" /-->
    <nop/>
@@ -487,7 +487,7 @@ INSERT INTO sc_npctypes VALUES("107","ChaseTest2","DoNothing","","","","","","",
    <wait anim="stand" duration="1" />  <!-- Could be a watch operation!! -->
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("108","Minion","DoNothing","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("108","Minion","DoNothing",0,"","","","","","1",
 '<!-- Follow, start on /pet follow and stop on /pet stay -->
 <behavior name="follow" completion_decay="100" decay="0" growth="0" initial="0" loop="yes">
    <watch type="owner" range="3.0" />
@@ -526,7 +526,7 @@ INSERT INTO sc_npctypes VALUES("108","Minion","DoNothing","","","","","","","1",
 <react event="damage"               behavior="attack"       delta=  "200"  inactive_only="true" weight="1" />
 <react event="target out of range"  behavior="attack_chase"  />');
 
-INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","","","","","","1",
+INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","","","","","1",
 '<!-- Abstract base npc type for tribes -->
 
 <behavior name="InitTribeMember" completion_decay="-1" initial="1000" resume="yes" >
@@ -849,13 +849,13 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move","","",
 <react event="tribe_home:living"        behavior="TribeHomeLiving" />
 ');
 
-INSERT INTO sc_npctypes VALUES("111","MineingTribe","AbstractTribesman","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("111","MineingTribe","AbstractTribesman",0,"","","","","","0",
 '<empty/>');
 
-INSERT INTO sc_npctypes VALUES("112","HuntingTribe","AbstractTribesman","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("112","HuntingTribe","AbstractTribesman",0,"","","","","","0",
 '<empty/>');
 
-INSERT INTO sc_npctypes VALUES("113","MoveTest1","","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("113","MoveTest1","",0,"$walk","","","","","0",
 '<!-- Testing the wander operation. -->
 
 <!-- Locate nearest waypoint -->
@@ -869,7 +869,7 @@ INSERT INTO sc_npctypes VALUES("113","MoveTest1","","","$walk","","","","","0",
    <wander anim="walk" random="yes" />
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("114","MoveTest2","DoNothing","","$run","","","","","0",
+INSERT INTO sc_npctypes VALUES("114","MoveTest2","DoNothing",0,"$run","","","","","0",
 '<!-- Initial behavior to locate the starting point -->
 
 <behavior name="Initialize" completion_decay="-1" initial="1000">
@@ -894,7 +894,7 @@ INSERT INTO sc_npctypes VALUES("114","MoveTest2","DoNothing","","$run","","","",
    <wait anim="stand" duration="5" />
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("115","MoveTest3","DoNothing","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("115","MoveTest3","DoNothing",0,"","","","","","0",
 '<!-- Testing that advanced movement using waypoints -->
 <!-- work fine when interruped. If working ok this NPC -->
 <!-- should go the same way as MoveTest2 -->
@@ -922,7 +922,7 @@ INSERT INTO sc_npctypes VALUES("115","MoveTest3","DoNothing","","","","","","","
 
 <react event="location sensed"    behavior="Interrupt" />');
 
-INSERT INTO sc_npctypes VALUES("116","MoveTest4","DoNothing","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("116","MoveTest4","DoNothing",0,"","","","","","0",
 '<!-- This test moving between sectors -->
 
 <!-- Advanced movement using waypoints -->
@@ -950,7 +950,7 @@ INSERT INTO sc_npctypes VALUES("116","MoveTest4","DoNothing","","","","","","","
 
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move,Sleep","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move,Sleep",0,"$walk","","","","","0",
 '<!-- Example Citizen behaviour -->
 
 <!-- Go find nearest waypoint at startup -->
@@ -1005,7 +1005,7 @@ INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move,Sleep","","$walk
 <react event="time" value="22,0,,," random=",5,,,"  behavior="GoWork" /> 
 <react event="time" value="23,0,,," random=",5,,,"  behavior="GoHome" />');
 
-INSERT INTO sc_npctypes VALUES("118","MoveTest6","DoNothing","","$run","","","","","0",
+INSERT INTO sc_npctypes VALUES("118","MoveTest6","DoNothing",0,"$run","","","","","0",
 '<!-- Initial behavior to locate the starting point -->
 <behavior name="Initialize" completion_decay="-1" initial="1000">
    <!--debug level="0" /-->
@@ -1031,7 +1031,7 @@ INSERT INTO sc_npctypes VALUES("118","MoveTest6","DoNothing","","$run","","","",
 
 <react event="Error" behavior="Initialize" />');
 
-INSERT INTO sc_npctypes VALUES("119","MoveUnderground","DoNothing","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("119","MoveUnderground","DoNothing",0,"$walk","","","","","0",
 '<!-- Testing the wander operation. -->
 
 <!-- Locate nearest waypoint -->
@@ -1047,7 +1047,7 @@ INSERT INTO sc_npctypes VALUES("119","MoveUnderground","DoNothing","","$walk",""
    <wander anim="walk" random="yes" underground="true" />
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("120","WinchMover","DoNothing","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("120","WinchMover","DoNothing",0,"","","","","","0",
 '<!-- Initial behavior to locate the starting point -->
 <behavior name="Initialize" completion_decay="-1" initial="1000">
    <!--debug level="0" /-->
@@ -1067,7 +1067,7 @@ INSERT INTO sc_npctypes VALUES("120","WinchMover","DoNothing","","","","","","",
 
 <react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />');
 
-INSERT INTO sc_npctypes VALUES("121","WinchBeast","DoNothing","","","","","","","0",
+INSERT INTO sc_npctypes VALUES("121","WinchBeast","DoNothing",0,"","","","","","0",
 '<!-- Test interaction with sequences in the map -->
 <!-- and communication from other NPCs using NPCCMD -->
 
@@ -1100,7 +1100,7 @@ INSERT INTO sc_npctypes VALUES("121","WinchBeast","DoNothing","","","","","","",
 <react event="npccmd:global:winch_up" behavior="winch_up" delta="100" inactive_only="yes"/>
 <react event="npccmd:global:winch_down" behavior="winch_down" delta="100" inactive_only="yes"/>');
 
-INSERT INTO sc_npctypes VALUES("122","LocateTest1","DoNothing","","$run","","","","","0",
+INSERT INTO sc_npctypes VALUES("122","LocateTest1","DoNothing",0,"$run","","","","","0",
 '<!-- Test some locate fetures -->
 
 <behavior name="LocateNearestWaypointTest" decay="0" completion_decay="-1" growth="0.1" initial="80" >
@@ -1129,7 +1129,7 @@ INSERT INTO sc_npctypes VALUES("122","LocateTest1","DoNothing","","$run","","","
 <react event="LocateFailed" behavior="LocateFailureFailed" />');
 
 
-INSERT INTO sc_npctypes VALUES("123","SpellMaster","DoNothing","","$run","","","","","0",
+INSERT INTO sc_npctypes VALUES("123","SpellMaster","DoNothing",0,"$run","","","","","0",
 '<!-- Test various spell abilities -->
 
 <behavior name="InitSpellMaster" initial="1000" completion_decay="-1">
@@ -1140,7 +1140,7 @@ INSERT INTO sc_npctypes VALUES("123","SpellMaster","DoNothing","","$run","","","
 </behavior>
 ');
 
-INSERT INTO sc_npctypes VALUES("124","SpellFighter","DoNothing","","$run","","","","","0",
+INSERT INTO sc_npctypes VALUES("124","SpellFighter","DoNothing",0,"$run","","","","","0",
 '<!--   -->
 
 <behavior name="Prepare" completion_decay="-1">
@@ -1167,15 +1167,15 @@ INSERT INTO sc_npctypes VALUES("124","SpellFighter","DoNothing","","$run","","",
 <react event="spell:target"    type="direct heal" behavior="Drain" delta="100" />
 ');
 
-INSERT INTO sc_npctypes VALUES("125","Fighter5","DoNothing,Move,Diurnal,Fight","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("125","Fighter5","DoNothing,Move,Diurnal,Fight",0,"$walk","","","","","0",
 '<empty/>
 ');
-INSERT INTO sc_npctypes VALUES("126","Fighter6","DoNothing,Move,Diurnal,Fight","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("126","Fighter6","DoNothing,Move,Diurnal,Fight",0,"$walk","","","","","0",
 '<empty/>
 ');
-INSERT INTO sc_npctypes VALUES("127","Fighter7","DoNothing,Move,Nocturnal,Fight","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("127","Fighter7","DoNothing,Move,Nocturnal,Fight",0,"$walk","","","","","0",
 '<empty/>
 ');
-INSERT INTO sc_npctypes VALUES("128","Fighter8","DoNothing,Move,Nocturnal,Fight","","$walk","","","","","0",
+INSERT INTO sc_npctypes VALUES("128","Fighter8","DoNothing,Move,Nocturnal,Fight",0,"$walk","","","","","0",
 '<empty/>
 ');
