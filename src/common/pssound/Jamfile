@@ -1,8 +1,0 @@
-SubDir TOP src common pssound ;
-
-Library pssound
-	: [ Wildcard *.cpp *.h ]
-	: noinstall
-;
-
-ExternalLibs pssound : CRYSTAL ;
