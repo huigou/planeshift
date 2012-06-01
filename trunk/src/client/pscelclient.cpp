@@ -2003,7 +2003,7 @@ void GEMClientActor::SetCharacterMode(size_t newmode)
     if(newmode == movementMode)
         return;
 
-    Debug4(LOG_CELPERSIST, 0, "Setting New mode: %d for %s eid: %d", newmode, GetName(), this->GetEID());
+    Debug4(LOG_CELPERSIST, 0, "Setting New mode: %d for %s eid: %d", newmode, GetName(), this->GetEID().Unbox());
 
     movementMode = newmode;
 
