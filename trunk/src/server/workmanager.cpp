@@ -553,12 +553,12 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
         return;
     }
 
+    // Search for a natural resource at the current player location
     iSector *sector;
-
     actor->GetPosition(pos, sector);
-
     csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,(reward == NULL || !strcmp(reward,""))? NULL : reward);
 
+    // no resource found
     if(resources.IsEmpty())
     {
         if(client)
@@ -3489,7 +3489,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     float startQuality = transItem->GetItemQuality();
     if ( process )
     {
-        if ( result > 0 && !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), owner, itemQty == 0, currentQuality, process, trans) && process->GetGarbageId() != 0 )
+        if ( result > 0 && !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), owner, itemQty == 0, currentQuality, process, trans, workEvent->delayticks) && process->GetGarbageId() != 0 )
         {
             result = process->GetGarbageId();
             resultQty = process->GetGarbageQty();
@@ -3715,7 +3715,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 }
 
 // Apply skills if any to quality and practice points
-bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans)
+bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans, csTicks time)
 {
     if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_apply_skill, "Calculate Transformation Apply Skill"))
     {
@@ -3728,174 +3728,12 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker,
         env.Define("Transform", trans);
         env.Define("Secure", secure);
         env.Define("AmountModifier", amountModifier);
+        env.Define("CalculatedTime", time);
         
         calc_transform_apply_skill->Evaluate(&env);
         currentQuality = env.Lookup("Quality")->GetValue();
         return (currentQuality > 0);
     }
-    
-    // just return for processless transforms
-    if (!process)
-    {
-        if (secure) psserver->SendSystemInfo(clientNum,"Processless transforms give no practice points or quality change.");
-        return true;
-    }
-
-    // Check for a primary skill
-    float startingQuality = currentQuality;
-    if (secure) psserver->SendSystemInfo(clientNum,"Starting quality calculation with quality %f.", startingQuality);
-    int priSkill = process->GetPrimarySkillId();
-    if ( priSkill >= 0)
-    {
-        // Increase quality for crafted item based on if the starting quality was less then the normal quality
-        float baseQuality = transItem->GetBaseStats()->GetQuality();
-        if (currentQuality > baseQuality)
-        {
-            // Add the transfromation items base quality to the current quality as a crafting bonus
-            if (secure) psserver->SendSystemInfo(clientNum,"Primary skill add crafting bonus of item base quality %f.", baseQuality);
-            currentQuality = currentQuality + baseQuality;
-        }
-        else
-        {
-            // Double the current quality as a crafting bonus
-            if (secure) psserver->SendSystemInfo(clientNum,"Primary skill double current quality.");
-            currentQuality = currentQuality * 2;
-        }
-
-        // Get the players skill level using the transformations primary skill
-        unsigned int basePriSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)priSkill).Current();
-        unsigned int maxPriSkill = process->GetMaxPrimarySkill();
-
-        // Get the quality factor for this primary skill
-        //  and only use it if in range.
-        // This value represents what percentage of the effect of skills should be
-        //  applied to the quality calculation for this transformation
-        float priQualFactor = (process->GetPrimaryQualFactor())/100.00;
-        if ((priQualFactor > 0.00) && (priQualFactor < 1.00))
-        {
-            // For quality considerations cap the base skill
-            //  at the max skill for this transformation.
-            int capPriSkill = ( basePriSkill > maxPriSkill ) ? maxPriSkill : basePriSkill;
-
-            // Calculate the lack of skill as a percentage of the capped skill over the skill range.
-            // Since this is a lack of skill percentage subtract it from 1.
-            int minPriSkill = process->GetMinPrimarySkill();
-            float priSkillLessPercent = 0;
-            if((maxPriSkill-minPriSkill)>0)
-            {
-                priSkillLessPercent = 1 - ((float)(capPriSkill-minPriSkill)/(float)(maxPriSkill-minPriSkill));
-                if (secure) psserver->SendSystemInfo(clientNum,"Primary skill base level %d and max process level %d gives capped skill level %d.", basePriSkill, maxPriSkill, capPriSkill);
-                if (secure) psserver->SendSystemInfo(clientNum,"Min process level %d gives skill percent %f.", minPriSkill, priSkillLessPercent);
-            }
-
-            // Calculate the effect of the quality factor for this skill by the skill level
-            // Subtract it as a percentage from the current ingredient quality
-            currentQuality -= startingQuality * priSkillLessPercent * priQualFactor;
-            if (secure) psserver->SendSystemInfo(clientNum,"Current quality reduced to %f by starting quality %f times skill percent %f times process quality factor %f.", currentQuality, startingQuality, priSkillLessPercent, priQualFactor);
-        }
-
-        // Only give primary experience to those under the max
-        if ( basePriSkill < maxPriSkill )
-        {
-            // Get some practice in
-            int priPoints = process->GetPrimaryPracticePts();
-            if(amountModifier) priPoints *= (1+(transItem->GetStackCount()-1)*0.1);
-            owner->GetCharacterData()->CalculateAddExperience((PSSKILL)priSkill, priPoints);
-            if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",priPoints, priSkill);
-        }
-
-        // Apply the secondary skill if any
-        int secSkill = process->GetSecondarySkillId();
-        if ( secSkill >= 0)
-        {
-            // Increase quality for crafted item based on if the starting quality was less then the normal quality
-            float baseQuality = transItem->GetBaseStats()->GetQuality();
-            if (currentQuality > baseQuality)
-            {
-                // Add the transfromation items base quality to the current quality as a crafting bonus
-                if (secure) psserver->SendSystemInfo(clientNum,"Secondary skill add crafting bonus of item base quality %f.", baseQuality);
-                currentQuality = currentQuality + baseQuality;
-            }
-            else
-            {
-                // Double the current quality as a crafting bonus
-                if (secure) psserver->SendSystemInfo(clientNum,"Secondary skill double current quality.");
-                currentQuality = currentQuality * 2;
-            }
-
-            unsigned int baseSecSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)secSkill).Current();
-            unsigned int maxSecSkill = process->GetMaxSecondarySkill();
-
-            // Get the quality factor for this secmary skill
-            //  and only use it if in range.
-            float secQualFactor = (process->GetSecondaryQualFactor())/100.00;
-            if ((secQualFactor > 0.00) && (secQualFactor < 1.00))
-            {
-                // For quality considerations cap the base skill
-                //  at the max skill for this transformation.
-                int capSecSkill = ( baseSecSkill > maxSecSkill ) ? maxSecSkill : baseSecSkill;
-
-                // Calculate the lack of skill as a percentage of the capped skill over the skill range.
-                // Since this is a lack of skill percentage subtract it from 1.
-                int minSecSkill = process->GetMinSecondarySkill();
-                float secSkillLessPercent = 0;
-                if((maxSecSkill-minSecSkill) > 0)
-                {
-                    secSkillLessPercent = 1 - ((float)(capSecSkill-minSecSkill)/(float)(maxSecSkill-minSecSkill));
-                    if (secure) psserver->SendSystemInfo(clientNum,"Secondary skill base level %d and max process level %d gives capped skill level %d.", baseSecSkill, maxSecSkill, capSecSkill);
-                    if (secure) psserver->SendSystemInfo(clientNum,"Min process level %d gives skill percent %f.", minSecSkill, secSkillLessPercent);
-                }
-
-                // Calculate the effect of the quality factor for this skill by the skill level
-                currentQuality -= startingQuality * secSkillLessPercent * secQualFactor;
-                if (secure) psserver->SendSystemInfo(clientNum,"Current quality reduced to %f by starting quality %f times skill percent %f times process quality factor %f.", currentQuality, startingQuality, secSkillLessPercent, secQualFactor);
-            }
-
-            // Only give secondary experience to those under the max
-            if ( baseSecSkill < maxSecSkill )
-            {
-                // Get some practice in
-                int secPoints = process->GetSecondaryPracticePts();
-                if(amountModifier) secPoints *= (1+(transItem->GetStackCount()-1)*0.1);
-                owner->GetCharacterData()->CalculateAddExperience((PSSKILL)secSkill, secPoints);
-                if (secure) psserver->SendSystemInfo(clientNum,"Giving practice points %d to skill %d.",secPoints, secSkill);
-            }
-        }
-
-#ifndef NO_RANDOM_QUALITY
-        // Randomize the final quality results
-        // We are using a logrithmic calculation so that normally there is little quality change
-        //  except at the edges of the random distribution.
-        // Use a pattern specific factor to determine the curve at the edges
-        float roll = psserver->rng->Get();
-        float expFactor = factor*log((1/roll)-1);
-        currentQuality = currentQuality -((currentQuality*expFactor)/100);
-        if (secure) psserver->SendSystemInfo(clientNum,"Applying random effect changes quality to %f using factor %f on roll %f.", currentQuality, expFactor, roll);
-#endif
-    }
-    else
-    {
-        if (secure) psserver->SendSystemInfo(clientNum,"This transform gives no practice points or quality change.");
-    }
-
-    // Adjust the final quality with the transformation quality factor
-    currentQuality = currentQuality * trans->GetItemQualityPenaltyPercent();
-    if (secure) psserver->SendSystemInfo(clientNum,"Applying transformation penalty %f changes quality to %f.", trans->GetItemQualityPenaltyPercent(),currentQuality);
-
-    // Check for range
-    if ( currentQuality > 999.99)
-    {
-        currentQuality = 999.99F;
-    }
-
-    // Fail if it's worst then worse
-    else if (currentQuality < 10.0)
-    {
-        currentQuality = 0;
-        if (secure) psserver->SendSystemInfo(clientNum,"Failed quality check.  Creating garbage item.");
-        return false;
-    }
-    return true;
 }
 
 void WorkManager::SendTransformError( uint32_t clientNum, unsigned int result, uint32 curItemId, int curItemQty )
