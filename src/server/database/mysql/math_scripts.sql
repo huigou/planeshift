@@ -235,10 +235,6 @@ ResultPractice = if(Success, 1, 0);
 ResultModifier = if(Success, 25, 2);
 ");
 
-INSERT INTO math_scripts VALUES( "Calculate Transformation Experience",
-"
-Exp = if(StartQuality < CurrentQuality, 2*(CurrentQuality-StartQuality), 0);
-");
 
 INSERT INTO math_scripts VALUES( "Calculate Skill Experience",
 "
@@ -282,20 +278,21 @@ if(!Process:IsValid())
 {
     if(Secure)
     {
-        Worker:SendSystemInfo('Processless transforms give no practice points or quality change.',0);
+        Worker:SendSystemInfo('Processless transforms gives no quality change.',0);
     }
     exit = 1;
 }
 
-Quality = 100;
 PriSkill = Process:PrimarySkillId;
 PriPoints = Process:PrimarySkillPracticePoints;
 
-Worker:CalculateAddExperience(PriSkill, PriPoints, 1);
+// add here quality logic
+
+Quality = 100;
+
 if(Secure)
 {
     Worker:SendSystemInfo('Event took %f seconds.', 1, CalculatedTime);
-    Worker:SendSystemInfo('Giving practice points %f to skill %f.', 2, PriPoints, PriSkill);
 }
 
 " );
@@ -309,6 +306,25 @@ else
 {
     Time = Transform:TransformPoints;
 }");
+
+INSERT INTO math_scripts VALUES( "Calculate Transformation Experience",
+"
+Exp = if(StartQuality < CurrentQuality, 2*(CurrentQuality-StartQuality), 0);
+");
+
+INSERT INTO math_scripts VALUES( "Calculate Transformation Practice",
+"
+    PriPoints = Process:PrimarySkillPracticePoints;
+    PriPoints = PriPoints*CalculatedTime/4;
+
+    SecSkill = Process:SecondarySkillId;
+    if(SecSkill > 0) {
+      SecPoints = Process:SecondarySkillPracticePoints;
+      SecPoints = SecPoints*CalculatedTime/4;
+    } else {
+      SecPoints = 0;
+    }
+");
 
 
 INSERT INTO math_scripts VALUES( "CalculateDodgeValue" , "
@@ -550,8 +566,8 @@ if (OldItem:GetItemModifier(2)) { Executed=0; }
 // do not change quality or modifiers if nothing happened
 if (Executed=0) {
   Worker:SendSystemInfo('Setting quality BACK to original %f / %f', 2, OldItem:Quality, OldItem:MaxQuality);
-  NewItem:SetQuality(10);
-  NewItem:SetMaxQuality(10);
+  NewItem:SetQuality(OldItem:Quality);
+  NewItem:SetMaxQuality(OldItem:MaxQuality);
   NewItem:SetItemModifier(0, OldItem:GetItemModifier(0));
   NewItem:SetItemModifier(1, OldItem:GetItemModifier(1));
   NewItem:SetItemModifier(2, OldItem:GetItemModifier(2));

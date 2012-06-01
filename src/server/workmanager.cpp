@@ -120,10 +120,10 @@ const constraint constraints[] =
 //-----------------------------------------------------------------------------
 
 WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanager)
-{         
+{
 
-	cacheManager = cachemanager;
-	entityManager = entitymanager;
+    cacheManager = cachemanager;
+    entityManager = entitymanager;
     currentQuality = 1.00;
 
     Subscribe(&WorkManager::HandleWorkCommand, MSGTYPE_WORKCMD, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
@@ -138,6 +138,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_chance, "Calculate Mining Odds");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_exp, "Calculate Mining Experience");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_exp, "Calculate Transformation Experience");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_practice, "Calculate Transformation Practice");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpick_time, "Lockpicking Time");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_apply_skill, "Calculate Transformation Apply Skill");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_time, "Calculate Transformation Time");
@@ -150,6 +151,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Odds'", calc_mining_chance.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Experience'", calc_mining_exp.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Experience'", calc_transform_exp.IsValid());
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Practice'", calc_transform_practice.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Lockpicking Time'", calc_lockpick_time);
     //optional for now
     //CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Apply Skill'", calc_transform_apply_skill);
@@ -169,11 +171,11 @@ void WorkManager::Initialize()
 {
     Result res(db->Select("select * from natural_resources"));
 
-    if (res.IsValid())
+    if(res.IsValid())
     {
-        for (unsigned int i=0; i<res.Count(); i++)
+        for(unsigned int i=0; i<res.Count(); i++)
         {
-            NaturalResource *nr = new NaturalResource;
+            NaturalResource* nr = new NaturalResource;
 
             nr->sector = res[i].GetInt("loc_sector_id");
             nr->loc.x  = res[i].GetFloat("loc_x");
@@ -182,7 +184,7 @@ void WorkManager::Initialize()
             nr->radius = res[i].GetFloat("radius");
             nr->visible_radius = res[i].GetFloat("visible_radius");
             nr->probability = res[i].GetFloat("probability");
-            nr->skill = cacheManager->GetSkillByID( res[i].GetInt("skill") );
+            nr->skill = cacheManager->GetSkillByID(res[i].GetInt("skill"));
             nr->skill_level = res[i].GetInt("skill_level");
             nr->item_cat_id = res[i].GetUInt32("item_cat_id");
             nr->item_quality = res[i].GetFloat("item_quality");
@@ -190,7 +192,7 @@ void WorkManager::Initialize()
             nr->anim_duration_seconds = res[i].GetInt("anim_duration_seconds");
             nr->reward = res[i].GetInt("item_id_reward");
             nr->reward_nickname = res[i]["reward_nickname"];
-            
+
             size_t actionNum = resourcesActions.FindCaseInsensitive(res[i]["action"]);
             if(actionNum == csArrayItemNotFound)
                 actionNum = resourcesActions.Push(res[i]["action"]);
@@ -198,37 +200,37 @@ void WorkManager::Initialize()
             nr->action = actionNum;
 
             resources.Push(nr);
-            
+
         }
     }
     else
     {
         Error2("Database error loading natural_resources: %s\n",
-               db->GetLastError() );
+               db->GetLastError());
     }
 }
 
-void WorkManager::HandleWorkCommand(MsgEntry* me,Client *client)
+void WorkManager::HandleWorkCommand(MsgEntry* me,Client* client)
 {
     psWorkCmdMessage msg(me);
 
-    if (msg.command == "use" )
+    if(msg.command == "use")
     {
         HandleUse(client);
     }
-    else if (msg.command == "combine")
+    else if(msg.command == "combine")
     {
         HandleCombine(client);
     }
 
-    else if (msg.command == "repair")
+    else if(msg.command == "repair")
     {
         HandleRepair(client, msg.repairSlotName);
     }
-    else if (msg.command == "construct")
+    else if(msg.command == "construct")
     {
         HandleConstruct(client);
-    }    
+    }
     else
     {
         size_t result = resourcesActions.FindCaseInsensitive(msg.command);
@@ -243,19 +245,19 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client *client)
     }
 }
 
-void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
+void WorkManager::HandleLockPick(MsgEntry* me,Client* client)
 {
     gemObject* target = client->GetTargetObject();
 
     // Check if target is action item
     gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
-    if(gemAction) 
+    if(gemAction)
     {
         target = gemAction->GetAction()->GetRealItem();
     }
 
     // Check target gem and range ignoring Y co-ordinate
-    if (!target || client->GetActor()->RangeTo(client->GetTargetObject(), true, true) > RANGE_TO_USE)
+    if(!target || client->GetActor()->RangeTo(client->GetTargetObject(), true, true) > RANGE_TO_USE)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You need to be closer to the lock to try this.");
         return;
@@ -263,7 +265,7 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
 
     // Get item
     psItem* item = target->GetItem();
-    if ( !item )
+    if(!item)
     {
         Error1("Found gemItem but no psItem was attached!\n");
         return;
@@ -277,10 +279,10 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client *client)
 // Repair
 //-----------------------------------------------------------------------------
 
-void WorkManager::HandleRepair(Client *client, const csString &repairSlotName)
+void WorkManager::HandleRepair(Client* client, const csString &repairSlotName)
 {
     // Make sure client isn't already busy digging, etc.
-    if ( client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE )
+    if(client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
     {
         psserver->SendSystemError(client->GetClientNum(),"You cannot repair anything because you are %s.", client->GetActor()->GetModeStr());
         return;
@@ -290,52 +292,52 @@ void WorkManager::HandleRepair(Client *client, const csString &repairSlotName)
 
     // Check for repairable item in precised or default(right hand) slot
     int slotTarget;
-    if ( repairSlotName.IsEmpty() )
+    if(repairSlotName.IsEmpty())
         slotTarget = PSCHARACTER_SLOT_RIGHTHAND;
     else
         slotTarget = cacheManager->slotNameHash.GetID(repairSlotName);
 
-    psItem *repairTarget = client->GetCharacterData()->Inventory().GetInventoryItem((INVENTORY_SLOT_NUMBER)slotTarget);
-    if (repairTarget==NULL)
+    psItem* repairTarget = client->GetCharacterData()->Inventory().GetInventoryItem((INVENTORY_SLOT_NUMBER)slotTarget);
+    if(repairTarget==NULL)
     {
         if(slotTarget == -1)
         {
-            psserver->SendSystemError(client->GetClientNum(),"The Slot %s doesn't exists.", repairSlotName.GetData() );
+            psserver->SendSystemError(client->GetClientNum(),"The Slot %s doesn't exists.", repairSlotName.GetData());
         }
         else if(repairSlotName.IsEmpty())
         {
-            psserver->SendSystemError(client->GetClientNum(),"The Default Slot (Right Hand) is empty.", repairSlotName.GetData() );
+            psserver->SendSystemError(client->GetClientNum(),"The Default Slot (Right Hand) is empty.", repairSlotName.GetData());
         }
         else
         {
-            psserver->SendSystemError(client->GetClientNum(),"The Slot %s is empty.", repairSlotName.GetData() );
+            psserver->SendSystemError(client->GetClientNum(),"The Slot %s is empty.", repairSlotName.GetData());
         }
         return;
     }
-    if (repairTarget->GetItemQuality() >= repairTarget->GetMaxItemQuality() )
+    if(repairTarget->GetItemQuality() >= repairTarget->GetMaxItemQuality())
     {
-        psserver->SendSystemError(client->GetClientNum(),"Your %s is in perfect condition.", repairTarget->GetName() );
+        psserver->SendSystemError(client->GetClientNum(),"Your %s is in perfect condition.", repairTarget->GetName());
         return;
     }
 
     // Check for required repair kit item in any inventory slot
     int toolstatid     = repairTarget->GetRequiredRepairTool();
-    psItemStats *tool  = cacheManager->GetBasicItemStatsByID(toolstatid);
-    psItem *repairTool = NULL;
-    if (tool)
+    psItemStats* tool  = cacheManager->GetBasicItemStatsByID(toolstatid);
+    psItem* repairTool = NULL;
+    if(tool)
     {
         size_t index = client->GetCharacterData()->Inventory().FindItemStatIndex(tool);
-        if (index == SIZET_NOT_FOUND)
+        if(index == SIZET_NOT_FOUND)
         {
-            psserver->SendSystemError(client->GetClientNum(),"You must have a %s to repair your %s.", tool->GetName(), repairTarget->GetName() );
+            psserver->SendSystemError(client->GetClientNum(),"You must have a %s to repair your %s.", tool->GetName(), repairTarget->GetName());
             return;
         }
         repairTool = client->GetCharacterData()->Inventory().GetInventoryIndexItem(index);
     }
     else
     {
-         psserver->SendSystemError(client->GetClientNum(),"The %s cannot be repaired!", repairTarget->GetName() );
-         return;
+        psserver->SendSystemError(client->GetClientNum(),"The %s cannot be repaired!", repairTarget->GetName());
+        return;
     }
 
     // Calculate if current skill is enough to repair the item
@@ -351,14 +353,14 @@ void WorkManager::HandleRepair(Client *client, const csString &repairSlotName)
 
     int skillid = repairTarget->GetBaseStats()->GetCategory()->repairSkillId;
     int repairskillrank = client->GetCharacterData()->Skills().GetSkillRank(PSSKILL(skillid)).Current();
-    if (repairskillrank<rankneeded)
+    if(repairskillrank<rankneeded)
     {
-        psserver->SendSystemError(client->GetClientNum(),"This item is too complex for your current repair skill. You cannot repair it." );
+        psserver->SendSystemError(client->GetClientNum(),"This item is too complex for your current repair skill. You cannot repair it.");
         return;
     }
 
     // If skill=0, check if it has at least theoretical training in that skill
-    if (repairskillrank == 0 && client->GetCharacterData()->Skills().Get(PSSKILL(skillid)).CanTrain())
+    if(repairskillrank == 0 && client->GetCharacterData()->Skills().Get(PSSKILL(skillid)).CanTrain())
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You don't have the skill to repair your %s.",repairTarget->GetName());
         return;
@@ -391,7 +393,7 @@ void WorkManager::HandleRepair(Client *client, const csString &repairSlotName)
     // Queue time event to trigger when repair is complete, if not canceled.
     csVector3 dummy = csVector3(0,0,0);
 
-    psWorkGameEvent *evt = new psWorkGameEvent(this, client->GetActor(),repairDuration,REPAIR,dummy,NULL,client,repairTarget,repairResult);
+    psWorkGameEvent* evt = new psWorkGameEvent(this, client->GetActor(),repairDuration,REPAIR,dummy,NULL,client,repairTarget,repairResult);
     psserver->GetEventManager()->Push(evt);  // wake me up when repair is done
 
     client->GetActor()->SetTradeWork(evt);
@@ -404,25 +406,25 @@ void WorkManager::HandleRepair(Client *client, const csString &repairSlotName)
 
 void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 {
-    psItem *repairTarget = workEvent->object;
+    psItem* repairTarget = workEvent->object;
 
     // We're done work, clear the mode
     workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
     repairTarget->SetInUse(false);
     // Check for presence of required tool
     int toolstatid     = repairTarget->GetRequiredRepairTool();
-    psItemStats *tool  = cacheManager->GetBasicItemStatsByID(toolstatid);
-    psItem *repairTool = NULL;
-    if (tool)
+    psItemStats* tool  = cacheManager->GetBasicItemStatsByID(toolstatid);
+    psItem* repairTool = NULL;
+    if(tool)
     {
         size_t index = workEvent->client->GetCharacterData()->Inventory().FindItemStatIndex(tool);
-        if (index == SIZET_NOT_FOUND)
+        if(index == SIZET_NOT_FOUND)
         {
-            psserver->SendSystemError(workEvent->client->GetClientNum(),"You must have a %s to repair your %s.", tool->GetName(), repairTarget->GetName() );
+            psserver->SendSystemError(workEvent->client->GetClientNum(),"You must have a %s to repair your %s.", tool->GetName(), repairTarget->GetName());
             return;
         }
         repairTool = workEvent->client->GetCharacterData()->Inventory().GetInventoryIndexItem(index);
-        if (repairTool == repairTarget)
+        if(repairTool == repairTarget)
         {
             psserver->SendSystemError(workEvent->client->GetClientNum(), "You can't use your repair tool on itself.");
             return;
@@ -430,11 +432,11 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
     }
 
     // Now consume the item if we need to
-    if (repairTarget->GetRequiredRepairToolConsumed() && repairTool)
+    if(repairTarget->GetRequiredRepairToolConsumed() && repairTool)
     {
         // Always assume 1 item is consumed, not stacked
-        psItem *item = workEvent->client->GetCharacterData()->Inventory().RemoveItemID(repairTool->GetUID(),1);
-        if (item)
+        psItem* item = workEvent->client->GetCharacterData()->Inventory().RemoveItemID(repairTool->GetUID(),1);
+        if(item)
         {
             // This message must come first because item is about to be deleted.
             psserver->SendSystemResult(workEvent->client->GetClientNum(),
@@ -442,7 +444,7 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
                                        item->GetName());
 
             cacheManager->RemoveInstance(item);
-            psserver->GetCharManager()->UpdateItemViews( workEvent->client->GetClientNum() );
+            psserver->GetCharManager()->UpdateItemViews(workEvent->client->GetClientNum());
         }
     }
     else
@@ -503,9 +505,9 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 // Production
 //-----------------------------------------------------------------------------
 
-void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *reward, Client *client)
+void WorkManager::HandleProduction(gemActor* actor, size_t type, const char* reward, Client* client)
 {
-    if ( client && !LoadLocalVars(client) )
+    if(client && !LoadLocalVars(client))
     {
         return;
     }
@@ -513,9 +515,9 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
     int mode = actor->GetMode();
 
     // Make sure client isn't already busy digging, etc.
-    if ( mode != PSCHARACTER_MODE_PEACE )
+    if(mode != PSCHARACTER_MODE_PEACE)
     {
-        if ( client )
+        if(client)
         {
             psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are already busy.",resourcesActions.Get(type));
         }
@@ -527,9 +529,9 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
     }
 
     // check stamina
-    if ( !CheckStamina( actor->GetCharacterData() ) )
+    if(!CheckStamina(actor->GetCharacterData()))
     {
-        if ( client )
+        if(client)
         {
             psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are too tired.",resourcesActions.Get(type));
         }
@@ -545,7 +547,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
     // Make sure they are not in the same loc as the last dig.
     // skip this check for NPCs
     actor->GetLastProductionPos(pos);
-    if (client && SameProductionPosition(actor, pos))
+    if(client && SameProductionPosition(actor, pos))
     {
         psserver->SendSystemError(client->GetClientNum(),
                                   "You cannot %s in the same place twice in a"
@@ -554,7 +556,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
     }
 
     // Search for a natural resource at the current player location
-    iSector *sector;
+    iSector* sector;
     actor->GetPosition(pos, sector);
     csArray<NearNaturalResource> resources = FindNearestResource(sector,pos,type,(reward == NULL || !strcmp(reward,""))? NULL : reward);
 
@@ -571,16 +573,16 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
         }
         return;
     }
-    
+
     // Validate the skill
     // If skill == 0 and can still be trained it's not possible to execute this operation
     // check all the resources to check if one validates, else the resource is removed from the array.
     // if the array ends up empty it means we don't have a resource to attempt because of our skills.
     for(size_t i = 0; i < resources.GetSize(); i++)
     {
-        NaturalResource *nr = resources.Get(i).resource;
-        if (actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
-            actor->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
+        NaturalResource* nr = resources.Get(i).resource;
+        if(actor->GetCharacterData()->Skills().GetSkillRank((PSSKILL)nr->skill->id).Current() == 0 &&
+                actor->GetCharacterData()->Skills().Get((PSSKILL)nr->skill->id).CanTrain())
         {
             //we can't attempt this resource so we remove it from our array of possibilities
             resources.DeleteIndex(i);
@@ -608,13 +610,13 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
     // if the array ends up empty it means we don't have a resource to attempt because of our tools.
     for(size_t i = 0; i < resources.GetSize(); i++)
     {
-        NaturalResource *nr = resources.Get(i).resource;
-        psItem *item = actor->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
-        if (!item || nr->item_cat_id != item->GetCategory()->id)
+        NaturalResource* nr = resources.Get(i).resource;
+        psItem* item = actor->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
+        if(!item || nr->item_cat_id != item->GetCategory()->id)
         {
             //try the left hand
             item = actor->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
-            if (!item || nr->item_cat_id != item->GetCategory()->id)
+            if(!item || nr->item_cat_id != item->GetCategory()->id)
             {
                 //we can't attempt this resource so we remove it from our array of possibilities
                 resources.DeleteIndex(i);
@@ -623,7 +625,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
             }
         }
     }
-    
+
     //if we ended up with an empty array it means we don't have the tool to do any of these
     if(resources.IsEmpty())
     {
@@ -637,9 +639,9 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
         }
         return;
     }
-    
+
     //get the first resource data for use in time calculation (will be the most difficult to get)
-    NaturalResource *nr = resources.Get(0).resource;
+    NaturalResource* nr = resources.Get(0).resource;
 
     // Calculate time required
     int time_req = nr->anim_duration_seconds;
@@ -654,7 +656,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
     actor->SetProductionStartPos(pos);
 
     // Queue up game event for success
-    psWorkGameEvent *ev = new psWorkGameEvent(this,actor,time_req*1000,PRODUCTION,pos,&resources,client);
+    psWorkGameEvent* ev = new psWorkGameEvent(this,actor,time_req*1000,PRODUCTION,pos,&resources,client);
     psserver->GetEventManager()->Push(ev);  // wake me up when digging is done
 
     actor->SetTradeWork(ev);
@@ -672,44 +674,44 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char *rew
 // Function used by super client
 // TODO generalize the npcclient for now it has no way to specify a specific type it can only dig
 // TODO remove this little bogus function somehow
-void WorkManager::HandleProduction(gemActor *actor,const char *restype,const char *reward)
+void WorkManager::HandleProduction(gemActor* actor,const char* restype,const char* reward)
 {
     size_t type = resourcesActions.FindCaseInsensitive(restype);
     HandleProduction(actor, type, reward);
 }
 
 
-bool WorkManager::SameProductionPosition(gemActor *actor,
-                                           const csVector3& startPos)
+bool WorkManager::SameProductionPosition(gemActor* actor,
+        const csVector3 &startPos)
 {
     csVector3 pos;
-    iSector *sector;
+    iSector* sector;
 
     actor->GetPosition(pos, sector);
 
     return ((startPos - pos).SquaredNorm() < 1);
 }
 
-csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector *sector, csVector3& pos, const size_t action,const char *reward)
+csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector* sector, csVector3 &pos, const size_t action,const char* reward)
 {
     csArray<NearNaturalResource> nearResources;
 
-    psSectorInfo *playersector= cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
+    psSectorInfo* playersector= cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
     int sectorid = playersector->uid;
 
     Debug2(LOG_TRADE,0, "Finding nearest resource for %s\n", reward ? reward : "any resource");
 
-    for (size_t i = 0; i < resources.GetSize(); i++)
+    for(size_t i = 0; i < resources.GetSize(); i++)
     {
-        NaturalResource *curr=resources[i];
-        if (curr->sector==sectorid)
+        NaturalResource* curr=resources[i];
+        if(curr->sector==sectorid)
         {
-            if (curr->action == action && (!reward || curr->reward_nickname.CompareNoCase(reward)))
+            if(curr->action == action && (!reward || curr->reward_nickname.CompareNoCase(reward)))
             {
                 csVector3 diff = curr->loc - pos;
                 float dist = diff.Norm();
                 // Add the resource if dist is less than radius
-                if (dist < curr->visible_radius)
+                if(dist < curr->visible_radius)
                 {
                     nearResources.Push(NearNaturalResource(curr,dist));
                 }
@@ -717,14 +719,14 @@ csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector *sector, c
         }
     }
 
-    if (nearResources.IsEmpty())
+    if(nearResources.IsEmpty())
         Debug2(LOG_TRADE,0, "No resource found for %s\n", reward ? reward : "any resource");
 
     nearResources.Sort();
-    
+
     for(size_t i= 0; i < nearResources.GetSize(); i++)
     {
-        NearNaturalResource & res = nearResources.Get(i);
+        NearNaturalResource &res = nearResources.Get(i);
         Debug6(LOG_TRADE,0, "found res %zu(%s): dist %f, probability %f, level %d\n", i, res.resource->reward_nickname.GetData(), res.dist, res.resource->probability, res.resource->skill_level);
     }
 
@@ -733,12 +735,12 @@ csArray<NearNaturalResource> WorkManager::FindNearestResource(iSector *sector, c
 
 void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 {
-    if (!workEvent->worker.IsValid()) // Worker has disconnected
+    if(!workEvent->worker.IsValid())  // Worker has disconnected
         return;
 
     // Make sure clients are in the same loc as they started to dig.
-    if (workEvent->client && !SameProductionPosition(workEvent->client->GetActor(),
-                                workEvent->client->GetActor()->GetProductionStartPos()))
+    if(workEvent->client && !SameProductionPosition(workEvent->client->GetActor(),
+            workEvent->client->GetActor()->GetProductionStartPos()))
     {
         psserver->SendSystemError(workEvent->client->GetClientNum(),
                                   "You were unsuccessful since you moved away "
@@ -750,23 +752,23 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     }
 
     //we check the first item only as that's the one we had at the start
-    psCharacter *workerchar = workEvent->worker->GetCharacterData();
+    psCharacter* workerchar = workEvent->worker->GetCharacterData();
     psItem* tool = workerchar->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
-    if (!tool || workEvent->nrr.Get(0).resource->item_cat_id != tool->GetCategory()->id)
+    if(!tool || workEvent->nrr.Get(0).resource->item_cat_id != tool->GetCategory()->id)
     {
         tool = workerchar->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
-        if (!tool || workEvent->nrr.Get(0).resource->item_cat_id != tool->GetCategory()->id)
+        if(!tool || workEvent->nrr.Get(0).resource->item_cat_id != tool->GetCategory()->id)
         {
-            if (workEvent->client)
+            if(workEvent->client)
             {
                 psserver->SendSystemInfo(workEvent->worker->GetClientID(),"You were unsuccessful since you no longer have the tool.");
             }
-        
+
             workEvent->worker->SetMode(PSCHARACTER_MODE_PEACE); // Actor isn't working anymore
             return;
         }
     }
-    
+
     bool successfullProduction = false;   //used for giving experience later.
     size_t resNum = 0;                    //used to store the last resource checked
     //iterate all resources from the most difficult to the most easy to find
@@ -779,25 +781,25 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         float cur_skill = workerchar->Skills().GetSkillRank((PSSKILL)workEvent->nrr.Get(resNum).resource->skill->id).Current();
 
         // If skill=0, check if it has at least theoretical training in that skill
-        if (cur_skill==0)
+        if(cur_skill==0)
         {
             bool fullTrainingReceived = !workerchar->Skills().Get((PSSKILL)workEvent->nrr.Get(resNum).resource->skill->id).CanTrain();
-            if (fullTrainingReceived)
+            if(fullTrainingReceived)
                 cur_skill = 0.7F; // consider the skill somewhat usable
         }
 
         // Calculate complexity factor for skill
         float f1 = cur_skill / workEvent->nrr.Get(resNum).resource->skill_level;
-        if (f1 > 1.0) f1 = 1.0; // Clamp value 0..1
+        if(f1 > 1.0) f1 = 1.0;  // Clamp value 0..1
 
         // Calculate factor for tool quality
         float f2 = tool->GetItemQuality() / workEvent->nrr.Get(resNum).resource->item_quality;
-        if (f2 > 1.0) f2 = 1.0; // Clamp value 0..1
+        if(f2 > 1.0) f2 = 1.0;  // Clamp value 0..1
 
         // Calculate factor for distance from center of resource
         float dist = workEvent->nrr.Get(resNum).dist;
         float f3 = 1 - (dist / workEvent->nrr.Get(resNum).resource->radius);
-        if (f3 < 0.0) f3 = 0.0f; // Clamp value 0..1
+        if(f3 < 0.0) f3 = 0.0f;  // Clamp value 0..1
 
         MathEnvironment env;
         env.Define("Distance",    f3);                         // Distance from mine to the actual mining
@@ -807,17 +809,17 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         //update the script if needed. Here we don't protect against bad scripts as before for now.
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_chance, "Calculate Mining Odds");
         calc_mining_chance->Evaluate(&env);
-        MathVar *varTotal = env.Lookup("Total");
+        MathVar* varTotal = env.Lookup("Total");
         float total = varTotal->GetValue();
 
         csString debug;
-        debug.AppendFmt( "Probability:     %1.3f\n",workEvent->nrr.Get(resNum).resource->probability);
-        debug.AppendFmt( "Skill Factor:    %1.3f\n",f1);
-        debug.AppendFmt( "Quality Factor:  %1.3f\n",f2);
-        debug.AppendFmt( "Distance Factor: %1.3f\n",f3);
-        debug.AppendFmt( "Total Factor:    %1.3f\n",total);
-        debug.AppendFmt( "Roll:            %1.3f\n",roll);
-        if (workEvent->client)
+        debug.AppendFmt("Probability:     %1.3f\n",workEvent->nrr.Get(resNum).resource->probability);
+        debug.AppendFmt("Skill Factor:    %1.3f\n",f1);
+        debug.AppendFmt("Quality Factor:  %1.3f\n",f2);
+        debug.AppendFmt("Distance Factor: %1.3f\n",f3);
+        debug.AppendFmt("Total Factor:    %1.3f\n",total);
+        debug.AppendFmt("Roll:            %1.3f\n",roll);
+        if(workEvent->client)
         {
             Debug2(LOG_TRADE, workEvent->client->GetClientNum(), "%s", debug.GetData());
         }
@@ -827,33 +829,33 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         }
 
 
-        if (roll < total)  // successful!
+        if(roll < total)   // successful!
         {
-            psItemStats *newitem = cacheManager->GetBasicItemStatsByID(workEvent->nrr.Get(resNum).resource->reward);
+            psItemStats* newitem = cacheManager->GetBasicItemStatsByID(workEvent->nrr.Get(resNum).resource->reward);
             // Save resourceNick for reporting to the npcclient
             csString resourceNick = workEvent->nrr.Get(resNum).resource->reward_nickname;
-            if (!newitem)
+            if(!newitem)
             {
                 Bug2("Natural Resource reward item #%d not found!\n",workEvent->nrr.Get(resNum).resource->reward);
             }
             else
             {
-                psItem *item = newitem->InstantiateBasicItem();
-                if (!item)
+                psItem* item = newitem->InstantiateBasicItem();
+                if(!item)
                 {
                     Bug2("Failed instantizing reward item #%d!\n",workEvent->nrr.Get(resNum).resource->reward);
                     return;
                 }
 
-                if (!workerchar->Inventory().AddOrDrop(item))
+                if(!workerchar->Inventory().AddOrDrop(item))
                 {
                     Debug5(LOG_ANY, workerchar->GetPID().Unbox(), "HandleProductionEvent() could not give item of stat %u (%s) to character %s[%s])",
-                        newitem->GetUID(), newitem->GetName(), workerchar->GetCharName(), ShowID(workerchar->GetPID()));
+                           newitem->GetUID(), newitem->GetName(), workerchar->GetCharName(), ShowID(workerchar->GetPID()));
 
-                    if (workEvent->client)
+                    if(workEvent->client)
                     {
                         // Assume it's full
-                        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You found %s, but you can't carry anymore of it so you dropped it", newitem->GetName() );
+                        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You found %s, but you can't carry anymore of it so you dropped it", newitem->GetName());
                     }
                     else
                     {
@@ -864,10 +866,10 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 }
                 else
                 {
-                    if (workEvent->client)
+                    if(workEvent->client)
                     {
                         psserver->GetCharManager()->UpdateItemViews(workEvent->client->GetClientNum());
-                        psserver->SendSystemResult(workEvent->client->GetClientNum(),"You've got some %s!", newitem->GetName() );
+                        psserver->SendSystemResult(workEvent->client->GetClientNum(),"You've got some %s!", newitem->GetName());
                     }
                     else
                     {
@@ -879,7 +881,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 item->SetLoaded();  // Item is fully created
                 item->Save(false);    // First save
 
-                if (!workEvent->client)
+                if(!workEvent->client)
                 {
                     // Inform the npcclient about the item it's npc just got
                     psserver->GetNPCManager()->WorkDoneNotify(workEvent->worker->GetEID(), newitem->GetName(), resourceNick);
@@ -893,11 +895,11 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 workEvent->worker->GetPosition(pos, sector);
 
                 // Store the mining position for the next check.
-                if (workEvent->client)
+                if(workEvent->client)
                 {
                     workEvent->client->GetActor()->SetLastProductionPos(pos);
                 }
-                
+
                 //as we found an ore we set we were successfull and exit from the loop (so we don't give the player
                 //more than one ore at a time
                 successfullProduction = true;
@@ -910,10 +912,10 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     //if we didn't succed in the previous part just tell the player
     if(!successfullProduction)
     {
-        if (workEvent->client)
+        if(workEvent->client)
         {
             psserver->SendSystemInfo(workEvent->worker->GetClientID(),"You were not successful.");
-        } 
+        }
         else
         {
             Debug2(LOG_SUPERCLIENT,workEvent->worker->GetEID().Unbox(),"%s where not successful.",workEvent->worker->GetName());
@@ -921,7 +923,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
     }
 
     //Assign experience and practice points
-    if (workEvent->client)
+    if(workEvent->client)
     {
         int practicePoints;
         int experiencePoints;
@@ -938,7 +940,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         calc_mining_exp->Evaluate(&env);
         practicePoints   = env.Lookup("ResultPractice")->GetRoundValue();
         modifier = env.Lookup("ResultModifier")->GetValue();
-        MathVar *varResult = env.Lookup("Exp"); //optional variable
+        MathVar* varResult = env.Lookup("Exp"); //optional variable
         if(varResult)
             experiencePoints = varResult->GetRoundValue();
         else
@@ -954,7 +956,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         {
             workEvent->client->GetCharacterData()->AddExperiencePointsNotify(experiencePoints);
         }
-        
+
     }
     else
     {
@@ -1040,13 +1042,13 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
 void WorkManager::StopWork(Client* client, psItem* item)
 {
     // Assign the member vars
-    if ( !LoadLocalVars(client) )
+    if(!LoadLocalVars(client))
     {
         return;
     }
 
     // Check for bad item pointer
-    if (!item)
+    if(!item)
     {
         Error1("Bad item pointer in StopWork");
         return;
@@ -1054,23 +1056,23 @@ void WorkManager::StopWork(Client* client, psItem* item)
 
     // if no event for item then return
     psWorkGameEvent* curEvent = item->GetTransformationEvent();
-    if( !curEvent )
+    if(!curEvent)
     {
         return;
     }
 
     // Check for ending clean up event
-    if (curEvent->category == CLEANUP)
+    if(curEvent->category == CLEANUP)
     {
-      Debug2(LOG_TRADE,clientNum, "Stopping cleaning up %s item.\n", item->GetName());
-      StopCleanupWork(client, item);
+        Debug2(LOG_TRADE,clientNum, "Stopping cleaning up %s item.\n", item->GetName());
+        StopCleanupWork(client, item);
     }
     else
     {
         Debug3(LOG_TRADE, clientNum, "Player %s stopped working on %s item.\n", ShowID(worker->GetPID()), item->GetName());
 
         // Handle all the different transformation types
-        if( curEvent->GetTransformationType() == TRANSFORMTYPE_AUTO_CONTAINER )
+        if(curEvent->GetTransformationType() == TRANSFORMTYPE_AUTO_CONTAINER)
         {
             StopAutoWork(client, item);
         }
@@ -1083,16 +1085,16 @@ void WorkManager::StopWork(Client* client, psItem* item)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Handle /use command
-void WorkManager::HandleUse(Client *client)
+void WorkManager::HandleUse(Client* client)
 {
     // Assign the member vars
-    if ( !LoadLocalVars(client) )
+    if(!LoadLocalVars(client))
     {
         return;
     }
 
     //Check if we are starting or stopping use
-    if ( owner->GetMode() != PSCHARACTER_MODE_WORK )
+    if(owner->GetMode() != PSCHARACTER_MODE_WORK)
     {
         StartUseWork(client);
     }
@@ -1107,34 +1109,34 @@ void WorkManager::HandleUse(Client *client)
 void WorkManager::StartUseWork(Client* client)
 {
     // Check to see if we have everything we need to do any trade work
-    if (!ValidateWork())
+    if(!ValidateWork())
     {
         return;
     }
 
     // Check to see if we have pattern
-    if (!ValidateMind())
+    if(!ValidateMind())
     {
         return;
     }
 
     // Check to see if player has stamina for work
-    if (!ValidateStamina(client))
+    if(!ValidateStamina(client))
     {
         return;
     }
 
     // Check for any targeted item or container in hand
-    if (!ValidateTarget(client))
+    if(!ValidateTarget(client))
     {
         return;
     }
 
-    if ( workItem && workItem->GetIsContainer() ) // Check if the target is a container
+    if(workItem && workItem->GetIsContainer())    // Check if the target is a container
     {
         // cast a gem container to iterate through
-        gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
-        if (!container)
+        gemContainer* container = dynamic_cast<gemContainer*>(workItem->GetGemObject());
+        if(!container)
         {
             Error1("Could not instantiate gemContainer");
             return;
@@ -1143,27 +1145,27 @@ void WorkManager::StartUseWork(Client* client)
         // Load item array from the container
         csArray<psItem*> itemArray;
         gemContainer::psContainerIterator it(container);
-        while (it.HasNext())
+        while(it.HasNext())
         {
             // Only check the stuff that player owns
             psItem* item = it.Next();
-            if ((item->GetGuardingCharacterID() == owner->GetPID())
-                || (item->GetGuardingCharacterID() == 0))
+            if((item->GetGuardingCharacterID() == owner->GetPID())
+                    || (item->GetGuardingCharacterID() == 0))
             {
                 itemArray.Push(item);
             }
         }
 
         // Check for too many items
-        if (itemArray.GetSize() > 1 )
+        if(itemArray.GetSize() > 1)
         {
             // Tell the player they are trying to work on too many items
-            SendTransformError( clientNum, TRANSFORM_TOO_MANY_ITEMS );
+            SendTransformError(clientNum, TRANSFORM_TOO_MANY_ITEMS);
             return;
         }
 
         // Only one item from container can be transformed at once
-        if (itemArray.GetSize() == 1)
+        if(itemArray.GetSize() == 1)
         {
             // Check to see if item can be transformed
             uint32 itemID = itemArray[0]->GetBaseStats()->GetUID();
@@ -1171,7 +1173,7 @@ void WorkManager::StartUseWork(Client* client)
 
             // Verify there is a valid transformation for the item that was dropped
             unsigned int transMatch = AnyTransform(patterns, patternKFactor, itemID, count);
-            if (( transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ))
+            if((transMatch == TRANSFORM_MATCH) || (transMatch == TRANSFORM_GARBAGE))
             {
                 // Set up event for transformation
                 StartTransformationEvent(
@@ -1185,21 +1187,21 @@ void WorkManager::StartUseWork(Client* client)
             else
             {
                 // The transform could not be created so send the reason back to the user.
-                SendTransformError( clientNum, transMatch, itemID, count );
+                SendTransformError(clientNum, transMatch, itemID, count);
                 return;
             }
         }
         // nothing (owned by the player) in the container to use
         else
         {
-            SendTransformError( clientNum, TRANSFORM_BAD_USE );
+            SendTransformError(clientNum, TRANSFORM_BAD_USE);
         }
     }
     else // check for in hand use
     {
         // Check if player has any transformation items in right hand
         psItem* rhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
-        if ( rhand != NULL )
+        if(rhand != NULL)
         {
             // Find out if we can do a transformation on items in hand
             uint32 handId = rhand->GetBaseStats()->GetUID();
@@ -1207,7 +1209,7 @@ void WorkManager::StartUseWork(Client* client)
 
             // Verify there is a valid transformation for the item that was dropped
             unsigned int rhandMatch = AnyTransform(patterns, patternKFactor, handId, handCount);
-            if (( rhandMatch == TRANSFORM_MATCH ) || (rhandMatch == TRANSFORM_GARBAGE ))
+            if((rhandMatch == TRANSFORM_MATCH) || (rhandMatch == TRANSFORM_GARBAGE))
             {
                 // Set up event for transformation
                 StartTransformationEvent(
@@ -1218,17 +1220,17 @@ void WorkManager::StartUseWork(Client* client)
                 msg.SendMessage();
                 return;
             }
-            else if (rhandMatch != TRANSFORM_UNKNOWN_ITEM)
+            else if(rhandMatch != TRANSFORM_UNKNOWN_ITEM)
             {
                 // The transform could not be created so send the reason back to the user.
-                SendTransformError( clientNum, rhandMatch, handId, handCount );
+                SendTransformError(clientNum, rhandMatch, handId, handCount);
                 return;
             }
         }
 
         // Check if player has any transformation items in left hand
         psItem* lhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
-        if ( lhand != NULL )
+        if(lhand != NULL)
         {
             // Find out if we can do a transformation on items in hand
             uint32 handId = lhand->GetBaseStats()->GetUID();
@@ -1236,7 +1238,7 @@ void WorkManager::StartUseWork(Client* client)
 
             // Verify there is a valid transformation for the item that was dropped
             unsigned int lhandMatch = AnyTransform(patterns, patternKFactor, handId, handCount);
-            if (( lhandMatch == TRANSFORM_MATCH ) || (lhandMatch == TRANSFORM_GARBAGE ))
+            if((lhandMatch == TRANSFORM_MATCH) || (lhandMatch == TRANSFORM_GARBAGE))
             {
                 // Set up event for transformation
                 StartTransformationEvent(
@@ -1247,30 +1249,30 @@ void WorkManager::StartUseWork(Client* client)
                 msg.SendMessage();
                 return;
             }
-            else if (lhandMatch != TRANSFORM_UNKNOWN_ITEM)
+            else if(lhandMatch != TRANSFORM_UNKNOWN_ITEM)
             {
                 // The transform could not be created so send the reason back to the user.
-                SendTransformError( clientNum, lhandMatch, handId, handCount );
+                SendTransformError(clientNum, lhandMatch, handId, handCount);
             }
         }
 
         // Since either hand can fail to transform normally send general message if we get to here
-        SendTransformError( clientNum, TRANSFORM_MISSING_ITEM );
+        SendTransformError(clientNum, TRANSFORM_MISSING_ITEM);
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Stop doing use work
-void WorkManager::StopUseWork(MsgEntry* me,Client *client)
+void WorkManager::StopUseWork(MsgEntry* me,Client* client)
 {
     // Check for any targeted item or container in hand
-    if ( !ValidateTarget(client))
+    if(!ValidateTarget(client))
     {
         return;
     }
 
     // Kill the work event if it exists
-    if( client->GetActor()->GetMode() == PSCHARACTER_MODE_WORK )
+    if(client->GetActor()->GetMode() == PSCHARACTER_MODE_WORK)
     {
         client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
         psserver->SendSystemOK(client->GetClientNum(),"You stop working.");
@@ -1279,16 +1281,16 @@ void WorkManager::StopUseWork(MsgEntry* me,Client *client)
 
 ////////////////////////////////////////////////////////////////////////
 // Handle /combine command
-void WorkManager::HandleCombine(Client *client)
+void WorkManager::HandleCombine(Client* client)
 {
     // Assign the member vars
-    if ( !LoadLocalVars(client) )
+    if(!LoadLocalVars(client))
     {
         return;
     }
 
     // Check if we are starting or stopping use
-    if ( owner->GetMode() != PSCHARACTER_MODE_WORK )
+    if(owner->GetMode() != PSCHARACTER_MODE_WORK)
     {
         StartCombineWork(client);
     }
@@ -1303,25 +1305,25 @@ void WorkManager::HandleCombine(Client *client)
 void WorkManager::StartCombineWork(Client* client)
 {
     // Check to see if we have everything we need to do any trade work
-    if (!ValidateWork())
+    if(!ValidateWork())
     {
         return;
     }
 
     // Check to see if we have pattern
-    if (!ValidateMind())
+    if(!ValidateMind())
     {
         return;
     }
 
     // Check for any targeted item or container in hand
-    if (!ValidateTarget(client))
+    if(!ValidateTarget(client))
     {
         return;
     }
 
     // Check if targeted item is container
-    if (  workItem && workItem->GetIsContainer() )
+    if(workItem && workItem->GetIsContainer())
     {
         // Combine anything can be combined in container
         CombineWork();
@@ -1337,24 +1339,24 @@ bool WorkManager::CombineWork()
     uint32 combinationId = 0;
     int combinationQty = 0;
     int resultQuality = 0;
-    if ( IsContainerCombinable( combinationId, combinationQty ) )
+    if(IsContainerCombinable(combinationId, combinationQty))
     {
         //now we know the result quality as this function is going to destroy it we take a copy
         //TODO: loadlocalvariables is a big nuinseance which should it does unexpected effect to the environment.
-        resultQuality = currentQuality;        
+        resultQuality = currentQuality;
         // Transform all items in container into the combination item
-        psItem* newItem = CombineContainedItem( combinationId, combinationQty, currentQuality, workItem );
-        if (newItem)
+        psItem* newItem = CombineContainedItem(combinationId, combinationQty, currentQuality, workItem);
+        if(newItem)
         {
             //restore the valid current quality
             currentQuality = resultQuality;
             ValidateMind(); //unfortunately the bad loadlocalvariables is damaging this data so we restore it
             // Find out if we can do a combination transformation
-            unsigned int transMatch = AnyTransform(patterns, patternKFactor, combinationId, combinationQty );
-            if (( transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ))
+            unsigned int transMatch = AnyTransform(patterns, patternKFactor, combinationId, combinationQty);
+            if((transMatch == TRANSFORM_MATCH) || (transMatch == TRANSFORM_GARBAGE))
             {
                 // Set up event for transformation
-                if (workItem->GetCanTransform())
+                if(workItem->GetCanTransform())
                 {
                     StartTransformationEvent(
                         TRANSFORMTYPE_AUTO_CONTAINER, PSCHARACTER_SLOT_NONE,
@@ -1373,14 +1375,14 @@ bool WorkManager::CombineWork()
             {
                 // The transform could not be created so send "wrong" message and the reason back to the user.
                 psserver->SendSystemError(clientNum, "You started to combine items, but could not go any further.");
-                SendTransformError( clientNum, transMatch, combinationId, combinationQty );
+                SendTransformError(clientNum, transMatch, combinationId, combinationQty);
                 return true;
             }
         }
     }
     else
     {
-        SendTransformError( clientNum, TRANSFORM_BAD_COMBINATION);
+        SendTransformError(clientNum, TRANSFORM_BAD_COMBINATION);
         return false;
     }
     return false;
@@ -1391,13 +1393,13 @@ bool WorkManager::CombineWork()
 void WorkManager::StopCombineWork(Client* client)
 {
     // Check for any targeted item or container in hand
-    if ( !ValidateTarget(client))
+    if(!ValidateTarget(client))
     {
         return;
     }
 
     // Kill the work event if it exists
-    if( worker->GetMode() == PSCHARACTER_MODE_WORK )
+    if(worker->GetMode() == PSCHARACTER_MODE_WORK)
     {
         worker->SetMode(PSCHARACTER_MODE_PEACE);
     }
@@ -1408,16 +1410,16 @@ void WorkManager::StopCombineWork(Client* client)
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Handle /construct command
-void WorkManager::HandleConstruct(Client *client)
+void WorkManager::HandleConstruct(Client* client)
 {
     // Assign the member vars
-    if ( !LoadLocalVars(client) )
+    if(!LoadLocalVars(client))
     {
         return;
     }
 
     //Check if we are starting or stopping use
-    if ( owner->GetMode() != PSCHARACTER_MODE_WORK )
+    if(owner->GetMode() != PSCHARACTER_MODE_WORK)
     {
         StartConstructWork(client);
     }
@@ -1432,19 +1434,19 @@ void WorkManager::HandleConstruct(Client *client)
 void WorkManager::StartConstructWork(Client* client)
 {
     // Check to see if we have everything we need to do any trade work
-    if (!ValidateWork())
+    if(!ValidateWork())
     {
         return;
     }
 
     // Check to see if we have pattern
-    if (!ValidateMind())
+    if(!ValidateMind())
     {
         return;
     }
 
     // Check for any targeted item or container in hand
-    if (!ValidateTarget(client))
+    if(!ValidateTarget(client))
     {
         return;
     }
@@ -1465,8 +1467,8 @@ void WorkManager::StartConstructWork(Client* client)
             {
                 // Check to see if item can be transformed
                 uint32 itemID = workItem->GetBaseStats()->GetUID();
-                unsigned int transMatch = AnyTransform(patterns, patternKFactor, itemID, 1 );
-                if (transMatch == TRANSFORM_MATCH)
+                unsigned int transMatch = AnyTransform(patterns, patternKFactor, itemID, 1);
+                if(transMatch == TRANSFORM_MATCH)
                 {
                     // Set up event for transformation
                     StartTransformationEvent(
@@ -1477,7 +1479,7 @@ void WorkManager::StartConstructWork(Client* client)
                 else
                 {
                     // The transform could not be created so send the reason back to the user.
-                    SendTransformError( clientNum, transMatch, itemID, 1 );
+                    SendTransformError(clientNum, transMatch, itemID, 1);
                     return;
                 }
             }
@@ -1492,13 +1494,13 @@ void WorkManager::StartConstructWork(Client* client)
 void WorkManager::StopConstructWork(Client* client)
 {
     // Check for any targeted item or container in hand
-    if ( !ValidateTarget(client))
+    if(!ValidateTarget(client))
     {
         return;
     }
 
     // Kill the work event if it exists
-    if( worker->GetMode() == PSCHARACTER_MODE_WORK )
+    if(worker->GetMode() == PSCHARACTER_MODE_WORK)
     {
         worker->SetMode(PSCHARACTER_MODE_PEACE);
     }
@@ -1512,12 +1514,12 @@ void WorkManager::StopConstructWork(Client* client)
 void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem* droppedItem, int count)
 {
     // Assign the member vars
-    if ( !LoadLocalVars(client) )
+    if(!LoadLocalVars(client))
     {
         return;
     }
 
-    if ( !droppedItem )
+    if(!droppedItem)
     {
         Error1("Bad item passed to start AutoWork.");
         return;
@@ -1525,17 +1527,17 @@ void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem*
 
     // Interrupt the first event of the dropped item if any to handle stacking
     psWorkGameEvent* stackEvent = droppedItem->GetTransformationEvent();
-    if( stackEvent )
+    if(stackEvent)
     {
         droppedItem->SetTransformationEvent(NULL);
         stackEvent->Interrupt();
     }
 
     // We know it is a container so check if it's a transform container
-    if ( container->GetCanTransform() )
+    if(container->GetCanTransform())
     {
         // Check to see if we have everything we need to do any trade work
-        if (!ValidateWork())
+        if(!ValidateWork())
         {
             return;
         }
@@ -1546,11 +1548,11 @@ void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem*
         uint32 autoID = autoItem->GetBaseStats()->GetUID();
 
         // Check to see if we have pattern
-        if (ValidateMind())
+        if(ValidateMind())
         {
             // Verify there is a valid transformation for the item that was dropped
-            unsigned int transMatch = AnyTransform(patterns, patternKFactor, autoID, count );
-            switch( transMatch )
+            unsigned int transMatch = AnyTransform(patterns, patternKFactor, autoID, count);
+            switch(transMatch)
             {
                 case TRANSFORM_MATCH:
                 {
@@ -1571,7 +1573,7 @@ void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem*
                 default:
                 {
                     // The transform could not be created so send the reason back to the user.
-                    SendTransformError( clientNum, transMatch, autoID, count );
+                    SendTransformError(clientNum, transMatch, autoID, count);
                     break;
                 }
             }
@@ -1589,7 +1591,7 @@ void WorkManager::StartAutoWork(Client* client, gemContainer* container, psItem*
 void WorkManager::StopAutoWork(Client* client, psItem* autoItem)
 {
     // Check for proper autoItem
-    if ( !autoItem )
+    if(!autoItem)
     {
         Error1("StopAutoWork does not have a good autoItem pointer.");
         return;
@@ -1597,15 +1599,15 @@ void WorkManager::StopAutoWork(Client* client, psItem* autoItem)
 
     // Stop the auto item's work event
     psWorkGameEvent* workEvent = autoItem->GetTransformationEvent();
-    if (workEvent)
+    if(workEvent)
     {
-        if( !workEvent->GetTransformation())
+        if(!workEvent->GetTransformation())
         {
             Error1("StopAutoWork does not have a good transformation pointer.");
         }
 
         // Unless it's some garbage item let players know
-        if( workEvent->GetTransformation()->GetResultId() > 0)
+        if(workEvent->GetTransformation()->GetResultId() > 0)
         {
             psserver->SendSystemOK(clientNum,"You stop working on %s.", autoItem->GetName());
         }
@@ -1624,8 +1626,8 @@ void WorkManager::StopAutoWork(Client* client, psItem* autoItem)
 bool WorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
 {
     // cast a gem container to iterate thru
-    gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
-    if (!container)
+    gemContainer* container = dynamic_cast<gemContainer*>(workItem->GetGemObject());
+    if(!container)
     {
         Error1("Could not instantiate gemContainer");
         return false;
@@ -1635,18 +1637,18 @@ bool WorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
     csArray<psItem*> itemArray;
     gemContainer::psContainerIterator it(container);
     currentQuality = 1.00;
-    while (it.HasNext())
+    while(it.HasNext())
     {
         // Only check the stuff that player owns or is public
         psItem* item = it.Next();
-        if ((item->GetGuardingCharacterID() == owner->GetPID())
-            || (item->GetGuardingCharacterID() == 0))
+        if((item->GetGuardingCharacterID() == owner->GetPID())
+                || (item->GetGuardingCharacterID() == 0))
         {
             itemArray.Push(item);
 
             // While we are here find the item with the least quality
             float quality = item->GetItemQuality();
-            if (currentQuality < quality)
+            if(currentQuality < quality)
             {
                 currentQuality = quality;
             }
@@ -1654,7 +1656,7 @@ bool WorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
     }
 
     // Check if specific combination is possible
-    if( ValidateCombination(itemArray, resultId, resultQty))
+    if(ValidateCombination(itemArray, resultId, resultQty))
         return true;
 
     // Check if any combination is possible
@@ -1667,13 +1669,13 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
 {
     // check if player owns anything in conatiner
     size_t itemCount = itemArray.GetSize();
-    if (itemCount != 0)
+    if(itemCount != 0)
     {
         // Get all possible combinations for those patterns and group
         csArray<csPDelArray<CombinationConstruction>*> combArray;
         csArray<csPDelArray<CombinationConstruction>*> combGroupArray;
 
-        
+
         for(size_t i = 0; i < patterns.GetSize(); i++)
         {
             //get the combinations for the pattern
@@ -1708,16 +1710,16 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
         for(size_t u = 0; u < combArray.GetSize(); u++)
         {
             if(secure) psserver->SendSystemInfo(clientNum,"Checking combinations for patterns.");
-            for (size_t i=0; i<combArray.Get(u)->GetSize(); i++)
+            for(size_t i=0; i<combArray.Get(u)->GetSize(); i++)
             {
                 // Check for matching lists
                 CombinationConstruction* current = combArray.Get(u)->Get(i);
-                if (secure) psserver->SendSystemInfo(clientNum,"Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
-                if( MatchCombinations(itemArray,current) )
+                if(secure) psserver->SendSystemInfo(clientNum,"Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
+                if(MatchCombinations(itemArray,current))
                 {
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
-                    if (secure) psserver->SendSystemInfo(clientNum,"Found matching combination.");
+                    if(secure) psserver->SendSystemInfo(clientNum,"Found matching combination.");
                     return true;
                 }
             }
@@ -1726,17 +1728,17 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
         // Check all the possible combination in this data set
         for(size_t u = 0; u < combGroupArray.GetSize(); u++)
         {
-            if (secure) psserver->SendSystemInfo(clientNum,"Checking combinations for group patterns.");
-            for (size_t i=0; i<combGroupArray.Get(u)->GetSize(); i++)
+            if(secure) psserver->SendSystemInfo(clientNum,"Checking combinations for group patterns.");
+            for(size_t i=0; i<combGroupArray.Get(u)->GetSize(); i++)
             {
                 // Check for matching lists
                 CombinationConstruction* current = combGroupArray.Get(u)->Get(i);
-                if (secure) psserver->SendSystemInfo(clientNum,"Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
-                if( MatchCombinations(itemArray,current) )
+                if(secure) psserver->SendSystemInfo(clientNum,"Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
+                if(MatchCombinations(itemArray,current))
                 {
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
-                    if (secure) psserver->SendSystemInfo(clientNum,"Found matching group combination.");
+                    if(secure) psserver->SendSystemInfo(clientNum,"Found matching group combination.");
                     return true;
                 }
             }
@@ -1744,7 +1746,7 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
     }
     else
     {
-        if (secure) psserver->SendSystemInfo(clientNum,"Failed to find any items you own in container.");
+        if(secure) psserver->SendSystemInfo(clientNum,"Failed to find any items you own in container.");
         return false;
     }
     return false;
@@ -1756,7 +1758,7 @@ bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, i
 {
     // check if player owns anything in conatiner
     size_t itemCount = itemArray.GetSize();
-    if (itemCount != 0)
+    if(itemCount != 0)
     {
         //This is a bit weird but looked more elegant. Essentially we want to first
         //do one run where we only check the patterns then we do a second run
@@ -1768,16 +1770,16 @@ bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, i
                 uint32 activePattern = groupCheck? patterns.Get(i)->GetGroupPatternId() : patterns.Get(i)->GetId();
                 // Get list of unique ingredients for this pattern
                 csArray<uint32>* uniqueArray = cacheManager->GetTradeTransUniqueByID(activePattern);
-                if (uniqueArray == NULL)
+                if(uniqueArray == NULL)
                 {
                     continue;
                 }
 
                 // Go through all of the items making sure they are ingredients
-                for (size_t i=0; i<itemArray.GetSize(); i++)
+                for(size_t i=0; i<itemArray.GetSize(); i++)
                 {
                     psItem* item = itemArray.Get(i);
-                    if ( uniqueArray->Find(item->GetBaseStats()->GetUID()) == csArrayItemNotFound)
+                    if(uniqueArray->Find(item->GetBaseStats()->GetUID()) == csArrayItemNotFound)
                     {
                         return false;
                     }
@@ -1790,17 +1792,17 @@ bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, i
                 // Get all unknow item transforms for this pattern
                 csPDelArray<psTradeTransformations>* transArray =
                     cacheManager->FindTransformationsList(activePattern, 0);
-                if (transArray == NULL)
+                if(transArray == NULL)
                 {
                     return false;
                 }
 
                 // Go thru list of transforms
-                for (size_t j=0; j<transArray->GetSize(); j++)
+                for(size_t j=0; j<transArray->GetSize(); j++)
                 {
                     // Get first transform with a 0 process ID this indicates processless any ingredient transform
                     psTradeTransformations* trans = transArray->Get(j);
-                    if( trans->GetProcessId() == 0)
+                    if(trans->GetProcessId() == 0)
                     {
                         resultId = trans->GetResultId();
                         resultQty = trans->GetResultQty();
@@ -1818,25 +1820,25 @@ bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, i
 bool WorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConstruction* current)
 {
     // If the items count match then this is a possible valid combination.
-    if ( itemArray.GetSize() == current->combinations.GetSize() )
+    if(itemArray.GetSize() == current->combinations.GetSize())
     {
         // Setup two arrays for comparison
         csArray<psItem*> itemsMatched;
         csArray<psItem*> itemsLeft = itemArray;
 
         // Iterate over the items in the construction set looking for matches.
-        for( size_t j = 0; j < current->combinations.GetSize(); j++ )
+        for(size_t j = 0; j < current->combinations.GetSize(); j++)
         {
             uint32 combId  = current->combinations[j]->GetItemId();
             int combMinQty = current->combinations[j]->GetMinQty();
             int combMaxQty = current->combinations[j]->GetMaxQty();
 
             // Iterate again over all items left in match set.
-            for ( size_t z = 0; z < itemsLeft.GetSize(); z++ )
+            for(size_t z = 0; z < itemsLeft.GetSize(); z++)
             {
                 uint32 id =  itemsLeft[z]->GetCurrentStats()->GetUID();
                 int stackQty = itemsLeft[z]->GetStackCount();
-                if ( id ==  combId && stackQty >= combMinQty && stackQty <= combMaxQty )
+                if(id ==  combId && stackQty >= combMinQty && stackQty <= combMaxQty)
                 {
                     // We have matched the ids and the stack counts are in range.
                     itemsMatched.Push(itemsLeft[z]);
@@ -1847,17 +1849,17 @@ bool WorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConst
         }
 
         // If all items matched up then we have a valid combination
-        if( (itemsLeft.GetSize() == 0) && (itemsMatched.GetSize() == current->combinations.GetSize()) )
+        if((itemsLeft.GetSize() == 0) && (itemsMatched.GetSize() == current->combinations.GetSize()))
         {
             return true;
         }
         else
         {
-            if (secure)
+            if(secure)
             {
                 psserver->SendSystemInfo(clientNum,"Combination match fail.");
                 psserver->SendSystemInfo(clientNum,"Items left unmatched:");
-                for ( size_t z = 0; z < itemsLeft.GetSize(); z++ )
+                for(size_t z = 0; z < itemsLeft.GetSize(); z++)
                 {
                     psserver->SendSystemInfo(clientNum,"Item id %u quantity %d",itemsLeft[z]->GetCurrentStats()->GetUID(),itemsLeft[z]->GetStackCount());
                 }
@@ -1865,26 +1867,26 @@ bool WorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConst
             return false;
         }
     }
-    if (secure) psserver->SendSystemInfo(clientNum,"Bad count of items %u compared to combination count %u.", itemArray.GetSize(), current->combinations.GetSize() );
+    if(secure) psserver->SendSystemInfo(clientNum,"Bad count of items %u compared to combination count %u.", itemArray.GetSize(), current->combinations.GetSize());
     return false;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks if any transformation is possible
 //   We check the more specific transforms for matches first
-unsigned int WorkManager::AnyTransform(csArray<psTradePatterns*>& patterns, float& KFactor, uint32 targetId, int targetQty)
+unsigned int WorkManager::AnyTransform(csArray<psTradePatterns*> &patterns, float &KFactor, uint32 targetId, int targetQty)
 {
     unsigned int singleMatch = TRANSFORM_GARBAGE;
     unsigned int groupMatch  = TRANSFORM_GARBAGE;
     KFactor = 0;
-    
+
     // First check for specific single transform match
     for(size_t i = 0; i < patterns.GetSize(); i++)
     {
         uint32 singlePatternId = patterns.Get(i)->GetId();
-        if (secure) psserver->SendSystemInfo(clientNum,"Checking single transforms for pattern id %u, target id %u, and target qty %u.", singlePatternId,targetId,targetQty );
-        singleMatch =  IsTransformable( singlePatternId, targetId, targetQty );
-        if (singleMatch == TRANSFORM_MATCH)
+        if(secure) psserver->SendSystemInfo(clientNum,"Checking single transforms for pattern id %u, target id %u, and target qty %u.", singlePatternId,targetId,targetQty);
+        singleMatch =  IsTransformable(singlePatternId, targetId, targetQty);
+        if(singleMatch == TRANSFORM_MATCH)
         {
             KFactor = patterns.Get(i)->GetKFactor();
             return TRANSFORM_MATCH;
@@ -1895,9 +1897,9 @@ unsigned int WorkManager::AnyTransform(csArray<psTradePatterns*>& patterns, floa
     for(size_t i = 0; i < patterns.GetSize(); i++)
     {
         uint32 groupPatternId = patterns.Get(i)->GetGroupPatternId();
-        if (secure) psserver->SendSystemInfo(clientNum,"Checking group transforms for pattern id %u, target id %u, and target qty %u.",groupPatternId, targetId, targetQty);
-        groupMatch = IsTransformable( groupPatternId, targetId, targetQty );
-        if (groupMatch == TRANSFORM_MATCH)
+        if(secure) psserver->SendSystemInfo(clientNum,"Checking group transforms for pattern id %u, target id %u, and target qty %u.",groupPatternId, targetId, targetQty);
+        groupMatch = IsTransformable(groupPatternId, targetId, targetQty);
+        if(groupMatch == TRANSFORM_MATCH)
         {
             KFactor = patterns.Get(i)->GetKFactor();
             return TRANSFORM_MATCH;
@@ -1905,9 +1907,9 @@ unsigned int WorkManager::AnyTransform(csArray<psTradePatterns*>& patterns, floa
     }
 
     // Check for patternless transforms
-    if (secure) psserver->SendSystemInfo(clientNum,"Checking patternless transforms for pattern id %u, target id %u, and target qty %u.", 0, targetId, targetQty );
-    unsigned int lessMatch = IsTransformable( 0, targetId, targetQty );
-    if (lessMatch == TRANSFORM_MATCH)
+    if(secure) psserver->SendSystemInfo(clientNum,"Checking patternless transforms for pattern id %u, target id %u, and target qty %u.", 0, targetId, targetQty);
+    unsigned int lessMatch = IsTransformable(0, targetId, targetQty);
+    if(lessMatch == TRANSFORM_MATCH)
         return TRANSFORM_MATCH;
 
     //This is a bit weird but looked more elegant. Essentially we want to first
@@ -1933,9 +1935,9 @@ unsigned int WorkManager::AnyTransform(csArray<psTradePatterns*>& patterns, floa
     for(size_t i = 0; i < patterns.GetSize(); i++)
     {
         uint32 singlePatternId = patterns.Get(i)->GetId();
-        if (secure) psserver->SendSystemInfo(clientNum,"Checking single any item transforms for pattern id %u, target id %u, and target qty %u.",singlePatternId, 0, targetQty);
-        singleGarbMatch = IsTransformable( singlePatternId, 0, targetQty );
-        if (singleGarbMatch == TRANSFORM_MATCH)
+        if(secure) psserver->SendSystemInfo(clientNum,"Checking single any item transforms for pattern id %u, target id %u, and target qty %u.",singlePatternId, 0, targetQty);
+        singleGarbMatch = IsTransformable(singlePatternId, 0, targetQty);
+        if(singleGarbMatch == TRANSFORM_MATCH)
         {
             KFactor = patterns.Get(i)->GetKFactor();
             return TRANSFORM_GARBAGE;
@@ -1946,9 +1948,9 @@ unsigned int WorkManager::AnyTransform(csArray<psTradePatterns*>& patterns, floa
     for(size_t i = 0; i < patterns.GetSize(); i++)
     {
         uint32 groupPatternId = patterns.Get(i)->GetGroupPatternId();
-        if (secure) psserver->SendSystemInfo(clientNum,"Checking group any item transforms for pattern id %u, target id %u, and target qty %u.", groupPatternId, 0, targetQty);
-        unsigned int groupGarbMatch = IsTransformable( groupPatternId, 0, targetQty );
-        if (groupGarbMatch == TRANSFORM_MATCH)
+        if(secure) psserver->SendSystemInfo(clientNum,"Checking group any item transforms for pattern id %u, target id %u, and target qty %u.", groupPatternId, 0, targetQty);
+        unsigned int groupGarbMatch = IsTransformable(groupPatternId, 0, targetQty);
+        if(groupGarbMatch == TRANSFORM_MATCH)
         {
             KFactor = patterns.Get(i)->GetKFactor();
             return TRANSFORM_GARBAGE;
@@ -1959,21 +1961,21 @@ unsigned int WorkManager::AnyTransform(csArray<psTradePatterns*>& patterns, floa
     if(secure) psserver->SendSystemInfo(clientNum,"Checking for pattern-less any ingredient transforms for target id %u.", targetId);
     if(IsIngredient(0, targetId))
         return TRANSFORM_MATCH;
-        
+
     // Check for patternless specific single any item transform match
-    if (secure) psserver->SendSystemInfo(clientNum,"Checking pattern-less single any item transforms for target qty %u.", targetQty);
-    singleGarbMatch = IsTransformable( 0, 0, targetQty );
-    if (singleGarbMatch == TRANSFORM_MATCH)
+    if(secure) psserver->SendSystemInfo(clientNum,"Checking pattern-less single any item transforms for target qty %u.", targetQty);
+    singleGarbMatch = IsTransformable(0, 0, targetQty);
+    if(singleGarbMatch == TRANSFORM_MATCH)
         return TRANSFORM_GARBAGE;
 
     // If no other non-garbage/unknown failures then check for pattern-less any item transforms
-    if ((singleMatch == TRANSFORM_GARBAGE || singleMatch == TRANSFORM_UNKNOWN_ITEM)
-        && (groupMatch == TRANSFORM_GARBAGE || groupMatch == TRANSFORM_UNKNOWN_ITEM)
-        && (lessMatch == TRANSFORM_GARBAGE || lessMatch == TRANSFORM_UNKNOWN_ITEM))
+    if((singleMatch == TRANSFORM_GARBAGE || singleMatch == TRANSFORM_UNKNOWN_ITEM)
+            && (groupMatch == TRANSFORM_GARBAGE || groupMatch == TRANSFORM_UNKNOWN_ITEM)
+            && (lessMatch == TRANSFORM_GARBAGE || lessMatch == TRANSFORM_UNKNOWN_ITEM))
     {
-        if (secure) psserver->SendSystemInfo(clientNum,"Checking patternless any item tranforms for pattern id %u, target id %u, and target qty %u.", 0, 0, 0);
-        unsigned int lessGarbMatch = IsTransformable( 0, 0, 0 );
-        if (lessGarbMatch == TRANSFORM_MATCH)
+        if(secure) psserver->SendSystemInfo(clientNum,"Checking patternless any item tranforms for pattern id %u, target id %u, and target qty %u.", 0, 0, 0);
+        unsigned int lessGarbMatch = IsTransformable(0, 0, 0);
+        if(lessGarbMatch == TRANSFORM_MATCH)
             return TRANSFORM_GARBAGE;
     }
 
@@ -1991,96 +1993,96 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
     // Only get those with correct target item and pattern
     csPDelArray<psTradeTransformations>* transArray =
         cacheManager->FindTransformationsList(patternId, targetId);
-    if (transArray == NULL)
+    if(transArray == NULL)
     {
-        if (secure) psserver->SendSystemInfo(clientNum,"Found no transformations for item %d and pattern %d.", targetId, patternId );
+        if(secure) psserver->SendSystemInfo(clientNum,"Found no transformations for item %d and pattern %d.", targetId, patternId);
         return TRANSFORM_UNKNOWN_ITEM;
     }
 
     // Go thru all the trasnformations and check if one is possible
-    if (secure) psserver->SendSystemInfo(clientNum,"Found %u transformations.", transArray->GetSize() );
-    if (workItem)
+    if(secure) psserver->SendSystemInfo(clientNum,"Found %u transformations.", transArray->GetSize());
+    if(workItem)
     {
         workID = workItem->GetCurrentStats()->GetUID();
     }
     psTradeTransformations* transCandidate;
     psTradeProcesses* procCandidate;
-    for (size_t i=0; i<transArray->GetSize(); i++)
+    for(size_t i=0; i<transArray->GetSize(); i++)
     {
         transCandidate = transArray->Get(i);
-        if (secure) psserver->SendSystemInfo(clientNum,"Testing transformation id %u.", transCandidate->GetId() );
+        if(secure) psserver->SendSystemInfo(clientNum,"Testing transformation id %u.", transCandidate->GetId());
 
         // Go thru all the possable processes and check if one is possible
         csArray<psTradeProcesses*>* procArray = cacheManager->GetTradeProcessesByID(
-            transCandidate->GetProcessId());
+                transCandidate->GetProcessId());
 
         // If no process for this transform then just continue on
-        if (!procArray)
+        if(!procArray)
         {
-            if (secure) psserver->SendSystemInfo(clientNum,"No match, transformation has no process array.");
+            if(secure) psserver->SendSystemInfo(clientNum,"No match, transformation has no process array.");
             continue;
         }
 
-        for (size_t j=0; j<procArray->GetSize(); j++)
+        for(size_t j=0; j<procArray->GetSize(); j++)
         {
             // Check the non-zero work item does not match
             procCandidate = procArray->Get(j);
-            if( procCandidate->GetWorkItemId() != 0 && procCandidate->GetWorkItemId() != workID )
+            if(procCandidate->GetWorkItemId() != 0 && procCandidate->GetWorkItemId() != workID)
             {
-                    if (secure) psserver->SendSystemInfo(clientNum,"No match, transformation for wrong item candidate id=%u workitem Id=%u.", procCandidate->GetWorkItemId(), workID);
-                    match |= TRANSFORM_MISSING_ITEM;
-                    continue;
+                if(secure) psserver->SendSystemInfo(clientNum,"No match, transformation for wrong item candidate id=%u workitem Id=%u.", procCandidate->GetWorkItemId(), workID);
+                match |= TRANSFORM_MISSING_ITEM;
+                continue;
             }
 
             // Check if we do not have the correct quantity
             int itemQty = transCandidate->GetItemQty();
-            if ( itemQty != 0 && itemQty != targetQty )
+            if(itemQty != 0 && itemQty != targetQty)
             {
-                if (secure) psserver->SendSystemInfo(clientNum,"No match, transformation for wrong quantity candidateQty=%d itemQty=%d.", transCandidate->GetItemQty(), itemQty);
+                if(secure) psserver->SendSystemInfo(clientNum,"No match, transformation for wrong quantity candidateQty=%d itemQty=%d.", transCandidate->GetItemQty(), itemQty);
                 match |= TRANSFORM_BAD_QUANTITY;
                 continue;
             }
 
             // Check if any equipement is required
             uint32 equipmentId = procCandidate->GetEquipementId();
-            if ( equipmentId > 0 )
+            if(equipmentId > 0)
             {
                 // Check if required equipment is on hand
-                if ( !IsOnHand( equipmentId ) )
+                if(!IsOnHand(equipmentId))
                 {
-                    if (secure) psserver->SendSystemInfo(clientNum,"No match, transformation for wrong equipment transform id=%u equipmentId=%u.", transCandidate->GetId(), equipmentId);
+                    if(secure) psserver->SendSystemInfo(clientNum,"No match, transformation for wrong equipment transform id=%u equipmentId=%u.", transCandidate->GetId(), equipmentId);
                     match |= TRANSFORM_MISSING_EQUIPMENT;
                     continue;
                 }
             }
 
             // Check if the player has the sufficient training
-            if ( !ValidateTraining(transCandidate, procCandidate) )
+            if(!ValidateTraining(transCandidate, procCandidate))
             {
-                if (secure) psserver->SendSystemInfo(clientNum,"No match, transformation fails training check.");
+                if(secure) psserver->SendSystemInfo(clientNum,"No match, transformation fails training check.");
                 match |= TRANSFORM_BAD_TRAINING;
                 continue;
             }
 
             // Check if the player has the correct skills
-            if ( !ValidateSkills(transCandidate, procCandidate) )
+            if(!ValidateSkills(transCandidate, procCandidate))
             {
-                if (secure) psserver->SendSystemInfo(clientNum,"No match, transformation fails skill check.");
+                if(secure) psserver->SendSystemInfo(clientNum,"No match, transformation fails skill check.");
                 match |= TRANSFORM_BAD_SKILLS;
                 continue;
             }
 
             // Check if the transformation constraint is meet
-            if ( !ValidateConstraints(transCandidate, procCandidate) )
+            if(!ValidateConstraints(transCandidate, procCandidate))
             {
                 // Player message comes from database
-                if (secure) psserver->SendSystemInfo(clientNum,"No match, transformation fails constraint check.\n");
+                if(secure) psserver->SendSystemInfo(clientNum,"No match, transformation fails constraint check.\n");
                 match |= TRANSFORM_FAILED_CONSTRAINTS;
                 continue;
             }
 
             // Good match
-            if (secure) psserver->SendSystemInfo(clientNum,"Good match for transformation id=%u.\n", transCandidate->GetId());
+            if(secure) psserver->SendSystemInfo(clientNum,"Good match for transformation id=%u.\n", transCandidate->GetId());
             trans = transCandidate;
             process = procCandidate;
             return TRANSFORM_MATCH;
@@ -2098,41 +2100,41 @@ bool WorkManager::IsIngredient(uint32 patternId, uint32 targetId)
 {
     // Check if ingredient is on list of unique ingredients for this pattern
     csArray<uint32>* itemArray = cacheManager->GetTradeTransUniqueByID(patternId);
-    if (itemArray == NULL)
+    if(itemArray == NULL)
     {
-        if (secure) psserver->SendSystemInfo(clientNum,"No items for this pattern or group pattern.");
+        if(secure) psserver->SendSystemInfo(clientNum,"No items for this pattern or group pattern.");
         return false;
     }
 
     // Go thru list
-    for (size_t i=0; i<itemArray->GetSize(); i++)
+    for(size_t i=0; i<itemArray->GetSize(); i++)
     {
         // Check item on ingredient list
-        if( itemArray->Get(i) == targetId )
+        if(itemArray->Get(i) == targetId)
         {
             // Get all unknow item transforms for this pattern
             csPDelArray<psTradeTransformations>* transArray =
                 cacheManager->FindTransformationsList(patternId, 0);
-            if (transArray == NULL)
+            if(transArray == NULL)
             {
-                if (secure) psserver->SendSystemInfo(clientNum,"No known transformations for this item.");
+                if(secure) psserver->SendSystemInfo(clientNum,"No known transformations for this item.");
                 return false;
             }
 
             // Go thru list of transforms
-            for (size_t j=0; j<transArray->GetSize(); j++)
+            for(size_t j=0; j<transArray->GetSize(); j++)
             {
                 // Get first transform with a 0 process ID this indicates processless any ingredient transform
                 trans = transArray->Get(j);
                 process = NULL;
-                if( trans->GetProcessId() == 0)
+                if(trans->GetProcessId() == 0)
                 {
                     return true;
                 }
             }
         }
     }
-    if (secure) psserver->SendSystemInfo(clientNum,"Not an ingredient for this pattern.");
+    if(secure) psserver->SendSystemInfo(clientNum,"Not an ingredient for this pattern.");
     return false;
 }
 
@@ -2141,7 +2143,7 @@ bool WorkManager::IsIngredient(uint32 patternId, uint32 targetId)
 // Do transformation
 // This is called once all the transformation requirements have been verified.
 void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER transSlot, int resultQty,
-                                             float resultQuality, psItem* item)
+        float resultQuality, psItem* item)
 {
     // Get transformation delay
     int delay;
@@ -2157,10 +2159,10 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     }
 
     // Let the server admin know
-    if (secure) psserver->SendSystemInfo(clientNum,"Scheduled to finish work on %s in %1.1f seconds.\n", item->GetName(), (float)delay);
+    if(secure) psserver->SendSystemInfo(clientNum,"Scheduled to finish work on %s in %1.1f seconds.\n", item->GetName(), (float)delay);
 
     // Make sure we have an item
-    if (!item)
+    if(!item)
     {
         Error1("Bad item in StartTransformationEvent().");
         return;
@@ -2168,7 +2170,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
 
     // kill old event - just in case
     psWorkGameEvent* oldEvent = item->GetTransformationEvent();
-    if (oldEvent)
+    if(oldEvent)
     {
         Error1("Had to kill old event in StartTransformationEvent.");
         item->SetTransformationEvent(NULL);
@@ -2178,7 +2180,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     // Set event
     csVector3 pos(0,0,0);
     psWorkGameEvent* workEvent = new psWorkGameEvent(
-        this, owner, delay*1000, MANUFACTURE, pos, NULL, worker->GetClient() );
+        this, owner, delay*1000, MANUFACTURE, pos, NULL, worker->GetClient());
     workEvent->SetTransformationType(transType);
     workEvent->SetTransformationSlot(transSlot);
     workEvent->SetResultQuality(resultQuality);
@@ -2192,19 +2194,19 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     item->SetTransformationEvent(workEvent);
 
     // Send render effect to client and nearby people
-    if ( process && process->GetRenderEffect().Length() > 0 )
+    if(process && process->GetRenderEffect().Length() > 0)
     {
         csVector3 offset(0,0,0);
         workEvent->effectID =  cacheManager->NextEffectUID();
-        psEffectMessage newmsg( 0, process->GetRenderEffect(), offset, owner->GetEID(),0 ,workEvent->effectID );
+        psEffectMessage newmsg(0, process->GetRenderEffect(), offset, owner->GetEID(),0 ,workEvent->effectID);
         newmsg.Multicast(workEvent->multi,0,PROX_LIST_ANY_RANGE);
     }
 
     // If it's not an autotransformation event run the animation and setup the owner with the event
-    if( transType != TRANSFORMTYPE_AUTO_CONTAINER)
+    if(transType != TRANSFORMTYPE_AUTO_CONTAINER)
     {
         // Send anim and confirmation message to client and nearby people
-        if( process && !process->GetAnimation().IsEmpty())
+        if(process && !process->GetAnimation().IsEmpty())
         {
             psOverrideActionMessage msg(clientNum, worker->GetEID(), process->GetAnimation(), delay);
             psserver->GetEventManager()->Multicast(msg.msg, worker->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
@@ -2213,7 +2215,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
         // Setup work owner
         worker->SetMode(PSCHARACTER_MODE_WORK);
         owner->SetTradeWork(workEvent);
-        if (process)
+        if(process)
         {
             owner->GetCharacterData()->SetStaminaRegenerationWork(process->GetPrimarySkillId());
         }
@@ -2225,37 +2227,37 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Loads up local member variables
-bool WorkManager::LoadLocalVars(Client* client, gemObject *target)
+bool WorkManager::LoadLocalVars(Client* client, gemObject* target)
 {
-    if ( client == NULL )
+    if(client == NULL)
     {
         Error1("Bad client pointer.");
         return false;
     }
 
     clientNum = client->GetClientNum();
-    if ( clientNum == 0 )
+    if(clientNum == 0)
     {
         Error1("Bad client number.");
         return false;
     }
 
     worker = client->GetActor();
-    if ( !worker.IsValid())
+    if(!worker.IsValid())
     {
         Error1("Bad client GetActor pointer.");
         return false;
     }
 
     owner = worker;
-    if (!owner || !owner->GetCharacterData())
+    if(!owner || !owner->GetCharacterData())
     {
         Error1("Bad client actor character data pointer.");
         return false;
     }
 
     // Setup security check
-    secure = (client->GetSecurityLevel() > GM_LEVEL_0 ) ? true : false;
+    secure = (client->GetSecurityLevel() > GM_LEVEL_0) ? true : false;
 
     // Setup mode string pointer
     preworkModeString = owner->GetModeStr();
@@ -2276,15 +2278,15 @@ bool WorkManager::LoadLocalVars(Client* client, gemObject *target)
 // Check to see if client can do any trade work
 bool WorkManager::ValidateWork()
 {
-    if ( worker->GetMode() == PSCHARACTER_MODE_WORK)
+    if(worker->GetMode() == PSCHARACTER_MODE_WORK)
     {
-        psserver->SendSystemInfo(clientNum,"You can not practice your trade when working." );
+        psserver->SendSystemInfo(clientNum,"You can not practice your trade when working.");
         return false;
     }
     // Check if not in normal mode
-    else if ( worker->GetMode() == PSCHARACTER_MODE_COMBAT)
+    else if(worker->GetMode() == PSCHARACTER_MODE_COMBAT)
     {
-        psserver->SendSystemInfo(clientNum,"You can not practice your trade during combat." );
+        psserver->SendSystemInfo(clientNum,"You can not practice your trade during combat.");
         return false;
     }
     return true;
@@ -2299,7 +2301,7 @@ bool WorkManager::ValidateMind()
 {
     // Check for the existance of a design item
     psItem* designitem = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_MIND);
-    if ( !designitem )
+    if(!designitem)
     {
         patterns.Empty();
         return true;
@@ -2307,11 +2309,11 @@ bool WorkManager::ValidateMind()
 
     // Check if there is a pattern for that design item
     psItemStats* itemStats = designitem->GetCurrentStats();
-    patterns = cacheManager->GetTradePatternByItemID( itemStats->GetUID() );
-    if (patterns.GetSize() == 0)
+    patterns = cacheManager->GetTradePatternByItemID(itemStats->GetUID());
+    if(patterns.GetSize() == 0)
     {
         Error3("ValidateWork() could not find pattern ID for item %u (%s) in mind slot",
-            itemStats->GetUID(),itemStats->GetName());
+               itemStats->GetUID(),itemStats->GetName());
         return false;
     }
     return true;
@@ -2327,24 +2329,24 @@ bool WorkManager::ValidateTarget(Client* client)
     gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
     if(gemAction) target = gemAction->GetAction()->GetRealItem();
 
-    if (target)
+    if(target)
     {
         // Make sure it's not character
-        if (target->GetActorPtr())
+        if(target->GetActorPtr())
         {
             psserver->SendSystemInfo(clientNum,"Only items can be targeted for use.");
             return false;
         }
 
         // Check range ignoring Y co-ordinate
-        if (worker->RangeTo(target, true, true) > RANGE_TO_USE)
+        if(worker->RangeTo(target, true, true) > RANGE_TO_USE)
         {
             psserver->SendSystemError(clientNum,"You are not in range to use %s.",target->GetItem()->GetName());
             return false;
         }
 
         // Only legit items
-        if (!target->GetItem())
+        if(!target->GetItem())
         {
             psserver->SendSystemInfo(clientNum,"That item can not be used in this way.");
             return false;
@@ -2360,10 +2362,10 @@ bool WorkManager::ValidateTarget(Client* client)
     {
         // Check if player has any containers in right hand
         psItem* rhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
-        if ( rhand )
+        if(rhand)
         {
             // If it's a container it's our target
-            if ( rhand->GetIsContainer() )
+            if(rhand->GetIsContainer())
             {
                 workItem = rhand;
                 return true;
@@ -2372,10 +2374,10 @@ bool WorkManager::ValidateTarget(Client* client)
 
         // Check if player has any containers in left hand
         psItem* lhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
-        if ( lhand )
+        if(lhand)
         {
             // If it's a container it's our target
-            if ( lhand->GetIsContainer() )
+            if(lhand->GetIsContainer())
             {
                 workItem = lhand;
                 return true;
@@ -2391,34 +2393,34 @@ bool WorkManager::ValidateStamina(Client* client)
 {
     //TODO: use factors based on the work to determine required stamina
     // check stamina
-    if (client->GetActor()->GetCharacterData()->GetStamina(true)
-           <= client->GetActor()->GetCharacterData()->GetMaxPStamina().Current()*.1
-     || client->GetActor()->GetCharacterData()->GetStamina(false)
-           <= client->GetActor()->GetCharacterData()->GetMaxMStamina().Current()*.1)
+    if(client->GetActor()->GetCharacterData()->GetStamina(true)
+            <= client->GetActor()->GetCharacterData()->GetMaxPStamina().Current()*.1
+            || client->GetActor()->GetCharacterData()->GetStamina(false)
+            <= client->GetActor()->GetCharacterData()->GetMaxMStamina().Current()*.1)
     {
-        SendTransformError( clientNum, TRANSFORM_NO_STAMINA );
+        SendTransformError(clientNum, TRANSFORM_NO_STAMINA);
         return false;
     }
     return true;
 }
 
-bool WorkManager::CheckStamina(psCharacter * owner) const
+bool WorkManager::CheckStamina(psCharacter* owner) const
 {
 //todo- use factors based on the work to determine required stamina
     return (owner->GetStamina(true) >= owner->GetMaxPStamina().Current()*.1  // physical
-         && owner->GetStamina(false) >= owner->GetMaxMStamina().Current()*.1 // mental
-        );
+            && owner->GetStamina(false) >= owner->GetMaxMStamina().Current()*.1 // mental
+           );
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks if equipment is in hand
-bool WorkManager::IsOnHand( uint32 equipId )
+bool WorkManager::IsOnHand(uint32 equipId)
 {
     // Check right hand
     psItem* rhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_RIGHTHAND);
-    if ( rhand )
+    if(rhand)
     {
-        if ( equipId == rhand->GetCurrentStats()->GetUID() )
+        if(equipId == rhand->GetCurrentStats()->GetUID())
         {
             return true;
         }
@@ -2426,9 +2428,9 @@ bool WorkManager::IsOnHand( uint32 equipId )
 
     // Check left hand
     psItem* lhand = owner->GetCharacterData()->Inventory().GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
-    if ( lhand )
+    if(lhand)
     {
-        if ( equipId == lhand->GetCurrentStats()->GetUID() )
+        if(equipId == lhand->GetCurrentStats()->GetUID())
         {
             return true;
         }
@@ -2443,26 +2445,26 @@ bool WorkManager::ValidateTraining(psTradeTransformations* transCandidate, psTra
 {
     // Check primary skill training if any skill required
     int priSkill = processCandidate->GetPrimarySkillId();
-    if ( priSkill > 0 )
+    if(priSkill > 0)
     {
         // If primary skill is zero, check if this skill should be trained first
         unsigned int basePriSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)priSkill).Current();
-        if ( basePriSkill == 0 )
+        if(basePriSkill == 0)
         {
-            if (owner->GetCharacterData()->Skills().Get((PSSKILL)priSkill).CanTrain())
+            if(owner->GetCharacterData()->Skills().Get((PSSKILL)priSkill).CanTrain())
                 return false;
         }
     }
 
     // Check secondary skill training if any skill required
     int secSkill = processCandidate->GetSecondarySkillId();
-    if ( secSkill > 0 )
+    if(secSkill > 0)
     {
         // If secondary skill is zero, check if this skill should be trained first
         unsigned int baseSecSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)secSkill).Current();
-        if ( baseSecSkill == 0 )
+        if(baseSecSkill == 0)
         {
-            if (owner->GetCharacterData()->Skills().Get((PSSKILL)secSkill).CanTrain())
+            if(owner->GetCharacterData()->Skills().Get((PSSKILL)secSkill).CanTrain())
                 return false;
         }
     }
@@ -2475,11 +2477,11 @@ bool WorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTrade
 {
     // Check if players primary skill levels are less then minimum for that skill
     int priSkill = processCandidate->GetPrimarySkillId();
-    if ( priSkill > 0 )
+    if(priSkill > 0)
     {
         unsigned int minPriSkill = processCandidate->GetMinPrimarySkill();
         unsigned int basePriSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)priSkill).Current();
-        if ( minPriSkill > basePriSkill )
+        if(minPriSkill > basePriSkill)
         {
             return false;
         }
@@ -2487,11 +2489,11 @@ bool WorkManager::ValidateSkills(psTradeTransformations* transCandidate, psTrade
 
     // Check if players secondary skill levels are less then minimum for that skill
     int secSkill = processCandidate->GetSecondarySkillId();
-    if ( secSkill > 0 )
+    if(secSkill > 0)
     {
         unsigned int minSecSkill = processCandidate->GetMinSecondarySkill();
         unsigned int baseSecSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)secSkill).Current();
-        if ( minSecSkill > baseSecSkill )
+        if(minSecSkill > baseSecSkill)
         {
             return false;
         }
@@ -2506,11 +2508,11 @@ bool WorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate,
 {
     // Check if players primary skill levels are less then maximum for that skill
     int priSkill = processCandidate->GetPrimarySkillId();
-    if ( priSkill >= 0 )
+    if(priSkill >= 0)
     {
         unsigned int maxPriSkill = processCandidate->GetMaxPrimarySkill();
         unsigned int basePriSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)priSkill).Current();
-        if ( maxPriSkill < basePriSkill )
+        if(maxPriSkill < basePriSkill)
         {
             return false;
         }
@@ -2518,11 +2520,11 @@ bool WorkManager::ValidateNotOverSkilled(psTradeTransformations* transCandidate,
 
     // Check if players secondary skill levels are less then maximum for that skill
     int secSkill = processCandidate->GetSecondarySkillId();
-    if ( secSkill >= 0 )
+    if(secSkill >= 0)
     {
         unsigned int maxSecSkill = processCandidate->GetMaxSecondarySkill();
         unsigned int baseSecSkill = owner->GetCharacterData()->Skills().GetSkillRank((PSSKILL)secSkill).Current();
-        if ( maxSecSkill < baseSecSkill )
+        if(maxSecSkill < baseSecSkill)
         {
             return false;
         }
@@ -2545,25 +2547,25 @@ bool WorkManager::ValidateConstraints(psTradeTransformations* transCandidate, ps
     strcpy(constraintPtr,constraintStr);
 
     // Loop through all the constraint strings
-    char* funct = strtok( constraintPtr, constraintSeperators);
-    while( funct != NULL)
+    char* funct = strtok(constraintPtr, constraintSeperators);
+    while(funct != NULL)
     {
         // Save the pointer to the constraint and get the parameter string
-        param = strtok( NULL, constraintSeperators);
+        param = strtok(NULL, constraintSeperators);
 
         // Check all the constraints
         int constraintId = -1;
-        while( constraints[++constraintId].constraintFunction != NULL )
+        while(constraints[++constraintId].constraintFunction != NULL)
         {
             // Check if the transformation constraint matches
-            if( strcmp(constraints[constraintId].name,funct) == 0 )
+            if(strcmp(constraints[constraintId].name,funct) == 0)
             {
 
                 // Call the associated function
-                if ( !constraints[constraintId].constraintFunction( this, param) )
+                if(!constraints[constraintId].constraintFunction(this, param))
                 {
                     // Send constraint specific message to client
-                    psserver->SendSystemError(clientNum, constraints[constraintId].message );
+                    psserver->SendSystemError(clientNum, constraints[constraintId].message);
                     return false;
                 }
                 break;
@@ -2571,7 +2573,7 @@ bool WorkManager::ValidateConstraints(psTradeTransformations* transCandidate, ps
         }
 
         // Get the next constraint
-        funct = strtok( NULL, constraintSeperators);
+        funct = strtok(NULL, constraintSeperators);
     }
     return true;
 }
@@ -2579,17 +2581,17 @@ bool WorkManager::ValidateConstraints(psTradeTransformations* transCandidate, ps
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Calculate how long it will take to complete event
 //  based on the transformation's point quanity
-int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psTradeProcesses* process, psItem *transItem, gemActor *worker)
+int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psTradeProcesses* process, psItem* transItem, gemActor* worker)
 {
     // Calculate the seconds needed in order to complete this event
     int time = 0;
 
     if(!calc_transform_time.IsValid())
     {
-        //update the script if needed. 
+        //update the script if needed.
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_time, "Calculate Transformation Time");
     }
-    
+
     if(calc_transform_time.IsValid())
     {
         MathEnvironment env;
@@ -2645,8 +2647,8 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
 #endif
 
     // cast a gem container to iterate thru
-    gemContainer *container = dynamic_cast<gemContainer*> (containerItem->GetGemObject());
-    if (!container)
+    gemContainer* container = dynamic_cast<gemContainer*>(containerItem->GetGemObject());
+    if(!container)
     {
         Error1("Could not instantiate gemContainer");
         return NULL;
@@ -2654,16 +2656,16 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
 
     // Remove all items in container and destroy them
     gemContainer::psContainerIterator it(container);
-    while (it.HasNext())
+    while(it.HasNext())
     {
         // Remove all items from container that player owns
         psItem* item = it.Next();
-        if ((item->GetGuardingCharacterID() == owner->GetPID())
-            || (item->GetGuardingCharacterID() == 0) )
+        if((item->GetGuardingCharacterID() == owner->GetPID())
+                || (item->GetGuardingCharacterID() == 0))
         {
             // Kill any trade work started
             psWorkGameEvent* workEvent = item->GetTransformationEvent();
-            if (workEvent)
+            if(workEvent)
             {
                 item->SetTransformationEvent(NULL);
                 workEvent->Interrupt();
@@ -2671,7 +2673,7 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
 
             // Remove items and delete
             it.RemoveCurrent(owner->GetClient());
-            if (!item->Destroy())
+            if(!item->Destroy())
             {
                 Error2("CombineContainedItem() could not remove old item ID #%u from database.", item->GetUID());
                 return NULL;
@@ -2693,7 +2695,7 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
     // newItem->SetGuardingCharacterID(owner->GetPID());
 
     // Locate item in container and save container
-    if (!container->AddToContainer(newItem, owner->GetClient()))
+    if(!container->AddToContainer(newItem, owner->GetClient()))
     {
         Error3("Bad container slot %i when trying to add item instance #%u.", PSCHARACTER_SLOT_NONE, newItem->GetUID());
         return NULL;
@@ -2704,18 +2706,18 @@ psItem* WorkManager::CombineContainedItem(uint32 newId, int newQty, float itemQu
     float xpos,ypos,zpos,yrot;
     psSectorInfo* sectorinfo;
     InstanceID instance;
-    containerItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
-    newItem->SetLocationInWorld(instance,sectorinfo, 0.00, 0.00, 0.00, 0.00 );
+    containerItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot);
+    newItem->SetLocationInWorld(instance,sectorinfo, 0.00, 0.00, 0.00, 0.00);
 
     newItem->SetLoaded();  // Item is fully created
 
     // Check for conditions that would cause assert on newItem->Save(true)
-    if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
+    if(newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
-          worker->GetGuildID(), owner->GetFirstName(), owner);
-        if (workItem && workItem->GetBaseStats())
+               newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
+               worker->GetGuildID(), owner->GetFirstName(), owner);
+        if(workItem && workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
         }
@@ -2739,9 +2741,9 @@ psItem* WorkManager::TransformSelfContainerItem(psItem* oldItem, uint32 newId, i
 // Transform the one items in container into a new item
 psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans)
 {
-    if (!oldItem)
+    if(!oldItem)
     {
-        Error1("TransformAutoContainedItem() had no item to remove." );
+        Error1("TransformAutoContainedItem() had no item to remove.");
         return NULL;
     }
 
@@ -2749,8 +2751,8 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
     CPrintf(CON_DEBUG, "deleting item from container...\n");
 #endif
 
-    gemContainer *container = dynamic_cast<gemContainer*> (workItem->GetGemObject());
-    if (!container)
+    gemContainer* container = dynamic_cast<gemContainer*>(workItem->GetGemObject());
+    if(!container)
     {
         Error1("Could not instantiate gemContainer");
         return NULL;
@@ -2762,7 +2764,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
     container->RemoveFromContainer(oldItem, owner->GetClient());
 
     //Destroy the old item
-    if (!oldItem->Destroy())
+    if(!oldItem->Destroy())
     {
         Error2("TransformContainedItem() could not remove old item ID #%u from database", oldItem->GetUID());
         return NULL;
@@ -2798,7 +2800,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
     // newItem->SetGuardingCharacterID(owner->GetPID());
 
     // Locate item in container and save container
-    if (!container->AddToContainer(newItem, owner->GetClient(), oldslot))
+    if(!container->AddToContainer(newItem, owner->GetClient(), oldslot))
     {
         Error3("Bad container slot %i when trying to add item instance #%u.", PSCHARACTER_SLOT_NONE, newItem->GetUID());
         return NULL;
@@ -2809,18 +2811,18 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
     float xpos,ypos,zpos,yrot;
     psSectorInfo* sectorinfo;
     InstanceID instance;
-    workItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
-    newItem->SetLocationInWorld(instance,sectorinfo, 0.00, 0.00, 0.00, 0.00 );
+    workItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot);
+    newItem->SetLocationInWorld(instance,sectorinfo, 0.00, 0.00, 0.00, 0.00);
 
     newItem->SetLoaded();  // Item is fully created
 
     // Check for conditions that would cause assert on newItem->Save(true)
-    if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
+    if(newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
-          worker->GetGuildID(), owner->GetFirstName(), owner);
-        if (workItem && workItem->GetBaseStats())
+               newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
+               worker->GetGuildID(), owner->GetFirstName(), owner);
+        if(workItem && workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
         }
@@ -2836,15 +2838,15 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
 psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans)
 {
     // Remove items from slot and destroy it
-    psItem *oldItem = owner->GetCharacterData()->Inventory().RemoveItem(NULL,slot);
-    if (!oldItem)
+    psItem* oldItem = owner->GetCharacterData()->Inventory().RemoveItem(NULL,slot);
+    if(!oldItem)
     {
-        Error2("TransformSlotItem() could not remove item in slot #%i", slot );
+        Error2("TransformSlotItem() could not remove item in slot #%i", slot);
         return NULL;
     }
 
     //Destroy the old item
-    if (!oldItem->Destroy())
+    if(!oldItem->Destroy())
     {
         Error2("TransformSlotItem() could not remove old item ID #%u from database", oldItem->GetUID());
         return NULL;
@@ -2864,7 +2866,7 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
 
     //As the old item is no more needed delete it
     delete oldItem;
-    
+
     if(!newItem)
     {
         // Check for consumed item
@@ -2876,7 +2878,7 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
     }
 
     // Check for valid slot
-    if (slot < 0)
+    if(slot < 0)
     {
         Error1("No good slot to locate new item");
         return NULL;
@@ -2885,22 +2887,22 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
     // Locate item in owner's slot
     newItem->SetOwningCharacter(owner->GetCharacterData());
     owner->GetCharacterData()->Inventory().Add(newItem,false,false,slot);
-    if (!owner->GetCharacterData()->Inventory().EquipItem(newItem,slot))
+    if(!owner->GetCharacterData()->Inventory().EquipItem(newItem,slot))
     {
         // If can't equip then drop
         owner->GetCharacterData()->DropItem(newItem);
         psserver->SendSystemError(clientNum,
-            "Item %s was dropped because it could not be equiped.",newItem->GetName() );
+                                  "Item %s was dropped because it could not be equiped.",newItem->GetName());
     }
     newItem->SetLoaded();  // Item is fully created
 
     // Check for conditions that would cause assert on newItem->Save(true)
-    if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
+    if(newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
-          worker->GetGuildID(), owner->GetFirstName(), owner);
-        if (workItem && workItem->GetBaseStats())
+               newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
+               worker->GetGuildID(), owner->GetFirstName(), owner);
+        if(workItem && workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
         }
@@ -2918,15 +2920,15 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
 psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans)
 {
     // Remove items from targeted slot and destroy it
-    psItem *oldItem = gemTarget->GetCharacterData()->Inventory().RemoveItem(NULL,slot);
-    if (!oldItem)
+    psItem* oldItem = gemTarget->GetCharacterData()->Inventory().RemoveItem(NULL,slot);
+    if(!oldItem)
     {
-        Error2("TransformSlotItem() could not remove item in slot #%i", slot );
+        Error2("TransformSlotItem() could not remove item in slot #%i", slot);
         return NULL;
     }
 
     //Destroy the old item
-    if (!oldItem->Destroy())
+    if(!oldItem->Destroy())
     {
         Error2("TransformSlotItem() could not remove old item ID #%u from database", oldItem->GetUID());
         return NULL;
@@ -2958,14 +2960,14 @@ psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 
     }
 
     // Check for valid slot
-    if (slot < 0)
+    if(slot < 0)
     {
         Error1("No good slot to locate new item");
         return NULL;
     }
 
     // Check for valid target
-    if ( !gemTarget || !gemTarget->GetCharacterData() )
+    if(!gemTarget || !gemTarget->GetCharacterData())
     {
         Error1("No good target to locate new item");
         return NULL;
@@ -2974,22 +2976,22 @@ psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 
     // Locate in target slot
     newItem->SetOwningCharacter(gemTarget->GetCharacterData());
     gemTarget->GetCharacterData()->Inventory().Add(newItem);
-    if (!gemTarget->GetCharacterData()->Inventory().EquipItem(newItem,slot))
+    if(!gemTarget->GetCharacterData()->Inventory().EquipItem(newItem,slot))
     {
         // If can't equip then drop
         gemTarget->GetCharacterData()->DropItem(newItem);
         psserver->SendSystemError(gemTarget->GetClientID(),
-                                  "Item %s was dropped because it could not be equiped.", newItem->GetName() );
+                                  "Item %s was dropped because it could not be equiped.", newItem->GetName());
     }
     newItem->SetLoaded();  // Item is fully created
 
     // Check for conditions that would cause assert on newItem->Save(true)
-    if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
+    if(newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
-          worker->GetGuildID(), gemTarget->GetCharacterData()->GetCharName(), gemTarget->GetCharacterData());
-        if (workItem && workItem->GetBaseStats())
+               newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
+               worker->GetGuildID(), gemTarget->GetCharacterData()->GetCharName(), gemTarget->GetCharacterData());
+        if(workItem && workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
         }
@@ -2999,7 +3001,7 @@ psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 
 
     // Send equip message to target
     psserver->GetCharManager()->SendInventory(gemTarget->GetClientID());
-    if (gemTarget->GetClientID()) // No superclient
+    if(gemTarget->GetClientID())  // No superclient
     {
         psserver->GetCharManager()->UpdateItemViews(gemTarget->GetClientID());
     }
@@ -3010,9 +3012,9 @@ psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 
 // Transforms the targeted item into a new item
 psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans)
 {
-    if (!oldItem)
+    if(!oldItem)
     {
-        Error1("TransformTargetItem() had no item to transform." );
+        Error1("TransformTargetItem() had no item to transform.");
         return NULL;
     }
 
@@ -3024,11 +3026,11 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
     InstanceID instance;
     psSectorInfo* sectorinfo;
     float xpos,ypos,zpos,yrot;
-    oldItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot );
+    oldItem->GetLocationInWorld(instance, &sectorinfo, xpos, ypos, zpos, yrot);
 
     //Destroy gem and item
     entityManager->RemoveActor(oldItem->GetGemObject());
-    if (!oldItem->Destroy())
+    if(!oldItem->Destroy())
     {
         Error2("TransformTargetItem() could not destroy old item ID #%u from database", oldItem->GetUID());
         return NULL;
@@ -3061,7 +3063,7 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
 
     // Locate the new item where the old one was
     newItem->SetLocationInWorld(instance,sectorinfo,xpos,ypos,zpos,yrot);
-    if (!entityManager->CreateItem(newItem, true))
+    if(!entityManager->CreateItem(newItem, true))
     {
         delete newItem;
         return NULL;
@@ -3069,12 +3071,12 @@ psItem* WorkManager::TransformTargetItem(psItem* oldItem, uint32 newId, int newQ
 
 
     // Check for conditions that would cause assert on newItem->Save(true)
-    if (newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
+    if(newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
     {
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
-          newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
-          worker->GetGuildID(), owner->GetFirstName(), owner);
-        if (workItem && workItem->GetBaseStats())
+               newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
+               worker->GetGuildID(), owner->GetFirstName(), owner);
+        if(workItem && workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
         }
@@ -3126,30 +3128,30 @@ void WorkManager::TransformTargetItemToNpc(psItem* workItem, Client* client)
 //  The location and saving of item is up to calling routine
 psItem* WorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality, bool transient)
 {
-    Debug3( LOG_TRADE, 0,"Creating new item id(%u) quantity(%d)\n", newId, newQty );
+    Debug3(LOG_TRADE, 0,"Creating new item id(%u) quantity(%d)\n", newId, newQty);
 
 #ifdef DEBUG_WORKMANAGER
-        CPrintf(CON_DEBUG, "creating item id=%u qty=%i quality=%f\n",
+    CPrintf(CON_DEBUG, "creating item id=%u qty=%i quality=%f\n",
             newId, newQty, itemQuality);
 #endif
 
     // Check to make sure it's not a trasnformation that just destroys items
-    if (newId > 0)
+    if(newId > 0)
     {
         // Create a new item including stack count and the calculated quality
-        psItemStats* baseStats = cacheManager->GetBasicItemStatsByID( newId );
-        if (!baseStats)
+        psItemStats* baseStats = cacheManager->GetBasicItemStatsByID(newId);
+        if(!baseStats)
         {
-            Error2("CreateTradeItem() could not get base states for item #%iu", newId );
+            Error2("CreateTradeItem() could not get base states for item #%iu", newId);
             return NULL;
         }
 
         // Make a perminent new item
-        psItem* newItem = baseStats->InstantiateBasicItem( transient );
-        if (!newItem)
+        psItem* newItem = baseStats->InstantiateBasicItem(transient);
+        if(!newItem)
         {
             Error3("CreateTradeItem() could not create item (%s) id #%u",
-                baseStats->GetName(), newId );
+                   baseStats->GetName(), newId);
             return NULL;
         }
 
@@ -3163,7 +3165,7 @@ psItem* WorkManager::CreateTradeItem(uint32 newId, int newQty, float itemQuality
         newItem->SetCrafterID(worker->GetPID());
 
         // Set current player guild to creator mark
-        if (owner->GetGuild())
+        if(owner->GetGuild())
             newItem->SetGuildID(owner->GetGuild()->GetID());
         else
             newItem->SetGuildID(0);
@@ -3193,9 +3195,9 @@ bool WorkManager::constraintTime(WorkManager* that,char* param)
 
     // Get game hour in 24 hours cycle
     int curTime = psserver->GetWeatherManager()->GetGameTODHour();
-    int targetTime = atoi( param );
+    int targetTime = atoi(param);
 
-    if ( curTime == targetTime )
+    if(curTime == targetTime)
     {
         return true;
     }
@@ -3213,10 +3215,10 @@ bool WorkManager::constraintFriends(WorkManager* that, char* param)
         return false;
 
     // Count proximity player objects
-    csArray< gemObject *> *targetsInRange  = that->worker->GetObjectsInRange( FRIEND_RANGE );
+    csArray< gemObject*>* targetsInRange  = that->worker->GetObjectsInRange(FRIEND_RANGE);
 
     size_t count = (size_t)atoi(param);
-    if ( targetsInRange->GetSize() == count )
+    if(targetsInRange->GetSize() == count)
     {
         return true;
     }
@@ -3237,78 +3239,78 @@ bool WorkManager::constraintLocation(WorkManager* that, char* param)
     csVector3 pos;
     float yrot;
     iSector* sect;
-    that->worker->GetPosition( pos, yrot, sect );
+    that->worker->GetPosition(pos, yrot, sect);
 
     // Parse through the constraint parameters
-    pdest = strchr( param, ch );
+    pdest = strchr(param, ch);
     *pdest = '\0';
     char* sector = param;
 
     // go to the next parameter
     param = pdest + 1;
-    pdest = strchr( param, ch );
+    pdest = strchr(param, ch);
     *pdest = '\0';
     char* xloc = param;
 
     // go to the next parameter
     param = pdest + 1;
-    pdest = strchr( param, ch );
+    pdest = strchr(param, ch);
     *pdest = '\0';
     char* yloc = param;
 
     // go to the next parameter
     param = pdest + 1;
-    pdest = strchr( param, ch );
+    pdest = strchr(param, ch);
     *pdest = '\0';
     char* zloc = param;
 
     // go to the next parameter
     param = pdest + 1;
-    pdest = strchr( param, ch );
+    pdest = strchr(param, ch);
     *pdest = '\0';
     char* yrotation = param;
 
     // Skip if no sector constraint name specified
-    if ( strlen(sector) != 0 )
+    if(strlen(sector) != 0)
     {
         // Check sector
-        if ( strcmp( sector, sect->QueryObject()->GetName()) != 0)
+        if(strcmp(sector, sect->QueryObject()->GetName()) != 0)
             return false;
     }
 
     // Skip if no X constraint co-ord specified
-    if ( strlen(xloc) != 0 )
+    if(strlen(xloc) != 0)
     {
         // Check X location
-        float x = atof( xloc );
-        if ( PSABS(pos.x - x) > MAXDISTANCE )
+        float x = atof(xloc);
+        if(PSABS(pos.x - x) > MAXDISTANCE)
             return false;
     }
 
     // Skip if no Y constraint co-ord specified
-    if ( strlen(yloc) != 0 )
+    if(strlen(yloc) != 0)
     {
         // Check Y location
-        float y = atof( yloc );
-        if ( PSABS(pos.y - y) > MAXDISTANCE )
+        float y = atof(yloc);
+        if(PSABS(pos.y - y) > MAXDISTANCE)
             return false;
     }
 
     // Skip if no Z constraint co-ord specified
-    if ( strlen(zloc) != 0 )
+    if(strlen(zloc) != 0)
     {
         // Check Z location
-        float z = atof( zloc );
-        if ( PSABS(pos.z - z) > MAXDISTANCE )
+        float z = atof(zloc);
+        if(PSABS(pos.z - z) > MAXDISTANCE)
             return false;
     }
 
     // Skip if no Yrot constraint co-ord specified
-    if ( strlen(yrotation) != 0 )
+    if(strlen(yrotation) != 0)
     {
         // Check Y rotation
-        float r = atof( yrotation );
-        if ( PSABS(yrot - r) > MAXANGLE )
+        float r = atof(yrotation);
+        if(PSABS(yrot - r) > MAXANGLE)
             return false;
     }
 
@@ -3320,11 +3322,11 @@ bool WorkManager::constraintLocation(WorkManager* that, char* param)
 bool WorkManager::constraintMode(WorkManager* that, char* param)
 {
     // Check mode string pointer
-    if ( !that->preworkModeString )
+    if(!that->preworkModeString)
         return false;
 
     // Check constraint mode to mode before work started
-    if ( strcmp( that->preworkModeString, param) != 0 )
+    if(strcmp(that->preworkModeString, param) != 0)
         return false;
 
     return true;
@@ -3338,7 +3340,7 @@ bool WorkManager::constraintGender(WorkManager* that, char* param)
     psRaceInfo* race = that->owner->GetCharacterData()->GetRaceInfo();
 
     // Check constraint gender to player gender
-    if ( strcmp( race->GetGender(), param) != 0 )
+    if(strcmp(race->GetGender(), param) != 0)
         return false;
 
     return true;
@@ -3352,7 +3354,7 @@ bool WorkManager::constraintRace(WorkManager* that, char* param)
     psRaceInfo* race = that->owner->GetCharacterData()->GetRaceInfo();
 
     // Check constraint race to player race
-    if ( strcmp( race->GetRace(), param) != 0 )
+    if(strcmp(race->GetRace(), param) != 0)
         return false;
 
     return true;
@@ -3366,10 +3368,10 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     CPrintf(CON_DEBUG, "handling work event...\n");
 #endif
     // Load vars
-    if ( !LoadLocalVars(workEvent->client,workEvent->gemTarget) )
+    if(!LoadLocalVars(workEvent->client,workEvent->gemTarget))
     {
         Error1("Could not load local variables in HandleWorkEvent().\n");
-        if (secure) psserver->SendSystemInfo(clientNum,"Could not load local variables in HandleWorkEvent().");
+        if(secure) psserver->SendSystemInfo(clientNum,"Could not load local variables in HandleWorkEvent().");
         owner->SetTradeWork(NULL);
         worker->SetMode(PSCHARACTER_MODE_PEACE);
         return;
@@ -3380,10 +3382,10 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     {
         // Get active transformation and then do it
         trans = workEvent->GetTransformation();
-        if (!trans)
+        if(!trans)
         {
             Error1("No valid transformation in HandleWorkEvent().\n");
-            if (secure) psserver->SendSystemInfo(clientNum,"No valid transformation in HandleWorkEvent().");
+            if(secure) psserver->SendSystemInfo(clientNum,"No valid transformation in HandleWorkEvent().");
             owner->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
             return;
@@ -3391,10 +3393,10 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 
         // Get active process
         process = workEvent->GetProcess();
-        if (!process)
+        if(!process)
         {
             Error1("No valid process pointer for transaction.\n");
-            if (secure) psserver->SendSystemInfo(clientNum,"No valid process pointer for transaction.\n");
+            if(secure) psserver->SendSystemInfo(clientNum,"No valid process pointer for transaction.\n");
             owner->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
             return;
@@ -3403,21 +3405,21 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 
     // Check for exploits before starting
     workItem = workEvent->GetWorkItem();
-    if (transType == TRANSFORMTYPE_CONTAINER)
+    if(transType == TRANSFORMTYPE_CONTAINER)
     {
         // Get event data
-        if (!workItem)
+        if(!workItem)
         {
-                Error1("No valid transformation item in HandleWorkEvent().\n");
-                if (secure) psserver->SendSystemInfo(clientNum,"No valid transformation item in HandleWorkEvent().");
-                owner->SetTradeWork(NULL);
-                worker->SetMode(PSCHARACTER_MODE_PEACE);
-                return;
+            Error1("No valid transformation item in HandleWorkEvent().\n");
+            if(secure) psserver->SendSystemInfo(clientNum,"No valid transformation item in HandleWorkEvent().");
+            owner->SetTradeWork(NULL);
+            worker->SetMode(PSCHARACTER_MODE_PEACE);
+            return;
         }
 
         // Check to see if player walked away from non-auto container
         gemObject* target = workItem->GetGemObject();
-        if (worker->RangeTo(target, true) > RANGE_TO_USE)
+        if(worker->RangeTo(target, true) > RANGE_TO_USE)
         {
             psserver->SendSystemOK(clientNum,"You interrupted your work when you moved away.");
             owner->SetTradeWork(NULL);
@@ -3427,7 +3429,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     }
 
     // Clear out work item event pointer
-    if (workItem)
+    if(workItem)
     {
         workItem->SetTransformationEvent(NULL);
     }
@@ -3435,35 +3437,35 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     // Set and load
     currentQuality = workEvent->GetResultQuality();
     const int originalQty = workEvent->GetResultQuantity();
-    psItem* transItem = workEvent->GetTranformationItem();
+    psItem* sourceItem = workEvent->GetTranformationItem();
 
-    uint32 result = 0;
+    uint32 resultItem = 0;
     int resultQty = 0;
     int itemQty = 0;
     int QtyMultiplier = 1;
 
     if(trans)
     {
-        result = trans->GetResultId();
+        resultItem = trans->GetResultId();
         resultQty = trans->GetResultQty();
         itemQty = trans->GetItemQty();
     }
 
-    if (!transItem)
+    if(!sourceItem)
     {
         Error1("Bad transformation item in HandleWorkEvent().\n");
-        if (secure) psserver->SendSystemInfo(clientNum,"Bad transformation item in HandleWorkEvent().");
+        if(secure) psserver->SendSystemInfo(clientNum,"Bad transformation item in HandleWorkEvent().");
         owner->SetTradeWork(NULL);
         worker->SetMode(PSCHARACTER_MODE_PEACE);
         return;
     }
 
     // Check for item being moved from hand slots - container movement is handled by slot manager
-    if (transType == TRANSFORMTYPE_SLOT)
+    if(transType == TRANSFORMTYPE_SLOT)
     {
         INVENTORY_SLOT_NUMBER slot = workEvent->GetTransformationSlot();
-        psItem *oldItem = owner->GetCharacterData()->Inventory().GetInventoryItem(slot);
-        if (oldItem != workEvent->GetTranformationItem() || (oldItem && oldItem->GetStackCount() != originalQty))
+        psItem* oldItem = owner->GetCharacterData()->Inventory().GetInventoryItem(slot);
+        if(oldItem != workEvent->GetTranformationItem() || (oldItem && oldItem->GetStackCount() != originalQty))
         {
             psserver->SendSystemOK(clientNum,"You interrupted your work when you moved item.");
             owner->SetTradeWork(NULL);
@@ -3473,11 +3475,11 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     }
 
     // Check for item being moved from targetted hand slots
-    if (transType == TRANSFORMTYPE_TARGETSLOT)
+    if(transType == TRANSFORMTYPE_TARGETSLOT)
     {
         INVENTORY_SLOT_NUMBER slot = workEvent->GetTransformationSlot();
-        psItem *oldItem = gemTarget->GetCharacterData()->Inventory().GetInventoryItem(slot);
-        if (oldItem != workEvent->GetTranformationItem() || (oldItem && oldItem->GetStackCount() != originalQty))
+        psItem* oldItem = gemTarget->GetCharacterData()->Inventory().GetInventoryItem(slot);
+        if(oldItem != workEvent->GetTranformationItem() || (oldItem && oldItem->GetStackCount() != originalQty))
         {
             psserver->SendSystemOK(clientNum,"You interrupted your transform when your target moved item.");
             owner->SetTradeWork(NULL);
@@ -3485,39 +3487,44 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             return;
         }
     }
-    // Check and apply the skills to quality and practice points
-    float startQuality = transItem->GetItemQuality();
-    if ( process )
+    // Check and apply the skills to quality
+    float startQuality = sourceItem->GetItemQuality();
+    if(process)
     {
-        if ( result > 0 && !ApplySkills(workEvent->GetKFactor(), workEvent->GetTranformationItem(), owner, itemQty == 0, currentQuality, process, trans, workEvent->delayticks) && process->GetGarbageId() != 0 )
+        if(resultItem > 0 && !CalculateQuality(workEvent->GetKFactor(), workEvent->GetTranformationItem(), owner, itemQty == 0, currentQuality, process, trans, workEvent->delayticks) && process->GetGarbageId() != 0)
         {
-            result = process->GetGarbageId();
+            resultItem = process->GetGarbageId();
             resultQty = process->GetGarbageQty();
-            psItemStats* Stats = cacheManager->GetBasicItemStatsByID( result );
+            psItemStats* Stats = cacheManager->GetBasicItemStatsByID(resultItem);
             if(Stats)
                 startQuality = currentQuality = Stats->GetQuality();
         }
     }
 
     //  Check for 0 quantity transformations
-    if ( itemQty == 0 )
+    if(itemQty == 0)
     {
         resultQty = workEvent->GetResultQuantity();
         itemQty = resultQty;
         QtyMultiplier = resultQty;
     }
 
+    // store the source item for later comparison with result
+    psItem* sourceItemCopy = new psItem();
+    sourceItem->Copy(sourceItemCopy);
+
     // Handle all the different transformation types
-    switch( transType )
+    psItem* newItem;
+    switch(transType)
     {
         case TRANSFORMTYPE_SLOT:
         {
             INVENTORY_SLOT_NUMBER slot = workEvent->GetTransformationSlot();
-            psItem* newItem = TransformSlotItem(slot, result, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
-            if (!newItem && (result != 0))
+            newItem = TransformSlotItem(slot, resultItem, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
+            if(!newItem && (resultItem != 0))
             {
                 Error1("TransformSlotItem did not create new item in HandleWorkEvent().\n");
-                if (secure) psserver->SendSystemInfo(clientNum,"TransformSlotItem did not create new item in HandleWorkEvent().");
+                if(secure) psserver->SendSystemInfo(clientNum,"TransformSlotItem did not create new item in HandleWorkEvent().");
                 owner->SetTradeWork(NULL);
                 worker->SetMode(PSCHARACTER_MODE_PEACE);
                 return;
@@ -3529,11 +3536,11 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         case TRANSFORMTYPE_TARGETSLOT:
         {
             INVENTORY_SLOT_NUMBER slot = workEvent->GetTransformationSlot();
-            psItem* newItem = TransformTargetSlotItem(slot, result, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
-            if (!newItem && (result != 0))
+            newItem = TransformTargetSlotItem(slot, resultItem, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
+            if(!newItem && (resultItem != 0))
             {
                 Error1("TransformTargetSlotItem did not create new item in HandleWorkEvent().\n");
-                if (secure) psserver->SendSystemInfo(clientNum,"TransformSlotItem did not create new item in HandleWorkEvent().");
+                if(secure) psserver->SendSystemInfo(clientNum,"TransformSlotItem did not create new item in HandleWorkEvent().");
                 owner->SetTradeWork(NULL);
                 worker->SetMode(PSCHARACTER_MODE_PEACE);
                 return;
@@ -3544,11 +3551,11 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 
         case TRANSFORMTYPE_TARGET:
         {
-            psItem* newItem = TransformTargetItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
-            if (!newItem && (result != 0))
+            newItem = TransformTargetItem(workEvent->GetTranformationItem(), resultItem, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
+            if(!newItem && (resultItem != 0))
             {
                 Error1("TransformTargetItem did not create new item in HandleWorkEvent().\n");
-                if (secure) psserver->SendSystemInfo(clientNum,"TransformSlotItem did not create new item in HandleWorkEvent().");
+                if(secure) psserver->SendSystemInfo(clientNum,"TransformSlotItem did not create new item in HandleWorkEvent().");
                 owner->SetTradeWork(NULL);
                 worker->SetMode(PSCHARACTER_MODE_PEACE);
                 return;
@@ -3574,11 +3581,11 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 
         case TRANSFORMTYPE_SELF_CONTAINER:
         {
-            psItem* newItem = TransformSelfContainerItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
-            if (!newItem  && (result != 0))
+            newItem = TransformSelfContainerItem(workEvent->GetTranformationItem(), resultItem, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
+            if(!newItem  && (resultItem != 0))
             {
                 Error1("TransformSelfContainerItem did not create new item in HandleWorkEvent().\n");
-                if (secure) psserver->SendSystemInfo(clientNum,"TransformSelfContainerItem did not create new item in HandleWorkEvent().");
+                if(secure) psserver->SendSystemInfo(clientNum,"TransformSelfContainerItem did not create new item in HandleWorkEvent().");
                 owner->SetTradeWork(NULL);
                 worker->SetMode(PSCHARACTER_MODE_PEACE);
                 return;
@@ -3591,11 +3598,11 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         case TRANSFORMTYPE_SLOT_CONTAINER:
         case TRANSFORMTYPE_CONTAINER:
         {
-            psItem* newItem = TransformContainedItem(workEvent->GetTranformationItem(), result, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
-            if (!newItem  && (result != 0))
+            newItem = TransformContainedItem(workEvent->GetTranformationItem(), resultItem, resultQty, currentQuality, workEvent->GetProcess(), workEvent->GetTransformation());
+            if(!newItem  && (resultItem != 0))
             {
                 Error1("TransformContainedItem did not create new item in HandleWorkEvent().\n");
-                if (secure) psserver->SendSystemInfo(clientNum,"TransformContainedItem did not create new item in HandleWorkEvent().");
+                if(secure) psserver->SendSystemInfo(clientNum,"TransformContainedItem did not create new item in HandleWorkEvent().");
                 owner->SetTradeWork(NULL);
                 worker->SetMode(PSCHARACTER_MODE_PEACE);
                 return;
@@ -3611,8 +3618,25 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         }
     }
 
+    // check if result item is identical to source and in this case do not give experience or practice
+    bool somethingHappened = true;
+    if(newItem)
+    {
+        if(sourceItemCopy->GetBaseStats()->GetUID()==newItem->GetBaseStats()->GetUID() &&
+                sourceItemCopy->GetItemQuality()==newItem->GetItemQuality() &&
+                sourceItemCopy->GetMaxItemQuality()==newItem->GetMaxItemQuality() &&
+                sourceItemCopy->GetModifier(0)==newItem->GetModifier(0) &&
+                sourceItemCopy->GetModifier(1)==newItem->GetModifier(1) &&
+                sourceItemCopy->GetModifier(2)==newItem->GetModifier(2))
+        {
+            somethingHappened = false;
+        }
+    }
+    delete sourceItemCopy;
+
+
     // Calculate and apply experience points
-    if (result > 0)
+    if(resultItem > 0 && somethingHappened)
     {
         unsigned int experiencePoints;
         {
@@ -3632,21 +3656,57 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         owner->GetCharacterData()->AddExperiencePointsNotify(experiencePoints);
 
         Debug2(LOG_TRADE, clientNum, "Giving experience points %i.\n",experiencePoints);
-        if (secure) psserver->SendSystemInfo(clientNum,"Giving experience points %i.",experiencePoints);
+        if(secure) psserver->SendSystemInfo(clientNum,"Giving experience points %i.",experiencePoints);
+    }
+
+    // Calculate and apply practice points
+    if(resultItem > 0 && somethingHappened)
+    {
+        unsigned int primaryPracticePoints;
+        unsigned int secondaryPracticePoints;
+
+        MathEnvironment env;
+        env.Define("StartQuality", startQuality);
+        env.Define("CurrentQuality", currentQuality);
+        env.Define("QtyMultiplier", QtyMultiplier);
+        env.Define("Character", owner);
+        env.Define("Process", workEvent->GetProcess());
+        env.Define("CalculatedTime", workEvent->delayticks/1000);
+
+        //update the script if needed. Here we don't protect against bad scripts as before for now.
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_practice, "Calculate Transformation Practice");
+
+        calc_transform_practice->Evaluate(&env);
+        primaryPracticePoints = env.Lookup("PriPoints")->GetRoundValue();
+        int priSkill = workEvent->GetProcess()->GetPrimarySkillId();
+        owner->GetCharacterData()->Skills().AddSkillPractice((PSSKILL)priSkill,primaryPracticePoints);
+
+        Debug3(LOG_TRADE, clientNum, "Giving %i practice points to skill %d .",primaryPracticePoints, priSkill);
+        if(secure) psserver->SendSystemInfo(clientNum,"Giving %i practice points to skill %d .",primaryPracticePoints, priSkill);
+
+        int secSkill = workEvent->GetProcess()->GetSecondarySkillId();
+        if(secSkill)
+        {
+            secondaryPracticePoints = env.Lookup("SecPoints")->GetRoundValue();
+            owner->GetCharacterData()->Skills().AddSkillPractice((PSSKILL)secSkill,secondaryPracticePoints);
+            Debug3(LOG_TRADE, clientNum, "Giving %i practice points to skill %d .",secondaryPracticePoints, secSkill);
+            if(secure) psserver->SendSystemInfo(clientNum,"Giving %i practice points to skill %d .",secondaryPracticePoints, secSkill);
+        }
+
     }
 
     // Let the user know the we have done something
-    if (result <= 0 )
+    if(resultItem <= 0)
     {
-        psItemStats* itemStats = cacheManager->GetBasicItemStatsByID( trans->GetItemId() );
-        if (itemStats)
+        psItemStats* itemStats = cacheManager->GetBasicItemStatsByID(trans->GetItemId());
+        if(itemStats)
         {
             psserver->SendSystemOK(clientNum," %i %s is gone.", itemQty, itemStats->GetName());
         }
         else
         {
             Error2("HandleWorkEvent() could not get item stats for item ID #%u.", trans->GetItemId());
-            if (secure) psserver->SendSystemInfo(clientNum,"HandleWorkEvent() could not get item stats for item ID #%u.", trans->GetItemId());
+            if(secure) psserver->SendSystemInfo(clientNum,"HandleWorkEvent() could not get item stats for item ID #%u.", trans->GetItemId());
             owner->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
             return;
@@ -3654,16 +3714,16 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     }
     else
     {
-        psItemStats* resultStats = cacheManager->GetBasicItemStatsByID( result );
+        psItemStats* resultStats = cacheManager->GetBasicItemStatsByID(resultItem);
         psItem* newItem = workEvent->GetTranformationItem();
         if(resultStats && newItem)
         {
-                psserver->SendSystemOK(clientNum, "You made %i %s with quality %.0f.", resultQty, resultStats->GetName(), newItem->GetItemQuality());
+            psserver->SendSystemOK(clientNum, "You made %i %s with quality %.0f.", resultQty, resultStats->GetName(), newItem->GetItemQuality());
         }
         else
         {
-            Error2("HandleWorkEvent() could not get result item or item stats for item ID #%u.", result);
-            if (secure) psserver->SendSystemInfo(clientNum,"HandleWorkEvent() could not get result item or stats for item ID #%u.", result);
+            Error2("HandleWorkEvent() could not get result item or item stats for item ID #%u.", resultItem);
+            if(secure) psserver->SendSystemInfo(clientNum,"HandleWorkEvent() could not get result item or stats for item ID #%u.", resultItem);
             owner->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
             return;
@@ -3671,18 +3731,18 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     }
 
     // If there is something left lets see what other damage we can do
-    if( (result > 0) )
+    if(resultItem > 0 && somethingHappened)
     {
         // If it's an auto transformation keep going
-        if( (transType == TRANSFORMTYPE_AUTO_CONTAINER) )
+        if(transType == TRANSFORMTYPE_AUTO_CONTAINER)
         {
             // Check to see if we have pattern
-            if ( ValidateMind() )
+            if(ValidateMind())
             {
                 //TODO: Maybe all those function like this which seems copy & paste should be put in an unique one?
                 // Check if there is another transformation possible for the item just created
-                unsigned int transMatch = AnyTransform(patterns, patternKFactor, result, resultQty);
-                if ( (transMatch == TRANSFORM_MATCH ) || (transMatch == TRANSFORM_GARBAGE ) )
+                unsigned int transMatch = AnyTransform(patterns, patternKFactor, resultItem, resultQty);
+                if((transMatch == TRANSFORM_MATCH) || (transMatch == TRANSFORM_GARBAGE))
                 {
                     // Set up event for new transformation with the same setting as the old
                     StartTransformationEvent(
@@ -3697,12 +3757,12 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         }
 
         // If item in any container clean it up
-        if( (transType == TRANSFORMTYPE_AUTO_CONTAINER) ||
-            (transType == TRANSFORMTYPE_CONTAINER) )
+        if((transType == TRANSFORMTYPE_AUTO_CONTAINER) ||
+                (transType == TRANSFORMTYPE_CONTAINER))
         {
             // If no transformations started go ahead and start a cleanup event
             psItem* newItem = workEvent->GetTranformationItem();
-            if (newItem)
+            if(newItem)
             {
                 StartCleanupEvent(transType,workEvent->client, newItem, workEvent->client->GetActor());
             }
@@ -3714,8 +3774,8 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     worker->SetMode(PSCHARACTER_MODE_PEACE);
 }
 
-// Apply skills if any to quality and practice points
-bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans, csTicks time)
+// Apply skills if any to determine quality
+bool WorkManager::CalculateQuality(float factor, psItem* transItem, gemActor* worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans, csTicks time)
 {
     if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_apply_skill, "Calculate Transformation Apply Skill"))
     {
@@ -3728,103 +3788,103 @@ bool WorkManager::ApplySkills(float factor, psItem* transItem, gemActor *worker,
         env.Define("Transform", trans);
         env.Define("Secure", secure);
         env.Define("AmountModifier", amountModifier);
-        env.Define("CalculatedTime", time);
-        
+        env.Define("CalculatedTime", time/1000);
+
         calc_transform_apply_skill->Evaluate(&env);
         currentQuality = env.Lookup("Quality")->GetValue();
         return (currentQuality > 0);
     }
 }
 
-void WorkManager::SendTransformError( uint32_t clientNum, unsigned int result, uint32 curItemId, int curItemQty )
+void WorkManager::SendTransformError(uint32_t clientNum, unsigned int result, uint32 curItemId, int curItemQty)
 {
     csString error("");
 
     // There is some hierachy to the error codes
     //  for example, bad quantity is only important if no other error is found
-    if (result & TRANSFORM_UNKNOWN_WORKITEM)
+    if(result & TRANSFORM_UNKNOWN_WORKITEM)
     {
         psserver->SendSystemError(clientNum, "Nothing has been chosen to use.");
         return;
     }
-    if (result & TRANSFORM_FAILED_CONSTRAINTS)
+    if(result & TRANSFORM_FAILED_CONSTRAINTS)
     {
         // Message is sent by constraint logic.
         // error = "The conditions are not right for this to work.";
         return;
     }
-    if (result & TRANSFORM_UNKNOWN_PATTERN)
+    if(result & TRANSFORM_UNKNOWN_PATTERN)
     {
         psserver->SendSystemError(clientNum, "You are unable to think about what to do with this.");
         return;
     }
-    if (result & TRANSFORM_BAD_TRAINING)
+    if(result & TRANSFORM_BAD_TRAINING)
     {
         psserver->SendSystemError(clientNum, "You need some more training before you can do this sort of work.");
         return;
     }
-    if (result & TRANSFORM_BAD_SKILLS)
+    if(result & TRANSFORM_BAD_SKILLS)
     {
         psserver->SendSystemError(clientNum, "This is a bit beyond your skills at this moment.");
         return;
     }
-    if (result & TRANSFORM_OVER_SKILLED)
+    if(result & TRANSFORM_OVER_SKILLED)
     {
         psserver->SendSystemError(clientNum, "You loose interest in these simple tasks and cannot complete the work.");
         return;
     }
-    if (result & TRANSFORM_NO_STAMINA)
+    if(result & TRANSFORM_NO_STAMINA)
     {
         psserver->SendSystemError(clientNum, "You are either too tired or not focused enough to do this now.");
         return;
     }
-    if (result & TRANSFORM_MISSING_EQUIPMENT)
+    if(result & TRANSFORM_MISSING_EQUIPMENT)
     {
         psserver->SendSystemError(clientNum, "You do not have the correct tools for this sort of work.");
         return;
     }
-    if (result & TRANSFORM_BAD_QUANTITY)
+    if(result & TRANSFORM_BAD_QUANTITY)
     {
         psserver->SendSystemError(clientNum, "This doesn't seem to be the right amount to do anything useful.");
         return;
     }
-    if (result & TRANSFORM_BAD_USE)
+    if(result & TRANSFORM_BAD_USE)
     {
         psserver->SendSystemError(clientNum, "There is nothing in this container that you own.");
         return;
     }
-    if (result & TRANSFORM_TOO_MANY_ITEMS)
+    if(result & TRANSFORM_TOO_MANY_ITEMS)
     {
         psserver->SendSystemError(clientNum, "You can only work on one item at a time this way.");
         return;
     }
-    if (result & TRANSFORM_BAD_COMBINATION)
+    if(result & TRANSFORM_BAD_COMBINATION)
     {
         psserver->SendSystemError(clientNum, "You do not have the right amount of the right items for what you have in mind.");
         return;
     }
-    if (result & TRANSFORM_MISSING_ITEM)
+    if(result & TRANSFORM_MISSING_ITEM)
     {
         psserver->SendSystemError(clientNum, "You are not sure what to do with this.");
         return;
     }
-    if (result & TRANSFORM_UNKNOWN_ITEM)
+    if(result & TRANSFORM_UNKNOWN_ITEM)
     {
-        psItemStats* curStats = cacheManager->GetBasicItemStatsByID( curItemId );
+        psItemStats* curStats = cacheManager->GetBasicItemStatsByID(curItemId);
         if(curStats)
         {
             psserver->SendSystemError(clientNum, "You are not sure what to do with %d %s.", curItemQty, curStats->GetName());
         }
         return;
     }
-    if (result & TRANSFORM_GONE_WRONG)
+    if(result & TRANSFORM_GONE_WRONG)
     {
         psserver->SendSystemError(clientNum, "Something has obviously gone wrong.");
         return;
     }
-    if (result & TRANSFORM_GARBAGE)
+    if(result & TRANSFORM_GARBAGE)
     {
-        psItemStats* curStats = cacheManager->GetBasicItemStatsByID( curItemId );
+        psItemStats* curStats = cacheManager->GetBasicItemStatsByID(curItemId);
         if(curStats)
         {
             psserver->SendSystemError(clientNum, "You are not sure what to do with this.");
@@ -3844,7 +3904,7 @@ void WorkManager::SendTransformError( uint32_t clientNum, unsigned int result, u
 void WorkManager::StopCleanupWork(Client* client, psItem* cleanItem)
 {
     // Check for proper autoItem
-    if ( !cleanItem )
+    if(!cleanItem)
     {
         Error1("StopCleanupWork does not have a good cleanItem pointer.");
         return;
@@ -3852,7 +3912,7 @@ void WorkManager::StopCleanupWork(Client* client, psItem* cleanItem)
 
     // Stop the cleanup item's work event
     psWorkGameEvent* workEvent = cleanItem->GetTransformationEvent();
-    if (workEvent)
+    if(workEvent)
     {
         cleanItem->SetTransformationEvent(NULL);
         workEvent->Interrupt();
@@ -3864,7 +3924,7 @@ void WorkManager::StopCleanupWork(Client* client, psItem* cleanItem)
 // Start doing cleanup
 void WorkManager::StartCleanupEvent(int transType, Client* client, psItem* item, gemActor* worker)
 {
-    if (!item)
+    if(!item)
     {
         Error1("No valid transformation item in StartCleanupEvent().\n");
         return;
@@ -3878,7 +3938,7 @@ void WorkManager::StartCleanupEvent(int transType, Client* client, psItem* item,
     // Set event
     csVector3 pos(0,0,0);
     psWorkGameEvent* workEvent = new psWorkGameEvent(
-        this, worker, CLEANUP_DELAY*1000, CLEANUP, pos, NULL, client );
+        this, worker, CLEANUP_DELAY*1000, CLEANUP, pos, NULL, client);
     workEvent->SetTransformationType(transType);
     workEvent->SetTransformationItem(item);
     item->SetTransformationEvent(workEvent);
@@ -3896,7 +3956,7 @@ void WorkManager::HandleCleanupEvent(psWorkGameEvent* workEvent)
 
     // Get event item
     psItem* cleanItem = workEvent->GetTranformationItem();
-    if ( cleanItem )
+    if(cleanItem)
     {
         cleanItem->SetGuardingCharacterID(0);
         cleanItem->Save(true);
@@ -3919,11 +3979,11 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
     }
 
     // Check if player has a key
-    if (client->GetCharacterData()->Inventory().HaveKeyForLock(item->GetUID()))
+    if(client->GetCharacterData()->Inventory().HaveKeyForLock(item->GetUID()))
     {
         bool locked = item->GetIsLocked();
         // Make sure the player knows he unlocked or locked his lock. Imagine guildhouse left unlocked on accident.
-        if (locked)
+        if(locked)
         {
             psserver->SendSystemError(client->GetClientNum(), "You unlocked %s.", item->GetName());
         }
@@ -3936,13 +3996,13 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
         return;
     }
 
-    if (item->GetIsUnpickable())
+    if(item->GetIsUnpickable())
     {
         psserver->SendSystemInfo(client->GetClientNum(),"This lock is impossible to %s by lockpicking.", item->GetIsLocked() ? "open" : "close");
         return;
     }
 
-    if (!CheckStamina( client->GetCharacterData() ))
+    if(!CheckStamina(client->GetCharacterData()))
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You are too tired to lockpick");
         return;
@@ -3961,11 +4021,11 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpick_time, "Lockpicking Time");
 
     calc_lockpick_time->Evaluate(&env);
-    MathVar *time = env.Lookup("Time");
+    MathVar* time = env.Lookup("Time");
 
     // Add new event
     csVector3 emptyV = csVector3(0,0,0);
-    psWorkGameEvent *ev = new psWorkGameEvent(
+    psWorkGameEvent* ev = new psWorkGameEvent(
         this,
         client->GetActor(),
         time->GetRoundValue(),
@@ -3985,8 +4045,8 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     // Check if not moved too far away from lock
     // First check if lock (object such as box) is in not inventory
     // For now, that is never the case, but I can imagine that changing
-    if ( (PSCHARACTER_SLOT_NONE == workEvent->object->GetLocInParent()) &&
-         (workEvent->client->GetActor()->RangeTo(workEvent->object->GetGemObject()) > RANGE_TO_USE) )
+    if((PSCHARACTER_SLOT_NONE == workEvent->object->GetLocInParent()) &&
+            (workEvent->client->GetActor()->RangeTo(workEvent->object->GetGemObject()) > RANGE_TO_USE))
     {
         // Send denied message
         psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt, because you moved away.");
@@ -3995,12 +4055,12 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     {
         // Check if the user has the right skills
         int rank = 0;
-        if (skill >= 0 && skill < (PSSKILL)cacheManager->GetSkillAmount())
+        if(skill >= 0 && skill < (PSSKILL)cacheManager->GetSkillAmount())
         {
             rank = character->Skills().GetSkillRank(skill).Current();
         }
 
-        if (rank >= (int) workEvent->object->GetLockStrength())
+        if(rank >= (int) workEvent->object->GetLockStrength())
         {
             bool locked = workEvent->object->GetIsLocked();
             psserver->SendSystemOK(workEvent->client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());
@@ -4027,12 +4087,12 @@ psWorkGameEvent::psWorkGameEvent(WorkManager* mgr,
                                  gemActor* worker,
                                  int delayticks,
                                  int cat,
-                                 csVector3& pos,
-                                 csArray<NearNaturalResource> *natres,
-                                 Client *c,
+                                 csVector3 &pos,
+                                 csArray<NearNaturalResource>* natres,
+                                 Client* c,
                                  psItem* object,
                                  float repairAmt)
-                                 : psGameEvent(0,delayticks,"psWorkGameEvent"), effectID(0)
+    : psGameEvent(0,delayticks,"psWorkGameEvent"), effectID(0)
 {
     workmanager = mgr;
     if(natres)
@@ -4050,7 +4110,7 @@ psWorkGameEvent::psWorkGameEvent(WorkManager* mgr,
 void psWorkGameEvent::Interrupt()
 {
     // Setting the character mode ends up calling this function again, so we have to check for reentrancy here
-    if (workmanager)
+    if(workmanager)
     {
         workmanager = NULL;
 
@@ -4062,7 +4122,7 @@ void psWorkGameEvent::Interrupt()
         if(category == REPAIR && client->GetActor() && (client->GetActor()->GetMode() == PSCHARACTER_MODE_WORK))
         {
             client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
-            if (object)
+            if(object)
                 object->SetInUse(false);
         }
     }
@@ -4074,7 +4134,7 @@ void psWorkGameEvent::Trigger()
 {
     if(workmanager && worker.IsValid())
     {
-        if ( effectID != 0 )
+        if(effectID != 0)
         {
             psStopEffectMessage newmsg(effectID);
             newmsg.Multicast(multi,0,PROX_LIST_ANY_RANGE);
@@ -4115,20 +4175,20 @@ void psWorkGameEvent::Trigger()
     }
 }
 
-void psWorkGameEvent::DeleteObjectCallback(iDeleteNotificationObject * object)
+void psWorkGameEvent::DeleteObjectCallback(iDeleteNotificationObject* object)
 {
     if(workmanager && worker.IsValid())
     {
         worker->UnregisterCallback(this);
 
         // Cleanup any autoitem associated with event
-        if( transType == TRANSFORMTYPE_AUTO_CONTAINER )
+        if(transType == TRANSFORMTYPE_AUTO_CONTAINER)
         {
-            if( item )
+            if(item)
             {
 
 #ifdef DEBUG_WORKMANAGER
-CPrintf(CON_DEBUG, "Cleaning up item from auto-transform container...\n");
+                CPrintf(CON_DEBUG, "Cleaning up item from auto-transform container...\n");
 #endif
                 // clear out event
                 item->SetTransformationEvent(NULL);
@@ -4150,20 +4210,20 @@ psWorkGameEvent::~psWorkGameEvent()
     if(worker.IsValid())
     {
         worker->UnregisterCallback(this);
-        if (worker->GetTradeWork() == this)
+        if(worker->GetTradeWork() == this)
             worker->SetTradeWork(NULL);
     }
 
     // For manufactuing events only
-    if( category == MANUFACTURE )
+    if(category == MANUFACTURE)
     {
         // Remove any item reference to this  event
         psItem* transItem = GetTranformationItem();
-        if( transItem && transItem->GetTransformationEvent() == this)
+        if(transItem && transItem->GetTransformationEvent() == this)
             transItem->SetTransformationEvent(NULL);
 
         // The garbage transformation is not cached and needs to be cleaned up
-        if(transformation && !transformation->GetTransformationCacheFlag() )
+        if(transformation && !transformation->GetTransformationCacheFlag())
         {
             delete transformation;
         }

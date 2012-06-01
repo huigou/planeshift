@@ -102,7 +102,7 @@ struct NaturalResource
     float    radius;            ///< Radius around the centre where resource can be found.
     float    visible_radius;    ///< Radius around the centre where resource is visible
     float    probability;       ///< Probability of finding resource on attempt.
-    psSkillInfo *skill;         ///< Skill used to harvest resource.
+    psSkillInfo* skill;         ///< Skill used to harvest resource.
     int      skill_level;       ///< Skill level required to be able to harvest resource.
     unsigned int item_cat_id;   ///< Category of tool needed for the ressource
     float    item_quality;      ///< Quality of equipment for the ressource
@@ -111,8 +111,8 @@ struct NaturalResource
     int      reward;                ///< Item ID of the reward
     csString reward_nickname;       ///< Item name of the reward
     /** The action you need to take to get this resource. Id Corresponding to resourcesActions index.*/
-    size_t action;             
-             
+    size_t action;
+
 };
 
 
@@ -120,9 +120,9 @@ struct NaturalResource
  */
 class NearNaturalResource
 {
-    public:
-    NearNaturalResource(NaturalResource *res, float distance) : resource(res), dist(distance) {}
-    NaturalResource *resource;
+public:
+    NearNaturalResource(NaturalResource* res, float distance) : resource(res), dist(distance) {}
+    NaturalResource* resource;
     float dist;
     bool operator<(const NearNaturalResource &oth) const
     {
@@ -167,20 +167,20 @@ public:
       *
       * @param client  The client that placed the item inside
       */
-    void HandleUse(Client *client);
+    void HandleUse(Client* client);
 
     /** Start Combine work
       * This gets called when the player tries to combine items in a container using /combine command.
       *
       * @param client  The client that placed the item inside
       */
-    void HandleCombine(Client *client);
+    void HandleCombine(Client* client);
 
     /** Begins construction work.
       * This is called when a player attempts to build a constructable item.
       *
       */
-    void HandleConstruct(Client *client);
+    void HandleConstruct(Client* client);
 
     /** Start a work event for this client.  This is called when an item is placed
       * in a container.  If the container is an auto-transform container it can transform items
@@ -191,7 +191,7 @@ public:
       * @param autoItem The item that was placed inside and to be transformed.
       * @param count The stack count of the item placed in.
       */
-    void StartAutoWork(Client *client, gemContainer* container, psItem *autoItem, int count);
+    void StartAutoWork(Client* client, gemContainer* container, psItem* autoItem, int count);
 
     /** Checks to see if the progression script generated craft work can be done.
       *
@@ -200,7 +200,7 @@ public:
       * @param client  Pattern name passed in progressions cript
       * @return False if there is a problem doing the craft.
       */
-    bool StartScriptWork(Client* client, gemObject *target, csString pattern);
+    bool StartScriptWork(Client* client, gemObject* target, csString pattern);
 
     /** Stop work event.
      * This is called when a client removes an item from a container.
@@ -208,7 +208,7 @@ public:
      *  @param client The client that removed the item.
      *  @param item The item that was being transformed.
      */
-    void StopWork(Client *client, psItem *item);
+    void StopWork(Client* client, psItem* item);
 
     /** @name Work Event Handlers
       *  These are the functions fired when a psWorkGameEvent is Triggered.
@@ -241,7 +241,7 @@ public:
       * -# The values are all pre-calculated, so just adjust the quality of the item directly.
       * -# Consume the repair required item, if flagged to do so.
       * -# Notify the user.
-      * 
+      *
       * @param event The work event that was in the queue to fire.
       */
     void HandleRepairEvent(psWorkGameEvent* workEvent);
@@ -273,7 +273,7 @@ public:
       *
       * @return False if there is a problem loading stuff.
       */
-    bool LoadLocalVars(Client* client, gemObject *target=NULL);
+    bool LoadLocalVars(Client* client, gemObject* target=NULL);
 
     /* Send clear client view message to remove items from autocontainers.
       *
@@ -286,7 +286,7 @@ public:
 
 
     /// Handle production events from super clients
-    void HandleProduction(gemActor *actor,const char *type,const char *reward);
+    void HandleProduction(gemActor* actor,const char* type,const char* reward);
 
 protected:
     csPDelArray<NaturalResource> resources;       ///< list of all natural resources in game.
@@ -303,13 +303,14 @@ protected:
     csWeakRef<MathScript> calc_mining_chance;               ///< This is the calculation for chance of successful mining.
     csWeakRef<MathScript> calc_mining_exp;                  ///< This is the calculation for the experience to assign to player for mining.
     csWeakRef<MathScript> calc_transform_exp;               ///< This is the calculation for the experience to assign to player for trasformations.
+    csWeakRef<MathScript> calc_transform_practice;          ///< This is the calculation for the practice to assign to player for trasformations.
     csWeakRef<MathScript> calc_lockpick_time;               ///< This is the calculation for how long it takes to pick a lock.
     csWeakRef<MathScript> calc_transform_apply_skill;       ///< This is the calculation for the quality resulting from the item.
     csWeakRef<MathScript> calc_transform_time;              ///< This is the calculation for the time needed to accomplish a transformation.
 
 
-    void HandleLockPick(MsgEntry* me,Client *client);
-    void HandleWorkCommand(MsgEntry* me,Client *client);
+    void HandleLockPick(MsgEntry* me,Client* client);
+    void HandleWorkCommand(MsgEntry* me,Client* client);
 
     /** @brief Stop auto work event.
      * This is called when a client removes an item from any container
@@ -318,46 +319,46 @@ protected:
      *  @param client The client that removed the item.
      *  @param autoItem The item that was being transformed.
      */
-    void StopAutoWork(Client *client, psItem *autoItem);
+    void StopAutoWork(Client* client, psItem* autoItem);
 
     /** Handles stopping the use of the item for working.  This is called when an item
       * is tagetted and the /use command issued and it's already in use.
       *
       * @param client  The client that issues the /use command
       */
-    void StopUseWork(MsgEntry* me,Client *client);
+    void StopUseWork(MsgEntry* me,Client* client);
 
     /** Checks to see if the item can be used for working.
       *
       * @param client  The client that issues the /use command
       */
-    void StartUseWork(Client *client);
+    void StartUseWork(Client* client);
 
     /** Handles stopping the combining in the work container.  This is called when an item
       * is tagetted and the /combine command issued and it's already in use.
       *
       * @param client  The client that issues the /combine command
       */
-    void StopCombineWork(Client *client);
+    void StopCombineWork(Client* client);
 
     /** Checks to see if the work container item can be used for combining.
       *
       * @param client  The client that issues the /combine command
       */
-    void StartCombineWork(Client *client);
+    void StartCombineWork(Client* client);
 
     /** Checks to see if the item can be constructed
       *
       * @param client  The client that issues the /construct command
       */
-    void StartConstructWork(Client *client);
+    void StartConstructWork(Client* client);
 
     /** Handles stopping the constructing of an item.  This is called when an item
       * is tagetted and the /construct command issued and it's already in use.
       *
       * @param client  The client that issues the /construct command
       */
-    void StopConstructWork(Client *client);
+    void StopConstructWork(Client* client);
 
     /** Handles stopping the cleanup event for a particular item.  This is called when an item
       * is removed from a container.
@@ -372,7 +373,7 @@ protected:
       * @param clientNum the client to send the message to.
       * @param result The error code from the transformable test.
       */
-    void SendTransformError( uint32_t clientNum, unsigned int result, uint32 curItemId = 0, int CurItemQty = 0 );
+    void SendTransformError(uint32_t clientNum, unsigned int result, uint32 curItemId = 0, int CurItemQty = 0);
 
     /** Returns with the result ID and quantity of the combination
       *  if work item container has the correct items in the correct amounts
@@ -437,7 +438,7 @@ protected:
       *
       * @return An indicator of pattern match status.
       */
-    unsigned int AnyTransform(csArray<psTradePatterns*>& patterns, float& KFactor, uint32 targetId, int targetQty);
+    unsigned int AnyTransform(csArray<psTradePatterns*> &patterns, float &KFactor, uint32 targetId, int targetQty);
 
     /** Check to see if there is a possible trasnform available.
       * @param patternId The current pattern to use
@@ -508,7 +509,7 @@ protected:
     //bool SendItemUpdate( INVENTORY_SLOT_NUMBER slotID, psItem *newItem );
 
     void StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER transSlot, int resultQty,
-        float resultQuality, psItem* autoItem);
+                                  float resultQuality, psItem* autoItem);
     void StartCleanupEvent(int transType, Client* client, psItem* item, gemActor* worker);
 
     bool ValidateTarget(Client* client);
@@ -528,12 +529,16 @@ protected:
      *  @param worker The actor which is working on the object.
      *  @return The amount of time which will be needed to complete the work.
      */
-    int CalculateEventDuration(psTradeTransformations* trans, psTradeProcesses* process, psItem *transItem, gemActor *worker);
+    int CalculateEventDuration(psTradeTransformations* trans, psTradeProcesses* process, psItem* transItem, gemActor* worker);
 
-    bool CheckStamina(psCharacter * owner) const;
+    bool CheckStamina(psCharacter* owner) const;
 
     void Initialize();
-    bool ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans, csTicks time);
+
+    /**
+      * Calculates the quality of the item based on the skills applied
+      */
+    bool CalculateQuality(float factor, psItem* transItem, gemActor* worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans, csTicks time);
 
     /**
       * This function handles commands like "/repair" using
@@ -548,7 +553,7 @@ protected:
       * @param client The client that issues the command
       * @param repairSlotName the slot name which should be repaired.
       */
-    void HandleRepair(Client *client, const csString &repairSlotName);
+    void HandleRepair(Client* client, const csString &repairSlotName);
 
     /** @brief Handle production events from clients
       *
@@ -565,9 +570,9 @@ protected:
       * @param type The position in the resourcesActions array of the requested production type.
       * @param reward The name of the natural resource we are looking for.
       */
-    void HandleProduction(gemActor *actor, size_t type,const char *reward, Client *client = NULL);
+    void HandleProduction(gemActor* actor, size_t type,const char* reward, Client* client = NULL);
 
-    bool SameProductionPosition(gemActor *actor, const csVector3& startPos);
+    bool SameProductionPosition(gemActor* actor, const csVector3 &startPos);
 
     /** Find the nearest resource to the player of the requested type.
       * @param sector A pointer to the iSector the player is currently in.
@@ -575,7 +580,7 @@ protected:
       * @param action The position in the resourcesActions array of the requested production type.
       * @param reward The name of the natural resource we are looking for.
       */
-    csArray<NearNaturalResource> FindNearestResource(iSector *sector, csVector3& pos, const size_t action, const char *reward = NULL);
+    csArray<NearNaturalResource> FindNearestResource(iSector* sector, csVector3 &pos, const size_t action, const char* reward = NULL);
 
 private:
 
@@ -584,8 +589,8 @@ private:
     uint32_t clientNum;             ///< Current client the work manager is dealing with.
     psItem* workItem;               ///< The current work item that is in use ( example, ore furnace )
     psItem* autoItem;               ///< The current item that is being transformed by auto-transformation container
-    gemActor *owner;                ///< The character pointer of the current character being used.
-    gemObject *gemTarget;           ///< The object being targeted by the player.
+    gemActor* owner;                ///< The character pointer of the current character being used.
+    gemObject* gemTarget;           ///< The object being targeted by the player.
     csArray<psTradePatterns*> patterns;              /* ///< Current pattern ID
     uint32 groupPatternId;          ///< Current group pattern ID*/
     float patternKFactor;           ///< Pattern factor that's part of quality calculation
@@ -593,8 +598,8 @@ private:
     psTradeTransformations* trans;  ///< Current work transformation
     psTradeProcesses* process;      ///< Current work process
     const char* preworkModeString;  ///< Mode string prior to work
-    bool secure;                    ///< Cleint reached required security level
-    
+    bool secure;                    ///< Client reached required security level
+
     CacheManager* cacheManager;
     EntityManager* entityManager;
 };
@@ -611,9 +616,9 @@ public:
                     gemActor* worker,
                     int delayticks,
                     int cat,
-                    csVector3& pos,
-                    csArray<NearNaturalResource> *natres=NULL,
-                    Client *c=NULL,
+                    csVector3 &pos,
+                    csArray<NearNaturalResource>* natres=NULL,
+                    Client* c=NULL,
                     psItem* object=NULL,
                     float repairAmount=0.0F);
     virtual ~psWorkGameEvent();
@@ -622,48 +627,108 @@ public:
 
     virtual void Trigger();  ///< Abstract event processing function
 
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 
     /// Set the active trade transformation for the event.
-    void SetTransformation(psTradeTransformations *t) { transformation = t; }
+    void SetTransformation(psTradeTransformations* t)
+    {
+        transformation = t;
+    }
 
     /// Return the active transformation, if any for this event.
-    psTradeTransformations *GetTransformation() { return transformation; }
+    psTradeTransformations* GetTransformation()
+    {
+        return transformation;
+    }
 
     /// Set the active trade process for the event.
-    void SetProcess(psTradeProcesses *p) { process = p; }
+    void SetProcess(psTradeProcesses* p)
+    {
+        process = p;
+    }
 
     /// Return the active process, if any for this event.
-    psTradeProcesses *GetProcess() { return process; }
+    psTradeProcesses* GetProcess()
+    {
+        return process;
+    }
 
     /// result quantity is only used when transaction result is zero
-    int GetResultQuantity() { return resultQuantity; }
-    void SetResultQuantity(int newQuantity) { resultQuantity = newQuantity; }
+    int GetResultQuantity()
+    {
+        return resultQuantity;
+    }
+    void SetResultQuantity(int newQuantity)
+    {
+        resultQuantity = newQuantity;
+    }
 
     /// result quality is calculated immediately before the event
-    float GetResultQuality() { return resultQuality; }
-    void SetResultQuality(float newQuality) { resultQuality = newQuality; }
+    float GetResultQuality()
+    {
+        return resultQuality;
+    }
+    void SetResultQuality(float newQuality)
+    {
+        resultQuality = newQuality;
+    }
 
     /// pattern Kfactor is based on the current pattern
-    float GetKFactor() { return KFactor; }
-    void SetKFactor(float newFactor) { KFactor = newFactor; }
+    float GetKFactor()
+    {
+        return KFactor;
+    }
+    void SetKFactor(float newFactor)
+    {
+        KFactor = newFactor;
+    }
 
     /// slot to perform the transformation
-    INVENTORY_SLOT_NUMBER GetTransformationSlot() { return transSlot; }
-    void SetTransformationSlot(INVENTORY_SLOT_NUMBER curSlot) { transSlot = curSlot; }
+    INVENTORY_SLOT_NUMBER GetTransformationSlot()
+    {
+        return transSlot;
+    }
+    void SetTransformationSlot(INVENTORY_SLOT_NUMBER curSlot)
+    {
+        transSlot = curSlot;
+    }
 
-    psItem* GetTranformationItem() { return item; }
-    void SetTransformationItem(psItem* i) { item = i; }
+    psItem* GetTranformationItem()
+    {
+        return item;
+    }
+    void SetTransformationItem(psItem* i)
+    {
+        item = i;
+    }
 
-    psItem* GetWorkItem() { return workItem; }
-    void SetWorkItem(psItem* w) { workItem = w; }
+    psItem* GetWorkItem()
+    {
+        return workItem;
+    }
+    void SetWorkItem(psItem* w)
+    {
+        workItem = w;
+    }
 
-    gemObject* GetTargetGem() { return gemTarget; }
-    void SetTargetGem(gemObject* g) { gemTarget = g; }
+    gemObject* GetTargetGem()
+    {
+        return gemTarget;
+    }
+    void SetTargetGem(gemObject* g)
+    {
+        gemTarget = g;
+    }
 
     /// transformation type
-    int GetTransformationType() { return transType; }
-    void SetTransformationType(int t) { transType = t; }
+    int GetTransformationType()
+    {
+        return transType;
+    }
+    void SetTransformationType(int t)
+    {
+        transType = t;
+    }
 
     WorkManager* workmanager;
     csWeakRef<gemActor> worker;
