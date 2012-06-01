@@ -533,7 +533,7 @@ protected:
     bool CheckStamina(psCharacter * owner) const;
 
     void Initialize();
-    bool ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans);
+    bool ApplySkills(float factor, psItem* transItem, gemActor *worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans, csTicks time);
 
     /**
       * This function handles commands like "/repair" using

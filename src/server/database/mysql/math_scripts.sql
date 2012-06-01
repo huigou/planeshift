@@ -287,7 +287,6 @@ if(!Process:IsValid())
     exit = 1;
 }
 
-Time = 10;
 Quality = 100;
 PriSkill = Process:PrimarySkillId;
 PriPoints = Process:PrimarySkillPracticePoints;
@@ -295,6 +294,7 @@ PriPoints = Process:PrimarySkillPracticePoints;
 Worker:CalculateAddExperience(PriSkill, PriPoints, 1);
 if(Secure)
 {
+    Worker:SendSystemInfo('Event took %f seconds.', 1, CalculatedTime);
     Worker:SendSystemInfo('Giving practice points %f to skill %f.', 2, PriPoints, PriSkill);
 }
 

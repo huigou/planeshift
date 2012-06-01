@@ -1,7 +1,7 @@
 /*
  * gameevent.h
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -27,16 +27,17 @@ class EventManager;
 
 /**
  * All scheduled events must inherit from this class.  These events are
- * queued by the EventManager and are passed to the various subscribed 
+ * queued by the EventManager and are passed to the various subscribed
  * handlers at the appropriate time.
  */
 class psGameEvent
 {
     char type[32];          ///< The type of this GameEvent, used for debugging
 public:
-    static EventManager *eventmanager;
-    
+    static EventManager* eventmanager;
+
     csTicks triggerticks;   ///< ticks value when event should be triggered.
+    csTicks delayticks;     ///< delay before the event starts
     int id;                 ///< id value combined with ticks ensures uniqueness for tree
     static int nextid;      ///< id counter sequence
     bool valid;             ///< Set this to false if the trigger should not be fired.
@@ -46,7 +47,7 @@ public:
      * be fired at offset ticks from current time.
      */
     psGameEvent(csTicks ticks,int offsetticks, const char* newType);
-    
+
     virtual ~psGameEvent();
 
     /**
@@ -62,15 +63,18 @@ public:
      *
      * This function allows psGEMEvents to disconnect themselves
      */
-    virtual bool CheckTrigger() { return valid; };
-    
+    virtual bool CheckTrigger()
+    {
+        return valid;
+    };
+
     /**
      * Abstract event processing function
      *
      * This functino have to be overridden and will be called if
      * CheckTrigger is ok at the time given in the constructor.
      */
-    virtual void Trigger()=0;     
+    virtual void Trigger()=0;
 
     /**
      * Set the valid flag.
@@ -80,54 +84,66 @@ public:
      *
      * @param valid The new value of the valid flag.
      */
-    virtual void SetValid(bool valid) { this->valid = valid; }
-    
+    virtual void SetValid(bool valid)
+    {
+        this->valid = valid;
+    }
+
     /**
      * Return the valid flag.
      *
      * @return The valid flag.
      */
-    virtual bool IsValid() { return valid; }
+    virtual bool IsValid()
+    {
+        return valid;
+    }
 
     /**
      * Return the type that this event where created with.
      * Used for debugging.
      */
-    const char* GetType() { return type; }
+    const char* GetType()
+    {
+        return type;
+    }
 
     /**
      * Return a string with information about the event.
      * Used for debugging to be able to identify things like
      * way did this event take so long to execute.
      *
-     * TODO: Make this function abstact. But for now return "".
+     * TODO: Make this function abstract. But for now return "".
      */
     //TODO:    virtual csString ToString() const = 0;
-    virtual csString ToString() {return "Not implemented"; }
-    
-    bool operator==(const psGameEvent& other) const
+    virtual csString ToString()
+    {
+        return "Not implemented";
+    }
+
+    bool operator==(const psGameEvent &other) const
     {
         return (triggerticks==other.triggerticks &&
                 id==other.id);
     };
 
-    bool operator<(const psGameEvent& other) const
+    bool operator<(const psGameEvent &other) const
     {
-        if (triggerticks<other.triggerticks)
+        if(triggerticks<other.triggerticks)
             return true;
-        if (triggerticks>other.triggerticks)
+        if(triggerticks>other.triggerticks)
             return false;
-        if (id<other.id)
+        if(id<other.id)
             return true;
         return false;
     };
-    bool operator>(const psGameEvent& other) const
+    bool operator>(const psGameEvent &other) const
     {
-        if (triggerticks>other.triggerticks)
+        if(triggerticks>other.triggerticks)
             return true;
-        if (triggerticks<other.triggerticks)
+        if(triggerticks<other.triggerticks)
             return false;
-        if (id>other.id)
+        if(id>other.id)
             return true;
         return false;
     };
