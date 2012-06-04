@@ -2858,7 +2858,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     // deletes an item by its index in the inventory. DeleteItem(position, stackamount (-1 for whole stack))
     else if(function == "DeleteItem")
     {
-        psItem *item = inventory.RemoveItemIndex((INVENTORY_SLOT_NUMBER)int(params[0]), int(params[1]));
+        psItem *item = inventory.RemoveInventoryItem((INVENTORY_SLOT_NUMBER)int(params[0]), int(params[1]));
 
         //Item not found
         if(!item)
