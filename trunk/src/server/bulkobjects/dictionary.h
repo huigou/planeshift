@@ -476,20 +476,95 @@ public:
     virtual csString GetResponseScript();    
     virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
+
+
+/**
+ * This script operations is used to set character variables from npc dialogs.
+ * It can set a name and a value to associated to it. Note that each name must
+ * be unique for the current character or it will be overwritten.
+ */ 
 class SetVariableResponseOp : public ResponseOperation
 {
 protected:
-    csString variableName;
-    csString variableValue;
+    csString variableName;  ///< The name of the variable to be set.
+    csString variableValue; ///< The value of the variable to be set
 
 public:
+    /// Constructor. Practically does nothing.
     SetVariableResponseOp() { name = "offer"; }
+
+    ///Destructor.
     virtual ~SetVariableResponseOp() {};
+
+    /**
+     * Loads the script for the operation.
+     * @param node The document node of this operator.
+     */
     virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
+
+    /**
+     * Gets the script rappresentation of this object (after it has been loaded).
+     * @return A string with the content of the currently loaded script.
+     */
+    virtual csString GetResponseScript();
+
+    /**
+     * Actually runs the precompiled script.
+     * @param who The npc action which is running the script (ignored).
+     * @param target The npc actor which is being subject of the script.
+     * @param owner The npc response containing this script operation (ignored).
+     * @param timeDelay The time to wait before applying this script operation (ignored).
+     * @param voiceNumber The voice to apply for this operation (ignored).
+     * @return The function always returns true.
+     */
     virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 
 };
+
+
+/**
+ * This script operations is used to unset character variables from npc dialogs.
+ * It can unset a name a variable from its name. Note that each name must
+ * be unique for the current character or it will be overwritten.
+ */ 
+class UnSetVariableResponseOp : public ResponseOperation
+{
+protected:
+    csString variableName; ///< The name of the variable to be set.
+
+public:
+
+    /// Constructor. Practically does nothing.
+    UnSetVariableResponseOp() { name = "offer"; }
+
+    ///Destructor.
+    virtual ~UnSetVariableResponseOp() {};
+
+    /**
+     * Loads the script for the operation.
+     * @param node The document node of this operator.
+     */
+    virtual bool Load(iDocumentNode *node);
+
+    /**
+     * Gets the script rappresentation of this object (after it has been loaded).
+     * @return A string with the content of the currently loaded script.
+     */
+    virtual csString GetResponseScript();
+
+    /**
+     * Actually runs the precompiled script.
+     * @param who The npc action which is running the script (ignored).
+     * @param target The npc actor which is being subject of the script.
+     * @param owner The npc response containing this script operation (ignored).
+     * @param timeDelay The time to wait before applying this script operation (ignored).
+     * @param voiceNumber The voice to apply for this operation (ignored).
+     * @return The function always returns true.
+     */   
+    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+};
+
+
 /**
  * This script operation checks to make sure a named quest
  * has been assigned to a player, and stops the script if not,
@@ -690,7 +765,7 @@ class RunScriptResponseOp : public ResponseOperation
 protected:
     csString scriptname;
     csString bindingsText;
-    MathScript *bindings;
+    csWeakRef<MathScript> bindings;
 
 public:
     RunScriptResponseOp() { name = "run"; bindings = NULL; }
