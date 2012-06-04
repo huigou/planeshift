@@ -1362,6 +1362,10 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         {
             op = new SetVariableResponseOp;
         }
+        else if( strcmp( node->GetValue(), "unsetvariable" ) == 0 )
+        {
+            op = new UnSetVariableResponseOp;
+        }
         else if ( strcmp( node->GetValue(), "guild_award" ) == 0 )
         {
             op = new GuildAwardResponseOp;
@@ -2318,6 +2322,7 @@ bool SetVariableResponseOp::Load(iDocumentNode *node)
     variableValue = node->GetAttributeValue("value");
     return true;
 }
+
 csString SetVariableResponseOp::GetResponseScript()
 {
     psString resp = GetName();
@@ -2325,12 +2330,35 @@ csString SetVariableResponseOp::GetResponseScript()
     resp.AppendFmt(" value=\"%s\"",variableValue.GetData());
     return resp;
 }
+
 bool SetVariableResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber)
 {
     psCharacter *c = target->GetCharacterData();
     c->SetVariable(variableName,variableValue);
     return true;
 }
+
+bool UnSetVariableResponseOp::Load(iDocumentNode *node)
+{
+    variableName = node->GetAttributeValue("name");
+    return true;
+}
+
+csString UnSetVariableResponseOp::GetResponseScript()
+{
+    psString resp = GetName();
+    resp.AppendFmt(" name=\"%s\"",variableName.GetData());
+    return resp;
+}
+
+bool UnSetVariableResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber)
+{
+    psCharacter *c = target->GetCharacterData();
+    c->UnSetVariable(variableName);
+    return true;
+}
+
+
 bool GuildAwardResponseOp::Load(iDocumentNode *node)
 {
     karma = node->GetAttributeValueAsInt("karma");
