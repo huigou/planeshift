@@ -500,7 +500,7 @@ public:
      * Loads the script for the operation.
      * @param node The document node of this operator.
      */
-    virtual bool Load(iDocumentNode *node);
+    virtual bool Load(iDocumentNode* node);
 
     /**
      * Gets the script rappresentation of this object (after it has been loaded).
@@ -517,7 +517,7 @@ public:
      * @param voiceNumber The voice to apply for this operation (ignored).
      * @return The function always returns true.
      */
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Run(gemNPC* who, gemActor* target, NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 
 };
 
@@ -544,7 +544,7 @@ public:
      * Loads the script for the operation.
      * @param node The document node of this operator.
      */
-    virtual bool Load(iDocumentNode *node);
+    virtual bool Load(iDocumentNode* node);
 
     /**
      * Gets the script rappresentation of this object (after it has been loaded).
@@ -561,7 +561,7 @@ public:
      * @param voiceNumber The voice to apply for this operation (ignored).
      * @return The function always returns true.
      */   
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Run(gemNPC* who, gemActor* target, NpcResponse* owner, csTicks &timeDelay, int &voiceNumber);
 };
 
 
