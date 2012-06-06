@@ -2873,6 +2873,11 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
             return 0.0f;
         }
 
+        if(GetActor() && GetActor()->GetClientID())
+        {
+            psserver->GetCharManager()->SendInventory(GetActor()->GetClientID());
+        }
+
         return 1.0f;
     }
     /**
