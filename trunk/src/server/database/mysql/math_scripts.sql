@@ -574,3 +574,8 @@ if (Executed=0) {
 }
 
 " );
+
+INSERT INTO math_scripts VALUES( "trade_delete_item",
+"
+Worker:DeleteItem(0, 1); //
+" );

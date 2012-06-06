@@ -61,3 +61,6 @@ INSERT INTO trade_transformations VALUES(31,7,12,73,1,0,0,1,1.000000,'You bake a
 
 -- Advanced crafting
 INSERT INTO `trade_transformations` VALUES (9739,458,652,673,1,673,1,10,1,'Enchant Ruby Crystal');
+
+-- Item getting deleted in the process
+INSERT INTO `trade_transformations` VALUES (9962,458,812,417,1,416,1,10,1,'gem socket');

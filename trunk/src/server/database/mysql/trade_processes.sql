@@ -55,3 +55,6 @@ INSERT INTO trade_processes VALUES(12,0,"Flaming weapon","","",0,0,'',75,1,0,0,0
 
 -- Advanced crafting
 INSERT INTO `trade_processes` VALUES (652,0,'Enchant','cast','',4928,0,'',0,1,11,0,100,1,50,-1,0,0,0,0,'trade_enchant_gem','Enchant gems');
+
+-- Item getting deleted in the process
+INSERT INTO `trade_processes` VALUES (812,0,'Set1','craft','',4928,673,'',0,1,40,0,30,1,50,-1,0,0,0,0,'trade_delete_item','Delete item');
