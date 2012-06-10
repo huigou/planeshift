@@ -810,7 +810,9 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_chance, "Calculate Mining Odds");
         calc_mining_chance->Evaluate(&env);
         MathVar* varTotal = env.Lookup("Total");
+        MathVar* varResultQuality = env.Lookup("ResultQuality");
         float total = varTotal->GetValue();
+        float resultQuality = varResultQuality->GetValue();
 
         csString debug;
         debug.AppendFmt("Probability:     %1.3f\n",workEvent->nrr.Get(resNum).resource->probability);
@@ -818,6 +820,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         debug.AppendFmt("Quality Factor:  %1.3f\n",f2);
         debug.AppendFmt("Distance Factor: %1.3f\n",f3);
         debug.AppendFmt("Total Factor:    %1.3f\n",total);
+        debug.AppendFmt("Result Quality:    %1.3f\n",resultQuality);
         debug.AppendFmt("Roll:            %1.3f\n",roll);
         if(workEvent->client)
         {
@@ -846,6 +849,10 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                     Bug2("Failed instantizing reward item #%d!\n",workEvent->nrr.Get(resNum).resource->reward);
                     return;
                 }
+
+                // Set quality based on script result
+                item->SetItemQuality(resultQuality);
+                item->SetMaxItemQuality(resultQuality);
 
                 if(!workerchar->Inventory().AddOrDrop(item))
                 {
