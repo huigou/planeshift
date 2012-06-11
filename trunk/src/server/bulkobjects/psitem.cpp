@@ -91,11 +91,11 @@ public:
     {
         Debug2(LOG_USER, 0, "Removing object %s now.\n", ShowID(item_to_remove));
         // cannot store pointer because object may have already been removed and ptr not valid
-        gemObject *obj = psserver->entitymanager->GetGEM()->FindObject(item_to_remove);
-        if (obj)
+        gemObject* obj = psserver->entitymanager->GetGEM()->FindObject(item_to_remove);
+        if(obj)
         {
-            psItem *item = obj->GetItem();
-            if (item)
+            psItem* item = obj->GetItem();
+            if(item)
             {
                 // Is the item being guarded?
                 InstanceID instance = obj->GetInstance();
@@ -103,14 +103,16 @@ public:
                 // Do checks
                 PID guardCharacterID = item->GetGuardingCharacterID();
                 gemActor* guardActor = psserver->entitymanager->GetGEM()->FindPlayerEntity(guardCharacterID);
-                if (guardCharacterID.IsValid() &&
-                    guardActor &&
-                    guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT &&
-                    (guardActor->GetInstance() == instance))
+                if(guardCharacterID.IsValid() &&
+                        guardActor &&
+                        guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT &&
+                        (guardActor->GetInstance() == instance))
                 {
                     // Item is guarded, reschedule
                     item->ScheduleRemoval();
-                } else {
+                }
+                else
+                {
                     // Item isn't guarded, remove
                     EntityManager::GetSingleton().RemoveActor(obj);
                     item->Destroy();  // obj is deleted in RemoveActor
@@ -127,15 +129,15 @@ public:
 // Definition of the itempool for psItems
 PoolAllocator<psItem> psItem::itempool;
 
-void *psItem::operator new(size_t allocSize)
+void* psItem::operator new(size_t allocSize)
 {
     CS_ASSERT(allocSize<=sizeof(psItem));
-    return (void *)itempool.CallFromNew();
+    return (void*)itempool.CallFromNew();
 }
 
-void psItem::operator delete(void *releasePtr)
+void psItem::operator delete(void* releasePtr)
 {
-    itempool.CallFromDelete((psItem *)releasePtr);
+    itempool.CallFromDelete((psItem*)releasePtr);
 }
 
 psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), loaded(false)
@@ -155,8 +157,8 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     crafted_quality = -1;
 
     stack_count=1; // There will allways be one of a item.
-                   // The GetIsStackable is to be used to check if this item
-                   // is stackable.
+    // The GetIsStackable is to be used to check if this item
+    // is stackable.
     flags      = 0;
     crafter_id = 0;
     guild_id   = 0;
@@ -178,7 +180,7 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     location.loc_yrot=0.0f;
     location.loc_zrot=0.0f;
 
-    for (i=0;i<PSITEM_MAX_MODIFIERS;i++)
+    for(i=0; i<PSITEM_MAX_MODIFIERS; i++)
         modifiers[i]=NULL;
 
     lockStrength = 0;
@@ -191,7 +193,11 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     //create an overlay for modifications
     itemModifiers = new RandomizedOverlay;
     //fill the array of modifications ids with zero (used for save and copy till a new better schema is in place)
-    AddLootModifier(0); AddLootModifier(0); AddLootModifier(0);
+    AddLootModifier(0);
+    AddLootModifier(0);
+    AddLootModifier(0);
+
+    rarity = 0;
 }
 
 psItem::~psItem()
@@ -201,22 +207,22 @@ psItem::~psItem()
     //remove the itemModifiers class as it's no more needed
     delete itemModifiers;
 
-    if (!current_stats)
+    if(!current_stats)
         return;
 
-    if (item_in_use)
+    if(item_in_use)
     {
-        Error2("Item %s is being deleted while in use!", GetName() );
+        Error2("Item %s is being deleted while in use!", GetName());
     }
 
-    if (schedule)
+    if(schedule)
     {
         delete schedule; // Finally delete the pattern used for spawning this item
         schedule = NULL;
     }
 
     // If this is a uniq item delete the item state
-    if (base_stats!=NULL && flags & PSITEM_FLAG_UNIQUE_ITEM )
+    if(base_stats!=NULL && flags & PSITEM_FLAG_UNIQUE_ITEM)
     {
         delete base_stats;
         base_stats = NULL;
@@ -225,24 +231,24 @@ psItem::~psItem()
     }
 
 
-    if (item_quality != item_quality_original )
+    if(item_quality != item_quality_original)
     {
         UpdateItemQuality(uid, item_quality);
     }
 
-    if (gItem)
+    if(gItem)
         gItem->UnregisterCallback(this);
     gItem = NULL;
 }
 
 void psItem::UpdateItemQuality(uint32 id, float qual)
 {
-    if (!id || id==ID_DONT_SAVE_ITEM)
+    if(!id || id==ID_DONT_SAVE_ITEM)
         return;
 
     Debug3(LOG_USER,id,"UpdateItemQuality(%u,%1.2f)\n",id, qual);
     int ret = db->CommandPump("update item_instances set item_quality=%1.2f where id=%u",qual, id);
-    if (ret == 0 && strlen(db->GetLastError())) // 0 updates could mean the value was the same, not an error
+    if(ret == 0 && strlen(db->GetLastError()))  // 0 updates could mean the value was the same, not an error
     {
         Error3("Could not update item quality.  SQL was <%s> and error was <%s>",db->GetLastQuery(),db->GetLastError());
     }
@@ -251,22 +257,22 @@ void psItem::UpdateItemQuality(uint32 id, float qual)
 const char* psItem::GetQualityString()
 {
     // Create a string basedi on items crafted quality
-    if ( crafted_quality >= 250 )
+    if(crafted_quality >= 250)
         return "Finest";
-    else if ( crafted_quality >= 200 )
+    else if(crafted_quality >= 200)
         return "Extraordinary";
-    else if ( crafted_quality >= 150 )
+    else if(crafted_quality >= 150)
         return "Superior";
-    else if ( crafted_quality >= 100 )
+    else if(crafted_quality >= 100)
         return "Standard";
-    else if ( crafted_quality >= 50 )
+    else if(crafted_quality >= 50)
         return "Common";
     return "Inferior";
 }
 
 // Functions that manipulate psItem Data
 
-bool psItem::Load(iResultRow& row)
+bool psItem::Load(iResultRow &row)
 {
     // Begin filling in the item properties
     // Item Unique ID #
@@ -279,18 +285,18 @@ bool psItem::Load(iResultRow& row)
     stack_count=(unsigned short)row.GetInt("stack_count");
 
     // Clamp stacks so bugs resulting in huge item counts don't persist
-    if (stack_count > MAX_STACK_COUNT)
+    if(stack_count > MAX_STACK_COUNT)
         stack_count = MAX_STACK_COUNT;
 
-    if (row.GetInt("creator_mark_id"))
+    if(row.GetInt("creator_mark_id"))
     {
         SetCrafterID(PID(row.GetInt("creator_mark_id")));
     }
-    if (row.GetInt("guild_mark_id"))
+    if(row.GetInt("guild_mark_id"))
     {
         SetGuildID(row.GetInt("guild_mark_id"));
     }
-    if (row.GetFloat("decay_resistance"))
+    if(row.GetFloat("decay_resistance"))
     {
         SetDecayResistance(row.GetFloat("decay_resistance"));
     }
@@ -301,69 +307,69 @@ bool psItem::Load(iResultRow& row)
 
     // Flags
     psString flagstr(row["flags"]);
-    if (flagstr.FindSubString("LOCKED",0,true)!=-1)
+    if(flagstr.FindSubString("LOCKED",0,true)!=-1)
     {
         flags |= PSITEM_FLAG_LOCKED;
     }
-    if (flagstr.FindSubString("LOCKABLE",0,true)!=-1)
+    if(flagstr.FindSubString("LOCKABLE",0,true)!=-1)
     {
         flags |= PSITEM_FLAG_LOCKABLE;
     }
-    if (flagstr.FindSubString("SECURITYLOCK",0,true)!=-1)
+    if(flagstr.FindSubString("SECURITYLOCK",0,true)!=-1)
     {
         flags |= PSITEM_FLAG_SECURITYLOCK;
     }
-    if (flagstr.FindSubString("UNPICKABLE",0,true)!=-1)
+    if(flagstr.FindSubString("UNPICKABLE",0,true)!=-1)
     {
         flags |= PSITEM_FLAG_UNPICKABLE;
     }
-    if (flagstr.FindSubString("KEY",0,true)!=-1)
+    if(flagstr.FindSubString("KEY",0,true)!=-1)
     {
         flags |= PSITEM_FLAG_KEY;
     }
-    if (flagstr.FindSubString("MASTERKEY",0,true)!=-1)
+    if(flagstr.FindSubString("MASTERKEY",0,true)!=-1)
     {
         flags |= PSITEM_FLAG_MASTERKEY;
     }
-    if (flagstr.FindSubString("PURIFIED",0,true)!=-1)
+    if(flagstr.FindSubString("PURIFIED",0,true)!=-1)
     {
-       flags |= PSITEM_FLAG_PURIFIED;
+        flags |= PSITEM_FLAG_PURIFIED;
     }
-    if (flagstr.FindSubString("PURIFYING",0,true)!=-1)
-    {   
-       flags |= PSITEM_FLAG_PURIFIED;
-    }
-    if (flagstr.FindSubString("NOPICKUP",0,true)!=-1)
+    if(flagstr.FindSubString("PURIFYING",0,true)!=-1)
     {
-       flags |= PSITEM_FLAG_NOPICKUP;
+        flags |= PSITEM_FLAG_PURIFIED;
     }
-    if (flagstr.FindSubString("NOWEAKPICKUP",0,true)!=-1)
+    if(flagstr.FindSubString("NOPICKUP",0,true)!=-1)
     {
-       flags |= PSITEM_FLAG_NOPICKUPWEAK;
+        flags |= PSITEM_FLAG_NOPICKUP;
     }
-    if (flagstr.FindSubString("TRANSIENT",0,true)!=-1)
+    if(flagstr.FindSubString("NOWEAKPICKUP",0,true)!=-1)
     {
-       flags |= PSITEM_FLAG_TRANSIENT;
+        flags |= PSITEM_FLAG_NOPICKUPWEAK;
     }
-    if (flagstr.FindSubString("NPCOWNED", 0, true) != -1)
+    if(flagstr.FindSubString("TRANSIENT",0,true)!=-1)
+    {
+        flags |= PSITEM_FLAG_TRANSIENT;
+    }
+    if(flagstr.FindSubString("NPCOWNED", 0, true) != -1)
     {
         flags |= PSITEM_FLAG_NPCOWNED;
     }
-    if (flagstr.FindSubString("USECD", 0, true) != -1)
+    if(flagstr.FindSubString("USECD", 0, true) != -1)
     {
         flags |= PSITEM_FLAG_USE_CD;
     }
-    if (flagstr.FindSubString("UNSTACKABLE", 0, true) != -1)
+    if(flagstr.FindSubString("UNSTACKABLE", 0, true) != -1)
     {
         flags |= PSITEM_FLAG_UNSTACKABLE;
         flags &= ~PSITEM_FLAG_STACKABLE;
     }
-    if (flagstr.FindSubString("STACKABLE", 0, true) != -1)
+    if(flagstr.FindSubString("STACKABLE", 0, true) != -1)
     {
         flags |= PSITEM_FLAG_STACKABLE;
         flags &= ~PSITEM_FLAG_UNSTACKABLE;
     }
-    if (flagstr.FindSubString("SETTINGITEM", 0, true) != -1)
+    if(flagstr.FindSubString("SETTINGITEM", 0, true) != -1)
     {
         flags |= PSITEM_FLAG_SETTINGITEM;
     }
@@ -376,9 +382,9 @@ bool psItem::Load(iResultRow& row)
     psString olstr(row["openable_locks"]);
     psString w;
     olstr.GetWordNumber(1, w);
-    for (int n = 2; w.Length(); olstr.GetWordNumber(n++, w))
+    for(int n = 2; w.Length(); olstr.GetWordNumber(n++, w))
     {
-        if (w == "SKEL")
+        if(w == "SKEL")
             openableLocks.Push(KEY_SKELETON);
         else
         {
@@ -389,15 +395,15 @@ bool psItem::Load(iResultRow& row)
     }
 
     unsigned int stats_id=row.GetUInt32("item_stats_id_standard");
-    psItemStats *stats=psserver->GetCacheManager()->GetBasicItemStatsByID(stats_id);
-    if (!stats)
+    psItemStats* stats=psserver->GetCacheManager()->GetBasicItemStatsByID(stats_id);
+    if(!stats)
     {
         Error3("Item with id %s has unresolvable basic item stats id %u",row["id"],stats_id);
         return false;
     }
     SetBaseStats(stats);
 
-    if (row.GetFloat("item_quality"))
+    if(row.GetFloat("item_quality"))
     {
         SetItemQuality(row.GetFloat("item_quality"));
     }
@@ -415,9 +421,9 @@ bool psItem::Load(iResultRow& row)
     guardingCharacterID = row.GetUInt32("char_id_guardian");
 
     if(row.GetInt("location_in_parent") == -1 ||  // SLOT_NONE
-      (row.GetInt("location_in_parent") == 0 &&
-       row.GetInt("char_id_owner") == 0 &&
-       row.GetInt("parent_item_id") == 0)) // No owner and no slot
+            (row.GetInt("location_in_parent") == 0 &&
+             row.GetInt("char_id_owner") == 0 &&
+             row.GetInt("parent_item_id") == 0)) // No owner and no slot
     {
         float x,y,z,xrot,yrot,zrot;
         InstanceID instance;
@@ -425,8 +431,8 @@ bool psItem::Load(iResultRow& row)
         instance = row.GetUInt32("loc_instance");
         //        printf("KWF: Item instance=%d\n", instance);
 
-        psSectorInfo *itemsector=psserver->GetCacheManager()->GetSectorInfoByID(row.GetInt("loc_sector_id"));
-        if (!itemsector)
+        psSectorInfo* itemsector=psserver->GetCacheManager()->GetSectorInfoByID(row.GetInt("loc_sector_id"));
+        if(!itemsector)
         {
             Error4("Item %s(%s) Could not be loaded\nIt is in sector id %s which does not resolve\n",
                    GetName(), row["id"], row["loc_sector_id"]);
@@ -454,18 +460,18 @@ bool psItem::Load(iResultRow& row)
     // Unique item handling, stats specified are deltas to standard stats
 
     stats_id = row.GetUInt32("item_stats_id_unique");
-    if (stats_id)
+    if(stats_id)
     {
 
         Result result(db->Select("SELECT * from item_stats where id=%u",stats_id));
-        if (!result.IsValid())
+        if(!result.IsValid())
         {
             Error3("Item with id %s has unresolvable unique item stats id %u",row["id"],stats_id);
             return false;
         }
 
-        psItemStats *stats=new psItemStats;
-        if (!stats->ReadItemStats(result[0]))
+        psItemStats* stats=new psItemStats;
+        if(!stats->ReadItemStats(result[0]))
         {
             Error3("Item with id %s has unique item stats that cannot be parsed (unique item stats id %u)",row["id"],stats_id);
             delete stats;
@@ -529,17 +535,17 @@ void psItem::Save(bool children)
 {
     CS_ASSERT(!(loc_in_parent == -1 && owning_character && parent_item_InstanceID==0));
 
-    if (loaded && !pendingsave)
+    if(loaded && !pendingsave)
     {
 #if SAVE_TRACER
         csCallStack* stack = csCallStackHelper::CreateCallStack(0,true);
-        if (stack)
+        if(stack)
         {
             /// Store the function that queued this save (check this with a debugger if Commit() fails)
             last_save_queued_from = stack->GetEntryAll(1,true);
 
 #if SAVE_DEBUG
-            printf("\n%s::Save() for '%s', queued from stack:\n", typeid(*(item)).name(), GetName() );
+            printf("\n%s::Save() for '%s', queued from stack:\n", typeid(*(item)).name(), GetName());
             stack->Print();
             printf("\n");
 #endif
@@ -552,7 +558,7 @@ void psItem::Save(bool children)
             last_save_queued_from = "ERROR:  csCallStackHelper::CreateCallStack(0,true) returned NULL!";
         }
 #elif SAVE_DEBUG
-        printf("%s::Save() for '%s' queued\n", typeid(*(item)).name(), GetName() );
+        printf("%s::Save() for '%s' queued\n", typeid(*(item)).name(), GetName());
 #endif
 
         pendingsave = true;
@@ -560,7 +566,7 @@ void psItem::Save(bool children)
     }
 
 #if SAVE_DEBUG
-    else if (loaded) printf("%s::Save() for '%s' skipped\n", typeid(*(GetSafeReference()->item)).name(), GetName() );
+    else if(loaded) printf("%s::Save() for '%s' skipped\n", typeid(*(GetSafeReference()->item)).name(), GetName());
 #endif
 }
 
@@ -583,14 +589,14 @@ bool psItem::IsThisTheCreator(PID characterID)
     return creativeStats.IsThisTheCreator(characterID);
 }
 
-PID psItem::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
+PID psItem::GetCreator(PSITEMSTATS_CREATORSTATUS &creatorStatus)
 {
     if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
         return current_stats->GetCreator(creatorStatus);
     return creativeStats.GetCreator(creatorStatus);
 }
 
-void psItem::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
+void psItem::SetCreator(PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
 {
     if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
         return current_stats->SetCreator(characterID, creatorStatus);
@@ -598,14 +604,14 @@ void psItem::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatu
     creativeStats.SetCreator(characterID, creatorStatus);
 }
 
-bool psItem::SetCreation (PSITEMSTATS_CREATIVETYPE creativeType, const csString& newCreation, csString creatorName)
+bool psItem::SetCreation(PSITEMSTATS_CREATIVETYPE creativeType, const csString &newCreation, csString creatorName)
 {
     csString newDescription;
 
-     if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
+    if(creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE)
         return current_stats->SetCreation(creativeType, newCreation, creatorName);
 
-    if (creativeStats.SetCreativeContent(creativeType, newCreation, uid))
+    if(creativeStats.SetCreativeContent(creativeType, newCreation, uid))
     {
         newDescription = creativeStats.UpdateDescription(creativeType, GetName(), creatorName);
         SetDescription(newDescription.GetDataSafe());
@@ -618,12 +624,12 @@ bool psItem::SetCreation (PSITEMSTATS_CREATIVETYPE creativeType, const csString&
 
 void psItem::Commit(bool children)
 {
-    if (!pendingsave || uid == ID_DONT_SAVE_ITEM)
+    if(!pendingsave || uid == ID_DONT_SAVE_ITEM)
         return;
 
     pendingsave = false;
 
-    if (!loaded)
+    if(!loaded)
         return;
 
     static iRecord* updateQuery;
@@ -631,7 +637,7 @@ void psItem::Commit(bool children)
 
     iRecord* targetQuery;
 
-    if (GetUID()==0)
+    if(GetUID()==0)
     {
         if(insertQuery == NULL)
             insertQuery = db->NewInsertPreparedStatement("item_instances", 29, __FILE__, __LINE__); // 26 fields
@@ -654,13 +660,13 @@ void psItem::Commit(bool children)
     targetQuery->AddField("decay_resistance",GetDecayResistance());
 
     // Crafter ID
-    if (GetIsCrafterIDValid())
+    if(GetIsCrafterIDValid())
         targetQuery->AddField("creator_mark_id", GetCrafterID().Unbox());
     else
         targetQuery->AddFieldNull("creator_mark_id");
 
     // Guild ID
-    if (GetIsGuildIDValid())
+    if(GetIsGuildIDValid())
         targetQuery->AddField("guild_mark_id",GetGuildID());
     else
         targetQuery->AddFieldNull("guild_mark_id");
@@ -670,84 +676,84 @@ void psItem::Commit(bool children)
 
     // Thise two are actualy glyhs things and should be moved to psGlyph
     // if a generic way of updating flags are implemented.
-    if (flags & PSITEM_FLAG_PURIFIED)
+    if(flags & PSITEM_FLAG_PURIFIED)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("PURIFIED");
     }
-    if (flags & PSITEM_FLAG_PURIFYING)
+    if(flags & PSITEM_FLAG_PURIFYING)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("PURIFYING");
     }
-    if (flags & PSITEM_FLAG_LOCKED)
+    if(flags & PSITEM_FLAG_LOCKED)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("LOCKED");
     }
-    if (flags & PSITEM_FLAG_LOCKABLE)
+    if(flags & PSITEM_FLAG_LOCKABLE)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("LOCKABLE");
     }
-    if (flags & PSITEM_FLAG_SECURITYLOCK)
+    if(flags & PSITEM_FLAG_SECURITYLOCK)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("SECURITYLOCK");
     }
-    if (flags & PSITEM_FLAG_UNPICKABLE)
+    if(flags & PSITEM_FLAG_UNPICKABLE)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("UNPICKABLE");
     }
-    if (flags & PSITEM_FLAG_KEY)
+    if(flags & PSITEM_FLAG_KEY)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("KEY");
     }
-    if (flags & PSITEM_FLAG_MASTERKEY)
+    if(flags & PSITEM_FLAG_MASTERKEY)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("MASTERKEY");
     }
-    if (flags & PSITEM_FLAG_NOPICKUP)
+    if(flags & PSITEM_FLAG_NOPICKUP)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("NOPICKUP");
     }
-    if (flags & PSITEM_FLAG_NOPICKUPWEAK)
+    if(flags & PSITEM_FLAG_NOPICKUPWEAK)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("NOWEAKPICKUP");
     }
-    if (flags & PSITEM_FLAG_TRANSIENT)
+    if(flags & PSITEM_FLAG_TRANSIENT)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("TRANSIENT");
     }
-    if (flags & PSITEM_FLAG_NPCOWNED)
+    if(flags & PSITEM_FLAG_NPCOWNED)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("NPCOWNED");
     }
-    if (flags & PSITEM_FLAG_USE_CD)
+    if(flags & PSITEM_FLAG_USE_CD)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("USECD");
     }
-    if (flags & PSITEM_FLAG_UNSTACKABLE)
+    if(flags & PSITEM_FLAG_UNSTACKABLE)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("UNSTACKABLE");
     }
-    if (flags & PSITEM_FLAG_STACKABLE)
+    if(flags & PSITEM_FLAG_STACKABLE)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("STACKABLE");
     }
-    if (flags & PSITEM_FLAG_SETTINGITEM)
+    if(flags & PSITEM_FLAG_SETTINGITEM)
     {
-        if (!flagString.IsEmpty()) flagString.Append(",");
+        if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("SETTINGITEM");
     }
 
@@ -757,7 +763,7 @@ void psItem::Commit(bool children)
     targetQuery->AddField("item_stats_id_standard",GetBaseStats()->GetUID());
 
     // Container stuff
-    if (!parent_item_InstanceID)  // if not in container
+    if(!parent_item_InstanceID)   // if not in container
     {
         targetQuery->AddFieldNull("parent_item_id");  // id of object containing this one
         targetQuery->AddField("location_in_parent",loc_in_parent);  // slot number, or -1 if out in the world
@@ -770,13 +776,13 @@ void psItem::Commit(bool children)
 
 
     float locx,locy,locz,locxrot,locyrot,loczrot;
-    psSectorInfo *sectorinfo;
+    psSectorInfo* sectorinfo;
     InstanceID instance;
 
     GetLocationInWorld(instance,&sectorinfo,locx,locy,locz,locyrot);
     GetXZRotationInWorld(locxrot,loczrot);
 
-    if (!sectorinfo || parent_item_InstanceID)
+    if(!sectorinfo || parent_item_InstanceID)
     {
         targetQuery->AddFieldNull("loc_x");
         targetQuery->AddFieldNull("loc_y");
@@ -788,7 +794,7 @@ void psItem::Commit(bool children)
     }
     else  // Item is not held or in something; must be in the world
     {
-        if ( sectorinfo )
+        if(sectorinfo)
         {
             targetQuery->AddField("loc_x",locx);
             targetQuery->AddField("loc_y",locy);
@@ -800,7 +806,7 @@ void psItem::Commit(bool children)
         }
         else  //  Item is nowhere; cannot be saved
         {
-            Error3("Item %s(%u) could not be saved because it is in a null location and has no parent or character owner", GetName(), GetUID() );
+            Error3("Item %s(%u) could not be saved because it is in a null location and has no parent or character owner", GetName(), GetUID());
             CS_ASSERT(!"Attempt to save item without a parent in a NULL position");
         }
     }
@@ -815,12 +821,12 @@ void psItem::Commit(bool children)
     {
         csString tmp;
         unsigned int n = iter.Next();
-        if (!openableLocksString.IsEmpty()) openableLocksString.Append(" "); // Space to sparate since GetWordNumber is used to decode
-        if (n == KEY_SKELETON)
+        if(!openableLocksString.IsEmpty()) openableLocksString.Append(" ");  // Space to sparate since GetWordNumber is used to decode
+        if(n == KEY_SKELETON)
             openableLocksString.Append("SKEL");
         else
         {
-            tmp.Format( "%u", n);
+            tmp.Format("%u", n);
             openableLocksString.Append(tmp);
         }
     }
@@ -838,7 +844,7 @@ void psItem::Commit(bool children)
     targetQuery->AddField("suffix",modifierIds.Get(1));
     targetQuery->AddField("adjective",modifierIds.Get(2));
 
-    if (GetUID()==0)
+    if(GetUID()==0)
     {
         //printf("Saving item %s through SQL Insert\n",GetName() );
 
@@ -864,7 +870,7 @@ void psItem::Commit(bool children)
 
         // Save this entry
 
-        if ( !targetQuery->Execute(GetUID()) )
+        if(!targetQuery->Execute(GetUID()))
         {
             Error3("Failed to save item instance %u!\nError: %s", GetUID(), db->GetLastError());
         }
@@ -875,7 +881,7 @@ void psItem::Commit(bool children)
 
 void psItem::ForceSaveIfNew()
 {
-    if (GetUID()==0)
+    if(GetUID()==0)
     {
         // No UID. Force a save now to generate one.
         pendingsave = true;
@@ -890,10 +896,10 @@ void psItem::ForceSaveIfNew()
 
 INVENTORY_SLOT_NUMBER psItem::GetLocInParent(bool adjustSlot)
 {
-    if (adjustSlot && parent_item_InstanceID)
+    if(adjustSlot && parent_item_InstanceID)
     {
-        psItem *container = owning_character->Inventory().FindItemID(parent_item_InstanceID);
-        if (!container)
+        psItem* container = owning_character->Inventory().FindItemID(parent_item_InstanceID);
+        if(!container)
         {
 //            Error3("Bad container id %d in item %d.",parent_item_InstanceID,uid);
             return loc_in_parent;
@@ -915,7 +921,7 @@ bool psItem::GetIsCrafterIDValid()
 
 void psItem::SetIsCrafterIDValid(bool v)
 {
-    if (v)
+    if(v)
         flags=flags | PSITEM_FLAG_CRAFTER_ID_IS_VALID;
     else
         flags=flags & ~PSITEM_FLAG_CRAFTER_ID_IS_VALID;
@@ -928,7 +934,7 @@ bool psItem::GetIsGuildIDValid()
 
 void psItem::SetIsGuildIDValid(bool v)
 {
-    if (v)
+    if(v)
         flags=flags | PSITEM_FLAG_GUILD_ID_IS_VALID;
     else
         flags=flags & ~PSITEM_FLAG_GUILD_ID_IS_VALID;
@@ -964,7 +970,7 @@ void psItem::SetGuildID(unsigned int v)
 
 float psItem::GetMaxItemQuality() const
 {
-    if ( crafted_quality == -1 )
+    if(crafted_quality == -1)
         return current_stats->GetQuality();
     else
         return crafted_quality;
@@ -972,7 +978,7 @@ float psItem::GetMaxItemQuality() const
 
 void psItem::SetMaxItemQuality(float v)
 {
-    if (v > 300)
+    if(v > 300)
         v = 300; // Clamp item quality to no more than 300
 
     crafted_quality = v;
@@ -985,7 +991,7 @@ float psItem::GetItemQuality() const
 
 void psItem::SetItemQuality(float v)
 {
-    if (v > 300)
+    if(v > 300)
         v = 300; // Clamp item quality to no more than 300
 
     item_quality = v;
@@ -999,11 +1005,11 @@ void psItem::SetDecayResistance(float v)
 
 float psItem::AddDecay(float severityFactor)
 {
-    if (!this)
+    if(!this)
         return 0;
 
     item_quality -= severityFactor;
-    if (item_quality < 1)
+    if(item_quality < 1)
     {
         item_quality = 1;
     }
@@ -1013,7 +1019,7 @@ float psItem::AddDecay(float severityFactor)
 
 int psItem::GetRequiredRepairTool()
 {
-    if (GetCategory())
+    if(GetCategory())
         return GetCategory()->repairToolStatId;
     else
         return 0;
@@ -1021,7 +1027,7 @@ int psItem::GetRequiredRepairTool()
 
 bool psItem::GetRequiredRepairToolConsumed()
 {
-    if (GetCategory())
+    if(GetCategory())
         return GetCategory()->repairToolConsumed;
     else
         return false;
@@ -1029,7 +1035,7 @@ bool psItem::GetRequiredRepairToolConsumed()
 
 int psItem::GetIdentifySkill()
 {
-    if (GetCategory())
+    if(GetCategory())
         return GetCategory()->identifySkillId;
     else
         return 0;
@@ -1037,13 +1043,13 @@ int psItem::GetIdentifySkill()
 
 int psItem::GetIdentifyMinSkill()
 {
-    if (GetCategory())
+    if(GetCategory())
         return GetCategory()->identifyMinSkill;
     else
         return 0;
 }
 
-void psItem::GetLocationInWorld(InstanceID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const
+void psItem::GetLocationInWorld(InstanceID &instance,psSectorInfo** sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const
 {
     instance    = location.worldInstance;
     *sectorinfo = location.loc_sectorinfo;
@@ -1053,7 +1059,7 @@ void psItem::GetLocationInWorld(InstanceID &instance,psSectorInfo **sectorinfo,f
     loc_yrot    = location.loc_yrot;
 }
 
-void psItem::SetLocationInWorld(InstanceID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
+void psItem::SetLocationInWorld(InstanceID instance,psSectorInfo* sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
 {
     location.worldInstance  = instance;
     location.loc_sectorinfo = sectorinfo;
@@ -1094,30 +1100,30 @@ csString psItem::GetQuantityName()
     return GetQuantityName(GetName(),stack_count, GetCreative());
 }
 
-csString psItem::GetQuantityName(const char *namePtr, int stack_count, PSITEMSTATS_CREATIVETYPE creativeType, bool giveDetail)
+csString psItem::GetQuantityName(const char* namePtr, int stack_count, PSITEMSTATS_CREATIVETYPE creativeType, bool giveDetail)
 {
     psString name(namePtr);
-    if (name.IsEmpty())
+    if(name.IsEmpty())
         return "???";
 
     csString list;
     // sort out name for creative items like books & maps
-    if (creativeType != PSITEMSTATS_CREATIVETYPE_NONE)
+    if(creativeType != PSITEMSTATS_CREATIVETYPE_NONE)
     {
         psString creativeDesc;
 
-        if (creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
+        if(creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
             creativeDesc = "book";
-        else if (creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
+        else if(creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
             creativeDesc = "map";
         else if(creativeType == PSITEMSTATS_CREATIVETYPE_MUSIC)
             creativeDesc = "sheet";
         else
             creativeDesc = "???";
 
-        if (giveDetail)
+        if(giveDetail)
         {
-            if (stack_count == 1)
+            if(stack_count == 1)
             {
                 list.Format("%s ", (creativeDesc.IsVowel(0))?"an":"a");
             }
@@ -1135,44 +1141,44 @@ csString psItem::GetQuantityName(const char *namePtr, int stack_count, PSITEMSTA
     }
 
     // normal items like swords, etc etc
-    if (stack_count == 1)
+    if(stack_count == 1)
     {
-        list.Format("%s %s", (name.IsVowel(0))?"an":"a", name.GetData() );
+        list.Format("%s %s", (name.IsVowel(0))?"an":"a", name.GetData());
     }
     else
     {
         name.Plural(); // Get plural form of the name
-        list.Format("%d %s", stack_count, name.GetData() );
+        list.Format("%d %s", stack_count, name.GetData());
     }
 
     return list;
 }
 
 
-void psItem::SetOwningCharacter(psCharacter *owner)
+void psItem::SetOwningCharacter(psCharacter* owner)
 {
     owning_character = owner;
     owningCharacterID = owner ? owner->GetPID() : 0;
 
     // Owned items are always in inventory, never in the world.
     // Also, an item is owned, not guarded, when in the inventory.
-    if (owner)
+    if(owner)
     {
         guardingCharacterID = 0;
         SetLocationInWorld(0, NULL, 0, 0, 0, 0);
     }
 }
 
-void psItem::SetUniqueStats(psItemStats *statptr)
+void psItem::SetUniqueStats(psItemStats* statptr)
 {
     // Consider weight changes
     float weight_delta=0.0f;
 
     // If base_stats is NULL then this is a new item. No chickens here, just us egg.
-    if (base_stats!=NULL)
+    if(base_stats!=NULL)
         weight_delta-=GetWeight();
 
-    if (current_stats==base_stats)
+    if(current_stats==base_stats)
         current_stats=statptr;
 
     base_stats=statptr;
@@ -1182,7 +1188,7 @@ void psItem::SetUniqueStats(psItemStats *statptr)
     flags |= PSITEM_FLAG_UNIQUE_ITEM;
 
 
-    if (current_stats!=base_stats)
+    if(current_stats!=base_stats)
         RecalcCurrentStats();
 
     weight_delta+=GetWeight();
@@ -1193,17 +1199,17 @@ void psItem::SetUniqueStats(psItemStats *statptr)
 
 
 
-void psItem::SetBaseStats(psItemStats *statptr)
+void psItem::SetBaseStats(psItemStats* statptr)
 {
     // Consider weight changes
     float weight_delta=0.0f;
 
     // If base_stats is NULL then this is a new item. No chickens here, just us egg.
-    if (base_stats!=NULL)
+    if(base_stats!=NULL)
     {
         weight_delta-=GetWeight();
         // Consider the possibility of this previously being a unique item
-        if (flags & PSITEM_FLAG_UNIQUE_ITEM)
+        if(flags & PSITEM_FLAG_UNIQUE_ITEM)
         {
             // Note we delete here and then quickly reassign base_stats below after a pointer comparison
             delete base_stats;
@@ -1216,15 +1222,15 @@ void psItem::SetBaseStats(psItemStats *statptr)
     SetItemQuality(statptr->GetQuality());
 
     // Set pickupability based on movability, but only if the item is currently pickupable
-    if (!GetIsNoPickup())
+    if(!GetIsNoPickup())
         SetIsPickupable(!statptr->GetUnmovable());
 
-    if (current_stats==base_stats)
+    if(current_stats==base_stats)
         current_stats=statptr;
 
     base_stats=statptr;
 
-    if (current_stats!=base_stats)
+    if(current_stats!=base_stats)
         RecalcCurrentStats();
 
     weight_delta+=GetWeight();
@@ -1235,20 +1241,20 @@ void psItem::SetBaseStats(psItemStats *statptr)
 //        AdjustSumWeight(weight_delta);
 }
 
-void psItem::UpdateInventoryStatus(psCharacter *owner,uint32 parent_id, INVENTORY_SLOT_NUMBER slot)
+void psItem::UpdateInventoryStatus(psCharacter* owner,uint32 parent_id, INVENTORY_SLOT_NUMBER slot)
 {
-    if (IsEquipped() && owning_character)
+    if(IsEquipped() && owning_character)
         owning_character->Inventory().Unequip(this);
 
     SetOwningCharacter(owner);
     parent_item_InstanceID = parent_id;
     loc_in_parent           = (INVENTORY_SLOT_NUMBER)(slot%100);
 
-    if (IsEquipped() && owning_character)
+    if(IsEquipped() && owning_character)
         owning_character->Inventory().Equip(this);
 }
 
-void psItem::SetCurrentStats(psItemStats *statptr)
+void psItem::SetCurrentStats(psItemStats* statptr)
 {
     current_stats=statptr;
 }
@@ -1262,13 +1268,13 @@ void psItem::RecalcCurrentStats()
      *  then it may need adjustment.
      *
      */
-    if (current_stats==base_stats)
+    if(current_stats==base_stats)
         return;
-    for (i=0;i<PSITEM_MAX_MODIFIERS;i++)
+    for(i=0; i<PSITEM_MAX_MODIFIERS; i++)
     {
-        if (current_stats==modifiers[i])
+        if(current_stats==modifiers[i])
             return;
-        if (modifiers[i]!=NULL)
+        if(modifiers[i]!=NULL)
             has_modifiers=true;
     }
 
@@ -1279,35 +1285,35 @@ void psItem::RecalcCurrentStats()
     // TODO:  When modifiers are defined and the operations of how they apply to base stats is defined, implement that logic here.
 
     // For now, if there are no modifiers we presume that current_stats should = base_stats and that current_stats can be freed.
-    if (!has_modifiers && current_stats!=NULL)
+    if(!has_modifiers && current_stats!=NULL)
         delete current_stats;
     current_stats=base_stats;
 }
 
 
-bool psItem::HasModifier(psItemStats *modifier)
+bool psItem::HasModifier(psItemStats* modifier)
 {
     int i;
-    for (i=0;i<PSITEM_MAX_MODIFIERS;i++)
+    for(i=0; i<PSITEM_MAX_MODIFIERS; i++)
     {
-        if (modifier==modifiers[i])
+        if(modifier==modifiers[i])
             return true;
     }
     return false;
 }
 
 
-bool psItem::AddModifier(psItemStats *modifier)
+bool psItem::AddModifier(psItemStats* modifier)
 {
     int mod_number;
 
-    for (mod_number=0;mod_number<PSITEM_MAX_MODIFIERS;mod_number++)
+    for(mod_number=0; mod_number<PSITEM_MAX_MODIFIERS; mod_number++)
     {
-        if (modifiers[mod_number]==NULL)
+        if(modifiers[mod_number]==NULL)
             break;
     }
     // No free modifier slots available
-    if (mod_number==PSITEM_MAX_MODIFIERS)
+    if(mod_number==PSITEM_MAX_MODIFIERS)
         return false;
 
     // TODO:  We need to apply the modifier to the current stats of the item as well
@@ -1318,7 +1324,7 @@ bool psItem::AddModifier(psItemStats *modifier)
      *
      *
      */
-    if (GetIsUnique())
+    if(GetIsUnique())
         return true;
 
     /* if (current_stats==base_stats)
@@ -1332,9 +1338,9 @@ bool psItem::AddModifier(psItemStats *modifier)
     return true;
 }
 
-psItemStats *psItem::GetModifier(int index)
+psItemStats* psItem::GetModifier(int index)
 {
-    if (index<0 || index>=PSITEM_MAX_MODIFIERS)
+    if(index<0 || index>=PSITEM_MAX_MODIFIERS)
         return NULL;
     return modifiers[index];
 }
@@ -1342,7 +1348,7 @@ psItemStats *psItem::GetModifier(int index)
 bool psItem::IsEquipped() const
 {
     return (loc_in_parent < PSCHARACTER_SLOT_BULK1
-        && loc_in_parent >= 0);
+            && loc_in_parent >= 0);
 }
 
 bool psItem::IsActive() const
@@ -1362,17 +1368,17 @@ void psItem::SetActive(bool state)
     }
 }
 
-void psItem::RunEquipScript(gemActor *actor)
+void psItem::RunEquipScript(gemActor* actor)
 {
-    if (IsActive())
+    if(IsActive())
     {
         Warning2(LOG_SCRIPT, "Didn't run equip script for item \"%s\" because it's already active!", GetName());
         return;
     }
 
-    ApplicativeScript *script = (itemModifiers->active && itemModifiers->equip_script) ?
-                                 itemModifiers->equip_script : base_stats->GetEquipScript();
-    if (!script)
+    ApplicativeScript* script = (itemModifiers->active && itemModifiers->equip_script) ?
+                                itemModifiers->equip_script : base_stats->GetEquipScript();
+    if(!script)
         return;
 
     MathEnvironment env;
@@ -1386,56 +1392,56 @@ void psItem::RunEquipScript(gemActor *actor)
 
 void psItem::CancelEquipScript()
 {
-    if (!IsActive())
+    if(!IsActive())
         return;
 
     SetActive(false);
 
-    if (equipActiveSpell && equipActiveSpell->Cancel())
+    if(equipActiveSpell && equipActiveSpell->Cancel())
     {
         delete equipActiveSpell;
         equipActiveSpell = NULL;
     }
 }
 
-bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool checkStackCount, bool checkWorld) const
+bool psItem::CheckStackableWith(const psItem* otheritem, bool precise, bool checkStackCount, bool checkWorld) const
 {
     int i;
 
     // If we want precise quality check and qualities are different exit
-    if (GetItemQuality()!=otheritem->GetItemQuality() && precise)
+    if(GetItemQuality()!=otheritem->GetItemQuality() && precise)
         return false;
 
     // If we want precise quality check and max qualities are different exit
-    if (GetMaxItemQuality()!=otheritem->GetMaxItemQuality() && precise)
+    if(GetMaxItemQuality()!=otheritem->GetMaxItemQuality() && precise)
         return false;
 
     // If we want precise quality check and they were crafted by different folk then exit
-    if (GetCrafterID()!=otheritem->GetCrafterID() && precise)
+    if(GetCrafterID()!=otheritem->GetCrafterID() && precise)
         return false;
 
     // TODO:  Should unique items ever be stackable?
-    if (GetIsUnique())
+    if(GetIsUnique())
         return false;
 
-    if (!GetIsEquipStackable() && IsEquipped())
+    if(!GetIsEquipStackable() && IsEquipped())
         return false;
 
     int purifyStatus = GetPurifyStatus();
-    if (purifyStatus == 1)                      // purifying glyphs cannot be stacked
+    if(purifyStatus == 1)                       // purifying glyphs cannot be stacked
         return false;
 
     int otherPurifyStatus = otheritem->GetPurifyStatus();
-    if (purifyStatus != otherPurifyStatus)      // glyphs with different purification status cannot be stacked
+    if(purifyStatus != otherPurifyStatus)       // glyphs with different purification status cannot be stacked
         return false;
 
-    if (!GetIsStackable() || !otheritem->GetIsStackable())
+    if(!GetIsStackable() || !otheritem->GetIsStackable())
         return false;
 
-    if (checkStackCount && otheritem->GetStackCount() > MAX_STACK_COUNT - stack_count)
+    if(checkStackCount && otheritem->GetStackCount() > MAX_STACK_COUNT - stack_count)
         return false;
 
-    if (strcmp(GetName(), otheritem->GetName()) || strcmp(GetDescription(), otheritem->GetDescription()))
+    if(strcmp(GetName(), otheritem->GetName()) || strcmp(GetDescription(), otheritem->GetDescription()))
         return false;
 
     /* Conditions that must be met for stacking:
@@ -1445,15 +1451,15 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool chec
      * 4) Crafting attributes match
      */
 
-    if (GetBaseStats()!=otheritem->GetBaseStats())
+    if(GetBaseStats()!=otheritem->GetBaseStats())
         // If these have different base stats it doesn't matter about modifiers - they cant be combined
         return false;
 
     // TODO: Instead of checking each modifier, we can compare the resulting stats and see if they are equivalent
     // This requires implementing a comparison function in psItemStats
-    for (i=0;i<PSITEM_MAX_MODIFIERS;i++)
+    for(i=0; i<PSITEM_MAX_MODIFIERS; i++)
     {
-        if (modifiers[i]!=otheritem->modifiers[i])
+        if(modifiers[i]!=otheritem->modifiers[i])
             return false;
     }
 
@@ -1462,34 +1468,34 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool chec
         return false;
 
     // Check for keys
-    if (GetIsKey() != otheritem->GetIsKey() || GetIsMasterKey() != otheritem->GetIsMasterKey())
+    if(GetIsKey() != otheritem->GetIsKey() || GetIsMasterKey() != otheritem->GetIsMasterKey())
         return false;
 
-    if (GetIsKey())
+    if(GetIsKey())
     {
         // Both are either keys or master keys
-        if (!CompareOpenableLocks(otheritem) ||
-            !otheritem->CompareOpenableLocks(this))
+        if(!CompareOpenableLocks(otheritem) ||
+                !otheritem->CompareOpenableLocks(this))
             return false;
     }
 
     // if both are non null and different
-    if (GetGuardingCharacterID() != otheritem->GetGuardingCharacterID() &&
-        GetGuardingCharacterID() != 0 && otheritem->GetGuardingCharacterID() != 0)
+    if(GetGuardingCharacterID() != otheritem->GetGuardingCharacterID() &&
+            GetGuardingCharacterID() != 0 && otheritem->GetGuardingCharacterID() != 0)
         return false;
 
     // TODO: Check effects
 
-    if (GetCurrentStats()==otheritem->GetCurrentStats())
+    if(GetCurrentStats()==otheritem->GetCurrentStats())
     {
         return true;
     }
 
     // This checks to make sure that if the quality is different that these
     // items can still be stacked and use an average quality system.
-    if (item_quality != otheritem->item_quality || GetMaxItemQuality() != otheritem->GetMaxItemQuality())
+    if(item_quality != otheritem->item_quality || GetMaxItemQuality() != otheritem->GetMaxItemQuality())
     {
-        if ( GetCurrentStats()->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY )
+        if(GetCurrentStats()->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY)
             return true;
         else
             return false;
@@ -1501,22 +1507,22 @@ bool psItem::CheckStackableWith(const psItem *otheritem, bool precise, bool chec
 bool psItem::CompareOpenableLocks(const psItem* key) const
 {
     size_t locksCount = openableLocks.GetSize();
-    for (size_t i = 0 ; i < locksCount ; i++)
-        if (!key->CanOpenLock(openableLocks[i], false))
+    for(size_t i = 0 ; i < locksCount ; i++)
+        if(!key->CanOpenLock(openableLocks[i], false))
             return false;
     return true;
 }
 
-psItem *psItem::Copy(unsigned short newstackcount)
+psItem* psItem::Copy(unsigned short newstackcount)
 {
-    psItem *newitem;
+    psItem* newitem;
 
     // Cannot split into a stack of 0 or a stack of the same amount or more than there already are
-    if (newstackcount < 1)
+    if(newstackcount < 1)
         return NULL;
 
     // Cannot copy unique items
-    if (GetIsUnique())
+    if(GetIsUnique())
         return NULL;
 
     // Allocate a new item
@@ -1530,10 +1536,10 @@ psItem *psItem::Copy(unsigned short newstackcount)
     return newitem;
 }
 
-void psItem::Copy(psItem * target)
+void psItem::Copy(psItem* target)
 {
     Notify3(LOG_USER,"Copying item '%s' clone it.  Owner is %s.", GetName(),
-           owning_character ? owning_character->GetCharName() : "None" );
+            owning_character ? owning_character->GetCharName() : "None");
 
     // The location in world is the same
     target->SetLocationInWorld(location.worldInstance,location.loc_sectorinfo,location.loc_x,location.loc_y,location.loc_z,location.loc_yrot);
@@ -1580,26 +1586,26 @@ void psItem::Copy(psItem * target)
 
     // Current stats are rebuilt;
     int i;
-    for (i=0;i<PSITEM_MAX_MODIFIERS;i++)
+    for(i=0; i<PSITEM_MAX_MODIFIERS; i++)
     {
-        if (modifiers[i]!=NULL)
+        if(modifiers[i]!=NULL)
             target->AddModifier(modifiers[i]);
     }
-    target->SetOwningCharacter( owning_character);
+    target->SetOwningCharacter(owning_character);
 
     //generate the overlay cache of the modifiers in the new item.
     target->UpdateModifiers();
 
 }
 
-psItem *psItem::SplitStack(unsigned short newstackcount)
+psItem* psItem::SplitStack(unsigned short newstackcount)
 {
     // Cannot split into a stack of 0 or a stack of the same amount or more than there already are
-    if (newstackcount<1 || newstackcount>=GetStackCount())
+    if(newstackcount<1 || newstackcount>=GetStackCount())
         return NULL;
 
-    psItem *newitem = Copy(newstackcount);
-    if (newitem == NULL)
+    psItem* newitem = Copy(newstackcount);
+    if(newitem == NULL)
         return NULL;
 
     // Adjust stack count of source
@@ -1610,16 +1616,16 @@ psItem *psItem::SplitStack(unsigned short newstackcount)
     return newitem;
 }
 
-void psItem::CombineStack(psItem *& stackme)
+void psItem::CombineStack(psItem* &stackme)
 {
     // Make sure you call CheckStackableWith first!
     CS_ASSERT(CheckStackableWith(stackme,false));
 
     // If stacked item is from a spawn, we want to keep its spawning rules
-    if (stackme->schedule)
+    if(stackme->schedule)
     {
-        if (!schedule)  // Absorb schedule
-            SetScheduledItem( stackme->schedule );
+        if(!schedule)   // Absorb schedule
+            SetScheduledItem(stackme->schedule);
 
         stackme->schedule = NULL; // Prevent deleting of shedule later in delete in RemoveInstance
     }
@@ -1632,7 +1638,7 @@ void psItem::CombineStack(psItem *& stackme)
     SetMaxItemQuality(newMaxQuality);
     SetStackCount(newStackCount);
 
-    if (owning_character)
+    if(owning_character)
         owning_character->Inventory().UpdateEncumbrance();
 
     // if this item has no guarding character, and the other has one, keep it
@@ -1651,7 +1657,7 @@ void psItem::CombineStack(psItem *& stackme)
 
 // Functions that call into the appropriate psItemStats object
 
-int psItem::GetAttackAnimID(psCharacter *pschar)
+int psItem::GetAttackAnimID(psCharacter* pschar)
 {
     PSSKILL skill = current_stats->Weapon().Skill(PSITEMSTATS_WEAPONSKILL_INDEX_0);
     int curr_level = pschar->Skills().GetSkillRank(skill).Current();
@@ -1738,10 +1744,10 @@ bool psItem::GetBuyPersonalise()
     return current_stats->GetBuyPersonalise();
 }
 
-const char *psItem::GetName() const
+const char* psItem::GetName() const
 {
     //first check if this item was explictly given a special name
-    if (!item_name.IsEmpty())
+    if(!item_name.IsEmpty())
         return item_name;
 
     //then check if the item modifier overlay gives a name to this item.
@@ -1752,9 +1758,9 @@ const char *psItem::GetName() const
     return current_stats->GetName();
 }
 
-const char *psItem::GetDescription() const
+const char* psItem::GetDescription() const
 {
-    if (!item_description.IsEmpty())
+    if(!item_description.IsEmpty())
         return item_description;
     return current_stats->GetDescription();
 }
@@ -1769,12 +1775,12 @@ void psItem::SetDescription(const char* newDescription)
     item_description = newDescription;
 }
 
-const char *psItem::GetStandardName()
+const char* psItem::GetStandardName()
 {
     return current_stats->GetName();
 }
 
-const char *psItem::GetStandardDescription()
+const char* psItem::GetStandardDescription()
 {
     return current_stats->GetDescription();
 }
@@ -1808,7 +1814,7 @@ float psItem::GetDamage(PSITEMSTATS_DAMAGETYPE dmgtype)
 
 PSITEMSTATS_AMMOTYPE psItem::GetAmmoType()
 {
-   return current_stats->Ammunition().AmmoType();
+    return current_stats->Ammunition().AmmoType();
 }
 
 float psItem::GetPenetration()
@@ -1841,7 +1847,7 @@ float psItem::GetDamageProtection(PSITEMSTATS_DAMAGETYPE dmgtype)
     // Add the characters natural armour bonus onto his normal armour.
     psItemStats* natArm;
     natArm = psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->GetRaceInfo()->natural_armor_id);
-    if (!natArm || current_stats->Armor().Protection(dmgtype) > natArm->Armor().Protection(dmgtype))
+    if(!natArm || current_stats->Armor().Protection(dmgtype) > natArm->Armor().Protection(dmgtype))
     {
         useNat = false;
         //we have a modification overlay?
@@ -1865,9 +1871,9 @@ PSITEMSTATS_STAT psItem::GetWeaponAttributeBonusType(int index)
 
 float psItem::GetWeaponAttributeBonus(PSITEMSTATS_STAT stat)
 {
-    for (int i = 0; i < PSITEMSTATS_STAT_BONUS_COUNT; i++)
+    for(int i = 0; i < PSITEMSTATS_STAT_BONUS_COUNT; i++)
     {
-        if (GetWeaponAttributeBonusType(i) == stat)
+        if(GetWeaponAttributeBonusType(i) == stat)
             return GetWeaponAttributeBonusMax(i);
     }
     return 0.0f;
@@ -1924,9 +1930,9 @@ float psItem::GetDecayResistance()
 psMoney psItem::GetPrice()
 {
     static csWeakRef<MathScript> script;
-    if (!script.IsValid())
+    if(!script.IsValid())
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "Calc Item Price");
-    if (!script)
+    if(!script)
     {
         Error1("Cannot find mathscript: Calc Item Price");
         return current_stats->GetPrice();
@@ -1939,8 +1945,8 @@ psMoney psItem::GetPrice()
     env.Define("BaseQuality", current_stats->GetQuality());
     script->Evaluate(&env);
 
-    MathVar *finalPrice = env.Lookup("FinalPrice");
-    if (!finalPrice)
+    MathVar* finalPrice = env.Lookup("FinalPrice");
+    if(!finalPrice)
     {
         Error1("Failed to evaluate MathScript >Calc Item Price<.");
         return current_stats->GetPrice();
@@ -1951,13 +1957,13 @@ psMoney psItem::GetPrice()
 psMoney psItem::GetSellPrice()
 {
     static csWeakRef<MathScript> script;
-    if (!script.IsValid())
+    if(!script.IsValid())
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "Calc Item Sell Price");
-    if (!script)
+    if(!script)
     {
         Error1("Cannot find mathscript: Calc Item Sell Price");
         int sellPrice = (int)(GetPrice().GetTotal() * 0.8);
-        if (sellPrice == 0)
+        if(sellPrice == 0)
         {
             sellPrice = 1;
         }
@@ -1971,8 +1977,8 @@ psMoney psItem::GetSellPrice()
     env.Define("BaseQuality", current_stats->GetQuality());
     script->Evaluate(&env);
 
-    MathVar *finalPrice = env.Lookup("FinalPrice");
-    if (!finalPrice)
+    MathVar* finalPrice = env.Lookup("FinalPrice");
+    if(!finalPrice)
     {
         Error1("Failed to evaluate MathScript >Calc Item Price<.");
         return current_stats->GetPrice();
@@ -1980,7 +1986,7 @@ psMoney psItem::GetSellPrice()
     return psMoney(finalPrice->GetRoundValue());
 }
 
-psItemCategory * psItem::GetCategory()
+psItemCategory* psItem::GetCategory()
 {
     return current_stats->GetCategory();
 }
@@ -2011,7 +2017,7 @@ unsigned int psItem::GetTexturePartIndex()
 
 */
 
-const char *psItem::GetMeshName()
+const char* psItem::GetMeshName()
 {
     //do we have an overlay?
     if(itemModifiers->active && !itemModifiers->mesh.IsEmpty())
@@ -2019,22 +2025,22 @@ const char *psItem::GetMeshName()
     return current_stats->GetMeshName();
 }
 
-const char *psItem::GetTextureName()
+const char* psItem::GetTextureName()
 {
     return current_stats->GetTextureName();
 }
 
-const char *psItem::GetPartName()
+const char* psItem::GetPartName()
 {
     return current_stats->GetPartName();
 }
 
-const char *psItem::GetPartMeshName()
+const char* psItem::GetPartMeshName()
 {
     return current_stats->GetPartMeshName();
 }
 
-const char *psItem::GetImageName()
+const char* psItem::GetImageName()
 {
     //do we have an overlay?
     if(itemModifiers->active && !itemModifiers->icon.IsEmpty())
@@ -2042,7 +2048,7 @@ const char *psItem::GetImageName()
     return current_stats->GetImageName();
 }
 
-const char *psItem::GetSound()
+const char* psItem::GetSound()
 {
     return current_stats->GetSound();
 }
@@ -2077,162 +2083,162 @@ int psItem::GetMaxCharges() const
     return base_stats->GetMaxCharges();
 }
 
-double psItem::GetProperty(MathEnvironment* env, const char *ptr)
+double psItem::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
-    if (property == "Skill1")
+    if(property == "Skill1")
     {
         return GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)0);
     }
-    else if (property == "Skill2")
+    else if(property == "Skill2")
     {
         return GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)1);
     }
-    else if (property == "Skill3")
+    else if(property == "Skill3")
     {
         return GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)2);
     }
-    else if (property == "Quality")
+    else if(property == "Quality")
     {
         return GetItemQuality();
     }
-    else if (property == "ArmQuality")
+    else if(property == "ArmQuality")
     {
         // For natural armour quality
         if(useNat)
             return psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->GetRaceInfo()->natural_armor_id)->GetQuality();
         return GetItemQuality();
     }
-    else if (property == "MaxQuality")
+    else if(property == "MaxQuality")
     {
         return GetMaxItemQuality();
     }
-    else if (property == "WeaponCBV")
+    else if(property == "WeaponCBV")
     {
         return GetCounterBlockValue();
     }
-    else if (property == "UntargetedBlockValue")
+    else if(property == "UntargetedBlockValue")
     {
         return GetUntargetedBlockValue();
     }
-    else if (property == "TargetedBlockValue")
+    else if(property == "TargetedBlockValue")
     {
         return GetTargetedBlockValue();
     }
-    else if (property == "Hardness")
+    else if(property == "Hardness")
     {
         return GetHardness();
     }
-    else if (property == "DecayRate")
+    else if(property == "DecayRate")
     {
         return base_stats->GetDecayRate();
     }
-    else if (property == "DecayResistance")
+    else if(property == "DecayResistance")
     {
         return decay_resistance;
     }
-    else if (property == "Penetration")
+    else if(property == "Penetration")
     {
         return GetPenetration();
     }
-    else if (property == "DamageSlash")
+    else if(property == "DamageSlash")
     {
         return GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH);
     }
-    else if (property == "ProtectSlash")
+    else if(property == "ProtectSlash")
     {
         return GetDamageProtection(PSITEMSTATS_DAMAGETYPE_SLASH);
     }
-    else if (property.StartsWith("ExtraDamagePct"))
+    else if(property.StartsWith("ExtraDamagePct"))
     {
         return 0; // in the future, this should be read from weapon/armor XML
     }
-    else if (property == "DamageBlunt")
+    else if(property == "DamageBlunt")
     {
         return GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT);
     }
-    else if (property == "ProtectBlunt")
+    else if(property == "ProtectBlunt")
     {
         return GetDamageProtection(PSITEMSTATS_DAMAGETYPE_BLUNT);
     }
-    else if (property == "DamagePierce")
+    else if(property == "DamagePierce")
     {
         return GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE);
     }
-    else if (property == "ProtectPierce")
+    else if(property == "ProtectPierce")
     {
         return GetDamageProtection(PSITEMSTATS_DAMAGETYPE_PIERCE);
     }
-    else if (property == "StrMalus")
+    else if(property == "StrMalus")
     {
         return GetWeaponAttributeBonus(PSITEMSTATS_STAT_STRENGTH);
     }
-    else if (property == "AgiMalus")
+    else if(property == "AgiMalus")
     {
         return GetWeaponAttributeBonus(PSITEMSTATS_STAT_AGILITY);
     }
-    else if (property == "Weight")
+    else if(property == "Weight")
     {
         return GetWeight();
     }
-    else if (property == "MentalFactor")
+    else if(property == "MentalFactor")
     {
         int temp = GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)0);
-        return ( (double)psserver->GetCacheManager()->GetSkillByID((temp<0)?0:temp)->mental_factor / 100.0 );
+        return ((double)psserver->GetCacheManager()->GetSkillByID((temp<0)?0:temp)->mental_factor / 100.0);
     }
-    else if (property == "RequiredRepairSkill")
+    else if(property == "RequiredRepairSkill")
     {
         return base_stats->GetCategory()->repairSkillId;
     }
-    else if (property == "RepairDifficultyPct")
+    else if(property == "RepairDifficultyPct")
     {
         return base_stats->GetCategory()->repairDifficultyPct;
     }
-    else if (property == "SalePrice")
+    else if(property == "SalePrice")
     {
         return base_stats->GetPrice().GetTotal();
     }
-    else if (property == "Charges")
+    else if(property == "Charges")
     {
         return (double)GetCharges();
     }
-    else if (property == "MaxCharges")
+    else if(property == "MaxCharges")
     {
         return (double)GetMaxCharges();
     }
-    else if (property == "Range")
+    else if(property == "Range")
     {
         return (double)GetRange();
     }
-    else if (property == "Slot")
+    else if(property == "Slot")
     {
         return (double)GetLocInParent();
     }
-    else if (property == "Owner")
+    else if(property == "Owner")
     {
         return env->GetValue(owning_character);
     }
-    else if (property == "ArmorType")
+    else if(property == "ArmorType")
     {
         return (double)GetArmorType();
     }
-    else if (property == "IsMeleeWeapon")
+    else if(property == "IsMeleeWeapon")
     {
         return (double)GetIsMeleeWeapon();
     }
-    else if (property == "IsRangeWeapon")
+    else if(property == "IsRangeWeapon")
     {
         return (double)GetIsRangeWeapon();
     }
-    else if (property == "IsAmmo")
+    else if(property == "IsAmmo")
     {
         return (double)GetIsAmmo();
     }
-    else if (property == "IsArmor")
+    else if(property == "IsArmor")
     {
         return (double)GetIsArmor();
     }
-    else if (property == "IsShield")
+    else if(property == "IsShield")
     {
         return (double)GetIsShield();
     }
@@ -2251,23 +2257,23 @@ double psItem::GetProperty(MathEnvironment* env, const char *ptr)
     }
 }
 
-double psItem::CalcFunction(MathEnvironment* env, const char * functionName, const double * params)
+double psItem::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     csString function(functionName);
-    if (function == "GetArmorVSWeaponResistance")
+    if(function == "GetArmorVSWeaponResistance")
     {
-        psItem *weapon = this;
-        psItem *armor  = dynamic_cast<psItem*>(env->GetPointer(params[0]));
+        psItem* weapon = this;
+        psItem* armor  = dynamic_cast<psItem*>(env->GetPointer(params[0]));
 
         // if no armor return 1
-        if (!armor)
+        if(!armor)
             return 1.0F;
 
         return weapon->GetArmorVSWeaponResistance(armor->GetCurrentStats());
     }
     //returns to the script a psitemstats object. used to access the base stats
     //without the psitem overlay.
-    if (function == "GetBaseItem")
+    if(function == "GetBaseItem")
     {
         return env->GetValue(GetBaseStats());
     }
@@ -2324,7 +2330,7 @@ double psItem::CalcFunction(MathEnvironment* env, const char * functionName, con
 
 void psItem::SetIsLocked(bool v)
 {
-    if (v)
+    if(v)
         flags=flags | PSITEM_FLAG_LOCKED;
     else
         flags=flags & ~PSITEM_FLAG_LOCKED;
@@ -2332,7 +2338,7 @@ void psItem::SetIsLocked(bool v)
 
 void psItem::SetIsLockable(bool v)
 {
-    if (v)
+    if(v)
         flags=flags | PSITEM_FLAG_LOCKABLE;
     else
         flags=flags & ~PSITEM_FLAG_LOCKABLE;
@@ -2340,7 +2346,7 @@ void psItem::SetIsLockable(bool v)
 
 void psItem::SetIsSecurityLocked(bool v)
 {
-    if (v)
+    if(v)
         flags=flags | PSITEM_FLAG_SECURITYLOCK;
     else
         flags=flags & ~PSITEM_FLAG_SECURITYLOCK;
@@ -2348,7 +2354,7 @@ void psItem::SetIsSecurityLocked(bool v)
 
 void psItem::SetIsUnpickable(bool v)
 {
-    if (v)
+    if(v)
         flags=flags | PSITEM_FLAG_UNPICKABLE;
     else
         flags=flags & ~PSITEM_FLAG_UNPICKABLE;
@@ -2356,7 +2362,7 @@ void psItem::SetIsUnpickable(bool v)
 
 void psItem::SetIsNpcOwned(bool v)
 {
-    if (v)
+    if(v)
         flags |= PSITEM_FLAG_NPCOWNED;
     else
         flags &= ~PSITEM_FLAG_NPCOWNED;
@@ -2364,7 +2370,7 @@ void psItem::SetIsNpcOwned(bool v)
 
 void psItem::SetIsCD(bool v)
 {
-    if (v)
+    if(v)
         flags |= PSITEM_FLAG_USE_CD;
     else
         flags &= ~PSITEM_FLAG_USE_CD;
@@ -2373,7 +2379,7 @@ void psItem::SetIsCD(bool v)
 /// this only change the stackability for this instance, not all items (itemStats)
 void psItem::SetIsItemStackable(bool v)
 {
-    if (v)
+    if(v)
     {
         flags |= PSITEM_FLAG_STACKABLE;
         flags &= ~PSITEM_FLAG_UNSTACKABLE;
@@ -2394,7 +2400,7 @@ void psItem::ResetItemStackable()
 
 void psItem::SetIsKey(bool v)
 {
-    if (v)
+    if(v)
         flags = flags | PSITEM_FLAG_KEY;
     else
         flags = flags & ~PSITEM_FLAG_KEY;
@@ -2402,7 +2408,7 @@ void psItem::SetIsKey(bool v)
 
 void psItem::SetIsMasterKey(bool v)
 {
-    if (v)
+    if(v)
         flags = flags | PSITEM_FLAG_MASTERKEY;
     else
         flags = flags & ~PSITEM_FLAG_MASTERKEY;
@@ -2420,7 +2426,7 @@ void psItem::SetLockStrength(unsigned int v)
 
 bool psItem::CanOpenLock(uint32 id, bool includeSkel) const
 {
-    if (includeSkel)
+    if(includeSkel)
         return openableLocks.Find(id) != csArrayItemNotFound || openableLocks.Find(KEY_SKELETON) != csArrayItemNotFound;
     else
         return openableLocks.Find(id) != csArrayItemNotFound;
@@ -2428,7 +2434,7 @@ bool psItem::CanOpenLock(uint32 id, bool includeSkel) const
 
 void psItem::AddOpenableLock(uint32 v)
 {
-    if (openableLocks.Find(v) == csArrayItemNotFound)
+    if(openableLocks.Find(v) == csArrayItemNotFound)
         openableLocks.Push(v);
 }
 
@@ -2439,7 +2445,7 @@ void psItem::CopyOpenableLock(psItem* origKey)
 
 void psItem::MakeSkeleton(bool b)
 {
-    if (b)
+    if(b)
         AddOpenableLock(KEY_SKELETON);
     else
         RemoveOpenableLock(KEY_SKELETON);
@@ -2452,7 +2458,7 @@ bool psItem::GetIsSkeleton()
 
 void psItem::SetIsSettingItem(bool v)
 {
-    if (v)
+    if(v)
         flags = flags | PSITEM_FLAG_SETTINGITEM;
     else
         flags = flags & ~PSITEM_FLAG_SETTINGITEM;
@@ -2461,7 +2467,7 @@ void psItem::SetIsSettingItem(bool v)
 void psItem::RemoveOpenableLock(uint32 v)
 {
     size_t n = openableLocks.Find(v);
-    if (n != csArrayItemNotFound)
+    if(n != csArrayItemNotFound)
         openableLocks.DeleteIndexFast(n);
 }
 
@@ -2477,14 +2483,14 @@ csString psItem::GetOpenableLockNames()
     while(iter.HasNext())
     {
         uint32 idNum = iter.Next();
-        if (!openableLocksString.IsEmpty()) openableLocksString.Append(", ");
-        if (idNum == KEY_SKELETON)
+        if(!openableLocksString.IsEmpty()) openableLocksString.Append(", ");
+        if(idNum == KEY_SKELETON)
             openableLocksString.Append("All locks");
         else
         {
             // find lock gem
-            gemItem* lockItem = psserver->entitymanager->GetGEM()->FindItemEntity( idNum );
-            if (!lockItem)
+            gemItem* lockItem = psserver->entitymanager->GetGEM()->FindItemEntity(idNum);
+            if(!lockItem)
             {
                 Error2("Can not find genItem for lock instance ID %u.", idNum);
                 return openableLocksString;
@@ -2492,7 +2498,7 @@ csString psItem::GetOpenableLockNames()
 
             // get real item
             psItem* item = lockItem->GetItem();
-            if ( !item )
+            if(!item)
             {
                 Error2("Invalid ItemID from gemItem for instance ID %u.", idNum);
                 return openableLocksString;
@@ -2510,7 +2516,7 @@ void  psItem::SetLocInParent(INVENTORY_SLOT_NUMBER location)
 
 void psItem::SetIsPickupable(bool v)
 {
-    if (!v)
+    if(!v)
         flags=flags | PSITEM_FLAG_NOPICKUP;
     else
         flags=flags & ~PSITEM_FLAG_NOPICKUP;
@@ -2518,7 +2524,7 @@ void psItem::SetIsPickupable(bool v)
 
 void psItem::SetIsPickupableWeak(bool v)
 {
-    if (!v)
+    if(!v)
         flags=flags | PSITEM_FLAG_NOPICKUPWEAK;
     else
         flags=flags & ~PSITEM_FLAG_NOPICKUPWEAK;
@@ -2526,13 +2532,13 @@ void psItem::SetIsPickupableWeak(bool v)
 
 void psItem::SetIsTransient(bool v)
 {
-    if (v)
+    if(v)
         flags=flags | PSITEM_FLAG_TRANSIENT;
     else
         flags=flags & ~PSITEM_FLAG_TRANSIENT;
 }
 
-bool psItem::CheckRequirements( psCharacter* charData, csString& resp )
+bool psItem::CheckRequirements(psCharacter* charData, csString &resp)
 {
     //keeps the requirement list for use later.
     csArray<ItemRequirement> requirements;
@@ -2569,40 +2575,40 @@ bool psItem::CheckRequirements( psCharacter* charData, csString& resp )
     csString needed = "You need to have ";
     bool first= true;
 
-        for (size_t z = 0; z < requirements.GetSize(); z++)
+    for(size_t z = 0; z < requirements.GetSize(); z++)
+    {
+        PSITEMSTATS_STAT stat = psserver->GetCacheManager()->ConvertAttributeString(requirements[z].name);
+        if(stat != PSITEMSTATS_STAT_NONE)
         {
-            PSITEMSTATS_STAT stat = psserver->GetCacheManager()->ConvertAttributeString(requirements[z].name);
-            if ( stat != PSITEMSTATS_STAT_NONE )
+            // Stat buffs may be negative; don't use those here
+            SkillRank &cs = charData->GetSkillRank(statToSkill(stat));
+            val = csMax(cs.Base(), cs.Current());
+
+            // TODO: This should just use the buff always when a move from equipment to bulk can't fail
+        }
+        else
+        {
+            PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(requirements[z].name);
+            if(skill != PSSKILL_NONE)
             {
-                // Stat buffs may be negative; don't use those here
-                SkillRank & cs = charData->GetSkillRank(statToSkill(stat));
-                val = csMax(cs.Base(), cs.Current());
-
-                // TODO: This should just use the buff always when a move from equipment to bulk can't fail
-            }
-            else
-            {
-                PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(requirements[z].name);
-                if ( skill != PSSKILL_NONE )
-                {
-                    val = charData->Skills().GetSkillRank(skill).Current();
-                }
-            }
-
-            if ( val < requirements[z].min_value )
-            {
-                if(!first)
-                    needed +=" and ";
-                else
-                    first = false;
-
-                if(requirements[z].min_value - val > 40)
-                    needed += "a lot ";
-
-                needed += "more in ";
-                needed += requirements[z].name;
+                val = charData->Skills().GetSkillRank(skill).Current();
             }
         }
+
+        if(val < requirements[z].min_value)
+        {
+            if(!first)
+                needed +=" and ";
+            else
+                first = false;
+
+            if(requirements[z].min_value - val > 40)
+                needed += "a lot ";
+
+            needed += "more in ";
+            needed += requirements[z].name;
+        }
+    }
 
     if(first) // No needed things
     {
@@ -2637,8 +2643,8 @@ void psItem::ScheduleRespawn()
     schedule = NULL;
 }
 
-psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3& position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd,
-            float range)
+psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3 &position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd,
+                                 float range)
 {
     spawnID = id;
     this->itemID = itemID;
@@ -2658,21 +2664,21 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
 
     Notify4(LOG_SPAWN,"Spawning item (%u) in instance %u, sector: %s.",itemID,worldInstance, GetSector()->ToString());
 
-    psItemStats *stats = psserver->GetCacheManager()->GetBasicItemStatsByID(itemID);
-    if (stats==NULL)
+    psItemStats* stats = psserver->GetCacheManager()->GetBasicItemStatsByID(itemID);
+    if(stats==NULL)
     {
         Error2("Could not find basic stats with ID %u for item spawn.",itemID);
     }
     else
     {
-        psItem *item = stats->InstantiateBasicItem();
-        if (item)
+        psItem* item = stats->InstantiateBasicItem();
+        if(item)
         {
             // Create the item
             float xpos = psserver->GetRandomRange(GetPosition().x, range); // Random position within range
             float zpos = psserver->GetRandomRange(GetPosition().z, range);
             item->SetLocationInWorld(worldInstance,GetSector(),xpos, GetPosition().y, zpos, 0);
-            if ( !EntityManager::GetSingleton().CreateItem(item,false) )
+            if(!EntityManager::GetSingleton().CreateItem(item,false))
             {
                 delete item;
                 return NULL;
@@ -2692,7 +2698,7 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
     return NULL;
 }
 
-void psScheduledItem::UpdatePosition(csVector3& position, const char *sector)
+void psScheduledItem::UpdatePosition(csVector3 &position, const char* sector)
 {
     if(wantToDie)
         return;
@@ -2752,7 +2758,7 @@ bool psItem::Destroy()
     //}
 
     // Check for already removed
-    if ((this->GetUID() != 0) && !DeleteFromDatabase())
+    if((this->GetUID() != 0) && !DeleteFromDatabase())
     {
         Error3("Failed to delete item ID %u.  Error '%s'.",this->GetUID(),db->GetLastError());
         return false;
@@ -2763,7 +2769,7 @@ bool psItem::Destroy()
 
 bool psItem::DeleteFromDatabase()
 {
-    if ( db->CommandPump("DELETE FROM item_instances where id='%u'",this->uid)!=1)
+    if(db->CommandPump("DELETE FROM item_instances where id='%u'",this->uid)!=1)
         return false;
 
     uid = ID_DONT_SAVE_ITEM;  // prevent update attempts when key is -1 unsigned
@@ -2776,28 +2782,28 @@ void psItem::ScheduleRemoval()
 
     int randomized_interval = psserver->rng->Get(REMOVAL_INTERVAL_RANGE);
 
-    psItemRemovalEvent *event = new psItemRemovalEvent(REMOVAL_INTERVAL_MINIMUM + randomized_interval, this->uid );
+    psItemRemovalEvent* event = new psItemRemovalEvent(REMOVAL_INTERVAL_MINIMUM + randomized_interval, this->uid);
     psserver->GetEventManager()->Push(event);
 
     Notify2(LOG_USER,"Scheduling removal of object for %d ticks from now.",
-     REMOVAL_INTERVAL_MINIMUM + randomized_interval);
+            REMOVAL_INTERVAL_MINIMUM + randomized_interval);
 }
 
-void psItem::DeleteObjectCallback(iDeleteNotificationObject * object)
+void psItem::DeleteObjectCallback(iDeleteNotificationObject* object)
 {
-    if (gItem)
+    if(gItem)
     {
         gItem->UnregisterCallback(this);
         gItem = NULL;
     }
 }
 
-void psItem::UpdateView(Client *fromClient, EID eid, bool clear)
+void psItem::UpdateView(Client* fromClient, EID eid, bool clear)
 {
-    if (!fromClient)
+    if(!fromClient)
         return;
 
-    gemActor *guardian = clear ? 0 : psserver->entitymanager->GetGEM()->FindPlayerEntity(GetGuardingCharacterID());
+    gemActor* guardian = clear ? 0 : psserver->entitymanager->GetGEM()->FindPlayerEntity(GetGuardingCharacterID());
     psViewItemUpdate mesg(fromClient->GetClientNum(),
                           eid,
                           GetLocInParent(),
@@ -2813,63 +2819,63 @@ void psItem::UpdateView(Client *fromClient, EID eid, bool clear)
     mesg.Multicast(fromClient->GetActor()->GetMulticastClients(),0,5);
 }
 
-void psItem::SetGemObject(gemItem *object)
+void psItem::SetGemObject(gemItem* object)
 {
     // Unregister previous callbacks if the current gItem is not NULL
-    if (gItem)
+    if(gItem)
         gItem->UnregisterCallback(this);
 
     // Set the new gItem and register callback
     gItem = object;
-    if (gItem)
+    if(gItem)
         gItem->RegisterCallback(this);
 }
 
-bool psItem::SetBookText(const csString& newText)
+bool psItem::SetBookText(const csString &newText)
 {
     return SetCreation(PSITEMSTATS_CREATIVETYPE_LITERATURE, newText,
                        owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 
-bool psItem::SetSketch(const csString& newSketchData)
+bool psItem::SetSketch(const csString &newSketchData)
 {
     return SetCreation(PSITEMSTATS_CREATIVETYPE_SKETCH, newSketchData,
                        owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 
-bool psItem::SetMusicalSheet(const csString& newMusicalSheet)
+bool psItem::SetMusicalSheet(const csString &newMusicalSheet)
 {
     return SetCreation(PSITEMSTATS_CREATIVETYPE_MUSIC, newMusicalSheet,
                        owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 
-void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
+void psItem::FillContainerMsg(Client* client, psViewItemDescription &outgoing)
 {
-    gemContainer *container = dynamic_cast<gemContainer*> (gItem);
+    gemContainer* container = dynamic_cast<gemContainer*>(gItem);
 
-    if (!container)
+    if(!container)
     {
         // This is not a container in the world so it must be a container inside the person's
         // inventory.  So check to see which items the player has that are in the container.
         int slot = 0;
-        for (size_t i = 0; i < client->GetCharacterData()->Inventory().GetInventoryIndexCount(); i++)
+        for(size_t i = 0; i < client->GetCharacterData()->Inventory().GetInventoryIndexCount(); i++)
         {
-            psItem *child = client->GetCharacterData()->Inventory().GetInventoryIndexItem(i);
-            if (parent_item_InstanceID == uid)
+            psItem* child = client->GetCharacterData()->Inventory().GetInventoryIndexItem(i);
+            if(parent_item_InstanceID == uid)
             {
                 outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetTextureName(),
-                        child->GetImageName(), child->GetPurifyStatus(), slot++,
-                        child->GetStackCount());
+                                     child->GetImageName(), child->GetPurifyStatus(), slot++,
+                                     child->GetStackCount());
             }
         }
         return;
     }
 
     gemContainer::psContainerIterator it(container);
-    while (it.HasNext())
+    while(it.HasNext())
     {
         psItem* child = it.Next();
-        if (!child)
+        if(!child)
         {
             Debug2(LOG_NET,client->GetClientNum(),"Container iterator has next but returns null psItem pointer for %u.\n",client->GetClientNum());
             return;
@@ -2877,11 +2883,11 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription& outgoing)
 
         int stackCount = container->CanTake(client,child) ? child->GetStackCount() : -1;
         outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetTextureName(), child->GetImageName(),
-                child->GetPurifyStatus(), child->GetLocInParent(), stackCount);
+                             child->GetPurifyStatus(), child->GetLocInParent(), stackCount);
     }
 }
 
-bool psItem::SendItemDescription( Client *client)
+bool psItem::SendItemDescription(Client* client)
 {
     csString itemInfo, weight, size, itemQuality, itemCategory, itemName, itemCharges;
 
@@ -2890,7 +2896,7 @@ bool psItem::SendItemDescription( Client *client)
         itemInfo = "This item is locked\n\n";
     }
 
-    itemCategory.Format( "Category: %s", current_stats->GetCategory()->name.GetData() );
+    itemCategory.Format("Category: %s", current_stats->GetCategory()->name.GetData());
     float fweight = GetWeight();
     float ssize = GetItemSize();
     if(stack_count > 1)
@@ -2909,29 +2915,29 @@ bool psItem::SendItemDescription( Client *client)
     itemQuality = "";
     int idSkill = GetIdentifySkill();
     int idMin = GetIdentifyMinSkill();
-    if (!idSkill || idMin < client->GetCharacterData()->Skills().GetSkillRank((PSSKILL) idSkill).Current())
+    if(!idSkill || idMin < client->GetCharacterData()->Skills().GetSkillRank((PSSKILL) idSkill).Current())
     {
         // If the item is an average stackable type object it has no max quality so don't
         // send that information to the client since it is not applicable.
-        if ( current_stats->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY )
+        if(current_stats->GetFlags() & PSITEMSTATS_FLAG_AVERAGEQUALITY)
         {
-            itemQuality.Format("\nAverage Quality: %.0f", GetItemQuality() );
+            itemQuality.Format("\nAverage Quality: %.0f", GetItemQuality());
         }
         else
         {
-            itemQuality.Format("\nQuality: %.0f/%.0f", GetItemQuality(),GetMaxItemQuality() );
+            itemQuality.Format("\nQuality: %.0f/%.0f", GetItemQuality(),GetMaxItemQuality());
         }
     }
     itemInfo += itemQuality;
 
-    if (HasCharges())
+    if(HasCharges())
     {
         itemCharges.Format("\nCharges: %d",GetCharges());
         itemInfo += itemCharges;
     }
 
     // Generate item name
-    if ( crafter_id != 0 )
+    if(crafter_id != 0)
     {
         // Add craft adjective
         itemName.Format("%s %s",GetQualityString(),GetName());
@@ -2942,35 +2948,35 @@ bool psItem::SendItemDescription( Client *client)
     }
 
     // Item was crafted
-    if ( crafter_id != 0 )
+    if(crafter_id != 0)
     {
         // Crafter and guild names
         csString crafterInfo;
-        psCharacter* charData = psServer::CharacterLoader.QuickLoadCharacterData( crafter_id, true );
-        if ( charData )
+        psCharacter* charData = psServer::CharacterLoader.QuickLoadCharacterData(crafter_id, true);
+        if(charData)
         {
-            crafterInfo.Format( "\n\nCrafter: %s", charData->GetCharFullName());
+            crafterInfo.Format("\n\nCrafter: %s", charData->GetCharFullName());
             itemInfo += crafterInfo;
         }
 
         // Item was crafted by a guild member
-        if ( GetGuildID() != 0 )
+        if(GetGuildID() != 0)
         {
             csString guildInfo;
-            psGuildInfo* guild = psserver->GetCacheManager()->FindGuild( GetGuildID() );
-            if ( guild && !guild->IsSecret())
+            psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(GetGuildID());
+            if(guild && !guild->IsSecret())
             {
-                guildInfo.Format( "\nGuild: %s", guild->GetName().GetData());
+                guildInfo.Format("\nGuild: %s", guild->GetName().GetData());
                 itemInfo += guildInfo;
             }
         }
     }
 
-    if (GetGuardingCharacterID().IsValid())
+    if(GetGuardingCharacterID().IsValid())
     {
         csString guardingChar;
-        gemActor *guardian = psserver->entitymanager->GetGEM()->FindPlayerEntity(GetGuardingCharacterID());
-        if (guardian && guardian->GetCharacterData())
+        gemActor* guardian = psserver->entitymanager->GetGEM()->FindPlayerEntity(GetGuardingCharacterID());
+        if(guardian && guardian->GetCharacterData())
         {
             guardingChar.Format("\nGuarded by: %s", guardian->GetCharacterData()->GetCharFullName());
             itemInfo += guardingChar;
@@ -2978,24 +2984,24 @@ bool psItem::SendItemDescription( Client *client)
     }
 
     // Item is a key
-    if ( GetIsKey() )
+    if(GetIsKey())
     {
         csString lockInfo;
-        if (GetIsMasterKey())
+        if(GetIsMasterKey())
         {
-            lockInfo.Format( "\nThis is a master key!");
+            lockInfo.Format("\nThis is a master key!");
             itemInfo += lockInfo;
         }
-        lockInfo.Format( "\nOpens: %s", GetOpenableLockNames().GetData());
+        lockInfo.Format("\nOpens: %s", GetOpenableLockNames().GetData());
         itemInfo += lockInfo;
     }
 
     // Item is a weapon
-    if ( GetIsMeleeWeapon() || GetIsRangeWeapon() )
+    if(GetIsMeleeWeapon() || GetIsRangeWeapon())
     {
         csString speed, damage;
         // Weapon Speed
-        speed.Format( "\n\nAttack delay: %.2f", GetLatency() );
+        speed.Format("\n\nAttack delay: %.2f", GetLatency());
 
         // Weapon Damage Type
         damage = "\n\nDamage:";
@@ -3005,21 +3011,21 @@ bool psItem::SendItemDescription( Client *client)
         dmgPierce = GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE);
 
         // Only worth printing if their value is not zero
-        if ( dmgSlash )
-            damage += csString().Format( "\n Slash: %.2f", dmgSlash );
-        if ( dmgBlunt )
-            damage += csString().Format( "\n Blunt: %.2f", dmgBlunt );
-        if ( dmgPierce )
-            damage += csString().Format( "\n Pierce: %.2f", dmgPierce );
+        if(dmgSlash)
+            damage += csString().Format("\n Slash: %.2f", dmgSlash);
+        if(dmgBlunt)
+            damage += csString().Format("\n Blunt: %.2f", dmgBlunt);
+        if(dmgPierce)
+            damage += csString().Format("\n Pierce: %.2f", dmgPierce);
 
         itemInfo+= speed + damage;
     }
 
     // Item is armor
-    if ( GetIsArmor() )
+    if(GetIsArmor())
     {
         csString armor_type = "\n\n";
-        switch (GetBaseStats()->Armor().Type())
+        switch(GetBaseStats()->Armor().Type())
         {
             case PSITEMSTATS_ARMORTYPE_LIGHT:
                 armor_type.Append("Light Armor");
@@ -3030,8 +3036,8 @@ bool psItem::SendItemDescription( Client *client)
             case PSITEMSTATS_ARMORTYPE_HEAVY:
                 armor_type.Append("Heavy Armor");
                 break;
-        default:
-            break;
+            default:
+                break;
         }
         armor_type += "\n\nArmor:";
         float dmgSlash, dmgBlunt, dmgPierce;
@@ -3040,12 +3046,12 @@ bool psItem::SendItemDescription( Client *client)
         dmgPierce = GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE);
 
         // Only worth printing if their value is not zero
-        if ( dmgSlash )
-            armor_type += csString().Format( "\n Slash: %.2f", dmgSlash );
-        if ( dmgBlunt )
-            armor_type += csString().Format( "\n Blunt: %.2f", dmgBlunt );
-        if ( dmgPierce )
-            armor_type += csString().Format( "\n Pierce: %.2f", dmgPierce );
+        if(dmgSlash)
+            armor_type += csString().Format("\n Slash: %.2f", dmgSlash);
+        if(dmgBlunt)
+            armor_type += csString().Format("\n Blunt: %.2f", dmgBlunt);
+        if(dmgPierce)
+            armor_type += csString().Format("\n Pierce: %.2f", dmgPierce);
 
         itemInfo += armor_type;
     }
@@ -3056,15 +3062,21 @@ bool psItem::SendItemDescription( Client *client)
         itemInfo += csString().Format("\nCapacity: %d", GetContainerMaxSize());
     }
 
-    if (strcmp(GetDescription(),"0") != 0)
+    if(strcmp(GetDescription(),"0") != 0)
     {
         itemInfo += "\n\nDescription: ";
         itemInfo += GetDescription();
     }
 
-    psViewItemDescription outgoing( client->GetClientNum(), itemName.GetData(), itemInfo.GetData(), GetImageName(), stack_count );
+    // Item is random looted
+    if(true) // TODO what's the right check here?
+    {
+        itemInfo += csString().Format("\nRarity: %f", GetRarity());
+    }
 
-    if ( outgoing.valid )
+    psViewItemDescription outgoing(client->GetClientNum(), itemName.GetData(), itemInfo.GetData(), GetImageName(), stack_count);
+
+    if(outgoing.valid)
         psserver->GetEventManager()->SendMessage(outgoing.msg);
     else
     {
@@ -3075,19 +3087,19 @@ bool psItem::SendItemDescription( Client *client)
     return true;
 }
 
-bool psItem::SendContainerContents(Client *client, int containerID)
+bool psItem::SendContainerContents(Client* client, int containerID)
 {
-    if (GetIsLocked() && client->GetSecurityLevel() < GM_LEVEL_2)
+    if(GetIsLocked() && client->GetSecurityLevel() < GM_LEVEL_2)
         return SendItemDescription(client);
 
-    csString desc( GetDescription() );
+    csString desc(GetDescription());
 
     // FIXME: This function is called for world containers too...
-    psCharacterInventory& inv = client->GetCharacterData()->Inventory();
+    psCharacterInventory &inv = client->GetCharacterData()->Inventory();
     float containerWeight = GetWeight();
 
     desc.AppendFmt("\n\n%s Weight: %.2f\n", GetName(), containerWeight);
-    
+
     if(inv.GetContainedItemCount(this) > 0)
     {
         float containedWeight = inv.GetContainedWeight(this);
@@ -3095,24 +3107,24 @@ bool psItem::SendContainerContents(Client *client, int containerID)
                        containedWeight,
                        containedWeight + containerWeight);
     }
-    
+
     desc.AppendFmt("Capacity: %.2f/%u", inv.GetContainedSize(this), GetContainerMaxSize());
 
-    psViewItemDescription outgoing( client->GetClientNum(),
-                                    GetName(),
-                                    desc,
-                                    GetImageName(),
-                                    0,
-                                    IS_CONTAINER );
+    psViewItemDescription outgoing(client->GetClientNum(),
+                                   GetName(),
+                                   desc,
+                                   GetImageName(),
+                                   0,
+                                   IS_CONTAINER);
 
-    if (gItem != NULL )
+    if(gItem != NULL)
         outgoing.containerID = gItem->GetEID().Unbox();
     else
         outgoing.containerID = containerID;
 
     outgoing.ContainerSlots = GetContainerMaxSlots();
 
-    FillContainerMsg( client, outgoing);
+    FillContainerMsg(client, outgoing);
 
     outgoing.ConstructMsg(psserver->GetCacheManager()->GetMsgStrings());
     outgoing.SendMessage();
@@ -3120,25 +3132,25 @@ bool psItem::SendContainerContents(Client *client, int containerID)
     return true;
 }
 
-void psItem::SendCraftTransInfo(Client *client)
+void psItem::SendCraftTransInfo(Client* client)
 {
     csString mess;
     psItemStats* mindStats = GetCurrentStats();
-    if ( !mindStats )
+    if(!mindStats)
     {
         Error1("No stats for mind item.");
         return;
     }
 
     // Get character pointer
-    if ( client == NULL )
+    if(client == NULL)
     {
         Error1("Bad client pointer.");
         return;
     }
 
     psCharacter* character = client->GetCharacterData();
-    if ( character == NULL )
+    if(character == NULL)
     {
         Error1("Bad client psCharacter pointer.");
         return;
@@ -3157,16 +3169,16 @@ void psItem::SendCraftTransInfo(Client *client)
 
     // Send info to client
     psMsgCraftingInfo msg(client->GetClientNum(),mess);
-    if (msg.valid)
+    if(msg.valid)
         psserver->GetEventManager()->SendMessage(msg.msg);
     else
         Bug2("Could not create valid psMsgCraftingInfo for client %u.\n",client->GetClientNum());
 }
 
-void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csString & comboString)
+void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csString &comboString)
 {
     csArray<CraftComboInfo*>* combInfoArray = psserver->GetCacheManager()->GetTradeComboInfoByItemID(designID);
-    if (!combInfoArray)
+    if(!combInfoArray)
         return;
 
     csArray<CraftComboInfo*>::Iterator combInfoIter(combInfoArray->GetIterator());
@@ -3176,7 +3188,7 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
         // If any skill check succeed then display this combinations string.
         // that means we have a way to do something with the result of the combine
         csArray<CraftSkills*>* skillArray = combInfo->skillArray;
-        for ( int count = 0; count<(int)skillArray->GetSize(); count++ )
+        for(int count = 0; count<(int)skillArray->GetSize(); count++)
         {
             // Check if craft step minimum primary skill level is meet by client
             int priSkill = skillArray->Get(count)->priSkillId;
@@ -3189,7 +3201,7 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
             int secSkill = skillArray->Get(count)->secSkillId;
             if(secSkill >= 0 && skillArray->Get(count)->minSecSkill > (int)character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
             {
-                    continue;
+                continue;
             }
             // Otherwise send combination string, and go on to next combine
             comboString.Append(combInfo->craftCombDescription);
@@ -3198,26 +3210,26 @@ void psItem::GetComboInfoString(psCharacter* character, uint32 designID, csStrin
     }
 }
 
-void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csString & transString)
+void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csString &transString)
 {
     csArray<CraftTransInfo*>* craftArray = psserver->GetCacheManager()->GetTradeTransInfoByItemID(designID);
-    if (!craftArray)
+    if(!craftArray)
         return;
 
-    for ( int count = 0; count<(int)craftArray->GetSize(); count++ )
+    for(int count = 0; count<(int)craftArray->GetSize(); count++)
     {
         // Check if craft step minimum primary skill level is meet by client
         int priSkill = craftArray->Get(count)->priSkillId;
         if(priSkill >= 0 && craftArray->Get(count)->minPriSkill > character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
         {
-                continue;
+            continue;
         }
 
         // Check if craft step minimum seconday skill level is meet by client
         int secSkill = craftArray->Get(count)->secSkillId;
         if(secSkill >= 0 && craftArray->Get(count)->minSecSkill > (int) character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
         {
-                continue;
+            continue;
         }
 
         // Otherwise tack on trasnformation step description to message
@@ -3225,7 +3237,7 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
     }
 }
 
-bool psItem::SendBookText(Client *client, int containerID, int slotID)
+bool psItem::SendBookText(Client* client, int containerID, int slotID)
 {
     csString name = GetName();
     csString text;
@@ -3233,19 +3245,20 @@ bool psItem::SendBookText(Client *client, int containerID, int slotID)
     if(GetIsLocked())
     {
         text = lockedText;
-    } else text = GetBookText();
+    }
+    else text = GetBookText();
     //determine whether to display the 'write' button
     //and send the appropriate information if so
 
     //is it a writable book?  In our inventory? Are we the author?
     bool shouldWrite = (GetIsWriteable() &&
-        GetOwningCharacter() == client->GetCharacterData() &&
-        ( IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all creative", false)) );
+                        GetOwningCharacter() == client->GetCharacterData() &&
+                        (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all creative", false)));
 
-  //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
+    //  CPrintf(CON_DEBUG,"Sent text for book %u %u\n",slotID, containerID);
     psReadBookTextMessage outgoing(client->GetClientNum(), name, text, shouldWrite, slotID, containerID,GetCreativeBackgroundImg());
 
-    if (outgoing.valid)
+    if(outgoing.valid)
     {
         psserver->GetEventManager()->SendMessage(outgoing.msg);
     }
@@ -3258,13 +3271,13 @@ bool psItem::SendBookText(Client *client, int containerID, int slotID)
     return true;
 }
 
-void psItem::SendSketchDefinition(Client *client)
+void psItem::SendSketchDefinition(Client* client)
 {
     // Get character capabilities
     static csWeakRef<MathScript> script;
-    if (!script.IsValid())
+    if(!script.IsValid())
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "Calc Player Sketch Limits");
-    if (!script)
+    if(!script)
     {
         Error1("Cannot find mathscript: Calc Player Sketch Limits");
         return;
@@ -3274,8 +3287,8 @@ void psItem::SendSketchDefinition(Client *client)
     env.Define("Actor", client->GetCharacterData());
     script->Evaluate(&env);
 
-    MathVar *score = env.Lookup("IconScore");
-    MathVar *count = env.Lookup("PrimCount");
+    MathVar* score = env.Lookup("IconScore");
+    MathVar* count = env.Lookup("PrimCount");
     CS_ASSERT(score && count);
     int playerScore = score->GetRoundValue();
     int primCount   = count->GetRoundValue();
@@ -3286,44 +3299,44 @@ void psItem::SendSketchDefinition(Client *client)
 
     // writeable sketch? in inventory? author? gm?
     bool sketchReadOnly = !(GetIsWriteable() &&
-          GetOwningCharacter() == client->GetCharacterData() &&
-          (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all creative", false)) );
-    if (sketchReadOnly)
+                            GetOwningCharacter() == client->GetCharacterData() &&
+                            (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all creative", false)));
+    if(sketchReadOnly)
         xml.Append("<rdonly/>");
 
     size_t i=0;
-    while (psserver->GetCacheManager()->GetLimitation(i))
+    while(psserver->GetCacheManager()->GetLimitation(i))
     {
-        const psCharacterLimitation *charlimit = psserver->GetCacheManager()->GetLimitation(i);
+        const psCharacterLimitation* charlimit = psserver->GetCacheManager()->GetLimitation(i);
 
         // This limits which icons each player can use to only the ones below his level.
-        if (playerScore > charlimit->min_score)
-            xml.AppendFmt("<ic>%s</ic>",charlimit->value.GetDataSafe() );
+        if(playerScore > charlimit->min_score)
+            xml.AppendFmt("<ic>%s</ic>",charlimit->value.GetDataSafe());
         i++;
     }
     xml += "</limits>";
 
     // Now send all this
-    psSketchMessage msg( client->GetClientNum(), GetUID(), 0, xml, GetSketch(), !sketchReadOnly, GetName(), GetCreativeBackgroundImg() );
+    psSketchMessage msg(client->GetClientNum(), GetUID(), 0, xml, GetSketch(), !sketchReadOnly, GetName(), GetCreativeBackgroundImg());
     msg.SendMessage();
 }
 
 void psItem::SendMusicalSheet(Client* client)
 {
     bool readOnly = !(GetIsWriteable() &&
-          GetOwningCharacter() == client->GetCharacterData() &&
-          (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all creative", false)));
+                      GetOwningCharacter() == client->GetCharacterData() &&
+                      (IsThisTheCreator(client->GetCharacterData()->GetPID()) || psserver->CheckAccess(client, "write all creative", false)));
 
     psMusicalSheetMessage msg(client->GetClientNum(), GetUID(), readOnly, false, GetName(), GetMusicalSheet().GetDataSafe());
     msg.SendMessage();
 }
 
 void psItem::ViewItem(Client* client, int containerID,
-        INVENTORY_SLOT_NUMBER slotID)
+                      INVENTORY_SLOT_NUMBER slotID)
 {
-    psCharacter *owningCharacter = GetOwningCharacter();
+    psCharacter* owningCharacter = GetOwningCharacter();
 
-    if (current_stats->GetIsContainer())
+    if(current_stats->GetIsContainer())
     {
         SendContainerContents(client, slotID);
     }
@@ -3331,7 +3344,7 @@ void psItem::ViewItem(Client* client, int containerID,
     // for now, just examining mind item gives craft information rather then its normal description
     //  eventually /study will give same results after some delay
     // check if we are examining an item that is meant for mind slot
-    else if (FitsInSlots(PSITEMSTATS_SLOT_MIND))
+    else if(FitsInSlots(PSITEMSTATS_SLOT_MIND))
     {
         //We pass through container, slot & parent IDs so that we can pass them back and forth when writing books.
         SendCraftTransInfo(client);
@@ -3341,21 +3354,21 @@ void psItem::ViewItem(Client* client, int containerID,
     //e.g. "This book is bound in a leathery Pterosaur hide and branded with the insignia of the Sunshine Squadron"
     //NOTE that this logic is sensitive to ordering; Books currently have a nonzero "sketch" length since that's where they
     //store their content.
-    else if (GetIsReadable() && (client->GetCharacterData()
-            == owningCharacter || !owningCharacter))
+    else if(GetIsReadable() && (client->GetCharacterData()
+                                == owningCharacter || !owningCharacter))
     {
         //We pass through container, slot & parent IDs so that we can pass them back and forth when writing books.
         SendBookText(client, containerID, slotID);
     }
-    else if (GetCreative() == PSITEMSTATS_CREATIVETYPE_SKETCH
+    else if(GetCreative() == PSITEMSTATS_CREATIVETYPE_SKETCH
             && GetSketch().Length() > 0
             && (client->GetCharacterData() == owningCharacter
-                    || !owningCharacter)) // Sketch
+                || !owningCharacter)) // Sketch
     {
         SendSketchDefinition(client);
     }
     else if(GetCreative() == PSITEMSTATS_CREATIVETYPE_MUSIC
-        && (client->GetCharacterData() == owningCharacter || !owningCharacter))
+            && (client->GetCharacterData() == owningCharacter || !owningCharacter))
     {
         SendMusicalSheet(client);
     }
@@ -3365,32 +3378,32 @@ void psItem::ViewItem(Client* client, int containerID,
     }
 }
 
-bool psItem::SendActionContents(Client *client, psActionLocation *action)
+bool psItem::SendActionContents(Client* client, psActionLocation* action)
 {
-    if ( action == NULL )
+    if(action == NULL)
         return false;
 
     //if(GetIsLocked())
     //    return SendItemDescription(client);
 
-    csString name( action->name );
-    csString desc( GetDescription() );
-    csString icon( GetImageName() );
+    csString name(action->name);
+    csString desc(GetDescription());
+    csString icon(GetImageName());
 
     csString description = action->GetDescription();
-    if (description.Length())
+    if(description.Length())
     {
         desc = description.GetData();
     }
 
     bool isContainer = GetIsContainer();
 
-    psViewItemDescription outgoing( client->GetClientNum(),
-                                    name,
-                                    desc,
-                                    icon,
-                                    0,
-                                    isContainer );
+    psViewItemDescription outgoing(client->GetClientNum(),
+                                   name,
+                                   desc,
+                                   icon,
+                                   0,
+                                   isContainer);
 
     /* REMOVED: was probably there to avoid a crash, remove after some testing.
     if (action->gItem != NULL )
@@ -3403,14 +3416,77 @@ bool psItem::SendActionContents(Client *client, psActionLocation *action)
 
     outgoing.ContainerSlots = GetContainerMaxSlots();
 
-    if ( isContainer )
+    if(isContainer)
     {
-        FillContainerMsg( client, outgoing );
+        FillContainerMsg(client, outgoing);
         outgoing.ConstructMsg(psserver->GetCacheManager()->GetMsgStrings());
     }
 
     outgoing.SendMessage();
     return true;
+}
+
+float psItem::GetRarity()
+{
+
+    // if rarity is not yet calculated, recalculate it
+    if(rarity==0)
+        rarity = CalculateItemRarity();
+
+    return rarity;
+}
+
+float psItem::CalculateItemRarity()
+{
+
+    // TODO the following code should be moved to a script if possible.
+
+    // default rarity
+    float calcRarity = 1;
+
+    // calculate number of modifiers
+    int numModifiers=0;
+    for(int i=0; i<3; i++)
+    {
+        if(modifierIds[i]!=0)
+            numModifiers++;
+    }
+
+    // if there are no modifiers the item is not rare, leave rarity at 1
+    if(numModifiers==0)
+        return 1;
+
+    // get prefix probability (index 0)
+    float prefixProbability = psserver->GetSpawnManager()->GetLootRandomizer()->GetModifierPercentProbability(modifierIds[0],0);
+
+    // get suffix probability (index 1)
+    float suffixProbability = psserver->GetSpawnManager()->GetLootRandomizer()->GetModifierPercentProbability(modifierIds[1],1);
+
+    // get adjective probability (index 2)
+    float adjectiveProbability = psserver->GetSpawnManager()->GetLootRandomizer()->GetModifierPercentProbability(modifierIds[2],2);
+
+    // calculate rarity of all current modifiers
+    if(prefixProbability!=0)
+        calcRarity *= prefixProbability;
+    if(suffixProbability!=0)
+        calcRarity *= suffixProbability;
+    if(adjectiveProbability!=0)
+        calcRarity *= adjectiveProbability;
+
+    // add chance to get 1,2, or 3 modifiers
+    if(numModifiers==1)
+    {
+        calcRarity *= 0.22;
+    }
+    else if(numModifiers==2)
+    {
+        calcRarity *= 0.07;
+    }
+    else if(numModifiers==3)
+    {
+        calcRarity *= 0.01;
+    }
+    return calcRarity;
 }
 
 RandomizedOverlay::RandomizedOverlay()

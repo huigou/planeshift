@@ -162,7 +162,7 @@ class psWorkGameEvent;
  */
 class RandomizedOverlay
 {
-    public:
+public:
     RandomizedOverlay(); ///< Constructor.
     ~RandomizedOverlay(); ///< Destructor.
     bool active; ///< Notifies if this overlay is active and should be applied.
@@ -170,7 +170,7 @@ class RandomizedOverlay
     float weight; ///< Weigth of the item changed by the loot modifier rules.
     float latency; ///< Latency of the weapon changed by the loot modifiers rules.
     float damageStats[PSITEMSTATS_DAMAGETYPE_COUNT]; ///< Damage/protection stats changed by the loot modifiers rules.
-    ApplicativeScript *equip_script; ///< Equip script for this item overriding the main one from loot modifiers rules.
+    ApplicativeScript* equip_script; ///< Equip script for this item overriding the main one from loot modifiers rules.
     psMoney price; ///< Price calculated from the loot modifiers rules which overlays the basic one.
     csArray<ItemRequirement> reqs; ///< Array of all the stat prerequisites needed to equip this item.
     csString mesh; ///< Overriden mesh of this item from the basic one.
@@ -236,31 +236,43 @@ public:
      * with the parent's AddItemToContainer() member function.  It should then call Save() to save the instance
      * to the database.
      */
-    psItem ();
+    psItem();
 
     /** Destructs the psItem, and, if this is a container, all contained items. Does NOT remove any items from the database.
      */
-    virtual ~psItem ();
+    virtual ~psItem();
 
     /** Return a string identifying this object as an Item
      */
-    virtual const char * GetItemType() { return "Item"; }
+    virtual const char* GetItemType()
+    {
+        return "Item";
+    }
 
-    gemItem* GetGemObject() { return gItem; }
-    void SetGemObject( gemItem* object );
+    gemItem* GetGemObject()
+    {
+        return gItem;
+    }
+    void SetGemObject(gemItem* object);
 
-    psWorkGameEvent* GetTransformationEvent() { return transformationEvent; }
-    void SetTransformationEvent(psWorkGameEvent* t) { transformationEvent = t; }
+    psWorkGameEvent* GetTransformationEvent()
+    {
+        return transformationEvent;
+    }
+    void SetTransformationEvent(psWorkGameEvent* t)
+    {
+        transformationEvent = t;
+    }
 
     /// Handles deleted gem objects.
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 
     ///inform clients on view updates
-    void UpdateView(Client *fromClient, EID eid, bool clear);
+    void UpdateView(Client* fromClient, EID eid, bool clear);
 
-    bool SendItemDescription( Client *client);
+    bool SendItemDescription(Client* client);
 
-    bool SendContainerContents(Client *client, int containerID = CONTAINER_INVENTORY_BULK);
+    bool SendContainerContents(Client* client, int containerID = CONTAINER_INVENTORY_BULK);
 
     /** Send an item to the client.
      * @param client The client the message is for.
@@ -270,7 +282,7 @@ public:
      */
     void ViewItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
 
-    bool SendActionContents(Client *client, psActionLocation *action);
+    bool SendActionContents(Client* client, psActionLocation* action);
 
 private:
 
@@ -279,17 +291,17 @@ private:
       * @param client The client the message is for. Used to figure out ownership flags.
       * @param outgoing The message that needs to be populated.
       */
-    void FillContainerMsg(Client* client, psViewItemDescription& outgoing);
+    void FillContainerMsg(Client* client, psViewItemDescription &outgoing);
 
-    void SendCraftTransInfo( Client *client);
+    void SendCraftTransInfo(Client* client);
 
-    void GetComboInfoString(psCharacter* character, uint32 designID, csString & comboString);
+    void GetComboInfoString(psCharacter* character, uint32 designID, csString &comboString);
 
-    void GetTransInfoString(psCharacter* character, uint32 designID, csString & transString);
+    void GetTransInfoString(psCharacter* character, uint32 designID, csString &transString);
 
-    bool SendBookText( Client *client, int containerID, int slotID);
+    bool SendBookText(Client* client, int containerID, int slotID);
 
-    void SendSketchDefinition(Client *client);
+    void SendSketchDefinition(Client* client);
 
     void SendMusicalSheet(Client* client);
 
@@ -305,7 +317,7 @@ private:
     /// Location in the game world. Only valid if this item is not being carried by a player (directly or indirectly)
     struct
     {
-        psSectorInfo *loc_sectorinfo;
+        psSectorInfo* loc_sectorinfo;
         float loc_x,loc_y,loc_z;
         float loc_xrot,loc_yrot,loc_zrot;
         InstanceID worldInstance;
@@ -373,7 +385,7 @@ private:
      * NULL if this item is on the ground or in another item that is on the ground.
      *
      */
-    psCharacter *owning_character;
+    psCharacter* owning_character;
 
     /** The owner of the item may not be infact online so have to store the ID since the
         above may be undefined in some cases.
@@ -385,19 +397,19 @@ private:
      * This can point to a common shared entry from the basic stats list, or a unique entry.
      * Check for the PSITEM_FLAG_UNIQUE_ITEM flag to see which.
      */
-    psItemStats *base_stats;
+    psItemStats* base_stats;
     /** The current stats of this item.  This value should be used for pretty much everything.
      * Initially this points to the same entry as the base_stats.  If modifiers or effects are applied
      * this will point to an allocated temporary stats entry that contains the result of all modifiers
      * and effects on top of the base.
      */
-    psItemStats *current_stats;
+    psItemStats* current_stats;
     /** The list of modifiers for this item.
      * We could keep just the base and current, but then we wouldn't be able to track what kinds of modifiers
      * had been applied to this item instance, and it would be difficult to find where to add the modifiers in
      * the database.
      */
-    psItemStats *modifiers[PSITEM_MAX_MODIFIERS];
+    psItemStats* modifiers[PSITEM_MAX_MODIFIERS];
 
     // Lock stuff
     unsigned int lockStrength;
@@ -437,13 +449,13 @@ private:
     csString item_description;
 
     /// The ActiveSpell* of the equip script, for cancelling on unequip.
-    ActiveSpell *equipActiveSpell;
+    ActiveSpell* equipActiveSpell;
 
     /// A structure which holds the creative data about this item.
     psItemCreativeStats creativeStats;
 
     ///stores the modifications to apply to this item. This is a cache used to increase performance.
-    RandomizedOverlay *itemModifiers;
+    RandomizedOverlay* itemModifiers;
 
     ///stores the ids of the modifications to apply to this item. Used for save and copy.
     csArray<uint32_t> modifierIds;
@@ -453,7 +465,7 @@ public:
      * This is used only by the character loader.
      *  On return parentid is set to the UID of the parent item.  UID 0 is reserved for no parent.
      */
-    virtual bool Load(iResultRow& row);
+    virtual bool Load(iResultRow &row);
 
     /** Queues this item to be saved to the database.  (DB action will be executed after 500ms)
      *  Call this after EVERY change of a persistant property, and the system
@@ -468,17 +480,23 @@ public:
      *  This MUST be called after this item is constructed AND it's initial
      *  properties are set.  (includes normal loading, InstantiateBasicItem(), etc.)
      */
-    void SetLoaded() { loaded = true; }
+    void SetLoaded()
+    {
+        loaded = true;
+    }
 
     /** Check to see if the character meets the requirements for this item.
      */
-    bool CheckRequirements( psCharacter* character, csString& resp );
+    bool CheckRequirements(psCharacter* character, csString &resp);
 
     /** Returns the UID of this item instance.
      * 0 is reserved for no UID assigned yet.
      * Items are initially created with a UID of 0.  Save() generates a unique item id.
      */
-    uint32 GetUID() { return uid; }
+    uint32 GetUID()
+    {
+        return uid;
+    }
 
     /** Sets the Unique ID of this item. DO NOT CALL THIS.
      * This should ONLY be called internally or from psCharacterLoader.
@@ -496,12 +514,18 @@ public:
     void SetIsGuildIDValid(bool v);
     /// Returns the UID for the crafter of this item.  Be sure to check GetIsCrafterIDValid()!
 
-    PID GetCrafterID() const { return crafter_id; }
+    PID GetCrafterID() const
+    {
+        return crafter_id;
+    }
     /// Sets the UID for the cracter of this item.  Generally used immediately after completing the crafting work.
     void SetCrafterID(PID v);
 
     /// Returns the UID for the guild who has certified this item.  Be sure to check GetIsGuildIDValid()!
-    unsigned int GetGuildID() const { return guild_id; }
+    unsigned int GetGuildID() const
+    {
+        return guild_id;
+    }
     /// Sets the UID for the guild certifying this item.
     void SetGuildID(unsigned int v);
 
@@ -532,12 +556,21 @@ public:
     /// Set the item decay factor
     void SetItemDecayRate(float v);
     /// Get the item decay factor
-    float GetItemDecayRate() { return base_stats->GetDecayRate(); }
+    float GetItemDecayRate()
+    {
+        return base_stats->GetDecayRate();
+    }
     /// Adjust the item quality by an amount of decay
     float AddDecay(float severityFactor);
 
-    bool IsInUse()  { return item_in_use; }
-    void SetInUse(bool flag) { item_in_use = flag; }
+    bool IsInUse()
+    {
+        return item_in_use;
+    }
+    void SetInUse(bool flag)
+    {
+        item_in_use = flag;
+    }
 
     /** Returns true if this item is based off of unique statistics.
      * Items with unique statistics will be especially rare.  Some special operations are
@@ -552,22 +585,25 @@ public:
      * TODO: In the future we may expand this to functions that check for "similar" modifiers to a given
      *       modifier.
      */
-    bool HasModifier(psItemStats *modifier);
+    bool HasModifier(psItemStats* modifier);
 
     /** Adds a modifier to this item instance if there is space available.
      * Current stats are automaticaly updated.
      *
      * TODO: A DeleteModifier() function may be warranted in the future.
      */
-    bool AddModifier(psItemStats *modifier);
+    bool AddModifier(psItemStats* modifier);
 
     /** Returns the modifier at a specific index 0 through PSITEM_MAX_MODIFIERS-1
      *
      */
-    psItemStats *GetModifier(int index);
+    psItemStats* GetModifier(int index);
 
     /** Creates a new blank instance of it's class (i.e. psItem or its subclass) */
-    virtual psItem *CreateNew() { return new psItem(); }
+    virtual psItem* CreateNew()
+    {
+        return new psItem();
+    }
 
     /** Duplicates an item instance.
      *  The parameter is the stack count of the new item.
@@ -575,11 +611,11 @@ public:
      *  The returned item will not have a valid location nor a valid UID.  The location in the world or
      *  on an owning player must be set first, and then Save() called to generate a UID and save to the database.
      */
-    virtual psItem *Copy(unsigned short newstackcount);
+    virtual psItem* Copy(unsigned short newstackcount);
 
     /** Copies values of its attributes to item 'target'.
       */
-    virtual void Copy(psItem * target);
+    virtual void Copy(psItem* target);
 
     /** Splits an item instance representing a stack into two smaller stacks.
      *  The parameter is the size of the new stack.
@@ -592,13 +628,13 @@ public:
 
     /** Combines 'stackme' with this item.
      *  You must call CheckStackableWith first; this ASSERTS if the two are not stackable. */
-    void CombineStack(psItem *& stackme);
+    void CombineStack(psItem* &stackme);
 
 
     /** TODO:  Comment me with something more than "Gets the attack animation ID"
      *
      */
-    int GetAttackAnimID(psCharacter *pschar);
+    int GetAttackAnimID(psCharacter* pschar);
 
     /// Returns the decay value of the item.  See the decay member for a description of what this is.
     float GetDecay();
@@ -606,7 +642,10 @@ public:
     void SetDecay(float v);
 
     /// Returns the stack count.  Be sure to call GetIsStackable() first!
-    unsigned short GetStackCount() const { return stack_count; }
+    unsigned short GetStackCount() const
+    {
+        return stack_count;
+    }
     /** Sets the stack count.  Be sure to call GetIsStackable() first!
      *  Don't call this to try and combine or split stacks!  That logic is done in
      *  CombineStack() and SplitStack().
@@ -619,24 +658,41 @@ public:
      *
      * This should always be valid since items should be destroyed when the character logs off
      */
-    psCharacter *GetOwningCharacter() { return owning_character; }
+    psCharacter* GetOwningCharacter()
+    {
+        return owning_character;
+    }
     /** Get the ID of the owning character.  This is required in cases where the owning
       * character may not be online and the above pointer is undefined.
       */
-    PID GetOwningCharacterID() const { return owningCharacterID; }
+    PID GetOwningCharacterID() const
+    {
+        return owningCharacterID;
+    }
 
     /// Alters the owning character of this item.  Also see UpdateInventoryStatus.
-    virtual void SetOwningCharacter(psCharacter *owner);
+    virtual void SetOwningCharacter(psCharacter* owner);
 
     /** Item guardians: items dropped in the world or placed in a public
      *  container are not owned, but "guarded" by a character. */
-    PID  GetGuardingCharacterID() const { return guardingCharacterID; }
-    void SetGuardingCharacterID(PID guardian) { guardingCharacterID = guardian; }
+    PID  GetGuardingCharacterID() const
+    {
+        return guardingCharacterID;
+    }
+    void SetGuardingCharacterID(PID guardian)
+    {
+        guardingCharacterID = guardian;
+    }
 
     /// Returns the item that contains this item, or NULL if it's not contained by another item.
     uint32 GetContainerID() const
-    { return parent_item_InstanceID; }
-    void SetContainerID(uint32 parentId) { parent_item_InstanceID = parentId; }
+    {
+        return parent_item_InstanceID;
+    }
+    void SetContainerID(uint32 parentId)
+    {
+        parent_item_InstanceID = parentId;
+    }
 
 
     /** Returns the location of this item in it's parent item or in the players equipment, bulk or bank as appropriate.
@@ -649,39 +705,54 @@ public:
     /** Used to set the UNIQUE flag in addition to setting base stats pointer
      * TODO: This is pretty much untested at this point.
      */
-    void SetUniqueStats(psItemStats *statptr);
+    void SetUniqueStats(psItemStats* statptr);
 
     /** Alters the base stats of this item instance.
      * If called on a unique item it revokes the unique item status of this item!
      * If called on a unique item the unique item stats should be destroyed elsewhere.
      */
-    void SetBaseStats(psItemStats *statptr);
+    void SetBaseStats(psItemStats* statptr);
 
     /** Returns the base stats for this item instance.  You may want to use this only to see this item instance is a specific type of item
      * Do not use for retrieval of values for calculations (such as damage).
      */
-    psItemStats *GetBaseStats() const { return base_stats; }
+    psItemStats* GetBaseStats() const
+    {
+        return base_stats;
+    }
 
     /** Sets the current item stats.  DO NOT USE!
      * This is used mostly internally.  The current stats either point to the same entry as the base stats or a stats entry that
      * is the sum of the base stats plus modifiers and effects.
      */
-    void SetCurrentStats(psItemStats *statptr);
+    void SetCurrentStats(psItemStats* statptr);
 
     /** Gets a pointer to the current stats.  You probably dont want to use this.
      * Use the functions below which may apply additional logic to determine what value to return.
      */
-    psItemStats *GetCurrentStats() const { return current_stats; }
+    psItemStats* GetCurrentStats() const
+    {
+        return current_stats;
+    }
 
     /** In some cases some modifiers or effects may be difficult to reverse (for example percent bonuses applied and removed in different orders).
      * In these cases it should be safe to call RecalcCurrentStats() which takes a bit longer, but builds the current stats back up from the base.
      */
     void RecalcCurrentStats();
 
-    PSITEM_FLAGS GetFlags() { return flags; }
-    void SetFlags(int f) { flags = f; }
+    PSITEM_FLAGS GetFlags()
+    {
+        return flags;
+    }
+    void SetFlags(int f)
+    {
+        flags = f;
+    }
 
-    virtual int GetPurifyStatus() const { return 0; }
+    virtual int GetPurifyStatus() const
+    {
+        return 0;
+    }
 
     // Interface to itemstats
 
@@ -705,12 +776,12 @@ public:
     bool GetIsEquipStackable() const;
     PSITEMSTATS_CREATIVETYPE GetCreative();
     /// Write creative stuff such as lit text (eg book) or map data.
-    bool SetCreation (PSITEMSTATS_CREATIVETYPE, const csString&, csString);
+    bool SetCreation(PSITEMSTATS_CREATIVETYPE, const csString &, csString);
     /** Gets the creator of this creative and the creator setting status.
      *  @param creatorStatus The status of the creator setting in this creative
      *  @return PID The PID of the player who created this creative or 0 if not set or invalid.
      */
-    PID GetCreator (PSITEMSTATS_CREATORSTATUS & creatorStatus);
+    PID GetCreator(PSITEMSTATS_CREATORSTATUS &creatorStatus);
     /// sets the creator (i.e. author, artist, etc) of creative things
     void SetCreator(PID, PSITEMSTATS_CREATORSTATUS);
     /** Checks if the creator of the book is the one passed as argument.
@@ -718,12 +789,12 @@ public:
      */
     bool IsThisTheCreator(PID);
     bool GetBuyPersonalise();
-    const char *GetName() const;
-    const char *GetDescription() const;
+    const char* GetName() const;
+    const char* GetDescription() const;
     void SetName(const char* newName);
     void SetDescription(const char* newDescription);
-    const char *GetStandardName();
-    const char *GetStandardDescription();
+    const char* GetStandardName();
+    const char* GetStandardDescription();
 
     /** Allows to add a modification to the item.
      *  @todo For now the system, even if adapted to allow an unspecified amount of modifications now, in the LOAD
@@ -738,8 +809,14 @@ public:
     ///  Recalculates the modifications for this item
     void UpdateModifiers();
 
-    float GetRange() const { return current_stats->GetRange(); }
-    csSet<unsigned int> GetAmmoTypeID() const { return current_stats->GetAmmoTypeID(); }
+    float GetRange() const
+    {
+        return current_stats->GetRange();
+    }
+    csSet<unsigned int> GetAmmoTypeID() const
+    {
+        return current_stats->GetAmmoTypeID();
+    }
 
     PSITEMSTATS_WEAPONTYPE GetWeaponType();
     PSSKILL GetWeaponSkill(PSITEMSTATS_WEAPONSKILL_INDEX index);
@@ -761,7 +838,10 @@ public:
     float GetWeight();
     float GetItemSize();
     /// Gets the total size of the items in the stack.
-    float GetTotalStackSize() { return GetItemSize()*stack_count; }
+    float GetTotalStackSize()
+    {
+        return GetItemSize()*stack_count;
+    }
 
     unsigned short GetContainerMaxSize();
 
@@ -782,7 +862,10 @@ public:
      *  @param meshName The meshName we are sarching for the slot to remove for it.
      *  @return The list of meshes to remove when equipping this item.
      */
-    csString GetSlotRemovedMesh(int slot, csString meshName = "") { return GetBaseStats()->GetSlotRemovedMesh(slot, meshName); }
+    csString GetSlotRemovedMesh(int slot, csString meshName = "")
+    {
+        return GetBaseStats()->GetSlotRemovedMesh(slot, meshName);
+    }
     float GetDecayResistance();
     psMoney GetPrice();
     psMoney GetSellPrice();    ///< Merchants want a percentage
@@ -791,8 +874,8 @@ public:
 
     float GetVisibleDistance();
 
-    void GetLocationInWorld(InstanceID &instance,psSectorInfo **sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const;
-    void SetLocationInWorld(InstanceID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
+    void GetLocationInWorld(InstanceID &instance,psSectorInfo** sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot) const;
+    void SetLocationInWorld(InstanceID instance,psSectorInfo* sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
 
     /** Get the x and z axis rotations for the item (y obtained in GetLocationInWorld)
      * @param loc_xrot the variable in which the x rotation will be stored
@@ -820,43 +903,46 @@ public:
      */
     void SetRotationInWorld(float loc_xrot, float loc_yrot, float loc_zrot);
 
-    psSectorInfo* GetSector() const { return location.loc_sectorinfo; }
+    psSectorInfo* GetSector() const
+    {
+        return location.loc_sectorinfo;
+    }
 
     /** Get the Mesh Name for the item.
      *
      *  Used for standalone or weilded mesh.
      */
-    const char *GetMeshName();
+    const char* GetMeshName();
 
     /** Get the Texture Name for the item.
      *
      *  Used when worn and attached to the mesh given by part name.
      */
-    const char *GetTextureName();
+    const char* GetTextureName();
 
     /** Get the Part Name for the item.
      *
      *  This is the name of the part that the texture should be attached to
      *  if no change of mesh.
      */
-    const char *GetPartName();
+    const char* GetPartName();
 
     /** Get the Part Mesh Name for the item.
      *
      *  This is the new mesh to be attached to the location given
      *  by the pattern Part Name.
      */
-    const char *GetPartMeshName();
+    const char* GetPartMeshName();
 
     /** Get the Image Name for the item.
      *
      *  Used in inventory and other location where item has to be presented
      *  by a 2D image.
      */
-    const char *GetImageName();
+    const char* GetImageName();
 
     csString GetQuantityName(); // returns the quantity and plural name in a string
-    static csString GetQuantityName(const char *namePtr, int stack_count, PSITEMSTATS_CREATIVETYPE creativeType, bool giveDetail = false);
+    static csString GetQuantityName(const char* namePtr, int stack_count, PSITEMSTATS_CREATIVETYPE creativeType, bool giveDetail = false);
 
     // For future use, see notes for mesh_index variables, etc.
     /*
@@ -866,7 +952,7 @@ public:
     unsigned int GetImageIndex();
     */
 
-    void UpdateInventoryStatus(psCharacter *owner,uint32 parent_id, INVENTORY_SLOT_NUMBER slot);
+    void UpdateInventoryStatus(psCharacter* owner,uint32 parent_id, INVENTORY_SLOT_NUMBER slot);
 
     bool IsEquipped() const;
     // an item can be equipped, but not active. This happens when its equip requirements
@@ -876,61 +962,100 @@ public:
     bool IsActive() const;
     void SetActive(bool state);
 
-    void RunEquipScript(gemActor *actor);
+    void RunEquipScript(gemActor* actor);
     void CancelEquipScript();
 
     /**
      * @param checkWorld Checks if stackability is possible in the world (eg: instances comparing)
      */
-    bool CheckStackableWith(const psItem *otheritem, bool precise, bool checkStackCount = true, bool checkWorld = true) const;
+    bool CheckStackableWith(const psItem* otheritem, bool precise, bool checkStackCount = true, bool checkWorld = true) const;
 
-    const char *GetSound();
+    const char* GetSound();
 
     /// This is used by the math scripting engine to get various values.
     double GetProperty(MathEnvironment* env, const char* ptr);
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
-    const char *ToString() { return item_name.GetDataSafe(); }
+    const char* ToString()
+    {
+        return item_name.GetDataSafe();
+    }
 
-    bool GetIsLocked() { return ((flags & PSITEM_FLAG_LOCKED)? true : false); }
+    bool GetIsLocked()
+    {
+        return ((flags & PSITEM_FLAG_LOCKED)? true : false);
+    }
     void SetIsLocked(bool v);
 
-    bool GetIsLockable() { return ((flags & PSITEM_FLAG_LOCKABLE)? true : false); }
+    bool GetIsLockable()
+    {
+        return ((flags & PSITEM_FLAG_LOCKABLE)? true : false);
+    }
     void SetIsLockable(bool v);
 
-    bool GetIsSecurityLocked() { return ((flags & PSITEM_FLAG_SECURITYLOCK)? true : false); }
+    bool GetIsSecurityLocked()
+    {
+        return ((flags & PSITEM_FLAG_SECURITYLOCK)? true : false);
+    }
     void SetIsSecurityLocked(bool v);
 
-    bool GetIsUnpickable() { return ((flags & PSITEM_FLAG_UNPICKABLE)? true : false); }
+    bool GetIsUnpickable()
+    {
+        return ((flags & PSITEM_FLAG_UNPICKABLE)? true : false);
+    }
     void SetIsUnpickable(bool v);
 
     /** Gets if the item has a no pickup flag set.
      *  @return TRUE if the item has a no pickup flag set.
      */
-    bool GetIsNoPickup() { return (GetIsNoPickupStrong() || GetIsNoPickupWeak()); }
+    bool GetIsNoPickup()
+    {
+        return (GetIsNoPickupStrong() || GetIsNoPickupWeak());
+    }
 
     /** Checks if the item has a strong no pickup flag set.
      *  @return TRUE has a strong no pickup flag set.
      */
-    bool GetIsNoPickupStrong() { return ((flags & PSITEM_FLAG_NOPICKUP)? true : false); }
+    bool GetIsNoPickupStrong()
+    {
+        return ((flags & PSITEM_FLAG_NOPICKUP)? true : false);
+    }
 
     /** Checks if the item has a weak no pickup flag set.
      *  @return TRUE has a weak no pickup flag set.
      */
-    bool GetIsNoPickupWeak() { return ((flags & PSITEM_FLAG_NOPICKUPWEAK)? true : false); }
+    bool GetIsNoPickupWeak()
+    {
+        return ((flags & PSITEM_FLAG_NOPICKUPWEAK)? true : false);
+    }
 
-    bool GetIsCD() const { return ((flags & PSITEM_FLAG_USE_CD)? true : false); }
+    bool GetIsCD() const
+    {
+        return ((flags & PSITEM_FLAG_USE_CD)? true : false);
+    }
     void SetIsCD(bool v);
 
-    bool GetIsNpcOwned() const { return (flags & PSITEM_FLAG_NPCOWNED) != 0; }
+    bool GetIsNpcOwned() const
+    {
+        return (flags & PSITEM_FLAG_NPCOWNED) != 0;
+    }
     void SetIsNpcOwned(bool v);
 
-    bool GetIsKey() const { return ((flags & PSITEM_FLAG_KEY)? true : false); }
+    bool GetIsKey() const
+    {
+        return ((flags & PSITEM_FLAG_KEY)? true : false);
+    }
     void SetIsKey(bool v);
 
-    bool GetIsMasterKey() const { return ((flags & PSITEM_FLAG_MASTERKEY)? true : false); }
+    bool GetIsMasterKey() const
+    {
+        return ((flags & PSITEM_FLAG_MASTERKEY)? true : false);
+    }
     void SetIsMasterKey(bool v);
 
-    bool IsTransient() { return ((flags & PSITEM_FLAG_TRANSIENT) ? true : false); }
+    bool IsTransient()
+    {
+        return ((flags & PSITEM_FLAG_TRANSIENT) ? true : false);
+    }
     void SetIsTransient(bool v);
 
     /** Sets the pickupable flag in order to not allow/allow the item to be picked up.
@@ -946,13 +1071,22 @@ public:
     void SetIsItemStackable(bool v);
     void ResetItemStackable();
 
-    bool GetIsSettingItem() const { return ((flags & PSITEM_FLAG_SETTINGITEM)? true : false); }
+    bool GetIsSettingItem() const
+    {
+        return ((flags & PSITEM_FLAG_SETTINGITEM)? true : false);
+    }
     void SetIsSettingItem(bool v);
 
-    PSSKILL GetLockpickSkill() { return lockpickSkill; }
+    PSSKILL GetLockpickSkill()
+    {
+        return lockpickSkill;
+    }
     void SetLockpickSkill(PSSKILL v);
 
-    unsigned int GetLockStrength() { return lockStrength; }
+    unsigned int GetLockStrength()
+    {
+        return lockStrength;
+    }
     void SetLockStrength(unsigned int v);
 
     bool CompareOpenableLocks(const psItem* key) const;
@@ -965,21 +1099,30 @@ public:
     bool GetIsSkeleton();
     csString GetOpenableLockNames();
 
-    psScheduledItem* GetScheduledItem() { return schedule; }
-    void SetScheduledItem(psScheduledItem* item) { schedule = item; }
+    psScheduledItem* GetScheduledItem()
+    {
+        return schedule;
+    }
+    void SetScheduledItem(psScheduledItem* item)
+    {
+        schedule = item;
+    }
     void ScheduleRespawn();
 
     /// Gets the reduction of this weapon against the armor given
     float GetArmorVSWeaponResistance(psItemStats* armor);
 
     /// Gets the book text, should only be used if this is a book.
-    csString GetBookText() { return GetLiteratureText(); }
+    csString GetBookText()
+    {
+        return GetLiteratureText();
+    }
     /// Sets the book text, should only be used if this is a book.
-    bool SetBookText(const csString& newText);
+    bool SetBookText(const csString &newText);
     /// Sets sketch data
-    bool SetSketch(const csString& newSketchData);
+    bool SetSketch(const csString &newSketchData);
     /// Sets the musical sheet
-    bool SetMusicalSheet(const csString& newMusicalSheet);
+    bool SetMusicalSheet(const csString &newMusicalSheet);
 
     bool HasCharges() const;
     bool IsRechargeable() const;
@@ -988,7 +1131,10 @@ public:
     int GetMaxCharges() const;
 
     ///returns the special command assigned to this item
-    csString GetItemCommand() { return GetBaseStats()->GetItemCommand(); }
+    csString GetItemCommand()
+    {
+        return GetBaseStats()->GetItemCommand();
+    }
 
     /** Called when an item is completely destroyed from the persistant world
      *
@@ -1018,9 +1164,9 @@ public:
      */
 
     ///  The new operator is overriden to call PoolAllocator template functions
-    void *operator new(size_t);
+    void* operator new(size_t);
     ///  The delete operator is overriden to call PoolAllocator template functions
-    void operator delete(void *);
+    void operator delete(void*);
 
     /** Checks the writeable flag in the item_stats and tell if this is the case.
      *  @return TRUE if the item is writeable.
@@ -1032,15 +1178,29 @@ public:
     bool GetIsReadable();
 
     /// return creative contents of sketches.
-    const csString& GetSketch(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
+    const csString &GetSketch(void)
+    {
+        return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content;
+    }
     /// return creative contents of musical sheets.
-    const csString& GetMusicalSheet(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
+    const csString &GetMusicalSheet(void)
+    {
+        return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content;
+    }
     /// return creative contents of books.
-    const csString& GetLiteratureText(void) { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content; }
+    const csString &GetLiteratureText(void)
+    {
+        return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetSketch() : creativeStats.content;
+    }
     /// return the background image used in this creative.
-    const csString& GetCreativeBackgroundImg() { return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetCreativeBackgroundImg() : creativeStats.backgroundImg; }
+    const csString &GetCreativeBackgroundImg()
+    {
+        return creativeStats.creativeType == PSITEMSTATS_CREATIVETYPE_NONE ? GetBaseStats()->GetCreativeBackgroundImg() : creativeStats.backgroundImg;
+    }
 
     void PrepareCreativeItemInstance();
+
+    float GetRarity();
 
 private:
     /// Static reference to the pool for all psItem objects
@@ -1049,6 +1209,13 @@ private:
     gemItem* gItem;
 
     bool pendingsave;
+
+    float rarity;
+
+    /** Calculates the rarity of an item based on its modifiers
+     */
+    float CalculateItemRarity();
+
 protected:
     bool loaded;
 
@@ -1056,31 +1223,54 @@ protected:
 private:
     csString last_save_queued_from;
 #endif
+
 };
+
 
 class psScheduledItem
 {
 public:
-    psScheduledItem(int spawnID,uint32 itemID,csVector3& position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd,
-                float range);
+    psScheduledItem(int spawnID,uint32 itemID,csVector3 &position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd,
+                    float range);
 
     psItem* CreateItem();
-    uint32 GetItemID() { return itemID;}
+    uint32 GetItemID()
+    {
+        return itemID;
+    }
 
-    psSectorInfo* GetSector() { return sector; }
-    csVector3& GetPosition() { return pos; }
+    psSectorInfo* GetSector()
+    {
+        return sector;
+    }
+    csVector3 &GetPosition()
+    {
+        return pos;
+    }
     int MakeInterval(); ///< This will return a randomized interval
-    int GetInterval() { return interval; }
-    int GetMaxModifier() { return maxrnd; }
+    int GetInterval()
+    {
+        return interval;
+    }
+    int GetMaxModifier()
+    {
+        return maxrnd;
+    }
 
-    csTicks GetLastSpawn() { return lastSpawn; }
-    void UpdatePosition(csVector3& positon, const char *sector);
+    csTicks GetLastSpawn()
+    {
+        return lastSpawn;
+    }
+    void UpdatePosition(csVector3 &positon, const char* sector);
     void ChangeIntervals(int newint, int newrand);
     void ChangeRange(float newRange);
     void ChangeAmount(int newAmount);
     void Remove(); ///< Deletes from the DB and everything
 
-    bool WantToDie() { return wantToDie; }
+    bool WantToDie()
+    {
+        return wantToDie;
+    }
 
 private:
     bool wantToDie;
