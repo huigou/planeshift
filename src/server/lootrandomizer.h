@@ -33,6 +33,7 @@ struct LootModifier
     csString effect;                   ///< Declares modifiers to some stats like weight, weapon speed, resistance/attack types.
     csString equip_script;             ///< The part of equip_script to add to the item when this modifier is used.
     float    probability;              ///< The probability for this loot modifier to happen when generating a random item.
+    float    probabilityRange;         ///< The probability for this loot modifier expressed as range between current number and previous one.
     csString stat_req_modifier;        ///< The additional requirements to stats when this modifier is used.
     float    cost_modifier;            ///< The cost of this modifier @see CalcModifierCostCap
     csString mesh;                     ///< The mesh this modifier will use for the random item generated.
@@ -79,13 +80,13 @@ public:
     ~LootRandomizer();
 
     /// This adds another item to the entries array
-    void AddLootModifier( LootModifier *entry );
+    void AddLootModifier(LootModifier* entry);
 
     /** Gets a loot modifier from it's id.
      *  @param id The id of the item we are searching for.
      *  @return A pointer to the loot modifier which is referenced by the id we were searching for.
      */
-    LootModifier *GetModifier(uint32_t id);
+    LootModifier* GetModifier(uint32_t id);
 
     /** This randomizes the current loot item and returns the item with the modifiers applied.
      *  @param item The item instance which we will be randomizing.
@@ -94,33 +95,40 @@ public:
      *  @param numModifiers Forces the amount of modifiers to apply.
      *  @return A pointer to the resulting item (it's the same pointer which was passed to the function).
      */
-    psItem* RandomizeItem( psItem* item,
-                                float cost,
-                                bool lootTesting = false,
-                                size_t numModifiers = 0 );
+    psItem* RandomizeItem(psItem* item,
+                          float cost,
+                          bool lootTesting = false,
+                          size_t numModifiers = 0);
 
     /**
      * Runs the LootModifierCap mathscript and returns the result, used
      * by other function to determine if a modifier can be added.
-     * 
+     *
      * @param chr The psCharacter which is being analyzed.
      * @return A number determining the cost cap for the random modifiers.
      */
-    float CalcModifierCostCap(psCharacter *chr);
+    float CalcModifierCostCap(psCharacter* chr);
 
     /** Applies modifications to a randomized overlay depending on the requested ids.
      *  @param baseItem The basic item which will have the overlay generated for.
      *  @param overlay A pointer to the overlay where we will save the modifications to apply to this item.
      *  @param modifiersIds An array with all the ids of the modifiers which we will need to apply to the overlay.
      */
-    void ApplyModifier(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifiersIds);
+    void ApplyModifier(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t> &modifiersIds);
+
+    /** Returns the percent probability of a modifier based on the total number of modifiers available of that type.
+     *  @param modifier the ID of the modifier to evaluate.
+     *  @param modifierType 0=prefix, 1=suffix, 2=adjective
+     *  @return the float percentage, or 0 if the modifier is invalid or has no probability
+     */
+    float GetModifierPercentProbability(int modifierID, int modifierType);
 
 protected:
     csWeakRef<MathScript> modifierCostCalc; ///<A cached reference to the LootModifierCap math script.
     CacheManager* cacheManager; ///<A reference to the cachemanager.
 
 private:
-    void AddModifier( LootModifier *oper1, LootModifier *oper2 );
+    void AddModifier(LootModifier* oper1, LootModifier* oper2);
     /** sets an attribute to the item overlay. utility function used when parsing the loot modifiers xml
      *  @param op The operation to do with the attributes. (+, -, *)
      *  @param attrName The name of the attribute we are changing.
@@ -131,7 +139,7 @@ private:
      *                starts with an Uppercase letter because of mathscript restrains.
      *  @return TRUE if the operation succeded.
      */
-    bool SetAttribute(const csString & op, const csString & attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem, csArray<ValueModifier> &values);
+    bool SetAttribute(const csString &op, const csString &attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem, csArray<ValueModifier> &values);
 
     /**
      * Sets the attributes in the passed float array according to the passed parameters.
