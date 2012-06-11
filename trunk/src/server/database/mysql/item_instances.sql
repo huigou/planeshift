@@ -122,19 +122,21 @@ INSERT INTO `item_instances` VALUES (50,3,0,0,16,1,5,0,0,0,0,0,0,0,0,0,0,50,-1,7
 INSERT INTO `item_instances` VALUES (51,3,0,0,17,1,5,0,0,0,0,0,0,0,0,0,0,50,-1,69,0,'',0,-1,'','','',NULL,'0',0,0,0);
 
 # vengeance items
-INSERT INTO `item_instances` VALUES (60,2,0,0,16,1,0,0,0,0,0,0,0,0,0,0,0,50,50,2,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (61,2,0,0,17,1,0,0,0,0,0,0,0,0,0,0,0,50,-1,85,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (62,2,0,0,18,1,0,0,0,0,0,0,0,0,0,0,0,50,-1,411,0,'',0,-1,'','','',NULL,'1',0,0,0);
-INSERT INTO `item_instances` VALUES (63,2,0,0,20,1,0,0,0,0,0,0,0,0,0,0,0,50,50,84,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (67,2,0,0,27,1,0,0,0,0,0,0,0,0,0,0,0,50,50,71,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (68,2,0,0,24,1,0,0,0,0,0,0,0,0,0,0,0,50,50,235,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (69,2,0,0,28,1,0,0,0,0,0,0,0,0,0,0,0,50,50,65,0,'',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (60,2,0,0,16,1,0,0,0,0,0,0,0,0,0,0,0,50,50,2,0,'',0,-1,'','','',NULL,'0',0,0,0); -- Small Battle Axe
+INSERT INTO `item_instances` VALUES (61,2,0,0,17,1,0,0,0,0,0,0,0,0,0,0,0,50,-1,85,0,'',0,-1,'','','',NULL,'0',0,0,0); -- Gold Ore
+INSERT INTO `item_instances` VALUES (62,2,0,0,18,1,0,0,0,0,0,0,0,0,0,0,0,50,-1,411,0,'',0,-1,'','','',NULL,'1',0,0,0); -- Ring of Familiar
+INSERT INTO `item_instances` VALUES (63,2,0,0,20,1,0,0,0,0,0,0,0,0,0,0,0,50,50,84,0,'',0,-1,'','','',NULL,'0',0,0,0); -- Rock Pick
+INSERT INTO `item_instances` VALUES (67,2,0,0,24,1,0,0,0,0,0,0,0,0,0,0,0,50,50,71,0,'',0,-1,'','','',NULL,'0',0,0,0); -- Gareths waybread recipe
+INSERT INTO `item_instances` VALUES (68,2,0,0,25,1,0,0,0,0,0,0,0,0,0,0,0,50,50,235,0,'',0,-1,'','','',NULL,'0',0,0,0); -- sack
+INSERT INTO `item_instances` VALUES (69,2,0,0,28,1,0,0,0,0,0,0,0,0,0,0,0,50,50,65,0,'',0,-1,'','','',NULL,'0',0,0,0); -- wooden spoon
+INSERT INTO `item_instances` VALUES (70,2,0,0,29,1,0,0,0,0,0,0,0,0,0,0,0,50,50,7,0,'',0,-1,'','','',NULL,'0',3,10,5); -- falchion with modifiers
+INSERT INTO `item_instances` VALUES (140,2,0,0,26,1,0,0,0,0,0,0,0,0,0,0,0,50,50,9,0,'',0,-1,'','','',NULL,'0',0,0,0); -- mug
 
 # Wooden bowl and contents
-INSERT INTO `item_instances` VALUES (70,0,0,0,0,1,0,0,0,3,-3.7,1.07,-180.58,0,0,0,0,50,50,70,0,'NOPICKUP',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (71,0,2,70,1,1,0,0,0,3,0,0,0,0,0,0,0,50,-1,60,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (72,0,2,70,2,2,0,0,0,3,0,0,0,0,0,0,0,50,-1,61,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (73,0,2,70,3,7,0,0,0,3,0,0,0,0,0,0,0,50,-1,62,0,'',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (75,0,0,0,0,1,0,0,0,3,-3.7,1.07,-180.58,0,0,0,0,50,50,70,0,'NOPICKUP',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (76,0,2,70,1,1,0,0,0,3,0,0,0,0,0,0,0,50,-1,60,0,'',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (77,0,2,70,2,2,0,0,0,3,0,0,0,0,0,0,0,50,-1,61,0,'',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (78,0,2,70,3,7,0,0,0,3,0,0,0,0,0,0,0,50,-1,62,0,'',0,-1,'','','',NULL,'0',0,0,0);
 
 # Book container and contents
 INSERT INTO `item_instances` VALUES (80,0,0,0,0,1,0,0,0,3,-56.16,-3,-154.73,0,4.74,0,0,50,50,234,0,'NOPICKUP',0,-1,'','','',NULL,'0',0,0,0);
@@ -174,11 +176,11 @@ INSERT INTO `item_instances` VALUES (119,0,0,0,0,1,0,0,0,3,-16,0.12,-138.5,0,0,0
 INSERT INTO `item_instances` VALUES (120,0,0,0,0,1,0,0,0,3,-15,0.12,-138.5,0,0,0,0,50,50,413,0,'KEY',0,-1,'119','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (121,0,0,0,0,1,0,0,0,3,-16,0.12,-136.5,0,0,0,0,50,50,412,0,'LOCKED,LOCKABLE',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (128,0,0,0,0,1,0,0,0,3,-3.72,0.37,-183.03,0,90,0,0,50,50,138,0,'NOPICKUP',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (140,2,0,0,25,1,0,0,0,0,0,0,0,0,0,0,0,50,50,9,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (151,20,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,50,50,84,0,'TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (166,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,50,50,3,0,'',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (171,0,0,0,0,17,0,0,0,3,-16.6,-0.01,-171.9,0,0,0,0,50,50,91,0,'',0,-1,'','','',NULL,'0',0,0,0);
 
+# Miner items
+INSERT INTO `item_instances` VALUES (151,20,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,50,50,84,0,'TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
 
 # SpellMasters items
 INSERT INTO `item_instances` VALUES (180,82,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,50,50,13,0,'PURIFIED,TRANSIENT',0,-1,'','','',NULL,'0',0,0,0);
