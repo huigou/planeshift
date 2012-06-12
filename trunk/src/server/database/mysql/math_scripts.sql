@@ -253,7 +253,7 @@ INSERT INTO math_scripts VALUES( "Calc Player Sketch Limits",
 	PrimCount = Actor:getSkillValue(64) + 20;
 ");
 
-INSERT INTO math_scripts VALUES( "Calc Item Price", "FinalPrice = Price + Quality + MaxQuality;");
+INSERT INTO math_scripts VALUES( "Calc Item Price", "FinalPrice = Price*(Quality/MaxQuality);");
 
 INSERT INTO math_scripts VALUES( "Calc Item Sell Price", "FinalPrice = Price * 0.8;");
 

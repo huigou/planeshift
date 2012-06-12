@@ -41,5 +41,12 @@ INSERT INTO character_skills VALUES("6","2","0","0","2");
 INSERT INTO character_skills VALUES("7","2","0","0","2");
 
 # Tribe skills on mining
-INSERT INTO character_skills VALUES("20","37","400","400","400");
+INSERT INTO character_skills VALUES("20","37","200","200","200");
 
+# Strong fighter8 to test loot cost cap
+INSERT INTO character_skills VALUES("87","46","0","0","400");
+INSERT INTO character_skills VALUES("87","47","0","0","400");
+INSERT INTO character_skills VALUES("87","48","0","0","400");
+INSERT INTO character_skills VALUES("87","49","0","0","400");
+INSERT INTO character_skills VALUES("87","50","0","0","400");
+INSERT INTO character_skills VALUES("87","51","0","0","400");

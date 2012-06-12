@@ -224,9 +224,11 @@ public:
     /// This adds another item to the entries array
     void AddLootEntry( LootEntry *entry );
 
-    /** This calculates the loot for the character, given the
+    /** This calculates the loot for the killed character, given the
      *  current set of loot entries, and adds them to the
      *  character as lootable inventory.
+     *  @param char the character who has been killed
+     *  @param numModifiers max number of modifiers to use
      */
     void CreateLoot( psCharacter *chr, size_t numModifiers = 0 );
 
