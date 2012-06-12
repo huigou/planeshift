@@ -788,24 +788,19 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
                 cur_skill = 0.7F; // consider the skill somewhat usable
         }
 
-        // Calculate complexity factor for skill
-        float f1 = cur_skill / workEvent->nrr.Get(resNum).resource->skill_level;
-        if(f1 > 1.0) f1 = 1.0;  // Clamp value 0..1
-
-        // Calculate factor for tool quality
-        float f2 = tool->GetItemQuality() / workEvent->nrr.Get(resNum).resource->item_quality;
-        if(f2 > 1.0) f2 = 1.0;  // Clamp value 0..1
-
         // Calculate factor for distance from center of resource
         float dist = workEvent->nrr.Get(resNum).dist;
-        float f3 = 1 - (dist / workEvent->nrr.Get(resNum).resource->radius);
-        if(f3 < 0.0) f3 = 0.0f;  // Clamp value 0..1
+        float distance = 1 - (dist / workEvent->nrr.Get(resNum).resource->radius);
+        if(distance < 0.0) distance = 0.0f;  // Clamp value 0..1
 
         MathEnvironment env;
-        env.Define("Distance",    f3);                         // Distance from mine to the actual mining
-        env.Define("Probability", workEvent->nrr.Get(resNum).resource->probability); // Probability of successful mining
-        env.Define("Quality",     f2);                         // Quality of mining equipment
-        env.Define("Skill",       f1);                         // Mining skill
+        env.Define("Distance",           distance);                                          // Distance from mine to the actual mining
+        env.Define("Probability",        workEvent->nrr.Get(resNum).resource->probability);  // Probability of successful mining
+        env.Define("ToolQuality",        tool->GetItemQuality());                            // Quality of mining equipment
+        env.Define("RequiredToolQuality",workEvent->nrr.Get(resNum).resource->item_quality); // Required quality of mining equipment
+        env.Define("PlayerSkill",        cur_skill);                                         // Player skill
+        env.Define("RequiredSkill",      workEvent->nrr.Get(resNum).resource->skill_level);  // Required skill
+
         //update the script if needed. Here we don't protect against bad scripts as before for now.
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_chance, "Calculate Mining Odds");
         calc_mining_chance->Evaluate(&env);
@@ -815,10 +810,7 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         float resultQuality = varResultQuality->GetValue();
 
         csString debug;
-        debug.AppendFmt("Probability:     %1.3f\n",workEvent->nrr.Get(resNum).resource->probability);
-        debug.AppendFmt("Skill Factor:    %1.3f\n",f1);
-        debug.AppendFmt("Quality Factor:  %1.3f\n",f2);
-        debug.AppendFmt("Distance Factor: %1.3f\n",f3);
+        debug.AppendFmt("Distance:    %1.3f\n",distance);
         debug.AppendFmt("Total Factor:    %1.3f\n",total);
         debug.AppendFmt("Result Quality:    %1.3f\n",resultQuality);
         debug.AppendFmt("Roll:            %1.3f\n",roll);
