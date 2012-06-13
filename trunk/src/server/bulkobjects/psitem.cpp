@@ -3524,9 +3524,6 @@ float psItem::CalculateItemRarity()
         calcRarity *= 0.01;
     }
 
-    // return percentage
-    calcRarity *= 100;
-
     return calcRarity;
 }
 
