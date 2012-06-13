@@ -1200,7 +1200,11 @@ public:
 
     void PrepareCreativeItemInstance();
 
+    /// return Rarity as 0-100% range
     float GetRarity();
+
+    /// return Rarity description. example: "rare (0.7%)"
+    csString GetRarityName();
 
 private:
     /// Static reference to the pool for all psItem objects
