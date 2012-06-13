@@ -3069,9 +3069,10 @@ bool psItem::SendItemDescription(Client* client)
     }
 
     // Item is random looted
-    if(true) // TODO what's the right check here?
+    float rarity = GetRarity();
+    if(rarity!=0 && rarity<100)
     {
-        itemInfo += csString().Format("\nRarity: %f", GetRarity());
+        itemInfo += csString().Format("\nRarity: %s", GetRarityName().GetData());
     }
 
     psViewItemDescription outgoing(client->GetClientNum(), itemName.GetData(), itemInfo.GetData(), GetImageName(), stack_count);
@@ -3436,13 +3437,49 @@ float psItem::GetRarity()
     return rarity;
 }
 
+csString psItem::GetRarityName()
+{
+    float pctRarity = GetRarity();
+    csString name = "";
+
+    // we assume max rarity is 0.0002%
+    if(pctRarity<=0.001)
+        name = "almost unique";
+    else if(pctRarity<=0.01)
+        name = "extremely rare";
+    else if(pctRarity<=0.1)
+        name = "very rare";
+    else if(pctRarity<=1)
+        name = "rare";
+    else if(pctRarity<=10)
+        name = "uncommon";
+    else if(pctRarity<100)
+        name = "common";
+
+    // cut off non significant digits if less than 0.01
+    // example: 0.000765 to 0.0007 and 0.023 to 0.02
+    float cutoff = pctRarity;
+    int i=0;
+    for(; i<6; i++)
+    {
+        cutoff*=10;
+        if(cutoff>=1)
+            break;
+    }
+
+    csString format = "%s (%";
+    format.AppendFmt(".%d",i+1);
+    format.Append("f%%)");
+    return (new csString)->Format(format.GetData(),name.GetData(),pctRarity);
+}
+
 float psItem::CalculateItemRarity()
 {
 
     // TODO the following code should be moved to a script if possible.
 
-    // default rarity
-    float calcRarity = 1;
+    // default rarity: not rare
+    float calcRarity = 100;
 
     // calculate number of modifiers
     int numModifiers=0;
@@ -3454,7 +3491,7 @@ float psItem::CalculateItemRarity()
 
     // if there are no modifiers the item is not rare, leave rarity at 1
     if(numModifiers==0)
-        return 1;
+        return calcRarity;
 
     // get prefix probability (index 0)
     float prefixProbability = psserver->GetSpawnManager()->GetLootRandomizer()->GetModifierPercentProbability(modifierIds[0],0);
@@ -3486,6 +3523,10 @@ float psItem::CalculateItemRarity()
     {
         calcRarity *= 0.01;
     }
+
+    // return percentage
+    calcRarity *= 100;
+
     return calcRarity;
 }
 
