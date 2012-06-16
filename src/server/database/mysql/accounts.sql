@@ -59,26 +59,26 @@ INSERT INTO `accounts` VALUES (1,'vengeance','8dd9fa632ca161d0ca1929a4d99cbe77',
 INSERT INTO `accounts` VALUES (3,'guest','084e0343a0486ff05530df6c705c8bb4','84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec','2003-07-22 00:31:36','0000-00-00 00:00:00','127.0.0.1',30,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
 #password is "andrew"
-INSERT INTO `accounts` VALUES (5,'acraig','d914e3ecf6cc481114a3f534a5faf90b','acbbb1e76cfa0a8a61d75122d514465d56c3ed5ad2b259c9dcb01729800758fd','0000-00-00 00:00:00','0000-00-00 00:00:00','',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (5,'acraig','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','0000-00-00 00:00:00','0000-00-00 00:00:00','',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
 INSERT INTO `accounts` VALUES (9,'superclient','e1047916967c28e68172ef5bfe31ed407b5a6d568def7cb74018704ea25da522','0','2003-07-17 14:46:08','0000-00-00 00:00:00','127.0.0.1',99,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 INSERT INTO `accounts` VALUES (10,'superclient2','5f4dcc3b5aa765d61d8327deb882cf99','0',NULL,NULL,NULL,99,NULL,NULL,'N',0,NULL,0,0,NULL,NULL,0, '', '', '');
 
 #password is "andrew" for all the following accounts
-INSERT INTO `accounts` VALUES (11,'dev1','d914e3ecf6cc481114a3f534a5faf90b','acbbb1e76cfa0a8a61d75122d514465d56c3ed5ad2b259c9dcb01729800758fd','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',30,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
-INSERT INTO `accounts` VALUES (12,'dev2','d914e3ecf6cc481114a3f534a5faf90b','acbbb1e76cfa0a8a61d75122d514465d56c3ed5ad2b259c9dcb01729800758fd','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',30,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (11,'dev1','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',30,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (12,'dev2','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',30,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
-INSERT INTO `accounts` VALUES (13,'gm1','d914e3ecf6cc481114a3f534a5faf90b','acbbb1e76cfa0a8a61d75122d514465d56c3ed5ad2b259c9dcb01729800758fd','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',22,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
-INSERT INTO `accounts` VALUES (14,'gm2','d914e3ecf6cc481114a3f534a5faf90b','acbbb1e76cfa0a8a61d75122d514465d56c3ed5ad2b259c9dcb01729800758fd','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',26,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (13,'gm1','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',22,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (14,'gm2','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',26,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
-INSERT INTO `accounts` VALUES (15,'player1','d914e3ecf6cc481114a3f534a5faf90b','acbbb1e76cfa0a8a61d75122d514465d56c3ed5ad2b259c9dcb01729800758fd','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
-INSERT INTO `accounts` VALUES (16,'player2','d914e3ecf6cc481114a3f534a5faf90b','acbbb1e76cfa0a8a61d75122d514465d56c3ed5ad2b259c9dcb01729800758fd','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
-INSERT INTO `accounts` VALUES (17,'player3','d914e3ecf6cc481114a3f534a5faf90b','acbbb1e76cfa0a8a61d75122d514465d56c3ed5ad2b259c9dcb01729800758fd','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
-INSERT INTO `accounts` VALUES (18,'player4','d914e3ecf6cc481114a3f534a5faf90b','acbbb1e76cfa0a8a61d75122d514465d56c3ed5ad2b259c9dcb01729800758fd','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (15,'player1','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (16,'player2','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (17,'player3','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (18,'player4','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
 #password is "planeshift" for all the following accounts
-INSERT INTO `accounts` VALUES (19,'admin1','b30ee7d55aa2808cc143418fc1b93b46','24998c5ab3eaf794d865fc8ed565740dc89cad1e3ea8ec695e19c7f9cab77b30','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',50,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
-INSERT INTO `accounts` VALUES (20,'admin2','b30ee7d55aa2808cc143418fc1b93b46','24998c5ab3eaf794d865fc8ed565740dc89cad1e3ea8ec695e19c7f9cab77b30','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',50,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (19,'admin1','b30ee7d55aa2808cc143418fc1b93b46','4ab82ef332d3f38848c71ae8e6e10a40c0c428cfc70644e3d51ee47b89a2e5e7','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',50,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (20,'admin2','b30ee7d55aa2808cc143418fc1b93b46','4ab82ef332d3f38848c71ae8e6e10a40c0c428cfc70644e3d51ee47b89a2e5e7','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',50,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
