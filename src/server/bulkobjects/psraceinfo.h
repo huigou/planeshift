@@ -152,6 +152,17 @@ public:
      */
     float GetScale()     { return scale; }
     
+    /** Gets the id of the race (regardless of sex).
+     *  @return An int rappresenting the whole race.
+     */
+    int GetRaceID()     { return race; }
+
+    /** Gets the id of the specific race (considering also its sex, and alternative versions),
+     *  @return An int rappresenting the specific instance of the race (as a specific sex).
+     */
+    int GetUID()     { return uid; }
+
+
 };
 
 
