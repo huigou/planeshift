@@ -2711,6 +2711,18 @@ double psCharacter::GetProperty(MathEnvironment* env, const char* ptr)
     {
         return (double)IsPet();
     }
+    else if (property == "Race")
+    {
+        if(!GetRaceInfo())
+            return 0;
+        return (double)GetRaceInfo()->GetRaceID();
+    }
+    else if (property == "RaceUID")
+    {
+        if(!GetRaceInfo())
+            return 0;
+        return (double)GetRaceInfo()->GetUID();
+    }
 
     Error2("Requested psCharacter property not found '%s'", ptr);
     return 0;
