@@ -1713,6 +1713,11 @@ double psItemStats::GetProperty(MathEnvironment* env, const char *ptr)
         return (double) GetUID();
     }
 
+    if(property == "CategoryID")
+    {
+        return (double) GetCategory()->id;
+    }
+
     CPrintf(CON_ERROR, "psItemStats::GetProperty(%s) failed\n",ptr);
     return 0;
 }
