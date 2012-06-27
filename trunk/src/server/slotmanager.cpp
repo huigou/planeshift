@@ -912,6 +912,7 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     psItem* consumedItem = charData->Inventory().RemoveItemID(item->GetUID(), count);
     if (consumedItem)
     {
+        env.Define("Item", consumedItem);
         for (unsigned short i = 0; i < consumedItem->GetStackCount(); i++)
         {
             script->Run(&env);
