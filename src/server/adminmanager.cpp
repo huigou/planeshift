@@ -2548,7 +2548,7 @@ csString AdminCmdDataModify::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <SUBCOMMAND>\"\n"
            "SUBCOMMAND: intervals <interval> <intervalcap>\n"
            "            amount <amount>\n"
-           "            level <level>\n"
+           "            picklevel <level>\n"
            "            range <range>\n"
            "            move <x> <y> <z> [<y>]\n"
            "            pickskill <skillname>\n"
