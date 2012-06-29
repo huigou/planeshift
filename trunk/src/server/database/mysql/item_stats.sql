@@ -329,7 +329,7 @@ INSERT INTO `item_stats` VALUES (9004,'B','Platinum Ore',10.00,5.00,1,0,0,'BULK,
 -- Advanced crafting
 INSERT INTO `item_stats` VALUES (673,'B','Ruby Crystal',2,100,3,0,0,'BULK RIGHTHAND LEFTHAND','STACKABLE',0.1,-1,-1,-1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,'naturalres#crystal_ruby','/planeshift/materials/crystalruby_icon.dds','','','','','',16,1,'GENERIC','',0,'',0,'',0,0,0,0,0,0,0,1,'A ruby crystal','nosound',50,'','','',-1,2,'','Y');
 INSERT INTO `item_stats` VALUES (3034,'B','Enchanting Gems',1,100,0.5,0,0,'BULK MIND','STACKABLE',0.1,-1,-1,-1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,'books#bookclosed01','/planeshift/materials/bookclosed01_icon.dds','','','','','',15,500,'RECIPE','',0,'',0,'',0,0,0,0,0,0,0,1,'Book of Enchanting Gems','nosound',50,'','','',-1,2,'','Y');
-INSERT INTO `item_stats` VALUES (4928,'B','Enchanter',2,100,6,100,24,'BULK','CONTAINER CANTRANSFORM',0.1,-1,-1,-1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,'tools#alchemy_forge01a','/planeshift/materials/ironpot02a_icon.dds','','','','','',9,500,'TOOL','',0,'',0,'',0,0,0,0,0,0,0,1,'A magical artifact used to enchant gems','nosound',50,'','','',-1,2,'','Y');
+INSERT INTO `item_stats` VALUES (4928,'B','Enchanter',2,100,6,100,24,'BULK','CONTAINER',0.1,-1,-1,-1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,'tools#alchemy_forge01a','/planeshift/materials/ironpot02a_icon.dds','','','','','',9,500,'TOOL','',0,'',0,'',0,0,0,0,0,0,0,1,'A magical artifact used to enchant gems','nosound',50,'','','',-1,2,'','Y');
 
 
 /*!40000 ALTER TABLE `item_stats` ENABLE KEYS */;
