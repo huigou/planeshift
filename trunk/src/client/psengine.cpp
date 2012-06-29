@@ -49,7 +49,7 @@ if (!myref)                                                  \
        "No " str " plugin!");                                \
     return false;                                            \
 }                                                            \
-
+ 
 #define RegisterFactory(factoryclass)   \
     factory = new factoryclass();
 
@@ -128,7 +128,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigcamera.h"
 #include "gui/pawsconfigdetails.h"
 #include "gui/pawsconfigmarriage.h"
-#include "gui/pawsconfigpopup.h" 
+#include "gui/pawsconfigpopup.h"
 #include "gui/pawsconfigpvp.h"
 #include "gui/pawsconfigchat.h"
 #include "gui/pawsconfigchattabs.h"
@@ -198,7 +198,7 @@ if (!myref)                                                  \
 #include "gui/pawsbankwindow.h"
 #include "gui/pawsconfigchatbubbles.h"
 #include "gui/pawsconfigshadows.h"
-#include "gui/pawsconfiggeneric.h"
+#include "gui/pawsconfigtextpage.h"
 #include "gui/pawsnpcdialog.h"
 #include "gui/bartender.h"
 #include "gui/pawsconfigspellchecker.h"
@@ -235,7 +235,7 @@ CS_IMPLEMENT_APPLICATION
 
 // ----------------------------------------------------------------------------
 
-psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
+psEngine::psEngine(iObjectRegistry* objectreg, psCSSetup* CSSetup)
 {
     object_reg = objectreg;
     CS_Setup = CSSetup;
@@ -283,7 +283,7 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 
     xmlparser =  csQueryRegistry<iDocumentSystem> (object_reg);
     stringset = csQueryRegistryTagInterface<iStringSet> (object_reg, "crystalspace.shared.stringset");
-    nameRegistry = csEventNameRegistry::GetRegistry (object_reg);
+    nameRegistry = csEventNameRegistry::GetRegistry(object_reg);
 
     chatBubbles = 0;
     options = 0;
@@ -300,7 +300,7 @@ psEngine::psEngine (iObjectRegistry *objectreg, psCSSetup *CSSetup)
 
 // ----------------------------------------------------------------------------
 
-psEngine::~psEngine ()
+psEngine::~psEngine()
 {
     printf("psEngine destroyed.\n");
 }
@@ -308,7 +308,7 @@ psEngine::~psEngine ()
 
 void psEngine::Cleanup()
 {
-    if (loadstate==LS_DONE)
+    if(loadstate==LS_DONE)
         QuitClient();
 
     delete charmanager;
@@ -317,16 +317,16 @@ void psEngine::Cleanup()
     delete chatBubbles;
     delete autoexec;
 
-    if (queue)
+    if(queue)
     {
         if(eventHandlerLogic)
-            queue->RemoveListener (eventHandlerLogic);
+            queue->RemoveListener(eventHandlerLogic);
         if(eventHandler2D)
-            queue->RemoveListener (eventHandler2D);
+            queue->RemoveListener(eventHandler2D);
         if(eventHandler3D)
-            queue->RemoveListener (eventHandler3D);
+            queue->RemoveListener(eventHandler3D);
         if(eventHandlerFrame)
-            queue->RemoveListener (eventHandlerFrame);
+            queue->RemoveListener(eventHandlerFrame);
     }
 
     delete paws; // Include delete of mainWidget
@@ -357,30 +357,30 @@ void psEngine::Cleanup()
  * suitable environment for the engine.
  *
  **/
-bool psEngine::Initialize (int level)
+bool psEngine::Initialize(int level)
 {
     // load basic stuff that is enough to display the splash screen
-    if (level == 0)
+    if(level == 0)
     {
         // print out some version information
-        csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP, APPNAME);
-        csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
-            "This game uses Crystal Space Engine created by Jorrit and others");
-        csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP, CS_VERSION);
+        csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP, APPNAME);
+        csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
+                 "This game uses Crystal Space Engine created by Jorrit and others");
+        csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP, CS_VERSION);
 
         // Query for plugins
-        PS_QUERY_PLUGIN (queue,        iEventQueue,    "iEventQueue");
-        PS_QUERY_PLUGIN (vfs,          iVFS,           "iVFS");
-        PS_QUERY_PLUGIN (engine,       iEngine,        "iEngine");
-        PS_QUERY_PLUGIN (cfgmgr,       iConfigManager, "iConfigManager");
-        PS_QUERY_PLUGIN (g3d,          iGraphics3D,    "iGraphics3D");
-        PS_QUERY_PLUGIN (vc,           iVirtualClock,  "iVirtualClock");
+        PS_QUERY_PLUGIN(queue,        iEventQueue,    "iEventQueue");
+        PS_QUERY_PLUGIN(vfs,          iVFS,           "iVFS");
+        PS_QUERY_PLUGIN(engine,       iEngine,        "iEngine");
+        PS_QUERY_PLUGIN(cfgmgr,       iConfigManager, "iConfigManager");
+        PS_QUERY_PLUGIN(g3d,          iGraphics3D,    "iGraphics3D");
+        PS_QUERY_PLUGIN(vc,           iVirtualClock,  "iVirtualClock");
 
         // Query for the sound plugin, if not found query the dummy one
         SoundManager = csQueryRegistryOrLoad<iSoundManager>(object_reg, "iSoundManager");
         if(!SoundManager)
         {
-            PS_QUERY_PLUGIN (SoundManager, iSoundManager,  "crystalspace.planeshift.sound.dummy");
+            PS_QUERY_PLUGIN(SoundManager, iSoundManager,  "crystalspace.planeshift.sound.dummy");
         }
 
 
@@ -392,16 +392,16 @@ bool psEngine::Initialize (int level)
         hwRenderer = g2d->GetHWRenderer();
         hwVersion = g2d->GetHWGLVersion();
 #ifdef WIN32
-	// Check for Windows software OpenGL renderer.
-	if(hwRenderer == "GDI Generic")
-	{
-        printf("PlaneShift requires hardware acceleration (OpenGL). Make sure your video card drivers are up-to-date.\n");
-        csRef<iWin32Assistant> assistant = csQueryRegistry<iWin32Assistant>(object_reg);
-        assistant->AlertV(psEngine::hwnd, CS_ALERT_ERROR, "Warning!",  0, "PlaneShift requires hardware acceleration (OpenGL). Make sure your video card drivers are up-to-date.", 0);
-	}
-	csRef<iWin32Canvas> canvas = scfQueryInterface<iWin32Canvas> (g2d);
-	// This does not seem to give the correct window handle.
-	//hwnd = canvas->GetWindowHandle();
+        // Check for Windows software OpenGL renderer.
+        if(hwRenderer == "GDI Generic")
+        {
+            printf("PlaneShift requires hardware acceleration (OpenGL). Make sure your video card drivers are up-to-date.\n");
+            csRef<iWin32Assistant> assistant = csQueryRegistry<iWin32Assistant>(object_reg);
+            assistant->AlertV(psEngine::hwnd, CS_ALERT_ERROR, "Warning!",  0, "PlaneShift requires hardware acceleration (OpenGL). Make sure your video card drivers are up-to-date.", 0);
+        }
+        csRef<iWin32Canvas> canvas = scfQueryInterface<iWin32Canvas> (g2d);
+        // This does not seem to give the correct window handle.
+        //hwnd = canvas->GetWindowHandle();
 #endif
 
 #if !defined(CS_DEBUG) && defined(CS_PLATFORM_MACOSX)
@@ -410,8 +410,8 @@ bool psEngine::Initialize (int level)
 #endif
 
         // Initialize and tweak the Texture Manager
-        txtmgr = g3d->GetTextureManager ();
-        if (!txtmgr)
+        txtmgr = g3d->GetTextureManager();
+        if(!txtmgr)
         {
             return false;
         }
@@ -419,7 +419,7 @@ bool psEngine::Initialize (int level)
         //Check if sound is on or off in psclient.cfg
         csString soundPlugin;
 
-        soundOn = true; // FIXMESOUND is this variable REALLY needed and if not how do we handle this in future? 
+        soundOn = true; // FIXMESOUND is this variable REALLY needed and if not how do we handle this in future?
 
         // Load Logger settings
         LoadLogSettings();
@@ -454,7 +454,7 @@ bool psEngine::Initialize (int level)
         frameLimit = 1000 / maxFPS;
 
         mainWidget = new psMainWidget();
-        paws->SetMainWidget( mainWidget );
+        paws->SetMainWidget(mainWidget);
 
         paws->GetMouse()->Hide(true);
 
@@ -462,54 +462,55 @@ bool psEngine::Initialize (int level)
 
         if(!LoadSoundSettings(false))
         {
-			return false;
+            return false;
         }
 
-        if ( ! paws->LoadWidget("splash.xml") )
+        if(! paws->LoadWidget("splash.xml"))
             return false;
-        if ( ! paws->LoadWidget("ok.xml") )
+        if(! paws->LoadWidget("ok.xml"))
             return false;
-        if ( ! paws->LoadWidget("quitinfo.xml") )
+        if(! paws->LoadWidget("quitinfo.xml"))
             return false;
 
-        LoadPawsWidget("Yes / No dialog","yesno.xml" );
+        LoadPawsWidget("Yes / No dialog","yesno.xml");
 
         //Load confirmation information for duels and marriages
-        if (!LoadConfirmationSettings())
+        if(!LoadConfirmationSettings())
             return false;
 
         // Register our event handlers.
-        event_frame = csevFrame (object_reg);
+        event_frame = csevFrame(object_reg);
         event_canvashidden = csevCanvasHidden(object_reg,g2d);
         event_canvasexposed = csevCanvasExposed(object_reg,g2d);
         event_focusgained = csevFocusGained(object_reg);
         event_focuslost = csevFocusLost(object_reg);
-        event_mouse = csevMouseEvent (object_reg);
-        event_keyboard = csevKeyboardEvent (object_reg);
-        event_joystick = csevJoystickEvent (object_reg);
+        event_mouse = csevMouseEvent(object_reg);
+        event_keyboard = csevKeyboardEvent(object_reg);
+        event_joystick = csevJoystickEvent(object_reg);
         event_quit = csevQuit(object_reg);
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
         event_selectionnotify = csevSelectionNotify(object_reg);
 #endif
-        eventHandlerLogic = csPtr<LogicEventHandler> (new LogicEventHandler (this));
-        eventHandler2D = csPtr<EventHandler2D> (new EventHandler2D (this));
-        eventHandler3D = csPtr<EventHandler3D> (new EventHandler3D (this));
-        eventHandlerFrame = csPtr<FrameEventHandler> (new FrameEventHandler (this));
+        eventHandlerLogic = csPtr<LogicEventHandler> (new LogicEventHandler(this));
+        eventHandler2D = csPtr<EventHandler2D> (new EventHandler2D(this));
+        eventHandler3D = csPtr<EventHandler3D> (new EventHandler3D(this));
+        eventHandlerFrame = csPtr<FrameEventHandler> (new FrameEventHandler(this));
 
-        csEventID esublog[] = {
-              event_frame,
-              event_canvashidden,
-              event_canvasexposed,
-              event_focusgained,
-              event_focuslost,
-              event_mouse,
-              event_keyboard,
-              event_joystick,
-              event_quit,
+        csEventID esublog[] =
+        {
+            event_frame,
+            event_canvashidden,
+            event_canvasexposed,
+            event_focusgained,
+            event_focuslost,
+            event_mouse,
+            event_keyboard,
+            event_joystick,
+            event_quit,
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
-              event_selectionnotify,
+            event_selectionnotify,
 #endif
-              CS_EVENTLIST_END
+            CS_EVENTLIST_END
         };
 
         queue->RegisterListener(eventHandlerLogic, esublog);
@@ -518,19 +519,19 @@ bool psEngine::Initialize (int level)
         queue->RegisterListener(eventHandlerFrame, event_frame);
 
         // Inform debug that everything initialized succesfully
-        csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
-            "psEngine initialized.");
+        csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
+                 "psEngine initialized.");
 
-	// Set up font for messages that bypass paws.
-        iFontServer* fntsvr = g2d->GetFontServer ();
-        if (fntsvr)
+        // Set up font for messages that bypass paws.
+        iFontServer* fntsvr = g2d->GetFontServer();
+        if(fntsvr)
         {
-            font = fntsvr->LoadFont (CSFONT_LARGE);
-	}
+            font = fntsvr->LoadFont(CSFONT_LARGE);
+        }
 
         return true;
     }
-    else if (level == 1)
+    else if(level == 1)
     {
         backgroundWorldLoading = /*false; // Hardcoded disable due to major issues.*/ psengine->GetConfig()->GetBool("PlaneShift.Loading.BackgroundWorldLoading");
         loader = csQueryRegistry<iBgLoader>(object_reg);
@@ -539,30 +540,30 @@ bool psEngine::Initialize (int level)
         // Check VFS mounts
         csString test_path;
         csRef<iDataBuffer> realPath;
-        
+
         test_path = "/planeshift/materials/";
         realPath = vfs->GetRealPath(test_path);
 
-        if (!realPath.IsValid())
+        if(!realPath.IsValid())
         {
-          Error2("Bad virtual path %s.", test_path.GetData());
-          PS_PAUSEEXIT(1);
+            Error2("Bad virtual path %s.", test_path.GetData());
+            PS_PAUSEEXIT(1);
         }
         test_path = "/planeshift/meshes/";
         realPath = vfs->GetRealPath(test_path);
 
-        if (!realPath.IsValid())
+        if(!realPath.IsValid())
         {
-          Error2("Bad virtual path %s.", test_path.GetData());
-          PS_PAUSEEXIT(1);
+            Error2("Bad virtual path %s.", test_path.GetData());
+            PS_PAUSEEXIT(1);
         }
         test_path = "/planeshift/world/";
         realPath = vfs->GetRealPath(test_path);
 
-        if (!realPath.IsValid())
+        if(!realPath.IsValid())
         {
-          Error2("Bad virtual path %s.", test_path.GetData());
-          PS_PAUSEEXIT(1);
+            Error2("Bad virtual path %s.", test_path.GetData());
+            PS_PAUSEEXIT(1);
         }
 
         // Set progress bar.
@@ -577,11 +578,11 @@ bool psEngine::Initialize (int level)
         lastLoadingCount = 1;
 
         // Initialize Networking
-        if (!netmanager)
+        if(!netmanager)
         {
             netmanager = csPtr<psNetManager> (new psNetManager);
 
-            if (!netmanager->Initialize(object_reg))
+            if(!netmanager->Initialize(object_reg))
             {
                 lasterror = "Couldn't init Network Manager.";
                 return false;
@@ -594,8 +595,8 @@ bool psEngine::Initialize (int level)
         celclient = csPtr<psCelClient> (new psCelClient());
         slotManager = new psSlotManager();
         songManager = new ClientSongManager();
-        modehandler = csPtr<ModeHandler> (new ModeHandler (celclient,netmanager->GetMsgHandler(),object_reg));
-        actionhandler = csPtr<ActionHandler> ( new ActionHandler ( netmanager->GetMsgHandler(), object_reg ) );
+        modehandler = csPtr<ModeHandler> (new ModeHandler(celclient,netmanager->GetMsgHandler(),object_reg));
+        actionhandler = csPtr<ActionHandler> (new ActionHandler(netmanager->GetMsgHandler(), object_reg));
         zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(), celclient));
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
 
@@ -623,22 +624,22 @@ bool psEngine::Initialize (int level)
         // Init the main widget
         mainWidget->SetupMain();
 
-        if (!camera)
+        if(!camera)
         {
             camera = new psCamera();
         }
 
-        if (!charmanager)
+        if(!charmanager)
         {
             charmanager = new psClientCharManager(object_reg);
 
-            if (!charmanager->Initialize( GetMsgHandler(), celclient))
+            if(!charmanager->Initialize(GetMsgHandler(), celclient))
             {
                 lasterror = "Couldn't init Character Manager.";
                 return false;
             }
         }
-        if (!autoexec)
+        if(!autoexec)
         {
             autoexec = new Autoexec();
         }
@@ -714,18 +715,18 @@ bool psEngine::Initialize (int level)
             return false;
 
         // Load effects now, before we have actors
-        if (!effectManager)
+        if(!effectManager)
         {
             effectManager.AttachNew(new psEffectManager(object_reg));
         }
 
-        if (!effectManager->LoadFromDirectory("/this/data/effects", true, camera->GetView()))
+        if(!effectManager->LoadFromDirectory("/this/data/effects", true, camera->GetView()))
         {
             FatalError("Failed to load effects!");
             return false;
         }
 
-        if (!paws->LoadWidget("charpick.xml"))
+        if(!paws->LoadWidget("charpick.xml"))
         {
             FatalError("Failed to load character picker!");
             return false;
@@ -746,19 +747,19 @@ bool psEngine::Initialize (int level)
 void psEngine::LoadLogSettings()
 {
     int count=0;
-    for (int i=0; i< MAX_FLAGS; i++)
+    for(int i=0; i< MAX_FLAGS; i++)
     {
-        if (pslog::GetName(i))
+        if(pslog::GetName(i))
         {
             pslog::SetFlag(pslog::GetName(i),cfgmgr->GetBool(pslog::GetSettingName(i)), 0);
-            if ((cfgmgr->GetBool(pslog::GetSettingName(i))))
+            if((cfgmgr->GetBool(pslog::GetSettingName(i))))
             {
                 count++;
             }
 
         }
     }
-    if (count==0)
+    if(count==0)
     {
         CPrintf(CON_CMDOUTPUT,"All LOGS are off.\n");
     }
@@ -771,95 +772,95 @@ void psEngine::DeclareExtraFactories()
 
     pawsWidgetFactory* factory;
 
-    RegisterFactory (pawsInventoryDollViewFactory);
-    RegisterFactory (pawsGlyphSlotFactory);
-    RegisterFactory (pawsInfoWindowFactory);
-    RegisterFactory (pawsSplashWindowFactory);
-    RegisterFactory (pawsLoadWindowFactory);  
-    RegisterFactory (pawsChatWindowFactory);
-    RegisterFactory (pawsInventoryWindowFactory);
-    RegisterFactory (pawsItemDescriptionWindowFactory);
-    RegisterFactory (pawsContainerDescWindowFactory);
-    RegisterFactory (pawsInteractWindowFactory);
-    RegisterFactory (pawsControlWindowFactory);
-    RegisterFactory (pawsGroupWindowFactory);
-    RegisterFactory (pawsExchangeWindowFactory);
-    RegisterFactory (pawsSpellBookWindowFactory);
-    RegisterFactory (pawsGlyphWindowFactory);
-    RegisterFactory (pawsMerchantWindowFactory);
-    RegisterFactory (pawsStorageWindowFactory);
-    RegisterFactory (pawsConfigWindowFactory);
-    RegisterFactory (pawsConfigKeysFactory);
-    RegisterFactory (pawsConfigPopupFactory); 
-    RegisterFactory (pawsConfigPvPFactory);
-    RegisterFactory (pawsConfigMarriageFactory);
-    RegisterFactory (pawsFingeringWindowFactory);
-    RegisterFactory (pawsConfigDetailsFactory);
-    RegisterFactory (pawsConfigMouseFactory);
-    RegisterFactory (pawsConfigCameraFactory);
-    RegisterFactory (pawsConfigChatFactory);
-    RegisterFactory (pawsConfigSoundFactory);
-    RegisterFactory (pawsConfigEntityLabelsFactory);
-    RegisterFactory (pawsConfigEntityInteractionFactory);
-    RegisterFactory (pawsConfigAutoexecFactory);
-    RegisterFactory (pawsPetitionWindowFactory);
-    RegisterFactory (pawsPetitionGMWindowFactory);
-    RegisterFactory (pawsShortcutWindowFactory);
-    RegisterFactory (pawsLoginWindowFactory);
-    RegisterFactory (pawsCharacterPickerWindowFactory);
-    RegisterFactory (pawsGuildWindowFactory);
-    RegisterFactory (pawsLootWindowFactory);
-    RegisterFactory (pawsCreationMainFactory);
-    RegisterFactory (pawsCharBirthFactory);
-    RegisterFactory (pawsCharParentsFactory);
-    RegisterFactory (pawsChildhoodWindowFactory);
-    RegisterFactory (pawsLifeEventWindowFactory);
-    RegisterFactory (pawsPathWindowFactory);
-    RegisterFactory (pawsSummaryWindowFactory);
-    RegisterFactory (pawsSkillWindowFactory);
-    RegisterFactory (pawsQuestListWindowFactory);
-    RegisterFactory (pawsSpellCancelWindowFactory);
-    RegisterFactory (pawsGmGUIWindowFactory);
-    RegisterFactory (pawsMoneyFactory);
-    RegisterFactory (pawsHelpFactory);
-    RegisterFactory (pawsBuddyWindowFactory);
-    RegisterFactory (pawsIgnoreWindowFactory);
-    RegisterFactory (pawsSlotFactory);
-    RegisterFactory (pawsActionLocationWindowFactory);
-    RegisterFactory (pawsDetailWindowFactory);
-    RegisterFactory (pawsCharDescriptionFactory);
-    RegisterFactory (pawsQuestRewardWindowFactory);
-    RegisterFactory (pawsCreditsWindowFactory);
-    RegisterFactory (pawsQuitInfoBoxFactory);
-    RegisterFactory (pawsGMSpawnWindowFactory);
-    RegisterFactory (pawsSkillIndicatorFactory);
-    RegisterFactory (pawsBookReadingWindowFactory);
-    RegisterFactory (pawsWritingWindowFactory);
-    RegisterFactory (pawsActiveMagicWindowFactory);
-    RegisterFactory (pawsSmallInventoryWindowFactory);
-    RegisterFactory (pawsConfigChatFilterFactory);
-    RegisterFactory (pawsConfigChatTabsFactory);
-    RegisterFactory (pawsConfigChatTabCompletionFactory);
-    RegisterFactory (pawsConfigChatLogsFactory);
-    RegisterFactory (pawsGMActionWindowFactory);
-    RegisterFactory (pawsCraftWindowFactory);
-    RegisterFactory (pawsPetStatWindowFactory);
-    RegisterFactory (pawsTutorialWindowFactory);
-    RegisterFactory (pawsTutorialNotifyWindowFactory);
-    RegisterFactory (pawsSketchWindowFactory);
-    RegisterFactory (pawsGameBoardFactory);
-    RegisterFactory (pawsGameTileFactory);
-    RegisterFactory (pawsBankWindowFactory);
-    RegisterFactory (pawsConfigChatBubblesFactory);
-    RegisterFactory (pawsConfigShadowsFactory);
-    RegisterFactory (pawsConfigGenericFactory);
-    RegisterFactory (pawsNpcDialogWindowFactory);
-    RegisterFactory (pawsBartenderWindowFactory);
-    RegisterFactory (pawsCraftCancelWindowFactory);    
-    RegisterFactory (pawsConfigSpellCheckerFactory);        
-    RegisterFactory (pawsConfigTooltipsFactory);
-    RegisterFactory (pawsMusicWindowFactory);
-    RegisterFactory (pawsSheetLineFactory);
+    RegisterFactory(pawsInventoryDollViewFactory);
+    RegisterFactory(pawsGlyphSlotFactory);
+    RegisterFactory(pawsInfoWindowFactory);
+    RegisterFactory(pawsSplashWindowFactory);
+    RegisterFactory(pawsLoadWindowFactory);
+    RegisterFactory(pawsChatWindowFactory);
+    RegisterFactory(pawsInventoryWindowFactory);
+    RegisterFactory(pawsItemDescriptionWindowFactory);
+    RegisterFactory(pawsContainerDescWindowFactory);
+    RegisterFactory(pawsInteractWindowFactory);
+    RegisterFactory(pawsControlWindowFactory);
+    RegisterFactory(pawsGroupWindowFactory);
+    RegisterFactory(pawsExchangeWindowFactory);
+    RegisterFactory(pawsSpellBookWindowFactory);
+    RegisterFactory(pawsGlyphWindowFactory);
+    RegisterFactory(pawsMerchantWindowFactory);
+    RegisterFactory(pawsStorageWindowFactory);
+    RegisterFactory(pawsConfigWindowFactory);
+    RegisterFactory(pawsConfigKeysFactory);
+    RegisterFactory(pawsConfigPopupFactory);
+    RegisterFactory(pawsConfigPvPFactory);
+    RegisterFactory(pawsConfigMarriageFactory);
+    RegisterFactory(pawsFingeringWindowFactory);
+    RegisterFactory(pawsConfigDetailsFactory);
+    RegisterFactory(pawsConfigMouseFactory);
+    RegisterFactory(pawsConfigCameraFactory);
+    RegisterFactory(pawsConfigChatFactory);
+    RegisterFactory(pawsConfigSoundFactory);
+    RegisterFactory(pawsConfigEntityLabelsFactory);
+    RegisterFactory(pawsConfigEntityInteractionFactory);
+    RegisterFactory(pawsConfigAutoexecFactory);
+    RegisterFactory(pawsPetitionWindowFactory);
+    RegisterFactory(pawsPetitionGMWindowFactory);
+    RegisterFactory(pawsShortcutWindowFactory);
+    RegisterFactory(pawsLoginWindowFactory);
+    RegisterFactory(pawsCharacterPickerWindowFactory);
+    RegisterFactory(pawsGuildWindowFactory);
+    RegisterFactory(pawsLootWindowFactory);
+    RegisterFactory(pawsCreationMainFactory);
+    RegisterFactory(pawsCharBirthFactory);
+    RegisterFactory(pawsCharParentsFactory);
+    RegisterFactory(pawsChildhoodWindowFactory);
+    RegisterFactory(pawsLifeEventWindowFactory);
+    RegisterFactory(pawsPathWindowFactory);
+    RegisterFactory(pawsSummaryWindowFactory);
+    RegisterFactory(pawsSkillWindowFactory);
+    RegisterFactory(pawsQuestListWindowFactory);
+    RegisterFactory(pawsSpellCancelWindowFactory);
+    RegisterFactory(pawsGmGUIWindowFactory);
+    RegisterFactory(pawsMoneyFactory);
+    RegisterFactory(pawsHelpFactory);
+    RegisterFactory(pawsBuddyWindowFactory);
+    RegisterFactory(pawsIgnoreWindowFactory);
+    RegisterFactory(pawsSlotFactory);
+    RegisterFactory(pawsActionLocationWindowFactory);
+    RegisterFactory(pawsDetailWindowFactory);
+    RegisterFactory(pawsCharDescriptionFactory);
+    RegisterFactory(pawsQuestRewardWindowFactory);
+    RegisterFactory(pawsCreditsWindowFactory);
+    RegisterFactory(pawsQuitInfoBoxFactory);
+    RegisterFactory(pawsGMSpawnWindowFactory);
+    RegisterFactory(pawsSkillIndicatorFactory);
+    RegisterFactory(pawsBookReadingWindowFactory);
+    RegisterFactory(pawsWritingWindowFactory);
+    RegisterFactory(pawsActiveMagicWindowFactory);
+    RegisterFactory(pawsSmallInventoryWindowFactory);
+    RegisterFactory(pawsConfigChatFilterFactory);
+    RegisterFactory(pawsConfigChatTabsFactory);
+    RegisterFactory(pawsConfigChatTabCompletionFactory);
+    RegisterFactory(pawsConfigChatLogsFactory);
+    RegisterFactory(pawsGMActionWindowFactory);
+    RegisterFactory(pawsCraftWindowFactory);
+    RegisterFactory(pawsPetStatWindowFactory);
+    RegisterFactory(pawsTutorialWindowFactory);
+    RegisterFactory(pawsTutorialNotifyWindowFactory);
+    RegisterFactory(pawsSketchWindowFactory);
+    RegisterFactory(pawsGameBoardFactory);
+    RegisterFactory(pawsGameTileFactory);
+    RegisterFactory(pawsBankWindowFactory);
+    RegisterFactory(pawsConfigChatBubblesFactory);
+    RegisterFactory(pawsConfigShadowsFactory);
+    RegisterFactory(pawsConfigTextPageFactory);
+    RegisterFactory(pawsNpcDialogWindowFactory);
+    RegisterFactory(pawsBartenderWindowFactory);
+    RegisterFactory(pawsCraftCancelWindowFactory);
+    RegisterFactory(pawsConfigSpellCheckerFactory);
+    RegisterFactory(pawsConfigTooltipsFactory);
+    RegisterFactory(pawsMusicWindowFactory);
+    RegisterFactory(pawsSheetLineFactory);
 }
 
 //-----------------------------------------------------------------------------
@@ -870,26 +871,26 @@ void psEngine::DeclareExtraFactories()
  * mouse click, messages, etc.
  */
 
-bool psEngine::ProcessLogic(iEvent& ev)
+bool psEngine::ProcessLogic(iEvent &ev)
 {
     lastEvent = &ev;
 
     if(ev.Name == event_frame)
     {
-        if (gameLoaded)
+        if(gameLoaded)
         {
             modehandler->PreProcess();
         }
 
         // If any objects or actors are enqueued to be created, create the next one this frame.
-        if (celclient)
+        if(celclient)
         {
             celclient->CheckEntityQueues();
         }
 
         UpdatePerFrame();
     }
-    if (ev.Name == event_canvashidden)
+    if(ev.Name == event_canvashidden)
     {
         drawScreen = false;
         if(soundOn)
@@ -897,7 +898,7 @@ bool psEngine::ProcessLogic(iEvent& ev)
             MuteAllSounds();
         }
     }
-    else if (ev.Name == event_canvasexposed)
+    else if(ev.Name == event_canvasexposed)
     {
         drawScreen = true;
         if(soundOn)
@@ -905,21 +906,21 @@ bool psEngine::ProcessLogic(iEvent& ev)
             UnmuteAllSounds();
         }
     }
-    else if (ev.Name == event_focusgained)
+    else if(ev.Name == event_focusgained)
     {
         if(GetMuteSoundsOnFocusLoss() && soundOn)
         {
             UnmuteAllSounds();
         }
     }
-    else if (ev.Name == event_focuslost)
+    else if(ev.Name == event_focuslost)
     {
         if(GetMuteSoundsOnFocusLoss() && soundOn)
         {
             MuteAllSounds();
         }
     }
-    else if (ev.Name == event_quit)
+    else if(ev.Name == event_quit)
     {
         // Disconnect and quit, if this event wasn't made here
         QuitClient();
@@ -929,24 +930,24 @@ bool psEngine::ProcessLogic(iEvent& ev)
         bool handled = false;
         if(paws->HandleEvent(ev))
         {
-          handled = true;
+            handled = true;
         }
 
         if(slotManager && !handled && slotManager->HandleEvent(ev))
         {
-          handled = true;
+            handled = true;
         }
 
         if(charController)
         {
             if(!handled && charController->HandleEvent(ev))
             {
-              handled = true;
+                handled = true;
             }
 
             if(handled && paws->GetFocusOverridesControls())
             {
-              charController->GetMovementManager()->StopControlledMovement();
+                charController->GetMovementManager()->StopControlledMovement();
             }
         }
 
@@ -956,7 +957,7 @@ bool psEngine::ProcessLogic(iEvent& ev)
     return false;
 }
 
-bool psEngine::Process3D(iEvent& ev)
+bool psEngine::Process3D(iEvent &ev)
 {
     lastEvent = &ev;
 
@@ -974,12 +975,12 @@ bool psEngine::Process3D(iEvent& ev)
     }
 
     // Loading the game
-    if (loadstate != LS_DONE)
+    if(loadstate != LS_DONE)
     {
         LoadGame();
     }
 
-    if (drawScreen)
+    if(drawScreen)
     {
         // FPS limits
         FrameLimit();
@@ -1001,17 +1002,17 @@ bool psEngine::Process3D(iEvent& ev)
     return false;
 }
 
-bool psEngine::Process2D(iEvent& ev)
+bool psEngine::Process2D(iEvent &ev)
 {
     lastEvent = &ev;
 
-    if (drawScreen)
+    if(drawScreen)
     {
         g3d->BeginDraw(CSDRAW_2DGRAPHICS);
-        if (effectManager)
+        if(effectManager)
             effectManager->Render2D(g3d, g2d);
         paws->Draw();
-        if (showFPS)
+        if(showFPS)
         {
             csString fpsDisplay;
             fpsDisplay.Format("%.2f", getFPS());
@@ -1022,7 +1023,7 @@ bool psEngine::Process2D(iEvent& ev)
     return true;
 }
 
-bool psEngine::ProcessFrame(iEvent& ev)
+bool psEngine::ProcessFrame(iEvent &ev)
 {
     lastEvent = &ev;
 
@@ -1032,7 +1033,7 @@ bool psEngine::ProcessFrame(iEvent& ev)
     // We need to call this after drawing was finished so
     // LoadingScreen had a chance to be displayed when loading
     // maps in-game
-    if (zonehandler)
+    if(zonehandler)
         zonehandler->OnDrawingFinished();
 
     return true;
@@ -1040,26 +1041,28 @@ bool psEngine::ProcessFrame(iEvent& ev)
 
 // ----------------------------------------------------------------------------
 
-const csHandlerID * psEngine::LogicEventHandler::GenericPrec(csRef<iEventHandlerRegistry> &handler_reg,
-                                                        csRef<iEventNameRegistry> &name_reg,
-                                                        csEventID e) const
+const csHandlerID* psEngine::LogicEventHandler::GenericPrec(csRef<iEventHandlerRegistry> &handler_reg,
+        csRef<iEventNameRegistry> &name_reg,
+        csEventID e) const
 {
-    if (e != csevFrame(name_reg))
+    if(e != csevFrame(name_reg))
         return 0;
-    static csHandlerID precConstraint[2] = {
+    static csHandlerID precConstraint[2] =
+    {
         handler_reg->GetGenericID("planeshift.clientmsghandler"),
         CS_HANDLERLIST_END
     };
     return precConstraint;
 }
 
-const csHandlerID * psEngine::LogicEventHandler::GenericSucc(csRef<iEventHandlerRegistry> &handler_reg,
-                                                             csRef<iEventNameRegistry> &name_reg,
-                                                             csEventID e) const
+const csHandlerID* psEngine::LogicEventHandler::GenericSucc(csRef<iEventHandlerRegistry> &handler_reg,
+        csRef<iEventNameRegistry> &name_reg,
+        csEventID e) const
 {
-    if (e != csevFrame(name_reg))
+    if(e != csevFrame(name_reg))
         return 0;
-    static csHandlerID succConstraint[6] = {
+    static csHandlerID succConstraint[6] =
+    {
         FrameSignpost_Logic3D::StaticID(handler_reg),
         FrameSignpost_3D2D::StaticID(handler_reg),
         FrameSignpost_2DConsole::StaticID(handler_reg),
@@ -1134,16 +1137,16 @@ void psEngine::UnmuteAllSounds(void)
 const char* psEngine::FindCommonString(unsigned int cstr_id)
 {
     csStringHashReversible* strings = GetMsgStrings();
-    if (!strings)
+    if(!strings)
         return "";
 
     return strings->Request(cstr_id);
 }
 
-csStringID psEngine::FindCommonStringId(const char *str)
+csStringID psEngine::FindCommonStringId(const char* str)
 {
     csStringHashReversible* strings = GetMsgStrings();
-    if (!strings)
+    if(!strings)
         return csInvalidStringID;
 
     return strings->Request(str);
@@ -1151,7 +1154,7 @@ csStringID psEngine::FindCommonStringId(const char *str)
 
 csStringHashReversible* psEngine::GetMsgStrings()
 {
-    if (!celclient || !celclient->GetClientDR())
+    if(!celclient || !celclient->GetClientDR())
         return NULL;
 
     return celclient->GetClientDR()->GetMsgStrings();
@@ -1161,43 +1164,43 @@ csStringHashReversible* psEngine::GetMsgStrings()
 
 inline void psEngine::UpdatePerFrame()
 {
-    if (!celclient)
+    if(!celclient)
         return;
 
     // Must be in PostProcess for accurate DR updates
-    if (celclient->GetClientDR())
+    if(celclient->GetClientDR())
         celclient->GetClientDR()->CheckDeadReckoningUpdate();
 
-    if (celclient->GetMainPlayer())
+    if(celclient->GetMainPlayer())
     {
         celclient->GetClientDR()->CheckSectorCrossing(celclient->GetMainPlayer());
         celclient->PruneEntities();    // Prune CD-intensive entities by disabling CD
 
         // Update Stats for Player
-        celclient->GetMainPlayer()->GetVitalMgr()->Predict( csGetTicks(),"Self" );
+        celclient->GetMainPlayer()->GetVitalMgr()->Predict(csGetTicks(),"Self");
 
         // Update stats for Target if Target is there and has stats
-        GEMClientObject * target = psengine->GetCharManager()->GetTarget();
-        if (target && target->GetType() != -2 )
+        GEMClientObject* target = psengine->GetCharManager()->GetTarget();
+        if(target && target->GetType() != -2)
         {
-            GEMClientActor * actor = dynamic_cast<GEMClientActor*>(target);
-            if (actor)
+            GEMClientActor* actor = dynamic_cast<GEMClientActor*>(target);
+            if(actor)
                 actor->GetVitalMgr()->Predict(csGetTicks(),"Target");
         }
     }
 
-    if (celclient)
+    if(celclient)
         celclient->Update(HasLoadedMap());
 
-    if (effectManager)
+    if(effectManager)
         effectManager->Update();
 
     if(songManager)
         songManager->Update();
 
     // Update the sound system
-    if (GetSoundStatus()
-        && loadstate == LS_DONE)
+    if(GetSoundStatus()
+            && loadstate == LS_DONE)
     {
         GEMClientActor* mainPlayer = celclient->GetMainPlayer();
         csVector3 vel = mainPlayer->GetVelocity();
@@ -1220,7 +1223,7 @@ void psEngine::QuitClient()
 {
     // Only run through the shut down procedure once
     static bool alreadyQuitting = false;
-    if (alreadyQuitting)
+    if(alreadyQuitting)
     {
         return;
     }
@@ -1229,8 +1232,8 @@ void psEngine::QuitClient()
 
     loadstate = LS_NONE;
 
-    csRef<iConfigManager> cfg( csQueryRegistry<iConfigManager> (object_reg) );
-    if (cfg)
+    csRef<iConfigManager> cfg(csQueryRegistry<iConfigManager> (object_reg));
+    if(cfg)
     {
         cfg->Save();
     }
@@ -1261,12 +1264,12 @@ bool psEngine::UpdateWindowTitleInformations()
 
 // ----------------------------------------------------------------------------
 
-void psEngine::AddLoadingWindowMsg(const csString & msg)
+void psEngine::AddLoadingWindowMsg(const csString &msg)
 {
-    pawsLoadWindow* window = static_cast <pawsLoadWindow*> (paws->FindWidget("LoadWindow"));
-    if (window != NULL)
+    pawsLoadWindow* window = static_cast <pawsLoadWindow*>(paws->FindWidget("LoadWindow"));
+    if(window != NULL)
     {
-        window->AddText( paws->Translate(msg) );
+        window->AddText(paws->Translate(msg));
         ForceRefresh();
     }
 }
@@ -1279,271 +1282,271 @@ void psEngine::LoadGame()
 {
     switch(loadstate)
     {
-    case LS_ERROR:
-    case LS_NONE:
-        return;
-
-    case LS_LOAD_SCREEN:
-    {
-        paws->LoadWidget("loadwindow.xml");
-        LoadPawsWidget("Active Magic window","activemagicwindow.xml" );
-
-        pawsLoadWindow* window = dynamic_cast <pawsLoadWindow*> (paws->FindWidget("LoadWindow"));
-        if (!window)
-        {
-            FatalError("Widget: LoadWindow could not be found or is not a pawsLoadWindow widget.");
+        case LS_ERROR:
+        case LS_NONE:
             return;
-        }
 
-        AddLoadingWindowMsg( "Loading..." );
-        ForceRefresh();
-
-        // Request MOTD
-        psMOTDRequestMessage motdRe;
-        GetMsgHandler()->SendMessage(motdRe.msg);
-
-        pawsWidget* cpw = paws->FindWidget("CharPickerWindow");
-        cpw->DeleteYourself();
-
-        loadstate = LS_INIT_ENGINE;
-        break;
-    }
-
-    case LS_INIT_ENGINE:
-    {
-        if (charController == NULL)
+        case LS_LOAD_SCREEN:
         {
-            charController = new psCharController(nameRegistry);
-            if (!charController->Initialize())
+            paws->LoadWidget("loadwindow.xml");
+            LoadPawsWidget("Active Magic window","activemagicwindow.xml");
+
+            pawsLoadWindow* window = dynamic_cast <pawsLoadWindow*>(paws->FindWidget("LoadWindow"));
+            if(!window)
             {
-                FatalError("Couldn't initialize the character controller!");
+                FatalError("Widget: LoadWindow could not be found or is not a pawsLoadWindow widget.");
                 return;
             }
+
+            AddLoadingWindowMsg("Loading...");
+            ForceRefresh();
+
+            // Request MOTD
+            psMOTDRequestMessage motdRe;
+            GetMsgHandler()->SendMessage(motdRe.msg);
+
+            pawsWidget* cpw = paws->FindWidget("CharPickerWindow");
+            cpw->DeleteYourself();
+
+            loadstate = LS_INIT_ENGINE;
+            break;
         }
 
-        // load chat bubbles
-        if (!chatBubbles)
+        case LS_INIT_ENGINE:
         {
-            chatBubbles = new psChatBubbles();
-            chatBubbles->Initialize(this);
-        }
-
-        loadstate = LS_REQUEST_WORLD;
-        break;
-    }
-
-    case LS_REQUEST_WORLD:
-    {
-        if (!charController->IsReady())
-            return;  // Wait for character modes
-
-        celclient->RequestServerWorld();
-
-        loadtimeout = csGetTicks () + cfgmgr->GetInt("PlaneShift.Client.User.Persisttimeout", 60) * 1000;
-
-        AddLoadingWindowMsg( "Requesting connection" );
-        ForceRefresh();
-
-        loadstate = LS_SETTING_CHARACTERS;
-        break;
-    }
-
-    case LS_SETTING_CHARACTERS:
-    {
-        // Wait for the map to be loaded
-        if (!HasLoadedMap())
-            return;
-
-        // Request the actor.
-        if(!actorRequested)
-        {
-            celclient->RequestActor();
-            actorRequested = true;
-        }
-
-        if ( !celclient->IsReady() )
-        {
-            if (celclient->GetRequestStatus() != 0 && csGetTicks() > loadtimeout)
+            if(charController == NULL)
             {
-                csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
-                    "PSLoader: timeout!");
-
-                FatalError("Timeout waiting for the world to load");
+                charController = new psCharController(nameRegistry);
+                if(!charController->Initialize())
+                {
+                    FatalError("Couldn't initialize the character controller!");
+                    return;
+                }
             }
 
-            // We don't have the main actor or world yet
-            return;
-        }
-
-        // Set controlled actor and map controls
-        charController->GetMovementManager()->SetActor(NULL);
-
-        // Init camera with controlled actor
-        camera->InitializeView( celclient->GetMainPlayer() );
-
-        // Get stats
-        psStatsMessage statmsg;
-        GetMsgHandler()->SendMessage(statmsg.msg);
-
-        AddLoadingWindowMsg( "Getting entities" );
-        celclient->GetMainPlayer()->SendDRUpdate(0, celclient->GetClientDR()->GetMsgStrings());
-
-        AddLoadingWindowMsg( "Loading GUI" );
-        ForceRefresh();
-
-        loadstate = LS_CREATE_GUI;
-        break;
-    }
-
-    case LS_CREATE_GUI:
-    {
-        // Must be first!!!
-        if (!paws->LoadWidget( "control.xml" ))
-        {
-            GetMainWidget()->LockPlayer();
-            FatalError("The toolbar couldn't be loaded\nPlease check your logs");
-            return;
-        }
-
-        LoadPawsWidget( "Status window",           "infowindow.xml" );
-        LoadPawsWidget( "Ignore window",           "ignorewindow.xml" );
-        LoadPawsWidget( "Communications window",   GetChatWindowWidget().GetData() );
-        LoadPawsWidget( "Inventory window",        "inventory.xml" );
-        LoadPawsWidget( "Item description window", "itemdesc.xml" );
-        LoadPawsWidget( "Container description window","containerdesc.xml" );
-        LoadPawsWidget( "Book Reading window", "readbook.xml" );
-        LoadPawsWidget( "Interact menu",           "interact.xml" );
-        LoadPawsWidget( "Group status window",     "group.xml" );
-        LoadPawsWidget( "Exchange window",         "exchange.xml" );
-        LoadPawsWidget( "Glyph window",            "glyph.xml" );
-        LoadPawsWidget( "Merchant window",         "merchant.xml" );
-        LoadPawsWidget( "Storage window",          "storage.xml" );
-        LoadPawsWidget( "Petition window",         "petition.xml" );
-        LoadPawsWidget( "Petititon GM window",     "petitiongm.xml" );
-        LoadPawsWidget( "Spellbook window",        "spellwindow.xml" );
-        LoadPawsWidget( "Shortcut window",         "shortcutwindow.xml" );
-        LoadPawsWidget( "GM GUI window",           "gmguiwindow.xml" );
-        LoadPawsWidget( "Control panel",           "configwindow.xml" );
-        LoadPawsWidget( "Fingering window",        "fingering.xml" );
-        LoadPawsWidget( "Guild information window","guildwindow.xml" );
-        LoadPawsWidget( "Loot window",             "loot.xml" );
-        LoadPawsWidget( "Skills window",           "skillwindow.xml" );
-        LoadPawsWidget( "PetStats window",         "petstatwindow.xml" );
-        LoadPawsWidget( "Quest notebook window",   "questnotebook.xml" );
-        LoadPawsWidget( "Spell cast status window","spellcancelwindow.xml" );
-        LoadPawsWidget( "Help window",             "helpwindow.xml" );
-        LoadPawsWidget( "Buddy window",            "buddy.xml" );
-        LoadPawsWidget( "Action Location window",  "actionlocation.xml" );
-        LoadPawsWidget( "Details window",          "detailwindow.xml" );
-        LoadPawsWidget( "Character description window","chardescwindow.xml" );
-        LoadPawsWidget( "Quest reward window",     "questrewardwindow.xml" );
-        LoadPawsWidget( "GM Spawn interface",      "gmspawn.xml" );
-        //LoadPawsWidget( "Active Magic window",   "activemagicwindow.xml" );
-        LoadPawsWidget( "Small Inventory Window",  "smallinventory.xml" );
-        LoadPawsWidget( "GM Action Location Edit", "gmaddeditaction.xml" );
-        LoadPawsWidget( "Crafting",                "craft.xml");
-        LoadPawsWidget( "Tutorial",                "tutorial.xml");
-        LoadPawsWidget( "Sketch",                  "illumination.xml");
-        LoadPawsWidget( "GameBoard",               "gameboard.xml");
-        LoadPawsWidget( "Writing window",          "bookwriting.xml");
-        LoadPawsWidget( "NPC dialog window",       "dialog.xml");
-        LoadPawsWidget( "QuickSpellBar",            "quick_spell_bar.xml");
-        LoadPawsWidget( "Craft status window",     "craftcancelwindow.xml" );
-        LoadPawsWidget( "Music window",            "musicwindow.xml");
-
-        LoadCustomPawsWidgets("/data/gui/customwidgetslist.xml");
-
-        HideWindow("DescriptionEdit");
-        HideWindow("ItemDescWindow");
-        HideWindow("BookReadingWindow");
-        HideWindow("ContainerDescWindow");
-        HideWindow("GroupWindow");
-        HideWindow("InteractWindow");
-        HideWindow("ExchangeWindow");
-        HideWindow("MerchantWindow");
-        HideWindow("StorageWindow");
-        HideWindow("ShortcutEdit");
-        HideWindow("FingeringWindow");
-        HideWindow("QuestEdit");
-        HideWindow("LootWindow");
-        HideWindow("ActionLocationWindow");
-        HideWindow("DetailWindow");
-        HideWindow("QuestRewardWindow");
-        HideWindow("SpellCancelWindow");
-        HideWindow("GMSpawnWindow");
-        HideWindow("AddEditActionWindow");
-        HideWindow("GmGUI");
-        HideWindow("PetStatWindow");
-        HideWindow("WritingWindow");
-        HideWindow("CraftCancelWindow");
-        
-
-        paws->GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
-
-        // If we had any problems, show them
-        if ( wdgProblems.GetSize() > 0 )
-        {
-            printf("Following widgets failed to load:\n");
-
-            // Loop through the array
-            for (size_t i = 0;i < wdgProblems.GetSize(); i++)
+            // load chat bubbles
+            if(!chatBubbles)
             {
-                csString str = wdgProblems.Get(i);
-                if (str.Length() > 0)
-                    printf("%s\n",str.GetData());
+                chatBubbles = new psChatBubbles();
+                chatBubbles->Initialize(this);
             }
 
-            GetMainWidget()->LockPlayer();
-            FatalError("One or more widgets failed to load\nPlease check your logs");
-            return;
+            loadstate = LS_REQUEST_WORLD;
+            break;
         }
 
-        psClientStatusMessage statusmsg(true);
-        statusmsg.SendMessage();
-
-        // load the mouse options if not loaded already. The GetMouseBinds
-        // function will load them if they are requested before this code
-        // is executed.
-        if (!mouseBinds)
+        case LS_REQUEST_WORLD:
         {
-            mouseBinds = GetMouseBinds();
+            if(!charController->IsReady())
+                return;  // Wait for character modes
+
+            celclient->RequestServerWorld();
+
+            loadtimeout = csGetTicks() + cfgmgr->GetInt("PlaneShift.Client.User.Persisttimeout", 60) * 1000;
+
+            AddLoadingWindowMsg("Requesting connection");
+            ForceRefresh();
+
+            loadstate = LS_SETTING_CHARACTERS;
+            break;
         }
 
-        // run autoexec commands for this char
-        if (autoexec->GetEnabled())
+        case LS_SETTING_CHARACTERS:
         {
-          autoexec->execute();
+            // Wait for the map to be loaded
+            if(!HasLoadedMap())
+                return;
+
+            // Request the actor.
+            if(!actorRequested)
+            {
+                celclient->RequestActor();
+                actorRequested = true;
+            }
+
+            if(!celclient->IsReady())
+            {
+                if(celclient->GetRequestStatus() != 0 && csGetTicks() > loadtimeout)
+                {
+                    csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
+                             "PSLoader: timeout!");
+
+                    FatalError("Timeout waiting for the world to load");
+                }
+
+                // We don't have the main actor or world yet
+                return;
+            }
+
+            // Set controlled actor and map controls
+            charController->GetMovementManager()->SetActor(NULL);
+
+            // Init camera with controlled actor
+            camera->InitializeView(celclient->GetMainPlayer());
+
+            // Get stats
+            psStatsMessage statmsg;
+            GetMsgHandler()->SendMessage(statmsg.msg);
+
+            AddLoadingWindowMsg("Getting entities");
+            celclient->GetMainPlayer()->SendDRUpdate(0, celclient->GetClientDR()->GetMsgStrings());
+
+            AddLoadingWindowMsg("Loading GUI");
+            ForceRefresh();
+
+            loadstate = LS_CREATE_GUI;
+            break;
         }
 
-        // Set the focus to the main widget
-        paws->SetCurrentFocusedWidget(GetMainWidget());
+        case LS_CREATE_GUI:
+        {
+            // Must be first!!!
+            if(!paws->LoadWidget("control.xml"))
+            {
+                GetMainWidget()->LockPlayer();
+                FatalError("The toolbar couldn't be loaded\nPlease check your logs");
+                return;
+            }
 
-        // Enable render2texture (disabled until fully working).
-        //paws->UseR2T(true);
+            LoadPawsWidget("Status window",           "infowindow.xml");
+            LoadPawsWidget("Ignore window",           "ignorewindow.xml");
+            LoadPawsWidget("Communications window",   GetChatWindowWidget().GetData());
+            LoadPawsWidget("Inventory window",        "inventory.xml");
+            LoadPawsWidget("Item description window", "itemdesc.xml");
+            LoadPawsWidget("Container description window","containerdesc.xml");
+            LoadPawsWidget("Book Reading window", "readbook.xml");
+            LoadPawsWidget("Interact menu",           "interact.xml");
+            LoadPawsWidget("Group status window",     "group.xml");
+            LoadPawsWidget("Exchange window",         "exchange.xml");
+            LoadPawsWidget("Glyph window",            "glyph.xml");
+            LoadPawsWidget("Merchant window",         "merchant.xml");
+            LoadPawsWidget("Storage window",          "storage.xml");
+            LoadPawsWidget("Petition window",         "petition.xml");
+            LoadPawsWidget("Petititon GM window",     "petitiongm.xml");
+            LoadPawsWidget("Spellbook window",        "spellwindow.xml");
+            LoadPawsWidget("Shortcut window",         "shortcutwindow.xml");
+            LoadPawsWidget("GM GUI window",           "gmguiwindow.xml");
+            LoadPawsWidget("Control panel",           "configwindow.xml");
+            LoadPawsWidget("Fingering window",        "fingering.xml");
+            LoadPawsWidget("Guild information window","guildwindow.xml");
+            LoadPawsWidget("Loot window",             "loot.xml");
+            LoadPawsWidget("Skills window",           "skillwindow.xml");
+            LoadPawsWidget("PetStats window",         "petstatwindow.xml");
+            LoadPawsWidget("Quest notebook window",   "questnotebook.xml");
+            LoadPawsWidget("Spell cast status window","spellcancelwindow.xml");
+            LoadPawsWidget("Help window",             "helpwindow.xml");
+            LoadPawsWidget("Buddy window",            "buddy.xml");
+            LoadPawsWidget("Action Location window",  "actionlocation.xml");
+            LoadPawsWidget("Details window",          "detailwindow.xml");
+            LoadPawsWidget("Character description window","chardescwindow.xml");
+            LoadPawsWidget("Quest reward window",     "questrewardwindow.xml");
+            LoadPawsWidget("GM Spawn interface",      "gmspawn.xml");
+            //LoadPawsWidget( "Active Magic window",   "activemagicwindow.xml" );
+            LoadPawsWidget("Small Inventory Window",  "smallinventory.xml");
+            LoadPawsWidget("GM Action Location Edit", "gmaddeditaction.xml");
+            LoadPawsWidget("Crafting",                "craft.xml");
+            LoadPawsWidget("Tutorial",                "tutorial.xml");
+            LoadPawsWidget("Sketch",                  "illumination.xml");
+            LoadPawsWidget("GameBoard",               "gameboard.xml");
+            LoadPawsWidget("Writing window",          "bookwriting.xml");
+            LoadPawsWidget("NPC dialog window",       "dialog.xml");
+            LoadPawsWidget("QuickSpellBar",            "quick_spell_bar.xml");
+            LoadPawsWidget("Craft status window",     "craftcancelwindow.xml");
+            LoadPawsWidget("Music window",            "musicwindow.xml");
 
-        loadstate = LS_DONE;
-        break;
-    }
+            LoadCustomPawsWidgets("/data/gui/customwidgetslist.xml");
+
+            HideWindow("DescriptionEdit");
+            HideWindow("ItemDescWindow");
+            HideWindow("BookReadingWindow");
+            HideWindow("ContainerDescWindow");
+            HideWindow("GroupWindow");
+            HideWindow("InteractWindow");
+            HideWindow("ExchangeWindow");
+            HideWindow("MerchantWindow");
+            HideWindow("StorageWindow");
+            HideWindow("ShortcutEdit");
+            HideWindow("FingeringWindow");
+            HideWindow("QuestEdit");
+            HideWindow("LootWindow");
+            HideWindow("ActionLocationWindow");
+            HideWindow("DetailWindow");
+            HideWindow("QuestRewardWindow");
+            HideWindow("SpellCancelWindow");
+            HideWindow("GMSpawnWindow");
+            HideWindow("AddEditActionWindow");
+            HideWindow("GmGUI");
+            HideWindow("PetStatWindow");
+            HideWindow("WritingWindow");
+            HideWindow("CraftCancelWindow");
 
 
-    default:
-        loadstate = LS_NONE;
+            paws->GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
+
+            // If we had any problems, show them
+            if(wdgProblems.GetSize() > 0)
+            {
+                printf("Following widgets failed to load:\n");
+
+                // Loop through the array
+                for(size_t i = 0; i < wdgProblems.GetSize(); i++)
+                {
+                    csString str = wdgProblems.Get(i);
+                    if(str.Length() > 0)
+                        printf("%s\n",str.GetData());
+                }
+
+                GetMainWidget()->LockPlayer();
+                FatalError("One or more widgets failed to load\nPlease check your logs");
+                return;
+            }
+
+            psClientStatusMessage statusmsg(true);
+            statusmsg.SendMessage();
+
+            // load the mouse options if not loaded already. The GetMouseBinds
+            // function will load them if they are requested before this code
+            // is executed.
+            if(!mouseBinds)
+            {
+                mouseBinds = GetMouseBinds();
+            }
+
+            // run autoexec commands for this char
+            if(autoexec->GetEnabled())
+            {
+                autoexec->execute();
+            }
+
+            // Set the focus to the main widget
+            paws->SetCurrentFocusedWidget(GetMainWidget());
+
+            // Enable render2texture (disabled until fully working).
+            //paws->UseR2T(true);
+
+            loadstate = LS_DONE;
+            break;
+        }
+
+
+        default:
+            loadstate = LS_NONE;
     }
 
     csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
-        "PSLoader: step %d: success", loadstate);
+             "PSLoader: step %d: success", loadstate);
 
-    if (loadstate==LS_DONE)
+    if(loadstate==LS_DONE)
     {
         gameLoaded = true;
         paws->FindWidget("LoadWindow")->Hide();
     }
 }
 
-void psEngine::HideWindow(const csString & widgetName)
+void psEngine::HideWindow(const csString &widgetName)
 {
-    pawsWidget * wnd = paws->FindWidget(widgetName);
-    if (wnd != NULL)
+    pawsWidget* wnd = paws->FindWidget(widgetName);
+    if(wnd != NULL)
         wnd->Hide();
 }
 
@@ -1552,17 +1555,17 @@ psMouseBinds* psEngine::GetMouseBinds()
     // If not loaded load the mouse binds. They should normaly be loaded
     // from the load GUI step, but this function have been observerd called
     // before.
-    if (!mouseBinds)
+    if(!mouseBinds)
     {
         mouseBinds = new psMouseBinds();
 
         csString fileName = "/planeshift/userdata/options/mouse.xml";
-        if (!vfs->Exists(fileName))
+        if(!vfs->Exists(fileName))
         {
             fileName = "/planeshift/data/options/mouse_def.xml";
         }
 
-        if ( !mouseBinds->LoadFromFile( object_reg, fileName))
+        if(!mouseBinds->LoadFromFile(object_reg, fileName))
             Error1("Failed to load mouse options");
     }
     return mouseBinds;
@@ -1573,34 +1576,34 @@ csString psEngine::GetChatWindowWidget()
     csString chatWidget = "chat.xml";
     csRef<iDocument> doc;
     csRef<iDocumentNode> root, chatNode, optionNode;
-    if (psengine->GetVFS()->Exists(CONFIG_CHAT_FILE_NAME))
+    if(psengine->GetVFS()->Exists(CONFIG_CHAT_FILE_NAME))
         doc = ParseFile(GetObjectRegistry(), CONFIG_CHAT_FILE_NAME);
     else
         doc = ParseFile(GetObjectRegistry(), CONFIG_CHAT_FILE_NAME_DEF);
 
-    if (doc == NULL)
+    if(doc == NULL)
         return chatWidget;
 
     root = doc->GetRoot();
-    if (root == NULL)
+    if(root == NULL)
         return chatWidget;
 
     chatNode = root->GetNode("chat");
-    if (chatNode == NULL)
+    if(chatNode == NULL)
         return chatWidget;
 
     optionNode = chatNode->GetNode("chatoptions");
-    if (optionNode != NULL)
+    if(optionNode != NULL)
     {
         csRef<iDocumentNode> oNode = optionNode->GetNode("chatWidget");
-        if (oNode)
-        {	
+        if(oNode)
+        {
             chatWidget = oNode->GetAttributeValue("value");
             if(!chatWidget.Length()) //if none are defined put a default one
                 chatWidget = "chat.xml";
         }
     }
-    return chatWidget;    
+    return chatWidget;
 }
 
 size_t psEngine::GetTime()
@@ -1681,25 +1684,25 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     if(!forceDef)
         fileName = "/planeshift/userdata/options/sound.xml";
 
-    if (forceDef || !psengine->GetVFS()->Exists(fileName))
+    if(forceDef || !psengine->GetVFS()->Exists(fileName))
     {
         fileName = "/planeshift/data/options/sound_def.xml";
     }
 
     doc = ParseFile(object_reg, fileName);
-    if (doc == NULL)
+    if(doc == NULL)
     {
         Error2("Failed to parse file %s", fileName.GetData());
         return false;
     }
     root = doc->GetRoot();
-    if (root == NULL)
+    if(root == NULL)
     {
         Error2("%s has no XML root",fileName.GetData());
         return false;
     }
     mainNode = root->GetNode("sound");
-    if (mainNode == NULL)
+    if(mainNode == NULL)
     {
         Error2("%s has no <sound> tag",fileName.GetData());
         return false;
@@ -1707,28 +1710,28 @@ bool psEngine::LoadSoundSettings(bool forceDef)
 
     // load and apply the settings
     optionNode = mainNode->GetNode("ambient");
-    if (optionNode != NULL)
+    if(optionNode != NULL)
         SoundManager->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("actions");
-    if (optionNode != NULL)
-    	SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+    if(optionNode != NULL)
+        SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("effects");
-    if (optionNode != NULL)
-    	SoundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+    if(optionNode != NULL)
+        SoundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("music");
-    if (optionNode != NULL)
-    	SoundManager->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+    if(optionNode != NULL)
+        SoundManager->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("gui");
-    if (optionNode != NULL)
-    	SoundManager->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+    if(optionNode != NULL)
+        SoundManager->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("voices");
-    if (optionNode != NULL)
-    	SoundManager->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
+    if(optionNode != NULL)
+        SoundManager->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetToggle(optionNode->GetAttributeValueAsBool("on",true));
 
     optionNode = mainNode->GetNode("instruments");
     if(optionNode != NULL)
@@ -1738,7 +1741,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     if(optionNode != NULL)
     {
         int volume = optionNode->GetAttributeValueAsInt("value", 100);
-		SoundManager->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->SetVolume((float)volume / 100);
+        SoundManager->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("musicvolume");
@@ -1759,14 +1762,14 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     if(optionNode != NULL)
     {
         int volume = optionNode->GetAttributeValueAsInt("value", 100);
-		SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetVolume((float)volume / 100);
+        SoundManager->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("effectsvolume");
     if(optionNode != NULL)
     {
         int volume = optionNode->GetAttributeValueAsInt("value", 100);
-		SoundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetVolume((float)volume / 100);
+        SoundManager->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("guivolume");
@@ -1780,34 +1783,34 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     if(optionNode != NULL)
     {
         int volume = optionNode->GetAttributeValueAsInt("value", 100);
-		SoundManager->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetVolume((float)volume / 100);
+        SoundManager->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("instrumentsvolume");
     if(optionNode != NULL)
     {
         int volume = optionNode->GetAttributeValueAsInt("value", 100);
-		SoundManager->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)->SetVolume((float)volume / 100);
+        SoundManager->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)->SetVolume((float)volume / 100);
     }
 
     optionNode = mainNode->GetNode("muteonfocusloss");
-    if (optionNode != NULL)
+    if(optionNode != NULL)
         SetMuteSoundsOnFocusLoss(optionNode->GetAttributeValueAsBool("on", false));
 
     optionNode = mainNode->GetNode("loopbgm");
-    if (optionNode)
+    if(optionNode)
         SoundManager->SetLoopBGMToggle(optionNode->GetAttributeValueAsBool("on", false));
 
     optionNode = mainNode->GetNode("combatmusic");
-    if (optionNode)
-        SoundManager->SetCombatMusicToggle(optionNode->GetAttributeValueAsBool("on", true)); 
+    if(optionNode)
+        SoundManager->SetCombatMusicToggle(optionNode->GetAttributeValueAsBool("on", true));
 
     optionNode = mainNode->GetNode("chatsound");
-    if (optionNode)
+    if(optionNode)
         SoundManager->SetChatToggle(optionNode->GetAttributeValueAsBool("on", true));
 
     optionNode = mainNode->GetNode("usecamerapos");
-    if (optionNode)
+    if(optionNode)
         SoundManager->SetListenerOnCameraToggle(optionNode->GetAttributeValueAsBool("on", true));
     return true;
 }
@@ -1816,7 +1819,7 @@ bool psEngine::LoadPawsWidget(const char* title, const char* filename)
 {
     bool loaded = paws->LoadWidget(filename);
 
-    if (!loaded)
+    if(!loaded)
     {
         wdgProblems.Push(title);
     }
@@ -1824,7 +1827,7 @@ bool psEngine::LoadPawsWidget(const char* title, const char* filename)
     return loaded;
 }
 
-bool psEngine::LoadCustomPawsWidgets(const char * filename)
+bool psEngine::LoadCustomPawsWidgets(const char* filename)
 {
     csRef<iDocument> doc;
     csRef<iDocumentNode> root;
@@ -1832,39 +1835,39 @@ bool psEngine::LoadCustomPawsWidgets(const char * filename)
     const char* error;
 
     csRef<iDataBuffer> buff = vfs->ReadFile(filename);
-    if (buff == NULL)
+    if(buff == NULL)
     {
         Error2("Could not find file: %s", filename);
         return false;
     }
-    xml = psengine->GetXMLParser ();
+    xml = psengine->GetXMLParser();
     doc = xml->CreateDocument();
     assert(doc);
-    error = doc->Parse( buff );
-    if ( error )
+    error = doc->Parse(buff);
+    if(error)
     {
         Error3("Parse error in %s: %s", filename, error);
         return false;
     }
-    if (doc == NULL)
+    if(doc == NULL)
         return false;
 
     root = doc->GetRoot();
-    if (root == NULL)
+    if(root == NULL)
     {
         Error2("No root in XML %s", filename);
         return false;
     }
 
     csRef<iDocumentNode> customWidgetsNode = root->GetNode("custom_widgets");
-    if (!customWidgetsNode)
+    if(!customWidgetsNode)
     {
         Error2("No custom_widgets node in %s", filename);
         return false;
     }
 
     csRef<iDocumentNodeIterator> nodes = customWidgetsNode->GetNodes("widget");
-    while (nodes->HasNext())
+    while(nodes->HasNext())
     {
         csRef<iDocumentNode> widgetNode = nodes->Next();
 
@@ -1882,7 +1885,7 @@ void psEngine::FatalError(const char* msg)
     Bug2("%s\n", msg);
 
     pawsQuitInfoBox* quitinfo = (pawsQuitInfoBox*)(paws->FindWidget("QuitInfoWindow"));
-    if (quitinfo)
+    if(quitinfo)
     {
         quitinfo->SetBox(msg);
         quitinfo->Show();
@@ -1899,7 +1902,7 @@ void psEngine::FatalError(const char* msg)
 void psEngine::setLimitFPS(int a)
 {
     maxFPS = a;
-    frameLimit = ( 1000 / maxFPS );
+    frameLimit = (1000 / maxFPS);
     cfgmgr->SetInt("Video.frameLimit", maxFPS);
     cfgmgr->Save();// need to save this every time
 }
@@ -1913,7 +1916,7 @@ void psEngine::setLimitFPS(int a)
 #ifdef CS_COMPILER_MSVC
 void pureCallHandler()
 {
-   CS::Debug::AssertMessage("false", __FILE__, __LINE__, "Pure Virtual Function Call!\n");
+    CS::Debug::AssertMessage("false", __FILE__, __LINE__, "Pure Virtual Function Call!\n");
 }
 #endif
 
@@ -1924,17 +1927,17 @@ void pureCallHandler()
  * creates psEngine and initialize it. Then it calls the main loop.
  **/
 
-psEngine * psengine;
+psEngine* psengine;
 
-int main (int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 #ifdef CS_COMPILER_MSVC
     _set_purecall_handler(pureCallHandler);
 #endif
-    psCSSetup *CSSetup = new psCSSetup( argc, argv, "/this/psclient.cfg", CONFIGFILENAME );
+    psCSSetup* CSSetup = new psCSSetup(argc, argv, "/this/psclient.cfg", CONFIGFILENAME);
     iObjectRegistry* object_reg = CSSetup->InitCS();
 
-    pslog::Initialize (object_reg);
+    pslog::Initialize(object_reg);
     pslog::disp_flag[LOG_LOAD] = true;
 
     // Create our application object
@@ -1942,10 +1945,10 @@ int main (int argc, char *argv[])
 
 
     // Initialize engine
-    if (!psengine->Initialize(0))
+    if(!psengine->Initialize(0))
     {
-        csReport (object_reg, CS_REPORTER_SEVERITY_ERROR,
-                  PSAPP, "Failed to init app!");
+        csReport(object_reg, CS_REPORTER_SEVERITY_ERROR,
+                 PSAPP, "Failed to init app!");
         PS_PAUSEEXIT(1);
     }
 

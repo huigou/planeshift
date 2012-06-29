@@ -107,32 +107,32 @@ public:
     };
 
     /// Default constructor. It calls csApp constructor.
-    psEngine (iObjectRegistry *object_reg, psCSSetup *CSSetup);
+    psEngine(iObjectRegistry* object_reg, psCSSetup* CSSetup);
 
     /// Destructor
-    virtual ~psEngine ();
+    virtual ~psEngine();
 
     /** Creates and loads other interfaces.  There are 2 levels for the setup.
-    * @param level The level we want to load  
+    * @param level The level we want to load
     * At level 0:
     * <UL>
     * <LI> Various Crystal Space plugins are loaded.
-    * <LI> Crash/Dump system intialized. 
+    * <LI> Crash/Dump system intialized.
     * <LI> Sound manager is loaded.
-    * <LI> Log system loaded. 
+    * <LI> Log system loaded.
     * <LI> PAWS windowing system and skins setup.
     * </UL>
     * At level 1:
     * <UL>
     * <LI> The network manager is setup.
     * <LI> SlotManager, ModeManager, ActionHandler, ZoneManager, CacheManager setup.
-    * <LI> CEL setup. 
+    * <LI> CEL setup.
     * <LI> Trigger to start loading models fired.
     * </UL>
-    * 
-    * @return  True if the level was successful in loading/setting up all components. 
+    *
+    * @return  True if the level was successful in loading/setting up all components.
     */
-    bool Initialize (int level);
+    bool Initialize(int level);
 
     /**
     * Clean up stuff.
@@ -156,58 +156,166 @@ public:
     * when any event is triggered such as when a button is pushed, mouse move,
     * or keyboard pressed.
     */
-    bool ProcessLogic(iEvent& Event);
-    bool Process2D(iEvent& Event);
-    bool Process3D(iEvent& Event);
-    bool ProcessFrame(iEvent& Event);
+    bool ProcessLogic(iEvent &Event);
+    bool Process2D(iEvent &Event);
+    bool Process3D(iEvent &Event);
+    bool ProcessFrame(iEvent &Event);
 
     /// Load game calls LoadWorld and also load characters, cameras, items, etc.
     void LoadGame();
 
     /// check if the game has been loaded or not
-    bool IsGameLoaded() { return gameLoaded; };
+    bool IsGameLoaded()
+    {
+        return gameLoaded;
+    };
 
     // References to plugins
-    iObjectRegistry*      GetObjectRegistry()     { return object_reg; }
-    iEventNameRegistry*   GetEventNameRegistry()  { return nameRegistry; }
-    iEngine*              GetEngine()             { return engine; }
-    iGraphics3D*          GetG3D()                { return g3d; }
-    iGraphics2D*          GetG2D()                { return g2d; }
-    iTextureManager*      GetTextureManager()     { return txtmgr; }
-    iVFS*                 GetVFS()                { return vfs; }
-    iVirtualClock*        GetVirtualClock()       { return vc; }
-    iDocumentSystem*      GetXMLParser()          { return xmlparser; }
-    iConfigManager*       GetConfig()             { return cfgmgr; }  ///< config file
-    iBgLoader*            GetLoader()             { return loader; }
-    iSceneManipulate*     GetSceneManipulator()   { return scenemanipulator; }
-    iSoundManager*        GetSoundManager()       { return SoundManager; }
+    iObjectRegistry*      GetObjectRegistry()
+    {
+        return object_reg;
+    }
+    iEventNameRegistry*   GetEventNameRegistry()
+    {
+        return nameRegistry;
+    }
+    iEngine*              GetEngine()
+    {
+        return engine;
+    }
+    iGraphics3D*          GetG3D()
+    {
+        return g3d;
+    }
+    iGraphics2D*          GetG2D()
+    {
+        return g2d;
+    }
+    iTextureManager*      GetTextureManager()
+    {
+        return txtmgr;
+    }
+    iVFS*                 GetVFS()
+    {
+        return vfs;
+    }
+    iVirtualClock*        GetVirtualClock()
+    {
+        return vc;
+    }
+    iDocumentSystem*      GetXMLParser()
+    {
+        return xmlparser;
+    }
+    iConfigManager*       GetConfig()
+    {
+        return cfgmgr;    ///< config file
+    }
+    iBgLoader*            GetLoader()
+    {
+        return loader;
+    }
+    iSceneManipulate*     GetSceneManipulator()
+    {
+        return scenemanipulator;
+    }
+    iSoundManager*        GetSoundManager()
+    {
+        return SoundManager;
+    }
 
-    csRandomGen& GetRandomGen() { return random; }
-    float GetRandom() { return random.Get(); }
+    csRandomGen &GetRandomGen()
+    {
+        return random;
+    }
+    float GetRandom()
+    {
+        return random.Get();
+    }
 
-    ClientMsgHandler *   GetMsgHandler()       { return netmanager->GetMsgHandler(); }
-    CmdHandler*            GetCmdHandler()     { return netmanager->GetCmdHandler(); }
-    psSlotManager*         GetSlotManager()    { return slotManager;}
-    ClientSongManager*     GetSongManager()    { return songManager; }
-    psClientCharManager*   GetCharManager()    { return charmanager; }
-    psCelClient*           GetCelClient()      { return celclient; };
-    psMainWidget*          GetMainWidget()     { return mainWidget; }
-    psEffectManager*       GetEffectManager()  { return effectManager; }
-    psChatBubbles*         GetChatBubbles()    { return chatBubbles; }
-    psOptions*             GetOptions()        { return options; }
-    ModeHandler*           GetModeHandler()    { return modehandler; }
-    ActionHandler*         GetActionHandler()  { return actionhandler; }
-    psCharController*      GetCharControl()    { return charController; }
+    ClientMsgHandler*    GetMsgHandler()
+    {
+        return netmanager->GetMsgHandler();
+    }
+    CmdHandler*            GetCmdHandler()
+    {
+        return netmanager->GetCmdHandler();
+    }
+    psSlotManager*         GetSlotManager()
+    {
+        return slotManager;
+    }
+    ClientSongManager*     GetSongManager()
+    {
+        return songManager;
+    }
+    psClientCharManager*   GetCharManager()
+    {
+        return charmanager;
+    }
+    psCelClient*           GetCelClient()
+    {
+        return celclient;
+    };
+    psMainWidget*          GetMainWidget()
+    {
+        return mainWidget;
+    }
+    psEffectManager*       GetEffectManager()
+    {
+        return effectManager;
+    }
+    psChatBubbles*         GetChatBubbles()
+    {
+        return chatBubbles;
+    }
+    psOptions*             GetOptions()
+    {
+        return options;
+    }
+    ModeHandler*           GetModeHandler()
+    {
+        return modehandler;
+    }
+    ActionHandler*         GetActionHandler()
+    {
+        return actionhandler;
+    }
+    psCharController*      GetCharControl()
+    {
+        return charController;
+    }
     psMouseBinds*          GetMouseBinds();
-    psCamera*              GetPSCamera()       { return camera; }
-    psNetManager*          GetNetManager()     { return netmanager; }
-    psCSSetup*             GetCSSetup()        { return CS_Setup; }
-    ZoneHandler*           GetZoneHandler()    { return zonehandler; }
-    Autoexec*              GetAutoexec()       { return autoexec; }
+    psCamera*              GetPSCamera()
+    {
+        return camera;
+    }
+    psNetManager*          GetNetManager()
+    {
+        return netmanager;
+    }
+    psCSSetup*             GetCSSetup()
+    {
+        return CS_Setup;
+    }
+    ZoneHandler*           GetZoneHandler()
+    {
+        return zonehandler;
+    }
+    Autoexec*              GetAutoexec()
+    {
+        return autoexec;
+    }
 
     /// Access the player's petitioner target
-    void SetTargetPetitioner(const char * pet) { targetPetitioner = pet; }
-    const char * GetTargetPetitioner() { return targetPetitioner; }
+    void SetTargetPetitioner(const char* pet)
+    {
+        targetPetitioner = pet;
+    }
+    const char* GetTargetPetitioner()
+    {
+        return targetPetitioner;
+    }
 
     /// Quits client
     void QuitClient();
@@ -219,49 +327,91 @@ public:
     void Disconnect();
 
     /// Tell the engine to start the load proceedure.
-    void StartLoad() { loadstate = LS_LOAD_SCREEN; }
+    void StartLoad()
+    {
+        loadstate = LS_LOAD_SCREEN;
+    }
     LoadState loadstate;
 
     size_t GetTime();
 
-    float GetBrightnessCorrection() { return BrightnessCorrection; }
-    void SetBrightnessCorrection(float B) { BrightnessCorrection = B; }
+    float GetBrightnessCorrection()
+    {
+        return BrightnessCorrection;
+    }
+    void SetBrightnessCorrection(float B)
+    {
+        BrightnessCorrection = B;
+    }
     void UpdateLights();
 
-    float GetKFactor() { return KFactor; }
-    void SetKFactor(float K) { KFactor = K; }
+    float GetKFactor()
+    {
+        return KFactor;
+    }
+    void SetKFactor(float K)
+    {
+        KFactor = K;
+    }
 
-    iEvent* GetLastEvent() { return lastEvent; }
+    iEvent* GetLastEvent()
+    {
+        return lastEvent;
+    }
 
     // Functions to set and get frameLimit converted into a value of FPS for users
     void setLimitFPS(int);
-    int getLimitFPS() { return maxFPS; }
-    float getFPS() { return currFPS; }
+    int getLimitFPS()
+    {
+        return maxFPS;
+    }
+    float getFPS()
+    {
+        return currFPS;
+    }
 
-    bool toggleFPS() { showFPS = !showFPS; return showFPS; }
+    bool toggleFPS()
+    {
+        showFPS = !showFPS;
+        return showFPS;
+    }
 
     /**
      * Sets the duel confirm type and updates the confirmation settings XML.
      * @brief Sets duel confirm type
      * @param confirmType Updates \ref duelConfirmation with this value
      */
-    inline void SetDuelConfirm(int confirmType) { duelConfirmation = confirmType; WriteConfirmationSettings(); }
+    inline void SetDuelConfirm(int confirmType)
+    {
+        duelConfirmation = confirmType;
+        WriteConfirmationSettings();
+    }
     /**
      * @brief Simply returns the duel confirmation setting
      * @return \ref duelConfirmation
      */
-    inline int GetDuelConfirm() const { return duelConfirmation; }
+    inline int GetDuelConfirm() const
+    {
+        return duelConfirmation;
+    }
     /**
      * Sets if marriage proposals should be ignored and updates the confirmation settings XML.
      * @brief Sets if marriage proposals should be ignored
      * @param ignore Updates \ref marriageProposal with this value
      */
-    inline void SetMarriageProposal(bool ignore) { marriageProposal = ignore; WriteConfirmationSettings(); }
+    inline void SetMarriageProposal(bool ignore)
+    {
+        marriageProposal = ignore;
+        WriteConfirmationSettings();
+    }
     /**
      * @brief Simply returns if marriage proposals should be read or automatically ignored
      * @return \ref marriageProposal
      */
-    inline bool GetMarriageProposal() const { return marriageProposal; }
+    inline bool GetMarriageProposal() const
+    {
+        return marriageProposal;
+    }
     /**
      * Confirmation settings for marriage proposals and duels are written to /planeshift/userdata/options/confirmation.xml
      * @brief Writes confirmation settings for duels and marriages
@@ -281,16 +431,28 @@ public:
     bool LoadSoundSettings(bool forceDef);
 
     /// Checks if the client has loaded its map
-    inline bool HasLoadedMap() const { return loadedMap; }
+    inline bool HasLoadedMap() const
+    {
+        return loadedMap;
+    }
 
     /// Sets the HasLoadedMap value
-    void SetLoadedMap(bool value) { loadedMap = value; }
+    void SetLoadedMap(bool value)
+    {
+        loadedMap = value;
+    }
 
     /// Checks if the client had any errors during the loading state
-    bool LoadingError() { return loadError; }
+    bool LoadingError()
+    {
+        return loadError;
+    }
 
     /// Sets the LoadError value
-    void LoadError(bool value) { loadError = value; }
+    void LoadError(bool value)
+    {
+        loadError = value;
+    }
 
     /** Loads a widget
     * @param Title to show in the logs if an error occurs
@@ -302,11 +464,11 @@ public:
     /** Loads custom paws widgets that are specified as a list in an xml file.
     *   \param filename The xml file that holds the list of custom widgets.
     */
-    bool LoadCustomPawsWidgets(const char * filename);
+    bool LoadCustomPawsWidgets(const char* filename);
 
     SlotNameHash slotName;
 
-    void AddLoadingWindowMsg(const csString & msg);
+    void AddLoadingWindowMsg(const csString &msg);
 
     /** Shortcut to pawsQuitInfoBox
     * @param Message to display before quiting
@@ -314,17 +476,29 @@ public:
     void FatalError(const char* msg);
 
     /// Logged in?
-    bool IsLoggedIn() { return loggedIn; }
-    void SetLoggedIn(bool v) { loggedIn = v; }
+    bool IsLoggedIn()
+    {
+        return loggedIn;
+    }
+    void SetLoggedIn(bool v)
+    {
+        loggedIn = v;
+    }
 
     /** Set the number of characters this player has.
     * Used to wait for full loading of characters in selection screen.
     */
-    void SetNumChars(int chars) { numOfChars = chars; }
+    void SetNumChars(int chars)
+    {
+        numOfChars = chars;
+    }
 
     /// Get the number of characters this player should have.
-    int GetNumChars() { return numOfChars; }
-    
+    int GetNumChars()
+    {
+        return numOfChars;
+    }
+
     /// Get the main character's name
     const char* GetMainPlayerName();
 
@@ -332,22 +506,37 @@ public:
     bool UpdateWindowTitleInformations();
 
     /// Force the next frame to get drawn. Used when updating LoadWindow.
-    void ForceRefresh() { elapsed = 0; }
+    void ForceRefresh()
+    {
+        elapsed = 0;
+    }
 
     /// Set Guild Name here for use with Entity labels
-    void SetGuildName(const char *name) { guildname = name; }
+    void SetGuildName(const char* name)
+    {
+        guildname = name;
+    }
 
     /// Get GuildName
-    const char *GetGuildName() { return guildname; }
+    const char* GetGuildName()
+    {
+        return guildname;
+    }
 
     /** Gets whether sounds should be muted when the application loses focus.
     * @return true if sounds should be muted, false otherwise
     */
-    bool GetMuteSoundsOnFocusLoss(void) const { return muteSoundsOnFocusLoss; }
+    bool GetMuteSoundsOnFocusLoss(void) const
+    {
+        return muteSoundsOnFocusLoss;
+    }
     /** Sets whether sounds should be muted when the application loses focus.
     * @param value true if sounds should be muted, false otherwise
     */
-    void SetMuteSoundsOnFocusLoss(bool value) { muteSoundsOnFocusLoss = value; }
+    void SetMuteSoundsOnFocusLoss(bool value)
+    {
+        muteSoundsOnFocusLoss = value;
+    }
 
     /// Mute all sounds.
     void MuteAllSounds(void);
@@ -364,28 +553,43 @@ public:
     * @param[in] str The string we are looking for
     * @return The id of the common string or csInvalidStringID if not found
     */
-    csStringID FindCommonStringId(const char *str);
+    csStringID FindCommonStringId(const char* str);
 
     /// Get the message strings/common string table
     csStringHashReversible* GetMsgStrings();
 
     ///Get the status of the sound plugin, if available or not.
-    bool GetSoundStatus() {return soundOn;}
+    bool GetSoundStatus()
+    {
+        return soundOn;
+    }
 
     /// get the inventory cache
-    psInventoryCache* GetInventoryCache(void) { return inventoryCache; }
+    psInventoryCache* GetInventoryCache(void)
+    {
+        return inventoryCache;
+    }
 
     /// Whether or not we're background loading.
-    bool BackgroundWorldLoading() { return backgroundWorldLoading; }
+    bool BackgroundWorldLoading()
+    {
+        return backgroundWorldLoading;
+    }
 
-    void RegisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.PushSmart(obj); }
-    void UnregisterDelayedLoader(DelayedLoader* obj) { delayedLoaders.Delete(obj); }
-    
+    void RegisterDelayedLoader(DelayedLoader* obj)
+    {
+        delayedLoaders.PushSmart(obj);
+    }
+    void UnregisterDelayedLoader(DelayedLoader* obj)
+    {
+        delayedLoaders.Delete(obj);
+    }
+
     static csString hwRenderer;
     static csString hwVersion;
     static csString playerName;
 #ifdef WIN32
-	static HWND hwnd;
+    static HWND hwnd;
 #endif
 
 private:
@@ -402,7 +606,7 @@ private:
     /// This adds more factories to the standard PAWS ones.
     void DeclareExtraFactories();
 
-    void HideWindow(const csString & widgetName);
+    void HideWindow(const csString &widgetName);
 
     /// Limits the frame rate either by returning false or sleeping
     void FrameLimit();
@@ -532,11 +736,11 @@ private:
     csEventID event_keyboard;
     csEventID event_joystick;
     csEventID event_quit;
-    
+
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
     csEventID event_selectionnotify;
 #endif
-    
+
     /**
     * Embedded iEventHandler interface that handles frame events in the
     * logic phase.
@@ -544,26 +748,26 @@ private:
     class LogicEventHandler : public scfImplementation1<LogicEventHandler, iEventHandler>
     {
     public:
-        LogicEventHandler (psEngine* parent) : scfImplementationType (this), parent (parent)
+        LogicEventHandler(psEngine* parent) : scfImplementationType(this), parent(parent)
         {
         }
 
-        virtual ~LogicEventHandler ()
+        virtual ~LogicEventHandler()
         {
         }
 
-        virtual bool HandleEvent (iEvent& ev)
+        virtual bool HandleEvent(iEvent &ev)
         {
             return parent->ProcessLogic(ev);
         }
 
-        virtual const csHandlerID * GenericPrec(csRef<iEventHandlerRegistry> &,
-            csRef<iEventNameRegistry> &, csEventID) const;
-        virtual const csHandlerID * GenericSucc(csRef<iEventHandlerRegistry> &,
-            csRef<iEventNameRegistry> &, csEventID) const;
+        virtual const csHandlerID* GenericPrec(csRef<iEventHandlerRegistry> &,
+                                               csRef<iEventNameRegistry> &, csEventID) const;
+        virtual const csHandlerID* GenericSucc(csRef<iEventHandlerRegistry> &,
+                                               csRef<iEventNameRegistry> &, csEventID) const;
 
         CS_EVENTHANDLER_NAMES("planeshift.client.frame.logic")
-            CS_EVENTHANDLER_DEFAULT_INSTANCE_CONSTRAINTS
+        CS_EVENTHANDLER_DEFAULT_INSTANCE_CONSTRAINTS
 
     private:
         psEngine* parent;
@@ -576,15 +780,15 @@ private:
     class EventHandler3D : public scfImplementation1<EventHandler3D, iEventHandler>
     {
     public:
-        EventHandler3D (psEngine* parent) : scfImplementationType (this), parent (parent)
+        EventHandler3D(psEngine* parent) : scfImplementationType(this), parent(parent)
         {
         }
 
-        virtual ~EventHandler3D ()
+        virtual ~EventHandler3D()
         {
         }
 
-        virtual bool HandleEvent (iEvent& ev)
+        virtual bool HandleEvent(iEvent &ev)
         {
             return parent->Process3D(ev);
         }
@@ -602,15 +806,15 @@ private:
     class EventHandler2D : public scfImplementation1<EventHandler2D, iEventHandler>
     {
     public:
-        EventHandler2D (psEngine* parent) : scfImplementationType (this), parent (parent)
+        EventHandler2D(psEngine* parent) : scfImplementationType(this), parent(parent)
         {
         }
 
-        virtual ~EventHandler2D ()
+        virtual ~EventHandler2D()
         {
         }
 
-        virtual bool HandleEvent (iEvent& ev)
+        virtual bool HandleEvent(iEvent &ev)
         {
             return parent->Process2D(ev);
         }
@@ -628,15 +832,15 @@ private:
     class FrameEventHandler : public scfImplementation1<FrameEventHandler, iEventHandler>
     {
     public:
-        FrameEventHandler (psEngine* parent) : scfImplementationType (this), parent (parent)
+        FrameEventHandler(psEngine* parent) : scfImplementationType(this), parent(parent)
         {
         }
 
-        virtual ~FrameEventHandler ()
+        virtual ~FrameEventHandler()
         {
         }
 
-        virtual bool HandleEvent (iEvent& ev)
+        virtual bool HandleEvent(iEvent &ev)
         {
             return parent->ProcessFrame(ev);
         }
