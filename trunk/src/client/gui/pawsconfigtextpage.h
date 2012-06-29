@@ -1,5 +1,5 @@
 /*
- * pawsconfiggeneric.h - Author: Luca Pancallo
+ * pawsconfigtextpage.h - Author: Luca Pancallo
  *
  * Copyright (C) 2001-2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -26,10 +26,14 @@
 
 class pawsMultiLineTextBox;
 
-class pawsConfigGeneric : public pawsConfigSectionWindow
+/* This class is used as part of the PlaneShift Configuration Window
+ * as one panel on the right side. It has a textbox which can be filled by
+ * the configwindow.xml file with any text.
+ */
+class pawsConfigTextPage : public pawsConfigSectionWindow
 {
 public:
-    pawsConfigGeneric();
+    pawsConfigTextPage();
     void drawFrame();
 
     // Selects the text to display
@@ -37,28 +41,32 @@ public:
 
     //from pawsWidget:
     virtual bool PostSetup();
-	
+
     // from pawsConfigSectionWindow:
     virtual bool Initialize();
     virtual bool LoadConfig();
     virtual bool SaveConfig();
     virtual void SetDefault();
-    virtual void Show();	
-	
+    virtual void Show();
+
     // from pawsWidget
-    bool OnChange(pawsWidget* /*widget*/) { dirty = true; return true; }
+    bool OnChange(pawsWidget* /*widget*/)
+    {
+        dirty = true;
+        return true;
+    }
     virtual bool OnButtonPressed(int /*button*/, int /*keyModifier*/, pawsWidget* /*widget*/)
     {
         dirty = true;
         return true;
     }
-    virtual void OnListAction( pawsListBox* selected, int status );
+    virtual void OnListAction(pawsListBox* selected, int status);
 
 private:
-    pawsMultiLineTextBox *text;
+    pawsMultiLineTextBox* text;
     csString* textName;
-	
+
 };
 
-CREATE_PAWS_FACTORY( pawsConfigGeneric );
+CREATE_PAWS_FACTORY(pawsConfigTextPage);
 #endif
