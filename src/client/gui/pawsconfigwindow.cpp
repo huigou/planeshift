@@ -40,7 +40,7 @@
 #include "gui/pawscontrolwindow.h"
 #include "paws/pawsyesnobox.h"
 #include "paws/pawsokbox.h"
-#include "gui/pawsconfiggeneric.h"
+#include "gui/pawsconfigtextpage.h"
 
 #define TREE_FILE_NAME "configtree.xml"
 #define RESET_OPTIONS_CONFIRM_TEXT "Do you really want to reset these settings to default values?"
@@ -58,7 +58,7 @@
 pawsConfigWindow::pawsConfigWindow()
 {
     sectionTree   = NULL;
-	sectionParent = NULL;
+    sectionParent = NULL;
     currSectWnd   = NULL;
     okButton      = resetButton = NULL;
     notify        = NULL;
@@ -67,59 +67,59 @@ pawsConfigWindow::pawsConfigWindow()
 
 bool pawsConfigWindow::PostSetup()
 {
-    sectionTree = dynamic_cast <pawsSimpleTree*> (FindWidget("ConfigTree"));
-    if (sectionTree == NULL)
+    sectionTree = dynamic_cast <pawsSimpleTree*>(FindWidget("ConfigTree"));
+    if(sectionTree == NULL)
         return false;
 
     sectionTree->SetNotify(this);
     sectionTree->SetScrollBars(false, true);
     sectionTree->UseBorder("line");
 
-	sectionParent = FindWidget("PanelParent");
-	if (sectionParent == NULL)
-		return false;
-
-    // sets up buttons:    
-    okButton = FindWidget("OKButton");
-    if (okButton == NULL)
+    sectionParent = FindWidget("PanelParent");
+    if(sectionParent == NULL)
         return false;
-                
+
+    // sets up buttons:
+    okButton = FindWidget("OKButton");
+    if(okButton == NULL)
+        return false;
+
     resetButton = FindWidget("ResetButton");
-    if (resetButton == NULL)
+    if(resetButton == NULL)
         return false;
 
     return true;
 }
 
-void pawsConfigWindow::SetNotify(pawsWidget * _notify)
+void pawsConfigWindow::SetNotify(pawsWidget* _notify)
 {
     notify = _notify;
 }
 
- 
+
 bool pawsConfigWindow::OnButtonReleased(int /*mouseButton*/, int keyModifier, pawsWidget* widget)
 {
-    
-    if (widget == okButton)
+
+    if(widget == okButton)
     {
-        for (size_t x = 0; x < sectWnds.GetSize(); x++ )
+        for(size_t x = 0; x < sectWnds.GetSize(); x++)
         {
-            if (sectWnds[x].sectWnd->IsDirty())
-                sectWnds[x].sectWnd->SaveConfig();            
+            if(sectWnds[x].sectWnd->IsDirty())
+                sectWnds[x].sectWnd->SaveConfig();
         }
-        if (notify != NULL)
+        if(notify != NULL)
             notify->OnButtonPressed(0, keyModifier, this);
         Hide();
     }
-	else if (currSectWnd == NULL)   // there's no option category selected, inform the player
+    else if(currSectWnd == NULL)    // there's no option category selected, inform the player
         PawsManager::GetSingleton().CreateWarningBox(RESET_OPTIONS_WARNING_TEXT, this);
-    else if (widget == resetButton) // If the user has selected some options category
+    else if(widget == resetButton)  // If the user has selected some options category
         PawsManager::GetSingleton().CreateYesNoBox(RESET_OPTIONS_CONFIRM_TEXT, this);
     else
     {
-        switch ( widget->GetID() )
+        switch(widget->GetID())
         {
-            // User pressed yes on confirmation box
+                // User pressed yes on confirmation box
             case CONFIRM_YES:
             {
                 // Reset the selected options category
@@ -131,20 +131,20 @@ bool pawsConfigWindow::OnButtonReleased(int /*mouseButton*/, int keyModifier, pa
                 widget->GetParent()->Hide();
             }
         }
-    }      
+    }
     return true;
 }
 
 bool pawsConfigWindow::OnSelected(pawsWidget* widget)
 {
     csString sectName, factory, textName;
-    pawsTreeNode * node;
-    pawsWidget * sectWndAsWidget;
-    pawsConfigSectionWindow * newCurrSectWnd;
+    pawsTreeNode* node;
+    pawsWidget* sectWndAsWidget;
+    pawsConfigSectionWindow* newCurrSectWnd;
 
 
     node = dynamic_cast<pawsTreeNode*>(widget);
-    if (node == NULL)
+    if(node == NULL)
     {
         Error1("Selected widget is not pawsTreeNode");
         return false;
@@ -152,59 +152,61 @@ bool pawsConfigWindow::OnSelected(pawsWidget* widget)
 
     sectName = node->GetAttr("SectionName");
     textName = node->GetAttr("TextName");
-    if (sectName.IsEmpty())
+    if(sectName.IsEmpty())
         return false;    // .... this tree node does not invoke any configuration section
-    
+
     newCurrSectWnd = FindSectionWindow(sectName);
-    if (newCurrSectWnd == NULL)
+    if(newCurrSectWnd == NULL)
     {
         factory = node->GetAttr("factory");
-    
+
         sectWndAsWidget = PawsManager::GetSingleton().CreateWidget(factory);
-        if (sectWndAsWidget == NULL)
+        if(sectWndAsWidget == NULL)
         {
             Error1("Could not create pawsConfigSectionWindow widget from factory");
             return false;
         }
         newCurrSectWnd = dynamic_cast<pawsConfigSectionWindow*>(sectWndAsWidget);
-        if (newCurrSectWnd == NULL)
+        if(newCurrSectWnd == NULL)
         {
             Error1("Widget is not pawsConfigSectionWindow");
             return false;
         }
         sectionParent->AddChild(newCurrSectWnd);
-		newCurrSectWnd->SetRelativeFrame(8,8,sectionParent->GetActualWidth()-16 , sectionParent->GetActualHeight()-16 );
-        
-		// newCurrSectWnd->UseBorder("line");
-        if (!strcmp(sectName, "configsound") && !psengine->GetSoundStatus())
+        newCurrSectWnd->SetRelativeFrame(8,8,sectionParent->GetActualWidth()-16 , sectionParent->GetActualHeight()-16);
+
+        // newCurrSectWnd->UseBorder("line");
+        if(!strcmp(sectName, "configsound") && !psengine->GetSoundStatus())
         {
-            PawsManager::GetSingleton().CreateWarningBox( "Your sound settings are disabled!");
+            PawsManager::GetSingleton().CreateWarningBox("Your sound settings are disabled!");
             return false;
         }
-        if (!newCurrSectWnd->Initialize())
+        if(!newCurrSectWnd->Initialize())
         {
             Error1("pawsConfigSectionWindow failed to initialize");
             return false;
         }
 
-        // additional parameter for pawsConfigGeneric
-        if (!textName.IsEmpty()) {
-            pawsConfigGeneric *configGeneric = dynamic_cast<pawsConfigGeneric*>(newCurrSectWnd);
-            if (newCurrSectWnd == NULL)
+        // additional parameter for pawsConfigTextPage
+        if(!textName.IsEmpty())
+        {
+            pawsConfigTextPage* configGeneric = dynamic_cast<pawsConfigTextPage*>(newCurrSectWnd);
+            if(newCurrSectWnd == NULL)
             {
-                Error1("Widget is not pawsConfigGeneric");
+                Error1("Widget is not pawsConfigTextPage");
                 return false;
             }
-            else {
+            else
+            {
                 configGeneric->setTextName(&textName);
             }
         }
 
-		// Ignore sizing info loaded from file and override to fit tab here
-		newCurrSectWnd->SetSectionName(sectName);
-		newCurrSectWnd->SetRelativeFrame(8,8,sectionParent->GetActualWidth()-16 , sectionParent->GetActualHeight()-16 );
+        // Ignore sizing info loaded from file and override to fit tab here
+        newCurrSectWnd->SetSectionName(sectName);
+        newCurrSectWnd->SetRelativeFrame(8,8,sectionParent->GetActualWidth()-16 , sectionParent->GetActualHeight()-16);
 
-        if (!newCurrSectWnd->LoadConfig())
+        if(!newCurrSectWnd->LoadConfig())
         {
             Error1("pawsConfigSectionWindow could not load configuration");
             return false;
@@ -213,20 +215,20 @@ bool pawsConfigWindow::OnSelected(pawsWidget* widget)
         sectWnds.Push(sectWnd_t(sectName, newCurrSectWnd));
     }
 
-    if (currSectWnd != NULL)
+    if(currSectWnd != NULL)
         currSectWnd->Hide();
     newCurrSectWnd->Show();
-    
+
     currSectWnd = newCurrSectWnd;
     return true;
 }
 
-pawsConfigSectionWindow * pawsConfigWindow::FindSectionWindow(const csString & sectName)
-{    
-    for (size_t x = 0; x < sectWnds.GetSize(); x++ )
+pawsConfigSectionWindow* pawsConfigWindow::FindSectionWindow(const csString &sectName)
+{
+    for(size_t x = 0; x < sectWnds.GetSize(); x++)
     {
-        if (sectWnds[x].sectName == sectName)
-            return sectWnds[x].sectWnd;        
+        if(sectWnds[x].sectName == sectName)
+            return sectWnds[x].sectWnd;
     }
     return NULL;
 }

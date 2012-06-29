@@ -14,7 +14,7 @@
 
             <widget factory="pawsSimpleTreeNode" label="Controls">
                     <attr name="SectionName" value="ControlsGeneral"/>
-                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="factory" value="pawsConfigTextPage"/>
                     <attr name="TextName" value="In this section you can configure the keys associated to actions, for example the keys used for movement.
 
 You can also change the commands sent by each mouse button."/>
@@ -35,7 +35,7 @@ You can also change the commands sent by each mouse button."/>
 
             <widget factory="pawsSimpleTreeNode" label="Sound">
                     <attr name="SectionName" value="SoundGeneral"/>
-                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="factory" value="pawsConfigTextPage"/>
                     <attr name="TextName" value="IMPORTANT: If you are not hearing any sound, be sure it's enabled. At the moment enabling sound is available ONLY in the PlaneShift launcher.
 
 If you want to check this, you need to close this client, and relaunch PlaneShift. In the Launcher window, click on 'Settings' and 'Audio'."/>
@@ -48,7 +48,7 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
 
             <widget factory="pawsSimpleTreeNode" label="Graphics">
                     <attr name="SectionName" value="GraphicsGeneral"/>
-                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="factory" value="pawsConfigTextPage"/>
                     <attr name="TextName" value="IMPORTANT: The following graphical options are available ONLY in the PlaneShift launcher. If you want to change any of those, you need to close this client, and relaunch PlaneShift. In the Launcher window, click on 'Settings' and 'Settings/Graphics'.
 
 - Full screen or windowed mode (launcher only)
@@ -59,7 +59,7 @@ We suggest you to try different settings and see what's best for your hardware."
 
                 <widget factory="pawsSimpleTreeNode" label="Brightness">
                     <attr name="SectionName" value="BrightnessGeneral"/>
-                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="factory" value="pawsConfigTextPage"/>
                     <attr name="TextName" value="You can change the brightness/gamma of the game by pressing F11 to reduce the brightness, F12 to increase the brightness, and F10 to reset to default value."/>
                 </widget>
                 <widget factory="pawsSimpleTreeNode" label="Details">
@@ -78,11 +78,11 @@ We suggest you to try different settings and see what's best for your hardware."
 
             <widget factory="pawsSimpleTreeNode" label="Interface">
                     <attr name="SectionName" value="InterfaceGeneral"/>
-                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="factory" value="pawsConfigTextPage"/>
                     <attr name="TextName" value="In this section you can configure various options for the User Interface. Once you have learned the basic commands and controls, we suggest you to de-select 'Basic Chat Window' from 'Chat Tabs' and enable the Tabs you want to see."/>
                 <widget factory="pawsSimpleTreeNode" label="Language">
                     <attr name="SectionName" value="LanguageGeneral"/>
-                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="factory" value="pawsConfigTextPage"/>
                     <attr name="TextName" value="You can change the language of PlaneShift to have the user interface displayed in your language. We support Cesky, Dutch, French, Italian, German, Romanian, Russian, Swedish, and more. Please note pubic dialogues in game between players should  be in English.
 
 Changing the language can be done ONLY in the PlaneShift Launcher. To do this you should close this client, and relaunch PlaneShift. In the Launcher you should change the 'Language' dropdown."/>
@@ -107,7 +107,7 @@ Changing the language can be done ONLY in the PlaneShift Launcher. To do this yo
 
             <widget factory="pawsSimpleTreeNode" label="Confirmations">
                     <attr name="SectionName" value="ConfirmationsGeneral"/>
-                    <attr name="factory" value="pawsConfigGeneric"/>
+                    <attr name="factory" value="pawsConfigTextPage"/>
                     <attr name="TextName" value="IMPORTANT: By default in PlaneShift you cannot be attacked by other people without your approval. This is to ensure a smooth experience in the game.
 
 If you change the PvP setting, you may be attacked at any time."/>

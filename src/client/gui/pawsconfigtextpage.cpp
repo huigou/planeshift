@@ -1,5 +1,5 @@
 /*
- * pawsconfiggeneric.cpp - Author: Luca Pancallo
+ * pawsconfigtextpage.cpp - Author: Luca Pancallo
  *
  * Copyright (C) 2001-2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -21,7 +21,7 @@
 #include <psconfig.h>
 
 //PAWS INCLUDES
-#include "pawsconfiggeneric.h"
+#include "pawsconfigtextpage.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawstextbox.h"
 
@@ -29,68 +29,70 @@
 #include "../globals.h"
 
 
-pawsConfigGeneric::pawsConfigGeneric()
+pawsConfigTextPage::pawsConfigTextPage()
 {
-	text = NULL;
+    text = NULL;
 }
 
-bool pawsConfigGeneric::PostSetup()
+bool pawsConfigTextPage::PostSetup()
 {
-	text = (pawsMultiLineTextBox*)FindWidget("config generic text");
-	if (!text) {
-		Error1("Could not locate description text widget!");
-		return false;
-	}
-	
-	drawFrame();
-	
-	return true;
+    text = (pawsMultiLineTextBox*)FindWidget("config generic text");
+    if(!text)
+    {
+        Error1("Could not locate description text widget!");
+        return false;
+    }
+
+    drawFrame();
+
+    return true;
 }
 
-void pawsConfigGeneric::drawFrame()
+void pawsConfigTextPage::drawFrame()
 {
-	//Clear the frame by hiding all widgets
-	text->Hide();
+    //Clear the frame by hiding all widgets
+    text->Hide();
     text->Show();
 }
 
-void pawsConfigGeneric::setTextName(csString* textName)
+void pawsConfigTextPage::setTextName(csString* textName)
 {
     // show translated text
     text->SetText(PawsManager::GetSingleton().Translate(*textName));
 
 }
 
-bool pawsConfigGeneric::Initialize()
-{       
-    if ( ! LoadFromFile("configgeneric.xml")) {
+bool pawsConfigTextPage::Initialize()
+{
+    if(! LoadFromFile("configtextpage.xml"))
+    {
         return false;
     }
     return true;
 }
 
-bool pawsConfigGeneric::LoadConfig()
-{
-	return true;
-}
-
-bool pawsConfigGeneric::SaveConfig()
+bool pawsConfigTextPage::LoadConfig()
 {
     return true;
 }
 
-void pawsConfigGeneric::SetDefault()
+bool pawsConfigTextPage::SaveConfig()
 {
-	LoadConfig();
+    return true;
+}
+
+void pawsConfigTextPage::SetDefault()
+{
+    LoadConfig();
     SaveConfig();
 }
 
-void pawsConfigGeneric::Show()
+void pawsConfigTextPage::Show()
 {
-	pawsWidget::Show();
+    pawsWidget::Show();
 }
 
-void pawsConfigGeneric::OnListAction(pawsListBox* /*selected*/, int /*status*/)
+void pawsConfigTextPage::OnListAction(pawsListBox* /*selected*/, int /*status*/)
 {
     dirty = true;
 }
