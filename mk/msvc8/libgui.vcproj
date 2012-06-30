@@ -1804,9 +1804,6 @@
 				RelativePath="..\..\src\client\gui\pawsconfigentitylabels.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\client\gui\pawsconfiggeneric.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\client\gui\pawsconfigkeys.cpp">
 			</File>
 			<File
@@ -1829,6 +1826,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigspellchecker.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigtextpage.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigtooltips.cpp">
@@ -2063,9 +2063,6 @@
 				RelativePath="..\..\src\client\gui\pawsconfigentitylabels.h">
 			</File>
 			<File
-				RelativePath="..\..\src\client\gui\pawsconfiggeneric.h">
-			</File>
-			<File
 				RelativePath="..\..\src\client\gui\pawsconfigkeys.h">
 			</File>
 			<File
@@ -2088,6 +2085,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigspellchecker.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigtextpage.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigtooltips.h">
