@@ -43,7 +43,7 @@
 #include "dictionary.h"
 
 
-psQuest::psQuest()
+psQuest::psQuest() : task("")
 {
     id = 0;
     parent_quest = NULL;

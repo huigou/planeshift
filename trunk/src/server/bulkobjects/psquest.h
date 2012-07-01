@@ -75,6 +75,13 @@ class psQuest : public CS::Utility::WeakReferenced
     const char *GetName() const { return name; }
     const char *GetImage() const { return image; }
     const char *GetTask() const { return task; }
+
+    /**
+     * Gets if the task (quest description/note) contains some text.
+     *
+     * @return TRUE if the task has some text, FALSE otherwise.
+     */
+    bool hasTaskText() { return task.Length() > 0; }
     void SetTask(csString mytask) { task = mytask; }
     psQuest *GetParentQuest() const { return parent_quest; }
     void SetParentQuest(psQuest *parent) { parent_quest=parent; }
@@ -89,6 +96,12 @@ class psQuest : public CS::Utility::WeakReferenced
     bool AddPrerequisite(csRef<psQuestPrereqOp> op);
     void AddTriggerResponse(NpcTrigger * trigger, int responseID);
     void AddSubQuest(int id) { subquests.Push(id); }
+
+    /**
+     * Returns an ordered list of the subquests of this quest (so it's steps).
+     * @return A reference to an array containing the id of the subquests.
+     */
+    csArray<int> &GetSubQuests() { return subquests; }
     
     /**
      * @brief Return the prerequisite for this quest.

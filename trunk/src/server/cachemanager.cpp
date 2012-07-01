@@ -1941,7 +1941,6 @@ psQuest* CacheManager::AddDynamicQuest(const char* name, psQuest* parentQuest, i
     int id = 10000+(parentQuest->GetID()*100)+step;
     ptr = new psQuest;
     ptr->Init(id,name);
-    ptr->SetTask("NULL");
     ptr->SetParentQuest(parentQuest);
     parentQuest->AddSubQuest(id);
     quests_by_id.Put(id, ptr);

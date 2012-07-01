@@ -3716,30 +3716,6 @@ Skill& SkillSet::Get(PSSKILL skill)
     return skills[skill];
 }
 
-
-//////////////////////////////////////////////////////////////////////////
-// QuestAssignment accessor functions to accommodate removal of csWeakRef better
-//////////////////////////////////////////////////////////////////////////
-
-csWeakRef<psQuest>& QuestAssignment::GetQuest()
-{
-    if (!quest.IsValid())
-    {
-        psQuest *q = psserver->GetCacheManager()->GetQuestByID(quest_id);
-        SetQuest(q);
-    }
-    return quest;
-}
-
-void QuestAssignment::SetQuest(psQuest *q)
-{
-    if (q)
-    {
-        quest = q;
-        quest_id = q->GetID();
-    }
-}
-
 //////////////////////////////////////////////////////////////////////////
 // BuddyManager
 //////////////////////////////////////////////////////////////////////////

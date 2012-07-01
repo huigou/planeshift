@@ -38,6 +38,36 @@
 #include "pscharquestmgr.h"
 #include "pscharacter.h"
 
+//////////////////////////////////////////////////////////////////////////
+// QuestAssignment accessor functions to accommodate removal of csWeakRef better
+//////////////////////////////////////////////////////////////////////////
+
+csWeakRef<psQuest>& QuestAssignment::GetQuest()
+{
+    if (!quest.IsValid())
+    {
+        psQuest *q = psserver->GetCacheManager()->GetQuestByID(quest_id);
+        SetQuest(q);
+    }
+    return quest;
+}
+
+void QuestAssignment::SetQuest(psQuest *q)
+{
+    if (q)
+    {
+        quest = q;
+        quest_id = q->GetID();
+    }
+}
+
+bool QuestAssignment::IsCompleted()
+{
+    return status == PSQUEST_COMPLETE;
+}
+
+////////////////////////////////////////////////////////////////////////
+
 void psCharacterQuestManager::Initialize(psCharacter* cOwner)
 {
     owner = cOwner;
@@ -168,6 +198,7 @@ QuestAssignment *psCharacterQuestManager::AssignQuest(psQuest *quest, PID assign
         q->assigner_id = assigner_id;
         //set last response to current response only if this is the top parent
         q->last_response = quest->GetParentQuest() ? -1 : owner->GetLastResponse();    //This should be the response given when starting this quest
+        q->completionOrder = 0;  //this rappresents the default.
 
         // assign any skipped parent quests
         if (quest->GetParentQuest() && !IsQuestAssigned(quest->GetParentQuest()->GetID()))
@@ -249,6 +280,30 @@ bool psCharacterQuestManager::CompleteQuest(psQuest *quest)
                     }
                 }
             }
+
+            q->completionOrder = 0;
+        }
+        else
+        {
+            //if this is a substep assign the completion order by checking
+            //all the entries for the highest number, even though it's possible to cache
+            //this in reality this won't happen frequently due to the fact players
+            //must trigger it.
+            csArray<int> &steps = q->GetQuest()->GetParentQuest()->GetSubQuests();
+            unsigned int maxCompletionOrder = 0;
+            
+            for(int i = 0; i < steps.GetSize(); ++i)
+            {
+                
+                //Check if the quest is assigned and completed in order to check its completion numbering
+                QuestAssignment *stepAssignment = IsQuestAssigned(steps.Get(i));
+                if(stepAssignment && stepAssignment->IsCompleted() &&
+                   stepAssignment->completionOrder > maxCompletionOrder)
+                {
+                    maxCompletionOrder = stepAssignment->completionOrder;
+                }
+            }
+            q->completionOrder = maxCompletionOrder+1;
         }
 
         Debug3(LOG_QUESTS, owner->GetPID().Unbox(), "Player '%s' just completed quest '%s'.\n", owner->GetCharName(), quest->GetName());
@@ -319,10 +374,9 @@ bool psCharacterQuestManager::CheckQuestCompleted(psQuest *quest)
 {
     CS_ASSERT( quest );  // Must not be NULL
     QuestAssignment* questAssignment = IsQuestAssigned( quest->GetID());
-    if ( questAssignment )
+    if (questAssignment)
     {
-        if ( questAssignment->status == PSQUEST_COMPLETE)
-            return true;
+        return questAssignment->IsCompleted();
     }
     return false;
 }
@@ -491,10 +545,10 @@ bool psCharacterQuestManager::UpdateQuestAssignments(bool force_update)
 
             db->CommandPump("insert into character_quests "
                             "(player_id, assigner_id, quest_id, "
-                            "status, remaininglockout, last_response, last_response_npc_id) "
-                            "values (%d, %d, %d, '%c', %d, %d, %d) "
+                            "status, remaininglockout, last_response, last_response_npc_id, completionOrder) "
+                            "values (%d, %d, %d, '%c', %d, %d, %d, %d) "
                             "ON DUPLICATE KEY UPDATE "
-                            "status='%c',remaininglockout=%ld,last_response=%ld,last_response_npc_id=%ld;",
+                            "status='%c',remaininglockout=%ld,last_response=%ld,last_response_npc_id=%ld,completionOrder=%d;",
                             owner->GetPID().Unbox(),
                             q->assigner_id.Unbox(),
                             q->GetQuest()->GetID(),
@@ -502,10 +556,12 @@ bool psCharacterQuestManager::UpdateQuestAssignments(bool force_update)
                             q->lockout_end,
                             q->last_response,
                             q->last_response_from_npc_pid.Unbox(),
+                            q->completionOrder,
                             q->status,
                             q->lockout_end,
                             q->last_response,
-                            q->last_response_from_npc_pid.Unbox());
+                            q->last_response_from_npc_pid.Unbox(),
+                            q->completionOrder);
             Debug3(LOG_QUESTS, owner->GetPID().Unbox(), "Updated quest info for player %d, quest %d.\n", owner->GetPID().Unbox(), assignedQuests[i]->GetQuest()->GetID());
             assignedQuests[i]->dirty = false;
         }
@@ -537,6 +593,7 @@ bool psCharacterQuestManager::LoadQuestAssignments()
         q->assigner_id   = PID(result[i].GetInt("assigner_id"));
         q->last_response = result[i].GetInt("last_response");
         q->last_response_from_npc_pid = PID(result[i].GetInt("last_response_npc_id"));
+        q->completionOrder = result[i].GetInt("completionOrder");
 
         if (!q->GetQuest())
         {
