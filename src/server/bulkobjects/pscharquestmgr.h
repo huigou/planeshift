@@ -60,13 +60,25 @@ struct QuestAssignment
     /// To avoid losing a chain of responses in a quest, last responses are stored per assigned quest.
     PID last_response_from_npc_pid;
 
+    /// In case this questassignment was completed it will contain the order of completion.
+    unsigned int completionOrder;
+
     /// Since "quest" member can be nulled without notice, this accessor function attempts to refresh it if NULL
     csWeakRef<psQuest>& GetQuest();
+
+    /**
+     * Checks if the quest(/step) assignment is marked as complete.
+     * 
+     * @return True if the quest assignment is marked as complete.
+     */
+    bool IsCompleted();
+    
     void SetQuest(psQuest *q);
 protected:
 
     /// Quest ID saved in case quest gets nulled out from us
     int quest_id;
+    
     /// Weak pointer to the underlying quest relevant here
     csWeakRef<psQuest> quest;
 };

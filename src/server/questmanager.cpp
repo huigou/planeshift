@@ -23,6 +23,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <iutil/object.h>
+#include <csutil/priorityqueue.h>
 
 //=============================================================================
 // Project Includes
@@ -899,6 +900,16 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
             if (!HandlePlayerAction(block,which_trigger,current_npc,pending_triggers))
                 return line_number;
         }
+        else if (!strncasecmp(block,"QuestNote ", 10)) //This is a quest note for this step.
+        {
+            csString note = block.Slice(10).Trim();
+            //If the note contains some text assign it, else report an error.
+            if(note.IsEmpty())
+            {
+                return false;
+            }
+            quest->SetTask(note);
+        }
         else if (!strncmp(block,"...",3)) // New substep. Syntax: "... [NoRepeat]"
         {
             if (block.Length() > 3 && block.GetAt(3) != ' ')
@@ -1298,8 +1309,46 @@ void QuestManager::HandleQuestInfo(MsgEntry *me,Client *who)
         }
         else
         {
+
+            
+            //First of all take the main quest task string (equivalent to quest description)
+            csString tasks = q->GetQuest()->GetTask();
+            
+            //Take the list of subquests (steps) so we can iterate over them
+            csArray<int> &steps = q->GetQuest()->GetSubQuests();
+
+            //Finally prepare a priority queue to hold all the quest notes.
+            CS::Utility::PriorityQueue<TaskEntry> entries;
+
+            for(int i = 0; i < steps.GetSize(); ++i)
+            {
+                //Check if the quest is assigned and completed in order to show the additional quest notes
+                QuestAssignment *stepAssignment = who->GetActor()->GetCharacterData()->GetQuestMgr().IsQuestAssigned(steps.Get(i));
+                if(stepAssignment && stepAssignment->IsCompleted())
+                {
+                    //If there is a quest note add it to the priority queue, setting
+                    //the completion order and the quest order so they can be ordered by
+                    //completion order or quest step order (whichever is available)
+                    if(stepAssignment->GetQuest()->hasTaskText())
+                    {
+                        TaskEntry entry;
+                        entry.text.Format("\n\n%s", stepAssignment->GetQuest()->GetTask());
+                        entry.completionOrder = stepAssignment->completionOrder;
+                        entry.questOrder = i;
+                        entries.Insert(entry);
+                    }
+                }
+            }
+
+            //Now empty the queue taking the elements in the correct order and
+            //creating the notes text.
+            while(!entries.IsEmpty())
+            {
+                tasks.Append(entries.Pop().text);
+            }
+
             psQuestInfoMessage response(me->clientnum,psQuestInfoMessage::CMD_INFO,
-                q->GetQuest()->GetID(),q->GetQuest()->GetName(),q->GetQuest()->GetTask());
+                q->GetQuest()->GetID(),q->GetQuest()->GetName(), tasks.GetData());
             response.SendMessage();
         }
     }

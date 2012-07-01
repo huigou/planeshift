@@ -144,6 +144,43 @@ protected:
     void HandleQuestInfo(MsgEntry *pMsg,Client *client);
     void HandleQuestReward(MsgEntry *pMsg,Client *client);
 
+private:
+    /**
+     * This class is only for internal use for HandleQuestInfo and
+     * it's used to allow ordered population of the quest notes data.
+     */
+    class TaskEntry
+    {
+        public:
+        csString text;        ///< The text contained by this note.
+        int completionOrder;  ///< The completion order of the step, used to order entries by completion.
+        int questOrder;       ///< The quest step order used in case the completion order is invalid.
+
+        /**
+         * Returns if the entry comes before another, notice
+         * that here the effect of the ordering is inverted than
+         * what would be expected, this is because items with a lower
+         * number must come before items with an higher number and
+         * the priority queue implements higher number comes first.
+         *
+         * @param other The other task entry to compare with.
+         * @return TRUE if the current TaskEntry comes before the
+         *              other TaskEntry.
+         */
+        bool operator<(const TaskEntry &other) const
+        {
+            //first check if the completion order is different
+            //in that case use that as order
+            if(completionOrder != other.completionOrder)
+            {
+                return completionOrder > other.completionOrder;
+            }
+            //if they are the same check for the case the completion
+            //order is invalid and check if quest order is different
+            return questOrder > other.questOrder;
+        }
+    };
+
 public:
 
     QuestManager(CacheManager* cachemanager);

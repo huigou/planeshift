@@ -1732,6 +1732,11 @@ ALTER TABLE natural_resources ADD COLUMN `amount` int(10) unsigned default NULL 
 ALTER TABLE natural_resources ADD COLUMN `interval` int(11) NOT NULL default '0' COMMENT 'if amount not null, msec interval for spawning item when picked up';
 ALTER TABLE natural_resources ADD COLUMN `max_random` int(11) NOT NULL default '0' COMMENT 'Maximum random interval modifier in msecs';
 
+# Added an ordering to the quest completion.
+
+UPDATE `server_options` SET `option_value`='1267' WHERE `option_name`='db_version';
+ALTER TABLE `character_quests` ADD COLUMN `completionOrder` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'This field stores the ordering in which this quest was completed from 0 to n.' AFTER `last_response_npc_id`;
+
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
