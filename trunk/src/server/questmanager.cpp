@@ -614,10 +614,49 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
         csString questname = block.Slice(13,block.Length()-1).Trim();
         command.Format("<assigned quest=\"%s\"/>", questname.GetData());
     }
-    else if (!strncasecmp(block,"variable",4))
+    else if (!strncasecmp(block,"variable",8))
     {
         csString variableName = block.Slice(9,block.Length()).Trim();
         command.Format("<variable name=\"%s\"/>", variableName.GetData() );
+    }
+    else if (!strncasecmp(block,"skill",5)) // require skill <buffed> name <startLevel>-<endLevel>
+    {
+        csString data = block.Slice(6).Trim();
+        bool buffed = false;
+        csString skillName;
+
+        // Check if we allow buffed skills when evaluating
+        if(data.StartsWith("buffed", true))
+        {
+            buffed = true;
+            data.DeleteAt(0, 7).Trim();
+        }
+
+        // Search for the last instance of -, which is required and will rappresent the levels
+        // This way it's possible to allow anything inside the name of the skill, including spaces
+        // and - itself (if the - is forgotten at the end there might be parse errors) 
+        size_t skillAmountPosition = data.FindLast('-');
+
+        if(skillAmountPosition != (size_t)-1)
+        {
+            // Search for the first space before the - which is the cut point for the skill name
+            // a failure here just like above means the command is malformed
+            size_t skillNamePosition = data.FindLast(' ', skillAmountPosition);
+            if(skillNamePosition != (size_t)-1)
+            {
+                skillName = data.Slice(0, skillNamePosition).Trim();
+                data.DeleteAt(0, skillNamePosition).Trim();
+
+                // Now only the skill levels are left in the string
+                csStringArray skillLevels(data, "-", csStringArray::delimSplitEach);
+                if(skillLevels.GetSize() == 2)
+                {
+                    command.Format("<skill name=\"%s\" min=\"%s\" max=\"%s\" buffed=\"%d\"/>", skillName.GetData(), skillLevels[0], skillLevels[1], buffed);
+                }
+            }
+        }
+        // If a  string wasn't produced there was an error, in this case report it.
+        result = !command.IsEmpty();
     }
     else
     {
