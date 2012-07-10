@@ -98,7 +98,7 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
         Behavior * behavior = behaviors.Find(names[i]);
         if (!behavior)
         {
-            Error2("Reaction specified unknown behavior of '%s'. Error in XML.",(const char *)names[i]);
+            Error3("Reaction for event type '%s' specified unknown behavior of '%s'. Error in XML.",GetEventType(NULL).GetDataSafe(),(const char *)names[i]);
             return false;
         }
         affected.Push(behavior);
