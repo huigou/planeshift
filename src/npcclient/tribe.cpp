@@ -1009,12 +1009,12 @@ void Tribe::AddRecipe(Recipe* recipe, Recipe* parentRecipe, bool reqType)
     if(!recipe)
     {
         // Avoid a segFault and signal the issue
-        CPrintf(CON_ERROR, "Could not add recipe. Received null pointer for recipe.\n");
+        Error2("Could not add recipe. Received null pointer for recipe while loading tribe %s.\n",GetName());
         return;
     }
     if(!parentRecipe)
     {
-        CPrintf(CON_ERROR, "Could not add recipe. Received null pointer for parent recipe.\n");
+        Error2("Could not add recipe. Received null pointer for parent recipe while loading tribe %s.\n",GetName());
         return;
     }
 
