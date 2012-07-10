@@ -1521,7 +1521,6 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
     (Full Edition Only)</b>: Make sure the "Show all settings" checkbox is checked in
     Tools->Options before continuing.<br />
     If you have MSCV 2008, you might know it as MSVC 9.0, Visual Studio 9.0 or Visual Studio .NET 2008.<br />
-    If you have MSCV 2010, you might know it as MSVC 10.0, Visual Studio 10.0 or Visual Studio .NET 2010.<br />
     Here we will add all the directories containing all the include and libraries files that we will need to
     use for compiling PlaneShift.<br /> Under Tools->Options in you MSVC look on the left hand side for the Projects
     folder. Under Projects choose "VC++ Directories". In the "Show Directories for" choose "Include Files".
@@ -1542,6 +1541,11 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
         C:\development\CS\win32libs\lib<br />
     </p>
 
+    If you have MSCV 2010, you might know it as MSVC 10.0, Visual Studio 10.0 or Visual Studio .NET 2010 or 2010 Express Edition<br />
+    Version 2010 does not have anymore the VC Directories setting under Option, but it's per "Project". To add the include or libraries directories above, right click on a "Project" (NOT the solution) and select "Properties", then navigate the tree Configuration Properties->VC Directories.<br />
+    Then add there all the directories mentioned above if not yet present. Use the same technique for any other similar problem you encounter.<br />
+
+    
     <h3>Crystal Space (CS)</h3>
     <p>
         <span class="Normal">
