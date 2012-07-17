@@ -2113,20 +2113,26 @@ bool GiveItemResponseOp::Load(iDocumentNode *node)
     }
 
     // Check for count attribute
-    if (node->GetAttribute("count"))
+    if(node->GetAttribute("count"))
     {
         count = node->GetAttributeValueAsInt("count");
-        if (count < 1)
+        if(count < 1)
         {
-            Error1("Try to give negative or zero count in GiveItem script op!");
+            Error1("Tried to give negative or zero count in GiveItem script op!");
             count = 1;
         }
 
-        if (count > 1 && !itemstat->GetIsStackable())
+        if(count > 1 && !itemstat->GetIsStackable())
         {
-            Error2("ItemStat '%s' isn't stackable in GiveItem script op!",node->GetAttributeValue("item") );
+            Error2("ItemStat '%s' isn't stackable in GiveItem script op!", node->GetAttributeValue("item"));
             return false;
         }
+    }
+
+    // Check for quality attribute
+    if(node->GetAttribute("quality"))
+    {
+        quality = node->GetAttributeValueAsFloat("quality");
     }
 
     return true;
@@ -2135,10 +2141,14 @@ bool GiveItemResponseOp::Load(iDocumentNode *node)
 csString GiveItemResponseOp::GetResponseScript()
 {
     psString resp = GetName();
-    resp.AppendFmt(" item=\"%s\"",itemstat->GetName());
-    if (count != 1)
+    resp.AppendFmt(" item=\"%s\"", itemstat->GetName());
+    if(count != 1)
     {
-        resp.AppendFmt(" count=\"%d\"",count);
+        resp.AppendFmt(" count=\"%d\"", count);
+    }
+    if(quality >= 1)
+    {
+        resp.AppendFmt(" quality=\"%f\"", quality);
     }
 
     return resp;
@@ -2159,6 +2169,12 @@ bool GiveItemResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,cs
     }
 
     item->SetStackCount(count);
+
+    if(quality >= 1)
+    {
+        item->SetItemQuality(quality);
+    }
+
     item->SetLoaded();  // Item is fully created
 
 
@@ -2397,22 +2413,24 @@ bool OfferRewardResponseOp::Load(iDocumentNode *node)
     while (iter->HasNext())
     {
         csRef<iDocumentNode> node = iter->Next();
-        psItemStats* itemstat;
         // get item
+        psItemStats* itemStat;
         uint32 itemID = (uint32)node->GetAttributeValueAsInt("id");
+
         if (itemID)
-            itemstat = psserver->GetCacheManager()->GetBasicItemStatsByID(itemID);
+            itemStat = psserver->GetCacheManager()->GetBasicItemStatsByID(itemID);
         else
-            itemstat = psserver->GetCacheManager()->GetBasicItemStatsByName(node->GetAttributeValue("name"));
+            itemStat = psserver->GetCacheManager()->GetBasicItemStatsByName(node->GetAttributeValue("name"));
 
         // make sure that the item exists
-        if (!itemstat)
+        if (!itemStat)
         {
-            Error3("ItemStat #%u/%s was not found in OfferReward script op!",itemID,node->GetAttributeValue("name"));
+            Error3("ItemStat #%u/%s was not found in OfferReward script op!", itemID, node->GetAttributeValue("name"));
             return false;
         }
+
         // add this item to the list
-        offer.Push(itemstat);
+        offer.Push(itemStat);
     }
     return true;
 }
@@ -2420,9 +2438,9 @@ bool OfferRewardResponseOp::Load(iDocumentNode *node)
 csString OfferRewardResponseOp::GetResponseScript()
 {
     psString resp = GetName();
-    for (size_t n = 0; n < offer.GetSize();n++)
+    for (size_t n = 0; n < offer.GetSize(); n++)
     {
-        resp.AppendFmt("><item id=\"%s\"/",offer[n]->GetName());
+        resp.AppendFmt("><item id=\"%s\"/", offer[n]->GetName());
     }
     resp.AppendFmt("></offer");
     return resp;

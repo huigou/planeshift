@@ -491,7 +491,7 @@ protected:
 
 public:
     /// Constructor. Practically does nothing.
-    SetVariableResponseOp() { name = "offer"; }
+    SetVariableResponseOp() { name = "setvariable"; }
 
     ///Destructor.
     virtual ~SetVariableResponseOp() {};
@@ -535,7 +535,7 @@ protected:
 public:
 
     /// Constructor. Practically does nothing.
-    UnSetVariableResponseOp() { name = "offer"; }
+    UnSetVariableResponseOp() { name = "unsetvariable"; }
 
     ///Destructor.
     virtual ~UnSetVariableResponseOp() {};
@@ -727,9 +727,10 @@ class GiveItemResponseOp : public ResponseOperation
 protected:
     psItemStats *itemstat;
     int count;
+    float quality;
 
 public:
-    GiveItemResponseOp() { name="give"; itemstat=NULL; count=1; }
+    GiveItemResponseOp(): itemstat(NULL), count(1), quality(0) { name="give"; }
     virtual ~GiveItemResponseOp() {};
     virtual bool Load(iDocumentNode *node);
     virtual csString GetResponseScript();    
