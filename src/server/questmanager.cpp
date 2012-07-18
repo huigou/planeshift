@@ -612,6 +612,7 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
         // it's not possible to proceed.
         if(cutPos == (size_t)-1)
         {
+            Error1("Item or category suboperator couldn't be found.");
             result = false;
             return command;
         }
