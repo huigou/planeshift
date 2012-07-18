@@ -596,7 +596,7 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
         bool inventory = !strncasecmp(block,"possessed", 9);
 
         // Remove the heading
-        csString subcommand = block.Slice(inventory? 9 : 10, block.Length()).Trim();
+        csString subcommand = block.Slice(inventory? 9 : 8, block.Length()).Trim();
 
         // Create a temporary string for using find()
         csString temp = subcommand;
