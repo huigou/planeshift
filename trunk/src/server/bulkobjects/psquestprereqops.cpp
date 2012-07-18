@@ -358,9 +358,9 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpFaction::Copy()
 bool psQuestPrereqOpItem::Check(psCharacter * character) //TODO: extend this
 {
     if(!categoryName.IsEmpty())
-        return character->Inventory().hasItemCategory(categoryName, true, includeInventory);
+        return character->Inventory().hasItemCategory(categoryName, true, includeInventory, qualityMin, qualityMax);
     if(!itemName.IsEmpty())
-        return character->Inventory().hasItemName(itemName, true, includeInventory);
+        return character->Inventory().hasItemName(itemName, true, includeInventory, qualityMin, qualityMax);
     return false;
 }
 
@@ -373,6 +373,10 @@ csString psQuestPrereqOpItem::GetScriptOp()
         script.AppendFmt("name=\"%s\" ", itemName.GetData());
     if(!categoryName.IsEmpty())
         script.AppendFmt("category=\"%s\" ", categoryName.GetData());
+    if(qualityMin >= 1)
+        script.AppendFmt("qualitymin=\"%f\" ", qualityMin);
+    if(qualityMax >= 1)
+        script.AppendFmt("qualitymax=\"%f\" ", qualityMax);
     script.Append("/>");
     return script;
 }
@@ -380,7 +384,7 @@ csString psQuestPrereqOpItem::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpItem::Copy()
 {
     csRef<psQuestPrereqOpItem> copy;
-    copy.AttachNew(new psQuestPrereqOpItem(itemName,categoryName,includeInventory));
+    copy.AttachNew(new psQuestPrereqOpItem(itemName, categoryName, includeInventory, qualityMin, qualityMax));
     return csPtr<psQuestPrereqOp>(copy);
 }
 
