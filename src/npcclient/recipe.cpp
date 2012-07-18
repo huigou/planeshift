@@ -897,7 +897,15 @@ void RecipeManager::CreateGlobalNPCType(Tribe* tribe)
 
     assembledType = "<npctype name=\"tribe_";
     assembledType.Append(tribe->GetID());
-    assembledType.Append("\" parent=\"AbstractTribesman\">");
+    if (currentTribe->brain != "")
+    {
+       assembledType.Append("\" parent=\"";
+       assembledType.Append(currentTribe->brain);
+       assembledType.Append("\">");
+    } else
+    {
+       assembledType.Append("\" parent=\"AbstractTribesman\">");
+    }
 
     // Aggressivity Trait
     if(currentTribe->aggressivity == "warlike")
