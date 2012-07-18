@@ -899,7 +899,7 @@ void RecipeManager::CreateGlobalNPCType(Tribe* tribe)
     assembledType.Append(tribe->GetID());
     if (currentTribe->brain != "")
     {
-       assembledType.Append("\" parent=\"";
+       assembledType.Append("\" parent=\"");
        assembledType.Append(currentTribe->brain);
        assembledType.Append("\">");
     } else
