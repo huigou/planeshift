@@ -976,12 +976,31 @@ LocationType* LocationManager::CreateLocationType(int id, const csString& locati
 
 bool LocationManager::RemoveLocationType(iDataConnection* db, const csString& locationName)
 {
-    return false;
+    int res =db->Command("delete from sc_location_type where name='%s'",
+                         locationName.GetDataSafe());
+    if (res != 1)
+    {
+        return false;
+    }
+    
+    RemoveLocationType(locationName);
+
+    return true;
 }
 
 
 bool LocationManager::RemoveLocationType(const csString& locationName)
 {
+    LocationType* locationType = FindLocation(locationName);
+    if (locationType)
+    {
+
+        loctypes.Delete(locationType->GetName(),locationType);
+
+        delete locationType;
+        return true;
+    }
+    
     return false;
 }
 
