@@ -1012,13 +1012,15 @@ psItem *psCharacterInventory::GetItem(psItem *container,INVENTORY_SLOT_NUMBER sl
         return NULL;
 }
 
-bool psCharacterInventory::hasItemName(csString & itemname, bool includeEquipment, bool includeBulk)
+bool psCharacterInventory::hasItemName(csString & itemname, bool includeEquipment, bool includeBulk, float qualityMin, float qualityMax)
 {
     for (size_t i=1; i < inventory.GetSize(); i++)
     {
         if (inventory[i].item && (csString)inventory[i].item->GetName() == itemname &&
            (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
-           (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
+           (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1) &&
+           (qualityMin < 1 || inventory[i].item->GetItemQuality() >= qualityMin) &&
+           (qualityMax < 1 || inventory[i].item->GetItemQuality() <= qualityMax))
             return true;
     }
     return false;
@@ -1464,16 +1466,18 @@ bool psCharacterInventory::hasItemCategory(psItemCategory * category, bool inclu
     return false;
 }
 
-bool psCharacterInventory::hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk, bool includeStorage)
+bool psCharacterInventory::hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk, bool includeStorage, float qualityMin, float qualityMax)
 {
     if(includeEquipment || includeBulk)
     {
         // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
         for (size_t i = 1; i < inventory.GetSize(); i++)
         {
-            if (inventory[i].item && inventory[i].item->GetCategory()->name == categoryname &&
-               (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
-               (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1))
+            if(inventory[i].item && inventory[i].item->GetCategory()->name == categoryname &&
+              (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
+              (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1) &&
+              (qualityMin < 1 || inventory[i].item->GetItemQuality() >= qualityMin) &&
+              (qualityMax < 1 || inventory[i].item->GetItemQuality() <= qualityMax))
                 return true;
         }
     }
@@ -1481,7 +1485,9 @@ bool psCharacterInventory::hasItemCategory(csString & categoryname, bool include
     {
         for (size_t i = 0; i < storageInventory.GetSize(); i++)
         {
-            if (storageInventory[i]->GetCategory()->name == categoryname)
+            if((storageInventory[i]->GetCategory()->name == categoryname) &&
+              (qualityMin < 1 || inventory[i].item->GetItemQuality() >= qualityMin) &&
+              (qualityMax < 1 || inventory[i].item->GetItemQuality() <= qualityMax))
                 return true;
         }
     }

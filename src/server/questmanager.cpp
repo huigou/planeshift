@@ -588,33 +588,74 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
     {
         command.Format("<married/>");
     }
-    else if (!strncasecmp(block,"equipped",8))
+    else if (!strncasecmp(block,"possessed", 9) || !strncasecmp(block,"equipped", 8))
     {
-        csString itemName = block.Slice(9,block.Length()).Trim();
-        //this manages the category argument Require equipped category xxxx
-        if(itemName.StartsWith("category",true))
+        csStringArray qualityLevels;
+
+        // Check in which case we are of the two, in order to reduce code duplication.
+        bool inventory = !strncasecmp(block,"possessed", 9);
+
+        // Remove the heading
+        csString subcommand = block.Slice(inventory? 9 : 10, block.Length()).Trim();
+
+        // Create a temporary string for using find()
+        csString temp = subcommand;
+        temp.Downcase();
+
+        // Get the lesser between the position of category and item
+        // thus allowing these names to appear inside the name of the item
+        // at the same time the non presence will be regarded as bigger, so
+        // ignored.
+        size_t cutPos = csMin(temp.Find("category"), temp.Find("item"));
+
+        // In case csMin returns this value it means neither were found so
+        // it's not possible to proceed.
+        if(cutPos == (size_t)-1)
         {
-            csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
-            command.Format("<item inventory=\"false\" category=\"%s\"/>", categoryName.GetData());
+            result = false;
+            return command;
         }
-        else
+
+        // If the cut position is bigger than 0 it means there might be something
+        // before the item name (eg: quality)
+        if(cutPos != 0)
         {
-            command.Format("<item inventory=\"false\" name=\"%s\"/>", itemName.GetData());
+            // Search for the quality identifiers and cut the strings.
+            csString quality = subcommand.Slice(0, cutPos).Trim();
+            subcommand.DeleteAt(0, cutPos).Trim();
+
+            // Now only the quality is left in the new string, if it's not the
+            // parse might fail but it's an allowed fail.
+            qualityLevels.SplitString(quality, "-", csStringArray::delimSplitEach);
         }
-    }
-    else if (!strncasecmp(block,"possessed",9))
-    {
-        csString itemName = block.Slice(10,block.Length()).Trim();
-        //this manages the category argument Require equipped category xxxx
-        if(itemName.StartsWith("category",true))
+        
+        //this manages the category argument Require equipped/possesed category xxxx
+        if(subcommand.StartsWith("category",true))
         {
-            csString categoryName = itemName.Slice(9, itemName.Length()); //no need to trim done above
-            command.Format("<item inventory=\"true\" category=\"%s\"/>", categoryName.GetData());
+            csString categoryName = subcommand.Slice(9, subcommand.Length()); //no need to trim done above
+            command.Format("<item inventory=\"%d\" category=\"%s\" ", inventory, categoryName.GetData());
         }
-        else
+        else if(subcommand.StartsWith("item",true)) //this manages the item argument Require equipped/possessed item xxxx
         {
-            command.Format("<item inventory=\"true\" name=\"%s\"/>",itemName.GetData());
+            csString itemName = subcommand.Slice(4, subcommand.Length()); //no need to trim done above
+            command.Format("<item inventory=\"%d\" name=\"%s\" ", inventory, itemName.GetData());
         }
+
+        // Finally append the min and max quality in case these values have been found
+        // a single number will be interpreted as min quality, -value as max quality
+        // value-value as min-max quality. In reality the left part of the - is also
+        // a value - an empty string - which will be considered invalid and treathed as
+        // zero from the xml parser.
+        if(qualityLevels.GetSize() > 0)
+        {
+            command.AppendFmt("minquality=\"%s\" ", qualityLevels[0]);
+            if(qualityLevels.GetSize() > 1)
+            {
+                command.AppendFmt("maxquality=\"%s\" ", qualityLevels[1]);
+            }
+        }
+
+        command.Append("/>");
     }
     else if (!strncasecmp(block,"assignment of", 13)) //Require <no/not> assignment of deliver me an apple.
     {

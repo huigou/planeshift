@@ -236,9 +236,11 @@ public:
     /** Check if the item of a certain name is in the character inventory.
      * @param itemname The name of the item to search for.
      * @param includeBulk searches for the item only in the equipment if true.
+     * @param qualityMin The minimum quality the item must have, 0 to ignore.
+     * @param qualityMax The maximum quality the item must have, 0 to ignore.
      * @return The item in the given slot. NULL if no item was found.
      */
-    bool hasItemName(csString & itemname, bool includeEquipment, bool includeBulk);
+    bool hasItemName(csString & itemname, bool includeEquipment, bool includeBulk, float qualityMin = 0, float qualityMax = 0);
 
     /** Get an item that is in the equipment inventory.    
       * @param slot The slot in which we want to retrive the item ( if any ).
@@ -358,9 +360,11 @@ public:
     /** Check if the item of a certain category is in the character inventory.
      * @param categoryname The name of the category of item to search for.
      * @param includeBulk searches for the item only in the equipment if true.
+     * @param qualityMin The minimum quality the item must have, 0 to ignore.
+     * @param qualityMax The maximum quality the item must have, 0 to ignore.
      * @return true if the item was found, false if it wasn't.
      */
-    bool hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk, bool includeStorage = false);
+    bool hasItemCategory(csString & categoryname, bool includeEquipment, bool includeBulk, bool includeStorage = false, float qualityMin = 0, float qualityMax = 0);
     
     /** Iterates over the entire inventory to get a list of all the items from a particular category.
       * This is useful for npc merchants/storage when you want to get a list of all the items they have.

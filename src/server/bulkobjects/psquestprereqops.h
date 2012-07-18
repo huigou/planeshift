@@ -615,6 +615,8 @@ class psQuestPrereqOpItem : public psQuestPrereqOp
     csString itemName;
     csString categoryName;
     bool includeInventory;
+    float qualityMax;
+    float qualityMin;
 
  public:
 
@@ -625,7 +627,9 @@ class psQuestPrereqOpItem : public psQuestPrereqOp
      *                         else only inventory.
      * @param name The name of the base item we are searching for.
      */
-    psQuestPrereqOpItem(const char *itemName, const char *categoryName, bool includeInventory):itemName(itemName),categoryName(categoryName),includeInventory(includeInventory){};
+    psQuestPrereqOpItem(const char *itemName, const char *categoryName, bool includeInventory, float qualityMax, float qualityMin):
+                        itemName(itemName), categoryName(categoryName), includeInventory(includeInventory),
+                        qualityMax(qualityMax), qualityMin(qualityMin){};
 
     virtual ~psQuestPrereqOpItem() {}
 
