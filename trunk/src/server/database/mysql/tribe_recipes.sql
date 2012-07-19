@@ -79,7 +79,7 @@ building(Small Tent,2,Hunter Build Tent);',
 INSERT INTO `tribe_recipes` VALUES (100, 'Mining Tribe',
 '# No requirements', 
 '# The Mining tribe
-brain(civilised);aggressivity(peaceful);growth(conservatory);unity(organised);sleepPeriod(diurnal);
+brain(MiningTribe);aggressivity(peaceful);growth(conservatory);unity(organised);sleepPeriod(diurnal);
 
 # Load recipes
 loadRecipe(Do Nothing);
@@ -90,7 +90,7 @@ loadRecipe(Miner Evolve Tribe,distributed);
 INSERT INTO `tribe_recipes` VALUES (101, 'Hunting Tribe',
 '# No requirements',
 '# The Hunter tribe
-brain(civilised);aggressivity(neutral);growth(conservatory);unity(organised);sleepPeriod(diurnal);
+brain(HuntingTribe);aggressivity(neutral);growth(conservatory);unity(organised);sleepPeriod(diurnal);
 
 # Load Recipes
 loadRecipe(Do Nothing);
