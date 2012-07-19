@@ -240,6 +240,16 @@ bool NPCType::Load(iResultRow &row)
 
 bool NPCType::Load(iDocumentNode *node)
 {
+    // Load the name into a temp variable to prevent parent
+    // deap copy from overriding the name. Need the name for
+    // error reporting.
+    csString typeName = node->GetAttributeValue("name");
+    if ( typeName.Length() == 0 )
+    {
+        Error1("NPCType has no name attribute. Error in XML");
+        return false;
+    }
+
     csString parents = node->GetAttributeValue("parent");
     if (!parents.IsEmpty()) // this npctype is a subclass of another npctype
     {
@@ -253,19 +263,15 @@ bool NPCType::Load(iDocumentNode *node)
             }
             else
             {
-                Error2("Specified parent npctype '%s' could not be found.",
-                       parent[i].GetDataSafe());
+                Error3("NPCType '%s': Specified parent npctype '%s' could not be found.",
+                       typeName.GetDataSafe(), parent[i].GetDataSafe());
                 return false;
             }
         }
     }
 
-    name = node->GetAttributeValue("name");
-    if ( name.Length() == 0 )
-    {
-        Error1("NPCType has no name attribute. Error in XML");
-        return false;
-    }
+    // Now assign the name to this NPC Type after the parent DeepCopy is done.
+    name = typeName;
 
     if (node->GetAttributeValueAsFloat("ang_vel") )
         ang_vel = node->GetAttributeValueAsFloat("ang_vel");
@@ -1419,7 +1425,7 @@ void Behavior::ApplyNeedAbsolute(NPC *npc, float absoluteDesire)
 
 void Behavior::SetCurrentStep(int step)
 {
-    if (step < 0 || step >= sequence.GetSize())
+    if (step < 0 || step >= (int)sequence.GetSize())
     {
         Error3("Behavior trying to set current step to value %d that is outside sequence 0..%zu",
                step,sequence.GetSize());
