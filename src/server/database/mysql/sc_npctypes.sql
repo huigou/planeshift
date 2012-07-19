@@ -849,7 +849,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
 <react event="tribe_home:living"        behavior="TribeHomeLiving" />
 ');
 
-INSERT INTO sc_npctypes VALUES("111","MineingTribe","AbstractTribesman",0,"","","","","","0",
+INSERT INTO sc_npctypes VALUES("111","MiningTribe","AbstractTribesman",0,"","","","","","0",
 '<empty/>');
 
 INSERT INTO sc_npctypes VALUES("112","HuntingTribe","AbstractTribesman",0,"","","","","","0",
