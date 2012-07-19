@@ -493,7 +493,7 @@ public:
      */
     void ReplaceBuffers(csString& result);
 
-    Tribe::Memory* GetBufferMemory() { return &bufferMemory; }
+    Tribe::Memory* GetBufferMemory() { return bufferMemory; }
     void SetBufferMemory(Tribe::Memory* memory);
 
     /** Set a building spot for this NPC
@@ -512,7 +512,7 @@ private:
     iCollideSystem*   cdsys;
 
     BufferHash        npcBuffer;        ///< Used to store dynamic data
-    Tribe::Memory     bufferMemory;     ///< Used to store location data
+    Tribe::Memory*    bufferMemory;     ///< Used to store location data
     Tribe::Asset*     buildingSpot;     ///< Used to store current building spot.
     
     friend class psNPCTick;

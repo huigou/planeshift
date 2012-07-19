@@ -99,6 +99,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     this->networkmanager = networkmanager;
     this->world = world;
     this->cdsys = cdsys;
+    this->bufferMemory = NULL;
 
     for (int i = 0; i < 10; i++)
     {
@@ -126,6 +127,12 @@ NPC::~NPC()
     activeLocate->sector = NULL;
     activeLocate->wp = NULL;
     raceInfo = NULL;
+
+    if (bufferMemory)
+    {
+       delete bufferMemory;
+       bufferMemory = NULL;
+    }
 }
 
 void NPC::Tick()
@@ -230,15 +237,15 @@ void NPC::Dump()
         CPrintf(CON_CMDOUTPUT, "String buffer(%d): %s = %s\n",index++,bufferName.GetDataSafe(),value.GetDataSafe());
     }
     CPrintf(CON_CMDOUTPUT, "Memory buffer:\n");
-    if(bufferMemory.sector)
+    if(bufferMemory)
     {
-        CPrintf(CON_CMDOUTPUT, "Name: %s\n", bufferMemory.name.GetData());
+        CPrintf(CON_CMDOUTPUT, "Name: %s\n", bufferMemory->name.GetData());
         CPrintf(CON_CMDOUTPUT, "Pos: x:%f y:%f z:%f\n",
-                                bufferMemory.pos[0],
-                                bufferMemory.pos[1],
-                                bufferMemory.pos[2]);
+                                bufferMemory->pos[0],
+                                bufferMemory->pos[1],
+                                bufferMemory->pos[2]);
         CPrintf(CON_CMDOUTPUT, "Has Sector:\n");
-        if(bufferMemory.GetSector())
+        if(bufferMemory->GetSector())
             CPrintf(CON_CMDOUTPUT, "Yes\n");
         else
             CPrintf(CON_CMDOUTPUT, "No\n");
@@ -1234,12 +1241,17 @@ iSector* NPC::GetSpawnSector() const
 
 void NPC::SetBufferMemory(Tribe::Memory* memory)
 {
+    if (bufferMemory == NULL)
+    {
+        bufferMemory = new Tribe::Memory();
+    }
+
     // Just copy data
-    bufferMemory.name       = memory->name;
-    bufferMemory.pos        = memory->pos;
-    bufferMemory.sector     = memory->sector;
-    bufferMemory.sectorName = memory->sectorName;
-    bufferMemory.radius     = memory->radius;
+    bufferMemory->name       = memory->name;
+    bufferMemory->pos        = memory->pos;
+    bufferMemory->sector     = memory->sector;
+    bufferMemory->sectorName = memory->sectorName;
+    bufferMemory->radius     = memory->radius;
 }
 
 void NPC::SetBuildingSpot(Tribe::Asset* buildingSpot)
