@@ -811,7 +811,13 @@ bool psNPCClient::ReadNPCsFromDatabase()
                 int id = npc->GetTribe()->GetID();
                 csString typeName = "tribe_";
                 typeName.Append(id);
-                npc->SetBrain(npctypes.Get(typeName.GetData(), NULL), eventmanager);
+                NPCType* brain = npctypes.Get(typeName.GetData(), NULL);
+                if (!brain)
+                {
+                   Error3("Failed to load tribe brain for NPC %s(%s)",npc->GetName(),ShowID(npc->GetPID()));
+                   return false;
+                }
+                npc->SetBrain(brain, eventmanager);
             }
         }
         else
