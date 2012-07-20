@@ -264,12 +264,45 @@ INSERT INTO math_scripts VALUES( "Calc Char Account Level", "AccountLevel = log(
 INSERT INTO math_scripts VALUES( "Calc Bank Fee", "BankFee = 5.25 - (AccountLevel * 0.25);");
 
 INSERT INTO math_scripts VALUES( "Calculate Mining Odds", "
-Total = Distance * Probability * Quality * Skill + 0.1;
+Skill = PlayerSkill / RequiredSkill;
+Quality = ToolQuality / RequiredToolQuality;
 
-ResultQuality = Quality * Skill;
+Total = Distance * Probability * Quality * Skill + 0.3;
+
+ResultQuality = ToolQuality * Skill;
 ResultQuality = ResultQuality*300;
 
 ");
+
+Total = Distance * Probability * Quality * Skill + 0.2;
+
+SkillFactor = PlayerSkill / RequiredSkill;
+if (SkillFactor>6) {
+  SkillFactor = 6;
+}
+if (SkillFactor<1) {
+  SkillFactor = 1;
+}
+
+ToolFactor = 0.2*ToolQuality / RequiredToolQuality;
+if (ToolFactor>2) {
+  ToolFactor = 2;
+}
+if (ToolFactor<1) {
+  ToolFactor = 1;
+}
+
+RandomFactor = (0.4*rnd(1))+0.8;
+ResultQuality = 50*SkillFactor*ToolFactor*RandomFactor;
+if (ResultQuality>300) {
+  ResultQuality = 300;
+}
+if (ResultQuality<50) {
+  ResultQuality = 50;
+}
+
+ResultQuality = floor(ResultQuality);
+
 
 INSERT INTO math_scripts VALUES( "Calc Item Merchant Price Buy", "Result = ItemPrice - CharData:GetSkillValue(47)/10;");
 
