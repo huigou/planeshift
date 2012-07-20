@@ -133,7 +133,7 @@ bool Tribe::LoadMemory(iResultRow& row)
     memory->sectorName = row["sector_name"];
     // Try to find the sector. Will probably fail at this point.
     memory->sector = npcclient->GetEngine()->FindSector(memory->sectorName);
-    memory->npc = NULL; // Not a privat memory
+    memory->npc = NULL; // Not a private memory
     
     memories.PushBack(memory);
 
@@ -803,13 +803,14 @@ Tribe::Memory* Tribe::FindMemory(csString name)
 
 void Tribe::AddMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC * npc)
 {
-    Memory * memory = new Memory;
-    memory->id     = -1;
-    memory->name   = name;
-    memory->pos    = pos;
-    memory->sector = sector;
-    memory->radius = radius;
-    memory->npc    = npc;
+    Memory * memory    = new Memory;
+    memory->id         = -1;
+    memory->name       = name;
+    memory->pos        = pos;
+    memory->sector     = sector;
+    memory->sectorName = sector->QueryObject()->GetName();
+    memory->radius     = radius;
+    memory->npc        = npc;
     memories.PushBack(memory);
 }
 
@@ -1180,14 +1181,15 @@ bool Tribe::CheckMembers(const csString& type, int number)
         {
             number--;
         }
-        if(number == 0)
+
+        if(number <= 0)
+        {
             return true;
+        }
     }
+
     // We don't have enough members
-    if(number != 0)
-    {
-        return false;
-    }
+    return false;
 }
 
 bool Tribe::CheckResource(csString resource, int number)
