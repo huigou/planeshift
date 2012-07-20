@@ -639,7 +639,7 @@ LocationType *NPC::GetRegion()
 
 void NPC::Disable( bool disable)
 {
-    disabled = disabled;
+    disabled = disable;
 
     // Stop the movement
     
@@ -702,11 +702,11 @@ void NPC::DumpState()
     while (iter.HasNext())
     {
         csString name;
-        Locate* value = iter.Next(name);
-        CPrintf(CON_CMDOUTPUT, "%-15s Position: %s\n",name.GetDataSafe(),toString(activeLocate->pos,activeLocate->sector).GetDataSafe());
-        CPrintf(CON_CMDOUTPUT, "%-15s Angle:    %.2f\n","",activeLocate->angle);
-        CPrintf(CON_CMDOUTPUT, "%-15s Radius:   %.2f\n","",activeLocate->radius);
-        CPrintf(CON_CMDOUTPUT, "%-15s WP:       %s\n","",activeLocate->wp?activeLocate->wp->GetName():"");
+        Locate* locate = iter.Next(name);
+        CPrintf(CON_CMDOUTPUT, "%-15s Position: %s\n",name.GetDataSafe(),toString(locate->pos,locate->sector).GetDataSafe());
+        CPrintf(CON_CMDOUTPUT, "%-15s Angle:    %.2f\n","",locate->angle);
+        CPrintf(CON_CMDOUTPUT, "%-15s Radius:   %.2f\n","",locate->radius);
+        CPrintf(CON_CMDOUTPUT, "%-15s WP:       %s\n","",locate->wp?locate->wp->GetName():"");
         
     }
     
@@ -1287,7 +1287,6 @@ void NPC::SetBuffer(const csString& bufferName, const csString& value)
 
 void NPC::ReplaceBuffers(csString& result)
 {
-    int index = 0;
     BufferHash::GlobalIterator iter = npcBuffer.GetIterator();
     while (iter.HasNext())
     {
