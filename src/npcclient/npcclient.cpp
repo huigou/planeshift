@@ -422,6 +422,7 @@ Tribe* psNPCClient::GetTribe(int id)
             return tribes[i];
         }
     }
+    return NULL;
 }
 
 bool psNPCClient::AddNPCType(csString newType)
@@ -1569,7 +1570,7 @@ void psNPCClient::ListTribes(const char * pattern)
 
             	// Print Memories
                 CPrintf(CON_CMDOUTPUT,"Memories:\n");
-                CPrintf(CON_CMDOUTPUT,"%7s %-20s Position                Radius  %-20s  %-20s\n","ID","Name","Sector","Private to NPC");
+                CPrintf(CON_CMDOUTPUT,"%7s %-25s Position                Radius  %-20s  %-20s\n","ID","Name","Sector","Private to NPC");
                 csList<Tribe::Memory*>::Iterator it = tribes[i]->GetMemoryIterator();
                 while (it.HasNext())
                 {
@@ -1579,11 +1580,11 @@ void psNPCClient::ListTribes(const char * pattern)
                     {
                         name.Format("%s(%u)", memory->npc->GetName(), memory->npc->GetPID().Unbox());
                     }
-                    CPrintf(CON_CMDOUTPUT,"%7d %-20s %7.1f %7.1f %7.1f %7.1f %-20s %-20s\n",
+                    CPrintf(CON_CMDOUTPUT,"%7d %-25s %7.1f %7.1f %7.1f %7.1f %-20s %-20s\n",
                             memory->id,
                             memory->name.GetDataSafe(),
                             memory->pos.x,memory->pos.y,memory->pos.z,memory->radius,
-                            (memory->sector?memory->sector->QueryObject()->GetName():""),
+                            (memory->GetSector()?memory->GetSector()->QueryObject()->GetName():""),
                             name.GetDataSafe());
                 }
 
