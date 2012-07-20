@@ -59,8 +59,6 @@
 #include "gem.h"
 #include "globals.h"
 
-extern bool running;
-
 NPCType::NPCType()
     :ang_vel(999),vel(999),velSource(VEL_DEFAULT)
 {
