@@ -3220,6 +3220,24 @@ ScriptOperation::OperationResult NOPOperation::Run(NPC *npc, bool interrupted)
 
 //---------------------------------------------------------------------------
 
+
+PerceptOperation::DelayedPerceptOperationGameEvent::DelayedPerceptOperationGameEvent(int offsetTicks, NPC* npc, Perception& pcpt, PerceptOperation::TargetType target, float maxRange)
+      :psGameEvent(0,offsetTicks,"DelayedPerceptOperationGameEvent"),
+       npc(npc), pcpt(pcpt), target(target), maxRange(maxRange)
+{
+
+}
+
+void PerceptOperation::DelayedPerceptOperationGameEvent::Trigger()  // Abstract event processing function
+{
+    PerceptOperation::TriggerEvent(npc, pcpt, target, maxRange);
+}
+
+csString PerceptOperation::DelayedPerceptOperationGameEvent::ToString() const
+{
+    return "TODO";
+}
+
 bool PerceptOperation::Load(iDocumentNode *node)
 {
     if (!ScriptOperation::Load(node))
@@ -3264,6 +3282,8 @@ bool PerceptOperation::Load(iDocumentNode *node)
     condition = node->GetAttributeValue("condition");
     failedPerception = node->GetAttributeValue("failed_event");
 
+    delayed = node->GetAttributeValue("delayed");
+
     return true;
 }
 
@@ -3276,6 +3296,7 @@ ScriptOperation *PerceptOperation::MakeCopy()
     op->maxRange         = maxRange;
     op->condition        = condition;
     op->failedPerception = failedPerception;
+    op->delayed          = delayed;
 
     return op;
 }
@@ -3329,9 +3350,27 @@ ScriptOperation::OperationResult PerceptOperation::Run(NPC *npc, bool interrupte
         perceptionVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, perception);
     }
     
-
+    // Now that we are sure this perception is going to be fired create the perception
     Perception pcpt(perceptionVariablesReplaced);
 
+    // Check if perception should be fired now or later
+    if (delayed.IsEmpty())
+    {
+        TriggerEvent(npc, pcpt, target, maxRange);
+    }
+    else
+    {
+        csString delayedReplaced = psGameObject::ReplaceNPCVariables(npc, delayed);
+        int delayTicks = (int)(1000.0*atof(delayedReplaced.GetDataSafe()));
+
+        DelayedPerceptOperationGameEvent* event = new DelayedPerceptOperationGameEvent(delayTicks, npc, pcpt, target, maxRange);
+        event->QueueEvent();
+    }
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+}
+
+void PerceptOperation::TriggerEvent(NPC* npc, Perception& pcpt, PerceptOperation::TargetType target, float maxRange)
+{
     csVector3 basePos;
     iSector*  baseSector = NULL;
     float     baseYRot;
@@ -3346,7 +3385,7 @@ ScriptOperation::OperationResult PerceptOperation::Run(NPC *npc, bool interrupte
         if (maxRange >= 0.0)
         {
             npc->Printf(1,"Perception not sent based on range since no known position");
-            return OPERATION_COMPLETED; // Nothing more to do for this op.
+            return; // Nothing more to do for this op.
         }
         
     }
@@ -3362,7 +3401,7 @@ ScriptOperation::OperationResult PerceptOperation::Run(NPC *npc, bool interrupte
         if (!tribe)
         {
             npc->Printf("No tribe to percept");
-            return OPERATION_COMPLETED; // Nothing more to do for this op.
+            return; // Nothing more to do for this op.
         }
         
         tribe->TriggerEvent(&pcpt, maxRange, &basePos, baseSector);
@@ -3376,7 +3415,7 @@ ScriptOperation::OperationResult PerceptOperation::Run(NPC *npc, bool interrupte
         if (!npc->GetTarget())
         {
             npc->Printf(1,"Failed to percept since no target");
-            return OPERATION_COMPLETED; // Nothing more to do for this op.
+            return; // Nothing more to do for this op.
         }
         
         NPC *targetNPC = npc->GetTarget()->GetNPC();
@@ -3394,7 +3433,7 @@ ScriptOperation::OperationResult PerceptOperation::Run(NPC *npc, bool interrupte
         Error1("Unkown target type for Percept operation");
     }
 
-    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+    return;  // Nothing more to do for this op.
 }
 
 //---------------------------------------------------------------------------

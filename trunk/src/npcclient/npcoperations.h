@@ -45,6 +45,7 @@ struct iSector;
 // Project Includes
 //=============================================================================
 #include "npc.h"
+#include "perceptions.h"
 
 class NPC;
 class gemNPCObject;
@@ -1004,11 +1005,26 @@ protected:
         TARGET
     };
     
+    class DelayedPerceptOperationGameEvent : public psGameEvent
+    {
+    protected:
+        NPC*       npc;
+        Perception pcpt;
+        TargetType target;
+        float     maxRange;
+
+    public:
+        DelayedPerceptOperationGameEvent(int offsetTicks, NPC* npc, Perception& pcpt, TargetType target, float maxRange);
+        virtual void Trigger();  // Abstract event processing function
+        virtual csString ToString() const;
+    };
+
     csString   perception; ///< The perception name to send
     TargetType target;     ///< Hold the target for the perception, default SELF
     float      maxRange;   ///< Is there a max range for this, 0.0 is without limit
     csString   condition;  ///< A condition for when the perception should be fired
     csString   failedPerception; ///< A perception to fire if the condition fails
+    csString   delayed;          ///< If set this perception should be delayed.
 
     csWeakRef<MathScript> calc_condition; ///< This is the particular calculation for condition.
 public:
@@ -1019,6 +1035,7 @@ public:
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
     virtual bool CheckCondition();
+    static void TriggerEvent(NPC* npc, Perception& pcpt, TargetType target, float maxRange);
 };
 
 //-----------------------------------------------------------------------------
