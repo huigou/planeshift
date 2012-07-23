@@ -2795,7 +2795,7 @@ Deletes a character on the same account as the specified petitioner's.  (petitio
       <Contents>
         <content type="text">/deputize player level
 
-Temporarily changes a character's access level.  Used to give GMs abilities needed for special instances, or to temporarily add a player to a testers group.  May also be used to demote yourself to a player's status for testing.  (temp level expires on logout, and may be reset by anyone via "/deputize me reset")</content>
+Temporarily changes a character's access level to player, tester, GM, GM1-GM5, or developer.  Used to give GMs abilities needed for special instances, or to temporarily add a player to a testers group.  May also be used to demote yourself to a player's status for testing.  (temp level expires on logout, and may be reset by anyone via "/deputize me reset")</content>
       </Contents>
     </topic>
     <topic name="/divorce">
