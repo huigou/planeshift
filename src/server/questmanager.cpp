@@ -1245,6 +1245,16 @@ bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, ps
         block.SubString(response,start,end-start);
         response.Trim();
 
+        // GetSize is the count of elements starting with 1 (0 means 0 elements)
+        // counter starts from 0 so if the number of item is equal or minor to counter
+        // it means the next access would be out of bounds, so we lack enough trigger
+        // and it's a quest script error.
+        if(list.GetSize() <= counter)
+        {
+            Error2("Not enough triggers to build the menu. Found %d, expected more.", list.GetSize())
+            return false;
+        }
+
         //We have to cut out all the triggers outside the first one so 
         //the menu doesn't get "other versions" of text triggers
         csString trigger = list[ counter++ ];
