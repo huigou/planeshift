@@ -311,7 +311,7 @@ bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventMa
         pid   = row.GetInt("char_id");
         if ( pid == 0 )
         {
-            Error1("NPC has no id attribute. Error in XML");
+            Error2("NPC '%s' has no id attribute. Error in XML",name.GetDataSafe());
             return false;
         }
     }
@@ -319,7 +319,7 @@ bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventMa
     type = row["npctype"];
     if ( type.Length() == 0 )
     {
-        Error1("NPC has no type attribute. Error in XML");
+        Error3("NPC '%s'(%s) has no type attribute. Error in XML",name.GetDataSafe(),ShowID(pid));
         return false;
     }
 
@@ -328,7 +328,7 @@ bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventMa
     NPCType* t = npctypes.Get(type, NULL);
     if (!t)
     {
-        Error2("NPC type '%s' is not found. Error in XML",(const char *)type);
+        Error4("NPC '%s'(%s) type '%s' is not found. Error in XML",name.GetDataSafe(),ShowID(pid),(const char *)type);
         return false;
     }
 
