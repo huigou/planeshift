@@ -311,6 +311,8 @@ bool Location::CreateUpdate(iDataConnection* db)
         idStr.Format("%d",id);
         return db->GenericUpdateWithID("sc_locations","id",idStr,fields,values);    
     }
+
+    return false;
 }
 
 bool Location::Import(iDocumentNode *node, iDataConnection *db,int typeID)
@@ -404,8 +406,8 @@ bool Location::GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &secto
     iSector*  randomSector;
     
     // TODO: Hack, for now just get the y value and sector from the first point.
-    randomPos.y = pos.y;
-    randomSector = GetSector(engine);
+    randomPos.y = locs[0]->pos.y;
+    randomSector = locs[0]->GetSector(engine);
 
     do 
     {
@@ -470,6 +472,8 @@ bool LocationType::CreateUpdate(iDataConnection* db)
         idStr.Format("%d",id);
         return db->GenericUpdateWithID("sc_location_type","id",idStr,fields,values);    
     }
+
+    return false;
 }
 
 
