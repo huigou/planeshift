@@ -1179,3 +1179,15 @@ INSERT INTO sc_npctypes VALUES("127","Fighter7","DoNothing,Move,Nocturnal,Fight"
 INSERT INTO sc_npctypes VALUES("128","Fighter8","DoNothing,Move,Nocturnal,Fight",0,"$walk","","","","","0",
 '<empty/>
 ');
+INSERT INTO sc_npctypes VALUES("129","Fighter9","DoNothing,Move,Diurnal,Fight",0,"$walk","","","","","0",
+'<empty/>
+');
+INSERT INTO sc_npctypes VALUES("130","Fighter10","DoNothing,Move,Diurnal,Fight",0,"$walk","","","","","0",
+'<empty/>
+');
+INSERT INTO sc_npctypes VALUES("131","Fighter11","DoNothing,Move,Nocturnal,Fight",0,"$walk","","","","","0",
+'<empty/>
+');
+INSERT INTO sc_npctypes VALUES("132","Fighter12","DoNothing,Move,Nocturnal,Fight",0,"$walk","","","","","0",
+'<empty/>
+');
