@@ -119,6 +119,11 @@ bool psLauncherGUI::InitApp()
         return false;
     }
 
+    // Set the window title
+    iNativeWindow *nw = g2d->GetNativeWindow();
+    if (nw)
+        nw->SetTitle(APPNAME);
+
     // Initialise Sound
     soundManager = csQueryRegistryOrLoad<iSoundManager>(object_reg, "iSoundManager");
     if(!soundManager)
@@ -143,10 +148,6 @@ bool psLauncherGUI::InitApp()
         printf("Error initialising app (CRYSTAL not set?)\n");
         return false;
     }
-
-    iNativeWindow *nw = g2d->GetNativeWindow();
-    if (nw)
-        nw->SetTitle(APPNAME);
 
     g2d->AllowResize(false);
 
