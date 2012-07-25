@@ -62,3 +62,7 @@ INSERT INTO sc_npc_definitions VALUES("84","Fighter5","Fighter5","NPC Room South
 INSERT INTO sc_npc_definitions VALUES("85","Fighter6","Fighter6","NPC Room South Meadow","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("86","Fighter7","Fighter7","NPC Room South Meadow","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("87","Fighter8","Fighter8","NPC Room South Meadow","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("88","Fighter9","Fighter9","NPC Room North Meadow","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("89","Fighter10","Fighter10","NPC Room North Meadow","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("90","Fighter11","Fighter11","NPC Room North Meadow","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("91","Fighter12","Fighter12","NPC Room North Meadow","0.00","0.00","0","N","N");

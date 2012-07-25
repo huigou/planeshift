@@ -75,6 +75,11 @@ INSERT INTO `sc_locations` VALUES (48,13, 47, 'Meadow','-40.0', '0.0', '-265.0',
 INSERT INTO `sc_locations` VALUES (49,13, 48, 'Meadow','-40.0', '0.0', '-245.0', 0, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (50,12, -1, 'Sleep','10.0', '0.0', '-260.0', 5, 0.0,'', 3);
 INSERT INTO `sc_locations` VALUES (51,12, -1, 'Sleep','-40.0', '0.0', '-265.0', 5, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (52,14, 55, 'Meadow','-30.0', '0.0', '-55.0', 0, 0.0,'', 6);
+INSERT INTO `sc_locations` VALUES (53,14, 52, 'Meadow','15.0', '0.0', '-55.0', 0, 0.0,'', 6);
+INSERT INTO `sc_locations` VALUES (54,14, 53, 'Meadow','15.0', '5.0', '5.0', 0, 0.0,'', 6);
+INSERT INTO `sc_locations` VALUES (55,14, 54, 'Meadow','-30.0', '5.0', '5.0', 0, 0.0,'', 6);
+INSERT INTO `sc_locations` VALUES (56,12, -1, 'Sleep','-100.0', '0.0', '70.0', 5, 0.0,'', 6);
 
 
 

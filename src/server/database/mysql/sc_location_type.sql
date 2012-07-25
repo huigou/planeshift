@@ -30,4 +30,5 @@ INSERT INTO `sc_location_type` VALUES (10,'tribe_home');
 INSERT INTO `sc_location_type` VALUES (11,'hunting_ground');
 INSERT INTO `sc_location_type` VALUES (12,'sleeping_area');
 INSERT INTO `sc_location_type` VALUES (13,'NPC Room South Meadow');
+INSERT INTO `sc_location_type` VALUES (14,'NPC Room North Meadow');
 
