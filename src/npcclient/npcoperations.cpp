@@ -861,9 +861,8 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
                 dest->GetPosition().Description().GetData(),distance,timedelta);
 
     {
-        int ret;
         ScopedTimer st(250, "Movement extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
-        ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
+        npc->GetLinMove()->ExtrapolatePosition(timedelta);
     }
 
     {
@@ -2238,6 +2237,29 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
             located.angle = 0;
             located.sector = sector;
 
+	    // In case region is curved, adjust point to be at the surface
+	    {
+	      csVector3 start = pos + csVector3(0.0,5,0.0);
+	      csVector3 end = pos + csVector3(0.0,-5,0.0);
+
+              csSectorHitBeamResult result = sector->HitBeam(start,end,false);
+
+	      // Check if we found a intersection
+	      if (result.mesh)
+	      {
+		located.pos = result.isect;
+	      }
+	      else
+	      {
+                Error4("NPC %s LocateOperation in region %s fails to find ground from %s",
+		       ShowID(npc->GetPID()),region->GetName(),
+		       toString(pos,sector).GetDataSafe());
+		npc->Printf(1, "LocateOperation Failed to find round from %s in region %s",
+			   toString(pos,sector).GetDataSafe(), region->GetName());
+                return OPERATION_FAILED; // Nothing more to do for this op.
+	      }
+	    }
+
             // Find closest waypoint to the random location in the region
             located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
         }
@@ -2849,13 +2871,12 @@ ScriptOperation::OperationResult MoveOperation::Advance(float timedelta, NPC *np
     float     oldRot,newRot;
     iSector*  oldSector;
     iSector*  newSector;
-    int       ret;
 
     npc->GetLinMove()->GetLastPosition(oldPos, oldRot, oldSector);
 
     npc->Printf(10,"Old position: %s",toString(oldPos,oldSector).GetDataSafe());
 
-    ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    npc->GetLinMove()->ExtrapolatePosition(timedelta);
 
     npc->GetLinMove()->GetLastPosition(newPos, newRot, newSector);
     CheckMoveOk(npc, oldPos, oldSector, newPos, newSector, timedelta);
@@ -2935,8 +2956,7 @@ ScriptOperation::OperationResult MovePathOperation::Run(NPC *npc, bool interrupt
 
 ScriptOperation::OperationResult MovePathOperation::Advance(float timedelta, NPC *npc)
 {
-    int ret;
-    ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    npc->GetLinMove()->ExtrapolatePosition(timedelta);
 
     if (!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
                              timedelta*GetVelocity(npc),
@@ -3897,8 +3917,7 @@ ScriptOperation::OperationResult RotateOperation::Advance(float timedelta, NPC *
         return OPERATION_COMPLETED;
     }
     
-    int ret;
-    ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
+    npc->GetLinMove()->ExtrapolatePosition(timedelta);
 
     float rot;
     csVector3 pos;
@@ -4273,7 +4292,6 @@ ScriptOperation *TransferOperation::MakeCopy()
 ScriptOperation::OperationResult TransferOperation::Run(NPC *npc, bool interrupted)
 {
     csString transferItem = psGameObject::ReplaceNPCVariables(npc, item);
-item;
 
     csArray<csString> splitItem = psSplit(transferItem,':');
     if (splitItem[0] == "tribe")
