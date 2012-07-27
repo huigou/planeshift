@@ -362,8 +362,8 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
         }
 
         bool includeInventory = topNode->GetAttributeValueAsBool("inventory", false);
-        float qualityMin = topNode->GetAttributeValueAsBool("qualitymin", 0);
-        float qualityMax = topNode->GetAttributeValueAsBool("qualitymax", 0);
+        float qualityMin = topNode->GetAttributeValueAsFloat("qualitymin", 0.0f);
+        float qualityMax = topNode->GetAttributeValueAsFloat("qualitymax", 0.0f);
         prerequisite.AttachNew(new psQuestPrereqOpItem(name, category, includeInventory, qualityMin, qualityMax));
     }
     else if ( strcmp( topNode->GetValue(), "activemagic" ) == 0 )
