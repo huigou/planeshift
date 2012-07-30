@@ -1251,7 +1251,7 @@ bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, ps
         // and it's a quest script error.
         if(list.GetSize() <= counter)
         {
-            Error2("Not enough triggers to build the menu. Found %d, expected more.", list.GetSize())
+            Error2("Not enough triggers to build the menu. Found %u, expected more.", list.GetSize())
             return false;
         }
 
@@ -1418,7 +1418,7 @@ void QuestManager::HandleQuestInfo(MsgEntry *me,Client *who)
             //Finally prepare a priority queue to hold all the quest notes.
             CS::Utility::PriorityQueue<TaskEntry> entries;
 
-            for(int i = 0; i < steps.GetSize(); ++i)
+            for(size_t i = 0; i < steps.GetSize(); ++i)
             {
                 //Check if the quest is assigned and completed in order to show the additional quest notes
                 QuestAssignment *stepAssignment = who->GetActor()->GetCharacterData()->GetQuestMgr().IsQuestAssigned(steps.Get(i));

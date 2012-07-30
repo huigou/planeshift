@@ -826,7 +826,6 @@ size_t psPath::FindPointsInSector(iEngine * engine, iSector *sector, csList<psPa
 
 psPathPoint* psPath::FindPoint(int id)
 {
-    size_t count = 0;
     for (size_t i = 0; i < points.GetSize(); i++)
     {
         psPathPoint* point = points[i];
@@ -840,7 +839,6 @@ psPathPoint* psPath::FindPoint(int id)
 
 int psPath::FindPointIndex(int id) const
 {
-    size_t count = 0;
     for (size_t i = 0; i < points.GetSize(); i++)
     {
         const psPathPoint* point = points[i];
@@ -854,7 +852,6 @@ int psPath::FindPointIndex(int id) const
 
 int psPath::FindPointIndex(const psPathPoint* point) const
 {
-    size_t count = 0;
     for (size_t i = 0; i < points.GetSize(); i++)
     {
         if (points[i] == point)

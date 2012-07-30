@@ -74,6 +74,8 @@ bool WaypointAlias::CreateUpdate(iDataConnection* db)
         idStr.Format("%d",id);
         return db->GenericUpdateWithID("sc_waypoint_aliases","id",idStr,fields,values);    
     }
+
+    return true;
 }
 
 bool WaypointAlias::SetRotationAngle(iDataConnection* db, float rotationAngle)

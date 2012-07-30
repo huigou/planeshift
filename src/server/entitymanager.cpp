@@ -901,7 +901,6 @@ gemItem* EntityManager::CreateItem(psItem *& iteminstance, bool transient, int t
 
 bool EntityManager::CreateActionLocation(psActionLocation *al, bool transient = false)
 {
-    const csVector3 pos = al->GetPosition();
     iSector *sector = FindSector(al->GetSectorName());
     if (!sector)
     {
