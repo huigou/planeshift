@@ -137,6 +137,12 @@ public:
     bool            GetValueValid(int i);
     int             GetValue(int i);
     bool            GetRandomValid(int i);
+    /** Setting the value
+     *
+     *  This function ignore the data valid flag. And will not update it
+     *  for the value set.
+     */
+    bool            SetValue(int i, int value);
     csString        GetValue();
     int             GetRandom(int i);
     const csString& GetType()           { return type;         }
@@ -224,6 +230,12 @@ public:
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual csString ToString(NPC* npc);
+
+    /**
+       Called from Reaction for time types to normalize the
+       values used. This to allow 1.5hour random values.
+    */
+    static void NormalizeReaction(Reaction* reaction);
 };
 
 //-----------------------------------------------------------------------------

@@ -205,6 +205,12 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
             values[ii] += psGetRandom(GetRandom((int)ii));
         }
     }
+
+    // Some special cases to handle
+    if (eventType == "time")
+    {
+        TimePerception::NormalizeReaction(this);
+    }
 }
 
 void Reaction::React(NPC *who, Perception *pcpt)
@@ -400,6 +406,16 @@ bool Reaction::GetRandomValid(int i)
     {
         return randomsValid[i];
         
+    }
+    return false;
+}
+
+bool Reaction::SetValue(int i, int value)
+{
+    if (i < (int)values.GetSize())
+    {
+        values[i] = value;
+        return true;
     }
     return false;
 }
@@ -902,6 +918,54 @@ csString TimePerception::ToString(NPC* npc)
     result.Format("Name: '%s' : '%d:%02d %d-%d-%d'",GetName(npc).GetDataSafe(),
                   gameHour, gameMinute, gameYear, gameMonth, gameDay );
     return result;
+}
+
+void TimePerception::NormalizeReaction(Reaction* reaction)
+{
+    // Minutes
+    if (reaction->GetValueValid(1))
+    {
+        int minutes = reaction->GetValue(1)%60;
+        int hours = reaction->GetValue(1)/60;
+        reaction->SetValue(1,minutes);
+        if (reaction->GetValueValid(0))
+	{
+	    reaction->SetValue(0,reaction->GetValue(0)+hours);
+	}
+    }
+    // Hours
+    if (reaction->GetValueValid(0))
+    {
+        int hours = reaction->GetValue(0)%24;
+        int days = reaction->GetValue(0)/24;
+        reaction->SetValue(0,hours);
+        if (reaction->GetValueValid(2))
+	{
+	    reaction->SetValue(2,reaction->GetValue(2)+days);
+	}
+    }
+    // Day
+    if (reaction->GetValueValid(2))
+    {
+        int days = reaction->GetValue(2)%32;
+        int months = reaction->GetValue(2)/32;
+        reaction->SetValue(2,days);
+        if (reaction->GetValueValid(3))
+	{
+	    reaction->SetValue(3,reaction->GetValue(3)+months);
+	}
+    }
+    // Month
+    if (reaction->GetValueValid(3))
+    {
+        int months = reaction->GetValue(3)%10;
+        int years = reaction->GetValue(3)/10;
+        reaction->SetValue(3,months);
+        if (reaction->GetValueValid(4))
+	{
+	    reaction->SetValue(4,reaction->GetValue(4)+years);
+	}
+    }
 }
 
 //---------------------------------------------------------------------------------
