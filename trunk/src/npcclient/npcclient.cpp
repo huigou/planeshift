@@ -805,7 +805,6 @@ bool psNPCClient::ReadNPCsFromDatabase()
             {
 	            return false;
             }
-            
             else if(npc->GetTribe())
             {
                 // Overwrite brain with tribe brain

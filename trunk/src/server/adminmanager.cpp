@@ -6580,7 +6580,6 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
             return;
         }
 
-        int index;
         psPathPoint* point = NULL;
 
         if((point = pathNetwork->FindNearestPoint(path, myPos, mySector, data->radius)) == NULL)
@@ -6857,7 +6856,7 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
                                      point->GetID(),indexPoint,pathPoint->GetName(),
                                      pathPoint->GetID(),rangePoint,
                                      indexPoint-1>=0?pathPoint->points[indexPoint-1]->GetID():-1,
-                                     indexPoint+1<pathPoint->points.GetSize()?pathPoint->points[indexPoint+1]->GetID():-1,
+                                     indexPoint+1<(int)pathPoint->points.GetSize()?pathPoint->points[indexPoint+1]->GetID():-1,
                                      pathPoint->start->GetName(),pathPoint->start->GetID(),
                                      pathPoint->end->GetName(),pathPoint->end->GetID(),
                                      pathPoint->GetFlags().GetDataSafe());
@@ -7154,7 +7153,7 @@ void AdminManager::ShowLocations(Client* client, iSector* sector)
 
             if(location->IsRegion())
             {
-                for(int i = 0; i < location->locs.GetSize(); i++)
+                for(size_t i = 0; i < location->locs.GetSize(); i++)
                 {
                     Location* loc = location->locs[i];
                     Location* next = location->locs[(i+1)%location->locs.GetSize()];
@@ -7200,7 +7199,7 @@ void AdminManager::HideLocations(Client* client, iSector* sector)
 
             if(location->IsRegion())
             {
-                for(int i = 0; i < location->locs.GetSize(); i++)
+                for(size_t i = 0; i < location->locs.GetSize(); i++)
                 {
                     Location* loc = location->locs[i];
                     psStopEffectMessage msg(client->GetClientNum(), loc->GetEffectID(this));
@@ -7230,7 +7229,7 @@ void AdminManager::UpdateDisplayLocation(Location* location)
                 hide.SendMessage();
                 if(location->IsRegion())
                 {
-                    for(int i = 0; i < location->locs.GetSize(); i++)
+                    for(size_t i = 0; i < location->locs.GetSize(); i++)
                     {
                         Location* loc = location->locs[i];
                         psStopEffectMessage msg(client->GetClientNum(), loc->GetEffectID(this));
@@ -7244,7 +7243,7 @@ void AdminManager::UpdateDisplayLocation(Location* location)
                 show.SendMessage();
                 if(location->IsRegion())
                 {
-                    for(int i = 0; i < location->locs.GetSize(); i++)
+                    for(size_t i = 0; i < location->locs.GetSize(); i++)
                     {
                         Location* loc = location->locs[i];
                         psEffectMessage msg(client->GetClientNum(),"admin_location",
@@ -7701,7 +7700,7 @@ void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
 bool AdminManager::MoveObject(Client* client, gemObject* target, csVector3 &pos, float yrot, iSector* sector, InstanceID instance)
 {
     // This is a powerful feature; not everyone is allowed to use all of it
-    csString response;
+    csString responseExtras,responseExtrasWeak;
     if(client->GetActor() != dynamic_cast<gemActor*>(target) && !psserver->CheckAccess(client, "move others"))
         return false;
 
@@ -7710,23 +7709,23 @@ bool AdminManager::MoveObject(Client* client, gemObject* target, csVector3 &pos,
         gemItem* item = (gemItem*)target;
 
         // Check to see if this client has the admin level to move this particular item
-        bool extras = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move unpickupables/spawns", response);
-        bool extrasWeak = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move weak unpickupables", response);
+        bool extras = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move unpickupables/spawns", responseExtras);
+        bool extrasWeak = psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move weak unpickupables", responseExtrasWeak);
 
         if(!item->IsPickupable())
         {
             // Check to see if this client has the admin level to move this particular item
-            if(!psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move unpickupables/spawns", response))
+            if(!extras)
             {
                 if(!item->IsPickupableStrong())
                 {
-                    psserver->SendSystemError(client->GetClientNum(), response);
+                    psserver->SendSystemError(client->GetClientNum(), responseExtras);
                     return false;
                 }
                 // This is a weak unpickupable check to see if this client has the admin level to move this particular item
-                else if(!psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "move weak unpickupables", response))
+                else if(!extrasWeak)
                 {
-                    psserver->SendSystemError(client->GetClientNum(), response);
+                    psserver->SendSystemError(client->GetClientNum(), responseExtrasWeak);
                     return false;
                 }
             }

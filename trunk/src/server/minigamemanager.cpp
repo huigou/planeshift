@@ -905,14 +905,11 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
     }
 
     // Apply updates
-    TileStates piecePlayed;
     for (int i = 0; i < msg.msgNumUpdates; i++)
     {
         gameBoard.Set((msg.msgUpdates[2*i] & 0xF0) >> 4,
                       msg.msgUpdates[2*i] & 0x0F,
                       msg.msgUpdates[2*i+1]);
-        // note the piece played; determined by last (of 1 or 2) update in message.
-        piecePlayed = (TileStates)msg.msgUpdates[2*i+1];
     }
 
     movingPlayer->idleCounter = MINIGAME_IDLE_TIME;

@@ -3101,17 +3101,8 @@ void NPCManager::SendPetSkillList(Client * client, bool forceOpen, PSSKILL focus
 {
     csString buff;
     psCharacter * character = client->GetFamiliar()->GetCharacterData();
-    psCharacter * trainer = character->GetTrainer();
-    psTrainerInfo * trainerInfo = NULL;
-    float faction = 0.0;
 
     buff.Format("<L X=\"%u\" >", character->GetProgressionPoints());
-
-    if (trainer)
-    {
-        trainerInfo = trainer->GetTrainerInfo();
-        faction = trainer->GetActor()->GetRelativeFaction(character->GetActor());
-    }
 
     int realID = -1;
     bool found = false;

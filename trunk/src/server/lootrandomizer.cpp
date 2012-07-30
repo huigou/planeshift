@@ -295,7 +295,7 @@ void LootRandomizer::AddModifier(LootModifier* oper1, LootModifier* oper2)
 void LootRandomizer::SetAttributeApplyOP(float* value[], float modifier, size_t amount,  const csString &op)
 {
     // Operations  = ADD, MUL, SET
-    for(int i = 0; i < amount; i++)
+    for(size_t i = 0; i < amount; i++)
     {
         if(op.CompareNoCase("ADD"))
         {
@@ -561,6 +561,10 @@ float LootRandomizer::GetModifierPercentProbability(int modifierID, int modifier
     // 2=adjective
     else if(modifierType==2)
         return modifier->probabilityRange/adjective_max;
+    else
+        Error2("Unknown modifierID: %d",modifierID);
+
+    return 0;
 }
 
 csString LootRandomizer::GenerateScriptXML(csString &name, csString &equip_script, csArray<ValueModifier> &values)
