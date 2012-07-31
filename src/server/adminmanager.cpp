@@ -12131,6 +12131,7 @@ void AdminManager::HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage &msg, Adm
     psServerCommandMessage message(0, "quit");
     message.Multicast(psserver->GetNPCManager()->GetSuperClients(), -1, PROX_LIST_ANY_RANGE);
 
+    psserver->SendSystemInfo(client->GetClientNum(),"NPC Client quit requested.");
 }
 
 
