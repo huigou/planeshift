@@ -90,6 +90,77 @@ void psMusic::PreviousPitch(char &pitch, uint &octave)
     }
 }
 
+void psMusic::EnharmonicPitch(char &pitch, int &accidental)
+{
+    switch(accidental)
+    {
+    case 1:
+        switch(pitch)
+        {
+        case 'A':
+            pitch = 'B';
+            accidental = -1;
+            break;
+        case 'B':
+            pitch = 'C';
+            accidental = 0;
+            break;
+        case 'C':
+            pitch = 'D';
+            accidental = -1;
+            break;
+        case 'D':
+            pitch = 'E';
+            accidental = -1;
+            break;
+        case 'E':
+            pitch = 'F';
+            accidental = 0;
+            break;
+        case 'F':
+            pitch = 'G';
+            accidental = -1;
+            break;
+        case 'G':
+            pitch = 'A';
+            accidental = -1;
+            break;
+        }
+    case -1:
+        switch(pitch)
+        {
+        case 'A':
+            pitch = 'G';
+            accidental = 1;
+            break;
+        case 'B':
+            pitch = 'A';
+            accidental = 1;
+            break;
+        case 'C':
+            pitch = 'B';
+            accidental = 0;
+            break;
+        case 'D':
+            pitch = 'C';
+            accidental = 1;
+            break;
+        case 'E':
+            pitch = 'D';
+            accidental = 1;
+            break;
+        case 'F':
+            pitch = 'E';
+            accidental = 0;
+            break;
+        case 'G':
+            pitch = 'F';
+            accidental = 1;
+            break;
+        }
+    }
+}
+
 bool psMusic::GetMeasures(csRef<iDocument> musicalScore, csRefArray<iDocumentNode> &measures)
 {
     csRef<iDocumentNode> partNode;
@@ -122,18 +193,8 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
     float timePerMeasure;
     float timePerDivision;
 
-    uint nNotes;                            // number of notes in the score
-    uint nChords;                           // number of chords in the score
-    float totalLengthNoRests;               // total duration of the score in ms excluding rests.
-
-    uint endingNNotes;                      // number of notes in the previous endings
-    uint endingNChords;                     // number of chords in the previous endings
-    float endingTotalLengthNoRests;         // total length of the previous endings excluding rests
-
-    uint lastRepeatNNotes;                  // number of notes from the last start repeat
-    uint lastRepeatNChords;                 // number of chords from the last start repeat
-    float lastRepeatTotalLength;            // total length from the last start repeat
-    float lastRepeatTotalLengthNoRests;     // total length from the last start repeat excluding rests
+    ScoreStatistics endingStats;        // keeps statistics of the previous ending
+    ScoreStatistics lastRepeatStats;    // keeps statistics from the last start repeat
 
     csRefArray<iDocumentNode> measures;
 
@@ -147,36 +208,26 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
     timePerDivision = 60.0f / tempo / quarterDivisions * 1000; // (ms)
     timePerMeasure = 60.0f / tempo * beats / stats.beatType * 4 * 1000; // (ms)
 
-    // initializing variables
-    nNotes = 0;
-    nChords = 0;
-    totalLengthNoRests = 0.0;
-
-    endingNNotes = 0;
-    endingNChords = 0;
-    endingTotalLengthNoRests = 0.0;
-
-    lastRepeatNNotes = 0;
-    lastRepeatNChords = 0;
-    lastRepeatTotalLength = 0.0;
-    lastRepeatTotalLengthNoRests = 0.0;
-
-    stats.totalLength = 0.0;
-    stats.maximumPolyphony = 0;
+    // we make sure than stats are just initialized
+    stats.Reset();
     stats.minimumDuration = 500000; // (ms) this is more than a 8/4 note at bpm = 1
 
     // parsing the score
     for(size_t i = 0; i < measures.GetSize(); i++)
     {
         int noteDuration;
-        uint measureNNotes = 0;
-        uint measureNChords = 0;
-        float measureDurationNoRests = 0.0;
+        ScoreStatistics measureStats;
         int currentChordPolyphony = 0;
+
         csRef<iDocumentNode> noteNode;
+        csRef<iDocumentNode> pitchNode;
+        csRef<iDocumentNode> alterNode;
         csRef<iDocumentNode> barlineNode;
         csRef<iDocumentNode> durationNode;
         csRef<iDocumentNodeIterator> notesIter;
+
+        // we already know the measure length
+        measureStats.totalLength = timePerMeasure;
 
         // handling repeats
         barlineNode = measures.Get(i)->GetNode("barline");
@@ -195,10 +246,7 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
                 // resetting lastRepeat variables data
                 if(csStrCaseCmp(direction, "forward") == 0)
                 {
-                    lastRepeatNNotes = 0;
-                    lastRepeatNChords = 0;
-                    lastRepeatTotalLength = 0.0;
-                    lastRepeatTotalLengthNoRests = 0.0;
+                    lastRepeatStats.Reset();
                 }
             }
         }
@@ -208,6 +256,7 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
         while(notesIter->HasNext())
         {
             noteNode = notesIter->Next();
+            pitchNode = noteNode->GetNode("pitch");
             durationNode = noteNode->GetNode("duration");
 
             // if there's no durationNode syntax is incorrect
@@ -225,9 +274,52 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
                 // when the last notes of the score is a rests
                 currentChordPolyphony = 0;
             }
-            else // this is a note
+            else if(pitchNode.IsValid()) // this is a note
             {
-                measureNNotes++;
+                int alter;
+                char step;
+
+                measureStats.nNotes++;
+
+                // handling alteration counting
+                step = *(pitchNode->GetNode("step")->GetContentsValue());
+                alterNode = pitchNode->GetNode("alter");
+                if(alterNode == 0)
+                {
+                    alter = 0;
+                }
+                else
+                {
+                    alter = alterNode->GetContentsValueAsInt();
+                }
+
+                if(alter > 0)
+                {
+                    // we need to convert it into the flat enharmonic equivalent
+                    psMusic::EnharmonicPitch(step, alter);
+                }
+
+                if(alter < 0)
+                {
+                    switch(step)
+                    {
+                    case 'A':
+                        measureStats.nAb++;
+                        break;
+                    case 'B':
+                        measureStats.nBb++;
+                        break;
+                    case 'D':
+                        measureStats.nDb++;
+                        break;
+                    case 'E':
+                        measureStats.nEb++;
+                        break;
+                    case 'G':
+                        measureStats.nGb++;
+                        break;
+                    }
+                }
 
                 // if the note is part of a chord neither the chords count nor the total
                 // length have to be updated. The first notes in a chord doesn't have the
@@ -250,9 +342,13 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
                     }
 
                     currentChordPolyphony = 1;
-                    measureNChords++;
-                    measureDurationNoRests += noteDuration;
+                    measureStats.nChords++;
+                    measureStats.totalLengthNoRests += noteDuration;
                 }
+            }
+            else // a note without pitch not is not valid
+            {
+                return false;
             }
         }
 
@@ -269,15 +365,9 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
             }
         }
 
-        nNotes += measureNNotes;
-        nChords += measureNChords;
-        stats.totalLength += timePerMeasure;
-        totalLengthNoRests += measureDurationNoRests;
-
-        lastRepeatNNotes +=  measureNNotes;
-        lastRepeatNChords += measureNChords;
-        lastRepeatTotalLength += timePerMeasure;
-        lastRepeatTotalLengthNoRests += measureDurationNoRests;
+        // adding measure's statistics
+        stats += measureStats;
+        lastRepeatStats +=  measureStats;
 
         // checking if this measure is the end of a repeat
         if(barlineNode.IsValid())
@@ -295,12 +385,9 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
 
                 if(csStrCaseCmp(direction, "backward") == 0)
                 {
-                    int repeatCounter = repeatNode->GetAttributeValueAsInt("times");
+                    int nRepeat = repeatNode->GetAttributeValueAsInt("times");
 
-                    nNotes += lastRepeatNNotes * repeatCounter;
-                    nChords += lastRepeatNChords * repeatCounter;
-                    stats.totalLength += lastRepeatTotalLength * repeatCounter;
-                    totalLengthNoRests += lastRepeatTotalLengthNoRests * repeatCounter;
+                    stats += lastRepeatStats * nRepeat;
                 }
             }
 
@@ -311,38 +398,28 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
 
                 if(endingNumber == 1) // reset ending data
                 {
-                    endingNNotes = 0;
-                    endingNChords = 0;
-                    endingTotalLengthNoRests = 0.0;
+                    endingStats.Reset();
                 }
                 else
                 {
                     // previous endings are not played so they aren't taken into account
-                    nNotes -= endingNNotes;
-                    nChords -= endingNChords;
-                    stats.totalLength -= (endingNumber - 1) * timePerMeasure;
-                    totalLengthNoRests -= endingTotalLengthNoRests;
-
-                    endingNNotes += measureNNotes;
-                    endingNChords += measureNChords;
-                    endingTotalLengthNoRests += measureDurationNoRests;
+                    stats -= endingStats;
+                    endingStats += measureStats;
                 }
             }
         }
     }
 
     // setting average values
-    if(nChords == 0)
+    if(stats.nChords == 0)
     {
         // here stats.minimumDuration is still 500000
         stats.minimumDuration = 0;
-        stats.averageDuration = 0.0;
-        stats.averagePolyphony = 0.0;
     }
     else
     {
-        stats.averageDuration = totalLengthNoRests / nChords;
-        stats.averagePolyphony = (float)nNotes / nChords;
+        stats.averageDuration = stats.totalLengthNoRests / stats.nChords;
+        stats.averagePolyphony = (float)stats.nNotes / stats.nChords;
     }
 
     return true;

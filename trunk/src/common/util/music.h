@@ -30,13 +30,142 @@
 
 
 /**
- * This struct keeps general information about a score.
+ * This struct keeps general information about a score. All average statistics are
+ * computed by using the total length without rests. If the score is empty (or has
+ * only rests), the average polyphony and duration are set to 0.
  */
 struct ScoreStatistics
 {
+    /**
+     * Constructor. Initialize all statistics to 0.
+     */
     ScoreStatistics()
     {
+        Reset();
+    }
+
+    /**
+     * Copy constructor.
+     */
+    ScoreStatistics(const ScoreStatistics &copy)
+    {
+        nNotes = copy.nNotes;
+        nChords = copy.nChords;
+        nBb = copy.nBb;
+        nGb = copy.nGb;
+        nEb = copy.nEb;
+        nDb = copy.nDb;
+        nAb = copy.nAb;
+
+        totalLength = copy.totalLength;
+        totalLengthNoRests = copy.totalLengthNoRests;
+
+        minimumDuration = copy.minimumDuration;
+        maximumPolyphony = copy.maximumPolyphony;
+        averageDuration =copy.averageDuration;
+        averagePolyphony = copy.averagePolyphony;
+
+        beatType = copy.beatType;
+        fifths = copy.fifths;
+    }
+
+    /**
+     * Adds all statistics concerning number of notes/chords and length. It does not
+     * change minimum,maximum and average statistics nor beat type and fifths.
+     * @param addend the statistics that must be added to these.
+     * @return these updated statistics.
+     */
+    ScoreStatistics &operator+=(const ScoreStatistics &addend)
+    {
+        nNotes += addend.nNotes;
+        nChords += addend.nChords;
+        nBb += addend.nBb;
+        nGb += addend.nGb;
+        nEb += addend.nEb;
+        nDb += addend.nDb;
+        nAb += addend.nAb;
+
+        totalLength += addend.totalLength;
+        totalLengthNoRests += addend.totalLengthNoRests;
+
+        return *this;
+    }
+
+    /**
+     * Subtracts all statistics concerning number of notes/chords and length. It does
+     * not change minimum,maximum and average statistics nor beat type and fifths.
+     * @param subtrahend the statistics that must be subtracted to these.
+     * @return these updated statistics.
+     */
+    ScoreStatistics &operator-=(const ScoreStatistics &subtrahend)
+    {
+        nNotes -= subtrahend.nNotes;
+        nChords -= subtrahend.nChords;
+        nBb -= subtrahend.nBb;
+        nGb -= subtrahend.nGb;
+        nEb -= subtrahend.nEb;
+        nDb -= subtrahend.nDb;
+        nAb -= subtrahend.nAb;
+
+        totalLength -= subtrahend.totalLength;
+        totalLengthNoRests -= subtrahend.totalLengthNoRests;
+
+        return *this;
+    }
+
+    /**
+     * Multiplies all statistics concerning number of notes/chords and length for
+     * a integer scalar. It does not change minimum,maximum and average statistics
+     * nor beat type and fifths.
+     * @param scalar the integer that multiplies these statistics.
+     * @return these updated statistics.
+     */
+    ScoreStatistics &operator*=(const int scalar)
+    {
+        nNotes *= scalar;
+        nChords *= scalar;
+        nBb *= scalar;
+        nGb *= scalar;
+        nEb *= scalar;
+        nDb *= scalar;
+        nAb *= scalar;
+
+        totalLength *= scalar;
+        totalLengthNoRests *= scalar;
+
+        return *this;
+    }
+
+    /**
+     * Multiplies all statistics concerning number of notes/chords and length for
+     * a integer scalar. It does not change minimum,maximum and average statistics
+     * nor beat type and fifths.
+     * @param scalar the integer that multiplies these statistics.
+     * @return the updated statistics.
+     */
+    const ScoreStatistics operator*(const int scalar)
+    {
+        ScoreStatistics result(*this);
+        result *= scalar;
+        return result;
+    }
+
+    /**
+     * Set all statistics to 0.
+     */
+    void Reset()
+    {
+        nNotes = 0;
+        nChords = 0;
+        nBb = 0;
+        nGb = 0;
+        nEb = 0;
+        nDb = 0;
+        nAb = 0;
+
         totalLength = 0.0;
+        totalLengthNoRests = 0.0;
+
         minimumDuration = 0;
         maximumPolyphony = 0;
         averageDuration = 0.0;
@@ -46,7 +175,17 @@ struct ScoreStatistics
         fifths = 0;
     }
 
+    int nNotes;                 ///< total number of played notes in the score.
+    int nChords;                ///< total number of played chords in the score.
+    int nBb;                    ///< total number of played Bb.
+    int nGb;                    ///< total number of played Gb.
+    int nEb;                    ///< total number of played Eb.
+    int nDb;                    ///< total number of played Db.
+    int nAb;                    ///< total number of played Ab.
+
     float totalLength;          ///< total duration of the score in milliseconds.
+    float totalLengthNoRests;   ///< total duration of the score in ms excluding rests.
+
     int minimumDuration;        ///< duration of the shortest note in the score in ms.
     int maximumPolyphony;       ///< maximum number of notes played at the same time.
     float averageDuration;      ///< average duration of the score's notes in ms.
@@ -79,6 +218,13 @@ public:
     static void PreviousPitch(char &pitch, uint &octave);
 
     /**
+     * Turns the given pitch into the enharmonic equivalent.
+     * @param pitch the pitch of the note.
+     * @param accidental the alteration of the note.
+     */
+    static void EnharmonicPitch(char &pitch, int &accidental);
+
+    /**
      * Gets the XML nodes representing the measures contained in the musical score.
      *
      * @param musicalScore the musical score.
@@ -88,10 +234,7 @@ public:
     static bool GetMeasures(csRef<iDocument> score, csRefArray<iDocumentNode> &measures);
 
     /**
-     * Returns the length of the score in milliseconds in the parameter length. Rests
-     * are counted only for determining the song's total length but they are excluded
-     * from other statistics. If the score is empty (or has only rests), the average
-     * polyphony and duration are set to 0.
+     * Returns the statistics of the score.
      *
      * @param musicalScore the musical score.
      * @param stats the retrieved statistics of the given score.
