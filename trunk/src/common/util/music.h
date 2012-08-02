@@ -65,8 +65,9 @@ struct ScoreStatistics
         averageDuration =copy.averageDuration;
         averagePolyphony = copy.averagePolyphony;
 
-        beatType = copy.beatType;
+        tempo = copy.tempo;
         fifths = copy.fifths;
+        beatType = copy.beatType;
     }
 
     /**
@@ -171,8 +172,9 @@ struct ScoreStatistics
         averageDuration = 0.0;
         averagePolyphony = 0.0;
 
-        beatType = 0;
+        tempo = 0;
         fifths = 0;
+        beatType = 0;
     }
 
     int nNotes;                 ///< total number of played notes in the score.
@@ -191,8 +193,9 @@ struct ScoreStatistics
     float averageDuration;      ///< average duration of the score's notes in ms.
     float averagePolyphony;     ///< average number of notes played at the same time.
 
-    int beatType;               ///< beat type of the score.
+    int tempo;                  ///< tempo of the score.
     int fifths;                 ///< tonality as number of sharps (if > 0) or flats (if < 0).
+    int beatType;               ///< beat type of the score.
 };
 
 

@@ -126,6 +126,7 @@ void psMusic::EnharmonicPitch(char &pitch, int &accidental)
             accidental = -1;
             break;
         }
+        break; // external switch
     case -1:
         switch(pitch)
         {
@@ -158,6 +159,7 @@ void psMusic::EnharmonicPitch(char &pitch, int &accidental)
             accidental = 1;
             break;
         }
+        break; // external switch
     }
 }
 
@@ -188,7 +190,6 @@ bool psMusic::GetMeasures(csRef<iDocument> musicalScore, csRefArray<iDocumentNod
 bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stats)
 {
     int beats;
-    int tempo;
     int quarterDivisions;
     float timePerMeasure;
     float timePerDivision;
@@ -198,19 +199,19 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
 
     csRefArray<iDocumentNode> measures;
 
+    // we make sure than stats are just initialized
+    stats.Reset();
+    stats.minimumDuration = 500000; // (ms) this is more than a 8/4 note at bpm = 1
+
     // this retrieves the general attributes of the score and checks some syntax
-    if(!psMusic::GetAttributes(musicalScore, quarterDivisions, stats.fifths, beats, stats.beatType, tempo)
+    if(!psMusic::GetAttributes(musicalScore, quarterDivisions, stats.fifths, beats, stats.beatType, stats.tempo)
         || !psMusic::GetMeasures(musicalScore, measures))
     {
         return false;
     }
 
-    timePerDivision = 60.0f / tempo / quarterDivisions * 1000; // (ms)
-    timePerMeasure = 60.0f / tempo * beats / stats.beatType * 4 * 1000; // (ms)
-
-    // we make sure than stats are just initialized
-    stats.Reset();
-    stats.minimumDuration = 500000; // (ms) this is more than a 8/4 note at bpm = 1
+    timePerDivision = 60.0f / stats.tempo / quarterDivisions * 1000; // (ms)
+    timePerMeasure = 60.0f / stats.tempo * beats / stats.beatType * 4 * 1000; // (ms)
 
     // parsing the score
     for(size_t i = 0; i < measures.GetSize(); i++)
