@@ -2173,6 +2173,7 @@ bool GiveItemResponseOp::Run(gemNPC *who, gemActor *target,NpcResponse *owner,cs
     if(quality >= 1)
     {
         item->SetItemQuality(quality);
+        item->SetMaxItemQuality(quality);
     }
 
     item->SetLoaded();  // Item is fully created
