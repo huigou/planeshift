@@ -1251,7 +1251,7 @@ bool QuestManager::BuildMenu(const csString& block,const csStringArray& list, ps
         // and it's a quest script error.
         if(list.GetSize() <= counter)
         {
-            Error2("Not enough triggers to build the menu. Found %u, expected more.", list.GetSize())
+            Error2("Not enough triggers to build the menu. Found %zu, expected more.", list.GetSize())
             return false;
         }
 

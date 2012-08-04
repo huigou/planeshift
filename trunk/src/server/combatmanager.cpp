@@ -787,7 +787,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
 
 void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
 {
-    psCharacter *attacker_data,*target_data;
+    psCharacter *attacker_data;
     int attack_result;
     bool skipThisRound = false;
 
@@ -803,7 +803,6 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     gemActor *gemTarget   = dynamic_cast<gemActor*> ((gemObject *) event->target);
 
     attacker_data=event->GetAttackerData();
-    target_data=event->GetTargetData();
 
     // If the attacker is no longer in attack mode abort.
     if (gemAttacker->GetMode() != PSCHARACTER_MODE_COMBAT)

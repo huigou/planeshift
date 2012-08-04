@@ -136,6 +136,7 @@ class MessageManager : public MessageManagerBase
                 handlers.DeleteAll(type);
                 return GetEventManager()->Unsubscribe(this, type);
             }
+            return false;
         }
 
         /** @brief Unsubscribes a specific handler from a specific message type
