@@ -130,8 +130,8 @@ public:
 
 private:
 
-    csString radioOff;          ///"off" image resource name
     csString radioOn;           ///"on" image resource name
+    csString radioOff;          ///"off" image resource name
     int      size;
 };
 CREATE_PAWS_FACTORY( pawsRadioButtonGroup );
