@@ -37,6 +37,7 @@ struct iMovable;
 //=============================================================================
 //#include "npcbehave.h"
 #include "tribe.h"
+#include "gem.h"
 
 class  Behavior;
 class  EventManager;
@@ -106,13 +107,26 @@ public:
     /** Structure to hold located positions */
     typedef struct
     {
-        csVector3          pos;        ///< The position of the located object
-        iSector*           sector;     ///< The sector for the located object
-        float              angle;      ///< The angle of the located object
-        Waypoint*          wp;         ///< The nearest waypoint to the located object
-        float              radius;     ///< The radius of the located object
+        csVector3               pos;        ///< The position of the located object
+        iSector*                sector;     ///< The sector for the located object
+        float                   angle;      ///< The angle of the located object
+        Waypoint*               wp;         ///< The nearest waypoint to the located object
+        float                   radius;     ///< The radius of the located object
+        csWeakRef<gemNPCObject> target;     ///< The located target
     } Locate;
     typedef csHash<Locate*,csString> LocateHash;
+
+    enum
+    {
+        LOCATION_NONE = 0,
+        LOCATION_POS = 1,
+        LOCATION_SECTOR = 2,
+        LOCATION_ANGLE = 4,
+        LOCATION_WP = 8,
+        LOCATION_RADIUS = 16,
+        LOCATION_TARGET = 32,
+        LOCATION_ALL = -1
+    };
 
 protected:
 
@@ -150,6 +164,8 @@ protected:
     iSector*           spawnSector;          ///< The stored sector that this NPC where spawned
 
     RaceInfo_t        *raceInfo;
+
+    csArray< csWeakRef<gemNPCActor> > controlledActors; ///< Actors that are dragged/pushed around by this NPC.
 
     // Initial position checks
     csVector3          checkedPos;
@@ -330,19 +346,30 @@ public:
      *
      * Typically used to take backups of "Active" locate.
      */
-    bool CopyLocate(csString source, csString destination);
+    bool CopyLocate(csString source, csString destination, unsigned int flags);
+
+    /** Replace $LOCATION[<location>.<attribute>]
+     */
+    void ReplaceLocations(csString& result);
+
+    /** Switch the debuging state of this NPC.
+     */
+    bool SwitchDebugging();
     
+    /** Set a new debug level for this NPC.
+     * @param debug New debug level, 0 is no debugging
+     */
+    void SetDebugging(int debug);
     
-    bool SwitchDebugging()
-    {
-        debugging = !debugging;
-        return IsDebugging();
-    }
+    /** Add a client to receive debug information
+     * @param clentnum The client to add.
+     */
+    void AddDebugClient(uint clientnum);
     
-    void SetDebugging(int debug)
-    {
-        debugging = debug;
-    }
+    /** Remove client from list of debug receivers.
+     * @param clentnum The client to remove.
+     */
+    void RemoveDebugClient(uint clientnum);
     
     float GetAngularVelocity();
     float GetVelocity();
@@ -391,8 +418,9 @@ public:
      */
     gemNPCActor* GetNearestPlayer(float range, csVector3 &destPosition, iSector* &destSector, float &destRange);
 
-    gemNPCActor * GetNearestVisibleFriend(float range);
-    gemNPCActor * GetNearestDeadActor(float range);
+    gemNPCActor* GetNearestVisibleFriend(float range);
+    
+    gemNPCActor* GetNearestDeadActor(float range);
 
     void Printf(const char *msg,...);
     void Printf(int debug, const char *msg,...);
@@ -438,9 +466,21 @@ public:
      */
     void SetInsideTribeHome(bool inside) { insideTribeHome = inside; }
 
-    
+    /** Get the npc race info
+     */
     RaceInfo_t * GetRaceInfo();
     
+    /** Take control of another entity.
+     */
+    void TakeControl(gemNPCActor* actor);
+
+    /** Release control of another controlled entity.
+     */
+    void ReleaseControl(gemNPCActor* actor);
+
+    /**
+     */
+    void UpdateControlled();
 
     bool IsDebugging() { return (debugging > 0);};
     bool IsDebugging(int debug) { return (debugging > 0 && debug <= debugging);};
@@ -518,7 +558,8 @@ private:
     friend class psNPCTick;
 
     csArray<csString> debugLog;          ///< Local debug log of last n print statments for this NPC.
-    int               nextDebugLogEntry; ///< The next entry to use. 
+    int               nextDebugLogEntry; ///< The next entry to use.
+    csArray<uint>     debugClients;      ///< List of clients doing debugging
 };
 
 // The event that makes the NPC brain go TICK.

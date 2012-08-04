@@ -124,6 +124,11 @@ struct psMessageBytes
  */
 const unsigned int MAX_MESSAGE_SIZE = 65535 - sizeof(psMessageBytes) - 1;  // Current max, -1 for safety
 
+#define MSG_SIZEOF_VECTOR2   (2*sizeof(uint32))
+#define MSG_SIZEOF_VECTOR3   (3*sizeof(uint32))
+#define MSG_SIZEOF_VECTOR4   (4*sizeof(uint32))
+#define MSG_SIZEOF_SECTOR    100  // Sector can be a string in the message!!!
+#define MSG_SIZEOF_FLOAT     sizeof(uint32)
 
 //-----------------------------------------------------------------------------
 

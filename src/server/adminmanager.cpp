@@ -1353,6 +1353,8 @@ csString AdminCmdDataPercept::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [percept] [type]\"";
 }
 
+//---------------------------------------------------------------------------------
+
 AdminCmdDataChangeNPCType::AdminCmdDataChangeNPCType(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/changenpctype", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), npcType("")
 {
@@ -1400,6 +1402,56 @@ csString AdminCmdDataChangeNPCType::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <npc type name>\"";
 }
 
+//---------------------------------------------------------------------------------
+
+AdminCmdDataDebugNPC::AdminCmdDataDebugNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
+    : AdminCmdDataTarget("/debugnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), debugLevel(0)
+{
+    size_t index = 1;
+    bool found;
+
+    // when help is requested, return immediate
+    if(IsHelp(words[index]))
+        return;
+
+    // try first word as a target
+    if((found = ParseTarget(msgManager, me, msg, client, words[index])))
+    {
+        index++;
+    }
+
+    // if first word a target or client has selected a valid target
+    if(found || IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))
+    {
+        // the debug level is mandatory
+        if(words.GetCount() == index+1)
+        {
+            debugLevel = atoi(words[index]);
+            index++;
+        }
+        else if(words.GetCount() > index)
+        {
+            ParseError(me, "Too many parameters");
+        }
+        else
+        {
+            ParseError(me, "Missing parameters");
+        }
+    }
+    else
+    {
+        ParseError(me, "No target specified");
+    }
+}
+
+ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataDebugNPC)
+
+csString AdminCmdDataDebugNPC::GetHelpMessage()
+{
+    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <debuglevel>\"";
+}
+
+//---------------------------------------------------------------------------------
 
 AdminCmdDataSetStackable::AdminCmdDataSetStackable(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/setstackable", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET), subCommandList("info on off reset help")
@@ -4089,6 +4141,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataKillNPC());
     RegisterMsgFactoryFunction(new AdminCmdDataPercept());
     RegisterMsgFactoryFunction(new AdminCmdDataChangeNPCType());
+    RegisterMsgFactoryFunction(new AdminCmdDataDebugNPC());
     RegisterMsgFactoryFunction(new AdminCmdDataSetStackable());
     RegisterMsgFactoryFunction(new AdminCmdDataLoadQuest());
     RegisterMsgFactoryFunction(new AdminCmdDataItem());
@@ -4315,6 +4368,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     else if(data->command == "/changenpctype")
     {
         ChangeNPCType(me, msg, data, client);
+    }
+    else if(data->command == "/debugnpc")
+    {
+        DebugNPC(me, msg, data, client);
     }
     else if(data->command == "/rndmsgtest")
     {
@@ -8442,6 +8499,21 @@ void AdminManager::ChangeNPCType(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
     }
     psserver->SendSystemError(me->clientnum, "No NPC found to change type.");
 }
+
+void AdminManager::DebugNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
+{
+    AdminCmdDataDebugNPC* data = dynamic_cast<AdminCmdDataDebugNPC*>(cmddata);
+
+    gemNPC* target = dynamic_cast<gemNPC*>(data->targetObject);
+    if(target && target->GetClientID() == 0)
+    {
+        //send the change command.
+        psserver->GetNPCManager()->DebugNPC(target, client, data->debugLevel);
+        return;
+    }
+    psserver->SendSystemError(me->clientnum, "No NPC found to set debug level for.");
+}
+
 
 void AdminManager::Admin(int clientnum, Client* client, int requestedLevel)
 {

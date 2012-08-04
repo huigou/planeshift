@@ -343,6 +343,9 @@ public:
      */
     float GetAngle();
     iSector* GetSector();
+    /** Get the z velocity of the actor.
+     */
+    virtual float GetVelocity();
     const char *GetSectorName() { return GetSector() ? GetSector()->QueryObject()->GetName() : "(null)"; }
     csArray<gemObject*> *GetObjectsInRange( float range );
     //@}
@@ -1237,6 +1240,9 @@ public:
     // Target information
     void SetTargetObject(gemObject *object){ targetObject = object; }
     gemObject* GetTargetObject() const { return targetObject; }
+    /** Get the z velocity of the actor.
+     */
+    virtual float GetVelocity();
 };
 
 //-----------------------------------------------------------------------------

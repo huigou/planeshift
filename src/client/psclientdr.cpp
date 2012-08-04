@@ -255,7 +255,8 @@ void psClientDR::HandleForcePosition(MsgEntry *me)
     else
     {
         psengine->GetZoneHandler()->HandleDelayAndAnim(msg.loadTime, msg.start, msg.dest, msg.backgroundname, msg.loadWidget);
-        psengine->GetZoneHandler()->LoadZone(msg.pos, msg.sectorName, true);
+        psengine->GetZoneHandler()->LoadZone(msg.pos, msg.sectorName, msg.vel, true);
+        celclient->GetMainPlayer()->SetYRotation(msg.yrot);
     }
 }
 

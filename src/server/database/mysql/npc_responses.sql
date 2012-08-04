@@ -83,6 +83,8 @@ INSERT INTO `npc_responses` VALUES (43,18,'this is my error response.','','','',
 INSERT INTO `npc_responses` VALUES (44,35,'You just asked a question that I do not know the answer to.','','','','','','','','','','',0,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `npc_responses` VALUES (45,36,NULL,NULL,NULL,NULL,NULL,'','','','','<response><run script="explore_area" with="Area = \'NPCroom1\'; Range = 100; Exp = 100;"/></response>','',NULL,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO `npc_responses` VALUES (46,37,NULL,NULL,NULL,NULL,NULL,'','','','','<response><run script="explore_area" with="Area = \'NPCroom2\'; Range = 100; Exp = 1000;"/></response>','',NULL,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `npc_responses` VALUES (47,38,'Ok, I will bring you up by send the \"bring up\" command to the beast.','','','','','','','','','<response><respond/><npccmd cmd=\"bring_up\" /></response>','',0,NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `npc_responses` VALUES (48,39,'Welcome to the Winch. Tell me to "winch up" to have the winch beast winch up, "winch down" to have the winch beast winch down, or "bring me up" to have the winch beast bring you up.','','','','','','','','','','',0,NULL,NULL,NULL,NULL,NULL);
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

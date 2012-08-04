@@ -977,6 +977,47 @@ public:
     virtual csString GetHelpMessage();
 };
 
+/** @brief Class for changing npc debug level.
+ */
+class AdminCmdDataDebugNPC : public AdminCmdDataTarget
+{
+public:
+    int debugLevel; ///< The debug level to set for npc.
+
+    /** @brief Creates obj for specified command that changes NPC Debug level.
+     */
+    AdminCmdDataDebugNPC()
+        : AdminCmdDataTarget("/debugnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), debugLevel(0)
+    {};
+    
+    /** @brief Parses the given message to set debug level for npc.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     */
+    AdminCmdDataDebugNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    virtual ~AdminCmdDataDebugNPC()
+    {};
+
+     /** @brief Creates a command data object of the current class containing the parsed data.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+     */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    /** @brief Returns a helpmessage that fits to the parser of the class.
+     * @return csString: a help message to send back to the client
+     */
+    virtual csString GetHelpMessage();
+};
+
 /** @brief Class for un/setting, displaying information on stackable items.
  */
 class AdminCmdDataSetStackable : public AdminCmdDataTarget
@@ -3231,6 +3272,14 @@ protected:
      */
     void ChangeNPCType(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client);
 
+    /** @brief Change the NPC Debug level.
+     *  @param me The incoming message from the GM
+     *  @param msg The cracked command message.
+     *  @param data A pointer to the command parser object with target datat
+     *  @param client The GM client the command came from.
+     */
+    void DebugNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client);
+    
     /** @brief Creates an item or loads GUI for item creation.
      *
      * Gui for item creation is loaded when no item was specified.

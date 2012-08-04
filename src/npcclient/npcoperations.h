@@ -172,7 +172,7 @@ public:
      *
      */
     virtual bool CheckMoveOk(NPC* npc, csVector3 oldPos, iSector* oldSector,
-                             const csVector3 & newPos, iSector* newSector, float timedelta);
+                             const csVector3 & newPos, iSector* newSector, int resultFromExtrapolate );
 
     /** Check if the end point where ok.
      *
@@ -518,9 +518,10 @@ class CopyLocateOperation : public ScriptOperation
 protected:
     csString source;
     csString destination;
+    unsigned int flags;
 public:
 
-    CopyLocateOperation(): ScriptOperation("CopyLocate") {};
+    CopyLocateOperation(): ScriptOperation("CopyLocate"), flags(NPC::LOCATION_ALL) {};
     virtual ~CopyLocateOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -570,6 +571,25 @@ public:
 
     CircleOperation(): MoveOperation("Circle") { radius = 0.0f; }
     virtual ~CircleOperation() { }
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Control another actor.
+*/
+class ControlOperation : public ScriptOperation
+{
+protected:
+    bool control;  // Should this operation take or release control
+public:
+
+    ControlOperation( bool control ): ScriptOperation("Control"), control(control) { }
+    virtual ~ControlOperation() { }
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
 
@@ -1011,7 +1031,7 @@ protected:
         NPC*       npc;
         Perception pcpt;
         TargetType target;
-        float     maxRange;
+        float      maxRange;
 
     public:
         DelayedPerceptOperationGameEvent(int offsetTicks, NPC* npc, Perception& pcpt, TargetType target, float maxRange);
@@ -1020,6 +1040,7 @@ protected:
     };
 
     csString   perception; ///< The perception name to send
+    csString   type;       ///< The type value of the perception
     TargetType target;     ///< Hold the target for the perception, default SELF
     float      maxRange;   ///< Is there a max range for this, 0.0 is without limit
     csString   condition;  ///< A condition for when the perception should be fired

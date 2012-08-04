@@ -568,6 +568,39 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 break;
             }
 
+            case psNPCCommandsMessage::CMD_CONTROL:
+            {
+                msgtext.Append("CMD_CONTROL: ");
+
+                // Extract the data
+                EID controllingEntity = EID(msg->GetUInt32());
+                // Extract the DR data
+                uint32_t len = 0;
+                void *data = msg->GetBufferPointerUnsafe(len);
+
+                // Make sure we haven't run past the end of the buffer
+                if (msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_CONTROL from NPC client %u.\n",msg->clientnum);
+                    break;
+                }
+
+                msgtext.AppendFmt("Controlling EID: %u ", controllingEntity.Unbox());
+
+                if ( (accessPointers->msgstrings || accessPointers->msgstringshash) && accessPointers->engine)
+                {
+                    psDRMessage drmsg(data, len, accessPointers);  // alternate method of cracking 
+
+                    msgtext.Append(drmsg.ToString(accessPointers));
+                }
+                else
+                {
+                    msgtext.Append("Missing msg strings to decode");
+                }
+
+                break;
+            }
+
             case psNPCCommandsMessage::CMD_DROP:
             {
                 msgtext.Append("CMD_DROP: ");
@@ -724,6 +757,18 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 EID attacker = EID(msg->GetUInt32());
 
                 msgtext.AppendFmt("Target: %u Attacker: %u ", target.Unbox(), attacker.Unbox());
+                break;
+            }
+            case psNPCCommandsMessage::PCPT_DEBUG_NPC:
+            {
+                msgtext.Append("PCPT_DEBUG_NPC: ");
+                
+                // Extract the data
+                EID npc_eid = EID(msg->GetUInt32());
+                uint32_t clientnum = msg->GetUInt32();
+                uint8_t debugLevel = msg->GetUInt8();
+                
+                msgtext.AppendFmt("NPC: %s Client: %ul debugLevel: %d", ShowID(npc_eid), clientnum, debugLevel);
                 break;
             }
             case psNPCCommandsMessage::PCPT_GROUPATTACK:
@@ -1624,6 +1669,10 @@ psLocationMessage::psLocationMessage( MsgEntry* msgEntry )
    case LOCATION_RADIUS:
        radius        = msgEntry->GetFloat();
        break;
+   case LOCATION_SET_FLAG:
+       flags         = msgEntry->GetStr();
+       enable        = msgEntry->GetBool();
+       break;
    case LOCATION_RENAME:
        name          = msgEntry->GetStr();
        break;
@@ -1660,6 +1709,9 @@ csString psLocationMessage::ToString(NetBase::AccessPointers* /*accessPointers*/
         break;
     case LOCATION_RENAME:
         str.AppendFmt("Cmd: LOCATION_RENAME ID: %d Name: %s", id, name.GetDataSafe());
+        break;
+    case LOCATION_SET_FLAG:
+        str.AppendFmt("Cmd: LOCATION_SET_FLAG ID: %d Flag: %s Enable: %s", id, flags.GetDataSafe(),enable?"true":"false");
         break;
     case LOCATION_TYPE_ADD:
         str.AppendFmt("Cmd: LOCATION_TYPE_ADD ID: %d Name: %s", id, typeName.GetDataSafe());

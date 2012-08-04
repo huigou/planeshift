@@ -4681,6 +4681,7 @@ void psDRMessage::operator=(psDRMessage& other)
 void psDRMessage::ReadDRInfo(MsgEntry* me, NetBase::AccessPointers* accessPointers)
 {
     entityid = me->GetUInt32();
+    filterNumber = entityid.Unbox(); // Set the filter number to be used when filtering this in console output
     counter  = me->GetUInt8();
 
     // Find out what's packed here
@@ -4756,15 +4757,15 @@ csString psDRMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psForcePositionMessage, MSGTYPE_FORCE_POSITION);
 
 psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequenceNumber,
-                         const csVector3 & pos, float yRot, iSector *sector,
-                         csStringSet *msgstrings, uint32_t time, csString loadBackground,
-                         csVector2 start, csVector2 dest, csString loadWidget)
+                                               const csVector3 & pos, float yRot, iSector *sector, float vel,
+                                               csStringSet *msgstrings, uint32_t time, csString loadBackground,
+                                               csVector2 start, csVector2 dest, csString loadWidget)
 {
     CS_ASSERT(sector);
     csString sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
-    msg.AttachNew(new MsgEntry(sizeof(float)*8 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0) + sizeof(uint32_t) + loadBackground.Length() + 1 + loadWidget.Length() + 1, PRIORITY_HIGH, sequenceNumber));
+    msg.AttachNew(new MsgEntry(MSG_SIZEOF_FLOAT*9 + sizeof(uint8_t) + sizeof(uint32_t) + (sectorNameStrId == csInvalidStringID ? sectorName.Length() + 1 : 0) + sizeof(uint32_t) + loadBackground.Length() + 1 + loadWidget.Length() + 1, PRIORITY_HIGH, sequenceNumber));
 
     msg->SetType(MSGTYPE_FORCE_POSITION);
     msg->clientnum = client;
@@ -4786,6 +4787,8 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
 
     //widget which replaces the standard load one
     msg->Add(loadWidget);
+
+    msg->Add(vel);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -4809,6 +4812,7 @@ psForcePositionMessage::psForcePositionMessage(MsgEntry *me, NetBase::AccessPoin
     dest.y = me->GetFloat();
 
     loadWidget = me->GetStr();
+    vel = me->GetFloat();
 
     valid = !(me->overrun);
 }
@@ -4818,13 +4822,14 @@ void psForcePositionMessage::operator=(psForcePositionMessage & other)
     pos    = other.pos;
     yrot   = other.yrot;
     sector = other.sector;
+    vel    = other.vel;
 }
 
 csString psForcePositionMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
     msgtext.AppendFmt("Sector: %s ", sectorName.GetDataSafe());
-    msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f), yRot: %.2f", pos.x, pos.y, pos.z, yrot);
+    msgtext.AppendFmt("Pos(%.2f,%.2f,%.2f), yRot: %.2f vel: %.2f", pos.x, pos.y, pos.z, yrot, vel);
     return msgtext;
 }
 
@@ -5227,7 +5232,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
 
 
 psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPointers )
-    :flags(0),tribeID(0)
+    :tribeID(0),flags(0)
 {
     eid         = EID(me->GetUInt32());
     type        = me->GetUInt32();
@@ -7156,7 +7161,6 @@ PSF_IMPLEMENT_MSG_FACTORY(psPlaySongMessage, MSGTYPE_PLAY_SONG);
 psPlaySongMessage::psPlaySongMessage(uint32_t client, uint32_t songID, bool toPlayer,
                                      float minimumDuration, const char* instrName, uint32_t scoreSize, const char* musicalScore)
 {
-    size_t size = sizeof(uint32_t) + sizeof(bool) + sizeof(float) + strlen(instrName) + 1 + sizeof(uint32_t) + scoreSize + 1;
     msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + sizeof(float) + strlen(instrName) + 1 + sizeof(uint32_t) + scoreSize + 1));
 
     msg->SetType(MSGTYPE_PLAY_SONG);
@@ -7640,9 +7644,8 @@ csString GetMsgTypeName(int msgType)
     return psfMsgTypeName(msgType);
 }
 
-csString GetDecodedMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex)
+void DecodeMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex, csString& msgtext, int& filterNumber)
 {
-    csString msgtext;
     MsgEntry msg(me); // Take a copy to make sure we dont destroy the message.
                       // Can't do this const since current pointers are modified
                       // when parsing messages.
@@ -7677,10 +7680,10 @@ csString GetDecodedMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers
         msgtext.Append(" > ");
         msgtext.Append(cracker->ToString(accessPointers));
 
+        filterNumber = cracker->filterNumber;
+
         delete cracker;
     }
-
-    return msgtext;
 }
 
 typedef struct

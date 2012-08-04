@@ -934,8 +934,13 @@ int NetBase::GetIPByName(LPSOCKADDR_IN addr, const char *name)
 void NetBase::LogMessages(char dir,MsgEntry* me)
 {
     if (DoLogDebug(LOG_MESSAGES) && !FilterLogMessage(me->bytes->type,dir))
-        Debug3(LOG_MESSAGES,0,"%c: %s\n",dir,
-               GetDecodedMessage(me, &accessPointers, logmsgfiltersetting.filterhex).GetData());
+    {
+        csString msgtext;
+        int filterNumber;
+        DecodeMessage(me, &accessPointers, logmsgfiltersetting.filterhex, msgtext, filterNumber);
+        Debug3(LOG_MESSAGES,filterNumber,"%c: %s\n",dir,msgtext.GetDataSafe());
+               
+    }
 }
 
 

@@ -145,7 +145,7 @@ public:
     bool            SetValue(int i, int value);
     csString        GetValue();
     int             GetRandom(int i);
-    const csString& GetType()           { return type;         }
+    const csString& GetType() const     { return type;         }
     char            GetOp();
     csString        GetAffectedBehaviors();
     const csString& GetLastTriggerd()   { return lastTriggered; }
@@ -184,7 +184,7 @@ public:
     virtual gemNPCObject *GetTarget() { return NULL; }
 
     virtual csString GetName(NPC* npc);
-    const char* GetType() { return type; }
+    const csString& GetType() const { return type; }
     void SetType(const char* type) { this->type = type; }
     virtual bool GetLocation(csVector3& pos, iSector*& sector) { return false; }
     virtual float GetRadius() const { return 0.0; }

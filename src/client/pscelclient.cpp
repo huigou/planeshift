@@ -1781,6 +1781,18 @@ void GEMClientActor::SetPosition(const csVector3 &pos, float rot, iSector* secto
     linmove->SetPosition(pos, rot, sector);
 }
 
+void GEMClientActor::SetVelocity(const csVector3& vel)
+{
+    linmove->SetVelocity(vel);
+}
+
+void GEMClientActor::SetYRotation(const float yrot)
+{
+    linmove->SetYRotation(yrot);
+}
+
+
+
 void GEMClientActor::InitCharData(const char* traits, const char* equipment)
 {
     this->traits = traits;
@@ -2003,7 +2015,7 @@ void GEMClientActor::SetCharacterMode(size_t newmode)
     if(newmode == movementMode)
         return;
 
-    Debug4(LOG_CELPERSIST, 0, "Setting New mode: %d for %s eid: %d", newmode, GetName(), this->GetEID().Unbox());
+    Debug4(LOG_CELPERSIST, 0, "Setting New mode: %zu for %s eid: %d", newmode, GetName(), this->GetEID().Unbox());
 
     movementMode = newmode;
 

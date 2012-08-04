@@ -2754,6 +2754,13 @@ Change the selected guilds name.</content>
 Changes the player's name. If force is given, the lastname doesn't have to be unique. If forceall is given name and lastname doesn't have to be unique. If the lastname is not given the lastname will be preseved. If no is given as lastname, the lastname will be removed.</content>
       </Contents>
     </topic>
+    <topic name="/changenpctype">
+      <Contents>
+        <content type="text">/changenpctype [me/target/eid/pid/area/old name] [&lt;brain&gt;|reload]
+
+Changes the brain of the selected npcs. Use reload to reload the npctype db and set the new brain for the npc. Only the selected npc will have the reloaded brain set.</content>
+      </Contents>
+    </topic>
     <topic name="/charlist">
       <Contents>
         <content type="text">/charlist [me/target/eid/pid/area/name]
@@ -2781,6 +2788,13 @@ Notice: The intervals are in seconds, not milliseconds</content>
         <content type="text">/death name
 
 Kills something.</content>
+      </Contents>
+    </topic>
+    <topic name="/debugnpc">
+      <Contents>
+        <content type="text">/debugnpc [target/eid/pid/area/name] [&lt;debug level&gt;]
+
+Changes the debug level of the selected npcs.</content>
       </Contents>
     </topic>
     <topic name="/deletechar">

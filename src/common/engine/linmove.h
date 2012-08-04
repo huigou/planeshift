@@ -102,6 +102,7 @@ public:
   virtual void SetSpeed (float speedz);
 
   virtual float GetYRotation () const;
+  virtual void SetYRotation(float yrot);
   const csVector3 GetPosition () const;
   const csVector3 GetFullPosition () const;
 
@@ -111,7 +112,7 @@ public:
   virtual void SetFullPosition (const csVector3& pos, float yrot, const iSector* sector);
   virtual void SetPosition (const char* center_name, float yrot, iSector* sector);
   virtual void SetFullPosition (const char* center_name, float yrot, iSector* sector);
-    virtual void GetLastClientPosition (csVector3& pos, float& yrot, iSector*& sector);
+  virtual void GetLastClientPosition (csVector3& pos, float& yrot, iSector*& sector);
 
   virtual bool IsOnGround () const;
 

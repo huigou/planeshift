@@ -916,6 +916,17 @@ float psLinearMovement::GetYRotation () const
     ->GetTransform ().GetT2O ();
   return Matrix2YRot (transf);
 }
+
+void psLinearMovement::SetYRotation( float yrot )
+{
+    // Rotation
+    csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
+    mesh->GetMovable ()->GetTransform ().SetO2T (matrix);
+
+    mesh->GetMovable ()->UpdateMove ();
+}
+
+
 const csVector3 psLinearMovement::GetPosition () const
 {
   // user will get a warning and a nothing if theres no mesh
@@ -1017,14 +1028,14 @@ void psLinearMovement::SetPosition (const csVector3& pos, float yrot,
     }
     
 
-  // Position and Sector
-  mesh->GetMovable ()->SetPosition ((iSector *)sector,pos);
+    // Position and Sector
+    mesh->GetMovable ()->SetPosition ((iSector *)sector,pos);
 
-  // Rotation
-  csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
-  mesh->GetMovable ()->GetTransform ().SetO2T (matrix);
+    // Rotation
+    csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
+    mesh->GetMovable ()->GetTransform ().SetO2T (matrix);
 
-  mesh->GetMovable ()->UpdateMove ();
+    mesh->GetMovable ()->UpdateMove ();
 }
 
 void psLinearMovement::SetPosition (const char* center_name, float yrot,
@@ -1104,7 +1115,7 @@ void psLinearMovement::SetVelocity (const csVector3& vel)
 
 void psLinearMovement::AddVelocity (const csVector3& vel)
 {
-	// -107 is terminal velocity
+    // -107 is terminal velocity
     if (vel.Norm() > 110)
         printf("Garbage data in AddVel!\n");
 
