@@ -187,11 +187,17 @@ public:
     void QueueResurrectCommand(csVector3 where, float rot, iSector* sector, PID character_id);
     void QueueSequenceCommand(csString name, int cmd, int count);
     void QueueImperviousCommand(gemNPCActor * entity, bool impervious);
-    void QueueInfoReplyCommand(uint32_t clientNum,const char* reply);
+    
+    /** Send an info info command to the client.
+     */
+    void QueueSystemInfoCommand(uint32_t clientNum, const char* reply, ...);
+    
     void QueueAssessCommand(gemNPCActor* entity, gemNPCObject* target, const csString& physicalAssessmentPerception,
                             const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception);
     void QueueCastCommand(gemNPCActor* entity, gemNPCObject* target, const csString& spell, float kFactor);
     void QueueBusyCommand(gemNPCActor* entity, bool busy );
+
+    void QueueControlCommand(gemNPCActor* controllingEntity, gemNPCActor* controlledEntity );
     
     void SendAllCommands(bool final = false);
 

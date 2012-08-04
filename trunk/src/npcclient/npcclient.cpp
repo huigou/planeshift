@@ -459,6 +459,7 @@ bool psNPCClient::AddNPCType(csString newType)
 
 bool psNPCClient::LoadNPCTypes(iDocumentNode* root)
 {
+
     csRef<iDocumentNode> topNode = root->GetNode("npctypes");
     if(!topNode)
     {
@@ -495,6 +496,13 @@ bool psNPCClient::LoadNPCTypes(iDocumentNode* root)
 
 bool psNPCClient::LoadNPCTypes()
 {
+    // First clear the npctypes in case load npc types is used as a reload.
+    csHash<NPCType*, const char*>::GlobalIterator npcTypeIter(npctypes.GetIterator());
+    while (npcTypeIter.HasNext())
+        delete npcTypeIter.Next();
+    npctypes.Empty();
+
+
     csArray<unsigned long> postponedNPCTypeID;
     Result rs(db->Select("SELECT * from sc_npctypes ORDER BY id"));
 

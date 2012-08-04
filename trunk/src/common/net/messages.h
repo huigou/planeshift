@@ -50,7 +50,7 @@ class csStringHashReversible;
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
 // no inadvertent overlaps.
-#define PS_NPCNETVERSION 0x1029
+#define PS_NPCNETVERSION 0x102A
 
 enum Slot_Containers
 {
@@ -328,6 +328,7 @@ public:
 
     csRef<MsgEntry> msg;
     bool valid;
+    int filterNumber;
 
     psMessageCracker()
         : msg(NULL),valid(true)
@@ -383,7 +384,7 @@ public:
 typedef psMessageCracker* (*psfMsgFactoryFunc)(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
 csString GetMsgTypeName(int msgType);
-csString GetDecodedMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex);
+void DecodeMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex, csString& msgText, int& filterNumber);
 
 void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, const char* msgtypename);
 psMessageCracker* psfCreateMsg(int msgtype,
@@ -3057,10 +3058,11 @@ public:
     csVector2 start; ///<Start point of anmiation
     csVector2 dest;///<Destination point of animation
     csString loadWidget; ///< The widget to replace the load window with.
+    float    vel;            ///< The velocity of the actor
 
     psForcePositionMessage() { }
     psForcePositionMessage(uint32_t client, uint8_t sequence,
-                           const csVector3 &pos, float yRot, iSector* sector,
+                           const csVector3 &pos, float yRot, iSector* sector, float vel,
                            csStringSet* msgstrings, uint32_t time = 0, csString loadBackground = "", csVector2 start = 0, csVector2 dest = 0, csString loadWidget = "");
     psForcePositionMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 

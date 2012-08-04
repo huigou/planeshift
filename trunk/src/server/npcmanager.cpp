@@ -896,7 +896,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 csRef<iDataBuffer> databuf = csPtr<iDataBuffer> (new csDataBuffer (len));
                 memcpy(databuf->GetData(), data, len);
                 // find the entity and Set the DR data for it
-                gemNPC *actor = dynamic_cast<gemNPC*>(gemSupervisor->FindObject(drmsg.entityid));
+                gemActor *actor = dynamic_cast<gemActor*>(gemSupervisor->FindObject(drmsg.entityid));
 
                 if (!actor)
                 {
@@ -912,10 +912,11 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 {
                     // Go ahead and update the server version
                     actor->SetDRData(drmsg);
+
                     // Now multicast to other clients
                     actor->UpdateProxList();
-
                     actor->MulticastDRUpdate();
+
                     if(drmsg.vel.y < -20 || drmsg.pos.y < -1000)                   //NPC has fallen down
                     {
                         // First print out what happend
@@ -1453,6 +1454,48 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 psserver->GetWorkManager()->HandleProduction(gEntity,type,resource);
                 break;
             }
+
+            case psNPCCommandsMessage::CMD_CONTROL:
+            {
+                // Extract the data
+                EID controllingEntity = EID(list.msg->GetUInt32());
+                // extract the DR data
+                uint32_t len = 0;
+                void *data = list.msg->GetBufferPointerUnsafe(len);
+
+                // Make sure we haven't run past the end of the buffer
+                if (list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT, controllingEntity.Unbox(), "Received incomplete CMD_CONTROL from NPC client %u.\n", me->clientnum);
+                    break;
+                }
+
+                psDRMessage drmsg(data,len,psserver->GetNetManager()->GetAccessPointers()); // alternate method of cracking
+
+                Debug5(LOG_SUPERCLIENT, controllingEntity.Unbox(), "-->Got control Controlling EID: %u Controlled EID: %u Pos: %s yRot: %.1f\n",
+                       controllingEntity.Unbox(), drmsg.entityid.Unbox(),toString(drmsg.pos,drmsg.sector).GetDataSafe(),drmsg.yrot);
+
+                gemActor *controlled = dynamic_cast<gemActor*> (gemSupervisor->FindObject(drmsg.entityid));
+                if (!controlled)
+                {
+                    Debug1(LOG_SUPERCLIENT, controllingEntity.Unbox(), "Couldn't find controlled entity.\n");
+                    break;
+                }
+
+                // TODO: Allow for breake free
+
+                controlled->SetDRData(drmsg);
+                if (controlled->GetClient())
+                    controlled->GetClient()->SetCheatMask(MOVE_CHEAT, true); // Tell paladin one of these is OK.
+                
+                controlled->UpdateProxList();
+                controlled->MulticastDRUpdate();
+                controlled->ForcePositionUpdate();
+                controlled->BroadcastTargetStatDR(entityManager->GetClients());
+
+                break;
+            }
+            
             case psNPCCommandsMessage::CMD_DROP:
             {
                 EID entity_id = list.msg->GetUInt32();
@@ -2660,6 +2703,17 @@ void NPCManager::ChangeNPCBrain(gemNPC* npc, Client* client, const char* brainNa
     outbound->msg->Add(brainName);
     cmd_count++;
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Brain Change perception for %s.\n", ShowID(npc->GetEID()));
+}
+
+void NPCManager::DebugNPC(gemNPC* npc, Client* client, uint8_t debugLevel)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+sizeof(uint8));
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::PCPT_DEBUG_NPC);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add(client->GetClientNum());
+    outbound->msg->Add(debugLevel);
+    cmd_count++;
+    Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Debug Level perception for %s.\n", ShowID(npc->GetEID()));
 }
 
 

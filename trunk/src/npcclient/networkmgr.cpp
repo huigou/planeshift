@@ -933,14 +933,17 @@ bool NetworkManager::ReceiveMapList(MsgEntry *msg)
 
 bool NetworkManager::ReceiveNPCList(MsgEntry *msg)
 {
-    uint32_t length, pid, eid;
+    uint32_t length;
+    PID pid;
+    EID eid;
 
     length = msg->GetUInt32();
     CPrintf(CON_WARNING, "Received list of %i NPCs.\n", length);  
     for (unsigned int x=0; x<length; x++)
     {
-        pid = msg->GetUInt32();
-        eid = msg->GetUInt32();
+        pid = PID(msg->GetUInt32());
+        eid = EID(msg->GetUInt32());
+        CPrintf(CON_WARNING, "%s %s\n", ShowID(pid),ShowID(eid));
     }
 
     return true;
@@ -1087,6 +1090,26 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                             attacker_ent->GetName(), ShowID(attackerEID));
 
                 npc->TriggerEvent(&attack);
+                break;
+            }
+            case psNPCCommandsMessage::PCPT_DEBUG_NPC:
+            {
+                EID npc_eid = EID(list.msg->GetUInt32());
+                uint32_t clientNum = list.msg->GetUInt32();
+                uint8_t debugLevel = list.msg->GetUInt8();
+
+                NPC *npc = npcclient->FindNPC(npc_eid);
+
+                if (!npc)
+                {
+                    QueueSystemInfoCommand(clientNum,"NPCClient: No NPC found");
+                    break;
+                }
+                
+                npc->AddDebugClient(clientNum);
+                npc->SetDebugging(debugLevel);
+
+                QueueSystemInfoCommand(clientNum,"NPCCleint: Debug level set to %d for %s(%s)",debugLevel,npc->GetName(),ShowID(npc->GetEID()));
                 break;
             }
             case psNPCCommandsMessage::PCPT_GROUPATTACK:
@@ -1518,15 +1541,11 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 csString reply("NPCClient: ");
                 reply.Append(npc->Info());
-                QueueInfoReplyCommand(clientNum,reply);
+                QueueSystemInfoCommand(clientNum,reply);
 
-                reply = "";
-                reply.AppendFmt(" Behaviors: %s",npc->GetBrain()->InfoBehaviors(npc).GetDataSafe());
-                QueueInfoReplyCommand(clientNum,reply);
+                QueueSystemInfoCommand(clientNum," Behaviors: %s",npc->GetBrain()->InfoBehaviors(npc).GetDataSafe());
                 
-                reply = "";
-                reply.AppendFmt(" Reactions: %s",npc->GetBrain()->InfoReactions(npc).GetDataSafe());
-                QueueInfoReplyCommand(clientNum,reply);
+                QueueSystemInfoCommand(clientNum," Reactions: %s",npc->GetBrain()->InfoReactions(npc).GetDataSafe());
 
                 break;
 
@@ -1541,21 +1560,35 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 NPC *npc = npcclient->FindNPC(npc_eid);
 
                 if (!npc)
+                {
+                    QueueSystemInfoCommand(clientNum,"NPC not found");
                     break;
+                }
 
-                npc->Printf("Got change brain request to %s.", brainType.GetDataSafe());
+                npc->Printf("Got change brain request to %s from client %u.", brainType.GetDataSafe(), clientNum);
+
+                if (brainType == "reload")
+                {
+                    brainType = npc->GetBrain()->GetName();
+                    if (!npcclient->LoadNPCTypes())
+                    {
+                        QueueSystemInfoCommand(clientNum,"Failed to reload npctypes.");
+                        break;
+                    }
+                }
 
                 //search for the requested npc type
-
                 NPCType* type = npcclient->FindNPCType(brainType.GetDataSafe());
                 if (!type)
                 {
                     Error2("NPC type '%s' is not found",(const char *)brainType);
+                    QueueSystemInfoCommand(clientNum,"Brain not found");
                     break;
                 }
 
                 //if found set it
                 npc->SetBrain(type, npcclient->GetEventManager());
+                QueueSystemInfoCommand(clientNum,"Brain changed");
                 break;
             }
 
@@ -1998,17 +2031,26 @@ void NetworkManager::QueueImperviousCommand(gemNPCActor * entity, bool imperviou
     cmd_count++;
 }
 
-void NetworkManager::QueueInfoReplyCommand(uint32_t clientNum,const char* reply)
+void NetworkManager::QueueSystemInfoCommand(uint32_t clientNum, const char* reply, ...)
 {
-    CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+(strlen(reply)+1));
+    // Format the reply
+    va_list args;
+    va_start(args, reply);
+    char str[1024];
+    vsprintf(str, reply, args);
+    va_end(args);
+    
+    // Queue the System Info
+
+    CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+(strlen(str)+1));
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_INFO_REPLY);
     outbound->msg->Add( clientNum );
-    outbound->msg->Add( reply );
+    outbound->msg->Add( str );
 
     if ( outbound->msg->overrun )
     {
-        CS_ASSERT(!"NetworkManager::QueueInfoReplyCommand put message in overrun state!\n");
+        CS_ASSERT(!"NetworkManager::QueueSystemInfoCommand put message in overrun state!\n");
     }
 
     cmd_count++;
@@ -2064,6 +2106,24 @@ void NetworkManager::QueueBusyCommand(gemNPCActor* entity, bool busy )
     if ( outbound->msg->overrun )
     {
         CS_ASSERT(!"NetworkManager::QueueBusyCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;    
+}
+
+void NetworkManager::QueueControlCommand(gemNPCActor* controllingEntity, gemNPCActor* controlledEntity)
+{
+    CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+100);
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_CONTROL);
+    outbound->msg->Add( controllingEntity->GetEID().Unbox() );
+ 
+    psDRMessage drmsg(0,controlledEntity->GetEID(),0,connection->GetAccessPointers(),controlledEntity->pcmove);
+    outbound->msg->Add( drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize() );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NetworkManager::QueueControlCommand put message in overrun state!\n");
     }
 
     cmd_count++;    

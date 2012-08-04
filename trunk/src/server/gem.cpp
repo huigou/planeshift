@@ -1080,6 +1080,12 @@ iSector* gemObject::GetSector()
     return NULL;
 }
 
+float gemObject::GetVelocity()
+{
+    return 0.0; // Objects can't move
+}
+
+
 void gemObject::SendBehaviorMessage(const csString & str, gemObject *actor)
 {
     Error3("gemObject %s got behavior message %s in error.",GetName(),str.GetData());
@@ -3921,7 +3927,7 @@ void gemActor::ForcePositionUpdate(int32_t loadDelay, csString background, csVec
     uint32_t clientnum = GetClientID();
     forcedSector = GetSector();
 
-    psForcePositionMessage msg(clientnum, ++forceDRcounter, GetPosition(), GetAngle(), GetSector(),
+    psForcePositionMessage msg(clientnum, ++forceDRcounter, GetPosition(), GetAngle(), GetSector(), GetVelocity(),
                                cacheManager->GetMsgStrings(), loadDelay, background, point1, point2, widget);
     msg.SendMessage();
 }
@@ -4374,6 +4380,15 @@ bool gemActor::SetMesh(const char* meshname)
     }
     return false;
 }
+
+/** Get the z velocity of the actor.
+ */
+float gemActor::GetVelocity()
+{
+    csVector3 vel = pcmove->GetVelocity();
+    return vel.z;
+}
+
 
 /* gemActor::ChatHistoryEntry function implementations */
 

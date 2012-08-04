@@ -254,6 +254,17 @@ void NPC::Dump()
     {
         CPrintf(CON_CMDOUTPUT, "Empty\n");
     }
+
+    csString controlled;
+    for (size_t i = 0; i < controlledActors.GetSize(); i++)
+    {
+        if (controlledActors[i].IsValid())
+        {
+            controlled.AppendFmt(" %s",controlledActors[i]->GetName());
+        }
+    }
+    CPrintf(CON_CMDOUTPUT, "Controlled: %s\n",controlled.GetDataSafe());
+
 }
 
 EID NPC::GetEID()
@@ -413,6 +424,8 @@ void NPC::Advance(csTicks when)
     if (last_update && !disabled)
     {
         brain->Advance(when-last_update, this);
+
+        UpdateControlled();
     }
 
     last_update = when;
@@ -559,9 +572,9 @@ float NPC::GetActiveLocateRadius() const
     return activeLocate->radius;
 }
 
-bool NPC::CopyLocate(csString source, csString destination)
+bool NPC::CopyLocate(csString source, csString destination, unsigned int flags)
 {
-    Printf(5,"Copy locate from %s to %s",source.GetDataSafe(),destination.GetDataSafe());
+    Printf(5,"Copy locate from %s to %s (%X)",source.GetDataSafe(),destination.GetDataSafe(),flags);
 
     Locate* sourceLocate = storedLocates.Get(source,NULL);
     if (!sourceLocate)
@@ -577,11 +590,34 @@ bool NPC::CopyLocate(csString source, csString destination)
         storedLocates.PutUnique(destination,destinationLocation);
     }
     
-    destinationLocation->pos    = sourceLocate->pos;
-    destinationLocation->sector = sourceLocate->sector;
-    destinationLocation->angle  = sourceLocate->angle;
-    destinationLocation->wp     = sourceLocate->wp;
-    destinationLocation->radius = sourceLocate->radius;
+    if (flags & LOCATION_POS)
+    {
+        destinationLocation->pos    = sourceLocate->pos;
+    }
+    if (flags & LOCATION_SECTOR)
+    {
+        destinationLocation->sector = sourceLocate->sector;
+    }
+    if (flags & LOCATION_ANGLE)
+    {
+        destinationLocation->angle  = sourceLocate->angle;
+    }
+    if (flags & LOCATION_WP)
+    {
+        destinationLocation->wp     = sourceLocate->wp;
+    }
+    if (flags & LOCATION_RADIUS)
+    {
+        destinationLocation->radius = sourceLocate->radius;
+    }
+    if (flags & LOCATION_TARGET)
+    {
+        destinationLocation->target = sourceLocate->target;
+        if (destination == "Active")
+        {
+            SetTarget(destinationLocation->target);
+        }
+    }
 
     return true;
 }
@@ -675,6 +711,12 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Rotation:            %.2f\n",rot);
     CPrintf(CON_CMDOUTPUT, "Instance:            %d\n",instance);
     CPrintf(CON_CMDOUTPUT, "Debugging:           %d\n",debugging);
+    csString clients;
+    for (size_t i = 0; i < debugClients.GetSize(); i++)
+    {
+        clients.AppendFmt("  %u",debugClients[i]);
+    }
+    CPrintf(CON_CMDOUTPUT, "Debug clients:       %s\n",clients.GetDataSafe());
     CPrintf(CON_CMDOUTPUT, "DR Counter:          %d\n",DRcounter);
     CPrintf(CON_CMDOUTPUT, "Alive:               %s\n",alive?"True":"False");
     CPrintf(CON_CMDOUTPUT, "Disabled:            %s\n",disabled?"True":"False");
@@ -1012,8 +1054,9 @@ gemNPCActor* NPC::GetNearestDeadActor(float range)
 void NPC::Printf(const char *msg,...)
 {
     va_list args;
-	if(!IsDebugging())
-		return;
+
+    if(!IsDebugging())
+        return;
 
     va_start(args, msg);
     VPrintf(5,msg,args);
@@ -1022,32 +1065,22 @@ void NPC::Printf(const char *msg,...)
 
 void NPC::Printf(int debug, const char *msg,...)
 {
-    char str[1024];
     va_list args;
 
-	if(!IsDebugging())
-		return;
-
-    va_start(args, msg);
-    vsprintf(str, msg, args);
-    va_end(args);
-
-    // Add string to the internal log buffer
-    debugLog[nextDebugLogEntry] = str;
-    nextDebugLogEntry = (nextDebugLogEntry+1)%debugLog.GetSize();
-
-    if (!IsDebugging(debug))
+    if(!IsDebugging())
         return;
 
-    CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), str);
+    va_start(args, msg);
+    VPrintf(debug,msg,args);
+    va_end(args);
 }
 
 void NPC::VPrintf(int debug, const char *msg, va_list args)
 {
     char str[1024];
    
-	if(!IsDebugging())
-		return; 
+    if(!IsDebugging())
+        return; 
 
     vsprintf(str, msg, args);
 
@@ -1059,6 +1092,11 @@ void NPC::VPrintf(int debug, const char *msg, va_list args)
         return;
 
     CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), str);
+
+    for (size_t i = 0; i < debugClients.GetSize(); i++)
+    {
+        networkmanager->QueueSystemInfoCommand(debugClients[i],"%s (%s)> %s", GetName(), ShowID(pid), str);
+    }
 }
 
 gemNPCObject* NPC::GetTarget()
@@ -1168,6 +1206,48 @@ RaceInfo_t* NPC::GetRaceInfo()
 }
 
 
+void NPC::TakeControl(gemNPCActor* actor)
+{
+    controlledActors.PushSmart(csWeakRef<gemNPCActor>(actor));
+}
+
+void NPC::ReleaseControl(gemNPCActor* actor)
+{
+    controlledActors.Delete(csWeakRef<gemNPCActor>(actor));
+}
+
+void NPC::UpdateControlled()
+{
+    if (controlledActors.IsEmpty())
+    {
+        return;
+    }
+
+    csVector3 pos,vel;
+    float yrot;
+    iSector* sector;
+    
+    psGameObject::GetPosition(GetActor(), pos, yrot, sector);
+    vel = GetLinMove()->GetVelocity();
+
+    for (size_t i = 0; i < controlledActors.GetSize(); i++)
+    {
+        if (controlledActors[i].IsValid())
+        {
+            gemNPCActor* controlled = controlledActors[i];
+
+            // TODO: Calculate some offset from controlled to controlling
+
+            // For now use controlling position for controlled
+            psGameObject::SetPosition(controlled, pos, sector);
+            psGameObject::SetRotationAngle(controlled, yrot);
+            controlled->pcmove->SetVelocity(vel);
+            
+            // Queue the new controlled position to the server.
+            networkmanager->QueueControlCommand(GetActor(), controlled );
+        }
+    }
+}
 
 void NPC::CheckPosition()
 {
@@ -1287,6 +1367,9 @@ void NPC::SetBuffer(const csString& bufferName, const csString& value)
 
 void NPC::ReplaceBuffers(csString& result)
 {
+    // Only replace if there is something to replace
+    if (result.Find("$NBUFFER[") == ((size_t)-1) ) return;
+
     BufferHash::GlobalIterator iter = npcBuffer.GetIterator();
     while (iter.HasNext())
     {
@@ -1298,6 +1381,81 @@ void NPC::ReplaceBuffers(csString& result)
         
         result.ReplaceAll(replace,value);
     }
+}
+
+void NPC::ReplaceLocations(csString& result)
+{
+    size_t startPos,endPos;
+    
+    // Only replace if there is something to replace
+    startPos = result.Find("$LOCATION[");
+    while (startPos != ((size_t)-1))
+    {
+        endPos = result.FindFirst(']',startPos);
+        if (endPos == ((size_t)-1)) return; // There should always be a ] after $LOCATION
+
+        csString locationString = result.Slice(startPos+10,endPos-(startPos+10));
+
+        csArray<csString> strArr = psSplit(locationString,'.');
+        if (strArr.GetSize() != 2) return; // Should always be a location and an attribute.
+        
+        NPC::Locate* location = storedLocates.Get(strArr[0],NULL);
+        if (!location)
+        {
+            Error4("NPC %s(%s) Failed to find location %s in replace locations",
+                   GetName(),ShowID(GetEID()),strArr[0].GetDataSafe());
+            return; // Failed to find location
+        }
+        
+        csString replace;
+        
+
+        if (strArr[1].CompareNoCase("targetEID"))
+        {
+            if (location->target.IsValid())
+            {
+                replace = ShowID(location->target->GetEID());
+            }
+        }
+        else if (strArr[1].CompareNoCase("targetName"))
+        {
+            if (location->target.IsValid())
+            {
+                replace = location->target->GetName();
+            }
+        } else
+        {
+            Error5("NPC %s(%s) Failed to find find attribute %s for location %s in replace locations",
+                   GetName(),ShowID(GetEID()),strArr[1].GetDataSafe(),strArr[0].GetDataSafe());
+            return; // Not implemented or unkown attribute.
+        }
+
+        result.DeleteAt(startPos,endPos-startPos+1);
+        result.Insert(startPos,replace);
+
+        startPos = result.Find("$LOCATION[");
+    }
+}
+
+bool NPC::SwitchDebugging()
+{
+    debugging = !debugging;
+    return IsDebugging();
+}
+
+void NPC::SetDebugging(int debug)
+{
+    debugging = debug;
+}
+
+void NPC::AddDebugClient(uint clientnum)
+{
+    debugClients.PushSmart(clientnum);
+}
+
+void NPC::RemoveDebugClient(uint clientnum)
+{
+    debugClients.Delete(clientnum);
 }
 
 

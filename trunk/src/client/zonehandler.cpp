@@ -195,10 +195,10 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
 
     Notify3(LOG_LOAD, "Crossed from sector %s to sector %s.", msg.oldSector.GetData(), msg.newSector.GetData());
         
-    LoadZone(msg.pos, msg.newSector);
+    LoadZone(msg.pos, msg.newSector, 0);
 }
 
-void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
+void ZoneHandler::LoadZone(csVector3 pos, const char* sector, float vel, bool force)
 {
     if((loading || !strcmp(sector, LOADING_SECTOR)) && !force)
         return;
@@ -215,7 +215,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
     }
 
     // Move player to the loading sector.
-    MovePlayerTo(csVector3(0.0f), LOADING_SECTOR);
+    MovePlayerTo(csVector3(0.0f), LOADING_SECTOR, vel);
 
     // load target location
     if(!psengine->BackgroundWorldLoading())
@@ -285,10 +285,10 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, bool force)
 
     // do move the player in *any* case to make sure we won't end up looping to death
     // move player to new pos
-    MovePlayerTo(newPos, sectorToLoad);
+    MovePlayerTo(newPos, sectorToLoad, vel);
 }
 
-void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSector)
+void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSector, float newVel)
 {
     if(!celclient->IsReady())
         return;
@@ -304,6 +304,7 @@ void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSec
     {
         Notify5(LOG_LOAD, "Setting position of player %f %f %f in sector '%s'", newPos.x, newPos.y, newPos.z, newSector.GetData());
         celclient->GetMainPlayer()->SetPosition(newPos, yrot, sector);          // set new position
+        celclient->GetMainPlayer()->SetVelocity(csVector3(0.0,0.0,newVel));
     }
     else
     {
@@ -318,7 +319,7 @@ void ZoneHandler::OnDrawingFinished()
         if(psengine->GetLoader()->GetLoadingCount() == 0 && csGetTicks() >= forcedLoadingEndTime)
         {
             // move player to new pos
-            MovePlayerTo(newPos, sectorToLoad);
+            MovePlayerTo(newPos, sectorToLoad, 0.0);
 
             if(psengine->HasLoadedMap())
                 loadWindow->Hide();

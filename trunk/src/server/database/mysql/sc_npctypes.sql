@@ -60,7 +60,9 @@ INSERT INTO sc_npctypes VALUES("3","InRegion","",0,"","","out of bounds","","","
 </behavior> 
 
 <react event="move back in region" behavior="MoveBackInRegion" do_not_interrupt="GoToRegion,Move" />
-<react event="out of bounds"       behavior="MoveBackInRegion" do_not_interrupt="GoToRegion,Move" />');
+<react event="out of bounds"       behavior="MoveBackInRegion" do_not_interrupt="GoToRegion,Move" />
+<!-- In case of collision run MoveBackInRegion to select a new random point in the region -->
+<react event="collision"           behavior="MoveBackInRegion" />');
 
 INSERT INTO sc_npctypes VALUES("4","Fight","",0,"","","","","","1",
 '<behavior name="Fight"   initial="0" growth="0" decay="0" completion_decay="-1" >
@@ -1047,15 +1049,12 @@ INSERT INTO sc_npctypes VALUES("119","MoveUnderground","DoNothing",0,"$walk","",
    <wander anim="walk" random="yes" underground="true" />
 </behavior>');
 
-INSERT INTO sc_npctypes VALUES("120","WinchMover","DoNothing",0,"","","","","","0",
+INSERT INTO sc_npctypes VALUES("120","WinchMover","DoNothing,Move",0,"","","","","","0",
 '<!-- Initial behavior to locate the starting point -->
-<behavior name="Initialize" completion_decay="-1" initial="1000">
+<behavior name="Initialize" resume="yes" completion_decay="-1" initial="1000">
    <!--debug level="0" /-->
-   <locate obj="waypoint"  static="no" />    <!-- Locate nearest waypoint -->
-   <navigate anim="walk" />                  <!-- Local navigation -->
-   <locate obj="winch:Mover pos 1" static="no" />
-   <wander anim="walk" />        <!-- Navigate using waypoints -->
-   <navigate anim="walk" />      <!-- Local navigation -->
+   <locate obj="winch:Mover pos 1" static="no" destination="Move" />
+   <percept event="move" />
    <rotate type="absolute" value="180" ang_vel="20"/>
 </behavior>
 
@@ -1065,9 +1064,20 @@ INSERT INTO sc_npctypes VALUES("120","WinchMover","DoNothing",0,"","","","","","
    <wait duration="10" anim="stand" />
 </behavior>
 
-<react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />');
+<behavior name="bring_up" resume="yes" completion_decay="-1" >
+   <locate obj="player" range="20" destination="Player" />
+   <copy_locate source="Player" destination="Active" only="target" />
+   <talk text="I will have the winch beast bring you to the winch." target="true" />
+   <locate obj="entity:name:WinchBeast1" />
+   <talk text="$target please bring $LOCATION[Player.targetName] to the winch." target="false" />
+   <percept event="BringPlayer" type="entity:$LOCATION[Player.targetEID]" target="target" />
+</behavior>
 
-INSERT INTO sc_npctypes VALUES("121","WinchBeast","DoNothing",0,"","","","","","0",
+<react event="talk" inactive_only="yes" faction_diff="-100" oper=">" behavior="turn to face" delta="100"  when_invisible="yes" when_invincible="yes" />
+<react event="npccmd:self:bring_up" behavior="bring_up" delta="100" inactive_only="yes"/>
+');
+
+INSERT INTO sc_npctypes VALUES("121","WinchBeast","DoNothing,Move",0,"","","","","","0",
 '<!-- Test interaction with sequences in the map -->
 <!-- and communication from other NPCs using NPCCMD -->
 
@@ -1096,6 +1106,22 @@ INSERT INTO sc_npctypes VALUES("121","WinchBeast","DoNothing",0,"","","","","","
    <circle radius="2.5" angle="-360" anim="walk" vel="2" />
    <rotate type="relative" value="90" ang_vel="20"/>
 </behavior> 
+
+<behavior name="bring_player" resume="yes" completion_decay="-1" >
+   <locate obj="$perception_type" static="no" destination="Player" /> <!-- Expected perception type to be "entity:eid:<eid>" -->
+   <copy_locate source="Player" destination="Move" />
+   <percept event="move" />
+   <copy_locate source="Player" destination="Active" only="target" />
+   <control />
+   <locate obj="winch:Beast pos 1" destination="Move" />
+   <percept event="move" />
+   <copy_locate source="Player" destination="Active" only="target" />
+   <wait duration="5" />
+   <release_control />
+   <rotate type="absolute" value="90" ang_vel="20"/>
+</behavior>
+<react event="BringPlayer" behavior="bring_player" />
+
 
 <react event="npccmd:global:winch_up" behavior="winch_up" delta="100" inactive_only="yes"/>
 <react event="npccmd:global:winch_down" behavior="winch_down" delta="100" inactive_only="yes"/>');

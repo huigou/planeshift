@@ -490,6 +490,14 @@ public:
 
     virtual void SetPosition(const csVector3& pos, float rot, iSector* sector);
 
+    /** Set the velocity of the actor.
+     */
+    void SetVelocity(const csVector3& vel);
+
+    /** Set the rotation of the actor.
+     */
+    void SetYRotation(const float yrot);
+    
     void SetAlive( bool aliveFlag, bool newactor );
     virtual bool IsAlive() { return alive; }
     virtual int GetMasqueradeType() { return masqueradeType; }

@@ -1066,6 +1066,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new CopyLocateOperation;
         }
+        else if ( strcmp( node->GetValue(), "control" ) == 0 )
+        {
+            op = new ControlOperation(true);
+        }
         else if ( strcmp( node->GetValue(), "circle" ) == 0 )
         {
             op = new CircleOperation;
@@ -1147,6 +1151,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "pickup" ) == 0 )
         {
             op = new PickupOperation;
+        }
+        else if ( strcmp( node->GetValue(), "release_control" ) == 0 )
+        {
+            op = new ControlOperation(false);
         }
         else if ( strcmp( node->GetValue(), "reproduce" ) == 0 )
         {
@@ -1721,10 +1729,19 @@ float psGameObject::Calc2DDistance(const csVector3 & a, const csVector3 & b)
 
 csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
 {
-    csString result(object);
+    // Check if there are any $ sign in the string. If not there is no more to do
+    if (object.FindFirst('$') == ((size_t)-1)) return object;
+
+    // Now check if any of the $ signs is something to replace
+    csString result(object);  // Result will hold the string with all variables replaced
 
     // First replace buffers, this so that keywords can be put into buffers as well.
     npc->ReplaceBuffers(result);
+    
+    // Replace locations
+    npc->ReplaceLocations(result);
+
+    // Replace tribe stuff
     if (npc->GetTribe())
     {
         npc->GetTribe()->ReplaceBuffers(result);
@@ -1749,6 +1766,12 @@ csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
         result.ReplaceAll("$target",npc->GetTarget()->GetName());
     }
 
+    if (npc->GetLastPerception())
+    {
+        result.ReplaceAll("$perception_type",npc->GetLastPerception()->GetType());
+    }
+
+    npc->Printf(10,"Replaced variables in '%s' to get '%s'",object.GetDataSafe(),result.GetDataSafe());
 
     return result;
 }

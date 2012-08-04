@@ -202,7 +202,8 @@ public:
 
     enum PerceptionType
     {
-        CMD_TERMINATOR, // cmds go from superclient to server
+        // Commands go from superclient to server
+        CMD_TERMINATOR,
         CMD_ASSESS,
         CMD_ATTACK,
         CMD_BUSY,
@@ -219,21 +220,24 @@ public:
         CMD_SEQUENCE,
         CMD_SIT,
         CMD_SPAWN,
-        CMD_SPAWN_BUILDING, // used for superclient to request a new building
+        CMD_SPAWN_BUILDING,     // used for superclient to request a new building
         CMD_TALK,
         CMD_TRANSFER,
         CMD_VISIBILITY,
         CMD_WORK,
-        PCPT_ANYRANGEPLAYER, // perceptions go from server to superclient
+        CMD_CONTROL,
+        // Perceptions go from server to superclient
+        PCPT_ANYRANGEPLAYER,    
         PCPT_ASSESS, 
         PCPT_ATTACK,
-        PCPT_CHANGE_BRAIN, //Command to superclient used to change the brain of an npc.
+        PCPT_CHANGE_BRAIN,      // Command to superclient used to change the brain of an npc.
         PCPT_DEATH,
+        PCPT_DEBUG_NPC,         // Command the superclient to change the debug level of an npc.
         PCPT_DMG,
         PCPT_FAILED_TO_ATTACK,
         PCPT_FLAG,
         PCPT_GROUPATTACK,
-        PCPT_INFO_REQUEST, //Command to superclient, not a perception
+        PCPT_INFO_REQUEST,      // Command to superclient, not a perception
         PCPT_INVENTORY,
         PCPT_LONGRANGEPLAYER,
         PCPT_NPCCMD,
