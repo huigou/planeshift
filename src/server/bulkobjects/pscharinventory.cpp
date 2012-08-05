@@ -1019,8 +1019,8 @@ bool psCharacterInventory::hasItemName(csString & itemname, bool includeEquipmen
         if (inventory[i].item && (csString)inventory[i].item->GetName() == itemname &&
            (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
            (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1) &&
-           (qualityMin < 1 || inventory[i].item->GetItemQuality() >= qualityMin) &&
-           (qualityMax < 1 || inventory[i].item->GetItemQuality() <= qualityMax))
+           (qualityMin < 1.0f || inventory[i].item->GetItemQuality() >= qualityMin) &&
+           (qualityMax < 1.0f || inventory[i].item->GetItemQuality() <= qualityMax))
             return true;
     }
     return false;
@@ -1476,8 +1476,8 @@ bool psCharacterInventory::hasItemCategory(csString & categoryname, bool include
             if(inventory[i].item && inventory[i].item->GetCategory()->name == categoryname &&
               (includeEquipment || inventory[i].item->GetLocInParent(true) >= PSCHARACTER_SLOT_BULK1) &&
               (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1) &&
-              (qualityMin < 1 || inventory[i].item->GetItemQuality() >= qualityMin) &&
-              (qualityMax < 1 || inventory[i].item->GetItemQuality() <= qualityMax))
+              (qualityMin < 1.0f || inventory[i].item->GetItemQuality() >= qualityMin) &&
+              (qualityMax < 1.0f || inventory[i].item->GetItemQuality() <= qualityMax))
                 return true;
         }
     }
@@ -1486,8 +1486,8 @@ bool psCharacterInventory::hasItemCategory(csString & categoryname, bool include
         for (size_t i = 0; i < storageInventory.GetSize(); i++)
         {
             if((storageInventory[i]->GetCategory()->name == categoryname) &&
-              (qualityMin < 1 || inventory[i].item->GetItemQuality() >= qualityMin) &&
-              (qualityMax < 1 || inventory[i].item->GetItemQuality() <= qualityMax))
+              (qualityMin < 1.0f || inventory[i].item->GetItemQuality() >= qualityMin) &&
+              (qualityMax < 1.0f || inventory[i].item->GetItemQuality() <= qualityMax))
                 return true;
         }
     }

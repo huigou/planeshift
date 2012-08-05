@@ -638,7 +638,7 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
         }
         else if(subcommand.StartsWith("item",true)) //this manages the item argument Require equipped/possessed item xxxx
         {
-            csString itemName = subcommand.Slice(4, subcommand.Length()); //no need to trim done above
+            csString itemName = subcommand.Slice(5, subcommand.Length()); //no need to trim done above
             command.Format("<item inventory=\"%d\" name=\"%s\" ", inventory, itemName.GetData());
         }
 
