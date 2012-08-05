@@ -333,6 +333,11 @@ void WorkManager::HandleRepair(Client* client, const csString &repairSlotName)
             return;
         }
         repairTool = client->GetCharacterData()->Inventory().GetInventoryIndexItem(index);
+        if(repairTool == repairTarget)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You can't use your repair tool on itself.");
+            return;
+        }
     }
     else
     {
@@ -3793,6 +3798,7 @@ bool WorkManager::CalculateQuality(float factor, psItem* transItem, gemActor* wo
         currentQuality = env.Lookup("Quality")->GetValue();
         return (currentQuality > 0);
     }
+    return false;
 }
 
 void WorkManager::SendTransformError(uint32_t clientNum, unsigned int result, uint32 curItemId, int curItemQty)
