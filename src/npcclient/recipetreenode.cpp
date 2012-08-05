@@ -71,7 +71,7 @@ bool RecipeTreeNode::AddChild(RecipeTreeNode* child, Recipe* parent)
         AddChild(child);
         return true;
     }
-    for(int i=0;i<children.GetSize();i++)
+    for(size_t i=0; i<children.GetSize(); i++)
     {
         if(children[i]->AddChild(child,parent))
             return true;
@@ -81,7 +81,7 @@ bool RecipeTreeNode::AddChild(RecipeTreeNode* child, Recipe* parent)
 
 bool RecipeTreeNode::RemoveChild(RecipeTreeNode* child)
 {
-    for(int i=0;i<children.GetSize();i++)
+    for(size_t i=0; i<children.GetSize(); i++)
     {
         if(children[i] == child)
         {
@@ -98,7 +98,7 @@ bool RecipeTreeNode::RemoveChild(RecipeTreeNode* child)
 
 bool RecipeTreeNode::RemoveChild(Recipe* child)
 {
-    for(int i=0;i<children.GetSize();i++)
+    for(size_t i=0; i<children.GetSize(); i++)
     {
         if(children[i]->recipe == child)
         {
@@ -125,7 +125,7 @@ RecipeTreeNode* RecipeTreeNode::GetTreeRecipe(Recipe* searchRecipe)
         return this;
     }
     RecipeTreeNode* search;
-    for(int i=0;i<children.GetSize();i++)
+    for(size_t i=0; i<children.GetSize(); i++)
     {
         search = children[i]->GetTreeRecipe(searchRecipe);
         if(search)
@@ -165,7 +165,7 @@ RecipeTreeNode* RecipeTreeNode::GetNextRecipe()
             }
         }
 
-        for(int i=0;i<node->children.GetSize();i++)
+        for(size_t i=0; i<node->children.GetSize(); i++)
         {
             queue.Push(node->children[i]);
         }
@@ -183,7 +183,7 @@ void RecipeTreeNode::UpdateWaitTimes(int delta)
         wait = 0;
     }
 
-    for(int i=0;i<children.GetSize();i++)
+    for(size_t i=0; i<children.GetSize(); i++)
     {
         children[i]->UpdateWaitTimes(delta);
     }
@@ -201,7 +201,7 @@ bool RecipeTreeNode::ModifyWait(Recipe* theRecipe, int delta)
         }
         return true;
     }
-    for(int i=0;i<children.GetSize();i++)
+    for(size_t i=0; i<children.GetSize(); i++)
     {
         if(children[i]->ModifyWait(theRecipe,delta))
         {
@@ -221,7 +221,7 @@ void RecipeTreeNode::DumpRecipeTree(int index)
             priority,
             wait,
             nextStep);
-    for(int i=0;i<children.GetSize();i++)
+    for(size_t i=0; i<children.GetSize(); i++)
     {
         index++;
         children[i]->DumpRecipeTree(index);
@@ -234,7 +234,7 @@ void RecipeTreeNode::DumpRecipeTreeRecipes(int index)
     CPrintf(CON_NOTIFY,"RequirementParseType: %s\n", RequirementParseTypeString[requirementParseType]);
     recipe->Dump();
     CPrintf(CON_NOTIFY, "\n");
-    for(int i=0;i<children.GetSize();i++)
+    for(size_t i=0; i<children.GetSize(); i++)
     {
         index++;
         children[i]->DumpRecipeTreeRecipes(index);

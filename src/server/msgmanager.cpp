@@ -137,8 +137,8 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
     csArray<csString> splitTarget = psSplit(target, ':');
     size_t splitSize = splitTarget.GetSize();
 
-    if (splitSize < 3 || (splitTarget[2] != "map" && splitSize > 4) ||
-        splitTarget[2] == "map" && (splitSize > 5 || splitSize < 4))
+    if ((splitSize < 3) || (splitTarget[2] != "map" && splitSize > 4) ||
+        ((splitTarget[2] == "map") && (splitSize > 5 || splitSize < 4)))
     {
         psserver->SendSystemError(client->GetClientNum(),
                 "Try /$CMD area:item:range/map:mapname[:name]");

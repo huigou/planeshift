@@ -287,9 +287,9 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
     int scoreRank;
     psItem* instrItem;
     csTicks bonusTime = 0;
-    uint32 actorEID = charActor->GetEID().Unbox();
+    uint32_t actorEID = charActor->GetEID().Unbox();
     psCharacter* charData = charActor->GetCharacterData();
-    int charClientID = charActor->GetProxList()->GetClientID();
+    uint32_t charClientID = charActor->GetProxList()->GetClientID();
 
     // forwarding the message to the whole proximity list
     if(!isProcessedSongEnded) // no need to send it

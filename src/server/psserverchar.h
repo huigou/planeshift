@@ -65,18 +65,18 @@ public:
     bool Initialize();
 
     /// Sends the client an inventory
-    virtual bool SendInventory( int clientNum, bool sendUpdatesOnly=true );
+    virtual bool SendInventory( uint32_t clientNum, bool sendUpdatesOnly=true );
 
     void SendPlayerMoney( Client *client, bool storage = false);
 
     /// Update all views with items
-    virtual bool UpdateItemViews( int clientNum );
+    virtual bool UpdateItemViews( uint32_t clientNum );
 
     /** Sends out sound messages to the client
      *
      * @todo Modify to be able to send to all the people around client
      */
-    void SendOutPlaySoundMessage( int clientnum, const char* itemsound, const char* action );
+    void SendOutPlaySoundMessage( uint32_t clientNum, const char* itemsound, const char* action );
 
     /** Sends out equipment messages to all the people around client.
      *

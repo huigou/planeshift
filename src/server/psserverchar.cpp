@@ -402,7 +402,7 @@ void ServerCharManager::HandleInventoryMessage(MsgEntry* me,Client *client)
     }
 }
 
-bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
+bool ServerCharManager::SendInventory( uint32_t clientNum, bool sendUpdatesOnly)
 {
     psGUIInventoryMessage* outgoing;
 
@@ -412,7 +412,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
 
     bool exchanging = (client->GetExchangeID() != 0); // When exchanging, only send partial inv of what is not offered
 
-    int toClientNumber = clientNum;
+    uint32_t toClientNumber = clientNum;
 //    int itemCount, itemRemovedCount;
 //    unsigned int z;
 
@@ -431,11 +431,6 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
         psItem *item  = invitem->GetItem();
 
         int slot  = item->GetLocInParent(true);
-
-        int invType = CONTAINER_INVENTORY_BULK;
-
-        if (slot < PSCHARACTER_SLOT_BULK1)  // equipped if < than first bulk
-            invType = CONTAINER_INVENTORY_EQUIPMENT;
 
         Notify5(LOG_EXCHANGES, "  Inv item %s, slot %d, weight %1.1f, stack count %u\n",item->GetName(), slot, item->GetWeight(), item->GetStackCount() );
         msgsize += strlen(item->GetName()) + 1 + sizeof(uint32_t) * 5 + sizeof(float) * 2 + strlen(item->GetImageName()) + 1 + sizeof(uint8_t);
@@ -505,7 +500,7 @@ bool ServerCharManager::SendInventory( int clientNum, bool sendUpdatesOnly)
     return true;
 }
 
-bool ServerCharManager::UpdateItemViews( int clientNum )
+bool ServerCharManager::UpdateItemViews( uint32_t clientNum )
 {
     Client* client = psserver->GetNetManager()->GetClient(clientNum);
 
@@ -1174,9 +1169,9 @@ bool ServerCharManager::VerifyTrade( Client * client, psCharacter * character, p
 }
 
 
-void ServerCharManager::SendOutPlaySoundMessage( int clientnum, const char* itemsound, const char* action )
+void ServerCharManager::SendOutPlaySoundMessage( uint32_t clientNum, const char* itemsound, const char* action )
 {
-    if (clientnum == 0 || itemsound == NULL || action == NULL)
+    if (clientNum == 0 || itemsound == NULL || action == NULL)
         return;
 
     csString sound = itemsound;
@@ -1187,9 +1182,9 @@ void ServerCharManager::SendOutPlaySoundMessage( int clientnum, const char* item
     sound += ".";
     sound += action;
 
-    Debug3(LOG_SOUND,clientnum,"Sending sound %s to client %d", sound.GetData(), clientnum);
+    Debug3(LOG_SOUND, clientNum, "Sending sound %s to client %d", sound.GetData(), clientNum);
 
-    psPlaySoundMessage msg(clientnum, sound);
+    psPlaySoundMessage msg(clientNum, sound);
     psserver->GetEventManager()->SendMessage(msg.msg);
 
 // TODO: Sounds should really be multicasted, so others can hear them

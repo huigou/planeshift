@@ -57,7 +57,7 @@ void psMessageCracker::SendMessage()
 }
 
 
-void psMessageCracker::Multicast(csArray<PublishDestination>& multi, int except, float range)
+void psMessageCracker::Multicast(csArray<PublishDestination>& multi, uint32_t except, float range)
 {
     CS_ASSERT(valid);
     CS_ASSERT(msg);

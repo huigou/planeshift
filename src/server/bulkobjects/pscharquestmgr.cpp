@@ -292,7 +292,7 @@ bool psCharacterQuestManager::CompleteQuest(psQuest *quest)
             csArray<int> &steps = q->GetQuest()->GetParentQuest()->GetSubQuests();
             unsigned int maxCompletionOrder = 0;
             
-            for(int i = 0; i < steps.GetSize(); ++i)
+            for(size_t i = 0; i < steps.GetSize(); ++i)
             {
                 
                 //Check if the quest is assigned and completed in order to check its completion numbering
@@ -518,8 +518,6 @@ bool psCharacterQuestManager::UpdateQuestAssignments(bool force_update)
         QuestAssignment *q = assignedQuests[i];
         if (q->GetQuest().IsValid() && (q->dirty || force_update))
         {
-            int r;
-
             // will delete the quest only after the expiration time, so the player cannot get it again immediately
             // If it's a step, We can delete it even though it has inf lockout
             if (q->status == PSQUEST_DELETE &&
@@ -528,8 +526,8 @@ bool psCharacterQuestManager::UpdateQuestAssignments(bool force_update)
                  (q->lockout_end < owner->GetTotalOnlineTime()))) ||
                  q->GetQuest()->GetParentQuest()))   // delete
             {
-                r = db->CommandPump("DELETE FROM character_quests WHERE player_id=%d AND quest_id=%d",
-                                    owner->GetPID().Unbox(), q->GetQuest()->GetID());
+                db->CommandPump("DELETE FROM character_quests WHERE player_id=%d AND quest_id=%d",
+                                owner->GetPID().Unbox(), q->GetQuest()->GetID());
 
                 delete assignedQuests[i];
                 assignedQuests.DeleteIndex(i);

@@ -1289,7 +1289,6 @@ void UserManager::NotifyGuildBuddies(Client * client, bool logged_in)
 void UserManager::NotifyAllianceBuddies(Client * client, bool logged_in)
 {
     csString name (client->GetName());
-    PID char_id = client->GetCharacterData()->GetPID();
     psGuildInfo * charGuild = client->GetCharacterData()->GetGuild();
     EID clientEID;
     psGuildAlliance * alliance;

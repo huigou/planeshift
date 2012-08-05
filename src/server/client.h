@@ -305,12 +305,12 @@ public:
     
     unsigned int GetAccountTotalOnlineTime();
 
-    void AddDuelClient(int clientnum);
+    void AddDuelClient(uint32_t clientnum);
     void RemoveDuelClient(Client *client);
     void ClearAllDuelClients();
     int GetDuelClientCount();
     int GetDuelClient(int id);
-    bool IsDuelClient(int clientnum);
+    bool IsDuelClient(uint32_t clientnum);
     void AnnounceToDuelClients(gemActor *attacker, const char *event);
 
     /// Warn or mute for chat spamming
@@ -435,7 +435,7 @@ public:
     csArray<gemNPC *> listeningNpc;
     csString name;
 
-    csArray<int> duel_clients;
+    csArray<uint32_t> duel_clients;
 
     // Flood control
     static const int floodWarn = 3;                     ///< Warn client after 3 repeated messages

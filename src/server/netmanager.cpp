@@ -653,7 +653,7 @@ Client *NetManager::GetAnyClient(int cnum)
 }
 
 
-void NetManager::Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, int except, float range)
+void NetManager::Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, uint32_t except, float range)
 {
     for (size_t i=0; i<multi.GetSize(); i++)
     {
