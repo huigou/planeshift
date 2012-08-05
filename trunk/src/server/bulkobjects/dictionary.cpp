@@ -197,7 +197,6 @@ bool NPCDialogDict::LoadSynonyms(iDataConnection *db)
 
 void NPCDialogDict::AddWords(csString& trigger)
 {
-    bool found = false; // Flag to mark if a disallowed word is found
     int wordnum=1;
     csString word("temp");
 
@@ -228,7 +227,6 @@ void NPCDialogDict::AddWords(csString& trigger)
             trigger.RTrim();
             trigger.LTrim();
             wordnum--;  // Back up a word since we took one out.
-            found = true; // Mark that we found a disallowed word.
             continue;
         }
 
@@ -249,7 +247,6 @@ void NPCDialogDict::AddWords(csString& trigger)
         {
             // add word
             found = new NpcTerm(word);
-            //            CPrintf(CON_DEBUG, "Adding %s.\n",(const char *)word);
             phrases.Put(found->term, found);
         }
     }

@@ -277,7 +277,6 @@ bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client *client, float rang
     // look for other players in range (ignoring NPCs & pets).
     gemActor *registeringGM = client->GetActor();
     csArray<gemObject*> *targetsInRange = registeringGM->GetObjectsInRange(range);
-    bool regResult;
     for (size_t i=0; i<targetsInRange->GetSize(); i++)
     {
         gemObject *nearbyTarget;
@@ -285,7 +284,7 @@ bool GMEventManager::RegisterPlayersInRangeInGMEvent (Client *client, float rang
         if ((nearbyTarget=targetsInRange->Get(i)) && (target=nearbyTarget->GetClient()) &&
             target != client && target->IsReady())
         {
-            regResult = RegisterPlayerInGMEvent (client, target);
+            RegisterPlayerInGMEvent (client, target);
         }
     }
 

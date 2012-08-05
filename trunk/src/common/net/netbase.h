@@ -94,10 +94,10 @@ typedef GenericRefQueue <psNetPacketEntry> NetPacketQueue;
 
 struct PublishDestination
 {
-    int client;
-    void *object;
-    float dist;
-    float min_dist;
+    uint32_t client;
+    void*    object;
+    float    dist;
+    float    min_dist;
 
     PublishDestination(int client, void* object, float dist, float min_dist) : client(client), object(object), dist(dist), min_dist(min_dist) {}
 };
@@ -172,7 +172,7 @@ public:
     /**
      * Mulitcast a message, to all client nums
      */
-    virtual void Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, int except, float range) = 0;
+    virtual void Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, uint32_t except, float range) = 0;
 
     /**
      * Is this connection ready to use?

@@ -155,7 +155,7 @@ public:
     { netbase->Broadcast(msg, scope, guildID); }
 
     /// Send messages to all listed client nums.
-    virtual void Multicast(MsgEntry* msg, csArray<PublishDestination>& multi, int except, float range)
+    virtual void Multicast(MsgEntry* msg, csArray<PublishDestination>& multi, uint32_t except, float range)
     { netbase->Multicast(msg, multi, except, range); }
 
     void AddToLocalQueue(MsgEntry *me) { netbase->QueueMessage(me); }

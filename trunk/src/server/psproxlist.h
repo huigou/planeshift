@@ -112,7 +112,7 @@ public:
     csArray<PublishDestination>& GetClients() { return objectsThatWatchMe; }
     int GetClientID() { return clientnum; }
 
-    bool FindClient(int cnum);
+    bool FindClient(uint32_t cnum);
     gemObject *FindObjectName(const char *name);
 
     /**

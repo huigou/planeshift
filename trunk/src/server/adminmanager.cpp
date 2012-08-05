@@ -6317,26 +6317,30 @@ void AdminManager::UpdateDisplayWaypoint(Waypoint* wp)
 
         if(client->WaypointIsDisplaying())
         {
+            // Hide
+            psStopEffectMessage hide(client->GetClientNum(), wp->GetEffectID(this));
+            hide.SendMessage();
+
             csList<iSector*>::Iterator iter = client->GetWaypointDisplaying();
             while(iter.HasNext())
             {
                 iSector* sector = iter.Next();
 
-                // Hide
-                psStopEffectMessage hide(client->GetClientNum(), wp->GetEffectID(this));
-                hide.SendMessage();
-                // Display
-                // TODO: Include sector in psEffectMessage
-                psEffectMessage show(client->GetClientNum(),"admin_waypoint",wp->GetPosition(),0,0,
-                                     wp->GetEffectID(this),wp->GetRadius());
-                show.SendMessage();
-
-                csPDelArray<Edge>::Iterator iter = wp->edges.GetIterator();
-                while(iter.HasNext())
+                if (client->GetActor()->GetSector() == sector)
                 {
-                    Edge* edge = iter.Next();
-
-                    UpdateDisplayPath(edge->GetStartPoint());
+                    // Display
+                    // TODO: Include sector in psEffectMessage
+                    psEffectMessage show(client->GetClientNum(),"admin_waypoint",wp->GetPosition(),0,0,
+                                         wp->GetEffectID(this),wp->GetRadius());
+                    show.SendMessage();
+                    
+                    csPDelArray<Edge>::Iterator iter = wp->edges.GetIterator();
+                    while(iter.HasNext())
+                    {
+                        Edge* edge = iter.Next();
+                        
+                        UpdateDisplayPath(edge->GetStartPoint());
+                    }
                 }
             }
         }
@@ -7276,36 +7280,40 @@ void AdminManager::UpdateDisplayLocation(Location* location)
 
         if(client->LocationIsDisplaying())
         {
+            // Hide
+            psStopEffectMessage hide(client->GetClientNum(), location->GetEffectID(this));
+            hide.SendMessage();
+            if(location->IsRegion())
+            {
+                for(size_t i = 0; i < location->locs.GetSize(); i++)
+                {
+                    Location* loc = location->locs[i];
+                    psStopEffectMessage msg(client->GetClientNum(), loc->GetEffectID(this));
+                    msg.SendMessage();
+                }
+            }
+
             csList<iSector*>::Iterator iter = client->GetLocationDisplaying();
             while(iter.HasNext())
             {
                 iSector* sector = iter.Next();
 
-                // Hide
-                psStopEffectMessage hide(client->GetClientNum(), location->GetEffectID(this));
-                hide.SendMessage();
-                if(location->IsRegion())
+                if (client->GetActor()->GetSector() == sector)
                 {
-                    for(size_t i = 0; i < location->locs.GetSize(); i++)
+                    // Display
+                    // TODO: Include sector in psEffectMessage
+                    psEffectMessage show(client->GetClientNum(),"admin_location",location->GetPosition(),0,0,
+                                         location->GetEffectID(this),location->GetRadius());
+                    show.SendMessage();
+                    if(location->IsRegion())
                     {
-                        Location* loc = location->locs[i];
-                        psStopEffectMessage msg(client->GetClientNum(), loc->GetEffectID(this));
-                        msg.SendMessage();
-                    }
-                }
-                // Display
-                // TODO: Include sector in psEffectMessage
-                psEffectMessage show(client->GetClientNum(),"admin_location",location->GetPosition(),0,0,
-                                     location->GetEffectID(this),location->GetRadius());
-                show.SendMessage();
-                if(location->IsRegion())
-                {
-                    for(size_t i = 0; i < location->locs.GetSize(); i++)
-                    {
-                        Location* loc = location->locs[i];
-                        psEffectMessage msg(client->GetClientNum(),"admin_location",
-                                            loc->GetPosition(),0,0,loc->GetEffectID(this),loc->GetRadius());
-                        msg.SendMessage();
+                        for(size_t i = 0; i < location->locs.GetSize(); i++)
+                        {
+                            Location* loc = location->locs[i];
+                            psEffectMessage msg(client->GetClientNum(),"admin_location",
+                                                loc->GetPosition(),0,0,loc->GetEffectID(this),loc->GetRadius());
+                            msg.SendMessage();
+                        }
                     }
                 }
             }
@@ -11494,13 +11502,12 @@ int AdminManager::GetTrueSecurityLevel(AccountID accountID)
 void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataGameMasterEvent* data = dynamic_cast<AdminCmdDataGameMasterEvent*>(cmddata);
-    bool gmeventResult;
     GMEventManager* gmeventManager = psserver->GetGMEventManager();
 
     // add new event
     if(data->subCmd == "create")
     {
-        gmeventResult = gmeventManager->AddNewGMEvent(client, data->gmeventName, data->gmeventDesc);
+        gmeventManager->AddNewGMEvent(client, data->gmeventName, data->gmeventDesc);
         return;
     }
 
@@ -11510,11 +11517,11 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
         /// this looks odd, because the range value is in the 'player' parameter.
         if(data->rangeSpecifier == IN_RANGE)
         {
-            gmeventResult = gmeventManager->RegisterPlayersInRangeInGMEvent(client, data->range);
+            gmeventManager->RegisterPlayersInRangeInGMEvent(client, data->range);
         }
         else
         {
-            gmeventResult = gmeventManager->RegisterPlayerInGMEvent(client, data->player.targetClient);
+            gmeventManager->RegisterPlayerInGMEvent(client, data->player.targetClient);
         }
         return;
     }
@@ -11523,19 +11530,20 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
     if(data->subCmd == "complete")
     {
         if(data->gmeventName.IsEmpty())
-            gmeventResult = gmeventManager->CompleteGMEvent(client,
-                            client->GetPID());
+        {
+            gmeventManager->CompleteGMEvent(client, client->GetPID());
+        }
         else
-            gmeventResult = gmeventManager->CompleteGMEvent(client,
-                            data->gmeventName);
+        {
+            gmeventManager->CompleteGMEvent(client, data->gmeventName);
+        }
         return;
     }
 
     //remove player
     if(data->subCmd == "remove")
     {
-        gmeventResult = gmeventManager->RemovePlayerFromGMEvent(client,
-                        data->player.targetClient);
+        gmeventManager->RemovePlayerFromGMEvent(client, data->player.targetClient);
         return;
     }
 
@@ -11550,26 +11558,26 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
         csPDelArray<psRewardData>::Iterator it = data->rewardList.rewards.GetIterator();
         while(it.HasNext())
         {
-            gmeventResult = gmeventManager->RewardPlayersInGMEvent(client, data->rangeSpecifier, data->range, data->player.targetClient, it.Next());
+            gmeventManager->RewardPlayersInGMEvent(client, data->rangeSpecifier, data->range, data->player.targetClient, it.Next());
         }
         return;
     }
 
     if(data->subCmd == "list")
     {
-        gmeventResult = gmeventManager->ListGMEvents(client);
+        gmeventManager->ListGMEvents(client);
         return;
     }
 
     if(data->subCmd == "control")
     {
-        gmeventResult = gmeventManager->AssumeControlOfGMEvent(client, data->gmeventName);
+        gmeventManager->AssumeControlOfGMEvent(client, data->gmeventName);
         return;
     }
 
     if(data->subCmd == "discard")
     {
-        gmeventResult = gmeventManager->EraseGMEvent(client, data->gmeventName);
+        gmeventManager->EraseGMEvent(client, data->gmeventName);
         return;
     }
 }

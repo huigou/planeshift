@@ -344,7 +344,7 @@ public:
     /**
      * @brief Multicasts the message to all current connections.
      */
-    void Multicast(csArray<PublishDestination> &multi, int except, float range);
+    void Multicast(csArray<PublishDestination> &multi, uint32_t except, float range);
 
     /**
      * @brief Publishes the message to the local program.

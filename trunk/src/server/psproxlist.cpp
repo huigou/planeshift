@@ -226,7 +226,7 @@ void ProximityList::RemoveWatcher(gemObject *object)
     }
 }
 
-bool ProximityList::FindClient(int cnum)
+bool ProximityList::FindClient(uint32_t cnum)
 {
     for (size_t x = 0; x < objectsThatWatchMe.GetSize(); x++ )
     {

@@ -432,7 +432,6 @@ void psNPCLoader::ReadStats()
         CPrintf(CON_WARNING, "Warning: no <stats> tag found\n");
         return;
     }
-    float agility, charisma, endurance, intelligence, strength, will;
 
     csWeakRef<MathScript> setBaseSkillsScript;
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(setBaseSkillsScript, "SetBaseSkills");

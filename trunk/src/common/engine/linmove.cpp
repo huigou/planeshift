@@ -279,7 +279,6 @@ int psLinearMovement::MoveSprite (float delta)
   csReversibleTransform fulltransf = mesh->GetMovable ()
   	->GetFullTransform ();
   const csMatrix3& transf = fulltransf.GetT2O ();
-  float yrot = Matrix2YRot (transf);
 
   // Calculate the total velocity (body and world) in OBJECT space.
   csVector3 bodyVel (fulltransf.Other2ThisRelative (velWorld) + velBody);
@@ -345,7 +344,7 @@ int psLinearMovement::MoveSprite (float delta)
                 local_max_interval = delta;
         }
 
-      ret = MoveV (local_max_interval);
+        ret = MoveV (local_max_interval);
 
         csVector3 displacement(fulltransf.GetOrigin() - oldpos);
         
@@ -369,10 +368,9 @@ int psLinearMovement::MoveSprite (float delta)
         }
 
         RotateV (local_max_interval);
-        yrot = Matrix2YRot (transf);
         
         // We must update the transform after every rotation!
-            fulltransf = mesh->GetMovable ()->GetFullTransform ();
+        fulltransf = mesh->GetMovable ()->GetFullTransform ();
 
       if (ret == PS_MOVE_FAIL)
           return ret;

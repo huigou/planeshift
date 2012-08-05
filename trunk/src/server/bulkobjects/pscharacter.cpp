@@ -3203,14 +3203,13 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     size_t numberOfEvents = 0;
     csString gmeventsStr, event, name, desc;
     gmeventsStr.Append("<gmevents>");
-    GMEventStatus eventStatus;
 
     // XML: <event><name text><role text><status text><id text></event>
     if (assignedEvents.runningEventIDAsGM >= 0)
     {
-        eventStatus = psserver->GetGMEventManager()->GetGMEventDetailsByID(assignedEvents.runningEventIDAsGM,
-                                                                           name,
-                                                                           desc);
+        psserver->GetGMEventManager()->GetGMEventDetailsByID(assignedEvents.runningEventIDAsGM,
+                                                             name,
+                                                             desc);
         event.Format("<event><name text=\"%s\" /><role text=\"*\" /><status text=\"R\" /><id text=\"%d\" /></event>",
                      name.GetData(), assignedEvents.runningEventIDAsGM);
         gmeventsStr.Append(event);
@@ -3218,9 +3217,9 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     }
     if (assignedEvents.runningEventID >= 0)
     {
-        eventStatus = psserver->GetGMEventManager()->GetGMEventDetailsByID(assignedEvents.runningEventID,
-                                                                           name,
-                                       desc);
+        psserver->GetGMEventManager()->GetGMEventDetailsByID(assignedEvents.runningEventID,
+                                                             name,
+                                                             desc);
         event.Format("<event><name text=\"%s\" /><role text=\" \" /><status text=\"R\" /><id text=\"%d\" /></event>",
                      name.GetData(), assignedEvents.runningEventID);
         gmeventsStr.Append(event);
@@ -3231,9 +3230,9 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     while(iter.HasNext())
     {
         int gmEventIDAsGM = iter.Next();
-        eventStatus = psserver->GetGMEventManager()->GetGMEventDetailsByID(gmEventIDAsGM,
-                                                                           name,
-                                                                           desc);
+        psserver->GetGMEventManager()->GetGMEventDetailsByID(gmEventIDAsGM,
+                                                             name,
+                                                             desc);
         event.Format("<event><name text=\"%s\" /><role text=\"*\" /><status text=\"C\" /><id text=\"%d\" /></event>",
                      name.GetData(), gmEventIDAsGM);
         gmeventsStr.Append(event);
@@ -3244,9 +3243,9 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     while(iter2.HasNext())
     {
         int gmEventID = iter2.Next();
-        eventStatus = psserver->GetGMEventManager()->GetGMEventDetailsByID(gmEventID,
-                                                                           name,
-                                                                           desc);
+        psserver->GetGMEventManager()->GetGMEventDetailsByID(gmEventID,
+                                                             name,
+                                                             desc);
         event.Format("<event><name text=\"%s\" /><role text=\" \" /><status text=\"C\" /><id text=\"%d\" /></event>",
                      name.GetData(), gmEventID);
         gmeventsStr.Append(event);

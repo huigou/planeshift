@@ -940,7 +940,7 @@ void Tribe::TriggerEvent(Perception *pcpt, float maxRange,
 void Tribe::SendPerception(const char* pcpt, csArray<NPC*> npcs)
 {
     Perception perception(pcpt);
-    for(int i=0;i<npcs.GetSize();i++)
+    for(size_t i=0; i<npcs.GetSize(); i++)
     {
         NPC* npc = npcs[i];
         Debug4(LOG_TRIBES,GetID(),"--> Percept npc %s(%s): %s",npc->GetName(),ShowID(npc->GetEID()),perception.ToString(npc).GetDataSafe());
@@ -1039,7 +1039,7 @@ void Tribe::AddCyclicRecipe(Recipe* recipe, int time)
 
 void Tribe::DeleteCyclicRecipe(Recipe* recipe)
 {
-    for(int i=0;i<cyclicRecipes.GetSize();i++)
+    for(size_t i=0; i<cyclicRecipes.GetSize(); i++)
     {
         if(cyclicRecipes[i].recipe == recipe)
         {
@@ -1051,7 +1051,7 @@ void Tribe::DeleteCyclicRecipe(Recipe* recipe)
 
 bool Tribe::CheckKnowledge(csString knowHow)
 {
-    for(int i=0;i<knowledge.GetSize();i++)
+    for(size_t i=0; i<knowledge.GetSize(); i++)
     {
         if(knowledge[i] == knowHow)
         {
@@ -1087,7 +1087,7 @@ void Tribe::DumpKnowledge()
         CPrintf(CON_CMDOUTPUT, "No knowledge.\n");
     }
 
-    for(int i=0;i<knowledge.GetSize();i++)
+    for(size_t i=0; i<knowledge.GetSize(); i++)
     {
         CPrintf(CON_CMDOUTPUT, "%s ", knowledge[i].GetData());
     }
@@ -1121,7 +1121,7 @@ bool Tribe::LoadNPCMemoryBuffer(const char* name, csArray<NPC*> npcs)
         return false;
     }
 
-    for(int i=0;i<npcs.GetSize();i++)
+    for(size_t i=0; i<npcs.GetSize(); i++)
     {
         npcs[i]->SetBufferMemory(newLocation);
     }
@@ -1133,7 +1133,7 @@ void Tribe::LoadNPCMemoryBuffer(Tribe::Memory* memory, csArray<NPC*> npcs)
     if(!memory) return;
 
     // Just Assign
-    for(int i=0;i<npcs.GetSize();i++)
+    for(size_t i=0; i<npcs.GetSize(); i++)
     {
         npcs[i]->SetBufferMemory(memory);
     }
@@ -1151,7 +1151,7 @@ bool Tribe::CheckMembers(const csString& type, int number)
     if(type == "number")
     {
         // Check if total number is correct (we don't care if their idle or not
-        if(number <= members.GetSize())
+        if(number < 0 || (size_t)number <= members.GetSize())
         {
             return true;
         }
@@ -1159,7 +1159,7 @@ bool Tribe::CheckMembers(const csString& type, int number)
         return false;
     }
 
-    for(int i=0;i<members.GetSize();i++)
+    for(size_t i=0; i<members.GetSize(); i++)
     {
         NPC* member = members[i];
         
@@ -1194,7 +1194,7 @@ bool Tribe::CheckMembers(const csString& type, int number)
 
 bool Tribe::CheckResource(csString resource, int number)
 {
-    for(int i=0;i<resources.GetSize();i++)
+    for(size_t i=0; i<resources.GetSize(); i++)
     {
         if(resources[i].name == resource)
         {
@@ -1277,7 +1277,7 @@ csArray<NPC*> Tribe::SelectNPCs(const csString& type, const char* number)
     bool selectAny = type.CompareNoCase("any");
 
     // Loop all members. Check for type and if they are idle.
-    for(int i=0;i<members.GetSize();i++)
+    for(size_t i=0; i<members.GetSize(); i++)
     {
         NPC* member = members[i];
 
@@ -1329,7 +1329,6 @@ void Tribe::SetBuffer(const csString& bufferName, const csString& value)
 
 void Tribe::ReplaceBuffers(csString& result)
 {
-    int index = 0;
     BufferHash::GlobalIterator iter = tribeBuffer.GetIterator();
     while (iter.HasNext())
     {
@@ -1406,7 +1405,7 @@ void Tribe::SaveAsset(Tribe::Asset* asset, bool deletion)
 
 void Tribe::AddAsset(Tribe::AssetType type, csString name, gemNPCItem* item, int quantity, int id)
 {
-    for(int i=0;i<assets.GetSize();i++)
+    for(size_t i=0; i<assets.GetSize(); i++)
     {
         if(assets[i].name == name)
         {
@@ -1455,7 +1454,7 @@ void Tribe::AddAsset(Tribe::AssetType type, csString name, csVector3 position, i
 
 Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name)
 {
-    for(int i=0;i<assets.GetSize();i++)
+    for(size_t i=0; i<assets.GetSize(); i++)
     {
         if(assets[i].type == type && assets[i].name == name)
         {
@@ -1469,7 +1468,7 @@ Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name)
 
 Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status)
 {
-    for(int i=0;i<assets.GetSize();i++)
+    for(size_t i=0; i<assets.GetSize(); i++)
     {
         if(assets[i].type == type && assets[i].name == name && assets[i].status == status)
         {
@@ -1483,7 +1482,7 @@ Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, Tribe::Asset
 
 Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, csVector3 where, iSector* sector)
 {
-    for(int i=0;i<assets.GetSize();i++)
+    for(size_t i=0; i<assets.GetSize(); i++)
     {
         if(assets[i].type == type && assets[i].name == name && assets[i].pos == where && assets[i].sector == sector)
         {
@@ -1496,7 +1495,7 @@ Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, csVector3 wh
 
 void Tribe::DeleteAsset(csString name, int quantity)
 {
-    for(int i=0;i<assets.GetSize();i++)
+    for(size_t i=0; i<assets.GetSize(); i++)
     {
         if(assets[i].name == name)
         {
@@ -1515,7 +1514,7 @@ void Tribe::DeleteAsset(csString name, int quantity)
 
 void Tribe::DeleteAsset(csString name, csVector3 pos)
 {
-    for(int i=0;i<assets.GetSize();i++)
+    for(size_t i=0; i<assets.GetSize(); i++)
     {
         if(assets[i].name == name && assets[i].pos == pos)
         {
@@ -1538,7 +1537,7 @@ void Tribe::DumpAssets()
     CPrintf(CON_CMDOUTPUT, "%-15s %-25s %-6s %-25s %-15s\n",
             "Name", "Type","Quant", "Position", "Status");
 
-    for(int i=0;i<assets.GetSize();i++)
+    for(size_t i=0; i<assets.GetSize(); i++)
     {
         CPrintf(CON_CMDOUTPUT, "%-15s %-25s %-6d %-25s %-15s\n",
                 assets[i].name.GetData(),

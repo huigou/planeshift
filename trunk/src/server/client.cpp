@@ -331,7 +331,7 @@ unsigned int Client::GetAccountTotalOnlineTime()
     return totalTimeConnected;
 }
 
-void Client::AddDuelClient(int clientnum)
+void Client::AddDuelClient(uint32_t clientnum)
 {
     if (!IsDuelClient(clientnum))
         duel_clients.Push(clientnum);
@@ -371,7 +371,7 @@ int Client::GetDuelClient(int id)
     return duel_clients[id];
 }
 
-bool Client::IsDuelClient(int clientnum)
+bool Client::IsDuelClient(uint32_t clientnum)
 {
     return (duel_clients.Find(clientnum) != csArrayItemNotFound);
 }

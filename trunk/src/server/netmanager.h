@@ -99,7 +99,7 @@ public:
      * @param range: Is the maximum distance the client must be away to be out
      *     of "message reception range".
      */
-    virtual void Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, int except, float range);
+    virtual void Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, uint32_t except, float range);
 
     /** Checks for and deletes link dead clients.
      * This is called periodicly to detect linkdead clients. If it finds a
@@ -133,6 +133,7 @@ public:
      * @return Returns success or faliure.
      */
     virtual bool SendMessage (MsgEntry* me);
+    
     /**
      * Queues the message for sending later, so the calling classes don't have 
      * to all manage this themselves.

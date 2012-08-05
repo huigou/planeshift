@@ -2613,7 +2613,7 @@ public:
 
     virtual void Run(MathEnvironment* env)
     {
-        int num = (int) expr->Evaluate(env);
+        unsigned int num = (unsigned int) expr->Evaluate(env);
 
         gemActor* actor = GetActor(env, aim);
         if (!actor || !actor->GetClientID())

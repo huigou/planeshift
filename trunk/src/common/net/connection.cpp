@@ -296,7 +296,7 @@ void psNetConnection::Broadcast(MsgEntry* me, int, int)
     SendMessage(me);
 }
 
-void psNetConnection::Multicast(MsgEntry* me, const csArray<PublishDestination>& , int , float )
+void psNetConnection::Multicast(MsgEntry* me, const csArray<PublishDestination>& , uint32_t , float )
 {
     me->clientnum=0;
     SendMessage(me);

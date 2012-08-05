@@ -63,7 +63,7 @@ csStringArray SplitFunctions(csString buffer)
     csStringArray result;
     csStringArray lines;
     lines.SplitString(buffer, "\n");
-    for(int i=0; i< lines.GetSize();i++)
+    for(size_t i=0; i<lines.GetSize(); i++)
     {
         csString line = lines.Get(i);
         
@@ -78,7 +78,7 @@ csStringArray SplitFunctions(csString buffer)
 
         csStringArray functions;
         functions.SplitString(line, ";");
-        for (int j=0;j<functions.GetSize();j++)
+        for(size_t j=0; j<functions.GetSize(); j++)
         {
             csString function = functions.Get(j);
             function.Trim();
@@ -115,7 +115,7 @@ bool Recipe::Load(iResultRow &row)
     unparsedReq = SplitFunctions(row["requirements"]);
 
     // Parse Requirements
-    for(int i=0;i<unparsedReq.GetSize();i++)
+    for(size_t i=0; i<unparsedReq.GetSize(); i++)
     {
         Requirement newReq;
         newReq.reqText = unparsedReq.Get(i);
@@ -123,7 +123,7 @@ bool Recipe::Load(iResultRow &row)
         // Split into function & argument 1 & argument 2
         csStringArray explodedReq;
         explodedReq.SplitString(newReq.reqText, "(,)");
-        int index = 0;
+        size_t index = 0;
         reqText = explodedReq.Get(index++);
 
         // Flags used to check parameters
@@ -226,7 +226,7 @@ void Recipe::DumpAlgorithm()
     CPrintf(CON_NOTIFY, "Algorithms:\n");
     if (algorithm.GetSize())
     {
-        for(int i=0;i<algorithm.GetSize();i++)
+        for(size_t i=0; i<algorithm.GetSize(); i++)
         {
             CPrintf(CON_NOTIFY, "%d) %s\n", (i+1), algorithm.Get(i));
         }
@@ -242,7 +242,7 @@ void Recipe::DumpRequirements()
     CPrintf(CON_NOTIFY, "Requirements:\n");
     if (requirements.GetSize())
     {
-        for(int i=0;i<requirements.GetSize();i++)
+        for(size_t i=0; i<requirements.GetSize(); i++)
         {
             CPrintf(CON_NOTIFY, "%d) %s\n", (i+1), requirements[i].reqText.GetData());
         }
@@ -296,7 +296,7 @@ bool RecipeManager::LoadRecipes()
         return false;
     }
 
-    for(int i=0;i<(int)rs.Count();i++)
+    for(size_t i=0; i<rs.Count(); i++)
     {
         Recipe* newRecipe = new Recipe;
         recipes.Push(newRecipe);
@@ -319,7 +319,7 @@ bool RecipeManager::AddTribe(Tribe *tribe)
     csString      keyword;
     
     // Get Tribe Stats
-    for(int i=0;i<tribeStats.GetSize();i++)
+    for(size_t i=0; i<tribeStats.GetSize(); i++)
     {
         keywords.SplitString(tribeStats.Get(i), "(,)");
         keyword = keywords.Get(0);
@@ -409,7 +409,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
     functionArguments.SplitString(functionParts.Get(1), ",");
     
     // Due split, empty items may be in the array
-    for(int i=0;i<functionArguments.GetSize();i++)
+    for(size_t i=0; i<functionArguments.GetSize(); i++)
     {
         if(strlen(functionArguments.Get(i)) == 0)
             functionArguments.DeleteIndex(i);
@@ -513,7 +513,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         csString duration;
         duration.Append(atoi(functionArguments.Get(0)));
         printf("Work %s seconds.\n", duration.GetData());
-        for(int i=0;i<npcs.GetSize();i++)
+        for(size_t i=0; i<npcs.GetSize(); i++)
         {
             npcs[i]->SetBuffer("Work_Duration",duration);
         }
@@ -575,7 +575,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
 
         spot->status = Tribe::ASSET_STATUS_INCONSTRUCTION;
 
-        for(int i=0;i<npcs.GetSize();i++)
+        for(size_t i=0; i<npcs.GetSize(); i++)
         {
             npcs[i]->SetBuildingSpot(spot);
             npcs[i]->SetBuffer("Building",functionArguments.Get(0));
@@ -652,7 +652,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         npcs = tribe->SelectNPCs(functionArguments.Get(0), functionArguments.Get(1));
 
         csString str;
-        for (int i = 0; i <npcs.GetSize();i++,str+=", ")
+        for(size_t i=0; i<npcs.GetSize(); i++,str+=", ")
         {
             str += npcs[i]->GetName() + csString("(") + csString(ShowID(npcs[i]->GetEID())) + csString(")");
         }
@@ -706,7 +706,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         csString target = functionArguments.Get(0);
         if (target == "selection")
         {
-            for(int i=0;i<npcs.GetSize();i++)
+            for(size_t i=0; i<npcs.GetSize(); i++)
             {
                 npcs[i]->SetBuffer(functionArguments.Get(1),functionArguments.Get(2));
             }
@@ -793,7 +793,7 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
             return true;
         }
         
-        for(int i=0;i<quantity;i++)
+        for(int i=0; i<quantity; i++)
         {
             tribe->AddRecipe(GetRecipe(requirement.recipe), recipe);
         }
@@ -801,6 +801,11 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     }
     else if(requirement.type == Recipe::REQ_TYPE_TRIBESMAN)
     {
+        if (quantity < 0)
+        {
+            return false;
+        }
+
         if(tribe->CheckMembers(name, quantity))
             return true;
 
@@ -846,7 +851,7 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
             return true;
         }
         
-        for(int i=0;i<quantity;i++)
+        for(int i=0; i<quantity; i++)
         {
             tribe->AddRecipe(GetRecipe(requirement.recipe), recipe);
         }
@@ -975,10 +980,10 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
     csArray<NPC*>                selectedNPCs;
     
     // Check all requirements
-    int i = (bestRecipe->requirementParseType == RecipeTreeNode::REQ_DISTRIBUTED) ? bestRecipe->nextReq : 0;
-    for(i;i<requirements.GetSize();i++)
+    size_t i = (bestRecipe->requirementParseType == RecipeTreeNode::REQ_DISTRIBUTED) ? bestRecipe->nextReq : 0;
+    for(; i<requirements.GetSize(); i++)
     {
-        Debug4(LOG_TRIBES, tribe->GetID(), "Parsing req(index:%d) for recipe %s of type: %s\n", 
+        Debug4(LOG_TRIBES, tribe->GetID(), "Parsing req(index:%zu) for recipe %s of type: %s\n", 
                i,bestRecipe->recipe->GetName().GetData(),
                RecipeTreeNode::RequirementParseTypeString[bestRecipe->requirementParseType]);
 
@@ -1004,7 +1009,7 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
     // If we got here it means requirements are met
 
     // Execute Algorithm
-    for(int i=step;i<algorithm.GetSize();i++)
+    for(size_t i=step; i<algorithm.GetSize(); i++)
     {
         function = algorithm.Get(i);
         // If algorithm step needs wait time, signal it and return the step
@@ -1021,7 +1026,7 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
 
 Recipe* RecipeManager::GetRecipe(int recipeID)
 {
-    for(int i=0;i<recipes.GetSize();i++)
+    for(size_t i=0; i<recipes.GetSize(); i++)
         if(recipes[i]->GetID() == recipeID)
             return recipes[i];
 
@@ -1032,7 +1037,7 @@ Recipe* RecipeManager::GetRecipe(int recipeID)
 
 Recipe* RecipeManager::GetRecipe(csString recipeName)
 {
-    for(int i=0;i<recipes.GetSize();i++)
+    for(size_t i=0; i<recipes.GetSize(); i++)
     {
         if(recipes[i]->GetName() == recipeName)
         {
@@ -1048,7 +1053,7 @@ Recipe* RecipeManager::GetRecipe(csString recipeName)
 
 RecipeManager::TribeData* RecipeManager::GetTribeData(Tribe *tribe)
 {
-    for(int i=0;i<tribeData.GetSize();i++)
+    for(size_t i=0; i<tribeData.GetSize(); i++)
         if(tribeData[i].tribeID == tribe->GetID())
             return &tribeData[i];
 

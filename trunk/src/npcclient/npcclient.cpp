@@ -415,7 +415,7 @@ csRef<iDocumentNode> psNPCClient::GetRootNode(const char *xmlfile)
 
 Tribe* psNPCClient::GetTribe(int id)
 {
-    for(int i=0;i<tribes.GetSize();i++)
+    for(size_t i=0; i<tribes.GetSize(); i++)
     {
         if(tribes[i]->GetID() == id)
         {
@@ -564,7 +564,7 @@ bool psNPCClient::LoadNPCTypes()
 
 bool psNPCClient::FirePerception(int NPCId, const char* perception)
 {
-    for(int i=0;i<npcs.GetSize();i++)
+    for(size_t i=0; i<npcs.GetSize(); i++)
     {
         
         if((int)npcs[i]->GetPID().Unbox() == NPCId)
@@ -930,7 +930,7 @@ bool psNPCClient::LoadTribes()
                     Error2("Could not load tribe knowledge from db: %s", db->GetLastError() );
                     return false;
                 }
-                for(int i=0;i<rs2.Count(); i++)
+                for(size_t i=0; i<rs2.Count(); i++)
                 {
                     tribe->AddKnowledge(rs2[i]["knowledge"]);
                 }
@@ -943,7 +943,7 @@ bool psNPCClient::LoadTribes()
                     Error2("Could not load tribe assets from db: %s", db->GetLastError() );
                     return false;
                 }
-                for(int i=0;i<rs2.Count();i++)
+                for(size_t i=0; i<rs2.Count(); i++)
                 {
                     tribe->LoadAsset(rs2[i]);
                 }
@@ -1617,7 +1617,7 @@ void psNPCClient::ListTribes(const char * pattern)
 void psNPCClient::ListTribeRecipes(const char* tribeID)
 {
     int tribeid = atoi(tribeID);
-    for(int i=0;i<tribes.GetSize();i++)
+    for(size_t i=0; i<tribes.GetSize(); i++)
     {
         if(tribeid == tribes[i]->GetID())
         {
@@ -1836,7 +1836,7 @@ void psNPCClient::PerceptProximityTribeHome()
         bool within = false;
 
         // Now we have an actor, check that actor for each tribe.
-        for(int i=0;i<tribes.GetSize();i++)
+        for(size_t i=0; i<tribes.GetSize(); i++)
         {
             Tribe* tribe = tribes[i];
 

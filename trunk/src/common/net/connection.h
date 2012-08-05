@@ -65,7 +65,7 @@ public:
     virtual void Broadcast (MsgEntry* me, int scope, int guildID);
 
     /// Multicasting makes no sense in a single connection class.  Just wraps SendMessage.
-    virtual void Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, int except, float range);
+    virtual void Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, uint32_t except, float range);
 
     /// Necessary CS definition and stub function
     virtual void IncRef ()

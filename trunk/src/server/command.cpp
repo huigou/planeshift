@@ -1765,7 +1765,7 @@ int com_factions(const char*)
         output.AppendFmt("                     ");
         for (i = 0; i < num; i++)
         {
-            output.AppendFmt("%*s ", csMax((size_t)7, strlen(actors[i]->GetName())), actors[i]->GetName());
+            output.AppendFmt("%*s ", (int)csMax((size_t)7, strlen(actors[i]->GetName())), actors[i]->GetName());
         }
         CPrintf(CON_CMDOUTPUT ,"%s\n",output.GetDataSafe());
     }
@@ -1777,7 +1777,7 @@ int com_factions(const char*)
         output.AppendFmt("%20s ",actors[i]->GetName());
         for (j = 0; j < num; j++)
         {
-            output.AppendFmt("%*.2f ", csMax((size_t)7, strlen(actors[j]->GetName())), actors[i]->GetRelativeFaction(actors[j]));
+            output.AppendFmt("%*.2f ", (int)csMax((size_t)7, strlen(actors[j]->GetName())), actors[i]->GetRelativeFaction(actors[j]));
         }
         CPrintf(CON_CMDOUTPUT ,"%s\n",output.GetDataSafe());
     }
@@ -2471,7 +2471,8 @@ int com_list(const char* arg)
     {
         psserver->GetAdminManager()->GetPathNetwork()->ListWaypoints(words[1]);
     }    
-
+    
+    return 0;
 }
 
 

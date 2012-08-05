@@ -86,9 +86,8 @@ void TutorialManager::SendTutorialMessage(int which, Client *client, const char 
     SendTutorialMessage(which, client->GetClientNum(), instrs);
 }
 
-void TutorialManager::SendTutorialMessage(int which,uint32_t clientnum,const char *instrs)
+void TutorialManager::SendTutorialMessage(int which, uint32_t clientnum, const char *instrs)
 {
-//    printf("Send tutorial msg %d\n",which);
     if (!instrs)
     {
         csString error;
@@ -186,7 +185,7 @@ void TutorialManager::HandleDamage(MsgEntry *me,Client *client)
 }
 
 /// Specifically handle the message sent by a script
-void TutorialManager::HandleScriptMessage(uint32_t client, int which)
+void TutorialManager::HandleScriptMessage(uint32_t client, unsigned int which)
 {
     if(which < tutorialMsg.GetSize())
     {
