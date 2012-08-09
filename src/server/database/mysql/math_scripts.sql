@@ -425,68 +425,109 @@ INSERT INTO math_scripts VALUES( "GetSkillBaseValues" , "
 ");
 
 INSERT INTO math_scripts VALUES( "Calculate Song Parameters" , "
+
+    // Initializing variables
+    CanPlay = 1;
     InstrSkill = 52;
-    InstrSkillRank = Player:GetSkillValue(InstrSkill);
+    InstrSkillRank = Character:GetSkillValue(InstrSkill);
 
-    // The player unlocks 2 tonalities every 10 ranks
-    Fifths = abs(Fifths);
-    ScoreRank = Fifths * 10;
+    // The minimum duration of the note the character can play gets half every 50 ranks
+    CharMinimumDuration = 1000 / exp2(InstrSkillRank / 50);  // in milliseconds
 
-    // The player unlocks the beat type 8 (16) at rank 30 (60)
-    if(BeatType = 8)
+    // The character unlocks the beat type 8 (16) at rank 40 (80)
+    if((BeatType = 8 & InstrSkillRank < 40) | (BeatType = 16 & InstrSkillRank < 40))
     {
-        ScoreRank = ScoreRank + 30;
-    }
-    if(BeatType = 16)
-    {
-        ScoreRank = ScoreRank + 60;
+        CanPlay = 0;
+        Character:SendSystemError('You cannot play musical scores with this meter!', 0);
     }
 
-    // Players at rank 130 can play a score with beat type = 16 and in C#maj
-    // CanPlay is positive if the player can play it, negative otherwise
-    CanPlay = InstrSkillRank - ScoreRank;
+    // The character cannot play scores with notes too quick
+    if(MinimumDuration < CharMinimumDuration)
+    {
+        CanPlay = 0;
+        TargetTempo = floor(Tempo * MinimumDuration / CharMinimumDuration);
+        Character:SendSystemError('You cannot play this song so fast! Play it at least at tempo %.0f.', 1, TargetTempo);
+    }
 
-    // Meter and tonality add a maximum of 65 to the final rank
-    ScoreRank = ScoreRank / 2;
-
-    // The minimum duration of the note the player can play gets half every 50 ranks
-    PlayerMinimumDuration = 1000 / exp2(InstrSkillRank / 50);  // in milliseconds
-
-    if(AverageDuration = 0)  // the score is empty or has only rests
+    if(CanPlay = 0 | NNotes = 0)
     {
         ScoreRank = -1;
-        DurationFactor = 1;
     }
     else
     {
-        // Here the actual average duration of the song's execution is computed
-        if(PlayerMinimumDuration > MinimumDuration)
+        // Determining which altered notes are actually played (character learn a new note every 20 ranks)
+        NAlteredNotes = 0;
+        if(InstrSkillRank >= 20)
         {
-            DurationFactor = PlayerMinimumDuration / MinimumDuration;
+            NAlteredNotes = NAlteredNotes + NBb;
         }
         else
         {
-            DurationFactor = 1;
+            NNotes = NNotes - NBb;
         }
-        AverageDuration = AverageDuration * DurationFactor;
 
-        // The bonus (malus) due to the song's speed is in (-InstrSkillRank, +InstrSkillRank]
-        // It gets 0 when AverageDuration / PlayerMinimumDuration = 5
-        // TODO this formula should take into account also AveragePolyphony and MaximumPolyphony
-        DurationRatio = PlayerMinimumDuration / AverageDuration;
-        if(DurationRatio >= 0.2)
+        if(InstrSkillRank >= 40)
         {
-            ScoreRank = ScoreRank + InstrSkillRank * (1.25 * DurationRatio - 0.25);
+            NAlteredNotes = NAlteredNotes + NGb;
         }
         else
         {
-            ScoreRank = ScoreRank + InstrSkillRank * (5 * DurationRatio - 1);
+            NNotes = NNotes - NGb;
         }
 
-        // The minimum score rank is 0
-        if(ScoreRank < 0)
+        if(InstrSkillRank >= 60)
         {
-            ScoreRank = 0;
+            NAlteredNotes = NAlteredNotes + NEb;
+        }
+        else
+        {
+            NNotes = NNotes - NEb;
+        }
+
+        if(InstrSkillRank >= 80)
+        {
+            NAlteredNotes = NAlteredNotes + NDb;
+        }
+        else
+        {
+            NNotes = NNotes - NDb;
+        }
+
+        if(InstrSkillRank >= 100)
+        {
+            NAlteredNotes = NAlteredNotes + NAb;
+        }
+        else
+        {
+            NNotes = NNotes - NAb;
+        }
+
+        // Checking if the character can play at least one note
+        if(NNotes = 0)
+        {
+            ScoreRank = -1;
+        }
+        else
+        {
+            // Determining difficulty due to beat type
+            if(BeatType < 8)
+            {
+                BeatTypeDifficulty = 0;
+            }
+            else
+            {
+                BeatTypeDifficulty = 40 * BeatType / 8;
+            }
+
+            // Difficulty due to average duration is the inverted function for CharMinimumDuration
+            SpeedDifficulty = log2(1000 / AverageDuration) * 50;
+
+            // ScoreRank is in the interval (0,InstrSkillRank+50) if the score can be played
+            ScoreRank = 10 * NAlteredNotes / NNotes + BeatTypeDifficulty + SpeedDifficulty;
+            if(ScoreRank < 0)
+            {
+                ScoreRank = 0;
+            }
         }
     }
 ");
@@ -503,7 +544,7 @@ INSERT INTO math_scripts VALUES( "Calculate Song Experience" , "
     }
     else
     {
-        InstrSkillRank = Player:GetSkillValue(InstrSkill);
+        InstrSkillRank = Character:GetSkillValue(InstrSkill);
 
         // No practice points if the score's rank differ from the player's skill by more than 50
         RelativeDifficulty = 1 - abs(InstrSkillRank - ScoreRank) / 50;
