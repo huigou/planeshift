@@ -137,8 +137,7 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             int canPlay;
             int scoreRank;
             uint32 actorEID;
-            float durationFactor;
-            float playerMinDuration;
+            float playerMinDuration; // TODO to delete when new client is released
             psItem* instrItem;
             const char* instrName;
             ScoreStatistics scoreStats;
@@ -184,19 +183,23 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             
             if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongPar, "Calculate Song Parameters"))
             {
-                canPlay = -1; // the song won't be played
+                canPlay = 0; // the song won't be played
             }
             else
             {
                 // input variables
-                mathEnv.Define("Player", client->GetActor());
+                mathEnv.Define("Character", client->GetActor());
                 mathEnv.Define("Instrument", instrItem);
-                mathEnv.Define("Fifths", scoreStats.fifths);
+                mathEnv.Define("Tempo", scoreStats.tempo);
                 mathEnv.Define("BeatType", scoreStats.beatType);
+                mathEnv.Define("NNotes", scoreStats.nNotes);
+                mathEnv.Define("NAb", scoreStats.nAb);
+                mathEnv.Define("NBb", scoreStats.nBb);
+                mathEnv.Define("NDb", scoreStats.nDb);
+                mathEnv.Define("NEb", scoreStats.nEb);
+                mathEnv.Define("NGb", scoreStats.nGb);
                 mathEnv.Define("AverageDuration", scoreStats.averageDuration);
-                mathEnv.Define("AveragePolyphony", scoreStats.averagePolyphony);
                 mathEnv.Define("MinimumDuration", scoreStats.minimumDuration);
-                mathEnv.Define("MaximumPolyphony", scoreStats.maximumPolyphony);
 
                 // script evaluation
                 calcSongPar->Evaluate(&mathEnv);
@@ -204,11 +207,10 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
                 // output variables
                 canPlay = mathEnv.Lookup("CanPlay")->GetValue();
                 scoreRank = mathEnv.Lookup("ScoreRank")->GetValue();
-                durationFactor = mathEnv.Lookup("DurationFactor")->GetValue();
-                playerMinDuration = mathEnv.Lookup("PlayerMinimumDuration")->GetValue();
+                playerMinDuration = mathEnv.Lookup("CharMinimumDuration")->GetValue();
             }
 
-            if(canPlay >= 0)
+            if(canPlay)
             {
                 // sending message to requester, it's useless to send the musical sheet again
                 psPlaySongMessage sendedPlayMsg(client->GetClientNum(), actorEID, true, playerMinDuration, instrName, 0, "");
@@ -239,7 +241,7 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
                 instrItem->SetInUse(true);
 
                 // keeping track of the song's data
-                psEndSongEvent* event = new psEndSongEvent(charActor, scoreStats.totalLength * durationFactor);
+                psEndSongEvent* event = new psEndSongEvent(charActor, scoreStats.totalLength);
                 psserver->GetEventManager()->Push(event);
                 scoreRanks.Put(actorEID, scoreRank);
             }
@@ -317,7 +319,7 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
 
     // handling skill ranking
     instrItem = GetEquippedInstrument(charData);
-    scoreRank = scoreRanks.Get(actorEID, -10000);  // score rank should always be positive
+    scoreRank = scoreRanks.Get(actorEID, -10000);  // score rank is always positive
 
     if(instrItem != 0 && scoreRank != -10000)
     {
@@ -325,10 +327,9 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
         instrItem->SetInUse(false);
 
         //check and update scripts
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongPar, "Calculate Song Parameters");
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongExp, "Calculate Song Experience");
 
-        if(skillRanking && calcSongPar.IsValid() && calcSongExp.IsValid())
+        if(skillRanking && calcSongExp.IsValid())
         {
             MathEnvironment mathEnv;
             int practicePoints;
@@ -336,7 +337,7 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
             PSSKILL instrSkill;
 
             // input variables
-            mathEnv.Define("Player", charActor);
+            mathEnv.Define("Character", charActor);
             mathEnv.Define("Instrument", instrItem);
             mathEnv.Define("SongTime", (csGetTicks() - charData->GetSongStartTime()) / 1000);
             mathEnv.Define("ScoreRank", scoreRank);
