@@ -4948,9 +4948,37 @@ psPersistAllEntities::psPersistAllEntities(MsgEntry* me)
     msg = me;
 }
 
-csString psPersistAllEntities::ToString(NetBase::AccessPointers* /*accessPointers*/)
+csString psPersistAllEntities::ToString(NetBase::AccessPointers* accessPointers)
 {
-    return "PersistAllEntities";
+    csString msgtext;
+    while (true)
+    {
+        MsgEntry *entity = GetEntityMessage();
+        if (!entity) break;
+
+        if (entity->GetType() == MSGTYPE_PERSIST_ACTOR)
+        {
+            psPersistActor mesg( entity, accessPointers, true );
+            msgtext += " Actor: ";
+            msgtext += mesg.ToString( accessPointers );
+            msgtext += "\n";
+        }
+        else if (entity->GetType() == MSGTYPE_PERSIST_ITEM)
+        {
+            psPersistItem mesg( entity, accessPointers );
+            msgtext += " Item: ";
+            msgtext += mesg.ToString( accessPointers );
+            msgtext += "\n";
+        }
+        else
+        {
+            Error2("Unhandled type of entity (%d) in AllEntities message.",entity->GetType() );
+        }
+
+        delete entity;
+    }
+
+    return msgtext;
 }
 
 bool psPersistAllEntities::AddEntityMessage(MsgEntry *newEnt)
@@ -5196,7 +5224,8 @@ psPersistItem::psPersistItem( uint32_t clientNum,
                               float zRot,
                               uint32_t flags,
                               csStringSet* msgstrings,
-                              uint32_t tribeID)
+                              uint32_t tribeID,
+                              uint32_t uid)
 {
     msg.AttachNew(new MsgEntry( MAX_MESSAGE_SIZE ));
 
@@ -5217,6 +5246,10 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     {
         flags |= TRIBEID;
     }
+    if (uid != 0)
+    {
+        flags |= ITEM_UID;
+    }
     if (flags) // No point sending 0, only enties called out by flags can follow
     {
         msg->Add( flags );
@@ -5225,6 +5258,10 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     if (flags & TRIBEID)
     {
         msg->Add(tribeID);
+    }
+    if (flags & ITEM_UID)
+    {
+        msg->Add(uid);
     }
 
     msg->ClipToCurrentSize();
@@ -5251,6 +5288,10 @@ psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPoin
         {
             tribeID     = me->GetInt32();
         }
+        if (flags & ITEM_UID)
+        {
+            uid = me->GetUInt32();
+        }
     }
 }
 
@@ -5269,6 +5310,11 @@ csString psPersistItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
     {
         msgtext.AppendFmt(" TRIBEID");
         msgtext.AppendFmt(" Belongs to tribe: (id:%d)\n", tribeID);
+    }
+    if(flags & ITEM_UID)
+    {
+        msgtext.AppendFmt(" ITEM_UID");
+        msgtext.AppendFmt(" uid: %d\n", uid);
     }
 
     return msgtext;

@@ -3299,7 +3299,8 @@ public:
         NONE            = 0,
         NOPICKUP        = 1 << 0,
         COLLIDE         = 1 << 1,
-        TRIBEID         = 1 << 2
+        TRIBEID         = 1 << 2,
+        ITEM_UID        = 1 << 3
     };
 
     psPersistItem(uint32_t clientnum,
@@ -3315,7 +3316,8 @@ public:
                   float zRot,
                   uint32_t flags,
                   csStringSet* msgstrings,
-                  uint32_t tribeid = 0
+                  uint32_t tribeid = 0,
+                  uint32_t uid = 0
                  );
 
     psPersistItem(MsgEntry* me, NetBase::AccessPointers* accessPointers);
@@ -3342,6 +3344,7 @@ public:
     EID eid;
     uint32_t type;
     uint32_t flags;
+    uint32_t uid;
 };
 
 class psPersistActionLocation : public psMessageCracker

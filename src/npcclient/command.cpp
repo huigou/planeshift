@@ -340,6 +340,32 @@ int com_debugnpc(const char*line)
     return 0;
 }
 
+int com_setbuffer(const char*line)
+{
+    WordArray words(line,false);
+
+    if (!*line || words.GetCount() != 3)
+    {
+        CPrintf(CON_CMDOUTPUT, "Please specify: <npc_id> <buffer_name> <buffer_value>\n");
+        return 0;
+    }
+
+
+    unsigned int id = atoi(words[0]);
+    NPC* npc = npcclient->FindNPCByPID(id);
+    if(!npc)
+    {
+        CPrintf(CON_CMDOUTPUT, "No NPC with id '%s' found.\n", words[0].GetDataSafe());
+        return 0;
+    }
+
+    npc->SetBuffer(words[1],words[2]);
+
+    CPrintf(CON_CMDOUTPUT, "Setting buffer %s to %s for NPC %s.\n", words[1].GetDataSafe(), words[2].GetDataSafe(), npc->GetName());
+    
+    return 0;
+}
+
 int com_setlog(const char* line)
 {
     if (!*line)
@@ -435,10 +461,11 @@ const COMMAND commands[] = {
     { "filtermsg",    true,  com_filtermsg,    "Add or remove messages from the LOG_MESSAGE log"},
     { "fireperc",     false, com_fireperc,     "Fire the given perception on the given npc. (fireperc [npcPID] [perception])"},
     { "help",         false, com_help,         "Show help information" },
+    { "info",         false, com_info,         "Short print for 1 NPC"},
     { "list",         false, com_list,         "List entities ( list [char|ent|loc|npc|path|race|recipe|tribe|warpspace|waypoint] <filter> )" },
     { "print",        false, com_print,        "List all behaviors/hate of 1 NPC"},
-    { "info",         false, com_info,         "Short print for 1 NPC"},
     { "quit",         true,  com_quit,         "Makes the npc client exit"},
+    { "setbuffer",    false, com_setbuffer,    "Set a npc buffer"},
     { "setlog",       false, com_setlog,       "Set server log" },
     { "setmaxfile",   false, com_setmaxfile,   "Set maximum message class for output file"},
     { "setmaxout",    false, com_setmaxout,    "Set maximum message class for standard output"},

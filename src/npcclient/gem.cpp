@@ -260,6 +260,8 @@ gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg)
     name = mesg.name;
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
     type = mesg.type;
+    uid = mesg.uid;
+    tribeID = mesg.tribeID;
 
     if(!mesg.factname.GetData())
     {
@@ -270,12 +272,24 @@ gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg)
     if (mesg.flags & psPersistItem::NOPICKUP) flags |= NOPICKUP;
 }
 
+gemNPCItem::~gemNPCItem()
+{
+}
+
 //Here we check the flag to see if we can pick up this item
 bool gemNPCItem::IsPickable()
 {
     return !(flags & NOPICKUP);
 }
 
-gemNPCItem::~gemNPCItem()
+uint32_t gemNPCItem::GetUID() const
 {
+    return uid;
 }
+
+uint32_t gemNPCItem::GetTribeID() const
+{
+    return tribeID;
+}
+
+

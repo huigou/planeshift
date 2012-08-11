@@ -13,7 +13,7 @@ CREATE TABLE `sc_tribe_assets`
   `coordY` float(5) NOT NULL default '0',
   `coordZ` float(5) NOT NULL default '0',
   `sector_id` int(10) NOT NULL default '3',
-  `gemItemName` varchar(30) NOT NULL default '',
+  `itemID` int(10) NOT NULL default '0',
   `quantity` int(10) NOT NULL default '0' COMMENT '-1 if its a building',
   `status` int(1) NOT NULL default '0',
   PRIMARY KEY (`id`)

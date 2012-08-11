@@ -1172,9 +1172,17 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new RotateOperation;
         }
+        else if ( strcmp( node->GetValue(), "script" ) == 0 )
+        {
+            op = new ProgressScriptOperation;
+        }
         else if ( strcmp( node->GetValue(), "sequence" ) == 0 )
         {
             op = new SequenceOperation;
+        }
+        else if ( strcmp( node->GetValue(), "set_buffer" ) == 0 )
+        {
+            op = new SetBufferOperation;
         }
         else if ( strcmp( node->GetValue(), "share_memories" ) == 0 )
         {
@@ -1207,6 +1215,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "tribe_type" ) == 0 )
         {
             op = new TribeTypeOperation;
+        }
+        else if ( strcmp( node->GetValue(), "unbuild" ) == 0 )
+        {
+            op = new UnbuildOperation;
         }
         else if ( strcmp( node->GetValue(), "visible" ) == 0 )
         {

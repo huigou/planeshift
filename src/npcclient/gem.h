@@ -183,7 +183,12 @@ public:
 
     virtual bool IsPickable();
 
+    uint32_t GetUID() const;
+    uint32_t GetTribeID() const;
+
 protected:
+    uint32_t uid;
+    uint32_t tribeID;
     int flags;
 };
 

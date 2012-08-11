@@ -607,7 +607,11 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         where[1] = atoi(functionArguments.Get(1));
         where[2] = atoi(functionArguments.Get(2));
         iSector* sector = NULL; // Position for spots are delta values from tribe home so sector dosn't apply.
-        tribe->AddAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingName, where, sector, Tribe::ASSET_STATUS_NOT_USED);
+
+        if (!tribe->GetAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingName, where, sector))
+        {
+            tribe->AddAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingName, where, sector, Tribe::ASSET_STATUS_NOT_USED);
+        }
 
         return true;
     }
@@ -788,12 +792,14 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     // Check type of requirement and do something for each
     if(requirement.type == Recipe::REQ_TYPE_BUILDING)
     {
-        if(tribe->CheckAsset(Tribe::ASSET_TYPE_BUILDING, name, quantity))
+        int count = tribe->AssetQuantity(Tribe::ASSET_TYPE_BUILDING, name);
+        if (count >= quantity) 
         {
-            return true;
+            return true; // We have the required number of buildings
         }
         
-        for(int i=0; i<quantity; i++)
+        // Load receipes for each of the missing building
+        for(int i=0; i<(quantity-count); i++)
         {
             tribe->AddRecipe(GetRecipe(requirement.recipe), recipe);
         }
@@ -846,12 +852,14 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     }
     else if(requirement.type == Recipe::REQ_TYPE_ITEM)
     {
-        if(tribe->CheckAsset(Tribe::ASSET_TYPE_ITEM, name, quantity))
+        int count = tribe->AssetQuantity(Tribe::ASSET_TYPE_ITEM, name);
+        if (count >= quantity) 
         {
-            return true;
+            return true; // We have the required number of items
         }
         
-        for(int i=0; i<quantity; i++)
+        // Load receipes for each of the missing building
+        for(int i=0; i<(quantity-count); i++)
         {
             tribe->AddRecipe(GetRecipe(requirement.recipe), recipe);
         }

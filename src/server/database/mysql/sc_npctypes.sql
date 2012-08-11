@@ -786,6 +786,32 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
    <!--debug level="0" /-->
 </behavior>
 
+<behavior name="GoUnbuild" completion_decay="100" resume="yes" >
+   <!--debug level="15" /-->
+   <talk text="Going to unbuild $NBUFFER[Building] for $NBUFFER[Work_Duration]" target="false" />
+
+   <!-- Go to work -->
+   <locate obj="building:$NBUFFER[Building]" static="no"  destination="Move" />
+   <percept event="move" />
+
+   <wait duration="$NBUFFER[Work_Duration]" anim="stand" />
+   <unbuild />
+   <talk text="Nice work tearing this $NBUFFER[Building] down" target="false" />
+
+   <!-- Go home -->
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+
+   <!--debug level="0" /-->
+</behavior>
+
+<behavior name="TestGoUnbuild" completion_decay="-1" resume="yes" >
+   <set_buffer buffer="Building" value="Small Tent" />
+   <set_buffer buffer="Work_Duration" value="5" />
+   <percept event="tribe:unbuild" />
+</behavior>
+<react event="test_go_unbuild" behavior="TestGoUnbuild" />
+
 <behavior name="Guard" resume="yes" >
    <talk text="Going guarding" target="false" />
 
@@ -833,6 +859,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
 <react event="collision"                behavior="Turn" />
 <react event="tribe:breed"              behavior="Breed" />
 <react event="tribe:build"              behavior="GoBuild" />
+<react event="tribe:unbuild"              behavior="GoUnbuild" />
 <react event="tribe:buy"                behavior="Buy" />
 <react event="tribe:explore"            behavior="Explore" />
 <react event="tribe:hunt"               behavior="HuntResource"  />

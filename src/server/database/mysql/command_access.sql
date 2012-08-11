@@ -22,7 +22,8 @@ INSERT INTO command_groups VALUES(23, "Advanced");
 INSERT INTO command_groups VALUES(24, "Senior");
 INSERT INTO command_groups VALUES(25, "Leader");
 
-INSERT INTO command_groups VALUES(30, "Developers");
+INSERT INTO command_groups VALUES(30, "Developer");
+INSERT INTO command_groups VALUES(50, "Administrator");
 
 
 

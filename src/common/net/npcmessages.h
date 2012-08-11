@@ -218,11 +218,13 @@ public:
         CMD_PICKUP,
         CMD_RESURRECT,
         CMD_SEQUENCE,
+        CMD_SCRIPT,             // used for superclient to request a progress script to be run at server
         CMD_SIT,
         CMD_SPAWN,
         CMD_SPAWN_BUILDING,     // used for superclient to request a new building
         CMD_TALK,
         CMD_TRANSFER,
+        CMD_UNBUILD,            // used for superclient to request a building to be tearn down
         CMD_VISIBILITY,
         CMD_WORK,
         CMD_CONTROL,
