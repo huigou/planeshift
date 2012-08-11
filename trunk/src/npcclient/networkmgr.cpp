@@ -419,17 +419,6 @@ void NetworkManager::HandleItem( MsgEntry* me )
     gemNPCItem* item = new gemNPCItem(npcclient, mesg);        
     npcclient->Add(item);
 
-    // Is this a tribe Item?
-    if(mesg.tribeID != 0)
-    {
-        csVector3 where;
-        Tribe*    tribe = npcclient->GetTribe(mesg.tribeID);
-        if(tribe)
-        {
-            tribe->HandlePersitItem(item);
-        }
-    }
-
 }
 
 void NetworkManager::HandleObjectRemoval( MsgEntry* me )
@@ -1752,6 +1741,29 @@ void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *targ
     cmd_count++;
 }
 
+void NetworkManager::QueueScriptCommand(gemNPCActor *npc, gemNPCObject* target, const csString& scriptName)
+{
+    CheckCommandsOverrun(100);
+
+    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SCRIPT);
+    outbound->msg->Add( npc->GetEID().Unbox() );
+    if (target)
+    {
+        outbound->msg->Add( target->GetEID().Unbox() );
+    }
+    else
+    {
+        outbound->msg->Add( (uint32_t)0 );
+    }
+    outbound->msg->Add( scriptName );
+
+    if ( outbound->msg->overrun )
+    {
+        CS_ASSERT(!"NetworkManager::QueueScriptCommand put message in overrun state!\n");
+    }
+    cmd_count++;
+}
+
 void NetworkManager::QueueSitCommand(gemNPCActor *npc, gemNPCObject* target, bool sit)
 {
     CheckCommandsOverrun(100);
@@ -1806,6 +1818,21 @@ void NetworkManager::QueueSpawnBuildingCommand(gemNPCActor *spawner, csVector3 w
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueSpawnBuildingCommand put message in overrun state!\n");
+    }
+    cmd_count++;
+}
+
+void NetworkManager::QueueUnbuildCommand(gemNPCActor *unbuilder, gemNPCItem* building)
+{
+    CheckCommandsOverrun(100);
+
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_UNBUILD);
+    outbound->msg->Add(unbuilder->GetEID().Unbox());
+    outbound->msg->Add(building->GetEID().Unbox());
+
+    if(outbound->msg->overrun)
+    {
+        CS_ASSERT(!"NetworkManager::QueueUnbuildingCommand put message in overrun state!\n");
     }
     cmd_count++;
 }

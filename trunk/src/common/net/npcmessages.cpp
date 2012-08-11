@@ -370,6 +370,25 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 msgtext.AppendFmt("Attacker: %s Target: %s Spell: %s kFactor: %.1f", ShowID(attackerEID), ShowID(targetEID),spell.GetDataSafe(),kFactor);
                 break;
             }
+            case psNPCCommandsMessage::CMD_SCRIPT:
+            {
+                msgtext.Append("CMD_SCRIPT: ");
+
+                // Extract the data
+                EID npcEID = EID(msg->GetUInt32());
+                EID targetEID = EID(msg->GetUInt32());
+                csString scriptName = msg->GetStr();
+
+                // Make sure we haven't run past the end of the buffer
+                if (msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_SCRIPT from NPC client %u.\n",msg->clientnum);
+                    break;
+                }
+                
+                msgtext.AppendFmt("NPC: %u Target: %u To: %s", npcEID.Unbox(), targetEID.Unbox(), scriptName.GetDataSafe());
+                break;
+            }
             case psNPCCommandsMessage::CMD_SIT:
             {
                 msgtext.Append("CMD_SIT: ");
@@ -426,7 +445,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 }
 
                 msgtext.AppendFmt("Spawner: %s Pos: %s in sectorName %s. TribeID: %d. Building: %s", ShowID(spawnerEID), toString(pos).GetDataSafe(), sectorName.GetDataSafe(), tribeID, buildingName.GetDataSafe());
-
+                break;
             }
             case psNPCCommandsMessage::CMD_TALK:
             {
@@ -448,6 +467,23 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
 
                 msgtext.AppendFmt("Speaker: %u Target: %u Type: %u Public: %s Text: %s ", 
                                   speaker_id.Unbox(), targetId.Unbox(), talkType, publicTalk?"Yes":"No", text);
+                break;
+            }
+            case psNPCCommandsMessage::CMD_UNBUILD:
+            {
+                msgtext.Append("CMD_UNBUILD: ");
+
+                //Extract the data
+                EID unbuilderEID = EID(msg->GetUInt32());
+                EID buildingEID = EID(msg->GetUInt32());
+
+                if(msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT, msg->clientnum, "Received incomplete CMD_UNBUILD from NPC client %u.\n", msg->clientnum);
+                    break;
+                }
+
+                msgtext.AppendFmt("Unbuilder: %s Building: %s", ShowID(unbuilderEID), ShowID(buildingEID));
                 break;
             }
             case psNPCCommandsMessage::CMD_VISIBILITY:

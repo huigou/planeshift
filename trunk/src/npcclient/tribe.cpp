@@ -837,6 +837,22 @@ void Tribe::ShareMemories(NPC * npc)
     }    
 }
 
+iSector* Tribe::Asset::GetSector()
+{
+    if (sector) return sector;
+
+    if (sectorName.IsEmpty()) return NULL;
+    
+    sector = npcclient->GetEngine()->FindSector(sectorName);
+    return sector;
+}
+
+gemNPCItem* Tribe::Asset::GetItem()
+{
+    return item;
+}
+
+
 iSector* Tribe::Memory::GetSector()
 {
     if (sector) return sector;
@@ -1205,36 +1221,46 @@ bool Tribe::CheckResource(csString resource, int number)
     return false;
 }
 
-bool Tribe::CheckAsset(Tribe::AssetType type, csString item, int number)
+bool Tribe::CheckAsset(Tribe::AssetType type, csString name, int number)
 {
-    Asset* asset = GetAsset(type, item);
-    if(!asset)
+    for(size_t i=0; i<assets.GetSize(); i++)
     {
-        return false;
-    }
-
-    // If the building exists && is not just a spot for construction
-    if(asset->type == Tribe::ASSET_TYPE_BUILDING)
-    {
-        if (asset->status == Tribe::ASSET_STATUS_CONSTRUCTED)
+        Asset* asset = assets[i];
+        
+        if(asset->type == type && asset->name == name)
         {
-            //Requirement is met
-            return true;
+            // If the building exists && is not just a spot for construction
+            if(asset->type == Tribe::ASSET_TYPE_BUILDING)
+            {
+                if (asset->status == Tribe::ASSET_STATUS_CONSTRUCTED || asset->status == Tribe::ASSET_STATUS_INCONSTRUCTION)
+                {
+                    number -= asset->quantity;
+                }
+            }
+            else if (asset->type == Tribe::ASSET_TYPE_ITEM)
+            {
+                number -= asset->quantity;
+            }
         }
+        if (number < 0) return true;
     }
-    else if (asset->type == Tribe::ASSET_TYPE_ITEM)
-    {
-        if(asset->quantity > number)
-        {
-            // We have enough items, requirement is met
-            return true;
-        } else
-        {
-            return false;
-        }
-    }
-    
     return false;
+}
+
+size_t Tribe::AssetQuantity(Tribe::AssetType type, csString name)
+{
+    size_t quantity = 0;
+    
+    for(size_t i=0; i<assets.GetSize(); i++)
+    {
+        Asset* asset = assets[i];
+        
+        if(asset->type == type && asset->name == name)
+        {
+            quantity += asset->quantity;
+        }
+    }
+    return quantity;
 }
 
 void Tribe::Build(NPC* npc)
@@ -1252,20 +1278,82 @@ void Tribe::Build(NPC* npc)
 
         // Now ask the server to spawn the building. Upon spawn a persit item will be sent to the client.
         // The new building will be added to assets as part of the HandlePersitItem prosessing.
-        npcclient->GetNetworkMgr()->QueueSpawnBuildingCommand(npc->GetActor(),buildingPos, buildingSector, buildingSpot->name, GetID());
+        npcclient->GetNetworkMgr()->QueueSpawnBuildingCommand(npc->GetActor(), buildingPos, buildingSector, buildingSpot->name, GetID());
+
+        SaveAsset(buildingSpot);
     }
 }
 
-void Tribe::HandlePersitItem(gemNPCItem* item)
+void Tribe::Unbuild(NPC* npc, gemNPCItem* building)
+{
+    npc->Printf(6,"Unbuilding building %s",building->GetName());
+
+    Asset* buildingAsset = GetAsset(building);
+    if (buildingAsset)
+    {
+        buildingAsset->status = ASSET_STATUS_NOT_USED;
+        buildingAsset->quantity = 0;
+        SaveAsset(buildingAsset);
+
+        // Check if there is a building spot that need to be downgrades as well
+        csVector3 buildingPos = npc->GetTribe()->GetHomePosition();
+
+        buildingPos -= buildingAsset->pos;
+
+        Asset* buildingSpot = GetNearestAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingAsset->name, Tribe::ASSET_STATUS_CONSTRUCTED, 
+                                              buildingPos, NULL, 5.0, NULL );
+        if (buildingSpot)
+        {
+            buildingSpot->status = Tribe::ASSET_STATUS_NOT_USED;
+            SaveAsset(buildingSpot);
+
+            // Now the building asset and the spot is freed inform the server
+            npcclient->GetNetworkMgr()->QueueUnbuildCommand(npc->GetActor(), building);
+        }
+        else
+        {
+            Error4("NPC %s(%s) Failed to find building spot for building %s",npc->GetName(),ShowID(npc->GetEID()),building->GetName());
+        }
+    }
+    else
+    {
+        Error4("NPC %s(%s) Failed to find building asset for building %s",npc->GetName(),ShowID(npc->GetEID()),building->GetName());
+    }
+}
+
+void Tribe::HandlePersistItem(gemNPCItem* item)
 {
     csVector3 position;
     iSector*  sector;
 
     psGameObject::GetPosition(item,position,sector);
-    
-    // Add the new tribe item as an asset.
-    // TODO: Find buildings and items and add them seperate, for now add as BUILDING.
-    AddAsset(Tribe::ASSET_TYPE_BUILDING, item->GetName(), position, sector, Tribe::ASSET_STATUS_CONSTRUCTED);
+
+    // Check if we have this item as an asset
+    Asset* asset = GetAsset(item->GetUID());
+    if (asset)
+    {
+        asset->item = item;
+    }
+    else
+    {
+        // TODO: Find buildings and items and add them seperate, for now add as BUILDING.
+
+        asset = GetAsset(Tribe::ASSET_TYPE_BUILDING, item->GetName(), position, sector);
+        if (asset)
+        {
+            asset->item = item;
+            asset->itemUID = item->GetUID();
+            SaveAsset(asset);
+        }
+        else
+        {
+            // Add the new tribe item as an asset.
+            asset = AddAsset(Tribe::ASSET_TYPE_BUILDING, item->GetName(), position, sector, Tribe::ASSET_STATUS_CONSTRUCTED);
+            asset->item = item;
+            asset->itemUID = item->GetUID();
+            SaveAsset(asset);
+        }
+    }
 }
 
 
@@ -1345,120 +1433,156 @@ void Tribe::ReplaceBuffers(csString& result)
 void Tribe::LoadAsset(iResultRow &row)
 {
 
-    Asset asset;
-    asset.id = row.GetInt("id");
-    asset.name = row["name"];
-    asset.type = (AssetType)(row.GetInt("type"));
+    Asset* asset = new Asset();
+    asset->id = row.GetInt("id");
+    asset->name = row["name"];
+    asset->type = (AssetType)(row.GetInt("type"));
     csVector3 coords;
     coords[0] = row.GetFloat("coordX");
     coords[1] = row.GetFloat("coordY");
     coords[2] = row.GetFloat("coordZ");
-    asset.pos = coords;
-    asset.item = NULL;
-    asset.sector = npcclient->GetEngine()->GetSectors ()->FindByName(row["sector_name"]);
-    asset.status = (AssetStatus)(row.GetInt("status"));
-    asset.quantity = row.GetInt("quantity");
+    asset->pos = coords;
+    asset->item = NULL;
+    asset->itemUID = row.GetInt("itemID");
+    asset->sectorName = row["sector_name"];
+    // Try to find the sector. Will probably fail at this point.
+    if (!asset->sectorName.IsEmpty())
+    {
+        asset->sector = npcclient->GetEngine()->FindSector(asset->sectorName);
+    }
+    else
+    {
+        asset->sector = NULL;
+    }
+    asset->status = (AssetStatus)(row.GetInt("status"));
+    asset->quantity = row.GetInt("quantity");
 
     assets.Push(asset);
 }
 
 void Tribe::SaveAsset(Tribe::Asset* asset, bool deletion)
 {
-    const char * fields[] =
-        {"tribe_id", "name", "type","coordX", "coordY", "coordZ", "sector_id", "gemItemName", "quantity", "status"};
-    
-    psStringArray values;
-    values.FormatPush("%d",GetID());
-    values.FormatPush("%s",asset->name.GetData());
-    values.FormatPush("%d",asset->type);
-    values.FormatPush("%f",asset->pos[0]);
-    values.FormatPush("%f",asset->pos[1]);
-    values.FormatPush("%f",asset->pos[2]);
-    values.FormatPush("%d",asset->sector?Location::GetSectorID(db,asset->sector->QueryObject()->GetName()):-1);
-    values.FormatPush("%s","N/A"); // Work this out when items will be available
-    values.FormatPush("%d",asset->quantity);
-    values.FormatPush("%d",asset->status);
-
-    if(asset->id == -1)
+    if (deletion)
     {
-        // It's a new entry
-        asset->id = db->GenericInsertWithID("sc_tribe_assets",fields,values);
-        if(id == 0)
+        if (db->Command("DELETE FROM sc_tribe_assets WHERE id=%u",asset->id))
         {
-            CPrintf(CON_ERROR, "Failed to save asset for tribe: %s.\n", db->GetLastError());
-            return;
+            asset->id = -1;
         }
     }
     else
     {
-        // Old entry updated
-        csString id;
-        id.Format("%d",asset->id);
-
-        if(!db->GenericUpdateWithID("sc_tribe_assets","id",id,fields,values))
+        const char * fields[] =
+            {"tribe_id", "name", "type","coordX", "coordY", "coordZ", "sector_id", "itemID", "quantity", "status"};
+        
+        psStringArray values;
+        values.FormatPush("%d",GetID());
+        values.FormatPush("%s",asset->name.GetData());
+        values.FormatPush("%d",asset->type);
+        values.FormatPush("%f",asset->pos[0]);
+        values.FormatPush("%f",asset->pos[1]);
+        values.FormatPush("%f",asset->pos[2]);
+        values.FormatPush("%d",asset->sector?Location::GetSectorID(db,asset->sector->QueryObject()->GetName()):-1);
+        values.FormatPush("%d",asset->itemUID);
+        values.FormatPush("%d",asset->quantity);
+        values.FormatPush("%d",asset->status);
+        
+        if(asset->id == -1)
         {
-            CPrintf(CON_ERROR, "Failed to save asset for tribe: %s.\n", db->GetLastError());
-            return;
+            // It's a new entry
+            asset->id = db->GenericInsertWithID("sc_tribe_assets",fields,values);
+            if(id == 0)
+            {
+                CPrintf(CON_ERROR, "Failed to save asset for tribe: %s.\n", db->GetLastError());
+                return;
+            }
+        }
+        else
+        {
+            // Old entry updated
+            csString id;
+            id.Format("%d",asset->id);
+            
+            if(!db->GenericUpdateWithID("sc_tribe_assets","id",id,fields,values))
+            {
+                CPrintf(CON_ERROR, "Failed to save asset for tribe: %s.\n", db->GetLastError());
+                return;
+            }
         }
     }
 }
+
 
 void Tribe::AddAsset(Tribe::AssetType type, csString name, gemNPCItem* item, int quantity, int id)
 {
     for(size_t i=0; i<assets.GetSize(); i++)
     {
-        if(assets[i].name == name)
+        if(assets[i]->name == name)
         {
-            assets[i].quantity += quantity;
-            SaveAsset(&assets[i]);
+            assets[i]->quantity += quantity;
+            SaveAsset(assets[i]);
             return;
         }
     }
 
     // No items like this before in the array
-    Asset asset;
-    asset.id       = id;
-    asset.type     = type;
-    asset.name     = name;
-    asset.item     = item;
-    asset.quantity = quantity;
-    asset.pos      = csVector3(0,0,0);
-    asset.status   = Tribe::ASSET_STATUS_NOT_APPLICABLE;
-    assets.Push(asset);
-    SaveAsset(&asset);
-}
-
-void Tribe::AddAsset(Tribe::AssetType type, csString name, csVector3 position, iSector* sector, Tribe::AssetStatus status)
-{
-    // Just Add a new spot asset if it does not exist
-    if(GetAsset(type, name, position, sector))
+    Asset* asset = new Asset();
+    asset->id       = id;
+    asset->type     = type;
+    asset->name     = name;
+    asset->item     = item;
+    if (asset->item)
     {
-        // Asset already exists in the same spot. Bail
-        return;
+        asset->itemUID  = asset->item->GetUID();
     }
+    else
+    {
+        asset->itemUID = 0;
+    }
+    asset->quantity = quantity;
+    asset->pos      = csVector3(0,0,0);
+    asset->status   = Tribe::ASSET_STATUS_NOT_APPLICABLE;
+    assets.Push(asset);
+    SaveAsset(asset);
+}
 
-    Asset asset;
-    asset.id       = -1;
-    asset.type     = type;
-    asset.name     = name;
-    asset.item     = NULL;
-    asset.pos      = position;
-    asset.sector   = sector;
-    asset.quantity = 1;
-    asset.status   = status;
+Tribe::Asset* Tribe::AddAsset(Tribe::AssetType type, csString name, csVector3 position, iSector* sector, Tribe::AssetStatus status)
+{
+    Asset* asset = new Asset();
+    asset->id       = -1;
+    asset->type     = type;
+    asset->name     = name;
+    asset->item     = NULL;
+    asset->itemUID  = 0;
+    asset->pos      = position;
+    if (sector != NULL)
+    {
+        asset->sectorName = sector->QueryObject()->GetName();
+    }
+    asset->sector   = sector;
+    asset->quantity = 1;
+    asset->status   = status;
 
     assets.Push(asset);
-    SaveAsset(&asset);
-    return;
+    SaveAsset(asset);
+
+    return asset;
 }
+
+void Tribe::RemoveAsset(Tribe::Asset* asset)
+{
+    SaveAsset(asset,true); // Deleation = true
+    assets.Delete(asset);
+}
+
+
 
 Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name)
 {
     for(size_t i=0; i<assets.GetSize(); i++)
     {
-        if(assets[i].type == type && assets[i].name == name)
+        if(assets[i]->type == type && assets[i]->name == name)
         {
-            return &assets[i];
+            return assets[i];
         }
     }
     
@@ -1470,9 +1594,9 @@ Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, Tribe::Asset
 {
     for(size_t i=0; i<assets.GetSize(); i++)
     {
-        if(assets[i].type == type && assets[i].name == name && assets[i].status == status)
+        if(assets[i]->type == type && assets[i]->name == name && assets[i]->status == status)
         {
-            return &assets[i];
+            return assets[i];
         }
     }
     
@@ -1484,29 +1608,165 @@ Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, csVector3 wh
 {
     for(size_t i=0; i<assets.GetSize(); i++)
     {
-        if(assets[i].type == type && assets[i].name == name && assets[i].pos == where && assets[i].sector == sector)
+        if(assets[i]->type == type && assets[i]->name == name && assets[i]->pos == where && assets[i]->GetSector() == sector)
         {
-            return &assets[i];
+            return assets[i];
         }
     }
     
     return NULL;
 }
 
+Tribe::Asset* Tribe::GetAsset(gemNPCItem* item)
+{
+    for(size_t i=0; i<assets.GetSize(); i++)
+    {
+        if(assets[i]->item == item)
+        {
+            return assets[i];
+        }
+    }
+    
+    return NULL;
+}
+
+Tribe::Asset* Tribe::GetAsset(uint32_t itemUID)
+{
+    for(size_t i=0; i<assets.GetSize(); i++)
+    {
+        if(assets[i]->itemUID == itemUID)
+        {
+            return assets[i];
+        }
+    }
+    
+    return NULL;
+}
+
+
+
+Tribe::Asset* Tribe::GetRandomAsset(Tribe::AssetType type, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range)
+{
+    csArray<Tribe::Asset*> nearby;
+    
+    for(size_t i=0; i<assets.GetSize(); i++)
+    {
+        if(assets[i]->type == type && assets[i]->status == status)
+        {
+            float dist = npcclient->GetWorld()->Distance(pos,sector,assets[i]->pos,assets[i]->GetSector());
+        
+            if (range < 0 || dist < range)
+            {
+                nearby.Push(assets[i]);
+            }
+        }
+    }
+
+    if (nearby.GetSize()>0)  // found one or more closer than range
+    {
+        size_t pick = psGetRandom((uint32)nearby.GetSize());
+        
+        return nearby[pick];
+    }
+    
+    // If we get here, the asset does not exist and we return a null one
+    return NULL;
+}
+
+Tribe::Asset* Tribe::GetNearestAsset(Tribe::AssetType type, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range, float* locatedRange)
+{
+    Tribe::Asset* nearest = NULL;
+
+    for(size_t i=0; i<assets.GetSize(); i++)
+    {
+        if(assets[i]->type == type && assets[i]->status == status)
+        {
+            float dist = npcclient->GetWorld()->Distance(pos,sector,assets[i]->pos,assets[i]->GetSector());
+        
+            if (range < 0 || dist < range)
+            {
+                nearest = assets[i];
+                range = dist;
+            }
+        }
+    }
+
+    if (locatedRange) *locatedRange = range;
+
+    return nearest;
+}
+    
+Tribe::Asset* Tribe::GetRandomAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range)
+{
+    csArray<Tribe::Asset*> nearby;
+    
+    for(size_t i=0; i<assets.GetSize(); i++)
+    {
+        if(assets[i]->type == type && assets[i]->name == name && assets[i]->status == status)
+        {
+            float dist = npcclient->GetWorld()->Distance(pos,sector,assets[i]->pos,assets[i]->GetSector());
+        
+            if (range < 0 || dist < range)
+            {
+                nearby.Push(assets[i]);
+            }
+        }
+    }
+
+    if (nearby.GetSize()>0)  // found one or more closer than range
+    {
+        size_t pick = psGetRandom((uint32)nearby.GetSize());
+        
+        return nearby[pick];
+    }
+    
+    // If we get here, the asset does not exist and we return a null one
+    return NULL;
+}
+
+
+Tribe::Asset* Tribe::GetNearestAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range, float* locatedRange)
+{
+    Tribe::Asset* nearest = NULL;
+
+    for(size_t i=0; i<assets.GetSize(); i++)
+    {
+        if(assets[i]->type == type && assets[i]->name == name && assets[i]->status == status)
+        {
+            float dist = npcclient->GetWorld()->Distance(pos,sector,assets[i]->pos,assets[i]->GetSector());
+        
+            if (range < 0 || dist < range)
+            {
+                nearest = assets[i];
+                range = dist;
+            }
+        }
+    }
+
+    if (locatedRange) *locatedRange = range;
+
+    return nearest;
+}
+
+
 void Tribe::DeleteAsset(csString name, int quantity)
 {
     for(size_t i=0; i<assets.GetSize(); i++)
     {
-        if(assets[i].name == name)
+        if(assets[i]->name == name)
         {
-            assets[i].quantity -= quantity;
+            assets[i]->quantity -= quantity;
             // Remove entry if nothing remains
-            if(assets[i].quantity <= 0)
+            if(assets[i]->quantity <= 0)
             {
+                // Call SaveAsset with deletion = true to delete the asset
+                SaveAsset(assets[i], true);
+
                 assets.DeleteIndex(i);
                 return;
             }
-            SaveAsset(&assets[i]);
+            // Asset not deleted so update db
+            SaveAsset(assets[i]);
             return;
         }
     }
@@ -1516,7 +1776,7 @@ void Tribe::DeleteAsset(csString name, csVector3 pos)
 {
     for(size_t i=0; i<assets.GetSize(); i++)
     {
-        if(assets[i].name == name && assets[i].pos == pos)
+        if(assets[i]->name == name && assets[i]->pos == pos)
         {
             assets.DeleteIndex(i);
             return;
@@ -1534,17 +1794,18 @@ void Tribe::DumpAssets()
         return;
     }
 
-    CPrintf(CON_CMDOUTPUT, "%-15s %-25s %-6s %-25s %-15s\n",
-            "Name", "Type","Quant", "Position", "Status");
+    CPrintf(CON_CMDOUTPUT, "%-15s %-25s %-6s %-25s %-15s %s\n",
+            "Name", "Type","Quant", "Position", "Status", "Item");
 
     for(size_t i=0; i<assets.GetSize(); i++)
     {
-        CPrintf(CON_CMDOUTPUT, "%-15s %-25s %-6d %-25s %-15s\n",
-                assets[i].name.GetData(),
-                AssetTypeStr[assets[i].type],
-                assets[i].quantity,
-                toString(assets[i].pos,assets[i].sector).GetDataSafe(),
-                AssetStatusStr[assets[i].status]);
+        CPrintf(CON_CMDOUTPUT, "%-15s %-25s %-6d %-25s %-15s %s\n",
+                assets[i]->name.GetData(),
+                AssetTypeStr[assets[i]->type],
+                assets[i]->quantity,
+                toString(assets[i]->pos,assets[i]->GetSector()).GetDataSafe(),
+                AssetStatusStr[assets[i]->status],
+                assets[i]->item.IsValid()?assets[i]->item->GetName():"(NONE)");
     }
 }
 

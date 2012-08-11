@@ -951,6 +951,44 @@ ScriptOperation::OperationResult BuildOperation::Run(NPC *npc, bool interrupted)
 
 //---------------------------------------------------------------------------
 
+bool UnbuildOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *UnbuildOperation::MakeCopy()
+{
+    UnbuildOperation *op = new UnbuildOperation;
+    return op;
+}
+
+ScriptOperation::OperationResult UnbuildOperation::Run(NPC *npc, bool interrupted)
+{
+    if (npc->GetTribe())
+    {
+        gemNPCItem* building = dynamic_cast<gemNPCItem*>(npc->GetTarget());
+        if (building)
+        {
+            npc->GetTribe()->Unbuild(npc, building);
+        }
+        else
+        {
+            npc->Printf(5,"No building targeted.");
+            return OPERATION_FAILED;
+        }
+        
+    }
+    else
+    {
+        npc->Printf(5,"No tribe for this NPC.");
+        return OPERATION_FAILED;
+    }
+
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 bool BusyOperation::Load(iDocumentNode *node)
 {
     return true;
@@ -1989,6 +2027,10 @@ bool LocateOperation::Load(iDocumentNode *node)
     {
         return true;
     }
+    else if (split_obj[0] == "building")
+    {
+        return true;
+    }
     else if (split_obj[0] == "building_spot")
     {
         return true;
@@ -2186,8 +2228,9 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     csVector3 start_pos;
     psGameObject::GetPosition(npc->GetActor(),start_pos,start_rot,start_sector);
 
-    
-    npc->Printf(5, "LocateOp - Locate object '%s' destination '%s'", object.GetDataSafe(),destination.GetDataSafe());
+    // Prepare debug of arguments
+    csString locateArgs;
+    locateArgs.AppendFmt("- Object '%s' Destination '%s'", object.GetDataSafe(), destination.GetDataSafe());
 
     csString objectReplacedVariables = psGameObject::ReplaceNPCVariables(npc, object);
     csString destinationVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, destination);
@@ -2197,7 +2240,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
  
     if (split_obj[0] == "actor")
     {
-        npc->Printf(5,"LocateOp - Actor");
+        npc->Printf(5,"LocateOp - Actor %s",locateArgs.GetDataSafe());
 
         iSector *sector;
         csVector3 pos;
@@ -2219,9 +2262,57 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
 
         located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
     }
+    else if (split_obj[0] == "building")
+    {
+        npc->Printf(5,"LocateOp - Building %s",locateArgs.GetDataSafe());
+
+        if (!npc->GetTribe())
+        {
+            return OPERATION_FAILED;
+        }
+        
+        Tribe::Asset* building = NULL;
+
+        if (split_obj[1].IsEmpty())
+        {
+            if (random)
+            {
+                building = npc->GetTribe()->GetRandomAsset(Tribe::ASSET_TYPE_BUILDING, Tribe::ASSET_STATUS_CONSTRUCTED, start_pos, start_sector, range);
+            }
+            else
+            {
+                building = npc->GetTribe()->GetNearestAsset(Tribe::ASSET_TYPE_BUILDING, Tribe::ASSET_STATUS_CONSTRUCTED, start_pos, start_sector, range);
+            }
+        }
+        else
+        {
+            if (random)
+            {
+                building = npc->GetTribe()->GetRandomAsset(Tribe::ASSET_TYPE_BUILDING, split_obj[1], Tribe::ASSET_STATUS_CONSTRUCTED, start_pos, start_sector, range);
+            }
+            else
+            {
+                building = npc->GetTribe()->GetNearestAsset(Tribe::ASSET_TYPE_BUILDING, split_obj[1], Tribe::ASSET_STATUS_CONSTRUCTED, start_pos, start_sector, range);
+            }
+        }
+        
+        if (building)
+        {
+            located.pos =   building->pos;
+            located.angle = 0;
+            located.sector = building->sector;
+            located.target = building->item;
+            
+            located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
+        }
+        else
+        {
+            return OPERATION_FAILED;
+        }
+    }
     else if (split_obj[0] == "building_spot")
     {
-        npc->Printf(5,"LocateOp - Building spot");
+        npc->Printf(5,"LocateOp - Building spot %s",locateArgs.GetDataSafe());
         
         Tribe::Asset* buildingSpot = npc->GetBuildingSpot();
         if (buildingSpot)
@@ -2244,7 +2335,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "dead")
     {
-        npc->Printf(5,"LocateOp - Dead");
+        npc->Printf(5,"LocateOp - Dead %s",locateArgs.GetDataSafe());
 
         gemNPCActor* ent = npc->GetNearestDeadActor(range);
 
@@ -2270,7 +2361,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "entity")
     {
-        npc->Printf(5,"LocateOp - Entity");
+        npc->Printf(5,"LocateOp - Entity %s",locateArgs.GetDataSafe());
 
         gemNPCObject *entity = NULL;
 
@@ -2309,7 +2400,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if(split_obj[0] == "friend")
     {
-        npc->Printf(5, "LocateOp - Friend");
+        npc->Printf(5, "LocateOp - Friend %s",locateArgs.GetDataSafe());
 
         gemNPCActor *ent = npc->GetNearestVisibleFriend(20);
         if(ent)
@@ -2334,7 +2425,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "perception")
     {
-        npc->Printf(5,"LocateOp - Perception");
+        npc->Printf(5,"LocateOp - Perception %s",locateArgs.GetDataSafe());
 
         if (!npc->GetLastPerception())
         {
@@ -2352,7 +2443,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "player")
     {
-        npc->Printf(5,"LocateOp - Player");
+        npc->Printf(5,"LocateOp - Player %s",locateArgs.GetDataSafe());
 
         iSector *sector;
         csVector3 pos;
@@ -2376,7 +2467,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "target")
     {
-        npc->Printf(5,"LocateOp - Target");
+        npc->Printf(5,"LocateOp - Target %s",locateArgs.GetDataSafe());
 
         // Since we don't have a current enemy targeted, find one!
         gemNPCActor* ent = npc->GetMostHated(range,locate_invisible,locate_invincible);
@@ -2403,7 +2494,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "owner")
     {
-        npc->Printf(5,"LocateOp - Owner");
+        npc->Printf(5,"LocateOp - Owner %s",locateArgs.GetDataSafe());
 
         gemNPCObject *owner;
         // Since we don't have a current enemy targeted, find one!
@@ -2432,7 +2523,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "point")
     {
-        npc->Printf(5,"LocateOp - Point");
+        npc->Printf(5,"LocateOp - Point %s",locateArgs.GetDataSafe());
 
         iSector *sector;
         float npc_rot;
@@ -2451,7 +2542,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "region")
     {
-        npc->Printf(5,"LocateOp - Region");
+        npc->Printf(5,"LocateOp - Region %s",locateArgs.GetDataSafe());
+
         LocationType* region = npc->GetRegion();
         if (!region)
         {
@@ -2505,7 +2597,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "self")
     {
-        npc->Printf(5,"LocateOp - Self");
+        npc->Printf(5,"LocateOp - Self %s",locateArgs.GetDataSafe());
 
         gemNPCActor *ent;
 
@@ -2533,7 +2625,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "ownbuffer")
     {
-        npc->Printf(5, "LocateOp - Own Buffer");
+        npc->Printf(5, "LocateOp - Own Buffer %s",locateArgs.GetDataSafe());
+
         Tribe::Memory* ownBuffer = npc->GetBufferMemory();
 
         // If npc's buffer was never set just abandon
@@ -2555,7 +2648,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "spawn")
     {
-        npc->Printf(5,"LocateOp - Spawn");
+        npc->Printf(5,"LocateOp - Spawn %s",locateArgs.GetDataSafe());
 
         located.pos = npc->GetSpawnPosition();
         located.angle = 0;
@@ -2565,15 +2658,17 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "tribe")
     {
-        npc->Printf(5,"LocateOp - Tribe");
-
         if (!npc->GetTribe())
         {
+            npc->Printf(5,"LocateOp - Tribe: NO TRIBE");
+
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
 
         if (split_obj[1] == "home")
         {
+            npc->Printf(5,"LocateOp - Tribe - Home %s",locateArgs.GetDataSafe());
+
             float radius;
             csVector3 pos;
             npc->GetTribe()->GetHome(pos,radius,located.sector);
@@ -2588,6 +2683,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
         }
         else if (split_obj[1] == "memory")
         {
+            npc->Printf(5,"LocateOp - Tribe - Memory %s",locateArgs.GetDataSafe());
+
             float located_range=0.0;
             Tribe::Memory * memory;
 
@@ -2616,13 +2713,15 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
         }
         else if (split_obj[1] == "resource")
         {
+            npc->Printf(5,"LocateOp - Tribe - Resource %s",locateArgs.GetDataSafe());
+
             npc->GetTribe()->GetResource(npc,start_pos,start_sector,located.pos,located.sector,range,random);
             located.angle = 0.0;
             located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
         }
         else if (split_obj[0] == "target")
         {
-            npc->Printf(5,"LocateOp - Tribe Target");
+            npc->Printf(5,"LocateOp - Tribe - Target %s",locateArgs.GetDataSafe());
 
             if (!npc->GetTribe())
             {
@@ -2655,7 +2754,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "waypoint" )
     {
-        npc->Printf(5, "LocateOp - Waypoint");
+        npc->Printf(5, "LocateOp - Waypoint %s",locateArgs.GetDataSafe());
 
         float located_range=0.0;
 
@@ -2713,7 +2812,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (!static_loc || !staticLocated)
     {
-        npc->Printf(5, "LocateOp - Location");
+        npc->Printf(5, "LocateOp - Location %s",locateArgs.GetDataSafe());
 
         float located_range=0.0;
         Location * location;
@@ -3786,8 +3885,10 @@ ScriptOperation::OperationResult ReproduceOperation::Run(NPC *npc, bool interrup
     NPC * friendNPC = npc->GetTarget()->GetNPC();
     if(friendNPC)
     {
-        npc->Printf(5, "Reproduce");
-        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor(), psGameObject::ReplaceNPCVariables(npc,tribeMemberType));
+        csString tribeMemberTypeReplaced = psGameObject::ReplaceNPCVariables(npc,tribeMemberType);
+
+        npc->Printf(5, "Reproduce - %s",tribeMemberTypeReplaced.GetDataSafe());
+        npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor(), tribeMemberTypeReplaced);
     }
 
     return OPERATION_COMPLETED;  // Nothing more to do for this op.
@@ -4259,10 +4360,36 @@ void RotateOperation::InterruptOperation(NPC *npc)
 
 //---------------------------------------------------------------------------
 
+bool ProgressScriptOperation::Load(iDocumentNode *node)
+{
+    scriptName = node->GetAttributeValue("name");
+    if (scriptName.IsEmpty())
+    {
+        Error1("Script operation must have a name attribute");
+        return false;
+    }
+    return true;
+}
+
+ScriptOperation *ProgressScriptOperation::MakeCopy()
+{
+    ProgressScriptOperation *op = new ProgressScriptOperation;
+    op->scriptName = scriptName;
+    return op;
+}
+
+ScriptOperation::OperationResult ProgressScriptOperation::Run(NPC *npc, bool interrupted)
+{
+    npcclient->GetNetworkMgr()->QueueScriptCommand(npc->GetActor(), npc->GetTarget(), scriptName);
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 bool SequenceOperation::Load(iDocumentNode *node)
 {
     sequenceName = node->GetAttributeValue("name");
-    if (name.IsEmpty())
+    if (sequenceName.IsEmpty())
     {
         Error1("Sequence operation must have a name attribute");
         return false;
@@ -4309,6 +4436,64 @@ ScriptOperation::OperationResult SequenceOperation::Run(NPC *npc, bool interrupt
 {
 
     npcclient->GetNetworkMgr()->QueueSequenceCommand(sequenceName, cmd, count );
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
+bool SetBufferOperation::Load(iDocumentNode *node)
+{
+    buffer = node->GetAttributeValue("buffer");
+    if (buffer.IsEmpty())
+    {
+        Error1("Set Buffer operation must have a buffer attribute");
+        return false;
+    }
+    
+    value = node->GetAttributeValue("value");
+    if (value.IsEmpty())
+    {
+        Error1("Set Buffer operation must have a value attribute");
+        return false;
+    }
+
+    type = NPC_BUFFER;
+
+    if (node->GetAttribute("type"))
+    {
+        if (csString(node->GetAttributeValue("type")).CompareNoCase("tribe"))
+        {
+            type = TRIBE_BUFFER;
+        }
+    }
+
+    return true;
+}
+
+ScriptOperation *SetBufferOperation::MakeCopy()
+{
+    SetBufferOperation *op = new SetBufferOperation;
+    op->buffer = buffer;
+    op->value = value;
+    op->type = type;
+    return op;
+}
+
+ScriptOperation::OperationResult SetBufferOperation::Run(NPC *npc, bool interrupted)
+{
+    if (type == NPC_BUFFER)
+    {
+        npc->SetBuffer(buffer,value);
+    }
+    else if (type == TRIBE_BUFFER && npc->GetTribe())
+    {
+        npc->GetTribe()->SetBuffer(buffer,value);
+    }
+    else
+    {
+        return OPERATION_FAILED;
+    }
+
     return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
 

@@ -1735,8 +1735,16 @@ ALTER TABLE natural_resources ADD COLUMN `max_random` int(11) NOT NULL default '
 # Added an ordering to the quest completion.
 
 UPDATE `server_options` SET `option_value`='1267' WHERE `option_name`='db_version';
-ALTER TABLE `character_quests` ADD COLUMN `completionOrder` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'This field stores the ordering in which this quest was completed from 0 to n.' AFTER `last_response_npc_id`;
+ALTER TABLE character_quests ADD COLUMN `completionOrder` INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT 'This field stores the ordering in which this quest was completed from 0 to n.' AFTER `last_response_npc_id`;
 
+#
+# Changed tribe assets gemItemName to itemUID 1268
+#
+UPDATE `server_options` SET `option_value`='1268' WHERE `option_name`='db_version';
+ALTER TABLE sc_tribe_assets ADD COLUMN `itemID` int(10) NOT NULL default '0' AFTER `sector_id`;
+ALTER TABLE sc_tribe_assets DROP COLUMN `gemItemName`;
+UPDATE sc_tribe_assets a, item_instances i SET a.itemID=i.id WHERE a.coordX = i.loc_x AND a.coordY = i.loc_y AND a.coordZ = i.loc_z AND a.sector_id != -1;
+INSERT INTO command_groups VALUES(50, "Administrator");
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

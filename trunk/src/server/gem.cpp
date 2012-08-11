@@ -1342,8 +1342,8 @@ bool gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
                          zRot,
                          flags,
                          cacheManager->GetMsgStrings(),
-                         (to_superclients || allEntities)?GetTribeID():0 // Don't send tribe ids to clients
-                         );
+                         (to_superclients || allEntities)?GetTribeID():0, // Don't send tribe ids to clients
+                         (to_superclients || allEntities)?GetItem()->GetUID():0);
 
     if (clientnum && !to_superclients)
     {
@@ -5044,7 +5044,9 @@ bool gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
         }
     }
     if (allEntities)
+    {
         return allEntities->AddEntityMessage(mesg.msg);
+    }
 
     return true;
 }

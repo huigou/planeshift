@@ -353,6 +353,23 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* Will unbuild a tribe building.
+*/
+class UnbuildOperation : public ScriptOperation
+{
+protected:
+public:
+
+    UnbuildOperation(): ScriptOperation("Unbuild") {};
+    virtual ~UnbuildOperation() {};
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
 * Will Set the busy indicator for an NPC.
 */
 class BusyOperation : public ScriptOperation
@@ -1201,6 +1218,32 @@ public:
 
 //-----------------------------------------------------------------------------
 
+/** Script will make the progression script run at server
+ *
+ *  This class is the implementation of the script operations
+ *  used in behavior scripts for NPCS.
+ *
+ *  Examples:
+ *  <script name="my_script" />
+ */
+class ProgressScriptOperation : public ScriptOperation
+{
+protected:
+    csString scriptName; ///< The name of the script to run
+
+    // Instance temp variables. These dosn't need to be copied.
+
+public:
+
+    ProgressScriptOperation(): ScriptOperation("Script") {};
+    virtual ~ProgressScriptOperation() {};
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
 /**
 * Sequence will control a named sequence in the world.
 */
@@ -1223,6 +1266,33 @@ public:
 
     SequenceOperation(): ScriptOperation("Sequence") {};
     virtual ~SequenceOperation() {};
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* SetBuffer will set a buffer for tribe or npc.
+*/
+class SetBufferOperation : public ScriptOperation
+{
+protected:
+    enum // Sequence commands, should use same values as in the psSequenceMessage
+    {
+        NPC_BUFFER = 0,
+        TRIBE_BUFFER = 1
+    };
+    
+    csString buffer;
+    csString value;
+    int      type;
+
+public:
+
+    SetBufferOperation(): ScriptOperation("SetBuffer") {};
+    virtual ~SetBufferOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();

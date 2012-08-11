@@ -25,6 +25,8 @@
 #include <csutil/array.h>
 #include <csutil/list.h>
 #include <csutil/priorityqueue.h>
+#include <csutil/weakref.h>
+#include <csutil/parray.h>
 
 #include <csgeom/vector3.h>
 #include <iengine/sector.h>
@@ -87,16 +89,21 @@ public:
 
     struct Asset
     {
-        int         id;
-        AssetType   type;      ///< Type of this asset.
-        csString    name;      ///< Name. Especially used for buildings
-        gemNPCItem* item;      ///< Item representing the asset
-        int         quantity;  ///< Quantity of items of this type
-        csVector3   pos;       ///< Position // Used only for reservations
-        iSector*    sector;    ///< The Sector
-        AssetStatus status;    ///< Status of this asset. Used for buildings.
+        int                   id;
+        AssetType             type;      ///< Type of this asset.
+        csString              name;      ///< Name. Especially used for buildings
+        uint32_t              itemUID;   ///< The UID of the item, 0 if no item
+        csWeakRef<gemNPCItem> item;      ///< Item representing the asset
+        int                   quantity;  ///< Quantity of items of this type
+        csVector3             pos;       ///< Position // Used only for reservations
+        csString              sectorName;///< Name of the sector.
+        iSector*              sector;    ///< The Sector
+        AssetStatus           status;    ///< Status of this asset. Used for buildings.
 
         void        Save();
+        /** Get the sector */
+        iSector*    GetSector();
+        gemNPCItem* GetItem();
     };
 
     struct Memory
@@ -470,13 +477,19 @@ public:
     bool CheckResource(csString resource, int number);
 
     /** Check to see if enough assets are available */
-    bool CheckAsset(Tribe::AssetType type, csString items, int number);
+    bool CheckAsset(Tribe::AssetType type, csString name, int number);
+
+    /** Return the quanitity of the given asset type matching the name */
+    size_t AssetQuantity(Tribe::AssetType type, csString name);
    
     /** Build a building on the current NPC building spot */
     void Build(NPC* npc);
 
-    /** Handle percist items that should be assets. */
-    void HandlePersitItem(gemNPCItem* item);
+    /** Tear down a building */
+    void Unbuild(NPC* npc, gemNPCItem* building);
+    
+    /** Handle persist items that should be assets. */
+    void HandlePersistItem(gemNPCItem* item);
     
     /** Returns pointers to required npcs for a task */
     csArray<NPC*> SelectNPCs(const csString& type, const char* number);
@@ -514,7 +527,10 @@ public:
     void AddAsset(Tribe::AssetType type, csString name, gemNPCItem* item, int quantity, int id = -1);
 
     /** Add an asset to the tribe */
-    void AddAsset(Tribe::AssetType type, csString name, csVector3 position, iSector* sector, Tribe::AssetStatus status);
+    Tribe::Asset* AddAsset(Tribe::AssetType type, csString name, csVector3 position, iSector* sector, Tribe::AssetStatus status);
+
+    /** Remove an asset */
+    void RemoveAsset(Tribe::Asset* asset);
 
     /** Get asset */
     Asset* GetAsset(Tribe::AssetType type, csString name);
@@ -525,6 +541,24 @@ public:
     /** Get an asset based on name and position */
     Asset* GetAsset(Tribe::AssetType type, csString name, csVector3 where, iSector* sector);
 
+    /** Get asset */
+    Asset* GetAsset(gemNPCItem* item);
+
+    /** Get asset */
+    Asset* GetAsset(uint32_t itemUID);
+
+    /** Get an asset */
+    Asset* GetRandomAsset(Tribe::AssetType type, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range);
+
+    /** Get an asset */
+    Asset* GetNearestAsset(Tribe::AssetType type, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range, float* locatedRange = NULL);
+    
+    /** Get an asset */
+    Asset* GetRandomAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range);
+
+    /** Get an asset */
+    Asset* GetNearestAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range, float* locatedRange = NULL);
+    
     /** Delete item assets */
     void DeleteAsset(csString name, int quantity);
 
@@ -566,7 +600,7 @@ protected:
     csArray<NPC*>             deadMembers;
     csArray<Resource>         resources;
     csArray<csString>         knowledge;       ///< Array of knowledge tokens
-    csArray<Asset>            assets;          ///< Array of items / buildings
+    csPDelArray<Asset>        assets;          ///< Array of items / buildings
     csArray<CyclicRecipe>     cyclicRecipes;   ///< Array of cycle recipes
     RecipeTreeNode*           tribalRecipe;    ///< The tribal recipe root of the recipe tree
 

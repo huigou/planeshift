@@ -43,6 +43,7 @@ class psGameEvent;
 class NPC;
 class gemNPCActor;
 class gemNPCObject;
+class gemNPCItem;
 
 
 class NetworkManager : public psClientNetSubscriber 
@@ -136,6 +137,14 @@ public:
      */
     void QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target, const char* stance);
     
+    /** Send a script command to server
+     *
+     * @param npc             The npc that sit/stand
+     * @param target          The current target of then npc
+     * @param scriptName      The name of the progression script to run at server
+     */
+    void QueueScriptCommand(gemNPCActor *npc, gemNPCObject *target, const csString& scriptName);
+
     /** Send a sit command to server
      *
      * @param npc             The npc that sit/stand
@@ -161,6 +170,13 @@ public:
      * @param tribeID      The owner of this building
      */
     void QueueSpawnBuildingCommand(gemNPCActor *spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID);
+
+    /** Send a unbuild command to server
+     *
+     * @param unbuilder    The entity that unbuild the building
+     * @param building     The building.
+     */
+    void QueueUnbuildCommand(gemNPCActor *unbuilder, gemNPCItem* building);
     
     /** Queue a talk command to the server
      *

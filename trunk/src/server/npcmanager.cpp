@@ -74,7 +74,8 @@
 #include "adminmanager.h"
 #include "netmanager.h"
 #include "spellmanager.h"
-
+#include "progressionmanager.h"
+#include "scripting.h"
 
 class psNPCManagerTick : public psGameEvent
 {
@@ -1039,6 +1040,49 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 
                 break;
             }
+            case psNPCCommandsMessage::CMD_SCRIPT:
+            {
+                EID  npcEID = EID(list.msg->GetUInt32()); // NPC
+                EID  targetEID = EID(list.msg->GetUInt32()); // Target
+                csString scriptName = list.msg->GetStr();
+
+                Debug4(LOG_SUPERCLIENT, npcEID.Unbox(), "-->Got script cmd for entity %s target %s to run %s\n",
+                       ShowID(npcEID), ShowID(targetEID), scriptName.GetDataSafe());
+
+                // Make sure we haven't run past the end of the buffer
+                if (list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_SCRIPT from NPC client %u.\n",me->clientnum);
+                    break;
+                }
+
+		gemObject* target = dynamic_cast<gemObject*> (gemSupervisor->FindObject(targetEID));
+
+                gemNPC* npc = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(npcEID));
+                if (npc)
+                {
+                    ProgressionScript* progScript = NULL;
+                    
+                    progScript = psserver->GetProgressionManager()->FindScript(scriptName.GetDataSafe());
+                    if (!progScript)
+                    {
+                        Error2("Faild to find script %s",scriptName.GetDataSafe());
+                        break;
+                    }
+                    
+                    MathEnvironment env;
+                    env.Define("Actor",   npc);
+                    env.Define("Target",  target);
+                    progScript->Run(&env);
+                    
+                }
+                else
+                {
+                    Error1("NPC Client try to run script with no existing NPC.");
+                }
+
+                break;
+            }
             case psNPCCommandsMessage::CMD_SIT:
             {
                 EID  npcId = EID(list.msg->GetUInt32()); // NPC
@@ -1056,7 +1100,7 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
 
 		gemObject* target = dynamic_cast<gemObject*> (gemSupervisor->FindObject(targetId));
 
-                gemNPC *npc = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(npcId));
+                gemNPC* npc = dynamic_cast<gemNPC *> (gemSupervisor->FindObject(npcId));
                 if (npc)
                 {  
                     npc->SetTargetObject( target );
@@ -1134,6 +1178,33 @@ void NPCManager::HandleCommandList(MsgEntry *me,Client *client)
                 gemItem* newItem     = entityManager->CreateItem(requiredItem, false, tribeID);
 
                 newItem->UpdateProxList(true);
+                break; 
+            }
+            case psNPCCommandsMessage::CMD_UNBUILD:
+            {
+                EID unbuilderEID = EID(list.msg->GetUInt32());
+                EID buildingEID  = EID(list.msg->GetUInt32());
+
+                Debug3(LOG_SUPERCLIENT, unbuilderEID.Unbox(), "-->Got unbuild cmd for unbilder %s to unbuild %s\n", ShowID(unbuilderEID), ShowID(buildingEID));
+
+                if(list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,me->clientnum,"Received incomplete CMD_UNBUILD from NPC client %u.\n", me->clientnum);
+                    break;
+                }
+
+                gemItem* building = dynamic_cast<gemItem*> (gemSupervisor->FindObject(buildingEID));
+
+                if (building)
+                {
+                    psItem* item = building->GetItem();
+                    if (item)
+                    {
+                        entityManager->RemoveActor(building); // building is deleted in Remove Actor
+                        item->Destroy();                      // Remove item from DB.
+                    }
+                }
+
                 break; 
             }
             case psNPCCommandsMessage::CMD_BUSY:

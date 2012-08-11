@@ -587,6 +587,28 @@ void psNPCClient::Add( gemNPCObject* object )
     if (item)
     {
         all_gem_items.Push( item );
+
+        // Is this a tribe Item with tribe ID?
+        if (item->GetTribeID() != 0)
+        {
+            Tribe* tribe = GetTribe(item->GetTribeID());
+            if(tribe)
+            {
+                tribe->HandlePersistItem(item);
+            }
+        }
+        else
+        {
+            // Is this an asset without tribe ID?
+            for (size_t i=0; i<tribes.GetSize(); i++)
+            {
+                Tribe::Asset* asset = tribes[i]->GetAsset(item->GetUID());
+                if (asset)
+                {
+                    asset->item = item;
+                }
+            }
+        }
     }
 
     gemNPCActor* actor = dynamic_cast<gemNPCActor*>(object);
@@ -634,6 +656,33 @@ void psNPCClient::Remove ( gemNPCObject * object )
         {
             all_gem_items.DeleteIndexFast( n );
         }
+
+        Tribe::Asset* asset = NULL;
+        Tribe* tribe = NULL;
+        // Is this a tribe Item with tribe ID?
+        if (item->GetTribeID() != 0)
+        {
+            tribe = GetTribe(item->GetTribeID());
+            if(tribe)
+            {
+                asset = tribe->GetAsset(item->GetUID());
+            }
+        }
+        else
+        {
+            // Is this an asset without tribe ID?
+            for (size_t i=0; i<tribes.GetSize(); i++)
+            {
+                tribe = tribes[i];
+                asset = tribe->GetAsset(item->GetUID());
+                if (asset) break;
+            }
+        }
+        if (asset && tribe)
+        {
+            tribe->RemoveAsset(asset);
+        }
+        
     }
 
     gemNPCActor* actor = dynamic_cast<gemNPCActor*>(object);
@@ -937,7 +986,7 @@ bool psNPCClient::LoadTribes()
             } // End Load Knowledge scope
 
             { // Start Load Assets scope
-                Result rs2(db->Select("select a.*,s.name AS sector_name from sc_tribe_assets a, sectors s WHERE tribe_id=%d and s.id = a.sector_id", tribe->GetID()));
+                Result rs2(db->Select("select a.*,s.name AS sector_name from sc_tribe_assets a LEFT JOIN sectors s on s.id = a.sector_id WHERE tribe_id=%d", tribe->GetID()));
                 if(!rs2.IsValid())
                 {
                     Error2("Could not load tribe assets from db: %s", db->GetLastError() );
