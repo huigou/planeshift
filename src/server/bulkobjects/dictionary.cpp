@@ -1351,15 +1351,15 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
         {
             op = new RunScriptResponseOp;
         }
-        else if ( strcmp( node->GetValue(), "train" ) == 0 )
-        {
-            op = new TrainResponseOp;
-        }
         else if( strcmp( node->GetValue(), "setvariable" ) == 0 )
         {
             op = new SetVariableResponseOp;
         }
-        else if( strcmp( node->GetValue(), "unsetvariable" ) == 0 )
+        else if ( strcmp( node->GetValue(), "train" ) == 0 )
+        {
+            op = new TrainResponseOp;
+        }
+        else if ( strcmp( node->GetValue(), "unsetvariable" ) == 0 )
         {
             op = new UnSetVariableResponseOp;
         }
@@ -1402,10 +1402,13 @@ bool NpcResponse::ParseResponseScript(const char *xmlstr,bool insertBeginning)
             return false;
         }
         if (insertBeginning)
+        {
             script.Insert(where++,op);
-        else{
+        }
+        else
+        {
             script.Push(op);
-}
+        }
         // Execute any outstanding post load operations.
         if (postLoadAssignQuest)
         {

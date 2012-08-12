@@ -1062,17 +1062,17 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new ChaseOperation;
         }
-        else if ( strcmp( node->GetValue(), "copy_locate" ) == 0 )
+        else if ( strcmp( node->GetValue(), "circle" ) == 0 )
         {
-            op = new CopyLocateOperation;
+            op = new CircleOperation;
         }
         else if ( strcmp( node->GetValue(), "control" ) == 0 )
         {
             op = new ControlOperation(true);
         }
-        else if ( strcmp( node->GetValue(), "circle" ) == 0 )
+        else if ( strcmp( node->GetValue(), "copy_locate" ) == 0 )
         {
-            op = new CircleOperation;
+            op = new CopyLocateOperation;
         }
         else if ( strcmp( node->GetValue(), "debug" ) == 0 )
         {
