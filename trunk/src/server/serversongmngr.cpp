@@ -247,10 +247,8 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             }
             else
             {
-                // sending an error message
-                psStopSongMessage stopMsg(client->GetClientNum(), 0, true, psStopSongMessage::LOW_SKILL);
-                stopMsg.SendMessage();
-                return;
+                // error messages to the player due to low skill are
+                // sended by the mathscript Calculate Song Parameters
             }
         }
         else
