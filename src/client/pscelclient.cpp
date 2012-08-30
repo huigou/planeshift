@@ -1400,47 +1400,6 @@ GEMClientActor::GEMClientActor(psCelClient* cel, psPersistActor &mesg)
         cel->HandleUnresolvedPos(this, mesg.pos, csVector3(0, mesg.yrot, 0), mesg.sectorName);
     }
 
-    // Check whether we need to use a clone of our meshfact.
-    // This is needed when we have to scale.
-    if(scale > 0.0f)
-    {
-        bool failed = false;
-        csString newFactName = factName;
-        newFactName.AppendFmt("%f", scale);
-
-        psengine->GetLoader()->CloneFactory(factName, newFactName, &failed);
-
-        if(failed)
-        {
-            Error2("Failed to clone mesh factory: %s", factName.GetData());
-            scale = 0.0f;
-        }
-        else
-        {
-            factName = newFactName;
-        }
-
-    }
-
-    if(!mountFactname.IsEmpty() && mountFactname != "null" && mountScale > 0.0f)
-    {
-        bool failed = false;
-        csString newFactName = mountFactname;
-        newFactName.AppendFmt("%f", mountScale);
-
-        psengine->GetLoader()->CloneFactory(mountFactname, newFactName, &failed);
-
-        if(failed)
-        {
-            Error2("Failed to clone mesh factory: %s", mountFactname.GetData());
-            mountScale = 0.0f;
-        }
-        else
-        {
-            mountFactname = newFactName;
-        }
-    }
-
     LoadMesh();
 
     DRcounter = 0;  // mesg.counter cannot be trusted as it may have changed while the object was gone
@@ -2021,6 +1980,8 @@ void GEMClientActor::SetCharacterMode(size_t newmode)
 
     if(serverMode == psModeMessage::PEACE)
         SetIdleAnimation(psengine->GetCharControl()->GetMovementManager()->GetModeIdleAnim(movementMode));
+
+    psengine->GetSoundManager()->SetEntityState(newmode, pcmesh, race, false);
 }
 
 void GEMClientActor::SetAlive(bool newvalue, bool newactor)
@@ -2164,19 +2125,20 @@ bool GEMClientActor::CheckLoadStatus()
     else
     {
         SwitchToRealMesh(mesh);
-        /*if(scale >= 0)
+
+        // If the mesh has a scale apply it.
+        if(scale >= 0)
         {
             csRef<iMovable> movable = mesh->GetMovable();
             csReversibleTransform & trans = movable->GetTransform();
             csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
-            //scale = scale/sprite->GetScaleFactor();
-            trans.SetO2T(trans.GetO2T() / scale);
+
+            // Normalize the mesh scale to the base scale of the mesh.
+            scale = scale / sprite->GetScaleFactor();
+
+            // Apply the resize transformation.
+            trans = csReversibleTransform(1.0f / scale * csMatrix3(),csVector3(0)) * trans;
             movable->UpdateMove();
-        }*/
-        if(scale >= 0)
-        {
-            csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
-            sprite->AbsoluteRescaleFactory(scale);
         }
     }
 
