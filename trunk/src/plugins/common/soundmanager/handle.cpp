@@ -49,6 +49,7 @@ SoundHandle::SoundHandle()
     delayActive = false;
 
     // initializing pointers to null
+    sndCtrl = 0;
     snddata = 0;
     sndstream = 0;
     sndsource = 0;
@@ -84,7 +85,7 @@ SoundHandle::~SoundHandle()
     }
 
     // unsubscribing to SoundControls' events
-    if(sndCtrl != NULL)
+    if(sndCtrl != 0)
     {
         sndCtrl->Unsubscribe(this);
     }
