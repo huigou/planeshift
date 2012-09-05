@@ -23,6 +23,7 @@
 #include <csutil/scf.h>
 #include <csutil/list.h>
 #include <csgeom/poly3d.h>
+#include <iutil/threadmanager.h>
 
 class csBox3;
 class csOBB;
@@ -98,15 +99,15 @@ struct iCelNavMeshParams : public virtual iBase
   /// Set maximum contour edge length
   virtual void SetMaxEdgeLength (const int length) = 0;
 
-  /// Get minimum regions size (smaller regions will be deleted)
-  virtual int GetMinRegionSize () const = 0;
-  /// Set minimum regions size (smaller regions will be deleted)
-  virtual void SetMinRegionSize (const int size) = 0;
+  /// Get minimum regions area (smaller regions will be deleted)
+  virtual int GetMinRegionArea () const = 0;
+  /// Set minimum regions area (smaller regions will be deleted)
+  virtual void SetMinRegionArea (const int area) = 0;
 
-  /// Get minimum regions size (smaller regions will be merged)
-  virtual int GetMergeRegionSize () const = 0;
-  /// Set minimum regions size (smaller regions will be merged)
-  virtual void SetMergeRegionSize (const int size) = 0;
+  /// Get minimum regions area (smaller regions will be merged)
+  virtual int GetMergeRegionArea () const = 0;
+  /// Set minimum regions area (smaller regions will be merged)
+  virtual void SetMergeRegionArea (const int area) = 0;
 
   /// Get max number of vertices per polygon
   virtual int GetMaxVertsPerPoly () const = 0;
@@ -182,9 +183,8 @@ struct iCelNavMeshPath : public virtual iBase
 
   /**
    * Render path.
-   * \remarks The user is responsible for freeing the returned pointer.
    */
-  virtual csList<csSimpleRenderMesh>* GetDebugMeshes () const = 0;
+  virtual csArray<csSimpleRenderMesh*>* GetDebugMeshes () = 0;
 };
 
 
@@ -240,22 +240,25 @@ struct iCelNavMesh : public virtual iBase
 
   /**
    * Render navigation mesh.
-   * \remarks The user is responsible for freeing the returned pointer.
    */
-  virtual csList<csSimpleRenderMesh>* GetDebugMeshes () const = 0;
+  virtual csArray<csSimpleRenderMesh*>* GetDebugMeshes () = 0;
 
   /**
    * Render proxy agent.
-   * \remarks The user is responsible for freeing the returned pointer.
    */
-  virtual csList<csSimpleRenderMesh>* GetAgentDebugMeshes (const csVector3& pos) const = 0;
+  virtual csArray<csSimpleRenderMesh*>* GetAgentDebugMeshes (const csVector3& pos) = 0;
 
   /**
    * Render proxy agent of the specified color.
-   * \remarks The user is responsible for freeing the returned pointer.
+   * Adding to any previously got since construction or reset.
    */
-  virtual csList<csSimpleRenderMesh>* GetAgentDebugMeshes (const csVector3& pos, int red, int green, 
-                                                           int blue, int alpha) const = 0;
+  virtual csArray<csSimpleRenderMesh*>* GetAgentDebugMeshes (const csVector3& pos, int red, int green, 
+                                                           int blue, int alpha) = 0;
+
+  /**
+   * Clear all previous proxy agents.
+   */
+  virtual void ResetAgentDebugMeshes () = 0;
 };
 
 

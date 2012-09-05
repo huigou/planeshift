@@ -225,15 +225,15 @@ void NavGen::Run()
         builder->SetNavMeshParams(parameters);
 
         // get list of loaded sectors
-        csList<iSector*> sectors;
+        csRefArray<iSector> sectors;
         csRef<iSectorList> sectorList = engine->GetSectors();
         for(size_t i = 0; i < sectorList->GetCount(); i++)
         {
-            sectors.PushBack(sectorList->Get(i));
+            sectors.Push(sectorList->Get(i));
         }
 
         // build navmesh
-        if(!builder->SetSectors(sectors))
+        if(!builder->SetSectors(&sectors))
         {
             csPrintf("failed to set sector on navigation mesh builder\n");
             return;

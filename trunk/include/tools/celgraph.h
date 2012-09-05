@@ -159,7 +159,7 @@ struct iCelNode : public virtual iBase
   /**
    * Get edges.
    */
-  virtual csRefArray<iCelEdge> GetEdges () const = 0;
+  virtual csRefArray<iCelEdge>* GetEdges () = 0;
 };
 
 

@@ -92,7 +92,7 @@ class celNode : public scfImplementation1<
   { return edges.Get(idx); }
   virtual void RemoveEdge (size_t idx);
   virtual size_t AddSuccessor (iCelNode* node, bool state, float weight);
-  virtual csRefArray<iCelEdge> GetEdges () const;
+  virtual csRefArray<iCelEdge>* GetEdges ();
 };
 
 /**

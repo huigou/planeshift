@@ -187,10 +187,10 @@ size_t celNode::AddSuccessor (iCelNode* node, bool state, float weight)
   return edges.Push(edge);
 }
 
-csRefArray<iCelEdge> celNode::GetEdges () const
+csRefArray<iCelEdge>* celNode::GetEdges () 
 {
-  csRefArray<iCelEdge> edges(this->edges);
-  return edges;
+  //csRefArray<iCelEdge> edges(this->edges);
+  return &edges;
 }
 
 //---------------------------------------------------------------------------
@@ -436,11 +436,11 @@ bool celGraph::ShortestPath (iCelNode* from, iCelNode* goal, iCelPath* path)
     }
 
     // Get edges
-    csRefArray<iCelEdge> edges = current->GetEdges();
-    size_t size = edges.GetSize();
+    csRefArray<iCelEdge>* edges = current->GetEdges();
+    size_t size = edges->GetSize();
     for (size_t i = 0; i < size; i++)
     {
-      iCelNode* suc = edges[i]->GetSuccessor();
+      iCelNode* suc = edges->Get(i)->GetSuccessor();
       // Check if this Node is already in the queue
       array = hash.GetAll(computer.ComputeHash(suc->GetPosition().x + suc->GetPosition().y));
       csArray<iCelNode*> :: Iterator it = array.GetIterator();
@@ -462,7 +462,7 @@ bool celGraph::ShortestPath (iCelNode* from, iCelNode* goal, iCelPath* path)
       }
 
       suc->SetParent(current);
-      suc->Heuristic(current->GetCost() + edges[i]->GetWeight(), goal);
+      suc->Heuristic(current->GetCost() + edges->Get(i)->GetWeight(), goal);
       queue.Insert(suc);
       hash.Put(computer.ComputeHash(suc->GetPosition().x + suc->GetPosition().y), suc);
     }
@@ -502,18 +502,18 @@ bool celGraph::ShortestPath2 (iCelNode* from, iCelNode* goal, iCelPath* path)
     closedSet.Put(current, current);
 
     // Get successors
-    csRefArray<iCelEdge> edges = current->GetEdges();
-    size_t size = edges.GetSize();
+    csRefArray<iCelEdge>* edges = current->GetEdges();
+    size_t size = edges->GetSize();
     for (size_t i = 0; i < size; i++)
     {
-      iCelNode* successor = edges[i]->GetSuccessor();
+      iCelNode* successor = edges->Get(i)->GetSuccessor();
 
       if (closedSet.Contains(successor))
       {
         continue;
       }
 
-      float cost = current->GetCost() + edges[i]->GetWeight();
+      float cost = current->GetCost() + edges->Get(i)->GetWeight();
       if (!openSet.Contains(successor))
       {
         successor->SetParent(current);
