@@ -35,10 +35,23 @@ celHPath::celHPath (csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >& navmeshes)
     : scfImplementationType (this), navMeshes(navmeshes)
 {
   reverse = false;
+  debugMeshes = new csArray<csSimpleRenderMesh*>();
 }
 
 celHPath::~celHPath ()
 {
+  if (!debugMeshes->IsEmpty()) 
+  { 
+    csArray<csSimpleRenderMesh*>::Iterator it = debugMeshes->GetIterator(); 
+    while (it.HasNext()) 
+    { 
+      csSimpleRenderMesh* mesh = it.Next(); 
+      delete [] mesh->vertices; 
+      delete [] mesh->colors; 
+    } 
+    debugMeshes->DeleteAll();
+  }
+  delete debugMeshes;
 }
 
 void celHPath::Initialize(iCelPath* highLevelPath)
@@ -266,7 +279,7 @@ float celHPath::GetDistance () const
   return length-advanced;
 }
 
-csList<csSimpleRenderMesh>* celHPath::GetDebugMeshes ()
+csArray<csSimpleRenderMesh*>* celHPath::GetDebugMeshes ()
 {
   float halfHeight = 0.f;
   csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >::GlobalIterator it = navMeshes.GetIterator();
@@ -323,7 +336,23 @@ csList<csSimpleRenderMesh>* celHPath::GetDebugMeshes ()
     Next();
   }
 
-  return dd.GetMeshes();
+
+  // Clear previous meshes
+  if (!debugMeshes->IsEmpty()) 
+  { 
+    csArray<csSimpleRenderMesh*>::Iterator it = debugMeshes->GetIterator(); 
+    while (it.HasNext()) 
+    { 
+      csSimpleRenderMesh* mesh = it.Next(); 
+      delete [] mesh->vertices; 
+      delete [] mesh->colors; 
+    }
+    debugMeshes->DeleteAll(); 
+  }
+
+  // Update meshes
+  debugMeshes = dd.GetMeshes();
+  return debugMeshes;
 }
 
 
@@ -336,10 +365,13 @@ celHNavStruct::celHNavStruct (const iCelNavMeshParams* params, iObjectRegistry* 
 {
   this->objectRegistry = objectRegistry;
   parameters.AttachNew(params->Clone());
+  debugMeshes = new csArray<csSimpleRenderMesh*>();
 }
 
 celHNavStruct::~celHNavStruct ()
 {
+  debugMeshes->Empty();
+  delete debugMeshes;
 }
 
 void celHNavStruct::AddNavMesh(iCelNavMesh* navMesh)
@@ -839,8 +871,8 @@ bool celHNavStruct::Update (const csBox3& boundingBox, iSector* sector)
 
 bool celHNavStruct::Update (const csOBB& boundingBox, iSector* sector)
 {
-  csVector3 min;
-  csVector3 max;
+  csVector3 min (0.0f);
+  csVector3 max (0.0f);
   for (int i = 0; i < 8; i++)
   {
     csVector3 v = boundingBox.GetCorner(i);
@@ -905,12 +937,12 @@ void celHNavStruct::SaveParameters (iDocumentNode* node)
   param->SetAttributeAsInt("value", parameters->GetMaxEdgeLength());
 
   param = node->CreateNodeBefore(CS_NODE_ELEMENT);
-  param->SetValue("minregionsize");
-  param->SetAttributeAsInt("value", parameters->GetMinRegionSize());
+  param->SetValue("minregionarea");
+  param->SetAttributeAsInt("value", parameters->GetMinRegionArea());
 
   param = node->CreateNodeBefore(CS_NODE_ELEMENT);
-  param->SetValue("mergeregionsize");
-  param->SetAttributeAsInt("value", parameters->GetMergeRegionSize());
+  param->SetValue("mergeregionarea");
+  param->SetAttributeAsInt("value", parameters->GetMergeRegionArea());
 
   param = node->CreateNodeBefore(CS_NODE_ELEMENT);
   param->SetValue("maxvertsperpoly");
@@ -969,14 +1001,14 @@ void celHNavStruct::SaveHighLevelGraph (iDocumentNode* node1, iDocumentNode* nod
   for (size_t i = 0; i < size; i++)
   {
     csRef<iCelNode> graphNode = hlGraph->GetNode(i);
-    csRefArray<iCelEdge> edges = graphNode->GetEdges();
-    for (size_t j = 0; j < edges.GetSize(); j++)
+    csRefArray<iCelEdge>* edges = graphNode->GetEdges();
+    for (size_t j = 0; j < edges->GetSize(); j++)
     {
       csRef<iDocumentNode> e = node2->CreateNodeBefore(CS_NODE_ELEMENT);
       e->SetValue("edge");
       e->SetAttribute("from", graphNode->GetName());
-      e->SetAttribute("to", edges[j]->GetSuccessor()->GetName());
-      e->SetAttributeAsFloat("weight", edges[j]->GetWeight());
+      e->SetAttribute("to", edges->Get(j)->GetSuccessor()->GetName());
+      e->SetAttributeAsFloat("weight", edges->Get(j)->GetWeight());
     }    
   }
 }
@@ -1035,34 +1067,45 @@ const iCelNavMeshParams* celHNavStruct::GetNavMeshParams () const
   return parameters;
 }
 
-csList<csSimpleRenderMesh>* celHNavStruct::GetDebugMeshes () const
-{
-  csList<csSimpleRenderMesh>* meshes = new csList<csSimpleRenderMesh>();
-  csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >::ConstGlobalIterator it = navMeshes.GetIterator();
+csArray<csSimpleRenderMesh*>* celHNavStruct::GetDebugMeshes () 
+{ 
+  debugMeshes->Empty(); 
+
+  // Copy meshes from all navMeshes
+  csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >::GlobalIterator it = navMeshes.GetIterator();
   while (it.HasNext())
   {
     csRef<iCelNavMesh> navMesh = it.Next();
-    csList<csSimpleRenderMesh>* tmp = navMesh->GetDebugMeshes();
-    csList<csSimpleRenderMesh>::Iterator tmpIt(*tmp);
+    csArray<csSimpleRenderMesh*>* tmp = navMesh->GetDebugMeshes();
+    csArray<csSimpleRenderMesh*>::Iterator tmpIt = tmp->GetIterator();
     while (tmpIt.HasNext())
     {
-      meshes->PushBack(tmpIt.Next());
+      debugMeshes->Push(tmpIt.Next());
     }
-    delete tmp;
   }
-  return meshes;
+  return debugMeshes;
 }
 
-csList<csSimpleRenderMesh>* celHNavStruct::GetAgentDebugMeshes (const csVector3& pos, int red, int green,
-                                                                int blue, int alpha) const
+csArray<csSimpleRenderMesh*>* celHNavStruct::GetAgentDebugMeshes (const csVector3& pos, int red, int green,
+                                                                int blue, int alpha) 
 {
-  csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >::ConstGlobalIterator it = navMeshes.GetIterator();
+  csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >::GlobalIterator it = navMeshes.GetIterator();
   if (it.HasNext())
   {
     csRef<iCelNavMesh> navMesh = it.Next();
     return navMesh->GetAgentDebugMeshes(pos, red, green, blue, alpha);
   }
   return 0;
+}
+
+void celHNavStruct::ResetAgentDebugMeshes ()
+{
+  csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >::GlobalIterator it = navMeshes.GetIterator();
+  if (it.HasNext())
+  {
+    csRef<iCelNavMesh> navMesh = it.Next();
+    navMesh->ResetAgentDebugMeshes();
+  }
 }
 
 
@@ -1081,7 +1124,7 @@ celHNavStructBuilder::celHNavStructBuilder (iBase* parent) : scfImplementationTy
 
 celHNavStructBuilder::~celHNavStructBuilder ()
 {
-  delete sectors;
+  sectors.DeleteAll();
 }
 
 bool celHNavStructBuilder::Initialize (iObjectRegistry* objectRegistry) 
@@ -1090,17 +1133,21 @@ bool celHNavStructBuilder::Initialize (iObjectRegistry* objectRegistry)
   return true;
 }
 
-bool celHNavStructBuilder::SetSectors (csList<iSector*> sectorList)
+bool celHNavStructBuilder::SetSectors (csRefArray<iSector>* sectorList)
 {
-  delete sectors;
-  sectors = new csList<iSector*>(sectorList);
+  sectors.DeleteAll();
+  csRefArray<iSector>::Iterator it = sectorList->GetIterator();
+  while (it.HasNext())
+  {
+    sectors.Push(it.Next());
+  }
   builders.Empty();
   return InstantiateNavMeshBuilders();
 }
 
 bool celHNavStructBuilder::InstantiateNavMeshBuilders ()
 {
-  csList<iSector*>::Iterator it(*sectors);
+  csRefArray<iSector>::Iterator it = sectors.GetIterator();
   while (it.HasNext())
   {
     csPtrKey<iSector> key = it.Next();
@@ -1119,7 +1166,7 @@ bool celHNavStructBuilder::InstantiateNavMeshBuilders ()
 
 iCelHNavStruct* celHNavStructBuilder::BuildHNavStruct ()
 {
-  if (!sectors)
+  if (sectors.IsEmpty())
   {
     return 0;
   }
@@ -1131,23 +1178,22 @@ iCelHNavStruct* celHNavStructBuilder::BuildHNavStruct ()
   while (it.HasNext())
   {
     csRef<iCelNavMeshBuilder> builder = it.Next();
-    results.Push(builder->BuildNavMeshWait());
+    results.Push(builder->BuildNavMesh());
   }
 
   while(!results.IsEmpty())
   {
-    for(size_t i = 0; i < results.GetSize(); i++)
+    for (int i = results.GetSize() - 1; i >= 0; i--)
     {
       csRef<iThreadReturn> ret = results.Get(i);
-      if(ret->IsFinished())
+      if (ret->IsFinished())
       {
-        if(ret->WasSuccessful())
+        if (ret->WasSuccessful())
         {
           csRef<iCelNavMesh> mesh = scfQueryInterface<iCelNavMesh>(ret->GetResultRefPtr());
           navStruct->AddNavMesh(mesh);
         }
         results.DeleteIndex(i);
-        i--;
       }
     }
   }
@@ -1199,13 +1245,13 @@ bool celHNavStructBuilder::ParseParameters (iDocumentNode* node, iCelNavMeshPara
   int value2 = param->GetAttributeValueAsInt("value");
   params->SetMaxEdgeLength(value2);
 
-  param = node->GetNode("minregionsize");
+  param = node->GetNode("minregionarea");
   value2 = param->GetAttributeValueAsInt("value");
-  params->SetMinRegionSize(value2);
+  params->SetMinRegionArea(value2);
 
-  param = node->GetNode("mergeregionsize");
+  param = node->GetNode("mergeregionarea");
   value2 = param->GetAttributeValueAsInt("value");
-  params->SetMergeRegionSize(value2);
+  params->SetMergeRegionArea(value2);
 
   param = node->GetNode("maxvertsperpoly");
   value2 = param->GetAttributeValueAsInt("value");
@@ -1387,7 +1433,7 @@ const iCelNavMeshParams* celHNavStructBuilder::GetNavMeshParams () const
 void celHNavStructBuilder::SetNavMeshParams (const iCelNavMeshParams* parameters)
 {
   this->parameters.AttachNew(new celNavMeshParams(parameters));
-  if (sectors)
+  if (!sectors.IsEmpty())
   {
     csHash<csRef<iCelNavMeshBuilder>, csPtrKey<iSector> >::GlobalIterator it = builders.GetIterator();
     while (it.HasNext())

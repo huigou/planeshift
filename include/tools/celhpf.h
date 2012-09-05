@@ -24,6 +24,8 @@
 #include <csutil/list.h>
 #include <tools/celnavmesh.h>
 
+#include "iutil/vfs.h"
+
 class csBox3;
 class csOBB;
 class csString;
@@ -76,9 +78,8 @@ struct iCelHPath : public virtual iBase
   
   /**
    * Render path.
-   * \remarks The user is responsible for freeing the returned pointer.
    */
-  virtual csList<csSimpleRenderMesh>* GetDebugMeshes () = 0;
+  virtual csArray<csSimpleRenderMesh*>* GetDebugMeshes () = 0;
 };
 
 
@@ -148,16 +149,20 @@ struct iCelHNavStruct : public virtual iBase
 
   /**
    * Render navigation structure.
-   * \remarks The user is responsible for freeing the returned pointer.
    */
-  virtual csList<csSimpleRenderMesh>* GetDebugMeshes () const = 0;
+  virtual csArray<csSimpleRenderMesh*>* GetDebugMeshes () = 0;
 
   /**
    * Render proxy agent of the specified color.
-   * \remarks The user is responsible for freeing the returned pointer.
+   * Adding to any previously got since construction or reset.
    */
-  virtual csList<csSimpleRenderMesh>* GetAgentDebugMeshes (const csVector3& pos, int red, int green,
-                                                           int blue, int alpha) const = 0;
+  virtual csArray<csSimpleRenderMesh*>* GetAgentDebugMeshes (const csVector3& pos, int red, int green,
+                                                           int blue, int alpha) = 0;
+
+  /**
+   * Clear all previous proxy agents.
+   */
+  virtual void ResetAgentDebugMeshes () = 0;
 };
 
 
@@ -173,10 +178,9 @@ struct iCelHNavStructBuilder : public virtual iBase
    * Set the Sectors used to build the navigation structure.
    * \param sectorList List containing the sectors for which navmeshes will be built.
    * \return True in case everything went right and false otherwise.
-   * \remarks Even in case of a false return, the old sector information is lost.
-   *          You should call iCelHNavStructBuilder::SetNavMeshParams() before this method.
+   * \remarks You should call iCelHNavStructBuilder::SetNavMeshParams() before this method.
    */
-  virtual bool SetSectors(csList<iSector*> sectorList) = 0;
+  virtual bool SetSectors(csRefArray<iSector>* sectorList) = 0;
 
   /**
    * Build a hierarchical navigation structure using the current configurations.
