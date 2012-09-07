@@ -1067,8 +1067,15 @@ const iCelNavMeshParams* celHNavStruct::GetNavMeshParams () const
   return parameters;
 }
 
-csArray<csSimpleRenderMesh*>* celHNavStruct::GetDebugMeshes () 
+csArray<csSimpleRenderMesh*>* celHNavStruct::GetDebugMeshes (iSector* sector /*= 0*/) 
 { 
+  if (sector)
+  {
+    // Since there's only one navmesh per-sector (for now), fetch rendermeshes from it
+    csRef<iCelNavMesh> nm = *navMeshes[sector];
+    return nm->GetDebugMeshes ();
+  }
+
   debugMeshes->Empty(); 
 
   // Copy meshes from all navMeshes

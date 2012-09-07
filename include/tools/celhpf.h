@@ -89,7 +89,7 @@ struct iCelHPath : public virtual iBase
  */
 struct iCelHNavStruct : public virtual iBase
 {
-  SCF_INTERFACE (iCelHNavStruct, 1, 0, 0);
+  SCF_INTERFACE (iCelHNavStruct, 1, 1, 0);
 
   /**
    * Find the shortest path between two points.
@@ -150,7 +150,7 @@ struct iCelHNavStruct : public virtual iBase
   /**
    * Render navigation structure.
    */
-  virtual csArray<csSimpleRenderMesh*>* GetDebugMeshes () = 0;
+  virtual csArray<csSimpleRenderMesh*>* GetDebugMeshes (iSector* sector = 0) = 0;
 
   /**
    * Render proxy agent of the specified color.
