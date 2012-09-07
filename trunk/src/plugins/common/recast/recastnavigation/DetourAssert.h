@@ -15,17 +15,19 @@
 //    misrepresented as being the original software.
 // 3. This notice may not be removed or altered from any source distribution.
 //
-#ifndef RECAST_TIMER_H
-#define RECAST_TIMER_H
 
-#ifdef __GNUC__
-#include <stdint.h>
-typedef int64_t rcTimeVal;
+#ifndef DETOURASSERT_H
+#define DETOURASSERT_H
+
+// Note: This header file's only purpose is to include define assert.
+// Feel free to change the file and include your own implementation instead.
+
+#ifdef NDEBUG
+// From http://cnicholson.net/2009/02/stupid-c-tricks-adventures-in-assert/
+#	define dtAssert(x) do { (void)sizeof(x); } while((void)(__LINE__==-1),false)  
 #else
-typedef __int64 rcTimeVal;
+#	include <assert.h> 
+#	define dtAssert assert
 #endif
 
-rcTimeVal rcGetPerformanceTimer();
-int rcGetDeltaTimeUsec(rcTimeVal start, rcTimeVal end);
-
-#endif // RECAST_TIMER_H
+#endif // DETOURASSERT_H
