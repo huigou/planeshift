@@ -1798,7 +1798,16 @@
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourNavMeshBuilder.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourNavMeshQuery.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourNode.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourTileCache.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourTileCacheBuilder.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\InputGeom.cpp">
@@ -1828,7 +1837,7 @@
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastFilter.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastLog.cpp">
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastLayers.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastMesh.cpp">
@@ -1841,9 +1850,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastRegion.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\data.cpp">
@@ -1931,10 +1937,19 @@
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourAlloc.h">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourAssert.h">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourCommon.h">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourCrowd.h">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourDebugDraw.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourLocalBoundary.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourNavMesh.h">
@@ -1943,7 +1958,31 @@
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourNavMeshBuilder.h">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourNavMeshQuery.h">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourNode.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourObstacleAvoidance.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourPathCorridor.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourPathQueue.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourProximityGrid.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourStatus.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourTileCache.h">
+			</File>
+			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\DetourTileCacheBuilder.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\InputGeom.h">
@@ -1958,16 +1997,13 @@
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastAlloc.h">
 			</File>
 			<File
+				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastAssert.h">
+			</File>
+			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastDebugDraw.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastDump.h">
-			</File>
-			<File
-				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastLog.h">
-			</File>
-			<File
-				RelativePath="..\..\src\plugins\common\recast\recastnavigation\RecastTimer.h">
 			</File>
 			<File
 				RelativePath="..\..\src\plugins\common\soundmanager\data.h">
