@@ -120,7 +120,7 @@ public:
   virtual bool Update (const csOBB& boundingBox, iSector* sector = 0);
   virtual bool SaveToFile (iVFS* vfs, const char* directory);
   virtual const iCelNavMeshParams* GetNavMeshParams () const;
-  virtual csArray<csSimpleRenderMesh*>* GetDebugMeshes ();
+  virtual csArray<csSimpleRenderMesh*>* GetDebugMeshes (iSector* sector = 0);
   virtual csArray<csSimpleRenderMesh*>* GetAgentDebugMeshes (const csVector3& pos, int red, int green, 
                                                            int blue, int alpha);
   virtual void ResetAgentDebugMeshes ();
