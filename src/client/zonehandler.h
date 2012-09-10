@@ -1,7 +1,7 @@
 /*
  * zonehandler.h    Keith Fulton <keith@paqrat.com>
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -66,7 +66,7 @@ public:
      *
      * @param node The XML node to extract the information out of
      */
-    ZoneLoadInfo(iDocumentNode *node);
+    ZoneLoadInfo(iDocumentNode* node);
 
     /** @brief Basic comparison for equality
      *
@@ -76,7 +76,7 @@ public:
      * @param other The ZoneLoadInfo to compare to
      * @return True if \ref inSector == other.inSector, false otherwise
      */
-    bool operator==(ZoneLoadInfo& other) const
+    bool operator==(ZoneLoadInfo &other) const
     {
         return inSector == other.inSector;
     }
@@ -89,7 +89,7 @@ public:
      * @param other The ZoneLoadInfo to compare to
      * @return True if the character comparison of \ref inSector to other.inSector is < 0
      */
-    bool operator<(ZoneLoadInfo& other) const
+    bool operator<(ZoneLoadInfo &other) const
     {
         return (strcmp(inSector,other.inSector)<0);
     }
@@ -105,15 +105,15 @@ class ZoneHandler : public psClientNetSubscriber
 {
 public:
     /** @brief Basic constructor
-     * 
+     *
      * Sets initial values and calls \ref LoadZoneInfo(). Sets \ref valid to
      * true if everything checked out good
      *
      * @param mh The message handler to subscribe messages to
      * @param cc Used to get player information out of
      */
-    ZoneHandler(MsgHandler* mh, psCelClient *cc);
-    
+    ZoneHandler(MsgHandler* mh, psCelClient* cc);
+
     /** @brief Basic deconstructor
      */
     virtual ~ZoneHandler();
@@ -154,13 +154,13 @@ public:
      * @param newSector Target sector to move to
      * @param newVel Target velocity
      */
-    void MovePlayerTo(const csVector3 & newPos, const csString & newSector, float newVel);
+    void MovePlayerTo(const csVector3 &newPos, const csString &newSector, float newVel);
 
     /** @brief Handles delay and dot animation
     *
     * @param loadDelay Delay of loading screen
     * @param start Start of dot animation
-    * @param dest Destination of dot animation 
+    * @param dest Destination of dot animation
     * @param background The loading background
     * @param widgetName The name of the widget to use for this loading.
     */
@@ -170,18 +170,24 @@ public:
      *
      * @return \ref loading
      */
-    inline bool IsLoading() const { return loading; }
-    
+    inline bool IsLoading() const
+    {
+        return loading;
+    }
+
     /** @brief Returns whether the zone handler is valid
      *
      * @return \ref valid
      */
-    inline bool IsValid() const { return valid; }
-   
+    inline bool IsValid() const
+    {
+        return valid;
+    }
+
 protected:
-    csHash<ZoneLoadInfo *, const char*> zonelist;   ///< Mapping of names of zones to their load info
+    csHash<ZoneLoadInfo*, const char*> zonelist;    ///< Mapping of names of zones to their load info
     csRef<MsgHandler>                   msghandler; ///< Message Handler to subscribe to
-    psCelClient                        *celclient;  ///< Pointer to cel client instance
+    psCelClient*                        celclient;  ///< Pointer to cel client instance
 
     bool valid; ///< Whether the loading was successful
     csString sectorToLoad; ///< The sector that needs to be loaded
@@ -192,10 +198,10 @@ protected:
     csTicks forcedLoadingStartTime;///<Holds how long the loading shall be delayed
     csString forcedWidgetName;///<Holds the widget name used to replace the load window.
     size_t loadCount; ///< The number of items that are being loaded
-    
+
     pawsLoadWindow* loadWindow; ///< A load window that can be shown to users while loading
     pawsProgressBar* loadProgressBar; ///< Used for showing users load progress
-    
+
     /** @brief Finds the loading window
      *
      * Checks if there is a loading window. If there is not a loading window
@@ -205,7 +211,7 @@ protected:
      * @param widgetName if defined it will hook the loading windows to the defined name
      * @return True if a valid window was found, false otherwise.
      */
-    bool FindLoadWindow(bool force = false, const char *widgetName = "LoadWindow");
+    bool FindLoadWindow(bool force = false, const char* widgetName = "LoadWindow");
 
     /** @brief Extracts zone information out of a XML
      *
@@ -216,7 +222,7 @@ protected:
      * @return False if the file failed to load, true otherwise
      */
     bool LoadZoneInfo();
-    
+
     /** @brief Finds load info for a specific sector
      *
      * Searches \ref zonelist for the key specified in sector. If it is not
@@ -225,11 +231,11 @@ protected:
      * @param sector The sector to look for
      * @return The load info for the sector or null
      */
-    ZoneLoadInfo * FindZone(const char* sector) const;
+    ZoneLoadInfo* FindZone(const char* sector) const;
 
 private:
     /** @brief Forces load screen to show.
-     * 
+     *
      * Can also have the load screen stay for a defined amount of time.
      * Also allows to change the background of the load screen.
      * @param backgroundImage The image to put in the load screen.

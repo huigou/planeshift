@@ -1,7 +1,7 @@
 /*
  * zonehandler.cpp    Keith Fulton <keith@paqrat.com>
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -69,13 +69,13 @@
 
 #define LOADING_SECTOR "SectorWhereWeKeepEntitiesResidingInUnloadedMaps"
 
-ZoneHandler::ZoneHandler(MsgHandler* mh, psCelClient *cc) :
-                        msghandler(mh),
-                        celclient(cc),
-                        loading(false),
-                        forcedLoadingEndTime(0),
-                        loadWindow(0),
-                        loadProgressBar(0)
+ZoneHandler::ZoneHandler(MsgHandler* mh, psCelClient* cc) :
+    msghandler(mh),
+    celclient(cc),
+    loading(false),
+    forcedLoadingEndTime(0),
+    loadWindow(0),
+    loadProgressBar(0)
 {
     msghandler->Subscribe(this,MSGTYPE_NEWSECTOR);
 
@@ -84,16 +84,16 @@ ZoneHandler::ZoneHandler(MsgHandler* mh, psCelClient *cc) :
 
 ZoneHandler::~ZoneHandler()
 {
-    if (msghandler)
+    if(msghandler)
     {
         msghandler->Unsubscribe(this,MSGTYPE_NEWSECTOR);
     }
-    
-    csHash<ZoneLoadInfo *, const char*>::GlobalIterator it(zonelist.GetIterator());
-    
+
+    csHash<ZoneLoadInfo*, const char*>::GlobalIterator it(zonelist.GetIterator());
+
     while(it.HasNext())
         delete it.Next();
-        
+
 }
 
 bool ZoneHandler::FindLoadWindow(bool force, const char* widgetName)
@@ -101,11 +101,11 @@ bool ZoneHandler::FindLoadWindow(bool force, const char* widgetName)
     if(loadProgressBar != NULL && !force)
         return true;  // Already found
 
-    loadWindow = static_cast <pawsLoadWindow*> (PawsManager::GetSingleton().FindWidget(widgetName));
+    loadWindow = static_cast <pawsLoadWindow*>(PawsManager::GetSingleton().FindWidget(widgetName));
     if(loadWindow == NULL)
         return false;
 
-    loadProgressBar = static_cast <pawsProgressBar*> (loadWindow->FindWidget("Progress"));
+    loadProgressBar = static_cast <pawsProgressBar*>(loadWindow->FindWidget("Progress"));
     if(loadProgressBar == NULL)
         return false;
 
@@ -161,7 +161,7 @@ bool ZoneHandler::LoadZoneInfo()
     iVFS* vfs = psengine->GetVFS();
     if(!vfs)
         return false;
-        
+
     iDocumentSystem* xml = psengine->GetXMLParser();
     csRef<iDocument> doc = xml->CreateDocument();
 
@@ -181,7 +181,7 @@ bool ZoneHandler::LoadZoneInfo()
     while(zoneIter->HasNext())
     {
         csRef<iDocumentNode> zoneNode = zoneIter->Next();
-        ZoneLoadInfo *zone = new ZoneLoadInfo(zoneNode);
+        ZoneLoadInfo* zone = new ZoneLoadInfo(zoneNode);
         zonelist.Put(zone->inSector, zone);
     }
 
@@ -194,8 +194,16 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
     psNewSectorMessage msg(me);
 
     Notify3(LOG_LOAD, "Crossed from sector %s to sector %s.", msg.oldSector.GetData(), msg.newSector.GetData());
-        
-    LoadZone(msg.pos, msg.newSector, 0);
+    float vel = 0.0;
+    // load current speed on sector crossing if the player is valid (not during game loading)
+    if(celclient->GetMainPlayer())
+    {
+        csVector3 velocity = celclient->GetMainPlayer()->GetVelocity();
+        Notify4(LOG_LOAD, "Velocity %f %f %f", velocity.x, velocity.y, velocity.z);
+        vel=velocity.z;
+    }
+    // TOFIX: should be a vector3 and not just velocity.z
+    LoadZone(msg.pos, msg.newSector, vel);
 }
 
 void ZoneHandler::LoadZone(csVector3 pos, const char* sector, float vel, bool force)
@@ -208,7 +216,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, float vel, bool fo
     bool connected = true;
 
     ZoneLoadInfo* zone = FindZone(sectorToLoad);
-    if (zone == NULL)
+    if(zone == NULL)
     {
         Error1("Unable to find the sector you have entered in zoneinfo data.\nPlease check zoneinfo.xml");
         return;
@@ -232,10 +240,10 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, float vel, bool fo
         // perform extra checks whether blocked loading is necessary
         if(sectorToLoad != sectorBackup)
         {
-            iSector * newsector = psengine->GetEngine()->FindSector(sectorToLoad.GetDataSafe());
-            iSector * oldsector = psengine->GetEngine()->FindSector(sectorBackup.GetDataSafe());
+            iSector* newsector = psengine->GetEngine()->FindSector(sectorToLoad.GetDataSafe());
+            iSector* oldsector = psengine->GetEngine()->FindSector(sectorBackup.GetDataSafe());
 
-            if (oldsector && newsector && celclient->GetWorld())
+            if(oldsector && newsector && celclient->GetWorld())
             {
                 celclient->GetWorld()->BuildWarpCache(); // we need an up-to-date warp cache here
                 connected = celclient->GetWorld()->Connected(oldsector, newsector);
@@ -251,9 +259,9 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, float vel, bool fo
 
     // Set load screen if required.
     loadCount = psengine->GetLoader()->GetLoadingCount();
-    if (FindLoadWindow() && (loadCount != 0 || !psengine->HasLoadedMap() || !connected || forcedLoadingEndTime != 0))
+    if(FindLoadWindow() && (loadCount != 0 || !psengine->HasLoadedMap() || !connected || forcedLoadingEndTime != 0))
     {
-        
+
         loading = true;
 
         if(psengine->HasLoadedMap())
@@ -270,12 +278,12 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, float vel, bool fo
             loadWindow->SetBackground(forcedBackgroundImg);
         }
         else
-        // If the area has its own loading image, use it
-        if (zone->loadImage)
-        {
-            Debug2(LOG_LOAD, 0, "Setting background %s", zone->loadImage.GetData());
-            loadWindow->SetBackground(zone->loadImage.GetData());
-        }
+            // If the area has its own loading image, use it
+            if(zone->loadImage)
+            {
+                Debug2(LOG_LOAD, 0, "Setting background %s", zone->loadImage.GetData());
+                loadWindow->SetBackground(zone->loadImage.GetData());
+            }
 
         loadProgressBar->SetTotalValue(1.0f);
         loadProgressBar->SetCurrentValue(0.0f);
@@ -288,7 +296,7 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, float vel, bool fo
     MovePlayerTo(newPos, sectorToLoad, vel);
 }
 
-void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSector, float newVel)
+void ZoneHandler::MovePlayerTo(const csVector3 &newPos, const csString &newSector, float newVel)
 {
     if(!celclient->IsReady())
         return;
@@ -296,13 +304,13 @@ void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSec
     csVector3 pos;
     float yrot;
     iSector* sector;
-    
-    celclient->GetMainPlayer()->GetLastPosition (pos, yrot, sector);            // retrieve last yrot
-    
+
+    celclient->GetMainPlayer()->GetLastPosition(pos, yrot, sector);             // retrieve last yrot
+
     sector = psengine->GetEngine()->FindSector(newSector);
-    if (sector != NULL)
+    if(sector != NULL)
     {
-        Notify5(LOG_LOAD, "Setting position of player %f %f %f in sector '%s'", newPos.x, newPos.y, newPos.z, newSector.GetData());
+        Notify6(LOG_LOAD, "Setting position of player %f %f %f in sector '%s' velocity: %f", newPos.x, newPos.y, newPos.z, newSector.GetData(),newVel);
         celclient->GetMainPlayer()->SetPosition(newPos, yrot, sector);          // set new position
         celclient->GetMainPlayer()->SetVelocity(csVector3(0.0,0.0,newVel));
     }
@@ -314,7 +322,7 @@ void ZoneHandler::MovePlayerTo(const csVector3 & newPos, const csString & newSec
 
 void ZoneHandler::OnDrawingFinished()
 {
-    if (loading)
+    if(loading)
     {
         if(psengine->GetLoader()->GetLoadingCount() == 0 && csGetTicks() >= forcedLoadingEndTime)
         {
@@ -356,7 +364,7 @@ void ZoneHandler::OnDrawingFinished()
             {
                 timeProgress = (float)(csGetTicks() - forcedLoadingStartTime)/(forcedLoadingEndTime-forcedLoadingStartTime);
             }
-            
+
             float loadProgress = 1.0f;
             if(loadCount)
             {
@@ -368,19 +376,19 @@ void ZoneHandler::OnDrawingFinished()
     }
 }
 
-ZoneLoadInfo::ZoneLoadInfo(iDocumentNode *node)
+ZoneLoadInfo::ZoneLoadInfo(iDocumentNode* node)
 {
     inSector = node->GetAttributeValue("sector");
     loadImage = node->GetAttributeValue("loadimage");
     regions.AttachNew(new scfStringArray());
 
     csRef<iDocumentNodeIterator> regionIter = node->GetNodes("region");
-    while (regionIter->HasNext())
+    while(regionIter->HasNext())
     {
         // Parse attributes from tag
         csRef<iDocumentNode> regionNode = regionIter->Next();
         regions->Push(regionNode->GetAttributeValue("map"));
-    }    
+    }
 }
 
 void ZoneHandler::ForceLoadScreen(csString backgroundImage, uint32_t length, csString widgetName)
