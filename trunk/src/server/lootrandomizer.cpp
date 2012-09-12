@@ -198,7 +198,8 @@ psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTest
         // Get min probability <= probability <= max probability in modifiers list
         //probability = psserver->rng->Get( (int)((*modifierList)[ modifierList->Length() - 1 ]->probability - (int) (*modifierList)[0]->probability ) + 1) + (int) (*modifierList)[0]->probability;
         // Get returns a number < limit (Get a uint32 integer random number in range 0 <= num < iLimit.)
-        // so we must increase it of 1 in order to pick the case with the highest "probability".
+        // so we must increase it of 1 in order to pick the case with the highest "probability" and exclude 0
+        // which means "disabled" or "manual".
         probability = psserver->rng->Get(max_probability) + 1;
         for(newModifier = (int)modifierList->GetSize() - 1; newModifier >= 0 ; newModifier--)
         {
