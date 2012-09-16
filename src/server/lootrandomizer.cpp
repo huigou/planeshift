@@ -200,7 +200,7 @@ psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTest
         // Get returns a number < limit (Get a uint32 integer random number in range 0 <= num < iLimit.)
         // so we must increase it of 1 in order to pick the case with the highest "probability" and exclude 0
         // which means "disabled" or "manual".
-        probability = psserver->rng->Get(max_probability) + 1;
+        probability = psserver->rng->Get(max_probability) + 1.0f;
         for(newModifier = (int)modifierList->GetSize() - 1; newModifier >= 0 ; newModifier--)
         {
             //first of all check if the item is allowed to get this modifier
@@ -232,7 +232,10 @@ psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTest
             }
 
             float item_prob = ((*modifierList)[newModifier]->probability);
-            if(probability >=  item_prob)
+
+            // Probability starts from 1 items under this are automatically excluded
+            // as "disabled" from this means of randomization.
+            if(item_prob >= 1.0f && probability >=  item_prob)
             {
                 if(maxcost >= totalCost * (*modifierList)[newModifier]->cost_modifier ||
                         lootTesting)
