@@ -83,7 +83,7 @@ We suggest you to try different settings and see what's best for your hardware."
                 <widget factory="pawsSimpleTreeNode" label="Language">
                     <attr name="SectionName" value="LanguageGeneral"/>
                     <attr name="factory" value="pawsConfigTextPage"/>
-                    <attr name="TextName" value="You can change the language of PlaneShift to have the user interface displayed in your language. We support Cesky, Dutch, French, Italian, German, Romanian, Russian, Swedish, and more. Please note pubic dialogues in game between players should  be in English.
+                    <attr name="TextName" value="You can change the language of PlaneShift to have the user interface displayed in your language. We support Cesky, Dutch, French, Italian, German, Romanian, Russian, Swedish, and more. Please note public dialogues in game between players should  be in English.
 
 Changing the language can be done ONLY in the PlaneShift Launcher. To do this you should close this client, and relaunch PlaneShift. In the Launcher you should change the 'Language' dropdown."/>
                 </widget>
