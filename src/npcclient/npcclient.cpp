@@ -103,6 +103,7 @@ psNPCClient::psNPCClient () : serverconsole(NULL)
     tick_counter  = 0;
     current_long_range_perception_index = 0;
     current_long_range_perception_loc_index = 0;
+    current_tribe_home_perception_index = 0;
 }
 
 psNPCClient::~psNPCClient()
