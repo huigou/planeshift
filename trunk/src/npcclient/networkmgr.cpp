@@ -1098,7 +1098,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->AddDebugClient(clientNum);
                 npc->SetDebugging(debugLevel);
 
-                QueueSystemInfoCommand(clientNum,"NPCCleint: Debug level set to %d for %s(%s)",debugLevel,npc->GetName(),ShowID(npc->GetEID()));
+                QueueSystemInfoCommand(clientNum,"NPCClient: Debug level set to %d for %s(%s)",debugLevel,npc->GetName(),ShowID(npc->GetEID()));
                 break;
             }
             case psNPCCommandsMessage::PCPT_GROUPATTACK:
@@ -2063,17 +2063,17 @@ void NetworkManager::QueueSystemInfoCommand(uint32_t clientNum, const char* repl
     // Format the reply
     va_list args;
     va_start(args, reply);
-    char str[1024];
-    vsprintf(str, reply, args);
+    csString str;
+    str.FormatV(reply, args);
     va_end(args);
     
     // Queue the System Info
 
-    CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+(strlen(str)+1));
+    CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+(str.Length()+1));
 
     outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_INFO_REPLY);
     outbound->msg->Add( clientNum );
-    outbound->msg->Add( str );
+    outbound->msg->Add(str.GetDataSafe());
 
     if ( outbound->msg->overrun )
     {
