@@ -2433,7 +2433,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
             npc->Printf(5,"LocateOp - No Last Perception - nothing to do");
             return OPERATION_FAILED;  // Nothing more to do for this op.
         }
-        npc->Printf(5,"LocateOp - Last Perception is: %s",npc->GetLastPerception()->GetName(npc));
+        npc->Printf(5,"LocateOp - Last Perception is: %s",(npc->GetLastPerception()->GetName(npc)).GetData());
         if (!npc->GetLastPerception()->GetLocation(located.pos,located.sector))
         {
             npc->Printf(5,"LocateOp - Cannot get Location - nothing to do");
