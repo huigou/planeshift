@@ -2208,6 +2208,7 @@ Waypoint* LocateOperation::CalculateWaypoint(NPC *npc, csVector3 located_pos, iS
         npc->Printf(5,"Located WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
         return end;
     }
+    npc->Printf(5,"Cannot Locate WP at %s",toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
 
     return NULL;
 }
@@ -2429,10 +2430,12 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
 
         if (!npc->GetLastPerception())
         {
+            npc->Printf(5,"LocateOp - No Last Perception - nothing to do");
             return OPERATION_FAILED;  // Nothing more to do for this op.
         }
         if (!npc->GetLastPerception()->GetLocation(located.pos,located.sector))
         {
+            npc->Printf(5,"LocateOp - Cannot get Location - nothing to do");
             return OPERATION_FAILED;  // Nothing more to do for this op.
         }
 
