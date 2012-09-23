@@ -356,58 +356,112 @@ bool LootRandomizer::SetAttribute(const csString &op, const csString &attrName, 
     }
     if(AttributeName.Compare("item.weight"))
     {
-        overlay->weight = baseItem->GetWeight();
+        // Initialize the value if needed
+        if(CS::IsNaN(overlay->weight))
+        {
+            overlay->weight = baseItem->GetWeight();
+        }
+            
         value[0] = &overlay->weight;
     }
     else if(AttributeName.Compare("item.speed"))
     {
-        overlay->latency = baseItem->Weapon().Latency();
+        // Initialize the value if needed
+        if(CS::IsNaN(overlay->latency))
+        {
+            overlay->latency = baseItem->Weapon().Latency();
+        }
+
         value[0] = &overlay->latency;
     }
     else if(AttributeName.Compare("item.damage"))
     {
         for(int i = 0; i < 3; i++)
-            overlay->damageStats[i] = baseItem->Weapon().Damage((PSITEMSTATS_DAMAGETYPE)i);
+        {
+            // Initialize the value if needed
+            if(CS::IsNaN(overlay->damageStats[i]))
+            {
+                overlay->damageStats[i] = baseItem->Weapon().Damage((PSITEMSTATS_DAMAGETYPE)i);
+            }
+        }
+
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH];
         value[1] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT];
         value[2] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
     else if(AttributeName.Compare("item.damage.slash"))
     {
-        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH] = baseItem->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_SLASH);
+        // Initialize the value if needed
+        if(CS::IsNaN(overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH]))
+        {
+            overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH] = baseItem->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_SLASH);
+        }
+
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH];
     }
     else if(AttributeName.Compare("item.damage.pierce"))
     {
-        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE] = baseItem->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_PIERCE);
+        // Initialize the value if needed
+        if(CS::IsNaN(overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE]))
+        {
+            overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE] = baseItem->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_PIERCE);
+        }
+
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
     else if(AttributeName.Compare("item.damage.blunt"))
     {
-        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT] = baseItem->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_BLUNT);
+        // Initialize the value if needed
+        if(CS::IsNaN(overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT]))
+        {
+            overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT] = baseItem->Weapon().Damage(PSITEMSTATS_DAMAGETYPE_BLUNT);
+        }
+
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT];
     }
     else if(AttributeName.Compare("item.protection"))
     {
+        for(int i = 0; i < 3; i++)
+        {
+            // Initialize the value if needed
+            if(CS::IsNaN(overlay->damageStats[i]))
+            {
+                overlay->damageStats[i] = baseItem->Armor().Protection((PSITEMSTATS_DAMAGETYPE)i);
+            }
+        }
+
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH];
         value[1] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT];
         value[2] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE];
-        for(int i = 0; i < 3; i++)
-            overlay->damageStats[i] = baseItem->Armor().Protection((PSITEMSTATS_DAMAGETYPE)i);
     }
     else if(AttributeName.Compare("item.protection.slash"))
     {
-        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH] = baseItem->Armor().Protection(PSITEMSTATS_DAMAGETYPE_SLASH);
+        // Initialize the value if needed
+        if(CS::IsNaN(overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH]))
+        {
+            overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH] = baseItem->Armor().Protection(PSITEMSTATS_DAMAGETYPE_SLASH);
+        }
+
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_SLASH];
     }
     else if(AttributeName.Compare("item.protection.pierce"))
     {
-        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE] = baseItem->Armor().Protection(PSITEMSTATS_DAMAGETYPE_PIERCE);
+        // Initialize the value if needed
+        if(CS::IsNaN(overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE]))
+        {
+            overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE] = baseItem->Armor().Protection(PSITEMSTATS_DAMAGETYPE_PIERCE);
+        }
+
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
     else if(AttributeName.Compare("item.protection.blunt"))
     {
-        overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT] = baseItem->Armor().Protection(PSITEMSTATS_DAMAGETYPE_BLUNT);
+        // Initialize the value if needed
+        if(CS::IsNaN(overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT]))
+        {
+            overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT] = baseItem->Armor().Protection(PSITEMSTATS_DAMAGETYPE_BLUNT);
+        }
+
         value[0] = &overlay->damageStats[PSITEMSTATS_DAMAGETYPE_BLUNT];
     }
 
@@ -489,6 +543,7 @@ void LootRandomizer::ApplyModifier(psItemStats* baseItem, RandomizedOverlay* ove
         csString EffectOp = node->GetAttribute("operation")->GetValue();
         csString EffectName = node->GetAttribute("name")->GetValue();
         float EffectValue = node->GetAttribute("value")->GetValueAsFloat();
+
         //Add to the Attributes
         if(!SetAttribute(EffectOp, EffectName, EffectValue, overlay, baseItem, variableValues))
         {
