@@ -47,6 +47,7 @@
 #include "entitymanager.h"
 #include "progressionmanager.h"
 #include "tutorialmanager.h"
+#include "npcmanager.h"
 #include "clients.h"
 #include "events.h"
 #include "gem.h"
@@ -74,6 +75,16 @@ gemActor* GetActor(const MathEnvironment* env, const csString& varName)
 
     gemActor* actor = dynamic_cast<gemActor*>(var->GetObject()); // cast from iScriptableVar
     return actor;
+}
+
+gemNPC* GetNPC(const MathEnvironment* env, const csString& varName)
+{
+    MathVar* var = env->Lookup(varName);
+    if (!var)
+        return NULL;
+
+    gemNPC* npc = dynamic_cast<gemNPC*>(var->GetObject()); // cast from iScriptableVar
+    return npc;
 }
 
 psCharacter* GetCharacter(const MathEnvironment* env, const csString& varName)
@@ -1298,6 +1309,43 @@ protected:
     csString aim;  ///< name of the MathScript var to aim at
     csString text; ///< message to send
     csString type; ///< message type to send
+};
+
+//----------------------------------------------------------------------------
+
+/**
+ * NPCCmdOp - one-time npc command sending:
+ *
+ * <npccmd aim="Caster" cmd="spam spam spam spam...!"/>
+ */
+class NPCCmdOp : public ImperativeOp
+{
+public:
+    virtual ~NPCCmdOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        aim = node->GetAttributeValue("aim");
+        cmd = node->GetAttributeValue("cmd");
+        return true;
+    }
+
+    virtual void Run(MathEnvironment* env)
+    {
+        gemNPC* npc = GetNPC(env, aim);
+
+        if (npc)
+        {
+            csString finalCmd(cmd);
+            env->InterpolateString(finalCmd);
+
+            psserver->GetNPCManager()->QueueNPCCmdPerception(npc, finalCmd);
+        }
+    }
+
+protected:
+    csString aim; ///< name of the MathScript var to aim at
+    csString cmd; ///< cmd to send to the npc
 };
 
 //----------------------------------------------------------------------------
@@ -2707,6 +2755,10 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         else if (elem == "msg")
         {
             op = new MsgOp;
+        }
+        else if (elem == "npccmd")
+        {
+            op = new NPCCmdOp;
         }
         else if (elem == "fx")
         {
