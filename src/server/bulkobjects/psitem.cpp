@@ -776,7 +776,7 @@ void psItem::Commit(bool children)
         flagString.Append("IDENTIFIED");
     }
 
-    targetQuery->AddField("flags",flagString);
+    targetQuery->AddField("flags",flagString.GetData());
 
     // item_stats_id_standard - base stats if non unique, unique stats if unique
     targetQuery->AddField("item_stats_id_standard",GetBaseStats()->GetUID());
