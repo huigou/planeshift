@@ -1423,27 +1423,35 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
     if (!lootTesting)
         maxcost = lootRandomizer->CalcModifierCostCap(chr);
 
+    // cycle on all entries of our loot rule
     for (size_t i=0; i<entries.GetSize(); i++)
     {
+      // check we roll successfully on the probability
       float roll = psserver->rng->Get();
       if (roll <= entries[i]->probability)
       {
-        if(entries[i]->item) // We don't always have a item.
+        // If we have an item in the loot entry (We don't always have a item)
+        if(entries[i]->item)
         {
             int itemAmount = entries[i]->min_item + (int)(psserver->rng->Get() *
                              (float)(entries[i]->max_item - entries[i]->min_item));
             for(int y = 0; y < itemAmount; y++)
             {
+                // create the base item
                 psItem* loot_item = entries[i]->item->InstantiateBasicItem();
 
+                // if required, generate random modifiers on the item
                 if (entries[i]->randomize && psserver->rng->Get() <= entries[i]->randomizeProbability)
                     loot_item = lootRandomizer->RandomizeItem( loot_item,
                                                                maxcost,
                                                                lootTesting,
                                                                numModifiers );
 
+                // add the item as loot
                 if (!lootTesting)
                     chr->AddLootItem(loot_item);
+
+                // if we are in testing mode, then just print out the result of the randomization
                 else
                 {
                     // print out the stats
@@ -1491,6 +1499,8 @@ void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
                 }
             }
         }
+
+        // add money to the loot result if specified by the loot rule
         float pct = psserver->rng->Get();
         int money = entries[i]->min_money + (int)(pct * (float)(entries[i]->max_money - entries[i]->min_money));
         if (!lootTesting) chr->AddLootMoney(money);
