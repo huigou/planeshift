@@ -373,6 +373,14 @@ bool psItem::Load(iResultRow &row)
     {
         flags |= PSITEM_FLAG_SETTINGITEM;
     }
+    if(flagstr.FindSubString("IDENTIFIABLE", 0, true) != -1)
+    {
+        flags |= PSITEM_FLAG_IDENTIFIABLE;
+    }
+    if(flagstr.FindSubString("IDENTIFIED", 0, true) != -1)
+    {
+        flags |= PSITEM_FLAG_IDENTIFIED;
+    }
 
     // Lockpick stuff
     SetLockStrength(row.GetInt("lock_str"));
@@ -420,6 +428,7 @@ bool psItem::Load(iResultRow &row)
     owningCharacterID = row.GetUInt32("char_id_owner");
     guardingCharacterID = row.GetUInt32("char_id_guardian");
 
+    // Retrieve location in world if not in inventory or container
     if(row.GetInt("location_in_parent") == -1 ||  // SLOT_NONE
             (row.GetInt("location_in_parent") == 0 &&
              row.GetInt("char_id_owner") == 0 &&
@@ -429,7 +438,6 @@ bool psItem::Load(iResultRow &row)
         InstanceID instance;
 
         instance = row.GetUInt32("loc_instance");
-        //        printf("KWF: Item instance=%d\n", instance);
 
         psSectorInfo* itemsector=psserver->GetCacheManager()->GetSectorInfoByID(row.GetInt("loc_sector_id"));
         if(!itemsector)
@@ -448,7 +456,8 @@ bool psItem::Load(iResultRow &row)
         SetLocationInWorld(instance,itemsector,x,y,z,yrot);
         SetXZRotationInWorld(xrot,zrot);
     }
-    else // in inventory, they have no location
+    // in inventory, they have no location
+    else
     {
         SetLocationInWorld(0,NULL,0,0,0,0);
     }
@@ -458,7 +467,7 @@ bool psItem::Load(iResultRow &row)
 
 
     // Unique item handling, stats specified are deltas to standard stats
-
+    // NOTE: THIS FIELD SEEMS NOT USED AT THE MOMENT BY OUR DATA
     stats_id = row.GetUInt32("item_stats_id_unique");
     if(stats_id)
     {
@@ -755,6 +764,16 @@ void psItem::Commit(bool children)
     {
         if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("SETTINGITEM");
+    }
+    if(flags & PSITEM_FLAG_IDENTIFIABLE)
+    {
+        if(!flagString.IsEmpty()) flagString.Append(",");
+        flagString.Append("IDENTIFIABLE");
+    }
+    if(flags & PSITEM_FLAG_IDENTIFIED)
+    {
+        if(!flagString.IsEmpty()) flagString.Append(",");
+        flagString.Append("IDENTIFIED");
     }
 
     targetQuery->AddField("flags",flagString);
@@ -2288,10 +2307,14 @@ double psItem::CalcFunction(MathEnvironment* env, const char* functionName, cons
         }
         modifierIds[(unsigned int)(params[0])] = params[1];
         UpdateModifiers();
+
+        // we set the item as identifiable
+        SetIsIdentifiable(true);
+
         return (double) 1.0f;
     }
 
-    //Gets a modifier on the item. SetItemModifier(position, modifierId)
+    //Gets a modifier on the item. GetItemModifier(position)
     //The position reference is available in psItem::Load()
     if(function == "GetItemModifier")
     {
@@ -3513,18 +3536,34 @@ float psItem::CalculateItemRarity()
     // add chance to get 1,2, or 3 modifiers
     if(numModifiers==1)
     {
-        calcRarity *= 0.22;
+        calcRarity *= 0.22F;
     }
     else if(numModifiers==2)
     {
-        calcRarity *= 0.07;
+        calcRarity *= 0.07F;
     }
     else if(numModifiers==3)
     {
-        calcRarity *= 0.01;
+        calcRarity *= 0.01F;
     }
 
     return calcRarity;
+}
+
+void psItem::SetIsIdentifiable(bool v)
+{
+    if(v)
+        flags = flags | PSITEM_FLAG_IDENTIFIABLE;
+    else
+        flags = flags & ~PSITEM_FLAG_IDENTIFIABLE;
+}
+
+void psItem::SetIsIdentified(bool v)
+{
+    if(v)
+        flags = flags | PSITEM_FLAG_IDENTIFIED;
+    else
+        flags = flags & ~PSITEM_FLAG_IDENTIFIED;
 }
 
 RandomizedOverlay::RandomizedOverlay()

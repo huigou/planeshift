@@ -133,6 +133,12 @@ class gemActor;
 /// Flag for an un-pickupable item (remains fixed) - weak variant
 #define PSITEM_FLAG_NOPICKUPWEAK        0x00100000
 
+/// Flag for identifiable item (not yet identified)
+#define PSITEM_FLAG_IDENTIFIABLE        0x00200000
+
+/// Flag for identified items
+#define PSITEM_FLAG_IDENTIFIED          0x00400000
+
 #define KEY_SKELETON      ((unsigned int)-2)
 
 #define MAX_STACK_COUNT        65  // This is the most items a player can have in a stack
@@ -1205,6 +1211,23 @@ public:
 
     /// return Rarity description. example: "rare (0.7%)"
     csString GetRarityName();
+
+    /// Get the identifiable status of the item
+    bool GetIsIdentifiable()
+    {
+        return ((flags & PSITEM_FLAG_IDENTIFIABLE)? true : false);
+    }
+    /// Set the Identifiable flag of the item
+    void SetIsIdentifiable(bool v);
+
+    /// Get the identified status of the item
+    bool GetIsIdentified()
+    {
+        return ((flags & PSITEM_FLAG_IDENTIFIED)? true : false);
+    }
+    /// Set the Identified flag of the item
+    void SetIsIdentified(bool v);
+
 
 private:
     /// Static reference to the pool for all psItem objects
