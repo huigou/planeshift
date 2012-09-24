@@ -141,13 +141,16 @@ public:
      *
      * @see ServerConsole::MainLoop()
      */
-    void MainLoop ();
+    void MainLoop();
 
     /** Checks to see if a world is loaded
      *
      * @return Returns a true if a world has been loaded.
      */
-    bool IsMapLoaded() { return MapLoaded; }
+    bool IsMapLoaded()
+    {
+        return MapLoaded;
+    }
 
     /** Loads a map and changes the MapLoaded
      *
@@ -172,7 +175,7 @@ public:
      * @param numclients Current number of connected clients
      * @param client Will say no if client is GM
      */
-    bool IsFull(size_t numclients, Client * client);
+    bool IsFull(size_t numclients, Client* client);
     /** Removes a player from the world.
      * It will save the players state information and remove them from the
      * world.
@@ -182,7 +185,7 @@ public:
      * @param reason: Is a string representing the reason we are removing the
      *     player from the world.
      */
-    void RemovePlayer (uint32_t clientnum,const char *reason);
+    void RemovePlayer(uint32_t clientnum,const char* reason);
 
     /** Mutes a player from the world.
      * It will prevent them from being heard, until they log back in
@@ -191,189 +194,288 @@ public:
      * @param reason: Is a string representing the reason we are removing the
      *     player from the world.
      */
-    void MutePlayer (uint32_t clientnum,const char *reason);
+    void MutePlayer(uint32_t clientnum,const char* reason);
     //Unmutes player
-    void UnmutePlayer (uint32_t clientnum,const char *reason);
+    void UnmutePlayer(uint32_t clientnum,const char* reason);
 
     /** Gets the MOTD string */
-    const char * GetMOTD(){return (const char*)motd.GetData();}
+    const char* GetMOTD()
+    {
+        return (const char*)motd.GetData();
+    }
     /** Sets the MOTD string */
-    void SetMOTD(const char* str){motd=str;}
+    void SetMOTD(const char* str)
+    {
+        motd=str;
+    }
 
     /** Returns the server's network thread.
      *
      * @return Returns the NetManager object for the current networking thread.
      */
-    NetManager* GetNetManager() { return netmanager; }
+    NetManager* GetNetManager()
+    {
+        return netmanager;
+    }
     /** Returns the Chat manager.
      *
      * @return Returns a reference to the current chat manager server.
      */
-    ChatManager* GetChatManager() { return chatmanager; }
+    ChatManager* GetChatManager()
+    {
+        return chatmanager;
+    }
     /** Returns the Advice manager.
      *
      * @return Returns a reference to the current advice manager.
      */
-    AdviceManager* GetAdviceManager() { return advicemanager; }
+    AdviceManager* GetAdviceManager()
+    {
+        return advicemanager;
+    }
     /** Returns the Advice manager.
      *
      * @return Returns a reference to the current advice manager.
      */
-    ActionManager* GetActionManager() { return actionmanager; }
+    ActionManager* GetActionManager()
+    {
+        return actionmanager;
+    }
     /** Returns the NPC Superclient manager.
      *
      * @return Returns a reference to the current npc manager.
      */
-    NPCManager* GetNPCManager() { return npcmanager; }
+    NPCManager* GetNPCManager()
+    {
+        return npcmanager;
+    }
     /** Returns the database manager.
      *
      * @return Returns a reference to the current database manager.
      */
-    psDatabase* GetDatabase() { return database; }
+    psDatabase* GetDatabase()
+    {
+        return database;
+    }
     /** Returns the configuration manager.
      *
      * @return Returns a reference to the current configuration manager object.
      */
-    iConfigManager* GetConfig() { return configmanager; }
+    iConfigManager* GetConfig()
+    {
+        return configmanager;
+    }
     /** Returns the object registry.
      *
      * @return Returns a reference to the current object registry.
      */
-    iObjectRegistry* GetObjectReg() { return objreg; }
+    iObjectRegistry* GetObjectReg()
+    {
+        return objreg;
+    }
     /** Returns the spawn manager.
      *
      * @return Returns a reference to the current spawn manager.
      */
-    SpawnManager* GetSpawnManager() { return spawnmanager; }
+    SpawnManager* GetSpawnManager()
+    {
+        return spawnmanager;
+    }
     /** Returns the event manager.
      *
      * @return Returns a reference to the current event manager.
      */
-    EventManager* GetEventManager() { return eventmanager; }
+    EventManager* GetEventManager()
+    {
+        return eventmanager;
+    }
 
     /** Returns the Weather manager.
      *
      * @return Returns a reference to the current weather manager.
      */
-    WeatherManager*  GetWeatherManager() { return weathermanager; }
+    WeatherManager*  GetWeatherManager()
+    {
+        return weathermanager;
+    }
 
     /** Returns the Math Scripting Engine.
      *
      * @return Returns a ptr to the math script engine.
      */
-    MathScriptEngine*  GetMathScriptEngine() { return mathscriptengine; }
+    MathScriptEngine*  GetMathScriptEngine()
+    {
+        return mathscriptengine;
+    }
 
     /** Returns the Administration Manager.
      *
      * @return Returns a reference to the current administration manager.
      */
-    AdminManager* GetAdminManager() { return adminmanager; }
+    AdminManager* GetAdminManager()
+    {
+        return adminmanager;
+    }
     /** Returns the character manager.
      *
      * @return Returns a reference to the current character manager for the
      *     server.
      */
-    ServerCharManager* GetCharManager() { return charmanager; }
+    ServerCharManager* GetCharManager()
+    {
+        return charmanager;
+    }
 
     /** Returns the Progression Manager.
      *
      * @return Returns a reference to the current administration manager.
      */
-    ProgressionManager* GetProgressionManager() { return progression; }
+    ProgressionManager* GetProgressionManager()
+    {
+        return progression;
+    }
 
     /** Returns the Marriage Manager */
-    psMarriageManager* GetMarriageManager() { return marriageManager; }
+    psMarriageManager* GetMarriageManager()
+    {
+        return marriageManager;
+    }
 
     /** Returns the Exchange Manager */
-    ExchangeManager* GetExchangeManager() { return exchangemanager; }
+    ExchangeManager* GetExchangeManager()
+    {
+        return exchangemanager;
+    }
 
     /** Returns the Combat Manager.
      *
      * @return Returns a reference to the current combat manager.
      */
-    CombatManager* GetCombatManager() { return combatmanager; }
+    CombatManager* GetCombatManager()
+    {
+        return combatmanager;
+    }
 
     /** Returns the spell manager.
      *
      * @return Returns a reference to the current spell manager for the
      *     server.
      */
-    SpellManager* GetSpellManager() { return spellmanager; }
+    SpellManager* GetSpellManager()
+    {
+        return spellmanager;
+    }
 
     /** Returns the work manager.
      *
      * @return Returns a reference to the current work manager for the
      *     server.
      */
-    WorkManager* GetWorkManager() { return workmanager; }
+    WorkManager* GetWorkManager()
+    {
+        return workmanager;
+    }
 
     /** Returns the guild manager.
      *
      * @return Returns a reference to the current guild manager for the
      *     server.
      */
-    GuildManager* GetGuildManager() { return guildmanager; }
+    GuildManager* GetGuildManager()
+    {
+        return guildmanager;
+    }
 
     /** Returns the economy manager.
      *
      * @return Returns a reference to the current economy manager for the
      *     server.
      */
-    EconomyManager* GetEconomyManager() { return economymanager; }
+    EconomyManager* GetEconomyManager()
+    {
+        return economymanager;
+    }
 
     /** Returns the minigame manager
      *
      * @return returns a reference to the current minigame manager for the
      * server.
      */
-    MiniGameManager *GetMiniGameManager() { return minigamemanager; }
+    MiniGameManager* GetMiniGameManager()
+    {
+        return minigamemanager;
+    }
 
     /** Returns the GM Event Manager
      *
      * @return returns a reference to the GM event manager for the
      * server.
      */
-    GMEventManager *GetGMEventManager() { return gmeventManager; }
+    GMEventManager* GetGMEventManager()
+    {
+        return gmeventManager;
+    }
 
     /** Returns the Bank Manager
      *
      * @return returns a reference to the Bank manager for the server.
      */
-    BankManager *GetBankManager() { return bankmanager; }
-    
+    BankManager* GetBankManager()
+    {
+        return bankmanager;
+    }
+
 
     /** Returns the User Manager
      *
      * @return returns a reference to the User manager for the server.
      */
-    UserManager *GetUserManager() { return usermanager; }
-    
+    UserManager* GetUserManager()
+    {
+        return usermanager;
+    }
+
     /** Returns the Chace Manager
      *
      * @return returns a reference to the chache manager for the server.
      */
-    CacheManager *GetCacheManager() { return cachemanager; }
+    CacheManager* GetCacheManager()
+    {
+        return cachemanager;
+    }
 
     /** Returns the Introduction Manager
      *
      * @return returns a reference to the introduction manager for the server.
      */
-    IntroductionManager *GetIntroductionManager() { return intromanager; }
+    IntroductionManager* GetIntroductionManager()
+    {
+        return intromanager;
+    }
 
     /**
      * Returns the Song Manager.
      * @returns a reference to the song manager of the server.
      */
-    ServerSongManager* GetSongManager() { return songManager; }
+    ServerSongManager* GetSongManager()
+    {
+        return songManager;
+    }
 
     /**
      * Returns the Tutorial Manager.
      * @return A reference to the tutorial manager of the server.
      */
-    TutorialManager* GetTutorialManager() { return tutorialmanager; }
+    TutorialManager* GetTutorialManager()
+    {
+        return tutorialmanager;
+    }
 
     /// Returns a pointer to the AuthenticationServer
-    AuthenticationServer* GetAuthServer() { return authserver; }
+    AuthenticationServer* GetAuthServer()
+    {
+        return authserver;
+    }
 
     /** Gets a list of all connected clients.
      *
@@ -385,46 +487,58 @@ public:
      *
      * @return Returns a random number between 0.0(inclusive) and 1.0(non-inclusive).
      */
-    float GetRandom() { return rng->Get(); }
-    
+    float GetRandom()
+    {
+        return rng->Get();
+    }
+
     /** Returns a random position within a range.
      *
      * @return Returns the provided position changed randomly of the supplied range.
      */
-    float GetRandomRange(const float pos, const float range) { return (pos - range + GetRandom()*range*2); }
-    
+    float GetRandomRange(const float pos, const float range)
+    {
+        return (pos - range + GetRandom()*range*2);
+    }
+
     /** Returns a random number with a limit.
      *
      * @return Returns a random number between 0 and limit.
      */
-    uint32 GetRandom(uint32 limit) { return rng->Get(limit); }
+    uint32 GetRandom(uint32 limit)
+    {
+        return rng->Get(limit);
+    }
 
     /**
      * Convenience command to send a client a psSystemMessage.
      */
-    void SendSystemInfo(int clientnum, const char *fmt, ... );
+    void SendSystemInfo(int clientnum, const char* fmt, ...);
 
     /**
      * Similar to SendSystemInfo(), but the message is shown also on the "Main" tab.
      */
-    void SendSystemBaseInfo(int clientnum, const char *fmt, ...);
+    void SendSystemBaseInfo(int clientnum, const char* fmt, ...);
 
     /**
      * Convenience command to send a client a psSystemMessage with the MSG_RESULT type
      */
-    void SendSystemResult(int clientnum,const char *fmt, ... );
+    void SendSystemResult(int clientnum,const char* fmt, ...);
 
     /**
      * Convenience command to send a client a psSystemMessage with the MSG_OK type
      */
-    void SendSystemOK(int clientnum,const char *fmt, ... );
+    void SendSystemOK(int clientnum,const char* fmt, ...);
 
     /**
      * Convenience command to send a client an error psSystemMessage.
      */
-    void SendSystemError(int clientnum, const char *fmt, ... );
+    void SendSystemError(int clientnum, const char* fmt, ...);
 
-    LogCSV* GetLogCSV() { return logcsv; }
+    LogCSV* GetLogCSV()
+    {
+        return logcsv;
+    }
 
     /**
      * Used to load the log settings
@@ -475,8 +589,8 @@ public:
      * @param response: Is the new response for the trigger.
      * @param num: Is the response number to change. This can be a value from 1 - 5.
      */
-    void UpdateDialog( const char* area, const char* trigger,
-                       const char* response, int num );
+    void UpdateDialog(const char* area, const char* trigger,
+                      const char* response, int num);
 
     /** Changes the pronoun set for that trigger in that area.
      * //@@@Brendon have to find info on these args. What are the pronoun fields for?
@@ -488,9 +602,9 @@ public:
      * @param it:
      * @param them:
      */
-    void UpdateDialog( const char* area, const char* trigger,
-                       const char* prohim, const char* proher,
-                       const char* it,     const char* them );
+    void UpdateDialog(const char* area, const char* trigger,
+                      const char* prohim, const char* proher,
+                      const char* it,     const char* them);
 
     /** Gets all the triggers from a particular knowledge area.
      *
@@ -513,29 +627,29 @@ public:
      *      <LI>rotational angle (y-axis)
      *  </UL>
      */
-    iResultSet *GetSuperclientNPCs(int superclientID);
+    iResultSet* GetSuperclientNPCs(int superclientID);
 
     /** Check for options in table 'server_options'
      * @param option_name: the desired option
      * @param value: Value of the found option will be placed in this string.
      * @return Return false is option not found or if an error happened. True otherwise.
      */
-    bool GetServerOption(const char *option_name,csString& value);
+    bool GetServerOption(const char* option_name,csString &value);
 
     /** Set an option in table 'server_options'
      * @param option_name: the desired option
      * @param value: Value of the found option will be replaced with this string.
      * @return Return false is option not found or if an error happened. True otherwise.
      */
-    bool SetServerOption(const char *option_name,const csString& value);
+    bool SetServerOption(const char* option_name,const csString &value);
 
-    iResultSet* GetAllResponses(csString& trigger);
+    iResultSet* GetAllResponses(csString &trigger);
 
     /** Check if a client is authorized to execute a command
      * @param client: the client we are checking
      * @param command: the command we are checking for
      * @param returnError: tells whether the command outputs an error
-     * 
+     *
      * @return return true if the client is authorized to execute the command
      */
     bool CheckAccess(Client* client, const char* command, bool returnError=true);
@@ -543,13 +657,16 @@ public:
     /** Quits the server and sends informative messages
      * @param time: -1 to stop the quit, 0 to quit the server immediately, > 0 to delay the server quit
      * @param client: the client we are checking. If null messages are sent only to server console
-     */    
-    void QuitServer(int time, Client *client);
+     */
+    void QuitServer(int time, Client* client);
 
     /**
      * Return a unused PID for temporary usage.
      */
-    PID GetUnusedPID() { return --unused_pid; }
+    PID GetUnusedPID()
+    {
+        return --unused_pid;
+    }
 
 
     static psCharacterLoader        CharacterLoader;
@@ -557,8 +674,8 @@ public:
     NPCManager*                     npcmanager;
     psMarriageManager*              marriageManager;
     CombatManager*                combatmanager;
-    csRandomGen *                   rng;
-    QuestManager *                  questmanager;
+    csRandomGen*                    rng;
+    QuestManager*                   questmanager;
     CharCreationManager*          charCreationManager;
     csRef<GuildManager>             guildmanager;
     csRef<QuestionManager>          questionmanager;
@@ -600,7 +717,7 @@ protected:
     GMEventManager*                 gmeventManager;
     BankManager*                    bankmanager;
 
-    psQuitEvent *server_quit_event; ///< Used to keep track of the shut down event
+    psQuitEvent* server_quit_event; ///< Used to keep track of the shut down event
 
     /**
      * Unused PID. These are for temporary use.
