@@ -258,6 +258,10 @@ psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTest
     }
     //regenerate the modifiers cache of the item
     item->UpdateModifiers();
+
+    // If we arrive here, at least one modifier as been added, so we make the item "identifiable"
+    item->SetIsIdentifiable(true);
+
     return item;
 }
 
@@ -361,7 +365,7 @@ bool LootRandomizer::SetAttribute(const csString &op, const csString &attrName, 
         {
             overlay->weight = baseItem->GetWeight();
         }
-            
+
         value[0] = &overlay->weight;
     }
     else if(AttributeName.Compare("item.speed"))
