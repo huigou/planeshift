@@ -3019,8 +3019,14 @@ bool psItem::SendItemDescription(Client* client)
         itemInfo += lockInfo;
     }
 
+    // Item needs to be identified to show stats
+    bool identifiable = GetIsIdentifiable();
+    if (identifiable) {
+        itemInfo += "\nThis item is magical or has special properties. It needs to be identified.";
+    }
+
     // Item is a weapon
-    if(GetIsMeleeWeapon() || GetIsRangeWeapon())
+    if((GetIsMeleeWeapon() || GetIsRangeWeapon()) && !identifiable)
     {
         csString speed, damage;
         // Weapon Speed
@@ -3045,7 +3051,7 @@ bool psItem::SendItemDescription(Client* client)
     }
 
     // Item is armor
-    if(GetIsArmor())
+    if(GetIsArmor() && !identifiable)
     {
         csString armor_type = "\n\n";
         switch(GetBaseStats()->Armor().Type())
@@ -3093,11 +3099,12 @@ bool psItem::SendItemDescription(Client* client)
 
     // Item is random looted
     float rarity = GetRarity();
-    if(rarity!=0 && rarity<100)
+    if(rarity!=0 && rarity<100  && !identifiable)
     {
         itemInfo += csString().Format("\nRarity: %s", GetRarityName().GetData());
     }
 
+    // send description to client
     psViewItemDescription outgoing(client->GetClientNum(), itemName.GetData(), itemInfo.GetData(), GetImageName(), stack_count);
 
     if(outgoing.valid)
