@@ -1452,7 +1452,7 @@ ALTER TABLE `tribes`
 
 #1247 - Stefano Angeleri - Added a field to define which mesh are hidden by the items.
 UPDATE `server_options` SET `option_value`='1247' WHERE `option_name`='db_version';
-ALTER TABLE `item_stats` ADD COLUMN `removed_mesh` VARCHAR(200)  NOT NULL COMMENT 'Lists the mesh to be removed when this item is equipped. It\'s defined in this format slotname:mesh1,mesh2; slotname:mesh3; mesh4,mesh5. slotname is optional.' AFTER `cstr_part_mesh`;
+ALTER TABLE `item_stats` ADD COLUMN `removed_mesh` VARCHAR(200)  NOT NULL COMMENT 'Lists the mesh to be removed when this item is equipped. It is defined in this format slotname:mesh1,mesh2; slotname:mesh3; mesh4,mesh5. slotname is optional.' AFTER `cstr_part_mesh`;
 UPDATE item_stats set removed_mesh="helm:Hair" where valid_slots like "%HELM%" and name != "basecloths" and name not like "%Natural%" and name != "Rogue Armor";
 
 #1248 - Anders Reggestad added need set to tribe_needs
