@@ -98,7 +98,7 @@
 
 psCharacterLoader psServer::CharacterLoader;
 
-psServer::psServer ()
+psServer::psServer()
 {
     serverconsole       = NULL;
     netmanager          = NULL;
@@ -145,7 +145,7 @@ psServer::psServer ()
 psServer::~psServer()
 {
     // Kick players from server
-    if ( netmanager )
+    if(netmanager)
     {
         ClientConnectionSet* clients = netmanager->GetConnections();
 
@@ -158,15 +158,16 @@ psServer::~psServer()
                 p = i.HasNext() ? i.Next() : NULL;
             }
 
-            if (p)
+            if(p)
             {
                 psAuthRejectedMessage msgb
-                    (p->GetClientNum(),"The server was restarted or shut down.  Please check the website or forums for more news.");
+                (p->GetClientNum(),"The server was restarted or shut down.  Please check the website or forums for more news.");
 
                 eventmanager->Broadcast(msgb.msg, NetBase::BC_FINALPACKET);
                 RemovePlayer(p->GetClientNum(),"The server was restarted or shut down.  Please check the website or forums for more news.");
             }
-        } while (p);
+        }
+        while(p);
     }
 
     delete economymanager;
@@ -234,21 +235,21 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Start logging asap
     csRef<iCommandLineParser> cmdline =
-         csQueryRegistry<iCommandLineParser> (objreg);
+        csQueryRegistry<iCommandLineParser> (objreg);
 
-    if (cmdline)
+    if(cmdline)
     {
-        const char* ofile = cmdline->GetOption ("output");
-        if (ofile != NULL)
+        const char* ofile = cmdline->GetOption("output");
+        if(ofile != NULL)
         {
-            ConsoleOut::SetOutputFile (ofile, false);
+            ConsoleOut::SetOutputFile(ofile, false);
         }
         else
         {
-            const char* afile = cmdline->GetOption ("append");
-            if (afile != NULL)
+            const char* afile = cmdline->GetOption("append");
+            if(afile != NULL)
             {
-                ConsoleOut::SetOutputFile (afile, true);
+                ConsoleOut::SetOutputFile(afile, true);
             }
         }
     }
@@ -259,9 +260,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     vfs =  csQueryRegistry<iVFS> (objreg);
     configmanager =  csQueryRegistry<iConfigManager> (object_reg);
 
-    if (!configmanager || !vfs)
+    if(!configmanager || !vfs)
     {
-        Error1 ("Couldn't find Configmanager!");
+        Error1("Couldn't find Configmanager!");
         return false;
     }
 
@@ -290,27 +291,27 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     db_port = configmanager->GetInt("PlaneShift.Database.port");
 
     Debug5(LOG_STARTUP,0,COL_BLUE "Database Host: '%s' User: '%s' Databasename: '%s' Port: %d" COL_NORMAL,
-      (const char*) db_host, (const char*) db_user, (const char*) db_name, db_port);
+           (const char*) db_host, (const char*) db_user, (const char*) db_name, db_port);
 
-    if (!database->Initialize(db_host, db_port, db_user, db_pass, db_name))
+    if(!database->Initialize(db_host, db_port, db_user, db_pass, db_name))
     {
-        Error2("Could not create database or connect to it: %s",(const char *) database->GetLastError());
+        Error2("Could not create database or connect to it: %s",(const char*) database->GetLastError());
         delete database;
         database = NULL;
         return false;
     }
 
     csString db_version;
-    if ( ! GetServerOption("db_version", db_version) )
+    if(! GetServerOption("db_version", db_version))
     {
-        CPrintf (CON_ERROR, "Couldn't determine database version.  Error was %s.\n", db->GetLastError() );
+        CPrintf(CON_ERROR, "Couldn't determine database version.  Error was %s.\n", db->GetLastError());
         db = NULL;
         return false;
     }
 
-    if ( strcmp( db_version, DATABASE_VERSION_STR ) )
+    if(strcmp(db_version, DATABASE_VERSION_STR))
     {
-        CPrintf (CON_ERROR, "Database version mismatch: we have '%s' while we are looking for '%s'. Recreate your database using create_all.sql\n", (const char*)db_version, DATABASE_VERSION_STR);
+        CPrintf(CON_ERROR, "Database version mismatch: we have '%s' while we are looking for '%s'. Recreate your database using create_all.sql\n", (const char*)db_version, DATABASE_VERSION_STR);
         db = NULL;
         return false;
     }
@@ -360,7 +361,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     //Loads the standard motd message from db
     Result result(db->Select("SELECT option_value FROM server_options WHERE option_name = 'standard_motd'"));
-    if (result.IsValid()  &&  result.Count()>0)
+    if(result.IsValid()  &&  result.Count()>0)
     {
         motd = result[0][0];
     }
@@ -375,7 +376,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     progression = new ProgressionManager(GetConnections(), cachemanager);
 
     // Initialize DB settings cache
-    if (!cachemanager->PreloadAll(entitymanager))
+    if(!cachemanager->PreloadAll(entitymanager))
     {
         CPrintf(CON_ERROR, "Could not initialize database cache.\n");
         delete database;
@@ -385,7 +386,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     Debug1(LOG_STARTUP,0,"Preloaded mesh names, texture names, part names, image names, race info, sector info, traits, item categories, item stats, ways and spells.");
 
-    if (!CharacterLoader.Initialize())
+    if(!CharacterLoader.Initialize())
     {
         CPrintf(CON_ERROR, "Could not initialize Character Loader.\n");
         cachemanager->UnloadAll();
@@ -397,7 +398,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     // Start Network Thread
 
     netmanager = NetManager::Create(cachemanager, MSGTYPE_PREAUTHENTICATE,MSGTYPE_NPCAUTHENT);
-    if (!netmanager)
+    if(!netmanager)
     {
         return false;
     }
@@ -405,10 +406,10 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     csString serveraddr =
         configmanager->GetStr("PlaneShift.Server.Addr", "0.0.0.0");
     int port =
-    configmanager->GetInt("PlaneShift.Server.Port", 1243);
+        configmanager->GetInt("PlaneShift.Server.Port", 1243);
     Debug3(LOG_STARTUP,0,COL_BLUE "Listening on '%s' Port %d." COL_NORMAL,
-            (const char*) serveraddr, port);
-    if (!netmanager->Bind(serveraddr, port))
+           (const char*) serveraddr, port);
+    if(!netmanager->Bind(serveraddr, port))
     {
         delete netmanager;
         netmanager = NULL;
@@ -424,18 +425,18 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     // we still store two points. But they are one object
     // and one thread.
     eventmanager.AttachNew(new EventManager);
-    if (!eventmanager)
+    if(!eventmanager)
         return false;
 
     // This gives access to msghandler to all message types
     psMessageCracker::msghandler = eventmanager;
 
-    if (!eventmanager->Initialize(netmanager, 1000))
+    if(!eventmanager->Initialize(netmanager, 1000))
         return false;
 
     Debug1(LOG_STARTUP,0,"Started Event Manager Thread");
 
-    if ( !progression->Initialize())
+    if(!progression->Initialize())
     {
         Error1("Failed to start progression manager!");
         return false;
@@ -457,9 +458,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
 
     // Set up wiring for entitymanager
-    GEMSupervisor *gem = new GEMSupervisor(object_reg,database, entitymanager, cachemanager);
-    psServerDR *psserverdr = new psServerDR(cachemanager, entitymanager);
-    if (!entitymanager->Initialize(object_reg, GetConnections(), usermanager, gem, psserverdr, cachemanager))
+    GEMSupervisor* gem = new GEMSupervisor(object_reg,database, entitymanager, cachemanager);
+    psServerDR* psserverdr = new psServerDR(cachemanager, entitymanager);
+    if(!entitymanager->Initialize(object_reg, GetConnections(), usermanager, gem, psserverdr, cachemanager))
     {
         Error1("Failed to initialise CEL!");
         delete entitymanager;
@@ -473,7 +474,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Start Combat Manager
     combatmanager = new CombatManager(cachemanager, entitymanager);
-    if (!combatmanager->InitializePVP())
+    if(!combatmanager->InitializePVP())
     {
         return false;
     }
@@ -492,7 +493,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     questmanager = new QuestManager(cachemanager);
 
-    if (!questmanager->Initialize())
+    if(!questmanager->Initialize())
         return false;
 
     chatmanager = csPtr<ChatManager> (new ChatManager);
@@ -501,17 +502,17 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     guildmanager = csPtr<GuildManager>(new GuildManager(GetConnections(), chatmanager));
     Debug1(LOG_STARTUP,0,"Started Guild Manager");
 
-    questionmanager = csPtr<QuestionManager>(new QuestionManager() );
+    questionmanager = csPtr<QuestionManager>(new QuestionManager());
     Debug1(LOG_STARTUP,0,"Started Question Manager");
 
-    advicemanager = csPtr<AdviceManager>(new AdviceManager( database ) );
+    advicemanager = csPtr<AdviceManager>(new AdviceManager(database));
     Debug1(LOG_STARTUP,0,"Started Advice Manager");
 
     groupmanager = csPtr<GroupManager>(new GroupManager(GetConnections(), chatmanager));
     Debug1(LOG_STARTUP,0,"Started Group Manager");
 
     charmanager = new ServerCharManager(cachemanager, entitymanager->GetGEM());
-    if (!charmanager->Initialize())
+    if(!charmanager->Initialize())
         return false;
     Debug1(LOG_STARTUP,0,"Started Character Manager");
 
@@ -523,7 +524,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     tutorialmanager = new TutorialManager(GetConnections());
 
-    actionmanager = csPtr<ActionManager>(new ActionManager( database));
+    actionmanager = csPtr<ActionManager>(new ActionManager(database));
     Debug1(LOG_STARTUP,0,"Started Action Manager");
 
     authserver = csPtr<AuthenticationServer>(new AuthenticationServer(GetConnections(), usermanager, guildmanager));
@@ -533,7 +534,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0,"Started Exchange Manager");
 
     npcmanager = new NPCManager(GetConnections(), database, eventmanager, entitymanager->GetGEM(), cachemanager, entitymanager);
-    if ( !npcmanager->Initialize())
+    if(!npcmanager->Initialize())
     {
         Error1("Failed to start npc manager!");
         return false;
@@ -553,7 +554,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Start minigame manager
     minigamemanager = new MiniGameManager();
-    if (!minigamemanager->Initialise())
+    if(!minigamemanager->Initialise())
     {
         Error1("Failed to load minigame data");
         return false;
@@ -561,7 +562,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP, 0, "Started Minigame Manager");
 
     charCreationManager = new CharCreationManager(gem, cachemanager, entitymanager);
-    if ( !charCreationManager->Initialize() )
+    if(!charCreationManager->Initialize())
     {
         Error1("Failed to load character creation data");
         return false;
@@ -569,7 +570,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     Debug1(LOG_STARTUP,0, "Started Character Creation Manager");
 
     gmeventManager = new GMEventManager();
-    if (!gmeventManager->Initialise())
+    if(!gmeventManager->Initialise())
     {
         Error1("Failed to load GM Events Manager");
         return false;
@@ -586,9 +587,9 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     }
     Debug1(LOG_STARTUP,0, "Started Song Manager");
 
-    if (!ServerStatus::Initialize (object_reg))
+    if(!ServerStatus::Initialize(object_reg))
     {
-        CPrintf (CON_WARNING, "Warning: Couldn't initialize server status reporter.\n");
+        CPrintf(CON_WARNING, "Warning: Couldn't initialize server status reporter.\n");
     }
     else
     {
@@ -599,7 +600,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     return true;
 }
 
-void psServer::MainLoop ()
+void psServer::MainLoop()
 {
     // Start the server console.
     serverconsole = new ServerConsole(objreg, "psserver", "PS Server");
@@ -617,12 +618,12 @@ void psServer::MainLoop ()
     SaveLogSettings();
 }
 
-void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
+void psServer::RemovePlayer(uint32_t clientnum,const char* reason)
 {
     Client* client = netmanager->GetConnections()->FindAny(clientnum);
-    if (!client)
+    if(!client)
     {
-        CPrintf (CON_WARNING, "Tried to remove non-existent client: %d\n", clientnum);
+        CPrintf(CON_WARNING, "Tried to remove non-existent client: %d\n", clientnum);
         return;
     }
 
@@ -634,7 +635,7 @@ void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
 
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 
-    Notify3(LOG_CHARACTER, "Remove player '%s' (%d)", client->GetName(),client->GetClientNum() );
+    Notify3(LOG_CHARACTER, "Remove player '%s' (%d)", client->GetName(),client->GetClientNum());
 
     client->Disconnect();
 
@@ -644,7 +645,7 @@ void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
 
     entitymanager->DeletePlayer(client);
 
-    if (client->IsSuperClient())
+    if(client->IsSuperClient())
     {
         npcmanager->Disconnect(client);
     }
@@ -652,34 +653,34 @@ void psServer::RemovePlayer (uint32_t clientnum,const char *reason)
     netmanager->GetConnections()->MarkDelete(client);
 }
 
-void psServer::MutePlayer (uint32_t clientnum,const char *reason)
+void psServer::MutePlayer(uint32_t clientnum,const char* reason)
 {
     Client* client = netmanager->GetConnections()->Find(clientnum);
-    if (!client)
+    if(!client)
     {
-        CPrintf (CON_WARNING, "Tried to mute non-existent client: %d\n", clientnum);
+        CPrintf(CON_WARNING, "Tried to mute non-existent client: %d\n", clientnum);
         return;
     }
 
-    CPrintf (CON_DEBUG, "Mute player '%s' (%d)\n", client->GetName(),
-        client->GetClientNum() );
+    CPrintf(CON_DEBUG, "Mute player '%s' (%d)\n", client->GetName(),
+            client->GetClientNum());
 
     client->SetMute(true);
 
     psserver->SendSystemInfo(client->GetClientNum(),reason);
 }
 
-void psServer::UnmutePlayer (uint32_t clientnum,const char *reason)
+void psServer::UnmutePlayer(uint32_t clientnum,const char* reason)
 {
     Client* client = netmanager->GetConnections()->Find(clientnum);
-    if (!client)
+    if(!client)
     {
-        CPrintf (CON_WARNING, "Tried to unmute non-existent client: %d\n", clientnum);
+        CPrintf(CON_WARNING, "Tried to unmute non-existent client: %d\n", clientnum);
         return;
     }
 
-    CPrintf (CON_DEBUG, "Unmute player '%s' (%d)\n", client->GetName(),
-        client->GetClientNum() );
+    CPrintf(CON_DEBUG, "Unmute player '%s' (%d)\n", client->GetName(),
+            client->GetClientNum());
 
     client->SetMute(false);
     psserver->SendSystemInfo(client->GetClientNum(),reason);
@@ -687,7 +688,7 @@ void psServer::UnmutePlayer (uint32_t clientnum,const char *reason)
 
 bool psServer::LoadMap(const char* mapname)
 {
-    if (entitymanager->LoadMap(mapname))
+    if(entitymanager->LoadMap(mapname))
     {
         MapLoaded=true;
     }
@@ -696,7 +697,7 @@ bool psServer::LoadMap(const char* mapname)
 
 bool psServer::IsReady()
 {
-    if (!entitymanager)
+    if(!entitymanager)
         return false;
 
     return entitymanager->IsReady();
@@ -705,17 +706,17 @@ bool psServer::IsReady()
 
 bool psServer::HasBeenReady()
 {
-    if (!entitymanager)
+    if(!entitymanager)
         return false;
 
     return entitymanager->HasBeenReady();
 }
 
-bool psServer::IsFull(size_t numclients, Client * client)
+bool psServer::IsFull(size_t numclients, Client* client)
 {
     unsigned int maxclients = GetConfig()->GetInt("PlaneShift.Server.User.connectionlimit", 20);
 
-    if (client)
+    if(client)
     {
         return numclients > maxclients &&
                !cachemanager->GetCommandManager()->Validate(client->GetSecurityLevel(), "always login");
@@ -727,9 +728,9 @@ bool psServer::IsFull(size_t numclients, Client * client)
 }
 
 
-void psServer::SendSystemInfo(int clientnum, const char *fmt, ... )
+void psServer::SendSystemInfo(int clientnum, const char* fmt, ...)
 {
-    if ( clientnum == 0 || fmt == NULL )
+    if(clientnum == 0 || fmt == NULL)
         return;
 
     va_list args;
@@ -739,10 +740,10 @@ void psServer::SendSystemInfo(int clientnum, const char *fmt, ... )
 
     psSystemMessage newmsg(clientnum ,MSG_INFO, cssLine.GetData());
 
-    if (newmsg.valid)
+    if(newmsg.valid)
     {
         // Save to chat history (PS#2789)
-        if (Client* cl = GetConnections()->Find(clientnum))
+        if(Client* cl = GetConnections()->Find(clientnum))
             cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
     }
@@ -752,9 +753,9 @@ void psServer::SendSystemInfo(int clientnum, const char *fmt, ... )
     }
 }
 
-void psServer::SendSystemBaseInfo(int clientnum, const char *fmt, ...)
+void psServer::SendSystemBaseInfo(int clientnum, const char* fmt, ...)
 {
-    if ( clientnum == 0 || fmt == NULL )
+    if(clientnum == 0 || fmt == NULL)
         return;
 
     va_list args;
@@ -764,10 +765,10 @@ void psServer::SendSystemBaseInfo(int clientnum, const char *fmt, ...)
 
     psSystemMessage newmsg(clientnum ,MSG_INFO_BASE, cssLine.GetData());
 
-    if (newmsg.valid)
+    if(newmsg.valid)
     {
         // Save to chat history (PS#2789)
-        if (Client* cl = GetConnections()->Find(clientnum))
+        if(Client* cl = GetConnections()->Find(clientnum))
             cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
     }
@@ -777,9 +778,9 @@ void psServer::SendSystemBaseInfo(int clientnum, const char *fmt, ...)
     }
 }
 
-void psServer::SendSystemResult(int clientnum, const char *fmt, ... )
+void psServer::SendSystemResult(int clientnum, const char* fmt, ...)
 {
-    if ( clientnum == 0 || fmt == NULL )
+    if(clientnum == 0 || fmt == NULL)
         return;
 
     va_list args;
@@ -789,10 +790,10 @@ void psServer::SendSystemResult(int clientnum, const char *fmt, ... )
 
     psSystemMessage newmsg(clientnum ,MSG_RESULT, cssLine.GetData());
 
-    if (newmsg.valid)
+    if(newmsg.valid)
     {
         // Save to chat history (PS#2789)
-        if (Client* cl = GetConnections()->Find(clientnum))
+        if(Client* cl = GetConnections()->Find(clientnum))
             cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
     }
@@ -802,9 +803,9 @@ void psServer::SendSystemResult(int clientnum, const char *fmt, ... )
     }
 }
 
-void psServer::SendSystemOK(int clientnum, const char *fmt, ... )
+void psServer::SendSystemOK(int clientnum, const char* fmt, ...)
 {
-    if ( clientnum == 0 || fmt == NULL )
+    if(clientnum == 0 || fmt == NULL)
         return;
 
     va_list args;
@@ -814,10 +815,10 @@ void psServer::SendSystemOK(int clientnum, const char *fmt, ... )
 
     psSystemMessage newmsg(clientnum ,MSG_OK, cssLine.GetData());
 
-    if (newmsg.valid)
+    if(newmsg.valid)
     {
         // Save to chat history (PS#2789)
-        if (Client* cl = GetConnections()->Find(clientnum))
+        if(Client* cl = GetConnections()->Find(clientnum))
             cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
     }
@@ -827,9 +828,9 @@ void psServer::SendSystemOK(int clientnum, const char *fmt, ... )
     }
 }
 
-void psServer::SendSystemError(int clientnum, const char *fmt, ... )
+void psServer::SendSystemError(int clientnum, const char* fmt, ...)
 {
-    if ( clientnum == 0 || fmt == NULL )
+    if(clientnum == 0 || fmt == NULL)
         return;
 
     va_list args;
@@ -839,10 +840,10 @@ void psServer::SendSystemError(int clientnum, const char *fmt, ... )
 
     psSystemMessage newmsg(clientnum ,MSG_ERROR, cssLine.GetData());
 
-    if (newmsg.valid)
+    if(newmsg.valid)
     {
         // Save to chat history (PS#2789)
-        if (Client* cl = GetConnections()->Find(clientnum))
+        if(Client* cl = GetConnections()->Find(clientnum))
             cl->GetActor()->LogSystemMessage(cssLine.GetData());
         eventmanager->SendMessage(newmsg.msg);
     }
@@ -855,44 +856,44 @@ void psServer::SendSystemError(int clientnum, const char *fmt, ... )
 void psServer::LoadLogSettings()
 {
     int count=0;
-    for (int i=0; i< MAX_FLAGS; i++)
+    for(int i=0; i< MAX_FLAGS; i++)
     {
-        if (pslog::GetName(i))
+        if(pslog::GetName(i))
         {
             pslog::SetFlag(pslog::GetName(i),configmanager->GetBool(pslog::GetSettingName(i)),0);
             if(configmanager->GetBool(pslog::GetSettingName(i)))
                 count++;
         }
     }
-    if (count==0)
+    if(count==0)
     {
         CPrintf(CON_CMDOUTPUT,"All LOGS are off.\n");
     }
 
     csString debugFile =  configmanager->GetStr("PlaneShift.DebugFile");
-    if ( debugFile.Length() > 0 )
+    if(debugFile.Length() > 0)
     {
-        csRef<iStandardReporterListener> reporter =  csQueryRegistry<iStandardReporterListener > ( objreg);
+        csRef<iStandardReporterListener> reporter =  csQueryRegistry<iStandardReporterListener > (objreg);
 
 
-        reporter->SetMessageDestination (CS_REPORTER_SEVERITY_DEBUG, true, false ,false, false, true, false);
-        reporter->SetMessageDestination (CS_REPORTER_SEVERITY_ERROR, true, false ,false, false, true, false);
-        reporter->SetMessageDestination (CS_REPORTER_SEVERITY_BUG, true, false ,false, false, true, false);
+        reporter->SetMessageDestination(CS_REPORTER_SEVERITY_DEBUG, true, false ,false, false, true, false);
+        reporter->SetMessageDestination(CS_REPORTER_SEVERITY_ERROR, true, false ,false, false, true, false);
+        reporter->SetMessageDestination(CS_REPORTER_SEVERITY_BUG, true, false ,false, false, true, false);
 
         time_t curr=time(0);
         tm* gmtm = gmtime(&curr);
 
         csString timeStr;
         timeStr.Format("-%d-%02d-%02d-%02d:%02d:%02d",
-            gmtm->tm_year+1900,
-            gmtm->tm_mon+1,
-            gmtm->tm_mday,
-            gmtm->tm_hour,
-            gmtm->tm_min,
-            gmtm->tm_sec);
+                       gmtm->tm_year+1900,
+                       gmtm->tm_mon+1,
+                       gmtm->tm_mday,
+                       gmtm->tm_hour,
+                       gmtm->tm_min,
+                       gmtm->tm_sec);
 
-        debugFile.Append( timeStr );
-        reporter->SetDebugFile( debugFile, true );
+        debugFile.Append(timeStr);
+        reporter->SetDebugFile(debugFile, true);
 
         Debug2(LOG_STARTUP,0,"PlaneShift Server Log Opened............. %s", timeStr.GetData());
 
@@ -901,9 +902,9 @@ void psServer::LoadLogSettings()
 
 void psServer::SaveLogSettings()
 {
-    for (int i=0; i< MAX_FLAGS; i++)
+    for(int i=0; i< MAX_FLAGS; i++)
     {
-        if (pslog::GetName(i))
+        if(pslog::GetName(i))
         {
             configmanager->SetBool(pslog::GetSettingName(i),pslog::GetValue(pslog::GetName(i)));
         }
@@ -922,9 +923,9 @@ ClientConnectionSet* psServer::GetConnections()
 bool psServer::AddBuddy(PID self, PID buddy)
 {
     int rows = db->Command("INSERT INTO character_relationships (character_id, related_id, relationship_type) VALUES (%u, %u, 'buddy')",
-                            self.Unbox(), buddy.Unbox());
+                           self.Unbox(), buddy.Unbox());
 
-    if (rows != 1)
+    if(rows != 1)
     {
         database->SetLastError(database->GetLastSQLError());
         return false;
@@ -938,7 +939,7 @@ bool psServer::RemoveBuddy(PID self, PID buddy)
     int rows = db->Command("DELETE FROM character_relationships WHERE character_id=%d AND related_id=%d AND relationship_type='buddy'",
                            self.Unbox(), buddy.Unbox());
 
-    if (rows != 1)
+    if(rows != 1)
     {
         database->SetLastError(database->GetLastSQLError());
         return false;
@@ -947,59 +948,59 @@ bool psServer::RemoveBuddy(PID self, PID buddy)
     return true;
 }
 
-void psServer::UpdateDialog( const char* area, const char* trigger,
-                               const char* response, int num )
+void psServer::UpdateDialog(const char* area, const char* trigger,
+                            const char* response, int num)
 {
     csString escTrigger;
     csString escArea;
     csString escResp;
 
-    db->Escape( escTrigger, trigger );
-    db->Escape( escArea, area );
-    db->Escape( escResp, response );
+    db->Escape(escTrigger, trigger);
+    db->Escape(escArea, area);
+    db->Escape(escResp, response);
 
     // Find the response id:
     int id = db->SelectSingleNumber("SELECT response_id FROM npc_triggers "
-                                       "WHERE trigger=\"%s\" AND area=\"%s\"",
-                                       escTrigger.GetData(), escArea.GetData());
+                                    "WHERE trigger=\"%s\" AND area=\"%s\"",
+                                    escTrigger.GetData(), escArea.GetData());
 
 
-    db->Command(  "UPDATE npc_responses SET response%d=\"%s\" WHERE id=%d",
-            num, escResp.GetData(), id );
+    db->Command("UPDATE npc_responses SET response%d=\"%s\" WHERE id=%d",
+                num, escResp.GetData(), id);
 }
 
 
 
-void psServer::UpdateDialog( const char* area, const char* trigger,
-                   const char* prohim, const char* proher,
-                   const char* proit,     const char* prothem )
+void psServer::UpdateDialog(const char* area, const char* trigger,
+                            const char* prohim, const char* proher,
+                            const char* proit,     const char* prothem)
 {
     csString escTrigger;
     csString escArea;
     csString escHim,escHer,escIt,escThem;
 
-    db->Escape( escTrigger, trigger );
-    db->Escape( escArea, area );
-    db->Escape( escHim, prohim );
-    db->Escape( escHer, proher );
-    db->Escape( escIt, proit );
-    db->Escape( escThem, prothem );
+    db->Escape(escTrigger, trigger);
+    db->Escape(escArea, area);
+    db->Escape(escHim, prohim);
+    db->Escape(escHer, proher);
+    db->Escape(escIt, proit);
+    db->Escape(escThem, prothem);
 
 
     // Find the response id:
     int id = db->SelectSingleNumber("SELECT response_id FROM npc_triggers "
-                                       "WHERE trigger=\"%s\" AND area=\"%s\"",
-                                       escTrigger.GetData(), escArea.GetData());
+                                    "WHERE trigger=\"%s\" AND area=\"%s\"",
+                                    escTrigger.GetData(), escArea.GetData());
 
 
-    db->Command(     "UPDATE npc_responses SET "
-                     "pronoun_him=\"%s\", "
-                     "pronoun_her=\"%s\", "
-                     "pronoun_it=\"%s\", "
-                     "pronoun_them=\"%s\" "
-                     "WHERE id=%d",
-                     escHim.GetData(), escHer.GetData(),
-                     escIt.GetData(), escThem.GetData(), id);
+    db->Command("UPDATE npc_responses SET "
+                "pronoun_him=\"%s\", "
+                "pronoun_her=\"%s\", "
+                "pronoun_it=\"%s\", "
+                "pronoun_them=\"%s\" "
+                "WHERE id=%d",
+                escHim.GetData(), escHer.GetData(),
+                escIt.GetData(), escThem.GetData(), id);
 }
 
 iResultSet* psServer::GetAllTriggersInArea(csString data)
@@ -1007,10 +1008,10 @@ iResultSet* psServer::GetAllTriggersInArea(csString data)
     iResultSet* rs;
 
     csString escape;
-    db->Escape( escape, data );
+    db->Escape(escape, data);
     rs = db->Select("SELECT trigger FROM npc_triggers "
-                       "WHERE area='%s'", escape.GetData());
-    if ( !rs )
+                    "WHERE area='%s'", escape.GetData());
+    if(!rs)
     {
         Error2("db ERROR: %s", db->GetLastError());
         Error2("LAST QUERY: %s", db->GetLastQuery());
@@ -1020,19 +1021,19 @@ iResultSet* psServer::GetAllTriggersInArea(csString data)
     return rs;
 }
 
-iResultSet* psServer::GetAllResponses( csString& trigger )
+iResultSet* psServer::GetAllResponses(csString &trigger)
 {
     iResultSet* rs;
     csString escTrigger;
-    db->Escape( escTrigger, trigger );
+    db->Escape(escTrigger, trigger);
 
 
     // Get the response ID:
     int id = db->SelectSingleNumber("SELECT response_id FROM npc_triggers "
-                                       "WHERE trigger=\"%s\"",
-                                       escTrigger.GetData());
+                                    "WHERE trigger=\"%s\"",
+                                    escTrigger.GetData());
 
-    if ( !id )
+    if(!id)
     {
         Error2("db ERROR: %s", db->GetLastError());
         Error2("LAST QUERY: %s", db->GetLastQuery());
@@ -1041,8 +1042,8 @@ iResultSet* psServer::GetAllResponses( csString& trigger )
 
 
     rs = db->Select("SELECT * FROM npc_responses "
-                       "WHERE id=%d",id);
-    if ( !rs )
+                    "WHERE id=%d",id);
+    if(!rs)
     {
         Error2("db ERROR: %s", db->GetLastError());
         Error2("LAST QUERY: %s", db->GetLastQuery());
@@ -1053,15 +1054,15 @@ iResultSet* psServer::GetAllResponses( csString& trigger )
 }
 
 
-iResultSet *psServer::GetSuperclientNPCs(int superclientID)
+iResultSet* psServer::GetSuperclientNPCs(int superclientID)
 {
-    iResultSet *rs;
+    iResultSet* rs;
 
     rs = db->Select("SELECT id"
                     "  FROM characters"
                     " WHERE account_id='%d'",
                     superclientID);
-    if (!rs)
+    if(!rs)
     {
         database->SetLastError(database->GetLastSQLError());
     }
@@ -1070,14 +1071,14 @@ iResultSet *psServer::GetSuperclientNPCs(int superclientID)
 }
 
 
-bool psServer::GetServerOption(const char *option_name,csString& value)
+bool psServer::GetServerOption(const char* option_name,csString &value)
 {
     csString escape;
-    db->Escape( escape, option_name );
-    Result result (db->Select("select option_value from server_options where "
-                    "option_name='%s'", escape.GetData()));
+    db->Escape(escape, option_name);
+    Result result(db->Select("select option_value from server_options where "
+                             "option_name='%s'", escape.GetData()));
 
-    if (!result.IsValid())
+    if(!result.IsValid())
     {
         csString temp;
         temp.Format("Couldn't execute query.\nCommand was "
@@ -1087,7 +1088,7 @@ bool psServer::GetServerOption(const char *option_name,csString& value)
         return false;
     }
 
-    if (result.Count() == 1)
+    if(result.Count() == 1)
     {
         value = result[0]["option_value"];
         return true;
@@ -1096,15 +1097,15 @@ bool psServer::GetServerOption(const char *option_name,csString& value)
     return false;
 }
 
-bool psServer::SetServerOption(const char *option_name,const csString& value)
+bool psServer::SetServerOption(const char* option_name,const csString &value)
 {
     csString escape, dummy;
     bool bExists = GetServerOption(option_name, dummy);
     unsigned long result;
 
-    db->Escape( escape, option_name );
+    db->Escape(escape, option_name);
 
-    if (bExists)
+    if(bExists)
         result = db->Command("update server_options set option_value='%s' where option_name='%s'", value.GetData(), option_name);
     else
         result = db->Command("insert into server_options(option_name, option_value) values('%s','%s')", option_name, value.GetData());
@@ -1132,15 +1133,15 @@ bool psServer::CheckAccess(Client* client, const char* command, bool returnError
 class psQuitEvent : public psGameEvent
 {
 public:
-    psQuitEvent(EntityManager* entitymanager, csTicks msecDelay, psQuitEvent *quit_event, csString message,
-                       bool server_lock, bool server_shutdown)
+    psQuitEvent(EntityManager* entitymanager, csTicks msecDelay, psQuitEvent* quit_event, csString message,
+                bool server_lock, bool server_shutdown)
         : psGameEvent(0,msecDelay,"psDelayedQuitEvent")
     {
-       message_quit_event = quit_event;
-       mytext = message;
-       trigger_server_lock = server_lock;
-       trigger_server_shutdown = server_shutdown;
-       entityManager = entitymanager;
+        message_quit_event = quit_event;
+        mytext = message;
+        trigger_server_lock = server_lock;
+        trigger_server_shutdown = server_shutdown;
+        entityManager = entitymanager;
     }
     virtual void Trigger()
     {
@@ -1153,7 +1154,8 @@ public:
             psserver->GetEventManager()->Stop();
     }
     virtual bool CheckTrigger()
-    {   //If this is the event triggering the server shut down pass it's validity, else check that event if
+    {
+        //If this is the event triggering the server shut down pass it's validity, else check that event if
         //it's still valid
         return message_quit_event == NULL ? valid : message_quit_event->CheckTrigger();
     }
@@ -1165,12 +1167,12 @@ private:
     csString mytext; ///< Keeps the message which will be sent to clients
     bool trigger_server_lock; ///< If true this is the event locking the server
     bool trigger_server_shutdown; ///< If true this is the event which will shut down the server
-    psQuitEvent *message_quit_event; ///< Stores a link to the master event which will shut down the server
-    EntityManager *entityManager;
+    psQuitEvent* message_quit_event; ///< Stores a link to the master event which will shut down the server
+    EntityManager* entityManager;
 };
 
 /// Shuts down the server and exit program
-void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0 for timed shutdown
+void psServer::QuitServer(int time, Client* client) //-1 for stop, 0 for now > 0 for timed shutdown
 {
     if(time == -1) //if the user passed 'stop' (-1) we will abort the shut down process
     {
@@ -1183,7 +1185,7 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
             return;
         }
         server_quit_event->Invalidate(); //there is a quit event let's make it invalid
-        if (IsMapLoaded() && HasBeenReady()) //remake the server available if it was locked in the process
+        if(IsMapLoaded() && HasBeenReady())  //remake the server available if it was locked in the process
             entitymanager->SetReady(true);
         server_quit_event = NULL;  //we don't need it anymore so let's clean ourselves of it
         //Let the user know about the new situation about the server
@@ -1197,7 +1199,7 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
         if(server_quit_event == NULL) //check that there isn't a quit event already running...
         {
             uint quit_delay = time; //if the user passed a number we will read it
-            if (quit_delay) //we have an argument > 0 so let's put an event for server shut down
+            if(quit_delay)  //we have an argument > 0 so let's put an event for server shut down
             {
                 if(quit_delay > 1440) //We limit the maximum quit delay to 24 hours
                 {
@@ -1212,18 +1214,19 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
 
                 //generates the messages to alert the user and allocates them in the queque
                 for(uint i = 3; i > 0; i--) //i = 3 sets up the 0 seconds message and so is the event triggering
-                {                           //shutdown
+                {
+                    //shutdown
                     csString outtext = "Server Admin: The server will shut down in ";
-                             outtext += 60-(i*20);
-                             outtext += " seconds.";
-                    psQuitEvent *Quit_event = new psQuitEvent(entitymanager, ((quit_delay-1)*60+i*20)*1000, server_quit_event,
-                                                                outtext, false, i == 3);
+                    outtext += 60-(i*20);
+                    outtext += " seconds.";
+                    psQuitEvent* Quit_event = new psQuitEvent(entitymanager, ((quit_delay-1)*60+i*20)*1000, server_quit_event,
+                            outtext, false, i == 3);
                     GetEventManager()->Push(Quit_event);
                     if(!server_quit_event) server_quit_event = Quit_event;
                 }
                 csString outtext = "Server Admin: The server will shut down in 1 minute.";
-                psQuitEvent *Quit_event = new psQuitEvent(entitymanager, (quit_delay-1)*60*1000, server_quit_event, outtext,
-                                                          false, false);
+                psQuitEvent* Quit_event = new psQuitEvent(entitymanager, (quit_delay-1)*60*1000, server_quit_event, outtext,
+                        false, false);
                 GetEventManager()->Push(Quit_event);
 
                 if(quit_delay == 1) return; //if the time we had was 1 minute no reason to go on
@@ -1231,10 +1234,10 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
                 while(1)
                 {
                     csString outtext = "Server Admin: The server will shut down in ";
-                             outtext += quit_time;
-                             outtext += " minutes.";
-                    psQuitEvent *Quit_event = new psQuitEvent(entitymanager, (quit_delay-quit_time)*60*1000, server_quit_event,
-                                                                outtext, quit_time == 5, false);
+                    outtext += quit_time;
+                    outtext += " minutes.";
+                    psQuitEvent* Quit_event = new psQuitEvent(entitymanager, (quit_delay-quit_time)*60*1000, server_quit_event,
+                            outtext, quit_time == 5, false);
                     GetEventManager()->Push(Quit_event);
                     if(quit_time == quit_delay)
                     {
@@ -1256,20 +1259,22 @@ void psServer::QuitServer(int time, Client *client) //-1 for stop, 0 for now > 0
             }
             else //we have no arguments or the argument passed is zero let's quit immediately
             {
-                 GetEventManager()->Stop();
+                GetEventManager()->Stop();
             }
         }
         else //we have found a quit event so we will inform the user about that
         {
             uint planned_shutdown = (server_quit_event->triggerticks-csGetTicks())/1000; //gets the seconds
-                                                                                         //to the event
+            //to the event
             uint minutes = planned_shutdown/60; //get the minutes to the event
             uint seconds = planned_shutdown%60; //get the seconds to the event when the minutes are subtracted
             csString quitInfo = "The server is already shutting down in ";
             if(minutes) //if we don't have minutes (so they are zero) skip them
-                quitInfo += minutes; quitInfo += " minutes ";
+                quitInfo += minutes;
+            quitInfo += " minutes ";
             if(seconds) //if we don't have seconds (so they are zero) skip them
-                quitInfo += seconds; quitInfo += " seconds";
+                quitInfo += seconds;
+            quitInfo += " seconds";
             CPrintf(CON_CMDOUTPUT, "%s\n", quitInfo.GetDataSafe()); //send the message to the server console
             if(client)
                 SendSystemInfo(client->GetClientNum(),quitInfo.GetDataSafe());
