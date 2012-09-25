@@ -838,6 +838,8 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
     {
         sector = psserver->entitymanager->GetEngine()->GetSectors()->FindByName(sectorName);
 
+        CS_ASSERT(sector);
+
         csArray<gemObject*> nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos, spawnRule->GetMinSpawnSpacingDistance(), false);
         if (nearlist.IsEmpty())
         {
@@ -848,8 +850,6 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
                nearlist.GetSize(),count>0?" Will Retry":"Last try");
 
     }
-
-    CS_ASSERT(sector);
 
     Debug1(LOG_SPAWN,0,"Position accepted");
     Respawn(chardata, instance, pos, angle, sectorName);
