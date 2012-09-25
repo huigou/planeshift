@@ -136,9 +136,6 @@ class gemActor;
 /// Flag for identifiable item (not yet identified)
 #define PSITEM_FLAG_IDENTIFIABLE        0x00200000
 
-/// Flag for identified items
-#define PSITEM_FLAG_IDENTIFIED          0x00400000
-
 #define KEY_SKELETON      ((unsigned int)-2)
 
 #define MAX_STACK_COUNT        65  // This is the most items a player can have in a stack
@@ -1219,14 +1216,6 @@ public:
     }
     /// Set the Identifiable flag of the item
     void SetIsIdentifiable(bool v);
-
-    /// Get the identified status of the item
-    bool GetIsIdentified()
-    {
-        return ((flags & PSITEM_FLAG_IDENTIFIED)? true : false);
-    }
-    /// Set the Identified flag of the item
-    void SetIsIdentified(bool v);
 
 
 private:

@@ -142,6 +142,22 @@ INSERT INTO progression_events VALUES("cast Chain Lightning",
        </if>
      </script>');
 
+INSERT INTO progression_events VALUES("cast Identify",
+    '<script>
+       <let vars="Identify=Target:GetFlag(\'Identifiable\')">
+       <if t="Identify = 1">
+         <then>
+           <msg aim="Caster" text="${Target} has to be identified!"/>
+           <let vars="Identified=Target:SetFlag(\'Identifiable\',0)" />
+           <msg aim="Caster" text="${Target} is now identified!"/>
+         </then>
+         <else>
+           <msg aim="Caster" text="${Target} does NOT need identify!"/>
+         </else>
+       </if>
+       </let>
+     </script>');
+
 # Char creation events - god
 INSERT INTO progression_events VALUES ('charcreate_2','<script><skill aim="Actor" name="Crystal Way" value="2"/><int  aim="Actor" value="3"/><animal-affinity aim="Actor" name="daylight" value="2"/></script>');
 

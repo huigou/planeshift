@@ -32,4 +32,4 @@ INSERT INTO spell_glyphs VALUES("6","29","1"); #Fire
 INSERT INTO spell_glyphs VALUES("7","17","0"); #Light
 INSERT INTO spell_glyphs VALUES("8","15","0"); #Energy
 INSERT INTO spell_glyphs VALUES("8","14","1"); #Door
-
+INSERT INTO spell_glyphs VALUES("9","57","1"); #Sphere
