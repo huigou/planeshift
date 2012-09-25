@@ -377,10 +377,6 @@ bool psItem::Load(iResultRow &row)
     {
         flags |= PSITEM_FLAG_IDENTIFIABLE;
     }
-    if(flagstr.FindSubString("IDENTIFIED", 0, true) != -1)
-    {
-        flags |= PSITEM_FLAG_IDENTIFIED;
-    }
 
     // Lockpick stuff
     SetLockStrength(row.GetInt("lock_str"));
@@ -769,11 +765,6 @@ void psItem::Commit(bool children)
     {
         if(!flagString.IsEmpty()) flagString.Append(",");
         flagString.Append("IDENTIFIABLE");
-    }
-    if(flags & PSITEM_FLAG_IDENTIFIED)
-    {
-        if(!flagString.IsEmpty()) flagString.Append(",");
-        flagString.Append("IDENTIFIED");
     }
 
     targetQuery->AddField("flags",flagString.GetData());
@@ -2347,6 +2338,32 @@ double psItem::CalcFunction(MathEnvironment* env, const char* functionName, cons
         return (double) 0.0f;
     }
 
+    //Checks for an item flag
+    if(function == "GetFlag")
+    {
+        csString flagName = env->GetString(params[0]);
+        if(flagName=="Identifiable")
+        {
+            return (double) GetIsIdentifiable()?1.0f:0.0f;
+        }
+        else
+            CPrintf(CON_ERROR, "psItem::CalcFunction(%s) GetFlag flag %s not supported\n", functionName, flagName.GetData());
+    }
+
+    //Sets an item flag
+    if(function == "SetFlag")
+    {
+        csString flagName = env->GetString(params[0]);
+        if(flagName=="Identifiable")
+        {
+            unsigned int value = (unsigned int)(params[1]);
+            SetIsIdentifiable(value);
+            return (double) 0.0f;
+        }
+        else
+            CPrintf(CON_ERROR, "psItem::CalcFunction(%s) SetFlag flag %s not supported\n", functionName, flagName.GetData());
+    }
+
     CPrintf(CON_ERROR, "psItem::CalcFunction(%s) failed\n", functionName);
     return 0;
 }
@@ -3021,7 +3038,8 @@ bool psItem::SendItemDescription(Client* client)
 
     // Item needs to be identified to show stats
     bool identifiable = GetIsIdentifiable();
-    if (identifiable) {
+    if(identifiable)
+    {
         itemInfo += "\nThis item is magical or has special properties. It needs to be identified.";
     }
 
@@ -3563,14 +3581,6 @@ void psItem::SetIsIdentifiable(bool v)
         flags = flags | PSITEM_FLAG_IDENTIFIABLE;
     else
         flags = flags & ~PSITEM_FLAG_IDENTIFIABLE;
-}
-
-void psItem::SetIsIdentified(bool v)
-{
-    if(v)
-        flags = flags | PSITEM_FLAG_IDENTIFIED;
-    else
-        flags = flags & ~PSITEM_FLAG_IDENTIFIED;
 }
 
 RandomizedOverlay::RandomizedOverlay()
