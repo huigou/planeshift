@@ -2342,6 +2342,8 @@ THREADED_CALLABLE_IMPL(celNavMeshBuilder,BuildNavMesh)
   float tileBoundingMax[3];
   for (int y = 0; y < th; ++y)
   {
+    int percent = ((float)y/th)*100;
+    csPrintf("%d%%\n",percent); // Print progress %
     for (int x = 0; x < tw; ++x)
     {
       tileBoundingMin[0] = boundingMin[0] + x * tcs;
@@ -2372,6 +2374,8 @@ THREADED_CALLABLE_IMPL(celNavMeshBuilder,BuildNavMesh)
         }
       }
     }
+    csPrintf(CS_ANSI_CURSOR_UP(1)); // go back one line
+    csPrintf(CS_ANSI_CLEAR_LINE); // clear line
   }
   ret->SetResult(csRef<iBase>(navMesh));
   return true;

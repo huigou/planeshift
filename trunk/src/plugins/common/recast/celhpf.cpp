@@ -1155,8 +1155,12 @@ bool celHNavStructBuilder::SetSectors (csRefArray<iSector>* sectorList)
 bool celHNavStructBuilder::InstantiateNavMeshBuilders ()
 {
   csRefArray<iSector>::Iterator it = sectors.GetIterator();
+  int numSectors = sectors.GetSize();
+  int currentSector = 1;
+  csPrintf("Total sectors to parse: \n", numSectors);
   while (it.HasNext())
   {
+    csPrintf("Parsing sector %d/%d \n", currentSector, numSectors);
     csPtrKey<iSector> key = it.Next();
     CS_ASSERT(static_cast<iSector*>(key));
     csRef<iCelNavMeshBuilder> builder = csLoadPlugin<iCelNavMeshBuilder>(objectRegistry, "cel.navmeshbuilder");
@@ -1167,6 +1171,7 @@ bool celHNavStructBuilder::InstantiateNavMeshBuilders ()
     builder->SetNavMeshParams(parameters);
     builder->SetSector(key);
     builders.Put(key, builder);
+    currentSector++;
   }
   return true;
 }
@@ -1182,10 +1187,14 @@ iCelHNavStruct* celHNavStructBuilder::BuildHNavStruct ()
 
   csHash<csRef<iCelNavMeshBuilder>, csPtrKey<iSector> >::GlobalIterator it = builders.GetIterator();
   csRefArray<iThreadReturn> results;
+  int totalIterations = builders.GetSize();
+  int currentIteration = 1;
   while (it.HasNext())
   {
+    csPrintf("Building Nav Mesh %d/%d\n",currentIteration,totalIterations);
     csRef<iCelNavMeshBuilder> builder = it.Next();
     results.Push(builder->BuildNavMesh());
+    currentIteration++;
   }
 
   while(!results.IsEmpty())
