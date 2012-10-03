@@ -840,13 +840,11 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 {
                     "extremely weaker",
                     "much weaker",
-                    "quite weaker",
                     "weaker",
                     "equal",
                     "stronger",
                     "much stronger",
-                    "very powerful",
-                    "extremely powerful"
+                    "extremely stronger"
                 };
 
                 if(physical.IsEmpty())
