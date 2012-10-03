@@ -289,7 +289,7 @@ INSERT INTO sc_npctypes VALUES("13","Sleep","",0,"","","","","","1",
 <react event="sleep" behavior="AtSleep" />
 ');
 
-INSERT INTO sc_npctypes VALUES("14","Diurnal","Sleep,InRegion",0,"","$run","","","","1",
+INSERT INTO sc_npctypes VALUES("14","Diurnal","Sleep,InRegion",0,"$run","","","","","1",
 '<!-- Active by day. Sleeping/Hiding during night 22:00-06:00 -->
 <!--  Require Idle behavior when composed into a complete behavior -->
 
