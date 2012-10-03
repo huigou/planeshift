@@ -165,11 +165,14 @@ INSERT INTO sc_npctypes VALUES("8","On Sight Fighter","TurnToSensedPlayer,Fighte
 <react event="fight defencive"     behavior="FightDefencive" />
 
 <!-- Reaction to results of assessments -->
-<react event="$target lame"        behavior="AssessLame" />
+<react event="$target extremely weaker"        behavior="AssessLame" />
+<react event="$target much weaker"      behavior="AssessWeaker" />
 <react event="$target weaker"      behavior="AssessWeaker" />
 <react event="$target equal"       behavior="AssessEqual" />
 <react event="$target stronger"    behavior="AssessStronger" />
-<react event="$target powerfull"   behavior="AssessPowerfull" />');
+<react event="$target much stronger"   behavior="AssessStronger" />
+<react event="$target extremely stronger"   behavior="AssessPowerfull" />');
+
 
 INSERT INTO sc_npctypes VALUES("9","Answerer","DoNothing",0,"","","","","","1",
 '<behavior name="turn to face" completion_decay="-1" growth="0" initial="0" >
