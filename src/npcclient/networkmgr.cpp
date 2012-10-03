@@ -1,7 +1,7 @@
 /*
 * networkmgr.cpp
 *
-* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -59,8 +59,8 @@
 
 extern bool running;
 
-NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* engine)
-: reconnect(false)
+NetworkManager::NetworkManager(MsgHandler* mh,psNetConnection* conn, iEngine* engine)
+    : reconnect(false)
 {
     msghandler = mh;
     this->engine = engine;
@@ -86,14 +86,14 @@ NetworkManager::NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* en
     msghandler->Subscribe(this,MSGTYPE_LOCATION);
 
     connection= conn;
-    connection->SetEngine( engine );
+    connection->SetEngine(engine);
 
     PrepareCommandMessage();
 }
 
 NetworkManager::~NetworkManager()
 {
-    if (msghandler)
+    if(msghandler)
     {
         msghandler->Unsubscribe(this,MSGTYPE_NPCLIST);
         msghandler->Unsubscribe(this,MSGTYPE_MAPLIST);
@@ -117,7 +117,7 @@ NetworkManager::~NetworkManager()
     outbound = NULL;
 }
 
-void NetworkManager::Authenticate(csString& host,int port,csString& user,csString& pass)
+void NetworkManager::Authenticate(csString &host,int port,csString &user,csString &pass)
 {
     this->port = port;
     this->host = host;
@@ -131,17 +131,17 @@ void NetworkManager::Authenticate(csString& host,int port,csString& user,csStrin
 void NetworkManager::Disconnect()
 {
     psDisconnectMessage discon(0, 0, "");
-    msghandler->SendMessage(discon.msg);    
+    msghandler->SendMessage(discon.msg);
     connection->SendOut(); // Flush the network
     connection->DisConnect();
 }
 
-csStringHashReversible * NetworkManager::GetMsgStrings()
+csStringHashReversible* NetworkManager::GetMsgStrings()
 {
     return connection->GetAccessPointers()->msgstringshash;
 }
 
-const char *NetworkManager::GetCommonString(uint32_t cstr_id)
+const char* NetworkManager::GetCommonString(uint32_t cstr_id)
 {
     return connection->GetAccessPointers()->Request(cstr_id);
 }
@@ -152,27 +152,27 @@ uint32_t NetworkManager::GetCommonStringID(const char* string)
 }
 
 
-void NetworkManager::HandleMessage(MsgEntry *message)
+void NetworkManager::HandleMessage(MsgEntry* message)
 {
-    switch ( message->GetType() )
+    switch(message->GetType())
     {
         case MSGTYPE_MAPLIST:
         {
             connected = true;
-            if (ReceiveMapList(message))
+            if(ReceiveMapList(message))
             {
-                RequestAllObjects();    
+                RequestAllObjects();
             }
             else
             {
                 npcclient->Disconnect();
             }
-            
+
             break;
         }
         case MSGTYPE_NPCRACELIST:
         {
-            HandleRaceList( message );
+            HandleRaceList(message);
             break;
         }
         case MSGTYPE_NPCLIST:
@@ -181,7 +181,7 @@ void NetworkManager::HandleMessage(MsgEntry *message)
             ready = true;
             // Activates NPCs on server side
             psNPCReadyMessage mesg;
-            msghandler->SendMessage( mesg.msg );
+            msghandler->SendMessage(mesg.msg);
             npcclient->LoadCompleted();
             break;
         }
@@ -192,19 +192,19 @@ void NetworkManager::HandleMessage(MsgEntry *message)
         }
         case MSGTYPE_PERSIST_ACTOR:
         {
-            HandleActor( message );
+            HandleActor(message);
             break;
-        }        
-        
+        }
+
         case MSGTYPE_PERSIST_ITEM:
         {
-            HandleItem( message );
+            HandleItem(message);
             break;
-        }        
-        
+        }
+
         case MSGTYPE_REMOVE_OBJECT:
         {
-            HandleObjectRemoval( message );
+            HandleObjectRemoval(message);
             break;
         }
 
@@ -265,28 +265,28 @@ void NetworkManager::HandleMessage(MsgEntry *message)
     }
 }
 
-void NetworkManager::HandleConsoleCommand(MsgEntry *me)
+void NetworkManager::HandleConsoleCommand(MsgEntry* me)
 {
     csString buffer;
 
     psServerCommandMessage msg(me);
-    printf("Got command: %s\n", msg.command.GetDataSafe() );
+    printf("Got command: %s\n", msg.command.GetDataSafe());
 
     size_t i = msg.command.FindFirst(' ');
     csString word;
     msg.command.SubString(word,0,i);
-    const COMMAND *cmd = find_command(word.GetDataSafe());
+    const COMMAND* cmd = find_command(word.GetDataSafe());
 
-    if (cmd && cmd->allowRemote)
+    if(cmd && cmd->allowRemote)
     {
         int ret = execute_line(msg.command, &buffer);
-        if (ret == -1)
+        if(ret == -1)
             buffer = "Error executing command on the server.";
     }
     else
     {
         buffer = cmd ? "That command is not allowed to be executed remotely"
-                     : "No command by that name.  Please try again.";
+                 : "No command by that name.  Please try again.";
     }
     printf("%s\n", buffer.GetData());
 
@@ -294,36 +294,37 @@ void NetworkManager::HandleConsoleCommand(MsgEntry *me)
     retn.SendMessage();*/
 }
 
-void NetworkManager::HandleRaceList( MsgEntry* me)
+void NetworkManager::HandleRaceList(MsgEntry* me)
 {
-    psNPCRaceListMessage mesg( me );
+    psNPCRaceListMessage mesg(me);
 
     size_t count = mesg.raceInfo.GetSize();
-    for (size_t c = 0; c < count; c++)
+    for(size_t c = 0; c < count; c++)
     {
         npcclient->AddRaceInfo(mesg.raceInfo[c].name,mesg.raceInfo[c].walkSpeed,mesg.raceInfo[c].runSpeed);
+        Debug4(LOG_STARTUP,0, "Loading race speed: %s %f %f\n",mesg.raceInfo[c].name.GetData(),mesg.raceInfo[c].walkSpeed,mesg.raceInfo[c].runSpeed);
     }
 }
 
-void NetworkManager::HandleAllEntities(MsgEntry *message)
+void NetworkManager::HandleAllEntities(MsgEntry* message)
 {
     psPersistAllEntities allEntities(message);
 
     printf("Got All Entities message.\n");
     bool done=false;
     int count=0;
-    while (!done)
+    while(!done)
     {
         count++;
-        MsgEntry *entity = allEntities.GetEntityMessage();
-        if (entity)
+        MsgEntry* entity = allEntities.GetEntityMessage();
+        if(entity)
         {
-            if (entity->GetType() == MSGTYPE_PERSIST_ACTOR)
+            if(entity->GetType() == MSGTYPE_PERSIST_ACTOR)
                 HandleActor(entity);
-            else if (entity->GetType() == MSGTYPE_PERSIST_ITEM)
+            else if(entity->GetType() == MSGTYPE_PERSIST_ITEM)
                 HandleItem(entity);
             else
-                Error2("Unhandled type of entity (%d) in AllEntities message.",entity->GetType() );
+                Error2("Unhandled type of entity (%d) in AllEntities message.",entity->GetType());
 
             delete entity;
         }
@@ -333,13 +334,13 @@ void NetworkManager::HandleAllEntities(MsgEntry *message)
     printf("End of All Entities message, with %d entities done.\n", count);
 }
 
-void NetworkManager::HandleActor(MsgEntry *me)
+void NetworkManager::HandleActor(MsgEntry* me)
 {
-    psPersistActor mesg( me, connection->GetAccessPointers(), true );
+    psPersistActor mesg(me, connection->GetAccessPointers(), true);
 
-    Debug4(LOG_NET, 0, "Got persistActor message, size %zu, id=%d, name=%s", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe() );
+    Debug4(LOG_NET, 0, "Got persistActor message, size %zu, id=%d, name=%s", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe());
 
-    gemNPCObject * obj = npcclient->FindEntityID(mesg.entityid);
+    gemNPCObject* obj = npcclient->FindEntityID(mesg.entityid);
 
     if(obj && obj->GetPID() == mesg.playerID)
     {
@@ -347,11 +348,11 @@ void NetworkManager::HandleActor(MsgEntry *me)
         CPrintf(CON_ERROR, "Already know about gemNPCActor: %s (%s), %s %s.\n",
                 mesg.name.GetData(), obj->GetName(), ShowID(mesg.playerID), ShowID(mesg.entityid));
 
-        obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance );
-        obj->SetInvisible( (mesg.flags & psPersistActor::INVISIBLE) ? true : false );
-        obj->SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ? true : false );
-        obj->SetAlive( (mesg.flags & psPersistActor::IS_ALIVE) ? true : false );
-        
+        obj->Move(mesg.pos, mesg.yrot, mesg.sectorName, mesg.instance);
+        obj->SetInvisible((mesg.flags & psPersistActor::INVISIBLE) ? true : false);
+        obj->SetInvincible((mesg.flags & psPersistActor::INVINCIBLE) ? true : false);
+        obj->SetAlive((mesg.flags & psPersistActor::IS_ALIVE) ? true : false);
+
         return;
     }
 
@@ -367,30 +368,30 @@ void NetworkManager::HandleActor(MsgEntry *me)
         // so we can only assume a RemoveObject message misorder and we will delete the existing one and recreate.
         CPrintf(CON_ERROR, "Deleting because we already know gemNPCActor: "
                 "<%s, %s, %s> as <%s, %s, %s>.\n",
-                mesg.name.GetData(), ShowID(mesg.entityid), ShowID(mesg.playerID), 
+                mesg.name.GetData(), ShowID(mesg.entityid), ShowID(mesg.playerID),
                 obj->GetName(), ShowID(obj->GetEID()), ShowID(obj->GetPID()));
 
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
     }
 
-    gemNPCActor* actor = new gemNPCActor( npcclient, mesg);
-    
-    if ( mesg.flags & psPersistActor::NPC )
+    gemNPCActor* actor = new gemNPCActor(npcclient, mesg);
+
+    if(mesg.flags & psPersistActor::NPC)
     {
-        npcclient->AttachNPC( actor, mesg.counter, mesg.ownerEID, mesg.masterID );                
+        npcclient->AttachNPC(actor, mesg.counter, mesg.ownerEID, mesg.masterID);
     }
-    
-    npcclient->Add( actor );
+
+    npcclient->Add(actor);
 }
 
-void NetworkManager::HandleItem( MsgEntry* me )
+void NetworkManager::HandleItem(MsgEntry* me)
 {
     psPersistItem mesg(me, connection->GetAccessPointers());
 
-    gemNPCObject * obj = npcclient->FindEntityID(mesg.eid);
+    gemNPCObject* obj = npcclient->FindEntityID(mesg.eid);
 
-    Debug4(LOG_NET, 0, "Got persistItem message, size %zu, eid=%d, name=%s\n", me->GetSize(),mesg.eid.Unbox(),mesg.name.GetDataSafe() );
+    Debug4(LOG_NET, 0, "Got persistItem message, size %zu, eid=%d, name=%s\n", me->GetSize(),mesg.eid.Unbox(),mesg.name.GetDataSafe());
 
     if(obj && obj->GetPID().IsValid())
     {
@@ -402,63 +403,63 @@ void NetworkManager::HandleItem( MsgEntry* me )
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
     }
-    
+
 
     if(obj)
     {
         // We already know this item so just update the position.
         CPrintf(CON_ERROR, "Deleting because we already know "
-                "gemNPCItem: %s (%s), %s.\n", mesg.name.GetData(), 
+                "gemNPCItem: %s (%s), %s.\n", mesg.name.GetData(),
                 obj->GetName(), ShowID(mesg.eid));
-        
+
         npcclient->Remove(obj);
         obj = NULL; // Obj isn't valid after remove
     }
 
     // Add the new item to the world
-    gemNPCItem* item = new gemNPCItem(npcclient, mesg);        
+    gemNPCItem* item = new gemNPCItem(npcclient, mesg);
     npcclient->Add(item);
 
 }
 
-void NetworkManager::HandleObjectRemoval( MsgEntry* me )
+void NetworkManager::HandleObjectRemoval(MsgEntry* me)
 {
     psRemoveObject mesg(me);
 
-    gemNPCObject * object = npcclient->FindEntityID( mesg.objectEID );
-    if (object == NULL)
+    gemNPCObject* object = npcclient->FindEntityID(mesg.objectEID);
+    if(object == NULL)
     {
         CPrintf(CON_ERROR, "NPCObject %s cannot be removed - not found\n", ShowID(mesg.objectEID));
         return;
     }
 
     // If this is a NPC remove any queued dr updates before removing the entity.
-    NPC * npc = object->GetNPC();
-    if (npc)
+    NPC* npc = object->GetNPC();
+    if(npc)
     {
-        DequeueDRData( npc );
+        DequeueDRData(npc);
     }
 
-    npcclient->Remove( object ); // Object isn't valid after remove
+    npcclient->Remove(object);   // Object isn't valid after remove
 }
 
-void NetworkManager::HandlePathNetwork(MsgEntry *me)
+void NetworkManager::HandlePathNetwork(MsgEntry* me)
 {
     psPathNetworkMessage msg(me);
 
     psPathNetwork* pathNetwork = npcclient->GetPathNetwork();
-    
-    switch (msg.command)
+
+    switch(msg.command)
     {
-    case psPathNetworkMessage::PATH_ADD_POINT:
+        case psPathNetworkMessage::PATH_ADD_POINT:
         {
             psPath* path = pathNetwork->FindPath(msg.id);
-            if (path)
+            if(path)
             {
                 psPathPoint* point = path->AddPoint(msg.position, 0.0, msg.sector->QueryObject()->GetName());
                 point->SetID(msg.secondId);
-                
-                Debug4(LOG_NET, 0, "Added point %d to path %d at %s.\n", 
+
+                Debug4(LOG_NET, 0, "Added point %d to path %d at %s.\n",
                        msg.secondId, msg.id, toString(msg.position,msg.sector).GetDataSafe());
             }
             else
@@ -467,20 +468,20 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             }
         }
         break;
-    case psPathNetworkMessage::PATH_CREATE:
+        case psPathNetworkMessage::PATH_CREATE:
         {
             psPath* path = new psLinearPath(msg.id,msg.string,msg.flags);
-            if (path)
+            if(path)
             {
                 Waypoint* startWaypoint = pathNetwork->FindWaypoint(msg.startId);
-                if (!startWaypoint)
+                if(!startWaypoint)
                 {
                     Error2("Failed to find start waypoint %d\n",msg.startId);
                     return;
                 }
-                
+
                 Waypoint* stopWaypoint = pathNetwork->FindWaypoint(msg.stopId);
-                if (!stopWaypoint)
+                if(!stopWaypoint)
                 {
                     Error2("Failed to find stop waypoint %d\n",msg.stopId);
                     return;
@@ -489,7 +490,7 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
                 path->SetStart(startWaypoint);
                 path->SetEnd(stopWaypoint);
 
-                if (pathNetwork->CreatePath(path) != NULL)
+                if(pathNetwork->CreatePath(path) != NULL)
                 {
                     Debug2(LOG_NET, 0, "Created path %d.\n", msg.id);
                 }
@@ -498,40 +499,40 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to create path %d.\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::PATH_REMOVE_POINT:
+        case psPathNetworkMessage::PATH_REMOVE_POINT:
         {
             psPath* path = pathNetwork->FindPath(msg.id);
-            if (path)
+            if(path)
             {
                 int index = path->FindPointIndex(msg.secondId);
-                if (index >= 0)
+                if(index >= 0)
                 {
                     path->RemovePoint(index);
                     Debug3(LOG_NET, 0, "Removed point %d from path %d.\n", msg.secondId, msg.id);
                 }
                 else
                 {
-                    Error3( "Removed point %d from path %d failed.\n", msg.secondId, msg.id);
+                    Error3("Removed point %d from path %d failed.\n", msg.secondId, msg.id);
                 }
-                
+
             }
             else
             {
                 Error3("Failed to remove point %d from path %d.\n", msg.secondId, msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::PATH_RENAME:
+        case psPathNetworkMessage::PATH_RENAME:
         {
             psPath* path = pathNetwork->FindPath(msg.id);
-            if (path)
+            if(path)
             {
                 path->Rename(msg.string);
-                
+
                 Debug3(LOG_NET, 0, "Set name %s for path %d.\n",
                        msg.string.GetDataSafe(), msg.id);
             }
@@ -539,16 +540,16 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find path %d for rename\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::PATH_SET_FLAG:
+        case psPathNetworkMessage::PATH_SET_FLAG:
         {
             psPath* path = pathNetwork->FindPath(msg.id);
-            if (path)
+            if(path)
             {
                 path->SetFlag(msg.string, msg.enable);
-                
+
                 Debug4(LOG_NET, 0, "Set flag %s for path %d to %s.\n",
                        msg.string.GetDataSafe(), msg.id, msg.enable?"TRUE":"FALSE");
             }
@@ -556,16 +557,16 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find path %d for set flag\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::POINT_ADJUSTED:
+        case psPathNetworkMessage::POINT_ADJUSTED:
         {
             psPathPoint* point = pathNetwork->FindPathPoint(msg.id);
-            if (point)
+            if(point)
             {
                 point->Adjust(msg.position, msg.sector);
-                
+
                 Debug3(LOG_NET, 0, "Adjusted pathpoint %d to %s.\n",
                        msg.id, toString(msg.position, msg.sector).GetDataSafe());
             }
@@ -575,13 +576,13 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             }
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_ALIAS_ADD:
+        case psPathNetworkMessage::WAYPOINT_ALIAS_ADD:
         {
             Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
-            if (wp)
+            if(wp)
             {
                 wp->AddAlias(msg.aliasID,msg.string,msg.rotationAngle);
-                
+
                 Debug3(LOG_NET, 0, "Added alias %s to waypoint %d.\n",
                        msg.string.GetDataSafe(), msg.id);
             }
@@ -589,16 +590,16 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find waypoint %d for add alias\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_ALIAS_ROTATION_ANGLE:
+        case psPathNetworkMessage::WAYPOINT_ALIAS_ROTATION_ANGLE:
         {
             Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
-            if (wp)
+            if(wp)
             {
                 wp->SetRotationAngle(msg.string,msg.rotationAngle);
-                
+
                 Debug4(LOG_NET, 0, "Sett rotation angle %.3f for alias %s to waypoint %d.\n",
                        msg.rotationAngle,msg.string.GetDataSafe(), msg.id);
             }
@@ -606,16 +607,16 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find waypoint %d for alias set rotation angle\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_ADJUSTED:
+        case psPathNetworkMessage::WAYPOINT_ADJUSTED:
         {
             Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
-            if (wp)
+            if(wp)
             {
                 wp->Adjust(msg.position, msg.sector);
-                
+
                 Debug3(LOG_NET, 0, "Adjusted waypoint %d to %s.\n",
                        msg.id, toString(msg.position, msg.sector).GetDataSafe());
             }
@@ -623,16 +624,16 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find waypoint %d for adjust\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_CREATE:
+        case psPathNetworkMessage::WAYPOINT_CREATE:
         {
             csString sectorName = msg.sector->QueryObject()->GetName();
             Waypoint* wp = pathNetwork->CreateWaypoint(msg.string, msg.position, sectorName, msg.radius, msg.flags);
             wp->SetID(msg.id);
-            
-            if (wp)
+
+            if(wp)
             {
                 Debug3(LOG_NET, 0, "Created waypoint %d at %s.\n",
                        msg.id, toString(msg.position, msg.sector).GetDataSafe());
@@ -641,17 +642,17 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find waypoint %d for adjust\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_RADIUS:
+        case psPathNetworkMessage::WAYPOINT_RADIUS:
         {
             Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
-            if (wp)
+            if(wp)
             {
                 wp->SetRadius(msg.radius);
                 wp->RecalculateEdges(npcclient->GetWorld(), npcclient->GetEngine());
-                
+
                 Debug3(LOG_NET, 0, "Set radius %.2f for waypoint %d.\n",
                        msg.radius, msg.id);
             }
@@ -659,16 +660,16 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find waypoint %d for radius\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_RENAME:
+        case psPathNetworkMessage::WAYPOINT_RENAME:
         {
             Waypoint* waypoint = pathNetwork->FindWaypoint(msg.id);
-            if (waypoint)
+            if(waypoint)
             {
                 waypoint->Rename(msg.string);
-                
+
                 Debug3(LOG_NET, 0, "Set name %s for waypoint %d.\n",
                        msg.string.GetDataSafe(), msg.id);
             }
@@ -676,16 +677,16 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find waypoint %d for rename\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_ALIAS_REMOVE:
+        case psPathNetworkMessage::WAYPOINT_ALIAS_REMOVE:
         {
             Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
-            if (wp)
+            if(wp)
             {
                 wp->RemoveAlias(msg.string);
-                
+
                 Debug3(LOG_NET, 0, "Removed alias %s from waypoint %d.\n",
                        msg.string.GetDataSafe(), msg.id);
             }
@@ -693,16 +694,16 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find waypoint %d for remove alias\n", msg.id);
             }
-            
+
         }
         break;
-    case psPathNetworkMessage::WAYPOINT_SET_FLAG:
+        case psPathNetworkMessage::WAYPOINT_SET_FLAG:
         {
             Waypoint* wp = pathNetwork->FindWaypoint(msg.id);
-            if (wp)
+            if(wp)
             {
                 wp->SetFlag(msg.string, msg.enable);
-                
+
                 Debug4(LOG_NET, 0, "Set flag %s for waypoint %d to %s.\n",
                        msg.string.GetDataSafe(), msg.id, msg.enable?"TRUE":"FALSE");
             }
@@ -710,27 +711,27 @@ void NetworkManager::HandlePathNetwork(MsgEntry *me)
             {
                 Error2("Failed to find waypoint %d for set flag.\n", msg.id);
             }
-            
+
         }
         break;
     }
 }
 
-void NetworkManager::HandleLocation(MsgEntry *me)
+void NetworkManager::HandleLocation(MsgEntry* me)
 {
     psLocationMessage msg(me);
 
     LocationManager* locations = npcclient->GetLocationManager();
-    
-    switch (msg.command)
+
+    switch(msg.command)
     {
-    case psLocationMessage::LOCATION_ADJUSTED:
+        case psLocationMessage::LOCATION_ADJUSTED:
         {
             Location* location = locations->FindLocation(msg.id);
-            if (location)
+            if(location)
             {
                 location->Adjust(msg.position, msg.sector);
-                
+
                 Debug4(LOG_NET, 0, "Adjusted location %s(%d) to %s.\n",
                        location->GetName(), msg.id, toString(msg.position, msg.sector).GetDataSafe());
             }
@@ -738,15 +739,15 @@ void NetworkManager::HandleLocation(MsgEntry *me)
             {
                 Error2("Failed to find location %d for adjust\n", msg.id);
             }
-            
+
         }
         break;
-    case psLocationMessage::LOCATION_CREATED:
+        case psLocationMessage::LOCATION_CREATED:
         {
             Location* location = locations->CreateLocation(msg.typeName, msg.name, msg.position, msg.sector, msg.radius, msg.rotationAngle, msg.flags);
             location->SetID(msg.id);
-            
-            if (location)
+
+            if(location)
             {
                 Debug3(LOG_NET, 0, "Created location %d at %s.\n",
                        msg.id, toString(msg.position, msg.sector).GetDataSafe());
@@ -755,20 +756,20 @@ void NetworkManager::HandleLocation(MsgEntry *me)
             {
                 Error2("Failed to find location %d for adjust\n", msg.id);
             }
-            
+
         }
         break;
-    case psLocationMessage::LOCATION_INSERTED:
+        case psLocationMessage::LOCATION_INSERTED:
         {
             Location* location = locations->FindLocation(msg.prevID);
-            if (!location)
+            if(!location)
             {
                 Error2("Failed to find location %d",msg.prevID);
                 return;
             }
-            
+
             Location* newLocation = location->Insert(msg.id, msg.position, msg.sector);
-            if (newLocation)
+            if(newLocation)
             {
                 Debug3(LOG_NET, 0, "Insert new location %d after location %d\n", msg.id, msg.prevID);
             }
@@ -776,16 +777,16 @@ void NetworkManager::HandleLocation(MsgEntry *me)
             {
                 Error3("Failed to insert new location %d after location %d\n", msg.id, msg.prevID);
             }
-            
+
         }
         break;
-    case psLocationMessage::LOCATION_RADIUS:
+        case psLocationMessage::LOCATION_RADIUS:
         {
             Location* location = locations->FindLocation(msg.id);
-            if (location)
+            if(location)
             {
                 location->SetRadius(msg.radius);
-                
+
                 Debug3(LOG_NET, 0, "Set radius %.2f for location %d.\n",
                        msg.radius, msg.id);
             }
@@ -793,16 +794,16 @@ void NetworkManager::HandleLocation(MsgEntry *me)
             {
                 Error2("Failed to find location %d for radius\n", msg.id);
             }
-            
+
         }
         break;
-    case psLocationMessage::LOCATION_RENAME:
+        case psLocationMessage::LOCATION_RENAME:
         {
             Location* location = locations->FindLocation(msg.id);
-            if (location)
+            if(location)
             {
                 location->SetName(msg.name);
-                
+
                 Debug3(LOG_NET, 0, "Set name %s for location %d.\n",
                        location->GetName(), msg.id);
             }
@@ -810,20 +811,20 @@ void NetworkManager::HandleLocation(MsgEntry *me)
             {
                 Error2("Failed to find location %d for rename\n", msg.id);
             }
-            
+
         }
         break;
-    case psLocationMessage::LOCATION_SET_FLAG:
+        case psLocationMessage::LOCATION_SET_FLAG:
         {
             Location* location = locations->FindLocation(msg.id);
-            if (location)
+            if(location)
             {
-                if (!location->SetFlag(msg.flags, msg.enable))
+                if(!location->SetFlag(msg.flags, msg.enable))
                 {
                     Error3("Failed to set flag %s for location %d\n",msg.flags.GetDataSafe(),msg.id);
                     return;
                 }
-                
+
                 Debug4(LOG_NET, 0, "Set flag %s for location %d to %s.\n",
                        msg.flags.GetDataSafe(), msg.id, msg.enable?"TRUE":"FALSE");
             }
@@ -831,34 +832,34 @@ void NetworkManager::HandleLocation(MsgEntry *me)
             {
                 Error2("Failed to find location %d for set flag.\n", msg.id);
             }
-            
+
         }
         break;
-    case psLocationMessage::LOCATION_TYPE_ADD:
+        case psLocationMessage::LOCATION_TYPE_ADD:
         {
             LocationType* locationType = locations->CreateLocationType(msg.id,msg.typeName);
-            if (!locationType)
+            if(!locationType)
             {
                 Error1("Failed to create location type");
                 return;
             }
             Debug3(LOG_NET, 0, "Created location type %s(%d).\n",
                    locationType->GetName(),locationType->GetID());
-                
+
         }
         break;
-    case psLocationMessage::LOCATION_TYPE_REMOVE:
+        case psLocationMessage::LOCATION_TYPE_REMOVE:
         {
-            if (!locations->RemoveLocationType(msg.typeName))
+            if(!locations->RemoveLocationType(msg.typeName))
             {
                 return;
             }
             Debug2(LOG_NET, 0, "Removed location type %s.\n",
                    msg.typeName.GetDataSafe());
-            
+
         }
         break;
-    default:
+        default:
         {
             Error2("Command %d for Location Handling not implemented\n",msg.command);
         }
@@ -866,11 +867,11 @@ void NetworkManager::HandleLocation(MsgEntry *me)
 }
 
 
-void NetworkManager::HandleTimeUpdate( MsgEntry* me )
+void NetworkManager::HandleTimeUpdate(MsgEntry* me)
 {
     psWeatherMessage msg(me);
 
-    if (msg.type == psWeatherMessage::DAYNIGHT)  // time update msg
+    if(msg.type == psWeatherMessage::DAYNIGHT)   // time update msg
     {
         npcclient->UpdateTime(msg.minute, msg.hour, msg.day, msg.month, msg.year);
     }
@@ -879,22 +880,22 @@ void NetworkManager::HandleTimeUpdate( MsgEntry* me )
 
 void NetworkManager::RequestAllObjects()
 {
-    Notify1(LOG_STARTUP, "Requesting all game objects");    
-    
+    Notify1(LOG_STARTUP, "Requesting all game objects");
+
     psRequestAllObjects mesg;
-    msghandler->SendMessage( mesg.msg );
+    msghandler->SendMessage(mesg.msg);
 }
 
 
-bool NetworkManager::ReceiveMapList(MsgEntry *msg)
+bool NetworkManager::ReceiveMapList(MsgEntry* msg)
 {
     psMapListMessage list(msg);
     CPrintf(CON_CMDOUTPUT,"\n");
-    for (size_t i=0; i<list.map.GetSize(); i++)
+    for(size_t i=0; i<list.map.GetSize(); i++)
     {
         CPrintf(CON_CMDOUTPUT,"Loading world '%s'\n",list.map[i].GetDataSafe());
-        
-        if (!npcclient->LoadMap(list.map[i]))
+
+        if(!npcclient->LoadMap(list.map[i]))
         {
             CPrintf(CON_ERROR,"Failed to load world '%s'\n",list.map[i].GetDataSafe());
             return false;
@@ -911,7 +912,7 @@ bool NetworkManager::ReceiveMapList(MsgEntry *msg)
     // all required maps are loaded. Else sector Transformations
     // aren't known which will result in broken paths including
     // warp portals.
-    if (!npcclient->LoadPathNetwork())
+    if(!npcclient->LoadPathNetwork())
     {
         CPrintf(CON_ERROR, "Couldn't load the path network\n");
         exit(1);
@@ -920,15 +921,15 @@ bool NetworkManager::ReceiveMapList(MsgEntry *msg)
     return true;
 }
 
-bool NetworkManager::ReceiveNPCList(MsgEntry *msg)
+bool NetworkManager::ReceiveNPCList(MsgEntry* msg)
 {
     uint32_t length;
     PID pid;
     EID eid;
 
     length = msg->GetUInt32();
-    CPrintf(CON_WARNING, "Received list of %i NPCs.\n", length);  
-    for (unsigned int x=0; x<length; x++)
+    CPrintf(CON_WARNING, "Received list of %i NPCs.\n", length);
+    for(unsigned int x=0; x<length; x++)
     {
         pid = PID(msg->GetUInt32());
         eid = EID(msg->GetUInt32());
@@ -940,13 +941,13 @@ bool NetworkManager::ReceiveNPCList(MsgEntry *msg)
 
 
 
-void NetworkManager::HandlePositionUpdates(MsgEntry *msg)
+void NetworkManager::HandlePositionUpdates(MsgEntry* msg)
 {
     psAllEntityPosMessage updates(msg);
 
     csRef<iEngine> engine =  csQueryRegistry<iEngine> (npcclient->GetObjectReg());
 
-    for (int x=0; x<updates.count; x++)
+    for(int x=0; x<updates.count; x++)
     {
         csVector3 pos;
         iSector* sector;
@@ -958,12 +959,12 @@ void NetworkManager::HandlePositionUpdates(MsgEntry *msg)
     }
 }
 
-void NetworkManager::HandlePerceptions(MsgEntry *msg)
+void NetworkManager::HandlePerceptions(MsgEntry* msg)
 {
     psNPCCommandsMessage list(msg);
 
     char cmd = list.msg->GetInt8();
-    while (cmd != psNPCCommandsMessage::CMD_TERMINATOR)
+    while(cmd != psNPCCommandsMessage::CMD_TERMINATOR)
     {
         switch(cmd)
         {
@@ -976,15 +977,15 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 csString magical = msg->GetStr();
                 csString overall = msg->GetStr();
 
-                NPC *npc = npcclient->FindNPC(actorEID);
-                if (!npc)
+                NPC* npc = npcclient->FindNPC(actorEID);
+                if(!npc)
                 {
                     Debug3(LOG_NPC, actorEID.Unbox(), "Got assess perception for unknown NPC(%s) for %s!\n", ShowID(targetEID), ShowID(targetEID));
                     break;
                 }
 
-                gemNPCObject *target = npcclient->FindEntityID(targetEID);
-                if (!target)
+                gemNPCObject* target = npcclient->FindEntityID(targetEID);
+                if(!target)
                 {
                     npc->Printf("Got access perception from unknown target(%s)!\n", ShowID(targetEID));
                     break;
@@ -1013,8 +1014,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID npcEID    = EID(list.msg->GetUInt32());
                 bool spokenTo = list.msg->GetBool();
 
-                NPC *npc = npcclient->FindNPC(npcEID);
-                if (!npc)
+                NPC* npc = npcclient->FindNPC(npcEID);
+                if(!npc)
                 {
                     Debug2(LOG_NPC, npcEID.Unbox(), "Got spoken_to perception for unknown NPC(%s)!\n", ShowID(npcEID));
                     break;
@@ -1034,15 +1035,15 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID targetEID  = EID(list.msg->GetUInt32());
                 int faction    = list.msg->GetInt16();
 
-                NPC *npc = npcclient->FindNPC(targetEID);
-                if (!npc)
+                NPC* npc = npcclient->FindNPC(targetEID);
+                if(!npc)
                 {
                     Debug3(LOG_NPC, targetEID.Unbox(), "Got talk perception for unknown NPC(%s) from %s!\n", ShowID(targetEID), ShowID(speakerEID));
                     break;
                 }
 
-                gemNPCObject *speaker_ent = npcclient->FindEntityID(speakerEID);
-                if (!speaker_ent)
+                gemNPCObject* speaker_ent = npcclient->FindEntityID(speakerEID);
+                if(!speaker_ent)
                 {
                     npc->Printf("Got talk perception from unknown speaker(%s)!\n", ShowID(speakerEID));
                     break;
@@ -1060,15 +1061,15 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID targetEID   = EID(list.msg->GetUInt32());
                 EID attackerEID = EID(list.msg->GetUInt32());
 
-                NPC *npc = npcclient->FindNPC(targetEID);
-                gemNPCActor *attacker_ent = (gemNPCActor*)npcclient->FindEntityID(attackerEID);
-                
-                if (!npc)
+                NPC* npc = npcclient->FindNPC(targetEID);
+                gemNPCActor* attacker_ent = (gemNPCActor*)npcclient->FindEntityID(attackerEID);
+
+                if(!npc)
                 {
                     Debug2(LOG_NPC, targetEID.Unbox(), "Got attack perception for unknown NPC(%s)!\n", ShowID(targetEID));
                     break;
                 }
-                if (!attacker_ent)
+                if(!attacker_ent)
                 {
                     npc->Printf("Got attack perception for unknown attacker (%s)!", ShowID(attackerEID));
                     break;
@@ -1087,14 +1088,14 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 uint32_t clientNum = list.msg->GetUInt32();
                 uint8_t debugLevel = list.msg->GetUInt8();
 
-                NPC *npc = npcclient->FindNPC(npc_eid);
+                NPC* npc = npcclient->FindNPC(npc_eid);
 
-                if (!npc)
+                if(!npc)
                 {
                     QueueSystemInfoCommand(clientNum,"NPCClient: No NPC found");
                     break;
                 }
-                
+
                 npc->AddDebugClient(clientNum);
                 npc->SetDebugging(debugLevel);
 
@@ -1104,12 +1105,12 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             case psNPCCommandsMessage::PCPT_GROUPATTACK:
             {
                 EID targetEID = EID(list.msg->GetUInt32());
-                NPC *npc = npcclient->FindNPC(targetEID);
+                NPC* npc = npcclient->FindNPC(targetEID);
 
                 int groupCount = list.msg->GetUInt8();
-                csArray<gemNPCObject *> attacker_ents(groupCount);
+                csArray<gemNPCObject*> attacker_ents(groupCount);
                 csArray<int> bestSkillSlots(groupCount);
-                for (int i=0; i<groupCount; i++)
+                for(int i=0; i<groupCount; i++)
                 {
                     attacker_ents.Push(npcclient->FindEntityID(EID(list.msg->GetUInt32())));
                     bestSkillSlots.Push(list.msg->GetInt8());
@@ -1118,16 +1119,16 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                         if(npc)
                         {
                             npc->Printf("Got group attack perception for unknown group member!",
-                                        npc->GetActor()->GetName() );
+                                        npc->GetActor()->GetName());
                         }
-                        
+
                         attacker_ents.Pop();
                         bestSkillSlots.Pop();
                     }
                 }
 
 
-                if (!npc)
+                if(!npc)
                 {
                     Debug2(LOG_NPC, targetEID.Unbox(), "Got group attack perception for unknown NPC(%s)!", ShowID(targetEID));
                     break;
@@ -1154,14 +1155,14 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID targetEID   = EID(list.msg->GetUInt32());
                 float dmg       = list.msg->GetFloat();
 
-                NPC *npc = npcclient->FindNPC(targetEID);
-                if (!npc)
+                NPC* npc = npcclient->FindNPC(targetEID);
+                if(!npc)
                 {
                     Debug2(LOG_NPC, targetEID.Unbox(), "Attack on unknown NPC(%s).", ShowID(targetEID));
                     break;
                 }
-                gemNPCObject *attacker_ent = npcclient->FindEntityID(attackerEID);
-                if (!attacker_ent)
+                gemNPCObject* attacker_ent = npcclient->FindEntityID(attackerEID);
+                if(!attacker_ent)
                 {
                     CPrintf(CON_ERROR, "%s got attack perception for unknown attacker! (%s)\n",
                             npc->GetName(), ShowID(attackerEID));
@@ -1178,8 +1179,8 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
             case psNPCCommandsMessage::PCPT_DEATH:
             {
                 EID who = EID(list.msg->GetUInt32());
-                NPC *npc = npcclient->FindNPC(who);
-                if (!npc) // Not managed by us, or a player
+                NPC* npc = npcclient->FindNPC(who);
+                if(!npc)  // Not managed by us, or a player
                 {
                     DeathPerception pcpt(who);
                     npcclient->TriggerEvent(&pcpt); // Broadcast
@@ -1197,23 +1198,23 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 float    severity = list.msg->GetInt8() / 10;
                 csString type = GetCommonString(strhash);
 
-                gemNPCObject *caster_ent = npcclient->FindEntityID(caster);
-                NPC *npc = npcclient->FindNPC(target);
-                gemNPCObject *target_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(target);
+                gemNPCObject* caster_ent = npcclient->FindEntityID(caster);
+                NPC* npc = npcclient->FindNPC(target);
+                gemNPCObject* target_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(target);
 
-                if (npc)
+                if(npc)
                 {
                     npc->Printf("Got Spell Perception %s is casting %s on me.",
                                 (caster_ent)?caster_ent->GetName():"(unknown entity)",type.GetDataSafe());
                 }
 
-                if (!caster_ent || !target_ent)
+                if(!caster_ent || !target_ent)
                     break;
 
-                iSector *sector;
+                iSector* sector;
                 csVector3 pos;
                 psGameObject::GetPosition(target_ent, pos, sector);
-                
+
                 // This will result in spell:self, spell:target, spell:unknown perceptions
                 SpellPerception pcpt("spell",caster_ent,target_ent,type,severity);
 
@@ -1229,22 +1230,22 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID playerEID = EID(list.msg->GetUInt32());
                 float faction = list.msg->GetFloat();
 
-                NPC *npc = npcclient->FindNPC(npcEID);
-                if (!npc)
+                NPC* npc = npcclient->FindNPC(npcEID);
+                if(!npc)
                     break;  // This perception is not our problem
 
                 npc->Printf("Range perception: NPC: %s, player: %s, faction: %.0f",
                             ShowID(npcEID), ShowID(playerEID), faction);
 
-                gemNPCObject *npc_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(npcEID);
-                gemNPCObject * player = npcclient->FindEntityID(playerEID);
+                gemNPCObject* npc_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(npcEID);
+                gemNPCObject* player = npcclient->FindEntityID(playerEID);
 
-                if (!player || !npc_ent)
+                if(!player || !npc_ent)
                     break;
 
 
                 csString pcpt_name;
-                if ( npc->GetOwner() == player )
+                if(npc->GetOwner() == player)
                 {
                     pcpt_name.Append("owner ");
                 }
@@ -1252,13 +1253,13 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 {
                     pcpt_name.Append("player ");
                 }
-                if (cmd == psNPCCommandsMessage::PCPT_ANYRANGEPLAYER)
+                if(cmd == psNPCCommandsMessage::PCPT_ANYRANGEPLAYER)
                     pcpt_name.Append("anyrange");
-                if (cmd == psNPCCommandsMessage::PCPT_LONGRANGEPLAYER)
+                if(cmd == psNPCCommandsMessage::PCPT_LONGRANGEPLAYER)
                     pcpt_name.Append("sensed");
-                if (cmd == psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER)
+                if(cmd == psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER)
                     pcpt_name.Append("nearby");
-                if (cmd == psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER) // PERSONAL_RANGE
+                if(cmd == psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER)  // PERSONAL_RANGE
                     pcpt_name.Append("adjacent");
 
                 npc->Printf("Got Player %s in Range of %s with the %s Perception, with faction %d",
@@ -1276,14 +1277,14 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID pet_id    = EID(list.msg->GetUInt32());
                 EID target_id = EID(list.msg->GetUInt32());
 
-                gemNPCObject *owner = npcclient->FindEntityID(owner_id);
-                NPC *npc = npcclient->FindNPC(pet_id);
-                
-                gemNPCObject *pet = (npc) ? npc->GetActor() : npcclient->FindEntityID( pet_id );
+                gemNPCObject* owner = npcclient->FindEntityID(owner_id);
+                NPC* npc = npcclient->FindNPC(pet_id);
 
-                gemNPCObject *target = npcclient->FindEntityID( target_id );
+                gemNPCObject* pet = (npc) ? npc->GetActor() : npcclient->FindEntityID(pet_id);
 
-                if (npc)
+                gemNPCObject* target = npcclient->FindEntityID(target_id);
+
+                if(npc)
                 {
                     npc->Printf("Got OwnerCmd %d Perception from %s for %s with target %s",
                                 command,(owner)?owner->GetName():"(unknown entity)",
@@ -1291,10 +1292,10 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                                 (target)?target->GetName():"(none)");
                 }
 
-                if (!npc | !owner || !pet)
+                if(!npc | !owner || !pet)
                     break;
 
-                OwnerCmdPerception pcpt( "OwnerCmdPerception", command, owner, pet, target );
+                OwnerCmdPerception pcpt("OwnerCmdPerception", command, owner, pet, target);
 
                 npc->TriggerEvent(&pcpt);
                 break;
@@ -1305,21 +1306,21 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID owner_id = EID(list.msg->GetUInt32());
                 EID pet_id = EID(list.msg->GetUInt32());
 
-                gemNPCObject *owner = npcclient->FindEntityID(owner_id);
-                NPC *npc = npcclient->FindNPC(pet_id);
-                gemNPCObject *pet = (npc) ? npc->GetActor() : npcclient->FindEntityID( pet_id );
+                gemNPCObject* owner = npcclient->FindEntityID(owner_id);
+                NPC* npc = npcclient->FindNPC(pet_id);
+                gemNPCObject* pet = (npc) ? npc->GetActor() : npcclient->FindEntityID(pet_id);
 
-                if (npc)
+                if(npc)
                 {
                     npc->Printf("Got OwnerAction %d Perception from %s for %s",
                                 action,(owner)?owner->GetName():"(unknown entity)",
                                 (pet)?pet->GetName():"(unknown entity)");
                 }
 
-                if (!npc || !owner || !pet)
+                if(!npc || !owner || !pet)
                     break;
 
-                OwnerActionPerception pcpt( "OwnerActionPerception", action, owner, pet );
+                OwnerActionPerception pcpt("OwnerActionPerception", action, owner, pet);
 
                 npc->TriggerEvent(&pcpt);
                 break;
@@ -1330,13 +1331,13 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 csString perception = list.msg->GetStr();
                 csString type       = list.msg->GetStr();
 
-                NPC *npc = npcclient->FindNPC(npcEID);
-                if (npc)
+                NPC* npc = npcclient->FindNPC(npcEID);
+                if(npc)
                 {
                     npc->Printf("%s got Perception: %s Type: %s ", ShowID(npcEID), perception.GetDataSafe(), type.GetDataSafe());
 
 
-                    Perception pcpt( perception, type );
+                    Perception pcpt(perception, type);
                     npc->TriggerEvent(&pcpt);
                 }
                 break;
@@ -1348,17 +1349,17 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 bool inserted = msg->GetBool();
                 int count = msg->GetInt16();
 
-                gemNPCObject *owner = npcclient->FindEntityID(owner_id);
-                NPC *npc = npcclient->FindNPC(owner_id);
+                gemNPCObject* owner = npcclient->FindEntityID(owner_id);
+                NPC* npc = npcclient->FindNPC(owner_id);
 
-                if (!owner || !npc)
+                if(!owner || !npc)
                     break;
 
                 npc->Printf("Got Inventory %s Perception from %s for %d %s\n",
                             (inserted?"Add":"Remove"),owner->GetName(),
                             count,item_name.GetData());
-                
-                iSector *sector;
+
+                iSector* sector;
                 csVector3 pos;
                 psGameObject::GetPosition(owner, pos, sector);
 
@@ -1375,13 +1376,13 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 csString str;
                 str.Format("inventory:%s",(inserted?"added":"removed"));
 
-                InventoryPerception pcpt( str, item_name, count, pos, sector, 5.0 );
+                InventoryPerception pcpt(str, item_name, count, pos, sector, 5.0);
 
                 npc->TriggerEvent(&pcpt);
 
                 // Hack: To get inventory to tribe. Need some more general way of
                 //       delivery of perceptions to tribes....
-                if (npc->GetTribe())
+                if(npc->GetTribe())
                 {
                     npc->GetTribe()->HandlePerception(npc,&pcpt);
                 }
@@ -1394,10 +1395,10 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID npcEID = EID(msg->GetUInt32());
                 EID targetEID = EID(msg->GetUInt32());
 
-                NPC *npc = npcclient->FindNPC( npcEID );
-                gemNPCObject *target = npcclient->FindEntityID( targetEID );
+                NPC* npc = npcclient->FindNPC(npcEID);
+                gemNPCObject* target = npcclient->FindEntityID(targetEID);
 
-                if (!npc || !target)
+                if(!npc || !target)
                     break;
 
                 npc->Printf("Got Failed to Attack perception");
@@ -1413,9 +1414,9 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID owner_id = EID(msg->GetUInt32());
                 uint32_t flags = msg->GetUInt32();
 
-                gemNPCObject * obj = npcclient->FindEntityID(owner_id);
+                gemNPCObject* obj = npcclient->FindEntityID(owner_id);
 
-                if (!obj)
+                if(!obj)
                     break;
 
                 obj->SetInvisible((flags & psNPCCommandsMessage::INVISIBLE) ? true : false);
@@ -1430,18 +1431,18 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID owner_id = EID(msg->GetUInt32());
                 csString cmd   = msg->GetStr();
 
-                NPC *npc = npcclient->FindNPC(owner_id);
+                NPC* npc = npcclient->FindNPC(owner_id);
 
-                if (!npc)
+                if(!npc)
                     break;
 
-                NPCCmdPerception pcpt( cmd, npc );
+                NPCCmdPerception pcpt(cmd, npc);
 
                 npcclient->TriggerEvent(&pcpt); // Broadcast
 
                 break;
             }
-            
+
             case psNPCCommandsMessage::PCPT_TRANSFER:
             {
                 EID entity_id = EID(msg->GetUInt32());
@@ -1449,22 +1450,22 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 int count = msg->GetInt8();
                 csString target = msg->GetStr();
 
-                NPC *npc = npcclient->FindNPC(entity_id);
+                NPC* npc = npcclient->FindNPC(entity_id);
 
-                if (!npc)
+                if(!npc)
                     break;
 
                 npc->Printf("Got Transfer Perception from %s for %d %s to %s\n",
                             npc->GetName(),count,
                             item.GetDataSafe(),target.GetDataSafe());
 
-                iSector *sector;
+                iSector* sector;
                 csVector3 pos;
                 psGameObject::GetPosition(npc->GetActor(), pos, sector);
 
-                InventoryPerception pcpt( "transfer", item, count, pos, sector, 5.0 );
+                InventoryPerception pcpt("transfer", item, count, pos, sector, 5.0);
 
-                if (target == "tribe" && npc->GetTribe())
+                if(target == "tribe" && npc->GetTribe())
                 {
                     npc->GetTribe()->HandlePerception(npc,&pcpt);
                 }
@@ -1478,18 +1479,18 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 csString tribeMemberType = msg->GetStr();
 
 
-                NPC *npc = npcclient->FindNPC(spawner_eid);
+                NPC* npc = npcclient->FindNPC(spawner_eid);
 
-                if (!npc)
+                if(!npc)
                     break;
 
                 npc->Printf("Got spawn Perception to %u from %u\n",
                             spawned_eid.Unbox(), spawner_eid.Unbox());
                 npc->GetTribe()->AddMember(spawned_pid, tribeMemberType);
-                NPC *spawned_npc = npcclient->FindNPC(spawned_eid);
+                NPC* spawned_npc = npcclient->FindNPC(spawned_eid);
                 if(spawned_npc)
                 {
-                   npcclient->CheckAttachTribes(spawned_npc);
+                    npcclient->CheckAttachTribes(spawned_npc);
                 }
                 break;
             }
@@ -1498,12 +1499,12 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 EID npc_eid = EID(msg->GetUInt32());
                 csVector3 pos = msg->GetVector3();
                 float yrot = msg->GetFloat();
-                iSector* sector = msg->GetSector( 0, GetMsgStrings(), engine );
+                iSector* sector = msg->GetSector(0, GetMsgStrings(), engine);
                 InstanceID instance = msg->GetUInt32();
 
-                NPC *npc = npcclient->FindNPC(npc_eid);
+                NPC* npc = npcclient->FindNPC(npc_eid);
 
-                if (!npc)
+                if(!npc)
                     break;
 
                 npc->Printf("Got teleport perception to %s\n",toString(pos,sector).GetDataSafe());
@@ -1512,16 +1513,16 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 npc->TriggerEvent(&pcpt);
                 break;
             }
-           
+
             case psNPCCommandsMessage::PCPT_INFO_REQUEST:
             {
                 EID npc_eid = EID(msg->GetUInt32());
                 uint32_t clientNum = msg->GetUInt32();
                 csString infoRequestSubCmd = msg->GetStr();
 
-                NPC *npc = npcclient->FindNPC(npc_eid);
+                NPC* npc = npcclient->FindNPC(npc_eid);
 
-                if (!npc)
+                if(!npc)
                     break;
 
                 npc->Printf("Got info request.");
@@ -1533,7 +1534,7 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 QueueSystemInfoCommand(clientNum,reply);
 
                 QueueSystemInfoCommand(clientNum," Behaviors: %s",npc->GetBrain()->InfoBehaviors(npc).GetDataSafe());
-                
+
                 QueueSystemInfoCommand(clientNum," Reactions: %s",npc->GetBrain()->InfoReactions(npc).GetDataSafe());
 
                 break;
@@ -1546,9 +1547,9 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
                 uint32_t clientNum = msg->GetUInt32();
                 csString brainType = msg->GetStr();
 
-                NPC *npc = npcclient->FindNPC(npc_eid);
+                NPC* npc = npcclient->FindNPC(npc_eid);
 
-                if (!npc)
+                if(!npc)
                 {
                     QueueSystemInfoCommand(clientNum,"NPC not found");
                     break;
@@ -1556,10 +1557,10 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 npc->Printf("Got change brain request to %s from client %u.", brainType.GetDataSafe(), clientNum);
 
-                if (brainType == "reload")
+                if(brainType == "reload")
                 {
                     brainType = npc->GetBrain()->GetName();
-                    if (!npcclient->LoadNPCTypes())
+                    if(!npcclient->LoadNPCTypes())
                     {
                         QueueSystemInfoCommand(clientNum,"Failed to reload npctypes.");
                         break;
@@ -1568,9 +1569,9 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
 
                 //search for the requested npc type
                 NPCType* type = npcclient->FindNPCType(brainType.GetDataSafe());
-                if (!type)
+                if(!type)
                 {
-                    Error2("NPC type '%s' is not found",(const char *)brainType);
+                    Error2("NPC type '%s' is not found",(const char*)brainType);
                     QueueSystemInfoCommand(clientNum,"Brain not found");
                     break;
                 }
@@ -1591,12 +1592,12 @@ void NetworkManager::HandlePerceptions(MsgEntry *msg)
     }
 }
 
-void NetworkManager::HandleDisconnect(MsgEntry *msg)
+void NetworkManager::HandleDisconnect(MsgEntry* msg)
 {
     psDisconnectMessage disconnect(msg);
 
     // Special case to drop login failure reply from server immediately after we have already logged in.
-    if (connected && disconnect.msgReason.CompareNoCase("Already Logged In."))
+    if(connected && disconnect.msgReason.CompareNoCase("Already Logged In."))
         return;
 
     CPrintf(CON_WARNING, "Disconnected: %s\n",disconnect.msgReason.GetData());
@@ -1616,18 +1617,18 @@ void NetworkManager::HandleDisconnect(MsgEntry *msg)
 
         reconnect = true;
         // 60 secs to allow any connections to go linkdead.
-        psNPCReconnect *recon = new psNPCReconnect(60000, this, false);
+        psNPCReconnect* recon = new psNPCReconnect(60000, this, false);
         npcclient->GetEventManager()->Push(recon);
     }
 }
 
-void NetworkManager::HandleNPCWorkDone(MsgEntry *me)
+void NetworkManager::HandleNPCWorkDone(MsgEntry* me)
 {
     psNPCWorkDoneMessage msg(me);
 
     NPC* npc = npcclient->FindNPC(msg.npcEID);
 
-    if (!npc)
+    if(!npc)
     {
         Error2("Could not find npc(%s) for Got work done.", ShowID(msg.npcEID));
         return;
@@ -1640,21 +1641,21 @@ void NetworkManager::HandleNPCWorkDone(MsgEntry *me)
     }
 }
 
-void NetworkManager::HandleNewNpc(MsgEntry *me)
+void NetworkManager::HandleNewNpc(MsgEntry* me)
 {
     psNewNPCCreatedMessage msg(me);
 
-    NPC *npc = npcclient->FindNPCByPID(msg.master_id);
-    if (npc)
+    NPC* npc = npcclient->FindNPCByPID(msg.master_id);
+    if(npc)
     {
         npc->Printf("Got new NPC notification for %s", ShowID(msg.new_npc_id));
-        
-        // Insert a row in the db for this guy next.  
+
+        // Insert a row in the db for this guy next.
         // We will get an entity msg in a second to make him come alive.
         npc->InsertCopy(msg.new_npc_id,msg.owner_id);
 
         // Now requery so we have the new guy on our list when we get the entity msg.
-        if (!npcclient->ReadSingleNPC(msg.new_npc_id))
+        if(!npcclient->ReadSingleNPC(msg.new_npc_id))
         {
             Error3("Error creating copy of master %s as id %s.", ShowID(msg.master_id), ShowID(msg.new_npc_id));
             return;
@@ -1672,7 +1673,7 @@ void NetworkManager::PrepareCommandMessage()
     cmd_count = 0;
 }
 
-void NetworkManager::QueueDRData(NPC * npc )
+void NetworkManager::QueueDRData(NPC* npc)
 {
     // When a NPC is dead, this may still be called by Behavior::Interrupt
     if(!npc->IsAlive())
@@ -1680,7 +1681,7 @@ void NetworkManager::QueueDRData(NPC * npc )
     cmd_dr_outbound.PutUnique(npc->GetPID(), npc);
 }
 
-void NetworkManager::DequeueDRData(NPC * npc )
+void NetworkManager::DequeueDRData(NPC* npc)
 {
     npc->Printf(15, "Dequeuing DR Data...");
     cmd_dr_outbound.DeleteAll(npc->GetPID());
@@ -1688,52 +1689,52 @@ void NetworkManager::DequeueDRData(NPC * npc )
 
 void NetworkManager::CheckCommandsOverrun(size_t neededSize)
 {
-	if (outbound->msg->current + neededSize > outbound->msg->bytes->GetSize())
-		SendAllCommands();
+    if(outbound->msg->current + neededSize > outbound->msg->bytes->GetSize())
+        SendAllCommands();
 }
 
-void NetworkManager::QueueDRDataCommand(gemNPCActor *entity, psLinearMovement *linmove, uint8_t counter)
+void NetworkManager::QueueDRDataCommand(gemNPCActor* entity, psLinearMovement* linmove, uint8_t counter)
 {
     if(!entity) return; //TODO: This shouldn't happen but it happens so this is just a quick patch and
-                        //      the real problem should be fixed (entities being removed from the game
-                        //      world while moving will end up here with entity being null)
-                        //      DequeueDRData should be supposed to remove all queued data but the iterator
-                        //      in SendAllCommands still "catches them"
+    //      the real problem should be fixed (entities being removed from the game
+    //      world while moving will end up here with entity being null)
+    //      DequeueDRData should be supposed to remove all queued data but the iterator
+    //      in SendAllCommands still "catches them"
 
     CheckCommandsOverrun(100);
-   
+
     psDRMessage drmsg(0,entity->GetEID(),counter,connection->GetAccessPointers(),linmove);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DRDATA);
-    outbound->msg->Add( drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize() );
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_DRDATA);
+    outbound->msg->Add(drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize());
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueDRData put message in overrun state!\n");
     }
     cmd_count++;
 }
 
-void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target, const char* stance)
+void NetworkManager::QueueAttackCommand(gemNPCActor* attacker, gemNPCActor* target, const char* stance)
 {
 
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_ATTACK);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_ATTACK);
     outbound->msg->Add(attacker->GetEID().Unbox());
-    
-    if (target)
+
+    if(target)
     {
         outbound->msg->Add(target->GetEID().Unbox());
     }
     else
     {
-        outbound->msg->Add( (uint32_t) 0 );  // 0 target means stop attack
+        outbound->msg->Add((uint32_t) 0);    // 0 target means stop attack
     }
 
-    outbound->msg->Add( GetCommonStringID(stance) );
+    outbound->msg->Add(GetCommonStringID(stance));
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueAttackCommand put message in overrun state!\n");
     }
@@ -1741,69 +1742,69 @@ void NetworkManager::QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *targ
     cmd_count++;
 }
 
-void NetworkManager::QueueScriptCommand(gemNPCActor *npc, gemNPCObject* target, const csString& scriptName)
+void NetworkManager::QueueScriptCommand(gemNPCActor* npc, gemNPCObject* target, const csString &scriptName)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SCRIPT);
-    outbound->msg->Add( npc->GetEID().Unbox() );
-    if (target)
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_SCRIPT);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    if(target)
     {
-        outbound->msg->Add( target->GetEID().Unbox() );
+        outbound->msg->Add(target->GetEID().Unbox());
     }
     else
     {
-        outbound->msg->Add( (uint32_t)0 );
+        outbound->msg->Add((uint32_t)0);
     }
-    outbound->msg->Add( scriptName );
+    outbound->msg->Add(scriptName);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueScriptCommand put message in overrun state!\n");
     }
     cmd_count++;
 }
 
-void NetworkManager::QueueSitCommand(gemNPCActor *npc, gemNPCObject* target, bool sit)
+void NetworkManager::QueueSitCommand(gemNPCActor* npc, gemNPCObject* target, bool sit)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SIT);
-    outbound->msg->Add( npc->GetEID().Unbox() );
-    if (target)
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_SIT);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    if(target)
     {
-        outbound->msg->Add( target->GetEID().Unbox() );
+        outbound->msg->Add(target->GetEID().Unbox());
     }
     else
     {
-        outbound->msg->Add( (uint32_t)0 );
+        outbound->msg->Add((uint32_t)0);
     }
-    outbound->msg->Add( sit );
+    outbound->msg->Add(sit);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueSitCommand put message in overrun state!\n");
     }
     cmd_count++;
 }
 
-void NetworkManager::QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, const csString& tribeMemberType)
+void NetworkManager::QueueSpawnCommand(gemNPCActor* mother, gemNPCActor* father, const csString &tribeMemberType)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SPAWN);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_SPAWN);
     outbound->msg->Add(mother->GetEID().Unbox());
     outbound->msg->Add(father->GetEID().Unbox());
     outbound->msg->Add(tribeMemberType);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueSpawnCommand put message in overrun state!\n");
     }
     cmd_count++;
 }
 
-void NetworkManager::QueueSpawnBuildingCommand(gemNPCActor *spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID)
+void NetworkManager::QueueSpawnBuildingCommand(gemNPCActor* spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID)
 {
     CheckCommandsOverrun(100);
 
@@ -1822,7 +1823,7 @@ void NetworkManager::QueueSpawnBuildingCommand(gemNPCActor *spawner, csVector3 w
     cmd_count++;
 }
 
-void NetworkManager::QueueUnbuildCommand(gemNPCActor *unbuilder, gemNPCItem* building)
+void NetworkManager::QueueUnbuildCommand(gemNPCActor* unbuilder, gemNPCItem* building)
 {
     CheckCommandsOverrun(100);
 
@@ -1837,25 +1838,25 @@ void NetworkManager::QueueUnbuildCommand(gemNPCActor *unbuilder, gemNPCItem* bui
     cmd_count++;
 }
 
-void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, gemNPCActor* target, psNPCCommandsMessage::PerceptionTalkType talkType, bool publicTalk, const char* text)
+void NetworkManager::QueueTalkCommand(gemNPCActor* speaker, gemNPCActor* target, psNPCCommandsMessage::PerceptionTalkType talkType, bool publicTalk, const char* text)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TALK );
-    outbound->msg->Add( speaker->GetEID().Unbox() );
-    if (target)
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_TALK);
+    outbound->msg->Add(speaker->GetEID().Unbox());
+    if(target)
     {
-        outbound->msg->Add( target->GetEID().Unbox() );
+        outbound->msg->Add(target->GetEID().Unbox());
     }
     else
     {
-        outbound->msg->Add( (uint32_t)0 );
+        outbound->msg->Add((uint32_t)0);
     }
-    outbound->msg->Add( (uint32_t) talkType );
-    outbound->msg->Add( publicTalk );
+    outbound->msg->Add((uint32_t) talkType);
+    outbound->msg->Add(publicTalk);
     outbound->msg->Add(text);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueTalkCommand put message in overrun state!\n");
     }
@@ -1863,15 +1864,15 @@ void NetworkManager::QueueTalkCommand(gemNPCActor *speaker, gemNPCActor* target,
     cmd_count++;
 }
 
-void NetworkManager::QueueVisibilityCommand(gemNPCActor *entity, bool status)
+void NetworkManager::QueueVisibilityCommand(gemNPCActor* entity, bool status)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_VISIBILITY);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_VISIBILITY);
     outbound->msg->Add(entity->GetEID().Unbox());
-    
+
     outbound->msg->Add(status);
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueVisibleCommand put message in overrun state!\n");
     }
@@ -1879,16 +1880,16 @@ void NetworkManager::QueueVisibilityCommand(gemNPCActor *entity, bool status)
     cmd_count++;
 }
 
-void NetworkManager::QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item, int count)
+void NetworkManager::QueuePickupCommand(gemNPCActor* entity, gemNPCObject* item, int count)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_PICKUP);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_PICKUP);
     outbound->msg->Add(entity->GetEID().Unbox());
     outbound->msg->Add(item->GetEID().Unbox());
-    outbound->msg->Add( (int16_t) count );
+    outbound->msg->Add((int16_t) count);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueuePickupCommand put message in overrun state!\n");
     }
@@ -1896,23 +1897,23 @@ void NetworkManager::QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item,
     cmd_count++;
 }
 
-void NetworkManager::QueueEmoteCommand(gemNPCActor *npc, gemNPCObject* target,  const csString& cmd)
+void NetworkManager::QueueEmoteCommand(gemNPCActor* npc, gemNPCObject* target,  const csString &cmd)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_EMOTE);
-    outbound->msg->Add( npc->GetEID().Unbox() );
-    if (target)
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_EMOTE);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    if(target)
     {
-        outbound->msg->Add( target->GetEID().Unbox() );
+        outbound->msg->Add(target->GetEID().Unbox());
     }
     else
     {
-        outbound->msg->Add( (uint32_t)0 );
+        outbound->msg->Add((uint32_t)0);
     }
-    outbound->msg->Add( cmd );
+    outbound->msg->Add(cmd);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueEmoteCommand put message in overrun state!\n");
     }
@@ -1921,17 +1922,17 @@ void NetworkManager::QueueEmoteCommand(gemNPCActor *npc, gemNPCObject* target,  
 }
 
 
-void NetworkManager::QueueEquipCommand(gemNPCActor *entity, csString item, csString slot, int count)
+void NetworkManager::QueueEquipCommand(gemNPCActor* entity, csString item, csString slot, int count)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_EQUIP);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_EQUIP);
     outbound->msg->Add(entity->GetEID().Unbox());
-    outbound->msg->Add( item );
-    outbound->msg->Add( slot );
-    outbound->msg->Add( (int16_t) count );
+    outbound->msg->Add(item);
+    outbound->msg->Add(slot);
+    outbound->msg->Add((int16_t) count);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueEquipCommand put message in overrun state!\n");
     }
@@ -1939,15 +1940,15 @@ void NetworkManager::QueueEquipCommand(gemNPCActor *entity, csString item, csStr
     cmd_count++;
 }
 
-void NetworkManager::QueueDequipCommand(gemNPCActor *entity, csString slot)
+void NetworkManager::QueueDequipCommand(gemNPCActor* entity, csString slot)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DEQUIP);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_DEQUIP);
     outbound->msg->Add(entity->GetEID().Unbox());
-    outbound->msg->Add( slot );
+    outbound->msg->Add(slot);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueDequipCommand put message in overrun state!\n");
     }
@@ -1955,16 +1956,16 @@ void NetworkManager::QueueDequipCommand(gemNPCActor *entity, csString slot)
     cmd_count++;
 }
 
-void NetworkManager::QueueWorkCommand(gemNPCActor *entity, const csString& type, const csString& resource)
+void NetworkManager::QueueWorkCommand(gemNPCActor* entity, const csString &type, const csString &resource)
 {
-    CheckCommandsOverrun( sizeof(uint8_t) + sizeof(uint32_t) + (type.Length()+1) + (resource.Length()+1));
+    CheckCommandsOverrun(sizeof(uint8_t) + sizeof(uint32_t) + (type.Length()+1) + (resource.Length()+1));
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_WORK);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_WORK);
     outbound->msg->Add(entity->GetEID().Unbox());
-    outbound->msg->Add( type );
-    outbound->msg->Add( resource );
+    outbound->msg->Add(type);
+    outbound->msg->Add(resource);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueWorkCommand put message in overrun state!\n");
     }
@@ -1972,17 +1973,17 @@ void NetworkManager::QueueWorkCommand(gemNPCActor *entity, const csString& type,
     cmd_count++;
 }
 
-void NetworkManager::QueueTransferCommand(gemNPCActor *entity, csString item, int count, csString target)
+void NetworkManager::QueueTransferCommand(gemNPCActor* entity, csString item, int count, csString target)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TRANSFER);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_TRANSFER);
     outbound->msg->Add(entity->GetEID().Unbox());
-    outbound->msg->Add( item );
-    outbound->msg->Add( (int8_t)count );
-    outbound->msg->Add( target );
+    outbound->msg->Add(item);
+    outbound->msg->Add((int8_t)count);
+    outbound->msg->Add(target);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueTransferCommand put message in overrun state!\n");
     }
@@ -1990,15 +1991,15 @@ void NetworkManager::QueueTransferCommand(gemNPCActor *entity, csString item, in
     cmd_count++;
 }
 
-void NetworkManager::QueueDropCommand(gemNPCActor *entity, csString slot)
+void NetworkManager::QueueDropCommand(gemNPCActor* entity, csString slot)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_DROP);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_DROP);
     outbound->msg->Add(entity->GetEID().Unbox());
-    outbound->msg->Add( slot );
+    outbound->msg->Add(slot);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueDropCommand put message in overrun state!\n");
     }
@@ -2011,13 +2012,13 @@ void NetworkManager::QueueResurrectCommand(csVector3 where, float rot, iSector* 
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_RESURRECT );
-    outbound->msg->Add( character_id.Unbox() );
-    outbound->msg->Add( (float)rot );
-    outbound->msg->Add( where );
-    outbound->msg->Add( sector, 0, GetMsgStrings() );
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_RESURRECT);
+    outbound->msg->Add(character_id.Unbox());
+    outbound->msg->Add((float)rot);
+    outbound->msg->Add(where);
+    outbound->msg->Add(sector, 0, GetMsgStrings());
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueResurrectCommand put message in overrun state!\n");
     }
@@ -2029,12 +2030,12 @@ void NetworkManager::QueueSequenceCommand(csString name, int cmd, int count)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_SEQUENCE);
-    outbound->msg->Add( name );
-    outbound->msg->Add( (int8_t) cmd );
-    outbound->msg->Add( (int32_t) count );
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_SEQUENCE);
+    outbound->msg->Add(name);
+    outbound->msg->Add((int8_t) cmd);
+    outbound->msg->Add((int32_t) count);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueSequenceCommand put message in overrun state!\n");
     }
@@ -2042,15 +2043,15 @@ void NetworkManager::QueueSequenceCommand(csString name, int cmd, int count)
     cmd_count++;
 }
 
-void NetworkManager::QueueImperviousCommand(gemNPCActor * entity, bool impervious)
+void NetworkManager::QueueImperviousCommand(gemNPCActor* entity, bool impervious)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_IMPERVIOUS);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_IMPERVIOUS);
     outbound->msg->Add(entity->GetEID().Unbox());
-    outbound->msg->Add( (bool) impervious );
+    outbound->msg->Add((bool) impervious);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueImperviousCommand put message in overrun state!\n");
     }
@@ -2066,16 +2067,16 @@ void NetworkManager::QueueSystemInfoCommand(uint32_t clientNum, const char* repl
     csString str;
     str.FormatV(reply, args);
     va_end(args);
-    
+
     // Queue the System Info
 
     CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+(str.Length()+1));
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_INFO_REPLY);
-    outbound->msg->Add( clientNum );
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_INFO_REPLY);
+    outbound->msg->Add(clientNum);
     outbound->msg->Add(str.GetDataSafe());
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueSystemInfoCommand put message in overrun state!\n");
     }
@@ -2083,92 +2084,92 @@ void NetworkManager::QueueSystemInfoCommand(uint32_t clientNum, const char* repl
     cmd_count++;
 }
 
-void NetworkManager::QueueAssessCommand(gemNPCActor* entity, gemNPCObject* target, const csString& physicalAssessmentPerception,
-                                            const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception)
+void NetworkManager::QueueAssessCommand(gemNPCActor* entity, gemNPCObject* target, const csString &physicalAssessmentPerception,
+                                        const csString &magicalAssessmentPerception,  const csString &overallAssessmentPerception)
 {
     CheckCommandsOverrun(sizeof(int8_t)+2*sizeof(uint32_t)+(physicalAssessmentPerception.Length()+1)+
                          (magicalAssessmentPerception.Length()+1)+(overallAssessmentPerception.Length()+1));
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_ASSESS);
-    outbound->msg->Add( entity->GetEID().Unbox() );
-    outbound->msg->Add( target->GetEID().Unbox() );
-    outbound->msg->Add( physicalAssessmentPerception );
-    outbound->msg->Add( magicalAssessmentPerception );
-    outbound->msg->Add( overallAssessmentPerception );
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_ASSESS);
+    outbound->msg->Add(entity->GetEID().Unbox());
+    outbound->msg->Add(target->GetEID().Unbox());
+    outbound->msg->Add(physicalAssessmentPerception);
+    outbound->msg->Add(magicalAssessmentPerception);
+    outbound->msg->Add(overallAssessmentPerception);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueAssessCommand put message in overrun state!\n");
     }
 
-    cmd_count++;    
+    cmd_count++;
 }
 
-void NetworkManager::QueueCastCommand(gemNPCActor* entity, gemNPCObject* target, const csString& spell, float kFactor)
+void NetworkManager::QueueCastCommand(gemNPCActor* entity, gemNPCObject* target, const csString &spell, float kFactor)
 {
     CheckCommandsOverrun(sizeof(int8_t)+2*sizeof(uint32_t)+(spell.Length()+1)+sizeof(float));
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_CAST);
-    outbound->msg->Add( entity->GetEID().Unbox() );
-    outbound->msg->Add( target->GetEID().Unbox() );
-    outbound->msg->Add( spell );
-    outbound->msg->Add( kFactor );
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_CAST);
+    outbound->msg->Add(entity->GetEID().Unbox());
+    outbound->msg->Add(target->GetEID().Unbox());
+    outbound->msg->Add(spell);
+    outbound->msg->Add(kFactor);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueCastCommand put message in overrun state!\n");
     }
 
-    cmd_count++;    
+    cmd_count++;
 }
 
-void NetworkManager::QueueBusyCommand(gemNPCActor* entity, bool busy )
+void NetworkManager::QueueBusyCommand(gemNPCActor* entity, bool busy)
 {
     CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+sizeof(bool));
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_BUSY);
-    outbound->msg->Add( entity->GetEID().Unbox() );
-    outbound->msg->Add( busy );
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_BUSY);
+    outbound->msg->Add(entity->GetEID().Unbox());
+    outbound->msg->Add(busy);
 
-    if ( outbound->msg->overrun )
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueBusyCommand put message in overrun state!\n");
     }
 
-    cmd_count++;    
+    cmd_count++;
 }
 
 void NetworkManager::QueueControlCommand(gemNPCActor* controllingEntity, gemNPCActor* controlledEntity)
 {
     CheckCommandsOverrun(sizeof(int8_t)+sizeof(uint32_t)+100);
 
-    outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_CONTROL);
-    outbound->msg->Add( controllingEntity->GetEID().Unbox() );
- 
-    psDRMessage drmsg(0,controlledEntity->GetEID(),0,connection->GetAccessPointers(),controlledEntity->pcmove);
-    outbound->msg->Add( drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize() );
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_CONTROL);
+    outbound->msg->Add(controllingEntity->GetEID().Unbox());
 
-    if ( outbound->msg->overrun )
+    psDRMessage drmsg(0,controlledEntity->GetEID(),0,connection->GetAccessPointers(),controlledEntity->pcmove);
+    outbound->msg->Add(drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize());
+
+    if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NetworkManager::QueueControlCommand put message in overrun state!\n");
     }
 
-    cmd_count++;    
+    cmd_count++;
 }
 
 
 void NetworkManager::SendAllCommands(bool final)
 {
     // If this is the final send all for a tick we need to check if any NPCs has been queued for sending of DR data.
-    if (final)
+    if(final)
     {
         csHash<NPC*,PID>::GlobalIterator it(cmd_dr_outbound.GetIterator());
-        while ( it.HasNext() )
+        while(it.HasNext())
         {
-            NPC * npc = it.Next();
-            if (npc->GetActor())
+            NPC* npc = it.Next();
+            if(npc->GetActor())
             {
-                if (npc->GetLinMove()->GetSector())
+                if(npc->GetLinMove()->GetSector())
                 {
                     QueueDRDataCommand(npc->GetActor(),npc->GetLinMove(),npc->GetDRCounter());
                 }
@@ -2177,7 +2178,7 @@ void NetworkManager::SendAllCommands(bool final)
                     CPrintf(CON_WARNING,"NPC %s is trying to send DR data with no sector\n",npc->GetName());
                     npc->Disable(); // Disable the NPC.
                 }
-                
+
             }
             else
             {
@@ -2188,10 +2189,10 @@ void NetworkManager::SendAllCommands(bool final)
         }
         cmd_dr_outbound.DeleteAll();
     }
-    
-    if (cmd_count)
+
+    if(cmd_count)
     {
-        outbound->msg->Add( (int8_t) psNPCCommandsMessage::CMD_TERMINATOR);
+        outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_TERMINATOR);
         outbound->msg->ClipToCurrentSize();
 
         msghandler->SendMessage(outbound->msg);
@@ -2209,17 +2210,17 @@ void NetworkManager::ReAuthenticate()
 
 void NetworkManager::ReConnect()
 {
-    if (!connection->Connect(host,port))
+    if(!connection->Connect(host,port))
     {
-        CPrintf(CON_ERROR, "Couldn't resolve hostname %s on port %d.\n",(const char *)host,port);
+        CPrintf(CON_ERROR, "Couldn't resolve hostname %s on port %d.\n",(const char*)host,port);
         return;
     }
     // 2 seconds to allow linkdead messages to be processed
-    psNPCReconnect *recon = new psNPCReconnect(2000, this, true);
+    psNPCReconnect* recon = new psNPCReconnect(2000, this, true);
     npcclient->GetEventManager()->Push(recon);
 }
 
-void NetworkManager::SendConsoleCommand(const char *cmd)
+void NetworkManager::SendConsoleCommand(const char* cmd)
 {
     psServerCommandMessage msg(0,cmd);
     msg.SendMessage();
@@ -2227,8 +2228,8 @@ void NetworkManager::SendConsoleCommand(const char *cmd)
 
 /*------------------------------------------------------------------*/
 
-psNPCReconnect::psNPCReconnect(int offsetticks, NetworkManager *mgr, bool authent)
-: psGameEvent(0,offsetticks,"psNPCReconnect"), networkMgr(mgr), authent(authent)
+psNPCReconnect::psNPCReconnect(int offsetticks, NetworkManager* mgr, bool authent)
+    : psGameEvent(0,offsetticks,"psNPCReconnect"), networkMgr(mgr), authent(authent)
 {
 
 }
