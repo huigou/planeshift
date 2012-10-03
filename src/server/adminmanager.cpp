@@ -517,11 +517,13 @@ bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, p
     // Targeting for all commands
     if(word.Length() > 0)
     {
+        // the command allows a target selected by the client
         if(IsAllowedTargetType(ADMINCMD_TARGET_TARGET) && word == "target")
         {
             tryClientTarget = true;
             targetTypes |= ADMINCMD_TARGET_TARGET;
         }
+        // the command allows to use a PID:
         else if(IsAllowedTargetType(ADMINCMD_TARGET_PID) && word.StartsWith("pid:",true))
         {
             // NOTE: this might not set targetObject, targetActor, targetClient
@@ -530,26 +532,8 @@ bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, p
 
             if(!targetObject)
             {
-                //if(GetPlayerAccountIDByPID(me->clientnum, word))
-                //{
-                // try to find an online player for the name resolved
-                // from the pid
-                // (GetPlayerClient sets targetClient accordingly)
-                /*if (!GetPlayerClient(msgManager, me->clientnum, target, false))
-                {
-                    // error duplicate or not found at all
-                    if (duplicateActor)
-                    {
-                        psserver->SendSystemError(me->clientnum,"PID resolves to multiple online clients!");
-                        return false;
-                    }
-                    else
-                    {*/
                 // player is offline
                 psserver->SendSystemInfo(me->clientnum,"PID:%s no online client", ShowID(targetID));
-                //}
-                //}
-                //}
             }
             else
             {
@@ -561,6 +545,7 @@ bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, p
                 psserver->SendSystemInfo(me->clientnum,"%s resolved to online client %s", ShowID(targetID), target.GetData());
             }
         }
+        // command allows to target an area
         else if(IsAllowedTargetType(ADMINCMD_TARGET_AREA) && word.StartsWith("area:",true))
         {
             //generate the string
@@ -671,21 +656,13 @@ bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, p
     // test whether this is a npc or not
     if(targetObject)
     {
-        // natoka: I'm not sure what is better to either query by chartype
-        // or by casting the object as gemNPC and testing it
-        /*
-        if (targetObject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_NPC ||
-           targetObject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_PET ||
-           targetObject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_MOUNT ||
-           targetObject->GetCharacterData()->GetCharType() == PSCHARACTER_TYPE_MOUNTPET)
-        */
-
         gemNPC* npctarget = dynamic_cast<gemNPC*>(targetObject);
         if(npctarget && npctarget->GetClientID() == 0)
         {
             if(!IsAllowedTargetType(ADMINCMD_TARGET_NPC))
             {
                 // it is a npc, but npc is not an allowed target, so reset
+                psserver->SendSystemError(me->clientnum,"Target is an NPC, but server does not allow this command on an npc.");
                 Reset();
             }
             else
@@ -2685,7 +2662,14 @@ AdminCmdDataSetSkill::AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* m
     {
         found = true;
         index++;
+        // target is required
     }
+    else
+    {
+        psserver->SendSystemError(me->clientnum,"Provided target is invalid.");
+        return;
+    }
+
     // when first word is a target or the client has selected a target
     if(words.GetCount() == index + 2 && (found || IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))
     {
@@ -6326,19 +6310,19 @@ void AdminManager::UpdateDisplayWaypoint(Waypoint* wp)
             {
                 iSector* sector = iter.Next();
 
-                if (client->GetActor()->GetSector() == sector)
+                if(client->GetActor()->GetSector() == sector)
                 {
                     // Display
                     // TODO: Include sector in psEffectMessage
                     psEffectMessage show(client->GetClientNum(),"admin_waypoint",wp->GetPosition(),0,0,
                                          wp->GetEffectID(this),wp->GetRadius());
                     show.SendMessage();
-                    
+
                     csPDelArray<Edge>::Iterator iter = wp->edges.GetIterator();
                     while(iter.HasNext())
                     {
                         Edge* edge = iter.Next();
-                        
+
                         UpdateDisplayPath(edge->GetStartPoint());
                     }
                 }
@@ -7298,7 +7282,7 @@ void AdminManager::UpdateDisplayLocation(Location* location)
             {
                 iSector* sector = iter.Next();
 
-                if (client->GetActor()->GetSector() == sector)
+                if(client->GetActor()->GetSector() == sector)
                 {
                     // Display
                     // TODO: Include sector in psEffectMessage
