@@ -456,22 +456,28 @@ void UserManager::CalculateComparativeDifference(psCharacter* myCharData, psChar
     }
 
     // We calculate two 'levels', one physical and one magical.
-    const int maxLevel = 7;
+    const int maxLevel = 6;
 
-    theirPhysicalLevel = (theirPhysicalStat + theirBestCombat * 2) / 100;
+    theirPhysicalLevel = ((theirPhysicalStat + theirBestCombat * 2) / 800) * maxLevel;
     theirPhysicalLevel = (theirPhysicalLevel > maxLevel) ? maxLevel : theirPhysicalLevel;
-    theirMagicalLevel = (theirMagicalStat + theirBestMagical * 2) / 100;
+    theirMagicalLevel = ((theirMagicalStat + theirBestMagical * 2) / 800) * maxLevel;
     theirMagicalLevel = (theirMagicalLevel > maxLevel) ? maxLevel : theirMagicalLevel;
 
-    int myPhysicalLevel = (myPhysicalStat + myBestCombat * 2) / 100;
+    int myPhysicalLevel = ((myPhysicalStat + myBestCombat * 2) / 800) * maxLevel;
     myPhysicalLevel = (myPhysicalLevel > maxLevel) ? maxLevel : myPhysicalLevel;
-    int myMagicalLevel = (myMagicalStat + myBestMagical * 2) / 100;
+    int myMagicalLevel = ((myMagicalStat + myBestMagical * 2) / 800) * maxLevel;
     myMagicalLevel = (myMagicalLevel > maxLevel) ? maxLevel : myMagicalLevel;
 
     // And also a comparative difference for each.
-    physicalDiff = theirPhysicalLevel - myPhysicalLevel;
-    magicalDiff = theirMagicalLevel - myMagicalLevel;
-    overallLevelComparison = int ((float)(2 * maxLevel + physicalDiff + magicalDiff) / 3.5f);
+    int physicalDiffValue = theirPhysicalLevel - myPhysicalLevel;
+    int magicalDiffValue = theirMagicalLevel - myMagicalLevel;
+    // Clamp within the allowed range (0-6) considering difference from the median (3)
+    physicalDiff = (4+physicalDiffValue)>maxLevel?maxLevel:(3+physicalDiffValue);
+    physicalDiff = (4+physicalDiffValue)<0?0:(3+physicalDiffValue);
+    magicalDiff = (4+magicalDiffValue)>maxLevel?maxLevel:(3+magicalDiffValue);
+    magicalDiff = (4+magicalDiffValue)<0?0:(3+magicalDiffValue);
+
+    overallLevelComparison = int ((float)(2 * maxLevel + physicalDiffValue + magicalDiffValue) / 3.5f);
 }
 
 
