@@ -99,16 +99,31 @@ void NavGen::Run()
     csRef<iThreadManager> tman = csQueryRegistry<iThreadManager>(object_reg);
     tman->SetAlwaysRunNow(true);
 
+    // output execution parameters
+    csPrintf("-- INPUT Parameters --\n");
+    csPrintf("Materials: %s\n", materials.GetData());
+    csPrintf("Meshes: %s\n", meshes.GetData());
+    csPrintf("World: %s\n", world.GetData());
+    csPrintf("NavGen.Agent.Height: %f\n", height);
+    csPrintf("NavGen.Agent.Width: %f\n", width);
+    csPrintf("NavGen.Agent.Slope: %f\n", slope);
+    csPrintf("NavGen.Agent.MaxStepSize: %f\n", step);
+    csPrintf("NavGen.CellSize: %f\n", cellSize);
+    csPrintf("NavGen.CellHeight: %f\n", cellHeight);
+    csPrintf("NavGen.TileSize: %d\n", tileSize);
+    csPrintf("NavGen.BorderSize: %d\n", borderSize);
+    csPrintf("---\n");
+
     vc->Advance();
     queue->Process();
 
     // precache materials
     {
-        csPrintf("caching materials\n");
+        csPrintf("Caching materials...\n");
         csRef<iThreadReturn> ret = loader->PrecacheDataWait(materials+"materials.cslib");
         if(!ret->IsFinished() || !ret->WasSuccessful())
         {
-            csPrintf("failed to cache materials\n");
+            csPrintf("Failed to cache materials\n");
             return;
         }
     }
@@ -118,21 +133,21 @@ void NavGen::Run()
 
     // precache world
     {
-        csPrintf("finding meshes and world\n");
+        csPrintf("Finding meshes and world...\n");
         csRef<iStringArray> meshFiles = vfs->FindFiles(meshes);
         csRef<iStringArray> worldFiles = vfs->FindFiles(world);
 
         size_t loadCount = meshFiles->GetSize() + worldFiles->GetSize();
         size_t progress = 0;
 
-        csPrintf("caching meshes\n");
+        csPrintf("Caching meshes...\n");
         csRefArray<iThreadReturn> returns;
         for(size_t i = 0; i < meshFiles->GetSize(); i++)
         {
             returns.Push(loader->PrecacheData(meshFiles->Get(i)));
         }
 
-        csPrintf("finishing mesh cache\n");
+        csPrintf("Finishing mesh cache...\n");
         while(!returns.IsEmpty())
         {
             for(size_t i = 0; i < returns.GetSize(); i++)
@@ -156,13 +171,13 @@ void NavGen::Run()
             csSleep(100); // wait a bit before checking again
         }
 
-        csPrintf("caching world\n");
+        csPrintf("Caching world...\n");
         for(size_t i = 0; i < worldFiles->GetSize(); i++)
         {
             returns.Push(loader->PrecacheData(worldFiles->Get(i)));
         }
 
-        csPrintf("finishing world cache\n");
+        csPrintf("Finishing world cache...\n");
         while(!returns.IsEmpty())
         {
             for(size_t i = 0; i < returns.GetSize(); i++)
@@ -189,14 +204,14 @@ void NavGen::Run()
 
     // load world
     {
-        csPrintf("loading world\n");
+        csPrintf("Loading world...\n");
         if(!loader->LoadZones())
         {
             csPrintf("failed to load world\n");
             return;
         }
 
-        csPrintf("finishing world load\n");
+        csPrintf("Finishing world load...\n");
         size_t loadCount = loader->GetLoadingCount();
         while(loader->GetLoadingCount())
         {
@@ -212,7 +227,7 @@ void NavGen::Run()
 
     // process navmesh
     {
-        csPrintf("creating navmesh\n");
+        csPrintf("Loading meshes from sectors...\n");
         // set creation parameters
         csRef<iCelNavMeshParams> parameters;
         parameters.AttachNew(builder->GetNavMeshParams()->Clone());
@@ -232,20 +247,22 @@ void NavGen::Run()
             sectors.Push(sectorList->Get(i));
         }
 
-        // build navmesh
+        // set sectors in navigation mesh
         if(!builder->SetSectors(&sectors))
         {
             csPrintf("failed to set sector on navigation mesh builder\n");
             return;
         }
 
+        // build navmesh
+        csPrintf("Building navmesh...\n");
         csRef<iCelHNavStruct> navMesh = builder->BuildHNavStruct();
         if(!navMesh.IsValid())
         {
             csPrintf("failed to build navigation mesh\n");
             return;
         }
-        csPrintf("done generating, writing navmesh\n");
+        csPrintf("Done generating, writing navmesh\n");
         // save navmesh
         if(!navMesh->SaveToFile(vfs, output))
         {
@@ -253,7 +270,7 @@ void NavGen::Run()
             return;
         }
     }
-    csPrintf("done writing, closing up.\n");
+    csPrintf("Done writing, closing up.\n");
 
     loader.Invalidate();
     builder.Invalidate();
