@@ -892,14 +892,20 @@ bool psNPCClient::LoadPathNetwork()
     csRef<iCelHNavStructBuilder> builder = csQueryRegistry<iCelHNavStructBuilder>(objreg);
     if (!builder.IsValid())
     {
-        Error1("Could find builder");
+        Error1("Couldn't find builder");
         return false;
     }
     csString navmesh = configmanager->GetStr("PlaneShift.NPCClient.NavMesh","/planeshift/navmesh");
     navStruct = builder->LoadHNavStruct(vfs, navmesh);
 
+    if (!navStruct.IsValid())
+    {
+        Error1("Navigation mesh is not valid, check /planeshift/navmesh");
+        return false;
+    }
+
     pathNetwork = new psPathNetwork();
-    return pathNetwork->Load(engine, db, world) && navStruct.IsValid();
+    return pathNetwork->Load(engine, db, world);
 }
 
 bool psNPCClient::LoadLocations()
