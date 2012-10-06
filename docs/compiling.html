@@ -1903,6 +1903,9 @@ is located somewhere else or you want to connect to somebody's else server, you 
 
 <h2><a name="npcserver">Get the NPC Server Running</a></h2>
 
+NPCClient requires the "Navigation Mesh", which is basically a low resolution generated mesh of the walkable areas of the game, used to make the NPCs walk around. To use a pre-generated navmesh you can simply rename the file "navmesh_to_rename" to "navmesh" in the /data directory.<br/>
+If you want to generate your own navmesh, you can launch the navgen program.<br/>
+
 <p class="commandBox">
     jam navgen<br />
     ./navgen<br />
