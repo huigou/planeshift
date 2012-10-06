@@ -1,4 +1,4 @@
-@PlaneShift Team at Arcane Chrysalis 0.5.9 Release (released April 2012)
+@PlaneShift Team at Arcane Chrysalis 0.5.9.2 Release (released October 2012)
 
 &Project Leader, Director
 
@@ -83,6 +83,8 @@ The GM Team: Daxa, Dohmo, Durgrem, Janner, Marathal, Norra, Rhumdor, Taulus, Vel
 
 &Rules
 
+Davide "eonwind" Vescovini, for extensive work on crafting rules, in particular alchemy and herbalism.
+
 Stefan "Stelanso" Landgraf, for NPC paths, waypoints, progression and more.
 
 G. "Ravna" Hofstee, for rewriting part of the new webconsole and keeping it up to date.
@@ -108,7 +110,7 @@ Jorrit Tyberghein, for his great 3D engine (Crystal Space), for the continuous a
 
 Frank "res" Richter, from Crystal Space team, for continuous support on lighting, performances and stability.
 
-Caronet (www.caro.net), Subhosting (www.subhosting.net) and ezpcusa (www.ezpcusa.com) for providing the necessary hardware and bandwidth.
+Caronet (www.caro.net), Subhosting (www.subhosting.net) for providing the necessary hardware and bandwidth.
 
 All the former developers for their work and contributions to PlaneShift.
 
