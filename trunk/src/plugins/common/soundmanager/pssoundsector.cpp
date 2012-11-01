@@ -435,7 +435,7 @@ void psSoundSector::AddEntityDefinition(csRef<iDocumentNode> entityNode)
     }
 
     // entities have a default state as idle
-    entity->SetState(psModeMessage::PEACE,1);
+    entity->SetState(psModeMessage::PEACE, true, true);
 }
 
 void psSoundSector::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
@@ -579,7 +579,7 @@ void psSoundSector::SetEntityState(int state, iMeshWrapper* mesh, const char* ac
     // applying state change only if it's a temporary entity
     if(entity->IsTemporary())
     {
-        entity->SetState(state, forceChange);
+        entity->SetState(state, forceChange, true);
         return;
     }
 }
