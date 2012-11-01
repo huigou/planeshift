@@ -256,12 +256,7 @@ bool psEntity::CanPlay(int time, float range) const
     return false;
 }
 
-/*
- * If the entity is still playing the sound is not stopped so that states that change
- * to a fallback state with probability 1.0 won't play a new sound until the previous
- * one has been done.
- */
-void psEntity::SetState(uint newState, bool forceChange)
+void psEntity::SetState(uint newState, bool forceChange, bool setReady)
 {
     EntityState* entityState;
 
@@ -271,7 +266,13 @@ void psEntity::SetState(uint newState, bool forceChange)
         return;
     }
 
-    Debug3(LOG_SOUND, 0, "psEntity::SetState entity: %s state: %u",entityName.GetData(),newState);
+    Debug3(LOG_SOUND, 0, "psEntity::SetState entity: %s state: %u", entityName.GetData(), newState);
+
+    if(setReady)
+    {
+        Stop();
+        when = 0; // resetting delay
+    }
 
     // setting state
     entityState = states.Get(newState, 0);
@@ -325,6 +326,16 @@ bool psEntity::Play(SoundControl* &ctrl, csVector3 entityPosition)
     return false;
 }
 
+void psEntity::Stop()
+{
+    if(IsPlaying())
+    {
+        handle->RemoveCallback();
+        SoundSystemManager::GetSingleton().StopSound(handle->GetID());
+        handle = 0;
+    }
+}
+
 void psEntity::Update(int time, float distance, int interval, SoundControl* &ctrl,
                       csVector3 entityPosition)
 {
@@ -370,7 +381,10 @@ void psEntity::Update(int time, float distance, int interval, SoundControl* &ctr
         float prob = SoundManager::randomGen.Get();
         if(prob <= currentState->fallbackProbability)
         {
-            SetState(currentState->fallbackState, true);
+            // If the entity is still playing the sound is not stopped so that
+            // states that change to a fallback state with probability 1.0 won't
+            // play a new sound until the previous one has been done.
+            SetState(currentState->fallbackState, true, false);
         }
     }
 }
@@ -378,6 +392,6 @@ void psEntity::Update(int time, float distance, int interval, SoundControl* &ctr
 void psEntity::StopCallback(void* object)
 {
     psEntity* which = (psEntity*) object;
-    which->handle = NULL;
+    which->handle = 0;
 }
 

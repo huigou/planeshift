@@ -195,8 +195,11 @@ public:
      *
      * @param state the new state for this entity.
      * @param forceChange true to force the state change, false otherwise.
+     * @param setReady when set to true this set the entity in the condition to
+     * play the new state sounds by stopping any eventual playing sound and
+     * resetting the delay.
      */
-    void SetState(uint state, bool forceChange);
+    void SetState(uint state, bool forceChange, bool setReady);
 
     /**
      * Force this entity to play the sound associated to its current state.
@@ -208,6 +211,11 @@ public:
      * entity is already playing a sound.
      */
     bool Play(SoundControl* &ctrl, csVector3 entityPosition);
+
+    /**
+     * If this entity is playing, this method forces this to stop the sound.
+     */
+    void Stop();
 
     /**
      * Update the entity's activation status, play the sound associated with

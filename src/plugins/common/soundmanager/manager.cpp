@@ -436,6 +436,7 @@ InitSoundHandle(const char* name, bool loop, size_t loopstart, size_t loopend,
     if(!handle->Init(name, loop, volume_preset, type3d, sndCtrl, dopplerEffect))
     {
       delete handle;
+      handle = 0;
       return false;
     }
 
