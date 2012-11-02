@@ -1730,9 +1730,6 @@ void GEMClientActor::StopMoving(bool worldVel)
     linmove->SetAngularVelocity(zeros);
     if(worldVel)
         linmove->ClearWorldVelocity();
-
-    // update sound manager with idle state
-    psengine->GetSoundManager()->SetEntityState(psModeMessage::PEACE, pcmesh, race,1);
 }
 
 void GEMClientActor::SetPosition(const csVector3 &pos, float rot, iSector* sector)
@@ -1895,16 +1892,6 @@ void GEMClientActor::SetAnimationVelocity(const csVector3 &velocity)
     {
         charApp->SetSneak(false);
     }
-
-    // update sound manager with walk/run state if moving
-    // at the moment all monsters walk with speed 3 and run with speed 5
-    if(abs(velocity.z) > 3)
-        psengine->GetSoundManager()->SetEntityState(psModeMessage::RUN, pcmesh, race,1);
-    else if(abs(velocity.z) > 0)
-        psengine->GetSoundManager()->SetEntityState(psModeMessage::WALK, pcmesh, race,1);
-    else if(abs(velocity.z) == 0)
-        psengine->GetSoundManager()->SetEntityState(psModeMessage::PEACE, pcmesh, race,1);
-
 }
 
 void GEMClientActor::SetMode(uint8_t mode, bool newactor)

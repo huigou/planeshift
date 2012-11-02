@@ -440,11 +440,7 @@ void psSoundSector::AddEntityDefinition(csRef<iDocumentNode> entityNode)
 
 void psSoundSector::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
 {
-    float range;
-    csVector3 rangeVec;
     psEntity* entity;
-    int timeOfDay;
-    csVector3 listenerPos;
 
     if(mesh == 0 || meshName == 0)
     {
@@ -457,17 +453,10 @@ void psSoundSector::AddObjectEntity(iMeshWrapper* mesh, const char* meshName)
         return;
     }
 
-    listenerPos = SoundSystemManager::GetSingleton().GetListenerPos();
-    timeOfDay = SoundSectorManager::GetSingleton().GetTimeOfDay();
-
-    // if this isn't a temporary entity, create one only if it can
-    // actually play something
-    rangeVec = mesh->GetMovable()->GetFullPosition() - listenerPos;
-    range = rangeVec.Norm();
-
+    // if this isn't a temporary entity, create one
     Debug4(LOG_SOUND, 0, "psSoundSector::AddObjectEntity MESH %s ID %d temp %s",entity->GetEntityName().GetData(), entity->GetMeshID(), entity->IsTemporary()?"true":"false");
 
-    if(!entity->IsTemporary() && entity->CanPlay(timeOfDay, range))
+    if(!entity->IsTemporary())
     {
         entity = new psEntity(entity);
         entity->SetMeshID(mesh->QueryObject()->GetID());
