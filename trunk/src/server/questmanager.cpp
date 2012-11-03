@@ -703,7 +703,7 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
                     command.Format("<skill name=\"%s\" min=\"%s\" max=\"%s\" allowbuffed=\"%d\"/>", skillName.GetData(), skillLevels[0], skillLevels[1], buffed);
                 }
             }
-        }printf("%s\n", command.GetData());
+        }
         // If a  string wasn't produced there was an error, in this case report it.
         result = !command.IsEmpty();
     }
