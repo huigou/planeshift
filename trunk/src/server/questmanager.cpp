@@ -205,22 +205,27 @@ bool QuestManager::PrependPrerequisites(csString &substep_requireop,
         post = "</and></pre>";
     }
 
-    if (quest_assigned_already)
+    // Handle quest based prerequisite wrappings only if in a quest. For KA script
+    // these are not needed.
+    if(mainQuest)
     {
-        // If quest has been assigned in the script, we need to have every response
-        // verify that the quest have been assigned.
-        op.AppendFmt("<assigned quest=\"%s\" />", mainQuest->GetName());
-    }
-    else
-    {
-        // If quest has not been assigned in the script, we need to have every response
-        // verify that the quest have not been assigned.
-        op.AppendFmt("<not><assigned quest=\"%s\" /></not>", mainQuest->GetName());
-    }
+        if (quest_assigned_already)
+        {
+            // If quest has been assigned in the script, we need to have every response
+            // verify that the quest have been assigned.
+            op.AppendFmt("<assigned quest=\"%s\" />", mainQuest->GetName());
+        }
+        else
+        {
+            // If quest has not been assigned in the script, we need to have every response
+            // verify that the quest have not been assigned.
+            op.AppendFmt("<not><assigned quest=\"%s\" /></not>", mainQuest->GetName());
+        }
 
-    if (substep_requireop)
-    {
-        op.Append(substep_requireop);
+        if (substep_requireop)
+        {
+            op.Append(substep_requireop);
+        }
     }
 
     if (response_requireop)
@@ -230,9 +235,15 @@ bool QuestManager::PrependPrerequisites(csString &substep_requireop,
         // Response require op only valid for one response.
         response_requireop.Free();
     }
+    else if(!mainQuest)
+    {
+        // If this isn't a quest and there aren't prerequisites then
+        // there is nothing else to do. As prerequisite scripts cannot be
+        // empty we don't proceed.
+        return true;
+    }
 
     op.Append(post);
-
 
     // Will insert the new op in and new "and" list if not present already in the script.
     if (!last_response->ParsePrerequisiteScript(op,true)) // Insert at start of list
@@ -957,14 +968,12 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                     return line_number;
                 }
 
-                if (mainQuest) // Prerequisites only apply to quest scripts, not KA scripts.
+                if (!PrependPrerequisites(substep_requireop, response_requireop, quest_assigned_already && step_count > 1,last_response, mainQuest))
                 {
-                    if (!PrependPrerequisites(substep_requireop, response_requireop, quest_assigned_already && step_count > 1,last_response,mainQuest))
-                    {
-                        lastError.Format("PrependPrerequistes failed on line %d", line_number);
-                        return line_number;
-                    }
+                    lastError.Format("PrependPrerequistes failed on line %d", line_number);
+                    return line_number;
                 }
+
                 if (pending_menu)
                 {
                     // Now go back to the previous menu
