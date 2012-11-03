@@ -50,16 +50,16 @@ public:
         size_t i;
 
         // Make room for new element
-        SetSize(Length() + 1);
+        this->SetSize(Length() + 1);
 
         // This special case is required as we are not using a sentinel
         if(Length() > 1)
             for( i = Length()-1; i != 0 && *Get((i-1)/2) > *what; i = (i-1)/2)
-                Put(i, this->Get((i-1)/2));
+                this->Put(i, this->Get((i-1)/2));
         else
             i = 0;
 
-        Put(i, what);
+        this->Put(i, what);
     }
 
     T* DeleteMin()
@@ -70,7 +70,7 @@ public:
 
         CS_ASSERT(Length());
         // Shrink the array by 1
-        Truncate(Length() - 1);
+        this->Truncate(Length() - 1);
 
         if(!Length())
             return minElement;
@@ -84,11 +84,11 @@ public:
 
             // Move it down one level
             if( *lastElement > *this->Get(child))
-                Put(i, this->Get(child));
+                this->Put(i, this->Get(child));
             else
                 break;
         }
-        Put(i, lastElement);
+        this->Put(i, lastElement);
         return minElement;
     }
 
