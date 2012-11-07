@@ -1794,7 +1794,7 @@ In this case the file psserver.cfg has to be updated with the changed values. To
 name the file create_all.sql also has to be modified.</p>
 
 NOTE: If you have upgraded MySQL server to 4.1 or superior (while the client is still 4.0) please write this in your MySQL console:
-<p class="commandBox">UPDATE planeshift@localhost SET Password = OLD_PASSWORD('planeshift');</p>
+<p class="commandBox">SET PASSWORD FOR planeshift@localhost = OLD_PASSWORD('planeshift');</p>
 
 <h3>Running the Server</h3>
 <div>
