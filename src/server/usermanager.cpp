@@ -458,14 +458,14 @@ void UserManager::CalculateComparativeDifference(psCharacter* myCharData, psChar
     // We calculate two 'levels', one physical and one magical.
     const int maxLevel = 6;
 
-    theirPhysicalLevel = ((theirPhysicalStat + theirBestCombat * 2) / 800) * maxLevel;
+    theirPhysicalLevel = ((float)(theirPhysicalStat + theirBestCombat * 2) / 800) * maxLevel;
     theirPhysicalLevel = (theirPhysicalLevel > maxLevel) ? maxLevel : theirPhysicalLevel;
-    theirMagicalLevel = ((theirMagicalStat + theirBestMagical * 2) / 800) * maxLevel;
+    theirMagicalLevel = ((float)(theirMagicalStat + theirBestMagical * 2) / 800) * maxLevel;
     theirMagicalLevel = (theirMagicalLevel > maxLevel) ? maxLevel : theirMagicalLevel;
 
-    int myPhysicalLevel = ((myPhysicalStat + myBestCombat * 2) / 800) * maxLevel;
+    int myPhysicalLevel = ((float)(myPhysicalStat + myBestCombat * 2) / 800) * maxLevel;
     myPhysicalLevel = (myPhysicalLevel > maxLevel) ? maxLevel : myPhysicalLevel;
-    int myMagicalLevel = ((myMagicalStat + myBestMagical * 2) / 800) * maxLevel;
+    int myMagicalLevel = ((float)(myMagicalStat + myBestMagical * 2) / 800) * maxLevel;
     myMagicalLevel = (myMagicalLevel > maxLevel) ? maxLevel : myMagicalLevel;
 
     // And also a comparative difference for each.
@@ -590,7 +590,6 @@ void UserManager::SendCharacterDescription(Client* client, gemActor* actor, bool
             static const char* const MagicalStrengthAssessPhrases[] =
             {
                 "to be as intelligent as a stone",
-                "to have no magic skill of worth",
                 "to be an apprentice magic user",
                 "to be an advanced apprentice in magic use",
                 "to be a competant magic user",
@@ -608,8 +607,7 @@ void UserManager::SendCharacterDescription(Client* client, gemActor* actor, bool
                 "to be fit and have respectable fighting skills",
                 "to be in very good shape, with much experience in the fighting arts",
                 "to be strong, tough and agile with advanced fighting abilities",
-                "to have a body and mind honed for combat",
-                "to be physically perfect and a master in combat",
+                "to be physically perfect and a master in combat"
             };
 
             // Character's overall comparison.
@@ -617,13 +615,11 @@ void UserManager::SendCharacterDescription(Client* client, gemActor* actor, bool
             {
                 "wouldn't require any effort to defeat",
                 "is noticeably weaker than you",
-                "wouldn't pose much of a challenge",
                 "is not quite as strong as you",
                 "is about as strong as you",
                 "is a fair bit stronger than you",
                 "would pose a great challenge to defeat",
-                "is significantly more powerful than you",
-                "would be impossible to defeat"
+                "is significantly more powerful than you"
             };
 
             desc.AppendFmt("\n\n%s appears %s, while also appearing %s. You judge that %s %s.", charName.GetData(),
