@@ -472,12 +472,12 @@ void UserManager::CalculateComparativeDifference(psCharacter* myCharData, psChar
     int physicalDiffValue = theirPhysicalLevel - myPhysicalLevel;
     int magicalDiffValue = theirMagicalLevel - myMagicalLevel;
     // Clamp within the allowed range (0-6) considering difference from the median (3)
-    physicalDiff = (3+physicalDiffValue)>maxLevel?maxLevel:(3+physicalDiffValue);
+    physicalDiffValue = (3+physicalDiffValue)>maxLevel?maxLevel:(3+physicalDiffValue);
     physicalDiff = (3+physicalDiffValue)<0?0:(3+physicalDiffValue);
-    magicalDiff = (3+magicalDiffValue)>maxLevel?maxLevel:(3+magicalDiffValue);
+    magicalDiffValue = (3+magicalDiffValue)>maxLevel?maxLevel:(3+magicalDiffValue);
     magicalDiff = (3+magicalDiffValue)<0?0:(3+magicalDiffValue);
 
-    overallLevelComparison = int ((float)(2 * maxLevel + physicalDiffValue + magicalDiffValue) / 3.5f);
+    overallLevelComparison = int ((float)(2 * maxLevel + physicalDiff + magicalDiff) / 3.5f);
 }
 
 
