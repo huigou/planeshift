@@ -2144,7 +2144,7 @@ bool LocateOperation::Load(iDocumentNode *node)
         {
             return true;
         }
-        else if (split_obj[0] == "target")
+        else if (split_obj[1] == "target")
         {
             return true;
         }
