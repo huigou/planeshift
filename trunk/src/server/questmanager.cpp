@@ -412,17 +412,17 @@ bool QuestManager::HandleScriptCommand(csString& block,
                 }
                 else
                 {
-                    csString modifiers;
+                    csString modifiers = "";
                     int item_start = 1;
                     if (words.GetInt(item_start) != 0)
                     {
-                        modifiers.Format("count=\"%d\" ", words.GetInt(item_start));
+                        modifiers.Append(csString().Format("count=\"%d\" ", words.GetInt(item_start)));
                         item_start++;
                     }
 
                     if(words.GetInt(item_start) != 0)
                     {
-                        modifiers.Format(" quality=\"%d\" ", words.GetInt(item_start));
+                        modifiers.Append(csString().Format(" quality=\"%d\" ", words.GetInt(item_start)));
                         item_start++;
                     }
 
