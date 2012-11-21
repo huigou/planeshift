@@ -1001,7 +1001,7 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
         {
             // complain (shouldn't happen - script should've been validated against the schema)
             Error2("Unknown operation >%s< - validate against the schema!", elem.GetData());
-            return false;
+            return NULL;
         }
 
         if (op->Load(node))
@@ -2087,27 +2087,39 @@ public:
 
     bool Load(iDocumentNode* node)
     {
-        psSkillInfo* info = cachemanager->GetSkillByName(node->GetAttributeValue("name"));
-        if (!info)
-        {
-            Error2("Found <skill aim=\"...\" name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
-            return false;
-        }
-        skill = info->id;
+        skillName = node->GetAttributeValue("name");
         return Imperative3::Load(node);
     }
 
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
+        
+        //evaluate the variables so we can get it's value
+        MathVar* nameVar = env->Lookup(skillName);
+        csString varName;
+        
+        if(nameVar)
+            varName = nameVar->GetString();
+        else //if the variable was not found try getting the value associated directly (not in <let>)
+            varName = skillName;
+
+        psSkillInfo* info = cachemanager->GetSkillByName(varName);
+        if (!info)
+        {
+            Error2("Found <skill aim=\"...\" name=\"%s\">, but no such skill exists.", varName.GetData());
+            return;
+        }
+
+        PSSKILL skill = info->id;
         int val = (int) value->Evaluate(env);
         SkillRank& buffable = c->GetSkillRank(skill);
         buffable.SetBase(buffable.Base() + val);
-        c->SetSkillRank(skill,buffable.Base());
+        c->SetSkillRank(info->id,buffable.Base());
     }
 protected:
-    PSSKILL skill;
     CacheManager* cachemanager;
+    csString skillName;
 };
 
 //----------------------------------------------------------------------------
