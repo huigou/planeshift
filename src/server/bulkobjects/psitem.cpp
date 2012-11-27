@@ -3267,10 +3267,20 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
 
     for(int count = 0; count<(int)craftArray->GetSize(); count++)
     {
+
         // Check if craft step minimum primary skill level is meet by client
         int priSkill = craftArray->Get(count)->priSkillId;
         if(priSkill >= 0 && craftArray->Get(count)->minPriSkill > character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
         {
+                csString        query;
+
+                query.Format("select * from skills where skill_id=%d", priSkill );
+                Result result(db->Select(query));
+
+                transString.Append("With higher ");
+                transString.Append( result[0].GetString( "Name") );
+                transString.Append(" skill you could: " );
+                transString.Append(craftArray->Get(count)->craftStepDescription);
             continue;
         }
 
@@ -3278,6 +3288,15 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
         int secSkill = craftArray->Get(count)->secSkillId;
         if(secSkill >= 0 && craftArray->Get(count)->minSecSkill > (int) character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
         {
+                csString        query;
+
+                query.Format("select * from skills where skill_id=%d", secSkill );
+                Result result(db->Select(query));
+
+                transString.Append("With higher ");
+                transString.Append( result[0].GetString( "Name") );
+                transString.Append(" skill you could: " );
+                transString.Append(craftArray->Get(count)->craftStepDescription);
             continue;
         }
 

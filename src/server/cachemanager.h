@@ -418,6 +418,7 @@ public:
     psTradePatterns* GetTradePatternByName(csString name);
     csString CreateTransCraftDescription(psTradeTransformations* tran, psTradeProcesses* proc);
     csString CreateComboCraftDescription(CombinationConstruction* combArray);
+    csString CreateComboCraftDescription(Result *combArray);
     csArray<CraftTransInfo*>* GetTradeTransInfoByItemID(uint32 id);
     csArray<CraftComboInfo*>* GetTradeComboInfoByItemID(uint32 id);
     //@}
@@ -579,6 +580,21 @@ protected:
 
     /// Cache in the crafting messages.
     bool PreloadCraftMessages();
+
+
+
+	/////
+	//
+	// Craft Book revision - JAL 20121105-17
+	bool DescribeTransformation( Result*, csArray<CraftTransInfo*> *newArray, uint32 itemID);
+	bool ListProductionSteps( Result*, csArray<CraftTransInfo*> *newArray, uint32 patternID, uint32 itemID );
+	bool GetListOfFinalItems( Result*, csArray<uint32> *finalItems, int patternID, int groupID );
+	bool FindFinalItem( Result*, csArray<uint32> *finalItems, int patternID, int resultID, int groupID );
+	bool UniqueInsertIntoItemArray( csArray<uint32> *finalItems, int itemID );
+	//
+	/////
+
+
 
     /** Caches in the crafting transforms.
       * @param tradePattern  The current pattern message we want to construct.
