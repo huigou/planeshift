@@ -1440,7 +1440,7 @@ psTradePatterns* CacheManager::GetTradePatternByName(csString name)
 }
 
 //Insert the itemID into the finalItems array only if it isn't already included
-bool CacheManager::UniqueInsertIntoItemArray( csArray<uint32> *finalItems, int itemID ){
+bool CacheManager::UniqueInsertIntoItemArray( csArray<uint32> *finalItems, int itemID ){		
 	if( itemID==0 ) return false;
 
 	for( int i=0; i<finalItems->GetSize(); i++ ) {
@@ -1452,61 +1452,23 @@ bool CacheManager::UniqueInsertIntoItemArray( csArray<uint32> *finalItems, int i
 	return true;
 }
 
-int CacheManager::Contains(  csArray<uint32> *list, int id ) {
-	int matches	= 0;
-	for( int i=0; i<list->GetSize(); i++ ) {
-		if( list->Get(i)==id ) {
-			matches++;
-		}
-	}
-return matches;
-}
-
-int CacheManager::ResultsIn(  Result* TransformationList, int id ) {
-	int	c	=0;
-	for( int i = 0; i<TransformationList->Count(); i++ ) {
-		if( (*TransformationList)[i].GetInt("result_id" )==id ) {
-			c++;
-		}
-	}
-	return c;
-}
-
-bool CacheManager::FindFinalItem( Result* TransformationList, csArray<uint32> *finalItems, int patternID, int itemID, int groupID, csArray<uint32> *itemStack ){ 
-	int	i	= 0;
-	int	match	= 0;
-
-	itemStack->Push( itemID );
+bool CacheManager::FindFinalItem( Result* TransformationList, csArray<uint32> *finalItems, int patternID, int itemID, int groupID ){ 
+	int	i = 0;
 
 	for( i=0; i<TransformationList->Count(); i++ ) {
-		int	id	= (*TransformationList)[i].GetInt("item_id" ),
-			pattern	= (*TransformationList)[i].GetInt("pattern_id" ),
-			result	= (*TransformationList)[i].GetInt("result_id" );
-			
-
-		//for each Transformation with item_id==itemID and either patternID or groupID matching the pattern_id
-		if( id==itemID && ( pattern==patternID || pattern==groupID)) {
-			match++;
-
-
-			if( result==id ) {	//if the resultant item is the same as the current item, then this is a final item
-				if( Contains( finalItems, id )==0 ) {
-					UniqueInsertIntoItemArray( finalItems, id );
-				}
-			} else if( Contains(itemStack, result )>0 ) {
-				if( ResultsIn( TransformationList, result )>ResultsIn( TransformationList, id ) ) {
-					UniqueInsertIntoItemArray( finalItems, id );
-				} else {
-					UniqueInsertIntoItemArray( finalItems, result );
-				}
-			} else FindFinalItem( TransformationList, finalItems, patternID, result, groupID, itemStack ); 
+		if( (*TransformationList)[i].GetInt("item_id" )==itemID && (
+			(*TransformationList)[i].GetInt("pattern_id" )==patternID || (*TransformationList)[i].GetInt("pattern_id" )==groupID 
+		) ) {
+			break;
 		}
 	}
-	if( match==0 ) { //no records found matching this itemID
+	if( i>=TransformationList->Count() ) {
 		UniqueInsertIntoItemArray( finalItems, itemID );
+	} else if( (*TransformationList)[i].GetInt("result_id" )==itemID ) {
+		UniqueInsertIntoItemArray( finalItems, itemID );
+	} else {
+		FindFinalItem( TransformationList, finalItems, patternID, (*TransformationList)[i].GetInt("result_id"), groupID ); 
 	}
-	itemStack->Pop();
-
 	return true;
 }
 
@@ -1514,11 +1476,8 @@ bool CacheManager::GetListOfFinalItems( Result* TransformationList, csArray<uint
 	int		i;
 
 	for( i=0; i<TransformationList->Count(); i++ ) {
-		if( (*TransformationList)[i].GetInt("pattern_id" )==patternID || (*TransformationList)[i].GetInt("pattern_id" )==groupID ) {
-			csArray<uint32> *itemStack = new csArray<uint32>;
-			
-			FindFinalItem( TransformationList, finalItems, patternID, (*TransformationList)[i].GetInt("item_id" ), groupID, itemStack );
-			itemStack->DeleteAll();
+		if( (*TransformationList)[i].GetInt("pattern_id" )==patternID ) {
+			FindFinalItem( TransformationList, finalItems, patternID, (*TransformationList)[i].GetInt("result_id"), groupID );
 		}
 	}
 	return true;
@@ -1557,31 +1516,21 @@ bool CacheManager::DescribeTransformation( Result* TransformationList, csArray<C
 }
 
 //given the final item ID recursively list all the transformations and combinations required to produce it,
-bool CacheManager::ListProductionSteps( Result* TransformationList, csArray<CraftTransInfo*> *newArray, csArray<uint32> *finalItems, uint32 patternID, uint32 itemID, uint32 currentGroupID ) {
+bool CacheManager::ListProductionSteps( Result* TransformationList, csArray<CraftTransInfo*> *newArray, uint32 patternID, uint32 itemID ) {
 	int	i;
-	int	count	= 0;
 
 	for( i=0; i<TransformationList->Count(); i++ ) {
-                int     id      = (*TransformationList)[i].GetInt("item_id" ),
-                        pattern = (*TransformationList)[i].GetInt("pattern_id" ),
-                        result  = (*TransformationList)[i].GetInt("result_id" );
-
-		if( !Contains( finalItems, id ) && result==itemID && (pattern==patternID || pattern==currentGroupID)) {
-			csArray<uint32> *itemStack = new csArray<uint32>;
-			count++;
-                	if( itemID!=(*TransformationList)[i].GetInt( "item_id" )) {
-                        	ListProductionSteps( TransformationList, newArray, finalItems, patternID, id, currentGroupID);
-                	}
-                	DescribeTransformation( TransformationList, newArray, id );
+		if( (*TransformationList)[i].GetInt( "result_id" )==itemID ) {
+			break;
 		}
 	}
-	if( count==0 ) { //no transformations found...try combinations
+	if( i>=TransformationList->Count() ) {
         	csString        query;
 
-                query.Format("select * from trade_combinations where result_id=%d and pattern_id=%d or pattern_id=%i", itemID, patternID, currentGroupID );
+                query.Format("select * from trade_combinations where result_id=%d and pattern_id=%d or pattern_id=%i", itemID, patternID );
                 Result combinations(db->Select(query));
                 if( !combinations.IsValid() ) {
-                        Error3( "invalid return from \"select * from trade_combinations where result_id=%d and pattern_id=%d\"", itemID, patternID );
+                        Error3( "select * from trade_combinations where result_id=%d and pattern_id=%d", itemID, patternID );
                 }
                 if( combinations.Count()>0 ) {
                         csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID( itemID );
@@ -1591,6 +1540,11 @@ bool CacheManager::ListProductionSteps( Result* TransformationList, csArray<Craf
                         craftInfo->priSkillId = craftInfo->minPriSkill = craftInfo->secSkillId = craftInfo->minSecSkill = 0;
                         newArray->Push(craftInfo);
                 }
+        } else {
+                if( itemID!=(*TransformationList)[i].GetInt( "item_id" )) {
+                        ListProductionSteps( TransformationList, newArray, patternID, (*TransformationList)[i].GetInt( "item_id" ));
+                }
+                DescribeTransformation( TransformationList, newArray, (*TransformationList)[i].GetInt( "item_id" ) );
         }
 }
 
@@ -1599,7 +1553,7 @@ bool CacheManager::ListProductionSteps( Result* TransformationList, csArray<Craf
 bool CacheManager::PreloadCraftMessages() {
 	csArray<CraftTransInfo*>* newArray = NULL;
 
-        Result TransformationList(db->Select("select * from trade_transformations order by pattern_id"));
+        Result TransformationList(db->Select("select * from trade_transformations"));
 	if( !TransformationList.IsValid() ) {
 		Error1( "FAILED:select * from trade_transformations" )
 		return false;
@@ -1617,31 +1571,27 @@ bool CacheManager::PreloadCraftMessages() {
 		csArray<uint32> *finalItems = new csArray<uint32>;
 
         	// Get the design item that goes with the pattern
-        	int patternID = result[currentPattern].GetInt("id");
+        	int currentID = result[currentPattern].GetInt("id");
         	uint32 designItemID = result[currentPattern].GetInt("designitem_id");
         	int currentGroupID = result[currentPattern].GetInt("group_id");
 
 		newArray = new csArray<CraftTransInfo*>;
 		tradeCraftTransInfo_IDHash.Put(designItemID,newArray);
 
-		GetListOfFinalItems( &TransformationList, finalItems, patternID, currentGroupID );	//extract the list of final items from the list of all transformations
+		GetListOfFinalItems( &TransformationList, finalItems, currentID, currentGroupID );	//extract the list of final items from the list of all transformations
 
-		for(int i=0; i<finalItems->GetSize(); i++) {
+		for(int i=0; i<finalItems->GetSize(); i++)
+		{
 		//list the item to be created
 			craftInfo = new CraftTransInfo;
                         craftInfo->priSkillId = craftInfo->minPriSkill = craftInfo->secSkillId = craftInfo->minSecSkill = 0;
                         craftInfo->craftStepDescription.Append( "-- " ); 
-			if( GetBasicItemStatsByID(finalItems->Get(i)) ) {
-	                        craftInfo->craftStepDescription.Append( GetBasicItemStatsByID(finalItems->Get(i))->GetName() );
-			} else {
-	                        craftInfo->craftStepDescription.Append( "item " );
-	                        craftInfo->craftStepDescription.Append( finalItems->Get(i) );
-			}
+                        craftInfo->craftStepDescription.Append( GetBasicItemStatsByID(finalItems->Get(i))->GetName() );
                         craftInfo->craftStepDescription.Append( " ----- \n" ); 
                         newArray->Push(craftInfo);
 
 		//list the steps to create it
-			ListProductionSteps( &TransformationList, newArray, finalItems, patternID, finalItems->Get(i), currentGroupID );
+			ListProductionSteps( &TransformationList, newArray, currentID, finalItems->Get(i) );
 			DescribeTransformation( &TransformationList, newArray, finalItems->Get(i) );
 
 		//insert a blank row between items
@@ -1650,8 +1600,6 @@ bool CacheManager::PreloadCraftMessages() {
        			craftInfo->craftStepDescription = "\n";
 			newArray->Push(craftInfo);
 		}
-
-		finalItems->DeleteAll();
 	
 	}
 	Notify2(LOG_STARTUP, "%lu Trade Patterns Loaded", result.Count());
