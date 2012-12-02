@@ -933,10 +933,24 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         int experiencePoints;
         float modifier;
 
+        // Get player skill value
+        float cur_skill = workerchar->Skills().GetSkillRank((PSSKILL)workEvent->nrr.Get(resNum).resource->skill->id).Current();
+
+        // If skill=0, check if it has at least theoretical training in that skill
+        if(cur_skill==0)
+        {
+            bool fullTrainingReceived = !workerchar->Skills().Get((PSSKILL)workEvent->nrr.Get(resNum).resource->skill->id).CanTrain();
+            if(fullTrainingReceived)
+                cur_skill = 0.7F; // consider the skill somewhat usable
+        }
+
         MathEnvironment env;
         env.Define("Success", successfullProduction);
         env.Define("Worker", workEvent->client->GetCharacterData());
         env.Define("Probability", workEvent->nrr.Get(resNum).resource->probability); // Probability of successful mining
+        env.Define("ActionTime", workEvent->nrr.Get(resNum).resource->anim_duration_seconds); // Duration of the mining work.
+        env.Define("PlayerSkill", cur_skill);                                         // Player skill
+        env.Define("RequiredSkill", workEvent->nrr.Get(resNum).resource->skill_level);  // Required skill
 
         //update the script if needed. Here we don't protect against bad scripts as before for now.
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_exp, "Calculate Mining Experience");
