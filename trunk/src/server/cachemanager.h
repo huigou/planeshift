@@ -587,10 +587,12 @@ protected:
 	//
 	// Craft Book revision - JAL 20121105-17
 	bool DescribeTransformation( Result*, csArray<CraftTransInfo*> *newArray, uint32 itemID);
-	bool ListProductionSteps( Result*, csArray<CraftTransInfo*> *newArray, uint32 patternID, uint32 itemID );
+	bool ListProductionSteps( Result*, csArray<CraftTransInfo*> *newArray, csArray<uint32> *finalItems, uint32 patternID, uint32 itemID, uint32 currentGroupID );
 	bool GetListOfFinalItems( Result*, csArray<uint32> *finalItems, int patternID, int groupID );
-	bool FindFinalItem( Result*, csArray<uint32> *finalItems, int patternID, int resultID, int groupID );
+	bool FindFinalItem( Result*, csArray<uint32> *finalItems, int patternID, int itemID, int groupID, csArray<uint32> *itemStack );
 	bool UniqueInsertIntoItemArray( csArray<uint32> *finalItems, int itemID );
+	int Contains(  csArray<uint32> *list, int id );
+	int ResultsIn(   Result*, int id );
 	//
 	/////
 
