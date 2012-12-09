@@ -86,8 +86,12 @@ struct psItemStatFlags
     csString string;
     int flag;
 
-    psItemStatFlags(const char *s, int f) : string(s), flag(f) { }
-    void Set(const char *s,int f) { string=s; flag=f; }
+    psItemStatFlags(const char* s, int f) : string(s), flag(f) { }
+    void Set(const char* s,int f)
+    {
+        string=s;
+        flag=f;
+    }
 };
 
 // HACK TO GET AROUND BAD INCLUSION OF PSCHARACTER.H IN DRMESSAGE.H KWF
@@ -139,27 +143,39 @@ struct psCharacterLimitation
  */
 class optionEntry
 {
-    private:
+private:
     csString value; ///< The value of this option entry.
     csHash<optionEntry,csString> subOptions; ///< array of sub option entries to this.
-    public:
+public:
     /** Sets the value of this specific option to a newvalue.
      *  @note for now there is no support for db saving so this is only temporary.
      *  @param newValue The new string to assign to this option
      */
-    void setValue(const csString newValue) { value = newValue; }
+    void setValue(const csString newValue)
+    {
+        value = newValue;
+    }
     /** Get the value of this specific option.
      *  @return A csString containing the option value.
      */
-    csString getValue() { return value; }
+    csString getValue()
+    {
+        return value;
+    }
     /** Get the value of this specific option in double format.
      *  @return A double containing the option value converted to double.
      */
-    double getValueAsDouble() { return atof(value); }
+    double getValueAsDouble()
+    {
+        return atof(value);
+    }
     /** Get the value of this specific option in int format.
      *  @return An int containing the option value converted to int.
      */
-    int getValueAsInt() { return atoi(value); }
+    int getValueAsInt()
+    {
+        return atoi(value);
+    }
     /** Get the value of this specific option in csVector3 format.
      *  This function takes in account the format is x,y,z as text, returns a vector with 0,0,0
      *  in case of error.
@@ -191,7 +207,7 @@ class optionEntry
      *  @return A pointer to the optionEntry we are interested in. NULL if the optionEntry
      *          was not found.
      */
-    optionEntry *getOption(const csString path);
+    optionEntry* getOption(const csString path);
     /** Does the same of getOption, but, in case the entry is missing, an empty option will
      *  be added to the tree.
      *  @param path A path to the optionEntry we are interested in.
@@ -199,7 +215,7 @@ class optionEntry
      *  @return A pointer to the optionEntry we are interested in. It still returns NULL if the
      *          data is invalid, but that's a programming error and not a runtime error.
      */
-    optionEntry *getOptionSafe(const csString path, const csString fallback);
+    optionEntry* getOptionSafe(const csString path, const csString fallback);
 };
 
 /** This class manages the caching of data that is unchanging during server operation.
@@ -221,19 +237,22 @@ public:
     /** @name Sector Info Table cache
     */
     //@{
-    psSectorInfo *GetSectorInfoByName(const char *name);
-    psSectorInfo *GetSectorInfoByID(unsigned int id);
-    csHash<psSectorInfo *>::GlobalIterator GetSectorIterator();
+    psSectorInfo* GetSectorInfoByName(const char* name);
+    psSectorInfo* GetSectorInfoByID(unsigned int id);
+    csHash<psSectorInfo*>::GlobalIterator GetSectorIterator();
     //@}
 
-    psCommandManager* GetCommandManager() { return commandManager; }
+    psCommandManager* GetCommandManager()
+    {
+        return commandManager;
+    }
 
     /** @name Traits
      */
     //@{
     typedef csPDelArray<psTrait>::Iterator TraitIterator;
-    psTrait *GetTraitByID(unsigned int id);
-    psTrait *GetTraitByName(const char *name);
+    psTrait* GetTraitByID(unsigned int id);
+    psTrait* GetTraitByName(const char* name);
     TraitIterator GetTraitIterator();
     //@}
 
@@ -241,29 +260,29 @@ public:
      */
     //@{
     size_t         GetRaceInfoCount();
-    psRaceInfo *GetRaceInfoByIndex(int idx);
-    psRaceInfo *GetRaceInfoByID(unsigned int id);
-    psRaceInfo *GetRaceInfoByNameGender(const char *name,PSCHARACTER_GENDER gender);
-    psRaceInfo *GetRaceInfoByNameGender(unsigned int id, PSCHARACTER_GENDER gender);
-    psRaceInfo *GetRaceInfoByMeshName(const csString & meshname);
+    psRaceInfo* GetRaceInfoByIndex(int idx);
+    psRaceInfo* GetRaceInfoByID(unsigned int id);
+    psRaceInfo* GetRaceInfoByNameGender(const char* name,PSCHARACTER_GENDER gender);
+    psRaceInfo* GetRaceInfoByNameGender(unsigned int id, PSCHARACTER_GENDER gender);
+    psRaceInfo* GetRaceInfoByMeshName(const csString &meshname);
     //@}
 
     /** @name Skills
      */
     //@{
-    psSkillInfo *GetSkillByID(unsigned int id);
+    psSkillInfo* GetSkillByID(unsigned int id);
     size_t GetSkillAmount();
-    psSkillInfo *GetSkillByName(const char *name);
+    psSkillInfo* GetSkillByName(const char* name);
 
     ///Get all skills belonging to a specific category
-    void GetSkillsListbyCategory(csArray <psSkillInfo*>& listskill,int category );
+    void GetSkillsListbyCategory(csArray <psSkillInfo*> &listskill,int category);
     //@}
 
     /** @name Common Strings
     */
     //@{
-    const char *FindCommonString(unsigned int id);
-    unsigned int FindCommonStringID(const char *name);
+    const char* FindCommonString(unsigned int id);
+    unsigned int FindCommonStringID(const char* name);
     inline void AddCommonStringID(const char* name)
     {
         FindCommonStringID(name);
@@ -273,7 +292,10 @@ public:
      *
      * @return Returns a reference to the message strings hash table.
      */
-    csStringSet *GetMsgStrings() { return &msg_strings; }
+    csStringSet* GetMsgStrings()
+    {
+        return &msg_strings;
+    }
 
     /** Returns compressed message strings data.
      *
@@ -282,40 +304,40 @@ public:
      * @num_strings The number of strings encoded.
      * @digest The md5sum digest of the compressed data.
      */
-    void GetCompressedMessageStrings(char*& data, unsigned long& size,
-        uint32_t& num_strings, csMD5::Digest& digest);
+    void GetCompressedMessageStrings(char* &data, unsigned long &size,
+                                     uint32_t &num_strings, csMD5::Digest &digest);
     //@}
 
     /** @name Guilds
     */
     //@{
     csWeakRef<psGuildInfo> FindGuild(unsigned int id);
-    csWeakRef<psGuildInfo> FindGuild(const csString & name);
-    bool CreateGuild(const char *guildname, Client *client);
-    void RemoveGuild(psGuildInfo *which);
+    csWeakRef<psGuildInfo> FindGuild(const csString &name);
+    bool CreateGuild(const char* guildname, Client* client);
+    void RemoveGuild(psGuildInfo* which);
     //@}
 
     /** @name Guild alliances
     */
     //@{
-    psGuildAlliance * FindAlliance(unsigned int id);
-    bool CreateAlliance(const csString & name, psGuildInfo * founder, Client *client);
-    bool RemoveAlliance(psGuildAlliance *which);
+    psGuildAlliance* FindAlliance(unsigned int id);
+    bool CreateAlliance(const csString &name, psGuildInfo* founder, Client* client);
+    bool RemoveAlliance(psGuildAlliance* which);
     //@}
 
     /** @name Quests
     */
     //@{
-    psQuest *GetQuestByID(unsigned int id);
-    psQuest *GetQuestByName(const char *name);
-    psQuest *AddDynamicQuest(const char *name, psQuest *parentQuest, int step);
+    psQuest* GetQuestByID(unsigned int id);
+    psQuest* GetQuestByName(const char* name);
+    psQuest* AddDynamicQuest(const char* name, psQuest* parentQuest, int step);
 
     /// Unloads a quest and its scripts
     bool UnloadQuest(int id);
 
     /// Loads a quest and its scripts
     bool LoadQuest(int id);
-    csHash<psQuest *>::GlobalIterator GetQuestIterator();
+    csHash<psQuest*>::GlobalIterator GetQuestIterator();
     //@}
 
     /** @name Accounts
@@ -328,14 +350,14 @@ public:
      *  @param accountid - The unique id associated with the account.
      *  @return NULL if no account information was found for the given ID. The returned pointer must be deleted when no longer needed.
      */
-    psAccountInfo *GetAccountInfoByID(AccountID accountid);
+    psAccountInfo* GetAccountInfoByID(AccountID accountid);
 
     /** Retrieves account information given an character ID.
      *
      *  @param charid - The unique id associated with the character.
      *  @return NULL if no account information was found for the given ID. The returned pointer must be deleted when no longer needed.
      */
-    psAccountInfo *GetAccountInfoByCharID(PID charid);
+    psAccountInfo* GetAccountInfoByCharID(PID charid);
 
     /** Retrieves account information given a username.
      *
@@ -344,21 +366,21 @@ public:
      *  @param username - The unique username associated with the account.
      *  @return NULL if no account information was found for the given ID.  The returned pointer must be deleted when no longer needed.
      */
-    psAccountInfo *GetAccountInfoByUsername(const char *username);
+    psAccountInfo* GetAccountInfoByUsername(const char* username);
 
     /** Call to store modified account information back to the database. Updates IP, security level, last login time, os, graphics card and graphics driver version.
      *
      * @param ainfo - A pointer to account data to store.
      * @return true - success  false - failed
      */
-    bool UpdateAccountInfo(psAccountInfo *ainfo);
+    bool UpdateAccountInfo(psAccountInfo* ainfo);
 
     /** Call to create a new account in the database.
      *
      *  @param ainfo - Should be initialized with all needed account info.
      *  @return The accountid assigned to this account (also stored in the appropriate field in ainfo)
      */
-    unsigned int NewAccountInfo(psAccountInfo *ainfo);
+    unsigned int NewAccountInfo(psAccountInfo* ainfo);
     //@}
 
     /// Convenience function to preload all of the above in an appropriate order
@@ -366,39 +388,48 @@ public:
     void UnloadAll();
 
     // Item categories
-    psItemCategory *GetItemCategoryByID(unsigned int id);
-    psItemCategory *GetItemCategoryByName(const csString & name);
+    psItemCategory* GetItemCategoryByID(unsigned int id);
+    psItemCategory* GetItemCategoryByName(const csString &name);
 
     /** Gets an item category by its position in the array. Useful to iterate it.
      *  @param pos The position in the array from where to extract the category.
      *  @return A pointer to the category in the position.
      */
-    psItemCategory *GetItemCategoryByPos(size_t pos) { return itemCategoryList.Get(pos); }
+    psItemCategory* GetItemCategoryByPos(size_t pos)
+    {
+        return itemCategoryList.Get(pos);
+    }
     /** Gets the size of the item category array. Useful to iterate it.
      *  @return The size of the array.
      */
-    size_t GetItemCategoryAmount() { return itemCategoryList.GetSize(); }
+    size_t GetItemCategoryAmount()
+    {
+        return itemCategoryList.GetSize();
+    }
 
     // Item Animations
-    csPDelArray<psItemAnimation> *FindAnimationList(int id);
+    csPDelArray<psItemAnimation>* FindAnimationList(int id);
 
     // Ways
-    psWay *GetWayByID(unsigned int id);
-    psWay *GetWayByName(const csString & name);
+    psWay* GetWayByID(unsigned int id);
+    psWay* GetWayByName(const csString &name);
 
     // Factions
-    Faction * GetFaction(const char *name);
-    Faction * GetFaction(int id);
-    Faction * GetFactionByName(const char *name);
-    csHash<Faction*, int> &GetFactionHash() { return factions_by_id; }
+    Faction* GetFaction(const char* name);
+    Faction* GetFaction(int id);
+    Faction* GetFactionByName(const char* name);
+    csHash<Faction*, int> &GetFactionHash()
+    {
+        return factions_by_id;
+    }
 
     // Progression Scripts
-    ProgressionScript *GetProgressionScript(const char *name);
+    ProgressionScript* GetProgressionScript(const char* name);
 
     // Spells
     typedef csPDelArray<psSpell>::Iterator SpellIterator;
-    psSpell *GetSpellByID(unsigned int id);
-    psSpell *GetSpellByName(const csString & name);
+    psSpell* GetSpellByID(unsigned int id);
+    psSpell* GetSpellByName(const csString &name);
     SpellIterator GetSpellIterator();
 
     /** @name Trades
@@ -418,7 +449,7 @@ public:
     psTradePatterns* GetTradePatternByName(csString name);
     csString CreateTransCraftDescription(psTradeTransformations* tran, psTradeProcesses* proc);
     csString CreateComboCraftDescription(CombinationConstruction* combArray);
-    csString CreateComboCraftDescription(Result *combArray);
+    csString CreateComboCraftDescription(Result* combArray);
     csArray<CraftTransInfo*>* GetTradeTransInfoByItemID(uint32 id);
     csArray<CraftComboInfo*>* GetTradeComboInfoByItemID(uint32 id);
     //@}
@@ -427,40 +458,43 @@ public:
     */
     //@{
     /// Get item basic stats by hashed table
-    psItemStats *GetBasicItemStatsByName(csString name);
+    psItemStats* GetBasicItemStatsByName(csString name);
 
     /// Get item basic stats by hashed table
-    psItemStats *GetBasicItemStatsByID(uint32 id);
-    psItemStats *CopyItemStats(uint32 id, csString newName);
+    psItemStats* GetBasicItemStatsByID(uint32 id);
+    psItemStats* CopyItemStats(uint32 id, csString newName);
 
     /// return id of item if 'name' exists already
     uint32 BasicItemStatsByNameExist(csString name);
-    size_t ItemStatsSize(void) { return itemStats_IDHash.GetSize(); }
+    size_t ItemStatsSize(void)
+    {
+        return itemStats_IDHash.GetSize();
+    }
 
     /// If an item changes name (eg book title) keep cache up to date
     void CacheNameChange(csString oldName, csString newName);
 
-    bool LoadWorldItems(psSectorInfo *sector, csArray<psItem*> & items);
+    bool LoadWorldItems(psSectorInfo* sector, csArray<psItem*> &items);
 
     float GetArmorVSWeaponResistance(const char* armor_type, const char* weapon_type);
     float GetArmorVSWeaponResistance(psItemStats* armor, psItemStats* weapon);
 
-    void RemoveInstance( psItem * & item );
-    void RemoveItemStats (psItemStats *&itemStats);
+    void RemoveInstance(psItem* &item);
+    void RemoveItemStats(psItemStats* &itemStats);
 
-    PSITEMSTATS_STAT ConvertAttributeString(const char *attributestring);
+    PSITEMSTATS_STAT ConvertAttributeString(const char* attributestring);
 
     /// Converts the stat enum to a string.
-    const char* Attribute2String( PSITEMSTATS_STAT s );
+    const char* Attribute2String(PSITEMSTATS_STAT s);
     //@}
 
-    PSSKILL               ConvertSkillString(const char *skillstring);
+    PSSKILL               ConvertSkillString(const char* skillstring);
     PSSKILL               ConvertSkill(int skill_id);
-    PSCHARACTER_GENDER    ConvertGenderString(const char *genderstring);
+    PSCHARACTER_GENDER    ConvertGenderString(const char* genderstring);
     PSITEMSTATS_SLOTLIST  slotMap[PSCHARACTER_SLOT_BULK1];
 
     //Tips
-    void GetTipByID(int id, csString& tip);
+    void GetTipByID(int id, csString &tip);
     unsigned int GetTipLength(); ///< Returns how many tips there is
 
     SlotNameHash slotNameHash;
@@ -474,22 +508,37 @@ public:
     /// Translation table for Flag strings (from db) into bit codes
     csArray<psItemStatFlags> ItemStatFlagArray;
 
-    const char *MakeCacheName(const char *prefix, uint32 id);
-    void AddToCache(iCachedObject *obj, const char *name, int max_cache_time_seconds);
-    iCachedObject *RemoveFromCache(const char *name);
+    const char* MakeCacheName(const char* prefix, uint32 id);
+    void AddToCache(iCachedObject* obj, const char* name, int max_cache_time_seconds);
+    iCachedObject* RemoveFromCache(const char* name);
 
-    const csPDelArray<psCharMode>& GetCharModes() const { return char_modes; }
-    const csPDelArray<psMovement>& GetMovements() const { return movements; }
-    const psCharMode* GetCharMode(size_t id) const { return char_modes[id]; }
-    const psMovement* GetMovement(size_t id) const { return movements[id]; }
+    const csPDelArray<psCharMode> &GetCharModes() const
+    {
+        return char_modes;
+    }
+    const csPDelArray<psMovement> &GetMovements() const
+    {
+        return movements;
+    }
+    const psCharMode* GetCharMode(size_t id) const
+    {
+        return char_modes[id];
+    }
+    const psMovement* GetMovement(size_t id) const
+    {
+        return movements[id];
+    }
     uint8_t GetCharModeID(const char* name);
     uint8_t GetMovementID(const char* name);
 
     /// Used to track effect IDs
-    uint32_t NextEffectUID() { return ++effectID; }
+    uint32_t NextEffectUID()
+    {
+        return ++effectID;
+    }
 
     /// This allows psServerChar to build a list of limitations for each player on demand.
-    const psCharacterLimitation *GetLimitation(size_t index);
+    const psCharacterLimitation* GetLimitation(size_t index);
 
     /// List of stances.
     csArray<Stance> stances;
@@ -504,19 +553,28 @@ public:
      *  @return An optionEntry in the requested position. NULL if the path was not found.
      *  @see optionEntry
      */
-    optionEntry* getOption(const csString path) { return rootOptionEntry.getOption(path); }
+    optionEntry* getOption(const csString path)
+    {
+        return rootOptionEntry.getOption(path);
+    }
 
     /** Wrapper for the getOptionSafe method of the root optionEntry stored in cachemanager.
      *  @param A path to the requested option starting from the root optionEntry
      *  @return An optionEntry in the requested position. NULL if the path was invalid.
      *  @see optionEntry
      */
-    optionEntry* getOptionSafe(const csString path, const csString value) { return rootOptionEntry.getOptionSafe(path,value); }
+    optionEntry* getOptionSafe(const csString path, const csString value)
+    {
+        return rootOptionEntry.getOptionSafe(path,value);
+    }
 
     /** Returns a pointer to the loot randomizer which is hosted within the cache manager.
      *  @return A pointer to the lootrandomizer.
      */
-    LootRandomizer* getLootRandomizer() { return lootRandomizer; }
+    LootRandomizer* getLootRandomizer()
+    {
+        return lootRandomizer;
+    }
 
     /** Applies on a randomized overlay structure, starting with the base item stats passed, the modifier ids
      *  passed. This is an accessor to the lootrandomizer own function
@@ -524,8 +582,10 @@ public:
      *  @param overlay The overlay which we will fill with the modifiers data.
      *  @param modifierIds An array of ids referencing loot_modifiers rules.
      */
-    void ApplyItemModifiers(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t>& modifierIds)
-         { lootRandomizer->ApplyModifier(baseItem, overlay, modifierIds); }
+    void ApplyItemModifiers(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t> &modifierIds)
+    {
+        lootRandomizer->ApplyModifier(baseItem, overlay, modifierIds);
+    }
 
     /** Randomizes the passed item.
      *  @param item The item which we are going to randomize.
@@ -533,12 +593,17 @@ public:
      *  @param numModifiers The maximum amount of modifiers to apply.
      */
     void RandomizeItem(psItem* item, float maxCost, size_t numModifiers)
-         { lootRandomizer->RandomizeItem( item, maxCost, false, numModifiers); }
+    {
+        lootRandomizer->RandomizeItem(item, maxCost, false, numModifiers);
+    }
 
     /** Reloads the server_options.
      *  @return FALSE if the reload failed
      */
-    bool ReloadOptions() { return PreloadOptions(); }
+    bool ReloadOptions()
+    {
+        return PreloadOptions();
+    }
 
 protected:
     uint32_t effectID;
@@ -583,25 +648,15 @@ protected:
 
 
 
-	/////
-	//
-	// Craft Book revision - JAL 20121105-17
-	bool DescribeTransformation( csPDelArray<psTradeTransformations>&, csArray<CraftTransInfo*> *newArray );
-	int Contains(  csArray<uint32> *list, uint32 id );
-	int ResultsIn(   Result*, int id );
+    bool DescribeTransformation(csPDelArray<psTradeTransformations> &, csArray<CraftTransInfo*>* newArray);
+    int Contains(csArray<uint32>* list, uint32 id);
+    int ResultsIn(Result*, int id);
 
-	bool loadTradeTransformationsByPatternAndGroup( Result *result,
-		csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash,
-		csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash );
-	bool freeTradeTransformationsByPatternAndGroup( csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash );
-	bool FindFinalItem( csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txItemHash, csArray<uint32> *finalItems, uint32 itemID, csArray<uint32> *itemStack );
-	bool UniqueInsertIntoItemArray( csArray<uint32> *finalItems, uint32 itemID );
-	bool ListProductionSteps( csArray<CraftTransInfo*> *newArray, csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txResultHash, csArray<uint32> *finalItems, uint32 itemID, uint32 patternID, uint32 groupID, csArray<uint32> *itemStack   );
-
-
-
-	//
-	/////
+    bool loadTradeTransformationsByPatternAndGroup(Result* result, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash);
+    bool freeTradeTransformationsByPatternAndGroup(csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash);
+    bool FindFinalItem(csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txItemHash, csArray<uint32>* finalItems, uint32 itemID, csArray<uint32>* itemStack);
+    bool UniqueInsertIntoItemArray(csArray<uint32>* finalItems, uint32 itemID);
+    bool ListProductionSteps(csArray<CraftTransInfo*>* newArray, csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txResultHash, csArray<uint32>* finalItems, uint32 itemID, uint32 patternID, uint32 groupID, csArray<uint32>* itemStack);
 
 
 
@@ -609,23 +664,23 @@ protected:
       * @param tradePattern  The current pattern message we want to construct.
       * @param patternID    The pattern ID of the pattern we are cacheing.
       */
-    void CacheCraftTransforms( psMsgCraftingInfo* tradePattern, int patternID, int group );
+    void CacheCraftTransforms(psMsgCraftingInfo* tradePattern, int patternID, int group);
 
     /** Caches in the crafting combinations..
       * @param tradePattern  The current pattern message we want to construct.
       * @param patternID    The pattern ID of the pattern we are cacheing.
       */
-    void CacheCraftCombos( psMsgCraftingInfo* tradePattern, int patternID, int group );
+    void CacheCraftCombos(psMsgCraftingInfo* tradePattern, int patternID, int group);
 
-    PSTRAIT_LOCATION ConvertTraitLocationString(const char *locationstring);
+    PSTRAIT_LOCATION ConvertTraitLocationString(const char* locationstring);
 
     class psCacheExpireEvent; // forward decl for next decl
 
     struct CachedObject
     {
         csString name;
-        iCachedObject *object;
-        psCacheExpireEvent *event;
+        iCachedObject* object;
+        psCacheExpireEvent* event;
     };
 
     /**
@@ -637,11 +692,14 @@ protected:
     {
     protected:
         bool valid;
-        CachedObject *myObject;
+        CachedObject* myObject;
 
     public:
-        psCacheExpireEvent(int delayticks,CachedObject *object);
-        void CancelEvent() { valid = false;}
+        psCacheExpireEvent(int delayticks,CachedObject* object);
+        void CancelEvent()
+        {
+            valid = false;
+        }
         virtual void Trigger();  ///< Abstract event processing function
     };
 
@@ -649,7 +707,7 @@ protected:
      *  in memory for a time after we are done with them to
      *  avoid reloading in case they are reused soon.
      */
-    csHash<CachedObject *, csString> generic_object_cache;
+    csHash<CachedObject*, csString> generic_object_cache;
 
     // Common strings data.
     csStringSet msg_strings;
@@ -658,14 +716,14 @@ protected:
     uint32_t num_compressed_strings;
     csMD5::Digest compressed_msg_strings_digest;
 
-    csHash<psSectorInfo *> sectorinfo_by_id;   ///< Sector info list hashed by sector id
-    csHash<psSectorInfo *> sectorinfo_by_name; ///< Sector info list hashed by sector name
+    csHash<psSectorInfo*> sectorinfo_by_id;    ///< Sector info list hashed by sector id
+    csHash<psSectorInfo*> sectorinfo_by_name;  ///< Sector info list hashed by sector name
     csPDelArray<psTrait > traitlist;
     csPDelArray<psRaceInfo > raceinfolist;
 
     csHash<psSkillInfo*, int> skillinfo_IDHash;
-    csHash<psSkillInfo *, csString> skillinfo_NameHash;
-    csHash<psSkillInfo *, int> skillinfo_CategoryHash;
+    csHash<psSkillInfo*, csString> skillinfo_NameHash;
+    csHash<psSkillInfo*, int> skillinfo_CategoryHash;
 
     csPDelArray<psItemCategory > itemCategoryList;
     csPDelArray<psWay > wayList;
@@ -674,14 +732,14 @@ protected:
     csHash<ProgressionScript*,csString> scripts;
     csPDelArray<psSpell > spellList;
     //csArray<psItemStats *> basicitemstatslist;
-    csHash<psItemStats *,uint32> itemStats_IDHash;
-    csHash<psItemStats *,csString> itemStats_NameHash;
+    csHash<psItemStats*,uint32> itemStats_IDHash;
+    csHash<psItemStats*,csString> itemStats_NameHash;
     csPDelArray<csPDelArray<psItemAnimation > > item_anim_list;
     csHash<csRef<psGuildInfo> > guildinfo_by_id;
     csHash<psGuildAlliance*> alliance_by_id;
-    csHash<psQuest *> quests_by_id;
-    csHash<psTradePatterns *,uint32> tradePatterns_IDHash;
-    csHash<psTradePatterns *,csString> tradePatterns_NameHash;
+    csHash<psQuest*> quests_by_id;
+    csHash<psTradePatterns*,uint32> tradePatterns_IDHash;
+    csHash<psTradePatterns*,csString> tradePatterns_NameHash;
     csHash<csArray<psTradeProcesses*> *,uint32> tradeProcesses_IDHash;
     csHash<csPDelArray<CombinationConstruction> *,uint32> tradeCombinations_IDHash;
     csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32> tradeTransformations_IDHash;
@@ -697,10 +755,9 @@ protected:
     psCommandManager* commandManager;
     optionEntry rootOptionEntry;
 
-    LootRandomizer *lootRandomizer; ///< A pointer to the lootrandomizer mantained by the cachemanager.
+    LootRandomizer* lootRandomizer; ///< A pointer to the lootrandomizer mantained by the cachemanager.
 
 };
 
 
 #endif
-
