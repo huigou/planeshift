@@ -2857,6 +2857,7 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         }
         else
         {
+            Error3("Operation >%s< failed loading in script >%s<", elem.GetData(), name);
             delete op;
             return NULL;
         }
