@@ -302,7 +302,7 @@ bool RecipeManager::LoadRecipes()
         recipes.Push(newRecipe);
         newRecipe->Load(rs[i]);
     }
-    CPrintf(CON_NOTIFY, "Recipes loaded.\n");
+    CPrintf(CON_NOTIFY, "Loaded %d recipes.\n",rs.Count());
     return true;
 }
 

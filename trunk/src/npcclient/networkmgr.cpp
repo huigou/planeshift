@@ -933,7 +933,14 @@ bool NetworkManager::ReceiveNPCList(MsgEntry* msg)
     {
         pid = PID(msg->GetUInt32());
         eid = EID(msg->GetUInt32());
-        CPrintf(CON_WARNING, "%s %s\n", ShowID(pid),ShowID(eid));
+
+        // enable the NPC on NPCCLient if it has an associated npcclient ID
+        NPC* npc = npcclient->FindNPCByPID(pid);
+        if (npc)
+            npc->Disable(false);
+
+        // print the received NPC
+        CPrintf(CON_WARNING, "Enabling NPC %s %s\n", ShowID(pid),ShowID(eid));
     }
 
     return true;

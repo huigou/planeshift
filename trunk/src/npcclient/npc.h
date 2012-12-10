@@ -197,7 +197,10 @@ public:
     uint8_t               GetDRCounter() { return ++DRcounter;}
     void                  SetDRCounter(uint8_t counter) { DRcounter = counter;}
 
+    // Loads an NPC from one row of sc_npc_definitions, it also loads the corresponding brain. Used at boot time
     bool Load(iResultRow& row,csHash<NPCType*, const char*>& npctypes, EventManager* eventmanager, PID usePID);
+
+    // Loads an NPC base information and his brain
     void Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled, EventManager* eventmanager);
 
     bool InsertCopy(PID use_char_id, PID ownerPID);

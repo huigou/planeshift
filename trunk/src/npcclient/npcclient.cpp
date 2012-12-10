@@ -559,6 +559,12 @@ bool psNPCClient::LoadNPCTypes()
             }
         }
     }
+
+    if (postponedNPCTypeID.IsEmpty()) {
+        CPrintf(CON_WARNING, "Loaded %d NPC Types.\n", rs.Count());
+    } else
+        CPrintf(CON_WARNING, "Tried to load %d NPC Types, but %d failed.\n", rs.Count(), postponedNPCTypeID.GetSize());
+
     //success only if the array is empty at this point, else failure.
     return postponedNPCTypeID.IsEmpty();
 }
@@ -840,6 +846,7 @@ bool psNPCClient::ReadNPCsFromDatabase()
         Error2("Could not load npcs from db: %s",db->GetLastError() );
         return false;
     }
+    int loadedNPCs = 0;
     for (unsigned long i=0; i<rs.Count(); i++)
     {
         csString name = rs[i]["name"];
@@ -853,12 +860,15 @@ bool psNPCClient::ReadNPCsFromDatabase()
             continue;
         }
 
+        // creates a new NPC in NPCClient only
         NPC *npc = new NPC(this, network, world, engine, cdsys);
+        // loads the NPC brain
         if (npc->Load(rs[i],npctypes, eventmanager, 0))
         {
             npc->Tick();
             npcs.Push(npc);
 
+            // check if NPC is part of a tribe
             if (!CheckAttachTribes(npc))
             {
 	            return false;
@@ -876,6 +886,11 @@ bool psNPCClient::ReadNPCsFromDatabase()
                    return false;
                 }
                 npc->SetBrain(brain, eventmanager);
+                loadedNPCs++;
+            // this NPC is not part of a tribe
+            } else {
+                // disable the NPC by default, we will activate only the ones the server sends us
+                npc->Disable();
             }
         }
         else
@@ -884,6 +899,8 @@ bool psNPCClient::ReadNPCsFromDatabase()
             return false;
         }
     }
+
+    CPrintf(CON_WARNING, "Loaded %d NPCs from sc_npc_definitions.\n", loadedNPCs);
     return true;
 }
 
@@ -1017,6 +1034,8 @@ bool psNPCClient::LoadTribes()
             return false;
         }
     }
+
+    CPrintf(CON_WARNING, "Loaded %d Tribes.\n", rs.Count());
 
     return true;
 }
