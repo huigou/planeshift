@@ -1,7 +1,7 @@
 /*
 * npc.cpp by Keith Fulton <keith@paqrat.com>
 *
-* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -59,13 +59,13 @@
 #include "tribe.h"
 #include "npcbehave.h"
 
-extern iDataConnection *db;
+extern iDataConnection* db;
 
 NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys): checked(false), hatelist(npcclient, engine, world), tick(NULL)
-{ 
-    brain=NULL; 
+{
+    brain=NULL;
     pid=0;
-    last_update=0; 
+    last_update=0;
     npcActor=NULL;
     movable=NULL;
     DRcounter=0;
@@ -79,14 +79,14 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     // Store the active locate in the stored locates structure.
     storedLocates.PutUnique("Active", activeLocate);
 
-    ang_vel=vel=999; 
+    ang_vel=vel=999;
     walkVelocity=runVelocity=0.0; // Will be cached
-    region=NULL; 
+    region=NULL;
     insideRegion = true; // We assume that we start inside the region, if it exists
     insideTribeHome = true; // We assume that we start inside tribe home.
-    last_perception=NULL; 
-    debugging=0; 
-    alive=false; 
+    last_perception=NULL;
+    debugging=0;
+    alive=false;
     tribe=NULL;
     raceInfo=NULL;
     checkedSector=NULL;
@@ -101,7 +101,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     this->cdsys = cdsys;
     this->bufferMemory = NULL;
 
-    for (int i = 0; i < 10; i++)
+    for(int i = 0; i < 10; i++)
     {
         debugLog.Push(csString(""));
     }
@@ -110,35 +110,35 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
 
 NPC::~NPC()
 {
-    if (brain)
+    if(brain)
     {
-        delete brain; 
+        delete brain;
         brain = NULL;
     }
 
-    if (last_perception)
+    if(last_perception)
     {
         delete last_perception;
         last_perception = NULL;
     }
 
-    // Cleare some cached values 
+    // Cleare some cached values
     region = NULL;
     activeLocate->sector = NULL;
     activeLocate->wp = NULL;
     raceInfo = NULL;
 
-    if (bufferMemory)
+    if(bufferMemory)
     {
-       delete bufferMemory;
-       bufferMemory = NULL;
+        delete bufferMemory;
+        bufferMemory = NULL;
     }
 }
 
 void NPC::Tick()
 {
     // If NPC is disabled it should not tick
-    if (disabled)
+    if(disabled)
         return;
 
     // Ensure NPC only has one tick at a time.
@@ -173,36 +173,36 @@ csString NPC::Info()
         float rot;
         InstanceID instance = INSTANCE_ALL;
 
-        if (npcActor)
+        if(npcActor)
         {
             psGameObject::GetPosition(npcActor,pos,rot,sector);
             instance = npcActor->GetInstance();
         }
-	reply.AppendFmt(" Pos: %s Rot: %.2f Inst: %d\n",
+        reply.AppendFmt(" Pos: %s Rot: %.2f Inst: %d\n",
                         npcActor?toString(pos,sector).GetDataSafe():"(none)", rot, instance);
     }
     reply.AppendFmt(" DR Counter: %d ", DRcounter);
     reply.AppendFmt("%s\n",disabled?"Disabled ":"");
 
     reply.AppendFmt(" Active locate: ( Pos: %s Angle: %.1f deg Radius: %.2f WP: %s )\n",
-		    toString(activeLocate->pos,activeLocate->sector).GetDataSafe(),
-		    activeLocate->angle*180/PI,activeLocate->radius,
-		    activeLocate->wp?activeLocate->wp->GetName():"(None)");
+                    toString(activeLocate->pos,activeLocate->sector).GetDataSafe(),
+                    activeLocate->angle*180/PI,activeLocate->radius,
+                    activeLocate->wp?activeLocate->wp->GetName():"(None)");
     reply.AppendFmt(" Spawn pos: %s\n", toString(spawnPosition,spawnSector).GetDataSafe());
-    if (GetOwner())
+    if(GetOwner())
     {
         reply.AppendFmt(" Owner: %s\n",GetOwnerName());
     }
-    if (GetRegion())
+    if(GetRegion())
     {
         reply.AppendFmt(" Region( Name: %s Inside: %s )\n", GetRegion()->GetName(), insideRegion?"Yes":"No");
     }
-    if (GetTribe())
+    if(GetTribe())
     {
-	reply.AppendFmt(" Tribe( Name: %s Type: %s Inside home: %s )\n",
-			GetTribe()->GetName(),GetTribeMemberType().GetDataSafe(),insideTribeHome?"Yes":"No");
+        reply.AppendFmt(" Tribe( Name: %s Type: %s Inside home: %s )\n",
+                        GetTribe()->GetName(),GetTribeMemberType().GetDataSafe(),insideTribeHome?"Yes":"No");
     }
-    if (GetTarget())
+    if(GetTarget())
     {
         reply.AppendFmt(" Target: %s\n",GetTarget()->GetName());
     }
@@ -217,14 +217,14 @@ void NPC::Dump()
 {
     DumpState();
     CPrintf(CON_CMDOUTPUT,"\n");
-    
+
     DumpBehaviorList();
     CPrintf(CON_CMDOUTPUT,"\n");
 
     DumpReactionList();
     CPrintf(CON_CMDOUTPUT,"\n");
 
-    DumpHateList();            
+    DumpHateList();
     CPrintf(CON_CMDOUTPUT,"\n");
 
     DumpDebugLog();
@@ -234,7 +234,7 @@ void NPC::Dump()
     CPrintf(CON_CMDOUTPUT, "Buffers:\n");
     int index = 0;
     BufferHash::GlobalIterator iter = npcBuffer.GetIterator();
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         csString bufferName;
         csString value = iter.Next(bufferName);
@@ -245,9 +245,9 @@ void NPC::Dump()
     {
         CPrintf(CON_CMDOUTPUT, "Name: %s\n", bufferMemory->name.GetData());
         CPrintf(CON_CMDOUTPUT, "Pos: x:%f y:%f z:%f\n",
-                                bufferMemory->pos[0],
-                                bufferMemory->pos[1],
-                                bufferMemory->pos[2]);
+                bufferMemory->pos[0],
+                bufferMemory->pos[1],
+                bufferMemory->pos[2]);
         CPrintf(CON_CMDOUTPUT, "Has Sector:\n");
         if(bufferMemory->GetSector())
             CPrintf(CON_CMDOUTPUT, "Yes\n");
@@ -260,9 +260,9 @@ void NPC::Dump()
     }
 
     csString controlled;
-    for (size_t i = 0; i < controlledActors.GetSize(); i++)
+    for(size_t i = 0; i < controlledActors.GetSize(); i++)
     {
-        if (controlledActors[i].IsValid())
+        if(controlledActors[i].IsValid())
         {
             controlled.AppendFmt(" %s",controlledActors[i]->GetName());
         }
@@ -278,7 +278,7 @@ EID NPC::GetEID()
 
 psLinearMovement* NPC::GetLinMove()
 {
-    if (npcActor)
+    if(npcActor)
     {
         return npcActor->pcmove;
     }
@@ -306,7 +306,7 @@ NPCType* NPC::GetBrain()
     return brain;
 }
 
-void NPC::SetBrain(NPCType *type, EventManager* eventmanager)
+void NPC::SetBrain(NPCType* type, EventManager* eventmanager)
 {
     delete this->brain;
     this->type = type->GetName();
@@ -314,7 +314,7 @@ void NPC::SetBrain(NPCType *type, EventManager* eventmanager)
 
 }
 
-bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventManager* eventmanager, PID usePID)
+bool NPC::Load(iResultRow &row, csHash<NPCType*, const char*> &npctypes, EventManager* eventmanager, PID usePID)
 {
     name = row["name"];
     if(usePID.IsValid())
@@ -324,7 +324,7 @@ bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventMa
     else
     {
         pid   = row.GetInt("char_id");
-        if ( pid == 0 )
+        if(pid == 0)
         {
             Error2("NPC '%s' has no id attribute. Error in XML",name.GetDataSafe());
             return false;
@@ -332,7 +332,7 @@ bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventMa
     }
 
     type = row["npctype"];
-    if ( type.Length() == 0 )
+    if(type.Length() == 0)
     {
         Error3("NPC '%s'(%s) has no type attribute. Error in XML",name.GetDataSafe(),ShowID(pid));
         return false;
@@ -341,24 +341,24 @@ bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventMa
     region_name = row["region"]; // optional
 
     NPCType* t = npctypes.Get(type, NULL);
-    if (!t)
+    if(!t)
     {
-        Error4("NPC '%s'(%s) type '%s' is not found. Error in XML",name.GetDataSafe(),ShowID(pid),(const char *)type);
+        Error4("NPC '%s'(%s) type '%s' is not found. Error in XML",name.GetDataSafe(),ShowID(pid),(const char*)type);
         return false;
     }
 
-    if (row.GetFloat("ang_vel_override") != 0.0)
+    if(row.GetFloat("ang_vel_override") != 0.0)
     {
         ang_vel = row.GetFloat("ang_vel_override");
     }
 
-    if (row.GetFloat("move_vel_override") != 0.0)
+    if(row.GetFloat("move_vel_override") != 0.0)
     {
         vel = row.GetFloat("move_vel_override");
     }
 
-    const char *d = row["console_debug"];
-    if (d && *d=='Y')
+    const char* d = row["console_debug"];
+    if(d && *d=='Y')
     {
         debugging = 5;
     }
@@ -367,8 +367,8 @@ bool NPC::Load(iResultRow& row, csHash<NPCType*, const char*>& npctypes, EventMa
         debugging = 0;
     }
 
-    const char *e = row["disabled"];
-    if (e && (*e=='Y' || *e=='y'))
+    const char* e = row["disabled"];
+    if(e && (*e=='Y' || *e=='y'))
     {
         disabled = true;
     }
@@ -389,9 +389,9 @@ bool NPC::InsertCopy(PID use_char_id, PID ownerPID)
                         "('%s', %d,      '%s',    '%s',     %f,               %f, '%c',%d)",
                         name.GetData(), use_char_id.Unbox(), type.GetData(), region_name.GetData(), ang_vel, vel, IsDebugging() ? 'Y' : 'N', ownerPID.Unbox());
 
-    if (r!=1)
+    if(r!=1)
     {
-        Error3("Error in InsertCopy: %s->%s",db->GetLastQuery(),db->GetLastError() );
+        Error3("Error in InsertCopy: %s->%s",db->GetLastQuery(),db->GetLastError());
     }
     else
     {
@@ -400,15 +400,15 @@ bool NPC::InsertCopy(PID use_char_id, PID ownerPID)
     return (r==1);
 }
 
-void NPC::SetActor(gemNPCActor * actor)
+void NPC::SetActor(gemNPCActor* actor)
 {
     npcActor = actor;
 
     // Initialize active location to a known ok value
-    if (npcActor)
+    if(npcActor)
     {
-        
-        iSector *sector;
+
+        iSector* sector;
         psGameObject::GetPosition(actor,activeLocate->pos,activeLocate->angle,sector);
         movable = actor->pcmesh->GetMesh()->GetMovable();
     }
@@ -418,14 +418,14 @@ void NPC::SetActor(gemNPCActor * actor)
     }
 }
 
-void NPC::SetAlive( bool a )
+void NPC::SetAlive(bool a)
 {
     alive = a;
 }
 
 void NPC::Advance(csTicks when)
 {
-    if (last_update && !disabled)
+    if(last_update && !disabled)
     {
         brain->Advance(when-last_update, this);
 
@@ -435,21 +435,21 @@ void NPC::Advance(csTicks when)
     last_update = when;
 }
 
-void NPC::TriggerEvent(Perception *pcpt, float maxRange,
-                       csVector3 *basePos, iSector *baseSector, bool sameSector)
+void NPC::TriggerEvent(Perception* pcpt, float maxRange,
+                       csVector3* basePos, iSector* baseSector, bool sameSector)
 {
-    if (disabled)
+    if(disabled)
     {
         Printf(15,"Disabled so rejecting perception #s"
-               ,pcpt->ToString(this).GetData() );
+               ,pcpt->ToString(this).GetData());
         return;
     }
 
-    if (maxRange > 0.0)
+    if(maxRange > 0.0)
     {
         // This is a range based perception
         gemNPCActor* me = GetActor();
-        if (!me)
+        if(!me)
         {
             Printf(15,"Can't do a ranged based check without an actor");
             return;
@@ -459,22 +459,22 @@ void NPC::TriggerEvent(Perception *pcpt, float maxRange,
         iSector*  sector;
         psGameObject::GetPosition(me, pos, sector);
 
-        if (sameSector && sector != baseSector)
+        if(sameSector && sector != baseSector)
         {
             return;
         }
 
         float distance = world->Distance(pos, sector, *basePos, baseSector);
 
-        if (distance > maxRange)
+        if(distance > maxRange)
         {
             Printf(15,"The distance %.2f is outside range %.2f of perception %s",
-                   distance, maxRange, pcpt->ToString(this).GetData() );
+                   distance, maxRange, pcpt->ToString(this).GetData());
             return;
         }
     }
-    
-    Printf(10,"Got event %s",pcpt->ToString(this).GetData() );
+
+    Printf(10,"Got event %s",pcpt->ToString(this).GetData());
     brain->FirePerception(this, pcpt);
 }
 
@@ -484,16 +484,16 @@ void NPC::TriggerEvent(const char* pcpt)
     TriggerEvent(&perc, -1, NULL, NULL, false);
 }
 
-void NPC::SetLastPerception(Perception *pcpt)
+void NPC::SetLastPerception(Perception* pcpt)
 {
-    if (last_perception)
+    if(last_perception)
         delete last_perception;
     last_perception = pcpt;
 }
 
 gemNPCActor* NPC::GetMostHated(float range, bool includeInvisible, bool includeInvincible, float* hate)
 {
-    iSector *sector=NULL;
+    iSector* sector=NULL;
     csVector3 pos;
     psGameObject::GetPosition(GetActor(), pos, sector);
 
@@ -502,15 +502,15 @@ gemNPCActor* NPC::GetMostHated(float range, bool includeInvisible, bool includeI
 }
 
 
-gemNPCActor* NPC::GetMostHated( csVector3& pos, iSector *sector, float range, LocationType * region, bool includeInvisible, bool includeInvincible, float* hate)
+gemNPCActor* NPC::GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeInvisible, bool includeInvincible, float* hate)
 {
     gemNPCActor* hated = hatelist.GetMostHated(pos, sector, range, region,
-                                               includeInvisible, includeInvincible, hate);
+                         includeInvisible, includeInvincible, hate);
 
-    if (hated)
+    if(hated)
     {
         Printf(5, "Found most hated: %s(%s)", hated->GetName(), ShowID(hated->GetEID()));
-        
+
     }
     else
     {
@@ -520,7 +520,7 @@ gemNPCActor* NPC::GetMostHated( csVector3& pos, iSector *sector, float range, Lo
     return hated;
 }
 
-void NPC::AddToHateList(gemNPCActor *attacker, float delta)
+void NPC::AddToHateList(gemNPCActor* attacker, float delta)
 {
     Printf("Adding %1.2f to hatelist score for %s(%s).",
            delta, attacker->GetName(), ShowID(attacker->GetEID()));
@@ -532,41 +532,41 @@ void NPC::AddToHateList(gemNPCActor *attacker, float delta)
 }
 
 
-float NPC::GetEntityHate(gemNPCActor *ent)
+float NPC::GetEntityHate(gemNPCActor* ent)
 {
     return hatelist.GetHate(ent->GetEID());
 }
 
 void NPC::RemoveFromHateList(EID who)
 {
-    if (hatelist.Remove(who))
+    if(hatelist.Remove(who))
     {
         Printf("Removed %s from hate list.", ShowID(who));
     }
 }
 
-void NPC::SetLocate(const csString& destination, const NPC::Locate& locate )
+void NPC::SetLocate(const csString &destination, const NPC::Locate &locate)
 {
     // Find or create locate
     Locate* current = storedLocates.Get(destination,NULL);
-    if (!current)
+    if(!current)
     {
         current = new Locate;
         storedLocates.PutUnique(destination,current);
     }
-    
+
     // Copy content
     *current = locate;
 }
 
-void NPC::GetActiveLocate(csVector3& pos, iSector*& sector, float& rot)
+void NPC::GetActiveLocate(csVector3 &pos, iSector* &sector, float &rot)
 {
     pos=activeLocate->pos;
     sector = activeLocate->sector;
     rot=activeLocate->angle;
 }
 
-void NPC::GetActiveLocate(Waypoint*& wp)
+void NPC::GetActiveLocate(Waypoint* &wp)
 {
     wp = activeLocate->wp;
 }
@@ -581,43 +581,43 @@ bool NPC::CopyLocate(csString source, csString destination, unsigned int flags)
     Printf(5,"Copy locate from %s to %s (%X)",source.GetDataSafe(),destination.GetDataSafe(),flags);
 
     Locate* sourceLocate = storedLocates.Get(source,NULL);
-    if (!sourceLocate)
+    if(!sourceLocate)
     {
         Printf(5,"Failed to copy, no source found!");
         return false;
     }
 
     Locate* destinationLocation = storedLocates.Get(destination,NULL);
-    if (!destinationLocation)
+    if(!destinationLocation)
     {
         destinationLocation = new Locate;
         storedLocates.PutUnique(destination,destinationLocation);
     }
-    
-    if (flags & LOCATION_POS)
+
+    if(flags & LOCATION_POS)
     {
         destinationLocation->pos    = sourceLocate->pos;
     }
-    if (flags & LOCATION_SECTOR)
+    if(flags & LOCATION_SECTOR)
     {
         destinationLocation->sector = sourceLocate->sector;
     }
-    if (flags & LOCATION_ANGLE)
+    if(flags & LOCATION_ANGLE)
     {
         destinationLocation->angle  = sourceLocate->angle;
     }
-    if (flags & LOCATION_WP)
+    if(flags & LOCATION_WP)
     {
         destinationLocation->wp     = sourceLocate->wp;
     }
-    if (flags & LOCATION_RADIUS)
+    if(flags & LOCATION_RADIUS)
     {
         destinationLocation->radius = sourceLocate->radius;
     }
-    if (flags & LOCATION_TARGET)
+    if(flags & LOCATION_TARGET)
     {
         destinationLocation->target = sourceLocate->target;
-        if (destination == "Active")
+        if(destination == "Active")
         {
             SetTarget(destinationLocation->target);
         }
@@ -628,7 +628,7 @@ bool NPC::CopyLocate(csString source, csString destination, unsigned int flags)
 
 float NPC::GetAngularVelocity()
 {
-    if (ang_vel == 999)
+    if(ang_vel == 999)
         return brain->GetAngularVelocity(this);
     else
         return ang_vel;
@@ -636,7 +636,7 @@ float NPC::GetAngularVelocity()
 
 float NPC::GetVelocity()
 {
-    if (vel == 999)
+    if(vel == 999)
         return brain->GetVelocity(this);
     else
         return vel;
@@ -645,7 +645,7 @@ float NPC::GetVelocity()
 float NPC::GetWalkVelocity()
 {
     // Cache value if not looked up before
-    if (walkVelocity == 0.0)
+    if(walkVelocity == 0.0)
     {
         walkVelocity = npcclient->GetWalkVelocity(npcActor->GetRace());
     }
@@ -656,7 +656,7 @@ float NPC::GetWalkVelocity()
 float NPC::GetRunVelocity()
 {
     // Cache value if not looked up before
-    if (runVelocity == 0.0)
+    if(runVelocity == 0.0)
     {
         runVelocity = npcclient->GetRunVelocity(npcActor->GetRace());
     }
@@ -664,9 +664,9 @@ float NPC::GetRunVelocity()
     return runVelocity;
 }
 
-LocationType *NPC::GetRegion()
+LocationType* NPC::GetRegion()
 {
-    if (region)
+    if(region)
     {
         return region;
     }
@@ -677,10 +677,11 @@ LocationType *NPC::GetRegion()
     }
 }
 
-void NPC::Disable( bool disable)
+void NPC::Disable(bool disable)
 {
     // if not yet enabled, restart the tick
-    if (disabled && !disable) {
+    if(disabled && !disable)
+    {
         disabled = false;
         Tick();
     }
@@ -688,13 +689,13 @@ void NPC::Disable( bool disable)
     disabled = disable;
 
     // Stop the movement
-    
+
     // Set Vel to zero again
     if(GetActor())
     {
-        GetLinMove()->SetVelocity( csVector3(0,0,0) );
-        GetLinMove()->SetAngularVelocity( 0 );
-    
+        GetLinMove()->SetVelocity(csVector3(0,0,0));
+        GetLinMove()->SetAngularVelocity(0);
+
 
         //now persist
         networkmanager->QueueDRData(this);
@@ -710,7 +711,7 @@ void NPC::DumpState()
     float rot;
     InstanceID instance = INSTANCE_ALL;
 
-    if (npcActor)
+    if(npcActor)
     {
         psGameObject::GetPosition(npcActor,loc,rot,sector);
         instance = npcActor->GetInstance();
@@ -723,7 +724,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Instance:            %d\n",instance);
     CPrintf(CON_CMDOUTPUT, "Debugging:           %d\n",debugging);
     csString clients;
-    for (size_t i = 0; i < debugClients.GetSize(); i++)
+    for(size_t i = 0; i < debugClients.GetSize(); i++)
     {
         clients.AppendFmt("  %u",debugClients[i]);
     }
@@ -752,7 +753,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Locates for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
     LocateHash::GlobalIterator iter = storedLocates.GetIterator();
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         csString name;
         Locate* locate = iter.Next(name);
@@ -760,9 +761,9 @@ void NPC::DumpState()
         CPrintf(CON_CMDOUTPUT, "%-15s Angle:    %.2f\n","",locate->angle);
         CPrintf(CON_CMDOUTPUT, "%-15s Radius:   %.2f\n","",locate->radius);
         CPrintf(CON_CMDOUTPUT, "%-15s WP:       %s\n","",locate->wp?locate->wp->GetName():"");
-        
+
     }
-    
+
 }
 
 
@@ -770,7 +771,7 @@ void NPC::DumpBehaviorList()
 {
     CPrintf(CON_CMDOUTPUT, "Behaviors for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------------------\n");
-    
+
     brain->DumpBehaviorList(this);
 }
 
@@ -778,19 +779,19 @@ void NPC::DumpReactionList()
 {
     CPrintf(CON_CMDOUTPUT, "Reactions for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------------------\n");
-    
+
     brain->DumpReactionList(this);
 }
 
 void NPC::DumpHateList()
 {
-    iSector *sector=NULL;
+    iSector* sector=NULL;
     csVector3 pos;
 
     CPrintf(CON_CMDOUTPUT, "Hate list for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
 
-    if (GetActor())
+    if(GetActor())
     {
         psGameObject::GetPosition(GetActor(),pos,sector);
         hatelist.DumpHateList(pos,sector);
@@ -801,11 +802,11 @@ void NPC::DumpDebugLog()
 {
     CPrintf(CON_CMDOUTPUT, "Debug log for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
-    for (size_t i = 0; i < debugLog.GetSize(); i++)
+    for(size_t i = 0; i < debugLog.GetSize(); i++)
     {
         CPrintf(CON_CMDOUTPUT,"%2d %s\n",i,debugLog[(nextDebugLogEntry+i)%debugLog.GetSize()].GetDataSafe());
     }
-    
+
 }
 
 
@@ -831,7 +832,7 @@ gemNPCActor* NPC::GetNearestActor(float range, csVector3 &destPosition, iSector*
     psGameObject::GetPosition(GetActor(), loc, sector);
 
     csArray<gemNPCActor*> nearlist = npcclient->FindNearbyActors(sector, loc, range);
-    if (nearlist.GetSize() > 0)
+    if(nearlist.GetSize() > 0)
     {
         gemNPCActor* nearestEnt = NULL;
         csVector3    nearestLoc;
@@ -839,20 +840,20 @@ gemNPCActor* NPC::GetNearestActor(float range, csVector3 &destPosition, iSector*
 
         float nearestRange=range;
 
-        for (size_t i=0; i<nearlist.GetSize(); i++)
+        for(size_t i=0; i<nearlist.GetSize(); i++)
         {
-            gemNPCActor *ent = nearlist[i];
+            gemNPCActor* ent = nearlist[i];
 
             // Filter own NPC actor
             if(ent == GetActor())
                 continue;
 
             csVector3 loc2;
-            iSector *sector2;
+            iSector* sector2;
             psGameObject::GetPosition(ent, loc2, sector2);
 
             float dist = world->Distance(loc, sector, loc2, sector2);
-            if (dist < nearestRange)
+            if(dist < nearestRange)
             {
                 nearestRange  = dist;
                 nearestEnt    = ent;
@@ -860,7 +861,7 @@ gemNPCActor* NPC::GetNearestActor(float range, csVector3 &destPosition, iSector*
                 nearestSector = sector2;
             }
         }
-        if (nearestEnt)
+        if(nearestEnt)
         {
             destPosition = nearestLoc;
             destSector   = nearestSector;
@@ -879,7 +880,7 @@ gemNPCActor* NPC::GetNearestNPC(float range, csVector3 &destPosition, iSector* &
     psGameObject::GetPosition(GetActor(), loc, sector);
 
     csArray<gemNPCActor*> nearlist = npcclient->FindNearbyActors(sector, loc, range);
-    if (nearlist.GetSize() > 0)
+    if(nearlist.GetSize() > 0)
     {
         gemNPCActor* nearestEnt = NULL;
         csVector3    nearestLoc;
@@ -887,20 +888,20 @@ gemNPCActor* NPC::GetNearestNPC(float range, csVector3 &destPosition, iSector* &
 
         float nearestRange=range;
 
-        for (size_t i=0; i<nearlist.GetSize(); i++)
+        for(size_t i=0; i<nearlist.GetSize(); i++)
         {
-            gemNPCActor *ent = nearlist[i];
+            gemNPCActor* ent = nearlist[i];
 
             // Filter own NPC actor, and all players
             if(ent == GetActor() || !ent->GetNPC())
                 continue;
 
             csVector3 loc2;
-            iSector *sector2;
+            iSector* sector2;
             psGameObject::GetPosition(ent, loc2, sector2);
 
             float dist = world->Distance(loc, sector, loc2, sector2);
-            if (dist < nearestRange)
+            if(dist < nearestRange)
             {
                 nearestRange  = dist;
                 nearestEnt    = ent;
@@ -908,7 +909,7 @@ gemNPCActor* NPC::GetNearestNPC(float range, csVector3 &destPosition, iSector* &
                 nearestSector = sector2;
             }
         }
-        if (nearestEnt)
+        if(nearestEnt)
         {
             destPosition = nearestLoc;
             destSector   = nearestSector;
@@ -927,7 +928,7 @@ gemNPCActor* NPC::GetNearestPlayer(float range, csVector3 &destPosition, iSector
     psGameObject::GetPosition(GetActor(), loc, sector);
 
     csArray<gemNPCActor*> nearlist = npcclient->FindNearbyActors(sector, loc, range);
-    if (nearlist.GetSize() > 0)
+    if(nearlist.GetSize() > 0)
     {
         gemNPCActor* nearestEnt = NULL;
         csVector3    nearestLoc;
@@ -935,20 +936,20 @@ gemNPCActor* NPC::GetNearestPlayer(float range, csVector3 &destPosition, iSector
 
         float nearestRange=range;
 
-        for (size_t i=0; i<nearlist.GetSize(); i++)
+        for(size_t i=0; i<nearlist.GetSize(); i++)
         {
-            gemNPCActor *ent = nearlist[i];
+            gemNPCActor* ent = nearlist[i];
 
             // Filter own NPC actor, and all NPCs
             if(ent == GetActor() || ent->GetNPC())
                 continue;
 
             csVector3 loc2;
-            iSector *sector2;
+            iSector* sector2;
             psGameObject::GetPosition(ent, loc2, sector2);
 
             float dist = world->Distance(loc, sector, loc2, sector2);
-            if (dist < nearestRange)
+            if(dist < nearestRange)
             {
                 nearestRange  = dist;
                 nearestEnt    = ent;
@@ -956,7 +957,7 @@ gemNPCActor* NPC::GetNearestPlayer(float range, csVector3 &destPosition, iSector
                 nearestSector = sector2;
             }
         }
-        if (nearestEnt)
+        if(nearestEnt)
         {
             destPosition = nearestLoc;
             destSector   = nearestSector;
@@ -978,19 +979,19 @@ gemNPCActor* NPC::GetNearestVisibleFriend(float range)
     psGameObject::GetPosition(GetActor(), loc, sector);
 
     csArray<gemNPCObject*> nearlist = npcclient->FindNearbyEntities(sector,loc,range);
-    if (nearlist.GetSize() > 0)
+    if(nearlist.GetSize() > 0)
     {
         min_range=range;
-        for (size_t i=0; i<nearlist.GetSize(); i++)
+        for(size_t i=0; i<nearlist.GetSize(); i++)
         {
-            gemNPCObject *ent = nearlist[i];
+            gemNPCObject* ent = nearlist[i];
             NPC* npcFriend = ent->GetNPC();
 
-            if (!npcFriend || npcFriend == this)
+            if(!npcFriend || npcFriend == this)
                 continue;
 
             csVector3 loc2, isect;
-            iSector *sector2;
+            iSector* sector2;
             psGameObject::GetPosition(ent, loc2, sector2);
 
             float dist = (loc2 - loc).Norm();
@@ -1000,11 +1001,11 @@ gemNPCActor* NPC::GetNearestVisibleFriend(float range)
             // Is this friend visible?
             csIntersectingTriangle closest_tri;
             iMeshWrapper* sel = 0;
-            
-            dist = csColliderHelper::TraceBeam (npcclient->GetCollDetSys(), sector,
-                loc + csVector3(0, 0.6f, 0), loc2 + csVector3(0, 0.6f, 0), true, closest_tri, isect, &sel);
+
+            dist = csColliderHelper::TraceBeam(npcclient->GetCollDetSys(), sector,
+                                               loc + csVector3(0, 0.6f, 0), loc2 + csVector3(0, 0.6f, 0), true, closest_tri, isect, &sel);
             // Not visible
-            if (dist > 0)
+            if(dist > 0)
                 continue;
 
             min_range = (loc2 - loc).Norm();
@@ -1024,31 +1025,31 @@ gemNPCActor* NPC::GetNearestDeadActor(float range)
     psGameObject::GetPosition(GetActor(), loc, sector);
 
     csArray<gemNPCObject*> nearlist = npcclient->FindNearbyEntities(sector,loc,range);
-    if (nearlist.GetSize() > 0)
+    if(nearlist.GetSize() > 0)
     {
         min_range=range;
-        for (size_t i=0; i<nearlist.GetSize(); i++)
+        for(size_t i=0; i<nearlist.GetSize(); i++)
         {
             // Check if this is an Actor
-            gemNPCActor *ent = dynamic_cast<gemNPCActor*>(nearlist[i]);
-            if (!ent)
+            gemNPCActor* ent = dynamic_cast<gemNPCActor*>(nearlist[i]);
+            if(!ent)
             {
                 continue; // No actor
             }
-            
+
             // Check if this is an NPC
-            if (ent->GetNPC())
+            if(ent->GetNPC())
             {
                 continue; // This is and NPC
             }
-            
-            if (ent->IsAlive())
+
+            if(ent->IsAlive())
             {
                 continue;
             }
 
             csVector3 loc2, isect;
-            iSector *sector2;
+            iSector* sector2;
             psGameObject::GetPosition(ent, loc2, sector2);
 
             float dist = (loc2 - loc).Norm();
@@ -1062,7 +1063,7 @@ gemNPCActor* NPC::GetNearestDeadActor(float range)
     return nearEnt;
 }
 
-void NPC::Printf(const char *msg,...)
+void NPC::Printf(const char* msg,...)
 {
     va_list args;
 
@@ -1074,7 +1075,7 @@ void NPC::Printf(const char *msg,...)
     va_end(args);
 }
 
-void NPC::Printf(int debug, const char *msg,...)
+void NPC::Printf(int debug, const char* msg,...)
 {
     va_list args;
 
@@ -1086,12 +1087,12 @@ void NPC::Printf(int debug, const char *msg,...)
     va_end(args);
 }
 
-void NPC::VPrintf(int debug, const char *msg, va_list args)
+void NPC::VPrintf(int debug, const char* msg, va_list args)
 {
     char str[1024];
-   
+
     if(!IsDebugging())
-        return; 
+        return;
 
     vsprintf(str, msg, args);
 
@@ -1099,12 +1100,12 @@ void NPC::VPrintf(int debug, const char *msg, va_list args)
     debugLog[nextDebugLogEntry] = str;
     nextDebugLogEntry = (nextDebugLogEntry+1)%debugLog.GetSize();
 
-    if (!IsDebugging(debug))
+    if(!IsDebugging(debug))
         return;
 
     CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), str);
 
-    for (size_t i = 0; i < debugClients.GetSize(); i++)
+    for(size_t i = 0; i < debugClients.GetSize(); i++)
     {
         networkmanager->QueueSystemInfoCommand(debugClients[i],"%s (%s)> %s", GetName(), ShowID(pid), str);
     }
@@ -1113,25 +1114,25 @@ void NPC::VPrintf(int debug, const char *msg, va_list args)
 gemNPCObject* NPC::GetTarget()
 {
     // If something is targeted, use it.
-    if (target_id != 0)
+    if(target_id != 0)
     {
         // Check if visible
-        gemNPCObject * obj = npcclient->FindEntityID(target_id);
-        if (obj && obj->IsInvisible())
+        gemNPCObject* obj = npcclient->FindEntityID(target_id);
+        if(obj && obj->IsInvisible())
         {
             Printf(15, "GetTarget returning nothing, target is invisible");
             return NULL;
         }
-        
+
         return obj;
     }
     else  // if not, try the last perception entity
     {
-        if (GetLastPerception())
+        if(GetLastPerception())
         {
             gemNPCObject* target = NULL;
             gemNPCObject* entity = GetLastPerception()->GetTarget();
-            if (entity)
+            if(entity)
             {
                 target = npcclient->FindEntityID(entity->GetEID());
             }
@@ -1142,9 +1143,9 @@ gemNPCObject* NPC::GetTarget()
     return NULL;
 }
 
-void NPC::SetTarget(gemNPCObject *t)
+void NPC::SetTarget(gemNPCObject* t)
 {
-    if (t == NULL)
+    if(t == NULL)
     {
         Printf(10,"Clearing target");
         target_id = EID(0);
@@ -1157,62 +1158,62 @@ void NPC::SetTarget(gemNPCObject *t)
 }
 
 
-gemNPCObject *NPC::GetOwner()
+gemNPCObject* NPC::GetOwner()
 {
-    if (owner_id.IsValid())
+    if(owner_id.IsValid())
     {
-        return npcclient->FindEntityID( owner_id );
-    }        
+        return npcclient->FindEntityID(owner_id);
+    }
     return NULL;
 }
 
-const char * NPC::GetOwnerName()
+const char* NPC::GetOwnerName()
 {
-    if (owner_id.IsValid())
+    if(owner_id.IsValid())
     {
-        gemNPCObject *obj = npcclient->FindEntityID( owner_id );
-        if (obj)
+        gemNPCObject* obj = npcclient->FindEntityID(owner_id);
+        if(obj)
         {
             return obj->GetName();
         }
-    }        
+    }
 
-    return "";        
+    return "";
 }
 
 void NPC::SetOwner(EID owner_EID)
 {
-    if (owner_EID.IsValid())
+    if(owner_EID.IsValid())
         owner_id = owner_EID;
 }
 
-void NPC::SetTribe(Tribe * new_tribe)
+void NPC::SetTribe(Tribe* new_tribe)
 {
     tribe = new_tribe;
 }
 
-Tribe * NPC::GetTribe()
+Tribe* NPC::GetTribe()
 {
     return tribe;
 }
 
-void  NPC::SetTribeMemberType( const char* tribeMemberType )
+void  NPC::SetTribeMemberType(const char* tribeMemberType)
 {
     this->tribeMemberType = tribeMemberType;
 }
 
-const csString&  NPC::GetTribeMemberType() const
+const csString  &NPC::GetTribeMemberType() const
 {
     return tribeMemberType;
 }
 
 RaceInfo_t* NPC::GetRaceInfo()
 {
-    if (!raceInfo && npcActor)
+    if(!raceInfo && npcActor)
     {
         raceInfo = npcclient->GetRaceInfo(npcActor->GetRace());
     }
-    
+
     return raceInfo;
 }
 
@@ -1229,7 +1230,7 @@ void NPC::ReleaseControl(gemNPCActor* actor)
 
 void NPC::UpdateControlled()
 {
-    if (controlledActors.IsEmpty())
+    if(controlledActors.IsEmpty())
     {
         return;
     }
@@ -1237,13 +1238,13 @@ void NPC::UpdateControlled()
     csVector3 pos,vel;
     float yrot;
     iSector* sector;
-    
+
     psGameObject::GetPosition(GetActor(), pos, yrot, sector);
     vel = GetLinMove()->GetVelocity();
 
-    for (size_t i = 0; i < controlledActors.GetSize(); i++)
+    for(size_t i = 0; i < controlledActors.GetSize(); i++)
     {
-        if (controlledActors[i].IsValid())
+        if(controlledActors[i].IsValid())
         {
             gemNPCActor* controlled = controlledActors[i];
 
@@ -1253,9 +1254,9 @@ void NPC::UpdateControlled()
             psGameObject::SetPosition(controlled, pos, sector);
             psGameObject::SetRotationAngle(controlled, yrot);
             controlled->pcmove->SetVelocity(vel);
-            
+
             // Queue the new controlled position to the server.
-            networkmanager->QueueControlCommand(GetActor(), controlled );
+            networkmanager->QueueControlCommand(GetActor(), controlled);
         }
     }
 }
@@ -1263,8 +1264,8 @@ void NPC::UpdateControlled()
 void NPC::CheckPosition()
 {
     // We only need to check the position once
-    
-    npcMesh *pcmesh =  GetActor()->pcmesh;
+
+    npcMesh* pcmesh =  GetActor()->pcmesh;
 
     if(checked)
     {
@@ -1288,7 +1289,7 @@ void NPC::CheckPosition()
     iSector* sector = pcmesh->GetMesh()->GetMovable()->GetSectors()->Get(0);
     // See what happens in the next 10 seconds
     int count = 100;
-    while (count--)
+    while(count--)
     {
         GetLinMove()->ExtrapolatePosition(0.1f);
         vel = GetLinMove()->GetVelocity();
@@ -1317,10 +1318,10 @@ void NPC::CheckPosition()
 
 void NPC::StoreSpawnPosition()
 {
-    psGameObject::GetPosition(GetActor(), spawnPosition, spawnSector );
+    psGameObject::GetPosition(GetActor(), spawnPosition, spawnSector);
 }
 
-const csVector3& NPC::GetSpawnPosition() const
+const csVector3 &NPC::GetSpawnPosition() const
 {
     return spawnPosition;
 }
@@ -1332,7 +1333,7 @@ iSector* NPC::GetSpawnSector() const
 
 void NPC::SetBufferMemory(Tribe::Memory* memory)
 {
-    if (bufferMemory == NULL)
+    if(bufferMemory == NULL)
     {
         bufferMemory = new Tribe::Memory();
     }
@@ -1350,7 +1351,7 @@ void NPC::SetBuildingSpot(Tribe::Asset* buildingSpot)
     this->buildingSpot = buildingSpot;
 }
 
-    
+
 /** Get the stored building spot for this NPC
  */
 Tribe::Asset* NPC::GetBuildingSpot()
@@ -1360,7 +1361,7 @@ Tribe::Asset* NPC::GetBuildingSpot()
 
 
 
-csString NPC::GetBuffer(const csString& bufferName)
+csString NPC::GetBuffer(const csString &bufferName)
 {
     csString value = npcBuffer.Get(bufferName,"");
 
@@ -1369,72 +1370,73 @@ csString NPC::GetBuffer(const csString& bufferName)
     return value;
 }
 
-void NPC::SetBuffer(const csString& bufferName, const csString& value)
+void NPC::SetBuffer(const csString &bufferName, const csString &value)
 {
     Printf(6,"Set Buffer(%s,%s)",bufferName.GetDataSafe(),value.GetDataSafe());
 
     npcBuffer.PutUnique(bufferName,value);
 }
 
-void NPC::ReplaceBuffers(csString& result)
+void NPC::ReplaceBuffers(csString &result)
 {
     // Only replace if there is something to replace
-    if (result.Find("$NBUFFER[") == ((size_t)-1) ) return;
+    if(result.Find("$NBUFFER[") == ((size_t)-1)) return;
 
     BufferHash::GlobalIterator iter = npcBuffer.GetIterator();
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         csString bufferName;
         csString value = iter.Next(bufferName);
         csString replace("$NBUFFER[");
         replace += bufferName;
         replace += "]";
-        
+
         result.ReplaceAll(replace,value);
     }
 }
 
-void NPC::ReplaceLocations(csString& result)
+void NPC::ReplaceLocations(csString &result)
 {
     size_t startPos,endPos;
-    
+
     // Only replace if there is something to replace
     startPos = result.Find("$LOCATION[");
-    while (startPos != ((size_t)-1))
+    while(startPos != ((size_t)-1))
     {
         endPos = result.FindFirst(']',startPos);
-        if (endPos == ((size_t)-1)) return; // There should always be a ] after $LOCATION
+        if(endPos == ((size_t)-1)) return;  // There should always be a ] after $LOCATION
 
         csString locationString = result.Slice(startPos+10,endPos-(startPos+10));
 
         csArray<csString> strArr = psSplit(locationString,'.');
-        if (strArr.GetSize() != 2) return; // Should always be a location and an attribute.
-        
+        if(strArr.GetSize() != 2) return;  // Should always be a location and an attribute.
+
         NPC::Locate* location = storedLocates.Get(strArr[0],NULL);
-        if (!location)
+        if(!location)
         {
             Error4("NPC %s(%s) Failed to find location %s in replace locations",
                    GetName(),ShowID(GetEID()),strArr[0].GetDataSafe());
             return; // Failed to find location
         }
-        
-        csString replace;
-        
 
-        if (strArr[1].CompareNoCase("targetEID"))
+        csString replace;
+
+
+        if(strArr[1].CompareNoCase("targetEID"))
         {
-            if (location->target.IsValid())
+            if(location->target.IsValid())
             {
                 replace = ShowID(location->target->GetEID());
             }
         }
-        else if (strArr[1].CompareNoCase("targetName"))
+        else if(strArr[1].CompareNoCase("targetName"))
         {
-            if (location->target.IsValid())
+            if(location->target.IsValid())
             {
                 replace = location->target->GetName();
             }
-        } else
+        }
+        else
         {
             Error5("NPC %s(%s) Failed to find find attribute %s for location %s in replace locations",
                    GetName(),ShowID(GetEID()),strArr[1].GetDataSafe(),strArr[0].GetDataSafe());
@@ -1475,8 +1477,8 @@ void NPC::RemoveDebugClient(uint clientnum)
 
 void HateList::AddHate(EID entity_id, float delta)
 {
-    HateListEntry *h = hatelist.Get(entity_id, 0);
-    if (!h)
+    HateListEntry* h = hatelist.Get(entity_id, 0);
+    if(!h)
     {
         h = new HateListEntry;
         h->entity_id   = entity_id;
@@ -1489,43 +1491,43 @@ void HateList::AddHate(EID entity_id, float delta)
     }
 }
 
-gemNPCActor *HateList::GetMostHated(csVector3& pos, iSector *sector, float range, LocationType * region, bool includeInvisible, bool includeInvincible, float* hate)
+gemNPCActor* HateList::GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeInvisible, bool includeInvincible, float* hate)
 {
-    gemNPCObject *mostHated = NULL;
+    gemNPCObject* mostHated = NULL;
     float mostHateAmount=0.0;
 
     csArray<gemNPCObject*> list = npcclient->FindNearbyEntities(sector,pos,range);
-    for (size_t i=0; i<list.GetSize(); i++)
+    for(size_t i=0; i<list.GetSize(); i++)
     {
-        HateListEntry *h = hatelist.Get( list[i]->GetEID(),0 );
-        if (h)
+        HateListEntry* h = hatelist.Get(list[i]->GetEID(),0);
+        if(h)
         {
-            gemNPCObject * obj = npcclient->FindEntityID(list[i]->GetEID());
+            gemNPCObject* obj = npcclient->FindEntityID(list[i]->GetEID());
 
-            if (!obj) continue;
+            if(!obj) continue;
 
             // Skipp if invisible or invincible
-            if (obj->IsInvisible() && !includeInvisible) continue;
-            if (obj->IsInvincible() && !includeInvincible) continue;
-            
-            if (!mostHated || h->hate_amount > mostHateAmount)
+            if(obj->IsInvisible() && !includeInvisible) continue;
+            if(obj->IsInvincible() && !includeInvincible) continue;
+
+            if(!mostHated || h->hate_amount > mostHateAmount)
             {
                 csVector3 objPos;
                 iSector* objSector;
                 psGameObject::GetPosition(obj, objPos, objSector);
-                
+
                 // Don't include if a region is defined and obj not within region.
-                if (region && !region->CheckWithinBounds(engine,objPos,objSector)) 
+                if(region && !region->CheckWithinBounds(engine,objPos,objSector))
                 {
                     continue;
                 }
-                
+
                 mostHated = list[i];
                 mostHateAmount = h->hate_amount;
             }
         }
     }
-    if (hate)
+    if(hate)
     {
         *hate = mostHateAmount;
     }
@@ -1544,28 +1546,28 @@ void HateList::Clear()
 
 float HateList::GetHate(EID ent)
 {
-    HateListEntry *h = hatelist.Get(ent, 0);
-    if (h)
+    HateListEntry* h = hatelist.Get(ent, 0);
+    if(h)
         return h->hate_amount;
     else
         return 0;
 }
 
-void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
+void HateList::DumpHateList(const csVector3 &myPos, iSector* mySector)
 {
     csHash<HateListEntry*, EID>::GlobalIterator iter = hatelist.GetIterator();
 
     CPrintf(CON_CMDOUTPUT, "%6s %5s %-40s %5s %s\n",
             "Entity","Hated","Pos","Range","Flags");
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
-        HateListEntry *h = (HateListEntry *)iter.Next();
+        HateListEntry* h = (HateListEntry*)iter.Next();
         csVector3 pos(9.9f,9.9f,9.9f);
         gemNPCObject* obj = npcclient->FindEntityID(h->entity_id);
         csString sectorName;
 
-        if (obj)
+        if(obj)
         {
             iSector* sector;
             psGameObject::GetPosition(obj,pos,sector);
@@ -1577,11 +1579,11 @@ void HateList::DumpHateList(const csVector3& myPos, iSector *mySector)
                     h->entity_id.Unbox(), h->hate_amount, toString(pos, sector).GetDataSafe(),
                     world->Distance(pos,sector,myPos,mySector));
             // Print flags
-            if (obj->IsInvisible())
+            if(obj->IsInvisible())
             {
                 CPrintf(CON_CMDOUTPUT," Invisible");
             }
-            if (obj->IsInvincible())
+            if(obj->IsInvincible())
             {
                 CPrintf(CON_CMDOUTPUT," Invincible");
             }
