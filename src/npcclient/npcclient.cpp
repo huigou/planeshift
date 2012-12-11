@@ -1158,6 +1158,10 @@ void psNPCClient::TriggerEvent(Perception* pcpt, float maxRange,
 {
     for(size_t i=0; i<npcs.GetSize(); i++)
     {
+        // skip disabled NPCs
+        if (npcs[i]->IsDisabled())
+            continue;
+
         if(npcs[i]==NULL)   // one of our npcs is not active right now
             continue;
 
@@ -1826,6 +1830,10 @@ void psNPCClient::PerceptProximityItems()
 
             for(size_t i=0; i<npcs.GetSize(); i++)
             {
+                // skip disabled NPCs
+                if (npcs[i]->IsDisabled())
+                    continue;
+
                 if(npcs[i]==NULL || npcs[i]->GetActor() == NULL)  // Can't do anyting unless we have both
                     continue;
 
