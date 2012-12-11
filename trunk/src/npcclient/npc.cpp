@@ -137,6 +137,10 @@ NPC::~NPC()
 
 void NPC::Tick()
 {
+    // If NPC is disabled it should not tick
+    if (disabled)
+        return;
+
     // Ensure NPC only has one tick at a time.
     CS_ASSERT(tick == NULL);
 
@@ -675,6 +679,12 @@ LocationType *NPC::GetRegion()
 
 void NPC::Disable( bool disable)
 {
+    // if not yet enabled, restart the tick
+    if (disabled && !disable) {
+        disabled = false;
+        Tick();
+    }
+
     disabled = disable;
 
     // Stop the movement
@@ -690,6 +700,7 @@ void NPC::Disable( bool disable)
         networkmanager->QueueDRData(this);
         networkmanager->QueueImperviousCommand(GetActor(),true);
     }
+
 }
 
 void NPC::DumpState()
