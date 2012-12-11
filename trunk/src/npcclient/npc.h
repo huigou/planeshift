@@ -1,7 +1,7 @@
 /*
 * npc.h
 *
-* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -60,7 +60,7 @@ struct RaceInfo_t;
 #define NPC_BRAIN_TICK 200
 
 /**
-* This object represents the entities which have attacked or 
+* This object represents the entities which have attacked or
 * hurt the NPC and prioritizes them.
 */
 class HateList
@@ -69,10 +69,15 @@ protected:
     csHash<HateListEntry*, EID> hatelist;
 
 public:
-    HateList(psNPCClient* npcclient, iEngine* engine, psWorld* world) { this->npcclient = npcclient; this->engine = engine; this->world = world; }
+    HateList(psNPCClient* npcclient, iEngine* engine, psWorld* world)
+    {
+        this->npcclient = npcclient;
+        this->engine = engine;
+        this->world = world;
+    }
 
     void AddHate(EID entity_id, float delta);
-    
+
     /** Find the most hated entity within range of given position
      *
      *  Check the hate list and retrive most hated entity within range.
@@ -85,12 +90,12 @@ public:
      *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
      *  @return The hated entity
      */
-    gemNPCActor *GetMostHated(csVector3& pos, iSector *sector, float range, LocationType * region, bool includeInvisible, bool includeInvincible, float* hate);
+    gemNPCActor* GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeInvisible, bool includeInvincible, float* hate);
     bool Remove(EID entity_id);
-    void DumpHateList(const csVector3& myPos, iSector *mySector);
+    void DumpHateList(const csVector3 &myPos, iSector* mySector);
     void Clear();
     float GetHate(EID ent);
-    
+
 private:
     psNPCClient* npcclient;
     iEngine* engine;
@@ -132,18 +137,18 @@ protected:
 
     typedef csHash<csString,csString> BufferHash;
 
-    NPCType           *brain;
+    NPCType*           brain;
     csString           type;
     PID                pid;
     csString           name;
     csTicks            last_update;
-    gemNPCActor       *npcActor;
-    iMovable          *movable;
+    gemNPCActor*       npcActor;
+    iMovable*          movable;
     uint8_t            DRcounter;
 
     Locate*            activeLocate;   ///< The current "Active" locate
     LocateHash         storedLocates;  ///< List of stored locate locations
-    
+
     float              ang_vel,vel;
     float              walkVelocity;
     float              runVelocity;
@@ -157,13 +162,13 @@ protected:
     EID                target_id;
 
     Tribe*             tribe;
-    csString           tribeMemberType;      ///< What type/class is this NPC in the tribe. 
+    csString           tribeMemberType;      ///< What type/class is this NPC in the tribe.
     bool               insideTribeHome;      ///< State variable for inside outside tribe home checks.
-        
+
     csVector3          spawnPosition;        ///< The stored position that this NPC where spawned
     iSector*           spawnSector;          ///< The stored sector that this NPC where spawned
 
-    RaceInfo_t        *raceInfo;
+    RaceInfo_t*        raceInfo;
 
     csArray< csWeakRef<gemNPCActor> > controlledActors; ///< Actors that are dragged/pushed around by this NPC.
 
@@ -175,53 +180,77 @@ protected:
     bool               disabled;
 
     int                fallCounter; // Incremented if the NPC fall off the map
-    
+
     void Advance(csTicks when);
 
 public:
     HateList           hatelist;
-    
+
     NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys);
     virtual ~NPC();
 
-    
+
     void Tick();
-    
-    PID                   GetPID() { return pid; }
+
+    PID                   GetPID()
+    {
+        return pid;
+    }
     /**
      * Return the entity ID if an entity exist else 0.
      */
     EID                   GetEID();
-    iMovable             *GetMovable()   { return movable; }
-    psLinearMovement     *GetLinMove();
-    uint8_t               GetDRCounter() { return ++DRcounter;}
-    void                  SetDRCounter(uint8_t counter) { DRcounter = counter;}
+    iMovable*             GetMovable()
+    {
+        return movable;
+    }
+    psLinearMovement*     GetLinMove();
+    uint8_t               GetDRCounter()
+    {
+        return ++DRcounter;
+    }
+    void                  SetDRCounter(uint8_t counter)
+    {
+        DRcounter = counter;
+    }
 
     // Loads an NPC from one row of sc_npc_definitions, it also loads the corresponding brain. Used at boot time
-    bool Load(iResultRow& row,csHash<NPCType*, const char*>& npctypes, EventManager* eventmanager, PID usePID);
+    bool Load(iResultRow &row,csHash<NPCType*, const char*> &npctypes, EventManager* eventmanager, PID usePID);
 
     // Loads an NPC base information and his brain
     void Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled, EventManager* eventmanager);
 
     bool InsertCopy(PID use_char_id, PID ownerPID);
 
-    void SetActor(gemNPCActor * actor);
-    gemNPCActor * GetActor() { return npcActor; }
-    const char* GetName() {return name.GetDataSafe();}
+    void SetActor(gemNPCActor* actor);
+    gemNPCActor* GetActor()
+    {
+        return npcActor;
+    }
+    const char* GetName()
+    {
+        return name.GetDataSafe();
+    }
     void SetAlive(bool a);
-    bool IsAlive() const { return alive; }
+    bool IsAlive() const
+    {
+        return alive;
+    }
     void Disable(bool disable = true);
-    bool IsDisabled() { return disabled; }
+    bool IsDisabled()
+    {
+        return disabled;
+    }
 
-    Behavior *GetCurrentBehavior();
-    NPCType  *GetBrain();
+    Behavior* GetCurrentBehavior();
+    NPCType*  GetBrain();
 
     /**
      * Sets a new brain (npctype)  to this npc.
      * @param type The new type to assign to this npc.
      * @param eventmanager A pointer to the npcclient eventmanager.
      */
-    void SetBrain(NPCType *type, EventManager* eventmanager);
+    void SetBrain(NPCType* type, EventManager* eventmanager);
 
     /** Callback for debug scope timers
      */
@@ -233,7 +262,7 @@ public:
      *  and the "info <pid> npcclient console command.
      */
     csString Info();
-    
+
     /** Dump all information for one NPC to the console.
      *
      *  The main use of this fuction is the "print <pid>"
@@ -278,8 +307,8 @@ public:
      * @param basePos    The base position for range checks.
      * @param baseSector The base sector for range checks.
      * @param sameSector Only trigger if in same sector
-     */    
-    void TriggerEvent(Perception *pcpt, float maxRange=-1.0,
+     */
+    void TriggerEvent(Perception* pcpt, float maxRange=-1.0,
                       csVector3* basePos=NULL, iSector* baseSector=NULL,
                       bool sameSector=false);
 
@@ -290,9 +319,12 @@ public:
      * for the rest of the arguments
      */
     void TriggerEvent(const char* pcpt);
-    
-    void SetLastPerception(Perception *pcpt);
-    Perception *GetLastPerception() { return last_perception; }
+
+    void SetLastPerception(Perception* pcpt);
+    Perception* GetLastPerception()
+    {
+        return last_perception;
+    }
 
     /** Find the most hated entity within range of the NPC
      *
@@ -318,27 +350,27 @@ public:
      *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
      *  @return The hated entity
      */
-    gemNPCActor* GetMostHated(csVector3& pos, iSector *sector, float range, LocationType * region, bool includeInvisible, bool includeInvincible, float* hate);
+    gemNPCActor* GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeInvisible, bool includeInvincible, float* hate);
 
-    
-    float GetEntityHate(gemNPCActor *ent);
-    void AddToHateList(gemNPCActor *attacker,float delta);
+
+    float GetEntityHate(gemNPCActor* ent);
+    void AddToHateList(gemNPCActor* attacker,float delta);
     void RemoveFromHateList(EID who);
 
     /** Set the NPCs locate.
      */
-    void SetLocate(const csString& destination, const NPC::Locate& locate );
+    void SetLocate(const csString &destination, const NPC::Locate &locate);
 
     /** Get the NPCs current active locate.
      */
-    void GetActiveLocate(csVector3& pos, iSector*& sector, float& rot);
+    void GetActiveLocate(csVector3 &pos, iSector* &sector, float &rot);
 
     /** Return the wp of the current active locate.
      *
      * @param wp will be set with the wp currently in the active locate.
      */
-    void GetActiveLocate(Waypoint*& wp);
-    
+    void GetActiveLocate(Waypoint* &wp);
+
     /** Get the radius of the last locate operatoins
      *
      * @return The radius of the last locate
@@ -353,45 +385,54 @@ public:
 
     /** Replace $LOCATION[<location>.<attribute>]
      */
-    void ReplaceLocations(csString& result);
+    void ReplaceLocations(csString &result);
 
     /** Switch the debuging state of this NPC.
      */
     bool SwitchDebugging();
-    
+
     /** Set a new debug level for this NPC.
      * @param debug New debug level, 0 is no debugging
      */
     void SetDebugging(int debug);
-    
+
     /** Add a client to receive debug information
      * @param clentnum The client to add.
      */
     void AddDebugClient(uint clientnum);
-    
+
     /** Remove client from list of debug receivers.
      * @param clentnum The client to remove.
      */
     void RemoveDebugClient(uint clientnum);
-    
+
     float GetAngularVelocity();
     float GetVelocity();
     float GetWalkVelocity();
     float GetRunVelocity();
 
-    csString& GetRegionName() { return region_name; }
-    LocationType *GetRegion();
+    csString &GetRegionName()
+    {
+        return region_name;
+    }
+    LocationType* GetRegion();
 
     /** Check the inside region state of the npc.
      *
      */
-    bool IsInsideRegion() { return insideRegion; }
-    
+    bool IsInsideRegion()
+    {
+        return insideRegion;
+    }
+
     /** Set the inside region state
      *
      * Keep track of last perception for inbound our, outbound
      */
-    void SetInsideRegion(bool inside) { insideRegion = inside; }
+    void SetInsideRegion(bool inside)
+    {
+        insideRegion = inside;
+    }
 
 
     /** Return the nearest actor within the given range.
@@ -422,19 +463,19 @@ public:
     gemNPCActor* GetNearestPlayer(float range, csVector3 &destPosition, iSector* &destSector, float &destRange);
 
     gemNPCActor* GetNearestVisibleFriend(float range);
-    
+
     gemNPCActor* GetNearestDeadActor(float range);
 
-    void Printf(const char *msg,...);
-    void Printf(int debug, const char *msg,...);
-    void VPrintf(int debug, const char *msg,va_list arg);
+    void Printf(const char* msg,...);
+    void Printf(int debug, const char* msg,...);
+    void VPrintf(int debug, const char* msg,va_list arg);
 
-    gemNPCObject *GetTarget();
-    void SetTarget(gemNPCObject *t);
+    gemNPCObject* GetTarget();
+    void SetTarget(gemNPCObject* t);
 
-    gemNPCObject *GetOwner();
+    gemNPCObject* GetOwner();
     const char* GetOwnerName();
-    
+
     /** Sets the owner of this npc. The server will send us the owner of
      *  the entity connected to it so we can follow it's directions.
      *  @param owner_EID the eid of the entity who owns this npc.
@@ -442,37 +483,43 @@ public:
     void SetOwner(EID owner_EID);
 
     /** Set a new tribe for this npc */
-    void SetTribe(Tribe * new_tribe);
-    
+    void SetTribe(Tribe* new_tribe);
+
     /** Get the tribe this npc belongs to.
      *
      * @return Null if not part of a tribe
      */
-    Tribe * GetTribe();
+    Tribe* GetTribe();
 
     /** Set the type/class for this npc in a tribe.
      */
-    void SetTribeMemberType( const char* tribeMemberType );
+    void SetTribeMemberType(const char* tribeMemberType);
 
     /** Return the type/class for this NPC's tribe membership if any.
      */
-    const csString& GetTribeMemberType() const;
+    const csString &GetTribeMemberType() const;
 
     /** Check the inside tribe home state of the npc.
      *
      */
-    bool IsInsideTribeHome() { return insideTribeHome; }
-    
+    bool IsInsideTribeHome()
+    {
+        return insideTribeHome;
+    }
+
     /** Set the inside tribe home state
      *
      * Keep track of last perception for inbound our, outbound
      */
-    void SetInsideTribeHome(bool inside) { insideTribeHome = inside; }
+    void SetInsideTribeHome(bool inside)
+    {
+        insideTribeHome = inside;
+    }
 
     /** Get the npc race info
      */
-    RaceInfo_t * GetRaceInfo();
-    
+    RaceInfo_t* GetRaceInfo();
+
     /** Take control of another entity.
      */
     void TakeControl(gemNPCActor* actor);
@@ -485,8 +532,14 @@ public:
      */
     void UpdateControlled();
 
-    bool IsDebugging() { return (debugging > 0);};
-    bool IsDebugging(int debug) { return (debugging > 0 && debug <= debugging);};
+    bool IsDebugging()
+    {
+        return (debugging > 0);
+    };
+    bool IsDebugging(int debug)
+    {
+        return (debugging > 0 && debug <= debugging);
+    };
 
     void CheckPosition();
 
@@ -496,25 +549,31 @@ public:
      * spawn position.
      */
     void StoreSpawnPosition();
-    
+
     /** Return the position part of the spawn position */
-    const csVector3& GetSpawnPosition() const;
+    const csVector3 &GetSpawnPosition() const;
 
     /** Return the sector part of the spawn position */
     iSector* GetSpawnSector() const;
 
 
-    /** Increment the fall counter 
+    /** Increment the fall counter
     *
     * Fall counter is used for debugging.
     */
-    void IncrementFallCounter()  { ++fallCounter; }
+    void IncrementFallCounter()
+    {
+        ++fallCounter;
+    }
 
-    /** Return the fall counter 
+    /** Return the fall counter
     *
     * Fall counter is used for debugging.
     */
-    int GetFallCounter()  { return fallCounter; }
+    int GetFallCounter()
+    {
+        return fallCounter;
+    }
 
     /** Return a named buffer from the NPC.
      *
@@ -523,26 +582,29 @@ public:
      * @param The buffer name.
      * @return The content of the named buffer.
      */
-    csString GetBuffer(const csString& bufferName);
+    csString GetBuffer(const csString &bufferName);
     /** Set/Update the value of a named buffer.
      *
      * @param The buffer name.
      * @param The value to put in the buffer.
      */
-    void SetBuffer(const csString& bufferName, const csString& value);
+    void SetBuffer(const csString &bufferName, const csString &value);
     /** Replace $NBUFFER[x] with values from the NPC buffer.
      *
      * @param result String to replace buffers in.
      */
-    void ReplaceBuffers(csString& result);
+    void ReplaceBuffers(csString &result);
 
-    Tribe::Memory* GetBufferMemory() { return bufferMemory; }
+    Tribe::Memory* GetBufferMemory()
+    {
+        return bufferMemory;
+    }
     void SetBufferMemory(Tribe::Memory* memory);
 
     /** Set a building spot for this NPC
      */
     void SetBuildingSpot(Tribe::Asset* buildingSpot);
-    
+
     /** Get the stored building spot for this NPC
      */
     Tribe::Asset* GetBuildingSpot();
@@ -557,7 +619,7 @@ private:
     BufferHash        npcBuffer;        ///< Used to store dynamic data
     Tribe::Memory*    bufferMemory;     ///< Used to store location data
     Tribe::Asset*     buildingSpot;     ///< Used to store current building spot.
-    
+
     friend class psNPCTick;
 
     csArray<csString> debugLog;          ///< Local debug log of last n print statments for this NPC.
@@ -569,18 +631,21 @@ private:
 class psNPCTick : public psGameEvent
 {
 protected:
-    NPC *npc;
+    NPC* npc;
 
 public:
-	psNPCTick(int offsetticks, NPC *npc): psGameEvent(0,offsetticks,"psNPCTick"), npc(npc) {};
+    psNPCTick(int offsetticks, NPC* npc): psGameEvent(0,offsetticks,"psNPCTick"), npc(npc) {};
 
     virtual void Trigger()
     {
-    	npc->tick = NULL;
-    	npc->Tick();
+        npc->tick = NULL;
+        npc->Tick();
     }
 
-    virtual csString ToString() const { return "psNPCTick"; } 
+    virtual csString ToString() const
+    {
+        return "psNPCTick";
+    }
 };
 
 struct HateListEntry
