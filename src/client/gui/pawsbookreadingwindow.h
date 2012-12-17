@@ -35,37 +35,37 @@ public:
 
     bool PostSetup();
 
-    void HandleMessage( MsgEntry* message );
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    void HandleMessage(MsgEntry* message);
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
 
 private:
     pawsTextBox*            name;
     pawsMultiPageTextBox*   description;
-	pawsMultiPageTextBox*   descriptionRight;
+    pawsMultiPageTextBox*   descriptionRight;
     pawsMultiPageTextBox*   descriptionCraft;
-	pawsMultiPageTextBox*   descriptionCraftRight;
+    pawsMultiPageTextBox*   descriptionCraftRight;
     pawsWidget*             writeButton;
     pawsWidget*             saveButton;
-	pawsWidget*				nextButton;
-    pawsWidget*				prevButton;
+    pawsWidget*             nextButton;
+    pawsWidget*             prevButton;
     bool shouldWrite;
     int slotID;
     int containerID;
-	bool usingCraft;
-	csString filenameSafe(const csString &original);
-	bool isBadChar(char c);
-    
+    bool usingCraft;
+    csString filenameSafe(const csString &original);
+    bool isBadChar(char c);
+
     /// Background image.
     csRef<iPawsImage> bookBgImage;
     virtual void Draw();
 
-	int numPages;
-    
+    int numPages;
+
 };
 
-CREATE_PAWS_FACTORY( pawsBookReadingWindow );
+CREATE_PAWS_FACTORY(pawsBookReadingWindow);
 
 
-#endif 
+#endif
 
 

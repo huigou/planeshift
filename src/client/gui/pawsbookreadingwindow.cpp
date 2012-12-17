@@ -38,7 +38,7 @@
 
 #define EDIT 1001
 #define SAVE 1002
-#define NEXT 1003 
+#define NEXT 1003
 #define PREV 1004
 
 //////////////////////////////////////////////////////////////////////
@@ -51,23 +51,23 @@ bool pawsBookReadingWindow::PostSetup()
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_CRAFT_INFO);
 
     // Store some of our children for easy access later on.
-    name = dynamic_cast<pawsTextBox*> (FindWidget("ItemName"));
-    if ( !name ) return false;
+    name = dynamic_cast<pawsTextBox*>(FindWidget("ItemName"));
+    if(!name) return false;
 
-    description = dynamic_cast<pawsMultiPageTextBox*> (FindWidget("ItemDescription"));
-    if ( !description ) return false;
+    description = dynamic_cast<pawsMultiPageTextBox*>(FindWidget("ItemDescription"));
+    if(!description) return false;
 
-	// get the right hand window, this is needed for the open book view
-	descriptionRight = dynamic_cast<pawsMultiPageTextBox*> (FindWidget("ItemDescriptionRight"));
-	if ( !descriptionRight ) return false;
+    // get the right hand window, this is needed for the open book view
+    descriptionRight = dynamic_cast<pawsMultiPageTextBox*>(FindWidget("ItemDescriptionRight"));
+    if(!descriptionRight) return false;
 
-    descriptionCraft = dynamic_cast<pawsMultiPageTextBox*> (FindWidget("ItemDescriptionCraft"));
-	//if ( !descriptionCraft ) return false;
+    descriptionCraft = dynamic_cast<pawsMultiPageTextBox*>(FindWidget("ItemDescriptionCraft"));
+    //if ( !descriptionCraft ) return false;
 
-	// the same for the craft window, otherwise everything could bug
-	descriptionCraftRight = dynamic_cast<pawsMultiPageTextBox*> (FindWidget("ItemDescriptionCraftRight"));
+    // the same for the craft window, otherwise everything could bug
+    descriptionCraftRight = dynamic_cast<pawsMultiPageTextBox*>(FindWidget("ItemDescriptionCraftRight"));
     //if ( !descriptionCraftRight ) return false;
-    
+
     writeButton = FindWidget("WriteButton");
     //if ( !writeButton ) return false;
 
@@ -75,207 +75,221 @@ bool pawsBookReadingWindow::PostSetup()
     //if ( !saveButton ) return false;
 
 
-	nextButton = FindWidget("NextButton");
-	prevButton = FindWidget("PrevButton");
+    nextButton = FindWidget("NextButton");
+    prevButton = FindWidget("PrevButton");
 
-	usingCraft = false; // until the message turns up
+    usingCraft = false; // until the message turns up
     return true;
 }
 
-void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
-{   
-    switch ( me->GetType() )
+void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
+{
+    switch(me->GetType())
     {
         case MSGTYPE_READ_BOOK:
         {
             Show();
-            psReadBookTextMessage mesg( me );
+            psReadBookTextMessage mesg(me);
             csRef<iDocumentNode> docnode = ParseStringGetNode(mesg.text, "Contents", false);
             if(docnode)
             {
-				// I am not sure why these use dynamic_cast while the craft windows
-				// do not
-				dynamic_cast<pawsMultiPageDocumentView*>(description)->SetText(mesg.text.GetData());
-				dynamic_cast<pawsMultiPageDocumentView*>(descriptionRight)->SetText(mesg.text.GetData());
-				
-			}
-            else 
-			{
-					description->SetText(mesg.text);
-					descriptionRight->SetText(mesg.text);
-			}
-            name->SetText( mesg.name );       
+                // I am not sure why these use dynamic_cast while the craft windows
+                // do not
+                dynamic_cast<pawsMultiPageDocumentView*>(description)->SetText(mesg.text.GetData());
+                dynamic_cast<pawsMultiPageDocumentView*>(descriptionRight)->SetText(mesg.text.GetData());
+
+            }
+            else
+            {
+                description->SetText(mesg.text);
+                descriptionRight->SetText(mesg.text);
+            }
+            name->SetText(mesg.name);
             slotID = mesg.slotID;
             containerID = mesg.containerID;
-            if( writeButton )
+            if(writeButton)
             {
-                if( mesg.canWrite ) {
+                if(mesg.canWrite)
+                {
                     writeButton->Show();
-                } else {
+                }
+                else
+                {
                     writeButton->Hide();
                 }
             }
-            if( saveButton )
+            if(saveButton)
             {
-                if( mesg.canWrite ) {
+                if(mesg.canWrite)
+                {
                     saveButton->Show();
-                } else {
+                }
+                else
+                {
                     saveButton->Hide();
                 }
             }
-            if( descriptionCraft )
+            if(descriptionCraft)
             {
                 descriptionCraft->Hide();
             }
-            if( descriptionCraftRight )
+            if(descriptionCraftRight)
             {
                 descriptionCraftRight->Hide();
             }
-			// setup the windows for multi page view
+            // setup the windows for multi page view
 
-			numPages = description->GetNumPages();
-			
-			// set the descriptionRight to be 1 page ahead of description
-			descriptionRight->SetCurrentPageNum(description->GetCurrentPageNum()+1) ;
+            numPages = description->GetNumPages();
+
+            // set the descriptionRight to be 1 page ahead of description
+            descriptionRight->SetCurrentPageNum(description->GetCurrentPageNum()+1) ;
             description->Show();
-			descriptionRight->Show();
+            descriptionRight->Show();
             //set the background image for the book
             bookBgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(mesg.backgroundImg);
             usingCraft = false;
-			break;
+            break;
         }
         case MSGTYPE_CRAFT_INFO:
         {
             Show();
-            if( writeButton ) {
+            if(writeButton)
+            {
                 writeButton->Hide();
             }
-            if( saveButton ) {
+            if(saveButton)
+            {
                 saveButton->Hide();
             }
-            if( description ) {
+            if(description)
+            {
                 description->Hide();
             }
-            if( descriptionRight ) {
+            if(descriptionRight)
+            {
                 descriptionRight->Hide();
             }
             psMsgCraftingInfo mesg(me);
             csString text(mesg.craftInfo);
-            if (text && descriptionCraft)
+            if(text && descriptionCraft)
             {
-				// setup the craft windows for multi page view
-				numPages = descriptionCraft->GetNumPages();
+                // setup the craft windows for multi page view
+                numPages = descriptionCraft->GetNumPages();
                 descriptionCraft->SetText(text.GetData());
-				descriptionCraftRight->SetText(text.GetData());
-				
-				// set the descriptionCraftRight to be one page ahead
-				descriptionCraftRight->SetCurrentPageNum( descriptionCraft->GetCurrentPageNum()+1) ;
-                
-				// show both pages
-				descriptionCraft->Show();
-				descriptionCraftRight->Show();
+                descriptionCraftRight->SetText(text.GetData());
 
-				usingCraft = true;
+                // set the descriptionCraftRight to be one page ahead
+                descriptionCraftRight->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum()+1) ;
+
+                // show both pages
+                descriptionCraft->Show();
+                descriptionCraftRight->Show();
+
+                usingCraft = true;
             }
-            name->SetText( "You discover you can do the following:" );
+            name->SetText("You discover you can do the following:");
             break;
         }
     }
 }
- 
+
 bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
-    if(widget->GetID() == EDIT){
+    if(widget->GetID() == EDIT)
+    {
         // attempt to write on this book
         psWriteBookMessage msg(slotID, containerID);
         msg.SendMessage();
     }
 
-    if (widget->GetID() == SAVE)
+    if(widget->GetID() == SAVE)
     {
         csRef<iVFS> vfs = psengine->GetVFS();
         csString tempFileNameTemplate = "/planeshift/userdata/books/%s.txt", tempFileName;
         csString bookFormat;
-        if (filenameSafe(name->GetText()).Length()) {
+        if(filenameSafe(name->GetText()).Length())
+        {
             tempFileName.Format(tempFileNameTemplate, filenameSafe(name->GetText()).GetData());
         }
-        else { //The title is made up of Only special chars :-(
+        else   //The title is made up of Only special chars :-(
+        {
             tempFileNameTemplate = "/planeshift/userdata/books/book%d.txt";
             unsigned int tempNumber = 0;
             do
             {
-               tempFileName.Format(tempFileNameTemplate, tempNumber);
-               tempNumber++;
-            } while (vfs->Exists(tempFileName));
+                tempFileName.Format(tempFileNameTemplate, tempNumber);
+                tempNumber++;
+            }
+            while(vfs->Exists(tempFileName));
         }
-        
+
         bookFormat = description->GetText();
 #ifdef _WIN32
         bookFormat.ReplaceAll("\n", "\r\n");
 #endif
         vfs->WriteFile(tempFileName, bookFormat, bookFormat.Length());
-        
-        psSystemMessage msg(0, MSG_ACK, "Book saved to %s", tempFileName.GetData()+27 );
+
+        psSystemMessage msg(0, MSG_ACK, "Book saved to %s", tempFileName.GetData()+27);
         msg.FireEvent();
         return true;
     }
 
     if(widget->GetID() == NEXT)
-	{    
-		// traverse forwards if there is a page to go forward to
-		if( !usingCraft )
-		{
-			if( description->GetCurrentPageNum() <= numPages-2)
-			{
-				// pages were set explicitly rather than using the NextPage() functions
-				// this is because the pages are connected in this object
-				description->SetCurrentPageNum(description->GetCurrentPageNum() + 2 );
-				descriptionRight->SetCurrentPageNum(descriptionRight->GetCurrentPageNum() + 2 );
-			}
-		}
-		else
-		{
-			if( descriptionCraft->GetCurrentPageNum() <= numPages-2)
-			{
-				descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum() + 2 );
-				descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum() + 2 );
-			}
-		}
-		return true;
+    {
+        // traverse forwards if there is a page to go forward to
+        if(!usingCraft)
+        {
+            if(description->GetCurrentPageNum() <= numPages-2)
+            {
+                // pages were set explicitly rather than using the NextPage() functions
+                // this is because the pages are connected in this object
+                description->SetCurrentPageNum(description->GetCurrentPageNum() + 2);
+                descriptionRight->SetCurrentPageNum(descriptionRight->GetCurrentPageNum() + 2);
+            }
+        }
+        else
+        {
+            if(descriptionCraft->GetCurrentPageNum() <= numPages-2)
+            {
+                descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum() + 2);
+                descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum() + 2);
+            }
+        }
+        return true;
 
     }
     if(widget->GetID() == PREV)
-	{
-		// traverse backwards if there is a page to go back to	
-		if( !usingCraft )
-		{
-			if( description->GetCurrentPageNum() >= 2 )
-			{
-				description->SetCurrentPageNum(description->GetCurrentPageNum()- 2 );
-				descriptionRight->SetCurrentPageNum(descriptionRight->GetCurrentPageNum()-2 );
-			}
-		}
-		else
-		{
-			if( descriptionCraft->GetCurrentPageNum() >= 2 )
-			{
-				descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum()- 2 );
-				descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum()-2 );
-			}
-		}
-		return true;
+    {
+        // traverse backwards if there is a page to go back to
+        if(!usingCraft)
+        {
+            if(description->GetCurrentPageNum() >= 2)
+            {
+                description->SetCurrentPageNum(description->GetCurrentPageNum()- 2);
+                descriptionRight->SetCurrentPageNum(descriptionRight->GetCurrentPageNum()-2);
+            }
+        }
+        else
+        {
+            if(descriptionCraft->GetCurrentPageNum() >= 2)
+            {
+                descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum()- 2);
+                descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum()-2);
+            }
+        }
+        return true;
     }
 
     // close the Read window
     Hide();
-    PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
+    PawsManager::GetSingleton().SetCurrentFocusedWidget(NULL);
     return true;
 }
 
 bool pawsBookReadingWindow::isBadChar(char c)
 {
     csString badChars = "/\\?%*:|\"<>";
-    if (badChars.FindFirst(c) == (size_t) -1)
+    if(badChars.FindFirst(c) == (size_t) -1)
         return false;
     else
         return true;
@@ -289,7 +303,7 @@ void pawsBookReadingWindow::Draw()
     if(bookBgImage)
         bookBgImage->Draw(screenFrame, 0);
 
-        
+
     pawsWidget::DrawForeground();
 }
 
@@ -297,8 +311,9 @@ csString pawsBookReadingWindow::filenameSafe(const csString &original)
 {
     csString safe;
     size_t len = original.Length();
-    for (size_t c = 0; c < len; ++c) {
-        if (!isBadChar(original[c]))
+    for(size_t c = 0; c < len; ++c)
+    {
+        if(!isBadChar(original[c]))
             safe += original[c];
     }
     return safe;

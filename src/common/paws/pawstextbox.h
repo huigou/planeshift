@@ -67,7 +67,7 @@ public:
     /**
      * @brief Copy constructor
      */
-    pawsTextBox(const pawsTextBox& origin);
+    pawsTextBox(const pawsTextBox &origin);
 
     /**
      * Sets up the text box from a document node<br>
@@ -81,13 +81,13 @@ public:
      * @param node The node to pull the attributes from
      * @return True
      */
-    bool Setup ( iDocumentNode* node );
+    bool Setup(iDocumentNode* node);
     /**
      * Sets the text from the node using either the text attribute or the node's content
      * @param node The node to pull the text from
      * @return True if data is pulled, false if the node is empty
      */
-    bool SelfPopulate( iDocumentNode *node );
+    bool SelfPopulate(iDocumentNode* node);
 
     /// Draws the text box
     void Draw();
@@ -96,19 +96,22 @@ public:
      * Sets the text to display
      * @param text The string
      */
-    void SetText( const char* text );
+    void SetText(const char* text);
 
     /**
      * Sets the text to display using formatting
      * @param fmt The format to use to format the string to display
      */
-    void FormatText( const char *fmt, ... );
+    void FormatText(const char* fmt, ...);
 
     /**
      * Gets the text that is displayed by this text box
      * @return \ref text
      */
-    const char* GetText() const { return text; }
+    const char* GetText() const
+    {
+        return text;
+    }
 
     /**
      * Sets if this text box should be rendered vertically (top to bottom)
@@ -121,17 +124,17 @@ public:
      * @param horiz Sets the horizontal alignment for the text
      * @param vert Sets the vertical alignment for the text
      */
-    void Adjust( pawsHorizAdjust horiz, pawsVertAdjust vert );
+    void Adjust(pawsHorizAdjust horiz, pawsVertAdjust vert);
     /**
      * Alters how the text box is laid out horizontally in its container
      * @param horiz Sets the horizontal alignment for the text
      */
-    void HorizAdjust( pawsHorizAdjust horiz );
+    void HorizAdjust(pawsHorizAdjust horiz);
     /**
      * Alters how the text box is laid out vertically in its container
      * @param vert Sets the vertical alignment for the text
      */
-    void VertAdjust( pawsVertAdjust vert );
+    void VertAdjust(pawsVertAdjust vert);
 
     /**
      * Sets the size of the widget to fit the text that it displays
@@ -144,19 +147,28 @@ public:
      * Normal text boxes should not be focused.  Does nothing
      * @return false
      */
-    virtual bool OnGainFocus( bool ) const {return false;}
+    virtual bool OnGainFocus(bool) const
+    {
+        return false;
+    }
 
     /**
      * Gets the border style for the text box
      * @return Always \ref BORDER_SUNKEN
      */
-    inline int GetBorderStyle() const { return BORDER_SUNKEN; }
+    inline int GetBorderStyle() const
+    {
+        return BORDER_SUNKEN;
+    }
 
     /**
      * Sets if the text box is having its text grayed
      * @param g Overwrites \ref grayed
      */
-    inline void Grayed( bool g ) { grayed = g; }
+    inline void Grayed(bool g)
+    {
+        grayed = g;
+    }
 
     /**
      * Gets the font color based on the set colour and if \ref grayed is set
@@ -170,7 +182,7 @@ public:
      * @param dataname Unused
      * @param data The data to update the text with
      */
-    virtual void OnUpdateData(const char *dataname,PAWSData& data);
+    virtual void OnUpdateData(const char* dataname,PAWSData &data);
 
     /**
      * Utility function to calculate number of code points in a substring
@@ -211,7 +223,7 @@ protected:
      * @param width Target to store width of text into
      * @param height Target to store height of text into
      */
-    void CalcTextSize(int & width, int & height);
+    void CalcTextSize(int &width, int &height);
 
     /**
      * Fills 'letterSizes' array. Can be called only when vertical==true
@@ -246,12 +258,12 @@ protected:
     int textWidth;
 
     /// Array containing the size of each letter in text (only used when \ref vertical is true)
-    psPoint *letterSizes;
+    psPoint* letterSizes;
 
 };
 
 //--------------------------------------------------------------------------
-CREATE_PAWS_FACTORY( pawsTextBox );
+CREATE_PAWS_FACTORY(pawsTextBox);
 
 
 
@@ -287,18 +299,18 @@ public:
             colour = 0;
             size = 0;
         }
-        MessageLine(const MessageLine& origin):text(origin.text),colour(origin.colour),size(origin.size)
+        MessageLine(const MessageLine &origin):text(origin.text),colour(origin.colour),size(origin.size)
         {
-            for (unsigned int i = 0 ; i < origin.segments.GetSize(); i++)
+            for(unsigned int i = 0 ; i < origin.segments.GetSize(); i++)
                 segments.Push(origin.segments[i]);
         }
     };
 
-    pawsMessageTextBox( );
-    pawsMessageTextBox(const pawsMessageTextBox& origin);
+    pawsMessageTextBox();
+    pawsMessageTextBox(const pawsMessageTextBox &origin);
     virtual ~pawsMessageTextBox();
-    virtual bool Setup( iDocumentNode* node );
-    virtual bool Setup( void );
+    virtual bool Setup(iDocumentNode* node);
+    virtual bool Setup(void);
     virtual bool PostSetup();
 
     /**
@@ -306,7 +318,7 @@ public:
      * supplied.  This is NOT the same as Setup, which is defining height, width,
      * styles, etc.  This is data.
      */
-    bool SelfPopulate( iDocumentNode *node);
+    bool SelfPopulate(iDocumentNode* node);
 
     virtual void Draw();
 
@@ -315,19 +327,22 @@ public:
      * @param colour The colour this message should be. -1 means use the default
      *               colour that is available.
      */
-    void AddMessage( const char* data, int colour = -1 );
+    void AddMessage(const char* data, int colour = -1);
 
-    void AppendLastMessage( const char* data );
-    void ReplaceLastMessage( const char* data );
+    void AppendLastMessage(const char* data);
+    void ReplaceLastMessage(const char* data);
 
     virtual void OnResize();
     virtual void Resize();
-    virtual bool OnScroll( int direction, pawsScrollBar* widget );
-    virtual bool OnMouseDown( int button, int modifiers, int x, int y );
+    virtual bool OnScroll(int direction, pawsScrollBar* widget);
+    virtual bool OnMouseDown(int button, int modifiers, int x, int y);
 
     void Clear();
 
-    int GetBorderStyle() { return BORDER_SUNKEN; }
+    int GetBorderStyle()
+    {
+        return BORDER_SUNKEN;
+    }
 
     /** Resets scrollbar to starting position (offset=0) */
     void ResetScroll();
@@ -335,21 +350,21 @@ public:
     /** Sets the scrollbar to 100% (offset=max) */
     void FullScroll();
 
-    virtual void OnUpdateData(const char *dataname,PAWSData& data);
+    virtual void OnUpdateData(const char* dataname,PAWSData &data);
 
-    bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
+    bool OnKeyDown(utf32_char code, utf32_char key, int modifiers);
 
 
 protected:
     /// Renders an entire message and returns the total lines it took.
-    int RenderMessage( const char* data, int lineStart, int colour );
+    int RenderMessage(const char* data, int lineStart, int colour);
 
     /// List of messages this box has.
     csPDelArray<MessageLine> messages;
 
     //void AdjustMessages();
 
-    void SplitMessage( const char* newText, int colour, int size, MessageLine*& msgLine, int& startPosition );
+    void SplitMessage(const char* newText, int colour, int size, MessageLine* &msgLine, int &startPosition);
 
     /// Calculates value of the lineHeight attribute
     void CalcLineHeight();
@@ -358,7 +373,7 @@ protected:
      * checks for a child of type pawsScrollBar.
      * @return pawsScrollBar* pointer to child or NULL
      */
-    pawsScrollBar * GetScrollBar();
+    pawsScrollBar* GetScrollBar();
 
     csPDelArray<MessageLine> adjusted;
 
@@ -372,12 +387,12 @@ protected:
 
 private:
     static const int INITOFFSET = 20;
-    void WriteMessageLine(MessageLine*& msgLine, csString text, int colour);
-    void WriteMessageSegment(MessageLine*& msgLine, csString text, int colour, int startPosition);
+    void WriteMessageLine(MessageLine* &msgLine, csString text, int colour);
+    void WriteMessageSegment(MessageLine* &msgLine, csString text, int colour, int startPosition);
     csString FindStringThatFits(csString stringBuffer, int canDrawLength);
 };
 
-CREATE_PAWS_FACTORY( pawsMessageTextBox );
+CREATE_PAWS_FACTORY(pawsMessageTextBox);
 
 #define EDIT_TEXTBOX_MOUSE_SCROLL_AMOUNT 3
 #define BLINK_TICKS  1000
@@ -388,15 +403,18 @@ class pawsEditTextBox : public pawsWidget
 public:
     pawsEditTextBox();
     virtual ~pawsEditTextBox();
-    pawsEditTextBox(const pawsEditTextBox& origin);
+    pawsEditTextBox(const pawsEditTextBox &origin);
 
     virtual void Draw();
 
-    bool Setup( iDocumentNode* node );
+    bool Setup(iDocumentNode* node);
 
-    bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
+    bool OnKeyDown(utf32_char code, utf32_char key, int modifiers);
 
-    const char* GetText() { return text.GetDataSafe(); }
+    const char* GetText()
+    {
+        return text.GetDataSafe();
+    }
 
     void SetMultiline(bool multi);
     void SetPassword(bool pass); //displays astrices instead of text
@@ -404,40 +422,55 @@ public:
     /** Change the text in the edit box.
      * @param text The text that will replace whatever is currently there.
      */
-    void SetText( const char* text, bool publish = true );
-    virtual void OnUpdateData(const char *dataname,PAWSData& data);
+    void SetText(const char* text, bool publish = true);
+    virtual void OnUpdateData(const char* dataname,PAWSData &data);
 
     // Sets size of the widget to fit the text that it displays:
     void SetSizeByText();
 
     void Clear();
 
-    virtual bool OnMouseDown( int button, int modifiers, int x, int y );
+    virtual bool OnMouseDown(int button, int modifiers, int x, int y);
 
     /** Called as a callback to a request for clipboard content if avaliabe.
      *
      * \note Only implemented for unix
      */
-    virtual bool OnClipboard( const csString& content );
+    virtual bool OnClipboard(const csString &content);
 
-    int GetBorderStyle() { return BORDER_SUNKEN; }
+    int GetBorderStyle()
+    {
+        return BORDER_SUNKEN;
+    }
 
     /**
      * This function allows a widget to fill in its own contents from an xml node
      * supplied.  This is NOT the same as Setup, which is defining height, width,
      * styles, etc.  This is data.
      */
-    bool SelfPopulate( iDocumentNode *node);
+    bool SelfPopulate(iDocumentNode* node);
 
     /**
      * Set & Get top line funcs
      */
-    unsigned int GetTopLine() { return topLine; }
-    void SetTopLine(unsigned int newTopLine) { topLine = newTopLine; }
+    unsigned int GetTopLine()
+    {
+        return topLine;
+    }
+    void SetTopLine(unsigned int newTopLine)
+    {
+        topLine = newTopLine;
+    }
 
-    void SetCursorPosition(size_t pos) { cursorPosition = pos; }
+    void SetCursorPosition(size_t pos)
+    {
+        cursorPosition = pos;
+    }
 
-    virtual bool GetFocusOverridesControls() const { return true; }
+    virtual bool GetFocusOverridesControls() const
+    {
+        return true;
+    }
 
     /**
      * Sets the max length for the text box
@@ -448,7 +481,10 @@ public:
      * Returns the max length for the text box
      * @return maxLen
      */
-    inline unsigned int GetMaxLength() const { return maxLen; }
+    inline unsigned int GetMaxLength() const
+    {
+        return maxLen;
+    }
     /**
      * Gets the remaining characters that can be input
      * @return Remaining characters or UINT_MAX if no max length specified
@@ -462,30 +498,49 @@ public:
     /**
      * returns if the spellchecker is used in this widget
      */
-    inline bool getSpellChecked() const {return spellChecked;};
+    inline bool getSpellChecked() const
+    {
+        return spellChecked;
+    };
     /**
      * set if the spellchecker should be used
      * @param check true if the spellchecker should be used (the spellchecker will still be only used if the plugin is available)
      */
-    inline void setSpellChecked(const bool check) {spellChecked = check;};
+    inline void setSpellChecked(const bool check)
+    {
+        spellChecked = check;
+    };
     /**
      * toggels the current setting of the spellchecker
      */
-    inline void toggleSpellChecked() {spellChecked = !spellChecked;};
+    inline void toggleSpellChecked()
+    {
+        spellChecked = !spellChecked;
+    };
     /** Method the get the current colour used for typos
      */
-    unsigned int getTypoColour() {return typoColour;};
+    unsigned int getTypoColour()
+    {
+        return typoColour;
+    };
     /** Method to set the colour used for typos
      *  @param col The new colour to be used for typos
      */
-    void setTypoColour(unsigned int col) {typoColour = col;};
+    void setTypoColour(unsigned int col)
+    {
+        typoColour = col;
+    };
 protected:
     /** Helper method that does the actual spellchecking. Called from OnKeyDown
      */
     void checkSpelling();
     /** struct to contain the end boundry of a word and it's spellcheck status
      */
-    struct Word { bool correct; int endPos; };
+    struct Word
+    {
+        bool correct;
+        int endPos;
+    };
 
     bool password;
     csRef<iVirtualClock> clock;
@@ -533,7 +588,7 @@ protected:
     csArray<Word> words;
 };
 
-CREATE_PAWS_FACTORY( pawsEditTextBox );
+CREATE_PAWS_FACTORY(pawsEditTextBox);
 
 
 //---------------------------------------------------------------------------------------
@@ -544,33 +599,39 @@ class pawsMultiLineTextBox : public pawsWidget
 {
 public:
     pawsMultiLineTextBox();
-    pawsMultiLineTextBox(const pawsMultiLineTextBox& origin);
+    pawsMultiLineTextBox(const pawsMultiLineTextBox &origin);
     virtual ~pawsMultiLineTextBox();
 
-    bool Setup ( iDocumentNode* node );
+    bool Setup(iDocumentNode* node);
     bool PostSetup();
 
     void Draw();
 
-    void SetText( const char* text );
-    const char* GetText(){return text;}
+    void SetText(const char* text);
+    const char* GetText()
+    {
+        return text;
+    }
     void Resize();
-    bool OnScroll( int direction, pawsScrollBar* widget );
-    virtual bool OnMouseDown( int button, int modifiers, int x, int y );
+    bool OnScroll(int direction, pawsScrollBar* widget);
+    virtual bool OnMouseDown(int button, int modifiers, int x, int y);
 
     // Normal text boxes should not be focused.
-    virtual bool OnGainFocus(bool /*notifyParent*/ = true) {return false;}
-    virtual void OnUpdateData(const char *dataname,PAWSData& data);
+    virtual bool OnGainFocus(bool /*notifyParent*/ = true)
+    {
+        return false;
+    }
+    virtual void OnUpdateData(const char* dataname,PAWSData &data);
 
 protected:
 
-    void OrganizeText( const char* text );
+    void OrganizeText(const char* text);
 
     /**
      * checks for a child of type pawsScrollBar.
      * @return pawsScrollBar* pointer to child or NULL
      */
-    pawsScrollBar * GetScrollBar();
+    pawsScrollBar* GetScrollBar();
 
     /// The text for this box.
     csString text;
@@ -588,48 +649,54 @@ protected:
 };
 
 //--------------------------------------------------------------------------
-CREATE_PAWS_FACTORY( pawsMultiLineTextBox );
+CREATE_PAWS_FACTORY(pawsMultiLineTextBox);
 
 
 class pawsMultiPageTextBox : public pawsWidget
 {
 public:
     pawsMultiPageTextBox();
-    pawsMultiPageTextBox(const pawsMultiPageTextBox& origin);
+    pawsMultiPageTextBox(const pawsMultiPageTextBox &origin);
     virtual ~pawsMultiPageTextBox();
 
-    bool Setup ( iDocumentNode* node );
+    bool Setup(iDocumentNode* node);
     bool PostSetup();
 
 
-	
+
 
     void Draw();
 
-    void SetText( const char* text );
-    const char* GetText(){return text;}
+    void SetText(const char* text);
+    const char* GetText()
+    {
+        return text;
+    }
     void Resize();
-    bool OnScroll( int direction, pawsScrollBar* widget );
+    bool OnScroll(int direction, pawsScrollBar* widget);
 
-    virtual bool OnMouseDown( int button, int modifiers, int x, int y );
+    virtual bool OnMouseDown(int button, int modifiers, int x, int y);
 
     // Normal text boxes should not be focused.
-    virtual bool OnGainFocus(bool /*notifyParent*/ = true) {return false;}
-    virtual void OnUpdateData(const char *dataname,PAWSData& data);
+    virtual bool OnGainFocus(bool /*notifyParent*/ = true)
+    {
+        return false;
+    }
+    virtual void OnUpdateData(const char* dataname,PAWSData &data);
 
-	// Added these member functions for dealing with pages
-	int GetNumPages();
-	void SetCurrentPageNum(int n);
-	int GetCurrentPageNum();
+    // Added these member functions for dealing with pages
+    int GetNumPages();
+    void SetCurrentPageNum(int n);
+    int GetCurrentPageNum();
 protected:
 
-    void OrganizeText( const char* text );
+    void OrganizeText(const char* text);
 
     /**
      * checks for a child of type pawsScrollBar.
      * @return pawsScrollBar* pointer to child or NULL
      */
-    pawsScrollBar * GetScrollBar();
+    pawsScrollBar* GetScrollBar();
 
 
     /// The text for this box.
@@ -645,12 +712,12 @@ protected:
     int maxWidth;
     int maxHeight;
     pawsScrollBar* scrollBar;
-	int currentPageNum;
-	int numPages;
+    int currentPageNum;
+    int numPages;
 };
 
 //--------------------------------------------------------------------------
-CREATE_PAWS_FACTORY( pawsMultiPageTextBox );
+CREATE_PAWS_FACTORY(pawsMultiPageTextBox);
 
 
 /* An edit box widget */
@@ -659,7 +726,7 @@ class pawsMultilineEditTextBox : public pawsWidget
 public:
     pawsMultilineEditTextBox();
     virtual ~pawsMultilineEditTextBox();
-    pawsMultilineEditTextBox(const pawsMultilineEditTextBox& origin);
+    pawsMultilineEditTextBox(const pawsMultilineEditTextBox &origin);
     struct MessageLine
     {
         size_t lineLength; //Stores length of the line.
@@ -667,37 +734,43 @@ public:
         int lineExtra; //Stores 1 if line ends with a \n, or 0 if it does not.
     };
 
-    bool Setup( iDocumentNode* node );
+    bool Setup(iDocumentNode* node);
 
     virtual void Draw();
-    void DrawWidgetText(const char *text, size_t x, size_t y, int style, int fg, int visLine);
+    void DrawWidgetText(const char* text, size_t x, size_t y, int style, int fg, int visLine);
 
     /** Change the text in the edit box.
      * @param text The text that will replace whatever is currently there.
      */
-    void SetText( const char* text, bool publish = true );
+    void SetText(const char* text, bool publish = true);
     const char* GetText();
     void UpdateScrollBar();
     virtual void SetupScrollBar();
 
-    bool OnScroll( int direction, pawsScrollBar* widget );
+    bool OnScroll(int direction, pawsScrollBar* widget);
     virtual void OnResize();
-    virtual bool OnMouseUp( int button, int modifiers, int x, int y );
-    virtual bool OnMouseDown( int button, int modifiers, int x, int y );
+    virtual bool OnMouseUp(int button, int modifiers, int x, int y);
+    virtual bool OnMouseDown(int button, int modifiers, int x, int y);
     /** Called as a callback to a request for clipboard content if avaliabe.
      *
      * @note Only implemented for unix
      */
-    virtual bool OnClipboard( const csString& content );
-    virtual void OnUpdateData(const char *dataname,PAWSData& data);
-    virtual bool OnKeyDown( utf32_char code, utf32_char key, int modifiers );
-    virtual void CalcMouseClick( int x, int y, size_t &cursorLine, size_t &cursorChar);
+    virtual bool OnClipboard(const csString &content);
+    virtual void OnUpdateData(const char* dataname,PAWSData &data);
+    virtual bool OnKeyDown(utf32_char code, utf32_char key, int modifiers);
+    virtual void CalcMouseClick(int x, int y, size_t &cursorLine, size_t &cursorChar);
 
-    virtual bool GetFocusOverridesControls() const { return true; }
+    virtual bool GetFocusOverridesControls() const
+    {
+        return true;
+    }
 
-    void PushLineInfo( size_t lineLength, size_t lineBreak, int lineExtra);
+    void PushLineInfo(size_t lineLength, size_t lineBreak, int lineExtra);
 
-    int GetBorderStyle() { return BORDER_SUNKEN; }
+    int GetBorderStyle()
+    {
+        return BORDER_SUNKEN;
+    }
     void LayoutText();
 
     /**
@@ -705,17 +778,29 @@ public:
      * supplied.  This is NOT the same as Setup, which is defining height, width,
      * styles, etc.  This is data.
      */
-    bool SelfPopulate( iDocumentNode *node);
+    bool SelfPopulate(iDocumentNode* node);
 
     /**
      * Set & Get top line funcs
      */
-    size_t GetTopLine() { return topLine; }
-    void SetTopLine(size_t newTopLine) { topLine = newTopLine; }
+    size_t GetTopLine()
+    {
+        return topLine;
+    }
+    void SetTopLine(size_t newTopLine)
+    {
+        topLine = newTopLine;
+    }
     size_t GetCursorPosition();
     size_t GetCursorPosition(size_t destLine, size_t destCursor);
-    void SetCursorPosition(size_t pos) { cursorPosition = pos; }
-    void Clear(){ SetText(""); }
+    void SetCursorPosition(size_t pos)
+    {
+        cursorPosition = pos;
+    }
+    void Clear()
+    {
+        SetText("");
+    }
     csString GetLine(size_t line);
     int GetLineWidth(int lineNumber);
     void GetLinePos(size_t lineNumber, size_t &start, size_t &end);
@@ -733,7 +818,10 @@ public:
      * Returns the max length for the text box
      * @return maxLen
      */
-    inline unsigned int GetMaxLength() const { return maxLen; }
+    inline unsigned int GetMaxLength() const
+    {
+        return maxLen;
+    }
     /**
      * Gets the remaining characters that can be input
      * @return Remaining characters or UINT_MAX if no max length specified
@@ -747,25 +835,43 @@ public:
     /**
      * returns if the spellchecker is used in this widget
      */
-    inline bool getSpellChecked() const {return spellChecked;};
+    inline bool getSpellChecked() const
+    {
+        return spellChecked;
+    };
     /**
      * set if the spellchecker should be used
      * @param check true if the spellchecker should be used (the spellchecker will still be only used if the plugin is available)
      */
-    inline void setSpellChecked(const bool check) {spellChecked = check;};
+    inline void setSpellChecked(const bool check)
+    {
+        spellChecked = check;
+    };
     /**
      * toggels the current setting of the spellchecker
      */
-    inline void toggleSpellChecked() {spellChecked = !spellChecked;};
+    inline void toggleSpellChecked()
+    {
+        spellChecked = !spellChecked;
+    };
     /** Method the get the current colour used for typos
      */
-    unsigned int getTypoColour() {return typoColour;};
+    unsigned int getTypoColour()
+    {
+        return typoColour;
+    };
     /** Method to set the colour used for typos
      *  @param col The new colour to be used for typos
      */
-    void setTypoColour(unsigned int col) {typoColour = col;};
+    void setTypoColour(unsigned int col)
+    {
+        typoColour = col;
+    };
 
-	int GetLinesPerPage() { return canDrawLines; }
+    int GetLinesPerPage()
+    {
+        return canDrawLines;
+    }
 protected:
     /** Helper method that does the actual spellchecking. Only checks the currently
      * visible text. Called from OnKeyDown and LayoutText
@@ -779,10 +885,14 @@ protected:
      * @param str The text
      * @param visLine the number (counting from top=0) of the current visual line. Needed for the spellchecker to choose the correct word-boundries from lineTypos
      */
-    void drawTextSpellChecked(iFont *font, int x, int y, int fg, csString str, int visLine);
+    void drawTextSpellChecked(iFont* font, int x, int y, int fg, csString str, int visLine);
     /** struct to contain the end boundry of a word and it's spellcheck status
      */
-    struct Word { bool correct; int endPos; };
+    struct Word
+    {
+        bool correct;
+        int endPos;
+    };
 
     csRef<iVirtualClock> clock;
 
@@ -799,7 +909,7 @@ protected:
     /// Keep track of ticks for flashing
     csTicks blinkTicks;
 
-     /// Concatenated contents of lines, only valid after GetText()
+    /// Concatenated contents of lines, only valid after GetText()
     csString text;
     csPDelArray<MessageLine> lineInfo;
     int lineHeight;
@@ -835,7 +945,7 @@ protected:
     csArray<csArray<Word> > lineTypos;
 };
 
-CREATE_PAWS_FACTORY( pawsMultilineEditTextBox );
+CREATE_PAWS_FACTORY(pawsMultilineEditTextBox);
 
 
 
@@ -848,8 +958,11 @@ class pawsFadingTextBox : public pawsWidget
 public:
     pawsFadingTextBox();
     virtual ~pawsFadingTextBox() {};
-    pawsFadingTextBox(const pawsFadingTextBox& origin);
-    bool Setup(iDocumentNode* /*node*/) { return true;} // Shouldn't be created in XML, only by code
+    pawsFadingTextBox(const pawsFadingTextBox &origin);
+    bool Setup(iDocumentNode* /*node*/)
+    {
+        return true;   // Shouldn't be created in XML, only by code
+    }
 
     void Draw();
 
@@ -876,7 +989,7 @@ private:
     int time,fadetime;
 };
 
-CREATE_PAWS_FACTORY( pawsFadingTextBox );
+CREATE_PAWS_FACTORY(pawsFadingTextBox);
 ///PictureInfo hold the information of pictures that would be display in the same row with the same format
 struct PictureInfo
 {
@@ -890,7 +1003,7 @@ class pawsDocumentView: public pawsMultiLineTextBox
 {
 public:
     pawsDocumentView();
-    pawsDocumentView(const pawsDocumentView& origin);
+    pawsDocumentView(const pawsDocumentView &origin);
     virtual ~pawsDocumentView();
     /**
      * @brief Set the content that would be displayed in the view.
@@ -922,7 +1035,7 @@ protected:
      * @param node A <content type="pic"></content> node
      * @return How many pictures are defined to be displayed in a row in this node
      */
-    unsigned int ProcessPictureInfo(iDocumentNode *node);
+    unsigned int ProcessPictureInfo(iDocumentNode* node);
     csArray<PictureInfo> picsInfo;///< Hold all the info parse from xml document
 };
 CREATE_PAWS_FACTORY(pawsDocumentView);
@@ -932,7 +1045,7 @@ class pawsMultiPageDocumentView: public pawsMultiPageTextBox
 {
 public:
     pawsMultiPageDocumentView();
-    pawsMultiPageDocumentView(const pawsMultiPageDocumentView& origin);
+    pawsMultiPageDocumentView(const pawsMultiPageDocumentView &origin);
     virtual ~pawsMultiPageDocumentView();
     /**
      * @brief Set the content that would be displayed in the view.
@@ -964,7 +1077,7 @@ protected:
      * @param node A <content type="pic"></content> node
      * @return How many pictures are defined to be displayed in a row in this node
      */
-    unsigned int ProcessPictureInfo(iDocumentNode *node);
+    unsigned int ProcessPictureInfo(iDocumentNode* node);
     csArray<PictureInfo> picsInfo;///< Hold all the info parse from xml document
 };
 CREATE_PAWS_FACTORY(pawsMultiPageDocumentView);
