@@ -1224,6 +1224,7 @@ void PawsManager::RegisterFactories()
     RegisterFactory (pawsTextBoxFactory);
     RegisterFactory (pawsKeySelectBoxFactory);
     RegisterFactory (pawsMultiLineTextBoxFactory);
+	
     RegisterFactory (pawsMessageTextBoxFactory);
     RegisterFactory (pawsEditTextBoxFactory);
     RegisterFactory (pawsMultilineEditTextBoxFactory);
@@ -1239,6 +1240,7 @@ void PawsManager::RegisterFactories()
     RegisterFactory (pawsOkBoxFactory);
     RegisterFactory (pawsSelectorBoxFactory);
     RegisterFactory (pawsSpinBoxFactory);
+	RegisterFactory (pawsMultiPageTextBoxFactory);
 /*
     RegisterFactory (pawsSplashWindowFactory);
     RegisterFactory (pawsLoadWindowFactory);
@@ -1300,6 +1302,7 @@ void PawsManager::RegisterFactories()
 
     RegisterFactory (pawsSimpleWindowFactory);
     RegisterFactory (pawsDocumentViewFactory);
+	RegisterFactory (pawsMultiPageDocumentViewFactory);
     RegisterFactory (pawsThumbFactory);
 }
 

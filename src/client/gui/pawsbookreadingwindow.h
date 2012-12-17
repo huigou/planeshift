@@ -40,21 +40,26 @@ public:
 
 private:
     pawsTextBox*            name;
-    pawsMultiLineTextBox*   description;
-    pawsMultiLineTextBox*   descriptionCraft;
+    pawsMultiPageTextBox*   description;
+	pawsMultiPageTextBox*   descriptionRight;
+    pawsMultiPageTextBox*   descriptionCraft;
+	pawsMultiPageTextBox*   descriptionCraftRight;
     pawsWidget*             writeButton;
     pawsWidget*             saveButton;
-    
+	pawsWidget*				nextButton;
+    pawsWidget*				prevButton;
     bool shouldWrite;
     int slotID;
     int containerID;
-	
+	bool usingCraft;
 	csString filenameSafe(const csString &original);
 	bool isBadChar(char c);
     
     /// Background image.
     csRef<iPawsImage> bookBgImage;
     virtual void Draw();
+
+	int numPages;
     
 };
 
