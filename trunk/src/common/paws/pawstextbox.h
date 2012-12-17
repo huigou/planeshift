@@ -590,6 +590,69 @@ protected:
 //--------------------------------------------------------------------------
 CREATE_PAWS_FACTORY( pawsMultiLineTextBox );
 
+
+class pawsMultiPageTextBox : public pawsWidget
+{
+public:
+    pawsMultiPageTextBox();
+    pawsMultiPageTextBox(const pawsMultiPageTextBox& origin);
+    virtual ~pawsMultiPageTextBox();
+
+    bool Setup ( iDocumentNode* node );
+    bool PostSetup();
+
+
+	
+
+    void Draw();
+
+    void SetText( const char* text );
+    const char* GetText(){return text;}
+    void Resize();
+    bool OnScroll( int direction, pawsScrollBar* widget );
+
+    virtual bool OnMouseDown( int button, int modifiers, int x, int y );
+
+    // Normal text boxes should not be focused.
+    virtual bool OnGainFocus(bool /*notifyParent*/ = true) {return false;}
+    virtual void OnUpdateData(const char *dataname,PAWSData& data);
+
+	// Added these member functions for dealing with pages
+	int GetNumPages();
+	void SetCurrentPageNum(int n);
+	int GetCurrentPageNum();
+protected:
+
+    void OrganizeText( const char* text );
+
+    /**
+     * checks for a child of type pawsScrollBar.
+     * @return pawsScrollBar* pointer to child or NULL
+     */
+    pawsScrollBar * GetScrollBar();
+
+
+    /// The text for this box.
+    csString text;
+    /// The text, broken into separate lines by OrganizeText()
+    csArray<csString> lines;
+
+    //where our scrollbar at?and that d
+    size_t startLine;
+    //Number of lines that we can fit in the box
+    size_t canDrawLines;
+    bool usingScrollBar;
+    int maxWidth;
+    int maxHeight;
+    pawsScrollBar* scrollBar;
+	int currentPageNum;
+	int numPages;
+};
+
+//--------------------------------------------------------------------------
+CREATE_PAWS_FACTORY( pawsMultiPageTextBox );
+
+
 /* An edit box widget */
 class pawsMultilineEditTextBox : public pawsWidget
 {
@@ -701,6 +764,8 @@ public:
      *  @param col The new colour to be used for typos
      */
     void setTypoColour(unsigned int col) {typoColour = col;};
+
+	int GetLinesPerPage() { return canDrawLines; }
 protected:
     /** Helper method that does the actual spellchecking. Only checks the currently
      * visible text. Called from OnKeyDown and LayoutText
@@ -771,6 +836,8 @@ protected:
 };
 
 CREATE_PAWS_FACTORY( pawsMultilineEditTextBox );
+
+
 
 /// pawsFadingTextBox - Used for mainly on screen messages, deletes itself upon 100% fade
 #define FADE_TIME              1000 // Time for the onscreen message to fade away
@@ -859,5 +926,47 @@ protected:
     csArray<PictureInfo> picsInfo;///< Hold all the info parse from xml document
 };
 CREATE_PAWS_FACTORY(pawsDocumentView);
+
+
+class pawsMultiPageDocumentView: public pawsMultiPageTextBox
+{
+public:
+    pawsMultiPageDocumentView();
+    pawsMultiPageDocumentView(const pawsMultiPageDocumentView& origin);
+    virtual ~pawsMultiPageDocumentView();
+    /**
+     * @brief Set the content that would be displayed in the view.
+     * Set the content that would be displayed in the view.
+     * The text should be in form of xml style as following:
+     * <Contents>
+     *	 <Content type="pic" align="0" padding="5 5 5 5" width="32" height="32" src="ButtonSpeak;/paws/real_skin/mouse.png;ButtonOpen;"></Content>
+     *	 <Content type="text">text content</Content>
+     *	 <Content type="pic" align="2" padding="5 5 5 5" width="32" height="32" src="ButtonConstruct;/paws/real_skin/mouse.png;ButtonBanking;"></Content>
+     * </Contents>
+     * @param text The xml content defined what to be display in the view
+     */
+    void SetText(const char* text);
+    /**
+     * @brief Draw the content include text and pictures.
+     */
+    void Draw();
+    void Resize();
+protected:
+    /**
+     * @brief Organize the content to display in the view.
+     * Organize the content to display in the view. Text should be in the form of xml style
+     * @param text The xml content defined what to be display in the view
+     */
+    void OrganizeContent(const char* text);
+    /**
+     * @brief Process the <content type="pic"></content> node in the xml
+     * Process the <content type="pic"></content> node in the xml
+     * @param node A <content type="pic"></content> node
+     * @return How many pictures are defined to be displayed in a row in this node
+     */
+    unsigned int ProcessPictureInfo(iDocumentNode *node);
+    csArray<PictureInfo> picsInfo;///< Hold all the info parse from xml document
+};
+CREATE_PAWS_FACTORY(pawsMultiPageDocumentView);
 #endif
 

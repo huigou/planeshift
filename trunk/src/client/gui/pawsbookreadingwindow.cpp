@@ -38,6 +38,8 @@
 
 #define EDIT 1001
 #define SAVE 1002
+#define NEXT 1003 
+#define PREV 1004
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -52,17 +54,31 @@ bool pawsBookReadingWindow::PostSetup()
     name = dynamic_cast<pawsTextBox*> (FindWidget("ItemName"));
     if ( !name ) return false;
 
-    description = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescription"));
+    description = dynamic_cast<pawsMultiPageTextBox*> (FindWidget("ItemDescription"));
     if ( !description ) return false;
 
-    descriptionCraft = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescriptionCraft"));
-    //if ( !descriptionCraft ) return false;
+	// get the right hand window, this is needed for the open book view
+	descriptionRight = dynamic_cast<pawsMultiPageTextBox*> (FindWidget("ItemDescriptionRight"));
+	if ( !descriptionRight ) return false;
+
+    descriptionCraft = dynamic_cast<pawsMultiPageTextBox*> (FindWidget("ItemDescriptionCraft"));
+	//if ( !descriptionCraft ) return false;
+
+	// the same for the craft window, otherwise everything could bug
+	descriptionCraftRight = dynamic_cast<pawsMultiPageTextBox*> (FindWidget("ItemDescriptionCraftRight"));
+    //if ( !descriptionCraftRight ) return false;
     
     writeButton = FindWidget("WriteButton");
     //if ( !writeButton ) return false;
 
     saveButton = FindWidget("SaveButton");
     //if ( !saveButton ) return false;
+
+
+	nextButton = FindWidget("NextButton");
+	prevButton = FindWidget("PrevButton");
+
+	usingCraft = false; // until the message turns up
     return true;
 }
 
@@ -76,8 +92,18 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
             psReadBookTextMessage mesg( me );
             csRef<iDocumentNode> docnode = ParseStringGetNode(mesg.text, "Contents", false);
             if(docnode)
-                dynamic_cast<pawsDocumentView*>(description)->SetText(mesg.text.GetData());
-            else description->SetText(mesg.text);
+            {
+				// I am not sure why these use dynamic_cast while the craft windows
+				// do not
+				dynamic_cast<pawsMultiPageDocumentView*>(description)->SetText(mesg.text.GetData());
+				dynamic_cast<pawsMultiPageDocumentView*>(descriptionRight)->SetText(mesg.text.GetData());
+				
+			}
+            else 
+			{
+					description->SetText(mesg.text);
+					descriptionRight->SetText(mesg.text);
+			}
             name->SetText( mesg.name );       
             slotID = mesg.slotID;
             containerID = mesg.containerID;
@@ -101,10 +127,22 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
             {
                 descriptionCraft->Hide();
             }
+            if( descriptionCraftRight )
+            {
+                descriptionCraftRight->Hide();
+            }
+			// setup the windows for multi page view
+
+			numPages = description->GetNumPages();
+			
+			// set the descriptionRight to be 1 page ahead of description
+			descriptionRight->SetCurrentPageNum(description->GetCurrentPageNum()+1) ;
             description->Show();
+			descriptionRight->Show();
             //set the background image for the book
             bookBgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(mesg.backgroundImg);
-            break;
+            usingCraft = false;
+			break;
         }
         case MSGTYPE_CRAFT_INFO:
         {
@@ -118,19 +156,33 @@ void pawsBookReadingWindow::HandleMessage( MsgEntry* me )
             if( description ) {
                 description->Hide();
             }
+            if( descriptionRight ) {
+                descriptionRight->Hide();
+            }
             psMsgCraftingInfo mesg(me);
             csString text(mesg.craftInfo);
             if (text && descriptionCraft)
             {
+				// setup the craft windows for multi page view
+				numPages = descriptionCraft->GetNumPages();
                 descriptionCraft->SetText(text.GetData());
-                descriptionCraft->Show();
+				descriptionCraftRight->SetText(text.GetData());
+				
+				// set the descriptionCraftRight to be one page ahead
+				descriptionCraftRight->SetCurrentPageNum( descriptionCraft->GetCurrentPageNum()+1) ;
+                
+				// show both pages
+				descriptionCraft->Show();
+				descriptionCraftRight->Show();
+
+				usingCraft = true;
             }
             name->SetText( "You discover you can do the following:" );
             break;
         }
     }
 }
-
+ 
 bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
     if(widget->GetID() == EDIT){
@@ -168,6 +220,52 @@ bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
         return true;
     }
 
+    if(widget->GetID() == NEXT)
+	{    
+		// traverse forwards if there is a page to go forward to
+		if( !usingCraft )
+		{
+			if( description->GetCurrentPageNum() <= numPages-2)
+			{
+				// pages were set explicitly rather than using the NextPage() functions
+				// this is because the pages are connected in this object
+				description->SetCurrentPageNum(description->GetCurrentPageNum() + 2 );
+				descriptionRight->SetCurrentPageNum(descriptionRight->GetCurrentPageNum() + 2 );
+			}
+		}
+		else
+		{
+			if( descriptionCraft->GetCurrentPageNum() <= numPages-2)
+			{
+				descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum() + 2 );
+				descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum() + 2 );
+			}
+		}
+		return true;
+
+    }
+    if(widget->GetID() == PREV)
+	{
+		// traverse backwards if there is a page to go back to	
+		if( !usingCraft )
+		{
+			if( description->GetCurrentPageNum() >= 2 )
+			{
+				description->SetCurrentPageNum(description->GetCurrentPageNum()- 2 );
+				descriptionRight->SetCurrentPageNum(descriptionRight->GetCurrentPageNum()-2 );
+			}
+		}
+		else
+		{
+			if( descriptionCraft->GetCurrentPageNum() >= 2 )
+			{
+				descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum()- 2 );
+				descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum()-2 );
+			}
+		}
+		return true;
+    }
+
     // close the Read window
     Hide();
     PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );
@@ -190,6 +288,7 @@ void pawsBookReadingWindow::Draw()
     //draw background
     if(bookBgImage)
         bookBgImage->Draw(screenFrame, 0);
+
         
     pawsWidget::DrawForeground();
 }

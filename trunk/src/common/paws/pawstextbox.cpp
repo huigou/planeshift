@@ -1832,7 +1832,7 @@ void pawsMultiLineTextBox::SetText( const char* newText )
     }
     else
     {
-        usingScrollBar = true;
+      //  usingScrollBar = true;
         lines.Empty();
         OrganizeText( str.GetData() );
         if ( scrollBar )
@@ -1901,6 +1901,342 @@ bool pawsMultiLineTextBox::OnMouseDown( int button, int modifiers, int x, int y 
     }
     return pawsWidget::OnMouseDown( button, modifiers, x ,y);
 }
+
+
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+pawsMultiPageTextBox::pawsMultiPageTextBox()
+{
+    scrollBar = 0;
+    startLine = 0;
+    canDrawLines = 0;
+    maxHeight = 0;
+    maxWidth = 0;
+    factory = "pawsMultiPageTextBox";
+	currentPageNum = 0;
+
+}
+pawsMultiPageTextBox::pawsMultiPageTextBox(const pawsMultiPageTextBox& origin)
+                    :pawsWidget(origin),
+                    canDrawLines(origin.canDrawLines),
+                    maxHeight(origin.maxHeight),
+                    maxWidth(origin.maxWidth),
+                    startLine(origin.startLine),
+                    text(origin.text),
+                    usingScrollBar(origin.usingScrollBar)
+{
+	currentPageNum = 0;
+    for(unsigned int i = 0 ; i < origin.lines.GetSize(); i++)
+        lines.Push(origin.lines[i]);
+
+    scrollBar = 0;
+
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    {
+        if(origin.scrollBar == origin.children[i])
+            scrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
+        if(scrollBar != 0)
+            break;
+
+    }
+}
+
+pawsMultiPageTextBox::~pawsMultiPageTextBox()
+{
+
+}
+
+pawsScrollBar * pawsMultiPageTextBox::GetScrollBar()
+{
+    csArray<pawsWidget*>::Iterator it = children.GetIterator();
+    while(it.HasNext())
+    {
+        pawsScrollBar * child = dynamic_cast<pawsScrollBar*>(it.Next());
+        if (child)
+            return child;
+    }
+
+    return NULL;
+}
+
+bool pawsMultiPageTextBox::Setup( iDocumentNode* node )
+{
+    csRef<iDocumentNode> textNode = node->GetNode( "text" );
+    if ( textNode )
+    {
+        csRef<iDocumentAttribute> textAttribute = textNode->GetAttribute("string");
+        if ( textAttribute )
+        {
+            SetText( textAttribute->GetValue() );
+        }
+    }
+
+    return true;
+}
+
+bool pawsMultiPageTextBox::PostSetup()
+{
+	// removed scrollbar
+ /*   scrollBar = GetScrollBar();
+    if (!scrollBar)
+    {
+        scrollBar = new pawsScrollBar;
+        scrollBar->SetParent( this );
+        AddChild( scrollBar );
+        scrollBar->SetTickValue( 1.0 );
+        scrollBar->PostSetup();
+    }
+
+    scrollBar->SetRelativeFrame( defaultFrame.Width() - 40, 6, 24, defaultFrame.Height() - 12 );
+    scrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT);
+    pawsWidget::Resize();
+
+    scrollBar->Show();
+    scrollBar->SetMaxValue(lines.GetSize() - canDrawLines );
+    scrollBar->SetCurrentValue(0);
+	*/
+    return true;
+}
+
+void pawsMultiPageTextBox::Resize()
+{
+    pawsWidget::Resize();
+    SetText( text );
+}
+
+void pawsMultiPageTextBox::OrganizeText( const char* newText )
+{
+    csString text(newText);
+
+    // Check if we end with \n
+    // Chomp if we do
+    if (text.Length() > 0)
+    {
+        if (text.GetAt(text.Length()-1) == '\n')
+        {
+            text = text.Slice(0,text.Length()-1);
+        }
+
+    }
+    text.ReplaceAll("\t","");//remove all the tabs in the string
+    startLine = 0;
+
+    GetFont()->GetMaxSize( maxWidth, maxHeight );
+
+    canDrawLines = (screenFrame.Height()-(margin*2)) / maxHeight;
+
+    char* dummy = new char[text.Length() + 1];
+    char* head = dummy;
+
+    if (text.Length () > 0)
+        strcpy( dummy, text );
+    else
+        dummy[0] = 0;
+
+    int offSet = margin*2;
+    if ( usingScrollBar )
+        offSet += 36;
+
+
+    while ( dummy )
+    {
+        // See how many characters can be drawn on a single line.
+        int canDrawLength =  GetFont()->GetLength( dummy, screenFrame.Width()-offSet );
+
+        // Check for linebreaks
+        const char* pos=strchr(dummy,'\n');
+        csString loopStr(dummy);
+        if (pos)
+        {
+            while(pos)
+            {
+                csString temp(loopStr.GetData());
+                csString temp2(loopStr.GetData());
+
+                size_t pos1=temp.FindFirst('\n');
+
+                temp= temp.Slice(0,pos1);
+                temp2= temp2.Slice(pos1+1,(temp2.Length() - pos1-1));
+
+                OrganizeText(temp.GetData());
+
+                if (temp2.Length())
+                {
+                    loopStr = temp2;
+                    pos=strchr(loopStr.GetData(),'\n');
+                    if (!pos)
+                    {
+                        OrganizeText(temp2.GetData());
+                    }
+                }
+                else
+                    break;
+            }
+            break;
+        }
+
+        /// If it can fit the entire string then return.
+        if ( canDrawLength == (int)strlen( dummy ) )
+        {
+            lines.Push( dummy );
+            break;
+        }
+        // We have to push in a new line to the lines bit.
+        else
+        {
+            // Find out the nearest white space to break the line.
+            int index = canDrawLength;
+
+            while ( index > 0 && dummy[index] != ' ' )
+            {
+                index--;
+            }
+
+            if (index == 0)
+                index = canDrawLength;
+
+            // Index now points to the whitespace line so we can break it here.
+
+            csString test;
+            test.Append( dummy, index+1 );
+            dummy+=index+1;
+            lines.Push( test );
+        }
+    }
+
+	
+    delete [] head;
+}
+
+
+void pawsMultiPageTextBox::SetText( const char* newText )
+{
+    lines.Empty();
+	numPages = 0;
+	currentPageNum = 0;
+    psString str(newText);
+    size_t pos = str.FindSubString("\r");
+    while(pos != (size_t)-1)
+    {
+        str = str.Slice(0,pos) + "\n" + str.Slice(pos+2,str.Length()-pos-2);
+        pos = str.FindSubString("\r");
+    }
+
+
+    usingScrollBar = false;
+    if ( scrollBar ) scrollBar->Hide();
+
+
+    OrganizeText( str.GetData() );
+
+	numPages = lines.GetSize() / canDrawLines;
+
+    if ( canDrawLines >= lines.GetSize() )
+    {
+        canDrawLines = lines.GetSize();
+		// removed
+       /* if(scrollBar) //if there is a scrollbar we must setup it correctly else we will scroll in the void
+        {
+            scrollBar->SetMaxValue(0);
+            scrollBar->SetCurrentValue(0);
+        }*/
+    }
+    else
+    {
+      //  usingScrollBar = true;
+        lines.Empty();
+        OrganizeText( str.GetData() );
+		// removed
+      /*  if ( scrollBar )
+        {
+            scrollBar->ShowBehind();
+            scrollBar->SetMaxValue(lines.GetSize() / canDrawLines );
+            scrollBar->SetCurrentValue(0);
+        }*/
+    }
+    startLine = 0;
+    text.Replace( str.GetData() );
+}
+
+void pawsMultiPageTextBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
+{
+    // This is called automatically whenever subscribed data is published.
+    SetText( value.GetStr() );
+}
+
+
+void pawsMultiPageTextBox::Draw()
+{
+    pawsWidget::Draw();
+    pawsWidget::ClipToParent(false);
+
+    int drawX = screenFrame.xmin+margin;
+    int drawY = screenFrame.ymin+margin;
+
+    if (!maxHeight && GetFont())
+        GetFont()->GetMaxSize( maxWidth, maxHeight );
+
+    if (!canDrawLines && maxHeight)
+        canDrawLines = (screenFrame.Height()-(margin*2)) / maxHeight;
+
+    for (size_t x = startLine; x < (startLine+canDrawLines); x++ )
+    {
+        if ( x >= lines.GetSize() )
+            return;
+
+        DrawWidgetText( (const char*)lines[x], drawX, drawY);
+
+        drawY+=maxHeight;
+    }
+
+}
+
+bool pawsMultiPageTextBox::OnScroll(int /*direction*/, pawsScrollBar* widget)
+{
+	// removed, see pawsMultiLineTextBox::OnScroll
+    return true;
+}
+
+bool pawsMultiPageTextBox::OnMouseDown( int button, int modifiers, int x, int y )
+{
+	// removed for the moment
+	
+ /*   if (button == csmbWheelUp)
+    {
+        if (scrollBar)
+            scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() - MULTILINE_TEXTBOX_MOUSE_SCROLL_AMOUNT);
+        return true;
+    }
+    else if (button == csmbWheelDown)
+    {
+        if (scrollBar)
+            scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() + MULTILINE_TEXTBOX_MOUSE_SCROLL_AMOUNT);
+        return true;
+    }*/
+    return pawsWidget::OnMouseDown( button, modifiers, x ,y);
+}
+
+
+void pawsMultiPageTextBox::SetCurrentPageNum(int n)
+{
+	currentPageNum = n;
+	startLine = n*canDrawLines;
+}
+
+int pawsMultiPageTextBox::GetCurrentPageNum()
+{
+	return currentPageNum;
+}
+
+int pawsMultiPageTextBox::GetNumPages()
+{
+	return numPages;
+}
+//================================================================
+//
+//================================================================
+
 
 pawsFadingTextBox::pawsFadingTextBox()
 {
@@ -2355,6 +2691,366 @@ void pawsDocumentView::Resize()
     SetText(text);
 }
 void pawsDocumentView::SetText(const char* newtext)
+{
+    lines.Empty();
+
+    psString str(newtext);
+    size_t pos = str.FindSubString("\r");
+    while(pos != (size_t)-1)
+    {
+        str = str.Slice(0, pos) + "\n" + str.Slice(pos+2, str.Length()-pos-2);
+        pos = str.FindSubString("\r");
+    }
+
+
+    usingScrollBar = false;
+    if(scrollBar) scrollBar->Hide();
+
+    OrganizeContent(str.GetData());
+
+    if(canDrawLines >= lines.GetSize())
+    {
+        canDrawLines = lines.GetSize();
+        if(scrollBar) //if there is a scrollbar we must setup it correctly else we will scroll in the void
+        {
+            scrollBar->SetMaxValue(0);
+            scrollBar->SetCurrentValue(0);
+        }
+    }
+    else
+    {
+        usingScrollBar = true;
+        lines.Empty();
+        OrganizeContent(str.GetData());//the scroll bar will show, we should organize the content again
+        if(scrollBar)
+        {
+            scrollBar->ShowBehind();
+            scrollBar->SetMaxValue(lines.GetSize() - canDrawLines);
+            scrollBar->SetCurrentValue(0);
+        }
+    }
+    startLine = 0;
+    text.Replace(str.GetData());
+}
+
+
+
+pawsMultiPageDocumentView::pawsMultiPageDocumentView()
+{
+
+}
+
+pawsMultiPageDocumentView::pawsMultiPageDocumentView(const pawsMultiPageDocumentView& origin)
+                    :pawsMultiPageTextBox(origin)
+{
+    for (unsigned int i = 0 ; i < origin.picsInfo.GetSize() ; i++)
+        picsInfo.Push(origin.picsInfo[i]);
+}
+
+pawsMultiPageDocumentView::~pawsMultiPageDocumentView()
+{
+
+}
+void pawsMultiPageDocumentView::Draw()
+{
+    pawsWidget::Draw();
+    pawsWidget::ClipToParent(false);
+
+    int drawX = screenFrame.xmin+margin;
+    int drawY = screenFrame.ymin+margin;
+
+    if(!maxHeight && GetFont())
+        GetFont()->GetMaxSize(maxWidth, maxHeight);
+
+    if(!canDrawLines && maxHeight)
+        canDrawLines = (screenFrame.Height()-(margin*2)) / maxHeight;
+
+    int offSet = margin*2;
+    if(usingScrollBar)
+        offSet += 36;
+
+    //lets check if the first visibe line is actually a line for a image:
+    if ((lines.GetSize()>startLine) && (lines[startLine].StartsWith("#pic#")))
+    {
+        // nice...this means that the first line might not actually be the first line defining the image but one of the lines "coverd" by the image
+        // so lets find out where the picture really starts
+        if (startLine > 0) // okay...if we really start at the first line it's fine to assume that this is the first line of the image as well ;)
+        {
+          int picStart = startLine - 1;
+          while ((picStart >= 0) && (lines[picStart]==lines[startLine]))
+          {
+             picStart--;
+          }
+          // how many lines are invisble?
+          int invisibleLines;
+          if (picStart == 0)
+          {
+              // all lines before are from this image
+              invisibleLines = startLine;
+          }
+          else
+          {
+              // oh..and yes...we are one line before the first picture line...so lets add the one again.
+              invisibleLines = startLine - picStart + 1;
+          }
+          // of course we don't really want to know how many lines we have to move the image but how many pixels
+          drawY-= (invisibleLines * maxHeight);
+        }
+    }
+
+    for(size_t x = startLine; x < (startLine+canDrawLines); x++)
+    {
+        if(x >= lines.GetSize())
+            return;
+
+        csString & currentStr = lines[x];
+        if(!currentStr.StartsWith("#pic#"))
+        {
+            DrawWidgetText((const char*)lines[x], drawX, drawY);
+
+            drawY+=maxHeight;
+        }
+        else
+        {
+            csArray<int> indices;
+            csString sub;
+            currentStr.SubString(sub, 5);
+            int index = 0;
+
+            for(unsigned int i = 0 ; i < sub.Length() ; i++)
+            {
+                if(sub[i] != ',')
+                {
+                    index *= 10;
+                    index += sub[i]- '0';
+                }
+                else
+                {
+                    indices.Push(index);
+                    index = 0;
+                }
+            }
+            indices.Push(index);
+            //draw pictures
+            PictureInfo &pi = picsInfo[indices[0]];
+            unsigned int sz = indices.GetSize();
+            unsigned int sx = drawX;
+            if(pi.align == 0) //align left
+                sx += pi.padding[0];
+            else
+            {
+                if(pi.align == 1)//align center
+                {
+                    unsigned int w = pi.width;
+                    unsigned int pad = pi.padding[0]+pi.padding[2];
+                    unsigned int dsx = (screenFrame.Width() - w * sz - pad * (sz - 1) - offSet + margin )/2  ;
+                    sx = screenFrame.xmin + dsx;
+                }
+                else
+                {
+                    if(pi.align == 2)//align right
+                    {
+                        unsigned int w = pi.width;
+                        unsigned int pad = pi.padding[0]+pi.padding[2];
+                        unsigned int dsx = w * sz + pad * (sz - 1) + pi.padding[2] + margin;
+                        if(usingScrollBar)
+                            dsx += 36;
+                        sx += (screenFrame.Width() - dsx);
+                    }
+                    else sx += pi.padding[0];
+                }
+            }
+
+            unsigned int sy = drawY + pi.padding[1];
+
+            for(unsigned int i = 0 ; i< sz ; i++)
+            {
+                //draw an image at sx sy
+                csRef<iPawsImage> drawable;
+                if(picsInfo[i].srcString.StartsWith("/"))
+                {
+                    drawable.AttachNew(new pawsImageDrawable(picsInfo[indices[i]].srcString.GetData(), picsInfo[indices[i]].srcString.GetData()));
+                    PawsManager::GetSingleton().GetTextureManager()->Remove(picsInfo[i].srcString.GetData());
+                    PawsManager::GetSingleton().GetTextureManager()->AddPawsImage(drawable);
+                }
+                else
+                {
+                    //a resource
+                    drawable =  PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(picsInfo[indices[i]].srcString.GetData());
+                }
+                // only draw if the image was found
+                if (drawable)
+                {
+                    drawable->Draw(sx, sy, pi.width, pi.height);
+                }
+                sx += pi.padding[0] + pi.padding[2] + pi.width;
+            }
+            drawY += pi.height + pi.padding[3];
+        }
+
+        for(unsigned i = x+1 ; i < (startLine+canDrawLines) ; i++)
+        {
+            if(i >= lines.GetSize()) break;
+            if(currentStr == lines[i])
+                ++x;
+            else break;
+        }
+
+    }
+}
+
+unsigned int pawsMultiPageDocumentView::ProcessPictureInfo(iDocumentNode *node)
+{
+    //process a picture node. If the src attribute of the node contains more than one picture location,
+    //this function would fill create more than one PictureInfo structure into picsInfo array.
+    csString srcs = node->GetAttributeValue("src");
+
+    //all the pictures in current node hold the same format
+    unsigned int align = node->GetAttributeValueAsInt("align");
+    unsigned int width = node->GetAttributeValueAsInt("width");
+    unsigned int height = node->GetAttributeValueAsInt("height");
+    csString paddingStr = node->GetAttributeValue("padding");
+    paddingStr = paddingStr.Trim();
+    unsigned int padding[4] = {0, 0, 0, 0};
+    unsigned int index = 0;
+
+    for(unsigned int i = 0 ; i < paddingStr.Length() ; i++)
+    {
+        if(paddingStr[i] != ' ')
+        {
+            //none numbers of padding parameters are not checked here
+            padding[index] *= 10;
+            padding[index] += paddingStr[i]- '0';
+        }
+        else ++index;
+    }
+
+    csString temp = srcs;
+    unsigned int pos;
+    unsigned int sz = 0;
+
+    //process the src attribute and push corresponding PictureInfo into picsInfo array
+    while((pos = temp.FindFirst(';')) != -1)
+    {
+        csString sub;
+        temp.SubString(sub,0,pos);
+        PictureInfo pi;
+        pi.align = align;
+        pi.height = height;
+        pi.padding[0] = padding[0];
+        pi.padding[1] = padding[1];
+        pi.padding[2] = padding[2];
+        pi.padding[3] = padding[3];
+        pi.srcString = sub;
+        pi.width = width;
+        picsInfo.Push(pi);
+        temp.SubString(sub, pos+1);
+        temp = sub;
+        sz++;
+    }
+    return sz;
+}
+void pawsMultiPageDocumentView::OrganizeContent(const char * newtext)
+{
+    csString str(newtext);
+    csRef<iDocumentNode> root = ParseStringGetNode(str, "Contents");
+
+    if(root == 0)
+        return;
+
+    csRef<iDocumentNodeIterator> childIter = root->GetNodes();
+    picsInfo.Empty();
+
+    int offSet = margin*2;
+    if(usingScrollBar)
+        offSet += 36;
+
+    while(childIter->HasNext())
+    {
+        csRef<iDocumentNode> childNode = childIter->Next();
+        csString type(childNode->GetAttributeValue("type"));
+
+        if(type == "text")
+        {
+            //a text node, processed by the based method
+            csString textpart = childNode->GetContentsValue();
+            OrganizeText(textpart.GetData());
+        }
+        else
+            if(type == "pic") //a picture node
+            {
+                //process the picture node,return how many pictures in the row
+                unsigned int sz = ProcessPictureInfo(childNode);
+                if(sz == 0)
+                    continue;
+
+                unsigned int picIndex = picsInfo.GetSize() - 1;
+                unsigned int width = picsInfo[picIndex].width;
+                unsigned int height = picsInfo[picIndex].height;
+                unsigned int * padding = picsInfo[picIndex].padding;
+                unsigned int widthPerPic = padding[0] + padding[2] + width;
+
+                unsigned int needLength = widthPerPic*sz;
+                unsigned int canDrawLength = screenFrame.Width() - offSet;
+                GetFont()->GetMaxSize( maxWidth, maxHeight );
+                if(needLength <= canDrawLength)
+                {
+                    //all pictures could be drawn in a row
+                    csString infoStr="#pic#";
+                    for(; sz > 0; sz--)
+                    {
+                        unsigned int index = picIndex - sz + 1;
+
+
+                        if(sz != 1)
+                            infoStr = infoStr.Append(index) + ",";
+                        else infoStr.Append(index);
+                    }
+                    unsigned int occupied_lines = (padding[1] + padding[3] + height)/maxHeight + 1;
+                    for(unsigned int i = 0 ; i < occupied_lines ; i++)
+                        lines.Push(infoStr);
+                }
+                else
+                {
+                    //all pictures defined in this node could not be drawn in one row
+                    unsigned int howmanycandraw = canDrawLength/widthPerPic;
+                    if(howmanycandraw == 0) //the box could not hold the picture in, then the picture will no show
+                        continue;
+                    canDrawLength = howmanycandraw * widthPerPic;
+                    unsigned int rows = needLength%canDrawLength ? needLength/canDrawLength + 1 : needLength/canDrawLength;
+
+                    for(; rows>0; rows--)
+                    {
+                        csString infoStr="#pic#";
+                        unsigned int temp = howmanycandraw;
+
+                        for(; temp>0; temp--)
+                        {
+                            unsigned int index = picIndex - sz + 1;
+                            if(index > picIndex)
+                                break;
+
+                            if(temp != 1 && index != picIndex)
+                                infoStr = infoStr.Append(index) + ",";
+                            else infoStr.Append(index);
+                            sz--;
+                        }
+
+                        unsigned int occupied_lines = (padding[1] + padding[3] + height)/maxHeight + 1;
+                        for(unsigned int i = 0 ; i < occupied_lines ; i++)
+                            lines.Push(infoStr);
+                    }
+                }//end else
+            }//end pic type
+    }
+}
+
+void pawsMultiPageDocumentView::Resize()
+{
+    pawsWidget::Resize();
+    SetText(text);
+}
+void pawsMultiPageDocumentView::SetText(const char* newtext)
 {
     lines.Empty();
 

@@ -2,7 +2,7 @@
 
     <widget name="WritingWindow" factory="pawsWritingWindow" resizeable = "no" visible="no" movable="yes" style="New Standard GUI">
         <frame x="100" y="70" width="447" height="500" border="yes"/>
-        <bgimage resource="Book Background" />
+        <bgimage resource="Write Book" />
         <title resource="Scaling Title Bar" text="Book Writing" align="left" close_button="yes"/>
 
 
@@ -13,13 +13,12 @@
             <spellChecker enable="true" r="255" g="0" b="0"/>
         </widget>
 
-
-        <widget name="body" factory="pawsMultilineEditTextBox" style="textinput">
+         <widget name="body" factory="pawsMultilineEditTextBox" style="textinput">
             <frame x="35" y="90" width="385" height="380" border="no"/>
             <font name="becker-m.ttf" r="0" g="0" b="0" size="12"/>
             <spellChecker enable="true" r="255" g="0" b="0"/>
         </widget>
-
+        
         <widget name="save" factory="pawsButton" id="103" style="Standard Button">
             <frame x="5" y="5" width="50" height="20" />
         <label text="OK"/>
