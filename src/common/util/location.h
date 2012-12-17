@@ -1,7 +1,7 @@
 /*
  * location.h
  *
- * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -65,42 +65,63 @@ public:
 
     /** Constructor
      */
-    Location(LocationType* locationType, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags);
-    
+    Location(LocationType* locationType, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags);
+
     /** Destructor
      */
     ~Location();
 
     /** Get the DB ID.
      */
-    int GetID() const { return id; }
+    int GetID() const
+    {
+        return id;
+    }
 
     /** Set DB ID.
      */
-    void SetID(int id) { this->id = id; }
-    
+    void SetID(int id)
+    {
+        this->id = id;
+    }
+
     /** Return the position of this location.
      */
-    const csVector3& GetPosition() const { return pos; }
+    const csVector3 &GetPosition() const
+    {
+        return pos;
+    }
 
     /** Get flags.
      * @note No flags implemented yet.
      */
-    csString GetFlags() const { return csString(); }
+    csString GetFlags() const
+    {
+        return csString();
+    }
 
     /** Set flags.
      * @note No flags implemented yet.
      */
-    bool SetFlags(const csString& flags) { return false; }
+    bool SetFlags(const csString &flags)
+    {
+        return false;
+    }
 
     /** Set flag.
      * @note No flags implemented yet.
      */
-    bool SetFlag(const csString& flag, bool enable) { return false; }
-    
+    bool SetFlag(const csString &flag, bool enable)
+    {
+        return false;
+    }
+
     /** Get the Radius.
      */
-    float GetRadius() const { return radius; }
+    float GetRadius() const
+    {
+        return radius;
+    }
 
     /** Set Radius and recalculate the boudning box.
      */
@@ -112,49 +133,58 @@ public:
 
     /** Get the rotation angle
      */
-    float GetRotationAngle() const { return rot_angle; }
-    
+    float GetRotationAngle() const
+    {
+        return rot_angle;
+    }
+
     /** Get the type name of this location.
      */
     const char* GetTypeName() const;
 
     /** Load a location from the DB
      */
-    bool Load(iResultRow& row, iEngine *engine, iDataConnection *db);
+    bool Load(iResultRow &row, iEngine* engine, iDataConnection* db);
 
     /** Create or update an entry for this location in the DB.
      * @note Will update if there is a id different from -1.
      */
     bool CreateUpdate(iDataConnection* db);
-    
+
     /** Import a location from an XML document.
      */
-    bool Import(iDocumentNode *node, iDataConnection *db, int typeID);
+    bool Import(iDocumentNode* node, iDataConnection* db, int typeID);
 
     /** Query if this location is a region.
      * @return return true when this location is a region.
      *
      * @note Region is a location with multiple points.
      */
-    bool IsRegion() { return locs.GetSize() != 0; }
+    bool IsRegion()
+    {
+        return locs.GetSize() != 0;
+    }
 
     /** Query if this location is a circle
      */
-    bool IsCircle() { return locs.GetSize() == 0; }
-    
-    /** Return cached sector or find the sector and cache it from engine.
-     */
-    iSector*            GetSector(iEngine * engine);
+    bool IsCircle()
+    {
+        return locs.GetSize() == 0;
+    }
 
     /** Return cached sector or find the sector and cache it from engine.
      */
-    iSector*            GetSector(iEngine * engine) const;
+    iSector*            GetSector(iEngine* engine);
+
+    /** Return cached sector or find the sector and cache it from engine.
+     */
+    iSector*            GetSector(iEngine* engine) const;
 
     /** Return the bounding box for this location
      *
      * @return Bounding box of the location
      */
-    const csBox2& GetBoundingBox() const;
+    const csBox2 &GetBoundingBox() const;
 
     /** Function to calculate the bounding box for a location.
      *
@@ -162,10 +192,10 @@ public:
      * loaded or modified.
      */
     void CalculateBoundingBox();
-    
+
     /** Check if a point is within bounds of this location.
      */
-    bool CheckWithinBounds(iEngine * engine,const csVector3& pos,const iSector* sector);
+    bool CheckWithinBounds(iEngine* engine,const csVector3 &pos,const iSector* sector);
 
     /** Get a random position in the location
      *
@@ -178,22 +208,28 @@ public:
      *
      * @return True if position is found.
      */
-    bool GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &sector);
-    
+    bool GetRandomPosition(iEngine* engine,csVector3 &pos,iSector* &sector);
+
     /** retrive a sector ID.
      */
-    static int GetSectorID(iDataConnection *db, const char* name);
+    static int GetSectorID(iDataConnection* db, const char* name);
 
     /** retrive the name of this location.
      */
-    const char* GetName() const { return name.GetDataSafe(); }
+    const char* GetName() const
+    {
+        return name.GetDataSafe();
+    }
 
     /** Set the name.
      */
-    void SetName(const csString& name){ this->name = name; }
+    void SetName(const csString &name)
+    {
+        this->name = name;
+    }
 
     /** Return the effect ID for this location or assign a new ID
-        @param allocator 
+        @param allocator
      */
     uint32_t GetEffectID(iEffectIDAllocator* allocator);
 
@@ -212,11 +248,11 @@ public:
     /** Insert a new point in a region after this location.
      */
     Location* Insert(int id, csVector3 &pos, iSector* sector);
-    
+
 };
 
 /**
- * This stores a vector of positions listing a set of 
+ * This stores a vector of positions listing a set of
  * points defining a common type of location, such as
  * a list of burning fires or guard stations--whatever
  * the NPCs need.
@@ -234,8 +270,8 @@ public:
 
     /** Constructor
      */
-    LocationType(int id, const csString& name);
-    
+    LocationType(int id, const csString &name);
+
     /** Destructor
      */
     ~LocationType();
@@ -244,16 +280,16 @@ public:
      * @note Will update if there is a id different from -1.
      */
     bool CreateUpdate(iDataConnection* db);
-    
+
     /** Load a location type from an XML file.
      */
-    bool Load(iDocumentNode *node);
-    bool Import(iDocumentNode *node, iDataConnection *db);
-    bool ImportLocations(iDocumentNode *node, iDataConnection *db);
+    bool Load(iDocumentNode* node);
+    bool Import(iDocumentNode* node, iDataConnection* db);
+    bool ImportLocations(iDocumentNode* node, iDataConnection* db);
 
     /** Load a location type from DB.
      */
-    bool Load(iResultRow& row, iEngine *engine, iDataConnection *db);
+    bool Load(iResultRow &row, iEngine* engine, iDataConnection* db);
 
     /** Add a new location to this location type.
      */
@@ -262,11 +298,11 @@ public:
     /** Remove a location from this location type.
      */
     void RemoveLocation(Location* location);
-                     
+
     /** Check if a point is within any of the locaitons of this location type.
      */
-    bool CheckWithinBounds(iEngine * engine,const csVector3& pos,const iSector* sector);
-    
+    bool CheckWithinBounds(iEngine* engine,const csVector3 &pos,const iSector* sector);
+
     /** Get a random position in the location
      *
      * Will return the position found. Do not relay on the
@@ -278,21 +314,27 @@ public:
      *
      * @return True if position is found.
      */
-    bool GetRandomPosition(iEngine * engine,csVector3& pos,iSector* &sector);
+    bool GetRandomPosition(iEngine* engine,csVector3 &pos,iSector* &sector);
 
     /** retrive the ID of this location type.
      */
-    int GetID() const { return id; }
-    
+    int GetID() const
+    {
+        return id;
+    }
+
     /** retrive the name of this location type.
      */
-    const char* GetName() const { return name.GetDataSafe(); }
+    const char* GetName() const
+    {
+        return name.GetDataSafe();
+    }
 };
 
 /**
  * Manager that manage all locations and location types.
  */
-class LocationManager 
+class LocationManager
 {
 public:
     /** Constructor
@@ -330,22 +372,22 @@ public:
     /** Find a location of a specfic location type by nam.
      */
     Location* FindLocation(int id);
-    
+
     /** Find all location in given sector.
      */
-    size_t FindLocationsInSector(iEngine* engine, iSector *sector, csList<Location*>& list);
+    size_t FindLocationsInSector(iEngine* engine, iSector* sector, csList<Location*> &list);
 
     /** Find the neares location to a point.
      */
-    Location* FindNearestLocation(psWorld* world, csVector3& pos, iSector* sector, float range, float* found_range);
+    Location* FindNearestLocation(psWorld* world, csVector3 &pos, iSector* sector, float range, float* found_range);
 
     /** Find the neares location to a point of a given location type.
      */
-    Location* FindNearestLocation(psWorld* world, const char* loctype, csVector3& pos, iSector* sector, float range, float* found_range);
+    Location* FindNearestLocation(psWorld* world, const char* loctype, csVector3 &pos, iSector* sector, float range, float* found_range);
 
     /** Find a random location within a given max range.
      */
-    Location* FindRandomLocation(psWorld* world, const char* loctype, csVector3& pos, iSector* sector, float range, float* found_range);
+    Location* FindRandomLocation(psWorld* world, const char* loctype, csVector3 &pos, iSector* sector, float range, float* found_range);
 
     /** Get a iterator to all Location Types stored in the Location Manager.
      */
@@ -353,32 +395,32 @@ public:
 
     /** Create a new location. And add it to the DB.
      */
-    Location* CreateLocation(iDataConnection* db, LocationType* locationType, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags);
+    Location* CreateLocation(iDataConnection* db, LocationType* locationType, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags);
 
     /** Create a new location
      */
-    Location* CreateLocation(const char* locationTypeName, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags);
+    Location* CreateLocation(const char* locationTypeName, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags);
 
     /** Create a new location
      */
-    Location* CreateLocation(LocationType* locationType, const char* locationName, csVector3& pos, iSector* sector, float radius, float rot_angle, const csString& flags);
-    
-    /** Create a new location type
-     */
-    LocationType* CreateLocationType(iDataConnection* db, const csString& locationName);
+    Location* CreateLocation(LocationType* locationType, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags);
 
     /** Create a new location type
      */
-    LocationType* CreateLocationType(int id, const csString& locationName);
+    LocationType* CreateLocationType(iDataConnection* db, const csString &locationName);
+
+    /** Create a new location type
+     */
+    LocationType* CreateLocationType(int id, const csString &locationName);
 
     /** Remove a location type
      */
-    bool RemoveLocationType(iDataConnection* db, const csString& locationName);
+    bool RemoveLocationType(iDataConnection* db, const csString &locationName);
 
     /** Remove a location type
      */
-    bool RemoveLocationType(const csString& locationName);
-    
+    bool RemoveLocationType(const csString &locationName);
+
 private:
     csHash<LocationType*, csString> loctypes;          ///< Hash on all location types, hashed on the type.
     csArray<Location*>              all_locations;     ///< Quick access array to all locations.
