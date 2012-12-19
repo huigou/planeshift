@@ -1263,7 +1263,7 @@ size_t Tribe::AssetQuantity(Tribe::AssetType type, csString name)
     return quantity;
 }
 
-void Tribe::Build(NPC* npc)
+void Tribe::Build(NPC* npc, bool pickupable)
 {
     Asset* buildingSpot = npc->GetBuildingSpot();
 
@@ -1278,7 +1278,7 @@ void Tribe::Build(NPC* npc)
 
         // Now ask the server to spawn the building. Upon spawn a persit item will be sent to the client.
         // The new building will be added to assets as part of the HandlePersitItem prosessing.
-        npcclient->GetNetworkMgr()->QueueSpawnBuildingCommand(npc->GetActor(), buildingPos, buildingSector, buildingSpot->name, GetID());
+        npcclient->GetNetworkMgr()->QueueSpawnBuildingCommand(npc->GetActor(), buildingPos, buildingSector, buildingSpot->name, GetID(), pickupable);
 
         SaveAsset(buildingSpot);
     }

@@ -1151,6 +1151,7 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 csString      sectorName = list.msg->GetStr();
                 csString      buildingName = list.msg->GetStr();
                 int           tribeID = list.msg->GetInt16();
+                bool          pickupable = list.msg->GetBool();
 
                 InstanceID    instance = DEFAULT_INSTANCE;
                 psSectorInfo* sector = cacheManager->GetSectorInfoByName(sectorName);
@@ -1169,6 +1170,7 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 psItem* requiredItem = new psItem();
                 requiredItem->SetBaseStats(itemstats);
                 requiredItem->SetLocationInWorld(instance, sector, where[0], where[1], where[2], 0);
+                requiredItem->SetIsPickupable(pickupable);
                 requiredItem->SetLoaded();
                 requiredItem->Save(false);
 

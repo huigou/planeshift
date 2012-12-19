@@ -925,12 +925,14 @@ ScriptOperation::OperationResult AssessOperation::Run(NPC *npc, bool interrupted
 
 bool BuildOperation::Load(iDocumentNode *node)
 {
+    pickupable = node->GetAttributeValueAsBool("pickupable",false);
     return true;
 }
 
 ScriptOperation *BuildOperation::MakeCopy()
 {
     BuildOperation *op = new BuildOperation;
+    op->pickupable = pickupable;
     return op;
 }
 
@@ -938,7 +940,7 @@ ScriptOperation::OperationResult BuildOperation::Run(NPC *npc, bool interrupted)
 {
     if (npc->GetTribe())
     {
-        npc->GetTribe()->Build(npc);
+        npc->GetTribe()->Build(npc, pickupable);
     }
     else
     {
@@ -3657,7 +3659,7 @@ ScriptOperation *PerceptOperation::MakeCopy()
     return op;
 }
 
-bool PerceptOperation::CheckCondition()
+bool PerceptOperation::CheckCondition(NPC* npc)
 {
     if(!calc_condition.IsValid())
     {
@@ -3671,6 +3673,7 @@ bool PerceptOperation::CheckCondition()
     MathEnvironment env;
 
     env.Define("NPCClient",                npcclient);
+    env.Define("NPC",                      npc);
     env.Define("Result",                   0.0);
 
     //this is going to crash if the script cannot be found.
@@ -3688,7 +3691,7 @@ ScriptOperation::OperationResult PerceptOperation::Run(NPC *npc, bool interrupte
 
     if (!condition.IsEmpty())
     {
-        if (CheckCondition())
+        if (CheckCondition(npc))
         {
             perceptionVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, perception);
         }

@@ -106,7 +106,7 @@ private:
 /**
 * This object represents each NPC managed by this superclient.
 */
-class NPC : private ScopedTimerCB
+class NPC : private ScopedTimerCB, public iScriptableVar
 {
 public:
     /** Structure to hold located positions */
@@ -609,6 +609,12 @@ public:
      */
     Tribe::Asset* GetBuildingSpot();
 
+private:
+    /// iScriptableVar implementation
+    virtual double GetProperty(MathEnvironment* env, const char* ptr);
+    virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
+    virtual const char* ToString();
+    
 private:
     psNPCTick*        tick;
     psNPCClient*      npcclient;
