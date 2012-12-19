@@ -1811,7 +1811,7 @@ void NetworkManager::QueueSpawnCommand(gemNPCActor* mother, gemNPCActor* father,
     cmd_count++;
 }
 
-void NetworkManager::QueueSpawnBuildingCommand(gemNPCActor* spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID)
+void NetworkManager::QueueSpawnBuildingCommand(gemNPCActor* spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID, bool pickupable)
 {
     CheckCommandsOverrun(100);
 
@@ -1820,6 +1820,7 @@ void NetworkManager::QueueSpawnBuildingCommand(gemNPCActor* spawner, csVector3 w
     outbound->msg->Add(where);
     outbound->msg->Add(sector->QueryObject()->GetName());
     outbound->msg->Add(buildingName);
+    outbound->msg->Add(pickupable);
 
     outbound->msg->Add(tribeID);
 

@@ -483,7 +483,7 @@ public:
     size_t AssetQuantity(Tribe::AssetType type, csString name);
    
     /** Build a building on the current NPC building spot */
-    void Build(NPC* npc);
+    void Build(NPC* npc, bool pickupable);
 
     /** Tear down a building */
     void Unbuild(NPC* npc, gemNPCItem* building);

@@ -1359,7 +1359,43 @@ Tribe::Asset* NPC::GetBuildingSpot()
     return buildingSpot;
 }
 
+double NPC::GetProperty(MathEnvironment* env, const char* ptr)
+{
+    csString property(ptr);
+    if (property == "InsideTribeHome")
+    {
+    	return insideTribeHome?1.0:0.0;
+    }
+    if (property == "InsideRegion")
+    {
+    	return insideRegion?1.0:0.0;
+    }
+/*
+    if (property == "HP")
+    {
+        return 0.0; // TODO; Get the real value
+    }
+    if (property == "MaxHP")
+    {
+        return 1.0; // TODO: get the real value
+    }
+*/
+    Error2("Requested NPC property not found '%s'", ptr);
+    return 0.0;
+}
 
+double NPC::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
+{
+    csString function(functionName);
+
+    Error2("Requested NPC function not found '%s'", functionName);
+    return 0.0;
+}
+
+const char* NPC::ToString()
+{
+    return "NPC";
+}
 
 csString NPC::GetBuffer(const csString &bufferName)
 {

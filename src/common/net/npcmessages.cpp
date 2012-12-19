@@ -437,6 +437,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 csString sectorName = msg->GetStr();
                 csString buildingName = msg->GetStr();
                 int tribeID = msg->GetInt16();
+                bool pickupable = msg->GetBool();
 
                 if(msg->overrun)
                 {
@@ -444,7 +445,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                     break;
                 }
 
-                msgtext.AppendFmt("Spawner: %s Pos: %s in sectorName %s. TribeID: %d. Building: %s", ShowID(spawnerEID), toString(pos).GetDataSafe(), sectorName.GetDataSafe(), tribeID, buildingName.GetDataSafe());
+                msgtext.AppendFmt("Spawner: %s Pos: %s in sectorName %s. TribeID: %d. Building: %s Pickupable: %s", ShowID(spawnerEID), toString(pos).GetDataSafe(), sectorName.GetDataSafe(), tribeID, buildingName.GetDataSafe(), pickupable?"Yes":"No");
                 break;
             }
             case psNPCCommandsMessage::CMD_TALK:

@@ -341,6 +341,7 @@ public:
 class BuildOperation : public ScriptOperation
 {
 protected:
+    bool pickupable;
 public:
 
     BuildOperation(): ScriptOperation("Build") {};
@@ -1072,7 +1073,7 @@ public:
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
-    virtual bool CheckCondition();
+    virtual bool CheckCondition(NPC* npc);
     static void TriggerEvent(NPC* npc, Perception& pcpt, TargetType target, float maxRange);
 };
 

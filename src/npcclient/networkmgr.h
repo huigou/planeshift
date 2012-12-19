@@ -168,8 +168,9 @@ public:
      * @param sector       The sector in which we want a spawn.
      * @param buildingName The name of the building. Or more exactly... of the mesh for it.
      * @param tribeID      The owner of this building
+     * @param pickupable   Should the building be possible to pick up
      */
-    void QueueSpawnBuildingCommand(gemNPCActor *spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID);
+    void QueueSpawnBuildingCommand(gemNPCActor *spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID, bool pickupable);
 
     /** Send a unbuild command to server
      *
