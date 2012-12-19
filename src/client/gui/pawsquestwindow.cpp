@@ -632,8 +632,7 @@ void pawsQuestListWindow::SaveNotes(const char* fileName)
         if(!(qn->notes).IsEmpty() &&
                 !(qn->notes.Length() == 1 &&       // workaround to CS bug, test that file is not of length 1 containing a newline or carriage return
                   (qn->notes.GetAt(0)== '\n' ||     // newline
-                   qn->notes.GetAt(0) == '\r' ||    // carriage return
-                   qn->notes.GetAt(0) =='\r\n')))   // mac/unix carriage return?
+                   qn->notes.GetAt(0) == '\r' )))    // carriage return
         {
             parent = parentMain->CreateNodeBefore(CS_NODE_ELEMENT);
             sprintf(temp, "quest%d", qn->id);
