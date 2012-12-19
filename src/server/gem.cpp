@@ -5072,6 +5072,8 @@ void gemNPC::Broadcast(int clientnum, bool control)
 void gemNPC::SendGroupStats()
 {
     gemActor::SendGroupStats();
+
+    // Distribute PET stats to owner client
     if (GetCharacterData()->IsPet())
     {
         // Get Client ID of Owner
