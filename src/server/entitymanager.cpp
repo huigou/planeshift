@@ -987,9 +987,9 @@ void EntityManager::HandleActor(MsgEntry* me, Client *client)
     // First send the actor to the client
     actor->Send( me->clientnum, true, false );
 
-    // Then send stuff like HP and mana to player, flags=-1 force a update of all stats
+    // Then send stuff like HP and mana to player
     psCharacter * chardata = client->GetCharacterData();
-    chardata->SendStatDRMessage(me->clientnum, actor->GetEID(), -1);
+    chardata->SendStatDRMessage(me->clientnum, actor->GetEID(), DIRTY_VITAL_ALL);
 
     //Store info about the character login
     chardata->SetLastLoginTime();
