@@ -645,17 +645,12 @@ protected:
 
     /// Cache in the crafting messages.
     bool PreloadCraftMessages();
-
-
-
-    bool DescribeTransformation(csPDelArray<psTradeTransformations> &, csArray<CraftTransInfo*>* newArray);
+    bool DescribeTransformation(psTradeTransformations* t, csArray<CraftTransInfo*>* newArray);
+    bool DescribeCombination(Result* combinations, csArray<CraftTransInfo*>* newArray );
     int Contains(csArray<uint32>* list, uint32 id);
-    int ResultsIn(Result*, int id);
-
     bool loadTradeTransformationsByPatternAndGroup(Result* result, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash);
     bool freeTradeTransformationsByPatternAndGroup(csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash);
-    bool FindFinalItem(csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txItemHash, csArray<uint32>* finalItems, uint32 itemID, csArray<uint32>* itemStack);
-    bool UniqueInsertIntoItemArray(csArray<uint32>* finalItems, uint32 itemID);
+    bool FindFinalItem(csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txItemHash, csArray<uint32>* finalItems, uint32 itemID, csArray<uint32>* itemStack);    bool UniqueInsertIntoItemArray(csArray<uint32>* finalItems, uint32 itemID);
     bool ListProductionSteps(csArray<CraftTransInfo*>* newArray, csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txResultHash, csArray<uint32>* finalItems, uint32 itemID, uint32 patternID, uint32 groupID, csArray<uint32>* itemStack);
 
 
