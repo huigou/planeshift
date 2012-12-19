@@ -1689,6 +1689,8 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
             newArray->Push(craftInfo);
         }
     }
+
+    return true;
 }
 
 bool CacheManager::DescribeCombination( Result* combinations, csArray<CraftTransInfo*>* newArray )
@@ -1703,6 +1705,8 @@ bool CacheManager::DescribeCombination( Result* combinations, csArray<CraftTrans
 
     newArray->Push(craftInfo);
 //printf( "DEBUG: Describe Combination : %s\n", craftInfo->craftStepDescription.GetData() );
+
+    return true;
 }
 
 /** List the steps to produce an item.
@@ -1770,6 +1774,8 @@ bool CacheManager::ListProductionSteps(csArray<CraftTransInfo*>* newArray,
         }
     }
     itemStack->Pop();
+
+    return true;
 }
 
 
