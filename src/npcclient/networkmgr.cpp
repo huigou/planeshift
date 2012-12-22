@@ -994,17 +994,17 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 gemNPCObject* target = npcclient->FindEntityID(targetEID);
                 if(!target)
                 {
-                    npc->Printf("Got access perception from unknown target(%s)!\n", ShowID(targetEID));
+                    NPCDebug(npc, 5, "Got access perception from unknown target(%s)!\n", ShowID(targetEID));
                     break;
                 }
 
-                npc->Printf("Got Assess perception for %s(%s) to %s(%s) with "
-                            "Physical assessment: '%s' "
-                            "Magical assessment: '%s' "
-                            "Overall assessment: '%s'",
-                            npc->GetName(), ShowID(actorEID),
-                            target->GetName(), ShowID(targetEID),
-                            physical.GetDataSafe(),magical.GetDataSafe(),overall.GetDataSafe());
+                NPCDebug(npc, 5, "Got Assess perception for %s(%s) to %s(%s) with "
+                         "Physical assessment: '%s' "
+                         "Magical assessment: '%s' "
+                         "Overall assessment: '%s'",
+                         npc->GetName(), ShowID(actorEID),
+                         target->GetName(), ShowID(targetEID),
+                         physical.GetDataSafe(),magical.GetDataSafe(),overall.GetDataSafe());
 
                 Perception physicalPerception(physical);
                 npc->TriggerEvent(&physicalPerception);
@@ -1030,8 +1030,8 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
 
 
                 Perception perception("spoken_to",spokenTo?"true":"false");
-                npc->Printf("Got spoken_to perception for actor %s(%s) with spoken_to=%s.\n",
-                            npc->GetName(), ShowID(npcEID), spokenTo?"true":"false");
+                NPCDebug(npc, 5, "Got spoken_to perception for actor %s(%s) with spoken_to=%s.\n",
+                         npc->GetName(), ShowID(npcEID), spokenTo?"true":"false");
 
                 npc->TriggerEvent(&perception);
                 break;
@@ -1052,13 +1052,13 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 gemNPCObject* speaker_ent = npcclient->FindEntityID(speakerEID);
                 if(!speaker_ent)
                 {
-                    npc->Printf("Got talk perception from unknown speaker(%s)!\n", ShowID(speakerEID));
+                    NPCDebug(npc, 5, "Got talk perception from unknown speaker(%s)!\n", ShowID(speakerEID));
                     break;
                 }
 
                 FactionPerception talk("talk",faction,speaker_ent);
-                npc->Printf("Got Talk perception for from actor %s(%s), faction diff=%d.\n",
-                            speaker_ent->GetName(), ShowID(speakerEID), faction);
+                NPCDebug(npc, 5, "Got Talk perception for from actor %s(%s), faction diff=%d.\n",
+                         speaker_ent->GetName(), ShowID(speakerEID), faction);
 
                 npc->TriggerEvent(&talk);
                 break;
@@ -1078,13 +1078,13 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 }
                 if(!attacker_ent)
                 {
-                    npc->Printf("Got attack perception for unknown attacker (%s)!", ShowID(attackerEID));
+                    NPCDebug(npc, 5, "Got attack perception for unknown attacker (%s)!", ShowID(attackerEID));
                     break;
                 }
 
                 AttackPerception attack("attack",attacker_ent);
-                npc->Printf("Got Attack perception for from actor %s(%s).",
-                            attacker_ent->GetName(), ShowID(attackerEID));
+                NPCDebug(npc, 5, "Got Attack perception for from actor %s(%s).",
+                         attacker_ent->GetName(), ShowID(attackerEID));
 
                 npc->TriggerEvent(&attack);
                 break;
@@ -1125,8 +1125,8 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     {
                         if(npc)
                         {
-                            npc->Printf("Got group attack perception for unknown group member!",
-                                        npc->GetActor()->GetName());
+                            NPCDebug(npc, 5, "Got group attack perception for unknown group member!",
+                                     npc->GetActor()->GetName());
                         }
 
                         attacker_ents.Pop();
@@ -1144,13 +1144,13 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
 
                 if(attacker_ents.GetSize() == 0)
                 {
-                    npc->Printf("Got group attack perception and all group members are unknown!");
+                    NPCDebug(npc, 5, "Got group attack perception and all group members are unknown!");
                     break;
                 }
 
                 GroupAttackPerception attack("groupattack",attacker_ents,bestSkillSlots);
-                npc->Printf("Got Group Attack perception for recognising %i actors in the group.",
-                            attacker_ents.GetSize());
+                NPCDebug(npc, 5, "Got Group Attack perception for recognising %i actors in the group.",
+                         attacker_ents.GetSize());
 
                 npc->TriggerEvent(&attack);
                 break;
@@ -1183,8 +1183,8 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 }
 
                 DamagePerception damage("damage",attacker_ent,dmg);
-                npc->Printf("Got Damage perception for from actor %s(%s) for %1.1f HP to %.1f HP of %.1f HP.",
-                            attacker_ent->GetName(), ShowID(attackerEID), dmg, hp, maxHP);
+                NPCDebug(npc, 5, "Got Damage perception for from actor %s(%s) for %1.1f HP to %.1f HP of %.1f HP.",
+                         attacker_ent->GetName(), ShowID(attackerEID), dmg, hp, maxHP);
 
                 npc->TriggerEvent(&damage);
                 break;
@@ -1199,7 +1199,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     npcclient->TriggerEvent(&pcpt); // Broadcast
                     break;
                 }
-                npc->Printf("Got Death message");
+                NPCDebug(npc, 5, "Got Death message");
                 npcclient->HandleDeath(npc);
                 break;
             }
@@ -1217,7 +1217,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
 
                 if(npc)
                 {
-                    npc->Printf("Got Spell Perception %s is casting %s on me.",
+                    NPCDebug(npc, 5, "Got Spell Perception %s is casting %s on me.",
                                 (caster_ent)?caster_ent->GetName():"(unknown entity)",type.GetDataSafe());
                 }
 
@@ -1247,7 +1247,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(!npc)
                     break;  // This perception is not our problem
 
-                npc->Printf("Range perception: NPC: %s, player: %s, faction: %.0f",
+                NPCDebug(npc, 5, "Range perception: NPC: %s, player: %s, faction: %.0f",
                             ShowID(npcEID), ShowID(playerEID), faction);
 
                 gemNPCObject* npc_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(npcEID);
@@ -1275,7 +1275,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(cmd == psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER)  // PERSONAL_RANGE
                     pcpt_name.Append("adjacent");
 
-                npc->Printf("Got Player %s in Range of %s with the %s Perception, with faction %d",
+                NPCDebug(npc, 5, "Got Player %s in Range of %s with the %s Perception, with faction %d",
                             player->GetName(), npc_ent->GetName(), pcpt_name.GetData(), int(faction));
 
                 FactionPerception pcpt(pcpt_name, int (faction), player);
@@ -1299,7 +1299,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
 
                 if(npc)
                 {
-                    npc->Printf("Got OwnerCmd %d Perception from %s for %s with target %s",
+                    NPCDebug(npc, 5, "Got OwnerCmd %d Perception from %s for %s with target %s",
                                 command,(owner)?owner->GetName():"(unknown entity)",
                                 (pet)?pet->GetName():"(unknown entity)",
                                 (target)?target->GetName():"(none)");
@@ -1325,7 +1325,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
 
                 if(npc)
                 {
-                    npc->Printf("Got OwnerAction %d Perception from %s for %s",
+                    NPCDebug(npc, 5, "Got OwnerAction %d Perception from %s for %s",
                                 action,(owner)?owner->GetName():"(unknown entity)",
                                 (pet)?pet->GetName():"(unknown entity)");
                 }
@@ -1347,7 +1347,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 NPC* npc = npcclient->FindNPC(npcEID);
                 if(npc)
                 {
-                    npc->Printf("%s got Perception: %s Type: %s ", ShowID(npcEID), perception.GetDataSafe(), type.GetDataSafe());
+                    NPCDebug(npc, 5, "%s got Perception: %s Type: %s ", ShowID(npcEID), perception.GetDataSafe(), type.GetDataSafe());
 
 
                     Perception pcpt(perception, type);
@@ -1368,7 +1368,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(!owner || !npc)
                     break;
 
-                npc->Printf("Got Inventory %s Perception from %s for %d %s\n",
+                NPCDebug(npc, 5, "Got Inventory %s Perception from %s for %d %s\n",
                             (inserted?"Add":"Remove"),owner->GetName(),
                             count,item_name.GetData());
 
@@ -1414,7 +1414,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(!npc || !target)
                     break;
 
-                npc->Printf("Got Failed to Attack perception");
+                NPCDebug(npc, 5, "Got Failed to Attack perception");
 
                 Perception failedToAttack("failed to attack");
                 npc->TriggerEvent(&failedToAttack);
@@ -1468,9 +1468,9 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(!npc)
                     break;
 
-                npc->Printf("Got Transfer Perception from %s for %d %s to %s\n",
-                            npc->GetName(),count,
-                            item.GetDataSafe(),target.GetDataSafe());
+                NPCDebug(npc, 5, "Got Transfer Perception from %s for %d %s to %s\n",
+                         npc->GetName(),count,
+                         item.GetDataSafe(),target.GetDataSafe());
 
                 iSector* sector;
                 csVector3 pos;
@@ -1497,8 +1497,8 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(!npc)
                     break;
 
-                npc->Printf("Got spawn Perception to %u from %u\n",
-                            spawned_eid.Unbox(), spawner_eid.Unbox());
+                NPCDebug(npc, 5, "Got spawn Perception to %u from %u\n",
+                         spawned_eid.Unbox(), spawner_eid.Unbox());
                 npc->GetTribe()->AddMember(spawned_pid, tribeMemberType);
                 NPC* spawned_npc = npcclient->FindNPC(spawned_eid);
                 if(spawned_npc)
@@ -1520,7 +1520,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(!npc)
                     break;
 
-                npc->Printf("Got teleport perception to %s\n",toString(pos,sector).GetDataSafe());
+                NPCDebug(npc, 5, "Got teleport perception to %s\n",toString(pos,sector).GetDataSafe());
 
                 PositionPerception pcpt("teleported",NULL,instance,sector,pos,yrot,0.0);
                 npc->TriggerEvent(&pcpt);
@@ -1538,7 +1538,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(!npc)
                     break;
 
-                npc->Printf("Got info request.");
+                NPCDebug(npc, 5, "Got info request.");
 
                 // Send reply back in 3 parts. Since they only can hold a limited chars per message.
 
@@ -1568,7 +1568,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     break;
                 }
 
-                npc->Printf("Got change brain request to %s from client %u.", brainType.GetDataSafe(), clientNum);
+                NPCDebug(npc, 5, "Got change brain request to %s from client %u.", brainType.GetDataSafe(), clientNum);
 
                 if(brainType == "reload")
                 {
@@ -1661,7 +1661,7 @@ void NetworkManager::HandleNewNpc(MsgEntry* me)
     NPC* npc = npcclient->FindNPCByPID(msg.master_id);
     if(npc)
     {
-        npc->Printf("Got new NPC notification for %s", ShowID(msg.new_npc_id));
+        NPCDebug(npc, 5, "Got new NPC notification for %s", ShowID(msg.new_npc_id));
 
         // Insert a row in the db for this guy next.
         // We will get an entity msg in a second to make him come alive.
@@ -1696,7 +1696,7 @@ void NetworkManager::QueueDRData(NPC* npc)
 
 void NetworkManager::DequeueDRData(NPC* npc)
 {
-    npc->Printf(15, "Dequeuing DR Data...");
+    NPCDebug(npc, 15, "Dequeuing DR Data...");
     cmd_dr_outbound.DeleteAll(npc->GetPID());
 }
 

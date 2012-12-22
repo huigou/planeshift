@@ -591,7 +591,7 @@ bool Tribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSe
 
     if (npc)
     {
-        npc->Printf(5,"Range to tribe with radius %.2f is %.2f",homeRadius,dist);
+        NPCDebug(npc, 5, "Range to tribe with radius %.2f is %.2f",homeRadius,dist);
     }
 
     if (dist > homeRadius)
@@ -624,11 +624,11 @@ bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csV
         }
         if (memory)
         {
-            npc->Printf("Found needed resource: %s at %s",neededResource.GetDataSafe(),toString(memory->pos,memory->GetSector()).GetDataSafe());
+            NPCDebug(npc, 5, "Found needed resource: %s at %s",neededResource.GetDataSafe(),toString(memory->pos,memory->GetSector()).GetDataSafe());
         }
         else
         {
-            npc->Printf("Didn't find needed resource: %s",neededResource.GetDataSafe());
+            NPCDebug(npc, 5, "Didn't find needed resource: %s",neededResource.GetDataSafe());
         }
         
     }
@@ -646,17 +646,17 @@ bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csV
 
         if (memory)
         {
-            npc->Printf("Found resource area: %s at %s",area.GetDataSafe(),toString(memory->pos,memory->GetSector()).GetDataSafe());
+            NPCDebug(npc, 5, "Found resource area: %s at %s",area.GetDataSafe(),toString(memory->pos,memory->GetSector()).GetDataSafe());
         }
         else
         {
-            npc->Printf("Didn't find resource area: %s",area.GetDataSafe());
+            NPCDebug(npc, 5, "Didn't find resource area: %s",area.GetDataSafe());
         }
 
     }
     if (!memory)
     {
-        npc->Printf("Couldn't locate resource for npc.",npc->GetName() );
+        NPCDebug(npc, 5, "Couldn't locate resource for npc.",npc->GetName() );
         return false;
     }
 
@@ -727,7 +727,7 @@ void Tribe::Memorize(NPC * npc, Perception * perception)
 
     if (!perception->GetLocation(pos,sector))
     {
-        npc->Printf("Failed to memorize '%s' perception without valid position",name.GetDataSafe());
+        NPCDebug(npc, 5, "Failed to memorize '%s' perception without valid position",name.GetDataSafe());
         return;
     }
         
@@ -736,18 +736,18 @@ void Tribe::Memorize(NPC * npc, Perception * perception)
     Memory* memory = FindPrivMemory(name,pos,sector,radius,npc);
     if (memory)
     {
-        npc->Printf("Has this in private knowledge -> do nothing");
+        NPCDebug(npc, 5, "Has this in private knowledge -> do nothing");
         return;
     }
     
     memory = FindMemory(name,pos,sector,radius);
     if (memory)
     {
-        npc->Printf("Has this in tribe knowledge -> do nothing");
+        NPCDebug(npc, 5, "Has this in tribe knowledge -> do nothing");
         return;
     }
     
-    npc->Printf("Store in private memory: '%s' %.2f %.2f %2f %.2f '%s'",name.GetDataSafe(),pos.x,pos.y,pos.z,radius,npc->GetName());
+    NPCDebug(npc, 5, "Store in private memory: '%s' %.2f %.2f %2f %.2f '%s'",name.GetDataSafe(),pos.x,pos.y,pos.z,radius,npc->GetName());
     AddMemory(name,pos,sector,radius,npc);
 }
 
@@ -1286,7 +1286,7 @@ void Tribe::Build(NPC* npc, bool pickupable)
 
 void Tribe::Unbuild(NPC* npc, gemNPCItem* building)
 {
-    npc->Printf(6,"Unbuilding building %s",building->GetName());
+    NPCDebug(npc, 6, "Unbuilding building %s",building->GetName());
 
     Asset* buildingAsset = GetAsset(building);
     if (buildingAsset)

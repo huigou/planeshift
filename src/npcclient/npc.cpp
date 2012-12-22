@@ -442,8 +442,8 @@ void NPC::TriggerEvent(Perception* pcpt, float maxRange,
 {
     if(disabled)
     {
-        Printf(15,"Disabled so rejecting perception #s"
-               ,pcpt->ToString(this).GetData());
+        NPCDebug(this, 15, "Disabled so rejecting perception #s",
+                 pcpt->ToString(this).GetData());
         return;
     }
 
@@ -453,7 +453,7 @@ void NPC::TriggerEvent(Perception* pcpt, float maxRange,
         gemNPCActor* me = GetActor();
         if(!me)
         {
-            Printf(15,"Can't do a ranged based check without an actor");
+            NPCDebug(this, 15, "Can't do a ranged based check without an actor");
             return;
         }
 
@@ -470,13 +470,13 @@ void NPC::TriggerEvent(Perception* pcpt, float maxRange,
 
         if(distance > maxRange)
         {
-            Printf(15,"The distance %.2f is outside range %.2f of perception %s",
-                   distance, maxRange, pcpt->ToString(this).GetData());
+            NPCDebug(this, 15,"The distance %.2f is outside range %.2f of perception %s",
+                     distance, maxRange, pcpt->ToString(this).GetData());
             return;
         }
     }
 
-    Printf(10,"Got event %s",pcpt->ToString(this).GetData());
+    NPCDebug(this, 10,"Got event %s",pcpt->ToString(this).GetData());
     brain->FirePerception(this, pcpt);
 }
 
@@ -511,12 +511,12 @@ gemNPCActor* NPC::GetMostHated(csVector3 &pos, iSector* sector, float range, Loc
 
     if(hated)
     {
-        Printf(5, "Found most hated: %s(%s)", hated->GetName(), ShowID(hated->GetEID()));
+        NPCDebug(this, 5, "Found most hated: %s(%s)", hated->GetName(), ShowID(hated->GetEID()));
 
     }
     else
     {
-        Printf(5,"Found no hated entity");
+        NPCDebug(this, 5, "Found no hated entity");
     }
 
     return hated;
@@ -524,8 +524,8 @@ gemNPCActor* NPC::GetMostHated(csVector3 &pos, iSector* sector, float range, Loc
 
 void NPC::AddToHateList(gemNPCActor* attacker, float delta)
 {
-    Printf("Adding %1.2f to hatelist score for %s(%s).",
-           delta, attacker->GetName(), ShowID(attacker->GetEID()));
+    NPCDebug(this, 5, "Adding %1.2f to hatelist score for %s(%s).",
+             delta, attacker->GetName(), ShowID(attacker->GetEID()));
     hatelist.AddHate(attacker->GetEID(),delta);
     if(IsDebugging(5))
     {
@@ -543,7 +543,7 @@ void NPC::RemoveFromHateList(EID who)
 {
     if(hatelist.Remove(who))
     {
-        Printf("Removed %s from hate list.", ShowID(who));
+        NPCDebug(this, 5, "Removed %s from hate list.", ShowID(who));
     }
 }
 
@@ -580,12 +580,12 @@ float NPC::GetActiveLocateRadius() const
 
 bool NPC::CopyLocate(csString source, csString destination, unsigned int flags)
 {
-    Printf(5,"Copy locate from %s to %s (%X)",source.GetDataSafe(),destination.GetDataSafe(),flags);
+    NPCDebug(this, 5, "Copy locate from %s to %s (%X)",source.GetDataSafe(),destination.GetDataSafe(),flags);
 
     Locate* sourceLocate = storedLocates.Get(source,NULL);
     if(!sourceLocate)
     {
-        Printf(5,"Failed to copy, no source found!");
+        NPCDebug(this, 5, "Failed to copy, no source found!");
         return false;
     }
 
@@ -815,7 +815,7 @@ void NPC::DumpDebugLog()
 
 void NPC::ClearState()
 {
-    Printf(5,"ClearState");
+    NPCDebug(this, 5, "ClearState");
     brain->ClearState(this);
     last_perception = NULL;
     hatelist.Clear();
@@ -1066,18 +1066,6 @@ gemNPCActor* NPC::GetNearestDeadActor(float range)
     return nearEnt;
 }
 
-void NPC::Printf(const char* msg,...)
-{
-    va_list args;
-
-    if(!IsDebugging())
-        return;
-
-    va_start(args, msg);
-    VPrintf(5,msg,args);
-    va_end(args);
-}
-
 void NPC::Printf(int debug, const char* msg,...)
 {
     va_list args;
@@ -1123,7 +1111,7 @@ gemNPCObject* NPC::GetTarget()
         gemNPCObject* obj = npcclient->FindEntityID(target_id);
         if(obj && obj->IsInvisible())
         {
-            Printf(15, "GetTarget returning nothing, target is invisible");
+            NPCDebug(this, 15, "GetTarget returning nothing, target is invisible");
             return NULL;
         }
 
@@ -1139,7 +1127,7 @@ gemNPCObject* NPC::GetTarget()
             {
                 target = npcclient->FindEntityID(entity->GetEID());
             }
-            Printf(16,"GetTarget returning last perception entity: %s",target ? target->GetName() : "None specified");
+            NPCDebug(this, 16, "GetTarget returning last perception entity: %s",target ? target->GetName() : "None specified");
             return target;
         }
     }
@@ -1150,12 +1138,12 @@ void NPC::SetTarget(gemNPCObject* t)
 {
     if(t == NULL)
     {
-        Printf(10,"Clearing target");
+        NPCDebug(this, 10, "Clearing target");
         target_id = EID(0);
     }
     else
     {
-        Printf(10,"Setting target to: %s (%s)",t->GetName(),ShowID(t->GetEID()));
+        NPCDebug(this, 10, "Setting target to: %s (%s)",t->GetName(),ShowID(t->GetEID()));
         target_id = t->GetEID();
     }
 }
@@ -1422,14 +1410,14 @@ csString NPC::GetBuffer(const csString &bufferName)
 {
     csString value = npcBuffer.Get(bufferName,"");
 
-    Printf(6,"Get Buffer(%s) return: '%s'",bufferName.GetDataSafe(),value.GetDataSafe());
+    NPCDebug(this, 6, "Get Buffer(%s) return: '%s'",bufferName.GetDataSafe(),value.GetDataSafe());
 
     return value;
 }
 
 void NPC::SetBuffer(const csString &bufferName, const csString &value)
 {
-    Printf(6,"Set Buffer(%s,%s)",bufferName.GetDataSafe(),value.GetDataSafe());
+    NPCDebug(this, 6, "Set Buffer(%s,%s)",bufferName.GetDataSafe(),value.GetDataSafe());
 
     npcBuffer.PutUnique(bufferName,value);
 }

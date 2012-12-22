@@ -640,7 +640,7 @@ void psNPCClient::Remove(gemNPCObject* object)
     NPC* npc = object->GetNPC();
     if(npc)
     {
-        npc->Printf("Removing entity");
+        NPCDebug(npc, 5, "Removing entity");
     }
 
     EID EID = object->GetEID();
@@ -1101,7 +1101,7 @@ void psNPCClient::AttachNPC(gemNPCActor* actor, uint8_t DRcounter, EID ownerEID,
 
     CheckAttachTribes(npc);
 
-    npc->Printf("We are now managing NPC <%s, %s, %s>.\n", actor->GetName(), ShowID(actor->GetPID()), ShowID(actor->GetEID()));
+    NPCDebug(npc, 5, "We are now managing NPC <%s, %s, %s>.\n", actor->GetName(), ShowID(actor->GetPID()), ShowID(actor->GetEID()));
 
     // Test if this actor is in a valid starting position.
     npc->CheckPosition();
@@ -2031,7 +2031,7 @@ iCelHPath* psNPCClient::ShortestPath(NPC* npc, const csVector3 &from, iSector* f
     iCelHPath* path = GetNavStruct()->ShortestPath(from,fromSector,goal,goalSector);
     if(!path)
     {
-        npc->Printf(5,"Failed to find path");
+        NPCDebug(npc, 5, "Failed to find path");
     }
 
     return path;

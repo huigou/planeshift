@@ -567,10 +567,10 @@ void BehaviorSet::UpdateNeeds(float delta, NPC* npc)
             
             if (behaviors[i]->CurrentNeed() != behaviors[i]->NewNeed())
             {
-                npc->Printf(4, "Advancing %-30s:\t%1.1f ->%1.1f",
-                            behaviors[i]->GetName(),
-                            behaviors[i]->CurrentNeed(),
-                            behaviors[i]->NewNeed() );
+                NPCDebug(npc, 4, "Advancing %-30s:\t%1.1f ->%1.1f",
+                         behaviors[i]->GetName(),
+                         behaviors[i]->CurrentNeed(),
+                         behaviors[i]->NewNeed() );
             }
         }
 
@@ -612,7 +612,7 @@ Behavior* BehaviorSet::Schedule(NPC* npc)
         {
             npc->DumpBehaviorList();
         }
-        npc->Printf(15,"NO Active or no applicable behavior." );
+        NPCDebug(npc, 15,"NO Active or no applicable behavior." );
         return NULL;
     }
 
@@ -678,9 +678,9 @@ void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
         {
             if (active)  // if there is a behavior allready assigned to this npc
             {
-                npc->Printf(1,"Switching behavior from '%s' to '%s'",
-                            active->GetName(),
-                            newBehavior->GetName() );
+                NPCDebug(npc, 1, "Switching behavior from '%s' to '%s'",
+                         active->GetName(),
+                         newBehavior->GetName() );
 
                 // Interrupt and stop current behaviour
                 active->InterruptScript(npc);
@@ -691,8 +691,8 @@ void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
                 // Check if this behavior has allready looped once
                 if (newBehavior != lastActiveBehavior)
                 {
-                    npc->Printf(1,"Activating behavior '%s'",
-                                newBehavior->GetName() );
+                    NPCDebug(npc, 1, "Activating behavior '%s'",
+                             newBehavior->GetName() );
                 }
                 else
                 {
@@ -717,7 +717,7 @@ void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
             // If the interrupt has change the needs, try once
             if (GetHighestNeed(npc) > active->CurrentNeed())
             {
-                npc->Printf(3,"Need to rechedule since a new need is higest");
+                NPCDebug(npc, 3, "Need to rechedule since a new need is higest");
                 continue; // Start the check once more.
             }
 
@@ -777,7 +777,7 @@ void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
         }
     }
 
-    npc->Printf(15,"Active behavior is '%s'", (active?active->GetName():"(null)") );
+    NPCDebug(npc,15, "Active behavior is '%s'", (active?active->GetName():"(null)") );
     return;
 }
 
@@ -1288,7 +1288,7 @@ void Behavior::UpdateNeed(float delta, NPC* npc)
         // Apply delta to need, will check for limits as well
         ApplyNeedDelta(npc, -delta * need_decay_rate );
 
-        npc->Printf(11,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
+        NPCDebug(npc, 11, "%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
                     name.GetData(),delta,new_need,need_decay_rate);
     }
     else
@@ -1296,7 +1296,7 @@ void Behavior::UpdateNeed(float delta, NPC* npc)
         // Apply delta to need, will check for limits as well
         ApplyNeedDelta(npc, delta * need_growth_rate );
 
-        npc->Printf(11,"%s - Advance none active delta: %.3f Need: %.2f Growth Rate: %.2f",
+        NPCDebug(npc, 11, "%s - Advance none active delta: %.3f Need: %.2f Growth Rate: %.2f",
                     name.GetData(),delta,new_need,need_growth_rate);
     }
     
@@ -1317,7 +1317,7 @@ Behavior::BehaviorResult Behavior::Advance(float delta, NPC *npc)
     if (sequence[current_step]->GetState() == ScriptOperation::READY_TO_RUN ||
         sequence[current_step]->GetState() == ScriptOperation::INTERRUPTED)
     {
-        npc->Printf(2, "Running %s step %d - %s operation%s",
+        NPCDebug(npc, 2, "Running %s step %d - %s operation%s",
                     name.GetData(),current_step,sequence[current_step]->GetName(),
                     (interrupted?" Interrupted":""));
     
@@ -1330,8 +1330,8 @@ Behavior::BehaviorResult Behavior::Advance(float delta, NPC *npc)
     }
     else if (sequence[current_step]->GetState() == ScriptOperation::RUNNING)
     {
-        npc->Printf(10,"%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
-                    name.GetData(),delta,new_need,need_decay_rate);
+        NPCDebug(npc, 10, "%s - Advance active delta: %.3f Need: %.2f Decay Rate: %.2f",
+                 name.GetData(),delta,new_need,need_decay_rate);
         result = sequence[current_step]->Advance(delta,npc);
     }
     else
@@ -1347,8 +1347,8 @@ Behavior::BehaviorResult Behavior::Advance(float delta, NPC *npc)
     case ScriptOperation::OPERATION_NOT_COMPLETED:
         {
             // Operation not completed and should relinquish
-            npc->Printf(2, "Behavior %s step %d - %s will complete later...",
-                        name.GetData(),current_step,sequence[current_step]->GetName());
+            NPCDebug(npc, 2, "Behavior %s step %d - %s will complete later...",
+                     name.GetData(),current_step,sequence[current_step]->GetName());
             
             behaviorResult = Behavior::BEHAVIOR_WILL_COMPLETE_LATER; // This behavior is done for now.
             break;
@@ -1358,7 +1358,7 @@ Behavior::BehaviorResult Behavior::Advance(float delta, NPC *npc)
             OperationCompleted(npc);
             if (stepCount >= sequence.GetSize() || (current_step == 0 && !loop) )
             {
-                npc->Printf(3,"Terminating behavior '%s' since it has looped all once.",GetName());
+                NPCDebug(npc, 3, "Terminating behavior '%s' since it has looped all once.",GetName());
                 behaviorResult = Behavior::BEHAVIOR_COMPLETED; // This behavior is done
             }
             else
@@ -1402,8 +1402,8 @@ void Behavior::ApplyNeedDelta(NPC *npc, float deltaDesire)
     // Handle min desire limit
     if (minLimitValid && (new_need < minLimit))
     {
-        npc->Printf(5,"%s - ApplyNeedDelta limited new_need of %.3f to min value %.3f.",
-                    name.GetData(),new_need,minLimit);
+        NPCDebug(npc, 5, "%s - ApplyNeedDelta limited new_need of %.3f to min value %.3f.",
+                 name.GetData(),new_need,minLimit);
         
         new_need = minLimit;
     }
@@ -1411,8 +1411,8 @@ void Behavior::ApplyNeedDelta(NPC *npc, float deltaDesire)
     // Handle max desire limit
     if (maxLimitValid && (new_need > maxLimit))
     {
-        npc->Printf(5,"%s - ApplyNeedDelta limited new_need of %.3f to max value %.3f.",
-                    name.GetData(),new_need,maxLimit);
+        NPCDebug(npc, 5, "%s - ApplyNeedDelta limited new_need of %.3f to max value %.3f.",
+                 name.GetData(),new_need,maxLimit);
 
         new_need = maxLimit;
     }
@@ -1425,8 +1425,8 @@ void Behavior::ApplyNeedAbsolute(NPC *npc, float absoluteDesire)
     // Handle min desire limit
     if (minLimitValid && (new_need < minLimit))
     {
-        npc->Printf(5,"%s - ApplyNeedAbsolute limited new_need of %.3f to min value %.3f.",
-                    name.GetData(),new_need,minLimit);
+        NPCDebug(npc, 5, "%s - ApplyNeedAbsolute limited new_need of %.3f to min value %.3f.",
+                 name.GetData(),new_need,minLimit);
 
         new_need = minLimit;
     }
@@ -1434,8 +1434,8 @@ void Behavior::ApplyNeedAbsolute(NPC *npc, float absoluteDesire)
     // Handle max desire limit
     if (maxLimitValid && (new_need > maxLimit))
     {
-        npc->Printf(5,"%s - ApplyNeedAbsolute limited new_need of %.3f to max value %.3f.",
-                    name.GetData(),new_need,maxLimit);
+        NPCDebug(npc, 5, "%s - ApplyNeedAbsolute limited new_need of %.3f to max value %.3f.",
+                 name.GetData(),new_need,maxLimit);
 
         new_need = maxLimit;
     }
@@ -1475,7 +1475,7 @@ void Behavior::DoCompletionDecay(NPC* npc)
             delta_decay = current_need;
         }
         
-        npc->Printf(10, "Subtracting completion decay of %.2f from behavior '%s'.",delta_decay,GetName() );
+        NPCDebug(npc, 10, "Subtracting completion decay of %.2f from behavior '%s'.",delta_decay,GetName() );
         new_need = current_need - delta_decay;
     }
 }
@@ -1484,8 +1484,8 @@ void Behavior::StartScript(NPC *npc)
 {
     if (interrupted && resume_after_interrupt)
     {
-        npc->Printf(3,"Resuming behavior %s after interrupt at step %d - %s.",
-                    name.GetData(), current_step, sequence[current_step]->GetName());
+        NPCDebug(npc, 3, "Resuming behavior %s after interrupt at step %d - %s.",
+                 name.GetData(), current_step, sequence[current_step]->GetName());
     }
     else
     {
@@ -1496,8 +1496,8 @@ void Behavior::StartScript(NPC *npc)
         if (interrupted)
         {
             // We don't resume_after_interrupt, but the flag needs to be cleared
-            npc->Printf(3,"Restarting behavior %s after interrupt at step %d - %s.",
-                        name.GetData(), current_step, sequence[current_step]->GetName());
+            NPCDebug(npc, 3, "Restarting behavior %s after interrupt at step %d - %s.",
+                     name.GetData(), current_step, sequence[current_step]->GetName());
             interrupted = false;
         }
     }
@@ -1506,8 +1506,8 @@ void Behavior::StartScript(NPC *npc)
 
 void Behavior::OperationCompleted(NPC* npc)
 {
-    npc->Printf(2,"Completed step %d - %s of behavior %s",
-                current_step,sequence[current_step]->GetName(),name.GetData());
+    NPCDebug(npc, 2, "Completed step %d - %s of behavior %s",
+             current_step,sequence[current_step]->GetName(),name.GetData());
 
     sequence[current_step]->SetState(ScriptOperation::COMPLETED);
 
@@ -1522,12 +1522,12 @@ void Behavior::OperationCompleted(NPC* npc)
 
         if (loop)
         {
-            npc->Printf(1, "Loop back to start of behaviour '%s'",GetName());
+            NPCDebug(npc, 1, "Loop back to start of behaviour '%s'",GetName());
         }
         else
         {
             DoCompletionDecay(npc);
-            npc->Printf(1, "End of non looping behaviour '%s'",GetName());
+            NPCDebug(npc, 1, "End of non looping behaviour '%s'",GetName());
         }
     }
 
@@ -1540,7 +1540,7 @@ void Behavior::OperationFailed(NPC* npc)
     sequence[current_step]->Failure(npc);
     current_step = 0; // Restart operation next time
     DoCompletionDecay(npc);
-    npc->Printf(1, "End of behaviour '%s'",GetName());
+    NPCDebug(npc, 1, "End of behaviour '%s'",GetName());
 }
 
 void Behavior::SetStartStep()
@@ -1550,8 +1550,8 @@ void Behavior::SetStartStep()
 
 void Behavior::InterruptScript(NPC *npc)
 {
-    npc->Printf(2,"Interrupting behaviour %s at step %d - %s",
-                name.GetData(),current_step,sequence[current_step]->GetName());
+    NPCDebug(npc, 2, "Interrupting behaviour %s at step %d - %s",
+             name.GetData(),current_step,sequence[current_step]->GetName());
 
     if (interruptPerception.Length())
     {
@@ -1573,12 +1573,12 @@ void Behavior::Failure(NPC* npc, ScriptOperation* op)
 {
     if (failurePerception.IsEmpty())
     {
-        npc->Printf(5,"Operation %s failed with no failure perception",op->GetName());
+        NPCDebug(npc, 5, "Operation %s failed with no failure perception",op->GetName());
     }
     else
     {
-        npc->Printf(5,"Operation %s failed tigger failure perception: %s",
-                    op->GetName(),failurePerception.GetData());
+        NPCDebug(npc, 5, "Operation %s failed tigger failure perception: %s",
+                 op->GetName(),failurePerception.GetData());
 
         Perception perception(failurePerception);
         npc->TriggerEvent(&perception);
@@ -1783,7 +1783,7 @@ csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
         result.ReplaceAll("$perception_type",npc->GetLastPerception()->GetType());
     }
 
-    npc->Printf(10,"Replaced variables in '%s' to get '%s'",object.GetDataSafe(),result.GetDataSafe());
+    NPCDebug(npc, 10, "Replaced variables in '%s' to get '%s'",object.GetDataSafe(),result.GetDataSafe());
 
     return result;
 }

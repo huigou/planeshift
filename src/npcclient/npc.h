@@ -59,6 +59,13 @@ struct RaceInfo_t;
 
 #define NPC_BRAIN_TICK 200
 
+// Define a variadic macro for debugging prints for NPCs.
+// In this way only the check IsDebugging is executed for each NPC unless debugging
+// is turned on. Using the Printf functions will cause all args to be
+// resolved and that will result in a lot off spilled CPU.
+#define NPCDebug(npc,debug,...) \
+    { if (npc->IsDebugging()) { npc->Printf(debug, __VA_ARGS__); }}
+
 /**
 * This object represents the entities which have attacked or
 * hurt the NPC and prioritizes them.
@@ -470,10 +477,14 @@ public:
 
     gemNPCActor* GetNearestDeadActor(float range);
 
-    void Printf(const char* msg,...);
+    /**
+     * Use the NPCDebug(npc, debug, ...) macro instead of calling this function directly.
+     */
     void Printf(int debug, const char* msg,...);
+ private:
     void VPrintf(int debug, const char* msg,va_list arg);
 
+ public:
     gemNPCObject* GetTarget();
     void SetTarget(gemNPCObject* t);
 
