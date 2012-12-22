@@ -170,6 +170,10 @@ protected:
 
     RaceInfo_t*        raceInfo;
 
+    // Stats
+    float              hp;
+    float              maxHP;
+
     csArray< csWeakRef<gemNPCActor> > controlledActors; ///< Actors that are dragged/pushed around by this NPC.
 
     // Initial position checks
@@ -520,6 +524,22 @@ public:
      */
     RaceInfo_t* GetRaceInfo();
 
+    /** Set the npc HP
+     */
+    void SetHP(float hp);
+    
+    /** Get the npc HP
+     */
+    float GetHP() const;
+
+    /** Set the npc maxHP
+     */
+    void SetMaxHP(float maxHP);
+    
+    /** Get the npc maxHP
+     */
+    float GetMaxHP() const;
+
     /** Take control of another entity.
      */
     void TakeControl(gemNPCActor* actor);
@@ -532,10 +552,11 @@ public:
      */
     void UpdateControlled();
 
-    bool IsDebugging()
+    inline bool IsDebugging()
     {
         return (debugging > 0);
     };
+    
     bool IsDebugging(int debug)
     {
         return (debugging > 0 && debug <= debugging);

@@ -50,7 +50,7 @@ class csStringHashReversible;
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
 // no inadvertent overlaps.
-#define PS_NPCNETVERSION 0x102B
+#define PS_NPCNETVERSION 0x102C
 
 enum Slot_Containers
 {

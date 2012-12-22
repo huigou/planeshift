@@ -1161,6 +1161,8 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 EID attackerEID = EID(list.msg->GetUInt32());
                 EID targetEID   = EID(list.msg->GetUInt32());
                 float dmg       = list.msg->GetFloat();
+                float hp        = list.msg->GetFloat();
+                float maxHP     = list.msg->GetFloat();
 
                 NPC* npc = npcclient->FindNPC(targetEID);
                 if(!npc)
@@ -1168,6 +1170,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     Debug2(LOG_NPC, targetEID.Unbox(), "Attack on unknown NPC(%s).", ShowID(targetEID));
                     break;
                 }
+
+                npc->SetHP(hp);
+                npc->SetMaxHP(maxHP);
+
                 gemNPCObject* attacker_ent = npcclient->FindEntityID(attackerEID);
                 if(!attacker_ent)
                 {
@@ -1177,8 +1183,8 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 }
 
                 DamagePerception damage("damage",attacker_ent,dmg);
-                npc->Printf("Got Damage perception for from actor %s(%s) for %1.1f HP.",
-                            attacker_ent->GetName(), ShowID(attackerEID), dmg);
+                npc->Printf("Got Damage perception for from actor %s(%s) for %1.1f HP to %.1f HP of %.1f HP.",
+                            attacker_ent->GetName(), ShowID(attackerEID), dmg, hp, maxHP);
 
                 npc->TriggerEvent(&damage);
                 break;
