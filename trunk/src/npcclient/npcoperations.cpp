@@ -241,14 +241,14 @@ void ScriptOperation::SendCollitionPerception(NPC* npc)
     csString collision = GetCollisionPerception(npc);
     if (!collision.IsEmpty())
     {
-        npc->Printf(5,"Sending collition perception: " + collision );
+        NPCDebug(npc, 5, "Sending collition perception: " + collision );
 
         Perception perception(collision);
         npc->TriggerEvent(&perception);
     }
     else
     {
-        npc->Printf(6,"No collition perception to send.");
+        NPCDebug(npc, 6, "No collition perception to send.");
     }    
 }
 
@@ -257,14 +257,14 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, csVector3 oldPos, iSector* oldSector
     // Check if sectors where crossed correctly
     if (!npcclient->GetWorld()->WarpSpace(oldSector, newSector, oldPos))
     {
-        npc->Printf("CheckMoveOk: new and old sectors are not connected by a portal!");
+        NPCDebug(npc, 5, "CheckMoveOk: new and old sectors are not connected by a portal!");
         return false;
     }
 
     // Check result from extrapolation
     if (resultFromExtrapolate == PS_MOVE_FAIL || resultFromExtrapolate == PS_MOVE_DONTMOVE)
     {
-        npc->Printf(5, "Moved failed -> presumably collided");
+        NPCDebug(npc, 5, "Moved failed -> presumably collided");
 
         // We collided. Now stop the movment and inform the server.
         StopMovement(npc);
@@ -277,7 +277,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, csVector3 oldPos, iSector* oldSector
     } else if (resultFromExtrapolate == PS_MOVE_PARTIAL)
     {
         consecCollisions++;
-        npc->Printf(10, "Bang. %d consec collisions...", consecCollisions);
+        NPCDebug(npc, 10, "Bang. %d consec collisions...", consecCollisions);
 
         if (consecCollisions > 8)  // allow for hitting trees but not walls
         {
@@ -335,7 +335,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, csVector3 oldPos, iSector* oldSector
 
         if (rgn)
         {
-            npc->Printf(10, "Checking Region bounds");
+            NPCDebug(npc, 10, "Checking Region bounds");
             
             // check for inside/outside region bounds
             if (npc->IsInsideRegion())
@@ -369,7 +369,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, csVector3 oldPos, iSector* oldSector
         }
         else
         {
-            npc->Printf(10, "No region to check for bounds.");
+            NPCDebug(npc, 10, "No region to check for bounds.");
         }
     }
     
@@ -379,7 +379,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, csVector3 oldPos, iSector* oldSector
         // If tribehome checking has been enabled and npc is in a tribe
         if (checkTribeHome && npc->GetTribe())
         {
-            npc->Printf(10, "Checking Tribe bounds");
+            NPCDebug(npc, 10, "Checking Tribe bounds");
 
             if (npc->IsInsideTribeHome())
             {
@@ -412,7 +412,7 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, csVector3 oldPos, iSector* oldSector
         }
         else
         {
-            npc->Printf(10, "No tribe home to check for bounds.");
+            NPCDebug(npc, 10, "No tribe home to check for bounds.");
         }
         
     }
@@ -427,9 +427,9 @@ bool ScriptOperation::CheckEndPointOk(NPC* npc, const csVector3& myPos, iSector*
                                                        endPos, endSector );
     if (deviation > 1.0)
     {
-        npc->Printf(5, "Movement endet at %s failed to reach destination %s by %.2fm",
-                    toString(myPos, mySector).GetData(),
-                    toString(endPos, endSector).GetData(),deviation);
+        NPCDebug(npc, 5, "Movement endet at %s failed to reach destination %s by %.2fm",
+                 toString(myPos, mySector).GetData(),
+                 toString(endPos, endSector).GetData(),deviation);
 
         Perception perception("failed endpoint");
         npc->TriggerEvent(&perception);
@@ -480,7 +480,7 @@ const csString& ScriptOperation::GetFallingPerception(NPC* npc)
 
 void ScriptOperation::TurnTo(NPC *npc, const csVector3& dest, iSector* destsect, csVector3& forward, float &angle)
 {
-    npc->Printf(6,"TurnTo localDest=%s",toString(dest,destsect).GetData());
+    NPCDebug(npc, 6, "TurnTo localDest=%s",toString(dest,destsect).GetData());
 
     npcMesh* pcmesh = npc->GetActor()->pcmesh;
 
@@ -493,12 +493,12 @@ void ScriptOperation::TurnTo(NPC *npc, const csVector3& dest, iSector* destsect,
 
     if (!npcclient->GetWorld()->WarpSpace(sector, destsect, pos))
     {
-        npc->Printf("Current and TurnTo destination sectors are not connected!");
+        NPCDebug(npc, 5, "Current and TurnTo destination sectors are not connected!");
         return;
     }
     forward = dest-pos;
 
-    npc->Printf(6,"Forward is %s",toString(forward).GetDataSafe());
+    NPCDebug(npc, 6, "Forward is %s",toString(forward).GetDataSafe());
 
     up.Set(0,1,0);
     
@@ -528,7 +528,7 @@ void ScriptOperation::StopMovement(NPC *npc)
     npc->GetLinMove()->SetVelocity( csVector3(0,0,0) );
     npc->GetLinMove()->SetAngularVelocity( 0 );
 
-    npc->Printf(5,"Movement stopped.");
+    NPCDebug(npc, 5, "Movement stopped.");
 
     //now persist
     npcclient->GetNetworkMgr()->QueueDRData(npc);
@@ -550,7 +550,7 @@ int ScriptOperation::StartMoveTo(NPC *npc, const csVector3& dest, iSector* secto
     float dist = forward.Norm();
     int msec = (int)(1000.0 * dist / GetVelocity(npc)); // Move will take this many msecs.
     
-    npc->Printf(6,"MoveTo op should take approx %d msec.  ", msec);
+    NPCDebug(npc, 6, "MoveTo op should take approx %d msec.  ", msec);
     return msec;
 }
 
@@ -585,12 +585,12 @@ void ScriptOperation::Failure(NPC* npc)
         }
         else
         {
-            npc->Printf(5,"Operation %s failed with no failure perception",GetName());
+            NPCDebug(npc, 5, "Operation %s failed with no failure perception",GetName());
         }
     }
     else
     {
-        npc->Printf(5,"Operation %s failed tigger failure perception: %s",
+        NPCDebug(npc, 5, "Operation %s failed tigger failure perception: %s",
                     GetName(),failurePerception.GetData());
 
         Perception perception(failurePerception);
@@ -655,7 +655,7 @@ bool PathReachedEndPoint(NPC* npc, iCelHPath* path, const csVector3& endPos, iSe
                                                        finalDest->GetPosition(), finalDest->GetSector());
     if (deviation > 1.0)
     {
-        npc->Printf(5, "Path endet at % failed to reach destination %s by %.2fm",
+        NPCDebug(npc, 5, "Path endet at % failed to reach destination %s by %.2fm",
                     toString(finalDest->GetPosition(), finalDest->GetSector()).GetData(),
                     toString(endPos, endSector).GetData(),deviation);
         return false;
@@ -675,7 +675,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, bool interrupt
 
     if (!GetEndPosition(npc, myPos, mySector, endPos, endSector))
     {
-        npc->Printf(5, "Failed to find target position!");
+        NPCDebug(npc, 5, "Failed to find target position!");
         return OPERATION_FAILED;  // This operation is complete
     }
 
@@ -687,15 +687,15 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, bool interrupt
         float distance = npcclient->GetWorld()->Distance(myPos, mySector, endPos, endSector);
         if (distance < 0.5)
         {
-            npc->Printf(5, "We are done..");
+            NPCDebug(npc, 5, "We are done..");
             return OPERATION_COMPLETED;
         }
         else
         {
             // We really failed to find a path between us and the target
-            npc->Printf(5, "Failed to find a path between %s and %s", 
-                        toString(myPos, mySector).GetData(), 
-                        toString(endPos, endSector).GetData());
+            NPCDebug(npc, 5, "Failed to find a path between %s and %s", 
+                     toString(myPos, mySector).GetData(), 
+                     toString(endPos, endSector).GetData());
             
             return OPERATION_FAILED;  // This operation is complete
         }
@@ -706,7 +706,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, bool interrupt
     }
     else if ( path->GetDistance() < 0.5 )  // Distance allready adjusted for offset
     {
-        npc->Printf(5, "We are done...");
+        NPCDebug(npc, 5, "We are done...");
 
         return OPERATION_COMPLETED; // This operation is complete
     }
@@ -752,9 +752,9 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
     // Check if path endpoint has changed and needs to be updated
     if(EndPointChanged( endPos, endSector ))
     {
-        npc->Printf(8, "target diverged, recalculate path between %s and %s", 
-                        toString(myPos, mySector).GetData(), 
-                        toString(endPos, endSector).GetData());
+        NPCDebug(npc, 8, "target diverged, recalculate path between %s and %s", 
+                 toString(myPos, mySector).GetData(), 
+                 toString(endPos, endSector).GetData());
 
         path = npcclient->ShortestPath(npc, myPos, mySector, endPos, endSector);
         if(!path || !path->HasNext())
@@ -764,16 +764,16 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
             float distance = npcclient->GetWorld()->Distance(myPos, mySector, endPos, endSector);
             if (distance < 0.5)
             {
-                npc->Printf(5, "We are done....");
+                NPCDebug(npc, 5, "We are done....");
                 StopMovement(npc);
                 return OPERATION_COMPLETED;
             }
             else
             {
                 // We really failed to find a path between us and the target
-                npc->Printf(5, "Failed to find a path between %s and %s", 
-                            toString(myPos, mySector).GetData(), 
-                            toString(endPos, endSector).GetData());
+                NPCDebug(npc, 5, "Failed to find a path between %s and %s", 
+                         toString(myPos, mySector).GetData(), 
+                         toString(endPos, endSector).GetData());
                 StopMovement(npc);
                 return OPERATION_FAILED;
             }
@@ -797,7 +797,7 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
     float distance = npcclient->GetWorld()->Distance(myPos,mySector,dest->GetPosition(),dest->GetSector());
     if (distance >= INFINITY_DISTANCE)
     {
-        npc->Printf(5, "No connection found..");
+        NPCDebug(npc, 5, "No connection found..");
         StopMovement(npc);
         return OPERATION_FAILED;
     }
@@ -805,16 +805,16 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
     {
         if (distance > (currentDistance+0.001) )
         {
-            npc->Printf(6, "We passed localDest(dist=%.4f > curr=%.4f)...", distance, currentDistance);
+            NPCDebug(npc, 6, "We passed localDest(dist=%.4f > curr=%.4f)...", distance, currentDistance);
         }
         else
         {
-            npc->Printf(6, "We are at localDest(dist=%.4f)...", distance);
+            NPCDebug(npc, 6, "We are at localDest(dist=%.4f)...", distance);
         }
 
         if (!path->HasNext())
         {
-            npc->Printf(5, "We are done.....");
+            NPCDebug(npc, 5, "We are done.....");
             StopMovement(npc);
             if (CheckEndPointOk(npc, myPos, mySector, endPos, endSector ))
             {
@@ -846,7 +846,7 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
     	timedelta = distance / GetVelocity(npc);
     }
 
-    npc->Printf(8, "advance: pos=%s rot=%.2f dest=%s dist=%.3f timedelta=%.3f", 
+    NPCDebug(npc, 8, "advance: pos=%s rot=%.2f dest=%s dist=%.3f timedelta=%.3f", 
                 toString(myPos,mySector).GetDataSafe(), myRot,
                 dest->GetPosition().Description().GetData(),distance,timedelta);
     int ret;
@@ -862,8 +862,8 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
         iSector* myNewSector;
 
         npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
-        npc->Printf(8,"World position bodyVel=%s worldVel=%s",
-                       toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
+        NPCDebug(npc, 8, "World position bodyVel=%s worldVel=%s",
+                 toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
 
         CheckMoveOk(npc, myPos, mySector, myNewPos, myNewSector, ret);
     }
@@ -906,7 +906,7 @@ ScriptOperation::OperationResult AssessOperation::Run(NPC *npc, bool interrupted
 {
     if (npc->GetTarget())
     {
-        npc->Printf(5,"Queing Assement operation to server for %s",npc->GetTarget()->GetName());
+        NPCDebug(npc, 5, "Queing Assement operation to server for %s",npc->GetTarget()->GetName());
 
         npcclient->GetNetworkMgr()->QueueAssessCommand(npc->GetActor(), npc->GetTarget(), 
                                                        psGameObject::ReplaceNPCVariables(npc, physicalAssessmentPerception),
@@ -915,7 +915,7 @@ ScriptOperation::OperationResult AssessOperation::Run(NPC *npc, bool interrupted
     }
     else
     {
-        npc->Printf(5,"No target to Queing Assement operation for.");
+        NPCDebug(npc, 5, "No target to Queing Assement operation for.");
     }
 
     return OPERATION_COMPLETED;  // Nothing more to do for this op.
@@ -944,7 +944,7 @@ ScriptOperation::OperationResult BuildOperation::Run(NPC *npc, bool interrupted)
     }
     else
     {
-        npc->Printf(5,"No tribe for this NPC.");
+        NPCDebug(npc, 5, "No tribe for this NPC.");
         return OPERATION_FAILED;
     }
 
@@ -975,14 +975,14 @@ ScriptOperation::OperationResult UnbuildOperation::Run(NPC *npc, bool interrupte
         }
         else
         {
-            npc->Printf(5,"No building targeted.");
+            NPCDebug(npc, 5, "No building targeted.");
             return OPERATION_FAILED;
         }
         
     }
     else
     {
-        npc->Printf(5,"No tribe for this NPC.");
+        NPCDebug(npc, 5, "No tribe for this NPC.");
         return OPERATION_FAILED;
     }
 
@@ -1051,11 +1051,11 @@ ScriptOperation::OperationResult CastOperation::Run(NPC *npc, bool interrupted)
 {
     csString spellVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, spell);
     csString kFactorVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, kFactor);
-    npc->Printf(5, "Casting %s", spellVariablesReplaced.GetDataSafe());
+    NPCDebug(npc, 5, "Casting %s", spellVariablesReplaced.GetDataSafe());
 
     if (!npc->GetTarget())
     {
-        npc->Printf(5,"Cast operation failed with no target given");
+        NPCDebug(npc, 5, "Cast operation failed with no target given");
         return OPERATION_FAILED;
     }
 
@@ -1250,9 +1250,9 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
         {
             targetEID = targetEntity->GetEID();
 
-            npc->Printf(6, "Targeting nearest player (%s) at %s range %.2f for chase ...",
-                        targetEntity->GetName(), toString(endPos,endSector).GetDataSafe(),
-                        targetRange);
+            NPCDebug(npc, 6, "Targeting nearest player (%s) at %s range %.2f for chase ...",
+                     targetEntity->GetName(), toString(endPos,endSector).GetDataSafe(),
+                     targetRange);
         }
         break;
     case NEAREST_ACTOR:
@@ -1261,9 +1261,9 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
         {
             targetEID = targetEntity->GetEID();
 
-            npc->Printf(6, "Targeting nearest actor (%s) at %s range %.2f for chase ...",
-                        targetEntity->GetName(), toString(endPos,endSector).GetDataSafe(), 
-                        targetRange);
+            NPCDebug(npc, 6, "Targeting nearest actor (%s) at %s range %.2f for chase ...",
+                     targetEntity->GetName(), toString(endPos,endSector).GetDataSafe(), 
+                     targetRange);
         }
         break;
     case OWNER:
@@ -1277,8 +1277,8 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
 
                 targetEID = targetEntity->GetEID();
                 psGameObject::GetPosition(targetEntity, endPos, targetRot, endSector);
-                npc->Printf(6, "Targeting owner (%s) at %s for chase ...",
-                            targetEntity->GetName(), toString(endPos,endSector).GetDataSafe());
+                NPCDebug(npc, 6, "Targeting owner (%s) at %s for chase ...",
+                         targetEntity->GetName(), toString(endPos,endSector).GetDataSafe());
             }
         }
         break;
@@ -1293,8 +1293,8 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
 
                 targetEID = targetEntity->GetEID();
                 psGameObject::GetPosition(targetEntity, endPos, endSector);
-                npc->Printf(6, "Targeting current target (%s) at %s for chase ...",
-                            targetEntity->GetName(), toString(endPos,endSector).GetDataSafe());
+                NPCDebug(npc, 6, "Targeting current target (%s) at %s for chase ...",
+                         targetEntity->GetName(), toString(endPos,endSector).GetDataSafe());
             }
         }
         break;
@@ -1302,12 +1302,12 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
 
     if (!targetEID.IsValid() || !targetEntity)
     {
-        npc->Printf(5, "No one found to chase!");
+        NPCDebug(npc, 5, "No one found to chase!");
         return false;
     }
     if (targetEntity->GetInstance() != npc->GetActor()->GetInstance())
     {
-        npc->Printf(5, "Target found in different instance, no one found to chase!");
+        NPCDebug(npc, 5, "Target found in different instance, no one found to chase!");
         return false;
     }
 
@@ -1320,8 +1320,8 @@ bool ChaseOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const iSec
     endPos -= offsetDelta;
     // TODO: Check if new endPos is within same sector!!!
 
-    npc->Printf(5, "End point for chase of <%s, %s> at %s with offset %s", targetEntity->GetName(),
-                ShowID(targetEntity->GetEID()),
+    NPCDebug(npc, 5, "End point for chase of <%s, %s> at %s with offset %s", targetEntity->GetName(),
+             ShowID(targetEntity->GetEID()),
                 toString(endPos,endSector).GetDataSafe(),
                 toString(offsetDelta).GetDataSafe());
 
@@ -1351,7 +1351,7 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
 
             if (targetEID != targetEntity->GetEID())
             {
-                npc->Printf(5, "Changing chase to new player %s", newTarget->GetName());
+                NPCDebug(npc, 5, "Changing chase to new player %s", newTarget->GetName());
 
                 // Calculate an offset point from the target. 
                 // This point is used until new target is found
@@ -1379,7 +1379,7 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
 
             if (targetEID != targetEntity->GetEID())
             {
-                npc->Printf(5, "Changing chase to new actor %s", newTarget->GetName());
+                NPCDebug(npc, 5, "Changing chase to new actor %s", newTarget->GetName());
 
                 // Calculate an offset point from the target. 
                 // This point is used until new target is found
@@ -1409,7 +1409,7 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
     gemNPCActor* targetEntity = UpdateChaseTarget(npc, myPos, mySector);
     if (!targetEntity) // No target entity anymore
     {
-        npc->Printf(5, "ChaseOp has no target now!");
+        NPCDebug(npc, 5, "ChaseOp has no target now!");
         csString str;
         str.Append(typeStr[type]);
         str.Append(" out of target");
@@ -1420,7 +1420,7 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
 
     if (targetEntity->GetInstance() != npc->GetActor()->GetInstance())
     {
-        npc->Printf(5, "Target found in different instance, no one found to chase!");
+        NPCDebug(npc, 5, "Target found in different instance, no one found to chase!");
         return false;
     }
 
@@ -1433,7 +1433,7 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
     if ( (distance >= INFINITY_DISTANCE) ||
          ((chaseRange > 0) && (distance > chaseRange)) )
     {
-        npc->Printf(5, "Target out of chase range -> we are done..");
+        NPCDebug(npc, 5, "Target out of chase range -> we are done..");
         csString str;
         str.Append(typeStr[type]);
         str.Append(" out of chase");
@@ -1655,18 +1655,18 @@ ScriptOperation::OperationResult ControlOperation::Run(NPC *npc, bool interrupte
 
     if (!target)
     {
-        npc->Printf(5, "   Nothing to Control");
+        NPCDebug(npc, 5, "   Nothing to Control");
         return OPERATION_FAILED;
     }
 
     if (control)
     {
-        npc->Printf(5, "   Take Control %s", target->GetName());
+        NPCDebug(npc, 5, "   Take Control %s", target->GetName());
         npc->TakeControl(target);
     }
     else
     {
-        npc->Printf(5, "   Release Control %s", target->GetName());
+        NPCDebug(npc, 5, "   Release Control %s", target->GetName());
         npc->ReleaseControl(target);
     }
 
@@ -1714,14 +1714,14 @@ ScriptOperation::OperationResult DebugOperation::Run(NPC *npc, bool interrupted)
     
     if (!level) // Print before when turning off
     {
-        npc->Printf(1, "DebugOp Set debug %d",level);
+        NPCDebug(npc, 1, "DebugOp Set debug %d",level);
     }
     
     npc->SetDebugging(level);
     
     if (level) // Print after when turning on
     {
-        npc->Printf(1, "DebugOp Set debug %d",level);            
+        NPCDebug(npc, 1, "DebugOp Set debug %d",level);            
     }
 
     return OPERATION_COMPLETED;  // Nothing more to do for this op.
@@ -1751,7 +1751,7 @@ ScriptOperation *DequipOperation::MakeCopy()
 
 ScriptOperation::OperationResult DequipOperation::Run(NPC *npc, bool interrupted)
 {
-    npc->Printf(5, "   Who: %s Where: %s",
+    NPCDebug(npc, 5, "   Who: %s Where: %s",
                 npc->GetName(), slot.GetData());
 
     npcclient->GetNetworkMgr()->QueueDequipCommand(npc->GetActor(), slot );
@@ -1894,7 +1894,7 @@ ScriptOperation *EmoteOperation::MakeCopy()
 
 ScriptOperation::OperationResult EmoteOperation::Run(NPC *npc, bool interrupted)
 {
-    npc->Printf(5, "   Who: %s Emote: %s", npc->GetName(), cmd.GetData());
+    NPCDebug(npc, 5, "   Who: %s Emote: %s", npc->GetName(), cmd.GetData());
 
     npcclient->GetNetworkMgr()->QueueEmoteCommand(npc->GetActor(), npc->GetTarget(), cmd);
 
@@ -1933,7 +1933,7 @@ ScriptOperation *EquipOperation::MakeCopy()
 
 ScriptOperation::OperationResult EquipOperation::Run(NPC *npc, bool interrupted)
 {
-    npc->Printf(5, "   Who: %s What: %s Where: %s Count: %d",
+    NPCDebug(npc, 5, "   Who: %s What: %s Where: %s Count: %d",
                 npc->GetName(),item.GetData(), slot.GetData(), count);
 
     npcclient->GetNetworkMgr()->QueueEquipCommand(npc->GetActor(), item, slot, count);
@@ -2207,10 +2207,10 @@ Waypoint* LocateOperation::CalculateWaypoint(NPC *npc, csVector3 located_pos, iS
 
     if (end && (located_range == -1 || end_range >= located_range))
     {
-        npc->Printf(5,"Located WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+        NPCDebug(npc, 5, "Located WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
         return end;
     }
-    npc->Printf(5,"Cannot Locate WP at %s",toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+    NPCDebug(npc, 5, "Cannot Locate WP at %s",toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
 
     return NULL;
 }
@@ -2243,7 +2243,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
  
     if (split_obj[0] == "actor")
     {
-        npc->Printf(5,"LocateOp - Actor %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Actor %s",locateArgs.GetDataSafe());
 
         iSector *sector;
         csVector3 pos;
@@ -2267,7 +2267,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "building")
     {
-        npc->Printf(5,"LocateOp - Building %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Building %s",locateArgs.GetDataSafe());
 
         if (!npc->GetTribe())
         {
@@ -2315,7 +2315,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "building_spot")
     {
-        npc->Printf(5,"LocateOp - Building spot %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Building spot %s",locateArgs.GetDataSafe());
         
         Tribe::Asset* buildingSpot = npc->GetBuildingSpot();
         if (buildingSpot)
@@ -2338,7 +2338,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "dead")
     {
-        npc->Printf(5,"LocateOp - Dead %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Dead %s",locateArgs.GetDataSafe());
 
         gemNPCActor* ent = npc->GetNearestDeadActor(range);
 
@@ -2364,7 +2364,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "entity")
     {
-        npc->Printf(5,"LocateOp - Entity %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Entity %s",locateArgs.GetDataSafe());
 
         gemNPCObject *entity = NULL;
 
@@ -2403,7 +2403,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if(split_obj[0] == "friend")
     {
-        npc->Printf(5, "LocateOp - Friend %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Friend %s",locateArgs.GetDataSafe());
 
         gemNPCActor *ent = npc->GetNearestVisibleFriend(20);
         if(ent)
@@ -2428,17 +2428,17 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "perception")
     {
-        npc->Printf(5,"LocateOp - Perception %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Perception %s",locateArgs.GetDataSafe());
 
         if (!npc->GetLastPerception())
         {
-            npc->Printf(5,"LocateOp - No Last Perception - nothing to do");
+            NPCDebug(npc, 5, "LocateOp - No Last Perception - nothing to do");
             return OPERATION_FAILED;  // Nothing more to do for this op.
         }
-        npc->Printf(5,"LocateOp - Last Perception is: %s",(npc->GetLastPerception()->GetName(npc)).GetData());
+        NPCDebug(npc, 5, "LocateOp - Last Perception is: %s",(npc->GetLastPerception()->GetName(npc)).GetData());
         if (!npc->GetLastPerception()->GetLocation(located.pos,located.sector))
         {
-            npc->Printf(5,"LocateOp - Cannot get Location - nothing to do");
+            NPCDebug(npc, 5, "LocateOp - Cannot get Location - nothing to do");
             return OPERATION_FAILED;  // Nothing more to do for this op.
         }
 
@@ -2449,7 +2449,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "player")
     {
-        npc->Printf(5,"LocateOp - Player %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Player %s",locateArgs.GetDataSafe());
 
         iSector *sector;
         csVector3 pos;
@@ -2473,7 +2473,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "target")
     {
-        npc->Printf(5,"LocateOp - Target %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Target %s",locateArgs.GetDataSafe());
 
         // Since we don't have a current enemy targeted, find one!
         gemNPCActor* ent = npc->GetMostHated(range,locate_invisible,locate_invincible);
@@ -2500,7 +2500,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "owner")
     {
-        npc->Printf(5,"LocateOp - Owner %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Owner %s",locateArgs.GetDataSafe());
 
         gemNPCObject *owner;
         // Since we don't have a current enemy targeted, find one!
@@ -2512,7 +2512,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
         }
         else
         {
-            npc->Printf("Failed to find owner");
+            NPCDebug(npc, 5, "Failed to find owner");
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
 
@@ -2529,7 +2529,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "point")
     {
-        npc->Printf(5,"LocateOp - Point %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Point %s",locateArgs.GetDataSafe());
 
         iSector *sector;
         float npc_rot;
@@ -2548,12 +2548,12 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "region")
     {
-        npc->Printf(5,"LocateOp - Region %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Region %s",locateArgs.GetDataSafe());
 
         LocationType* region = npc->GetRegion();
         if (!region)
         {
-            npc->Printf("Failed to locate region");
+            NPCDebug(npc, 5, "Failed to locate region");
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
 
@@ -2591,8 +2591,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
                     Error4("NPC %s LocateOperation in region %s fails to find ground from %s",
                            ShowID(npc->GetPID()),region->GetName(),
                            toString(pos,sector).GetDataSafe());
-                    npc->Printf(1, "LocateOperation Failed to find round from %s in region %s",
-                                toString(pos,sector).GetDataSafe(), region->GetName());
+                    NPCDebug(npc, 1, "LocateOperation Failed to find round from %s in region %s",
+                             toString(pos,sector).GetDataSafe(), region->GetName());
                     return OPERATION_FAILED; // Nothing more to do for this op.
                 }
 	    }
@@ -2603,7 +2603,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "self")
     {
-        npc->Printf(5,"LocateOp - Self %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Self %s",locateArgs.GetDataSafe());
 
         gemNPCActor *ent;
 
@@ -2631,7 +2631,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "ownbuffer")
     {
-        npc->Printf(5, "LocateOp - Own Buffer %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Own Buffer %s",locateArgs.GetDataSafe());
 
         Tribe::Memory* ownBuffer = npc->GetBufferMemory();
 
@@ -2654,7 +2654,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "spawn")
     {
-        npc->Printf(5,"LocateOp - Spawn %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Spawn %s",locateArgs.GetDataSafe());
 
         located.pos = npc->GetSpawnPosition();
         located.angle = 0;
@@ -2666,14 +2666,14 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     {
         if (!npc->GetTribe())
         {
-            npc->Printf(5,"LocateOp - Tribe: NO TRIBE");
+            NPCDebug(npc, 5, "LocateOp - Tribe: NO TRIBE");
 
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
 
         if (split_obj[1] == "home")
         {
-            npc->Printf(5,"LocateOp - Tribe - Home %s",locateArgs.GetDataSafe());
+            NPCDebug(npc, 5, "LocateOp - Tribe - Home %s",locateArgs.GetDataSafe());
 
             float radius;
             csVector3 pos;
@@ -2689,7 +2689,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
         }
         else if (split_obj[1] == "memory")
         {
-            npc->Printf(5,"LocateOp - Tribe - Memory %s",locateArgs.GetDataSafe());
+            NPCDebug(npc, 5, "LocateOp - Tribe - Memory %s",locateArgs.GetDataSafe());
 
             float located_range=0.0;
             Tribe::Memory * memory;
@@ -2705,8 +2705,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
             
             if (!memory)
             {
-                npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                            (const char *)objectReplacedVariables,npc->GetName() );
+                NPCDebug(npc, 5, "Couldn't locate any <%s> in npc script for <%s>.",
+                         (const char *)objectReplacedVariables,npc->GetName() );
                 return OPERATION_FAILED; // Nothing more to do for this op.
             }
             located.pos = memory->pos;
@@ -2719,7 +2719,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
         }
         else if (split_obj[1] == "resource")
         {
-            npc->Printf(5,"LocateOp - Tribe - Resource %s",locateArgs.GetDataSafe());
+            NPCDebug(npc, 5, "LocateOp - Tribe - Resource %s",locateArgs.GetDataSafe());
 
             npc->GetTribe()->GetResource(npc,start_pos,start_sector,located.pos,located.sector,range,random);
             located.angle = 0.0;
@@ -2727,7 +2727,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
         }
         else if (split_obj[0] == "target")
         {
-            npc->Printf(5,"LocateOp - Tribe - Target %s",locateArgs.GetDataSafe());
+            NPCDebug(npc, 5, "LocateOp - Tribe - Target %s",locateArgs.GetDataSafe());
 
             if (!npc->GetTribe())
             {
@@ -2760,7 +2760,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "waypoint" )
     {
-        npc->Printf(5, "LocateOp - Waypoint %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Waypoint %s",locateArgs.GetDataSafe());
 
         float located_range=0.0;
 
@@ -2804,12 +2804,12 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
 
         if (!located.wp)
         {
-            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                (const char *)objectReplacedVariables,npc->GetName() );
+            NPCDebug(npc, 5, "Couldn't locate any <%s> in npc script for <%s>.",
+                     (const char *)objectReplacedVariables,npc->GetName() );
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
-        npc->Printf(5, "Located waypoint: %s at %s range %.2f",located.wp->GetName(),
-                    toString(located.wp->loc.pos,located.wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
+        NPCDebug(npc, 5, "Located waypoint: %s at %s range %.2f",located.wp->GetName(),
+                 toString(located.wp->loc.pos,located.wp->loc.GetSector(npcclient->GetEngine())).GetData(),located_range);
 
         located.pos = located.wp->loc.pos;
         located.sector = located.wp->loc.GetSector(npcclient->GetEngine());
@@ -2818,7 +2818,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (!static_loc || !staticLocated)
     {
-        npc->Printf(5, "LocateOp - Location %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Location %s",locateArgs.GetDataSafe());
 
         float located_range=0.0;
         Location * location;
@@ -2838,8 +2838,8 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
 
         if (!location)
         {
-            npc->Printf(5, "Couldn't locate any <%s> in npc script for <%s>.",
-                (const char *)objectReplacedVariables,npc->GetName() );
+            NPCDebug(npc, 5, "Couldn't locate any <%s> in npc script for <%s>.",
+                     (const char *)objectReplacedVariables,npc->GetName() );
             return OPERATION_FAILED; // Nothing more to do for this op.
         }
         located.pos = location->pos;
@@ -2860,7 +2860,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else
     {
-        npc->Printf(5, "remembered location from last time");
+        NPCDebug(npc, 5, "remembered location from last time");
         located = storedStaticLocated;
     }
 
@@ -2871,9 +2871,9 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
         npc->SetTarget(located.target);
     }
 
-    npc->Printf(5, "LocateOp - %s location: pos %s rot %.2f wp %s target: %s",
-                destinationVariablesReplaced.GetDataSafe(),toString(located.pos,located.sector).GetData(),located.angle,
-                (located.wp?located.wp->GetName():"(NULL)"),located.target.IsValid()?located.target->GetName():"(NULL)");
+    NPCDebug(npc, 5, "LocateOp - %s location: pos %s rot %.2f wp %s target: %s",
+             destinationVariablesReplaced.GetDataSafe(),toString(located.pos,located.sector).GetData(),located.angle,
+             (located.wp?located.wp->GetName():"(NULL)"),located.target.IsValid()?located.target->GetName():"(NULL)");
 
     return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
@@ -2920,14 +2920,14 @@ ScriptOperation::OperationResult LoopEndOperation::Run(NPC *npc, bool interrupte
 
     if (current < iterations || iterations < 0)  // -1 iterations mean forever
     {
-        npc->Printf(5, "LoopEnd - Loop %d of %d back to %d",current,iterations,loopback_op);
+        NPCDebug(npc, 5, "LoopEnd - Loop %d of %d back to %d",current,iterations,loopback_op);
         behavior->SetCurrentStep(loopback_op);
         return OPERATION_COMPLETED;
     }
 
     current = 0; // Make sure we will loop next time to
 
-    npc->Printf(5, "LoopEnd - Exit %d %d",current,iterations);
+    NPCDebug(npc, 5, "LoopEnd - Exit %d %d",current,iterations);
     return OPERATION_COMPLETED;
 }
 
@@ -2985,14 +2985,14 @@ ScriptOperation *MeleeOperation::MakeCopy()
 
 ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, bool interrupted)
 {
-    npc->Printf(5, "MeleeOperation starting with meele range %.2f seek range %.2f will attack:%s%s.",
-                melee_range, seek_range,(attack_invisible?" Invisible":" Visible"),
-                (attack_invincible?" Invincible":""));
+    NPCDebug(npc, 5, "MeleeOperation starting with meele range %.2f seek range %.2f will attack:%s%s.",
+             melee_range, seek_range,(attack_invisible?" Invisible":" Visible"),
+             (attack_invincible?" Invincible":""));
 
     attacked_ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
     if (attacked_ent)
     {
-        npc->Printf(5, "Melee starting to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
+        NPCDebug(npc, 5, "Melee starting to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
 
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), attacked_ent, stance);
     }
@@ -3012,7 +3012,7 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *n
     
     if (!ent)
     {
-        npc->Printf(8, "No Melee target in range (%2.2f), going to chase!", melee_range);
+        NPCDebug(npc, 8, "No Melee target in range (%2.2f), going to chase!", melee_range);
 
         // No enemy to whack on in melee range, search far
         ent = npc->GetMostHated(seek_range, attack_invisible, attack_invincible);
@@ -3038,7 +3038,7 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *n
             {
                 npc->DumpHateList();
             }
-            npc->Printf(8, "No hated target in seek range (%2.2f)!", seek_range);
+            NPCDebug(npc, 8, "No hated target in seek range (%2.2f)!", seek_range);
             npc->GetCurrentBehavior()->ApplyNeedDelta(npc, -5); // don't want to fight as badly
         }
         return OPERATION_NOT_COMPLETED;
@@ -3048,11 +3048,11 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *n
         attacked_ent = ent;
         if (attacked_ent)
         {
-            npc->Printf(5, "Melee switching to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
+            NPCDebug(npc, 5, "Melee switching to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
         }
         else
         {
-            npc->Printf(5, "Melee stop attack");
+            NPCDebug(npc, 5, "Melee stop attack");
         }
         npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent, stance);
     }
@@ -3113,11 +3113,11 @@ ScriptOperation::OperationResult MemorizeOperation::Run(NPC *npc, bool interrupt
     Perception * percept = npc->GetLastPerception();
     if (!percept)
     {
-        npc->Printf(5, ">>> Memorize No Perception.");
+        NPCDebug(npc, 5, ">>> Memorize No Perception.");
         return OPERATION_COMPLETED; // Nothing more to do for this op.
     }
     
-    npc->Printf(5, ">>> Memorize '%s' '%s'.",percept->GetType().GetDataSafe(),percept->GetName(npc).GetDataSafe());
+    NPCDebug(npc, 5, ">>> Memorize '%s' '%s'.",percept->GetType().GetDataSafe(),percept->GetName(npc).GetDataSafe());
 
     Tribe * tribe = npc->GetTribe();
     
@@ -3209,14 +3209,14 @@ ScriptOperation::OperationResult MoveOperation::Advance(float timedelta, NPC *np
 
     npc->GetLinMove()->GetLastPosition(oldPos, oldRot, oldSector);
 
-    npc->Printf(10,"Old position: %s",toString(oldPos,oldSector).GetDataSafe());
+    NPCDebug(npc, 10, "Old position: %s",toString(oldPos,oldSector).GetDataSafe());
 
     int ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
 
     npc->GetLinMove()->GetLastPosition(newPos, newRot, newSector);
     CheckMoveOk(npc, oldPos, oldSector, newPos, newSector, ret);
 
-    npc->Printf(10,"New position: %s",toString(newPos,newSector).GetDataSafe());
+    NPCDebug(npc, 10, "New position: %s",toString(newPos,newSector).GetDataSafe());
 
     return OPERATION_NOT_COMPLETED;
 }
@@ -3298,7 +3298,7 @@ ScriptOperation::OperationResult MovePathOperation::Advance(float timedelta, NPC
                              direction, npc->GetMovable()))
     {
         // At end of path
-        npc->Printf(5, "We are done..");
+        NPCDebug(npc, 5, "We are done..");
 
         // Set position to where it is supposed to go
         npc->GetLinMove()->SetPosition(path->GetEndPos(direction),path->GetEndRot(direction),
@@ -3323,7 +3323,7 @@ ScriptOperation::OperationResult MovePathOperation::Advance(float timedelta, NPC
         csVector3 pos; float rot; iSector *sec;
         psGameObject::GetPosition(npc->GetActor(),pos,rot,sec);
 
-        npc->Printf(8, "MovePath Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
+        NPCDebug(npc, 8, "MovePath Loc is %s Rot: %1.2f Vel: %.2f Dist: %.2f Index: %d Fraction %.2f",
                     toString(pos).GetDataSafe(),rot,GetVelocity(npc),anchor->GetDistance(),anchor->GetCurrentAtIndex(),anchor->GetCurrentAtFraction());
         
         csVector3 anchor_pos,anchor_up,anchor_forward;
@@ -3333,7 +3333,7 @@ ScriptOperation::OperationResult MovePathOperation::Advance(float timedelta, NPC
         anchor->GetInterpolatedForward(anchor_forward);
         
 
-        npc->Printf(9, "Anchor pos: %s forward: %s up: %s",toString(anchor_pos).GetDataSafe(),
+        NPCDebug(npc, 9, "Anchor pos: %s forward: %s up: %s",toString(anchor_pos).GetDataSafe(),
                     toString(anchor_forward).GetDataSafe(),toString(anchor_up).GetDataSafe());
         
     }
@@ -3543,7 +3543,7 @@ bool NavigateOperation::GetEndPosition(NPC* npc, const csVector3 &myPos, const i
 
     npc->GetActiveLocate(endPos,endSector,dummyRot);
 
-    npc->Printf(5, "Located %s at %1.2f m/sec.",toString(endPos,endSector).GetData(),
+    NPCDebug(npc, 5, "Located %s at %1.2f m/sec.",toString(endPos,endSector).GetData(),
                 GetVelocity(npc) );
 
     return true;
@@ -3745,7 +3745,7 @@ void PerceptOperation::TriggerEvent(NPC* npc, Perception& pcpt, PerceptOperation
     {
         if (maxRange >= 0.0)
         {
-            npc->Printf(1,"Perception not sent based on range since no known position");
+            NPCDebug(npc, 1, "Perception not sent based on range since no known position");
             return; // Nothing more to do for this op.
         }
         
@@ -3761,7 +3761,7 @@ void PerceptOperation::TriggerEvent(NPC* npc, Perception& pcpt, PerceptOperation
         Tribe* tribe = npc->GetTribe();
         if (!tribe)
         {
-            npc->Printf("No tribe to percept");
+            NPCDebug(npc, 5, "No tribe to percept");
             return; // Nothing more to do for this op.
         }
         
@@ -3775,7 +3775,7 @@ void PerceptOperation::TriggerEvent(NPC* npc, Perception& pcpt, PerceptOperation
     {
         if (!npc->GetTarget())
         {
-            npc->Printf(1,"Failed to percept since no target");
+            NPCDebug(npc, 1, "Failed to percept since no target");
             return; // Nothing more to do for this op.
         }
         
@@ -3786,7 +3786,7 @@ void PerceptOperation::TriggerEvent(NPC* npc, Perception& pcpt, PerceptOperation
         }
         else
         {
-            npc->Printf(1,"Failed to percept since target isn't a NPC");
+            NPCDebug(npc, 1, "Failed to percept since target isn't a NPC");
         }
     }
     else
@@ -3829,20 +3829,20 @@ ScriptOperation::OperationResult PickupOperation::Run(NPC *npc, bool interrupted
     {
         if (!npc->GetLastPerception())
         {
-            npc->Printf(5,"Pickup operation. No perception for NPC");
+            NPCDebug(npc, 5, "Pickup operation. No perception for NPC");
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
         
         if (!(item = npc->GetLastPerception()->GetTarget()))
         {
-            npc->Printf(5,"Pickup operation. No target in perception for NPC.");
+            NPCDebug(npc, 5, "Pickup operation. No target in perception for NPC.");
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
         
         if (!item->IsPickable())
         {
-            npc->Printf(1,"Pickup operation failed since object %s isn't pickable",
-                        item->GetName());
+            NPCDebug(npc, 1, "Pickup operation failed since object %s isn't pickable",
+                     item->GetName());
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
         
@@ -3855,7 +3855,7 @@ ScriptOperation::OperationResult PickupOperation::Run(NPC *npc, bool interrupted
         return OPERATION_FAILED;  // Nothing more to do for this op.
     }
 
-    npc->Printf(5, "   Who: %s What: %s Count: %d",npc->GetName(),item->GetName(), count);
+    NPCDebug(npc, 5, "   Who: %s What: %s Count: %d",npc->GetName(),item->GetName(), count);
 
     npcclient->GetNetworkMgr()->QueuePickupCommand(npc->GetActor(), item, count);
 
@@ -3894,7 +3894,7 @@ ScriptOperation::OperationResult ReproduceOperation::Run(NPC *npc, bool interrup
     {
         csString tribeMemberTypeReplaced = psGameObject::ReplaceNPCVariables(npc,tribeMemberType);
 
-        npc->Printf(5, "Reproduce - %s",tribeMemberTypeReplaced.GetDataSafe());
+        NPCDebug(npc, 5, "Reproduce - %s",tribeMemberTypeReplaced.GetDataSafe());
         npcclient->GetNetworkMgr()->QueueSpawnCommand(friendNPC->GetActor(), npc->GetActor(), tribeMemberTypeReplaced);
     }
 
@@ -4085,7 +4085,7 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
 
     if (interrupted)
     {
-        npc->Printf(5,"Interrupted rotation to %.2f deg",target_angle*180.0f/PI);
+        NPCDebug(npc, 5, "Interrupted rotation to %.2f deg",target_angle*180.0f/PI);
 
         angle_delta =  target_angle - rot;
     }
@@ -4111,7 +4111,7 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
                     max_angle = rot_angle; 
             }
 
-            npc->Printf(5, "Region found in between %.2f and %.2f",min_angle*180.0f/PI,max_angle*180.0f/PI);
+            NPCDebug(npc, 5, "Region found in between %.2f and %.2f",min_angle*180.0f/PI,max_angle*180.0f/PI);
 
             if (max_angle-min_angle  > PI )
             {
@@ -4120,7 +4120,7 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
                 min_angle=temp;
             }
 
-            npc->Printf(5, "Region found in between %.2f and %.2f",min_angle*180.0f/PI,max_angle*180.0f/PI);
+            NPCDebug(npc, 5, "Region found in between %.2f and %.2f",min_angle*180.0f/PI,max_angle*180.0f/PI);
 
             // Pick an angle in that range
             target_angle = SeekAngle(npc, psGetRandom() * (max_angle-min_angle) + min_angle);
@@ -4169,11 +4169,11 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
 
         target_angle = psGameObject::CalculateIncidentAngle(pos,dest);
 
-        npc->Printf(5, "Rotate to located destinaion of %.2f deg",target_angle*180.0f/PI);
+        NPCDebug(npc, 5, "Rotate to located destinaion of %.2f deg",target_angle*180.0f/PI);
 
         if(pos == dest && sector == dest_sector && (fabs(rot-target_angle)<PI/30.0))
         {
-            npc->Printf(5,"At located destination, end rotation.");
+            NPCDebug(npc, 5, "At located destination, end rotation.");
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
         
@@ -4182,7 +4182,7 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
         // If the angle is close enough don't worry about it and just go to next command.
         if (fabs(angle_delta) < PI/30.0)
         {
-            npc->Printf(5, "Rotation at destination angle. Ending rotation.");
+            NPCDebug(npc, 5, "Rotation at destination angle. Ending rotation.");
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
     }
@@ -4195,11 +4195,11 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
         npc->GetActiveLocate(dest,dest_sector,dest_rot);
 
         target_angle = dest_rot;
-        npc->Printf(5, "Rotate to located rotaion of %.2f deg",target_angle*180.0f/PI);
+        NPCDebug(npc, 5, "Rotate to located rotaion of %.2f deg",target_angle*180.0f/PI);
 
         if(pos == dest && sector == dest_sector && (fabs(rot-dest_rot)<PI/30.0))
         {
-            npc->Printf(5,"At located destination, end rotation.");
+            NPCDebug(npc, 5, "At located destination, end rotation.");
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
 
@@ -4208,19 +4208,19 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
         // If the angle is close enough don't worry about it and just go to next command.
         if (fabs(angle_delta) < TWO_PI/60.0)
         {
-            npc->Printf(5, "Rotation at destination angle. Ending rotation.");
+            NPCDebug(npc, 5, "Rotation at destination angle. Ending rotation.");
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
     }
     else if (op_type == ROT_ABSOLUTE)
     {
-        npc->Printf(5, "Absolute rotation to %.2f deg",target_angle*180.0f/PI);
+        NPCDebug(npc, 5, "Absolute rotation to %.2f deg",target_angle*180.0f/PI);
         
         angle_delta =  target_angle - rot;
     }
     else if (op_type == ROT_RELATIVE)
     {
-        npc->Printf(5, "Relative rotation by %.2f deg",delta_angle*180.0f/PI);
+        NPCDebug(npc, 5, "Relative rotation by %.2f deg",delta_angle*180.0f/PI);
 
         angle_delta = delta_angle;
         target_angle = rot + angle_delta;
@@ -4243,8 +4243,8 @@ ScriptOperation::OperationResult RotateOperation::Run(NPC *npc, bool interrupted
     // wake me up when it's over
     remaining = fabs(angle_delta/ang_vel);
 
-    npc->Printf(5,"Rotating %1.2f deg from %1.2f to %1.2f at %1.2f deg/sec in %.3f sec.",
-                angle_delta*180/PI,rot*180.0f/PI,target_angle*180.0f/PI,ang_vel*180.0f/PI,remaining);
+    NPCDebug(npc, 5, "Rotating %1.2f deg from %1.2f to %1.2f at %1.2f deg/sec in %.3f sec.",
+             angle_delta*180/PI,rot*180.0f/PI,target_angle*180.0f/PI,ang_vel*180.0f/PI,remaining);
 
     return OPERATION_NOT_COMPLETED;
 }
@@ -4267,7 +4267,7 @@ ScriptOperation::OperationResult RotateOperation::Advance(float timedelta, NPC *
     iSector* sector;
     psGameObject::GetPosition(npc->GetActor(),pos,rot,sector);
 
-    npc->Printf(6,"Rotated to %.2f deg, remaining %.2f",rot*180.0f/PI,remaining);
+    NPCDebug(npc, 6, "Rotated to %.2f deg, remaining %.2f",rot*180.0f/PI,remaining);
 
     return OPERATION_NOT_COMPLETED;
 }
@@ -4330,7 +4330,7 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
 
             if(dist < 0)
             {
-                npc->Printf(6,"Turning left!");
+                NPCDebug(npc, 6, "Turning left!");
                 turn = left;
                 break;
             }
@@ -4341,7 +4341,7 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
 
             if(dist < 0)
             {
-                npc->Printf(6,"Turning right!");
+                NPCDebug(npc, 6, "Turning right!");
                 turn = right;
                 break;
             }
@@ -4350,7 +4350,7 @@ float RotateOperation::SeekAngle(NPC* npc, float targetYRot)
         }
         if (turn==0.0)
         {
-            npc->Printf(5,"Possible ERROR: turn value was 0");
+            NPCDebug(npc, 5, "Possible ERROR: turn value was 0");
         }
         // Apply turn
         targetYRot = turn;
@@ -4520,7 +4520,7 @@ ScriptOperation *ShareMemoriesOperation::MakeCopy()
 ScriptOperation::OperationResult ShareMemoriesOperation::Run(NPC *npc, bool interrupted)
 {
 
-    npc->Printf("ShareMemories with tribe.");
+    NPCDebug(npc, 5, "ShareMemories with tribe.");
 
     Tribe * tribe = npc->GetTribe();
     if ( !tribe ) return OPERATION_COMPLETED; // Nothing more to do for this op.
@@ -4550,7 +4550,7 @@ ScriptOperation::OperationResult SitOperation::Run(NPC *npc, bool interrupted)
         remaining = 3.0;
     }
 
-    npc->Printf(5, "   Who: %s %s", npc->GetName(), sit?"sit":"stand" );
+    NPCDebug(npc, 5, "   Who: %s %s", npc->GetName(), sit?"sit":"stand" );
 
     npcclient->GetNetworkMgr()->QueueSitCommand(npc->GetActor(), npc->GetTarget(), sit);
 
@@ -4566,7 +4566,7 @@ ScriptOperation::OperationResult SitOperation::Advance(float timedelta,NPC *npc)
     }
     else
     {
-        npc->Printf(10, "waiting to be %... %.2f",sit?"seated":"standing",remaining);
+        NPCDebug(npc, 10, "waiting to be %... %.2f",sit?"seated":"standing",remaining);
     }
 
     return OPERATION_NOT_COMPLETED;
@@ -4629,12 +4629,12 @@ ScriptOperation::OperationResult TalkOperation::Run(NPC *npc, bool interrupted)
         
         if (!talkTarget)
         {
-            npc->Printf(1,"No target for talk operation.");
+            NPCDebug(npc, 1, "No target for talk operation.");
             return OPERATION_COMPLETED;  // Nothing more to do for this op.
         }
     }
 
-    npc->Printf(5,"Talk: %s",talkText.GetDataSafe());
+    NPCDebug(npc, 5, "Talk: %s",talkText.GetDataSafe());
 
     csString talkTextVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, talkText);
             
@@ -4676,7 +4676,7 @@ ScriptOperation::OperationResult TeleportOperation::Run(NPC *npc, bool interrupt
     
     if (!actor)
     {
-        npc->Printf(1,"No actor for telport operation.");
+        NPCDebug(npc, 1, "No actor for telport operation.");
         return OPERATION_COMPLETED;  // Nothing more to do for this op.
     }
     
@@ -4685,7 +4685,7 @@ ScriptOperation::OperationResult TeleportOperation::Run(NPC *npc, bool interrupt
     float     rot;
 
     npc->GetActiveLocate(pos, sector, rot);
-    npc->Printf(5, "Teleport to %s",toString(pos,sector).GetDataSafe());
+    NPCDebug(npc, 5, "Teleport to %s",toString(pos,sector).GetDataSafe());
 
     psGameObject::SetPosition(npc->GetActor(), pos, sector);
 
@@ -4727,7 +4727,7 @@ ScriptOperation::OperationResult TransferOperation::Run(NPC *npc, bool interrupt
     {
         if (!npc->GetTribe())
         {
-            npc->Printf(5, "No tribe");
+            NPCDebug(npc, 5, "No tribe");
             return OPERATION_COMPLETED; // Nothing more to do for this op. 
         }
         
@@ -4773,7 +4773,7 @@ ScriptOperation::OperationResult TribeHomeOperation::Run(NPC *npc, bool interrup
     npc->GetActiveLocate(pos,sector,rot);
     radius = npc->GetActiveLocateRadius();
     
-    npc->Printf("Moves tribe home to: %s",toString(pos,sector).GetData());
+    NPCDebug(npc, 5, "Moves tribe home to: %s",toString(pos,sector).GetData());
 
     tribe->SetHome(pos,radius,sector);
 
@@ -4813,7 +4813,7 @@ ScriptOperation::OperationResult TribeTypeOperation::Run(NPC *npc, bool interrup
 
   
     npc->SetTribeMemberType(tribeType);  
-    npc->Printf("Change tribe type to : %s", tribeType.GetDataSafe() );
+    NPCDebug(npc, 5, "Change tribe type to : %s", tribeType.GetDataSafe() );
 
     return OPERATION_COMPLETED; // Nothing more to do for this op.
 }
@@ -4907,7 +4907,7 @@ ScriptOperation::OperationResult WaitOperation::Advance(float timedelta,NPC *npc
     {
         return OPERATION_COMPLETED;
     }
-    npc->Printf(10, "waiting... %.2f",remaining);
+    NPCDebug(npc, 10, "waiting... %.2f",remaining);
     return OPERATION_NOT_COMPLETED;
 }
 
@@ -5013,7 +5013,7 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
     if (!start)
     {
         //printf("Not a waypoint nearby!\n");
-        npc->Printf(5,"Failed, not at a waypoint nearby.");
+        NPCDebug(npc, 5, "Failed, not at a waypoint nearby.");
         return OPERATION_FAILED;
     }
 
@@ -5035,7 +5035,7 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
         if (!currentEdge)
         {
             //printf("Failed to find route\n");
-            npc->Printf(5, "Failed, to find route from waypoint %s.",start->GetName());
+            NPCDebug(npc, 5, "Failed, to find route from waypoint %s.",start->GetName());
             return OPERATION_FAILED;
         }
     }
@@ -5048,14 +5048,14 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
         if (!end)
         {
             //printf("NO end waypoint!\n");
-            npc->Printf(5,"Failed to find active locate waypoint");
+            NPCDebug(npc, 5, "Failed to find active locate waypoint");
             return OPERATION_FAILED;
         }
         
         if (start && end)
         {
-            npc->Printf(6, "Start WP: %30s at %s",start->GetName(),toString(start->loc.pos,start->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
-            npc->Printf(6, "End WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+            NPCDebug(npc, 6, "Start WP: %30s at %s",start->GetName(),toString(start->loc.pos,start->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+            NPCDebug(npc, 6, "End WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
             
             if (start == end)
             {
@@ -5069,7 +5069,7 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
                 if (edgeList.IsEmpty())
                 {
                     //printf("No route\n");
-                    npc->Printf(5, "Can't find route...");
+                    NPCDebug(npc, 5, "Can't find route...");
                     return OPERATION_FAILED;
                 }
             }
@@ -5091,7 +5091,7 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
                     wp_str.Append(" -> ");
                     wp_str.Append(edge->GetEndWaypoint()->GetName());
                 }
-                npc->Printf(5, "Waypoint list: %s",wp_str.GetDataSafe());
+                NPCDebug(npc, 5, "Waypoint list: %s",wp_str.GetDataSafe());
             }
             // End print waypoint list
 
@@ -5100,8 +5100,8 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC *npc)
 
             if (currentEdge)
             {
-                npc->Printf(5,"Running from %s to %s",currentEdge->GetStartWaypoint()->GetName(),
-                            currentEdge->GetEndWaypoint()->GetName());
+                NPCDebug(npc, 5, "Running from %s to %s",currentEdge->GetStartWaypoint()->GetName(),
+                         currentEdge->GetEndWaypoint()->GetName());
             }
 
         }
@@ -5134,8 +5134,8 @@ Edge* WanderOperation::GetNextEdge(NPC* npc)
     {
         SetPathPointIterator(currentEdge->GetIterator());
 
-        npc->Printf(5,"Running from %s to %s",currentEdge->GetStartWaypoint()->GetName(),
-                    currentEdge->GetEndWaypoint()->GetName());
+        NPCDebug(npc, 5, "Running from %s to %s",currentEdge->GetStartWaypoint()->GetName(),
+                 currentEdge->GetEndWaypoint()->GetName());
     }
 
     return currentEdge;
@@ -5161,7 +5161,7 @@ psPathPoint* WanderOperation::GetNextPathPoint(NPC* npc, bool &teleport)
     // We are at the end of the path, get next edge.
     if (!currentPathPointIterator || !currentPathPointIterator->HasNext())
     {
-        npc->Printf(5,"No more path points, changing edge...");
+        NPCDebug(npc, 5, "No more path points, changing edge...");
 
         Edge* edge = GetNextEdge(npc); // Indirect sets the currentEdge
         if (!edge)
@@ -5186,10 +5186,10 @@ psPathPoint* WanderOperation::GetNextPathPoint(NPC* npc, bool &teleport)
 	currentPointOffset = csVector3(0.0,0.0,0.0);
 	AddRandomRange(currentPointOffset,  currentPathPoint->GetRadius(), 0.5);
 
-        npc->Printf(6,"Next point %s with offset %s",
-                    toString(currentPathPoint->GetPosition(),
-                             currentPathPoint->GetSector(npcclient->GetEngine())).GetData(),
-		    toString(currentPointOffset).GetData());
+        NPCDebug(npc, 6, "Next point %s with offset %s",
+                 toString(currentPathPoint->GetPosition(),
+                          currentPathPoint->GetSector(npcclient->GetEngine())).GetData(),
+                 toString(currentPointOffset).GetData());
 
 
     }
@@ -5227,7 +5227,7 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, bool interrupted
         psPathPoint* destPoint = GetCurrentPathPoint(npc);
         if (!destPoint)
         {
-            npc->Printf(5,">>>WanderOp NO pathpoints, %s cannot move.",npc->GetName());
+            NPCDebug(npc, 5, ">>>WanderOp NO pathpoints, %s cannot move.",npc->GetName());
             return OPERATION_FAILED;
         }
         
@@ -5248,7 +5248,7 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, bool interrupted
     if (!destPoint)
     {
         //printf("No pathpoints\n");
-        npc->Printf(5,">>>WanderOp NO pathpoints, %s cannot move.",npc->GetName());
+        NPCDebug(npc, 5, ">>>WanderOp NO pathpoints, %s cannot move.",npc->GetName());
         return OPERATION_FAILED;
     }
 
@@ -5265,7 +5265,7 @@ ScriptOperation::OperationResult WanderOperation::Run(NPC *npc, bool interrupted
     else if (!StartMoveTo(npc, destPoint))
     {
         //printf("Failed to start move to.\n");
-        npc->Printf(5,">>>Failed to start move to.");
+        NPCDebug(npc, 5, ">>>Failed to start move to.");
         return OPERATION_FAILED;
     }
 
@@ -5289,26 +5289,26 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
     float distance = npcclient->GetWorld()->Distance(myPos, mySector,
                                                      destPos, destPoint->GetSector(npcclient->GetEngine()));
 
-    npc->Printf(6,"Current localDest %s at %s dist %.2f",
-                destPoint->GetName().GetData(),
-                toString(destPos, destPoint->GetSector(npcclient->GetEngine())).GetData(),
-                distance);
+    NPCDebug(npc, 6, "Current localDest %s at %s dist %.2f",
+             destPoint->GetName().GetData(),
+             toString(destPos, destPoint->GetSector(npcclient->GetEngine())).GetData(),
+             distance);
                 
 
     if (distance >= INFINITY_DISTANCE)
     {
-        npc->Printf(5, "No connection found..");
+        NPCDebug(npc, 5, "No connection found..");
         return OPERATION_FAILED;
     }
     else if (distance <= 0.5f || distance > currentDistance )
     {
         if (distance > currentDistance )
         {
-            npc->Printf(6, "We passed localDest...");
+            NPCDebug(npc, 6, "We passed localDest...");
         }
         else
         {
-            npc->Printf(6, "We are at localDest...");
+            NPCDebug(npc, 6, "We are at localDest...");
         }
 
         bool teleport = false;
@@ -5325,10 +5325,9 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
                                                                destPos, destPoint->GetSector(npcclient->GetEngine()));
             distance = currentDistance; // Update this to the distance to the new point as well.
 
-            npc->Printf(6,"New localDest %s at range %.2f",
-                        toString(destPos,
-                                 destPoint->GetSector(npcclient->GetEngine())).GetData(),
-                        currentDistance);
+            NPCDebug(npc, 6, "New localDest %s at range %.2f",
+                     toString(destPos, destPoint->GetSector(npcclient->GetEngine())).GetData(),
+                     currentDistance);
 
             if (teleport)
             {
@@ -5337,13 +5336,13 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
             }
             else if (!StartMoveTo(npc, destPoint))
             {
-                npc->Printf(5, "We are done..Failed to start to next localDest.");
+                NPCDebug(npc, 5, "We are done..Failed to start to next localDest.");
                 return OPERATION_FAILED;
             }
         }
         else
         {
-            npc->Printf(5, "We are done..");
+            NPCDebug(npc, 5, "We are done..");
             StopMovement(npc);
             return OPERATION_COMPLETED;
         }
@@ -5361,21 +5360,21 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
     float close = GetVelocity(npc)*timedelta;
     if(distance <= close)
     {
-        npc->Printf(5,"We are close %.3f < %.3f",distance,close);
+        NPCDebug(npc, 5, "We are close %.3f < %.3f",distance,close);
         
     	timedelta = distance / GetVelocity(npc);
     }
 
-    npc->Printf(8, "advance: pos=%s rot=%.2f localDest=%s dist=%.3f timedelta=%.3f", 
-                toString(myPos,mySector).GetDataSafe(), myRot,
-                destPoint->GetPosition().Description().GetData(),distance,timedelta);
+    NPCDebug(npc, 8, "advance: pos=%s rot=%.2f localDest=%s dist=%.3f timedelta=%.3f", 
+             toString(myPos,mySector).GetDataSafe(), myRot,
+             destPoint->GetPosition().Description().GetData(),distance,timedelta);
     int ret;
     {
         ScopedTimer st(250, "Movement extrapolate %.2f time for %s", timedelta, ShowID(npc->GetActor()->GetEID()));
         ret = npc->GetLinMove()->ExtrapolatePosition(timedelta);
         if (ret != PS_MOVE_SUCCEED)
         {
-            npc->Printf("Extrapolate didn't success: %d",ret);
+            NPCDebug(npc, 5, "Extrapolate didn't success: %d",ret);
         }
     }
 
@@ -5386,9 +5385,9 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
         iSector* myNewSector;
 
         npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
-        npc->Printf(8,"World position bodyVel=%s worldVel=%s newPos=%s",
-                    toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe(),
-                    toString(myNewPos,myNewSector).GetDataSafe());
+        NPCDebug(npc, 8, "World position bodyVel=%s worldVel=%s newPos=%s",
+                 toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe(),
+                 toString(myNewPos,myNewSector).GetDataSafe());
 
         CheckMoveOk(npc, myPos, mySector, myNewPos, myNewSector, ret);
     }
@@ -5511,9 +5510,9 @@ ScriptOperation *WatchOperation::MakeCopy()
 
 ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, bool interrupted)
 {
-    npc->Printf(5, "WatchOperation starting with watch range (%.2f) will watch:%s%s.",
-                watchRange,(watchInvisible?" Invisible":" Visible"),
-                (watchInvincible?" Invincible":""));
+    NPCDebug(npc, 5, "WatchOperation starting with watch range (%.2f) will watch:%s%s.",
+             watchRange,(watchInvisible?" Invisible":" Visible"),
+             (watchInvincible?" Invincible":""));
 
     iSector*  targetSector;
     csVector3 targetPos;
@@ -5528,8 +5527,8 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, bool interrupted)
             if (watchedEnt)
             {
                 targetEID = watchedEnt->GetEID();
-                npc->Printf(5, "Targeting nearest actor (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for watch ...",
-                            watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z,targetRange);
+                NPCDebug(npc, 5, "Targeting nearest actor (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for watch ...",
+                         watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z,targetRange);
             }
             break;
         case NEAREST_PLAYER:
@@ -5537,8 +5536,8 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, bool interrupted)
             if (watchedEnt)
             {
                 targetEID = watchedEnt->GetEID();
-                npc->Printf(5, "Targeting nearest player (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for watch ...",
-                            watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z,targetRange);
+                NPCDebug(npc, 5, "Targeting nearest player (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for watch ...",
+                         watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z,targetRange);
             }
             break;
         case NEAREST_NPC:
@@ -5546,8 +5545,8 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, bool interrupted)
             if (watchedEnt)
             {
                 targetEID = watchedEnt->GetEID();
-                npc->Printf(5, "Targeting nearest NPC (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for watch ...",
-                            watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z,targetRange);
+                NPCDebug(npc, 5, "Targeting nearest NPC (%s) at (%1.2f,%1.2f,%1.2f) range %.2f for watch ...",
+                         watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z,targetRange);
             }
             break;
         case OWNER:
@@ -5556,8 +5555,8 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, bool interrupted)
             {
                 targetEID = watchedEnt->GetEID();
                 psGameObject::GetPosition(watchedEnt, targetPos, targetSector);
-                npc->Printf(5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...",
-                            watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
+                NPCDebug(npc, 5, "Targeting owner (%s) at (%1.2f,%1.2f,%1.2f) for watch ...",
+                         watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
 
             }
             break;
@@ -5567,15 +5566,15 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, bool interrupted)
             {
                 targetEID = watchedEnt->GetEID();
                 psGameObject::GetPosition(watchedEnt, targetPos, targetSector);
-                npc->Printf(5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
-                            watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
+                NPCDebug(npc, 5, "Targeting current target (%s) at (%1.2f,%1.2f,%1.2f) for chase ...",
+                         watchedEnt->GetName(),targetPos.x,targetPos.y,targetPos.z );
             }
             break;
     }
 
     if (!watchedEnt)
     {
-        npc->Printf(5,"No entity to watch");
+        NPCDebug(npc, 5, "No entity to watch");
         return OPERATION_COMPLETED; // Nothing to do for this behaviour.
     }
     
@@ -5612,7 +5611,7 @@ bool WatchOperation::OutOfRange(NPC *npc)
 
     if (npc->GetActor()->GetInstance() != watchedEnt->GetInstance())
     {
-        npc->Printf(7,"Watched is in diffrent instance.");
+        NPCDebug(npc, 7, "Watched is in diffrent instance.");
         return true;
     }
 
@@ -5620,7 +5619,7 @@ bool WatchOperation::OutOfRange(NPC *npc)
     
     if (distance > watchRange)
     {
-        npc->Printf(7,"Watched is %.2f away.",distance);
+        NPCDebug(npc, 7, "Watched is %.2f away.",distance);
         return true;
     }
     
@@ -5632,7 +5631,7 @@ ScriptOperation::OperationResult WatchOperation::Advance(float timedelta, NPC *n
 {
     if (!watchedEnt)
     {
-        npc->Printf(5,"No entity to watch");
+        NPCDebug(npc, 5, "No entity to watch");
         return OPERATION_FAILED;
     }
 

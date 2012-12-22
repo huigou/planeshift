@@ -222,7 +222,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
     {
         if (who->IsDebugging(20))
         {
-            who->Printf(20, "Reaction '%s' skipping perception %s", GetEventType(who).GetDataSafe(), pcpt->ToString(who).GetDataSafe());
+            NPCDebug(who, 20, "Reaction '%s' skipping perception %s", GetEventType(who).GetDataSafe(), pcpt->ToString(who).GetDataSafe());
         }
         return;
     }
@@ -230,23 +230,23 @@ void Reaction::React(NPC *who, Perception *pcpt)
     // If dead we should not react unless reactWhenDead is set
     if (!(who->IsAlive() || reactWhenDead))
     {
-        who->Printf(5, "Only react to '%s' when alive", GetEventType(who).GetDataSafe());
+        NPCDebug(who, 5, "Only react to '%s' when alive", GetEventType(who).GetDataSafe());
         return;
     }
 
     // Check if the active behavior should not be interrupted.
     if (who->GetCurrentBehavior() && DoNotInterrupt(who->GetCurrentBehavior()))
     {
-        who->Printf(5,"Prevented from reacting to '%s' while not interrupt behavior '%s' is active",
-                    GetEventType(who).GetDataSafe(),who->GetCurrentBehavior()->GetName());
+        NPCDebug(who, 5, "Prevented from reacting to '%s' while not interrupt behavior '%s' is active",
+                 GetEventType(who).GetDataSafe(),who->GetCurrentBehavior()->GetName());
         return; 
     } 
 
     // Check if this reaction is limited to only interrupt some given behaviors.
     if (who->GetCurrentBehavior() && OnlyInterrupt(who->GetCurrentBehavior()))
     {
-        who->Printf(5,"Prevented from reacting to '%s' since behavior '%s' should not be interrupted",
-                    GetEventType(who).GetDataSafe(),who->GetCurrentBehavior()->GetName());
+        NPCDebug(who, 5, "Prevented from reacting to '%s' since behavior '%s' should not be interrupted",
+                 GetEventType(who).GetDataSafe(),who->GetCurrentBehavior()->GetName());
         return; 
     } 
 
@@ -273,22 +273,22 @@ void Reaction::React(NPC *who, Perception *pcpt)
             break;
 
 
-        who->Printf(2, "Reaction '%s[%s]' reacting to perception: %s", GetEventType(who).GetDataSafe(), type.GetDataSafe(), pcpt->ToString(who).GetDataSafe());
+        NPCDebug(who, 2, "Reaction '%s[%s]' reacting to perception: %s", GetEventType(who).GetDataSafe(), type.GetDataSafe(), pcpt->ToString(who).GetDataSafe());
         switch (desireType)
         {
         case DESIRE_NONE:
-            who->Printf(10, "No change to need for behavior %s.", affected[i]->GetName());
+            NPCDebug(who, 10, "No change to need for behavior %s.", affected[i]->GetName());
             break;
         case DESIRE_ABSOLUTE:
-            who->Printf(10, "Setting %1.1f need to behavior %s", desireValue, affected[i]->GetName());
+            NPCDebug(who, 10, "Setting %1.1f need to behavior %s", desireValue, affected[i]->GetName());
             affected[i]->ApplyNeedAbsolute(who, desireValue);
             break;
         case DESIRE_DELTA:
-            who->Printf(10, "Adding %1.1f need to behavior %s", desireValue, affected[i]->GetName());
+            NPCDebug(who, 10, "Adding %1.1f need to behavior %s", desireValue, affected[i]->GetName());
             affected[i]->ApplyNeedDelta(who, desireValue);
             break;
         case DESIRE_GUARANTIED:
-            who->Printf(10, "Guarantied need to behavior %s", affected[i]->GetName());
+            NPCDebug(who, 10, "Guarantied need to behavior %s", affected[i]->GetName());
             
             float highest = who->GetBrain()->GetHighestNeed(who);
             if (who->GetCurrentBehavior() != affected[i])
@@ -568,7 +568,7 @@ bool FactionPerception::ShouldReact(Reaction *reaction, NPC *npc)
         
         if (reaction->GetOp() == '>' )
         {
-            npc->Printf(15, "Checking %d > %d.",factionDelta,reaction->GetFactionDiff() );
+            NPCDebug(npc, 15, "Checking %d > %d.",factionDelta,reaction->GetFactionDiff() );
             if (factionDelta > reaction->GetFactionDiff() )
             {
                 return true;
@@ -580,7 +580,7 @@ bool FactionPerception::ShouldReact(Reaction *reaction, NPC *npc)
         }
         else if (reaction->GetOp() == '<' )
         {
-            npc->Printf(15, "Checking %d < %d.",factionDelta,reaction->GetFactionDiff() );
+            NPCDebug(npc, 15, "Checking %d < %d.",factionDelta,reaction->GetFactionDiff() );
             if (factionDelta < reaction->GetFactionDiff() )
             {
                 return true;
@@ -592,7 +592,7 @@ bool FactionPerception::ShouldReact(Reaction *reaction, NPC *npc)
         }
         else
         {
-            npc->Printf(15, "Skipping faction check.");            
+            NPCDebug(npc, 15, "Skipping faction check.");            
             return true;
         }
         
@@ -797,11 +797,11 @@ bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
 
     csString eventName = GetName(npc);
 
-    npc->Printf(20,"Spell percpetion checking for match beween %s and %s", eventName.GetData(), reaction->GetEventType(npc).GetDataSafe());
+    NPCDebug(npc, 20, "Spell percpetion checking for match beween %s and %s", eventName.GetData(), reaction->GetEventType(npc).GetDataSafe());
 
     if (eventName == reaction->GetEventType(npc))
     {
-        npc->Printf(15, "%s spell cast by %s on %s, severity %1.1f.",
+        NPCDebug(npc, 15, "%s spell cast by %s on %s, severity %1.1f.",
             eventName.GetData(), (caster)?caster->GetName():"(Null caster)", (target)?target->GetName():"(Null target)", spell_severity);
 
         return true;
@@ -887,7 +887,7 @@ bool TimePerception::ShouldReact(Reaction *reaction, NPC *npc)
                 dbgOut.Append("*");
             }
 
-            npc->Printf(15,dbgOut);
+            NPCDebug(npc, 15, dbgOut);
         }
         
         if ((!reaction->GetValueValid(0) || reaction->GetValue(0) == gameHour) &&
@@ -1053,7 +1053,7 @@ void OwnerCmdPerception::ExecutePerception( NPC *pet, float weight )
         }
         else
         {
-            pet->Printf("No target to add to hate list");
+            NPCDebug(pet, 5, "No target to add to hate list");
         }
         
         break;
@@ -1184,12 +1184,12 @@ bool NPCCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     if (global_event.CompareNoCase(reaction->GetEventType(npc)))
     {
-        npc->Printf(15,"Matched reaction '%s' to perception '%s'.",reaction->GetEventType(npc).GetDataSafe(), global_event.GetData() );
+        NPCDebug(npc, 15, "Matched reaction '%s' to perception '%s'.",reaction->GetEventType(npc).GetDataSafe(), global_event.GetData() );
         return true;
     }
     else
     {
-        npc->Printf(16,"No matched reaction '%s' to perception '%s'.",reaction->GetEventType(npc).GetDataSafe(), global_event.GetData() );
+        NPCDebug(npc, 16, "No matched reaction '%s' to perception '%s'.",reaction->GetEventType(npc).GetDataSafe(), global_event.GetData() );
     }
     
 
@@ -1198,14 +1198,14 @@ bool NPCCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
     if (self_event.CompareNoCase(reaction->GetEventType(npc)) && npc == self)
     {
-        npc->Printf(15,"Matched reaction '%s' to perception '%s'.",reaction->GetEventType(npc).GetDataSafe(), self_event.GetData() );
+        NPCDebug(npc, 15, "Matched reaction '%s' to perception '%s'.",reaction->GetEventType(npc).GetDataSafe(), self_event.GetData() );
         return true;
     }
     else
     {
-        npc->Printf(16,"No matched reaction '%s' to perception '%s' for self(%s) with npc(%s).",
-                    reaction->GetEventType(npc).GetDataSafe(), self_event.GetData(), 
-                    self->GetName(), npc->GetName() );
+        NPCDebug(npc, 16, "No matched reaction '%s' to perception '%s' for self(%s) with npc(%s).",
+                 reaction->GetEventType(npc).GetDataSafe(), self_event.GetData(), 
+                 self->GetName(), npc->GetName() );
     }
     
     return false;
