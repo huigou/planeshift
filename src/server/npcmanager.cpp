@@ -2556,6 +2556,8 @@ void NPCManager::QueueDamagePerception(gemActor* attacker,gemNPC* target,float d
     outbound->msg->Add(attacker->GetEID().Unbox());
     outbound->msg->Add(target->GetEID().Unbox());
     outbound->msg->Add((float) dmg);
+    outbound->msg->Add((float) target->GetCharacterData()->GetHP());
+    outbound->msg->Add((float) target->GetCharacterData()->GetMaxHP().Current());
     cmd_count++;
     Debug4(LOG_NPC, attacker->GetEID().Unbox(), "Added perception: %s hit %s for %1.1f dmg.\n",
            attacker->GetName(),
@@ -3206,7 +3208,9 @@ void NPCManager::HandlePetSkill(MsgEntry* me,Client* client)
                                      PSSKILL_NONE);
 
             if(newmsg.valid)
+            {
                 eventmanager->SendMessage(newmsg.msg);
+            }
             else
             {
                 Bug2("Could not create valid psPetSkillMessage for client %u.\n",client->GetClientNum());

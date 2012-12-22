@@ -828,9 +828,12 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 msgtext.Append("PCPT_DMG: ");
                 EID attacker = EID(msg->GetUInt32());
                 EID target   = EID(msg->GetUInt32());
-                float dmg      = msg->GetFloat();
+                float dmg    = msg->GetFloat();
+                float hp     = msg->GetFloat();
+                float maxHP  = msg->GetFloat();
 
-                msgtext.AppendFmt("Attacker: %u Target: %u Dmg: %.1f ", attacker.Unbox(), target.Unbox(), dmg);
+                msgtext.AppendFmt("Attacker: %u Target: %u Dmg: %.1f HP: %.1f MaxHP: %.1f",
+                                  attacker.Unbox(), target.Unbox(), dmg, hp, maxHP);
                 break;
             }
             case psNPCCommandsMessage::PCPT_SPELL:

@@ -89,6 +89,8 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     alive=false;
     tribe=NULL;
     raceInfo=NULL;
+    hp = 0.0;
+    maxHP = 0.0;
     checkedSector=NULL;
     checked = false;
     checkedResult = false;
@@ -738,6 +740,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Vel:                 %.2f\n",vel);
     CPrintf(CON_CMDOUTPUT, "Walk velocity:       %.2f\n",walkVelocity);
     CPrintf(CON_CMDOUTPUT, "Run velocity:        %.2f\n",runVelocity);
+    CPrintf(CON_CMDOUTPUT, "HP/MaxHP:            %.1f/%.1f\n",GetHP(),GetMaxHP());
     CPrintf(CON_CMDOUTPUT, "Owner:               %s\n",GetOwnerName());
     CPrintf(CON_CMDOUTPUT, "Race:                %s\n",GetRaceInfo()?GetRaceInfo()->GetName():"(None)");
     CPrintf(CON_CMDOUTPUT, "Region:              %s\n",GetRegion()?GetRegion()->GetName():"(None)");
@@ -1217,6 +1220,25 @@ RaceInfo_t* NPC::GetRaceInfo()
     return raceInfo;
 }
 
+void NPC::SetHP(float hp)
+{
+    this->hp = hp;
+}
+
+float NPC::GetHP() const
+{
+    return hp;
+}
+
+void NPC::SetMaxHP(float maxHP)
+{
+    this->maxHP = maxHP;
+}
+
+float NPC::GetMaxHP() const
+{
+    return maxHP;
+}
 
 void NPC::TakeControl(gemNPCActor* actor)
 {
@@ -1370,16 +1392,15 @@ double NPC::GetProperty(MathEnvironment* env, const char* ptr)
     {
     	return insideRegion?1.0:0.0;
     }
-/*
     if (property == "HP")
     {
-        return 0.0; // TODO; Get the real value
+        return GetHP();
     }
     if (property == "MaxHP")
     {
-        return 1.0; // TODO: get the real value
+        return GetMaxHP();
     }
-*/
+
     Error2("Requested NPC property not found '%s'", ptr);
     return 0.0;
 }
