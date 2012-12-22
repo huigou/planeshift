@@ -600,7 +600,7 @@ bool psEffectObj::Update(csTicks elapsed)
         }
 
         baseScale = scale;
-        matTransform = matBase / baseScale;
+        matTransform = matBase * baseScale;
     }
     else
     {
@@ -649,7 +649,7 @@ bool psEffectObj::Update(csTicks elapsed)
 
         // SCALE
         baseScale = LERP_KEY(KA_SCALE,lerpfactor) * scale;
-        matTransform /= baseScale;
+        matTransform *= baseScale;
     
         // adjust position
         meshMovable->SetPosition(anchorPosition+newPos);
