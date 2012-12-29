@@ -1480,18 +1480,22 @@ int CacheManager::Contains(csArray<uint32>* list, uint32 id)
  * starting at any random node, recursively walk the data network until a 'final' looking node is encountered,
  * then add it to the finalItems list.
  */
-bool CacheManager::FindFinalItem(csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txItemHash, csArray<uint32>* finalItems, uint32 itemID, csArray<uint32>* itemStack)
+bool CacheManager::FindFinalItem(csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txItemHash,
+csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* rxItemHash,
+csArray<uint32>* finalItems, uint32 itemID, csArray<uint32>* itemStack)
 {
     int i	= 0;
     csHash<csPDelArray<psTradeTransformations> *,uint32>* iHash	= NULL;
     csPDelArray<psTradeTransformations>* iArray	= NULL;
     psTradeTransformations* tx	= NULL;
 
+//printf( "DEBUG: FindFinalItem : checking itemID %i\n", itemID );
     itemStack->Push(itemID);
     iHash = txItemHash->Get(itemID, NULL);
     if(!iHash)
     {
         //no records found matching this itemID
+//printf( "DEBUG: FindFinalItem : no records found matching itemID %i\n", itemID );
         UniqueInsertIntoItemArray(finalItems, itemID);
     }
     else
@@ -1506,23 +1510,31 @@ bool CacheManager::FindFinalItem(csHash<csHash<csPDelArray<psTradeTransformation
 
             if(itemID == Key)
             {
+//printf( "DEBUG: FindFinalItem : itemID %i == Key \n", itemID );
                 UniqueInsertIntoItemArray(finalItems, itemID);
             }
             else if(Contains(itemStack, Key)>0)
             {
+//printf( "DEBUG: FindFinalItem : loop found...\n" );
                 //if there's a loop, it's impossible to determine programmatically which *should* be the final state;
                 //we adopt the heuristic that the one that is the target of fewer transformations is the final one.
-                if(txItemHash->Get(Key, NULL)->GetSize() < iHash->GetSize())
+//                if(txItemHash->Get(Key, NULL)->GetSize() < iHash->GetSize())
+//                {
+//                    UniqueInsertIntoItemArray(finalItems, Key);
+//                }
+                //heuristic : product of more transforms = final item
+                if(rxItemHash->Get(Key, NULL)->GetSize() > rxItemHash->Get(itemID, NULL)->GetSize() )
                 {
                     UniqueInsertIntoItemArray(finalItems, Key);
                 }
-                else if(txItemHash->Get(Key, NULL)->GetSize() == iHash->GetSize())
+/*                else if(txItemHash->Get(Key, NULL)->GetSize() == iHash->GetSize())
                 {
                     //adopt the hueristic that if they have the same number they are both 'final' states. This should
                     //primarily come into play in the case of two final items that can transform into each other.
                     UniqueInsertIntoItemArray(finalItems, Key);
                     UniqueInsertIntoItemArray(finalItems, itemID);
                 }
+*/
                 else
                 {
                     UniqueInsertIntoItemArray(finalItems, itemID);
@@ -1532,7 +1544,7 @@ bool CacheManager::FindFinalItem(csHash<csHash<csPDelArray<psTradeTransformation
             {
                 if(!Contains(finalItems, Key))
                 {
-                    FindFinalItem(txItemHash, finalItems, Key, itemStack);
+                    FindFinalItem(txItemHash, rxItemHash, finalItems, Key, itemStack);
                 }
             }
         }
@@ -1550,14 +1562,14 @@ bool CacheManager::loadTradeTransformationsByPatternAndGroup(Result* Transformat
         csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash,
         csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash)
 {
-    int							currentrow;
-    uint32							itemID,
-                                    resultID;
-    csHash<csPDelArray<psTradeTransformations> *,uint32>*	rHash	= NULL;
-    csPDelArray<psTradeTransformations>*			rArray	= NULL;
-    csHash<csPDelArray<psTradeTransformations> *,uint32>*	iHash	= NULL;
-    csPDelArray<psTradeTransformations>*			iArray	= NULL;
-    psTradeTransformations*					tx	= NULL;
+    int currentrow;
+    uint32 itemID,
+           resultID;
+    csHash<csPDelArray<psTradeTransformations> *,uint32>* rHash	= NULL;
+    csPDelArray<psTradeTransformations>* rArray	= NULL;
+    csHash<csPDelArray<psTradeTransformations> *,uint32>* iHash	= NULL;
+    csPDelArray<psTradeTransformations>* iArray	= NULL;
+    psTradeTransformations* tx	= NULL;
 
     for(currentrow=0; currentrow<TransformationList->Count(); currentrow++)
     {
@@ -1728,6 +1740,7 @@ bool CacheManager::ListProductionSteps(csArray<CraftTransInfo*>* newArray,
     if(!rHash)
     {
         //no records found matching this resultID...try combinations
+//printf( "DEBUG : ListProductionSteps : checking for combinations...\n" );
         csString        query;
 
         //query.Format("select * from trade_combinations where result_id=%d and (pattern_id=%d or pattern_id=%i)", resultID, patternID, groupID);
@@ -1741,8 +1754,10 @@ bool CacheManager::ListProductionSteps(csArray<CraftTransInfo*>* newArray,
         {
             for( int j=0; j<combinations.Count(); j++ )
             {
-                ListProductionSteps( newArray, txResultHash, finalItems, combinations[j].GetUInt32( "item_id" ),
-                    patternID, groupID, itemStack );
+                if(!Contains(finalItems, combinations[j].GetUInt32( "item_id" )))
+                {
+                    ListProductionSteps( newArray, txResultHash, finalItems, combinations[j].GetUInt32( "item_id" ), patternID, groupID, itemStack );
+                }
             }
             DescribeCombination( &combinations, newArray );    
         }
@@ -1757,23 +1772,26 @@ bool CacheManager::ListProductionSteps(csArray<CraftTransInfo*>* newArray,
             uint32  Key;
             rArray =  Iter.Next(Key);
 
-            if(resultID == Key)
+            if(resultID == Key || Contains(itemStack, Key) )
             {
 //printf( "DEBUG : ListProductionSteps : next(%u),  result ID %i\n", Key, resultID );
                 DescribeTransformation(rArray->Get(0), newArray);
             }
-            else if(!Contains(finalItems, Key) && !Contains(itemStack, Key))
+            else if( !Contains(itemStack, Key))
             {
-                ListProductionSteps(newArray, txResultHash, finalItems, Key, patternID, groupID, itemStack);
+		if(!Contains(finalItems, Key))
+                {
+                    ListProductionSteps(newArray, txResultHash, finalItems, Key, patternID, groupID, itemStack);
+                }
                 for( int j=0; j<rArray->GetSize(); j++ )
                 {
 //printf( "DEBUG : ListProductionSteps : calling ListProductionSteps with entry %i, result ID %u\n", j, Key );
                     DescribeTransformation(rArray->Get(j), newArray);
                 }
+                
             }
         }
     }
-    itemStack->Pop();
 
     return true;
 }
@@ -1806,7 +1824,6 @@ bool CacheManager::PreloadCraftMessages()
         tradeCraftTransInfo_IDHash.Put(designItemID,newArray);
 
         //Get the list of transformations for this pattern and group
-        //query.Format("select * from trade_transformations where pattern_id=%i or pattern_id=%i", patternID, currentGroupID);
         query.Format("select * from trade_transformations where pattern_id=%i or pattern_id=%i", patternID, currentGroupID);
         Result TransformationList(db->Select(query));
         if(!result.IsValid())
@@ -1823,7 +1840,7 @@ bool CacheManager::PreloadCraftMessages()
         {
             csArray<uint32>* itemStack = new csArray<uint32>;
 
-            FindFinalItem(txItemHash, finalItems, TransformationList[i].GetInt("item_id"), itemStack);
+            FindFinalItem(txItemHash, txResultHash, finalItems, TransformationList[i].GetInt("item_id"), itemStack);
             itemStack->DeleteAll();
         }
 
@@ -1840,7 +1857,7 @@ bool CacheManager::PreloadCraftMessages()
             }
             else
             {
-                craftInfo->craftStepDescription.Append("item ");
+                craftInfo->craftStepDescription.Append(" item ");
                 craftInfo->craftStepDescription.Append(finalItems->Get(i));
             }
             craftInfo->craftStepDescription.Append(" ----- \n");
@@ -1851,6 +1868,7 @@ bool CacheManager::PreloadCraftMessages()
             csArray<uint32>* itemStack = new csArray<uint32>;
 
             ListProductionSteps(newArray, txResultHash, finalItems, finalItems->Get(i), patternID, currentGroupID, itemStack);
+            itemStack->DeleteAll();
 
             //insert a blank row between items
             craftInfo = new CraftTransInfo;
@@ -1917,10 +1935,10 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
         if(!toolStats)
         {
             Error2("No tool id %u", proc->GetEquipementId());
+            desc.Append( "\n" );
             return desc;
         }
-        csString temp;
-        temp.Format(" with a %s.\n", toolStats->GetName());
+        csString temp;        temp.Format(" with a %s.\n", toolStats->GetName());
         desc.Append(temp);
     }
     else
