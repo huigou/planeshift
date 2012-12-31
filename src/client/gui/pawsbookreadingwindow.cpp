@@ -93,11 +93,9 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
             csRef<iDocumentNode> docnode = ParseStringGetNode(mesg.text, "Contents", false);
             if(docnode)
             {
-                // I am not sure why these use dynamic_cast while the craft windows
-                // do not
+                // these are casted into the docnode object
                 dynamic_cast<pawsMultiPageDocumentView*>(description)->SetText(mesg.text.GetData());
                 dynamic_cast<pawsMultiPageDocumentView*>(descriptionRight)->SetText(mesg.text.GetData());
-
             }
             else
             {
@@ -143,6 +141,7 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
 
             // set the descriptionRight to be 1 page ahead of description
             descriptionRight->SetCurrentPageNum(description->GetCurrentPageNum()+1) ;
+
             description->Show();
             descriptionRight->Show();
             //set the background image for the book
@@ -169,14 +168,18 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
             {
                 descriptionRight->Hide();
             }
+
             psMsgCraftingInfo mesg(me);
             csString text(mesg.craftInfo);
-            if(text && descriptionCraft)
+
+            if(text && descriptionCraft && descriptionCraftRight)
             {
                 // setup the craft windows for multi page view
-                numPages = descriptionCraft->GetNumPages();
+
                 descriptionCraft->SetText(text.GetData());
                 descriptionCraftRight->SetText(text.GetData());
+
+                numPages = descriptionCraft->GetNumPages();
 
                 // set the descriptionCraftRight to be one page ahead
                 descriptionCraftRight->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum()+1) ;
@@ -249,10 +252,13 @@ bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
         }
         else
         {
-            if(descriptionCraft->GetCurrentPageNum() <= numPages-2)
+            if(descriptionCraft && descriptionCraftRight)
             {
-                descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum() + 2);
-                descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum() + 2);
+                if(descriptionCraft->GetCurrentPageNum() <= numPages-2)
+                {
+                    descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum() + 2);
+                    descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum() + 2);
+                }
             }
         }
         return true;
@@ -271,10 +277,13 @@ bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
         }
         else
         {
-            if(descriptionCraft->GetCurrentPageNum() >= 2)
+            if(descriptionCraft && descriptionCraftRight)
             {
-                descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum()- 2);
-                descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum()-2);
+                if(descriptionCraft->GetCurrentPageNum() >= 2)
+                {
+                    descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum()- 2);
+                    descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum()-2);
+                }
             }
         }
         return true;
