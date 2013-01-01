@@ -1420,6 +1420,7 @@ GEMClientActor::~GEMClientActor()
     if(rider.IsValid())
     {
         psengine->GetEngine()->RemoveObject(rider);
+        cel->UnattachObject(rider->QueryObject(), this);
     }
 
     if(pcmesh.IsValid())
@@ -2136,6 +2137,12 @@ bool GEMClientActor::CheckLoadStatus()
         calstate->SetUserData((void*)this);
 
     cel->AttachObject(pcmesh->QueryObject(), this);
+
+    // If this is a mounted object add also what is mounting it so it can be clicked.
+    if(rider.IsValid())
+    {
+        cel->AttachObject(rider->QueryObject(), this);
+    }
 
     psengine->UnregisterDelayedLoader(this);
 
