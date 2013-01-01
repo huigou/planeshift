@@ -161,10 +161,10 @@ class psTradeProcesses : public iScriptableVar
     uint32 GetGarbageId() const { return garbageId; }
     int GetGarbageQty() const { return garbageQty; }
     int GetPrimarySkillId() const { return priSkillId; }
+    int GetSubprocessId() const { return subprocess; }
     unsigned int GetMinPrimarySkill() const { return minPriSkill; }
     unsigned int GetMaxPrimarySkill() const { return maxPriSkill; }
-    int GetPrimaryPracticePts() const { return priPracticePts; }
-    int GetPrimaryQualFactor() const { return priQualFactor; }
+    int GetPrimaryPracticePts() const { return priPracticePts; }    int GetPrimaryQualFactor() const { return priQualFactor; }
     int GetSecondarySkillId() const { return secSkillId; }
     unsigned int GetMinSecondarySkill() const { return minSecSkill; }
     unsigned int GetMaxSecondarySkill() const { return maxSecSkill; }

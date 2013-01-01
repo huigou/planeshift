@@ -1690,15 +1690,17 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
         for(int k=0; k<procArray->GetSize(); k++)
         {
             psTradeProcesses* proc = procArray->Get(k);
-            craftInfo = new CraftTransInfo;
+            if( proc->GetSubprocessId()==0 ) {
+                craftInfo = new CraftTransInfo;
 
-            craftInfo->priSkillId = proc->GetPrimarySkillId();
-            craftInfo->minPriSkill = proc->GetMinPrimarySkill();
-            craftInfo->secSkillId = proc->GetSecondarySkillId();
-            craftInfo->minSecSkill = proc->GetMinSecondarySkill();
-            craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
+                craftInfo->priSkillId = proc->GetPrimarySkillId();
+                craftInfo->minPriSkill = proc->GetMinPrimarySkill();
+                craftInfo->secSkillId = proc->GetSecondarySkillId();
+                craftInfo->minSecSkill = proc->GetMinSecondarySkill();
+                craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
 //printf ( "DEBUG: Describe Transformation - item %i--[process %i]-->result %i  = %s\n", itemID, processID, resultID, craftInfo->craftStepDescription.GetData());
-            newArray->Push(craftInfo);
+                newArray->Push(craftInfo);
+            }
         }
     }
 
@@ -1774,12 +1776,15 @@ bool CacheManager::ListProductionSteps(csArray<CraftTransInfo*>* newArray,
 
             if(resultID == Key || Contains(itemStack, Key) )
             {
-//printf( "DEBUG : ListProductionSteps : next(%u),  result ID %i\n", Key, resultID );
-                DescribeTransformation(rArray->Get(0), newArray);
+//printf( "DEBUG : ListProductionSteps : next(%u),  result ID %i has %i transformations\n", Key, resultID, rArray->GetSize() );
+                for( int j=0; j<rArray->GetSize(); j++ )
+                {
+                    DescribeTransformation(rArray->Get(j), newArray);
+                }
             }
             else if( !Contains(itemStack, Key))
             {
-		if(!Contains(finalItems, Key))
+                if(!Contains(finalItems, Key))
                 {
                     ListProductionSteps(newArray, txResultHash, finalItems, Key, patternID, groupID, itemStack);
                 }
