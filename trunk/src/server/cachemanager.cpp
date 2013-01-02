@@ -1698,11 +1698,74 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
                 craftInfo->secSkillId = proc->GetSecondarySkillId();
                 craftInfo->minSecSkill = proc->GetMinSecondarySkill();
                 craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
+                craftInfo->craftStepDescription.Append( ".\n" );
+
 //printf ( "DEBUG: Describe Transformation - item %i--[process %i]-->result %i  = %s\n", itemID, processID, resultID, craftInfo->craftStepDescription.GetData());
                 newArray->Push(craftInfo);
             }
         }
     }
+
+    return true;
+}
+
+bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformations>* rArray, csArray<CraftTransInfo*>* newArray)
+{
+    psTradeTransformations*    t = rArray->Get(0);
+    uint32      itemID = t->GetItemId();
+    uint32      processID = t->GetProcessId();
+    uint32      resultID = t->GetResultId();
+
+    csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(processID);
+    if(!procArray)
+    {
+        return false;
+    }
+    psTradeProcesses* proc = procArray->Get(0);
+
+    CraftTransInfo* craftInfo;
+    craftInfo = new CraftTransInfo;
+
+    craftInfo->priSkillId = proc->GetPrimarySkillId();
+    craftInfo->minPriSkill = proc->GetMinPrimarySkill();
+    craftInfo->secSkillId = proc->GetSecondarySkillId();
+    craftInfo->minSecSkill = proc->GetMinSecondarySkill();
+    craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
+
+    for( int j=1; j<rArray->GetSize(); j++ )
+    {
+	psTradeTransformations*    u = rArray->Get(j);
+        csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(u->GetProcessId());
+   
+        for(int k=0; k<procArray->GetSize(); k++)
+        {
+            proc = procArray->Get(k);
+
+            if(proc->GetEquipementId() != 0)
+            {
+                psItemStats* toolStats = GetBasicItemStatsByID(proc->GetEquipementId());
+                if(toolStats)
+                {
+                    if( j>0 )
+                    {
+                        if( j==rArray->GetSize()-1 )
+                        {
+                            craftInfo->craftStepDescription.Append( " or " );
+                        }
+                        else
+                        {
+                            craftInfo->craftStepDescription.Append( ", " );
+                        }
+                    }
+                    craftInfo->craftStepDescription.Append( toolStats->GetName());
+                }
+            }
+        }
+    }
+    craftInfo->craftStepDescription.Append(".\n");
+    newArray->Push(craftInfo);
+//printf ( "DEBUG: Describe Multi Transformation - item %i--[process %i]-->result %i  = %s\n", itemID, processID, resultID, craftInfo->craftStepDescription.GetData());
+
 
     return true;
 }
@@ -1745,7 +1808,6 @@ bool CacheManager::ListProductionSteps(csArray<CraftTransInfo*>* newArray,
 //printf( "DEBUG : ListProductionSteps : checking for combinations...\n" );
         csString        query;
 
-        //query.Format("select * from trade_combinations where result_id=%d and (pattern_id=%d or pattern_id=%i)", resultID, patternID, groupID);
         query.Format("select * from trade_combinations where result_id=%d and pattern_id=%d", resultID, patternID);
         Result combinations(db->Select(query));
         if(!combinations.IsValid())
@@ -1776,10 +1838,13 @@ bool CacheManager::ListProductionSteps(csArray<CraftTransInfo*>* newArray,
 
             if(resultID == Key || Contains(itemStack, Key) )
             {
-//printf( "DEBUG : ListProductionSteps : next(%u),  result ID %i has %i transformations\n", Key, resultID, rArray->GetSize() );
-                for( int j=0; j<rArray->GetSize(); j++ )
+                if( rArray->GetSize()==1 )
                 {
-                    DescribeTransformation(rArray->Get(j), newArray);
+                    DescribeTransformation(rArray->Get(0), newArray);
+                 }
+                else
+                {
+                    DescribeMultiTransformation(rArray, newArray);
                 }
             }
             else if( !Contains(itemStack, Key))
@@ -1899,7 +1964,6 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
     psItemStats* itemStats = GetBasicItemStatsByID(tran->GetItemId());
     if(!itemStats)
     {
-//desc.Format( "DEBUG no item stats found for item %d -[%d]-> result %d\n", tran->GetItemId(), proc->GetWorkItemId(), tran->GetResultId() );
         return desc;
     }
 
@@ -1907,7 +1971,6 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
     psItemStats* resultStats = GetBasicItemStatsByID(tran->GetResultId());
     if(!resultStats)
     {
-//desc.Format( "DEBUG no result stats found for item %d -[%d]-> result %d\n", tran->GetItemId(),proc->GetWorkItemId(),  tran->GetResultId() );
         return desc;
     }
 
@@ -1915,7 +1978,6 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
     psItemStats* workStats = GetBasicItemStatsByID(proc->GetWorkItemId());
     if(!workStats)
     {
-//desc.Format( "DEBUG no work stats found for item %d -[%d]-> result %d\n", tran->GetItemId(), proc->GetWorkItemId(), tran->GetResultId() );
         return desc;
     }
     // Create craft message
@@ -1943,12 +2005,8 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
             desc.Append( "\n" );
             return desc;
         }
-        csString temp;        temp.Format(" with a %s.\n", toolStats->GetName());
+        csString temp;        temp.Format(" with a %s", toolStats->GetName());
         desc.Append(temp);
-    }
-    else
-    {
-        desc.Append(".\n");
     }
     return desc;
 }
