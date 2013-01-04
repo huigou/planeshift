@@ -58,6 +58,7 @@ class  gemNPCObject;
 class  gemNPCItem;
 struct iVFS;
 class  Perception;
+class  Reaction;
 class  psWorld;
 class  Location;
 class  LocationType;
@@ -68,6 +69,8 @@ class  Tribe;
 class  psPath;
 class  psPathNetwork;
 struct iCelHNavStruct;
+
+#define USE_REACTION_REGISTRATION
 
 struct RaceInfo_t
 {
@@ -294,6 +297,12 @@ public:
         return connection;
     }
 
+#ifdef USE_REACTION_REGISTRATION
+    /**
+     * Register a reaction for an NPC with the client. Used to speed up FirePerception.
+     */
+    void RegisterReaction(NPC *npc, Reaction *reaction);
+#endif
     /**
      * Sends a perception to all npcs.
      *
@@ -587,7 +596,7 @@ public:
     bool LoadNPCTypes(iDocumentNode* root);
 
     bool LoadNPCTypes();
-
+    
     /** Fire perception
      *
      * Method used by the console command 'fireperc'.
@@ -644,7 +653,8 @@ protected:
     /**
      * Find all actors that are in a tribe home and percept tribe and actor if it is an NPC.
      */
-    void PerceptProximityTribeHome();
+    void PerceptProximityTribeHome();    
+    
 public:
     static psNPCClient*             npcclient;
 protected:
@@ -673,8 +683,13 @@ protected:
     csArray<gemNPCObject*>          all_gem_objects;
     csArray<gemNPCItem*>            all_gem_items;
     csArray<gemNPCActor*>           all_gem_actors;
+    
     csHash<RaceInfo_t,csString>     raceInfos;
 
+#ifdef USE_REACTION_REGISTRATION 
+    csHash<NPC*,csString>           allReactions; // Hash of all registered reactions. 
+#endif
+    
     csRef<iCollideSystem>           cdsys;
 
     psWorld*                        world;

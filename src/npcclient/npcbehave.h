@@ -189,6 +189,7 @@ class NPCType
     };
     
 protected:
+    NPC*                  npc;       ///< Pointer to the NPC for this brain.
     csString              name;      ///< The name of this NPC type.
     csPDelArray<Reaction> reactions; ///< The reactions available for this NPCType.
     BehaviorSet           behaviors; ///< The set of behaviors available for this NPCType.
@@ -207,7 +208,7 @@ protected:
 
 public:
     NPCType();
-    NPCType(NPCType& other) { DeepCopy(other); }
+    NPCType(NPCType& other, NPC *npc);
 
     ~NPCType();
     void DeepCopy(NPCType& other);
@@ -234,7 +235,7 @@ public:
      * @param npc   The NPC that own this BehaviorSet.
      */
     csString InfoReactions(NPC *npc);
-
+    
     void DumpReactionList(NPC *npc);
 
     Behavior *GetCurrentBehavior()
@@ -256,6 +257,13 @@ public:
 
     
 private:
+    /** Add a new reaction to this Brain.
+     */
+    void AddReaction(Reaction *reaction);
+
+    /** Insert a new reaction at the beginning to this Brain.
+     */
+    void InsertReaction(Reaction *reaction);
 };
 
 

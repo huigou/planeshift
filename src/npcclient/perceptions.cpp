@@ -759,6 +759,7 @@ SpellPerception::SpellPerception(const char *name,
 csString SpellPerception::GetName(NPC* npc)
 {
     csString event(name);
+#ifndef USE_REACTION_REGISTRATION
     event.Append(':');
 
     if (npc->GetEntityHate((gemNPCActor*)caster) || npc->GetEntityHate((gemNPCActor*)target))
@@ -773,34 +774,29 @@ csString SpellPerception::GetName(NPC* npc)
     {
         event.Append("unknown");
     }
+#endif
 
     return event;
 }
 
 bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    csString event(name);
-    event.Append(':');
-
-    if (npc->GetEntityHate((gemNPCActor*)caster) || npc->GetEntityHate((gemNPCActor*)target))
-    {
-        event.Append("target");
-    }
-    else if (target == npc->GetActor())
-    {
-        event.Append("self");
-    }
-    else
-    {
-        event.Append("unknown");
-    }
-
     csString eventName = GetName(npc);
 
     NPCDebug(npc, 20, "Spell percpetion checking for match beween %s and %s", eventName.GetData(), reaction->GetEventType(npc).GetDataSafe());
 
     if (eventName == reaction->GetEventType(npc))
     {
+        // For target it has to be checked if this is actually a target of this npc that is casting
+        if (eventName == "spell:target")
+        {
+            if (!npc->GetEntityHate((gemNPCActor*)caster) && !npc->GetEntityHate((gemNPCActor*)target))
+            {
+                NPCDebug(npc, 10, "Spell for target and target or caster not on hate list!!");
+                return false;
+            }
+        }
+
         NPCDebug(npc, 15, "%s spell cast by %s on %s, severity %1.1f.",
             eventName.GetData(), (caster)?caster->GetName():"(Null caster)", (target)?target->GetName():"(Null target)", spell_severity);
 

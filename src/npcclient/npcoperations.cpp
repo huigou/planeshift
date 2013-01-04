@@ -1051,13 +1051,14 @@ ScriptOperation::OperationResult CastOperation::Run(NPC *npc, bool interrupted)
 {
     csString spellVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, spell);
     csString kFactorVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, kFactor);
-    NPCDebug(npc, 5, "Casting %s", spellVariablesReplaced.GetDataSafe());
 
     if (!npc->GetTarget())
     {
         NPCDebug(npc, 5, "Cast operation failed with no target given");
         return OPERATION_FAILED;
     }
+
+    NPCDebug(npc, 5, "Casting %s on %s", spellVariablesReplaced.GetDataSafe(),npc->GetTarget()->GetName());
 
     npcclient->GetNetworkMgr()->QueueCastCommand(npc->GetActor(), npc->GetTarget(), spellVariablesReplaced,
                                                  atof(kFactorVariablesReplaced.GetDataSafe()));

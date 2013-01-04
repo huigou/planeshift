@@ -60,8 +60,14 @@
 #include "globals.h"
 
 NPCType::NPCType()
-    :ang_vel(999),vel(999),velSource(VEL_DEFAULT)
+    :npc(NULL),ang_vel(999),vel(999),velSource(VEL_DEFAULT)
 {
+}
+
+NPCType::NPCType(NPCType& other, NPC* npc)
+ :npc(npc)
+{
+    DeepCopy(other);
 }
 
 NPCType::~NPCType()
@@ -83,7 +89,7 @@ void NPCType::DeepCopy(NPCType& other)
 
     for (size_t x=0; x<other.reactions.GetSize(); x++)
     {
-        reactions.Push( new Reaction(*other.reactions[x],behaviors) );
+        AddReaction( new Reaction(*other.reactions[x],behaviors) );
     }
 }
 
@@ -222,7 +228,7 @@ bool NPCType::Load(iResultRow &row)
                 }
             }
 
-            reactions.Insert(0,r);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
+            InsertReaction(r);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
         }
         else if(strcmp( node->GetValue(), "empty" ) == 0)
         {
@@ -367,7 +373,7 @@ bool NPCType::Load(iDocumentNode *node)
                 }
             }
 
-            reactions.Insert(0,r);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
+            InsertReaction(r);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
         }
         else
         {
@@ -376,6 +382,28 @@ bool NPCType::Load(iDocumentNode *node)
         }
     }
     return true; // success
+}
+
+void NPCType::AddReaction(Reaction *reaction)
+{
+    reactions.Push( reaction );
+#ifdef USE_REACTION_REGISTRATION
+    if (npc)
+    {
+        npcclient->RegisterReaction(npc, reaction);
+    }
+#endif
+}
+
+void NPCType::InsertReaction(Reaction *reaction)
+{
+    reactions.Insert(0,reaction);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
+#ifdef USE_REACTION_REGISTRATION
+    if (npc)
+    {
+        npcclient->RegisterReaction(npc, reaction);
+    }
+#endif
 }
 
 void NPCType::FirePerception(NPC *npc, Perception *pcpt)
@@ -1622,6 +1650,12 @@ void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos, float& yrot
     {
         sector = NULL;
     }
+
+    //    NPC* npc = object->GetNPC();
+    //    if (npc)
+    //    {
+    //        NPCDebug(npc, 1, "============ GetPosition(%s, %.2f) =============", toString(pos,sector).GetDataSafe(), yrot);
+    //    }
 }
 
 void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos,iSector*& sector)
@@ -1648,6 +1682,13 @@ void psGameObject::GetPosition(gemNPCObject* object, csVector3& pos,iSector*& se
     {
         sector = NULL;
     }
+
+    //    NPC* npc = object->GetNPC();
+    //    if (npc)
+    //    {
+    //        NPCDebug(npc, 1, "============ GetPosition(%s) =============", toString(pos,sector).GetDataSafe());
+    //    }
+
 }
 
 

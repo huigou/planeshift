@@ -1228,10 +1228,24 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 csVector3 pos;
                 psGameObject::GetPosition(target_ent, pos, sector);
 
+#ifdef USE_REACTION_REGISTRATION
+                if (npc)
+                {
+                    SpellPerception pcpt_self("spell:self",caster_ent,target_ent,type,severity);
+                    npc->TriggerEvent(&pcpt_self, -1, NULL, NULL, true); 
+                }
+
+                SpellPerception pcpt_target("spell:target",caster_ent,target_ent,type,severity);
+                npcclient->TriggerEvent(&pcpt_target, 30, &pos, sector, true); // Broadcast to same sector
+
+                SpellPerception pcpt_unknown("spell:unknown",caster_ent,target_ent,type,severity);
+                npcclient->TriggerEvent(&pcpt_unknown, 30, &pos, sector, true); // Broadcast to same sector
+#else
                 // This will result in spell:self, spell:target, spell:unknown perceptions
                 SpellPerception pcpt("spell",caster_ent,target_ent,type,severity);
 
                 npcclient->TriggerEvent(&pcpt, 30, &pos, sector, true); // Broadcast to same sector
+#endif
                 break;
             }
             case psNPCCommandsMessage::PCPT_ANYRANGEPLAYER:
