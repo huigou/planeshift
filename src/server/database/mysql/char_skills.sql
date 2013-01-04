@@ -39,7 +39,7 @@ INSERT INTO character_skills VALUES("19","47","0","0","60");
 INSERT INTO character_skills VALUES("19","46","0","0","60");
 
 # Fighter1 skills on axe (Fighter2 inherits from Fighter1)
-INSERT INTO character_skills VALUES("6","2","0","0","100");
+INSERT INTO character_skills VALUES("6","2","0","0","100"); # Axe
 
 # Tribe skills on mining
 INSERT INTO character_skills VALUES("20","37","200","200","200");
@@ -51,3 +51,15 @@ INSERT INTO character_skills VALUES("87","48","0","0","400");
 INSERT INTO character_skills VALUES("87","49","0","0","400");
 INSERT INTO character_skills VALUES("87","50","0","0","400");
 INSERT INTO character_skills VALUES("87","51","0","0","400");
+
+# SpellMaster1, make spells a 100% probability
+INSERT INTO character_skills VALUES("82","47","0","0","400"); # Charisma
+INSERT INTO character_skills VALUES("82","51","0","0","400"); # Will
+INSERT INTO character_skills VALUES("82","11","0","0","400"); # Crystal
+INSERT INTO character_skills VALUES("82","12","0","0","400"); # Azure
+
+# SpellMaster1, make spell a 100% probability
+INSERT INTO character_skills VALUES("92","47","0","0","400"); # Charisma
+INSERT INTO character_skills VALUES("92","51","0","0","400"); # Will
+INSERT INTO character_skills VALUES("92","11","0","0","400"); # Crystal
+INSERT INTO character_skills VALUES("92","12","0","0","400"); # Azure

@@ -1185,17 +1185,6 @@ INSERT INTO sc_npctypes VALUES("122","LocateTest1","DoNothing",0,"$run","","",""
 <react event="LocateFailed" behavior="LocateFailureFailed" />');
 
 
-INSERT INTO sc_npctypes VALUES("123","SpellMaster","DoNothing",0,"$run","","","","","0",
-'<!-- Test various spell abilities -->
-
-<behavior name="InitSpellMaster" initial="1000" completion_decay="-1">
-   <talk text="$name is initializing" target="false" />
-   <wait duration="15" />
-   <locate obj="self" />
-   <cast spell="Swiftness" k="1.0" />
-</behavior>
-');
-
 INSERT INTO sc_npctypes VALUES("124","SpellFighter","DoNothing",0,"$run","","","","","0",
 '<!--   -->
 
@@ -1247,3 +1236,72 @@ INSERT INTO sc_npctypes VALUES("131","Fighter11","DoNothing,Move,Nocturnal,Fight
 INSERT INTO sc_npctypes VALUES("132","Fighter12","DoNothing,Move,Nocturnal,Fight",0,"$walk","","","","","0",
 '<empty/>
 ');
+
+INSERT INTO sc_npctypes VALUES("140","SpellMaster1","DoNothing",0,"$run","","","","","0",
+'<!-- Test various spell abilities -->
+
+<behavior name="InitSpellMaster" initial="1000" completion_decay="-1">
+   <talk text="$name is initializing" target="false" />
+   <wait duration="15" />
+   <locate obj="self" />
+   <cast spell="Swiftness" k="0.5" />
+</behavior>
+
+<!-- Growth of 2 should trigger this behavior approximatly every 20 sec -->
+<behavior name="AttackSpellMaster2" initial="10" growth="2.5" completion_decay="-1">
+   <locate obj="entity:name:SpellMaster2" />
+   <talk text="Casting Summon Missile on $target" target="false" />
+   <cast spell="Summon Missile" k="1.0" />
+</behavior>
+
+<behavior name="SpellUnknown" completion_decay="-1">
+   <locate obj="perception" />
+   <talk text="$target casted a spell" target="false" />
+</behavior>
+
+<behavior name="SpellSelf" completion_decay="-1">
+   <locate obj="perception" />
+   <talk text="$target casted a spell on me" target="false" />
+</behavior>
+
+<behavior name="SpellTarget" completion_decay="-1">
+   <locate obj="perception" />
+   <talk text="$target casted a spell on a target" target="false" />
+</behavior>
+
+<react event="spell:unknown" behavior="SpellUnknown" />
+<react event="spell:self"    behavior="SpellSelf" />
+<react event="spell:target"  behavior="SpellTarget" />
+');
+
+INSERT INTO sc_npctypes VALUES("141","SpellMaster2","DoNothing",0,"$run","","","","","0",
+'<!-- Test various spell abilities -->
+
+<!-- Growth of 2 should trigger this behavior approximatly every 25 sec -->
+<behavior name="BoostSpellMaster" initial="1000" growth="2.0" completion_decay="-1">
+   <talk text="$name is boosting" target="false" />
+   <wait duration="15" />
+   <locate obj="self" />
+   <cast spell="Swiftness" k="1.0" />
+</behavior>
+
+<behavior name="SpellUnknown" completion_decay="-1">
+   <locate obj="perception" />
+   <talk text="$target casted a spell" target="false" />
+</behavior>
+
+<behavior name="SpellSelf" completion_decay="-1">
+   <locate obj="perception" />
+   <talk text="$target casted a spell on me" target="false" />
+</behavior>
+
+<behavior name="SpellTarget" completion_decay="-1">
+   <locate obj="perception" />
+   <talk text="$target casted a spell on a target" target="false" />
+</behavior>
+
+<react event="spell:unknown" behavior="SpellUnknown" />
+<react event="spell:self"    behavior="SpellSelf" />
+<react event="spell:target"  behavior="SpellTarget" />
+');
+

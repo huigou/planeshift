@@ -56,7 +56,7 @@ INSERT INTO sc_npc_definitions VALUES("78","MoveMaster6","MoveTest6","","0.00","
 INSERT INTO sc_npc_definitions VALUES("79","LocateMaster1","LocateTest1","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("80","Chaser1","ChaseTest1","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("81","Chaser2","ChaseTest2","","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("82","SpellMaster","SpellMaster","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("82","SpellMaster1","SpellMaster1","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("83","SpellFighter","SpellFighter","NPC Room Fighter region 1","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("84","Fighter5","Fighter5","NPC Room South Meadow","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("85","Fighter6","Fighter6","NPC Room South Meadow","0.00","0.00","0","N","N");
@@ -66,3 +66,4 @@ INSERT INTO sc_npc_definitions VALUES("88","Fighter9","Fighter9","NPC Room North
 INSERT INTO sc_npc_definitions VALUES("89","Fighter10","Fighter10","NPC Room North Meadow","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("90","Fighter11","Fighter11","NPC Room North Meadow","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("91","Fighter12","Fighter12","NPC Room North Meadow","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("92","SpellMaster2","SpellMaster2","","0.00","0.00","0","N","N");

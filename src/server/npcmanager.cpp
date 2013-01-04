@@ -1015,7 +1015,7 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 csString spell = list.msg->GetStr();
                 float kFactor = list.msg->GetFloat();
 
-                Debug5(LOG_SUPERCLIENT, attackerEID.Unbox(), "-->Got cast %s with k %.1f from entity %s to %s\n", spell.GetDataSafe(), kFactor, ShowID(attackerEID), ShowID(targetEID));
+                Debug5(LOG_SUPERCLIENT, attackerEID.Unbox(), "-->Got cast %s with k %.1f from attacker entity %s to target %s\n", spell.GetDataSafe(), kFactor, ShowID(attackerEID), ShowID(targetEID));
 
                 // Make sure we haven't run past the end of the buffer
                 if(list.msg->overrun)
@@ -1031,7 +1031,7 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                     break;
                 }
 
-                gemObject* target   = (gemObject*)gemSupervisor->FindObject(targetEID);
+                gemObject* target   = gemSupervisor->FindObject(targetEID);
                 attacker->SetTargetObject(target);
 
                 psserver->GetSpellManager()->Cast(attacker, spell, kFactor, NULL);

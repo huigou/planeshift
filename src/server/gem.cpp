@@ -2344,6 +2344,14 @@ int gemActor::GetTargetType(gemObject* target)
         return TARGET_SELF; /* Self */
     }
 
+    if (GetCharacterData()->IsNPC() && target->GetCharacterData()->IsNPC())
+    {
+        // NPCs can interpret targets as either friends or foe...even self.
+        // This allows them to attack or cast spells on any other NPC.
+        return TARGET_SELF | TARGET_FRIEND | TARGET_FOE;
+    }
+    
+
     if (target->GetCharacterData()->GetImperviousToAttack())
     {
         return TARGET_FRIEND; /* Impervious NPC */

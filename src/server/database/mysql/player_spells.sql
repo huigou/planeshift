@@ -37,7 +37,7 @@ INSERT INTO player_spells VALUES("2","7","6");
 INSERT INTO player_spells VALUES("2","8","7");
 
 
-# NPC SpellMaster spells
+# NPC SpellMaster1 spells
 INSERT INTO player_spells VALUES("82","1","0");
 INSERT INTO player_spells VALUES("82","2","1");
 INSERT INTO player_spells VALUES("82","3","2");
@@ -57,3 +57,12 @@ INSERT INTO player_spells VALUES("83","6","5");
 INSERT INTO player_spells VALUES("83","7","6");
 INSERT INTO player_spells VALUES("83","8","7");
 
+# NPC SpellMaster2 spells
+INSERT INTO player_spells VALUES("92","1","0");
+INSERT INTO player_spells VALUES("92","2","1");
+INSERT INTO player_spells VALUES("92","3","2");
+INSERT INTO player_spells VALUES("92","4","3");
+INSERT INTO player_spells VALUES("92","5","4");
+INSERT INTO player_spells VALUES("92","6","5");
+INSERT INTO player_spells VALUES("92","7","6");
+INSERT INTO player_spells VALUES("92","8","7");

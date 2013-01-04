@@ -387,8 +387,11 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
         }
         else
         {
-            Debug5(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s  cannot cast %s on %s. You can only cast it on %s.", 
-                   caster->GetName(),name.GetData(), target ? target->GetName() : "that", allowedTypes.GetData());
+            csString targetTypeName;
+            Client::GetTargetTypeName(targetType, targetTypeName );
+            
+            Debug6(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s  cannot cast %s on %s. You can only cast it on %s. Target is; %s", 
+                   caster->GetName(),name.GetData(), target ? target->GetName() : "that", allowedTypes.GetData(),targetTypeName.GetDataSafe());
         }
         
         return;
