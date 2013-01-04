@@ -295,7 +295,7 @@ void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name
     this->region_name = region_name;
     this->debugging = debugging;
     this->disabled = disabled;
-    this->brain = new NPCType(*type);
+    this->brain = new NPCType(*type, this);
 }
 
 Behavior* NPC::GetCurrentBehavior()
@@ -312,7 +312,7 @@ void NPC::SetBrain(NPCType* type, EventManager* eventmanager)
 {
     delete this->brain;
     this->type = type->GetName();
-    this->brain = new NPCType(*type);
+    this->brain = new NPCType(*type, this);
 
 }
 
@@ -379,7 +379,7 @@ bool NPC::Load(iResultRow &row, csHash<NPCType*, const char*> &npctypes, EventMa
         disabled = false;
     }
 
-    brain = new NPCType(*t); // deep copy constructor
+    brain = new NPCType(*t, this); // deep copy constructor
 
     return true; // success
 }
