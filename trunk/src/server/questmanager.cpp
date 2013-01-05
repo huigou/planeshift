@@ -660,10 +660,10 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
         // zero from the xml parser.
         if(qualityLevels.GetSize() > 0)
         {
-            command.AppendFmt("minquality=\"%s\" ", qualityLevels[0]);
+            command.AppendFmt("qualitymin=\"%s\" ", qualityLevels[0]);
             if(qualityLevels.GetSize() > 1)
             {
-                command.AppendFmt("maxquality=\"%s\" ", qualityLevels[1]);
+                command.AppendFmt("qualitymax=\"%s\" ", qualityLevels[1]);
             }
         }
 
