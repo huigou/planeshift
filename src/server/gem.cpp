@@ -349,6 +349,24 @@ void GEMSupervisor::FillNPCList(MsgEntry *msg, AccountID superclientID)
     }
 }
 
+void GEMSupervisor::SendAllNPCStats(AccountID superclientID)
+{
+    csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
+
+    while (iter.HasNext())
+    {
+        gemObject* obj = iter.Next();
+        if (obj->GetSuperclientID() == superclientID)
+        {
+            gemNPC* npc = obj->GetNPCPtr();
+            if (npc)
+            {
+                psserver->npcmanager->QueueStatDR(npc, DIRTY_VITAL_ALL );
+            }
+        }
+    }
+}
+
 void GEMSupervisor::ActivateNPCs(AccountID superclientID)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
@@ -2948,10 +2966,11 @@ void gemActor::UpdateStats()
 {
     if (psChar)
     {
-        if (!psChar->UpdateStatDRData(csGetTicks()))
-            return;
-
-        SendGroupStats();
+        if (psChar->UpdateStatDRData(csGetTicks()))
+        {
+            // There are dirty stats that need to be published
+            SendGroupStats();
+        }
     }
 }
 
@@ -5079,7 +5098,10 @@ void gemNPC::Broadcast(int clientnum, bool control)
 
 void gemNPC::SendGroupStats()
 {
-    gemActor::SendGroupStats();
+    // First we update super clients. Updating stats to clients (Targeted entities)
+    // will cause the stats dirty flag to be cleared so we do this update first.
+    unsigned int statsDirtyFlags = GetCharacterData()->GetStatsDirtyFlags();
+    psserver->GetNPCManager()->QueueStatDR(this, statsDirtyFlags);
 
     // Distribute PET stats to owner client
     if (GetCharacterData()->IsPet())
@@ -5088,9 +5110,20 @@ void gemNPC::SendGroupStats()
         gemObject *owner = GetOwner();
         if (owner && owner->GetClientID())
         {
-            psChar->SendStatDRMessage(owner->GetClientID(), eid, 0);
+            GetCharacterData()->SendStatDRMessage(owner->GetClientID(), eid, statsDirtyFlags);
         }
     }
+
+    // Now call the actor function to push stat updates to groups
+    // and clients that target this entity.
+    gemActor::SendGroupStats();
+
+
+    // Now that every thing is updated make sure no stats are dirty
+    // NPCs that are not targeted will not have a StatDRMessage sent
+    // and need these stats dirty flags to be cleared or they will
+    // be updated each second.
+    GetCharacterData()->ClearStatsDirtyFlags(statsDirtyFlags);
 }
 
 void gemNPC::ForcePositionUpdate()

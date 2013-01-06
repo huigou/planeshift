@@ -203,7 +203,7 @@ public:
     void QueueDropCommand(gemNPCActor *entity, csString slot);
     void QueueResurrectCommand(csVector3 where, float rot, iSector* sector, PID character_id);
     void QueueSequenceCommand(csString name, int cmd, int count);
-    void QueueImperviousCommand(gemNPCActor * entity, bool impervious);
+    void QueueTemporarilyImperviousCommand(gemNPCActor * entity, bool impervious);
     
     /** Send an info info command to the client.
      */

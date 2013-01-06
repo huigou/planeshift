@@ -50,7 +50,7 @@ class csStringHashReversible;
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
 // no inadvertent overlaps.
-#define PS_NPCNETVERSION 0x102C
+#define PS_NPCNETVERSION 0x102D
 
 enum Slot_Containers
 {
@@ -133,7 +133,7 @@ enum MSG_TYPES
     MSGTYPE_NPCLIST,
     MSGTYPE_GUITARGETUPDATE,
     MSGTYPE_MAPLIST,
-    MSGTYPE_NPCOMMANDLIST,
+    MSGTYPE_NPCCOMMANDLIST,
     MSGTYPE_NPCREADY,
     MSGTYPE_ALLENTITYPOS,
     MSGTYPE_PERSIST_ALL_ENTITIES,
