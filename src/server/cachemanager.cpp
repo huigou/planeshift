@@ -1440,23 +1440,33 @@ psTradePatterns* CacheManager::GetTradePatternByName(csString name)
     return tradePatterns_NameHash.Get(name,NULL);
 }
 
-/** Insert the itemID into the finalItems array only if it isn't already included.
- *
+
+/** Insert Sorted Unique
+ *  Insert the itemID into an array, sorted according the the item's Name, no more than one time. 
  */
 bool CacheManager::UniqueInsertIntoItemArray(csArray<uint32>* finalItems, uint32 itemID)
 {
     if(itemID==0) return false;
 
+    psItemStats* NewStats = GetBasicItemStatsByID(itemID);
+
     for(int i=0; i<finalItems->GetSize(); i++)
     {
-        if(finalItems->Get(i) == itemID)
+        psItemStats* CurrStats;
+        if(finalItems->Get(i) == itemID)    //already in list
         {
             return false;
         }
+        CurrStats = GetBasicItemStatsByID(finalItems->Get(i));
+//printf( "--DEBUG: UniqueInsertIntoItemArray comparing (item %i)%s to %s\n", itemID, NewStats->GetName(), CurrStats->GetName() );
+        if(  strcmp(NewStats->GetName(),CurrStats->GetName())<1 )
+        {
+            finalItems->Insert( i, itemID );    //insert before current item
+            return true;
+        }
     }
 //printf( "--DEBUG: UniqueInsertIntoItemArray : %i\n", itemID );
-    finalItems->Push(itemID);
-    return true;
+    finalItems->Push(itemID);    return true;
 }
 
 /** Check if an int value is already in an array
