@@ -180,7 +180,13 @@ protected:
     // Stats
     float              hp;
     float              maxHP;
-
+    float              mana;
+    float              maxMana;
+    float              pysStamina;
+    float              maxPysStamina;
+    float              menStamina;
+    float              maxMenStamina;
+    
     csArray< csWeakRef<gemNPCActor> > controlledActors; ///< Actors that are dragged/pushed around by this NPC.
 
     // Initial position checks
@@ -543,14 +549,62 @@ public:
      */
     float GetHP() const;
 
-    /** Set the npc maxHP
+    /** Set the npc MaxHP
      */
     void SetMaxHP(float maxHP);
     
-    /** Get the npc maxHP
+    /** Get the npc MaxHP
      */
     float GetMaxHP() const;
 
+    /** Set the npc Mana
+     */
+    void SetMana(float mana);
+    
+    /** Get the npc Mana
+     */
+    float GetMana() const;
+    
+    /** Set the npc MaxMana
+     */
+    void SetMaxMana(float maxMana);
+    
+    /** Get the npc MaxMana
+     */
+    float GetMaxMana() const;
+    
+    /** Set the npc PysStamina
+     */
+    void SetPysStamina(float pysStamina);
+    
+    /** Get the npc PysStamina
+     */
+    float GetPysStamina() const;
+    
+    /** Set the npc MaxPysStamina
+     */
+    void SetMaxPysStamina(float maxPysStamina);
+    
+    /** Get the npc MaxPysStamina
+     */
+    float GetMaxPysStamina() const;
+    
+    /** Set the npc MenStamina
+     */
+    void SetMenStamina(float menStamina);
+    
+    /** Get the npc MenStamina
+     */
+    float GetMenStamina() const;
+    
+    /** Set the npc MaxMenStamina
+     */
+    void SetMaxMenStamina(float maxMenStamina);
+    
+    /** Get the npc MaxMenStamina
+     */
+    float GetMaxMenStamina() const;
+    
     /** Take control of another entity.
      */
     void TakeControl(gemNPCActor* actor);

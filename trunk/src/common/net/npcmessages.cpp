@@ -27,6 +27,7 @@
 #include "util/strutil.h"
 #include "util/waypoint.h"
 #include "util/pspath.h"
+#include "rpgrules/vitals.h"
 
 //---------------------------------------------------------------------------
 
@@ -234,13 +235,13 @@ csString psNPCRaceListMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 //---------------------------------------------------------------------------
 
-PSF_IMPLEMENT_MSG_FACTORY(psNPCCommandsMessage,MSGTYPE_NPCOMMANDLIST);
+PSF_IMPLEMENT_MSG_FACTORY(psNPCCommandsMessage,MSGTYPE_NPCCOMMANDLIST);
 
 psNPCCommandsMessage::psNPCCommandsMessage(uint32_t clientToken,int size)
 {
     msg.AttachNew(new MsgEntry(size));
 
-    msg->SetType(MSGTYPE_NPCOMMANDLIST);
+    msg->SetType(MSGTYPE_NPCCOMMANDLIST);
     msg->clientnum      = clientToken;
 
     // NB: The message data is actually filled in by npc manager.
@@ -722,9 +723,9 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 break;
             }
 
-            case psNPCCommandsMessage::CMD_IMPERVIOUS:
+            case psNPCCommandsMessage::CMD_TEMPORARILY_IMPERVIOUS:
             {
-                msgtext.Append("CMD_IMPERVIOUS: ");
+                msgtext.Append("CMD_TEMPORARILY_IMPERVIOUS: ");
 
                 EID entity_id = EID(msg->GetUInt32());
                 bool impervious = msg->GetBool();
@@ -732,7 +733,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
                 {
-                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_IMPERVIOUS from NPC client %u.\n",msg->clientnum);
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_TEMPORARILY_IMPERVIOUS from NPC client %u.\n",msg->clientnum);
                     break;
                 }
 
@@ -846,6 +847,56 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 csString type = accessPointers->Request(strhash);
 
                 msgtext.AppendFmt("Caster: %u Target: %u Type: \"%s\"(%u) Severity: %f ", caster.Unbox(), target.Unbox(), type.GetData(), strhash, severity);
+                break;
+            }
+            case psNPCCommandsMessage::PCPT_STAT_DR:
+            {
+                msgtext.Append("PCPT_STAT_DR: ");
+                EID          entityEID       = EID(msg->GetUInt32());
+                unsigned int statsDirtyFlags = msg->GetUInt16();
+
+                msgtext.AppendFmt("Entity: %u Flags: %X", entityEID.Unbox(), statsDirtyFlags);
+                if (statsDirtyFlags & DIRTY_VITAL_HP)
+                {
+                    float hp = msg->GetFloat();
+                    msgtext.AppendFmt(" HP: %.2f",hp);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_HP_MAX)
+                {
+                    float maxHP = msg->GetFloat();
+                    msgtext.AppendFmt(" MaxHP: %.2f",maxHP);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MANA)
+                {
+                    float mana = msg->GetFloat();
+                    msgtext.AppendFmt(" Mana: %.2f",mana);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
+                {
+                    float maxMana = msg->GetFloat();
+                    msgtext.AppendFmt(" MaxMana: %.2f",maxMana);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
+                {
+                    float pysStamina = msg->GetFloat();
+                    msgtext.AppendFmt(" PStamina: %.2f",pysStamina);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_MAX)
+                {
+                    float maxPysStamina = msg->GetFloat();
+                    msgtext.AppendFmt(" MaxPStamina: %.2f",maxPysStamina);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
+                {
+                    float menStamina = msg->GetFloat();
+                    msgtext.AppendFmt(" MStamina: %.2f",menStamina);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
+                {
+                    float maxMenStamina = msg->GetFloat();
+                    msgtext.AppendFmt(" MaxMStamina: %.2f",maxMenStamina);
+                }
+
                 break;
             }
             case psNPCCommandsMessage::PCPT_DEATH:
@@ -1040,6 +1091,7 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
     }
     if (msg->overrun)
     {
+        msgtext.AppendFmt("****Message overrun*****\n");
         Debug2(LOG_NET,msg->clientnum,"Received unterminated or unparsable psNPCCommandsMessage from client %u.\n",msg->clientnum);
     }
 

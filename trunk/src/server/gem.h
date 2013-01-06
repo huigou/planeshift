@@ -175,6 +175,7 @@ public:
     void GetAllEntityPos(csArray<psAllEntityPosMessage>& msgs);
     int  CountManagedNPCs(AccountID superclientID);
     void FillNPCList(MsgEntry *msg, AccountID superclientID);
+    void SendAllNPCStats(AccountID superclientID);
     void ActivateNPCs(AccountID superclientID);
     void StopAllNPCs(AccountID superclientID);
 

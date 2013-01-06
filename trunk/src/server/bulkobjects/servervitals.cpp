@@ -66,7 +66,7 @@ psServerVitals::psServerVitals(psCharacter * character)
 
 #define PERCENT_VALUE(v) vitals[v].max.Current() ? vitals[v].value / vitals[v].max.Current() : 0
 #define PERCENT_RATE(v)  vitals[v].max.Current() ? vitals[v].drRate.Current() / vitals[v].max.Current() : 0
-bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group)
+bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, unsigned int flags, csRef<PlayerGroup> group)
 {
     bool backup=0;
     if (flags)
@@ -75,7 +75,9 @@ bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, int flags, c
         statsDirty = flags;
     }
     else if (version % 10 == 0)  // every 10th msg to this person, send everything
+    {
         statsDirty = DIRTY_VITAL_ALL;
+    }
 
     if (!statsDirty)
         return false;
@@ -127,21 +129,19 @@ bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, int flags, c
 
 bool psServerVitals::Update( csTicks now )
 {
-    csTicks drdelta = now - lastDRUpdate;
     float delta;
     /* It is necessary to check when lastDRUpdate is 0 because, if not when a character login his stats
     are significantly incremented, which is instead unnecessary. As tested, delta cannot be 0 or the actors
     with 0 HP and negative drRate will enter a loop of death, but it has to be really small in order to guarantee
-    a smooth increment of the stats. Since, now can be quite a random value when lastDRUpdate is 0, it is important
-    to give an high value to drdelta, so we can force a stats update.*/
+    a smooth increment of the stats. Dirty all vitals to force a stats update.*/
     if(!lastDRUpdate)
     {
-        delta=0.1f; //The value can be adjusted but it has to be really small.
-        drdelta= 11000; //drdelta must be really high, in order to avoid randomness and guarantee stats update
+        delta = 0.1f; //The value can be adjusted but it has to be really small.
+        statsDirty = DIRTY_VITAL_ALL;
     }
     else
     {
-       delta= (now-lastDRUpdate)/1000.0;
+       delta = (now-lastDRUpdate)/1000.0;
     }
     lastDRUpdate = now;
 
@@ -157,11 +157,7 @@ bool psServerVitals::Update( csTicks now )
         character->GetActor()->Kill(NULL);
     }
 
-    if (drdelta > 10000)
-    {
-        statsDirty = QUERY_FAILED;
-    }
-
+    // Return true if there are dirty vitals
     return (statsDirty) ? true : false;
 }
 
@@ -194,6 +190,16 @@ void psServerVitals::AdjustVital(int vital, int dirtyFlag, float delta)
 {
     DirtyVital(vital, dirtyFlag).value += delta;
     ClampVital(vital);
+}
+
+unsigned int psServerVitals::GetStatsDirtyFlags() const
+{
+    return statsDirty;
+}
+
+void psServerVitals::ClearStatsDirtyFlags( unsigned int dirtyFlags )
+{
+    statsDirty &= ~dirtyFlags;
 }
 
 void psServerVitals::ClampVital(int v)

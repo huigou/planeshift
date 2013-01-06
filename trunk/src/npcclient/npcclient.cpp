@@ -1454,7 +1454,7 @@ void psNPCClient::EnableDisableNPCs(const char* pattern, bool enable)
 
 void psNPCClient::ListAllNPCs(const char* pattern)
 {
-    if(strcmp(pattern, "summary")==0)
+    if(strcasecmp(pattern, "summary")==0)
     {
         int disabled = 0;
         int alive = 0;
@@ -1478,7 +1478,28 @@ void psNPCClient::ListAllNPCs(const char* pattern)
                 npcs.GetSize(), disabled, alive, entity, behaviour, brain);
 
         return; // No point continue since no npc should be named summary :)
+    } else if (strcasecmp(pattern,"stats") == 0)
+    {
+        CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-11s %-11s %-11s %-11s\n",
+                "NPC ID", "EID", "Name",
+                "HP", "Mana","PStamina","MStamina");
+        for(size_t i = 0; i < npcs.GetSize(); i++)
+        {
+            CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %5.1f/%5.1f %5.1f/%5.1f %5.1f/%5.1f %5.1f/%5.1f \n" ,
+                    npcs[i]->GetPID().Unbox(),
+                    npcs[i]->GetActor() ? npcs[i]->GetActor()->GetEID().Unbox() : 0,
+                    npcs[i]->GetName(),
+                    npcs[i]->GetHP(),npcs[i]->GetMaxHP(),
+                    npcs[i]->GetMana(),npcs[i]->GetMaxMana(),
+                    npcs[i]->GetPysStamina(),npcs[i]->GetMaxPysStamina(),
+                    npcs[i]->GetMenStamina(),npcs[i]->GetMaxMenStamina()
+                    );
+        }
+        
+        return;
     }
+
+    // Default behavior
 
     CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-6s %-6s %-20s %-20s %-4s %-3s %-8s\n",
             "NPC ID", "EID", "Name", "Entity", "Status", "Brain","Behaviour","Step","Dbg","Disabled");

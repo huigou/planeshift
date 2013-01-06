@@ -172,9 +172,11 @@ int com_list (const char* arg)
 {
     WordArray words(arg,false);
 
-    if (words.GetCount() == 0)
+    if (words.GetCount() == 0 || strncasecmp(words[0],"help",1) == 0)
     {
-        CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|loc|npc|path|race|recipe|tribe|warpspace|waypoint] <pattern|EID>\n");
+        CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|help|loc|npc|path|race|recipe|tribe|warpspace|waypoint] <pattern|EID>\n");
+        CPrintf(CON_CMDOUTPUT,"Sub commands:\n");
+        CPrintf(CON_CMDOUTPUT,"  npc [summary|stats|<pattern>]\n");
         return 0;
     }
 

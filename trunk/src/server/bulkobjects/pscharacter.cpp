@@ -1852,7 +1852,9 @@ bool psCharacter::UpdateStatDRData(csTicks now)
 
     // if HP dropped to zero, provoke the killing process
     if (GetHP() == 0   &&   actor != NULL   &&   actor->IsAlive())
+    {
         actor->Kill(NULL);
+    }
     return res;
 }
 
@@ -2078,6 +2080,16 @@ void psCharacter::CalculateMaxStamina()
     // Set the max values
     GetMaxPStamina().SetBase(basePhy->GetValue());
     GetMaxMStamina().SetBase(baseMen->GetValue());
+}
+
+unsigned int psCharacter::GetStatsDirtyFlags() const
+{
+    return vitals->GetStatsDirtyFlags();
+}
+
+void psCharacter::ClearStatsDirtyFlags( unsigned int dirtyFlags )
+{
+    vitals->ClearStatsDirtyFlags(dirtyFlags);
 }
 
 void psCharacter::ResetSwings(csTicks timeofattack)

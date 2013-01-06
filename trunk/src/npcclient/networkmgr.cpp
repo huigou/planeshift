@@ -44,6 +44,7 @@
 #include "engine/linmove.h"
 #include "util/strutil.h"
 #include "util/waypoint.h"
+#include "rpgrules/vitals.h"
 
 //=============================================================================
 // Local Space Includes
@@ -70,7 +71,7 @@ NetworkManager::NetworkManager(MsgHandler* mh,psNetConnection* conn, iEngine* en
     msghandler->Subscribe(this,MSGTYPE_MAPLIST);
     msghandler->Subscribe(this,MSGTYPE_CELPERSIST);
     msghandler->Subscribe(this,MSGTYPE_ALLENTITYPOS);
-    msghandler->Subscribe(this,MSGTYPE_NPCOMMANDLIST);
+    msghandler->Subscribe(this,MSGTYPE_NPCCOMMANDLIST);
     msghandler->Subscribe(this,MSGTYPE_PERSIST_ALL_ENTITIES);
     msghandler->Subscribe(this,MSGTYPE_PERSIST_ACTOR);
     msghandler->Subscribe(this,MSGTYPE_PERSIST_ITEM);
@@ -99,7 +100,7 @@ NetworkManager::~NetworkManager()
         msghandler->Unsubscribe(this,MSGTYPE_MAPLIST);
         msghandler->Unsubscribe(this,MSGTYPE_CELPERSIST);
         msghandler->Unsubscribe(this,MSGTYPE_ALLENTITYPOS);
-        msghandler->Unsubscribe(this,MSGTYPE_NPCOMMANDLIST);
+        msghandler->Unsubscribe(this,MSGTYPE_NPCCOMMANDLIST);
         msghandler->Unsubscribe(this,MSGTYPE_PERSIST_ACTOR);
         msghandler->Unsubscribe(this,MSGTYPE_PERSIST_ITEM);
         msghandler->Unsubscribe(this,MSGTYPE_REMOVE_OBJECT);
@@ -213,7 +214,7 @@ void NetworkManager::HandleMessage(MsgEntry* message)
             HandlePositionUpdates(message);
             break;
         }
-        case MSGTYPE_NPCOMMANDLIST:
+        case MSGTYPE_NPCCOMMANDLIST:
         {
             HandlePerceptions(message);
             break;
@@ -1203,6 +1204,92 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 npcclient->HandleDeath(npc);
                 break;
             }
+            case psNPCCommandsMessage::PCPT_STAT_DR:
+            {
+                EID          entityEID       = EID(list.msg->GetUInt32());
+                unsigned int statsDirtyFlags = msg->GetUInt16();
+
+                float hp = 0.0, maxHP = 0.0;
+                float mana = 0.0, maxMana = 0.0;
+                float pysStamina = 0.0, maxPysStamina = 0.0;
+                float menStamina = 0.0, maxMenStamina = 0.0;
+
+                if (statsDirtyFlags & DIRTY_VITAL_HP)
+                {
+                    hp = list.msg->GetFloat();
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_HP_MAX)
+                {
+                    maxHP = list.msg->GetFloat();
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MANA)
+                {
+                    mana = list.msg->GetFloat();
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
+                {
+                    maxMana = list.msg->GetFloat();
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
+                {
+                    pysStamina = list.msg->GetFloat();
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_MAX)
+                {
+                    maxPysStamina = list.msg->GetFloat();
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
+                {
+                    menStamina = list.msg->GetFloat();
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
+                {
+                    maxMenStamina = list.msg->GetFloat();
+                }
+
+                NPC* npc = npcclient->FindNPC(entityEID);
+
+                if(!npc)
+                {
+                    break;
+                }
+                
+                NPCDebug(npc, 5, "Got StatDR Perception: HP: %.2f/.2f Mana: %.2f/%.2f PysStamina: %.2f/%.2f MenStamina: %.2f/%.2f",
+                         hp,maxHP,mana,maxMana,pysStamina,maxPysStamina,menStamina,maxMenStamina);
+                if (statsDirtyFlags & DIRTY_VITAL_HP)
+                {
+                    npc->SetHP(hp);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_HP_MAX)
+                {
+                    npc->SetMaxHP(maxHP);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MANA)
+                {
+                    npc->SetMana(mana);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
+                {
+                    npc->SetMaxMana(maxMana);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
+                {
+                    npc->SetPysStamina(pysStamina);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_MAX)
+                {
+                    npc->SetMaxPysStamina(maxPysStamina);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
+                {
+                    npc->SetMenStamina(menStamina);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
+                {
+                    npc->SetMaxMenStamina(maxMenStamina);
+                }
+                break;
+            }
             case psNPCCommandsMessage::PCPT_SPELL:
             {
                 EID caster = EID(list.msg->GetUInt32());
@@ -2071,17 +2158,17 @@ void NetworkManager::QueueSequenceCommand(csString name, int cmd, int count)
     cmd_count++;
 }
 
-void NetworkManager::QueueImperviousCommand(gemNPCActor* entity, bool impervious)
+void NetworkManager::QueueTemporarilyImperviousCommand(gemNPCActor* entity, bool impervious)
 {
     CheckCommandsOverrun(100);
 
-    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_IMPERVIOUS);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_TEMPORARILY_IMPERVIOUS);
     outbound->msg->Add(entity->GetEID().Unbox());
     outbound->msg->Add((bool) impervious);
 
     if(outbound->msg->overrun)
     {
-        CS_ASSERT(!"NetworkManager::QueueImperviousCommand put message in overrun state!\n");
+        CS_ASSERT(!"NetworkManager::QueueTemporarilyImperviousCommand put message in overrun state!\n");
     }
 
     cmd_count++;

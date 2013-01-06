@@ -892,7 +892,17 @@ public:
     void SetStaminaRegenerationStill(bool physical = true, bool mental = true);
     void SetStaminaRegenerationWork(int skill);
 
+    /** Recalculate the maximm stamina for the character.
+     */
     void CalculateMaxStamina();
+
+    /** Return the dirty flags for vitals.
+     */
+    unsigned int GetStatsDirtyFlags() const;
+
+    /** Cleare the dirty flags for vitals.
+     */
+    void ClearStatsDirtyFlags( unsigned int dirtyFlags );
 
     const char* GetHelmGroup() { return helmGroup.GetData(); }
     const char* GetBracerGroup() { return BracerGroup.GetData(); }

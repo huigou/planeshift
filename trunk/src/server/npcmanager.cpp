@@ -443,7 +443,7 @@ NPCManager::NPCManager(ClientConnectionSet* pCCS,
     entityManager = entitymanager;
 
     Subscribe(&NPCManager::HandleAuthentRequest,MSGTYPE_NPCAUTHENT,REQUIRE_ANY_CLIENT);
-    Subscribe(&NPCManager::HandleCommandList,MSGTYPE_NPCOMMANDLIST,REQUIRE_ANY_CLIENT);
+    Subscribe(&NPCManager::HandleCommandList,MSGTYPE_NPCCOMMANDLIST,REQUIRE_ANY_CLIENT);
     Subscribe(&NPCManager::HandleConsoleCommand,MSGTYPE_NPC_COMMAND,REQUIRE_ANY_CLIENT);
     Subscribe(&NPCManager::HandleNPCReady,MSGTYPE_NPCREADY, REQUIRE_ANY_CLIENT);
     Subscribe(&NPCManager::HandleSimpleRenderMesh,MSGTYPE_SIMPLE_RENDER_MESH,REQUIRE_ANY_CLIENT);
@@ -499,6 +499,10 @@ void NPCManager::HandleNPCReady(MsgEntry* me,Client* client)
     // NPC Client is now ready so add onto superclients list
     client->SetReady(true);
     superclients.Push(PublishDestination(client->GetClientNum(), client, 0, 0));
+
+    // TODO: Consider move this to a earlier stage in the load process
+    // Update the superclient with entity stats
+    psserver->npcmanager->SendAllNPCStats(client);
 
     // Notify console user that NPC Client is up and running.
     CPrintf(CON_DEBUG, "NPC Client '%s' load completed.\n",client->GetName());
@@ -777,6 +781,14 @@ void NPCManager::SendNPCList(Client* client)
         Bug2("Overran message buffer while sending NPC List to client %u.\n",client->GetClientNum());
     }
 }
+
+void NPCManager::SendAllNPCStats(Client* client)
+{
+    // Ask supervisor to iterate all controlled npcs to
+    // queue a StatDR perception
+    gemSupervisor->SendAllNPCStats(client->GetAccountID());
+}
+
 
 void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
 {
@@ -1722,7 +1734,7 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 break;
             }
 
-            case psNPCCommandsMessage::CMD_IMPERVIOUS:
+            case psNPCCommandsMessage::CMD_TEMPORARILY_IMPERVIOUS:
             {
                 EID entity_id = EID(list.msg->GetUInt32());
                 int impervious = list.msg->GetBool();
@@ -2551,7 +2563,7 @@ void NPCManager::QueueAttackPerception(gemActor* attacker,gemNPC* target)
  */
 void NPCManager::QueueDamagePerception(gemActor* attacker,gemNPC* target,float dmg)
 {
-    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+sizeof(float));
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+MSG_SIZEOF_FLOAT*3);
     outbound->msg->Add((int8_t) psNPCCommandsMessage::PCPT_DMG);
     outbound->msg->Add(attacker->GetEID().Unbox());
     outbound->msg->Add(target->GetEID().Unbox());
@@ -2586,6 +2598,50 @@ void NPCManager::QueueSpellPerception(gemActor* caster, gemObject* target,const 
     cmd_count++;
     Debug4(LOG_NPC, caster->GetEID().Unbox(), "Added perception: %s cast a %s spell on %s.\n", caster->GetName(), spell_cat_name, target->GetName());
 }
+
+void NPCManager::QueueStatDR(gemNPC* npc, unsigned int statsDirtyFlags )
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+sizeof(uint16_t)+MSG_SIZEOF_FLOAT*8);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::PCPT_STAT_DR);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add((uint16_t) statsDirtyFlags );
+
+    if (statsDirtyFlags & DIRTY_VITAL_HP)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetHP());
+    }
+    if (statsDirtyFlags & DIRTY_VITAL_HP_MAX)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetMaxHP().Current());
+    }
+    if (statsDirtyFlags & DIRTY_VITAL_MANA)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetMana());
+    }
+    if (statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetMaxMana().Current());
+    }
+    if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetStamina(true));
+    }
+    if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_MAX)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetMaxPStamina().Current());
+    }
+    if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetStamina(false));
+    }
+    if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetMaxMStamina().Current());
+    }
+    cmd_count++;
+    Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added perception: StatDR for %s\n",npc->GetName());
+}
+
 
 void NPCManager::QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type,
                                       gemActor* npc, gemActor* player,

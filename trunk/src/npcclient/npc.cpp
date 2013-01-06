@@ -91,6 +91,12 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     raceInfo=NULL;
     hp = 0.0;
     maxHP = 0.0;
+    mana = 0.0;
+    maxMana = 0.0;
+    pysStamina = 0.0;
+    maxPysStamina = 0.0;
+    menStamina = 0.0;
+    maxMenStamina = 0.0;
     checkedSector=NULL;
     checked = false;
     checkedResult = false;
@@ -690,21 +696,30 @@ void NPC::Disable(bool disable)
 
     disabled = disable;
 
-    // Stop the movement
-
-    // Set Vel to zero again
-    if(GetActor())
+    if (GetActor())
     {
-        GetLinMove()->SetVelocity(csVector3(0,0,0));
-        GetLinMove()->SetAngularVelocity(0);
+        if (disabled)
+        {
+            // Stop the movement
 
+            // Set Vel to zero again
+            GetLinMove()->SetVelocity(csVector3(0,0,0));
+            GetLinMove()->SetAngularVelocity(0);
 
-        //now persist
-        networkmanager->QueueDRData(this);
-        networkmanager->QueueImperviousCommand(GetActor(),true);
+            //now persist
+            networkmanager->QueueDRData(this);
+
+            // Set the npc in the none attackable state
+            networkmanager->QueueTemporarilyImperviousCommand(GetActor(), true);
+        }
+        else
+        {
+            // Set the npc in the attackable state
+            networkmanager->QueueTemporarilyImperviousCommand(GetActor(), false);
+        }
     }
-
 }
+    
 
 void NPC::DumpState()
 {
@@ -721,37 +736,40 @@ void NPC::DumpState()
 
     CPrintf(CON_CMDOUTPUT, "States for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
-    CPrintf(CON_CMDOUTPUT, "Position:            %s\n",npcActor?toString(loc,sector).GetDataSafe():"(none)");
-    CPrintf(CON_CMDOUTPUT, "Rotation:            %.2f\n",rot);
-    CPrintf(CON_CMDOUTPUT, "Instance:            %d\n",instance);
-    CPrintf(CON_CMDOUTPUT, "Debugging:           %d\n",debugging);
+    CPrintf(CON_CMDOUTPUT, "Position:             %s\n",npcActor?toString(loc,sector).GetDataSafe():"(none)");
+    CPrintf(CON_CMDOUTPUT, "Rotation:             %.2f\n",rot);
+    CPrintf(CON_CMDOUTPUT, "Instance:             %d\n",instance);
+    CPrintf(CON_CMDOUTPUT, "Debugging:            %d\n",debugging);
     csString clients;
     for(size_t i = 0; i < debugClients.GetSize(); i++)
     {
         clients.AppendFmt("  %u",debugClients[i]);
     }
-    CPrintf(CON_CMDOUTPUT, "Debug clients:       %s\n",clients.GetDataSafe());
-    CPrintf(CON_CMDOUTPUT, "DR Counter:          %d\n",DRcounter);
-    CPrintf(CON_CMDOUTPUT, "Alive:               %s\n",alive?"True":"False");
-    CPrintf(CON_CMDOUTPUT, "Disabled:            %s\n",disabled?"True":"False");
-    CPrintf(CON_CMDOUTPUT, "Checked:             %s\n",checked?"True":"False");
-    CPrintf(CON_CMDOUTPUT, "Spawn position:      %s\n",toString(spawnPosition,spawnSector).GetDataSafe());
-    CPrintf(CON_CMDOUTPUT, "Ang vel:             %.2f\n",ang_vel);
-    CPrintf(CON_CMDOUTPUT, "Vel:                 %.2f\n",vel);
-    CPrintf(CON_CMDOUTPUT, "Walk velocity:       %.2f\n",walkVelocity);
-    CPrintf(CON_CMDOUTPUT, "Run velocity:        %.2f\n",runVelocity);
-    CPrintf(CON_CMDOUTPUT, "HP/MaxHP:            %.1f/%.1f\n",GetHP(),GetMaxHP());
-    CPrintf(CON_CMDOUTPUT, "Owner:               %s\n",GetOwnerName());
-    CPrintf(CON_CMDOUTPUT, "Race:                %s\n",GetRaceInfo()?GetRaceInfo()->GetName():"(None)");
-    CPrintf(CON_CMDOUTPUT, "Region:              %s\n",GetRegion()?GetRegion()->GetName():"(None)");
-    CPrintf(CON_CMDOUTPUT, "Inside region:       %s\n",insideRegion?"Yes":"No");
-    CPrintf(CON_CMDOUTPUT, "Tribe:               %s\n",GetTribe()?GetTribe()->GetName():"(None)");
-    CPrintf(CON_CMDOUTPUT, "TribeMemberType:     %s\n",GetTribeMemberType().GetDataSafe());
-    CPrintf(CON_CMDOUTPUT, "Inside tribe home:   %s\n",insideTribeHome?"Yes":"No");
-    CPrintf(CON_CMDOUTPUT, "Target:              %s\n",GetTarget()?GetTarget()->GetName():"");
-    CPrintf(CON_CMDOUTPUT, "Last perception:     %s\n",last_perception?last_perception->GetName(this).GetDataSafe():"(None)");
-    CPrintf(CON_CMDOUTPUT, "Fall counter:        %d\n", GetFallCounter());
-    CPrintf(CON_CMDOUTPUT, "Brain:               %s\n\n", brain->GetName());
+    CPrintf(CON_CMDOUTPUT, "Debug clients:        %s\n",clients.GetDataSafe());
+    CPrintf(CON_CMDOUTPUT, "DR Counter:           %d\n",DRcounter);
+    CPrintf(CON_CMDOUTPUT, "Alive:                %s\n",alive?"True":"False");
+    CPrintf(CON_CMDOUTPUT, "Disabled:             %s\n",disabled?"True":"False");
+    CPrintf(CON_CMDOUTPUT, "Checked:              %s\n",checked?"True":"False");
+    CPrintf(CON_CMDOUTPUT, "Spawn position:       %s\n",toString(spawnPosition,spawnSector).GetDataSafe());
+    CPrintf(CON_CMDOUTPUT, "Ang vel:              %.2f\n",ang_vel);
+    CPrintf(CON_CMDOUTPUT, "Vel:                  %.2f\n",vel);
+    CPrintf(CON_CMDOUTPUT, "Walk velocity:        %.2f\n",walkVelocity);
+    CPrintf(CON_CMDOUTPUT, "Run velocity:         %.2f\n",runVelocity);
+    CPrintf(CON_CMDOUTPUT, "HP/MaxHP:             %.1f/%.1f\n",GetHP(),GetMaxHP());
+    CPrintf(CON_CMDOUTPUT, "Mana/MaxMana:         %.1f/%.1f\n",GetMana(),GetMaxMana());
+    CPrintf(CON_CMDOUTPUT, "PStamina/MaxPStamina: %.1f/%.1f\n",GetPysStamina(),GetMaxPysStamina());
+    CPrintf(CON_CMDOUTPUT, "MStamina/MaxMStamina: %.1f/%.1f\n",GetMenStamina(),GetMaxMenStamina());
+    CPrintf(CON_CMDOUTPUT, "Owner:                %s\n",GetOwnerName());
+    CPrintf(CON_CMDOUTPUT, "Race:                 %s\n",GetRaceInfo()?GetRaceInfo()->GetName():"(None)");
+    CPrintf(CON_CMDOUTPUT, "Region:               %s\n",GetRegion()?GetRegion()->GetName():"(None)");
+    CPrintf(CON_CMDOUTPUT, "Inside region:        %s\n",insideRegion?"Yes":"No");
+    CPrintf(CON_CMDOUTPUT, "Tribe:                %s\n",GetTribe()?GetTribe()->GetName():"(None)");
+    CPrintf(CON_CMDOUTPUT, "TribeMemberType:      %s\n",GetTribeMemberType().GetDataSafe());
+    CPrintf(CON_CMDOUTPUT, "Inside tribe home:    %s\n",insideTribeHome?"Yes":"No");
+    CPrintf(CON_CMDOUTPUT, "Target:               %s\n",GetTarget()?GetTarget()->GetName():"");
+    CPrintf(CON_CMDOUTPUT, "Last perception:      %s\n",last_perception?last_perception->GetName(this).GetDataSafe():"(None)");
+    CPrintf(CON_CMDOUTPUT, "Fall counter:         %d\n", GetFallCounter());
+    CPrintf(CON_CMDOUTPUT, "Brain:                %s\n\n", brain->GetName());
 
     CPrintf(CON_CMDOUTPUT, "Locates for %s (%s)\n", name.GetData(), ShowID(pid));
     CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
@@ -760,10 +778,10 @@ void NPC::DumpState()
     {
         csString name;
         Locate* locate = iter.Next(name);
-        CPrintf(CON_CMDOUTPUT, "%-15s Position: %s\n",name.GetDataSafe(),toString(locate->pos,locate->sector).GetDataSafe());
-        CPrintf(CON_CMDOUTPUT, "%-15s Angle:    %.2f\n","",locate->angle);
-        CPrintf(CON_CMDOUTPUT, "%-15s Radius:   %.2f\n","",locate->radius);
-        CPrintf(CON_CMDOUTPUT, "%-15s WP:       %s\n","",locate->wp?locate->wp->GetName():"");
+        CPrintf(CON_CMDOUTPUT, "%-15s Position:  %s\n",name.GetDataSafe(),toString(locate->pos,locate->sector).GetDataSafe());
+        CPrintf(CON_CMDOUTPUT, "%-15s Angle:     %.2f\n","",locate->angle);
+        CPrintf(CON_CMDOUTPUT, "%-15s Radius:    %.2f\n","",locate->radius);
+        CPrintf(CON_CMDOUTPUT, "%-15s WP:        %s\n","",locate->wp?locate->wp->GetName():"");
 
     }
 
@@ -1228,6 +1246,66 @@ float NPC::GetMaxHP() const
     return maxHP;
 }
 
+void NPC::SetMana(float mana)
+{
+    this->mana = mana;
+}
+   
+float NPC::GetMana() const
+{
+    return mana;
+}
+
+void NPC::SetMaxMana(float maxMana)
+{
+    this->maxMana = maxMana;
+}
+    
+float NPC::GetMaxMana() const
+{
+    return maxMana;
+}
+    
+void NPC::SetPysStamina(float pysStamina)
+{
+    this->pysStamina = pysStamina;
+}
+    
+float NPC::GetPysStamina() const
+{
+    return pysStamina;
+}
+    
+void NPC::SetMaxPysStamina(float maxPysStamina)
+{
+    this->maxPysStamina = maxPysStamina;
+}
+    
+float NPC::GetMaxPysStamina() const
+{
+    return maxPysStamina;
+}
+    
+void NPC::SetMenStamina(float menStamina)
+{
+    this->menStamina = menStamina;
+}
+   
+float NPC::GetMenStamina() const
+{
+    return menStamina;
+}
+    
+void NPC::SetMaxMenStamina(float maxMenStamina)
+{
+    this->maxMenStamina = maxMenStamina;
+}
+    
+float NPC::GetMaxMenStamina() const
+{
+    return maxMenStamina;
+}
+
 void NPC::TakeControl(gemNPCActor* actor)
 {
     controlledActors.PushSmart(csWeakRef<gemNPCActor>(actor));
@@ -1387,6 +1465,30 @@ double NPC::GetProperty(MathEnvironment* env, const char* ptr)
     if (property == "MaxHP")
     {
         return GetMaxHP();
+    }
+    if (property == "Mana")
+    {
+        return GetMana();
+    }
+    if (property == "MaxMana")
+    {
+        return GetMaxMana();
+    }
+    if (property == "PStamina")
+    {
+        return GetPysStamina();
+    }
+    if (property == "MaxPStamina")
+    {
+        return GetMaxPysStamina();
+    }
+    if (property == "MStamina")
+    {
+        return GetMenStamina();
+    }
+    if (property == "MaxMStamina")
+    {
+        return GetMaxMenStamina();
     }
 
     Error2("Requested NPC property not found '%s'", ptr);

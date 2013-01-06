@@ -82,7 +82,7 @@ public:
 
      /** Handles new Vital data construction for the server.
       */
-    bool SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group = NULL);
+    bool SendStatDRMessage(uint32_t clientnum, EID eid, unsigned int flags, csRef<PlayerGroup> group = NULL);
 
     bool Update( csTicks now );
 
@@ -92,6 +92,14 @@ public:
     void SetVital(int vitalName, int dirtyFlag, float value);
     void AdjustVital(int vitalName, int dirtyFlag, float delta);
 
+    /** Return the dirty flags for vitals.
+     */
+    unsigned int GetStatsDirtyFlags() const;
+
+    /** Cleare the dirty flags for vitals.
+     */
+    void ClearStatsDirtyFlags( unsigned int dirtyFlags );
+    
 private:
     /// Clamps the vital's current value to be in the interval [0, max].
     void ClampVital(int vital);
