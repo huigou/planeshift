@@ -3277,13 +3277,12 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
                 query.Format("select * from skills where skill_id=%d", priSkill );
                 Result result(db->Select(query));
 
-                transString.Append("With higher ");
+                transString.Append("[[");
                 transString.Append( result[0].GetString( "Name") );
-                transString.Append(" skill you could: " );
+                transString.Append("]]" );
                 transString.Append(craftArray->Get(count)->craftStepDescription);
             continue;
         }
-
         // Check if craft step minimum seconday skill level is meet by client
         int secSkill = craftArray->Get(count)->secSkillId;
         if(secSkill >= 0 && craftArray->Get(count)->minSecSkill > (int) character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
