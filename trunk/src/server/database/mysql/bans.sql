@@ -14,4 +14,3 @@ CREATE TABLE bans (
 );
 
 INSERT INTO `bans` VALUES (3,'80.11.111.',1229325764,1249325764,'Dummy ban example',1);
-INSERT INTO `bans` VALUES (3,'80.22.222.',1223325764,1245325764,'Dummy ban example',0);
