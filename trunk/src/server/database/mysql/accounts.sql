@@ -53,15 +53,15 @@ CREATE TABLE  `accounts` (
 #
 
 #password is "keith"
-INSERT INTO `accounts` VALUES (1,'vengeance','8dd9fa632ca161d0ca1929a4d99cbe77','a4e463d7dec930ea7f5a7d92fc3b798a167c7c206438739d4c82d96d5ebf2cfe','2006-06-24 00:47:50','0000-00-00 00:00:00','127.0.0.1',30,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (1,'vengeance','8dd9fa632ca161d0ca1929a4d99cbe77','a4e463d7dec930ea7f5a7d92fc3b798a167c7c206438739d4c82d96d5ebf2cfe','2006-06-24 00:47:50','2001-10-10 00:00:00','127.0.0.1',30,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
 #password is "guest"
-INSERT INTO `accounts` VALUES (3,'guest','084e0343a0486ff05530df6c705c8bb4','84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec','2003-07-22 00:31:36','0000-00-00 00:00:00','127.0.0.1',30,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (3,'guest','084e0343a0486ff05530df6c705c8bb4','84983c60f7daadc1cb8698621f802c0d9f9a3c3c295c810748fb048115c186ec','2003-07-22 00:31:36','2001-10-10 00:00:00','127.0.0.1',30,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
 #password is "andrew"
-INSERT INTO `accounts` VALUES (5,'acraig','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','0000-00-00 00:00:00','0000-00-00 00:00:00','',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (5,'acraig','d914e3ecf6cc481114a3f534a5faf90b','d979885447a413abb6d606a5d0f45c3b7809e6fde2c83f0df3426f1fc9bfed97','2001-11-11 00:00:00','0000-00-00 00:00:00','',0,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 
-INSERT INTO `accounts` VALUES (9,'superclient','e1047916967c28e68172ef5bfe31ed407b5a6d568def7cb74018704ea25da522','0','2003-07-17 14:46:08','0000-00-00 00:00:00','127.0.0.1',99,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
+INSERT INTO `accounts` VALUES (9,'superclient','e1047916967c28e68172ef5bfe31ed407b5a6d568def7cb74018704ea25da522','0','2003-07-17 14:46:08','2001-11-11 00:00:00','127.0.0.1',99,'','US','M',1980,'A',0,0,'none','',0, '', '', '');
 INSERT INTO `accounts` VALUES (10,'superclient2','5f4dcc3b5aa765d61d8327deb882cf99','0',NULL,NULL,NULL,99,NULL,NULL,'N',0,NULL,0,0,NULL,NULL,0, '', '', '');
 
 #password is "andrew" for all the following accounts
