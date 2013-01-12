@@ -535,7 +535,7 @@ void NPC::AddToHateList(gemNPCActor* attacker, float delta)
     hatelist.AddHate(attacker->GetEID(),delta);
     if(IsDebugging(5))
     {
-        DumpHateList();
+        DumpHateList(this);
     }
 }
 
@@ -816,6 +816,20 @@ void NPC::DumpHateList()
     {
         psGameObject::GetPosition(GetActor(),pos,sector);
         hatelist.DumpHateList(pos,sector);
+    }
+}
+
+void NPC::DumpHateList(NPC* npc)
+{
+    iSector* sector=NULL;
+    csVector3 pos;
+
+    NPCDebug(npc, 5, "Hate list for %s (%s)", name.GetData(), ShowID(pid));
+
+    if(GetActor())
+    {
+        psGameObject::GetPosition(GetActor(), pos, sector);
+        hatelist.DumpHateList(npc, pos, sector);
     }
 }
 
@@ -1704,8 +1718,8 @@ void HateList::DumpHateList(const csVector3 &myPos, iSector* mySector)
 {
     csHash<HateListEntry*, EID>::GlobalIterator iter = hatelist.GetIterator();
 
-    CPrintf(CON_CMDOUTPUT, "%6s %5s %-40s %5s %s\n",
-            "Entity","Hated","Pos","Range","Flags");
+    CPrintf(CON_CMDOUTPUT, "%6s %-20s %5s %-40s %5s %s\n",
+            "Entity","Name", "Hated","Pos","Range","Flags");
 
     while(iter.HasNext())
     {
@@ -1722,18 +1736,9 @@ void HateList::DumpHateList(const csVector3 &myPos, iSector* mySector)
             {
                 sectorName = sector->QueryObject()->GetName();
             }
-            CPrintf(CON_CMDOUTPUT, "%6d %5.1f %40s %5.1f",
-                    h->entity_id.Unbox(), h->hate_amount, toString(pos, sector).GetDataSafe(),
-                    world->Distance(pos,sector,myPos,mySector));
-            // Print flags
-            if(obj->IsInvisible())
-            {
-                CPrintf(CON_CMDOUTPUT," Invisible");
-            }
-            if(obj->IsInvincible())
-            {
-                CPrintf(CON_CMDOUTPUT," Invincible");
-            }
+            CPrintf(CON_CMDOUTPUT,"%6d %-20s %5.1f %-40s %5.1f%s%s",
+                    h->entity_id.Unbox(), obj->GetName(), h->hate_amount, toString(pos, sector).GetDataSafe(),
+                    world->Distance(pos,sector,myPos,mySector), obj->IsInvisible()?" Invisible":"", obj->IsInvincible()?" Invincible":"");
             CPrintf(CON_CMDOUTPUT,"\n");
         }
         else
@@ -1744,4 +1749,39 @@ void HateList::DumpHateList(const csVector3 &myPos, iSector* mySector)
 
     }
     CPrintf(CON_CMDOUTPUT, "\n");
+}
+
+void HateList::DumpHateList(NPC* npc, const csVector3 &myPos, iSector* mySector)
+{
+    csHash<HateListEntry*, EID>::GlobalIterator iter = hatelist.GetIterator();
+
+    NPCDebug(npc, 5, "%6s %-20s %5s %-40s %5s %s",
+             "Entity","Name", "Hated","Pos","Range","Flags");
+
+    while(iter.HasNext())
+    {
+        HateListEntry* h = (HateListEntry*)iter.Next();
+        csVector3 pos(9.9f,9.9f,9.9f);
+        gemNPCObject* obj = npcclient->FindEntityID(h->entity_id);
+        csString sectorName;
+
+        if(obj)
+        {
+            iSector* sector;
+            psGameObject::GetPosition(obj,pos,sector);
+            if(sector)
+            {
+                sectorName = sector->QueryObject()->GetName();
+            }
+            NPCDebug(npc, 5, "%6d %-20s %5.1f %-40s %5.1f%s%s",
+                     h->entity_id.Unbox(), obj->GetName(), h->hate_amount, toString(pos, sector).GetDataSafe(),
+                     world->Distance(pos,sector,myPos,mySector), obj->IsInvisible()?" Invisible":"", obj->IsInvincible()?" Invincible":"");
+        }
+        else
+        {
+            // This is an error situation. Should not hate something that isn't online.
+            NPCDebug(npc, 5, "Entity: %u Hated: %.1f", h->entity_id.Unbox(), h->hate_amount);
+        }
+
+    }
 }

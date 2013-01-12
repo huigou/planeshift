@@ -877,13 +877,14 @@ public:
 class MeleeOperation : public ScriptOperation
 {
 protected:
-    float seek_range, melee_range;
+    float        seek_range, melee_range;
     gemNPCActor* attacked_ent;
-    bool  attack_invisible,attack_invincible;
-    csString stance;
+    bool         attack_invisible,attack_invincible;
+    csString     stance;
+    bool         tribe;
 public:
 
-    MeleeOperation(): ScriptOperation("Melee") { attacked_ent=NULL; seek_range=0; melee_range=0; }
+    MeleeOperation(): ScriptOperation("Melee") { attacked_ent=NULL; seek_range=0; melee_range=0; tribe=false; }
     virtual ~MeleeOperation() {}
 
     virtual bool Load(iDocumentNode* node);
@@ -1065,7 +1066,7 @@ protected:
     csString   failedPerception; ///< A perception to fire if the condition fails
     csString   delayed;          ///< If set this perception should be delayed.
 
-    csWeakRef<MathScript> calc_condition; ///< This is the particular calculation for condition.
+    csWeakRef<MathScript> calcCondition; ///< This is the particular calculation for condition.
 public:
 
     PerceptOperation(): ScriptOperation("Percept") {};

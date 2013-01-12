@@ -2969,6 +2969,8 @@ bool MeleeOperation::Load(iDocumentNode *node)
         stance = "normal";
     }
 
+    tribe = node->GetAttributeValueAsBool("tribe",false);
+
     return true;
 }
 
@@ -2980,6 +2982,7 @@ ScriptOperation *MeleeOperation::MakeCopy()
     op->attack_invisible = attack_invisible;
     op->attack_invincible = attack_invincible;
     op->stance = stance;
+    op->tribe = tribe;
     attacked_ent = NULL;
     return op;
 }
@@ -2990,7 +2993,14 @@ ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, bool interrupted)
              melee_range, seek_range,(attack_invisible?" Invisible":" Visible"),
              (attack_invincible?" Invincible":""));
 
-    attacked_ent = npc->GetMostHated(melee_range,attack_invisible,attack_invincible);
+    if (tribe && npc->GetTribe())
+    {
+        attacked_ent = npc->GetTribe()->GetMostHated(npc, melee_range,attack_invisible,attack_invincible); 
+    }
+    else
+    {
+        attacked_ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
+    }
     if (attacked_ent)
     {
         NPCDebug(npc, 5, "Melee starting to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
@@ -3009,14 +3019,30 @@ ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, bool interrupted)
 ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *npc)
 {
     // Check hate list to make sure we are still attacking the right person
-    gemNPCActor *ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
+    gemNPCActor* ent;
+
+    if (tribe && npc->GetTribe())
+    {
+        ent = npc->GetTribe()->GetMostHated(npc, melee_range, attack_invisible, attack_invincible);
+    }
+    else
+    {
+        ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
+    }
     
     if (!ent)
     {
         NPCDebug(npc, 8, "No Melee target in range (%2.2f), going to chase!", melee_range);
 
         // No enemy to whack on in melee range, search far
-        ent = npc->GetMostHated(seek_range, attack_invisible, attack_invincible);
+        if (tribe && npc->GetTribe())
+        {
+            ent = npc->GetTribe()->GetMostHated(npc, seek_range, attack_invisible, attack_invincible);
+        }
+        else
+        {
+            ent = npc->GetMostHated(seek_range, attack_invisible, attack_invincible);
+        }
 
         // The idea here is to save the next best target and chase
         // him if out of range.
@@ -3662,9 +3688,9 @@ ScriptOperation *PerceptOperation::MakeCopy()
 
 bool PerceptOperation::CheckCondition(NPC* npc)
 {
-    if(!calc_condition.IsValid())
+    if(!calcCondition.IsValid())
     {
-        if (!npcclient->GetMathScriptEngine()->CheckAndUpdateScript(calc_condition, condition))
+        if (!npcclient->GetMathScriptEngine()->CheckAndUpdateScript(calcCondition, condition))
         {
             Error2("Failed to load math script for PerceptionOperation condition '%s'",condition.GetDataSafe());
             return false;
@@ -3678,7 +3704,7 @@ bool PerceptOperation::CheckCondition(NPC* npc)
     env.Define("Result",                   0.0);
 
     //this is going to crash if the script cannot be found.
-    calc_condition->Evaluate(&env);
+    calcCondition->Evaluate(&env);
 
     MathVar* result   = env.Lookup("Result");
 

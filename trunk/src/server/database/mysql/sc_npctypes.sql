@@ -87,8 +87,8 @@ INSERT INTO sc_npctypes VALUES("4","Fight","",0,"","","","","","1",
 
 
 <react event="fight"               behavior="Fight" />
-<react event="attack"              behavior="Fight" />
-<react event="damage"              behavior="Fight" delta="20" weight="1" />
+<react event="attack"              behavior="Fight" weight="1" /> <!-- Add 1 to hate list -->
+<react event="damage"              behavior="Fight" delta="20" weight="2" /> <!-- Add double damage to hate list -->
 <react event="target out of range" behavior="Chase" />
 <react event="failed to attack"    behavior="FailedToAttack" />
 

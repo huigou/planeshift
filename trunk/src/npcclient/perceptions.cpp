@@ -116,6 +116,15 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
     weight                 = node->GetAttributeValueAsFloat("weight");
     factionDiff            = node->GetAttributeValueAsInt("faction_diff");
     oper                   = node->GetAttributeValue("oper");
+    condition              = node->GetAttributeValue("condition");
+    if (!condition.IsEmpty())
+    {
+        if (!npcclient->GetMathScriptEngine()->CheckAndUpdateScript(calcCondition, condition))
+        {
+            Error2("Failed to load math script for Reaction condition '%s'",condition.GetDataSafe());
+            return false;
+        }
+    }
 
     // Decode the value field, It is in the form value="1,2,,4"
     csString valueAttr = node->GetAttributeValue("value");
@@ -183,6 +192,8 @@ void Reaction::DeepCopy(Reaction& other,BehaviorSet& behaviors)
     range                  = other.range;
     factionDiff            = other.factionDiff;
     oper                   = other.oper;
+    condition              = other.condition;
+    calcCondition          = other.calcCondition;
     weight                 = other.weight;
     values                 = other.values;
     valuesValid            = other.valuesValid;
@@ -250,6 +261,29 @@ void Reaction::React(NPC *who, Perception *pcpt)
         return; 
     } 
 
+
+    // Check condition
+    if (!condition.IsEmpty())
+    {
+        MathEnvironment env;
+
+        env.Define("NPCClient",                npcclient);
+        env.Define("NPC",                      who);
+        env.Define("Result",                   0.0);
+        
+        //this is going to crash if the script cannot be found.
+        calcCondition->Evaluate(&env);
+        
+        MathVar* result   = env.Lookup("Result");
+        
+        if (result->GetValue() == 0.0)
+        {
+            NPCDebug(who, 5, "Prevented from reacting to '%s' since condition is false",
+                     GetEventType(who).GetDataSafe());
+            return;
+        }
+    }
+    
 
 
     // We should no react and triggerd all affected behaviors

@@ -100,6 +100,7 @@ public:
     gemNPCActor* GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeInvisible, bool includeInvincible, float* hate);
     bool Remove(EID entity_id);
     void DumpHateList(const csVector3 &myPos, iSector* mySector);
+    void DumpHateList(NPC* npc, const csVector3 &myPos, iSector* mySector);
     void Clear();
     float GetHate(EID ent);
 
@@ -304,6 +305,11 @@ public:
      */
     void DumpHateList();
 
+    /**
+     * Dump all hated entities for npc. Using debug prints at level 5.
+     */
+    void DumpHateList(NPC* npc);
+    
     /**
      * Dump the debug log for npc
      */
