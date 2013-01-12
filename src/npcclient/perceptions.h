@@ -64,6 +64,8 @@ protected:
     float     range;
     int       factionDiff;
     csString  oper;
+    csString  condition;
+    csWeakRef<MathScript> calcCondition; ///< This is the particular calculation for condition.
     bool      activeOnly;
     bool      inactiveOnly;
     bool      reactWhenDead;
