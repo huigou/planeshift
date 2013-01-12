@@ -184,7 +184,9 @@ psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
                 return charData;
             }
             else //this is needed because if the item is cached it needs to be destroyed (and so saved) before we load it again
+            {
                 delete (psCharacter *)obj->RecoverObject();
+            }
         }
     //}   
 
@@ -615,7 +617,7 @@ bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
 // 08-02-2005 Borrillis:
 // NPC's should not save their locations back into the characters table
 // This causes mucho problems so don't "fix" it.
-bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,bool charRecordOnly)
+bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor, bool charRecordOnly)
 {
     bool playerORpet = chardata->GetCharType() == PSCHARACTER_TYPE_PLAYER ||
                        chardata->GetCharType() == PSCHARACTER_TYPE_PET;
@@ -624,13 +626,20 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
     static iRecord* updatePlayer;
     static iRecord* updateNpc;
     if(playerORpet && updatePlayer == NULL)
+    {
         updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 35, __FILE__, __LINE__); // 35 fields + 1 id field
+    }
+    
     if(!playerORpet && updateNpc == NULL)
+    {
         updateNpc = db->NewUpdatePreparedStatement("characters", "id", 28, __FILE__, __LINE__); // 28 fields + 1 id field
+    }
 
     // Give 100% hp if the char is dead
     if(!actor->IsAlive())
+    {
         chardata->SetHitPoints(chardata->GetMaxHP().Base());
+    }
 
     iRecord* targetUpdate = (playerORpet) ? updatePlayer : updateNpc;
 
@@ -662,7 +671,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         csString sector;
         InstanceID instance;
         if (!actor->IsAlive()) //resurrect the player where it should be before saving him.
+        {
             actor->Resurrect();
+        }
             
         iSector* sec;
         // We want to save the last reported location
@@ -704,7 +715,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
         targetUpdate->AddField("last_login", timeStr.GetData() );
     }
     else
+    {
         targetUpdate->AddField("last_login", chardata->GetLastLoginTime().GetData() );
+    }
 
     // Create XML for a new progression script that'll restore ActiveSpells.
     csString script;
@@ -741,12 +754,16 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata,gemActor *actor,
 
     // traits
     if (!ClearCharacterTraits(chardata->GetPID()))
+    {
         Error3("Failed to clear traits for character %s: %s.", ShowID(chardata->GetPID()), db->GetLastError());
+    }
     for (i=0;i<PSTRAIT_LOCATION_COUNT;i++)
     {
         psTrait *trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
         if (trait!=NULL)
+        {
             SaveCharacterTrait(chardata->GetPID(),trait->uid);
+        }
     }
 
     // For all the skills we have update them. If the update fails it will automatically save a new

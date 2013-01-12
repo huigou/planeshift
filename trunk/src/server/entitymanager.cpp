@@ -292,14 +292,24 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     // Adjust Position of npc from owners pos
     chardata->GetActor()->GetPosition( pos, yrot, sector );
 
+    PID pid = chardata->GetPID();
+
+    // If the character has a master we would like to clone the data
+    // from the original master.
+    if (chardata->GetMasterNPCID().IsValid())
+    {
+        pid = chardata->GetMasterNPCID();
+    }
+    
+
     float deltax = psserver->GetRandom(6)/4 - 1.5;
     float deltaz = psserver->GetRandom(6)/4 - 1.5;
     
 
-    PID npcPID(this->CopyNPCFromDatabase( chardata->GetPID(),
-                                        pos.x + deltax, pos.y, pos.z + deltaz,  // Set position some distance from parent
-                                        yrot, sector->QueryObject()->GetName(),
-                                        0,NULL, NULL)); // Keep name of parent
+    PID npcPID(this->CopyNPCFromDatabase(pid,
+                                         pos.x + deltax, pos.y, pos.z + deltaz,  // Set position some distance from parent
+                                         yrot, sector->QueryObject()->GetName(),
+                                         0,NULL, NULL)); // Keep name of parent
     if (!npcPID.IsValid())
     {
         Error1( "Could not clone the master NPC .");
@@ -322,7 +332,7 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     db->Command("INSERT INTO npc_knowledge_areas(player_id, area, priority) VALUES (%d, 'Pet %s 1', '1')", 
                 npcPID.Unbox(), npc->GetCharacterData()->GetRaceInfo()->GetName() );
 
-    psServer::CharacterLoader.SaveCharacterData( npc->GetCharacterData(), npc, false );
+    psServer::CharacterLoader.SaveCharacterData( npc->GetCharacterData(), npc, /*charRecordOnly*/ false );
 
     // Add NPC to all Super Clients
     psserver->npcmanager->AddEntity( npc );

@@ -309,9 +309,9 @@ struct Skill
     SkillRank rank;          ///< Skill rank (buffable)
 
     unsigned short zCost;    ///< Cost in Z points.
-    unsigned short yCost;    ///< cost in y points.
+    unsigned short yCost;    ///< Cost in y points.
     unsigned short zCostNext;///< Cost in Z points of next level.
-    unsigned short yCostNext;///< cost in y points of next level.
+    unsigned short yCostNext;///< Cost in y points of next level.
     bool dirtyFlag;          ///< Flag if this was changed after load from database
 
     psSkillInfo *info;       ///< Database information about the skill.
