@@ -1002,7 +1002,7 @@ bool psCharacter::LoadSkills(PID use_id)
                 PSSKILL skill = (PSSKILL)skillResult[i].GetInt("skill_id");
                 skills.SetSkillPractice(  skill, skillResult[i].GetInt("skill_Z") );
                 skills.SetSkillKnowledge( skill, skillResult[i].GetInt("skill_Y") );
-                skills.SetSkillRank(      skill, skillResult[i].GetInt("skill_Rank"),false );
+                skills.SetSkillRank(      skill, skillResult[i].GetInt("skill_Rank"), false );
             }
         }
         skills.Calculate();
@@ -3069,7 +3069,7 @@ void Skill::Train( int yIncrease )
     if(y < yCost)
     {
         y+=yIncrease;
-        dirtyFlag = true;
+        dirtyFlag = true; // Mark for DB update
     }
 }
 
@@ -3110,7 +3110,7 @@ bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded, psCharac
     {
         actuallyAdded = 0;
     }
-    dirtyFlag = true;
+    dirtyFlag = true;  // Mark for DB update
     return rankup;
 }
 
@@ -3126,7 +3126,7 @@ void psCharacter::SetSkillRank(PSSKILL which, unsigned int rank)
 
 unsigned int psCharacter::GetCharLevel(bool physical)
 {
-	MathEnvironment env;
+    MathEnvironment env;
     env.Define("Actor", this);
 
     env.Define("Physical", (physical ? 1 : 0));
@@ -3649,16 +3649,22 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
 
     // Clamp rank to stay within sane values, even if given something totally outrageous.
     if (rank < 0)
+    {
         rank = 0;
+    }
     else if (rank > SKILL_MAX_RANK)
+    {
         rank = SKILL_MAX_RANK;
+    }
 
     skills[which].rank.SetBase(rank);
     skills[which].CalculateCosts(self);
-    skills[which].dirtyFlag = true;
+    skills[which].dirtyFlag = true;  // Mark for DB update
 
     if (recalculatestats)
-      self->RecalculateStats();
+    {
+        self->RecalculateStats();
+    }
 }
 
 void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
@@ -3668,7 +3674,7 @@ void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
     if (y_value < 0)
         y_value = 0;
     skills[which].y = y_value;
-    skills[which].dirtyFlag = true;
+    skills[which].dirtyFlag = true;   // Mark for DB update
 }
 
 
@@ -3680,7 +3686,7 @@ void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
         z_value = 0;
 
     skills[which].z = z_value;
-    skills[which].dirtyFlag = true;
+    skills[which].dirtyFlag = true;   // Mark for DB update
 }
 
 

@@ -42,7 +42,27 @@ INSERT INTO character_skills VALUES("19","46","0","0","60");
 INSERT INTO character_skills VALUES("6","2","0","0","100"); # Axe
 
 # Tribe skills on mining
-INSERT INTO character_skills VALUES("20","37","200","200","200");
+INSERT INTO character_skills VALUES("20","2","0","0","165"); # Axe
+INSERT INTO character_skills VALUES("20","4","0","0","115"); # Melee
+INSERT INTO character_skills VALUES("20","37","0","0","200"); # Mining
+INSERT INTO character_skills VALUES("20","46","0","0","75"); # Agility
+INSERT INTO character_skills VALUES("20","47","0","0","85"); # Charisma
+INSERT INTO character_skills VALUES("20","48","0","0","175"); # Endurance
+INSERT INTO character_skills VALUES("20","49","0","0","65"); # Intelligence
+INSERT INTO character_skills VALUES("20","50","0","0","175"); # Strength
+INSERT INTO character_skills VALUES("20","51","0","0","95"); # Will
+
+# Tribe skills on hunting
+INSERT INTO character_skills VALUES("62","0","0","0","65"); # Sword
+INSERT INTO character_skills VALUES("62","1","0","0","95"); # Knives & Daggers
+INSERT INTO character_skills VALUES("62","4","0","0","115"); # Melee
+INSERT INTO character_skills VALUES("62","6","0","0","195"); # Ranged
+INSERT INTO character_skills VALUES("62","46","0","0","175"); # Agility
+INSERT INTO character_skills VALUES("62","47","0","0","95"); # Charisma
+INSERT INTO character_skills VALUES("62","48","0","0","175"); # Endurance
+INSERT INTO character_skills VALUES("62","49","0","0","75"); # Intelligence
+INSERT INTO character_skills VALUES("62","50","0","0","95"); # Strength
+INSERT INTO character_skills VALUES("62","51","0","0","85"); # Will
 
 # Strong fighter8 to test loot cost cap
 INSERT INTO character_skills VALUES("87","46","0","0","400");
