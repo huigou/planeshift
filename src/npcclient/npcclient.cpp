@@ -1480,19 +1480,19 @@ void psNPCClient::ListAllNPCs(const char* pattern)
         return; // No point continue since no npc should be named summary :)
     } else if (strcasecmp(pattern,"stats") == 0)
     {
-        CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-11s %-11s %-11s %-11s\n",
+        CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-17s %-17s %-17s %-17s\n",
                 "NPC ID", "EID", "Name",
                 "HP", "Mana","PStamina","MStamina");
         for(size_t i = 0; i < npcs.GetSize(); i++)
         {
-            CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %5.1f/%5.1f %5.1f/%5.1f %5.1f/%5.1f %5.1f/%5.1f \n" ,
+            CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %5.1f/%5.1f/%5.1f %5.1f/%5.1f/%5.1f %5.1f/%5.1f/%5.1f %5.1f/%5.1f/%5.1f \n" ,
                     npcs[i]->GetPID().Unbox(),
                     npcs[i]->GetActor() ? npcs[i]->GetActor()->GetEID().Unbox() : 0,
                     npcs[i]->GetName(),
-                    npcs[i]->GetHP(),npcs[i]->GetMaxHP(),
-                    npcs[i]->GetMana(),npcs[i]->GetMaxMana(),
-                    npcs[i]->GetPysStamina(),npcs[i]->GetMaxPysStamina(),
-                    npcs[i]->GetMenStamina(),npcs[i]->GetMaxMenStamina()
+                    npcs[i]->GetHP(),npcs[i]->GetMaxHP(),npcs[i]->GetHPRate(),
+                    npcs[i]->GetMana(),npcs[i]->GetMaxMana(),npcs[i]->GetManaRate(),
+                    npcs[i]->GetPysStamina(),npcs[i]->GetMaxPysStamina(),npcs[i]->GetPysStaminaRate(),
+                    npcs[i]->GetMenStamina(),npcs[i]->GetMaxMenStamina(),npcs[i]->GetMenStaminaRate()
                     );
         }
         

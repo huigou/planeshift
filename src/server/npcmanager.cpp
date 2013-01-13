@@ -2614,6 +2614,10 @@ void NPCManager::QueueStatDR(gemNPC* npc, unsigned int statsDirtyFlags )
     {
         outbound->msg->Add((float) npc->GetCharacterData()->GetMaxHP().Current());
     }
+    if (statsDirtyFlags & DIRTY_VITAL_HP_RATE)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetHPRate().Current());
+    }
     if (statsDirtyFlags & DIRTY_VITAL_MANA)
     {
         outbound->msg->Add((float) npc->GetCharacterData()->GetMana());
@@ -2621,6 +2625,10 @@ void NPCManager::QueueStatDR(gemNPC* npc, unsigned int statsDirtyFlags )
     if (statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
     {
         outbound->msg->Add((float) npc->GetCharacterData()->GetMaxMana().Current());
+    }
+    if (statsDirtyFlags & DIRTY_VITAL_MANA_RATE)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetManaRate().Current());
     }
     if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
     {
@@ -2630,6 +2638,10 @@ void NPCManager::QueueStatDR(gemNPC* npc, unsigned int statsDirtyFlags )
     {
         outbound->msg->Add((float) npc->GetCharacterData()->GetMaxPStamina().Current());
     }
+    if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_RATE)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetPStaminaRate().Current());
+    }
     if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
     {
         outbound->msg->Add((float) npc->GetCharacterData()->GetStamina(false));
@@ -2637,6 +2649,10 @@ void NPCManager::QueueStatDR(gemNPC* npc, unsigned int statsDirtyFlags )
     if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
     {
         outbound->msg->Add((float) npc->GetCharacterData()->GetMaxMStamina().Current());
+    }
+    if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_RATE)
+    {
+        outbound->msg->Add((float) npc->GetCharacterData()->GetMStaminaRate().Current());
     }
     cmd_count++;
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added perception: StatDR for %s\n",npc->GetName());

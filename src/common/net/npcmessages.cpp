@@ -866,6 +866,11 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                     float maxHP = msg->GetFloat();
                     msgtext.AppendFmt(" MaxHP: %.2f",maxHP);
                 }
+                if (statsDirtyFlags & DIRTY_VITAL_HP_RATE)
+                {
+                    float hpRate = msg->GetFloat();
+                    msgtext.AppendFmt(" HPRate: %.2f",hpRate);
+                }
                 if (statsDirtyFlags & DIRTY_VITAL_MANA)
                 {
                     float mana = msg->GetFloat();
@@ -875,6 +880,11 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 {
                     float maxMana = msg->GetFloat();
                     msgtext.AppendFmt(" MaxMana: %.2f",maxMana);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MANA_RATE)
+                {
+                    float manaRate = msg->GetFloat();
+                    msgtext.AppendFmt(" ManaRate: %.2f",manaRate);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
                 {
@@ -886,6 +896,11 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                     float maxPysStamina = msg->GetFloat();
                     msgtext.AppendFmt(" MaxPStamina: %.2f",maxPysStamina);
                 }
+                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_RATE)
+                {
+                    float pysStaminaRate = msg->GetFloat();
+                    msgtext.AppendFmt(" PStaminaRate: %.2f",pysStaminaRate);
+                }
                 if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
                 {
                     float menStamina = msg->GetFloat();
@@ -895,6 +910,11 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 {
                     float maxMenStamina = msg->GetFloat();
                     msgtext.AppendFmt(" MaxMStamina: %.2f",maxMenStamina);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_RATE)
+                {
+                    float menStaminaRate = msg->GetFloat();
+                    msgtext.AppendFmt(" MStaminaRate: %.2f",menStaminaRate);
                 }
 
                 break;

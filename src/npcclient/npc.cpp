@@ -61,6 +61,62 @@
 
 extern iDataConnection* db;
 
+
+
+
+void Stat::Update( csTicks now )
+{
+    // No point in updating when rate is not set
+    if (rate == 0.0)
+    {
+        lastUpdate = now;
+        return;
+    }
+    
+    float delta = (now - lastUpdate)/1000.0;
+    
+    value += delta*rate;
+    
+    if (value < 0.0)
+    {
+        value = 0.0;
+    } else if (value > max)
+    {
+        value = max;
+    }
+
+    lastUpdate = now;
+}
+
+void Stat::SetValue( float value, csTicks now )
+{
+    this->value = value;
+    lastUpdate = now;
+}
+
+void Stat::SetMax( float max )
+{
+    this->max = max;
+    if (value > max)
+    {
+        value = max;
+    }
+}
+
+void Stat::SetRate( float rate, csTicks now )
+{
+    // Update value to now.
+    Update(now);
+    // Set new rate
+    this->rate = rate;
+}
+
+
+
+
+
+
+
 NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys): checked(false), hatelist(npcclient, engine, world), tick(NULL)
 {
     brain=NULL;
@@ -89,14 +145,6 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     alive=false;
     tribe=NULL;
     raceInfo=NULL;
-    hp = 0.0;
-    maxHP = 0.0;
-    mana = 0.0;
-    maxMana = 0.0;
-    pysStamina = 0.0;
-    maxPysStamina = 0.0;
-    menStamina = 0.0;
-    maxMenStamina = 0.0;
     checkedSector=NULL;
     checked = false;
     checkedResult = false;
@@ -755,10 +803,10 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Vel:                  %.2f\n",vel);
     CPrintf(CON_CMDOUTPUT, "Walk velocity:        %.2f\n",walkVelocity);
     CPrintf(CON_CMDOUTPUT, "Run velocity:         %.2f\n",runVelocity);
-    CPrintf(CON_CMDOUTPUT, "HP/MaxHP:             %.1f/%.1f\n",GetHP(),GetMaxHP());
-    CPrintf(CON_CMDOUTPUT, "Mana/MaxMana:         %.1f/%.1f\n",GetMana(),GetMaxMana());
-    CPrintf(CON_CMDOUTPUT, "PStamina/MaxPStamina: %.1f/%.1f\n",GetPysStamina(),GetMaxPysStamina());
-    CPrintf(CON_CMDOUTPUT, "MStamina/MaxMStamina: %.1f/%.1f\n",GetMenStamina(),GetMaxMenStamina());
+    CPrintf(CON_CMDOUTPUT, "HP(Value/Max/Rate):   %.1f/%.1f/%.1f\n",GetHP(),GetMaxHP(),GetHPRate());
+    CPrintf(CON_CMDOUTPUT, "Mana(V/M/R):          %.1f/%.1f/%.1f\n",GetMana(),GetMaxMana(),GetManaRate());
+    CPrintf(CON_CMDOUTPUT, "PStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetPysStamina(),GetMaxPysStamina(),GetPysStaminaRate());
+    CPrintf(CON_CMDOUTPUT, "MStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetMenStamina(),GetMaxMenStamina(),GetMenStaminaRate());
     CPrintf(CON_CMDOUTPUT, "Owner:                %s\n",GetOwnerName());
     CPrintf(CON_CMDOUTPUT, "Race:                 %s\n",GetRaceInfo()?GetRaceInfo()->GetName():"(None)");
     CPrintf(CON_CMDOUTPUT, "Region:               %s\n",GetRegion()?GetRegion()->GetName():"(None)");
@@ -1242,84 +1290,128 @@ RaceInfo_t* NPC::GetRaceInfo()
 
 void NPC::SetHP(float hp)
 {
-    this->hp = hp;
+    this->hp.SetValue(hp, csGetTicks());
 }
 
-float NPC::GetHP() const
+float NPC::GetHP()
 {
-    return hp;
+    hp.Update(csGetTicks());
+    return hp.GetValue();
 }
 
 void NPC::SetMaxHP(float maxHP)
 {
-    this->maxHP = maxHP;
+    hp.SetMax(maxHP);
 }
 
 float NPC::GetMaxHP() const
 {
-    return maxHP;
+    return hp.GetMax();
+}
+
+void NPC::SetHPRate(float hpRate)
+{
+    hp.SetRate( hpRate, csGetTicks() );
+}
+
+float NPC::GetHPRate() const
+{
+    return hp.GetRate();
 }
 
 void NPC::SetMana(float mana)
 {
-    this->mana = mana;
+    this->mana.SetValue(mana, csGetTicks() );
 }
    
-float NPC::GetMana() const
+float NPC::GetMana()
 {
-    return mana;
+    mana.Update(csGetTicks());
+    return mana.GetValue();
 }
 
 void NPC::SetMaxMana(float maxMana)
 {
-    this->maxMana = maxMana;
+    mana.SetMax(maxMana);
 }
     
 float NPC::GetMaxMana() const
 {
-    return maxMana;
+    return mana.GetMax();
 }
     
+void NPC::SetManaRate(float manaRate)
+{
+    mana.SetRate(manaRate, csGetTicks());
+}
+   
+float NPC::GetManaRate() const
+{
+    return mana.GetRate();
+}
+
 void NPC::SetPysStamina(float pysStamina)
 {
-    this->pysStamina = pysStamina;
+    this->pysStamina.SetValue(pysStamina, csGetTicks());
 }
     
-float NPC::GetPysStamina() const
+float NPC::GetPysStamina()
 {
-    return pysStamina;
+    pysStamina.Update(csGetTicks());
+    return pysStamina.GetValue();
 }
     
 void NPC::SetMaxPysStamina(float maxPysStamina)
 {
-    this->maxPysStamina = maxPysStamina;
+    pysStamina.SetMax( maxPysStamina );
 }
     
 float NPC::GetMaxPysStamina() const
 {
-    return maxPysStamina;
+    return pysStamina.GetMax();
+}
+    
+void NPC::SetPysStaminaRate(float pysStaminaRate)
+{
+    pysStamina.SetRate(pysStaminaRate, csGetTicks());
+}
+    
+float NPC::GetPysStaminaRate() const
+{
+    return pysStamina.GetRate();
 }
     
 void NPC::SetMenStamina(float menStamina)
 {
-    this->menStamina = menStamina;
+    this->menStamina.SetValue( menStamina, csGetTicks());
 }
    
-float NPC::GetMenStamina() const
+float NPC::GetMenStamina()
 {
-    return menStamina;
+    menStamina.Update(csGetTicks());
+    return menStamina.GetValue();
 }
     
 void NPC::SetMaxMenStamina(float maxMenStamina)
 {
-    this->maxMenStamina = maxMenStamina;
+    menStamina.SetMax( maxMenStamina );
 }
     
 float NPC::GetMaxMenStamina() const
 {
-    return maxMenStamina;
+    return menStamina.GetMax();
 }
 
+void NPC::SetMenStaminaRate(float menStaminaRate)
+{
+    menStamina.SetRate( menStaminaRate, csGetTicks());
+}
+   
+float NPC::GetMenStaminaRate() const
+{
+    return menStamina.GetRate();
+}
+    
 void NPC::TakeControl(gemNPCActor* actor)
 {
     controlledActors.PushSmart(csWeakRef<gemNPCActor>(actor));

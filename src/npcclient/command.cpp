@@ -433,6 +433,8 @@ int com_showtime(const char*)
     CPrintf(CON_CMDOUTPUT,"Game time is %d:%02d %d-%d-%d\n",
             npcclient->GetGameTODHour(),npcclient->GetGameTODMinute(),
             npcclient->GetGameTODYear(),npcclient->GetGameTODMonth(),npcclient->GetGameTODDay());
+    csTicks now = csGetTicks();
+    CPrintf(CON_CMDOUTPUT,"Tick is %u. Remaining %.5f days before csTicks rollover.\n",now,(float)(UINT_MAX-now)/(1000.0*60.0*60.0*24.0));
     return 0;
 }
 
