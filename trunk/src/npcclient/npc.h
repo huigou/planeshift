@@ -110,6 +110,53 @@ private:
     psWorld* world;
 };
 
+/**
+ * Represents a stat for the NPC. Used to extrapolated stat values
+ * as they regenerate.
+ */
+class Stat
+{
+public:
+    /** Constructor
+     */
+    Stat() : value(0.0), max(0.0), rate(0.0), lastUpdate(0) {}
+
+    /**
+     * Update the stat to now.
+     */
+    void Update( csTicks now );
+
+    /** Set the stat value.
+     */
+    void SetValue( float value, csTicks now );
+
+    /** Set the maximum stat value.
+     */
+    void SetMax( float max );
+
+    /** Set the regeneration value for this stat.
+     */
+    void SetRate( float rate, csTicks now );
+
+    /** Return the current value of the stat.
+     *
+     * Call Update before to get the extrapolated value.
+     */
+    float GetValue() const { return value; }
+
+    /** Get the max stat value
+     */
+    float GetMax() const { return max; }
+
+    /** Get the regeneration rate.
+     */
+    float GetRate() const { return rate; }
+private:
+    float   value;         ///< Value of the stat
+    float   max;           ///< Maximum value of the stat
+    float   rate;          ///< Regeneration rate for the stat
+    csTicks lastUpdate;    ///< Last time this stat was updated
+};
 
 /**
 * This object represents each NPC managed by this superclient.
@@ -179,14 +226,10 @@ protected:
     RaceInfo_t*        raceInfo;
 
     // Stats
-    float              hp;
-    float              maxHP;
-    float              mana;
-    float              maxMana;
-    float              pysStamina;
-    float              maxPysStamina;
-    float              menStamina;
-    float              maxMenStamina;
+    Stat               hp;
+    Stat               mana;
+    Stat               pysStamina;
+    Stat               menStamina;
     
     csArray< csWeakRef<gemNPCActor> > controlledActors; ///< Actors that are dragged/pushed around by this NPC.
 
@@ -553,7 +596,7 @@ public:
     
     /** Get the npc HP
      */
-    float GetHP() const;
+    float GetHP();
 
     /** Set the npc MaxHP
      */
@@ -563,13 +606,21 @@ public:
      */
     float GetMaxHP() const;
 
+    /** Set the npc HP
+     */
+    void SetHPRate(float hpRate);
+    
+    /** Get the npc HPRate
+     */
+    float GetHPRate() const;
+
     /** Set the npc Mana
      */
     void SetMana(float mana);
     
     /** Get the npc Mana
      */
-    float GetMana() const;
+    float GetMana();
     
     /** Set the npc MaxMana
      */
@@ -579,13 +630,21 @@ public:
      */
     float GetMaxMana() const;
     
+    /** Set the npc ManaRate
+     */
+    void SetManaRate(float manaRate);
+    
+    /** Get the npc ManaRate
+     */
+    float GetManaRate() const;
+    
     /** Set the npc PysStamina
      */
     void SetPysStamina(float pysStamina);
     
     /** Get the npc PysStamina
      */
-    float GetPysStamina() const;
+    float GetPysStamina();
     
     /** Set the npc MaxPysStamina
      */
@@ -595,13 +654,21 @@ public:
      */
     float GetMaxPysStamina() const;
     
+    /** Set the npc PysStaminaRate
+     */
+    void SetPysStaminaRate(float pysStaminaRate);
+    
+    /** Get the npc PysStaminaRate
+     */
+    float GetPysStaminaRate() const;
+    
     /** Set the npc MenStamina
      */
     void SetMenStamina(float menStamina);
     
     /** Get the npc MenStamina
      */
-    float GetMenStamina() const;
+    float GetMenStamina();
     
     /** Set the npc MaxMenStamina
      */
@@ -610,6 +677,14 @@ public:
     /** Get the npc MaxMenStamina
      */
     float GetMaxMenStamina() const;
+    
+    /** Set the npc MenStaminaRate
+     */
+    void SetMenStaminaRate(float menStaminaRate);
+    
+    /** Get the npc MenStaminaRate
+     */
+    float GetMenStaminaRate() const;
     
     /** Take control of another entity.
      */

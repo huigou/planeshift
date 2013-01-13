@@ -1209,10 +1209,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 EID          entityEID       = EID(list.msg->GetUInt32());
                 unsigned int statsDirtyFlags = msg->GetUInt16();
 
-                float hp = 0.0, maxHP = 0.0;
-                float mana = 0.0, maxMana = 0.0;
-                float pysStamina = 0.0, maxPysStamina = 0.0;
-                float menStamina = 0.0, maxMenStamina = 0.0;
+                float hp = 0.0, maxHP = 0.0, hpRate = 0.0;
+                float mana = 0.0, maxMana = 0.0, manaRate = 0.0;
+                float pysStamina = 0.0, maxPysStamina = 0.0, pysStaminaRate = 0.0;
+                float menStamina = 0.0, maxMenStamina = 0.0, menStaminaRate = 0.0;
 
                 if (statsDirtyFlags & DIRTY_VITAL_HP)
                 {
@@ -1222,6 +1222,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 {
                     maxHP = list.msg->GetFloat();
                 }
+                if (statsDirtyFlags & DIRTY_VITAL_HP_RATE)
+                {
+                    hpRate = list.msg->GetFloat();
+                }
                 if (statsDirtyFlags & DIRTY_VITAL_MANA)
                 {
                     mana = list.msg->GetFloat();
@@ -1229,6 +1233,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if (statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
                 {
                     maxMana = list.msg->GetFloat();
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MANA_RATE)
+                {
+                    manaRate = list.msg->GetFloat();
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
                 {
@@ -1238,6 +1246,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 {
                     maxPysStamina = list.msg->GetFloat();
                 }
+                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_RATE)
+                {
+                    pysStaminaRate = list.msg->GetFloat();
+                }
                 if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
                 {
                     menStamina = list.msg->GetFloat();
@@ -1245,6 +1257,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
                 {
                     maxMenStamina = list.msg->GetFloat();
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_RATE)
+                {
+                    menStaminaRate = list.msg->GetFloat();
                 }
 
                 NPC* npc = npcclient->FindNPC(entityEID);
@@ -1254,8 +1270,8 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     break;
                 }
                 
-                NPCDebug(npc, 5, "Got StatDR Perception: HP: %.2f/.2f Mana: %.2f/%.2f PysStamina: %.2f/%.2f MenStamina: %.2f/%.2f",
-                         hp,maxHP,mana,maxMana,pysStamina,maxPysStamina,menStamina,maxMenStamina);
+                NPCDebug(npc, 5, "Got StatDR Perception: HP: %.2f/.2f %.2f Mana: %.2f/%.2f %.2f PysStamina: %.2f/%.2f %.2f MenStamina: %.2f/%.2f %.2f",
+                         hp,maxHP,hpRate,mana,maxMana,manaRate,pysStamina,maxPysStamina,pysStaminaRate,menStamina,maxMenStamina,menStaminaRate);
                 if (statsDirtyFlags & DIRTY_VITAL_HP)
                 {
                     npc->SetHP(hp);
@@ -1263,6 +1279,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if (statsDirtyFlags & DIRTY_VITAL_HP_MAX)
                 {
                     npc->SetMaxHP(maxHP);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_HP_RATE)
+                {
+                    npc->SetHPRate(hpRate);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_MANA)
                 {
@@ -1272,6 +1292,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 {
                     npc->SetMaxMana(maxMana);
                 }
+                if (statsDirtyFlags & DIRTY_VITAL_MANA_RATE)
+                {
+                    npc->SetManaRate(manaRate);
+                }
                 if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
                 {
                     npc->SetPysStamina(pysStamina);
@@ -1280,6 +1304,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 {
                     npc->SetMaxPysStamina(maxPysStamina);
                 }
+                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_RATE)
+                {
+                    npc->SetPysStaminaRate(pysStaminaRate);
+                }
                 if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
                 {
                     npc->SetMenStamina(menStamina);
@@ -1287,6 +1315,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
                 {
                     npc->SetMaxMenStamina(maxMenStamina);
+                }
+                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_RATE)
+                {
+                    npc->SetMenStaminaRate(menStaminaRate);
                 }
                 break;
             }

@@ -505,7 +505,8 @@ void Tribe::UpdateDeathRate()
 {
     csTicks now = csGetTicks();
 
-    int delta = now - lastDeath; // TODO: Fix rollover situation
+    // Calculate delta, integer types give nice rollover
+    int delta = now - lastDeath;
 
     float rate = delta;
 
@@ -519,7 +520,8 @@ void Tribe::UpdateResourceRate(int amount)
 {
     csTicks now = csGetTicks();
 
-    int delta = now - lastResource; // TODO: Fix rollover situation
+    // Calculate delta, integer types give nice rollover
+    int delta = now - lastResource;
 
     float rate = delta/amount;
 
@@ -1108,8 +1110,6 @@ void Tribe::DumpKnowledge()
         CPrintf(CON_CMDOUTPUT, "%s ", knowledge[i].GetData());
     }
 
-    // TODO -- Change the classic printf with something else
-    // I used this just to make it look nicer on the console. Don't think it's ok.
     CPrintf(CON_CMDOUTPUT, "\n");
 }
 
