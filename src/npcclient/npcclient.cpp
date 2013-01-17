@@ -1155,7 +1155,7 @@ psPath* psNPCClient::FindPath(const char* name)
 #ifdef USE_REACTION_REGISTRATION 
 void psNPCClient::RegisterReaction(NPC* npc, Reaction* reaction)
 {
-    allReactions.PutUnique(reaction->GetEventType(npc), npc);
+    allReactions.Put(reaction->GetEventType(), npc);
 }
 #endif
 
@@ -1163,7 +1163,9 @@ void psNPCClient::TriggerEvent(Perception* pcpt, float maxRange,
                                csVector3* basePos, iSector* baseSector,
                                bool sameSector)
 {
-#ifdef USE_REACTION_REGISTRATION 
+#ifdef USE_REACTION_REGISTRATION
+    bool foundUser = false;
+
     // Only trigger NPCs that has this percpetion type registered as a reaction.
     csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator(pcpt->GetName(NULL)));
     while (iter.HasNext())
@@ -1175,6 +1177,11 @@ void psNPCClient::TriggerEvent(Perception* pcpt, float maxRange,
             continue;
 
         npc->TriggerEvent(pcpt, maxRange, basePos, baseSector, sameSector);
+        foundUser = true;
+    }
+    if (!foundUser)
+    {
+        notUsedReactions.PushSmart( pcpt->GetName(NULL) );
     }
 #else
     for(size_t i=0; i<npcs.GetSize(); i++)
@@ -1756,6 +1763,85 @@ void psNPCClient::ListTribeRecipes(const char* tribeID)
     CPrintf(CON_CMDOUTPUT, "No Tribe with id '%d' found.\n", tribeID);
 }
 
+void psNPCClient::ListReactions(const char* pattern)
+{
+    csArray<NPC*> npcs;
+    csArray<csString> reactions;
+
+    // Extract uniq lists of NPCs and reactions
+    {
+        csHash<NPC*,csString>::GlobalIterator iter(allReactions.GetIterator());
+        while (iter.HasNext())
+        {
+            csTuple2<NPC*,csString> item = iter.NextTuple();
+            npcs.PushSmart(item.first);
+            reactions.PushSmart(item.second);
+        }
+    }
+
+    CPrintf(CON_CMDOUTPUT, "Registered reactions (Per NPC):\n");
+    csArray<NPC*>::Iterator npcIter = npcs.GetIterator();
+    while (npcIter.HasNext())
+    {
+        NPC* npc = npcIter.Next();
+        CPrintf(CON_CMDOUTPUT, "NPC: %s(%s):\n",npc->GetName(),ShowID(npc->GetEID()));
+        csString result;
+        csString delim = "";
+        csHash<NPC*,csString>::GlobalIterator iter(allReactions.GetIterator());
+        while (iter.HasNext())
+        {
+            csTuple2<NPC*,csString> item = iter.NextTuple();
+            if (item.first == npc)
+            {
+                csString reaction = item.second;
+                if (result.Length() > 70)
+                {
+                    CPrintf(CON_CMDOUTPUT,"%s\n",result.GetDataSafe());
+                    delim = "";
+                    result = "";
+                }
+                result.AppendFmt("%s%s",delim.GetData(),reaction.GetDataSafe());
+                delim = ", ";
+            }
+        }
+        CPrintf(CON_CMDOUTPUT,"%s\n",result.GetDataSafe());
+    }
+    CPrintf(CON_CMDOUTPUT, "Registered reactions (Per Reaction):\n");
+    csArray<csString>::Iterator reactionIter = reactions.GetIterator();
+    while (reactionIter.HasNext())
+    {
+        csString reaction = reactionIter.Next();
+        CPrintf(CON_CMDOUTPUT, "Reaction: \"%s\"\n",reaction.GetDataSafe());
+        csString result;
+        csString delim = "";
+        csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator(reaction));
+        while (iter.HasNext())
+        {
+            NPC* npc = iter.Next();
+            if (result.Length() > 70)
+            {
+                CPrintf(CON_CMDOUTPUT,"%s\n",result.GetDataSafe());
+                delim = "";
+                result = "";
+            }
+            result.AppendFmt("%s%s(%s)",delim.GetData(),npc->GetName(),ShowID(npc->GetEID()));
+            delim = ", ";
+        }
+        CPrintf(CON_CMDOUTPUT,"%s\n",result.GetDataSafe());
+    }
+    
+    CPrintf(CON_CMDOUTPUT, "Not used reactions:\n");
+    csArray<csString>::Iterator notUsedIter(notUsedReactions.GetIterator());
+    while (notUsedIter.HasNext())
+    {
+        csString type = notUsedIter.Next();
+        CPrintf(CON_CMDOUTPUT, "%s\n",type.GetDataSafe());
+    }
+    
+}
+
+
+
 void psNPCClient::ListWaypoints(const char* pattern)
 {
     pathNetwork->ListWaypoints(pattern);
@@ -2041,7 +2127,7 @@ void psNPCClient::PerceptProximityLocations()
 
         // Now trigger every NPC within the sector of the location.
         TriggerEvent(&pcpt_sensed, location->radius + LONG_RANGE_PERCEPTION,
-                     &location->pos, location->GetSector(engine),true); // Broadcast only in sector
+                     &location->pos, location->GetSector(engine), true); // Broadcast only in sector
     }
 }
 

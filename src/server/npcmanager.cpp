@@ -859,32 +859,8 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                     "extremely stronger"
                 };
 
-                if(physical.IsEmpty())
-                {
-                    physical = ComparePhrases[physicalDiff];
-                }
-                else
-                {
-                    physical += csString(" ") + ComparePhrases[physicalDiff];
-                }
-                if(magical.IsEmpty())
-                {
-                    magical = ComparePhrases[magicalDiff];
-                }
-                else
-                {
-                    magical += csString(" ") + ComparePhrases[magicalDiff];
-                }
-                if(overall.IsEmpty())
-                {
-                    overall = ComparePhrases[overallDiff];
-                }
-                else
-                {
-                    overall += csString(" ") + ComparePhrases[overallDiff];
-                }
-
-                QueueAssessPerception(actorEID,targetEID,physical,magical,overall);
+                QueueAssessPerception(actorEID,targetEID,physical,ComparePhrases[physicalDiff],
+                                      magical,ComparePhrases[magicalDiff],overall,ComparePhrases[overallDiff]);
 
                 break;
             }
@@ -2475,17 +2451,28 @@ void NPCManager::CheckSendPerceptionQueue(size_t expectedAddSize)
 /**
  */
 void NPCManager::QueueAssessPerception(EID entityEID, EID targetEID, const csString &physicalAssessmentPerception,
-                                       const csString &magicalAssessmentPerception,  const csString &overallAssessmentPerception)
+                                       const csString &physicalAssessmentDifferencePerception,
+                                       const csString &magicalAssessmentPerception,  
+                                       const csString &magicalAssessmentDifferencePerception,
+                                       const csString &overallAssessmentPerception,
+                                       const csString &overallAssessmentDifferencePerception)
 {
     CheckSendPerceptionQueue(sizeof(int8_t)+2*sizeof(uint32_t)+(physicalAssessmentPerception.Length()+1)+
-                             (magicalAssessmentPerception.Length()+1)+(overallAssessmentPerception.Length()+1));
+                             (physicalAssessmentDifferencePerception.Length()+1)+
+                             (magicalAssessmentPerception.Length()+1)+
+                             (magicalAssessmentDifferencePerception.Length()+1)+
+                             (overallAssessmentPerception.Length()+1)+
+                             (overallAssessmentDifferencePerception.Length()+1));
 
     outbound->msg->Add((int8_t) psNPCCommandsMessage::PCPT_ASSESS);
     outbound->msg->Add(entityEID.Unbox());
     outbound->msg->Add(targetEID.Unbox());
     outbound->msg->Add(physicalAssessmentPerception);
+    outbound->msg->Add(physicalAssessmentDifferencePerception);
     outbound->msg->Add(magicalAssessmentPerception);
+    outbound->msg->Add(magicalAssessmentDifferencePerception);
     outbound->msg->Add(overallAssessmentPerception);
+    outbound->msg->Add(overallAssessmentDifferencePerception);
 
     if(outbound->msg->overrun)
     {

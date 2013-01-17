@@ -92,7 +92,12 @@ public:
 
     /// Let the superclient know the result of an assessment
     void QueueAssessPerception(EID entityEID, EID targetEID, const csString& physicalAssessmentPerception,
-                               const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception);
+                               const csString &physicalAssessmentDifferencePerception,
+                               const csString &magicalAssessmentPerception,  
+                               const csString &magicalAssessmentDifferencePerception,
+                               const csString &overallAssessmentPerception,
+                               const csString &overallAssessmentDifferencePerception);
+
     
     /// Let the superclient know that a player has said something to one of its npcs.
     void QueueTalkPerception(gemActor *speaker, gemNPC *target);

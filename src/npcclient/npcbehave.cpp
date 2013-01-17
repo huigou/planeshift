@@ -202,7 +202,7 @@ bool NPCType::Load(iResultRow &row)
             for(size_t i=0; i<reactions.GetSize(); i++)
             {
                 // Same event with same type
-                if( (reactions[i]->GetEventType(NULL) == r->GetEventType(NULL))&&
+                if( (reactions[i]->GetEventType() == r->GetEventType())&&
                     (reactions[i]->type == r->type)&&
                     (reactions[i]->values == r->values))
                 {
@@ -217,7 +217,7 @@ bool NPCType::Load(iResultRow &row)
                                 // to allow for overiding of event,affected pairs.
                                 // Though now give error, until needed.
                                 Error5("NPCType(%s) reaction of type '%s' already connected to '%s' in '%s'", row["id"],
-                                       r->GetEventType(NULL).GetDataSafe(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
+                                       r->GetEventType().GetDataSafe(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
                                 return false;
                                 // delete reactions[i];
                                 //reactions.DeleteIndex(i);
@@ -345,7 +345,7 @@ bool NPCType::Load(iDocumentNode *node)
             for (size_t i=0; i<reactions.GetSize(); i++)
             {
                 // Same event with same type
-                if ((reactions[i]->GetEventType(NULL) == r->GetEventType(NULL))&&
+                if ((reactions[i]->GetEventType() == r->GetEventType())&&
                     (reactions[i]->type == r->type)&&
                     (reactions[i]->values == r->values))
                 {
@@ -360,7 +360,7 @@ bool NPCType::Load(iDocumentNode *node)
                                 // to allow for overiding of event,affected pairs.
                                 // Though now give error, until needed.
                                 Error4("Reaction of type '%s' already connected to '%s' in '%s'",
-                                       r->GetEventType(NULL).GetDataSafe(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
+                                       r->GetEventType().GetDataSafe(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
                                 return false;
                                 // delete reactions[i];
                                 //reactions.DeleteIndex(i);
@@ -397,7 +397,7 @@ void NPCType::AddReaction(Reaction *reaction)
 
 void NPCType::InsertReaction(Reaction *reaction)
 {
-    reactions.Insert(0,reaction);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
+    reactions.Insert(0, reaction);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
 #ifdef USE_REACTION_REGISTRATION
     if (npc)
     {
@@ -408,28 +408,20 @@ void NPCType::InsertReaction(Reaction *reaction)
 
 void NPCType::FirePerception(NPC *npc, Perception *pcpt)
 {
-    Behavior* behavior = npc->GetCurrentBehavior();
-    if(behavior && behavior->IsAMOn() && npc->GetTribe())
+    // Check if this NPC should Automatically memorize some types
+
+    if(npc->HasAutoMemorizeTypes() && npc->GetTribe())
     {
-        csString type            = pcpt->GetType();
-
-        // No point in memorizing a perception with no type, since the memory would be (null).
-        if (type.Length())
+        if (npc->ContainAutoMemorizeType(pcpt->GetType()))
         {
-            csArray<csString>* types = behavior->GetAMTypes();
-
-            // Check if all should be memorized or check for specefic.
-            if(types->Get(0) == "all" || (types->Find(type) != csArrayItemNotFound))
-            {
-                npc->GetTribe()->Memorize(npc,pcpt);
-            }
+            npc->GetTribe()->Memorize(npc,pcpt);
         }
     }
     
     // Check all reactions
     for (size_t x=0; x<reactions.GetSize(); x++)
     {
-        reactions[x]->React(npc,pcpt);
+        reactions[x]->React(npc, pcpt);
     }
 }
 
@@ -440,11 +432,12 @@ csString NPCType::InfoReactions(NPC *npc)
     for (size_t i=0; i<reactions.GetSize(); i++)
     {
         
-        reply.AppendFmt("%s",reactions[i]->GetEventType(npc).GetDataSafe());
+        reply.AppendFmt("%s",reactions[i]->GetEventType().GetDataSafe());
 
-        if (!reactions[i]->GetType().IsEmpty())
+        csString type = reactions[i]->GetType(npc);
+        if (!type.IsEmpty())
         {
-            reply.AppendFmt("[%s]",reactions[i]->GetType().GetDataSafe());
+            reply.AppendFmt("[%s]",type.GetDataSafe());
         }
         if (!reactions[i]->GetValue().IsEmpty())
         {
@@ -470,7 +463,7 @@ void NPCType::DumpReactionList(NPC *npc)
     for (size_t i=0; i<reactions.GetSize(); i++)
     {
         CPrintf(CON_CMDOUTPUT, "%-25s %-25s %5.1f %-10s %-20s %s\n",
-                reactions[i]->GetEventType(NULL).GetDataSafe(),reactions[i]->GetType().GetDataSafe(),
+                reactions[i]->GetEventType().GetDataSafe(),reactions[i]->GetType(npc).GetDataSafe(),
                 reactions[i]->GetRange(),
                 reactions[i]->GetValue().GetDataSafe(),
                 reactions[i]->GetLastTriggerd().GetDataSafe(),
@@ -923,8 +916,6 @@ Behavior::Behavior()
     minLimit                = 0.0;
     maxLimitValid           = false;
     maxLimit                = 0.0;
-    auto_memorize.SetSize(0);
-    AMOn                    = false;
 }
 
 Behavior::Behavior(const char *n)
@@ -973,8 +964,6 @@ void Behavior::DeepCopy(Behavior& other)
     minLimit                = other.minLimit;
     maxLimitValid           = other.maxLimitValid;
     maxLimit                = other.maxLimit;
-    auto_memorize           = other.auto_memorize;
-    AMOn                    = other.AMOn;
     failurePerception       = other.failurePerception;
 
     for (size_t x=0; x<other.sequence.GetSize(); x++)
@@ -1027,12 +1016,13 @@ bool Behavior::Load(iDocumentNode *node)
         maxLimitValid = false;
     }
 
-    // Load the locations that the npc should memorize without breaking behavior
+    // TODO: Remove this check when all servers has been updated.
+    // This field of the behavior is now depricated.
     csString tmp            = node->GetAttributeValue("auto_memorize");
     if(tmp.Length())
     {
-        auto_memorize = psSplit(tmp,',');
-        AMOn = true;
+        Error2("Auto_memorize is not longer suppored. Do not use in behavior %s",name.GetDataSafe());
+        return false;
     }
 
     current_need            = init_need;
@@ -1073,6 +1063,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         if ( strcmp( node->GetValue(), "assess" ) == 0 )
         {
             op = new AssessOperation;
+        }
+        else if ( strcmp( node->GetValue(), "auto_memorize" ) == 0 )
+        {
+            op = new AutoMemorizeOperation;
         }
         else if ( strcmp( node->GetValue(), "build" ) == 0 )
         {
@@ -1783,7 +1777,8 @@ float psGameObject::Calc2DDistance(const csVector3 & a, const csVector3 & b)
 csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
 {
     // Check if there are any $ sign in the string. If not there is no more to do
-    if (object.FindFirst('$') == ((size_t)-1)) return object;
+    // If there are no NPC then we just return as well.
+    if ((object.FindFirst('$') == ((size_t)-1)) || (!npc)) return object;
 
     // Now check if any of the $ signs is something to replace
     csString result(object);  // Result will hold the string with all variables replaced

@@ -1575,6 +1575,47 @@ ScriptOperation::OperationResult CopyLocateOperation::Run(NPC *npc, bool interru
 
 //---------------------------------------------------------------------------
 
+bool AutoMemorizeOperation::Load(iDocumentNode *node)
+{
+    types = node->GetAttributeValue("types");
+    if (types.IsEmpty())
+    {
+        Error1("auto_memorize operation without types not allowed.");
+        return false;
+    }
+    
+    enable = node->GetAttributeValueAsBool("enable",true);
+    enable = !node->GetAttributeValueAsBool("disable",!enable);
+
+    return true;
+}
+
+ScriptOperation *AutoMemorizeOperation::MakeCopy()
+{
+    AutoMemorizeOperation *op = new AutoMemorizeOperation;
+    op->types  = types;
+    op->enable = enable;
+
+    return op;
+}
+
+ScriptOperation::OperationResult AutoMemorizeOperation::Run(NPC *npc, bool interrupted)
+{
+    if (enable)
+    {
+        npc->AddAutoMemorize(types);
+    }
+    else
+    {
+        npc->RemoveAutoMemorize(types);
+    }
+    
+
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 bool CircleOperation::Load(iDocumentNode *node)
 {
     radius = node->GetAttributeValueAsFloat("radius");

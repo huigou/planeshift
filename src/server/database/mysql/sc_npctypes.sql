@@ -165,13 +165,13 @@ INSERT INTO sc_npctypes VALUES("8","On Sight Fighter","TurnToSensedPlayer,Fighte
 <react event="fight defencive"     behavior="FightDefencive" />
 
 <!-- Reaction to results of assessments -->
-<react event="$target extremely weaker"        behavior="AssessLame" />
-<react event="$target much weaker"      behavior="AssessWeaker" />
-<react event="$target weaker"      behavior="AssessWeaker" />
-<react event="$target equal"       behavior="AssessEqual" />
-<react event="$target stronger"    behavior="AssessStronger" />
-<react event="$target much stronger"   behavior="AssessStronger" />
-<react event="$target extremely stronger"   behavior="AssessPowerfull" />');
+<react event="assess extremely weaker"    type="$target" behavior="AssessLame" />
+<react event="assess much weaker"         type="$target" behavior="AssessWeaker" />
+<react event="assess weaker"              type="$target" behavior="AssessWeaker" />
+<react event="assess equal"               type="$target" behavior="AssessEqual" />
+<react event="assess stronger"            type="$target" behavior="AssessStronger" />
+<react event="assess much stronger"       type="$target" behavior="AssessStronger" />
+<react event="assess extremely stronger"  type="$target" behavior="AssessPowerfull" />');
 
 
 INSERT INTO sc_npctypes VALUES("9","Answerer","DoNothing",0,"","","","","","1",
@@ -582,8 +582,9 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
 
 
 
-<behavior name="Explore" completion_decay="100" resume="yes" auto_memorize="all">
+<behavior name="Explore" completion_decay="100" resume="yes" >
    <talk text="Going Exploring" target="false" />
+   <auto_memorize types="all" /> <!-- Turn on auto memorize -->
 
    <!-- Only use the move to get to the nearest waypoint. Need the -->
    <!-- wander to be part of this behavior in order to memorize -->
@@ -599,6 +600,8 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
    <!-- Go home -->
    <locate obj="tribe:home" static="no" destination="Move" />
    <percept event="move" />
+
+   <auto_memorize types="all" enable="no" /> <!-- Turn off auto memorize -->
 
    <!-- Share the memories we have discoved during this exploration with the tribe -->
    <share_memories />
@@ -862,7 +865,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
 <react event="collision"                behavior="Turn" />
 <react event="tribe:breed"              behavior="Breed" />
 <react event="tribe:build"              behavior="GoBuild" />
-<react event="tribe:unbuild"              behavior="GoUnbuild" />
+<react event="tribe:unbuild"            behavior="GoUnbuild" />
 <react event="tribe:buy"                behavior="Buy" />
 <react event="tribe:explore"            behavior="Explore" />
 <react event="tribe:hunt"               behavior="HuntResource"  />
@@ -873,6 +876,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
 <react event="tribe:work"               behavior="GoToWork" />
 <react event="target out of range"      behavior="Chase" />
 <react event="target out of chase"      behavior="Chase" absolute="0" only_interrupt="Chase" />
+<react event="location sensed" />
 
 <!-- Perceptions that fire when an actor cross the tribe home boundary -->
 <react event="tribe_home:actor_entered" behavior="TribeHomeActorEntered" />

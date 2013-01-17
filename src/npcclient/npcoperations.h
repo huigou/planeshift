@@ -579,6 +579,26 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* Turn on and off auto remembering of perceptions
+*/
+class AutoMemorizeOperation : public ScriptOperation
+{
+protected:
+    csString types;
+    bool     enable;
+public:
+
+    AutoMemorizeOperation(): ScriptOperation("AutoMemorize"), enable(false) { }
+    virtual ~AutoMemorizeOperation() { }
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+};
+
+//-----------------------------------------------------------------------------
+
+/**
 * Moving entails a circle with radius at a velocity and an animation action.
 */
 class CircleOperation : public MoveOperation

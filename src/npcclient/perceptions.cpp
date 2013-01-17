@@ -64,6 +64,21 @@ Reaction::Reaction()
 
 bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
 {
+    // Handle hooking up to the perception
+    eventType              = node->GetAttributeValue("event");
+    if (eventType.IsEmpty())
+    {
+        Error2("No event type specefied for node: %s",node->GetValue());
+        return false;
+    }
+
+    if (eventType.Find("$") != ((size_t)-1))
+    {
+        Error3("Event type with variables not allowed for %s. From node: %s",eventType.GetData(),node->GetValue());
+        return false;
+    }
+    
+
     // Default to guarantied
     desireType = DESIRE_GUARANTIED;
     desireValue = 0.0f;
@@ -92,24 +107,19 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
 
     // Handle hooking up to the right behavior
     csString name = node->GetAttributeValue("behavior");
-    csArray<csString> names = psSplit(name,',');
-    for (size_t i = 0; i < names.GetSize(); i++)
+    if (!name.IsEmpty())
     {
-        Behavior * behavior = behaviors.Find(names[i]);
-        if (!behavior)
+        csArray<csString> names = psSplit(name,',');
+        for (size_t i = 0; i < names.GetSize(); i++)
         {
-            Error3("Reaction for event type '%s' specified unknown behavior of '%s'. Error in XML.",GetEventType(NULL).GetDataSafe(),(const char *)names[i]);
-            return false;
+            Behavior * behavior = behaviors.Find(names[i]);
+            if (!behavior)
+            {
+                Error3("Reaction for event type '%s' specified unknown behavior of '%s'. Error in XML.",GetEventType().GetDataSafe(),(const char *)names[i]);
+                return false;
+            }
+            affected.Push(behavior);
         }
-        affected.Push(behavior);
-    }
-
-    // Handle hooking up to the perception
-    eventType              = node->GetAttributeValue("event");
-    if (eventType.IsEmpty())
-    {
-        Error2("No event type specefied for node: %s",node->GetValue());
-        return false;
     }
     
     range                  = node->GetAttributeValueAsFloat("range");
@@ -229,11 +239,11 @@ void Reaction::React(NPC *who, Perception *pcpt)
     CS_ASSERT(who);
 
     // Check if the perception is a match for this reaction
-    if (!pcpt->ShouldReact(this,who))
+    if (!pcpt->ShouldReact(this, who))
     {
         if (who->IsDebugging(20))
         {
-            NPCDebug(who, 20, "Reaction '%s' skipping perception %s", GetEventType(who).GetDataSafe(), pcpt->ToString(who).GetDataSafe());
+            NPCDebug(who, 20, "Reaction '%s' skipping perception %s", GetEventType().GetDataSafe(), pcpt->ToString(who).GetDataSafe());
         }
         return;
     }
@@ -241,7 +251,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
     // If dead we should not react unless reactWhenDead is set
     if (!(who->IsAlive() || reactWhenDead))
     {
-        NPCDebug(who, 5, "Only react to '%s' when alive", GetEventType(who).GetDataSafe());
+        NPCDebug(who, 5, "Only react to '%s' when alive", GetEventType().GetDataSafe());
         return;
     }
 
@@ -249,7 +259,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
     if (who->GetCurrentBehavior() && DoNotInterrupt(who->GetCurrentBehavior()))
     {
         NPCDebug(who, 5, "Prevented from reacting to '%s' while not interrupt behavior '%s' is active",
-                 GetEventType(who).GetDataSafe(),who->GetCurrentBehavior()->GetName());
+                 GetEventType().GetDataSafe(),who->GetCurrentBehavior()->GetName());
         return; 
     } 
 
@@ -257,7 +267,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
     if (who->GetCurrentBehavior() && OnlyInterrupt(who->GetCurrentBehavior()))
     {
         NPCDebug(who, 5, "Prevented from reacting to '%s' since behavior '%s' should not be interrupted",
-                 GetEventType(who).GetDataSafe(),who->GetCurrentBehavior()->GetName());
+                 GetEventType().GetDataSafe(),who->GetCurrentBehavior()->GetName());
         return; 
     } 
 
@@ -279,7 +289,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
         if (result->GetValue() == 0.0)
         {
             NPCDebug(who, 5, "Prevented from reacting to '%s' since condition is false",
-                     GetEventType(who).GetDataSafe());
+                     GetEventType().GetDataSafe());
             return;
         }
     }
@@ -307,7 +317,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
             break;
 
 
-        NPCDebug(who, 2, "Reaction '%s[%s]' reacting to perception: %s", GetEventType(who).GetDataSafe(), type.GetDataSafe(), pcpt->ToString(who).GetDataSafe());
+        NPCDebug(who, 2, "Reaction '%s[%s]' reacting to perception: %s", GetEventType().GetDataSafe(), type.GetDataSafe(), pcpt->ToString(who).GetDataSafe());
         switch (desireType)
         {
         case DESIRE_NONE:
@@ -335,7 +345,7 @@ void Reaction::React(NPC *who, Perception *pcpt)
     }
     
     // Execute the perception
-    pcpt->ExecutePerception(who,weight);
+    pcpt->ExecutePerception(who, weight);
 
     Perception *p = pcpt->MakeCopy();
     who->SetLastPerception(p);
@@ -390,16 +400,8 @@ bool Reaction::OnlyInterrupt(Behavior* behavior)
     return false; // There are no limitation on who to interrupt
 }
 
-csString Reaction::GetEventType(NPC* npc)
+const csString& Reaction::GetEventType() const
 {
-    // If npc is given subsitute variables
-    if (npc)
-    {
-        csString result = psGameObject::ReplaceNPCVariables(npc, eventType );
-        return result;
-    }
-    
-    // Return the raw eventType if no NPC is given.
     return eventType;
 }
 
@@ -452,6 +454,11 @@ bool Reaction::SetValue(int i, int value)
         return true;
     }
     return false;
+}
+
+const csString Reaction::GetType(NPC* npc) const
+{
+    return psGameObject::ReplaceNPCVariables(npc, type);
 }
 
 char Reaction::GetOp()
@@ -530,8 +537,8 @@ csString Reaction::GetAffectedBehaviors()
 
 bool Perception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if ((GetName(npc) == reaction->GetEventType(npc)) &&
-        (reaction->GetType().IsEmpty() || type == reaction->GetType()))
+    if ((GetName(npc) == reaction->GetEventType()) &&
+        (reaction->GetType(npc).IsEmpty() || type == reaction->GetType(npc)))
     {
         return true;
     }
@@ -562,7 +569,7 @@ csString Perception::ToString(NPC* npc)
 
 bool RangePerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if (name == reaction->GetEventType(npc) && range < reaction->GetRange())
+    if (name == reaction->GetEventType() && range < reaction->GetRange())
     {
         return true;
     }
@@ -590,7 +597,7 @@ csString RangePerception::ToString(NPC* npc)
 
 bool FactionPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if (name == reaction->GetEventType(npc))
+    if (name == reaction->GetEventType())
     {
         if (player)
         {
@@ -679,7 +686,7 @@ Perception *ItemPerception::MakeCopy()
 
 bool LocationPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if (name == reaction->GetEventType(npc) && (reaction->GetType().IsEmpty() || type == reaction->GetType()))
+    if (name == reaction->GetEventType() && (reaction->GetType(npc).IsEmpty() || type == reaction->GetType(npc)))
     {
         return true;
     }
@@ -699,7 +706,7 @@ bool LocationPerception::GetLocation(csVector3& pos, iSector*& sector)
 
 Perception *LocationPerception::MakeCopy()
 {
-    LocationPerception *p = new LocationPerception(name,type,location, engine);
+    LocationPerception *p = new LocationPerception(name, type, location, engine);
     return p;
 }
 
@@ -713,7 +720,7 @@ float LocationPerception::GetRadius() const
 
 bool PositionPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if (name == reaction->GetEventType(npc) && (reaction->GetType().IsEmpty() || type == reaction->GetType()))
+    if (name == reaction->GetEventType() && (reaction->GetType(npc).IsEmpty() || type == reaction->GetType(npc)))
     {
         return true;
     }
@@ -761,7 +768,9 @@ Perception *GroupAttackPerception::MakeCopy()
 void GroupAttackPerception::ExecutePerception(NPC *npc,float weight)
 {
     for(size_t i=0;i<attacker_ents.GetSize();i++)
+    {
         npc->AddToHateList((gemNPCActor*)attacker_ents[i],bestSkillSlots[i]*weight);
+    }
 }
 
 //---------------------------------------------------------------------------------
@@ -817,9 +826,9 @@ bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
     csString eventName = GetName(npc);
 
-    NPCDebug(npc, 20, "Spell percpetion checking for match beween %s and %s", eventName.GetData(), reaction->GetEventType(npc).GetDataSafe());
+    NPCDebug(npc, 20, "Spell percpetion checking for match beween %s and %s", eventName.GetData(), reaction->GetEventType().GetDataSafe());
 
-    if (eventName == reaction->GetEventType(npc))
+    if (eventName == reaction->GetEventType())
     {
         // For target it has to be checked if this is actually a target of this npc that is casting
         if (eventName == "spell:target")
@@ -864,7 +873,7 @@ void SpellPerception::ExecutePerception(NPC *npc,float weight)
 
 bool TimePerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if (name == reaction->GetEventType(npc) )
+    if (name == reaction->GetEventType() )
     {
         if (npc->IsDebugging(15))
         {
@@ -1036,7 +1045,7 @@ OwnerCmdPerception::OwnerCmdPerception( const char *name,
 
 bool OwnerCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 {
-    if (name == reaction->GetEventType(npc))
+    if (name == reaction->GetEventType())
     {
         return true;
     }
@@ -1171,7 +1180,7 @@ bool OwnerActionPerception::ShouldReact( Reaction *reaction, NPC *npc )
         break;
     }
 
-    if (event == reaction->GetEventType(npc))
+    if (event == reaction->GetEventType())
     {
         return true;
     }
@@ -1212,29 +1221,29 @@ bool NPCCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
     csString global_event("npccmd:global:");
     global_event.Append(cmd);
 
-    if (global_event.CompareNoCase(reaction->GetEventType(npc)))
+    if (global_event.CompareNoCase(reaction->GetEventType()))
     {
-        NPCDebug(npc, 15, "Matched reaction '%s' to perception '%s'.",reaction->GetEventType(npc).GetDataSafe(), global_event.GetData() );
+        NPCDebug(npc, 15, "Matched reaction '%s' to perception '%s'.",reaction->GetEventType().GetDataSafe(), global_event.GetData() );
         return true;
     }
     else
     {
-        NPCDebug(npc, 16, "No matched reaction '%s' to perception '%s'.",reaction->GetEventType(npc).GetDataSafe(), global_event.GetData() );
+        NPCDebug(npc, 16, "No matched reaction '%s' to perception '%s'.",reaction->GetEventType().GetDataSafe(), global_event.GetData() );
     }
     
 
     csString self_event("npccmd:self:");
     self_event.Append(cmd);
 
-    if (self_event.CompareNoCase(reaction->GetEventType(npc)) && npc == self)
+    if (self_event.CompareNoCase(reaction->GetEventType()) && npc == self)
     {
-        NPCDebug(npc, 15, "Matched reaction '%s' to perception '%s'.",reaction->GetEventType(npc).GetDataSafe(), self_event.GetData() );
+        NPCDebug(npc, 15, "Matched reaction '%s' to perception '%s'.",reaction->GetEventType().GetDataSafe(), self_event.GetData() );
         return true;
     }
     else
     {
         NPCDebug(npc, 16, "No matched reaction '%s' to perception '%s' for self(%s) with npc(%s).",
-                 reaction->GetEventType(npc).GetDataSafe(), self_event.GetData(), 
+                 reaction->GetEventType().GetDataSafe(), self_event.GetData(), 
                  self->GetName(), npc->GetName() );
     }
     

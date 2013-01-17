@@ -817,6 +817,12 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Target:               %s\n",GetTarget()?GetTarget()->GetName():"");
     CPrintf(CON_CMDOUTPUT, "Last perception:      %s\n",last_perception?last_perception->GetName(this).GetDataSafe():"(None)");
     CPrintf(CON_CMDOUTPUT, "Fall counter:         %d\n", GetFallCounter());
+    csString types;
+    for (size_t m=0; m < autoMemorizeTypes.GetSize(); m++)
+    {
+        types.AppendFmt("%s%s",m?",":"",autoMemorizeTypes.Get(m).GetDataSafe());
+    }
+    CPrintf(CON_CMDOUTPUT, "AutoMemorize:         \"%s\"\n",types.GetDataSafe());
     CPrintf(CON_CMDOUTPUT, "Brain:                %s\n\n", brain->GetName());
 
     CPrintf(CON_CMDOUTPUT, "Locates for %s (%s)\n", name.GetData(), ShowID(pid));
@@ -1145,6 +1151,39 @@ gemNPCActor* NPC::GetNearestDeadActor(float range)
     }
     return nearEnt;
 }
+
+void NPC::AddAutoMemorize(csString types)
+{
+    csArray<csString> typeArray = psSplit(types,',');
+
+    for (size_t i=0; i < typeArray.GetSize(); i++)
+    {
+        if (!typeArray[i].IsEmpty())
+        {
+            // Push at tail if not already present
+            autoMemorizeTypes.PushSmart(typeArray[i]);
+        }
+    }
+
+    NPCDebug(this, 10, "Added Auto Memorize Types: %s",types.GetDataSafe());
+}
+
+void NPC::RemoveAutoMemorize(csString types)
+{
+    csArray<csString> typeArray = psSplit(types,',');
+    for (size_t i=0; i < typeArray.GetSize(); i++)
+    {
+        autoMemorizeTypes.Delete(typeArray[i]);
+    }
+
+    NPCDebug(this, 10, "Removed Auto Memorize Types: %s",types.GetDataSafe());
+}
+
+bool NPC::ContainAutoMemorizeType(const csString& type)
+{
+    return ( (!type.IsEmpty()) && ((autoMemorizeTypes.Get(0) == "all") || (autoMemorizeTypes.Find(type) != csArrayItemNotFound)));
+}
+
 
 void NPC::Printf(int debug, const char* msg,...)
 {

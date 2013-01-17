@@ -174,7 +174,7 @@ int com_list (const char* arg)
 
     if (words.GetCount() == 0 || strncasecmp(words[0],"help",1) == 0)
     {
-        CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|help|loc|npc|path|race|recipe|tribe|warpspace|waypoint] <pattern|EID>\n");
+        CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|help|loc|npc|path|race|reactions|recipe|tribe|warpspace|waypoint] <pattern|EID>\n");
         CPrintf(CON_CMDOUTPUT,"Sub commands:\n");
         CPrintf(CON_CMDOUTPUT,"  npc [summary|stats|<pattern>]\n");
         return 0;
@@ -208,7 +208,11 @@ int com_list (const char* arg)
             CPrintf(CON_CMDOUTPUT, "No Race with id '%s' found.\n", words[1].GetDataSafe());
         }        
     }
-    else if (strncasecmp(words[0],"recipe",2) == 0)
+    else if (strncasecmp(words[0],"reactions",3) == 0)
+    {
+        npcclient->ListReactions(words[1]);
+    }
+    else if (strncasecmp(words[0],"recipe",3) == 0)
     {
         npcclient->ListTribeRecipes(words[1]);
     }

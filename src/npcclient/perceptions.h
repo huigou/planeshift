@@ -133,7 +133,7 @@ public:
      */
     bool OnlyInterrupt(Behavior* behavior);
     
-    csString        GetEventType(NPC* npc);
+    const csString& GetEventType() const;
     float           GetRange()          { return range;        }
     int             GetFactionDiff()    { return factionDiff; }
     bool            GetValueValid(int i);
@@ -147,7 +147,7 @@ public:
     bool            SetValue(int i, int value);
     csString        GetValue();
     int             GetRandom(int i);
-    const csString& GetType() const     { return type;         }
+    const csString  GetType(NPC* npc) const;
     char            GetOp();
     csString        GetAffectedBehaviors();
     const csString& GetLastTriggerd()   { return lastTriggered; }

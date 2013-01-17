@@ -216,6 +216,8 @@ protected:
     EID                owner_id;
     EID                target_id;
 
+    csArray<csString>  autoMemorizeTypes;  ///< Used to store what types of perceptions to memorize without changing behaviors
+
     Tribe*             tribe;
     csString           tribeMemberType;      ///< What type/class is this NPC in the tribe.
     bool               insideTribeHome;      ///< State variable for inside outside tribe home checks.
@@ -531,6 +533,22 @@ public:
     gemNPCActor* GetNearestVisibleFriend(float range);
 
     gemNPCActor* GetNearestDeadActor(float range);
+
+    /** Add new types to the autoMemorize store. They should be "," seperated.
+     */
+    void AddAutoMemorize(csString types);
+
+    /** Remove types from the autoMemorize store. They should be "," seperated.
+     */
+    void RemoveAutoMemorize(csString types);
+
+    /** Check if the NPC has anything to automemorize.
+     */
+    bool HasAutoMemorizeTypes() const { return !autoMemorizeTypes.IsEmpty(); }
+
+    /** Check if the type is contained in the NPC autoMemorize store
+     */
+    bool ContainAutoMemorizeType(const csString& type);
 
     /**
      * Use the NPCDebug(npc, debug, ...) macro instead of calling this function directly.
