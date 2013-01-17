@@ -421,6 +421,11 @@ public:
     void ListTribeRecipes(const char* tribeID);
 
     /**
+     * List all the registered reactions
+     */
+    void ListReactions(const char* pattern);
+
+    /**
      * List all waypoints matching pattern to console.
      */
     void ListWaypoints(const char* pattern);
@@ -687,7 +692,8 @@ protected:
     csHash<RaceInfo_t,csString>     raceInfos;
 
 #ifdef USE_REACTION_REGISTRATION 
-    csHash<NPC*,csString>           allReactions; // Hash of all registered reactions. 
+    csHash<NPC*,csString>           allReactions;     ///< Hash of all registered reactions.
+    csArray<csString>               notUsedReactions; ///< List of not matched reactions. 
 #endif
     
     csRef<iCollideSystem>           cdsys;

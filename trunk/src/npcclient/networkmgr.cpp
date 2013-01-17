@@ -982,8 +982,14 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 EID actorEID = EID(msg->GetUInt32());
                 EID targetEID = EID(msg->GetUInt32());
                 csString physical = msg->GetStr();
+                csString physicalDiff = "assess ";
+                physicalDiff += msg->GetStr();
                 csString magical = msg->GetStr();
+                csString magicalDiff = "assess ";
+                magicalDiff += msg->GetStr();
                 csString overall = msg->GetStr();
+                csString overallDiff = "assess ";
+                overallDiff += msg->GetStr();
 
                 NPC* npc = npcclient->FindNPC(actorEID);
                 if(!npc)
@@ -1000,20 +1006,22 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 }
 
                 NPCDebug(npc, 5, "Got Assess perception for %s(%s) to %s(%s) with "
-                         "Physical assessment: '%s' "
-                         "Magical assessment: '%s' "
-                         "Overall assessment: '%s'",
+                         "Physical assessment: '%s' '%s' "
+                         "Magical assessment: '%s' '%s' "
+                         "Overall assessment: '%s' '%s'",
                          npc->GetName(), ShowID(actorEID),
                          target->GetName(), ShowID(targetEID),
-                         physical.GetDataSafe(),magical.GetDataSafe(),overall.GetDataSafe());
+                         physical.GetDataSafe(),physicalDiff.GetDataSafe(),
+                         magical.GetDataSafe(),magicalDiff.GetDataSafe(),
+                         overall.GetDataSafe(),overallDiff.GetDataSafe());
 
-                Perception physicalPerception(physical);
+                Perception physicalPerception(physicalDiff, physical);
                 npc->TriggerEvent(&physicalPerception);
 
-                Perception magicalPerception(magical);
+                Perception magicalPerception(magicalDiff, magical);
                 npc->TriggerEvent(&magicalPerception);
 
-                Perception overallPerception(overall);
+                Perception overallPerception(overallDiff, overall);
                 npc->TriggerEvent(&overallPerception);
                 break;
             }

@@ -272,8 +272,11 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 EID actor_id = EID(msg->GetUInt32());
                 EID target_id = EID(msg->GetUInt32());
                 csString physical = msg->GetStr();
+                csString physicalDiff = msg->GetStr();
                 csString magical = msg->GetStr();
+                csString magicalDiff = msg->GetStr();
                 csString overall = msg->GetStr();
+                csString overallDiff = msg->GetStr();
 
                 // Make sure we haven't run past the end of the buffer
                 if (msg->overrun)
@@ -282,8 +285,11 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                     break;
                 }
 
-                msgtext.AppendFmt("Actor: %u Target: %u Physical: %s Magical: %s Overall: %s", actor_id.Unbox(), target_id.Unbox(),
-                                  physical.GetDataSafe(),magical.GetDataSafe(),overall.GetDataSafe());
+                msgtext.AppendFmt("Actor: %u Target: %u Physical: %s %s Magical: %s %s Overall: %s %s",
+                                  actor_id.Unbox(), target_id.Unbox(),
+                                  physical.GetDataSafe(),physicalDiff.GetDataSafe(),
+                                  magical.GetDataSafe(),magicalDiff.GetDataSafe(),
+                                  overall.GetDataSafe(),overallDiff.GetDataSafe());
                 break;
             }
             case psNPCCommandsMessage::CMD_DRDATA:
