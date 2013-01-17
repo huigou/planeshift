@@ -200,6 +200,8 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char* _host, cons
         delete connection;
         return false;
     }
+
+    mathScriptEngine = new MathScriptEngine(db,"math_script");
     eventmanager = new EventManager;
     recipemanager = new RecipeManager(this, eventmanager);
     msghandler   = eventmanager;
@@ -256,8 +258,6 @@ bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char* _host, cons
         CPrintf(CON_ERROR, "Couldn't load the sc_location_type table\n");
         exit(1);
     }
-
-    mathScriptEngine = new MathScriptEngine(db,"math_script");
 
     cdsys =  csQueryRegistry<iCollideSystem> (objreg);
 
