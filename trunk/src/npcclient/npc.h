@@ -249,8 +249,9 @@ protected:
 
     void Advance(csTicks when);
 
-public:
     HateList           hatelist;
+
+ public:
 
     NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys);
     virtual ~NPC();
