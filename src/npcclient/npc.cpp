@@ -579,12 +579,19 @@ gemNPCActor* NPC::GetMostHated(csVector3 &pos, iSector* sector, float range, Loc
 
 void NPC::AddToHateList(gemNPCActor* attacker, float delta)
 {
-    NPCDebug(this, 5, "Adding %1.2f to hatelist score for %s(%s).",
-             delta, attacker->GetName(), ShowID(attacker->GetEID()));
-    hatelist.AddHate(attacker->GetEID(),delta);
-    if(IsDebugging(5))
+    if (GetActor() && (GetActor() != attacker))
     {
-        DumpHateList(this);
+        NPCDebug(this, 5, "Adding %1.2f to hatelist score for %s(%s).",
+                 delta, attacker->GetName(), ShowID(attacker->GetEID()));
+        hatelist.AddHate(attacker->GetEID(),delta);
+        if(IsDebugging(5))
+        {
+            DumpHateList(this);
+        }
+    }
+    else
+    {
+        NPCDebug(this, 5, "Rejecting adding of %1.2f to hatelist for self to self.", delta);
     }
 }
 
