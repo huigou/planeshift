@@ -537,8 +537,7 @@ csString Reaction::GetAffectedBehaviors()
 
 bool Perception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if ((GetName(npc) == reaction->GetEventType()) &&
-        (reaction->GetType(npc).IsEmpty() || type == reaction->GetType(npc)))
+    if ((GetName(npc) == reaction->GetEventType()) && (reaction->GetType(npc).IsEmpty() || type == reaction->GetType(npc)))
     {
         return true;
     }
@@ -550,6 +549,11 @@ Perception *Perception::MakeCopy()
     Perception *p = new Perception(name,type);
     return p;
 }
+
+void Perception::ExecutePerception(NPC *npc, float weight)
+{
+}
+
 
 csString Perception::GetName(NPC* /* npc */)
 {
@@ -684,15 +688,6 @@ Perception *ItemPerception::MakeCopy()
 //---------------------------------------------------------------------------------
 
 
-bool LocationPerception::ShouldReact(Reaction *reaction, NPC *npc)
-{
-    if (name == reaction->GetEventType() && (reaction->GetType(npc).IsEmpty() || type == reaction->GetType(npc)))
-    {
-        return true;
-    }
-    return false;
-}
-
 bool LocationPerception::GetLocation(csVector3& pos, iSector*& sector)
 {
     if (location)
@@ -717,15 +712,6 @@ float LocationPerception::GetRadius() const
 
 //---------------------------------------------------------------------------------
 
-
-bool PositionPerception::ShouldReact(Reaction *reaction, NPC *npc)
-{
-    if (name == reaction->GetEventType() && (reaction->GetType(npc).IsEmpty() || type == reaction->GetType(npc)))
-    {
-        return true;
-    }
-    return false;
-}
 
 bool PositionPerception::GetLocation(csVector3& pos, iSector*& sector)
 {
@@ -826,9 +812,11 @@ bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
     csString eventName = GetName(npc);
 
-    NPCDebug(npc, 20, "Spell percpetion checking for match beween %s and %s", eventName.GetData(), reaction->GetEventType().GetDataSafe());
+    NPCDebug(npc, 20, "Spell percpetion checking for match beween %s[%s] and %s[%s]",
+             eventName.GetData(), type.GetDataSafe(),
+             reaction->GetEventType().GetDataSafe(), reaction->GetType(npc).GetDataSafe());
 
-    if (eventName == reaction->GetEventType())
+    if (Perception::ShouldReact(reaction, npc))
     {
         // For target it has to be checked if this is actually a target of this npc that is casting
         if (eventName == "spell:target")

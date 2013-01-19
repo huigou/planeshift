@@ -973,7 +973,7 @@ void Tribe::SendPerception(const char* pcpt)
     TriggerEvent(&perception);
 }
 
-gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeInvisible, bool includeInvincible, float* hate)
+gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeOutsideRegion, bool includeInvisible, bool includeInvincible, float* hate)
 {
     float mostHatedAmount = 0.0;
     gemNPCActor* mostHated = NULL;
@@ -989,7 +989,7 @@ gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeInvisible, b
         float hateValue = 0;
 
         gemNPCActor* hated = member->GetMostHated(pos, sector, range, NULL,
-                                                  includeInvisible, includeInvincible,
+                                                  includeOutsideRegion, includeInvisible, includeInvincible,
                                                   &hateValue );
         if (!mostHated || hateValue > mostHatedAmount)
         {

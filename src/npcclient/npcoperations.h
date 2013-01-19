@@ -826,8 +826,9 @@ protected:
     float     range;
     bool      static_loc;
     bool      random;
-    bool      locate_invisible;
-    bool      locate_invincible;
+    bool      locateOutsideRegion;      ///< Locate targets outside a region if a region exist. Default false
+    bool      locateInvisible;   ///< Locate invisible targets
+    bool      locateInvincible;  ///< Locate invincible targets
     csString  destination;       ///< Alternate destination instead of "Active" locate.
 
     
@@ -899,7 +900,7 @@ class MeleeOperation : public ScriptOperation
 protected:
     float        seek_range, melee_range;
     gemNPCActor* attacked_ent;
-    bool         attack_invisible,attack_invincible;
+    bool         attackOutsideRegion, attackInvisible, attackInvincible;
     csString     stance;
     bool         tribe;
 public:

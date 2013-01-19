@@ -924,19 +924,19 @@ void RecipeManager::CreateGlobalNPCType(Tribe* tribe)
     if(currentTribe->aggressivity == "warlike")
     {
         reaction = "<react event=\"player nearby\" behavior=\"aggressive_meet\" delta=\"150\" />";
-        reaction = "<react event=\"attack\" behavior=\"aggressive_meet\" delta=\"150\" />";
+        reaction = "<react event=\"attack\" behavior=\"aggressive_meet\" delta=\"150\"  weight=\"1\" />";
         assembledType += reaction;
     }
     else if(currentTribe->aggressivity == "neutral")
     {
         reaction = "<react event=\"player nearby\" behavior=\"peace_meet\" delta=\"100\" />\n";
-        reaction += "<react event=\"attack\" behavior=\"normal_attacked\" delta=\"150\" />";
+        reaction += "<react event=\"attack\" behavior=\"normal_attacked\" delta=\"150\"  weight=\"1\" />";
         assembledType += reaction;
     }
     else if(currentTribe->aggressivity == "peaceful")
     {
         reaction = "<react event=\"player nearby\" behavior=\"peace_meet\" delta=\"100\" />\n";
-        reaction += "<react event=\"attack\" behavior=\"coward_attacked\" delta=\"100\" />\n";
+        reaction += "<react event=\"attack\" behavior=\"coward_attacked\" delta=\"100\"  weight=\"1\" />\n";
         assembledType += reaction;
     }
     else
