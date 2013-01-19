@@ -547,21 +547,22 @@ void NPC::SetLastPerception(Perception* pcpt)
     last_perception = pcpt;
 }
 
-gemNPCActor* NPC::GetMostHated(float range, bool includeInvisible, bool includeInvincible, float* hate)
+gemNPCActor* NPC::GetMostHated(float range, bool includeOutsideRegion, bool includeInvisible, bool includeInvincible, float* hate)
 {
     iSector* sector=NULL;
     csVector3 pos;
     psGameObject::GetPosition(GetActor(), pos, sector);
 
     return GetMostHated(pos, sector, range, GetRegion(),
-                        includeInvisible, includeInvincible, hate);
+                        includeOutsideRegion, includeInvisible, includeInvincible, hate);
 }
 
 
-gemNPCActor* NPC::GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeInvisible, bool includeInvincible, float* hate)
+gemNPCActor* NPC::GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeOutsideRegion, 
+                               bool includeInvisible, bool includeInvincible, float* hate)
 {
-    gemNPCActor* hated = hatelist.GetMostHated(pos, sector, range, region,
-                         includeInvisible, includeInvincible, hate);
+    gemNPCActor* hated = hatelist.GetMostHated(this, pos, sector, range, region,
+                                               includeOutsideRegion, includeInvisible, includeInvincible, hate);
 
     if(hated)
     {
@@ -1783,7 +1784,8 @@ void HateList::AddHate(EID entity_id, float delta)
     }
 }
 
-gemNPCActor* HateList::GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeInvisible, bool includeInvincible, float* hate)
+gemNPCActor* HateList::GetMostHated(NPC* npc, csVector3 &pos, iSector* sector, float range, LocationType* region,
+                                    bool includeOutsideRegion, bool includeInvisible, bool includeInvincible, float* hate)
 {
     gemNPCObject* mostHated = NULL;
     float mostHateAmount=0.0;
@@ -1809,8 +1811,9 @@ gemNPCActor* HateList::GetMostHated(csVector3 &pos, iSector* sector, float range
                 psGameObject::GetPosition(obj, objPos, objSector);
 
                 // Don't include if a region is defined and obj not within region.
-                if(region && !region->CheckWithinBounds(engine,objPos,objSector))
+                if(!includeOutsideRegion && region && !region->CheckWithinBounds(engine,objPos,objSector))
                 {
+                    NPCDebug(npc, 10, "Skipping %s(%s) since outside region %s",obj->GetName(),ShowID(obj->GetEID()),region->GetName());
                     continue;
                 }
 

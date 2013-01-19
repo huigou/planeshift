@@ -384,12 +384,14 @@ public:
      *
      *  @param  npc               The senter of the search.
      *  @param  range             The range to search for hated entities.
+     *  @param  includeOutsideRegion  Include outside region entities in the search.
      *  @param  includeInvisible  Include invisible entities in the search.
      *  @param  includeInvincible Include invincible entities in the search.
      *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
      *  @return The hated entity
      */
-    gemNPCActor* GetMostHated(NPC* npc, float range, bool includeInvisible, bool includeInvincible, float* hate=NULL);
+    gemNPCActor* GetMostHated(NPC* npc, float range, bool includeOutsideRegion,
+                              bool includeInvisible, bool includeInvincible, float* hate=NULL);
 
     /** Callback for debug of long time used in scopes.
      */

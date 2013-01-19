@@ -181,7 +181,7 @@ public:
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
-    virtual void ExecutePerception(NPC *npc,float weight) { }
+    virtual void ExecutePerception(NPC *npc,float weight);
   
     virtual gemNPCObject *GetTarget() { return NULL; }
 
@@ -297,7 +297,6 @@ public:
     : Perception(n,type), location(location), engine(engine)  {}
     virtual ~LocationPerception() {}
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
     virtual float GetRadius() const;
@@ -324,7 +323,6 @@ public:
         : Perception(n,type), instance(instance), sector(sector), pos(pos), yrot(yrot), radius(radius)  {}
     virtual ~PositionPerception() {}
 
-    virtual bool ShouldReact(Reaction *reaction, NPC *npc);
     virtual Perception *MakeCopy();
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
     virtual float GetRadius() const;

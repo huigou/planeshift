@@ -89,15 +89,18 @@ public:
      *
      *  Check the hate list and retrive most hated entity within range.
      *
+     *  @param  npc               The NPC
      *  @param  pos               The position
      *  @param  sector            The sector of the position
      *  @param  range             The range to search for hated entities.
+     *  @param  includeOutsideRegion Include enties outside region in the search.
      *  @param  includeInvisible  Include invisible entities in the search.
      *  @param  includeInvincible Include invincible entities in the search.
      *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
      *  @return The hated entity
      */
-    gemNPCActor* GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeInvisible, bool includeInvincible, float* hate);
+    gemNPCActor* GetMostHated(NPC* npc, csVector3 &pos, iSector* sector, float range, LocationType* region,
+                              bool includeOutsideRegion, bool includeInvisible, bool includeInvincible, float* hate);
     bool Remove(EID entity_id);
     void DumpHateList(const csVector3 &myPos, iSector* mySector);
     void DumpHateList(NPC* npc, const csVector3 &myPos, iSector* mySector);
@@ -399,12 +402,14 @@ public:
      *  Check the hate list and retrive most hated entity within range.
      *
      *  @param  range             The range to search for hated entities.
+     *  @param  includeOutsideRegion Include enties outside region in the search.
      *  @param  includeInvisible  Include invisible entities in the search.
      *  @param  includeInvincible Include invincible entities in the search.
      *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
      *  @return The hated entity
      */
-    gemNPCActor* GetMostHated(float range, bool includeInvisible, bool includeInvincible, float* hate=NULL);
+    gemNPCActor* GetMostHated(float range, bool includeOutsideRegion, bool includeInvisible,
+                              bool includeInvincible, float* hate=NULL);
 
     /** Find the most hated entity within range of a given position
      *
@@ -413,12 +418,14 @@ public:
      *  @param  pos               The position
      *  @param  sector            The sector of the position
      *  @param  range             The range to search for hated entities.
+     *  @param  includeOutsideRegion Include enties outside region in the search.
      *  @param  includeInvisible  Include invisible entities in the search.
      *  @param  includeInvincible Include invincible entities in the search.
      *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
      *  @return The hated entity
      */
-    gemNPCActor* GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeInvisible, bool includeInvincible, float* hate);
+    gemNPCActor* GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeOutsideRegion,
+                              bool includeInvisible, bool includeInvincible, float* hate);
 
 
     float GetEntityHate(gemNPCActor* ent);

@@ -2022,8 +2022,9 @@ LocateOperation::LocateOperation(const LocateOperation* other)
       range(other->range),
       static_loc(other->static_loc),
       random(other->random),
-      locate_invisible(other->locate_invisible),
-      locate_invincible(other->locate_invincible),
+      locateOutsideRegion(other->locateOutsideRegion),
+      locateInvisible(other->locateInvisible),
+      locateInvincible(other->locateInvincible),
       destination(other->destination)
 {
 }
@@ -2054,8 +2055,9 @@ bool LocateOperation::Load(iDocumentNode *node)
         range = -1;
     }
     random = node->GetAttributeValueAsBool("random",false);
-    locate_invisible = node->GetAttributeValueAsBool("invisible",false);
-    locate_invincible = node->GetAttributeValueAsBool("invincible",false);
+    locateOutsideRegion = node->GetAttributeValueAsBool("outside_region",false);
+    locateInvisible = node->GetAttributeValueAsBool("invisible",false);
+    locateInvincible = node->GetAttributeValueAsBool("invincible",false);
 
     destination = node->GetAttributeValue("destination");
     // If no destination is given, set default destination
@@ -2518,7 +2520,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
         NPCDebug(npc, 5, "LocateOp - Target %s",locateArgs.GetDataSafe());
 
         // Since we don't have a current enemy targeted, find one!
-        gemNPCActor* ent = npc->GetMostHated(range,locate_invisible,locate_invincible);
+        gemNPCActor* ent = npc->GetMostHated(range,locateOutsideRegion,locateInvisible,locateInvincible);
 
         if(ent)
         {
@@ -2777,7 +2779,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
             }
 
             // Since we don't have a current enemy targeted, find one!
-            gemNPCActor* ent = npc->GetTribe()->GetMostHated(npc, range, locate_invisible, locate_invincible);
+            gemNPCActor* ent = npc->GetTribe()->GetMostHated(npc, range, locateOutsideRegion, locateInvisible, locateInvincible);
 
             if(ent)
             {
@@ -3000,8 +3002,9 @@ bool MeleeOperation::Load(iDocumentNode *node)
         melee_range  = 3.0f;
     }
     
-    attack_invisible = node->GetAttributeValueAsBool("invisible",false);
-    attack_invincible= node->GetAttributeValueAsBool("invincible",false);
+    attackOutsideRegion = node->GetAttributeValueAsBool("outside_region",false);
+    attackInvisible = node->GetAttributeValueAsBool("invisible",false);
+    attackInvincible= node->GetAttributeValueAsBool("invincible",false);
 
     stance = node->GetAttributeValue("stance");
     // Default to normal stance
@@ -3020,8 +3023,9 @@ ScriptOperation *MeleeOperation::MakeCopy()
     MeleeOperation *op = new MeleeOperation;
     op->seek_range  = seek_range;
     op->melee_range = melee_range;
-    op->attack_invisible = attack_invisible;
-    op->attack_invincible = attack_invincible;
+    op->attackOutsideRegion = attackOutsideRegion;
+    op->attackInvisible = attackInvisible;
+    op->attackInvincible = attackInvincible;
     op->stance = stance;
     op->tribe = tribe;
     attacked_ent = NULL;
@@ -3031,16 +3035,16 @@ ScriptOperation *MeleeOperation::MakeCopy()
 ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, bool interrupted)
 {
     NPCDebug(npc, 5, "MeleeOperation starting with meele range %.2f seek range %.2f will attack:%s%s.",
-             melee_range, seek_range,(attack_invisible?" Invisible":" Visible"),
-             (attack_invincible?" Invincible":""));
+             melee_range, seek_range,(attackInvisible?" Invisible":" Visible"),
+             (attackInvincible?" Invincible":""));
 
     if (tribe && npc->GetTribe())
     {
-        attacked_ent = npc->GetTribe()->GetMostHated(npc, melee_range,attack_invisible,attack_invincible); 
+        attacked_ent = npc->GetTribe()->GetMostHated(npc, melee_range,attackOutsideRegion, attackInvisible,attackInvincible); 
     }
     else
     {
-        attacked_ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
+        attacked_ent = npc->GetMostHated(melee_range, attackOutsideRegion, attackInvisible, attackInvincible);
     }
     if (attacked_ent)
     {
@@ -3064,11 +3068,11 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *n
 
     if (tribe && npc->GetTribe())
     {
-        ent = npc->GetTribe()->GetMostHated(npc, melee_range, attack_invisible, attack_invincible);
+        ent = npc->GetTribe()->GetMostHated(npc, melee_range, attackOutsideRegion, attackInvisible, attackInvincible);
     }
     else
     {
-        ent = npc->GetMostHated(melee_range, attack_invisible, attack_invincible);
+        ent = npc->GetMostHated(melee_range, attackOutsideRegion, attackInvisible, attackInvincible);
     }
     
     if (!ent)
@@ -3078,11 +3082,11 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *n
         // No enemy to whack on in melee range, search far
         if (tribe && npc->GetTribe())
         {
-            ent = npc->GetTribe()->GetMostHated(npc, seek_range, attack_invisible, attack_invincible);
+            ent = npc->GetTribe()->GetMostHated(npc, seek_range, attackOutsideRegion, attackInvisible, attackInvincible);
         }
         else
         {
-            ent = npc->GetMostHated(seek_range, attack_invisible, attack_invincible);
+            ent = npc->GetMostHated(seek_range, attackOutsideRegion, attackInvisible, attackInvincible);
         }
 
         // The idea here is to save the next best target and chase
