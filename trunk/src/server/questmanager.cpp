@@ -369,11 +369,11 @@ bool QuestManager::HandleScriptCommand(csString& block,
         else if (!strncasecmp(block,"Give",4))
         {
             WordArray words(block);
-            if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("tria")) // give tria money
+            if (words.GetInt(1) != 0 && words.GetTail(2).CompareNoCase("tria")) // give tria money
             {
                 op.Format("<money value=\"0,0,0,%d\"/>",words.GetInt(1) );
             }
-            else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("hexa")) // give hexa money
+            else if (words.GetInt(1) != 0 && words.GetTail(2).CompareNoCase("hexa")) // give hexa money
             {
                 op.Format("<money value=\"0,0,%d,0\"/>",words.GetInt(1) );
             }
@@ -381,7 +381,7 @@ bool QuestManager::HandleScriptCommand(csString& block,
             {
                 op.Format("<money value=\"0,%d,0,0\"/>",words.GetInt(1) );
             }
-            else if (words.GetInt(1) != 0 && words.Get(2).CompareNoCase("circle")) // give circle money
+            else if (words.GetInt(1) != 0 && words.GetTail(2).CompareNoCase("circle")) // give circle money
             {
                 op.Format("<money value=\"%d,0,0,0\"/>",words.GetInt(1) );
             }
