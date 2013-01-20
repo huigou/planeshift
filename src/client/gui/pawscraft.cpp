@@ -50,9 +50,10 @@ void pawsCraftWindow::HandleMessage( MsgEntry* me )
     textBox = dynamic_cast<pawsMultiLineTextBox*>(FindWidget("HelpText"));
     psMsgCraftingInfo mesg(me);
     csString text(mesg.craftInfo);
+    text.ReplaceAll( "[[", "With higher ");
+    text.ReplaceAll( "]]", " skill you could: " );
     if (text)
         textBox->SetText(text.GetData());
-
 /*
     if ( itemTree )
         delete itemTree;
