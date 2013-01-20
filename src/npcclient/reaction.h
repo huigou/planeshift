@@ -101,16 +101,18 @@ public:
     bool Load(iDocumentNode *node, BehaviorSet& behaviors);
     void React(NPC *who, Perception *pcpt);
 
-    /** Check if the player should react to this reaction
+    /**
+     * Check if the player should react to this reaction
      *
      * Caled by perception related to entitis to check
      * for reaction against visibility and invincibility
      *
-     * @entity The entity tho check for visibility and invincibility
+     * @param entity          The entity tho check for visibility and invincibility
      */
     bool ShouldReact(gemNPCObject* entity);
     
-    /** Check if this is a behavior that shouldn't be interrupted
+    /**
+     * Check if this is a behavior that shouldn't be interrupted
      *
      * @param behavior The behavior to check.
      * @return True if this is a behavior that shouldn't be interrupted.

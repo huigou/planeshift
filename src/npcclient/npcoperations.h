@@ -49,7 +49,7 @@ struct iSector;
 #include "perceptions.h"
 
 /**
- * \addtogroup npcclient
+ * \addtogroup script_operations
  * @{ */
 
 class NPC;
@@ -173,7 +173,7 @@ public:
     /** Check if the move where ok.
      *
      * Check if a move operation has collided, walked out of bounds, or walked in bound. Will
-     * fire perceptions at these events with the names given by \se LoadCheckMoveOk
+     * fire perceptions at these events with the names given by \sa LoadCheckMoveOk
      *
      */
     virtual bool CheckMoveOk(NPC* npc, csVector3 oldPos, iSector* oldSector,
@@ -685,9 +685,9 @@ public:
  *  This class is the implementation of the work operations
  *  used in behavior scripts for NPCS.
  *
- *  Examples:
- *  <work type="dig" resource="tribe:wealth" />
- *  <work type="dig" resource="Gold Ore" />
+ *  Examples: <pre>
+ *  \<work type="dig" resource="tribe:wealth" /\>
+ *  \<work type="dig" resource="Gold Ore" /\> </pre>
  */
 class WorkOperation : public ScriptOperation
 {
@@ -727,13 +727,12 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
-* Eat will take a bite of a nearby dead actor and add resource to tribe wealth.
-*
-* Examples:
-* <eat resource="tribe:wealth" />
-* <eat resource="Flesh" />
-*
-*/
+ * Eat will take a bite of a nearby dead actor and add resource to tribe wealth.
+ *
+ * Examples: <pre>
+ * \<eat resource="tribe:wealth" /\>
+ * \<eat resource="Flesh" /\> </pre>
+ */
 class EatOperation : public ScriptOperation
 {
 protected:
@@ -755,8 +754,8 @@ public:
  *  This class is the implementation of the emote operations
  *  used in behavior scripts for NPCS.
  *
- *  Examples:
- *  <emote cmd="greet" />
+ *  Examples: <pre>
+ *  \<emote cmd="greet" /\> </pre>
  */
 class EmoteOperation : public ScriptOperation
 {
@@ -777,9 +776,8 @@ public:
 /**
 * Equip will tell the npc to equip a item
 *
-* Examples:
-* <equip item="Sword" slot="righthand" count="1" />
-*
+* Examples: <pre>
+* \<equip item="Sword" slot="righthand" count="1" /\> </pre>
 */
 class EquipOperation : public ScriptOperation
 {
@@ -1169,9 +1167,9 @@ public:
  * Reward will add a given resource to the Tribe that the
  * current NPC is a member of.
  *
- * Examples:
- * <reward resource="Gold Ore" count="2" />
- * <reward resource="tribe:wealth" />
+ * Examples: <pre>
+ * \<reward resource="Gold Ore" count="2" /\>
+ * \<reward resource="tribe:wealth" /\> </pre>
  */
 class RewardOperation : public ScriptOperation
 {
@@ -1251,8 +1249,8 @@ public:
  *  This class is the implementation of the script operations
  *  used in behavior scripts for NPCS.
  *
- *  Examples:
- *  <script name="my_script" />
+ *  Examples: <pre>
+ *  \<script name="my_script" /\> </pre>
  */
 class ProgressScriptOperation : public ScriptOperation
 {
@@ -1351,9 +1349,9 @@ public:
  *  This class is the implementation of the sit operations
  *  used in behavior scripts for NPCS.
  *
- *  Examples:
- *  <sit />
- *  <standup />
+ *  Examples: <pre>
+ *  \<sit /\>
+ *  \<standup /\> </pre>
  */
 class SitOperation : public ScriptOperation
 {

@@ -52,8 +52,10 @@ struct CombinationConstruction;
 #define CLEANUP_DELAY       600         ///< Seconds to wait before performing cleanup event
 //#define CLEANUP_DELAY       10 ///< for testing only
 
-/** Holds the possible return values for a test to see if an item is transformable.
-    This is binary since each transform atempt could have multiple reasons for failure
+/**
+ * Holds the possible return values for a test to see if an item is transformable.
+ *
+ * This is binary since each transform atempt could have multiple reasons for failure
  */
 enum TradePatternMatch
 {
@@ -76,7 +78,8 @@ enum TradePatternMatch
     TRANSFORM_GARBAGE               = 0x8000        ///< There was a any item garbage transform that matched correctly
 };
 
-/** Holds the possible transformation types.
+/**
+ * Holds the possible transformation types.
  */
 enum TradeTransfomType
 {
@@ -93,30 +96,31 @@ enum TradeTransfomType
 
 //-----------------------------------------------------------------------------
 
-/** This class keeps natural resource concentrations across the world.
+/**
+ * This class keeps natural resource concentrations across the world.
  */
 struct NaturalResource
 {
-    int sector;                 ///< The id of the sector this resource is in.
-    csVector3 loc;              ///< Centre point of resource location.
-    float    radius;            ///< Radius around the centre where resource can be found.
-    float    visible_radius;    ///< Radius around the centre where resource is visible
-    float    probability;       ///< Probability of finding resource on attempt.
-    psSkillInfo* skill;         ///< Skill used to harvest resource.
-    int      skill_level;       ///< Skill level required to be able to harvest resource.
-    unsigned int item_cat_id;   ///< Category of tool needed for the ressource
-    float    item_quality;      ///< Quality of equipment for the ressource
-    csString anim;                  ///< Name of animation to play while harvesting
-    int      anim_duration_seconds; ///< Length of time the animation should play.
-    int      reward;                ///< Item ID of the reward
-    csString reward_nickname;       ///< Item name of the reward
-    /** The action you need to take to get this resource. Id Corresponding to resourcesActions index.*/
-    size_t action;
-
+    int          sector;                ///< The id of the sector this resource is in.
+    csVector3    loc;                   ///< Centre point of resource location.
+    float        radius;                ///< Radius around the centre where resource can be found.
+    float        visible_radius;        ///< Radius around the centre where resource is visible
+    float        probability;           ///< Probability of finding resource on attempt.
+    psSkillInfo* skill;                 ///< Skill used to harvest resource.
+    int          skill_level;           ///< Skill level required to be able to harvest resource.
+    unsigned int item_cat_id;           ///< Category of tool needed for the ressource
+    float        item_quality;          ///< Quality of equipment for the ressource
+    csString     anim;                  ///< Name of animation to play while harvesting
+    int          anim_duration_seconds; ///< Length of time the animation should play.
+    int          reward;                ///< Item ID of the reward
+    csString     reward_nickname;       ///< Item name of the reward
+    size_t       action;                ///< The action you need to take to get this resource.
+                                        ///< Id Corresponding to resourcesActions index.
 };
 
 
-/** This class keeps the hit of natural resources found for the player and allows ordering of them in an array
+/**
+ * This class keeps the hit of natural resources found for the player and allows ordering of them in an array
  */
 class NearNaturalResource
 {
@@ -147,10 +151,11 @@ struct constraint
 
 //-----------------------------------------------------------------------------
 
-/** This class handles all calculations around work, using statistics
-*  and information from the pspccharacterinfo Prop Classes for both
-*  the worker and the target.
-*/
+/**
+ * This class handles all calculations around work, using statistics
+ * and information from the pspccharacterinfo Prop Classes for both
+ * the worker and the target.
+ */
 class WorkManager : public MessageManager<WorkManager>
 {
 public:
@@ -162,126 +167,150 @@ public:
 // Entry points
 //-----------------------------------------------------------------------------
 
-    /** Handles using an item for working.  This is called when an item
-      * is tagetted and the use command issued.
-      *
-      * @param client  The client that placed the item inside
-      */
+    /**
+     * Handles using an item for working.
+     *
+     * This is called when an item is tagetted and the use command issued.
+     *
+     * @param client            The client that placed the item inside
+     */
     void HandleUse(Client* client);
 
-    /** Start Combine work
-      * This gets called when the player tries to combine items in a container using /combine command.
-      *
-      * @param client  The client that placed the item inside
-      */
+    /**
+     * Start Combine work
+     * This gets called when the player tries to combine items in a container using /combine command.
+     *
+     * @param client            The client that combines
+     */
     void HandleCombine(Client* client);
 
-    /** Begins construction work.
-      * This is called when a player attempts to build a constructable item.
-      *
-      */
+    /**
+     * Begins construction work.
+     *
+     * This is called when a player attempts to build a constructable item.
+     *
+     * @param client            The client that construct
+     */
     void HandleConstruct(Client* client);
 
-    /** Start a work event for this client.  This is called when an item is placed
-      * in a container.  If the container is an auto-transform container it can transform items
-      * automatically ( ie placing items in automatically triggers the transformation process to start ).
-      *
-      * @param client  The client that placed the item inside
-      * @param container The work item container that can transform an item.
-      * @param autoItem The item that was placed inside and to be transformed.
-      * @param count The stack count of the item placed in.
-      */
+    /**
+     * Start a work event for this client.
+     *
+     * This is called when an item is placed
+     * in a container.  If the container is an auto-transform container it can transform items
+     * automatically ( ie placing items in automatically triggers the transformation process to start ).
+     *
+     * @param client            The client that placed the item inside
+     * @param container         The work item container that can transform an item.
+     * @param autoItem          The item that was placed inside and to be transformed.
+     * @param count The stack count of the item placed in.
+     */
     void StartAutoWork(Client* client, gemContainer* container, psItem* autoItem, int count);
 
-    /** Checks to see if the progression script generated craft work can be done.
-      *
-      * @param client  The client for the actor that initiates that progressions script
-      * @param target  Targetted item
-      * @param client  Pattern name passed in progressions cript
-      * @return False if there is a problem doing the craft.
-      */
+    /**
+     * Checks to see if the progression script generated craft work can be done.
+     *
+     * @param client            The client for the actor that initiates that progressions script
+     * @param target            Targetted item
+     * @param pattern           Pattern name passed in progressions cript
+     * @return False if there is a problem doing the craft.
+     */
     bool StartScriptWork(Client* client, gemObject* target, csString pattern);
 
-    /** Stop work event.
+    /**
+     * Stop work event.
+     *
      * This is called when a client removes an item from a container.
      *
-     *  @param client The client that removed the item.
-     *  @param item The item that was being transformed.
+     * @param client            The client that removed the item.
+     * @param item              The item that was being transformed.
      */
     void StopWork(Client* client, psItem* item);
 
     /** @name Work Event Handlers
       *  These are the functions fired when a psWorkGameEvent is Triggered.
-      */
-    //@{
-    /** @brief Handles a transformation/combination event. Basically the manufacturing events.
-      *
-      * @param event The work event that was in the queue to fire.
-      */
+      * @{ */
+    /**
+     * Handles a transformation/combination event.
+     *
+     * Basically the manufacturing events.
+     *
+     * @param workEvent The work event that was in the queue to fire.
+     */
     void HandleWorkEvent(psWorkGameEvent* workEvent);
 
-    /** @brief Handles a cleanup event. Basically removing discarded items from public containers.
-      *
-      * @param event The work event that was in the queue to fire.
-      */
+    /**
+     * Handles a cleanup event.
+     *
+     * Basically removing discarded items from public containers.
+     *
+     * @param workEvent The work event that was in the queue to fire.
+     */
     void HandleCleanupEvent(psWorkGameEvent* workEvent);
 
-    /** @brief Handles a resource/harvesting event. Basically the production events.
-      *
-      * @param event The work event that was in the queue to fire.
-      */
+    /**
+     * Handles a resource/harvesting event.
+     *
+     * Basically the production events.
+     *
+     * @param workEvent The work event that was in the queue to fire.
+     */
     void HandleProductionEvent(psWorkGameEvent* workEvent);
 
-    /** @brief Handles a repair event, which occurs after a few seconds of repairing an item.
-      *
-      * This function handles the conclusion timer of when a repair is completed.
-      * It is not called if the event is cancelled.  It follows the following
-      * sequence of steps.
-      *
-      * -# The values are all pre-calculated, so just adjust the quality of the item directly.
-      * -# Consume the repair required item, if flagged to do so.
-      * -# Notify the user.
-      *
-      * @param event The work event that was in the queue to fire.
-      */
+    /**
+     * Handles a repair event, which occurs after a few seconds of repairing an item.
+     *
+     * This function handles the conclusion timer of when a repair is completed.
+     * It is not called if the event is cancelled.  It follows the following
+     * sequence of steps.
+     *
+     * -# The values are all pre-calculated, so just adjust the quality of the item directly.
+     * -# Consume the repair required item, if flagged to do so.
+     * -# Notify the user.
+     *
+     * @param workEvent The work event that was in the queue to fire.
+     */
     void HandleRepairEvent(psWorkGameEvent* workEvent);
     void LockpickComplete(psWorkGameEvent* workEvent);
-    //@}
+    
+    /** @} */
 
 
     /** @name Constraint Functions
-      */
-    //@{
+      * @{ */
     static bool constraintTime(WorkManager* that, char* param);
     static bool constraintFriends(WorkManager* that,char* param);
     static bool constraintLocation(WorkManager* that,char* param);
     static bool constraintMode(WorkManager* that,char* param);
     static bool constraintGender(WorkManager* that,char* param);
     static bool constraintRace(WorkManager* that,char* param);
-    //@}
+    /** @} */
 
 
     /// Lockpicking
     void StartLockpick(Client* client,psItem* item);
 
 
-    /** Sets up the internal structure of the work manager to handle a particular client.
-      * This sets many variables of the workmanager to work with a single user at a time.
-      *
-      * @param client The client that is the current one to use.
-      * @param target The object for which the client is targetting.
-      *
-      * @return False if there is a problem loading stuff.
-      */
+    /**
+     * Sets up the internal structure of the work manager to handle a particular client.
+     *
+     * This sets many variables of the workmanager to work with a single user at a time.
+     *
+     * @param client The client that is the current one to use.
+     * @param target The object for which the client is targetting.
+     *
+     * @return False if there is a problem loading stuff.
+     */
     bool LoadLocalVars(Client* client, gemObject* target=NULL);
 
-    /* Send clear client view message to remove items from autocontainers.
-      *
-      * @param slotID The slot number to clear.
-      * @param containerID The container ID that has item that needs to be cleared.
-      *
-      * @return False if there is a problem sending message.
-      *
+    /*
+     * Send clear client view message to remove items from autocontainers.
+     *
+     * @param slotID The slot number to clear.
+     * @param containerID The container ID that has item that needs to be cleared.
+     *
+     * @return False if there is a problem sending message.
+     *
     bool SendClearUpdate( unsigned int slotID, unsigned int containerID ); */
 
 
@@ -312,141 +341,167 @@ protected:
     void HandleLockPick(MsgEntry* me,Client* client);
     void HandleWorkCommand(MsgEntry* me,Client* client);
 
-    /** @brief Stop auto work event.
+    /**
+     * Stop auto work event.
+     *
      * This is called when a client removes an item from any container
      * before it has had a chance to transform the item.
      *
-     *  @param client The client that removed the item.
-     *  @param autoItem The item that was being transformed.
+     * @param client The client that removed the item.
+     * @param autoItem The item that was being transformed.
      */
     void StopAutoWork(Client* client, psItem* autoItem);
 
-    /** Handles stopping the use of the item for working.  This is called when an item
-      * is tagetted and the /use command issued and it's already in use.
-      *
-      * @param client  The client that issues the /use command
-      */
+    /**
+     * Handles stopping the use of the item for working.  This is called when an item
+     * is tagetted and the /use command issued and it's already in use.
+     *
+     * @param me                The message entry.
+     * @param client            The client that issues the /use command.
+     */
     void StopUseWork(MsgEntry* me,Client* client);
 
-    /** Checks to see if the item can be used for working.
-      *
-      * @param client  The client that issues the /use command
-      */
+    /**
+     * Checks to see if the item can be used for working.
+     *
+     * @param client  The client that issues the /use command
+     */
     void StartUseWork(Client* client);
 
-    /** Handles stopping the combining in the work container.  This is called when an item
-      * is tagetted and the /combine command issued and it's already in use.
-      *
-      * @param client  The client that issues the /combine command
-      */
+    /**
+     * Handles stopping the combining in the work container.  This is called when an item
+     * is tagetted and the /combine command issued and it's already in use.
+     *
+     * @param client  The client that issues the /combine command
+     */
     void StopCombineWork(Client* client);
 
-    /** Checks to see if the work container item can be used for combining.
-      *
-      * @param client  The client that issues the /combine command
-      */
+    /**
+     * Checks to see if the work container item can be used for combining.
+     *
+     * @param client  The client that issues the /combine command
+     */
     void StartCombineWork(Client* client);
 
-    /** Checks to see if the item can be constructed
-      *
-      * @param client  The client that issues the /construct command
-      */
+    /**
+     * Checks to see if the item can be constructed
+     *
+     * @param client  The client that issues the /construct command
+     */
     void StartConstructWork(Client* client);
 
-    /** Handles stopping the constructing of an item.  This is called when an item
-      * is tagetted and the /construct command issued and it's already in use.
-      *
-      * @param client  The client that issues the /construct command
-      */
+    /**
+     * Handles stopping the constructing of an item.  This is called when an item
+     * is tagetted and the /construct command issued and it's already in use.
+     *
+     * @param client  The client that issues the /construct command
+     */
     void StopConstructWork(Client* client);
 
-    /** Handles stopping the cleanup event for a particular item.  This is called when an item
-      * is removed from a container.
-      *
-      * @param client  The client that removes the item
-      * @param cleanItem  The item that is removed
-      */
+    /**
+     * Handles stopping the cleanup event for a particular item.  This is called when an item
+     * is removed from a container.
+     *
+     * @param client  The client that removes the item
+     * @param cleanItem  The item that is removed
+     */
     void StopCleanupWork(Client* client, psItem* cleanItem);
 
-    /** Sends an error message to the client based on the trade pattern error.
-      * @see TradePatternMatch for the list of error conditions.
-      * @param clientNum the client to send the message to.
-      * @param result The error code from the transformable test.
-      */
+    /**
+     * Sends an error message to the client based on the trade pattern error.
+     *
+     * @see TradePatternMatch for the list of error conditions.
+     *
+     * @param clientNum         the client to send the message to.
+     * @param result            The error code from the transformable test.
+     * @param curItemId         The current item ID.
+     * @param CurItemQty        The current item quantity.
+     */
     void SendTransformError(uint32_t clientNum, unsigned int result, uint32 curItemId = 0, int CurItemQty = 0);
 
-    /** Returns with the result ID and quantity of the combination
-      *  if work item container has the correct items in the correct amounts
-      * Note:  This assumes that the combination items array is sorted by
-      *  resultId and then itemId
-      *
-      * @return resultID The item ID of the resulting item.
-      * @return resultQty The stack quantity of the resulting item.
-      *
-      * @return False if combination is not possible.
-      */
+    /**
+     * Returns with the result ID and quantity of the combination
+     * if work item container has the correct items in the correct amounts.
+     *
+     * \note  This assumes that the combination items array is sorted by
+     *        resultId and then itemId
+     *
+     * @param resultId          The item ID of the resulting item.
+     * @param resultQty         The stack quantity of the resulting item.
+     *
+     * @return False if combination is not possible.
+     */
     bool IsContainerCombinable(uint32 &resultId, int &resultQty);
 
-    /** Returns with the result ID and quantity of the combination
-      *  if player has the correct items in the correct amounts in hand
-      * Note:  This assumes that the combination items array is sorted by
-      *  resultId and then itemId
-      *
-      * @return resultID The item ID of the resulting item.
-      * @return resultQty The stack quantity of the resulting item.
-      *
-      * @return False if combination is not possible.
-      */
+    /**
+     * Returns with the result ID and quantity of the combination
+     * if player has the correct items in the correct amounts in hand
+     *
+     * \note This assumes that the combination items array is sorted by
+     *       resultId and then itemId.
+     *
+     * @param resultId          The item ID of the resulting item.
+     * @param resultQty         The stack quantity of the resulting item.
+     *
+     * @return False if combination is not possible.
+     */
     bool IsHandCombinable(uint32 &resultId, int &resultQty);
 
-    /** Returns with the result ID and quantity of the combination
-      *  if the item list matches every item in a valid combination
-      *
-      * @param itemArray The array of items that need to be checked.
-      * @return resultID The item ID of the resulting item.
-      * @return resultQty The stack quantity of the resulting item.
-      *
-      * @return False if combination is not possible.
-      */
+    /**
+     * Returns with the result ID and quantity of the combination
+     * if the item list matches every item in a valid combination
+     *
+     * @param itemArray         The array of items that need to be checked.
+     * @param resultId          The item ID of the resulting item.
+     * @param resultQty         The stack quantity of the resulting item.
+     *
+     * @return False if combination is not possible.
+     */
     bool ValidateCombination(csArray<psItem*> itemArray, uint32 &resultId, int &resultQty);
 
-    /** Returns with the result ID and quantity of the combination
-      *  if the item list is in set of unique ingredients for that pattern
-      *
-      * @param itemArray The array of items that need to be checked.
-      * @return resultID The item ID of the resulting item.
-      * @return resultQty The stack quantity of the resulting item.
-      *
-      * @return False if combination is not possible.
-      */
+    /**
+     * Returns with the result ID and quantity of the combination
+     * if the item list is in set of unique ingredients for that pattern.
+     *
+     * @param itemArray The array of items that need to be checked.
+     * @param resultId The item ID of the resulting item.
+     * @param resultQty The stack quantity of the resulting item.
+     *
+     * @return False if combination is not possible.
+     */
     bool AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, int &resultQty);
 
-    /** Returns true then item array matchs combination array regardless of order
-      *
-      * @param itemArray The array of items that need to be checked.
-      * @param current The combination structure that includes an array of items
-      *
-      * @return False if combination is not possible.
-      */
+    /**
+     * Returns true then item array matchs combination array regardless of order.
+     *
+     * @param itemArray The array of items that need to be checked.
+     * @param current The combination structure that includes an array of items
+     *
+     * @return False if combination is not possible.
+     */
     bool MatchCombinations(csArray<psItem*> itemArray, CombinationConstruction* current);
 
-    /** Check to see if there is a possible trasnform available.
-      * @param patterns The list of all applicable patters to apply
-      *                 (including group patterns)
-      * @param targetID the id of the item trying to transform.
-      * @param targetQty The stack count of the item to transform.
-      *
-      * @return An indicator of pattern match status.
-      */
+    /**
+     * Check to see if there is a possible trasnform available.
+     *
+     * @param patterns  The list of all applicable patters to apply (including group patterns)
+     * @param KFactor   The KFactor
+     * @param targetId  The id of the item trying to transform.
+     * @param targetQty The stack count of the item to transform.
+     *
+     * @return An indicator of pattern match status.
+     */
     unsigned int AnyTransform(csArray<psTradePatterns*> &patterns, float &KFactor, uint32 targetId, int targetQty);
 
-    /** Check to see if there is a possible trasnform available.
-      * @param patternId The current pattern to use
-      * @param targetId the id of the item trying to transform.
-      * @param targetQty The stack count of the item to transform.
-      *
-      * @return An indicator of pattern match status.
-      */
+    /**
+     * Check to see if there is a possible trasnform available.
+     *
+     * @param patternId The current pattern to use
+     * @param targetId the id of the item trying to transform.
+     * @param targetQty The stack count of the item to transform.
+     *
+     * @return An indicator of pattern match status.
+     */
     unsigned int IsTransformable(uint32 patternId, uint32 targetId, int targetQty);
 
     bool ScriptNoTarget();
@@ -458,35 +513,64 @@ protected:
     bool IsIngredient(uint32 patternId, uint32 targetId);
 
     /**
-     * @param process The process which was applied in order to generate this item, if any, else NULL.
-     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
+     * @param oldItem           The item which is going to be destructed (the old item).
+     * @param newId             The id of the new.
+     * @param newQty            The new number of items.
+     * @param itemQuality       The new items quality.
+     * @param process           The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans             The transformation which was applied in order to generate this item, if any, else NULL.
      */
     psItem* TransformSelfContainerItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
 
     /**
-     * @param process The process which was applied in order to generate this item, if any, else NULL.
-     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
+     * @param oldItem           The item which is going to be destructed (the old item).
+     * @param newId             The id of the new.
+     * @param newQty            The new number of items.
+     * @param itemQuality       The new items quality.
+     * @param process           The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans             The transformation which was applied in order to generate this item, if any, else NULL.
      */
     psItem* TransformContainedItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
+
+    /**
+     *
+     * @param newId             The new ID
+     * @param newQty            The new number of items.
+     * @param itemQuality       The new items quality.
+     * @param containerItem     The container.
+     */
     psItem* CombineContainedItem(uint32 newId, int newQty, float itemQuality, psItem* containerItem);
 
     /**
-     * @param process The process which was applied in order to generate this item, if any, else NULL.
-     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
+     * @param slot              The slot
+     * @param newId             The new ID
+     * @param newQty            The new number of items.
+     * @param itemQuality       The new items quality.
+     * @param process           The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans             The transformation which was applied in order to generate this item, if any, else NULL.
      */
     psItem* TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
 
     /**
-     * @param process The process which was applied in order to generate this item, if any, else NULL.
-     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
+     * @param slot              The slot
+     * @param newId             The new ID
+     * @param newQty            The new number of items.
+     * @param itemQuality       The new items quality.
+     * @param process           The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans             The transformation which was applied in order to generate this item, if any, else NULL.
      */
     psItem* TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
 
     /**
-     * @param process The process which was applied in order to generate this item, if any, else NULL.
-     * @param trans The transformation which was applied in order to generate this item, if any, else NULL.
+     * @param oldItem           The item which is going to be destructed (the old item).
+     * @param newId             The id of the new.
+     * @param newQty            The new number of items.
+     * @param itemQuality       The new items quality.
+     * @param process           The process which was applied in order to generate this item, if any, else NULL.
+     * @param trans             The transformation which was applied in order to generate this item, if any, else NULL.
      */
     psItem* TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
+    
     void TransformTargetItemToNpc(psItem* workItem, Client* client);
 
     /**
@@ -523,11 +607,14 @@ protected:
     bool ValidateNotOverSkilled(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
     bool ValidateConstraints(psTradeTransformations* transCandidate, psTradeProcesses* processCandidate);
 
-    /** Calculates the event duration to accomplish a work using a math script.
-     *  @param trans The transformation which is being applied.
-     *  @param transItem The item which is being transformed.
-     *  @param worker The actor which is working on the object.
-     *  @return The amount of time which will be needed to complete the work.
+    /**
+     * Calculates the event duration to accomplish a work using a math script.
+     *
+     * @param trans             The transformation which is being applied.
+     * @param process           The process.
+     * @param transItem         The item which is being transformed.
+     * @param worker            The actor which is working on the object.
+     * @return The amount of time which will be needed to complete the work.
      */
     int CalculateEventDuration(psTradeTransformations* trans, psTradeProcesses* process, psItem* transItem, gemActor* worker);
 
@@ -541,45 +628,50 @@ protected:
     bool CalculateQuality(float factor, psItem* transItem, gemActor* worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans, csTicks time);
 
     /**
-      * This function handles commands like "/repair" using
-      * the following sequence of steps.
-      *
-      * -# Make sure client isn't already busy digging, etc.
-      * -# Check for repairable item in right hand slot
-      * -# Check for required repair kit item in any inventory slot
-      * -# Calculate time required for repair based on item and skill level
-      * -# Calculate result after repair
-      * -# Queue time event to trigger when repair is complete, if not canceled.
-      * @param client The client that issues the command
-      * @param repairSlotName the slot name which should be repaired.
-      */
+     * This function handles commands like "/repair" using
+     * the following sequence of steps.
+     *
+     * -# Make sure client isn't already busy digging, etc.
+     * -# Check for repairable item in right hand slot
+     * -# Check for required repair kit item in any inventory slot
+     * -# Calculate time required for repair based on item and skill level
+     * -# Calculate result after repair
+     * -# Queue time event to trigger when repair is complete, if not canceled.
+     * @param client The client that issues the command
+     * @param repairSlotName the slot name which should be repaired.
+     */
     void HandleRepair(Client* client, const csString &repairSlotName);
 
-    /** @brief Handle production events from clients
-      *
-      * This function handles commands like "/dig for gold" using
-      * the following sequence of steps:
-      *
-      * -# Make sure client isn't already busy digging, etc.
-      * -# Find closest natural resource
-      * -# Validate category of equipped item
-      * -# Calculate time required
-      * -# Send anim and confirmation message to client
-      * -# Queue up game event for success
-      * @param client The client that issues the command
-      * @param type The position in the resourcesActions array of the requested production type.
-      * @param reward The name of the natural resource we are looking for.
-      */
+    /**
+     * Handle production events from clients.
+     *
+     * This function handles commands like "/dig for gold" using
+     * the following sequence of steps:
+     *
+     * -# Make sure client isn't already busy digging, etc.
+     * -# Find closest natural resource
+     * -# Validate category of equipped item
+     * -# Calculate time required
+     * -# Send anim and confirmation message to client
+     * -# Queue up game event for success
+     *
+     * @param actor             The actor
+     * @param type              The position in the resourcesActions array of the requested production type.
+     * @param reward            The name of the natural resource we are looking for.
+     * @param client            The client that issues the command
+     */
     void HandleProduction(gemActor* actor, size_t type,const char* reward, Client* client = NULL);
 
     bool SameProductionPosition(gemActor* actor, const csVector3 &startPos);
 
-    /** Find the nearest resource to the player of the requested type.
-      * @param sector A pointer to the iSector the player is currently in.
-      * @param pos A csVector3 with the position of the player in the current sector.
-      * @param action The position in the resourcesActions array of the requested production type.
-      * @param reward The name of the natural resource we are looking for.
-      */
+    /**
+     * Find the nearest resource to the player of the requested type.
+     *
+     * @param sector            A pointer to the iSector the player is currently in.
+     * @param pos               A csVector3 with the position of the player in the current sector.
+     * @param action            The position in the resourcesActions array of the requested production type.
+     * @param reward            The name of the natural resource we are looking for.
+     */
     csArray<NearNaturalResource> FindNearestResource(iSector* sector, csVector3 &pos, const size_t action, const char* reward = NULL);
 
 private:
@@ -591,8 +683,8 @@ private:
     psItem* autoItem;               ///< The current item that is being transformed by auto-transformation container
     gemActor* owner;                ///< The character pointer of the current character being used.
     gemObject* gemTarget;           ///< The object being targeted by the player.
-    csArray<psTradePatterns*> patterns;              /* ///< Current pattern ID
-    uint32 groupPatternId;          ///< Current group pattern ID*/
+    csArray<psTradePatterns*> patterns; ///< Current pattern ID
+    uint32 groupPatternId;          ///< Current group pattern ID
     float patternKFactor;           ///< Pattern factor that's part of quality calculation
     float currentQuality;           ///< Current result item quality
     psTradeTransformations* trans;  ///< Current work transformation

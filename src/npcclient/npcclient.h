@@ -74,11 +74,14 @@ class  psPath;
 class  psPathNetwork;
 struct iCelHNavStruct;
 
+
+/** Structure for race depended values.
+ */
 struct RaceInfo_t
 {
-    csString name;
-    float    walkSpeed;
-    float    runSpeed;
+    csString name;      ///< The name of the race
+    float    walkSpeed; ///< The default walk speed for this race
+    float    runSpeed;  ///< The default run speed for this race.
 
     const char* GetName()
     {
@@ -93,14 +96,22 @@ class psNPCClient : public iCommandCatcher, public iScriptableVar
 {
 public:
 
+    /** Keep information about deferred NPCs during loading.
+     */
     struct DeferredNPC
     {
-        PID id;
+        PID      id;
         csString name;
     };
 
 
+    /**
+     * Constructor.
+     *
+     * Create the NPC Client application class.
+     */
     psNPCClient();
+    
     /**
      * Cleans up all allocated memory and removes all the players from the world.
      */
@@ -110,8 +121,15 @@ public:
      * Initialize the superclient.
      * Starts a thread for the Network, Message Handler. Also
      * binds the status socket for the network.
+     *
+     * @param object_reg The object registry
+     * @param host       The host that keeps the DB.
+     * @param user       The user for the DB.
+     * @param pass       The password for the DB.
+     * @param port       The port for the DB.
+     * @return True if the initialization went ok.
      */
-    bool Initialize(iObjectRegistry* object_reg,const char* host, const char* user, const char* pass, int port);
+    bool Initialize(iObjectRegistry* object_reg, const char* host, const char* user, const char* pass, int port);
 
     /**
      * Just make iObjectRegistry available to other classes.
@@ -132,6 +150,11 @@ public:
      */
     void MainLoop();
 
+    /**
+     * Catch a command from the console.
+     *
+     * @param cmd The command.
+     */
     virtual void CatchCommand(const char* cmd);
 
     /**
@@ -160,18 +183,21 @@ public:
     void Tick();
 
     /**
-     * Load a map into a region.  This is a copy of code
-     * from entitymanager->CreateRoom().
+     * Load a map into a region.
+     *
+     * This is a copy of code from entitymanager->CreateRoom().
+     *
+     * @param mapfile A file with maps to load.
      */
     bool LoadMap(const char* mapfile);
 
-    /**
+    /** Find a region with a given name.
      * This function handles the searching for the specified region name
      * so that other functions can refer to the region directly.
      */
     LocationType* FindRegion(const char* regname);
 
-    /**
+    /** Find a location with a given name.
      * This function handles the searching for the specified location type
      * so that other functions can refer to the location type directly.
      */
@@ -179,19 +205,19 @@ public:
 
     /**
      * This function handles the searching for the specified object
-     * type and basically does the work for the <locate> script command.
+     * type and basically does the work for the \<locate\> script command.
      */
     Location* FindLocation(const char* loctype, const char* name);
 
     /**
      * This function handles the searching for the specified object
-     * type and basically does the work for the <locate> script command.
+     * type and basically does the work for the \<locate\> script command.
      */
     Location* FindNearestLocation(const char* loctype, csVector3 &pos, iSector* sector, float range = -1, float* found_range = NULL);
 
     /**
      * This function handles the searching for the specified object
-     * type and basically does the work for the <locate> script command.
+     * type and basically does the work for the \<locate\> script command.
      */
     Location* FindRandomLocation(const char* loctype, csVector3 &pos, iSector* sector, float range = -1, float* found_range = NULL);
 
@@ -312,16 +338,18 @@ public:
      *
      * \sa NPC::TriggerEvent Tribe::TriggerEvent
      *
-     * @param maxRange   If greater than 0.0 then max range apply
-     * @param basePos    The base position for range checks.
-     * @param baseSector The base sector for range checks.
-     * @param sameSector Only trigger if in same sector
+     * @param pcpt            The perception
+     * @param maxRange        If greater than 0.0 then max range apply
+     * @param basePos         The base position for range checks.
+     * @param baseSector      The base sector for range checks.
+     * @param sameSector      Only trigger if in same sector
      */
     void TriggerEvent(Perception* pcpt, float maxRange=-1.0,
                       csVector3* basePos=NULL, iSector* baseSector=NULL,
                       bool sameSector=false);
 
-    /** Returns the Event Manger.
+    /**
+     * Returns the Event Manger.
      *
      * @return Returns a ptr to the event manager.
      */
@@ -330,7 +358,8 @@ public:
         return eventmanager;
     }
 
-    /** Returns the Math Scripting Engine.
+    /**
+     * Returns the Math Scripting Engine.
      *
      * @return Returns a ptr to the math script engine.
      */
@@ -347,31 +376,46 @@ public:
     /**
      * SetEntityPos finds the given ID entity, and updates
      * its position in mesh and linmove.
-     * @param force Applies the entity reposition also on npc. Useful with teleport slide and other operations.
+     *
+     * @param id       The EID of the entity.
+     * @param pos      The new position.
+     * @param sector   The new sector.
+     * @param instance The new instance.
+     * @param force    Applies the entity reposition also on npc. Useful with teleport slide and other operations.
      */
     void SetEntityPos(EID id, csVector3 &pos, iSector* sector, InstanceID instance, bool force = false);
 
     /**
      * Find the NPC* attached to the entity with the specified character ID
+     *
+     * @param character_id  The PID of the NPC to find.
+     * @return The NPC or NULL if no NPC with this PID was found.
      */
     NPC* FindNPCByPID(PID character_id);
 
     /**
      * Find the NPC* attached to the entity with the specified EID
+     *
+     * @param entid           The EID of the NPC to find.
+     * @return The NPC or NULL if no NPC with this EID was found.
      */
     NPC* FindNPC(EID entid);
 
     /**
      * Find a given path.
+     *
+     * @param name            The name of the path.
+     * @return The path or NULL if no path was found.
      */
     psPath* FindPath(const char* name);
 
-    /** Enable or disable NPCs
+    /**
+     * Enable or disable NPCs
      *
-     *  Alter the Disabled state of NPCs.
+     * Alter the Disabled state of NPCs.
      *
-     *  @param pattern Used to mach NPC(s) to enable or disable.
-     *  @param enable  Set to true if the NPC should be enabled.
+     * @param pattern Used to mach NPC(s) to enable or disable.
+     * @param enable  Set to true if the NPC should be enabled.
      */
     void EnableDisableNPCs(const char* pattern, bool enable);
 
@@ -388,13 +432,13 @@ public:
         return npcs.GetSize();
     }
 
-    /** Retrive the current tick counter
+    /**
+     * Retrive the current tick counter
      */
     unsigned int GetTickCounter() const
     {
         return tick_counter;
     }
-
 
     /**
      * Find one npc and print its current state info.
@@ -455,14 +499,16 @@ public:
     gemNPCObject* FindCharacterID(PID pid);
     gemNPCObject* FindEntityID(EID eid);
 
-    /** Find named entity.
+    /**
+     * Find named entity.
      *
-     *  Return first entity that macht the given name.
+     * Return first entity that macht the given name.
      */
     gemNPCObject* FindEntityByName(const char* name);
 
     /**
      * Loop through every tribe and check if this npc is a member.
+     *
      * @return false if tribe member and failed to attach, otherwise true
      */
     bool CheckAttachTribes(NPC* npc);
@@ -476,17 +522,21 @@ public:
 
     NPC* ReadSingleNPC(PID char_id, PID master_id = 0);
 
-    /** Clones a master npc to a new npc whith the passed PID.
-     *  Used to inheredit behaviours from other npc.
-     *  @note this is used as last shore scenario. This way the npc even
-     *        if mastered can override the entry of it's master.
-     *        The master PID comes from psserver.
-     *  @param char_id A valid PID of the character which is taking it's
-     *                 attributes from the master npc.
-     *  @param master_id A valid PID of the master npc from which we will
-     *                   copy the attributes.
-     *  @return A pointer to the newly created NPC. NULL if the arguments
-     *          where invalid or the master wasn't found.
+    /**
+     * Clones a master npc to a new npc whith the passed PID.
+     *
+     * Used to inheredit behaviours from other npc.
+     *
+     * @note this is used as last shore scenario. This way the npc even
+     *       if mastered can override the entry of it's master.
+     *       The master PID comes from psserver.
+     *
+     * @param char_id A valid PID of the character which is taking it's
+     *                attributes from the master npc.
+     * @param master_id A valid PID of the master npc from which we will
+     *                  copy the attributes.
+     * @return A pointer to the newly created NPC. NULL if the arguments
+     *         where invalid or the master wasn't found.
      */
     NPC* ReadMasteredNPC(PID char_id, PID master_id);
 
@@ -494,8 +544,6 @@ public:
      * Update with time from server in order to start timed events.
      */
     void UpdateTime(int minute, int hour, int day, int month, int year);
-
-    //    psPFMaps*  GetMaps() { return PFMaps; }
 
     iCelHNavStruct*  GetNavStruct()
     {
@@ -519,28 +567,55 @@ public:
         return vfs;
     }
 
+    /** @name Game time
+     * Functions to retrive the game time.
+     */
+    ///@{
+
+    /**
+     * Get the minute of the game time of day.
+     */
     int GetGameTODMinute()
     {
         return gameMinute;
     }
+    
+    /**
+     * Get the hour of the game time of day.
+     */
     int GetGameTODHour()
     {
         return gameHour;
     }
+    
+    /**
+     * Get the day of the game time of day.
+     */
     int GetGameTODDay()
     {
         return gameDay;
     }
+    
+    /**
+     * Get the month of the game time of day.
+     */
     int GetGameTODMonth()
     {
         return gameMonth;
     }
+    
+    /**
+     * Get the year of the game time of day.
+     */
     int GetGameTODYear()
     {
         return gameYear;
     }
-
-    /** Attach a server gemObject to a Crystal Space object.
+    ///@}
+    
+    /**
+     * Attach a server gemObject to a Crystal Space object.
+     *
      * In most cases this will be a mesh wrapper.
      *
      * @param object The Crystal Space object we want to attach our gemObject to.
@@ -548,48 +623,59 @@ public:
      */
     void AttachObject(iObject* object, gemNPCObject* gobject);
 
-    /** Unattach a gemObject from a Crystal Space object.
-      * In most cases the Crystal Space object is a meshwrapper.
-      *
-      * @param object The Crystal Space object we want to unattach our object from.
-      * @param gobject The gem object we want to unattach.
-      */
+    /**
+     * Unattach a gemObject from a Crystal Space object.
+     *
+     * In most cases the Crystal Space object is a meshwrapper.
+     *
+     * @param object The Crystal Space object we want to unattach our object from.
+     * @param gobject The gem object we want to unattach.
+     */
     void UnattachObject(iObject* object, gemNPCObject* gobject);
 
-    /** See if there is a gemObject attached to a given Crystal Space object.
-      *
-      * @param object The Cyrstal Space object we want to see if there is an object attached to.
-      *
-      * @return A gemNPCObject if it exists that is attached to the Crystal Space object.
-      */
+    /**
+     * See if there is a gemObject attached to a given Crystal Space object.
+     *
+     * @param object The Cyrstal Space object we want to see if there is an object attached to.
+     *
+     * @return A gemNPCObject if it exists that is attached to the Crystal Space object.
+     */
     gemNPCObject* FindAttachedObject(iObject* object);
 
 
-    /** Create a list of all nearby gem objects.
-      * @param sector The sector to check in.
-      * @param pos The starting position
-      * @param radius The distance around the starting point to check.
-      * @param doInvisible If true check invisible meshes otherwise ignore them.
-      *
-      * @return A csArray<> of all the objects in the given radius.
-      */
+    /**
+     * Create a list of all nearby gem objects.
+     *
+     * @param sector The sector to check in.
+     * @param pos The starting position
+     * @param radius The distance around the starting point to check.
+     * @param doInvisible If true check invisible meshes otherwise ignore them.
+     *
+     * @return A csArray<> of all the objects in the given radius.
+     */
     csArray<gemNPCObject*> FindNearbyEntities(iSector* sector, const csVector3 &pos, float radius, bool doInvisible = false);
 
-    /** Create a list of all nearby gem actors.
-      * @param sector The sector to check in.
-      * @param pos The starting position
-      * @param radius The distance around the starting point to check.
-      * @param doInvisible If true check invisible meshes otherwise ignore them.
-      *
-      * @return A csArray<> of all the objects in the given radius.
-      */
+    /**
+     * Create a list of all nearby gem actors.
+     *
+     * @param sector The sector to check in.
+     * @param pos The starting position
+     * @param radius The distance around the starting point to check.
+     * @param doInvisible If true check invisible meshes otherwise ignore them.
+     *
+     * @return A csArray<> of all the objects in the given radius.
+     */
     csArray<gemNPCActor*> FindNearbyActors(iSector* sector, const csVector3 &pos, float radius, bool doInvisible = false);
 
-    /** Load and return the root node of an xml file.
+    /**
+     * Load and return the root node of an xml file.
+     *
+     * @param xmlfile Name of the xml file to find the root node of.
      */
     csRef<iDocumentNode> GetRootNode(const char* xmlfile);
 
-    /** Add an NPCType
+    /**
+     * Add an NPCType
      *
      * Upon loading a tribe, the Recipe Manager creates a NPCType and
      * uses this method to Put the assembled npctype into the npctypes map.
@@ -599,11 +685,20 @@ public:
      */
     bool AddNPCType(csString newType);
 
+    /**
+     * Decode a npc type from the XML definition.
+     *
+     * @param root The document node that containts a NPC type.
+     */
     bool LoadNPCTypes(iDocumentNode* root);
 
+    /**
+     * Load NPC Types from DB.
+     */
     bool LoadNPCTypes();
     
-    /** Fire perception
+    /**
+     * Fire perception
      *
      * Method used by the console command 'fireperc'.
      * It fires a perception on the given npc.
@@ -614,34 +709,50 @@ public:
      */
     bool FirePerception(int NPCId, const char* perception);
 
-    // made public for the networkmanager to call it
+    /**
+     * made public for the networkmanager to call it
+     */
     bool LoadPathNetwork();
 
-    /** Return the path network of the npcclient
+    /**
+     * Return the path network of the npcclient
      */
     psPathNetwork* GetPathNetwork()
     {
         return pathNetwork;
     }
 
-    /** Return the location manager of the npcclient
+    /**
+     * Return the location manager of the npcclient
      */
     LocationManager* GetLocationManager()
     {
         return locationManager;
     }
 
-    /// iScriptableVar implementation
+    /** @name iScriptableVar implementation
+     * Functions that implement the iScriptableVar interface. 
+     */
+    ///@{
     virtual double GetProperty(MathEnvironment* env, const char* ptr);
     virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     virtual const char* ToString();
-
+    ///@}
+    
 protected:
-
+    /**
+     * Read NPCs from the DB.
+     */
     bool ReadNPCsFromDatabase();
+
+    /**
+     * Load locations from the DB.
+     */
     bool LoadLocations();
 
-    /** Load Tribes from db */
+    /**
+     * Load Tribes from the DB.
+     */
     bool LoadTribes();
 
     /**

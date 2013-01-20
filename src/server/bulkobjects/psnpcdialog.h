@@ -82,13 +82,14 @@ struct KnowledgeArea
     };
 };
 
-/** Sentence written by the user represented
-    as sequence of known terms */
+/**
+ * Sentence written by the user represented as sequence of known terms.
+ */
 class NpcTriggerSentence
 {
 protected:
-    csArray<NpcTerm*> terms;  // Not PArray because these ptrs are shared
-    csString str; /// String version built from array
+    csArray<NpcTerm*> terms;  ///< Not PArray because these ptrs are shared
+    csString str;             ///< String version built from array
 
 public:
     NpcTriggerSentence()  {};
@@ -111,12 +112,12 @@ class DialogHistory
 protected:
     struct DialogHistoryEntry
     {
-        int playerID; /// Who was the response said to
-        int responseID;  /// What response was said
-        csTicks when;    /// Timestamp of response
+        int playerID;    ///< Who was the response said to
+        int responseID;  ///< What response was said
+        csTicks when;    ///< Timestamp of response
     };
     csArray<DialogHistoryEntry> history;
-    int counter;  /// Current location in circular buffer
+    int counter;                          ///< Current location in circular buffer
 public:
     DialogHistory() { counter=0; }
 
@@ -146,8 +147,6 @@ protected:
     Client *currentClient;
     DialogHistory dialogHistory;
 
-
-    //void FindTriggerWords(const char *text,csString& trigger);
     NpcResponse* FindResponse(csString& trigger,const char *text);
     NpcResponse *FindResponseWithAllPrior(const char *area,const char *trigger);
     bool CheckPronouns(psString& text);
@@ -157,9 +156,12 @@ protected:
 protected:
     void CleanPunctuation(psString& str, bool cleanQMark = true);
     
-    /** Recognizes phrases in the text and translates them to synonyms,
-        Ignores any unrecognized phrases. Returns array of recognized phrases. */
+    /**
+     * Recognizes phrases in the text and translates them to synonyms,
+     * Ignores any unrecognized phrases. Returns array of recognized phrases.
+     */
     void FilterKnownTerms(const psString & text, NpcTriggerSentence &trigger, Client *client);
+    
     /**
      * Find a trigger by trying every combinations of generalization for each
      * term.
@@ -208,36 +210,47 @@ class psAttitudeBlock;
 class psSpecialResponse;
 class psResponse;
 
-//! This is used to handle <specificknowledge> and <specialresponse> tags.
+/**
+ * This is used to handle \<specificknowledge\> and \<specialresponse\> tags.
+ */
 class psDialogManager
 {
 public:
-    //! Add a trigger to the list of triggers.
+    /**
+     * Add a trigger to the list of triggers.
+     */
     void AddTrigger( psTriggerBlock* trigger );
 
-    //! Add a special response to the internal list.
+    /**
+     * Add a special response to the internal list.
+     */
     void AddSpecialResponse( psSpecialResponse* response );
 
-    //! A debuging function that prints all the trigger data. 
+    /**
+     * A debuging function that prints all the trigger data.
+     */
     void PrintInfo();
 
-    //! A list of all the triggers.
-    /*!
+    /**
+     * A list of all the triggers.
+     *
      * This is a simple list of the all the trigger data that needs
      * to be created. It is of type psTriggerBlock.
      */
     csArray<psTriggerBlock*> triggers;
 
 
-    //! A list of all the special responses.
-    /*!
+    /**
+     * A list of all the special responses.
+     *
      * This is a simple list of the all the special response data that needs
      * to be created. It is of type psSpecialResponse.
      */
     csArray<psSpecialResponse*> special;
 
-    //! Maps a internal ID to a database ID.
-    /*! 
+    /**
+     * Maps a internal ID to a database ID.
+     * 
      * When responses are loaded from a file they are given internal IDs.
      * When they are added to the database they are given a proper database
      * id.  This function returns that database ID based on the internal one
@@ -245,10 +258,14 @@ public:
      */
     int GetPriorID( int internalID );
 
-    //! Keep track of the database id's of the triggers.
+    /**
+     * Keep track of the database id's of the triggers.
+     */
     csArray<int> triggerIDs;
 
-    //! Keep track of the database id's of responses.
+    /**
+     * Keep track of the database id's of responses.
+     */
     csArray<int> responseIDs;
 
     csString    area;
@@ -264,32 +281,31 @@ public:
    
 //--------------------------------------------------------------------------
 
-//! A special NPC response.
-/*!
+/**
+ * A special NPC response.
+ *
  * This holds the data related to a special response. These are usually
- * fall back or error responses for NPCs.  The format of the tag is:
- *            <specialresponse reactionMax="max" 
+ * fall back or error responses for NPCs.  The format of the tag is: <pre>
+ *           \<specialresponse reactionMax="max" 
  *                             reactionMin="min" 
  *                             type="type"
- *                             value="expression"/>
+ *                             value="expression"/\></pre>
  */
 class psSpecialResponse
 {
 public: 
-    //! Create the response based on the given tag.
+    /**
+     * Create the response based on the given tag.
+     */
     psSpecialResponse( csRef<iDocumentNode> responseNode, int questID );
 
-    //! The trigger name.
-    csString type;
+    csString type;        ///< The trigger name.
 
-    //! The response given
-    csString response;
+    csString response;    ///< The response given.
 
-    //! The min attitude required for this response.
-    int attMin;
+    int attMin;           ///< The min attitude required for this response.
 
-    //! The max attitude required for this response.
-    int attMax;
+    int attMax;           ///< The max attitude required for this response.
 
     int questID;
 };
@@ -297,8 +313,9 @@ public:
 
 //--------------------------------------------------------------------------
 
-//! A set of trigger data. 
-/*!
+/**
+ * A set of trigger data. 
+ *
  * This manages all the data that is related to a trigger.  It consists of 
  * a list of phrases and a list of attitudes.  For each attitude and phrase
  * a new trigger will be generated.  So 3 phrases and 2 attitudes will 
@@ -314,49 +331,56 @@ public:
         questID = -1;
     }
 
-    //! A list of phrases for this trigger. 
-    /*! This allows us to create many triggers to map to many responses.
+    /**
+     * A list of phrases for this trigger.
+     *
+     * This allows us to create many triggers to map to many responses.
      */
     csStringArray phraseList;
 
-    //! The list of attitudes. 
-    /*! This contain the responses based on an attitude range.
+    /**
+     * The list of attitudes.
+     *
+     * This contain the responses based on an attitude range.
      */
     csArray<psAttitudeBlock*> attitudes;
    
     psTriggerBlock() { priorResponseID = 0; } 
 
-    //! This is a recursive function that creates triggers.
+    /**
+     * This is a recursive function that creates triggers.
+     */
     void Create( csRef<iDocumentNode> triggerNode, int questID );
  
-    // This sets the prior responseID for this trigger data. 
+    /**
+     * This sets the prior responseID for this trigger data.
+     */
     void SetPrior( int id ) { priorResponseID = id; }
 
-    // Holds the prior responseID.
-    int priorResponseID;
+    int priorResponseID;              ///< Holds the prior responseID.
 
-    // Holds the real databaseID of this trigger.
-    int databaseID;
+    int databaseID;                   ///< Holds the real databaseID of this trigger.
+    
+    csString area;                    ///< The knowledge area of this trigger.
 
-    // The knowledge area of this trigger.
-    csString area;
+    psDialogManager* manager;         ///<  Main mangaer.
 
-    //  Main mangaer.
-    psDialogManager* manager;
-
-    // questID of trigger
-    int questID;
+    int questID;                      ///< questID of trigger
 };
 
 
 //--------------------------------------------------------------------------
 
-//! A simple response 
+/**
+ * A simple response.
+ */
 class psResponse
 {
 public:
-    //! The response lists.
-    /*! Each response set can have up to 5 different phrases that are 
+    /**
+     * The response lists.
+     *
+     * Each response set can have up to 5 different phrases that are 
      * randomly picked from.
      */
     csStringArray responses;
@@ -367,28 +391,27 @@ public:
              pronoun_it,
              pronoun_them;
 
-    //! The internal ID given by the dialog manager.
-    int givenID;
+    int givenID;              ///< The internal ID given by the dialog manager.
 
-    //! The actual databaseID.
-    int databaseID;
+    int databaseID;           ///< The actual databaseID.
 
-    //! The questID of the response
-    int questID;
+    int questID;              ///< The questID of the response
+
 };
 
 
 //--------------------------------------------------------------------------
 
-//! This is an attitude class data that has the responses.
-/*! The attitude block is a set of responses based on a particular attitude
- *  range.  This class keeps track of that data.
+/**
+ * This is an attitude class data that has the responses.
+ *
+ * The attitude block is a set of responses based on a particular attitude
+ * range.  This class keeps track of that data.
  */
 class psAttitudeBlock
 {
 public:
-    //! Used to generate the internal id's
-    static int responseID;
+    static int responseID;    ///< Used to generate the internal id's
 
     psAttitudeBlock( psDialogManager * mgr) 
     { 
@@ -396,20 +419,18 @@ public:
         responseSet.givenID = ++responseID; 
     }
 
-    //! The response set for this attitude.
-    psResponse responseSet;
+    psResponse responseSet;    ///< The response set for this attitude.
 
-    //! Populate the data for this class.
+    /**
+     * Populate the data for this class.
+     */
     void Create( csRef<iDocumentNode> attitudeNode, int questID );
 
-    //! The max attitude that these responses are for.
-    int maxAttitude;
+    int maxAttitude;           ///< The max attitude that these responses are for.
 
-    //! The min NPC attitude that these responses are for.
-    int minAttitude;
+    int minAttitude;           ///< The min NPC attitude that these responses are for.
 
-    //! Main dialog manager.
-    psDialogManager* manager;
+    psDialogManager* manager;  ///< Main dialog manager.
 };
 
 #endif 

@@ -37,7 +37,7 @@
 #include "gem.h"
 
 /**
- * \addtogroup npcclient
+ * \addtogroup perceptions
  * @{ */
 
 class Reaction;
@@ -58,61 +58,116 @@ struct iSector;
 class Perception
 {
 protected:
-    /// The name of this perception.
-    csString name;
+    csString name;       ///< The name of this perception.
 
-    /// Values used by perceptions. Usally they correspond to the same value in a reaction.  
-    csString  type;
+    csString type;       ///< Type used by perceptions. Usally they correspond to the same value in a reaction.
 
 public:
-    Perception(const char *n) { name = n; }
-    Perception(const char *n, const char *t) { name = n; type = t; }
+    /**
+     * Constructor.
+     *
+     * @param name            The name of the perception.
+     */
+     Perception(const char* name):name(name) {}
+
+    /**
+     * Constructor.
+     *
+     * @param name            The name of the perception.
+     * @param type            The type for this perception.
+     */
+    Perception(const char* name, const char* type):name(name),type(type) {}
+
+    /**
+     * Destructor.
+     */
     virtual ~Perception() {}
 
-
+    /**
+     * Check if this perception should react to a reaction.
+     *
+     * @param reaction         The reaction to check for.
+     * @param npc              The NPC that might receive this.
+     *
+     * @return true if reaction should be reacted to.
+     */
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
+
+    /**
+     * Make a copy of this perception.
+     *
+     * @return the copy.
+     */
     virtual Perception *MakeCopy();
+
+    /**
+     * All preconditions has been checked, now excecute the perception.
+     *
+     * @param npc             The target of the percpetion.
+     * @param weight          Indicate how much the HateList of the npc should be changed. Value comes from the reaction.
+     */
     virtual void ExecutePerception(NPC *npc,float weight);
-  
+
+    /**
+     * Some perception has a target/source.
+     *
+     * \sa DamagePerception
+     *
+     * @return the target of this perception.
+     */
     virtual gemNPCObject *GetTarget() { return NULL; }
 
-    /** Get the name of the perception.
+    /**
+     * Get the name of the perception.
      *
-     *  This name has to be const since it is used in the registered reaction
-     *  chache to find the reactions and npcs that should have this perception.
+     * This name has to be <b>const</b> since it is used in the registered reaction
+     * chache to find the reactions and npcs that should have this perception.
+     *
+     * @return the name of the perception.
      */
     virtual const csString& GetName() const;
 
-    /** Return the type of the perception.
+    /**
+     * Get the type of the perception.
+     *
+     * @return the type of the perception.
      */
     const csString& GetType() const;
+
+    /**
+     * Set the type of the perception.
+     *
+     * In most cases this can be done through the constructor Perception::Perception(const char*,const char*).
+     */
     void SetType(const char* type);
+
+    /**
+     * Get a location assosiated with the perception.
+     *
+     * Some perception might hold a location.
+     *
+     * @param pos              The position of the location.
+     * @param sector           The sector of the location.
+     *
+     * @return true if there where a location.
+     */
     virtual bool GetLocation(csVector3& pos, iSector*& sector) { return false; }
+
+    /**
+     * Get the radius of the perception.
+     */
     virtual float GetRadius() const { return 0.0; }
 
+    /**
+     * Get a text description of the perception.
+     */
     virtual csString ToString(NPC* npc);
 };
 
 //-----------------------------------------------------------------------------
 
-class RangePerception : public Perception
-{
-protected:
-    float range;
-
-public:
-    RangePerception(const char *n,float r)
-    : Perception(n), range(r)  {    }
-    virtual ~RangePerception() {}
-
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
-    virtual Perception *MakeCopy();
-    virtual csString ToString(NPC* npc);
-};
-
-//-----------------------------------------------------------------------------
-
-/** Given to the NPC upon ever tick of game minute.
+/**
+ * Given to the NPC upon ever tick of game minute.
  *
  * Perception to allow reaction based on time.
  * Any combination of hours,minutes,years,months,days can be matched.
@@ -141,6 +196,11 @@ public:
 
 //-----------------------------------------------------------------------------
 
+/**
+ * Deliver a faction based perception.
+ *
+ * Faction based perception can be perception like "talk" or "player nearby".
+ */
 class FactionPerception : public Perception
 {
 protected:
@@ -280,8 +340,9 @@ public:
 
 /**
  * Whenever an NPC is hit for damage by a melee hit or a spell,
- * this perception is passed to the damaged npc.  Right now,
- * it affects his/her hate list according to the weight supplied.
+ * this perception is passed to the damaged npc.
+ *
+ * Right now, it affects his/her hate list according to the weight supplied.
  */
 class DamagePerception : public Perception
 {
@@ -302,6 +363,7 @@ public:
 /**
  * Whenever a player casts a spell on himself, another player,
  * or any npc, this perception is passed to npc's in the vicinity.
+ *
  * We cannot only use targeted NPCs because an npc in combat may
  * want to react to a player healing his group mate, which helps
  * his team and hurts the NPC indirectly.  Right now, reactions
@@ -329,7 +391,9 @@ public:
 
 /**
  * The network layer is notified of any deaths from players
- * or NPCs on the server.  This perception is passed to all
+ * or NPCs on the server.
+ *
+ * This perception is passed to all
  * NPCs so they can react, by removing the player from hate
  * lists, stopping their combat or whatever.
  */
@@ -372,13 +436,19 @@ public:
     
 };
 
+/** @} */
+
 //-----------------------------------------------------------------------------
 
-/// NPC Pet Perceptions ============================================
+/**
+ * \addtogroup pet_perceptions
+ * @{ */
+
 /**
  * Whenever an NPCPet is told by it's owner to stay,
- * this perception is passed to the NPCPet.  Right now,
- * it changes the current behavior of the NPCPet.
+ * this perception is passed to the NPCPet.
+ *
+ * Right now, it changes the current behavior of the NPCPet.
  */
 class OwnerCmdPerception : public Perception
 {
@@ -402,8 +472,9 @@ public:
 
 /**
  * Whenever an NPCPet is told by it's owner to stay,
- * this perception is passed to the NPCPet.  Right now,
- * it changes the current behavior of the NPCPet.
+ * this perception is passed to the NPCPet.
+ *
+ * Right now, it changes the current behavior of the NPCPet.
  */
 class OwnerActionPerception : public Perception
 {
@@ -422,12 +493,11 @@ public:
 
 //-----------------------------------------------------------------------------
 
-/// NPC Pet Perceptions ============================================
-
 /**
  * Whenever an NPC Cmd is received this perception is fired.
  * This is most typicaly from a response script like:
- * <npccmd cmd="test_cmd"/>
+ * Example:<pre>
+ * \<npccmd cmd="test_cmd"/\></pre>
  */
 class NPCCmdPerception : public Perception
 {

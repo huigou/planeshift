@@ -26,6 +26,11 @@
 #include <csgeom/vector3.h>
 #include "util/psstring.h"
 
+
+/**
+ * \addtogroup messages
+ * @{ */
+
 // Forward declarations
 class Location;
 class LocationType;
@@ -593,6 +598,7 @@ public:
     virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/);
 };
 
+/** @} */
 
 #endif
 

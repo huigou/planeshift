@@ -91,34 +91,6 @@ csString Perception::ToString(NPC* npc)
     return result;
 }
 
-
-/*----------------------------------------------------------------------------*/
-
-bool RangePerception::ShouldReact(Reaction *reaction, NPC *npc)
-{
-    if (name == reaction->GetEventType() && range < reaction->GetRange())
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-Perception *RangePerception::MakeCopy()
-{
-    RangePerception *p = new RangePerception(name,range);
-    return p;
-}
-
-csString RangePerception::ToString(NPC* npc)
-{
-    csString result;
-    result.Format("Name: '%s' Range: '%.2f'",GetName().GetDataSafe(), range );
-    return result;
-}
-
 //---------------------------------------------------------------------------------
 
 

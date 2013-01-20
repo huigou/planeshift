@@ -88,18 +88,20 @@ public:
 
     void AddHate(EID entity_id, float delta);
 
-    /** Find the most hated entity within range of given position
+    /**
+     * Find the most hated entity within range of given position
      *
      *  Check the hate list and retrive most hated entity within range.
      *
-     *  @param  npc               The NPC
-     *  @param  pos               The position
-     *  @param  sector            The sector of the position
-     *  @param  range             The range to search for hated entities.
+     *  @param  npc                  The NPC
+     *  @param  pos                  The position
+     *  @param  sector               The sector of the position
+     *  @param  range                The range to search for hated entities.
+     *  @param  region               The region to search for hated entities within.
      *  @param  includeOutsideRegion Include enties outside region in the search.
-     *  @param  includeInvisible  Include invisible entities in the search.
-     *  @param  includeInvincible Include invincible entities in the search.
-     *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
+     *  @param  includeInvisible     Include invisible entities in the search.
+     *  @param  includeInvincible    Include invincible entities in the search.
+     *  @param  hate                 If diffrent from NULL, set upon return to the hate of the hated.
      *  @return The hated entity
      */
     gemNPCActor* GetMostHated(NPC* npc, csVector3 &pos, iSector* sector, float range, LocationType* region,
@@ -123,7 +125,8 @@ private:
 class Stat
 {
 public:
-    /** Constructor
+    /**
+     * Constructor
      */
     Stat() : value(0.0), max(0.0), rate(0.0), lastUpdate(0) {}
 
@@ -132,29 +135,35 @@ public:
      */
     void Update( csTicks now );
 
-    /** Set the stat value.
+    /**
+     * Set the stat value.
      */
     void SetValue( float value, csTicks now );
 
-    /** Set the maximum stat value.
+    /**
+     * Set the maximum stat value.
      */
     void SetMax( float max );
 
-    /** Set the regeneration value for this stat.
+    /**
+     * Set the regeneration value for this stat.
      */
     void SetRate( float rate, csTicks now );
 
-    /** Return the current value of the stat.
+    /**
+     * Return the current value of the stat.
      *
      * Call Update before to get the extrapolated value.
      */
     float GetValue() const { return value; }
 
-    /** Get the max stat value
+    /**
+     * Get the max stat value
      */
     float GetMax() const { return max; }
 
-    /** Get the regeneration rate.
+    /**
+     * Get the regeneration rate.
      */
     float GetRate() const { return rate; }
 private:
@@ -170,7 +179,9 @@ private:
 class NPC : private ScopedTimerCB, public iScriptableVar
 {
 public:
-    /** Structure to hold located positions */
+    /**
+     * Structure to hold located positions
+     */
     typedef struct
     {
         csVector3               pos;        ///< The position of the located object
@@ -217,12 +228,12 @@ protected:
     LocationType*      region;               ///< Cached pointer to the region
     bool               insideRegion;         ///< State variable for inside outside region checks.
     Perception*        last_perception;
-    int                debugging;       /// The current debugging level for this npc
+    int                debugging;            ///< The current debugging level for this npc
     bool               alive;
     EID                owner_id;
     EID                target_id;
 
-    csArray<csString>  autoMemorizeTypes;  ///< Used to store what types of perceptions to memorize without changing behaviors
+    csArray<csString>  autoMemorizeTypes;    ///< Used to store what types of perceptions to memorize without changing behaviors
 
     Tribe*             tribe;
     csString           tribeMemberType;      ///< What type/class is this NPC in the tribe.
@@ -284,10 +295,16 @@ protected:
         DRcounter = counter;
     }
 
-    // Loads an NPC from one row of sc_npc_definitions, it also loads the corresponding brain. Used at boot time
+    /**
+     * Loads an NPC from one row of sc_npc_definitions, it also loads the corresponding brain.
+     *
+     * Used at boot time
+     */
     bool Load(iResultRow &row,csHash<NPCType*, const char*> &npctypes, EventManager* eventmanager, PID usePID);
 
-    // Loads an NPC base information and his brain
+    /**
+     * Loads an NPC base information and his brain
+     */
     void Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled, EventManager* eventmanager);
 
     bool InsertCopy(PID use_char_id, PID ownerPID);
@@ -322,21 +339,24 @@ protected:
      */
     void SetBrain(NPCType* type, EventManager* eventmanager);
 
-    /** Callback for debug scope timers
+    /**
+     * Callback for debug scope timers
      */
     void ScopedTimerCallback(const ScopedTimer* timer);
 
-    /** Provide info about the NPC.
+    /**
+     * Provide info about the NPC.
      *
-     *  This funcion is both used by the "/info" in the client
-     *  and the "info <pid> npcclient console command.
+     * This funcion is both used by the "/info" in the client
+     * and the "info \<pid\> npcclient console command.
      */
     csString Info();
 
-    /** Dump all information for one NPC to the console.
+    /**
+     * Dump all information for one NPC to the console.
      *
-     *  The main use of this fuction is the "print <pid>"
-     *  npcclient console command.
+     * The main use of this fuction is the "print \<pid\>"
+     * npcclient console command.
      */
     void Dump();
 
@@ -344,14 +364,17 @@ protected:
      * Dump all state information for npc.
      */
     void DumpState();
+    
     /**
      * Dump all behaviors for npc.
      */
     void DumpBehaviorList();
+    
     /**
      * Dump all reactions for npc.
      */
     void DumpReactionList();
+    
     /**
      * Dump all hated entities for npc.
      */
@@ -369,7 +392,8 @@ protected:
 
     void ClearState();
 
-    /** Send a perception to this NPC
+    /**
+     * Send a perception to this NPC
      *
      * This will send the perception to this npc.
      * If the maxRange has been set to something greater than 0.0
@@ -387,7 +411,8 @@ protected:
                       csVector3* basePos=NULL, iSector* baseSector=NULL,
                       bool sameSector=false);
 
-    /** Send a perception to this NPC
+    /**
+     * Send a perception to this NPC
      *
      * Uses the above method, but acts as a wrapper.
      * Receives only the name of the perception and uses default values
@@ -401,32 +426,35 @@ protected:
         return last_perception;
     }
 
-    /** Find the most hated entity within range of the NPC
+    /**
+     * Find the most hated entity within range of the NPC
      *
-     *  Check the hate list and retrive most hated entity within range.
+     * Check the hate list and retrive most hated entity within range.
      *
-     *  @param  range             The range to search for hated entities.
-     *  @param  includeOutsideRegion Include enties outside region in the search.
-     *  @param  includeInvisible  Include invisible entities in the search.
-     *  @param  includeInvincible Include invincible entities in the search.
-     *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
-     *  @return The hated entity
+     * @param  range             The range to search for hated entities.
+     * @param  includeOutsideRegion Include enties outside region in the search.
+     * @param  includeInvisible  Include invisible entities in the search.
+     * @param  includeInvincible Include invincible entities in the search.
+     * @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
+     * @return The hated entity
      */
     gemNPCActor* GetMostHated(float range, bool includeOutsideRegion, bool includeInvisible,
                               bool includeInvincible, float* hate=NULL);
 
-    /** Find the most hated entity within range of a given position
+    /**
+     * Find the most hated entity within range of a given position
      *
-     *  Check the hate list and retrive most hated entity within range.
+     * Check the hate list and retrive most hated entity within range.
      *
-     *  @param  pos               The position
-     *  @param  sector            The sector of the position
-     *  @param  range             The range to search for hated entities.
-     *  @param  includeOutsideRegion Include enties outside region in the search.
-     *  @param  includeInvisible  Include invisible entities in the search.
-     *  @param  includeInvincible Include invincible entities in the search.
-     *  @param  hate              If diffrent from NULL, set upon return to the hate of the hated.
-     *  @return The hated entity
+     * @param  pos                  The position
+     * @param  sector               The sector of the position
+     * @param  range                The range to search for hated entities.
+     * @param  region               The region to search for hated entities within.
+     * @param  includeOutsideRegion Include enties outside region in the search.
+     * @param  includeInvisible     Include invisible entities in the search.
+     * @param  includeInvincible    Include invincible entities in the search.
+     * @param  hate                 If diffrent from NULL, set upon return to the hate of the hated.
+     * @return The hated entity
      */
     gemNPCActor* GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeOutsideRegion,
                               bool includeInvisible, bool includeInvincible, float* hate);
@@ -436,52 +464,67 @@ protected:
     void AddToHateList(gemNPCActor* attacker,float delta);
     void RemoveFromHateList(EID who);
 
-    /** Set the NPCs locate.
+    /**
+     * Set the NPCs locate.
      */
     void SetLocate(const csString &destination, const NPC::Locate &locate);
 
-    /** Get the NPCs current active locate.
+    /**
+     * Get the NPCs current active locate.
      */
     void GetActiveLocate(csVector3 &pos, iSector* &sector, float &rot);
 
-    /** Return the wp of the current active locate.
+    /**
+     * Return the wp of the current active locate.
      *
      * @param wp will be set with the wp currently in the active locate.
      */
     void GetActiveLocate(Waypoint* &wp);
 
-    /** Get the radius of the last locate operatoins
+    /**
+     * Get the radius of the last locate operatoins
      *
      * @return The radius of the last locate
      */
     float GetActiveLocateRadius() const;
 
-    /** Copy locates
+    /**
+     * Copy locates
      *
      * Typically used to take backups of "Active" locate.
      */
     bool CopyLocate(csString source, csString destination, unsigned int flags);
 
-    /** Replace $LOCATION[<location>.<attribute>]
+    /**
+     * Replace a location. 
+     *
+     * This replace $LOCATION[\<location\>.\<attribute\>].
      */
     void ReplaceLocations(csString &result);
 
-    /** Switch the debuging state of this NPC.
+    /**
+     * Switch the debuging state of this NPC.
      */
     bool SwitchDebugging();
 
-    /** Set a new debug level for this NPC.
+    /**
+     * Set a new debug level for this NPC.
+     *
      * @param debug New debug level, 0 is no debugging
      */
     void SetDebugging(int debug);
 
-    /** Add a client to receive debug information
-     * @param clentnum The client to add.
+    /**
+     * Add a client to receive debug information
+     *
+     * @param clientnum The client to add.
      */
     void AddDebugClient(uint clientnum);
 
-    /** Remove client from list of debug receivers.
-     * @param clentnum The client to remove.
+    /**
+     * Remove client from list of debug receivers.
+     *
+     * @param clientnum The client to remove.
      */
     void RemoveDebugClient(uint clientnum);
 
@@ -496,7 +539,8 @@ protected:
     }
     LocationType* GetRegion();
 
-    /** Check the inside region state of the npc.
+    /**
+     * Check the inside region state of the npc.
      *
      */
     bool IsInsideRegion()
@@ -504,7 +548,8 @@ protected:
         return insideRegion;
     }
 
-    /** Set the inside region state
+    /**
+     * Set the inside region state
      *
      * Keep track of last perception for inbound our, outbound
      */
@@ -514,30 +559,36 @@ protected:
     }
 
 
-    /** Return the nearest actor within the given range.
-     *  @param range The search range to look for players
-     *  @param destPosition Return the position of the target
-     *  @param destSector Return the sector of the target
-     *  @param destRange Return the range to the target
-     *  @return The actor of the nearest player or NPC or NULL if none within range
+    /**
+     * Return the nearest actor within the given range.
+     *
+     * @param range The search range to look for players
+     * @param destPosition Return the position of the target
+     * @param destSector Return the sector of the target
+     * @param destRange Return the range to the target
+     * @return The actor of the nearest player or NPC or NULL if none within range
      */
     gemNPCActor* GetNearestActor(float range, csVector3 &destPosition, iSector* &destSector, float &destRange);
 
-    /** Return the nearest NPC within the given range.
-     *  @param range The search range to look for players
-     *  @param destPosition Return the position of the target
-     *  @param destSector Return the sector of the target
-     *  @param destRange Return the range to the target
-     *  @return The actor of the nearest NPC or NULL if none within range
+    /**
+     * Return the nearest NPC within the given range.
+     *
+     * @param range The search range to look for players
+     * @param destPosition Return the position of the target
+     * @param destSector Return the sector of the target
+     * @param destRange Return the range to the target
+     * @return The actor of the nearest NPC or NULL if none within range
      */
     gemNPCActor* GetNearestNPC(float range, csVector3 &destPosition, iSector* &destSector, float &destRange);
 
-    /** Return the nearest player within the given range.
-     *  @param range The search range to look for players
-     *  @param destPosition Return the position of the target
-     *  @param destSector Return the sector of the target
-     *  @param destRange Return the range to the target
-     *  @return The actor of the nearest player or NULL if none within range
+    /**
+     * Return the nearest player within the given range.
+     *
+     * @param range The search range to look for players
+     * @param destPosition Return the position of the target
+     * @param destSector Return the sector of the target
+     * @param destRange Return the range to the target
+     * @return The actor of the nearest player or NULL if none within range
      */
     gemNPCActor* GetNearestPlayer(float range, csVector3 &destPosition, iSector* &destSector, float &destRange);
 
@@ -545,19 +596,23 @@ protected:
 
     gemNPCActor* GetNearestDeadActor(float range);
 
-    /** Add new types to the autoMemorize store. They should be "," seperated.
+    /**
+     * Add new types to the autoMemorize store. They should be "," seperated.
      */
     void AddAutoMemorize(csString types);
 
-    /** Remove types from the autoMemorize store. They should be "," seperated.
+    /**
+     * Remove types from the autoMemorize store. They should be "," seperated.
      */
     void RemoveAutoMemorize(csString types);
 
-    /** Check if the NPC has anything to automemorize.
+    /**
+     * Check if the NPC has anything to automemorize.
      */
     bool HasAutoMemorizeTypes() const { return !autoMemorizeTypes.IsEmpty(); }
 
-    /** Check if the type is contained in the NPC autoMemorize store
+    /**
+     * Check if the type is contained in the NPC autoMemorize store
      */
     bool ContainAutoMemorizeType(const csString& type);
 
@@ -575,22 +630,30 @@ protected:
     gemNPCObject* GetOwner();
     const char* GetOwnerName();
 
-    /** Sets the owner of this npc. The server will send us the owner of
-     *  the entity connected to it so we can follow it's directions.
-     *  @param owner_EID the eid of the entity who owns this npc.
+    /**
+     * Sets the owner of this npc.
+     *
+     * The server will send us the owner of
+     * the entity connected to it so we can follow it's directions.
+     *
+     * @param owner_EID the eid of the entity who owns this npc.
      */
     void SetOwner(EID owner_EID);
 
-    /** Set a new tribe for this npc */
+    /**
+     * Set a new tribe for this npc
+     */
     void SetTribe(Tribe* new_tribe);
 
-    /** Get the tribe this npc belongs to.
+    /**
+     * Get the tribe this npc belongs to.
      *
      * @return Null if not part of a tribe
      */
     Tribe* GetTribe();
 
-    /** Set the type/class for this npc in a tribe.
+    /**
+     * Set the type/class for this npc in a tribe.
      */
     void SetTribeMemberType(const char* tribeMemberType);
 
@@ -598,7 +661,8 @@ protected:
      */
     const csString &GetTribeMemberType() const;
 
-    /** Check the inside tribe home state of the npc.
+    /**
+     * Check the inside tribe home state of the npc.
      *
      */
     bool IsInsideTribeHome()
@@ -606,7 +670,8 @@ protected:
         return insideTribeHome;
     }
 
-    /** Set the inside tribe home state
+    /**
+     * Set the inside tribe home state
      *
      * Keep track of last perception for inbound our, outbound
      */
@@ -615,201 +680,269 @@ protected:
         insideTribeHome = inside;
     }
 
-    /** Get the npc race info
+    /**
+     * Get the npc race info
      */
     RaceInfo_t* GetRaceInfo();
 
-    /** Set the npc HP
+    /**
+     * Set the npc HP
      */
     void SetHP(float hp);
     
-    /** Get the npc HP
+    /**
+     * Get the npc HP
      */
     float GetHP();
 
-    /** Set the npc MaxHP
+    /**
+     * Set the npc MaxHP
      */
     void SetMaxHP(float maxHP);
     
-    /** Get the npc MaxHP
+    /**
+     * Get the npc MaxHP
      */
     float GetMaxHP() const;
 
-    /** Set the npc HP
+    /**
+     * Set the npc HP
      */
     void SetHPRate(float hpRate);
     
-    /** Get the npc HPRate
+    /**
+     * Get the npc HPRate
      */
     float GetHPRate() const;
 
-    /** Set the npc Mana
+    /**
+     * Set the npc Mana
      */
     void SetMana(float mana);
     
-    /** Get the npc Mana
+    /**
+     * Get the npc Mana
      */
     float GetMana();
     
-    /** Set the npc MaxMana
+    /**
+     * Set the npc MaxMana
      */
     void SetMaxMana(float maxMana);
     
-    /** Get the npc MaxMana
+    /**
+     * Get the npc MaxMana
      */
     float GetMaxMana() const;
     
-    /** Set the npc ManaRate
+    /**
+     * Set the npc ManaRate
      */
     void SetManaRate(float manaRate);
     
-    /** Get the npc ManaRate
+    /**
+     * Get the npc ManaRate
      */
     float GetManaRate() const;
     
-    /** Set the npc PysStamina
+    /**
+     * Set the npc PysStamina
      */
     void SetPysStamina(float pysStamina);
     
-    /** Get the npc PysStamina
+    /**
+     * Get the npc PysStamina
      */
     float GetPysStamina();
     
-    /** Set the npc MaxPysStamina
+    /**
+     * Set the npc MaxPysStamina
      */
     void SetMaxPysStamina(float maxPysStamina);
     
-    /** Get the npc MaxPysStamina
+    /**
+     * Get the npc MaxPysStamina
      */
     float GetMaxPysStamina() const;
     
-    /** Set the npc PysStaminaRate
+    /**
+     * Set the npc PysStaminaRate
      */
     void SetPysStaminaRate(float pysStaminaRate);
     
-    /** Get the npc PysStaminaRate
+    /**
+     * Get the npc PysStaminaRate
      */
     float GetPysStaminaRate() const;
     
-    /** Set the npc MenStamina
+    /**
+     * Set the npc MenStamina
      */
     void SetMenStamina(float menStamina);
     
-    /** Get the npc MenStamina
+    /**
+     * Get the npc MenStamina
      */
     float GetMenStamina();
     
-    /** Set the npc MaxMenStamina
+    /**
+     * Set the npc MaxMenStamina
      */
     void SetMaxMenStamina(float maxMenStamina);
     
-    /** Get the npc MaxMenStamina
+    /**
+     * Get the npc MaxMenStamina
      */
     float GetMaxMenStamina() const;
     
-    /** Set the npc MenStaminaRate
+    /**
+     * Set the npc MenStaminaRate
      */
     void SetMenStaminaRate(float menStaminaRate);
     
-    /** Get the npc MenStaminaRate
+    /**
+     * Get the npc MenStaminaRate
      */
     float GetMenStaminaRate() const;
     
-    /** Take control of another entity.
+    /**
+     * Take control of another entity.
      */
     void TakeControl(gemNPCActor* actor);
 
-    /** Release control of another controlled entity.
+    /**
+     * Release control of another controlled entity.
      */
     void ReleaseControl(gemNPCActor* actor);
 
     /**
+     * Update entities controlled by this NPC.
      */
     void UpdateControlled();
 
+    /**
+     * Check if this NPC has enabled any debugging.
+     */
     inline bool IsDebugging()
     {
         return (debugging > 0);
     };
-    
+
+    /**
+     * Check if this NPC is debugging at the given level.
+     *
+     * @param debug The debug level.
+     */
     bool IsDebugging(int debug)
     {
         return (debugging > 0 && debug <= debugging);
     };
 
+    /**
+     * 
+     */
     void CheckPosition();
 
-    /** Store the start position.
+    /**
+     * Store the start position.
      *
      * Store the current position as spawn position so that NPCs can locate
      * spawn position.
      */
     void StoreSpawnPosition();
 
-    /** Return the position part of the spawn position */
+    /**
+     * Return the position part of the spawn position
+     */
     const csVector3 &GetSpawnPosition() const;
 
-    /** Return the sector part of the spawn position */
+    /**
+     * Return the sector part of the spawn position
+     */
     iSector* GetSpawnSector() const;
 
 
-    /** Increment the fall counter
-    *
-    * Fall counter is used for debugging.
-    */
+    /**
+     * Increment the fall counter
+     *
+     * Fall counter is used for debugging.
+     */
     void IncrementFallCounter()
     {
         ++fallCounter;
     }
 
-    /** Return the fall counter
-    *
-    * Fall counter is used for debugging.
-    */
+    /**
+     * Return the fall counter
+     *
+     * Fall counter is used for debugging.
+     */
     int GetFallCounter()
     {
         return fallCounter;
     }
 
-    /** Return a named buffer from the NPC.
+    /**
+     * Return a named buffer from the NPC.
      *
      * Function used to get data from buffers containing information.
      *
-     * @param The buffer name.
+     * @param  bufferName The buffer name.
      * @return The content of the named buffer.
      */
     csString GetBuffer(const csString &bufferName);
-    /** Set/Update the value of a named buffer.
+    
+    /**
+     * Set/Update the value of a named buffer.
      *
-     * @param The buffer name.
-     * @param The value to put in the buffer.
+     * @param bufferName The buffer name.
+     * @param value The value to put in the buffer.
      */
     void SetBuffer(const csString &bufferName, const csString &value);
-    /** Replace $NBUFFER[x] with values from the NPC buffer.
+    
+    /**
+     * Replace $NBUFFER[x] with values from the NPC buffer.
      *
      * @param result String to replace buffers in.
      */
     void ReplaceBuffers(csString &result);
 
+    /**
+     * Retrive the current buffer memory of the npc
+     */
     Tribe::Memory* GetBufferMemory()
     {
         return bufferMemory;
     }
+
+    /**
+     * Set a new buffer memory for the NPC.
+     *
+     *  @param memory The new memory to store in the NPC.
+     */
     void SetBufferMemory(Tribe::Memory* memory);
 
-    /** Set a building spot for this NPC
+    /**
+     * Set a building spot for this NPC.
+     *
+     * @param buildingSpot The building spot to set.
      */
     void SetBuildingSpot(Tribe::Asset* buildingSpot);
 
-    /** Get the stored building spot for this NPC
+    /**
+     * Get the stored building spot for this NPC
      */
     Tribe::Asset* GetBuildingSpot();
 
 private:
-    /// iScriptableVar implementation
+    /** @name iScriptableVar implementation
+     * Functions that implement the iScriptableVar interface. 
+     */
+    ///@{
     virtual double GetProperty(MathEnvironment* env, const char* ptr);
     virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     virtual const char* ToString();
+    ///@}
     
 private:
     psNPCTick*        tick;
@@ -829,7 +962,8 @@ private:
     csArray<uint>     debugClients;      ///< List of clients doing debugging
 };
 
-// The event that makes the NPC brain go TICK.
+/** The event that makes the NPC brain go TICK.
+ */
 class psNPCTick : public psGameEvent
 {
 protected:
