@@ -292,7 +292,7 @@ int Tribe::AliveCount() const
 
 void Tribe::HandlePerception(NPC * npc, Perception *perception)
 {
-    csString name = perception->GetName(npc);
+    csString name = perception->GetName();
     
     CS::Utility::StringArray<> strarr;
     strarr.SplitString(name, ":");

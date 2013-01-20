@@ -45,6 +45,10 @@ struct iCollideSystem;
 
 #include "tools/celhpf.h"
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class  psDatabase;
 class  MsgHandler;
 class  psNetConnection;
@@ -69,8 +73,6 @@ class  Tribe;
 class  psPath;
 class  psPathNetwork;
 struct iCelHNavStruct;
-
-#define USE_REACTION_REGISTRATION
 
 struct RaceInfo_t
 {
@@ -297,12 +299,11 @@ public:
         return connection;
     }
 
-#ifdef USE_REACTION_REGISTRATION
     /**
      * Register a reaction for an NPC with the client. Used to speed up FirePerception.
      */
     void RegisterReaction(NPC *npc, Reaction *reaction);
-#endif
+
     /**
      * Sends a perception to all npcs.
      *
@@ -691,10 +692,8 @@ protected:
     
     csHash<RaceInfo_t,csString>     raceInfos;
 
-#ifdef USE_REACTION_REGISTRATION 
     csHash<NPC*,csString>           allReactions;     ///< Hash of all registered reactions.
     csArray<csString>               notUsedReactions; ///< List of not matched reactions. 
-#endif
     
     csRef<iCollideSystem>           cdsys;
 
@@ -720,6 +719,7 @@ protected:
 
 };
 
+/** @} */
 
 #endif
 
