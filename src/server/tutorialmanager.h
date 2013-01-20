@@ -64,8 +64,9 @@ public:
 
     /**
      * Specifically handle the message sent by a script
+     *
      * @param client The client where the message has to be sent.
-     * @param The ID of the tip from the database
+     * @param which  The ID of the tip from the database
      */
     void HandleScriptMessage(uint32_t client, unsigned int which);
 
