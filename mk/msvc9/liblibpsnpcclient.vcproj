@@ -1759,6 +1759,9 @@
 				RelativePath="..\..\src\npcclient\perceptions.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\npcclient\reaction.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\npcclient\recipe.cpp">
 			</File>
 			<File
@@ -1809,6 +1812,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\npcclient\perceptions.h">
+			</File>
+			<File
+				RelativePath="..\..\src\npcclient\reaction.h">
 			</File>
 			<File
 				RelativePath="..\..\src\npcclient\recipe.h">
