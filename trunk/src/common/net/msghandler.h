@@ -45,12 +45,11 @@ struct Subscription
     uint32_t flags; /**< Additional flags for detecting if the subscriber should be notified */
     iNetSubscriber* subscriber; /**< The actual subscriber that wants to be notified */
 
-    /**@brief Constructor without a callback
+    /**
+     * Constructor without a callback
      *
-     * \ref callback is set to NULL
-     * 
      * @param nSubscriber Sets \ref subscriber
-     * @param nFlags Sets \ref flags
+     * @param nFlags      Sets \ref flags
      */
     Subscription(iNetSubscriber *nSubscriber, uint32_t nFlags = 0x01/*REQUIRE_READY_CLIENT*/)
         : flags(nFlags), subscriber(nSubscriber)

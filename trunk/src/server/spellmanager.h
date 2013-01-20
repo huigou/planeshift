@@ -43,9 +43,11 @@
 class ClientConnectionSet;
 class psSpell;
 
-/** Manager class that handles loading/searching/casting spells. 
-  * This class also manages a number of psSpell Events.  
-  */
+/**
+ * Manager class that handles loading/searching/casting spells.
+ *
+ * This class also manages a number of psSpell Events.  
+ */
 class SpellManager : public MessageManager<SpellManager>
 {
 public:
@@ -55,85 +57,104 @@ public:
                    CacheManager *cachemanager);
     virtual ~SpellManager();
     
-    /** Purifying on a glyph has been complete.  
-      *  This will send out a network message to the client and update it's inventory 
-      *  with the new purified glyph.
-      *
-      *  @param character The character this is for.
-      *  @param glyphUID  The unique ID for this item instance of the glyph.
-      */
+    /**
+     * Purifying on a glyph has been complete.
+     *
+     *  This will send out a network message to the client and update it's inventory 
+     *  with the new purified glyph.
+     *
+     *  @param character The character this is for.
+     *  @param glyphUID  The unique ID for this item instance of the glyph.
+     */
     void EndPurifying(psCharacter * character, uint32 glyphUID);
     
-    /** Sends out the glyphs to a client.  
-      * Builds and sends psRequestGlyphsMessage for the client.
-      *
-      * @param client  The client that will be sent it's current glyphs.
-      */
+    /**
+     * Sends out the glyphs to a client.
+     *
+     * Builds and sends psRequestGlyphsMessage for the client.
+     *
+     * @param notused A not used message entry.
+     * @param client  The client that will be sent it's current glyphs.
+     */
     void SendGlyphs(MsgEntry *notused, Client * client);
     
-    /** Handles a glyph request from a client.
+    /**
+     * Handles a glyph request from a client.
      * 
+     * @param notused A not used message entry.
+     * @param client  The client that requested glyphs.
      */
     void HandleGlyphRequest(MsgEntry *notused, Client * client);
 
 protected:    
-    /** Save a spell to the database for when a player has researched it.
-      *
-      * @param client The client that this is for.
-      * @param spellName The name of the spell to save for that player.
-      */      
+    /**
+     * Save a spell to the database for when a player has researched it.
+     *
+     * @param client The client that this is for.
+     * @param spellName The name of the spell to save for that player.
+     */      
     void SaveSpell(Client * client, csString spellName);
     
-    /** Case a particular spell.
-      * 
-      * @param me message entry for the client spell caster message.
-      * @param client the clien that cast the spell.
-      */
+    /**
+     * Case a particular spell.
+     * 
+     * @param me message entry for the client spell caster message.
+     * @param client the clien that cast the spell.
+     */
     void Cast(MsgEntry *me, Client *client);
 
 public:
-    /** Case a particular spell.
-      * 
-      * @param client The client that is casting the spell.
-      * @param spellName The name of the spell to cast.
-      * @param kFactor The power factor that the spell is cast with.
-      */
+    /**
+     * Case a particular spell.
+     * 
+     * @param caster The caster of the spell.
+     * @param spellName The name of the spell to cast.
+     * @param kFactor The power factor that the spell is cast with.
+     * @param client The client that is casting the spell.
+     */
     void Cast(gemActor* caster, const csString& spellName, float kFactor, Client *client);
 
 protected:    
 
     void HandleCancelSpell(MsgEntry* notused, Client* client);
 
-    /** Send the player's spell book.
-      * 
-      * @param client The client that will be sent the spell book.
-      */
+    /**
+     * Send the player's spell book.
+     *
+     * @param notused A not used message entry.
+     * @param client  The client that will be sent the spell book.
+     */
     void SendSpellBook(MsgEntry *notused, Client * client);
     
-    /** Start to purify a glyph.
-      * This will also send out notifications to the client about the start of operation.
-      *
-      * @param client The client that this data is for.
-      * @param The stat ID of the glyph that the player wants to purify.
-      */  
+    /**
+     * Start to purify a glyph.
+     *
+     * This will also send out notifications to the client about the start of operation.
+     *
+     * @param me     The inncomming message.
+     * @param client The client that this data is for.
+     */  
     void StartPurifying(MsgEntry *me, Client * client);
     
-    /** Find a spell in the assorted glyphs.
-      * This checks ths list of glyphs and see if it matches any 
-      * known spell. This is for when players are researching spells.
-      * 
-      * @param client The client this data is for.
-      * @param assembler A list of glyphs to check for spell match.
-      *
-      * @return A spell if a match found, NULL otherwise.
-      */
+    /**
+     * Find a spell in the assorted glyphs.
+     *
+     * This checks ths list of glyphs and see if it matches any 
+     * known spell. This is for when players are researching spells.
+     * 
+     * @param client The client this data is for.
+     * @param assembler A list of glyphs to check for spell match.
+     *
+     * @return A spell if a match found, NULL otherwise.
+     */
     psSpell* FindSpell(Client * client, const glyphList_t & assembler);
 
-    /** Handles a command when player tries to research.
-      * 
-      * @param client The client this is for.
-      * @param me The message from that client.
-      */
+    /**
+     * Handles a command when player tries to research.
+     * 
+     * @param client The client this is for.
+     * @param me The message from that client.
+     */
     void HandleAssembler(MsgEntry* me,Client* client);
 
     ClientConnectionSet *clients;
