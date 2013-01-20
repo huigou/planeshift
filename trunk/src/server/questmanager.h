@@ -191,11 +191,14 @@ public:
     void Assign(psQuest *quest, Client *who, gemNPC *assigner,csTicks timeDelay=0);
     bool Complete(psQuest *quest, Client *who, csTicks timeDelay = 0);
 
-    /** Discards the requested step this is used by dictionary.
-     *  @todo evaluate if this should be moved somewhere else togheter with the two above.
-     *  @param quest The quest we are discarding.
-     *  @param who The client which is discarding the quest.
-     *  @param delay The delay for messages.
+    /**
+     * Discards the requested step this is used by dictionary.
+     *
+     * @todo evaluate if this should be moved somewhere else togheter with the two above.
+     *
+     * @param quest            The quest we are discarding.
+     * @param who              The client which is discarding the quest.
+     * @param timeDelay        The delay for messages.
      */
     bool Uncomplete(psQuest *quest, Client *who, csTicks timeDelay = 0);
 

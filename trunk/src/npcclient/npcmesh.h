@@ -48,56 +48,75 @@ class gemNPCObject;
  * \addtogroup npcclient
  * @{ */
 
-/** This is a helper class that defines a mesh on the server.  
+/** This is a helper class that defines a mesh on the server.
+ *
  * It wraps around some of the loading details.
  */
 class npcMesh
 {
 public:
-    /** Create a new gem Mesh.
+    /**
+     * Create a new gem Mesh.
+     *
      * This will setup a new mesh and add it to the CS engine.
-     * @param objreg The main Crystal Space object registry.
-     * @param owner  The npcObject that is using this mesh.
-     * @param super  The NPC client supervisor object.
+     *
+     * @param objreg          The main Crystal Space object registry.
+     * @param owner           The npcObject that is using this mesh.
+     * @param super           The NPC client supervisor object.
      */
     npcMesh( iObjectRegistry* objreg, gemNPCObject* owner, psNPCClient* super);
 
+    /**
+     * Destructor.
+     */
     ~npcMesh();
 
-    /** Load a mesh factory.
+    /**
+     * Load a mesh factory.
+     *
      * This is called if it can't find the factory in the cached engine list.
-     * @param fileName The name of the file where the factory is stored.
-     * @param factoryName The name of the factory that is loading.
+     * @param fileName        The name of the file where the factory is stored.
+     * @param factoryName     The name of the factory that is loading.
      *
      * @return  An iMeshFactoryWrapper that was loaded.  Null if nothing could
      *          be loaded.
      */
     iMeshFactoryWrapper* LoadMeshFactory(const char* fileName, const char* factoryName);
-    /** Set a mesh.
-     * @param factoryName The factory name of the mesh we want to set.
-     * @param fileName The file to load if the factory is not found.
+    
+    /**
+     * Set a mesh.
+     *
+     * @param factoryName     The factory name of the mesh we want to set.
+     * @param fileName        The file to load if the factory is not found.
      * 
      * @return true If it was successful in setting the mesh.
      */
     bool SetMesh( const char* factoryName, const char* fileName );
 
-    /** Get the Crystal Space iMeshWrapper from this.
+    /**
+     * Get the Crystal Space iMeshWrapper from this.
+     *
      * @return an iMeshWrapper that is being used. 
      */
     iMeshWrapper* GetMesh();
 
-    /** Set a mesh.
-     * @param newMesh  The Crystal Space mesh wrapper to set in.
+    /**
+     * Set a mesh.
+     *
+     * @param newMesh         The Crystal Space mesh wrapper to set in.
      */
     void SetMesh( iMeshWrapper* newMesh);
 
-    /** Removes the mesh from the engine.
+    /**
+     * Removes the mesh from the engine.
      */
     void RemoveMesh();
 
-    /** Move a mesh.
-     * @param room  The sector to move in.
-     * @param position The position to place the mesh.
+    /**
+     * Move a mesh.
+     *
+     * @param sector          The sector to move in.
+     * @param position        The position to place the mesh.
      */
     void MoveMesh( iSector* sector, const csVector3& position );
 
@@ -106,9 +125,9 @@ private:
     csRef<iObjectRegistry> objectReg;       ///< CS object registry list.
     csWeakRef<iEngine> engine;              ///< Main CS engine.
 
-    psNPCClient* gem;                     ///< Object controller.
+    psNPCClient* gem;                       ///< Object controller.
 
-    gemNPCObject* gemOwner;                    ///< gemObject using this mesh.
+    gemNPCObject* gemOwner;                 ///< gemObject using this mesh.
 };
 
 /** @} */

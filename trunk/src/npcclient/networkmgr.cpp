@@ -67,6 +67,7 @@ NetworkManager::NetworkManager(MsgHandler* mh,psNetConnection* conn, iEngine* en
     this->engine = engine;
     ready = false;
     connected = false;
+
     msghandler->Subscribe(this,MSGTYPE_NPCLIST);
     msghandler->Subscribe(this,MSGTYPE_MAPLIST);
     msghandler->Subscribe(this,MSGTYPE_CELPERSIST);
@@ -160,7 +161,7 @@ void NetworkManager::HandleMessage(MsgEntry* message)
         case MSGTYPE_MAPLIST:
         {
             connected = true;
-            if(ReceiveMapList(message))
+            if(HandleMapList(message))
             {
                 RequestAllObjects();
             }
@@ -178,7 +179,7 @@ void NetworkManager::HandleMessage(MsgEntry* message)
         }
         case MSGTYPE_NPCLIST:
         {
-            ReceiveNPCList(message);
+            HandleNPCList(message);
             ready = true;
             // Activates NPCs on server side
             psNPCReadyMessage mesg;
@@ -335,11 +336,11 @@ void NetworkManager::HandleAllEntities(MsgEntry* message)
     printf("End of All Entities message, with %d entities done.\n", count);
 }
 
-void NetworkManager::HandleActor(MsgEntry* me)
+void NetworkManager::HandleActor(MsgEntry* msg)
 {
-    psPersistActor mesg(me, connection->GetAccessPointers(), true);
+    psPersistActor mesg(msg, connection->GetAccessPointers(), true);
 
-    Debug4(LOG_NET, 0, "Got persistActor message, size %zu, id=%d, name=%s", me->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe());
+    Debug4(LOG_NET, 0, "Got persistActor message, size %zu, id=%d, name=%s", msg->GetSize(),mesg.playerID.Unbox(),mesg.name.GetDataSafe());
 
     gemNPCObject* obj = npcclient->FindEntityID(mesg.entityid);
 
@@ -888,7 +889,7 @@ void NetworkManager::RequestAllObjects()
 }
 
 
-bool NetworkManager::ReceiveMapList(MsgEntry* msg)
+bool NetworkManager::HandleMapList(MsgEntry* msg)
 {
     psMapListMessage list(msg);
     CPrintf(CON_CMDOUTPUT,"\n");
@@ -922,7 +923,7 @@ bool NetworkManager::ReceiveMapList(MsgEntry* msg)
     return true;
 }
 
-bool NetworkManager::ReceiveNPCList(MsgEntry* msg)
+bool NetworkManager::HandleNPCList(MsgEntry* msg)
 {
     uint32_t length;
     PID pid;

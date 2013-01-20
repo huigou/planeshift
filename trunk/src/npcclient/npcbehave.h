@@ -92,6 +92,9 @@ public:
     /** Find a behavior in the set.
      *
      *  Search the set for a behavior maching the given name.
+     *
+     *  @param name The name of the behavior to find.
+     *  @return The found behavior or NULL if no behavior is found.
      */
     Behavior *Find(const char *name);
 
@@ -120,10 +123,14 @@ public:
      * Increase or decrease needs depended on the behaviors
      * active state.
      *
+     * @param delta The delta to add to the need for this behavior.
+     * @param npc The NPC that own this BehaviorSet.
      */
     void UpdateNeeds(float delta, NPC* npc);
 
     /** Rearrange the behavior set based on need.
+     *
+     * @param npc The NPC that own this BehaviorSet.
      */
     Behavior* Schedule(NPC* npc);
     
@@ -135,13 +142,14 @@ public:
      * @param npc   The NPC that own this BehaviorSet.
      *
      */
-    void Advance(csTicks delta,NPC *npc);
+    void Advance(csTicks delta, NPC *npc);
 
     /** Execute script operations
      *
      * Will run script operations until they loop, fail, or need more time.
      *
-     * @param npc   The NPC that own this BehaviorSet.
+     * @param npc            The NPC that own this BehaviorSet.
+     * @param forceRunScript Force running the script.
      */
     void Execute(NPC* npc, bool forceRunScript);
 
@@ -225,6 +233,9 @@ public:
     /** Find a behavior in the set.
      *
      *  Search the set for a behavior maching the given name.
+     *
+     *  @param name The name to search for.
+     *  @return The behavior or NULL if no behavior is found.
      */
     Behavior *Find(const char *name) { return behaviors.Find(name); }
 
@@ -234,12 +245,17 @@ public:
 
     void DumpBehaviorList(NPC *npc) { behaviors.DumpBehaviorList(npc); }
     csString InfoBehaviors(NPC *npc) { return behaviors.InfoBehaviors(npc); }
+    
     /** Info about the reaction list for debug.
      *
      * @param npc   The NPC that own this BehaviorSet.
      */
     csString InfoReactions(NPC *npc);
     
+    /** Dump the reaction list for this NPC.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
+     */
     void DumpReactionList(NPC *npc);
 
     Behavior *GetCurrentBehavior()
@@ -248,24 +264,54 @@ public:
     }
 
     /** Return hight current or new need.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
      */
     float GetHighestNeed(NPC *npc);
     
+    /** Return the angular velociy of the NPC.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
+     */
     float GetAngularVelocity(NPC *npc);
+
+    /** Return the velociy of the NPC.
+     *
+     * @param npc   The NPC that own this BehaviorSet.
+     */
     float GetVelocity(NPC *npc);
 
+    /** Return the percpetion to fire for collisions.
+     */
     const csString& GetCollisionPerception() const;
+
+    /** Return the percpetion to fire for OutOfBounds.
+     *
+     *  The percepton to fire when a NPC with a region is moving outside the region.
+     */
     const csString& GetOutOfBoundsPerception() const;
+
+    /** Return the percpetion to fire for InBound.
+     *
+     *  The percepton to fire when a NPC with a region move back inside the region.
+     */
     const csString& GetInBoundsPerception() const;
+
+    /** Return the percpetion to fire for falling.
+     */
     const csString& GetFallingPerception() const;
 
     
 private:
     /** Add a new reaction to this Brain.
+     *
+     * @param reaction The reaction to add.
      */
     void AddReaction(Reaction *reaction);
 
     /** Insert a new reaction at the beginning to this Brain.
+     *
+     * @param reaction The reaction to insert.
      */
     void InsertReaction(Reaction *reaction);
 };
@@ -351,7 +397,8 @@ public:
      *
      * The need is adjusted by the given delta value.
      *
-     * @param delta_desire The delta in desire for this behavior
+     * @param npc            Include NPC for debug outputs.
+     * @param deltaDesire    The delta in desire for this behavior
      *
      * \note Will limit the new_need if limits has been given for the
      *       need of this behavior.
@@ -364,7 +411,8 @@ public:
      * The need is set to the given desire. Ignoring whatever
      * value the new need of the behavoir might have had previous.
      *
-     * @param absolute_desire The absolute desire to be used for this behavior
+     * @param npc            Include NPC for debug outputs.
+     * @param absoluteDesire The absolute desire to be used for this behavior
      *
      * \note Will limit the new_need if limits has been given for the
      *       need of this behavior.

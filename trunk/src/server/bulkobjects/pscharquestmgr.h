@@ -115,13 +115,16 @@ public:
     */
     QuestAssignment* IsQuestAssigned(int id);
 
-    /** Assign a quest.
-    *   This assigns a quest to the character.
-    *   @param quest The quest object that will be assigned to the character.
-    *   @param assignerID The PID of the character that assigned the quest.
-    *
-    *   @return A QuestAssignement object for the quest.
-    */
+    /**
+     * Assign a quest.
+     *
+     * This assigns a quest to the character.
+     *
+     * @param quest             The quest object that will be assigned to the character.
+     * @param assignerId        The PID of the character that assigned the quest.
+     *
+     * @return A QuestAssignement object for the quest.
+     */
     QuestAssignment* AssignQuest(psQuest* quest, PID assignerId);
 
     /** Complete a quest.
@@ -139,11 +142,12 @@ public:
     */
     void DiscardQuest(QuestAssignment* q, bool force = false);
 
-    /** Discard a quest
-    *
-    *   @param q The Quest object for the quest we want to discard.
-    *   @param force Force the quest to be discarded regardless of any conditions.
-    */
+    /**
+     * Discard a quest.
+     *
+     * @param quest             The Quest object for the quest we want to discard.
+     * @param force             Force the quest to be discarded regardless of any conditions.
+     */
     bool DiscardQuest(psQuest *quest, bool force = false);
 
     /** Set an assigned quest last response.
@@ -170,14 +174,16 @@ public:
     */
     int GetAssignedQuestLastResponse(size_t i);
 
-    /** Update the quest assignment list.
-    *   This updates the database to write the current quest assignment lists for the
-    *   character.
-    *
-    *   @param force If set to true, write the quest information even if it is not 'dirty'
-    *
-    *   @return true if the quest information successfully written to database.
-    */
+    /**
+     * Update the quest assignment list.
+     *
+     * This updates the database to write the current quest assignment lists for the
+     * character.
+     *
+     * @param forceUpdate      If set to true, write the quest information even if it is not 'dirty'
+     *
+     * @return true if the quest information successfully written to database.
+     */
     bool UpdateQuestAssignments(bool forceUpdate = false);
 
     /** Create a network message for all the assigned quests. 

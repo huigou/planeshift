@@ -34,6 +34,10 @@
 #include "util/skillcache.h"
 #include <ivideo/graph3d.h>
 
+/**
+ * \addtogroup messages
+ * @{ */
+
 struct iSpriteCal3DState;
 struct iEngine;
 
@@ -5743,5 +5747,6 @@ public:
 
 };
 
+/** @} */
 
 #endif

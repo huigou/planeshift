@@ -193,22 +193,30 @@ public:
     /// Updates time in game for a pet
     void UpdatePetTime();
     
-    /** Returns the skill used to handle pet operations.
-     *  @return A PSSKILL which is the skill choosen to handle pet operations.
+    /**
+     * Returns the skill used to handle pet operations.
+     *
+     * @return A PSSKILL which is the skill choosen to handle pet operations.
      */
     PSSKILL GetPetSkill() { return (PSSKILL)petSkill->getValueAsInt(); }
 
-    /** Notify superclients that a location where adjusted.
-     * @param wp The location that has been adjusted.
+    /**
+     * Notify superclients that a location where adjusted.
+     *
+     * @param location  The location that has been adjusted.
      */
     void LocationAdjusted(Location* location);
 
-    /** Notify superclients that a location where created.
+    /**
+     * Notify superclients that a location where created.
+     * 
      * @param location The location that has been created.
      */
     void LocationCreated(Location* location);
 
-    /** Notify superclients that a location where inserted into a region.
+    /**
+     * Notify superclients that a location where inserted into a region.
+     *
      * @param location The location that has been inserted.
      */
     void LocationInserted(Location* location);

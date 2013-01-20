@@ -85,7 +85,7 @@ public:
 
     struct Resource
     {
-        int      id;           ///< Database id
+        int      id;                     ///< Database id
         csString name;
         csString nick;
         int      amount;
@@ -104,9 +104,19 @@ public:
         iSector*              sector;    ///< The Sector
         AssetStatus           status;    ///< Status of this asset. Used for buildings.
 
+        /**
+         * Save the asset.
+         */
         void        Save();
-        /** Get the sector */
+        
+        /**
+         * Get the sector of the Asset.
+         */
         iSector*    GetSector();
+
+        /**
+         * Get the Item of the Asset.
+         */
         gemNPCItem* GetItem();
     };
 
@@ -136,45 +146,69 @@ public:
         int     timeLeft;   ///< Number of ticks left before re-execution
     };
    
-    /** Construct a new tribe object */
+    /**
+     * Construct a new tribe object.
+     */
     Tribe(EventManager* eventmngr);
 
-    /** Destruct a tribe object */
+    /**
+     * Destruct a tribe object.
+     */
     virtual ~Tribe();
 
-    /** Load the tribe object */
+    /**
+     * Load the tribe object.
+     */
     bool Load(iResultRow& row);
 
-    /** Load and add a new member to the tribe */
+    /**
+     * Load and add a new member to the tribe.
+     */
     bool LoadMember(iResultRow& row);
 
-    /** Load and add a new resource to the tribe */
+    /**
+     * Load and add a new resource to the tribe.
+     */
     bool LoadResource(iResultRow& row);
     
-    /** Adds a new member to the tribe, e.g. from reproduction */
+    /**
+     * Adds a new member to the tribe.
+     */
     bool AddMember(PID pid, const char* tribeMemberType);
 
-    /** Save or update an resource in database */
+    /**
+     * Save or update an resource in database.
+     */
     void SaveResource(Resource* resource, bool newResource);
 
-    /** Attach a new member to the tribe if the NPC is a member */
-    bool CheckAttach(NPC * npc);
-
-    /** Attach a new member to the tribe */
-    bool AttachMember(NPC * npc, const char* tribeMemberType);
-
-    /** Remove members that die */
-    bool HandleDeath(NPC * npc);
+    /**
+     * Attach a new member to the tribe if the NPC is a member
+     */
+    bool CheckAttach(NPC* npc);
 
     /**
-     * Count number of alive members
+     * Attach a new member to the tribe.
+     */
+    bool AttachMember(NPC* npc, const char* tribeMemberType);
+
+    /**
+     * Remove members that die.
+     */
+    bool HandleDeath(NPC* npc);
+
+    /**
+     * Count number of alive members.
      */
     int AliveCount() const;
 
-    /** Handled a perception given to this tribe */
+    /**
+     * Handled a perception given to this tribe.
+     */
     void HandlePerception(NPC * npc, Perception * perception);
 
-    /** Add a new resource to the tribe resource table */
+    /**
+     * Add a new resource to the tribe resource table.
+     */
     void AddResource(csString resource, int amount, csString nick = "");
 
     /**
@@ -182,7 +216,9 @@ public:
      */
     int CountResource(csString resource) const;
     
-    /** Advance the tribe */
+    /**
+     * Advance the tribe.
+     */
     void Advance(csTicks when,EventManager *eventmgr);
 
     int GetID() { return id; }
@@ -219,7 +255,8 @@ public:
      */
     void SetHome(const csVector3& pos, float radius, iSector* sector);
 
-    /** Check if the position is within the bounds of the tribe home
+    /**
+     * Check if the position is within the bounds of the tribe home
      *
      * @param npc    The npc responsible for this checking
      * @param pos    The position to check
@@ -255,7 +292,8 @@ public:
      */
     const char* GetNeededResourceAreaType();
 
-    /** Get wealth resource growth rate
+    /**
+     * Get wealth resource growth rate
      *
      * Get the rate that the wealth will grow when all members are dead.
      *
@@ -263,7 +301,8 @@ public:
      */
     float GetWealthResourceGrowth() const;
 
-    /** Get wealth resource growth rate active
+    /**
+     * Get wealth resource growth rate active
      *
      * Get the rate that the wealth will grow when there are alive members.
      *
@@ -271,7 +310,8 @@ public:
      */
     float GetWealthResourceGrowthActive() const;
 
-    /** Get wealth resource growth active limit
+    /**
+     * Get wealth resource growth active limit
      *
      * Get the limit that the wealth will be capped at when there are alive members.
      *
@@ -348,7 +388,8 @@ public:
      */
     Memory* FindRandomMemory(const char* name,const csVector3& pos, const iSector* sector, float range = -1.0, float *foundRange = NULL);
 
-    /** Send a perception to all members of the tribe
+    /**
+     * Send a perception to all members of the tribe
      *
      * This will send the perception to all the members of the tribe.
      * If the maxRange has been set to something greater than 0.0
@@ -363,7 +404,8 @@ public:
     void TriggerEvent(Perception* pcpt, float maxRange=-1.0,
                       csVector3* basePos=NULL, iSector* baseSector=NULL);
 
-    /** Sends the given perception to the given list of npcs
+    /**
+     * Sends the given perception to the given list of npcs
      *
      * Used by the recipe manager to send perceptions to tribe members
      * selected by the active recipe.
@@ -373,7 +415,8 @@ public:
      */
     void SendPerception(const char* pcpt, csArray<NPC*> npcs);
 
-    /** Sends the given perception to the tribe.
+    /**
+     * Sends the given perception to the tribe.
      *
      * Used to send perceptions to all tribe members.
      *
@@ -381,7 +424,8 @@ public:
      */
     void SendPerception(const char* pcpt);
     
-    /** Find the most hated entity for tribe within range 
+    /**
+     * Find the most hated entity for tribe within range 
      *
      *  Check the hate list and retrive most hated entity within range
      *  of the given NPC.
@@ -397,33 +441,43 @@ public:
     gemNPCActor* GetMostHated(NPC* npc, float range, bool includeOutsideRegion,
                               bool includeInvisible, bool includeInvincible, float* hate=NULL);
 
-    /** Callback for debug of long time used in scopes.
+    /**
+     * Callback for debug of long time used in scopes.
      */
     virtual void ScopedTimerCallback(const ScopedTimer* timer);
 
 
-    /** Retrive death rate average value from tribe.
+    /**
+     * Retrive death rate average value from tribe.
      *
      * @return The Exponential smoothed death rate.
      */
     float GetDeathRate() { return deathRate; }
     
-    /** Retrive resource rate average value from tribe.
+    /**
+     * Retrive resource rate average value from tribe.
      *
      * @return The Exponential smoothed resource rate.
      */
     float GetResourceRate() { return resourceRate; }
     
-    /** Sets the tribe's recipe manager */
+    /**
+     * Sets the tribe's recipe manager.
+     */
     void SetRecipeManager(RecipeManager* rm) { recipeManager = rm; }
     
-    /** Get the main recipe */
+    /**
+     * Get the main recipe.
+     */
     Recipe* GetTribalRecipe();
 
-    /** Updates recipe wait times */
+    /**
+     * Updates recipe wait times.
+     */
     void UpdateRecipeData(int delta);
 
-    /** Add a recipe
+    /**
+     * Add a recipe.
      *
      * Adds a recipe to activeRecipes array in respect of it's
      * priority and cost.
@@ -434,7 +488,8 @@ public:
      */
     void AddRecipe(Recipe* recipe, Recipe* parentRecipe, bool reqType = false);
 
-    /** Add a cyclic recipe
+    /**
+     * Add a cyclic recipe
      *
      * Cyclic recipes are executed once in a pre-defined quantum of time
      * and are set with the highest priority.
@@ -444,25 +499,38 @@ public:
      */
     void AddCyclicRecipe(Recipe* recipe, int time);
 
-    /** Delete a cyclic recipe */
+    /**
+     * Delete a cyclic recipe
+     */
     void DeleteCyclicRecipe(Recipe* recipe);
 
-    /** Add a knowledge token */
+    /**
+     * Add a knowledge token
+     */
     void AddKnowledge(csString knowHow) { knowledge.Push(knowHow); }
 
-    /** Check if knowledge is known */
+    /**
+     * Check if knowledge is known.
+     */
     bool CheckKnowledge(csString knowHow);
 
-    /** Save a knowledge piece in the database */
+    /**
+     * Save a knowledge piece in the database.
+     */
     void SaveKnowledge(csString knowHow);
 
-    /** Dump knowledge to console */
+    /**
+     * Dump knowledge to console.
+     */
     void DumpKnowledge();
 
-    /** Dumps all information about recipes to console */
+    /**
+     * Dumps all information about recipes to console.
+     */
     void DumpRecipesToConsole();
 
-    /** Set npcs memory buffers
+    /**
+     * Set npcs memory buffers
      *
      * Loads locations into the Memory buffers of the npcs.
      * Useful when assigning tasks to them.
@@ -473,111 +541,173 @@ public:
      */
     bool LoadNPCMemoryBuffer(const char* name, csArray<NPC*> npcs);
 
-    /** Set npcs memory buffers - Using a memory */
+    /**
+     * Set npcs memory buffers - Using a memory.
+     */
     void LoadNPCMemoryBuffer(Tribe::Memory* memory, csArray<NPC*> npcs);
 
-    /** Check to see if enough members are idle */
+    /**
+     * Check to see if enough members are idle.
+     */
     bool CheckMembers(const csString& type, int number);
 
-    /** Check to see if enough resources are available */
+    /**
+     * Check to see if enough resources are available.
+     */
     bool CheckResource(csString resource, int number);
 
-    /** Check to see if enough assets are available */
+    /**
+     * Check to see if enough assets are available.
+     */
     bool CheckAsset(Tribe::AssetType type, csString name, int number);
 
-    /** Return the quanitity of the given asset type matching the name */
+    /**
+     * Return the quanitity of the given asset type matching the name.
+     */
     size_t AssetQuantity(Tribe::AssetType type, csString name);
    
-    /** Build a building on the current NPC building spot */
+    /**
+     * Build a building on the current NPC building spot.
+     */
     void Build(NPC* npc, bool pickupable);
 
-    /** Tear down a building */
+    /**
+     * Tear down a building.
+     */
     void Unbuild(NPC* npc, gemNPCItem* building);
     
-    /** Handle persist items that should be assets. */
+    /**
+     * Handle persist items that should be assets.
+     */
     void HandlePersistItem(gemNPCItem* item);
     
-    /** Returns pointers to required npcs for a task */
+    /**
+     * Returns pointers to required npcs for a task.
+     */
     csArray<NPC*> SelectNPCs(const csString& type, const char* number);
     
-    /** Return a named buffer from the NPC.
+    /**
+     * Return a named buffer from the NPC.
      *
      * Function used to get data from buffers containing information.
      *
-     * @param  Buffer name
+     * @param  bufferName The name of the buffer to retrive.
      * @return Buffer value
      */
     csString GetBuffer(const csString& bufferName);
-    /** Set/Update the value of a named buffer.
+    
+    /**
+     * Set/Update the value of a named buffer.
      *
-     * @param The buffer name.
-     * @param The value to put in the buffer.
+     * @param bufferName      The buffer name.
+     * @param value           The value to put in the buffer.
      */
     void SetBuffer(const csString& bufferName, const csString& value);
-    /** Replace $TBUFFER[x] with values from the NPC buffer.
+    
+    /**
+     * Replace $TBUFFER[x] with values from the NPC buffer.
      *
      * @param result String to replace buffers in.
      */
     void ReplaceBuffers(csString& result);
 
-    /** Modify Wait Time for a recipe */
+    /**
+     * Modify Wait Time for a recipe.
+     */
     void ModifyWait(Recipe* recipe, int delta);
 
-    /** Load an asset from an iResultRow */
+    /**
+     * Load an asset from an iResultRow.
+     */
     void LoadAsset(iResultRow &row);
 
-    /** Save an asset to the db - responsable for deleting assets to */
+    /**
+     * Save an asset to the db - responsable for deleting assets to.
+     */
     void SaveAsset(Tribe::Asset* asset, bool deletion = false);
 
-    /** Add an item asset */
+    /**
+     * Add an item asset.
+     */
     void AddAsset(Tribe::AssetType type, csString name, gemNPCItem* item, int quantity, int id = -1);
 
-    /** Add an asset to the tribe */
+    /**
+     * Add an asset to the tribe.
+     */
     Tribe::Asset* AddAsset(Tribe::AssetType type, csString name, csVector3 position, iSector* sector, Tribe::AssetStatus status);
 
-    /** Remove an asset */
+    /**
+     * Remove an asset.
+     */
     void RemoveAsset(Tribe::Asset* asset);
 
-    /** Get asset */
+    /**
+     * Get asset.
+     */
     Asset* GetAsset(Tribe::AssetType type, csString name);
 
-    /** Get asset */
+    /**
+     * Get asset.
+     */
     Asset* GetAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status);
     
-    /** Get an asset based on name and position */
+    /**
+     * Get an asset based on name and position.
+     */
     Asset* GetAsset(Tribe::AssetType type, csString name, csVector3 where, iSector* sector);
 
-    /** Get asset */
+    /**
+     * Get asset.
+     */
     Asset* GetAsset(gemNPCItem* item);
 
-    /** Get asset */
+    /**
+     * Get asset.
+     */
     Asset* GetAsset(uint32_t itemUID);
 
-    /** Get an asset */
+    /**
+     * Get a random asset.
+     */
     Asset* GetRandomAsset(Tribe::AssetType type, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range);
 
-    /** Get an asset */
+    /**
+     * Get nearest asset.
+     */
     Asset* GetNearestAsset(Tribe::AssetType type, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range, float* locatedRange = NULL);
     
-    /** Get an asset */
+    /**
+     * Get an asset.
+     */
     Asset* GetRandomAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range);
 
-    /** Get an asset */
+    /**
+     * Get an asset.
+     */
     Asset* GetNearestAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range, float* locatedRange = NULL);
     
-    /** Delete item assets */
+    /**
+     * Delete item assets.
+     */
     void DeleteAsset(csString name, int quantity);
 
-    /** Delete a building asset */
+    /**
+     * Delete a building asset.
+     */
     void DeleteAsset(csString name, csVector3 pos);
 
-    /** Dump Assets */
+    /**
+     * Dump Assets
+     */
     void DumpAssets();
 
-    /** Dump Buffers */
+    /**
+     * Dump Buffers.
+     */
     void DumpBuffers();
 
-    /** Prospect Mine
+    /**
+     * Assigned a resource to a prospect Mine.
      *
      * Upon 'Explore' behavior, tribe members may find locations
      * named 'mine'. After mining from an unkown deposit, the npcclient
@@ -587,44 +717,51 @@ public:
      *
      * @param npc      The npc who prospected it to access his memoryBuffer.
      * @param resource The resulted resource received from psServer.
+     * @param nick     The nick name of the resource for this mine.
      */
     void ProspectMine(NPC* npc, csString resource, csString nick);
 
 protected:
-    /** Update the deathRate variable.
+    /**
+     * Update the deathRate variable.
      */
     void UpdateDeathRate();
 
-    /** Update the resourceRate variable.
+    /**
+     * Update the resourceRate variable.
      */
     void UpdateResourceRate( int amount );
 
-    int                       id;
-    csString                  name;
-    csArray<MemberID>         membersId;
-    csArray<NPC*>             members;
-    csArray<NPC*>             deadMembers;
-    csArray<Resource>         resources;
-    csArray<csString>         knowledge;       ///< Array of knowledge tokens
-    csPDelArray<Asset>        assets;          ///< Array of items / buildings
-    csArray<CyclicRecipe>     cyclicRecipes;   ///< Array of cycle recipes
-    RecipeTreeNode*           tribalRecipe;    ///< The tribal recipe root of the recipe tree
+    int                       id;                               ///< The id of the tribe.
+    csString                  name;                             ///< The name of the tribe.
+    csArray<MemberID>         membersId;                        ///< List of ID for members.
+    csArray<NPC*>             members;                          ///< List of attached NPCs.
+    csArray<NPC*>             deadMembers;                      ///< List of dead members.
+    csArray<Resource>         resources;                        ///< List of resources.
+    csArray<csString>         knowledge;                        ///< Array of knowledge tokens
+    csPDelArray<Asset>        assets;                           ///< Array of items / buildings
+    csArray<CyclicRecipe>     cyclicRecipes;                    ///< Array of cycle recipes
+    RecipeTreeNode*           tribalRecipe;                     ///< The tribal recipe root of the recipe tree
 
-    csVector3                 homePos;
-    float                     homeRadius;
-    csString                  homeSectorName;
-    iSector*                  homeSector;
+    /** @name Home Position
+     * @{ */
+    csVector3                 homePos;                          ///< The position
+    float                     homeRadius;                       ///< The radius of the home
+    csString                  homeSectorName;                   ///< The sector name where home is.
+    iSector*                  homeSector;                       ///< The resolved sector name.
+    /**  @} */
+    
     int                       maxSize;
-    BufferHash                tribeBuffer;       ///< Buffer used to hold data for recipe's functions
+    BufferHash                tribeBuffer;                      ///< Buffer used to hold data for recipe's functions
     csString                  wealthResourceName;
     csString                  wealthResourceNick;
     csString                  wealthResourceArea;
     float                     wealthResourceGrowth;
     float                     wealthResourceGrowthActive;
     int                       wealthResourceGrowthActiveLimit;
-    float                     accWealthGrowth; ///< Accumulated rest of wealth growth.
+    float                     accWealthGrowth;                  ///< Accumulated rest of wealth growth.
     int                       reproductionCost;
-    csString                  npcIdleBehavior; ///< The name of the behavior that indicate that the member is idle
+    csString                  npcIdleBehavior;                  ///< The name of the behavior that indicate that the member is idle
     csString                  wealthGatherNeed;
     csList<Memory*>           memories;
     
@@ -632,13 +769,13 @@ protected:
     csTicks                   lastAdvance;
 
 
-    float                     deathRate;    ///< The average time in ticks between deaths
-    float                     resourceRate; ///< The average time in ticks between new resource is found
-    csTicks                   lastDeath;    ///< Time when a member was last killed
-    csTicks                   lastResource; ///< Time when a resource was last added.
+    float                     deathRate;                        ///< The average time in ticks between deaths
+    float                     resourceRate;                     ///< The average time in ticks between new resource is found
+    csTicks                   lastDeath;                        ///< Time when a member was last killed
+    csTicks                   lastResource;                     ///< Time when a resource was last added.
 
-    EventManager*             eventManager;  ///< Link to the event manager
-    RecipeManager*            recipeManager; ///< The Recipe Manager handling this tribe
+    EventManager*             eventManager;                     ///< Link to the event manager
+    RecipeManager*            recipeManager;                    ///< The Recipe Manager handling this tribe
 };
 
 /** @} */
