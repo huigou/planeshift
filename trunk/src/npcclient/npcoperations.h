@@ -48,6 +48,10 @@ struct iSector;
 #include "reaction.h"
 #include "perceptions.h"
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class NPC;
 class gemNPCObject;
 class gemNPCActor;
@@ -1680,5 +1684,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
+
+/** @} */
 
 #endif

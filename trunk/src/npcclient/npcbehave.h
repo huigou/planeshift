@@ -46,6 +46,10 @@ struct iSector;
 #include "walkpoly.h"
 #include "npcoperations.h"
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class ScriptOperation;
 class Perception;
 class Reaction;
@@ -486,6 +490,7 @@ public:
 
 };
 
+/** @} */
 
 #endif
 

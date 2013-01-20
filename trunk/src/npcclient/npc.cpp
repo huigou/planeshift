@@ -55,13 +55,10 @@
 #include "npc.h"
 #include "npcclient.h"
 #include "gem.h"
+#include "globals.h"
 #include "npcmesh.h"
 #include "tribe.h"
 #include "npcbehave.h"
-
-extern iDataConnection* db;
-
-
 
 
 void Stat::Update( csTicks now )

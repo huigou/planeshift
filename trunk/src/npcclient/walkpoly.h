@@ -34,6 +34,10 @@
 //=============================================================================
 #include "pathfind.h"
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class psNPCClient;
 
 void Dump3(const char * name, const csVector3 & p);
@@ -422,6 +426,7 @@ protected:
     csArray<psANode*> nodes;
 };
 
+/** @} */
 
 #endif
 

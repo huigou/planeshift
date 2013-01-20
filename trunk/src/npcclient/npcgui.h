@@ -24,6 +24,10 @@
 
 #include "paws/pawswidget.h"
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class EventHandler;
 class PawsManager;
 class pawsComboBox;
@@ -84,5 +88,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY( pawsNPCClientWindow );
+
+/** @} */
 
 #endif // __NPCGUI_H__

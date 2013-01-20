@@ -34,6 +34,10 @@
 #include "util/psconst.h"
 #include "util/mathscript.h"
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class Perception;
 class Behavior;
 class NPC;
@@ -144,6 +148,8 @@ public:
     const csString& GetLastTriggerd()   { return lastTriggered; }
     
 };
+
+/** @} */
 
 #endif
 

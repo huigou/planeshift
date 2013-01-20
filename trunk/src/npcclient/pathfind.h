@@ -32,6 +32,9 @@
 #include <csutil/csstring.h>
 #include <csutil/list.h>
 
+/**
+ * \addtogroup npcclient
+ * @{ */
 
 class psANode;
 class psWalkPoly;
@@ -267,6 +270,8 @@ protected:
     iObjectRegistry * objReg;
     csRef<iVFS> vfs;
 };
+
+/** @} */
 
 #endif
 
