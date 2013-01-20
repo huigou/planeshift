@@ -387,23 +387,19 @@ bool NPCType::Load(iDocumentNode *node)
 void NPCType::AddReaction(Reaction *reaction)
 {
     reactions.Push( reaction );
-#ifdef USE_REACTION_REGISTRATION
     if (npc)
     {
         npcclient->RegisterReaction(npc, reaction);
     }
-#endif
 }
 
 void NPCType::InsertReaction(Reaction *reaction)
 {
     reactions.Insert(0, reaction);  // reactions get inserted at beginning so subclass ones take precedence over superclass.
-#ifdef USE_REACTION_REGISTRATION
     if (npc)
     {
         npcclient->RegisterReaction(npc, reaction);
     }
-#endif
 }
 
 void NPCType::FirePerception(NPC *npc, Perception *pcpt)

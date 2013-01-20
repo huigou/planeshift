@@ -52,7 +52,7 @@
 
 bool Perception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    if ((GetName(npc) == reaction->GetEventType()) && (reaction->GetType(npc).IsEmpty() || type == reaction->GetType(npc)))
+    if ((GetName() == reaction->GetEventType()) && (reaction->GetType(npc).IsEmpty() || type == reaction->GetType(npc)))
     {
         return true;
     }
@@ -69,17 +69,25 @@ void Perception::ExecutePerception(NPC *npc, float weight)
 {
 }
 
-
-csString Perception::GetName(NPC* /* npc */)
+const csString& Perception::GetName() const
 {
     return name;
 }
 
+const csString& Perception::GetType() const
+{
+    return type;
+}
+
+void Perception::SetType(const char* type)
+{
+    this->type = type;
+}
 
 csString Perception::ToString(NPC* npc)
 {
     csString result;
-    result.Format("Name: '%s[%s]'",GetName(npc).GetDataSafe(), type.GetDataSafe());
+    result.Format("Name: '%s[%s]'",GetName().GetDataSafe(), type.GetDataSafe());
     return result;
 }
 
@@ -107,7 +115,7 @@ Perception *RangePerception::MakeCopy()
 csString RangePerception::ToString(NPC* npc)
 {
     csString result;
-    result.Format("Name: '%s' Range: '%.2f'",GetName(npc).GetDataSafe(), range );
+    result.Format("Name: '%s' Range: '%.2f'",GetName().GetDataSafe(), range );
     return result;
 }
 
@@ -300,32 +308,9 @@ SpellPerception::SpellPerception(const char *name,
     this->type = type;
 }
 
-csString SpellPerception::GetName(NPC* npc)
-{
-    csString event(name);
-#ifndef USE_REACTION_REGISTRATION
-    event.Append(':');
-
-    if (npc->GetEntityHate((gemNPCActor*)caster) || npc->GetEntityHate((gemNPCActor*)target))
-    {
-        event.Append("target");
-    }
-    else if (target == npc->GetActor())
-    {
-        event.Append("self");
-    }
-    else
-    {
-        event.Append("unknown");
-    }
-#endif
-
-    return event;
-}
-
 bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
 {
-    csString eventName = GetName(npc);
+    csString eventName = GetName();
 
     NPCDebug(npc, 20, "Spell percpetion checking for match beween %s[%s] and %s[%s]",
              eventName.GetData(), type.GetDataSafe(),
@@ -338,13 +323,14 @@ bool SpellPerception::ShouldReact(Reaction *reaction, NPC *npc)
         {
             if (!npc->GetEntityHate((gemNPCActor*)caster) && !npc->GetEntityHate((gemNPCActor*)target))
             {
-                NPCDebug(npc, 10, "Spell for target and target or caster not on hate list!!");
+                NPCDebug(npc, 10, "Spell for target and target or caster in not on hate list!!");
                 return false;
             }
         }
 
         NPCDebug(npc, 15, "%s spell cast by %s on %s, severity %1.1f.",
-            eventName.GetData(), (caster)?caster->GetName():"(Null caster)", (target)?target->GetName():"(Null target)", spell_severity);
+                 eventName.GetData(), (caster)?caster->GetName():"(Null caster)",
+                 (target)?target->GetName():"(Null target)", spell_severity);
 
         return true;
     }
@@ -457,7 +443,7 @@ Perception *TimePerception::MakeCopy()
 csString TimePerception::ToString(NPC* npc)
 {
     csString result;
-    result.Format("Name: '%s' : '%d:%02d %d-%d-%d'",GetName(npc).GetDataSafe(),
+    result.Format("Name: '%s' : '%d:%02d %d-%d-%d'",GetName().GetDataSafe(),
                   gameHour, gameMinute, gameYear, gameMonth, gameDay );
     return result;
 }

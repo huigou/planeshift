@@ -2479,7 +2479,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
             NPCDebug(npc, 5, "LocateOp - No Last Perception - nothing to do");
             return OPERATION_FAILED;  // Nothing more to do for this op.
         }
-        NPCDebug(npc, 5, "LocateOp - Last Perception is: %s",(npc->GetLastPerception()->GetName(npc)).GetData());
+        NPCDebug(npc, 5, "LocateOp - Last Perception is: %s",(npc->GetLastPerception()->GetName()).GetData());
         if (!npc->GetLastPerception()->GetLocation(located.pos,located.sector))
         {
             NPCDebug(npc, 5, "LocateOp - Cannot get Location - nothing to do");
@@ -3189,7 +3189,7 @@ ScriptOperation::OperationResult MemorizeOperation::Run(NPC *npc, bool interrupt
         return OPERATION_COMPLETED; // Nothing more to do for this op.
     }
     
-    NPCDebug(npc, 5, ">>> Memorize '%s' '%s'.",percept->GetType().GetDataSafe(),percept->GetName(npc).GetDataSafe());
+    NPCDebug(npc, 5, ">>> Memorize '%s' '%s'.",percept->GetType().GetDataSafe(),percept->GetName().GetDataSafe());
 
     Tribe * tribe = npc->GetTribe();
     

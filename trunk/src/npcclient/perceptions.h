@@ -36,6 +36,10 @@
 #include "net/npcmessages.h"
 #include "gem.h"
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class Reaction;
 class NPC;
 class Location;
@@ -72,9 +76,17 @@ public:
   
     virtual gemNPCObject *GetTarget() { return NULL; }
 
-    virtual csString GetName(NPC* npc);
-    const csString& GetType() const { return type; }
-    void SetType(const char* type) { this->type = type; }
+    /** Get the name of the perception.
+     *
+     *  This name has to be const since it is used in the registered reaction
+     *  chache to find the reactions and npcs that should have this perception.
+     */
+    virtual const csString& GetName() const;
+
+    /** Return the type of the perception.
+     */
+    const csString& GetType() const;
+    void SetType(const char* type);
     virtual bool GetLocation(csVector3& pos, iSector*& sector) { return false; }
     virtual float GetRadius() const { return 0.0; }
 
@@ -306,8 +318,6 @@ protected:
 public:
     SpellPerception(const char *name,gemNPCObject *caster,gemNPCObject *target, const char *spell_type, float severity);
 
-    virtual csString GetName(NPC* npc);
-
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
     virtual bool GetLocation(csVector3& pos, iSector*& sector);
@@ -431,6 +441,8 @@ public:
     virtual bool ShouldReact( Reaction *reaction, NPC *npc );
     virtual Perception *MakeCopy();
 };
+
+/** @} */
 
 #endif
 

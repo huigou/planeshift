@@ -262,7 +262,7 @@ csString NPC::Info()
     {
         reply.AppendFmt(" Target: %s\n",GetTarget()->GetName());
     }
-    reply.AppendFmt(" Last perception: '%s'\n",last_perception?last_perception->GetName(this).GetDataSafe():"(None)");
+    reply.AppendFmt(" Last perception: '%s'\n",last_perception?last_perception->GetName().GetDataSafe():"(None)");
     reply.AppendFmt(" Fall counter: %d\n", GetFallCounter());
     reply.AppendFmt(" Brain: %s",GetBrain()->GetName());
 
@@ -823,7 +823,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "TribeMemberType:      %s\n",GetTribeMemberType().GetDataSafe());
     CPrintf(CON_CMDOUTPUT, "Inside tribe home:    %s\n",insideTribeHome?"Yes":"No");
     CPrintf(CON_CMDOUTPUT, "Target:               %s\n",GetTarget()?GetTarget()->GetName():"");
-    CPrintf(CON_CMDOUTPUT, "Last perception:      %s\n",last_perception?last_perception->GetName(this).GetDataSafe():"(None)");
+    CPrintf(CON_CMDOUTPUT, "Last perception:      %s\n",last_perception?last_perception->GetName().GetDataSafe():"(None)");
     CPrintf(CON_CMDOUTPUT, "Fall counter:         %d\n", GetFallCounter());
     csString types;
     for (size_t m=0; m < autoMemorizeTypes.GetSize(); m++)

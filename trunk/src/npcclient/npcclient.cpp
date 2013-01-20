@@ -1152,22 +1152,19 @@ psPath* psNPCClient::FindPath(const char* name)
     return pathNetwork->FindPath(name);
 }
 
-#ifdef USE_REACTION_REGISTRATION 
 void psNPCClient::RegisterReaction(NPC* npc, Reaction* reaction)
 {
     allReactions.Put(reaction->GetEventType(), npc);
 }
-#endif
 
 void psNPCClient::TriggerEvent(Perception* pcpt, float maxRange,
                                csVector3* basePos, iSector* baseSector,
                                bool sameSector)
 {
-#ifdef USE_REACTION_REGISTRATION
     bool foundUser = false;
 
     // Only trigger NPCs that has this percpetion type registered as a reaction.
-    csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator(pcpt->GetName(NULL)));
+    csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator(pcpt->GetName()));
     while (iter.HasNext())
     {
         NPC* npc = iter.Next();
@@ -1181,18 +1178,8 @@ void psNPCClient::TriggerEvent(Perception* pcpt, float maxRange,
     }
     if (!foundUser)
     {
-        notUsedReactions.PushSmart( pcpt->GetName(NULL) );
+        notUsedReactions.PushSmart( pcpt->GetName() );
     }
-#else
-    for(size_t i=0; i<npcs.GetSize(); i++)
-    {
-        // skip disabled NPCs
-        if (npcs[i]->IsDisabled())
-            continue;
-
-        npcs[i]->TriggerEvent(pcpt, maxRange, basePos, baseSector, sameSector);
-    }
-#endif
 }
 
 void psNPCClient::SetEntityPos(EID eid, csVector3 &pos, iSector* sector, InstanceID instance, bool force)
@@ -1925,7 +1912,7 @@ void psNPCClient::PerceptProximityItems()
         // If not more than check_count items don't check them more than once :)
         check_count = size;
     }
-#ifdef USE_REACTION_REGISTRATION
+
     csList<NPC*> npcList;
     {
         csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator("item sensed"));
@@ -2024,79 +2011,6 @@ void psNPCClient::PerceptProximityItems()
             }
         }
     }
-        
-    
-#else
-    while(check_count--)
-    {
-        current_long_range_perception_index++;
-        if(current_long_range_perception_index >= (int)all_gem_items.GetSize())
-        {
-            current_long_range_perception_index = 0;
-        }
-
-        gemNPCItem* item = all_gem_items[current_long_range_perception_index];
-
-        iSector* item_sector;
-        csVector3 item_pos;
-        psGameObject::GetPosition(item,item_pos,item_sector);
-
-        if(item && item->IsPickable())
-        {
-            // Use bounding boxes to check within perception range. This
-            // is faster than using the distance.
-            csBox3 bboxLong;
-            bboxLong.AddBoundingVertex(item_pos-csVector3(LONG_RANGE_PERCEPTION));
-            bboxLong.AddBoundingVertexSmart(item_pos+csVector3(LONG_RANGE_PERCEPTION));
-            csBox3 bboxShort;
-            bboxShort.AddBoundingVertex(item_pos-csVector3(SHORT_RANGE_PERCEPTION));
-            bboxShort.AddBoundingVertexSmart(item_pos+csVector3(SHORT_RANGE_PERCEPTION));
-            csBox3 bboxPersonal;
-            bboxPersonal.AddBoundingVertex(item_pos-csVector3(PERSONAL_RANGE_PERCEPTION));
-            bboxPersonal.AddBoundingVertexSmart(item_pos+csVector3(PERSONAL_RANGE_PERCEPTION));
-
-            for(size_t i=0; i<npcs.GetSize(); i++)
-            {
-                // skip disabled NPCs
-                if (npcs[i]->IsDisabled())
-                    continue;
-
-                if(npcs[i]==NULL || npcs[i]->GetActor() == NULL)  // Can't do anyting unless we have both
-                    continue;
-
-                iSector* npc_sector;
-                csVector3 npc_pos;
-                psGameObject::GetPosition(npcs[i]->GetActor(), npc_pos, npc_sector);
-
-                // Only percept for items in same sector, NPC will probably not see a item
-                // in other sectors.
-                if(npc_sector != item_sector)
-                {
-                    continue;
-                }
-
-                if(npc_pos < bboxLong)
-                {
-                    if(npc_pos < bboxShort)
-                    {
-                        if(npc_pos < bboxPersonal)
-                        {
-                            ItemPerception pcpt_adjacent("item adjacent", item);
-                            npcs[i]->TriggerEvent(&pcpt_adjacent);
-                            continue;
-                        }
-                        ItemPerception pcpt_nearby("item nearby", item);
-                        npcs[i]->TriggerEvent(&pcpt_nearby);
-                        continue;
-                    }
-                    ItemPerception pcpt_sensed("item sensed", item);
-                    npcs[i]->TriggerEvent(&pcpt_sensed);
-                    continue;
-                }
-            }
-        }
-    }
-#endif
 }
 
 void psNPCClient::PerceptProximityLocations()
