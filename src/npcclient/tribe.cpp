@@ -50,8 +50,6 @@
 #include "gem.h"
 #include "networkmgr.h"
 
-extern iDataConnection *db;
-
 const char* Tribe::AssetTypeStr[] = {"ASSET_TYPE_ITEM","ASSET_TYPE_BUILDING","ASSET_TYPE_BUILDINGSPOT"};
 const char* Tribe::AssetStatusStr[] = {"ASSET_STATUS_NOT_APPLICABLE","ASSET_STATUS_NOT_USED","ASSET_STATUS_INCONSTRUCTION","ASSET_STATUS_CONSTRUCTED"};
 

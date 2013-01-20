@@ -23,9 +23,19 @@
 #ifndef __GLOBALS_H__
 #define __GLOBALS_H__
 
-class psNPCClient;
+/**
+ * \addtogroup npcclient
+ * @{ */
 
-extern psNPCClient* npcclient;
+// Forward declarations
+class psNPCClient;
+class iDataConnection;
+
+extern psNPCClient* npcclient; ///< Global connection to the NPC Client.
+
+extern iDataConnection* db; ///< Global connection to the Database. Set from the psDatabase class.
+
+/** @} */
 
 #endif
 

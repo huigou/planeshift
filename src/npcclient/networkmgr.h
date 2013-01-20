@@ -37,6 +37,11 @@ class psLinearMovement;
 //=============================================================================
 // Local Includes
 //=============================================================================
+
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class psNPCCommandsMessage;
 class psNetConnection;
 class psGameEvent;
@@ -44,7 +49,6 @@ class NPC;
 class gemNPCActor;
 class gemNPCObject;
 class gemNPCItem;
-
 
 class NetworkManager : public psClientNetSubscriber 
 {
@@ -246,6 +250,8 @@ public:
     psNPCReconnect(int offsetticks, NetworkManager *mgr, bool authent);
     virtual void Trigger();  // Abstract event processing function
 };
+
+/** @} */
 
 #endif
 

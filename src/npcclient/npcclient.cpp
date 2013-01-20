@@ -74,7 +74,6 @@
 #include "status.h"
 
 bool running;
-extern iDataConnection* db;
 
 class psNPCClientTick : public psGameEvent
 {

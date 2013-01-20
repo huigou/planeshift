@@ -34,6 +34,10 @@
 //=============================================================================
 #include "npcclient.h"
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class gemNPCActor;
 class gemNPCObject;
 class npcMesh;
@@ -191,5 +195,7 @@ protected:
     uint32_t tribeID;
     int flags;
 };
+
+/** @} */
 
 #endif

@@ -41,6 +41,10 @@
 // Local Includes
 //=============================================================================
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class iResultRow;
 class EventManager;
 class NPC;
@@ -636,5 +640,7 @@ protected:
     EventManager*             eventManager;  ///< Link to the event manager
     RecipeManager*            recipeManager; ///< The Recipe Manager handling this tribe
 };
+
+/** @} */
 
 #endif

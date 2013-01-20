@@ -44,6 +44,10 @@ class csVector3;
 class psNPCClient;
 class gemNPCObject;
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 /** This is a helper class that defines a mesh on the server.  
  * It wraps around some of the loading details.
  */
@@ -106,5 +110,7 @@ private:
 
     gemNPCObject* gemOwner;                    ///< gemObject using this mesh.
 };
+
+/** @} */
 
 #endif

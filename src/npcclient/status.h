@@ -26,6 +26,10 @@
 #include <csutil/threading/thread.h>
 #include <csutil/csstring.h>
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 struct iObjectRegistry;
 
 /** This class is used to record the status of the npcclient to display it on a website so
@@ -48,5 +52,7 @@ public:
     
     static unsigned int count;
 };
+
+/** @} */
 
 #endif

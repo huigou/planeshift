@@ -34,11 +34,15 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
+#include "globals.h"
 #include "tribe.h"
 #include "recipetreenode.h"
 #include "npcbehave.h"
 
-extern iDataConnection* db;
+
+/**
+ * \addtogroup npcclient
+ * @{ */
 
 class psNPCClient;
 class EventManager;
@@ -254,5 +258,7 @@ private:
     psNPCClient*            npcclient;    ///< Link to npcclient
     EventManager*           eventmanager; ///< Link to event manager
 };
+
+/** @} */
 
 #endif

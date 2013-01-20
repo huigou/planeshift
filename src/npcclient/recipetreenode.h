@@ -34,6 +34,10 @@
 #include "tribe.h"
 #include "recipe.h"
 
+/**
+ * \addtogroup npcclient
+ * @{ */
+
 class Recipe;
 
 #define CYCLIC_RECIPE_PRIORITY 100
@@ -109,5 +113,7 @@ public:
     void DumpRecipeTreeRecipes() { DumpRecipeTreeRecipes(1); }
     void DumpRecipeTreeRecipes(int index);
 };
+
+/** @} */
 
 #endif

@@ -35,9 +35,12 @@ struct iMovable;
 //=============================================================================
 // Local Includes
 //=============================================================================
-//#include "npcbehave.h"
 #include "tribe.h"
 #include "gem.h"
+
+/**
+ * \addtogroup npcclient
+ * @{ */
 
 class  Behavior;
 class  EventManager;
@@ -853,6 +856,7 @@ struct HateListEntry
     float hate_amount;
 };
 
+/** @} */
 
 #endif
 
