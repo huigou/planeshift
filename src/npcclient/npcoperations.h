@@ -45,6 +45,7 @@ struct iSector;
 // Project Includes
 //=============================================================================
 #include "npc.h"
+#include "reaction.h"
 #include "perceptions.h"
 
 class NPC;
