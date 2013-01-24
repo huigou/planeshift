@@ -798,6 +798,41 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* Hate list modifications.
+*/
+class HateListOperation : public ScriptOperation
+{
+protected:
+    /**
+     * Flags definitions for use in the flags variable.
+     */
+    enum 
+    {
+        MAX_HATE = 0x0001,
+        MIN_HATE = 0x0002,
+        ABS_HATE = 0x0004,
+        DELTA_HATE = 0x0008,
+        HATE_PERCEPTION = 0x0010  ///< Use last perception instead of target
+    };
+
+    unsigned int flags;           ///< Flags
+    float        maxHate;         ///< Hate should have a max value if MAX_HATE is set
+    float        minHate;         ///< Hate should bave a min value if MIN_HATE is set
+    float        absoluteHate;    ///< Hate should be set to this value if ABS_HATE is set
+    float        deltaHate;       ///< Added to hate if DELTA_HATE is set
+public:
+
+    HateListOperation(): ScriptOperation("HateList"), flags(0) {};
+    virtual ~HateListOperation() {};
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+
+//-----------------------------------------------------------------------------
+
+/**
 * Invisible will make the npc invisible.
 */
 class InvisibleOperation : public ScriptOperation
@@ -829,10 +864,10 @@ protected:
     float     range;
     bool      static_loc;
     bool      random;
-    bool      locateOutsideRegion;      ///< Locate targets outside a region if a region exist. Default false
-    bool      locateInvisible;   ///< Locate invisible targets
-    bool      locateInvincible;  ///< Locate invincible targets
-    csString  destination;       ///< Alternate destination instead of "Active" locate.
+    csString  locateOutsideRegion; ///< Locate targets outside a region if a region exist. Default false
+    bool      locateInvisible;     ///< Locate invisible targets
+    bool      locateInvincible;    ///< Locate invincible targets
+    csString  destination;         ///< Alternate destination instead of "Active" locate.
 
     
 public:
@@ -903,7 +938,9 @@ class MeleeOperation : public ScriptOperation
 protected:
     float        seek_range, melee_range;
     gemNPCActor* attacked_ent;
-    bool         attackOutsideRegion, attackInvisible, attackInvincible;
+    csString     attackOutsideRegion;  ///< Attack even outside region if a region is defined.
+    bool         attackInvisible;
+    bool         attackInvincible;
     csString     stance;
     bool         tribe;
 public:

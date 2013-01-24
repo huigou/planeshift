@@ -460,8 +460,25 @@ protected:
                               bool includeInvisible, bool includeInvincible, float* hate);
 
 
-    float GetEntityHate(gemNPCActor* ent);
+    /**
+     * Retrive the hate this NPC has to a given entity.
+     *
+     * @param entity The entity to check for hate.
+     * @return the hate value
+     */
+    float GetEntityHate(gemNPCActor* entity);
+
+    /**
+     * Change the hate list value for an attacker.
+     *
+     * @param attacker The entity that should be adjusted.
+     * @param delta    The change in hate to apply to the attacker.
+     */
     void AddToHateList(gemNPCActor* attacker,float delta);
+
+    /**
+     * Remove a entity from the hate list.
+     */
     void RemoveFromHateList(EID who);
 
     /**

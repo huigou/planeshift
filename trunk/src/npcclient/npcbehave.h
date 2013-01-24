@@ -536,6 +536,16 @@ public:
      */
     static csString ReplaceNPCVariables(NPC* npc, const csString& object);
 
+    /** Replace NPC Variables/keywords in the string
+     *
+     * Replace $race,$target,$tribe,$owner,$name.
+     *
+     * @param npc    The npc to take the variables from
+     * @param object The string to replace the keywords from
+     * @return true if result is true or yes.
+     */
+    static bool ReplaceNPCVariablesBool(NPC* npc, const csString& object);
+
 };
 
 /** @} */
