@@ -63,14 +63,16 @@ struct Note
 
     /**
      * Constructor.
+     *
      * @param position the note's position.
      * @param alter the note's alteration.
      */
     Note(short int position, short int alter);
 
     /**
-     * Writes this note as a <pitch> XML node.
-     * @return the <pitch> XML node.
+     * Writes this note as a \<pitch\> XML node.
+     *
+     * @return the \<pitch\> XML node.
      */
     csString ToXML();
 };
@@ -87,6 +89,7 @@ public:
 
     /**
      * Copy constructor. It copies notes and duration.
+     *
      * @param chord the Chord to copy.
      */
     Chord(Chord* chord);
@@ -98,36 +101,42 @@ public:
 
     /**
      * Returns the next Chord.
+     *
      * @return the next Chord.
      */
     Chord* Next() { return next; }
 
     /**
      * Returns the previous Chord.
+     *
      * @return the previous Chord.
      */
     Chord* Prev() { return prev; }
 
     /**
      * Return true if this chord is a rest, false otherwise.
+     *
      * @return true if this is a rest.
      */
     bool IsRest() { return isRest; }
 
     /**
      * Returns true if there are not notes in this chord.
+     *
      * @return true if this chord is empty, false otherwise.
      */
     bool IsEmpty() { return notes.GetSize() == 0; }
 
     /**
      * Gets the duration of this chord.
+     *
      * @return the duration of this chord.
      */
     int GetDuration() { return duration; }
 
     /**
      * Sets the duration of this chord.
+     *
      * @param duration one of the values of the enum Duration.
      */
     void SetDuration(int duration);
@@ -138,13 +147,14 @@ public:
      *
      * @param position the position where the note (or the rest) must be drawn.
      * @param alter the alteration of the note (-1 flat, 0 normal, 1 sharp).
-     * @param true if it is a rest.
+     * @param isRest true if it is a rest.
      */
     void AddNote(int position, int alter, bool isRest);
 
     /**
-     * Adds a not-rest note to this chord from a <pitch> XML node.
-     * @param pitch the <pitch> XML node.
+     * Adds a not-rest note to this chord from a \<pitch\> XML node.
+     *
+     * @param pitch the \<pitch\> XML node.
      */
     void AddNote(csRef<iDocumentNode> pitch);
 
@@ -155,6 +165,7 @@ public:
 
     /**
      * Inserts the given chord after this one.
+     *
      * @param chord the chord to insert.
      */
     void AttachChord(Chord* chord);
@@ -169,8 +180,8 @@ public:
     void Draw(pawsSheetLine* pawsLine, Chord* selectedChord, int horizontalPos);
 
     /**
-     * Write this chord as a <note> XML node.
-     * @return the <note> XML node.
+     * Write this chord as a \<note\> XML node.
+     * @return the \<note\> XML node.
      */
     csString ToXML();
 
@@ -396,7 +407,8 @@ public:
     bool Hit(int x, Chord* &chord, bool &before);
 
     /**
-     * Writes this measure as a <measure> XML node.
+     * Writes this measure as a <pre>\<measure\><pre> XML node.
+     *
      * @param number the number of this measure.
      * @param attributes the attributes and direction nodes.
      * @return the <measure> XML node.

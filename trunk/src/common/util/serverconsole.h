@@ -67,11 +67,12 @@ public:
     ~ServerConsole();
 
     /**
-     * Executes a script of commands. The script is passed
-     * in as a char array buffer (NOT a filename). This function
+     * Executes a script of commands.
+     *
+     * The script is passed in as a char array buffer (NOT a filename). This function
      * goes through the char array script line at a time and executes
      * the given server command. It also allows for commenting the
-     * script using the #comment...
+     * script using the \#comment...
      */
     static void ExecuteScript(const char* script);
 
@@ -82,8 +83,9 @@ public:
     void Run();
 
     /**
-     * The main server console loop. This waits for a user
-     * to enter a line of data and executes the command
+     * The main server console loop.
+     *
+     * This waits for a user to enter a line of data and executes the command
      * that the user entered.
      */
     void MainLoop();

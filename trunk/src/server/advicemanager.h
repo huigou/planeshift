@@ -50,7 +50,9 @@ class AdviceSession;
 #define SESSION_STATUS_CLAIMED 1
 #define SESSION_STATUS_OWNED   2
 
-/** Holds data on an 'advisor' in the world.
+/**
+ * Holds data on an 'advisor' in the world.
+ *
  * An advisor is self appointed person that answers questions in game that
  * people have. First Time questions are broadcast to all advisors, first
  * advisor to answer gets points and the questioneer for the rest of the session.
@@ -68,6 +70,7 @@ struct AdvisorStruct
 /**
  * AdviceManager keeps track of all the invitations of any kind
  * that are pending, using a collection of PendingAdvice objects.
+ *
  * An invitation is pending between the time that the Noob
  * sends the invitation and when an Advisor sends a response.
  */
@@ -80,39 +83,45 @@ public:
 
     void HandleAdviceMessage(MsgEntry *pMsg,Client *client);
 
-    /** Adds a new advisor available to answer questions.
-      *
-      * @param id The player id to be set as and advisor.
-      * @param connectionId The client id that will be the advisor.
-      */
+    /**
+     * Adds a new advisor available to answer questions.
+     *
+     * @param client The player client.
+     */
     void AddAdvisor(Client *client);
 
-    /** Remove advisor available to answer questions.
-      *
-      * @param id The id of the advisor to remove ( same as player ID )
-      * @param The client id that client dropping advisor role.
-      */
+    /**
+     * Remove advisor available to answer questions.
+     *
+     * @param id The id of the advisor to remove ( same as player ID )
+     * @param connectionId The client id that client dropping advisor role.
+     */
     void RemoveAdvisor(uint32_t id, int connectionId);
 
-    /** Resend request for advice due to timeout.
-      *
-      * @param The session that has expired
-      */
+    /**
+     * Resend request for advice due to timeout.
+     *
+     * @param adviceSession The session that has expired
+     */
     void AdviceRequestTimeout(AdviceSession *adviceSession);
 
-    /** Remove advise session due to timeout.
-      *
-      * @param The session that has expired
-      */
+    /**
+     * Remove advise session due to timeout.
+     *
+     * @param who The actor.
+     * @param adviceSession The session that has expired.
+     * @param msg A message for the player.
+     */
     void CancelAdvisorSession(gemActor *who, AdviceSession *adviceSession, const char * msg );
 
     void RemoveSession( AdviceSession *adviceSession);
 
-    /** Retrieve the clients advisor mode
-      *
-      * @param id The id of the advisor to remove ( same as player ID )
-      * @param The client id that client dropping advisor role.
-      */
+    /**
+     * Retrieve the clients advisor mode.
+     *
+     * @param id The id of the advisor to remove ( same as player ID )
+     * @param connectionId The client id that client dropping advisor role.
+     */
     bool GetAdvisorMode( int id, int connectionId );
 
 protected:

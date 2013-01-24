@@ -49,14 +49,15 @@ public:
     virtual void Cancel() = 0;
 };
 
-/** ActiveSpells
+/**
+ * ActiveSpells
  *
  * A description of an active spell, containing all the information needed to
  * - Cancel it, reverting all its effects
  * - Persist it to the database (as a ProgressionScript that can recreate it).
  *
  * These correspond to "applied mode" in ProgressionScripts - that is, the
- * contents of <apply> nodes.
+ * contents of \<apply\> nodes.
  */
 class ActiveSpell : public CS::Utility::WeakReferenced
 {
@@ -93,7 +94,7 @@ public:
 protected:
     csString name;            ///< The name of the spell
     SPELL_TYPE type;          ///< Spell type - buff, debuff, etc.
-    csString script;          ///< the contents of an <apply> node which recreates this effect
+    csString script;          ///< the contents of an \<apply\> node which recreates this effect
     csTicks duration;         ///< How long this spell lasts
     bool cancelOnDeath;       ///< Whether or not this spell should be cancelled on death
     bool damagesHP;           ///< Whether or not this spell damages HP (for cancel on duel defeat)

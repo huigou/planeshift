@@ -38,7 +38,9 @@ class ActiveSpell;
 class EntityManager;
 class CacheManager;
 
-/** Events that can trigger scripts, i.e. <on type="attack"> */
+/**
+ * Events that can trigger scripts, i.e. \<on type="attack"\>
+ */
 enum SCRIPT_TRIGGER
 {
     ATTACK,

@@ -510,13 +510,15 @@ public:
      */
     pawsWidget* GetParent() { return parent; }
 
-    /** Load a widget based on its <widget></widget> tag.
+    /**
+     * Load a widget based on its \<widget\>\</widget\> tag.
+     *
      * @param node The xml data for the widget.
      * @remark Recursivly loads all child widgets.
      */
     virtual bool Load( iDocumentNode* node );
     
-    /** Load standard widget attributes based on its <widget></widget> tag.
+    /** Load standard widget attributes based on its \<widget\>\</widget\> tag.
      * @param node The xml data for the widget.
      */
     virtual bool LoadAttributes( iDocumentNode* node );
@@ -526,7 +528,7 @@ public:
      */
     virtual bool LoadEventScripts(iDocumentNode * node);
 
-    /** Load widget children based on subtags of its <widget></widget> tag.
+    /** Load widget children based on subtags of its \<widget\>\</widget\> tag.
      * @param node The xml data for the widget.
      */
     virtual bool LoadChildren( iDocumentNode* node );

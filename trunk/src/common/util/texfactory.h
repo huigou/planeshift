@@ -126,7 +126,7 @@ public:
     ~psImageRegion();
 
     /**
-     * Scans through the xml string and pulls out all <line> tags
+     * Scans through the xml string and pulls out all \<line\> tags
      * making a list of psScanlines from the tags.
      */
     bool CreateRegion(iDocumentNode* node);
@@ -143,6 +143,7 @@ public:
     /**
      * Copies the pixels from the src image, in this region
      * as specified by the list of scanlines, into the dest pixels.
+     *
      * Bitmode is intended to allow different types of blending
      * but is not used at this time.
      */

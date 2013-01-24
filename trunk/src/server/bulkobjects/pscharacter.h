@@ -380,12 +380,13 @@ public:
      */
     SkillSet(psCharacter *self);
 
-    /** @brief Sets the common skill info for this skill ( data from the database )
-      * @param which  The skill we want to set
-      * @param info   The info structure to assign to this skill.
-      * @param user   The owner character of this skill.
-      * @param recalculatestats   if true, stats of player will be recalculated taking into account the new skill
-      */
+    /**
+     * Sets the common skill info for this skill ( data from the database ).
+     *
+     * @param which  The skill we want to set
+     * @param info   The info structure to assign to this skill.
+     * @param recalculatestats   if true, stats of player will be recalculated taking into account the new skill
+     */
     void SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculatestats = true);
 
     /** @brief Sets the practice level for the skill.

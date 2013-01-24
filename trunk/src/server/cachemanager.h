@@ -297,12 +297,13 @@ public:
         return &msg_strings;
     }
 
-    /** Returns compressed message strings data.
+    /**
+     * Returns compressed message strings data.
      *
-     * @data Pointer to the compressed data.
-     * @size Size of the compressed data in bytes.
-     * @num_strings The number of strings encoded.
-     * @digest The md5sum digest of the compressed data.
+     * @param data Pointer to the compressed data.
+     * @param size Size of the compressed data in bytes.
+     * @param num_strings The number of strings encoded.
+     * @param digest The md5sum digest of the compressed data.
      */
     void GetCompressedMessageStrings(char* &data, unsigned long &size,
                                      uint32_t &num_strings, csMD5::Digest &digest);
@@ -548,28 +549,35 @@ public:
 
     void AddItemStatsToHashTable(psItemStats* newitem);
 
-    /** Wrapper for the getOption method of the root optionEntry stored in cachemanager.
-     *  @param A path to the requested option starting from the root optionEntry
-     *  @return An optionEntry in the requested position. NULL if the path was not found.
-     *  @see optionEntry
+    /**
+     * Wrapper for the getOption method of the root optionEntry stored in cachemanager.
+     *
+     * @param path A path to the requested option starting from the root optionEntry.
+     * @return An optionEntry in the requested position. NULL if the path was not found.
+     * @see optionEntry
      */
     optionEntry* getOption(const csString path)
     {
         return rootOptionEntry.getOption(path);
     }
 
-    /** Wrapper for the getOptionSafe method of the root optionEntry stored in cachemanager.
-     *  @param A path to the requested option starting from the root optionEntry
-     *  @return An optionEntry in the requested position. NULL if the path was invalid.
-     *  @see optionEntry
+    /**
+     * Wrapper for the getOptionSafe method of the root optionEntry stored in cachemanager.
+     *
+     * @param path A path to the requested option starting from the root optionEntry.
+     * @param value The value.
+     * @return An optionEntry in the requested position. NULL if the path was invalid.
+     * @see optionEntry
      */
     optionEntry* getOptionSafe(const csString path, const csString value)
     {
         return rootOptionEntry.getOptionSafe(path,value);
     }
 
-    /** Returns a pointer to the loot randomizer which is hosted within the cache manager.
-     *  @return A pointer to the lootrandomizer.
+    /**
+     * Returns a pointer to the loot randomizer which is hosted within the cache manager.
+     *
+     * @return A pointer to the lootrandomizer.
      */
     LootRandomizer* getLootRandomizer()
     {
@@ -638,7 +646,9 @@ protected:
     void PreloadCommandGroups();
 
 
-    /**Loads the loot modifiers from the loot modifiers table
+    /**
+     * Loads the loot modifiers from the loot modifiers table.
+     *
      * @return TRUE if there were no issues during loading, else FALSE.
      */
     bool PreloadLootModifiers();
@@ -656,16 +666,22 @@ protected:
 
 
 
-    /** Caches in the crafting transforms.
-      * @param tradePattern  The current pattern message we want to construct.
-      * @param patternID    The pattern ID of the pattern we are cacheing.
-      */
+    /**
+     * Caches in the crafting transforms.
+     *
+     * @param tradePattern  The current pattern message we want to construct.
+     * @param patternID     The pattern ID of the pattern we are cacheing.
+     * @param group         The group.
+     */
     void CacheCraftTransforms(psMsgCraftingInfo* tradePattern, int patternID, int group);
 
-    /** Caches in the crafting combinations..
-      * @param tradePattern  The current pattern message we want to construct.
-      * @param patternID    The pattern ID of the pattern we are cacheing.
-      */
+    /**
+     * Caches in the crafting combinations.
+     *
+     * @param tradePattern  The current pattern message we want to construct.
+     * @param patternID    The pattern ID of the pattern we are cacheing.
+     * @param group         The group.
+     */
     void CacheCraftCombos(psMsgCraftingInfo* tradePattern, int patternID, int group);
 
     PSTRAIT_LOCATION ConvertTraitLocationString(const char* locationstring);

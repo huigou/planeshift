@@ -4047,18 +4047,20 @@ public:
       */
     psViewItemDescription(int containerID, int slotID);
 
-    /** @brief Construct a message to go out to a client.
-      *
-      * If icContainer is false then the message is constructed right away.  If it is true
-      * then the data is stored and the message is not constructed (because size is not known ).
-      *
-      * @param to The desitination client.
-      * @param itemName The name of the item requested.
-      * @param description The description of the requested item.
-      * @param icon The 2D gui image to draw for this item.
-      * @param isContainer True if this item is a container.
-      */
-    psViewItemDescription(uint32_t to, const char* itemName, const char* Description, const char* icon,
+    /**
+     * Construct a message to go out to a client.
+     *
+     * If icContainer is false then the message is constructed right away.  If it is true
+     * then the data is stored and the message is not constructed (because size is not known ).
+     *
+     * @param to The desitination client.
+     * @param itemName The name of the item requested.
+     * @param description The description of the requested item.
+     * @param icon The 2D gui image to draw for this item.
+     * @param stackCount The numer of items in the stack.
+     * @param isContainer True if this item is a container.
+     */
+    psViewItemDescription(uint32_t to, const char* itemName, const char* description, const char* icon,
                           uint32_t stackCount, bool isContainer = false);
 
     /** Crack out the details from the message.
@@ -4140,18 +4142,21 @@ private:
 class psViewItemUpdate : public psMessageCracker
 {
 public:
-    /** @brief Constructs a message to go out to a client.
-      *
-      * @param to The desitination client.
-      * @param containerID The destination container's entity ID (it's always a world container).
-      * @param slotID The slot in the container where to make the update.
-      * @param clearSlot Boolean that indicates if the update is to clear out the slot.
-      * @param itemName The name of the item requested.
-      * @param materialName the name of the material to apply to this item when in the 3d world.
-      * @param icon The 2D gui image to draw for this item.
-      * @param stackCount The number of items in the stack.
-      * @param ownerEID The GEM entity ID of the owner
-      */
+    /**
+     * Constructs a message to go out to a client.
+     *
+     * @param to The desitination client.
+     * @param containerID The destination container's entity ID (it's always a world container).
+     * @param slotID The slot in the container where to make the update.
+     * @param clearSlot Boolean that indicates if the update is to clear out the slot.
+     * @param itemName The name of the item requested.
+     * @param icon The 2D gui image to draw for this item.
+     * @param meshName The mesh name.
+     * @param materialName the name of the material to apply to this item when in the 3d world.
+     * @param stackCount The number of items in the stack.
+     * @param ownerID The GEM entity ID of the owner
+     * @param msgstrings A message strings cache.
+     */
     psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot, const char* itemName, const char* icon, const char* meshName, const char* materialName, uint32_t stackCount, EID ownerID, csStringSet* msgstrings);
 
     /// Crack out the details from the message.

@@ -30,14 +30,18 @@
 
 
 /**
- * This struct keeps general information about a score. All average statistics are
+ * This struct keeps general information about a score.
+ *
+ * All average statistics are
  * computed by using the total length without rests. If the score is empty (or has
  * only rests), the average polyphony and duration are set to 0.
  */
 struct ScoreStatistics
 {
     /**
-     * Constructor. Initialize all statistics to 0.
+     * Constructor.
+     *
+     * Initialize all statistics to 0.
      */
     ScoreStatistics()
     {
@@ -138,9 +142,10 @@ struct ScoreStatistics
     }
 
     /**
-     * Multiplies all statistics concerning number of notes/chords and length for
-     * a integer scalar. It does not change minimum,maximum and average statistics
-     * nor beat type and fifths.
+     * Multiplies all statistics concerning number of notes/chords and length for a integer scalar.
+     *
+     * It does not change minimum,maximum and average statistics nor beat type and fifths.
+     *
      * @param scalar the integer that multiplies these statistics.
      * @return the updated statistics.
      */
@@ -208,6 +213,7 @@ class psMusic
 public:
     /**
      * Turns the given pitch into the next one in the scale.
+     *
      * @param pitch the pitch of the note.
      * @param octave the octave of the note.
      */
@@ -215,6 +221,7 @@ public:
 
     /**
      * Turns the given pitch into the previous one in the scale.
+     *
      * @param pitch the pitch of the note.
      * @param octave the octave of the note.
      */
@@ -246,8 +253,9 @@ public:
     static bool GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stats);
 
     /**
-     * Gets the attributes in the first measure of the given score. The provided
-     * attributes are always valid. If the musical score contains non valid attributes
+     * Gets the attributes in the first measure of the given score.
+     *
+     * The provided attributes are always valid. If the musical score contains non valid attributes
      * (e.g. beatType <= 0), they are set to a valid default value.
      *
      * @param musicalScore the musical score.
@@ -265,6 +273,7 @@ public:
 
     /**
      * Compress a song with the zlib compression algorithm.
+     *
      * @attention the output string is not a normal string but a sequence of bytes. It
      * could contain null characters. Do not treat it like a null terminated string.
      *
@@ -276,6 +285,7 @@ public:
 
     /**
      * Decompress a song with the zlib compression algorithm.
+     *
      * @param inputScore the compressed musical sheet.
      * @param outputScore at the end this string will contain the uncompressed score.
      * @return true if the decompression is done without errors, false otherwise.
@@ -284,7 +294,7 @@ public:
 
 private:
     /**
-     * Checks if the given document is a valid musical score and provide the <part> node.
+     * Checks if the given document is a valid musical score and provide the \<part\> node.
      *
      * @param musicalScore the musical score.
      * @param partNode a reference that will contain the part XML node.

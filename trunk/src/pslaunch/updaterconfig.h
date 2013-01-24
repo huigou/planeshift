@@ -122,7 +122,8 @@ struct Proxy
     uint port;
 };
 
-/** Holds an updater configuration file.
+/**
+ * Holds an updater configuration file.
  */
 class Config
 {
@@ -132,46 +133,63 @@ public:
     Mirror* GetMirror(uint mirrorNumber);
     csArray<Mirror> GetRepairMirrors();
 
-    /* Get mirrors. */
+    /**
+     * Get mirrors.
+     */
     csRefArray<Mirror>& GetMirrors() { return mirrors; }
-    /* Get clientVersions list. */
+    
+    /**
+     * Get clientVersions list.
+     */
     csRefArray<ClientVersion>& GetClientVersions() { return clientVersions; }
 
-    /** Loads mirrors from an xml formatted entry eg:
-     *  <mirrors>
-     *      <mirror id="1" name="Mirror1" url="http://www.mirror1.com/updaterdir" />
-     *      <mirror id="2" name="Mirror2" url="http://www.mirror2.com/updaterdir" />
-     *  </mirrors>
+    /**
+     * Loads mirrors from an xml formatted entry.
+     *
+     * Eg:<pre>
+     *  \<mirrors\>
+     *      \<mirror id="1" name="Mirror1" url="http://www.mirror1.com/updaterdir" /\>
+     *      \<mirror id="2" name="Mirror2" url="http://www.mirror2.com/updaterdir" /\>
+     *  \</mirrors\></pre>
+     *
      *  @param node The reference to the main node of an xml document containing the mirror list.
      *  @return FALSE if the mirrors entry was not found or no mirrors were added during the parsing.
      */
     bool LoadMirrors(csRef<iDocumentNode> node);
 
-    /* Init a xml config file. */
+    /**
+     * Init a xml config file.
+     */
     bool Initialize(csRef<iDocumentNode> node);
 
-    /* Get our platform string. */
+    /**
+     * Get our platform string.
+     */
     const char* GetPlatform() const;
 
     const char* GetGeneric() const { return "generic"; }
 
-    /* Get latest updater version */
+    /**
+     * Get latest updater version.
+     */
     float GetUpdaterVersionLatest() const { return updaterVersionLatest; }
 
-    /** Get latest updater major version
-     *  @return An unsigned int with the major version
+    /**
+     * Get latest updater major version.
+     * @return An unsigned int with the major version
      */
     unsigned int GetUpdaterVersionLatestMajor() const { return updaterVersionLatestMajor; }
 
-    /** Get latest updater minor version
-     *  @return An unsigned int with the minor version
+    /**
+     * Get latest updater minor version.
+     * @return An unsigned int with the minor version
      */
     unsigned int GetUpdaterVersionLatestMinor() const { return updaterVersionLatestMinor; }
 
-    /* Get latest updater version md5sum */
+    /** Get latest updater version md5sum */
     const char* GetUpdaterVersionLatestMD5() const { return updaterVersionLatestMD5; }
 
-    /* Get whether the updater mirror is active */
+    /** Get whether the updater mirror is active */
     bool IsActive() const { return active; }
 
 private:
@@ -203,50 +221,77 @@ public:
     UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs);
     ~UpdaterConfig();
 
-    /* Returns true if the updater is self updating */
+    /**
+     * Returns true if the updater is self updating.
+     */
     int IsSelfUpdating() const { return selfUpdating; }
 
-    /* Returns true if a integrity check (repair) needs to be done. */
+    /**
+     * Returns true if a integrity check (repair) needs to be done.
+     */
     bool CheckForIntegrity() const { return checkIntegrity; }
 
-    /* Returns true if a mirror switch needs to be done. */
+    /**
+     * Returns true if a mirror switch needs to be done.
+     */
     bool SwitchMirror() const { return switchMirror; }
 
-    /* Returns the proxy struct */
+    /**
+     * Returns the proxy struct.
+     */
     Proxy GetProxy() { return proxy; }
 
-    /* Returns the current/old config from updaterinfo.xml */
+    /**
+     * Returns the current/old config from updaterinfo\.xml.
+     */
     Config* GetCurrentConfig() const { return currentCon; }
 
-    /* Returns the new/downloaded config from updaterinfo.xml */
+    /**
+     * Returns the new/downloaded config from updaterinfo\.xml.
+     */
     Config* GetNewConfig() const { return newCon; }
 
-    /* Returns true if the last update was successful */
+    /**
+     * Returns true if the last update was successful.
+     */
     bool WasCleanUpdate() const { return cleanUpdate; }
 
-    /* Returns true if we want the updater to update platform specific files. */
+    /**
+     * Returns true if we want the updater to update platform specific files.
+     */
     bool UpdatePlatform() const { return updatePlatform; }
 
-    /* Returns true if we want to do in-zip repairs. */
+    /**
+     * Returns true if we want to do in-zip repairs.
+     */
     bool RepairingInZip() const { return repairInZip; }
 
-    /* Returns true if we want a repair to keep the old file (*.bak). */
+    /**
+     * Returns true if we want a repair to keep the old file (*\.bak).
+     */
     bool KeepingRepaired() const { return keepRepaired; }
 
-    /* Returns true if we want to perform a repair when files fail after an update. */
+    /**
+     * Returns true if we want to perform a repair when files fail after an update.
+     */
     bool RepairFailed() const { return repairFailed; }
 
-    /* True if we want to use the updater. This could be turned of when third-party
-     * updater is used
+    /**
+     * True if we want to use the updater. This could be turned of when third-party
+     * updater is used.
      */
     bool IsUpdateEnabled() const { return updateEnabled; }
 
-    /* Returns the configfile for the app */
+    /**
+     * Returns the configfile for the app.
+     */
     csRef<iConfigFile> GetConfigFile() const { return configFile; }
 
     void SetSelfUpdating(bool t) { selfUpdating = t ? 1 : 0; }
 
-    /* Returns the new mirror address. */
+    /**
+     * Returns the new mirror address.
+     */
     const char* GetNewMirrorAddress() const { return newMirror; }
 
 private:

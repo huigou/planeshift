@@ -79,7 +79,9 @@ enum GM_LEVEL
     GM_TESTER  = 10
 };
 
-/// @brief Reward Data is an abstract structure for all kinds of rewards
+/**
+ * Reward Data is an abstract structure for all kinds of rewards
+ */
 class psRewardData
 {
 public:
@@ -2906,7 +2908,10 @@ public:
         : AdminCmdData(commandName)
     {};
     
-    /** @brief Parses the given message and stores its data.
+    /**
+     * Parses the given message and stores its data.
+     *
+     * @param commandName name of the command
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
      * @param msg psAdminCmdMessage containing the message
@@ -2961,23 +2966,28 @@ public:
     virtual ~AdminCmdDataRndMsgTest()
     {};
 
-     /** @brief Creates an object the parsed data for the test message.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+     /**
+      * Creates an object the parsed data for the test message.
+      *
+      * @param msgManager message manager that handles this command
+      * @param me The incoming message from the GM
+      * @param msg psAdminCmdMessage containing the message
+      * @param client client of the network communication
+      * @param words command message to parse
+      * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
     virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
 
-    /** @brief Returns a helpmessage that fits to the parser of the class.
+    /**
+     * Returns a helpmessage that fits to the parser of the class.
+     *
      * @return csString: a help message to send back to the client
      */
     virtual csString GetHelpMessage();
 };
 
-/** Class for list command.
+/**
+ * Class for list command.
  *
  * Currently lists only available maps.
  */
@@ -2987,39 +2997,49 @@ public:
     AdminCmdSubCommandParser subCommandList; ///< List of possible sub commands
     csString subCommand; ///< given subcommand
 
-    /** Creates obj for specified command that needs a reason
+    /**
+     * Creates obj for specified command that needs a reason
      */
     AdminCmdDataList()
     : AdminCmdData("/list"), subCommandList("map")
     {};
     
-    /** Parses the given message and stores its data.
-     * @params msgmanager message manager that handles this command
-     * @params msg psAdminCmdMessage containing the message
-     * @params client client of the network communication
-     * @params words command message to parse
+    /**
+     * Parses the given message and stores its data.
+     *
+     * @param msgManager message manager that handles this command
+     * @param me message entry
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
      */
     AdminCmdDataList(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
 
     virtual ~AdminCmdDataList()
     {};
 
-     /** Creates a command data object of the current class containing the parsed data.
-     * @params msgmanager message manager that handles this command
-     * @params msg psAdminCmdMessage containing the message
-     * @params client client of the network communication
-     * @params words command message to parse
-     * @returns AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    /**
+     * Creates a command data object of the current class containing the parsed data.
+     *
+     * @param msgManager message manager that handles this command
+     * @param me message entry
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
     virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
 
-    /** Returns the Helpmessageportion for the destination according to the type
-     * @returns csString containg the helpmessage part for destination
+    /**
+     * Returns the Helpmessageportion for the destination according to the type
+     *
+     * @return csString containg the helpmessage part for destination
      */
     virtual csString GetHelpMessage();
 };
 
-/** Class for time command.
+/**
+ * Class for time command.
  *
  * Currently lists only available maps.
  */
@@ -3036,34 +3056,43 @@ public:
     : AdminCmdData("/time"), subCommandList("show set")
     {};
     
-    /** Parses the given message and stores its data.
-     * @params msgmanager message manager that handles this command
-     * @params msg psAdminCmdMessage containing the message
-     * @params client client of the network communication
-     * @params words command message to parse
+    /**
+     * Parses the given message and stores its data.
+     *
+     * @param msgManager message manager that handles this command
+     * @param me message entry
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
      */
     AdminCmdDataTime(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
 
     virtual ~AdminCmdDataTime()
     {};
 
-     /** Creates a command data object of the current class containing the parsed data.
-     * @params msgmanager message manager that handles this command
-     * @params msg psAdminCmdMessage containing the message
-     * @params client client of the network communication
-     * @params words command message to parse
-     * @returns AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    /**
+     * Creates a command data object of the current class containing the parsed data.
+     *
+     * @param msgManager message manager that handles this command
+     * @param me message entry
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
     virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
 
-    /** Returns the Helpmessageportion for the destination according to the type
-     * @returns csString containg the helpmessage part for destination
+    /**
+     * Returns the Helpmessageportion for the destination according to the type.
+     *
+     * @return csString containg the helpmessage part for destination
      */
     virtual csString GetHelpMessage();
 };
 
 
-/** @brief Class containing object factory for AdminCmdData objects.
+/**
+ * Class containing object factory for AdminCmdData objects.
  *
  * Creates specific AdminCmdData objects on demand.
  * The objects are stored and accessed by the command name that they have
@@ -3155,8 +3184,10 @@ public:
       */
     void AwardToTarget(unsigned int gmClientNum, Client* target, psRewardData* data);
 
-    /** @brief Get sector and coordinates of starting point of a map.
-     * @return returns the success (true when successful). 
+    /**
+     * Get sector and coordinates of starting point of a map.
+     *
+     * @return return the success (true when successful). 
      */
     bool GetStartOfMap(int clientnum, const csString & map, iSector * & targetSector,  csVector3 & targetPoint);
     
@@ -3267,7 +3298,7 @@ protected:
     /** @brief Change the npctype (brain) of the npc.
      *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
-     *  @param data A pointer to the command parser object with target datat
+     *  @param cmddata A pointer to the command parser object with target datat
      *  @param client The GM client the command came from.
      */
     void ChangeNPCType(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client);
@@ -3275,7 +3306,7 @@ protected:
     /** @brief Change the NPC Debug level.
      *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
-     *  @param data A pointer to the command parser object with target datat
+     *  @param cmddata A pointer to the command parser object with target datat
      *  @param client The GM client the command came from.
      */
     void DebugNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client);
@@ -3565,68 +3596,91 @@ protected:
      */
     virtual uint32_t GetEffectID();
 
-    /** @brif Hide all paths for all clients
+    /**
+     * Hide all paths for all clients.
+     *
      * @param clearSelected Clear selected path when iterating.
      */
     void HideAllPaths(bool clearSelected);
     
-    /** @brif Hide all paths for a client
+    /**
+     * Hide all paths for a client.
+     *
      * @param client The client to hide paths for.
      */
     void HidePaths(Client* client);
     
-    /** @brif Hide all waypoints for a client
+    /**
+     * Hide all waypoints for a client.
+     *
      * @param client The client to hide waypoints for.
      */
     void HideWaypoints(Client* client);
     
-    /** @brif Hide all paths for a client in a sector
+    /**
+     * Hide all paths for a client in a sector.
+     *
      * @param client The client to hide paths for.
      * @param sector The sector to hide paths in.
      */
     void HidePaths(Client* client, iSector* sector);
     
-    /** @brif Hide all waypoints for a client in a sector.
+    /**
+     * Hide all waypoints for a client in a sector.
+     *
      * @param client The client ot hide waypoints for.
      * @param sector The sector to hide paths in.
      */
     void HideWaypoints(Client* client, iSector* sector);
     
-    /** @brif Show paths and waypoints for all clients that have enabled display.
+    /**
+     * Show paths and waypoints for all clients that have enabled display.
      */
     void RedisplayAllPaths();
     
-    /** @brif Show paths for client in all sectors that has been enabled.
+    /**
+     * Show paths for client in all sectors that has been enabled.
+     *
      * @param client The client to show paths for.
      */
     void ShowPaths(Client* client);
     
-    /** @brif Show waypoint for client in all sectors that has been enabled.
+    /**
+     * Show waypoint for client in all sectors that has been enabled.
+     *
      * @param client The client to show waypoints for.
      */
     void ShowWaypoints(Client* client);
     
-    /** @brif Show path for a client in a given sector.
+    /**
+     * Show path for a client in a given sector.
+     *
      * @param client The client to show paths for.
      * @param sector The sector to show paths in.
      */
     void ShowPaths(Client* client, iSector* sector);
 
-    /** @brif Show waypoints for a client in a given sector.
+    /**
+     * Show waypoints for a client in a given sector.
+     *
      * @param client The client to show waypoints for.
      * @param sector The sector to show paths in. 
      */
     void ShowWaypoints(Client* client, iSector* sector);
 
-    /** @brif Update the display of paths in clients.
+    /**
+     * Update the display of paths in clients.
      */
     void UpdateDisplayPath(psPathPoint* point);
 
-    /** @brif Update the display of waypoints in clients.
+    /**
+     * Update the display of waypoints in clients.
      */
     void UpdateDisplayWaypoint(Waypoint* wp);
     
-    /** @brief Handle online path editing.
+    /**
+     * Handle online path editing.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3634,7 +3688,9 @@ protected:
      */
     void HandlePath( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
 
-    /** @brief Add new location point to DB.
+    /**
+     * Add new location point to DB.
+     *
      * @param typeID type of the location
      * @param pos position of the new location.
      * @param sectorName name of the sector for the new location.
@@ -3643,7 +3699,8 @@ protected:
      */
     int LocationCreate(int typeID, csVector3& pos, csString& sectorName, csString& name, int radius);
 
-    /** @brif Handle display of locations
+    /**
+     * Handle display of locations
      */
     void ShowLocations(Client* client, iSector* sector);
 
@@ -3659,7 +3716,9 @@ protected:
      */
     void UpdateDisplayLocation(Location* location);
     
-    /** @brief Handle online path editing.
+    /**
+     * Handle online path editing.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3667,7 +3726,9 @@ protected:
      */
     void HandleLocation( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Handle action location entrances
+    /**
+     * Handle action location entrances.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3675,7 +3736,9 @@ protected:
      */
     void HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Handles a user submitting a petition.
+    /**
+     * Handles a user submitting a petition.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3683,7 +3746,8 @@ protected:
      */
     void HandleAddPetition(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data,Client *client);
 
-    /** @brief Handles broadcasting the petition list dirty signal.
+    /**
+     * Handles broadcasting the petition list dirty signal.
      *
      * Used by: CancelPetition, GMHandlePetition, HandleAddPetition
      * @param clientNum of the client issuing the command.
@@ -3691,41 +3755,54 @@ protected:
      */
     void BroadcastDirtyPetitions(int clientNum, bool includeSelf=false);
 
-    /** @brief Gets the list of petitions and returns an array with the parsed data.
-     *  @param petitions an array with the data of the petition: It's empty if it wasn't possible to obtain results.
-     *  @param client The GM client which requested the informations.
-     *  @param IsGMrequest manages if the list should be formated for gm or players. True is for gm.
-     *  @return true if the query succeded, false if there were errors.
+    /**
+     * Gets the list of petitions and returns an array with the parsed data.
+     *
+     * @param petitions an array with the data of the petition: It's empty if it wasn't possible to obtain results.
+     * @param client The GM client which requested the informations.
+     * @param IsGMrequest manages if the list should be formated for gm or players. True is for gm.
+     * @return true if the query succeded, false if there were errors.
      */
     bool GetPetitionsArray(csArray<psPetitionInfo> &petitions, Client *client, bool IsGMrequest = false);
 
-    /** @brief Retrieves a list of petitions.
+    /**
+     * Retrieves a list of petitions.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
     void ListPetitions(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
-    /** @brief Cancels a petition.
+    
+    /**
+     * Cancels a petition.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
     void CancelPetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
-    /** @brief Modifies a petition.
+    
+    /**
+     * Modifies a petition.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
     void ChangePetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
 
-    /** @brief Handles GM queries for dealing with petitions.
+    /**
+     * Handles GM queries for dealing with petitions.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
     void GMListPetitions(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
     
-    /** @brief Handles GM changes to petitions.
+    /**
+     * Handles GM changes to petitions.
      *
      * Possible changes are: canceling, closing, assigning, escalating,
      * deescalationg.
@@ -3735,14 +3812,17 @@ protected:
      */
     void GMHandlePetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
 
-    /** @brief Lists all players for a GM.
+    /**
+     * Lists all players for a GM.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
     void SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg, Client *client);
 
-    /** @brief List command for information retrieval.
+    /**
+     * List command for information retrieval.
      *
      * Currently only supports listing the servers map.
      * @param me The incoming message from the GM
@@ -3752,7 +3832,8 @@ protected:
      */
     void HandleList(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data,Client *client);
 
-    /** @brief Time command for setting of game time.
+    /**
+     * Time command for setting of game time.
      *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
@@ -3761,21 +3842,26 @@ protected:
      */
     void HandleTime(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data,Client *client);
     
-    /** @brief Changes the name of the player to the specified one.
-     *  @param me The incoming message from the GM
-     *  @param msg The cracked command message.
+    /**
+     * Changes the name of the player to the specified one.
+     *
+     * @param me The incoming message from the GM
+     * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
-     *  @param client The GM client the command came from.
+     * @param client The GM client the command came from.
      */
     void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Changes the NPC's default spawn location.
+    /**
+     * Changes the NPC's default spawn location.
+     *
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
     void UpdateRespawn(AdminCmdData* data, Client* client);
 
-    /** @brief Controls the weather.
+    /**
+     * Controls the weather.
      *
      * To turn it on/off.
      * @param me The incoming message from the GM
@@ -3785,7 +3871,8 @@ protected:
      */
     void Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Controls the rain.
+    /**
+     * Controls the rain.
      *
      * Turn off, turn on, setting rain parameters.
      * @param me The incoming message from the GM
@@ -3795,7 +3882,8 @@ protected:
      */
     void Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Controls the snow.
+    /**
+     * Controls the snow.
      *
      * Turn off, turn on, setting snow parameters.
      * @param me The incoming message from the GM
@@ -3805,7 +3893,8 @@ protected:
      */
     void Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Controls the thunder.
+    /**
+     * Controls the thunder.
      *
      * Sending a sound command to the clients. 
      * Works only when it is raining.
@@ -3816,7 +3905,8 @@ protected:
      */
     void Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Controls the rain.
+    /**
+     * Controls the rain.
      *
      * Turn off, turn on, setting rain parameters.
      * @param me The incoming message from the GM
@@ -3826,7 +3916,8 @@ protected:
      */
     void Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Deletes a character from the database.
+    /**
+     * Deletes a character from the database.
      *
      * Should be used with caution.
      * This function will also send out reasons why a delete failed. Possible
@@ -3841,7 +3932,8 @@ protected:
      */
     void DeleteCharacter( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client );
 
-    /** @brief Bans a name from being used.
+    /**
+     * Bans a name from being used.
      *
      * The given name is added to the list of not allowed names
      * for characters.
@@ -3853,7 +3945,8 @@ protected:
      */
     void BanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Unbans a name from not being used.
+    /**
+     * Unbans a name from not being used.
      *
      * The given name is removed from the list of not allowed names
      * for characters.
@@ -3865,7 +3958,8 @@ protected:
      */
     void UnBanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
     
-    /** @brief Bans an account
+    /**
+     * Bans an account
      *
      * Bans can be done by player or account (pid,name,targeting).
      * Their length can be defined and set according to the security level of
@@ -3878,7 +3972,8 @@ protected:
      */
      void BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Unbans an account
+    /**
+     * Unbans an account
      *
      * Unbanning can be done by player or account (pid,name).
      * Depending on the ban length, the unbanning is executed when
@@ -3891,7 +3986,8 @@ protected:
      */
     void UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Bans an account from advising
+    /**
+     * Bans an account from advising
      *
      * Bans can be done by player or account (pid,name,targeting).
      * Their length can be defined and set according to the security level of
@@ -3904,7 +4000,9 @@ protected:
      */
 
     void BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
-    /** @brief Unbans an account for advising
+    
+    /**
+     * Unbans an account for advising
      *
      * Unbanning can be done by player or account (pid,name).
      * Depending on the ban length, the unbanning is executed when
@@ -3917,7 +4015,9 @@ protected:
      */
     void UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Retrieves a list of spawn types for from all items of the server.
+    /**
+     * Retrieves a list of spawn types for from all items of the server.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3925,13 +4025,17 @@ protected:
      */
     void SendSpawnTypes (MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief sends items of the specified type to the GMs client.
+    /**
+     * Sends items of the specified type to the GMs client.
+     *
      * @param me The incoming message from the GM
      * @param client The GM client the command came from.
      */
     void SendSpawnItems (MsgEntry* me, Client *client);
 
-    /** @brief changes the name of a guild.
+    /**
+     * Changes the name of a guild.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3939,7 +4043,9 @@ protected:
      */
     void RenameGuild( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
     
-    /** @brief changes the leader of a guild.
+    /**
+     * Changes the leader of a guild.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3947,7 +4053,9 @@ protected:
      */
     void ChangeGuildLeader( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
 
-    /** @brief Sends information about an award (reward) to the target and GM.
+    /**
+     * Sends information about an award (reward) to the target and GM.
+     *
      * @param gmClientnum The GM awarding something.
      * @param target the client that should get the award information.
      * @param awardname is a name for the award.
@@ -3956,7 +4064,9 @@ protected:
      */
     void SendAwardInfo(size_t gmClientnum, Client* target, const char* awardname, const char* awarddesc, int awarded);
 
-    /** @brief Awards experience to a player, by a GM.
+    /**
+     * Awards experience to a player, by a GM.
+     *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3965,13 +4075,17 @@ protected:
      */
     void AwardExperience(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client, Client* target);
 
-    /** @brief Awards something to a player, by a GM.
+    /**
+     * Awards something to a player, by a GM.
+     *
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.gm
      */
     void Award(AdminCmdData* data, Client* client);
 
-    /** @brief Transfers an item from one client to another.
+    /**
+     * Transfers an item from one client to another.
+     *
      * @param me incoming message from gm client
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3979,14 +4093,18 @@ protected:
      */
     void TransferItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
 
-    /** @brief Checks the presence of items.
+    /**
+     * Checks the presence of items.
+     *
      * @param me incoming message from gm client
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      */
     void CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data);
 
-    /** @brief Freezes a client, preventing it from doing anything.
+    /**
+     * Freezes a client, preventing it from doing anything.
+     *
      * @param me incoming message from gm client
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -3994,7 +4112,9 @@ protected:
      */
     void FreezeClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
 
-    /** @brief Thaws a client, reversing a freeze command.
+    /**
+     * Thaws a client, reversing a freeze command.
+     *
      * @param me incoming message from gm client
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -4002,7 +4122,8 @@ protected:
      */
     void ThawClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
 
-    /** @brief Retrieves detailed information about a character.
+    /**
+     * Retrieves detailed information about a character.
      *
      * For a targeted player this lists the inventory of the player.
      *
@@ -4013,7 +4134,8 @@ protected:
      */
     void Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
 
-    /** @brief Changes the skill of the target.
+    /**
+     * Changes the skill of the target.
      *
      * TODO: should be changed to alias /award
      *
@@ -4024,7 +4146,9 @@ protected:
      */
     void SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
 
-    /** @brief Temporarily changes the mesh for a player.
+    /**
+     * Temporarily changes the mesh for a player.
+     *
      * @param me incoming message from gm client
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -4032,7 +4156,9 @@ protected:
      */
     void Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
 
-    /** @brief Temporarily changes the security level for a player
+    /**
+     * Temporarily changes the security level for a player.
+     *
      * @param me incoming message from gm client
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -4040,13 +4166,17 @@ protected:
      */
     void TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Gets the given account number's security level from the DB.
+    /**
+     * Gets the given account number's security level from the DB.
+     *
      * @param accountID to retrieve the security level for.
      * @return the security level of the specified account.
      */
     int GetTrueSecurityLevel(AccountID accountID);
 
-    /** @brief Handle GM Event command.
+    /**
+     * Handle GM Event command.
+     *
      * @param me incoming message from gm client
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -4054,14 +4184,18 @@ protected:
      */
     void HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Handle request to view bad text from the targeted NPC.
+    /**
+     * Handle request to view bad text from the targeted NPC.
+     *
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
     void HandleBadText(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Manipulate quests from characters.
+    /**
+     * Manipulate quests from characters.
+     *
      * @param me incoming message from gm client
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
@@ -4069,14 +4203,16 @@ protected:
      */
     void HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Change quality of items.
+    /**
+     * Change quality of items.
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
     void HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Decide whether an item is stackable or not.
+    /**
+     * Decide whether an item is stackable or not.
      *
      * This is bypassing the flag for this type of item.
      * @param me incoming message from gm client
@@ -4085,21 +4221,26 @@ protected:
      */
     void ItemStackable(MsgEntry* me, AdminCmdData* data, Client *client );
 
-    /** @brief Set trait of a char.
+    /**
+     * Set trait of a char.
+     *
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
     void HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Change name of items.
+    /**
+     * Change name of items.
+     *
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
     void HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Handle reloads from DB.
+    /**
+     * Handle reloads from DB.
      *
      * Currently can only reload items.
      * @param msg The cracked command message.
@@ -4108,162 +4249,190 @@ protected:
      */
     void HandleReload(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief List warnings given to account
-     *  @param msg The cracked command message.
+    /**
+     * List warnings given to account.
+     *
+     * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
-     *  @param client The GM client the command came from.
+     * @param client The GM client the command came from.
      */
     void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Shows what the target used in command will afflict in the game
-     *  @param msg The cracked command message.
+    /**
+     * Shows what the target used in command will afflict in the game.
+     *
+     * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
-     *  @param client The GM client the command came from.
+     * @param client The GM client the command came from.
      */
     void CheckTarget(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Allows to disable/enable quests temporarily (server cache) or definitely (database)
+    /**
+     * Allows to disable/enable quests temporarily (server cache) or definitely (database).
      *
-     *  @param me The incoming message from the GM
-     *  @param msg The cracked command message.
+     * @param me The incoming message from the GM
+     * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
-     *  @param client The GM client the command came from.
+     * @param client The GM client the command came from.
      */
     void DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
 
-    /** @brief Allows to set an experience given to who kills the issing player
+    /**
+     * Allows to set an experience given to who kills the issing player.
      *
-     *  @param me The incoming message from the GM
-     *  @param msg The cracked command message.
+     * @param me The incoming message from the GM
+     * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
-     *  @param client The GM client the command came from.
+     * @param client The GM client the command came from.
      */
     void SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Allows to change faction points of players.
+    /**
+     * Allows to change faction points of players.
      *
-     *  @param me The incoming message from the GM.
-     *  @param msg The cracked command message.
-     *  @param data A pointer to the command parser object with target data.
-     *  @param client The target client which will have his faction points changed.
+     * @param me The incoming message from the GM.
+     * @param msg The cracked command message.
+     * @param data A pointer to the command parser object with target data.
+     * @param client The target client which will have his faction points changed.
      */
     void AssignFaction(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
-    /** @brief Allows to quit/reboot the server remotely from a client
+    /**
+     * Allows to quit/reboot the server remotely from a client.
      *
-     *  @param me The incoming message from the GM
-     *  @param msg The cracked command message.
-     *  @param data A pointer to the command parser object with target data
-     *  @param client The GM client the command came from.
+     * @param me The incoming message from the GM
+     * @param msg The cracked command message.
+     * @param data A pointer to the command parser object with target data
+     * @param client The GM client the command came from.
      */
     void HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
 
-    /** @brief Allows to quit/reboot the npcclient remotely from a client
+    /**
+     * Allows to quit/reboot the npcclient remotely from a client.
      *
-     *  @param me The incoming message from the GM
-     *  @param msg The cracked command message.
-     *  @param data A pointer to the command parser object with target data
-     *  @param client The GM client the command came from.
+     * @param me The incoming message from the GM
+     * @param msg The cracked command message.
+     * @param data A pointer to the command parser object with target data
+     * @param client The GM client the command came from.
      */
     void HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
 
-    /** @brief Allows to get version the server remotely from a client
+    /**
+     * Allows to get version the server remotely from a client.
      *
-     *  @param me The incoming message from the GM
-     *  @param msg The cracked command message.
-     *  @param data A pointer to the command parser object with target data
-     *  @param client The GM client the command came from.
+     * @param me The incoming message from the GM
+     * @param msg The cracked command message.
+     * @param data A pointer to the command parser object with target data
+     * @param client The GM client the command came from.
      */
     void HandleVersion(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
     
-    /** @brief Adds a petition under the passed user's name to the 'petitions' table in the database.
+    /**
+     * Adds a petition under the passed user's name to the 'petitions' table in the database.
      *
-     *  Will automatically add the date and time of the petition's submission
-     *  in the appropriate table columns
-     *  @param playerID: PID of the player who is submitting the petition.
-     *  @param petition: The player's request.
-     *  @return Returns either success or failure.
+     * Will automatically add the date and time of the petition's submission
+     * in the appropriate table columns
+     * @param playerID: PID of the player who is submitting the petition.
+     * @param petition: The player's request.
+     * @return Returns either success or failure.
      */
     bool AddPetition(PID playerID, const char* petition);
 
-    /** @brief Returns a list of all the petitions for the specified player
-     *  @param playerID: Is the ID of the player who is requesting the list.
+    /**
+     * Returns a list of all the petitions for the specified player.
+     *
+     * @param playerID: Is the ID of the player who is requesting the list.
      *                   if the ID is -1, that means a GM is requesting a complete listing
-     *  @param gmID: Is the id of the GM who is requesting petitions, ignored if playerID != -1
-     *  @return Returns a iResultSet which contains the set of all matching petitions for the user
+     * @param gmID: Is the id of the GM who is requesting petitions, ignored if playerID != -1
+     * @return Returns a iResultSet which contains the set of all matching petitions for the user
      */
     iResultSet *GetPetitions(PID playerID, PID gmID = PETITION_GM);
 
-    /** @brief Cancels the specified petition if the player was its creator
-     *  @param playerID: Is the ID of the player who is requesting the change.
-     *  @param petitionID: The petition id
-     *  @param isGMrequest: if true that means a GM is cancelling someone's petition
-     *  @return Returns either success or failure.
+    /**
+     * Cancels the specified petition if the player was its creator.
+     *
+     * @param playerID: Is the ID of the player who is requesting the change.
+     * @param petitionID: The petition id
+     * @param isGMrequest: if true that means a GM is cancelling someone's petition
+     * @return Returns either success or failure.
      */
     bool CancelPetition(PID playerID, int petitionID, bool isGMrequest = false);
 
-    /** @brief Changes the description of the specified petition if the player was its creator
-     *  @param playerID: Is the ID of the player who is requesting the change.
+    /**
+     * Changes the description of the specified petition if the player was its creator.
+     *
+     * @param playerID: Is the ID of the player who is requesting the change.
      *                   if ID is -1, that means a GM is changing someone's petition
-     *  @param petitionID: The petition id
-     *  @param petition new petition text
-     *  @return Returns either success or failure.
+     * @param petitionID: The petition id
+     * @param petition new petition text
+     * @return Returns either success or failure.
      */
     bool ChangePetition(PID playerID, int petitionID, const char* petition);
 
-    /** @brief Closes the specified petition (GM only)
-     *  @param gmID: Is the ID of the GM who is requesting the close.
-     *  @param petitionID: The petition id
-     *  @param desc: the closing description
-     *  @return Returns either success or failure.
+    /**
+     * Closes the specified petition (GM only).
+     *
+     * @param gmID: Is the ID of the GM who is requesting the close.
+     * @param petitionID: The petition id
+     * @param desc: the closing description
+     * @return Returns either success or failure.
      */
     bool ClosePetition(PID gmID, int petitionID, const char* desc);
 
-    /** @brief Assignes the specified GM to the specified petition
-     *  @param gmID: Is the ID of the GM who is requesting the assignment.
-     *  @param petitionID: The petition id
-     *  @return Returns either success or failure.
+    /**
+     * Assignes the specified GM to the specified petition.
+     *
+     * @param gmID: Is the ID of the GM who is requesting the assignment.
+     * @param petitionID: The petition id
+     * @return Returns either success or failure.
      */
     bool AssignPetition(PID gmID, int petitionID);
 
-    /** @brief Deassignes the specified GM to the specified petition
-     *  @param gmID: Is the ID of the GM who is requesting the deassignment.
-     *  @param gmLevel: The security level of the gm
-     *  @param petitionID: The petition id
-     *  @return Returns either success or failure.
+    /**
+     * Deassignes the specified GM to the specified petition.
+     *
+     * @param gmID: Is the ID of the GM who is requesting the deassignment.
+     * @param gmLevel: The security level of the gm
+     * @param petitionID: The petition id
+     * @return Returns either success or failure.
      */
     bool DeassignPetition(PID gmID, int gmLevel, int petitionID);
 
-    /** @brief Escalates the level of the specified petition.
+    /**
+     * Escalates the level of the specified petition.
      *
-     *  Changes the assigned_gm to -1, and the status to 'Open'
-     *  @param gmID: Is the ID of the GM who is requesting the escalation.
-     *  @param gmLevel: The security level of the gm
-     *  @param petitionID: The petition id
-     *  @return Returns either success or failure.
+     * Changes the assigned_gm to -1, and the status to 'Open'
+     * @param gmID: Is the ID of the GM who is requesting the escalation.
+     * @param gmLevel: The security level of the gm
+     * @param petitionID: The petition id
+     * @return Returns either success or failure.
      */
     bool EscalatePetition(PID gmID, int gmLevel, int petitionID);
-    /** @brief DEscalates the level of the specified petition.
+    
+    /**
+     * Descalates the level of the specified petition.
      *
-     *  Changes the assigned_gm to -1, and the status to 'Open'
-     *  @param gmID: Is the ID of the GM who is requesting the descalation.
-     *  @param gmLevel: The security level of the gm
-     *  @param petitionID: The petition id
-     *  @return Returns either success or failure.
+     * Changes the assigned_gm to -1, and the status to 'Open'
+     * @param gmID: Is the ID of the GM who is requesting the descalation.
+     * @param gmLevel: The security level of the gm
+     * @param petitionID: The petition id
+     * @return Returns either success or failure.
      */
     bool DescalatePetition(PID gmID, int gmLevel, int petitionID);
 
-    /** @brief logs all gm commands
+    /**
+     * Logs all gm commands
+     *
      * @param accountID: of the GM
-     *  @param gmID: the ID of the GM
-     *  @param playerID: the ID of the player
-     *  @param cmd: the command the GM executed
-     *  @return Returns either success or failure.
+     * @param gmID: the ID of the GM
+     * @param playerID: the ID of the player
+     * @param cmd: the command the GM executed
+     * @return Returns either success or failure.
      */
     bool LogGMCommand(AccountID accountID, PID gmID, PID playerID, const char* cmd);
 
     /**
-     * @brief Messagetest sending 10 random messages to a client.
+     * Messagetest sending 10 random messages to a client.
      *
      * Sends 10 messages in random order to the client for 
      * testing sequential delivery.
@@ -4273,10 +4442,11 @@ protected:
      */
     void RandomMessageTest(AdminCmdData* data, Client *client);
 
-    /** @brief Returns the last error generated by SQL
+    /**
+     * Returns the last error generated by SQL
      *
-     *  @return Returns a string that describes the last sql error.
-     *  @see iConnection::GetLastError()
+     * @return Returns a string that describes the last sql error.
+     * @see iConnection::GetLastError()
      */
     const char* GetLastSQLError ();
 
@@ -4285,24 +4455,30 @@ protected:
     ClientConnectionSet* clients; ///< internal list of clients connected to the server
 
 
-    /** @brief sends the gm client the current gm attributes.
+    /**
+     * Sends the gm client the current gm attributes.
+     *
      * @param client of the GM.
      */
     void SendGMAttribs(Client* client);
 
-    //! Holds a dummy dialog.
-    /*! We may need this later on when NPC's are inserted.  This also
+    /**
+     * Holds a dummy dialog.
+     *
+     * We may need this later on when NPC's are inserted.  This also
      * insures that the dicitonary will always exist.  There where some
      * problems with the dictionary getting deleted just after the
      * initial npc was added. This prevents that
      */
     psNPCDialog* npcdlg;
 
-    /** Holds the entire PathNetwork for editing of paths.
+    /**
+     * Holds the entire PathNetwork for editing of paths.
      */
     psPathNetwork* pathNetwork;
 
-    /** Hold every location in the world for editing of locations.
+    /**
+     * Hold every location in the world for editing of locations.
      */
     LocationManager* locations;
 };
