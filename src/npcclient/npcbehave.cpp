@@ -1120,6 +1120,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new BusyOperation(false);
         }
+        else if ( strcmp( node->GetValue(), "hate_list" ) == 0 )
+        {
+            op = new HateListOperation;
+        }
         else if ( strcmp( node->GetValue(), "invisible" ) == 0 )
         {
             op = new InvisibleOperation;
@@ -1818,6 +1822,14 @@ csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
     NPCDebug(npc, 10, "Replaced variables in '%s' to get '%s'",object.GetDataSafe(),result.GetDataSafe());
 
     return result;
+}
+
+
+bool psGameObject::ReplaceNPCVariablesBool(NPC* npc, const csString& object)
+{
+    csString replaced = ReplaceNPCVariables(npc, object);
+
+    return (replaced.CompareNoCase("true") || replaced.CompareNoCase("yes"));
 }
 
 

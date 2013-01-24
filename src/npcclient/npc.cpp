@@ -1608,6 +1608,18 @@ double NPC::GetProperty(MathEnvironment* env, const char* ptr)
     {
     	return insideRegion?1.0:0.0;
     }
+    if (property == "Hate")
+    {
+        gemNPCActor* target = dynamic_cast<gemNPCActor*>(GetTarget());
+        if (target)
+        {
+            return GetEntityHate(target);
+        }
+        else
+        {
+            return 0.0;
+        }
+    }
     if (property == "HP")
     {
         return GetHP();

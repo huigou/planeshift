@@ -1985,6 +1985,108 @@ ScriptOperation::OperationResult EquipOperation::Run(NPC *npc, bool interrupted)
 
 //---------------------------------------------------------------------------
 
+bool HateListOperation::Load(iDocumentNode *node)
+{
+    // Clear all flags
+    flags = 0;
+
+    if (node->GetAttributeValue("max"))
+    {
+        flags |= MAX_HATE;
+        maxHate = node->GetAttributeValueAsFloat("max");
+    }
+    if (node->GetAttributeValue("min"))
+    {
+        flags |= MIN_HATE;
+        minHate = node->GetAttributeValueAsFloat("min");
+    }
+    if (node->GetAttributeValue("absolute"))
+    {
+        flags |= ABS_HATE;
+        absoluteHate = node->GetAttributeValueAsFloat("absolute");
+    }
+    if (node->GetAttributeValue("delta"))
+    {
+        flags |= DELTA_HATE;
+        deltaHate = node->GetAttributeValueAsFloat("delta");
+    }
+    if (node->GetAttributeValueAsBool("perception",false))
+    {
+        flags |= HATE_PERCEPTION;
+    }
+
+    if ((flags & ABS_HATE) && (flags & DELTA_HATE))
+    {
+        Error1("Can not define both a delta and an absolute hate change.");
+        return false;
+    }
+
+    return true;
+}
+
+ScriptOperation *HateListOperation::MakeCopy()
+{
+    HateListOperation *op = new HateListOperation;
+    op->flags = flags;
+    op->maxHate = maxHate;
+    op->minHate = minHate;
+    op->absoluteHate = absoluteHate;
+    op->deltaHate = deltaHate;
+    return op;
+}
+
+ScriptOperation::OperationResult HateListOperation::Run(NPC *npc, bool interrupted)
+{
+    gemNPCActor* target = NULL;
+
+    if (flags & HATE_PERCEPTION)
+    {
+        Perception* lastPerception = npc->GetLastPerception();
+        target = dynamic_cast<gemNPCActor*>(lastPerception->GetTarget());
+    } else // Default use target
+    {
+        target = dynamic_cast<gemNPCActor*>(npc->GetTarget());
+    }
+    
+    // We need a target in order to change the hate
+    if (!target)
+    {
+        return OPERATION_FAILED;
+    }
+    
+    float oldHate = npc->GetEntityHate(target);
+    float newHate = oldHate;
+    
+    if (flags & DELTA_HATE)
+    {
+        newHate += deltaHate;
+    }
+    if (flags & ABS_HATE)
+    {
+        newHate = absoluteHate;
+    }
+    if (flags & MAX_HATE)
+    {
+        if (newHate > maxHate)
+        {
+            newHate = maxHate;
+        }
+    }
+    if (flags & MIN_HATE)
+    {
+        if (newHate < minHate)
+        {
+            newHate = minHate;
+        }
+    }
+    
+    npc->AddToHateList(target, newHate-oldHate);
+
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 bool InvisibleOperation::Load(iDocumentNode *node)
 {
     return true;
@@ -2055,7 +2157,11 @@ bool LocateOperation::Load(iDocumentNode *node)
         range = -1;
     }
     random = node->GetAttributeValueAsBool("random",false);
-    locateOutsideRegion = node->GetAttributeValueAsBool("outside_region",false);
+    locateOutsideRegion = node->GetAttributeValue("outside_region");
+    if (locateOutsideRegion.IsEmpty())
+    {
+        locateOutsideRegion = "false";
+    }
     locateInvisible = node->GetAttributeValueAsBool("invisible",false);
     locateInvincible = node->GetAttributeValueAsBool("invincible",false);
 
@@ -2517,10 +2623,13 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
     }
     else if (split_obj[0] == "target")
     {
-        NPCDebug(npc, 5, "LocateOp - Target %s",locateArgs.GetDataSafe());
+        NPCDebug(npc, 5, "LocateOp - Target %s, Range %.2f, OutsideRegion: %s%s%s",locateArgs.GetDataSafe(),range,
+                 locateOutsideRegion.GetDataSafe(),locateInvisible?", Invisible":"",locateInvincible?", Invincible":"");
+
+        bool outsideRegion = psGameObject::ReplaceNPCVariablesBool(npc, locateOutsideRegion);
 
         // Since we don't have a current enemy targeted, find one!
-        gemNPCActor* ent = npc->GetMostHated(range,locateOutsideRegion,locateInvisible,locateInvincible);
+        gemNPCActor* ent = npc->GetMostHated(range,outsideRegion,locateInvisible,locateInvincible);
 
         if(ent)
         {
@@ -2771,15 +2880,18 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC *npc, bool interrupted
         }
         else if (split_obj[0] == "target")
         {
-            NPCDebug(npc, 5, "LocateOp - Tribe - Target %s",locateArgs.GetDataSafe());
+            NPCDebug(npc, 5, "LocateOp - Tribe - Target %s, Range %.2f OutsideRegion: %s%s%s",locateArgs.GetDataSafe(),range,
+                     locateOutsideRegion.GetDataSafe(),locateInvisible?", Invisible":"",locateInvincible?", Invincible":"");
 
             if (!npc->GetTribe())
             {
                 return OPERATION_FAILED; //  Nothing more to do for this op.
             }
 
+            bool outsideRegion = psGameObject::ReplaceNPCVariablesBool(npc, locateOutsideRegion);
+
             // Since we don't have a current enemy targeted, find one!
-            gemNPCActor* ent = npc->GetTribe()->GetMostHated(npc, range, locateOutsideRegion, locateInvisible, locateInvincible);
+            gemNPCActor* ent = npc->GetTribe()->GetMostHated(npc, range, outsideRegion, locateInvisible, locateInvincible);
 
             if(ent)
             {
@@ -3002,7 +3114,11 @@ bool MeleeOperation::Load(iDocumentNode *node)
         melee_range  = 3.0f;
     }
     
-    attackOutsideRegion = node->GetAttributeValueAsBool("outside_region",false);
+    attackOutsideRegion = node->GetAttributeValue("outside_region");
+    if (attackOutsideRegion.IsEmpty())
+    {
+        attackOutsideRegion = "false";
+    }
     attackInvisible = node->GetAttributeValueAsBool("invisible",false);
     attackInvincible= node->GetAttributeValueAsBool("invincible",false);
 
@@ -3038,13 +3154,15 @@ ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, bool interrupted)
              melee_range, seek_range,(attackInvisible?" Invisible":" Visible"),
              (attackInvincible?" Invincible":""));
 
+    bool outsideRegion = psGameObject::ReplaceNPCVariablesBool(npc, attackOutsideRegion);
+
     if (tribe && npc->GetTribe())
     {
-        attacked_ent = npc->GetTribe()->GetMostHated(npc, melee_range,attackOutsideRegion, attackInvisible,attackInvincible); 
+        attacked_ent = npc->GetTribe()->GetMostHated(npc, melee_range, outsideRegion, attackInvisible,attackInvincible); 
     }
     else
     {
-        attacked_ent = npc->GetMostHated(melee_range, attackOutsideRegion, attackInvisible, attackInvincible);
+        attacked_ent = npc->GetMostHated(melee_range, outsideRegion, attackInvisible, attackInvincible);
     }
     if (attacked_ent)
     {
@@ -3066,13 +3184,15 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *n
     // Check hate list to make sure we are still attacking the right person
     gemNPCActor* ent;
 
+    bool outsideRegion = psGameObject::ReplaceNPCVariablesBool(npc, attackOutsideRegion);
+
     if (tribe && npc->GetTribe())
     {
-        ent = npc->GetTribe()->GetMostHated(npc, melee_range, attackOutsideRegion, attackInvisible, attackInvincible);
+        ent = npc->GetTribe()->GetMostHated(npc, melee_range, outsideRegion, attackInvisible, attackInvincible);
     }
     else
     {
-        ent = npc->GetMostHated(melee_range, attackOutsideRegion, attackInvisible, attackInvincible);
+        ent = npc->GetMostHated(melee_range, outsideRegion, attackInvisible, attackInvincible);
     }
     
     if (!ent)
@@ -3082,11 +3202,11 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *n
         // No enemy to whack on in melee range, search far
         if (tribe && npc->GetTribe())
         {
-            ent = npc->GetTribe()->GetMostHated(npc, seek_range, attackOutsideRegion, attackInvisible, attackInvincible);
+            ent = npc->GetTribe()->GetMostHated(npc, seek_range, outsideRegion, attackInvisible, attackInvincible);
         }
         else
         {
-            ent = npc->GetMostHated(seek_range, attackOutsideRegion, attackInvisible, attackInvincible);
+            ent = npc->GetMostHated(seek_range, outsideRegion, attackInvisible, attackInvincible);
         }
 
         // The idea here is to save the next best target and chase
