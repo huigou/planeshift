@@ -98,27 +98,45 @@ class psTradeTransformations : public iScriptableVar
 
     int GetTransPoints() const { MathEnvironment env; return transPoints->Evaluate(&env); }
 
-    /**Cache flag is used for garbage collection
+    /**
+     * Cache flag is used for garbage collection.
+     *
      * If true transformation is cached and should not be deleted after use
-     *  otherwise it needs to be cleaned up
+     * otherwise it needs to be cleaned up
      */
     int GetTransformationCacheFlag() { return transCached; }
 
-    /** Returns the name of the current transform.
-     *  @note Needed for iScriptableVar. 
-     *  @return just "transform".
+    /** @name iScriptableVar implementation
+     * Functions that implement the iScriptableVar interface. 
+     */
+    ///@{
+
+    /**
+     * Returns the name of the current transform.
+     *
+     * @note Needed for iScriptableVar. 
+     * @return just "transform".
      */
     const char* ToString();
 
-    ///Needed for iScriptableVar. Does nothing right now just returns 0 for anything passed.
+    /**
+     * Does nothing right now just returns 0 for anything passed.
+     *
+     * @note Needed for iScriptableVar.
+     */
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
 
-    /** Returns the requested variable stored in this transform.
-     *  @note Needed for iScriptableVar.
-     *  @param ptr A pointer to a char array stating the requested variable.
-     *  @return A double with the value of the requested variable.
+    /**
+     * Returns the requested variable stored in this transform.
+     *
+     * @note Needed for iScriptableVar.
+     *
+     * @param env The MathEnviroment.
+     * @param ptr A pointer to a char array stating the requested variable.
+     * @return A double with the value of the requested variable.
      */
     double GetProperty(MathEnvironment* env, const char* ptr);
+    ///@}
 
  protected:
     uint32 id;
@@ -132,15 +150,18 @@ class psTradeTransformations : public iScriptableVar
     MathExpression* transPoints;
 
 private:
-    /** Cache flag is used for garbage collection
-     *  If true transformation is cached and should not be deleted after use
-     *  otherwise it needs to be cleaned up
+    /**
+     * Cache flag is used for garbage collection.
+     *
+     * If true transformation is cached and should not be deleted after use
+     * otherwise it needs to be cleaned up
      */
     bool transCached;
 };
 
 /**
  * This class holds the master list of all trade processes possible in the game.
+ *
  * This class is read only since it is cached and shared by multiple users.
  */
 class psTradeProcesses : public iScriptableVar
@@ -173,8 +194,9 @@ class psTradeProcesses : public iScriptableVar
     csString& GetRenderEffect() { return renderEffect; }
 
     /**
-     * Gets the script associated to this process. This can be set from
-     * the users of the class and it's a cache for the mathscript.
+     * Gets the script associated to this process.
+     *
+     * This can be set from the users of the class and it's a cache for the mathscript.
      *
      * @return A weak reference to the associated mathscript, if any.
      */
@@ -182,6 +204,7 @@ class psTradeProcesses : public iScriptableVar
 
     /**
      * Gets the name of the script associated to this process.
+     *
      * It will be run after the process is done during the generation of
      * the new item.
      *
@@ -190,21 +213,35 @@ class psTradeProcesses : public iScriptableVar
      */
     csString GetScriptName() const { return scriptName; }
 
-    /** Returns the name of the current process.
+    /** @name iScriptableVar implementation
+     * Functions that implement the iScriptableVar interface. 
+     */
+    ///@{
+    /**
+     * Returns the name of the current process.
      *  @note Needed for iScriptableVar. 
      *  @return the name of the process.
      */
     const char* ToString();
 
-    ///Needed for iScriptableVar. Does nothing right now just returns 0 for anything passed.
+    /**
+     * Does nothing right now just returns 0 for anything passed.
+     *
+     * @none Needed for iScriptableVar.
+     */
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
 
-    /** Returns the requested variable stored in this process.
+    /**
+     * Returns the requested variable stored in this process.
+     *
      *  @note Needed for iScriptableVar.
+     *
+     *  @param env The MathEnviroment.
      *  @param ptr A pointer to a char array stating the requested variable.
      *  @return A double with the value of the requested variable.
      */
     double GetProperty(MathEnvironment* env, const char* ptr);
+    ///@}
     
  protected:
     uint32 processId;
@@ -257,7 +294,9 @@ class psTradePatterns
 
 //-----------------------------------------------------------------------------
 
-/** Each item has a list of items required for its construction.*/
+/**
+ * Each item has a list of items required for its construction.
+ */
 struct CombinationConstruction
 {
     uint32 resultItem;     
@@ -267,7 +306,9 @@ struct CombinationConstruction
 
 //-----------------------------------------------------------------------------
 
-/** Each item contains the craft skills for the craft step.*/
+/**
+ * Each item contains the craft skills for the craft step.
+ */
 struct CraftSkills
 {
     int priSkillId;
@@ -276,7 +317,9 @@ struct CraftSkills
     int minSecSkill;
 };
 
-/** Each item contains craft information about a craft transformation step.*/
+/**
+ * Each item contains craft information about a craft transformation step.
+ */
 struct CraftTransInfo
 {
     int priSkillId;
@@ -286,7 +329,9 @@ struct CraftTransInfo
     csString craftStepDescription;
 };
 
-/** Each item contains craft information about a craft combination.*/
+/**
+ * Each item contains craft information about a craft combination.
+ */
 struct CraftComboInfo
 {
     csArray<CraftSkills*>* skillArray;

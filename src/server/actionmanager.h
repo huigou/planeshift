@@ -52,7 +52,8 @@ class ActionManager;
 class psSectorInfo;
 class Client;
 
-/** Time out event on interacting with an action item.
+/**
+ * Time out event on interacting with an action item.
  */
 class psActionTimeoutGameEvent : public psGameEvent
 {
@@ -63,8 +64,9 @@ public:
 
     ~psActionTimeoutGameEvent();
     
-    /** Abstract event processing function.
-    */
+    /**
+     * Abstract event processing function.
+     */
     virtual void Trigger();  
     virtual bool IsValid() { return valid; }
     
@@ -79,9 +81,11 @@ protected:
 
 //----------------------------------------------------------------------------
 
-/** Handles the map interaction system.
-  * Used to populate/update/change current action locations.
-  */
+/**
+ * Handles the map interaction system.
+ *
+ * Used to populate/update/change current action locations.
+ */
 class ActionManager : public MessageManager<ActionManager>
 {
 public:
@@ -90,14 +94,18 @@ public:
 
     virtual ~ActionManager();
 
-    /** Loads cache from action_location table in db
-      * @param sectorinfo The sector to repopulate. Null means all sectors.
-      */
+    /**
+     * Loads cache from action_location table in db.
+     *
+     * @param sectorinfo The sector to repopulate. Null means all sectors.
+     */
     bool RepopulateActionLocations(psSectorInfo *sectorinfo = 0);
 
-    /** Loads cache with given action location
-      * @param action The action location to which you want to load
-      */
+    /**
+     * Loads cache with given action location.
+     *
+     * @param action The action location to which you want to load
+     */
     bool CacheActionLocation(psActionLocation* action);
 
     /** Processes psMapActionMessages
@@ -109,73 +117,82 @@ public:
 
     void RemoveActiveTrigger( size_t clientnum, const psActionLocation *actionLocation );
 
-    /** Finds an ActionLocation from it's CEL Entity ID
-      *
-      * @param id The id of the cel entity to find.
-      */
+    /**
+     * Finds an ActionLocation from it's CEL Entity ID.
+     *
+     * @param id The id of the cel entity to find.
+     */
     psActionLocation *FindAction(EID id);
 
-    /** Finds an ActionLocation from the action ID
-      *
-      * @param id The id of the action location.
-      */
+    /**
+     * Finds an ActionLocation from the action ID.
+     *
+     * @param id The id of the action location.
+     */
     psActionLocation *FindActionByID( uint32 id );
 
-    /** Finds an inactive entrance action location in the specified target sector map
-      *
-      * @param entranceSector The entrance teleport target sector string to qualify the search.
-      */
+    /**
+     * Finds an inactive entrance action location in the specified target sector map.
+     *
+     * @param entranceSector The entrance teleport target sector string to qualify the search.
+     */
     psActionLocation* FindAvailableEntrances( csString entranceSector );
 
 protected:
 
     // Message Handlers
 
-    /** Handles Query messages from client.
-    *
-    * @param xml xml containing query parameters.
-    * @param client      The client that sent the message.
-    */
+    /**
+     * Handles Query messages from client.
+     *
+     * @param xml xml containing query parameters.
+     * @param client      The client that sent the message.
+     */
     void HandleQueryMessage( csString xml, Client *client );
     void LoadXML( csRef<iDocumentNode> topNode );
     bool HandleSelectQuery( csRef<iDocumentNode> topNode, Client *client );
     bool HandleProximityQuery( csRef<iDocumentNode> topNode, Client *client );
     bool ProcessMatches( csArray<psActionLocation *> matches, Client *client );
 
-    /** Handles Save messages from client.
-    *
-    * @param xml xml containing query parameters.
-    * @param client      The client that sent the message.
-    */
+    /**
+     * Handles Save messages from client.
+     *
+     * @param xml xml containing query parameters.
+     * @param client      The client that sent the message.
+     */
     void HandleSaveMessage( csString xml, Client *client );
 
-    /** Handles List messages from client.
-    *
-    * @param xml xml containing query parameters.
-    * @param client      The client that sent the message.
-    */
+    /**
+     * Handles List messages from client.
+     *
+     * @param xml xml containing query parameters.
+     * @param client      The client that sent the message.
+     */
     void HandleListMessage( csString xml, Client *client );
 
-    /** Handles Delete messages from client.
-    *
-    * @param xml xml containing query parameters.
-    * @param client      The client that sent the message.
-    */
+    /**
+     * Handles Delete messages from client.
+     *
+     * @param xml xml containing query parameters.
+     * @param client      The client that sent the message.
+     */
     void HandleDeleteMessage( csString xml, Client *client );
 
-    /** Handles Reload messages from client.
-    *
-    * @param client      The client that sent the message.
-    */
+    /**
+     * Handles Reload messages from client.
+     *
+     * @param client      The client that sent the message.
+     */
     void HandleReloadMessage( Client *client);
 
     // Operation Handlers
 
-    /** Handles Examine Operation for a action location.
-    *
-    * @param action The action that is to be performed.
-    * @param client      The client that sent the message.
-    */
+    /**
+     * Handles Examine Operation for a action location.
+     *
+     * @param action The action that is to be performed.
+     * @param client      The client that sent the message.
+     */
     void HandleExamineOperation( psActionLocation* action, Client *client );
     void HandleScriptOperation ( psActionLocation* action, Client *client );
 

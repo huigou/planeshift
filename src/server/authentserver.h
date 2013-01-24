@@ -67,6 +67,8 @@ protected:
 };
 
 /**
+ * Authentication handling.
+ *
  * This class subscribes to "AUTH" messages and checks userid's and passwords
  * against the database (hardcoded right now, not live db).  If they are valid
  * an "Account Approved" message is sent back, telling the client what to
@@ -78,7 +80,9 @@ class AuthenticationServer : public MessageManager<AuthenticationServer>
 {
 public:
 
-    /** Initializing Constructor.
+    /**
+     * Initializing Constructor.
+     *
      * This initializes the AuthenticationServer object. Storing the
      * references to the objects asked for. This also subscribes this object
      * to the message handler listening to messages of type:
@@ -88,23 +92,26 @@ public:
      * When either of these messages appear on the message queue, the corresponding
      * function is called with the message as the argument. 
      *
-     * @param pCCS: Reference to the client connection set.
-     * @param usermgr: Reference to the user manager.
-     * @param netpersist: Reference to the network persistance manager.
-     * @param gm: Reference to the guild manager.
+     * @param pCCS Reference to the client connection set.
+     * @param usermgr Reference to the user manager.
+     * @param gm Reference to the guild manager.
      */
     AuthenticationServer(ClientConnectionSet *pCCS,
                            UserManager *usermgr,
                            GuildManager *gm);
 
-    /** Destructor.
+    /**
+     * Destructor.
+     *
      * The destructor will un-subscribe this object from the message handler.
      *
      * @see MsgHandler::Unsubscribe()
      */
     virtual ~AuthenticationServer();
 
-    /** Sends a disconnect message to the given client. 
+    /**
+     * Sends a disconnect message to the given client.
+     *
      * This will send a disconnect to the given client. Before doing that it
      * makes sure that no other clients have a reference to it before removing
      * it from the world. Sends a message of type NetBase::BC_FINALPACKET to
@@ -116,12 +123,14 @@ public:
      */
     void SendDisconnect(Client* client,const char *reason);
 
-    /** Util function to send string hash to client, because authentserver and
-     *  npcmanager both send these.
+    /**
+     * Util function to send string hash to client, because authentserver and
+     * npcmanager both send these.
      */
     void SendMsgStrings(int cnum, bool send_digest);
 
-    /** Updates the status of the client. Currently is used to set client to ready.
+    /**
+     * Updates the status of the client. Currently is used to set client to ready.
      */
     void HandleStatusUpdate(MsgEntry *me, Client *client);
     
@@ -147,36 +156,47 @@ protected:
      */
     bool CheckAuthenticationPreCondition(int clientnum, bool netversionok, const char* sUser);
     
-    /** Handles an authenticate message from the message queue.
+    /**
+     * Handles an authenticate message from the message queue.
+     *
      * This method recieves a authenticate message. Uses the following steps to
      * authenticate a client. Sends a psAuthMessageApproved message back to the
      * client if it was successfully authenticated and adds the client to the
      * current client list.
      *
-     * @param me: Is a message entry that contains the authenticate message.
+     * @param me      Is a message entry that contains the authenticate message.
+     * @param notused Not used.
      * @see psAuthMessageApproved 
      */
     void HandleAuthent(MsgEntry *me, Client *notused);
 
-    /** Handles a request for messsage strings from a client.
+    /**
+     * Handles a request for messsage strings from a client.
      */
     void HandleStringsRequest(MsgEntry* me, Client *notused);
 
-    /*  This just questsions a random number (clientnum) from server 
-    *   It is used for authenticating*/
+    /**
+     * This just questsions a random number (clientnum) from server.
+     *
+     * It is used for authenticating
+     */
     void HandlePreAuthent(MsgEntry *me, Client *notused);
     
-    /** Handles a disconnect message from the message queue.
+    /**
+     * Handles a disconnect message from the message queue.
+     *
      * This will remove the player from the server using
      * psServer::RemovePlayer() 
      *
-     * @param me: Is the disconnect message that was recieved.
-     * @param msg: Is the reason for the disconnect.
+     * @param me Is the disconnect message that was recieved.
+     * @param notused Not used.
      */
     void HandleDisconnect(MsgEntry* me,Client *notused);
     
-    /** Handles a message where a client picks his character to play with.
-     *  Can remove the player using psServer::RemovePlayer if invalid.
+    /**
+     * Handles a message where a client picks his character to play with.
+     *
+     * Can remove the player using psServer::RemovePlayer if invalid.
      */
     void HandleAuthCharacter(MsgEntry* me, Client *notused);    
 };

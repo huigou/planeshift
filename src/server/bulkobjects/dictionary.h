@@ -759,7 +759,7 @@ public:
  * This script operation invokes the progression manager to run a script,
  * as part of his response to a player event.
  * 
- * Syntax: <run script="name" with="...mathscript to add bindings..."/>
+ * Syntax: <pre>\<run script="name" with="...mathscript to add bindings..."/\></pre>
  */
 class RunScriptResponseOp : public ResponseOperation
 {

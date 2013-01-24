@@ -78,18 +78,19 @@ public:
      */
     void SendOutPlaySoundMessage( uint32_t clientNum, const char* itemsound, const char* action );
 
-    /** Sends out equipment messages to all the people around client.
+    /**
+     * Sends out equipment messages to all the people around client.
      *
      * This is used when a player changes their visible equipment and needs
      * to be reflected on other nearby clients. Visible changes can be either
      * new weapons/shields ( new mesh ) or texture changes for clothes ( new material ).
      *
-     * @param actor The actor that has changed equipment.
-     * @param slotName To what slot has changed.
-     * @param item The item that is the piece of visible equipment.
-     * @param type  The equiping type. One of:
-     *                psEquipmentMessage::DEEQUIP
-     *                psEquipmentMessage::EQUIP
+     * @param actor  The actor that has changed equipment.
+     * @param slotID To what slot has changed.
+     * @param item   The item that is the piece of visible equipment.
+     * @param equipped   The equiping type. One of:
+     *               psEquipmentMessage::DEEQUIP
+     *               psEquipmentMessage::EQUIP
      *
      */
     void SendOutEquipmentMessages( gemActor* actor,
@@ -139,13 +140,17 @@ protected:
      *  @param client The client sending us the message.
      */
     void HandleStorageMessage( MsgEntry* me, Client *client );
-    /** Sends to the client the stored items for this category.
-     *  @param client The client sending us the message.
-     *  @param merchant ?????
-     *  @param category The category we are browsing
-     *  @return Always TRUE.
+
+    /**
+     * Sends to the client the stored items for this category.
+     *
+     * @param client The client sending us the message.
+     * @param character merchant ?????
+     * @param category The category we are browsing
+     * @return Always TRUE.
      */
     bool SendStorageItems( Client *client, psCharacter * character, psItemCategory * category);
+    
     /** Handles the request to access the storage from the player.
      *  @param msg The cracked message received from the client.
      *  @param client The client sending us the message.

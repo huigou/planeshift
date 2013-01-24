@@ -559,6 +559,7 @@ protected:
 
     /**
      * The widget that is drag'n'dropped across the screen by the mouse.
+     *
      * If it is not NULL, it is drawn instead of mouse on its position.
      * This widget has no parent widget (same as with pawsMainWidget)
      */
@@ -573,8 +574,10 @@ protected:
 
     csRef<iSoundManager> soundManager;  ///< planeshift's sound manager
 
-    /** @brief Parses given file and returns the <widget_description> tag of it
-     *  @return NULL on failure.
+    /**
+     * Parses given file and returns the \<widget_description\> tag of it
+     *
+     * @return NULL on failure.
      */
     csRef<iDocumentNode> ParseWidgetFile( const char* widgetFile );
 

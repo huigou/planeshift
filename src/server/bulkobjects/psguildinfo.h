@@ -44,13 +44,14 @@
 class psCharacter;
 class iResultRow;
 
-/** @brief Privileges that may be specifically given/taken from members of a guild
+/**
+ * Privileges that may be specifically given/taken from members of a guild
  *
  * There are no restrictions on operations done by the \ref MAX_GUILD_LEVEL member.
  * The member at \ref MAX_GUILD_LEVEL (leader) can promote other members to
  * \ref MAX_GUILD_LEVEL which in turn demotes the leader to one below
  * \ref MAX_GUILD_LEVEL. A leader cannot simply demote his/herself. A leader cannot
- * leave a guild. Consequently each guild has <u>just<u> one \ref MAX_GUILD_LEVEL
+ * leave a guild. Consequently each guild has <b>just</b> one \ref MAX_GUILD_LEVEL
  * member.
  */
 enum GUILD_PRIVILEGE

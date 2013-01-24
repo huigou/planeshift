@@ -26,28 +26,40 @@
 #include "util/log.h"
 
 
-/** Loads and parses a XML file, then returns its parsed XML document */
+/**
+ * Loads and parses a XML file, then returns its parsed XML document.
+ */
 csRef<iDocument> ParseFile(iObjectRegistry* object_reg, const csString & name);
 
-/** Parses a XML string, then returns the parsed document  */
+/**
+ * Parses a XML string, then returns the parsed document.
+ */
 csRef<iDocument> ParseString(const csString & str, bool notify = true);
 
-/** Parses a XML string, then returns the top node with name 'topNodeName' */
+/**
+ * Parses a XML string, then returns the top node with name 'topNodeName'.
+ */
 csRef<iDocumentNode> ParseStringGetNode(const csString & str, const csString & topNodeName, bool notify = true);
 
-/** Escapes special XML characters in 'str' */
+/**
+ * Escapes special XML characters in 'str'.
+ */
 csString EscpXML(const char * str);
 
-/** Generates XML representing given node 
-  * If 'childrenOnly' is true, only XML of child nodes will be returned
-  */
+/**
+ * Generates XML representing given node.
+ *
+ * If 'childrenOnly' is true, only XML of child nodes will be returned
+ */
 csString GetNodeXML(csRef<iDocumentNode> node, bool childrenOnly = false);
 
-/** Copies/merges children and attributes of 'source' to 'target'
-  * mode : 0=clear target first (i.e. exact copy)
-  *        1=don't clear but overwrite those attributes in 'target' that are in 'source'
-  *        2=don't clear and don't overwrite existing attributes, add new only
-  */
+/**
+ * Copies/merges children and attributes of 'source' to 'target'.
+ *
+ * Mode : 0=clear target first (i.e. exact copy)
+ *        1=don't clear but overwrite those attributes in 'target' that are in 'source'
+ *        2=don't clear and don't overwrite existing attributes, add new only
+ */
 void CopyXMLNode(csRef<iDocumentNode> source, csRef<iDocumentNode> target, int mode);
 
 class psXMLTag;
@@ -61,14 +73,29 @@ public:
     size_t FindNextTag( size_t start );
     size_t GetTag( int start, psXMLTag& tag );
     size_t GetTagSection( int start, const char* tagName, psXMLString& tagSection);
-    /** GetWithinTagSection return the psXMLString section text of a tag: <TAG>XML</TAG>
-     *  @param tagSection Return the section text. If tag not found returning "".
+    
+    /**
+     * GetWithinTagSection return the psXMLString section text of a tag.
+     *
+     * <pre>\<TAG\>XML\</TAG\></pre>
+     *
+     * @param start The start position.
+     * @param tagName The name of the tag.
+     * @param tagSection Return the section text. If tag not found returning "".
      */
     size_t GetWithinTagSection( int start, const char* tagName, psXMLString& tagSection);
-    /** GetWithinTagSection return a csString containing the text in a tag section: <TAG>Text</TAG>
-     *  @param tagSection Return the section text. If TAG not found the string isn't modified. 
+
+    /**
+     * GetWithinTagSection return a csString containing the text in a tag section.
+     *
+     * <pre>\<TAG\>Text\</TAG\></pre>
+     *
+     * @param start The start position.
+     * @param tagName The name of the tag.
+     * @param value Return the section text. If TAG not found the string isn't modified. 
      */
     size_t GetWithinTagSection( int start, const char* tagName, csString& value);
+    
     size_t GetWithinTagSection( int start, const char* tagName, int& value);
     size_t GetWithinTagSection( int start, const char* tagName, double& value);
 

@@ -110,11 +110,13 @@ class SoundSystemManager
      * @param loopstart startframe when looping
      * @param loopend when reach it will jump to startframe
      * @param volume_preset volume for this sound, all volume calculations are based upon this
+     * @param sndCtrl the sound controller
      * @param pos Sound 3d position of the sound, keep type3d in mind because it can be ABSOLUTE or RELATIVE
      * @param dir direction this sound is emitting to
      * @param mindist distance when maxvolume should be reached
      * @param maxdist distance when minvolume is applied
      * @param rad radiation of the directional cone. Set it to 0 if you dont want a directional sound.
+     * @param type3d Either ABSOLUTE or RELATIVE.
      * @param handle a Handle you have to supply. You may discard it if you dont want to manage this sound.
      * */
     bool Play3DSound (const char *name, bool loop, size_t loopstart,

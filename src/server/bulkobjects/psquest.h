@@ -52,8 +52,8 @@ class psQuest;
  * Utility function to parse prerequisite scripts.
  *
  * @param prerequisite The variable that will hold the parsed prerequisite
- * @param self    Pointer to the quest if used to load for a quest
- * @param scripts The prerequisite to parse <pre>...</pre>.
+ * @param self         Pointer to the quest if used to load for a quest
+ * @param script       The prerequisite to parse \<pre\>...\</pre\>.
  * @return True if successfully parsed.
  */
 bool LoadPrerequisiteXML(csRef<psQuestPrereqOp>& prerequisite, psQuest* self, csString script);
@@ -99,12 +99,14 @@ class psQuest : public CS::Utility::WeakReferenced
 
     /**
      * Returns an ordered list of the subquests of this quest (so it's steps).
+     *
      * @return A reference to an array containing the id of the subquests.
      */
     csArray<int> &GetSubQuests() { return subquests; }
     
     /**
-     * @brief Return the prerequisite for this quest.
+     * Return the prerequisite for this quest.
+     *
      * @return The prerequisite for this quest.
      */
     psQuestPrereqOp* GetPrerequisite() { return prerequisite; }
@@ -112,7 +114,7 @@ class psQuest : public CS::Utility::WeakReferenced
     const csString& GetCategory() const { return category; }
         
     /**
-     * @brief Check if the quest is active (and also it's parents)
+     * Check if the quest is active (and also it's parents).
      * 
      * A quest to be active must be active itself and, if so, also it's parents (most probably earlier steps)
      * must be active themselves so check back to them if this quest is active else return as not active directly.
@@ -122,7 +124,7 @@ class psQuest : public CS::Utility::WeakReferenced
     bool Active() { return active ? (parent_quest ? parent_quest->Active() : active) : active; }
 
     /**
-     * @brief Sets activation status of the quest
+     * Sets activation status of the quest.
      */
     void Active(bool state) { active = state; }
     

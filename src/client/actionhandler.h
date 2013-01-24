@@ -54,51 +54,56 @@ public:
     virtual ~ActionHandler();
     void HandleMessage( MsgEntry* me );
 
-    /** Creates and XML Query to send to the server. 
-     *   Create XML query
+    /**
+     * Creates and XML Query to send to the server.
+     *
+     * Create XML query
      *   <PRE>
-     *   <location>
-     *     <sector></sector>
-     *     <mesh></mesh>
-     *     <polygon></polygon>
-     *     <position><x/><y/><z/></position>
-     *     <triggertype</triggertype>
-     *   <location>
+     *   \<location\>
+     *     \<sector\>\</sector\>
+     *     \<mesh\>\</mesh\>
+     *     \<polygon\>\</polygon\>
+     *     \<position\>\<x/\>\<y/\>\<z/\>\</position\>
+     *     \<triggertype\>\</triggertype\>
+     *   \<location\>
      *   </PRE>
      */
     void Query( const char* trigger, const char* sector, const char* mesh, int32_t poly, csVector3 pos );
 
-    /** Command server to save an action location to the database. 
-      * Create XML query
-      * <PRE>
-      * <location>
-      *     <id></id>
-      *     <masterid></masterid>
-      *     <name></name>
-      *     <sector></sector>
-      *     <mesh></mesh>
-      *     <polygon></polygon>
-      *     <position><x/><y/><z/></position>
-      *     <radius></radius>
-      *     <triggertype></triggertype>
-      *     <responsetype></responsetype>
-      *     <response></response>
-      *     <active></active>
-      * <location>          
-      * </PRE>
-      */
+    /**
+     * Command server to save an action location to the database.
+     *
+     * Create XML query
+     * <PRE>
+     * \<location\>
+     *     \<id\>\</id\>
+     *     \<masterid\>\</masterid\>
+     *     \<name\>\</name\>
+     *     \<sector\>\</sector\>
+     *     \<mesh\>\</mesh\>
+     *     \<polygon\>\</polygon\>
+     *     \<position\>\<x/\>\<y/\>\<z/\>\</position\>
+     *     \<radius\>\</radius\>
+     *     \<triggertype\>\</triggertype\>
+     *     \<responsetype\>\</responsetype\>
+     *     \<response\>\</response\>
+     *     \<active\>\</active\>
+     * \<location>          
+     * </PRE>
+     */
     void Save( const char* id, const char* masterid, const char* name, const char* sector, const char* mesh, 
         const char* poly, const char* posx, const char* posy, const char* posz, const char* pos_instance, const char* radius, 
         const char* triggertype, const char* responsetype, const char* response, const char* active );
 
-    /** Command server to remove an action location. 
-      * Create XML query
-      * <PRE>
-      * <location>
-      *     <id></id>
-      * <location> 
-      * </PRE>
-      */
+    /**
+     * Command server to remove an action location. 
+     * Create XML query
+     * <PRE>
+     * \<location\>
+     *     \<id\>\</id\>
+     * \<location\> 
+     * </PRE>
+     */
     void DeleteAction( const char* id );
 
     /** Resend the client actions back to the client. */
