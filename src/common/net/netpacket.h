@@ -26,6 +26,10 @@
 #include "net/packing.h"
 #include "net/message.h"
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 enum
 {
   PKTSIZE_ACK    = 0,        // 0 pktsize means ACK pkt
@@ -261,6 +265,8 @@ public:
         return csComparator<psNetPacketEntry, psNetPacketEntry>::Compare(*r1, *r2);
     }
 };
+
+/** @} */
 
 #endif
 

@@ -26,6 +26,10 @@ class MsgEntry;
 class Client;
 
 /**
+ * \addtogroup common_net
+ * @{ */
+
+/**
  * This interface must be implemented by objects that want to receive network
  * messages.  Objects must call a provider's Subscribe function to sign up
  * for the msg types they want.
@@ -53,6 +57,8 @@ struct iCmdSubscriber : public virtual csRefCount
      */
     virtual const char *HandleCommand(const char *cmd) = 0;
 };
+
+/** @} */
 
 #endif
 

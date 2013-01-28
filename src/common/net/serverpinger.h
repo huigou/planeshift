@@ -22,6 +22,10 @@
 
 #include <net/connection.h>
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 /// Class psServerPinger takes care about sending pings to a server in Login screen.
 class psServerPinger
 {
@@ -91,5 +95,7 @@ protected:
     unsigned int flags; ///< Last flags returned from server. Should only be used if ping != -1 && ping != 9999
     iObjectRegistry * objReg;
 };
+
+/** @} */
 
 #endif

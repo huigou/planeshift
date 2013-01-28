@@ -32,6 +32,10 @@ struct iNetSubscriber;
 class NetBase;
 class Client;
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 //-----------------------------------------------------------------------------
 
 
@@ -160,9 +164,9 @@ public:
      * which is of size count. This will send the message to all the clients
      * except the client which has a client number given in the variable
      * except.
-     * <p>//@@@Brendon Note: Why is multi not const & ?
+     * @note (Brendon) Why is multi not const & ?
      *
-     * @param me     Is the message to be sent to other clients.
+     * @param msg     Is the message to be sent to other clients.
      * @param multi  Is a vector of all the clients to send this message to.
      * @param except Is a client number for a client NOT to send this message
      *     to. This would usually be the client trying to send the message.
@@ -189,6 +193,8 @@ protected:
     csHash<Subscription, msgtype> subscribers;
     CS::Threading::ReadWriteMutex mutex; /**< @brief Protects \ref subscribers */
 };
+
+/** @} */
 
 #endif
 

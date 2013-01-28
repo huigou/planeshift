@@ -341,22 +341,22 @@ public:
     virtual ~psMessageCracker() {}
 
     /**
-     * @brief Sends the message to the client/server.
+     *  Sends the message to the client/server.
      */
     void SendMessage();
 
     /**
-     * @brief Multicasts the message to all current connections.
+     *  Multicasts the message to all current connections.
      */
     void Multicast(csArray<PublishDestination> &multi, uint32_t except, float range);
 
     /**
-     * @brief Publishes the message to the local program.
+     *  Publishes the message to the local program.
      */
     void FireEvent();
 
     /**
-     * @brief Gets the name of the message type
+     *  Gets the name of the message type
      *
      * Used by the message factory to get the name of the message type.
      * This should NOT be overloaded manually.
@@ -366,7 +366,7 @@ public:
     virtual csString GetMessageTypeName() const = 0;
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * Used when a message is Logged.
      * Every message should implement a version of this function that print
@@ -458,7 +458,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -479,7 +479,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -499,7 +499,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Convert the message into human readable string.
+     *  Convert the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -521,7 +521,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -541,7 +541,7 @@ class psPreAuthenticationMessage : public psMessageCracker
 public:
     uint32_t  netversion;
     /**
-     * @brief Creates a message for requesting auth from server
+     *  Creates a message for requesting auth from server
      */
     psPreAuthenticationMessage(uint32_t clientnum,uint32_t version=PS_NETVERSION);
     /**
@@ -555,7 +555,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -596,7 +596,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -615,7 +615,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -635,7 +635,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -660,7 +660,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Convert the message into human readable string.
+     *  Convert the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -710,7 +710,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -740,7 +740,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -828,7 +828,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -852,7 +852,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -874,7 +874,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -896,7 +896,7 @@ public:
 
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -925,7 +925,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -998,7 +998,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1007,7 +1007,7 @@ public:
 };
 
 /**
- * @brief Messages sent by the user to the server with requests for
+ *  Messages sent by the user to the server with requests for
  * petition information
  *
  * This class was added in case we need to add more petition
@@ -1034,7 +1034,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1076,7 +1076,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1102,7 +1102,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1148,7 +1148,21 @@ public:
                    SET_ALLIANCE_NOTIFICATION      ///< Clients asks server to change the alliance member login/logout notification setting
                  };
 
-    /** @brief Constuct a new equipment message to go on the network.
+    /**
+     * Constuct a new Guild message to go on the network.
+     *
+     * This will build any of the GUI exchange message needed in
+     * the guild window.
+     *
+     * @param command     One of OPEN.
+     * @param commandData XML string with command data
+     *
+     */
+    psGUIGuildMessage(uint32_t command,
+                      csString commandData);
+
+    /**
+     * Constuct a new Guild message to go on the network.
      *
      * This will build any of the GUI exchange message needed in
      * the guild window.
@@ -1158,9 +1172,6 @@ public:
      * @param commandData XML string with command data
      *
      */
-    psGUIGuildMessage(uint32_t command,
-                      csString commandData);
-
     psGUIGuildMessage(uint32_t clientNum,
                       uint32_t command,
                       csString commandData);
@@ -1171,7 +1182,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1199,7 +1210,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1227,7 +1238,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1256,7 +1267,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1283,7 +1294,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1310,7 +1321,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1331,7 +1342,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1354,7 +1365,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1374,7 +1385,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1455,7 +1466,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1475,7 +1486,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1519,7 +1530,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1572,7 +1583,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1625,7 +1636,9 @@ public:
     // One of the commands as defined above.
     uint8_t command;
 
-    /** Creates a message with a command and max size.
+    /**
+     * Creates a message with a command and max size.
+     *
      * The default message constructed is a request for inventory which
      * should normally be only done on the client.
      * @param command The type that this inventory message is. Should be one of the
@@ -1635,18 +1648,21 @@ public:
     psGUIInventoryMessage(uint8_t command = REQUEST, uint32_t size=0);
 
 
-    /** Create a new message that will be used for an inventory list.
+    /**
+     * Create a new message that will be used for an inventory list.
+     *
      * This is usually done by the server to create a message to be sent
      * to the client about the players inventory. It needs to know totalItems
      * so it can write that to the message first.
      *
+     * @param clientNum   Client destination.
      * @param command Should be LIST.
      * @param totalItems The total items or item stacks.
      * @param totalEmptiedSlots The total number of slots been emptied.
      * @param maxWeight The max weight the player can carry.
      * @param cache_version Inventory cache version we're gonna build in this message.
-     */
-    psGUIInventoryMessage(uint32_t clientnum,
+     * @param msgsize The size. */
+    psGUIInventoryMessage(uint32_t clientNum,
                           uint8_t command,
                           uint32_t totalItems,
                           uint32_t totalEmptiedSlots,
@@ -1655,7 +1671,9 @@ public:
                           size_t msgsize);
 
 
-    /** Crack open the message.
+    /**
+     * Crack open the message.
+     *
      * This is a switch statement that fills in particular data members
      * depending on the command that is given.
      */
@@ -1664,7 +1682,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1729,7 +1747,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1759,7 +1777,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1783,7 +1801,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1808,7 +1826,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1838,7 +1856,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1861,7 +1879,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1890,7 +1908,8 @@ class psEquipmentMessage : public psMessageCracker
 public:
     enum Command { EQUIP, DEEQUIP };
 
-    /** @brief Constuct a new equipment message to go on the network.
+    /**
+     * Constuct a new equipment message to go on the network.
      *
      * This will build an equipment message for any player that has
      * changed their equipment.  Should only be generated by the server.
@@ -1899,12 +1918,13 @@ public:
      * @param actorid   The entity that has changed ( target of this message )
      * @param type One of EQUIP or DEEQUIP
      * @param slot The slot that has changed
-     * @param meshName The name of the mesh to attach to slot
+     * @param mesh The name of the mesh to attach to slot
      * @param part The name of the submesh that the equipment should go on.
      * @param texture The name of the new texture to go onto a part
+     * @param partMesh The name of the submesh for the part.
      * @param removedMesh Lists the mesh which should be removed when this item is equiped.
      *
-     * If the type is DEEQUIP the meshName is ignored and sent as ""
+     * @note If the type is DEEQUIP the meshName is ignored and sent as ""
      */
     psEquipmentMessage(uint32_t clientNum,
                        EID actorid,
@@ -1923,7 +1943,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -1970,7 +1990,8 @@ public:
                    CANCEL
                  };
 
-    /** @brief Constuct a new equipment message to go on the network.
+    /**
+     * Constuct a new equipment message to go on the network.
      *
      * This will build any of the GUI exchange message needed in
      * a player item exchange.
@@ -1993,7 +2014,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2025,7 +2046,8 @@ public:
                    CANCEL
                  };
 
-    /** @brief Constuct a new equipment message to go on the network.
+    /**
+     * Constuct a new equipment message to go on the network.
      *
      * This will build any of the GUI exchange message needed in
      * a player item exchange.
@@ -2048,7 +2070,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2074,7 +2096,8 @@ public:
                    LEAVE
                  };
 
-    /** @brief Constucts a new equipment message to go on the network.
+    /**
+     * Constucts a new equipment message to go on the network.
      *
      * This will build any of the GUI exchange message needed in
      * a player item exchange.
@@ -2097,7 +2120,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2122,7 +2145,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2156,7 +2179,7 @@ public:
     */
     void SetCraftTime(int craftTime, uint32_t client);
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2187,7 +2210,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2215,7 +2238,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2239,7 +2262,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2267,7 +2290,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2306,7 +2329,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2420,7 +2443,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2445,20 +2468,21 @@ public:
 class psGUITargetUpdateMessage : public psMessageCracker
 {
 public:
-    /** @brief Constucts a new GUI Target Update message to go on the network.
+    /**  Constucts a new GUI Target Update message to go on the network.
      *
      * This will build any of the GUI target update messages.
      *
      * @param clientNum   Client destination.
-     * @param targetName  Name of the new target to display.
+     * @param targetID    Name of the new target to display.
      */
-    psGUITargetUpdateMessage(uint32_t client_num, EID target_id);
+    psGUITargetUpdateMessage(uint32_t clientNum, EID targetID);
+    
     psGUITargetUpdateMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2498,7 +2522,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2539,7 +2563,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2591,7 +2615,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2621,7 +2645,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2644,7 +2668,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2667,7 +2691,7 @@ public:
 class psStatsMessage : public psMessageCracker
 {
 public:
-    /** @brief Sends a message to the client.
+    /**  Sends a message to the client.
      *  @param client The active client number to send to.
      *  @param maxHP The newly calculated maximum HP for this client's character.
      *  @param maxMana The newly calculated maximum mana for this client's character.
@@ -2685,7 +2709,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2721,12 +2745,12 @@ public:
                    QUIT
                  };
 
-    /** @brief Constucts a new equipment message to go on the network.
+    /**
+     * Constucts a new equipment message to go on the network.
      *
      * This will build any of the GUI exchange message needed in
      * a skill window.
      *
-     * @param clientNum   Client destination.
      * @param command     One of REQUEST,BUY_SKILL, SKILL_LIST
      *                             SKILL_SELECTED, DESCRIPTION, QUIT
      * @param commandData XML string with command data
@@ -2764,7 +2788,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2853,7 +2877,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -2903,12 +2927,12 @@ public:
                    QUIT
                  };
 
-    /** @brief Constucts a new equipment message to go on the network.
+    /**
+     * Constucts a new equipment message to go on the network.
      *
      * This will build any of the GUI exchange message needed in
      * a skill window.
      *
-     * @param clientNum   Client destination.
      * @param command     One of REQUEST,BUY_SKILL, SKILL_LIST
      *                             SKILL_SELECTED, DESCRIPTION, QUIT
      * @param commandData XML string with command data
@@ -2943,7 +2967,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3040,7 +3064,7 @@ public:
     void operator=(psDRMessage &other);
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3059,9 +3083,9 @@ public:
     csString sectorName;     ///< Name of the sector
     csString backgroundname; ///< Name of the background to use instead of the normal one in delay.
     uint32_t loadTime;       ///< time to wait even if there is no need to load
-    csVector2 start; ///<Start point of anmiation
-    csVector2 dest;///<Destination point of animation
-    csString loadWidget; ///< The widget to replace the load window with.
+    csVector2 start;         ///<Start point of anmiation
+    csVector2 dest;          ///<Destination point of animation
+    csString loadWidget;     ///< The widget to replace the load window with.
     float    vel;            ///< The velocity of the actor
 
     psForcePositionMessage() { }
@@ -3075,7 +3099,7 @@ public:
     void operator=(psForcePositionMessage &other);
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3094,7 +3118,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3111,7 +3135,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3128,7 +3152,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3154,7 +3178,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3179,7 +3203,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3187,7 +3211,7 @@ public:
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
     /**
-     * @brief Appends the new entity message to the current pending message.
+     *  Appends the new entity message to the current pending message.
      *
      * @param newEnt Pointer to psPersistActor message to append.
      * @return Returns true if adding was successful, false if the current msg is full and it fails.
@@ -3195,7 +3219,7 @@ public:
     bool AddEntityMessage(MsgEntry* newEnt);
 
     /**
-     * @brief Creates a new entity persist message from the next slot in the inbound buffer.
+     *  Creates a new entity persist message from the next slot in the inbound buffer.
      *
      * @return Returns a psPersistActor MsgEntry structure if one is still in the message, or NULL if this message is complete.
      */
@@ -3250,7 +3274,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3329,7 +3353,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3367,7 +3391,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3390,7 +3414,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3417,7 +3441,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3455,7 +3479,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3493,7 +3517,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3521,7 +3545,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3553,7 +3577,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3606,7 +3630,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3647,7 +3671,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3693,7 +3717,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3776,7 +3800,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3803,7 +3827,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3840,7 +3864,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3874,7 +3898,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3901,7 +3925,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3945,7 +3969,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -3987,7 +4011,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4009,7 +4033,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4072,7 +4096,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4165,7 +4189,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4251,7 +4275,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4298,7 +4322,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4322,7 +4346,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4353,7 +4377,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4389,7 +4413,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4419,7 +4443,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4442,7 +4466,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4461,7 +4485,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4483,7 +4507,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4503,7 +4527,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4524,7 +4548,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4547,7 +4571,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4583,7 +4607,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4615,7 +4639,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4637,7 +4661,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4656,7 +4680,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4678,7 +4702,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4708,7 +4732,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4743,7 +4767,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4769,7 +4793,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4810,7 +4834,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4835,7 +4859,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4868,7 +4892,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4889,7 +4913,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4912,7 +4936,7 @@ public:
     void GetMove(uint32 &id, const char* &name, csVector3 &base_move, csVector3 &base_rotate);
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4958,7 +4982,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -4997,7 +5021,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5035,7 +5059,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5081,13 +5105,14 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
+    virtual csString ToString(NetBase::AccessPointers* accessPointers)
     {
+        (void)accessPointers; // NOT USED
         return csString("not implemented");
     }
 
@@ -5246,7 +5271,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers
      * @return A human readable string for the message
@@ -5273,7 +5298,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers
      * @return A human readable string for the message
@@ -5331,7 +5356,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers
      * @return A human readable string for the message
@@ -5367,9 +5392,9 @@ class psEntranceMessage : public psMessageCracker
 
 public:
     /**
-     * @brief Constructor for message for entering.
+     * Constructor for message for entering.
      *
-     * @param gem entity ID
+     * @param entranceID The ID of the entrance.
      */
     psEntranceMessage(EID entranceID);
 
@@ -5378,7 +5403,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers
      * @return A human readable string for the message
@@ -5410,7 +5435,7 @@ public:
     void Populate(csString &gmeventStr, int clientnum);
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5439,7 +5464,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5517,7 +5542,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5548,7 +5573,7 @@ public:
 
     PSF_DECLARE_MSG_FACTORY();
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5570,7 +5595,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5595,7 +5620,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5620,15 +5645,12 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     * Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
-    {
-        return csString("not implemented");
-    }
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
 };
 
@@ -5651,7 +5673,7 @@ public:
     void BuildMsg(int clientnum);
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5686,13 +5708,14 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
+    virtual csString ToString(NetBase::AccessPointers* accessPointers)
     {
+        (void)accessPointers; // NOT USED
         return csString("Str: ") + str;
     }
 
@@ -5717,7 +5740,7 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-     * @brief Converts the message into human readable string.
+     *  Converts the message into human readable string.
      *
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
@@ -5740,15 +5763,12 @@ public:
     PSF_DECLARE_MSG_FACTORY();
 
     /**
-    * @brief Converts the message into human readable string.
+    *  Converts the message into human readable string.
     *
     * @param accessPointers A struct to a number of access pointers.
     * @return Return a human readable string for the message.
     */
-    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
-    {
-        return csString("not implemented");
-    }
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
 };
 

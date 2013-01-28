@@ -27,10 +27,6 @@
 #include "util/psstring.h"
 
 
-/**
- * \addtogroup messages
- * @{ */
-
 // Forward declarations
 class Location;
 class LocationType;
@@ -39,6 +35,10 @@ class WaypointAlias;
 class psPath;
 class psPathPoint;
 struct iSector;
+
+/**
+ * \addtogroup messages
+ * @{ */
 
 /**
 * The message sent from superclient to server on login.
@@ -444,7 +444,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/) { return command; }
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 };
 
 /** Handle PathNetwork changes from server to superclient.
@@ -536,7 +536,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/);
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 };
 
 /** Handle Location changes from server to superclient.
@@ -595,7 +595,7 @@ public:
      * @param accessPointers A struct to a number of access pointers.
      * @return Return a human readable string for the message.
      */
-    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/);
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
 };
 
 /** @} */

@@ -41,6 +41,10 @@
 
 using namespace CS::Threading;
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 enum // note that 0x02 (bit1) is also reserved for marking messages as multipacket
 {
     PRIORITY_LOW  = 0x00,
@@ -1070,6 +1074,8 @@ public:
      */
     psMessageBytes *bytes;
 };
+
+/** @} */
 
 #endif
 

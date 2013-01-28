@@ -32,6 +32,10 @@
 #include <netdb.h>
 #include <unistd.h>
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 /* define some types */
 #ifndef SOCKET
 #define SOCKET    int
@@ -64,5 +68,7 @@ static inline void exitSocket()
 {
     return;
 }
+
+/** @} */
 
 #endif

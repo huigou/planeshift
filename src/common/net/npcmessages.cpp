@@ -1335,6 +1335,11 @@ psServerCommandMessage::psServerCommandMessage( MsgEntry* msgEntry )
    command = msgEntry->GetStr();
 }
 
+csString psServerCommandMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
+{
+    return command;
+}
+
 //--------------------------------------------------------------------------
 
 PSF_IMPLEMENT_MSG_FACTORY(psPathNetworkMessage,MSGTYPE_PATH_NETWORK);
