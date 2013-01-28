@@ -38,10 +38,6 @@ struct iMovable;
 #include "tribe.h"
 #include "gem.h"
 
-/**
- * \addtogroup npcclient
- * @{ */
-
 class  Behavior;
 class  EventManager;
 class  HateList;
@@ -59,6 +55,10 @@ class  psNPCTick;
 struct iCollideSystem;
 struct HateListEntry;
 struct RaceInfo_t;
+
+/**
+ * \addtogroup npcclient
+ * @{ */
 
 #define NPC_BRAIN_TICK 200
 

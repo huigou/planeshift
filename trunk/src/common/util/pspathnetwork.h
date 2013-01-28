@@ -32,6 +32,13 @@ class WaypointAlias;
 class psPath;
 class psWorld;
 
+/**
+ * \addtogroup psutil
+ * @{ */
+
+/**
+ * A network of Waypoint and psPath objects.
+ */
 class psPathNetwork
 {
 public:
@@ -66,6 +73,7 @@ public:
     bool Load(iEngine *engine, iDataConnection *db, psWorld * world);
 
     /**
+     * Add a new waypoint to the given group.
      *
      */
     size_t AddWaypointToGroup(csString group, Waypoint * wp);
@@ -93,25 +101,47 @@ public:
 
     /**
      * Find waypoint nearest to a point in the world
-     * @param range Find only waypoints within range from waypoint, -1 if range dosn't matter
+     *
+     * @param v                The position to start searching from.
+     * @param sector           The sector to search in.
+     * @param range            Find only waypoints within range from waypoint, -1 if range dosn't matter
+     * @param[out] found_range The range the waypoint was found at.
+     * @return The found waypoint or NULL if no wapoint was found.
      */
     Waypoint *FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range = NULL);
 
     /**
-     * Find random waypoint within a given range to a point in the world
-     * @param range Find only waypoints within range from waypoint, -1 if range dosn't matter
+     * Find random waypoint within a given range to a point in the world.
+     *
+     * @param v                The position to start searching from.
+     * @param sector           The sector to search in.
+     * @param range            Find only waypoints within range from waypoint, -1 if range dosn't matter
+     * @param[out] found_range The range the waypoint was found at.
+     * @return The found waypoint or NULL if no wapoint was found.
      */
     Waypoint *FindRandomWaypoint(csVector3& v, iSector *sector, float range, float * found_range = NULL);
 
     /**
      * Find waypoint nearest to a point in the world in the given group.
-     * @param range Find only waypoints within range from waypoint, -1 if range dosn't matter
+     *
+     * @param group            The group to search in.
+     * @param v                The position to start searching from.
+     * @param sector           The sector to search in.
+     * @param range            Find only waypoints within range from waypoint, -1 if range dosn't matter
+     * @param[out] found_range The range the waypoint was found at.
+     * @return The found waypoint or NULL if no wapoint was found.
      */
     Waypoint *FindNearestWaypoint(int group, csVector3& v,iSector *sector, float range, float * found_range = NULL);
 
     /**
-     * Find random waypoint within a given range to a point in the world
-     * @param range Find only waypoints within range from waypoint, -1 if range dosn't matter
+     * Find random waypoint within a given range to a point in the world.
+     *
+     * @param group            The group to search in.
+     * @param v                The position to start searching from.
+     * @param sector           The sector to search in.
+     * @param range            Find only waypoints within range from waypoint, -1 if range dosn't matter
+     * @param[out] found_range The range the waypoint was found at.
+     * @return The found waypoint or NULL if no wapoint was found.
      */
     Waypoint *FindRandomWaypoint(int group, csVector3& v, iSector *sector, float range, float * found_range = NULL);
 
@@ -127,25 +157,47 @@ public:
 
     /**
      * Find the point nearest to the path.
-     * @param index return the index of the path point at the start of this segment.
+     *
+     * @param path             The path containging the point to search for.
+     * @param pos              The position to start searching from.
+     * @param sector           The sector to search in.
+     * @param range            Find only points within range from given position, -1 if range dosn't matter
+     * @param[out] index       Return the index of the path point at the start of this segment.
      */
     psPathPoint* FindPoint(const psPath* path, const csVector3& pos, iSector* sector, float range, int& index);
     
     /**
      * Find the path nearest to a point in the world.
-     * @ param Set an maximum range for points to considere.
+     *
+     * @param path             The path containging the point to search for.
+     * @param pos              The position to start searching from.
+     * @param sector           The sector to search in.
+     * @param range            Find only points within range from given position, -1 if range dosn't matter
      */
     psPathPoint* FindNearestPoint(const psPath* path, const csVector3& v, const iSector *sector, float range);
 
     /**
      * Find the path nearest to a point in the world.
-     * @ param Set an maximum range for points to considere.
+     *
+     * @param v                The position to start searching from.
+     * @param sector           The sector to search in.
+     * @param range            Find only paths within range from given position, -1 if range dosn't matter
+     * @param[out] found_range The range the path was found at.
+     * @param[out] index       Return the index of the path found.
+     * @param[out] fraction    Return the fraction of the path where the positions is closesed.
+     * @return The found path or NULL if no path was found.
      */
     psPath *FindNearestPath(csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL, float * fraction = NULL);
     
     /**
-     * Find the point nearest to a point in the world
-     * @ param Set an maximum range for points to considere.
+     * Find the point nearest to a point in the world.
+     *
+     * @param v                The position to start searching from.
+     * @param sector           The sector to search in.
+     * @param range            Find only points within range from given position, -1 if range dosn't matter
+     * @param[out] found_range The range the point was found at.
+     * @param[out] index       Return the index of the point found.
+     * @return The found path or NULL if no path was found.
      */
     psPath *FindNearestPoint(csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL);
     
@@ -231,5 +283,7 @@ public:
      */
     bool Delete(psPath * path);
 };
+
+/** @} */
 
 #endif

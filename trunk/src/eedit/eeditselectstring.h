@@ -26,6 +26,10 @@
 class pawsButton;
 class pawsEditTextBox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** A dialog window to select a string value.
  */
 class EEditSelectString : public pawsWidget, public scfImplementation0<EEditSelectString>
@@ -34,9 +38,12 @@ public:
     EEditSelectString();
     virtual ~EEditSelectString();
 
-    /** Pops up the select dialog.
-     *   @param startValue the value that first appears in the dialog box.
-     *   @param callback a pointer to the callback that should be called on selection.
+    /**
+     * Pops up the select dialog.
+     *
+     * @param startValue the value that first appears in the dialog box.
+     * @param callback a pointer to the callback that should be called on selection.
+     * @param pos Selected position.
      */
     void Select(const csString & startValue, EEditInputboxManager::iSelectString * callback, const csVector2 & pos);
     
@@ -53,5 +60,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditSelectString);
+
+/** @} */
 
 #endif 

@@ -1373,7 +1373,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
     }
 
     //don't allow frozen clients to drain all their possessions to an alt before punishment
-    if(client->IsFrozen())
+    if(client->GetActor()->IsFrozen())
     {
         psserver->SendSystemInfo(client->GetClientNum(), "You can't trade while being frozen by a GM");
         return;
@@ -1452,7 +1452,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
             return;
         }
 
-        if(targetClient->IsFrozen())
+        if(targetClient->GetActor()->IsFrozen())
         {
             psserver->SendSystemInfo(client->GetClientNum(), "%s was frozen by a GM and cannot trade", target->GetName());
             return;

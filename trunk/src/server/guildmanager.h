@@ -42,7 +42,13 @@ class PendingGuildInvite;
 class PendingGuildWarInvite;
 
 
-/** Information about client that asked us to tell him when some guild data change */
+/**
+ * \addtogroup server
+ * @{ */
+
+/**
+ * Information about client that asked us to tell him when some guild data change.
+ */
 class GuildNotifySubscription
 {
 public:
@@ -71,10 +77,14 @@ public:
 
     void ResendGuildData(int id);
 
-    /// After the grace period is up, disband guild if requirements not met.
+    /**
+     * After the grace period is up, disband guild if requirements not met.
+     */
     void RequirementsDeadline(int guild_id);
 
-    /// Ensure guild has at least the minimum members, and set timer to disband if not.
+    /**
+     * Ensure guild has at least the minimum members, and set timer to disband if not.
+     */
     void CheckMinimumRequirements(psGuildInfo *guild, gemActor *notify);
 
 
@@ -97,24 +107,40 @@ protected:
     void HandleSetMemberLevel(Client *client,iDocumentNode * root);
     void HandleSetMemberPoints(Client *client,iDocumentNode * root);
 
-    /** Handles the message from the client asking for a change in max member points
-     *  @param client: the client asking the operation
-     *  @param root: the document node which starts the data for this command
+    /**
+     * Handles the message from the client asking for a change in max member points.
+     *
+     * @param client the client asking the operation
+     * @param root the document node which starts the data for this command
      */
     void HandleSetMaxMemberPoints(Client *client,iDocumentNode * root);
     void HandleSetMemberNotes(Client *client,iDocumentNode * root, bool isPublic);
 
-    /** Checks if client has right 'priv' */
+    /**
+     * Checks if client has right 'priv'.
+     */
     bool CheckClientRights(Client * client, GUILD_PRIVILEGE priv);
 
-    /** Checks if client has right 'priv'. If not, it sends him psSystemMessage with text 'denialMsg' */
+    /**
+     * Checks if client has right 'priv'.
+     *
+     * If not, it sends him psSystemMessage with text 'denialMsg'
+     */
     bool CheckClientRights(Client * client, GUILD_PRIVILEGE priv, const char * denialMsg);
     
-    ///parses the xml to check if the client wants only a list of online members
+    /**
+     * Parses the xml to check if the client wants only a list of online members.
+     */
     bool RetrieveOnlineOnly(iDocumentNode * root);
-    ///parses the xml to check if the client wants to be notified of guild member logging in/off
+    
+    /**
+     * Parses the xml to check if the client wants to be notified of guild member logging in/off.
+     */
     bool RetrieveGuildNotifications(iDocumentNode * root);
-    ///parses the xml to check if the client wants to be notified of alliance member logging in/off
+    
+    /**
+     * Parses the xml to check if the client wants to be notified of alliance member logging in/off.
+     */
     bool RetrieveAllianceNotifications(iDocumentNode * root);
 
 
@@ -125,19 +151,25 @@ protected:
 
     csString MakeAllianceMemberXML(psGuildInfo * member, bool allianceLeader);
 
-    /** Parses a right string in order to be used by the right assignment functions.
-     *  @param privilege: A string with the privilege name
-     *  @param right: Where the result is stored
-     *  @return bool true if the right was found
+    /**
+     * Parses a right string in order to be used by the right assignment functions.
+     *
+     * @param privilege A string with the privilege name
+     * @param right Where the result is stored
+     * @return true if the right was found
      */
     bool ParseRightString(csString privilege,  GUILD_PRIVILEGE& right);
 
     void CreateGuild(psGuildCmdMessage& msg,Client *client);
 
-    /// This function actually removes the guild
+    /**
+     * This function actually removes the guild.
+     */
     void EndGuild(psGuildInfo *guild,int clientnum);
 
-    /// This handles the command from the player to end the guild, validates and calls the other EndGuild.
+    /**
+     * This handles the command from the player to end the guild, validates and calls the other EndGuild.
+     */
     void EndGuild(psGuildCmdMessage& msg,Client *client);
 
     void ChangeGuildName(psGuildCmdMessage& msg,Client *client);
@@ -147,21 +179,25 @@ protected:
     void Rename(psGuildCmdMessage& msg,Client *client);
     void Promote(psGuildCmdMessage& msg,Client *client);
 
-    /** Handles the /getmemberpermissions command and returns the permissions
-     *  of the member to the requesting client. The client can only check
-     *  permissions of members he can change permissions too.
+    /**
+     * Handles the /getmemberpermissions command and returns the permissions
+     * of the member to the requesting client.
      *
-     *  @param msg: the message coming from the client
-     *  @param client: the client sending the request
+     * The client can only check
+     * permissions of members he can change permissions too.
+     *
+     * @param msg    the message coming from the client
+     * @param client the client sending the request
      */
     void GetMemberPermissions(psGuildCmdMessage& msg,Client *client);
 
-    /** Handles the /setmemberpermissions command and allows to change
-     *  the permissions of a particular member of a guild (addition/removal
-     *  from the guild level permissions)
+    /**
+     * Handles the /setmemberpermissions command and allows to change
+     * the permissions of a particular member of a guild (addition/removal
+     * from the guild level permissions).
      *
-     *  @param msg: the message coming from the client
-     *  @param client: the client sending the request
+     * @param msg the message coming from the client
+     * @param client the client sending the request
      */
     void SetMemberPermissions(psGuildCmdMessage& msg,Client *client);
     void ListMembers(psGuildCmdMessage& msg,Client *client);
@@ -177,13 +213,16 @@ protected:
     void AllianceLeave(psGuildCmdMessage &msg, Client *client);
     void AllianceLeader(psGuildCmdMessage &msg, Client *client);
     void EndAlliance(psGuildCmdMessage &msg, Client *client);
+    
     /**
-     * This is the function which actually end the alliance. This is
-     * needed as the alliance could be removed also for the lack of the
+     * This is the function which actually end the alliance.
+     *
+     * This is needed as the alliance could be removed also for the lack of the
      * prerequisites automatically on guild removal, which itself can
      * happen automatically.
-     * @param psAllianceInfo A pointer to the alliance being removed.
-     * @param clientnum The number of the client who issued the command,
+     *
+     * @param alliance  A pointer to the alliance being removed.
+     * @param clientNum The number of the client who issued the command,
      *                  if any.
      */
     void EndAlliance(psGuildAlliance *alliance, int clientNum);
@@ -193,22 +232,30 @@ protected:
     bool AddPlayerToGuild(int guild,const char *guildname,Client *client,int level);
     GuildNotifySubscription * FindNotifySubscr(Client * client);
 
-    /** @brief Sends changed guild data to notification subscribers
-      *
-      * Value of 'msg' says which kind of data and it can be:
-      *       psGUIGuildMessage::GUILD_DATA
-      *       psGUIGuildMessage::LEVEL_DATA
-      *       psGUIGuildMessage::MEMBER_DATA
-      *       psGUIGuildMessage::ALLIANCE_DATA
-      */
+    /**
+     * Sends changed guild data to notification subscribers.
+     *
+     * Value of 'msg' says which kind of data and it can be:
+     *       <ul>
+     *         <li>psGUIGuildMessage::GUILD_DATA</li>
+     *         <li>psGUIGuildMessage::LEVEL_DATA</li>
+     *         <li>psGUIGuildMessage::MEMBER_DATA</li>
+     *         <li>psGUIGuildMessage::ALLIANCE_DATA</li>
+     *       </ul>
+     */
     void SendNotifications(int guild, int msg);
 
-    /** Calls SendNotifications() with type psGUIGuildMessage::ALLIANCE_DATA for all alliance members */
+    /**
+     * Calls SendNotifications() with type psGUIGuildMessage::ALLIANCE_DATA for all alliance members.
+     */
     void SendAllianceNotifications(psGuildAlliance * alliance);
 
-    /** Sends psGUIGuildMessage::ALLIANCE_DATA messages saying "you are not in any alliance"
-      * to all notification subscribers from given alliance.
-      * This is used when an alliance is being disbanded or when one of its members is removed. */
+    /**
+     * Sends psGUIGuildMessage::ALLIANCE_DATA messages saying "you are not in any alliance"
+     * to all notification subscribers from given alliance.
+     *
+     * This is used when an alliance is being disbanded or when one of its members is removed.
+     */
     void SendNoAllianceNotifications(psGuildAlliance * alliance);
     void SendNoAllianceNotifications(psGuildInfo * guild);
 
@@ -224,6 +271,8 @@ protected:
 
     csRef<iDocumentSystem>  xml;
 };
+
+/** @} */
 
 #endif
 

@@ -25,6 +25,10 @@
 
 class pawsRadioButton;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** A dialog window to select a yes or no value.
  */
 class EEditSelectYesNo : public pawsWidget, public scfImplementation0<EEditSelectYesNo>
@@ -53,5 +57,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditSelectYesNo);
+
+/** @} */
 
 #endif 

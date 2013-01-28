@@ -10562,14 +10562,14 @@ void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdDa
         return;
     }
 
-    if(data->targetClient->IsFrozen())
+    if(data->targetClient->GetActor()->IsFrozen())
     {
         psserver->SendSystemError(me->clientnum,"The player is already frozen");
         return;
     }
 
     data->targetClient->GetActor()->SetAllowedToMove(false);
-    data->targetClient->SetFrozen(true);
+    data->targetClient->GetActor()->SetFrozen(true);
     data->targetClient->GetActor()->SetMode(PSCHARACTER_MODE_SIT);
     psserver->SendSystemError(data->targetClient->GetClientNum(), "You have been frozen in place by a GM.");
     psserver->SendSystemInfo(me->clientnum, "You froze '%s'.",(const char*)data->target);
@@ -10584,14 +10584,14 @@ void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
         return;
     }
 
-    if(!data->targetClient->IsFrozen())
+    if(!data->targetClient->GetActor()->IsFrozen())
     {
         psserver->SendSystemError(me->clientnum,"The player is not frozen");
         return;
     }
 
     data->targetClient->GetActor()->SetAllowedToMove(true);
-    data->targetClient->SetFrozen(false);
+    data->targetClient->GetActor()->SetFrozen(false);
     data->targetClient->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
     psserver->SendSystemOK(data->targetClient->GetClientNum(), "You have been released by a GM.");
     psserver->SendSystemInfo(me->clientnum, "You released '%s'.",(const char*)data->target);

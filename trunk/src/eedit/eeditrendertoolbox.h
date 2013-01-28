@@ -28,6 +28,10 @@
 
 class pawsButton;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** This handles the effect render toolbox.
  */
 class EEditRenderToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditRenderToolbox>
@@ -66,5 +70,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditRenderToolbox);
+
+/** @} */
 
 #endif 

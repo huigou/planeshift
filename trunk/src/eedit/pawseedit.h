@@ -28,6 +28,10 @@ class pawsEditTextBox;
 class pawsButton;
 class pawsGenericView;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 class pawsEEdit : public pawsWidget
 {
 public:
@@ -63,5 +67,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY( pawsEEdit );
+
+/** @} */
 
 #endif

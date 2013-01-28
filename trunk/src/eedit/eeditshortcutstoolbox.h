@@ -26,6 +26,10 @@
 
 class pawsListBox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 struct EEditShortcutKey
 {
     EEditShortcutKey(const char * _command, int _key, int _modifiers)
@@ -87,5 +91,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditShortcutsToolbox);
+
+/** @} */
 
 #endif 

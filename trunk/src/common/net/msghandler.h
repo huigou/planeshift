@@ -153,7 +153,22 @@ public:
     virtual void Broadcast(MsgEntry* msg, broadcasttype scope = NetBase::BC_EVERYONEBUTSELF, int guildID=-1)
     { netbase->Broadcast(msg, scope, guildID); }
 
-    /// Send messages to all listed client nums.
+    /**
+     * Sends the given message me to all the clients in the list.
+     *
+     * Sends the given message me to all the clients in the list (clientlist)
+     * which is of size count. This will send the message to all the clients
+     * except the client which has a client number given in the variable
+     * except.
+     * <p>//@@@Brendon Note: Why is multi not const & ?
+     *
+     * @param me     Is the message to be sent to other clients.
+     * @param multi  Is a vector of all the clients to send this message to.
+     * @param except Is a client number for a client NOT to send this message
+     *     to. This would usually be the client trying to send the message.
+     * @param range  Is the maximum distance the client must be away to be out
+     *     of "message reception range".
+     */
     virtual void Multicast(MsgEntry* msg, csArray<PublishDestination>& multi, uint32_t except, float range)
     { netbase->Multicast(msg, multi, except, range); }
 

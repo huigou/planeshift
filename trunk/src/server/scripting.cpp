@@ -435,7 +435,7 @@ protected:
 class MuteAOp : public AppliedOp
 {
 public:
-	MuteAOp() : AppliedOp() { }
+    MuteAOp() : AppliedOp() { }
     virtual ~MuteAOp() { }
 
     bool Load(iDocumentNode* node)
@@ -457,7 +457,7 @@ public:
 class FreezeAOp : public AppliedOp
 {
 public:
-	FreezeAOp() : AppliedOp() { }
+    FreezeAOp() : AppliedOp() { }
     virtual ~FreezeAOp() { }
 
     bool Load(iDocumentNode* node)
@@ -468,7 +468,7 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
 
-    	FrozenBuffable& buffable = target->GetClient()->GetBuffableFrozen();
+    	FrozenBuffable& buffable = target->GetBuffableFrozen();
     	buffable.Buff(asp, 1);
         asp->Add(buffable, "<freeze />");
     }

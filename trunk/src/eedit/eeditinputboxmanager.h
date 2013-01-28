@@ -35,6 +35,9 @@ class EEditSelectNewAnchor;
 class EEditSelectEditAnchor;
 class EEditSelectNewAnchorKeyFrame;
 
+/**
+ * \addtogroup eedit
+ * @{ */
 /** A class that manages the inputbox windows.
  */
 class EEditInputboxManager
@@ -43,15 +46,18 @@ public:
     EEditInputboxManager();
     ~EEditInputboxManager();
 
-    /** Loads all the toolbox widgets.
-     *   @param paws a pointer to a valid PawsManager
-     *   @return true on success, false otherwise.
+    /**
+     * Loads all the toolbox widgets.
+     *
+     * @param paws a pointer to a valid PawsManager
+     * @return true on success, false otherwise.
      */
     bool LoadWidgets(PawsManager * paws);
 
-    /** Registers all the factories needed by the toolboxes.
-     *   @param paws a pointer to a valid PawsManager
-     *   @return true on success, false otherwise.
+    /**
+     * Registers all the factories needed by the toolboxes.
+     *
+     * @return true on success, false otherwise.
      */
     bool RegisterFactories() const;
 
@@ -146,5 +152,7 @@ private:
     EEditSelectEditAnchor        * selectEditAnchor;
     EEditSelectNewAnchorKeyFrame * selectNewAnchorKeyFrame;
 };
+
+/** @} */
 
 #endif

@@ -26,6 +26,10 @@
 class pawsButton;
 class pawsEditTextBox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** A dialog window to edit effect anchor.
  */
 class EEditSelectEditAnchor : public pawsWidget, public scfImplementation0<EEditSelectEditAnchor>
@@ -34,9 +38,12 @@ public:
     EEditSelectEditAnchor();
     virtual ~EEditSelectEditAnchor();
 
-    /** Pops up the select dialog.
-     *   @param currName the name of the existing anchor.
-     *   @param callback a pointer to the callback that should be called on selection.
+    /**
+     * Pops up the select dialog.
+     *
+     * @param currName the name of the existing anchor.
+     * @param callback a pointer to the callback that should be called on selection.
+     * @param pos Selected position.
      */
     void Select(const csString & currName, EEditInputboxManager::iSelectEditAnchor * callback, const csVector2 & pos);
     
@@ -53,6 +60,8 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditSelectEditAnchor);
+
+/** @} */
 
 #endif
 

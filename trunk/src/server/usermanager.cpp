@@ -255,7 +255,7 @@ void UserManager::HandleMOTDRequest(MsgEntry* me,Client* client)
 
 void UserManager::HandleUserCommand(MsgEntry* me,Client* client)
 {
-    if(client->IsFrozen())  //disable most commands
+    if(client->GetActor()->IsFrozen())  //disable most commands
         return;
 
     psUserCmdMessage msg(me);
@@ -1578,7 +1578,7 @@ void UserManager::HandleStopAttack(psUserCmdMessage &msg,Client* client)
 
 void UserManager::Attack(Stance stance, Client* client)
 {
-    if(!client->IsAlive() || client->IsFrozen())
+    if(!client->IsAlive() || client->GetActor()->IsFrozen())
     {
         psserver->SendSystemError(client->GetClientNum(),"You are dead, you cannot fight now.");
         return;
@@ -2471,7 +2471,7 @@ void UserManager::ChallengeToDuel(psUserCmdMessage &msg,Client* client)
     }
 
     //don't allow frozen clients to challenge
-    if(client->IsFrozen())
+    if(client->GetActor()->IsFrozen())
     {
         psserver->SendSystemInfo(client->GetClientNum(), "You can't challenge opponents while being frozen by a GM");
         return;
@@ -2506,7 +2506,7 @@ void UserManager::ChallengeToDuel(psUserCmdMessage &msg,Client* client)
         return;
     }
 
-    if(targetClient->IsFrozen())
+    if(targetClient->GetActor()->IsFrozen())
     {
         psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot be challenged", target->GetName());
         return;

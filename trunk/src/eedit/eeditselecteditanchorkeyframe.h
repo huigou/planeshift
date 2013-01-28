@@ -27,6 +27,10 @@ class pawsButton;
 class pawsSpinBox;
 class pawsCheckBox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** A dialog window to edit an anchor keyframe.
  */
 class EEditSelectEditAnchorKeyFrame : public pawsWidget, public scfImplementation0<EEditSelectEditAnchorKeyFrame>
@@ -35,9 +39,12 @@ public:
     EEditSelectEditAnchorKeyFrame();
     virtual ~EEditSelectEditAnchorKeyFrame();
 
-    /** Pops up the select dialog.
-     *   @param time the default time of the select box.
-     *   @param callback a pointer to the callback that should be called on selection.
+    /**
+     * Pops up the select dialog.
+     *
+     * @param time the default time of the select box.
+     * @param callback a pointer to the callback that should be called on selection.
+     * @param pos Selected position.
      */
     void Select(float time, EEditInputboxManager::iSelectEditAnchorKeyFrame * callback, const csVector2 & pos);
     
@@ -57,6 +64,8 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditSelectEditAnchorKeyFrame);
+
+/** @} */
 
 #endif
 

@@ -2073,6 +2073,16 @@ bool gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPers
     return true;
 }
 
+
+//--------------------------------------------------------------------------------------
+// FrozenBuffable
+//--------------------------------------------------------------------------------------
+
+void FrozenBuffable::OnChange()
+{
+    actor->SetAllowedToMove( !(Current() > 0) );
+}
+
 //--------------------------------------------------------------------------------------
 // gemActor
 //--------------------------------------------------------------------------------------
@@ -2096,6 +2106,8 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
     pid = chardata->GetPID();
 
     cel->AddActorEntity(this);
+    isFrozen.Initialize(this);
+    SetFrozen(false);
 
     // Store a safe reference to the client
     clientRef = psserver->GetConnections()->FindAny(clientnum);
@@ -2327,6 +2339,8 @@ void gemActor::SetAllowedToMove(bool newvalue)
     // and we'll request the client not to send any.
     psMoveLockMessage msg(GetClientID(),!isAllowedToMove);
     msg.SendMessage();
+
+    // @todo: Notify super clients... 
 }
 
 int gemActor::GetTargetType(gemObject* target)
@@ -3442,7 +3456,7 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
     psModeMessage msg(GetClientID(), GetEID(), (uint8_t) newmode, extraData);
     msg.Multicast(GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
 
-    bool isFrozen = GetClientID() ? GetClient()->IsFrozen() : false;
+    bool isFrozen = IsFrozen();
     SetAllowedToMove(newmode != PSCHARACTER_MODE_DEAD &&
                      newmode != PSCHARACTER_MODE_DEFEATED &&
                      newmode != PSCHARACTER_MODE_SIT &&

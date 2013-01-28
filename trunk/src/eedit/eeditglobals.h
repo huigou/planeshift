@@ -22,6 +22,12 @@
 
 #include "eeditapp.h"
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 extern EEditApp *editApp;
+
+/** @} */
 
 #endif

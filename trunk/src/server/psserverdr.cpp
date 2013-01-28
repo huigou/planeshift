@@ -169,7 +169,7 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
         return;
     }
 
-    if ( client->IsFrozen() || !actor->IsAllowedToMove())  // Is this movement allowed?
+    if ( actor->IsFrozen() || !actor->IsAllowedToMove())  // Is this movement allowed?
     {
         if (drmsg.worldVel.y > 0)
         {

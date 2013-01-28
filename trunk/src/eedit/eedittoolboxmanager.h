@@ -25,7 +25,12 @@
 class PawsManager;
 class pawsWidget;
 
-/** A class that manages a group of toolbox windows.
+/**
+ * \addtogroup eedit
+ * @{ */
+
+/**
+ * A class that manages a group of toolbox windows.
  */
 class EEditToolboxManager
 {
@@ -33,37 +38,48 @@ public:
     EEditToolboxManager();
     ~EEditToolboxManager();
 
-    /** Updates all the toolboxes in the list.
-     *   @param elapsed the time in milliseconds that has passed since last frame.
+    /**
+     * Updates all the toolboxes in the list.
+     *
+     * @param elapsed the time in milliseconds that has passed since last frame.
      */
     void UpdateAll(unsigned int elapsed);
 
-    /** Loads all the toolbox widgets.
-     *   @param paws a pointer to a valid PawsManager
-     *   @return true on success, false otherwise.
+    /**
+     * Loads all the toolbox widgets.
+     *
+     * @param paws a pointer to a valid PawsManager
+     * @return true on success, false otherwise.
      */
     bool LoadWidgets(PawsManager * paws);
 
-    /** Registers all the factories needed by the toolboxes.
-     *   @param paws a pointer to a valid PawsManager
-     *   @return true on success, false otherwise.
+    /**
+     * Registers all the factories needed by the toolboxes.
+     *
+     * @return true on success, false otherwise.
      */
     bool RegisterFactories() const;
 
-    /** Counts the number of toolboxes in the list.
-     *   @return the number of toolboxes.
+    /**
+     * Counts the number of toolboxes in the list.
+     *
+     * @return the number of toolboxes.
      */
     size_t GetToolboxCount() const;
 
-    /** Grabs a toolbox of the given type.
-     *   @param type the toolbox type.
-     *   @return the toolbox.
+    /**
+     * Grabs a toolbox of the given type.
+     *
+     * @param type the toolbox type.
+     * @return the toolbox.
      */
     EEditToolbox * GetToolbox(size_t type) const;
 
-    /** Grabs the toolbox widget of the given toolbox type.
-     *   @param type the toolbox type
-     *   @return the toolbox as a pawsWidget
+    /**
+     * Grabs the toolbox widget of the given toolbox type.
+     *
+     * @param type the toolbox type
+     * @return the toolbox as a pawsWidget
      */
     pawsWidget * GetToolboxWidget(size_t type) const;
     
@@ -77,6 +93,8 @@ private:
     /// Array of strings giving the name of the widget for each toolbox.
     const char * widgetNames[EEditToolbox::T_COUNT];
 };
+
+/** @} */
 
 #endif
 

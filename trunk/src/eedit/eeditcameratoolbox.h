@@ -25,7 +25,12 @@
 
 class pawsButton;
 
-/** This handles the camera controls toolbox
+/**
+ * \addtogroup eedit
+ * @{ */
+
+/**
+ * This handles the camera controls toolbox.
  */
 class EEditCameraToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditCameraToolbox>
 {
@@ -53,5 +58,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditCameraToolbox);
+
+/** @} */
 
 #endif 
