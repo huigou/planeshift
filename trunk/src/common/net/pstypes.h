@@ -8,6 +8,12 @@
 
 #include "psstdint.h"
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 typedef uint32_t    objID;
+
+/** @} */
 
 #endif

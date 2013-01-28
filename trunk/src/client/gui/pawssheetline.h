@@ -33,6 +33,10 @@ class Measure;
 class SheetLine;
 class pawsSheetLine;
 
+/**
+ * \addtogroup client_gui
+ * @{ */
+
 #define SYMBOL_ENCODING_BASE 0xf000
 
 //--------------------------------------------------
@@ -230,8 +234,8 @@ public:
     Measure(Chord* firstChord);
 
     /**
-     * Constructor. Creates a measure from a <measure> XML node.
-     * @param measure the <measure> XML node.
+     * Constructor. Creates a measure from a \<measure\> XML node.
+     * @param measure the \<measure\> XML node.
      * @param quarterDivisions the number of divisions in a quarter.
      */
     Measure(csRef<iDocumentNode> measure, int quarterDivisions);
@@ -390,7 +394,7 @@ public:
      * Draws this measure.
      * @param pawsLine the pawsSheetLine that store the font-dependent parameters.
      * @param selectedChord the current selected chord.
-     * @param the horizontal position where the first chord must be drawn.
+     * @param startPosition the horizontal position where the first chord must be drawn.
      */
     void Draw(pawsSheetLine* pawsLine, Chord* selectedChord, int startPosition);
 
@@ -407,11 +411,11 @@ public:
     bool Hit(int x, Chord* &chord, bool &before);
 
     /**
-     * Writes this measure as a <pre>\<measure\><pre> XML node.
+     * Writes this measure as a \<measure\> XML node.
      *
      * @param number the number of this measure.
      * @param attributes the attributes and direction nodes.
-     * @return the <measure> XML node.
+     * @return the \<measure\> XML node.
      */
     csString ToXML(uint number, csString attributes = "");
 
@@ -448,7 +452,7 @@ private:
      * Draws the repeats dots at the given position.
      * @param pawsLine the pawsSheetLine containing the drawing parameters.
      * @param x the horizontal position where to draw the two dots.
-     * @param end true if the two dots are for a start repeat.
+     * @param start true if the two dots are for a start repeat.
      */
     void DrawRepeatDots(pawsSheetLine* pawsLine, int x, bool start);
 
@@ -743,5 +747,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(pawsSheetLine);
+
+/** @} */
 
 #endif // PAWS_SHEET_LINE_H

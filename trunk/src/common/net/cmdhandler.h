@@ -34,6 +34,10 @@
 
 class psChatWindow;
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 // This little struct tracks who is interested in what.
 struct CmdSubscription
 {
@@ -88,6 +92,8 @@ public:
     /// Return a list (alpha-sorted with unique entries) of the subscribed commands
     void GetSubscribedCommands(csRedBlackTree<psString>& tree);
 };
+
+/** @} */
 
 #endif
 

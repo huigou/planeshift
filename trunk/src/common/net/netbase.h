@@ -34,6 +34,10 @@
 #include <csutil/array.h>
 #include "netprofile.h"
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 #define NUM_BROADCAST        0xffffffff
 #define MAXQUEUESIZE        20000
 #define MAXCLIENTQUEUESIZE  5000
@@ -176,7 +180,7 @@ public:
      * which is of size count. This will send the message to all the clients
      * except the client which has a client number given in the variable
      * except.
-     * <p>//@@@Brendon Note: Why is multi not const & ?
+     * @note (Brendon) Why is multi not const & ?
      *
      * @param me     Is the message to be sent to other clients.
      * @param multi  Is a vector of all the clients to send this message to.
@@ -268,6 +272,7 @@ public:
      * Log the message to LOG_MESSAGE.
      *
      * @param dir Should be R for received messages, S for sent messages and I for internal.
+     * @param me  Logged message.
      */
     void LogMessages(char dir, MsgEntry* me);
 
@@ -749,6 +754,8 @@ public:
         return pending;
     }
 };
+
+/** @} */
 
 #endif
 

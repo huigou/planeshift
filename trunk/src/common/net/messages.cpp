@@ -3414,15 +3414,15 @@ csString psEffectMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUITargetUpdateMessage,MSGTYPE_GUITARGETUPDATE);
 
-psGUITargetUpdateMessage::psGUITargetUpdateMessage(uint32_t client_num,
-                                                   EID target_id)
+psGUITargetUpdateMessage::psGUITargetUpdateMessage(uint32_t clientNum,
+                                                   EID targetID)
 {
     msg.AttachNew(new MsgEntry(2*sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_GUITARGETUPDATE);
-    msg->clientnum      = client_num;
+    msg->clientnum      = clientNum;
 
-    msg->Add(target_id.Unbox());
+    msg->Add(targetID.Unbox());
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -7994,6 +7994,11 @@ psCachedFileMessage::psCachedFileMessage( MsgEntry* me )
     }
 }
 
+csString psCachedFileMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
+{
+    return csString("not implemented");
+}
+
 PSF_IMPLEMENT_MSG_FACTORY(psDialogMenuMessage,MSGTYPE_DIALOG_MENU);
 
 psDialogMenuMessage::psDialogMenuMessage()
@@ -8218,3 +8223,7 @@ psOrderedMessage::psOrderedMessage(MsgEntry* me)
     valid = !(me->overrun);
 }
 
+csString psOrderedMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
+{
+    return csString("not implemented");
+}

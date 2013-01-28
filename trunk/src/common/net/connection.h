@@ -25,7 +25,12 @@
 
 struct iObjectRegistry;
 
-/** Client-side UDP handler.
+/**
+ * \addtogroup common_net
+ * @{ */
+
+/**
+ * Client-side UDP handler.
  *
  * Implementation of client side network connection on top of the common network
  * code in psnet. For details about the functions look at connection.h and
@@ -115,4 +120,6 @@ private:
     csRef<CS::Threading::Thread> thread;
 };
     
+/** @} */
+
 #endif

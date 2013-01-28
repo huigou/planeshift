@@ -25,7 +25,13 @@
 #include "message.h"
 #include "util/psprofile.h"
 
-/**  Statistics of receiving or sending of network messages */
+/**
+ * \addtogroup common_net
+ * @{ */
+
+/**
+ * Statistics of receiving or sending of network messages.
+ */
 class psNetMsgProfiles : public psOperProfileSet
 {
 public:
@@ -36,8 +42,12 @@ public:
 protected:
     void AddEnoughRecords(csArray<psOperProfile*> & profs, int neededIndex, const char * desc);
     
-    /** Statistics for receiving and sending of different message types */
+    /**
+     * Statistics for receiving and sending of different message types.
+     */
     csArray<psOperProfile*> recvProfs, sentProfs;
 };
+
+/** @} */
 
 #endif

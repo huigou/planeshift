@@ -35,6 +35,9 @@ class  CmdHandler;  // needed for circular includes
 class  ClientMsgHandler;
 class  Client;  // dummy blind definition.  Only used on server.
 
+/**
+ * \addtogroup common_net
+ * @{ */
 
 class psCmdBase : public iNetSubscriber, public iCmdSubscriber
 {
@@ -72,6 +75,8 @@ public:
     virtual bool Verify(MsgEntry *,unsigned int,Client *& ) { return true; }
 
 };
+
+/** @} */
 
 #endif
 

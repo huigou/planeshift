@@ -14,6 +14,10 @@
 #include <winsock.h>
 #undef _INC_WINDOWS
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 #define SOCK_SENDTO(a,b,c,d,e,f)    sendto(a,(const char *)b,c,d,e,f)
 #define SOCK_RECVFROM(a,b,c,d,e,f)    recvfrom(a,(char *)b,c,d,e,f)
 #define SOCK_IOCTL(a,b,c)        ioctlsocket(a,b,(unsigned long *)c)
@@ -37,6 +41,8 @@ static inline void exitSocket()
 {
     WSACleanup();
 }
+
+/** @} */
 
 #endif
 

@@ -28,6 +28,10 @@ class psNetConnection;
 class NetBase;
 struct iObjectRegistry;
 
+/**
+ * \addtogroup common_net
+ * @{ */
+
 class ClientMsgHandler : public MsgHandler
 {
 public:
@@ -37,8 +41,8 @@ public:
     /** Initializes the Handler */
     bool Initialize(NetBase *nb, iObjectRegistry* object_reg);
 
-    /** This is a conveniance function that basically calls
-     * NetBase::Connect
+    /**
+     * This is a conveniance function that basically calls NetBase::Connect.
      */
     bool Connect(const char* server, int port);
 
@@ -73,5 +77,7 @@ protected:
     iObjectRegistry* object_reg;
     csHash<OrderedMessageChannel*> orderedMessages;
 };
+
+/** @} */
 
 #endif
