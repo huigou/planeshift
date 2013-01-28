@@ -30,6 +30,10 @@
 
 class EEditErrorToolbox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** A csReporterListener for eedit
  */
 class EEditReporter : public scfImplementation1<EEditReporter, iReporterListener>,
@@ -51,5 +55,7 @@ private:
     csWeakRef<EEditErrorToolbox> errorToolbox;
     iObjectRegistry* object_reg;
 };
+
+/** @} */
 
 #endif 

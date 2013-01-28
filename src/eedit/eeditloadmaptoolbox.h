@@ -29,6 +29,10 @@
 class pawsButton;
 class pawsEditTextBox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** This allows loading of a new map.
  */
 class EEditLoadMapToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditLoadMapToolbox>
@@ -37,8 +41,10 @@ public:
     EEditLoadMapToolbox();
     virtual ~EEditLoadMapToolbox();
 
-    /** Sets the text for the map field.
-     *   \param mapPath     The new path of the map field.
+    /**
+     * Sets the text for the map field.
+     *
+     * @param mapFile     The new map.
      */
     void SetMapFile(const char * mapFile);
 
@@ -83,5 +89,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditLoadMapToolbox);
+
+/** @} */
 
 #endif 

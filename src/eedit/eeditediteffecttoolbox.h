@@ -40,7 +40,12 @@ class pawsTree;
 class pawsSimpleTreeNode;
 class pawsSeqTreeNode;
 
-/** This allows you to edit the effect.
+/**
+ * \addtogroup eedit
+ * @{ */
+
+/**
+ * This allows you to edit the effect.
  */
 class EEditEditEffectToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditEditEffectToolbox>
 {
@@ -48,8 +53,10 @@ public:
     EEditEditEffectToolbox();
     virtual ~EEditEditEffectToolbox();
 
-    /** Loads the given effect tree.
-     *   @param effect the effect to load
+    /**
+     * Loads the given effect tree.
+     * 
+     * @param effect the effect to load
      */
     void LoadEffect(psEffect * effect);
     
@@ -61,6 +68,13 @@ public:
     // inheritted from pawsWidget
     virtual bool PostSetup(); 
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+
+    /**
+     * Called whenever a widget is selected.
+     *
+     * @param widget The selected widget.
+     * @return false.
+     */
     virtual bool OnSelected( pawsWidget* widget);
     virtual void OnUpdateData(const char *dataname,PAWSData& data);
 
@@ -143,5 +157,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditEditEffectToolbox);
+
+/** @} */
 
 #endif 

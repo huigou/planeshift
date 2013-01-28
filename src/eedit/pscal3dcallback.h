@@ -30,6 +30,10 @@
 
 class EEditApp;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** A stripped version of the cal3d callback loader used only for eedit
  */
 class psCal3DCallbackLoader : public scfImplementation1<psCal3DCallbackLoader, iLoaderPlugin>
@@ -84,6 +88,8 @@ protected:
     /// keep track of the effect ID
     unsigned int effectID;
 };
+
+/** @} */
 
 #endif
 

@@ -38,6 +38,10 @@ class MathVar;
 class iDataConnection;
 
 /**
+ * \addtogroup psutil
+ * @{ */
+
+/**
  * This holds all the formulas loaded from the MathScript table
  * and provides a container for them.  It also enables adding
  * of some needed functions not built-in to the formula parser.
@@ -404,7 +408,7 @@ public:
 
 /**
  * This holds one line of a (potentially) multi-line script.
- * It knows what <var> is on the left, and what <formula> is
+ * It knows what \<var\> is on the left, and what \<formula\> is
  * on the right of the = sign.  When run, it executes the
  * formula and sets the result in the Var.  These vars are
  * shared across Lines, which means the next Line can use
@@ -444,7 +448,7 @@ public:
 /**
  *  A MathScript is a mini-program to run.
  *  It allows multiple lines. Each line must be
- *  in the form of:  <var> = <formula>.  When
+ *  in the form of:  \<var\> = \<formula\>.  When
  *  it parses, it makes a hashmap of all the variables
  *  for quick access.
  */
@@ -466,6 +470,8 @@ public:
 
     double Evaluate(MathEnvironment *env) const;
 };
+
+/** @} */
 
 #endif
 

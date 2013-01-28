@@ -26,6 +26,10 @@
 class pawsButton;
 class pawsListBox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** A dialog window to select from a list of values.
  */
 class EEditSelectList : public pawsWidget, public scfImplementation0<EEditSelectList>
@@ -34,11 +38,14 @@ public:
     EEditSelectList();
     virtual ~EEditSelectList();
 
-    /** Pops up the select list dialog.
-     *   @param list the list of possible values.
-     *   @param listCount the number of possible values.
-     *   @param defaultValue the default value.
-     *   @param callback a pointer to the callback that should be called on selection.
+    /**
+     * Pops up the select list dialog.
+     *
+     * @param list the list of possible values.
+     * @param listCount the number of possible values.
+     * @param defaultValue the default value.
+     * @param callback a pointer to the callback that should be called on selection.
+     * @param pos Selected position.
      */
     void Select(csString * list, size_t listCount, const csString & defaultValue, EEditInputboxManager::iSelectList * callback, const csVector2 & pos);
     
@@ -56,5 +63,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditSelectList);
+
+/** @} */
 
 #endif 

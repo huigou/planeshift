@@ -25,6 +25,10 @@
 #include "paws/pawslistbox.h"
 #include "paws/pawsbutton.h"
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 struct iEEditRequestComboCallback : public virtual iBase
 {
     SCF_INTERFACE(iEEditRequestComboCallback, 2, 0, 0);
@@ -56,6 +60,8 @@ private:
 };
 
 CREATE_PAWS_FACTORY( EEditRequestCombo );
+
+/** @} */
 
 #endif
 

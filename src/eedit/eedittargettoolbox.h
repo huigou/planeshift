@@ -33,6 +33,10 @@ class pawsEditTextBox;
 class pawsSpinBox;
 class pawsRadioButton;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** This handles the effect target object.
  */
 class EEditTargetToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditTargetToolbox>
@@ -126,5 +130,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditTargetToolbox);
+
+/** @} */
 
 #endif 

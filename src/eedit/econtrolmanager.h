@@ -22,6 +22,10 @@
 #include <iutil/event.h>
 #include <csutil/array.h>
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 #define CMD_DECLARATION(func)   static void func(eControlManager *obj, bool down)
 
 struct iObjectRegistry;
@@ -29,23 +33,28 @@ struct iObjectRegistry;
 class eControlManager 
 {
 public:
-    /** Initialise the eControlManager with an object registry. The object
-     * registry will be searched for the keymap files and etc.
+    /**
+     * Initialise the eControlManager with an object registry.
+     *
+     * The object registry will be searched for the keymap files and etc.
      */
     eControlManager(iObjectRegistry* object_reg);
     ~eControlManager();
 
-    /** Handles the given even if it is a key even.
-     *   @event  The event to handle.
-     *   @return True if the event has been handled, false otherwise.
+    /**
+     * Handles the given even if it is a key even.
+     *
+     * @param event  The event to handle.
+     * @return True if the event has been handled, false otherwise.
      */
     bool HandleEvent(iEvent &event);
 
-    /** Imports key mappings from the given files. Note that this adds to the
-     *  current mappings.
-     *   @filename  Name of the file with the mappings to import.
-     *   @return    Returns true upon successfully loading the file, false
-     *              otherwises.
+    /**
+     * Imports key mappings from the given files.
+     *
+     * @note Note that this adds to the current mappings.
+     * @param filename  Name of the file with the mappings to import.
+     * @return Returns true upon successfully loading the file, false otherwises.
      */
     bool LoadKeyMap(const char* filename);
 
@@ -62,34 +71,44 @@ public:
     CMD_DECLARATION( HandleLookDown     );
 
 private:
-    /** Executes the command mapped to the given key, if one exists.
-     *   @key       A csKeyEveentData structure describing the key.
+    /**
+     * Executes the command mapped to the given key, if one exists.
+     *
+     * @param key       A csKeyEveentData structure describing the key.
      */
     void ExecuteKeyCommand(csKeyEventData &key);
 
-    /** Adds a mapping between the given action and key to the keymap.
-     *   @action    Name of the action.
-     *   @data      csKeyEventData describing the key.
+    /**
+     * Adds a mapping between the given action and key to the keymap.
+     *
+     * @param action    Name of the action.
+     * @param data      csKeyEventData describing the key.
      */
     void Map(const char *action, csKeyEventData &data);
 
-    /** Finds the index of the action with the given name in the keyMap array.
-     *   @name      Name of the action to search for.
-     *   @return    Returns the index of the action or -1 if not found.
+    /**
+     * Finds the index of the action with the given name in the keyMap array.
+     *
+     * @param name      Name of the action to search for.
+     * @return    Returns the index of the action or -1 if not found.
      */
     size_t StringToAction(const char *name);
 
-    // Holds the map between a key and its action.
+    /**
+     * Holds the map between a key and its action.
+     */
     struct ActionKeyMap
     {
-        csString action;        // Action name
-        csKeyEventData csKey;   // Key
+        csString action;        ///< Action name
+        csKeyEventData csKey;   ///< Key
     };
 
-    // An array of mappings between keys and actions 
-    csArray<ActionKeyMap*>  keyMap;
+    csArray<ActionKeyMap*>  keyMap; ///< An array of mappings between keys and actions 
+
 
     iObjectRegistry*    object_reg;
 };
+
+/** @} */
 
 #endif

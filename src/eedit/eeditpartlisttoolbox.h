@@ -38,6 +38,10 @@ struct iParticleEffector;
 struct iMeshObjectFactory;
 struct ParticleParameterRow;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 struct ParameterData
 {
   csString type;
@@ -135,5 +139,7 @@ public:
 };
 
 CREATE_PAWS_FACTORY(EEditParticleListToolbox);
+
+/** @} */
 
 #endif 

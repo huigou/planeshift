@@ -26,6 +26,10 @@
 class pawsButton;
 class pawsSpinBox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** A dialog window to select a 3D vector value.
  */
 class EEditSelectVec3 : public pawsWidget, public scfImplementation0<EEditSelectVec3>
@@ -34,9 +38,12 @@ public:
     EEditSelectVec3();
     virtual ~EEditSelectVec3();
 
-    /** Pops up the select dialog.
-     *   @param startValue the value that first appears in the dialog box.
-     *   @param callback a pointer to the callback that should be called on selection.
+    /**
+     * Pops up the select dialog.
+     *
+     * @param startValue the value that first appears in the dialog box.
+     * @param callback a pointer to the callback that should be called on selection.
+     * @param pos Selected position.
      */
     void Select(const csVector3 & startValue, EEditInputboxManager::iSelectVec3 * callback, const csVector2 & pos);
     
@@ -55,5 +62,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditSelectVec3);
+
+/** @} */
 
 #endif 

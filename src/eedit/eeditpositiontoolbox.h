@@ -32,6 +32,9 @@ class pawsEditTextBox;
 class pawsSpinBox;
 class pawsRadioButton;
 
+/**
+ * \addtogroup eedit
+ * @{ */
 /** This handles the effect position object.
  */
 class EEditPositionToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditPositionToolbox>
@@ -125,5 +128,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditPositionToolbox);
+
+/** @} */
 
 #endif 

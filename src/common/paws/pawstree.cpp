@@ -1144,7 +1144,9 @@ void pawsTree::Select(pawsTreeNode *node)
     }
     
     if (notificationTarget != NULL)
+    {
         notificationTarget->OnSelected(node);
+    }
 }
 
 void pawsTree::Deselect()

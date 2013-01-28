@@ -44,14 +44,23 @@ class csVector3;
 class GEMSupervisor;
 class gemObject;
 
-/** This is a helper class that defines a mesh on the server.  
+/**
+ * \addtogroup server
+ * @{ */
+
+/**
+ * This is a helper class that defines a mesh on the server.
+ *
  * It wraps around some of the loading details.
  */
 class gemMesh
 {
 public:
-    /** Create a new gem Mesh.
+    /**
+     * Create a new gem Mesh.
+     *
      * This will setup a new mesh and add it to the CS engine.
+     *
      * @param objreg The main Crystal Space object registry.
      * @param owner  The gemObject that is using this mesh.
      * @param super  The GEM supervisor object.
@@ -60,8 +69,11 @@ public:
 
     ~gemMesh();
 
-    /** Load a mesh factory.
+    /**
+     * Load a mesh factory.
+     *
      * This is called if it can't find the factory in the cached engine list.
+     *
      * @param fileName The name of the file where the factory is stored.
      * @param factoryName The name of the factory that is loading.
      *
@@ -69,7 +81,10 @@ public:
      *          be loaded.
      */
     iMeshFactoryWrapper* LoadMeshFactory(const char* fileName, const char* factoryName);
-    /** Set a mesh.
+    
+    /**
+     * Set a mesh.
+     *
      * @param factoryName The factory name of the mesh we want to set.
      * @param fileName The file to load if the factory is not found.
      * 
@@ -77,22 +92,29 @@ public:
      */
     bool SetMesh( const char* factoryName, const char* fileName );
 
-    /** Get the Crystal Space iMeshWrapper from this.
+    /**
+     * Get the Crystal Space iMeshWrapper from this.
+     *
      * @return an iMeshWrapper that is being used. 
      */
     iMeshWrapper* GetMesh();
 
-    /** Set a mesh.
+    /**
+     * Set a mesh.
+     *
      * @param newMesh  The Crystal Space mesh wrapper to set in.
      */
     void SetMesh( iMeshWrapper* newMesh);
 
-    /** Removes the mesh from the engine.
+    /**
+     * Removes the mesh from the engine.
      */
     void RemoveMesh();
 
-    /** Move a mesh.
-     * @param room  The sector to move in.
+    /**
+     * Move a mesh.
+     *
+     * @param sector  The sector to move in.
      * @param yrot The Y-axis rotation of the object.
      * @param position The position to place the mesh.
      */
@@ -107,5 +129,7 @@ private:
 
     gemObject* gemOwner;                    ///< gemObject using this mesh.
 };
+
+/** @} */
 
 #endif

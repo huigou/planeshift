@@ -42,6 +42,10 @@ class psSkillInfo;
 struct Faction;
 
 /**
+ * \addtogroup bulkobjects
+ * @{ */
+
+/**
  * Pure virtual base quest prerequisite operator class
  *
  * This base class define the needed functions for every
@@ -70,7 +74,7 @@ class psQuestPrereqOp : public csRefCount
     /**
      * Convert the prerequisite script to a xml string
      *
-     * Wrapps the operator in <pre>...</pre> tags.
+     * Wrapps the operator in \<pre\>...\</pre\> tags.
      *
      * @return XML string for the prerequisite script.
      */
@@ -173,7 +177,7 @@ class psQuestPrereqOpAnd: public psQuestPrereqOpList
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator to the xml string:
-     * <and><child1/>...<childN/></and>
+     * \<and\>\<child1/\>...\<childN/\>\</and\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -220,7 +224,7 @@ class psQuestPrereqOpOr: public psQuestPrereqOpList
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator to the xml string:
-     * <or><child1/>...<childN/></or>
+     * \<or\>\<child1/\>...\<childN/\>\</or\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -280,7 +284,7 @@ class psQuestPrereqOpRequire: public psQuestPrereqOpList
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <require [min="min"] [max="max"]><child1>...<childN></require>
+     * \<require [min="min"] [max="max"]\>\<child1\>...\<childN\>\</require\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -325,7 +329,7 @@ class psQuestPrereqOpNot: public psQuestPrereqOpList
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <not><child></not>
+     * \<not\>\<child\>\</not\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -392,7 +396,7 @@ class psQuestPrereqOpQuestCompleted: public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <completed quest="quest name"/>
+     * \<completed quest="quest name"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -449,7 +453,7 @@ class psQuestPrereqOpQuestAssigned: public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <assigned quest="quest name"/>
+     * \<assigned quest="quest name"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -523,7 +527,7 @@ class psQuestPrereqOpQuestCompletedCategory: public psQuestPrereqOp
     /**
      * Convert the prerequisite operator to a xml string
      *
-     * Convert the operator into the xml string: <completed category="category" [min="min"] [max="max"] />
+     * Convert the operator into the xml string: \<completed category="category" [min="min"] [max="max"] /\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -586,7 +590,7 @@ class psQuestPrereqOpFaction: public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <faction name="faction name" value="faction value"/>
+     * \<faction name="faction name" value="faction value"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -645,7 +649,7 @@ class psQuestPrereqOpItem : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <item inventory="true/false" name="baseitemname"/>
+     * \<item inventory="true/false" name="baseitemname"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -695,7 +699,7 @@ class psQuestPrereqOpActiveMagic : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <activemagic name="-activemagic"/>
+     * \<activemagic name="-activemagic"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -758,7 +762,7 @@ class psQuestPrereqOpTrait : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <activemagic name="-activemagic"/>
+     * \<activemagic name="-activemagic"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -808,7 +812,7 @@ class psQuestPrereqOpRace : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <race name="racename"/>
+     * \<race name="racename"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -858,7 +862,7 @@ class psQuestPrereqOpGender : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <gender type="Gender Initial"/>
+     * \<gender type="Gender Initial"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -908,7 +912,7 @@ class psQuestPrereqOpKnownSpell : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <knownspell spell="Spell Name"/>
+     * \<knownspell spell="Spell Name"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -959,7 +963,7 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <guild type="type of the guild"/>
+     * \<guild type="type of the guild"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -1006,7 +1010,7 @@ class psQuestPrereqOpMarriage : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <marriage status="yes/no"/>
+     * \<marriage status="yes/no"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -1059,7 +1063,7 @@ class psQuestPrereqOpAdvisorPoints : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <advisorpoints min="-min" max="-max" type="min/max/both"/>
+     * \<advisorpoints min="-min" max="-max" type="min/max/both"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -1110,7 +1114,7 @@ class psQuestPrereqOpTimeOnline : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <onlinetime min="-min" max="-max" />
+     * \<onlinetime min="-min" max="-max" /\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -1161,7 +1165,7 @@ class psQuestPrereqOpTimeOfDay : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <timeofday min="-min" max="-max"/>
+     * \<timeofday min="-min" max="-max"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -1211,7 +1215,7 @@ class psQuestPrereqOpVariable : public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <variable name="variablename"/>
+     * \<variable name="variablename"/\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -1257,7 +1261,7 @@ class psQuestPrereqOpXor: public psQuestPrereqOpList
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator to the xml string:
-     * <xor><child1/>...<childN/></xor>
+     * \<xor\>\<child1/\>...\<childN/\>\</xor\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -1320,7 +1324,7 @@ class psQuestPrereqOpSkill: public psQuestPrereqOp
      * Convert the prerequisite operator to a xml string
      *
      * Convert the operator into the xml string:
-     * <skill name="skill name" min="0" max="0" allowbuffed="false" />
+     * \<skill name="skill name" min="0" max="0" allowbuffed="false" /\>
      *
      * @return XML string for the prerequisite operator.
      */
@@ -1336,5 +1340,7 @@ class psQuestPrereqOpSkill: public psQuestPrereqOp
      */
     virtual csPtr<psQuestPrereqOp> Copy();
 };
+
+/** @} */
 
 #endif

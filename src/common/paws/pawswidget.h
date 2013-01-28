@@ -107,7 +107,8 @@ class WidgetConfigWindow;
 class pawsScript;
 class pawsTitle;
 
-/** The main base widget that all other widgets should inherit from.
+/**
+ * The main base widget that all other widgets should inherit from.
  */
 class pawsWidget : public iPAWSSubscriber, public iScriptableVar
 {
@@ -146,7 +147,9 @@ protected:
     /// Used in SetTitle() for the new close button.
     pawsButton* close_widget;
 
-    /** The child widgets.
+    /**
+     * The child widgets.
+     *
      * Widgets are drawn from the end of this array to the beginning.
      * Children with alwaysOnTop=true are positioned before all other children
      * in this array.
@@ -162,12 +165,14 @@ protected:
     /// Flag to determine visiblity.
     bool visible;
 
-    /** Determines if this widget should write/load it's position from a 
+    /**
+     * Determines if this widget should write/load it's position from a 
      * config file.
      */
     bool saveWidgetPositions;
 
-    /** Determines if the settings (alpha, fade, etc) of this widget are 
+    /**
+     * Determines if the settings (alpha, fade, etc) of this widget are 
      * configurable.
      */
     bool configurable;
@@ -181,7 +186,8 @@ protected:
     /// If the resize widget should be drawn
     bool showResize;
 
-    /** Determines if this widget should be auto resized with screen 
+    /**
+     * Determines if this widget should be auto resized with screen 
      * resolution.
      */
     bool resizeToScreen;
@@ -213,7 +219,9 @@ protected:
     /// The variable that this widget is subscribed to
     csString subscribedVar;
 
-    /** Stores the bgColour for this widget.  
+    /**
+     * Stores the bgColour for this widget.
+     *
      * @remark Set to -1 if no colour should be used.
      */
     int bgColour;   
@@ -251,13 +259,17 @@ protected:
     /// The speed of the fading process.
     float fadeSpeed;
 
-    /** Path to the file that describes context menu of our widget 
-     * (invoked by mouse right-click). 
+    /**
+     * Path to the file that describes context menu of our widget 
+     * (invoked by mouse right-click).
+     *
      * @remark If blank, then there is no context menu for our widget.
      */
     csString contextMenuFile;
     
-    /** Existing context menu of the widget.
+    /**
+     * Existing context menu of the widget.
+     *
      * @remark NULL if there is no menu created at the moment.
      */
     pawsMenu * contextMenu;
@@ -292,7 +304,8 @@ protected:
     /// Current font style.
     int fontStyle;
 
-    /** Used in the SelfPopulate functions to map to xml nodes for
+    /**
+     * Used in the SelfPopulate functions to map to xml nodes for
      * each widget.
      */
     csString xmlbinding;
@@ -306,7 +319,9 @@ protected:
     /// Masking image, used for nice-looking stuff.
     csRef<iPawsImage> maskImage;
 
-    /** Flag determines if WidgetAT() ignores this widget. 
+    /**
+     * Flag determines if WidgetAT() ignores this widget.
+     *
      * @remark Default is FALSE. Set during LoadAttributes().
      */
     bool ignore;
@@ -328,7 +343,10 @@ protected:
 
     /** 
      * Flag of whether OnUpdateData should overwrite the previous value or 
-     * add to it. Used by Multi-line edit currently.  
+     * add to it.
+     *
+     * Used by Multi-line edit currently.
+     *
      * @remark TRUE by default because everything else should overwrite. 
      */
     bool overwrite_subscription;
@@ -349,7 +367,9 @@ public:
 
     virtual ~pawsWidget();
 
-    /** Locate a widget that is at these screen coordindates. 
+    /**
+     * Locate a widget that is at these screen coordindates.
+     *
      * This will recurse through all the children as well looking
      * for the lowest widget that contains these coordinates. 
      *
@@ -363,54 +383,74 @@ public:
 
     virtual void Ignore(bool ig) { ignore = ig; }
 
-    /** Does an action based on this string.
+    /**
+     * Does an action based on this string.
+     *
+     * @param action The action to perform.
      */
     virtual void PerformAction( const char* action );
 
-    /** Returns the csRect that defines widget area.
-    * @return screenFrame
-    */
+    /**
+     * Returns the csRect that defines widget area.
+     *
+     * @return screenFrame
+     */
     virtual csRect GetScreenFrame();
 
-    /** Returns the default csRect.
+    /**
+     * Returns the default csRect.
+     *
      * @return defaultFrame 
      */
     virtual csRect GetDefaultFrame() { return defaultFrame; }
 
-    /** Is the widget currently set visible?
+    /**
+     * Is the widget currently set visible?
+     *
      * @return bool
      */
     bool IsVisible() { return visible && (!parent || parent->IsVisible()); }
 
-   /** Make the widget visible or hides it.
-     * @param bool TRUE calls Show(), FALSE calls Hide().
-     */
+   /**
+    * Make the widget visible or hides it.
+    *
+    * @param visible TRUE calls Show(), FALSE calls Hide().
+    */
     void SetVisibility(bool visible) { if (visible) Show(); else Hide(); }
 
-    /** Makes widget visible and brings it to the front.
+    /**
+     * Makes widget visible and brings it to the front.
+     *
      * Sets visible TRUE shows border if present then calls BringToTop() on 
      * itself.
      */
     virtual void Show();
 
-    /** Makes widget visible and brings it to the front but behind widget with
+    /**
+     * Makes widget visible and brings it to the front but behind widget with
      * current focus.
+     *
      * Sets visible TRUE shows border if present then calls Show() on widget 
      * that had focus when ShowBehind() was called.
      */
     virtual void ShowBehind();
 
-    /** Makes widget invisible and removes focus if widget has current focus.
+    /**
+     * Makes widget invisible and removes focus if widget has current focus.
+     *
      * Sets visible FALSE, hides border if present and then if focused when 
      * called it calls SetCurrentFocusedWidget(NULL).
      */
     virtual void Hide();
 
-    /** Simply calls Hide() unless overidden.
+    /**
+     * Simply calls Hide() unless overidden.
      */
     virtual void Close() { Hide(); }
     
-    /** Test button for activity. 
+    /**
+     * Test button for activity.
+     *
      * @param button The button to test.
      * @param modifiers Modifier to use.
      * @param pressedWidget The widget with the event.
@@ -424,80 +464,113 @@ public:
      */
     virtual bool CheckKeyHandled(int /*keyCode*/) { return false; }
 
-    /** Add a child widget to this widget.  
+    /**
+     * Add a child widget to this widget.
+     *
      * This widget is then responsible for deleting this child.
+     *
      * @param widget The child to add.
      */
     void AddChild( pawsWidget* widget );
     
-    /** Removes the widget from list of children and destructs it.
+    /**
+     * Removes the widget from list of children and destructs it.
+     *
      * @param widget The child to delete.
      */
     virtual void DeleteChild( pawsWidget* widget );
     
-    /// Removes and destructs itself.
+    /**
+     * Removes and destructs itself.
+     */
     void DeleteYourself() { parent->DeleteChild(this); }
 
-    /** Removes the widget from list of children but does NOT destruct it.
+    /**
+     * Removes the widget from list of children but does NOT destruct it.
+     *
      * @param widget The widget to remove.
      * @remark Ownership goes to the caller.
      */
     void RemoveChild( pawsWidget* widget );
 
-    /** Used if you need to loop through the children of a widget
+    /**
+     * Used if you need to loop through the children of a widget.
+     *
      * @param ID of the child
      */
     pawsWidget* GetChild(size_t i) { return children.Get(i); }
 
-    /** Used if you need to loop through the children of a widget
+    /**
+     * Used if you need to loop through the children of a widget
+     *
      * @return Count of the children
      */
     size_t GetChildrenCount() { return children.GetSize();}
 
-    /** Returns true, if 'widget' is child of our widget, even if it 
+    /**
+     * Returns true, if 'widget' is child of our widget, even if it 
      * is indirect.
+     *
      * @param widget The widget to test.
      */
     bool IsIndirectChild( pawsWidget * widget );
     
     /**
      * Returns true if widget equals this, or widget is a child of this.
+     *
      * If widget is null, false is returned.
      */
     bool Includes( pawsWidget * widget );
 
-    /** Set the owner of this widget.
+    /**
+     * Set the owner of this widget.
+     *
      * @param widget The owner of this widget.
      */
     void SetParent( pawsWidget* widget );
 
-    /** Find a child widget of this widget.
+    /**
+     * Find a child widget of this widget.
+     *
      * Recurses down through the children as well looking for widget.
+     *
      * @param name The name of the widget to look for.
+     * @param complain If true, print an error message if widget is not found. 
      * @return A pointer to the widget if found. NULL otherwise. 
      */
     pawsWidget* FindWidget( const char* name, bool complain = true );
 
-    /** Find a child widget of this widget.
+    /**
+     * Find a child widget of this widget.
+     *
      * Recurses down through the children as well looking for widget.
+     *
      * @param id The id of the widget to look for.
+     * @param complain If true, print an error message if widget is not found. 
      * @return A pointer to the widget if found. NULL otherwise. 
      */    
     pawsWidget* FindWidget( int id, bool complain = true  );
 
-    /** Find a child widget of this widget with the given XML binding.
+    /**
+     * Find a child widget of this widget with the given XML binding.
+     *
      * Recurses down through the children as well looking for widget.
+     *
      * @param xmlbinding The xmlbinding of the widget to look for.
      * @return A pointer to the widget if found. NULL otherwise. 
      */
     pawsWidget* FindWidgetXMLBinding( const char* xmlbinding );
 
-    /** Get the xml nodes of this widget.
+    /**
+     * Get the xml nodes of this widget.
+     *
      * @return xmlbinding
      */
     virtual const csString& GetXMLBinding(){ return xmlbinding; }
 
-    /** Sets the xml nodes of this widget.
+    /**
+     * Sets the xml nodes of this widget.
+     *
      * @param xmlbinding
      */
     virtual void SetXMLBinding(csString & xmlbinding) 
@@ -505,7 +578,9 @@ public:
         this->xmlbinding = xmlbinding; 
     }
 
-    /** Get this widget's parent.
+    /**
+     * Get this widget's parent.
+     *
      * @return parent
      */
     pawsWidget* GetParent() { return parent; }
@@ -518,48 +593,65 @@ public:
      */
     virtual bool Load( iDocumentNode* node );
     
-    /** Load standard widget attributes based on its \<widget\>\</widget\> tag.
+    /**
+     * Load standard widget attributes based on its \<widget\>\</widget\> tag.
+     *
      * @param node The xml data for the widget.
      */
     virtual bool LoadAttributes( iDocumentNode* node );
 
-    /** Load event scripts for this widget.
+    /**
+     * Load event scripts for this widget.
+     *
      * @param node The xml node for the widget.
      */
     virtual bool LoadEventScripts(iDocumentNode * node);
 
-    /** Load widget children based on subtags of its \<widget\>\</widget\> tag.
+    /**
+     * Load widget children based on subtags of its \<widget\>\</widget\> tag.
+     *
      * @param node The xml data for the widget.
      */
     virtual bool LoadChildren( iDocumentNode* node );
 
-    /** Parses XML file 'fileName', finds first widget tag and Load()s itself 
-     * from this tag. 'fileName' is standard path of the XML file to load. 
+    /**
+     * Parses XML file 'fileName', finds first widget tag and Load()s itself 
+     * from this tag.
+     *
+     * 'fileName' is standard path of the XML file to load.
+     *
      * @see psLocalization::FindLocalizedFile()
      */
     bool LoadFromFile(const csString & fileName);
 
-    /** Setup this widget.
-    */
+    /**
+     * Setup this widget.
+     */
     virtual bool Setup(iDocumentNode* /*node*/) { return true; }
 
-    /** This is called after the widget and all of it's children have been 
+    /**
+     * This is called after the widget and all of it's children have been 
      * created.
+     *
      * @remark This can be useful for widgets that want to get pointers to 
      * some of it's children for quick access.
      */
     virtual bool PostSetup() { return true; }
 
-    /** This function parses the xml string and calls SelfPopulate
+    /**
+     * This function parses the xml string and calls SelfPopulate
      * with the resulting DOM structure if valid.
+     *
      * @param xmlstr The xml string to process.  
      * @remark This is NOT the same thing as Setup, which is defining the 
      * widget structure. This is for data.
      */
     virtual bool SelfPopulateXML( const char *xmlstr );
 
-    /** This function allows a widget to fill in its own contents from an xml 
+    /**
+     * This function allows a widget to fill in its own contents from an xml 
      * node supplied and calls the same function for all children.
+     *
      * @param node The xml data for the widget.
      * @return bool TRUE if no children, FALSE if there are problems with a 
      * node.
@@ -570,30 +662,43 @@ public:
      */
     virtual bool SelfPopulate( iDocumentNode *node );
 
-    /** Does the first part of the drawing. It draws the background of the window.
-     *  @return TRUE if the widget can be drawn.
+    /**
+     * Does the first part of the drawing. It draws the background of the window.
+     *
+     * @return TRUE if the widget can be drawn.
      */
     bool DrawWindow();
-    /// Does the second part of the drawing drawing the background of the window.
+    
+    /**
+     * Does the second part of the drawing drawing the background of the window.
+     */
     void DrawForeground();
 
-    /** Draws the widget and all of it's children.
+    /**
+     * Draws the widget and all of it's children.
+     *
      * @remarks Uses clipping rect of it's parent to define drawing area. 
      * If the drawing area defined is empty it returns.
      */
     virtual void Draw();
+    
     virtual void Draw3D(iGraphics3D*) {}
 
-    /** Draws the background with a color or an image.
+    /**
+     * Draws the background with a color or an image.
+     *
      * @remarks Uses focus status to apply appropriate fading. 
      */
     virtual void DrawBackground();
 
-    /** Draws all children marked visible.
+    /**
+     * Draws all children marked visible.
      */
     virtual void DrawChildren();
     
-    /** Draws the mask picture.
+    /**
+     * Draws the mask picture.
+     *
      * @remark Uses focus status to apply appropriate fading. 
      */
     virtual void DrawMask();
@@ -606,19 +711,25 @@ public:
         return parentDraw || !PawsManager::GetSingleton().UsingR2T();
     }
 
-    /** Test widget to see if it is resizable.
+    /**
+     * Test widget to see if it is resizable.
+     *
      * @return isResizable Flag to set a widget resizable.
      * @remark This is set by marking the resizable attribute yes or no in the
      * widget's xml data.
      */
     bool IsResizable() { return isResizable; }
 
-    /** Sets the showResize flag, controlling if the resize widget should be drawn
-      * @param Value
-      */
+    /**
+     * Sets the showResize flag, controlling if the resize widget should be drawn.
+     *
+     * @param v Value
+     */
     void SetResizeShow(bool v) { showResize = v;}
 
-    /** Registers mode with the windowManager.
+    /**
+     * Registers mode with the windowManager.
+     *
      * @param isModal set TRUE to make the widget modal.
      */
     void SetModalState( bool isModal );
@@ -884,7 +995,9 @@ public:
     /// Resize a widget based on it's parent's size.
     virtual void Resize();
     
-    /** Called whenever a button is pressed.
+    /**
+     * Called whenever a button is pressed.
+     *
      * @param button The button pressed.
      * @param keyModifier Modifier key in effect.
      * @param widget The widget the button belongs to.
@@ -898,8 +1011,10 @@ public:
         return true; 
     }
 
-    /** Called whenever a button is released.
+    /**
+     * Called whenever a button is released.
      * @param button The button released.
+     * @param keyModifier Modifier key in effect.
      * @param widget The widget the button belongs to.
      * @return bool Parent's result or FALSE if no parent.
      */
@@ -921,8 +1036,10 @@ public:
         return false;
     }  
 
-    /** Called whenever a widget is selected.
-     * @param widget
+    /**
+     * Called whenever a widget is selected.
+     *
+     * @param widget The selected widget.
      * @return bool
      */
     virtual bool OnSelected(pawsWidget* /*widget*/) { return false; }

@@ -79,6 +79,10 @@ class PublishVector;
 class psLinearMovement;
 class gemMesh;
 
+/**
+ * \addtogroup server
+ * @{ */
+
 #define BUFF_INDICATOR          "+"
 #define DEBUFF_INDICATOR        "-"
 
@@ -87,8 +91,9 @@ class gemMesh;
 
 //-----------------------------------------------------------------------------
 
-/** Helper class to attach a PlaneShift gem object to a particular mesh.
-  */
+/**
+ * Helper class to attach a PlaneShift gem object to a particular mesh.
+ */
 class psGemServerMeshAttach : public scfImplementationExt1<psGemServerMeshAttach,
                                                            csObject,
                                                            scfFakeInterface<psGemServerMeshAttach> >
@@ -96,12 +101,15 @@ class psGemServerMeshAttach : public scfImplementationExt1<psGemServerMeshAttach
 public:
     SCF_INTERFACE(psGemServerMeshAttach, 0, 0, 1);
 
-    /** @brief Setup this helper with the object we want to attach with.
-     *  @param object  The gemObject we want to attach to a mesh.
+    /**
+     * Setup this helper with the object we want to attach with.
+     *
+     * @param object  The gemObject we want to attach to a mesh.
      */
     psGemServerMeshAttach(gemObject* object);
 
-    /** @brief Get the gemObject that the mesh has attached.
+    /**
+     * Get the gemObject that the mesh has attached.
      */
     gemObject* GetObject() { return object; }
 
@@ -121,43 +129,53 @@ public:
     psDatabase             *database;                       ///< The main PlaneShift database object.
     NPCManager             *npcmanager;                     ///< NPC controller.
 
-    /** @brief Create a new singleton of the GEM Supervisor object.
-      * @param objreg The Crystal Space Object Registry.
-      * @param db The main PlaneShift database.
-      */
+    /**
+     * Create a new singleton of the GEM Supervisor object.
+     *
+     * @param objreg The Crystal Space Object Registry.
+     * @param db The main PlaneShift database.
+     * @param entitymanager The EntityManager.
+     * @param cachemanager The CacheManager.
+     */
     GEMSupervisor(iObjectRegistry *objreg, psDatabase *db, EntityManager *entitymanager, CacheManager *cachemanager);
 
-    /** @brief Destroy this singleton.
+    /**
+     * Destroy this singleton.
      *
-     *  This will only be ever called on a server shutdown.
+     * This will only be ever called on a server shutdown.
      */
     virtual ~GEMSupervisor();
 
-    /** @brief Get a hash of all the current entities on the server.
+    /**
+     * Get a hash of all the current entities on the server.
      *
-     *  @return a csHash of all the gemObjects.
+     * @return a csHash of all the gemObjects.
      */
     csHash<gemObject*, EID> & GetAllGEMS() { return entities_by_eid; }
 
     /** @name Search functions
      */
-    //@{
-    /** @brief Find an entity ID for an item.
+    ///@{
+    /**
+     * Find an entity ID (EID) for an item.
      *
-     *  @param item The psItem that we want to find the entity ID for.
-     *
-     *  @return the EID of that item if it was found. 0 if no id could be found.
+     * @param item The psItem that we want to find the entity ID for.
+     * @return the EID of that item if it was found. 0 if no id could be found.
      */
     EID        FindItemID(psItem *item);
+    
     gemObject *FindObject(EID cel_id);
+    
     gemObject *FindObject(const csString& name);
 
-
     gemActor  *FindPlayerEntity(PID player_id);
+    
     gemNPC    *FindNPCEntity(PID npc_id);
+    
     gemNPC    *FindNPCEntity(EID eid);
-	    gemItem   *FindItemEntity(uint32 item_id);
-    //@}
+    
+    gemItem   *FindItemEntity(uint32 item_id);
+    ///@}
 
     EID  CreateEntity(gemObject *obj);
     void AddEntity(gemObject *obj, EID objEid); ///< Ugly function, used for gemAL
@@ -179,21 +197,25 @@ public:
     void ActivateNPCs(AccountID superclientID);
     void StopAllNPCs(AccountID superclientID);
 
-    /** @brief Gets a list of all the 'live' entities that this player has ownership of.
-      *
-      * This can be things like items in containers or work items.
-      *
-      * @param playerID The character owner ID we are looking for.
-      * @param list The populated list of items that are active in game.
-      */
+    /**
+     * Gets a list of all the 'live' entities that this player has ownership of.
+     *
+     * This can be things like items in containers or work items.
+     *
+     * @param playerID The character owner ID we are looking for.
+     * @param list The populated list of items that are active in game.
+     */
     void GetPlayerObjects(PID playerID, csArray<gemObject*> &list);
 
-    /** @brief Teleport a player to a location.
+    /**
+     * Teleport a player to a location.
      *
-     *  @param object The player to move
-     *  @param x,y,z  Location to move to
-     *  @param rot    The rotation to use.
-     *  @param sector The sector name to move to.
+     * @param object     The player to move
+     * @param x          X Location to move to
+     * @param y          Y Location to move to
+     * @param z          Z Location to move to
+     * @param rot        The rotation to use.
+     * @param sectorname The sector name to move to.
      */
     void Teleport( gemObject* object, float x, float y, float z, float rot, const char* sectorname );
 
@@ -201,60 +223,65 @@ public:
     void HandleDamageMessage(MsgEntry *me, Client *client);
     void HandleStatDRUpdateMessage(MsgEntry *me, Client *client);
 
-   /** @brief Attach a server gemObject to a Crystal Space object.
-     *
-     * In most cases this will be a mesh wrapper.
-     *
-     * @param object The Crystal Space object we want to attach our gemObject to.
-     * @param gobject The PlaneShift object that we want to attach.
-     */
+   /**
+    * Attach a server gemObject to a Crystal Space object.
+    *
+    * In most cases this will be a mesh wrapper.
+    *
+    * @param object The Crystal Space object we want to attach our gemObject to.
+    * @param gobject The PlaneShift object that we want to attach.
+    */
     void AttachObject( iObject* object, gemObject* gobject);
 
 
-    /** @brief Unattach a gemObject from a Crystal Space object.
-      *
-      * In most cases the Crystal Space object is a meshwrapper.
-      *
-      * @param object The Crystal Space object we want to unattach our client object from.
-      * @param gobject The gem object we want to unattach.
+    /**
+     * Unattach a gemObject from a Crystal Space object.
+     *
+     * In most cases the Crystal Space object is a meshwrapper.
+     *
+     * @param object The Crystal Space object we want to unattach our client object from.
+     * @param gobject The gem object we want to unattach.
       */
     void UnattachObject( iObject* object, gemObject* gobject);
 
 
-    /** @brief See if there is a gemObject attached to a given Crystal Space object.
-      *
-      * @param object The Cyrstal Space object we want to see if there is an object attached to.
-      *
-      * @return A gemObject if it exists that is attached to the Crystal Space object.
-      */
+    /**
+     * See if there is a gemObject attached to a given Crystal Space object.
+     *
+     * @param object The Cyrstal Space object we want to see if there is an object attached to.
+     * @return A gemObject if it exists that is attached to the Crystal Space object.
+     */
     gemObject* FindAttachedObject (iObject* object);
 
 
-    /** @brief Create a list of all nearby gem objects.
-      *
-      * @param sector The sector to check in.
-      * @param pos The starting position
-      * @param radius The distance around the starting point to check.
-      * @param doInvisible If true check invisible meshes otherwise ignore them.
-      *
-      * @return A csArray<> of all the objects in the given radius.
-      */
+    /**
+     * Create a list of all nearby gem objects.
+     *
+     * @param sector The sector to check in.
+     * @param pos The starting position
+     * @param radius The distance around the starting point to check.
+     * @param doInvisible If true check invisible meshes otherwise ignore them.
+     *
+     * @return A csArray<> of all the objects in the given radius.
+     */
     csArray<gemObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
 
-    /** @brief Create a list of all gem objects in a sector.
-      *
-      * @param sector The sector to check in.
-      * @param doInvisible If true check invisible meshes otherwise ignore them.
-      *
-      * @return A csArray<> of all the objects in the given radius.
-      */
+    /**
+     * Create a list of all gem objects in a sector.
+     *
+     * @param sector The sector to check in.
+     * @param doInvisible If true check invisible meshes otherwise ignore them.
+     *
+     * @return A csArray<> of all the objects in the given radius.
+     */
     csArray<gemObject*> FindSectorEntities (iSector* sector, bool doInvisible = false);
 
 protected:
-    /** @brief Get the next ID for an object.
-      *
-      * @return The next ID available that can be assigned to an object.
-      */
+    /**
+     * Get the next ID for an object.
+     *
+     * @return The next ID available that can be assigned to an object.
+     */
     EID GetNextID();
 
     csHash<gemObject*, EID> entities_by_eid; ///< A list of all the entities stored by EID (entity/gem ID).
@@ -263,8 +290,8 @@ protected:
 
     uint32              nextEID;             ///< The next ID available for an object.
 
-    /// Stored here to save expensive csQueryRegistry calls
-    csRef<iEngine> engine;
+    
+    csRef<iEngine> engine;                   ///< Stored here to save expensive csQueryRegistry calls
 };
 
 //-----------------------------------------------------------------------------
@@ -281,20 +308,29 @@ public:
 
     EID GetEID() { return eid; }
 
-    /// iScriptableVar implementation
+    /** @name iScriptableVar implementation
+     * Functions that implement the iScriptableVar interface. 
+     */
+    ///@{
     virtual double GetProperty(MathEnvironment* env, const char* ptr);
     virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     virtual const char* ToString() { return name.GetData(); }
+    ///@}
 
-    /// Called when a client disconnects
+    /**
+     * Called when a client disconnects.
+     */
     virtual void Disconnect();
 
     virtual bool IsValid(void) { return eid.IsValid(); }
 
-    /// Returns whether the object is alive.
+    /**
+     * Returns whether the object is alive.
+     */
     bool IsAlive() const { return is_alive; }
     
-    /** Set needed stats for alive or dead for object
+    /**
+     * Set needed stats for alive or dead for object
      *
      * When dead the mana and HP rate are set to 0.
      *
@@ -328,79 +364,165 @@ public:
     void UnregisterCallback(iDeleteObjectCallback * receiver) { receivers.Delete(receiver); }
 
     /** @name Mesh related functions
+     *
      */
-    //@{
-    iMeshWrapper *GetMeshWrapper();
-    csString GetMesh() { return factname; }
-    void Move(const csVector3& pos,float rotangle,iSector* room);
-    bool IsNear(gemObject *obj,float radius, bool ignoreY = false);
-    const csVector3 & GetPosition();
-    void GetPosition(csVector3& pos, float& yrot,iSector*& sector);
-    void GetPosition(csVector3& pos, iSector*& sector);
+    ///@{
+
     /**
-     * Get rotation of entity as returned by psWorld::Matrix2YRot
+     *
+     */
+    iMeshWrapper *GetMeshWrapper();
+
+    /**
+     *
+     */
+    csString GetMesh() { return factname; }
+
+    /**
+     *
+     */
+    void Move(const csVector3& pos,float rotangle,iSector* room);
+
+    /**
+     *
+     */
+    bool IsNear(gemObject *obj,float radius, bool ignoreY = false);
+
+    /**
+     *
+     */
+    const csVector3 & GetPosition();
+
+    /**
+     *
+     */
+    void GetPosition(csVector3& pos, float& yrot,iSector*& sector);
+
+    /**
+     *
+     */
+    void GetPosition(csVector3& pos, iSector*& sector);
+    
+    /**
+     * Get rotation of entity as returned by psWorld::Matrix2YRot.
+     *
      * @return rotation about y axis
      * @see psWorld::Matrix2Yrot
      */
     float GetAngle();
-    iSector* GetSector();
-    /** Get the z velocity of the actor.
-     */
-    virtual float GetVelocity();
-    const char *GetSectorName() { return GetSector() ? GetSector()->QueryObject()->GetName() : "(null)"; }
-    csArray<gemObject*> *GetObjectsInRange( float range );
-    //@}
 
-    /** @name Proxlist related functions
+    /**
+     *
      */
-    //@{
-    ProximityList *GetProxList() { return proxlist; };
+    iSector* GetSector();
+    
+    /**
+     * Get the z velocity of the actor.
+     */
+    virtual float GetVelocity();    
+
+    /**
+     *
+     */
+    const char *GetSectorName() { return GetSector() ? GetSector()->QueryObject()->GetName() : "(null)"; }
+
+    /**
+     *
+     */
+    csArray<gemObject*> *GetObjectsInRange( float range );
+    ///@}
+
+    /** @name Proxlist related functions.
+     */
+    ///@{    
+
+    /**
+     *
+     */
+    ProximityList *GetProxList() { return proxlist; };    
+
+    /**
+     *
+     */
     csArray<PublishDestination>& GetMulticastClients();
 
-    /** Generates proxlist if needed (or forced)
-      * Then removes entities of nearby objects at clients, if needed */
+    /**
+     * Generates proxlist if needed (or forced).
+     *
+     * Then removes entities of nearby objects at clients, if needed.
+     *
+     * @param force Force an update if set to true.
+     */
     void UpdateProxList( bool force = false);
+    
+    /**
+     *
+     */
     void RemoveFromAllProx();
 
+    /**
+     *
+     */
     void SetAlwaysWatching(bool w) { alwaysWatching = w; }
+    
+    /**
+     *
+     */
     bool AlwaysWatching() { return alwaysWatching; }
-    //@}
+    ///@}
 
     float RangeTo(gemObject *obj, bool ignoreY = false, bool ignoreInstance = false);
 
     virtual bool IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos);
 
-    /** This value indicates the range that this entity would become visible
-     *  to other entities if no other modifiers were taken into consideration. */
+    /**
+     * This value indicates the range that this entity would become visible
+     * to other entities if no other modifiers were taken into consideration.
+     */
     virtual float GetBaseAdvertiseRange() { return DEF_PROX_DIST; };
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
 
-    /** Dump debug information. Used in the com_print function
+    /**
+     * Dump debug information.
+     *
+     * Used in the com_print function.
      */
     virtual void Dump();
     
     
     /** @name Networking functions
      */
-    //@{
+    ///@{
 
     /**
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
      */
     virtual void Broadcast(int clientnum, bool control);
 
     /**
+     * Send this object to the given client.
+     *
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
+     * @param to_superclients Send to super clients
+     * @param allEntities Buffer the message instead of sending it.
      */
     virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) { return true; }
+    
+    /**
+     * Distribute this object to all members of a group.
+     *
+     * @param me The MsgEntry to send to all group members.
+     */
     virtual void SendGroupMessage(MsgEntry *me) { };
-    //@}
+    ///@}
 
     /** @name Overridden functions in child classes
      */
-    //@{
+    ///@{
     virtual PID GetPID() { return 0; }
     virtual int GetGuildID() { return 0; }
     virtual csWeakRef<psGuildInfo> GetGuild() { return 0; }
@@ -422,22 +544,22 @@ public:
 
     virtual gemObject* GetOwner() { return NULL; }
 
-    /** Returns if the object has killsteal protection.
-	 *  
-	 * Rules about killsteal protection should be implmented here. 
-	 * Generic objects don't have killsteal protection
+    /**
+     * Returns if the object has killsteal protection.
+     *  
+     * Rules about killsteal protection should be implmented here. 
+     * Generic objects don't have killsteal protection
      *
      * @return A boolean indicating if this gemObject must have killsteal protection.
      */
-	virtual bool HasKillStealProtection() { return false; }
-    //@}
+    virtual bool HasKillStealProtection() { return false; }
+    ///@}
 
 protected:
     gemObject(GEMSupervisor* gemsupervisor, EntityManager* entitymanager, CacheManager* cachemanager, const char* name, const char* factname, InstanceID myinstance, iSector* room,
               const csVector3& pos, float rotangle, int clientnum);
 
     bool valid;                                 ///< Is object fully loaded
-//  csRef<gemObjectSafe> self_reference;        ///< Placeholder for ref 1 of saferef
 
     gemMesh* pcmesh;                            ///< link to mesh class
     ProximityList *proxlist;                    ///< Proximity List for this object
@@ -465,7 +587,8 @@ protected:
 
 //-----------------------------------------------------------------------------
 
-/** Any PS Object with which a player may have interaction (i.e. clickable).
+/**
+ * Any PS Object with which a player may have interaction (i.e. clickable).
  */
 class gemActiveObject : public gemObject
 {
@@ -481,20 +604,24 @@ public:
     virtual const char* GetObjectType() { return "Active object"; }
 
     /**
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
      */
     virtual void Broadcast(int clientnum, bool control);
 
     /**
+     * Send this object to the given client.
+     *
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
+     * @param to_superclients Send to super clients
+     * @param allEntities Buffer the message instead of sending it.
      */
     virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL) { return true; }
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
 
-    //@@@ should probably add tests for other actions (usable? examinable?)
-    // default "interaction" objects are not pick-uppable and cannot be locked
     virtual bool IsPickupable() { return false; }
     virtual bool IsPickupableWeak() { return false; }
     virtual bool IsPickupableStrong() { return false; }
@@ -538,65 +665,88 @@ public:
     psItem* GetItemData() { return itemdata; }
 
 
-    /// iScriptableVar implementation
+    /** @name iScriptableVar implementation
+     * Functions that implement the iScriptableVar interface. 
+     */
+    ///@{
     virtual double GetProperty(MathEnvironment* env, const char* ptr);
     virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
+    ///@}
 
     virtual float GetBaseAdvertiseRange();
 
     /**
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
      */
     virtual void Broadcast(int clientnum, bool control);
 
     /**
+     * Send this object to the given client.
+     *
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
+     * @param to_superclients Send to super clients
+     * @param allEntities Buffer the message instead of sending it.
      */
-    virtual bool Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
+    virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
 
-    /** @brief Set position of item in world.
-      *
-      * @param pos The coordinates of the object in the sector
-      * @param angle The y rotation angle
-      * @param sector The sector in which the object is
-      * @param instance The instance the object is in
-      *
-      * @return Set the position of the item in given sector, instance and position. Also sets the item y rotation
-      */
+    /**
+     * Set position of item in world.
+     *
+     * @param pos The coordinates of the object in the sector
+     * @param angle The y rotation angle
+     * @param sector The sector in which the object is
+     * @param instance The instance the object is in
+     *
+     * @return Set the position of the item in given sector, instance and position. Also sets the item y rotation
+     */
     virtual void SetPosition(const csVector3& pos,float angle, iSector* sector, InstanceID instance);
 
-    /** Set the x, y and z axis rotations for the item
+    /**
+     * Set the x, y and z axis rotations for the item.
+     *
      * @param xrotangle the variable used to set the x rotation of the item
      * @param yrotangle the variable used to set the x rotation of the item
      * @param zrotangle the variable used to set the z rotation of the item
      */
     virtual void SetRotation(float xrotangle, float yrotangle, float zrotangle);
-    /** Get the x,y and z axis rotations for the item
+    
+    /**
+     * Get the x,y and z axis rotations for the item.
+     *
      * @param xrotangle the variable in which the x rotation will be stored
      * @param yrotangle the variable in which the y rotation will be stored
      * @param zrotangle the variable in which the z rotation will be stored
      */
     virtual void GetRotation(float& xrotangle, float& yrotangle, float& zrotangle);
 
-    /** Gets if the object can be picked up from anyone.
-     *  @return TRUE if the object can be picked up from anyone.
+    /**
+     * Gets if the object can be picked up from anyone.
+     *
+     * @return TRUE if the object can be picked up from anyone.
      */
     virtual bool IsPickupable();
 
-    /** Gets if the object can be picked up from anyone according to weak rules.
+    /**
+     * Gets if the object can be picked up from anyone according to weak rules.
      *
-     *  This is a weaker version which allows more overriding of the not
-     *  pickupable status.
-     *  @return TRUE if the object can be picked up from anyone according to weak rules.
+     * This is a weaker version which allows more overriding of the not
+     * pickupable status.
+     *
+     * @return TRUE if the object can be picked up from anyone according to weak rules.
      */
     virtual bool IsPickupableWeak();
 
-    /** Gets if the object can be picked up from anyone according to strong rules.
+    /**
+     * Gets if the object can be picked up from anyone according to strong rules.
      *
-     *  This is a stronger version.
-     *  @return TRUE if the object can be picked up from anyone according to strong rules.
+     * This is a stronger version.
+     *
+     * @return TRUE if the object can be picked up from anyone according to strong rules.
      */
     virtual bool IsPickupableStrong();
+    
     virtual bool IsLockable();
     virtual bool IsLocked();
     virtual bool IsConstructible();
@@ -610,11 +760,13 @@ public:
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
 
 private:
-    /** Used to handle the take all messages with containers.
-     *  @param str The id of the message takestackall or takeall
-     *  @param obj The actor doing the action.
-     *  @param precise Whathever if we should stack the items only if they are equal or
-     *                 only if they are of the same type.
+    /**
+     * Used to handle the take all messages with containers.
+     *
+     * @param str     The id of the message takestackall or takeall
+     * @param obj     The actor doing the action.
+     * @param precise Whathever if we should stack the items only if they are equal or
+     *                only if they are of the same type.
      */ 
     virtual void SendBehaviorMessageTakeAll(const csString & str, gemObject *obj, bool precise);
 };
@@ -623,7 +775,9 @@ private:
 
 /**
  * gemContainers are the public containers in the world for crafting, like
- * forges or ovens.  Regular containers in inventory, like sacks, are simulated
+ * forges or ovens.
+ * 
+ * Regular containers in inventory, like sacks, are simulated
  * by psCharInventory.
  */
 class gemContainer : public gemItem
@@ -649,25 +803,27 @@ public:
     bool AddToContainer(psItem *item,Client *fromClient, int slot=-1) { return AddToContainer(item, fromClient, slot, false); }
     bool RemoveFromContainer(psItem *item,Client *fromClient);
 
-    /** @brief Checks if client is allowed to remove an item from the container.
-      *
-      * @param client A pointer to the client viewing the container
-      * @param item  Item being viewed or taken
-      *
-      * @return boolean indicating if client is allowed to take the item
-      */
+    /**
+     * Checks if client is allowed to remove an item from the container.
+     *
+     * @param client A pointer to the client viewing the container
+     * @param item  Item being viewed or taken
+     *
+     * @return boolean indicating if client is allowed to take the item
+     */
     bool CanTake(Client *client, psItem* item);
 
-    /** @brief Remove an item from the container.
-      *
-      * @param itemStack A pointer to the complete stack of the items we are looking at.
-      * @param fromslot  Where in the container the items are removed from.
-      * @param fromClient The client that is removing the items.
-      * @param stackCount The amount of items we want to remove.
-      *
-      * @return An item pointer that is the removed items from container.  If itemStack == the item returned
-      *         then the entire stack has been removed.  Otherwise it will be a new item instance.
-      */
+    /**
+     * Remove an item from the container.
+     *
+     * @param itemStack  A pointer to the complete stack of the items we are looking at.
+     * @param fromSlot   Where in the container the items are removed from.
+     * @param fromClient The client that is removing the items.
+     * @param stackCount The amount of items we want to remove.
+     *
+     * @return An item pointer that is the removed items from container.  If itemStack == the item returned
+     *         then the entire stack has been removed.  Otherwise it will be a new item instance.
+     */
     psItem* RemoveFromContainer(psItem *itemStack, int fromSlot, Client *fromClient, int stackCount);
 
     psItem *FindItemInSlot(int slot, int stackCount = -1);
@@ -711,14 +867,20 @@ public:
     virtual bool SeesObject(gemObject * object, float range);
 
     /**
-     * @param control  Set to true when sent to the controlling client.
+     * @param clientnum The client that initiated this update.
+     * @param control   Set to true when sent to the controlling client.
      */
     virtual void Broadcast(int clientnum, bool control);
 
     /**
+     * Send this object to the given client.
+     *
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
+     * @param to_superclients Send to super clients
+     * @param allEntities Buffer the message instead of sending it.
      */
-    virtual bool Send( int clientnum, bool control, bool super_clients, psPersistAllEntities *allEntities=NULL);
+    virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
 
     virtual bool GetVisibility() { return visible; };
     virtual void SetVisibility(bool vis) { visible = vis; };
@@ -726,8 +888,11 @@ public:
 
 //-----------------------------------------------------------------------------
 
-/** A record in a gemActor's attacker history.  This is abstract; entries are
- *  classified as either normal damage or DOT.
+/**
+ * A record in a gemActor's attacker history.
+ *
+ * This is abstract; entries are
+ * classified as either normal damage or DOT.
  */
 class AttackerHistory
 {
@@ -744,7 +909,9 @@ protected:
     csTicks timeOfAttack;
 };
 
-/// An AttackerHistory entry for a regular, one-time damaging attack
+/**
+ * An AttackerHistory entry for a regular, one-time damaging attack.
+ */
 class DamageHistory : public AttackerHistory
 {
 public:
@@ -758,7 +925,9 @@ protected:
     float damage;
 };
 
-/// An AttackerHistory entry for a DOT (damage over time) attack
+/**
+ * An AttackerHistory entry for a DOT (damage over time) attack.
+ */
 class DOTHistory : public AttackerHistory
 {
 public:
@@ -778,14 +947,26 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
+class FrozenBuffable : public ClampedPositiveBuffable<int>
+{
+public:
+    void Initialize(gemActor *actor){ this->actor = actor; }
 
-/** Any semi-autonomous object, either a player or an NPC.
+protected:
+    gemActor* actor;
+    virtual void OnChange();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+ * Any semi-autonomous object, either a player or an NPC.
  */
 class gemActor :  public gemObject, public iDeathNotificationObject
 {
 protected:
     psCharacter *psChar;
-    PID pid; ///< Player ID (also known as character ID or PID)
+    PID pid;                   ///< Player ID (also known as character ID or PID)
     csRef<PlayerGroup> group;
 
     psCharacter *mount;
@@ -894,6 +1075,7 @@ protected:
     uint8_t movementMode; ///< Actor movement mode from DB table movement_modes
     bool isAllowedToMove; ///< Is a movement lockout in effect?
     bool atRest;          ///< Is this character stationary or moving?
+    FrozenBuffable isFrozen;  ///< Whether the actor is frozen or not.
 
     PSCHARACTER_MODE player_mode;
     Stance combat_stance;
@@ -927,10 +1109,13 @@ public:
 
     virtual PID GetPID() { return pid; }
 
-    /// iScriptableVar::GetProperty implementation
+    /** @name iScriptableVar implementation
+     * Functions that implement the iScriptableVar interface. 
+     */
+    ///@{
     virtual double GetProperty(MathEnvironment* env, const char *ptr);
-    /// iScriptableVar::CalcFunction implementation
     virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
+    ///@}
 
     bool SetupCharData();
 
@@ -950,33 +1135,44 @@ public:
     bool IsSpellCasting() { return spellCasting != NULL; }
     void InterruptSpellCasting() { if (spellCasting) spellCasting->Interrupt(); }
 
-    /// Assign trade work event so it can be accessed
+    /**
+     * Assign trade work event so it can be accessed.
+     */
     void SetTradeWork(psWorkGameEvent *event) { workEvent = event; }
-    /// Return trade work event so it can be stopped
+    
+    /**
+     * Return trade work event so it can be stopped.
+     */
     psWorkGameEvent *GetTradeWork() { return workEvent; }
 
     bool IsAllowedToMove() { return isAllowedToMove; }  ///< Covers sitting, death, and out-of-stamina
     void SetAllowedToMove(bool newvalue);
 
-    /** Get the target type in regards to attacks
+    /// Check whether the actor is frozen.
+    void SetFrozen(bool flag) { isFrozen.SetBase(flag ? 1 : 0); }
+    bool IsFrozen() { return (isFrozen.Current() > 0); }
+    FrozenBuffable & GetBuffableFrozen() { return isFrozen; }
+    
+    /**
+     * Get the target type in regards to attacks
      */
     int GetTargetType(gemObject* target);
         
-    /** Checks if our actor can attack given target.
-     *  If not, the msg is filled out.
+    /**
+     * Checks if our actor can attack given target.
+     *
+     * If not, the msg is filled out.
      */
     bool IsAllowedToAttack(gemObject* target, csString& msg);
 
 
     /**
-     * @brief Make the character sit
+     * Make the character sit.
      */
     void Sit();
 
     /**
-     * @brief Makes the character stand up
-     *
-     * @param the client who stand
+     * Makes the character stand up.
      */
     void Stand();
 
@@ -994,38 +1190,46 @@ public:
     void SetLastProductionPos(csVector3& pos) { last_production_pos = pos; }
     void GetLastProductionPos(csVector3& pos) { pos = last_production_pos; }
 
-    /** @brief Returns the place where the player last started digging.
-      *
-      * @return The location where the player last started digging. */
+    /**
+     * Returns the place where the player last started digging.
+     *
+     * @return The location where the player last started digging.
+     */
     const csVector3& GetProductionStartPos(void) const { return productionStartPos; }
-    /** @brief Sets the place where the player started digging.
-      *
-      * @param pos The location where the player started digging. */
+    
+    /**
+     * Sets the place where the player started digging.
+     *
+     * @param pos The location where the player started digging.
+     */
     void SetProductionStartPos(const csVector3& pos) { productionStartPos = pos; }
 
     // To be used for the /report command.
 
     /**
-     * @brief Adds an active report (file logging session) to this actor.
+     * Adds an active report (file logging session) to this actor.
+     *
      * @param[in] reporter The client actor issuing /report
      * @return true on success, or false on error (failure to start logging probably)
      */
     bool AddChatReport(gemActor *reporter);
 
     /**
-     * @brief Removes an active report (file logging session) for this actor.
+     * Removes an active report (file logging session) for this actor.
+     *
      * This function is invoked automatically after a specific amount of time
      * from the report activation.
      */
     void RemoveChatReport();
 
     /**
-     * @brief Returns /report file logging status.
+     * Returns /report file logging status.
      */
     bool IsLoggingChat() const { return activeReports > 0; }
 
     /**
-     * @brief Adds the chat message to the history and optionally to the log file
+     * Adds the chat message to the history and optionally to the log file.
+     *
      * @param[in] who The name of the character who sent this message
      * @param[in] msg The chat message
      * @return Returns true if the message was written to the log file
@@ -1035,6 +1239,7 @@ public:
     /**
      * @brief Saves a system message to this actor's chat history and logs it to
      * a file, if there are active reports.
+     *
      * @return Returns true if the line was written to the log file
      */
     bool LogSystemMessage(const char* szLine);
@@ -1042,6 +1247,7 @@ public:
     /**
      * @brief Saves a line to this actor's chat history and logs it to
      * a file, if there are active reports.
+     *
      * @return Returns true if the line was written to the log file
      */
     bool LogLine(const char* szLine);
@@ -1086,8 +1292,11 @@ public:
     const char *GetGuildName();
     csWeakRef<psGuildInfo> GetGuild() { return psChar->GetGuild(); }
     psGuildLevel *GetGuildLevel() { return psChar->GetGuildLevel(); }
-    /** Gets the psguildmember structure refereed to this actor, if in a guild
-     *  @return psGuildMember: A pointer to the psGuildMember structure of this actor
+    
+    /**
+     * Gets the psguildmember structure refereed to this actor, if in a guild.
+     *
+     * @return psGuildMember: A pointer to the psGuildMember structure of this actor
      */
     psGuildMember *GetGuildMembership() { return psChar->GetGuildMembership(); }
 
@@ -1097,9 +1306,12 @@ public:
     void RemoveAttackerHistory(gemActor * attacker);
     bool CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) const;
 
-    /** Checks the attacker history to see if the attacker has actually attacked the entity.
+    /**
+     * Checks the attacker history to see if the attacker has actually attacked the entity.
+     *
      *  Used to exclude from loot those who didn't actually partecipate in the attack even if
      *  they are grouped.
+     *
      *  @param attacker A pointer to the actor we are checking if it has attacked.
      *  @return TRUE if the actor has attacked the entity.
      */
@@ -1120,29 +1332,50 @@ public:
     void SetAction(const char *anim,csTicks& timeDelay);
 
     virtual void Broadcast(int clientnum, bool control);
+
     /**
+     * Send this object to the given client.
+     *
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
+     * @param to_superclients Send to super clients
+     * @param allEntities Buffer the message instead of sending it.
      */
     virtual bool Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
+
+    /**
+     * Distribute this object to all members of a group.
+     *
+     * @param me The MsgEntry to send to all group members.
+     */
     virtual void SendGroupMessage(MsgEntry *me);
 
-    /// Used by chat manager to identify an npc you are near if you talk to one
+    /**
+     * Used by chat manager to identify an npc you are near if you talk to one.
+     */
     gemObject *FindNearbyActorName(const char *name);
 
     virtual void SendBehaviorMessage(const csString & str, gemObject *obj);
     virtual csString GetDefaultBehavior(const csString & dfltBehaviors);
 
-    /** Called when the object began falling - 'fallBeginning' tells where the fall started
-        displaceY is the displacement that needs to be added to due to passing through
-        warping portals
-        portalSector is the final sector of the player after passing through the warping
-        portals.
-    */
+    /**
+     * Called when the object began falling - 'fallBeginning' tells where the fall started
+     * displaceY is the displacement that needs to be added to due to passing through
+     * warping portals portalSector is the final sector of the player after passing through the warping
+     * portals.
+     */
     void FallBegan(const csVector3& pos, iSector* sector);
-    /** Called when the object has fallen down - sets its falling status to false */
+    
+    /**
+     * Called when the object has fallen down - sets its falling status to false.
+     */
     float FallEnded(const csVector3& pos, iSector* sector);
-    /** Checks if the object is falling */
+    
+    /**
+     * Checks if the object is falling.
+     */
     bool IsFalling() { return isFalling; }
+    
     csTicks GetFallStartTime() { return fallStartTime; }
 
     bool AtRest() const { return atRest; }
@@ -1154,37 +1387,56 @@ public:
     virtual bool GetInvincibility() { return invincible; }
     virtual void SetInvincibility(bool invincible);
 
-    /// Flag to determine of this player can see all objects
+    /**
+     * Flag to determine of this player can see all objects.
+     */
     bool GetViewAllObjects() { return viewAllObjects; }
     void SetViewAllObjects(bool v);
 
     void StopMoving(bool worldVel = false);
 
-    /** Moves player to his spawn position
-     *  @param delay The time to wait in the load screen even if the new position was already loaded.
-     *  @param background The background to use when the load screen is shown or if it's forced.
-     *  @paran widget The widget which will replace the normal loading one, if any is defined.
-     *  @return TRUE in case of success. FALSE if the character lacks a spawn position.
+    /**
+     * Moves player to his spawn position.
+     *
+     * @param delay The time to wait in the load screen even if the new position was already loaded.
+     * @param background The background to use when the load screen is shown or if it's forced.
+     * @param point1 Start point for animation
+     * @param point2 Destination point for animation
+     * @param widget The widget which will replace the normal loading one, if any is defined.
+     * @return TRUE in case of success. FALSE if the character lacks a spawn position.
      */
     bool MoveToSpawnPos(int32_t delay = 0, csString background = "", csVector2 point1 = 0, csVector2 point2 = 0, csString widget = "");
-    /** Gets the player spawn position according to his race.
+    
+    /**
+     * Gets the player spawn position according to his race.
      * 
-     *  @todo Implement the support for player specific spawn pos, not only race specific.
-     *  @param pos A csVector where to store the player position.
-     *  @param yrot A float where to store the rotation of the player.
-     *  @param sector An iSector where to store the sector of the position the player.
-     *  @param useRange A boolean which says if we have to apply random range calculation in the positions.
-     *  @return FALSE If the race or the destination sector of the player can't be found.
+     * @todo Implement the support for player specific spawn pos, not only race specific.
+     *
+     * @param pos A csVector where to store the player position.
+     * @param yrot A float where to store the rotation of the player.
+     * @param sector An iSector where to store the sector of the position the player.
+     * @param useRange A boolean which says if we have to apply random range calculation in the positions.
+     * @return FALSE If the race or the destination sector of the player can't be found.
      */
     bool GetSpawnPos(csVector3& pos, float& yrot, iSector*& sector, bool useRange = false);
 
-    /// Restores actor to his last valid position
+    /**
+     * Restores actor to his last valid position.
+     *
+     * @param force Force an update if set to true.
+     */
     bool MoveToValidPos(bool force = false);
+    
     void GetValidPos(csVector3& pos, float& yrot, iSector*& sector, InstanceID &instance);
 
-    /// Get the last reported location this actor was at
+    /**
+     * Get the last reported location this actor was at.
+     */
     void GetLastLocation(csVector3 & pos, float & yrot, iSector*& sector, InstanceID &instance);
-    /// Moves player to his last reported location
+    
+    /**
+     * Moves player to his last reported location.
+     */
     void MoveToLastPos();
 
     /// Record the location of this actor before he was teleported
@@ -1213,7 +1465,8 @@ public:
     int FindAnimIndex(const char *name);
 
 
-    /** Set attributes back to default.
+    /**
+     * Set attributes back to default.
      *
      * GMs use this commands to set attributes back to the default
      * for either a player or a GM.
@@ -1223,6 +1476,10 @@ public:
     void SetDefaults( bool player );
     
 
+    /** @name GM/debug abilities
+     * Turn on and of features used for GMs/debuging.
+     */
+    ///@{
     /** These flags are for GM/debug abilities */
     bool nevertired;        ///< infinite stamina
     bool infinitemana;      ///< infinite mana
@@ -1231,8 +1488,11 @@ public:
     bool questtester;       ///< no quest lockouts
     bool givekillexp;       ///< give exp if killed
     bool attackable;        ///< This actor can be attacked by anyone without limitations or /challenge
+    ///@}
 
-    // don't use this directly
+    /**
+     * @note don't use this directly
+     */
     bool SetMesh(const char* meshname);
 
     bool GetFiniteInventory() { return GetCharacterData()->Inventory().GetDoRestrictions(); }
@@ -1241,7 +1501,9 @@ public:
     // Target information
     void SetTargetObject(gemObject *object){ targetObject = object; }
     gemObject* GetTargetObject() const { return targetObject; }
-    /** Get the z velocity of the actor.
+    
+    /**
+     * Get the z velocity of the actor.
      */
     virtual float GetVelocity();
 };
@@ -1318,7 +1580,8 @@ public:
     const csArray<int>& GetLootableClients() const {return lootable_clients; }
     Client *GetRandomLootClient(int range);
 
-    /** Used to allow a NPC to communicate by saying things to its environment.
+    /**
+     * Used to allow a NPC to communicate by saying things to its environment.
      *
      * Use this to publish chat messages of type SAY for NPCs.
      * They can either be of private to the client who or broadcasted.
@@ -1330,7 +1593,8 @@ public:
      */
     void Say(const char* sayText, Client* who, bool sayPublic, csTicks &timeDelay);
     
-    /** Used to allow a NPC to communicate through action to its environment.
+    /**
+     * Used to allow a NPC to communicate through action to its environment.
      *
      * Use this to publish chat messages of type ME,MY,NARRATE for NPCs.
      * They can either be of private to the client who or broadcasted.
@@ -1350,11 +1614,17 @@ public:
     void GetBadText(size_t first,size_t last, csStringArray& saidArray, csStringArray& trigArray);
 
     /**
+     * Send this object to the given client.
+     *
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
+     * @param to_superclients Send to super clients
+     * @param allEntities Buffer the message instead of sending it.
      */
     virtual bool Send(int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities=NULL);
 
     /**
+     * @param clientnum The client that initiated this update.
      * @param control  Set to true when sent to the controlling client.
      */
     virtual void Broadcast(int clientnum, bool control );
@@ -1373,10 +1643,11 @@ public:
     virtual void SetPosition(const csVector3& pos, float angle, iSector* sector);
 
 
-    /** Returns if the npc has killsteal protection.
-	 *  
-	 * Rules about killsteal protection should be implemented here. 
-	 * Generic NPCs have killsteal protection, pet don't have it.
+    /**
+     * Returns if the npc has killsteal protection.
+     *  
+     * Rules about killsteal protection should be implemented here. 
+     * Generic NPCs have killsteal protection, pet don't have it.
      *
      * @return A boolean indicating if this gemNPC must have killsteal protection.
      */
@@ -1385,24 +1656,29 @@ public:
     virtual void SendGroupStats();
     virtual void ForcePositionUpdate();
 
-    /** Register clients that speak to a npc
+    /**
+     * Register clients that speak to a npc
      */
     void RegisterSpeaker(Client* client);
 
-    /** Check speakers to see if not spoken to anymore.
+    /**
+     * Check speakers to see if not spoken to anymore.
      */
     void CheckSpeakers();
 
-    /** To set the busy state of the NPC
+    /**
+     * To set the busy state of the NPC
      *
-     * NPC operation <busy /> and <idle /> set and cleare this flag.
+     * NPC operation \<busy /\> and \<idle /\> set and cleare this flag.
+     * @see BusyOperation
      */
     void SetBusy(bool busy);
 
-    /** True if the NPC client sent the busy command.
+    /**
+     * True if the NPC client sent the busy command.
      *
-     * NPC operation <busy /> and <idle /> set and cleare this flag.
-     *
+     * NPC operation \<busy /\> and \<idle /\> set and cleare this flag.
+     * @see BusyOperation
      */
     bool IsBusy() const;
 };
@@ -1437,8 +1713,9 @@ private:
 
 /**
  * This class automatically implements timed events which depend
- * on the existence and validity of a gemObject of any kind.  It
- * will make sure this event is cancelled and skipped when the
+ * on the existence and validity of a gemObject of any kind.
+ *
+ * It will make sure this event is cancelled and skipped when the
  * gemObject is deleted before the event is fired.
  */
 class psGEMEvent : public psGameEvent, public iDeleteObjectCallback
@@ -1507,5 +1784,6 @@ public:
     }
 };
 
+/** @} */
 
 #endif

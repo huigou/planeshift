@@ -28,6 +28,10 @@ class pawsButton;
 class pawsMessageTextBox;
 class pawsCheckBox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 class EEditError
 {
 public:
@@ -105,5 +109,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditErrorToolbox);
+
+/** @} */
 
 #endif 

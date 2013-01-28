@@ -27,6 +27,10 @@ class pawsButton;
 class pawsListBox;
 class psEffectManager;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** This allows you to load an effect.
  */
 class EEditLoadEffectToolbox : public EEditToolbox, public pawsWidget, public scfImplementation0<EEditLoadEffectToolbox>
@@ -65,5 +69,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditLoadEffectToolbox);
+
+/** @} */
 
 #endif 

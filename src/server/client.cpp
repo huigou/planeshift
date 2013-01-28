@@ -78,9 +78,7 @@ Client::Client ()
     isBuddyListHiding   = false;
 
     mute.Initialize(this);
-    isFrozen.Initialize(this);
     SetMute(false);
-    SetFrozen(false);
 
     // pets[0] is a special case for the players familiar.
     pets.Insert(0, PID(0));
@@ -575,7 +573,3 @@ OrderedMessageChannel *Client::GetOrderedMessageChannel(msgtype mtype)
 
 void MuteBuffable::OnChange() {}
 
-void FrozenBuffable::OnChange()
-{
-	cli->GetCharacterData()->GetActor()->SetAllowedToMove( !(Current() > 0) );
-}

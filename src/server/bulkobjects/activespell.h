@@ -36,10 +36,15 @@
 struct iDocumentNode;
 class gemActor;
 
-/** iCancelAction
+/**
+ * \addtogroup bulkobjects
+ * @{ */
+
+/**
+ * iCancelAction
  *
  * A generic way to make necessary stuff happen when an ActiveSpell
- * is cancelled.  For example, sending the undo half of a <msg>, or
+ * is cancelled.  For example, sending the undo half of a \<msg\>, or
  * unhooking an event triggered spell.
  */
 class iCancelAction
@@ -82,13 +87,18 @@ public:
     SPELL_TYPE      Type() const { return type; }
     csTicks Duration() const { return duration; }
 
-    /** If Cancel() returns true, you're responsible for freeing the ActiveSpell's memory.
-     *  If it returns false, it ignored the (second) attempt to cancel it (due to links).
+    /**
+     * If Cancel() returns true, you're responsible for freeing the ActiveSpell's memory.
+     *
+     * If it returns false, it ignored the (second) attempt to cancel it (due to links).
      */
     bool Cancel();
+    
     bool HasExpired() const;
 
-    /// Return (XML for) a ProgressionScript that would restore this spell effect.
+    /**
+     * Return (XML for) a ProgressionScript that would restore this spell effect.
+     */
     csString Persist() const;
 
 protected:
@@ -105,5 +115,7 @@ protected:
     csArray<iSpellModifier*> modifiers; ///< The iSpellModifiers this ActiveSpell altered, for cancelling.
     csPDelArray<iCancelAction> actions; ///< Actions to take when cancelling (i.e. unattaching scripts).
 };
+
+/** @} */
 
 #endif

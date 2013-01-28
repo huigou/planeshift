@@ -33,6 +33,10 @@ class psSectorInfo;
 
 
 /**
+ * \addtogroup server
+ * @{ */
+
+/**
  * This class is used to store respawn ranges for NPCs. They are intended
  * to be gathered into a SpawnRule.
  */
@@ -165,7 +169,8 @@ public:
     /// Determine if substitute player should be spawned.  Returns either original or substitute.
     PID CheckSubstitution(PID originalplayer);
 
-    /** Pick a spot for the entity to respawn
+    /**
+     * Pick a spot for the entity to respawn.
      *
      * @return True if this is a random area rule, or false if it is a fixed position.
      */
@@ -224,13 +229,15 @@ public:
     /// This adds another item to the entries array
     void AddLootEntry( LootEntry *entry );
 
-    /** This calculates the loot for the killed character, given the
-     *  current set of loot entries, and adds them to the
-     *  character as lootable inventory.
-     *  @param char the character who has been killed
-     *  @param numModifiers max number of modifiers to use
+    /**
+     * This calculates the loot for the killed character, given the
+     * current set of loot entries, and adds them to the
+     * character as lootable inventory.
+     *
+     * @param character the character who has been killed
+     * @param numModifiers max number of modifiers to use
      */
-    void CreateLoot( psCharacter *chr, size_t numModifiers = 0 );
+    void CreateLoot( psCharacter *character, size_t numModifiers = 0 );
 
     /**
      * Set the randomizer to use for random loot
@@ -261,7 +268,8 @@ public:
     SpawnManager(psDatabase *db, CacheManager *cachemanager, EntityManager *entitymanager, GEMSupervisor *gemsupervisor);
     virtual ~SpawnManager();
 
-    /** Returns the loot randomizer.
+    /**
+     * Returns the loot randomizer.
      *
      * @return Returns a reference to the current loot randomizer.
      */
@@ -289,13 +297,16 @@ public:
      */
     void LoadSpawnRanges(SpawnRule *rule);
 
-    /** Load hunt location
-     *  @param sectorinfo The sector to load in. NULL means all sectors.
+    /**
+     * Load hunt location.
+     *
+     * @param sectorinfo The sector to load in. NULL means all sectors.
      */
     void LoadHuntLocations(psSectorInfo *sectorinfo = 0);
 
     /**
      * Used by LoadHuntLocations() to spawn the hunt locations in game.
+     *
      * @param result the result set to use for the spawm
      * @param sectorinfo The sector to load in. NULL means all sectors.
      */
@@ -303,11 +314,12 @@ public:
 
     /**
      * Called at server startup to create all creatures currently marked as
-     * "living" in the database.  This will restore the server to its last
-     * known NPC population if it crashes.
+     * "living" in the database.
      *
-     *  @param sectorinfo The sector we want to repopulate.
-     *                    If NULL then respawn all sectors.
+     * This will restore the server to its last known NPC population if it crashes.
+     *
+     * @param sectorinfo The sector we want to repopulate.
+     *                   If NULL then respawn all sectors.
      */
     void RepopulateLive(psSectorInfo *sectorinfo = 0);
 
@@ -322,8 +334,11 @@ public:
      */
     void Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, const char* sector);
 
-    /// Adds all items to the world.
-    /** Called at the server startup to add all the items to the game.
+    /**
+     * Adds all items to the world.
+     *
+     * Called at the server startup to add all the items to the game.
+     *
      * @param sectorinfo The sector to respawn the items into. If NULL it will
      *                   respawn all items in all sectors.
      */
@@ -356,7 +371,8 @@ protected:
     SpawnRule*    spawnRule;   ///< The rule to use for determine where
 
 public:
-    /** Event to respawn given PID in a position to be found by the spawnRule.
+    /**
+     * Event to respawn given PID in a position to be found by the spawnRule.
      */
     psRespawnGameEvent(SpawnManager* mgr,
                        int delayticks,
@@ -400,5 +416,6 @@ protected:
     psScheduledItem* schedule;
 };
 
+/** @} */
 
 #endif

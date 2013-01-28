@@ -26,6 +26,10 @@
 class pawsButton;
 class pawsSpinBox;
 
+/**
+ * \addtogroup eedit
+ * @{ */
+
 /** A dialog window to select a floating point value.
  */
 class EEditSelectFloat : public pawsWidget, public scfImplementation0<EEditSelectFloat>
@@ -34,9 +38,12 @@ public:
     EEditSelectFloat();
     virtual ~EEditSelectFloat();
 
-    /** Pops up the select float dialog.
-     *   @param startValue the value that first appears in the dialog box.
-     *   @param callback a pointer to the callback that should be called on selection.
+    /**
+     * Pops up the select float dialog.
+     *
+     * @param startValue the value that first appears in the dialog box.
+     * @param callback a pointer to the callback that should be called on selection.
+     * @param pos Selected position.
      */
     void Select(float startValue, EEditInputboxManager::iSelectFloat * callback, const csVector2 & pos);
     
@@ -53,5 +60,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(EEditSelectFloat);
+
+/** @} */
 
 #endif 

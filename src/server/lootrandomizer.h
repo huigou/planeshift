@@ -22,6 +22,10 @@
 class RandomizedOverlay;
 
 /**
+ * \addtogroup server
+ * @{ */
+
+/**
  * This class holds one loot modifier
  * The lootRandomizer contions arrays of these
  */
@@ -72,28 +76,38 @@ protected:
     float suffix_max;
 
 public:
-    /** Constructor.
+    /**
+     * Constructor.
+     *
      *  @param cachemanager A pointer to the cache manager.
      */
     LootRandomizer(CacheManager* cachemanager);
-    ///Destructor
+    /**
+     * Destructor
+     */
     ~LootRandomizer();
 
-    /// This adds another item to the entries array
+    /**
+     * This adds another item to the entries array.
+     */
     void AddLootModifier(LootModifier* entry);
 
-    /** Gets a loot modifier from it's id.
-     *  @param id The id of the item we are searching for.
-     *  @return A pointer to the loot modifier which is referenced by the id we were searching for.
+    /**
+     * Gets a loot modifier from it's id.
+     *
+     * @param id The id of the item we are searching for.
+     * @return A pointer to the loot modifier which is referenced by the id we were searching for.
      */
     LootModifier* GetModifier(uint32_t id);
 
-    /** This randomizes the current loot item and returns the item with the modifiers applied.
-     *  @param item The item instance which we will be randomizing.
-     *  @param cost The maximum "cost" of the randomization we can apply @see CalcModifierCostCap
-     *  @param lootTesting Says if we really are applying the modifiers.
-     *  @param numModifiers Forces the amount of modifiers to apply.
-     *  @return A pointer to the resulting item (it's the same pointer which was passed to the function).
+    /**
+     * This randomizes the current loot item and returns the item with the modifiers applied.
+     *
+     * @param item The item instance which we will be randomizing.
+     * @param cost The maximum "cost" of the randomization we can apply @see CalcModifierCostCap
+     * @param lootTesting Says if we really are applying the modifiers.
+     * @param numModifiers Forces the amount of modifiers to apply.
+     * @return A pointer to the resulting item (it's the same pointer which was passed to the function).
      */
     psItem* RandomizeItem(psItem* item,
                           float cost,
@@ -109,17 +123,21 @@ public:
      */
     float CalcModifierCostCap(psCharacter* chr);
 
-    /** Applies modifications to a randomized overlay depending on the requested ids.
-     *  @param baseItem The basic item which will have the overlay generated for.
-     *  @param overlay A pointer to the overlay where we will save the modifications to apply to this item.
-     *  @param modifiersIds An array with all the ids of the modifiers which we will need to apply to the overlay.
+    /**
+     * Applies modifications to a randomized overlay depending on the requested ids.
+     *
+     * @param baseItem The basic item which will have the overlay generated for.
+     * @param overlay A pointer to the overlay where we will save the modifications to apply to this item.
+     * @param modifiersIds An array with all the ids of the modifiers which we will need to apply to the overlay.
      */
     void ApplyModifier(psItemStats* baseItem, RandomizedOverlay* overlay, csArray<uint32_t> &modifiersIds);
 
-    /** Returns the percent probability of a modifier based on the total number of modifiers available of that type.
-     *  @param modifier the ID of the modifier to evaluate.
-     *  @param modifierType 0=prefix, 1=suffix, 2=adjective
-     *  @return the float percentage, or 0 if the modifier is invalid or has no probability
+    /**
+     * Returns the percent probability of a modifier based on the total number of modifiers available of that type.
+     *
+     * @param modifierID the ID of the modifier to evaluate.
+     * @param modifierType 0=prefix, 1=suffix, 2=adjective
+     * @return the float percentage, or 0 if the modifier is invalid or has no probability
      */
     float GetModifierPercentProbability(int modifierID, int modifierType);
 
@@ -129,20 +147,24 @@ protected:
 
 private:
     void AddModifier(LootModifier* oper1, LootModifier* oper2);
-    /** sets an attribute to the item overlay. utility function used when parsing the loot modifiers xml
-     *  @param op The operation to do with the attributes. (+, -, *)
-     *  @param attrName The name of the attribute we are changing.
-     *  @param modifier The amount to change of the attribute (right operand, left operand is the basic attribute)
-     *  @param overlay The randomization overlay where we are applying these attributes.
-     *  @param baseItem The base item of the item we are applying these attributes to
-     *  @param values An array which will be filled with the variables defined as attribute (var.Name). It's important the name
+    
+    /**
+     * Sets an attribute to the item overlay. utility function used when parsing the loot modifiers xml.
+     *
+     * @param op The operation to do with the attributes. (+, -, *)
+     * @param attrName The name of the attribute we are changing.
+     * @param modifier The amount to change of the attribute (right operand, left operand is the basic attribute)
+     * @param overlay The randomization overlay where we are applying these attributes.
+     * @param baseItem The base item of the item we are applying these attributes to
+     * @param values An array which will be filled with the variables defined as attribute (var.Name). It's important the name
      *                starts with an Uppercase letter because of mathscript restrains.
-     *  @return TRUE if the operation succeded.
+     * @return TRUE if the operation succeded.
      */
     bool SetAttribute(const csString &op, const csString &attrName, float modifier, RandomizedOverlay* overlay, psItemStats* baseItem, csArray<ValueModifier> &values);
 
     /**
      * Sets the attributes in the passed float array according to the passed parameters.
+     *
      * @param value An array of pointers to floats containing the value to be modified.
      * @param modifier The amount to apply through all the array values.
      * @param amount The size of the passed array of pointers.
@@ -152,6 +174,7 @@ private:
 
     /**
      * Generates the equip script amended with the defined variables.
+     *
      * @param name The name of the item.
      * @param equip_script The inner equip script defined in the equip_script column of the database.
      * @param values An array of values parsed from the set attributes which will be used to add in the
@@ -160,6 +183,8 @@ private:
      */
     csString GenerateScriptXML(csString &name, csString &equip_script, csArray<ValueModifier> &values);
 };
+
+/** @} */
 
 #endif
 

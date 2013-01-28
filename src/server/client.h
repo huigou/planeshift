@@ -65,16 +65,6 @@ protected:
     virtual void OnChange();
 };
 
-class FrozenBuffable : public ClampedPositiveBuffable<int>
-{
-public:
-    void Initialize(Client *c) { cli = c; }
-
-protected:
-    Client *cli;
-    virtual void OnChange();
-};
-
 enum TARGET_TYPES
 {
     TARGET_NONE     = 0x01, /* Also Area */
@@ -157,12 +147,7 @@ public:
         
     /// Returns whether the client's character is alive.
     bool IsAlive() const;
-
-    /// Check whether the client is frozen.
-    void SetFrozen(bool flag) { isFrozen.SetBase(flag ? 1 : 0); }
-    bool IsFrozen() { return (isFrozen.Current() > 0); }
-    FrozenBuffable & GetBuffableFrozen() { return isFrozen; }
-
+    
     /// Check if distance between client and target is within range.
     bool ValidateDistanceToTarget(float range);
 
@@ -174,14 +159,16 @@ public:
     void SetMesh(csString nextMesh) { mesh = nextMesh; }
     csString GetMesh() const { return mesh; }
 
-    /** Get the current selected target player.
+    /**
+     * Get the current selected target player.
      * @return -1 if no target selected or target not a player
      */
     int GetTargetClientID();
 
-    /** Get the current selected object id.
-    * @return -1 if no target selected
-    */
+    /**
+     * Get the current selected object id.
+     * @return -1 if no target selected
+     */
     //    int GetTargetObjectID();
 
     uint32_t GetClientNum() const { return clientnum; }
@@ -469,8 +456,6 @@ public:
     csList<iSector*> locationDisplaySectors;
     
 private:    
-    FrozenBuffable isFrozen;  ///< Whether the client is frozen or not.
-
     /// Potential number of exploits automatically detected.
     unsigned int detectedCheatCount;
 
