@@ -232,3 +232,4 @@ RegisterCompileGroups server psserver psclient psnpcclient client tests tools cl
 # Library targets must be seen by Jam before Application and Plugin targets.
 
 SubInclude TOP src ;
+SubInclude TOP docs ;
