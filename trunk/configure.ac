@@ -45,6 +45,7 @@ CS_PROG_CXX
 CS_PROG_LINK
 CS_CHECK_COMMON_TOOLS_LINK
 CS_CHECK_COMMON_TOOLS_BASIC
+CS_CHECK_COMMON_TOOLS_DOC_DOXYGEN
 
 #----------------------------------------------------------------------------
 # Determine system type
