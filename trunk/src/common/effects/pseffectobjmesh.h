@@ -25,6 +25,10 @@
 
 class psEffect2DRenderer;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjMesh : public psEffectObj
 {
 public:
@@ -49,5 +53,7 @@ private:
     csRef<iThreadReturn> factory;
     csRef<iSprite3DState> sprState;
 };
+
+/** @} */
 
 #endif

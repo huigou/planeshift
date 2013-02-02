@@ -16,6 +16,18 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
+#ifndef __NAMEGENERATOR_H__
+#define __NAMEGENERATOR_H__
+
+
+#include <csutil/parray.h>
+#include <csutil/randomgen.h>
+
+struct iObjectRegistry;
+
+/**
+ * \addtogroup common_util
+ * @{ */
 
 
 /* Name generation functions.
@@ -66,15 +78,6 @@
  */
 
 
-
-#ifndef __NAMEGENERATOR_H__
-#define __NAMEGENERATOR_H__
-
-
-#include <csutil/parray.h>
-#include <csutil/randomgen.h>
-
-struct iObjectRegistry;
 
 enum {
     NAMEGENERATOR_FEMALE_FIRST_NAME=0,
@@ -142,10 +145,7 @@ private:
     NameGenerator *generators[NAMEGENERATOR_MAX];
 };
 
-
-
-
-
+/** @} */
 
 #endif
 

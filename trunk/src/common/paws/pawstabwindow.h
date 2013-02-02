@@ -22,6 +22,9 @@
 #include "pawswidget.h"
 #include "pawsbutton.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
 
 /** 
  * This window is supposed to be a generic widget for using tabs to show and hide subwindows
@@ -61,5 +64,7 @@ protected:
 };
 
 CREATE_PAWS_FACTORY( pawsTabWindow );
+
+/** @} */
 
 #endif

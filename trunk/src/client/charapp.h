@@ -133,10 +133,12 @@ public:
       */
     void ApplyTraits(const csString& traits);
 
-    /** Apply a set of equipment based on a XML string.
-      * @param traits The XML formated string that has a list of the equipment
-      *               to apply.
-      */
+    /**
+     * Apply a set of equipment based on a XML string.
+     *
+     * @param equipment The XML formated string that has a list of the equipment
+     *                  to apply.
+     */
     void ApplyEquipment(const csString& equipment);
 
     /** Handle the visual aspect of mounting, by attaching the rider's mesh
@@ -179,22 +181,26 @@ public:
 
     void SetSneak(bool sneaking);
 
-    /** Change the material on a part of the model.
-    * @param part The part of the model we want to change the materail on ( ex Torso )
-    * @param material The name of the material to use.
-    *
-    * @return true if the material was changed.
-    */
+    /**
+     * Change the material on a part of the model.
+     *
+     * @param part The part of the model we want to change the materail on ( ex Torso )
+     * @param materialName The name of the material to use.
+     *
+     * @return true if the material was changed.
+     */
     bool ChangeMaterial(const char* part, const char* materialName);
 
 private:
-    /** Parse a string from it's parts into a proper string.
-      * For example part Torso and str $P_Plate will give Torso_Plate.
-      * @param part The part of them model to parse in.
-      * @param str  The string to parse.
-      *
-      * @return The parsed string.
-      */
+    /**
+     * Parse a string from it's parts into a proper string.
+     *
+     * For example part Torso and str $P_Plate will give Torso_Plate.
+     * @param part The part of them model to parse in.
+     * @param str  The string to parse.
+     *
+     * @return The parsed string.
+     */
     csString ParseStrings(const char *part, const char* str) const;
 
     /** Set a particular trait into place.

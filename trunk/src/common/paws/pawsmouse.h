@@ -32,6 +32,10 @@ class PawsManager;
 
 struct iGraphics3D;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 /** The mouse pointer.
  */
 class pawsMouse  
@@ -105,6 +109,8 @@ protected:
 
     void SetOSMouse(csRef<iPawsImage> mouseImage);
 };
+
+/** @} */
 
 #endif 
 

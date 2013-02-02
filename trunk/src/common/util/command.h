@@ -24,6 +24,10 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 typedef int cmdfuncptr(const char *);
 
 /**
@@ -40,5 +44,7 @@ struct COMMAND {
 };
 
 extern const COMMAND commands[];
+
+/** @} */
 
 #endif

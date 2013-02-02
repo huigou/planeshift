@@ -20,6 +20,17 @@
  * 
  */
 
+#ifndef PS_POOLALLOCATOR_H
+#define PS_POOLALLOCATOR_H
+
+// Define this to enable testing to be sure a Release()'d object came from the pool to begin with (debug mode only)
+//#define POOLALLOC_DEBUG_DELETE
+
+#include <csutil/threading/thread.h>
+
+/**
+ * \addtogroup common_util
+ * @{ */
 
 /*   Design notes:
  *
@@ -60,13 +71,6 @@
  *  - A pool size of 3 should be about as efficient as normal heap allocation functions
  *  
  */
-#ifndef PS_POOLALLOCATOR_H
-#define PS_POOLALLOCATOR_H
-
-// Define this to enable testing to be sure a Release()'d object came from the pool to begin with (debug mode only)
-//#define POOLALLOC_DEBUG_DELETE
-
-#include <csutil/threading/thread.h>
 
 #define POOLALLOC_DEFAULT_ALLOCATION_OBJECTS    1024   
 
@@ -308,5 +312,7 @@ private:
 
 
 };
+
+/** @} */
 
 #endif

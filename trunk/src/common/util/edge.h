@@ -25,6 +25,9 @@
 // Forward declaration of types
 class psPathPoint;
 
+/**
+ * \addtogroup common_util
+ * @{ */
 
 /** Represents the Edge in a PathNetwork.
  *
@@ -174,5 +177,7 @@ protected:
     };
 
 };
+
+/** @} */
 
 #endif

@@ -23,6 +23,10 @@
 #include "pawswidget.h"
 class pawsMultiLineTextBox;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 ////////////////////////////////////////////////////////////////////////////
 //  GUI BUTTONS
 ////////////////////////////////////////////////////////////////////////////
@@ -69,6 +73,8 @@ private:
 };
 
 CREATE_PAWS_FACTORY( pawsYesNoBox );
+
+/** @} */
 
 #endif 
 

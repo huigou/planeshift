@@ -25,6 +25,10 @@
 
 class pawsWidget;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 struct pawsScriptResult
 {
     pawsWidget *widget;
@@ -65,5 +69,7 @@ public:
 
     void Execute();
 };
+
+/** @} */
 
 #endif // PAWS_SCRIPT_H

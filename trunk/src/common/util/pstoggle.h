@@ -26,6 +26,10 @@
 #define PSTOGGLE_H_
 
 /**
+ * \addtogroup common_util
+ * @{ */
+
+/**
  * Simple Toggle with callback functionality.
  * Calls the callback function on toggle state change.
  * Dont forget to remove the callback if you destroy the object it points to.
@@ -83,5 +87,7 @@ class psToggle
      */
     void Callback();
 };
+
+/** @} */
 
 #endif /*PSTOGGLE_H_*/

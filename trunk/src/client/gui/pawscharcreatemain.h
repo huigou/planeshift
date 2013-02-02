@@ -103,8 +103,11 @@ private:
     pawsTextBox* beardStyleLabel;    
     int currentBeardStyleChoice;    
     
-     /** Change the hair style mesh of a player.
+     /**
+      * Change the hair style mesh of a player.
+      *
       * @param currentChoice  The number of the current choice in the available list.
+      * @param old Old value.
       */        
     void ChangeHairStyle( int currentChoice, int old );                        
     pawsTextBox* hairStyleLabel;    
@@ -150,8 +153,10 @@ private:
     RaceDefinition* race;
      
     
-    /** Updates the race + gender shown
-     * @param ID of the race to change to
+    /**
+     * Updates the race + gender shown.
+     *
+     * @param id ID of the race to change to
      */
     void UpdateRace(int id);
  

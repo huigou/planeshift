@@ -22,6 +22,10 @@
 
 #include "pawsbutton.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 class pawsTitle : public pawsWidget
 {
 private:
@@ -71,5 +75,7 @@ public:
 	void MoveDelta(int /*dx*/, int /*dy*/) {}
 	void MoveTo(int /*x*/, int /*y*/) {}
 };
+
+/** @} */
 
 #endif // PAWS_TITLE_HEADER

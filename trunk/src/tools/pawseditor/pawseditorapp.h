@@ -117,8 +117,10 @@ public:
      */
     bool LoadWidgets();
 
-    /** handles an event from the event handler
-     *   @param Event the event to handle
+    /**
+     * Handles an event from the event handler.
+     *
+     * @param ev Event the event to handle
      */
     bool HandleEvent (iEvent &ev);
 

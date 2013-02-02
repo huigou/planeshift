@@ -22,8 +22,6 @@
 #include "util/pscache.h"
 
 /**
- * @class psInventoryCache
- *
  * The psInventoryCache class implements the inventory cache on the client.
  */
 class psInventoryCache : public psCache
@@ -44,23 +42,29 @@ class psInventoryCache : public psCache
             int purifyStatus;
         };
 	
-        /** Requests inventory from server.
-         *  Decides whether to request full inventory
-         *  list or just updates the local cache.
+        /**
+         * Requests inventory from server.
          *
-         *  @return bool success of inventory request
+         * Decides whether to request full inventory
+         * list or just updates the local cache.
+         *
+         * @return bool success of inventory request
          */
         bool GetInventory (void);
 
-        /** Store an item in the inventory.
+        /**
+         * Store an item in the inventory.
          *
-         * @param slot: Slot number
-         * @param container: Container id
-         * @param name: Item name
-         * @param weight: Weight of item
-         * @param size: Size of item
-         * @param stackCount: Number of items in stack
-         * @param purifyStatus: Purify status
+         * @param slot Slot number
+         * @param container Container id
+         * @param name Item name
+         * @param meshName Items mesh
+         * @param materialName Items material.
+         * @param weight Weight of item
+         * @param size Size of item
+         * @param stackCount Number of items in stack
+         * @param iconImage The item icon.
+         * @param purifyStatus Purify status.
          * @return bool Success flag
          */
         bool SetInventoryItem(int slot,
@@ -74,7 +78,8 @@ class psInventoryCache : public psCache
                               csString iconImage,
                               int purifyStatus);
 
-        /** Set empty slot.
+        /**
+         * Set empty slot.
          *
          * @param slot Slot number
          * @param container: Container id
@@ -82,27 +87,25 @@ class psInventoryCache : public psCache
          */
         bool EmptyInventoryItem(int slot, int container);
 
-        /** Empty entire inventory
-         *
+        /**
+         * Empty entire inventory.
          */
         void EmptyInventory(void);
 
-        /** Get item from container slot.
+        /**
+         * Get item from container slot.
          *
          * @param slot: Slot number
-         * @param container: Container id
-         * @param item: The item pointer
-         * @return bool success flag
          */
          CachedItemDescription*GetInventoryItem(int slot);
 	
-		 /// inline uint32 GetInventoryVersion() const
-		 /// Info: Returns the cache version (PS#2691)
-		 inline uint32 GetInventoryVersion() const { return version; }
-	
-		 /// inline void SetInventoryVersion(uint32 ver)
-		 /// Info: Sets the cache version (PS#2691)
-		 inline void SetInventoryVersion(uint32 ver) { version = ver; }
+         /// inline uint32 GetInventoryVersion() const
+         /// Info: Returns the cache version (PS#2691)
+         inline uint32 GetInventoryVersion() const { return version; }
+         
+         /// inline void SetInventoryVersion(uint32 ver)
+         /// Info: Sets the cache version (PS#2691)
+         inline void SetInventoryVersion(uint32 ver) { version = ver; }
 
     private:
 

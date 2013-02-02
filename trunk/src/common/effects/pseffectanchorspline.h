@@ -24,6 +24,10 @@
 
 #include <csgeom/spline.h>
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectAnchorSpline : public psEffectAnchor
 {
 public:
@@ -46,5 +50,7 @@ private:
 
     csCatmullRomSpline * spline;
 };
+
+/** @} */
 
 #endif

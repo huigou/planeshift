@@ -30,6 +30,10 @@ class pawsButton;
 class pawsEditTextBox;
 class pawsScrollbar;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 class iOnColorEnteredAction
 {
 public:
@@ -150,6 +154,8 @@ protected:
 };
 
 CREATE_PAWS_FACTORY(pawsColorPromptWindow);
+
+/** @} */
 
 #endif
 

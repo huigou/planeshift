@@ -33,7 +33,7 @@ class psPath;
 class psWorld;
 
 /**
- * \addtogroup psutil
+ * \addtogroup common_util
  * @{ */
 
 /**
@@ -170,7 +170,7 @@ public:
      * Find the path nearest to a point in the world.
      *
      * @param path             The path containging the point to search for.
-     * @param pos              The position to start searching from.
+     * @param v                The position to start searching from.
      * @param sector           The sector to search in.
      * @param range            Find only points within range from given position, -1 if range dosn't matter
      */

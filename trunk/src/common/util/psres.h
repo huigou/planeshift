@@ -7,6 +7,10 @@
 
 class psTemplateResMngr;
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 class psTemplateRes : public csRefCount
 {
 public:
@@ -21,6 +25,8 @@ protected:
     psTemplateResMngr* mngr;
     csString name;
 };
+
+/** @} */
 
 #endif
 

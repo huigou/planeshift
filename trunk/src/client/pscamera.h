@@ -138,31 +138,43 @@ public:
 
     /** sets the current position of the camera (different for each mode)
      *   @param pos The new camera position for the current mode
+     * @param mode the camera mode
      */
     void SetPosition(const csVector3& pos, int mode = -1);
 
     /** returns the current position of the camera (different for each mode)
+     * @param mode the camera mode
      *   @return The current camera position for the current mode
      */
     csVector3 GetPosition(int mode = -1) const;
 
-    /** sets the current target of the camera (different for each mode)
-     *   @param tar The new camera target for the current mode
+    /**
+     * Sets the current target of the camera (different for each mode).
+     *
+     * @param tar The new camera target for the current mode
+     * @param mode the camera mode
      */
     void SetTarget(const csVector3& tar, int mode = -1);
 
     /** returns the current position of the camera (different for each mode)
-     *   @return The current camera target for the current mode
+     * @param mode the camera mode
+     * @return The current camera target for the current mode
      */
     csVector3 GetTarget(int mode = -1) const;
 
-    /** sets the current up vector of the camera (different for each mode)
-     *   @param up The new camera up vector for the current mode
+    /**
+     * Sets the current up vector of the camera (different for each mode).
+     *
+     * @param up The new camera up vector for the current mode
+     * @param mode the camera mode
      */
     void SetUp(const csVector3& up, int mode = -1);
 
-    /** returns the current up vector of the camera (different for each mode)
-     *   @return The current camera up vector for the current mode
+    /**
+     * Returns the current up vector of the camera (different for each mode).
+     *
+     * @param mode the camera mode
+     * @return The current camera up vector for the current mode
      */
     csVector3 GetUp(int mode = -1) const;
 
@@ -209,10 +221,14 @@ public:
      */
     iMeshWrapper * Get3DPointFrom2D(int x, int y, csVector3 * worldCoord=0, csVector3 * untransfCoord=0);
 
-    /** returns the mesh under the 2D point
-     *   @param x the x part of the 2D point
-     *   @param y the y part of the 2D point
-     *   @return the mesh under the 2D point
+    /**
+     * Returns the mesh under the 2D point
+     *
+     * @param x the x part of the 2D point
+     * @param y the y part of the 2D point
+     * @param[out] pos The best found position.
+     * @param poly Not used
+     * @return the mesh under the 2D point
      */
     iMeshWrapper* FindMeshUnder2D(int x, int y, csVector3  * pos = NULL, int *poly = NULL);
 
@@ -279,7 +295,7 @@ public:
     void SetDistance(float distance, int mode = -1);
 
     /** moves the distance from the camera position to its target
-     *   @param deltaYaw the amount to displace the current distance
+     *   @param deltaDistance the amount to displace the current distance
      *   @param mode Optional - the camera mode to apply it to (leave blank for current)
      */
     void MoveDistance(float deltaDistance, int mode = -1);
@@ -545,13 +561,18 @@ private:
      */
     void DoCameraTransition();
 
-    /** handles the interpolation between the actual camera data and the ideal camera data for the current mode
-     *   @param isElastic when true, the camera will follow Hooke's law and dampening mechanics to interpolate, otherwise the interpolation is instant
-     *   @param deltaIdeal the change between the ideal data of last frame and this one, used for dampening
+    /**
+     * Handles the interpolation between the actual camera data and the ideal camera data for the current mode.
+     *
+     * @param isElastic when true, the camera will follow Hooke's law and dampening mechanics to interpolate, otherwise the interpolation is instant
+     * @param elapsedTicks Elapsed ticks.
+     * @param deltaIdeal the change between the ideal data of last frame and this one, used for dampening
+     * @param sector The sector.
      */
     void DoElasticPhysics(bool isElastic, const csTicks elapsedTicks, const CameraData& deltaIdeal, iSector* sector);
 
-    /** ensures that the actor is (in)visible when he's supposed to be
+    /**
+     * Ensures that the actor is (in)visible when he's supposed to be.
      */
     void EnsureActorVisibility();
 

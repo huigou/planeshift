@@ -23,6 +23,17 @@
 #ifndef CSSETUP_HEADER
 #define CSSETUP_HEADER
 
+#include <cstool/initapp.h>
+
+struct iConfigManager;
+struct iConfigFile;
+struct iVFS;
+struct iObjectRegistry;
+
+/**
+ * \addtogroup common_util
+ * @{ */
+
 #ifndef PS_VERSION
 #define PS_VERSION "0.5.9.4"
 #endif
@@ -35,12 +46,6 @@
 #define PS_PAUSEEXIT(x) exit(x)
 #endif
 
-#include <cstool/initapp.h>
-
-struct iConfigManager;
-struct iConfigFile;
-struct iVFS;
-struct iObjectRegistry;
 
 /** A helper class to setup Crystal Space and mount some dirs.
  */
@@ -97,4 +102,7 @@ protected:
     csRef<iConfigManager> configManager;
     csRef<iVFS>           vfs;
 };
+
+/** @} */
+
 #endif

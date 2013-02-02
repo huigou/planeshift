@@ -38,7 +38,7 @@ class MathVar;
 class iDataConnection;
 
 /**
- * \addtogroup psutil
+ * \addtogroup common_util
  * @{ */
 
 /**

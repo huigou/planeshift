@@ -27,6 +27,10 @@
 #include "util/pserror.h"
 
 /**
+ * \addtogroup common_util
+ * @{ */
+
+/**
 * A queue of smart pointers with locking facilties
 * for multi-threading. The objects in the queue must
 * implement reference counting.
@@ -221,5 +225,7 @@ protected:
     CS::Threading::RecursiveMutex mutex;
     CS::Threading::Condition datacondition;
 };
+
+/** @} */
 
 #endif

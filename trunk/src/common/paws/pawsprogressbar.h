@@ -21,6 +21,10 @@
 
 #include "pawswidget.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 class pawsProgressBar : public pawsWidget
 {
 public:
@@ -56,5 +60,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY( pawsProgressBar );
+
+/** @} */
 
 #endif

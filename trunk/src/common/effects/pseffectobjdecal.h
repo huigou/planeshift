@@ -29,6 +29,10 @@
 
 class psEffect2DRenderer;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjDecal : public psEffectObj
 {
 public:
@@ -44,8 +48,10 @@ public:
 
 protected:
 
-    /** performs the post setup (after the effect obj has been loaded).
-     *  Things like create mesh factory, etc are initialized here.
+    /**
+     * Performs the post setup (after the effect obj has been loaded).
+     *
+     * Things like create mesh factory, etc are initialized here.
      */
     virtual bool PostSetup();
 
@@ -62,5 +68,7 @@ protected:
 };
 
 #endif // PS_EFFECT_ENABLE_DECAL
+
+/** @} */
 
 #endif

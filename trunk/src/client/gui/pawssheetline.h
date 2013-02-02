@@ -689,7 +689,6 @@ public:
      *
      * @param x the ending horizontal position of the thick line (the second one).
      * @param y the starting vertical position.
-     * @param width the width of the double line.
      * @param height the height of the double line.
      */
     void DrawDoubleLine(int x, int y, int height);

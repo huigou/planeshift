@@ -28,6 +28,10 @@
 class pawsButton;
 class ComboWrapper;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 class iOnItemChosenAction
 {
 public:
@@ -99,6 +103,8 @@ protected:
 };
 
 CREATE_PAWS_FACTORY(pawsComboPromptWindow);
+
+/** @} */
 
 #endif
 

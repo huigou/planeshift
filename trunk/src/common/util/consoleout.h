@@ -23,6 +23,10 @@
 
 #include <csutil/csstring.h>
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 extern FILE * errorLog;
 
 /**
@@ -130,6 +134,8 @@ public:
 #define CShift          ConsoleOut::Shift
 #define CUnshift        ConsoleOut::Unshift
 #define CPrompt         ConsoleOut::SetPrompt
+
+/** @} */
 
 #endif
 

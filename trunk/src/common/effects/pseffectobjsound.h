@@ -25,6 +25,10 @@
 class psEffect2DRenderer;
 struct iSoundManager;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjSound : public psEffectObj
 {
 public:
@@ -60,5 +64,7 @@ private:
     bool loop;
     bool playedOnce;
 };
+
+/** @} */
 
 #endif

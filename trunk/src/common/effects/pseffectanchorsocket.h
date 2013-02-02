@@ -25,6 +25,10 @@
 struct iSpriteCal3DState;
 struct iSpriteCal3DSocket;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectAnchorSocket : public psEffectAnchor
 {
 public:
@@ -62,5 +66,7 @@ private:
     csVector3 initPos;
     csRef<iSpriteCal3DState> cal3d;
 };
+
+/** @} */
 
 #endif

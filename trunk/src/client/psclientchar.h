@@ -95,12 +95,13 @@ public:
     
     psCreationManager* GetCreation() { return charCreation; }
 
-    /** Sets the target of the character.
-     *  This will send a select message to the server to inform it of the change in target.
-     *   @param newTarget The new target of the character, 0 to select nothing.
-     *   @param informServer true if the server should be informed of the new target.
-     *   @param the action string to send to the server
-     *   @param defines if the server has to be notified or not
+    /**
+     * Sets the target of the character.
+     *
+     * This will send a select message to the server to inform it of the change in target.
+     *  @param newTarget The new target of the character, 0 to select nothing.
+     *  @param action the action string to send to the server
+     *  @param notifyServer true if the server should be informed of the new target.
      */
     void SetTarget(GEMClientObject *newTarget, const char *action, bool notifyServer=true);
 

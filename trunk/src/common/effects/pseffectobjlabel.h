@@ -33,6 +33,10 @@ struct iFont;
 struct iParticle;
 class  psEffect2DRenderer;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjLabel : public psEffectObj, public psEffectObjTextable
 {
 private:
@@ -80,5 +84,7 @@ protected:
     virtual bool CreateMeshFact();
 
 };
+
+/** @} */
 
 #endif

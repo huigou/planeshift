@@ -26,6 +26,10 @@
 
 #include "pseffectobj.h"
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjLight : public psEffectObj
 {
 public:
@@ -47,5 +51,7 @@ protected:
     csColor color;
     csVector3 offset;
 };
+
+/** @} */
 
 #endif

@@ -34,6 +34,10 @@ struct iFont;
 struct BorderDefinition;
 class PawsManager; 
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 #define BORDER_COLOURS 5
 
 
@@ -71,6 +75,8 @@ private:
     
     csPDelArray<BorderDefinition> borders;
 };
+
+/** @} */
 
 #endif 
 

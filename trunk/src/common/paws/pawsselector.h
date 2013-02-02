@@ -27,6 +27,12 @@
 class pawsListBox;
 class pawsListBoxRow;
 class pawsButton;
+
+
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 ////////////////////////////////////////////////////////////////////////////////
 #define SELECTOR_ADD_BUTTON    -100
 #define SELECTOR_REMOVE_BUTTON -200
@@ -39,22 +45,24 @@ class pawsButton;
 ////////////////////////////////////////////////////////////////////////////////
 
 
-/** This a available->selected widget.
-  * This is a fairly complex widget set.  It is used for when you have a list of 
-  * available options in one list box and a list of selected items in a second box 
-  * and arrows to add/remove them from one to the other.
-  *
-  * This widget assumes that the left side is the available ones and the right side
-  * is the selected ones.
-  *
-  * Widget is defined as:
-  
-      <widget name="TEST" factory="pawsSelectorBox" >
-            <frame x="10" y="10" width="500" height="400" border="yes" />
-            <available width="200" rowheight="30" />
-            <selected width="200" rowheight="30" />
-        </widget>
-   */            
+/**
+ * This a available->selected widget.
+ *
+ * This is a fairly complex widget set.  It is used for when you have a list of 
+ * available options in one list box and a list of selected items in a second box 
+ * and arrows to add/remove them from one to the other.
+ *
+ * This widget assumes that the left side is the available ones and the right side
+ * is the selected ones.
+ *
+ * Widget is defined as:
+ *
+ *    \<widget name="TEST" factory="pawsSelectorBox" \>
+ *          \<frame x="10" y="10" width="500" height="400" border="yes" /\>
+ *          \<available width="200" rowheight="30" /\>
+ *          \<selected width="200" rowheight="30" /\>
+ *     \</widget\>
+ */            
 class pawsSelectorBox : public pawsWidget
 {
 public:
@@ -96,5 +104,7 @@ private:
 
 CREATE_PAWS_FACTORY( pawsSelectorBox );
 
+
+/** @} */
 
 #endif

@@ -28,6 +28,10 @@ class pawsButton;
 class pawsListBox;
 class pawsComboBox;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 class iOnFileSelectedAction
 {
 public:
@@ -124,6 +128,8 @@ protected:
 };
 
 CREATE_PAWS_FACTORY( pawsFileNavigation );
+
+/** @} */
 
 #endif // #ifndef PAWS_FILENAVIGATION_HEADER
 

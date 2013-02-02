@@ -76,7 +76,8 @@ public:
 
     /**
      * Copy constructor.
-     * @param the pawsMusicWindow to copy.
+     *
+     * @param origin the pawsMusicWindow to copy.
      */
     pawsMusicWindow(const pawsMusicWindow* origin);
 
@@ -98,6 +99,7 @@ public:
 
     /**
      * Gets beats and beat type of the song.
+     *
      * @param beats a reference to the integer that will contain beats.
      * @param beatType a reference to the integer that will contain the beat type.
      */
@@ -105,6 +107,7 @@ public:
 
     /**
      * Gets the sheet's number of divisions.
+     *
      * @return the number of divisions in sixteenths.
      */
     uint GetDivisions();
@@ -222,12 +225,14 @@ private:
 
     /**
      * Converts the musical sheet into an XML document.
+     *
      * @return the XML document.
      */
     csString ToXML();
 
     /**
      * Returns the index-th SheetLine.
+     *
      * @param index the number of the line, < 0 to get the last one.
      * @return the last SheetLine, a null pointer if there are any.
      */
@@ -235,6 +240,7 @@ private:
 
     /**
      * Returns the SheetLine that contain the selected measure.
+     *
      * @return the SheetLine that contain the selected measure.
      */
     SheetLine* GetSelectedSheetLine();
@@ -246,6 +252,7 @@ private:
 
     /**
      * Resize all the SheetLines from the given one display the selected chord.
+     *
      * @param line the first sheet line to resize.
      * @param forceAll true to force the resizing of all the the following lines.
      */
@@ -282,12 +289,14 @@ private:
 
     /**
      * Turn on or off the insert mode.
+     *
      * @param toggle true to activate the insert mode, false to deactivate it.
      */
     void SetInsertMode(bool toggle);
 
     /**
      * Toggle the edit mode.
+     *
      * @param toggle true to active the edit mode, false to deactive.
      */
     void ToggleEditMode(bool toggle);
@@ -350,6 +359,7 @@ private:
 
     /**
      * Returns the duration associated to the selected duration buttons.
+     *
      * @return the selected duration.
      */
     int GetSelectedDuration();
@@ -364,14 +374,16 @@ private:
 
     /**
      * Selects the given duration button and deselects the previous one.
-     * @param button the ID of the new selected duration button.
+     *
+     * @param buttonID the ID of the new selected duration button.
      */
     void SelectDuration(int buttonID);
 
     /**
      * Selects the given alteration button and deselects the previous one if
      * any. Use NO_SELECTED to deselect all.
-     * @param button the ID of the new selected alteration button.
+     *
+     * @param buttonID the ID of the new selected alteration button.
      */
     void SelectAlteration(int buttonID);
 

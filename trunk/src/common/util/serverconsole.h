@@ -47,6 +47,10 @@ int execute_line(const char *line,csString *buffer);
 struct iObjectRegistry;
 
 /**
+ * \addtogroup common_util
+ * @{ */
+
+/**
  * This defines an interface for intercepting commands instead of handling them
  * locally in the server console.
  */
@@ -128,6 +132,8 @@ public:
         CPrintf (CON_CMDOUTPUT, COL_BLUE "%s: " COL_NORMAL, ServerConsole::prompt);
     };
 };
+
+/** @} */
 
 #endif
 

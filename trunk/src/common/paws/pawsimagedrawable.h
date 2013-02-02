@@ -22,6 +22,10 @@
 
 #include "pawstexturemanager.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 class pawsImageDrawable : public scfImplementation1<pawsImageDrawable, iPawsImage>
 {
 private:
@@ -83,5 +87,7 @@ public:
     int GetTransparentGreen() const;
     int GetTransparentBlue() const;
 };
+
+/** @} */
 
 #endif // PAWS_IMAGE_DRAWABLE

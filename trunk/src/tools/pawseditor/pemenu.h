@@ -46,7 +46,8 @@ public:
 
 private:
 
-    /** Callback class for the pawsFileNavigation dialog
+    /**
+     * Callback class for the pawsFileNavigation dialog.
      */
     class OnFileSelected : public iOnFileSelectedAction
     {
@@ -55,17 +56,23 @@ private:
             int buttonID;
 
         public:
-            /** Accepts a pointer to a valid pawsEditTextBox that will accept the selected file path.
-             *   @param widget the pawsEditTextBox
+            /**
+             * Accepts a pointer to a valid pawsEditTextBox that will accept the selected file path.
+             *
+             * @param Parent The parent.
+             * @param button The button.
              */
             OnFileSelected( peMenu *Parent, int button ) { parent = Parent; buttonID = button; }
 
-            /** Destructor - does nothing atm.
+            /**
+             * Destructor - does nothing atm.
              */
             virtual ~OnFileSelected( ) { }
 
-            /** This is called when a file has been selected.
-             *   @param text the selected file
+            /**
+             * This is called when a file has been selected.
+             *
+             * @param text the selected file
              */
             virtual void Execute(const csString & text);
 

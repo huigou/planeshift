@@ -21,6 +21,10 @@
 #ifndef __MINIGAME_H
 #define __MINIGAME_H
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 /// Globals for minigames
 namespace psMiniGame
 {
@@ -70,6 +74,8 @@ namespace psMiniGame
     };
 
 }
+
+/** @} */
 
 #endif
 

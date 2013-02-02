@@ -24,11 +24,15 @@
 
 #include <csutil/csstring.h>
 
-#define XML_CASE_INSENSITIVE true
-#define XML_CASE_SENSITIVE   false
-
 class csStringArray;
 class MathEnvironment;
+
+/**
+ * \addtogroup common_util
+ * @{ */
+
+#define XML_CASE_INSENSITIVE true
+#define XML_CASE_SENSITIVE   false
 
 class psString : public csString
 {
@@ -75,6 +79,8 @@ public:
 
     void Split(csStringArray& result, char delim='|');
 };
+
+/** @} */
 
 #endif
 

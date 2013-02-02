@@ -5,6 +5,10 @@
 
 #include <csutil/hash.h>
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 typedef csHash<csRef<psTemplateRes>, csString> psTemplateResourceHash;
 
 class psTemplateResMngr
@@ -33,6 +37,8 @@ protected:
      */
     psTemplateResourceHash *p_resources;
 };
+
+/** @} */
 
 #endif
 

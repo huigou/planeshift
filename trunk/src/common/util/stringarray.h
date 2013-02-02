@@ -23,6 +23,10 @@
 #include <csutil/stringarray.h>
 
 /**
+ * \addtogroup common_util
+ * @{ */
+
+/**
  * A slightly improved version of csStringArray, sporting the handy FormatPush
  * method.
  */
@@ -43,5 +47,7 @@ public:
         return Push(str);
     }
 };
+
+/** @} */
 
 #endif // PS_STRINGARRAY_H

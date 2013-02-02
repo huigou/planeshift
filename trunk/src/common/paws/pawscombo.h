@@ -28,19 +28,23 @@ class pawsTextBox;
 class pawsListBox;
 class pawsListBoxRow;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 /** A basic combo box widget.
     This widget consists of a textbox and a drop down list box. When an 
     item from the list box is selected the textbox is updated.
     
     This is the format of how it is defined in a widget file:
     
-    <widget name="comboBox" factory="pawsComboBox">
-            <!-- Size of text box with the current choice -->
-            <frame x="100" y="100" width="100" height="30" border="no" />            
+    \<widget name="comboBox" factory="pawsComboBox"\>
+            \<!-- Size of text box with the current choice --\>
+            \<frame x="100" y="100" width="100" height="30" border="no" /\>            
             
-            <!-- Number of list box choices with height of a choice row -->
-            <listbox rows="5" height="30" text="InitialText" />            
-    </widget>
+            \<!-- Number of list box choices with height of a choice row --\>
+            \<listbox rows="5" height="30" text="InitialText" /\>            
+    \</widget\>
     
     This class sets the listbox with the id of the combo widget so if you want 
     to track messages from this you override the Selected( pawsListBox* widget ) 
@@ -107,5 +111,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY ( pawsComboBox );
+
+/** @} */
 
 #endif

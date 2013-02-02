@@ -28,6 +28,10 @@
 
 struct iObjectRegistry;
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 struct psStringTableItem
 {
     csString original;
@@ -75,5 +79,7 @@ protected:
     psStringTableHash stringTbl;
     iObjectRegistry* object_reg;
 };
+
+/** @} */
 
 #endif

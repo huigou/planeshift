@@ -1,4 +1,5 @@
-/** pscache.h
+/*
+ * pscache.h
  *
  * Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
@@ -21,11 +22,14 @@
 #define PS_CACHE
 
 /**
- * @class psCache
+ * \addtogroup common_util
+ * @{ */
+
+/**
+ * psCache
  *
  * The psCache class implements the common cache mechanism.
  */
-
 class psCache
 {
     public:
@@ -51,6 +55,8 @@ class psCache
     protected:
         CACHE_STATUS cacheStatus;
 };
+
+/** @} */
 
 #endif
 

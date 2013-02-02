@@ -24,6 +24,10 @@
 
 class psEffect2DRenderer;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjSimpMesh : public psEffectObj
 {
 public:
@@ -47,5 +51,7 @@ private:
     csString fileName;
     csString meshName;
 };
+
+/** @} */
 
 #endif

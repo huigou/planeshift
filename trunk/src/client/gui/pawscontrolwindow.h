@@ -104,7 +104,7 @@ public:
     void WindowClose(pawsWidget* wnd);
 
     /** When a new window registers make an entry for them in our list.
-     * @param wnd: The window to register.
+     * @param window The window to register.
      */
     void Register( pawsControlledWindow* window );
 

@@ -69,11 +69,14 @@ public:
 
     /**
      * Execute a short cut script.
+     *
      * @param shortcutNum is the button number if local = true
      *                    else it is the command in range from
      *                    0 to MAX_SHORTCUT_SETS*10-1;
+     * @param local
      */
     void ExecuteCommand(int shortcutNum, bool local);
+    
     const csString& GetCommandName(int shortcutNum, bool local);
     csString GetTriggerText(int shortcutNum);
 

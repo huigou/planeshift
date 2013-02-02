@@ -27,6 +27,10 @@
 struct iConfigManager;
 struct iObjectRegistry;
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 enum LOG_TYPES
 {
     LOG_ANY,
@@ -220,5 +224,7 @@ public:
     LogCSV(iConfigManager* configmanager, iVFS* vfs);
     void Write(int type, csString& text);
 };
+
+/** @} */
 
 #endif

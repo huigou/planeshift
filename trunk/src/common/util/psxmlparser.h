@@ -25,6 +25,9 @@
 #include <iutil/vfs.h>
 #include "util/log.h"
 
+/**
+ * \addtogroup common_util
+ * @{ */
 
 /**
  * Loads and parses a XML file, then returns its parsed XML document.
@@ -129,5 +132,7 @@ public:
 
     void GetTagName(psString& name);
 }; 
+
+/** @} */
 
 #endif

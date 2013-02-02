@@ -26,38 +26,44 @@
 #include <iutil/vfs.h>
 #include <util/psxmlparser.h>
 
-/** This macro is used to define hash tables of different types 
-  * that have keys of type "const char *" */
+/**
+ * \addtogroup common_paws
+ * @{ */
+
+/**
+ * This macro is used to define hash tables of different types 
+ * that have keys of type "const char *"
+ */
 #define STRING_HASH(V) csHash <V, csString>
 
-/** Class pawsStyles keeps definitions of PAWS styles - a PAWS style is collection
-  * of XML attributes and XML nodes that are automatically applied to all PAWS XML widgets
-  * that are using this PAWS style.
-    
-  styles.xml
-  ----------
-    <!-- defines standard letter look -->
-    <style name="standard font">
-        <font name="cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" 
-              sr="0" sg="0" sb="0"/> 
-    </style>
-
-    <!-- style "big" overrides font size -->
-    <style name="big" inherit="standard font">
-        <font size="20"/> 
-    </style>
-    
-  mywidget.zml
-  ------------
-    <!-- this widget uses "big" style but changes font face to "verdana" -->
-    <widget name="version" factory="pawsTextBox" style="big">
-        <frame x="100" y="100" width="330" height="30" />
-        <font name="LiberationSans-Regular.ttf"/> 
-        <text string="omgwtf"  horizAdjust="CENTRE" />    
-    </widget>
-
-  */
-  
+/**
+ * Class pawsStyles keeps definitions of PAWS styles - a PAWS style is collection
+ * of XML attributes and XML nodes that are automatically applied to all PAWS XML widgets
+ * that are using this PAWS style.
+ *   
+ * styles.xml
+ * ----------
+ *   \<!-- defines standard letter look --\>
+ *   \<style name="standard font"\>
+ *       \<font name="cupandtalon.ttf" r="-1" g="-1" b="-1" size="12" 
+ *             sr="0" sg="0" sb="0"/\> 
+ *   \</style\>
+ *
+ *   \<!-- style "big" overrides font size --\>
+ *   \<style name="big" inherit="standard font"\>
+ *       \<font size="20"/\> 
+ *   \</style\>
+ *   
+ * mywidget.zml
+ * ------------
+ *   \<!-- this widget uses "big" style but changes font face to "verdana" --\>
+ *   \<widget name="version" factory="pawsTextBox" style="big"\>
+ *       \<frame x="100" y="100" width="330" height="30" /\>
+ *       \<font name="LiberationSans-Regular.ttf"/\> 
+ *       \<text string="omgwtf"  horizAdjust="CENTRE" /\>    
+ *   \</widget\>
+ *
+ */
 class pawsStyles
 {
 public:
@@ -92,4 +98,6 @@ protected:
 };
  
  
+/** @} */
+
 #endif

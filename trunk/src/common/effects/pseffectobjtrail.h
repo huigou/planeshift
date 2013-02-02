@@ -26,6 +26,10 @@
 
 class psEffect2DRenderer;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjTrail : public psEffectObj
 {
 public:
@@ -112,5 +116,7 @@ private:
 
     bool useMid;
 };
+
+/** @} */
 
 #endif

@@ -39,7 +39,12 @@
 
 struct iCollection;
 
-/** This widget is used to view a mesh in it's own seperate world.
+/**
+ * \addtogroup common_paws
+ * @{ */
+
+/**
+ * This widget is used to view a mesh in it's own seperate world.
  */
 class pawsGenericView : public pawsWidget
 {
@@ -51,10 +56,13 @@ public:
      */
     bool Setup(iDocumentNode* node);    
     
-    /** Loads a map to use as the backdrop.
-      * @param map The full path name of the map to load
-      * @return True if the map was loaded correctly. False otherwise.
-      */
+    /**
+     * Loads a map to use as the backdrop.
+     *
+     * @param map The full path name of the map to load
+     * @param sector The sector to load the map into.
+     * @return True if the map was loaded correctly. False otherwise.
+     */
     bool LoadMap ( const char* map, const char* sector = 0);
     
     void Draw();
@@ -79,5 +87,7 @@ private:
 };
 CREATE_PAWS_FACTORY( pawsGenericView );
 
+
+/** @} */
 
 #endif

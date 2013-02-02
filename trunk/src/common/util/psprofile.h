@@ -24,6 +24,10 @@
 #include <csutil/csstring.h>
 #include <csutil/hash.h>
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 /****************************************************************************************
 * General profilling library
 *
@@ -129,5 +133,7 @@ public:
 protected:
     csTicks start;
 };
+
+/** @} */
 
 #endif

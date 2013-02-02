@@ -47,6 +47,9 @@
 class MsgEntry;
 class MsgHandler;
 
+/**
+ * \addtogroup client
+ * @{ */
 
 ///////////////////////////////////////////////////////////////////////////////
 // Possible response types for logging in.
@@ -56,7 +59,9 @@ class MsgHandler;
 #define REJECTED      2
 
 
-/** Handles Authentication details from the client to the server. 
+/**
+ * Handles Authentication details from the client to the server.
+ *
  * The basic role of the authentication client is to handle the 
  * login/logout functions on the client.  When it is created it will 
  * subscribe to these types of messages:
@@ -79,23 +84,30 @@ public:
     psAuthenticationClient(MsgHandler *myMsgQueue);
     virtual ~psAuthenticationClient();
 
-    /** Send a message to the server to login.
+    /**
+     * Send a message to the server to login.
+     *
      * @param user The account name
      * @param pwd The account password
+     * @param pwd256 The account password
      *
      * @return Always true.
      */
     bool Authenticate (const csString & user, const csString & pwd, const csString & pwd256);
 
-    /** Handle incomming messages based on the subscribed types.
+    /**
+     * Handle incomming messages based on the subscribed types.
      */
     virtual void HandleMessage(MsgEntry *mh);
 
-    /** Return the reason ( if any ) for a client to be rejected.
-      */
+    /**
+     * Return the reason ( if any ) for a client to be rejected.
+     */
     const char* GetRejectMessage();
 
-    /** Get the current status of authentication.
+    /**
+     * Get the current status of authentication.
+     *
      * Possible return values are:
      * <UL>
      *  <LI>NO_RESPONSE
@@ -108,7 +120,8 @@ public:
         return iClientApproved;
     };
 
-    /** Clear the status of the login attempt.
+    /**
+     * Clear the status of the login attempt.
      */
     void Reset(void)
     {
@@ -136,6 +149,8 @@ private:
     /** Handle an incoming disconnect message. */
     void HandleDisconnect( MsgEntry* me );    
 };
+
+/** @} */
 
 #endif
 

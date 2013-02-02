@@ -22,6 +22,10 @@
 
 #include "pawstexturemanager.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 class pawsFrameDrawable  : public scfImplementation1<pawsFrameDrawable, iPawsImage>
 {
 private:
@@ -96,5 +100,7 @@ public:
 
     int GetDefaultAlpha() const;
 };
+
+/** @} */
 
 #endif // PAWS_FRAME_DRAWABLE
