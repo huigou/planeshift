@@ -23,6 +23,10 @@
 #include <cstypes.h>
 #include <csutil/csstring.h>
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 // Colour support. Only supported by pawsMessageTextBox for now.
 // 1 is a control character which should be filtered out of user text input.
 // The code is a fixed-size of 8 bytes.
@@ -177,5 +181,7 @@ float psGetRandom();
 uint32 psGetRandom(uint32 limit);
 
 
+
+/** @} */
 
 #endif

@@ -28,6 +28,10 @@
 struct iVirtualClock;
 class pawsButton;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 class pawsThumb : public pawsWidget
 {
 public:
@@ -93,8 +97,12 @@ public:
      */
     virtual void EnableValueLimit( bool limited );
 
-    /** Set the current value that this scroll bar should have. 
+    /**
+     * Set the current value that this scroll bar should have.
+     *
      * @param value The current value of this bar.
+     * @param triggerEvent
+     * @param publish
      */
     virtual void SetCurrentValue( float value, bool triggerEvent = true, bool publish=true );
 
@@ -210,5 +218,7 @@ protected:
 //--------------------------------------------------------------------------------
 CREATE_PAWS_FACTORY( pawsScrollBar );
 
+
+/** @} */
 
 #endif

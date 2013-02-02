@@ -27,6 +27,10 @@
 
 class pawsScrollBar;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 /** Type of functions that are used to compare listbox rows during sorting: */
 typedef int (*listBoxSortingFunc)(pawsWidget * a, pawsWidget * b);
 
@@ -38,7 +42,9 @@ int textBoxSortFunc(pawsWidget * widgetA, pawsWidget * widgetB);
 //                            struct ColumnInfo
 //-----------------------------------------------------------------------------
 
-/** Defines the structure of the list box table.
+/**
+ * Defines the structure of the list box table.
+ *
  * This describes how a column is defined.  The height should be constant across
  * all the columns for a particular table.
  */
@@ -106,8 +112,9 @@ public:
     /// Sets the last index of the row. Is used by pawsListBox to update lastIndex variable when sorting.
     void SetLastIndex(int index){lastIndex = index;}
     
-    /** Handles hiding of the row. Used to give focus back to the list box
-     *  before hiding
+    /**
+     * Handles hiding of the row. Used to give focus back to the list box
+     * before hiding.
      */
     void Hide();
 
@@ -130,7 +137,10 @@ private:
 
 
 #define LISTBOX_MOUSE_SCROLL_AMOUNT 3
-/** A simple list box widget.
+
+/**
+ * A simple list box widget.
+ *
  * A list box is made up a list of another type of widgets called
  * pawsListBoxRows.  Each row is then made up of several widgets that
  * constitue a 'row'.  So a row may be a textbox, image, button.
@@ -141,31 +151,31 @@ private:
  * id=ListBoxID+ row*numberOfColumns+coloum:
 
 
-    <widget name="PetitionList" factory="pawsListBox" xmlbinding="petition_list" id="0" autoid="yes" sortBy="2" sortOrder="asc" >
+    \<widget name="PetitionList" factory="pawsListBox" xmlbinding="petition_list" id="0" autoid="yes" sortBy="2" sortOrder="asc" \>
         Size of entire list box
-        <frame x="4" y="34" width="592" height="288" border="yes"/>
+        \<frame x="4" y="34" width="592" height="288" border="yes"/\>
 
         Each row in the list box will be 32 high
-        <columns height="32" xmlbinding="p">
+        \<columns height="32" xmlbinding="p"\>
 
             define a column that is 140 wide.  The first column of any row
-            will be a textbox widget as defined by the <widget></widget> class
-            <column width="140" xmlbinding="GM">
-                <widget name="GM" factory="pawsTextBox"></widget>
-            </column>
+            will be a textbox widget as defined by the \<widget\>\</widget\> class
+            \<column width="140" xmlbinding="GM"\>
+                \<widget name="GM" factory="pawsTextBox"\>\</widget\>
+            \</column\>
 
             define other columns:
-            <column width="150"  xmlbinding="stat">
-                <widget name="Status" factory="pawsWidget">
-                    <bgimage resource="Funny" />
-                </widget>
-            </column>
+            \<column width="150"  xmlbinding="stat"\>
+                \<widget name="Status" factory="pawsWidget"\>
+                    \<bgimage resource="Funny" /\>
+                \</widget\>
+            \</column\>
 
-            <column width="302"  xmlbinding="pet">
-                <widget name="Petition" factory="pawsTextBox"></widget>
-            </column>
-        </columns>
-    </widget>
+            \<column width="302"  xmlbinding="pet"\>
+                \<widget name="Petition" factory="pawsTextBox"\>\</widget\>
+            \</column\>
+        \</columns\>
+    \</widget\>
 
  */
 class pawsListBox : public pawsWidget
@@ -235,19 +245,24 @@ public:
 
     int GetTotalColumns() { return totalColumns; }
 
-    /** Set how many columns this list box will have.
-      * This is usually for code constructed list boxes and creates a new
-      * set of column definitions.
-      */
+    /**
+     * Set how many columns this list box will have.
+     *
+     * This is usually for code constructed list boxes and creates a new
+     * set of column definitions.
+     */
     void SetTotalColumns( int numCols );
 
-    /** Set how a column should be constructed.
-      * This is usuall used for code constructed list boxes.
-      *@param col The column number
-      *@param  height The height of what rows should be.
-      *@param widgetDesc This is an XML description of the widget. Much the same as you
-                         would find in the .xml files.
-      */
+    /**
+     * Set how a column should be constructed.
+     *
+     * This is usuall used for code constructed list boxes.
+     * @param col The column number
+     * @param width The width of that column.
+     * @param height The height of what rows should be.
+     * @param widgetDesc This is an XML description of the widget. Much the same as you
+     *                   would find in the .xml files.
+     */
     void SetColumnDef( int col, int width, int height, const char* widgetDesc );
 
     void UseTitleRow( bool yes );
@@ -276,16 +291,18 @@ public:
 
     void CalculateDrawPositions();
 
-    /** When enter is pressed the highlighted row will be selected
-     *  and the widget will be notified
+    /**
+     * When enter is pressed the highlighted row will be selected
+     * and the widget will be notified
      */
     bool OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers);
 
     void Resize();
 
-    /** Sets the widget that will be notified when a row is selected.
-     *  When nothing is set the OnListAction messages will be sent
-     *  to the parent widget
+    /**
+     * Sets the widget that will be notified when a row is selected.
+     * When nothing is set the OnListAction messages will be sent
+     * to the parent widget
      */
     void SetNotify(pawsWidget* target){notifyTarget = target;};
 
@@ -312,13 +329,19 @@ public:
     void SortRows();
 
 
-    /** Returns listbox cell of type pawsTextBox or NULL (when the cell does not exist or it is another type) */
+    /**
+     * Returns listbox cell of type pawsTextBox or NULL (when the cell does not exist or it is another type).
+     */
     pawsTextBox * GetTextCell(int rowNum, int colNum);
 
-    /** Returns value of cell of type pawsTextBox */
+    /**
+     * Returns value of cell of type pawsTextBox.
+     */
     csString GetTextCellValue(int rowNum, int colNum);
 
-    /** Sets value of cell of type pawsTextBox */
+    /**
+     * Sets value of cell of type pawsTextBox.
+     */
     void SetTextCellValue(int rowNum, int colNum, const csString & value);
 
     void AutoScrollUpdate(bool v){autoUpdateScroll = v;}
@@ -401,5 +424,7 @@ protected:
 
 CREATE_PAWS_FACTORY ( pawsListBox );
 
+
+/** @} */
 
 #endif

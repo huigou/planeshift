@@ -307,26 +307,32 @@ public:
         return autoexec;
     }
 
-    /// Access the player's petitioner target
+    /**
+     * Access the player's petitioner target.
+     */
     void SetTargetPetitioner(const char* pet)
     {
         targetPetitioner = pet;
     }
+    
     const char* GetTargetPetitioner()
     {
         return targetPetitioner;
     }
 
-    /// Quits client
+    /**
+     * Quits client.
+     */
     void QuitClient();
 
     /**
-    * Formally disconnects a client and allows time for an info box to be shown
-    * @param final Set to true if this is the final quit.
-    */
+     * Formally disconnects a client and allows time for an info box to be shown.
+     */
     void Disconnect();
 
-    /// Tell the engine to start the load proceedure.
+    /**
+     * Tell the engine to start the load proceedure.
+     */
     void StartLoad()
     {
         loadstate = LS_LOAD_SCREEN;
@@ -378,6 +384,7 @@ public:
 
     /**
      * Sets the duel confirm type and updates the confirmation settings XML.
+     *
      * @brief Sets duel confirm type
      * @param confirmType Updates \ref duelConfirmation with this value
      */
@@ -412,11 +419,13 @@ public:
     {
         return marriageProposal;
     }
+    
     /**
      * Confirmation settings for marriage proposals and duels are written to /planeshift/userdata/options/confirmation.xml
      * @brief Writes confirmation settings for duels and marriages
      */
     void WriteConfirmationSettings();
+    
     /**
      * Confirmation settings for marriage proposals and duels are read from /planeshift/userdata/options/confirmation.xml
      * @brief Loads confimration settings for duels and marriages
@@ -424,10 +433,12 @@ public:
      */
     bool LoadConfirmationSettings();
 
-    /** Loads and applies the sound settings
-    * @param True if you want to load the default settings
-    * @return true if it was successfully done
-    */
+    /**
+     * Loads and applies the sound settings.
+     *
+     * @param forceDef True if you want to load the default settings
+     * @return true if it was successfully done
+     */
     bool LoadSoundSettings(bool forceDef);
 
     /// Checks if the client has loaded its map
@@ -454,25 +465,31 @@ public:
         loadError = value;
     }
 
-    /** Loads a widget
-    * @param Title to show in the logs if an error occurs
-    * @param XML file
-    * @return Append this to a var and check it after all loading is done
-    */
+    /**
+     * Loads a widget.
+     *
+     * @param title Title to show in the logs if an error occurs
+     * @param filename XML file
+     * @return Append this to a var and check it after all loading is done
+     */
     bool LoadPawsWidget(const char* title, const char* filename);
 
-    /** Loads custom paws widgets that are specified as a list in an xml file.
-    *   \param filename The xml file that holds the list of custom widgets.
-    */
+    /**
+     * Loads custom paws widgets that are specified as a list in an xml file.
+     *
+     * @param filename The xml file that holds the list of custom widgets.
+     */
     bool LoadCustomPawsWidgets(const char* filename);
 
     SlotNameHash slotName;
 
     void AddLoadingWindowMsg(const csString &msg);
 
-    /** Shortcut to pawsQuitInfoBox
-    * @param Message to display before quiting
-    */
+    /**
+     * Shortcut to pawsQuitInfoBox.
+     *
+     * @param msg Message to display before quiting
+     */
     void FatalError(const char* msg);
 
     /// Logged in?
@@ -485,9 +502,11 @@ public:
         loggedIn = v;
     }
 
-    /** Set the number of characters this player has.
-    * Used to wait for full loading of characters in selection screen.
-    */
+    /**
+     * Set the number of characters this player has.
+     *
+     * Used to wait for full loading of characters in selection screen.
+     */
     void SetNumChars(int chars)
     {
         numOfChars = chars;

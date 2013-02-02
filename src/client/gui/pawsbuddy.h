@@ -110,7 +110,7 @@ private:
      *  
      *  @param name The name of the buddy.
      *  @param oldAlias The previous alias of the buddy.
-     *  @param newAliad The new alias of the buddy.
+     *  @param newAlias The new alias of the buddy.
      */
     void ChangeAlias(const csString & name, const csString & oldAlias, const csString & newAlias);
 

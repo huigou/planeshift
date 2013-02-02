@@ -28,6 +28,9 @@
 #include <csutil/csstring.h>
 #include <iutil/document.h>
 
+/**
+ * \addtogroup common_util
+ * @{ */
 
 /**
  * This struct keeps general information about a score.
@@ -237,7 +240,7 @@ public:
     /**
      * Gets the XML nodes representing the measures contained in the musical score.
      *
-     * @param musicalScore the musical score.
+     * @param score the musical score.
      * @param measures a reference to a csRefArray that will contain the XML nodes.
      * @return true if the document is a valid musical score, false otherwise.
      */
@@ -302,6 +305,8 @@ private:
      */
     static bool CheckValidity(csRef<iDocument> musicalScore, csRef<iDocumentNode> &partNode);
 };
+
+/** @} */
 
 #endif // PSMUSIC_H
 

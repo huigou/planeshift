@@ -25,6 +25,10 @@
 
 class psString;
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 /**  Statistics of time consumed by SQL statements */
 class psDBProfiles : public psNamedProfiles
 {
@@ -38,5 +42,7 @@ protected:
     void StripConstantsFromSQL(psString & sql);
 
 };
+
+/** @} */
 
 #endif

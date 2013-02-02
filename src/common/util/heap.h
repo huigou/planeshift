@@ -27,6 +27,10 @@
 
 #include <csutil/array.h>
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 template <class T>
 class Heap : protected csArray<T*>
 {
@@ -100,6 +104,8 @@ public:
             return NULL;
     }
 };
+
+/** @} */
 
 #endif
 

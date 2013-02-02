@@ -24,17 +24,21 @@
 
 class pawsTextBox;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 /** A combination widget that has a check box and a text label.
     
     This widget is defined in an XML as:
          
-    <widget name="nameHere" factory="pawsCheckBox" id="intIDNumber">
-        <!-- The size of the entire widget including text and button. -->
-        <frame x="75" y="5" width="70" height="30" />        
+    \<widget name="nameHere" factory="pawsCheckBox" id="intIDNumber"\>
+        \<!-- The size of the entire widget including text and button. --\>
+        \<frame x="75" y="5" width="70" height="30" /\>
         
-        <!-- The text label to use and it's position relative to the button -->
-        <text string="Sell" position="right"/>
-    </widget>
+        \<!-- The text label to use and it's position relative to the button --\>
+        \<text string="Sell" position="right"/\>
+    \</widget\>
     
     Current supported positions are left/right.
     
@@ -51,6 +55,7 @@ public:
     pawsCheckBox();
 
     pawsCheckBox(const pawsCheckBox& origin);
+    
    /**
     * @fn ~pawsCheckBox()
     * @brief This function is not yet documented.
@@ -137,7 +142,8 @@ public:
     * @fn virtual double GetProperty(const char * ptr)
     * @brief Get the value of the specified property.
     *
-    * @param *ptr The name of the property to get.
+    * @param env Math environment.
+    * @param ptr The name of the property to get.
     */
     virtual double GetProperty(MathEnvironment* env, const char* ptr);
 
@@ -167,5 +173,7 @@ private:
     
 };
 CREATE_PAWS_FACTORY( pawsCheckBox );
+
+/** @} */
 
 #endif 

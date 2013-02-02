@@ -19,7 +19,11 @@
  * @{ */
 
       /**
-        * \defgroup common_net Common Net
+       * \defgroup common_effects Effects
+       */
+
+      /**
+        * \defgroup common_net Net
         * @{ */
 
              /**
@@ -29,7 +33,11 @@
       /** @} */
 
       /**
-       * \defgroup psutil Utility functions
+       * \defgroup common_paws PAWS
+       */
+
+      /**
+       * \defgroup common_util Util
        */
 
 /** @} */

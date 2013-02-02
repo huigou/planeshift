@@ -41,33 +41,39 @@ struct Vital
     float drRate;
 };
 
-/** Handles the incoming vital data from the server to update it's
-  * local values.
-  */
+/**
+ * Handles the incoming vital data from the server to update it's
+ * local values.
+ */
 class psClientVitals : public psVitalManager<Vital>
 {
 public:
     psClientVitals();
 
-     /** @brief Handles new Vital data from the server.
-      *  @param me The Vital message from the server with the correct
+     /**
+      * Handles new Vital data from the server.
+      *
+      * @param msg The Vital message from the server with the correct
       *            values for this Vital.
-      *  @param lable The label to be appended to published values
+      * @param labelname The label to be appended to published values
       */
     void HandleDRData(psStatDRMessage& msg, const char *labelname );
 
-     /** @brief Reset virtuals on death
-      *  @param lable The label to be appended to published values
+     /**
+      * Reset virtuals on death.
+      *
+      * @param labelname The label to be appended to published values
       */
     void HandleDeath( const char *labelname );
 
-    /** @brief Predicts the new values of the various Vitals.
-      *
-      * This helps limit the lag time in getting new values for these Vitals.
-      *
-      * @param now  The current ticks to use from last valid data from the server.
-      * @param lable The label to be appended to published values
-      */
+    /**
+     * Predicts the new values of the various Vitals.
+     *
+     * This helps limit the lag time in getting new values for these Vitals.
+     *
+     * @param now  The current ticks to use from last valid data from the server.
+     * @param labelname The label to be appended to published values
+     */
     void Predict( csTicks now, const char *labelname );
 
 private:

@@ -23,6 +23,12 @@
 #include "pawsbutton.h"
 
 class pawsTextBox;
+
+/**
+ * \addtogroup common_paws
+ * @{ */
+
+
 ///position of radio button
 enum psRadioPos
     {
@@ -31,45 +37,47 @@ enum psRadioPos
         POS_ABOVE,
         POS_UNDERNEATH
     };
-/** A combination widget that has a radio button and a text label.
-    This should ALWAYS be a child of the pawsRadioButtonGroup in order 
-    to control his brothers properly ( ie have only 1 in group active at 
-    at time. )
-    
-    This widget is defined in an XML as:
-         
-    <widget name="nameHere" factory="pawsRadioButton" id="intIDNumber">
-        <!-- The size of the entire widget including text and button. -->
-        <frame x="75" y="5" width="70" height="30" />        
-        
-        <!-- The text label to use and it's position relative to the button -->
-        <text string="Sell" position="right"/>
-    </widget>
-    
-    Current supported positions are left/right.
-
-    To create Radio button group do this:
-    
-    <widget name="RBG" factory="pawsRadioButtonGroup">
-        <!-- global radio buttons properties -->
-        <radio on="radioon" off="radiooff" size="25"> 
-        <radionode>
-            <!-- radio button 1 -->
-
-            <frame x="75" y="5" width="70" height="30" />        
-            <text string="Sell" position="right"/>
-
-            <!-- self button properties. overrride global. -->
-            <radio on="radioon1" off="radiooff1" size="20"> 
-        </radionode>
-        <radionode>
-            <!-- radio button 2 -->
-        </radionode>
-    </widget>
-    
-    By default it uses the radioon/radiooff named images and automatically 
-    assumes that their size is 16x16.  
-*/
+/**
+ * A combination widget that has a radio button and a text label.
+ *
+ * This should ALWAYS be a child of the pawsRadioButtonGroup in order 
+ * to control his brothers properly ( ie have only 1 in group active at 
+ * at time. )
+ *   
+ * This widget is defined in an XML as:
+ *        
+ *   \<widget name="nameHere" factory="pawsRadioButton" id="intIDNumber"\>
+ *       \<!-- The size of the entire widget including text and button. --\>
+ *       \<frame x="75" y="5" width="70" height="30" /\>        
+ *       
+ *       \<!-- The text label to use and it's position relative to the button --\>
+ *       \<text string="Sell" position="right"/\>
+ *   \</widget\>
+ *   
+ * Current supported positions are left/right.
+ *
+ * To create Radio button group do this:
+ *   
+ *   \<widget name="RBG" factory="pawsRadioButtonGroup"\>
+ *       \<!-- global radio buttons properties --\>
+ *       \<radio on="radioon" off="radiooff" size="25"\> 
+ *       \<radionode\>
+ *           \<!-- radio button 1 --\>
+ *
+ *           \<frame x="75" y="5" width="70" height="30" /\>        
+ *           \<text string="Sell" position="right"/\>
+ *
+ *           \<!-- self button properties. overrride global. --\>
+ *           \<radio on="radioon1" off="radiooff1" size="20"\> 
+ *       \</radionode\>
+ *       \<radionode\>
+ *           \<!-- radio button 2 --\>
+ *       \</radionode\>
+ *   \</widget\>
+ *   
+ * By default it uses the radioon/radiooff named images and automatically 
+ * assumes that their size is 16x16.  
+ */
 class pawsRadioButton: public pawsButton
 {
 public:
@@ -105,7 +113,8 @@ CREATE_PAWS_FACTORY( pawsRadioButton );
 
 //---------------------------------------------------------------------------
 
-/** This is a set of radio buttons and is used to control them.
+/**
+ * This is a set of radio buttons and is used to control them.
  */
 class pawsRadioButtonGroup : public pawsWidget
 {
@@ -136,8 +145,6 @@ private:
 };
 CREATE_PAWS_FACTORY( pawsRadioButtonGroup );
 
-
-
-
+/** @} */
 
 #endif 

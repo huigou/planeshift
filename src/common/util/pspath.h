@@ -38,6 +38,9 @@ class Location;
 class psString;
 class psPath;
 
+/**
+ * \addtogroup common_util
+ * @{ */
 
 /**
  * Helper interface to allocate effect IDs
@@ -385,5 +388,7 @@ private:
 
     float                  pathDistance;    
 };
+
+/** @} */
 
 #endif

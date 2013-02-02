@@ -25,6 +25,10 @@
 
 class psEffect2DRenderer;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjSpire : public psEffectObj
 {
 public:
@@ -121,5 +125,7 @@ private:
     csColor4 *  colour;
     int vertCount;
 };
+
+/** @} */
 
 #endif

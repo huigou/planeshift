@@ -27,6 +27,10 @@
 class pawsButton;
 class pawsTextBox;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 /** 
  * pawsPromptWindow is the common base for windows that let the user enter one piece of information.
  * It has a label telling the user what is expected, OK and Cancel buttons and *some* widget
@@ -79,6 +83,8 @@ protected:
 };
 
 CREATE_PAWS_FACTORY(pawsPromptWindow);
+
+/** @} */
 
 #endif
 

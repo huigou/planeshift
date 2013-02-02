@@ -33,6 +33,9 @@ class pawsTextBox;
 class pawsComboBox;
 class pawsEditTextBox;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
 
 /**
  * Interface implemented by a pawsMeterPromptWindow listener
@@ -151,5 +154,7 @@ private:
 };
 
 CREATE_PAWS_FACTORY(pawsMeterPromptWindow);
+
+/** @} */
 
 #endif // PAWS_MUSIC_METER_PROMPT_H

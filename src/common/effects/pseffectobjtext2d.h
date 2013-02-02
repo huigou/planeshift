@@ -31,6 +31,10 @@ class psEffect2DElement;
 class psEffect2DTextElement;
 class psEffect2DImgElement;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 enum psEffectBackgroundAlign
 {
     EA_NONE = 0,
@@ -104,4 +108,7 @@ protected:
     bool PostSetup();
     void DrawTextElement(const psEffectTextElement & element);
 };
+
+/** @} */
+
 #endif

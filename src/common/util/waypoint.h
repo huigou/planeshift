@@ -29,6 +29,10 @@
 #include "util/edge.h"
 
 /**
+ * \addtogroup common_util
+ * @{ */
+
+/**
  * Class to hold information regarding aliases for waypoints.
  */
 class WaypointAlias
@@ -217,5 +221,7 @@ public:
     bool excluded;  /// Set to true if the waypoint is filtered out.
 
 };
+
+/** @} */
 
 #endif

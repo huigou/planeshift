@@ -23,6 +23,10 @@
 #include <csutil/scf_implementation.h>
 #include <iutil/eventh.h>
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 /** Declares a generic event handler for a class.
  *  Use this within the body of the parent class you wish to receive events.
  *
@@ -50,6 +54,8 @@ public:                                                                         
     CS_EVENTHANDLER_NAMES(eventName);                                               \
     CS_EVENTHANDLER_NIL_CONSTRAINTS;                                                \
 }
+
+/** @} */
 
 #endif
 

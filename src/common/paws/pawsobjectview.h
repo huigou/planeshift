@@ -40,6 +40,10 @@
 class psCharAppearance;
 struct iBgLoader;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 /** This widget is used to view a mesh in it's own seperate world.
  */
 class pawsObjectView : public pawsWidget
@@ -67,12 +71,14 @@ public:
      */
     bool Setup(iDocumentNode* node);    
     
-    /** Loads a map to use as the backdrop.
-      *
-      * @param map The full path name of the map to load
-      * 
-      * @return True if the map was loaded correctly. False otherwise.
-      */
+    /**
+     * Loads a map to use as the backdrop.
+     *
+     * @param map The full path name of the map to load
+     * @param sector The sector to use.
+     * 
+     * @return True if the map was loaded correctly. False otherwise.
+     */
     bool LoadMap ( const char* map, const char* sector );
 
     /**
@@ -172,5 +178,7 @@ private:
 };
 CREATE_PAWS_FACTORY( pawsObjectView );
 
+
+/** @} */
 
 #endif

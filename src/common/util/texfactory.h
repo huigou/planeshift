@@ -29,6 +29,10 @@
 class psImageRegion;
 
 /**
+ * \addtogroup common_util
+ * @{ */
+
+/**
  * This class reads in the xml file defining regions and maintains
  * the preload list of textures.  When a new player texture is required,
  * the xml string specifying the parts to be merged is passed to this
@@ -149,6 +153,8 @@ public:
      */
     void OverlayRegion(iImage *dest, iImage *src,int bitmode=0);
 };
+
+/** @} */
 
 #endif
 

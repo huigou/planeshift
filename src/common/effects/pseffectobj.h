@@ -46,6 +46,10 @@ class psEffect2DRenderer;
 class psEffectAnchor;
 
 /**
+ * \addtogroup common_effects
+ * @{ */
+
+/**
  * Stores data for a specific effect object keyframe
  */
 class psEffectObjKeyFrame
@@ -56,9 +60,10 @@ public:
     psEffectObjKeyFrame(iDocumentNode *node, const psEffectObjKeyFrame *prevKeyFrame);
     ~psEffectObjKeyFrame();
 
-    /** Adjust each parameter that have the use_scale 
-     *  property set with this scale. 
-     *  @return True if if any params where scaled
+    /**
+     * Adjust each parameter that have the use_scale property set with this scale.
+     *
+     * @return True if if any params where scaled
      */
     bool SetParamScalings(const float* scale);
 
@@ -101,7 +106,7 @@ public:
 
     float     actions[KA_COUNT];
     csVector3 vecActions[KA_VEC_COUNT - KA_COUNT];
-    int       useScale[KA_VEC_COUNT];  // If set upon load the actions are scaled after cloning. 0 no scaling, 1=scale1, 2=scale2, 3=scale3
+    int       useScale[KA_VEC_COUNT];  ///< If set upon load the actions are scaled after cloning. 0 no scaling, 1=scale1, 2=scale2, 3=scale3
 
     /// keep track of which actions were specified for which 
     csBitArray specAction;
@@ -119,50 +124,64 @@ public:
     psEffectObjKeyFrameGroup();
     ~psEffectObjKeyFrameGroup();
 
-    /** returns the number of keyframes in the group.
-     *   @return the keyframe count
+    /**
+     * Returns the number of keyframes in the group.
+     *
+     * @return the keyframe count
      */
     size_t GetSize() const
     { return keyFrames.GetSize(); }
 
-    /** returns the keyframe at the given index.
-     *   @param idx the index of the keyframe to grab
-     *   @return the keyframe
+    /**
+     * Returns the keyframe at the given index.
+     *
+     * @param idx the index of the keyframe to grab
+     * @return the keyframe
      */
     psEffectObjKeyFrame * Get(size_t idx) const
     { return keyFrames[idx]; }
 
-    /** returns the keyframe at the given index.
-     *   @param idx the index of the keyframe to grab
-     *   @return the keyframe
+    /**
+     * Returns the keyframe at the given index.
+     *
+     * @param idx the index of the keyframe to grab
+     * @return the keyframe
      */
     psEffectObjKeyFrame * operator [] (size_t idx) const
     { return keyFrames[idx]; }
     
-    /** pushes a keyframe onto the group.
-     *   @param keyFrame the keyframe to push
+    /**
+     * Pushes a keyframe onto the group.
+     *
+     * @param keyFrame the keyframe to push
      */
     void Push(psEffectObjKeyFrame * keyFrame)
     { keyFrames.Push(keyFrame); }
 
-    /** deletes the keyframe at the given index.
-     *   @param idx the index of the keyframe to delete
+    /**
+     * Deletes the keyframe at the given index.
+     *
+     * @param idx the index of the keyframe to delete
      */
     void DeleteIndex(size_t idx)
     { keyFrames.DeleteIndex(idx); }
 
-    /** deletes all of the keyframes in this group.
+    /**
+     * Deletes all of the keyframes in this group.
      */
     void DeleteAll()
     { keyFrames.DeleteAll(); }
 
-    /** Clones the key frame group object.
+    /**
+     * Clones the key frame group object.
      */
     psEffectObjKeyFrameGroup* Clone() const;
 
-    /** Adjust each parameter in each frame that have the use_scale 
-     *  property set with this scale. 
-     *  @return True if if any params where scaled
+    /**
+     * Adjust each parameter in each frame that have the use_scale 
+     * property set with this scale.
+     *
+     * @return True if if any params where scaled
      */
     bool SetFrameParamScalings(const float* scale);
 
@@ -179,66 +198,91 @@ public:
     psEffectObj(iView * parentView, psEffect2DRenderer * renderer2d);
     virtual ~psEffectObj();
     
-    /** loads the effect object from an xml node
-     *   @param node the xml node containing the effect object, must be valid
-     *   @return true on success, false otherwise
+    /**
+     * Loads the effect object from an xml node.
+     *
+     * @param node the xml node containing the effect object, must be valid
+     * @param ldr_context the current loader context.
+     * @return true on success, false otherwise
      */
     virtual bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
 
-    /** renders the effect
-     *   @param up the base up vector of the effect obj
-     *   @return true on success
+    /**
+     * Renders the effect.
+     *
+     * @param up the base up vector of the effect obj
+     * @return true on success
      */
     virtual bool Render(const csVector3 &up);
 
-    /** If the obj supports it, sets the scaling parameters.
+    /**
+     * If the obj supports it, sets the scaling parameters.
      */
     virtual bool SetScaling(float scale, float aspect);
 
-    /** Adjust each parameter in each frame that have the use_scale 
-     *  property set with this scale. 
-     *  @return True if if any params where scaled
+    /**
+     * Adjust each parameter in each frame that have the use_scale 
+     * property set with this scale.
+     *
+     * @return True if if any params where scaled
      */
     virtual bool SetFrameParamScalings(const float* scale);
 
-    /** Updates the spell effect -- called every frame.
-     *   @param elapsed the ticks elapsed since last update
-     *   @return false if the obj is useless and can be removed
+    /**
+     * Updates the spell effect -- called every frame.
+     *
+     * @param elapsed the ticks elapsed since last update
+     * @return false if the obj is useless and can be removed
      */
     virtual bool Update(csTicks elapsed);
 
-    /** Convenience function to clone the base member variables
-     *   @param newObj reference to the new object that will contain the cloned variables
+    /**
+     * Convenience function to clone the base member variables.
+     *
+     * @param newObj reference to the new object that will contain the cloned variables
      */
     virtual void CloneBase(psEffectObj *newObj) const;
 
-    /** Clones the effect object.  This will almost always be overloaded.
+    /**
+     * Clones the effect object.
+     *
+     * This will almost always be overloaded.
      */
     virtual psEffectObj *Clone() const;
 
-    /** Attaches this mesh to the given effect anchor.
-     *   @param newAnchor The effect anchor to attach this mesh to.
-     *   @return true If it attached properly, false otherwise.
+    /**
+     * Attaches this mesh to the given effect anchor.
+     *
+     * @param newAnchor The effect anchor to attach this mesh to.
+     * @return true If it attached properly, false otherwise.
      */
     virtual bool AttachToAnchor(psEffectAnchor * newAnchor);
 
-    /** Shows or hides an object
-     *   @param show or hide (true = show, false = hide)
+    /**
+     * Shows or hides an object.
+     *
+     * @param value show or hide (true = show, false = hide)
      */
     virtual void Show(bool value);
 
-    /** gets the time left that the effect obj has to live
-     *   @return the current kill time
+    /**
+     * Gets the time left that the effect obj has to live.
+     *
+     * @return the current kill time
      */
     int GetKillTime() const { return killTime; }
 
-    /** sets the new time left that the effect obj has to live
-     *   @param newKillTime the new kill time
+    /**
+     * Sets the new time left that the effect obj has to live.
+     *
+     * @param newKillTime the new kill time
      */
     void SetKillTime(int newKillTime) { killTime = newKillTime; }
 
-    /** Sets the base rotation matrix of the effect obj
-     *   @param rot the base rotation matrix of the angle
+    /**
+     * Sets the base rotation matrix of the effect obj.
+     *
+     * @param newRotBase the base rotation matrix of the angle
      */
     void SetRotBase(const csMatrix3 & newRotBase)
     {
@@ -246,8 +290,10 @@ public:
             matBase = newRotBase;
     }
     
-    /** Sets the position rotation of the effect obj.
-     *   @param newPosTransf the new position rotation.
+    /**
+     * Sets the position rotation of the effect obj.
+     *
+     * @param newPosTransf the new position rotation.
      */
     void SetPosition(const csMatrix3 & newPosTransf)
     {
@@ -255,8 +301,10 @@ public:
             matBase = newPosTransf;
     }
 
-    /** Sets the target rotation of the effect obj.
-     *   @param newTargetTransf the new target rotation.
+    /**
+     * Sets the target rotation of the effect obj.
+     *
+     * @param newTargetTransf the new target rotation.
      */
     void SetTarget(const csMatrix3 & newTargetTransf)
     {
@@ -264,62 +312,84 @@ public:
             matBase = newTargetTransf;
     }
 
-    /** Get the direction.
-     *  @return direction.
+    /**
+     * Get the direction.
+     *
+     * @return direction.
      */
     int GetDirection () const { return dir; }
 
-    /** Sets the name of the anchor that this effect obj is attached to.
-     *   @param anchor the new name of the anchor that this obj is attached to
+    /**
+     * Sets the name of the anchor that this effect obj is attached to.
+     *
+     * @param anchor the new name of the anchor that this obj is attached to
      */
     void SetAnchorName(const csString & anchor) { anchorName = anchor; }
 
-    /** Gets the name of the anchor that this effect obj is attached to.
-     *   @return The name of the anchor that this effect obj is attached to.
+    /**
+     * Gets the name of the anchor that this effect obj is attached to.
+     *
+     * @return The name of the anchor that this effect obj is attached to.
      */
     const csString & GetAnchorName() const { return anchorName; }
 
-    /** Get the priority for rendering the mesh.
-     *  @return the CS engine priority.
+    /**
+     * Get the priority for rendering the mesh.
+     *
+     * @return the CS engine priority.
      */
     CS::Graphics::RenderPriority GetRenderPriority() const { return priority; }
 
-    /** Get the zbuf mode for rendering the mesh.
-     *  @return the CS zbuf mode.
+    /**
+     * Get the zbuf mode for rendering the mesh.
+     *
+     * @return the CS zbuf mode.
      */
     csZBufMode GetZBufMode() const { return zFunc; }
 
-    /** Get the mixmode for rendering the mesh.
-     *  @return the CS mixmode.
+    /**
+     * Get the mixmode for rendering the mesh.
+     *
+     * @return the CS mixmode.
      */
     unsigned int GetMixMode () const { return mixmode; }
 
-    /** Get the birth.
-     *  @return the birth value
+    /**
+     * Get the birth.
+     *
+     * @return the birth value
      */
     float GetBirth() const { return birth; }
    
-    /** Accessor function to get the animation length of this effect obj.
-     *   @return the animation length of this effect obj
+    /**
+     * Accessor function to get the animation length of this effect obj.
+     *
+     * @return the animation length of this effect obj
      */
     float GetAnimLength() const { return animLength; }
 
     void SetAnimationScaling(float s);
 
-    /** Gets the name of this effect obj.
-     *   @return the name of this effect obj.
+    /**
+     * Gets the name of this effect obj.
+     *
+     * @return the name of this effect obj.
      */
     csString GetName() const { return name; }
     
-    /** returns the number of keyframes in this obj.
-     *   @return the keyFrame count
+    /**
+     * Returns the number of keyframes in this obj.
+     *
+     * @return the keyFrame count
      */
     size_t GetKeyFrameCount() const
     { return keyFrames->GetSize(); }
 
-    /** returns the keyframe at the given index.
-     *   @param idx the index of the keyframe to grab
-     *   @return the keyframe at the given index
+    /**
+     * Returns the keyframe at the given index.
+     *
+     * @param idx the index of the keyframe to grab
+     * @return the keyframe at the given index
      */
     psEffectObjKeyFrame * GetKeyFrame(size_t idx) const
     { return keyFrames->Get(idx); }
@@ -347,27 +417,34 @@ protected:
         SCALING_LOOP   = 8
     };
 
-    /** finds the index of the keyFrame at the specified time
-     *   @param time the time to lookup
-     *   @return the index of the keyFrame at the specified time
+    /**
+     * Finds the index of the keyFrame at the specified time.
+     *
+     * @param time the time to lookup
+     * @return the index of the keyFrame at the specified time
      */
     size_t FindKeyFrameByTime(csTicks time) const;
 
-    /** finds the next key frame where the specific action is specified
-     *   @param startFrame the first frame to start looking
-     *   @param action the action to look for
-     *   @param index a container to store the index of the found key frame
-     *   @return true if it found one, false otherwise
+    /**
+     * Finds the next key frame where the specific action is specified.
+     *
+     * @param startFrame the first frame to start looking
+     * @param action the action to look for
+     * @param index a container to store the index of the found key frame
+     * @return true if it found one, false otherwise
      */
     bool FindNextKeyFrameWithAction(size_t startFrame, size_t action, size_t &index) const;
 
-    /** linearly interpolates keyFrame values for actions that weren't specified in a certain key frame
+    /**
+     * Linearly interpolates keyFrame values for actions that weren't specified in a certain key frame.
      */
     void FillInLerps();
 
-    /** builds a rotation matrix given an up vector (yaw is assumed to be 0)
-     *   @param up the up (unit) vector
-     *   @return a rotation matrix representing the up vector
+    /**
+     * Builds a rotation matrix given an up vector (yaw is assumed to be 0).
+     *
+     * @param up the up (unit) vector
+     * @return a rotation matrix representing the up vector
      */
     csMatrix3 BuildRotMatrix(const csVector3 &up) const;
 
@@ -487,5 +564,7 @@ protected:
     lerpFactor(keyFrames->Get(currKeyFrame)->time, \
                keyFrames->Get(nextKeyFrame)->time, \
                life)
+
+/** @} */
 
 #endif

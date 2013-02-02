@@ -23,6 +23,10 @@
 #include <csutil/strhashr.h>
 #include <csutil/parray.h>
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 /** Holds a list of the possible socket identifiers that items can be attached to.
  */
 enum INVENTORY_SLOT_NUMBER
@@ -108,4 +112,7 @@ private:
     csStringHashReversible slotNames;
     csPDelArray<PrimaryToSecondary> secondaryNames;
 };
+
+/** @} */
+
 #endif

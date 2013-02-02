@@ -34,6 +34,10 @@ struct iParticle;
 class psEffect2DRenderer;
 
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjText : public psEffectObjQuad, public psEffectObjTextable
 {
 private:
@@ -94,4 +98,7 @@ protected:
         return 1;
     };
 };
+
+/** @} */
+
 #endif

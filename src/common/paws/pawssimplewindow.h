@@ -22,7 +22,12 @@
 
 #include "pawswidget.h"
 
-/** This is meant as a blank window that can be used for windows that are completely 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
+/**
+ * This is meant as a blank window that can be used for windows that are completely 
  * specified through data (some combination of scripts and pub/subs).
  */
 class pawsSimpleWindow : public pawsWidget
@@ -32,6 +37,8 @@ public:
 };
 
 CREATE_PAWS_FACTORY(pawsSimpleWindow);
+
+/** @} */
 
 #endif // PAWS_SIMPLE_WINDOW_H
 

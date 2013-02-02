@@ -1680,6 +1680,11 @@ bool pawsWidget::OnMouseDown( int button, int modifiers, int x, int y )
     return false;
 }
 
+bool pawsWidget::OnSelected(pawsWidget* /*widget*/)
+{ 
+    return false;
+}
+
 bool pawsWidget::OnMenuAction ( pawsWidget * widget, const pawsMenuAction & action )
 {
     if (action.name == MENU_DESTROY_ACTION_NAME)

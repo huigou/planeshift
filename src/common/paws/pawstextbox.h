@@ -32,6 +32,9 @@ struct iVirtualClock;
 
 #include <ispellchecker.h>
 
+/**
+ * \addtogroup common_paws
+ * @{ */
 
 /**
  * A basic text box widget. Useful for simply displaying text.
@@ -424,22 +427,29 @@ public:
     void SetMultiline(bool multi);
     void SetPassword(bool pass); //displays astrices instead of text
 
-    /** Change the text in the edit box.
+    /**
+     * Change the text in the edit box.
+     *
      * @param text The text that will replace whatever is currently there.
+     * @param publish Publish the text.
      */
     void SetText(const char* text, bool publish = true);
+    
     virtual void OnUpdateData(const char* dataname,PAWSData &data);
 
-    // Sets size of the widget to fit the text that it displays:
+    /**
+     * Sets size of the widget to fit the text that it displays.
+     */
     void SetSizeByText();
 
     void Clear();
 
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
 
-    /** Called as a callback to a request for clipboard content if avaliabe.
+    /**
+     * Called as a callback to a request for clipboard content if avaliabe.
      *
-     * \note Only implemented for unix
+     * @note Only implemented for unix
      */
     virtual bool OnClipboard(const csString &content);
 
@@ -744,8 +754,11 @@ public:
     virtual void Draw();
     void DrawWidgetText(const char* text, size_t x, size_t y, int style, int fg, int visLine);
 
-    /** Change the text in the edit box.
+    /**
+     * Change the text in the edit box.
+     *
      * @param text The text that will replace whatever is currently there.
+     * @param publish Publish the text.
      */
     void SetText(const char* text, bool publish = true);
     const char* GetText();
@@ -1015,11 +1028,11 @@ public:
      *
      * Set the content that would be displayed in the view.
      * The text should be in form of xml style as following:
-     * <Contents>
-     *	 <Content type="pic" align="0" padding="5 5 5 5" width="32" height="32" src="ButtonSpeak;/paws/real_skin/mouse.png;ButtonOpen;"></Content>
-     *	 <Content type="text">text content</Content>
-     *	 <Content type="pic" align="2" padding="5 5 5 5" width="32" height="32" src="ButtonConstruct;/paws/real_skin/mouse.png;ButtonBanking;"></Content>
-     * </Contents>
+     * \<Contents\>
+     *	 \<Content type="pic" align="0" padding="5 5 5 5" width="32" height="32" src="ButtonSpeak;/paws/real_skin/mouse.png;ButtonOpen;"></Content\>
+     *	 \<Content type="text"\>text content\</Content\>
+     *	 \<Content type="pic" align="2" padding="5 5 5 5" width="32" height="32" src="ButtonConstruct;/paws/real_skin/mouse.png;ButtonBanking;"\>\</Content\>
+     * \</Contents\>
      * @param text The xml content defined what to be display in the view
      */
     void SetText(const char* text);
@@ -1102,5 +1115,8 @@ protected:
     csArray<PictureInfo> picsInfo;///< Hold all the info parse from xml document
 };
 CREATE_PAWS_FACTORY(pawsMultiPageDocumentView);
+
+/** @} */
+
 #endif
 

@@ -22,6 +22,10 @@
 
 #include "pseffectanchor.h"
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectAnchorBasic : public psEffectAnchor
 {
 public:
@@ -38,5 +42,7 @@ public:
 private:
 
 };
+
+/** @} */
 
 #endif

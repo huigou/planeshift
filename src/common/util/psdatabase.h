@@ -32,6 +32,10 @@ class csVector3;
 class psString;
 class csRandomGen;
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 // implementation of the plugin
 
 #define  PS_DBNAME  "planeshift"
@@ -150,5 +154,7 @@ struct Result
 };
 
 
+
+/** @} */
 
 #endif

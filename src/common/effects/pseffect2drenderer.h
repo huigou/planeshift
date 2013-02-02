@@ -28,6 +28,10 @@
 #include <ivideo/graph2d.h>
 #include <ivideo/fontserv.h>
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 #define PS_EFFECT_2D_TEXT_MAX_CHARS 512
 
 /** Base class for all possible 2D Effect Elements
@@ -106,5 +110,7 @@ public:
 
     void Render(iGraphics3D * g3d, iGraphics2D * g2d);
 };
+
+/** @} */
 
 #endif // PS_EFFECT_2D_RENDERER

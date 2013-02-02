@@ -20,6 +20,10 @@
 #ifndef PSSCF_H
 #define PSSCF_H
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 /* Note from Keith:  I would like to make this a hard assert()
    once we get all existing errors/leaks fixed, so we find them
    sooner from now on. For now it's just a printf.
@@ -44,5 +48,7 @@
     printf("\n***Object %s is being deleted correctly in %s:%d.\n\n",what,__FILE__,__LINE__);  \
     }                        \
 
+
+/** @} */
 
 #endif

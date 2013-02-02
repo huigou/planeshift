@@ -21,6 +21,10 @@
 
 class MathEnvironment;
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 class iScriptableVar
 {
 public:
@@ -30,6 +34,7 @@ public:
     virtual ~iScriptableVar() {};
 };
 
+/** @} */
 
 #endif
 

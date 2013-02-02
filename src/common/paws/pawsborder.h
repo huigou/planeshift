@@ -27,6 +27,9 @@
 #include <csgeom/csrectrg.h>
 #include "pawswidget.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Function Declarations
@@ -125,6 +128,8 @@ protected:
     int style;
     bool shadowFont;
 };
+
+/** @} */
 
 #endif 
 

@@ -22,6 +22,10 @@
 
 #include <csutil/csstring.h>
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 enum psEffectTextAlignment
 {
     ETA_LEFT,
@@ -56,6 +60,8 @@ public:
     virtual bool SetText(int rows, ...) = 0;
     virtual ~psEffectObjTextable() {};
 };
+
+/** @} */
 
 #endif // PS_EFFECT_OBJ_TEXTABLE_HEADER
 

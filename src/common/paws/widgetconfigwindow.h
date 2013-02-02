@@ -30,6 +30,10 @@ class pawsCheckBox;
 class pawsTextBox;
 class pawsScrollBar;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 //-----------------------------------------------------------------------------
 //                            class WidgetConfigWindow
 //-----------------------------------------------------------------------------
@@ -103,5 +107,7 @@ private:
 
 CREATE_PAWS_FACTORY( WidgetConfigWindow );
 
+
+/** @} */
 
 #endif

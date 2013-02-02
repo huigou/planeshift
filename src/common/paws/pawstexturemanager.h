@@ -37,6 +37,10 @@
 
 class pawsTextureManager;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 struct iPawsImage : public virtual iBase
 {
     SCF_INTERFACE(iPawsImage, 1, 0, 0);
@@ -60,14 +64,15 @@ public:
     pawsTextureManager( iObjectRegistry* objectReg );
     virtual ~pawsTextureManager();
 
-    /** Loads an image list from xml. 
+    /**
+     * Loads an image list from xml.
+     *
      * The format for an image is:
-     * <pre>
-     * <image file="/this/path/to/image.png" resource="commonName">
-            <texturerect x="0" y="0" width="32" height="32" />
-            <alpha level="128" />   
-            <trans r="255" g="0" b="255" />
-     * </image>
+     * \<image file="/this/path/to/image.png" resource="commonName"\>
+     *       \<texturerect x="0" y="0" width="32" height="32" />
+     *       \<alpha level="128" /\>   
+     *       \<trans r="255" g="0" b="255" /\>
+     * \</image\>
      *
      * @param listName The VFS path to the list file.
      * 
@@ -75,7 +80,9 @@ public:
      */ 
     bool LoadImageList( const char* listName );
 
-    /** Remove a description from the list.
+    /**
+     * Remove a description from the list.
+     *
      * This removes an image from the list once we are totally finished with it.
      * ie there will not be any more refs to it.
      *
@@ -96,6 +103,8 @@ public:
 
     csHash<csRef<iPawsImage>, csString> elementList;
 };
+
+/** @} */
 
 #endif
 

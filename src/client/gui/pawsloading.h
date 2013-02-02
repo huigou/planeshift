@@ -39,7 +39,8 @@
 class pawsMessageTextBox;
 
 
-/** This is the window that is displayed when the game is loading the maps.
+/**
+ * This is the window that is displayed when the game is loading the maps.
  */
 class pawsLoadWindow : public pawsWidget, public psClientNetSubscriber
 {
@@ -54,15 +55,19 @@ public:
     void Hide();
     void Draw();
     
-    /** Initializing of the dot animation.
-    *@param start A vector representing the start of the animation.
-    *@param dest A vector representing the destination of the animation.
-    */
+    /**
+     * Initializing of the dot animation.
+     *
+     * @param start A vector representing the start of the animation.
+     * @param dest A vector representing the destination of the animation.
+     * @param delay
+     */
     void InitAnim(csVector2 start, csVector2 dest, csTicks delay);
 
-    /** @brief Sends the motd message to local listeners.
+    /**
+     * Sends the motd message to local listeners.
      * 
-     *  Used to handle the update of newly spawned custom loading windows.
+     * Used to handle the update of newly spawned custom loading windows.
      */
     void PublishMOTD();
 
@@ -88,6 +93,7 @@ private:
 
     /** 
      *  Render the dot animation.
+     *
      *  Called only if renderAnim == true
      */
     void DrawAnim();

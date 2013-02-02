@@ -19,6 +19,10 @@
 #ifndef __SINGLETON_H__
 #define __SINGLETON_H__
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 template <typename T> class Singleton
 {
     static T* ptrSingleton;
@@ -52,6 +56,8 @@ public:
     }
 };
 template <typename T> T* Singleton<T>::ptrSingleton = 0;
+
+/** @} */
 
 #endif
 

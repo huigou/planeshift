@@ -33,6 +33,10 @@ struct iEngine;
 struct iLight;
 struct iMeshWrapper;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psLight
 {
 public:
@@ -56,5 +60,7 @@ private:
     uint stepsPerCycle;
     uint dimStrength;
 };
+
+/** @} */
 
 #endif

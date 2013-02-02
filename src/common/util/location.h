@@ -36,6 +36,10 @@ class psWorld;
 class iEffectIDAllocator;
 
 /**
+ * \addtogroup common_util
+ * @{ */
+
+/**
  * A Location is a named place on the map, located
  * dynamically by NPCs as scripted.
  *
@@ -425,6 +429,8 @@ private:
     csHash<LocationType*, csString> loctypes;          ///< Hash on all location types, hashed on the type.
     csArray<Location*>              all_locations;     ///< Quick access array to all locations.
 };
+
+/** @} */
 
 #endif
 

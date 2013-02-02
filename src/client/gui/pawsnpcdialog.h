@@ -92,7 +92,7 @@ public:
     /**
      * @brief Load quest info from xmlbinding message
      *
-     * @param xmlbinding An xml string which contains quest info
+     * @param xmlstr An xml string which contains quest info
      *
      */
     void LoadQuest(csString xmlstr);
@@ -109,7 +109,7 @@ public:
      * @brief Display NPC's chat text
      *
      * @param inText Content that the NPC's chat text
-     * @param npcname The target NPC name
+     * @param actor The target NPC name
      */
     void NpcSays(csString& inText, GEMClientActor *actor);
 

@@ -17,9 +17,26 @@
  *
  */
 
+#ifndef PAWS_MENU_HEADER
+#define PAWS_MENU_HEADER
+
+#include <csutil/parray.h>
+#include <iutil/document.h>
+#include "pawswidget.h"
+#include "pawstextbox.h"
+#include "pawsbutton.h"
+
+
+class pawsIMenu;
+class pawsMenu;
+class pawsIMenuItem;
+class pawsMenuItem;
 
 /**
- *
+ * \addtogroup common_paws
+ * @{ */
+
+/**
  * When pawsMenu is created, target of notification messages (OnMenuAction) must be set by SetNotify() method.
  * When pawsMenu creates a submenu, it sets the target of notification messages automatically.
  *
@@ -65,30 +82,15 @@
  *    autosize  - if "true", then widget size is calculated and set so its content just fits in
  *    colour    - colour of menu label
  *
- * all widgets inside are added as menu items
+ * All widgets inside are added as menu items.
  *
  */
-
-
-#ifndef PAWS_MENU_HEADER
-#define PAWS_MENU_HEADER
-
-#include <csutil/parray.h>
-#include <iutil/document.h>
-#include "pawswidget.h"
-#include "pawstextbox.h"
-#include "pawsbutton.h"
-
-
-class pawsIMenu;
-class pawsMenu;
-class pawsIMenuItem;
-class pawsMenuItem;
 
 
 /**
  * pawsMenuAction - when OnMenuAction event is invoked, this structure is sent to event handler 
  * and tells it what action the handler should take.
+ *
  * Content of pawsMenuAction is defined in each regular menu item.
  */ 
 class pawsMenuAction
@@ -99,7 +101,7 @@ public:
 };
 
 /**
- * value of pawsMenuAction::name when window request its destruction
+ * Value of pawsMenuAction::name when window request its destruction.
  */
 #define MENU_DESTROY_ACTION_NAME "MenuWantsDestroy"
 
@@ -108,44 +110,58 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
- * Possible reasons of closing of menu:
+ * Possible reasons of closing of menu.
  */
-enum pawsMenuClose {closeAction, closeSiblingOpened, closeCloseClicked, 
-                    closeParentClosed, closeChildClosed};
-
+enum pawsMenuClose
+    {
+        closeAction,          ///< Action to close the menu.
+        closeSiblingOpened,   ///< Sibling was opened.
+        closeCloseClicked,    ///< Close was cliked.
+        closeParentClosed,    ///< Parent closed.
+        closeChildClosed      ///< Child closed.
+    };
 
 /** 
- * pawsIMenu is common interface to menus (e.g. pawsMenu)
+ * pawsIMenu is common interface to menus \ref pawsMenu.
  */
 class pawsIMenu : public pawsWidget
 {
 public:
+    /**
+     * Constructor.
+     */
     pawsIMenu(){  };
+    
+    /**
+     * Constructor.
+     */
     pawsIMenu(const pawsIMenu& origin): pawsWidget(origin)
     {
 
     }
+    
     /**
-     * Sets parent menu of submenu:
+     * Sets parent menu of submenu.
      */
     virtual void SetParentMenu(pawsIMenu * parentMenu) = 0;
 
     /**
-     * Called when parent menu was closed
+     * Called when parent menu was closed.
      */
     virtual void OnParentMenuDestroyed(pawsMenuClose reason) = 0;
     
     /**
-     * Called when child menu was closed
+     * Called when child menu was closed.
      */
     virtual void OnChildMenuDestroyed(pawsIMenu * child, pawsMenuClose reason) = 0;
     
     /**
-     * Called when another submenu of parent menu was opened
+     * Called when another submenu of parent menu was opened.
      */
     virtual void OnSiblingOpened() = 0;
 
-    /** Processes action invoked by user: 
+    /**
+     * Processes action invoked by user: 
      *    - according to action type either opens a new menu or sends notification to subscriber
      * 'item' is menu item that was activated
      * 'action' is description of the action that should be taken
@@ -171,7 +187,7 @@ enum pawsMenuAlign {alignLeft, alignCenter};
 
 
 /**
- * pawsMenu is standard PAWS menu widget
+ * pawsMenu is standard PAWS menu widget.
  */
 class pawsMenu : public pawsIMenu
 {
@@ -446,5 +462,7 @@ protected:
 
 CREATE_PAWS_FACTORY(pawsMenuSeparator);
 
+
+/** @} */
 
 #endif

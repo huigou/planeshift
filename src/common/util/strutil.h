@@ -33,6 +33,13 @@
 
 class psString;
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
+/**
+ * Split a csString into an array of sctrings.
+ */
 void Split(const csString& str, csArray<csString> & arr);
 
 /**
@@ -180,6 +187,8 @@ csString toString(const csTransform& trans);
  * @param maxRowLen the resulting max length after the split
  */ 
 csArray<csString> splitTextInLines(csString inText, size_t maxLineLength, int& maxRowLen);
+
+/** @} */
 
 #endif
 

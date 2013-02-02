@@ -31,6 +31,10 @@
 
 struct iVFS;
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
 class FileStat : public csRefCount
 {
 public:
@@ -88,5 +92,7 @@ public:
     /* Sets all permissions on a file. */
     void SetPermissions(const char* path, FileStat* fs);
 };
+
+/** @} */
 
 #endif // __FILEUTIL_H__

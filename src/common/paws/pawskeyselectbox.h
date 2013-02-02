@@ -22,7 +22,12 @@
 
 #include "pawswidget.h"
 
-/** A widget that can be used to select key and display combinations.
+/**
+ * \addtogroup common_paws
+ * @{ */
+
+/**
+ * A widget that can be used to select key and display combinations.
  */
 class pawsKeySelectBox : public pawsWidget
 {
@@ -74,4 +79,7 @@ protected:
     int textX, textY;        // Position of text inside the widget
 };
 CREATE_PAWS_FACTORY(pawsKeySelectBox);
+
+/** @} */
+
 #endif

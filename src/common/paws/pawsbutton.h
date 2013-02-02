@@ -25,6 +25,10 @@
 
 #include "pawswidget.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 /* Types of flash buttons, used in chat window */
 enum FLASH_STATE {
     FLASH_REGULAR = 0,
@@ -150,5 +154,7 @@ protected:
 
 //----------------------------------------------------------------------
 CREATE_PAWS_FACTORY( pawsButton );
+
+/** @} */
 
 #endif 

@@ -37,6 +37,10 @@ struct iSector;
 struct iSectorList;
 
 /**
+ * \addtogroup common_effects
+ * @{ */
+
+/**
  * Stores data for a specific effect anchor keyframe
  */
 class psEffectAnchorKeyFrame
@@ -46,11 +50,13 @@ public:
     psEffectAnchorKeyFrame(iDocumentNode * node, const psEffectAnchorKeyFrame * prevKeyFrame);
     ~psEffectAnchorKeyFrame();
 
-    /** Applies default values to this anchor keyframe.
+    /**
+     * Applies default values to this anchor keyframe.
      */
     void SetDefaults();
 
-    /** Sets up this keyframe for the special case of being the first key frame in the group.
+    /**
+     * Sets up this keyframe for the special case of being the first key frame in the group.
      */
     void SetupFirstFrame();
 
@@ -112,39 +118,50 @@ public:
     psEffectAnchorKeyFrameGroup();
     ~psEffectAnchorKeyFrameGroup();
 
-    /** returns the number of keyframes in the group.
-     *   @return the keyframe count
+    /**
+     * Returns the number of keyframes in the group.
+     *
+     * @return the keyframe count
      */
     size_t GetSize() const
     { return keyFrames.GetSize(); }
 
-    /** returns the keyframe at the given index.
-     *   @param idx the index of the keyframe to grab
-     *   @return the keyframe
+    /**
+     * Returns the keyframe at the given index.
+     *
+     * @param idx the index of the keyframe to grab
+     * @return the keyframe
      */
     psEffectAnchorKeyFrame * Get(size_t idx) const
     { return keyFrames[idx]; }
 
-    /** returns the keyframe at the given index.
-     *   @param idx the index of the keyframe to grab
-     *   @return the keyframe
+    /**
+     * Returns the keyframe at the given index.
+     *
+     * @param idx the index of the keyframe to grab
+     * @return the keyframe
      */
     psEffectAnchorKeyFrame * operator [] (size_t idx) const
     { return keyFrames[idx]; }
     
-    /** pushes a keyframe onto the group.
-     *   @param keyFrame the keyframe to push
+    /**
+     * Pushes a keyframe onto the group.
+     *
+     * @param keyFrame the keyframe to push
      */
     void Push(psEffectAnchorKeyFrame * keyFrame)
     { keyFrames.Push(keyFrame); }
 
-    /** deletes the keyframe at the given index.
-     *   @param idx the index of the keyframe to delete
+    /**
+     * Deletes the keyframe at the given index.
+     *
+     * @param idx the index of the keyframe to delete
      */
     void DeleteIndex(size_t idx)
     { keyFrames.DeleteIndex(idx); }
 
-    /** deletes all of the keyframes in this group.
+    /**
+     * Deletes all of the keyframes in this group.
      */
     void DeleteAll()
     { keyFrames.DeleteAll(); }
@@ -159,51 +176,67 @@ public:
     psEffectAnchor();
     virtual ~psEffectAnchor();
     
-    /** Loads the effect anchors from an xml node.
-     *   @param node the xml node containing the effect anchor, must be valid.
-     *   @return true on success, false otherwise.
+    /**
+     * Loads the effect anchors from an xml node.
+     *
+     * @param node the xml node containing the effect anchor, must be valid.
+     * @return true on success, false otherwise.
      */
     virtual bool Load(iDocumentNode *node);
 
-    /** Creates the effect anchor.
-     *   @param offset the offset of the position of the obj.
-     *   @param posAttach the mesh to attach this anchor to.
-     *   @return true on success.
+    /**
+     * Creates the effect anchor.
+     *
+     * @param offset the offset of the position of the obj.
+     * @param posAttach the mesh to attach this anchor to.
+     * @param rotateWithMesh Rotate the anchor with the mesh.
+     * @return true on success.
      */
     virtual bool Create(const csVector3 &offset, iMeshWrapper * posAttach, bool rotateWithMesh = false);
 
-    /** Updates the effect anchor -- called every frame.
-     *   @param elapsed the ticks elapsed since last update.
-     *   @return false if the anchor is useless and can be removed by its parent effect.
+    /**
+     * Updates the effect anchor -- called every frame.
+     *
+     * @param elapsed the ticks elapsed since last update.
+     * @return false if the anchor is useless and can be removed by its parent effect.
      */
     virtual bool Update(csTicks elapsed);
 
-    /** Convenience function to clone the base member variables
-     *   @param newAnchor reference to the new anchor that will contain the cloned variables
+    /**
+     * Convenience function to clone the base member variables.
+     *
+     * @param newAnchor reference to the new anchor that will contain the cloned variables
      */
     void CloneBase(psEffectAnchor * newAnchor) const;
 
-    /** Clones the effect anchor.  This will almost always be overloaded.
+    /**
+     * Clones the effect anchor.  This will almost always be overloaded.
      */
     virtual psEffectAnchor * Clone() const;
     
-    /** Sets a new position for the effect anchor.
-     *   @param basePos The new position of the anchor.
-     *   @param sector The new sector of the anchor
-     *   @param transf The transform of the position.
+    /**
+     * Sets a new position for the effect anchor.
+     *
+     * @param basePos The new position of the anchor.
+     * @param sector The new sector of the anchor
+     * @param transf The transform of the position.
      */
     virtual void SetPosition(const csVector3 & basePos, iSector * sector, const csMatrix3 & transf);
 
-    /** Sets a new position for the effect anchor.
-     *   @param basePos The new position of the anchor.
-     *   @param sectors The new sectors of the anchor.
-     *   @param transf The transform of the position.
+    /**
+     * Sets a new position for the effect anchor.
+     *
+     * @param basePos The new position of the anchor.
+     * @param sectors The new sectors of the anchor.
+     * @param transf The transform of the position.
      */
     virtual void SetPosition(const csVector3 & basePos, iSectorList * sectors, const csMatrix3 & transf);
 
-    /** Sets the target of the effect anchor.
-     *   @param newTarget The new target.
-     *   @param transf The transform of the target.
+    /**
+     * Sets the target of the effect anchor.
+     *
+     * @param newTarget The new target.
+     * @param transf The transform of the target.
      */
     void SetTarget(const csVector3 & newTarget, const csMatrix3 & transf)
     {
@@ -211,72 +244,98 @@ public:
         targetTransf = transf;
     }
 
-    /** Returns the name of this effect anchor.
-     *   @return The name of this effect anchor.
+    /**
+     * Returns the name of this effect anchor.
+     *
+     * @return The name of this effect anchor.
      */
     const csString & GetName() const { return name; }
 
-    /** Sets the name of this effect anchor.
-     *   @param newName The new name of the anchor.
+    /**
+     * Sets the name of this effect anchor.
+     *
+     * @param newName The new name of the anchor.
      */
     void SetName(const csString & newName) { name = newName; }
     
-    /** Returns the mesh that's associated with this effect anchor (almost always a nullmesh).
-     *   @return Generally returns either a nullmesh or 0.
+    /**
+     * Returns the mesh that's associated with this effect anchor (almost always a nullmesh).
+     *
+     * @return Generally returns either a nullmesh or 0.
      */
     iMeshWrapper * GetMesh() const { return mesh; }
 
-    /** Sets the base rotation matrix of the effect anchor.
-     *   @param newRotBase The base rotation matrix.
+    /**
+     * Sets the base rotation matrix of the effect anchor.
+     *
+     * @param newRotBase The base rotation matrix.
      */
     virtual void SetRotBase(const csMatrix3 & newRotBase) { matBase = newRotBase; }
 
-    /** Transforms the offset according to the mesh's settings, like abs_dir, etc.
-     *   @param offset the vector to be transformed.
+    /**
+     * Transforms the offset according to the mesh's settings, like abs_dir, etc.
+     *
+     * @param offset the vector to be transformed.
      */
     void TransformOffset(csVector3 & offset);
 
-    /** Returns the number of keyframes in this anchor.
-     *   @return The keyFrame count.
+    /**
+     * Returns the number of keyframes in this anchor.
+     *
+     * @return The keyFrame count.
      */
     size_t GetKeyFrameCount() const
     { return keyFrames->GetSize(); }
 
-    /** Returns the keyframe at the given index.
-     *   @param idx The index of the keyframe to grab.
-     *   @return The keyframe at the given index.
+    /**
+     * Returns the keyframe at the given index.
+     *
+     * @param idx The index of the keyframe to grab.
+     * @return The keyframe at the given index.
      */
     psEffectAnchorKeyFrame * GetKeyFrame(size_t idx) const
     { return keyFrames->Get(idx); }
 
-    /** Gets the direction type of this anchor.
-     *   @return the direction type (none, origin, target).
+    /**
+     * Gets the direction type of this anchor.
+     *
+     * @return the direction type (none, origin, target).
      */
     const char * GetDirectionType() const;
 
-    /** Sets the direction type of this anchor.
-     *   @param newDir the new direction type (none, origin, target).
+    /**
+     * Sets the direction type of this anchor.
+     *
+     * @param newDir the new direction type (none, origin, target).
      */
     void SetDirectionType(const char * newDir);
 
-    /** Sets the animation length of the effect anchor.
-     *   @param newAnimLength the new animation length.
+    /**
+     * Sets the animation length of the effect anchor.
+     *
+     * @param newAnimLength the new animation length.
      */
     void SetAnimLength(float newAnimLength) { animLength = newAnimLength; }
 
-    /** Gets the animation length of the effect anchor.
-     *   @return the animation length.
+    /**
+     * Gets the animation length of the effect anchor.
+     *
+     * @return the animation length.
      */
     float GetAnimGetSize() { return animLength; }
 
-    /** Creates a new keyframe and attaches it to this movable.
-     *   @param time The time of this new keyFrame.
-     *   @return the index where the new keyframe can be reached using GetKeyFrame(index).
+    /**
+     * Creates a new keyframe and attaches it to this movable.
+     *
+     * @param time The time of this new keyFrame.
+     * @return the index where the new keyframe can be reached using GetKeyFrame(index).
      */
     size_t AddKeyFrame(float time);
     
-    /** Check to see if this anchor is ready.
-     *   @return true if it's ready.
+    /**
+     * Check to see if this anchor is ready.
+     *
+     * @return true if it's ready.
      */
     bool IsReady() const { return isReady; }
 
@@ -289,23 +348,28 @@ public:
         DT_COUNT
     };
 
-    /** Interpolates keyFrame actions for ones that weren't specified in each keyframe.
+    /**
+     * Interpolates keyFrame actions for ones that weren't specified in each keyframe.
      */
     void FillInLerps();
     
 protected:
 
-    /** Finds the index of the keyFrame at the specified time.
-     *   @param time The time to lookup.
-     *   @return The index of the keyFrame at the specified time.
+    /**
+     * Finds the index of the keyFrame at the specified time.
+     *
+     * @param time The time to lookup.
+     * @return The index of the keyFrame at the specified time.
      */
     size_t FindKeyFrameByTime(float time) const;
 
-    /** Finds the next key frame where the specific action is specified.
-     *   @param startFrame The first frame to start looking.
-     *   @param action The action to look for.
-     *   @param index A container to store the index of the found key frame.
-     *   @return true if it found one and the index is stored, false otherwise.
+    /**
+     * Finds the next key frame where the specific action is specified.
+     *
+     * @param startFrame The first frame to start looking.
+     * @param action The action to look for.
+     * @param index A container to store the index of the found key frame.
+     * @return true if it found one and the index is stored, false otherwise.
      */
     bool FindNextKeyFrameWithAction(size_t startFrame, size_t action, size_t & index) const;
 
@@ -375,5 +439,7 @@ protected:
         return v1 + (v2-v1)*(t-t1)/(t2-t1);
     }
 };
+
+/** @} */
 
 #endif

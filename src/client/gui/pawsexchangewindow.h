@@ -76,10 +76,12 @@ protected:
     /// Clear out the exchange window and reset the backgrounds.
     void Clear();
 
-    /** Start a new exchange with a player.
-      * @player The name of the player to trade with.
-      * @withPlayer Is the user exchanging with other player, or with NPC ?
-      */
+    /**
+     * Start a new exchange with a player.
+     *
+     * @param player The name of the player to trade with.
+     * @param withPlayer Is the user exchanging with other player, or with NPC ?
+     */
     void StartExchange( csString& player, bool withPlayer );
 
     /// retain the state of the inventory window before opening the exchange

@@ -27,6 +27,10 @@ class psEffect2DRenderer;
 
 //struct iParticlesObjectState;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjParticles : public psEffectObj
 {
 public:
@@ -52,6 +56,8 @@ private:
     //csRef<iParticlesObjectState> pstate;
     bool isAnimating;
 };
+
+/** @} */
 
 #endif
 #endif

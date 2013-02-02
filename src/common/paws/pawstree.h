@@ -27,6 +27,9 @@
 #include "pawsmanager.h"
 #include "pawscrollbar.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
 
 #define TREE_MOUSE_SCROLL_AMOUNT 20
 /**
@@ -561,6 +564,8 @@ CREATE_PAWS_FACTORY(pawsSimpleTreeNode);
 CREATE_PAWS_FACTORY(pawsTreeNode);
 CREATE_PAWS_FACTORY(pawsSeqTreeNode);
 CREATE_PAWS_FACTORY(pawsWidgetTreeNode);
+
+/** @} */
 
 #endif 
 

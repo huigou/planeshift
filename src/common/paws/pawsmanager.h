@@ -60,6 +60,10 @@ struct iPAWSSubscriber;
 struct PAWSData;
 struct PAWSSubscription;
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 typedef csHash<PAWSSubscription*,csString> PAWSSubscriptionsHash;
 
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
@@ -252,15 +256,20 @@ public:
     /// Returns the resized image.
     csRef<iPawsImage> GetResizeImage() { return resizeImg; }
 
-    /** Locate a widget by name.
+    /**
+     * Locate a widget by name.
+     *
      * @param name The name of the widget.
+     * @param complain If true it will show errors if the widget wasn't found.
      */
     pawsWidget* FindWidget( const char* name, bool complain=true );
 
-    /** Remove the named widget from the mainwidget
-     *  @param widgetName The name of the widget to look for.
-     *  @param complain If true it will show errors if the widget wasn't found.
-     *  @return a boolean stating if the widget was found (and so removed)
+    /**
+     * Remove the named widget from the mainwidget
+     *
+     * @param widgetName The name of the widget to look for.
+     * @param complain If true it will show errors if the widget wasn't found.
+     * @return a boolean stating if the widget was found (and so removed)
      */
     bool RemoveWidget(const char* widgetName, bool complain);
 
@@ -302,10 +311,13 @@ public:
      */
     void CreateWarningBox( const char* message, pawsWidget* notify = NULL, bool modal = true );
 
-    /** @brief Creates a YesNo box with the supplied text.
-     *  @param message The warning.
-     *  @param notify The Widget which recives event notifications (i.e. Button Pressed).
-     *  @param translate Whathever the message should be translated or not.
+    /**
+     * Creates a YesNo box with the supplied text.
+     *
+     * @param message The warning.
+     * @param notify The Widget which recives event notifications (i.e. Button Pressed).
+     * @param modal The box shold be modal.
+     * @param translate Whathever the message should be translated or not.
      */
     void CreateYesNoBox(const char* message, pawsWidget* notify = NULL, bool modal = true, bool translate = true);
 
@@ -673,6 +685,8 @@ struct PAWSSubscription
     PAWSData lastKnownValue;
     iPAWSSubscriber *subscriber;
 };
+
+/** @} */
 
 #endif
 

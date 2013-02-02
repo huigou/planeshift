@@ -27,6 +27,10 @@ class psGameEvent;
 class MsgHandler;
 
 /**
+ * \addtogroup common_util
+ * @{ */
+
+/**
  * This class handles all queueing and invoking of timed events, such as
  * combat, spells, NPC dialog responses, range weapons, or NPC respawning.
  * It maintains a queue ordered by trigger time and is polled by the engine
@@ -70,5 +74,7 @@ public:
     /// Allows sending of a message not immediately, but after a short delay
     virtual void SendMessageDelayed(MsgEntry *msg,csTicks msecDelay);
 };
+
+/** @} */
 
 #endif

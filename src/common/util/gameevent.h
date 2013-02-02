@@ -24,6 +24,9 @@
 
 class EventManager;
 
+/**
+ * \addtogroup common_util
+ * @{ */
 
 /**
  * All scheduled events must inherit from this class.  These events are
@@ -148,6 +151,8 @@ public:
         return false;
     };
 };
+
+/** @} */
 
 #endif
 

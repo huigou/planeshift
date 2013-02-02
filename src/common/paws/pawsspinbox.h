@@ -25,6 +25,10 @@
 #include <csutil/timer.h>
 
 
+/**
+ * \addtogroup common_paws
+ * @{ */
+
 #define SPIN_INTERVAL        100
 #define SPIN_START_DELAY     500
 
@@ -34,20 +38,21 @@
 
 struct SpinBoxTimerEvent;
 
-/** A combination widget that has up and down arrows and a text label.
-    
-    This widget is defined in an XML as:
-         
-    <widget name="nameHere" factory="pawsSpinBox" id="intIDNumber">
-        <!-- The size of the entire widget including text and button. -->
-        <frame x="75" y="5" width="70" height="30" />        
-        
-        <!-- The text label to use and it's position relative to the button -->
-        <number default="5" min="0" max="100" inc="1" position="right"/>
-    </widget>
-    
-    Current supported positions are left/right.
-*/
+/**
+ * A combination widget that has up and down arrows and a text label.
+ *   
+ * This widget is defined in an XML as:
+ *        
+ *   \<widget name="nameHere" factory="pawsSpinBox" id="intIDNumber"\>
+ *       \<!-- The size of the entire widget including text and button. --\>
+ *       \<frame x="75" y="5" width="70" height="30" /\>        
+ *       
+ *       \<!-- The text label to use and it's position relative to the button --\>
+ *       \<number default="5" min="0" max="100" inc="1" position="right"/\>
+ *   \</widget\>
+ *   
+ * Current supported positions are left/right.
+ */
 class pawsSpinBox : public pawsWidget 
 {
 public:
@@ -86,5 +91,7 @@ private:
     float inc;
 };
 CREATE_PAWS_FACTORY( pawsSpinBox );
+
+/** @} */
 
 #endif

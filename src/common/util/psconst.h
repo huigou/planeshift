@@ -29,6 +29,11 @@
 
 #include <math.h> // To include HUGE_VALF for INFINITY_DISTANCE
 
+/**
+ * \addtogroup common_util
+ * @{ */
+
+
 #define SOCKET_CLOSE_FORCED  true
 
 #define DEF_PROX_DIST   100        ///< 100m is trial distance here
@@ -171,5 +176,8 @@ typedef int32_t ContainerID;
 #else
 #define INFINITY_DISTANCE 9999999.99f
 #endif
+
+
+/** @} */
 
 #endif

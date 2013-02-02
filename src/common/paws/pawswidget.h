@@ -36,6 +36,9 @@
 #include "pawsmanager.h"
 #include "util/scriptvar.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
 
 #define ATTACH_LEFT     2
 #define ATTACH_RIGHT    4
@@ -342,8 +345,7 @@ protected:
     bool parentDraw;
 
     /** 
-     * Flag of whether OnUpdateData should overwrite the previous value or 
-     * add to it.
+     * Flag of whether OnUpdateData should overwrite the previous value or add to it.
      *
      * Used by Multi-line edit currently.
      *
@@ -496,7 +498,7 @@ public:
     /**
      * Used if you need to loop through the children of a widget.
      *
-     * @param ID of the child
+     * @param i ID of the child
      */
     pawsWidget* GetChild(size_t i) { return children.Get(i); }
 
@@ -734,7 +736,9 @@ public:
      */
     void SetModalState( bool isModal );
 
-    /**  Changes hasFocus to TRUE and reports status to parent.
+    /**
+     * Changes hasFocus to TRUE and reports status to parent.
+     *
      * @return bool
      * @remark Acts recursively on it's parents. If the widget cannot 
      * be focused, this function needs be overridden.
@@ -747,7 +751,9 @@ public:
         return true;
     }
 
-    /// Sets hasFocus false and notifys parent.
+    /**
+     * Sets hasFocus false and notifys parent.
+     */
     virtual void OnLostFocus() 
     { 
         if ( !hasFocus ) return; 
@@ -755,13 +761,19 @@ public:
         if ( parent ) parent->OnLostFocus();
     }
     
-    /// Sets the new position of the close button.
+    /**
+     * Sets the new position of the close button.
+     */
     virtual void OnResize();
     
-    /// Called once the mouse up is done after resizing a widget.
+    /**
+     * Called once the mouse up is done after resizing a widget.
+     */
     virtual void StopResize();
 
-    /** Get the color for this widgets border.
+    /**
+     * Get the color for this widgets border.
+     *
      * @param which The index value in borderColor to get.
      * @returns It's own border color if it has one, if it doesn't have
      * it's own then the parent's, or if no parent it returns the default  
@@ -769,7 +781,9 @@ public:
      */
     virtual int GetBorderColour(int which);
     
-    /** Set the size of this widget and it's position relative to the parent.
+    /**
+     * Set the size of this widget and it's position relative to the parent.
+     *
      * @param x The offset from the parent's minimum x value.
      * @param y The offset from the parent's minimum y value.
      * @param width Value to be used for default width.
@@ -777,31 +791,40 @@ public:
      */
     virtual void SetRelativeFrame( int x, int y, int width, int height );
     
-    /** Resets the position, width and height to the default position
+    /**
+     * Resets the position, width and height to the default position.
      */
     virtual void ResetToDefaultFrame( ) { screenFrame = defaultFrame; }
 
-    /** Set the position of this widget relative to the parent.
+    /**
+     * Set the position of this widget relative to the parent.
+     *
      * @param x The offset from the parent's minimum x value.
      * @param y The offset from the parent's minimum y value.
      * @remark Recalculates the screen positions of all of it's children.
      */
     virtual void SetRelativeFramePos( int x, int y );
 
-    /** Sets defaultFrame and screenFrame size attributes.
+    /**
+     * Sets defaultFrame and screenFrame size attributes.
+     *
      * @param width Value to be used for default width.
      * @param height Value to be used for default height.
      * @remark Recalculates the screen positions of all of it's children.
      */
     virtual void SetRelativeFrameSize( int width, int height );
     
-    /** Modify attachFlags to control widget construction.
+    /**
+     * Modify attachFlags to control widget construction.
+     *
      * @param flags The new value for attachFlags. 
      * @remark attachFlags is 0 by default.
      */
     virtual void SetAttachFlags( int flags ) { attachFlags = flags; }
 
-    /** Manage mouse down event to test for and apply window changes.
+    /**
+     * Manage mouse down event to test for and apply window changes.
+     *
      * @param button Type of button: 1 resizable or movable, 2  
      * context menu or config window.
      * @param modifiers Used with PAWS_CONSTRUCTION.
@@ -812,47 +835,61 @@ public:
      */
     virtual bool OnMouseDown( int button, int modifiers, int x, int y );
 
-    /** Manage mouse up event.
+    /**
+     * Manage mouse up event.
+     *
      * @return bool Parent's result or FALSE if no parent.
      * @remark Acts recursively on it's parents.
      */
     virtual bool OnMouseUp( int button, int modifiers, int x, int y );
    
-    /** Manage mouse double click event.
-      * @return bool Parent's result or FALSE if no parent.
-      * @remark Acts recursively on it's parents.
-      */
+    /**
+     * Manage mouse double click event.
+     *
+     * @return bool Parent's result or FALSE if no parent.
+     * @remark Acts recursively on it's parents.
+     */
     virtual bool OnDoubleClick( int button, int modifiers, int x, int y);
 
 
-    /** Called whenever the mouse enters this widget.
+    /**
+     * Called whenever the mouse enters this widget.
+     *
      * @return bool Parent's result or TRUE if no parent.
      * @remark Acts recursively on it's parents.
      */
     virtual bool OnMouseEnter();
     
-    /** Called whenever the mouse leaves this widget.
+    /**
+     * Called whenever the mouse leaves this widget.
+     *
      * @return bool Parent's result or TRUE if no parent.
      */
     virtual bool OnMouseExit();
     
-    /** Called when mouse enters a child widget. 
+    /**
+     * Called when mouse enters a child widget.
+     *
      * If child wants to inform parent.
      * @param child The child widget.
      * @return true
      */
     virtual bool OnChildMouseEnter( pawsWidget* child );
     
-    /** Called when a mouse exits a child widget. 
+    /**
+     * Called when a mouse exits a child widget.
+     *
      * If child wants to inform parent.
      * @param child The child widget.
      * @return bool Parent's result or TRUE if no parent.
      */
     virtual bool OnChildMouseExit( pawsWidget* child );
     
-    /** Process keydown messages.
+    /**
+     * Process keydown messages.
+     *
      * @param keyCode The code for the pressed key.
-     * @param key The key pressed.
+     * @param keyChar The key pressed.
      * @param modifiers Used to modify tab behavior.
      * @return bool TRUE for success FALSE if no action.
      * @remark If you override this, be sure to also override 
@@ -860,30 +897,40 @@ public:
      */
     virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
     
-    /** Process joypadDown messages.
+    /**
+     * Process joypadDown messages.
+     *
      * @param key The key pressed.
      * @param modifiers Used to modify behavior.
      * @return bool TRUE for success FALSE if no action.
      */
     virtual bool OnJoypadDown( int key, int modifiers );
 
-    /** Process Clipboard content, as a response to RequestClipboardContent
+    /**
+     * Process Clipboard content, as a response to RequestClipboardContent
+     *
      * @param content The content of the clipboard
      * @return bool TRUE for success FALSE if no action.
      */
     virtual bool OnClipboard( const csString& content );
     
-    /** Test focus of the widget.
+    /**
+     * Test focus of the widget.
+     *
      * @return hasFocus Current status of the widget.
      */
     virtual bool HasFocus() { return hasFocus; }
 
-    /** Test if the widget should intercept all key presses.
+    /**
+     * Test if the widget should intercept all key presses.
+     *
      * @remark False by default, should be true for text entry widgets
      */
     virtual bool GetFocusOverridesControls() const { return false; }
 
-    /** Move this widget up the z order to the top
+    /**
+     * Move this widget up the z order to the top.
+     *
      * If the widget is alwaysOnTop, it will be placed in position 0.
      * If the widget is not alwaysOnTop, it will be placed after the last 
      * alwaysOnTop widget. Will also recurse up through the parents to bring
@@ -892,15 +939,21 @@ public:
      */
     virtual void BringToTop( pawsWidget* widget );
 
-    /** Move this widget down the z order to the bottom
+    /**
+     * Move this widget down the z order to the bottom
+     *
      * @param widget Widget to bring forward.
      */
     virtual void SendToBottom( pawsWidget* widget );
 
-    /// Get the name of this widget.
+    /**
+     * Get the name of this widget.
+     */
     const char* GetName()  { return name; }
 
-    /// Set the name of this widget.
+    /**
+     * Set the name of this widget.
+     */
     void SetName( const char* newName ) 
     { 
         name.Replace( newName ); 
@@ -908,40 +961,52 @@ public:
         closeName.Append("_close");
     }
 
-    /// Returns the closeName of this widget.
+    /**
+     * Returns the closeName of this widget.
+     */
     const char* GetCloseName() { return closeName; }
 
-   /** Move a widget by a delta amount.
-     * This will recurse through all the children calling MoveDelta on each.
-     * @param dx Delta x
-     * @param dy Delta y
-     */
+   /**
+    * Move a widget by a delta amount.
+    *
+    * This will recurse through all the children calling MoveDelta on each.
+    * @param dx Delta x
+    * @param dy Delta y
+    */
     virtual void MoveDelta( int dx, int dy );
 
-    /** Moves this widget and all of its children to a new screen location.
+    /**
+     * Moves this widget and all of its children to a new screen location.
+     *
      * @param x new x
      * @param y new y
      */
     virtual void MoveTo( int x, int y );
     
-    /** Move this widget so that its center is at given location.
+    /**
+     * Move this widget so that its center is at given location.
+     *
      * @param x Screen coordinate X.
      * @param y Screen coordinage Y.
      */
     virtual void CenterTo( int x, int y );
     
-    /** Move this widget so that its center is at mouse pointer, but it is 
-     * fully on screen.
+    /**
+     * Move this widget so that its center is at mouse pointer, but it is fully on screen.
      */
     virtual void CenterToMouse();
 
-    /** Resize a widget based on the current mouse position.
+    /**
+     * Resize a widget based on the current mouse position.
+     *
      * This will recurse through all the children calling Resize() on each.
      * @param flags  The resize direction.
      */    
     virtual void Resize( int flags );
 
-    /** Resize a widget by a delta amount.
+    /**
+     * Resize a widget by a delta amount.
+     *
      * This will recurse through all the children calling Resize() on each.
      * @param dx Delta x
      * @param dy Delta y
@@ -949,7 +1014,9 @@ public:
      */    
     virtual void Resize( int dx, int dy, int flags );
 
-    /** Set the size of a particlar widget.
+    /**
+     * Set the size of a particlar widget.
+     *
      * This will also call Resize() all of the children widgets to 
      * adjust to the new parent size. 
      * @param newWidth The new width of this widget.
@@ -957,42 +1024,58 @@ public:
      */
     virtual void SetSize( int newWidth, int newHeight );
 
-    /// Same as above, but does not resize children
+    /**
+     * Same as above, but does not resize children.
+     */
     virtual void SetForceSize( int newWidth, int newHeight );
 
-    /** Creates a new border and links it to the widget.
+    /**
+     * Creates a new border and links it to the widget.
+     *
      * @param style The style of border to create.
      */
     virtual void UseBorder( const char* style = 0 );
 
-    /// This returns the border created by UseBorder()
+    /**
+     * This returns the border created by UseBorder().
+     */
     virtual pawsBorder* GetBorder() { return border; }
 
-    /** This returns the BORDER_BUMP style.
+    /**
+     * This returns the BORDER_BUMP style.
+     *
      * @remark Other styles available include: BORDER_RAISED, BORDER_SUNKEN 
      * and BORDER_ETCHED.
      */
     virtual int GetBorderStyle() { return BORDER_BUMP; }
     
-    /** Sets the background image, logs error if NULL.
+    /**
+     * Sets the background image, logs error if NULL.
+     *
      * @param imageName The new background image.
      * @remark Loads image description and gets initial alpha level.
      */
     virtual void SetBackground( const char* imageName );
 
-    /** Retrieve the background image name.
+    /**
+     * Retrieve the background image name.
+     *
      * @return csString resourceName or "" if not found.
      */
     csString GetBackground();
 
-    /** Sets the alpha level of the background.
+    /**
+     * Sets the alpha level of the background.
+     *
      * @param alphaValue The new alpha level.
      * @remark Updates current alpha level sets alpha and alphaMin to 
      * alphaValue.
      */
     virtual void SetBackgroundAlpha( int alphaValue );
 
-    /// Resize a widget based on it's parent's size.
+    /**
+     * Resize a widget based on it's parent's size.
+     */
     virtual void Resize();
     
     /**
@@ -1025,7 +1108,9 @@ public:
         return false;
     }
 
-    /** Called whenever a window is scrolled.
+    /**
+     * Called whenever a window is scrolled.
+     *
      * @param scrollDirection The direction to move.
      * @param widget The scrollbar widget being manipulated.
      * @return bool Parent's result or FALSE if no parent.
@@ -1042,38 +1127,50 @@ public:
      * @param widget The selected widget.
      * @return bool
      */
-    virtual bool OnSelected(pawsWidget* /*widget*/) { return false; }
+    virtual bool OnSelected(pawsWidget* widget);
     
-    /** Called whenever a menu action occurs.
+    /**
+     * Called whenever a menu action occurs.
+     *
      * @param widget The widget acted upon.
      * @param action The action to take.
      * @return TRUE on menu destroy and FALSE on configure
      */
-    virtual bool OnMenuAction ( pawsWidget * widget, const pawsMenuAction & action );
+    virtual bool OnMenuAction(pawsWidget* widget, const pawsMenuAction & action );
     
-    /** Called whenever a widget is selected.
+    /**
+     * Called whenever a widget is selected.
+     *
      * @param widget The widget acted upon.
      * @return Notify parent and return result FALSE if no parent.
      */
     virtual bool OnChange(pawsWidget * widget);
 
-    /** Change the id of a widget.
+    /**
+     * Change the id of a widget.
+     *
      * @param newID The id number to change to.
      */
     void SetID( int newID ) { id = newID; }
 
-    /** Gets the id of a widget.
+    /**
+     * Gets the id of a widget.
+     *
      * @return id The widget id.
      */
     int  GetID() { return id; }
 
-    /** Tests value of this widgets alwaysOnTop flag.
+    /**
+     * Tests value of this widgets alwaysOnTop flag.
+     *
      * @return bool alwaysOnTop.
      */
     bool IsAlwaysOnTop() { return alwaysOnTop; }
 
-    /** Sets value of this widgets alwaysOnTop flag.
-     * @param bool
+    /**
+     * Sets value of this widgets alwaysOnTop flag.
+     *
+     * @param value True to set always on top.
      * @remark Will cause the parent to bring this widget to the top.
      */
     void SetAlwaysOnTop( bool value ) 
@@ -1083,31 +1180,43 @@ public:
             parent->BringToTop(this); 
     }
 
-    /** Makes a widget movable.
-     * @param bool
+    /**
+     * Makes a widget movable.
+     *
+     * @param value True if movable.
      */
     void SetMovable( bool value ) { movable = value; }
 
-    /** Changes the text for a tool tip.
+    /**
+     * Changes the text for a tool tip.
+     *
      * @param text The new text.
      */
     void SetToolTip(const char* text) {toolTip.Replace(text);}
 
-    /** Gets the text from a tool tip.
+    /**
+     * Gets the text from a tool tip.
+     *
      * @return csString The tool tip text.
      */
     csString& GetToolTip() { return toolTip; }
 
-    /** Changes the format of a tool tip.
+    /**
+     * Changes the format of a tool tip.
+     *
      * @param fmt The format string.
-     * @param args These define the new format.
+     * @param ... These define the new format.
      */
     void FormatToolTip( const char *fmt, ... );
     
-    /// Sets the tool tip to the one defined in the XML.
+    /**
+     * Sets the tool tip to the one defined in the XML.
+     */
     void SetDefaultToolTip() { toolTip.Replace(defaultToolTip); }
 
-    /** Called whenever an item in a child list box is selected.
+    /**
+     * Called whenever an item in a child list box is selected.
+     *
      * @param selected The listbox that has the item selected.
      * @param status From listbox when a row is selected. 
      */
@@ -1116,32 +1225,41 @@ public:
         if (parent) parent->OnListAction(selected,status); 
     }
     
-    /** Saves the position of this widget to the config file.
+    /**
+     * Saves the position of this widget to the config file.
+     *
      * This is done if the savedWindowPos is set to true, this can be done
      * inside the xml file as  savepositions="yes"
      */
     virtual void SavePosition();
 
-    /** Get the position of this widget that was stored in a cfg file.
-     * return A csrect that is the new position. Or return the position that 
+    /**
+     * Get the position of this widget that was stored in a cfg file.
+     *
+     * @return A csrect that is the new position. Or return the position that 
      * is in the XML file.
      */
     virtual csRect LoadPositions();
 
-    /** Sets the type of factory.
-     *  @param myfactory The new factory type. 
+    /**
+     * Sets the type of factory.
+     *
+     * @param myfactory The new factory type. 
      */
     void SetFactory( const char* myfactory ) 
     { 
         factory = myfactory; 
     }
 
-    /** Gets the current factory type.
-     *  @return factory The current factory type. 
+    /**
+     * Gets the current factory type.
+     *
+     * @return factory The current factory type. 
      */
     const char* GetType() { return factory; }
 
-    /** Returns the actual width assuming the passed value was in 800x600 
+    /**
+     * Returns the actual width assuming the passed value was in 800x600 
      * resolution. 
      */
     int GetActualWidth( int myValue=-1 )
@@ -1162,7 +1280,8 @@ public:
         return ( (int)ret );
     }
 
-    /** Returns the actual Height assuming the passed value was in 800x600
+    /**
+     * Returns the actual Height assuming the passed value was in 800x600
      * resolution. 
      */
     int GetActualHeight( int myValue=-1 )
@@ -1193,6 +1312,7 @@ public:
         myValue /= desktop;
         return myValue;
     }
+    
     int GetLogicalHeight(int myValue )
     {
         if (!resizeToScreen)
@@ -1204,24 +1324,32 @@ public:
         return myValue;
     }
 
-    /** Sets hasMouseFocus.
+    /**
+     * Sets hasMouseFocus.
+     *
      * @param value TRUE causes widget to react to mouse focus.
      * @remark hasMouseFocus is used by DrawBackground() to fade the 
      * background in. Disabled by default.
      */
     virtual void MouseOver(bool value);
 
-    /** Used to control the fading feature of the widget.
-     * @param bool 
+    /**
+     * Used to control the fading feature of the widget.
+     *
+     * @param value True if fading feature should be on.
      */
     void SetFade(bool value);
 
-    /** Used to control the font scaling of the widget.
-     * @param bool 
+    /**
+     * Used to control the font scaling of the widget.
+     *
+     * @param value True if font scaling should be enabled.
      */
     void SetFontScaling(bool value);
 
-    /** Draw text in the widget at specified location.
+    /**
+     * Draw text in the widget at specified location.
+     *
      * @param text The text to draw.
      * @param x The x screen position.
      * @param y The x screen position.
@@ -1232,7 +1360,9 @@ public:
     void DrawWidgetText(const char *text, int x, int y, int style=-1);
 
     /**
-     * Get the rectangle containing the text DrawWidgetText will produce
+     * Get the rectangle containing the text DrawWidgetText will produce.
+     *
+     * @param text The text.
      * @param x The x screen position.
      * @param y The x screen position.
      * @param style When set at -1 causes widget to call GetFontStyle().
@@ -1241,7 +1371,9 @@ public:
      */
     csRect GetWidgetTextRect(const char *text, int x, int y, int style=-1);
 
-    /// Set the minimum height and width to protect the widget from negatives.
+    /**
+     * Set the minimum height and width to protect the widget from negatives.
+     */
     void SetMinSize( int width, int height)
     {
         min_width = width;
@@ -1254,7 +1386,9 @@ public:
         height = min_height;
     }
 
-    /** Set the max size for height and width.
+    /**
+     * Set the max size for height and width.
+     *
      * @remark Default is screen height and width.
      */
     void SetMaxSize( int width, int height)
@@ -1264,201 +1398,255 @@ public:
     }
 
 
-    /** Sets name of the PAWS xml-file that describes context menu of our 
-     * widget.
+    /**
+     * Sets name of the PAWS xml-file that describes context menu of our widget.
      */
     void SetContextMenu(const csString & fileName) 
     { 
         contextMenuFile = fileName; 
     }
    
-    /** If some part of the widget is not within the rectangle of its parent,
+    /**
+     * If some part of the widget is not within the rectangle of its parent,
      * then the widget is moved inside (if it is small enough).
      */
      void MakeFullyVisible();
      
-     /** This re-calculates a widget's on screen position to draw based on 
-       * it's relative position and parent screen location.
-       */
+     /**
+      * This re-calculates a widget's on screen position to draw based on 
+      * it's relative position and parent screen location.
+      */
      void RecalcScreenPositions();
      
-    /** Determines clipping area to use.
+    /**
+     * Determines clipping area to use.
+     *
      * If a widget is the top level it clips to the canvas. If it has a parent
      * it calculates the intersection between either it's border or  
      * screenframe and parent clip. Updates clipRect for future drawing.
      */
      void ClipToParent(bool allowForBackgroundBorder);
 
-    /** This returns the current clipping rectangle.
+    /**
+     * This returns the current clipping rectangle.
+     *
      * @return csRect clipRect
      */
      csRect ClipRect() { return clipRect; }
 
-    /** Set text color.
-     *  @param newColour The colour to use from now on for this widget.
-     *                   If it's -1 it will make the selection at runtime
-     *                   (by checking first the parent then the default colour)
-     *                   If it's -2 (default) it will make the choice upon
-     *                   this call by setting the default color.
+    /**
+     * Set text color.
+     *
+     * @param newColour The colour to use from now on for this widget.
+     *                  If it's -1 it will make the selection at runtime
+     *                  (by checking first the parent then the default colour)
+     *                  If it's -2 (default) it will make the choice upon
+     *                  this call by setting the default color.
      */
     void SetColour( int newColour = -2 );
 
-    /// Set font to use programmatically.
+    /**
+     * Set font to use programmatically.
+     */
     void SetFont( const char* fontName, int Size=0 );
 
-    /** Change font to new size and reload font to make it take effect.
+    /**
+     * Change font to new size and reload font to make it take effect.
+     *
      * @param newSize The font size to change to.
      */
     void ChangeFontSize( float newSize );
 
-    /** Gets the current font size.
+    /**
+     * Gets the current font size.
+     *
      * @return It's own size if it has one, if not then the parent's,
      * or if it doesn't have a parent it returns DEFAULT_FONT_SIZE
      */
     float GetFontSize();
 
-    /** Gets the current font as an iFont.
+    /**
+     * Gets the current font as an iFont.
+     *
      * @return It's own font if it has one, if not then the parent's,
      * or if it doesn't have a parent it returns windowManager DEFAULT_FONT.
      */
     iFont *GetFont( bool scaled = true);
 
-    /** Gets the current font color.
+    /**
+     * Gets the current font color.
+     *
      * @return defaultFontColour if it is != -1, if it has a parent 
      * use parent->GetFontColour(), if it doesn't have a parent it 
      * returns windowManager GetDefaultFontColour().
      */
     virtual int GetFontColour();
 
-    /** Gets the current shadow color.
+    /**
+     * Gets the current shadow color.
+     *
      * @return default if myFont, if not then the parent's,
      * or if it doesn't have a parent it returns black.
      */
     int    GetFontShadowColour();
 
-    /** Gets the current font style.
+    /**
+     * Gets the current font style.
+     *
      * @return fontStyle if myFont, if not then the parent's,
      * or if it doesn't have a parent it returns DEFAULT_FONT_STYLE.
      */
     int    GetFontStyle();
 
-    /** Sets the current font style.
+    /**
+     * Sets the current font style.
      */
     void   SetFontStyle(int style);
 
-    /** Determines if the coordinates are within this widget. Typically the border or screenFrame.
+    /**
+     * Determines if the coordinates are within this widget. Typically the border or screenFrame.
+     *
      * @param x The x screen position.
      * @param y The y screen position.
      * @return TRUE if yes otherwise FALSE
      */
     virtual bool Contains( int x, int y );
 
-    /** Creates a popup window that the user can use to
-     *  adjust the settings of this window.
+    /**
+     * Creates a popup window that the user can use to
+     * adjust the settings of this window.
      */
     virtual void CreateWidgetConfigWindow();
 
-    /** Called by ApplyAlphaOnChildren to remove the config
-     *  window to prevent weird stuff.
+    /**
+     * Called by ApplyAlphaOnChildren to remove the config
+     * window to prevent weird stuff.
      */
     virtual void DestroyWidgetConfigWindow();
     
-    /** Gets the minimim alpha value of this widget.
+    /**
+     * Gets the minimim alpha value of this widget.
      */
     int GetMinAlpha(){return alphaMin;};
     
-    /** Gets the maximum alpha value of this widget.
+    /**
+     * Gets the maximum alpha value of this widget.
      */
     int GetMaxAlpha(){return alpha;};
     
-    /** Gets the fade value of this widget
+    /**
+     * Gets the fade value of this widget
      */
     int GetFadeVal(){return (int)fadeVal;};
 
-    /** Sets the minimim alpha of this widget.
+    /**
+     * Sets the minimim alpha of this widget.
      */
     void SetMinAlpha(int value){alphaMin=value;};
     
-    /** Sets the maximum alpha of this widget.
+    /**
+     * Sets the maximum alpha of this widget.
      */
     void SetMaxAlpha(int value){alpha=value;};
     
-    /** Gets the fade status of this widget.
+    /**
+     * Gets the fade status of this widget.
      */
     bool isFadeEnabled(){return fade;};
     
-    /** Gets the fading speed.
+    /**
+     * Gets the fading speed.
      */
     float GetFadeSpeed(){return fadeSpeed;};
     
-    /** Sets the fading speed.
+    /**
+     * Sets the fading speed.
      */
     void SetFadeSpeed(float speed){fadeSpeed=speed;};
 
-    /** Returns whether or not font is being auto-scaled.
+    /**
+     * Returns whether or not font is being auto-scaled.
      */
     bool isScalingFont() { return scaleFont; }
     
-    /** Sets the border title of this widget.
+    /**
+     * Sets the border title of this widget.
      */
     void SetTitle(const char *title);
     
-    /** Saves current widget settings to an XML file.
+    /**
+     * Saves current widget settings to an XML file.
      */
     virtual void SaveSettings();
     
-    /** Loads current widget settings from an XML file.
+    /**
+     * Loads current widget settings from an XML file.
      */
     virtual void LoadSettings();
     
-    /** This draws the tool tip if a widget is visible and a tool tip is 
+    /**
+     * This draws the tool tip if a widget is visible and a tool tip is 
      * available.
+     *
      * @param x The x screen position.
      * @param y The y screen position.
      */
     virtual void DrawToolTip(int x, int y);
     
-    /** Prints the widget names for the widget and all it's children.
+    /**
+     * Prints the widget names for the widget and all it's children.
+     *
      * @param tab String to set tab format.
      */
     virtual void Dump(csString tab = "");
     
-    /** Returns textual description of path to our widget through the widget 
-      * tree. (direct and indirect parents)
-      */
+    /**
+     *Returns textual description of path to our widget through the widget 
+     * tree. (direct and indirect parents)
+     */
     csString GetPathInWidgetTree();
 
-    /** Sets a masking image which will be drawn after the normal stuff.
-     *   @param image The image resource name.
+    /**
+     * Sets a masking image which will be drawn after the normal stuff.
+     *
+     * @param image The image resource name.
      */
     void SetMaskingImage(const char* image);
 
-    /** Clears the masking image.
+    /**
+     * Clears the masking image.
      */
     void ClearMaskingImage();
 
-    /** Sets the background color
-     * @param Red
-     * @param Green
-     * @param Blue
+    /**
+     * Sets the background color
+     *
+     * @param r Red
+     * @param g Green
+     * @param b Blue
      */
     void SetBackgroundColor(int r,int g, int b);
     
     void ClearBackgroundColor() { bgColour = -1; }
 
-    /** Changes filename to the name provided.
+    /**
+     * Changes filename to the name provided.
      */
     void SetFilename(const char *name);
 
-    /** Returns the filename.
+    /**
+     * Returns the filename.
      */
     const char *GetFilename();
 
-    /** Reloads widget from XML file.
+    /**
+     * Reloads widget from XML file.
      */
     void ReloadWidget();
 
-    /** Stores extra data into this widget.
+    /**
+     * Stores extra data into this widget.
+     *
      * @param data The extra data to store.  
      * @remark The widget takes ownership of the data.
      */
@@ -1468,27 +1656,33 @@ public:
         extraData = data; 
     }
 
-    /** Grabs extra data stored in the widget.
-     *  @return The extra data stored in this widget.
+    /**
+     * Grabs extra data stored in the widget.
+     *
+     * @return The extra data stored in this widget.
      */
     iWidgetData * GetExtraData() { return extraData; }
 
-    /** Tests if widget settings (alpha, fade, etc) are configurable.
-     *   @return bool
+    /**
+     * Tests if widget settings (alpha, fade, etc) are configurable.
+     *
+     * @return bool
      */
     bool IsConfigurable() { return configurable; }
 
     virtual void OnUpdateData(const char* /*dataname*/, PAWSData& /*data*/) {}
     virtual void NewSubscription(const char* dataname) { subscribedVar = dataname; }
 
-    /** Sets up the title bar for the widget.
+    /**
+     * Sets up the title bar for the widget.
      * 
-     *  @param text The name that should go in the title.
-     *  @param image The name of the backround image for the title.
-     *  @param align The alignment of the text.
-     *  @param close_button "yes" means to add a close button to the title bar.
+     * @param text The name that should go in the title.
+     * @param image The name of the backround image for the title.
+     * @param align The alignment of the text.
+     * @param close_button "yes" means to add a close button to the title bar.
+     * @param shadowTitle True if title should have shadow.
      *
-     *  @return true if all was successful.
+     * @return true if all was successful.
      */
     bool SetTitle( const char* text, const char* image, const char* align, const char* close_button, const bool shadowTitle = true);
 
@@ -1514,31 +1708,41 @@ public:
     bool NeedsRender() const { return needsRender; }
 
 protected:
-    /** This will check to see if the mouse is over the resize hot spot.
+    /**
+     * This will check to see if the mouse is over the resize hot spot.
      */
     int ResizeFlags(int mouseX, int mouseY);
 
-    /** Creates context menu from file ('contextMenuFile' attribute)
+    /**
+     * Creates context menu from file ('contextMenuFile' attribute)
      */
     bool CreateContextMenu();
 
-    /** Calculates the right position in array of children for a given
+    /**
+     * Calculates the right position in array of children for a given
      * child (depends on always-on-top state).
      */     
     int CalcChildPosition(pawsWidget * child);
 
-    /** Loads custom border color preferences.
+    /**
+     * Loads custom border color preferences.
      */
     void LoadBorderColours( iDocumentNode* node );
     
-    /// Gets button from widget and sets it's location.
+    /**
+     * Gets button from widget and sets it's location.
+     */
     void SetCloseButtonPos();
 
-    /// Convert from string flag to int flag.
+    /**
+     * Convert from string flag to int flag.
+     */
     int GetAttachFlag( const char* flag );    
 
 public:
-    /// Executes any pawsScript associated with the given event
+    /**
+     * Executes any pawsScript associated with the given event.
+     */
     void RunScriptEvent(PAWS_WIDGET_SCRIPT_EVENTS event);
 
     const char* ToString() { return name.GetDataSafe(); }
@@ -1615,6 +1819,8 @@ public: \
 
 
 
+
+/** @} */
 
 #endif 
 

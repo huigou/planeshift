@@ -27,6 +27,10 @@
 class pawsButton;
 
 /**
+ * \addtogroup common_paws
+ * @{ */
+
+/**
  * This interface defines the callback used by pawsStringPromptWindow
  * to notify another window of a supplied answer.
  */
@@ -150,6 +154,8 @@ protected:
 };
 
 CREATE_PAWS_FACTORY(pawsStringPromptWindow);
+
+/** @} */
 
 #endif
 

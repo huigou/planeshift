@@ -25,6 +25,10 @@
 class MsgEntry;
 
 /**
+ * \addtogroup common_util
+ * @{ */
+
+/**
  * @class psSkillCacheItem
  *
  * psSkillCacheItem item is one stat or skill in the skill cache.
@@ -251,5 +255,7 @@ class psSkillCache {
         bool deleteItem(psSkillCacheItem *item);
 
 };
+
+/** @} */
 
 #endif

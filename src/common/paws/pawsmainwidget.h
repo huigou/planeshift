@@ -28,6 +28,9 @@
 #include "pawswidget.h"
 #include "psmousebinds.h"
 
+/**
+ * \addtogroup common_paws
+ * @{ */
 
 /** A paws script key.
  * This is read from the guikeys.xml file to handle gui keys.
@@ -62,5 +65,7 @@ protected:
     //iCamera* guiCamera;
     csPDelArray<pawsScriptKey> keys;
 };
+
+/** @} */
 
 #endif

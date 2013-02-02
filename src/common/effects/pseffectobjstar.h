@@ -25,6 +25,10 @@
 
 class psEffect2DRenderer;
 
+/**
+ * \addtogroup common_effects
+ * @{ */
+
 class psEffectObjStar : public psEffectObj
 {
 public:
@@ -103,5 +107,7 @@ private:
     csVector3 * vert;
     csColor4 *  colour;
 };
+
+/** @} */
 
 #endif
