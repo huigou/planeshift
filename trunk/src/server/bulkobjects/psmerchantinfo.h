@@ -33,6 +33,10 @@
 // Local Includes
 //=============================================================================
 
+/**
+ * \addtogroup bulkobjects
+ * @{ */
+
 struct psItemCategory
 {
     
@@ -51,12 +55,13 @@ struct psItemCategory
 class psMerchantInfo : public csRefCount
 {
 public:
-    /** A character is defined to be a merchant if there are
-    * merchant item categories for the character.
-    * 
-    * @param characterid The characterid to check.
-    * @return Return true if the character is a merchant.
-    */
+    /**
+     * A character is defined to be a merchant if there are
+     * merchant item categories for the character.
+     * 
+     * @param pid The characterid to check.
+     * @return Return true if the character is a merchant.
+     */
     bool Load(PID pid);
     
     psItemCategory * FindCategory(int id);
@@ -65,5 +70,7 @@ public:
     csArray<psItemCategory*> categories;
     
 };
+
+/** @} */
 
 #endif

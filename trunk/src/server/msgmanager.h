@@ -35,6 +35,15 @@
 // Local Includes
 //=============================================================================
 
+class Client;
+class gemObject;
+class gemActor;
+class MsgEntry;
+class GEMSupervisor;
+
+/**
+ * \addtogroup server
+ * @{ */
 
 /// These flags define the tests that are centrally done 
 /// before subclasses get the message.
@@ -49,13 +58,8 @@
 #define REQUIRE_TARGETNPC            0x80
 
 
-class Client;
-class gemObject;
-class gemActor;
-class MsgEntry;
-class GEMSupervisor;
-
-/** @brief Base server-side class for subscriptions
+/**
+ * Base server-side class for subscriptions.
  *
  * Contains non-templated functions for classes that need to be able to subscribe
  * to messages.
@@ -69,14 +73,16 @@ public:
     /** Finds Client* of character with given name. */
     Client * FindPlayerClient(const char *name);
     
-    /** @brief Decodes an area: expression
+    /**
+     * Decodes an area: expression.
      *
      *  @param client The client of the caller
      *  @param target The area: expression
      */
     csArray<csString> DecodeCommandArea(Client *client, csString target);
     
-    /** @brief Find the object we are referring to in str
+    /**
+     * Find the object we are referring to in str.
      * 
      * This str can have different formats, depending on the object
      * we are trying to get.
@@ -87,7 +93,8 @@ public:
     gemObject* FindObjectByString(const csString& str, gemActor * me) const;
 };
 
-/** @brief Provides a manager to facilitate subscriptions
+/**
+ * Provides a manager to facilitate subscriptions.
  *
  * Any server-side class that needs to be informed of incoming messages should
  * derive from this class. To use, simply inherit from this class with the
@@ -105,13 +112,14 @@ class MessageManager : public MessageManagerBase
             UnsubscribeAll();
         }
 
-        /** @brief Subscribes this manager to a specific message type with a custom callback
+        /**
+         * Subscribes this manager to a specific message type with a custom callback.
          *
          * Any time a message with the specified type (and flags are met) is
          * received the specified function is called
          * @param fpt The function to call
          * @param type The type of message to be notified of
-         * @param Optional flags to check <i>Default: 0x01</i>
+         * @param flags to check <i>Default: 0x01</i>
          */
         inline void Subscribe(FunctionPointer fpt, msgtype type, uint32_t flags = 0x01)
         {
@@ -123,7 +131,8 @@ class MessageManager : public MessageManagerBase
             handlers.Put(type, fpt);
         }
 
-        /** @brief Unsubscribes this manager from a specific message type
+        /**
+         * Unsubscribes this manager from a specific message type.
          *
          * @param type The type of message to unsubscribe from
          * @return True if a subscription was removed, false if this was not subscribed
@@ -139,7 +148,8 @@ class MessageManager : public MessageManagerBase
             return false;
         }
 
-        /** @brief Unsubscribes a specific handler from a specific message type
+        /**
+         * Unsubscribes a specific handler from a specific message type.
          *
          * @param handler The handler to unsubscribe
          * @param type The type of message to unsubscribe from
@@ -166,7 +176,8 @@ class MessageManager : public MessageManagerBase
             }
         }
 
-        /** @brief Unsubscribes this manager from all message types
+        /**
+         * Unsubscribes this manager from all message types.
          *
          * @return True if a subscription was removed, false if this was not subscribed
          */
@@ -177,7 +188,8 @@ class MessageManager : public MessageManagerBase
             return GetEventManager()->UnsubscribeAll(this);
         }
         
-        /** @brief Transfers the message to the manager specific function
+        /**
+         * Transfers the message to the manager specific function.
          *
          * @note DO NOT OVERRIDE
          * @param msg Message that is forwarded to the manager's function
@@ -206,7 +218,9 @@ class MessageManager : public MessageManagerBase
     private:
         CS::Threading::RecursiveMutex mutex;
         csHash<FunctionPointer, msgtype> handlers;
-        /** @brief Gets the event manager from the server
+        
+        /**
+         * Gets the event manager from the server.
          *
          * Asserts if the retrieved manager is valid
          *
@@ -219,5 +233,7 @@ class MessageManager : public MessageManagerBase
             return eventManager;
         }
 };
+
+/** @} */
 
 #endif

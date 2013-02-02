@@ -89,23 +89,37 @@ class  BankManager;
 class  ServerConsole;
 class  psQuitEvent;
 
-/** The main server class.
+/**
+ * \addtogroup server
+ * @{ */
+
+/**
+ * The main server class.
+ *
  * The main server class holding references to important server objects.
  */
 class psServer
 {
 public:
 
-    /** Default constructor.
+    /**
+     * Default constructor.
+     *
      * Just sets all the pointers to NULL.
      */
     psServer();
-    /** Destructor.
+    
+    /**
+     * Destructor.
+     *
      * Cleans up all allocated memory and removes all the players from the
      * world.
      */
     ~psServer();
-    /** Initialize the server.
+    
+    /**
+     * Initialize the server.
+     *
      * Initializes the following modules:
      *     - marriage Manager ( psMarriageManager )
      *     - database ( psDatabase )
@@ -132,7 +146,10 @@ public:
      * @return Returns success or failure.
      */
     bool Initialize(iObjectRegistry* objreg);
-    /** Runs a script file to set up server and goes to the consoles main loop.
+    
+    /**
+     * Runs a script file to set up server and goes to the consoles main loop.
+     *
      * Load and starts an optional script file whose name was given on the
      * command line using the "run script_filename" option. This script sets
      * up the server by executing console commands. After that the function
@@ -143,7 +160,8 @@ public:
      */
     void MainLoop();
 
-    /** Checks to see if a world is loaded
+    /**
+     * Checks to see if a world is loaded
      *
      * @return Returns a true if a world has been loaded.
      */
@@ -152,64 +170,85 @@ public:
         return MapLoaded;
     }
 
-    /** Loads a map and changes the MapLoaded
+    /**
+     * Loads a map and changes the MapLoaded.
      *
+     * @param mapname The name of the map to load.
      * @return Returns a true if the world loaded.
      */
     bool LoadMap(const char* mapname);
 
-    /** Checks to see if a world is loaded ready to go.
+    /**
+     * Checks to see if a world is loaded ready to go.
      *
      * @return Returns a true if a world has been loaded and is ready to go.
      * @see EntityManager::IsReady()
      */
     bool IsReady();
-    /** Checks to see if a world has loaded in the past.
+    
+    /**
+     * Checks to see if a world has loaded in the past.
      *
      * @return Returns a true if a world has been loaded or is still loaded.
      * @see EntityManager::HasBeenReady()
      */
     bool HasBeenReady();
-    /** Checks if the server is full
+    
+    /**
+     * Checks if the server is full
      *
      * @param numclients Current number of connected clients
      * @param client Will say no if client is GM
      */
     bool IsFull(size_t numclients, Client* client);
-    /** Removes a player from the world.
+    
+    /**
+     * Removes a player from the world.
+     *
      * It will save the players state information and remove them from the
      * world.
      *
-     * @param clientnum: Is the number of the client whose player we wish to
+     * @param clientnum Is the number of the client whose player we wish to
      *     remove from the world.
-     * @param reason: Is a string representing the reason we are removing the
+     * @param reason Is a string representing the reason we are removing the
      *     player from the world.
      */
     void RemovePlayer(uint32_t clientnum,const char* reason);
 
-    /** Mutes a player from the world.
+    /**
+     * Mutes a player from the world.
+     *
      * It will prevent them from being heard, until they log back in
-     * @param clientnum: Is the number of the client whose player we wish to
-     *     remove from the world.
-     * @param reason: Is a string representing the reason we are removing the
-     *     player from the world.
+     * @param clientnum Is the number of the client whose player we wish to
+     *                  remove from the world.
+     * @param reason    Is a string representing the reason we are removing the
+     *                  player from the world.
      */
     void MutePlayer(uint32_t clientnum,const char* reason);
-    //Unmutes player
+    
+    /**
+     * Unmutes player
+     */
     void UnmutePlayer(uint32_t clientnum,const char* reason);
 
-    /** Gets the MOTD string */
+    /**
+     * Gets the MOTD string.
+     */
     const char* GetMOTD()
     {
         return (const char*)motd.GetData();
     }
-    /** Sets the MOTD string */
+    
+    /**
+     * Sets the MOTD string.
+     */
     void SetMOTD(const char* str)
     {
         motd=str;
     }
 
-    /** Returns the server's network thread.
+    /**
+     * Returns the server's network thread.
      *
      * @return Returns the NetManager object for the current networking thread.
      */
@@ -217,7 +256,9 @@ public:
     {
         return netmanager;
     }
-    /** Returns the Chat manager.
+    
+    /**
+     * Returns the Chat manager.
      *
      * @return Returns a reference to the current chat manager server.
      */
@@ -225,7 +266,9 @@ public:
     {
         return chatmanager;
     }
-    /** Returns the Advice manager.
+    
+    /**
+     * Returns the Advice manager.
      *
      * @return Returns a reference to the current advice manager.
      */
@@ -233,7 +276,9 @@ public:
     {
         return advicemanager;
     }
-    /** Returns the Advice manager.
+    
+    /**
+     * Returns the Advice manager.
      *
      * @return Returns a reference to the current advice manager.
      */
@@ -241,7 +286,9 @@ public:
     {
         return actionmanager;
     }
-    /** Returns the NPC Superclient manager.
+    
+    /**
+     * Returns the NPC Superclient manager.
      *
      * @return Returns a reference to the current npc manager.
      */
@@ -249,7 +296,9 @@ public:
     {
         return npcmanager;
     }
-    /** Returns the database manager.
+    
+    /**
+     * Returns the database manager.
      *
      * @return Returns a reference to the current database manager.
      */
@@ -257,7 +306,9 @@ public:
     {
         return database;
     }
-    /** Returns the configuration manager.
+    
+    /**
+     * Returns the configuration manager.
      *
      * @return Returns a reference to the current configuration manager object.
      */
@@ -265,7 +316,9 @@ public:
     {
         return configmanager;
     }
-    /** Returns the object registry.
+    
+    /**
+     * Returns the object registry.
      *
      * @return Returns a reference to the current object registry.
      */
@@ -273,7 +326,9 @@ public:
     {
         return objreg;
     }
-    /** Returns the spawn manager.
+    
+    /**
+     * Returns the spawn manager.
      *
      * @return Returns a reference to the current spawn manager.
      */
@@ -281,7 +336,9 @@ public:
     {
         return spawnmanager;
     }
-    /** Returns the event manager.
+    
+    /**
+     * Returns the event manager.
      *
      * @return Returns a reference to the current event manager.
      */
@@ -290,7 +347,8 @@ public:
         return eventmanager;
     }
 
-    /** Returns the Weather manager.
+    /**
+     * Returns the Weather manager.
      *
      * @return Returns a reference to the current weather manager.
      */
@@ -299,7 +357,8 @@ public:
         return weathermanager;
     }
 
-    /** Returns the Math Scripting Engine.
+    /**
+     * Returns the Math Scripting Engine.
      *
      * @return Returns a ptr to the math script engine.
      */
@@ -308,7 +367,8 @@ public:
         return mathscriptengine;
     }
 
-    /** Returns the Administration Manager.
+    /**
+     * Returns the Administration Manager.
      *
      * @return Returns a reference to the current administration manager.
      */
@@ -316,7 +376,9 @@ public:
     {
         return adminmanager;
     }
-    /** Returns the character manager.
+    
+    /**
+     * Returns the character manager.
      *
      * @return Returns a reference to the current character manager for the
      *     server.
@@ -326,7 +388,8 @@ public:
         return charmanager;
     }
 
-    /** Returns the Progression Manager.
+    /**
+     * Returns the Progression Manager.
      *
      * @return Returns a reference to the current administration manager.
      */
@@ -335,19 +398,24 @@ public:
         return progression;
     }
 
-    /** Returns the Marriage Manager */
+    /**
+     * Returns the Marriage Manager.
+     */
     psMarriageManager* GetMarriageManager()
     {
         return marriageManager;
     }
 
-    /** Returns the Exchange Manager */
+    /**
+     * Returns the Exchange Manager.
+     */
     ExchangeManager* GetExchangeManager()
     {
         return exchangemanager;
     }
 
-    /** Returns the Combat Manager.
+    /**
+     * Returns the Combat Manager.
      *
      * @return Returns a reference to the current combat manager.
      */
@@ -356,7 +424,8 @@ public:
         return combatmanager;
     }
 
-    /** Returns the spell manager.
+    /**
+     * Returns the spell manager.
      *
      * @return Returns a reference to the current spell manager for the
      *     server.
@@ -366,7 +435,8 @@ public:
         return spellmanager;
     }
 
-    /** Returns the work manager.
+    /**
+     * Returns the work manager.
      *
      * @return Returns a reference to the current work manager for the
      *     server.
@@ -376,7 +446,8 @@ public:
         return workmanager;
     }
 
-    /** Returns the guild manager.
+    /**
+     * Returns the guild manager.
      *
      * @return Returns a reference to the current guild manager for the
      *     server.
@@ -386,7 +457,8 @@ public:
         return guildmanager;
     }
 
-    /** Returns the economy manager.
+    /**
+     * Returns the economy manager.
      *
      * @return Returns a reference to the current economy manager for the
      *     server.
@@ -396,7 +468,8 @@ public:
         return economymanager;
     }
 
-    /** Returns the minigame manager
+    /**
+     * Returns the minigame manager
      *
      * @return returns a reference to the current minigame manager for the
      * server.
@@ -406,7 +479,8 @@ public:
         return minigamemanager;
     }
 
-    /** Returns the GM Event Manager
+    /**
+     * Returns the GM Event Manager
      *
      * @return returns a reference to the GM event manager for the
      * server.
@@ -416,7 +490,8 @@ public:
         return gmeventManager;
     }
 
-    /** Returns the Bank Manager
+    /**
+     * Returns the Bank Manager
      *
      * @return returns a reference to the Bank manager for the server.
      */
@@ -425,8 +500,8 @@ public:
         return bankmanager;
     }
 
-
-    /** Returns the User Manager
+    /**
+     * Returns the User Manager
      *
      * @return returns a reference to the User manager for the server.
      */
@@ -435,7 +510,8 @@ public:
         return usermanager;
     }
 
-    /** Returns the Chace Manager
+    /**
+     * Returns the Chace Manager
      *
      * @return returns a reference to the chache manager for the server.
      */
@@ -444,7 +520,8 @@ public:
         return cachemanager;
     }
 
-    /** Returns the Introduction Manager
+    /**
+     * Returns the Introduction Manager
      *
      * @return returns a reference to the introduction manager for the server.
      */
@@ -455,6 +532,7 @@ public:
 
     /**
      * Returns the Song Manager.
+     *
      * @returns a reference to the song manager of the server.
      */
     ServerSongManager* GetSongManager()
@@ -464,6 +542,7 @@ public:
 
     /**
      * Returns the Tutorial Manager.
+     *
      * @return A reference to the tutorial manager of the server.
      */
     TutorialManager* GetTutorialManager()
@@ -471,19 +550,23 @@ public:
         return tutorialmanager;
     }
 
-    /// Returns a pointer to the AuthenticationServer
+    /**
+     * Returns a pointer to the AuthenticationServer.
+     */
     AuthenticationServer* GetAuthServer()
     {
         return authserver;
     }
 
-    /** Gets a list of all connected clients.
+    /**
+     * Gets a list of all connected clients.
      *
      * @return Returns a pointer to the list of all the clients.
      */
     ClientConnectionSet* GetConnections();
 
-    /** Returns a random number.
+    /**
+     * Returns a random number.
      *
      * @return Returns a random number between 0.0(inclusive) and 1.0(non-inclusive).
      */
@@ -492,7 +575,8 @@ public:
         return rng->Get();
     }
 
-    /** Returns a random position within a range.
+    /**
+     * Returns a random position within a range.
      *
      * @return Returns the provided position changed randomly of the supplied range.
      */
@@ -501,7 +585,8 @@ public:
         return (pos - range + GetRandom()*range*2);
     }
 
-    /** Returns a random number with a limit.
+    /**
+     * Returns a random number with a limit.
      *
      * @return Returns a random number between 0 and limit.
      */
@@ -550,9 +635,10 @@ public:
      */
     void SaveLogSettings();
 
-    /** Adds a buddy to this players list of buddies.
-     * Takes the
-     * player ID of us and the player ID of the buddy.
+    /**
+     * Adds a buddy to this players list of buddies.
+     *
+     * Takes the player ID of us and the player ID of the buddy.
      * When you have a buddy, you will be able to see when they
      * come online and leave.
      *
@@ -562,9 +648,10 @@ public:
      */
     bool AddBuddy(PID self, PID buddy);
 
-    /** Removes a buddy from this character's list of buddies.
-     * Takes the
-     * unique player ID of us and the player ID of the buddy.
+    /**
+     * Removes a buddy from this character's list of buddies.
+     *
+     * Takes the unique player ID of us and the player ID of the buddy.
      * Returns false if buddy diddnt exist.
      *
      * @param self: Is the player ID for the current player we are removing the buddy from.
@@ -573,7 +660,9 @@ public:
      */
     bool RemoveBuddy(PID self, PID buddy);
 
-    /** Change the dialog responses for that trigger in the area.
+    /**
+     * Change the dialog responses for that trigger in the area.
+     *
      * Given the area, trigger and response number; change the
      * reponse to be the new value. There are seperate tables
      * for the triggers and the responses. If something has
@@ -592,30 +681,34 @@ public:
     void UpdateDialog(const char* area, const char* trigger,
                       const char* response, int num);
 
-    /** Changes the pronoun set for that trigger in that area.
-     * //@@@Brendon have to find info on these args. What are the pronoun fields for?
+    /**
+     * Changes the pronoun set for that trigger in that area.
      *
-     * @param area: Is the name of the area associated with the trigger.
-     * @param trigger: Is the trigger we want to modify a response for.
-     * @param prohim:
-     * @param proher:
-     * @param it:
-     * @param them:
+     * @note Brendon have to find info on these args. What are the pronoun fields for?
+     *
+     * @param area Is the name of the area associated with the trigger.
+     * @param trigger Is the trigger we want to modify a response for.
+     * @param prohim
+     * @param proher
+     * @param it
+     * @param them
      */
     void UpdateDialog(const char* area, const char* trigger,
                       const char* prohim, const char* proher,
                       const char* it,     const char* them);
 
-    /** Gets all the triggers from a particular knowledge area.
+    /**
+     * Gets all the triggers from a particular knowledge area.
      *
-     * @param data: Is a string containing the name of the data area we want the triggers for.
+     * @param data Is a string containing the name of the data area we want the triggers for.
      * @return Returns an iResultSet containing a list of all the triggers for a particular knowledge area.
      * Result set contains the following members:
      *     - trigger
      */
     iResultSet* GetAllTriggersInArea(csString data);
 
-    /** Return a list of NPCs (with their info) managed by a particular superclient.
+    /**
+     * Return a list of NPCs (with their info) managed by a particular superclient.
      *
      * @param superclientID is the playerID of the superclient
      * @return Returns a iResultSet which contains the set of all npcs managed by the superclient.
@@ -629,34 +722,42 @@ public:
      */
     iResultSet* GetSuperclientNPCs(int superclientID);
 
-    /** Check for options in table 'server_options'
-     * @param option_name: the desired option
-     * @param value: Value of the found option will be placed in this string.
+    /**
+     * Check for options in table 'server_options'.
+     *
+     * @param option_name the desired option
+     * @param value Value of the found option will be placed in this string.
      * @return Return false is option not found or if an error happened. True otherwise.
      */
     bool GetServerOption(const char* option_name,csString &value);
 
-    /** Set an option in table 'server_options'
-     * @param option_name: the desired option
-     * @param value: Value of the found option will be replaced with this string.
+    /**
+     * Set an option in table 'server_options'.
+     *
+     * @param option_name the desired option
+     * @param value Value of the found option will be replaced with this string.
      * @return Return false is option not found or if an error happened. True otherwise.
      */
     bool SetServerOption(const char* option_name,const csString &value);
 
     iResultSet* GetAllResponses(csString &trigger);
 
-    /** Check if a client is authorized to execute a command
-     * @param client: the client we are checking
-     * @param command: the command we are checking for
-     * @param returnError: tells whether the command outputs an error
+    /**
+     * Check if a client is authorized to execute a command.
+     *
+     * @param client the client we are checking
+     * @param command the command we are checking for
+     * @param returnError tells whether the command outputs an error
      *
      * @return return true if the client is authorized to execute the command
      */
     bool CheckAccess(Client* client, const char* command, bool returnError=true);
 
-    /** Quits the server and sends informative messages
-     * @param time: -1 to stop the quit, 0 to quit the server immediately, > 0 to delay the server quit
-     * @param client: the client we are checking. If null messages are sent only to server console
+    /**
+     * Quits the server and sends informative messages.
+     *
+     * @param time -1 to stop the quit, 0 to quit the server immediately, > 0 to delay the server quit
+     * @param client the client we are checking. If null messages are sent only to server console
      */
     void QuitServer(int time, Client* client);
 
@@ -673,10 +774,10 @@ public:
 
     NPCManager*                     npcmanager;
     psMarriageManager*              marriageManager;
-    CombatManager*                combatmanager;
+    CombatManager*                  combatmanager;
     csRandomGen*                    rng;
     QuestManager*                   questmanager;
-    CharCreationManager*          charCreationManager;
+    CharCreationManager*            charCreationManager;
     csRef<GuildManager>             guildmanager;
     csRef<QuestionManager>          questionmanager;
     csRef<GroupManager>             groupmanager;
@@ -692,13 +793,13 @@ protected:
     NetManager*                     netmanager;
     AdminManager*                   adminmanager;
     psDatabase*                     database;
-    ServerCharManager*            charmanager;
+    ServerCharManager*              charmanager;
     SpawnManager*                   spawnmanager;
     csRef<EventManager>             eventmanager;
     WeatherManager*                 weathermanager;
-    SpellManager*                 spellmanager;
+    SpellManager*                   spellmanager;
     ProgressionManager*             progression;
-    WorkManager*                  workmanager;
+    WorkManager*                    workmanager;
     EconomyManager*                 economymanager;
     TutorialManager*                tutorialmanager;
     MiniGameManager*                minigamemanager;
@@ -725,6 +826,8 @@ protected:
      */
     uint32_t unused_pid;
 };
+
+/** @} */
 
 #endif
 

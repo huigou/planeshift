@@ -24,7 +24,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/csstring.h>
-
+ 
 //=============================================================================
 // Project Includes
 //=============================================================================
@@ -44,6 +44,10 @@ class gemObject;
 class gemActor;
 class ProgressionScript;
 class MathExpression;
+
+/**
+ * \addtogroup bulkobjects
+ * @{ */
 
 struct psWay
 {
@@ -96,26 +100,29 @@ class psSpell : public iScriptableVar
      */
     bool CanCast(gemActor* caster, float kFactor, csString & reason, bool canCastAllSpells);
 
-    /** Creates a new instance of this spell.
-     *  @param mgr The main PS Spell Manager.
-     *  @param client The client that cast the spell.
-     *  @param effectName [CHANGES] Filled in with this spell's effect.
-     *  @param offset [CHANGES] Filled in with the offset( ie how off target ) this spell is.
-     *  @param anchorID [CHANGES] The entity that the spell should be attached to ( in case of movement )
-     *  @param targetID [CHANGES] Filled in with the ID of the target.
+    /**
+     * Creates a new instance of this spell.
+     *
+     * @param caster The caster of the spell.
+     * @param kFactor The kFactor used.
+     * @param client The client that cast the spell.
      */
     void Cast(gemActor *caster, float kFactor, Client *client) const;
+    
     void Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power, Client* client) const;
 
     int GetRealm() { return realm; }
     psWay* GetWay() { return way; }
     csArray<psItemStats*>& GetGlyphList() { return glyphList; }
 
-    /// iScriptableVar Implementation
-    /// This is used by the math scripting engine to get various values.
+    /** @name iScriptableVar implementation
+     * Functions that implement the iScriptableVar interface. 
+     */
+    ///@{
     double GetProperty(MathEnvironment* env, const char* ptr);
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     const char* ToString() { return name.GetDataSafe(); }
+    ///@}
 
 protected:
     bool AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* target, float power, Client* client) const;
@@ -194,5 +201,7 @@ public:
     virtual void Trigger();  // Abstract event processing function
     virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
 };
+
+/** @} */
 
 #endif

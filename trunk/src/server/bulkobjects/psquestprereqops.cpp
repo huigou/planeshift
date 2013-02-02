@@ -421,10 +421,10 @@ bool psQuestPrereqOpTrait::Check(psCharacter * character)
 {
     if (character->GetActor())
     {
-        psTrait* TraitToCheck = character->GetTraitForLocation(TraitLocation);
-        if(TraitToCheck)
+        psTrait* traitToCheck = character->GetTraitForLocation(traitLocation);
+        if(traitToCheck)
         {
-            return TraitToCheck->name == TraitName;
+            return traitToCheck->name == traitName;
         }
     }
     return false;
@@ -434,7 +434,7 @@ csString psQuestPrereqOpTrait::GetScriptOp()
 {
     csString script;
 
-    script.Format("<trait name=\"%s\" location=\"%s\"/>", TraitName.GetData(), psTrait::locationString[(int)TraitLocation]);
+    script.Format("<trait name=\"%s\" location=\"%s\"/>", traitName.GetData(), psTrait::locationString[(int)traitLocation]);
 
     return script;
 }
@@ -442,7 +442,7 @@ csString psQuestPrereqOpTrait::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpTrait::Copy()
 {
     csRef<psQuestPrereqOpTrait> copy;
-    copy.AttachNew(new psQuestPrereqOpTrait(TraitName, psTrait::locationString[(int)TraitLocation]));
+    copy.AttachNew(new psQuestPrereqOpTrait(traitName, psTrait::locationString[(int)traitLocation]));
     return csPtr<psQuestPrereqOp>(copy);
 }
 
@@ -538,7 +538,7 @@ bool psQuestPrereqOpGuild::Check(psCharacter * character)
     else
     {
         //first check the name, if any
-        if(GuildName.Length() && character->GetGuild()->GetName() != GuildName)
+        if(guildName.Length() && character->GetGuild()->GetName() != guildName)
             return false;
         if(guildtype == "both") //no need to check for the case it's in a guild
             return true;
@@ -555,9 +555,9 @@ csString psQuestPrereqOpGuild::GetScriptOp()
     csString script;
 
     script.Format("<guild type=\"%s\"", guildtype.GetData());
-    if(GuildName.Length())
+    if(guildName.Length())
     {
-        script.AppendFmt("name=\"%s\"", GuildName.GetData());
+        script.AppendFmt("name=\"%s\"", guildName.GetData());
     }
     script += "/>";
 
@@ -567,7 +567,7 @@ csString psQuestPrereqOpGuild::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpGuild::Copy()
 {
     csRef<psQuestPrereqOpGuild> copy;
-    copy.AttachNew(new psQuestPrereqOpGuild(guildtype, GuildName));
+    copy.AttachNew(new psQuestPrereqOpGuild(guildtype, guildName));
     return csPtr<psQuestPrereqOp>(copy);
 }
 

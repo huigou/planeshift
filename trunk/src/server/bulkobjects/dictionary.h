@@ -40,8 +40,6 @@
 //=============================================================================
 #include "psquestprereqops.h"
 
-#define MAX_RESP 5
-
 class NpcTerm;
 class NpcTriggerGroupEntry;
 class NpcTrigger;
@@ -57,6 +55,12 @@ class MathScript;
 
 struct iDocumentNode;
 struct Faction;
+
+/**
+ * \addtogroup bulkobjects
+ * @{ */
+
+#define MAX_RESP 5
 
 template<typename K, typename K2> class NpcTriggerOrdering : public CS::Container::RedBlackTreeOrderingTotal<NpcTrigger,NpcTrigger>
 {
@@ -74,15 +78,15 @@ protected:
     csHash<NpcTriggerGroupEntry*, csString> trigger_groups;
     csHash<NpcTriggerGroupEntry*>      trigger_groups_by_id;
     NpcTriggerTree                     triggers;
-    csHash<NpcTrigger*>                 trigger_by_id;
-    csHash<NpcResponse*>          responses;
+    csHash<NpcTrigger*>                trigger_by_id;
+    csHash<NpcResponse*>               responses;
     csHash<bool, csString>             disallowed_words;
-	csHash<csString,csString>		   knowledgeAreas;  /// Collection of all referenced knowledge areas
+    csHash<csString,csString>          knowledgeAreas;  /// Collection of all referenced knowledge areas
 
-	/// This is a storage area for popup menus parsed during quest loading, which is done before NPCs are spawned.
-	csHash<NpcDialogMenu*,csString>    initial_popup_menus;
+    /// This is a storage area for popup menus parsed during quest loading, which is done before NPCs are spawned.
+    csHash<NpcDialogMenu*,csString>    initial_popup_menus;
     
-	int dynamic_id;
+    int dynamic_id;
 
     bool LoadSynonyms(iDataConnection *db);
     bool LoadTriggerGroups(iDataConnection *db);
@@ -355,16 +359,16 @@ class NpcResponse
     /// Used for when a response number is unneeded (debug printf around in psnpcdialog)
     const char *GetResponse() { int number = 0; return GetResponse(number); }
 
-	/// Returns the VFS path to the audio file which represents this response on the server, or NULL if one was not specified.
-	const char *GetVoiceFile(int &number) { return voiceAudioPath[number]; }
+    /// Returns the VFS path to the audio file which represents this response on the server, or NULL if one was not specified.
+    const char *GetVoiceFile(int &number) { return voiceAudioPath[number]; }
 
     /// Check for SayResponseOp with public flag set, which tells chat whether it is public or private.
     bool HasPublicResponse();
     bool ParseResponseScript(const char *xmlstr,bool insertBeginning=false);
-
-	/**
-	 * Returns SIZET_NOT_FOUND (-1) if it fails, or csTicks of response duration if successful
-	 */
+    
+    /**
+     * Returns SIZET_NOT_FOUND (-1) if it fails, or csTicks of response duration if successful
+     */
     csTicks ExecuteScript(gemActor *player, gemNPC* target);
     csString GetResponseScript();
 
@@ -382,7 +386,7 @@ class NpcResponse
      * Add a prerequisite to the prerequisite for this response.
      *
      * @param op The prerequisite op to add
-     * @insertBeginning Insert at beginning or at end (Default at end).
+     * @param insertBeginning Insert at beginning or at end (Default at end).
      * @return True if successfully added.
      */
     bool AddPrerequisite(csRef<psQuestPrereqOp> op, bool insertBeginning = false);
@@ -759,7 +763,7 @@ public:
  * This script operation invokes the progression manager to run a script,
  * as part of his response to a player event.
  * 
- * Syntax: <pre>\<run script="name" with="...mathscript to add bindings..."/\></pre>
+ * Syntax: \<run script="name" with="...mathscript to add bindings..."/\>
  */
 class RunScriptResponseOp : public ResponseOperation
 {
@@ -873,5 +877,7 @@ public:
     virtual csString GetResponseScript();    
     virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
+
+/** @} */
 
 #endif

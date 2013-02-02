@@ -53,6 +53,10 @@
 class Client;
 class gemActor;
 
+/**
+ * \addtogroup bulkobjects
+ * @{ */
+
 // Note: The following 2 options require a clean rebuild when changed.
 
 /// Enable this to be notified of all item saving activity
@@ -747,6 +751,7 @@ public:
     {
         return flags;
     }
+    
     void SetFlags(int f)
     {
         flags = f;
@@ -787,10 +792,13 @@ public:
     PID GetCreator(PSITEMSTATS_CREATORSTATUS &creatorStatus);
     /// sets the creator (i.e. author, artist, etc) of creative things
     void SetCreator(PID, PSITEMSTATS_CREATORSTATUS);
-    /** Checks if the creator of the book is the one passed as argument.
-     *  @param PID the pid of the character we are checking creator status.
+
+    /**
+     * Checks if the creator of the book is the one passed as argument.
+     *
+     * @param pid the PID of the character we are checking creator status.
      */
-    bool IsThisTheCreator(PID);
+    bool IsThisTheCreator(PID pid);
     bool GetBuyPersonalise();
     const char* GetName() const;
     const char* GetDescription() const;
@@ -969,6 +977,11 @@ public:
     void CancelEquipScript();
 
     /**
+     * Check if otheritem is stackable with this item.
+     *
+     * @param otheritem The item to check if this item is stackable with.
+     * @param precise Is the quality, max quality and crafter the same.
+     * @param checkStackCount Sheck the stack count.
      * @param checkWorld Checks if stackability is possible in the world (eg: instances comparing)
      */
     bool CheckStackableWith(const psItem* otheritem, bool precise, bool checkStackCount = true, bool checkWorld = true) const;
@@ -1300,5 +1313,7 @@ private:
     float range;           ///< Range in which to spawn item
     csTicks lastSpawn;     ///< When we last spawned it, good for something perhaps? :)
 };
+
+/** @} */
 
 #endif

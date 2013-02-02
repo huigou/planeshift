@@ -569,10 +569,13 @@ class psQuestPrereqOpFaction: public psQuestPrereqOp
      * Construct a faction operator
      *
      * @param faction The quest that need to be assigned.
+     * @param value The value
+     * @param max Is the level a max.
      */
     psQuestPrereqOpFaction(Faction* faction, int value, bool max):faction(faction),value(value),max(max){};
 
     /**
+     * Destructor.
      */
     virtual ~psQuestPrereqOpFaction() {}
 
@@ -625,20 +628,26 @@ class psQuestPrereqOpItem : public psQuestPrereqOp
  public:
 
     /**
-     * Construct an inventory operator
+     * Construct an inventory operator.
      *
+     * @param itemName The name of the base item we are searching for.
+     * @param categoryName The name of the category.
      * @param includeInventory if true it will search either equipment and inventory
      *                         else only inventory.
-     * @param name The name of the base item we are searching for.
+     * @param qualityMin A minimum quality.
+     * @param qualityMax A maximum quality
      */
     psQuestPrereqOpItem(const char *itemName, const char *categoryName, bool includeInventory, float qualityMin, float qualityMax):
                         itemName(itemName), categoryName(categoryName), includeInventory(includeInventory),
                         qualityMin(qualityMin), qualityMax(qualityMax){};
 
+    /**
+     * Destructor.
+     */
     virtual ~psQuestPrereqOpItem() {}
 
     /**
-     * Check if the specified item is in the player inventory/equipment
+     * Check if the specified item is in the player inventory/equipment.
      *
      * @param  character The character that are checking for a prerequisite
      * @return True if the item was found.
@@ -646,7 +655,7 @@ class psQuestPrereqOpItem : public psQuestPrereqOp
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<item inventory="true/false" name="baseitemname"/\>
@@ -656,7 +665,7 @@ class psQuestPrereqOpItem : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -667,7 +676,7 @@ class psQuestPrereqOpItem : public psQuestPrereqOp
 };
 
 /**
- * Active magic prerequisite operator
+ * Active magic prerequisite operator.
  *
  * The actor must have a certain active magic (buff or debuff).
  */
@@ -679,24 +688,24 @@ class psQuestPrereqOpActiveMagic : public psQuestPrereqOp
  public:
 
     /**
-     * Construct an active magic operator
+     * Construct an active magic operator.
      *
-     * @param activeMagic The name of the magic that's required to be active
+     * @param activeMagic The name of the magic that's required to be active.
      */
     psQuestPrereqOpActiveMagic(const char *activeMagic):activeMagic(activeMagic){};
 
     virtual ~psQuestPrereqOpActiveMagic() {}
 
     /**
-     * Check if the specified magic is active
+     * Check if the specified magic is active.
      *
-     * @param  character The character that are checking for a prerequisite
+     * @param  character The character that are checking for a prerequisite.
      * @return True if the magic is active.
      */
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<activemagic name="-activemagic"/\>
@@ -706,7 +715,7 @@ class psQuestPrereqOpActiveMagic : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -717,30 +726,29 @@ class psQuestPrereqOpActiveMagic : public psQuestPrereqOp
 };
 
 /**
- * Trait prerequisite operator
+ * Trait prerequisite operator.
  *
  * The actor must have a certain Trait in a certain position.
  */
 class psQuestPrereqOpTrait : public psQuestPrereqOp
 {
  protected:
-    csString TraitName;
-    PSTRAIT_LOCATION TraitLocation;
+    csString traitName;
+    PSTRAIT_LOCATION traitLocation;
     
  public:
 
     /**
-     * Construct a Trait operator
+     * Construct a Trait operator.
      *
-     * @param activeMagic The name of the magic that's required to be active
      */
-    psQuestPrereqOpTrait(const char *TraitName, csString TraitLocationString):TraitName(TraitName)
+    psQuestPrereqOpTrait(const char *traitName, csString traitLocationString):traitName(traitName)
     {
         for(int position = PSTRAIT_LOCATION_NONE; position < PSTRAIT_LOCATION_COUNT; position++)
         {
-            if ((csString)psTrait::locationString[position] == TraitLocationString)
+            if ((csString)psTrait::locationString[position] == traitLocationString)
             {
-                TraitLocation = (PSTRAIT_LOCATION) position;
+                traitLocation = (PSTRAIT_LOCATION) position;
                 break;
             }
         }
@@ -751,15 +759,15 @@ class psQuestPrereqOpTrait : public psQuestPrereqOp
     virtual ~psQuestPrereqOpTrait() {}
 
     /**
-     * Check if the specified trait is present
+     * Check if the specified trait is present.
      *
-     * @param  character The character that are checking for a prerequisite
+     * @param  character The character that are checking for a prerequisite.
      * @return True if the trait is present.
      */
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<activemagic name="-activemagic"/\>
@@ -769,7 +777,7 @@ class psQuestPrereqOpTrait : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -780,7 +788,7 @@ class psQuestPrereqOpTrait : public psQuestPrereqOp
 };
 
 /**
- * race prerequisite operator
+ * race prerequisite operator.
  *
  * The actor must be of a certain race.
  */
@@ -792,16 +800,16 @@ class psQuestPrereqOpRace : public psQuestPrereqOp
  public:
 
     /**
-     * Construct a race operator
+     * Construct a race operator.
      *
-     * @param race The name of the race the actor is required to be
+     * @param race The name of the race the actor is required to be.
      */
     psQuestPrereqOpRace(const char *race):race(race){};
 
     virtual ~psQuestPrereqOpRace() {}
 
     /**
-     * Check if the character is of the specific race
+     * Check if the character is of the specific race.
      *
      * @param  character The character that are checking for a prerequisite
      * @return True if the race is the one we are looking for.
@@ -809,7 +817,7 @@ class psQuestPrereqOpRace : public psQuestPrereqOp
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<race name="racename"/\>
@@ -819,7 +827,7 @@ class psQuestPrereqOpRace : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -830,7 +838,7 @@ class psQuestPrereqOpRace : public psQuestPrereqOp
 };
 
 /**
- * Gender prerequisite operator
+ * Gender prerequisite operator.
  *
  * The actor must be of a certain gender.
  */
@@ -842,16 +850,16 @@ class psQuestPrereqOpGender : public psQuestPrereqOp
  public:
 
     /**
-     * Construct a gender operator
+     * Construct a gender operator.
      *
-     * @param gender The sex the character must be
+     * @param gender The sex the character must be.
      */
     psQuestPrereqOpGender(const char *gender):gender(gender){};
 
     virtual ~psQuestPrereqOpGender() {}
 
     /**
-     * Check if the character is of the specified gender
+     * Check if the character is of the specified gender.
      *
      * @param  character The character that are checking for a prerequisite
      * @return True if the gender is the one we are looking for.
@@ -859,7 +867,7 @@ class psQuestPrereqOpGender : public psQuestPrereqOp
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<gender type="Gender Initial"/\>
@@ -869,7 +877,7 @@ class psQuestPrereqOpGender : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -880,7 +888,7 @@ class psQuestPrereqOpGender : public psQuestPrereqOp
 };
 
 /**
- * Spell knownledge prerequisite operator
+ * Spell knownledge prerequisite operator.
  *
  * The actor must know a certain spell.
  */
@@ -892,9 +900,9 @@ class psQuestPrereqOpKnownSpell : public psQuestPrereqOp
  public:
 
     /**
-     * Construct a Spell Known operator
+     * Construct a Spell Known operator.
      *
-     * @param spell The spell the character must know
+     * @param spell The spell the character must know.
      */
     psQuestPrereqOpKnownSpell(const char *spell):spell(spell){};
 
@@ -909,7 +917,7 @@ class psQuestPrereqOpKnownSpell : public psQuestPrereqOp
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<knownspell spell="Spell Name"/\>
@@ -919,7 +927,7 @@ class psQuestPrereqOpKnownSpell : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -930,7 +938,7 @@ class psQuestPrereqOpKnownSpell : public psQuestPrereqOp
 };
 
 /**
- * Guild prerequisite operator
+ * Guild prerequisite operator.
  *
  * The actor must be in a certain type of guild or none.
  */
@@ -938,21 +946,22 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
 {
  protected:
     csString guildtype;
-    csString GuildName;
+    csString guildName;
 
  public:
 
     /**
-     * Construct a guild operator
+     * Construct a guild operator.
      *
      * @param guildtype The type of guild the character must be
+     * @param guildName The name of the quild.
      */
-    psQuestPrereqOpGuild(const char *guildtype, const char *GuildName):guildtype(guildtype),GuildName(GuildName){};
+    psQuestPrereqOpGuild(const char *guildtype, const char *guildName):guildtype(guildtype),guildName(guildName){};
 
     virtual ~psQuestPrereqOpGuild() {}
 
     /**
-     * Check if the character is in a specified type of guild
+     * Check if the character is in a specified type of guild.
      *
      * @param  character The character that are checking for a prerequisite
      * @return True if the character is in the guild type we are looking for.
@@ -960,7 +969,7 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<guild type="type of the guild"/\>
@@ -970,7 +979,7 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -981,7 +990,7 @@ class psQuestPrereqOpGuild : public psQuestPrereqOp
 };
 
 /**
- * Marriage prerequisite operator
+ * Marriage prerequisite operator.
  *
  * The actor must be married or not.
  */
@@ -990,16 +999,14 @@ class psQuestPrereqOpMarriage : public psQuestPrereqOp
  public:
 
     /**
-     * Construct a marriage operator
-     *
-     * @param status The type of guild the character must be
+     * Construct a marriage operator.
      */
     psQuestPrereqOpMarriage() {};
 
     virtual ~psQuestPrereqOpMarriage() {}
 
     /**
-     * Check if the character is married or not
+     * Check if the character is married or not.
      *
      * @param  character The character that are checking for a prerequisite
      * @return True if the character is married or not.
@@ -1007,7 +1014,7 @@ class psQuestPrereqOpMarriage : public psQuestPrereqOp
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<marriage status="yes/no"/\>
@@ -1017,7 +1024,7 @@ class psQuestPrereqOpMarriage : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -1028,7 +1035,7 @@ class psQuestPrereqOpMarriage : public psQuestPrereqOp
 };
 
 /**
- * advisor points prerequisite operator
+ * advisor points prerequisite operator.
  *
  * The advisorpoints must be beetwen maxPoints and minPoints.
  */
@@ -1041,26 +1048,26 @@ class psQuestPrereqOpAdvisorPoints : public psQuestPrereqOp
  public:
 
     /**
-     * Construct an advisor points operator
+     * Construct an advisor points operator.
      *
-     * @param minPoints Minimal advisor points
-     * @param maxPoints Maximal advisor points
-     * @param type Type of the check
+     * @param minPoints Minimal advisor points.
+     * @param maxPoints Maximal advisor points.
+     * @param type Type of the check.
      */
      psQuestPrereqOpAdvisorPoints(int minPoints, int maxPoints, csString type):minPoints(minPoints),maxPoints(maxPoints),type(type){};
 
     virtual ~psQuestPrereqOpAdvisorPoints() {}
 
     /**
-     * Check if within the advisor points range
+     * Check if within the advisor points range.
      *
-     * @param  character The character that are checking for a prerequisite
-     * @return True if in the valid range
+     * @param  character The character that are checking for a prerequisite.
+     * @return True if in the valid range.
      */
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<advisorpoints min="-min" max="-max" type="min/max/both"/\>
@@ -1070,7 +1077,7 @@ class psQuestPrereqOpAdvisorPoints : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -1081,7 +1088,7 @@ class psQuestPrereqOpAdvisorPoints : public psQuestPrereqOp
 };
 
 /**
- * Time online time prerequisite operator
+ * Time online time prerequisite operator.
  *
  * The time must be between mintime and maxtime.
  */
@@ -1093,25 +1100,25 @@ class psQuestPrereqOpTimeOnline : public psQuestPrereqOp
  public:
 
     /**
-     * Construct an online time operator
+     * Construct an online time operator.
      *
-     * @param minTime Minimal time online
-     * @param maxTime Maximal time online
+     * @param minTime Minimal time online.
+     * @param maxTime Maximal time online.
      */
      psQuestPrereqOpTimeOnline(int minTime, int maxTime):minTime(minTime),maxTime(maxTime){};
 
     virtual ~psQuestPrereqOpTimeOnline() {}
 
     /**
-     * Check if within the time range
+     * Check if within the time range.
      *
-     * @param  character The character that are checking for a prerequisite
-     * @return True if in the valid range
+     * @param  character The character that are checking for a prerequisite.
+     * @return True if in the valid range.
      */
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<onlinetime min="-min" max="-max" /\>
@@ -1121,7 +1128,7 @@ class psQuestPrereqOpTimeOnline : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -1132,7 +1139,7 @@ class psQuestPrereqOpTimeOnline : public psQuestPrereqOp
 };
 
 /**
- * Time of day prerequisite operator
+ * Time of day prerequisite operator.
  *
  * The time must be between mintime and maxtime.
  */
@@ -1144,25 +1151,25 @@ class psQuestPrereqOpTimeOfDay : public psQuestPrereqOp
  public:
 
     /**
-     * Construct a time of the day operator
+     * Construct a time of the day operator.
      *
-     * @param minTime Minimal time of day
-     * @param maxTime Maximal time of day
+     * @param minTime Minimal time of day.
+     * @param maxTime Maximal time of day.
      */
      psQuestPrereqOpTimeOfDay(int minTime, int maxTime):minTime(minTime),maxTime(maxTime){};
 
     virtual ~psQuestPrereqOpTimeOfDay() {}
 
     /**
-     * Check if within the time range
+     * Check if within the time range.
      *
-     * @param  character The character that are checking for a prerequisite
-     * @return True if in the valid range
+     * @param  character The character that are checking for a prerequisite.
+     * @return True if in the valid range.
      */
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<timeofday min="-min" max="-max"/\>
@@ -1172,7 +1179,7 @@ class psQuestPrereqOpTimeOfDay : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -1183,7 +1190,7 @@ class psQuestPrereqOpTimeOfDay : public psQuestPrereqOp
 };
 
 /**
- * Variable set prerequisite operator
+ * Variable set prerequisite operator.
  *
  * The character must have the specified variable set.
  */
@@ -1195,7 +1202,7 @@ class psQuestPrereqOpVariable : public psQuestPrereqOp
  public:
 
     /**
-     * Construct a variable operator
+     * Construct a variable operator.
      *
      * @param variableName The variable to check for assignment.
      */
@@ -1206,13 +1213,13 @@ class psQuestPrereqOpVariable : public psQuestPrereqOp
     /**
      * Check if the character has the variable defined.
      *
-     * @param  character The character that are checking for a prerequisite
+     * @param  character The character that are checking for a prerequisite.
      * @return True if the variable we are searching for was found.
      */
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<variable name="variablename"/\>
@@ -1222,7 +1229,7 @@ class psQuestPrereqOpVariable : public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -1258,7 +1265,7 @@ class psQuestPrereqOpXor: public psQuestPrereqOpList
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator to the xml string:
      * \<xor\>\<child1/\>...\<childN/\>\</xor\>
@@ -1268,7 +1275,7 @@ class psQuestPrereqOpXor: public psQuestPrereqOpList
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.
@@ -1292,23 +1299,23 @@ class psQuestPrereqOpSkill: public psQuestPrereqOp
      */
     psSkillInfo *skill;
 
-    int min; ///< The minimum skill level
-    int max; ///< The maximum skill level
+    int min;          ///< The minimum skill level
+    int max;          ///< The maximum skill level
     bool allowBuffed; ///< Stores if we should allow buff to be taken in consideration
  public:
 
     /**
-     * Construct a skill operator
+     * Construct a skill operator.
      *
      * @param skill The skill which should be checked for.
      * @param min The minimum acceptable for this prerequisite to be true.
      * @param max The maximum acceptable for this prerequisite to be true.
-     * @param allowBuffed Declares if buff should be taken in consideration
+     * @param allowBuffed Declares if buff should be taken in consideration.
      */
     psQuestPrereqOpSkill(psSkillInfo *skill, unsigned int min, unsigned int max, bool allowBuffed):skill(skill),min(min),max(max),allowBuffed(allowBuffed){};
 
     /**
-     * Destructor
+     * Destructor.
      */
     virtual ~psQuestPrereqOpSkill() {}
 
@@ -1321,7 +1328,7 @@ class psQuestPrereqOpSkill: public psQuestPrereqOp
     virtual bool Check(psCharacter * character);
 
     /**
-     * Convert the prerequisite operator to a xml string
+     * Convert the prerequisite operator to a xml string.
      *
      * Convert the operator into the xml string:
      * \<skill name="skill name" min="0" max="0" allowbuffed="false" /\>
@@ -1331,7 +1338,7 @@ class psQuestPrereqOpSkill: public psQuestPrereqOp
     virtual csString GetScriptOp();
 
     /**
-     * Copy the prerequisite operator
+     * Copy the prerequisite operator.
      *
      * Override this function to return a copy of the prerequisite
      * operator.

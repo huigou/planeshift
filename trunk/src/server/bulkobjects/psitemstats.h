@@ -49,6 +49,10 @@ class psCharacter;
 class psItem;
 struct psItemCategory;
 
+/**
+ * \addtogroup bulkobjects
+ * @{ */
+
 enum PSITEMSTATS_WEAPONTYPE
 {
     PSITEMSTATS_WEAPONTYPE_NONE = -1,
@@ -233,7 +237,10 @@ struct psItemAnimation
 
 
 //-----------------------------------------------------------------------------
-/** This class stores an items various armour related information. */
+
+/**
+ * This class stores an items various armour related information.
+ */
 class psItemArmorStats
 {
 public:
@@ -255,8 +262,10 @@ private:
     float hardness;
 };
 
-/** This class holds the various cached database information relating
-  * to the weapon skills of a an item_stat. */
+/**
+ * This class holds the various cached database information relating
+ * to the weapon skills of a an item_stat.
+ */
 class psItemWeaponStats
 {
 
@@ -264,7 +273,9 @@ public:
     friend class psItemStats;
     psItemWeaponStats();
 
-    /** Read the weapon related details from the database. */
+    /**
+     * Read the weapon related details from the database.
+     */
     void ReadStats( iResultRow& row );
 
     PSITEMSTATS_WEAPONTYPE Type() { return weapon_type; }
@@ -295,14 +306,18 @@ private:
     float counter_block_value;
 };
 
-/** This little class holds info about Ammunition for Ranged Weapons. */
+/**
+ * This little class holds info about Ammunition for Ranged Weapons.
+ */
 class psItemAmmoStats
 {
 public:
     psItemAmmoStats();
     ~psItemAmmoStats();
 
-    /** Read the Ammo related details from the database. */
+    /**
+     * Read the Ammo related details from the database.
+     */
     void ReadStats( iResultRow& row );
 
     PSITEMSTATS_AMMOTYPE AmmoType() { return ammunition_type; }
@@ -310,7 +325,9 @@ private:
     PSITEMSTATS_AMMOTYPE ammunition_type;
 };
 
-/** This class holds info about Creative items such as books, etc **/
+/**
+ * This class holds info about Creative items such as books, etc.
+ */
 class psItemCreativeStats
 {
 public:
@@ -325,49 +342,73 @@ public:
     ///destructor
     ~psItemCreativeStats();
 
-    /** Checks if the passed PID is the creator of this creative.
-     *  @param characterID The PID of the player we are checking if it's the creator.
-     *  @return TRUE if the passed PID corresponds to the creator of this creative item.
+    /**
+     * Checks if the passed PID is the creator of this creative.
+     *
+     * @param characterID The PID of the player we are checking if it's the creator.
+     * @return TRUE if the passed PID corresponds to the creator of this creative item.
      */
     bool IsThisTheCreator(PID characterID);
-    /** Sets the player passed as the creator of this creative, in case someone doesn't own creation status
-     *  already, in that case it will be ignored.
-     *  @param characterID The PID of the character who will be the creator of this creative defintion.
-     *  @param creatorStatus A status from PSITEMSTATS_CREATORSTATUS to which setting the creative.
+    
+    /**
+     * Sets the player passed as the creator of this creative, in case someone doesn't own creation status
+     * already, in that case it will be ignored.
+     *
+     * @param characterID The PID of the character who will be the creator of this creative defintion.
+     * @param creatorStatus A status from PSITEMSTATS_CREATORSTATUS to which setting the creative.
      */
     void SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus);
-    /** Gets the creator and the status of the creator of this creative
-     *  @param creatorStatus A reference to a PSITEMSTATS_CREATORSTATUS which will be filled with
-     *                       the informations about the status of the creator.
-     *  @return PID The pid of the character who created this creative in case it's valid, else will
-     *              return 0 as PID.
+    
+    /**
+     * Gets the creator and the status of the creator of this creative.
+     *
+     * @param creatorStatus A reference to a PSITEMSTATS_CREATORSTATUS which will be filled with
+     *                      the informations about the status of the creator.
+     * @return PID The pid of the character who created this creative in case it's valid, else will
+     *             return 0 as PID.
      */
     PID GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus);
 
 private:
-    /** Read the Creative data from the database.
-     *  @param row The database row as loaded from the database: must have at least a creative_definition column.*/
+    /**
+     * Read the Creative data from the database.
+     *
+     * @param row The database row as loaded from the database: must have at least a creative_definition column.
+     */
     void ReadStats( iResultRow& row);
-    /** Read the Creative data from the internal creativeDefinitionXML, populating all the fields from it. */
+    
+    /**
+     * Read the Creative data from the internal creativeDefinitionXML, populating all the fields from it.
+     */
     void ReadStats();
 
-    /** general write creative content */
+    /**
+     * general write creative content.
+     */
     bool SetCreativeContent(PSITEMSTATS_CREATIVETYPE, const csString&, uint32);
 
-    /** Format content for database */
+    /**
+     * Format content for database.
+     */
     bool FormatCreativeContent(void);
 
-    /** Save creation in database */
+    /**
+     * Save creation in database.
+     */
     void SaveCreation(uint32);
 
-    /** Update the description of the item */
+    /**
+     * Update the description of the item.
+     */
     csString UpdateDescription(PSITEMSTATS_CREATIVETYPE, csString, csString);
 
-    /** Used to set if this creativedefinition has to operate on item_instances in place of item_stats when
-     *  saving data on the database. Pass TRUE if you wish that this creative definition saves data in the
-     *  instances in place of the stats.
-     *  @param value TRUE to make this creative definition operate on item_instances, otherwise it will operate
-     *               on item_stats.
+    /**
+     * Used to set if this creativedefinition has to operate on item_instances in place of item_stats when
+     * saving data on the database. Pass TRUE if you wish that this creative definition saves data in the
+     * instances in place of the stats.
+     *
+     * @param value TRUE to make this creative definition operate on item_instances, otherwise it will operate
+     *              on item_stats.
      */
     void setInstanceBased(bool value) { instanceBased = value; }
 
@@ -379,8 +420,10 @@ private:
 
     PID creatorID;
     PSITEMSTATS_CREATORSTATUS creatorIDStatus;
-    /** Indicates that when we save on the database we have to operate on item_instances, in place
-     *  of item_stats.
+    
+    /**
+     * Indicates that when we save on the database we have to operate on item_instances, in place
+     * of item_stats.
      */
     bool instanceBased;
 
@@ -416,18 +459,23 @@ private:
     psItemCreativeStats creativeStats;
 
     float weight;
-    /** Size of the longest dimension of this object, in cm
-     *  This is used to determine wether an item can fit inside of a container.
+    
+    /**
+     * Size of the longest dimension of this object, in cm
+     * This is used to determine wether an item can fit inside of a container.
      */
     float size;
-    /** Size of the longest dimension of the longest item this container can hold.
-     *  This is used to determine wether an item can fit inside of a container.
-     *  Only valid if this is a container.
+    
+    /**
+     * Size of the longest dimension of the longest item this container can hold.
+     * This is used to determine wether an item can fit inside of a container.
+     * Only valid if this is a container.
      */
     unsigned short container_max_size;
 
-    /** Maximum amount of slots available for this container. This is used
-     *  to decide how many slots to show client side to store items.
+    /**
+     * Maximum amount of slots available for this container. This is used
+     * to decide how many slots to show client side to store items.
      */
     int container_max_slots;
 
@@ -442,15 +490,17 @@ private:
     csArray<INVENTORY_SLOT_NUMBER> valid_slots_array;
     PSITEMSTATS_FLAGS flags;
 
-    /*  The visible distance is used to determine the range at which this item becomes visible.
-     *  (At this time, this means when lying on the ground, but it could just as easily be
-     *   used for equipped objects)
-     *  This number will not always be a hard and fast rule.  Other numbers such as situation
-     *  visibility modifiers and character perception enhancements may be combined with this
-     *  to determine wether an object is ultimately visible.
+    /**
+     * The visible distance is used to determine the range at which this item becomes visible.
      *
-     *  At this time the default proximity distance is 100.0  (DEF_PROX_DIST in psconst.h), and
-     *  visible distances greater than this value will have no effect.
+     * (At this time, this means when lying on the ground, but it could just as easily be
+     *  used for equipped objects)
+     * This number will not always be a hard and fast rule.  Other numbers such as situation
+     * visibility modifiers and character perception enhancements may be combined with this
+     * to determine wether an object is ultimately visible.
+     *
+     * At this time the default proximity distance is 100.0  (DEF_PROX_DIST in psconst.h), and
+     * visible distances greater than this value will have no effect.
      */
     float visible_distance;
 
@@ -520,19 +570,25 @@ private:
 
     csHash<csHash<csString,int> > meshRemovalInfo;
 
-    /** Loads in the the slot based removal informations.
-      * @param row The database row to load information from.
-      */
+    /**
+     * Loads in the the slot based removal informations.
+     *
+     * @param row The database row to load information from.
+     */
     void LoadMeshRemoval( iResultRow& row );
 
-    /** Loads in the valid slots from the database for this particular item.
-      * @param row The database row to load information from.
-      */
+    /**
+     * Loads in the valid slots from the database for this particular item.
+     *
+     * @param row The database row to load information from.
+     */
     void LoadSlots(iResultRow& row);
 
-    /** Parses the flag information and sets the internal flags.
-      * @param row The database row to load information from.
-      */
+    /**
+     * Parses the flag information and sets the internal flags.
+     *
+     * @param row The database row to load information from.
+     */
     void ParseFlags(iResultRow& row);
 
 public:
@@ -560,8 +616,11 @@ public:
     bool GetIsConsumable();
     bool GetIsReadable();
     bool GetIsWriteable();
-    /** Gets if the item should be allowed to be spawned.
-     *  @return BOOL saying if the item can be spawned from the item command.
+    
+    /**
+     * Gets if the item should be allowed to be spawned.
+     *
+     * @return BOOL saying if the item can be spawned from the item command.
      */
     bool IsSpawnable();
     PSITEMSTATS_CREATIVETYPE GetCreative();
@@ -572,7 +631,9 @@ public:
 
     float weaponRange;
 
-    /// @return True if the object is a money object.
+    /**
+     * @return True if the object is a money object.
+     */
     bool IsMoney();
 
     uint32 GetUID();
@@ -591,8 +652,9 @@ public:
     float GetSize();
     unsigned short GetContainerMaxSize();
 
-    /** Gets the slots available in this item (only containers) which means
-     *  also the maximum amount of items which can be stored in this container.
+    /**
+     * Gets the slots available in this item (only containers) which means
+     * also the maximum amount of items which can be stored in this container.
      *
      *  @return The number of slots available in this container.
      */
@@ -601,11 +663,13 @@ public:
     PSITEMSTATS_SLOTLIST GetValidSlots();
     bool FitsInSlots(PSITEMSTATS_SLOTLIST slotmask);
 
-    /** Gets the list of mesh to remove when this item is equipped in the specified slot.
-     *  If the race specified is not found the race -1 (aka no race specific) will be searched too.
-     *  @param slot The slot this item is being equipped into.
-     *  @param meshName The meshName we are sarching for the slot to remove for it.
-     *  @return The list of meshes to remove when equipping this item.
+    /**
+     * Gets the list of mesh to remove when this item is equipped in the specified slot.
+     *
+     * If the race specified is not found the race -1 (aka no race specific) will be searched too.
+     * @param slot The slot this item is being equipped into.
+     * @param meshName The meshName we are sarching for the slot to remove for it.
+     * @return The list of meshes to remove when equipping this item.
      */
     csString GetSlotRemovedMesh(int slot, csString meshName = "");
     float GetDecayRate();
@@ -621,51 +685,59 @@ public:
     bool GetUnique();
     void SetRandom();
     bool GetRandom();
-    /** Used to get the creative definition so psitem can make it's own copy of it.
-     *  @return psXMLString The creative definition xml data of this item.
+    
+    /**
+     * Used to get the creative definition so psitem can make it's own copy of it.
+     *
+     * @return psXMLString The creative definition xml data of this item.
      */
     psXMLString getCreativeXML() { return creativeStats.creativeDefinitionXML; }
     void SetName(const char *v);
     void SaveName(void);
 
-    /** Get the Mesh Name for the item.
+    /**
+     * Get the Mesh Name for the item.
      *
-     *  Used for standalone or weilded mesh.
+     * Used for standalone or weilded mesh.
      */
     const char *GetMeshName();
 
     void SetMeshName(const char *v);
 
-    /** Get the Texture Name for the item.
+    /**
+     * Get the Texture Name for the item.
      *
-     *  Used when worn and attached to the mesh given by part name.
+     * Used when worn and attached to the mesh given by part name.
      */
     const char *GetTextureName();
 
     void SetTextureName(const char *v);
 
-    /** Get the Part Name for the item.
+    /**
+     * Get the Part Name for the item.
      *
-     *  This is the name of the part that the texture should be attached to
-     *  if no change of mesh.
+     * This is the name of the part that the texture should be attached to
+     * if no change of mesh.
      */
     const char *GetPartName();
 
     void SetPartName(const char *v);
 
-    /** Get the Part Mesh Name for the item.
+    /**
+     * Get the Part Mesh Name for the item.
      *
-     *  This is the new mesh to be attached to the location given
-     *  by the pattern Part Name.
+     * This is the new mesh to be attached to the location given
+     * by the pattern Part Name.
      */
     const char *GetPartMeshName();
 
     void SetPartMeshName(const char *v);
 
-    /** Get the Image Name for the item.
+    /**
+     * Get the Image Name for the item.
      *
-     *  Used in inventory and other location where item has to be presented
-     *  by a 2D image.
+     * Used in inventory and other location where item has to be presented
+     * by a 2D image.
      */
     const char *GetImageName();
 
@@ -696,17 +768,22 @@ public:
     ApplicativeScript* GetEquipScript() { return equipScript; }
     const csString & GetConsumeScriptName() { return consumeScriptName; }
 
-    /// Sets a new equip script and saves it to the DB.  Mostly for the loot generator.
+    /**
+     * Sets a new equip script and saves it to the DB.  Mostly for the loot generator.
+     */
     bool SetEquipScript(const csString & script);
 
-    /** Gets the list of requirements of this item, used by psitem to check them over a player
-     *  @return A pointer to the start of the array of itemRequirement (they are 3 elements)
+    /**
+     * Gets the list of requirements of this item, used by psitem to check them over a player.
+     *
+     * @return A pointer to the start of the array of itemRequirement (they are 3 elements)
      */
     csArray<ItemRequirement> &GetRequirements();
     bool SetRequirement(const csString & statName, float statValue);
 
     /**
      *  Called to create an instance of an item using basic item stats.
+     *
      *  The item instance can be modified by the caller after it's created (modifiers, uniqueness, etc)
      *  You MUST call Loaded() on the returned item once it is in a ready state, to allow saving.
      */
@@ -720,15 +797,21 @@ public:
     const csString& GetSketch(void) { return creativeStats.content; }
     const csString& GetLiteratureText(void) { return creativeStats.content; }
 
-    /// Write creative stuff such as lit text (eg book) or map data.
+    /**
+     * Write creative stuff such as lit text (eg book) or map data.
+     */
     bool SetCreation (PSITEMSTATS_CREATIVETYPE, const csString&, csString);
 
-    /// creator (i.e. author, artist, etc) of creative things
+    /**
+     * creator (i.e. author, artist, etc) of creative things.
+     */
     void SetCreator(PID, PSITEMSTATS_CREATORSTATUS);
     bool IsThisTheCreator(PID);
 
-    /** Returns the background image assigned to the creative item.
-     *  @return A csString containing the name of the background image assigned to the creative item.
+    /**
+     * Returns the background image assigned to the creative item.
+     *
+     * @return A csString containing the name of the background image assigned to the creative item.
      */
     const csString& GetCreativeBackgroundImg();
 
@@ -741,19 +824,29 @@ public:
     ///returns the special command assigned to this item
     csString GetItemCommand() { return itemCommand; }
 
-    /** Returns the name of the item.
-     *  @note Needed for iScriptableVar. 
-     *  @return the name of the item.
+    /**
+     * Returns the name of the item.
+     *
+     * @note Needed for iScriptableVar. 
+     * @return the name of the item.
      */
     const char* ToString() { return name.GetDataSafe(); }
 
-    ///Needed for iScriptableVar. Does nothing right now just returns 0 for anything passed.
+    /**
+     * Needed for iScriptableVar.
+     *
+     * Does nothing right now just returns 0 for anything passed.
+     */
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
 
-    /** Returns the requested variable stored in this item stats.
-     *  @note Needed for iScriptableVar.
-     *  @param ptr A pointer to a char array stating the requested variable.
-     *  @return A double with the value of the requested variable.
+    /**
+     * Returns the requested variable stored in this item stats.
+     *
+     * @note Needed for iScriptableVar.
+     *
+     * @param env A math environment.
+     * @param ptr A pointer to a char array stating the requested variable.
+     * @return A double with the value of the requested variable.
      */
     double GetProperty(MathEnvironment* env, const char* ptr);
 
@@ -770,7 +863,7 @@ private:
     static PoolAllocator<psItemStats> itempool;
 };
 
-
+/** @} */
 
 #endif
 
