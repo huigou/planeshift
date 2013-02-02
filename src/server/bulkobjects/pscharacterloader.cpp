@@ -593,7 +593,9 @@ bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
 
     /// Let GMEventManager sort the DB out, as it is a bit complex, and its cached too
     if (!psserver->GetGMEventManager()->RemovePlayerFromGMEvents(pid))
+    {
         Error2("Failed to remove %s from GM events database/cache", ShowID(pid));
+    }
 
     csArray<gemObject*> list;
     psserver->entitymanager->GetGEM()->GetPlayerObjects(pid, list);

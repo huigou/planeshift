@@ -40,6 +40,10 @@ class psTradeCombinations;
 //-----------------------------------------------------------------------------
 
 /**
+ * \addtogroup bulkobjects
+ * @{ */
+
+/**
  * This class holds the master list of all trade combinations possible in the game.
  */
 class psTradeCombinations
@@ -227,7 +231,7 @@ class psTradeProcesses : public iScriptableVar
     /**
      * Does nothing right now just returns 0 for anything passed.
      *
-     * @none Needed for iScriptableVar.
+     * @note Needed for iScriptableVar.
      */
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
 
@@ -338,5 +342,6 @@ struct CraftComboInfo
     csString craftCombDescription;
 };
 
+/** @} */
 
 #endif

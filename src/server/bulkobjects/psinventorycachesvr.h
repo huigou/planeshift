@@ -34,8 +34,10 @@
 //=============================================================================
 
 /**
- * @class psInventoryCacheServer
- *
+ * \addtogroup bulkobjects
+ * @{ */
+
+/**
  * The psInventoryCacheServer class implements the inventory cache on the server.
  */
 class psInventoryCacheServer : public psCache
@@ -45,36 +47,42 @@ class psInventoryCacheServer : public psCache
         psInventoryCacheServer();
         ~psInventoryCacheServer();
 
-        /** Flags that a bulk slot's contents has changed.
-          * 
-          * @param slot: slot number
-          * @return bool Slot has been flagged successfully.
-          */
-        bool SetSlotModified (INVENTORY_SLOT_NUMBER slot);		/// bulk slot has modified
+        /**
+         * Flags that a bulk slot's contents has changed.
+         * 
+         * @param slot: slot number
+         * @return bool Slot has been flagged successfully.
+         */
+        bool SetSlotModified (INVENTORY_SLOT_NUMBER slot);
 
-        /** Checks if a bulk slot's contents has changed.
-          * 
-          * @param slot: slot number
-          * @return bool bulk slot status.
-          */
-        bool HasSlotModified (INVENTORY_SLOT_NUMBER slot);		/// has bulk slot has modified
+        /**
+         * Checks if a bulk slot's contents has changed.
+         * 
+         * @param slot: slot number
+         * @return bool bulk slot status.
+         */
+        bool HasSlotModified (INVENTORY_SLOT_NUMBER slot);
 
-        /** Clears flag that bulk slot has modified.
-          * 
-          * @param slot: slot number
-          * @return bool Slot has been flagged successfully.
-          */
-        bool ClearSlot(INVENTORY_SLOT_NUMBER);
+        /**
+         * Clears flag that bulk slot has modified.
+         * 
+         * @param slot slot number
+         * @return bool Slot has been flagged successfully.
+         */
+        bool ClearSlot(INVENTORY_SLOT_NUMBER slot);
 
-        /** Clears all slot modified flags.
+        /**
+         * Clears all slot modified flags.
          * 
          * @return bool Success flag.
          */
         bool ClearAllSlots(void);
 
     private:
-        bool SlotModified[PSCHARACTER_SLOT_BULK_END];   /// flag if a bulk-slot has modified since last update
+        bool SlotModified[PSCHARACTER_SLOT_BULK_END];                   ///< flag if a bulk-slot has modified since last update
 };
+
+/** @} */
 
 #endif
 

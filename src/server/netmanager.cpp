@@ -388,16 +388,16 @@ NetManager::Connection *NetManager::GetConnByNum (uint32_t clientnum)
 
 bool NetManager::SendMessageDelayed(MsgEntry *me, csTicks delay)
 {
-	if (delay)
-	{
-		DelayedMessageSendEvent *event = new DelayedMessageSendEvent(delay,me);
-		psserver->GetEventManager()->Push(event);
-		return true;
-	}
-	else
-	{
-		return SendMessage(me);
-	}
+    if (delay)
+    {
+        DelayedMessageSendEvent *event = new DelayedMessageSendEvent(delay,me);
+        psserver->GetEventManager()->Push(event);
+        return true;
+    }
+    else
+    {
+        return SendMessage(me);
+    }
 }
 
 bool NetManager::SendMessage(MsgEntry* me)

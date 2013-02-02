@@ -42,6 +42,10 @@
 class psCharacter;
 class ProgressionScript;
 
+/**
+ * \addtogroup server
+ * @{ */
+
 class ProgressionManager : public MessageManager<ProgressionManager>
 {
 public:
@@ -50,10 +54,14 @@ public:
 
     virtual ~ProgressionManager();
 
-    /** Send the skill list to the client. 
-      * @param client The client that the message is for.
-      * @param forceOpen  If true it will force open the skills screen on the client.
-      */
+    /**
+     * Send the skill list to the client.
+     *
+     * @param client The client that the message is for.
+     * @param forceOpen  If true it will force open the skills screen on the client.
+     * @param focus The skill in focus.
+     * @param isTraining Is training.
+     */
     void SendSkillList(Client * client, bool forceOpen, PSSKILL focus = PSSKILL_NONE, bool isTraining = false);
 
     void StartTraining(Client * client, psCharacter * trainer);
@@ -85,6 +93,8 @@ protected:
     csWeakRef<MathScript> calc_dynamic_experience; ///< Math script used to calculate the dynamic experience
     CacheManager *cacheManager;
 };
+
+/** @} */
 
 #endif
 

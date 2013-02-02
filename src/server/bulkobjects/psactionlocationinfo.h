@@ -48,6 +48,10 @@ struct iDocumentNode;
 class MathExpression;
 
 /**
+ * \addtogroup bulkobjects
+ * @{ */
+
+/**
  * This huge class stores all the properties of any object
  * a player can have in the game.  All stats, bonuses, maluses,
  * magic stat alterations, combat properties, spell effects,
@@ -183,10 +187,9 @@ private:
     /// Static reference to the pool for all psItem objects
     static PoolAllocator<psActionLocation> actionpool;
 
-    /// Sets up member variables for different response strings.
-    ///  You can add code here when new response string XML is needed or parse it dynamically
-    ///  @param action The action location to which you want to setup
-    ///  @param xxxxxxxxNode The action location response XML node
+    /**
+     * Sets up member variables for different response strings.
+     */
     void SetupEntrance(csRef<iDocumentNode> entranceNode);
     void SetupReturn(csRef<iDocumentNode> returnNode);
     void SetupContainer(csRef<iDocumentNode> containerNode);
@@ -244,7 +247,7 @@ private:
     bool         DeleteByKey ( const char *table, const char *idname, const char *idvalue );
 };
 
-
+/** @} */
 
 #endif
 

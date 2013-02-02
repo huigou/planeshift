@@ -42,13 +42,18 @@ class gemActionLocation;
 class gemObject;
 class psMGUpdateMessage;
 
+/**
+ * \addtogroup server
+ * @{ */
+
 enum MinigameStyle
 {
-    MG_GAME,    // normally 2 or more player mini-game
-    MG_PUZZLE   // single player mini-game
+    MG_GAME,    ///< normally 2 or more player mini-game
+    MG_PUZZLE   ///< single player mini-game
 };
 
-/** Structure to hold player data
+/**
+ * Structure to hold player data.
  */
 struct MinigamePlayer
 {
@@ -65,7 +70,8 @@ struct MinigamePlayer
     int blackOrWhite;
 };
 
-/** Implements one minigame session.
+/**
+ * Implements one minigame session.
  *
  * Game sessions are bound to a game board (action location) and identified
  * by a unique name. The name of the game board is defined in the action_locations table (name field).
@@ -74,10 +80,10 @@ struct MinigamePlayer
  * The response string specifies the name to the record in gameboards
  * and an optional prepared layout & is expected to have the
  * following format:
- * <Examine>
- *  <GameBoard Name='gameboard name' [Layout='board layout'] [Session='personal'|'public'] [EndGame='yes'|'no'] />
- *  <Description>Description as seen by players</Description>
- * </Examine>
+ * \<Examine\>
+ *  \<GameBoard Name='gameboard name' [Layout='board layout'] [Session='personal'|'public'] [EndGame='yes'|'no'] /\>
+ *  \<Description\>Description as seen by players\</Description\>
+ * \</Examine\>
  *
  * The Layout attribute defines the layout of the game board and optionally also preset game
  * pieces on it. Optional - to override the default.
@@ -117,10 +123,11 @@ public:
 
     /**
      * Loads the game.
-     * @param[in] responseString The string with minigame options and board layout.
-     * @return Returns true if the game was loaded and false if not.
      *
      * The Load() function loads the game from the given action location response string.
+     *
+     * @param[in] responseString The string with minigame options and board layout.
+     * @return Returns true if the game was loaded and false if not.
      */
     bool Load(csString &responseString);
 
@@ -141,6 +148,7 @@ public:
 
     /**
      * Sends the current game board to the given player.
+     *
      * @param[in] clientID The ID of the client.
      * @param[in] modOptions Modifier for game options.
      */
@@ -225,7 +233,8 @@ private:
 };
 
 
-/** Handles minigame sessions.
+/**
+ * Handles minigame sessions.
  *
  * This is the manager class of mini-games, handling overall mini-game definitions,
  * action-location gameboards and game sessions.
@@ -286,5 +295,6 @@ protected:
     csHash<psMiniGameBoardDef *, csString> gameBoardDef;
 };
 
+/** @} */
 
 #endif

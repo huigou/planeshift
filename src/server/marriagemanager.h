@@ -28,10 +28,15 @@
 // Local Includes
 //=============================================================================
 
+/**
+ * \addtogroup server
+ * @{ */
 
-/** This class manages all marriage related stuff.
- *  This class manages all marriage related functionality and has 
- *  functions to retrieve/edit character's marriage related details.
+/**
+ * This class manages all marriage related stuff.
+ *
+ * This class manages all marriage related functionality and has 
+ * functions to retrieve/edit character's marriage related details.
  */
 class psMarriageManager
 {
@@ -46,27 +51,34 @@ public:
     /// Divorce
     void Divorce( Client* client, csString divorceMsg );
 
-    /** Sets spouse name for a given character Name
-    *
-    * @charData    Pointer to the character's data
-    * @spouseData  Pointer to spouse character's data.
-    * @return true if successfull else returns false.
-    */
+    /**
+     * Sets spouse name for a given character Name
+     *
+     * @param charData    Pointer to the character's data
+     * @param spouseData  Pointer to spouse character's data.
+     * @return true if successfull else returns false.
+     */
     bool PerformMarriage( psCharacter* charData, psCharacter* spouseData );
 
-    /** Deletes marriage information of given character name from DB and 
-        reverts any lastname changes and updates cached data.*/
+    /**
+     * Deletes marriage information of given character name from DB and 
+     * reverts any lastname changes and updates cached data.
+     */
     void DeleteMarriageInfo( psCharacter* charData );
 
-    /** Used to update name in labels, guilds, targets, etc. **/
-
+    /**
+     * Used to update name in labels, guilds, targets, etc.
+     */
     void UpdateName ( psCharacter* charData );
 
 private:
-    /** Creates a character's entry in "character_marriage_details"
-        table of DB if one is not present already. */
+    /**
+     * Creates a character's entry in "character_marriage_details"
+     * table of DB if one is not present already.
+     */
     bool CreateMarriageEntry( psCharacter* charData,  psCharacter* spouseData );
 };
 
+/** @} */
 
 #endif
