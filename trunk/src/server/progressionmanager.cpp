@@ -121,11 +121,12 @@ void ProgressionManager::HandleZPointEvent(MsgEntry *me, Client *client)
 
     csString string;
     string.Format("You've gained some practice points in %s.", evt.skillName.GetData() );
-    if ( evt.rankUp )
-    {
-        string.Append(" You've also ranked up!");
-    }
     psserver->SendSystemInfo(evt.actor->GetClientID(), string);
+    if(evt.rankUp)
+    {
+        string.Format("You've ranked up in %s!", evt.skillName.GetData());
+        psserver->SendSystemResult(evt.actor->GetClientID(), string);
+    }
 
     SendSkillList( client, false );
 }
