@@ -3546,6 +3546,12 @@ AdminCmdDataQuest::AdminCmdDataQuest(AdminManager* msgManager, MsgEntry* me, psA
             if(words.GetCount() == index + 1)
             {
                 questName = words[index++];
+                
+                // Check if this is a request to list variables.
+                if (subCmd == "list" && questName.CompareNoCase("variables"))
+                {
+                    subCmd = "list variables";
+                }
             }
             else if(words.GetCount() != index)
             {
@@ -4571,7 +4577,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     }
     else if(data->command == "/quest")
     {
-        HandleCompleteQuest(me, msg, data, client);
+        HandleQuest(me, msg, data, client);
     }
     else if(data->command == "/setquality")
     {
@@ -11596,7 +11602,7 @@ void AdminManager::HandleBadText(psAdminCmdMessage &msg, AdminCmdData* cmddata, 
     psserver->SendSystemInfo(client->GetClientNum(), "--------------------------------------");
 }
 
-void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
+void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataQuest* data = dynamic_cast<AdminCmdDataQuest*>(cmddata);
     Client* subject = data->targetClient;
@@ -11736,6 +11742,34 @@ void AdminManager::HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage &msg, Admi
         else //TODO: add offline support?
         {
             psserver->SendSystemError(me->clientnum,"Unable to assign quests: player %s is offline!", name.GetData());
+        }
+    }
+    else if(data->subCmd == "list variables")  //this command will list the quest variables for the player
+    {
+        if(target != client && !listOthers) //the first part will evaluate as true if offline which is fine for us
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to list other players' quest variables.");
+            return;
+        }
+        
+        if(data->IsOnline())  //check if the player is online
+        {
+            psCharacter* chardata = target->GetActor()->GetCharacterData();
+            if (chardata)
+            {
+                csHash<charVariable, csString>::ConstGlobalIterator iter = chardata->GetVariables();
+                csString result;
+                while (iter.HasNext())
+                {
+                    charVariable var = iter.Next();
+                    result.AppendFmt("%s%10s %10s",result.Length()?"\n":"",var.name.GetDataSafe(),var.value.GetDataSafe());
+                }
+                if (!result.Length())
+                {
+                    result = "No variables defined.";
+                }
+                psserver->SendSystemInfo(me->clientnum, "Quest Variables:\n%s",result.GetDataSafe());
+            }
         }
     }
     else // assume "list" (even if it isn't)

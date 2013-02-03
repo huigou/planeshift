@@ -1255,6 +1255,13 @@ void psCharacter::UnSetVariable(const csString &name)
     
 }
 
+csHash<charVariable, csString>::ConstGlobalIterator psCharacter::GetVariables() const
+{
+    return charVariables.GetIterator();
+}
+
+
+
 unsigned int psCharacter::GetExperiencePoints() // W
 {
     return vitals->GetExp();

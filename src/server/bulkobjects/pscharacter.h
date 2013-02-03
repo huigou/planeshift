@@ -901,6 +901,11 @@ public:
      */
     void UnSetVariable(const csString &name);
 
+    /**
+     * Retrive const iterator for character variables.
+     */
+    csHash<charVariable, csString>::ConstGlobalIterator GetVariables() const;
+
     unsigned int GetExperiencePoints(); // W
     void SetExperiencePoints(unsigned int W);
     unsigned int AddExperiencePoints(unsigned int W);
@@ -1296,8 +1301,12 @@ protected:
      * @return TRUE always. bool was used for consistancy.
      */
     bool LoadVariables(PID pid);
-    /// Helper function which saves the character variables to the database.
+    
+    /**
+     * Helper function which saves the character variables to the database.
+     */
     void UpdateVariables();
+    
     bool LoadExploration(Result& exploration);
     bool LoadGMEvents();
 
