@@ -2479,6 +2479,7 @@ void NPCManager::QueueAssessPerception(EID entityEID, EID targetEID, const csStr
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueAssessPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueAssessPerception put message in overrun state!\n");
     }
 
     Debug3(LOG_NPC, entityEID.Unbox(), "Added assess perception: Entity: %s Target. %s\n",
@@ -2504,6 +2505,7 @@ void NPCManager::QueueTalkPerception(gemActor* speaker,gemNPC* target)
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueTalkPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueTalkPerception put message in overrun state!\n");
     }
 
     Debug4(LOG_NPC, speaker->GetEID().Unbox(), "Added perception: %s spoke to %s with %1.1f faction standing.\n",
@@ -2541,6 +2543,7 @@ void NPCManager::QueueAttackPerception(gemActor* attacker,gemNPC* target)
         if(outbound->msg->overrun)
         {
             CS_ASSERT(!"NPCManager::QueueAttackPerception group put message in overrun state!\n");
+            Error1(!"NPCManager::QueueAttackPerception group put message in overrun state!\n");
         }
 
         Debug3(LOG_NPC, attacker->GetEID().Unbox(), "Added perception: %s's group is attacking %s.\n",
@@ -2559,6 +2562,7 @@ void NPCManager::QueueAttackPerception(gemActor* attacker,gemNPC* target)
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueAttackPerception lone gunman put message in overrun state!\n");
+        Error1(!"NPCManager::QueueAttackPerception lone gunman put message in overrun state!\n");
     }
 
     Debug3(LOG_NPC, attacker->GetEID().Unbox(), "Added perception: %s is attacking %s.\n",
@@ -2585,6 +2589,7 @@ void NPCManager::QueueDamagePerception(gemActor* attacker,gemNPC* target,float d
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueDamagePerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueDamagePerception put message in overrun state!\n");
     }
 
     Debug4(LOG_NPC, attacker->GetEID().Unbox(), "Added perception: %s hit %s for %1.1f dmg.\n",
@@ -2604,6 +2609,7 @@ void NPCManager::QueueDeathPerception(gemObject* who)
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueDeathPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueDeathPerception put message in overrun state!\n");
     }
 
     Debug2(LOG_NPC, who->GetEID().Unbox(), "Added perception: %s death.\n", who->GetName());
@@ -2624,6 +2630,7 @@ void NPCManager::QueueSpellPerception(gemActor* caster, gemObject* target,const 
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueSpellPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueSpellPerception put message in overrun state!\n");
     }
 
     Debug4(LOG_NPC, caster->GetEID().Unbox(), "Added perception: %s cast a %s spell on %s.\n", caster->GetName(), spell_cat_name, target->GetName());
@@ -2690,6 +2697,7 @@ void NPCManager::QueueStatDR(gemNPC* npc, unsigned int statsDirtyFlags )
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueStatDR put message in overrun state!\n");
+        Error1(!"NPCManager::QueueStatDR put message in overrun state!\n");
     }
 
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added perception: StatDR for %s\n",npc->GetName());
@@ -2710,6 +2718,7 @@ void NPCManager::QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type,
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueEnemyPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueEnemyPerception put message in overrun state!\n");
     }
 
     Debug5(LOG_NPC, player->GetEID().Unbox(), "Added perception: Entity %s within range of entity %s, type %d, faction %.0f.\n", ShowID(player->GetEID()), ShowID(npc->GetEID()), type, relative_faction);
@@ -2739,6 +2748,7 @@ void NPCManager::QueueOwnerCmdPerception(gemActor* owner, gemNPC* pet, psPETComm
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueOwnerCmdPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueOwnerCmdPerception put message in overrun state!\n");
     }
 
     Debug4(LOG_NPC, owner->GetEID().Unbox(), "Added perception: %s has told %s to %d.\n",
@@ -2761,6 +2771,7 @@ void NPCManager::QueueInventoryPerception(gemActor* owner, psItem* itemdata, boo
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueInventoryPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueInventoryPerception put message in overrun state!\n");
     }
 
     Debug7(LOG_NPC, owner->GetEID().Unbox(), "Added perception: %s(%s) has %s %d %s %s inventory.\n",
@@ -2791,6 +2802,7 @@ void NPCManager::QueueFlagPerception(gemActor* owner)
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueFlagPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueFlagPerception put message in overrun state!\n");
     }
 
     Debug4(LOG_NPC, owner->GetEID().Unbox(), "Added perception: %s(%s) flags 0x%X.\n",
@@ -2812,6 +2824,7 @@ void NPCManager::QueueNPCCmdPerception(gemActor* owner, const csString &cmd)
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueNPCCmdPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueNPCCmdPerception put message in overrun state!\n");
     }
 
     Debug4(LOG_NPC, owner->GetEID().Unbox(), "Added perception: %s(%s) npc cmd %s.\n",
@@ -2836,6 +2849,7 @@ void NPCManager::QueueTransferPerception(gemActor* owner, psItem* itemdata, csSt
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueTransferPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueTransferPerception put message in overrun state!\n");
     }
 
     Debug6(LOG_NPC, owner->GetEID().Unbox(), "Added perception: %s(%s) has transfered %d %s to %s.\n",
@@ -2860,6 +2874,7 @@ void NPCManager::QueueSpawnedPerception(gemNPC* spawned, gemNPC* spawner, const 
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueSpawnedPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueSpawnedPerception put message in overrun state!\n");
     }
 
     Debug3(LOG_NPC, spawner->GetEID().Unbox(), "Added spawn perception: %s from %s.\n", ShowID(spawned->GetEID()), ShowID(spawner->GetEID()));
@@ -2880,6 +2895,7 @@ void NPCManager::QueueTeleportPerception(gemNPC* npc, csVector3 &pos, float yrot
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueTeleportPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueTeleportPerception put message in overrun state!\n");
     }
 
     Debug3(LOG_NPC, npc->GetEID().Unbox(), "Added teleport perception for %s to %s.\n", ShowID(npc->GetEID()), toString(pos,sector).GetDataSafe());
@@ -2898,6 +2914,7 @@ void NPCManager::QueueInfoRequestPerception(gemNPC* npc, Client* client, const c
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueInfoRequestPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueInfoRequestPerception put message in overrun state!\n");
     }
 
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Info Request perception for %s.\n", ShowID(npc->GetEID()));
@@ -2915,6 +2932,7 @@ void NPCManager::QueueFailedToAttackPerception(gemNPC* attacker, gemObject* targ
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueFailedToAttackPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueFailedToAttackPerception put message in overrun state!\n");
     }
 
     Debug2(LOG_NPC, attacker->GetEID().Unbox(), "Added Failed to Attack perception for %s.\n", ShowID(attacker->GetEID()));
@@ -2933,6 +2951,7 @@ void NPCManager::QueuePerceptPerception(gemNPC* npc, csString perception, csStri
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueuePerceptPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueuePerceptPerception put message in overrun state!\n");
     }
 
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Percept perception for %s.\n", ShowID(npc->GetEID()));
@@ -2950,6 +2969,7 @@ void NPCManager::QueueSpokenToPerception(gemNPC* npc, bool spokenTo)
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::QueueSpokenToPerception put message in overrun state!\n");
+        Error1(!"NPCManager::QueueSpokenToPerception put message in overrun state!\n");
     }
 
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added SpokenTo perception for %s.\n", ShowID(npc->GetEID()));
@@ -2971,6 +2991,7 @@ void NPCManager::ChangeNPCBrain(gemNPC* npc, Client* client, const char* brainNa
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::ChangeNPCBrain put message in overrun state!\n");
+        Error1(!"NPCManager::ChangeNPCBrain put message in overrun state!\n");
     }
 
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Brain Change perception for %s.\n", ShowID(npc->GetEID()));
@@ -2989,6 +3010,7 @@ void NPCManager::DebugNPC(gemNPC* npc, Client* client, uint8_t debugLevel)
     if(outbound->msg->overrun)
     {
         CS_ASSERT(!"NPCManager::DebugNPC put message in overrun state!\n");
+        Error1(!"NPCManager::DebugNPC put message in overrun state!\n");
     }
 
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Debug Level perception for %s.\n", ShowID(npc->GetEID()));
