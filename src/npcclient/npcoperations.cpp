@@ -3322,6 +3322,38 @@ ScriptOperation::OperationResult MemorizeOperation::Run(NPC *npc, bool interrupt
 
 //---------------------------------------------------------------------------
 
+DeleteNPCOperation::DeleteNPCOperation(const DeleteNPCOperation* other)
+    : ScriptOperation("DeleteNPC")
+{
+}
+
+DeleteNPCOperation::DeleteNPCOperation()
+    : ScriptOperation("DeleteNPC")
+{
+}
+
+bool DeleteNPCOperation::Load(iDocumentNode *node)
+{
+    return true;
+}
+
+ScriptOperation *DeleteNPCOperation::MakeCopy()
+{
+    DeleteNPCOperation *op = new DeleteNPCOperation(this);
+    return op;
+}
+
+ScriptOperation::OperationResult DeleteNPCOperation::Run(NPC *npc, bool interrupted)
+{
+    NPCDebug(npc, 5, "DeleteNPC %s", npc->GetTarget()->GetName());
+
+    npcclient->GetNetworkMgr()->QueueDeleteNPCCommand(npc);
+
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 bool MoveOperation::Load(iDocumentNode *node)
 {
     LoadVelocity(node);

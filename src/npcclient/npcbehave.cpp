@@ -1096,6 +1096,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new DebugOperation;
         }
+        else if ( strcmp( node->GetValue(), "delete_npc" ) == 0 )
+        {
+            op = new DeleteNPCOperation;
+        }
         else if ( strcmp( node->GetValue(), "dequip" ) == 0 )
         {
             op = new DequipOperation;

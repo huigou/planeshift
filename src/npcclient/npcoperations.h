@@ -554,6 +554,31 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
+* Let the NPC delete it self.
+*/
+class DeleteNPCOperation : public ScriptOperation
+{
+protected:
+    /**
+     * Constructor for this operation, used by the MakeCopy.
+     *
+     * This constructor will copy all the Operation Parameters
+     * from the other operation and initialize all Instance Variables
+     * to default values.
+     */
+    DeleteNPCOperation(const DeleteNPCOperation* other);
+
+ public:
+    DeleteNPCOperation();
+    virtual ~DeleteNPCOperation() {};
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
+/**
 * Moving entails a velocity vector and an animation action.
 */
 class MoveOperation : public ScriptOperation

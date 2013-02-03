@@ -2141,6 +2141,21 @@ void NetworkManager::QueueTransferCommand(gemNPCActor* entity, csString item, in
     cmd_count++;
 }
 
+void NetworkManager::QueueDeleteNPCCommand(NPC* npc)
+{
+    CheckCommandsOverrun(100);
+
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_DELETE_NPC);
+    outbound->msg->Add(npc->GetPID().Unbox());
+
+    if(outbound->msg->overrun)
+    {
+        CS_ASSERT(!"NetworkManager::QueueDeleteNPCCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;
+}
+
 void NetworkManager::QueueDropCommand(gemNPCActor* entity, csString slot)
 {
     CheckCommandsOverrun(100);

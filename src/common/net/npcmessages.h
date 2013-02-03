@@ -213,6 +213,7 @@ public:
         CMD_ATTACK,
         CMD_BUSY,
         CMD_CAST,
+        CMD_DELETE_NPC,
         CMD_DEQUIP,
         CMD_DRDATA,
         CMD_DROP,
@@ -271,7 +272,7 @@ public:
     };
 
     /// Create psMessageBytes struct for outbound use
-    psNPCCommandsMessage(uint32_t clientToken,int size);
+    psNPCCommandsMessage(uint32_t clientToken, int size);
 
     /// Crack incoming psMessageBytes struct for inbound use
     psNPCCommandsMessage(MsgEntry *message);

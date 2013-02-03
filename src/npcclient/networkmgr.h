@@ -380,6 +380,11 @@ public:
     void QueueTransferCommand(gemNPCActor *entity, csString item, int count, csString target);
 
     /**
+     * Send a command to delete a npc.
+     */
+    void QueueDeleteNPCCommand(NPC* npcx);
+
+    /**
      * Send a command to drop the content of a slot.
      */
     void QueueDropCommand(gemNPCActor *entity, csString slot);
