@@ -88,6 +88,7 @@ public:
 };
 
 const int NPC_TICK_INTERVAL = 300;  //msec
+const size_t MAX_NPC_COMMANS_MESSAGE_SIZE = 15000; // bytes
 
 /**
  * This class is the relationship of Owner to Pet ( which includes Familiars ).
@@ -1023,6 +1024,38 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 attacker->SetTargetObject(target);
 
                 psserver->GetSpellManager()->Cast(attacker, spell, kFactor, NULL);
+
+                break;
+            }
+            case psNPCCommandsMessage::CMD_DELETE_NPC:
+            {
+                PID npcPID = PID(list.msg->GetUInt32());
+
+                Debug2(LOG_SUPERCLIENT, npcPID.Unbox(), "-->Got delete npc %s\n",ShowID(npcPID));
+
+                // Make sure we haven't run past the end of the buffer
+                if(list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT, npcPID.Unbox(), "Received incomplete CMD_DELETE_NPC from NPC client %u.\n", me->clientnum);
+                    break;
+                }
+
+                gemNPC* npc = gemSupervisor->FindNPCEntity(npcPID);
+                if(!npc)
+                {
+                    Debug2(LOG_SUPERCLIENT, npcPID.Unbox(), "No entity %s", ShowID(npcPID));
+                    break;
+                }
+
+                // First remove from gemSupervisor
+                gemSupervisor->RemoveEntity(npc);
+
+                // Than remove from DB
+                csString error;
+                if (!psserver->CharacterLoader.DeleteCharacterData(npcPID, error))
+                {
+                    Error2("Failed to remove NPC %s!!!",ShowID(npcPID));
+                }
 
                 break;
             }
@@ -2434,7 +2467,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
 
 void NPCManager::PrepareMessage()
 {
-    outbound = new psNPCCommandsMessage(0,15000);
+    outbound = new psNPCCommandsMessage(0,MAX_NPC_COMMANS_MESSAGE_SIZE);
     cmd_count = 0;
 }
 
@@ -2442,7 +2475,9 @@ void NPCManager::PrepareMessage()
 
 void NPCManager::CheckSendPerceptionQueue(size_t expectedAddSize)
 {
-    if(outbound->msg->GetSize()+expectedAddSize >= MAX_MESSAGE_SIZE)
+    const size_t TERMINATE_MSG_SIZE = sizeof(uint8_t);
+
+    if(outbound->msg->GetSize()+expectedAddSize+TERMINATE_MSG_SIZE > MAX_NPC_COMMANS_MESSAGE_SIZE)
     {
         SendAllCommands(false); //as this happens before an npctick we don't create a new one
     }

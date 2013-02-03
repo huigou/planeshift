@@ -237,7 +237,7 @@ csString psNPCRaceListMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psNPCCommandsMessage,MSGTYPE_NPCCOMMANDLIST);
 
-psNPCCommandsMessage::psNPCCommandsMessage(uint32_t clientToken,int size)
+psNPCCommandsMessage::psNPCCommandsMessage(uint32_t clientToken, int size)
 {
     msg.AttachNew(new MsgEntry(size));
 
@@ -375,6 +375,23 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 }
 
                 msgtext.AppendFmt("Attacker: %s Target: %s Spell: %s kFactor: %.1f", ShowID(attackerEID), ShowID(targetEID),spell.GetDataSafe(),kFactor);
+                break;
+            }
+            case psNPCCommandsMessage::CMD_DELETE_NPC:
+            {
+                msgtext.Append("CMD_DELETE_NPC: ");
+
+                // Extract the data
+                PID npcPID = PID(msg->GetUInt32());
+
+                // Make sure we haven't run past the end of the buffer
+                if (msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_DELETE_NPC from NPC client %u.\n",msg->clientnum);
+                    break;
+                }
+
+                msgtext.AppendFmt("NPC: %s", ShowID(npcPID));
                 break;
             }
             case psNPCCommandsMessage::CMD_SCRIPT:
