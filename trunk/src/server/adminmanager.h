@@ -4201,7 +4201,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleCompleteQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
 
     /**
      * Change quality of items.
