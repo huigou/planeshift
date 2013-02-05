@@ -457,7 +457,8 @@ protected:
     virtual void Reset();
 };
 
-/** @brief Class for storing subcommands for a specific word position.
+/**
+ * Class for storing subcommands for a specific word position.
  */
 class AdminCmdSubCommandParser
 {

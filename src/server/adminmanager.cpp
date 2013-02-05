@@ -3515,7 +3515,7 @@ csString AdminCmdDataBadText::GetHelpMessage()
 
 AdminCmdDataQuest::AdminCmdDataQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/quest", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE),
-      subCommandList("complete list discard assign")
+      subCommandList("complete list discard assign setvariable unsetvariable")
 {
     size_t index = 1;
     bool found;
@@ -11770,6 +11770,55 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
                 }
                 psserver->SendSystemInfo(me->clientnum, "Quest Variables:\n%s",result.GetDataSafe());
             }
+        }
+        else
+        {
+            psserver->SendSystemError(me->clientnum,"Target is not online!");
+        }
+        
+    }
+    else if(data->subCmd == "setvariable")  //this command will set a variable for the player
+    {
+        if(target != client && !listOthers) //the first part will evaluate as true if offline which is fine for us
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to set other players' variables.");
+            return;
+        }
+        
+        if(data->IsOnline())  //check if the player is online
+        {
+            psCharacter* chardata = target->GetActor()->GetCharacterData();
+            if (chardata)
+            {
+                chardata->SetVariable(data->questName);
+                psserver->SendSystemInfo(me->clientnum, "Variable set: %s",data->questName.GetDataSafe());
+            }
+        }
+        else
+        {
+            psserver->SendSystemError(me->clientnum,"Target is not online!");
+        }
+    }
+    else if(data->subCmd == "unsetvariable")  //this command will unset a variable for the player
+    {
+        if(target != client && !listOthers) //the first part will evaluate as true if offline which is fine for us
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to set other players' variables.");
+            return;
+        }
+        
+        if(data->IsOnline())  //check if the player is online
+        {
+            psCharacter* chardata = target->GetActor()->GetCharacterData();
+            if (chardata)
+            {
+                chardata->UnSetVariable(data->questName);
+                psserver->SendSystemInfo(me->clientnum, "Variable unset: %s",data->questName.GetDataSafe());
+            }
+        }
+        else
+        {
+            psserver->SendSystemError(me->clientnum,"Target is not online!");
         }
     }
     else // assume "list" (even if it isn't)
