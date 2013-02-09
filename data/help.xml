@@ -1992,6 +1992,15 @@ There is a invisible advisor point system. Not sure how this works exactly but t
   (Asks [question] in the help channel. In case no advisor is currently available you are notified in the system chat tab.)</content>
           </Contents>
         </topic>
+        <topic name="/petition">
+          <Contents>
+            <content type="text">This command creates a petition.
+
+Usage;
+/petition [message]
+(submits a petition with the text [message].)</content>
+          </Contents>
+        </topic>
       </branch>
       <branch name="Interaction commands">
         <topic name="/bank">
@@ -2485,13 +2494,13 @@ Usage:
 (Sets the target of your pet. If no target is given the target of your character will be uses. If [target] is "me" you pet wil target your character. Otherwise [target] is interpreted as the name of the target you want to set.
               </Contents>
         </topic>
-        <topic name="/petition">
+        <topic name="/unmount">
           <Contents>
-            <content type="text">This command creates a petition.
+            <content type="text">This command allows you to unmount an animal.
 
-Usage;
-/petition [message]
-(submits a petition with the text [message].)</content>
+Usage:
+/unmount
+(Unmounts from the currently mounted mount. You must be mounted for this to work.)</content>
           </Contents>
         </topic>
       </branch>
