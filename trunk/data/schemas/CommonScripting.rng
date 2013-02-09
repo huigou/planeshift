@@ -17,6 +17,7 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  -->
 <grammar xmlns="http://relaxng.org/ns/structure/1.0">
+  
   <define name="ImperativeMode">
     <zeroOrMore>
       <choice>
@@ -149,7 +150,7 @@
                 <value>ground</value>
               </choice>           
             </attribute>
-            <attribute name="randomize" />
+            <attribute name="randomize" >
               <choice>
                 <value>true</value>
                 <value>false</value>
@@ -214,24 +215,7 @@
           </optional>
         </element>
         <element name="mana">     <ref name="imperative2"/> </element>
-        <element name="pstamina"><define name="teleport">
-    <choice>
-      <attribute name="location"/>
-      <group>
-        <attribute name="sector"/>
-        <optional>
-          <attribute name="x"/>
-          <attribute name="y"/>
-          <attribute name="z"/>
-        </optional>
-        <optional>
-          <attribute name="instance"/>
-        </optional>
-      </group>
-         <attribute name="delay"/>
-         <attribute name="background"/>
-    </choice>
-  </define> <ref name="imperative2"/> </element>
+        <element name="pstamina"> <ref name="imperative2"/> </element>
         <element name="mstamina"> <ref name="imperative2"/> </element>
 
         <!-- stats -->
@@ -245,12 +229,7 @@
         <!-- other -->
         <element name="exp"> <ref name="imperative2"/> </element>
 
-        <element name="skill"><define name="boolean">
-    <choice>
-      <value>true</value>
-      <value>false</value>
-    </choice>
-  </define> <ref name="imperative3"/> </element>
+        <element name="skill"> <ref name="imperative3"/> </element>
         <element name="faction"> <ref name="imperative3"/> </element>
         <element name="animal-affinity"> <ref name="imperative3"/> </element>
 
@@ -395,22 +374,28 @@
         <optional>
           <attribute name="instance"/>
         </optional>
-      </group>
+      <!-- </group>
+      <group> -->
          <attribute name="delay"/>
          <attribute name="background"/>
          <attribute name="widget"/>
-       <group>
          <optional>
            <attribute name="x1"/>
            <attribute name="y1"/>
            <attribute name="x2"/>
            <attribute name="y2"/>
          </optional>
-       </group>
+      </group>
     </choice>
   </define>
 
 
+  <define name="boolean">
+    <choice>
+      <value>true</value>
+      <value>false</value>
+    </choice>
+  </define>
 
 
   <define name="weatherbase">
