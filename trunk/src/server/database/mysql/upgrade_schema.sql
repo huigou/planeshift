@@ -1746,6 +1746,16 @@ ALTER TABLE sc_tribe_assets DROP COLUMN `gemItemName`;
 UPDATE sc_tribe_assets a, item_instances i SET a.itemID=i.id WHERE a.coordX = i.loc_x AND a.coordY = i.loc_y AND a.coordZ = i.loc_z AND a.sector_id != -1;
 INSERT INTO command_groups VALUES(50, "Administrator");
 
+#
+# Added flags to the tribe_members table.
+#
+UPDATE `server_options` SET `option_value`='1269' WHERE `option_name`='db_version';
+ALTER TABLE tribe_members ADD COLUMN `flags` varchar(200) default '' COMMENT 'Various flags like: CREATED, ...' AFTER `member_type`;
+# First make all dynamic, assuming most are dynamic added.
+UPDATE `tribe_members` SET `flags`='DYNAMIC';
+# For each static added NPC do the following.
+UPDATE `tribe_members` SET `flags`='STATIC' where member_id='<for each static member in db>';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
