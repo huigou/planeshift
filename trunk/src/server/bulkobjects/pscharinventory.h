@@ -578,6 +578,10 @@ public:
      */    
     void SetBasicWeapon(psRaceInfo *race = NULL);
 
+    /**
+     * Allocate either a psItem or a psGlyph.
+     */
+    static psItem *GetItemFactory(psItemStats *stats);
 
 private:
     void WriteItem(csRef<iDocumentNode> equipmentNode, psItem* item, int bulk, INVENTORY_SLOT_NUMBER slot);
@@ -612,10 +616,8 @@ private:
      */
     csArray<size_t> FindCompatibleStackedItems(psItem *item, bool checkStackCount = true, bool precise = true);
 
-    /// Allocate either a psItem or a psGlyph
-    psItem *GetItemFactory(psItemStats *stats);
-
     psInventoryCacheServer inventoryCacheServer;    ///< handle inventory cache
+
 };
 
 class InventoryTransaction
