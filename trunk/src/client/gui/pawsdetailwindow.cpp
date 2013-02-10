@@ -201,10 +201,18 @@ void pawsDetailWindow::HandleMessage( MsgEntry* me )
         str.Append(msg.race);
 
         //Add seperator
-        str.Append(PawsManager::GetSingleton().Translate(" in front\nof you named "));
+        str.Append(PawsManager::GetSingleton().Translate(" in front of you"));
 
-        //Add name
-        str.Append(msg.name);
+        // Now prevent writing "You see a mail Monster in front of you named Monster."
+        if (msg.name != msg.race)
+        {
+            //Add name
+            str.Append("\n");
+            str.Append(PawsManager::GetSingleton().Translate("named "));
+            str.Append(msg.name);
+        }
+        
+        str.Append(".");
 
         intro->SetText( str.GetData() );
         storedescription = msg.desc.GetData();
