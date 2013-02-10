@@ -3241,14 +3241,7 @@ bool CacheManager::LoadWorldItems(psSectorInfo* sector, csArray<psItem*> &items)
             continue;
         }
 
-        if(stats->GetIsGlyph())
-        {
-            item = new psGlyph();
-        }
-        else
-        {
-            item = new psItem();
-        }
+        item = psCharacterInventory::GetItemFactory(stats);
 
         if(!item->Load(result[i]))
         {
