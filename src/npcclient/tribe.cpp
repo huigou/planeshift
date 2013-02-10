@@ -113,9 +113,12 @@ bool Tribe::AddMember(PID pid, const char* tribeMemberType)
 
     membersId.Push(mID);
 
+    csString flags;
+    flags += "DYNAMIC"; // Indicat that the NPC has been created dynamic by the NPC Server.
+
     // Add to members list in db
-    db->Command("INSERT INTO tribe_members (tribe_id,member_id,member_type) "
-                "VALUES (%u,%u,'%s')", GetID(), pid.Unbox(),tribeMemberType);
+    db->Command("INSERT INTO tribe_members (tribe_id,member_id,member_type,flags) "
+                "VALUES (%u,%u,'%s','%s')", GetID(), pid.Unbox(),tribeMemberType,flags.GetDataSafe());
 
     return true;
 }
