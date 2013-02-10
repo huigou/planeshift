@@ -462,9 +462,13 @@ void psTriggerHandler::HandleMovement(const psControl* trigger, bool value)
     {
         movement->CancelRunTo();
         if (value)
+        {
             movement->Start(move);
+        }
         else
+        {
             movement->Stop(move);
+        }
     }
     else
     {
@@ -669,9 +673,13 @@ void psTriggerHandler::HandleMovementAction(const psControl* trigger, bool /*val
     {
         if (psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::SIT ||
             psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::OVERWEIGHT)
+        {
             psengine->GetCmdHandler()->Execute("/stand");
+        }
         else
+        {
             psengine->GetCmdHandler()->Execute("/sit");
+        }
     }
 }
 

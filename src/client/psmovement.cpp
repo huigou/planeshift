@@ -161,7 +161,10 @@ void psMovementManager::LockMoves(bool v)
         StopAllMovement();
     }
     else
+    {
         actor->Movement().ResetGravity();
+    }
+    
 }
 
 void psMovementManager::HandleMessage(MsgEntry* me)
