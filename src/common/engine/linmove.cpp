@@ -149,8 +149,6 @@ psLinearMovement::psLinearMovement (iObjectRegistry* object_reg)
     offset_err = 0;
     offset_rate = 0;
 
-    speed = 1.0f;
-
     deltaLimit = 0.0f;
 
 
@@ -197,11 +195,6 @@ void psLinearMovement::SetAngularVelocity (const csVector3& angleVel,
   this->angleToReach = angleToReach;
 }
 
-void psLinearMovement::SetSpeed (float speedZ)
-{
-  speed = speedZ;
-}
-
 // --------------------------------------------------------------------------
 
 static float Matrix2YRot (const csMatrix3& mat)
@@ -229,7 +222,6 @@ bool psLinearMovement::RotateV (float delta)
   if (angularVelocity < SMALL_EPSILON)
     return false;
 
-  //delta *= speed;
   csVector3 angle = angularVelocity * delta;
   if (angleToReachFlag)
   {
@@ -289,8 +281,6 @@ int psLinearMovement::MoveSprite (float delta)
              ),(bodyVel.z==0.0f) ? MAX_CD_INTERVAL : ABS (intervalSize.z/bodyVel.z)
         );
 
-  // Compensate for speed
-  local_max_interval /= speed;
   // Err on the side of safety (95% error margin)
   local_max_interval *= 0.95f;
 
@@ -386,8 +376,6 @@ int psLinearMovement::MoveSprite (float delta)
       	: ABS (intervalSize.x/bodyVel.x)), (bodyVel.z==0.0f)
       	? MAX_CD_INTERVAL
       	: ABS (intervalSize.z/bodyVel.z));
-      // Compensate for speed
-      local_max_interval /= speed;
       // Err on the side of safety (95% error margin)
       local_max_interval *= 0.95f;
 
@@ -465,7 +453,6 @@ int psLinearMovement::MoveV (float delta)
   // (this is relevant if we are anchored). Later on we will correct that.
   csReversibleTransform fulltransf = movable->GetFullTransform ();
   mat = fulltransf.GetT2O ();
-  //delta *= speed;
 
   csVector3 worldVel (fulltransf.This2OtherRelative (velBody) + velWorld);
   csVector3 oldpos (fulltransf.GetOrigin ());
@@ -869,12 +856,11 @@ int psLinearMovement::FindSectors (const csVector3& pos, float radius,
   return numsector;
 }
 
-void psLinearMovement::GetDRData (bool& on_ground, float& speed,
+void psLinearMovement::GetDRData (bool& on_ground,
 	csVector3& pos, float& yrot, iSector*& sector, csVector3& vel,
 	csVector3& worldVel, float& ang_vel)
 {
   on_ground = IsOnGround ();
-  speed = this->speed;
   GetLastPosition (pos, yrot, sector);
   vel = velBody;
   ang_vel = angularVelocity.y;
@@ -1046,14 +1032,13 @@ void psLinearMovement::SetPosition (const char* center_name, float yrot,
   }
 }
 
-void psLinearMovement::SetDRData (bool on_ground, float speed,
+void psLinearMovement::SetDRData (bool on_ground,
 	csVector3& pos, float yrot, iSector *sector, csVector3& vel,
 	csVector3& worldVel, float ang_vel)
 {
   if (colldet)
     colldet->SetOnGround (on_ground);
 
-  this->speed = speed;
   SetPosition (pos,yrot,sector);
   SetVelocity (vel);
   ClearWorldVelocity ();
@@ -1067,7 +1052,7 @@ void psLinearMovement::SetDRData (bool on_ground, float speed,
     lastClientYrot = yrot;
 }
 
-void psLinearMovement::SetSoftDRData (bool on_ground, float speed,
+void psLinearMovement::SetSoftDRData (bool on_ground,
 	csVector3& pos, float yrot, iSector *sector, csVector3& vel,
 	csVector3& worldVel, float ang_vel)
 {
@@ -1094,7 +1079,6 @@ void psLinearMovement::SetSoftDRData (bool on_ground, float speed,
     SetPosition (pos, yrot, sector);
   }
 
-  this->speed = speed;
   SetVelocity (vel);
   ClearWorldVelocity ();
   AddVelocity (worldVel);

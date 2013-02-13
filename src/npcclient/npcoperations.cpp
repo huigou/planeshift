@@ -857,11 +857,11 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
 
     {
         bool on_ground;
-        float speed,ang_vel;
+        float ang_vel;
         csVector3 bodyVel,worldVel,myNewPos;
         iSector* myNewSector;
 
-        npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
+        npc->GetLinMove()->GetDRData(on_ground,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
         NPCDebug(npc, 8, "World position bodyVel=%s worldVel=%s",
                  toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
 
@@ -5604,11 +5604,11 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
 
     {
         bool on_ground;
-        float speed,ang_vel;
+        float ang_vel;
         csVector3 bodyVel,worldVel,myNewPos;
         iSector* myNewSector;
 
-        npc->GetLinMove()->GetDRData(on_ground,speed,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
+        npc->GetLinMove()->GetDRData(on_ground,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
         NPCDebug(npc, 8, "World position bodyVel=%s worldVel=%s newPos=%s",
                  toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe(),
                  toString(myNewPos,myNewSector).GetDataSafe());

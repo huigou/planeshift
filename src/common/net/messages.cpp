@@ -4546,8 +4546,7 @@ psDRMessage::psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
                          NetBase::AccessPointers* accessPointers,
                          psLinearMovement *linmove, uint8_t mode)
 {
-    float speed;
-    linmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
+    linmove->GetDRData(on_ground,pos,yrot,sector,vel,worldVel,ang_vel);
 
     CreateMsgEntry(client, accessPointers, sector, csString());
 
@@ -5052,8 +5051,7 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     msg->SetType(MSGTYPE_PERSIST_ACTOR);
     msg->clientnum  = clientNum;
 
-    float speed;
-    linmove->GetDRData(on_ground,speed,pos,yrot,sector,vel, worldVel, ang_vel);
+    linmove->GetDRData(on_ground,pos,yrot,sector,vel, worldVel, ang_vel);
 
     WriteDRInfo(clientNum, mappedid, on_ground, movementMode, counter, pos, yrot, sector, csString(),
         vel, worldVel, ang_vel, msgstrings, false);

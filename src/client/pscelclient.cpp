@@ -1394,7 +1394,7 @@ GEMClientActor::GEMClientActor(psCelClient* cel, psPersistActor &mesg)
     linmove->SetDeltaLimit(0.2f);
 
     if(mesg.sector != NULL && !psengine->GetZoneHandler()->IsLoading())
-        linmove->SetDRData(mesg.on_ground, 1.0f, mesg.pos, mesg.yrot, mesg.sector, mesg.vel, mesg.worldVel, mesg.ang_vel);
+        linmove->SetDRData(mesg.on_ground, mesg.pos, mesg.yrot, mesg.sector, mesg.vel, mesg.worldVel, mesg.ang_vel);
     else
     {
         cel->HandleUnresolvedPos(this, mesg.pos, csVector3(0, mesg.yrot, 0), mesg.sectorName);
@@ -1630,19 +1630,18 @@ void GEMClientActor::SendDRUpdate(unsigned char priority, csStringHashReversible
 {
     // send update out
     EID mappedid = eid;  // no mapping anymore, IDs are identical
-    float speed, yrot, ang_vel;
+    float yrot, ang_vel;
     bool on_ground;
     csVector3 pos, vel, worldVel;
     iSector* sector;
 
-    linmove->GetDRData(on_ground, speed, pos, yrot, sector, vel, worldVel, ang_vel);
+    linmove->GetDRData(on_ground, pos, yrot, sector, vel, worldVel, ang_vel);
 
     ZoneHandler* zonehandler = psengine->GetZoneHandler();
     if(zonehandler && zonehandler->IsLoading())
     {
         // disable movement to stop stamina drain while map is loading
         on_ground = true;
-        speed = 0;
         vel = 0;
         ang_vel = 0;
     }
@@ -1690,12 +1689,12 @@ void GEMClientActor::SetDRData(psDRMessage &drmsg)
                 if(drmsg.sector != cur_sector || (drmsg.vel < 0.1f) || (csSquaredDist::PointPoint(cur_pos,drmsg.pos) > 25.0f))
                 {
                     // Do hard DR when it would make you slide
-                    linmove->SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+                    linmove->SetDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
                 }
                 else
                 {
                     // Do soft DR when moving
-                    linmove->SetSoftDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+                    linmove->SetSoftDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
                 }
 
                 DRcounter = drmsg.counter;
