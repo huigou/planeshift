@@ -261,7 +261,8 @@ csString NPC::Info()
     }
     reply.AppendFmt(" Last perception: '%s'\n",last_perception?last_perception->GetName().GetDataSafe():"(None)");
     reply.AppendFmt(" Fall counter: %d\n", GetFallCounter());
-    reply.AppendFmt(" Brain: %s",GetBrain()->GetName());
+    reply.AppendFmt(" Brain: '%s'\n",GetBrain()->GetName());
+    reply.AppendFmt(" Current Behavior: '%s'",GetCurrentBehavior()?GetCurrentBehavior()->GetName():"(None)");
 
     return reply;
 }
