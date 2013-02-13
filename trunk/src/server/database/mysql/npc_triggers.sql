@@ -69,6 +69,8 @@ INSERT INTO `npc_triggers` VALUES (36,'!anyrange',0,'NPCroom1');
 INSERT INTO `npc_triggers` VALUES (37,'!anyrange',0,'NPCroom2');
 INSERT INTO `npc_triggers` VALUES (38,'bring me up',0,'WinchMovers');
 INSERT INTO `npc_triggers` VALUES (39,'grettings',0,'WinchMovers');
+INSERT INTO `npc_triggers` VALUES (40,'enkidukai',0,'MaleEnki');
+INSERT INTO `npc_triggers` VALUES (41,'goldore',0,'MaleEnki');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
