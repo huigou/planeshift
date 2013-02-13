@@ -99,7 +99,6 @@ public:
   
   virtual bool InitCD (const csVector3& body, const csVector3& legs, const csVector3& shift, iMeshWrapper* mesh);
   virtual void GetCDDimensions (csVector3& body, csVector3& legs, csVector3& shift);
-  virtual void SetSpeed (float speedz);
 
   virtual float GetYRotation () const;
   virtual void SetYRotation(float yrot);
@@ -140,12 +139,12 @@ public:
     virtual csTicks ClientTimeDiff() { return csGetTicks() - lastClientDRUpdate; }
 
   /// Return all necessary data for Dead Reckoning
-  virtual void GetDRData (bool& on_ground, float& speed, csVector3& pos,
+  virtual void GetDRData (bool& on_ground, csVector3& pos,
       float& yrot, iSector*& sector, csVector3& vel, csVector3& worldVel,
       float& ang_vel);
 
   /// Sets all relevant dead reckoning data on this entity
-  virtual void SetDRData(bool on_ground, float speed, csVector3& pos,
+  virtual void SetDRData(bool on_ground, csVector3& pos,
     float yrot, iSector *sector, csVector3& vel, csVector3& worldVel,
     float ang_vel);
 
@@ -157,7 +156,7 @@ public:
    *  the MoveV routine will offset the position so that the position
    *  error becomes zero.
    */
-  virtual void SetSoftDRData(bool on_ground,float speed, csVector3& pos,
+  virtual void SetSoftDRData(bool on_ground, csVector3& pos,
     float yrot, iSector *sector, csVector3& vel, csVector3& worldVel,
     float ang_vel);
 
@@ -277,7 +276,6 @@ protected:
   bool stationary;
   /** Speed affects all aspects of movement, including gravity.
     * It's effectively a comparative rate of "time" */
-  float speed;
   float gravity;
 
   csVector3 angularVelocity;

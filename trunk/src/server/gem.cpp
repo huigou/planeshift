@@ -3873,7 +3873,7 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
             forcedSector = NULL;  // Reset the forced sector after we received the correct sector at least once.
         }
     }
-    pcmove->SetDRData(drmsg.on_ground,1.0f,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+    pcmove->SetDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
     DRcounter = drmsg.counter;
 
 
@@ -3953,10 +3953,10 @@ void gemActor::GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& se
 void gemActor::MulticastDRUpdate()
 {
     bool on_ground;
-    float speed,yrot,ang_vel;
+    float yrot,ang_vel;
     csVector3 pos,vel,worldVel;
     iSector *sector;
-    pcmove->GetDRData(on_ground,speed,pos,yrot,sector,vel,worldVel,ang_vel);
+    pcmove->GetDRData(on_ground,pos,yrot,sector,vel,worldVel,ang_vel);
     psDRMessage drmsg(0, eid, on_ground, movementMode, DRcounter,
                       pos,yrot,sector, "", vel,worldVel,ang_vel,
                       psserver->GetNetManager()->GetAccessPointers());

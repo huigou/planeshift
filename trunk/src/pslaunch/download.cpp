@@ -100,16 +100,16 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double /*ult
     csString progressLine;
 
     if(data->lastSize == 0)
-	    progressLine += '\n';
+        progressLine += '\n';
     else
-	    progressLine += '\r';
+        progressLine += '\r';
     progressLine += '[';
     for(int pos = 0; pos < progressWidth; pos++)
     {
-	    if(pos < progressWidth * progress)
-	    	progressLine += '-';
-	    else
-		progressLine += ' ';
+        if(pos < progressWidth * progress)
+            progressLine += '-';
+        else
+            progressLine += ' ';
     }
 
 
@@ -132,7 +132,10 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double /*ult
     	etaStr = normalize_seconds(eta);
     }
     else
-	    etaStr = "Never";
+    {
+        etaStr = "Never";
+    }
+
     const char* speedUnits = normalize_bytes(&speed);
 
     double dlnormalized = dlnow;
@@ -208,7 +211,7 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         
         if(!URL)
         {
-    		UpdaterEngine::GetSingletonPtr()->PrintOutput("Using mirror %s for %s\n", url.GetData(), file);
+            UpdaterEngine::GetSingletonPtr()->PrintOutput("Using mirror %s for %s\n", url.GetData(), file);
             url.Append(file);
         }
 
@@ -240,14 +243,18 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         csString realFilePath;
 
         /**
-         * Might seem wierd to use time and rand to get a random file but it was
+         * Might seem wierd to use time and random to get a random file but it was
          * an easy solution to an small problem. Please change if you know a better
          * random function for filenames.
          */
-        fileName.Append("/");
-        fileName.Append(time(NULL));
-        fileName.Append(rand());
-        fileName.Append(".download");
+        do
+        {
+            fileName = UPDATE_CACHE_DIR;
+            fileName.Append("/");
+            fileName.Append(time(NULL));
+            fileName.Append(csRandomGen().Get());
+            fileName.Append(".download");
+        } while (vfs->Exists(fileName));  // Just make sure this file dosn't exist
 
         csRef<iDataBuffer> cachepath;
         cachepath = vfs->GetRealPath(fileName);
@@ -326,9 +333,9 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             if(!silent)
             {
                 if(error.IsEmpty())
-    			UpdaterEngine::GetSingletonPtr()->PrintOutput("Server error %i (%s)\n", curlhttpcode, url.GetData());
+                    UpdaterEngine::GetSingletonPtr()->PrintOutput("Server error %i (%s)\n", curlhttpcode, url.GetData());
                 else
-    			UpdaterEngine::GetSingletonPtr()->PrintOutput("Server error: %s (%i)\n", error.GetData(), curlhttpcode);
+                    UpdaterEngine::GetSingletonPtr()->PrintOutput("Server error: %s (%i)\n", error.GetData(), curlhttpcode);
             }
 
             if(!URL)
