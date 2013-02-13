@@ -278,7 +278,7 @@ int psLinearMovement::MoveSprite (float delta)
 
   csReversibleTransform fulltransf = mesh->GetMovable ()
   	->GetFullTransform ();
-  const csMatrix3& transf = fulltransf.GetT2O ();
+  //  const csMatrix3& transf = fulltransf.GetT2O ();
 
   // Calculate the total velocity (body and world) in OBJECT space.
   csVector3 bodyVel (fulltransf.Other2ThisRelative (velWorld) + velBody);
@@ -465,7 +465,7 @@ int psLinearMovement::MoveV (float delta)
   // (this is relevant if we are anchored). Later on we will correct that.
   csReversibleTransform fulltransf = movable->GetFullTransform ();
   mat = fulltransf.GetT2O ();
-  delta *= speed;
+  //delta *= speed;
 
   csVector3 worldVel (fulltransf.This2OtherRelative (velBody) + velWorld);
   csVector3 oldpos (fulltransf.GetOrigin ());
