@@ -458,6 +458,7 @@ int psLinearMovement::MoveV (float delta)
   csVector3 oldpos (fulltransf.GetOrigin ());
   csVector3 newpos (worldVel*delta + oldpos);
   csVector3 bufpos = newpos;
+  float dist = (newpos - oldpos).Norm ();
 
   // @@@ Magodra: In some cases the newpos seams to be invalid. Not sure about
   //              the reason, but the FollowSegment function will not work later
@@ -481,8 +482,8 @@ int psLinearMovement::MoveV (float delta)
     }
     else
     {
-      // check if we collided
-      if ((newpos - bufpos).Norm () > 0.000001f)
+      // check if we collided, did move less than 9/10 of the distance
+      if ((newpos - bufpos).Norm () > dist/10.0)
       {
         ret = PS_MOVE_PARTIAL;
       }
@@ -917,6 +918,7 @@ const csVector3 psLinearMovement::GetPosition () const
   if (!mesh)  return csVector3 ();
   return mesh->GetMovable ()->GetPosition ();
 }
+
 const csVector3 psLinearMovement::GetFullPosition () const
 {
   // user will get a warning and a nothing if theres no mesh
