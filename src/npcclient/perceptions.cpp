@@ -84,6 +84,17 @@ void Perception::SetType(const char* type)
     this->type = type;
 }
 
+bool Perception::GetLocation(csVector3& pos, iSector*& sector)
+{
+    if (GetTarget())
+    {
+        psGameObject::GetPosition(GetTarget(),pos,sector);
+        return true;
+    }
+    return false;
+}
+
+
 csString Perception::ToString(NPC* npc)
 {
     csString result;
@@ -140,16 +151,6 @@ bool FactionPerception::ShouldReact(Reaction *reaction, NPC *npc)
     return false;
 }
 
-bool FactionPerception::GetLocation(csVector3& pos, iSector*& sector)
-{
-    if (player)
-    {
-        psGameObject::GetPosition(player,pos,sector);
-        return true;
-    }
-    return false;
-}
-
 Perception *FactionPerception::MakeCopy()
 {
     FactionPerception *p = new FactionPerception(name,factionDelta,player);
@@ -162,17 +163,6 @@ void FactionPerception::ExecutePerception(NPC *npc,float weight)
 }
 
 //---------------------------------------------------------------------------------
-
-
-bool ItemPerception::GetLocation(csVector3& pos, iSector*& sector)
-{
-    if (item)
-    {
-        psGameObject::GetPosition(item,pos,sector);
-        return true;
-    }
-    return false;
-}
 
 Perception *ItemPerception::MakeCopy()
 {
@@ -313,16 +303,6 @@ Perception *SpellPerception::MakeCopy()
 {
     SpellPerception *p = new SpellPerception(name,caster,target,type,spell_severity);
     return p;
-}
-
-bool SpellPerception::GetLocation(csVector3& pos, iSector*& sector)
-{
-    if (caster)
-    {
-        psGameObject::GetPosition(caster,pos,sector);
-        return true;
-    }
-    return false;
 }
 
 void SpellPerception::ExecutePerception(NPC *npc,float weight)
