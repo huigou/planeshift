@@ -1825,6 +1825,15 @@ void NetworkManager::PrepareCommandMessage()
 void NetworkManager::QueueDRData(NPC* npc)
 {
     // When a NPC is dead, this may still be called by Behavior::Interrupt
+    /*    if(!npc->IsAlive())
+        return;
+    cmd_dr_outbound.PutUnique(npc->GetPID(), npc);
+    */
+}
+
+void NetworkManager::QueueDRData2(NPC* npc)
+{
+    // When a NPC is dead, this may still be called by Behavior::Interrupt
     if(!npc->IsAlive())
         return;
     cmd_dr_outbound.PutUnique(npc->GetPID(), npc);
@@ -1842,8 +1851,9 @@ void NetworkManager::CheckCommandsOverrun(size_t neededSize)
         SendAllCommands();
 }
 
-void NetworkManager::QueueDRDataCommand(gemNPCActor* entity, psLinearMovement* linmove, uint8_t counter)
+void NetworkManager::QueueDRDataCommand(NPC* npc)
 {
+    gemNPCActor* entity = npc->GetActor();
     if(!entity) return; //TODO: This shouldn't happen but it happens so this is just a quick patch and
     //      the real problem should be fixed (entities being removed from the game
     //      world while moving will end up here with entity being null)
@@ -1852,7 +1862,25 @@ void NetworkManager::QueueDRDataCommand(gemNPCActor* entity, psLinearMovement* l
 
     CheckCommandsOverrun(100);
 
-    psDRMessage drmsg(0,entity->GetEID(),counter,connection->GetAccessPointers(),linmove);
+    psLinearMovement* linmove = npc->GetLinMove();
+    bool onGround;
+    csVector3 myPos,vel,worldVel;
+    float yrot,angVel;
+    iSector* mySector;
+    uint8_t mode = 0;
+    linmove->GetDRData(onGround,myPos,yrot,mySector,vel,worldVel,angVel);
+
+    uint8_t counter = npc->GetDRCounter(csGetTicks(),myPos,yrot,mySector,vel,angVel);
+
+    psDRMessage drmsg(0,entity->GetEID(),onGround,mode,counter,myPos,yrot,mySector,csString(),
+                      vel,worldVel,angVel,connection->GetAccessPointers());
+
+    if (DoLogDebug(LOG_DRDATA))
+    {
+        Debug(LOG_DRDATA, entity->GetEID().Unbox(), "%s, %s, %s, %s, %f, %f, %f, %f, %s, %f, %f, %f, %f, %f, %f, %f",
+              "NPCCLIENT", "SET", ShowID(entity->GetEID()),onGround?"TRUE":"FALSE", myPos.x, myPos.y, myPos.z, yrot,
+              mySector->QueryObject()->GetName(), vel.x, vel.y, vel.z, worldVel.x, worldVel.y, worldVel.z, angVel);
+    }
 
     outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_DRDATA);
     outbound->msg->Add(drmsg.msg->bytes->payload,(uint32_t)drmsg.msg->bytes->GetTotalSize());
@@ -2336,7 +2364,7 @@ void NetworkManager::SendAllCommands(bool final)
             {
                 if(npc->GetLinMove()->GetSector())
                 {
-                    QueueDRDataCommand(npc->GetActor(),npc->GetLinMove(),npc->GetDRCounter());
+                    QueueDRDataCommand(npc);
                 }
                 else
                 {

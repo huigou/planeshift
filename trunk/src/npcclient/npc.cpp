@@ -122,6 +122,9 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     npcActor=NULL;
     movable=NULL;
     DRcounter=0;
+    lastDrSector = NULL;
+    lastDrTime = csGetTicks();
+    lastDrMoving = false;
 
     // Set up the locates
     activeLocate = new Locate();
@@ -197,16 +200,69 @@ void NPC::Tick()
     // Ensure NPC only has one tick at a time.
     CS_ASSERT(tick == NULL);
 
+    csTicks now = csGetTicks();
+
     if(npcclient->IsReady())
     {
         ScopedTimer st(200, this); // Calls the ScopedTimerCallback on timeout
 
-        Advance(csGetTicks());  // Abstract event processing function
+        Advance(now);  // Abstract event processing function
     }
+
+    TickPostProcess(now);
 
     tick = new psNPCTick(NPC_BRAIN_TICK, this);
     tick->QueueEvent();
 }
+
+void NPC::TickPostProcess(csTicks when)
+{
+    if (!npcActor) return;
+
+    psLinearMovement* linmove = GetLinMove();
+    bool onGround;
+    csVector3 myPos,myVel,worldVel;
+    float myYRot,myAngVel;
+    iSector* mySector;
+    linmove->GetDRData(onGround,myPos,myYRot,mySector,myVel,worldVel,myAngVel);
+
+    float distance = npcclient->GetWorld()->Distance(myPos, mySector, lastDrPosition, lastDrSector);
+
+
+    NPCDebug(this, 11, "PostProcess: Dist: %.2f YRot: %.2f -> %.2f AngVel: %.2f -> %.2f Vel: %.2f",
+             distance, lastDrYRot, myYRot, lastDrAngVel, myAngVel, (myVel-lastDrVel).Norm());
+
+    // Check if there are any change in rotatation or velocity. Thies changes will influcence the visual effect
+    // so update at once.
+    if ((fabs(myYRot - lastDrYRot) > 0.01) || (fabs(myAngVel - lastDrAngVel) > 0.01) || ((myVel-lastDrVel).Norm() > 0.1))
+    {
+        npcclient->GetNetworkMgr()->QueueDRData2(this);
+        // lastDrPosition, lastDrSector, lastDrTime will be updated when actually sending the Dr to server
+        // in the network manager.
+        lastDrMoving = true;
+    }
+    else if ((distance > 0.1)) // Moving
+    {
+        // At least queue once every 3 seconds when moving
+        if ((when - lastDrTime) > 3000)
+        {
+            npcclient->GetNetworkMgr()->QueueDRData2(this);
+            // lastDrPosition, lastDrSector, lastDrTime will be updated when actually sending the Dr to server
+            // in the network manager.
+        }
+        lastDrMoving = true;
+    }
+    else
+    {
+        // Update twice when stop moving...
+        if (lastDrMoving && ((when - lastDrTime) > 1000) )
+        {
+            lastDrMoving = false;
+            npcclient->GetNetworkMgr()->QueueDRData(this);
+        }
+    }
+}
+
 
 
 void NPC::ScopedTimerCallback(const ScopedTimer* timer)
@@ -623,9 +679,9 @@ void NPC::SetLocate(const csString &destination, const NPC::Locate &locate)
 
 void NPC::GetActiveLocate(csVector3 &pos, iSector* &sector, float &rot)
 {
-    pos=activeLocate->pos;
+    pos    = activeLocate->pos;
     sector = activeLocate->sector;
-    rot=activeLocate->angle;
+    rot    = activeLocate->angle;
 }
 
 void NPC::GetActiveLocate(Waypoint* &wp)

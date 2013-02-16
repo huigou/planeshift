@@ -1038,16 +1038,18 @@ void psLinearMovement::SetDRData (bool on_ground,
 	csVector3& pos, float yrot, iSector *sector, csVector3& vel,
 	csVector3& worldVel, float ang_vel)
 {
-  if (colldet)
-    colldet->SetOnGround (on_ground);
+    if (colldet)
+    {
+        colldet->SetOnGround (on_ground);
+    }
 
-  SetPosition (pos,yrot,sector);
-  SetVelocity (vel);
-  ClearWorldVelocity ();
-  AddVelocity (worldVel);
-  csVector3 rot (0.0f, ang_vel, 0.0f);
-  SetAngularVelocity (rot);
-  lastDRUpdate = csGetTicks ();
+    SetPosition (pos,yrot,sector);
+    SetVelocity (vel);
+    ClearWorldVelocity ();
+    AddVelocity (worldVel);
+    csVector3 rot (0.0f, ang_vel, 0.0f);
+    SetAngularVelocity (rot);
+    lastDRUpdate = csGetTicks ();
     lastClientDRUpdate = lastDRUpdate;
     lastClientPosition = pos;
     lastClientSector = sector;

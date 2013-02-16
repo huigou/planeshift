@@ -216,7 +216,15 @@ protected:
     csTicks            last_update;
     gemNPCActor*       npcActor;
     iMovable*          movable;
+    
     uint8_t            DRcounter;
+    csVector3          lastDrPosition;
+    iSector*           lastDrSector;
+    csTicks            lastDrTime;
+    bool               lastDrMoving;
+    float              lastDrYRot;
+    csVector3          lastDrVel;
+    float              lastDrAngVel;
 
     Locate*            activeLocate;   ///< The current "Active" locate
     LocateHash         storedLocates;  ///< List of stored locate locations
@@ -263,6 +271,11 @@ protected:
 
     void Advance(csTicks when);
 
+    /**
+     * Handle post tick processing.
+     */
+    void TickPostProcess(csTicks when);
+
     HateList           hatelist;
 
  public:
@@ -286,8 +299,16 @@ protected:
         return movable;
     }
     psLinearMovement*     GetLinMove();
-    uint8_t               GetDRCounter()
+    
+    uint8_t               GetDRCounter(csTicks when, const csVector3& pos, float yRot, iSector* sector,
+                                       const csVector3& vel, float angVel)
     {
+        lastDrTime = when;
+        lastDrPosition = pos;
+        lastDrSector = sector;
+        lastDrYRot = yRot;
+        lastDrVel = vel;
+        lastDrAngVel = angVel;
         return ++DRcounter;
     }
     void                  SetDRCounter(uint8_t counter)

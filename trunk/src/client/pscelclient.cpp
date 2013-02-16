@@ -1677,6 +1677,17 @@ void GEMClientActor::SetDRData(psDRMessage &drmsg)
             iSector* cur_sector;
             linmove->GetLastPosition(cur_pos,cur_yrot,cur_sector);
 
+            if (DoLogDebug(LOG_DRDATA))
+            {
+                Debug(LOG_DRDATA, GetEID().Unbox(), "%s, %s, %s, %s, %f, %f, %f, %f, %s, %f, %f, %f, %f, %f, %f, %f",
+                      "PSCLIENT", "OLD", ShowID(GetEID()),"?", cur_pos.x, cur_pos.y, cur_pos.z, cur_yrot,
+                      cur_sector->QueryObject()->GetName(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 );
+
+                Debug(LOG_DRDATA, GetEID().Unbox(), "%s, %s, %s, %s, %f, %f, %f, %f, %s, %f, %f, %f, %f, %f, %f, %f",
+                      "PSCLIENT", "SET", ShowID(GetEID()),drmsg.on_ground?"TRUE":"FALSE", drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot,
+                      drmsg.sector->QueryObject()->GetName(), drmsg.vel.x, drmsg.vel.y, drmsg.vel.z, drmsg.worldVel.x, drmsg.worldVel.y, drmsg.worldVel.z, drmsg.ang_vel);
+            }
+
             // If we're loading and this is a sector change, set unresolved.
             // We don't want to move to a new sector which may be loading.
             if(drmsg.sector != cur_sector && psengine->GetZoneHandler()->IsLoading())
