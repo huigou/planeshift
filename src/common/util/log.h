@@ -67,8 +67,9 @@ enum LOG_TYPES
     LOG_LOOT,
     LOG_DUELS,
     LOG_TRIBES,
+    LOG_DRDATA,
+// NOTE: Remember to update the flagnames and flagsettings tables in log.cpp when addning new entries
     MAX_FLAGS
-// NOTE: Remember to update the flagnames table in log.cpp when addning new entries
 };
 
 enum
@@ -120,6 +121,9 @@ const char* GetSettingName(int id);
  
 // Debug macros
 
+#define Debug(type, filter_id, ...) \
+    { if (DoLogDebug2(type,filter_id)){ \
+        pslog::LogMessage (__FILE__, __LINE__, __FUNCTION__, CS_REPORTER_SEVERITY_DEBUG, type, filter_id, __VA_ARGS__ ); }}
 #define Debug1(type, filter_id, a) \
     { if (DoLogDebug2(type,filter_id)){ \
         pslog::LogMessage (__FILE__, __LINE__, __FUNCTION__, CS_REPORTER_SEVERITY_DEBUG, type, filter_id, a); }}

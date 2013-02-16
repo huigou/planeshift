@@ -862,8 +862,10 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
         iSector* myNewSector;
 
         npc->GetLinMove()->GetDRData(on_ground,myNewPos,myRot,myNewSector,bodyVel,worldVel,ang_vel);
-        NPCDebug(npc, 8, "World position bodyVel=%s worldVel=%s",
-                 toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe());
+        NPCDebug(npc, 8, "New world position pos=%s rot=%.2f bodyVel=%s worldVel=%s angVel=%.2f dist=%.2f",
+                 toString(myNewPos,myNewSector).GetDataSafe(),myRot,
+                 toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe(),ang_vel,
+                 npcclient->GetWorld()->Distance(myNewPos, myNewSector, myPos, mySector));
 
         CheckMoveOk(npc, myPos, mySector, myNewPos, myNewSector, ret);
     }

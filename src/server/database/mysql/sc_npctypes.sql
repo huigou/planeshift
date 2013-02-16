@@ -1004,6 +1004,8 @@ INSERT INTO sc_npctypes VALUES("117","MoveTest5","Answerer,Move,Sleep",0,"$walk"
    <invisible/>
    <wait duration="1" anim="stand" />
    <rotate type="locaterotation" ang_vel="45"/>
+   <!-- Workaround: Need to wait after rotate, before setting invisbile in the Sleep. To prevent infinit rotation. --> 
+   <wait duration="1" anim="stand" />
 
    <percept event="sleep" />
 </behavior>

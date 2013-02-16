@@ -230,11 +230,9 @@ public:
      * only be called as a result of first calling QueueDRData that will
      * put the npc in a queue for DR updates.
      *
-     * @param entity          The entity to queue DR Data for.
-     * @param linmove         The Linear Movement structure for the entity.
-     * @param counter         The DR counter to use for this transmission.
+     * @param npc             The npc to queue DR Data for.
      */
-    void QueueDRDataCommand(gemNPCActor *entity, psLinearMovement *linmove, uint8_t counter);
+    void QueueDRDataCommand(NPC* npc);
 
  public:
     /**
@@ -259,6 +257,16 @@ public:
      */
     void QueueDRData(NPC * npc );
     
+    /**
+     * Queue the NPC for an DR Update to the server.
+     *
+     * Can be called multiple times. If in queue already nothing will
+     * be added.
+     *
+     * @param npc      Queue DR data for this NPC.
+     */
+    void QueueDRData2(NPC * npc );
+
     /**
      * Call to remove queued dr updates when entities are removed/deleted.
      */

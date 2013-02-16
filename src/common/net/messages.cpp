@@ -4551,8 +4551,8 @@ psDRMessage::psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
     CreateMsgEntry(client, accessPointers, sector, csString());
 
     WriteDRInfo(client, mappedid,
-        on_ground, mode, counter, pos, yrot, sector, csString(),
-         vel,worldVel, ang_vel, accessPointers->msgstrings);
+                on_ground, mode, counter, pos, yrot, sector, csString(),
+                vel,worldVel, ang_vel, accessPointers->msgstrings);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
