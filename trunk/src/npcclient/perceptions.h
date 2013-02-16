@@ -144,14 +144,15 @@ public:
     /**
      * Get a location assosiated with the perception.
      *
-     * Some perception might hold a location.
+     * Some perception might hold a location. Default impl
+     * get location from target if there is one.
      *
      * @param pos              The position of the location.
      * @param sector           The sector of the location.
      *
      * @return true if there where a location.
      */
-    virtual bool GetLocation(csVector3& pos, iSector*& sector) { return false; }
+    virtual bool GetLocation(csVector3& pos, iSector*& sector);
 
     /**
      * Get the radius of the perception.
@@ -214,7 +215,6 @@ public:
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
-    virtual bool GetLocation(csVector3& pos, iSector*& sector);
     virtual gemNPCObject *GetTarget() { return player; }
     virtual void ExecutePerception(NPC *npc,float weight);
 };
@@ -236,7 +236,6 @@ public:
     virtual ~ItemPerception() {}
 
     virtual Perception *MakeCopy();
-    virtual bool GetLocation(csVector3& pos, iSector*& sector);
     virtual gemNPCObject *GetTarget() { return item; }
 };
 
@@ -356,6 +355,7 @@ public:
 
     virtual Perception *MakeCopy();
     virtual void ExecutePerception(NPC *npc,float weight);
+    virtual gemNPCObject *GetTarget() { return attacker; }
 };
 
 //-----------------------------------------------------------------------------
@@ -382,7 +382,6 @@ public:
 
     virtual bool ShouldReact(Reaction *reaction,NPC *npc);
     virtual Perception *MakeCopy();
-    virtual bool GetLocation(csVector3& pos, iSector*& sector);
     virtual gemNPCObject* GetTarget() { return caster; } 
     virtual void ExecutePerception(NPC *npc,float weight);
 };
