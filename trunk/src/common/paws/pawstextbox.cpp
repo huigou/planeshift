@@ -1700,6 +1700,7 @@ void pawsMultiLineTextBox::Resize()
 
 void pawsMultiLineTextBox::OrganizeText(const char* newText)
 {
+    int greyedOut = 0;
     csString text(newText);
 
     // Check if we end with \n
@@ -1730,7 +1731,6 @@ void pawsMultiLineTextBox::OrganizeText(const char* newText)
     int offSet = margin*2;
     if(usingScrollBar)
         offSet += 36;
-
 
     while(dummy)
     {
@@ -1794,7 +1794,9 @@ void pawsMultiLineTextBox::OrganizeText(const char* newText)
             csString test;
             test.Append(dummy, index+1);
             dummy+=index+1;
+
             lines.Push(test);
+
         }
     }
 
@@ -1871,7 +1873,6 @@ void pawsMultiLineTextBox::Draw()
     {
         if(x >= lines.GetSize())
             return;
-
         DrawWidgetText((const char*)lines[x], drawX, drawY);
 
         drawY+=maxHeight;
@@ -2007,6 +2008,7 @@ void pawsMultiPageTextBox::Resize()
 
 void pawsMultiPageTextBox::OrganizeText(const char* newText)
 {
+    int greyedOut = 0;
     csString text(newText);
 
     // Check if we end with \n
@@ -2079,7 +2081,35 @@ void pawsMultiPageTextBox::OrganizeText(const char* newText)
         /// If it can fit the entire string then return.
         if(canDrawLength == (int)strlen(dummy))
         {
-            lines.Push(dummy);
+            // Check for crafting books to grey out the text of transform players cannot do
+            if(greyedOut==0)
+            {
+                char* p1 = NULL,
+                      *p2 = NULL;
+
+                p1=strstr(dummy, "With higher ");
+                p2=strstr(dummy, "With Higher ");
+                if(p1!=NULL || p2!=NULL)
+                {
+                    greyedOut = 1;
+                }
+            }
+            if(greyedOut)
+            {
+                csString temp;
+                temp.Append("\r");
+                temp.Append(dummy);
+                lines.Push(temp);
+                if(strchr(dummy, '.')!=NULL)
+                {
+                    greyedOut = 0;
+                }
+                temp.Empty();
+            }
+            else
+            {
+                lines.Push(dummy);
+            }
             break;
         }
         // We have to push in a new line to the lines bit.
@@ -2101,6 +2131,25 @@ void pawsMultiPageTextBox::OrganizeText(const char* newText)
             csString test;
             test.Append(dummy, index+1);
             dummy+=index+1;
+            if(greyedOut==0)
+            {
+                int p1,
+                    p2;
+                p1=test.Find("With higher ");
+                p2=test.Find("With Higher ");
+                if(p1==0 || p2==0)
+                {
+                    greyedOut = 1;
+                }
+            }
+            if(greyedOut)
+            {
+                test.Insert(0, "\r");
+                if(test.FindFirst('.', 1)==test.Length()-1)
+                {
+                    greyedOut = 0;
+                }
+            }
             lines.Push(test);
         }
     }
@@ -2182,11 +2231,11 @@ void pawsMultiPageTextBox::Draw()
 
     for(size_t x = startLine; x < (startLine+canDrawLines); x++)
     {
+
         if(x >= lines.GetSize())
             return;
 
         DrawWidgetText((const char*)lines[x], drawX, drawY);
-
         drawY+=maxHeight;
     }
 
@@ -2752,6 +2801,8 @@ pawsMultiPageDocumentView::~pawsMultiPageDocumentView()
 }
 void pawsMultiPageDocumentView::Draw()
 {
+    int fontColor = GetFontColour();
+
     pawsWidget::Draw();
     pawsWidget::ClipToParent(false);
 
@@ -2805,8 +2856,19 @@ void pawsMultiPageDocumentView::Draw()
         csString &currentStr = lines[x];
         if(!currentStr.StartsWith("#pic#"))
         {
-            DrawWidgetText((const char*)lines[x], drawX, drawY);
+            csString temp;
 
+            temp.Append(lines[x]);
+            //This is special case logic to grey out lines in the Craft Books that
+            //tell the player about things they can't yet do. the marking of the lines with "\r"'s is done in pawsMultiLineTextBox::OrganizeText
+            if(lines[x].FindStr("\r", 0)==0)
+            {
+                temp.DeleteAt(0,1);
+                SetColour(0x888888);
+            }
+            DrawWidgetText(temp, drawX, drawY);
+            SetColour(fontColor);
+            temp.Empty();
             drawY+=maxHeight;
         }
         else
@@ -2896,6 +2958,8 @@ void pawsMultiPageDocumentView::Draw()
         }
 
     }
+//reassert default color
+    SetColour(fontColor);
 }
 
 unsigned int pawsMultiPageDocumentView::ProcessPictureInfo(iDocumentNode* node)
