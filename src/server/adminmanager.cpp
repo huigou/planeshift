@@ -188,6 +188,18 @@ bool psRewardDataSkill::IsZero()
     return (skillName.IsEmpty());
 }
 
+psRewardDataPractice::psRewardDataPractice(csString pSkillName, int pPractice)
+    : psRewardData(REWARD_PRACTICE)
+{
+    skillName = pSkillName;
+    practice = pPractice;
+}
+
+bool psRewardDataPractice::IsZero()
+{
+    return (skillName.IsEmpty() || practice == 0);
+}
+
 psRewardDataMoney::psRewardDataMoney(csString pmoneyType, int pmoneyCount, bool prandom)
     : psRewardData(REWARD_MONEY), moneyType(pmoneyType), moneyCount(pmoneyCount), random(prandom)
 {
@@ -661,9 +673,9 @@ bool AdminCmdTargetParser::ParseTarget(AdminManager* msgManager, MsgEntry* me, p
         {
             if(!IsAllowedTargetType(ADMINCMD_TARGET_NPC))
             {
-                // it is a npc, but npc is not an allowed target, so reset
+                // it is a npc, but npc is not an allowed target
                 psserver->SendSystemError(me->clientnum,"Target is an NPC, but server does not allow this command on an npc.");
-                Reset();
+                return false;
             }
             else
             {
@@ -806,6 +818,7 @@ AdminCmdRewardParser::AdminCmdRewardParser()
     rewardTypes.Push("skill","<skillname>|all [+-]<value> [<max>]");
     rewardTypes.Push("money","<circles|hexas|octas|trias> <value>|random");
     rewardTypes.Push("faction","<factionname> <value>");
+    rewardTypes.Push("practice","<skillname>|all <value>");
 }
 
 bool AdminCmdRewardParser::ParseWords(size_t index, const WordArray &words)
@@ -873,6 +886,18 @@ bool AdminCmdRewardParser::ParseWords(size_t index, const WordArray &words)
         {
             rewards.Push(new psRewardDataFaction(words[index++], words.GetInt(index++)));
         }
+        else if(subCmd == "practice" && remaining >= 2)
+        {
+            relative = false;
+            skill = words[index++];
+
+            // check for relative value
+            if(words[index].GetAt(0) == '+' || words[index].GetAt(0) == '-')
+                relative = true;
+            delta = words.GetInt(index++);
+
+            rewards.Push(new psRewardDataPractice(skill, delta));
+        }
         else // invalid arguments
         {
             //check wether command was invalid or it was too short
@@ -892,12 +917,13 @@ bool AdminCmdRewardParser::ParseWords(size_t index, const WordArray &words)
 
 csString AdminCmdRewardParser::GetHelpMessage()
 {
-    return "REWARD: \n   " + // rewardTypes.GetHelpMessage() + "\n" + "   "
+    return "REWARD: \n   " +
            rewardTypes.GetHelpMessage("exp") + "\n" +
            "   " + rewardTypes.GetHelpMessage("item") + "\n" +
            "   " + rewardTypes.GetHelpMessage("skill") + "\n" +
            "   " + rewardTypes.GetHelpMessage("money") + "\n" +
-           "   " + rewardTypes.GetHelpMessage("faction");
+           "   " + rewardTypes.GetHelpMessage("faction") + "\n" +
+           "   " + rewardTypes.GetHelpMessage("practice");
 }
 
 AdminCmdOnOffToggleParser::AdminCmdOnOffToggleParser(ADMINCMD_SETTING_ONOFF defaultValue)
@@ -10105,6 +10131,12 @@ void AdminManager::AwardToTarget(unsigned int gmClientNum, Client* target, psRew
         return;
     }
 
+    if(!target)
+    {
+        psserver->SendSystemError(gmClientNum, "No target selected!");
+        return;
+    }
+
     if(!target->GetCharacterData())
     {
         psserver->SendSystemError(gmClientNum, "Invalid target to award");
@@ -10189,6 +10221,32 @@ void AdminManager::AwardToTarget(unsigned int gmClientNum, Client* target, psRew
         {
             psSkillInfo* skill = psserver->GetCacheManager()->GetSkillByName(rewardDataSkill->skillName);
             modified |= ApplySkill(gmClientNum, target, skill, rewardDataSkill->skillDelta, rewardDataSkill->relativeSkill, rewardDataSkill->skillCap);
+        }
+
+        if(modified && target)  // update client view if we changed something
+        {
+            psserver->GetProgressionManager()->SendSkillList(target, false);
+        }
+    }
+
+    if(data->rewardType == psRewardData::REWARD_PRACTICE)  // award skill practice
+    {
+        psRewardDataPractice* rewardDataPractice = dynamic_cast<psRewardDataPractice*>(data);
+
+        bool modified = false;
+        if(rewardDataPractice->skillName == "all")  // update all skills
+        {
+            for(size_t i = 0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
+            {
+                psSkillInfo* skill = psserver->GetCacheManager()->GetSkillByID(i);
+                if(!skill) continue;  // skill doesn't exist -> this should not happen
+                modified |= target->GetCharacterData()->Skills().AddSkillPractice(skill, rewardDataPractice->practice);
+            }
+        }
+        else // update a certain one
+        {
+            psSkillInfo* skill = psserver->GetCacheManager()->GetSkillByName(rewardDataPractice->skillName);
+            modified |= target->GetCharacterData()->Skills().AddSkillPractice(skill, rewardDataPractice->practice);
         }
 
         if(modified && target)  // update client view if we changed something
