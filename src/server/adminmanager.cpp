@@ -3575,7 +3575,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataQuest)
 csString AdminCmdDataQuest::GetHelpMessage()
 {
     return "Syntax: \"" + command + " [" + subCommandList.GetHelpMessage() +
-           "] [questname]\"\n";
+           "] [questname|variable]|variables\"\n";
 }
 
 AdminCmdDataSetQuality::AdminCmdDataSetQuality(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
