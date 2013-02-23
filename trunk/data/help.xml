@@ -1645,7 +1645,7 @@ Usage: /cast [power] [spellname]
           <Contents>
             <content type="text">Command to send a challenge request to another player.
 
-Usage: /challange
+Usage: /challenge
 (Challenges the currently targeted character to a duel. The system chat tab will show you if the other player accepted or rejected the challenge.)</content>
           </Contents>
         </topic>
