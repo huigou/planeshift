@@ -128,7 +128,7 @@ void ProgressionManager::HandleZPointEvent(MsgEntry *me, Client *client)
         psserver->SendSystemResult(evt.actor->GetClientID(), string);
     }
 
-    SendSkillList(client, false);
+    SendSkillList(client, false, PSSKILL_NONE, client->GetCharacterData()->GetTrainer() != NULL );
 }
 
 
@@ -348,7 +348,7 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
                             true,
                             PSSKILL_NONE,
                             -1,
-                            false);
+                            client->GetCharacterData()->GetTrainer() != NULL);
 
             if (newmsg.valid)
                 SendMessage(newmsg.msg);
@@ -470,7 +470,7 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
             character->UseProgressionPoints(skillAmount);
             character->SetMoney(character->Money()-(info->price * skillAmount));
             character->Train(info->id,skillAmount);
-            SendSkillList(client, true, info->id);
+            SendSkillList(client, true, info->id, client->GetCharacterData()->GetTrainer() != NULL);
             psserver->GetCharManager()->UpdateItemViews(client->GetClientNum());
             psserver->SendSystemInfo(client->GetClientNum(), "You've received some %s training", skillName.GetData());
 
@@ -618,7 +618,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
 void ProgressionManager::StartTraining(Client * client, psCharacter * trainer)
 {
     client->GetCharacterData()->SetTrainer(trainer);
-    SendSkillList(client, true, PSSKILL_NONE, true);
+    SendSkillList(client, true, PSSKILL_NONE, client->GetCharacterData()->GetTrainer() != NULL);
 }
 
 ProgressionScript *ProgressionManager::FindScript(char const *name)

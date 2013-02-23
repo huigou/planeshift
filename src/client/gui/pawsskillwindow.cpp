@@ -461,7 +461,7 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
             *rowIdx = idx; // Row index of the selected skill
         }
 
-        if (flush || skill->isModified())
+        if (flush || skills->isModified())
         {
             switch (skill->getCategory())
             {
@@ -736,8 +736,6 @@ void pawsSkillWindow::OnListAction( pawsListBox* widget, int status )
     if (status==LISTBOX_HIGHLIGHTED)
     {
         pawsListBoxRow* row = widget->GetSelectedRow();
-        selectedRow = row;
-
         pawsTextBox* skillName = (pawsTextBox*)(row->GetColumn(0));
 
         selectedSkill.Replace( skillName->GetText() );
@@ -913,7 +911,7 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
     
     if (skillName == selectedSkill)
     {
-        statsSkillList->Select(row);
+        tabNameSkillList->Select(row);
         foundSelected = true;
     }
 

@@ -506,8 +506,16 @@ public:
      */
     bool  AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int& added );
 
-    int AddSkillPractice(PSSKILL skill, unsigned int val);
+    /**
+     * Add skill practice.
+     */
+    int AddSkillPractice(psSkillInfo* skill, unsigned int val);
 
+    /**
+     * Add skill practice.
+     */
+    int AddSkillPractice(PSSKILL skill, unsigned int val);
+    
     /**
      *  Get the slot that is the best skill in the set.
      *

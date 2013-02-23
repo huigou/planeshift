@@ -239,7 +239,7 @@ public:
     /// Creates the title row
     void CreateTitleRow();
 
-    bool OnScroll( int direction, pawsScrollBar* widget );
+    virtual bool OnScroll( int direction, pawsScrollBar* widget );
 
     bool OnMouseDown(int button, int modifiers, int x, int y );
 
