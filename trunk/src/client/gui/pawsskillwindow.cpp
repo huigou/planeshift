@@ -295,13 +295,16 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                     skillString = incoming.commandData;
                     skillCache.apply(&incoming.skillCache);
 
-                    bool flush = train != incoming.trainingWindow || incoming.openWindow;
+                    bool flush = (train != incoming.trainingWindow) || incoming.openWindow;
                     train=incoming.trainingWindow;
 
                     int selectedRowIdx = -1;
                     HandleSkillList(&skillCache, incoming.focusSkill, &selectedRowIdx, flush);
 
-                    SelectSkill(selectedRowIdx, incoming.skillCat);
+                    if (selectedRowIdx > 0)
+                    {
+                        SelectSkill(selectedRowIdx, incoming.skillCat);
+                    }
 
                     hitpointsMax = incoming.hitpointsMax;
                     manaMax = incoming.manaMax;
@@ -422,7 +425,9 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
         return;
 
     if (skills->hasRemoved() || unsortedSkills.IsEmpty())
+    {
         flush = true;
+    }
 
     if (flush)
     {
@@ -486,11 +491,6 @@ void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, 
                     break;
                 }
             }
-          /*  if(stat)
-            {
-                combatSkillList->MoveRow(combatSkillList->GetRowCount()-1,stati);
-                stati++;
-            }*/
         }
     }
     
@@ -823,11 +823,11 @@ void pawsSkillWindow::Draw()
     pawsWidget::Draw();
 }
 
-void pawsSkillWindow::FlashTabButton(const char* buttonName)
+void pawsSkillWindow::FlashTabButton(const char* buttonName, bool flash)
 {
     if (buttonName != NULL && FindWidget(buttonName))
     {
-        ((pawsButton *) FindWidget(buttonName))->Flash(true);
+        ((pawsButton *) FindWidget(buttonName))->Flash(flash);
     }
 }
 
@@ -857,14 +857,13 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
     }
 
     pawsListBoxRow* row = NULL;
-    if (!flush)
-    {
-        row = unsortedSkills[idx];
-    }
-    
-    if (row == NULL)
+    if (flush)
     {
         row = tabNameSkillList->NewRow();
+    }
+    else
+    {
+        row = unsortedSkills[idx];
     }
 
     pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
@@ -918,10 +917,8 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
         foundSelected = true;
     }
 
-    if (train) //If we are training, flash the tab button
-    {
-        FlashTabButton(tabName);
-    }
+    //If we are training, flash the tab button
+    FlashTabButton(tabName, train);
 
     ++idx; // Update the row index
 }

@@ -128,7 +128,7 @@ void ProgressionManager::HandleZPointEvent(MsgEntry *me, Client *client)
         psserver->SendSystemResult(evt.actor->GetClientID(), string);
     }
 
-    SendSkillList( client, false );
+    SendSkillList(client, false);
 }
 
 
@@ -264,7 +264,7 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
             if (character)
                 character->GetSkillCache()->clear();
 
-            SendSkillList(client,false);
+            SendSkillList(client, true);
             break;
         }
         case psGUISkillMessage::SKILL_SELECTED:
@@ -470,7 +470,7 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
             character->UseProgressionPoints(skillAmount);
             character->SetMoney(character->Money()-(info->price * skillAmount));
             character->Train(info->id,skillAmount);
-            SendSkillList(client,true,info->id);
+            SendSkillList(client, true, info->id);
             psserver->GetCharManager()->UpdateItemViews(client->GetClientNum());
             psserver->SendSystemInfo(client->GetClientNum(), "You've received some %s training", skillName.GetData());
 
@@ -568,13 +568,11 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
             // We are training, but this skill is not available for training
             psSkillCacheItem *item = skills->getItemBySkillId(skillID);
             if (item)
+            {
                 item->setRemoved(true);
+            }
         }
     }
-
-    bool training= false;
-    if (isTraining)
-        training= true;
 
     MathEnvironment skillVal;
     character->GetSkillValues(&skillVal);
@@ -600,7 +598,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                             forceOpen,
                             selectedSkillNameId,
                             selectedSkillCat,
-                            training //If we are training the client must know it
+                            isTraining //If we are training the client must know it
                             );
 
     Debug2(LOG_SKILLXP, client->GetClientNum(),"Sending psGUISkillMessage w/ stats to %d, Valid: ",int(client->GetClientNum()));

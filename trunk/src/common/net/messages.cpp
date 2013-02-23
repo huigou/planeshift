@@ -4056,6 +4056,10 @@ csString psStatsMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUISkillMessage, MSGTYPE_GUISKILL);
 
+const char * psGUISkillMessage::SkillCommandString[] = 
+    {"REQUEST","BUY_SkILL","SKILL_LIST","SKILL_SELECTED","DESCRIPTION","QUIT"};
+        
+
 psGUISkillMessage::psGUISkillMessage( uint8_t command,
                                       csString commandData)
 {
@@ -4195,7 +4199,11 @@ csString psGUISkillMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Command: %d ", command);
+    msgtext.AppendFmt("Command: %s(%d) ", SkillCommandString[command], command);
+#ifdef FULL_DEBUG_DUMP
+    msgtext.AppendFmt("Data: '%s' ", commandData.GetDataSafe());
+    msgtext.AppendFmt("SkillCache: %s ", skillCache.ToString().GetData());
+#endif
     if (includeStats)
     {
         msgtext.AppendFmt("Str: %d End: %d Agi: %d Int: %d Wil: %d Cha: %d ",
@@ -4207,9 +4215,6 @@ csString psGUISkillMessage::ToString(NetBase::AccessPointers * /*accessPointers*
         msgtext.AppendFmt("Window '%s' Training '%s'",
             (openWindow ? "open" : "closed"), (trainingWindow ? "open" : "closed"));
     }
-#ifdef FULL_DEBUG_DUMP
-    msgtext.AppendFmt(" Data: '%s' ", commandData.GetDataSafe());
-#endif
 
     return msgtext;
 }
