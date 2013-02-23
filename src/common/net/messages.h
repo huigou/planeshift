@@ -2745,6 +2745,8 @@ public:
                    QUIT
                  };
 
+    static const char * SkillCommandString[];
+    
     /**
      * Constucts a new equipment message to go on the network.
      *

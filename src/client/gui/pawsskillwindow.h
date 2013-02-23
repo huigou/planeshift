@@ -112,7 +112,7 @@ protected:
      *  category, so with the flashing of the tab (the category) the player
      *  knows that a certain skill is available to be trained
      */
-    void FlashTabButton(const char* buttonName);
+    void FlashTabButton(const char* buttonName, bool flash);
 
     /** This handles the skill list for each category */
     void HandleSkillCategory(pawsListBox* tabNameSkillList, const char* indWidget,
