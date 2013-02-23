@@ -1025,17 +1025,15 @@ void pawsCreationMain::UpdateRace(int id)
     //temporary hardcoding needs removal
     maleButton->SetEnabled(id != 9);
     femaleButton->SetEnabled(id != 9);
-    if(id != 9)
+    if(id == 9)
     {
         maleButton->SetState(false);
         femaleButton->SetState(false);
     }
     else
     {
-        if(createManager->GetSelectedGender() != PSCHARACTER_GENDER_FEMALE)
-            maleButton->SetState(true);
-        else
-            femaleButton->SetState(true);
+        maleButton->SetState(createManager->GetSelectedGender() == PSCHARACTER_GENDER_MALE);
+        femaleButton->SetState(createManager->GetSelectedGender() == PSCHARACTER_GENDER_FEMALE);
     }
 
 
