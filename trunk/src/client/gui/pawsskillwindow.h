@@ -133,7 +133,6 @@ protected:
 
     csString skillString;
     csString selectedSkill;
-    pawsListBoxRow* selectedRow;
 
     int hitpointsMax, manaMax, physStaminaMax, menStaminaMax;
 

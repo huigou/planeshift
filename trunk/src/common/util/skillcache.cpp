@@ -441,6 +441,8 @@ csString psSkillCache::ToString() const
 {
     csString result;
     
+    result.AppendFmt("PP: %d New: %s C: %d - ",progressionPoints,newList?"Yes":"No",count());
+
     psSkillCacheIter p(skillCache);
 
     while (p.HasNext())

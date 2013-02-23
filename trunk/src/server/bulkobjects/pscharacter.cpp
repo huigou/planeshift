@@ -3530,15 +3530,15 @@ SkillSet::SkillSet(psCharacter *self) : CharacterAttribute(self)
     }
 }
 
-int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
+int SkillSet::AddSkillPractice(psSkillInfo* skillInfo, unsigned int val)
 {
     unsigned int added;
     bool rankUp;
     csString name;
 
-    rankUp = AddToSkillPractice(skill,val, added);
+    PSSKILL skill = skillInfo->id;
 
-    psSkillInfo* skillInfo = psserver->GetCacheManager()->GetSkillByID(skill);
+    rankUp = AddToSkillPractice(skill,val, added);
 
     if ( skillInfo )
     {
@@ -3576,6 +3576,13 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
     }
 
     return added;
+}
+
+int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
+{
+    psSkillInfo* skillInfo = psserver->GetCacheManager()->GetSkillByID(skill);
+
+    return AddSkillPractice(skillInfo, val);
 }
 
 unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )

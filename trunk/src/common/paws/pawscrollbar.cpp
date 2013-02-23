@@ -59,24 +59,24 @@ pawsScrollBar::pawsScrollBar()
     thumb = NULL;
     mouseIsDraggingThumb = false;
 
-	upGrey.Clear();
-	upUnpressed.Clear();
-	upPressed.Clear();
-	upOffsetx = 0;
-	upOffsety = 0;
-	upWidth = 0;
-	upHeight = 0;
-
-	downGrey.Clear();
-	downUnpressed.Clear();
-	downPressed.Clear();
-	downOffsetx = 0;
-	downOffsety = 0;
-	downWidth = 0;
-	downHeight = 0;
-
-	thumbStopped = "ScrollBar Thumb";
-	thumbMoving = "ScrollBar Thumb Moving";
+    upGrey.Clear();
+    upUnpressed.Clear();
+    upPressed.Clear();
+    upOffsetx = 0;
+    upOffsety = 0;
+    upWidth = 0;
+    upHeight = 0;
+    
+    downGrey.Clear();
+    downUnpressed.Clear();
+    downPressed.Clear();
+    downOffsetx = 0;
+    downOffsety = 0;
+    downWidth = 0;
+    downHeight = 0;
+        
+    thumbStopped = "ScrollBar Thumb";
+    thumbMoving = "ScrollBar Thumb Moving";
 }
 
 pawsScrollBar::pawsScrollBar(const pawsScrollBar& origin)

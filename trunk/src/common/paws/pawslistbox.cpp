@@ -667,12 +667,16 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
     int offset = 0;
     if ( usingTitleRow )
         offset = 1;
-    int numberOfRows = GetUnborderedHeight() / columnDef[0].height - offset;
+    int numberOfRows = (GetUnborderedHeight() / columnDef[0].height) - offset;
 
     if (selected<topRow)
+    {
         topRow=selected;
+    }
     else if (selected>=topRow+numberOfRows)
+    {
         topRow=(selected-numberOfRows)+1;
+    }
 
     CalculateDrawPositions();
 
@@ -682,7 +686,9 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
     }
 
     if (notify)
+    {
         SendOnListAction(LISTBOX_HIGHLIGHTED);
+    }
 
     return true;
 }
@@ -831,20 +837,20 @@ void pawsListBox::CalculateDrawPositions()
     if ( usingTitleRow )
         offset = 1;
 
-     // Clamp toprow to existing rows
-     if (topRow<0)
-         topRow=0;
-     if (topRow>totalRows)
-         topRow=totalRows;
-
-    size_t numberOfRows = GetUnborderedHeight() / columnDef[0].height - offset;
-
+    // Clamp toprow to existing rows
+    if (topRow<0)
+        topRow=0;
+    if (topRow>totalRows)
+        topRow=totalRows;
+    
+    size_t numberOfRows = (GetUnborderedHeight() / columnDef[0].height) - offset;
+    
     size_t row = topRow;
-
+    
     //Hide all rows till the one which will be drawn
     for ( size_t x = 0; x < row; x++ )
         rows[x]->Hide();
-
+    
     //figure out which ones to draw and position them
     for ( size_t z = 0; z < numberOfRows; z++ )
     {
@@ -860,7 +866,7 @@ void pawsListBox::CalculateDrawPositions()
             }
             positionY+=margin;
             positionX+=margin;
-
+            
             rows[row]->ShowBehind();
             rows[row]->SetRelativeFramePos( positionX, positionY );
             row++;
@@ -868,11 +874,11 @@ void pawsListBox::CalculateDrawPositions()
         else
             break;
     }
-
+    
     //hide the last rows we don't see
     for (size_t x = row; x < rows.GetSize(); x++ )
         rows[x]->Hide();
-
+    
     if (scrollBar)
     {
         if (rows.GetSize() > numberOfRows)
