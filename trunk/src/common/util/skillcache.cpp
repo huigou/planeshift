@@ -82,9 +82,13 @@ psSkillCacheItem::~psSkillCacheItem()
 unsigned short psSkillCacheItem::size() const
 {
     if (removed)
+    {
         return sizeof(uint8_t);
+    }
     else
+    {
         return sizeof(uint8_t) + 7*sizeof(uint16_t) + sizeof(bool);
+    }
 }
 
 void psSkillCacheItem::update(unsigned short R,
@@ -179,6 +183,7 @@ void psSkillCacheItem::read(MsgEntry *msg)
             removed = true;
             break;
         case psSkillCacheItem::UPDATE_OR_ADD:
+            removed = false;
             rank = msg->GetUInt16();
             actualStat = msg->GetUInt16();
             knowledge = msg->GetUInt16();
@@ -297,20 +302,26 @@ psSkillCacheItem *psSkillCache::getItemBySkillId(uint id)
 
 void psSkillCache::setModified(bool modified)
 {
-    modified = modified;
+    this->modified = modified;
+
     psSkillCacheIter p(skillCache);
     while (p.HasNext())
     {
         psSkillCacheItem *item = p.Next();
         if (item)
+        {
             item->setModified(modified);
+        }
     }
 }
 
 bool psSkillCache::isModified()
 {
     if (modified)
+    {
         return true;
+    }
+    
     psSkillCacheIter p(skillCache);
     while (!modified && p.HasNext())
     {
@@ -323,7 +334,7 @@ bool psSkillCache::isModified()
 
 void psSkillCache::setRemoved(bool removed)
 {
-    removed = removed;
+    this->removed = removed;
 }
 
 bool psSkillCache::hasRemoved()
@@ -425,6 +436,38 @@ void psSkillCache::write(MsgEntry *msg)
     newList = false;
     modified = false;
 }
+
+csString psSkillCache::ToString() const
+{
+    csString result;
+    
+    psSkillCacheIter p(skillCache);
+
+    while (p.HasNext())
+    {
+        psSkillCacheItem* item =  p.Next();
+        
+        if (item->isRemoved())
+        {
+            result.AppendFmt("NID: %d Removed;", item->getNameId());
+        }
+        else
+        {
+            result.AppendFmt("NID: %d Cat: %d R: %d AS: %d K: %d KC: %d P: %d PC: %d;",
+                             item->getNameId(), item->getCategory(), item->getRank(),
+                             item->getActualStat(), item->getKnowledge(),
+                             item->getKnowledgeCost(), item->getPractice(),
+                             item->getPracticeCost());
+        }
+
+        if (p.HasNext())
+        {
+            result.Append(" ");
+        }
+    }
+    return result;
+}
+
 
 bool psSkillCache::deleteItem(psSkillCacheItem *item)
 {
