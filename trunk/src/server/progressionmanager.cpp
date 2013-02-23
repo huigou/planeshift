@@ -238,11 +238,8 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
 
         final *= mod;
 
-        psserver->SendSystemInfo(attacker->GetClientID(), "You gained %d experience points.", final);
-        if (int pp = attacker->GetCharacterData()->AddExperiencePoints(final))
-        {
-            psserver->SendSystemInfo(attacker->GetClientID(), "You gained %d progression points.", pp);
-        }
+        // Reward player with final experience points and notify client.
+        attacker->GetCharacterData()->AddExperiencePointsNotify(final);
     }
 
     deadActor->ClearDamageHistory();

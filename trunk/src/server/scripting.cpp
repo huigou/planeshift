@@ -2127,21 +2127,36 @@ protected:
 /**
  * ExpOp - grant experience points.
  *
- * <exp aim="Actor" value="200"/>
+ * <exp aim="Actor" value="200" notify="false" />
  */
 class ExpOp : public Imperative2
 {
 public:
-    ExpOp() : Imperative2() { }
+    ExpOp() : Imperative2(), notify(false) { }
     virtual ~ExpOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        notify = node->GetAttributeValueAsBool("notify", false);
+        return Imperative2::Load(node);
+    }
 
     // AllocateKillDamage blah.
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
         float exp = value->Evaluate(env);
-        c->AddExperiencePoints((unsigned int)exp);
+        if (notify)
+        {
+            c->AddExperiencePointsNotify((unsigned int)exp);
+        }
+        else
+        {           
+            c->AddExperiencePoints((unsigned int)exp);
+        }
     }
+protected:
+    bool notify;
 };
 
 //----------------------------------------------------------------------------
@@ -2254,7 +2269,7 @@ public:
 class ActionOp : public Imperative1
 {
 public:
-	ActionOp(CacheManager* cachemanager) {cacheManager = cachemanager; }
+    ActionOp(CacheManager* cachemanager) {cacheManager = cachemanager; }
     virtual ~ActionOp() { }
 
     bool Load(iDocumentNode* node)
