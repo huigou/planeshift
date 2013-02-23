@@ -21,6 +21,7 @@
 #define PS_SKILL_CACHE_H
 
 #include <csutil/list.h>
+#include <csutil/csstring.h>
 
 class MsgEntry;
 
@@ -129,6 +130,7 @@ class psSkillCacheItem {
     private:
         bool removed;
         bool modified;
+        
         unsigned int nameId;
         int skillId;
 
@@ -241,6 +243,11 @@ class psSkillCache {
          * message entry.
          */
         void read(MsgEntry *);
+
+        /**
+         * Convert cache to string.
+         */
+        csString ToString() const;
 
     private:
         csList<psSkillCacheItem *> skillCache;
