@@ -44,19 +44,19 @@
 
         <widget name="MaleButton" factory="pawsButton" id="100">
             <frame x="60" y="120" width="35" height="45" border="no"/>
-            <buttonup resource="maleOn"/>
-            <buttondown resource="maleOff"/>
-            <buttongrayup resource="maleOn"/>
-            <buttongraydown resource="maleOn"/>
+            <buttonup resource="maleOff"/>
+            <buttondown resource="maleOn"/>
+            <buttongrayup resource="maleOff"/>
+            <buttongraydown resource="maleOff"/>
             <label text="M" y="8"/>
         </widget>
 
         <widget name="FemaleButton" factory="pawsButton" id="200">
             <frame x="50" y="170" width="35" height="45" border="no"/>
-            <buttonup resource="femaleOn"/>
-            <buttondown resource="femaleOff"/>
-            <buttongrayup resource="femaleOn"/>
-            <buttongraydown resource="femaleOn"/>
+            <buttonup resource="femaleOff"/>
+            <buttondown resource="femaleOn"/>
+            <buttongrayup resource="femaleOff"/>
+            <buttongraydown resource="femaleOff"/>
             <label text="F" y="3"/>
         </widget>
 
