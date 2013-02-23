@@ -92,7 +92,8 @@ public:
         REWARD_FACTION, ///< faction points
         REWARD_SKILL, ///< skill points
         REWARD_MONEY, ///< trias, octas, ...
-        REWARD_ITEM ///< an item
+        REWARD_ITEM, ///< an item
+        REWARD_PRACTICE ///< skill practice
     };
 
     Reward_Type rewardType; ///< stores the reward type /see Reward_Type
@@ -163,6 +164,26 @@ public:
     bool relativeSkill;
 
     psRewardDataSkill(csString pskillName, int pskillDelta, int pskillCap, bool prelativeSkill);
+
+    /** @brief checks if the reward is zero.
+     *
+     * @returns bool: true when reward is a zero gain, otherwise false
+     */
+    virtual bool IsZero(); ///< checks if the reward is zero
+};
+
+/// @brief RewardDataPractice holds practice reward data
+class psRewardDataPractice : public psRewardData
+{
+public:
+    /** name of the practice to adjust.
+      * may be "all" to adjust all practices.
+      * may be "copy" to set the values of the target
+      */
+    csString skillName;
+    int practice; ///< value to adjust the practice by/set it to
+    
+    psRewardDataPractice(csString pSkillName, int pDelta);
 
     /** @brief checks if the reward is zero.
      *
