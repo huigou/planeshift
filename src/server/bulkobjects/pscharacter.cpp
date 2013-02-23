@@ -1315,11 +1315,12 @@ unsigned int psCharacter::AddExperiencePointsNotify(unsigned int experiencePoint
         {
             if(PP > 0)
             {
-                psserver->SendSystemInfo(GetActor()->GetClientID(), "You gained some experience points and %d progression points!", PP);
+                psserver->SendSystemInfo(GetActor()->GetClientID(), "You gained %d experience point%s and %d progression point%s!",
+                                         experiencePoints, experiencePoints>1?"s":"", PP, PP>1?"s":"");
             }
             else
             {
-                psserver->SendSystemInfo(GetActor()->GetClientID(),"You gained some experience points");
+                psserver->SendSystemInfo(GetActor()->GetClientID(), "You gained %d experience point%s",experiencePoints,experiencePoints>1?"s":"");
             }
         }
         return PP;
