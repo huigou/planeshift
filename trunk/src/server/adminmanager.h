@@ -3775,7 +3775,19 @@ protected:
     /**
      * Handle display of locations
      */
+    void ShowLocations(Client* client);
+
+    /**
+     * Handle display of locations
+     */
     void ShowLocations(Client* client, iSector* sector);
+
+    /**
+     * Hide all locations for all clients.
+     *
+     * @param clearSelected Clear selected location when iterating.
+     */
+    void HideAllLocations(bool clearSelected);
 
     /** Hide all locations for one client.
      */
@@ -3784,6 +3796,11 @@ protected:
     /** Hide all locations in one sector for one client.
      */
     void HideLocations(Client* client, iSector* sector);
+
+    /**
+     * Show locations for all clients that have enabled display.
+     */
+    void RedisplayAllLocations();
 
     /** Update location to all clients displaying locations.
      */

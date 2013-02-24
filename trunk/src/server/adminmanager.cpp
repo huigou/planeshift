@@ -3841,6 +3841,7 @@ AdminCmdDataReload::AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, p
     subCommandList.Push("serveroptions","#Reload all the server options");
     subCommandList.Push("mathscript","#Reload all the mathscripts");
     subCommandList.Push("path","#Reload all the path data");
+    subCommandList.Push("locations","#Reload all the location data");
 
     size_t index = 1;
 
@@ -7268,6 +7269,19 @@ int AdminManager::LocationCreate(int typeID, csVector3 &pos, csString &sectorNam
     return id;
 }
 
+void AdminManager::ShowLocations(Client* client)
+{
+    if(client->LocationIsDisplaying())
+    {
+        csList<iSector*>::Iterator iter = client->GetLocationDisplaying();
+        while(iter.HasNext())
+        {
+            iSector* sector = iter.Next();
+            ShowLocations(client, sector);
+        }
+    }
+}
+
 void AdminManager::ShowLocations(Client* client, iSector* sector)
 {
     csList<Location*> list;
@@ -7299,6 +7313,26 @@ void AdminManager::ShowLocations(Client* client, iSector* sector)
                     msg.SendMessage();
                 }
             }
+        }
+    }
+}
+
+void AdminManager::HideAllLocations(bool clearSelected)
+{
+    ClientIterator i(*clients);
+    while(i.HasNext())
+    {
+        Client* client = i.Next();
+
+        // Cleare selected while we are iterating over the clients.
+        if(clearSelected)
+        {
+            client->SetSelectedLocationID(-1);
+        }
+
+        if(client->LocationIsDisplaying())
+        {
+            HideLocations(client);
         }
     }
 }
@@ -7337,6 +7371,20 @@ void AdminManager::HideLocations(Client* client, iSector* sector)
                     msg.SendMessage();
                 }
             }
+        }
+    }
+}
+
+void AdminManager::RedisplayAllLocations()
+{
+    ClientIterator i(*clients);
+    while(i.HasNext())
+    {
+        Client* client = i.Next();
+
+        if(client->LocationIsDisplaying())
+        {
+            ShowLocations(client);
         }
     }
 }
@@ -12244,6 +12292,19 @@ void AdminManager::HandleReload(psAdminCmdMessage &msg, AdminCmdData* cmddata, C
         RedisplayAllPaths();
 
         psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded path network.");
+
+    }
+    else if(data->subCmd == "locations")
+    {
+        HideAllLocations(true); // And cleare Selected Locations
+
+        delete locations;
+        locations = new LocationManager();
+        locations->Load(EntityManager::GetSingleton().GetEngine(),db);
+
+        RedisplayAllLocations();
+
+        psserver->SendSystemOK(client->GetClientNum(), "Successfully reloaded locations.");
 
     }
 }
