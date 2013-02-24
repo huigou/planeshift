@@ -1113,8 +1113,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     break;
                 }
 
-                npc->AddDebugClient(clientNum);
-                npc->SetDebugging(debugLevel);
+                npc->AddDebugClient(clientNum,debugLevel);
 
                 QueueSystemInfoCommand(clientNum,"NPCClient: Debug level set to %d for %s(%s)",debugLevel,npc->GetName(),ShowID(npc->GetEID()));
                 break;
