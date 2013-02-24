@@ -420,6 +420,32 @@ protected:
 
 //-----------------------------------------------------------------------------
 
+/**
+* Let the NPC change brain.
+*/
+class ChangeBrainOperation : public ScriptOperation
+{
+protected:
+    csString brain;
+
+    /** Constructor for this operation, used by the MakeCopy.
+     *
+     *  This constructor will copy all the Operation Parameters
+     *  from the other operation and initialize all Instance Variables
+     *  to default values.
+     */
+    ChangeBrainOperation(const ChangeBrainOperation* other);
+
+ public:
+    ChangeBrainOperation();
+    virtual ~ChangeBrainOperation() {};
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
 /** Detect and chase a target until reached o out of bound.
 *   Chase updates periodically and turns, moving towards a certain
 *   location.  This is normally used to chase a targeted player.

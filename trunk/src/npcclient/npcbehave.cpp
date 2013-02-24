@@ -1076,6 +1076,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new CastOperation;
         }
+        else if ( strcmp( node->GetValue(), "change_brain" ) == 0 )
+        {
+            op = new ChangeBrainOperation;
+        }
         else if ( strcmp( node->GetValue(), "chase" ) == 0 )
         {
             op = new ChaseOperation;

@@ -1070,6 +1070,61 @@ ScriptOperation::OperationResult CastOperation::Run(NPC *npc, bool interrupted)
 
 //---------------------------------------------------------------------------
 
+ChangeBrainOperation::ChangeBrainOperation(const ChangeBrainOperation* other)
+    : ScriptOperation("ChangeBrain"),
+      brain(other->brain)
+{
+}
+
+ChangeBrainOperation::ChangeBrainOperation()
+    : ScriptOperation("ChangeBrain")
+{
+}
+
+bool ChangeBrainOperation::Load(iDocumentNode *node)
+{
+    brain = node->GetAttributeValue("brain");
+    if (brain.IsEmpty())
+    {
+        Error1("No brain given for ChangeBrain operation");
+        return false;
+    }
+
+    return true;
+}
+
+ScriptOperation *ChangeBrainOperation::MakeCopy()
+{
+    ChangeBrainOperation *op = new ChangeBrainOperation(this);
+    return op;
+}
+
+ScriptOperation::OperationResult ChangeBrainOperation::Run(NPC *npc, bool interrupted)
+{
+    csString brainVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, brain);
+
+    if (!npc->GetTarget())
+    {
+        NPCDebug(npc, 5, "ChangeBrain operation failed with no target given");
+        return OPERATION_FAILED;
+    }
+
+    NPCType* type = npcclient->FindNPCType(brainVariablesReplaced.GetDataSafe());
+    if(!type)
+    {
+        NPCDebug(npc, 5, "NPC brain '%s' is not found", brainVariablesReplaced.GetDataSafe());
+        return OPERATION_FAILED;
+    }
+    
+    NPCDebug(npc, 5, "ChangeBrain to %s for %s", brainVariablesReplaced.GetDataSafe(),npc->GetTarget()->GetName());
+
+    npc->SetBrain(type, npcclient->GetEventManager());
+
+    return OPERATION_COMPLETED;  // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 const char * ChaseOperation::typeStr[]={"nearest_actor","nearest_npc","nearest_player","owner","target"};
 
 ChaseOperation::ChaseOperation()
