@@ -63,6 +63,7 @@ INSERT INTO command_group_assignment VALUES( "/time", 30 );
 INSERT INTO command_group_assignment VALUES( "/version", 30 );
 INSERT INTO command_group_assignment VALUES( "/changenpctype", 30 );
 INSERT INTO command_group_assignment VALUES( "/debugnpc", 30 );
+INSERT INTO command_group_assignment VALUES( "/debugtribe", 30 );
 INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 30 );
 INSERT INTO command_group_assignment VALUES( "/death", 30 );
 INSERT INTO command_group_assignment VALUES( "/crystal", 30 );

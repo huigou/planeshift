@@ -66,7 +66,6 @@ enum LOG_TYPES
     LOG_USER,
     LOG_LOOT,
     LOG_DUELS,
-    LOG_TRIBES,
     LOG_DRDATA,
 // NOTE: Remember to update the flagnames and flagsettings tables in log.cpp when addning new entries
     MAX_FLAGS
