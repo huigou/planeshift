@@ -394,11 +394,11 @@ bool RecipeManager::AddTribe(Tribe *tribe)
 
 bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>& npcs, Recipe* recipe)
 {
-    Debug2(LOG_TRIBES,tribe->GetID(),"Parse Function: '%s'",function.GetDataSafe());
+    RDebug(tribe, 5, "Parse Function: '%s'",function.GetDataSafe());
 
     function = Preparse(function, tribe);
 
-    Debug2(LOG_TRIBES,tribe->GetID(),"  - Preparsed: '%s'",function.GetDataSafe());
+    RDebug(tribe, 5, "  - Preparsed: '%s'",function.GetDataSafe());
 
     csStringArray functionParts;
     csString      functionBody;
@@ -660,7 +660,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         {
             str += npcs[i]->GetName() + csString("(") + csString(ShowID(npcs[i]->GetEID())) + csString(")");
         }
-        Debug2(LOG_TRIBES, tribe->GetID(), "Selected NPCs: %s",str.GetDataSafe());
+        RDebug(tribe, 5, "Selected NPCs: %s",str.GetDataSafe());
 
         return true;
     }
@@ -785,7 +785,7 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     csString name = Preparse(requirement.name, tribe);
     int      quantity = atoi(Preparse(requirement.quantity, tribe));
 
-    Debug7(LOG_TRIBES,tribe->GetID(),"ParseRequirement: Type: %s Name: '%s'='%s' Quantity: '%s'='%d' Recipe: %s",
+    RDebug(tribe, 5, "ParseRequirement: Type: %s Name: '%s'='%s' Quantity: '%s'='%d' Recipe: %s",
            Recipe::RequirementTypeString[requirement.type],requirement.name.GetDataSafe(),name.GetDataSafe(),
            requirement.quantity.GetDataSafe(),quantity,requirement.recipe.GetDataSafe());
 
@@ -840,7 +840,7 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     {
         if(tribe->CheckResource(name, quantity))
         {
-            Debug3(LOG_TRIBES,tribe->GetID(),"Requirement resource %s quantity %d ok",name.GetDataSafe(),quantity);
+            RDebug(tribe, 5, "Requirement resource %s quantity %d ok",name.GetDataSafe(),quantity);
             return true;
         }
 
@@ -991,7 +991,7 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
     size_t i = (bestRecipe->requirementParseType == RecipeTreeNode::REQ_DISTRIBUTED) ? bestRecipe->nextReq : 0;
     for(; i<requirements.GetSize(); i++)
     {
-        Debug4(LOG_TRIBES, tribe->GetID(), "Parsing req(index:%zu) for recipe %s of type: %s\n", 
+        RDebug(tribe, 5, "Parsing req(index:%zu) for recipe %s of type: %s\n", 
                i,bestRecipe->recipe->GetName().GetData(),
                RecipeTreeNode::RequirementParseTypeString[bestRecipe->requirementParseType]);
 
@@ -1001,7 +1001,7 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
             // Requirement met
             bestRecipe->nextReq = (i == (requirements.GetSize() - 1)) ? 0 : i + 1;
 
-            Debug1(LOG_TRIBES, tribe->GetID(), "Requirement met");
+            RDebug(tribe, 5, "Requirement met");
         }
         else
         {
@@ -1009,7 +1009,7 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
             bestRecipe->nextReq = (bestRecipe->requirementParseType == RecipeTreeNode::REQ_DISTRIBUTED) ? i + 1 : i;
 
             // Value code for 'Requirement not met'
-            Debug1(LOG_TRIBES, tribe->GetID(), "Requirement NOT met");
+            RDebug(tribe, 5, "Requirement NOT met");
             return -2;
         }
     }
@@ -1023,7 +1023,7 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
         // If algorithm step needs wait time, signal it and return the step
         if(!ParseFunction(function, tribe, selectedNPCs, recipe))
         {
-            Debug1(LOG_TRIBES, tribe->GetID()," ParseFunction - FAILED");
+            RDebug(tribe, 5, " ParseFunction - FAILED");
             return i+1;
         }
     }

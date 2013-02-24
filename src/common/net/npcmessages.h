@@ -238,9 +238,10 @@ public:
         PCPT_ANYRANGEPLAYER,    
         PCPT_ASSESS, 
         PCPT_ATTACK,
-        PCPT_CHANGE_BRAIN,      // Command to superclient used to change the brain of an npc.
+        PCPT_CHANGE_BRAIN,      ///< Command to superclient used to change the brain of a npc.
         PCPT_DEATH,
-        PCPT_DEBUG_NPC,         // Command the superclient to change the debug level of an npc.
+        PCPT_DEBUG_NPC,         ///< Command the superclient to change the debug level of a npc.
+        PCPT_DEBUG_TRIBE,       ///< Command the superclient to change the debug level of a tribe.
         PCPT_DMG,
         PCPT_FAILED_TO_ATTACK,
         PCPT_FLAG,

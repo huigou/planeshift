@@ -36,6 +36,7 @@
 //=============================================================================
 #include <util/psconst.h>
 #include <util/psutil.h>
+#include <util/remotedebug.h>
 
 //=============================================================================
 // Local Includes
@@ -61,7 +62,7 @@ class EventManager;
 /**
  * Class used to define a Tribal Object
  */
-class Tribe : public ScopedTimerCB
+class Tribe : public ScopedTimerCB, public RemoteDebug
 {
 public:
     typedef csHash<csString,csString> BufferHash;
@@ -721,7 +722,17 @@ public:
      */
     void ProspectMine(NPC* npc, csString resource, csString nick);
 
-protected:
+private:
+    /**
+     * Callback function to report local debug.
+     */
+    virtual void LocalDebugReport(const csString& debugString);
+    
+    /**
+     * Callback function to report remote debug.
+     */
+    virtual void RemoteDebugReport(uint32_t clientNum, const csString& debugString);
+
     /**
      * Update the deathRate variable.
      */

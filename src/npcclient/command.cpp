@@ -338,9 +338,53 @@ int com_debugnpc(const char*line)
     else
     {
         if(npc->SwitchDebugging())
+        {
             CPrintf(CON_CMDOUTPUT, "Debugging for NPC %s switched ON.\n", npc->GetName());
+        }
         else
+        {
             CPrintf(CON_CMDOUTPUT, "Debugging for NPC %s switched OFF.\n", npc->GetName());
+        }
+    }
+    
+    return 0;
+}
+
+int com_debugtribe(const char*line)
+{
+    WordArray words(line);
+
+    if (!*line)
+    {
+        CPrintf(CON_CMDOUTPUT, "Please specify: <tribe_id> [<log_level>]\n");
+        return 0;
+    }
+
+
+    unsigned int id = atoi(words[0]);
+    Tribe* tribe = npcclient->GetTribe(id);
+    if(!tribe)
+    {
+        CPrintf(CON_CMDOUTPUT, "No Tribe with id '%s' found.\n", words[0].GetDataSafe());
+        return 0;
+    }
+
+    if (words.GetCount() >= 2)
+    {
+        int level = atoi(words[1]);
+        tribe->SetDebugging(level);
+        CPrintf(CON_CMDOUTPUT, "Debugging for Tribe %s set to %d.\n", tribe->GetName(), level);
+    }
+    else
+    {
+        if(tribe->SwitchDebugging())
+        {
+            CPrintf(CON_CMDOUTPUT, "Debugging for Tribe %s switched ON.\n", tribe->GetName());
+        }
+        else
+        {
+            CPrintf(CON_CMDOUTPUT, "Debugging for Tribe %s switched OFF.\n", tribe->GetName());
+        }
     }
     
     return 0;
@@ -464,6 +508,7 @@ int com_status(const char*)
  */
 const COMMAND commands[] = {
     { "debugnpc",     false, com_debugnpc,     "Switches the debug mode on 1 NPC"},
+    { "debugtribe",   false, com_debugtribe,   "Switches the debug mode on 1 Tribe"},
     { "disable",      false, com_disable,      "Disable a enabled NPC. [all | pattern | EID]"},
     { "enable",       false, com_enable,       "Enable a disabled NPC. [all | pattern | EID]"},
     { "filtermsg",    true,  com_filtermsg,    "Add or remove messages from the LOG_MESSAGE log"},

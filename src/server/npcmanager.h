@@ -169,6 +169,14 @@ public:
      */
     void DebugNPC(gemNPC* npc, Client* client, uint8_t debugLevel);
 
+    /**
+     * Requests the npcclient to change the debug level of this npc.
+     * @param npc The npc which will be changed.
+     * @param client The client requesting the action.
+     * @param debugLevel The new debug level for the npc.
+     */
+    void DebugTribe(gemNPC* npc, Client* client, uint8_t debugLevel);
+
     /// Send all queued commands and perceptions to active superclients and reset the queues.
     void SendAllCommands(bool createNewTick = true);
 

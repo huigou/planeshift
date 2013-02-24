@@ -1109,13 +1109,38 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
 
                 if(!npc)
                 {
-                    QueueSystemInfoCommand(clientNum,"NPCClient: No NPC found");
+                    QueueSystemInfoCommand(clientNum,"NPCClient: No NPC found!");
                     break;
                 }
 
                 npc->AddDebugClient(clientNum,debugLevel);
 
-                QueueSystemInfoCommand(clientNum,"NPCClient: Debug level set to %d for %s(%s)",debugLevel,npc->GetName(),ShowID(npc->GetEID()));
+                QueueSystemInfoCommand(clientNum,"NPCClient: NPC Debug level set to %d for %s(%s)",debugLevel,npc->GetName(),ShowID(npc->GetEID()));
+                break;
+            }
+            case psNPCCommandsMessage::PCPT_DEBUG_TRIBE:
+            {
+                EID npc_eid = EID(list.msg->GetUInt32());
+                uint32_t clientNum = list.msg->GetUInt32();
+                uint8_t debugLevel = list.msg->GetUInt8();
+
+                NPC* npc = npcclient->FindNPC(npc_eid);
+
+                if(!npc)
+                {
+                    QueueSystemInfoCommand(clientNum,"NPCClient: No NPC found!");
+                    break;
+                }
+
+                if(!npc->GetTribe())
+                {
+                    QueueSystemInfoCommand(clientNum,"NPCClient: NPC not part of any tribe!");
+                    break;
+                }
+
+                npc->GetTribe()->AddDebugClient(clientNum,debugLevel);
+
+                QueueSystemInfoCommand(clientNum,"NPCClient: Tribe Debug level set to %d for %s(%s)",debugLevel,npc->GetName(),ShowID(npc->GetEID()));
                 break;
             }
             case psNPCCommandsMessage::PCPT_GROUPATTACK:

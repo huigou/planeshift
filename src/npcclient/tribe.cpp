@@ -447,7 +447,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
         // we can parse recipes and send them to work
         if(behavior && strcasecmp(behavior->GetName(),npcIdleBehavior.GetDataSafe())==0)
         {
-            Debug3(LOG_TRIBES, id, "*** Found Idle NPC %s(%s) checking recipes ***", npc->GetName(),ShowID(npc->GetEID()));
+            RDebug(this, 5, "*** Found Idle NPC %s(%s) checking recipes ***", npc->GetName(),ShowID(npc->GetEID()));
 
             // Update recipes wait times
             UpdateRecipeData(decreaseValue);
@@ -464,7 +464,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
 
             if(bestRecipe->wait <= 0)
             {
-                Debug2(LOG_TRIBES, id, "Applying recipe %s.", bestRecipe->recipe->GetName().GetDataSafe());
+                RDebug(this, 5, "Applying recipe %s.", bestRecipe->recipe->GetName().GetDataSafe());
                 
                 bestRecipe->nextStep = recipeManager->ApplyRecipe(
                     bestRecipe, this, bestRecipe->nextStep);
@@ -477,7 +477,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
                 csString rName = bestRecipe->recipe->GetName();
                 if(rName != "do nothing")
                 {
-                    Debug2(LOG_TRIBES, id, "Recipe %s completed.", rName.GetData());
+                    RDebug(this, 5, "Recipe %s completed.", rName.GetData());
                 }
 
                 tribalRecipe->RemoveChild(bestRecipe->recipe);
@@ -500,6 +500,16 @@ bool Tribe::ShouldGrow() const
 bool Tribe::CanGrow() const
 {
     return CountResource(wealthResourceName) >= reproductionCost;
+}
+
+void Tribe::LocalDebugReport(const csString& debugString)
+{
+    CPrintf(CON_CMDOUTPUT, "%s (%d)> %s\n", GetName(), id, debugString.GetDataSafe());
+}
+    
+void Tribe::RemoteDebugReport(uint32_t clientNum, const csString& debugString)
+{
+   npcclient->GetNetworkMgr()->QueueSystemInfoCommand(clientNum,"%s (%d)> %s", GetName(), id, debugString.GetDataSafe()); 
 }
 
 void Tribe::UpdateDeathRate()
@@ -962,7 +972,7 @@ void Tribe::SendPerception(const char* pcpt, csArray<NPC*> npcs)
     for(size_t i=0; i<npcs.GetSize(); i++)
     {
         NPC* npc = npcs[i];
-        Debug4(LOG_TRIBES,GetID(),"--> Percept npc %s(%s): %s",npc->GetName(),ShowID(npc->GetEID()),perception.ToString(npc).GetDataSafe());
+        RDebug(this, 5, "--> Percept npc %s(%s): %s",npc->GetName(),ShowID(npc->GetEID()),perception.ToString(npc).GetDataSafe());
 
         npc->TriggerEvent(&perception);
     }
@@ -1404,14 +1414,14 @@ csString Tribe::GetBuffer(const csString& bufferName)
 {
     csString value = tribeBuffer.Get(bufferName,"");
 
-    Debug3(LOG_TRIBES,GetID(),"Get Buffer(%s) return: '%s'",bufferName.GetDataSafe(),value.GetDataSafe());
+    RDebug(this, 5, "Get Buffer(%s) return: '%s'",bufferName.GetDataSafe(),value.GetDataSafe());
 
     return value;
 }
 
 void Tribe::SetBuffer(const csString& bufferName, const csString& value)
 {
-    Debug3(LOG_TRIBES,GetID(),"Set Buffer(%s,%s)",bufferName.GetDataSafe(),value.GetDataSafe());
+    RDebug(this, 5, "Set Buffer(%s,%s)",bufferName.GetDataSafe(),value.GetDataSafe());
 
     tribeBuffer.PutUnique(bufferName,value);
 }

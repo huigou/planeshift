@@ -3048,7 +3048,26 @@ void NPCManager::DebugNPC(gemNPC* npc, Client* client, uint8_t debugLevel)
         Error1("NPCManager::DebugNPC put message in overrun state!\n");
     }
 
-    Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Debug Level perception for %s.\n", ShowID(npc->GetEID()));
+    Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added NPC Debug Level perception for %s.\n", ShowID(npc->GetEID()));
+}
+
+void NPCManager::DebugTribe(gemNPC* npc, Client* client, uint8_t debugLevel)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+sizeof(uint8));
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::PCPT_DEBUG_TRIBE);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add(client->GetClientNum());
+    outbound->msg->Add(debugLevel);
+
+    cmd_count++;
+
+    if(outbound->msg->overrun)
+    {
+        CS_ASSERT(!"NPCManager::DebugTribe put message in overrun state!\n");
+        Error1("NPCManager::DebugTribe put message in overrun state!\n");
+    }
+
+    Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Tribe Debug Level perception for %s.\n", ShowID(npc->GetEID()));
 }
 
 

@@ -832,6 +832,18 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 msgtext.AppendFmt("NPC: %s Client: %ul debugLevel: %d", ShowID(npc_eid), clientnum, debugLevel);
                 break;
             }
+            case psNPCCommandsMessage::PCPT_DEBUG_TRIBE:
+            {
+                msgtext.Append("PCPT_DEBUG_TRIBE: ");
+                
+                // Extract the data
+                EID npc_eid = EID(msg->GetUInt32());
+                uint32_t clientnum = msg->GetUInt32();
+                uint8_t debugLevel = msg->GetUInt8();
+                
+                msgtext.AppendFmt("NPC: %s Client: %ul debugLevel: %d", ShowID(npc_eid), clientnum, debugLevel);
+                break;
+            }
             case psNPCCommandsMessage::PCPT_GROUPATTACK:
             {
                 msgtext.Append("PCPT_GROUPATTACK: ");
