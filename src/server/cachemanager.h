@@ -655,19 +655,121 @@ protected:
 
     /// Cache in the crafting messages.
     bool PreloadCraftMessages();
-    bool DescribeTransformation(psTradeTransformations* t, csArray<CraftTransInfo*>* newArray);
-    bool DescribeMultiTransformation(csPDelArray<psTradeTransformations>* rArray, csArray<CraftTransInfo*>* newArray);
-    bool DescribeCombination(Result* combinations, csArray<CraftTransInfo*>* newArray);
+
+    /**
+     * Insert the itemID into an array, sorted according the the item's Name, no more than one time.
+     *
+     *  @param finalItems    The array of items
+     *  @param itemID        The ID number of the item to be inserted/sorted
+     */
+    bool UniqueInsertIntoItemArray(csArray<uint32>* finalItems, uint32 itemID);
+
+    /**
+     * Check if an int value is already in an array
+     * This is used primarily with the "stack" arrays that track progress through a network of data nodes,
+     * to determine if a node has already been visited.
+     *
+     * @param list    The array of ints
+     * @param id      The int value to be checked for
+     *
+     * @return        The number of matches found
+     */
     int Contains(csArray<uint32>* list, uint32 id);
-    bool loadTradeTransformationsByPatternAndGroup(Result* result, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash);
-    bool freeTradeTransformationsByPatternAndGroup(csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash);
+
+    /**
+     * Build the list of 'final' items.
+     * starting at any random node, recursively walk the data network until a 'final' looking node is encountered,
+     * then add it to the finalItems list.
+     *
+     * @param txItemHash    Hash on item ID to find result ID
+     * @param rxItemHash    Hash on result ID to find item ID
+     * @param finalItems    Array listing item numbers considered 'final'
+     * @param itemID        item under current considerations
+     * @param itemStack     List of items already visited; used for detecting cycles inthe data
+     *
+     * @return
+     */
     bool FindFinalItem(csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txItemHash, csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* rxItemHash, csArray<uint32>* finalItems, uint32 itemID, csArray<uint32>* itemStack);
+
+    /**
+     * From the list of final items, extract those that belong to the specified craft book
+     *
+     * @param txItemHash        Hash on item ID to find result ID
+     * @param rxItemHash        Hash on result ID to find item ID
+     * @param finalItems        Array listing item numbers considered 'final'
+     * @param craftBookItems    Array listing item numbers considered 'final'
+     * @param resultID          Item under current considerations
+     * @param patternID         pattern that specifies the craft Book
+     * @param itemStack         List of items already visited; used for detecting cycles inthe data
+     *
+     * @return                  true
+     */
     bool ReconcileFinalItems(csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txItemHash, csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* rxItemHash, csArray<uint32>* finalItems, csArray<uint32>* craftBookItems, uint32 resultID, uint32 patternID, csArray<uint32>* itemStack);
 
-    bool UniqueInsertIntoItemArray(csArray<uint32>* finalItems, uint32 itemID);
+    /**
+     *  load transformations into hashes for faster access.
+     * NOTE that these hashes are for use specifically in creating the Craft book messages and are cleaned up after.
+     *
+     * @param txResultHash   Hash on result ID to find item ID
+     * @param txItemHash     Hash on item ID to find result ID
+     * 
+     * @return               true
+     */
+    bool loadTradeTransformationsByPatternAndGroup(Result* result, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash);
+
+    /**
+     * dispose of transformation hashes for craft books.
+     *
+     * @param txResultHash   Hash on result ID to find item ID
+     * @param txItemHash     Hash on item ID to find result ID
+     *
+     * @return               true
+     */
+    bool freeTradeTransformationsByPatternAndGroup(csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash);
+
+    /**
+     * build the description of the trade transformation
+     *
+     * @param t          list of trade transformations to describe
+     * @param newArray   Array that holds the CraftTransInfo objects needed to construct the text
+     *
+     * @return           true
+     */
+    bool DescribeTransformation(psTradeTransformations* t, csArray<CraftTransInfo*>* newArray);
+
+    /**
+     * build the description of the trade transformation where multiple tools can be used to produce the same result. This is especially useful for enchanting gems.
+     *
+     * @param rArray     list of trade transformations with multiple tools for same transform
+     * @param newArray   Array that holds the CraftTransInfo objects needed to construct the text
+     *
+     * @return           true
+     */
+    bool DescribeMultiTransformation(csPDelArray<psTradeTransformations>* rArray, csArray<CraftTransInfo*>* newArray);
+
+    /**
+     * build the description of a trade combination
+     *
+     * @param combinations   list of components of a specific trade combination
+     * @param newArray       Array that holds the CraftTransInfo objects needed to construct the text
+     *
+     * @return           true
+     */
+    bool DescribeCombination(Result* combinations, csArray<CraftTransInfo*>* newArray);
+
+    /**
+     * main procedure constructing the recipe steps
+     *
+     * @param newArray       Array that holds the CraftTransInfo objects needed to construct the text
+     * @param txResultHash   Hash of trade transformations by result item
+     * @param finalItems     list of items identified as 'final'; these are used to construct the seperate recipes in a single book.
+     * @param itemID         which item to construct the recipe for
+     * @param patternID      which pattern id to construct the recipe for
+     * @param groupID        which group (ie craft book) to construct the recipe for
+     * @param itemStack      array that keeps track of items visited in the traversal of data; used to detect loops in the data.
+     *
+     */
     bool ListProductionSteps(csArray<CraftTransInfo*>* newArray, csHash<csHash<csPDelArray<psTradeTransformations>*, uint32> *,uint32>* txResultHash, csArray<uint32>* finalItems, uint32 itemID, uint32 patternID, uint32 groupID, csArray<uint32>* itemStack);
-
-
 
     /**
      * Caches in the crafting transforms.

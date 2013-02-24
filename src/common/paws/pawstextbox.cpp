@@ -2087,8 +2087,8 @@ void pawsMultiPageTextBox::OrganizeText(const char* newText)
                 char* p1 = NULL,
                       *p2 = NULL;
 
-                p1=strstr(dummy, "With higher ");
-                p2=strstr(dummy, "With Higher ");
+                p1=strstr(dummy, "   With higher ");
+                p2=strstr(dummy, "   With Higher ");
                 if(p1!=NULL || p2!=NULL)
                 {
                     greyedOut = 1;
@@ -2135,8 +2135,8 @@ void pawsMultiPageTextBox::OrganizeText(const char* newText)
             {
                 int p1,
                     p2;
-                p1=test.Find("With higher ");
-                p2=test.Find("With Higher ");
+                p1=test.Find("   With higher ");
+                p2=test.Find("   With Higher ");
                 if(p1==0 || p2==0)
                 {
                     greyedOut = 1;

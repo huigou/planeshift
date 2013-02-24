@@ -1567,14 +1567,11 @@ bool CacheManager::ReconcileFinalItems(csHash<csHash<csPDelArray<psTradeTransfor
     csPDelArray<psTradeTransformations>*                    rArray  = NULL;
     psTradeTransformations*                                 tx      = NULL;
 
-//printf( "DEBUG : ReconcileFinalItems : result ID %u, pattern %u\n", resultID, patternID );
-
     itemStack->Push(resultID);
     rHash = txResultHash->Get(resultID, NULL);
     if(!rHash)
     {
         //no records found matching this resultID...try combinations
-//printf( "DEBUG : ReconcileFinalItems : checking for combinations...\n" );
         csString        query;
 
         //query.Format("select * from trade_combinations where result_id=%d and pattern_id=%d", resultID, patternID);
@@ -1583,7 +1580,6 @@ bool CacheManager::ReconcileFinalItems(csHash<csHash<csPDelArray<psTradeTransfor
         if(!combinations.IsValid())
         {
             Error3("invalid return from \"select * from trade_combinations where result_id=%d and pattern_id=%d\"", resultID, patternID);
-//printf("DEBUG: ReconcileFinalItems : invalid return from \"select * from trade_combinations where result_id=%d and pattern_id=%d\"", resultID, patternID);
         }
         else if(combinations.Count()>0)
         {
@@ -1591,10 +1587,8 @@ bool CacheManager::ReconcileFinalItems(csHash<csHash<csPDelArray<psTradeTransfor
             {
                 if(Contains(finalItems, combinations[j].GetUInt32("item_id")))
                 {
-//printf( "DEBUG : ReconcileFinalItems : adding %d to craftBookItems...\n",combinations[j].GetUInt32( "item_id" ));
                     UniqueInsertIntoItemArray(craftBookItems, combinations[j].GetUInt32("item_id"));
                 }
-//printf( "DEBUG : ReconcileFinalItems : listing steps for component %d...\n",combinations[j].GetUInt32( "item_id" ));
                 ReconcileFinalItems(txItemHash, txResultHash, finalItems, craftBookItems, combinations[j].GetUInt32("item_id"), patternID, itemStack);
             }
         }
@@ -1613,7 +1607,6 @@ bool CacheManager::ReconcileFinalItems(csHash<csHash<csPDelArray<psTradeTransfor
             {
                 if(Contains(finalItems, Key))
                 {
-//printf( "DEBUG : ReconcileFinalItems : adding %d to craftBookItems...\n", Key);
                     UniqueInsertIntoItemArray(craftBookItems,  Key);
                 }
                 ReconcileFinalItems(txItemHash, txResultHash, finalItems, craftBookItems, Key, patternID, itemStack);
@@ -1770,6 +1763,7 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
                 craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
                 craftInfo->craftStepDescription.Append(".\n");
 
+                craftInfo->craftStepDescription.Insert( 0, "   " );
                 newArray->Push(craftInfo);
             }
         }
@@ -1780,10 +1774,102 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
 
 bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformations>* rArray, csArray<CraftTransInfo*>* newArray)
 {
-    psTradeTransformations*    t = rArray->Get(0);
+    //sort transformations by their processes skill requirements
+    csPDelArray<psTradeTransformations>* sortedArray = NULL;
+    for(int i=0; i<rArray->GetSize(); i++)
+    {
+        psTradeTransformations*    t = rArray->Get(i);
+        if(sortedArray==NULL)
+        {
+            sortedArray = new  csPDelArray<psTradeTransformations>;
+            sortedArray->Push(rArray->Get(i));
+        }
+        else
+        {
+
+            int j;
+            for(j=0; j<sortedArray->GetSize(); j++)
+            {
+                uint32      uprocessID = t->GetProcessId();
+                csArray<psTradeProcesses*>* uProcArray = GetTradeProcessesByID(uprocessID);
+
+                psTradeTransformations*    s = sortedArray->Get(j);
+                uint32      sprocessID = s->GetProcessId();
+                csArray<psTradeProcesses*>* sProcArray = GetTradeProcessesByID(sprocessID);
+
+                int uPri = uProcArray->Get(0)->GetPrimarySkillId();
+                int upLvl = uProcArray->Get(0)->GetMinPrimarySkill();
+                int sPri = sProcArray->Get(0)->GetPrimarySkillId();
+                int spLvl = sProcArray->Get(0)->GetMinPrimarySkill();
+
+                if(uPri < sPri)
+                {
+                    sortedArray->Insert(j, t);
+                    break;
+                }
+                else if(uPri==sPri)
+                {
+                    //if Primary skills are the same, consider primary skill levels
+                    if(upLvl < spLvl)
+                    {
+                        sortedArray->Insert(j, t);
+                        break;
+                    }
+                    else if(uPri==sPri)
+                    {
+                        //if Primary skills and levels are the same, consider secondary skills
+
+                        int uSec = uProcArray->Get(0)->GetSecondarySkillId();
+                        int usLvl = uProcArray->Get(0)->GetMinSecondarySkill();
+                        int sSec = sProcArray->Get(0)->GetSecondarySkillId();
+                        int ssLvl = sProcArray->Get(0)->GetMinSecondarySkill();
+
+                        if(uSec < sSec)
+                        {
+                            sortedArray->Insert(j, t);
+                            break;
+                        }
+                        else if(uPri==sPri)
+                        {
+                            //if Secondary skills are the same, consider Secondary skill levels
+                            if(usLvl < ssLvl)
+                            {
+                                sortedArray->Insert(j, t);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if(j==sortedArray->GetSize())
+            {
+                sortedArray->Push(rArray->Get(i));
+            }
+        }
+    }
+
+//printf( "----------\n" );
+//for( int i=0; i<sortedArray->GetSize(); i++ ) {
+//                psTradeTransformations*    s = sortedArray->Get(i);
+//                uint32      sprocessID = s->GetProcessId();
+//                csArray<psTradeProcesses*>* sProcArray = GetTradeProcessesByID(sprocessID);
+//
+//                int sPri = sProcArray->Get(0)->GetPrimarySkillId();
+//                int sSec = sProcArray->Get(0)->GetSecondarySkillId();
+//printf( "DEBUG: sortedArray( %d ) Primary = %d, Secondary = %d\n", i, sPri, sSec);
+//}
+//printf( "----------\n" );
+
+
+
+    psTradeTransformations*    t = sortedArray->Get(0);
     uint32      itemID = t->GetItemId();
     uint32      processID = t->GetProcessId();
     uint32      resultID = t->GetResultId();
+    uint32      lastPrimarySkillId;
+    uint32      lastPrimarySkillLvl;
+    uint32      lastSecondarySkillId;
+    uint32      lastSecondarySkillLvl;
 
     csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(processID);
     if(!procArray)
@@ -1796,47 +1882,100 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
     craftInfo = new CraftTransInfo;
 
     craftInfo->priSkillId = proc->GetPrimarySkillId();
+    lastPrimarySkillId = proc->GetPrimarySkillId();
+
     craftInfo->minPriSkill = proc->GetMinPrimarySkill();
+    lastPrimarySkillLvl = proc->GetMinPrimarySkill();
+
     craftInfo->secSkillId = proc->GetSecondarySkillId();
+    lastSecondarySkillId = proc->GetSecondarySkillId();
+
     craftInfo->minSecSkill = proc->GetMinSecondarySkill();
+    lastSecondarySkillLvl = proc->GetMinSecondarySkill();
+
     craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
 
-    for(int j=1; j<rArray->GetSize(); j++)
+    uint32 itemCounter=0;
+
+    for(int j=1; j<sortedArray->GetSize(); j++)
     {
-        psTradeTransformations*    u = rArray->Get(j);
+        printf("DEBUG : sortedArray(%d), itemcount = %d\n", j, itemCounter);
+        psTradeTransformations*    u = sortedArray->Get(j);
         csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(u->GetProcessId());
 
         for(int k=0; k<procArray->GetSize(); k++)
         {
+//printf( "DEBUG : sortedArray(%d), proc(%d), itemcount = %d\n", j, k, itemCounter );
             proc = procArray->Get(k);
-
             if(proc->GetEquipementId() != 0)
             {
+                if(proc->GetPrimarySkillId() != lastPrimarySkillId  ||
+                        proc->GetMinPrimarySkill() != lastPrimarySkillLvl ||
+                        proc->GetSecondarySkillId() != lastSecondarySkillId ||
+                        proc->GetMinSecondarySkill() != lastSecondarySkillLvl)
+                {
+                    craftInfo->craftStepDescription.Append(".\n");
+                    newArray->Push(craftInfo);
+
+                    craftInfo = new CraftTransInfo;
+
+                    craftInfo->priSkillId = proc->GetPrimarySkillId();
+                    lastPrimarySkillId = proc->GetPrimarySkillId();
+                    craftInfo->minPriSkill = proc->GetMinPrimarySkill();
+
+                    craftInfo->secSkillId = proc->GetSecondarySkillId();
+                    lastSecondarySkillId = proc->GetSecondarySkillId();
+                    craftInfo->minSecSkill = proc->GetMinSecondarySkill();
+
+                    craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
+//printf( "DEBUG : (1)craftStepDescription = %s\n", craftInfo->craftStepDescription.GetData() );
+                    //itemCounter=1;
+                    continue;
+                }
+                /*                else if( proc->GetSecondarySkillId() != lastSecondarySkillId )
+                                { //Primary is same but secondary is different
+
+                                    craftInfo->craftStepDescription.Append(".\n");
+                                    newArray->Push(craftInfo);
+
+                                    craftInfo = new CraftTransInfo;
+
+                                    craftInfo->priSkillId = proc->GetPrimarySkillId();
+                                    lastPrimarySkillId = proc->GetPrimarySkillId();
+                                    craftInfo->minPriSkill = proc->GetMinPrimarySkill();
+
+                                    craftInfo->secSkillId = proc->GetSecondarySkillId();
+                                    lastSecondarySkillId = proc->GetSecondarySkillId();
+                                    craftInfo->minSecSkill = proc->GetMinSecondarySkill();
+
+                                    craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
+                //printf( "DEBUG : (2)craftStepDescription = %s\n", craftInfo->craftStepDescription.GetData() );
+                                    //itemCounter=1;
+                                    continue;
+                                }
+                */
                 psItemStats* toolStats = GetBasicItemStatsByID(proc->GetEquipementId());
                 if(toolStats)
                 {
-                    if(j>0)
-                    {
-                        if(j==rArray->GetSize()-1)
-                        {
-                            craftInfo->craftStepDescription.Append(" or ");
-                        }
-                        else
-                        {
-                            craftInfo->craftStepDescription.Append(", ");
-                        }
-                    }
+                    //if(itemCounter>0)
+                    //{
+                    craftInfo->craftStepDescription.Append(", ");
+                    //}
                     craftInfo->craftStepDescription.Append(toolStats->GetName());
+//printf( "DEBUG : (3)craftStepDescription = %s\n", craftInfo->craftStepDescription.GetData() );
+                    itemCounter++;
                 }
             }
         }
     }
+    craftInfo->craftStepDescription.Insert( 0, "   " );
     craftInfo->craftStepDescription.Append(".\n");
     newArray->Push(craftInfo);
 
-
     return true;
 }
+
+
 
 bool CacheManager::DescribeCombination(Result* combinations, csArray<CraftTransInfo*>* newArray)
 {
@@ -1848,6 +1987,7 @@ bool CacheManager::DescribeCombination(Result* combinations, csArray<CraftTransI
     //note that the skill mins are not used for combinations, so set them all to 0
     craftInfo->priSkillId = craftInfo->minPriSkill = craftInfo->secSkillId = craftInfo->minSecSkill = 0;
 
+    craftInfo->craftStepDescription.Insert( 0, "   " );
     newArray->Push(craftInfo);
 
     return true;
@@ -1873,7 +2013,6 @@ bool CacheManager::ListProductionSteps(csArray<CraftTransInfo*>* newArray,
         //no records found matching this resultID...try combinations
         csString        query;
 
-        //query.Format("select * from trade_combinations where result_id=%d and pattern_id=%d", resultID, patternID);
         query.Format("select * from trade_combinations where result_id=%d", resultID);
         Result combinations(db->Select(query));
         if(!combinations.IsValid())
