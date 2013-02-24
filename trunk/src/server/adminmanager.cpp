@@ -11807,6 +11807,8 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
     // "quest change others" gives access to complete/discard other players' quests.
     const bool listOthers = psserver->CheckAccess(client, "quest list others", false);
     const bool changeOthers = psserver->CheckAccess(client, "quest change others", false);
+    const bool listVariables = psserver->CheckAccess(client, "variables list", false);
+    const bool modifyVariables = psserver->CheckAccess(client, "variables modify", false);
 
     if(data->subCmd == "complete")
     {
@@ -11920,9 +11922,9 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
     }
     else if(data->subCmd == "list variables")  //this command will list the quest variables for the player
     {
-        if(target != client && !listOthers) //the first part will evaluate as true if offline which is fine for us
+        if(!listVariables && !modifyVariables) 
         {
-            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to list other players' quest variables.");
+            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to list variables.");
             return;
         }
         
@@ -11942,7 +11944,7 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
                 {
                     result = "No variables defined.";
                 }
-                psserver->SendSystemInfo(me->clientnum, "Quest Variables:\n%s",result.GetDataSafe());
+                psserver->SendSystemInfo(me->clientnum, "Variables:\n%s",result.GetDataSafe());
             }
         }
         else
@@ -11953,9 +11955,9 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
     }
     else if(data->subCmd == "setvariable")  //this command will set a variable for the player
     {
-        if(target != client && !listOthers) //the first part will evaluate as true if offline which is fine for us
+        if(!modifyVariables) 
         {
-            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to set other players' variables.");
+            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to modify variables.");
             return;
         }
         
@@ -11975,9 +11977,9 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
     }
     else if(data->subCmd == "unsetvariable")  //this command will unset a variable for the player
     {
-        if(target != client && !listOthers) //the first part will evaluate as true if offline which is fine for us
+        if(!modifyVariables) 
         {
-            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to set other players' variables.");
+            psserver->SendSystemError(client->GetClientNum(), "You don't have permission to modify variables.");
             return;
         }
         

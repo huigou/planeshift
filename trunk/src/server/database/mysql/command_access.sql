@@ -70,6 +70,8 @@ INSERT INTO command_group_assignment VALUES( "/crystal", 30 );
 INSERT INTO command_group_assignment VALUES( "/key", 30 );
 INSERT INTO command_group_assignment VALUES( "full modify", 30 );
 INSERT INTO command_group_assignment VALUES( "spawn all", 30 );
+INSERT INTO command_group_assignment VALUES( "variables list", 30)
+INSERT INTO command_group_assignment VALUES( "variables modify", 30)
 
 # GM5 and above
 INSERT INTO command_group_assignment VALUES( "/disablequest", 30 );

@@ -1762,6 +1762,13 @@ UPDATE `tribe_members` SET `flags`='STATIC' where member_id='<for each static me
 INSERT INTO command_group_assignment VALUES( "/debugtribe", 30 );
 UPDATE `server_options` SET `option_value`='1270' WHERE `option_name`='db_version';
 
+#
+# Own access level for variables.
+#
+INSERT INTO command_group_assignment VALUES( "variables list", 30);
+INSERT INTO command_group_assignment VALUES( "variables modify", 30);
+UPDATE `server_options` SET `option_value`='1271' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
