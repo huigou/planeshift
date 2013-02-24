@@ -2806,6 +2806,13 @@ Kills something.</content>
 Changes the debug level of the selected npcs.</content>
       </Contents>
     </topic>
+    <topic name="/debugtribe">
+      <Contents>
+        <content type="text">/debugtribe [target/eid/pid/area/name] [&lt;debug level&gt;]
+
+Changes the debug level of the tribe for the selected npcs.</content>
+      </Contents>
+    </topic>
     <topic name="/deletechar">
       <Contents>
         <content type="text">/deletechar [character name] [petitioner name]
