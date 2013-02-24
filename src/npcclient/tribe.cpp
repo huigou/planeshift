@@ -1117,11 +1117,11 @@ void Tribe::DumpKnowledge()
 void Tribe::DumpRecipesToConsole()
 {
     CPrintf(CON_CMDOUTPUT, "Dumping recipe list for tribe %d\n", GetID());
-    CPrintf(CON_CMDOUTPUT, "+-------------------------------------------------+\n");
-    CPrintf(CON_CMDOUTPUT, "| No | ID | Name              |Pers|Prio|Wait|Step|\n");
-    CPrintf(CON_CMDOUTPUT, "+-------------------------------------------------+\n");
+    CPrintf(CON_CMDOUTPUT, "+------------------------------------------------------------+\n");
+    CPrintf(CON_CMDOUTPUT, "| No | ID | Name                         |Pers|Prio|Wait|Step|\n");
+    CPrintf(CON_CMDOUTPUT, "+------------------------------------------------------------+\n");
     tribalRecipe->DumpRecipeTree();
-    CPrintf(CON_CMDOUTPUT, "+-------------------------------------------------+\n");
+    CPrintf(CON_CMDOUTPUT, "+------------------------------------------------------------+\n");
     tribalRecipe->DumpRecipeTreeRecipes();
 
 }

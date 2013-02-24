@@ -213,7 +213,7 @@ bool RecipeTreeNode::ModifyWait(Recipe* theRecipe, int delta)
 
 void RecipeTreeNode::DumpRecipeTree(int index)
 {
-    CPrintf(CON_CMDOUTPUT, "|%4d|%4d|%19s|%4d|%4d|%4d|%4d|\n",
+    CPrintf(CON_CMDOUTPUT, "|%4d|%4d|%30s|%4d|%4d|%4d|%4d|\n",
             index,
             recipe->GetID(),
             recipe->GetName().GetData(),

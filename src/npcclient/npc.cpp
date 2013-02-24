@@ -141,7 +141,6 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     insideRegion = true; // We assume that we start inside the region, if it exists
     insideTribeHome = true; // We assume that we start inside tribe home.
     last_perception=NULL;
-    debugging=0;
     alive=false;
     tribe=NULL;
     raceInfo=NULL;
@@ -156,12 +155,6 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     this->world = world;
     this->cdsys = cdsys;
     this->bufferMemory = NULL;
-
-    for(int i = 0; i < 10; i++)
-    {
-        debugLog.Push(csString(""));
-    }
-    nextDebugLogEntry = 0;
 }
 
 NPC::~NPC()
@@ -401,7 +394,7 @@ void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name
     this->pid = pid;
     this->type = type->GetName();
     this->region_name = region_name;
-    this->debugging = debugging;
+    SetDebugging(debugging);
     this->disabled = disabled;
     this->brain = new NPCType(*type, this);
 }
@@ -470,11 +463,11 @@ bool NPC::Load(iResultRow &row, csHash<NPCType*, const char*> &npctypes, EventMa
     const char* d = row["console_debug"];
     if(d && *d=='Y')
     {
-        debugging = 5;
+        SetDebugging(5);
     }
     else
     {
-        debugging = 0;
+        SetDebugging(0);
     }
 
     const char* e = row["disabled"];
@@ -849,13 +842,8 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Position:             %s\n",npcActor?toString(loc,sector).GetDataSafe():"(none)");
     CPrintf(CON_CMDOUTPUT, "Rotation:             %.2f\n",rot);
     CPrintf(CON_CMDOUTPUT, "Instance:             %d\n",instance);
-    CPrintf(CON_CMDOUTPUT, "Debugging:            %d\n",debugging);
-    csString clients;
-    for(size_t i = 0; i < debugClients.GetSize(); i++)
-    {
-        clients.AppendFmt("  %u",debugClients[i]);
-    }
-    CPrintf(CON_CMDOUTPUT, "Debug clients:        %s\n",clients.GetDataSafe());
+    CPrintf(CON_CMDOUTPUT, "Debugging:            %d\n",GetDebugging());
+    CPrintf(CON_CMDOUTPUT, "Debug clients:        %s\n",GetRemoteDebugClientsString().GetDataSafe());
     CPrintf(CON_CMDOUTPUT, "DR Counter:           %d\n",DRcounter);
     CPrintf(CON_CMDOUTPUT, "Alive:                %s\n",alive?"True":"False");
     CPrintf(CON_CMDOUTPUT, "Disabled:             %s\n",disabled?"True":"False");
@@ -1246,42 +1234,16 @@ bool NPC::ContainAutoMemorizeType(const csString& type)
     return ( (!type.IsEmpty()) && ((autoMemorizeTypes.Get(0) == "all") || (autoMemorizeTypes.Find(type) != csArrayItemNotFound)));
 }
 
-
-void NPC::Printf(int debug, const char* msg,...)
+void NPC::LocalDebugReport(const csString& debugString)
 {
-    va_list args;
-
-    if(!IsDebugging())
-        return;
-
-    va_start(args, msg);
-    VPrintf(debug,msg,args);
-    va_end(args);
+    CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), debugString.GetDataSafe());
+}
+    
+void NPC::RemoteDebugReport(uint32_t clientNum, const csString& debugString)
+{
+   networkmanager->QueueSystemInfoCommand(clientNum,"%s (%s)> %s", GetName(), ShowID(pid), debugString.GetDataSafe()); 
 }
 
-void NPC::VPrintf(int debug, const char* msg, va_list args)
-{
-    char str[1024];
-
-    if(!IsDebugging())
-        return;
-
-    vsprintf(str, msg, args);
-
-    // Add string to the internal log buffer
-    debugLog[nextDebugLogEntry] = str;
-    nextDebugLogEntry = (nextDebugLogEntry+1)%debugLog.GetSize();
-
-    if(!IsDebugging(debug))
-        return;
-
-    CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), str);
-
-    for(size_t i = 0; i < debugClients.GetSize(); i++)
-    {
-        networkmanager->QueueSystemInfoCommand(debugClients[i],"%s (%s)> %s", GetName(), ShowID(pid), str);
-    }
-}
 
 gemNPCObject* NPC::GetTarget()
 {
@@ -1815,29 +1777,6 @@ void NPC::ReplaceLocations(csString &result)
         startPos = result.Find("$LOCATION[");
     }
 }
-
-bool NPC::SwitchDebugging()
-{
-    debugging = !debugging;
-    return IsDebugging();
-}
-
-void NPC::SetDebugging(int debug)
-{
-    debugging = debug;
-}
-
-void NPC::AddDebugClient(uint clientnum)
-{
-    debugClients.PushSmart(clientnum);
-}
-
-void NPC::RemoveDebugClient(uint clientnum)
-{
-    debugClients.Delete(clientnum);
-}
-
-
 
 //-----------------------------------------------------------------------------
 

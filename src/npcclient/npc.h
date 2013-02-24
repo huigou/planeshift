@@ -31,6 +31,7 @@ struct iMovable;
 
 #include "util/psutil.h"
 #include "util/gameevent.h"
+#include "util/remotedebug.h"
 
 //=============================================================================
 // Local Includes
@@ -70,9 +71,9 @@ struct RaceInfo_t;
     { if (npc->IsDebugging()) { npc->Printf(debug, __VA_ARGS__); }}
 
 /**
-* This object represents the entities which have attacked or
-* hurt the NPC and prioritizes them.
-*/
+ * This object represents the entities which have attacked or
+ * hurt the NPC and prioritizes them.
+ */
 class HateList
 {
 protected:
@@ -176,7 +177,7 @@ private:
 /**
 * This object represents each NPC managed by this superclient.
 */
-class NPC : private ScopedTimerCB, public iScriptableVar
+class NPC : private ScopedTimerCB, public iScriptableVar, public RemoteDebug
 {
 public:
     /**
@@ -236,7 +237,6 @@ protected:
     LocationType*      region;               ///< Cached pointer to the region
     bool               insideRegion;         ///< State variable for inside outside region checks.
     Perception*        last_perception;
-    int                debugging;            ///< The current debugging level for this npc
     bool               alive;
     EID                owner_id;
     EID                target_id;
@@ -540,32 +540,6 @@ protected:
      */
     void ReplaceLocations(csString &result);
 
-    /**
-     * Switch the debuging state of this NPC.
-     */
-    bool SwitchDebugging();
-
-    /**
-     * Set a new debug level for this NPC.
-     *
-     * @param debug New debug level, 0 is no debugging
-     */
-    void SetDebugging(int debug);
-
-    /**
-     * Add a client to receive debug information
-     *
-     * @param clientnum The client to add.
-     */
-    void AddDebugClient(uint clientnum);
-
-    /**
-     * Remove client from list of debug receivers.
-     *
-     * @param clientnum The client to remove.
-     */
-    void RemoveDebugClient(uint clientnum);
-
     float GetAngularVelocity();
     float GetVelocity();
     float GetWalkVelocity();
@@ -654,13 +628,17 @@ protected:
      */
     bool ContainAutoMemorizeType(const csString& type);
 
-    /**
-     * Use the NPCDebug(npc, debug, ...) macro instead of calling this function directly.
-     */
-    void Printf(int debug, const char* msg,...);
  private:
-    void VPrintf(int debug, const char* msg,va_list arg);
-
+    /**
+     * Callback function to report local debug.
+     */
+    virtual void LocalDebugReport(const csString& debugString);
+    
+    /**
+     * Callback function to report remote debug.
+     */
+    virtual void RemoteDebugReport(uint32_t clientNum, const csString& debugString);
+    
  public:
     gemNPCObject* GetTarget();
     void SetTarget(gemNPCObject* t);
@@ -859,24 +837,6 @@ protected:
     void UpdateControlled();
 
     /**
-     * Check if this NPC has enabled any debugging.
-     */
-    inline bool IsDebugging()
-    {
-        return (debugging > 0);
-    };
-
-    /**
-     * Check if this NPC is debugging at the given level.
-     *
-     * @param debug The debug level.
-     */
-    bool IsDebugging(int debug)
-    {
-        return (debugging > 0 && debug <= debugging);
-    };
-
-    /**
      * 
      */
     void CheckPosition();
@@ -995,9 +955,6 @@ private:
 
     friend class psNPCTick;
 
-    csArray<csString> debugLog;          ///< Local debug log of last n print statments for this NPC.
-    int               nextDebugLogEntry; ///< The next entry to use.
-    csArray<uint>     debugClients;      ///< List of clients doing debugging
 };
 
 /** The event that makes the NPC brain go TICK.
