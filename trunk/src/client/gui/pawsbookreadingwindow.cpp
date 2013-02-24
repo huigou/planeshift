@@ -171,8 +171,8 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
 
             psMsgCraftingInfo mesg(me);
             csString text(mesg.craftInfo);
-            text.ReplaceAll( "[[", "With Higher " );
-            text.ReplaceAll( "]]", " skill you could: " );
+            text.ReplaceAll( "[[", "   With Higher " );
+            text.ReplaceAll( "]]   ", " skill you could: " );
 
             if(text && descriptionCraft && descriptionCraftRight)
             {
@@ -192,7 +192,7 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
 
                 usingCraft = true;
             }
-            name->SetText("You discover you can do the following:");
+            //name->SetText("You discover you can do the following:");
             break;
         }
     }
