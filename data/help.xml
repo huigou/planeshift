@@ -3376,9 +3376,10 @@ Use /rain sector 0 0 0 or /rain sector off for ending the event. </content>
     </topic>
     <topic name="/reload">
       <Contents>
-        <content type="text">/reload item
+        <content type="text">/reload [item|serveroptions|mathscript|path|locations]
 
-Reloads the currently targeted item from the database.</content>
+Reloads enties from the database. Item reload the currently targeted item from the database. For serveroptions, mathscript, path, and locations 
+all data is reloaded.</content>
       </Contents>
     </topic>
     <topic name="/runscript">
