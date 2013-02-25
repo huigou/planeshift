@@ -1804,6 +1804,9 @@
 				RelativePath="..\..\src\common\util\psxmlparser.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\common\util\remotedebug.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\common\util\serverconsole.cpp">
 			</File>
 			<File
@@ -1923,6 +1926,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\psxmlparser.h">
+			</File>
+			<File
+				RelativePath="..\..\src\common\util\remotedebug.h">
 			</File>
 			<File
 				RelativePath="..\..\src\common\util\scriptvar.h">
