@@ -8549,6 +8549,13 @@ void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
 {
     AdminCmdDataKillNPC* data = dynamic_cast<AdminCmdDataKillNPC*>(cmddata);
 
+    if (data->targetObject && data->targetObject->GetClientID())
+    {
+        psserver->SendSystemError(me->clientnum, "You can not kill a Player with this command!");
+        return;
+    }
+    
+
     gemNPC* target = dynamic_cast<gemNPC*>(data->targetObject);
     if(target && target->GetClientID() == 0)
     {
