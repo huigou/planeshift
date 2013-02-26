@@ -998,19 +998,30 @@ bool pawsMessageTextBox::OnKeyDown(utf32_char keyCode, utf32_char key, int modif
 {
     //this function handles if the user uses the page up or down buttons on this text box
     //and scroll of exactly the size of lines which is shown in the textbox
-    if(keyCode == CSKEY_PGUP) //go up
+    switch (key)
     {
-        if(scrollBar)
-            scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() - maxLines); //maxLines is updated on resize
-        return true;
+    case CSKEY_PGUP: //go up
+        {
+            if(scrollBar)
+            {
+                scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() - maxLines); //maxLines is updated on resize
+            }
+            break;
+        }
+    case CSKEY_PGDN: //go down
+        {
+            if(scrollBar)
+            {
+                scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() + maxLines); //maxLines is updated on resize
+            }
+            break;
+        }
+    default:
+        {
+            return pawsWidget::OnKeyDown(keyCode, key, modifiers);
+        }
     }
-    else if(keyCode == CSKEY_PGDN) //go down
-    {
-        if(scrollBar)
-            scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() + maxLines); //maxLines is updated on resize
-        return true;
-    }
-    return pawsWidget::OnKeyDown(keyCode, key, modifiers);
+    return true;
 }
 
 
@@ -3154,3 +3165,4 @@ void pawsMultiPageDocumentView::SetText(const char* newtext)
     startLine = 0;
     text.Replace(str.GetData());
 }
+
