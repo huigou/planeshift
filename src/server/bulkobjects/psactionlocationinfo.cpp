@@ -134,7 +134,7 @@ bool psActionLocation::Load(iResultRow& row)
     float z = row.GetFloat( "pos_z" );
     position = csVector3( x, y, z );
 	
-	pos_instance = row.GetUInt32("pos_instance");
+    pos_instance = row.GetUInt32("pos_instance");
 	
     if ( !master_id )
     {
@@ -144,7 +144,7 @@ bool psActionLocation::Load(iResultRow& row)
     }
     else
     {
-        responsetype = row[ "master_triggertype" ];
+        triggertype = row[ "master_triggertype" ];
         responsetype = row[ "master_responsetype" ];
         response = row[ "master_response" ];
     }
