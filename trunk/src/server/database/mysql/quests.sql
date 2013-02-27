@@ -19,9 +19,9 @@
 -- Table structure for table `quests`
 --
 
-DROP TABLE IF EXISTS `quests`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+DROP TABLE IF EXISTS `quests`;
 CREATE TABLE `quests` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(40) NOT NULL DEFAULT '',

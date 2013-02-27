@@ -14,12 +14,12 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0*/;
 
 
-DROP TABLE IF EXISTS `quest_scripts`;
 
 #
 # Table structure for table 'quest_scripts'
 #
 
+DROP TABLE IF EXISTS `quest_scripts`;
 CREATE TABLE `quest_scripts` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quest_id` int(10) NOT NULL default '0' COMMENT 'FK to quests table, or -1 for KA scripts.',

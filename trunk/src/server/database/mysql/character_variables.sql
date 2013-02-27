@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS `character_variables` (
+DROP TABLE IF EXISTS `character_variables`;
+CREATE TABLE `character_variables` (
   `character_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'The character this variable is assigned to',
   `name` varchar(255) NOT NULL COMMENT 'The name of the variable',
   `value` varchar(255) NOT NULL COMMENT 'The value of the variable',
