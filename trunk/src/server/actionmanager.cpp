@@ -807,9 +807,13 @@ bool ActionManager::RepopulateActionLocations(psSectorInfo* sectorinfo)
     csString query;
 
     if(sectorinfo)
+    {
         query.Format("SELECT al.*, master.triggertype master_triggertype, master.responsetype master_responsetype, master.response master_response FROM action_locations al LEFT OUTER JOIN action_locations master ON al.master_id = master.id WHERE al.sectorname='%s'", sectorinfo->name.GetData());
+    }
     else
+    {
         query = "SELECT al.*, master.triggertype master_triggertype, master.responsetype master_responsetype, master.response master_response FROM action_locations al LEFT OUTER JOIN action_locations master ON al.master_id = master.id";
+    }
 
     Result result(db->Select(query));
 
