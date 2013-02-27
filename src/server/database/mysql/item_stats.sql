@@ -19,9 +19,9 @@
 -- Table structure for table `item_stats`
 --
 
-DROP TABLE IF EXISTS `item_stats`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
+DROP TABLE IF EXISTS `item_stats`;
 CREATE TABLE `item_stats` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `stat_type` char(1) NOT NULL DEFAULT 'B',
