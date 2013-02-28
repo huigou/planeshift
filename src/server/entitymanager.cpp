@@ -1101,8 +1101,7 @@ void EntityManager::HandleUserAction(MsgEntry* me, Client *client)
 
     if (action == "select" || action == "context")
     {
-        if (object != NULL)
-            object->SendTargetStatDR(client);
+        object->SendTargetStatDR(client);
     }
 
     Debug4(LOG_USER,client->GetClientNum(), "User Action: %s %s %s",client->GetName(),

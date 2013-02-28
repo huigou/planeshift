@@ -100,6 +100,17 @@ public:
 
     void ViewItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
 
+    /**
+     * Check if trading is allowed.
+     *
+     * Will return true if trading is allowed. Returning a reasion in the errorMessage if a pointer is given.
+     *
+     */
+    static bool TradingCheck(Client * client, gemObject * target, csString * errorMessage = NULL);
+
+    /**
+     * Start trading.
+     */
     void BeginTrading(Client * client, gemObject * target, const csString & type);
     
     /** Handles a storing beginning.

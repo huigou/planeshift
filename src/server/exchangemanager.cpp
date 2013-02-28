@@ -1361,52 +1361,98 @@ ExchangeManager::~ExchangeManager()
 {
     //do nothing
 }
-void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool automaticExchange )
+
+bool ExchangeManager::ExchangeCheck(Client * client, gemObject * target, csString * errorMessage)
 {
-    // Make sure we are in a peaceful mode before trading
-    if ( client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE && client->GetActor()->GetMode() != PSCHARACTER_MODE_SIT && client->GetActor()->GetMode() != PSCHARACTER_MODE_OVERWEIGHT )
+    PSCHARACTER_MODE mode = client->GetActor()->GetMode();
+
+    if ( mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_SIT && mode != PSCHARACTER_MODE_OVERWEIGHT )
     {
-        csString err;
-        err.Format("You can't trade while %s.", client->GetActor()->GetModeStr());
-        psserver->SendSystemInfo(client->GetClientNum(), err);
-        return;
+        if (errorMessage)
+        {
+            errorMessage->Format("You can't trade while %s.", client->GetActor()->GetModeStr());
+        }
+        return false;
     }
 
     //don't allow frozen clients to drain all their possessions to an alt before punishment
     if(client->GetActor()->IsFrozen())
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "You can't trade while being frozen by a GM");
-        return;
+        if (errorMessage)
+        {
+            *errorMessage = "You can't trade while being frozen by a GM";
+        }
+        return false;
     }
 
     if ( client->GetExchangeID() )
     {
-        psserver->SendSystemError(client->GetClientNum(), "You are already busy with another trade" );
-        return;
+        if (errorMessage)
+        {
+            *errorMessage = "You are already busy with another trade" ;
+        }
+        return false;
     }
-
-    Client * targetClient = 0;
-    gemObject * target;
-
-    target = client->GetTargetObject();
 
     if (!target->IsAlive())
     {
-        psserver->SendSystemError(client->GetClientNum(), "Cannot give items to dead things!");
-        return;
+        if (errorMessage)
+        {
+            *errorMessage = "Cannot give items to dead things!";
+        }
+        return false;
     }
 
     // Check to make sure that the client or target are not busy with a merchant first.
     if ( target->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING )
     {
-        psserver->SendSystemError(client->GetClientNum(), "%s is busy at the moment", target->GetName());
-        return;
+        if (errorMessage)
+        {
+            errorMessage->Format("%s is busy at the moment", target->GetName());
+        }
+        return false;
     }
     if ( client->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING )
     {
-        psserver->SendSystemError(client->GetClientNum(), "You are busy with a merchant", target->GetName());
+        if (errorMessage)
+        {
+            errorMessage->Format("You are busy with a merchant");
+        }
+        return false;
+    }
+
+
+    return true;
+}
+
+
+void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool automaticExchange )
+{
+    gemObject* target = client->GetTargetObject();
+
+    ///////////
+    // Check preconditions for traiding.
+    // Range check is outside TradingCheck to prevent dublicate range checks in gemNPC::SendBehaviorMessage
+
+    // Check within select range
+    if( client->GetActor()->RangeTo(target) > RANGE_TO_SELECT )
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), "You are not in range to %s with %s.", withPlayer?"exchange":"give", target->GetName());
         return;
     }
+
+    // Check all other preconditions
+    csString errorMessage;
+    if (!ExchangeCheck(client, client->GetTargetObject(),&errorMessage))
+    {
+        psserver->SendSystemInfo(client->GetClientNum(), errorMessage);
+        return;
+    }
+    //TODO: Move more of the checks bellow into the ExchangeCheck!!!!
+
+    // End of preconditons
+    ///////////
+        
 
     // if the command was "/give":
     if (!withPlayer)
@@ -1417,13 +1463,6 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
             return;
         }
 
-        // Check range
-        if( client->GetActor()->RangeTo(target) > RANGE_TO_SELECT )
-        {
-            psserver->SendSystemError(client->GetClientNum(), "%s is too far away to trade.",
-                                      target->GetName());
-            return;
-        }
 
         Exchange* exchange = new PlayerToNPCExchange(client, target, automaticExchange, this);
         client->SetExchangeID( exchange->GetID() );
@@ -1439,7 +1478,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
             return;
         }
 
-        targetClient = clients->FindPlayer(target->GetPID());
+        Client * targetClient = target->GetClient();
         if (targetClient == NULL)
         {
             psserver->SendSystemError(client->GetClientNum(), "Cannot find your target!");
@@ -1461,14 +1500,6 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
         if ( targetClient->GetExchangeID() )
         {
             psserver->SendSystemError(client->GetClientNum(), "%s is busy with another trade", targetClient->GetName() );
-            return;
-        }
-
-        // Check range
-        if(client->GetActor()->RangeTo(targetClient->GetActor()) > RANGE_TO_SELECT)
-        {
-            psserver->SendSystemError(client->GetClientNum(), "%s is too far away to trade.",
-                                      targetClient->GetActor()->GetName());
             return;
         }
 

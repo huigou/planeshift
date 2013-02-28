@@ -405,6 +405,8 @@ public:
     ExchangeManager(ClientConnectionSet *pCCS);
     virtual ~ExchangeManager();
 
+    static bool ExchangeCheck(Client * client, gemObject * target, csString * errorMessage = NULL);
+    
     void StartExchange( Client* client, bool withPlayer, bool automaticExchange = false );
 
     void HandleExchangeRequest(MsgEntry *me,Client *client);

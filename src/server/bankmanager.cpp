@@ -681,6 +681,7 @@ void BankManager::HandleBanking( MsgEntry *me, Client *client )
     if (!msg.valid)
     {
         Debug2(LOG_NET,me->clientnum,"Received unparsable psGUIBankingMessage from client %u.\n", me->clientnum);
+        return;
     }
     // Check we're still near the banker.
     gemObject *banker = NULL;
