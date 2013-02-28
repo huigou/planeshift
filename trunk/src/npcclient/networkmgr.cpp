@@ -893,6 +893,13 @@ bool NetworkManager::HandleMapList(MsgEntry* msg)
 {
     psMapListMessage list(msg);
     CPrintf(CON_CMDOUTPUT,"\n");
+
+    if (list.map.GetSize() == 0)
+    {
+        CPrintf(CON_ERROR, "NO maps to load\n");
+        exit(1);
+    }
+
     for(size_t i=0; i<list.map.GetSize(); i++)
     {
         CPrintf(CON_CMDOUTPUT,"Loading world '%s'\n",list.map[i].GetDataSafe());
@@ -908,7 +915,9 @@ bool NetworkManager::HandleMapList(MsgEntry* msg)
 
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(npcclient->GetObjectReg());
     while(loader->GetLoadingCount() != 0)
+    {
         loader->ContinueLoading(true);
+    }
 
     // @@@ RlyDontKnow: Path Networks have to be loaded *after*
     // all required maps are loaded. Else sector Transformations
