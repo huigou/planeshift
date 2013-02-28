@@ -1859,6 +1859,8 @@ csString psGUIInteractMessage::ToString(NetBase::AccessPointers * /*accessPointe
     if (options & psGUIInteractMessage::GENERIC)
         msgtext.Append(" GENERIC");
 
+    msgtext.AppendFmt(" Command: '%s'",genericCommand.GetDataSafe());
+
     return msgtext;
 }
 
