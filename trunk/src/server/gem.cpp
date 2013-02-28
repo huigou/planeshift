@@ -4704,8 +4704,8 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
     }
     else if ( msg_id == "context" )
     {
-        // If the player is in range of the item.
-        if ( RangeTo(actor) < RANGE_TO_SELECT && actor->IsAlive() )
+        // If the player is in range of the item and if player is alive.
+        if ( RangeTo(actor) <= RANGE_TO_SELECT && actor->IsAlive() )
         {
             int options = 0;
 
@@ -4759,38 +4759,51 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
 
                 // Loot a dead character
                 if (!IsAlive())
+                {
                     options |= psGUIInteractMessage::LOOT;
+                }
 
                 // If we are in a peaceful mode we can possibly do some trading.
-                if (actor->GetMode() == PSCHARACTER_MODE_PEACE)
+                if (ExchangeManager::ExchangeCheck(actor->GetClient(), this))
                 {
-                    options |= psGUIInteractMessage::GIVE;
-
-                    // Trade with a merchant
-                    if (psChar->IsMerchant() && IsAlive())
-                        options |= psGUIInteractMessage::BUYSELL;
-
-                    // Bank with a banker
-                    if(psChar->IsBanker() && IsAlive())
-                        options |= psGUIInteractMessage::BANK;
-
-                    // Train with a trainer
-                    if (psChar->IsTrainer() && IsAlive())
-                        options |= psGUIInteractMessage::TRAIN;
-
+                    options |= psGUIInteractMessage::GIVE; // Exchange
+                }
+                
+                // Bank with a banker
+                if((actor->GetMode() == PSCHARACTER_MODE_PEACE) && psChar->IsBanker() && IsAlive())
+                {
+                    options |= psGUIInteractMessage::BANK;
+                }
+                
+                // Trade with a merchant
+                if (ServerCharManager::TradingCheck(actor->GetClient(), this))
+                {
+                    options |= psGUIInteractMessage::BUYSELL; // Traide
+                }
+                
+                // If we are in a peaceful mode we can possibly do some training.
+                if ((actor->GetMode() == PSCHARACTER_MODE_PEACE) && psChar->IsTrainer() && IsAlive())
+                {
+                    options |= psGUIInteractMessage::TRAIN;
                 }
 
                 // If we are alive then we can talk with an NPC
                 if (IsAlive())
+                {
                     options |= psGUIInteractMessage::NPCTALK;
+                }
 
                 // Can we attack this NPC?
                 csString msg; // Not used
                 if (IsAlive() && actor && actor->IsAllowedToAttack(this,msg))
+                {
                     options |= psGUIInteractMessage::ATTACK;
+                }
                     
                 if(IsAlive() && psChar->IsStorage())
+                {
                     options |= psGUIInteractMessage::STORAGE;
+                }
             }
 
             // Check if there is something to send

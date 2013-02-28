@@ -558,53 +558,90 @@ bool ServerCharManager::HasConnected( csString name )
     return true;
 }
 
-void ServerCharManager::BeginTrading(Client * client, gemObject * target, const csString & type)
+bool ServerCharManager::TradingCheck(Client * client, gemObject * target, csString * errorMessage)
 {
-    psCharacter * merchant = NULL;
-    int clientnum = client->GetClientNum();
-    psCharacter* character = client->GetCharacterData();
+    psCharacter * merchant = target->GetCharacterData();
     PSCHARACTER_MODE mode = client->GetActor()->GetMode();
 
     // Make sure that we are not busy with something else
-    if (mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_SIT && mode != PSCHARACTER_MODE_OVERWEIGHT
-        && mode != PSCHARACTER_MODE_EXHAUSTED)
+    if ((mode != PSCHARACTER_MODE_PEACE) && (mode != PSCHARACTER_MODE_SIT) && (mode != PSCHARACTER_MODE_OVERWEIGHT)
+        && mode != (PSCHARACTER_MODE_EXHAUSTED))
     {
-        psserver->SendSystemError(client->GetClientNum(), "You cannot trade because you are already busy.");
-        return;
+        if (errorMessage)
+        {
+            *errorMessage = "You cannot trade because you are already busy.";
+        }
+        return false;
     }
 
     if ( client->GetExchangeID() )
     {
-        psserver->SendSystemError(client->GetClientNum(), "You are already busy with another trade" );
-        return;
+        if (errorMessage)
+        {
+            *errorMessage = "You are already busy with another trade.";
+        }
+        return false;
     }
 
-    merchant = target->GetCharacterData();
     if(!merchant)
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "Merchant not found.");
-        return;
-    }
-
-    if (client->GetActor()->RangeTo(target) > RANGE_TO_SELECT)
-    {
-        psserver->SendSystemInfo(client->GetClientNum(), "You are not in range to trade with %s.",merchant->GetCharName());
-        return;
+        if (errorMessage)
+        {
+            *errorMessage = "Merchant not found.";
+        }
+        return false;
     }
 
     if (!target->IsAlive())
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "Can't trade with a dead merchant.");
-        return;
+        if (errorMessage)
+        {
+            *errorMessage = "Can't trade with a dead merchant.";
+        }
+        return false;
     }
 
     if (!merchant->IsMerchant())
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "%s isn't a merchant.",merchant->GetCharName());
+        if (errorMessage)
+        {
+            errorMessage->AppendFmt("%s isn't a merchant.", merchant->GetCharName());
+        }
+        return false;
+    }
+
+    return true;
+}
+
+
+void ServerCharManager::BeginTrading(Client * client, gemObject * target, const csString & type)
+{
+    psCharacter * merchant = target->GetCharacterData();
+    int clientnum = client->GetClientNum();
+    psCharacter* character = client->GetCharacterData();
+
+    ///////////
+    // Check preconditions for traiding.
+    // Range check is outside TradingCheck to prevent dublicate range checks in gemNPC::SendBehaviorMessage
+
+    // Check within select range
+    if (client->GetActor()->RangeTo(target) > RANGE_TO_SELECT)
+    {
+        psserver->SendSystemInfo(clientnum, "You are not in range to trade with %s.", merchant->GetCharName());
         return;
     }
 
-    psserver->SendSystemInfo(client->GetClientNum(), "You started trading with %s.",merchant->GetCharName());
+    // Check all other preconditions
+    csString errorMessage;
+    if (!TradingCheck(client, target, &errorMessage))
+    {
+        psserver->SendSystemInfo(clientnum, errorMessage );
+        return;
+    }
+    // End of preconditons
+    ///////////
+
+    psserver->SendSystemInfo(clientnum, "You started trading with %s.",merchant->GetCharName());
 
     if (type == "SELL")
     {
