@@ -2850,7 +2850,9 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
     {
         // for now, if the actor is on a mount, he's dropped off it
         if(GetMount())
+        {
             entityManager->RemoveRideRelation(this);
+        }
 
         // If no explicit killer, look for the last person to cast a DoT spell.
         if (!attacker && dmgHistory.GetSize() > 0)
@@ -2881,6 +2883,8 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
                 psserver->SendSystemError(GetClientID(), "You've been slain by %s!", attacker->GetName());
                 GetClient()->AnnounceToDuelClients(attacker, "slain");
             }
+
+            StopMoving(true);
 
             SetMode(PSCHARACTER_MODE_DEAD);
         }
