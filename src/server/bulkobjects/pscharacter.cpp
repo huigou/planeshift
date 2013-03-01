@@ -696,6 +696,7 @@ bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
 
 bool psCharacter::LoadRelationshipInfo(PID pid)
 {
+    // To reduce number of queries load all releationships types and sorte them out in the later load functions.
     Result has_a(db->Select("SELECT a.*, b.name AS \"buddy_name\" FROM character_relationships a, characters b WHERE a.character_id = %u AND a.related_id = b.id order by a.character_id", pid.Unbox()));
     Result of_a(db->Select("SELECT a.*, b.name AS \"buddy_name\" FROM character_relationships a, characters b WHERE a.related_id = %u AND a.character_id = b.id order by a.related_id", pid.Unbox()));
 

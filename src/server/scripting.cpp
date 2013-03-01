@@ -2630,7 +2630,7 @@ protected:
 class CreateFamiliarOp : public Imperative1
 {
 public:
-	CreateFamiliarOp(EntityManager* entitymanager) { entityManager = entitymanager; }
+    CreateFamiliarOp(EntityManager* entitymanager) { entityManager = entitymanager; }
     virtual ~CreateFamiliarOp() { }
 
     bool Load(iDocumentNode* node)

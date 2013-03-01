@@ -1935,7 +1935,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
 
     WordArray words(msg.options);
 
-    // Operator did give a name, lets see if we find the named pet
+    // Operator did give a name, lets see if we find the named pet.
     if(msg.target.Length() != 0 && familiarID == 0)
     {
         size_t numPets = owner->GetNumPets();
