@@ -140,7 +140,8 @@ private:
     int fifths;                        ///< The tonality of the song.
     csString beats;                    ///< Numerator of the song's meter.
     csString beatType;                 ///< Denominator of the song's meter.
-    uint tempo;                        ///< Beats per seconds of the song.
+    uint tempo;                        ///< BPM suggested on the score.
+    uint playedTempo;                  ///< BPM when playing the song.
 
     SheetLine* linesHead;              ///< All the lines of the sheet.
     Measure* measuresHead;             ///< All the measures of the sheet.
@@ -226,9 +227,11 @@ private:
     /**
      * Converts the musical sheet into an XML document.
      *
+     * @param usePlayedTempo true if the XML score should contain the
+     * played tempo instead of the one suggested on the sheet.
      * @return the XML document.
      */
-    csString ToXML();
+    csString ToXML(bool usePlayedTempo);
 
     /**
      * Returns the index-th SheetLine.
@@ -340,6 +343,11 @@ private:
      * Creates a prompt window where the user can change the tempo.
      */
     void ChangeBPM();
+
+    /**
+     * Creates a prompt window where the user can set the played tempo.
+     */
+    void SetPlayedBPM();
 
     /**
      * Changes the selected note duration according to the selected duration buttons.

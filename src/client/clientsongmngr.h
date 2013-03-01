@@ -127,11 +127,10 @@ private:
      *
      * @param musicalSheet the musical sheet into XML format.
      * @param instrName the name of the instrument used to play.
-     * @param minimumDuration the minimum duration that the player is able to play..
      * @param playerPos the position of the player.
      * @return the song handle's ID.
      */
-    uint PlaySong(const char* musicalSheet, const char* instrName, float minimumDuration, csVector3 playerPos);
+    uint PlaySong(const char* musicalSheet, const char* instrName, csVector3 playerPos);
 
     /**
      * Stops the song with the given ID.

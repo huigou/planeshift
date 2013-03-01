@@ -5177,13 +5177,12 @@ public:
      * @param client the client's ID.
      * @param songID the song's ID.
      * @param toPlayer true if this message is directed to the player that plays the song.
-     * @param minimumDuration the minimum duration that the player is able to play.
      * @param instrName the name of the used instrument.
      * @param scoreSize the length of the musical score
      * @param musicalScore the musical sheet to play.
      */
     psPlaySongMessage(uint32_t client, uint32_t songID, bool toPlayer,
-                      float minimumDuration, const char* instrName, uint32_t scoreSize, const char* musicalScore);
+                      const char* instrName, uint32_t scoreSize, const char* musicalScore);
 
     /**
      * Constructor from a MsgEntry.
@@ -5203,14 +5202,14 @@ public:
 
     uint32_t songID;
     bool toPlayer;
-    float minimumDuration;
     csString instrName;
     csString musicalScore;
 };
 
 
 /**
- * This message is used to stop a song.
+ * This message is used by both server and client to stop a song. It can also
+ * be used by the server to report an error.
  */
 class psStopSongMessage: public psMessageCracker
 {
@@ -5220,8 +5219,7 @@ public:
     {
         NO_SONG_ERROR = 1,
         ILLEGAL_SCORE,
-        NO_INSTRUMENT,
-        LOW_SKILL
+        NO_INSTRUMENT
     };
 
     /**

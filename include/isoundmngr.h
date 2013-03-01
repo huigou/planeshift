@@ -341,13 +341,12 @@ struct iSoundManager: public virtual iBase
      *
      * @param musicalSheet the sheet to play.
      * @param instrument the name of the instrument the player uses to play.
-     * @param minimumDuration the minimum duration that the player is able to play.
      * @param sndCtrlID the ID of the SoundControl that handles the sound.
      * @param pos the position of the sound source.
      * @param dir the direction of the sound.
      * @return 0 if the sound cannot be played, its ID otherwise.
      */
-    virtual uint PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float minimumDuration,
+    virtual uint PlaySong(csRef<iDocument> musicalSheet, const char* instrument,
         SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir) = 0;
 
     /**

@@ -156,7 +156,7 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
             // playing
             if(playMsg.toPlayer)
             {
-                songHandleID = PlaySong(sheet, playMsg.instrName, playMsg.minimumDuration, playerPos);
+                songHandleID = PlaySong(sheet, playMsg.instrName, playerPos);
             }
             else
             {
@@ -164,7 +164,7 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
                 csString uncompressedScore;
                 psMusic::ZDecompressSong(playMsg.musicalScore, uncompressedScore);
 
-                songHandleID = PlaySong(uncompressedScore, playMsg.instrName, playMsg.minimumDuration, playerPos);
+                songHandleID = PlaySong(uncompressedScore, playMsg.instrName, playerPos);
             }
 
             // handling instrument not defined
@@ -235,9 +235,6 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
             case psStopSongMessage::NO_INSTRUMENT:
                 errorStr = "You do not have an equipped musical instrument!";
                 break;
-            case psStopSongMessage::LOW_SKILL:
-                errorStr = "You do not have enough musical skill to play this score.";
-                break;
             }
 
             if(!errorStr.IsEmpty())
@@ -254,7 +251,7 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
     }
 }
 
-uint ClientSongManager::PlaySong(const char* musicalSheet, const char* instrName, float minimumDuration, csVector3 playerPos)
+uint ClientSongManager::PlaySong(const char* musicalSheet, const char* instrName, csVector3 playerPos)
 {
     csRef<iDocument> sheetDoc;
     csRef<iDocumentSystem> docSys;
@@ -265,7 +262,7 @@ uint ClientSongManager::PlaySong(const char* musicalSheet, const char* instrName
     sheetDoc = docSys->CreateDocument();
     sheetDoc->Parse(musicalSheet, true);
 
-    return sndMngr->PlaySong(sheetDoc, instrName, minimumDuration, iSoundManager::INSTRUMENT_SNDCTRL, playerPos, 0);
+    return sndMngr->PlaySong(sheetDoc, instrName, iSoundManager::INSTRUMENT_SNDCTRL, playerPos, 0);
 }
 
 void ClientSongManager::StopSong(uint songID)
