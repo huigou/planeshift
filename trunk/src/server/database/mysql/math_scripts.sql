@@ -435,7 +435,7 @@ INSERT INTO math_scripts VALUES( "Calculate Song Parameters" , "
     CharMinimumDuration = 1000 / exp2(InstrSkillRank / 50);  // in milliseconds
 
     // The character unlocks the beat type 8 (16) at rank 40 (80)
-    if((BeatType = 8 & InstrSkillRank < 40) | (BeatType = 16 & InstrSkillRank < 40))
+    if((BeatType = 8 & InstrSkillRank < 40) | (BeatType = 16 & InstrSkillRank < 80))
     {
         CanPlay = 0;
         Character:SendSystemError('You cannot play musical scores with this meter!', 0);

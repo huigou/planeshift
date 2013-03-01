@@ -46,12 +46,6 @@ public:
      */
     virtual ~SongHandle();
 
-    /**
-     * Sets the minimum duration played of this song.
-     * @param minimumDuration the new minimum duration.
-     */
-    void SetMinimumDuration(float minimumDuration);
-
 
     // From SoundHandle
     //------------------
@@ -60,7 +54,6 @@ public:
               int type, SoundControl* &ctrl, bool dopplerEffect);
 
 private:
-    float minDuration;              ///< the minimum duration that the player is able to play.
     Instrument* instrument;         ///< instrument of the song
     csRef<iDocument> sheet;         ///< musical sheet of the song
 };

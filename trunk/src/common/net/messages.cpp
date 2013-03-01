@@ -7210,16 +7210,15 @@ psMusicalSheetMessage::psMusicalSheetMessage(MsgEntry* me)
 PSF_IMPLEMENT_MSG_FACTORY(psPlaySongMessage, MSGTYPE_PLAY_SONG);
 
 psPlaySongMessage::psPlaySongMessage(uint32_t client, uint32_t songID, bool toPlayer,
-                                     float minimumDuration, const char* instrName, uint32_t scoreSize, const char* musicalScore)
+                                     const char* instrName, uint32_t scoreSize, const char* musicalScore)
 {
-    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + sizeof(float) + strlen(instrName) + 1 + sizeof(uint32_t) + scoreSize + 1));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(bool) + strlen(instrName) + 1 + sizeof(uint32_t) + scoreSize + 1));
 
     msg->SetType(MSGTYPE_PLAY_SONG);
     msg->clientnum = client;
 
     msg->Add(songID);
     msg->Add(toPlayer);
-    msg->Add(minimumDuration);
     msg->Add(instrName);
     msg->Add(musicalScore, scoreSize);
 }
@@ -7231,7 +7230,6 @@ psPlaySongMessage::psPlaySongMessage(MsgEntry* me)
 
     songID = me->GetUInt32();
     toPlayer = me->GetBool();
-    minimumDuration = me->GetFloat();
     instrName = me->GetStr();
 
     scoreBuffer = (char*)me->GetBufferPointerUnsafe(scoreSize);

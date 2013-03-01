@@ -137,7 +137,6 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             int canPlay;
             int scoreRank;
             uint32 actorEID;
-            float playerMinDuration; // TODO to delete when new client is released
             psItem* instrItem;
             const char* instrName;
             ScoreStatistics scoreStats;
@@ -207,13 +206,12 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
                 // output variables
                 canPlay = mathEnv.Lookup("CanPlay")->GetValue();
                 scoreRank = mathEnv.Lookup("ScoreRank")->GetValue();
-                playerMinDuration = mathEnv.Lookup("CharMinimumDuration")->GetValue();
             }
 
             if(canPlay)
             {
                 // sending message to requester, it's useless to send the musical sheet again
-                psPlaySongMessage sendedPlayMsg(client->GetClientNum(), actorEID, true, playerMinDuration, instrName, 0, "");
+                psPlaySongMessage sendedPlayMsg(client->GetClientNum(), actorEID, true, instrName, 0, "");
                 sendedPlayMsg.SendMessage();
 
                 // if the score is empty or has only rests there's no need to inform other clients
@@ -231,7 +229,7 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
                         {
                             continue;
                         }
-                        psPlaySongMessage sendedPlayMsg(proxList[i].client, actorEID, false, playerMinDuration, instrName, compressedScore.Length(), compressedScore);
+                        psPlaySongMessage sendedPlayMsg(proxList[i].client, actorEID, false, instrName, compressedScore.Length(), compressedScore);
                         sendedPlayMsg.SendMessage();
                     }
                 }
@@ -247,8 +245,12 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             }
             else
             {
-                // error messages to the player due to low skill are
-                // sended by the mathscript Calculate Song Parameters
+                // error messages to the player due to low skill are sended by the
+                // mathscript Calculate Song Parameters but we still have to notify
+                // the client about the error in order to fix the GUI
+                psStopSongMessage sendedStopMsg(client->GetClientNum(), actorEID, true,
+                    psStopSongMessage::NO_SONG_ERROR);
+                sendedStopMsg.SendMessage();
             }
         }
         else

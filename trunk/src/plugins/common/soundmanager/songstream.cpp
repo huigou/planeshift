@@ -59,7 +59,6 @@ SndSysSongStream::SndSysSongStream(csRef<SndSysSongData> sndData, SongData* data
     lastNoteSize = 0;
 
     songData = data;
-    minDuration = 0.0;
     timePerDivision = 60.0f / songData->tempo / songData->divisions;
 
     // conversion variables are set during the first AdvancePosition() because m_OutputFrequency = 0
@@ -242,7 +241,6 @@ bool SndSysSongStream::GetNextChord(char* &noteBuffer, size_t &noteBufferSize)
     uint octave;
     uint divisions;
     float duration;
-    float durationFactor;
     csRef<iDocumentNode> measure;
     csRef<iDocumentNode> barline;
     csRef<iDocumentNode> note;
@@ -358,15 +356,7 @@ bool SndSysSongStream::GetNextChord(char* &noteBuffer, size_t &noteBufferSize)
     divisions = note->GetNode("duration")->GetContentsValueAsInt();
 
     // computing note duration in seconds
-    if(minDuration > songData->scoreStats.minimumDuration)
-    {
-        durationFactor = minDuration / songData->scoreStats.minimumDuration;
-    }
-    else
-    {
-        durationFactor = 1.0;
-    }
-    duration = timePerDivision * divisions * durationFactor;
+    duration = timePerDivision * divisions;
 
     // adjusting alteration depending on the tonality
     if(step != 'R')

@@ -41,6 +41,12 @@
 //====================================================================================
 #include "pawssheetline.h"
 
+//-----------------------------------------------------------------------------
+// Forward Declarations
+//-----------------------------------------------------------------------------
+#define USE_PLAYED_TEMPO true
+#define USE_SCORE_TEMPO false
+
 
 pawsMusicWindow::pawsMusicWindow()
 {
@@ -253,6 +259,13 @@ void pawsMusicWindow::OnStringEntered(const char* name, int param, const char* v
 
     if(value == 0 || strlen(value) == 0)
     {
+        // if the player click Cancel after clicking
+        // the Play button, it remains down
+        if(csStrCaseCmp(name, "PlayedBPM") == 0)
+        {
+            playButton->SetState(false);
+        }
+
         return;
     }
 
@@ -326,6 +339,19 @@ void pawsMusicWindow::OnStringEntered(const char* name, int param, const char* v
 
         tempo = newTempo;
     }
+    else if(csStrCaseCmp(name, "PlayedBPM") == 0)
+    {
+        int newPlayedTempo = atoi(value);
+
+        if(newPlayedTempo <= 0 || newPlayedTempo > 280)
+        {
+            return;
+        }
+
+        playedTempo = newPlayedTempo;
+
+        PlayStop();
+    }
 }
 
 
@@ -387,7 +413,14 @@ double pawsMusicWindow::CalcFunction(MathEnvironment* env, const char* functionN
     }
     else if(csStrCaseCmp(functionName, "ClickPlayButton") == 0)
     {
-        PlayStop();
+        if(playButton->GetState()) // play
+        {
+            SetPlayedBPM();
+        }
+        else
+        {
+            PlayStop();
+        }
         return 0.0;
     }
     else if(csStrCaseCmp(functionName, "ClickDotButton") == 0)
@@ -476,7 +509,7 @@ void pawsMusicWindow::Hide()
         }
 
         // creating XML score
-        xmlScore = ToXML();
+        xmlScore = ToXML(USE_SCORE_TEMPO);
 
         // sending message
         psMusicalSheetMessage message(0, currentItemID, readOnly, false, border->GetTitle(), xmlScore);
@@ -691,6 +724,7 @@ bool pawsMusicWindow::LoadXML(csRef<iDocument> sheet)
     beats.Append(iBeats);
     beatType.Append(iBeatType);
     tempo = scoreTempo;
+    playedTempo = scoreTempo;
 
     // creating data structures
     measuresHead = new Measure(measures[0], quarterDivisions);
@@ -719,7 +753,7 @@ bool pawsMusicWindow::LoadXML(csRef<iDocument> sheet)
     return true;
 }
 
-csString pawsMusicWindow::ToXML()
+csString pawsMusicWindow::ToXML(bool usePlayedTempo)
 {
     csString attributes = "<attributes>";
     csString doc = "<score-partwise version=\"2.0\">";
@@ -734,7 +768,14 @@ csString pawsMusicWindow::ToXML()
     // attibutes and direction
     attributes.AppendFmt("<divisions>%d</divisions><key><fifths>%d</fifths></key>", 4, fifths);
     attributes.AppendFmt("<time><beats>%s</beats><beat-type>%s</beat-type></time></attributes>", beats.GetData(), beatType.GetData());
-    attributes.AppendFmt("<direction><sound tempo=\"%d\"/></direction>", tempo);
+    if(usePlayedTempo)
+    {
+        attributes.AppendFmt("<direction><sound tempo=\"%d\"/></direction>", playedTempo);
+    }
+    else
+    {
+        attributes.AppendFmt("<direction><sound tempo=\"%d\"/></direction>", tempo);
+    }
 
     // measures
     int measureNum = 1;
@@ -1130,12 +1171,12 @@ void pawsMusicWindow::PlayStop()
         if(editButton->GetState()) // sheet not consistent
         {
             ToggleEditMode(false);
-            psengine->GetSongManager()->PlayMainPlayerSong(currentItemID, ToXML());
+            psengine->GetSongManager()->PlayMainPlayerSong(currentItemID, ToXML(USE_PLAYED_TEMPO));
             ToggleEditMode(true);
         }
         else
         {
-            psengine->GetSongManager()->PlayMainPlayerSong(currentItemID, ToXML());
+            psengine->GetSongManager()->PlayMainPlayerSong(currentItemID, ToXML(USE_PLAYED_TEMPO));
         }
     }
     else // stop
@@ -1156,12 +1197,12 @@ void pawsMusicWindow::Save()
     if(editButton->GetState())
     {
         ToggleEditMode(false);
-        xml = ToXML();
+        xml = ToXML(USE_SCORE_TEMPO);
         ToggleEditMode(true);
     }
     else
     {
-        xml = ToXML();
+        xml = ToXML(USE_SCORE_TEMPO);
     }
 
     // getting the file's name
@@ -1276,6 +1317,23 @@ void pawsMusicWindow::ChangeBPM()
     strTempo = tempo;
     pawsStringPromptWindow::Create("BPM", strTempo,
         false, 220, 20, this, "BPM");
+}
+
+void pawsMusicWindow::SetPlayedBPM()
+{
+    csString strTempo;
+
+    if(pendingString)
+    {
+        return;
+    }
+
+    pendingString = true;
+
+    // This window calls OnStringEntered when Ok is pressed.
+    strTempo = playedTempo;
+    pawsStringPromptWindow::Create("Played BPM", strTempo,
+        false, 220, 20, this, "PlayedBPM");
 }
 
 void pawsMusicWindow::ChangeChordDuration()
@@ -1515,6 +1573,7 @@ void pawsMusicWindow::ResetState()
     beats = "4";
     beatType = "4";
     tempo = 90;
+    playedTempo = 90;
 
     linesHead = 0;
     measuresHead = 0;

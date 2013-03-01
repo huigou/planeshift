@@ -31,22 +31,12 @@
 SongHandle::SongHandle(csRef<iDocument> musicalSheet, Instrument* instr)
     : sheet(musicalSheet)
 {
-    minDuration = 0.0;
     instrument = instr;
 }
 
 SongHandle::~SongHandle()
 {
     // instrument is deleted by InstrumentsManager
-}
-
-void SongHandle::SetMinimumDuration(float minimumDuration)
-{
-    minDuration = minimumDuration;
-    if(sndstream != 0)
-    {
-        static_cast<SndSysSongStream*>(&(*sndstream))->SetMinimumDuration(minDuration);
-    }
 }
 
 bool SongHandle::Init(const char* /* resName */, bool loop, float volumePreset,
@@ -66,7 +56,6 @@ bool SongHandle::Init(const char* /* resName */, bool loop, float volumePreset,
     {
         return false;
     }
-    static_cast<SndSysSongStream*>(&(*sndstream))->SetMinimumDuration(minDuration);
 
     if(!SoundSystemManager::GetSingleton().GetSoundSystem()->CreateSource(sndstream, sndsource))
     {

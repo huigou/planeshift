@@ -45,13 +45,6 @@ public:
     SndSysSongStream(csRef<SndSysSongData> soundData, SongData* songData, csSndSysSoundFormat* renderFormat, int mode3D);
     virtual ~SndSysSongStream();
 
-    /**
-     * Sets the minimum duration played of this song.
-     * @param minimumDuration the new minimum duration.
-     */
-    void SetMinimumDuration(float minimumDuration) { minDuration = minimumDuration; }
-
-
     // From iSndSysStream
     //--------------------
     virtual void AdvancePosition(size_t frameDelta);
@@ -78,7 +71,6 @@ private:
     size_t lastNoteSize;                ///< duration of the last chord read by GetNextChord() in bytes.
 
     SongData* songData;                 ///< the song's data.
-    float minDuration;                  ///< the minimum duration that the player is able to play.
     float timePerDivision;              ///< the time per divisionin seconds of this song.
     csRef<SndSysSongData> soundData;    ///< the sound data object.
 

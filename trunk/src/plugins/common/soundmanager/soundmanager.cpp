@@ -454,7 +454,7 @@ uint SoundManager::PlaySound(const char* fileName, bool loop, SndCtrlID sndCtrlI
     }
 }
 
-uint SoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument, float minimumDuration,
+uint SoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrument,
               SndCtrlID sndCtrlID, csVector3 pos, csVector3 dir)
 {
     SoundHandle* handle = 0;
@@ -462,7 +462,7 @@ uint SoundManager::PlaySong(csRef<iDocument> musicalSheet, const char* instrumen
     // we don't want to play a sound with the main sound control
     SoundControl* sndCtrl = sndSysMgr->GetSoundControl(sndCtrlID);
 
-    if(instrMgr->PlaySong(sndCtrl, pos, dir, handle, musicalSheet, instrument, minimumDuration))
+    if(instrMgr->PlaySong(sndCtrl, pos, dir, handle, musicalSheet, instrument))
     {
         return handle->GetID();
     }
