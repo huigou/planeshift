@@ -193,10 +193,10 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
                 usingCraft = true;
             }
             //name->SetText("You discover you can do the following:");
+            name->SetText("");
             break;
         }
-    }
-}
+    }}
 
 bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
