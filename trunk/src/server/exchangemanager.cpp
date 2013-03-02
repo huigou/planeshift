@@ -530,7 +530,8 @@ void ExchangingCharacter::GetSimpleOffering(csString& buff, psCharacter *chr, bo
         psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
         if (item)
         {
-            xmlItems.FormatPush("<item n=\"%s\" c=\"%d\"/>", item->GetName(),
+            xmlItems.FormatPush("<item n=\"%s\" c=\"%d\"/>", 
+                                item->GetBaseStats()->GetName(),
                                 itemInSlot->exchangeStackCount);
         }
     }
@@ -1607,12 +1608,16 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
             {
                 // Now verify that the player has exactly the right count of these items, and not more of them in another slot
                 psItem *invItem = client->GetCharacterData()->Inventory().GetInventoryIndexItem(foundIndex);
-                if (invItem->GetStackCount() < itemCount || invItem->GetStackCount() > itemCount || client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat,foundIndex+1) != SIZET_NOT_FOUND)
+                if (invItem->GetStackCount() < itemCount || invItem->GetStackCount() > itemCount || client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat,foundIndex+1) != SIZET_NOT_FOUND || strcmp(invItem->GetName(), itemstat->GetName()) != 0)
                 {
                     // Distinguish the cases from each other in order to send out the correct error message
                     if (invItem->GetStackCount() < itemCount)
                     {
                         psserver->SendSystemError(client->GetClientNum(), "You have too few %s.  Come back when you have the correct amount.", itemName.GetData());
+                    }
+                    else if(strcmp(invItem->GetName(), itemstat->GetName()) != 0)
+                    {
+                        psserver->SendSystemError(client->GetClientNum(), "You must give the items manually because you have different types of %s.", itemName.GetData());
                     }
                     else
                     {
