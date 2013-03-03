@@ -358,23 +358,39 @@ bool NPCDialogDict::LoadTriggers(iDataConnection *db)
             continue;
         }
 
-        ParseMultiTrigger(newtrig);
+        csArray<NpcTrigger*> newTriggers = ParseMultiTrigger(newtrig);
 
-        if(newtrig->trigger.Length() == 0)
+        // As the trigger has been parsed we can delete the new trigger
+        delete newtrig;
+
+        for(unsigned int y = 0; y < newTriggers.GetSize(); y++)
         {
-            Error3("Found bad trigger %d of trigger length 0 in triggers, area %s", newtrig->id, newtrig->area.GetDataSafe());
-            delete newtrig;
-            continue;
-        }
+            newtrig = newTriggers[y];
 
-        AddWords(newtrig->trigger); // Make sure these trigger words are in known word list.
+            if(newtrig->trigger.Length() == 0)
+            {
+                Error3("Found bad trigger %d of trigger length 0 in triggers, area %s", newtrig->id, newtrig->area.GetDataSafe());
+                delete newtrig;
+                continue;
+            }
 
-        triggers.Insert(newtrig);
+            AddWords(newtrig->trigger); // Make sure these trigger words are in known word list.
 
-        if (!FindKnowledgeArea(newtrig->area))
-        {
-            Debug2(LOG_QUESTS, 0, "--------Adding KA: %s",newtrig->area.GetDataSafe());
-            knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
+            if (!FindKnowledgeArea(newtrig->area))
+            {
+                Debug2(LOG_QUESTS, 0, "--------Adding KA: %s",newtrig->area.GetDataSafe());
+                knowledgeAreas.PutUnique(newtrig->area,newtrig->area);
+            }
+
+            // check if there is an equal triggers, in that case just trash this new one.
+            if(triggers.Find(newtrig, NULL))
+            {
+                delete newtrig;
+            }
+            else
+            {
+                triggers.Insert(newtrig);
+            }
         }
     }
     return true;
@@ -504,28 +520,26 @@ bool NPCDialogDict::CheckForTriggerGroup(csString& trigger)
     return false;
 }
 
-void NPCDialogDict::ParseMultiTrigger(NpcTrigger *parsetrig)
+csArray<NpcTrigger*> NPCDialogDict::ParseMultiTrigger(NpcTrigger *parsetrig)
 {
+    csArray<NpcTrigger*> newTriggers;
     psString trig(parsetrig->trigger);
     csStringArray list;
 
     trig.Split(list,'.');
-    if (list.GetSize() <= 1)
-        return;
 
-    parsetrig->trigger = list.Get(0);
-    int id = AddTriggerGroupEntry(-1,list.Get(0),0);
-    if (id < 0)
+    // For each trigger create a trigger object rappresenting it.
+    for(int i = 0; i < list.GetSize(); i++)
     {
-        Error3("Error in MultiTrigger %d (%s)",parsetrig->id, parsetrig->trigger.GetDataSafe() );
-        return;
+        NpcTrigger* newtrig = new NpcTrigger;
+        newtrig->id = parsetrig->id;
+        newtrig->area = parsetrig->area;
+        newtrig->priorresponseID = parsetrig->priorresponseID;
+        newtrig->trigger = list[i];
+        newTriggers.Push(newtrig);
     }
-    for (size_t i=1; i<list.GetSize(); i++)
-    {
-        AddTriggerGroupEntry(-1,list.Get(i),id);
-    }
+    return newTriggers;
 }
-
 
 bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int responseID )
 {
@@ -545,28 +559,38 @@ bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int respons
         return false;
     }
 
-    ParseMultiTrigger(newtrig);
+    csArray<NpcTrigger*> newTriggers = ParseMultiTrigger(newtrig);
+
+    // As the trigger has been parsed we can delete the new trigger
+    delete newtrig;
 
     CS_ASSERT(responseID != -1);
-    newtrig->responseIDlist.Push(responseID);
 
-    NpcTrigger* trig;
-
-    AddWords( newtrig->trigger );
-
-    trig = triggers.Find( newtrig, NULL);
-    if (trig)
+    for(int i = 0; i < newTriggers.GetSize(); i++)
     {
-        // There are already a trigger with this combination of
-        // triggertext, KA, and prior respose so pushing the trigger
-        // response on the same trigger.
-        CS_ASSERT(responseID != -1);
-        trig->responseIDlist.Push(responseID);
+        newtrig = newTriggers[i];
+        newtrig->responseIDlist.Push(responseID);
 
-        delete newtrig;
+        NpcTrigger* trig;
+
+        AddWords( newtrig->trigger );
+
+        trig = triggers.Find(newtrig, NULL);
+        if (trig)
+        {
+            // There are already a trigger with this combination of
+            // triggertext, KA, and prior respose so pushing the trigger
+            // response on the same trigger.
+            CS_ASSERT(responseID != -1);
+            trig->responseIDlist.Push(responseID);
+
+            delete newtrig;
+        }
+        else
+        {
+            triggers.Insert(newtrig);
+        }
     }
-    else
-        triggers.Insert(newtrig);
 
     return true;
 }

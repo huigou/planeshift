@@ -106,7 +106,7 @@ protected:
     NpcTerm* AddTerm(const char *term);
 
     int AddTriggerGroupEntry(int id,const char *txt, int equivID);
-    void ParseMultiTrigger(NpcTrigger *parsetrig);
+    csArray<NpcTrigger*> ParseMultiTrigger(NpcTrigger *parsetrig);
 
 public:
     NPCDialogDict();
