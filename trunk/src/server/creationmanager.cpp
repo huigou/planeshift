@@ -509,7 +509,7 @@ CharCreationManager::LifeEventChoiceServer* CharCreationManager::FindLifeEvent( 
             return lifeEvents[x];
     }
     
-    return 0;
+    return NULL;
 }
 
 
@@ -950,8 +950,15 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
     {
         MathEnvironment env;
         env.Define("Actor", actor);
-        csString scriptName(psserver->charCreationManager->FindLifeEvent(upload.lifeEvents[li])->eventScript.GetData());
-        Debug2(LOG_NEWCHAR, me->clientnum, "LifeEvent Script: %s", scriptName.GetData());
+        LifeEventChoiceServer* lifeEvent = psserver->charCreationManager->FindLifeEvent(upload.lifeEvents[li]);
+        if (!lifeEvent)
+        {
+            Error2("No LifeEvent Script found: %d", upload.lifeEvents[li]);
+            continue;
+        }
+        
+        csString scriptName(lifeEvent->eventScript.GetData());
+        Debug2(LOG_NEWCHAR, me->clientnum, "LifeEvent Script: %s", scriptName.GetDataSafe());
 
         ProgressionScript *script = psserver->GetProgressionManager()->FindScript(scriptName);
         if (script)
@@ -1021,7 +1028,14 @@ void CharCreationManager::HandleUploadMessage( MsgEntry* me, Client *client )
             
             if ( rank > 0 )
             {
-           		mesg.AddSkill(rank, name);
+                if (z >= PSSKILL_AGI && z <= PSSKILL_WILL)
+                {
+                    mesg.AddStat(rank, name);
+                }
+                else
+                {
+                    mesg.AddSkill(rank, name);
+                }
             }                                            
         }                
         mesg.Construct();
