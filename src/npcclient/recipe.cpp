@@ -923,8 +923,8 @@ void RecipeManager::CreateGlobalNPCType(Tribe* tribe)
     // Aggressivity Trait
     if(currentTribe->aggressivity == "warlike")
     {
-        reaction = "<react event=\"player nearby\" behavior=\"aggressive_meet\" delta=\"150\" />";
-        reaction = "<react event=\"attack\" behavior=\"aggressive_meet\" delta=\"150\"  weight=\"1\" />";
+        reaction = "<react event=\"player nearby\" behavior=\"aggressive_meet\" delta=\"150\" />\n";
+        reaction += "<react event=\"attack\" behavior=\"aggressive_meet\" delta=\"150\"  weight=\"1\" />";
         assembledType += reaction;
     }
     else if(currentTribe->aggressivity == "neutral")
