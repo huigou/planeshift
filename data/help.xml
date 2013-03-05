@@ -285,7 +285,7 @@ Training only works if you have a NPC selected that actually is capable to train
         <Contents>
           <content type="text">Inventory Window
 
-The inventory windows allows you to manage the belongings of your character and to equip and unequip items.
+The inventory windows allows you to manage the belongings of your character and to use, equip and unequip items.
 
 In the left part you can see what items are currently equipped. You can also change the equipment here by dragging items to or from the equipment-slots. Each equipment slots can hold a specific kind of items. To get the name of the different slots just move your mouse above them.
 
@@ -310,6 +310,8 @@ At the bottom you can see how much weight you carry at the moment and how much y
 The inventory also allows dropping of items. If you want to drop an item just drag it from the inventory to the place you want to drop it. If you want to drop money use the icons for the different coins at the bottom. After clicking them you are asked how much coins you want to take. Afterwards you can drop them just the same way as items.
 
 When you drop an item you can use right mouse button to rotate it on one axis, and shift + right mouse button to rotate it on the other axis.
+
+To use a item like a Potion you can drag the item over to the character displayed in the center and release the mouse over your character. 
 
 At last it's worth mentioning that there are shortkeys for taking one item of a stack or taking the whole stack, If you click on a stack of items while holding the shift-key one of the items is taken. If you hold the ctrl-key the whole stack is taken.</content>
         </Contents>
