@@ -1382,6 +1382,7 @@ bool UpdaterEngine::UpdateFile(csString baseurl, csString mountPath, csString fi
         }
     }
     PrintOutput(" Success!\n");
+    return true;
 }
 
 void UpdaterEngine::CheckAndUpdate(iDocumentNode* md5sums, csString baseurl, bool accepted)
