@@ -29,6 +29,7 @@
 #include "net/clientmsghandler.h"
 #include "util/strutil.h"
 #include "util/psxmlparser.h"
+#include "util/log.h"
 
 // PAWS INCLUDES
 #include "pawsskillwindow.h"
@@ -551,19 +552,20 @@ void pawsPetStatWindow::SetTarget( GEMClientActor* actor )
         // Set control Subscriptions
         targetID.Clear();
         targetID.Append(actor->GetEID().Unbox());
-        signal.Format("fVitalValue0:%s", targetID.GetData());
+
+        signal.Format("fVitalValue%d:%s", VITAL_HITPOINTS, targetID.GetData());
         PawsManager::GetSingleton().Subscribe(signal, hpBar);
         PawsManager::GetSingleton().Subscribe(signal, hpCurrent);
 
-        signal.Format("fVitalValue1:%s", targetID.GetData());
+        signal.Format("fVitalValue%d:%s", VITAL_MANA, targetID.GetData());
         PawsManager::GetSingleton().Subscribe(signal, manaBar);
         PawsManager::GetSingleton().Subscribe(signal, manaCurrent);
 
-        signal.Format("fVitalValue2:%s", targetID.GetData());
+        signal.Format("fVitalValue%d:%s", VITAL_PYSSTAMINA, targetID.GetData());
         PawsManager::GetSingleton().Subscribe(signal, pysStaminaBar);
         PawsManager::GetSingleton().Subscribe(signal, pysStaminaCurrent);
 
-        signal.Format("fVitalValue3:%s", targetID.GetData());
+        signal.Format("fVitalValue%d:%s", VITAL_MENSTAMINA, targetID.GetData());
         PawsManager::GetSingleton().Subscribe(signal, menStaminaBar);
         PawsManager::GetSingleton().Subscribe(signal, menStaminaCurrent);
     }

@@ -287,7 +287,8 @@ void psClientDR::HandleStatsUpdate( MsgEntry* me )
     }        
     else 
     {   // Publish Vitals data using EntityID
-        csString ID((size_t) gemObject->GetEID().Unbox());
+        csString ID;
+        ID.Append(gemObject->GetEID().Unbox());
         gemObject->GetVitalMgr()->HandleDRData(statdrmsg, ID.GetData() );
     }
 
