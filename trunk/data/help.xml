@@ -2465,7 +2465,7 @@ Usage:
         <topic name="/pet">
           <Contents><content type="text">This is the main command to interact with your pets.
   
-  For all the following commands [pet-name,] is either the name of your pet or it's number. If no [petname,] is given the first found pet of the ones you have currently summoned is used. Do not forget to add the "," after the name or number of your pet.
+  For all the following commands [pet-name,] is either the name of your pet or it's number. If no [petname,] is given the first found pet of the ones you have currently summoned is used. Do not forget to add the "," after the name or number of your pet. Use quotes for petname with multiple names.
 
 Usage:
 /pet [pet-name,] assist</content>
