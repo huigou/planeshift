@@ -303,7 +303,7 @@ void psUserCommands::AskToSlayBeforeSending(psMessageCracker *msg)
 
 const char *psUserCommands::HandleCommand(const char *cmd)
 {
-    WordArray words(cmd);
+    WordArray words(cmd, false);
 
     if (words.GetCount() == 0)
         return "";
@@ -463,13 +463,14 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/storage")
     {
     	csString buff;
-        if (words.GetCount() > 1){
-        csString tail = words.GetTail(1);
+        if (words.GetCount() > 1)
+        {
+            csString tail = words.GetTail(1);
             buff.Format("<R TYPE=\"STORE\" TARGET=\"%s\"/>",tail.GetData());
         }
         else
         {
-        	buff.Format("<R TYPE=\"STORE\"/>"); // If no target specified by user use active target
+            buff.Format("<R TYPE=\"STORE\"/>"); // If no target specified by user use active target
         }
         psGUIStorageMessage storage(psGUIStorageMessage::REQUEST,buff);
         storage.SendMessage();
@@ -697,6 +698,15 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         csString pCommand = words[1];
         csString target, options;
 
+        // Check for "," in word 2. This could
+        // happen if the pet name is in quotes.
+        if (words.GetCount() > 2 && words[2] == ",")
+        {
+            pCommand += ",";
+            words.DeleteIndex(2);
+        }
+        
+        // Is there a , for pet name?
         if ( pCommand.FindFirst( ',' ) != (size_t)-1 )
         {
             // Pet name specified
