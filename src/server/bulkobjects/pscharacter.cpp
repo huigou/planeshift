@@ -3539,41 +3539,30 @@ int SkillSet::AddSkillPractice(psSkillInfo* skillInfo, unsigned int val)
 
     PSSKILL skill = skillInfo->id;
 
-    rankUp = AddToSkillPractice(skill,val, added);
+    rankUp = AddToSkillPractice(skill, val, added);
 
-    if ( skillInfo )
+    // Save skill and practice only when the level reached a new rank
+    // this is done to avoid saving to db each time a player hits
+    // an opponent
+    if(rankUp && self->GetActor()->GetClientID() != 0)
     {
-        // Save skill and practice only when the level reached a new rank
-        // this is done to avoid saving to db each time a player hits
-        // an opponent
-        if(rankUp && self->GetActor()->GetClientID() != 0)
-        {
-            psServer::CharacterLoader.UpdateCharacterSkill(
-                self->GetPID(),
-                skill,
-                GetSkillPractice((PSSKILL)skill),
-                GetSkillKnowledge((PSSKILL)skill),
-                GetSkillRank((PSSKILL)skill).Base()
-                );
-        }
-
-
-        name = skillInfo->name;
-        Debug5(LOG_SKILLXP,self->GetActor()->GetClientID(),"Adding %d points to skill %s to character %s (%d)\n",val,skillInfo->name.GetData(),
-            self->GetCharFullName(),
-            self->GetActor()->GetClientID());
-        if(added > 0)
-        {
-            psZPointsGainedEvent event(self->GetActor(), skillInfo->name, added, rankUp);
-            event.FireEvent();
-        }
+        psServer::CharacterLoader.UpdateCharacterSkill(self->GetPID(),
+                                                       skill,
+                                                       GetSkillPractice((PSSKILL)skill),
+                                                       GetSkillKnowledge((PSSKILL)skill),
+                                                       GetSkillRank((PSSKILL)skill).Base()
+                                                       );
     }
-    else
+
+
+    name = skillInfo->name;
+    Debug5(LOG_SKILLXP,self->GetActor()->GetClientID(),"Adding %d points to skill %s to character %s (%d)\n",val,skillInfo->name.GetData(),
+           self->GetCharFullName(),
+           self->GetActor()->GetClientID());
+    if(added > 0)
     {
-        Debug4(LOG_SKILLXP,self->GetActor()->GetClientID(),"WARNING! Skill practise to unknown skill(%d) for character %s (%d)\n",
-            (int)skill,
-            self->GetCharFullName(),
-            self->GetActor()->GetClientID());
+        psZPointsGainedEvent event(self->GetActor(), skillInfo->name, added, rankUp);
+        event.FireEvent();
     }
 
     return added;
@@ -3583,7 +3572,19 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
 {
     psSkillInfo* skillInfo = psserver->GetCacheManager()->GetSkillByID(skill);
 
-    return AddSkillPractice(skillInfo, val);
+    if (skillInfo)
+    {
+        return AddSkillPractice(skillInfo, val);
+    }
+    else
+    {
+        Debug4(LOG_SKILLXP,self->GetActor()->GetClientID(),"WARNING! Skill practise to unknown skill(%d) for character %s (%d)\n",
+               (int)skill,
+               self->GetCharFullName(),
+               self->GetActor()->GetClientID());
+    }
+
+    return 0;
 }
 
 unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
