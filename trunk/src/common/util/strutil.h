@@ -80,6 +80,14 @@ public:
         return Get(wordNum);
     }
 
+    /**
+     * Delete the n'th element from the word array.
+     */
+    bool DeleteIndex(size_t n)
+    {
+        return csStringArray::DeleteIndex(n);
+    }
+
     bool GetString(size_t wordNum, csString &retValue) const
     {
         if(wordNum >= GetSize())
