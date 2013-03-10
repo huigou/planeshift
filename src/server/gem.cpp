@@ -2653,6 +2653,12 @@ void gemActor::Defeat()
     psSpareDefeatedEvent *evt = new psSpareDefeatedEvent(this);
     psserver->GetEventManager()->Push(evt);
 
+    // Interrupt spells currently cast. This has to be done
+    // before setting character mode as the interrupting may
+    // set the character back to PEACE.
+    InterruptSpellCasting();
+    
+    // Set the character mode to defeated.
     SetMode(PSCHARACTER_MODE_DEFEATED);
 
     // Cancel any active spells which are marked as doing HP damage.
@@ -2660,7 +2666,9 @@ void gemActor::Defeat()
     // since there may be long standing debuffs like the DR curse.
     CancelActiveSpellsWhichDamage();
     if(psChar->GetHP() < 1) // make sure we won't die instantly
+    {
     	psChar->SetHitPoints(1);
+    }
 }
 
 void gemActor::Resurrect()
@@ -2816,7 +2824,9 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
     {
         // Successful attack, if >30% max hp then interrupt spell
         if (damage > psChar->GetMaxHP().Current() * 0.3F)
+        {
             InterruptSpellCasting();
+        }
     }
 
     if (GetCharacterData()->GetHP() - damage < 0)
