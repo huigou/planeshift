@@ -2,8 +2,8 @@
 
 
 1 VERSIONINFO
-FILEVERSION 0,5,9,4
-PRODUCTVERSION 0,5,9,4
+FILEVERSION 0,5,9,10
+PRODUCTVERSION 0,5,9,10
 #ifdef CS_DEBUG
 FILEFLAGS 0x1
 #else
@@ -15,8 +15,8 @@ FILEFLAGS 0x0
     BLOCK "040904E4"
     {
       VALUE "ProductName", "PlaneShift a 3d MMORPG"
-      VALUE "ProductVersion", "0.5.9.4"
-      VALUE "FileVersion", "0.5.9.4"
+      VALUE "ProductVersion", "0.5.9.10"
+      VALUE "FileVersion", "0.5.9.10"
       VALUE "LegalCopyright", "Copyright (C)2001-2013 Atomic Blue"
       VALUE "FileDescription", "ccheck_static"
 #ifdef CS_DEBUG
