@@ -36,6 +36,7 @@ struct iCollideSystem;
 // Library Includes
 //=============================================================================
 #include "net/pstypes.h"
+#include "net/npcmessages.h"
 
 #include "util/psconst.h"
 #include "util/serverconsole.h"
@@ -73,21 +74,6 @@ class  Tribe;
 class  psPath;
 class  psPathNetwork;
 struct iCelHNavStruct;
-
-
-/** Structure for race depended values.
- */
-struct RaceInfo_t
-{
-    csString name;      ///< The name of the race
-    float    walkSpeed; ///< The default walk speed for this race
-    float    runSpeed;  ///< The default run speed for this race.
-
-    const char* GetName()
-    {
-        return name.GetDataSafe();
-    }
-};
 
 /**
  * The main NPC Client class holding references to important superclient objects
@@ -287,12 +273,12 @@ public:
     /**
      * Add a race info to the race info list
      */
-    void AddRaceInfo(csString &name, float walkSpeed, float runSpeed);
+    void AddRaceInfo(const psNPCRaceListMessage::NPCRaceInfo_t& raceInfo);
 
     /**
      * Get pointer to a race info to the given race name.
      */
-    RaceInfo_t* GetRaceInfo(const char* name);
+    psNPCRaceListMessage::NPCRaceInfo_t* GetRaceInfo(const char* name);
 
     /**
      * Dump all race infos
@@ -801,7 +787,7 @@ protected:
     csArray<gemNPCItem*>            all_gem_items;
     csArray<gemNPCActor*>           all_gem_actors;
     
-    csHash<RaceInfo_t,csString>     raceInfos;
+    csHash<psNPCRaceListMessage::NPCRaceInfo_t,csString>     raceInfos; ///< Information about all the races.
 
     csHash<NPC*,csString>           allReactions;     ///< Hash of all registered reactions.
     csArray<csString>               notUsedReactions; ///< List of not matched reactions. 

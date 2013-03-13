@@ -303,7 +303,7 @@ void NetworkManager::HandleRaceList(MsgEntry* me)
     size_t count = mesg.raceInfo.GetSize();
     for(size_t c = 0; c < count; c++)
     {
-        npcclient->AddRaceInfo(mesg.raceInfo[c].name,mesg.raceInfo[c].walkSpeed,mesg.raceInfo[c].runSpeed);
+        npcclient->AddRaceInfo(mesg.raceInfo[c]);
         Debug4(LOG_STARTUP,0, "Loading race speed: %s %f %f\n",mesg.raceInfo[c].name.GetData(),mesg.raceInfo[c].walkSpeed,mesg.raceInfo[c].runSpeed);
     }
 }

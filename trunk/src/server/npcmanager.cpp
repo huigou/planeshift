@@ -755,7 +755,7 @@ void NPCManager::SendRaces(Client* client)
     for(uint32_t i=0; i < count; i++)
     {
         psRaceInfo* ri = cacheManager->GetRaceInfoByIndex(i);
-        newmsg.AddRace(ri->name,ri->walkBaseSpeed,ri->runBaseSpeed, i == (count-1));
+        newmsg.AddRace(ri->name,ri->walkBaseSpeed,ri->runBaseSpeed, ri->size, i == (count-1));
     }
     newmsg.SendMessage();
 }
