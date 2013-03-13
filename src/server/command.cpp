@@ -76,6 +76,7 @@
 #include "bulkobjects/pstrainerinfo.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/pssectorinfo.h"
+#include "bulkobjects/psraceinfo.h"
 
 int com_lock (const char*)
 {
@@ -1737,6 +1738,22 @@ int com_charlist(const char*)
     return 0;
 }
 
+int com_racelist(const char* pattern)
+{
+    uint32_t count = (uint32_t)psserver->GetCacheManager()->GetRaceInfoCount();
+
+    CPrintf(CON_CMDOUTPUT,"%-20s %10s %10s %-20s\n","Race","WalkSpeed","RunSpeed","Size");
+    for(uint32_t i=0; i < count; i++)
+    {
+        psRaceInfo* ri = psserver->GetCacheManager()->GetRaceInfoByIndex(i);
+
+        CPrintf(CON_CMDOUTPUT,"%-20s %10.2f %10.2f %20s\n",ri->name.GetDataSafe(),ri->walkBaseSpeed,ri->runBaseSpeed,
+                toString(ri->size).GetDataSafe());
+    }
+    return 0;
+}
+
+
 int com_factions(const char*)
 {
 
@@ -2446,7 +2463,7 @@ int com_list(const char* arg)
 
     if (words.GetCount() == 0)
     {
-        CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|loc|npc|path|race|recipe|tribe|warpspace|waypoint] <pattern|EID>\n");
+        CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|path|race|warpspace|waypoint] <pattern|EID>\n");
         return 0;
     }
 
@@ -2462,6 +2479,10 @@ int com_list(const char* arg)
     else if (strncasecmp(words[0],"path",1) == 0)
     {
         psserver->GetAdminManager()->GetPathNetwork()->ListPaths(words[1]);
+    }
+    else if (strncasecmp(words[0],"race",1) == 0)
+    {
+        com_racelist(words[1]);
     }
     else if (strncasecmp(words[0],"warpspace",3) == 0)
     {

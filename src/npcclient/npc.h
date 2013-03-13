@@ -55,7 +55,6 @@ class  psNPCClient;
 class  psNPCTick;
 struct iCollideSystem;
 struct HateListEntry;
-struct RaceInfo_t;
 
 /**
  * \addtogroup npcclient
@@ -250,7 +249,7 @@ protected:
     csVector3          spawnPosition;        ///< The stored position that this NPC where spawned
     iSector*           spawnSector;          ///< The stored sector that this NPC where spawned
 
-    RaceInfo_t*        raceInfo;
+    psNPCRaceListMessage::NPCRaceInfo_t*        raceInfo;
 
     // Stats
     Stat               hp;
@@ -699,7 +698,7 @@ protected:
     /**
      * Get the npc race info
      */
-    RaceInfo_t* GetRaceInfo();
+    psNPCRaceListMessage::NPCRaceInfo_t* GetRaceInfo();
 
     /**
      * Set the npc HP

@@ -188,7 +188,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNPCRaceListMessage,MSGTYPE_NPCRACELIST);
 
 psNPCRaceListMessage::psNPCRaceListMessage(uint32_t clientToken, int count)
 {
-    msg.AttachNew(new MsgEntry(sizeof(int16) + count*(100+2*sizeof(float))));
+    msg.AttachNew(new MsgEntry(sizeof(int16) + count*(100+2*sizeof(float)+MSG_SIZEOF_VECTOR3)));
 
     msg->SetType(MSGTYPE_NPCRACELIST);
     msg->clientnum      = clientToken;
@@ -205,15 +205,17 @@ psNPCRaceListMessage::psNPCRaceListMessage(MsgEntry *message)
         ri.name = message->GetStr();
         ri.walkSpeed = message->GetFloat();
         ri.runSpeed = message->GetFloat();
+        ri.size = message->GetVector3();
         raceInfo.Push(ri);
     }
 }
 
-void psNPCRaceListMessage::AddRace(csString& name, float walkSpeed, float runSpeed, bool last)
+void psNPCRaceListMessage::AddRace(csString& name, float walkSpeed, float runSpeed, const csVector3& size, bool last)
 {
     msg->Add(name.GetDataSafe());
     msg->Add( (float)walkSpeed);
     msg->Add( (float)runSpeed);
+    msg->Add( size );
     if (last)
     {
         msg->ClipToCurrentSize();
@@ -225,9 +227,10 @@ csString psNPCRaceListMessage::ToString(NetBase::AccessPointers * /*accessPointe
     csString msgtext;
     for (size_t c = 0; c < raceInfo.GetSize(); c++)
     {
-        msgtext.AppendFmt(" name: '%s' walkSpeed: %.2f runSpeed %.2f",
+        msgtext.AppendFmt(" name: '%s' walkSpeed: %.2f runSpeed %.2f size %s",
                           raceInfo[c].name.GetDataSafe(),
-                          raceInfo[c].walkSpeed,raceInfo[c].runSpeed);
+                          raceInfo[c].walkSpeed,raceInfo[c].runSpeed,
+                          toString(raceInfo[c].size).GetDataSafe());
     }
     
     return msgtext;

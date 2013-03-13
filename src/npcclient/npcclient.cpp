@@ -1295,16 +1295,12 @@ NPCType* psNPCClient::FindNPCType(const char* npctype_name)
     return npctypes.Get(npctype_name, NULL);
 }
 
-void psNPCClient::AddRaceInfo(csString &name, float walkSpeed, float runSpeed)
+void psNPCClient::AddRaceInfo(const psNPCRaceListMessage::NPCRaceInfo_t& raceInfo)
 {
-    RaceInfo_t ri;
-    ri.name = name;
-    ri.walkSpeed = walkSpeed;
-    ri.runSpeed = runSpeed;
-    raceInfos.PutUnique(name,ri);
+    raceInfos.PutUnique(raceInfo.name,raceInfo);
 }
 
-RaceInfo_t* psNPCClient::GetRaceInfo(const char* name)
+psNPCRaceListMessage::NPCRaceInfo_t* psNPCClient::GetRaceInfo(const char* name)
 {
     return raceInfos.GetElementPointer(name);
 }
@@ -1312,7 +1308,7 @@ RaceInfo_t* psNPCClient::GetRaceInfo(const char* name)
 
 float psNPCClient::GetWalkVelocity(csString &race)
 {
-    RaceInfo_t* ri = raceInfos.GetElementPointer(race);
+    psNPCRaceListMessage::NPCRaceInfo_t* ri = raceInfos.GetElementPointer(race);
     if(ri)
     {
         return ri->walkSpeed;
@@ -1323,7 +1319,7 @@ float psNPCClient::GetWalkVelocity(csString &race)
 
 float psNPCClient::GetRunVelocity(csString &race)
 {
-    RaceInfo_t* ri = raceInfos.GetElementPointer(race);
+    psNPCRaceListMessage::NPCRaceInfo_t* ri = raceInfos.GetElementPointer(race);
     if(ri)
     {
         return ri->runSpeed;
@@ -1518,12 +1514,15 @@ void psNPCClient::ListAllNPCs(const char* pattern)
 
 bool psNPCClient::DumpRace(const char* pattern)
 {
-    csHash<RaceInfo_t,csString>::GlobalIterator it(raceInfos.GetIterator());
+    csHash<psNPCRaceListMessage::NPCRaceInfo_t,csString>::GlobalIterator it(raceInfos.GetIterator());
+
+    CPrintf(CON_CMDOUTPUT,"%-20s %10s %10s %-20s\n","Race","WalkSpeed","RunSpeed","Size");
 
     while(it.HasNext())
     {
-        const RaceInfo_t &ri = it.Next();
-        CPrintf(CON_CMDOUTPUT,"%.40s %.2f %.2f\n",ri.name.GetDataSafe(),ri.walkSpeed,ri.runSpeed);
+        const psNPCRaceListMessage::NPCRaceInfo_t &ri = it.Next();
+        CPrintf(CON_CMDOUTPUT,"%-20s %10.2f %10.2f %20s\n",ri.name.GetDataSafe(),ri.walkSpeed,ri.runSpeed,
+                toString(ri.size).GetDataSafe());
     }
 
     return true;

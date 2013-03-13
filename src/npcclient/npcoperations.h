@@ -471,7 +471,7 @@ protected:
     float            searchRange;            ///< Search for targets within this range
     float            chaseRange;             ///< Chase as long targets are within this range.
                                              ///< Chase forever if set to -1.
-    float            offset;                 ///< Used to stop a offset from the target.
+    csString         offsetAttribute;        ///< Used to stop a offset from the target.
     float            offsetAngleMax;         ///< The maximum offset angle in radians
     float            sideOffset;             ///< Add a offset to the side of the target
     bool             offsetRelativeHeading;  ///< Set to true will make the offset relative target heading
@@ -514,7 +514,7 @@ public:
      *  as a 3D vector that represents the distance from the target to the end
      *  point of the chase.
      */
-    csVector3 CalculateOffsetDelta(const csVector3 &myPos, const iSector* mySector,
+    csVector3 CalculateOffsetDelta(NPC* npc, const csVector3 &myPos, const iSector* mySector,
                                    const csVector3 &endPos, const iSector* endSector,
                                    float endRot) const;
 
@@ -548,6 +548,11 @@ public:
      */
     virtual bool Load(iDocumentNode* node);
 
+    /**
+     * Resolve the offset attribute.
+     */
+    virtual float GetOffset(NPC* npc) const;
+    
     /** Make a deep copy of this operation.
      *
      *  MakeCopy will make a copy of all Operation Parameters and reset each

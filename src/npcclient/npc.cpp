@@ -858,7 +858,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "PStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetPysStamina(),GetMaxPysStamina(),GetPysStaminaRate());
     CPrintf(CON_CMDOUTPUT, "MStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetMenStamina(),GetMaxMenStamina(),GetMenStaminaRate());
     CPrintf(CON_CMDOUTPUT, "Owner:                %s\n",GetOwnerName());
-    CPrintf(CON_CMDOUTPUT, "Race:                 %s\n",GetRaceInfo()?GetRaceInfo()->GetName():"(None)");
+    CPrintf(CON_CMDOUTPUT, "Race:                 %s\n",GetRaceInfo()?GetRaceInfo()->name.GetDataSafe():"(None)");
     CPrintf(CON_CMDOUTPUT, "Region:               %s\n",GetRegion()?GetRegion()->GetName():"(None)");
     CPrintf(CON_CMDOUTPUT, "Inside region:        %s\n",insideRegion?"Yes":"No");
     CPrintf(CON_CMDOUTPUT, "Tribe:                %s\n",GetTribe()?GetTribe()->GetName():"(None)");
@@ -1341,7 +1341,7 @@ const csString  &NPC::GetTribeMemberType() const
     return tribeMemberType;
 }
 
-RaceInfo_t* NPC::GetRaceInfo()
+psNPCRaceListMessage::NPCRaceInfo_t* NPC::GetRaceInfo()
 {
     if(!raceInfo && npcActor)
     {

@@ -498,7 +498,7 @@ INSERT INTO sc_npctypes VALUES("108","Minion","DoNothing",0,"","","","","","1",
    <watch type="owner" range="3.0" />
 </behavior>
 <behavior name="follow_chase" completion_decay="100" growth="0" initial="0">
-   <chase type="owner" anim="walk" collision="follow_collided" offset="2.0" />
+   <chase type="owner" anim="walk" collision="follow_collided" offset="1.0+$race_size" />
 </behavior>
 <behavior name="follow_turn" completion_decay="100" growth="0" initial="0">
    <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
