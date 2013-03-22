@@ -599,6 +599,9 @@ bool EntityManager::CreatePlayer (Client* client)
     }
 
     client->SetActor(actor);
+    
+    // Set the actor name to the client too.
+    client->SetName(chardata->GetCharName());
   
     chardata->LoadActiveSpells();
 
