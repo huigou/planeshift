@@ -1446,6 +1446,12 @@ void Behavior::ApplyNeedDelta(NPC *npc, float deltaDesire)
 
         new_need = maxLimit;
     }
+
+    // Floor behaviours to -998.0. (the -999.0 is an invalid uninit value).
+    if(new_need < -998.0)
+    {
+        new_need = -998.0;
+    }
 }
 
 void Behavior::ApplyNeedAbsolute(NPC *npc, float absoluteDesire)
