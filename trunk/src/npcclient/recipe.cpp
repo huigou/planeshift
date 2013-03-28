@@ -283,6 +283,10 @@ csString RecipeManager::Preparse(csString function, Tribe* tribe)
     container.Append(tribe->GetNeededResource());
     function.ReplaceAll("REPRODUCTION_RESOURCE", container.GetData());
 
+    container = "";
+    container.Append(tribe->GetNeededResourceAreaType());
+    function.ReplaceAll("RESOURCE_AREA", container.GetData());
+
     return function;
 }
 
