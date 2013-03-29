@@ -146,6 +146,11 @@ psRewardData::psRewardData(Reward_Type prewardType)
     rewardType = prewardType;
 }
 
+psRewardData::~psRewardData()
+{
+    
+}
+
 bool psRewardData::IsZero()
 {
     return true;

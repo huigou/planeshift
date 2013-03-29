@@ -26,8 +26,6 @@
 #include "util/log.h"
 #include "netmanager.h"
 
-//static int compareClientsByName(Client * const &, Client * const &);
-
 ClientConnectionSet::ClientConnectionSet():addrHash(307),hash(307)
 {
 }
@@ -74,13 +72,6 @@ Client *ClientConnectionSet::Add(LPSOCKADDR_IN addr)
     hash.Put(client->GetClientNum(), client);
     return client;
 }
-
-/*
-static int compareClientsByName(Client * const &a, Client * const &b)
-{
-    return strcmp(a->GetName(), b->GetName());
-}
-*/
 
 void ClientConnectionSet::MarkDelete(Client *client)
 {

@@ -290,35 +290,39 @@ bool pawsLoginWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, 
             }
 
             switch (servers[listBox->GetSelectedRowNum()]->GetStatus())
-			{
-				case psServerPinger::INIT:
-				case psServerPinger::FAILED:
-				{
-					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("The server isn't available!"));
-					error.FireEvent();
-					return true;
-				}
-				case psServerPinger::FULL:
-					// GM's should be able to connect, even if server is full.
-					// So in this case the server have to decide if it accept the
-					// connection.
-					ConnectToServer();  
-					return true;
-				case psServerPinger::LOCKED:
-				{
-					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("The server is locked!"));
-					error.FireEvent();
-					return true;
-				}
-				case psServerPinger::WAIT:
-				{
-					psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("The server isn't ready!"));
-					error.FireEvent();
-					return true;
-				}
-				case psServerPinger::READY:
-					ConnectToServer();
-					return true;
+            {
+                case psServerPinger::INIT:
+                case psServerPinger::FAILED:
+                {
+                    psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("The server isn't available!"));
+                    error.FireEvent();
+                    return true;
+                }
+                case psServerPinger::FULL:
+                {
+                    // GM's should be able to connect, even if server is full.
+                    // So in this case the server have to decide if it accept the
+                    // connection.
+                    ConnectToServer();  
+                    return true;
+                }
+                case psServerPinger::LOCKED:
+                {
+                    psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("The server is locked!"));
+                    error.FireEvent();
+                    return true;
+                }
+                case psServerPinger::WAIT:
+                {
+                    psSystemMessage error(0,MSG_ERROR,PawsManager::GetSingleton().Translate("The server isn't ready!"));
+                    error.FireEvent();
+                    return true;
+                }
+                case psServerPinger::READY:
+                {
+                    ConnectToServer();
+                    return true;
+                }
             }
 
             return true;

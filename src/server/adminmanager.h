@@ -102,6 +102,10 @@ public:
       */
     psRewardData(Reward_Type prewardType);
 
+    /** Destructor.
+     */
+    virtual ~psRewardData();
+
     /** @brief checks if the reward is zero
      * returns bool: true when reward is a zero gain, otherwise false
      */
