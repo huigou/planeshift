@@ -1812,6 +1812,7 @@ csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
 
         result.ReplaceAll("$tribe",npc->GetTribe()->GetName());
         result.ReplaceAll("$member_type",npc->GetTribeMemberType());
+        result.ReplaceAll("$resource_area",npc->GetTribe()->GetNeededResourceAreaType());
     }
     
     result.ReplaceAll("$name",npc->GetName());
