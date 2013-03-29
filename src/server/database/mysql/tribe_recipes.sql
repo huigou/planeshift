@@ -36,8 +36,8 @@ INSERT INTO `tribe_recipes` VALUES (23, 'Hunter Buy Coal', 'tribesman(Hunter,1);
 
 
 
-INSERT INTO `tribe_recipes` VALUES (30, 'Miner Mate', 'resource(REPRODUCTION_RESOURCE,REPRODUCTION_COST,Miner Dig Resource,Resource);tribesman(any,1);', 'select(any,1);setBuffer(selection,Reproduce_Type,$member_type);mate();alterResource(REPRODUCTION_RESOURCE, -REPRODUCTION_COST);', 0 , 0);
-INSERT INTO `tribe_recipes` VALUES (31, 'Hunter Mate', 'resource(REPRODUCTION_RESOURCE,REPRODUCTION_COST,Hunter Hunt Resource,Resource);tribesman(any,1);', 'select(any,1);setBuffer(selection,Reproduce_Type,$member_type);mate();alterResource(REPRODUCTION_RESOURCE, -REPRODUCTION_COST);', 0 , 0);
+INSERT INTO `tribe_recipes` VALUES (30, 'Miner Mate', 'resource($REPRODUCTION_RESOURCE,$REPRODUCTION_COST,Miner Dig Resource,Resource);tribesman(any,1);', 'select(any,1);setBuffer(selection,Reproduce_Type,$member_type);mate();alterResource($REPRODUCTION_RESOURCE, -$REPRODUCTION_COST);', 0 , 0);
+INSERT INTO `tribe_recipes` VALUES (31, 'Hunter Mate', 'resource($REPRODUCTION_RESOURCE,$REPRODUCTION_COST,Hunter Hunt Resource,Resource);tribesman(any,1);', 'select(any,1);setBuffer(selection,Reproduce_Type,$member_type);mate();alterResource($REPRODUCTION_RESOURCE, -$REPRODUCTION_COST);', 0 , 0);
 
 # Spot Recipe
 INSERT INTO `tribe_recipes` VALUES (40, 'Hunter Tribe Spots', '', 'reserveSpot(0,0,0,Campfire);reserveSpot(-4,0,6,Small Tent);reserveSpot(6,0,4,Small Tent);reserveSpot(4,0,-6,Small Tent);reserveSpot(-8,0,-2,Small Tent);', 0, 0);
@@ -46,8 +46,8 @@ INSERT INTO `tribe_recipes` VALUES (41, 'Miner Tribe Spots', '', 'reserveSpot(0,
 
 
 # Upkeep
-INSERT INTO `tribe_recipes` VALUES (50, 'Mining Upkeep', 'resource(REPRODUCTION_RESOURCE,10,Miner Dig Resource,Resource);', 'alterResource(REPRODUCTION_RESOURCE,-10);', 1, 1);
-INSERT INTO `tribe_recipes` VALUES (51, 'Hunting Upkeep', 'resource(REPRODUCTION_RESOURCE,10,Hunter Hunt Resource,Resource);', 'alterResource(REPRODUCTION_RESOURCE,-10);', 1, 1);
+INSERT INTO `tribe_recipes` VALUES (50, 'Mining Upkeep', 'resource($REPRODUCTION_RESOURCE,10,Miner Dig Resource,Resource);', 'alterResource($REPRODUCTION_RESOURCE,-10);', 1, 1);
+INSERT INTO `tribe_recipes` VALUES (51, 'Hunting Upkeep', 'resource($REPRODUCTION_RESOURCE,10,Hunter Hunt Resource,Resource);', 'alterResource($REPRODUCTION_RESOURCE,-10);', 1, 1);
 
 # 
 INSERT INTO `tribe_recipes` VALUES (60, 'Miner Build Campfire', 'tribesman(Miner,1);resource(Coal,10,Miner Dig Resource,Resource);', 'select(Miner,1);locateBuildingSpot(Campfire);percept(selection,tribe:build);alterResource(Coal,-10);', 0, 0);
