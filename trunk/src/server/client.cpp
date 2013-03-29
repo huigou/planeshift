@@ -258,6 +258,24 @@ bool Client::IsMyPet(gemActor * other) const
     return false;
 }
 
+void Client::SetName(const char* n)
+{
+    name = n;
+}
+
+const char* Client::GetName()
+{
+    // If there is a character than get the first name of the character.
+    if (GetCharacterData())
+    {
+        return GetCharacterData()->GetCharName();
+    }
+
+    // Until a character is loaded use the name set when the client is created. This will than
+    // be the account name.
+    return name;
+}
+
 void Client::SetActor(gemActor* myactor)
 {
     actor = myactor;

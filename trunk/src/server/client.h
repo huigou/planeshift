@@ -124,8 +124,22 @@ public:
     bool IsMute() { return (mute.Current() > 0); }
     MuteBuffable & GetBuffableMute() { return mute; }
 
-    void SetName(const char* n) { name = n; }
-    const char* GetName() { return name; }
+    /**
+     * Set the clients name.
+     *
+     * Use this to set the account name during loading. When a Character is loaded
+     * this call will have no effect anymore, since GetName than will use the
+     * character to get the name.
+     */
+    void SetName(const char* n);
+
+    /**
+     * Get Client Name.
+     *
+     * Returning the account name until a Character is connected to the client. When a Character
+     * is connected it will returnt the Character first name.
+     */
+    const char* GetName();
 
     // Additional Entity information
     void SetActor(gemActor* myactor);
