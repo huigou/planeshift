@@ -221,7 +221,6 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     csTicks start = csGetTicks();
 
     psAuthenticationMessage msg(me); // This cracks message into members.
-
     if (!msg.valid)
     {
         Debug1(LOG_NET,me->clientnum,"Mangled psAuthenticationMessage received.\n");
@@ -513,10 +512,14 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     }
     
     if (psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default advisor"))
+    {
         psserver->GetAdviceManager()->AddAdvisor(client);
+    }
 
     if (psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default buddylisthide"))
+    {
         client->SetBuddyListHide(true);
+    }
 
     psserver->GetWeatherManager()->SendClientGameTime(me->clientnum);
 
