@@ -277,15 +277,15 @@ csString RecipeManager::Preparse(csString function, Tribe* tribe)
 
     container = "";
     container.Append(tribe->GetReproductionCost());
-    function.ReplaceAll("REPRODUCTION_COST", container.GetData());
+    function.ReplaceAll("$REPRODUCTION_COST", container.GetData());
 
     container = "";
     container.Append(tribe->GetNeededResource());
-    function.ReplaceAll("REPRODUCTION_RESOURCE", container.GetData());
+    function.ReplaceAll("$REPRODUCTION_RESOURCE", container.GetData());
 
     container = "";
     container.Append(tribe->GetNeededResourceAreaType());
-    function.ReplaceAll("RESOURCE_AREA", container.GetData());
+    function.ReplaceAll("$RESOURCE_AREA", container.GetData());
 
     return function;
 }
