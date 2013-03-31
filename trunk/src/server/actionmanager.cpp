@@ -64,16 +64,12 @@
 #include "minigamemanager.h"
 
 
-psActionTimeoutGameEvent::psActionTimeoutGameEvent(ActionManager* mgr, const psActionLocation* actionLocation, size_t clientnum)
-    : psGameEvent(0, 1000, "psActionTimeoutGameEvent")
+psActionTimeoutGameEvent::psActionTimeoutGameEvent(ActionManager* mgr, const psActionLocation* actionLocation, EID actorEID)
+    : psGameEvent(0, 1000, "psActionTimeoutGameEvent"), actionManager(mgr), actorEID(actorEID), actionLocation(actionLocation)
 {
     valid = false;
-    if(mgr)
+    if(actionManager)
     {
-        actionmanager =  mgr;
-        info = actionLocation;
-        client = clientnum;
-
         valid = true;
     }
 }
@@ -81,9 +77,9 @@ psActionTimeoutGameEvent::psActionTimeoutGameEvent(ActionManager* mgr, const psA
 psActionTimeoutGameEvent::~psActionTimeoutGameEvent()
 {
     valid = false;
-    actionmanager = NULL;
-    info = NULL;
-    client = 0;
+    actionManager = NULL;
+    actionLocation = NULL;
+    actorEID = 0;
 }
 
 void psActionTimeoutGameEvent::Trigger()
@@ -91,21 +87,22 @@ void psActionTimeoutGameEvent::Trigger()
     psSectorInfo* sector;
     float pos_x, pos_y, pos_z, yrot;
     InstanceID instance;
-    Client* clientPtr = psserver->GetNetManager()->GetClient((int)client);
-    if(clientPtr && info)
+    gemActor* actor = (gemActor*)psserver->entitymanager->GetGEM()->FindObject(actorEID);
+
+    if(valid && actor && actionLocation)
     {
-        clientPtr->GetCharacterData()->GetLocationInWorld(instance, sector, pos_x, pos_y, pos_z, yrot);
+        actor->GetCharacterData()->GetLocationInWorld(instance, sector, pos_x, pos_y, pos_z, yrot);
         csVector3 clientPos(pos_x, pos_y, pos_z);
 
-        if(csSquaredDist::PointPoint(clientPos, info->position) > (info->radius * info->radius))
+        if(csSquaredDist::PointPoint(clientPos, actionLocation->position) > (actionLocation->radius * actionLocation->radius))
         {
-            actionmanager->RemoveActiveTrigger(client, info);
+            actionManager->RemoveActiveTrigger(actorEID, actionLocation);
             valid = false;
         }
         else
         {
             // still in range create new event
-            psActionTimeoutGameEvent* newevent = new psActionTimeoutGameEvent(actionmanager, info, client);
+            psActionTimeoutGameEvent* newevent = new psActionTimeoutGameEvent(actionManager, actionLocation, actorEID);
             psserver->GetEventManager()->Push(newevent);
         }
     }
@@ -182,11 +179,6 @@ void ActionManager::HandleQueryMessage(csString xml, Client* client)
         if(triggerType.CompareNoCase("SELECT"))
         {
             handled = HandleSelectQuery(topNode, client);
-        }
-
-        if(triggerType.CompareNoCase("PROXIMITY"))
-        {
-            handled = HandleProximityQuery(topNode, client);
         }
 
         if(!handled)
@@ -332,56 +324,36 @@ bool ActionManager::HandleSelectQuery(csRef<iDocumentNode> topNode, Client* clie
     return handled;
 }
 
-bool ActionManager::HandleProximityQuery(csRef<iDocumentNode> topNode, Client* client)
+void ActionManager::NotifyProximity(gemActor* actor, gemActionLocation* actionLocationObject, float range)
 {
-    bool handled = false;
+    // Actor and action Location has been percepted as close by the proximity list.
+    // Now lets check if this should trigger en effect....
 
-    csArray<psActionLocation*> matches;
-    psActionLocation* actionLocation;
-    csHash<psActionLocation*>::Iterator iter(actionLocation_by_sector.GetIterator(csHashCompute(sectorName)));
-    while(iter.HasNext())
+    psActionLocation* actionLocation = actionLocationObject->GetAction();
+    if(actionLocation->triggertype != "PROXIMITY")
     {
-        actionLocation = iter.Next();
-
-        if(actionLocation->triggertype == "PROXIMITY")
-        {
-            csString key("");
-            size_t id= actionLocation->id;
-            key.AppendFmt("%zu", id);
-            size_t clientnum=client->GetClientNum();
-            key.AppendFmt("%zu", clientnum);
-            csHash<psActionLocation*>::Iterator active(activeTriggers.GetIterator(csHashCompute(key)));
-
-            if((actionLocation->sectorname == sectorName) &&
-                    (csSquaredDist::PointPoint(actionLocation->position, position) < (actionLocation->radius * actionLocation->radius)))
-            {
-                // Found match
-                if(!active.HasNext())
-                {
-                    matches.Push(actionLocation);
-                }
-            }
-        }
+        return;  // ActionLocation not of type PROXIMITY.
     }
 
-    // ProcessMatches
-    handled = ProcessMatches(matches, client);
-
-    csArray<psActionLocation*>::Iterator results(matches.GetIterator());
-    while(results.HasNext())
+    if (range > actionLocation->radius)
     {
-        actionLocation = results.Next();
-        csString key("");
-        size_t id=actionLocation->id;
-        size_t clientnum=client->GetClientNum();
-        key.AppendFmt("%zu",id);
-        key.AppendFmt("%zu", clientnum);
-        activeTriggers.Put(csHashCompute(key), actionLocation);
-        psActionTimeoutGameEvent* event = new psActionTimeoutGameEvent(this, actionLocation, client->GetClientNum());
-        psserver->GetEventManager()->Push(event);
+        return; // Outside range of action location.
     }
-    return handled;
+
+    if (HasActiveTrigger(actor->GetEID(),actionLocation))
+    {
+        return; // Trigger is active for this client.
+    }
+
+    if(actionLocation->responsetype == "SCRIPT")
+    {
+        HandleScriptOperation(actionLocation, actor);
+
+        AddActiveTrigger(actor->GetEID(),actionLocation);
+    }
 }
+
+
 
 psActionLocation* ActionManager::FindAction(EID id)
 {
@@ -436,7 +408,7 @@ bool ActionManager::ProcessMatches(csArray<psActionLocation*> matches, Client* c
 
             if(actionLocation->responsetype == "SCRIPT")
             {
-                HandleScriptOperation(actionLocation, client);
+                HandleScriptOperation(actionLocation, client->GetActor());
                 handled = true;
             }
         }
@@ -764,7 +736,7 @@ void ActionManager::HandleExamineOperation(psActionLocation* action, Client* cli
 
 
 
-void ActionManager::HandleScriptOperation(psActionLocation* action, Client* client)
+void ActionManager::HandleScriptOperation(psActionLocation* action, gemActor* actor)
 {
     // if no event is specified, do nothing
     if(action->response.Length() > 0)
@@ -780,24 +752,55 @@ void ActionManager::HandleScriptOperation(psActionLocation* action, Client* clie
         gemItem* realItem = action->GetRealItem();
 
         MathEnvironment env;
-        env.Define("Actor", client->GetActor());
+        env.Define("Actor", actor);
         if(realItem)
+        {
             env.Define("Item", realItem->GetItem());
+        }
+        
         script->Run(&env);
     }
 }
 
-void ActionManager::RemoveActiveTrigger(size_t clientnum, const psActionLocation* actionLocation)
+void ActionManager::RemoveActiveTrigger(EID actorEID, const psActionLocation* actionLocation)
 {
     csString key("");
-    size_t id= actionLocation->id;
+    size_t   id = actionLocation->id;
     key.AppendFmt("%zu", id);
-    key.AppendFmt("%zu",  clientnum);
+    key.AppendFmt("%u", actorEID.Unbox());
 
-    csHash<psActionLocation*>::Iterator active(activeTriggers.GetIterator(csHashCompute(key)));
+    csHash<const psActionLocation*>::Iterator active(activeTriggers.GetIterator(csHashCompute(key)));
 
     while(active.HasNext())
+    {
         activeTriggers.Delete(csHashCompute(key), active.Next());
+    }
+}
+
+bool ActionManager::HasActiveTrigger(EID actorEID, const psActionLocation* actionLocation)
+{
+    csString key("");
+    size_t   id = actionLocation->id;
+    key.AppendFmt("%zu", id);
+    key.AppendFmt("%u", actorEID.Unbox());
+    csHash<const psActionLocation*>::Iterator active(activeTriggers.GetIterator(csHashCompute(key)));
+
+    // There is a active trigger if this iterator has a next element.
+    return (active.HasNext());
+}
+
+void ActionManager::AddActiveTrigger(EID actorEID, const psActionLocation* actionLocation)
+{
+    csString key("");
+    size_t   id = actionLocation->id;
+    key.AppendFmt("%zu", id);
+    key.AppendFmt("%u", actorEID.Unbox());
+    activeTriggers.Put(csHashCompute(key), actionLocation);
+
+    // Create game event to check if the actor move outside trigger area again. While
+    // inside the game event will be recreated until client can be removed from active triggers lists.
+    psActionTimeoutGameEvent* event = new psActionTimeoutGameEvent(this, actionLocation, actorEID);
+    psserver->GetEventManager()->Push(event);
 }
 
 bool ActionManager::RepopulateActionLocations(psSectorInfo* sectorinfo)
