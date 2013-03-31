@@ -36,12 +36,13 @@ pawsCheckBox::pawsCheckBox()
 }
 
 pawsCheckBox::pawsCheckBox(const pawsCheckBox& origin)
-            : textOffsetX(origin.textOffsetX), textOffsetY(origin.textOffsetY),
+            : pawsWidget(origin),
+            textOffsetX(origin.textOffsetX),
+            textOffsetY(origin.textOffsetY),
             checkBoxOff(origin.checkBoxOff),
-            checkBoxGrey(origin.checkBoxGrey),
             checkBoxOn(origin.checkBoxOn),
-            checkBoxSize(origin.checkBoxSize),
-            pawsWidget(origin)
+            checkBoxGrey(origin.checkBoxGrey),
+            checkBoxSize(origin.checkBoxSize)
 {
     text = 0;
     checkBox = 0;

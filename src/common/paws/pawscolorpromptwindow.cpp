@@ -49,12 +49,12 @@ pawsColorPromptWindow::pawsColorPromptWindow()
 
 pawsColorPromptWindow::pawsColorPromptWindow(const pawsColorPromptWindow& origin)
                         :pawsPromptWindow(origin),
-                        lastValidText(origin.lastValidText),
                         maxColor(origin.maxColor),
                         minColor(origin.minColor),
+                        lastValidText(origin.lastValidText),
+                        action(0),
                         name(origin.name),
-                        param(origin.param),
-                        action(0)
+                        param(origin.param)
 {
     inputWidget = 0;
     scrollBarB = 0;

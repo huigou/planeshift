@@ -94,8 +94,8 @@ pawsTreeNode::pawsTreeNode()
 pawsTreeNode::pawsTreeNode(const pawsTreeNode& origin)
                 :pawsWidget(origin),
                 tree(0),
-                collapsed(origin.collapsed),
-                collapsable(origin.collapsable)
+                collapsable(origin.collapsable),
+                collapsed(origin.collapsed)
 {
     for (unsigned int i = 0 ; i < origin.attrList.GetSize(); i++)
         attrList.Push(origin.attrList[i]);
@@ -676,7 +676,7 @@ pawsTreeNode * pawsTreeStruct::FindNodeAt(pawsTreeNode *parent, int x, int y)
     csRect frame;
 
     if (parent->IsCollapsed())
-        return false;
+        return NULL;
 
     child = parent->GetFirstChild();
     while (child != NULL)

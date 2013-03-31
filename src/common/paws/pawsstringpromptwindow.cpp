@@ -40,8 +40,8 @@ pawsStringPromptWindow::pawsStringPromptWindow()
 
 pawsStringPromptWindow::pawsStringPromptWindow(const pawsStringPromptWindow& origin)
                         :pawsPromptWindow(origin),
-                        action(0),
                         multiLine(origin.multiLine),
+                        action(0),
                         name(origin.name),
                         param(origin.param)
 {
