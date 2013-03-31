@@ -126,6 +126,11 @@ void psAuthenticationClient::HandleMessage(MsgEntry *me)
                 psengine->GetNetManager()->Disconnect();
 #endif
             }
+            else
+            {
+                Notify1( LOG_CONNECTIONS, "Received disconnect will not connected.\n");
+            }
+            
             break;          
         }
         

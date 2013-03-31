@@ -113,13 +113,14 @@ void psNetManager::Disconnect()
     if (!connected)
         return;
 
+    connected = false;
+
     psDisconnectMessage discon(0, 0, "");
     msghandler->SendMessage(discon.msg);
     msghandler->Flush(); // Flush the network
     //msghandler->DispatchQueue(); // Flush inbound message queue
    
     connection->DisConnect();
-    connected = false;
 }
 
 void psNetManager::Authenticate(const csString & name, const csString & pwd, const  csString & pwd256)
