@@ -904,6 +904,8 @@ protected:
      * @param visLine the number (counting from top=0) of the current visual line. Needed for the spellchecker to choose the correct word-boundries from lineTypos
      */
     void drawTextSpellChecked(iFont* font, int x, int y, int fg, csString str, int visLine);
+
+
     /** struct to contain the end boundry of a word and it's spellcheck status
      */
     struct Word
@@ -939,7 +941,6 @@ protected:
     size_t topLine;
     pawsScrollBar* vScrollBar;
 
-    void ReflowText();
     bool usingScrollBar;
 
     int maxWidth;

@@ -55,16 +55,16 @@ pawsTextBox::pawsTextBox() : textX(0), textY(0)
     factory = "pawsTextBox";
 }
 pawsTextBox::pawsTextBox(const pawsTextBox &origin):
+    pawsWidget(origin),
+    text(origin.text),
     colour(origin.colour),
     grayed(origin.grayed),
     horizAdjust(origin.horizAdjust),
-    text(origin.text),
-    textWidth(origin.textWidth),
-    textX(origin.textX),
-    textY(origin.textY),
     vertAdjust(origin.vertAdjust),
     vertical(origin.vertical),
-    pawsWidget(origin)
+    textX(origin.textX),
+    textY(origin.textY),
+    textWidth(origin.textWidth)
 {
     letterSizes = 0;
     if(origin.letterSizes)
@@ -1628,12 +1628,12 @@ pawsMultiLineTextBox::pawsMultiLineTextBox()
 }
 pawsMultiLineTextBox::pawsMultiLineTextBox(const pawsMultiLineTextBox &origin)
     :pawsWidget(origin),
-     canDrawLines(origin.canDrawLines),
-     maxHeight(origin.maxHeight),
-     maxWidth(origin.maxWidth),
-     startLine(origin.startLine),
      text(origin.text),
-     usingScrollBar(origin.usingScrollBar)
+     startLine(origin.startLine),
+     canDrawLines(origin.canDrawLines),
+     usingScrollBar(origin.usingScrollBar),
+     maxWidth(origin.maxWidth),
+     maxHeight(origin.maxHeight)
 {
     for(unsigned int i = 0 ; i < origin.lines.GetSize(); i++)
         lines.Push(origin.lines[i]);
@@ -1931,12 +1931,12 @@ pawsMultiPageTextBox::pawsMultiPageTextBox()
 }
 pawsMultiPageTextBox::pawsMultiPageTextBox(const pawsMultiPageTextBox &origin)
     :pawsWidget(origin),
-     canDrawLines(origin.canDrawLines),
-     maxHeight(origin.maxHeight),
-     maxWidth(origin.maxWidth),
-     startLine(origin.startLine),
      text(origin.text),
-     usingScrollBar(origin.usingScrollBar)
+     startLine(origin.startLine),
+     canDrawLines(origin.canDrawLines),
+     usingScrollBar(origin.usingScrollBar),
+     maxWidth(origin.maxWidth),
+     maxHeight(origin.maxHeight)
 {
     currentPageNum = 0;
     for(unsigned int i = 0 ; i < origin.lines.GetSize(); i++)
@@ -2307,19 +2307,19 @@ pawsFadingTextBox::pawsFadingTextBox()
     font = NULL;
     factory = "pawsFadingTextBox";
 }
-pawsFadingTextBox::pawsFadingTextBox(const pawsFadingTextBox &origin)
-    :color(origin.color),
-     fadetime(origin.fadetime),
+pawsFadingTextBox::pawsFadingTextBox(const pawsFadingTextBox &origin):
+     pawsWidget(origin),
+     text(origin.text),
      first(origin.first),
      firstFont(origin.firstFont),
      font(origin.font),
      org_color(origin.org_color),
+     color(origin.color),
      scolor(origin.scolor),
      start(origin.start),
-     text(origin.text),
-     time(origin.time),
      ymod(origin.ymod),
-     pawsWidget(origin)
+     time(origin.time),
+     fadetime(origin.fadetime)
 {
 
 }

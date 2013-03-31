@@ -47,22 +47,22 @@ pawsComboBox::pawsComboBox()
 }
 
 pawsComboBox::pawsComboBox(const pawsComboBox& origin)
-                : closed(origin.closed),
-                downButton(origin.downButton),
-                downButtonPressed(origin.downButtonPressed),
-                fliptotop(origin.fliptotop),
+                :pawsWidget(origin),
                 initalText(origin.initalText),
-                listalpha(origin.listalpha),
                 oldHeight(origin.oldHeight),
                 oldWidth(origin.oldWidth),
-                rowHeight(origin.rowHeight),
+                closed(origin.closed),
+                fliptotop(origin.fliptotop),
+                useScrollBar(origin.useScrollBar),
                 rows(origin.rows),
+                rowHeight(origin.rowHeight),
+                listalpha(origin.listalpha),
                 sorted(origin.sorted),
                 text(origin.text),
                 upButton(origin.upButton),
                 upButtonPressed(origin.upButtonPressed),
-                useScrollBar(origin.useScrollBar),
-                pawsWidget(origin)
+                downButton(origin.downButton),
+                downButtonPressed(origin.downButtonPressed)
 {
     arrow = 0;
     itemChoice = 0;

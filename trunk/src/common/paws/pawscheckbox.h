@@ -162,12 +162,12 @@ public:
 private:
     pawsButton* checkBox;
     pawsTextBox* text;
-	int textOffsetX;
-	int textOffsetY;
+    int textOffsetX;
+    int textOffsetY;
 
     csString checkBoxOff;
     csString checkBoxOn;
-	csString checkBoxGrey;
+    csString checkBoxGrey;
 
     int checkBoxSize;  
     

@@ -91,10 +91,11 @@ pawsFileNavigation::pawsFileNavigation()
 
 pawsFileNavigation::pawsFileNavigation(const pawsFileNavigation& origin)
                     :pawsWidget(origin),
+                    vfs(origin.vfs),
                     current_path(origin.current_path),
                     fullpathandfilename(0),
                     selection_state(origin.selection_state),
-                    vfs(origin.vfs)
+                    action(origin.action)
 {
     for (unsigned int i = 0 ; i < origin.zip_mounts.GetSize(); i++)
         zip_mounts.Push(origin.zip_mounts[i]);

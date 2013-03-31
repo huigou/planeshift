@@ -116,37 +116,36 @@ pawsListBox::pawsListBox()
 
 pawsListBox::pawsListBox(const pawsListBox& origin)
                 :pawsWidget(origin),
-                arrowDown(origin.arrowDown),
-                arrowSize(origin.arrowSize),
-                arrowUp(origin.arrowUp),
-                ascOrder(origin.ascOrder),
+                usingTitleRow(origin.usingTitleRow),
+                totalColumns(origin.totalColumns),
+                totalRows(origin.totalRows),
+                columnHeight(origin.columnHeight),
+                rowWidth(origin.rowWidth),
+                topRow(origin.topRow),
+                selected(origin.selected),
+                xMod(origin.xMod),
                 autoID(origin.autoID),
                 autoResize(origin.autoResize),
                 autoUpdateScroll(origin.autoUpdateScroll),
-                columnHeight(origin.columnHeight),
-                highlightAlpha(origin.highlightAlpha),
-                highlightImage(origin.highlightImage),
                 notifyTarget(0),
-                rowWidth(origin.rowWidth),
-                scrollbarHeightMod(origin.scrollbarHeightMod),
-                scrollbarWidth(origin.scrollbarWidth),
-                selectable(origin.selectable),
-                selected(origin.selected),
+                xmlbinding_row(origin.xmlbinding_row),
+                sortColNum(origin.sortColNum),
+                ascOrder(origin.ascOrder),
                 //sort_ascOrder(origin.sort_ascOrder),
                 //sort_sortColNum(origin.sort_sortColNum),
                 //sort_sortFunc(origin.sort_sortFunc),
-                sortColNum(origin.sortColNum),
-                topRow(origin.topRow),
-                totalColumns(origin.totalColumns),
-                totalRows(origin.totalRows),
+                highlightImage(origin.highlightImage),
+                highlightAlpha(origin.highlightAlpha),
+                arrowSize(origin.arrowSize),
+                scrollbarWidth(origin.scrollbarWidth),
+                scrollbarHeightMod(origin.scrollbarHeightMod),
                 useBorder(origin.useBorder),
-                usingTitleRow(origin.usingTitleRow),
-                xmlbinding_row(origin.xmlbinding_row),
-                xMod(origin.xMod)
-
+                selectable(origin.selectable),
+                arrowUp(origin.arrowUp),
+                arrowDown(origin.arrowDown)
 {
     columnDef = new ColumnDef[origin.totalColumns];
-    for (unsigned int i = 0 ; i < origin.totalColumns; i++)
+    for (int i = 0 ; i < origin.totalColumns; i++)
     {
         columnDef[i].height = origin.columnDef[i].height;
         columnDef[i].width = origin.columnDef[i].height;

@@ -184,8 +184,8 @@ protected:
     pawsTreeNode * prevSibling, * nextSibling;        //NULL in first/last sibling
 
     csArray<TreeNodeAttribute> attrList;          //attributes associated with node
-    bool collapsable,                 //can node by collapsed ?
-         collapsed;                   //is node currently collapsed ?
+    bool collapsable;                 //can node by collapsed ?
+    bool collapsed;                   //is node currently collapsed ?
 };
 
 
