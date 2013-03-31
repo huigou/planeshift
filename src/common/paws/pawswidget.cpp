@@ -399,6 +399,23 @@ bool pawsWidget::IsIndirectChild( pawsWidget * widget )
     return false;
 }
 
+bool pawsWidget::IsChildOf( pawsWidget * someParent )
+{
+    // Search through all parents to check if someParent is an actual parent
+    pawsWidget* widget = this;
+    do
+    {
+        if (widget == someParent)
+        {
+            return true;
+        }
+        widget = widget->GetParent();
+    } while (widget);
+
+    return false;
+}
+
+
 bool pawsWidget::Includes( pawsWidget * widget )
 {
   return widget && (widget == this || IsIndirectChild(widget));

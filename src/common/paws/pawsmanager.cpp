@@ -759,12 +759,13 @@ bool PawsManager::HandleMouseMove(csMouseEventData &data)
         return true;
     }
 
-    if(modalWidget == NULL)
+    // Handle mouseoverWidget and start fading due to loss of mouse focus
+    pawsWidget* widget = mainWidget->WidgetAt(data.x, data.y);
+    if(widget)
     {
-        pawsWidget* widget = mainWidget->WidgetAt(data.x, data.y);
-
-        if(widget)
+        if((modalWidget == NULL) || widget->IsChildOf(modalWidget))
         {
+            // Handle mouse over for 
             if(widget && widget != mouseoverWidget)
             {
                 widget->OnMouseEnter();
@@ -772,30 +773,43 @@ bool PawsManager::HandleMouseMove(csMouseEventData &data)
             }
 
             mouseoverWidget = widget;
-            pawsWidget* widgetFade = widget;
 
-            // Only fade in/out topmost parent
-            if(widgetFade != mainWidget)
+            // Now only handle fading if not modal windows are involved
+            if (modalWidget == NULL)
             {
-                for(pawsWidget* mainParent = widgetFade->GetParent(); mainParent != mainWidget; mainParent=widgetFade->GetParent())
-                {
-                    widgetFade = mainParent;
-                }
-            }
+                pawsWidget* widgetFade = widget;
 
-
-            if(lastfadeWidget != widgetFade && widgetFade && widgetFade->IsVisible())
-            {
-                if(lastfadeWidget && lastfadeWidget != mainWidget)
-                {
-                    lastfadeWidget->MouseOver(false);
-                }
-                lastfadeWidget = widgetFade;
-
+                // Only fade in/out topmost parent
                 if(widgetFade != mainWidget)
-                    widgetFade->MouseOver(true);                // Fade in
+                {
+                    for(pawsWidget* mainParent = widgetFade->GetParent(); mainParent != mainWidget; mainParent=widgetFade->GetParent())
+                    {
+                        widgetFade = mainParent;
+                    }
+                }
+                
+                
+                if(lastfadeWidget != widgetFade && widgetFade && widgetFade->IsVisible())
+                {
+                    if(lastfadeWidget && lastfadeWidget != mainWidget)
+                    {
+                        lastfadeWidget->MouseOver(false);
+                    }
+                    lastfadeWidget = widgetFade;
+                    
+                    if(widgetFade != mainWidget)
+                        widgetFade->MouseOver(true);                // Fade in
+                }
             }
         }
+        else
+        {
+            mouseoverWidget = NULL;
+        }
+    }
+    else
+    {
+        mouseoverWidget = NULL;
     }
 
     return false;
@@ -836,7 +850,7 @@ void PawsManager::Draw()
     graphics2D->SetClipRect(0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
 
     // Draw the tooltip above all other windows after 250 csTicks
-    if(timeOver < csGetTicks() - tipDelay && mouseoverWidget)
+    if((timeOver < (csGetTicks() - tipDelay)) && mouseoverWidget)
     {
         mouseoverWidget->DrawToolTip(mouse->GetPosition().x, mouse->GetPosition().y);
     }

@@ -516,6 +516,13 @@ public:
      * @param widget The widget to test.
      */
     bool IsIndirectChild( pawsWidget * widget );
+
+    /**
+     * Returns true, if this widget is the child of 'someParent'.
+     *
+     * @param someParent The parent to check for.
+     */
+    bool IsChildOf( pawsWidget * someParent );
     
     /**
      * Returns true if widget equals this, or widget is a child of this.
