@@ -55,6 +55,7 @@
 #include "globals.h"
 #include "npcmanager.h"
 #include "entitymanager.h"
+#include "actionmanager.h"
 
 // define if you want loads of debug printfs
 //#define PSPROXDEBUG
@@ -285,7 +286,7 @@ gemObject *ProximityList::FindObjectName(const char *name)
             return objectsThatIWatch[x];
         }
     }
-    return false;
+    return NULL;
 }
 
 void ProximityList::UpdatePublishDestRange(PublishDestination *pd, gemObject *myself, gemObject *object,
@@ -351,7 +352,15 @@ void ProximityList::UpdatePublishDestRange(PublishDestination *pd, gemObject *my
                                                                 actorself,
                                                                 faction);
             }
+        } else
+        {
+            gemActionLocation* actionLocationObject = dynamic_cast<gemActionLocation*>(myself);
+            if (actorobject && actionLocationObject)
+            {
+                psserver->GetActionManager()->NotifyProximity(actorobject, actionLocationObject, newrange);
+            }
         }
+        
     }
 }
 

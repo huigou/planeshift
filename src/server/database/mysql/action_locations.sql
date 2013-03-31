@@ -26,7 +26,7 @@ INSERT INTO `action_locations` VALUES (1,0,'The Blacksmith Shop','NPCroom','_s_b
 INSERT INTO `action_locations` VALUES (2,0,'A door to a restricted place','NPCroom','door1', 0,-42,0,-158,4294967295,10,'SELECT','EXAMINE',"<Examine><Entrance Type='Prime' Script='Actor:HasCompletedQuest(\"Rescue the Princess\")' X='-58' Y='0' Z='-115' Rot='280' Sector='NPCroom1'/><Description>A door to a restricted place</Description></Examine>",'Y');
 
 INSERT INTO `action_locations` VALUES (3,0,'IngotsOfFire','NPCroom','smith_ingots',0,0,0,0,4294967295,10,'PROXIMITY','SCRIPT','flame_damage','Y');
-INSERT INTO `action_locations` VALUES (4,0,'HealingTree','NPCroom','_g_treetop02big_npc02',0,0,0,0,4294967295,4,'PROXIMITY','SCRIPT','healing_tree','Y');
+INSERT INTO `action_locations` VALUES (4,0,'HealingTree','NPCroom','',0,-21.98,0.00,-169.02,4294967295,5,'PROXIMITY','SCRIPT','healing_tree','Y');
 INSERT INTO `action_locations` VALUES (5,0,'woodbox','NPCroom','smith_woodbox',0,0,0,0,4294967295,5,'SELECT','EXAMINE','<Examine>\n<Container ID=\'80\'/>\n<Description>A Box full of books</Description>\n</Examine>','Y');
 INSERT INTO `action_locations` VALUES (6,0,'Smith Forge','NPCroom','smith_furnace',0,0,0,0,4294967295,5,'SELECT','EXAMINE','<Examine>\n<Container ID=\'115\'/>\n<Description>A smith forge, ready to heat materials</Description>\n</Examine>','Y');
 INSERT INTO `action_locations` VALUES (7,0,'Anvil','NPCroom','smith_anvil',0,0,0,0,4294967295,5,'SELECT','EXAMINE','<Examine>\n<Container ID=\'116\'/>\n<Description>An anvil used to forge items</Description>\n</Examine>','Y');

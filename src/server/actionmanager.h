@@ -51,17 +51,31 @@ class psActionLocation;
 class ActionManager;
 class psSectorInfo;
 class Client;
+class gemActionLocation;
+class gemActor;
 
 /**
  * Time out event on interacting with an action item.
+ *
+ * This timer is fired when an entity is detected to trigger an action location. It
+ * will than regullary check if the entity has left and release the entity
+ * from the triggered action location.
  */
 class psActionTimeoutGameEvent : public psGameEvent
 {
 public:    
-    psActionTimeoutGameEvent(ActionManager *mgr,
-                     const psActionLocation *actionLocation,
-                     size_t  client);
+    /**
+     * Constructor.
+     *
+     * @param mgr            Pointer to ActionManager, used for callbacks from Trigger.
+     * @param actionLocation Action location to guard.
+     * @pram  actorEID       The EID of the actor that is inside the action location.
+     */
+    psActionTimeoutGameEvent(ActionManager* mgr, const psActionLocation* actionLocation, EID actorEID);
 
+    /**
+     * Destructor.
+     */
     ~psActionTimeoutGameEvent();
     
     /**
@@ -71,11 +85,11 @@ public:
     virtual bool IsValid() { return valid; }
     
 protected:
-    ActionManager *actionmanager;
-    bool valid;
+    ActionManager*           actionManager;  ///< Reference to the action manager
+    bool                     valid;          ///< Is this trigger still valid
     
-    size_t                       client;     
-    const  psActionLocation      *info;         
+    EID                      actorEID;       ///< Reference to the actor
+    const  psActionLocation* actionLocation; ///< The action location         
 };
 
 
@@ -84,14 +98,21 @@ protected:
 /**
  * Handles the map interaction system.
  *
- * Used to populate/update/change current action locations.
+ * Used to populate/update/change current action locations. Action locations
+ * can either be triggered by user action or proximity to the action location.
  */
 class ActionManager : public MessageManager<ActionManager>
 {
 public:
 
-    ActionManager( psDatabase *db );
+    /**
+     * Constructor.
+     */
+    ActionManager( psDatabase* db );
 
+    /**
+     * Destructor.
+     */
     virtual ~ActionManager();
 
     /**
@@ -108,15 +129,38 @@ public:
      */
     bool CacheActionLocation(psActionLocation* action);
 
-    /** Processes psMapActionMessages
-      *
-      * @param msg            The message to process
-      * @param client      The client that sent the message.
-      */
+    /**
+     * Processes psMapActionMessages.
+     *
+     * @param msg         The message to process
+     * @param client      The client that sent the message.
+     */
     void HandleMapAction( MsgEntry *msg, Client *client );
 
-    void RemoveActiveTrigger( size_t clientnum, const psActionLocation *actionLocation );
+    /**
+     * Remove all active trigger flag for this client and action location.
+     *
+     * @param actorEID       The EID of the actor to remove from the given action location.
+     * @param actionLocation The location that is triggered for the given actor.
+     */
+    void RemoveActiveTrigger(EID actorEID, const psActionLocation* actionLocation);
 
+    /**
+     * Check if there is an active action location for this client/actionLocation pair.
+     *
+     * @param actorEID       The EID of the actor to remove from the given action location.
+     * @param actionLocation The location that is triggered for the given actor.
+     */
+    bool HasActiveTrigger(EID actorEID, const psActionLocation* actionLocation);
+
+    /**
+     * Add a new active actionLocation for this client.
+     *
+     * @param actorEID       The EID of the actor to remove from the given action location.
+     * @param actionLocation The location that is triggered for the given actor.
+     */
+    void AddActiveTrigger(EID actorEID, const psActionLocation* actionLocation);
+    
     /**
      * Finds an ActionLocation from it's CEL Entity ID.
      *
@@ -138,6 +182,11 @@ public:
      */
     psActionLocation* FindAvailableEntrances( csString entranceSector );
 
+    /**
+     * Handle notification from the proxy system about players nearby action locations.
+     */
+    void NotifyProximity(gemActor* actor, gemActionLocation* actionLocationObject, float range);
+
 protected:
 
     // Message Handlers
@@ -149,15 +198,15 @@ protected:
      * @param client      The client that sent the message.
      */
     void HandleQueryMessage( csString xml, Client *client );
+    
     void LoadXML( csRef<iDocumentNode> topNode );
     bool HandleSelectQuery( csRef<iDocumentNode> topNode, Client *client );
-    bool HandleProximityQuery( csRef<iDocumentNode> topNode, Client *client );
     bool ProcessMatches( csArray<psActionLocation *> matches, Client *client );
 
     /**
      * Handles Save messages from client.
      *
-     * @param xml xml containing query parameters.
+     * @param xml         xml containing query parameters.
      * @param client      The client that sent the message.
      */
     void HandleSaveMessage( csString xml, Client *client );
@@ -165,7 +214,7 @@ protected:
     /**
      * Handles List messages from client.
      *
-     * @param xml xml containing query parameters.
+     * @param xml         xml containing query parameters.
      * @param client      The client that sent the message.
      */
     void HandleListMessage( csString xml, Client *client );
@@ -173,7 +222,7 @@ protected:
     /**
      * Handles Delete messages from client.
      *
-     * @param xml xml containing query parameters.
+     * @param xml         xml containing query parameters.
      * @param client      The client that sent the message.
      */
     void HandleDeleteMessage( csString xml, Client *client );
@@ -190,28 +239,32 @@ protected:
     /**
      * Handles Examine Operation for a action location.
      *
-     * @param action The action that is to be performed.
+     * @param action      The action that is to be performed.
      * @param client      The client that sent the message.
      */
     void HandleExamineOperation( psActionLocation* action, Client *client );
-    void HandleScriptOperation ( psActionLocation* action, Client *client );
+
+    /**
+     * Handles Script Operation for a action location.
+     *
+     * @param action      The action that is to be performed.
+     * @param actor       The actor triggered the script.
+     */
+    void HandleScriptOperation ( psActionLocation* action, gemActor* actor );
 
     // Current action location data
     csString triggerType;
     csString sectorName;
     csString meshName;
     csVector3 position;
+    
 
-    // ActionItems
-    //psActionItemInfo *GetActionItemByID(unsigned int id);
-    //psActionItemInfo *GetActionItemByName(const char *name);
-
-    psDatabase              *database;
+    psDatabase*              database;
     csHash<psActionLocation *> actionLocationList;
     csHash<psActionLocation *> actionLocation_by_name;
     csHash<psActionLocation *> actionLocation_by_sector;
     csHash<psActionLocation *, uint32> actionLocation_by_id;
-    csHash<psActionLocation *> activeTriggers;
+    csHash<const psActionLocation*> activeTriggers;
 
 };
 
