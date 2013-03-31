@@ -1671,18 +1671,42 @@ size_t psCharacter::GetLootItems(psLootMessage& msg, EID entity, int cnum)
     return lootPending.GetSize();
 }
 
+csArray<psItem*> psCharacter::RemoveLootItems(csArray<csString> categories)
+{
+    csArray<psItem*> items;
+
+    for(size_t x = 0; x < lootPending.GetSize(); x++)
+    {
+        if(!lootPending[x])
+        {
+          printf("Potential ERROR: why this happens?");
+          lootPending.DeleteIndex(x);
+          continue;
+        }
+        
+        if(categories.IsEmpty() ||
+            categories.Find(lootPending[x]->GetCategory()->name.Downcase()) != csArrayItemNotFound)
+        {
+            items.Push(lootPending[x]);
+            lootPending.DeleteIndex(x);
+        }
+    }
+    return items;
+}
+
 psItem* psCharacter::RemoveLootItem(int id)
 {
     size_t x;
-    for (x=0; x<lootPending.GetSize(); x++)
+    for(x = 0; x < lootPending.GetSize(); x++)
     {
-        if (!lootPending[x]) {
+        if(!lootPending[x])
+        {
           printf("Potential ERROR: why this happens?");
           lootPending.DeleteIndex(x);
           continue;
         }
 
-        if (lootPending[x]->GetBaseStats()->GetUID() == (uint32) id)
+        if(lootPending[x]->GetBaseStats()->GetUID() == (uint32) id)
         {
             psItem* item = lootPending[x];
             lootPending.DeleteIndex(x);

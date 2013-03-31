@@ -153,14 +153,34 @@ public:
     void HandleLoot(psUserCmdMessage& msg, Client *client);
     
     /**
-     * Attempt to loot the target
+     * Attempt to loot the target using the loot window
      *
-     * Sends the lootable item to the client and splits any loot money across
-     * a group ( if present ).
+     * Sends the lootable items to the client and calls LootMoney(CLient *client)
      *
      * @param client The client where the loot command came from.
      */
     void Loot(Client *client);
+    
+    /**
+     * Attempt to loot money from the target
+     *
+     * Takes money from the target and splits it across the group (if any)
+     *
+     * @param client The client where the loot command came from.
+     */
+    void LootMoney(Client* client);
+    
+    /**
+     * Attempt to loot all or certain items from target
+     *
+     * Tries to loot the items which fit the specified categories (if any).
+     * Also handles group looting and rolling, if a group is present
+     *
+     * @param client The client where the loot command came from.
+     * @param categories Only items of given categories are looted (e.g. "weapons, gems")
+     * @param lootAction Either 0 for LOOT_SELF or 1 for LOOT_ROLL (only works when in a group)
+     */
+    void LootItems(Client* client, csString categories = "all", uint8_t lootAction = 0);
 
     /**
      * Load emotes from xml.

@@ -1373,7 +1373,6 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
     if ( command == "/spawn" ||
          command == "/unstick" ||
          command == "/die" ||
-         command == "/loot" ||
          command == "/train" ||
          command == "/use" ||
          command == "/stopattack" ||
@@ -1470,6 +1469,26 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
         action = words.GetTail(2);
         return;
     }
+    if ( command == "/loot" )
+    {
+        short i = 1;
+        
+        if(words.Get(i) == "roll")
+        {
+            dice = 1;
+            i++;
+        }
+        else
+            dice = 0;
+        
+        action = words.Get(i);
+        if(action == "items")
+        {
+            i++;
+            text = words.GetTail(i);
+        }
+        return;
+    }
 
     valid = false;
 }
@@ -1510,10 +1529,23 @@ csString psUserCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/
         msgtext.AppendFmt("Message: %s", text.GetData());
         return msgtext;
     }
+    if (command == "/loot")
+    {
+        msgtext.AppendFmt("Action: %s ", action.GetData());
+        if(action == "items")
+        {
+            if(text != "")
+                msgtext.AppendFmt("Item Categories: %s ", text.GetData());
+            else
+                msgtext.AppendFmt("Item Categories: all ");
+        }
+        msgtext.AppendFmt("Loot Action: %s", (dice) ? "LOOT_ROLL" : "LOOT_SELF");
+        return msgtext;
+    }
     if (command == "/spawn" || command == "/unstick" ||
-         command == "/die" || command == "/loot" ||
-         command == "/train" || command == "/use" ||
-         command == "/stopattack" || command == "/starttrading" ||
+         command == "/die" ||  command == "/train" ||
+         command == "/use" ||  command == "/stopattack" ||
+         command == "/starttrading" ||
          command == "/stoptrading" || command == "/quests" ||
          command == "/tip" || command == "/motd" ||
          command == "/challenge" || command == "/yield" ||

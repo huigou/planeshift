@@ -245,6 +245,10 @@ public:
     void SetRandomizer( LootRandomizer *rnd ) { lootRandomizer = rnd; }
 };
 
+/** A structure to hold the clients that are pending a group loot question.
+ */
+class PendingLootPrompt;
+
 /**
  *  This class is periodically called by the engine to ensure that
  *  monsters (and other NPCs) are respawned appropriately.
@@ -415,6 +419,18 @@ public:
 protected:
     psScheduledItem* schedule;
 };
+
+/**
+ * Handles looting of an item, whether there is a group or not.
+ *
+ * @param item The item to loot (at best returned from RemoveLootItem)
+ * @param obj The actor to loot the item from
+ * @param client The client which is looting
+ * @param cacheManager The CacheManager to use for the PendingLootPrompt
+ * @param gem The GEMSupervisor to use for the PendingLootPrompt
+ * @param lootAction Either 0 for LOOT_SELF or 1 for LOOT_ROLL
+ */
+void handleGroupLootItem(psItem* item, gemActor* obj, Client* client, CacheManager* cacheManager, GEMSupervisor* gem, uint8_t lootAction = 0);
 
 /** @} */
 
