@@ -838,6 +838,17 @@ public:
      * @return The psItem whch  void DiscardQuest(QuestAssignment *q, bool force = false);corresponds to the base stats item searched for.
      */
     psItem* RemoveLootItem(int id);
+    
+    /**
+     * Removes either all or only those items with specified categories from the loot of a defeated character.
+     *
+     * Checks whether the items in lootPending fit the specified categories and removes them accordingly.
+     *
+     * @param [categories] A csArray containing csStrings with category names. If
+     *                     parameter is not provided, all items will be removed.
+     * @return A csArray containing pointers to the removed psItem(s)
+     */
+    csArray<psItem*> RemoveLootItems(csArray<csString> categories = csArray<csString>());
 
     /**
      * Adds the supplied psItem to the list of lootable items from this character.

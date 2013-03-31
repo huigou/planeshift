@@ -79,6 +79,7 @@
 #include "psserver.h"
 #include "psserverchar.h"
 #include "usermanager.h"
+#include "spawnmanager.h" // needed for handleGroupLootItem()
 
 #define RANGE_TO_CHALLENGE 50
 #define GM_LEVEL 1
@@ -1695,31 +1696,25 @@ void UserManager::Ready()
     UserStatRegeneration();
 }
 
-void UserManager::HandleLoot(psUserCmdMessage &msg,Client* client)
-{
-    Loot(client);
-}
-
-/**
+/* 
 * Check target dead
 * Check target lootable by this client
-* Return lootable items list if present
 */
-void UserManager::Loot(Client* client)
+bool TargetLootable(Client* client)
 {
     uint32_t clientnum = client->GetClientNum();
 
     if(!client->IsAlive())
     {
-        psserver->SendSystemError(client->GetClientNum(),"You are dead, you cannot loot now.");
-        return;
+        psserver->SendSystemError(client->GetClientNum(), "You are dead, you cannot loot now.");
+        return false;
     }
 
     gemObject* target = client->GetTargetObject();
     if(!target)
     {
-        psserver->SendSystemError(clientnum,"You don't have a target selected.");
-        return;
+        psserver->SendSystemError(clientnum, "You don't have a target selected.");
+        return false;
     }
 
     gemNPC* npc = target->GetNPCPtr();
@@ -1731,48 +1726,252 @@ void UserManager::Loot(Client* client)
             if(clientnum == actor->GetClient()->GetClientNum())
             {
                 psserver->SendSystemError(clientnum, "You can't loot yourself.");
-                return;
+                return false;
             }
 
             if(actor->IsAlive())
             {
                 psserver->SendSystemError(clientnum, "You can't loot a person that is alive.");
-                return;
+                return false;
             }
         }
         psserver->SendSystemError(clientnum, "You can only loot NPCs.");
-        return;
+        return false;
     }
 
 
     if(target->IsAlive())
     {
         psserver->SendSystemError(clientnum, "You can't loot a creature that is alive.");
-        return;
+        return false;
     }
 
     // Check target lootable by this client
     if(!npc->IsLootableClient(client->GetClientNum()))
     {
-        Debug2(LOG_USER, client->GetClientNum(),"Client %d tried to loot mob that wasn't theirs.\n",client->GetClientNum());
-        psserver->SendSystemError(client->GetClientNum(),"You are not allowed to loot %s.",target->GetName());
-        return;
+        Debug2(LOG_USER, client->GetClientNum(), "Client %d tried to loot mob that wasn't theirs.\n", client->GetClientNum());
+        psserver->SendSystemError(client->GetClientNum(),"You are not allowed to loot %s.", target->GetName());
+        return false;
     }
 
     // Check to make sure loot is in range.
     if(client->GetActor()->RangeTo(target) > RANGE_TO_LOOT)
     {
         psserver->SendSystemError(client->GetClientNum(), "Too far away to loot %s", target->GetName());
-        return;
+        return false;
     }
+    // Target is lootable
+    return true;
+}
 
+void UserManager::HandleLoot(psUserCmdMessage &msg,Client* client)
+{
+    // check whether target is dead and lootable
+    if(!TargetLootable(client))
+            return;
+        
+    if(msg.action.CompareNoCase("money"))
+    {
+        LootMoney(client);
+    }
+    else if(msg.action.CompareNoCase("items"))
+    {
+        LootMoney(client);
+        LootItems(client, msg.text, msg.dice); // dice is either 0 (==LOOT_SELF) or 1 (==LOOT_ROLL)
+    }
+    else if(msg.action.CompareNoCase("all"))
+    {
+        LootMoney(client);
+        LootItems(client, "all", msg.dice);
+    }
+    else if(msg.action == "")
+    {
+        // Loot money and display all lootable items
+        LootMoney(client);
+        Loot(client);
+    }
+    else
+        psserver->SendSystemInfo(client->GetClientNum(), "Usage: /loot [roll] [all|money|items <categories>]");
+}
 
+/**
+* Loot all the money
+*/
+void UserManager::LootMoney(Client* client)
+{
+    gemObject* target = client->GetTargetObject();
+    psCharacter* chr = target->GetCharacterData();
+    if(chr)
+    {
+        int money = chr->GetLootMoney();
+        
+        if(!money)
+        {
+            Debug1(LOG_LOOT, client->GetClientNum(), "Mob has no money to be looted.\n");
+            psserver->SendSystemError(client->GetClientNum(), "%s has no money to be looted.", target->GetName());
+            return;
+        }
+        
+        csRef<PlayerGroup> group = client->GetActor()->GetGroup();
+        int remainder,each;
+        // Split up money among LootableClients in group.
+        if(group)
+        {
+            Debug2(LOG_LOOT, client->GetClientNum(),"Splitting up %d money.\n", money);
+            // Locate the group members who are in range to loot the trias
+            csArray<gemActor*> closegroupmembers;
+            const csArray<int> &lootable_clients = target->GetNPCPtr()->GetLootableClients();
+            size_t membercount = group->GetMemberCount();
+            for(size_t i = 0 ; i < membercount ; i++)
+            {
+                gemActor* currmember = group->GetMember(i);
+                if(!currmember)
+                {
+                    continue;
+                }
+                //Copy all lootable clients.
+                //TODO: a direct interface to gemNPC::lootable_clients would be better
+                if(lootable_clients.Contains(currmember->GetClientID()) != csArrayItemNotFound)
+                {
+                    closegroupmembers.Push(currmember);
+                }
+            }
+
+            remainder = money % (int) closegroupmembers.GetSize();
+            each      = money / (int) closegroupmembers.GetSize();
+            psMoney eachmoney = psMoney(each).Normalized();
+            psMoney remmoney  = psMoney(remainder).Normalized();
+            csString remstr   = remmoney.ToUserString();
+            csString eachstr  = eachmoney.ToUserString();
+
+            if(each)
+            {
+                psSystemMessage loot(client->GetClientNum(), MSG_LOOT, "Everyone nearby has looted %s.", eachstr.GetData());
+                client->GetActor()->SendGroupMessage(loot.msg);
+
+                // Send a personal message to each group member about the money
+                for(size_t i = 0; i < membercount; i++)
+                {
+                    gemActor* currmember = group->GetMember(i);
+                    if(closegroupmembers.Contains(currmember) != csArrayItemNotFound)
+                    {
+                        //Normal loot is not shown in yellow. Until that happens, do not do it for few coins
+                        //psserver->SendSystemResult(currmember->GetClient()->GetClientNum(), "You have looted %s.", eachstr.GetData());
+                        psserver->SendSystemInfo(currmember->GetClient()->GetClientNum(), "You have looted %s.", eachstr.GetData());
+
+                        psLootEvent evt(
+                            chr->GetPID(),
+                            chr->GetCharName(),
+                            currmember->GetCharacterData()->GetPID(),
+                            currmember->GetCharacterData()->GetCharName(),
+                            0, "N/A", 0, 0, eachmoney.GetTotal());
+                        evt.FireEvent();
+                    }
+                    else
+                    {
+                        // Something less intrusive for players who were too far away
+                        psserver->SendSystemInfo(currmember->GetClient()->GetClientNum(), "You were too far away to loot.");
+                    }
+
+                }
+
+                for(unsigned int i = 0; i < closegroupmembers.GetSize(); i++)
+                {
+                    closegroupmembers[i]->GetCharacterData()->AdjustMoney(eachmoney, false);
+                    psserver->GetCharManager()->SendPlayerMoney(closegroupmembers[i]->GetClient());
+                }
+
+            }
+            if(remainder)
+            {
+                psSystemMessage loot2(client->GetClientNum(), MSG_LOOT, "You have looted an extra %s.", remstr.GetData());
+                loot2.SendMessage();
+
+                client->GetCharacterData()->AdjustMoney(remmoney, false);
+                psserver->GetCharManager()->SendPlayerMoney(client);
+                psLootEvent evt(chr->GetPID(),
+                                chr->GetCharName(),
+                                client->GetCharacterData()->GetPID(),
+                                client->GetCharacterData()->GetCharName(),
+                                0, "N/A", 0, 0, remmoney.GetTotal());
+                evt.FireEvent();
+            }
+        }
+        // No group present, just take all the money
+        else
+        {
+            psMoney m = psMoney(money).Normalized();
+            csString mstr = m.ToUserString();
+            
+            //Debug2(LOG_LOOT, client->GetClientNum(),"Looting %d money.\n", money); // Needed?
+            psSystemMessage loot(client->GetClientNum(), MSG_LOOT, "You have looted %s.", mstr.GetData());
+            loot.SendMessage();
+
+            client->GetCharacterData()->AdjustMoney(m, false);
+            psserver->GetCharManager()->SendPlayerMoney(client);
+
+            psLootEvent evt(chr->GetPID(),
+                            chr->GetCharName(),
+                            client->GetCharacterData()->GetPID(),
+                            client->GetCharacterData()->GetCharName(),
+                            0, "N/A", 0, 0, m.GetTotal());
+            evt.FireEvent();
+        }
+    }
+}
+
+/**
+* Loot all items
+*/
+void UserManager::LootItems(Client* client, csString userInput, uint8_t lootAction)
+{
+    gemObject* target = client->GetTargetObject();
+    psCharacter* chr = target->GetCharacterData();
+    
+    if(chr)
+    {
+        csArray<csString> categories;
+        
+        if(!userInput.CompareNoCase("") && !userInput.CompareNoCase("all"))
+        {
+            // Slice user inputted categories into an array
+            userInput    = userInput.Append(','); // add addiontal coma for loop
+            size_t start = 0;
+            size_t end   = userInput.Find(",", start);
+            
+            while(end != csArrayItemNotFound)
+            {
+                categories.Push(userInput.Slice(start, (end - start)).Collapse().Downcase());
+                start = end + 1;
+                end   = userInput.Find(",", start);
+            }
+        }
+        
+        csArray<psItem*> items = chr->RemoveLootItems(categories);
+        
+        if(!items.IsEmpty())
+        {
+            for(size_t x = 0; x < items.GetSize(); x++)
+                // if possible, adds item to inventory
+                handleGroupLootItem(items[x], target->GetActorPtr(), client, cacheManager, gem, lootAction); 
+        }
+        else
+            psserver->SendSystemError(client->GetClientNum(), "%s has no items to be looted.", target->GetName());
+        
+    }
+}
+
+/**
+* Return lootable items list if present
+*/
+void UserManager::Loot(Client* client)
+{
     // Return lootable items list if present
+    gemObject* target = client->GetTargetObject();
     psCharacter* chr = target->GetCharacterData();
     if(chr)
     {
         // Send items to looting player
-        int money = chr->GetLootMoney();
         psLootMessage loot;
         size_t count = chr->GetLootItems(loot,
                                          target->GetEID(),
@@ -1782,123 +1981,11 @@ void UserManager::Loot(Client* client)
             Debug3(LOG_LOOT, client->GetClientNum(), "Sending %zu loot items to %s.\n", count, client->GetActor()->GetName());
             loot.SendMessage();
         }
-        else if(!count && !money)
-        {
-            Debug1(LOG_LOOT, client->GetClientNum(),"Mob doesn't have loot.\n");
-            psserver->SendSystemError(client->GetClientNum(),"%s has nothing to be looted.",target->GetName());
-        }
-
-        // Split up money among LootableClients in group.
-        // These are those clients who were close enough when the NPC was killed.
-
-        if(money)
-        {
-            Debug2(LOG_LOOT, client->GetClientNum(),"Splitting up %d money.\n", money);
-            csRef<PlayerGroup> group = client->GetActor()->GetGroup();
-            int remainder,each;
-            if(group)
-            {
-                // Locate the group members who are in range to loot the trias
-                csArray<gemActor*> closegroupmembers;
-                const csArray<int> &lootable_clients = npc->GetLootableClients();
-                size_t membercount = group->GetMemberCount();
-                for(size_t i = 0 ; i < membercount ; i++)
-                {
-                    gemActor* currmember = group->GetMember(i);
-                    if(!currmember)
-                    {
-                        continue;
-                    }
-                    //Copy all lootable clients.
-                    //TODO: a direct interface to gemNPC::lootable_clients would be better
-                    if(lootable_clients.Contains(currmember->GetClientID()) != csArrayItemNotFound)
-                    {
-                        closegroupmembers.Push(currmember);
-                    }
-                }
-
-                remainder = money % (int) closegroupmembers.GetSize();
-                each      = money / (int) closegroupmembers.GetSize();
-                psMoney eachmoney = psMoney(each).Normalized();
-                psMoney remmoney  = psMoney(remainder).Normalized();
-                csString remstr   = remmoney.ToUserString();
-                csString eachstr  = eachmoney.ToUserString();
-
-                if(each)
-                {
-                    psSystemMessage loot(client->GetClientNum(),MSG_LOOT,"Everyone nearby has looted %s.",eachstr.GetData());
-                    client->GetActor()->SendGroupMessage(loot.msg);
-
-                    // Send a personal message to each group member about the money
-                    for(size_t i = 0 ; i < membercount ; i++)
-                    {
-                        gemActor* currmember = group->GetMember(i);
-                        if(closegroupmembers.Contains(currmember) != csArrayItemNotFound)
-                        {
-                            //Normal loot is not shown in yellow. Until that happens, do not do it for few coins
-                            //psserver->SendSystemResult(currmember->GetClient()->GetClientNum(), "You have looted %s.", eachstr.GetData());
-                            psserver->SendSystemInfo(currmember->GetClient()->GetClientNum(), "You have looted %s.", eachstr.GetData());
-
-                            psLootEvent evt(
-                                chr->GetPID(),
-                                chr->GetCharName(),
-                                currmember->GetCharacterData()->GetPID(),
-                                currmember->GetCharacterData()->GetCharName(),
-                                0, "N/A", 0, 0, eachmoney.GetTotal());
-                            evt.FireEvent();
-                        }
-                        else
-                        {
-                            // Something less intrusive for players who were too far away
-                            psserver->SendSystemInfo(currmember->GetClient()->GetClientNum(), "You were too far away to loot.");
-                        }
-
-
-                    }
-
-                    for(unsigned int i=0; i< closegroupmembers.GetSize(); i++)
-                    {
-                        closegroupmembers[i]->GetCharacterData()->AdjustMoney(eachmoney, false);
-                        psserver->GetCharManager()->SendPlayerMoney(closegroupmembers[i]->GetClient());
-                    }
-
-                }
-                if(remainder)
-                {
-                    psSystemMessage loot2(client->GetClientNum(),MSG_LOOT,"You have looted an extra %s.",remstr.GetData());
-                    loot2.SendMessage();
-
-                    client->GetCharacterData()->AdjustMoney(remmoney, false);
-                    psserver->GetCharManager()->SendPlayerMoney(client);
-                    psLootEvent evt(chr->GetPID(),
-                                    chr->GetCharName(),
-                                    client->GetCharacterData()->GetPID(),
-                                    client->GetCharacterData()->GetCharName(),
-                                    0, "N/A", 0, 0, remmoney.GetTotal());
-                    evt.FireEvent();
-                }
-            }
-            else
-            {
-                psMoney m = psMoney(money).Normalized();
-                csString mstr = m.ToUserString();
-
-                psSystemMessage loot(client->GetClientNum(),MSG_LOOT,"You have looted %s.",mstr.GetData());
-                loot.SendMessage();
-
-                client->GetCharacterData()->AdjustMoney(m, false);
-                psserver->GetCharManager()->SendPlayerMoney(client);
-
-                psLootEvent evt(chr->GetPID(),
-                                chr->GetCharName(),
-                                client->GetCharacterData()->GetPID(),
-                                client->GetCharacterData()->GetCharName(),
-                                0, "N/A", 0, 0, m.GetTotal());
-                evt.FireEvent();
-            }
-        }
         else
-            Debug1(LOG_LOOT, client->GetClientNum(),"Mob has no money to loot.\n");
+        {
+            Debug1(LOG_LOOT, client->GetClientNum(), "Mob doesn't have loot.\n");
+            psserver->SendSystemError(client->GetClientNum(), "%s has no items to be looted.", target->GetName());
+        }
     }
 }
 
