@@ -1509,6 +1509,13 @@ public:
      * Get the z velocity of the actor.
      */
     virtual float GetVelocity();
+
+    /**
+     * Check if object is inside guarded area.
+     *
+     * Guarded are is a circle of RANGE_TO_GUARD around player and pet.
+     */
+    virtual bool InsideGuardedArea(gemObject* object);
 };
 
 //-----------------------------------------------------------------------------
