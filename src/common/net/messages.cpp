@@ -5808,40 +5808,100 @@ psViewItemDescription::psViewItemDescription(int containerID, int slotID)
 
     msg->Add( (uint8_t)REQUEST );
     msg->Add( (int32_t)containerID );
-
     msg->Add( (uint32_t)slotID );
 }
 
-psViewItemDescription::psViewItemDescription(uint32_t to, const char *itemName, const char *description, const char *icon, uint32_t stackCount, bool isContainer)
+psViewItemDescription::psViewItemDescription(uint32_t to, const char *itemName, const char *description, const char *icon, uint32_t stackCount)
 {
     csString name(itemName);
     csString desc(description);
     csString iconName(icon);
 
-    if ( !isContainer )
-    {
-        msg.AttachNew(new MsgEntry(sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(uint32_t)));
-        msg->SetType(MSGTYPE_VIEW_ITEM);
-        msg->clientnum = to;
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(uint32_t)));
+    msg->SetType(MSGTYPE_VIEW_ITEM);
+    msg->clientnum = to;
+    
+    msg->Add( (uint8_t)DESCR );
+    msg->Add( !IS_CONTAINER ); // Allways false
+    msg->Add( itemName );
+    msg->Add( description );
+    msg->Add( icon );
+    msg->Add( stackCount );
+}
 
-        msg->Add( (uint8_t)DESCR );
-        msg->Add( !IS_CONTAINER );
-        msg->Add( itemName );
-        msg->Add( description );
-        msg->Add( icon );
-        msg->Add( stackCount );
-    }
-    else
+psViewItemDescription::psViewItemDescription( MsgEntry* me, NetBase::AccessPointers* accessPointers )
+{
+    format = me->GetUInt8();
+
+    if ( format == REQUEST )
     {
-        this->itemName = itemName;
-        this->itemDescription = description;
-        this->itemIcon = icon;
-        this->to = to;
-        msgSize = (int) (sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(int32_t) + sizeof(int32_t) + sizeof(uint32_t));
+        containerID = me->GetInt32();
+        slotID      = me->GetUInt32();
+
+        if (containerID == CONTAINER_INVENTORY_BULK) // must adjust slot number up
+            slotID += PSCHARACTER_SLOT_BULK1;
+    }
+    else if ( format == DESCR )
+    {
+        hasContents = me->GetBool(); // Will return false.
+
+        itemName = me->GetStr();
+        itemDescription = me->GetStr();
+        itemIcon = me->GetStr();
+
+        stackCount = me->GetUInt32();
     }
 }
 
-void psViewItemDescription::AddContents(const char *name, const char *meshName, const char *materialName, const char *icon, int purifyStatus, int slot, int stack)
+csString psViewItemDescription::ToString(NetBase::AccessPointers * /*accessPointers*/)
+{
+    csString msgtext;
+
+    if ( format == REQUEST )
+    {
+        msgtext.AppendFmt("Container ID: %d Slot ID: %d", containerID, slotID);
+    }
+    else if ( format == DESCR )
+    {
+        msgtext.AppendFmt("Name: '%s' Description: '%s' Icon: '%s' Stack Count: %d ",
+                itemName,
+                itemDescription,
+                itemIcon,
+                stackCount);
+    }
+
+    return msgtext;
+}
+
+//------------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psViewContainerDescription,MSGTYPE_VIEW_CONTAINER);
+
+psViewContainerDescription::psViewContainerDescription(int containerID, int slotID)
+{
+    msg.AttachNew(new MsgEntry( sizeof(int32_t)*2 + sizeof(uint8_t)));
+    msg->SetType(MSGTYPE_VIEW_CONTAINER);
+    msg->clientnum = 0;
+
+    msg->Add( (uint8_t)REQUEST );
+    msg->Add( (int32_t)containerID );
+    msg->Add( (uint32_t)slotID );
+}
+
+psViewContainerDescription::psViewContainerDescription(uint32_t to, const char *itemName, const char *description, const char *icon, uint32_t stackCount)
+{
+    csString name(itemName);
+    csString desc(description);
+    csString iconName(icon);
+
+    this->itemName = itemName;
+    this->itemDescription = description;
+    this->itemIcon = icon;
+    this->to = to;
+    msgSize = (int) (sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(int32_t) + sizeof(int32_t) + sizeof(uint32_t));
+}
+
+void psViewContainerDescription::AddContents(const char *name, const char *meshName, const char *materialName, const char *icon, int purifyStatus, int slot, int stack)
 {
     ContainerContents item;
     item.name = name;
@@ -5858,7 +5918,7 @@ void psViewItemDescription::AddContents(const char *name, const char *meshName, 
     msgSize += (int)(namesize + iconsize + 3 + sizeof(int)*5);
 }
 
-void psViewItemDescription::ConstructMsg(csStringSet* msgstrings)
+void psViewContainerDescription::ConstructMsg(csStringSet* msgstrings)
 {
     msg.AttachNew(new MsgEntry( msgSize ));
     msg->SetType(MSGTYPE_VIEW_CONTAINER);
@@ -5870,7 +5930,7 @@ void psViewItemDescription::ConstructMsg(csStringSet* msgstrings)
     msg->Add( itemDescription );
     msg->Add( itemIcon );
     msg->Add( (int32_t)containerID );
-    msg->Add( (int32_t)ContainerSlots);
+    msg->Add( (int32_t)maxContainerSlots);
     msg->Add( (uint32_t)contents.GetSize() );
     for ( size_t n = 0; n < contents.GetSize(); n++ )
     {
@@ -5884,7 +5944,7 @@ void psViewItemDescription::ConstructMsg(csStringSet* msgstrings)
     }
 }
 
-psViewItemDescription::psViewItemDescription( MsgEntry* me, NetBase::AccessPointers* accessPointers )
+psViewContainerDescription::psViewContainerDescription( MsgEntry* me, NetBase::AccessPointers* accessPointers )
 {
     format = me->GetUInt8();
 
@@ -5912,7 +5972,7 @@ psViewItemDescription::psViewItemDescription( MsgEntry* me, NetBase::AccessPoint
         if ( hasContents )
         {
             containerID = me->GetInt32();
-            ContainerSlots = me->GetInt32();
+            maxContainerSlots = me->GetInt32();
             size_t length = me->GetUInt32();
 
             for ( size_t n = 0; n < length; n++ )
@@ -5931,7 +5991,7 @@ psViewItemDescription::psViewItemDescription( MsgEntry* me, NetBase::AccessPoint
     }
 }
 
-csString psViewItemDescription::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psViewContainerDescription::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5949,16 +6009,17 @@ csString psViewItemDescription::ToString(NetBase::AccessPointers * /*accessPoint
 
         if ( hasContents )
         {
-            msgtext.AppendFmt("Container ID: %d has %d slots and Contains ", ContainerSlots, containerID);
+            msgtext.AppendFmt("Container ID: %d Max Slots: %d Contains", containerID, maxContainerSlots);
 
             for (size_t n = 0; n < contents.GetSize(); n++)
             {
-                msgtext.AppendFmt("Name: '%s' Icon: '%s' Purify Status: %d Slot ID: %d Stack Count: %d ",
-                        contents[n].name.GetData(),
-                        contents[n].icon.GetData(),
-                        contents[n].purifyStatus,
-                        contents[n].slotID,
-                        contents[n].stackCount);
+                msgtext.AppendFmt("%sName: '%s' Icon: '%s' Purify Status: %d Slot ID: %d Stack Count: %d ",
+                                  n?", ":"; ",
+                                  contents[n].name.GetData(),
+                                  contents[n].icon.GetData(),
+                                  contents[n].purifyStatus,
+                                  contents[n].slotID,
+                                  contents[n].stackCount);
             }
         }
     }

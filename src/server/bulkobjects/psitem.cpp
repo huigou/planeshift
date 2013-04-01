@@ -923,7 +923,6 @@ INVENTORY_SLOT_NUMBER psItem::GetLocInParent(bool adjustSlot)
     }
 }
 
-
 bool psItem::GetIsCrafterIDValid()
 {
     return (flags & PSITEM_FLAG_CRAFTER_ID_IS_VALID);
@@ -1258,7 +1257,7 @@ void psItem::UpdateInventoryStatus(psCharacter* owner,uint32 parent_id, INVENTOR
 
     SetOwningCharacter(owner);
     parent_item_InstanceID = parent_id;
-    loc_in_parent           = (INVENTORY_SLOT_NUMBER)(slot%100);
+    loc_in_parent          = (INVENTORY_SLOT_NUMBER)(slot%100);
 
     if(IsEquipped() && owning_character)
         owning_character->Inventory().Equip(this);
@@ -2889,7 +2888,7 @@ bool psItem::SetMusicalSheet(const csString &newMusicalSheet)
                        owning_character ? owning_character->GetCharFullName():"Unknown");
 }
 
-void psItem::FillContainerMsg(Client* client, psViewItemDescription &outgoing)
+void psItem::FillContainerMsg(Client* client, psViewContainerDescription &outgoing)
 {
     gemContainer* container = dynamic_cast<gemContainer*>(gItem);
 
@@ -2897,14 +2896,13 @@ void psItem::FillContainerMsg(Client* client, psViewItemDescription &outgoing)
     {
         // This is not a container in the world so it must be a container inside the person's
         // inventory.  So check to see which items the player has that are in the container.
-        int slot = 0;
         for(size_t i = 0; i < client->GetCharacterData()->Inventory().GetInventoryIndexCount(); i++)
         {
             psItem* child = client->GetCharacterData()->Inventory().GetInventoryIndexItem(i);
-            if(parent_item_InstanceID == uid)
+            if(child->parent_item_InstanceID == GetUID())
             {
                 outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetTextureName(),
-                                     child->GetImageName(), child->GetPurifyStatus(), slot++,
+                                     child->GetImageName(), child->GetPurifyStatus(), child->GetLocInParent(),
                                      child->GetStackCount());
             }
         }
@@ -3159,19 +3157,18 @@ bool psItem::SendContainerContents(Client* client, int containerID)
 
     desc.AppendFmt("Capacity: %.2f/%u", inv.GetContainedSize(this), GetContainerMaxSize());
 
-    psViewItemDescription outgoing(client->GetClientNum(),
-                                   GetName(),
-                                   desc,
-                                   GetImageName(),
-                                   0,
-                                   IS_CONTAINER);
+    psViewContainerDescription outgoing(client->GetClientNum(),
+                                        GetName(),
+                                        desc,
+                                        GetImageName(),
+                                        0);
 
     if(gItem != NULL)
         outgoing.containerID = gItem->GetEID().Unbox();
     else
         outgoing.containerID = containerID;
 
-    outgoing.ContainerSlots = GetContainerMaxSlots();
+    outgoing.maxContainerSlots = GetContainerMaxSlots();
 
     FillContainerMsg(client, outgoing);
 
@@ -3463,33 +3460,33 @@ bool psItem::SendActionContents(Client* client, psActionLocation* action)
         desc = description.GetData();
     }
 
-    bool isContainer = GetIsContainer();
-
-    psViewItemDescription outgoing(client->GetClientNum(),
-                                   name,
-                                   desc,
-                                   icon,
-                                   0,
-                                   isContainer);
-
-    /* REMOVED: was probably there to avoid a crash, remove after some testing.
-    if (action->gItem != NULL )
-        outgoing.containerID = action->gItem->GetEntity()->GetID();
-    else
-        outgoing.containerID = containerID;
-    */
-
-    outgoing.containerID = gItem->GetEID().Unbox();
-
-    outgoing.ContainerSlots = GetContainerMaxSlots();
-
-    if(isContainer)
+    if (GetIsContainer())
     {
+        psViewContainerDescription outgoing(client->GetClientNum(),
+                                            name,
+                                            desc,
+                                            icon,
+                                            0);
+
+        outgoing.containerID = gItem->GetEID().Unbox();
+
+        outgoing.maxContainerSlots = GetContainerMaxSlots();
+
         FillContainerMsg(client, outgoing);
         outgoing.ConstructMsg(psserver->GetCacheManager()->GetMsgStrings());
-    }
 
-    outgoing.SendMessage();
+        outgoing.SendMessage();
+    }
+    else
+    {
+        psViewItemDescription outgoing(client->GetClientNum(),
+                                       name,
+                                       desc,
+                                       icon,
+                                       0);
+
+        outgoing.SendMessage();
+    }
     return true;
 }
 
