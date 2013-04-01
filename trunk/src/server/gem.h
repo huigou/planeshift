@@ -799,7 +799,10 @@ public:
         float zrotangle,
         int clientnum);
 
-    bool CanAdd(unsigned short amountToAdd, psItem *item, int slot=-1);
+    /**
+     * Check if a item can be added to a container.
+     */
+    bool CanAdd(unsigned short amountToAdd, psItem *item, int slot, csString &reason);
     bool AddToContainer(psItem *item,Client *fromClient, int slot=-1) { return AddToContainer(item, fromClient, slot, false); }
     bool RemoveFromContainer(psItem *item,Client *fromClient);
 
