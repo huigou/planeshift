@@ -104,9 +104,8 @@ public:
                 PID guardCharacterID = item->GetGuardingCharacterID();
                 gemActor* guardActor = psserver->entitymanager->GetGEM()->FindPlayerEntity(guardCharacterID);
                 if(guardCharacterID.IsValid() &&
-                        guardActor &&
-                        guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT &&
-                        (guardActor->GetInstance() == instance))
+                   guardActor && guardActor->InsideGuardedArea(item->GetGemObject()) &&
+                   (guardActor->GetInstance() == instance))
                 {
                     // Item is guarded, reschedule
                     item->ScheduleRemoval();

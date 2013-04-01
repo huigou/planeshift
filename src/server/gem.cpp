@@ -1456,11 +1456,11 @@ void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
              if (guardCharacterID.IsValid() &&
                  guardCharacterID != actor->GetCharacterData()->GetPID() &&
                  guardActor &&
-                 guardActor->RangeTo(item->GetGemObject()) < RANGE_TO_SELECT &&
+                 guardActor->InsideGuardedArea(item->GetGemObject()) &&
                  (guardActor->GetInstance() == this->GetInstance()))
              {
                  psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
-                     guardActor->GetCharacterData()->GetCharFullName());
+                                          guardActor->GetCharacterData()->GetCharFullName());
                  return;
              }
          }
@@ -1710,7 +1710,7 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot, cs
 
     // Test if container is guarded by someone else who is near
     if (guardID.IsValid() && guardID != item->GetOwningCharacterID()
-        && guardingActor && (guardingActor->RangeTo(this) <= RANGE_TO_GUARD))
+        && guardingActor && guardingActor->InsideGuardedArea(this))
     {
         reason = " because container is guarded";
         return false;
@@ -1781,7 +1781,7 @@ bool gemContainer::CanTake(Client *client, psItem* item)
     gemActor* guardingActor = cel->FindPlayerEntity(guard);
 
     if ((!guard.IsValid() || guard == client->GetCharacterData()->GetPID() || !guardingActor) ||
-        (guardingActor->RangeTo(this,false,true) > RANGE_TO_GUARD))
+        (!guardingActor->InsideGuardedArea(this)))
     {
         return true;
     }
@@ -4457,6 +4457,43 @@ float gemActor::GetVelocity()
 {
     csVector3 vel = pcmove->GetVelocity();
     return vel.z;
+}
+
+bool gemActor::InsideGuardedArea(gemObject* object)
+{
+    // Is inside own guard range?
+    if (RangeTo(object) <= RANGE_TO_GUARD)
+    {
+        return true;
+    }
+    else
+    {
+        // Check if inside familiar/pet range?
+        // TODO: Add some skill check here?
+        Client* client = GetClient();
+        if (client)
+        {
+            gemActor* familiar = client->GetFamiliar();
+            if (familiar && (familiar->RangeTo(object) <= RANGE_TO_GUARD))
+            {
+                return true;
+            } 
+            else
+            {
+                size_t num = client->GetNumPets();
+                for(size_t n = 0; n < num; n++)
+                {
+                    gemActor* pet = client->GetPet(n);
+                    if (pet && (pet->RangeTo(object) <= RANGE_TO_GUARD))
+                    {
+                        return true;
+                    } 
+                }
+            }
+            
+        }
+    }
+    return false;
 }
 
 
