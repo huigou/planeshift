@@ -3136,30 +3136,62 @@ bool psItem::SendItemDescription(Client* client)
 
 bool psItem::SendContainerContents(Client* client, int containerID)
 {
-    if(GetIsLocked() && client->GetSecurityLevel() < GM_LEVEL_2)
-        return SendItemDescription(client);
+    csString itemCategory, itemInfo;
 
-    csString desc(GetDescription());
+    // If item is looked send standard item description unless GM
+    if(GetIsLocked())
+    {
+        if (client->GetSecurityLevel() < GM_LEVEL_2)
+        {
+            itemInfo += "This item is locked\n\n";
+        }
+        else
+        {
+            return SendItemDescription(client);
+        }
+    }
+
+    itemCategory.Format("Category: %s", current_stats->GetCategory()->name.GetData());
+    itemInfo += itemCategory;
 
     // FIXME: This function is called for world containers too...
     psCharacterInventory &inv = client->GetCharacterData()->Inventory();
     float containerWeight = GetWeight();
+    float ssize = GetItemSize();
 
-    desc.AppendFmt("\n\n%s Weight: %.2f\n", GetName(), containerWeight);
+    itemInfo.AppendFmt("\n%s Weight: %.3f", GetName(), containerWeight);
+    itemInfo.AppendFmt("\n%s Size: %.3f", GetName(), ssize);
 
     if(inv.GetContainedItemCount(this) > 0)
     {
         float containedWeight = inv.GetContainedWeight(this);
-        desc.AppendFmt("Contents Weight: %.2f\nTotal Weight: %.2f\n\n",
-                       containedWeight,
-                       containedWeight + containerWeight);
+        itemInfo.AppendFmt("\nContents Weight: %.2f\nTotal Weight: %.2f",
+                           containedWeight,
+                           containedWeight + containerWeight);
     }
 
-    desc.AppendFmt("Capacity: %.2f/%u", inv.GetContainedSize(this), GetContainerMaxSize());
+    itemInfo.AppendFmt("\nCapacity: %.2f/%u", inv.GetContainedSize(this), GetContainerMaxSize());
+
+    if(GetGuardingCharacterID().IsValid())
+    {
+        csString guardingChar;
+        gemActor* guardian = psserver->entitymanager->GetGEM()->FindPlayerEntity(GetGuardingCharacterID());
+        if(guardian && guardian->GetCharacterData())
+        {
+            guardingChar.Format("\nGuarded by: %s", guardian->GetCharacterData()->GetCharFullName());
+            itemInfo += guardingChar;
+        }
+    }
+
+    if(strcmp(GetDescription(),"0") != 0)
+    {
+        itemInfo += "\n\nDescription: ";
+        itemInfo += GetDescription();
+    }
 
     psViewContainerDescription outgoing(client->GetClientNum(),
                                         GetName(),
-                                        desc,
+                                        itemInfo,
                                         GetImageName(),
                                         0);
 
