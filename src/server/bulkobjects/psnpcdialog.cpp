@@ -96,7 +96,9 @@ const csString& NpcTriggerSentence::GetString()
 const char* NpcTriggerSentence::GeneralizeTerm(NPCDialogDict *dict,size_t which, size_t depth)
 {
     if (which >= terms.GetSize())
-        return false;
+    {
+        return NULL;
+    }
     
     str.Clear();
 
