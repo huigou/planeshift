@@ -46,15 +46,15 @@ public:
 
 private:
     void HandleUpdateItem( MsgEntry* me );
-    void HandleViewItem( MsgEntry* me );
+    void HandleViewContainer( MsgEntry* me );
 
-    pawsTextBox*        name;
+    pawsTextBox*          name;
     pawsMultiLineTextBox* description;
-    pawsWidget*         pic;
-    ContainerID         containerID;
-    pawsListBox*        contents;
+    pawsWidget*           pic;
+    ContainerID           containerID;
+    pawsListBox*          contents;
 
-    int containerSlots;
+    int                   containerSlots;
 };
 
 CREATE_PAWS_FACTORY( pawsContainerDescWindow );

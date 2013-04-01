@@ -117,10 +117,10 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
     PawsManager::GetSingleton().Publish(sigData, data);
 }
 
-void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
+void pawsContainerDescWindow::HandleViewContainer( MsgEntry* me )
 {
     Show();
-    psViewItemDescription mesg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
+    psViewContainerDescription mesg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
 
     description->SetText( mesg.itemDescription );
     name->SetText( mesg.itemName );
@@ -142,7 +142,7 @@ void pawsContainerDescWindow::HandleViewItem( MsgEntry* me )
             Debug2(LOG_CHARACTER, 0, "Setting up container %d.", mesg.containerID);
 
             contents->Clear();
-            containerSlots = mesg.ContainerSlots;
+            containerSlots = mesg.maxContainerSlots;
 
             const int cols = contents->GetTotalColumns(); //6;
             const int rows = (int) ceil(float(containerSlots)/cols);
@@ -210,7 +210,7 @@ void pawsContainerDescWindow::HandleMessage( MsgEntry* me )
     {
         case MSGTYPE_VIEW_CONTAINER:
         {
-            HandleViewItem( me );
+            HandleViewContainer( me );
             break;
         }
         case MSGTYPE_UPDATE_ITEM:
