@@ -298,7 +298,7 @@ private:
       * @param client The client the message is for. Used to figure out ownership flags.
       * @param outgoing The message that needs to be populated.
       */
-    void FillContainerMsg(Client* client, psViewItemDescription &outgoing);
+    void FillContainerMsg(Client* client, psViewContainerDescription &outgoing);
 
     void SendCraftTransInfo(Client* client);
 
@@ -702,7 +702,8 @@ public:
     }
 
 
-    /** Returns the location of this item in it's parent item or in the players equipment, bulk or bank as appropriate.
+    /**
+     * Returns the location of this item in it's parent item or in the players equipment, bulk or bank as appropriate.
      */
     INVENTORY_SLOT_NUMBER GetLocInParent(bool adjustSlot=false);
 

@@ -1878,7 +1878,10 @@ psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Clien
 psItem *gemContainer::FindItemInSlot(int slot, int stackCount)
 {
     if (slot < 0 || slot >= SlotCount())
+    {
+        Error3("FindItemSlot Slot index %d is outside [0..%d]",slot,SlotCount());
         return NULL;
+    }
     psContainerIterator it(this);
     while (it.HasNext())
     {

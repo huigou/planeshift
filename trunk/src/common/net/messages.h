@@ -4087,7 +4087,7 @@ public:
      * @param isContainer True if this item is a container.
      */
     psViewItemDescription(uint32_t to, const char* itemName, const char* description, const char* icon,
-                          uint32_t stackCount, bool isContainer = false);
+                          uint32_t stackCount);
 
     /** Crack out the details from the message.
       * This will look at the packet and figure out if it is a single item or a container.
@@ -4122,6 +4122,105 @@ public:
 
     ///The slots available in this container
     int ContainerSlots;
+
+    /// Where this item is in the container.
+    int slotID;
+
+    /// Running count of message size. Used for constructing the outgoing message.
+    int msgSize;
+
+    /// True if this item is a container and has contents.
+    bool hasContents;
+
+    /// The destination client for this message.
+    int to;
+
+private:
+    enum
+    {
+        REQUEST,
+        DESCR
+    };
+    int format;
+};
+
+
+//------------------------------------------------------------------------------
+
+/** General Message for sending information about an containter to a client.
+  * This class can take single items or containers and will send all the data to
+  * the client.  The client will then pop up the correct window when it gets one
+  * of these messages.  The item screen for a single item or the container screen
+  * if the item is a container.
+  *
+  * When sending an item to a client you create this message by giving the name and
+  * description of the item ( all items have this )
+  *
+  * If it is a container you need to set the container ID and call AddContents() for
+  * each item in the container.  After that you need to call ConstructMsg() to build the
+  * network message.
+  */
+class psViewContainerDescription : public psMessageCracker
+{
+public:
+    /** @brief Requests to the server for an item Description.
+      *
+      * @param containerID What container this item is from. Can be one of the special ones
+      *                    like CONTAINER_INVENTORY. If the item is in the world or not in
+      *                    a container then it is the gem id of the item.
+      * @param slotID Where this item is in the container.
+      */
+    psViewContainerDescription(int containerID, int slotID);
+
+    /**
+     * Construct a message to go out to a client.
+     *
+     * If icContainer is false then the message is constructed right away.  If it is true
+     * then the data is stored and the message is not constructed (because size is not known ).
+     *
+     * @param to The desitination client.
+     * @param itemName The name of the item requested.
+     * @param description The description of the requested item.
+     * @param icon The 2D gui image to draw for this item.
+     * @param stackCount The numer of items in the stack.
+     * @param isContainer True if this item is a container.
+     */
+    psViewContainerDescription(uint32_t to, const char* itemName, const char* description, const char* icon,
+                          uint32_t stackCount);
+
+    /** Crack out the details from the message.
+      * This will look at the packet and figure out if it is a single item or a container.
+      * If it is a container it will populate it's internal array of data.
+      */
+    psViewContainerDescription(MsgEntry* me, NetBase::AccessPointers* accessPointers);
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     *  Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
+
+    /// The name of the item or container.
+    const char* itemName;
+
+    /// The description of this item or container.
+    const char* itemDescription;
+
+    /// The 2D graphic GUI image.
+    const char* itemIcon;
+
+    /// Stack count of the item.
+    uint32_t stackCount;
+
+    /// The container ID for this item.
+    int containerID;
+
+    ///The maximum number of slots available in this container
+    int maxContainerSlots;
 
     /// Where this item is in the container.
     int slotID;
