@@ -1691,21 +1691,30 @@ gemContainer::gemContainer(GEMSupervisor* gemsupervisor, CacheManager* cachemana
 {
 }
 
-bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
+bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot, csString &reason)
 {
     if (!item)
+    {
+        reason = ""; // No reason since this is an internal error
         return false;
+    }
 
     if(slot >= SlotCount())
+    {
+        reason = ""; // No reason since this is an internal error
         return false;
+    }
 
-    PID guard = GetItem()->GetGuardingCharacterID();
-    gemActor* guardingActor = cel->FindPlayerEntity(guard);
+    PID guardID = GetItem()->GetGuardingCharacterID();
+    gemActor* guardingActor = cel->FindPlayerEntity(guardID);
 
     // Test if container is guarded by someone else who is near
-    if (guard.IsValid() && guard != item->GetOwningCharacterID()
-        && guardingActor && (guardingActor->RangeTo(this) <= 5))
+    if (guardID.IsValid() && guardID != item->GetOwningCharacterID()
+        && guardingActor && (guardingActor->RangeTo(this) <= RANGE_TO_GUARD))
+    {
+        reason = " because container is guarded";
         return false;
+    }
 
     /* We often want to see if a partial stack could be added, but we want to
      * check before actually doing the splitting.  So, we take an extra parameter
@@ -1720,7 +1729,10 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot)
         currentSize += child->GetTotalStackSize();
     }
     if (item->GetItemSize()*amountToAdd + currentSize > itemdata->GetContainerMaxSize())
+    {
+        reason = " because the item is to large to fitt";
         return false;
+    }
 
     unsigned short savedCount = item->GetStackCount();
     item->SetStackCount(amountToAdd);

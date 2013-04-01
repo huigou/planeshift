@@ -236,7 +236,8 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             
             psItem* newItem = NULL;
                 
-            if (worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot))
+            csString reason;
+            if (worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot, reason))
             {
                 newItem = worldContainer->RemoveFromContainer(itemProposed, msg.fromSlot,fromClient, msg.stackCount);
                 
@@ -253,6 +254,13 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
                     return;
                 }
             }
+            else
+            {
+                psserver->SendSystemError(fromClient->GetClientNum(), "Item cannot be added to that container"+reason+".");
+                parentItem->SendContainerContents(fromClient, containerEntityID);
+                return;
+            }
+            
             
             // Start work on item again
             // If the entire stack was taken then newItem will be the same as itemProposed.  If that is not the
@@ -267,7 +275,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
                 psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, newItem, newItem->GetStackCount());
             }                
 
-            // parentItem->SendContainerContents(fromClient, containerEntityID);
+            parentItem->SendContainerContents(fromClient, containerEntityID);
 
             break;
         }
@@ -315,6 +323,8 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
                 
                 chr->Inventory().Add(newItem, false);
                 itemProposed->SetGuardingCharacterID(0);
+
+                parentItem->SendContainerContents(fromClient, containerEntityID);
                 return;
             }
 
@@ -322,7 +332,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             // Update client(s)
             itemProposed->UpdateView(fromClient, worldContainer->GetEID(), true);
 
-//            parentItem->SendContainerContents(fromClient, containerEntityID);
+            parentItem->SendContainerContents(fromClient, containerEntityID);
             break;
         }
     }
@@ -485,7 +495,8 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             }
 
             // Now take this out of inventory and put in container
-            if (worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot))
+            csString reason;
+            if (worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot, reason))
             {
                 psItem *newItem = chr->Inventory().RemoveItem(NULL, (INVENTORY_SLOT_NUMBER) srcSlot, msg.stackCount);
                 if (!newItem)
@@ -498,7 +509,8 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             }
             else
             {
-                psserver->SendSystemError(fromClient->GetClientNum(), "That item cannot be added to that container.");
+                psserver->SendSystemError(fromClient->GetClientNum(), "Item cannot be added to that container"+reason+".");
+                parentItem->SendContainerContents(fromClient, containerEntityID);
                 return;
             }
 
