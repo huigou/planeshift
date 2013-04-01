@@ -271,6 +271,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
 
             break;
         }
+        // Drop one item into the world.
         case CONTAINER_WORLD:
         {
             itemProposed->SetGuardingCharacterID(0);
@@ -396,11 +397,11 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
     INVENTORY_SLOT_NUMBER destSlot = PSCHARACTER_SLOT_NONE;
 
     if (msg.fromContainer == CONTAINER_INVENTORY_BULK)
-        srcSlot = (INVENTORY_SLOT_NUMBER) (msg.fromSlot + PSCHARACTER_SLOT_BULK1);
+        srcSlot = (INVENTORY_SLOT_NUMBER) (msg.fromSlot + (int)PSCHARACTER_SLOT_BULK1);
     else if (msg.fromContainer == CONTAINER_INVENTORY_EQUIPMENT)
         srcSlot = (INVENTORY_SLOT_NUMBER) msg.fromSlot;
     else
-        srcSlot = (INVENTORY_SLOT_NUMBER) (msg.fromContainer * 100 + msg.fromSlot + 16);
+        srcSlot = (INVENTORY_SLOT_NUMBER) (msg.fromContainer * 100 + msg.fromSlot + (int)PSCHARACTER_SLOT_BULK1);
 
     psCharacter *chr = fromClient->GetCharacterData();
 
@@ -598,16 +599,16 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                 }
             }
 
-			 // Check for slot compatibility
-			if (!chr->Inventory().CheckSlotRequirements(itemProposed, destSlot, msg.stackCount))
-			{
-               psserver->SendSystemError(fromClient->GetClientNum(), "%s does not fit in that slot.", itemProposed->GetName());
+            // Check for slot compatibility
+            if (!chr->Inventory().CheckSlotRequirements(itemProposed, destSlot, msg.stackCount))
+            {
+                psserver->SendSystemError(fromClient->GetClientNum(), "%s does not fit in that slot.", itemProposed->GetName());
                 return;
-			}
+            }
             else
-			{
+            {
                 // printf("Item %s will fit in slot %d\n", itemProposed->GetName(), destSlot);
-			}
+            }
 
 
             // Check for dest slot already occupied

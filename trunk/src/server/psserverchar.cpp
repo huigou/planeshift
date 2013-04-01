@@ -204,7 +204,9 @@ void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT
     psItem* item = slotManager->FindItem(client, containerID, slotID);
 
     if ( item )
+    {
         item->ViewItem(client, containerID, slotID);
+    }
     else
     {
         psActionLocation *action = psserver->GetActionManager()->FindAction( containerID );
