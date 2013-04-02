@@ -1739,7 +1739,9 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
 
                 NPCDebug(npc, 5, "Got change brain request to %s from client %u.", brainType.GetDataSafe(), clientNum);
 
-                if(brainType == "reload")
+                bool reload = (brainType == "reload");
+
+                if(reload)
                 {
                     brainType = npc->GetBrain()->GetName();
                     if(!npcclient->LoadNPCTypes())
@@ -1754,13 +1756,13 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(!type)
                 {
                     Error2("NPC type '%s' is not found",(const char*)brainType);
-                    QueueSystemInfoCommand(clientNum,"Brain not found");
+                    QueueSystemInfoCommand(clientNum,"Brain not found.");
                     break;
                 }
 
                 //if found set it
                 npc->SetBrain(type, npcclient->GetEventManager());
-                QueueSystemInfoCommand(clientNum,"Brain changed");
+                QueueSystemInfoCommand(clientNum,"Brain %s %s.",brainType.GetDataSafe(),reload?"reloaded":"changed");
                 break;
             }
 

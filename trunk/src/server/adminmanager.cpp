@@ -1385,7 +1385,7 @@ AdminCmdDataChangeNPCType::AdminCmdDataChangeNPCType(AdminManager* msgManager, M
         // the npc type name is mandatory
         if(words.GetCount() == index+1)
         {
-            npcType = words[index];
+            npcType = words[index]; // <Brain> or reload
             index++;
         }
         else if(words.GetCount() > index)
@@ -1407,7 +1407,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataChangeNPCType)
 
 csString AdminCmdDataChangeNPCType::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <npc type name>\"";
+    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <brain>|reload\"";
 }
 
 //---------------------------------------------------------------------------------
@@ -8632,7 +8632,7 @@ void AdminManager::ChangeNPCType(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
         PID npcid = target->GetCharacterData()->GetPID();
         //send the change command.
         psserver->GetNPCManager()->ChangeNPCBrain(target, client, data->npcType.GetDataSafe());
-        psserver->SendSystemResult(me->clientnum, "NPC (%s) has been changed type.", npcid.Show().GetData());
+        psserver->SendSystemResult(me->clientnum, "NPC (%s) has been commanded to change type.", npcid.Show().GetData());
         return;
     }
     psserver->SendSystemError(me->clientnum, "No NPC found to change type.");
