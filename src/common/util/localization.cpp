@@ -196,6 +196,12 @@ void psLocalization::ClearStringTable()
     dirty = false;
 }
 
+int CompareStringTableItem(psStringTableItem* const &first,  psStringTableItem* const &second)
+{
+    return csComparator<csString,csString>::Compare(first->original,second->original);
+}
+
+
 void psLocalization::WriteStringTable()
 {
     if (filename.IsEmpty())
@@ -220,18 +226,28 @@ void psLocalization::WriteStringTable()
     file->Write(AuthorString, AuthorString.Length());
     file->Write("<StringTable>\n", strlen("<stringtable>\n") );
 
-    int i=0;
+    // Sort the list before writing.
+    csArray<psStringTableItem*> array;
     while (iter.HasNext())
     {
-        i++;
         item = (psStringTableItem*)iter.Next();
+        array.InsertSorted(item,CompareStringTableItem);
+    }
+
+    // Write the sorted list to file.
+    csArray<psStringTableItem*>::Iterator iterSorted = array.GetIterator();
+    int count=0;
+    while (iterSorted.HasNext())
+    {
+        count++;
+        item = (psStringTableItem*)iterSorted.Next();
         csString line;
         line.Format("  <item orig=\"%s\" trans=\"%s\" />\n", EscpXML(item->original).GetDataSafe(), EscpXML(item->translated).GetDataSafe() );
         file->Write(line, line.Length() );
     }
 
-    file->Write("</StringTable>",strlen("</stringtable>") );
+    file->Write("</StringTable>\n",strlen("</stringtable>\n") );
 
-    printf("-----------------------------------\nSaved %d translation entries.\n-----------------------------------\n", i);
+    printf("-----------------------------------\nSaved %d translation entries.\n-----------------------------------\n", count);
 
 }
