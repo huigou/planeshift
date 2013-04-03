@@ -174,6 +174,22 @@ The kran looks at the written page, tilting his head a bit and scratching the to
       <Contents>
         <content type="text">Descriptions of the PlaneShift windows.</content>
       </Contents>
+      <topic name="Buddy list window">
+        <Contents>
+          <content type="text">Buddy list window
+
+With this list you can manage your "friends" in PlaneShift. A red name in the list indicated that the character isn't online at the moment while a green name means the character is in game. By clicking on one of the names you can send that character a tell (same as /tell &lt;character-name&gt; &lt;message&gt;).
+
+With the "+" (Add) button you can add new characters to your buddy list.
+
+The "-" (Remove) button allows you to remove the currently selected character from your buddy list again.
+
+With the "Alias" button you can rename an entry in the buddy list. This can be used for example to add information about which guild that character belongs too. These aliases are not saved on the server but your own computer so they won't be available if you login from a different computer.
+
+Additional Info: All names on your buddy list will be available for the tab-completion of the chat window right from the start. 
+</content>
+        </Contents>
+      </topic>
       <branch name="Chat Window">
         <Contents>
           <content type="text">The chat windows is probably the most important windows of PlaneShift. Good part of the interaction between players is done with this window. Commands can be executed by typing them in this window. You can configure which which tabs are shown in the in-game options: Options->Interface->Chat Tabs. You can also configure which messages are sent in the main tab. The currently selected chat tab is highlighted, and the tab will "flash" in case of a new, unread message arrives.</content>
@@ -244,133 +260,8 @@ The kran looks at the written page, tilting his head a bit and scratching the to
           </topic>
         </branch>
       </branch>
-      <topic name="Info window">
-        <Contents>
-          <content type="text">Info Window
-
-The info window gives you an overview about your own character and your current target as well as some other important information about Yliakum. It also allows you to influence some of your characters behaviors.
-
-The first line shows the name of your current target. 
-The bar just below show the health of your current target.
-
-The next line tells you what's the current time in Yliakum.
-
-Below the time are several icons for the different stances you can take during combat. Stances represent the combat style of your character in melee. If you are in combat you can click on any of the icons to change to that stance. The first icon stops the attack. Stances from left to right: Full Defensive, Defensive, Normal, Aggressive, Bloody.
-
-Below the stances is a slider that allows you to specify how much power you want to channel in the next magic spell you cast. The more power you channel, the more chances there are for it being unpredictable or fizzling, but its effects will be stronger.
-
-The large red bar below shows your current health.
-The smaller red bar shows your current Physical stamina.
-
-The large blue bar shows your current Mana.
-The smaller blue bar bellow shows your current mental stamina.</content>
-        </Contents>
-      </topic>
-      <topic name="Stats and skills window">
-        <Contents>
-          <content type="text">Stats and skills window
-
-This windows shows all stats and skills of your character.
-
-At the top you can see the current Health, Physical Stamina, Mana and Mental Stamina values of your character.
-
-Next you can see all the stats, skills and factions of your character. You can switch between the different tabs to see the values of a specific category. If you see a number in brackets mean this stats is affected by magic means (Items, spells...) and the value in brackets is the current modified one. If you select one of the skills you can see its description in the text window below.
-
-At the bottom you can see the amount of Progress Points (PPs) your character currently possess, and how much more experience you need to get a new Progress Point. These are important to understand the progression of your character. Next you have the amount of tria (coins) you own, and two buttons for training.
-
-Training only works if you have a NPC selected that actually is capable to train your char. To train with that NPC select the skill you want to train and click "Buy Skill" to spend a single Progress Point for training (and the necessary tria for the training of course) of "Buy Skill Rank" to spend as many Progress Points are needed to train the current skill rank completely.</content>
-        </Contents>
-      </topic>
-      <topic name="Inventory Window">
-        <Contents>
-          <content type="text">Inventory Window
-
-The inventory windows allows you to manage the belongings of your character and to use, equip and unequip items.
-
-In the left part you can see what items are currently equipped. You can also change the equipment here by dragging items to or from the equipment-slots. Each equipment slots can hold a specific kind of items. To get the name of the different slots just move your mouse above them.
-
-Hand Left, Right Hand: For equipping tools, shields, weapons and all other items you want to hold. Please note many crafting techniques require you to hold the tool in your right hand.
-Helm: For caps and helms. 
-Mind: This is for equipping crafting books. You need to have the book for your current crafting task equipped in this slot to be able to perform the task.
-Right, Left Finger: For rings.
-Neck: For necklaces and amulets.
-Gloves: For gloves.
-Torso: For torso armor.
-Bracers: For bracers.
-Back: For robes.
-Arms: For arms armor.
-Boots: For boots.
-Legs: For pants.
-Belt: For belts.
-
-Below the equipment area you can see all the others items your character is currently carrying. Each stack of item needs one inventory slot. You can stack up to 65 items in one slot. Not all items are stack-able, books or containers can't be put in stacks for example. If the available slots are not enough, you can extend your inventory with containers (example a chest or a pouch). If you right-click a container a new window with a few more slots will show up. Each container has also a limited capacity.
-
-At the bottom you can see how much weight you carry at the moment and how much you could carry at maximum. Next it's Capacity. Each item has also a Capacity value in addition to it's weight. This represents how much space the item takes. And last but not least you can see how much money you are currently carrying.
-
-The inventory also allows dropping of items. If you want to drop an item just drag it from the inventory to the place you want to drop it. If you want to drop money use the icons for the different coins at the bottom. After clicking them you are asked how much coins you want to take. Afterwards you can drop them just the same way as items.
-
-When you drop an item you can use right mouse button to rotate it on one axis, and shift + right mouse button to rotate it on the other axis.
-
-To use a item like a Potion you can drag the item over to the character displayed in the center and release the mouse over your character. 
-
-At last it's worth mentioning that there are shortkeys for taking one item of a stack or taking the whole stack, If you click on a stack of items while holding the shift-key one of the items is taken. If you hold the ctrl-key the whole stack is taken.</content>
-        </Contents>
-      </topic>
-      <topic name="Quests Window">
-        <Contents>
-          <content type="text">Quests Window
-
-This windows allows you to keep track of your open and finished quests as well as the GM events you took part in. The "Quests" and "Events" buttons on top allow you to choose if you want to see informations on quests or on events. In the list at the left you can selelect a specific quest or event to get some more informations displayed on it on the right side. With the "Uncompleted" and "Completed" buttons bellow the list you can switch between finished quests/events and those you are still working on.
-
-The "Discard" buttons allows you to drop specific quests. Of course this works only on quests you haven't finished yet and even then only on quests that are redoable. (Means on almost no quests at all. Most quests in PS can be done only a single time and those you can't discard).
-
-The Quest notes at the bottom of the window allow you to write down your own thoughts about quests. You can use them to keep track of the hints NPCs gave you for example. These notes are saved on your computer and not on the server. So if you play Planeshift on a different computer they won't show up there.
-The "Save" saves your notes while "Reload" loads them again and overwrites all changes you made since the last "Save".
-</content>
-        </Contents>
-      </topic>
-      <topic name="Spell Book">
-        <Contents>
-          <content type="text">Spell Book
-
-The spell book lists all your currently known spells. You can select a spell on the left side to get more information about it on the right side.
-
-</content>
-          <content type="pic" src="Cast Magic;" padding="0" width="64" height="64"/>
-          <content type="text">With the "Cast" button you can cast the currently selected spell.
-
-</content>
-          <content type="pic" src="Defensive Magic;" padding="0" width="64" height="64"/>
-          <content type="text">The "Active Spells" button opens a window which shows all magic effects currently influencing your char (This includes effects of magic items or Dakkru's curse as well as spells).
-
-</content>
-          <content type="pic" src="Glyph Magic;" padding="0" width="64" height="64"/>
-          <content type="text">The "Research Magic" Buttons opens the window for purifying glyphs or researching new spells.</content>
-        </Contents>
-      </topic>
-      
-      <topic name="Research Magic">
-        <Contents>
-          <content type="text">Research Magic
-
-You can access this window from the spell book window, by clicking the "Research" button. It allows you to research new spells and to purify glyphs.
-
-</content>
-          <content type="pic" src="Cast Magic;" padding="0" width="64" height="64"/>
-          <content type="text">With the "Cast" button you can cast the currently created spell.
-
-</content>
-          <content type="pic" src="PurifyGlyphButton;" padding="0" width="64" height="64"/>
-          <content type="text">The Purify button allows you to purify glyphs. To use it you have to drag and drop a glyph on top of it. You will see the glyph changing his background after few seconds and a message in the chat window telling you the glyphis purified. Before researching a new spell you need to have your glyphs purified.
-
-</content>
-          <content type="pic" src="ResearchSpellButton;" padding="0" width="64" height="64"/>
-          <content type="text">The "Research" Button allows you to try the current glyph sequence and weave it into a spell. The glyphs should be placed in the four empty slots just below the purify button. If the sequence of glyphs corresponds to a spell and your research is successfull, the new spell will be added to your spell book.</content>
-        </Contents>
-      </topic>
-      
-      <branch name="Guild Window">
-        <Contents><content type="text">Guild Window
+      <branch name="Guild info window">
+        <Contents><content type="text">Guild info window
 
 The main window displayes and with proper permissions allows you to change some basic information about the guild.
 
@@ -451,64 +342,75 @@ With the ""Create alliance" button you can create a new alliance.</content>
           </Contents>
         </topic>
       </branch>
-      <topic name="Buddy List">
+      <topic name="Group stats window">
         <Contents>
-          <content type="text">Buddy List
-
-With this list you can manage your "friends" in PlaneShift. A red name in the list indicated that the character isn't online at the moment while a green name means the character is in game. By clicking on one of the names you can send that character a tell (same as /tell &lt;character-name&gt; &lt;message&gt;).
-
-With the "+" (Add) button you can add new characters to your buddy list.
-
-The "-" (Remove) button allows you to remove the currently selected character from your buddy list again.
-
-With the "Alias" button you can rename an entry in the buddy list. This can be used for example to add information about which guild that character belongs too. These aliases are not saved on the server but your own computer so they won't be available if you login from a different computer.
-
-Additional Info: All names on your buddy list will be available for the tab-completion of the chat window right from the start. 
-</content>
-        </Contents>
-      </topic>
-      <topic name="Group window">
-        <Contents>
-          <content type="text">Group Window
+          <content type="text">Group stats Window
 
 The names and an image of their char of people in your current group is shown in this window. Group leaders can invite or dismiss people or disband the whole group by right-clicking the window. The group leader is always shown as the topmost character in the list. If this player logs out the next one in the list will become group leader.</content>
         </Contents>
       </topic>
-      <topic name="Petitions Window">
+      <topic name="Help window">
         <Contents>
-          <content type="text">Petitions Window
-
-This window allows you to contact GMs about problems you have. At the top you can see a list of all your current petitions and their status. GMs will usually add their answer to your petition so make sure to check them now and then again to see if they were already processed. Once you read the answer of GMs you can remove the petitions with the "Delete" button.
-
-The "New" button allows you to create a new petiton while the "Save" button allows you to modify existing petitions.
-
-Petitions are a great way to get in contact with GMs if no GM is currently online. For example if one of your characters is unable to login it might help to login another character from the same account and make a petition about your issue. A GM will read that petition and move your character to the original spawn position. This often helps in case of login problems. By using the same account you verify also that this is actually one of your character.
-</content>
+          <content type="text">This help window.</content>
         </Contents>
       </topic>
-      <branch name="Shortcuts">
+      <topic name="Information window">
         <Contents>
-          <content type="text">Shortcuts
+          <content type="text">Information window
 
-This window allows you to define shortcuts for often used actions. Shortcuts can be executed by simply clicking the corresponding button or you can assing keyboard keys to them. You can create upto 200 different shortcuts.</content>
+The info window gives you an overview about your own character and your current target as well as some other important information about Yliakum. It also allows you to influence some of your characters behaviors.
+
+The first line shows the name of your current target. 
+The bar just below show the health of your current target.
+
+The next line tells you what's the current time in Yliakum.
+
+Below the time are several icons for the different stances you can take during combat. Stances represent the combat style of your character in melee. If you are in combat you can click on any of the icons to change to that stance. The first icon stops the attack. Stances from left to right: Full Defensive, Defensive, Normal, Aggressive, Bloody.
+
+Below the stances is a slider that allows you to specify how much power you want to channel in the next magic spell you cast. The more power you channel, the more chances there are for it being unpredictable or fizzling, but its effects will be stronger.
+
+The large red bar below shows your current health.
+The smaller red bar shows your current Physical stamina.
+
+The large blue bar shows your current Mana.
+The smaller blue bar bellow shows your current mental stamina.</content>
         </Contents>
-        <topic name="Creating new shortcuts">
-          <Contents>
-            <content type="text">To create or change a shortcut just right-click the shortcut button you want to assign to your defined shortcut.
+      </topic>
+      <topic name="Inventory window">
+        <Contents>
+          <content type="text">Inventory window
 
-Each shortcut must have a "Name". Put this in first as if you forget it your shortcut won't be saved.
+The inventory windows allows you to manage the belongings of your character and to use, equip and unequip items.
 
-In the middle you can put one or more commands that should be executed for the shortcut. If you have more than one command you must put each command in a new line. All available commands for the chat window are possible here. In case you want the shortcut to display some text in main chat you have to add an explicit "/say" in fornt of your text (Though that's not needed for emotes in the main chat, just starting with "/me" will do).
+In the left part you can see what items are currently equipped. You can also change the equipment here by dragging items to or from the equipment-slots. Each equipment slots can hold a specific kind of items. To get the name of the different slots just move your mouse above them.
 
-The "Clear" button will empty all fields of the shortcut. 
+Hand Left, Right Hand: For equipping tools, shields, weapons and all other items you want to hold. Please note many crafting techniques require you to hold the tool in your right hand.
+Helm: For caps and helms. 
+Mind: This is for equipping crafting books. You need to have the book for your current crafting task equipped in this slot to be able to perform the task.
+Right, Left Finger: For rings.
+Neck: For necklaces and amulets.
+Gloves: For gloves.
+Torso: For torso armor.
+Bracers: For bracers.
+Back: For robes.
+Arms: For arms armor.
+Boots: For boots.
+Legs: For pants.
+Belt: For belts.
 
-With the "Set" button you can assign a key to your shortcut. This can also be done in the in-game-options but is usually easier here.
+Below the equipment area you can see all the others items your character is currently carrying. Each stack of item needs one inventory slot. You can stack up to 65 items in one slot. Not all items are stack-able, books or containers can't be put in stacks for example. If the available slots are not enough, you can extend your inventory with containers (example a chest or a pouch). If you right-click a container a new window with a few more slots will show up. Each container has also a limited capacity.
 
-With "Done" your changes will be saved while "Cancel" will discard them.
-            </content>
-          </Contents>
-        </topic>
-      </branch>
+At the bottom you can see how much weight you carry at the moment and how much you could carry at maximum. Next it's Capacity. Each item has also a Capacity value in addition to it's weight. This represents how much space the item takes. And last but not least you can see how much money you are currently carrying.
+
+The inventory also allows dropping of items. If you want to drop an item just drag it from the inventory to the place you want to drop it. If you want to drop money use the icons for the different coins at the bottom. After clicking them you are asked how much coins you want to take. Afterwards you can drop them just the same way as items.
+
+When you drop an item you can use right mouse button to rotate it on one axis, and shift + right mouse button to rotate it on the other axis.
+
+To use a item like a Potion you can drag the item over to the character displayed in the center and release the mouse over your character. 
+
+At last it's worth mentioning that there are shortkeys for taking one item of a stack or taking the whole stack, If you click on a stack of items while holding the shift-key one of the items is taken. If you hold the ctrl-key the whole stack is taken.</content>
+        </Contents>
+      </topic>
       <branch name="Options window">
         <Contents>
           <content type="text">Options Window
@@ -845,12 +747,123 @@ Here you can specify command that are executed each time you login. The commands
           </Contents>
         </topic>
       </branch>
-      <topic name="Help window">
+      <topic name="Petitions window">
         <Contents>
-          <content type="text">This help window.</content>
+          <content type="text">Petitions window
+
+This window allows you to contact GMs about problems you have. At the top you can see a list of all your current petitions and their status. GMs will usually add their answer to your petition so make sure to check them now and then again to see if they were already processed. Once you read the answer of GMs you can remove the petitions with the "Delete" button.
+
+The "New" button allows you to create a new petiton while the "Save" button allows you to modify existing petitions.
+
+Petitions are a great way to get in contact with GMs if no GM is currently online. For example if one of your characters is unable to login it might help to login another character from the same account and make a petition about your issue. A GM will read that petition and move your character to the original spawn position. This often helps in case of login problems. By using the same account you verify also that this is actually one of your character.
+</content>
         </Contents>
       </topic>
+      <topic name="Quests window">
+        <Contents>
+          <content type="text">Quests window
+
+This windows allows you to keep track of your open and finished quests as well as the GM events you took part in. The "Quests" and "Events" buttons on top allow you to choose if you want to see informations on quests or on events. In the list at the left you can selelect a specific quest or event to get some more informations displayed on it on the right side. With the "Uncompleted" and "Completed" buttons bellow the list you can switch between finished quests/events and those you are still working on.
+
+The "Discard" buttons allows you to drop specific quests. Of course this works only on quests you haven't finished yet and even then only on quests that are redoable. (Means on almost no quests at all. Most quests in PS can be done only a single time and those you can't discard).
+
+The Quest notes at the bottom of the window allow you to write down your own thoughts about quests. You can use them to keep track of the hints NPCs gave you for example. These notes are saved on your computer and not on the server. So if you play Planeshift on a different computer they won't show up there.
+The "Save" saves your notes while "Reload" loads them again and overwrites all changes you made since the last "Save".
+</content>
+        </Contents>
+      </topic>
+      <topic name="Quick bar window">
+        <Contents>
+          <content type="text">Quick bar window
+
+This window allow you to get quick access to items and spells. Drag an item from your inventory or a spell icon from you spell bock over to one of the quick bar slots. When you click on the item it will be used, equivalent with /use item. When you click a spell it is cast, equivalent with /cast spell.</content>
+        </Contents>
+      </topic>
+      <topic name="Quit window">
+        <Contents>
+          <content type="text">Quit window
+
+Ask you to confirm if you wish to exit from Planeshift.</content>
+        </Contents>
+      </topic>
+      <topic name="Research Magic">
+        <Contents>
+          <content type="text">Research Magic
+
+You can access this window from the spell book window, by clicking the "Research" button. It allows you to research new spells and to purify glyphs.
+
+</content>
+          <content type="pic" src="Cast Magic;" padding="0" width="64" height="64"/>
+          <content type="text">With the "Cast" button you can cast the currently created spell.
+
+</content>
+          <content type="pic" src="PurifyGlyphButton;" padding="0" width="64" height="64"/>
+          <content type="text">The Purify button allows you to purify glyphs. To use it you have to drag and drop a glyph on top of it. You will see the glyph changing his background after few seconds and a message in the chat window telling you the glyphis purified. Before researching a new spell you need to have your glyphs purified.
+
+</content>
+          <content type="pic" src="ResearchSpellButton;" padding="0" width="64" height="64"/>
+          <content type="text">The "Research" Button allows you to try the current glyph sequence and weave it into a spell. The glyphs should be placed in the four empty slots just below the purify button. If the sequence of glyphs corresponds to a spell and your research is successfull, the new spell will be added to your spell book.</content>
+        </Contents>
+      </topic>
+      <branch name="Shortcuts Window">
+        <Contents>
+          <content type="text">Shortcuts
+
+This window allows you to define shortcuts for often used actions. Shortcuts can be executed by simply clicking the corresponding button or you can assing keyboard keys to them. You can create upto 200 different shortcuts.</content>
+        </Contents>
+        <topic name="Creating new shortcuts">
+          <Contents>
+            <content type="text">To create or change a shortcut just right-click the shortcut button you want to assign to your defined shortcut.
+
+Each shortcut must have a "Name". Put this in first as if you forget it your shortcut won't be saved.
+
+In the middle you can put one or more commands that should be executed for the shortcut. If you have more than one command you must put each command in a new line. All available commands for the chat window are possible here. In case you want the shortcut to display some text in main chat you have to add an explicit "/say" in fornt of your text (Though that's not needed for emotes in the main chat, just starting with "/me" will do).
+
+The "Clear" button will empty all fields of the shortcut. 
+
+With the "Set" button you can assign a key to your shortcut. This can also be done in the in-game-options but is usually easier here.
+
+With "Done" your changes will be saved while "Cancel" will discard them.
+            </content>
+          </Contents>
+        </topic>
+      </branch>
+      <topic name="Spell Book Window">
+        <Contents>
+          <content type="text">Spell Book Window
+
+The spell book lists all your currently known spells. You can select a spell on the left side to get more information about it on the right side.
+
+</content>
+          <content type="pic" src="Cast Magic;" padding="0" width="64" height="64"/>
+          <content type="text">With the "Cast" button you can cast the currently selected spell.
+
+</content>
+          <content type="pic" src="Defensive Magic;" padding="0" width="64" height="64"/>
+          <content type="text">The "Active Spells" button opens a window which shows all magic effects currently influencing your char (This includes effects of magic items or Dakkru's curse as well as spells).
+
+</content>
+          <content type="pic" src="Glyph Magic;" padding="0" width="64" height="64"/>
+          <content type="text">The "Research Magic" Buttons opens the window for purifying glyphs or researching new spells.</content>
+        </Contents>
+      </topic>
+      <topic name="Stats and skills window">
+        <Contents>
+          <content type="text">Stats and skills window
+
+This windows shows all stats and skills of your character.
+
+At the top you can see the current Health, Physical Stamina, Mana and Mental Stamina values of your character.
+
+Next you can see all the stats, skills and factions of your character. You can switch between the different tabs to see the values of a specific category. If you see a number in brackets mean this stats is affected by magic means (Items, spells...) and the value in brackets is the current modified one. If you select one of the skills you can see its description in the text window below.
+
+At the bottom you can see the amount of Progress Points (PPs) your character currently possess, and how much more experience you need to get a new Progress Point. These are important to understand the progression of your character. Next you have the amount of tria (coins) you own, and two buttons for training.
+
+Training only works if you have a NPC selected that actually is capable to train your char. To train with that NPC select the skill you want to train and click "Buy Skill" to spend a single Progress Point for training (and the necessary tria for the training of course) of "Buy Skill Rank" to spend as many Progress Points are needed to train the current skill rank completely.</content>
+        </Contents>
+      </topic>      
     </branch>
+
     <branch name="Chat commands">
       <Contents>
         <content type="text">This section explains all chat commands</content>
