@@ -879,7 +879,7 @@ void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3
     ServerStatus::mob_birthcount++;
 }
 
-void handleGroupLootItem(psItem* item, gemActor* obj, Client* client, CacheManager* cacheManager, GEMSupervisor* gem, uint8_t lootAction)
+void handleGroupLootItem(psItem* item, gemActor* target, Client* client, CacheManager* cacheManager, GEMSupervisor* gem, uint8_t lootAction)
 {
     if(!item)
     {
@@ -894,7 +894,7 @@ void handleGroupLootItem(psItem* item, gemActor* obj, Client* client, CacheManag
     Client* randfriendclient = NULL;
     if(group.IsValid())
     {
-        randfriendclient = obj->GetRandomLootClient(RANGE_TO_LOOT * 10);
+        randfriendclient = target->GetRandomLootClient(RANGE_TO_LOOT * 10);
         if (!randfriendclient)
         {
             Error3("GetRandomLootClient failed for loot msg from %s, object %s.", client->GetName(), item->GetName() );
@@ -916,7 +916,8 @@ void handleGroupLootItem(psItem* item, gemActor* obj, Client* client, CacheManag
     }
 
     // Ask group member before take
-    if (lootAction == psLootItemMessage::LOOT_SELF && group.IsValid() && client != randfriendclient && obj->HasBeenAttackedBy(randfriendclient->GetActor()))
+    if ((lootAction == psLootItemMessage::LOOT_SELF) && group.IsValid() &&
+        (client != randfriendclient))
     {
         psserver->SendSystemInfo(client->GetClientNum(),
                                  "Asking roll winner %s if you may take the %s...",
@@ -928,7 +929,7 @@ void handleGroupLootItem(psItem* item, gemActor* obj, Client* client, CacheManag
 
         // Item will be held in the prompt until answered.
 
-        PendingLootPrompt* p = new PendingLootPrompt(client, randfriendclient, item, obj->GetCharacterData(), request, cacheManager, gem);
+        PendingLootPrompt* p = new PendingLootPrompt(client, randfriendclient, item, target->GetCharacterData(), request, cacheManager, gem);
         psserver->questionmanager->SendQuestion(p);
 
         type.Append(" Pending");
@@ -966,7 +967,7 @@ void handleGroupLootItem(psItem* item, gemActor* obj, Client* client, CacheManag
         for(int i = 0; i < (int)group->GetMemberCount(); i++)
         {
             int cnum = group->GetMember(i)->GetClientID();
-            if(obj->IsLootableClient(cnum))
+            if(target->IsLootableClient(cnum))
             {
                 psLootRemoveMessage rem(cnum, item->GetBaseStats()->GetUID());
                 rem.SendMessage();
@@ -980,8 +981,8 @@ void handleGroupLootItem(psItem* item, gemActor* obj, Client* client, CacheManag
     }
 
     psLootEvent evt(
-                   obj->GetCharacterData()->GetPID(),
-                   obj->GetCharacterData()->GetCharName(),
+                   target->GetCharacterData()->GetPID(),
+                   target->GetCharacterData()->GetCharName(),
                    looterclient->GetCharacterData()->GetPID(),
                    looterclient->GetCharacterData()->GetCharName(),
                    item->GetUID(),
@@ -997,37 +998,29 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
 {
     psLootItemMessage msg(me);
     
-    // Possible hack here?  We are trusting the client to send the right msg.entity?
-    gemObject *object = gem->FindObject(msg.entity);
-    if(!object)
+    gemActor* target = dynamic_cast<gemActor*>(gem->FindObject(msg.entity));
+    if(!target)
     {
         Error3("LootItem Message from %s specified an erroneous entity id: %s.", client->GetName(), ShowID(msg.entity));
         return;
     }
-
-    gemActor *obj = object->GetActorPtr();
-    if(!obj)
-    {
-        Error3("LootItem Message from %s specified a non-actor entity id: %s.", client->GetName(), ShowID(msg.entity));
-        return;
-    }
-    psCharacter *chr = obj->GetCharacterData();
-    if(!chr)
+    psCharacter* targetCharacter = target->GetCharacterData();
+    if(!targetCharacter)
     {
         Error3("LootItem Message from %s specified a non-character entity id: %s.", client->GetName(), ShowID(msg.entity));
         return;
     }
 
     // Check the range to the lootable object.
-    if(client->GetActor()->RangeTo(obj) > RANGE_TO_LOOT)
+    if(client->GetActor()->RangeTo(target) > RANGE_TO_LOOT)
     {
-        psserver->SendSystemError(client->GetClientNum(), "Too far away to loot %s.", obj->GetName() );
+        psserver->SendSystemError(client->GetClientNum(), "Too far away to loot %s.", target->GetName() );
         return;
     }
     
-    psItem *item = chr->RemoveLootItem(msg.lootitem);
+    psItem *item = targetCharacter->RemoveLootItem(msg.lootitem);
     
-    handleGroupLootItem(item, obj, client, cacheManager, gem, msg.lootaction);
+    handleGroupLootItem(item, target, client, cacheManager, gem, msg.lootaction);
 }
 
 void SpawnManager::HandleDeathEvent(MsgEntry *me,Client *notused)

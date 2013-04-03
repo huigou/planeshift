@@ -886,12 +886,13 @@ public:
 class AdminCmdDataKillNPC : public AdminCmdDataTarget
 {
 public:
-    bool reload; ///< whether NPC should be reloaded after the kill or not
+    bool   reload; ///< whether NPC should be reloaded after the kill or not
+    float  damage; ///< If <> 0 than only do this damage
 
     /** @brief Creates obj for specified command that kills/reloads a npc.
      */
     AdminCmdDataKillNPC()
-    : AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), reload(false)
+        : AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), reload(false), damage(0.0)
     {};
     
     /** @brief Parses the given message for killing/reloadin a npc.

@@ -2845,8 +2845,9 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
     }
 
     if (GetCharacterData()->GetHP() - damage < 0)
+    {
         damage = GetCharacterData()->GetHP();
-
+    }
 
     // Add dmg to history
     AddAttackerHistory(attacker, damage);
@@ -2971,14 +2972,20 @@ bool gemActor::CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) cons
         const AttackerHistory* lasthit = GetDamageHistory(i-1);
 
         // any 15 second gap is enough to make us stop looking
-        if (lasttime - lasthit->TimeOfAttack() > 15000)
+        if ((lasttime - lasthit->TimeOfAttack()) > 15000)
+        {
             return true;
+        }
         lasttime = lasthit->TimeOfAttack();
 
         if (lasthit->Attacker().IsValid())
+        {
             lastAttacker = lasthit->Attacker();
+        }
         else
+        {
             continue;  // ignore disconnects
+        }
 
         // If someone else, except for attacker pet, hit first and attacker not grouped with them,
         // attacker locked out
@@ -2997,9 +3004,12 @@ bool gemActor::HasBeenAttackedBy(gemActor* attacker)
     for (int i = (int)GetDamageHistoryCount(); i>0; i--)
     {
         const AttackerHistory* hit = GetDamageHistory(i-1);
+
         //check if we have found our attacker in the history
         if(attacker == hit->Attacker())
-            return true;        
+        {
+            return true;
+        }
     }    
     return false;
 }
