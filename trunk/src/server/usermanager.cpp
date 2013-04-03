@@ -2560,7 +2560,7 @@ void UserManager::ChallengeToDuel(psUserCmdMessage &msg,Client* client)
     //don't allow frozen clients to challenge
     if(client->GetActor()->IsFrozen())
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "You can't challenge opponents while being frozen by a GM");
+        psserver->SendSystemInfo(client->GetClientNum(), "You can't challenge opponents while being frozen.");
         return;
     }
 
@@ -2595,7 +2595,7 @@ void UserManager::ChallengeToDuel(psUserCmdMessage &msg,Client* client)
 
     if(targetClient->GetActor()->IsFrozen())
     {
-        psserver->SendSystemInfo(client->GetClientNum(), "% was frozen by a GM and cannot be challenged", target->GetName());
+        psserver->SendSystemInfo(client->GetClientNum(), "% was frozen and cannot be challenged", target->GetName());
         return;
     }
 
