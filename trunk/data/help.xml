@@ -2969,7 +2969,7 @@ Kicks the named player off of the server.</content>
     </topic>
     <topic name="/killnpc">
       <Contents>
-        <content type="text">/killnpc name reload
+        <content type="text">/killnpc [me/target/eid/pid/area/name] [&lt;damge&gt;|reload]
 
 Kills the targeted NPC, using the current target if no name is given. The reload option recreates the NPC with stats and triggers from the DB.</content>
       </Contents>

@@ -1030,7 +1030,9 @@ void CombatManager::HandleDeathEvent(MsgEntry *me,Client *client)
 
     // Stop any duels.
     if (death.deadActor->GetClient())
+    {
         death.deadActor->GetClient()->ClearAllDuelClients();
+    }
 
     // Stop actor moving.
     death.deadActor->StopMoving();

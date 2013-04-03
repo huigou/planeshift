@@ -1274,7 +1274,7 @@ csString AdminCmdDataBan::GetHelpMessage()
 }
 
 AdminCmdDataKillNPC::AdminCmdDataKillNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
-    : AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), reload(false)
+    : AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), reload(false),damage(0.0)
 {
     size_t index = 1;
     bool found;
@@ -1300,7 +1300,7 @@ AdminCmdDataKillNPC::AdminCmdDataKillNPC(AdminManager* msgManager, MsgEntry* me,
         }
         else if(words.GetCount() > index)
         {
-            ParseError(me, "Too many parameters");
+            damage = words.GetFloat(index++);
         }
     }
     else
@@ -1313,7 +1313,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataKillNPC)
 
 csString AdminCmdDataKillNPC::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [reload]\"";
+    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " [<damage>|reload]\"";
 }
 
 AdminCmdDataPercept::AdminCmdDataPercept(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
@@ -8566,7 +8566,15 @@ void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
     {
         if(!data->reload)
         {
-            target->Kill(client->GetActor());
+            if (data->damage > 0.0)
+            {
+                target->DoDamage(client->GetActor(),data->damage);
+            }
+            else
+            {
+                target->Kill(client->GetActor());
+            }
+            
         }
         else
         {

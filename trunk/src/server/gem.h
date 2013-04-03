@@ -1318,7 +1318,7 @@ public:
      *  @param attacker A pointer to the actor we are checking if it has attacked.
      *  @return TRUE if the actor has attacked the entity.
      */
-    bool HasBeenAttackedBy(gemActor* attacker);
+    virtual bool HasBeenAttackedBy(gemActor* attacker);
 
     void Kill(gemActor *attacker) { DoDamage(attacker, psChar->GetHP() ); }
     void Defeat();
@@ -1588,7 +1588,7 @@ public:
     virtual void RemoveLootableClient(int cnum);
     bool IsLootableClient(int cnum);
     const csArray<int>& GetLootableClients() const {return lootable_clients; }
-    Client *GetRandomLootClient(int range);
+    virtual Client *GetRandomLootClient(int range);
 
     /**
      * Used to allow a NPC to communicate by saying things to its environment.
