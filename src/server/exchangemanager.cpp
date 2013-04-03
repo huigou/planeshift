@@ -1381,7 +1381,7 @@ bool ExchangeManager::ExchangeCheck(Client * client, gemObject * target, csStrin
     {
         if (errorMessage)
         {
-            *errorMessage = "You can't trade while being frozen by a GM";
+            *errorMessage = "You can't trade while being frozen.";
         }
         return false;
     }
@@ -1390,7 +1390,7 @@ bool ExchangeManager::ExchangeCheck(Client * client, gemObject * target, csStrin
     {
         if (errorMessage)
         {
-            *errorMessage = "You are already busy with another trade" ;
+            *errorMessage = "You are already busy with another trade." ;
         }
         return false;
     }
@@ -1488,19 +1488,19 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
 
         if ( client == targetClient )
         {
-            psserver->SendSystemError(client->GetClientNum(),"You can not trade with yourself");
+            psserver->SendSystemError(client->GetClientNum(),"You can not trade with yourself.");
             return;
         }
 
         if(targetClient->GetActor()->IsFrozen())
         {
-            psserver->SendSystemInfo(client->GetClientNum(), "%s was frozen by a GM and cannot trade", target->GetName());
+            psserver->SendSystemInfo(client->GetClientNum(), "%s was frozen and cannot trade.", target->GetName());
             return;
         }
 
         if ( targetClient->GetExchangeID() )
         {
-            psserver->SendSystemError(client->GetClientNum(), "%s is busy with another trade", targetClient->GetName() );
+            psserver->SendSystemError(client->GetClientNum(), "%s is busy with another trade.", targetClient->GetName() );
             return;
         }
 
