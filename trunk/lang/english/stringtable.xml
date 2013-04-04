@@ -733,7 +733,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Start Repeat" trans="" />
   <item orig="Stat" trans="" />
   <item orig="Stats" trans="" />
-  <item orig="Stats and Skills" trans="" />
+  <item orig="Stats and skills" trans="" />
   <item orig="Stats description:" trans="" />
   <item orig="Stats:" trans="" />
   <item orig="Status" trans="" />
@@ -749,6 +749,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="System" trans="" />
   <item orig="System Base" trans="" />
   <item orig="System text color" trans="" />
+  <item orig="Tabs to show" trans="" />
   <item orig="Take All" trans="" />
   <item orig="Take and Stack All" trans="" />
   <item orig="Take item" trans="" />
@@ -857,6 +858,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Welcome to PlaneShift!" trans="" />
   <item orig="Whisper" trans="" />
   <item orig="Whole" trans="" />
+  <item orig="Window Settings" trans="" />
   <item orig="Withdraw" trans="" />
   <item orig="Withdraw and Deposit" trans="" />
   <item orig="Write in this book" trans="" />
@@ -866,6 +868,9 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Yes" trans="" />
   <item orig="You advise %s with this suggestion: %s" trans="" />
   <item orig="You are ignoring all replies from that person." trans="" />
+  <item orig="You are not in a guild.
+New guilds must have a minimum of 1 members, and the fee is 20000 trias. Beware that a guild will be automatically disbanded if it has less than 5 members for more than 5 minutes
+Do you wish to found a guild now?" trans="" />
   <item orig="You can not ignore yourself." trans="" />
   <item orig="You cannot have a negative CP value." trans="" />
   <item orig="You currently have no petitions." trans="" />
