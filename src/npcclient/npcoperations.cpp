@@ -5828,7 +5828,7 @@ ScriptOperation::OperationResult WatchOperation::Run(NPC *npc, bool interrupted)
             }
             break;
         case NEAREST_PLAYER:
-            watchedEnt = npc->GetNearestActor(searchRange, targetPos, targetSector, targetRange);
+            watchedEnt = npc->GetNearestPlayer(searchRange, targetPos, targetSector, targetRange);
             if (watchedEnt)
             {
                 targetEID = watchedEnt->GetEID();
