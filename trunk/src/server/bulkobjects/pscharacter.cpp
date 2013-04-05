@@ -1675,7 +1675,7 @@ csArray<psItem*> psCharacter::RemoveLootItems(csArray<csString> categories)
 {
     csArray<psItem*> items;
 
-    for(size_t x = 0; x < lootPending.GetSize(); x++)
+    for(size_t x = lootPending.GetSize()-1; x >= 0; x--)
     {
         if(!lootPending[x])
         {
@@ -1684,11 +1684,22 @@ csArray<psItem*> psCharacter::RemoveLootItems(csArray<csString> categories)
           continue;
         }
         
-        if(categories.IsEmpty() ||
-            categories.Find(lootPending[x]->GetCategory()->name.Downcase()) != csArrayItemNotFound)
+        if(categories.IsEmpty())
         {
             items.Push(lootPending[x]);
             lootPending.DeleteIndex(x);
+        }
+        else
+        {
+            for (size_t i = 0; i < categories.GetSize(); i++)
+            {
+                if (lootPending[x]->GetCategory()->name.Downcase().Find(categories[i]) != csArrayItemNotFound)
+                {
+                    items.Push(lootPending[x]);
+                    lootPending.DeleteIndex(x);
+                    break; // inner loop. Item in pos x was removed
+                }
+            }
         }
     }
     return items;
