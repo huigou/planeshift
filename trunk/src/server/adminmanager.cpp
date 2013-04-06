@@ -10225,7 +10225,14 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem &msg, Client* client
     item->SetLoaded();  // Item is fully created
     if(charData->Inventory().Add(item))
     {
-        text.Format("You spawned %s to your inventory",msg.item.GetData());
+        if (msg.count > 1)
+        {
+            text.Format("You spawned %d %s to your inventory.", msg.count, psString(msg.item).Plural().GetData());            
+        }
+        else
+        {
+            text.Format("You spawned %s to your inventory.", msg.item.GetData());
+        }
     }
     else
     {
