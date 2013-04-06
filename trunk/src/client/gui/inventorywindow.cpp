@@ -31,6 +31,7 @@
 #include "globals.h"
 
 #include "pscelclient.h"
+#include "psinventorycache.h"
 
 
 #include "paws/pawstextbox.h"
@@ -47,6 +48,7 @@
 #include "gui/pawsslot.h"
 #include "gui/pawscontrolwindow.h"
 #include "gui/pawsinventorydollview.h"
+#include "gui/pawscontainerdescwindow.h"
 #include "../charapp.h"
 
 #define VIEW_BUTTON 1005
@@ -66,7 +68,7 @@ pawsInventoryWindow::pawsInventoryWindow()
 {
     loader =  csQueryRegistry<iThreadedLoader> ( PawsManager::GetSingleton().GetObjectRegistry() );
 
-    bulkSlots.SetSize( 32 );
+    bulkSlots.SetSize( INVENTORY_BULK_COUNT );
     equipmentSlots.SetSize(INVENTORY_EQUIP_COUNT);
     for ( size_t n = 0; n < equipmentSlots.GetSize(); n++ )
         equipmentSlots[n] = NULL;
@@ -333,41 +335,83 @@ void pawsInventoryWindow::Dequip( const char* itemName )
     }
 }
 
-void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlotID )
+void pawsInventoryWindow::UpdateFromContainer(ContainerID fromContainerID, int fromSlotID, int fromStackCount, int takenStackCount)
 {
-    pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
-    if ( (itemName != NULL) && (bulkList) )
+    pawsSlot* fromSlot = NULL;
+
+    // Find the fromSlot
+    if (fromContainerID == CONTAINER_INVENTORY_BULK)
     {
-        pawsSlot* fromSlot = NULL;
-        for ( size_t z = 0; z < bulkSlots.GetSize(); z++ )
+        if (fromContainerID >= 0 && fromContainerID < INVENTORY_BULK_COUNT)
         {
-            if ( !bulkSlots[z]->IsEmpty() )
+            fromSlot = bulkSlots[fromSlotID];
+        }
+        else
+        {
+            int slotID = fromSlotID % 100;
+            int locationInParent = (fromSlotID-slotID)/100;
+
+            pawsContainerDescWindow* containerDescWindow = (pawsContainerDescWindow*)PawsManager::GetSingleton().FindWidget("ContainerDescWindow");
+            if (containerDescWindow)
             {
-                csString tip(bulkSlots[z]->GetToolTip());
-                if ( tip.CompareNoCase(itemName) )
+                if (containerDescWindow->GetContainerID() == locationInParent)
                 {
-                    fromSlot = bulkSlots[z];
-                    break;
+                    fromSlot = containerDescWindow->GetSlot( slotID );
                 }
             }
         }
+        
+    }
 
-        if ( fromSlot )
+    if (fromSlot)
+    {
+        // Prechange the slot, client side
+        if (fromStackCount > takenStackCount)
         {
-            int container   = fromSlot->ContainerID();
-            int slot        = fromSlot->ID();
+            fromSlot->StackCount(fromStackCount - takenStackCount);
+        }
+        else
+        {
+            fromSlot->Clear();
+        }
+    }
+    else
+    {
+        // Found no slot!!!
+    }
+}
 
-            if (fromSlot->StackCount() > stackCount)
-                fromSlot->StackCount(fromSlot->StackCount() - stackCount);
-            else
-                fromSlot->Clear();
+void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlotID )
+{
+    csHash<psInventoryCache::CachedItemDescription*>::GlobalIterator iter = psengine->GetInventoryCache()->GetIterator();
+    psInventoryCache::CachedItemDescription* from = NULL;
+    
+    while (iter.HasNext())
+    {
+        psInventoryCache::CachedItemDescription* slotDesc = iter.Next();
 
-            //psItem* item = charData->GetItemInSlot( slot );
-            psSlotMovementMsg msg( container, slot,
+        if (slotDesc->name.CompareNoCase(itemName))
+        {
+            from = slotDesc;
+        }
+    }
+    
+    if (from)
+    {
+        int container   = from->containerID;
+        int slot        = from->slot;
+
+        UpdateFromContainer(container, slot, from->stackCount, stackCount);
+
+        if (container == CONTAINER_INVENTORY_BULK)
+        {
+            slot -= PSCHARACTER_SLOT_BULK1;
+        }
+        
+        psSlotMovementMsg msg( container, slot,
                                CONTAINER_INVENTORY_EQUIPMENT, toSlotID,
                                stackCount );
-            msg.SendMessage();
-        }
+        msg.SendMessage();
     }
 }
 

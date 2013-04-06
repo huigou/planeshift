@@ -85,7 +85,7 @@ bool psInventoryCache::EmptyInventoryItem(int slot, int /*container*/)
 }
 
 bool psInventoryCache::SetInventoryItem(int slot,
-                                        int /*container*/,
+                                        int containerID,
                                         csString name,
                                         csString meshName,
                                         csString materialName,
@@ -103,6 +103,8 @@ bool psInventoryCache::SetInventoryItem(int slot,
     //printf("Setting item %s in slot %d\n", name.GetDataSafe(), slot);
 
     CachedItemDescription *newItem = new CachedItemDescription;
+    newItem->slot = slot;
+    newItem->containerID = containerID;
     newItem->name = name;
     newItem->meshName = meshName;
     newItem->materialName = materialName;

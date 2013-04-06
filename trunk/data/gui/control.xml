@@ -169,7 +169,7 @@
             </attachpoints>
         </widget>
 
-        <widget name="SkillsButton" factory="pawsButton" id="1400" tooltip="Stats and skills" sound="gui.toolbar">
+        <widget name="SkillsButton" factory="pawsButton" id="1400" tooltip="Stats and Skills" sound="gui.toolbar">
             <frame x="896" y="1" width="64" height="64" />
             <bgimage resource="SkillsButton" />
             <attachpoints>
