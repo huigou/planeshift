@@ -274,11 +274,13 @@ bool psString::IsVowel(size_t pos)
     }
 }
 
-void psString::Plural()
+psString& psString::Plural()
 {
     // Check exceptions first
     if ( Slice(Size-4).Downcase() == "fish" )
-        return;
+    {
+        return *this;
+    }
 
     const char *suffix = "s";
 
@@ -316,6 +318,8 @@ void psString::Plural()
     }
 
     Append(suffix);
+
+    return *this;
 }
 
 void psString::Split(csStringArray& arr, char delim)
