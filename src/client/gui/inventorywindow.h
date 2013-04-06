@@ -67,6 +67,16 @@ public:
     /// Get a free slot
     pawsSlot* GetFreeSlot();
 
+    /**
+     * Update content of a container where a stack count has been taken.
+     *
+     * @param fromContainerID   The container ID of the container.
+     * @param fromSlotID        The slot ID in the container.
+     * @param fromStackCount    The old stack count of the given slot.
+     * @param takenStackCount   The number of items taken out of the slot.
+     */
+    void UpdateFromContainer(ContainerID fromContainerID, int fromSlotID, int fromStackCount, int takenStackCount);
+
     /** Equips an item into it's closest available slot.
      *  Will pick the first item of the given name in the bulk slots to try
      *  to equip. In this sense drinking a potion is the same as 'equipping' it.

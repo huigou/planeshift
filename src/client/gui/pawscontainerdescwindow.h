@@ -44,6 +44,16 @@ public:
     //from iNetSubscriber:
     void HandleMessage( MsgEntry* message );
 
+    /**
+     * Return the container ID of the current displayed container.
+     */
+    ContainerID GetContainerID() { return containerID; }
+
+    /**
+     * Return the slot.
+     */
+    pawsSlot* GetSlot(int slotID);
+
 private:
     void HandleUpdateItem( MsgEntry* me );
     void HandleViewContainer( MsgEntry* me );

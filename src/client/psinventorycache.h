@@ -32,6 +32,8 @@ class psInventoryCache : public psCache
 
         struct CachedItemDescription
         {
+            int slot;
+            int containerID;
             csString name;
             csString meshName;
             csString materialName;
@@ -68,7 +70,7 @@ class psInventoryCache : public psCache
          * @return bool Success flag
          */
         bool SetInventoryItem(int slot,
-                              int container,
+                              int containerID,
                               csString name,
                               csString meshName,
                               csString materialName,
@@ -107,6 +109,12 @@ class psInventoryCache : public psCache
          /// Info: Sets the cache version (PS#2691)
          inline void SetInventoryVersion(uint32 ver) { version = ver; }
 
+
+         /**
+          * Return iterator to all cache items.
+          */
+         csHash<CachedItemDescription*>::GlobalIterator GetIterator() { return itemhash.GetIterator(); }
+         
     private:
 
         csHash<CachedItemDescription*> itemhash;  // all cached items in equip, bulk or containers
