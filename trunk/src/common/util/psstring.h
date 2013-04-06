@@ -75,7 +75,7 @@ public:
     size_t FindCommonLength(const psString& other) const;
     
     bool IsVowel(size_t pos); /// Check if a character is a vowel
-    void Plural(); /// Turn the last word of the string into an English plural
+    psString& Plural(); /// Turn the last word of the string into an English plural
 
     void Split(csStringArray& result, char delim='|');
 };
