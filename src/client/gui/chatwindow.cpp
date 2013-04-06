@@ -212,7 +212,8 @@ bool pawsChatWindow::PostSetup()
         buttonNames.Push("System Button");
         buttonNames.Push("Help Button");
 
-        unsigned int ct = 0, lastX, lastY, increment;
+        unsigned int ct = 0;
+        int lastX, lastY, increment;
         bool isVertical = false;
         pawsWidget * tmp;
         for (unsigned int i = 0 ; i < buttonNames.GetSize() ; i++)
@@ -239,7 +240,7 @@ bool pawsChatWindow::PostSetup()
                 tmp = pw->FindWidget(buttonNames[i]);
                 if(ct == 1)
                 {
-                    unsigned int thisX, thisY;
+                    int thisX, thisY;
                     thisX = tmp->GetDefaultFrame().xmin;
                     thisY = tmp->GetDefaultFrame().ymin;
 
