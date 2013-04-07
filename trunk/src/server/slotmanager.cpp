@@ -692,8 +692,15 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             if (msg.stackCount < itemProposed->GetStackCount())
             {
                 itemMoving = itemProposed->SplitStack(msg.stackCount);
-                chr->Inventory().Add(itemMoving, false, false, destSlot);
-                itemProposed->Save(false);
+                if (chr->Inventory().Add(itemMoving, false, false, destSlot))
+                {
+                    itemProposed->Save(false);
+                }
+                else // this really should never happen, but just in case
+                {
+                    itemProposed->CombineStack(itemMoving);
+                }
+                
             }
             else // entire stack
             {
