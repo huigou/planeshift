@@ -60,6 +60,8 @@
 // Definition of the itempool for psItemStats
 PoolAllocator<psActionLocation> psActionLocation::actionpool;
 
+const char* psActionLocation::TriggerTypeStr[] = {"NONE","SELECT","PROXIMITY"};
+
 void *psActionLocation::operator new(size_t allocSize)
 {
     CS_ASSERT( allocSize <= sizeof( psActionLocation ) );
@@ -83,7 +85,7 @@ psActionLocation::psActionLocation() : gemAction( NULL )
     position = csVector3(0.0F);
     pos_instance = INSTANCE_ALL;
     radius = 0.0F;
-    triggertype .Clear();
+    triggertype = TRIGGERTYPE_NONE;
     responsetype.Clear();
     response.Clear();
     isContainer = false;
@@ -138,13 +140,29 @@ bool psActionLocation::Load(iResultRow& row)
 	
     if ( !master_id )
     {
-        triggertype = row[ "triggertype" ];
+        csString trigger = row[ "triggertype" ];
+        if (trigger.CompareNoCase("SELECT"))
+        {
+            triggertype = TRIGGERTYPE_SELECT;
+        }
+        else if (trigger.CompareNoCase("PROXIMITY"))
+        {
+            triggertype = TRIGGERTYPE_PROXIMITY;
+        }
         responsetype = row[ "responsetype" ];
         response = row[ "response" ];
     }
     else
     {
-        triggertype = row[ "master_triggertype" ];
+        csString trigger = row[ "master_triggertype" ];
+        if (trigger.CompareNoCase("SELECT"))
+        {
+            triggertype = TRIGGERTYPE_SELECT;
+        }
+        else if (trigger.CompareNoCase("PROXIMITY"))
+        {
+            triggertype = TRIGGERTYPE_PROXIMITY;
+        }
         responsetype = row[ "master_responsetype" ];
         response = row[ "master_response" ];
     }
@@ -201,7 +219,17 @@ bool psActionLocation::Load( csRef<iDocumentNode> root )
     if ( node ) radius = node->GetContentsValueAsFloat();
 
     node = root->GetNode( "triggertype" );
-    if ( node ) triggertype = node->GetContentsValue();
+    if ( node ){
+        csString trigger = node->GetContentsValue();
+        if (trigger.CompareNoCase("SELECT"))
+        {
+            triggertype = TRIGGERTYPE_SELECT;
+        }
+        else if (trigger.CompareNoCase("PROXIMITY"))
+        {
+            triggertype = TRIGGERTYPE_PROXIMITY;
+        }
+    }
 
     node = root->GetNode( "responsetype" );
     if ( node ) responsetype = node->GetContentsValue();
@@ -253,7 +281,7 @@ bool psActionLocation::Save()
 
     if ( !master_id )
     {
-        fields.FormatPush( "%s", triggertype.GetData() );
+        fields.FormatPush( "%s", TriggerTypeStr[triggertype] );
         fields.FormatPush( "%s", responsetype.GetData() );
         fields.FormatPush( "%s", response.GetData() );
     }
@@ -388,7 +416,7 @@ csString psActionLocation::ToXML() const
     csString escpxml_sectorname = EscpXML(sectorname);
     csString escpxml_meshname = EscpXML(meshname);
     csString escpxml_polygon = EscpXML(polygon);
-    csString escpxml_triggertype = EscpXML(triggertype);
+    csString escpxml_triggertype = EscpXML(TriggerTypeStr[triggertype]);
     csString escpxml_responsetype = EscpXML(responsetype);
     csString escpxml_response = EscpXML(response);
     xml.Format( formatXML,
