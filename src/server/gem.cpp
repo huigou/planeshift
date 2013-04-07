@@ -5108,6 +5108,7 @@ bool gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
 
     if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
     if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
+    if (IsAlive())           flags |= psPersistActor::IS_ALIVE;
 
     Client* targetClient = psserver->GetConnections()->Find(clientnum);
     if (targetClient && targetClient->GetCharacterData())
