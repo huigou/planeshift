@@ -354,6 +354,11 @@ void NetworkManager::HandleActor(MsgEntry* msg)
         obj->SetInvisible((mesg.flags & psPersistActor::INVISIBLE) ? true : false);
         obj->SetInvincible((mesg.flags & psPersistActor::INVINCIBLE) ? true : false);
         obj->SetAlive((mesg.flags & psPersistActor::IS_ALIVE) ? true : false);
+        NPC* npc = obj->GetNPC();
+        if (npc)
+        {
+            npc->SetAlive(obj->IsAlive());
+        }
 
         return;
     }
@@ -1604,6 +1609,11 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 obj->SetInvisible((flags & psNPCCommandsMessage::INVISIBLE) ? true : false);
                 obj->SetInvincible((flags & psNPCCommandsMessage::INVINCIBLE) ? true : false);
                 obj->SetAlive((flags & psNPCCommandsMessage::IS_ALIVE));
+                NPC* npc = obj->GetNPC();
+                if (npc)
+                {
+                    npc->SetAlive(obj->IsAlive());
+                }
 
                 break;
             }

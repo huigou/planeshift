@@ -185,6 +185,7 @@ gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg)
 
     SetInvisible( (mesg.flags & psPersistActor::INVISIBLE)?  true : false );
     SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ?  true : false );
+    SetAlive( (mesg.flags & psPersistActor::IS_ALIVE) ?  true : false );
     SetInstance( mesg.instance );
 
     Debug3(LOG_CELPERSIST, eid.Unbox(), "Actor %s(%s) Received\n", mesg.name.GetData(), ShowID(mesg.entityid));
@@ -215,7 +216,7 @@ void gemNPCActor::AttachNPC(NPC * newNPC)
 {
     npc = newNPC;
     npc->SetActor(this);
-    npc->SetAlive(true);
+    npc->SetAlive(isAlive);
 }
 
 bool gemNPCActor::SetWithinTribe(Tribe* tribe, Tribe** oldTribe)

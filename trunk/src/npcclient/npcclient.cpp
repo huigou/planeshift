@@ -1886,6 +1886,14 @@ void psNPCClient::HandleDeath(NPC* who)
 {
     who->GetBrain()->Interrupt(who);
     who->SetAlive(false);
+
+    // If enity update entity as well
+    gemNPCActor* entity = who->GetActor();
+    if (entity)
+    {
+        entity->SetAlive(false);
+    }
+    
     if(who->GetTribe())
     {
         who->GetTribe()->HandleDeath(who);
