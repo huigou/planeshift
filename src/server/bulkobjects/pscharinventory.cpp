@@ -727,11 +727,6 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
 
 bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_SLOT_NUMBER slot, gemContainer* container, bool precise)
 {
-    if (slot%100<ANY_EMPTY_BULK_SLOT || slot%100>=PSCHARACTER_SLOT_BULK_END)
-    {
-        Error2("Inv slot %d is out of bounds! Add failed.", slot );
-        return false;
-    }
 
     if (item->GetBaseStats()->IsMoney())
     {
@@ -865,39 +860,35 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
         }
     }
 
-    // Next if it is supposed to be in a particular slot, just stick in there if possible
-    if (slot%100 > PSCHARACTER_SLOT_NONE && slot%100 < PSCHARACTER_SLOT_BULK_END) // slot specified
+    if (!CheckSlotRequirements(item, slot))
+        return false; // -1 means add failed
+    
+    uint32 parentID = 0;
+    int containerSlot = slot/100;
+    if (containerSlot)
     {
-        if (!CheckSlotRequirements(item, slot))
-            return false; // -1 means add failed
-
-        uint32 parentID = 0;
-        int containerSlot = slot/100;
-        if (containerSlot)
-        {
-            psItem *containerItem = GetItem(NULL,(INVENTORY_SLOT_NUMBER)containerSlot);
-            if (!containerItem->GetIsContainer())
-                return false;
-            else
-                parentID = containerItem->GetUID();
-        }
-
-        if (test)
-            return true; // not really doing it here
-
-        psCharacterInventoryItem newItem(item);
-        inventory.Push(newItem);
-
-        item->UpdateInventoryStatus(owner, parentID, slot);
-        item->Save(false);
-
-        UpdateEncumbrance();
-
-        if (owner->IsNPC() || owner->IsPet())
-            psserver->GetNPCManager()->QueueInventoryPerception(owner->GetActor(), item, true);
-        return true;
+        psItem *containerItem = GetItem(NULL,(INVENTORY_SLOT_NUMBER)containerSlot);
+        if (!containerItem->GetIsContainer())
+            return false;
+        else
+            parentID = containerItem->GetUID();
     }
-    return false;
+
+    if (test)
+        return true; // not really doing it here
+    
+    psCharacterInventoryItem newItem(item);
+    inventory.Push(newItem);
+    
+    item->UpdateInventoryStatus(owner, parentID, slot);
+    item->Save(false);
+    
+    UpdateEncumbrance();
+
+    if (owner->IsNPC() || owner->IsPet())
+        psserver->GetNPCManager()->QueueInventoryPerception(owner->GetActor(), item, true);
+
+    return true;
 }
 
 psCharacterInventory::psEquipInfo& psCharacterInventory::GetEquipmentObject(INVENTORY_SLOT_NUMBER slot)
