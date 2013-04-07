@@ -60,6 +60,15 @@ class MathExpression;
 class psActionLocation
 {
 public:
+    typedef enum 
+    {
+        TRIGGERTYPE_NONE,   /// Default initial value, should not exist after loaded.
+        TRIGGERTYPE_SELECT,
+        TRIGGERTYPE_PROXIMITY
+    } TriggerType;
+
+    static const char* TriggerTypeStr[];
+
     psActionLocation ();
     ~psActionLocation ();
 
@@ -150,7 +159,7 @@ public:
     void SetName(const csString & newname) { name = newname; }
     void SetSectorName(const csString & newsector) { sectorname = newsector; }
     void SetMeshName(const csString & newmeshname) { meshname = newmeshname; }
-    void SetTriggerType(const csString & newtrigger) { triggertype = newtrigger; }
+    void SetTriggerType(const TriggerType & newtrigger) { triggertype = newtrigger; }
     void SetResponseType(const csString & newresponsetype) { responsetype = newresponsetype; }
     void SetResponse(const csString & newresponse) { response = newresponse; }
     void SetPosition(csVector3 newposition) { position = newposition; }
@@ -177,7 +186,7 @@ public:
     csVector3 position; ///< x,y,z coordinates required for entrances
     InstanceID pos_instance; ///< The instance from where this action location will be accesible.
     float radius;
-    csString triggertype;
+    TriggerType triggertype;
     csString responsetype;
     csString response;
 

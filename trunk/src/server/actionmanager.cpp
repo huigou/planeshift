@@ -330,7 +330,7 @@ void ActionManager::NotifyProximity(gemActor* actor, gemActionLocation* actionLo
     // Now lets check if this should trigger en effect....
 
     psActionLocation* actionLocation = actionLocationObject->GetAction();
-    if(actionLocation->triggertype != "PROXIMITY")
+    if(actionLocation->triggertype != psActionLocation::TRIGGERTYPE_PROXIMITY)
     {
         return;  // ActionLocation not of type PROXIMITY.
     }

@@ -6056,7 +6056,7 @@ void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage &msg, Ad
         actionLocation->SetMeshName(meshTarget);
         actionLocation->SetRadius(2.0);
         actionLocation->SetPosition(pos);
-        actionLocation->SetTriggerType("SELECT");
+        actionLocation->SetTriggerType(psActionLocation::TRIGGERTYPE_SELECT);
         actionLocation->SetResponseType("EXAMINE");
         actionLocation->SetResponse(resp);
         actionLocation->SetIsEntrance(true);
