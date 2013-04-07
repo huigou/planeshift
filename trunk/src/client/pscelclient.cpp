@@ -1808,6 +1808,19 @@ bool GEMClientActor::IsGroupedWith(GEMClientActor* actor)
         return false;
 }
 
+bool GEMClientActor::IsOwnedBy(GEMClientActor* actor)
+{
+    if (actor && actor->GetOwnerEID() == GetOwnerEID() && GetOwnerEID() != 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+
 bool GEMClientActor::SetAnimation(const char* anim, int duration)
 {
     if(!cal3dstate)

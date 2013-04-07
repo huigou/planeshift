@@ -2058,11 +2058,13 @@ void ModeHandler::OtherBlock(GEMClientActor* atObject, GEMClientActor* tarObject
 {
     bool isGrouped = celclient->GetMainPlayer()->IsGroupedWith(atObject) ||
                      celclient->GetMainPlayer()->IsGroupedWith(tarObject);
+    bool isYours   = celclient->GetMainPlayer()->IsOwnedBy(atObject) ||
+                     celclient->GetMainPlayer()->IsOwnedBy(tarObject);
     int level = celclient->GetMainPlayer()->GetType();
 
     psengine->GetEffectManager()->RenderEffect("combatBlock", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
 
-    if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_BLOCKED)))
+    if(!((level > 0 || isGrouped || isYours) && (chatWindow->GetSettings().vicinityFilters & COMBAT_BLOCKED)))
         return;
 
     psSystemMessage ev(0,MSG_COMBAT_BLOCK,"%s attacks %s but they are blocked.", MungeName(atObject, true).GetData(), MungeName(tarObject).GetData());
@@ -2073,12 +2075,14 @@ void ModeHandler::OtherDamage(float damage, GEMClientActor* atObject, GEMClientA
 {
     bool isGrouped = celclient->GetMainPlayer()->IsGroupedWith(atObject) ||
                      celclient->GetMainPlayer()->IsGroupedWith(tarObject);
+    bool isYours   = celclient->GetMainPlayer()->IsOwnedBy(atObject) ||
+                     celclient->GetMainPlayer()->IsOwnedBy(tarObject);
     int level = celclient->GetMainPlayer()->GetType();
 
     if(damage)
     {
         psengine->GetEffectManager()->RenderEffect("combatHitOther", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
-        if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_SUCCEEDED)))
+        if(!((level > 0 || isGrouped || isYours) && (chatWindow->GetSettings().vicinityFilters & COMBAT_SUCCEEDED)))
             return;
 
         psSystemMessage ev(0,MSG_COMBAT_HITOTHER,"%s hits %s for %1.2f damage!", MungeName(atObject, true).GetData(), MungeName(tarObject).GetData(), damage);
@@ -2087,7 +2091,7 @@ void ModeHandler::OtherDamage(float damage, GEMClientActor* atObject, GEMClientA
     else
     {
         psengine->GetEffectManager()->RenderEffect("combatHitOtherFail", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
-        if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_FAILED)))
+        if(!((level > 0 || isGrouped || isYours) && (chatWindow->GetSettings().vicinityFilters & COMBAT_FAILED)))
             return;
         psSystemMessage ev(0,MSG_COMBAT_HITOTHER,"%s hits %s, but fails to do any damage!", MungeName(atObject, true).GetData(), MungeName(tarObject).GetData());
         msghandler->Publish(ev.msg);
@@ -2113,10 +2117,12 @@ void ModeHandler::OtherDodge(GEMClientActor* atObject, GEMClientActor* tarObject
 {
     bool isGrouped = celclient->GetMainPlayer()->IsGroupedWith(atObject) ||
                      celclient->GetMainPlayer()->IsGroupedWith(tarObject);
+    bool isYours   = celclient->GetMainPlayer()->IsOwnedBy(atObject) ||
+                     celclient->GetMainPlayer()->IsOwnedBy(tarObject);
     int level = celclient->GetMainPlayer()->GetType();
 
     psengine->GetEffectManager()->RenderEffect("combatDodge", csVector3(0, 0, 0), tarObject->GetMesh(), atObject->GetMesh());
-    if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_DODGED)))
+    if(!((level > 0 || isGrouped || isYours) && (chatWindow->GetSettings().vicinityFilters & COMBAT_DODGED)))
         return;
     psSystemMessage ev(0,MSG_COMBAT_DODGE,"%s attacks %s but %s dodges.", MungeName(atObject, true).GetData(),MungeName(tarObject).GetData(),MungeName(tarObject).GetData());
     msghandler->Publish(ev.msg);
@@ -2126,10 +2132,12 @@ void ModeHandler::OtherMiss(GEMClientActor* atObject, GEMClientActor* tarObject)
 {
     bool isGrouped = celclient->GetMainPlayer()->IsGroupedWith(atObject) ||
                      celclient->GetMainPlayer()->IsGroupedWith(tarObject);
+    bool isYours   = celclient->GetMainPlayer()->IsOwnedBy(atObject) ||
+                     celclient->GetMainPlayer()->IsOwnedBy(tarObject);
     int level = celclient->GetMainPlayer()->GetType();
 
     psengine->GetEffectManager()->RenderEffect("combatMiss", csVector3(0, 0, 0), atObject->GetMesh(), tarObject->GetMesh());
-    if(!((level > 0 || isGrouped) && (chatWindow->GetSettings().vicinityFilters & COMBAT_MISSED)))
+    if(!((level > 0 || isGrouped || isYours) && (chatWindow->GetSettings().vicinityFilters & COMBAT_MISSED)))
         return;
     psSystemMessage ev(0,MSG_COMBAT_MISS,"%s attacks %s but misses.", MungeName(atObject, true).GetData(),MungeName(tarObject).GetData());
     msghandler->Publish(ev.msg);

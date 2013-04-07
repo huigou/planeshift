@@ -574,6 +574,7 @@ public:
 
     // Access functions for the group var
     bool IsGroupedWith(GEMClientActor* actor);
+    bool IsOwnedBy(GEMClientActor* actor);
     unsigned int GetGroupID() { return groupID; }
     void SetGroupID(unsigned int id) { groupID = id; }
     EID  GetOwnerEID()       { return ownerEID; }
