@@ -195,7 +195,20 @@ void ChatManager::HandleChatMessage(MsgEntry *me, Client *client)
               }
               // If no particular pet was specified, assume the default familiar...
               if (!pet)
+              {
                   pet = dynamic_cast <gemNPC*>(client->GetFamiliar());
+              }
+
+              // Check if there is a mount
+              if (!pet)
+              {
+                  psCharacter* mount = client->GetActor()->GetMount();
+                  if (mount)
+                  {
+                      SendSay(client->GetClientNum(), client->GetActor(), msg, mount->GetCharFullName());
+                      break;
+                  }
+              }
 
               // Send the message or an appropriate error...
               if (!pet)
