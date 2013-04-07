@@ -1709,7 +1709,8 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot, cs
     gemActor* guardingActor = cel->FindPlayerEntity(guardID);
 
     // Test if container is guarded by someone else who is near
-    if (guardID.IsValid() && guardID != item->GetOwningCharacterID()
+    if (guardID.IsValid() && (guardID != item->GetOwningCharacterID() && 
+                              guardID != item->GetGuardingCharacterID())
         && guardingActor && guardingActor->InsideGuardedArea(this))
     {
         reason = " because container is guarded";
