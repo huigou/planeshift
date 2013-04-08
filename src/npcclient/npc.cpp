@@ -524,6 +524,8 @@ void NPC::SetActor(gemNPCActor* actor)
 void NPC::SetAlive(bool a)
 {
     alive = a;
+
+    NPCDebug(this, 1, "** NPC %s is %s**\n", GetName(), alive?"Alive":"Dead");
 }
 
 void NPC::Advance(csTicks when)

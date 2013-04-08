@@ -156,6 +156,12 @@ bool gemNPCObject::InitMesh(    const char *factname,
     return true;
 }
 
+void gemNPCObject::SetAlive(bool alive )
+{
+    isAlive = alive;
+}
+
+
 void gemNPCObject::SetPosition(csVector3& pos, iSector* sector, InstanceID* instance)
 {
     psGameObject::SetPosition(this, pos, sector);

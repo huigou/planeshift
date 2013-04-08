@@ -105,7 +105,7 @@ public:
     virtual void SetInvincible(bool inv) { invincible = inv; }
 
     virtual bool IsAlive() { return isAlive; }
-    virtual void SetAlive(bool alive ) { isAlive = alive; }
+    virtual void SetAlive(bool alive );
 
     virtual NPC *GetNPC() { return NULL; }
 
