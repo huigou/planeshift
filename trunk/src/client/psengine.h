@@ -341,14 +341,34 @@ public:
 
     size_t GetTime();
 
+    /**
+     * Get the current brightness correlation value.
+     */
     float GetBrightnessCorrection()
     {
         return BrightnessCorrection;
     }
-    void SetBrightnessCorrection(float B)
-    {
-        BrightnessCorrection = B;
-    }
+    
+    /**
+     * Set the current brightness correlation value.
+     */
+    void SetBrightnessCorrection(float B);
+
+    /**
+     * Adjust brightness up and inform user.
+     */
+    void AdjustBrightnessCorrectionUp();
+
+    /**
+     * Adjust brightness down and inform user.
+     */
+    void AdjustBrightnessCorrectionDown();
+
+    /**
+     * Reset brightness and inform user.
+     */
+    void ResetBrightnessCorrection();
+    
     void UpdateLights();
 
     float GetKFactor()

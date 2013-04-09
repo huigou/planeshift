@@ -56,7 +56,9 @@ void Split(const csString& str, csArray<csString> & arr);
 csString& GetWordNumber(const csString& str, int number, size_t * startpos = NULL);
 
 
-/** WordArray is class that parses text command (e.g. "/newguild Insomniac Developers") to words */
+/**
+ * WordArray is class that parses text command (e.g. "/newguild Insomniac Developers") to words.
+ */
 class WordArray : protected csStringArray
 {
 public:
@@ -67,7 +69,9 @@ public:
         return GetSize();
     }
 
-    /* Returns given word, or empty string if it does not exist */
+    /**
+     * Returns given word, or empty string if it does not exist.
+     */
     csString Get(size_t wordNum) const
     {
         if(wordNum < GetSize())
@@ -99,6 +103,25 @@ public:
         return true;
     }
 
+    /**
+     * Check if the word is an interger.
+     */
+    bool IsInt(size_t wordNum) const
+    {
+        const char* toConvert = Get(wordNum).GetDataSafe();
+        char* endPtr = const_cast<char*>(toConvert);
+
+        errno = 0; /* To distinguish success/failure after call */
+        strtol(toConvert, &endPtr, 10);  // 10 base
+
+        // Check for error situations
+        if (errno != 0) return false;
+        if (toConvert == endPtr) return false;
+        if (*endPtr != '\0') return false;  // Further characters after number
+        
+        return true;
+    }
+
     int GetInt(size_t wordNum) const 
     {
         return atoi(Get(wordNum).GetData());
@@ -127,6 +150,25 @@ public:
         }
 
         return false;
+    }
+
+    /**
+     * Check if the word is a float.
+     */
+    bool IsFloat(size_t wordNum) const
+    {
+        const char* toConvert = Get(wordNum).GetDataSafe();
+        char* endPtr = const_cast<char*>(toConvert);
+
+        errno = 0; /* To distinguish success/failure after call */
+        strtof(toConvert, &endPtr);
+
+        // Check for error situations
+        if (errno != 0) return false;
+        if (toConvert == endPtr) return false;
+        if (*endPtr != '\0') return false;  // Further characters after number
+        
+        return true;
     }
 
     float GetFloat(size_t wordNum) const
