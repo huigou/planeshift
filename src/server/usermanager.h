@@ -153,6 +153,14 @@ public:
     void HandleLoot(psUserCmdMessage& msg, Client *client);
     
     /**
+     * Checks whether target is lootable.
+     *
+     * @param actor The actor which is looting
+     * @param client The client where the loot command came from.
+     */
+    bool CheckTargetLootable(gemActor* actor, Client* client);
+    
+    /**
      * Attempt to loot the target using the loot window
      *
      * Sends the lootable items to the client and calls LootMoney(CLient *client)
@@ -166,9 +174,10 @@ public:
      *
      * Takes money from the target and splits it across the group (if any)
      *
+     * @param actor The actor which is looting
      * @param client The client where the loot command came from.
      */
-    void LootMoney(Client* client);
+    void LootMoney(gemActor* actor, Client* client);
     
     /**
      * Attempt to loot all or certain items from target
@@ -176,11 +185,12 @@ public:
      * Tries to loot the items which fit the specified categories (if any).
      * Also handles group looting and rolling, if a group is present
      *
+     * @param actor The actor which is looting
      * @param client The client where the loot command came from.
      * @param categories Only items of given categories are looted (e.g. "weapons, gems")
      * @param lootAction Either 0 for LOOT_SELF or 1 for LOOT_ROLL (only works when in a group)
      */
-    void LootItems(Client* client, csString categories = "all", uint8_t lootAction = 0);
+    void LootItems(gemActor* actor, Client* client, csString categories = "all", uint8_t lootAction = 0);
 
     /**
      * Load emotes from xml.

@@ -1270,6 +1270,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new WorkOperation;
         }
+        else if ( strcmp( node->GetValue(), "loot" ) == 0 )
+        {
+            op = new LootOperation;
+        }
         else
         {
             Error2("Node '%s' under Behavior is not a valid script operation name. Error in XML",

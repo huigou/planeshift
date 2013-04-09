@@ -1311,3 +1311,23 @@ INSERT INTO sc_npctypes VALUES("141","SpellMaster2","DoNothing",0,"$run","","","
 <react event="spell:target"  behavior="SpellTarget" />
 ');
 
+INSERT INTO sc_npctypes VALUES("142","FightNearestNPC","DoNothing,InRegion,Fight",0,"$run","","","","","0",
+'<behavior name="FightNearestNPC"   loop="yes" initial="50" growth="10" decay="0" completion_decay="0" >
+   <locate obj="friend"  range="10" />
+   <hate_list delta="1.0" />
+   <rotate type="locatedest" anim="walk" ang_vel="120" />
+   <melee seek_range="10" melee_range="2.5" stance="normal" invincible="true" />
+</behavior>
+
+<behavior name="Loot" initial="0" growth="0" completion_decay="200" >
+   <locate obj="dead" range="3" />
+   <loot type="all" />
+</behavior>
+
+<react event="player nearby"       behavior="FightNearestNPC" delta="100" inactive_only="yes" />
+<react event="fight"               behavior="FightNearestNPC" />
+<react event="attack"              behavior="FightNearestNPC" weight="1" /> <!-- Add 1 to hate list -->
+<react event="damage"              behavior="FightNearestNPC" delta="20" weight="2" /> <!-- Add double damage to hate list -->
+
+<react event="death"               behavior="FightNearestNPC" absolute="0" />
+<react event="death"               behavior="Loot" absolute="200" range="5" />');

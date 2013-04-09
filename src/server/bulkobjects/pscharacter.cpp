@@ -1675,7 +1675,7 @@ csArray<psItem*> psCharacter::RemoveLootItems(csArray<csString> categories)
 {
     csArray<psItem*> items;
 
-    for(size_t x = lootPending.GetSize()-1; x >= 0; x--)
+    for(int x = lootPending.GetSize()-1; x >= 0; x--)
     {
         if(!lootPending[x])
         {

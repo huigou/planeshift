@@ -1587,6 +1587,40 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
 
                 break;
             }
+            
+            case psNPCCommandsMessage::CMD_LOOT:
+            {
+                EID entity_id = EID(list.msg->GetUInt32());
+                EID target_id = EID(list.msg->GetUInt32());
+                csString type = list.msg->GetStr();
+                Debug4(LOG_SUPERCLIENT, entity_id.Unbox(), "-->Got loot cmd: Entity %s to loot from EID: %s for %s\n",
+                       ShowID(entity_id), ShowID(target_id), type.GetData());
+
+                // Make sure we haven't run past the end of the buffer
+                if(list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT, entity_id.Unbox(), "Received incomplete CMD_LOOT from NPC client %u.\n", me->clientnum);
+                    break;
+                }
+                
+                gemActor* actor  = dynamic_cast<gemActor*>(gemSupervisor->FindObject(entity_id));
+                gemActor* target = dynamic_cast<gemActor*>(gemSupervisor->FindObject(target_id));
+                
+                if(actor)
+                {
+                    actor->SetTargetObject(target);
+                    
+                    if(psserver->GetUserManager()->CheckTargetLootable(actor, NULL))
+                    {
+                        psserver->GetUserManager()->LootMoney(actor, NULL);
+                        psserver->GetUserManager()->LootItems(actor, NULL, type);
+                    }
+                }
+                else
+                     Error1("NPC Client try to loot with no existing npc");
+                
+                break;
+            }
 
             case psNPCCommandsMessage::CMD_DROP:
             {

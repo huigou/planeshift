@@ -444,6 +444,11 @@ public:
      * Send a command start controll an entity.
      */
     void QueueControlCommand(gemNPCActor* controllingEntity, gemNPCActor* controlledEntity );
+    
+    /**
+     * Send a command to loot selected target.
+     */
+    void QueueLootCommand(gemNPCActor *entity, EID targetEID, const csString& type);
 
     /**
      * Send a console command.
