@@ -30,13 +30,34 @@ class pawsMultiLineTextBox;
 class pawsBookReadingWindow : public pawsWidget, public psClientNetSubscriber
 {
 public:
-//    pawsBookReadingWindow(){};
-//    virtual ~pawsBookReadingWindow() {};
+    pawsBookReadingWindow(){};
+    virtual ~pawsBookReadingWindow() {};
 
     bool PostSetup();
 
     void HandleMessage(MsgEntry* message);
-    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+
+    /**
+     * Turn a number of pages.
+     *
+     * Will turn two and two pages as you turn a book.
+     *
+     * @param count The number of pages to turn in the book.
+     */
+    void TurnPage(int count);
+
+    /**
+     * Turn to a given page.
+     *
+     * Will turn to start of a double side where the given page is.
+     *
+     * @param page The page to view
+     */
+    void SetPage(int page);
+    
+    virtual bool OnMouseDown(int button, int modifiers, int x, int y);
+    virtual bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers);
+    virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
 
 private:
     pawsTextBox*            name;

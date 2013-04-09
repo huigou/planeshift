@@ -196,7 +196,124 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
             name->SetText("");
             break;
         }
-    }}
+    }
+}
+
+void pawsBookReadingWindow::TurnPage(int count)
+{
+    // traverse forwards if there is a page to go forward to
+    if(!usingCraft)
+    {
+        int newPageNum = description->GetCurrentPageNum()+2*count;
+        int newPageNumRight = descriptionRight->GetCurrentPageNum() + 2*count;
+
+        if(newPageNum >= 0 && newPageNum <= numPages)
+        {
+            // pages were set explicitly rather than using the NextPage() functions
+            // this is because the pages are connected in this object
+            description->SetCurrentPageNum(newPageNum);
+            descriptionRight->SetCurrentPageNum(newPageNumRight);
+        }
+    }
+    else
+    {
+        if(descriptionCraft && descriptionCraftRight)
+        {
+            int newPageNum = descriptionCraft->GetCurrentPageNum()+2*count;
+            int newPageNumRight = descriptionCraftRight->GetCurrentPageNum() + 2*count;
+
+            if(newPageNum >= 0 && newPageNum <= numPages)
+            {
+                descriptionCraft->SetCurrentPageNum(newPageNum);
+                descriptionCraftRight->SetCurrentPageNum(newPageNumRight);
+            }
+        }
+    }
+}
+
+void pawsBookReadingWindow::SetPage(int page)
+{
+    page -= page%2;  // Make sure we are at start of a double page
+
+    if (page < 0)
+    {
+        page = 0;
+    }
+    if (page > numPages)
+    {
+        page = numPages - numPages%2;
+    }
+
+    // traverse forwards if there is a page to go forward to
+    if(!usingCraft)
+    {
+        description->SetCurrentPageNum(page);
+        descriptionRight->SetCurrentPageNum(page+1);
+    }
+    else
+    {
+        if(descriptionCraft && descriptionCraftRight)
+        {
+            descriptionCraft->SetCurrentPageNum(page);
+            descriptionCraftRight->SetCurrentPageNum(page+1);
+        }
+    }
+}
+
+
+bool pawsBookReadingWindow::OnMouseDown(int button, int modifiers, int x, int y)
+{
+    if(button == csmbWheelDown)
+    {
+        TurnPage(1);
+        return true;
+    }
+    else if(button == csmbWheelUp)
+    {
+        TurnPage(-1);
+        return true;
+    }
+
+    return pawsWidget::OnMouseDown(button, modifiers, x ,y);
+}
+
+bool pawsBookReadingWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers)
+{
+    //this function handles if the user uses the page up or down buttons on this text box
+    //and scroll of exactly the size of lines which is shown in the textbox
+    switch (key)
+    {
+    case CSKEY_PGDN: //go next
+    case CSKEY_RIGHT:
+    case CSKEY_DOWN:
+        {
+            TurnPage(1);
+            break;
+        }
+    case CSKEY_PGUP: //go prev
+    case CSKEY_LEFT:
+    case CSKEY_UP:
+        {
+            TurnPage(-1);
+            break;
+        }
+    case CSKEY_HOME:
+        {
+            SetPage(0);
+            break;
+        }
+    case CSKEY_END:
+        {
+            SetPage(numPages);
+            break;
+        }
+    default:
+        {
+            return pawsWidget::OnKeyDown(keyCode, key, modifiers);
+        }
+    }
+    return true;
+}
 
 bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
@@ -241,53 +358,13 @@ bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
 
     if(widget->GetID() == NEXT)
     {
-        // traverse forwards if there is a page to go forward to
-        if(!usingCraft)
-        {
-            if(description->GetCurrentPageNum() <= numPages-2)
-            {
-                // pages were set explicitly rather than using the NextPage() functions
-                // this is because the pages are connected in this object
-                description->SetCurrentPageNum(description->GetCurrentPageNum() + 2);
-                descriptionRight->SetCurrentPageNum(descriptionRight->GetCurrentPageNum() + 2);
-            }
-        }
-        else
-        {
-            if(descriptionCraft && descriptionCraftRight)
-            {
-                if(descriptionCraft->GetCurrentPageNum() <= numPages-2)
-                {
-                    descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum() + 2);
-                    descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum() + 2);
-                }
-            }
-        }
+        TurnPage(1);
         return true;
 
     }
     if(widget->GetID() == PREV)
     {
-        // traverse backwards if there is a page to go back to
-        if(!usingCraft)
-        {
-            if(description->GetCurrentPageNum() >= 2)
-            {
-                description->SetCurrentPageNum(description->GetCurrentPageNum()- 2);
-                descriptionRight->SetCurrentPageNum(descriptionRight->GetCurrentPageNum()-2);
-            }
-        }
-        else
-        {
-            if(descriptionCraft && descriptionCraftRight)
-            {
-                if(descriptionCraft->GetCurrentPageNum() >= 2)
-                {
-                    descriptionCraft->SetCurrentPageNum(descriptionCraft->GetCurrentPageNum()- 2);
-                    descriptionCraftRight->SetCurrentPageNum(descriptionCraftRight->GetCurrentPageNum()-2);
-                }
-            }
-        }
+        TurnPage(-1);
         return true;
     }
 
