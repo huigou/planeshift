@@ -2189,6 +2189,15 @@ Usage:
             <content type="text">This command lists the available admin commands for your account. As I assume your are no GM or Dev this won't do anything for you.</content>
           </Contents>
         </topic>
+        <topic name="/brightness">
+          <Contents>
+            <content type="text">This command allow you to change the brightness level.
+
+Usage: /brightness [&lt;value&gt;|increase|decrease|reset]
+
+Setting a brigness value between -1.0 and 3.0. You can do /brighness increase or decrease to change by 0.1 or reset to set back to 0.0. By default F10 will reset, F11 decrease and F12 increase brigness as well.</content>
+          </Contents>
+        </topic>
         <topic name="/buddy">
           <Contents>
             <content type="text">This command allows you to manage your buddy-list.

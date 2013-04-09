@@ -413,46 +413,17 @@ psTriggerHandler::~psTriggerHandler()
 
 void psTriggerHandler::HandleBrightnessUp(const psControl* /*trigger*/, bool /*value*/)
 {
-    csString sysmsg;
-
-    float BrightnessCorrection = psengine->GetBrightnessCorrection();
-
-    if(BrightnessCorrection < 3.0f)
-        BrightnessCorrection += 0.1f;
-
-    psengine->SetBrightnessCorrection(BrightnessCorrection);
-    psengine->UpdateLights();
-
-    sysmsg.Format("Brightness correction: %0.1f.",BrightnessCorrection);
-    psSystemMessage ackmsg(0, MSG_OK, sysmsg);
-    ackmsg.FireEvent();
+    psengine->AdjustBrightnessCorrectionUp();
 }
 
 void psTriggerHandler::HandleBrightnessDown(const psControl* /*trigger*/, bool /*value*/)
 {
-    csString sysmsg;
-
-    float BrightnessCorrection = psengine->GetBrightnessCorrection();
-
-    if(BrightnessCorrection > -1.0f)
-        BrightnessCorrection -= 0.1f;
-
-    psengine->SetBrightnessCorrection(BrightnessCorrection);
-    psengine->UpdateLights();
-
-    sysmsg.Format("Brightness correction: %0.1f.",BrightnessCorrection);
-    psSystemMessage ackmsg(0, MSG_OK, sysmsg);
-    ackmsg.FireEvent();
+    psengine->AdjustBrightnessCorrectionDown();
 }
 
- void psTriggerHandler::HandleBrightnessReset(const psControl* /*trigger*/, bool /*value*/)
+void psTriggerHandler::HandleBrightnessReset(const psControl* /*trigger*/, bool /*value*/)
 {
-    psengine->SetBrightnessCorrection(0.0f);
-    psengine->UpdateLights();
- 
- 
-    psSystemMessage ackmsg(0, MSG_OK, "Brightness Reset!");
-    ackmsg.FireEvent();
+    psengine->ResetBrightnessCorrection();
 }
 
 void psTriggerHandler::HandleMovement(const psControl* trigger, bool value)

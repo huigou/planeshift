@@ -621,6 +621,9 @@ bool psEngine::Initialize(int level)
             PS_PAUSEEXIT(1);
         }
 
+        BrightnessCorrection = options->GetOption("engine","brightness", 0.0f);
+        UpdateLights();
+
         // Init the main widget
         mainWidget->SetupMain();
 
@@ -1610,6 +1613,70 @@ size_t psEngine::GetTime()
 {
     return modehandler->GetTime();
 }
+
+void psEngine::SetBrightnessCorrection(float B)    
+{
+    BrightnessCorrection = B;
+
+    options->SetOption("engine","brightness", BrightnessCorrection);
+}
+
+void psEngine::AdjustBrightnessCorrectionUp()
+{
+    csString sysMsg;
+
+    float brightnessCorrection = psengine->GetBrightnessCorrection();
+
+    if(brightnessCorrection < 3.0f)
+    {
+        brightnessCorrection += 0.1f;
+    }
+    if (brightnessCorrection > 3.0)
+    {
+        brightnessCorrection = 3.0;
+    }
+
+    psengine->SetBrightnessCorrection(brightnessCorrection);
+    psengine->UpdateLights();
+
+    sysMsg.Format("Brightness correction: %0.1f", brightnessCorrection);
+    psSystemMessage ackMsg(0, MSG_OK, sysMsg);
+    ackMsg.FireEvent();
+}
+
+void psEngine::AdjustBrightnessCorrectionDown()
+{
+    csString sysMsg;
+
+    float brightnessCorrection = psengine->GetBrightnessCorrection();
+
+    if(brightnessCorrection > -1.0f)
+    {
+        brightnessCorrection -= 0.1f;
+    }
+    if (brightnessCorrection < -1.0f)
+    {
+        brightnessCorrection = -1.0f;
+    }
+
+    psengine->SetBrightnessCorrection(brightnessCorrection);
+    psengine->UpdateLights();
+
+    sysMsg.Format("Brightness correction: %0.1f", brightnessCorrection);
+    psSystemMessage ackMsg(0, MSG_OK, sysMsg);
+    ackMsg.FireEvent();
+}
+
+void psEngine::ResetBrightnessCorrection()
+{
+    psengine->SetBrightnessCorrection(0.0f);
+    psengine->UpdateLights();
+ 
+ 
+    psSystemMessage ackmsg(0, MSG_OK, "Brightness Reset!");
+    ackmsg.FireEvent();
+}
+
 
 void psEngine::UpdateLights()
 {

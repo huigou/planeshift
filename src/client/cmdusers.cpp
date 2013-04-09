@@ -73,6 +73,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/attack",        this);
     cmdsource->Subscribe("/away",          this);
     cmdsource->Subscribe("/bank",          this);
+    cmdsource->Subscribe("/brightness",    this);
     cmdsource->Subscribe("/buddy",         this); // add named player to buddy list
     cmdsource->Subscribe("/buy",           this);
     cmdsource->Subscribe("/storage",       this); //allows to access the storage of an npc.
@@ -151,6 +152,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/attack",                this);
     cmdsource->Unsubscribe("/away",                  this);
     cmdsource->Unsubscribe("/bank",                  this);
+    cmdsource->Unsubscribe("/brightness",            this);
     cmdsource->Unsubscribe("/buddy",                 this);
     cmdsource->Unsubscribe("/buy",                   this);
     cmdsource->Unsubscribe("/storage",               this);
@@ -428,6 +430,58 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         }
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
         exchange.SendMessage();
+    }
+    else if ( words[0] == "/brightness" )
+    {
+        const char* usage = "Usage: /brightness [<value>|increase|decrease|reset]";
+        if (words.GetCount() != 2) //if there were no arguments open the buddy window
+        {
+            return usage;
+        }
+        else //else send the data to the server for parsing
+        {
+            if (csStrNCaseCmp(words[1].GetDataSafe(), "increase", 1) == 0) // Only need to compare first to make uniq
+            {
+                psengine->AdjustBrightnessCorrectionUp();
+            }
+            else if (csStrNCaseCmp(words[1].GetDataSafe(), "decrease", 1) == 0) // Only need to compare first to make uniq
+            {
+                psengine->AdjustBrightnessCorrectionDown();
+            }
+            else if (csStrNCaseCmp(words[1].GetDataSafe(), "reset", 1) == 0) // Only need to compare first to make uniq
+            {
+                psengine->ResetBrightnessCorrection();
+            }
+            else if (words.IsFloat(1))
+            {
+                csString sysMsg;
+
+                float brightnessCorrection = words.GetFloat(1);
+
+                // Cap values
+                if (brightnessCorrection > 3.0)
+                {
+                    brightnessCorrection = 3.0;
+                }
+                else if (brightnessCorrection < -1.0)
+                {
+                    brightnessCorrection = -1.0;
+                }
+
+                // Update engine
+                psengine->SetBrightnessCorrection(brightnessCorrection);
+                psengine->UpdateLights();
+                
+                // Inform user
+                sysMsg.Format("Brightness correction: %0.1f",brightnessCorrection);
+                psSystemMessage ackMsg(0, MSG_OK, sysMsg);
+                ackMsg.FireEvent();
+            }
+            else
+            {
+                return usage;
+            }
+        }
     }
     else if ( words[0] == "/buddy" )
     {
