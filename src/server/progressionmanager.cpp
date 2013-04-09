@@ -412,7 +412,8 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
             gemActor* actorTrainer = character->GetTrainer()->GetActor();
             if ( actorTrainer )
             {
-                if ( character->GetActor()->RangeTo(actorTrainer, false) > RANGE_TO_SELECT )
+                if ( (character->GetActor()->RangeTo(actorTrainer, false) > RANGE_TO_SELECT) ||
+                     (actorTrainer->GetVisibility() == false) )
                 {
                     psserver->SendSystemInfo(client->GetClientNum(),
                                              "Need to get a bit closer to understand the training.");
