@@ -1241,14 +1241,15 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
             {
                 EID who = EID(list.msg->GetUInt32());
                 NPC* npc = npcclient->FindNPC(who);
-                if(!npc)  // Not managed by us, or a player
+                
+                DeathPerception pcpt(who);
+                npcclient->TriggerEvent(&pcpt); // Broadcast
+                
+                if(npc)
                 {
-                    DeathPerception pcpt(who);
-                    npcclient->TriggerEvent(&pcpt); // Broadcast
-                    break;
+                    NPCDebug(npc, 5, "Got Death message");
+                    npcclient->HandleDeath(npc);
                 }
-                NPCDebug(npc, 5, "Got Death message");
-                npcclient->HandleDeath(npc);
                 break;
             }
             case psNPCCommandsMessage::PCPT_STAT_DR:
@@ -2395,6 +2396,22 @@ void NetworkManager::QueueControlCommand(gemNPCActor* controllingEntity, gemNPCA
     cmd_count++;
 }
 
+void NetworkManager::QueueLootCommand(gemNPCActor* entity, EID targetEID, const csString& type)
+{
+    CheckCommandsOverrun(sizeof(uint8_t) + sizeof(uint32_t) + (type.Length()+1));
+
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::CMD_LOOT);
+    outbound->msg->Add(entity->GetEID().Unbox());
+    outbound->msg->Add(targetEID.Unbox());
+    outbound->msg->Add(type);
+
+    if(outbound->msg->overrun)
+    {
+        CS_ASSERT(!"NetworkManager::QueueLootCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;
+}
 
 void NetworkManager::SendAllCommands(bool final)
 {

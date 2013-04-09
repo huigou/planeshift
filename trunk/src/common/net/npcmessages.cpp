@@ -665,6 +665,26 @@ csString psNPCCommandsMessage::ToString(NetBase::AccessPointers * accessPointers
                 break;
             }
 
+            case psNPCCommandsMessage::CMD_LOOT:
+            {
+                msgtext.Append("CMD_LOOT: ");
+
+                // Extract the data
+                EID entity_id = EID(msg->GetUInt32());
+                EID target_id = EID(msg->GetUInt32());
+                csString type = msg->GetStr();
+
+                // Make sure we haven't run past the end of the buffer
+                if(msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT,msg->clientnum,"Received incomplete CMD_LOOT from NPC client %u.\n",msg->clientnum);
+                    break;
+                }
+                
+                msgtext.AppendFmt("Actor EID: %u TargetEID: %u Type: %s", entity_id.Unbox(), target_id.Unbox(), type.GetData());
+                break;
+            }
+
             case psNPCCommandsMessage::CMD_DROP:
             {
                 msgtext.Append("CMD_DROP: ");

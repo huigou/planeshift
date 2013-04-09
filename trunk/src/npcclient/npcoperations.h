@@ -1776,6 +1776,31 @@ public:
 
 //-----------------------------------------------------------------------------
 
+/** Loot will make the NPC loot specified items
+ *
+ *  This class is the implementation of the loot operations
+ *  used in behavior scripts for NPCS.
+ *
+ *  Examples: <pre>
+ *  \<loot type="all"     /\>
+ *  \<loot type="weapons" /\> </pre>
+ */
+class LootOperation : public ScriptOperation
+{
+protected:
+    csString type;     ///< Type of items to loot
+
+public:
+
+    LootOperation(): ScriptOperation("Loot") {};
+    virtual ~LootOperation() {};
+    virtual OperationResult Run(NPC* npc,bool interrupted);
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+};
+
+//-----------------------------------------------------------------------------
+
 /** @} */
 
 #endif

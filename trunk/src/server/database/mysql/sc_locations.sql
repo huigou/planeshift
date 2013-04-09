@@ -80,6 +80,8 @@ INSERT INTO `sc_locations` VALUES (53,14, 52, 'Meadow','15.0', '0.0', '-55.0', 0
 INSERT INTO `sc_locations` VALUES (54,14, 53, 'Meadow','15.0', '5.0', '5.0', 0, 0.0,'', 6);
 INSERT INTO `sc_locations` VALUES (55,14, 54, 'Meadow','-30.0', '5.0', '5.0', 0, 0.0,'', 6);
 INSERT INTO `sc_locations` VALUES (56,12, -1, 'Sleep','-100.0', '0.0', '70.0', 5, 0.0,'', 6);
-
-
+INSERT INTO `sc_locations` VALUES (60,15, 63, 'NPC Attacking nearest p1','15.00', '0.0', '-160.00', 0, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (61,15, 60, 'NPC Attacking nearest p2','30.00', '0.0', '-160.00', 0, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (62,15, 61, 'NPC Attacking nearest p3','30.00', '0.0', '-180.00', 0, 0.0,'', 3);
+INSERT INTO `sc_locations` VALUES (63,15, 62, 'NPC Attacking nearest p3','15.00', '0.0', '-180.00', 0, 0.0,'', 3);
 

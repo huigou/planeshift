@@ -3245,7 +3245,8 @@ ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, bool interrupted)
     else
     {
         // We know who attacked us, even if they aren't in range.
-        npc->SetTarget( npc->GetLastPerception()->GetTarget() );
+        if(npc->GetLastPerception()) // FIXME: guard for now to prevent segfault
+            npc->SetTarget( npc->GetLastPerception()->GetTarget() );
     }
 
     return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
@@ -5950,4 +5951,38 @@ void WatchOperation::InterruptOperation(NPC *npc)
 }
 
 //---------------------------------------------------------------------------
+
+bool LootOperation::Load(iDocumentNode *node)
+{
+    type = node->GetAttributeValue("type");
+    
+    if(type.IsEmpty())
+        type = "all";
+    
+    return true;
+}
+
+ScriptOperation* LootOperation::MakeCopy()
+{
+    LootOperation* op = new LootOperation;
+
+    op->type   = type;
+
+    return op;
+}
+
+ScriptOperation::OperationResult LootOperation::Run(NPC *npc, bool interrupted)
+{
+    if(npc->GetTarget())
+    {
+        npcclient->GetNetworkMgr()->QueueLootCommand(npc->GetActor(), npc->GetTarget()->GetEID(), type);
+        return OPERATION_COMPLETED;
+    }
+    else
+    {
+        NPCDebug(npc, 5, "No target selected.");
+        return OPERATION_FAILED;
+    }
+}
+
 

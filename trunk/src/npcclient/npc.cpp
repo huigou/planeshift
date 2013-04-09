@@ -1178,12 +1178,6 @@ gemNPCActor* NPC::GetNearestDeadActor(float range)
                 continue; // No actor
             }
 
-            // Check if this is an NPC
-            if(ent->GetNPC())
-            {
-                continue; // This is and NPC
-            }
-
             if(ent->IsAlive())
             {
                 continue;

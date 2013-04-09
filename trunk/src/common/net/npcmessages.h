@@ -235,6 +235,7 @@ public:
         CMD_VISIBILITY,
         CMD_WORK,
         CMD_CONTROL,
+        CMD_LOOT,
         // Perceptions go from server to superclient
         PCPT_ANYRANGEPLAYER,    
         PCPT_ASSESS, 
