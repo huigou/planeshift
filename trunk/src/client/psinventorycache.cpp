@@ -22,6 +22,15 @@
 #include "psinventorycache.h"
 #include "globals.h"
 
+int psInventoryCache::CachedItemDescription::CompareSlot(CachedItemDescription* const &first, CachedItemDescription* const &second)
+{
+    if (first->slot < second->slot) return -1;
+    else if (second->slot < first->slot) return 1;
+    else return 0;
+}
+
+
+
 psInventoryCache::psInventoryCache () : version(0)
 {
     EmptyInventory();
@@ -33,11 +42,12 @@ psInventoryCache::~psInventoryCache ()
 
     while (loop.HasNext())
     {
-        CachedItemDescription *next = loop.Next();
+        CachedItemDescription* next = loop.Next();
         delete next;
     }
 
     itemhash.Empty();
+    itemBySlot.Empty();
 }
 
 bool psInventoryCache::GetInventory()
@@ -56,7 +66,7 @@ bool psInventoryCache::GetInventory()
         psGUIInventoryMessage request(psGUIInventoryMessage::UPDATE_REQUEST);
         request.SendMessage();
     }
-    
+
     return true;
 }
 
@@ -66,18 +76,20 @@ void psInventoryCache::EmptyInventory(void)
 
     while (loop.HasNext())
     {
-        CachedItemDescription *next = loop.Next();
+        CachedItemDescription* next = loop.Next();
         delete next;
     }
 
     itemhash.Empty();
+    itemBySlot.Empty();
 
     PawsManager::GetSingleton().Publish("sigClearInventorySlots");
 }
 
 bool psInventoryCache::EmptyInventoryItem(int slot, int /*container*/)
 {
-    CachedItemDescription *id = itemhash.Get(slot,NULL);
+    CachedItemDescription* id = itemhash.Get(slot,NULL);
+    itemBySlot.Delete(id);
     delete id;
     itemhash.DeleteAll(slot);
 
@@ -97,12 +109,14 @@ bool psInventoryCache::SetInventoryItem(int slot,
 {
     if (itemhash.Get(slot,NULL))
     {
-        delete itemhash.Get(slot,NULL);
+        CachedItemDescription* id = itemhash.Get(slot,NULL);
+        itemBySlot.Delete(id);
+        delete id;
     }
 
     //printf("Setting item %s in slot %d\n", name.GetDataSafe(), slot);
 
-    CachedItemDescription *newItem = new CachedItemDescription;
+    CachedItemDescription* newItem = new CachedItemDescription;
     newItem->slot = slot;
     newItem->containerID = containerID;
     newItem->name = name;
@@ -114,7 +128,8 @@ bool psInventoryCache::SetInventoryItem(int slot,
     newItem->iconImage = iconImage;
     newItem->purifyStatus = purifyStatus;
 
-    itemhash.PutUnique(slot,newItem);
+    itemhash.PutUnique(slot, newItem);
+    itemBySlot.InsertSorted(newItem, CachedItemDescription::CompareSlot);
 
     if (newItem && newItem->stackCount>0 && newItem->iconImage.Length() != 0)
     {
@@ -122,11 +137,11 @@ bool psInventoryCache::SetInventoryItem(int slot,
         sigData.Format("invslot_%d", slot);
 
         data.Format( "%s %d %d %s %s %s", newItem->iconImage.GetData(),
-            newItem->stackCount,
-            newItem->purifyStatus,
-            newItem->meshName.GetData(),
-            newItem->materialName.GetData(),
-            newItem->name.GetData());
+                     newItem->stackCount,
+                     newItem->purifyStatus,
+                     newItem->meshName.GetData(),
+                     newItem->materialName.GetData(),
+                     newItem->name.GetData());
 
         PawsManager::GetSingleton().Publish(sigData, data);
     }
@@ -134,7 +149,7 @@ bool psInventoryCache::SetInventoryItem(int slot,
     return true;
 }
 
-psInventoryCache::CachedItemDescription *psInventoryCache::GetInventoryItem(int slot)
+psInventoryCache::CachedItemDescription* psInventoryCache::GetInventoryItem(int slot)
 {
     return itemhash.Get(slot,NULL);
 }

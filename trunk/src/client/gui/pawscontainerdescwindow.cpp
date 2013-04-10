@@ -131,7 +131,9 @@ void pawsContainerDescWindow::HandleViewContainer( MsgEntry* me )
 
     bool newContainer = false;
     if(containerID != mesg.containerID)
+    {
         newContainer = true;
+    }
 
     containerID = mesg.containerID;
 
@@ -187,11 +189,11 @@ void pawsContainerDescWindow::HandleViewContainer( MsgEntry* me )
             sigData.Format("invslot_%u", mesg.containerID * 100 + mesg.contents[i].slotID + 16);
 
             data.Format( "%s %d %d %s %s %s", mesg.contents[i].icon.GetData(),
-                mesg.contents[i].stackCount,
-                mesg.contents[i].purifyStatus,
-                mesg.contents[i].meshName.GetData(),
-                mesg.contents[i].materialName.GetData(),
-                mesg.contents[i].name.GetData() );
+                         mesg.contents[i].stackCount,
+                         mesg.contents[i].purifyStatus,
+                         mesg.contents[i].meshName.GetData(),
+                         mesg.contents[i].materialName.GetData(),
+                         mesg.contents[i].name.GetData() );
 
             Debug3(LOG_PAWS, 0, "Publishing slot data %s -> %s", sigData.GetData(), data.GetData() );
             PawsManager::GetSingleton().Publish(sigData, data );
@@ -235,19 +237,19 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
     }
     // Check to see if player attempts to take and stack everything
     else if(widgetName == "TakeStackAll")
-    {        
+    {
         GEMClientObject* oldtarget = psengine->GetCharManager()->GetTarget();
         EID oldID;
-        
+
         if(oldtarget)
         {
-             oldID = oldtarget->GetEID();
+            oldID = oldtarget->GetEID();
         }
-        
+
         Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %u", containerID, oldID.Unbox());
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
-        
+
         // Attempt to grab all items in the container.
         psengine->GetCmdHandler()->Execute("/takestackall");
 
@@ -256,19 +258,19 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
     }
     // Check to see if player attempts to take everything
     else if (widgetName == "TakeAll")
-    {        
+    {
         GEMClientObject* oldtarget = psengine->GetCharManager()->GetTarget();
         EID oldID;
-        
+
         if(oldtarget)
         {
-             oldID = oldtarget->GetEID();
+            oldID = oldtarget->GetEID();
         }
-        
+
         Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %u", containerID, oldID.Unbox());
         psUserActionMessage setnewtarget(0, containerID, "select");
         setnewtarget.SendMessage();
-        
+
         // Attempt to grab all items in the container.
         psengine->GetCmdHandler()->Execute("/takeall");
 
@@ -294,7 +296,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
 
         return true;
     }
- /* Ahhem! - internal memoír for tzaeru to not forget uncommenting this & completing the bottom most this. */
+    /* Ahhem! - internal memoír for tzaeru to not forget uncommenting this & completing the bottom most this. */
     else if ( widget->GetID() == INVENTORY_BUTTON )
     {
         if ( psengine->GetSlotManager()->IsDragging() )
@@ -312,14 +314,14 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
         }
 
         return true;
-    } 
+    }
     else if ( widget->GetID() == COMBINE_BUTTON || widget->GetID() == UNCOMBINE_BUTTON )
     {
         GEMClientObject* oldtarget = psengine->GetCharManager()->GetTarget();
         EID oldID;
         if(oldtarget)
         {
-             oldID = oldtarget->GetEID();
+            oldID = oldtarget->GetEID();
         }
         Debug3(LOG_PAWS, 0, "selecting containerID %d, oldID %u", containerID, oldID.Unbox());
         psUserActionMessage setnewtarget(0, containerID, "select");
@@ -333,7 +335,7 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
         psUserActionMessage setoldtarget(0, oldID, "select");
         setoldtarget.SendMessage();
     }
-    
+
     return true;
 }
 
@@ -350,7 +352,7 @@ pawsSlot* pawsContainerDescWindow::GetSlot(int slotID)
             return dynamic_cast <pawsSlot*> (listRow->GetColumn(col));
         }
     }
-    
+
     return NULL;
 }
 
