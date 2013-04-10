@@ -185,7 +185,7 @@ public:
     void AddItemEntity(gemItem *item);
     void RemoveItemEntity(gemItem *item);
 
-    void RemoveClientFromLootables(int cnum);
+    void RemovePlayerFromLootables(PID playerID);
 
     void UpdateAllDR();
     void UpdateAllStats();
@@ -532,9 +532,9 @@ public:
     virtual psNPCDialog *GetNPCDialogPtr() { return 0; }
     virtual void GetLastSuperclientPos(csVector3& pos, InstanceID& instance, csTicks& last) const { }
     virtual void SetLastSuperclientPos(const csVector3& pos, InstanceID instance, const csTicks& now) { }
-    virtual void AddLootableClient(int cnum) { }
-    virtual void RemoveLootableClient(int cnum) { }
-    virtual bool IsLootableClient(int cnum) { return false; }
+    virtual void AddLootablePlayer(PID playerID) { }
+    virtual void RemoveLootablePlayer(PID playerID) { }
+    virtual bool IsLootablePlayer(PID playerID) { return false; }
     virtual Client *GetRandomLootClient(int range) { return NULL; }
     virtual AccountID GetSuperclientID() { return 0; }
     virtual void SetSuperclientID(AccountID id) { }
@@ -1534,7 +1534,7 @@ protected:
     csTicks nextLongRangeAvail;      ///< When can npc respond to long range prox trigger again
 
     /// Array of client id's allowed to loot this char
-    csArray<int> lootable_clients;
+    csArray<PID> lootablePlayers;
 
     struct DialogCounter
     {
@@ -1584,10 +1584,10 @@ public:
     virtual void ApplyStaminaCalculations(const csVector3& velocity, float times) { } // NPCs usually have 0 stamina.
     // Before this fix, this caused a major long term bug where NPCs would give up attacking after a few hits and expending all stamina.
 
-    virtual void AddLootableClient(int cnum);
-    virtual void RemoveLootableClient(int cnum);
-    bool IsLootableClient(int cnum);
-    const csArray<int>& GetLootableClients() const {return lootable_clients; }
+    virtual void AddLootablePlayer(PID playerID);
+    virtual void RemoveLootablePlayer(PID playerID);
+    bool IsLootablePlayer(PID playerID);
+    const csArray<PID>& GetLootablePlayers() const {return lootablePlayers; }
     virtual Client *GetRandomLootClient(int range);
 
     /**

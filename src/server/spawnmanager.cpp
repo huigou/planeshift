@@ -707,9 +707,9 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
                 if (!grp)
                 {
                     // Not part of group so add the owner
-                    Debug3(LOG_LOOT, killer_cnum, "Adding owner %d as able to loot %s.",
-                           owner->GetClientID(), obj->GetName() );
-                    obj->AddLootableClient(owner->GetClientID());
+                    Debug3(LOG_LOOT, killer_cnum, "Adding owner with pid: %u as able to loot %s.",
+                           owner->GetPID().Unbox(), obj->GetName());
+                    obj->AddLootablePlayer(owner->GetPID());
                 }
                 else
                 {
@@ -724,19 +724,19 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
             {
                 if (grp->GetMember(i)->RangeTo(obj) < RANGE_TO_RECV_LOOT)
                 {
-                    Debug3(LOG_LOOT, 0,"Adding %s as able to loot %s.",grp->GetMember(i)->GetName(),obj->GetName() );
-                    obj->AddLootableClient(grp->GetMember(i)->GetClientID() );
+                    Debug3(LOG_LOOT, 0, "Adding %s as able to loot %s.", grp->GetMember(i)->GetName(), obj->GetName());
+                    obj->AddLootablePlayer(grp->GetMember(i)->GetPID());
                 }
                 else
                 {
-                    Debug3(LOG_LOOT, 0,"Not adding %s as able to loot %s, because out of range or because he didn't attack the entity.",grp->GetMember(i)->GetName(),obj->GetName() );
+                    Debug3(LOG_LOOT, 0, "Not adding %s as able to loot %s, because out of range or because he didn't attack the entity.", grp->GetMember(i)->GetName(), obj->GetName());
                 }
             }
         }
         else
         {
-            Debug3(LOG_LOOT, killer_cnum, "Adding client %d as able to loot %s.", killer_cnum, obj->GetName() );
-            obj->AddLootableClient(killer_cnum);
+            Debug3(LOG_LOOT, killer_cnum, "Adding player with pid: %u as able to loot %s.", killer->GetPID().Unbox(), obj->GetName());
+            obj->AddLootablePlayer(killer->GetPID());
         }
 
     }
@@ -966,10 +966,10 @@ void handleGroupLootItem(psItem* item, gemActor* target, Client* client, CacheMa
     {
         for(int i = 0; i < (int)group->GetMemberCount(); i++)
         {
-            int cnum = group->GetMember(i)->GetClientID();
-            if(target->IsLootableClient(cnum))
+            PID playerID = group->GetMember(i)->GetPID();
+            if(target->IsLootablePlayer(playerID))
             {
-                psLootRemoveMessage rem(cnum, item->GetBaseStats()->GetUID());
+                psLootRemoveMessage rem(group->GetMember(i)->GetClientID(), item->GetBaseStats()->GetUID());
                 rem.SendMessage();
             }
         }

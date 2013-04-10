@@ -1758,13 +1758,17 @@ bool UserManager::CheckTargetLootable(gemActor* actor, Client* client)
         return false;
     }
 
-    // Check target lootable by this client
-    // TODO: NPC version of IsLootableClient()
-    // e.g. by using EID or PID instead of clientID for lootable_clients
-    if(client && !npc->IsLootableClient(client->GetClientNum()))
+    // Check target lootable by this player
+    if(!npc->IsLootablePlayer(actor->GetPID()))
     {
-        Debug2(LOG_USER, client->GetClientNum(), "Client %d tried to loot mob that wasn't theirs.\n", client->GetClientNum());
-        psserver->SendSystemError(client->GetClientNum(),"You are not allowed to loot %s.", target->GetName());
+        if(client)
+        {
+            Debug2(LOG_USER, client->GetClientNum(), "Client %d tried to loot mob that wasn't theirs.\n", client->GetClientNum());
+            psserver->SendSystemError(client->GetClientNum(),"You are not allowed to loot %s.", target->GetName());
+        }
+        else
+            Debug2(LOG_SUPERCLIENT, actor->GetEID().Unbox(), "Not allowed to loot %s.", target->GetName());
+            
         return false;
     }
 
@@ -1838,13 +1842,13 @@ void UserManager::LootMoney(gemActor* actor, Client* client)
         
         csRef<PlayerGroup> group = actor->GetGroup();
         int remainder,each;
-        // Split up money among LootableClients in group.
+        // Split up money among LootablePlayers in group.
         if(group && client) // NPCs don't care about group looting
         {
             Debug2(LOG_LOOT, client->GetClientNum(),"Splitting up %d money.\n", money);
             // Locate the group members who are in range to loot the trias
             csArray<gemActor*> closegroupmembers;
-            const csArray<int> &lootable_clients = target->GetNPCPtr()->GetLootableClients();
+            const csArray<PID> &lootablePlayers = target->GetNPCPtr()->GetLootablePlayers();
             size_t membercount = group->GetMemberCount();
             for(size_t i = 0 ; i < membercount ; i++)
             {
@@ -1853,9 +1857,9 @@ void UserManager::LootMoney(gemActor* actor, Client* client)
                 {
                     continue;
                 }
-                //Copy all lootable clients.
-                //TODO: a direct interface to gemNPC::lootable_clients would be better
-                if(lootable_clients.Contains(currmember->GetClientID()) != csArrayItemNotFound)
+                //Copy all lootable players.
+                //TODO: a direct interface to gemNPC::lootablePlayers would be better
+                if(lootablePlayers.Contains(currmember->GetPID()) != csArrayItemNotFound)
                 {
                     closegroupmembers.Push(currmember);
                 }
