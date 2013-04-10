@@ -26,102 +26,124 @@
  */
 class psInventoryCache : public psCache
 {
-    public:
-        psInventoryCache();
-        ~psInventoryCache();
+public:
+    psInventoryCache();
+    ~psInventoryCache();
 
-        struct CachedItemDescription
-        {
-            int slot;
-            int containerID;
-            csString name;
-            csString meshName;
-            csString materialName;
-            float weight;
-            float size;
-            int stackCount;
-            csString iconImage;
-            int purifyStatus;
-        };
-	
-        /**
-         * Requests inventory from server.
-         *
-         * Decides whether to request full inventory
-         * list or just updates the local cache.
-         *
-         * @return bool success of inventory request
-         */
-        bool GetInventory (void);
+    struct CachedItemDescription
+    {
+        int slot;
+        int containerID;
+        csString name;
+        csString meshName;
+        csString materialName;
+        float weight;
+        float size;
+        int stackCount;
+        csString iconImage;
+        int purifyStatus;
 
-        /**
-         * Store an item in the inventory.
-         *
-         * @param slot Slot number
-         * @param container Container id
-         * @param name Item name
-         * @param meshName Items mesh
-         * @param materialName Items material.
-         * @param weight Weight of item
-         * @param size Size of item
-         * @param stackCount Number of items in stack
-         * @param iconImage The item icon.
-         * @param purifyStatus Purify status.
-         * @return bool Success flag
-         */
-        bool SetInventoryItem(int slot,
-                              int containerID,
-                              csString name,
-                              csString meshName,
-                              csString materialName,
-                              float weight,
-                              float size,
-                              int stackCount,
-                              csString iconImage,
-                              int purifyStatus);
+        static int CompareSlot(CachedItemDescription* const &first, CachedItemDescription* const &second);
+    };
 
-        /**
-         * Set empty slot.
-         *
-         * @param slot Slot number
-         * @param container: Container id
-         * @return bool Success flag
-         */
-        bool EmptyInventoryItem(int slot, int container);
+    /**
+     * Requests inventory from server.
+     *
+     * Decides whether to request full inventory
+     * list or just updates the local cache.
+     *
+     * @return bool success of inventory request
+     */
+    bool GetInventory (void);
 
-        /**
-         * Empty entire inventory.
-         */
-        void EmptyInventory(void);
+    /**
+     * Store an item in the inventory.
+     *
+     * @param slot Slot number
+     * @param container Container id
+     * @param name Item name
+     * @param meshName Items mesh
+     * @param materialName Items material.
+     * @param weight Weight of item
+     * @param size Size of item
+     * @param stackCount Number of items in stack
+     * @param iconImage The item icon.
+     * @param purifyStatus Purify status.
+     * @return bool Success flag
+     */
+    bool SetInventoryItem(int slot,
+                          int containerID,
+                          csString name,
+                          csString meshName,
+                          csString materialName,
+                          float weight,
+                          float size,
+                          int stackCount,
+                          csString iconImage,
+                          int purifyStatus);
 
-        /**
-         * Get item from container slot.
-         *
-         * @param slot: Slot number
-         */
-         CachedItemDescription*GetInventoryItem(int slot);
-	
-         /// inline uint32 GetInventoryVersion() const
-         /// Info: Returns the cache version (PS#2691)
-         inline uint32 GetInventoryVersion() const { return version; }
-         
-         /// inline void SetInventoryVersion(uint32 ver)
-         /// Info: Sets the cache version (PS#2691)
-         inline void SetInventoryVersion(uint32 ver) { version = ver; }
+    /**
+     * Set empty slot.
+     *
+     * @param slot Slot number
+     * @param container: Container id
+     * @return bool Success flag
+     */
+    bool EmptyInventoryItem(int slot, int container);
+
+    /**
+     * Empty entire inventory.
+     */
+    void EmptyInventory(void);
+
+    /**
+     * Get item from container slot.
+     *
+     * @param slot: Slot number
+     */
+    CachedItemDescription* GetInventoryItem(int slot);
+
+    /// inline uint32 GetInventoryVersion() const
+    /// Info: Returns the cache version (PS#2691)
+    inline uint32 GetInventoryVersion() const
+    {
+        return version;
+    }
+
+    /// inline void SetInventoryVersion(uint32 ver)
+    /// Info: Sets the cache version (PS#2691)
+    inline void SetInventoryVersion(uint32 ver)
+    {
+        version = ver;
+    }
 
 
-         /**
-          * Return iterator to all cache items.
-          */
-         csHash<CachedItemDescription*>::GlobalIterator GetIterator() { return itemhash.GetIterator(); }
-         
-    private:
+    /**
+     * Return iterator to all cache items.
+     */
+    csHash<CachedItemDescription*>::GlobalIterator GetHashIterator()
+    {
+        return itemhash.GetIterator();
+    }
 
-        csHash<CachedItemDescription*> itemhash;  // all cached items in equip, bulk or containers
-        // CachedItemDescription bulkItems[INVENTORY_BULK_COUNT];    /// cached bulk items
-        // CachedItemDescription equipItems[INVENTORY_EQUIP_COUNT];  /// cached equip items
+    /**
+     * Return iterator to all cache item sorted by slot.
+     */
+    csArray<CachedItemDescription*>::Iterator GetSortedIterator()
+    {
+        return itemBySlot.GetIterator();
+    }
 
-		uint32 version; // Current cache version (PS#2691)
+private:
+
+    csHash<CachedItemDescription*> itemhash;  // all cached items in equip, bulk or containers
+
+    csArray<CachedItemDescription*> itemBySlot; // all cached items sorted by slot number
+
+    // CachedItemDescription bulkItems[INVENTORY_BULK_COUNT];    /// cached bulk items
+    // CachedItemDescription equipItems[INVENTORY_EQUIP_COUNT];  /// cached equip items
+
+    uint32 version; // Current cache version (PS#2691)
 };
 
 #endif

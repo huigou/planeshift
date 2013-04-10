@@ -117,24 +117,25 @@ bool pawsInventoryWindow::SetupSlot( const char* slotName )
 bool pawsInventoryWindow::PostSetup()
 {
     // If you add something here, DO NOT FORGET TO CHANGE 'INVENTORY_EQUIP_COUNT'!!!
-   const char* equipmentSlotNames[] = { "lefthand", "righthand", "leftfinger", "rightfinger", "helm", "neck", "back", "arms", "gloves", "boots", "legs", "belt", "bracers", "torso", "mind" };
+    const char* equipmentSlotNames[] = { "lefthand", "righthand", "leftfinger", "rightfinger", "helm", "neck", "back", "arms", "gloves", "boots", "legs", "belt", "bracers", "torso", "mind" };
 
     // Setup the Doll
     if ( !SetupDoll() )
         return false;
 
     money = dynamic_cast <pawsMoney*> (FindWidget("Money"));
-    if ( money ){
+    if ( money )
+    {
         money->SetContainer( CONTAINER_INVENTORY_MONEY );
     }
 
     for(size_t x = 0; x < INVENTORY_EQUIP_COUNT-1; x++)
     {
         if(!SetupSlot(equipmentSlotNames[x]))
-           return false;
+            return false;
     }
 
-    pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
+    pawsListBox* bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
     if (bulkList)
     {
         int colCount = bulkList->GetTotalColumns();
@@ -142,11 +143,11 @@ bool pawsInventoryWindow::PostSetup()
 
         for(int r = 0; r < rowCount; r ++)
         {
-            pawsListBoxRow * listRow = bulkList->NewRow(r);
+            pawsListBoxRow* listRow = bulkList->NewRow(r);
             for (int j = 0; j < colCount; j++)
             {
                 int i = r*colCount + j;
-                pawsSlot * slot;
+                pawsSlot* slot;
                 slot = dynamic_cast <pawsSlot*> (listRow->GetColumn(j));
                 slot->SetContainer( CONTAINER_INVENTORY_BULK );
                 //csString name;
@@ -172,7 +173,7 @@ bool pawsInventoryWindow::PostSetup()
     // subscribe all equipment slots to sigClearInventorySlots - needed e.g for stacks of ammo or showing the orignal tooltip
     for(size_t z = 0; z < INVENTORY_EQUIP_COUNT-1; z++)
     {
-        pawsSlot * slotname = dynamic_cast<pawsSlot*>(FindWidget(equipmentSlotNames[z]));
+        pawsSlot* slotname = dynamic_cast<pawsSlot*>(FindWidget(equipmentSlotNames[z]));
         if(slotname)
         {
             PawsManager::GetSingleton().Subscribe("sigClearInventorySlots", slotname);
@@ -290,7 +291,7 @@ pawsSlot* pawsInventoryWindow::GetFreeSlot()
 
 void pawsInventoryWindow::Dequip( const char* itemName )
 {
-    pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
+    pawsListBox* bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
     if ( (itemName != NULL) && (bulkList) )
     {
         pawsSlot* fromSlot = NULL;
@@ -328,7 +329,7 @@ void pawsInventoryWindow::Dequip( const char* itemName )
                                        freeSlot->ID(),
                                        stackCount );
                 freeSlot->Reserve();
-                msg.SendMessage();               
+                msg.SendMessage();
                 fromSlot->Clear();
             }
         }
@@ -360,7 +361,7 @@ void pawsInventoryWindow::UpdateFromContainer(ContainerID fromContainerID, int f
                 }
             }
         }
-        
+
     }
 
     if (fromSlot)
@@ -383,9 +384,10 @@ void pawsInventoryWindow::UpdateFromContainer(ContainerID fromContainerID, int f
 
 void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlotID )
 {
-    csHash<psInventoryCache::CachedItemDescription*>::GlobalIterator iter = psengine->GetInventoryCache()->GetIterator();
+    csArray<psInventoryCache::CachedItemDescription*>::Iterator iter = psengine->GetInventoryCache()->GetSortedIterator();
     psInventoryCache::CachedItemDescription* from = NULL;
-    
+
+    // Search cache for item to equip
     while (iter.HasNext())
     {
         psInventoryCache::CachedItemDescription* slotDesc = iter.Next();
@@ -393,9 +395,10 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlo
         if (slotDesc->name.CompareNoCase(itemName))
         {
             from = slotDesc;
+            break;  // We found an item, so breaking the search
         }
     }
-    
+
     if (from)
     {
         int container   = from->containerID;
@@ -406,8 +409,10 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlo
         if (container == CONTAINER_INVENTORY_BULK)
         {
             slot -= PSCHARACTER_SLOT_BULK1;
+            container =  (INVENTORY_SLOT_NUMBER)(slot/100);
+            slot = slot%100;
         }
-        
+
         psSlotMovementMsg msg( container, slot,
                                CONTAINER_INVENTORY_EQUIPMENT, toSlotID,
                                stackCount );
@@ -418,7 +423,7 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlo
 //search for items in bulk, then in equipped slots
 void pawsInventoryWindow::Write( const char* itemName )
 {
-    pawsListBox * bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
+    pawsListBox* bulkList = dynamic_cast <pawsListBox*> (FindWidget("BulkList"));
     if ( (itemName != NULL) && (bulkList) )
     {
         pawsSlot* fromSlot = NULL;
@@ -435,7 +440,8 @@ void pawsInventoryWindow::Write( const char* itemName )
             }
         }
 
-        if( fromSlot == NULL){
+        if( fromSlot == NULL)
+        {
             // See if we can find the item in the equipment slots.
             for ( size_t z = 0; z < equipmentSlots.GetSize(); z++ )
             {
@@ -456,7 +462,7 @@ void pawsInventoryWindow::Write( const char* itemName )
 
         if ( fromSlot )
         {
-           printf("Found item %s to write on\n", itemName);
+            printf("Found item %s to write on\n", itemName);
             int container   = fromSlot->ContainerID();
             int slot        = fromSlot->ID();
 
