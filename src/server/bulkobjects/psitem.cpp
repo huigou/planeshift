@@ -104,8 +104,8 @@ public:
                 PID guardCharacterID = item->GetGuardingCharacterID();
                 gemActor* guardActor = psserver->entitymanager->GetGEM()->FindPlayerEntity(guardCharacterID);
                 if(guardCharacterID.IsValid() &&
-                   guardActor && guardActor->InsideGuardedArea(item->GetGemObject()) &&
-                   (guardActor->GetInstance() == instance))
+                        guardActor && guardActor->InsideGuardedArea(item->GetGemObject()) &&
+                        (guardActor->GetInstance() == instance))
                 {
                     // Item is guarded, reschedule
                     item->ScheduleRemoval();
@@ -1252,7 +1252,9 @@ void psItem::SetBaseStats(psItemStats* statptr)
 void psItem::UpdateInventoryStatus(psCharacter* owner,uint32 parent_id, INVENTORY_SLOT_NUMBER slot)
 {
     if(IsEquipped() && owning_character)
+    {
         owning_character->Inventory().Unequip(this);
+    }
 
     SetOwningCharacter(owner);
     parent_item_InstanceID = parent_id;
@@ -2901,8 +2903,8 @@ void psItem::FillContainerMsg(Client* client, psViewContainerDescription &outgoi
             if(child->parent_item_InstanceID == GetUID())
             {
                 outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetTextureName(),
-                                     child->GetImageName(), child->GetPurifyStatus(), child->GetLocInParent(),
-                                     child->GetStackCount());
+                                     child->GetImageName(), child->GetPurifyStatus(),
+                                     child->GetLocInParent(), child->GetStackCount());
             }
         }
         return;
@@ -2919,8 +2921,9 @@ void psItem::FillContainerMsg(Client* client, psViewContainerDescription &outgoi
         }
 
         int stackCount = container->CanTake(client,child) ? child->GetStackCount() : -1;
-        outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetTextureName(), child->GetImageName(),
-                             child->GetPurifyStatus(), child->GetLocInParent(), stackCount);
+        outgoing.AddContents(child->GetName(), child->GetMeshName(), child->GetTextureName(),
+                             child->GetImageName(), child->GetPurifyStatus(),
+                             child->GetLocInParent(), stackCount);
     }
 }
 
@@ -3300,30 +3303,30 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
         int priSkill = craftArray->Get(count)->priSkillId;
         if(priSkill >= 0 && craftArray->Get(count)->minPriSkill > character->Skills().GetSkillRank((PSSKILL) priSkill).Current())
         {
-                csString        query;
+            csString        query;
 
-                query.Format("select * from skills where skill_id=%d", priSkill );
-                Result result(db->Select(query));
+            query.Format("select * from skills where skill_id=%d", priSkill );
+            Result result(db->Select(query));
 
-                transString.Append("[[");
-                transString.Append( result[0].GetString( "Name") );
-                transString.Append("]]" );
-                transString.Append(craftArray->Get(count)->craftStepDescription);
+            transString.Append("[[");
+            transString.Append( result[0].GetString( "Name") );
+            transString.Append("]]" );
+            transString.Append(craftArray->Get(count)->craftStepDescription);
             continue;
         }
         // Check if craft step minimum seconday skill level is meet by client
         int secSkill = craftArray->Get(count)->secSkillId;
         if(secSkill >= 0 && craftArray->Get(count)->minSecSkill > (int) character->Skills().GetSkillRank((PSSKILL) secSkill).Current())
         {
-                csString        query;
+            csString        query;
 
-                query.Format("select * from skills where skill_id=%d", secSkill );
-                Result result(db->Select(query));
+            query.Format("select * from skills where skill_id=%d", secSkill );
+            Result result(db->Select(query));
 
-                transString.Append("With higher ");
-                transString.Append( result[0].GetString( "Name") );
-                transString.Append(" skill you could: " );
-                transString.Append(craftArray->Get(count)->craftStepDescription);
+            transString.Append("With higher ");
+            transString.Append( result[0].GetString( "Name") );
+            transString.Append(" skill you could: " );
+            transString.Append(craftArray->Get(count)->craftStepDescription);
             continue;
         }
 
