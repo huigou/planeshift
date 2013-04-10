@@ -256,16 +256,16 @@ void GEMSupervisor::RemoveEntity(gemObject *which)
 
 }
 
-void GEMSupervisor::RemoveClientFromLootables(int cnum)
+void GEMSupervisor::RemovePlayerFromLootables(PID playerID)
 {
     csHash<gemObject*, EID>::GlobalIterator i(entities_by_eid.GetIterator());
-    while ( i.HasNext() )
+    while(i.HasNext())
     {
         gemObject* obj = i.Next();
-        gemNPC * npc = obj->GetNPCPtr();
+        gemNPC* npc = obj->GetNPCPtr();
 
-        if ( npc)
-            npc->RemoveLootableClient(cnum);
+        if(npc)
+            npc->RemoveLootablePlayer(playerID);
     }
 }
 
@@ -4909,27 +4909,27 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
         ShowPopupMenu(actor->GetClient());
 }
 
-void gemNPC::AddLootableClient(int cnum)
+void gemNPC::AddLootablePlayer(PID playerID)
 {
-    lootable_clients.Push(cnum);
+    lootablePlayers.Push(playerID);
 }
 
-void gemNPC::RemoveLootableClient(int cnum)
+void gemNPC::RemoveLootablePlayer(PID playerID)
 {
-    for (size_t i=0; i<lootable_clients.GetSize(); i++)
+    for(size_t i = 0; i < lootablePlayers.GetSize(); i++)
     {
-        if (lootable_clients[i] == cnum)
-            lootable_clients[i] = -1; // Should not be possible to find a client with this id.
-                                      // Fast and client is removed from table;
+        if(lootablePlayers[i] == playerID)
+            lootablePlayers[i] = -1; // Should not be possible to find a player with this id.
+                                     // Fast and client is removed from table;
     }
 }
 
 
-bool gemNPC::IsLootableClient(int cnum)
+bool gemNPC::IsLootablePlayer(PID playerID)
 {
-    for (size_t i=0; i<lootable_clients.GetSize(); i++)
+    for(size_t i = 0; i < lootablePlayers.GetSize(); i++)
     {
-        if (lootable_clients[i] == cnum)
+        if(lootablePlayers[i] == playerID)
             return true;
     }
     return false;
@@ -4937,31 +4937,31 @@ bool gemNPC::IsLootableClient(int cnum)
 
 Client *gemNPC::GetRandomLootClient(int range)
 {
-    if (lootable_clients.GetSize() == 0)
+    if(lootablePlayers.GetSize() == 0)
         return NULL;
 
-    csArray<int> temp;
-    int which = psserver->rng->Get((int)lootable_clients.GetSize());
+    csArray<PID> temp;
+    int which = psserver->rng->Get((int)lootablePlayers.GetSize());
     int first = which;
 
     do
     {
-        if (lootable_clients[which] != -1)
-            temp.Push(lootable_clients[which]);
+        if(lootablePlayers[which] != -1)
+            temp.Push(lootablePlayers[which]);
 
         ++which;
-        if (which == (int)lootable_clients.GetSize())
+        if(which == (int)lootablePlayers.GetSize())
             which = 0;
     } while (which != first);
 
     Client *found;
 
-    for (size_t i=0; i<temp.GetSize(); i++)
+    for(size_t i = 0; i < temp.GetSize(); i++)
     {
-        found = psserver->GetNetManager()->GetClient(temp[i]);
+        found = EntityManager::GetSingleton().GetClients()->FindPlayer(temp[i]);
 
-        if (found && found->GetActor() &&
-            found->GetActor()->RangeTo(this) < range)
+        if(found && found->GetActor() &&
+           found->GetActor()->RangeTo(this) < range)
         {
             return found;
         }

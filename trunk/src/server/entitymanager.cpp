@@ -677,7 +677,7 @@ bool EntityManager::DeletePlayer(Client * client)
 
         // This removes the actor from the world data
         Debug3(LOG_NET,client->GetClientNum(),"EntityManager Removing actor %s from client %s.",actor->GetName(),client->GetName() );
-        gem->RemoveClientFromLootables(client->GetClientNum());
+        gem->RemovePlayerFromLootables(actor->GetPID());
         client->SetActor(NULL); // Prevent anyone from getting to a deleted actor through the client
         RemoveActor(actor);
     }
