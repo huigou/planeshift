@@ -771,8 +771,15 @@ public:
     void SetCharType(unsigned int v) { CS_ASSERT(v < PSCHARACTER_TYPE_COUNT); characterType = v; }
     const char *GetCharTypeName() { return characterTypeName[characterType]; }
 
+    /**
+     * Set the last login time for the character in the format YYYY-MM-DD HH:MM:SS.
+     */
     void SetLastLoginTime( const char* last_login = NULL, bool save = true);
-    csString GetLastLoginTime() const { return lastlogintime; }
+    
+    /**
+     * Retrive the last login time in the format YYYY-MM-DD HH:MM:SS.
+     */
+    csString GetLastLoginTime() const;
 
     void SetSpouseName(const char* name);
     

@@ -529,7 +529,7 @@ csArray<NpcTrigger*> NPCDialogDict::ParseMultiTrigger(NpcTrigger *parsetrig)
     trig.Split(list,'.');
 
     // For each trigger create a trigger object rappresenting it.
-    for(int i = 0; i < list.GetSize(); i++)
+    for(size_t i = 0; i < list.GetSize(); i++)
     {
         NpcTrigger* newtrig = new NpcTrigger;
         newtrig->id = parsetrig->id;
@@ -566,7 +566,7 @@ bool NPCDialogDict::AddTrigger( iDataConnection* db, int triggerID , int respons
 
     CS_ASSERT(responseID != -1);
 
-    for(int i = 0; i < newTriggers.GetSize(); i++)
+    for(size_t i = 0; i < newTriggers.GetSize(); i++)
     {
         newtrig = newTriggers[i];
         newtrig->responseIDlist.Push(responseID);

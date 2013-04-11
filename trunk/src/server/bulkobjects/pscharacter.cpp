@@ -928,7 +928,8 @@ void psCharacter::SetLastLoginTime(const char *last_login, bool save )
     if ( !last_login )
     {
         time_t curr=time(0);
-        tm* gmtm = gmtime(&curr);
+        tm result;
+        tm* gmtm = gmtime_r(&curr,&result);
 
         timeStr.Format("%d-%02d-%02d %02d:%02d:%02d",
                         gmtm->tm_year+1900,
@@ -957,6 +958,11 @@ void psCharacter::SetLastLoginTime(const char *last_login, bool save )
              return;
         }
     }
+}
+
+csString psCharacter::GetLastLoginTime() const
+{
+    return lastlogintime;
 }
 
 bool psCharacter::LoadSpells(PID use_id)
