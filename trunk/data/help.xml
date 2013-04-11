@@ -1669,8 +1669,20 @@ Usage: /challenge
             <content type="text">With this command you can loot corpses of NPCs. You can't loot other players after a duel.
   
   Usage:
+  /loot [roll] [all|money|items [categories]]
+  (Attempts to loot targeted NPC, taking specified goods. If no arguments are provided, a loot window will show up.)
+  
   /loot
-  (Opens the loot window of the current target. You can only loot NPCs slayed by you or one of your current group) </content>
+  (Opens the loot window of the current target.)
+  
+  /loot money
+  (Loots all the tria. If you're in a group, the tria will be shared.)
+  
+  /loot [roll] items [categories]
+  (Loots money and items with specified categories (e.g. "weapons, gems"). If categories are left out, all items will be looted. If you add the optional "roll" before "items", all specifed items will be rolled.)
+  
+  /loot [roll] all
+  (Loots money and all items. If you're in a group, money will be shared and items are either attempted to be taken or rolled, if you add the optional "roll" before "all".)</content>
           </Contents>
         </topic>
         <topic name="/stopattack">
