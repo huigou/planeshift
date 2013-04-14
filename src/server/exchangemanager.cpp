@@ -1171,7 +1171,7 @@ psItem* PlayerToPlayerExchange::GetTargetOffer(int slot)
 *
 ***********************************************************************************/
 
-PlayerToNPCExchange::PlayerToNPCExchange(Client* player, gemObject* target, bool automaticExchange, csRef<ExchangeManager> manager)
+PlayerToNPCExchange::PlayerToNPCExchange(Client* player, gemObject* target, bool automaticExchange, int questID, csRef<ExchangeManager> manager)
                     : Exchange(player, automaticExchange, manager)
 {
     this->target = target;
@@ -1184,6 +1184,8 @@ PlayerToNPCExchange::PlayerToNPCExchange(Client* player, gemObject* target, bool
     }
 
     target->RegisterCallback( this );
+
+    this->questID = questID;
 
 //    player->GetCharacterData()->Inventory().BeginExchange();
 }
@@ -1246,7 +1248,7 @@ void PlayerToNPCExchange::HandleEnd(Client * client)
 
 bool PlayerToNPCExchange::CheckXMLResponse(Client * client, psNPCDialog *dlg, csString trigger)
 {
-    NpcResponse *resp = dlg->FindXMLResponse(client, trigger);
+    NpcResponse *resp = dlg->FindXMLResponse(client, trigger, questID);
     if (resp && resp->type != NpcResponse::ERROR_RESPONSE)
     {
         csTicks delay = resp->ExecuteScript(client->GetActor(), (gemNPC *)target);
@@ -1427,7 +1429,7 @@ bool ExchangeManager::ExchangeCheck(Client * client, gemObject * target, csStrin
 }
 
 
-void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool automaticExchange )
+void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool automaticExchange, int questID)
 {
     gemObject* target = client->GetTargetObject();
 
@@ -1465,7 +1467,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
         }
 
 
-        Exchange* exchange = new PlayerToNPCExchange(client, target, automaticExchange, this);
+        Exchange* exchange = new PlayerToNPCExchange(client, target, automaticExchange, questID, this);
         client->SetExchangeID( exchange->GetID() );
         exchanges.Push (exchange);
     }
@@ -1556,7 +1558,7 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
 
     Notify2(LOG_TRADE, "Got autogive of '%s'\n", give.str.GetDataSafe());
 
-    // Expecting xml string like: <l money="0,0,0,0"><item n="Steel Falchion" c="1"/></l>
+    // Expecting xml string like: <l money="0,0,0,0"><item n="Steel Falchion" c="1"/><questid id="1234"/></l>
 
     csRef<iDocument> doc = ParseString(give.str);
     if (doc == NULL)
@@ -1577,8 +1579,20 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
         return;
     }
 
+    // First check if the search has to be only for a quest or not
+    csRef<iDocumentNode> questNode = topNode->GetNode("questid");
+    int questIDHint = -1;
+    if(questNode.IsValid())
+    {
+        questIDHint = questNode->GetAttributeValueAsInt("id");
+        if(questIDHint < -1)
+        {
+            questIDHint = -1;
+        }        
+    }
+
     // Create a temporary exchange to actually do all the gift giving
-    StartExchange(client, false, true);
+    StartExchange(client, false, true, questIDHint);
 
     // Check to make sure it worked
     Exchange* exchange = GetExchange( client->GetExchangeID() );
@@ -1587,9 +1601,10 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
         psserver->SendSystemError(client->GetClientNum(),"Could not give requested items.");
         return;
     }
+
     // Now validate that the person has all the required items here
     int exchangeSlot = 0, itemCount = 0;
-    csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
+    csRef<iDocumentNodeIterator> iter = topNode->GetNodes("item");
     while ( iter->HasNext() )
     {
         itemCount++;

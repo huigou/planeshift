@@ -147,8 +147,8 @@ protected:
     Client *currentClient;
     DialogHistory dialogHistory;
 
-    NpcResponse* FindResponse(csString& trigger,const char *text);
-    NpcResponse *FindResponseWithAllPrior(const char *area,const char *trigger);
+    NpcResponse* FindResponse(csString& trigger,const char *text, int questID = -1);
+    NpcResponse *FindResponseWithAllPrior(const char *area,const char *trigger, int questID = -1);
     bool CheckPronouns(psString& text);
     void UpdateAntecedents(NpcResponse *resp);
     void AddBadText(const char *text,const char *trigger);
@@ -183,7 +183,7 @@ public:
 
     NpcResponse *Respond(const char * text,Client *client);
 
-    NpcResponse* FindXMLResponse(Client *client, csString trigger);
+    NpcResponse* FindXMLResponse(Client *client, csString trigger, int questID = -1);
 
     bool AddWord(const char *word);
     bool AddSynonym(const char *word,const char *synonym);

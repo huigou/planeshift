@@ -460,10 +460,11 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
                                          const char *trigger,
                                          int faction,
                                          int priorresponse,
-                                         Client *client)
+                                         Client *client,
+                                         int questID)
 {
-    Debug7(LOG_NPC, client ? client->GetClientNum() : 0,"Entering NPCDialogDict::FindResponse(%s,%s,%s,%d,%d,%s)",
-            npc->GetName(),area,trigger,faction,priorresponse,client->GetName());
+    Debug8(LOG_NPC, client ? client->GetClientNum() : 0,"Entering NPCDialogDict::FindResponse(%s,%s,%s,%d,%d,%s,%d)",
+            npc->GetName(),area,trigger,faction,priorresponse,client->GetName(), questID);
     NpcTrigger *trig;
     NpcTrigger key;
 
@@ -1110,7 +1111,7 @@ bool NpcTrigger::Load(iResultRow& row)
     return true;
 }
 
-bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialogDict * dict, csArray<int> *availableResponseList)
+bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialogDict * dict, csArray<int> *availableResponseList, int questID)
 {
     bool haveAvail = false;
 
@@ -1123,7 +1124,8 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
             {
                 // Check if all prerequisites are true, and available(no lockout)
                 if ( ((!resp->prerequisite || client->GetCharacterData()->CheckResponsePrerequisite(resp) ) && //checks if prerequisites are in order
-                     (!resp->quest || (resp->quest->Active() && client->GetCharacterData()->GetQuestMgr().CheckQuestAvailable(resp->quest,npc->GetPID()))))  //checks if the player can get the quest
+                     (!resp->quest || ((questID == -1 || resp->quest->GetID() == questID) && resp->quest->Active() &&  // checks if the quest is the wanted one.
+                     client->GetCharacterData()->GetQuestMgr().CheckQuestAvailable(resp->quest,npc->GetPID()))))  //checks if the player can get the quest
                      /*overrides the above while mantaining quest consistency in case of questtester */
                    ||(client->GetCharacterData()->GetActor() && client->GetCharacterData()->GetActor()->questtester &&
                      (!resp->quest || !resp->quest->GetParentQuest())))
@@ -2598,7 +2600,6 @@ void NpcDialogMenu::AddTrigger(const csString &menuText, const csString &trigger
     this->triggers.Push( new_trigger );
 }
 
-
 void NpcDialogMenu::Add(NpcDialogMenu *add)
 {
     if (!add)
@@ -2670,8 +2671,46 @@ void NpcDialogMenu::ShowMenu(Client *client,csTicks delay, gemNPC *npc)
 
         csString menuText = triggers[i].menuText;
         npc->GetNPCDialogPtr()->SubstituteKeywords(client,menuText);
-        //only add the trigger if it isn't a question
-        csString trigger = (menuText.Find("?=") == SIZET_NOT_FOUND) ? triggers[i].trigger : "(question)";
+
+        // Only add the trigger if it isn't a question, also add the 
+        // questid if available (for compatibility only when not a question)
+        csString trigger;
+
+        // It's a quest
+        if(triggers[i].quest)
+        {
+            // As the trigger is unused client side, being a question,
+            // use it to store the questID.
+            if(menuText.Find("?=") != SIZET_NOT_FOUND)
+            {
+                trigger.Format("{%d}", triggers[i].quest->GetID());
+            }
+            else if(triggers[i].trigger.GetAt(0) != '<')
+            {
+                // This is a normal trigger add {d} in front of it with the questID
+                trigger.Format("{%d} %s", triggers[i].quest->GetID(), triggers[i].trigger.GetData());
+            }
+            else
+            {
+                // This is an exchange, add an additional tag, which is unpacked by exchange manager.
+                // Simple replacement to add the needed tag: reasoning, there can be only one </l>
+                // in the xml so this <l money="0,0,0,0"><item n="Steel Falchion" c="1"/></l>
+                // is made this: <l money="0,0,0,0"><item n="Steel Falchion" c="1"/><questid id="1234"/></l>
+                trigger = triggers[i].trigger;
+                trigger.FindReplace("</l>", csString().Format("<questid id=\"%d\"/></l>", triggers[i].quest->GetID()));
+            }
+        }
+        else //not part of a quest
+        {
+            if(menuText.Find("?=") != SIZET_NOT_FOUND)
+            {
+                trigger = triggers[i].trigger;
+            }
+            else
+            {
+                trigger = "(question)";
+            }
+        }
 
         menu.AddResponse((uint32_t) i,
                           menuText,
