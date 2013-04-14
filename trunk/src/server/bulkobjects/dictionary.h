@@ -127,7 +127,8 @@ public:
                               const char *trigger,
                               int faction,
                               int priorresponse,
-                              Client *client);
+                              Client *client, 
+                              int questID = -1);
 
     /** Lookup the response with the given ID from responses */
     NpcResponse * FindResponse(int responseID); 
@@ -259,7 +260,7 @@ public:
     bool Load(iResultRow& row);
 
     /// Return true if there are one available response for this trigger
-    bool HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialogDict * dict, csArray<int> *availableResponseList = NULL );
+    bool HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialogDict * dict, csArray<int> *availableResponseList = NULL, int questID = -1 );
 
     /// Return one of the members of responseIDlist array randomly
     int  GetRandomResponse( const csArray<int> &availableResponseList);

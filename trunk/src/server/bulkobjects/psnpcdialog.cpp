@@ -353,7 +353,7 @@ void psNPCDialog::AddBadText(const char *text, const char *trigger)
 
 
 //Check current trigger with all prior responses in quests, and in general
-NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *trigger)
+NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *trigger, int questID)
 {
     NpcResponse *resp = NULL;
     int lastresponse = -1;
@@ -367,13 +367,13 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
         { 
             if (!TestedWithoutLastResponse)
             {
-                resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient); 
+                resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient, questID); 
                 TestedWithoutLastResponse = true;
             }
         }
         else
         {
-            resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient); 
+            resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient, questID); 
         }
 
         if (resp)
@@ -386,13 +386,13 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
         { 
             if (!TestedWithoutLastResponse)
             {
-                resp = dict->FindResponse(self, area,trigger,0,lastresponse,currentClient);
+                resp = dict->FindResponse(self, area,trigger,0,lastresponse,currentClient, questID);
                 TestedWithoutLastResponse = true;
             }
         }
         else
         {
-            resp = dict->FindResponse(self, area,trigger,0,lastresponse,currentClient);
+            resp = dict->FindResponse(self, area,trigger,0,lastresponse,currentClient, questID);
         }
     }
     if (currentClient && !resp && TestedWithoutLastResponse)
@@ -404,7 +404,7 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
     return resp;
 }
 
-NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
+NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text, int questID)
 {
     KnowledgeArea *area;
     NpcResponse *resp = NULL;
@@ -429,13 +429,13 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
     for (size_t z = 0; z < knowareas.GetSize(); z++)
     {
         area = knowareas[z];
-        Debug4(LOG_NPC, currentClient ? currentClient->GetClientNum() : 0,"NPC checking %s for trigger %s , with lastResponseID %d...",
-            (const char *)area->area,(const char *)trigger, currentClient ? currentClient->GetCharacterData()->GetLastResponse() : -1);
+        Debug5(LOG_NPC, currentClient ? currentClient->GetClientNum() : 0,"NPC checking %s for trigger %s , with lastResponseID %d and questID %d...",
+            (const char *)area->area,(const char *)trigger, currentClient ? currentClient->GetCharacterData()->GetLastResponse() : -1, questID);
 
-        resp = FindResponseWithAllPrior(area->area, trigger);
+        resp = FindResponseWithAllPrior(area->area, trigger, questID);
         if (!resp) // If no response found, try search for error trigger
         {
-            resp = FindResponseWithAllPrior(area->area, trigger_error);
+            resp = FindResponseWithAllPrior(area->area, trigger_error, questID);
             if (!resp) // If no response found, try search without last response
             {
                 if (!currentClient || currentClient->GetCharacterData()->GetLastResponse() == -1)
@@ -445,10 +445,10 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text)
                     continue;
                 }
 
-                resp = dict->FindResponse(self, area->area,trigger,0,-1,currentClient);
+                resp = dict->FindResponse(self, area->area,trigger,0,-1,currentClient, questID);
                 if (!resp) // If no response found, try search for error trigger without last response
                 {
-                    resp = dict->FindResponse(self, area->area,trigger_error,0,-1,currentClient);
+                    resp = dict->FindResponse(self, area->area,trigger_error,0,-1,currentClient, questID);
                     if (resp)
                     {
                         // Force setting of type Error if error trigger found
@@ -621,9 +621,34 @@ NpcResponse *psNPCDialog::FindOrGeneralizeTrigger(Client *client,NpcTriggerSente
 
 NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
 {
-    NpcResponse *resp;
+    NpcResponse *resp = NULL;
     NpcTriggerSentence trigger,generalized;
     psString pstext(text);
+	int questIDHint = -1;
+
+	// Cut the first { } as quest hint, if it's there.
+	if(pstext.GetAt(0) == '{')
+	{
+		// As the starting element was found search the closing one.
+		size_t endPos = pstext.Find("}");
+		if(endPos != (size_t)-1)
+		{
+			csString id = pstext.Slice(1, endPos - 1);
+			// Quest id can only be positive.
+			unsigned long value = strtoul(id.GetData(), NULL, 0);
+
+			// Assign to the questIDHint and check for overflow attempts
+			questIDHint = value;
+			if(questIDHint < -1) 
+			{
+				questIDHint = -1;
+			}
+
+			// Remove the special command from the trigger.
+			pstext = pstext.Slice(endPos + 1);
+		}
+	}
+
     //limit text to the maximum allocated in wordnet.
     pstext.Truncate(WORDBUF); 
     
@@ -659,7 +684,19 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
     dict->CheckForTriggerGroup(copy);  // substitute master trigger if this is child trigger in group
 
 	// This is the generic version that does not use WordNet
-	resp = FindResponse(copy, trigger.GetString());
+	// First check with the hint, then check without the hint, no need to check also in the next part
+	// as these should be precise hits as generated from the menu.
+	if(questIDHint >= 0)
+	{
+		resp = FindResponse(copy, trigger.GetString(), questIDHint);
+	}
+
+	// If there is no hint, or the quest hint yielded nothing try without the hint.
+	if(!resp)
+	{
+		resp = FindResponse(copy, trigger.GetString());
+	}
+
 	
     // Try each word (in reverse order) of the trigger by itself before giving up
     if (!resp)
@@ -710,7 +747,7 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
     }
 }
 
-NpcResponse *psNPCDialog::FindXMLResponse(Client *client, csString trigger)
+NpcResponse *psNPCDialog::FindXMLResponse(Client *client, csString trigger, int questID)
 {
     if(!client)
     {
@@ -723,7 +760,7 @@ NpcResponse *psNPCDialog::FindXMLResponse(Client *client, csString trigger)
         currentClient = client;
     }
 
-    return FindResponse(trigger, trigger.GetDataSafe());
+    return FindResponse(trigger, trigger.GetDataSafe(), questID);
 }
 
 NpcResponse *psNPCDialog::RepeatedResponse(const psString& text, NpcResponse *resp, csTicks when, int times)

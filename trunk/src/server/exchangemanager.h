@@ -372,7 +372,7 @@ private:
 class PlayerToNPCExchange : public Exchange
 {
 public:
-    PlayerToNPCExchange(Client* starter, gemObject* target, bool automaticExchange, csRef<ExchangeManager> manager);
+    PlayerToNPCExchange(Client* starter, gemObject* target, bool automaticExchange, int questID, csRef<ExchangeManager> manager);
     virtual ~PlayerToNPCExchange();
     gemObject * GetTargetGEM();
     bool CheckExchange(uint32_t clientNum, bool checkRange=false);
@@ -394,6 +394,7 @@ protected:
     bool CheckXMLResponse(Client * client, psNPCDialog *dlg, csString trigger);
 
     gemObject* target;
+    bool questID;
 };
 
 /* Maintains a list of all the exchanges that are ongoing.
@@ -407,7 +408,7 @@ public:
 
     static bool ExchangeCheck(Client * client, gemObject * target, csString * errorMessage = NULL);
     
-    void StartExchange( Client* client, bool withPlayer, bool automaticExchange = false );
+    void StartExchange( Client* client, bool withPlayer, bool automaticExchange = false, int questID = -1);
 
     void HandleExchangeRequest(MsgEntry *me,Client *client);
     void HandleExchangeAccept (MsgEntry *me,Client *client);

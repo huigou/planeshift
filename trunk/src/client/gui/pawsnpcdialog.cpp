@@ -49,6 +49,7 @@ pawsNpcDialogWindow::pawsNpcDialogWindow() : targetEID(0)
     ticks = 0;
     cameraMode = 0;
     loadOnce = 0;
+    questIDFree = -1;
     enabledChatBubbles = true;
     clickedOnResponseBubble = false;
     gotNewMenu = false;
@@ -137,9 +138,11 @@ bool pawsNpcDialogWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modi
                 }
 
                 //try checking if there is free text instead
-                if(answer == "")
+                if(answer == "" && text != "")
                 {
-                    answer = text;
+                    if(questIDFree != -1) answer.Format("{%d} ", questIDFree);
+                    answer += text;
+                    questIDFree = -1;
                 }
 
                 if(answer != "")
@@ -147,9 +150,30 @@ bool pawsNpcDialogWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modi
                     csString cmd;
                     if(answer.GetAt(0) == '=')  // prompt window signal
                     {
-                        pawsStringPromptWindow::Create(csString(answer.GetData()+1),
+                        // cut the questID and convert it to a number as it's needed by the prompt window management
+                        size_t pos = answer.FindFirst("{");
+                        size_t endPos = answer.FindFirst("}");
+                        int questID = -1;
+                        if(pos != SIZET_NOT_FOUND)
+                        {
+                            unsigned long value = strtoul(answer.GetData() + pos + 1, NULL, 0);
+                            questID = value;
+                            // check for overflows
+	                		if(questID < -1) 
+                			{
+                                questID = -1;
+                            }
+
+                            endPos += 1;
+                        }
+                        else
+                        {
+                            endPos = 1;
+                        }
+
+                        pawsStringPromptWindow::Create(csString(answer.GetData()+endPos),
                                                        csString(""),
-                                                       false, 320, 30, this, answer.GetData()+1);
+                                                       false, 320, 30, this, answer.GetData()+endPos, questID);
                     }
                     else
                     {
@@ -198,6 +222,21 @@ bool pawsNpcDialogWindow::OnButtonPressed(int button, int keyModifier, pawsWidge
                 // we clicked on a free text question, leave only free text box
                 if(trigger.GetAt(0) == '=')
                 {
+                    // cut the questID and convert it to a number as it's needed by the prompt window management
+                    size_t pos = trigger.FindFirst("{");
+                    int questID = -1;
+                    if(pos != SIZET_NOT_FOUND)
+                    {
+                        unsigned long value = strtoul(trigger.GetData() + pos + 1, NULL, 0);
+                        questID = value;
+                        // check for overflows
+                		if(questID < -1) 
+            			{
+                            questID = -1;
+                        }
+                    }
+
+                    questIDFree = questID;
                     ShowOnlyFreeText();
                     PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
                     gotNewMenu = true;
@@ -389,9 +428,30 @@ void pawsNpcDialogWindow::OnListAction(pawsListBox* widget, int status)
         csString cmd;
         if(trigger.GetAt(0) == '=')  // prompt window signal
         {
-            pawsStringPromptWindow::Create(csString(trigger.GetData()+1),
+            // cut the questID and convert it to a number as it's needed by the prompt window management
+            size_t pos = trigger.FindFirst("{");
+            size_t endPos = trigger.FindFirst("}");
+            int questID = -1;
+            if(pos != SIZET_NOT_FOUND)
+            {
+                unsigned long value = strtoul(trigger.GetData() + pos + 1, NULL, 0);
+                questID = value;
+                // check for overflows
+	    		if(questID < -1) 
+    			{
+                    questID = -1;
+                }
+
+                endPos += 1;
+            }
+            else
+            {
+                endPos = 1;
+            }
+
+            pawsStringPromptWindow::Create(csString(trigger.GetData()+endPos),
                                            csString(""),
-                                           false, 320, 30, this, trigger.GetData()+1);
+                                           false, 320, 30, this, trigger.GetData()+endPos, questID);
         }
         else
         {
@@ -549,12 +609,20 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
         if(where != SIZET_NOT_FOUND)  // we have a prompt choice
         {
             pawsTextBox* hidden = (pawsTextBox*)responseList->GetRow(i)->GetColumn(1);
-            if(where != SIZET_NOT_FOUND)
+            if(hidden)
             {
-                str.DeleteAt(where,1); // take out the ?
+                csString id = "=";
+
+                // compatibility with old servers.
+                if(csString(hidden->GetText()).Find("{") != SIZET_NOT_FOUND)
+                {
+                    id += hidden->GetText();
+                }
+
+                str.DeleteAt(where,2); // take out the ?=
+                id += str.GetData();
                 // Save the question prompt, starting with the =, in the hidden column
-                hidden->SetText(str.GetData() + where);
-                str.DeleteAt(where,1); // take out the =
+                hidden->SetText(id.GetData());
 
                 // now change the visible menu choice to something better
                 pawsTextBox* prompt = (pawsTextBox*)responseList->GetRow(i)->GetColumn(0);
@@ -575,16 +643,24 @@ void pawsNpcDialogWindow::AdjustForPromptWindow()
         size_t where = str.Find("?=");
         if(where != SIZET_NOT_FOUND)
         {
-            str.DeleteAt(where,1);
-            qi.trig = csString(str.GetData() + where);
-            str.DeleteAt(where,1);
+            csString id = "=";
+            // compatibility with old servers.
+            if(qi.trig.Find("{") != SIZET_NOT_FOUND)
+            {
+                id += qi.trig;
+            }
+
+            str.DeleteAt(where,2); // take out the ?=
+            id += str;
+            // Save the question prompt, starting with the =, in the hidden column
+            qi.trig = id;
             str.Insert(where,"I know the answer to : ");
             qi.text = str;
         }
     }
 }
 
-void pawsNpcDialogWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
+void pawsNpcDialogWindow::OnStringEntered(const char* name, int param, const char* value)
 {
     //The user cancelled the operation. So show again the last window and do nothing else.
     if(value == NULL)
@@ -596,7 +672,15 @@ void pawsNpcDialogWindow::OnStringEntered(const char* name, int /*param*/, const
     Debug3(LOG_QUESTS, 0,"Got name=%s, value=%s\n", name, value);
 
     csString cmd;
-    cmd.Format("/tellnpc %s", value);
+    if(param != -1)
+    {
+        cmd.Format("/tellnpc {%d} %s", param, value);
+    }
+    else
+    {
+        cmd.Format("/tellnpc %s", value);
+    }
+
     psengine->GetCmdHandler()->Publish(cmd);
     DisplayTextInChat(value);
     ticks = csGetTicks(); // reset time, so we can wait for the next server response
@@ -732,6 +816,7 @@ void pawsNpcDialogWindow::Hide()
     {
         textBox->Clear();
         CleanBubbles();
+        questIDFree = -1;
         psengine->GetPSCamera()->LockCameraMode(false);
         psengine->GetCharManager()->LockTarget(false);
         //psengine->GetChatBubbles()->setEnabled(enabledChatBubbles);
