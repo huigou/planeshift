@@ -998,10 +998,12 @@ protected:
     bool         attackInvisible;
     bool         attackInvincible;
     csString     stance;
-    bool         tribe;
+    csString     attackMostHatedTribeTarget; ///< Melee operation "tribe" attribute. When set to true the
+                                             ///< melee operation will use the most hated of all the tribe
+                                             ///< members when deciding target.
 public:
 
-    MeleeOperation(): ScriptOperation("Melee") { attacked_ent=NULL; seek_range=0; melee_range=0; tribe=false; }
+    MeleeOperation(): ScriptOperation("Melee") { attacked_ent=NULL; seek_range=0; melee_range=0;}
     virtual ~MeleeOperation() {}
 
     virtual bool Load(iDocumentNode* node);

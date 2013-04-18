@@ -538,11 +538,11 @@ public:
 
     /** Replace NPC Variables/keywords in the string
      *
-     * Replace $race,$target,$tribe,$owner,$name.
+     * Check for a boolean result of the replace.
      *
      * @param npc    The npc to take the variables from
      * @param object The string to replace the keywords from
-     * @return true if result is true or yes.
+     * @return true if result from replace is "true" or "yes".
      */
     static bool ReplaceNPCVariablesBool(NPC* npc, const csString& object);
 
