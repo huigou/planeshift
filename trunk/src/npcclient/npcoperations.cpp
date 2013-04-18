@@ -3201,7 +3201,12 @@ bool MeleeOperation::Load(iDocumentNode *node)
         stance = "normal";
     }
 
-    tribe = node->GetAttributeValueAsBool("tribe",false);
+    attackMostHatedTribeTarget = node->GetAttributeValue("tribe");
+    // Default to only look for own hated entities.
+    if (attackMostHatedTribeTarget.IsEmpty())
+    {
+        attackMostHatedTribeTarget = "false";
+    }
 
     return true;
 }
@@ -3215,7 +3220,7 @@ ScriptOperation *MeleeOperation::MakeCopy()
     op->attackInvisible = attackInvisible;
     op->attackInvincible = attackInvincible;
     op->stance = stance;
-    op->tribe = tribe;
+    op->attackMostHatedTribeTarget = attackMostHatedTribeTarget;
     attacked_ent = NULL;
     return op;
 }
@@ -3227,6 +3232,7 @@ ScriptOperation::OperationResult MeleeOperation::Run(NPC *npc, bool interrupted)
              (attackInvincible?" Invincible":""));
 
     bool outsideRegion = psGameObject::ReplaceNPCVariablesBool(npc, attackOutsideRegion);
+    bool tribe = psGameObject::ReplaceNPCVariablesBool(npc, attackMostHatedTribeTarget);
 
     if (tribe && npc->GetTribe())
     {
@@ -3258,6 +3264,7 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC *n
     gemNPCActor* ent;
 
     bool outsideRegion = psGameObject::ReplaceNPCVariablesBool(npc, attackOutsideRegion);
+    bool tribe = psGameObject::ReplaceNPCVariablesBool(npc, attackMostHatedTribeTarget);
 
     if (tribe && npc->GetTribe())
     {
