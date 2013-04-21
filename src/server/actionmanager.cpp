@@ -281,7 +281,9 @@ bool ActionManager::HandleSelectQuery(csRef<iDocumentNode> topNode, Client* clie
     csArray<psActionLocation*> matches;
     psActionLocation* actionLocation;
 
-    csHash<psActionLocation*>::Iterator iter(actionLocationList.GetIterator(csHashCompute(triggerType + sectorName + meshName)));
+
+    csString hashKey = triggerType + sectorName + meshName;
+    csHash<psActionLocation*>::Iterator iter(actionLocationList.GetIterator(csHashCompute(hashKey)));
     while(iter.HasNext())
     {
         actionLocation = iter.Next();
@@ -518,7 +520,9 @@ void ActionManager::HandleSaveMessage(csString xml, Client* client)
             }
 
             // Remove from Cache
-            actionLocationList.Delete(csHashCompute(action->triggertype + action->sectorname + action->meshname), action);
+
+            csString hashKey = action->GetTriggerTypeAsString() + action->sectorname + action->meshname;
+            actionLocationList.Delete(csHashCompute(hashKey), action);
             actionLocation_by_name.Delete(csHashCompute(action->name), action);
             actionLocation_by_sector.Delete(csHashCompute(action->sectorname), action);
             actionLocation_by_id.Delete(action->id, action);
@@ -597,7 +601,7 @@ void ActionManager::HandleDeleteMessage(csString xml, Client* client)
         if(actionLocation->Delete())
         {
             // Remove from Cache
-            actionLocationList.Delete(csHashCompute(actionLocation->triggertype + actionLocation->sectorname + actionLocation->meshname), actionLocation);
+            actionLocationList.Delete(csHashCompute(actionLocation->GetTriggerTypeAsString() + actionLocation->sectorname + actionLocation->meshname), actionLocation);
             actionLocation_by_name.Delete(csHashCompute(actionLocation->name), actionLocation);
             actionLocation_by_sector.Delete(csHashCompute(actionLocation->sectorname), actionLocation);
             actionLocation_by_id.Delete(actionLocation->id, actionLocation);
@@ -862,7 +866,8 @@ bool ActionManager::CacheActionLocation(psActionLocation* action)
     // Create location and add to hash lists
     if(EntityManager::GetSingleton().CreateActionLocation(action, false))
     {
-        actionLocationList.Put(csHashCompute(action->triggertype + action->sectorname + action->meshname), action);
+        csString hashKey = action->GetTriggerTypeAsString() + action->sectorname + action->meshname;
+        actionLocationList.Put(csHashCompute(hashKey), action);
         actionLocation_by_name.Put(csHashCompute(action->name), action);
         actionLocation_by_sector.Put(csHashCompute(action->sectorname), action);
         actionLocation_by_id.Put(action->id, action);
