@@ -1124,17 +1124,21 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
             {
                 // Check if all prerequisites are true, and available(no lockout)
                 if ( ((!resp->prerequisite || client->GetCharacterData()->CheckResponsePrerequisite(resp) ) && //checks if prerequisites are in order
-                     (!resp->quest || ((questID == -1 || resp->quest->GetID() == questID) && resp->quest->Active() &&  // checks if the quest is the wanted one.
+                     (!resp->quest || (resp->quest->Active() &&  // checks if the quest is active.
                      client->GetCharacterData()->GetQuestMgr().CheckQuestAvailable(resp->quest,npc->GetPID()))))  //checks if the player can get the quest
                      /*overrides the above while mantaining quest consistency in case of questtester */
                    ||(client->GetCharacterData()->GetActor() && client->GetCharacterData()->GetActor()->questtester &&
                      (!resp->quest || !resp->quest->GetParentQuest())))
                 {
-                    Debug2(LOG_QUESTS,client->GetClientNum(),"Pushing quest response: %d",resp->id);
-                    // This is a available response that is connected to a available quest
-                    haveAvail = true;
-                    if (availableResponseList)
-                        availableResponseList->Push(resp->id);
+                    // Check if the quest is the wanted one. It's checked here to avoid questtester to get in the middle.
+                    if(!resp->quest || (questID == -1 || resp->quest->GetID() == questID))
+                    {
+                        Debug2(LOG_QUESTS,client->GetClientNum(),"Pushing quest response: %d",resp->id);
+                        // This is a available response that is connected to a available quest
+                        haveAvail = true;
+                        if (availableResponseList)
+                            availableResponseList->Push(resp->id);
+                    }
                 }
             }
             else
