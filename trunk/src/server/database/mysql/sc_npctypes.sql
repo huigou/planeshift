@@ -576,6 +576,12 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
    <melee seek_range="20" melee_range="3" />
 </behavior>
 
+<behavior name="Fight" completion_decay="-1">
+   <locate obj="target" range="20" />
+   <rotate type="locatedest" anim="walk" ang_vel="120" />
+   <melee seek_range="20" melee_range="3" />
+</behavior>
+
 <behavior name="Chase" initial="0" growth="0" decay="1" complection_decay="-1" >
    <chase type="target" chase_range="20" anim="run" vel="5" />
 </behavior>
@@ -862,6 +868,47 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
    <talk text="I am living a tribe." target="false" />
 </behavior>
 
+<behavior name="LocateNewTarget" completion_decay="-1" >
+   <locate obj="friend" static="no" destination="Target" range="20" />
+</behavior>
+
+<behavior name="HuntNPC" completion_decay="100" resume="yes">
+   <talk text="Going hunting NPCs" target="false" />
+
+   <!-- Go to work -->
+   <locate obj="tribe:memory:npc_battlefield"  random="yes"  destination="Move" />
+   <percept event="move" />
+
+   <!-- Kill´em all -->
+   <talk text="Killing some NPCs. INTO BATTLE!" target="false" /> 
+   <loop iterations="1" >
+      <locate obj="friend"  range="20" failure="LocateNewTarget" />
+      <hate_list delta="1.0" />
+      <percept event="fight" />
+   </loop>
+
+   <!-- Go home -->
+   <!-- 
+   <talk text="Going home now." target="false" />
+   <locate obj="tribe:home" static="no" destination="Move" />
+   <percept event="move" />
+   -->
+</behavior>
+
+<behavior name="Loot" initial="0" growth="0" completion_decay="-1" >
+   <talk text="Looting..." target="false" />
+   <locate obj="dead" range="3" />
+   <loot type="all" />
+</behavior>
+
+<behavior name="GiveItemTribe" initial="0" growth="0" completion_decay="-1" decay="0" >
+    <talk text="Giving $perception_type to tribe..." target="false" />
+    <transfer item="$perception_type" target="tribe" />
+</behavior>
+
+<react event="inventory:added"          behavior="GiveItemTribe"/> <!-- use some delta? -->
+<react event="death"                    behavior="Loot" range="5" />
+<react event="fight"                    behavior="Fight" />
 <react event="collision"                behavior="Turn" />
 <react event="tribe:breed"              behavior="Breed" />
 <react event="tribe:build"              behavior="GoBuild" />
@@ -869,6 +916,7 @@ INSERT INTO sc_npctypes VALUES("109","AbstractTribesman","DoNothing,Move",0,"","
 <react event="tribe:buy"                behavior="Buy" />
 <react event="tribe:explore"            behavior="Explore" />
 <react event="tribe:hunt"               behavior="HuntResource"  />
+<react event="tribe:huntnpc"            behavior="HuntNPC" />
 <react event="tribe:mine"               behavior="MineResource" />
 <react event="tribe:resurrect"          behavior="Resurrect" when_dead="yes" />
 <react event="tribe:test_mine"          behavior="TestMineResource"  />
@@ -1316,10 +1364,10 @@ INSERT INTO sc_npctypes VALUES("142","FightNearestNPC","DoNothing,InRegion,Fight
    <locate obj="friend"  range="10" />
    <hate_list delta="1.0" />
    <rotate type="locatedest" anim="walk" ang_vel="120" />
-   <melee seek_range="10" melee_range="2.5" stance="normal" invincible="true" />
+   <melee seek_range="20" melee_range="2.5" stance="normal" />
 </behavior>
 
-<behavior name="Loot" initial="0" growth="0" completion_decay="200" >
+<behavior name="Loot" initial="0" growth="0" completion_decay="-1" >
    <locate obj="dead" range="3" />
    <loot type="all" />
 </behavior>
@@ -1330,4 +1378,4 @@ INSERT INTO sc_npctypes VALUES("142","FightNearestNPC","DoNothing,InRegion,Fight
 <react event="damage"              behavior="FightNearestNPC" delta="20" weight="2" /> <!-- Add double damage to hate list -->
 
 <react event="death"               behavior="FightNearestNPC" absolute="0" />
-<react event="death"               behavior="Loot" absolute="200" range="5" />');
+<react event="death"               behavior="Loot" range="5" />');

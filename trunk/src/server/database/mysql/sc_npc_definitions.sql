@@ -67,7 +67,7 @@ INSERT INTO sc_npc_definitions VALUES("89","Fighter10","Fighter10","NPC Room Nor
 INSERT INTO sc_npc_definitions VALUES("90","Fighter11","Fighter11","NPC Room North Meadow","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("91","Fighter12","Fighter12","NPC Room North Meadow","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("92","SpellMaster2","SpellMaster2","","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("100","NPC Fighter 1","FightNearestNPC","NPC Field Attacking nearest","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("101","NPC Fighter 2","FightNearestNPC","NPC Field Attacking nearest","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("102","NPC Fighter 3","FightNearestNPC","NPC Field Attacking nearest","0.00","0.00","0","N","N");
-INSERT INTO sc_npc_definitions VALUES("103","NPC Fighter 4","FightNearestNPC","NPC Field Attacking nearest","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("100","NPC Fighter 1","FightNearestNPC","npc_battlefield","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("101","NPC Fighter 2","FightNearestNPC","npc_battlefield","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("102","NPC Fighter 3","FightNearestNPC","npc_battlefield","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("103","NPC Fighter 4","FightNearestNPC","npc_battlefield","0.00","0.00","0","N","N");

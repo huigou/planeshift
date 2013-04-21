@@ -1550,31 +1550,13 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 iSector* sector;
                 csVector3 pos;
                 psGameObject::GetPosition(owner, pos, sector);
-
-                /* TODO: Create a inventory for each NPC.
-                if (inserted)
-                {
-                    npc->InventoryAdd(item_name);
-                }
-                else
-                {
-                    npc->InventoryRemove(item_name);
-                }
-                */
+                
                 csString str;
                 str.Format("inventory:%s",(inserted?"added":"removed"));
 
                 InventoryPerception pcpt(str, item_name, count, pos, sector, 5.0);
-
                 npc->TriggerEvent(&pcpt);
 
-                // Hack: To get inventory to tribe. Need some more general way of
-                //       delivery of perceptions to tribes....
-                if(npc->GetTribe())
-                {
-                    npc->GetTribe()->HandlePerception(npc,&pcpt);
-                }
-                // ... end of hack.
                 break;
             }
 
