@@ -160,6 +160,8 @@ public:
     void SetSectorName(const csString & newsector) { sectorname = newsector; }
     void SetMeshName(const csString & newmeshname) { meshname = newmeshname; }
     void SetTriggerType(const TriggerType & newtrigger) { triggertype = newtrigger; }
+    TriggerType GetTriggerType() const { return triggertype; }
+    const char* GetTriggerTypeAsString() const { return TriggerTypeStr[triggertype]; } 
     void SetResponseType(const csString & newresponsetype) { responsetype = newresponsetype; }
     void SetResponse(const csString & newresponse) { response = newresponse; }
     void SetPosition(csVector3 newposition) { position = newposition; }
