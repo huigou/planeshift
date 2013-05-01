@@ -489,7 +489,7 @@ NpcResponse *NPCDialogDict::FindResponse(gemNPC * npc,
     csArray<int> availableResponseList;
 
     // Check if not all responses is blocked(Not available in quests, Prequests not fullfitted,...)
-    if (!trig || !trig->HaveAvailableResponses(client,npc,this,&availableResponseList))
+    if (!trig || !trig->HaveAvailableResponses(client,npc,this,&availableResponseList, questID))
     {
         Debug1(LOG_NPC, client ? client->GetClientNum() : 0,"NPCDialogDict::FindResponse no available responses found");
         return NULL;
@@ -1131,7 +1131,9 @@ bool NpcTrigger::HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialog
                      (!resp->quest || !resp->quest->GetParentQuest())))
                 {
                     // Check if the quest is the wanted one. It's checked here to avoid questtester to get in the middle.
-                    if(!resp->quest || (questID == -1 || resp->quest->GetID() == questID))
+                    if(!resp->quest || (questID == -1 || // Check if quest is there and that the client provided an hint.
+                      (resp->quest->GetParentQuest() && resp->quest->GetParentQuest()->GetID() == questID) || // Check if it's a subquest.
+                       resp->quest->GetID() == questID)) // Check as main quest.
                     {
                         Debug2(LOG_QUESTS,client->GetClientNum(),"Pushing quest response: %d",resp->id);
                         // This is a available response that is connected to a available quest
