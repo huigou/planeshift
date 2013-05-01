@@ -394,7 +394,7 @@ protected:
     bool CheckXMLResponse(Client * client, psNPCDialog *dlg, csString trigger);
 
     gemObject* target;
-    bool questID;
+    int questID;
 };
 
 /* Maintains a list of all the exchanges that are ongoing.
