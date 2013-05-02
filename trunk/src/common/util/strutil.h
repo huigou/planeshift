@@ -111,7 +111,9 @@ public:
         const char* toConvert = Get(wordNum).GetDataSafe();
         char* endPtr = const_cast<char*>(toConvert);
 
-        errno = 0; /* To distinguish success/failure after call */
+        // TOFIX: gives the following error on windows:
+        //        error C2106: '=' : left operand must be l-value
+        //errno = 0; /* To distinguish success/failure after call */
         strtol(toConvert, &endPtr, 10);  // 10 base
 
         // Check for error situations
@@ -158,10 +160,12 @@ public:
     bool IsFloat(size_t wordNum) const
     {
         const char* toConvert = Get(wordNum).GetDataSafe();
-        char* endPtr = const_cast<char*>(toConvert);
+        const char* endPtr = const_cast<char*>(toConvert);
 
-        errno = 0; /* To distinguish success/failure after call */
-        strtof(toConvert, &endPtr);
+        // TOFIX: gives the following error on windows:
+        //        error C2106: '=' : left operand must be l-value
+        // errno = 0; /* To distinguish success/failure after call */
+        CS::Utility::strtof(toConvert, &endPtr);
 
         // Check for error situations
         if (errno != 0) return false;
