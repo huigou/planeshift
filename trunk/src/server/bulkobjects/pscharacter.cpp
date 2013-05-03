@@ -79,7 +79,7 @@
 #define ENABLE_MAX_CAPACITY 0
 
 
-const char *psCharacter::characterTypeName[] = { "player", "npc", "pet", "mount", "mountpet" };
+const char* psCharacter::characterTypeName[] = { "player", "npc", "pet", "mount", "mountpet" };
 
 csWeakRef<MathScript> psCharacter::maxRealmScript        = NULL;
 csWeakRef<MathScript> psCharacter::staminaCalc           = NULL;
@@ -101,16 +101,16 @@ csWeakRef<MathScript> psCharacter::baseSkillValuesGet    = NULL;
 PoolAllocator<psCharacter> psCharacter::characterpool;
 
 
-void *psCharacter::operator new(size_t allocSize)
+void* psCharacter::operator new(size_t allocSize)
 {
 // Debug3(LOG_CHARACTER,"%i %i", allocSize,sizeof(psCharacter));
 //    CS_ASSERT(allocSize<=sizeof(psCharacter));
-    return (void *)characterpool.CallFromNew();
+    return (void*)characterpool.CallFromNew();
 }
 
-void psCharacter::operator delete(void *releasePtr)
+void psCharacter::operator delete(void* releasePtr)
 {
-    characterpool.CallFromDelete((psCharacter *)releasePtr);
+    characterpool.CallFromDelete((psCharacter*)releasePtr);
 }
 
 psCharacter::psCharacter() : inventory(this),
@@ -133,7 +133,7 @@ psCharacter::psCharacter() : inventory(this),
     overrideMaxMana = 0.0f;
 
     name = lastname = fullName = " ";
-    SetSpouseName( "" );
+    SetSpouseName("");
     isMarried = false;
 
     race.SetCharacter(this);
@@ -148,7 +148,7 @@ psCharacter::psCharacter() : inventory(this),
     location.loc_yrot = 0.0f;
     spawnLoc = location;
 
-    for (int i=0;i<PSTRAIT_LOCATION_COUNT;i++)
+    for(int i=0; i<PSTRAIT_LOCATION_COUNT; i++)
         traits[i] = NULL;
 
     npcSpawnRuleId = -1;
@@ -162,7 +162,7 @@ psCharacter::psCharacter() : inventory(this),
     trainerInfo = NULL;
     trainer     = NULL;
     actor = NULL;
-    
+
     timeconnected = 0;
     startTimeThisSession = csGetTicks();
 
@@ -293,10 +293,10 @@ psCharacter::psCharacter() : inventory(this),
 
 psCharacter::~psCharacter()
 {
-    if (guildinfo)
+    if(guildinfo)
         guildinfo->Disconnect(this);
 
-    if (factions)
+    if(factions)
     {
         delete factions;
         factions = NULL;
@@ -305,24 +305,24 @@ psCharacter::~psCharacter()
     // First force and update of the DB of all QuestAssignments before deleting
     // every assignment.
     questManager.UpdateQuestAssignments(true);
-    
+
     delete vitals;
     vitals = NULL;
 
 //    delete workInfo;
 }
 
-void psCharacter::SetActor( gemActor* newActor )
+void psCharacter::SetActor(gemActor* newActor)
 {
     actor = newActor;
-    if (actor)
+    if(actor)
     {
         inventory.RunEquipScripts();
         inventory.CalculateLimits();
     }
 }
 
-bool psCharacter::Load(iResultRow& row)
+bool psCharacter::Load(iResultRow &row)
 {
 
     // TODO:  Link in account ID?
@@ -333,14 +333,14 @@ bool psCharacter::Load(iResultRow& row)
     questManager.Initialize(this);
 
     accountid = AccountID(row.GetInt("account_id"));
-    SetCharType( row.GetUInt32("character_type") );
+    SetCharType(row.GetUInt32("character_type"));
 
     SetFullName(row["name"], row["lastname"]);
-    SetOldLastName( row["old_lastname"] );
+    SetOldLastName(row["old_lastname"]);
 
     unsigned int raceid = row.GetUInt32("racegender_id");
-    psRaceInfo *raceinfo = psserver->GetCacheManager()->GetRaceInfoByID(raceid);
-    if (!raceinfo)
+    psRaceInfo* raceinfo = psserver->GetCacheManager()->GetRaceInfoByID(raceid);
+    if(!raceinfo)
     {
         Error3("Character ID %s has unknown race id %s. Character loading failed.",row["id"],row["racegender_id"]);
         return false;
@@ -361,7 +361,7 @@ bool psCharacter::Load(iResultRow& row)
     SetOOCDescription(row["description_ooc"]); //loads the ooc description of the player
 
     SetCreationInfo(row["creation_info"]); //loads the info gathered in the creation in order to allow the player
-                                           //to review them
+    //to review them
 
     SetLifeDescription(row["description_life"]); //Loads the life events added by players
 
@@ -422,11 +422,11 @@ bool psCharacter::Load(iResultRow& row)
     {
         GetMaxMana().SetBase(row.GetFloat("base_mana_max"));
     }
-    
+
     overrideMaxHp = GetMaxHP().Base();
     overrideMaxMana = GetMaxMana().Base();
 
-    if (!LoadSkills(use_id))
+    if(!LoadSkills(use_id))
     {
         Error2("Cannot load skills for Character %s. Character loading failed.", ShowID(pid));
         return false;
@@ -453,10 +453,10 @@ bool psCharacter::Load(iResultRow& row)
     mod = row.GetFloat("stamina_mental");
     SetStamina(mod < 0 ? GetMaxMStamina().Base() : mod,false);
 
-    if( GetHP() <= 0 )
-        SetHitPoints( GetMaxHP().Base() );
-    if( GetMana() <= 0 )
-        SetMana( GetMaxMana().Base() );
+    if(GetHP() <= 0)
+        SetHitPoints(GetMaxHP().Base());
+    if(GetMana() <= 0)
+        SetMana(GetMaxMana().Base());
 
     vitals->SetOrigVitals(); // This saves them as loaded state for restoring later without hitting db, npc death resurrect.
 
@@ -477,8 +477,8 @@ bool psCharacter::Load(iResultRow& row)
         row.GetInt("bank_money_hexas"),
         row.GetInt("bank_money_trias"));
 
-    psSectorInfo *sectorinfo=psserver->GetCacheManager()->GetSectorInfoByID(row.GetUInt32("loc_sector_id"));
-    if (sectorinfo==NULL)
+    psSectorInfo* sectorinfo=psserver->GetCacheManager()->GetSectorInfoByID(row.GetUInt32("loc_sector_id"));
+    if(sectorinfo==NULL)
     {
         Error3("Character %s has unresolvable sector id %lu.", ShowID(pid), row.GetUInt32("loc_sector_id"));
         return false;
@@ -489,7 +489,7 @@ bool psCharacter::Load(iResultRow& row)
                        row.GetFloat("loc_x"),
                        row.GetFloat("loc_y"),
                        row.GetFloat("loc_z"),
-                       row.GetFloat("loc_yrot") );
+                       row.GetFloat("loc_yrot"));
     if(csGetTicks() - start > 500)
     {
         csString status;
@@ -501,7 +501,7 @@ bool psCharacter::Load(iResultRow& row)
 
     // Guild fields here
     guildinfo = psserver->GetCacheManager()->FindGuild(row.GetUInt32("guild_member_of"));
-    if (guildinfo)
+    if(guildinfo)
         guildinfo->Connect(this);
 
     SetNotifications(row.GetInt("join_notifications"));
@@ -519,7 +519,7 @@ bool psCharacter::Load(iResultRow& row)
     timeconnected        = row.GetUInt32("time_connected_sec");
     startTimeThisSession = csGetTicks();
 
-    if (!LoadTraits(use_id))
+    if(!LoadTraits(use_id))
     {
         Error2("Cannot load traits for Character %s. Character loading failed.", ShowID(pid));
         return false;
@@ -534,15 +534,15 @@ bool psCharacter::Load(iResultRow& row)
     }
 
     // This data is loaded only if it's a player, not an NPC
-    if ( !IsNPC() && !IsPet() )
+    if(!IsNPC() && !IsPet())
     {
-        if (!questManager.LoadQuestAssignments())
+        if(!questManager.LoadQuestAssignments())
         {
             Error2("Cannot load quest assignments for Character %s. Character loading failed.", ShowID(pid));
             return false;
         }
 
-        if (!LoadGMEvents())
+        if(!LoadGMEvents())
         {
             Error2("Cannot load GM Events for Character %s. Character loading failed.", ShowID(pid));
             return false;
@@ -557,11 +557,11 @@ bool psCharacter::Load(iResultRow& row)
                       csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
-    if (use_id != pid)
+    if(use_id != pid)
     {
         // This has a master npc template, so load character specific items
         // from the master npc.
-        if (!inventory.Load(use_id))
+        if(!inventory.Load(use_id))
         {
             Error2("Cannot load character specific items for Character %s. Character loading failed.", ShowID(pid));
             return false;
@@ -579,7 +579,7 @@ bool psCharacter::Load(iResultRow& row)
                       csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
-    if (!LoadRelationshipInfo(pid)) // Buddies, Marriage Info, Familiars
+    if(!LoadRelationshipInfo(pid))  // Buddies, Marriage Info, Familiars
     {
         return false;
     }
@@ -605,7 +605,7 @@ bool psCharacter::Load(iResultRow& row)
     }
     // Load merchant info
     csRef<psMerchantInfo> merchant = csPtr<psMerchantInfo>(new psMerchantInfo());
-    if (merchant->Load(use_id))
+    if(merchant->Load(use_id))
     {
         merchantInfo = merchant;
     }
@@ -619,7 +619,7 @@ bool psCharacter::Load(iResultRow& row)
     }
     // Load trainer info
     csRef<psTrainerInfo> trainer = csPtr<psTrainerInfo>(new psTrainerInfo());
-    if (trainer->Load(use_id))
+    if(trainer->Load(use_id))
     {
         trainerInfo = trainer;
     }
@@ -631,7 +631,7 @@ bool psCharacter::Load(iResultRow& row)
                       csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
-    if (!LoadSpells(use_id))
+    if(!LoadSpells(use_id))
     {
         Error2("Cannot load spells for Character %s. Character loading failed.", ShowID(pid));
         return false;
@@ -656,7 +656,7 @@ bool psCharacter::Load(iResultRow& row)
     if(row.GetInt("banker") == 1)
         banker = true;
 
-     // Load if the character is a statue
+    // Load if the character is a statue
     if(row.GetInt("statue") == 1)
         isStatue = true;
 
@@ -664,24 +664,24 @@ bool psCharacter::Load(iResultRow& row)
     return true;
 }
 
-bool psCharacter::QuickLoad(iResultRow& row, bool noInventory)
+bool psCharacter::QuickLoad(iResultRow &row, bool noInventory)
 {
     pid = row.GetInt("id");
     SetFullName(row["name"], row["lastname"]);
 
     unsigned int raceid = row.GetUInt32("racegender_id");
-    psRaceInfo *raceinfo = psserver->GetCacheManager()->GetRaceInfoByID(raceid);
-    if (!raceinfo)
+    psRaceInfo* raceinfo = psserver->GetCacheManager()->GetRaceInfoByID(raceid);
+    if(!raceinfo)
     {
         Error3("Character ID %s has unknown race id %s.",row["id"],row["racegender_id"]);
         return false;
     }
 
-    if (!noInventory)
+    if(!noInventory)
     {
         SetRaceInfo(raceinfo);
 
-        if (!LoadTraits(pid))
+        if(!LoadTraits(pid))
         {
             Error2("Cannot load traits for Character %s.", ShowID(pid));
             return false;
@@ -700,25 +700,25 @@ bool psCharacter::LoadRelationshipInfo(PID pid)
     Result has_a(db->Select("SELECT a.*, b.name AS \"buddy_name\" FROM character_relationships a, characters b WHERE a.character_id = %u AND a.related_id = b.id order by a.character_id", pid.Unbox()));
     Result of_a(db->Select("SELECT a.*, b.name AS \"buddy_name\" FROM character_relationships a, characters b WHERE a.related_id = %u AND a.character_id = b.id order by a.related_id", pid.Unbox()));
 
-    if ( !LoadFamiliar( has_a, of_a ) )
+    if(!LoadFamiliar(has_a, of_a))
     {
         Error2("Cannot load familiar info for Character %s.", ShowID(pid));
         return false;
     }
 
-    if ( !LoadMarriageInfo( has_a ) )
+    if(!LoadMarriageInfo(has_a))
     {
-      Error2("Cannot load Marriage Info for Character %s.", ShowID(pid));
-      return false;
+        Error2("Cannot load Marriage Info for Character %s.", ShowID(pid));
+        return false;
     }
 
-    if ( !buddyManager.LoadBuddies( has_a, of_a ) )
+    if(!buddyManager.LoadBuddies(has_a, of_a))
     {
         Error2("Cannot load buddies for Character %s.", ShowID(pid));
         return false;
     }
 
-    if ( !LoadExploration( has_a ) )
+    if(!LoadExploration(has_a))
     {
         Error2("Cannot load exploration points for Character %s.", ShowID(pid));
         return false;
@@ -755,10 +755,10 @@ void psCharacter::UpdateFactions()
 bool psCharacter::LoadFactions(PID pid)
 {
     Result factions(db->Select("SELECT faction_id, value from character_factions where character_id = %u", pid.Unbox()));
-    
-    if (factions.IsValid())
+
+    if(factions.IsValid())
     {
-        for (unsigned long i = 0; i < factions.Count(); i++)
+        for(unsigned long i = 0; i < factions.Count(); i++)
         {
             //sets the faction, overwrites what could be there and doesn't set the dirty flag
             GetFactions()->UpdateFactionStanding(factions[i].GetUInt32("faction_id"), factions[i].GetUInt32("value"), false, true);
@@ -777,7 +777,7 @@ void psCharacter::UpdateVariables()
     csHash<charVariable, csString>::GlobalIterator iter(charVariables.GetIterator());
     while(iter.HasNext())
     {
-        charVariable& variable = iter.Next();
+        charVariable &variable = iter.Next();
         if(variable.dirty)
         {
             db->CommandPump("INSERT INTO character_variables "
@@ -795,10 +795,10 @@ void psCharacter::UpdateVariables()
 bool psCharacter::LoadVariables(PID pid)
 {
     Result variables(db->Select("SELECT name, value from character_variables where character_id = %u", pid.Unbox()));
-    
-    if (variables.IsValid())
+
+    if(variables.IsValid())
     {
-        for (unsigned long i = 0; i < variables.Count(); i++)
+        for(unsigned long i = 0; i < variables.Count(); i++)
         {
             charVariables.PutUnique(variables[i]["name"], charVariable(variables[i]["name"], variables[i]["value"]));
         }
@@ -810,9 +810,9 @@ bool psCharacter::LoadVariables(PID pid)
 void psCharacter::LoadIntroductions()
 {
     Result r = db->Select("SELECT * FROM introductions WHERE charid=%d", pid.Unbox());
-    if (r.IsValid())
+    if(r.IsValid())
     {
-        for (unsigned long i = 0; i < r.Count(); i++)
+        for(unsigned long i = 0; i < r.Count(); i++)
         {
             unsigned int charID = r[i].GetUInt32("introcharid");
             // Safe to skip test because the DB disallows duplicate rows
@@ -823,26 +823,26 @@ void psCharacter::LoadIntroductions()
 
 
 
-bool psCharacter::LoadMarriageInfo( Result& result)
+bool psCharacter::LoadMarriageInfo(Result &result)
 {
-    if ( !result.IsValid() )
+    if(!result.IsValid())
     {
         Error3("Could not load marriage info for %s: %s", ShowID(pid), db->GetLastError());
         return false;
     }
 
-    for ( unsigned int x = 0; x < result.Count(); x++ )
+    for(unsigned int x = 0; x < result.Count(); x++)
     {
 
-        if ( strcmp( result[x][ "relationship_type" ], "spouse" ) == 0 )
+        if(strcmp(result[x][ "relationship_type" ], "spouse") == 0)
         {
             const char* spouseName = result[x]["spousename"];
-            if ( spouseName == NULL )
+            if(spouseName == NULL)
                 return true;
 
-            SetSpouseName( spouseName );
+            SetSpouseName(spouseName);
 
-            Notify2( LOG_MARRIAGE, "Successfully loaded marriage info for %s", name.GetData() );
+            Notify2(LOG_MARRIAGE, "Successfully loaded marriage info for %s", name.GetData());
             break;
         }
     }
@@ -850,40 +850,40 @@ bool psCharacter::LoadMarriageInfo( Result& result)
     return true;
 }
 
-bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
+bool psCharacter::LoadFamiliar(Result &pet, Result &owner)
 {
     ownerId = 0;
 
-    if ( !pet.IsValid() )
+    if(!pet.IsValid())
     {
         Error3("Could not load pet info for %s: %s", ShowID(pid), db->GetLastError());
         return false;
     }
 
-    if ( !owner.IsValid() )
+    if(!owner.IsValid())
     {
         Error3("Could not load owner info for character %s: %s", ShowID(pid), db->GetLastError());
         return false;
     }
 
     unsigned int x;
-    for ( x = 0; x < pet.Count(); x++ )
+    for(x = 0; x < pet.Count(); x++)
     {
 
-        if ( strcmp( pet[x][ "relationship_type" ], "familiar" ) == 0 )
+        if(strcmp(pet[x][ "relationship_type" ], "familiar") == 0)
         {
-            familiarsId.Push(pet[x].GetInt( "related_id" ));
-            Notify2( LOG_PETS, "Successfully loaded familiar for %s", name.GetData() );
+            familiarsId.Push(pet[x].GetInt("related_id"));
+            Notify2(LOG_PETS, "Successfully loaded familiar for %s", name.GetData());
         }
     }
 
-    for ( x = 0; x < owner.Count(); x++ )
+    for(x = 0; x < owner.Count(); x++)
     {
 
-        if ( strcmp( owner[x][ "relationship_type" ], "familiar" ) == 0 )
+        if(strcmp(owner[x][ "relationship_type" ], "familiar") == 0)
         {
-            ownerId = owner[x].GetInt( "character_id" );
-            Notify2( LOG_PETS, "Successfully loaded owner for %s", name.GetData() );
+            ownerId = owner[x].GetInt("character_id");
+            Notify2(LOG_PETS, "Successfully loaded owner for %s", name.GetData());
             break;
         }
     }
@@ -891,7 +891,7 @@ bool psCharacter::LoadFamiliar( Result& pet, Result& owner )
     return true;
 }
 
-bool psCharacter::LoadExploration(Result& exploration)
+bool psCharacter::LoadExploration(Result &exploration)
 {
     if(!exploration.IsValid())
     {
@@ -915,29 +915,31 @@ bool psCharacter::LoadGMEvents(void)
 {
     assignedEvents.runningEventID =
         psserver->GetGMEventManager()->GetAllGMEventsForPlayer(pid,
-                                                               assignedEvents.completedEventIDs,
-                                                               assignedEvents.runningEventIDAsGM,
-                                                               assignedEvents.completedEventIDsAsGM);
+                assignedEvents.completedEventIDs,
+                assignedEvents.runningEventIDAsGM,
+                assignedEvents.completedEventIDsAsGM);
     return true;  // cant see how this can fail, but keep convention for now.
 }
 
-void psCharacter::SetLastLoginTime(const char *last_login, bool save )
+void psCharacter::SetLastLoginTime(const char* last_login, bool save)
 {
     csString timeStr;
 
-    if ( !last_login )
+    if(!last_login)
     {
         time_t curr=time(0);
         tm result;
-        tm* gmtm = gmtime_r(&curr,&result);
+        //TOFIX: gmtime is not thread safe, but windows uses gmtime_s() and linux gmtime_r()
+        //       so we need a wrapper function or similar
+        tm* gmtm = gmtime(&curr);
 
         timeStr.Format("%d-%02d-%02d %02d:%02d:%02d",
-                        gmtm->tm_year+1900,
-                        gmtm->tm_mon+1,
-                        gmtm->tm_mday,
-                        gmtm->tm_hour,
-                        gmtm->tm_min,
-                        gmtm->tm_sec);
+                       gmtm->tm_year+1900,
+                       gmtm->tm_mon+1,
+                       gmtm->tm_mday,
+                       gmtm->tm_hour,
+                       gmtm->tm_min,
+                       gmtm->tm_sec);
     }
     else
     {
@@ -949,13 +951,13 @@ void psCharacter::SetLastLoginTime(const char *last_login, bool save )
     if(guildinfo)
         guildinfo->UpdateLastLogin(this);
 
-    if ( save )
+    if(save)
     {
         //Store in database
-        if (!db->CommandPump("UPDATE characters SET last_login='%s' WHERE id='%d'", timeStr.GetData(), pid.Unbox()))
+        if(!db->CommandPump("UPDATE characters SET last_login='%s' WHERE id='%d'", timeStr.GetData(), pid.Unbox()))
         {
-             Error2( "Last login storage: DB Error: %s\n", db->GetLastError() );
-             return;
+            Error2("Last login storage: DB Error: %s\n", db->GetLastError());
+            return;
         }
     }
 }
@@ -969,14 +971,14 @@ bool psCharacter::LoadSpells(PID use_id)
 {
     // Load spells in asc since we use push to create the spell list.
     Result spells(db->Select("SELECT * FROM player_spells WHERE player_id=%u ORDER BY spell_slot ASC", use_id.Unbox()));
-    if (spells.IsValid())
+    if(spells.IsValid())
     {
         int i,count=spells.Count();
 
-        for (i=0;i<count;i++)
+        for(i=0; i<count; i++)
         {
-            psSpell * spell = psserver->GetCacheManager()->GetSpellByID(spells[i].GetInt("spell_id"));
-            if (spell != NULL)
+            psSpell* spell = psserver->GetCacheManager()->GetSpellByID(spells[i].GetInt("spell_id"));
+            if(spell != NULL)
                 AddSpell(spell);
             else
             {
@@ -994,22 +996,22 @@ bool psCharacter::LoadSkills(PID use_id)
     // Load skills
     Result skillResult(db->Select("SELECT * FROM character_skills WHERE character_id=%u", use_id.Unbox()));
 
-    for ( size_t z = 0; z < psserver->GetCacheManager()->GetSkillAmount(); z++ )
+    for(size_t z = 0; z < psserver->GetCacheManager()->GetSkillAmount(); z++)
     {
-        skills.SetSkillInfo( (PSSKILL)z, psserver->GetCacheManager()->GetSkillByID((PSSKILL)z), false );
+        skills.SetSkillInfo((PSSKILL)z, psserver->GetCacheManager()->GetSkillByID((PSSKILL)z), false);
     }
 
-    if (skillResult.IsValid())
+    if(skillResult.IsValid())
     {
         unsigned int i;
-        for (i=0;i<skillResult.Count();i++)
+        for(i=0; i<skillResult.Count(); i++)
         {
-            if (skillResult[i]["skill_id"]!=NULL)
+            if(skillResult[i]["skill_id"]!=NULL)
             {
                 PSSKILL skill = (PSSKILL)skillResult[i].GetInt("skill_id");
-                skills.SetSkillPractice(  skill, skillResult[i].GetInt("skill_Z") );
-                skills.SetSkillKnowledge( skill, skillResult[i].GetInt("skill_Y") );
-                skills.SetSkillRank(      skill, skillResult[i].GetInt("skill_Rank"), false );
+                skills.SetSkillPractice(skill, skillResult[i].GetInt("skill_Z"));
+                skills.SetSkillKnowledge(skill, skillResult[i].GetInt("skill_Y"));
+                skills.SetSkillRank(skill, skillResult[i].GetInt("skill_Rank"), false);
             }
         }
         skills.Calculate();
@@ -1024,13 +1026,13 @@ bool psCharacter::LoadTraits(PID use_id)
 {
     // Load traits
     Result traits(db->Select("SELECT * FROM character_traits WHERE character_id=%u", use_id.Unbox()));
-    if (traits.IsValid())
+    if(traits.IsValid())
     {
         unsigned int i;
-        for (i=0;i<traits.Count();i++)
+        for(i=0; i<traits.Count(); i++)
         {
-            psTrait *trait=psserver->GetCacheManager()->GetTraitByID(traits[i].GetInt("trait_id"));
-            if (!trait)
+            psTrait* trait=psserver->GetCacheManager()->GetTraitByID(traits[i].GetInt("trait_id"));
+            if(!trait)
             {
                 Error3("%s has unknown trait id %s.", ShowID(pid), traits[i]["trait_id"]);
             }
@@ -1043,31 +1045,31 @@ bool psCharacter::LoadTraits(PID use_id)
         return false;
 }
 
-void psCharacter::AddSpell(psSpell * spell)
+void psCharacter::AddSpell(psSpell* spell)
 {
     spellList.Push(spell);
 }
 
 void psCharacter::SetFullName(const char* newFirstName, const char* newLastName)
 {
-    if ( !newFirstName )
+    if(!newFirstName)
     {
-        Error1( "Null passed as first name..." );
+        Error1("Null passed as first name...");
         return;
     }
 
     // Error3( "SetFullName( %s, %s ) called...", newFirstName, newLastName );
     // Update fist, last & full name
-    if ( strlen(newFirstName) )
+    if(strlen(newFirstName))
     {
         name = newFirstName;
         fullName = name;
     }
-    if ( newLastName )
+    if(newLastName)
     {
         lastname = newLastName;
 
-        if ( strlen(newLastName) )
+        if(strlen(newLastName))
         {
             fullName += " ";
             fullName += lastname;
@@ -1077,7 +1079,7 @@ void psCharacter::SetFullName(const char* newFirstName, const char* newLastName)
     //Error2( "New fullname is now: %s", fullname.GetData() );
 }
 
-void psCharacter::SetRaceInfo(psRaceInfo *rinfo)
+void psCharacter::SetRaceInfo(psRaceInfo* rinfo)
 {
     race.SetBase(rinfo);
 }
@@ -1085,7 +1087,7 @@ void psCharacter::SetRaceInfo(psRaceInfo *rinfo)
 void OverridableRace::OnChange()
 {
     //if the race info is invalid do nothing
-    psRaceInfo *raceInfo = Current();
+    psRaceInfo* raceInfo = Current();
     if(!raceInfo)
         return;
 
@@ -1126,7 +1128,7 @@ void OverridableRace::OnChange()
         {
             //For now we check if we are near 1. In that case we disable the movement mod, else we send it directly.
             float movMod = Current()->GetSpeedModifier();
-            if( movMod < 1+EPSILON && movMod > 1-EPSILON)
+            if(movMod < 1+EPSILON && movMod > 1-EPSILON)
             {
                 psMoveModMsg modMsg(character->GetActor()->GetClientID(), psMoveModMsg::NONE,
                                     csVector3(0), 0);
@@ -1142,12 +1144,12 @@ void OverridableRace::OnChange()
     }
 }
 
-psRaceInfo *psCharacter::GetRaceInfo()
+psRaceInfo* psCharacter::GetRaceInfo()
 {
     return race.Current();
 }
 
-OverridableRace & psCharacter::GetOverridableRace()
+OverridableRace &psCharacter::GetOverridableRace()
 {
     return race;
 }
@@ -1158,7 +1160,7 @@ void psCharacter::SetFamiliarID(PID v)
 
     csString sql;
     sql.Format("INSERT INTO character_relationships VALUES (%u, %d, 'familiar', '')", pid.Unbox(), v.Unbox());
-    if( !db->Command( sql ) )
+    if(!db->Command(sql))
     {
         Error3("Couldn't execute SQL %s!, %s's pet relationship is not saved.", sql.GetData(), ShowID(pid));
     }
@@ -1166,11 +1168,11 @@ void psCharacter::SetFamiliarID(PID v)
 
 void psCharacter::LoadActiveSpells()
 {
-    if (progressionScriptText.IsEmpty())
+    if(progressionScriptText.IsEmpty())
         return;
 
-    ProgressionScript *script = ProgressionScript::Create(psserver->entitymanager, psserver->GetCacheManager(), fullName, progressionScriptText);
-    if (!script)
+    ProgressionScript* script = ProgressionScript::Create(psserver->entitymanager, psserver->GetCacheManager(), fullName, progressionScriptText);
+    if(!script)
     {
         Error3("Saved progression script for >%s< is invalid:\n%s", fullName.GetData(), progressionScriptText.GetData());
         return;
@@ -1185,7 +1187,7 @@ void psCharacter::LoadActiveSpells()
     delete script;
 }
 
-void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, InstanceID instance)
+void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo* sector, InstanceID instance)
 {
     spawnLoc.loc_sector = sector;
     spawnLoc.loc = pos;
@@ -1193,15 +1195,15 @@ void psCharacter::UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector,
     spawnLoc.worldInstance = instance;
 
     // Save to database
-    st_location & l = spawnLoc;
+    st_location &l = spawnLoc;
     psString sql;
 
     sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where id=%u",
-                     l.loc.x, l.loc.y, l.loc.z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, pid.Unbox());
-    if (db->CommandPump(sql) != 1)
+                  l.loc.x, l.loc.y, l.loc.z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, pid.Unbox());
+    if(db->CommandPump(sql) != 1)
     {
-        Error3 ("Couldn't save character's position to database.\nCommand was "
-            "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+        Error3("Couldn't save character's position to database.\nCommand was "
+               "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
     }
 }
 
@@ -1215,7 +1217,7 @@ csString psCharacter::GetVariableValue(csString &name)
     return charVariables.Get(name, charVariable()).value;
 }
 
-Buffable<int>& psCharacter::GetBuffableVariable(const csString& name, const csString& value)
+Buffable<int> &psCharacter::GetBuffableVariable(const csString &name, const csString &value)
 {
     if(!HasVariableDefined(name))
     {
@@ -1233,7 +1235,7 @@ void psCharacter::SetVariable(const csString &name, const csString &value)
     //not already in the db (aka don't use this to load from the db)
     //right now this must not overwrite temporary variables or there could be issues.
     if(!HasVariableDefined(name))
-    {    
+    {
         charVariables.PutUnique(name, charVariable(name,value, true));
     }
     else //update variables
@@ -1256,10 +1258,10 @@ void psCharacter::UnSetVariable(const csString &name)
     charVariables.DeleteAll(name);
     //update the database
     db->CommandPump("DELETE FROM character_variables where "
-                            "character_id = %u and name = \"%s\"",
-                            pid.Unbox(),
-                            name.GetData());
-    
+                    "character_id = %u and name = \"%s\"",
+                    pid.Unbox(),
+                    name.GetData());
+
 }
 
 csHash<charVariable, csString>::ConstGlobalIterator psCharacter::GetVariables() const
@@ -1295,7 +1297,7 @@ unsigned int psCharacter::AddExperiencePoints(unsigned int W)
     exp += W;
     bool updatedPP = false;
 
-    while (exp >= 200)
+    while(exp >= 200)
     {
         exp -= 200;
         if(progP != UINT_MAX) //don't allow overflow
@@ -1346,7 +1348,7 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
                 return 0;
             }
         }
-        
+
         MathEnvironment env;
         env.Define("ZCost", skills.Get(skill).zCost);
         env.Define("YCost", skills.Get(skill).yCost);
@@ -1360,18 +1362,18 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
 
         if(GetActor()->GetClient()->GetSecurityLevel() >= GM_DEVELOPER)
         {
-                psserver->SendSystemInfo(GetActor()->GetClientID(),
-                "Giving %d experience and %d practicepoints to skill %d with modifier %f.\n"
-                "zcost for the skill is %d for this level and %d for the next level\n"
-                "ycost for the skill is %d for this level and %d for the next level\n",
-                experiencePoints, practicePoints, skill, modifier,
-                skills.Get(skill).zCost, skills.Get(skill).zCostNext,
-                skills.Get(skill).yCost, skills.Get(skill).yCostNext);
+            psserver->SendSystemInfo(GetActor()->GetClientID(),
+                                     "Giving %d experience and %d practicepoints to skill %d with modifier %f.\n"
+                                     "zcost for the skill is %d for this level and %d for the next level\n"
+                                     "ycost for the skill is %d for this level and %d for the next level\n",
+                                     experiencePoints, practicePoints, skill, modifier,
+                                     skills.Get(skill).zCost, skills.Get(skill).zCostNext,
+                                     skills.Get(skill).yCost, skills.Get(skill).yCostNext);
         }
 
         AddExperiencePointsNotify(experiencePoints);
 
-        if (psserver->GetCacheManager()->GetSkillByID((PSSKILL)skill)) //check if skill is valid
+        if(psserver->GetCacheManager()->GetSkillByID((PSSKILL)skill))  //check if skill is valid
         {
             Skills().AddSkillPractice(skill, practicePoints);
         }
@@ -1380,14 +1382,14 @@ unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int pra
     return 0;
 }
 
-void psCharacter::SetSpouseName( const char* name )
+void psCharacter::SetSpouseName(const char* name)
 {
-    if ( !name )
+    if(!name)
         return;
 
     spouseName = name;
 
-    if ( !strcmp(name,"") )
+    if(!strcmp(name,""))
         isMarried = false;
     else
         isMarried = true;
@@ -1402,7 +1404,7 @@ unsigned int psCharacter::GetProgressionPoints() // X
 void psCharacter::SetProgressionPoints(unsigned int X,bool save)
 {
     unsigned int exp = vitals->GetExp();
-    if (save)
+    if(save)
     {
         Debug3(LOG_SKILLXP, pid.Unbox(), "Updating PP points and Exp to %u and %u\n", X, exp);
         // Update the DB
@@ -1414,7 +1416,7 @@ void psCharacter::SetProgressionPoints(unsigned int X,bool save)
         }
     }
 
-    vitals->SetPP( X );
+    vitals->SetPP(X);
 }
 
 void psCharacter::UseProgressionPoints(unsigned int X)
@@ -1423,12 +1425,12 @@ void psCharacter::UseProgressionPoints(unsigned int X)
     SetProgressionPoints(vitals->GetPP()-X,true);
 }
 
-int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
+int psCharacter::GetMaxAllowedRealm(PSSKILL skill)
 {
     unsigned int waySkillRank = skills.GetSkillRank(skill).Current();
 
     // Special case for rank 0 people just starting.
-    if (waySkillRank == 0 && skills.GetSkillRank(skill).Base() == 0 && !skills.Get(skill).CanTrain())
+    if(waySkillRank == 0 && skills.GetSkillRank(skill).Base() == 0 && !skills.Get(skill).CanTrain())
         return 1;
 
     MathEnvironment env;
@@ -1444,8 +1446,8 @@ int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
 
     maxRealmScript->Evaluate(&env);
 
-    MathVar *maxRealm = env.Lookup("MaxRealm");
-    if (!maxRealm)
+    MathVar* maxRealm = env.Lookup("MaxRealm");
+    if(!maxRealm)
     {
         Error1("Failed to evaluate MathScript >MaxRealm<.");
         return 0;
@@ -1453,32 +1455,32 @@ int psCharacter::GetMaxAllowedRealm( PSSKILL skill )
     return maxRealm->GetRoundValue();
 }
 
-void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, const csVector3& rot, bool guarded, bool transient, bool inplace)
+void psCharacter::DropItem(psItem* &item, csVector3 suggestedPos, const csVector3 &rot, bool guarded, bool transient, bool inplace)
 {
-    if (!item)
+    if(!item)
         return;
 
-    if (item->IsInUse())
+    if(item->IsInUse())
     {
         psserver->SendSystemError(actor->GetClientID(),"You cannot drop an item while using it.");
         return;
     }
 
     // Handle position
-    if (inplace)
+    if(inplace)
     {
         // drop at the character's position.
         suggestedPos.x = location.loc.x;
         suggestedPos.y = location.loc.y;
         suggestedPos.z = location.loc.z;
     }
-    else if (suggestedPos != 0)
+    else if(suggestedPos != 0)
     {
         // User-specified position: check if it's close enough to the character.
         csVector3 delta;
         delta = suggestedPos - location.loc;
 
-        if (delta.Norm() > MAX_DROP_DISTANCE && actor->GetClient()->GetSecurityLevel() < GM_DEVELOPER)
+        if(delta.Norm() > MAX_DROP_DISTANCE && actor->GetClient()->GetSecurityLevel() < GM_DEVELOPER)
         {
             // Not close enough, cap it to the maximum range in the specified direction.
             suggestedPos = location.loc + delta.Unit() * MAX_DROP_DISTANCE;
@@ -1508,11 +1510,11 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, const csVector
         item->SetGuardingCharacterID(pid);
 
     gemObject* obj = EntityManager::GetSingleton().MoveItemToWorld(item,
-                             location.worldInstance, location.loc_sector,
-                             suggestedPos.x, suggestedPos.y, suggestedPos.z,
-                             rot.x, rot.y, rot.z, this, transient);
+                     location.worldInstance, location.loc_sector,
+                     suggestedPos.x, suggestedPos.y, suggestedPos.z,
+                     rot.x, rot.y, rot.z, this, transient);
 
-    if (obj)
+    if(obj)
     {
         // Assign new object to replace the original object
         item = obj->GetItem();
@@ -1521,27 +1523,27 @@ void psCharacter::DropItem(psItem *&item, csVector3 suggestedPos, const csVector
     psMoney money;
 
     psDropEvent evt(pid,
-            GetCharName(),
+                    GetCharName(),
                     item->GetUID(),
-            item->GetName(),
+                    item->GetName(),
                     item->GetStackCount(),
                     (int)item->GetCurrentStats()->GetQuality(),
                     0);
     evt.FireEvent();
 
     // If a container, move its contents as well...
-    gemContainer *cont = dynamic_cast<gemContainer*> (obj);
-    if (cont)
+    gemContainer* cont = dynamic_cast<gemContainer*>(obj);
+    if(cont)
     {
-        for (size_t i=0; i < Inventory().GetInventoryIndexCount(); i++)
+        for(size_t i=0; i < Inventory().GetInventoryIndexCount(); i++)
         {
-            psItem *item = Inventory().GetInventoryIndexItem(i);
-            if (item->GetContainerID() == cont->GetItem()->GetUID())
+            psItem* item = Inventory().GetInventoryIndexItem(i);
+            if(item->GetContainerID() == cont->GetItem()->GetUID())
             {
                 // This item is in the dropped container
                 size_t slot = item->GetLocInParent() - PSCHARACTER_SLOT_BULK1;
                 Inventory().RemoveItemIndex(i);
-                if (!cont->AddToContainer(item, actor->GetClient(), (int)slot))
+                if(!cont->AddToContainer(item, actor->GetClient(), (int)slot))
                 {
                     Error2("Cannot add item into container slot %zu.\n", slot);
                     return;
@@ -1565,19 +1567,20 @@ void psCharacter::CalculateEquipmentModifiers()
     // inactive when strength spell expires). This could result in an
     // endless loop, hence this method locks itself against being called recursively.
     static bool lock_me = false;
-    if(lock_me) {
-      return;
+    if(lock_me)
+    {
+        return;
     }
     lock_me = true;
 
     csList<psItem*> itemlist;
 
-    for (int i = 0; i < PSITEMSTATS_STAT_COUNT; i++)
+    for(int i = 0; i < PSITEMSTATS_STAT_COUNT; i++)
     {
         modifiers[(PSITEMSTATS_STAT) i].Cancel(MODIFIER_FAKE_ACTIVESPELL);
     }
 
-    psItem *currentitem = NULL;
+    psItem* currentitem = NULL;
 
     // Loop through every holding item adding it to list of items to check
     for(int i = 0; i < PSCHARACTER_SLOT_BULK1; i++)
@@ -1598,21 +1601,21 @@ void psCharacter::CalculateEquipmentModifiers()
     {
         hasChanged = false;
         csList<psItem*>::Iterator it(itemlist);
-        while (it.HasNext())
+        while(it.HasNext())
         {
             currentitem = it.Next();
 
             csString response;
-            if (!currentitem->CheckRequirements(this, response))
+            if(!currentitem->CheckRequirements(this, response))
             {
                 continue;
             }
-            if (!currentitem->IsActive())
+            if(!currentitem->IsActive())
             {
                 currentitem->RunEquipScript(actor);
             }
             // Check for attr bonuses
-            for (int i = 0; i < PSITEMSTATS_STAT_BONUS_COUNT; i++)
+            for(int i = 0; i < PSITEMSTATS_STAT_BONUS_COUNT; i++)
             {
                 int attributeNum = currentitem->GetWeaponAttributeBonusType(i);
                 if(attributeNum != -1)
@@ -1622,14 +1625,15 @@ void psCharacter::CalculateEquipmentModifiers()
             itemlist.Delete(it);
             break;
         }
-    } while (hasChanged);
+    }
+    while(hasChanged);
 
     // go through list of items whose requirements are not fulfilled and deactivate them
     csList<psItem*>::Iterator i(itemlist);
-    while( i.HasNext() )
+    while(i.HasNext())
     {
         currentitem = i.Next();
-        if (currentitem->IsActive())
+        if(currentitem->IsActive())
         {
             currentitem->CancelEquipScript();
         }
@@ -1638,9 +1642,9 @@ void psCharacter::CalculateEquipmentModifiers()
     lock_me = false;
 }
 
-void psCharacter::AddLootItem(psItem *item)
+void psCharacter::AddLootItem(psItem* item)
 {
-    if (!item)
+    if(!item)
     {
         Error2("Attempted to add 'null' loot item to character %s, ignored.",fullName.GetDataSafe());
         return;
@@ -1648,26 +1652,27 @@ void psCharacter::AddLootItem(psItem *item)
     lootPending.Push(item);
 }
 
-size_t psCharacter::GetLootItems(psLootMessage& msg, EID entity, int cnum)
+size_t psCharacter::GetLootItems(psLootMessage &msg, EID entity, int cnum)
 {
-    if (lootPending.GetSize() )
+    if(lootPending.GetSize())
     {
         csString loot;
         loot.Append("<loot>");
 
-        for (size_t i=0; i<lootPending.GetSize(); i++)
+        for(size_t i=0; i<lootPending.GetSize(); i++)
         {
-            if (!lootPending[i]) {
-              printf("Potential ERROR: why this happens?");
-              continue;
+            if(!lootPending[i])
+            {
+                printf("Potential ERROR: why this happens?");
+                continue;
             }
             csString item;
             csString escpxml_imagename = EscpXML(lootPending[i]->GetImageName());
             csString escpxml_name = EscpXML(lootPending[i]->GetName());
             item.Format("<li><image icon=\"%s\" count=\"1\" /><desc text=\"%s\" /><id text=\"%u\" /></li>",
-                  escpxml_imagename.GetData(),
-                  escpxml_name.GetData(),
-                  lootPending[i]->GetBaseStats()->GetUID()); //use the basic item id to reference this.
+                        escpxml_imagename.GetData(),
+                        escpxml_name.GetData(),
+                        lootPending[i]->GetBaseStats()->GetUID()); //use the basic item id to reference this.
             loot.Append(item);
         }
         loot.Append("</loot>");
@@ -1685,11 +1690,11 @@ csArray<psItem*> psCharacter::RemoveLootItems(csArray<csString> categories)
     {
         if(!lootPending[x])
         {
-          printf("Potential ERROR: why this happens?");
-          lootPending.DeleteIndex(x);
-          continue;
+            printf("Potential ERROR: why this happens?");
+            lootPending.DeleteIndex(x);
+            continue;
         }
-        
+
         if(categories.IsEmpty())
         {
             items.Push(lootPending[x]);
@@ -1697,9 +1702,9 @@ csArray<psItem*> psCharacter::RemoveLootItems(csArray<csString> categories)
         }
         else
         {
-            for (size_t i = 0; i < categories.GetSize(); i++)
+            for(size_t i = 0; i < categories.GetSize(); i++)
             {
-                if (lootPending[x]->GetCategory()->name.Downcase().Find(categories[i]) != csArrayItemNotFound)
+                if(lootPending[x]->GetCategory()->name.Downcase().Find(categories[i]) != csArrayItemNotFound)
                 {
                     items.Push(lootPending[x]);
                     lootPending.DeleteIndex(x);
@@ -1718,9 +1723,9 @@ psItem* psCharacter::RemoveLootItem(int id)
     {
         if(!lootPending[x])
         {
-          printf("Potential ERROR: why this happens?");
-          lootPending.DeleteIndex(x);
-          continue;
+            printf("Potential ERROR: why this happens?");
+            lootPending.DeleteIndex(x);
+            continue;
         }
 
         if(lootPending[x]->GetBaseStats()->GetUID() == (uint32) id)
@@ -1756,20 +1761,20 @@ void psCharacter::SetMoney(psMoney m)
     SaveMoney(false);
 }
 
-void psCharacter::SetMoney( psItem *& itemdata )
+void psCharacter::SetMoney(psItem* &itemdata)
 {
     /// Check to see if the item is a money item and treat as a special case.
-    if ( itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_TRIA )
-        money.AdjustTrias( itemdata->GetStackCount() );
+    if(itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_TRIA)
+        money.AdjustTrias(itemdata->GetStackCount());
 
-    if ( itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_HEXA )
-        money.AdjustHexas( itemdata->GetStackCount() );
+    if(itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_HEXA)
+        money.AdjustHexas(itemdata->GetStackCount());
 
-    if ( itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_OCTA )
-        money.AdjustOctas( itemdata->GetStackCount() );
+    if(itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_OCTA)
+        money.AdjustOctas(itemdata->GetStackCount());
 
-    if ( itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_CIRCLE )
-        money.AdjustCircles( itemdata->GetStackCount() );
+    if(itemdata->GetBaseStats()->GetFlags() & PSITEMSTATS_FLAG_CIRCLE)
+        money.AdjustCircles(itemdata->GetStackCount());
 
     psserver->GetCacheManager()->RemoveInstance(itemdata);
     SaveMoney(false);
@@ -1778,16 +1783,16 @@ void psCharacter::SetMoney( psItem *& itemdata )
 void psCharacter::SetMoney(psItemStats* MoneyObject,  int amount)
 {
     /// Check to see if the item is a money item and treat as a special case.
-    if ( MoneyObject->GetFlags() & PSITEMSTATS_FLAG_TRIA )
+    if(MoneyObject->GetFlags() & PSITEMSTATS_FLAG_TRIA)
         money.AdjustTrias(amount);
 
-    if ( MoneyObject->GetFlags() & PSITEMSTATS_FLAG_HEXA )
+    if(MoneyObject->GetFlags() & PSITEMSTATS_FLAG_HEXA)
         money.AdjustHexas(amount);
 
-    if ( MoneyObject->GetFlags() & PSITEMSTATS_FLAG_OCTA )
+    if(MoneyObject->GetFlags() & PSITEMSTATS_FLAG_OCTA)
         money.AdjustOctas(amount);
 
-    if ( MoneyObject->GetFlags() & PSITEMSTATS_FLAG_CIRCLE )
+    if(MoneyObject->GetFlags() & PSITEMSTATS_FLAG_CIRCLE)
         money.AdjustCircles(amount);
 
     SaveMoney(false);
@@ -1795,15 +1800,15 @@ void psCharacter::SetMoney(psItemStats* MoneyObject,  int amount)
 
 void psCharacter::AdjustMoney(psMoney m, bool bank)
 {
-    psMoney *mon;
+    psMoney* mon;
     if(bank)
         mon = &bankMoney;
     else
         mon = &money;
-    mon->Adjust( MONEY_TRIAS, m.GetTrias() );
-    mon->Adjust( MONEY_HEXAS, m.GetHexas() );
-    mon->Adjust( MONEY_OCTAS, m.GetOctas() );
-    mon->Adjust( MONEY_CIRCLES, m.GetCircles() );
+    mon->Adjust(MONEY_TRIAS, m.GetTrias());
+    mon->Adjust(MONEY_HEXAS, m.GetHexas());
+    mon->Adjust(MONEY_OCTAS, m.GetOctas());
+    mon->Adjust(MONEY_CIRCLES, m.GetCircles());
     SaveMoney(bank);
 }
 
@@ -1825,10 +1830,10 @@ void psCharacter::SaveMoney(bool bank)
                       money.GetCircles(), money.GetTrias(), money.GetHexas(), money.GetOctas(), pid.Unbox());
     }
 
-    if (db->CommandPump(sql) != 1)
+    if(db->CommandPump(sql) != 1)
     {
-        Error3 ("Couldn't save character's money to database.\nCommand was "
-            "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+        Error3("Couldn't save character's money to database.\nCommand was "
+               "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
     }
 }
 
@@ -1850,7 +1855,7 @@ void psCharacter::CombatDrain(int slot)
         }
     }
 
-    psItem *weapon = inventory.GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER) slot);
+    psItem* weapon = inventory.GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER) slot);
     if(!weapon)//shouldn't happen
         return;
 
@@ -1860,9 +1865,9 @@ void psCharacter::CombatDrain(int slot)
 
     script->Evaluate(&env);
 
-    MathVar *phyDrain = env.Lookup("PhyDrain");
-    MathVar *mntDrain = env.Lookup("MntDrain");
-    if (!phyDrain || !mntDrain)
+    MathVar* phyDrain = env.Lookup("PhyDrain");
+    MathVar* mntDrain = env.Lookup("MntDrain");
+    if(!phyDrain || !mntDrain)
     {
         Error1("Failed to evaluate MathScript >StaminaCombat<.");
         return;
@@ -1901,7 +1906,7 @@ bool psCharacter::UpdateStatDRData(csTicks now)
     bool res = vitals->Update(now);
 
     // if HP dropped to zero, provoke the killing process
-    if (GetHP() == 0   &&   actor != NULL   &&   actor->IsAlive())
+    if(GetHP() == 0   &&   actor != NULL   &&   actor->IsAlive())
     {
         actor->Kill(NULL);
     }
@@ -1913,36 +1918,36 @@ bool psCharacter::SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRe
     return vitals->SendStatDRMessage(clientnum, eid, flags, group);
 }
 
-VitalBuffable & psCharacter::GetMaxHP()
+VitalBuffable &psCharacter::GetMaxHP()
 {
     return vitals->GetVital(VITAL_HITPOINTS).max;
 }
-VitalBuffable & psCharacter::GetMaxMana()
+VitalBuffable &psCharacter::GetMaxMana()
 {
     return vitals->GetVital(VITAL_MANA).max;
 }
-VitalBuffable & psCharacter::GetMaxPStamina()
+VitalBuffable &psCharacter::GetMaxPStamina()
 {
     return vitals->GetVital(VITAL_PYSSTAMINA).max;
 }
-VitalBuffable & psCharacter::GetMaxMStamina()
+VitalBuffable &psCharacter::GetMaxMStamina()
 {
     return vitals->GetVital(VITAL_MENSTAMINA).max;
 }
 
-VitalBuffable & psCharacter::GetHPRate()
+VitalBuffable &psCharacter::GetHPRate()
 {
     return vitals->GetVital(VITAL_HITPOINTS).drRate;
 }
-VitalBuffable & psCharacter::GetManaRate()
+VitalBuffable &psCharacter::GetManaRate()
 {
     return vitals->GetVital(VITAL_MANA).drRate;
 }
-VitalBuffable & psCharacter::GetPStaminaRate()
+VitalBuffable &psCharacter::GetPStaminaRate()
 {
     return vitals->GetVital(VITAL_PYSSTAMINA).drRate;
 }
-VitalBuffable & psCharacter::GetMStaminaRate()
+VitalBuffable &psCharacter::GetMStaminaRate()
 {
     return vitals->GetVital(VITAL_MENSTAMINA).drRate;
 }
@@ -1959,7 +1964,7 @@ void psCharacter::SetMana(float v)
 
 void psCharacter::AdjustStamina(float delta, bool pys)
 {
-    if (pys)
+    if(pys)
         vitals->AdjustVital(VITAL_PYSSTAMINA, DIRTY_VITAL_PYSSTAMINA, delta);
     else
         vitals->AdjustVital(VITAL_MENSTAMINA, DIRTY_VITAL_MENSTAMINA, delta);
@@ -1996,8 +2001,8 @@ void psCharacter::SetStaminaRegenerationWalk(bool physical,bool mental)
     }
     staminaRatioWalk->Evaluate(&env);
 
-    MathVar *ratePhy = env.Lookup("PStaminaRate");
-    MathVar *rateMen = env.Lookup("MStaminaRate");
+    MathVar* ratePhy = env.Lookup("PStaminaRate");
+    MathVar* rateMen = env.Lookup("MStaminaRate");
 
     if(physical && ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
     if(mental   && rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
@@ -2024,8 +2029,8 @@ void psCharacter::SetStaminaRegenerationSitting()
 
     staminaRatioSit->Evaluate(&env);
 
-    MathVar *ratePhy = env.Lookup("PStaminaRate");
-    MathVar *rateMen = env.Lookup("MStaminaRate");
+    MathVar* ratePhy = env.Lookup("PStaminaRate");
+    MathVar* rateMen = env.Lookup("MStaminaRate");
 
     if(ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
     if(rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
@@ -2053,8 +2058,8 @@ void psCharacter::SetStaminaRegenerationStill(bool physical,bool mental)
 
     staminaRatioStill->Evaluate(&env);
 
-    MathVar *ratePhy = env.Lookup("PStaminaRate");
-    MathVar *rateMen = env.Lookup("MStaminaRate");
+    MathVar* ratePhy = env.Lookup("PStaminaRate");
+    MathVar* rateMen = env.Lookup("MStaminaRate");
 
     if(physical && ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
     if(mental   && rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
@@ -2066,7 +2071,7 @@ void psCharacter::SetStaminaRegenerationStill(bool physical,bool mental)
 void psCharacter::SetStaminaRegenerationWork(int skill)
 {
     //Gms don't want to lose stamina when testing
-    if (actor->nevertired)
+    if(actor->nevertired)
         return;
 
     MathEnvironment env;
@@ -2093,8 +2098,8 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
 
     staminaRatioWork->Evaluate(&env);
 
-    MathVar *ratePhy = env.Lookup("PStaminaRate");
-    MathVar *rateMen = env.Lookup("MStaminaRate");
+    MathVar* ratePhy = env.Lookup("PStaminaRate");
+    MathVar* rateMen = env.Lookup("MStaminaRate");
 
     if(ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
     if(rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
@@ -2120,9 +2125,9 @@ void psCharacter::CalculateMaxStamina()
 
     staminaCalc->Evaluate(&env);
 
-    MathVar *basePhy = env.Lookup("BasePhy");
-    MathVar *baseMen = env.Lookup("BaseMen");
-    if (!basePhy || !baseMen)
+    MathVar* basePhy = env.Lookup("BasePhy");
+    MathVar* baseMen = env.Lookup("BaseMen");
+    if(!basePhy || !baseMen)
     {
         Error1("Failed to evaluate MathScript >StaminaBase<.");
         return;
@@ -2137,19 +2142,19 @@ unsigned int psCharacter::GetStatsDirtyFlags() const
     return vitals->GetStatsDirtyFlags();
 }
 
-void psCharacter::ClearStatsDirtyFlags( unsigned int dirtyFlags )
+void psCharacter::ClearStatsDirtyFlags(unsigned int dirtyFlags)
 {
     vitals->ClearStatsDirtyFlags(dirtyFlags);
 }
 
 void psCharacter::ResetSwings(csTicks timeofattack)
 {
-    psItem *Weapon;
+    psItem* Weapon;
 
-    for (int slot = 0; slot < PSCHARACTER_SLOT_BULK1; slot++)
+    for(int slot = 0; slot < PSCHARACTER_SLOT_BULK1; slot++)
     {
         Weapon = Inventory().GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER)slot);
-        if (Weapon !=NULL)
+        if(Weapon !=NULL)
         {
             inventory.GetEquipmentObject((INVENTORY_SLOT_NUMBER)slot).eventId=0;
         }
@@ -2158,10 +2163,10 @@ void psCharacter::ResetSwings(csTicks timeofattack)
 
 void psCharacter::TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId)
 {
-    psItem *Weapon;
+    psItem* Weapon;
 
     // Slot out of range
-    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
+    if(slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
         return;
 
     // TODO: Reduce ammo if this is an ammunition using weapon
@@ -2169,7 +2174,7 @@ void psCharacter::TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId)
     // Reset next attack time
     Weapon=Inventory().GetEffectiveWeaponInSlot(slot);
 
-    if (!Weapon) //no need to continue
+    if(!Weapon)  //no need to continue
         return;
 
     inventory.GetEquipmentObject(slot).eventId = eventId;
@@ -2182,7 +2187,7 @@ void psCharacter::TagEquipmentObject(INVENTORY_SLOT_NUMBER slot,int eventId)
 int psCharacter::GetSlotEventId(INVENTORY_SLOT_NUMBER slot)
 {
     // Slot out of range
-    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
+    if(slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
         return 0;
 
     return inventory.GetEquipmentObject(slot).eventId;
@@ -2193,8 +2198,8 @@ int psCharacter::GetSlotEventId(INVENTORY_SLOT_NUMBER slot)
 
 float psCharacter::GetTargetedBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slot)
 {
-    psItem *weapon=Inventory().GetEffectiveWeaponInSlot(slot);
-    if (weapon==NULL)
+    psItem* weapon=Inventory().GetEffectiveWeaponInSlot(slot);
+    if(weapon==NULL)
         return 0.0f;
 
     return weapon->GetTargetedBlockValue();
@@ -2202,8 +2207,8 @@ float psCharacter::GetTargetedBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER sl
 
 float psCharacter::GetUntargetedBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slot)
 {
-    psItem *weapon=Inventory().GetEffectiveWeaponInSlot(slot);
-    if (weapon==NULL)
+    psItem* weapon=Inventory().GetEffectiveWeaponInSlot(slot);
+    if(weapon==NULL)
         return 0.0f;
 
     return weapon->GetUntargetedBlockValue();
@@ -2215,7 +2220,7 @@ float psCharacter::GetTotalTargetedBlockValue()
     float blockval=0.0f;
     int slot;
 
-    for (slot=0;slot<PSCHARACTER_SLOT_BULK1;slot++)
+    for(slot=0; slot<PSCHARACTER_SLOT_BULK1; slot++)
         blockval+=GetTargetedBlockValueForWeaponInSlot((INVENTORY_SLOT_NUMBER)slot);
 
     return blockval;
@@ -2226,7 +2231,7 @@ float psCharacter::GetTotalUntargetedBlockValue()
     float blockval=0.0f;
     int slot;
 
-    for (slot=0;slot<PSCHARACTER_SLOT_BULK1;slot++)
+    for(slot=0; slot<PSCHARACTER_SLOT_BULK1; slot++)
         blockval+=GetUntargetedBlockValueForWeaponInSlot((INVENTORY_SLOT_NUMBER)slot);
 
     return blockval;
@@ -2235,8 +2240,8 @@ float psCharacter::GetTotalUntargetedBlockValue()
 
 float psCharacter::GetCounterBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slot)
 {
-    psItem *weapon=inventory.GetEffectiveWeaponInSlot(slot);
-    if (weapon==NULL)
+    psItem* weapon=inventory.GetEffectiveWeaponInSlot(slot);
+    if(weapon==NULL)
         return 0.0f;
 
     return weapon->GetCounterBlockValue();
@@ -2244,16 +2249,17 @@ float psCharacter::GetCounterBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slo
 
 bool psCharacter::ArmorUsesSkill(INVENTORY_SLOT_NUMBER slot, PSITEMSTATS_ARMORTYPE skill)
 {
-    if (inventory.GetInventoryItem(slot)==NULL)
+    if(inventory.GetInventoryItem(slot)==NULL)
         return inventory.GetEquipmentObject(slot).default_if_empty->GetArmorType()==skill;
     else
         return inventory.GetInventoryItem(slot)->GetArmorType()==skill;
 }
 
-void psCharacter::CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float& heavy_p, float& med_p, float& light_p) {
-    if (ArmorUsesSkill(slot,PSITEMSTATS_ARMORTYPE_LIGHT)) light_p+=1.0f/6.0f;
-    if (ArmorUsesSkill(slot,PSITEMSTATS_ARMORTYPE_MEDIUM)) med_p+=1.0f/6.0f;
-    if (ArmorUsesSkill(slot,PSITEMSTATS_ARMORTYPE_HEAVY)) heavy_p+=1.0f/6.0f;
+void psCharacter::CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float &heavy_p, float &med_p, float &light_p)
+{
+    if(ArmorUsesSkill(slot,PSITEMSTATS_ARMORTYPE_LIGHT)) light_p+=1.0f/6.0f;
+    if(ArmorUsesSkill(slot,PSITEMSTATS_ARMORTYPE_MEDIUM)) med_p+=1.0f/6.0f;
+    if(ArmorUsesSkill(slot,PSITEMSTATS_ARMORTYPE_HEAVY)) heavy_p+=1.0f/6.0f;
 }
 
 
@@ -2272,7 +2278,7 @@ float psCharacter::GetDodgeValue()
     CalculateArmorForSlot(PSCHARACTER_SLOT_BOOTS, heavy_p, med_p, light_p);
 
     MathEnvironment env;
-    
+
     // Add actor to manipulate and points to calculate.
     env.Define("Actor", this);
     env.Define("HeavyPoints", heavy_p);
@@ -2319,22 +2325,22 @@ float psCharacter::GetDodgeValue()
  */
 void psCharacter::PracticeArmorSkills(unsigned int practice, INVENTORY_SLOT_NUMBER attackLocation)
 {
-	unsigned int heavy_p = 0;
-	unsigned int med_p = 0;
-	unsigned int light_p = 0;
+    unsigned int heavy_p = 0;
+    unsigned int med_p = 0;
+    unsigned int light_p = 0;
 
-    psItem *armor = inventory.GetEffectiveArmorInSlot(attackLocation);
+    psItem* armor = inventory.GetEffectiveArmorInSlot(attackLocation);
 
-    switch (armor->GetArmorType())
+    switch(armor->GetArmorType())
     {
         case PSITEMSTATS_ARMORTYPE_LIGHT:
-        	light_p = practice;
+            light_p = practice;
             break;
         case PSITEMSTATS_ARMORTYPE_MEDIUM:
-        	med_p = practice;
+            med_p = practice;
             break;
         case PSITEMSTATS_ARMORTYPE_HEAVY:
-        	heavy_p = practice;
+            heavy_p = practice;
             break;
         default:
             break;
@@ -2366,43 +2372,43 @@ void psCharacter::PracticeWeaponSkills(unsigned int practice)
 {
     int slot;
 
-    for (slot=0;slot<PSCHARACTER_SLOT_BULK1;slot++)
+    for(slot=0; slot<PSCHARACTER_SLOT_BULK1; slot++)
     {
-        psItem *weapon=inventory.GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER)slot);
-        if (weapon!=NULL)
+        psItem* weapon=inventory.GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER)slot);
+        if(weapon!=NULL)
             PracticeWeaponSkills(weapon,practice);
     }
 
 }
 
-void psCharacter::PracticeWeaponSkills(psItem * weapon, unsigned int practice)
+void psCharacter::PracticeWeaponSkills(psItem* weapon, unsigned int practice)
 {
-    for (int index = 0; index < PSITEMSTATS_WEAPONSKILL_INDEX_COUNT; index++)
+    for(int index = 0; index < PSITEMSTATS_WEAPONSKILL_INDEX_COUNT; index++)
     {
         PSSKILL skill = weapon->GetWeaponSkill((PSITEMSTATS_WEAPONSKILL_INDEX)index);
-        if (skill != PSSKILL_NONE)
+        if(skill != PSSKILL_NONE)
             skills.AddSkillPractice(skill,practice);
     }
 }
 
-void psCharacter::SetTraitForLocation(PSTRAIT_LOCATION location,psTrait *trait)
+void psCharacter::SetTraitForLocation(PSTRAIT_LOCATION location,psTrait* trait)
 {
-    if (location<0 || location>=PSTRAIT_LOCATION_COUNT)
+    if(location<0 || location>=PSTRAIT_LOCATION_COUNT)
         return;
 
     traits[location]=trait;
 }
 
-psTrait *psCharacter::GetTraitForLocation(PSTRAIT_LOCATION location)
+psTrait* psCharacter::GetTraitForLocation(PSTRAIT_LOCATION location)
 {
-    if (location<0 || location>=PSTRAIT_LOCATION_COUNT)
+    if(location<0 || location>=PSTRAIT_LOCATION_COUNT)
         return NULL;
 
     return traits[location];
 }
 
 
-void psCharacter::GetLocationInWorld(InstanceID &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot)
+void psCharacter::GetLocationInWorld(InstanceID &instance,psSectorInfo* &sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot)
 {
     sectorinfo=location.loc_sector;
     loc_x=location.loc.x;
@@ -2412,9 +2418,9 @@ void psCharacter::GetLocationInWorld(InstanceID &instance,psSectorInfo *&sectori
     instance = location.worldInstance;
 }
 
-void psCharacter::SetLocationInWorld(InstanceID instance, psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
+void psCharacter::SetLocationInWorld(InstanceID instance, psSectorInfo* sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot)
 {
-    psSectorInfo *oldsector = location.loc_sector;
+    psSectorInfo* oldsector = location.loc_sector;
     InstanceID oldInstance = location.worldInstance;
 
     location.loc_sector=sectorinfo;
@@ -2424,9 +2430,9 @@ void psCharacter::SetLocationInWorld(InstanceID instance, psSectorInfo *sectorin
     location.loc_yrot=loc_yrot;
     location.worldInstance = instance;
 
-    if (oldInstance != instance || (oldsector && oldsector != sectorinfo))
+    if(oldInstance != instance || (oldsector && oldsector != sectorinfo))
     {
-        if ( GetCharType() == PSCHARACTER_TYPE_PLAYER ) // NOT an NPC so it's ok to save location info
+        if(GetCharType() == PSCHARACTER_TYPE_PLAYER)    // NOT an NPC so it's ok to save location info
             SaveLocationInWorld();
     }
 }
@@ -2436,33 +2442,33 @@ void psCharacter::SaveLocationInWorld()
     if(!loaded)
         return;
 
-    st_location & l = location;
+    st_location &l = location;
     psString sql;
 
     sql.AppendFmt("update characters set loc_x=%10.2f, loc_y=%10.2f, loc_z=%10.2f, loc_yrot=%10.2f, loc_sector_id=%u, loc_instance=%u where id=%u",
-                     l.loc.x, l.loc.y, l.loc.z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, pid.Unbox());
-    if (db->CommandPump(sql) != 1)
+                  l.loc.x, l.loc.y, l.loc.z, l.loc_yrot, l.loc_sector->uid, l.worldInstance, pid.Unbox());
+    if(db->CommandPump(sql) != 1)
     {
-        Error3 ("Couldn't save character's position to database.\nCommand was "
-            "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+        Error3("Couldn't save character's position to database.\nCommand was "
+               "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
     }
 }
 
 
 
 
-psSpell * psCharacter::GetSpellByName(const csString& spellName)
+psSpell* psCharacter::GetSpellByName(const csString &spellName)
 {
-    for (size_t i=0; i < spellList.GetSize(); i++)
+    for(size_t i=0; i < spellList.GetSize(); i++)
     {
-        if (spellList[i]->GetName().CompareNoCase(spellName)) return spellList[i];
+        if(spellList[i]->GetName().CompareNoCase(spellName)) return spellList[i];
     }
     return NULL;
 }
 
-psSpell * psCharacter::GetSpellByIdx(int index)
+psSpell* psCharacter::GetSpellByIdx(int index)
 {
-    if (index < 0 || (size_t)index >= spellList.GetSize())
+    if(index < 0 || (size_t)index >= spellList.GetSize())
         return NULL;
     return spellList[index];
 }
@@ -2483,24 +2489,24 @@ bool psCharacter::SetTradingStopped(bool stopped)
 bool psCharacter::ReadyToExchange()
 {
     return (//TODO: Test for fighting &&
-        //TODO: Test for casting spell
-       //  !exchangeMgr.IsValid() &&
-        !tradingStopped &&
-        tradingStatus == NOT_TRADING);
+               //TODO: Test for casting spell
+               //  !exchangeMgr.IsValid() &&
+               !tradingStopped &&
+               tradingStatus == NOT_TRADING);
 
 }
 
-void psCharacter::MakeTextureString( csString& traits)
+void psCharacter::MakeTextureString(csString &traits)
 {
     // initialize string
     traits = "<traits>";
 
     // cycle through and add entries for each part
-    for (unsigned int i=0;i<PSTRAIT_LOCATION_COUNT;i++)
+    for(unsigned int i=0; i<PSTRAIT_LOCATION_COUNT; i++)
     {
-        psTrait *trait;
+        psTrait* trait;
         trait = GetTraitForLocation((PSTRAIT_LOCATION)i);
-        while (trait != NULL)
+        while(trait != NULL)
         {
             csString buff = trait->ToXML(true);
             traits.Append(buff);
@@ -2511,53 +2517,53 @@ void psCharacter::MakeTextureString( csString& traits)
     // terminate string
     traits.Append("</traits>");
 
-    Notify2( LOG_CHARACTER, "Traits string: %s", (const char*)traits );
+    Notify2(LOG_CHARACTER, "Traits string: %s", (const char*)traits);
 }
 
-void psCharacter::MakeEquipmentString( csString& equipment )
+void psCharacter::MakeEquipmentString(csString &equipment)
 {
     equipment = "<equiplist>";
     equipment.AppendFmt("<helm>%s</helm><bracer>%s</bracer><belt>%s</belt><cloak>%s</cloak>", EscpXML(helmGroup).GetData(), EscpXML(BracerGroup).GetData(), EscpXML(BeltGroup).GetData(), EscpXML(CloakGroup).GetData());
 
-    for (int i=0; i<PSCHARACTER_SLOT_BULK1; i++)
+    for(int i=0; i<PSCHARACTER_SLOT_BULK1; i++)
     {
         psItem* item = inventory.GetInventoryItem((INVENTORY_SLOT_NUMBER)i);
-        if (item == NULL)
+        if(item == NULL)
             continue;
 
-        csString slot = EscpXML( psserver->GetCacheManager()->slotNameHash.GetName(i) );
-        csString mesh = EscpXML( item->GetMeshName() );
-        csString part = EscpXML( item->GetPartName() );
-        csString texture = EscpXML( item->GetTextureName() );
-        csString partMesh = EscpXML( item->GetPartMeshName() );
+        csString slot = EscpXML(psserver->GetCacheManager()->slotNameHash.GetName(i));
+        csString mesh = EscpXML(item->GetMeshName());
+        csString part = EscpXML(item->GetPartName());
+        csString texture = EscpXML(item->GetTextureName());
+        csString partMesh = EscpXML(item->GetPartMeshName());
         csString removedMesh = EscpXML(item->GetSlotRemovedMesh(i, GetActor() ? GetActor()->GetMesh() : (csString)GetRaceInfo()->GetMeshName()));
 
         equipment.AppendFmt("<equip slot=\"%s\" mesh=\"%s\" part=\"%s\" texture=\"%s\" partMesh=\"%s\"  removedMesh=\"%s\" />",
-                              slot.GetData(), mesh.GetData(), part.GetData(), texture.GetData(), partMesh.GetData(), removedMesh.GetData() );
+                            slot.GetData(), mesh.GetData(), part.GetData(), texture.GetData(), partMesh.GetData(), removedMesh.GetData());
     }
 
     equipment.Append("</equiplist>");
 
-    Notify2( LOG_CHARACTER, "Equipment string: %s", equipment.GetData() );
+    Notify2(LOG_CHARACTER, "Equipment string: %s", equipment.GetData());
 }
 
 
-bool psCharacter::AppendCharacterSelectData(psAuthApprovedMessage& auth)
+bool psCharacter::AppendCharacterSelectData(psAuthApprovedMessage &auth)
 {
     csString traits;
     csString equipment;
 
-    MakeTextureString( traits );
-    MakeEquipmentString( equipment );
+    MakeTextureString(traits);
+    MakeEquipmentString(equipment);
 
     auth.AddCharacter(fullName, GetRaceInfo()->GetName(), GetRaceInfo()->GetMeshName(), traits, equipment);
     return true;
 }
 
 
-bool psCharacter::CheckResponsePrerequisite(NpcResponse *resp)
+bool psCharacter::CheckResponsePrerequisite(NpcResponse* resp)
 {
-    CS_ASSERT( resp );  // Must not be NULL
+    CS_ASSERT(resp);    // Must not be NULL
 
     return resp->CheckPrerequisite(this);
 }
@@ -2565,21 +2571,21 @@ bool psCharacter::CheckResponsePrerequisite(NpcResponse *resp)
 
 
 
-psGuildLevel * psCharacter::GetGuildLevel()
+psGuildLevel* psCharacter::GetGuildLevel()
 {
-    if (guildinfo == NULL)
+    if(guildinfo == NULL)
         return 0;
 
-    psGuildMember * membership = guildinfo->FindMember(pid);
-    if (membership == NULL)
+    psGuildMember* membership = guildinfo->FindMember(pid);
+    if(membership == NULL)
         return 0;
 
     return membership->guildlevel;
 }
 
-psGuildMember * psCharacter::GetGuildMembership()
+psGuildMember* psCharacter::GetGuildMembership()
 {
-    if (guildinfo == NULL)
+    if(guildinfo == NULL)
         return 0;
 
     return guildinfo->FindMember(pid);
@@ -2593,12 +2599,12 @@ bool psCharacter::Knows(PID charID)
     return true;
 }
 
-bool psCharacter::Introduce(psCharacter *c)
+bool psCharacter::Introduce(psCharacter* c)
 {
-    if (!c) return false;
+    if(!c) return false;
     PID theirID = c->GetPID();
 
-    if (!acquaintances.Contains(theirID))
+    if(!acquaintances.Contains(theirID))
     {
         acquaintances.AddNoTest(theirID);
         db->CommandPump("insert into introductions values(%d, %d)", this->pid.Unbox(), theirID.Unbox());
@@ -2607,12 +2613,12 @@ bool psCharacter::Introduce(psCharacter *c)
     return false;
 }
 
-bool psCharacter::Unintroduce(psCharacter *c)
+bool psCharacter::Unintroduce(psCharacter* c)
 {
-    if (!c) return false;
+    if(!c) return false;
     PID theirID = c->GetPID();
 
-    if (acquaintances.Contains(theirID))
+    if(acquaintances.Contains(theirID))
     {
         acquaintances.Delete(theirID);
         db->CommandPump("delete from introductions where charid=%d and introcharid=%d", this->pid.Unbox(), theirID.Unbox());
@@ -2625,9 +2631,9 @@ bool psCharacter::Unintroduce(psCharacter *c)
 bool psCharacter::AddExploredArea(PID explored)
 {
     int rows = db->Command("INSERT INTO character_relationships (character_id, related_id, relationship_type) VALUES (%u, %u, 'exploration')",
-        pid.Unbox(), explored.Unbox());
+                           pid.Unbox(), explored.Unbox());
 
-    if (rows != 1)
+    if(rows != 1)
     {
         psserver->GetDatabase()->SetLastError(psserver->GetDatabase()->GetLastSQLError());
         return false;
@@ -2652,134 +2658,134 @@ bool psCharacter::HasExploredArea(PID explored)
 double psCharacter::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
-    if (property == "AttackerTargeted")
+    if(property == "AttackerTargeted")
     {
         return true;
         // return (attacker_targeted) ? 1 : 0;
     }
-    else if (property == "TotalTargetedBlockValue")
+    else if(property == "TotalTargetedBlockValue")
     {
         return GetTotalTargetedBlockValue();
     }
-    else if (property == "TotalUntargetedBlockValue")
+    else if(property == "TotalUntargetedBlockValue")
     {
         return GetTotalUntargetedBlockValue();
     }
-    else if (property == "DodgeValue")
+    else if(property == "DodgeValue")
     {
         return GetDodgeValue();
     }
-    else if (property == "KillExp")
+    else if(property == "KillExp")
     {
         return killExp;
     }
-    else if (property == "GetAttackValueModifier")
+    else if(property == "GetAttackValueModifier")
     {
         return attackModifier.Value();
     }
-    else if (property == "GetDefenseValueModifier")
+    else if(property == "GetDefenseValueModifier")
     {
         return defenseModifier.Value();
     }
-    else if (property == "HP")
+    else if(property == "HP")
     {
         return GetHP();
     }
-    else if (property == "MaxHP")
+    else if(property == "MaxHP")
     {
         return GetMaxHP().Current();
     }
-    else if (property == "BaseHP")
+    else if(property == "BaseHP")
     {
         return GetMaxHP().Base();
     }
-    else if (property == "Mana")
+    else if(property == "Mana")
     {
         return GetMana();
     }
-    else if (property == "MaxMana")
+    else if(property == "MaxMana")
     {
         return GetMaxMana().Current();
     }
-    else if (property == "BaseMana")
+    else if(property == "BaseMana")
     {
         return GetMaxMana().Base();
     }
-    else if (property == "PStamina")
+    else if(property == "PStamina")
     {
         return GetStamina(true);
     }
-    else if (property == "MStamina")
+    else if(property == "MStamina")
     {
         return GetStamina(false);
     }
-    else if (property == "MaxPStamina")
+    else if(property == "MaxPStamina")
     {
         return GetMaxPStamina().Current();
     }
-    else if (property == "MaxMStamina")
+    else if(property == "MaxMStamina")
     {
         return GetMaxMStamina().Current();
     }
-    else if (property == "BasePStamina")
+    else if(property == "BasePStamina")
     {
         return GetMaxPStamina().Base();
     }
-    else if (property == "BaseMStamina")
+    else if(property == "BaseMStamina")
     {
         return GetMaxMStamina().Base();
     }
-    else if (property == "AllArmorStrMalus")
+    else if(property == "AllArmorStrMalus")
     {
         return modifiers[PSITEMSTATS_STAT_STRENGTH].Current();
     }
-    else if (property == "AllArmorAgiMalus")
+    else if(property == "AllArmorAgiMalus")
     {
         return modifiers[PSITEMSTATS_STAT_AGILITY].Current();
     }
-    else if (property == "PID")
+    else if(property == "PID")
     {
         return (double) pid.Unbox();
     }
-    else if (property == "loc_x")
+    else if(property == "loc_x")
     {
         return location.loc.x;
     }
-    else if (property == "loc_y")
+    else if(property == "loc_y")
     {
         return location.loc.y;
     }
-    else if (property == "loc_z")
+    else if(property == "loc_z")
     {
         return location.loc.z;
     }
-    else if (property == "loc_yrot")
+    else if(property == "loc_yrot")
     {
         return location.loc_yrot;
     }
-    else if (property == "sector")
+    else if(property == "sector")
     {
         return env->GetValue(location.loc_sector);
     }
-    else if (property == "owner")
+    else if(property == "owner")
     {
         return (double) ownerId.Unbox();
     }
-    else if (property == "IsNPC")
+    else if(property == "IsNPC")
     {
         return (double)IsNPC();
     }
-    else if (property == "IsPet")
+    else if(property == "IsPet")
     {
         return (double)IsPet();
     }
-    else if (property == "Race")
+    else if(property == "Race")
     {
         if(!GetRaceInfo())
             return 0;
         return (double)GetRaceInfo()->GetRaceID();
     }
-    else if (property == "RaceUID")
+    else if(property == "RaceUID")
     {
         if(!GetRaceInfo())
             return 0;
@@ -2793,25 +2799,25 @@ double psCharacter::GetProperty(MathEnvironment* env, const char* ptr)
 double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     csString function(functionName);
-    if (function == "HasCompletedQuest")
+    if(function == "HasCompletedQuest")
     {
-        const char *questName = env->GetString(params[0]);
-        psQuest *quest = psserver->GetCacheManager()->GetQuestByName(questName);
+        const char* questName = env->GetString(params[0]);
+        psQuest* quest = psserver->GetCacheManager()->GetQuestByName(questName);
         return (double) questManager.CheckQuestCompleted(quest);
     }
-    else if (function == "Faction")
+    else if(function == "Faction")
     {
-        const char *factionName = env->GetString(params[0]);
-        Faction *faction = psserver->GetCacheManager()->GetFactionByName(factionName);
-        return (double) (faction ? factions->GetFaction(faction) : 0);
+        const char* factionName = env->GetString(params[0]);
+        Faction* faction = psserver->GetCacheManager()->GetFactionByName(factionName);
+        return (double)(faction ? factions->GetFaction(faction) : 0);
     }
-    else if (function == "GetStatValue")
+    else if(function == "GetStatValue")
     {
         PSITEMSTATS_STAT stat = (PSITEMSTATS_STAT)(int)params[0];
 
         return (double) GetSkillRank(statToSkill(stat)).Current();
     }
-    else if (function == "GetAverageSkillValue")
+    else if(function == "GetAverageSkillValue")
     {
         PSSKILL skill1 = (PSSKILL)(int)params[0];
         PSSKILL skill2 = (PSSKILL)(int)params[1];
@@ -2822,13 +2828,13 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
         double count = (double)(1+(skill2!=PSSKILL_NONE)+(skill3!=PSSKILL_NONE));
         v1 /= count;
 
-        if (skill2!=PSSKILL_NONE)
+        if(skill2!=PSSKILL_NONE)
         {
             double v2 = skills.GetSkillRank(skill2).Current();
             v1 += v2/count;
         }
 
-        if (skill3!=PSSKILL_NONE)
+        if(skill3!=PSSKILL_NONE)
         {
             double v3 = skills.GetSkillRank(skill3).Current();
             v1 += v3/count;
@@ -2836,52 +2842,52 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
 
         return v1;
     }
-    else if (function == "SkillRank")
+    else if(function == "SkillRank")
     {
-        const char *skillName = env->GetString(params[0]);
+        const char* skillName = env->GetString(params[0]);
         PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(skillName);
         double value = skills.GetSkillRank(skill).Current();
 
         return value;
     }
-    else if (function == "GetSkillValue")
+    else if(function == "GetSkillValue")
     {
         PSSKILL skill = (PSSKILL)(int)params[0];
         double value = skills.GetSkillRank(skill).Current();
         return value;
     }
-    else if (function == "GetSkillBaseValue")
+    else if(function == "GetSkillBaseValue")
     {
         PSSKILL skill = (PSSKILL)(int)params[0];
         double value = skills.GetSkillRank(skill).Base();
         return value;
     }
-    else if (function == "SetSkillValue")
+    else if(function == "SetSkillValue")
     {
         PSSKILL skill = (PSSKILL)(int)params[0];
         skills.SetSkillRank(skill, (int)params[1]);
         return 0;
     }
-    else if (function == "PracticeSkillID")
+    else if(function == "PracticeSkillID")
     {
         PSSKILL skill = (PSSKILL)(int)params[0];
 
         return skills.AddSkillPractice(skill, params[1]);
     }
-    else if (function == "GetVariableValueInt")
+    else if(function == "GetVariableValueInt")
     {
-        const char *variableName = env->GetString(params[0]);
+        const char* variableName = env->GetString(params[0]);
         double value = charVariables.Get(variableName, charVariable()).intBuff.Current();
         return value;
     }
-    else if (function == "PracticeSkill")
+    else if(function == "PracticeSkill")
     {
-        const char *skillName = env->GetString(params[0]);
+        const char* skillName = env->GetString(params[0]);
         PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(skillName);
 
         return skills.AddSkillPractice(skill, params[1]);
     }
-    else if (function == "HasExploredArea")
+    else if(function == "HasExploredArea")
     {
         if(!HasExploredArea(params[0]))
         {
@@ -2891,7 +2897,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
 
         return 1;
     }
-    else if (function == "IsWithin")
+    else if(function == "IsWithin")
     {
         if(location.loc_sector->uid != params[4])
             return 0.0;
@@ -2899,7 +2905,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
         csVector3 other(params[1], params[2], params[3]);
         return (csVector3(other - location.loc).Norm() <= params[0]) ? 1.0 : 0.0;
     }
-    else if (function == "IsEnemy")
+    else if(function == "IsEnemy")
     {
         // Check for self.
         if(ownerId == params[0])
@@ -2913,11 +2919,11 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
 
         return 0.0;
     }
-    else if (function == "GetItem")
+    else if(function == "GetItem")
     {
         INVENTORY_SLOT_NUMBER slot = (INVENTORY_SLOT_NUMBER)(int)params[0];
-        psItem *item = NULL;
-        if (inventory.GetInventoryItem(slot))
+        psItem* item = NULL;
+        if(inventory.GetInventoryItem(slot))
         {
             item = inventory.GetInventoryItem(slot);
         }
@@ -2932,7 +2938,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     // deletes an item by its index in the inventory. DeleteItem(position, stackamount (-1 for whole stack))
     else if(function == "DeleteItem")
     {
-        psItem *item = inventory.RemoveInventoryItem((INVENTORY_SLOT_NUMBER)int(params[0]), int(params[1]));
+        psItem* item = inventory.RemoveInventoryItem((INVENTORY_SLOT_NUMBER)int(params[0]), int(params[1]));
 
         //Item not found
         if(!item)
@@ -2957,7 +2963,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     /**
      * Seems not to be used and could be replaced by a correct GetSkillValue in scripts instead.
      */
-    else if (function == "GetArmorSkill")
+    else if(function == "GetArmorSkill")
     {
         PSSKILL skill;
         switch((PSITEMSTATS_ARMORTYPE)(int)params[0])
@@ -2976,7 +2982,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
         }
         return (double)skills.GetSkillRank(skill).Current();
     }
-    else if (function == "CalculateAddExperience")
+    else if(function == "CalculateAddExperience")
     {
         return (double)CalculateAddExperience((PSSKILL)(int) params[0], (unsigned int) params[1], (float) params[2]);
     }
@@ -2987,12 +2993,12 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
 
 /** A skill can only be trained if the player requires points for it.
   */
-bool psCharacter::CanTrain( PSSKILL skill )
+bool psCharacter::CanTrain(PSSKILL skill)
 {
-    return skills.CanTrain( skill );
+    return skills.CanTrain(skill);
 }
 
-void psCharacter::GetSkillValues(MathEnvironment *env)
+void psCharacter::GetSkillValues(MathEnvironment* env)
 {
     env->Define("Actor", this);
     //check if the mathscript is still valid else try to reload it
@@ -3006,7 +3012,7 @@ void psCharacter::GetSkillValues(MathEnvironment *env)
     skillValuesGet->Evaluate(env);
 }
 
-void psCharacter::GetSkillBaseValues(MathEnvironment *env)
+void psCharacter::GetSkillBaseValues(MathEnvironment* env)
 {
     env->Define("Actor", this);
     //check if the mathscript is still valid else try to reload it
@@ -3022,21 +3028,21 @@ void psCharacter::GetSkillBaseValues(MathEnvironment *env)
 
 
 
-void psCharacter::Train( PSSKILL skill, int yIncrease )
+void psCharacter::Train(PSSKILL skill, int yIncrease)
 {
-	skills.Train( skill, yIncrease ); // Normal training
+    skills.Train(skill, yIncrease);   // Normal training
 
-	skills.CheckDoRank( skill );
-	if(!psServer::CharacterLoader.UpdateCharacterSkill(
-			pid,
-			skill,
-			skills.GetSkillPractice((PSSKILL)skill),
-			skills.GetSkillKnowledge((PSSKILL)skill),
-			skills.GetSkillRank((PSSKILL)skill).Base()
-			))
-	{
-		 Error2("Couldn't save skills for character %u!\n", pid.Unbox());
-	}
+    skills.CheckDoRank(skill);
+    if(!psServer::CharacterLoader.UpdateCharacterSkill(
+                pid,
+                skill,
+                skills.GetSkillPractice((PSSKILL)skill),
+                skills.GetSkillKnowledge((PSSKILL)skill),
+                skills.GetSkillRank((PSSKILL)skill).Base()
+            ))
+    {
+        Error2("Couldn't save skills for character %u!\n", pid.Unbox());
+    }
 }
 
 void psCharacter::StartSong()
@@ -3061,10 +3067,10 @@ void Skill::CalculateCosts(psCharacter* user)
 
     // Calc the new Y/Z cost
     csWeakRef<MathScript> script = psserver->GetMathScriptEngine()->FindScript(info->costScript);
-    if (!script)
+    if(!script)
     {
         Error4("Couldn't find script %s to calculate skill cost of %d (%s)!",
-                info->costScript.GetData(), info->id, info->name.GetData());
+               info->costScript.GetData(), info->id, info->name.GetData());
         return;
     }
 
@@ -3078,9 +3084,9 @@ void Skill::CalculateCosts(psCharacter* user)
 
     script->Evaluate(&env);
 
-    MathVar *yCostVar = env.Lookup("YCost");
-    MathVar *zCostVar = env.Lookup("ZCost");
-    if (!yCostVar || !zCostVar)
+    MathVar* yCostVar = env.Lookup("YCost");
+    MathVar* zCostVar = env.Lookup("ZCost");
+    if(!yCostVar || !zCostVar)
     {
         Error4("Failed to evaluate MathScript >%s< to calculate skill cost of %d (%s).",
                info->costScript.GetData(), info->id, info->name.GetData());
@@ -3098,23 +3104,23 @@ void Skill::CalculateCosts(psCharacter* user)
     yCostNext = yCostVar->GetRoundValue();
     zCostNext = zCostVar->GetRoundValue();
 
-/*
-    // Make sure the y values is clamped to the cost.  Otherwise Practice may always
-    // fail.
-    if  (y > yCost)
-    {
-        dirtyFlag = true;
-        y = yCost;
-    }
-    if ( z > zCost )
-    {
-        dirtyFlag = true;
-        z = zCost;
-    }
-*/
+    /*
+        // Make sure the y values is clamped to the cost.  Otherwise Practice may always
+        // fail.
+        if  (y > yCost)
+        {
+            dirtyFlag = true;
+            y = yCost;
+        }
+        if ( z > zCost )
+        {
+            dirtyFlag = true;
+            z = zCost;
+        }
+    */
 }
 
-void Skill::Train( int yIncrease )
+void Skill::Train(int yIncrease)
 {
     if(y < yCost)
     {
@@ -3124,30 +3130,30 @@ void Skill::Train( int yIncrease )
 }
 
 
-bool Skill::CheckDoRank( psCharacter* user )
+bool Skill::CheckDoRank(psCharacter* user)
 {
-	if ( y >= yCost && z >= zCost)
+    if(y >= yCost && z >= zCost)
     {
         rank.SetBase(rank.Base()+1);
         z = 0;
         y = 0;
         // Reset the costs for Y/Z
         CalculateCosts(user);
-    	return true;
+        return true;
     }
     return false;
 }
 
-bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded, psCharacter* user )
+bool Skill::Practice(unsigned int amount, unsigned int &actuallyAdded, psCharacter* user)
 {
     bool rankup = false;
 
     // Practice can take place
-    if ( y >= yCost )
+    if(y >= yCost)
     {
-    	z+=amount;
-    	rankup = CheckDoRank( user );
-    	if ( rankup )
+        z+=amount;
+        rankup = CheckDoRank(user);
+        if(rankup)
         {
             actuallyAdded = -zCost;
         }
@@ -3166,7 +3172,7 @@ bool Skill::Practice( unsigned int amount, unsigned int& actuallyAdded, psCharac
 
 void psCharacter::SetSkillRank(PSSKILL which, unsigned int rank)
 {
-    if (rank < 0)
+    if(rank < 0)
         rank = 0;
 
     skills.SetSkillRank(which, rank);
@@ -3209,7 +3215,7 @@ void psCharacter::RecalculateStats()
     }
 
 
-    if (overrideMaxMana)
+    if(overrideMaxMana)
     {
         GetMaxMana().SetBase(overrideMaxMana);
     }
@@ -3217,7 +3223,7 @@ void psCharacter::RecalculateStats()
     {
         maxManaScript->Evaluate(&env);
         MathVar* maxMana = env.Lookup("MaxMana");
-        if (maxMana)
+        if(maxMana)
         {
             GetMaxMana().SetBase(maxMana->GetValue());
         }
@@ -3230,13 +3236,13 @@ void psCharacter::RecalculateStats()
     // Calculate current Max HP level:
     static csWeakRef<MathScript> maxHPScript;
 
-    if (!maxHPScript)
+    if(!maxHPScript)
     {
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxHPScript, "CalculateMaxHP");
         CS_ASSERT(maxHPScript.IsValid());
     }
 
-    if (overrideMaxHp)
+    if(overrideMaxHp)
     {
         GetMaxHP().SetBase(overrideMaxHp);
     }
@@ -3258,7 +3264,7 @@ void psCharacter::RecalculateStats()
 //        GetActor()->UpdateAllSpeedModifiers();
 }
 
-size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int clientnum)
+size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage &gmeventsMsg, int clientnum)
 {
     // GM events consist of events ran by the GM (running & completed) and
     // participated in (running & completed).
@@ -3267,21 +3273,21 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     gmeventsStr.Append("<gmevents>");
 
     // XML: <event><name text><role text><status text><id text></event>
-    if (assignedEvents.runningEventIDAsGM >= 0)
+    if(assignedEvents.runningEventIDAsGM >= 0)
     {
         psserver->GetGMEventManager()->GetGMEventDetailsByID(assignedEvents.runningEventIDAsGM,
-                                                             name,
-                                                             desc);
+                name,
+                desc);
         event.Format("<event><name text=\"%s\" /><role text=\"*\" /><status text=\"R\" /><id text=\"%d\" /></event>",
                      name.GetData(), assignedEvents.runningEventIDAsGM);
         gmeventsStr.Append(event);
         numberOfEvents++;
     }
-    if (assignedEvents.runningEventID >= 0)
+    if(assignedEvents.runningEventID >= 0)
     {
         psserver->GetGMEventManager()->GetGMEventDetailsByID(assignedEvents.runningEventID,
-                                                             name,
-                                                             desc);
+                name,
+                desc);
         event.Format("<event><name text=\"%s\" /><role text=\" \" /><status text=\"R\" /><id text=\"%d\" /></event>",
                      name.GetData(), assignedEvents.runningEventID);
         gmeventsStr.Append(event);
@@ -3293,8 +3299,8 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     {
         int gmEventIDAsGM = iter.Next();
         psserver->GetGMEventManager()->GetGMEventDetailsByID(gmEventIDAsGM,
-                                                             name,
-                                                             desc);
+                name,
+                desc);
         event.Format("<event><name text=\"%s\" /><role text=\"*\" /><status text=\"C\" /><id text=\"%d\" /></event>",
                      name.GetData(), gmEventIDAsGM);
         gmeventsStr.Append(event);
@@ -3306,8 +3312,8 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
     {
         int gmEventID = iter2.Next();
         psserver->GetGMEventManager()->GetGMEventDetailsByID(gmEventID,
-                                                             name,
-                                                             desc);
+                name,
+                desc);
         event.Format("<event><name text=\"%s\" /><role text=\" \" /><status text=\"C\" /><id text=\"%d\" /></event>",
                      name.GetData(), gmEventID);
         gmeventsStr.Append(event);
@@ -3316,15 +3322,15 @@ size_t psCharacter::GetAssignedGMEvents(psGMEventListMessage& gmeventsMsg, int c
 
     gmeventsStr.Append("</gmevents>");
 
-    if (numberOfEvents)
-    gmeventsMsg.Populate(gmeventsStr, clientnum);
+    if(numberOfEvents)
+        gmeventsMsg.Populate(gmeventsStr, clientnum);
 
     return numberOfEvents;
 }
 
 void psCharacter::AssignGMEvent(int id, bool playerIsGM)
 {
-    if (playerIsGM)
+    if(playerIsGM)
         assignedEvents.runningEventIDAsGM = id;
     else
         assignedEvents.runningEventID = id;
@@ -3332,10 +3338,10 @@ void psCharacter::AssignGMEvent(int id, bool playerIsGM)
 
 void psCharacter::CompleteGMEvent(bool playerIsGM)
 {
-    if (playerIsGM)
+    if(playerIsGM)
     {
         assignedEvents.completedEventIDsAsGM.Push(assignedEvents.runningEventIDAsGM);
-    assignedEvents.runningEventIDAsGM = -1;
+        assignedEvents.runningEventIDAsGM = -1;
     }
     else
     {
@@ -3346,16 +3352,16 @@ void psCharacter::CompleteGMEvent(bool playerIsGM)
 
 void psCharacter::RemoveGMEvent(int id, bool playerIsGM)
 {
-    if (playerIsGM)
+    if(playerIsGM)
     {
-        if (assignedEvents.runningEventIDAsGM == id)
+        if(assignedEvents.runningEventIDAsGM == id)
             assignedEvents.runningEventIDAsGM = -1;
         else
             assignedEvents.completedEventIDsAsGM.Delete(id);
     }
     else
     {
-        if (assignedEvents.runningEventID == id)
+        if(assignedEvents.runningEventID == id)
             assignedEvents.runningEventID = -1;
         else
             assignedEvents.completedEventIDs.Delete(id);
@@ -3363,15 +3369,15 @@ void psCharacter::RemoveGMEvent(int id, bool playerIsGM)
 }
 
 
-bool psCharacter::UpdateFaction(Faction * faction, int delta)
+bool psCharacter::UpdateFaction(Faction* faction, int delta)
 {
-    if (!GetActor())
+    if(!GetActor())
     {
         return false;
     }
 
     GetFactions()->UpdateFactionStanding(faction->id,delta);
-    if (delta > 0)
+    if(delta > 0)
     {
         psserver->SendSystemInfo(GetActor()->GetClientID(),"Your faction with %s has improved.",faction->name.GetData());
     }
@@ -3381,7 +3387,7 @@ bool psCharacter::UpdateFaction(Faction * faction, int delta)
     }
 
 
-    psFactionMessage factUpdate( GetActor()->GetClientID(), psFactionMessage::MSG_UPDATE);
+    psFactionMessage factUpdate(GetActor()->GetClientID(), psFactionMessage::MSG_UPDATE);
     int standing;
     float weight;
     GetFactions()->GetFactionStanding(faction->id, standing ,weight);
@@ -3393,9 +3399,9 @@ bool psCharacter::UpdateFaction(Faction * faction, int delta)
     return true;
 }
 
-bool psCharacter::CheckFaction(Faction * faction, int value)
+bool psCharacter::CheckFaction(Faction* faction, int value)
 {
-    if (!GetActor()) return false;
+    if(!GetActor()) return false;
 
     return GetFactions()->CheckFaction(faction,value);
 }
@@ -3409,13 +3415,13 @@ void psCharacter::SetDescription(const char* newValue)
 {
     description = newValue;
     bool bChanged = false;
-    while (description.Find("\n\n\n\n") != (size_t)-1)
+    while(description.Find("\n\n\n\n") != (size_t)-1)
     {
         bChanged = true;
         description.ReplaceAll("\n\n\n\n", "\n\n\n");
     }
 
-    if (bChanged && GetActor() && GetActor()->GetClient())
+    if(bChanged && GetActor() && GetActor()->GetClient())
         psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! Description trimmed.");
 }
 
@@ -3428,13 +3434,13 @@ void psCharacter::SetOOCDescription(const char* newValue)
 {
     oocdescription = newValue;
     bool bChanged = false;
-    while (description.Find("\n\n\n\n") != (size_t)-1)
+    while(description.Find("\n\n\n\n") != (size_t)-1)
     {
         bChanged = true;
         description.ReplaceAll("\n\n\n\n", "\n\n\n");
     }
 
-    if (bChanged && GetActor() && GetActor()->GetClient())
+    if(bChanged && GetActor() && GetActor()->GetClient())
         psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! Description trimmed.");
 }
 
@@ -3448,18 +3454,18 @@ void psCharacter::SetCreationInfo(const char* newValue)
 {
     creationinfo = newValue;
     bool bChanged = false;
-    while (creationinfo.Find("\n\n\n\n") != (size_t)-1)
+    while(creationinfo.Find("\n\n\n\n") != (size_t)-1)
     {
         bChanged = true;
         creationinfo.ReplaceAll("\n\n\n\n", "\n\n\n");
     }
 
-    if (bChanged && GetActor() && GetActor()->GetClient())
+    if(bChanged && GetActor() && GetActor()->GetClient())
         psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! creation info trimmed.");
 }
 
 //Generates and returns the dynamic life events from factions
-bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
+bool psCharacter::GetFactionEventsDescription(csString &factionDescription)
 {
     //iterates all the various factions in this character
     csHash<FactionStanding*, int>::GlobalIterator iter(GetFactions()->GetStandings().GetIterator());
@@ -3471,9 +3477,9 @@ bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
         {
             csArray<FactionLifeEvent>::ReverseIterator scoreIter = standing->faction->PositiveFactionEvents.GetReverseIterator();
             score = standing->score;
-            while (scoreIter.HasNext())
+            while(scoreIter.HasNext())
             {
-                FactionLifeEvent& lifevt = scoreIter.Next();
+                FactionLifeEvent &lifevt = scoreIter.Next();
                 if(score > lifevt.value) //check if the score is enough to attribuite this life event
                 {
                     factionDescription += lifevt.event_description + "\n"; //add the life event to the description
@@ -3485,10 +3491,10 @@ bool psCharacter::GetFactionEventsDescription(csString & factionDescription)
         {
             csArray<FactionLifeEvent>::ReverseIterator scoreIter = standing->faction->NegativeFactionEvents.GetReverseIterator();
             score = abs(standing->score); //we store values as positive to make things easier and faster so take the
-                                          //absolute value
-            while (scoreIter.HasNext())
+            //absolute value
+            while(scoreIter.HasNext())
             {
-                FactionLifeEvent& lifevt = scoreIter.Next();
+                FactionLifeEvent &lifevt = scoreIter.Next();
                 if(score > lifevt.value)
                 {
                     factionDescription += lifevt.event_description + "\n";
@@ -3512,23 +3518,23 @@ void psCharacter::SetLifeDescription(const char* newValue)
 {
     lifedescription = newValue;
     bool bChanged = false;
-    while (lifedescription.Find("\n\n\n\n") != (size_t)-1)
+    while(lifedescription.Find("\n\n\n\n") != (size_t)-1)
     {
         bChanged = true;
         lifedescription.ReplaceAll("\n\n\n\n", "\n\n\n");
     }
 
-    if (bChanged && GetActor() && GetActor()->GetClient())
+    if(bChanged && GetActor() && GetActor()->GetClient())
         psserver->SendSystemError(GetActor()->GetClient()->GetClientNum(), "Warning! custom life events trimmed.");
 }
 
 //TODO: Make this not return a temp csString, but fix in place
-csString NormalizeCharacterName(const csString & name)
+csString NormalizeCharacterName(const csString &name)
 {
     csString normName = name;
     normName.Downcase();
     normName.Trim();
-    if (normName.Length() > 0)
+    if(normName.Length() > 0)
         normName.SetAt(0,toupper(normName.GetAt(0)));
     return normName;
 }
@@ -3544,23 +3550,23 @@ void CharStat::SetBase(int x)
     chr->Skills().Calculate();
 }
 
-StatSet::StatSet(psCharacter *self) : CharacterAttribute(self)
+StatSet::StatSet(psCharacter* self) : CharacterAttribute(self)
 {
-    for (int i = 0; i < PSITEMSTATS_STAT_COUNT; i++)
+    for(int i = 0; i < PSITEMSTATS_STAT_COUNT; i++)
     {
         stats[i].Initialize(self);
     }
 }
 
-CharStat & StatSet::Get(PSITEMSTATS_STAT which)
+CharStat &StatSet::Get(PSITEMSTATS_STAT which)
 {
     CS_ASSERT(which >= 0 && which < PSITEMSTATS_STAT_COUNT);
     return stats[which];
 }
 
-SkillSet::SkillSet(psCharacter *self) : CharacterAttribute(self)
+SkillSet::SkillSet(psCharacter* self) : CharacterAttribute(self)
 {
-    for (size_t i = 0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
+    for(size_t i = 0; i < psserver->GetCacheManager()->GetSkillAmount(); i++)
     {
         //generate a new skill
         Skill mySkill;
@@ -3588,11 +3594,11 @@ int SkillSet::AddSkillPractice(psSkillInfo* skillInfo, unsigned int val)
     if(rankUp && self->GetActor()->GetClientID() != 0)
     {
         psServer::CharacterLoader.UpdateCharacterSkill(self->GetPID(),
-                                                       skill,
-                                                       GetSkillPractice((PSSKILL)skill),
-                                                       GetSkillKnowledge((PSSKILL)skill),
-                                                       GetSkillRank((PSSKILL)skill).Base()
-                                                       );
+                skill,
+                GetSkillPractice((PSSKILL)skill),
+                GetSkillKnowledge((PSSKILL)skill),
+                GetSkillRank((PSSKILL)skill).Base()
+                                                      );
     }
 
 
@@ -3613,7 +3619,7 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
 {
     psSkillInfo* skillInfo = psserver->GetCacheManager()->GetSkillByID(skill);
 
-    if (skillInfo)
+    if(skillInfo)
     {
         return AddSkillPractice(skillInfo, val);
     }
@@ -3628,18 +3634,18 @@ int SkillSet::AddSkillPractice(PSSKILL skill, unsigned int val)
     return 0;
 }
 
-unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
+unsigned int SkillSet::GetBestSkillSlot(bool withBuffer)
 {
     unsigned int max = 0;
     unsigned int i = 0;
-    for (; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
+    for(; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
     {
         unsigned int rank = withBuffer ? skills[i].rank.Current() : skills[i].rank.Base();
-        if (rank > max)
+        if(rank > max)
             max = rank;
     }
 
-    if (i == psserver->GetCacheManager()->GetSkillAmount())
+    if(i == psserver->GetCacheManager()->GetSkillAmount())
         return (unsigned int)~0;
     else
         return i;
@@ -3647,15 +3653,15 @@ unsigned int SkillSet::GetBestSkillSlot( bool withBuffer )
 
 void SkillSet::Calculate()
 {
-    for ( size_t z = 0; z < psserver->GetCacheManager()->GetSkillAmount(); z++ )
+    for(size_t z = 0; z < psserver->GetCacheManager()->GetSkillAmount(); z++)
     {
         skills[z].CalculateCosts(self);
     }
 }
 
-bool SkillSet::CanTrain( PSSKILL skill )
+bool SkillSet::CanTrain(PSSKILL skill)
 {
-    if (skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return false;
     else
     {
@@ -3663,32 +3669,32 @@ bool SkillSet::CanTrain( PSSKILL skill )
     }
 }
 
-void SkillSet::CheckDoRank( PSSKILL skill )
+void SkillSet::CheckDoRank(PSSKILL skill)
 {
 
-    if (skill<0 ||skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(skill<0 ||skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
     else
     {
-        skills[skill].CheckDoRank( self );
+        skills[skill].CheckDoRank(self);
     }
 }
 
-void SkillSet::Train( PSSKILL skill, int yIncrease )
+void SkillSet::Train(PSSKILL skill, int yIncrease)
 {
 
-    if (skill<0 ||skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(skill<0 ||skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
     else
     {
-        skills[skill].Train( yIncrease );
+        skills[skill].Train(yIncrease);
     }
 }
 
 
-void SkillSet::SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculatestats )
+void SkillSet::SetSkillInfo(PSSKILL which, psSkillInfo* info, bool recalculatestats)
 {
-    if (which<0 || which>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(which<0 || which>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
     else
     {
@@ -3696,21 +3702,21 @@ void SkillSet::SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculates
         skills[which].CalculateCosts(self);
     }
 
-    if (recalculatestats)
-      self->RecalculateStats();
+    if(recalculatestats)
+        self->RecalculateStats();
 }
 
-void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculatestats )
+void SkillSet::SetSkillRank(PSSKILL which, unsigned int rank, bool recalculatestats)
 {
-    if (which < 0 || which >= (PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(which < 0 || which >= (PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
 
     // Clamp rank to stay within sane values, even if given something totally outrageous.
-    if (rank < 0)
+    if(rank < 0)
     {
         rank = 0;
     }
-    else if (rank > SKILL_MAX_RANK)
+    else if(rank > SKILL_MAX_RANK)
     {
         rank = SKILL_MAX_RANK;
     }
@@ -3719,17 +3725,17 @@ void SkillSet::SetSkillRank( PSSKILL which, unsigned int rank, bool recalculates
     skills[which].CalculateCosts(self);
     skills[which].dirtyFlag = true;  // Mark for DB update
 
-    if (recalculatestats)
+    if(recalculatestats)
     {
         self->RecalculateStats();
     }
 }
 
-void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
+void SkillSet::SetSkillKnowledge(PSSKILL which, int y_value)
 {
-    if (which<0 || which>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(which<0 || which>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
-    if (y_value < 0)
+    if(y_value < 0)
         y_value = 0;
     skills[which].y = y_value;
     skills[which].dirtyFlag = true;   // Mark for DB update
@@ -3738,9 +3744,9 @@ void SkillSet::SetSkillKnowledge( PSSKILL which, int y_value )
 
 void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
 {
-    if (which<0 || which>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(which<0 || which>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return;
-    if (z_value < 0)
+    if(z_value < 0)
         z_value = 0;
 
     skills[which].z = z_value;
@@ -3748,16 +3754,16 @@ void SkillSet::SetSkillPractice(PSSKILL which,int z_value)
 }
 
 
-bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int& added )
+bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int &added)
 {
-    if (skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
     {
         added = 0;
         return 0;
     }
 
     bool rankup = false;
-    rankup = skills[skill].Practice( val, added, self );
+    rankup = skills[skill].Practice(val, added, self);
     return rankup;
 }
 
@@ -3765,7 +3771,7 @@ bool SkillSet::AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int&
 unsigned int SkillSet::GetSkillPractice(PSSKILL skill)
 {
 
-    if (skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return 0;
     return skills[skill].z;
 }
@@ -3774,18 +3780,18 @@ unsigned int SkillSet::GetSkillPractice(PSSKILL skill)
 unsigned int SkillSet::GetSkillKnowledge(PSSKILL skill)
 {
 
-    if (skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
+    if(skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return 0;
     return skills[skill].y;
 }
 
-SkillRank & SkillSet::GetSkillRank(PSSKILL skill)
+SkillRank &SkillSet::GetSkillRank(PSSKILL skill)
 {
     CS_ASSERT(skill >= 0 && skill < (PSSKILL)psserver->GetCacheManager()->GetSkillAmount());
     return skills[skill].rank;
 }
 
-Skill& SkillSet::Get(PSSKILL skill)
+Skill &SkillSet::Get(PSSKILL skill)
 {
     CS_ASSERT(skill >= 0 && skill < (PSSKILL)psserver->GetCacheManager()->GetSkillAmount());
     return skills[skill];
@@ -3794,15 +3800,15 @@ Skill& SkillSet::Get(PSSKILL skill)
 //////////////////////////////////////////////////////////////////////////
 // BuddyManager
 //////////////////////////////////////////////////////////////////////////
-bool psBuddyManager::AddBuddy(PID buddyID, csString & buddyName)
+bool psBuddyManager::AddBuddy(PID buddyID, csString &buddyName)
 {
     // Cannot addself to buddy list
-    if (buddyID == characterId)
+    if(buddyID == characterId)
         return false;
 
-    for ( size_t x = 0; x < buddyList.GetSize(); x++ )
+    for(size_t x = 0; x < buddyList.GetSize(); x++)
     {
-        if ( buddyList[x].playerId == buddyID )
+        if(buddyList[x].playerId == buddyID)
         {
             return true;
         }
@@ -3812,16 +3818,16 @@ bool psBuddyManager::AddBuddy(PID buddyID, csString & buddyName)
     b.name      = buddyName;
     b.playerId  = buddyID;
 
-    buddyList.Push( b );
+    buddyList.Push(b);
     return true;
 }
 
 
 void psBuddyManager::RemoveBuddy(PID buddyID)
 {
-    for ( size_t x = 0; x < buddyList.GetSize(); x++ )
+    for(size_t x = 0; x < buddyList.GetSize(); x++)
     {
-        if ( buddyList[x].playerId == buddyID )
+        if(buddyList[x].playerId == buddyID)
         {
             buddyList.DeleteIndex(x);
             return;
@@ -3832,46 +3838,46 @@ void psBuddyManager::RemoveBuddy(PID buddyID)
 
 void psBuddyManager::AddBuddyOf(PID buddyID)
 {
-    if ( buddyOfList.Find( buddyID )  == csArrayItemNotFound )
+    if(buddyOfList.Find(buddyID)  == csArrayItemNotFound)
     {
-        buddyOfList.Push( buddyID );
+        buddyOfList.Push(buddyID);
     }
 }
 
 
 void psBuddyManager::RemoveBuddyOf(PID buddyID)
 {
-    buddyOfList.Delete( buddyID );
+    buddyOfList.Delete(buddyID);
 }
 
 
-bool psBuddyManager::LoadBuddies( Result& myBuddies, Result& buddyOf )
+bool psBuddyManager::LoadBuddies(Result &myBuddies, Result &buddyOf)
 {
     unsigned int x;
 
-    if ( !myBuddies.IsValid() )
-      return true;
+    if(!myBuddies.IsValid())
+        return true;
 
-    for ( x = 0; x < myBuddies.Count(); x++ )
+    for(x = 0; x < myBuddies.Count(); x++)
     {
 
-        if ( strcmp( myBuddies[x][ "relationship_type" ], "buddy" ) == 0 )
+        if(strcmp(myBuddies[x][ "relationship_type" ], "buddy") == 0)
         {
             Buddy newBud;
             newBud.name = myBuddies[x][ "buddy_name" ];
             newBud.playerId = PID(myBuddies[x].GetUInt32("related_id"));
 
-            buddyList.Insert( 0, newBud );
+            buddyList.Insert(0, newBud);
         }
     }
 
     // Load all the people that I am a buddy of. This is used to inform these people
     // of when I log in/out.
-    for (x = 0; x < buddyOf.Count(); x++ )
+    for(x = 0; x < buddyOf.Count(); x++)
     {
-        if ( strcmp( buddyOf[x][ "relationship_type" ], "buddy" ) == 0 )
+        if(strcmp(buddyOf[x][ "relationship_type" ], "buddy") == 0)
         {
-            buddyOfList.Insert( 0, buddyOf[x].GetUInt32( "character_id" ) );
+            buddyOfList.Insert(0, buddyOf[x].GetUInt32("character_id"));
         }
     }
 
@@ -3879,16 +3885,16 @@ bool psBuddyManager::LoadBuddies( Result& myBuddies, Result& buddyOf )
 }
 
 
-bool psBuddyManager::IsBuddy(PID buddyID) 
+bool psBuddyManager::IsBuddy(PID buddyID)
 {
-    for ( size_t x = 0; x < buddyList.GetSize(); x++ ) 
+    for(size_t x = 0; x < buddyList.GetSize(); x++)
     {
-        if ( buddyList[x].playerId == buddyID )
+        if(buddyList[x].playerId == buddyID)
         {
             return true;
         }
     }
-    return false; 
+    return false;
 }
 
 
