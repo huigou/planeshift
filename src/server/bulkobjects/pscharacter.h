@@ -86,7 +86,7 @@ struct Faction;
  * @{ */
 
 /** "Normalizes" name of character i.e. makes the first letter uppercase and all the rest downcase */
-csString NormalizeCharacterName(const csString & name);
+csString NormalizeCharacterName(const csString &name);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -110,9 +110,9 @@ enum PSCHARACTER_TYPE
 class CharacterAttribute
 {
 protected:
-    psCharacter *self;
+    psCharacter* self;
 public:
-    CharacterAttribute(psCharacter *character) : self(character) { }
+    CharacterAttribute(psCharacter* character) : self(character) { }
 };
 
 // Remember to update the translation table in GetModeStr when adding modes.
@@ -206,7 +206,10 @@ public:
      *
      *  @param charID The PID of the owner of this buddy manager.
      */
-    void Initialize(PID charID) { characterId = charID; }
+    void Initialize(PID charID)
+    {
+        characterId = charID;
+    }
 
     /**
      * Add the player with a certain Player ID to this character buddy list.
@@ -214,7 +217,7 @@ public:
      * @param buddyID the Player ID which we are going to add to the character buddy list
      * @param name The name of the buddy.
      */
-    bool AddBuddy(PID buddyID, csString & name);
+    bool AddBuddy(PID buddyID, csString &name);
 
     /**
      * Remove the player with a certain Player ID from this character buddy list.
@@ -232,14 +235,14 @@ public:
     bool IsBuddy(PID buddyID);
 
     /**
-     * Adds this player as having this character on their buddy list. 
+     * Adds this player as having this character on their buddy list.
      *
      * @param buddyID the Player ID of the character that has this character as a buddy.
      */
     void AddBuddyOf(PID buddyID);
 
     /**
-     * Remove character as having this character on their buddy list. 
+     * Remove character as having this character on their buddy list.
      *
      * @param buddyID the Player ID of the character that has removed this character as a buddy.
      */
@@ -251,11 +254,17 @@ public:
      * @param myBuddies The database set of characters that are my buddy.
      * @param buddyOf   The database set of characters that have me as a buddy.
      */
-    bool LoadBuddies( Result& myBuddies, Result& buddyOf );
+    bool LoadBuddies(Result &myBuddies, Result &buddyOf);
 
 
-    csArray<psBuddyManager::Buddy>  GetBuddyList()   { return buddyList; }
-    csArray<PID>                    GetBuddyOfList() { return buddyOfList; }
+    csArray<psBuddyManager::Buddy>  GetBuddyList()
+    {
+        return buddyList;
+    }
+    csArray<PID>                    GetBuddyOfList()
+    {
+        return buddyOfList;
+    }
 
 private:
 
@@ -273,10 +282,13 @@ private:
 class SkillStatBuffable : public ClampedPositiveBuffable<int>
 {
 public:
-    void Initialize(psCharacter *c) { chr = c; }
+    void Initialize(psCharacter* c)
+    {
+        chr = c;
+    }
 protected:
     virtual void OnChange();
-    psCharacter *chr;
+    psCharacter* chr;
 };
 
 // When base stats change, we also need to recalculate skill training costs.
@@ -292,10 +304,13 @@ typedef SkillStatBuffable SkillRank;
 class StatSet : public CharacterAttribute
 {
 public:
-    StatSet(psCharacter *self);
+    StatSet(psCharacter* self);
 
-    CharStat & Get(PSITEMSTATS_STAT attrib);
-    CharStat & operator [] (PSITEMSTATS_STAT which) { return Get(which); }
+    CharStat &Get(PSITEMSTATS_STAT attrib);
+    CharStat &operator [](PSITEMSTATS_STAT which)
+    {
+        return Get(which);
+    }
 
 protected:
     CharStat stats[PSITEMSTATS_STAT_COUNT];
@@ -316,16 +331,28 @@ struct Skill
     unsigned short yCostNext;///< Cost in y points of next level.
     bool dirtyFlag;          ///< Flag if this was changed after load from database
 
-    psSkillInfo *info;       ///< Database information about the skill.
+    psSkillInfo* info;       ///< Database information about the skill.
 
-    Skill() { Clear(); }
-    void Clear() { z=y=0; zCost=yCost=0; info = NULL; dirtyFlag = false;}
+    Skill()
+    {
+        Clear();
+    }
+    void Clear()
+    {
+        z=y=0;
+        zCost=yCost=0;
+        info = NULL;
+        dirtyFlag = false;
+    }
 
     void CalculateCosts(psCharacter* user);
 
     /** Checks to see if this skill can be trained any more at the current rank.
      */
-    bool CanTrain() { return y < yCost; }
+    bool CanTrain()
+    {
+        return y < yCost;
+    }
 
     /**
      * Train a skill by a particular amount.
@@ -335,7 +362,7 @@ struct Skill
      *
      * @param yIncrease The amount to try to increase the skill by.
      */
-    void Train( int yIncrease );
+    void Train(int yIncrease);
 
     /**
      * Check if skill will rank and rank it up.
@@ -349,7 +376,7 @@ struct Skill
      *
      * @return True if the practice causes a rank change, false if not.
      */
-    bool CheckDoRank( psCharacter* user );
+    bool CheckDoRank(psCharacter* user);
 
     /**
      * Practice this skill.
@@ -367,7 +394,7 @@ struct Skill
      *
      * @return True if the practice causes a rank change, false if not.
      */
-    bool Practice( unsigned int amount, unsigned int& actuallyAdded, psCharacter* user  );
+    bool Practice(unsigned int amount, unsigned int &actuallyAdded, psCharacter* user);
 };
 
 
@@ -388,7 +415,7 @@ public:
      *
      * @param self The psCharacter this skillset is associated with.
      */
-    SkillSet(psCharacter *self);
+    SkillSet(psCharacter* self);
 
     /**
      * Sets the common skill info for this skill ( data from the database ).
@@ -397,7 +424,7 @@ public:
      * @param info   The info structure to assign to this skill.
      * @param recalculatestats   if true, stats of player will be recalculated taking into account the new skill
      */
-    void SetSkillInfo( PSSKILL which, psSkillInfo* info, bool recalculatestats = true);
+    void SetSkillInfo(PSSKILL which, psSkillInfo* info, bool recalculatestats = true);
 
     /**
      * Sets the practice level for the skill.
@@ -430,7 +457,7 @@ public:
      * @param rank    The value to set this skill rank at.
      * @param recalculatestats   if true, stats of player will be recalculated taking into account the new skill rank
      */
-    void SetSkillRank( PSSKILL which, unsigned int rank, bool recalculatestats = true);
+    void SetSkillRank(PSSKILL which, unsigned int rank, bool recalculatestats = true);
 
     /**
      * Update the costs for all the skills.
@@ -446,7 +473,7 @@ public:
      * @param skill The skill we want to train.
      * @return  True if the skill still requires Y credits before it is fully trained.
      */
-    bool CanTrain( PSSKILL skill );
+    bool CanTrain(PSSKILL skill);
 
     /**
      * Checks if a skill should rank and ranks it.
@@ -455,7 +482,7 @@ public:
      *
      * @param skill The skill we want to check.
      */
-    void CheckDoRank( PSSKILL skill );
+    void CheckDoRank(PSSKILL skill);
 
 
     /**
@@ -467,7 +494,7 @@ public:
      *  @param skill The skill we want to train.
      *  @param yIncrease  The amount we want to train this skill by.
      */
-    void Train( PSSKILL skill, int yIncrease );
+    void Train(PSSKILL skill, int yIncrease);
 
 
     /**
@@ -476,7 +503,7 @@ public:
      *  @param which The skill that we want the rank for.
      *  @return The rank of the requested skill.
      */
-    SkillRank & GetSkillRank(PSSKILL which);
+    SkillRank &GetSkillRank(PSSKILL which);
 
     /**
      *  Get the current knowledge level of a skill.
@@ -484,7 +511,7 @@ public:
      *  @param skill the enum of the skill that we want.
      *  @return The Y value of that skill.
      */
-    unsigned int GetSkillKnowledge( PSSKILL skill );
+    unsigned int GetSkillKnowledge(PSSKILL skill);
 
     /**
      *  Get the current practice level of a skill.
@@ -504,7 +531,7 @@ public:
      *
      * @return True if practice caused a rank up.
      */
-    bool  AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int& added );
+    bool  AddToSkillPractice(PSSKILL skill, unsigned int val, unsigned int &added);
 
     /**
      * Add skill practice.
@@ -515,16 +542,16 @@ public:
      * Add skill practice.
      */
     int AddSkillPractice(PSSKILL skill, unsigned int val);
-    
+
     /**
      *  Get the slot that is the best skill in the set.
      *
      *  @param withBuff   Apply any skill buffs?
      *  @return The slot the best skill is in.
      */
-    unsigned int GetBestSkillSlot( bool withBuff );
+    unsigned int GetBestSkillSlot(bool withBuff);
 
-    Skill & Get(PSSKILL skill);
+    Skill &Get(PSSKILL skill);
 };
 
 #define ALWAYS_IMPERVIOUS      1
@@ -561,15 +588,18 @@ struct Stance
  */
 class charVariable
 {
-    public:    
+public:
     csString name;          ///< The name of the variable.
     csString value;         ///< The value assigned to this variable.
     bool dirty;             ///< Says if the variable was modified.
     Buffable<int> intBuff;  ///< A buffable interpretation of the variable
 
-    
-    Buffable<int>& GetBuffable() { return intBuff; }
-    
+
+    Buffable<int> &GetBuffable()
+    {
+        return intBuff;
+    }
+
     charVariable() : dirty(false) {}
     charVariable(csString name, csString value) : name(name), value(value), dirty(false)
     {
@@ -602,7 +632,10 @@ public:
      *
      * @param psChar A pointer to a pscharacter.
      */
-    void SetCharacter(psCharacter *psChar) { character = psChar; }
+    void SetCharacter(psCharacter* psChar)
+    {
+        character = psChar;
+    }
 
 protected:
 
@@ -613,7 +646,7 @@ protected:
      */
     virtual void OnChange();
 
-    psCharacter *character; ///< Pointer to the psCharacter owning this overridable class.
+    psCharacter* character; ///< Pointer to the psCharacter owning this overridable class.
 };
 
 //-----------------------------------------------------------------------------
@@ -621,18 +654,18 @@ protected:
 class psCharacter : public iScriptableVar, public iCachedObject
 {
 public:
-    enum TradingStatus 
+    enum TradingStatus
     {
-        NOT_TRADING, 
-        SELLING, 
-        BUYING, 
-        WITHDRAWING, 
+        NOT_TRADING,
+        SELLING,
+        BUYING,
+        WITHDRAWING,
         STORING
     };
 
     struct st_location
     {
-        psSectorInfo *loc_sector;
+        psSectorInfo* loc_sector;
         csVector3 loc;
         float loc_yrot;
         InstanceID worldInstance;
@@ -642,18 +675,30 @@ public:
 
     virtual ~psCharacter();
 
-    bool Load(iResultRow& row);
+    bool Load(iResultRow &row);
 
-    bool IsStatue() { return isStatue; }
+    bool IsStatue()
+    {
+        return isStatue;
+    }
 
-    psCharacterInventory& Inventory() { return inventory; }
+    psCharacterInventory &Inventory()
+    {
+        return inventory;
+    }
 
-    psMoney Money() { return money; }
-    
-    psMoney& BankMoney() { return bankMoney; }
-    
+    psMoney Money()
+    {
+        return money;
+    }
+
+    psMoney &BankMoney()
+    {
+        return bankMoney;
+    }
+
     void SetMoney(psMoney m);
-    
+
     /**
      *  Add a money object to the current wallet.
      *
@@ -661,7 +706,7 @@ public:
      *
      * @param moneyObject The money object that was just picked up.
      */
-    void SetMoney( psItem *& moneyObject );
+    void SetMoney(psItem* &moneyObject);
 
     /**
      *  Add a certain amount of a money object to the current wallet based on the baseitem data.
@@ -672,51 +717,87 @@ public:
      * @param amount The amount of the base object which was rewarded.
      */
     void SetMoney(psItemStats* MoneyObject,  int amount);
-    
+
     void AdjustMoney(psMoney m, bool bank);
-    
+
     void SaveMoney(bool bank);
 
     void ResetStats();
 
 
     /// Checks the bit field for a bit flag from the enum in TutorialManager.h
-    bool NeedsHelpEvent(int which) { return (helpEventFlags & (1 << which))==0; }
+    bool NeedsHelpEvent(int which)
+    {
+        return (helpEventFlags & (1 << which))==0;
+    }
 
     /// Sets a bit field complete for a specified flag from the enum in tutorialmanager.h
-    void CompleteHelpEvent(int which) { helpEventFlags |= (1 << which); }
+    void CompleteHelpEvent(int which)
+    {
+        helpEventFlags |= (1 << which);
+    }
 
     /// Set the active guild for the character.
-    void SetGuild(psGuildInfo *g) { guildinfo = g; }
+    void SetGuild(psGuildInfo* g)
+    {
+        guildinfo = g;
+    }
     /// Return the active guild, if any for this character.
-    csWeakRef<psGuildInfo> GetGuild() { return guildinfo; }
+    csWeakRef<psGuildInfo> GetGuild()
+    {
+        return guildinfo;
+    }
     /// Return the guild level for this character, if any.
-    psGuildLevel *GetGuildLevel();
+    psGuildLevel* GetGuildLevel();
     /// Return the guild membership for this character, if any.
-    psGuildMember *GetGuildMembership();
+    psGuildMember* GetGuildMembership();
 
     ///Returns if the client should receive notifications about guild members logging in
-    bool IsGettingGuildNotifications() { return (joinNotifications & PSCHARACTER_JOINNOTIFICATION_GUILD); }
+    bool IsGettingGuildNotifications()
+    {
+        return (joinNotifications & PSCHARACTER_JOINNOTIFICATION_GUILD);
+    }
     ///Returns if the client should receive notifications about alliance members logging in
-    bool IsGettingAllianceNotifications() { return (joinNotifications & PSCHARACTER_JOINNOTIFICATION_ALLIANCE); }
+    bool IsGettingAllianceNotifications()
+    {
+        return (joinNotifications & PSCHARACTER_JOINNOTIFICATION_ALLIANCE);
+    }
     ///Sets if the client should receive notifications about guild members logging in
-    void SetGuildNotifications(bool enabled) { if(enabled) joinNotifications |= PSCHARACTER_JOINNOTIFICATION_GUILD;
-                                               else joinNotifications &= ~PSCHARACTER_JOINNOTIFICATION_GUILD;}
+    void SetGuildNotifications(bool enabled)
+    {
+        if(enabled) joinNotifications |= PSCHARACTER_JOINNOTIFICATION_GUILD;
+        else joinNotifications &= ~PSCHARACTER_JOINNOTIFICATION_GUILD;
+    }
     ///Sets if the client should receive notifications about alliance members logging in
-    void SetAllianceNotifications(bool enabled) { if(enabled) joinNotifications |= PSCHARACTER_JOINNOTIFICATION_ALLIANCE;
-                                                  else joinNotifications &= ~PSCHARACTER_JOINNOTIFICATION_ALLIANCE;}
+    void SetAllianceNotifications(bool enabled)
+    {
+        if(enabled) joinNotifications |= PSCHARACTER_JOINNOTIFICATION_ALLIANCE;
+        else joinNotifications &= ~PSCHARACTER_JOINNOTIFICATION_ALLIANCE;
+    }
 
     ///gets the notification bitfield directly: to be used only by the save functon
-    int GetNotifications(){ return joinNotifications; }
+    int GetNotifications()
+    {
+        return joinNotifications;
+    }
     ///sets the notification bitfield directly: to be used only by the loader functon
-    void SetNotifications(int notifications) { joinNotifications = notifications; }
+    void SetNotifications(int notifications)
+    {
+        joinNotifications = notifications;
+    }
 
-    SkillSet & Skills() { return skills;     }
+    SkillSet &Skills()
+    {
+        return skills;
+    }
 
     /**
      * Returns a pointer to the skill cache for this character
      */
-    psSkillCache *GetSkillCache() { return &skillCache; }
+    psSkillCache* GetSkillCache()
+    {
+        return &skillCache;
+    }
 
     /**
      * Function to get the base and current skill values.
@@ -726,71 +807,135 @@ public:
 
     // iCachedObject Functions below
     virtual void ProcessCacheTimeout() {};  ///< required for iCachedObject but not used here
-    virtual void *RecoverObject() { return this; }  ///< Turn iCachedObject ptr into psCharacter
-    virtual void DeleteSelf() { delete this; }  ///< Delete must come from inside object to handle operator::delete overrides.
+    virtual void* RecoverObject()
+    {
+        return this;    ///< Turn iCachedObject ptr into psCharacter
+    }
+    virtual void DeleteSelf()
+    {
+        delete this;    ///< Delete must come from inside object to handle operator::delete overrides.
+    }
 
-    
+
 
     /// Load the bare minimum to know what this character is looks like
-    bool QuickLoad(iResultRow& row, bool noInventory);
+    bool QuickLoad(iResultRow &row, bool noInventory);
 
     void LoadIntroductions();
 
     void LoadActiveSpells();
-    void AddSpell(psSpell * spell);
-    bool Store(const char *location,const char *slot,psItem *what);
+    void AddSpell(psSpell* spell);
+    bool Store(const char* location,const char* slot,psItem* what);
 
-    void SetPID(PID characterID) { pid = characterID; }
-    PID GetPID() const { return pid; }
+    void SetPID(PID characterID)
+    {
+        pid = characterID;
+    }
+    PID GetPID() const
+    {
+        return pid;
+    }
 
-    PID GetMasterNPCID() const { return npcMasterId ? npcMasterId : pid; }
+    PID GetMasterNPCID() const
+    {
+        return npcMasterId ? npcMasterId : pid;
+    }
 
-    void SetAccount(AccountID id) { accountid = id; }
-    AccountID GetAccount() const { return accountid; }
+    void SetAccount(AccountID id)
+    {
+        accountid = id;
+    }
+    AccountID GetAccount() const
+    {
+        return accountid;
+    }
 
-    void SetName(const char* newName) { SetFullName(newName,lastname.GetData()); }
-    void SetLastName(const char* newLastName) { SetFullName(name.GetData(),newLastName); }
+    void SetName(const char* newName)
+    {
+        SetFullName(newName,lastname.GetData());
+    }
+    void SetLastName(const char* newLastName)
+    {
+        SetFullName(name.GetData(),newLastName);
+    }
     void SetFullName(const char* newFirstName, const char* newLastName);
-    void SetOldLastName( const char* oldLastName ) { this->oldlastname = oldLastName; };
+    void SetOldLastName(const char* oldLastName)
+    {
+        this->oldlastname = oldLastName;
+    };
 
-    const char *GetCharName() const     { return name.GetData(); }
-    const char *GetCharLastName() const { return lastname.GetData(); }
-    const char *GetCharFullName() const { return fullName.GetData(); }
-    const char *GetOldLastName() const  { return oldlastname.GetData(); }
+    const char* GetCharName() const
+    {
+        return name.GetData();
+    }
+    const char* GetCharLastName() const
+    {
+        return lastname.GetData();
+    }
+    const char* GetCharFullName() const
+    {
+        return fullName.GetData();
+    }
+    const char* GetOldLastName() const
+    {
+        return oldlastname.GetData();
+    }
 
     // Introductions
     /// Answers whether this character knows the given character or not.
     bool Knows(PID charid);
-    bool Knows(psCharacter *c) { return (c ? Knows(c->GetPID()) : false); }
+    bool Knows(psCharacter* c)
+    {
+        return (c ? Knows(c->GetPID()) : false);
+    }
     /// Introduces this character to the given character; answers false if already introduced.
-    bool Introduce(psCharacter *c);
+    bool Introduce(psCharacter* c);
     /// Unintroduces this character to the given character; answers false if not introduced.
-    bool Unintroduce(psCharacter *c);
+    bool Unintroduce(psCharacter* c);
 
-    unsigned int GetCharType() const { return characterType; }
-    void SetCharType(unsigned int v) { CS_ASSERT(v < PSCHARACTER_TYPE_COUNT); characterType = v; }
-    const char *GetCharTypeName() { return characterTypeName[characterType]; }
+    unsigned int GetCharType() const
+    {
+        return characterType;
+    }
+    void SetCharType(unsigned int v)
+    {
+        CS_ASSERT(v < PSCHARACTER_TYPE_COUNT);
+        characterType = v;
+    }
+    const char* GetCharTypeName()
+    {
+        return characterTypeName[characterType];
+    }
 
     /**
      * Set the last login time for the character in the format YYYY-MM-DD HH:MM:SS.
      */
-    void SetLastLoginTime( const char* last_login = NULL, bool save = true);
-    
+    void SetLastLoginTime(const char* last_login = NULL, bool save = true);
+
     /**
      * Retrive the last login time in the format YYYY-MM-DD HH:MM:SS.
      */
     csString GetLastLoginTime() const;
 
     void SetSpouseName(const char* name);
-    
+
     /**
      *  Gets Spouse Name of a character.
      *
      *  @return  SpouseName or "" if not married.
      */
-    const char *GetSpouseName() const { return spouseName.GetData(); }
-    void SetIsMarried( bool married ) { isMarried = married; }
-    bool GetIsMarried() const { return isMarried; }
+    const char* GetSpouseName() const
+    {
+        return spouseName.GetData();
+    }
+    void SetIsMarried(bool married)
+    {
+        isMarried = married;
+    }
+    bool GetIsMarried() const
+    {
+        return isMarried;
+    }
 
     /**
      * Sets the provided race info as the base default one.
@@ -800,21 +945,21 @@ public:
      *
      * @param rinfo A pointer to a @see psRaceInfo
      */
-    void SetRaceInfo(psRaceInfo *rinfo);
+    void SetRaceInfo(psRaceInfo* rinfo);
 
     /**
      * Gets the pointer to the global current raceinfo applied to this character.
      *
      * @return A @see psRaceInfo pointer
      */
-    psRaceInfo *GetRaceInfo();
+    psRaceInfo* GetRaceInfo();
 
     /**
      * Gets a reference to the overridable race allowing to override it or check the base race.
-     * 
+     *
      * @return A @see OverridableRace reference in this psCharacter
      */
-    OverridableRace & GetOverridableRace();
+    OverridableRace &GetOverridableRace();
 
     /**
      * Add a new explored area.
@@ -830,11 +975,20 @@ public:
      */
     bool HasExploredArea(PID explored);
 
-    FactionSet *GetFactions() { return factions; }
+    FactionSet* GetFactions()
+    {
+        return factions;
+    }
 
-    void SetLootCategory(int id) { lootCategoryId = id; }
-    int  GetLootCategory() const { return lootCategoryId; }
-    
+    void SetLootCategory(int id)
+    {
+        lootCategoryId = id;
+    }
+    int  GetLootCategory() const
+    {
+        return lootCategoryId;
+    }
+
     /**
      * Removes an item from the loot loaded on the character due to it's defeat.
      *
@@ -845,7 +999,7 @@ public:
      * @return The psItem whch  void DiscardQuest(QuestAssignment *q, bool force = false);corresponds to the base stats item searched for.
      */
     psItem* RemoveLootItem(int id);
-    
+
     /**
      * Removes either all or only those items with specified categories from the loot of a defeated character.
      *
@@ -862,9 +1016,12 @@ public:
      *
      * @param item A pointer to the item being lootable from this character.
      */
-    void AddLootItem(psItem *item);
-    void AddLootMoney(int money) { lootMoney += money; }
-    size_t GetLootItems(psLootMessage& msg, EID entity, int cnum);
+    void AddLootItem(psItem* item);
+    void AddLootMoney(int money)
+    {
+        lootMoney += money;
+    }
+    size_t GetLootItems(psLootMessage &msg, EID entity, int cnum);
 
     /// Gets and zeroes the loot money
     int  GetLootMoney();
@@ -873,9 +1030,15 @@ public:
     void ClearLoot();
 
     /// The last_response given by an npc to this player.
-    int GetLastResponse() { return lastResponse; }
-    void SetLastResponse(int response) { lastResponse=response; }
-    bool CheckResponsePrerequisite(NpcResponse *resp);
+    int GetLastResponse()
+    {
+        return lastResponse;
+    }
+    void SetLastResponse(int response)
+    {
+        lastResponse=response;
+    }
+    bool CheckResponsePrerequisite(NpcResponse* resp);
 
     void CombatDrain(int);
 
@@ -903,7 +1066,7 @@ public:
      * @param value The value.
      * @return A buffable<int> with the value of the variable.
      */
-    Buffable<int>& GetBuffableVariable(const csString& name, const csString& value = "0");
+    Buffable<int> &GetBuffableVariable(const csString &name, const csString &value = "0");
 
     /**
      * Sets a new variable for this character.
@@ -942,15 +1105,34 @@ public:
     void UseProgressionPoints(unsigned int X);
 
     /// Get the maximum realm the caster can cast with given skill
-    int GetMaxAllowedRealm( PSSKILL skill );
-    SkillRank & GetSkillRank(PSSKILL skill) { return skills.GetSkillRank(skill); }
+    int GetMaxAllowedRealm(PSSKILL skill);
+    SkillRank &GetSkillRank(PSSKILL skill)
+    {
+        return skills.GetSkillRank(skill);
+    }
 
-    void KilledBy(psCharacter* attacker) { deaths++; if(!attacker) suicides++; }
-    void Kills(psCharacter* target) { kills++; }
+    void KilledBy(psCharacter* attacker)
+    {
+        deaths++;
+        if(!attacker) suicides++;
+    }
+    void Kills(psCharacter* target)
+    {
+        kills++;
+    }
 
-    unsigned int GetKills() const { return kills; }
-    unsigned int GetDeaths() const { return deaths; }
-    unsigned int GetSuicides() const { return suicides; }
+    unsigned int GetKills() const
+    {
+        return kills;
+    }
+    unsigned int GetDeaths() const
+    {
+        return deaths;
+    }
+    unsigned int GetSuicides() const
+    {
+        return suicides;
+    }
 
     /**
      *  Drops an item into the world (one meter from this character's position).
@@ -962,7 +1144,7 @@ public:
      * @param transient flag (decay?) (default=true)
      * @param inplace TRUE if in place.
      */
-    void DropItem(psItem *&item, csVector3 pos = 0, const csVector3& rot = csVector3(0), bool guarded = true, bool transient = true, bool inplace = false);
+    void DropItem(psItem* &item, csVector3 pos = 0, const csVector3 &rot = csVector3(0), bool guarded = true, bool transient = true, bool inplace = false);
 
     float GetHP();
     float GetMana();
@@ -976,15 +1158,15 @@ public:
     void AdjustMana(float adjust);
     void AdjustStamina(float adjust, bool pys);
 
-    VitalBuffable & GetMaxHP();
-    VitalBuffable & GetMaxMana();
-    VitalBuffable & GetMaxPStamina();
-    VitalBuffable & GetMaxMStamina();
+    VitalBuffable &GetMaxHP();
+    VitalBuffable &GetMaxMana();
+    VitalBuffable &GetMaxPStamina();
+    VitalBuffable &GetMaxMStamina();
 
-    VitalBuffable & GetHPRate();
-    VitalBuffable & GetManaRate();
-    VitalBuffable & GetPStaminaRate();
-    VitalBuffable & GetMStaminaRate();
+    VitalBuffable &GetHPRate();
+    VitalBuffable &GetManaRate();
+    VitalBuffable &GetPStaminaRate();
+    VitalBuffable &GetMStaminaRate();
 
     void SetStaminaRegenerationNone(bool physical = true, bool mental = true);
     void SetStaminaRegenerationWalk(bool physical = true, bool mental = true);
@@ -1005,19 +1187,43 @@ public:
     /**
      * Cleare the dirty flags for vitals.
      */
-    void ClearStatsDirtyFlags( unsigned int dirtyFlags );
+    void ClearStatsDirtyFlags(unsigned int dirtyFlags);
 
-    const char* GetHelmGroup() { return helmGroup.GetData(); }
-    const char* GetBracerGroup() { return BracerGroup.GetData(); }
-    const char* GetBeltGroup() { return BeltGroup.GetData(); }
-    const char* GetCloakGroup() { return CloakGroup.GetData(); }
+    const char* GetHelmGroup()
+    {
+        return helmGroup.GetData();
+    }
+    const char* GetBracerGroup()
+    {
+        return BracerGroup.GetData();
+    }
+    const char* GetBeltGroup()
+    {
+        return BeltGroup.GetData();
+    }
+    const char* GetCloakGroup()
+    {
+        return CloakGroup.GetData();
+    }
 
-    void SetHelmGroup(const char* Group) { helmGroup = Group; }
-    void SetBracerGroup(const char* Group) { BracerGroup = Group; }
-    void SetBeltGroup(const char* Group) { BeltGroup = Group; }
-    void SetCloakGroup(const char* Group) { CloakGroup = Group; }
+    void SetHelmGroup(const char* Group)
+    {
+        helmGroup = Group;
+    }
+    void SetBracerGroup(const char* Group)
+    {
+        BracerGroup = Group;
+    }
+    void SetBeltGroup(const char* Group)
+    {
+        BeltGroup = Group;
+    }
+    void SetCloakGroup(const char* Group)
+    {
+        CloakGroup = Group;
+    }
 
-    size_t GetAssignedGMEvents(psGMEventListMessage& gmevents, int clientnum);
+    size_t GetAssignedGMEvents(psGMEventListMessage &gmevents, int clientnum);
     void AssignGMEvent(int id, bool playerIsGM);
     void CompleteGMEvent(bool playerIsGM);
     void RemoveGMEvent(int id, bool playerIsGM=false);
@@ -1025,18 +1231,18 @@ public:
     /**
      * Update a npc's default spawn position with given data.
      */
-    void UpdateRespawn(csVector3 pos, float yrot, psSectorInfo *sector, InstanceID instance);
+    void UpdateRespawn(csVector3 pos, float yrot, psSectorInfo* sector, InstanceID instance);
 
 
     /**
      * Update this faction for this player with delta value.
      */
-    bool UpdateFaction(Faction * faction, int delta);
+    bool UpdateFaction(Faction* faction, int delta);
 
     /**
      * Check player for given faction.
      */
-    bool CheckFaction(Faction * faction, int value);
+    bool CheckFaction(Faction* faction, int value);
 
     /**
      * Takes care of setting correctly all the data needed to keep track of the song.
@@ -1054,42 +1260,84 @@ public:
     /**
      * Gets the starting time of the song that the player is currently playing.
      */
-    csTicks GetSongStartTime() const { return songExecutionTime; }
+    csTicks GetSongStartTime() const
+    {
+        return songExecutionTime;
+    }
 
     /**
      * Check if the character is a banker.
      */
-    bool IsBanker() const { return banker; }
+    bool IsBanker() const
+    {
+        return banker;
+    }
 
     /**
      * Check if the character is a storage.
      *
      * @return TRUE if the character mantains a storage
      */
-    bool IsStorage() const { return IsBanker(); }
+    bool IsStorage() const
+    {
+        return IsBanker();
+    }
     void RecalculateStats();
 
-    bool IsNPC() { return characterType == PSCHARACTER_TYPE_NPC; };
+    bool IsNPC()
+    {
+        return characterType == PSCHARACTER_TYPE_NPC;
+    };
 
     /**
      * Used to determine if this character is a player.
      *
      * @return TRUE if the character is a player.
      */
-    bool IsPlayer() { return characterType == PSCHARACTER_TYPE_PLAYER; };
+    bool IsPlayer()
+    {
+        return characterType == PSCHARACTER_TYPE_PLAYER;
+    };
 
     /// Used to determine if this NPC is a pet
-    bool IsPet() { return (characterType == PSCHARACTER_TYPE_PET || characterType == PSCHARACTER_TYPE_MOUNTPET); };
+    bool IsPet()
+    {
+        return (characterType == PSCHARACTER_TYPE_PET || characterType == PSCHARACTER_TYPE_MOUNTPET);
+    };
     /// Used to determine if this NPC is a mount
-    bool IsMount() { return (characterType == PSCHARACTER_TYPE_MOUNT || characterType == PSCHARACTER_TYPE_MOUNTPET); };
-    PID  GetFamiliarID(size_t id) { return familiarsId.GetSize() > id ? familiarsId.Get(id) : 0; };
+    bool IsMount()
+    {
+        return (characterType == PSCHARACTER_TYPE_MOUNT || characterType == PSCHARACTER_TYPE_MOUNTPET);
+    };
+    PID  GetFamiliarID(size_t id)
+    {
+        return familiarsId.GetSize() > id ? familiarsId.Get(id) : 0;
+    };
     void SetFamiliarID(PID v);
-    bool CanSummonFamiliar(int id) { return GetFamiliarID(id) != 0 && canSummonFamiliar.Current() > 0; }
-    Buffable<int> & GetCanSummonFamiliar() { return canSummonFamiliar; }
-    const char *GetAnimalAffinity() { return animalAffinity.GetDataSafe(); };
-    void SetAnimialAffinity( const char* v ) { animalAffinity = v; };
-    PID  GetOwnerID() { return ownerId; };
-    void SetOwnerID(PID v) { ownerId = v; };
+    bool CanSummonFamiliar(int id)
+    {
+        return GetFamiliarID(id) != 0 && canSummonFamiliar.Current() > 0;
+    }
+    Buffable<int> &GetCanSummonFamiliar()
+    {
+        return canSummonFamiliar;
+    }
+    const char* GetAnimalAffinity()
+    {
+        return animalAffinity.GetDataSafe();
+    };
+    void SetAnimialAffinity(const char* v)
+    {
+        animalAffinity = v;
+    };
+    PID  GetOwnerID()
+    {
+        return ownerId;
+    };
+    void SetOwnerID(PID v)
+    {
+        ownerId = v;
+    };
 
     bool UpdateStatDRData(csTicks now);
     bool SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group = NULL);
@@ -1118,36 +1366,60 @@ public:
     float GetCounterBlockValueForWeaponInSlot(INVENTORY_SLOT_NUMBER slot);
     float GetDodgeValue();
 
-    Multiplier & AttackModifier()  { return attackModifier;  }
-    Multiplier & DefenseModifier() { return defenseModifier; }
+    Multiplier &AttackModifier()
+    {
+        return attackModifier;
+    }
+    Multiplier &DefenseModifier()
+    {
+        return defenseModifier;
+    }
 
     /// Practice skills for armor and weapons
     void PracticeArmorSkills(unsigned int practice, INVENTORY_SLOT_NUMBER attackLocation);
     void PracticeWeaponSkills(unsigned int practice);
-    void PracticeWeaponSkills(psItem * weapon, unsigned int practice);
+    void PracticeWeaponSkills(psItem* weapon, unsigned int practice);
 
-    void SetTraitForLocation(PSTRAIT_LOCATION location,psTrait *trait);
-    psTrait *GetTraitForLocation(PSTRAIT_LOCATION location);
+    void SetTraitForLocation(PSTRAIT_LOCATION location,psTrait* trait);
+    psTrait* GetTraitForLocation(PSTRAIT_LOCATION location);
 
-    void GetLocationInWorld(InstanceID &instance,psSectorInfo *&sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot);
-    void SetLocationInWorld(InstanceID instance,psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
+    void GetLocationInWorld(InstanceID &instance,psSectorInfo* &sectorinfo,float &loc_x,float &loc_y,float &loc_z,float &loc_yrot);
+    void SetLocationInWorld(InstanceID instance,psSectorInfo* sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
     void SaveLocationInWorld();
 
     /// Construct an XML format string of the player's texture choices.
-    void MakeTextureString( csString& textureString );
+    void MakeTextureString(csString &textureString);
 
     /// Construct an XML format string of the player's equipment.
-    void MakeEquipmentString( csString& equipmentString );
+    void MakeEquipmentString(csString &equipmentString);
 
     /// Returns a level of character based on his 6 base stats.
     unsigned int GetCharLevel(bool physical);
 
-    bool IsMerchant() { return (merchantInfo != NULL); }
-    psMerchantInfo *GetMerchantInfo() { return merchantInfo; }
-    bool IsTrainer() { return (trainerInfo != NULL); }
-    psTrainerInfo *GetTrainerInfo() { return trainerInfo; }
-    psCharacter *GetTrainer() { return trainer; }
-    void SetTrainer(psCharacter *trainer) { this->trainer = trainer; }
+    bool IsMerchant()
+    {
+        return (merchantInfo != NULL);
+    }
+    psMerchantInfo* GetMerchantInfo()
+    {
+        return merchantInfo;
+    }
+    bool IsTrainer()
+    {
+        return (trainerInfo != NULL);
+    }
+    psTrainerInfo* GetTrainerInfo()
+    {
+        return trainerInfo;
+    }
+    psCharacter* GetTrainer()
+    {
+        return trainer;
+    }
+    void SetTrainer(psCharacter* trainer)
+    {
+        this->trainer = trainer;
+    }
 
     /**
      *  Figure out if this skill can be trained.
@@ -1158,7 +1430,7 @@ public:
      * @param skill The skill we want to train.
      * @return  True if the skill still requires Y credits before it is fully trained.
      */
-    bool CanTrain( PSSKILL skill );
+    bool CanTrain(PSSKILL skill);
 
     /**
      *  Trains a skill.
@@ -1169,39 +1441,63 @@ public:
      *  @param skill The skill we want to train.
      *  @param yIncrease  The amount we want to train this skill by.
      */
-    void Train( PSSKILL skill, int yIncrease );
+    void Train(PSSKILL skill, int yIncrease);
 
     /**
      * Directly sets rank of given skill. It completely bypasses the skill logic,
      * it is used for testing only.
      */
-    void SetSkillRank( PSSKILL which, unsigned int rank);
+    void SetSkillRank(PSSKILL which, unsigned int rank);
 
-    psSpell * GetSpellByName(const csString& spellName);
-    psSpell * GetSpellByIdx(int index);
-    csArray<psSpell*>& GetSpellList() { return spellList; }
+    psSpell* GetSpellByName(const csString &spellName);
+    psSpell* GetSpellByIdx(int index);
+    csArray<psSpell*> &GetSpellList()
+    {
+        return spellList;
+    }
 
-    
-    psCharacter* GetMerchant() { return merchant; }
-    TradingStatus GetTradingStatus() { return tradingStatus; }
-    void SetTradingStatus(TradingStatus trading, psCharacter *merchant)
-        { tradingStatus = trading; this->merchant = merchant; }
 
-    gemActor *GetActor() { return actor; }
-    void SetActor(gemActor *actor);
+    psCharacter* GetMerchant()
+    {
+        return merchant;
+    }
+    TradingStatus GetTradingStatus()
+    {
+        return tradingStatus;
+    }
+    void SetTradingStatus(TradingStatus trading, psCharacter* merchant)
+    {
+        tradingStatus = trading;
+        this->merchant = merchant;
+    }
+
+    gemActor* GetActor()
+    {
+        return actor;
+    }
+    void SetActor(gemActor* actor);
 
     bool SetTradingStopped(bool stopped);
 
     bool ReadyToExchange();
 
     /// Number of seconds online this session in seconds.
-    unsigned int GetOnlineTimeThisSession() { return (csGetTicks() - startTimeThisSession)/1000; }
+    unsigned int GetOnlineTimeThisSession()
+    {
+        return (csGetTicks() - startTimeThisSession)/1000;
+    }
 
     /// Number of seconds online ever including this session in seconds.
-    unsigned int GetTotalOnlineTime() { return timeconnected + GetOnlineTimeThisSession(); }
+    unsigned int GetTotalOnlineTime()
+    {
+        return timeconnected + GetOnlineTimeThisSession();
+    }
 
 
-    unsigned int GetTimeConnected() { return timeconnected; }
+    unsigned int GetTimeConnected()
+    {
+        return timeconnected;
+    }
 
     /**
      * This is used to get the stored player description.
@@ -1244,7 +1540,7 @@ public:
      * @param factionDescription: where to store the dynamically generated data.
      * @return Returns true if there were some dynamic life events founds else false.
      */
-    bool GetFactionEventsDescription(csString & factionDescription);
+    bool GetFactionEventsDescription(csString &factionDescription);
 
     /**
      * This is used to get the stored informations from the custom life events made by players.
@@ -1261,52 +1557,88 @@ public:
     /// This is used by the math scripting engine to get various values.
     double GetProperty(MathEnvironment* env, const char* ptr);
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
-    const char* ToString() { return fullName.GetData(); }
+    const char* ToString()
+    {
+        return fullName.GetData();
+    }
 
     /// The exp to be handed out when this actor dies
-    int GetKillExperience() { return killExp; }
-    void SetKillExperience(int newValue) { killExp=newValue; }
+    int GetKillExperience()
+    {
+        return killExp;
+    }
+    void SetKillExperience(int newValue)
+    {
+        killExp=newValue;
+    }
 
-    void SetImperviousToAttack(int newValue) { imperviousToAttack=newValue; }
-    int GetImperviousToAttack() { return imperviousToAttack; }
+    void SetImperviousToAttack(int newValue)
+    {
+        imperviousToAttack=newValue;
+    }
+    int GetImperviousToAttack()
+    {
+        return imperviousToAttack;
+    }
 
     void CalculateEquipmentModifiers();
     float GetStatModifier(PSITEMSTATS_STAT attrib);
-    
-    bool AppendCharacterSelectData(psAuthApprovedMessage& auth);
+
+    bool AppendCharacterSelectData(psAuthApprovedMessage &auth);
 
     // NPC based functions - should these go here?
-    int NPC_GetSpawnRuleID() { return npcSpawnRuleId; }
-    void NPC_SetSpawnRuleID(int v) { npcSpawnRuleId=v; }
+    int NPC_GetSpawnRuleID()
+    {
+        return npcSpawnRuleId;
+    }
+    void NPC_SetSpawnRuleID(int v)
+    {
+        npcSpawnRuleId=v;
+    }
 
-    psBuddyManager& GetBuddyMgr() { return buddyManager; }
-    psCharacterQuestManager& GetQuestMgr() { return questManager; }
+    psBuddyManager &GetBuddyMgr()
+    {
+        return buddyManager;
+    }
+    psCharacterQuestManager &GetQuestMgr()
+    {
+        return questManager;
+    }
 
     ///  The new operator is overriden to call PoolAllocator template functions
-    void *operator new(size_t);
+    void* operator new(size_t);
     ///  The delete operator is overriden to call PoolAllocator template functions
-    void operator delete(void *);
+    void operator delete(void*);
 
     /**
      * Get the account ID that this character is attached to.
      * @return The account ID that this character is attached to.
      */
-    AccountID GetAccountId() { return accountid; }
+    AccountID GetAccountId()
+    {
+        return accountid;
+    }
 
     /**
      * Get the character spawn location.
-     * @return The struct that has the information about where the character spawns. 
-     */    
-    st_location GetSpawnLocation() { return spawnLoc; }
+     * @return The struct that has the information about where the character spawns.
+     */
+    st_location GetSpawnLocation()
+    {
+        return spawnLoc;
+    }
 
     /**
      * Get the character location
      * @return The struct that has the information about where the character is
-     */    
-    st_location GetLocation() const { return location; }
+     */
+    st_location GetLocation() const
+    {
+        return location;
+    }
 
     friend class psCharacterLoader;
-    
+
 protected:
 
     bool LoadSpells(PID use_id);
@@ -1314,26 +1646,26 @@ protected:
     bool LoadSkills(PID use_id);
     bool LoadTraits(PID use_id);
     bool LoadRelationshipInfo(PID pid);
-    bool LoadBuddies( Result& myBuddy, Result& buddyOf);
-    bool LoadMarriageInfo( Result& result);
-    bool LoadFamiliar( Result& pet, Result& owner);
+    bool LoadBuddies(Result &myBuddy, Result &buddyOf);
+    bool LoadMarriageInfo(Result &result);
+    bool LoadFamiliar(Result &pet, Result &owner);
     /// Helper function which loads the factions from the database.
     bool LoadFactions(PID pid);
     /// Helper function which saves the factions to the database.
     void UpdateFactions();
-    
+
     /**
      * Helper function which loads the character variables from the database.
      * @return TRUE always. bool was used for consistancy.
      */
     bool LoadVariables(PID pid);
-    
+
     /**
      * Helper function which saves the character variables to the database.
      */
     void UpdateVariables();
-    
-    bool LoadExploration(Result& exploration);
+
+    bool LoadExploration(Result &exploration);
     bool LoadGMEvents();
 
     psCharacterInventory        inventory;                    ///< Character's inventory handler.
@@ -1355,11 +1687,11 @@ protected:
     bool                        tradingStopped;
     TradingStatus               tradingStatus;          ///< See the enum for the various status.
 
-    gemActor * actor;               ///< The current game entity object this characater is attached to.
+    gemActor* actor;                ///< The current game entity object this characater is attached to.
     PID pid;                        ///< Current  PID for this characater ( or is it the above entity? )
     AccountID accountid;            ///< Account ID that this characater is attached to.
 
-    csRef<psTrainerInfo>    trainerInfo;        ///< Character's trainer information 
+    csRef<psTrainerInfo>    trainerInfo;        ///< Character's trainer information
     psCharacter*            trainer;            ///<  The current character that is being trained?
 
     csString description;     ///<Player description
@@ -1398,23 +1730,23 @@ protected:
 
     OverridableRace race; ///< Holds the race of this character and it's overriden values.
 
-    FactionSet *factions;
-    
+    FactionSet* factions;
+
     csString progressionScriptText; ///< flat string loaded from the DB.
-    
+
     int     imperviousToAttack;
-    
+
     /// Bitfield for which help events a character has already encountered.
     unsigned int     helpEventFlags;
-    
+
     st_location location;
     psServerVitals* vitals;
 
-    psTrait *traits[PSTRAIT_LOCATION_COUNT];
+    psTrait* traits[PSTRAIT_LOCATION_COUNT];
 
     /// NPC specific data.  Should this go here?
     int npcSpawnRuleId;
-    
+
     /// Id of Loot category to use if this char has extra loot
     int  lootCategoryId;
 
@@ -1422,7 +1754,7 @@ protected:
     PID ownerId;
     csArray<PID> familiarsId;
     Buffable<int> canSummonFamiliar;
-    
+
     /// Total number of seconds online.  Updated at logoff.
     unsigned int timeconnected;
     csTicks startTimeThisSession;
@@ -1435,7 +1767,7 @@ protected:
     csArray<psSpell*>         spellList;
 
     csHash<charVariable, csString> charVariables; ///< Used to store character variables for this character.
-    
+
     psSkillCache              skillCache;
     GMEventsAssignment        assignedEvents;
     csArray<PID>              exploredAreas;
@@ -1444,9 +1776,9 @@ protected:
     int joinNotifications;
 
     float overrideMaxHp,overrideMaxMana;  ///< These values are loaded from base_hp_max,base_mana_max in the db and
-                                              ///< should prevent normal HP calculations from taking place
+    ///< should prevent normal HP calculations from taking place
 
-    static const char *characterTypeName[];
+    static const char* characterTypeName[];
     unsigned int characterType;
 
     /// Array of items waiting to be looted.
@@ -1460,10 +1792,10 @@ protected:
 
 
 private:
-    void CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float& heavy_p, float& med_p, float& light_p);
+    void CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float &heavy_p, float &med_p, float &light_p);
     bool ArmorUsesSkill(INVENTORY_SLOT_NUMBER slot, PSITEMSTATS_ARMORTYPE skill);
 
-    int FindGlyphSlot(const csArray<glyphSlotInfo>& slots, psItemStats * glyphType, int purifyStatus);
+    int FindGlyphSlot(const csArray<glyphSlotInfo> &slots, psItemStats* glyphType, int purifyStatus);
 
     csTicks songExecutionTime;   ///< Keeps track of the execution time of a player's song.
 
@@ -1492,7 +1824,7 @@ private:
     csString CloakGroup;
 
     bool banker;    ///< Whether or not the character is a banker
-    
+
     /// Static reference to the pool for all psItem objects
     static PoolAllocator<psCharacter> characterpool;
 };
