@@ -26,26 +26,27 @@
 #include "chatwindow.h"
 #include "pscelclient.h"
 #include "psclientchar.h"
+#include "pawsscrollmenu.h"
 
 
 //=============================================================================
 // Defines
 //=============================================================================
-#define COMMAND_FILE         "/planeshift/userdata/options/shortcutcommands.xml"
-#define DEFAULT_COMMAND_FILE "/planeshift/data/options/shortcutcommands_def.xml"
+#define COMMAND_FILE            "/planeshift/userdata/options/shortcutcommands.xml"
+#define DEFAULT_COMMAND_FILE    "/planeshift/data/options/shortcutcommands_def.xml"
 
-#define BUTTON_PADDING       2
-#define BUTTON_SPACING       8
-#define WINDOW_PADDING       5
-#define SCROLLBAR_SIZE       12
+#define BUTTON_PADDING          4
+#define BUTTON_SPACING          8
+#define WINDOW_PADDING          5
+#define SCROLLBAR_SIZE          12
 
-#define DONE_BUTTON          1100
-#define CANCEL_BUTTON        1101
-#define SETKEY_BUTTON        1102
-#define CLEAR_BUTTON         1103
+#define DONE_BUTTON             1100
+#define CANCEL_BUTTON           1101
+#define SETKEY_BUTTON           1102
+#define CLEAR_BUTTON            1103
 
 #define SHORTCUT_BUTTON_OFFSET  2000
-
+#define PALLETTE_BUTTON_OFFSET  10000
 
 //=============================================================================
 // Classes
@@ -74,152 +75,113 @@ pawsShortcutWindow::~pawsShortcutWindow()
 
 void pawsShortcutWindow::LoadCommandsFile()
 {
-    // Check if there have been created a custom file
-    // else use the default file.
-    csString fileName = COMMAND_FILE;
-    if (!vfs->Exists(fileName))
+
+// if there's a new style character-specific file then load it 
+    csString CommandFileName( psengine->GetMainPlayerName() );
+    CommandFileName.ReplaceAll( " ", "_" );
+    CommandFileName.Insert( 0, "/planeshift/userdata/options/shortcutcommands_" );
+    CommandFileName.Append( ".xml" );
+    if( vfs->Exists( CommandFileName.GetData() ))
     {
-        fileName = DEFAULT_COMMAND_FILE;
+        LoadCommands(CommandFileName);
     }
-
-    LoadCommands(fileName);
-}
-
-void pawsShortcutWindow::CalcButtonSize()
-{
-    int maxWidth, maxHeight;
-    int width, height;
-    int shortcutNum;
-
-    maxWidth = maxHeight = 0;
-    
-    for (shortcutNum = 0; shortcutNum < NUM_SHORTCUTS; shortcutNum++)
-    {
-        GetFont()->GetDimensions( names[shortcutNum].GetDataSafe(), width, height );
-        maxWidth   = csMax(width,   maxWidth);
-        maxHeight  = csMax(height, maxHeight);
-    }
-    
-    buttonWidth   = maxWidth  + 2*BUTTON_PADDING + 8;
-    buttonHeight  = maxHeight + 2*BUTTON_PADDING + 2;
-}
-
-
-size_t pawsShortcutWindow::CalcTotalRowsNeeded(size_t matrixWidth)
-{
-    return (int)ceil(NUM_SHORTCUTS / (float)matrixWidth);
-}
-
-
-void pawsShortcutWindow::CalcMatrixSize(size_t & matrixWidth, size_t & matrixHeight)
-{
-    CalcButtonSize();
-    matrixWidth   = (screenFrame.Width()   - 2*WINDOW_PADDING - SCROLLBAR_SIZE/2) / (buttonWidth  + BUTTON_SPACING);
-    matrixHeight  = (screenFrame.Height()  - 2*WINDOW_PADDING)                  / (buttonHeight + BUTTON_SPACING);
-
-    matrixWidth   = csMax(matrixWidth,  (size_t)1);
-    matrixHeight  = csMin(csMax(matrixHeight, (size_t)1), CalcTotalRowsNeeded(matrixWidth));
-}
-
-
-void pawsShortcutWindow::RebuildMatrix()
-{
-    size_t matrixWidth, matrixHeight;
-    pawsButton * button;
-    size_t i, k;
-
-    // delete old matrix
-    for (i=0; i < matrix.GetSize(); i++)
-    {
-        for (k=0; k < matrix[i].GetSize(); k++)
-        {
-            DeleteChild(matrix[i][k]);
-        }
-    }            
-    matrix.DeleteAll();
-    
-    CalcMatrixSize(matrixWidth, matrixHeight);
-    
-    // create new matrix
-    matrix.SetSize(matrixWidth);
-    for (i=0; i < matrix.GetSize(); i++)
-    {
-        matrix[i].SetSize(matrixHeight);
-        for (k=0; k < matrix[i].GetSize(); k++)
-        {
-            button = new pawsButton;
-            button->SetSound("gui.shortcut");
-            AddChild(button);
-            button->SetBackground(buttonBackgroundImage);
-            matrix[i][k] = button;
-        }
-    }
-
-    UpdateMatrix();
-    LayoutMatrix();
-    
-    CS_ASSERT(matrix.GetSize()>0);
-    if (scrollBar != NULL)
-    {    
-        scrollBar->SetMaxValue(ceil(    NUM_SHORTCUTS / (float)(matrixWidth*matrixHeight)    )   - 1   );
-    }        
-}
-
-
-void  pawsShortcutWindow::LayoutMatrix()
-{
-    pawsButton * button;
-    size_t i, k;
-    
-    for (i=0; i < matrix.GetSize(); i++)
-    {
-        for (k=0; k < matrix[i].GetSize(); k++)
-        {
-            button = matrix[i][k];
-            button->SetRelativeFrame(WINDOW_PADDING + (int)i * (buttonWidth  + BUTTON_SPACING),
-                                     WINDOW_PADDING + (int)k * (buttonHeight + BUTTON_SPACING),
-                                     buttonWidth, buttonHeight);
-        }
-    }
-}
-
-
-void pawsShortcutWindow::UpdateMatrix()
-{
-    pawsButton * button;
-    size_t shortcutNum;
-    int scrollBarPos;
-    size_t i, k;
-
-    if (scrollBar != NULL)
-    {
-        scrollBarPos = (int)scrollBar->GetCurrentValue();
-    }        
     else
     {
-        scrollBarPos = 0;
-    }        
-
-    for (i=0; i < matrix.GetSize(); i++)
-    {
-        for (k=0; k < matrix[i].GetSize(); k++)
+        //if there's an old-style custom shortcuts file, load or append it
+        if (vfs->Exists("/planeshift/userdata/options/shortcutcommands.xml"))
         {
-            button = matrix[i][k];
-            shortcutNum = i + k * matrix.GetSize() + scrollBarPos*matrix.GetSize()*matrix[0].GetSize();
-            if (shortcutNum < NUM_SHORTCUTS)
-            {
-                button->Show();
-                button->SetText(names[shortcutNum]);
-                button->SetID(SHORTCUT_BUTTON_OFFSET + (int)shortcutNum);
-            }
-            else
-            {
-                button->Hide();
-            }                
+            LoadCommands( "/planeshift/userdata/options/shortcutcommands.xml" );
         }
-    }        
+        else // if there's no customization then load the defaults
+        {
+            LoadCommands( "/planeshift/data/options/shortcutcommands_def.xml" );
+        }
+
+        //if there's an old-style quickbar config file, load it
+        if(vfs->Exists("/planeshift/userdata/options/bartender.xml"))
+        {
+            LoadQuickbarFile();
+        }
+
+        SaveCommands();
+    }
 }
 
+void pawsShortcutWindow::LoadQuickbarFile()
+{
+    //prepares to load the file
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    csRef<iDocumentSystem> xml = psengine->GetXMLParser ();
+    csRef<iDocumentNode> root, bartenderNode;
+    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDataBuffer> buf (vfs->ReadFile ("/planeshift/userdata/options/bartender.xml"));
+    //if the file is empty or not opeanable we are done. We return true because it's not a failure.
+    if (!buf || !buf->GetSize ())
+    {
+        return ;
+    }
+    const char* error = doc->Parse( buf );
+    if ( error )
+    {
+        Error2("Error loading bartender entries: %s\n", error);
+        return ;
+    }
+
+    root = doc->GetRoot();
+    if (root == NULL)
+    {
+        Error2("%s has no XML root", "/planeshift/userdata/options/bartender.xml");
+    }
+    bartenderNode = root->GetNode("bartender");
+    if (bartenderNode == NULL)
+    {
+        Error2("%s has no <bartender> tag", "/planeshift/userdata/options/bartender.xml");
+    }
+
+    //iterate all the nodes starting with slot in order to find the ones
+    //to associate to the slots
+    csRef<iDocumentNodeIterator> slotNodes = bartenderNode->GetNodes("slot");
+    while (slotNodes->HasNext())
+    {
+        csRef<iDocumentNode> slotNode = slotNodes->Next();
+
+        //get the data needed for the widget to be setup
+        csString slotName = slotNode->GetAttributeValue("name");
+        if( slotName.IsEmpty() )
+        {
+            names.Insert( 0, csString("") );
+        }
+        else
+        {
+            names.Insert(0, slotName);
+        }
+
+        csString slotImage = slotNode->GetAttributeValue("image");
+        if( slotImage.Length()>0 ) // "(null)" == 6; any path we can use will be more...this is a cludge.
+        {
+            icon.Insert(0,slotImage);
+        }
+        else
+        {
+            icon.Insert( 0, csString("") );
+        }
+
+        csString slotAction = slotNode->GetAttributeValue("action");
+        if( slotAction.IsEmpty() )
+        {
+            cmds.Insert( 0, csString("") );
+        }
+        else
+        {
+            cmds.Insert(0, slotAction);
+        }
+    }
+    return ;
+}
+
+void pawsShortcutWindow::HandleMessage( MsgEntry* me )
+{
+}
 
 bool pawsShortcutWindow::Setup(iDocumentNode *node)
 {
@@ -227,47 +189,53 @@ bool pawsShortcutWindow::Setup(iDocumentNode *node)
         buttonBackgroundImage = node->GetAttributeValue("buttonimage");
     else
         buttonBackgroundImage = "Scaling Button";
+
     return true;
 }
 
 
 bool pawsShortcutWindow::PostSetup()
 {
-    // Create the scroll bar
-    //scrollBar = new pawsScrollBar;
-    //AddChild( scrollBar );
-    //scrollBar->SetHorizontal(false);
-    //int attach = ATTACH_BOTTOM | ATTACH_RIGHT | ATTACH_TOP;
-    //scrollBar->SetAttachFlags( attach );
-    //scrollBar->SetRelativeFrame( defaultFrame.Width()-SCROLLBAR_SIZE, 0, SCROLLBAR_SIZE, defaultFrame.Height()-8);
-    //scrollBar->PostSetup();
-    //scrollBar->Resize();
+    size_t i;
+    csArray<csString>  n;
 
-    scrollBar = dynamic_cast<pawsScrollBar *>(FindWidget("scrollbar"));
-    //scrollBar->SetTickValue( 1.0 );
+    pawsControlledWindow::PostSetup();
+    psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_MODE);
 
-    RebuildMatrix();
+    main_hp      = (pawsProgressBar*)FindWidget( "My HP" );
+    main_mana    = (pawsProgressBar*)FindWidget( "My Mana" );
+    phys_stamina = (pawsProgressBar*)FindWidget( "My PysStamina" );
+    ment_stamina = (pawsProgressBar*)FindWidget( "My MenStamina" );
+    MenuBar      = (pawsScrollMenu*)FindWidget( "MenuBar" );
+    if ( !main_hp || !main_mana || !phys_stamina || !ment_stamina )
+    {
+        return false;
+    }
+    
+    main_hp->SetTotalValue(1);
+    main_mana->SetTotalValue(1);
+    phys_stamina->SetTotalValue(1);
+    ment_stamina->SetTotalValue(1);
+
+    //set to a default minimum size...expands as needed
+    //names.SetSize( NUM_SHORTCUTS );
+    n =  names;
+    for( i=0; i<names.GetSize(); i++ )
+    {
+        csString t = GetTriggerText( i );
+        if( t.Length()>0 )
+        {
+            n[i].Insert( 0, " - " );
+            n[i].Insert( 0, t );
+        }
+    }
+    MenuBar->LoadArrays( names, icon, n, cmds, 2000, this);
 
     return true;
 }
 
-
 void pawsShortcutWindow::OnResize()
 {
-    size_t newMatrixWidth, newMatrixHeight;
-
-    if (matrix.GetSize() == 0)
-    {
-        return;
-    }        
-    
-    // If the matrix size that is appropriate for current window size differs from actual matrix size,
-    // we will adjust the matrix to it
-    CalcMatrixSize(newMatrixWidth, newMatrixHeight);
-    if (matrix.GetSize() != newMatrixWidth   ||   matrix[0].GetSize() != newMatrixHeight)
-    {
-        RebuildMatrix();
-    }                    
 }
 
 
@@ -275,24 +243,34 @@ bool pawsShortcutWindow::OnMouseDown( int button, int modifiers, int x, int y )
 {
     if ( button == csmbWheelUp )
     {
-        scrollBar->ScrollUp();
-        return true;
+	    return true;
     }
     else if ( button == csmbWheelDown )
     {
-        scrollBar->ScrollDown();
-        return true;
+	    return true;
     }
     else
     {
-        return pawsControlledWindow::OnMouseDown(button, modifiers, x, y);
+	return pawsControlledWindow::OnMouseDown(button, modifiers, x, y);
     }
 }
 
 
-// bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+{
+    // Play a sound
+    PawsManager::GetSingleton().GetSoundManager()->PlaySound("gui.shortcut", false, iSoundManager::GUI_SNDCTRL);
+    return true;
+}
+
 bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
 {
+    if( widget->GetID() <= -SHORTCUT_BUTTON_OFFSET ) //in a DnD...save, reset to non-DnD, do not exec command.
+    {
+        SaveCommands();
+        widget->SetID( abs(widget->GetID()) );
+        return true;
+    }
     if (!subWidget)
         subWidget = PawsManager::GetSingleton().FindWidget("ShortcutEdit");
 
@@ -305,18 +283,45 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     if (!shortcutText)
         shortcutText = dynamic_cast <pawsTextBox*> (subWidget->FindWidget("ShortcutText"));
 
+    if (!iconDisplay)
+        iconDisplay = dynamic_cast <pawsDnDButton*> (subWidget->FindWidget("IconDisplay"));
+
+    if (!iconPallette)
+    {
+        //for the icon Pallette we don't want any names or actions, so we'll pass an empty stub array
+        csArray<csString>	stubArray;
+        iconPallette = dynamic_cast <pawsScrollMenu*> (subWidget->FindWidget("iconPallette"));
+
+        //get a ptr to the txture manager so we can look at the elementList, which stores the icon names.
+        pawsTextureManager *tm = PawsManager::GetSingleton().GetTextureManager();
+        int i = tm->elementList.GetSize();
+        
+        //build an array of the icon names
+        csHash<csRef<iPawsImage>, csString>::GlobalIterator Iter(tm->elementList.GetIterator());
+        Iter.Reset();
+        //build a lits of all PS icons
+        while(Iter.HasNext())
+        {
+            allIcons.Push(  Iter.Next()->GetName() );
+        }
+
+        //pass the array of icon names to LoadArrays as both the icon and the tooltip, so we can see then names when we hover over one
+        iconPallette->LoadArrays( stubArray, allIcons, allIcons, stubArray, PALLETTE_BUTTON_OFFSET, this );
+        iconPallette->OfferEditLock( false );
+        //iconPallette->OfferUseLock( false );
+        iconPallette->OnResize();
+
+        iconDisplayID=-1;
+    }
 
     // These should not be NULL
     CS_ASSERT(subWidget); CS_ASSERT(labelBox); CS_ASSERT(textBox); CS_ASSERT(shortcutText);
 
-    BringToTop(this);
-
-    // Finished Configuring command button
     switch ( widget->GetID() )
     {
         case DONE_BUTTON:
         {
-            if (!labelBox->GetText() || *(labelBox->GetText()) == '\0')
+            if (!labelBox->GetText() || *(labelBox->GetText()) == '\0' )
             {
                 if (textBox->GetText() && *(textBox->GetText()) != '\0')
                 {
@@ -327,54 +332,89 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                 }
                 else //shortcut is empty and will be removed. Also remove possible key binding.
                 {
+                    //remove key bindings
                     csString editedCmd;
                     editedCmd.Format("Shortcut %d",edit+1);
                     psengine->GetCharControl()->RemapTrigger(editedCmd,psControl::NONE,0,0);
+
+                    //clear DnD Button
+                    if( ((pawsDnDButton *)editedButton)->GetMaskingImage() )
+                    {
+                        editedButton->ClearMaskingImage();
+                    }
+                    editedButton->SetToolTip( "" );
+                    ((pawsDnDButton *)editedButton)->SetText("");
+
+                    //Clear data arrays
+                    names[ edit ].Clear();
+                    cmds[ edit ].Clear();
+                    icon[ edit ].Clear();
                 }
             }
-            // Otherwise save the label and command as it is
-            names[edit] = labelBox->GetText();
-            cmds[edit] = textBox->GetText();
-        
-            CalcButtonSize();
-            UpdateMatrix();
-            LayoutMatrix();
-            SetWindowSizeToFitMatrix();
+            else  //labelBox (ie name) is set
+            {
+                // Otherwise save the label, icon and command
+                if( edit < names.GetSize() )
+                {
+                    names[edit] = labelBox->GetText();
+                    cmds[edit] = textBox->GetText();
+                    icon[edit] = iconDisplay->GetMaskingImageName();
+                }
+    	
+                editedButton->SetMaskingImage( icon[edit] );
+                if( iconDisplay->GetMaskingImage()>0 ) //there is one...
+                {
+                    ((pawsButton *)editedButton)->SetText( csString("") );
+                }
+                else    //there's not one yet
+                {
+                    ((pawsButton *)editedButton)->SetText( names[edit] );
+                }
+                iconDisplayID = -1;
+                iconDisplay->SetMaskingImage( csString(""));
+
+                csString t = GetTriggerText( edit );
+                if( t.Length()>0 && edit < names.GetSize() )
+                {
+                    csString n = names[ edit ];
+                    n.Insert( 0, " - " );
+                    n.Insert( 0, t );
+                    editedButton->SetToolTip( n );
+                }
+                else
+                {
+                    editedButton->SetToolTip( names[edit] );
+                }
+
+            } 
+            SaveCommands();
 
             PawsManager::GetSingleton().SetModalWidget(NULL);
             PawsManager::GetSingleton().SetCurrentFocusedWidget(this);
             subWidget->Hide();
 
-            pawsWidget * configKeyAsWidget = PawsManager::GetSingleton().FindWidget("ConfigKeys");
-        
-            pawsConfigKeys * configKey = dynamic_cast<pawsConfigKeys*>
-                (configKeyAsWidget);
-                
-            if (configKey)
-            {
-                configKey->UpdateNicks();
-            }                
+            Resize();
+            ResetEditWindow();
 
-            SaveCommands();
             return true;
         }
         case CLEAR_BUTTON:
         {
-            labelBox->Clear();
-            textBox->Clear();
+            ResetEditWindow();
+
             return true;
         }
         case CANCEL_BUTTON:
         {
-            PawsManager::GetSingleton().SetModalWidget(NULL);
-            PawsManager::GetSingleton().SetCurrentFocusedWidget(this);
             subWidget->Hide();
+            ResetEditWindow();
+
             return true;
         }
         case SETKEY_BUTTON:
         {
             pawsWidget * fingWndAsWidget;
-
+        
             fingWndAsWidget = PawsManager::GetSingleton().FindWidget("FingeringWindow");
             if (fingWndAsWidget == NULL)
             {
@@ -388,19 +428,33 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                 return false;
             }
             fingWnd->ShowDialog(this, labelBox->GetText());
-            
+    
             return true;
         }
     }            // switch( ... )
-
-    // Execute clicked on button
     if ( mouseButton == csmbLeft && !(keyModifier & CSMASK_CTRL))
-        ExecuteCommand( widget->GetID() - SHORTCUT_BUTTON_OFFSET, false );
-    // Configure the button that was clicked on
+    {
+        // Execute clicked on button
+        if( widget->GetID()>=PALLETTE_BUTTON_OFFSET )
+        {
+            iconDisplayID = widget->GetID();
+            iconDisplay->SetMaskingImage(allIcons[iconDisplayID-PALLETTE_BUTTON_OFFSET]);
+	    icon[edit] = allIcons[iconDisplayID-PALLETTE_BUTTON_OFFSET];
+        }
+        else
+        {
+            if( !((pawsDnDButton *)widget)->GetUseLock() )
+            {
+                ExecuteCommand( widget->GetID() - SHORTCUT_BUTTON_OFFSET + position, false );
+            }
+        }
+    }
     else if ( mouseButton == csmbRight || (mouseButton == csmbLeft && (keyModifier & CSMASK_CTRL)) )
     {
         edit = widget->GetID() - SHORTCUT_BUTTON_OFFSET;
-        if ( edit < 0 || edit >= NUM_SHORTCUTS )
+        editedButton = widget;
+
+        if ( edit < 0 )
             return false;
 
         if (!subWidget || !labelBox || !textBox || !shortcutText)
@@ -422,6 +476,16 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
             shortcutText->SetText("");
         }
 
+        if( icon[edit] )
+        {
+            iconDisplay->SetMaskingImage(icon[edit]);
+            iconDisplayID=edit+PALLETTE_BUTTON_OFFSET;
+        }
+        else
+        {
+            iconDisplay->ClearMaskingImage();
+        }
+
         subWidget->Show();
         PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
     }
@@ -429,7 +493,16 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     {
         return false;
     }
-    return true;
+return true;
+}
+
+void pawsShortcutWindow::ResetEditWindow()
+{
+    iconDisplayID = -1;
+    shortcutText->SetText( "" );
+    iconDisplay->ClearMaskingImage();
+    labelBox->Clear();
+    textBox->Clear();
 }
 
 
@@ -438,7 +511,7 @@ csString pawsShortcutWindow::GetTriggerText(int shortcutNum)
     psCharController* manager = psengine->GetCharControl();
     csString str;
     str.Format("Shortcut %d",shortcutNum+1);
-            
+
     const psControl* ctrl = manager->GetTrigger( str );
     if (!ctrl)
     {
@@ -452,38 +525,17 @@ csString pawsShortcutWindow::GetTriggerText(int shortcutNum)
 
 bool pawsShortcutWindow::OnScroll(int /*direction*/, pawsScrollBar* /*widget*/)
 {
-    UpdateMatrix();
     return true;
 }
 
-
-void pawsShortcutWindow::SetWindowSizeToFitMatrix()
-{
-    CS_ASSERT(matrix.GetSize() > 0);
-    CS_ASSERT(matrix[0].GetSize() > 0);
-
-    int width  = 2*WINDOW_PADDING + (int)matrix.GetSize()    * (buttonWidth  + BUTTON_SPACING) + SCROLLBAR_SIZE/2 +1;
-    int height = 2*WINDOW_PADDING + (int)matrix[0].GetSize() * (buttonHeight + BUTTON_SPACING) + 1;
-
-    if (width > screenFrame.Width())
-        width = screenFrame.Width();
-    if (height > screenFrame.Height())
-        height = screenFrame.Height();
-
-    SetSize(width, height);
-}
-
-
 void pawsShortcutWindow::StopResize()
 {
-    SetWindowSizeToFitMatrix();
 }
 
 
 void pawsShortcutWindow::LoadDefaultCommands()
 {
     LoadCommands(DEFAULT_COMMAND_FILE);
-    UpdateMatrix();
 }
 
 
@@ -505,10 +557,10 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
         return ;
     }
 
-    csRef<iDocumentNodeIterator> iter = doc->GetRoot()->GetNode("shortcuts")->GetNodes();
 
     bool zerobased = false;
 
+    csRef<iDocumentNodeIterator> iter = doc->GetRoot()->GetNode("shortcuts")->GetNodes();
     while ( iter->HasNext() )
     {
         csRef<iDocumentNode> child = iter->Next();
@@ -524,19 +576,38 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
         {
             number--;
         }
-        if (number < 0 || number >= NUM_SHORTCUTS)
+        //if (number < 0 || number >= NUM_SHORTCUTS)
+        if (number < 0 )
             continue;
-        names[number] = child->GetAttributeValue("name");
-        cmds[number] = child->GetContentsValue();
+        icon.Put(number, child->GetAttributeValue("buttonimage") );
+        names.Put(number, child->GetAttributeValue("name") );
+        cmds.Put(number, child->GetContentsValue() );
+    }
+    //set minimum sizes of command arrays
+    if( names.GetSize()<NUM_SHORTCUTS )
+    {
+        names.SetSize( NUM_SHORTCUTS, csString( "") );
+    }
+    if( icon.GetSize()<NUM_SHORTCUTS )
+    {
+        icon.SetSize( NUM_SHORTCUTS, csString("") );
+    }
+    if( cmds.GetSize()<NUM_SHORTCUTS )
+    {
+        cmds.SetSize( NUM_SHORTCUTS, csString("") );
     }
 }
 
-
 void pawsShortcutWindow::SaveCommands(void)
 {
+    csString CommandFileName( psengine->GetMainPlayerName() );
+    CommandFileName.ReplaceAll( " ", "_" );
+    CommandFileName.Insert( 0, "/planeshift/userdata/options/shortcutcommands_" );
+    CommandFileName.Append( ".xml" );
     bool found = false;
     int i;
-    for (i = 0;i < NUM_SHORTCUTS;i++)
+    //for (i = 0;i < NUM_SHORTCUTS;i++)
+    for (i = 0;i < cmds.GetSize();i++)
     {
         if (cmds[i].IsEmpty())
             continue;
@@ -557,7 +628,8 @@ void pawsShortcutWindow::SaveCommands(void)
 
     csRef<iDocumentNode> text;
     csString temp;
-    for (i=0;i < NUM_SHORTCUTS; i++)
+    //for (i=0;i < NUM_SHORTCUTS; i++)
+    for (i = 0;i < cmds.GetSize();i++)
     {
         if (cmds[i].IsEmpty())
             continue;
@@ -574,21 +646,23 @@ void pawsShortcutWindow::SaveCommands(void)
         {
             parent->SetAttribute("name", names[i].GetData());
         }
+
+        if (!icon[i].IsEmpty() )
+        {
+            parent->SetAttribute("buttonimage", icon[i].GetData());
+        }
         text = parent->CreateNodeBefore(CS_NODE_TEXT);
         text->SetValue(cmds[i].GetData());
     }
-    doc->Write(vfs, COMMAND_FILE);
+    doc->Write(vfs, CommandFileName.GetData() );
 }
 
         
 void pawsShortcutWindow::ExecuteCommand(int shortcutNum, bool local)
 {
-    if (local)
-    {
-        shortcutNum = shortcutNum + (int)scrollBar->GetCurrentValue()*(int)matrix.GetSize();
-    }
 
-    if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
+    //if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
+    if (shortcutNum < 0 )
     {
         return;
     }
@@ -672,21 +746,15 @@ void pawsShortcutWindow::ExecuteCommand(int shortcutNum, bool local)
             const char* errorMessage = cmdsource->Publish( command );
             if ( errorMessage )
                 chatWindow->ChatOutput( errorMessage );
-            
         }
-        
     }
 }
 
 
 const csString& pawsShortcutWindow::GetCommandName(int shortcutNum, bool local)
 {
-    if (local)
-    {
-        shortcutNum = shortcutNum + (int)scrollBar->GetCurrentValue()*(int)matrix.GetSize();
-    }
-
-    if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
+    //if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
+    if (shortcutNum < 0 )
     {
         static csString error("Out of range");
         return error;
@@ -748,3 +816,12 @@ bool pawsShortcutWindow::OnFingering(csString string, psControl::Device device, 
         return false;
     }
 }
+
+
+void pawsShortcutWindow::Show()
+{
+    psStatDRMessage msg;
+    msg.SendMessage();
+    pawsControlledWindow::Show();
+}
+

@@ -1287,6 +1287,8 @@ void PawsManager::RegisterFactories()
         RegisterFactory (pawsPetitionWindowFactory);
         RegisterFactory (pawsPetitionGMWindowFactory);
         RegisterFactory (pawsPetitionViewWindowFactory);
+        RegisterFactory (pawsScrollMenuFactory);
+        RegisterFactory (pawsDnDButtonFactory);
         RegisterFactory (pawsShortcutWindowFactory);
         RegisterFactory (pawsLoginWindowFactory);
         RegisterFactory (pawsCharacterPickerWindowFactory);

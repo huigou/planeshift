@@ -26,6 +26,32 @@
 #include "gui/pawscontrolwindow.h"
 #include "gui/pawsconfigkeys.h"
 
+#include "net/message.h"
+#include "paws/pawsprogressbar.h"
+#include "pawsscrollmenu.h"
+
+// COMMON INCLUDES
+#include "net/messages.h"
+#include "net/clientmsghandler.h"
+#include "net/cmdhandler.h"
+
+// CLIENT INCLUDES
+#include "pscelclient.h"
+#include "../globals.h"
+#include "clientvitals.h"
+
+// PAWS INCLUDES
+#include "pawsinfowindow.h"
+#include "paws/pawstextbox.h"
+#include "paws/pawsmanager.h"
+#include "paws/pawsprogressbar.h"
+#include "paws/pawscrollbar.h"
+#include "paws/pawsbutton.h"
+#include "gui/pawscontrolwindow.h"
+#include "pawsslot.h"
+
+
+
 //=============================================================================
 // Forward Declarations
 //=============================================================================
@@ -39,8 +65,7 @@ class pawsScrollBar;
 //=============================================================================
 // Defines
 //=============================================================================
-#define NUM_SHORTCUTS    200
-
+#define NUM_SHORTCUTS    256
 
 //=============================================================================
 // Classes 
@@ -49,7 +74,7 @@ class pawsScrollBar;
 /**
  * 
  */
-class pawsShortcutWindow : public pawsControlledWindow, public pawsFingeringReceiver
+class pawsShortcutWindow : public pawsControlledWindow, public pawsFingeringReceiver, public psClientNetSubscriber
 {
 public:
     pawsShortcutWindow();
@@ -60,7 +85,7 @@ public:
     virtual bool PostSetup();
 
     bool OnMouseDown( int button, int modifiers, int x, int y );
-    // bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
     bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
     bool OnScroll( int direction, pawsScrollBar* widget );
     void OnResize();
@@ -82,7 +107,12 @@ public:
 
     void LoadDefaultCommands();
     void LoadCommandsFile();
+    void LoadQuickbarFile();
     
+    void ResetEditWindow();
+
+    void Show();
+
 protected:
     /// chat window for easy access
     pawsChatWindow* chatWindow;
@@ -90,32 +120,9 @@ protected:
     void SaveCommands(void);
     CmdHandler *cmdsource;
 
-    /** Calculates common size of shortcuts buttons */
-    void CalcButtonSize();
-    
-    /** Calculates dimensions of shortcut button matrix */
-    void CalcMatrixSize(size_t & matrixWidth, size_t & matrixHeight);
-    
-    /** Calculates how many rows of buttons do we need if there 
-        is 'matrixWidth' number of buttons in each */
-    size_t CalcTotalRowsNeeded(size_t matrixWidth);
-    
-    /** Creates matrix of shortcut buttons (first deletes old one) */
-    void RebuildMatrix();
-    
-    /** Sets positions and sizes of buttons in the matrix */
-    void LayoutMatrix();
-    
-    /** Sets texts and IDs of buttons inside matrix according to current scroll position */
-    void UpdateMatrix();
-    
-    /** Sets window size that is ideal for current button matrix */
-    void SetWindowSizeToFitMatrix();
-    
-
-    // Simple string arrays holding the commands and command name
-    csString cmds[NUM_SHORTCUTS];
-    csString names[NUM_SHORTCUTS];
+    csArray<csString> cmds;
+    csArray<csString> names;
+    csArray<csString> icon;
 
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> xml;
@@ -134,17 +141,55 @@ protected:
     // The button configuring widget
     pawsWidget* subWidget;
 
-    // Current size of shortcut buttons
-    int buttonWidth, buttonHeight;
-    
+    pawsScrollMenu* iconPallette;
+    pawsDnDButton*  iconDisplay;
+    int             iconDisplayID;
+
     // The matrix of buttons of visible shortcuts
-    csArray< csArray<pawsButton*> > matrix;
+    ////csArray< csArray<pawsButton*> > matrix;
+    //csArray<pawsButton*> matrix;
+
+    csArray<pawsWidget *> VisibleShortcuts;
 
     csString buttonBackgroundImage;
 
     int edit;
+    pawsWidget *editedButton;
 
     pawsScrollBar* scrollBar;
+
+    virtual void HandleMessage(MsgEntry *msg);
+
+private:
+    pawsProgressBar *main_hp;
+    pawsProgressBar *main_mana;
+    pawsProgressBar *phys_stamina;
+    pawsProgressBar *ment_stamina;
+    pawsScrollMenu  *MenuBar;
+
+
+    csArray<csString>    allIcons;
+    csArray<csString>    allNames; //not populated at this time...
+
+
+/*
+    pawsWidget      *ScrollListFrame;
+    pawsWidget      *ButtonHolder;
+    pawsWidget      *innerButtonHolder;
+    pawsButton      *LeftScrollButton;
+    pawsButton      *EditLockButton;
+    pawsButton      *RightScrollButton;
+    pawsButton      *UseLockButton;
+*/
+    size_t            position;
+
 };
+
+class iWidgetData 
+{
+    csString CmdData;
+};
+
+
 CREATE_PAWS_FACTORY( pawsShortcutWindow );
 #endif
