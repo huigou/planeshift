@@ -24,11 +24,13 @@
 #include <csutil/array.h>
 
 #include "paws/pawsnumberpromptwindow.h"
+//#include "paws/pawsdndbutton.h"
 
 //=============================================================================
 // Forward Declarations
 //=============================================================================
 class pawsSlot;
+class pawsDnDButton;
 class MsgHandler;
 struct iMeshWrapper;
 
@@ -46,6 +48,8 @@ public:
     bool HandleEvent( iEvent& ev );
 
     void Handle( pawsSlot* slot, bool grabOne = false, bool grabAll = false );
+    void Handle( pawsDnDButton* target );
+
     void SetDragDetails(pawsSlot* slot, int count);
 
     bool IsDragging() { return isDragging; }
@@ -68,11 +72,11 @@ private:
         int containerID;
         int slotID;
         int stackCount;
-        pawsSlot* slot;
+        pawsWidget* slot;
         csString meshFactName;
         csString materialName;
         csString toolTip;
-        csString bartenderAction;
+        csString Action;
         int parentID;
         bool split; ///< Holds if the slot we are dragging contains a split of a stack.
     } draggingSlot;

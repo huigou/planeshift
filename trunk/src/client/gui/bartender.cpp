@@ -124,7 +124,7 @@ pawsBartenderWindow::~pawsBartenderWindow()
             slotNode->SetAttribute("name", slot->GetName());
             slotNode->SetAttribute("image", slot->ImageName());
             slotNode->SetAttribute("tooltip", slot->GetToolTip());
-            slotNode->SetAttribute("action", slot->GetBartenderAction());
+            slotNode->SetAttribute("action", slot->GetAction());
         }
     }
 

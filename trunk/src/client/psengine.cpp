@@ -155,6 +155,8 @@ if (!myref)                                                  \
 #include "gui/pawsspellbookwindow.h"
 #include "gui/pawssplashwindow.h"
 #include "gui/shortcutwindow.h"
+#include "gui/pawsscrollmenu.h"
+#include "gui/pawsdndbutton.h"
 #include "gui/pawsloginwindow.h"
 #include "gui/pawscharpick.h"
 #include "gui/pawsloading.h"
@@ -809,6 +811,8 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory(pawsPetitionWindowFactory);
     RegisterFactory(pawsPetitionGMWindowFactory);
     RegisterFactory(pawsShortcutWindowFactory);
+    RegisterFactory(pawsScrollMenuFactory);
+    RegisterFactory(pawsDnDButtonFactory);
     RegisterFactory(pawsLoginWindowFactory);
     RegisterFactory(pawsCharacterPickerWindowFactory);
     RegisterFactory(pawsGuildWindowFactory);
