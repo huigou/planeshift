@@ -7,7 +7,6 @@
         <loose value="0" />
         <defaultlastchat value="0" />
         <spellChecker value="0" r="255" g="0" b="0" />
-        <chatWidget value="chat_basic.xml" />
         <CHAT_SYSTEM log="0" file="chat.txt" bracket="" />
         <CHAT_COMBAT log="0" file="chat.txt" bracket="" />
         <CHAT_SAY log="1" file="chat.txt" bracket="" />

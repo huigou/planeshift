@@ -147,7 +147,6 @@ pawsChatWindow::pawsChatWindow()
     settings.joindefaultchannel = true;
     settings.defaultlastchat = true;
     settings.tabSetting = 1023; //enables all tabs
-    settings.chatWidget = "chat.xml";
 
     for (int i = 0; i < CHAT_END; i++)
     {
@@ -196,81 +195,78 @@ bool pawsChatWindow::PostSetup()
     LoadChatSettings();
 
     // Adjust tabs according tabs
-    if(settings.chatWidget != "chat_basic.xml") 
+    pawsWidget * pw = FindWidget("Chat Tabs");
+
+    csArray<csString> buttonNames;//tabs' names that will be searched later
+    buttonNames.Push("Main Button");
+    buttonNames.Push("Chat Button");
+    buttonNames.Push("NPC Button");
+    buttonNames.Push("Tell Button");
+    buttonNames.Push("Guild Button");
+    buttonNames.Push("Group Button");
+    buttonNames.Push("Alliance Button");
+    buttonNames.Push("Auction Button");
+    buttonNames.Push("System Button");
+    buttonNames.Push("Help Button");
+
+    unsigned int ct = 0;
+    int lastX, lastY, increment;
+    bool isVertical = false;
+    pawsWidget * tmp;
+    for (unsigned int i = 0 ; i < buttonNames.GetSize() ; i++)
     {
-        pawsWidget * pw = FindWidget("Chat Tabs");
-
-        csArray<csString> buttonNames;//tabs' names that will be searched later
-        buttonNames.Push("Main Button");
-        buttonNames.Push("Chat Button");
-        buttonNames.Push("NPC Button");
-        buttonNames.Push("Tell Button");
-        buttonNames.Push("Guild Button");
-        buttonNames.Push("Group Button");
-        buttonNames.Push("Alliance Button");
-        buttonNames.Push("Auction Button");
-        buttonNames.Push("System Button");
-        buttonNames.Push("Help Button");
-
-        unsigned int ct = 0;
-        int lastX, lastY, increment;
-        bool isVertical = false;
-        pawsWidget * tmp;
-        for (unsigned int i = 0 ; i < buttonNames.GetSize() ; i++)
+        if(i == 0)
         {
-            if(i == 0)
+            tmp = pw->FindWidget(buttonNames[i]);
+            lastX = tmp->GetDefaultFrame().xmin;
+            lastY = tmp->GetDefaultFrame().ymin;
+        }
+        if(TABVALUE(settings.tabSetting,i))
+        {//this tab is visible
+            if(ct == 0) 
             {
                 tmp = pw->FindWidget(buttonNames[i]);
-                lastX = tmp->GetDefaultFrame().xmin;
-                lastY = tmp->GetDefaultFrame().ymin;
+                if(tmp->GetDefaultFrame().xmin != lastX || tmp->GetDefaultFrame().ymin != lastY)
+                {
+                    tmp->SetRelativeFramePos(lastX,lastY);
+                }
+                tabs->OnButtonPressed(0,0,tmp);//activate the first tab
+                ct++;
+                continue;
             }
-            if(TABVALUE(settings.tabSetting,i))
-            {//this tab is visible
-                if(ct == 0) 
-                {
-                    tmp = pw->FindWidget(buttonNames[i]);
-                    if(tmp->GetDefaultFrame().xmin != lastX || tmp->GetDefaultFrame().ymin != lastY)
-                    {
-                        tmp->SetRelativeFramePos(lastX,lastY);
-                    }
-                    tabs->OnButtonPressed(0,0,tmp);//activate the first tab
-                    ct++;
-                    continue;
-                }
-                tmp = pw->FindWidget(buttonNames[i]);
-                if(ct == 1)
-                {
-                    int thisX, thisY;
-                    thisX = tmp->GetDefaultFrame().xmin;
-                    thisY = tmp->GetDefaultFrame().ymin;
+            tmp = pw->FindWidget(buttonNames[i]);
+            if(ct == 1)
+            {
+                int thisX, thisY;
+                thisX = tmp->GetDefaultFrame().xmin;
+                thisY = tmp->GetDefaultFrame().ymin;
 
-                    if(thisX == lastX && thisY != lastY)
-                    {
-                        isVertical = true;
-                        increment = tmp->GetDefaultFrame().Height();
-                    }
-                    else
-                    {
-                        increment = tmp->GetDefaultFrame().Width();
-                    }
-                }
-                if(isVertical)
+                if(thisX == lastX && thisY != lastY)
                 {
-                    tmp->SetRelativeFramePos(lastX,lastY+increment*ct);
-                    //tmp->MoveDelta(0,increment*ct);
+                    isVertical = true;
+                    increment = tmp->GetDefaultFrame().Height();
                 }
                 else
                 {
-                    tmp->SetRelativeFramePos(lastX+increment*ct, lastY);
+                    increment = tmp->GetDefaultFrame().Width();
                 }
-                tmp->SetVisibility(true);
-                ct++;
+            }
+            if(isVertical)
+            {
+                tmp->SetRelativeFramePos(lastX,lastY+increment*ct);
+                //tmp->MoveDelta(0,increment*ct);
             }
             else
             {
-                tmp = pw->FindWidget(buttonNames[i]);
-                tmp->SetVisibility(false);
+                tmp->SetRelativeFramePos(lastX+increment*ct, lastY);
             }
+            tmp->SetVisibility(true);
+            ct++;
+        }
+        else
+        {
+            tmp = pw->FindWidget(buttonNames[i]);
+            tmp->SetVisibility(false);
         }
     }
     
@@ -379,12 +375,6 @@ void pawsChatWindow::LoadChatSettings()
                 settings.joindefaultchannel = option->GetAttributeValueAsBool("value", true);
             else if (nodeName == "defaultlastchat")
                 settings.defaultlastchat = option->GetAttributeValueAsBool("value", true);          
-            else if (nodeName == "chatWidget")
-            {
-                settings.chatWidget = option->GetAttributeValue("value");
-                if(!settings.chatWidget.Length()) //if none are defined put a default one
-                    settings.chatWidget = "chat.xml";
-            }
             else
             {
                 for(int i = 0; i < CHAT_END; i++)
@@ -1146,7 +1136,7 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocumentNode> root, chatNode, colorNode, optionNode,looseNode,filtersNode,
                          badWordsNode, badWordsTextNode, tabCompletionNode, completionItemNode, cNode, logNode, selectTabStyleNode,
                          echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode, tabSettingNode, 
-                         defaultlastchatNode, spellCheckerNode, spellCheckerWordNode, chatWidgetNode, mainTabNode, flashingNode, flashingOnCharNode, node;
+                         defaultlastchatNode, spellCheckerNode, spellCheckerWordNode, mainTabNode, flashingNode, flashingOnCharNode, node;
 
     root = doc->CreateRoot();
 
@@ -1179,10 +1169,6 @@ void pawsChatWindow::SaveChatSettings()
     defaultlastchatNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     defaultlastchatNode->SetValue("defaultlastchat");
     defaultlastchatNode->SetAttributeAsInt("value",(int)settings.defaultlastchat);    
-
-    chatWidgetNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
-    chatWidgetNode->SetValue("chatWidget");
-    chatWidgetNode->SetAttribute("value",settings.chatWidget.GetData());
 
     looseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     looseNode->SetValue("loose");
