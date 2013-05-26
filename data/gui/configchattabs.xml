@@ -96,10 +96,5 @@
             <frame x="120" y="240" width="120" height="20" />
             <text string="Help" />
         </widget>
-
-        <widget name="basicchat" factory="pawsCheckBox">
-            <frame x="20" y="280" width="240" height="20" />
-            <text string="Use basic chat window (need reload)" />
-        </widget>
     </widget>
 </widget_description>

@@ -1417,7 +1417,7 @@ void psEngine::LoadGame()
 
             LoadPawsWidget("Status window",           "infowindow.xml");
             LoadPawsWidget("Ignore window",           "ignorewindow.xml");
-            LoadPawsWidget("Communications window",   GetChatWindowWidget().GetData());
+            LoadPawsWidget("Communications window",   "chat.xml");
             LoadPawsWidget("Inventory window",        "inventory.xml");
             LoadPawsWidget("Item description window", "itemdesc.xml");
             LoadPawsWidget("Container description window","containerdesc.xml");
@@ -1576,41 +1576,6 @@ psMouseBinds* psEngine::GetMouseBinds()
             Error1("Failed to load mouse options");
     }
     return mouseBinds;
-}
-
-csString psEngine::GetChatWindowWidget()
-{
-    csString chatWidget = "chat.xml";
-    csRef<iDocument> doc;
-    csRef<iDocumentNode> root, chatNode, optionNode;
-    if(psengine->GetVFS()->Exists(CONFIG_CHAT_FILE_NAME))
-        doc = ParseFile(GetObjectRegistry(), CONFIG_CHAT_FILE_NAME);
-    else
-        doc = ParseFile(GetObjectRegistry(), CONFIG_CHAT_FILE_NAME_DEF);
-
-    if(doc == NULL)
-        return chatWidget;
-
-    root = doc->GetRoot();
-    if(root == NULL)
-        return chatWidget;
-
-    chatNode = root->GetNode("chat");
-    if(chatNode == NULL)
-        return chatWidget;
-
-    optionNode = chatNode->GetNode("chatoptions");
-    if(optionNode != NULL)
-    {
-        csRef<iDocumentNode> oNode = optionNode->GetNode("chatWidget");
-        if(oNode)
-        {
-            chatWidget = oNode->GetAttributeValue("value");
-            if(!chatWidget.Length()) //if none are defined put a default one
-                chatWidget = "chat.xml";
-        }
-    }
-    return chatWidget;
 }
 
 size_t psEngine::GetTime()
