@@ -39,16 +39,25 @@
 #define BUTTON_PADDING          4
 #define SHORTCUT_BUTTON_OFFSET  2000
 
+#define ScrollMenuOptionDISABLED 0
+#define ScrollMenuOptionENABLED  1
+#define ScrollMenuOptionDYNAMIC  2
 
 #include "paws/pawswidget.h"
 #include "gui/pawsdndbutton.h"
+
+
+
 
 
 /** A scrolling list of buttons, each with an icon and which accepts drag-n-drop.
  */
 class pawsScrollMenu : public pawsWidget
 {
+
 public:
+
+
     pawsScrollMenu();
     virtual ~pawsScrollMenu();
 
@@ -62,9 +71,10 @@ public:
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
 
     bool LoadArrays(csArray<csString> &name, csArray<csString> &icon, csArray<csString> &toolTip, csArray<csString> &actions, int baseIndex, pawsWidget* widget);
-    bool LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget);
+    bool LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget, bool IsEnabled);
 
     bool RemoveByName(csString name);
+    int  GetSize();
 
     virtual bool Setup(iDocumentNode* node);
     bool SelfPopulate(iDocumentNode* node);
@@ -81,8 +91,11 @@ public:
     virtual bool IsEnabled() const;
     virtual void SetNotify(pawsWidget* widget);
 
-    void OfferEditLock(bool value);
-//    void OfferUseLock( bool value );
+    //void OfferEditLock(bool value);
+    void SetEditLock(int mode) {EditLockMode=mode; }
+    bool IsEditable() {return EditLockButton->GetState(); }
+    void SetLeftScroll(int mode);
+    void SetRightScroll(int mode);
 
 protected:
 
@@ -149,15 +162,20 @@ protected:
     int                   buttonLocation;
 
     pawsButton*            LeftScrollButton;
+    int                    LeftScrollMode;
+    bool                   LeftScrollVisible;
+
     pawsButton*            RightScrollButton;
+    int                    RightScrollMode;
+    bool                   RightScrollVisible;
 
     pawsButton*            EditLockButton;
-    bool                   EditLockButtonAvailable;    //is button available for use?
+    int                    EditLockMode;               //enabled, disabled, (dynamic==>enabled)
     bool                   EditLock;                 //true = editing prevented, false = editing allowed
 
-    pawsButton*            UseLockButton;
-    bool                   UseLockButtonAvailable;
-    bool                   UseLock;                 //true = usage prevented, false = usage allowed
+    //pawsButton*            UseLockButton;
+    //bool                   UseLockButtonAvailable;
+    //bool                   UseLock;                 //true = usage prevented, false = usage allowed
 
     pawsWidget*            callbackWidget;
 

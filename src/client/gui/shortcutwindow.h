@@ -1,8 +1,9 @@
 /*
 * shortcutwindow.h - Author: Andrew Dai
-*
 * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
+* Revision Author: Joe Lyon
+* Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -87,24 +88,33 @@ public:
     bool OnMouseDown( int button, int modifiers, int x, int y );
     bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
     bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
-    bool OnScroll( int direction, pawsScrollBar* widget );
     void OnResize();
-    void StopResize();
     bool OnFingering(csString string, psControl::Device device, uint button, uint32 mods);
 
     /**
      * Execute a short cut script.
      *
-     * @param shortcutNum is the button number if local = true
-     *                    else it is the command in range from
-     *                    0 to MAX_SHORTCUT_SETS*10-1;
-     * @param local
+     * @param shortcutNum is the button ordinal number 
      */
-    void ExecuteCommand(int shortcutNum, bool local);
+    void ExecuteCommand(int shortcutNum );
     
-    const csString& GetCommandName(int shortcutNum, bool local);
+    /**
+     * Get the short cut script.
+     *
+     * @param shortcutNum is the button ordinal number 
+     */
+    const csString& GetCommandName(int shortcutNum );
+
+    /**
+     * Get the text of a buttons assigned shortcut key 
+     *
+     * @param shortcutNum is the button ordinal number
+     */
     csString GetTriggerText(int shortcutNum);
 
+    /**
+     * Load the commands, icon names and shortcut text keys
+    **/
     void LoadDefaultCommands();
     void LoadCommandsFile();
     void LoadQuickbarFile();
@@ -138,25 +148,17 @@ protected:
 
     pawsTextBox* title;
 
-    // The button configuring widget
+    // Widget used to configure the shortcuts
     pawsWidget* subWidget;
 
-    pawsScrollMenu* iconPallette;
+    pawsScrollMenu* iconPalette;
     pawsDnDButton*  iconDisplay;
     int             iconDisplayID;
-
-    // The matrix of buttons of visible shortcuts
-    ////csArray< csArray<pawsButton*> > matrix;
-    //csArray<pawsButton*> matrix;
-
-    csArray<pawsWidget *> VisibleShortcuts;
 
     csString buttonBackgroundImage;
 
     int edit;
     pawsWidget *editedButton;
-
-    pawsScrollBar* scrollBar;
 
     virtual void HandleMessage(MsgEntry *msg);
 
@@ -171,23 +173,8 @@ private:
     csArray<csString>    allIcons;
     csArray<csString>    allNames; //not populated at this time...
 
-
-/*
-    pawsWidget      *ScrollListFrame;
-    pawsWidget      *ButtonHolder;
-    pawsWidget      *innerButtonHolder;
-    pawsButton      *LeftScrollButton;
-    pawsButton      *EditLockButton;
-    pawsButton      *RightScrollButton;
-    pawsButton      *UseLockButton;
-*/
     size_t            position;
 
-};
-
-class iWidgetData 
-{
-    csString CmdData;
 };
 
 

@@ -59,7 +59,6 @@ bool pawsScrollMenu::PostSetup()
 
     buttonHeight = screenFrame.Height();
     buttonWidth = buttonHeight;
-    // scrollIncrement = ((int)((screenFrame.Width()/buttonWidth)/2))*buttonWidth;
 
     EditLockButton = new pawsButton;
     AddChild(EditLockButton);
@@ -70,7 +69,7 @@ bool pawsScrollMenu::PostSetup()
     EditLockButton->SetUpImage("lockicon");
     EditLockButton->SetDownImage("unlockicon");
     EditLockButton->SetAlwaysOnTop(true);
-    OfferEditLock(true);
+    SetEditLock( ScrollMenuOptionENABLED );
 
     LeftScrollButton = new pawsButton;
     AddChild(LeftScrollButton);
@@ -80,6 +79,7 @@ bool pawsScrollMenu::PostSetup()
     LeftScrollButton->SetBackgroundAlpha(0);
     LeftScrollButton->SetBackground("Left Arrow");
     LeftScrollButton->SetAlwaysOnTop(true);
+    SetLeftScroll( ScrollMenuOptionDYNAMIC );
 
     ButtonHolder = new pawsWidget;
     AddChild(ButtonHolder);
@@ -93,17 +93,7 @@ bool pawsScrollMenu::PostSetup()
     RightScrollButton->SetBackground("Right Arrow");
     RightScrollButton->SetBackgroundAlpha(0);
     RightScrollButton->SetAlwaysOnTop(true);
-
-//    UseLockButton = new pawsButton;
-//    AddChild( UseLockButton );
-//        UseLockButton->SetSound("gui.shortcut");
-//        UseLockButton->SetID(104);
-//        UseLockButton->SetToolTip("Prevent/Allow use");
-//        UseLockButton->SetToggle( true );
-//        UseLockButton->SetUpImage("checkon");
-//        UseLockButton->SetDownImage("ButtonClose");
-//        UseLockButton->SetAlwaysOnTop(true);
-//        OfferUseLock( true );
+    SetRightScroll( ScrollMenuOptionDYNAMIC );
 
     buttonLocation=BUTTON_PADDING;
 
@@ -116,74 +106,38 @@ void pawsScrollMenu::OnResize()
 
     if(EditLockButton)
     {
-        if(EditLockButtonAvailable)
+        if(EditLockMode>0)
         {
             EditLockButton->Show(); //allows for dynamic enable/disable
-            EditLockButton->SetRelativeFrame(0, 0, buttonWidth, buttonHeight);
+            EditLockButton->SetRelativeFrame(0, buttonHeight/4, buttonWidth/2, buttonHeight/2);
         }
         else
         {
             EditLockButton->Hide();
         }
     }
-    if(LeftScrollButton)
+/*    if(LeftScrollButton)
     {
-        LeftScrollButton->SetRelativeFrame((EditLockButtonAvailable?buttonWidth:0), 0, buttonWidth, buttonHeight);
-    }
+        if( LeftScrollVisible )
+        {
+            LeftScrollButton->SetRelativeFrame((EditLockMode>0?buttonWidth/2:0), buttonHeight/4, buttonWidth/2, buttonHeight/2);
+        }
+    } */
 
     if(ButtonHolder)
     {
         //resize the button holder to fit the new parent window size
-        int edgeSpace = buttonWidth + BUTTON_PADDING \
-                        + (EditLockButtonAvailable?buttonWidth*1:0) +BUTTON_PADDING \
-//                + (UseLockButtonAvailable?buttonWidth*1:0) + BUTTON_PADDING
-                        + buttonWidth + BUTTON_PADDING;
+        int edgeSpace = buttonWidth/2 + BUTTON_PADDING \
+                        + (EditLockMode>0?buttonWidth/2:0) +BUTTON_PADDING \
+                        + buttonWidth/2 + BUTTON_PADDING;
 
-        ButtonHolder->SetRelativeFrame(buttonWidth*(EditLockButtonAvailable?2:1)+2*BUTTON_PADDING, 0, GetScreenFrame().Width()-edgeSpace,  GetScreenFrame().Height());
+        ButtonHolder->SetRelativeFrame((buttonWidth/2)*(EditLockMode>0?2:1)+2*BUTTON_PADDING, 0, GetScreenFrame().Width()-edgeSpace,  GetScreenFrame().Height());
 
         //if we have buttons then size them properly, show those within the buttonHolder visible area and hide the rest
         if(Buttons.GetSize() >0)
         {
 
             LayoutButtons();
-
-            /******
-                        int buttonCol = buttonLocation==0?BUTTON_PADDING:buttonLocation,
-                            buttonRow = 1;
-
-                        for( int i=0; i<Buttons.GetSize(); i++ )
-                        {
-                            if( !Buttons[i] )
-                            {
-            printf( "pawsScrollMenu::OnResize - ERROR Button[ %i ] is null\n", i );
-                                continue;
-                            }
-                            //resize
-                            int buttonSize = CalcButtonSize( (pawsDnDButton *)Buttons[i] );
-                            if( buttonCol+buttonSize > ButtonHolder->GetScreenFrame().Width() )
-                            {
-                                if( (buttonRow)*buttonHeight < ButtonHolder->GetScreenFrame().Height() )//there's enough vertical space for another row of buttons ...
-                                {
-                                    //buttonCol = buttonLocation==0?BUTTON_PADDING:buttonLocation;
-                                    buttonCol = BUTTON_PADDING;
-                                    buttonRow++;
-                                }
-                            }
-                            Buttons[i]->SetRelativeFrame( buttonCol, 4+((buttonRow-1)*buttonHeight), buttonSize-8, buttonWidth-8);
-                            buttonCol += buttonSize;
-
-                            //Hide/Show...this is necessary because text on hidden widgets is *not* hidden as it should be.
-                            //if( Buttons[i]->GetScreenFrame().xmax <= ButtonHolder->GetScreenFrame().xmin ||  Buttons[i]->GetScreenFrame().xmin >= ButtonHolder->GetScreenFrame().xmax )
-                            if( Buttons[i]->GetScreenFrame().xmax <= ButtonHolder->GetScreenFrame().xmin ||  Buttons[i]->GetScreenFrame().xmin >= ButtonHolder->GetScreenFrame().xmax || Buttons[i]->GetScreenFrame().ymax > ButtonHolder->GetScreenFrame().ymax )
-                            {
-                               Buttons[i]->Hide();
-                            }
-                            else
-                            {
-                                Buttons[i]->Show();
-                            }
-                        }
-            ***** */
 
             // if the last button is not within the visible area (could happen due to removals) shift right
             if(Buttons[ Buttons.GetSize()-1 ]->GetScreenFrame().xmax < 0)   //if the last button is off the left side of the viewing area then move them all.
@@ -194,47 +148,24 @@ void pawsScrollMenu::OnResize()
                 distance =  GetScreenFrame().xmax;
                 buttonLocation+=distance;
                 LayoutButtons();
-                /******
-                                for( int i=0; i<Buttons.GetSize(); i++ )
-                                {
-                                    if( !Buttons[i] )
-                                    {
-                                        continue;
-                                    }
-                                    Buttons[i]->MoveDelta( distance, 0 );
-
-                                    //Hide/Show...this is necessary because text on hidden widgets is *not* hidden as it should be.
-                                    if( Buttons[i]->GetScreenFrame().xmax <= ButtonHolder->GetScreenFrame().xmin ||  Buttons[i]->GetScreenFrame().xmin >= ButtonHolder->GetScreenFrame().xmax )
-                                    {
-                                       Buttons[i]->Hide();
-                                    }
-                                    else
-                                    {
-                                        Buttons[i]->Show();
-                                    }
-                                }
-                ***** */
             }
         }
     }
 
+    if(LeftScrollButton)
+    {
+        if( LeftScrollVisible )
+        {
+            LeftScrollButton->SetRelativeFrame((EditLockMode>0?buttonWidth/2:0), buttonHeight/4, buttonWidth/2, buttonHeight/2);
+        }
+    }
     if(RightScrollButton)
     {
-        //RightScrollButton->SetRelativeFrame(  parent->GetScreenFrame().Width()-(UseLockButtonAvailable?2:1)*buttonWidth, 0, buttonWidth, buttonHeight);
-        RightScrollButton->SetRelativeFrame(parent->GetScreenFrame().Width()-buttonWidth, 0, buttonWidth, buttonHeight);
+        if( RightScrollVisible )
+        {
+            RightScrollButton->SetRelativeFrame(GetScreenFrame().Width()-(buttonWidth/2), buttonWidth/4, buttonWidth/2, buttonHeight/2);
+        }
     }
-//    if( UseLockButton )
-//    {
-//        if( UseLockButtonAvailable )
-//        {
-//            UseLockButton->Show(); //allows for dynamic enable/disable
-//            UseLockButton->SetRelativeFrame( parent->GetScreenFrame().Width()-buttonWidth, 0, buttonWidth, buttonHeight);
-//        }
-//        else
-//        {
-//            UseLockButton->Hide();
-//        }
-//    }
 
     pawsWidget::OnResize();
 }
@@ -253,13 +184,13 @@ void pawsScrollMenu::LayoutButtons()
                 printf("pawsScrollMenu::OnResize - ERROR Button[ %i ] is null\n", i);
                 continue;
             }
-            //resize
+            //perform layout
             int buttonSize = CalcButtonSize((pawsDnDButton*)Buttons[i]);
-            if(buttonCol+buttonSize > ButtonHolder->GetScreenFrame().Width())
+
+            if( buttonCol+buttonSize > ButtonHolder->GetScreenFrame().Width())
             {
                 if((buttonRow)*buttonHeight < ButtonHolder->GetScreenFrame().Height())  //there's enough vertical space for another row of buttons ...
                 {
-                    //buttonCol = buttonLocation==0?BUTTON_PADDING:buttonLocation;
                     buttonCol = BUTTON_PADDING;
                     buttonRow++;
                 }
@@ -268,8 +199,7 @@ void pawsScrollMenu::LayoutButtons()
             buttonCol += buttonSize;
 
             //Hide/Show...this is necessary because text on hidden widgets is *not* hidden as it should be.
-            //if( Buttons[i]->GetScreenFrame().xmax <= ButtonHolder->GetScreenFrame().xmin ||  Buttons[i]->GetScreenFrame().xmin >= ButtonHolder->GetScreenFrame().xmax || Buttons[i]->GetScreenFrame().ymax > ButtonHolder->GetScreenFrame().ymax )
-            if(Buttons[i]->GetScreenFrame().xmax <= ButtonHolder->GetScreenFrame().xmin ||  Buttons[i]->GetScreenFrame().xmax >= ButtonHolder->GetScreenFrame().xmax || Buttons[i]->GetScreenFrame().ymax > ButtonHolder->GetScreenFrame().ymax)
+            if(Buttons[i]->GetScreenFrame().xmax <= ButtonHolder->GetScreenFrame().xmin ||  Buttons[i]->GetScreenFrame().xmin >= ButtonHolder->GetScreenFrame().xmax || Buttons[i]->GetScreenFrame().ymax > ButtonHolder->GetScreenFrame().ymax)
             {
                 Buttons[i]->Hide();
             }
@@ -278,38 +208,65 @@ void pawsScrollMenu::LayoutButtons()
                 Buttons[i]->Show();
             }
         }
+        if( LeftScrollMode==ScrollMenuOptionDYNAMIC )
+        {
+            if( Buttons[0]->GetScreenFrame().xmax <= ButtonHolder->GetScreenFrame().xmin )
+            {
+                LeftScrollVisible=true;
+                LeftScrollButton->Show();
+            }
+            else 
+            {
+                LeftScrollVisible=false;
+                LeftScrollButton->Hide();
+            }
+        }
+        else if( LeftScrollMode==ScrollMenuOptionENABLED )
+        {
+                LeftScrollVisible=true;
+                LeftScrollButton->Show();
+        }
+        else
+        {
+                LeftScrollVisible=true;
+                LeftScrollButton->Show();
+        }
+        if( RightScrollMode==ScrollMenuOptionDYNAMIC )
+        {
+            if( (Buttons[Buttons.GetSize()-1]->GetScreenFrame().xmin >= ButtonHolder->GetScreenFrame().xmax || Buttons[Buttons.GetSize()-1]->GetScreenFrame().ymin >= ButtonHolder->GetScreenFrame().ymax ) )
+            {
+                RightScrollVisible=true;
+                RightScrollButton->Show();
+            }
+            else 
+            {
+                RightScrollVisible=false;
+                RightScrollButton->Hide();
+            }
+        }
+        else if( RightScrollMode==ScrollMenuOptionENABLED )
+        {
+             RightScrollVisible=true;
+             RightScrollButton->Show();
+        }
+        else //RightScrollMode==ScrollMenuOptionDISABLED
+        {
+             RightScrollVisible=false;
+             RightScrollButton->Hide();
+        }
+    }
+    else
+    {
+        LeftScrollVisible=false;
+        LeftScrollButton->Hide();
+        RightScrollVisible=false;
+        RightScrollButton->Hide();
     }
 }
 
 void pawsScrollMenu::OnResizeStop()
 {
 }
-
-void pawsScrollMenu::OfferEditLock(bool value)
-{
-    EditLockButtonAvailable = value;
-    if(value)
-    {
-        EditLockButton->Show();
-    }
-    else
-    {
-        EditLockButton->Hide();
-    }
-}
-
-//void pawsScrollMenu::OfferUseLock( bool value )
-//{
-//    UseLockButtonAvailable = value;
-//    if( value )
-//    {
-//        UseLockButton->Show();
-//    }
-//    else
-//    {
-//        UseLockButton->Hide();
-//    }
-//}
 
 bool pawsScrollMenu::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
 {
@@ -324,14 +281,12 @@ bool pawsScrollMenu::OnButtonReleased(int mouseButton, int keyModifier, pawsWidg
         {
             for(int i=0; i<Buttons.GetSize(); i++)
             {
-                //((pawsDnDButton *)Buttons[i])->SetDnDLock( !(((pawsDnDButton *)Buttons[i])->GetDnDLock()));
                 ((pawsDnDButton*)Buttons[i])->SetDnDLock(EditLockButton->GetState());
             }
             return true;
         }
         case 102:    //left scroll button
         {
-            printf("left button\n");
             int moveDist;
 
             if(Buttons.GetSize()>0)
@@ -376,14 +331,6 @@ bool pawsScrollMenu::OnButtonReleased(int mouseButton, int keyModifier, pawsWidg
             }
             return false;
         }
-//        case 104:    //prevents usage - for example disable combat bar when in non-combat situation
-//        {
-//            for( int i=0; i<Buttons.GetSize(); i++ )
-//            {
-//                ((pawsDnDButton *)Buttons[i])->SetUseLock( !(((pawsDnDButton *)Buttons[i])->GetUseLock()) );
-//            }
-//            return true;
-//        }
     }            // switch( ... )
 
     callbackWidget->OnButtonReleased(mouseButton, keyModifier, widget);
@@ -452,7 +399,7 @@ bool pawsScrollMenu::LoadArrays(csArray<csString> &name, csArray<csString> &icon
     return true;
 }
 
-bool pawsScrollMenu::LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget)
+bool pawsScrollMenu::LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget, bool IsEnabled)
 {
     int buttonPos;
 
@@ -464,12 +411,9 @@ bool pawsScrollMenu::LoadSingle(csString name, csString icon, csString toolTip, 
     button->SetSound("gui.shortcut");
     button->SetBackground("Scaling Button");
     button->ClipToParent(true);
-    //button->SetIndexBase(baseIndex);
     button->SetID(Index);
     button->SetName(name);
-    //button->SetImageNameCallback( &icon );
-    //button->SetNameCallback( &name );
-    //button->SetActionCallback( &action );
+    button->SetEnabled( IsEnabled );
 
     if(!icon.IsEmpty())
     {
@@ -513,18 +457,20 @@ bool pawsScrollMenu::RemoveByName(csString name)
     return true;
 }
 
+int pawsScrollMenu::GetSize()
+{
+    return ButtonHolder->GetChildrenCount();
+}
+
 
 int pawsScrollMenu::CalcButtonSize(pawsDnDButton* target)
 {
-//printf( "pawsScrollMenu::CalcButtonSize begins\n" );
     if(!target)
     {
-//printf( "pawsScrollMenu::CalcButtonSize target is NULL\n" );
         return buttonWidth;
     }
     if(target->GetMaskingImage())
     {
-//printf( "pawsScrollMenu::CalcButtonSize finds maskingImage, returns default buttonwidth of %i\n", buttonWidth );
         return buttonWidth;
     }
     else if(target->GetText() && strlen(target->GetText())>0)
@@ -535,20 +481,16 @@ int pawsScrollMenu::CalcButtonSize(pawsDnDButton* target)
             height,
             finalWidth;
 
-//printf( "pawsScrollMenu::CalcButtonSize target has text\n" );
-
         target->GetFont()->GetDimensions(target->GetText(), textWidth, height);
         target->GetFont()->GetDimensions("MM", paddingWidth, height);
         finalWidth = ((int)((paddingWidth+textWidth)/buttonWidth)+1)*buttonWidth;
-        //return paddingWidth+textWidth;
+
         return finalWidth;
     }
     else //empty button
     {
-//printf( "pawsScrollMenu::CalcButtonSize target has no image or text, returning default\n" );
         return buttonWidth;
     }
-//printf( "pawsScrollMenu::CalcButtonSize ends\n" );
 }
 
 bool pawsScrollMenu::SelfPopulate(iDocumentNode* node)
@@ -574,6 +516,17 @@ bool pawsScrollMenu::OnMouseExit()
 
 bool pawsScrollMenu::OnMouseDown(int button, int modifiers, int x, int y)
 {
+    if( Buttons.GetSize() > 0 )
+    {
+        if( Buttons[ Buttons.GetSize()-1 ]->GetScreenFrame().xmax <x || Buttons[ Buttons.GetSize()-1 ]->GetScreenFrame().ymax <y )
+        {
+           parent->OnMouseDown( button, modifiers, GetScreenFrame().xmin + x, GetScreenFrame().ymin + y );
+        }
+    }
+    else
+    {
+       parent->OnMouseDown( button, modifiers, GetScreenFrame().xmin + x, GetScreenFrame().ymin + y );
+    }
     return false;
 }
 
@@ -603,4 +556,30 @@ void pawsScrollMenu::SetEnabled(bool enabled)
 bool pawsScrollMenu::IsEnabled() const
 {
     return true;
+}
+
+void pawsScrollMenu::SetLeftScroll(int mode)
+{
+    LeftScrollMode = mode;
+    if( LeftScrollMode == ScrollMenuOptionENABLED )
+    {
+        LeftScrollVisible=true;
+    }
+    else
+    {
+        LeftScrollVisible=false;
+    }
+}
+
+void pawsScrollMenu::SetRightScroll(int mode)
+{
+    RightScrollMode = mode;
+    if( RightScrollMode == ScrollMenuOptionENABLED )
+    {
+        RightScrollVisible=true;
+    }
+    else
+    {
+        RightScrollVisible=false;
+    }
 }
