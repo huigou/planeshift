@@ -103,10 +103,10 @@ public:
 
 protected:
     csString name;            ///< The name of the spell
+    csString icon;            ///< the icon associated with this spell, for use in the active magic window
     SPELL_TYPE type;          ///< Spell type - buff, debuff, etc.
     csString script;          ///< the contents of an \<apply\> node which recreates this effect
-    csTicks duration;         ///< How long this spell lasts
-    bool cancelOnDeath;       ///< Whether or not this spell should be cancelled on death
+    csTicks duration;         ///< How long this spell lasts    bool cancelOnDeath;       ///< Whether or not this spell should be cancelled on death
     bool damagesHP;           ///< Whether or not this spell damages HP (for cancel on duel defeat)
 
     gemActor* target;         ///< Who this spell is registered with

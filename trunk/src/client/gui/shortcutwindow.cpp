@@ -46,7 +46,7 @@
 #define CLEAR_BUTTON            1103
 
 #define SHORTCUT_BUTTON_OFFSET  2000
-#define PALLETTE_BUTTON_OFFSET  10000
+#define PALETTE_BUTTON_OFFSET  10000
 
 //=============================================================================
 // Classes
@@ -218,7 +218,6 @@ bool pawsShortcutWindow::PostSetup()
     ment_stamina->SetTotalValue(1);
 
     //set to a default minimum size...expands as needed
-    //names.SetSize( NUM_SHORTCUTS );
     n =  names;
     for( i=0; i<names.GetSize(); i++ )
     {
@@ -286,11 +285,11 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     if (!iconDisplay)
         iconDisplay = dynamic_cast <pawsDnDButton*> (subWidget->FindWidget("IconDisplay"));
 
-    if (!iconPallette)
+    if (!iconPalette)
     {
-        //for the icon Pallette we don't want any names or actions, so we'll pass an empty stub array
+        //for the icon Palette we don't want any names or actions, so we'll pass an empty stub array
         csArray<csString>	stubArray;
-        iconPallette = dynamic_cast <pawsScrollMenu*> (subWidget->FindWidget("iconPallette"));
+        iconPalette = dynamic_cast <pawsScrollMenu*> (subWidget->FindWidget("iconPalette"));
 
         //get a ptr to the txture manager so we can look at the elementList, which stores the icon names.
         pawsTextureManager *tm = PawsManager::GetSingleton().GetTextureManager();
@@ -306,10 +305,9 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         }
 
         //pass the array of icon names to LoadArrays as both the icon and the tooltip, so we can see then names when we hover over one
-        iconPallette->LoadArrays( stubArray, allIcons, allIcons, stubArray, PALLETTE_BUTTON_OFFSET, this );
-        iconPallette->OfferEditLock( false );
-        //iconPallette->OfferUseLock( false );
-        iconPallette->OnResize();
+        iconPalette->LoadArrays( stubArray, allIcons, allIcons, stubArray, PALETTE_BUTTON_OFFSET, this );
+        iconPalette->SetEditLock( ScrollMenuOptionDISABLED );
+        iconPalette->OnResize();
 
         iconDisplayID=-1;
     }
@@ -362,11 +360,11 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                 }
     	
                 editedButton->SetMaskingImage( icon[edit] );
-                if( iconDisplay->GetMaskingImage()>0 ) //there is one...
+                if( iconDisplay->GetMaskingImage()>0 ) //there is already a masking image
                 {
                     ((pawsButton *)editedButton)->SetText( csString("") );
                 }
-                else    //there's not one yet
+                else  //there's no masking image so far
                 {
                     ((pawsButton *)editedButton)->SetText( names[edit] );
                 }
@@ -432,25 +430,30 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
             return true;
         }
     }            // switch( ... )
-    if ( mouseButton == csmbLeft && !(keyModifier & CSMASK_CTRL))
+    if ( mouseButton == csmbLeft && !(keyModifier & CSMASK_CTRL))    //if left mouse button clicked
     {
-        // Execute clicked on button
-        if( widget->GetID()>=PALLETTE_BUTTON_OFFSET )
+        if( widget->GetID()>=PALETTE_BUTTON_OFFSET )        //if the clicked widget's offset is within the PALETTE range
         {
             iconDisplayID = widget->GetID();
-            iconDisplay->SetMaskingImage(allIcons[iconDisplayID-PALLETTE_BUTTON_OFFSET]);
-	    icon[edit] = allIcons[iconDisplayID-PALLETTE_BUTTON_OFFSET];
+            iconDisplay->SetMaskingImage(allIcons[iconDisplayID-PALETTE_BUTTON_OFFSET]);
+	    icon[edit] = allIcons[iconDisplayID-PALETTE_BUTTON_OFFSET];
         }
         else
         {
-            if( !((pawsDnDButton *)widget)->GetUseLock() )
-            {
-                ExecuteCommand( widget->GetID() - SHORTCUT_BUTTON_OFFSET + position, false );
-            }
+            if( cmds.GetSize()>0 )
+                if( (cmds[widget->GetID() - SHORTCUT_BUTTON_OFFSET + position ]) )
+                {
+                    ExecuteCommand( widget->GetID() - SHORTCUT_BUTTON_OFFSET + position );
+                }
         }
     }
     else if ( mouseButton == csmbRight || (mouseButton == csmbLeft && (keyModifier & CSMASK_CTRL)) )
     {
+        if( !(MenuBar->IsEditable()) )
+        {
+            return false;
+        }
+        
         edit = widget->GetID() - SHORTCUT_BUTTON_OFFSET;
         editedButton = widget;
 
@@ -479,7 +482,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         if( icon[edit] )
         {
             iconDisplay->SetMaskingImage(icon[edit]);
-            iconDisplayID=edit+PALLETTE_BUTTON_OFFSET;
+            iconDisplayID=edit+PALETTE_BUTTON_OFFSET;
         }
         else
         {
@@ -520,16 +523,6 @@ csString pawsShortcutWindow::GetTriggerText(int shortcutNum)
     }
 
     return ctrl->ToString();
-}
-
-
-bool pawsShortcutWindow::OnScroll(int /*direction*/, pawsScrollBar* /*widget*/)
-{
-    return true;
-}
-
-void pawsShortcutWindow::StopResize()
-{
 }
 
 
@@ -628,7 +621,6 @@ void pawsShortcutWindow::SaveCommands(void)
 
     csRef<iDocumentNode> text;
     csString temp;
-    //for (i=0;i < NUM_SHORTCUTS; i++)
     for (i = 0;i < cmds.GetSize();i++)
     {
         if (cmds[i].IsEmpty())
@@ -658,7 +650,7 @@ void pawsShortcutWindow::SaveCommands(void)
 }
 
         
-void pawsShortcutWindow::ExecuteCommand(int shortcutNum, bool local)
+void pawsShortcutWindow::ExecuteCommand(int shortcutNum )
 {
 
     //if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
@@ -751,7 +743,7 @@ void pawsShortcutWindow::ExecuteCommand(int shortcutNum, bool local)
 }
 
 
-const csString& pawsShortcutWindow::GetCommandName(int shortcutNum, bool local)
+const csString& pawsShortcutWindow::GetCommandName(int shortcutNum )
 {
     //if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
     if (shortcutNum < 0 )

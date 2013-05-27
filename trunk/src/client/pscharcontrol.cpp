@@ -117,7 +117,7 @@ csString GetDisplayName(const char* n)
                 shortcuts = dynamic_cast<pawsShortcutWindow*>(PawsManager::GetSingleton().FindWidget("ShortcutWindow"));
 
             if (shortcuts)
-                name = shortcuts->GetCommandName(id-1, false);
+                name = shortcuts->GetCommandName(id-1);
         }
     }
     
@@ -671,7 +671,8 @@ void psTriggerHandler::HandleShortcut(const psControl* trigger,bool value)
             return;
         }
 
-        shortcutwin->ExecuteCommand(sc-1,false);
+        //shortcutwin->ExecuteCommand(sc-1,false);
+        shortcutwin->ExecuteCommand(sc-1);
     }
 }
 
