@@ -527,8 +527,8 @@ bool QuestManager::HandleScriptCommand(csString& block,
 
 void QuestManager::AutocompleteQuestName(csString& questname, psQuest *mainQuest)
 {
-    //attempt to consider it as a step of this quest if not found.
-    if(!cacheManager->GetQuestByName(questname)) 
+    //attempt to consider it as a step of this quest if not found. If no quest is associated do nothing.
+    if(mainQuest && !cacheManager->GetQuestByName(questname)) 
     {
         csString tmpQuestName;
         //create the autocompleted questname
