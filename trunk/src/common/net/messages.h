@@ -3696,15 +3696,18 @@ public:
     psGUIActiveMagicMessage(uint32_t clientNum,
                             commandType cmd,
                             SPELL_TYPE type,
-                            const csString &name)
+                            const csString &name,
+                            const csString &image)
     {
-        msg.AttachNew(new MsgEntry(sizeof(bool) + +sizeof(uint8_t) + sizeof(int32_t) + name.Length() + 1));
+        msg.AttachNew(new MsgEntry(sizeof(bool) + +sizeof(uint8_t) + sizeof(int32_t) + name.Length() + image.Length() + 1));
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
         msg->Add((uint8_t)cmd);
         msg->Add((uint8_t)type);
         msg->Add(name);
+        msg->Add(image);         //<---
         valid = !(msg->overrun);
+//printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage sending message ( %i, %i, %i, %s, %s)\n", clientNum, cmd, type, name.GetData(), image.GetData() );
     }
 
     /// Crack this message off the network.
@@ -3713,7 +3716,9 @@ public:
         command = (commandType) message->GetUInt8();
         type = (SPELL_TYPE) message->GetUInt8();
         name = message->GetStr();
+        image = message->GetStr();         //<---
         valid = true;
+//printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage receiving message ( %i, %i, %s, %s)\n", command, type, name.GetData(), image.GetData() );
     }
 
     PSF_DECLARE_MSG_FACTORY();
@@ -3729,6 +3734,7 @@ public:
     commandType command;
     SPELL_TYPE type;
     csString name;
+    csString image;
 };
 
 //-----------------------------------------------------------------------------
