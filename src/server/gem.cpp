@@ -4358,7 +4358,8 @@ void gemActor::DetachScript(ProgressionScript *script, int type)
 void gemActor::AddActiveSpell(ActiveSpell *asp)
 {
     activeSpells.Push(asp);
-    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name());
+//    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name() );
+    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name(), psserver->GetCacheManager()->GetSpellByName(asp->Name())->GetImage());
     outgoing.SendMessage();
 }
 
@@ -4366,11 +4367,11 @@ bool gemActor::RemoveActiveSpell(ActiveSpell *asp)
 {
     if (activeSpells.Delete(asp))
     {
-        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name());
+//        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name());
+        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name(), psserver->GetCacheManager()->GetSpellByName(asp->Name())->GetImage());
         outgoing.SendMessage();
         return true;
-    }
-    return false;
+    }    return false;
 }
 
 ActiveSpell* gemActor::FindActiveSpell(const csString & name, SPELL_TYPE type)

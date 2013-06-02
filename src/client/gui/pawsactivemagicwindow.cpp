@@ -89,13 +89,10 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
 
             if( incoming.type == BUFF )
             {
-                csString imageName = "/planeshift/materials/spell_" + incoming.name + ".dds";
-                imageName.ReplaceAll( " ", "_" );
-printf( "pawsActiveMagicWindow::HandleMessage loading buff image %s\n", imageName.GetData() );
-                 csRef<iPawsImage> image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
+                 csRef<iPawsImage> image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
                 if (image)
                 {
-                    buffList->LoadSingle( incoming.name, imageName, incoming.name, csString( "" ), 1, this, false );
+                    buffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), 1, this, false );
                 }
                 else
                 {
@@ -105,13 +102,10 @@ printf( "pawsActiveMagicWindow::HandleMessage loading buff image %s\n", imageNam
             }
             else
             {
-                csString imageName = "/planeshift/materials/spell_" + incoming.name + ".dds";
-                imageName.ReplaceAll( " ", "_" );
-printf( "pawsActiveMagicWindow::HandleMessage loading debuff image %s\n", imageName.GetData() );
-                 csRef<iPawsImage> image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
+                 csRef<iPawsImage> image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
                 if (image)
                 {
-                    debuffList->LoadSingle( incoming.name, imageName, incoming.name, csString( "" ), 1, this, false );
+                    debuffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), 1, this, false );
                 }
                 else
                 {
