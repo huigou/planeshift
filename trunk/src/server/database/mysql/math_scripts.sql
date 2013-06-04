@@ -62,7 +62,7 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         {
           if(Attacker:IsNPC)
           {
-            if(TargetWeapon:IsShield())
+            if(TargetWeapon:IsShield)
             {
               Target:PracticeSkillID(TargetWeapon:Skill1,1);
               Target:PracticeSkillID(TargetWeapon:Skill2,1);
