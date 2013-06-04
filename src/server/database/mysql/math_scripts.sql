@@ -84,7 +84,7 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
 
         AttackValue = WeaponSkill;
         TargetAttackValue = TargetWeaponSkill;
-        DV = Attacker:Agility;
+        DV = Attacker:GetSkillValue(46);
         TargetDV = 0;
 
         AVStance = if(AttackerStance=1, (AttackValue*2)+(DV*0.8),
