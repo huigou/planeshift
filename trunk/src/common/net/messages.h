@@ -3699,15 +3699,49 @@ public:
                             const csString &name,
                             const csString &image)
     {
-        msg.AttachNew(new MsgEntry(sizeof(bool) + +sizeof(uint8_t) + sizeof(int32_t) + name.Length() + image.Length() + 1));
+        size_t    msgSize = sizeof(bool) + sizeof(uint8_t) + sizeof(int32_t);
+
+        if( name && name.Length()>0 )        //<--
+            msgSize += name.Length() +1;
+        else
+            msgSize += sizeof(uint8_t);
+
+        if( image )        //<--
+        {
+            if( image && image.Length()>0 )        //<--
+            {
+                msgSize += image.Length() +1;
+printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got image '%s'\n", image.GetData());
+            }
+            else
+            {
+printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got zero-length image\n");
+            }
+        }
+        else
+        {
+            msgSize += sizeof(uint8_t);
+printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got no image\n" );
+        }
+
+        //msg.AttachNew(new MsgEntry(sizeof(bool) + sizeof(uint8_t) + sizeof(int32_t) + name.Length() + image.Length() + 2));
+        msg.AttachNew(new MsgEntry( msgSize ) );
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
         msg->Add((uint8_t)cmd);
         msg->Add((uint8_t)type);
-        msg->Add(name);
-        msg->Add(image);         //<---
+        if( name && name.Length()>0 )        //<--
+            msg->Add(name);
+        else 
+            msg->Add((uint8_t)0);
+
+        if( image && image.Length()>0 )        //<--
+            msg->Add(image); 
+        else 
+            msg->Add((uint8_t)0);
+
         valid = !(msg->overrun);
-//printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage sending message ( %i, %i, %i, %s, %s)\n", clientNum, cmd, type, name.GetData(), image.GetData() );
+printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage sending message ( %i, %i, %i, %s, %s)\n", clientNum, cmd, type, name?name.GetData():"N/A", image?image.GetData():"N/A" );
     }
 
     /// Crack this message off the network.
@@ -3715,14 +3749,13 @@ public:
     {
         command = (commandType) message->GetUInt8();
         type = (SPELL_TYPE) message->GetUInt8();
-        name = message->GetStr();
-        image = message->GetStr();         //<---
+        name = message->GetStr();          //if there was no name when the message was sent, this should read a null string
+        image = message->GetStr();         //if there was no name when the message was sent, this should read a null string
         valid = true;
-//printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage receiving message ( %i, %i, %s, %s)\n", command, type, name.GetData(), image.GetData() );
+printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage receiving message ( %i, %i, %s, %s)\n", command, type, name.GetData(), image.GetData() );
     }
 
     PSF_DECLARE_MSG_FACTORY();
-
     /**
      *  Converts the message into human readable string.
      *

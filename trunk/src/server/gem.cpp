@@ -4357,10 +4357,42 @@ void gemActor::DetachScript(ProgressionScript *script, int type)
 
 void gemActor::AddActiveSpell(ActiveSpell *asp)
 {
+printf( "gemActor::AddActiveSpell begins\n" );
+    if( !asp ) 
+    {
+printf( "gemActor::AddActiveSpell asp invalid\n" );
+        return;
+    }
+printf( "gemActor::AddActiveSpell push asp onto active spells list\n" );
     activeSpells.Push(asp);
-//    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name() );
-    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name(), psserver->GetCacheManager()->GetSpellByName(asp->Name())->GetImage());
+
+    csString   lname = asp->Name();
+    if( !lname )
+    {
+printf( "gemActor::AddActiveSpell name invalid\n" );
+        return;
+    }
+
+    psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(asp->Name());
+    csString   imageName;
+    if( !lspell )
+    {
+printf( "gemActor::AddActiveSpell psSpell invalid\n" );
+        imageName = csString();
+    }
+    else
+    {
+        imageName = lspell->GetImage();
+        if( !imageName )
+        {
+printf( "gemActor::AddActiveSpell image invalid\n" );
+            imageName = csString();
+        }
+    }
+
+    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name(), imageName );
     outgoing.SendMessage();
+printf( "gemActor::AddActiveSpell ends\n" );
 }
 
 bool gemActor::RemoveActiveSpell(ActiveSpell *asp)
@@ -4368,7 +4400,7 @@ bool gemActor::RemoveActiveSpell(ActiveSpell *asp)
     if (activeSpells.Delete(asp))
     {
 //        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name());
-        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name(), psserver->GetCacheManager()->GetSpellByName(asp->Name())->GetImage());
+        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name(), csString() );
         outgoing.SendMessage();
         return true;
     }    return false;
