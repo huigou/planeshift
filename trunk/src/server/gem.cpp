@@ -4759,7 +4759,7 @@ void gemNPC::ShowPopupMenu(Client *client)
     if (menu.triggers.GetSize())
         menu.ShowMenu(client,0, this);
     else
-        psserver->SendSystemError(client->GetClientNum(), "This NPC no quest for you, but might have other things to say.");
+        psserver->SendSystemError(client->GetClientNum(), "This NPC has no quest for you, but might have other things to say.");
 }
 
 void gemNPC::SetOwner(gemObject* newOwner)
