@@ -362,7 +362,7 @@ bool psEffectObjLabel::SetText(int rows, ...)
         for(uint b=0; b<newElem.text.Length(); b++)
         {     
             
-            if(newElem.text[b] > 255)
+            if(newElem.text[b] >= NUM_GLYPHS)
             {
                 newElem.text[b] = 0;
                 Error2("UNSUPPORTED CHARACTERS: %s\n", newElem.text.GetData());
@@ -423,7 +423,7 @@ bool psEffectObjLabel::SetText(int rows, ...)
         for(size_t j=0; j<text.Length(); j++)
         {
             uint c = text.GetAt(j);
-            if(c > 255)
+            if(c >= NUM_GLYPHS)
             {
                 c = 0;
                 Error2("UNSUPPORTED CHARACTERS: %s\n", text.GetData());
