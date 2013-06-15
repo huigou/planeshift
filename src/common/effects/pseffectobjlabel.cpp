@@ -360,7 +360,14 @@ bool psEffectObjLabel::SetText(int rows, ...)
         newElem.width = 0;
         newElem.height = 0;
         for(uint b=0; b<newElem.text.Length(); b++)
-        {
+        {     
+            
+            if(newElem.text[b] > 255)
+            {
+                newElem.text[b] = 0;
+                Error2("UNSUPPORTED CHARACTERS: %s\n", newElem.text.GetData());
+            }     
+
             newElem.width += width[newElem.text[b]];
             if( newElem.height < height[newElem.text[b]] )
             {
@@ -416,6 +423,12 @@ bool psEffectObjLabel::SetText(int rows, ...)
         for(size_t j=0; j<text.Length(); j++)
         {
             uint c = text.GetAt(j);
+            if(c > 255)
+            {
+                c = 0;
+                Error2("UNSUPPORTED CHARACTERS: %s\n", text.GetData());
+            }
+
             float fx1, fy1, fx2, fy2;
 
             fx1 = (float)x * scalefactor - labelwidth/2.0;
