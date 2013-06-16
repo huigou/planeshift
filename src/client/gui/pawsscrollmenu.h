@@ -81,25 +81,22 @@ public:
 
     virtual void Draw();
 
-    virtual bool OnMouseEnter();
-    virtual bool OnMouseExit();
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
-    virtual bool OnMouseUp(int button, int modifiers, int x, int y);
     virtual bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers);
 
-    virtual void SetEnabled(bool enabled);
     virtual bool IsEnabled() const;
-    virtual void SetNotify(pawsWidget* widget);
 
-    //void OfferEditLock(bool value);
     void SetEditLock(int mode) {EditLockMode=mode; }
     bool IsEditable() {return EditLockButton->GetState(); }
     void SetLeftScroll(int mode);
     void SetRightScroll(int mode);
 
-protected:
+    void setButtonWidth( int width );
+    void setScrollIncrement( int incr );
+    void setScrollProportion( float prop );
 
-    virtual bool CheckKeyHandled(int keyCode);
+
+protected:
 
     /// Track to see if the button is down.
     bool down;
@@ -153,9 +150,11 @@ protected:
     bool changeOnMouseOver;
 
 
-    int buttonWidth,
-        buttonHeight,
-        scrollIncrement;
+    int   buttonWidth,
+          buttonHeight,
+          scrollIncrement;
+    float scrollProportion;
+    bool  buttonWidthDynamic;
 
     pawsWidget*            ButtonHolder;
     csArray<pawsWidget*> Buttons;

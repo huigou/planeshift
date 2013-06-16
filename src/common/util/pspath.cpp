@@ -908,6 +908,11 @@ void psLinearPath::PrecalculatePath(psWorld * world, iEngine *engine)
 	iSector* sectorP1 = points[ii]->GetSector(engine);
 	iSector* sectorP2 = points[ii+1]->GetSector(engine);
 
+        if( !sectorP1 || !sectorP2 )
+        {
+            precalculationValid = false;
+            return;
+        }
         if (!world->WarpSpace(sectorP2,sectorP1,pos2))
         {
             Error6("In path \'%s\', sector %s of points %lu and"

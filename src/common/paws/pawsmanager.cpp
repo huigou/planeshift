@@ -639,7 +639,10 @@ bool PawsManager::HandleMouseDown(csMouseEventData &data)
 
             if(widget != mainWidget)
             {
+if( widget->GetParent() )
+{
                 widget->GetParent()->BringToTop(widget);
+}
             }
 
             // Distribute the event to the widget
@@ -782,7 +785,9 @@ bool PawsManager::HandleMouseMove(csMouseEventData &data)
                 // Only fade in/out topmost parent
                 if(widgetFade != mainWidget)
                 {
-                    for(pawsWidget* mainParent = widgetFade->GetParent(); mainParent != mainWidget; mainParent=widgetFade->GetParent())
+                    pawsWidget* mainParent = widgetFade->GetParent();
+
+                    //for(pawsWidget* mainParent = widgetFade->GetParent(); mainParent != mainWidget; mainParent=widgetFade->GetParent())
                     {
                         widgetFade = mainParent;
                     }
@@ -1733,5 +1738,7 @@ bool PawsManager::LoadTooltips(const char* fileName)
 
 csString PawsManager::getToolTipSkinPath()
 {
-    return GetLocalization()->FindLocalizedFile("tooltips.xml");
+    csString t;
+    t = GetLocalization()->FindLocalizedFile("tooltips.xml");
+    return t;
 }

@@ -67,26 +67,57 @@ public:
     {
         dragDrop = isDragDrop;
     };
-    void PlaceItem(const char* imageName, const char* Name, const char* toolTip, const char* action);
+    bool PlaceItem(const char* imageName, const char* Name, const char* toolTip, const char* action);
+
+    csArray<csString>* GetImageNameCallback()
+    {
+        return ImageNameCallback;
+    };
     void SetImageNameCallback(csArray<csString>* in)
     {
         ImageNameCallback=in;
+    };
+
+    csArray<csString>* GetNameCallback()
+    {
+        return NameCallback;
     };
     void SetNameCallback(csArray<csString>* in)
     {
         NameCallback=in;
     };
+    const char* GetName()
+    {
+        if( NameCallback )
+        {
+            if( NameCallback->Get(id-indexBase).Length()>0 )
+            {
+               return NameCallback->Get(id-indexBase).GetData();
+            }
+        }
+        return GetText();
+    }
+
+    csArray<csString>* GetActionCallback()
+    {
+        return ActionCallback;
+    };
     void SetActionCallback(csArray<csString>* in)
     {
         ActionCallback=in;
     };
+
     void SetIndexBase(int indexBase)
     {
         this->indexBase=indexBase;
     };
+    int GetIndexBase()
+    {
+        return indexBase;
+    };
 
     void SetMaskingImage(const char* image);
-    //const char* GetMaskingImageName() {return maskingImageName.GetData();};
+
     csString GetMaskingImageName()
     {
         return maskingImageName;
@@ -95,9 +126,28 @@ public:
     {
         return containerID;
     };
-    void SetAction(csString &act)
+    void SetAction(const char *act)
     {
+        SetAction( csString( act ));
+    }
+    void SetAction(csString act)
+    {
+        if( ActionCallback )
+        {
+           ActionCallback->Get(id-indexBase).Replace(act);
+        }
         action = act;
+    }
+    const char * GetAction()
+    {
+        if( action )
+        {
+            if( !action.IsEmpty() )
+            {
+                return action.GetData();
+            }
+        }
+        return "";
     }
 
     void SetUseLock(bool locked)
@@ -118,10 +168,27 @@ public:
         return DnDLock;
     };
 
+    /***
+     * Remove all contents of button.
+     */
+    void Clear();
+
+    /***
+     * Get Button index number
+     */
+    int GetButtonIndex()
+    {
+        return id-indexBase;
+    }
+
+    void SetDragDropInProgress( bool val );
+    bool IsDragDropInProgress( );
+
 
 protected:
     psSlotManager*      mgr;
     bool                dragDrop;
+    bool                dragDropInProgress;
     csString            action;
     int                 containerID;
     int                 indexBase;

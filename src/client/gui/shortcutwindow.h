@@ -174,7 +174,8 @@ private:
     csArray<csString>    allNames; //not populated at this time...
 
     size_t            position;
-
+    size_t            buttonWidth;
+    float             scrollSize;
 };
 
 

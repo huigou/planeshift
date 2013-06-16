@@ -44,6 +44,7 @@
 #define CANCEL_BUTTON           1101
 #define SETKEY_BUTTON           1102
 #define CLEAR_BUTTON            1103
+#define CLEAR_ICON_BUTTON       1104
 
 #define SHORTCUT_BUTTON_OFFSET  2000
 #define PALETTE_BUTTON_OFFSET  10000
@@ -185,10 +186,38 @@ void pawsShortcutWindow::HandleMessage( MsgEntry* me )
 
 bool pawsShortcutWindow::Setup(iDocumentNode *node)
 {
-    if (node->GetAttribute("buttonimage"))
-        buttonBackgroundImage = node->GetAttributeValue("buttonimage");
-    else
-        buttonBackgroundImage = "Scaling Button";
+    csRef<iDocumentNode> tempnode;
+    csRef<iDocumentNodeIterator> nodeIter = node->GetNodes();
+    while( nodeIter->HasNext() )
+    {
+        tempnode = nodeIter->Next();
+        if( tempnode->GetAttributeValue("name") && strcmp( "MenuBar", tempnode->GetAttributeValue("name"))==0 )
+        {
+            csRef<iDocumentAttributeIterator> attiter = tempnode->GetAttributes();
+            csRef<iDocumentAttribute> subnode;
+
+            while ( attiter->HasNext() )
+            {
+                subnode = attiter->Next();
+                if( strcmp( "buttonWidth", subnode->GetName() )==0 )
+                {
+                    if( strcmp( "auto", subnode->GetValue() )==0 )
+                    {
+                        buttonWidth=0;
+                    }
+                    else
+                    {
+                        buttonWidth=subnode->GetValueAsInt();
+                    }
+                }
+                else if( strcmp( "scrollSize", subnode->GetName() )==0 )
+                {
+                    scrollSize=subnode->GetValueAsFloat();
+                }
+            }
+            break;
+        }
+    }
 
     return true;
 }
@@ -200,23 +229,42 @@ bool pawsShortcutWindow::PostSetup()
     csArray<csString>  n;
 
     pawsControlledWindow::PostSetup();
-    psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_MODE);
 
     main_hp      = (pawsProgressBar*)FindWidget( "My HP" );
     main_mana    = (pawsProgressBar*)FindWidget( "My Mana" );
     phys_stamina = (pawsProgressBar*)FindWidget( "My PysStamina" );
     ment_stamina = (pawsProgressBar*)FindWidget( "My MenStamina" );
-    MenuBar      = (pawsScrollMenu*)FindWidget( "MenuBar" );
-    if ( !main_hp || !main_mana || !phys_stamina || !ment_stamina )
+    if ( main_hp )
     {
-        return false;
+        main_hp->SetTotalValue(1);
     }
-    
-    main_hp->SetTotalValue(1);
-    main_mana->SetTotalValue(1);
-    phys_stamina->SetTotalValue(1);
-    ment_stamina->SetTotalValue(1);
+    if ( main_mana )
+    {
+        main_mana->SetTotalValue(1);
+    }
+    if ( phys_stamina )
+    {
+        phys_stamina->SetTotalValue(1);
+    }
+    if ( ment_stamina )
+    {
+        ment_stamina->SetTotalValue(1);
+    }
+    if( main_hp || main_mana || phys_stamina || ment_stamina )
+    {
+        psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_MODE);
+    }
 
+    MenuBar      = (pawsScrollMenu*)FindWidget( "MenuBar" );
+    MenuBar->setButtonWidth( buttonWidth );
+    if( scrollSize>1 )
+    {
+        MenuBar->setScrollIncrement( (int)scrollSize );
+    }
+    else
+    {
+        MenuBar->setScrollProportion( scrollSize );
+    }
     //set to a default minimum size...expands as needed
     n =  names;
     for( i=0; i<names.GetSize(); i++ )
@@ -229,6 +277,7 @@ bool pawsShortcutWindow::PostSetup()
         }
     }
     MenuBar->LoadArrays( names, icon, n, cmds, 2000, this);
+    position = 0;
 
     return true;
 }
@@ -264,10 +313,14 @@ bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
 
 bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
 {
-    if( widget->GetID() <= -SHORTCUT_BUTTON_OFFSET ) //in a DnD...save, reset to non-DnD, do not exec command.
+    if( ((pawsDnDButton* )widget)->IsDragDropInProgress() )
     {
         SaveCommands();
-        widget->SetID( abs(widget->GetID()) );
+        ((pawsDnDButton*)widget)->SetDragDropInProgress( false );
+        return true;
+    }
+    if(  psengine->GetSlotManager()->IsDragging() )
+    {
         return true;
     }
     if (!subWidget)
@@ -335,18 +388,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                     editedCmd.Format("Shortcut %d",edit+1);
                     psengine->GetCharControl()->RemapTrigger(editedCmd,psControl::NONE,0,0);
 
-                    //clear DnD Button
-                    if( ((pawsDnDButton *)editedButton)->GetMaskingImage() )
-                    {
-                        editedButton->ClearMaskingImage();
-                    }
-                    editedButton->SetToolTip( "" );
-                    ((pawsDnDButton *)editedButton)->SetText("");
-
-                    //Clear data arrays
-                    names[ edit ].Clear();
-                    cmds[ edit ].Clear();
-                    icon[ edit ].Clear();
+                    ((pawsDnDButton *)editedButton)->Clear();
                 }
             }
             else  //labelBox (ie name) is set
@@ -356,20 +398,26 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                 {
                     names[edit] = labelBox->GetText();
                     cmds[edit] = textBox->GetText();
-                    icon[edit] = iconDisplay->GetMaskingImageName();
+                    if( iconDisplay->GetMaskingImageName().Length()>0 )
+                    {
+                        icon[edit] = iconDisplay->GetMaskingImageName();
+                    }
+                    else
+                    {
+                        icon[edit].Clear();
+                    }
                 }
     	
-                editedButton->SetMaskingImage( icon[edit] );
-                if( iconDisplay->GetMaskingImage()>0 ) //there is already a masking image
+                if( icon[edit].Length()>0 )
                 {
-                    ((pawsButton *)editedButton)->SetText( csString("") );
+                    editedButton->SetMaskingImage( icon[edit] );
+                    ((pawsButton *)editedButton)->SetText( csString() );
                 }
-                else  //there's no masking image so far
+                else
                 {
+                    editedButton->ClearMaskingImage();
                     ((pawsButton *)editedButton)->SetText( names[edit] );
                 }
-                iconDisplayID = -1;
-                iconDisplay->SetMaskingImage( csString(""));
 
                 csString t = GetTriggerText( edit );
                 if( t.Length()>0 && edit < names.GetSize() )
@@ -399,6 +447,13 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         case CLEAR_BUTTON:
         {
             ResetEditWindow();
+
+            return true;
+        }
+        case CLEAR_ICON_BUTTON:
+        {
+            iconDisplay->ClearMaskingImage();
+            iconDisplay->SetMaskingImage( csString() );
 
             return true;
         }
@@ -441,10 +496,12 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         else
         {
             if( cmds.GetSize()>0 )
-                if( (cmds[widget->GetID() - SHORTCUT_BUTTON_OFFSET + position ]) )
+            {
+                if( (cmds[widget->GetID() - SHORTCUT_BUTTON_OFFSET + position ]) ) 
                 {
                     ExecuteCommand( widget->GetID() - SHORTCUT_BUTTON_OFFSET + position );
                 }
+            }
         }
     }
     else if ( mouseButton == csmbRight || (mouseButton == csmbLeft && (keyModifier & CSMASK_CTRL)) )
@@ -569,7 +626,6 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
         {
             number--;
         }
-        //if (number < 0 || number >= NUM_SHORTCUTS)
         if (number < 0 )
             continue;
         icon.Put(number, child->GetAttributeValue("buttonimage") );
@@ -652,7 +708,6 @@ void pawsShortcutWindow::SaveCommands(void)
         
 void pawsShortcutWindow::ExecuteCommand(int shortcutNum )
 {
-
     //if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
     if (shortcutNum < 0 )
     {

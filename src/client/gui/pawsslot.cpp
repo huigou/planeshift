@@ -67,7 +67,6 @@ pawsSlot::pawsSlot()
     reserved = false;
 
     drawStackCount = true;
-    isBartender = false;
 
     locked = false;
 }
@@ -87,18 +86,10 @@ bool pawsSlot::Setup( iDocumentNode* node )
         slotID = ident->GetAttributeValueAsInt("id");
     }
 
-    csRef<iDocumentNode> bartender = node->GetNode("bartender_slot");
-    if ( bartender )
-    {
-       isBartender = bartender->GetContentsValueAsInt() != 0;
-//       isBartender = bartender->GetContentsValueAsBool();
-    }
-
     csRef<iDocumentNode> showStackAmount = node->GetNode("show_stack_amount");
     if ( showStackAmount )
     {
        DrawStackCount(showStackAmount->GetContentsValueAsInt() != 0);
-       //DrawStackCount(showStackAmount->GetContentsValueAsBool());
     }
 
     mgr = psengine->GetSlotManager();
@@ -116,28 +107,6 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
 
     if ( !psengine->GetCelClient()->GetMainPlayer()->IsAlive() )
         return true;
-
-
-    //printf("Is Bartender Slot: %d, Empty %d\n", isBartender ,empty);
-    //if it's a bartender slot and we aren't dragging
-    if ( isBartender && !GetLock() && (!empty && !psengine->GetSlotManager()->IsDragging()))
-    {
-        //check if ctrl+alt is being held if so delete (probably should use a lock feature and allow
-        //to drag them around and out making the "deleted"?)
-        if((modifiers & CSMASK_CTRL) && (modifiers & CSMASK_ALT))
-        {
-            Clear();
-            return true;
-        }
-        //if we aren't pressing ctrl we execute the command else we allow drag and drop
-        else if(!(modifiers & CSMASK_CTRL))
-        {
-            //in case they are not just act normally
-            //printf("This is a bartender button with action: %s\n", action.GetData());
-            psengine->GetCmdHandler()->Execute(action.GetData());
-            return true;
-        }
-    }
 
     if ( !empty && psengine->GetMouseBinds()->CheckBind("ContextMenu",button,modifiers) )
     {
@@ -207,7 +176,6 @@ void pawsSlot::StackCount( int newCount )
 void pawsSlot::PlaceItem( const char* imageName, const char* meshFactName, const char* matName, int count )
 {
 
-    //printf( "Placing Image: %s\n", imageName);
     meshfactName = meshFactName;
     materialName = matName;
 
@@ -266,13 +234,11 @@ void pawsSlot::Draw()
 
 void pawsSlot::Clear()
 {
-    //printf("In pawsSlot::Clear()\n");
     empty = true;
     stackCount = 0;
     stackCountLabel->Hide();
     SetPurifyStatus(0);
     SetToolTip("");
-    clearBartenderAction();
 
     reserved = false;
     image = NULL;
@@ -381,9 +347,6 @@ void pawsSlot::OnUpdateData(const char *dataname,PAWSData& value)
 
         PlaceItem( icon, mesh, material, atoi(  count.GetData() ) );
         SetToolTip( name );
-        //as here are only items for now at least we assign an use bartenderaction.
-        csString action = "/use " + name;
-        SetBartenderAction(action);
         SetPurifyStatus( atoi(status.GetData())  );
     }
 

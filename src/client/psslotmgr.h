@@ -24,7 +24,6 @@
 #include <csutil/array.h>
 
 #include "paws/pawsnumberpromptwindow.h"
-//#include "paws/pawsdndbutton.h"
 
 //=============================================================================
 // Forward Declarations
@@ -51,6 +50,7 @@ public:
     void Handle( pawsDnDButton* target );
 
     void SetDragDetails(pawsSlot* slot, int count);
+    void SetDragDetails(pawsDnDButton *target );
 
     bool IsDragging() { return isDragging; }
     bool IsPlacing() { return isPlacing; }

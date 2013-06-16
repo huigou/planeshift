@@ -91,7 +91,6 @@ bool pawsControlWindow::PostSetup()
     AddWindow( "InfoWindow" ,        "InfoButton" );
     AddWindow( "HelpWindow" ,        "HelpButton" );
     AddWindow( "ShortcutWindow" ,    "ShortcutButton" );
-    AddWindow( "HotBar" ,            "HotBarButton" );
     AddWindow( "BuddyWindow" ,       "BuddyButton" );
     AddWindow( "GroupWindow" ,       "GroupButton" );
     AddWindow( "PetitionWindow" ,    "PetitionButton" );
@@ -353,8 +352,6 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
         widget = "ActiveMagicWindow";
     else if(widgetStr == "managepetitions")
         widget = "PetitionGMWindow";
-    else if(widgetStr == "quickspell")
-        widget = "HotBar";
     else if(widgetStr == "music")
         widget = "MusicWindow";
     else if(widgetStr == "quit")
