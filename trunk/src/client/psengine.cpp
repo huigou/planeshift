@@ -202,7 +202,6 @@ if (!myref)                                                  \
 #include "gui/pawsconfigshadows.h"
 #include "gui/pawsconfigtextpage.h"
 #include "gui/pawsnpcdialog.h"
-#include "gui/bartender.h"
 #include "gui/pawsconfigspellchecker.h"
 #include "gui/pawsconfigtooltips.h"
 #include "gui/pawsmusicwindow.h"
@@ -862,7 +861,6 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory(pawsConfigShadowsFactory);
     RegisterFactory(pawsConfigTextPageFactory);
     RegisterFactory(pawsNpcDialogWindowFactory);
-    RegisterFactory(pawsBartenderWindowFactory);
     RegisterFactory(pawsCraftCancelWindowFactory);
     RegisterFactory(pawsConfigSpellCheckerFactory);
     RegisterFactory(pawsConfigTooltipsFactory);
@@ -1457,7 +1455,6 @@ void psEngine::LoadGame()
             LoadPawsWidget("GameBoard",               "gameboard.xml");
             LoadPawsWidget("Writing window",          "bookwriting.xml");
             LoadPawsWidget("NPC dialog window",       "dialog.xml");
-            LoadPawsWidget("QuickSpellBar",            "quick_spell_bar.xml");
             LoadPawsWidget("Craft status window",     "craftcancelwindow.xml");
             LoadPawsWidget("Music window",            "musicwindow.xml");
 

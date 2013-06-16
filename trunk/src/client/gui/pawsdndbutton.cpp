@@ -54,7 +54,10 @@ pawsDnDButton::pawsDnDButton()
     changeOnMouseOver = false;
     originalFontColour = -1;
     factory = "pawsDnDButton";
-    dragDrop = false;
+    dragDrop = true;            //is drag-n-drop supposed to be enabled?
+    ImageNameCallback = NULL;
+    NameCallback = NULL;
+    ActionCallback = NULL;
 }
 
 pawsDnDButton::pawsDnDButton(const pawsDnDButton &pb)
@@ -276,7 +279,7 @@ void pawsDnDButton::Draw()
 bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
 {
     bool empty;
-
+ 
     if(GetMaskingImage())
     {
         empty = false;
@@ -291,23 +294,24 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
     }
 
 
-    if(psengine->GetSlotManager()->IsDragging())
+    if(button==csmbLeft && (dragDrop || psengine->GetSlotManager()->IsDragging()))
     {
         if(GetDnDLock())
         {
             if(!empty)
             {
-                psengine->GetSlotManager()->CancelDrag();
 
                 //if CTRL-ALT-lmb click then clear the button
                 if((modifiers & CSMASK_CTRL) && (modifiers & CSMASK_ALT))
                 {
-                    //Clear();
+                    psengine->GetSlotManager()->CancelDrag();
                     return true;
                 }
                 //if CTRL-lmb then start drag
                 else if(!(modifiers & CSMASK_CTRL))
                 {
+                    psengine->GetSlotManager()->Handle( this );
+                    return true;
                 }
             }
             else
@@ -322,7 +326,7 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
                 }
                 mgr->Handle(this);
 
-                SetID(-GetID());	// communicates up the predecessor icons that this is a DnD action.
+                dragDropInProgress = true;
             }
         }
         else
@@ -332,10 +336,6 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
     }
     else
     {
-        if(GetID() < 0)
-        {
-            SetID(abs(GetID()));	// this is no longer a DnD action
-        }
         pawsButton::OnMouseDown(button, modifiers, x, y);
     }
 
@@ -389,37 +389,104 @@ csRef<iPawsImage> pawsDnDButton::GetMaskingImage()
     return maskImage;
 }
 
-void pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const char* toolTip, const char* action)
+bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const char* toolTip, const char* action)
 {
-    SetMaskingImage(imageName);
-    this->toolTip = csString(toolTip);
-    this->action = csString(action);
-    if(ImageNameCallback)
+    bool validMove = false; //if function returns false don't delet the original
+
+    if( imageName )
     {
-        ImageNameCallback->Get(id-indexBase).Replace(imageName);
+        SetMaskingImage(imageName);
+        if(ImageNameCallback)
+        {
+            if( ImageNameCallback->Get(id-indexBase) )
+            {
+                ImageNameCallback->Get(id-indexBase).Replace(imageName);
+            }
+        }
+        validMove = true;
     }
-    if(NameCallback)
+    if(Name )
     {
-        if(*Name!=0)
+        SetName( Name );
+        if(NameCallback)
         {
             NameCallback->Get(id-indexBase).Replace(Name);
         }
-        else
+        validMove = true;
+    }
+    else
+    {
+        if( toolTip )
         {
-            NameCallback->Get(id-indexBase).Replace(toolTip);
+            SetName( toolTip );
+            if(NameCallback)
+            {
+                NameCallback->Get(id-indexBase).Replace(toolTip);
+            }
+            validMove = true;
         }
     }
-    if(ActionCallback)
+    if( !validMove )
     {
-        ActionCallback->Get(id-indexBase).Replace(action);
+        return false;
     }
+    if( toolTip )
+    {
+        SetToolTip( toolTip );
+    }
+    if( action )
+    {
+        SetAction( csString(action) );
+        if(ActionCallback)
+        {
+            ActionCallback->Get(id-indexBase).Replace(action);
+        }
+    }
+    return true;
 }
 
 
 
 void pawsDnDButton::SetMaskingImage(const char* image)
 {
+    if( ImageNameCallback )
+    {
+        ImageNameCallback->Get(id-indexBase).Replace( image );
+    }
     maskingImageName = csString(image);
     pawsWidget::SetMaskingImage(image);
     return;
+}
+
+void pawsDnDButton::Clear()
+{
+    if( GetMaskingImage() )
+    {
+        ClearMaskingImage();
+    }
+    SetToolTip( "" );
+    SetText( "" );
+
+    if(ImageNameCallback)
+    {
+        ImageNameCallback->Get(id-indexBase).Clear();
+    }
+    if( NameCallback)
+    {
+        NameCallback->Get(id-indexBase).Clear();
+    }
+    if(ActionCallback)
+    {
+        ActionCallback->Get(id-indexBase).Clear();
+    }
+}
+
+void pawsDnDButton::SetDragDropInProgress( bool val )
+{
+    dragDropInProgress = val;
+}
+
+bool pawsDnDButton::IsDragDropInProgress( )
+{
+    return dragDropInProgress;
 }

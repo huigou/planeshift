@@ -68,10 +68,11 @@ bool SlotManager::Initialize()
 
 void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
 {
+//printf( "SlotManager::HandleSlotMovement begins\n" );
     psSlotMovementMsg mesg(me);
-    // printf("Got slot movement message for %d stacked items.\n", mesg.stackCount);
-    // printf("--> From container %d, slot %d\n", mesg.fromContainer, mesg.fromSlot);
-    // printf("--> To   container %d, slot %d\n", mesg.toContainer, mesg.toSlot);
+//printf("Got slot movement message for %d stacked items.\n", mesg.stackCount);
+//printf("--> From container %d, slot %d\n", mesg.fromContainer, mesg.fromSlot);
+//printf("--> To   container %d, slot %d\n", mesg.toContainer, mesg.toSlot);
 
     // If stacks are less than 1 then we should not do anything server wise.
     // This means the player does not own the item.
@@ -131,6 +132,7 @@ void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
             LogCSV::GetSingleton().Write(CSV_STATUS, status);
     }
 
+//printf( "SlotManager::HandleSlotMovement ends\n" );
     return;
 }
 

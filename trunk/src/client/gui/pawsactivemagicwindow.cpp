@@ -89,7 +89,16 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
 
             if( incoming.type == BUFF )
             {
-                 csRef<iPawsImage> image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
+                csRef<iPawsImage> image;
+
+                if( incoming.image.Length() >0 )
+                {
+                     image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
+                }
+                else
+                {
+                    image = NULL;
+                }
                 if (image)
                 {
                     buffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), 1, this, false );

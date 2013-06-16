@@ -8,8 +8,14 @@
 
         <frame x="5" y="50" width="400" height="100" border="yes" />
             <minframe width="150" height="100" />
-            <bgimage resource="Back" alpha="75" />
 
+<!-- This resource definition makes the background frame invisible. comment it out if you want to see the frame  -->
+        <bgimage resource="Back" alpha="255" />
+<!-- -->
+
+
+
+<!-- Bars for the health, stamina, mana, and mental stamina. comment them out if you don't want them -->
 	<widget name="Bars" factory="pawsWidget" >
 	    <frame x="5" y="5" width="400" height="24" />
         	<minframe width="150" height="100" />
@@ -21,7 +27,7 @@
 	    </attachpoints>
 
 	    <widget name="My HP" factory="pawsProgressBar" tooltip="Health">
-		<frame x="0" y="5" width="195" height="15" border="no" resizable="yes" />
+		<frame x="0" y="5" width="199" height="15" border="no" resizable="yes" />
                 <attachpoints>
                      <attach point="PROPORTIONAL_RIGHT" />
                      <attach point="PROPORTIONAL_LEFT" />
@@ -33,7 +39,7 @@
 		</subscriptions>
 	    </widget>
 	    <widget name="My PysStamina" factory="pawsProgressBar" tooltip="Physical Stamina">
-		<frame x="10" y="20" width="185" height="5" border="no" resizable="yes" />
+		<frame x="14" y="20" width="185" height="5" border="no" resizable="yes" />
                 <attachpoints>
                      <attach point="PROPORTIONAL_RIGHT" />
                      <attach point="PROPORTIONAL_LEFT" />
@@ -46,7 +52,7 @@
 
 	    </widget>
 	    <widget name="My Mana" factory="pawsProgressBar" tooltip="Mana">
-		<frame x="200" y="5" width="195" height="15" border="no" resizable="yes" />
+		<frame x="200" y="5" width="200" height="15" border="no" resizable="yes" />
                 <attachpoints>
                      <attach point="PROPORTIONAL_RIGHT" />
                      <attach point="PROPORTIONAL_LEFT" />
@@ -72,8 +78,21 @@
 	    </widget>
 
 	</widget>
+<!-- -->
 
-<!-- the frame's height attribute controls the size of the buttons -->
+
+
+<!-- the scrolling menu-bar 
+
+        Widget attributes:
+            buttonWidth - may be set to a number of pixels to force a sepcific width, or the word "auto" to set the width dynamically; default is "auto".
+                When set to auto, the width of the icon buttons is controlled by the valus of the height attribute of the frame and minframe. Frame should never be smaller than minframe.
+                forcing the width is intended to support text shortcuts; icons will look really bad at this point.
+
+            scrollSize  - may be set to a number between 0 and 1 to scroll that portion of the menu width (eg. 0.5 = scroll 1/2 of the visible icons), or a number > 1 to scroll by that many pixels.
+
+        <widget name="MenuBar" factory="pawsScrollMenu" buttonWidth="128" scrollSize="0.75" >
+-->
         <widget name="MenuBar" factory="pawsScrollMenu" >
             <frame x="0" y="40" height="48" width="400" resizeable="yes" border="no" />
             <minframe width="150" height="48" />
@@ -86,7 +105,11 @@
         </widget>
 
     </widget>
+<!-- -->
 
+
+
+<!-- The button editing subwidget. nothing configurable here. -->
     <widget name="ShortcutEdit" factory="pawsWidget" visible="no" savepositions="no" movable="yes"
             resizable="yes" configurable="no" keepaspect="no" style="New Standard GUI">
 
@@ -168,7 +191,7 @@
 
 
         <widget name="iconPalette" factory="pawsScrollMenu" >
-            <frame x="20" y="170" height="28" width="290" resizable="yes" border="no" />
+            <frame x="20" y="170" height="32" width="290" resizable="yes" border="no" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
                 <attach point="ATTACH_RIGHT" /> 
@@ -193,8 +216,16 @@
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
         </widget>
+        <widget name="ClearIconButton" factory="pawsButton" toggle="no" id="1104" notify="ShortcutWindow" style="Standard Button">
+            <frame x="140" y="250" width="70" height="24" />
+            <label text="Clear Icon" />
+            <attachpoints>
+                <attach point="ATTACH_LEFT" />
+                <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
+        </widget>
         <widget name="CancelButton" factory="pawsButton" toggle="no" id="1101" notify="ShortcutWindow" style="Standard Button">
-            <frame x="140" y="250" width="60" height="24" />
+            <frame x="220" y="250" width="50" height="24" />
             <label text="Cancel" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />

@@ -3708,20 +3708,20 @@ public:
 
         if( image )        //<--
         {
-            if( image && image.Length()>0 )        //<--
+            if( image.Length()>0 )        //<--
             {
                 msgSize += image.Length() +1;
-printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got image '%s'\n", image.GetData());
+//printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got image '%s'\n", image.GetData());
             }
             else
             {
-printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got zero-length image\n");
+//printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got zero-length image\n");
             }
         }
         else
         {
             msgSize += sizeof(uint8_t);
-printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got no image\n" );
+//printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got no image\n" );
         }
 
         //msg.AttachNew(new MsgEntry(sizeof(bool) + sizeof(uint8_t) + sizeof(int32_t) + name.Length() + image.Length() + 2));
@@ -3741,7 +3741,7 @@ printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage got no image\n" );
             msg->Add((uint8_t)0);
 
         valid = !(msg->overrun);
-printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage sending message ( %i, %i, %i, %s, %s)\n", clientNum, cmd, type, name?name.GetData():"N/A", image?image.GetData():"N/A" );
+//printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage sending message ( %i, %i, %i, %s, %s)\n", clientNum, cmd, type, name?name.GetData():"N/A", image?image.GetData():"N/A" );
     }
 
     /// Crack this message off the network.
@@ -3752,10 +3752,11 @@ printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage sending message ( %i, 
         name = message->GetStr();          //if there was no name when the message was sent, this should read a null string
         image = message->GetStr();         //if there was no name when the message was sent, this should read a null string
         valid = true;
-printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage receiving message ( %i, %i, %s, %s)\n", command, type, name.GetData(), image.GetData() );
+//printf( "psGUIActiveMagicMessage::psGUIActiveMagicMessage receiving message ( %i, %i, %s, %s)\n", command, type, name.GetData(), image.GetData() );
     }
 
     PSF_DECLARE_MSG_FACTORY();
+
     /**
      *  Converts the message into human readable string.
      *

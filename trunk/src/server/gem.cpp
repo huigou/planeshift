@@ -4357,42 +4357,45 @@ void gemActor::DetachScript(ProgressionScript *script, int type)
 
 void gemActor::AddActiveSpell(ActiveSpell *asp)
 {
-printf( "gemActor::AddActiveSpell begins\n" );
     if( !asp ) 
     {
-printf( "gemActor::AddActiveSpell asp invalid\n" );
         return;
     }
-printf( "gemActor::AddActiveSpell push asp onto active spells list\n" );
     activeSpells.Push(asp);
 
     csString   lname = asp->Name();
+    psSpell*   lspell;
+    csString   imageName;
     if( !lname )
     {
 printf( "gemActor::AddActiveSpell name invalid\n" );
-        return;
+//        return;
+        //lname = csString();
+        //lname = null;
     }
-
-    psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(asp->Name());
-    csString   imageName;
-    if( !lspell )
+    else if( lname )
     {
-printf( "gemActor::AddActiveSpell psSpell invalid\n" );
-        imageName = csString();
-    }
-    else
-    {
-        imageName = lspell->GetImage();
-        if( !imageName )
+        psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(asp->Name());
+        csString   imageName;
+        if( !lspell )
         {
-printf( "gemActor::AddActiveSpell image invalid\n" );
+printf( "gemActor::AddActiveSpell psSpell invalid\n" );
             imageName = csString();
+        }
+        else
+        {
+            imageName = lspell->GetImage();
+            if( !imageName )
+            {
+printf( "gemActor::AddActiveSpell image invalid\n" );
+                imageName = csString();
+            }
         }
     }
 
-    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name(), imageName );
+    //psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name(), imageName );
+    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), lname, imageName );
     outgoing.SendMessage();
-printf( "gemActor::AddActiveSpell ends\n" );
 }
 
 bool gemActor::RemoveActiveSpell(ActiveSpell *asp)
