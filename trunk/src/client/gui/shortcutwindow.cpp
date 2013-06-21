@@ -506,6 +506,11 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     }
     else if ( mouseButton == csmbRight || (mouseButton == csmbLeft && (keyModifier & CSMASK_CTRL)) )
     {
+        if( widget->GetID() >= PALETTE_BUTTON_OFFSET ) //ignore right-click on icon palette
+        {
+            return true;
+        }
+
         if( !(MenuBar->IsEditable()) )
         {
             return false;

@@ -229,11 +229,9 @@ void pawsScrollMenu::LayoutButtons()
         int buttonCol = buttonLocation==0?BUTTON_PADDING:buttonLocation,
             buttonRow = 1;
 
-printf( "pawsScrollMenu::LayoutButtons button[0] is at %i, %i\n", Buttons[0]->GetScreenFrame().xmin, Buttons[0]->GetScreenFrame().ymin );
         for(int i=0; i<Buttons.GetSize(); i++)
         {
-            if(!Buttons[i])
-            {
+            if(!Buttons[i])            {
                 printf("pawsScrollMenu::OnResize - ERROR Button[ %i ] is null\n", i);
                 continue;
             }
