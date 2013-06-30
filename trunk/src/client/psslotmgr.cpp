@@ -226,7 +226,7 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
     widget->DrawStackCount(parent->IsDrawingStackCount());
 
     SetDragDetails(parent, count);
-    //parent->StackCount( newStack );
+    parent->StackCount( newStack );
     isDragging = true;
     PawsManager::GetSingleton().SetDragDropWidget( widget );
 }
@@ -260,6 +260,7 @@ void psSlotManager::PlaceItem()
     {
         return;
     }
+
     // Get WS position.
     psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
 
@@ -336,7 +337,6 @@ void psSlotManager::DropItem(bool guard)
 
 void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
 {
-    //printf("In psSlotManager::Handle( pawsSlot *)\n");
     if ( !isDragging )
     {
         // Make sure other code isn't drag-and-dropping a different object.
@@ -378,25 +378,7 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
             CancelDrag();
             return;
         }
-        //printf("Dropping Slot Here\n");
-        //printf("Target Slot Information: \n");
-        //printf("Bartender Slot: %d\n", slot->IsBartender());
-        //printf("Sending slot movement message\n");
-        if ( slot->IsBartender() && !slot->GetLock() )
-        {
-            //we cancel dragging because we aren't moving the original item but just taking
-            //a reference to it. If it's among bartender slots we will handle them differently
-            CancelDrag();
-            slot->PlaceItem( ((pawsSlot *)draggingSlot.slot)->ImageName(), "", "", draggingSlot.stackCount);
-            slot->SetBartenderAction(draggingSlot.Action);
-            slot->SetToolTip(draggingSlot.toolTip);
-            //if the original slot was a bartender clear it as we are moving it to a new one
-            if( ((pawsSlot *)draggingSlot.slot)->IsBartender())
-            {
-                 ((pawsSlot *)draggingSlot.slot)->Clear();
-            }
-        }
-        else if( !slot->GetLock() )
+        if( !slot->GetLock() )
         {
             //printf("Slot->ID: %d\n", slot->ID() );
             //printf("Container: %d\n", slot->ContainerID() );
