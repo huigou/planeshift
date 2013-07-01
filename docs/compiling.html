@@ -285,8 +285,27 @@ function Onload(){
 
 <h1><a name="top">PlaneShift Compiling Guide</a></h1>
 
+Welcome to the PlaneShift Compiling Guide, please follow the instruction below carefully.<br />
+
+<h3>Table of Content</h3> <!-- section menu -->
+<p style="margin-left: 15px; margin-top: 0;">
+    <a href="#dates">Source Revisions</a><br />
+    <a href="#dir">Working Directory</a><br />
+    <a href="#tools">Install Tools</a><br />
+    <a href="#download">Download Source Code</a><br />
+    <a href="#compile">Compile the Code</a><br />
+    <a href="#server">Get the Server Running</a> <i>(optional)</i><br />
+    <a href="#npcserver">Get the NPC Server Running</a><br />
+    <span class="Linux"><a href="#scripts">Mini Scripts</a> <i>(optional)</i><br /></span>
+    <a href="#runclient">Get the Client Running</a><br />
+    <a href="#help">Getting Help</a><br />
+    <a href="#credits">Credits</a>
+</p>
+
 <!-- system menu -->
-<h4>Select your OS, compiler, target (laanx compatible or developer), and build type:</h4>
+<h3>Select your Configuration</h3>
+IMPORTANT: Select from the dropdown below your OS, compiler, target (user or developer), and build type. This will change the instructions below.<br/>
+<br/>
 <select id="OSes" onchange="ShowSet('OS',this.options[this.selectedIndex].value)" name="OSes">
     <option value="Linux-Generic" selected="selected">Linux</option>
     <option value="Linux-Debian">Debian Linux</option>
@@ -311,8 +330,10 @@ function Onload(){
     <option value="Normal" selected="selected">Normal</option>
     <option value="Static">Static</option>
 </select>
-
-
+<br/>
+<br/>
+Choose "User" if you want to compile the client to be compatible with the current public server.<br/>
+Choose "Developer" if you want to develop on latest code, which is most likely not compatible with the public server. You will compile also a local server.
 <noscript>
     <p><i>
         <b class="noscript">JavaScript must be enabled to fully view this guide!</b><br />
@@ -320,19 +341,8 @@ function Onload(){
     </i></p>
 </noscript>
 <br />
-<h3>Building PS:</h3> <!-- section menu -->
-<p style="margin-left: 15px; margin-top: 0;">
-    <a href="#dates">Source Revisions</a><br />
-    <a href="#dir">Working Directory</a><br />
-    <a href="#tools">Install Tools</a><br />
-    <a href="#download">Download Source Code</a><br />
-    <a href="#compile">Compile the Code</a><br />
-    <a href="#server">Get the Server Running</a> <i>(optional)</i><br />
-    <a href="#npcserver">Get the NPC Server Running</a><br />
-    <span class="Linux"><a href="#scripts">Mini Scripts</a> <i>(optional)</i><br /></span>
-    <a href="#runclient">Get the Client Running</a><br />
-    <a href="#help">Getting Help</a>
-</p>
+<br />
+
 
 <div> <!-- intros -->
     <div class="Windows">
@@ -341,25 +351,14 @@ function Onload(){
             associated toolset that can be used for compiling Win32 executables. In conjunction
             with other free or open source software the majority of PlaneShift can be compiled
             under Windows without having to purchase any compiler or other licenses.<br /><br />
-        <b>Credits</b><br />
-                Caarrie, Trying to maintain the guide;<br />
-        Arianna Benigno, maintained the guide;<br />
-        Rolenun, adjuster for good part of the content;<br />
-        Dave Garrett, author of the new compiling guides layout;<br />
-        Steve Cook, author of the guide to compiling with Mingw32.<br />
+
         </div>
         <div class="MSVC">
         This guide lists the steps necessary to download all the tools and compile PlaneShift.
             This guide assumes that Visual C++.NET or Visual Studio.NET is installed. Some tools
             need glut, Directx 9 SDK, and python. These features are not needed so they won't be
             covered here. As a result there will be some compilation errors due to missing files.<br /><br />
-        <b>Credits</b><br />
-                Caarrie, Trying to maintain the guide;<br />
-        Arianna Benigno, maintained the guide;<br />
-        Rolenun, adjuster for good part of the content;<br />
-        Dave Garrett, author of the new compiling guides layout;<br />
-        Chris Ayers, author of the first guide for MSVC;<br />
-        Steve Cook, author of the guide to compiling with Mingw32, on which the first MSVC guide was based.<br />
+
         </div>
     </div>
     <div class="Linux">
@@ -367,13 +366,7 @@ function Onload(){
         running in Linux. It gives instructions on how to get all the required tools and how
         to check out the source code and configure it. At the end there you will have a
         PlaneShift client and a PlaneShift updater application, and if you want also the server.<br /><br />
-      <b>Credits</b><br />
-          Caarrie, Trying to maintain the guide;<br />
-      Arianna Benigno, maintained the guide;<br />
-      Dave Garrett, author of the new compiling guides layout;<br />
-      Andrew Craig, author of the first Linux guides<br />
-      Platyna, author of the first compiling guide for Slackware distribution.<br />
-        Mike Gist, author of the static compiling guide.<br />
+
     </div>
 
     <div class="FreeBSD">
@@ -382,22 +375,11 @@ function Onload(){
         to check out the source code and configure it. At the end there you will have a
         PlaneShift client and a PlaneShift updater application, and if you want also the server.<br /><br />
 
-      <b>Credits</b><br />
-          Caarrie, Trying to maintain the guide;<br />
-          Arianna Benigno, maintained the guide;<br />
-          Dave Garrett, author of the new compiling guides layout;<br />
-          Andrew Craig, author of the first Linux guides<br />
-
-          Platyna, author of the first compiling guide for Slackware distribution.<br />
-          Mike Gist, author of the static compiling guide.<br />
     </div>
     <div class="MacOSX">
         This guide gives a very basic description on how to get a working client up and
         running on a Mac. It gives instructions on how to get to check out the source code and configure it. At the end there you will have a
         PlaneShift client and a PlaneShift updater application, and if you want also the server.<br /><br />
-      <b>Credits</b><br />
-       Caarrie, Author of the first basic Mac guide with help from the <a href="http://www.yliakum.com/psdocs/index.php?page=4">PSDocs</a> guide and Trymm
-
     <p>Here is a basic Mac guide based on the linux guide, for more specifics refer to <a href="http://www.yliakum.com/psdocs/index.php?page=4">PSDocs</a>, a user maintained guide.</p>
             <div class="Static">There is no Mac static build guide at this time</div>
     </div>
@@ -863,7 +845,7 @@ then<br /><br />
 </div>
 <br />
 <h3>Server Databases</h3>
-<i>Optional section</i>
+<i>Required only if you want to compile also the PlaneShift Server</i>
 <br />
 <br />
         <b><a name="mysql">MySQL:</a></b><br />
@@ -1564,10 +1546,22 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
 and select Properties, 'read only' is one of the attributes in the General tab) before continuing.</p>
 
     <div class="User">
-    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br />
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to :
+      <span class="Normal">
+      'Release(with DLLs)' <br />
+      </span>
+      <span class="Static">
+      ReleaseWithStaticLibs <br />
+      </span>
     </div>
     <div class="Developer">
-    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug(with DLLs)'.<br />
+    Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to:
+      <span class="Normal">
+      'Debug(with DLLs)' <br />
+      </span>
+      <span class="Static">
+      DebugWithStaticLibs <br />
+      </span>
     </div>
     <p>Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br />
     If you encounter any errors, check you have done everything correctly, and then if the problem persists, you can
@@ -2042,6 +2036,18 @@ There is an IRC channel dedicated to providing help with building PlaneShift:</p
     <b>Server:</b> irc.freenode.net<br />
     <b>Channel:</b> #PlaneShift-build
 </p>
+
+<h2><a name="credits">Credits</a></h2>
+
+        Caarrie, author of the first version of this guide and basic Mac guide;<br />
+        Arianna Benigno, maintained the guide;<br />
+        Rolenun, adjuster for good part of the content;<br />
+        Dave Garrett, author of the new compiling guides layout;<br />
+        Chris Ayers, author of the first guide for MSVC;<br />
+        Steve Cook, author of the guide to compiling with Mingw32.<br />
+        Platyna, author of the first compiling guide for Slackware distribution.<br />
+        Mike Gist, author of the static compiling guide.<br />
+        Andrew Craig, author of the first Linux guides<br />
 
 </body>
 </html>
