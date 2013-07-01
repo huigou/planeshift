@@ -705,6 +705,7 @@ public:
     int GetCurrentPageNum();
 protected:
 
+    // splits the given text in separate lines filling the 'lines' variable
     void OrganizeText(const char* text);
 
     /**

@@ -1831,9 +1831,10 @@ void pawsMultiLineTextBox::SetText(const char* newText)
     usingScrollBar = false;
     if(scrollBar) scrollBar->Hide();
 
-
+    // try to fit the message into the window, filling 'lines' variable
     OrganizeText(str.GetData());
 
+    // if it fits into the current window...
     if(canDrawLines >= lines.GetSize())
     {
         canDrawLines = lines.GetSize();
@@ -1843,9 +1844,10 @@ void pawsMultiLineTextBox::SetText(const char* newText)
             scrollBar->SetCurrentValue(0);
         }
     }
+    // if it doesn't then add a scrollbar
     else
     {
-        //  usingScrollBar = true;
+        usingScrollBar = true;
         lines.Empty();
         OrganizeText(str.GetData());
         if(scrollBar)
