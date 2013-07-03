@@ -1823,7 +1823,7 @@ csString psGameObject::ReplaceNPCVariables(NPC* npc, const csString& object)
     if (npc->GetRaceInfo())
     {
         csString size;
-        size.Append(MAX(npc->GetRaceInfo()->size.x,npc->GetRaceInfo()->size.y));
+        size.Append(csMax(npc->GetRaceInfo()->size.x,npc->GetRaceInfo()->size.y));
         result.ReplaceAll("$race_size",size);
         result.ReplaceAll("$race",npc->GetRaceInfo()->name.GetDataSafe());
     }
