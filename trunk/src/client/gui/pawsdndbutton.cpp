@@ -293,14 +293,12 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
         empty = true;
     }
 
-
     if(button==csmbLeft && (dragDrop || psengine->GetSlotManager()->IsDragging()))
     {
         if(GetDnDLock())
         {
             if(!empty)
             {
-
                 //if CTRL-ALT-lmb click then clear the button
                 if((modifiers & CSMASK_CTRL) && (modifiers & CSMASK_ALT))
                 {
@@ -332,6 +330,7 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
         else
         {
             psengine->GetSlotManager()->CancelDrag();
+            pawsButton::OnMouseDown(button, modifiers, x, y);
         }
     }
     else

@@ -6,8 +6,8 @@
             savepositions="yes" movable="yes" resizable="yes" keepaspect="no" >
             
 
-        <frame x="5" y="50" width="400" height="100" border="yes" />
-            <minframe width="150" height="100" />
+        <frame x="5" y="50" width="400" height="75" border="yes" />
+            <minframe width="150" height="75" />
 
 <!-- This resource definition makes the background frame invisible. comment it out if you want to see the frame  -->
         <bgimage resource="Back" alpha="255" />
@@ -184,15 +184,14 @@
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
                 <attach point="ATTACH_RIGHT" />
-                <attach point="ATTACH_BOTTOM" />
                 <attach point="ATTACH_TOP" />
             </attachpoints>
         </widget>
 
-
         <widget name="iconPalette" factory="pawsScrollMenu" >
             <frame x="20" y="170" height="32" width="290" resizable="yes" border="no" />
             <attachpoints>
+                <attach point="ATTACH_TOP" />
                 <attach point="ATTACH_LEFT" />
                 <attach point="ATTACH_RIGHT" /> 
                 <attach point="ATTACH_BOTTOM" />

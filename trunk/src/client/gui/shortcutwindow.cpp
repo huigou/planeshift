@@ -78,8 +78,19 @@ void pawsShortcutWindow::LoadCommandsFile()
 {
 
 // if there's a new style character-specific file then load it 
-    csString CommandFileName( psengine->GetMainPlayerName() );
-    CommandFileName.ReplaceAll( " ", "_" );
+   csString CommandFileName,
+             CharName( psengine->GetMainPlayerName() );
+    size_t   spPos = CharName.FindFirst( ' ' );
+
+    if( spPos != (size_t) -1 )
+    { //there is a space in the name
+        CommandFileName = CharName.Slice(0,spPos );
+    }
+    else
+    {
+        CommandFileName = CharName;
+    }
+
     CommandFileName.Insert( 0, "/planeshift/userdata/options/shortcutcommands_" );
     CommandFileName.Append( ".xml" );
     if( vfs->Exists( CommandFileName.GetData() ))
@@ -654,13 +665,23 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
 
 void pawsShortcutWindow::SaveCommands(void)
 {
-    csString CommandFileName( psengine->GetMainPlayerName() );
-    CommandFileName.ReplaceAll( " ", "_" );
+    csString CommandFileName,
+             CharName( psengine->GetMainPlayerName() );
+    size_t   spPos = CharName.FindFirst( ' ' );
+
+    if( spPos != (size_t) -1 )
+    { //there is a space in the name
+        CommandFileName = CharName.Slice(0,spPos );
+    }
+    else
+    {
+        CommandFileName = CharName;
+    }
+
     CommandFileName.Insert( 0, "/planeshift/userdata/options/shortcutcommands_" );
     CommandFileName.Append( ".xml" );
     bool found = false;
     int i;
-    //for (i = 0;i < NUM_SHORTCUTS;i++)
     for (i = 0;i < cmds.GetSize();i++)
     {
         if (cmds[i].IsEmpty())

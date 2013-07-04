@@ -8,14 +8,14 @@
     <button name="ShowButtonUp"     x="0" y="0" />
     <button name="ShowButtonDown"   x="0" y="0" />
     <button name="ChatButton"       x="64" y="1" />
-    <button name="SkillsButton"    x="128" y="1" />
-    <button name="InventoryButton"       x="192" y="1" />
-    <button name="QuestButton"   x="256" y="1" />
-    <button name="SpellBookButton"      x="320" y="1" />
-    <button name="InfoButton"  x="384" y="1" />
-    <button name="OptionsButton"       x="448" y="1" />
-    <button name="HelpButton"  x="512" y="1" />
-    <button name="QuitButton"     x="576" y="1" />
+    <button name="SkillsButton"     x="128" y="1" />
+    <button name="InventoryButton"  x="192" y="1" />
+    <button name="QuestButton"      x="256" y="1" />
+    <button name="SpellBookButton"  x="320" y="1" />
+    <button name="InfoButton"       x="384" y="1" />
+    <button name="OptionsButton"    x="448" y="1" />
+    <button name="HelpButton"       x="512" y="1" />
+    <button name="QuitButton"       x="576" y="1" />
 
     <button name="GuildButton"      x="-500" y="-500" />
     <button name="PetitionButton"   x="-500" y="-500" />
@@ -33,21 +33,21 @@
     <button name="ShowButtonDown"   x="0" y="0" />
     <!-- Right -->
     <button name="ChatButton"       x="5" y="5" />
-    <button name="SkillsButton"    x="69" y="5" />
-    <button name="InventoryButton"       x="133" y="5" />
-    <button name="QuestButton"   x="197" y="5" />
-    <button name="SpellBookButton"      x="261" y="5" />
+    <button name="SkillsButton"     x="69" y="5" />
+    <button name="InventoryButton"  x="133" y="5" />
+    <button name="QuestButton"      x="197" y="5" />
+    <button name="SpellBookButton"  x="261" y="5" />
     <button name="GuildButton"      x="325" y="5" />
-    <button name="InfoButton"  x="389" y="5" />
-    <button name="BuddyButton"     x="453" y="5" />
+    <button name="InfoButton"       x="389" y="5" />
+    <button name="BuddyButton"      x="453" y="5" />
     <!-- Down -->
-    <button name="GroupButton"      x="5" y="134" />
-    <button name="PetitionButton"      x="5" y="198" />
-    <button name="ShortcutButton"       x="5" y="262" />
-    <button name="HotBarButton"   x="5" y="326" />
-    <button name="OptionsButton"   x="5" y="390" />
-    <button name="HelpButton"       x="5" y="454" />
-    <button name="QuitButton"  x="5" y="518" />
+    <button name="GroupButton"      x="5" y="69" />
+    <button name="PetitionButton"   x="5" y="133" />
+    <button name="ShortcutButton"   x="5" y="197" />
+<!--    <button name="HotBarButton"     x="5" y="326" /> -->
+    <button name="OptionsButton"    x="5" y="261" />
+    <button name="HelpButton"       x="5" y="325" />
+    <button name="QuitButton"       x="5" y="389" />
 </style2>
 
 <style3>
@@ -57,20 +57,20 @@
     <button name="ShowButtonUp"     x="0" y="0" />
     <button name="ShowButtonDown"   x="0" y="0" />
     <button name="ChatButton"       x="64" y="1" />
-    <button name="SkillsButton"    x="128" y="1" />
-    <button name="InventoryButton"       x="192" y="1" />
-    <button name="QuestButton"   x="256" y="1" />
-    <button name="SpellBookButton"      x="320" y="1" />
+    <button name="SkillsButton"     x="128" y="1" />
+    <button name="InventoryButton"  x="192" y="1" />
+    <button name="QuestButton"      x="256" y="1" />
+    <button name="SpellBookButton"  x="320" y="1" />
     <button name="GuildButton"      x="384" y="1" />
-    <button name="InfoButton"  x="448" y="1" />
+    <button name="InfoButton"       x="448" y="1" />
     <button name="BuddyButton"      x="512" y="1" />
     <button name="GroupButton"      x="576" y="1" />
-    <button name="PetitionButton"       x="640" y="1" />
+    <button name="PetitionButton"   x="640" y="1" />
     <button name="ShortcutButton"   x="704" y="1" />
-    <button name="HotBarButton"   x="768" y="1" />
-    <button name="OptionsButton"       x="832" y="1" />
-    <button name="HelpButton"  x="896" y="1" />
-    <button name="QuitButton"     x="960" y="1" />
+<!--    <button name="HotBarButton"     x="768" y="1" /> -->
+    <button name="OptionsButton"    x="768" y="1" />
+    <button name="HelpButton"       x="832" y="1" />
+    <button name="QuitButton"       x="896" y="1" />
 </style3>
 
 <style4>
@@ -83,21 +83,21 @@
     <button name="ChatButton"       x="64" y="0" />
     <button name="InfoButton"       x="128" y="0" />
     <button name="ShortcutButton"   x="192" y="0" />
-    <button name="HotBarButton"      x="256" y="0" />
+<!--    <button name="HotBarButton"     x="256" y="0" /> -->
 
-    <button name="BuddyButton"      x="320" y="0" />
-    <button name="GroupButton"      x="384" y="0" />
-    <button name="GuildButton"      x="448" y="0" />
+    <button name="BuddyButton"      x="256" y="0" />
+    <button name="GroupButton"      x="320" y="0" />
+    <button name="GuildButton"      x="384" y="0" />
 
-    <button name="InventoryButton"       x="512" y="0" />
-    <button name="SkillsButton"    x="576" y="0" />
-    <button name="QuestButton"   x="640" y="0" />
-    <button name="SpellBookButton"      x="704" y="0" />
+    <button name="InventoryButton"  x="448" y="0" />
+    <button name="SkillsButton"     x="512" y="0" />
+    <button name="QuestButton"      x="576" y="0" />
+    <button name="SpellBookButton"  x="640" y="0" />
 
-    <button name="PetitionButton"       x="768" y="0" />
-    <button name="HelpButton"  x="832" y="0" />
-    <button name="OptionsButton"       x="896" y="0" />
-    <button name="QuitButton"     x="960" y="0" />
+    <button name="PetitionButton"   x="704" y="0" />
+    <button name="HelpButton"       x="768" y="0" />
+    <button name="OptionsButton"    x="832" y="0" />
+    <button name="QuitButton"       x="896" y="0" />
 </style4>
 
 <style5>
@@ -108,21 +108,21 @@
     <button name="ShowButtonUp"     y="0" x="0" />
     <button name="ShowButtonDown"   y="0" x="0" />
     <button name="ChatButton"       y="20" x="1" />
-    <button name="SkillsButton"    y="84" x="1" />
-    <button name="InventoryButton"       y="148" x="1" />
-    <button name="QuestButton"   y="212" x="1" />
-    <button name="SpellBookButton"      y="276" x="1" />
+    <button name="SkillsButton"     y="84" x="1" />
+    <button name="InventoryButton"  y="148" x="1" />
+    <button name="QuestButton"      y="212" x="1" />
+    <button name="SpellBookButton"  y="276" x="1" />
     <button name="GuildButton"      y="340" x="1" />
-    <button name="InfoButton"  y="404" x="1" />
-    <button name="QuitButton"     y="468" x="1" />
+    <button name="QuitButton"       y="404" x="1" />
 
     <!-- Start on new row -->
     <button name="BuddyButton"      y="20" x="65" />
     <button name="GroupButton"      y="84" x="65" />
-    <button name="PetitionButton"       y="148" x="65" />
+    <button name="PetitionButton"   y="148" x="65" />
     <button name="ShortcutButton"   y="212" x="65" />
-    <button name="HotBarButton"   y="276" x="65" />
-    <button name="OptionsButton"       y="340" x="65" />
-    <button name="HelpButton"  y="404" x="65" />
+<!--    <button name="HotBarButton"     y="276" x="65" /> -->
+    <button name="OptionsButton"    y="276" x="65" />
+    <button name="HelpButton"       y="340" x="65" />
+    <button name="InfoButton"       y="404" x="65" />
 
 </style5>

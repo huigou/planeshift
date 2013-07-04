@@ -45,6 +45,7 @@ public:
     virtual ~pawsActiveMagicWindow() {};
 
     bool PostSetup();
+    bool Setup(iDocumentNode* node);
 
     void HandleMessage(MsgEntry* me);
 
@@ -65,18 +66,20 @@ public:
     pawsCheckBox*    showWindow;
 private:
 
-    pawsListBox*     buffCategories;   ///< Listbox used to show active buff magic
-    pawsListBox*     debuffCategories; ///< Listbox used to show active debuff magic
     pawsScrollMenu*  buffList;
     pawsScrollMenu*  debuffList;
-
+    pawsWidget*      windowFrame;
 
     pawsConfigPopup* configPopup;  ///<This is used to point to a instance of ConfigPopup
 
     /** If true, show active magic window
      *  if false, don't show this window
      */
-    bool show;
+    bool show,
+         useImages,
+         autoResize,
+         showItemEffects;
+
 };
 
 CREATE_PAWS_FACTORY(pawsActiveMagicWindow);

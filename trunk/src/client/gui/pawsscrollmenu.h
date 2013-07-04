@@ -75,12 +75,19 @@ public:
 
     bool RemoveByName(csString name);
     int  GetSize();
+    int  GetButtonWidth();
+    int  GetButtonHeight();
+    int  GetButtonHolderWidth();
+    int  GetButtonHolderHeight();
+    int  GetTotalButtonWidth();
 
     virtual bool Setup(iDocumentNode* node);
     bool SelfPopulate(iDocumentNode* node);
 
     virtual void Draw();
 
+    bool ScrollUp();
+    bool ScrollDown();
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
     virtual bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers);
 
