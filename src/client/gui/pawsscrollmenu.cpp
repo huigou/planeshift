@@ -68,7 +68,7 @@ bool pawsScrollMenu::PostSetup()
     AddChild(EditLockButton);
     EditLockButton->SetSound("gui.shortcut");
     EditLockButton->SetID(101);
-    EditLockButton->SetToolTip("Prevent/Allow Drag and Drop");
+    EditLockButton->SetToolTip("Prevent/Allow Editing and Drag/Drop");
     EditLockButton->SetToggle(true);
     EditLockButton->SetUpImage("lockicon");
     EditLockButton->SetDownImage("unlockicon");
@@ -160,8 +160,7 @@ void pawsScrollMenu::OnResize()
             topSpace  = (LeftScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2:0)+(RightScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2:0);
         }
 
-        //ButtonHolder->SetRelativeFrame(leftEdge, topSpace, GetScreenFrame().Width()-edgeSpace,  GetScreenFrame().Height()-2*topSpace );
-        ButtonHolder->SetRelativeFrame(leftEdge, topSpace, GetScreenFrame().Width()-edgeSpace,  GetScreenFrame().Height()-topSpace );
+        ButtonHolder->SetRelativeFrame(leftEdge, topSpace, GetScreenFrame().Width()-edgeSpace,  GetScreenFrame().Height()-2*topSpace );
 
         //if we have buttons then size them properly, show those within the buttonHolder visible area and hide the rest
         if(Buttons.GetSize() >0)

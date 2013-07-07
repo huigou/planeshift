@@ -292,7 +292,7 @@ void pawsConfigKeys::SetDefault()
     psengine->GetCharControl()->LoadDefaultKeys();
 
     pawsShortcutWindow* shortcuts = dynamic_cast<pawsShortcutWindow*>
-                                       (PawsManager::GetSingleton().FindWidget("ShortcutWindow"));
+                                       (PawsManager::GetSingleton().FindWidget("ShortcutMenu"));
     if (shortcuts)
         shortcuts->LoadDefaultCommands();
 

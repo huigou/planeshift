@@ -90,7 +90,7 @@ bool pawsControlWindow::PostSetup()
     AddWindow( "SpellBookWindow" ,   "SpellBookButton" );
     AddWindow( "InfoWindow" ,        "InfoButton" );
     AddWindow( "HelpWindow" ,        "HelpButton" );
-    AddWindow( "ShortcutWindow" ,    "ShortcutButton" );
+    AddWindow( "ShortcutMenu" ,    "ShortcutButton" );
     AddWindow( "BuddyWindow" ,       "BuddyButton" );
     AddWindow( "GroupWindow" ,       "GroupButton" );
     AddWindow( "PetitionWindow" ,    "PetitionButton" );
@@ -317,7 +317,7 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
     else if(widgetStr == "gm")
         widget = "GmGUI";
     else if(widgetStr == "shortcut")
-        widget = "ShortcutWindow";
+        widget = "ShortcutMenu";
     else if(widgetStr == "group")
         widget = "GroupWindow";
     else if(widgetStr == "guild")
