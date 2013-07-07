@@ -95,7 +95,9 @@ public:
                return NameCallback->Get(id-indexBase).GetData();
             }
         }
-        return GetText();
+        if( GetText() )
+            return GetText();
+        return NULL; 
     }
 
     csArray<csString>* GetActionCallback()

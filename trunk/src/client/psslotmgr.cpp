@@ -434,6 +434,10 @@ void psSlotManager::Handle( pawsDnDButton* target )
         widget->SetRelativeFrame( 0,0, target->GetDefaultFrame().Width(), target->GetDefaultFrame().Height() );
 
         widget->PlaceItem( target->GetMaskingImageName(), target->GetName(), target->GetToolTip(), target->GetAction() );
+        if( !target->GetMaskingImageName() )
+        {
+            widget->SetText(target->GetName());
+        }
 
         widget->SetBackgroundAlpha(0);
         widget->SetParent( NULL );
@@ -455,11 +459,12 @@ void psSlotManager::Handle( pawsDnDButton* target )
         }
         if ( target->GetDnDLock() ) //state "down" == true == editable
         {
+            target->Clear();
+
             target->SetImageNameCallback( ((pawsDnDButton *)draggingSlot.slot)->GetImageNameCallback() );
             target->SetNameCallback( ((pawsDnDButton *)draggingSlot.slot)->GetNameCallback() );
             target->SetActionCallback( ((pawsDnDButton *)draggingSlot.slot)->GetActionCallback() );
 
-;
             if( target->PlaceItem( ((pawsDnDButton *)draggingSlot.slot)->GetMaskingImageName(),  ((pawsDnDButton *)draggingSlot.slot)->GetName(), ((pawsDnDButton *)draggingSlot.slot)->GetToolTip(),  ((pawsDnDButton *)draggingSlot.slot)->GetAction() ) )
             {
                 //move key bindings
@@ -486,8 +491,19 @@ void psSlotManager::Handle( pawsDnDButton* target )
                     psengine->GetCharControl()->RemapTrigger( editedCmd, keyDevice, keyButton, keyMods );
                 }
 
+                //set text if there's no icon
+                if(  ((pawsDnDButton *)draggingSlot.slot)->GetMaskingImageName().IsEmpty() )
+                {
+                    target->SetText( ((pawsDnDButton *)draggingSlot.slot)->GetName() );
+                }
+
                 //clear contents of the originating button
                 ((pawsDnDButton *)draggingSlot.slot)->Clear();
+
+                //redraw the parent window to change layout
+                target->SetParent( ((pawsDnDButton *)draggingSlot.slot)->GetParent() );
+                target->GetParent()->GetParent()->OnResize(); // parent is the buttonHolder, grandparent is the shortcut window.
+
             }
             CancelDrag();
         }

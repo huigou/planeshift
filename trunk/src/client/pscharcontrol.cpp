@@ -114,7 +114,7 @@ csString GetDisplayName(const char* n)
         {
             static pawsShortcutWindow* shortcuts = NULL;
             if (!shortcuts)
-                shortcuts = dynamic_cast<pawsShortcutWindow*>(PawsManager::GetSingleton().FindWidget("ShortcutWindow"));
+                shortcuts = dynamic_cast<pawsShortcutWindow*>(PawsManager::GetSingleton().FindWidget("ShortcutMenu"));
 
             if (shortcuts)
                 name = shortcuts->GetCommandName(id-1);
@@ -658,11 +658,10 @@ void psTriggerHandler::HandleShortcut(const psControl* trigger,bool value)
 {
     static pawsShortcutWindow* shortcutwin = NULL;
     if (!shortcutwin)
-        shortcutwin = dynamic_cast<pawsShortcutWindow*>(PawsManager::GetSingleton().FindWidget("ShortcutWindow"));
+        shortcutwin = dynamic_cast<pawsShortcutWindow*>(PawsManager::GetSingleton().FindWidget("ShortcutMenu"));
 
     if (shortcutwin && value)
-    {
-        size_t start = trigger->name.FindLast(' ') + 1;
+    {        size_t start = trigger->name.FindLast(' ') + 1;
         csString cutter = trigger->name.Slice(start,trigger->name.Length()-start);
         int sc = atoi(cutter.GetDataSafe());
         if (sc == 0)

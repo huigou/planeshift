@@ -506,7 +506,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         }
         else
         {
-            if( cmds.GetSize()>0 )
+            if( cmds.GetSize()>0 && !MenuBar->IsEditable() )
             {
                 if( (cmds[widget->GetID() - SHORTCUT_BUTTON_OFFSET + position ]) ) 
                 {

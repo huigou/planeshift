@@ -390,10 +390,13 @@ csRef<iPawsImage> pawsDnDButton::GetMaskingImage()
 
 bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const char* toolTip, const char* action)
 {
+printf( "pawsDnDButton::PlaceItem begins\n" );
+
     bool validMove = false; //if function returns false don't delet the original
 
     if( imageName )
     {
+        maskingImageName=imageName;
         SetMaskingImage(imageName);
         if(ImageNameCallback)
         {
@@ -403,6 +406,10 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
             }
         }
         validMove = true;
+    }
+    else
+    {
+        ImageNameCallback=NULL;
     }
     if(Name )
     {
@@ -424,6 +431,10 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
             }
             validMove = true;
         }
+        else
+        {
+            NameCallback=NULL;
+        }
     }
     if( !validMove )
     {
@@ -441,6 +452,11 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
             ActionCallback->Get(id-indexBase).Replace(action);
         }
     }
+    else
+    {
+        ActionCallback=NULL;
+    }
+printf( "pawsDnDButton::PlaceItem ends\n" );
     return true;
 }
 

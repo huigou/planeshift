@@ -208,7 +208,7 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         }
         if(words[1] == "shortcut")
         {
-            ((pawsShortcutWindow*)PawsManager::GetSingleton().FindWidget("ShortcutWindow"))->LoadCommandsFile();
+            ((pawsShortcutWindow*)PawsManager::GetSingleton().FindWidget("ShortcutMenu"))->LoadCommandsFile();
             return "Shortcuts reloaded";
         }
         return "try /reload sound";
