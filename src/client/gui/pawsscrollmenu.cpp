@@ -714,3 +714,23 @@ void pawsScrollMenu::SetRightScroll(int mode)
         RightScrollVisible=false;
     }
 }
+
+void pawsScrollMenu::SetEditLock(int mode)
+{
+    if( mode )
+    {
+        EditLockMode=true;
+    }
+    else
+    {
+        EditLockMode=false;
+        for(int i=0; i<Buttons.GetSize(); i++)
+        {
+           ((pawsDnDButton*)Buttons[i])->SetDnDLock(false);
+        }
+    }
+}
+
+
+
+

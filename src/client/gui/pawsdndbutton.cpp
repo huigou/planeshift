@@ -390,8 +390,6 @@ csRef<iPawsImage> pawsDnDButton::GetMaskingImage()
 
 bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const char* toolTip, const char* action)
 {
-printf( "pawsDnDButton::PlaceItem begins\n" );
-
     bool validMove = false; //if function returns false don't delet the original
 
     if( imageName )
@@ -456,7 +454,6 @@ printf( "pawsDnDButton::PlaceItem begins\n" );
     {
         ActionCallback=NULL;
     }
-printf( "pawsDnDButton::PlaceItem ends\n" );
     return true;
 }
 
