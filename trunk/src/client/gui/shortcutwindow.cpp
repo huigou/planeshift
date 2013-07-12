@@ -404,30 +404,29 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
             }
             else  //labelBox (ie name) is set
             {
-                // Otherwise save the label, icon and command
                 if( edit < names.GetSize() )
                 {
                     names[edit] = labelBox->GetText();
                     cmds[edit] = textBox->GetText();
-                    if( iconDisplay->GetMaskingImageName().Length()>0 )
-                    {
-                        icon[edit] = iconDisplay->GetMaskingImageName();
-                    }
-                    else
+                    if( iconDisplay->GetMaskingImageName().IsEmpty() )
                     {
                         icon[edit].Clear();
                     }
+                    else
+                    {
+                        icon[edit] = iconDisplay->GetMaskingImageName();
+                    }
                 }
     	
-                if( icon[edit].Length()>0 )
-                {
-                    editedButton->SetMaskingImage( icon[edit] );
-                    ((pawsButton *)editedButton)->SetText( csString() );
-                }
-                else
+                if( icon[edit].IsEmpty()>0 )
                 {
                     editedButton->ClearMaskingImage();
                     ((pawsButton *)editedButton)->SetText( names[edit] );
+                }
+                else
+                {
+                    ((pawsDnDButton *)editedButton)->SetMaskingImage( icon[edit] );
+                    ((pawsButton *)editedButton)->SetText( csString() );
                 }
 
                 csString t = GetTriggerText( edit );
