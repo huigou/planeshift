@@ -2,7 +2,7 @@
 
   <pawsQuestListWindow name="QuestNotebook" visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
     <frame x="100" y="100" width="550" height="400" border="yes" />
-    <title resource="Scaling Title Bar" text="Quest & Events Notebook" align="left" close_button="yes"/>
+    <title resource="Scaling Title Bar" text="Quest & Events Notebook" align="left" close_button="yes" />
 
     <pawsTextBox name="" style="Header Font">
         <frame x="20" y="15" width="135" height="20" />
@@ -125,12 +125,12 @@
     </pawsTextBox>
 
     <pawsButton name="Discard" id="1201" style="Standard Button">
-        <frame x="460" y="225" width="78" height="17"/>
+        <frame x="460" y="225" width="78" height="25"/>
         <label text="Discard"/>
     </pawsButton>
 
     <pawsButton name="Evaluate" id="1205" visible="no" style="Standard Button">
-        <frame x="350" y="225" width="78" height="17"/>
+        <frame x="350" y="225" width="78" height="25"/>
         <label text="Evaluate"/>
     </pawsButton>
 
@@ -153,11 +153,11 @@
     </pawsMultilineEditTextBox>
 
     <pawsButton name="SaveButton" id="1203" style="Standard Button">
-        <frame x="24" y="370" width="60" height="17"/>
+        <frame x="24" y="370" width="60" height="25"/>
         <label text="Save" />
     </pawsButton>
     <pawsButton name="CancelButton" id="1204" style="Standard Button">
-        <frame x="111" y="370" width="70" height="17"/>
+        <frame x="111" y="370" width="70" height="25"/>
         <label text="Reload" />
     </pawsButton>
 
