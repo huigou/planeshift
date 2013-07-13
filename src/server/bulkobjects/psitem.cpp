@@ -2127,6 +2127,10 @@ double psItem::GetProperty(MathEnvironment* env, const char* ptr)
     {
         return GetCounterBlockValue();
     }
+    else if(property == "Latency")
+    {
+        return GetLatency();
+    }
     else if(property == "UntargetedBlockValue")
     {
         return GetUntargetedBlockValue();
