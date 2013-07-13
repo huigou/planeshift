@@ -491,7 +491,7 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
         env.Define("Worker", workEvent->client->GetCharacterData());
         env.Define("RepairAmount", workEvent->repairAmount);
         //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_quality, "Calculate Repair Experience");
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_exp, "Calculate Repair Experience");
         calc_repair_exp->Evaluate(&env);
         practicePoints   = env.Lookup("ResultPractice")->GetRoundValue();
         modifier = env.Lookup("ResultModifier")->GetValue();
@@ -3682,6 +3682,8 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     {
         unsigned int primaryPracticePoints;
         unsigned int secondaryPracticePoints;
+        double primaryModifier = 0.0f;
+        double secondaryModifier = 0.0f;
 
         MathEnvironment env;
         env.Define("StartQuality", startQuality);
@@ -3696,8 +3698,15 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 
         calc_transform_practice->Evaluate(&env);
         primaryPracticePoints = env.Lookup("PriPoints")->GetRoundValue();
+
+        // Check for a primary Modifier for the exp assignment, defaults to 0 in order to reproduce previous behaviour.
+        if(env.Lookup("PrimaryModifier") != NULL)
+        {
+            primaryModifier = env.Lookup("PrimaryModifier")->GetValue();
+        }
+
         int priSkill = workEvent->GetProcess()->GetPrimarySkillId();
-        owner->GetCharacterData()->Skills().AddSkillPractice((PSSKILL)priSkill,primaryPracticePoints);
+        owner->GetCharacterData()->CalculateAddExperience((PSSKILL)priSkill, primaryPracticePoints, primaryModifier);
 
         Debug3(LOG_TRADE, clientNum, "Giving %i practice points to skill %d .",primaryPracticePoints, priSkill);
         if(secure) psserver->SendSystemInfo(clientNum,"Giving %i practice points to skill %d .",primaryPracticePoints, priSkill);
@@ -3706,7 +3715,14 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         if(secSkill)
         {
             secondaryPracticePoints = env.Lookup("SecPoints")->GetRoundValue();
-            owner->GetCharacterData()->Skills().AddSkillPractice((PSSKILL)secSkill,secondaryPracticePoints);
+
+            // Check for a primary Modifier for the exp assignment, defaults to 0 in order to reproduce previous behaviour.
+            if(env.Lookup("SecondaryModifier") != NULL)
+            {
+                primaryModifier = env.Lookup("SecondaryModifier")->GetValue();
+            }
+
+            owner->GetCharacterData()->CalculateAddExperience((PSSKILL)secSkill, secondaryPracticePoints, secondaryModifier);
             Debug3(LOG_TRADE, clientNum, "Giving %i practice points to skill %d .",secondaryPracticePoints, secSkill);
             if(secure) psserver->SendSystemInfo(clientNum,"Giving %i practice points to skill %d .",secondaryPracticePoints, secSkill);
         }
