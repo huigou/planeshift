@@ -439,12 +439,12 @@
             </widget>
 
             <widget name="ReloadMOTD" factory="pawsButton" id="2001" style="Standard Button" >
-                <frame x="40" y="210" width="90" height="20" />
+                <frame x="40" y="210" width="90" height="25" />
                 <label text="Refresh MOTD" />
             </widget>
 
             <widget name="SaveMOTD" factory="pawsButton" id="2000" style="Standard Button">
-                <frame x="140" y="210" width="90" height="20" />
+                <frame x="140" y="210" width="90" height="25" />
                 <label text="Save MOTD" />
             </widget>
 
@@ -462,7 +462,7 @@
             </widget>
 
             <widget name="GuildNameButton" factory="pawsButton" id="1001" style="Standard Button">
-                <frame x="420" y="260" width="60" height="19"/>
+                <frame x="420" y="260" width="60" height="25"/>
                 <label text="Change"/>
             </widget>
 
@@ -480,7 +480,7 @@
             </widget>
 
             <widget name="GuildWebPageButton" factory="pawsButton" id="1004" style="Standard Button">
-                <frame x="420" y="290" width="60" height="19"/>
+                <frame x="420" y="290" width="60" height="25"/>
                 <label text="Change"/>
             </widget>
 
