@@ -79,7 +79,7 @@ We suggest you to try different settings and see what's best for your hardware."
             <widget factory="pawsSimpleTreeNode" label="Interface">
                     <attr name="SectionName" value="InterfaceGeneral"/>
                     <attr name="factory" value="pawsConfigTextPage"/>
-                    <attr name="TextName" value="In this section you can configure various options for the User Interface. Once you have learned the basic commands and controls, we suggest you to de-select 'Basic Chat Window' from 'Chat Tabs' and enable the Tabs you want to see."/>
+                    <attr name="TextName" value="In this section you can configure various options for the User Interface. Once you have learned the basic commands and controls, we suggest you to look at 'Chat-Tabs' and enable the Tabs you want to see in the chat window."/>
                 <widget factory="pawsSimpleTreeNode" label="Language">
                     <attr name="SectionName" value="LanguageGeneral"/>
                     <attr name="factory" value="pawsConfigTextPage"/>
