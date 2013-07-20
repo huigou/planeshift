@@ -43,7 +43,16 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsDnDButton::pawsDnDButton()
+pawsDnDButton::pawsDnDButton() :
+    dragDropInProgress(0),
+    action(""),
+    containerID(0),
+    indexBase(0),
+    Callback(NULL),
+    ImageNameCallback(NULL),
+    NameCallback(NULL),
+    ActionCallback(NULL),
+    maskingImageName("")
 {
     down = false;
     notify = NULL;
@@ -54,10 +63,7 @@ pawsDnDButton::pawsDnDButton()
     changeOnMouseOver = false;
     originalFontColour = -1;
     factory = "pawsDnDButton";
-    dragDrop = true;            //is drag-n-drop supposed to be enabled?
-    ImageNameCallback = NULL;
-    NameCallback = NULL;
-    ActionCallback = NULL;
+    dragDrop = 1;            //is drag-n-drop supposed to be enabled?
 }
 
 pawsDnDButton::pawsDnDButton(const pawsDnDButton &pb)
@@ -394,7 +400,6 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
 
     if( imageName )
     {
-        maskingImageName=imageName;
         SetMaskingImage(imageName);
         if(ImageNameCallback)
         {
@@ -407,6 +412,7 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
     }
     else
     {
+        ClearMaskingImage();
         ImageNameCallback=NULL;
     }
     if(Name )
@@ -431,6 +437,7 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
         }
         else
         {
+            SetName("");
             NameCallback=NULL;
         }
     }
@@ -452,6 +459,7 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
     }
     else
     {
+        SetAction("");
         ActionCallback=NULL;
     }
     return true;
@@ -465,7 +473,7 @@ void pawsDnDButton::SetMaskingImage(const char* image)
     {
         ImageNameCallback->Get(id-indexBase).Replace( image );
     }
-    maskingImageName = csString(image);
+    //maskingImageName = csString(image);
     pawsWidget::SetMaskingImage(image);
     return;
 }
@@ -493,12 +501,12 @@ void pawsDnDButton::Clear()
     }
 }
 
-void pawsDnDButton::SetDragDropInProgress( bool val )
+void pawsDnDButton::SetDragDropInProgress( int val )
 {
     dragDropInProgress = val;
 }
 
-bool pawsDnDButton::IsDragDropInProgress( )
+int pawsDnDButton::IsDragDropInProgress( )
 {
     return dragDropInProgress;
 }

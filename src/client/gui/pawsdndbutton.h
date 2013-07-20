@@ -63,7 +63,7 @@ public:
     //void                SetLock(bool val) {locked=val; };
     csRef<iPawsImage>   GetMaskingImage();
 
-    void SetDrag(bool isDragDrop)
+    void SetDrag(int isDragDrop)
     {
         dragDrop = isDragDrop;
     };
@@ -120,10 +120,6 @@ public:
 
     void SetMaskingImage(const char* image);
 
-    csString GetMaskingImageName()
-    {
-        return maskingImageName;
-    };
     int ContainerID()
     {
         return containerID;
@@ -183,14 +179,14 @@ public:
         return id-indexBase;
     }
 
-    void SetDragDropInProgress( bool val );
-    bool IsDragDropInProgress( );
+    void SetDragDropInProgress( int val );
+    int IsDragDropInProgress( );
 
 
 protected:
     psSlotManager*      mgr;
-    bool                dragDrop;
-    bool                dragDropInProgress;
+    int                dragDrop;
+    int                dragDropInProgress;
     csString            action;
     int                 containerID;
     int                 indexBase;
