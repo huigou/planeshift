@@ -167,6 +167,7 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
                     if (image)
                     {
                         buffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), 1, this, false );
+
                     }
                     else
                     {
@@ -177,6 +178,7 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
                 {
                     buffList->LoadSingle( incoming.name, csString( "" ), incoming.name, csString( "" ), 1, this, false );
                 }
+                buffList->SetEditLock( ScrollMenuOptionDISABLED );
                 buffList->Resize();
             }
             else // incoming.type == DEBUFF
@@ -206,7 +208,7 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
                 {
                     debuffList->LoadSingle( incoming.name, csString( "" ), incoming.name, csString( "" ), 1, this, false );
                 }
-
+                debuffList->SetEditLock( ScrollMenuOptionDISABLED );
                 debuffList->Resize();
             }
 

@@ -430,11 +430,18 @@ void psSlotManager::Handle( pawsDnDButton* target )
             return;
         }
 
+        if( (target->GetMaskingImage()==NULL || *(target->GetMaskingImage()->GetName())==0) && !target->GetName() )
+        { //there's nothing in this button, don't drag it.
+printf( "psSlotManager::Handle( pawsDnDButton* target ) detected empty button\n" );
+           return;
+        }
+printf( "psSlotManager::Handle( pawsDnDButton* target ) detected button contents\n" );
+
         pawsDnDButton* widget = new pawsDnDButton();
         widget->SetRelativeFrame( 0,0, target->GetDefaultFrame().Width(), target->GetDefaultFrame().Height() );
 
-        widget->PlaceItem( target->GetMaskingImageName(), target->GetName(), target->GetToolTip(), target->GetAction() );
-        if( !target->GetMaskingImageName() )
+        widget->PlaceItem( target->GetMaskingImage()!=NULL?target->GetMaskingImage()->GetName():NULL, target->GetName(), target->GetToolTip(), target->GetAction() );
+        if( target->GetMaskingImage()==NULL || *(target->GetMaskingImage()->GetName()) == 0 )
         {
             widget->SetText(target->GetName());
         }
@@ -465,7 +472,7 @@ void psSlotManager::Handle( pawsDnDButton* target )
             target->SetNameCallback( ((pawsDnDButton *)draggingSlot.slot)->GetNameCallback() );
             target->SetActionCallback( ((pawsDnDButton *)draggingSlot.slot)->GetActionCallback() );
 
-            if( target->PlaceItem( ((pawsDnDButton *)draggingSlot.slot)->GetMaskingImageName(),  ((pawsDnDButton *)draggingSlot.slot)->GetName(), ((pawsDnDButton *)draggingSlot.slot)->GetToolTip(),  ((pawsDnDButton *)draggingSlot.slot)->GetAction() ) )
+            if( target->PlaceItem( ((pawsDnDButton *)draggingSlot.slot)->GetMaskingImage()!=NULL?((pawsDnDButton *)draggingSlot.slot)->GetMaskingImage()->GetName():NULL,  ((pawsDnDButton *)draggingSlot.slot)->GetName(), ((pawsDnDButton *)draggingSlot.slot)->GetToolTip(),  ((pawsDnDButton *)draggingSlot.slot)->GetAction() ) )
             {
                 //move key bindings
                 csString          editedCmd;
@@ -492,7 +499,7 @@ void psSlotManager::Handle( pawsDnDButton* target )
                 }
 
                 //set text if there's no icon
-                if(  ((pawsDnDButton *)draggingSlot.slot)->GetMaskingImageName().IsEmpty() )
+                if(  ((pawsDnDButton *)draggingSlot.slot)->GetMaskingImage()==NULL || *(((pawsDnDButton *)draggingSlot.slot)->GetMaskingImage()->GetName()) == 0 )
                 {
                     target->SetText( ((pawsDnDButton *)draggingSlot.slot)->GetName() );
                 }

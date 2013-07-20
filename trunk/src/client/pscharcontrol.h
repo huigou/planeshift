@@ -68,7 +68,7 @@ struct psControl
     };
         
     psControl(const char* n, PressType t, TriggerFunction f)
-        : name(n), state(false), device(NONE), button(0), type(t), function(f), data(NULL) {}
+        : name(n), state(false), device(NONE), button(0), mods(0), type(t), function(f), data(NULL) {}
     
     csString name;             ///< Name of this control
     bool state;                ///< Is this active?
