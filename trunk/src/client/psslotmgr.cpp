@@ -241,7 +241,6 @@ void psSlotManager::SetDragDetails(pawsDnDButton* target )
 void psSlotManager::SetDragDetails(pawsSlot* slot, int count)
 {
     draggingSlot.containerID     = slot->ContainerID();
-printf( "psSlotManager::SetDragDetails - container ID = %i\n", draggingSlot.containerID );
     draggingSlot.slotID          = slot->ID();
     draggingSlot.stackCount      = count;
     draggingSlot.slot            = slot;
@@ -344,7 +343,6 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
         if (dndWidget)
             return;
 
-        //printf("Starting a drag/drop action\n");
         if( !slot->GetLock() ){
             int stackCount = slot->StackCount();
             if ( stackCount > 0 )
@@ -421,6 +419,10 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
 
 void psSlotManager::Handle( pawsDnDButton* target )
 {
+    if( target==NULL )
+    {
+       return;
+    }
     if ( !IsDragging() )
     {
         // Make sure other code isn't drag-and-dropping a different object.
@@ -430,16 +432,13 @@ void psSlotManager::Handle( pawsDnDButton* target )
             return;
         }
 
-        if( (target->GetMaskingImage()==NULL || *(target->GetMaskingImage()->GetName())==0) && !target->GetName() )
+        if( (target->GetMaskingImage()==NULL || *(target->GetMaskingImage()->GetName())==0) && (target->GetName()==NULL || *(target->GetName())==0 ) )
         { //there's nothing in this button, don't drag it.
-printf( "psSlotManager::Handle( pawsDnDButton* target ) detected empty button\n" );
            return;
         }
-printf( "psSlotManager::Handle( pawsDnDButton* target ) detected button contents\n" );
 
         pawsDnDButton* widget = new pawsDnDButton();
         widget->SetRelativeFrame( 0,0, target->GetDefaultFrame().Width(), target->GetDefaultFrame().Height() );
-
         widget->PlaceItem( target->GetMaskingImage()!=NULL?target->GetMaskingImage()->GetName():NULL, target->GetName(), target->GetToolTip(), target->GetAction() );
         if( target->GetMaskingImage()==NULL || *(target->GetMaskingImage()->GetName()) == 0 )
         {

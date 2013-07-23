@@ -194,7 +194,6 @@ protected:
     csArray<csString>*   ImageNameCallback;
     csArray<csString>*   NameCallback;
     csArray<csString>*   ActionCallback;
-    csString            maskingImageName;
 
     virtual bool CheckKeyHandled(int keyCode);
 

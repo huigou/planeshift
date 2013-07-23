@@ -178,10 +178,6 @@ protected:
     int                    EditLockMode;               //enabled, disabled, (dynamic==>enabled)
     bool                   EditLock;                 //true = editing prevented, false = editing allowed
 
-    //pawsButton*            UseLockButton;
-    //bool                   UseLockButtonAvailable;
-    //bool                   UseLock;                 //true = usage prevented, false = usage allowed
-
     pawsWidget*            callbackWidget;
 
 };
