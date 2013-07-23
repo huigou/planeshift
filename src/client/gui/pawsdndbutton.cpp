@@ -51,8 +51,7 @@ pawsDnDButton::pawsDnDButton() :
     Callback(NULL),
     ImageNameCallback(NULL),
     NameCallback(NULL),
-    ActionCallback(NULL),
-    maskingImageName("")
+    ActionCallback(NULL)
 {
     down = false;
     notify = NULL;
@@ -63,7 +62,7 @@ pawsDnDButton::pawsDnDButton() :
     changeOnMouseOver = false;
     originalFontColour = -1;
     factory = "pawsDnDButton";
-    dragDrop = 1;            //is drag-n-drop supposed to be enabled?
+    dragDrop = 1;
 }
 
 pawsDnDButton::pawsDnDButton(const pawsDnDButton &pb)
@@ -285,7 +284,7 @@ void pawsDnDButton::Draw()
 bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
 {
     bool empty;
- 
+
     if(GetMaskingImage())
     {
         empty = false;
@@ -300,44 +299,28 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
     }
 
     if(button==csmbLeft && (dragDrop || psengine->GetSlotManager()->IsDragging()))
+    //if( psengine->GetSlotManager()->IsDragging() )
     {
-        if(GetDnDLock())
+        if(!GetDnDLock())
         {
-            if(!empty)
-            {
-                //if CTRL-ALT-lmb click then clear the button
-                if((modifiers & CSMASK_CTRL) && (modifiers & CSMASK_ALT))
-                {
-                    psengine->GetSlotManager()->CancelDrag();
-                    return true;
-                }
-                //if CTRL-lmb then start drag
-                else if(!(modifiers & CSMASK_CTRL))
-                {
-                    psengine->GetSlotManager()->Handle( this );
-                    return true;
-                }
-            }
-            else
-            {
-                if(!mgr)
-                {
-                    mgr = psengine->GetSlotManager();
-                }
-                if(!mgr)
-                {
-                    return false;
-                }
-                mgr->Handle(this);
-
-                dragDropInProgress = true;
-            }
+             psengine->GetSlotManager()->CancelDrag();
+            pawsButton::OnMouseDown(button, modifiers, x, y);
         }
         else
         {
-            psengine->GetSlotManager()->CancelDrag();
-            pawsButton::OnMouseDown(button, modifiers, x, y);
+            if(!mgr)
+            {
+                mgr = psengine->GetSlotManager();
+            }
+            if(!mgr)
+            {
+                return false;
+            }
+            mgr->Handle(this);
+
+            dragDropInProgress = true;
         }
+
     }
     else
     {
@@ -473,7 +456,6 @@ void pawsDnDButton::SetMaskingImage(const char* image)
     {
         ImageNameCallback->Get(id-indexBase).Replace( image );
     }
-    //maskingImageName = csString(image);
     pawsWidget::SetMaskingImage(image);
     return;
 }

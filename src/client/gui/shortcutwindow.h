@@ -132,6 +132,7 @@ protected:
 
     csArray<csString> cmds;
     csArray<csString> names;
+    csArray<csString> toolTips;
     csArray<csString> icon;
 
     csRef<iVFS> vfs;
