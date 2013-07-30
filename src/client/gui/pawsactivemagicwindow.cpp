@@ -41,6 +41,34 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+pawsActiveMagicWindow::pawsActiveMagicWindow() :
+    buffList( NULL ),
+    configPopup(NULL),
+    show(true),
+    useImages(true),
+    autoResize(true)
+{
+    OnResize(); //get orientation set correctly
+}
+
+void pawsActiveMagicWindow::OnResize()
+{
+    if( GetScreenFrame().Width() > GetScreenFrame().Height() )
+    {
+        Orientation = ScrollMenuOptionHORIZONTAL;
+    }
+    else
+    {
+        Orientation = ScrollMenuOptionVERTICAL;
+    }
+    if( buffList!=NULL )
+    {
+        buffList->SetOrientation(Orientation);
+        buffList->OnResize();
+    }
+
+}
+
 bool pawsActiveMagicWindow::PostSetup()
 {
     pawsWidget::PostSetup();
@@ -55,6 +83,8 @@ bool pawsActiveMagicWindow::PostSetup()
     {
         buffList->SetLeftScroll( ScrollMenuOptionDISABLED );
         buffList->SetRightScroll( ScrollMenuOptionDISABLED );
+        buffList->AutoResize();
+        AutoResize( );
     }
     else
     {
@@ -62,30 +92,24 @@ bool pawsActiveMagicWindow::PostSetup()
         buffList->SetRightScroll( ScrollMenuOptionDYNAMIC );
     }
 
-    debuffList= (pawsScrollMenu*)FindWidget("DebuffBar");
-    if(!debuffList)
-        return false;
-    debuffList->SetEditLock( ScrollMenuOptionDISABLED );
-    if( autoResize )
-    {
-        debuffList->SetLeftScroll( ScrollMenuOptionDISABLED );
-        debuffList->SetRightScroll( ScrollMenuOptionDISABLED );
-    }
-    else
-    {
-        debuffList->SetLeftScroll( ScrollMenuOptionDYNAMIC );
-        debuffList->SetRightScroll( ScrollMenuOptionDYNAMIC );
-    }
-
     showWindow              = (pawsCheckBox*)FindWidget("ShowActiveMagicWindow");
     if(!showWindow)
         return false;
-    showWindow->Hide();
+
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_ACTIVEMAGIC);
+
+    // If no active magic, hide the window.
+    if( buffList->GetSize() < 1 && showWindow->GetState() == false )
+    {
+        showWindow->Hide();
+    }
+    else
+    {
+        showWindow->Show();
+    }
 
     if(!LoadSetting())
         return false;
-
-    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_ACTIVEMAGIC);
 
     return true;
 }
@@ -93,8 +117,6 @@ bool pawsActiveMagicWindow::PostSetup()
 bool pawsActiveMagicWindow::Setup(iDocumentNode *node)
 {
     useImages  = true;
-    autoResize = true;
-    showItemEffects = true;
 
     if( node->GetAttributeValue("name") && strcmp( "ActiveMagicWindow", node->GetAttributeValue("name"))==0 )
     {
@@ -119,13 +141,6 @@ bool pawsActiveMagicWindow::Setup(iDocumentNode *node)
                     autoResize=false;
                 }
             }
-            else if( strcmp( "showItemEffects", subnode->GetName() )==0 )
-            {
-                if( strcmp( "false", subnode->GetValue() )==0 )
-                {
-                    showItemEffects=false;
-                }
-            }
         }
     }
 
@@ -144,6 +159,7 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
     if (!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
         ShowBehind();
 
+printf( "pawsActiveMagicWindow::HandleMessage got incoming image = %s\n", incoming.image.GetData() );
     switch ( incoming.command )
     {
         case psGUIActiveMagicMessage::Add:
@@ -166,20 +182,26 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
                     }
                     if (image)
                     {
-                        buffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), 1, this, false );
-
+                        buffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), 0, this, false );
                     }
                     else
                     {
-                        buffList->LoadSingle( incoming.name, csString( "/planeshift/materials/crystal_ball_icon.dds" ), incoming.name, csString( "" ), 1, this, false );
+                        buffList->LoadSingle( incoming.name, csString( "/planeshift/materials/crystal_ball_icon.dds" ), incoming.name, csString( "" ), 0, this, false );
                     }
                 }
                 else
                 {
-                    buffList->LoadSingle( incoming.name, csString( "" ), incoming.name, csString( "" ), 1, this, false );
+                    buffList->LoadSingle( incoming.name, csString( "" ), incoming.name, csString( "" ), 0, this, false );
                 }
                 buffList->SetEditLock( ScrollMenuOptionDISABLED );
-                buffList->Resize();
+                if( autoResize )
+                {
+                    AutoResize( );
+                }
+                else
+                {
+                    buffList->Resize();
+                }
             }
             else // incoming.type == DEBUFF
             {
@@ -197,88 +219,100 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
                     }
                     if (image)
                     {
-                        debuffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), 1, this, false );
+                        buffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), -1, this, false );
                     }
                     else
                     {
-                        debuffList->LoadSingle( incoming.name, csString( "danger_01" ), incoming.name, csString( "" ), 1, this, false );
+                        buffList->LoadSingle( incoming.name, csString( "danger_01" ), incoming.name, csString( "" ), -1, this, false );
                     }
                 }
                 else
                 {
-                    debuffList->LoadSingle( incoming.name, csString( "" ), incoming.name, csString( "" ), 1, this, false );
+                    buffList->LoadSingle( incoming.name, csString( "" ), incoming.name, csString( "" ), -1, this, false );
                 }
-                debuffList->SetEditLock( ScrollMenuOptionDISABLED );
-                debuffList->Resize();
+                //buffList->SetEditLock( ScrollMenuOptionDISABLED );
+                if( autoResize )
+                {
+                    AutoResize( );
+                }
+                else
+                {
+                    buffList->Resize();
+                }
             }
 
-            if( autoResize )
-            {
-                int    windowPadding = GetScreenFrame().Width() - buffList->GetScreenFrame().Width();    // horizontal space between window & lists
-                if( GetScreenFrame().Width() > GetScreenFrame().Height())  //horizontal case
-                {
-                    int newWidth = buffList->GetTotalButtonWidth(),
-                        t = 0;
-
-                    //size to the buff/debuff bar with the greatest icon width
-                    if( newWidth < (t=debuffList->GetTotalButtonWidth()) )
-                    {
-                        newWidth = t;
-                    }
-                    if( newWidth > buffList->GetButtonHolderWidth() ) //buffList & debuffList should always be the same size...
-                    { //need to resize
-                        int  buttonPadding = buffList->GetScreenFrame().Width() - buffList->GetButtonHolderWidth(); //get space within scrollbar reserved for scrolling & lock buttons
-
-                        SetSize( newWidth+windowPadding+buttonPadding,  GetScreenFrame().Height() );
-                        if( GetScreenFrame().xmax > psengine->GetG2D()->GetWidth() ) //sticking off the edge of the screen
-                        {
-                            MoveDelta( -(GetScreenFrame().xmax - psengine->GetG2D()->GetWidth()), 0 );
-                        }
-                    }
-                }
-                else //vertical case
-                {
-                    int vertPadding = GetScreenFrame().Height() - buffList->GetScreenFrame().Height() - debuffList->GetScreenFrame().Height(),
-                    newHeight = buffList->GetSize();    //how many buttons
-                    if( newHeight < debuffList->GetSize() )
-                    {
-                        newHeight = debuffList->GetSize();
-                    }
-                    newHeight *= (buffList->GetButtonHeight()+BUTTON_PADDING);  //convert number of buttons to number of pixels
-                    
-                    if( (newHeight*2)+vertPadding >  GetScreenFrame().Height() )
-                    { //need to resize
-                        SetSize( GetScreenFrame().Width(), (newHeight*2)+vertPadding );
-                        //buffList->SetSize( buffList->GetScreenFrame().Width(), newHeight);
-                        //debuffList->SetSize( debuffList->GetScreenFrame().Width(), newHeight );
-
-                        if( GetScreenFrame().ymax > psengine->GetG2D()->GetHeight() ) //sticking off the bottom of the screen
-                        {
-                            MoveDelta( 0, -(GetScreenFrame().ymax - psengine->GetG2D()->GetHeight()) );
-                        }
-                    }
-                }
-            }
             break;
         }
         case psGUIActiveMagicMessage::Remove:
         {
-            if( incoming.type == BUFF )
-            {
                 buffList->RemoveByName( incoming.name );
-                buffList->Resize();
-            }
-            else
-            {
-                debuffList->RemoveByName( incoming.name );
-                debuffList->Resize();
-            }
+                if( autoResize )
+                {
+                    AutoResize( );
+                }
+                else
+                {
+                   buffList->Resize();
+                }
 
             // If no active magic, hide the window.
-            if( buffList->GetSize() < 1 && debuffList->GetSize() < 1 )
+            if( buffList->GetSize() < 1 )
                 Hide();
 
             break;
+        }
+    }
+}
+
+void pawsActiveMagicWindow::AutoResize( )
+{
+    int horizPadding = 0,
+        vertPadding = 0,
+        buffSize = 0,
+        t = 0;
+
+    if( !buffList )
+    {
+        return;
+    }
+
+    if( Orientation == ScrollMenuOptionHORIZONTAL )
+    {
+        buffSize = buffList->AutoResize();
+        if( buffSize == 0 )
+        {
+            buffSize = buffList->GetButtonWidth();
+        }
+
+        SetSize( buffSize+buffList->GetButtonWidth(), GetScreenFrame().Height() );
+        if( GetScreenFrame().xmax > psengine->GetG2D()->GetWidth() ) //sticking off the edge of the screen
+        {
+            //t = GetScreenFrame().xmax - psengine->GetG2D()->GetWidth();
+            t = buffList->GetTotalButtonWidth();
+            if(  GetScreenFrame().xmin - t < 0 )
+            {
+                t = -GetScreenFrame().xmin; //should put the window at the left ede of the screen
+            }
+            else 
+            {
+                t = -(GetScreenFrame().xmax - psengine->GetG2D()->GetWidth());
+            }
+            MoveDelta( t, 0 );
+        }
+    }
+    else
+    {
+        buffSize = buffList->AutoResize();
+        if( buffSize == 0 )
+        {
+            buffSize = buffList->GetButtonHeight();
+        }
+
+        SetSize( GetScreenFrame().Width(), buffSize+buffList->GetButtonHeight() );
+
+        if( GetScreenFrame().ymax > psengine->GetG2D()->GetHeight() ) //sticking off the bottom of the screen
+        {
+            MoveDelta( 0, -(GetScreenFrame().ymax - psengine->GetG2D()->GetHeight()) );
         }
     }
 }
@@ -347,7 +381,6 @@ void pawsActiveMagicWindow::SaveSetting()
 
     csRef<iDocument> doc = docsys->CreateDocument();        
     csRef<iDocumentNode> root,defaultRoot, activeMagicNode, activeMagicOptionsNode, showWindowNode;
-    //csRef<iDocumentNode> root,defaultRoot, activeMagicNode, activeMagicOptionsNode;
 
     root = doc->CreateRoot();
 

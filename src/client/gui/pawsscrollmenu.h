@@ -39,9 +39,11 @@
 #define BUTTON_PADDING          4
 #define SHORTCUT_BUTTON_OFFSET  2000
 
-#define ScrollMenuOptionDISABLED 0
-#define ScrollMenuOptionENABLED  1
-#define ScrollMenuOptionDYNAMIC  2
+#define ScrollMenuOptionDISABLED    0
+#define ScrollMenuOptionENABLED     1
+#define ScrollMenuOptionDYNAMIC     2
+#define ScrollMenuOptionHORIZONTAL  3
+#define ScrollMenuOptionVERTICAL    4
 
 #include "paws/pawswidget.h"
 #include "gui/pawsdndbutton.h"
@@ -66,6 +68,7 @@ public:
     void OnResizeStop();
     int  CalcButtonSize(pawsDnDButton* target);
     void LayoutButtons();
+    virtual void MouseOver(bool value);
 
     virtual bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
@@ -80,6 +83,7 @@ public:
     int  GetButtonHolderWidth();
     int  GetButtonHolderHeight();
     int  GetTotalButtonWidth();
+    int  GetOrientation();
 
     virtual bool Setup(iDocumentNode* node);
     bool SelfPopulate(iDocumentNode* node);
@@ -100,7 +104,8 @@ public:
     void setButtonWidth( int width );
     void setScrollIncrement( int incr );
     void setScrollProportion( float prop );
-
+    void SetOrientation( int Orientation );
+    int  AutoResize();
 
 protected:
 
@@ -179,6 +184,8 @@ protected:
     bool                   EditLock;                 //true = editing prevented, false = editing allowed
 
     pawsWidget*            callbackWidget;
+
+    int                    Orientation;
 
 };
 

@@ -63,6 +63,7 @@ pawsDnDButton::pawsDnDButton() :
     originalFontColour = -1;
     factory = "pawsDnDButton";
     dragDrop = 1;
+    keepaspect = true;
 }
 
 pawsDnDButton::pawsDnDButton(const pawsDnDButton &pb)
@@ -116,7 +117,7 @@ bool pawsDnDButton::Setup(iDocumentNode* node)
         notify = PawsManager::GetSingleton().FindWidget(notifyAttribute->GetValue());
 
     // Check for mouse over
-    changeOnMouseOver = node->GetAttributeValueAsBool("changeonmouseover", false);
+    //changeOnMouseOver = node->GetAttributeValueAsBool("changeonmouseover", false);
 
     // Get the down button image name.
     csRef<iDocumentNode> buttonDownImage = node->GetNode("buttondown");
@@ -424,17 +425,13 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
             NameCallback=NULL;
         }
     }
-    if( !validMove )
-    {
-        return false;
-    }
     if( toolTip )
     {
         SetToolTip( toolTip );
     }
     if( action )
     {
-        SetAction( csString(action) );
+        SetAction( action );
         if(ActionCallback)
         {
             ActionCallback->Get(id-indexBase).Replace(action);
@@ -442,8 +439,12 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
     }
     else
     {
-        SetAction("");
+        action=NULL;
         ActionCallback=NULL;
+    }
+    if( !validMove )
+    {
+        return false;
     }
     return true;
 }
@@ -492,3 +493,8 @@ int pawsDnDButton::IsDragDropInProgress( )
 {
     return dragDropInProgress;
 }
+
+void pawsDnDButton::MouseOver(bool value)
+{
+}
+

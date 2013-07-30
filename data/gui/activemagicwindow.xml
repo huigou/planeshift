@@ -4,8 +4,6 @@
     widget attributes:
         useImages       - may be set to true or false; default is true, which displays icons for each buff/debuff/spell rather than text
         autoResize      - may be set to true or false; default is true, which automatically resizes the window to display all buff/debuff/spells without the need to scroll through them.
-        showItemEffects - may be set to true or false; default is true, which includes item buffs/debuffs in the window.
-
 -->
 
 <widget name="ActiveMagicWindow" factory="pawsActiveMagicWindow"
@@ -15,35 +13,25 @@
         autoResize="true"
 >
 
-    <frame name="ActiveMagicFrame" x="320" y="200" width="330" height="110" border="yes" resizable="yes"/>
-        <minframe width="64" height="110" /> 
+    <frame name="ActiveMagicFrame" x="320" y="200" width="330" height="54" border="yes" resizable="yes"/>
+        <minframe width="54" height="54" /> 
         <maxframe width="2000" height="1000" />
         <bgimage resource="Back" alpha="255" />
 
     <widget name="BuffBar" factory="pawsScrollMenu">
-        <frame x="0" y="4" height="48" width="310" border="no" resizable="yes" />
-            <maxframe width="2000" height="480" /> -->
+        <frame x="0" y="4" width="320" height="48" border="no" resizable="yes" />
+            <minframe width="48" height="48" />
+            <maxframe width="2000" height="480" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
+            <attach point="ATTACH_LEFT" />
             <attach point="ATTACH_TOP" />
-            <attach point="ATTACH_LEFT" />
-            <attach point="PROPORTIONAL_BOTTOM" />
-        </attachpoints>
-    </widget>
-
-    <widget name="DebuffBar" factory="pawsScrollMenu" >
-        <frame x="0" y="57" height="48" width="310" border="no" resizable="yes"  />
-            <maxframe width="2000" height="480" /> -->
-        <attachpoints>
-            <attach point="ATTACH_RIGHT" />
-            <attach point="PROPORTIONAL_TOP" />
-            <attach point="ATTACH_LEFT" />
             <attach point="ATTACH_BOTTOM" />
         </attachpoints>
     </widget>
 
      <widget name="ShowActiveMagicWindow" factory="pawsCheckBox" >
-        <frame x="0" y="65" width="185" height="20" border="no" />
+        <frame x="0" y="0" width="0" height="0" border="no" />
 <!--        <text string="Don't show this window again" /> -->
     </widget>
 
