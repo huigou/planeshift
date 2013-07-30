@@ -55,6 +55,8 @@ public:
 
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
     virtual bool OnMouseUp(int button, int modifiers, int x, int y);
+    virtual void MouseOver(bool value);
+
 
     bool                GetLock()
     {
@@ -145,7 +147,7 @@ public:
                 return action.GetData();
             }
         }
-        return "";
+        return NULL;
     }
 
     void SetUseLock(bool locked)

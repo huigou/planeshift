@@ -38,8 +38,11 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsScrollMenu::pawsScrollMenu()
-    : enabled(true) /*, upTextOffsetX(0), upTextOffsetY(0), downTextOffsetX(0), downTextOffsetY(0) */
+pawsScrollMenu::pawsScrollMenu() :
+    enabled(true),
+    Orientation(ScrollMenuOptionHORIZONTAL),
+    buttonWidth( 0 ),
+    buttonHeight( 0 )
 {
 }
 
@@ -50,8 +53,38 @@ pawsScrollMenu::~pawsScrollMenu()
 
 bool pawsScrollMenu::Setup(iDocumentNode* node)
 {
+    csRef<iDocumentNode> tempnode;
+    csRef<iDocumentNodeIterator> nodeIter = node->GetNodes();
+    while( nodeIter->HasNext() )
+    {
+        tempnode = nodeIter->Next();
+        if( tempnode->GetAttributeValue("name") && strcasecmp( "ActiveMagicWindow", tempnode->GetAttributeValue("name"))==0 )
+        {
+            csRef<iDocumentAttributeIterator> attiter = tempnode->GetAttributes();
+            csRef<iDocumentAttribute> subnode;
+
+            while ( attiter->HasNext() )
+            {
+                subnode = attiter->Next();
+                if( strcasecmp( "buttonWidth", subnode->GetName() )==0 )
+                {
+                    if( strcasecmp( "auto", subnode->GetValue() )==0 )
+                    {
+                        buttonWidth=0;
+                    }
+                    else
+                    {
+                        buttonWidth=subnode->GetValueAsInt();
+                    }
+                }
+            }
+            break;
+        }
+    }
+
     return true;
 }
+
 
 bool pawsScrollMenu::PostSetup()
 {
@@ -194,7 +227,7 @@ void pawsScrollMenu::OnResize()
             {
                 LeftScrollButton->SetBackground("Up Arrow");
                 LeftScrollButton->SetToolTip("Scroll up in shortcuts list");
-                LeftScrollButton->SetRelativeFrame(buttonHeight, buttonHeight/4, buttonHeight/2, buttonHeight/2);
+                LeftScrollButton->SetRelativeFrame(GetScreenFrame().Width() - (buttonWidth/2), buttonHeight/4, buttonHeight/2, buttonHeight/2);
             }
         }
     }
@@ -212,7 +245,7 @@ void pawsScrollMenu::OnResize()
             {
                 RightScrollButton->SetBackground("Down Arrow");
                 RightScrollButton->SetToolTip("Scroll down in shortcuts list");
-                RightScrollButton->SetRelativeFrame(buttonHeight, GetScreenFrame().Height()-(buttonHeight/2), buttonHeight/2, buttonHeight/2);
+                RightScrollButton->SetRelativeFrame(GetScreenFrame().Width() - (buttonWidth/2), GetScreenFrame().Height()-(buttonHeight/2), buttonHeight/2, buttonHeight/2);
             }
         }
     }
@@ -239,7 +272,7 @@ void pawsScrollMenu::LayoutButtons()
 
             if( buttonCol+buttonSize > ButtonHolder->GetScreenFrame().Width())
             {
-                if((buttonRow)*buttonHeight < ButtonHolder->GetScreenFrame().Height())  //there's enough vertical space for another row of buttons ...
+                //////if((buttonRow)*buttonHeight < ButtonHolder->GetScreenFrame().Height())  //there's enough vertical space for another row of buttons ...
                 {
                     buttonCol = BUTTON_PADDING;
                     buttonRow++;
@@ -320,6 +353,14 @@ void pawsScrollMenu::LayoutButtons()
 
 void pawsScrollMenu::OnResizeStop()
 {
+    if( GetScreenFrame().xmax > GetScreenFrame().ymax )
+    {
+        Orientation = ScrollMenuOptionHORIZONTAL;
+    }
+    else
+    {
+        Orientation = ScrollMenuOptionVERTICAL;
+    }
 }
 
 bool pawsScrollMenu::ScrollUp()
@@ -525,8 +566,16 @@ bool pawsScrollMenu::LoadSingle(csString name, csString icon, csString toolTip, 
 
     pawsDnDButton* button;
     button = new pawsDnDButton;
-    ButtonHolder->AddChild(button);
-    Buttons.Push(button);
+    if( Index>Buttons.GetSize() || Index==-1 )
+    { //append
+        ButtonHolder->AddChild(button);
+        Buttons.Push(button);
+    }
+    else
+    { //insert before Index
+        ButtonHolder->AddChild(Index, button);
+        Buttons.Insert(Index, button);
+    }
 
     button->SetSound("gui.shortcut");
     button->SetBackground("Scaling Button");
@@ -732,5 +781,32 @@ void pawsScrollMenu::SetEditLock(int mode)
 }
 
 
+void pawsScrollMenu::SetOrientation(int Orientation)
+{
+    this->Orientation = Orientation;
+}
+
+int pawsScrollMenu::GetOrientation()
+{
+    return this->Orientation;
+}
 
 
+int pawsScrollMenu::AutoResize( )
+{
+    if( Orientation == ScrollMenuOptionHORIZONTAL )
+    {
+        SetSize( Buttons.GetSize()*buttonWidth, GetScreenFrame().Height() );
+        return Buttons.GetSize()*buttonWidth;
+    }
+    else //vertical case
+    {
+        SetSize( GetScreenFrame().Width(), Buttons.GetSize()*buttonHeight ); 
+        return Buttons.GetSize()*buttonHeight;
+    }
+}
+
+
+void pawsScrollMenu::MouseOver(bool value)
+{
+}

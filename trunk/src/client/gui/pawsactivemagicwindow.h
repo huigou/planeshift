@@ -42,12 +42,14 @@ class pawsActiveMagicWindow : public pawsWidget, public psClientNetSubscriber
 {
 public:
 
+    pawsActiveMagicWindow();
     virtual ~pawsActiveMagicWindow() {};
 
     bool PostSetup();
     bool Setup(iDocumentNode* node);
 
     void HandleMessage(MsgEntry* me);
+    void OnResize();
 
     virtual void Close();
 
@@ -59,16 +61,17 @@ public:
     ///Saves the configuration file
     void SaveSetting();
 
+    void AutoResize( );
+
     /**
       * Check-box which gives the user a opportunity to show or
       * not to show the Active Magic Window
       */
     pawsCheckBox*    showWindow;
+
 private:
 
     pawsScrollMenu*  buffList;
-    pawsScrollMenu*  debuffList;
-    pawsWidget*      windowFrame;
 
     pawsConfigPopup* configPopup;  ///<This is used to point to a instance of ConfigPopup
 
@@ -77,8 +80,9 @@ private:
      */
     bool show,
          useImages,
-         autoResize,
-         showItemEffects;
+         autoResize;
+    int  Orientation;
+
 
 };
 

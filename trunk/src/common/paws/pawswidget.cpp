@@ -373,6 +373,20 @@ void pawsWidget::AddChild( pawsWidget* childWidget )
     childWidget->SetParent( this );
 }
 
+void pawsWidget::AddChild( size_t Index, pawsWidget* childWidget )
+{
+    if ( !childWidget )
+        return;
+
+    //if ( childWidget->IsAlwaysOnTop() )
+        children.Insert( Index, childWidget );
+    //else
+        //children.Push( childWidget );
+
+    // Let the child know that he is attached to this widget.
+    childWidget->SetParent( this );
+}
+
 void pawsWidget::RemoveChild( pawsWidget* widget )
 {
     if ( !widget )

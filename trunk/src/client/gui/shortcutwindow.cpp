@@ -54,7 +54,13 @@
 // Classes
 //=============================================================================
 
-pawsShortcutWindow::pawsShortcutWindow()
+pawsShortcutWindow::pawsShortcutWindow() :
+    subWidget(NULL),
+    shortcutText(NULL),
+    textBox(NULL),
+    labelBox(NULL),
+    buttonWidth(0),                     //added 20130726 - ticket 6087
+    scrollSize(0)                      //added 20130726 - ticket 6087
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
     xml = psengine->GetXMLParser ();
@@ -63,10 +69,6 @@ pawsShortcutWindow::pawsShortcutWindow()
 
     cmdsource = psengine->GetCmdHandler();
     chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
-    subWidget = NULL;
-    shortcutText = NULL;
-    textBox = NULL;
-    labelBox = NULL;
 }
 
 
@@ -414,6 +416,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                 {
                     names[edit] = csString(labelBox->GetText());
                     cmds[edit] = csString(textBox->GetText());
+                    ((pawsDnDButton *)editedButton)->SetAction( textBox->GetText() );
                     if( iconDisplay->GetMaskingImage()!=NULL )
                     {
                         icon[edit] = csString( iconDisplay->GetMaskingImage()->GetName());

@@ -476,10 +476,18 @@ public:
     void AddChild( pawsWidget* widget );
     
     /**
+     * Add a child widget to this widget at a specified position.
+     *
+     * This widget is then responsible for deleting this child.
+     *
+     * @param widget The child to add.
+     */
+    void AddChild( size_t Index, pawsWidget* widget );
+    
+    /**
      * Removes the widget from list of children and destructs it.
      *
-     * @param widget The child to delete.
-     */
+     * @param widget The child to delete.     */
     virtual void DeleteChild( pawsWidget* widget );
     
     /**
