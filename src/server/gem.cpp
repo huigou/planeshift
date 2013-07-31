@@ -4368,18 +4368,12 @@ void gemActor::AddActiveSpell(ActiveSpell *asp)
     csString   imageName;
     if( !lname )
     {
-printf( "gemActor::AddActiveSpell name invalid\n" );
-//        return;
-        //lname = csString();
-        //lname = null;
     }
     else if( lname )
     {
-        psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(asp->Name());
-        csString   imageName;
+        psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(lname);
         if( !lspell )
         {
-printf( "gemActor::AddActiveSpell psSpell invalid\n" );
             imageName = csString();
         }
         else
@@ -4387,13 +4381,11 @@ printf( "gemActor::AddActiveSpell psSpell invalid\n" );
             imageName = lspell->GetImage();
             if( !imageName )
             {
-printf( "gemActor::AddActiveSpell image invalid\n" );
                 imageName = csString();
             }
         }
     }
 
-    //psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Name(), imageName );
     psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), lname, imageName );
     outgoing.SendMessage();
 }
@@ -4402,7 +4394,6 @@ bool gemActor::RemoveActiveSpell(ActiveSpell *asp)
 {
     if (activeSpells.Delete(asp))
     {
-//        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name());
         psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name(), csString() );
         outgoing.SendMessage();
         return true;
