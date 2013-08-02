@@ -8,7 +8,7 @@
         <bgimage resource="Scaling Widget Background" />
 
          <widget name="InputText" factory="pawsEditTextBox" alwaysontop="yes">
-            <frame x="50" y="125" width="445" height="25" border="no" />
+            <frame x="65" y="125" width="430" height="25" border="no" />
         <attachpoints>
                 <attach point="ATTACH_RIGHT" />
                 <attach point="ATTACH_BOTTOM" />
@@ -29,7 +29,7 @@
 
 
        <widget name="ButtonsBackground" factory="pawsWidget">
-                <frame x="0" y="0" width="50" height="268" border="no" />
+                <frame x="0" y="0" width="60" height="268" border="no" />
         <bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_TOP" />
@@ -42,7 +42,7 @@
 
 
                 <widget name="Main Button" factory="pawsButton" toggle="yes" id="1000" tooltip="Main" shadows="yes" style="Standard Tab">
-                    <frame x="0" y="0" width="50" height="25" border="no" />
+                    <frame x="0" y="0" width="60" height="25" border="no" />
                     <label text="Main"/>
                     <attachpoints>
                         <attach point="ATTACH_TOP" />
@@ -52,7 +52,7 @@
                 </widget>
                 <widget name="Chat Button" factory="pawsButton" toggle="yes" id="1008" tooltip="Chat" shadows="yes" style="Standard Tab">
                     <label text="Channels"/>
-                    <frame x="0" y="25" width="50" height="25" border="no"/>
+                    <frame x="0" y="25" width="60" height="25" border="no"/>
                     <attachpoints>
                         <attach point="ATTACH_TOP" />
                         <attach point="ATTACH_LEFT" />
@@ -60,7 +60,7 @@
 
                 </widget>
                 <widget name="NPC Button" factory="pawsButton" toggle="yes" id="1002" tooltip="NPC" shadows="yes" style="Standard Tab">
-                    <frame x="0" y="50" width="50" height="25" border="no" />
+                    <frame x="0" y="50" width="60" height="25" border="no" />
                     <label text="NPC"/>
                     <attachpoints>
                         <attach point="ATTACH_TOP" />
@@ -69,7 +69,7 @@
 
                 </widget>
                 <widget name="Tell Button" factory="pawsButton" toggle="yes" id="1003" tooltip="Whisper" shadows="yes" style="Standard Tab">
-                    <frame x="0" y="75" width="50" height="25" border="no" />
+                    <frame x="0" y="75" width="60" height="25" border="no" />
                     <label text="Whisper"/>
                     <attachpoints>
                         <attach point="ATTACH_TOP" />
@@ -78,7 +78,7 @@
 
                 </widget>
                 <widget name="Guild Button" factory="pawsButton" toggle="yes" id="1004" tooltip="Guild" shadows="yes" style="Standard Tab">
-                    <frame x="0" y="100" width="50" height="25" border="no" />
+                    <frame x="0" y="100" width="60" height="25" border="no" />
                     <label text="Guild"/>
                     <attachpoints>
                         <attach point="ATTACH_TOP" />
@@ -87,7 +87,7 @@
 
                 </widget>
                 <widget name="Group Button" factory="pawsButton" toggle="yes" id="1005" tooltip="Group" shadows="yes" style="Standard Tab">
-                    <frame x="0" y="125" width="50" height="25" border="no" />
+                    <frame x="0" y="125" width="60" height="25" border="no" />
                     <label text="Group"/>
                     <attachpoints>
                         <attach point="ATTACH_TOP" />
@@ -96,7 +96,7 @@
 
                 </widget>
                 <widget name="Alliance Button" factory="pawsButton" toggle="yes" id="1009" tooltip="Alliance" shadows="yes" style="Standard Tab">
-                    <frame x="0" y="150" width="50" height="25" border="no" />
+                    <frame x="0" y="150" width="60" height="25" border="no" />
                     <label text="Alliance"/>
                     <attachpoints>
                         <attach point="ATTACH_TOP" />
@@ -105,7 +105,7 @@
 
                 </widget>
                 <widget name="Auction Button" factory="pawsButton" toggle="yes" id="1006" tooltip="Auction" shadows="yes" style="Standard Tab">
-                    <frame x="0" y="175" width="50" height="25" border="no" />
+                    <frame x="0" y="175" width="60" height="25" border="no" />
                     <label text="Auction"/>
                     <attachpoints>
                         <attach point="ATTACH_TOP" />
@@ -115,7 +115,7 @@
                 </widget>
                 <widget name="System Button" factory="pawsButton" toggle="yes" id="1001" tooltip="System" shadows="yes" style="Standard Tab">
                     <label text="System"/>
-                    <frame x="0" y="200" width="50" height="25" border="no" />
+                    <frame x="0" y="200" width="60" height="25" border="no" />
                     <attachpoints>
                         <attach point="ATTACH_TOP" />
                         <attach point="ATTACH_LEFT" />
@@ -124,7 +124,7 @@
                 </widget>
                  <widget name="Help Button" factory="pawsButton" toggle="yes" id="1007" tooltip="Help" shadows="yes" style="Standard Tab">
                     <label text="Help"/>
-                    <frame x="0" y="225" width="50" height="25" border="no" />
+                    <frame x="0" y="225" width="60" height="25" border="no" />
                         <attachpoints>
                         <attach point="ATTACH_TOP" />
                         <attach point="ATTACH_LEFT" />
@@ -135,20 +135,20 @@
 
 
             <widget name="MainText" factory="pawsMessageTextBox" visible="no" id="1100">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
                     <attach point="ATTACH_LEFT" />
                     <attach point="ATTACH_BOTTOM" />
                 </attachpoints>
-                <pawsScrollBar width="15" maxValue="1.0" />
+                <pawsScrollBar width="20" maxValue="1.0" />
         <subscriptions overwrite = "false">
             <subscribe data="subMainText" />
         </subscriptions>
             </widget>
             <widget name="SystemText" factory="pawsMessageTextBox" visible="no" id="1101">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -158,10 +158,10 @@
         <subscriptions overwrite = "false">
             <subscribe data="subSystemText" />
         </subscriptions>
-            <pawsScrollBar width="15"  maxValue="1.0" />
+            <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
             <widget name="NpcText" factory="pawsMessageTextBox" visible="no" id="1102">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -171,10 +171,10 @@
         <subscriptions overwrite = "false">
             <subscribe data="subNPCText" />
         </subscriptions>
-            <pawsScrollBar width="15"  maxValue="1.0" />
+            <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
             <widget name="TellText" factory="pawsMessageTextBox" visible="no" id="1103">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -184,10 +184,10 @@
         <subscriptions overwrite = "false">
             <subscribe data="subTellText" />
         </subscriptions>
-            <pawsScrollBar width="15"  maxValue="1.0" />
+            <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
             <widget name="GuildText" factory="pawsMessageTextBox" visible="no" id="1104">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -197,10 +197,10 @@
         <subscriptions overwrite = "false">
             <subscribe data="subGuildText" />
         </subscriptions>
-            <pawsScrollBar width="15"  maxValue="1.0" />
+            <pawsScrollBar width="20"  maxValue="1.0" />
            </widget>
             <widget name="AllianceText" factory="pawsMessageTextBox" visible="no" id="1109">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -210,10 +210,10 @@
         <subscriptions overwrite = "false">
             <subscribe data="subAllianceText" />
         </subscriptions>
-            <pawsScrollBar width="15"  maxValue="1.0" />
+            <pawsScrollBar width="20"  maxValue="1.0" />
            </widget>
             <widget name="GroupText" factory="pawsMessageTextBox" visible="no" id="1105">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -223,10 +223,10 @@
         <subscriptions overwrite = "false">
             <subscribe data="subGroupText" />
         </subscriptions>
-            <pawsScrollBar width="15"  maxValue="1.0" />
+            <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
             <widget name="AuctionText" factory="pawsMessageTextBox" visible="no" id="1106">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -236,11 +236,11 @@
         <subscriptions overwrite = "false">
             <subscribe data="subAuctionsText" />
         </subscriptions>
-            <pawsScrollBar width="15"  maxValue="1.0" />
+            <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
 
             <widget name="ChannelsText" factory="pawsMessageTextBox" visible="no" id="1108">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -250,11 +250,11 @@
         <subscriptions overwrite = "false">
                 <subscribe data="subChannelsText"/>
         </subscriptions>
-            <pawsScrollBar width="15"  maxValue="1.0" />
+            <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
 
             <widget name="HelpText" factory="pawsMessageTextBox" visible="no" id="1107">
-                <frame x="55" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="125" border="no" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -264,7 +264,7 @@
         <subscriptions overwrite = "false">
             <subscribe data="subHelpText" />
         </subscriptions>
-            <pawsScrollBar width="15" maxValue="1.0" />
+            <pawsScrollBar width="20" maxValue="1.0" />
             </widget>
         </widget>
 
