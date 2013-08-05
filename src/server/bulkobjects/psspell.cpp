@@ -196,6 +196,7 @@ psSpellCost psSpell::ManaCost(psCharacter *caster, float kFactor) const
     env.Define("Realm",       realm);
     env.Define("RelatedStat", caster->GetSkillRank(way->related_stat_skill).Current());
     env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
+    env.Define("Caster", caster);
     script->Evaluate(&env);
 
     MathVar *manaCost = env.Lookup("ManaCost");
@@ -439,7 +440,7 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
     evt->QueueEvent();
 }
 
-void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power, Client* client) const
+void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power, Client* client, csTicks castingDuration) const
 {
     const float chanceOfSuccess = ChanceOfCastSuccess(caster->GetCharacterData(), kFactor);
     float roll = psserver->GetRandom() * 100.f;
@@ -605,6 +606,8 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         {
             MathEnvironment env;
             env.Define("Realm", realm);
+            env.Define("Spell", const_cast<psSpell*>(this));
+            env.Define("CastDuration", (float)castingDuration);
             env.Define("MaxRealm", caster->GetCharacterData()->GetMaxAllowedRealm(way->skill));
             script->Evaluate(&env);
 
@@ -724,6 +727,7 @@ psSpellCastGameEvent::psSpellCastGameEvent(const psSpell* spell,
     this->kFactor    = kFactor;
     this->powerLevel = powerLevel;
     this->client     = client;
+    this->duration = castingDuration;
 
     target->RegisterCallback(this);
     caster->RegisterCallback(this);
@@ -799,7 +803,7 @@ void psSpellCastGameEvent::Trigger()
     // Make sure caster is alive...there might be UDP jitter problems (PS#2728).
     if (caster->IsAlive())
     {
-        spell->Affect(caster, target, max_range, kFactor, powerLevel, client);
+        spell->Affect(caster, target, max_range, kFactor, powerLevel, client, duration);
     }
 
     // Spell casting complete, we are now in PEACE mode again.
