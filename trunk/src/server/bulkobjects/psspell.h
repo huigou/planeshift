@@ -109,7 +109,10 @@ class psSpell : public iScriptableVar
      */
     void Cast(gemActor *caster, float kFactor, Client *client) const;
     
-    void Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power, Client* client) const;
+    /*
+     * @param castingDuration The time it was waited before the spell could affect targets.
+     */
+    void Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power, Client* client, csTicks castingDuration) const;
 
     int GetRealm() { return realm; }
     psWay* GetWay() { return way; }
