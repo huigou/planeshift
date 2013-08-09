@@ -315,14 +315,15 @@ psEffectObjKeyFrameGroup::~psEffectObjKeyFrameGroup()
     keyFrames.DeleteAll();
 }
 
-psEffectObjKeyFrameGroup* psEffectObjKeyFrameGroup::Clone() const
+csPtr<psEffectObjKeyFrameGroup> psEffectObjKeyFrameGroup::Clone() const    //ticket 6051
 {
-    psEffectObjKeyFrameGroup* clone = new psEffectObjKeyFrameGroup();
+    csRef<psEffectObjKeyFrameGroup> clone;                                 //ticket 6051
+    clone.AttachNew(new psEffectObjKeyFrameGroup());                       //ticket 6051
     for (size_t i = 0; i < keyFrames.GetSize(); i++)
     {
         clone->Push(new psEffectObjKeyFrame(keyFrames[i]));
     }
-    return clone;
+    return csPtr<psEffectObjKeyFrameGroup> (clone);                        //ticket 6051
 }
 
 bool psEffectObjKeyFrameGroup::SetFrameParamScalings(const float* scale)
