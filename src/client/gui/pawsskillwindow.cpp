@@ -61,6 +61,8 @@ pawsSkillWindow::pawsSkillWindow()
     skillString.Clear();
     skillDescriptions.DeleteAll();
     filter = false;
+    train = false;
+    foundSelected = false;
 
     hitpointsMax = 0;
     manaMax = 0;
