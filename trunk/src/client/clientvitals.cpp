@@ -40,6 +40,11 @@ psClientVitals::psClientVitals()
 {
     counter = 0;
     counterSet = false;
+
+    for(int i = 0; i < VITAL_COUNT; i++) //ticket 6048
+    {
+        vitals[i].drRate = 0;
+    }
 }
 
 void psClientVitals::HandleDRData(psStatDRMessage& msg, const char *labelname )

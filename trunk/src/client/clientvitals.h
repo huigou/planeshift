@@ -37,6 +37,8 @@ class psStatDRMessage;
 /// A character vital (such as HP or Mana) - client side
 struct Vital
 {
+    Vital() : value(0.0), drRate(0.0) {}
+
     float value;
     float drRate;
 };
