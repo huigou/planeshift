@@ -84,6 +84,10 @@ public:
     int  GetButtonHolderHeight();
     int  GetTotalButtonWidth();
     int  GetOrientation();
+    int  GetEditMode()
+    {
+        return EditMode;
+    }
 
     virtual bool Setup(iDocumentNode* node);
     bool SelfPopulate(iDocumentNode* node);
@@ -106,6 +110,13 @@ public:
     void setScrollProportion( float prop );
     void SetOrientation( int Orientation );
     int  AutoResize();
+    void SetEditMode(int val)
+    {
+        EditMode = val;
+    }
+
+
+
 
 protected:
 
@@ -186,6 +197,7 @@ protected:
     pawsWidget*            callbackWidget;
 
     int                    Orientation;
+    int                    EditMode;
 
 };
 

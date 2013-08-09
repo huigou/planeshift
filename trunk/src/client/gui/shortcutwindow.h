@@ -173,10 +173,12 @@ private:
 
     csArray<csString>    allIcons;
     csArray<csString>    allNames; //not populated at this time...
+    csArray<csString>    stubArray;
 
     size_t            position;
     size_t            buttonWidth;
     float             scrollSize;
+    int               EditMode;
 };
 
 

@@ -59,8 +59,15 @@ pawsShortcutWindow::pawsShortcutWindow() :
     shortcutText(NULL),
     textBox(NULL),
     labelBox(NULL),
+    title(NULL),
+    iconPalette(NULL),
+    iconDisplay(NULL),
+    iconDisplayID(0),
+    editedButton(NULL),
+    position(0),
     buttonWidth(0),                     //added 20130726 - ticket 6087
-    scrollSize(0)                      //added 20130726 - ticket 6087
+    scrollSize(0),                      //added 20130726 - ticket 6087
+    EditMode(0)                     // 0 = "drag", 1 = "all"
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
     xml = psengine->GetXMLParser ();
@@ -229,6 +236,13 @@ bool pawsShortcutWindow::Setup(iDocumentNode *node)
                 {
                     scrollSize=subnode->GetValueAsFloat();
                 }
+                else if( strcasecmp( "editMode", subnode->GetName() )==0 )
+                {
+                    if( strcasecmp( "all", subnode->GetValue() )==0 )
+                    {
+                        EditMode=1;
+                    }
+                }
             }
             break;
         }
@@ -273,6 +287,7 @@ bool pawsShortcutWindow::PostSetup()
 
     MenuBar      = (pawsScrollMenu*)FindWidget( "MenuBar" );
     MenuBar->setButtonWidth( buttonWidth );
+    MenuBar->SetEditMode( EditMode );
     if( scrollSize>1 )
     {
         MenuBar->setScrollIncrement( (int)scrollSize );
@@ -307,11 +322,13 @@ bool pawsShortcutWindow::OnMouseDown( int button, int modifiers, int x, int y )
 {
     if ( button == csmbWheelUp )
     {
-	    return true;
+        MenuBar->OnMouseDown( button, modifiers, x, y );
+	return true;
     }
     else if ( button == csmbWheelDown )
     {
-	    return true;
+        MenuBar->OnMouseDown( button, modifiers, x, y );
+	return true;
     }
     else
     {
@@ -342,25 +359,48 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
 
     if (!subWidget)
         subWidget = PawsManager::GetSingleton().FindWidget("ShortcutEdit");
+    if (!subWidget )
+    {
+        printf( "pawsShortcutWindow::OnButtonReleased unable to read ShortcutEdit widget!!\n");
+        return false;
+    }
 
     if (!labelBox)
         labelBox = dynamic_cast <pawsEditTextBox*> (subWidget->FindWidget("LabelBox"));
+    if (!labelBox )
+    {
+        printf( "pawsShortcutWindow::OnButtonReleased unable to read labelBox widget!!\n");
+        return false;
+    }
 
     if (!textBox)
-        textBox = dynamic_cast <pawsMultilineEditTextBox*> (subWidget->FindWidget("CommandBox"));
+         textBox = dynamic_cast <pawsMultilineEditTextBox*> (subWidget->FindWidget("CommandBox"));
+    if (!textBox )
+    {
+        printf( "pawsShortcutWindow::OnButtonReleased unable to read textBox widget!!\n");
+        return false;
+    }
 
     if (!shortcutText)
-        shortcutText = dynamic_cast <pawsTextBox*> (subWidget->FindWidget("ShortcutText"));
+         shortcutText = dynamic_cast <pawsTextBox*> (subWidget->FindWidget("ShortcutText"));
+    if (!shortcutText )
+    {
+        printf( "pawsShortcutWindow::OnButtonReleased unable to read shortcutText widget!!\n");
+        return false;
+    }
 
     if (!iconDisplay)
-        iconDisplay = dynamic_cast <pawsDnDButton*> (subWidget->FindWidget("IconDisplay"));
+         iconDisplay = dynamic_cast <pawsDnDButton*> (subWidget->FindWidget("IconDisplay"));
+    if (!iconDisplay )
+    {
+        printf( "pawsShortcutWindow::OnButtonReleased unable to read iconDisplay widget!!\n");
+        return false;
+    }
 
     if (!iconPalette)
-    {
-        //for the icon Palette we don't want any names or actions, so we'll pass an empty stub array
-        csArray<csString>	stubArray;
         iconPalette = dynamic_cast <pawsScrollMenu*> (subWidget->FindWidget("iconPalette"));
-
+    if (iconPalette)
+    {
         //get a ptr to the txture manager so we can look at the elementList, which stores the icon names.
         pawsTextureManager *tm = PawsManager::GetSingleton().GetTextureManager();
         int i = tm->elementList.GetSize();
@@ -383,7 +423,8 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     }
 
     // These should not be NULL
-    CS_ASSERT(subWidget); CS_ASSERT(labelBox); CS_ASSERT(textBox); CS_ASSERT(shortcutText);
+    CS_ASSERT(subWidget); CS_ASSERT(labelBox); CS_ASSERT(textBox); CS_ASSERT(shortcutText); CS_ASSERT(iconDisplay); CS_ASSERT(iconPalette);
+
 
     switch ( widget->GetID() )
     {

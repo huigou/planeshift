@@ -785,9 +785,7 @@ bool PawsManager::HandleMouseMove(csMouseEventData &data)
                 // Only fade in/out topmost parent
                 if(widgetFade != mainWidget)
                 {
-                    pawsWidget* mainParent = widgetFade->GetParent();
-
-                    //for(pawsWidget* mainParent = widgetFade->GetParent(); mainParent != mainWidget; mainParent=widgetFade->GetParent())
+                    for(pawsWidget* mainParent = widgetFade->GetParent(); mainParent != mainWidget; mainParent=widgetFade->GetParent())
                     {
                         widgetFade = mainParent;
                     }

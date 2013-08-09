@@ -51,7 +51,8 @@ pawsDnDButton::pawsDnDButton() :
     Callback(NULL),
     ImageNameCallback(NULL),
     NameCallback(NULL),
-    ActionCallback(NULL)
+    ActionCallback(NULL),
+    editMode(0)
 {
     down = false;
     notify = NULL;
@@ -397,7 +398,7 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
     else
     {
         ClearMaskingImage();
-        ImageNameCallback=NULL;
+        //ImageNameCallback=NULL;
     }
     if(Name )
     {
@@ -422,7 +423,7 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
         else
         {
             SetName("");
-            NameCallback=NULL;
+            //NameCallback=NULL;
         }
     }
     if( toolTip )
@@ -440,7 +441,7 @@ bool pawsDnDButton::PlaceItem(const char* imageName, const char* Name, const cha
     else
     {
         action=NULL;
-        ActionCallback=NULL;
+        //ActionCallback=NULL;
     }
     if( !validMove )
     {
