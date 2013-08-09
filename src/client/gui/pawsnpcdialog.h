@@ -173,7 +173,7 @@ private:
     bool enabledChatBubbles;       ///< Stores the state of chat bubbles.
     bool clickedOnResponseBubble;  ///< flag when player clicks on the response bubble
     bool gotNewMenu;               ///< keeps track of the incoming new menu message
-    int timeDelay;                 ///< calculates the time needed to read the last npc say
+    csTicks timeDelay;                 ///< calculates the time needed to read the last npc say
     int questIDFree;               ///< Keeps the value of the quest if the free text question was triggered.
 
     pawsListBox* responseList;
