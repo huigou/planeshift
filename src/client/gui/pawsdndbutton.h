@@ -186,12 +186,13 @@ public:
 
 
 protected:
-    psSlotManager*      mgr;
-    int                dragDrop;
-    int                dragDropInProgress;
-    csString            action;
-    int                 containerID;
-    int                 indexBase;
+    psSlotManager*       mgr;
+    int                  dragDrop;
+    int                  dragDropInProgress;
+    csString             action;
+    int                  containerID;
+    int                  indexBase;
+    int                  editMode;
     pawsWidget*          Callback;
     csArray<csString>*   ImageNameCallback;
     csArray<csString>*   NameCallback;

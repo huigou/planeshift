@@ -39,10 +39,33 @@
 //////////////////////////////////////////////////////////////////////
 
 pawsScrollMenu::pawsScrollMenu() :
-    enabled(true),
-    Orientation(ScrollMenuOptionHORIZONTAL),
+    notify(NULL),
+    toggle(0),
+    enabled(1),
+    upTextOffsetX(0),
+    upTextOffsetY(0),
+    downTextOffsetX(0),
+    downTextOffsetY(0),
+    changeOnMouseOver(0),
+    flash(0),
     buttonWidth( 0 ),
-    buttonHeight( 0 )
+    buttonHeight( 0 ),
+    scrollIncrement(1.0),
+    scrollProportion(0.0),
+    buttonWidthDynamic(false),
+    ButtonHolder(NULL),
+    buttonLocation(0),
+    LeftScrollButton(NULL),
+    LeftScrollMode(0),
+    LeftScrollVisible(true),
+    RightScrollButton(NULL),
+    RightScrollMode(0),
+    RightScrollVisible(true),
+    EditLockButton(NULL),
+    EditLockMode(0),               //enabled, disabled, (dynamic==>enabled)
+    EditLock(true),                 //true = editing prevented, false = editing allowed
+    callbackWidget(NULL),
+    Orientation(ScrollMenuOptionHORIZONTAL)
 {
 }
 
