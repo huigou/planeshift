@@ -76,7 +76,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
         }
         else if(ev.Name == MouseDown)
         {
-            if(button == 0) // Left
+            if(button == csmbLeft) // Left
             {
                 if(isPlacing)
                 {
@@ -89,7 +89,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
                     PlaceItem();
                 }
             }
-            else if(button == 1) // right
+            else if(button == csmbRight) // right
             {
                 if(!isRotating)
                 {
@@ -113,7 +113,7 @@ bool psSlotManager::HandleEvent( iEvent& ev )
         }
         else if(ev.Name == MouseUp)
         {
-            if(button == 1) // right
+            if(button == csmbRight) // right
             {
                 if(isRotating)
                 {
@@ -370,8 +370,8 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
     }
     else
     {
-        //do nothing if it's the same slot and we aren't dragging a split item
-        if(slot == draggingSlot.slot && !draggingSlot.split)
+        //do nothing if it's the same slot 
+        if(slot == draggingSlot.slot )
         {
             CancelDrag();
             return;
@@ -516,6 +516,7 @@ void psSlotManager::Handle( pawsDnDButton* target )
     }
     else //dragging from a Slot
     {
+        CancelDrag();
         if( !draggingSlot.Action.IsEmpty() )
         {
             target->PlaceItem( ((pawsSlot *)draggingSlot.slot)->ImageName(), draggingSlot.toolTip, draggingSlot.toolTip, draggingSlot.Action );
@@ -526,7 +527,6 @@ void psSlotManager::Handle( pawsDnDButton* target )
             target->PlaceItem( ((pawsSlot *)draggingSlot.slot)->ImageName(), draggingSlot.toolTip, draggingSlot.toolTip, t );
             draggingSlot.stackCount--;
         }
-        CancelDrag();
     }
 
 }
