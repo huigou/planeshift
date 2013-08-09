@@ -61,11 +61,10 @@ public:
     /**
      * Destructor.
      */
-    ~SoundSectorManager();
+    virtual ~SoundSectorManager();
 
     /**
-     * Load all sound sectors defined in XML files stored in the areas folder. Its
-     * path is defined in the option Planeshift.Sound.AreasPath of the configuration
+     * Load all sound sectors defined in XML files stored in the areas folder. Its     * path is defined in the option Planeshift.Sound.AreasPath of the configuration
      * file.
      * @param objectReg the object registry.
      * @return true if sectors could be loaded, false otherwise.
