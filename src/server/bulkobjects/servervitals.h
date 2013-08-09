@@ -64,6 +64,8 @@ protected:
 /// A character vital (such as HP or Mana) - server side.
 struct Vital
 {
+    Vital() : value(0.0) {}
+
     float value;
     VitalBuffable drRate; ///< Amount added to this vital each second
     VitalBuffable max;
