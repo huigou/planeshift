@@ -175,7 +175,7 @@ public:
     /**
      * Clones the key frame group object.
      */
-    psEffectObjKeyFrameGroup* Clone() const;
+    csPtr<psEffectObjKeyFrameGroup> Clone() const;    //ticket 6051
 
     /**
      * Adjust each parameter in each frame that have the use_scale 
