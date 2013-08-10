@@ -301,7 +301,6 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
     }
 
     if(button==csmbLeft && (dragDrop || psengine->GetSlotManager()->IsDragging()))
-    //if( psengine->GetSlotManager()->IsDragging() )
     {
         if(!GetDnDLock())
         {

@@ -205,15 +205,18 @@ void pawsScrollMenu::OnResize()
 
         if( screenFrame.Width() > screenFrame.Height() ) //horizontal case
         {
-            leftEdge =  (LeftScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2 + BUTTON_PADDING:0) \
-                        + (EditLockMode>0?buttonHeight/2:0) +BUTTON_PADDING;
-            edgeSpace = leftEdge + (RightScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2 + BUTTON_PADDING:0);
+            //leftEdge =  (LeftScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2 + BUTTON_PADDING:0) \
+            //            + (EditLockMode>0?buttonHeight/2:0) +BUTTON_PADDING;
+            //edgeSpace = leftEdge + (RightScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2 + BUTTON_PADDING:0);
+            leftEdge =  (LeftScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0) \
+                        + (EditLockMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0);
+            edgeSpace = leftEdge + (RightScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0);
             topSpace = 0;
         }
         else //vertical case
         {
             edgeSpace = 0;
-            topSpace  = (LeftScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2:0)+(RightScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2:0);
+            topSpace  = (LeftScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0)+(RightScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0);
         }
 
         ButtonHolder->SetRelativeFrame(leftEdge, topSpace, GetScreenFrame().Width()-edgeSpace,  GetScreenFrame().Height()-2*topSpace );
@@ -293,13 +296,10 @@ void pawsScrollMenu::LayoutButtons()
             //perform layout
             buttonSize = CalcButtonSize((pawsDnDButton*)Buttons[i]);
 
-            if( buttonCol+buttonSize > ButtonHolder->GetScreenFrame().Width())
+            if( buttonCol+buttonSize > ButtonHolder->GetScreenFrame().Width() && i>0 )
             {
-                //////if((buttonRow)*buttonHeight < ButtonHolder->GetScreenFrame().Height())  //there's enough vertical space for another row of buttons ...
-                {
-                    buttonCol = BUTTON_PADDING;
-                    buttonRow++;
-                }
+                buttonCol = BUTTON_PADDING;
+                buttonRow++;
             }
             Buttons[i]->SetRelativeFrame(buttonCol, 4+((buttonRow-1)*buttonHeight), buttonSize-8, buttonHeight-8);
             buttonCol += buttonSize;
@@ -792,6 +792,7 @@ void pawsScrollMenu::SetEditLock(int mode)
     if( mode )
     {
         EditLockMode=true;
+        EditLockButton->Show();
     }
     else
     {
@@ -800,9 +801,9 @@ void pawsScrollMenu::SetEditLock(int mode)
         {
            ((pawsDnDButton*)Buttons[i])->SetDnDLock(false);
         }
+        EditLockButton->Hide();
     }
 }
-
 
 void pawsScrollMenu::SetOrientation(int Orientation)
 {
