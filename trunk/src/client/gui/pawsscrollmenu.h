@@ -88,6 +88,10 @@ public:
     {
         return EditMode;
     }
+    int GetEditLock()
+    {
+        return EditLockMode; 
+    }
 
     virtual bool Setup(iDocumentNode* node);
     bool SelfPopulate(iDocumentNode* node);

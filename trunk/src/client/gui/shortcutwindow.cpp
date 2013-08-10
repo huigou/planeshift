@@ -67,7 +67,7 @@ pawsShortcutWindow::pawsShortcutWindow() :
     position(0),
     buttonWidth(0),                     //added 20130726 - ticket 6087
     scrollSize(0),                      //added 20130726 - ticket 6087
-    EditMode(0)                     // 0 = "drag", 1 = "all"
+    EditMode(0)                     // 0 = edit lock prevents drag, 1 = edit lock prevent all editing
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
     xml = psengine->GetXMLParser ();
@@ -571,7 +571,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
             return true;
         }
 
-        if( !(MenuBar->IsEditable()) )
+        if( !(MenuBar->IsEditable()) && MenuBar->GetEditMode()==1 )
         {
             return false;
         }

@@ -92,9 +92,11 @@
 
             scrollSize  - may be set to a number between 0 and 1 to scroll that portion of the menu width (eg. 0.5 = scroll 1/2 of the visible icons), or a number > 1 to scroll by that many pixels.
 
+            editMode    - set to "all" to prevent drag-n-drop as well as rt-click editing when the EditLock is set. default is to allow rt-click editing even when the EditLock is set, to maintain backward compatibility.
+
         <widget name="MenuBar" factory="pawsScrollMenu" buttonWidth="128" scrollSize="0.75" >
 -->
-        <widget name="MenuBar" factory="pawsScrollMenu" >
+        <widget name="MenuBar" factory="pawsScrollMenu">
             <frame x="0" y="40" height="48" width="520" resizeable="yes" border="no" />
             <minframe width="150" height="48" />
             <attachpoints>
