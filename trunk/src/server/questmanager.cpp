@@ -641,7 +641,7 @@ csString QuestManager::ParseRequireCommand(csString& block, bool& result, psQues
             qualityLevels.SplitString(quality, "-", csStringArray::delimSplitEach);
         }
         
-        //this manages the category argument Require equipped/possesed category xxxx
+        //this manages the category argument Require equipped/possessed category xxxx
         if(subcommand.StartsWith("category",true))
         {
             csString categoryName = subcommand.Slice(9, subcommand.Length()); //no need to trim done above
