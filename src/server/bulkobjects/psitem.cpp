@@ -2303,8 +2303,11 @@ double psItem::CalcFunction(MathEnvironment* env, const char* functionName, cons
         modifierIds[(unsigned int)(params[0])] = params[1];
         UpdateModifiers();
 
-        // we set the item as identifiable
-        SetIsIdentifiable(true);
+        // we set the item as identifiable only if there is a special modifier
+        if(params[1]>0)
+        {
+            SetIsIdentifiable(true);
+        }
 
         return (double) 1.0f;
     }
@@ -3147,7 +3150,7 @@ bool psItem::SendContainerContents(Client* client, int containerID)
     // If item is looked send standard item description unless GM
     if(GetIsLocked())
     {
-        if (client->GetSecurityLevel() < GM_LEVEL_2)
+        if(client->GetSecurityLevel() < GM_LEVEL_2)
         {
             itemInfo += "This item is locked\n\n";
         }
@@ -3309,12 +3312,12 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
         {
             csString        query;
 
-            query.Format("select * from skills where skill_id=%d", priSkill );
+            query.Format("select * from skills where skill_id=%d", priSkill);
             Result result(db->Select(query));
 
             transString.Append("[[");
-            transString.Append( result[0].GetString( "Name") );
-            transString.Append("]]" );
+            transString.Append(result[0].GetString("Name"));
+            transString.Append("]]");
             transString.Append(craftArray->Get(count)->craftStepDescription);
             continue;
         }
@@ -3324,12 +3327,12 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
         {
             csString        query;
 
-            query.Format("select * from skills where skill_id=%d", secSkill );
+            query.Format("select * from skills where skill_id=%d", secSkill);
             Result result(db->Select(query));
 
             transString.Append("With higher ");
-            transString.Append( result[0].GetString( "Name") );
-            transString.Append(" skill you could: " );
+            transString.Append(result[0].GetString("Name"));
+            transString.Append(" skill you could: ");
             transString.Append(craftArray->Get(count)->craftStepDescription);
             continue;
         }
@@ -3498,7 +3501,7 @@ bool psItem::SendActionContents(Client* client, psActionLocation* action)
         desc = description.GetData();
     }
 
-    if (GetIsContainer())
+    if(GetIsContainer())
     {
         psViewContainerDescription outgoing(client->GetClientNum(),
                                             name,
