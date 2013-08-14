@@ -73,6 +73,7 @@ pawsShortcutWindow::pawsShortcutWindow() :
     xml = psengine->GetXMLParser ();
 
     LoadCommandsFile();
+    psengine->GetCharControl()->LoadKeyFile();
 
     cmdsource = psengine->GetCmdHandler();
     chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
@@ -119,87 +120,8 @@ void pawsShortcutWindow::LoadCommandsFile()
             LoadCommands( "/planeshift/data/options/shortcutcommands_def.xml" );
         }
 
-        //if there's an old-style quickbar config file, load it
-        if(vfs->Exists("/planeshift/userdata/options/bartender.xml"))
-        {
-            LoadQuickbarFile();
-        }
-
         SaveCommands();
     }
-}
-
-
-void pawsShortcutWindow::LoadQuickbarFile()
-{
-    //prepares to load the file
-    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iDocumentSystem> xml = psengine->GetXMLParser ();
-    csRef<iDocumentNode> root, bartenderNode;
-    csRef<iDocument> doc = xml->CreateDocument();
-    csRef<iDataBuffer> buf (vfs->ReadFile ("/planeshift/userdata/options/bartender.xml"));
-    //if the file is empty or not opeanable we are done. We return true because it's not a failure.
-    if (!buf || !buf->GetSize ())
-    {
-        return ;
-    }
-    const char* error = doc->Parse( buf );
-    if ( error )
-    {
-        Error2("Error loading bartender entries: %s\n", error);
-        return ;
-    }
-
-    root = doc->GetRoot();
-    if (root == NULL)
-    {
-        Error2("%s has no XML root", "/planeshift/userdata/options/bartender.xml");
-    }
-    bartenderNode = root->GetNode("bartender");
-    if (bartenderNode == NULL)
-    {
-        Error2("%s has no <bartender> tag", "/planeshift/userdata/options/bartender.xml");
-    }
-
-    //iterate all the nodes starting with slot in order to find the ones
-    //to associate to the slots
-    csRef<iDocumentNodeIterator> slotNodes = bartenderNode->GetNodes("slot");
-    while (slotNodes->HasNext())
-    {
-        csRef<iDocumentNode> slotNode = slotNodes->Next();
-
-        //get the data needed for the widget to be setup
-        csString slotName = slotNode->GetAttributeValue("name");
-        if( slotName.IsEmpty() )
-        {
-            names.Insert( 0, csString("") );
-        }
-        else
-        {
-            names.Insert(0, slotName);
-        }
-
-        csString slotImage = slotNode->GetAttributeValue("image");
-        if( slotImage.Length()>0 ) // "(null)" == 6; any path we can use will be more...this is a cludge.
-        {
-            icon.Insert(0,slotImage);
-        }
-        else
-        {
-            icon.Insert( 0, csString("") );
-        }
-
-        csString slotAction = slotNode->GetAttributeValue("action");
-        if( slotAction.IsEmpty() )
-        {
-            cmds.Insert( 0, csString("") );
-        }
-        else
-        {
-            cmds.Insert(0, slotAction);
-        }
-    }
-    return ;
 }
 
 void pawsShortcutWindow::HandleMessage( MsgEntry* me )
@@ -361,7 +283,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         subWidget = PawsManager::GetSingleton().FindWidget("ShortcutEdit");
     if (!subWidget )
     {
-        printf( "pawsShortcutWindow::OnButtonReleased unable to read ShortcutEdit widget!!\n");
+        Error1( "pawsShortcutWindow::OnButtonReleased unable to read ShortcutEdit widget!!\n");
         return false;
     }
 
@@ -369,7 +291,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         labelBox = dynamic_cast <pawsEditTextBox*> (subWidget->FindWidget("LabelBox"));
     if (!labelBox )
     {
-        printf( "pawsShortcutWindow::OnButtonReleased unable to read labelBox widget!!\n");
+        Error1( "pawsShortcutWindow::OnButtonReleased unable to read labelBox widget!!\n");
         return false;
     }
 
@@ -377,7 +299,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
          textBox = dynamic_cast <pawsMultilineEditTextBox*> (subWidget->FindWidget("CommandBox"));
     if (!textBox )
     {
-        printf( "pawsShortcutWindow::OnButtonReleased unable to read textBox widget!!\n");
+        Error1( "pawsShortcutWindow::OnButtonReleased unable to read textBox widget!!\n");
         return false;
     }
 
@@ -385,7 +307,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
          shortcutText = dynamic_cast <pawsTextBox*> (subWidget->FindWidget("ShortcutText"));
     if (!shortcutText )
     {
-        printf( "pawsShortcutWindow::OnButtonReleased unable to read shortcutText widget!!\n");
+        Error1( "pawsShortcutWindow::OnButtonReleased unable to read shortcutText widget!!\n");
         return false;
     }
 
@@ -393,7 +315,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
          iconDisplay = dynamic_cast <pawsDnDButton*> (subWidget->FindWidget("IconDisplay"));
     if (!iconDisplay )
     {
-        printf( "pawsShortcutWindow::OnButtonReleased unable to read iconDisplay widget!!\n");
+        Error1( "pawsShortcutWindow::OnButtonReleased unable to read iconDisplay widget!!\n");
         return false;
     }
 
@@ -420,6 +342,11 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         iconPalette->OnResize();
 
         iconDisplayID=-1;
+    }
+    else
+    {
+        Error1( "pawsShortcutWindow::OnButtonReleased unable to load iconPalette widget!!\n");
+        return false;
     }
 
     // These should not be NULL
@@ -451,8 +378,6 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
             }
             else  //labelBox (ie name) is set
             {
-/******************************************************************************************
-*/
                 if( edit < names.GetSize() )
                 {
                     names[edit] = csString(labelBox->GetText());
@@ -479,8 +404,6 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                 }
                 iconDisplayID = -1;
                 iconDisplay->SetMaskingImage( "" );
-/*
-************************************************************************************/
                 csString t = GetTriggerText( edit );
                 if( t.Length()>0 && edit < names.GetSize() )
                 {
@@ -551,7 +474,6 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         {
             iconDisplayID = widget->GetID();
             iconDisplay->SetMaskingImage(allIcons[iconDisplayID-PALETTE_BUTTON_OFFSET]);
-	    icon[edit] = allIcons[iconDisplayID-PALETTE_BUTTON_OFFSET];
         }
         else
         {
