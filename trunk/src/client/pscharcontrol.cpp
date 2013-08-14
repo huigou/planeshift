@@ -711,8 +711,9 @@ bool psCharController::Initialize()
     // Create the controls
     CreateKeys();
 
-    // Load what the keys are set to
-    if ( !LoadKeys(CUSTOM_CONTROLS_FILE) && !LoadKeys(DEFAULT_CONTROLS_FILE) )
+    // Load what the keys are set to - initially this is the default key set; character specific key mappings deferred
+//    if ( !LoadKeys(CUSTOM_CONTROLS_FILE) && !LoadKeys(DEFAULT_CONTROLS_FILE) )
+    if ( !LoadKeys(DEFAULT_CONTROLS_FILE) )
     {
         Error1("Could not load \"data/options/controls_def.xml\"!");
         return false;
@@ -727,6 +728,42 @@ bool psCharController::Initialize()
     ready = true;
 
     return true;
+}
+
+void psCharController::LoadKeyFile()
+{
+// if there's a new style character-specific file then load it
+   csString CommandFileName,
+             CharName( psengine->GetMainPlayerName() );
+    size_t   spPos = CharName.FindFirst( ' ' );
+
+    if( spPos != (size_t) -1 )
+    { //there is a space in the name
+        CommandFileName = CharName.Slice(0,spPos );
+    }
+    else
+    {
+        CommandFileName = CharName;
+    }
+
+    CommandFileName.Insert( 0, "/planeshift/userdata/options/controls_" );
+    CommandFileName.Append( ".xml" );
+    if( psengine->GetVFS()->Exists( CommandFileName.GetData() ))
+    {
+        LoadKeys(CommandFileName.GetData());
+    }
+    else 
+    {
+        if( psengine->GetVFS()->Exists(CUSTOM_CONTROLS_FILE))
+        {
+            LoadKeys(CUSTOM_CONTROLS_FILE);
+        }
+        else
+        {
+            LoadKeys(DEFAULT_CONTROLS_FILE);
+        }
+        SaveKeys();
+    }
 }
 
 void psCharController::CreateKeys()
@@ -915,11 +952,25 @@ void psCharController::SaveKeys()
 
     xml += "</controls>\n";
 
-    psengine->GetVFS()->WriteFile( CUSTOM_CONTROLS_FILE, xml.GetData(), xml.Length() );
+   csString CommandFileName,
+             CharName( psengine->GetMainPlayerName() );
+    size_t   spPos = CharName.FindFirst( ' ' );
+
+    if( spPos != (size_t) -1 )
+    { //there is a space in the name
+        CommandFileName = CharName.Slice(0,spPos );
+    }
+    else
+    {
+        CommandFileName = CharName;
+    }
+
+    CommandFileName.Insert( 0, "/planeshift/userdata/options/controls_" );
+    CommandFileName.Append( ".xml" );
+    psengine->GetVFS()->WriteFile( CommandFileName.GetData(), xml.GetData(), xml.Length() );
 }
 
-const psControl* psCharController::GetTrigger( const char* name )
-{
+const psControl* psCharController::GetTrigger( const char* name ){
     return controls.GetTrigger(name);
 }
 

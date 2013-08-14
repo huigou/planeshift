@@ -250,6 +250,9 @@ public:
     /// Returns true if the trigger exists and is mapped to the specified combo
     bool MatchTrigger( const char* name, psControl::Device device, uint button, uint32 mods );
 
+    /// loads the character-specific custom key mappings
+    void LoadKeyFile();
+
     /// Resets key mappings to defaults
     void LoadDefaultKeys();
 
