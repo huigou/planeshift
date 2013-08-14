@@ -320,38 +320,39 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     }
 
     if (!iconPalette)
+    {
         iconPalette = dynamic_cast <pawsScrollMenu*> (subWidget->FindWidget("iconPalette"));
-    if (iconPalette)
-    {
-        //get a ptr to the txture manager so we can look at the elementList, which stores the icon names.
-        pawsTextureManager *tm = PawsManager::GetSingleton().GetTextureManager();
-        int i = tm->elementList.GetSize();
-        
-        //build an array of the icon names
-        csHash<csRef<iPawsImage>, csString>::GlobalIterator Iter(tm->elementList.GetIterator());
-        Iter.Reset();
-        //build a lits of all PS icons
-        while(Iter.HasNext())
+        if (iconPalette)
         {
-            allIcons.Push(  Iter.Next()->GetName() );
+            //get a ptr to the txture manager so we can look at the elementList, which stores the icon names.
+            pawsTextureManager *tm = PawsManager::GetSingleton().GetTextureManager();
+            int i = tm->elementList.GetSize();
+        
+            //build an array of the icon names
+            csHash<csRef<iPawsImage>, csString>::GlobalIterator Iter(tm->elementList.GetIterator());
+            Iter.Reset();
+            //build a lits of all PS icons
+            while(Iter.HasNext())
+            {
+                allIcons.Push(  Iter.Next()->GetName() );
+            }
+
+            //pass the array of icon names to LoadArrays as both the icon and the tooltip, so we can see then names when we hover over one
+            iconPalette->LoadArrays( stubArray, allIcons, allIcons, stubArray, PALETTE_BUTTON_OFFSET, this );
+            iconPalette->SetEditLock( ScrollMenuOptionDISABLED );
+            iconPalette->OnResize();
+    
+            iconDisplayID=-1;
         }
-
-        //pass the array of icon names to LoadArrays as both the icon and the tooltip, so we can see then names when we hover over one
-        iconPalette->LoadArrays( stubArray, allIcons, allIcons, stubArray, PALETTE_BUTTON_OFFSET, this );
-        iconPalette->SetEditLock( ScrollMenuOptionDISABLED );
-        iconPalette->OnResize();
-
-        iconDisplayID=-1;
-    }
-    else
-    {
-        Error1( "pawsShortcutWindow::OnButtonReleased unable to load iconPalette widget!!\n");
-        return false;
+        else
+        {
+            Error1( "pawsShortcutWindow::OnButtonReleased unable to load iconPalette widget!!\n");
+            return false;
+        }
     }
 
     // These should not be NULL
     CS_ASSERT(subWidget); CS_ASSERT(labelBox); CS_ASSERT(textBox); CS_ASSERT(shortcutText); CS_ASSERT(iconDisplay); CS_ASSERT(iconPalette);
-
 
     switch ( widget->GetID() )
     {
