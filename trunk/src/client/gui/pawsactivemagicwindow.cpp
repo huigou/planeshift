@@ -46,7 +46,8 @@ pawsActiveMagicWindow::pawsActiveMagicWindow() :
     configPopup(NULL),
     show(true),
     useImages(true),
-    autoResize(true)
+    autoResize(true),
+    showEffects(false)
 {
     OnResize(); //get orientation set correctly
 }
@@ -141,6 +142,13 @@ bool pawsActiveMagicWindow::Setup(iDocumentNode *node)
                     autoResize=false;
                 }
             }
+            else if( strcmp( "showEffects", subnode->GetName() )==0 )
+            {
+                if( strcmp( "true", subnode->GetValue() )==0 )
+                {
+                    showEffects=true;
+                }
+            }
         }
     }
 
@@ -159,7 +167,11 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
     if (!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
         ShowBehind();
 
-printf( "pawsActiveMagicWindow::HandleMessage got incoming image = %s\n", incoming.image.GetData() );
+    if(incoming.duration==0 && showEffects==false )
+    {
+        return;
+    }
+
     switch ( incoming.command )
     {
         case psGUIActiveMagicMessage::Add:

@@ -80,7 +80,8 @@ private:
      */
     bool show,
          useImages,
-         autoResize;
+         autoResize,
+         showEffects;   ///<true==show spell & item effects; false==show spell effects but not item effects
     int  Orientation;
 
 

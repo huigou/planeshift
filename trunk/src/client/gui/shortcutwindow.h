@@ -24,13 +24,6 @@
 //=============================================================================
 // Library Includes
 //=============================================================================
-#include "gui/pawscontrolwindow.h"
-#include "gui/pawsconfigkeys.h"
-
-#include "net/message.h"
-#include "paws/pawsprogressbar.h"
-#include "pawsscrollmenu.h"
-
 // COMMON INCLUDES
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
@@ -40,28 +33,19 @@
 #include "pscelclient.h"
 #include "../globals.h"
 #include "clientvitals.h"
+#include "psclientchar.h"
 
 // PAWS INCLUDES
-#include "pawsinfowindow.h"
-#include "paws/pawstextbox.h"
-#include "paws/pawsmanager.h"
-#include "paws/pawsprogressbar.h"
-#include "paws/pawscrollbar.h"
-#include "paws/pawsbutton.h"
 #include "gui/pawscontrolwindow.h"
-#include "pawsslot.h"
-
+#include "gui/pawsconfigkeys.h"
+#include "paws/pawsprogressbar.h"
+#include "pawsscrollmenu.h"
 
 
 //=============================================================================
 // Forward Declarations
 //=============================================================================
 class pawsChatWindow;
-class pawsMessageTextBox;
-class pawsEditTextBox;
-class pawsMultilineEditTextBox;
-class pawsTextBox;
-class pawsScrollBar;
 
 //=============================================================================
 // Defines
