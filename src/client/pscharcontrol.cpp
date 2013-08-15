@@ -711,8 +711,8 @@ bool psCharController::Initialize()
     // Create the controls
     CreateKeys();
 
-    // Load what the keys are set to - initially this is the default key set; character specific key mappings deferred
-//    if ( !LoadKeys(CUSTOM_CONTROLS_FILE) && !LoadKeys(DEFAULT_CONTROLS_FILE) )
+    // Load what the keys are set to - initially this is the default key set;
+    // character specific key mappings deferred until the character name is defined. (called from shortcutwindow.cpp)
     if ( !LoadKeys(DEFAULT_CONTROLS_FILE) )
     {
         Error1("Could not load \"data/options/controls_def.xml\"!");

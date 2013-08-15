@@ -3696,24 +3696,22 @@ public:
     psGUIActiveMagicMessage(uint32_t clientNum,
                             commandType cmd,
                             SPELL_TYPE type,
+                            csTicks duration,
                             const csString &name,
                             const csString &image)
-    {
-        size_t    msgSize = sizeof(bool) + sizeof(uint8_t) + sizeof(int32_t);
+    {   //                                                 + duration         +
+        size_t    msgSize = sizeof(bool) + sizeof(uint8_t) + sizeof(uint32_t) + sizeof(int32_t);
 
-        if( name && name.Length()>0 )        //<--
+        if( name && name.Length()>0 )
             msgSize += name.Length() +1;
         else
             msgSize += sizeof(uint8_t);
 
-        if( image )        //<--
+        if( image )
         {
-            if( image.Length()>0 )        //<--
+            if( image.Length()>0 )
             {
                 msgSize += image.Length() +1;
-            }
-            else
-            {
             }
         }
         else
@@ -3721,21 +3719,22 @@ public:
             msgSize += sizeof(uint8_t);
         }
 
-        //msg.AttachNew(new MsgEntry(sizeof(bool) + sizeof(uint8_t) + sizeof(int32_t) + name.Length() + image.Length() + 2));
         msg.AttachNew(new MsgEntry( msgSize ) );
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
         msg->Add((uint8_t)cmd);
         msg->Add((uint8_t)type);
-        if( name && name.Length()>0 )        //<--
+        if( name && name.Length()>0 )
             msg->Add(name);
         else 
             msg->Add((uint8_t)0);
 
-        if( image && image.Length()>0 )        //<--
+        if( image && image.Length()>0 )
             msg->Add(image); 
         else 
             msg->Add((uint8_t)0);
+
+        msg->Add((uint32_t)duration);
 
         valid = !(msg->overrun);
     }
@@ -3747,6 +3746,7 @@ public:
         type = (SPELL_TYPE) message->GetUInt8();
         name = message->GetStr();          //if there was no name when the message was sent, this should read a null string
         image = message->GetStr();         //if there was no name when the message was sent, this should read a null string
+        duration = message->GetUInt32();
         valid = true;
     }
 
@@ -3761,6 +3761,7 @@ public:
 
     commandType command;
     SPELL_TYPE type;
+    uint32     duration;
     csString name;
     csString image;
 };

@@ -4,6 +4,7 @@
     widget attributes:
         useImages       - may be set to true or false; default is true, which displays icons for each buff/debuff/spell rather than text
         autoResize      - may be set to true or false; default is true, which automatically resizes the window to display all buff/debuff/spells without the need to scroll through them.
+        showEffects     - may be set to true or false; default is false, which shows only spell effects; true shows item effects AND spell effects
 -->
 
 <widget name="ActiveMagicWindow" factory="pawsActiveMagicWindow"

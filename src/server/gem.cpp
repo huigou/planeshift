@@ -4386,7 +4386,7 @@ void gemActor::AddActiveSpell(ActiveSpell *asp)
         }
     }
 
-    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), lname, imageName );
+    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Duration(), lname, imageName );
     outgoing.SendMessage();
 }
 
@@ -4394,7 +4394,7 @@ bool gemActor::RemoveActiveSpell(ActiveSpell *asp)
 {
     if (activeSpells.Delete(asp))
     {
-        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Name(), csString() );
+        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Duration(), asp->Name(), csString() );
         outgoing.SendMessage();
         return true;
     }    return false;
