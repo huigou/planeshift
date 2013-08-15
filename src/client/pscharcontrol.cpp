@@ -69,7 +69,7 @@ psTriggerHandler* psControl::handler = NULL;
 
 inline void psControl::Execute() const
 {
-    if (function)
+    if(function)
     {
         (handler->*function)(this,state);
     }
@@ -89,7 +89,7 @@ csString ComboToString(psControl::Device device, uint button, uint32 mods)
     csKeyModifiers modifiers;
     csKeyEventHelper::GetModifiers(mods,modifiers);
     iEventNameRegistry* nr = PawsManager::GetSingleton().GetEventNameRegistry();
-    switch (device)
+    switch(device)
     {
         case psControl::NONE:
             return NO_BIND;
@@ -107,21 +107,21 @@ csString GetDisplayName(const char* n)
 {
     csString name(n);
 
-    if (name.StartsWith("Shortcut"))
+    if(name.StartsWith("Shortcut"))
     {
         int id = atoi(name.DeleteAt(0, name.FindFirst(' ')));
-        if (id > 0)
+        if(id > 0)
         {
             static pawsShortcutWindow* shortcuts = NULL;
-            if (!shortcuts)
+            if(!shortcuts)
                 shortcuts = dynamic_cast<pawsShortcutWindow*>(PawsManager::GetSingleton().FindWidget("ShortcutMenu"));
 
-            if (shortcuts)
+            if(shortcuts)
                 name = shortcuts->GetCommandName(id-1);
         }
     }
-    
-    if (name.Slice(name.FindLast(' ')+1,5) == "(sec)")
+
+    if(name.Slice(name.FindLast(' ')+1,5) == "(sec)")
     {
         name = name.Truncate(name.Length()-6);
     }
@@ -131,12 +131,12 @@ csString GetDisplayName(const char* n)
 
 uint32 GetPSMouseMods(const iEvent* event)
 {
-    if(!event) 
+    if(!event)
     {
         return 0;
     }
     uint32 modifiers;
-    event->Retrieve( "keyModifiers", modifiers );
+    event->Retrieve("keyModifiers", modifiers);
     return modifiers & PS_MODS_MASK;
 }
 
@@ -148,10 +148,10 @@ uint32 GetPSKeyMods(const iEvent* event)
     bool shift = m.modifiers[csKeyModifierTypeShift] != 0;
     bool ctrl = m.modifiers[csKeyModifierTypeCtrl] != 0;
     bool alt = m.modifiers[csKeyModifierTypeAlt] != 0;
-    
+
     return (shift << csKeyModifierTypeShift)
-         | (ctrl << csKeyModifierTypeCtrl)
-         | (alt << csKeyModifierTypeAlt);
+           | (ctrl << csKeyModifierTypeCtrl)
+           | (alt << csKeyModifierTypeAlt);
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -169,21 +169,21 @@ psControlManager::psControlManager(iEventNameRegistry* eventname_reg, psTriggerH
     CS_ASSERT(handler);
 }
 
-void psControlManager::NewTrigger( const char* name, psControl::PressType type, psControl::TriggerFunction function )
+void psControlManager::NewTrigger(const char* name, psControl::PressType type, psControl::TriggerFunction function)
 {
-    triggers.Push( new psControl(name,type,function) );
+    triggers.Push(new psControl(name,type,function));
 }
 
-bool psControlManager::MapTrigger( const char* name, psControl::Device device, uint button, uint32 mods )
+bool psControlManager::MapTrigger(const char* name, psControl::Device device, uint button, uint32 mods)
 {
     psControl* ctrl = GetTrigger(name);
-    if (!ctrl)
+    if(!ctrl)
         return false;  // Invalid trigger name
 
     psControl* other = GetMappedTrigger(device,button,mods);
-    if (other && other->mods == mods)  // Ignore default GetMappedTrigger()
+    if(other && other->mods == mods)   // Ignore default GetMappedTrigger()
     {
-        if (other!=ctrl)
+        if(other!=ctrl)
         {
             return false; // This combo is already in use
         }
@@ -192,22 +192,22 @@ bool psControlManager::MapTrigger( const char* name, psControl::Device device, u
             return true; //already assigned to this control. Do nothing, but return success.
         }
     }
-    
 
-    #ifdef CONTROLS_DEBUG
-        printf("Mapping trigger \"%s\" to %s\n", name, ComboToString(device,button,mods).GetData() );
-    #endif
+
+#ifdef CONTROLS_DEBUG
+    printf("Mapping trigger \"%s\" to %s\n", name, ComboToString(device,button,mods).GetData());
+#endif
 
     ResetTrigger(ctrl);  // Clear it out if already set to something else
 
-    if (device == psControl::NONE)
+    if(device == psControl::NONE)
         return true;  // Map removed
 
     ctrl->device = device;
     ctrl->button = button;
     ctrl->mods = mods;
 
-    switch (device)
+    switch(device)
     {
         case psControl::KEYBOARD:
             keyboard.Put(button,ctrl);
@@ -221,7 +221,7 @@ bool psControlManager::MapTrigger( const char* name, psControl::Device device, u
     }
 }
 
-void psControlManager::ResetTrigger( psControl* trigger )
+void psControlManager::ResetTrigger(psControl* trigger)
 {
     // Remove trigger from all hash maps
     keyboard.Delete(trigger->button,trigger);
@@ -234,24 +234,24 @@ void psControlManager::ResetTrigger( psControl* trigger )
 
 void psControlManager::ResetAllTriggers()
 {
-    for (size_t i=0; i<triggers.GetSize(); i++)
-        if (triggers[i]->device != psControl::NONE)
+    for(size_t i=0; i<triggers.GetSize(); i++)
+        if(triggers[i]->device != psControl::NONE)
             ResetTrigger(triggers[i]);
 
     CS_ASSERT(keyboard.IsEmpty() && mouse.IsEmpty());
 }
 
-psControl* psControlManager::GetTrigger( const char* name )
+psControl* psControlManager::GetTrigger(const char* name)
 {
-    for (size_t i=0; i<triggers.GetSize(); i++)
-        if (triggers[i]->name == name)
+    for(size_t i=0; i<triggers.GetSize(); i++)
+        if(triggers[i]->name == name)
             return triggers[i];
     return NULL;
 }
 
-psControl* psControlManager::GetMappedTrigger( psControl::Device device, uint button, uint32 mods )
+psControl* psControlManager::GetMappedTrigger(psControl::Device device, uint button, uint32 mods)
 {
-    switch (device)
+    switch(device)
     {
         case psControl::NONE:
             return NULL;
@@ -265,23 +265,23 @@ psControl* psControlManager::GetMappedTrigger( psControl::Device device, uint bu
     }
 }
 
-psControl* psControlManager::GetFromMap( const psControlMap &ctrlmap, uint button, uint32 mods )
+psControl* psControlManager::GetFromMap(const psControlMap &ctrlmap, uint button, uint32 mods)
 {
     const csArray<psControl*> maps = ctrlmap.GetAll(button);
     psControl* modless = NULL;
-    for (size_t i=0; i<maps.GetSize(); i++)
+    for(size_t i=0; i<maps.GetSize(); i++)
     {
-        if (maps[i]->mods == mods)   // Find a trigger with matching mods
+        if(maps[i]->mods == mods)    // Find a trigger with matching mods
             return maps[i];
-        else if (maps[i]->mods == 0) // Find modless trigger as a fallback
+        else if(maps[i]->mods == 0)  // Find modless trigger as a fallback
             modless = maps[i];
     }
     return modless;
 }
 
-csArray<psControl*>* psControlManager::GetMappedTriggers( psControl::Device device, uint button)
+csArray<psControl*>* psControlManager::GetMappedTriggers(psControl::Device device, uint button)
 {
-    switch (device)
+    switch(device)
     {
         case psControl::NONE:
             return NULL;
@@ -295,16 +295,16 @@ csArray<psControl*>* psControlManager::GetMappedTriggers( psControl::Device devi
     }
 }
 
-csArray<psControl*>* psControlManager::GetArrayFromMap( const psControlMap &ctrlmap, uint button)
+csArray<psControl*>* psControlManager::GetArrayFromMap(const psControlMap &ctrlmap, uint button)
 {
     csArray<psControl*>* maps = new csArray<psControl*>(ctrlmap.GetAll(button));
     return maps;
 }
 
-void psControlManager::HandleButton( psControl::Device device, uint button, uint32 mods, bool newState )
+void psControlManager::HandleButton(psControl::Device device, uint button, uint32 mods, bool newState)
 {
     psControl* ctrlPressed = GetMappedTrigger(device,button,mods); //First trigger
-    if (ctrlPressed == NULL)
+    if(ctrlPressed == NULL)
         return;  // Not mapped
 
     csArray<psControl*>* ctrls = GetMappedTriggers(device,button); //All triggers (for stopping triggers with mods that may not exist now)
@@ -314,17 +314,17 @@ void psControlManager::HandleButton( psControl::Device device, uint button, uint
     {
         if(!newState)
             ctrl = (*ctrls)[i];
-        switch (ctrl->type)
+        switch(ctrl->type)
         {
             case psControl::NORMAL:
             {
                 // Clear other triggers of the button if they have changed
-                if (ctrl->state == newState && ctrl->name != ctrlPressed->name)
+                if(ctrl->state == newState && ctrl->name != ctrlPressed->name)
                     break;
 
-                #ifdef CONTROLS_DEBUG
-                    printf("Handling normal map: \"%s\" for %s\n", ctrl->name.GetData(), ctrl->ToString().GetData() );
-                #endif
+#ifdef CONTROLS_DEBUG
+                printf("Handling normal map: \"%s\" for %s\n", ctrl->name.GetData(), ctrl->ToString().GetData());
+#endif
 
                 ctrl->state = newState;
                 ctrl->Execute();
@@ -333,17 +333,17 @@ void psControlManager::HandleButton( psControl::Device device, uint button, uint
 
             case psControl::TOGGLE:
             {
-                if (newState != true)
+                if(newState != true)
                     break;  // Change on presses only
 
-                #ifdef CONTROLS_DEBUG
-                    printf("Handling toggle map: \"%s\" for %s\n", ctrl->name.GetData(), ctrl->ToString().GetData() );
-                #endif
+#ifdef CONTROLS_DEBUG
+                printf("Handling toggle map: \"%s\" for %s\n", ctrl->name.GetData(), ctrl->ToString().GetData());
+#endif
 
                 ctrl->state = !ctrl->state;
                 ctrl->Execute();
                 break;
-                
+
             }
         }
         i++;
@@ -353,12 +353,12 @@ void psControlManager::HandleButton( psControl::Device device, uint button, uint
     return;
 }
 
-bool psControlManager::SetTriggerData( const char* name, const void* ptr )
+bool psControlManager::SetTriggerData(const char* name, const void* ptr)
 {
     bool found = false;
-    for (size_t i=0; i<triggers.GetSize(); i++)
+    for(size_t i=0; i<triggers.GetSize(); i++)
     {
-        if (triggers[i]->name.StartsWith(name,true))
+        if(triggers[i]->name.StartsWith(name,true))
         {
             // Set pointer
             triggers[i]->data = static_cast<psControl::DataPtr>(ptr);
@@ -368,12 +368,12 @@ bool psControlManager::SetTriggerData( const char* name, const void* ptr )
     return found;
 }
 
-bool psControlManager::HandleEvent( iEvent &event )
+bool psControlManager::HandleEvent(iEvent &event)
 {
-    if ( csKeyEventHelper::GetAutoRepeat(&event) )
+    if(csKeyEventHelper::GetAutoRepeat(&event))
         return true;  // Ignore auto-repeats
 
-    if ( event.Name == event_key_down || event.Name == event_key_up )  // Is this a key press?
+    if(event.Name == event_key_down || event.Name == event_key_up)     // Is this a key press?
     {
         utf32_char key = csKeyEventHelper::GetRawCode(&event);
         uint32 mods = GetPSKeyMods(&event);
@@ -382,7 +382,7 @@ bool psControlManager::HandleEvent( iEvent &event )
         HandleButton(psControl::KEYBOARD,key,mods,state);
         return true;
     }
-    else if ( event.Name == event_mouse_down || event.Name == event_mouse_up )  // Mouse button press?
+    else if(event.Name == event_mouse_down || event.Name == event_mouse_up)     // Mouse button press?
     {
         uint button = csMouseEventHelper::GetButton(&event);
         uint32 mods = GetPSMouseMods(&event);
@@ -429,10 +429,10 @@ void psTriggerHandler::HandleBrightnessReset(const psControl* /*trigger*/, bool 
 void psTriggerHandler::HandleMovement(const psControl* trigger, bool value)
 {
     const psMovement* move = static_cast<const psMovement*>(trigger->data);
-    if (move)
+    if(move)
     {
         movement->CancelRunTo();
-        if (value)
+        if(value)
         {
             movement->Start(move);
         }
@@ -443,44 +443,44 @@ void psTriggerHandler::HandleMovement(const psControl* trigger, bool value)
     }
     else
     {
-        Error2("Movement trigger '%s' is not ready", trigger->name.GetData() );
+        Error2("Movement trigger '%s' is not ready", trigger->name.GetData());
     }
 }
 
 void psTriggerHandler::HandleMovementJump(const psControl* trigger, bool value)
 {
     const psMovement* move = static_cast<const psMovement*>(trigger->data);
-    if (move)
+    if(move)
     {
-        if (value)
+        if(value)
             movement->Push(move);
     }
     else
     {
-        Error2("Movement trigger '%s' is not ready", trigger->name.GetData() );
+        Error2("Movement trigger '%s' is not ready", trigger->name.GetData());
     }
 }
 
 void psTriggerHandler::HandleMode(const psControl* trigger, bool value)
 {
     const psCharMode* mode = static_cast<const psCharMode*>(trigger->data);
-    if (mode)
+    if(mode)
     {
-        if (value)
+        if(value)
             movement->Start(mode);
         else
             movement->Stop(mode);
     }
     else
     {
-        Error2("Mode trigger '%s' is not ready", trigger->name.GetData() );
+        Error2("Mode trigger '%s' is not ready", trigger->name.GetData());
     }
 }
 
 void psTriggerHandler::HandleModeRun(const psControl* /*trigger*/, bool /*value*/)
 {
     if(movement && !movement->Sneaking())
-    { 
+    {
         movement->ToggleRun();
     }
 }
@@ -504,9 +504,9 @@ void psTriggerHandler::HandleAutoMove(const psControl* /*trigger*/, bool /*value
 
 void psTriggerHandler::HandleLook(const psControl* trigger, bool value)
 {
-    if (value)
+    if(value)
     {
-        if (trigger->name == "Look up")
+        if(trigger->name == "Look up")
             psengine->GetPSCamera()->SetPitchVelocity(1.0f);
         else
             psengine->GetPSCamera()->SetPitchVelocity(-1.0f);
@@ -520,10 +520,10 @@ void psTriggerHandler::HandleLook(const psControl* trigger, bool value)
 void psTriggerHandler::HandleZoom(const psControl* trigger, bool /*value*/)
 {
     // KL: Removed check for value because we now treat this event as TOGGLE.
-    if (trigger->name == "Zoom in")
+    if(trigger->name == "Zoom in")
     {
-        if (psengine->GetPSCamera()->GetMinDistance() == psengine->GetPSCamera()->GetDistance() &&
-            psengine->GetPSCamera()->GetCameraMode() != psCamera::CAMERA_FIRST_PERSON)
+        if(psengine->GetPSCamera()->GetMinDistance() == psengine->GetPSCamera()->GetDistance() &&
+                psengine->GetPSCamera()->GetCameraMode() != psCamera::CAMERA_FIRST_PERSON)
         {
             psengine->GetPSCamera()->SetCameraMode(psCamera::CAMERA_FIRST_PERSON);
         }
@@ -531,15 +531,15 @@ void psTriggerHandler::HandleZoom(const psControl* trigger, bool /*value*/)
     }
     else
     {
-        if (psengine->GetPSCamera()->GetMinDistance() == psengine->GetPSCamera()->GetDistance() &&
-            psengine->GetPSCamera()->GetCameraMode() == psCamera::CAMERA_FIRST_PERSON)
+        if(psengine->GetPSCamera()->GetMinDistance() == psengine->GetPSCamera()->GetDistance() &&
+                psengine->GetPSCamera()->GetCameraMode() == psCamera::CAMERA_FIRST_PERSON)
         {
             psengine->GetPSCamera()->SetCameraMode(psengine->GetPSCamera()->GetLastCameraMode());
         }
         psengine->GetPSCamera()->MoveDistance(1.0f);
     }
 
-      //should be SetPitch... but there is no method to do that currently so the movement is blocky for now
+    //should be SetPitch... but there is no method to do that currently so the movement is blocky for now
 }
 
 void psTriggerHandler::HandleMouseLook(const psControl* /*trigger*/, bool value)
@@ -547,25 +547,30 @@ void psTriggerHandler::HandleMouseLook(const psControl* /*trigger*/, bool value)
     // RS: invert mouselook status so the mouselook button can be
     // used to temporarily switch out of mouselook mode too
     movement->MouseLook(!movement->MouseLook());
-    if (!movement->MouseZoom() && movement->MouseLook()) { // KL: No CenterMouse while in MouseZoom mode.
+    if(!movement->MouseZoom() && movement->MouseLook())    // KL: No CenterMouse while in MouseZoom mode.
+    {
         charcontrol->CenterMouse(value);
     }
- 
-    if (movement->MouseLook() )
+
+    if(movement->MouseLook())
     {
         //we set modality to the main widget so it's not possible for other widgets to grab focus
         //which could make weird situations
         PawsManager::GetSingleton().SetModalWidget(PawsManager::GetSingleton().GetMainWidget());
         PawsManager::GetSingleton().GetMouse()->Hide(true);
 
-        if (psengine->GetPSCamera()->GetCameraMode()
-             == psCamera::CAMERA_FIRST_PERSON)
+        if(psengine->GetPSCamera()->GetCameraMode()
+                == psCamera::CAMERA_FIRST_PERSON)
         {
             PawsManager::GetSingleton().GetMouse()->WantCrosshair();
-        } else {
+        }
+        else
+        {
             PawsManager::GetSingleton().GetMouse()->WantCrosshair(false);
         }
-    } else {
+    }
+    else
+    {
         //if the main widget owns modality status we remove it from it.
         //we check for this because this can happen also if the mouselook() returns false because it wasn't
         //allowed from the main widget to activate: in that case it means, most probably, another widget has modality
@@ -579,20 +584,21 @@ void psTriggerHandler::HandleMouseLook(const psControl* /*trigger*/, bool value)
 // KL: New function HandleMouseLookToggle to handle keyboard toggle for MouseLook seperately.
 void psTriggerHandler::HandleMouseLookToggle(const psControl* trigger, bool value)
 {
-    if (!value) {
+    if(!value)
+    {
         return;
     }
 
     HandleMouseLook(trigger,!movement->MouseLook());
 }
-  
+
 void psTriggerHandler::HandleMouseZoom(const psControl* /*trigger*/, bool value)
 {
     // KL: Changed order to match HandleMouseLookToggle (no change in functionality, just to keep code more readable).
-    if (movement->MouseZoom()!=value) // KL: Switch only if necessary to avoid jumping mouse cursor or overwriting last saved position.
+    if(movement->MouseZoom()!=value)  // KL: Switch only if necessary to avoid jumping mouse cursor or overwriting last saved position.
     {
         movement->MouseZoom(value);
-        if (!movement->MouseLook()) // KL: No CenterMouse while in MouseLook mode.
+        if(!movement->MouseLook())  // KL: No CenterMouse while in MouseLook mode.
             charcontrol->CenterMouse(value);
     }
 }
@@ -600,9 +606,9 @@ void psTriggerHandler::HandleMouseZoom(const psControl* /*trigger*/, bool value)
 
 void psTriggerHandler::HandleMouseMove(const psControl* /*trigger*/, bool value)
 {
-    if (value && psengine->GetCelClient()
-     && psengine->GetCelClient()->GetMainPlayer()
-     && psengine->GetCelClient()->GetMainPlayer()->IsAlive())
+    if(value && psengine->GetCelClient()
+            && psengine->GetCelClient()->GetMainPlayer()
+            && psengine->GetCelClient()->GetMainPlayer()->IsAlive())
     {
         if(movement->MouseMove())
         {
@@ -615,14 +621,14 @@ void psTriggerHandler::HandleMouseMove(const psControl* /*trigger*/, bool value)
 
 void psTriggerHandler::HandleCameraMode(const psControl* /*trigger*/, bool value)
 {
-    if (value)
+    if(value)
         psengine->GetPSCamera()->NextCameraMode();
 }
 
 void psTriggerHandler::HandleCenterCamera(const psControl* /*trigger*/, bool value)
 {
-    if (value)
-    {        
+    if(value)
+    {
         float       rotY;
         csVector3   pos;
         iSector*    sector;
@@ -633,17 +639,17 @@ void psTriggerHandler::HandleCenterCamera(const psControl* /*trigger*/, bool val
         cam->SetPosition(pos + csVector3(sinf(rotY)*cam->GetMaxDistance(),0,cosf(rotY)*cam->GetMaxDistance()));
         cam->SetYaw(rotY);
 
-        if (cam->GetCameraMode() == psCamera::CAMERA_FREE)
+        if(cam->GetCameraMode() == psCamera::CAMERA_FREE)
             cam->SetPitch(0);
     }
 }
 
 void psTriggerHandler::HandleMovementAction(const psControl* trigger, bool /*value*/)
 {
-    if (trigger->name == "Sit" && psengine->GetCelClient()->GetMainPlayer())
+    if(trigger->name == "Sit" && psengine->GetCelClient()->GetMainPlayer())
     {
-        if (psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::SIT ||
-            psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::OVERWEIGHT)
+        if(psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::SIT ||
+                psengine->GetCelClient()->GetMainPlayer()->GetMode() == psModeMessage::OVERWEIGHT)
         {
             psengine->GetCmdHandler()->Execute("/stand");
         }
@@ -657,14 +663,15 @@ void psTriggerHandler::HandleMovementAction(const psControl* trigger, bool /*val
 void psTriggerHandler::HandleShortcut(const psControl* trigger,bool value)
 {
     static pawsShortcutWindow* shortcutwin = NULL;
-    if (!shortcutwin)
+    if(!shortcutwin)
         shortcutwin = dynamic_cast<pawsShortcutWindow*>(PawsManager::GetSingleton().FindWidget("ShortcutMenu"));
 
-    if (shortcutwin && value)
-    {        size_t start = trigger->name.FindLast(' ') + 1;
+    if(shortcutwin && value)
+    {
+        size_t start = trigger->name.FindLast(' ') + 1;
         csString cutter = trigger->name.Slice(start,trigger->name.Length()-start);
         int sc = atoi(cutter.GetDataSafe());
-        if (sc == 0)
+        if(sc == 0)
         {
             Error1("Invalid extraction in shortcut handle!");
             return;
@@ -678,10 +685,10 @@ void psTriggerHandler::HandleShortcut(const psControl* trigger,bool value)
 void psTriggerHandler::HandleWindow(const psControl* trigger, bool value)
 {
     static pawsControlWindow* ctrlWindow = NULL;
-    if (!ctrlWindow)
+    if(!ctrlWindow)
         ctrlWindow = dynamic_cast<pawsControlWindow*>(PawsManager::GetSingleton().FindWidget("ControlWindow"));
 
-    if (ctrlWindow && !value)
+    if(ctrlWindow && !value)
     {
         ctrlWindow->HandleWindowName(trigger->name);
     }
@@ -713,7 +720,7 @@ bool psCharController::Initialize()
 
     // Load what the keys are set to - initially this is the default key set;
     // character specific key mappings deferred until the character name is defined. (called from shortcutwindow.cpp)
-    if ( !LoadKeys(DEFAULT_CONTROLS_FILE) )
+    if(!LoadKeys(DEFAULT_CONTROLS_FILE))
     {
         Error1("Could not load \"data/options/controls_def.xml\"!");
         return false;
@@ -733,28 +740,29 @@ bool psCharController::Initialize()
 void psCharController::LoadKeyFile()
 {
 // if there's a new style character-specific file then load it
-   csString CommandFileName,
-             CharName( psengine->GetMainPlayerName() );
-    size_t   spPos = CharName.FindFirst( ' ' );
+    csString CommandFileName,
+             CharName(psengine->GetMainPlayerName());
+    size_t   spPos = CharName.FindFirst(' ');
 
-    if( spPos != (size_t) -1 )
-    { //there is a space in the name
-        CommandFileName = CharName.Slice(0,spPos );
+    if(spPos != (size_t) -1)
+    {
+        //there is a space in the name
+        CommandFileName = CharName.Slice(0,spPos);
     }
     else
     {
         CommandFileName = CharName;
     }
 
-    CommandFileName.Insert( 0, "/planeshift/userdata/options/controls_" );
-    CommandFileName.Append( ".xml" );
-    if( psengine->GetVFS()->Exists( CommandFileName.GetData() ))
+    CommandFileName.Insert(0, "/planeshift/userdata/options/controls_");
+    CommandFileName.Append(".xml");
+    if(psengine->GetVFS()->Exists(CommandFileName.GetData()))
     {
         LoadKeys(CommandFileName.GetData());
     }
-    else 
+    else
     {
-        if( psengine->GetVFS()->Exists(CUSTOM_CONTROLS_FILE))
+        if(psengine->GetVFS()->Exists(CUSTOM_CONTROLS_FILE))
         {
             LoadKeys(CUSTOM_CONTROLS_FILE);
         }
@@ -821,12 +829,12 @@ void psCharController::CreateKeys()
     controls.NewTrigger("Toggle chat", psControl::NORMAL, NULL);
     controls.NewTrigger("Reply tell" , psControl::NORMAL, NULL);
     controls.NewTrigger("Close"      , psControl::NORMAL, NULL);
-    
+
     // Shortcuts
-    for (int i=0; i<NUM_SHORTCUTS; i++)
+    for(int i=0; i<NUM_SHORTCUTS; i++)
     {
         csString shortcut;
-        shortcut.Format("Shortcut %d", i+1 );
+        shortcut.Format("Shortcut %d", i+1);
         controls.NewTrigger(shortcut, psControl::NORMAL, &psTriggerHandler::HandleShortcut);
     }
 }
@@ -841,28 +849,28 @@ void psCharController::CreateKeys()
  */
 bool psCharController::LoadKeys(const char* filename)
 {
-    if ( !psengine->GetVFS()->Exists(filename) )
+    if(!psengine->GetVFS()->Exists(filename))
         return false;
 
     csRef<iDocument> doc = ParseFile(psengine->GetObjectRegistry(), filename);
-    if (doc == NULL)
+    if(doc == NULL)
     {
-        Error2("Could not parse keys file %s.", filename );
+        Error2("Could not parse keys file %s.", filename);
         return false;
     }
     csRef<iDocumentNode> root = doc->GetRoot();
-    if (root == NULL)
+    if(root == NULL)
     {
         Error1("No root in XML");
         return false;
     }
-    
+
     csRef<iDocumentNode> node = root->GetNode("controls");
-    if (node == NULL)
+    if(node == NULL)
     {
         //check for os specific nodes if a global controls one wasn't found
         csRef<iDocumentNodeIterator> osNodes = root->GetNodes("os");
-        while (osNodes->HasNext())
+        while(osNodes->HasNext())
         {
             //gets the next element of the iterator
             csRef<iDocumentNode> osNode = osNodes->Next();
@@ -886,24 +894,24 @@ bool psCharController::LoadKeys(const char* filename)
             return false;
         }
     }
-    
+
     iEventNameRegistry* nr = psengine->GetEventNameRegistry();
     csRef<iDocumentNodeIterator> binds = node->GetNodes("bind");
-    while (binds->HasNext())
-    {        
+    while(binds->HasNext())
+    {
         csRef<iDocumentNode> keyNode = binds->Next();
 
         csString key = keyNode->GetAttributeValue("key");
-        if (key.IsEmpty())
+        if(key.IsEmpty())
             continue;
 
         csString action = keyNode->GetAttributeValue("action");
-        if (action.IsEmpty())
+        if(action.IsEmpty())
         {
-            Error2("Failed to get action for key '%s'", key.GetData() );
+            Error2("Failed to get action for key '%s'", key.GetData());
             continue;
         }
-        
+
         // Try to parse keyboard combo
         csKeyEventData data;
         bool parsed = csInputDefinition::ParseKey(nr, key, &data.codeRaw, &data.codeCooked, &data.modifiers);
@@ -912,21 +920,21 @@ bool psCharController::LoadKeys(const char* filename)
         psControl::Device device = psControl::KEYBOARD;
 
         // If that didn't work, try mouse
-        if (!parsed)
+        if(!parsed)
         {
             parsed = psMouseBinds::StringToMouseButton(key,button,mods);
             device = psControl::MOUSE;
         }
 
-        if (!parsed)
+        if(!parsed)
         {
-            Error3("Failed to parse key combo '%s' for '%s'", key.GetData(), action.GetData() );
+            Error3("Failed to parse key combo '%s' for '%s'", key.GetData(), action.GetData());
             continue;
         }
 
-        if ( !controls.MapTrigger(action,device,button,mods) )
+        if(!controls.MapTrigger(action,device,button,mods))
         {
-            Error3("Failed to map '%s' to '%s'", key.GetData(), action.GetData() );
+            Error3("Failed to map '%s' to '%s'", key.GetData(), action.GetData());
             continue;
         }
     }
@@ -944,45 +952,47 @@ void psCharController::SaveKeys()
 {
     csString xml = "<controls>\n";
 
-    const csPDelArray<psControl>& triggers = controls.GetAllTriggers();
-    for (size_t i=0; i<triggers.GetSize(); i++)
-        xml.AppendFmt( "    <bind action=\"%s\" key=\"%s\" />\n",
-                       triggers[i]->name.GetData(),
-                       EscpXML(triggers[i]->ToString()).GetData() );
+    const csPDelArray<psControl> &triggers = controls.GetAllTriggers();
+    for(size_t i=0; i<triggers.GetSize(); i++)
+        xml.AppendFmt("    <bind action=\"%s\" key=\"%s\" />\n",
+                      triggers[i]->name.GetData(),
+                      EscpXML(triggers[i]->ToString()).GetData());
 
     xml += "</controls>\n";
 
-   csString CommandFileName,
-             CharName( psengine->GetMainPlayerName() );
-    size_t   spPos = CharName.FindFirst( ' ' );
+    csString CommandFileName,
+             CharName(psengine->GetMainPlayerName());
+    size_t   spPos = CharName.FindFirst(' ');
 
-    if( spPos != (size_t) -1 )
-    { //there is a space in the name
-        CommandFileName = CharName.Slice(0,spPos );
+    if(spPos != (size_t) -1)
+    {
+        //there is a space in the name
+        CommandFileName = CharName.Slice(0,spPos);
     }
     else
     {
         CommandFileName = CharName;
     }
 
-    CommandFileName.Insert( 0, "/planeshift/userdata/options/controls_" );
-    CommandFileName.Append( ".xml" );
-    psengine->GetVFS()->WriteFile( CommandFileName.GetData(), xml.GetData(), xml.Length() );
+    CommandFileName.Insert(0, "/planeshift/userdata/options/controls_");
+    CommandFileName.Append(".xml");
+    psengine->GetVFS()->WriteFile(CommandFileName.GetData(), xml.GetData(), xml.Length());
 }
 
-const psControl* psCharController::GetTrigger( const char* name ){
+const psControl* psCharController::GetTrigger(const char* name)
+{
     return controls.GetTrigger(name);
 }
 
-const psControl* psCharController::GetMappedTrigger( psControl::Device device, uint button, uint32 mods )
+const psControl* psCharController::GetMappedTrigger(psControl::Device device, uint button, uint32 mods)
 {
     return controls.GetMappedTrigger(device,button,mods);
 }
 
-bool psCharController::RemapTrigger( const char* name, psControl::Device device, uint button, uint32 mods )
+bool psCharController::RemapTrigger(const char* name, psControl::Device device, uint button, uint32 mods)
 {
     bool changed = controls.MapTrigger(name,device,button,mods);
-    if (changed)
+    if(changed)
         SaveKeys();
     return changed;
 }
@@ -992,19 +1002,19 @@ bool psCharController::IsReady()
     return ready && movement.IsReady();
 }
 
-bool psCharController::HandleEvent( iEvent &event )
+bool psCharController::HandleEvent(iEvent &event)
 {
-    if ( !IsReady() )
+    if(!IsReady())
         return false;
 
     // RS: do not leave mouselook mode on mouseclick
     //if (event.Name == event_mouseclick && movement.MouseLook())
     //    CancelMouseLook();
 
-    if ( controls.HandleEvent(event) )
+    if(controls.HandleEvent(event))
         return true;
 
-    if ( movement.HandleEvent(event) )
+    if(movement.HandleEvent(event))
         return true;
 
     return false;
@@ -1014,7 +1024,7 @@ void psCharController::CenterMouse(bool value)
 {
     static psPoint oldMousePos;
     PawsManager::GetSingleton().GetMouse()->Hide(value);
-    if (value)
+    if(value)
     {
         iGraphics2D* g2d = psengine->GetG2D();
         int width = g2d->GetWidth();
@@ -1031,7 +1041,7 @@ void psCharController::CenterMouse(bool value)
 void psCharController::CancelMouseLook()
 {
     // KL: Fixed and simplified CancelMouseLook.
-    if (GetMovementManager()->MouseLook()) 
+    if(GetMovementManager()->MouseLook())
     {
         GetMovementManager()->MouseLook(false);
         CenterMouse(false);

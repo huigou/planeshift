@@ -90,16 +90,16 @@ public:
     };
     const char* GetName()
     {
-        if( NameCallback )
+        if(NameCallback)
         {
-            if( NameCallback->Get(id-indexBase).Length()>0 )
+            if(NameCallback->Get(id-indexBase).Length()>0)
             {
-               return NameCallback->Get(id-indexBase).GetData();
+                return NameCallback->Get(id-indexBase).GetData();
             }
         }
-        if( GetText() )
+        if(GetText())
             return GetText();
-        return NULL; 
+        return NULL;
     }
 
     csArray<csString>* GetActionCallback()
@@ -126,23 +126,23 @@ public:
     {
         return containerID;
     };
-    void SetAction(const char *act)
+    void SetAction(const char* act)
     {
-        SetAction( csString( act ));
+        SetAction(csString(act));
     }
     void SetAction(csString act)
     {
-        if( ActionCallback )
+        if(ActionCallback)
         {
-           ActionCallback->Get(id-indexBase).Replace(act);
+            ActionCallback->Get(id-indexBase).Replace(act);
         }
         action = act;
     }
-    const char * GetAction()
+    const char* GetAction()
     {
-        if( action )
+        if(action)
         {
-            if( !action.IsEmpty() )
+            if(!action.IsEmpty())
             {
                 return action.GetData();
             }
@@ -181,8 +181,8 @@ public:
         return id-indexBase;
     }
 
-    void SetDragDropInProgress( int val );
-    int IsDragDropInProgress( );
+    void SetDragDropInProgress(int val);
+    int IsDragDropInProgress();
 
 
 protected:

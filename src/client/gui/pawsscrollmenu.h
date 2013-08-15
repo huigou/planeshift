@@ -90,7 +90,7 @@ public:
     }
     int GetEditLock()
     {
-        return EditLockMode; 
+        return EditLockMode;
     }
 
     virtual bool Setup(iDocumentNode* node);
@@ -106,13 +106,16 @@ public:
     virtual bool IsEnabled() const;
 
     void SetEditLock(int mode);
-    bool IsEditable() {return EditLockButton->GetState(); }
+    bool IsEditable()
+    {
+        return EditLockButton->GetState();
+    }
     void SetLeftScroll(int mode);
     void SetRightScroll(int mode);
-    void setButtonWidth( int width );
-    void setScrollIncrement( int incr );
-    void setScrollProportion( float prop );
-    void SetOrientation( int Orientation );
+    void setButtonWidth(int width);
+    void setScrollIncrement(int incr);
+    void setScrollProportion(float prop);
+    void SetOrientation(int Orientation);
     int  AutoResize();
     void SetEditMode(int val)
     {

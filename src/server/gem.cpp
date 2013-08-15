@@ -123,12 +123,12 @@ psGemServerMeshAttach::psGemServerMeshAttach(gemObject* objectToAttach) : scfImp
 
 //-----------------------------------------------------------------------------
 
-GEMSupervisor *gemObject::cel = NULL;
+GEMSupervisor* gemObject::cel = NULL;
 
-GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
-                             psDatabase *db,
-                             EntityManager *entitymanager,
-                             CacheManager *cachemanager)
+GEMSupervisor::GEMSupervisor(iObjectRegistry* objreg,
+                             psDatabase* db,
+                             EntityManager* entitymanager,
+                             CacheManager* cachemanager)
 {
     object_reg = objreg;
     database = db;
@@ -142,7 +142,7 @@ GEMSupervisor::GEMSupervisor(iObjectRegistry *objreg,
     nextEID = 10000;
 
     Subscribe(&GEMSupervisor::HandleDamageMessage,MSGTYPE_DAMAGE_EVENT,NO_VALIDATION);
-    Subscribe(&GEMSupervisor::HandleStatDRUpdateMessage,MSGTYPE_STATDRUPDATE, REQUIRE_READY_CLIENT );
+    Subscribe(&GEMSupervisor::HandleStatDRUpdateMessage,MSGTYPE_STATDRUPDATE, REQUIRE_READY_CLIENT);
     Subscribe(&GEMSupervisor::HandleStatsMessage,MSGTYPE_STATS, REQUIRE_READY_CLIENT);
 
     engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
@@ -166,7 +166,7 @@ GEMSupervisor::~GEMSupervisor()
     }
 }
 
-void GEMSupervisor::HandleStatsMessage(MsgEntry *me,Client *client)
+void GEMSupervisor::HandleStatsMessage(MsgEntry* me,Client* client)
 {
     if(!client->GetActor())
     {
@@ -178,21 +178,21 @@ void GEMSupervisor::HandleStatsMessage(MsgEntry *me,Client *client)
                        psChar->GetMaxHP().Current(),
                        psChar->GetMaxMana().Current(),
                        psChar->Inventory().MaxWeight(),
-                       psChar->Inventory().GetCurrentMaxSpace() );
+                       psChar->Inventory().GetCurrentMaxSpace());
 
     msg.SendMessage();
 }
 
-void GEMSupervisor::HandleDamageMessage(MsgEntry *me,Client *client)
+void GEMSupervisor::HandleDamageMessage(MsgEntry* me,Client* client)
 {
     psDamageEvent evt(me);
     evt.target->BroadcastTargetStatDR(entityManager->GetClients());
 }
 
-void GEMSupervisor::HandleStatDRUpdateMessage(MsgEntry *me,Client *client)
+void GEMSupervisor::HandleStatDRUpdateMessage(MsgEntry* me,Client* client)
 {
-    gemActor *actor = client->GetActor();
-    psCharacter *psChar = actor->GetCharacterData();
+    gemActor* actor = client->GetActor();
+    psCharacter* psChar = actor->GetCharacterData();
 
     psChar->SendStatDRMessage(client->GetClientNum(), actor->GetEID(), DIRTY_VITAL_ALL);
 }
@@ -202,11 +202,11 @@ EID GEMSupervisor::GetNextID()
     return EID(nextEID++);
 }
 
-EID GEMSupervisor::CreateEntity(gemObject *obj)
+EID GEMSupervisor::CreateEntity(gemObject* obj)
 {
     EID eid = GetNextID();
 
-    if (obj)
+    if(obj)
     {
         entities_by_eid.Put(eid, obj);
         Debug3(LOG_CELPERSIST,0,"Entity <%s> added to supervisor as %s\n", obj->GetName(), ShowID(eid));
@@ -215,40 +215,40 @@ EID GEMSupervisor::CreateEntity(gemObject *obj)
     return eid;
 }
 
-void GEMSupervisor::AddEntity(gemObject *obj, EID objEid)
+void GEMSupervisor::AddEntity(gemObject* obj, EID objEid)
 {
     CS_ASSERT(!entities_by_eid.Contains(objEid));
     entities_by_eid.Put(objEid, obj);
     Debug3(LOG_CELPERSIST,0,"Entity <%s> added to supervisor as %s\n", obj->GetName(), ShowID(objEid));
 }
 
-void GEMSupervisor::AddActorEntity(gemActor *actor)
+void GEMSupervisor::AddActorEntity(gemActor* actor)
 {
     actors_by_pid.Put(actor->GetPID(), actor);
     Debug3(LOG_CELPERSIST,0,"Actor added to supervisor with %s and %s.\n", ShowID(actor->GetEID()), ShowID(actor->GetPID()));
 }
 
-void GEMSupervisor::RemoveActorEntity(gemActor *actor)
+void GEMSupervisor::RemoveActorEntity(gemActor* actor)
 {
     actors_by_pid.Delete(actor->GetPID(), actor);
     Debug3(LOG_CELPERSIST,0,"Actor <%s, %s> removed from supervisor.\n", ShowID(actor->GetEID()), ShowID(actor->GetPID()));
 }
 
-void GEMSupervisor::AddItemEntity(gemItem *item)
+void GEMSupervisor::AddItemEntity(gemItem* item)
 {
     items_by_uid.Put(item->GetItem()->GetUID(), item);
     Debug3(LOG_CELPERSIST,0,"Item added to supervisor with %s and UID:%u.\n", ShowID(item->GetEID()), item->GetItem()->GetUID());
 }
 
-void GEMSupervisor::RemoveItemEntity(gemItem *item)
+void GEMSupervisor::RemoveItemEntity(gemItem* item)
 {
     items_by_uid.Delete(item->GetItem()->GetUID(), item);
     Debug3(LOG_CELPERSIST,0,"Item <%s, %u> removed from supervisor.\n", ShowID(item->GetEID()), item->GetItem()->GetUID());
 }
 
-void GEMSupervisor::RemoveEntity(gemObject *which)
+void GEMSupervisor::RemoveEntity(gemObject* which)
 {
-    if (!which)
+    if(!which)
         return;
 
     entities_by_eid.Delete(which->GetEID(), which);
@@ -270,26 +270,26 @@ void GEMSupervisor::RemovePlayerFromLootables(PID playerID)
 }
 
 
-gemObject *GEMSupervisor::FindObject(EID id)
+gemObject* GEMSupervisor::FindObject(EID id)
 {
-    if (!id.IsValid())
+    if(!id.IsValid())
         return NULL;
 
     return entities_by_eid.Get(id, NULL);
 }
 
-gemObject *GEMSupervisor::FindObject(const csString& name)
+gemObject* GEMSupervisor::FindObject(const csString &name)
 {
     csHash<gemObject*, EID>::GlobalIterator i(entities_by_eid.GetIterator());
 
-    while ( i.HasNext() )
+    while(i.HasNext())
     {
         gemObject* obj = i.Next();
-        if ( name.CompareNoCase(obj->GetName()) )
-                return obj;
-        else if ( obj->GetNPCPtr() ) //Allow search for first name only with NPCs
+        if(name.CompareNoCase(obj->GetName()))
+            return obj;
+        else if(obj->GetNPCPtr())    //Allow search for first name only with NPCs
         {
-            WordArray names (obj->GetName(), false);
+            WordArray names(obj->GetName(), false);
             if(name.CompareNoCase(names[0]))
                 return obj;
         }
@@ -298,22 +298,22 @@ gemObject *GEMSupervisor::FindObject(const csString& name)
     return NULL;
 }
 
-gemActor *GEMSupervisor::FindPlayerEntity(PID player_id)
+gemActor* GEMSupervisor::FindPlayerEntity(PID player_id)
 {
     return actors_by_pid.Get(player_id, NULL);
 }
 
-gemNPC *GEMSupervisor::FindNPCEntity(PID npc_id)
+gemNPC* GEMSupervisor::FindNPCEntity(PID npc_id)
 {
     return dynamic_cast<gemNPC*>(actors_by_pid.Get(npc_id, NULL));
 }
 
-gemNPC *GEMSupervisor::FindNPCEntity(EID eid)
+gemNPC* GEMSupervisor::FindNPCEntity(EID eid)
 {
     return dynamic_cast<gemNPC*>(entities_by_eid.Get(eid, NULL));
 }
 
-gemItem *GEMSupervisor::FindItemEntity(uint32 item_id)
+gemItem* GEMSupervisor::FindItemEntity(uint32 item_id)
 {
     return items_by_uid.Get(item_id, NULL);
 }
@@ -323,10 +323,10 @@ int GEMSupervisor::CountManagedNPCs(AccountID superclientID)
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
     int count=0;
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
-        gemObject *obj = iter.Next();
-        if (obj->GetSuperclientID() == superclientID)
+        gemObject* obj = iter.Next();
+        if(obj->GetSuperclientID() == superclientID)
         {
             count++;
         }
@@ -334,14 +334,14 @@ int GEMSupervisor::CountManagedNPCs(AccountID superclientID)
     return count;
 }
 
-void GEMSupervisor::FillNPCList(MsgEntry *msg, AccountID superclientID)
+void GEMSupervisor::FillNPCList(MsgEntry* msg, AccountID superclientID)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
-        gemObject *obj = iter.Next();
-        if (obj->GetSuperclientID() == superclientID)
+        gemObject* obj = iter.Next();
+        if(obj->GetSuperclientID() == superclientID)
         {
             msg->Add(obj->GetPID().Unbox());
             msg->Add(obj->GetEID().Unbox());
@@ -353,15 +353,15 @@ void GEMSupervisor::SendAllNPCStats(AccountID superclientID)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         gemObject* obj = iter.Next();
-        if (obj->GetSuperclientID() == superclientID)
+        if(obj->GetSuperclientID() == superclientID)
         {
             gemNPC* npc = obj->GetNPCPtr();
-            if (npc)
+            if(npc)
             {
-                psserver->npcmanager->QueueStatDR(npc, DIRTY_VITAL_ALL );
+                psserver->npcmanager->QueueStatDR(npc, DIRTY_VITAL_ALL);
             }
         }
     }
@@ -371,10 +371,10 @@ void GEMSupervisor::ActivateNPCs(AccountID superclientID)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
-        gemObject *obj = iter.Next();
-        if (obj->GetSuperclientID() == superclientID)
+        gemObject* obj = iter.Next();
+        if(obj->GetSuperclientID() == superclientID)
         {
             // Turn off any npcs about to be managed from being temporarily impervious
             obj->GetCharacterData()->SetImperviousToAttack(obj->GetCharacterData()->GetImperviousToAttack() & ~TEMPORARILY_IMPERVIOUS);  // may switch this to 'hide' later
@@ -388,13 +388,13 @@ void GEMSupervisor::StopAllNPCs(AccountID superclientID)
 
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
-        gemObject *obj = iter.Next();
-        if (obj->GetSuperclientID() == superclientID && obj->IsAlive())
+        gemObject* obj = iter.Next();
+        if(obj->GetSuperclientID() == superclientID && obj->IsAlive())
         {
             // CPrintf(CON_DEBUG, "  Deactivating %s...\n",obj->GetName() );
-            gemActor *actor = obj->GetActorPtr();
+            gemActor* actor = obj->GetActorPtr();
             actor->pcmove->SetVelocity(csVector3(0,0,0));
             actor->pcmove->SetAngularVelocity(csVector3(0,0,0));
             actor->pcmove->SetOnGround(true);
@@ -415,10 +415,10 @@ void GEMSupervisor::UpdateAllDR()
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
-        gemObject *obj = iter.Next();
-        if (obj->GetPID().IsValid())
+        gemObject* obj = iter.Next();
+        if(obj->GetPID().IsValid())
         {
             obj->UpdateDR();
         }
@@ -429,25 +429,25 @@ void GEMSupervisor::UpdateAllStats()
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
-        gemObject *obj = iter.Next();
-        gemActor *actor = dynamic_cast<gemActor *>(obj);
-        if (actor)
+        gemObject* obj = iter.Next();
+        gemActor* actor = dynamic_cast<gemActor*>(obj);
+        if(actor)
         {
             actor->UpdateStats();
         }
     }
 }
 
-void GEMSupervisor::GetPlayerObjects(PID playerID, csArray<gemObject*> &list )
+void GEMSupervisor::GetPlayerObjects(PID playerID, csArray<gemObject*> &list)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         gemObject* obj = iter.Next();
         gemItem* item = dynamic_cast<gemItem*>(obj);
-        if (item && item->GetItem()->GetOwningCharacterID() == playerID)
+        if(item && item->GetItem()->GetOwningCharacterID() == playerID)
         {
             list.Push(item);
         }
@@ -455,52 +455,52 @@ void GEMSupervisor::GetPlayerObjects(PID playerID, csArray<gemObject*> &list )
 }
 
 
-void GEMSupervisor::GetAllEntityPos(csArray<psAllEntityPosMessage>& update)
+void GEMSupervisor::GetAllEntityPos(csArray<psAllEntityPosMessage> &update)
 {
     csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
-    
+
     csTicks now = csGetTicks();
 
     // Loop as long as we need to send more messages.
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         psAllEntityPosMessage msg;
         msg.SetLength(ALLENTITYPOS_MAX_AMOUNT,0); // Set a message length limit
 
         // Fill the message
         int count_actual = 0;
-        while (iter.HasNext())
+        while(iter.HasNext())
         {
-            gemObject *obj = iter.Next();
-            if (obj->GetPID().IsValid())
+            gemObject* obj = iter.Next();
+            if(obj->GetPID().IsValid())
             {
-                gemActor *actor = dynamic_cast<gemActor *>(obj);
+                gemActor* actor = dynamic_cast<gemActor*>(obj);
                 // FIXME: Now only distribute players, this should
                 //        be modify to send all actors exepct
-                //        NPCs controlled by the receving superclient. 
-                if (actor && actor->GetClient())
+                //        NPCs controlled by the receving superclient.
+                if(actor && actor->GetClient())
                 {
                     csVector3 pos,pos2;
                     float yrot;
                     InstanceID instance,oldInstance;
-                    iSector *sector;
+                    iSector* sector;
                     csTicks last;
                     obj->GetPosition(pos,yrot,sector);
                     instance = obj->GetInstance();
                     obj->GetLastSuperclientPos(pos2,oldInstance,last);
 
                     float dist2 = (pos.x - pos2.x) * (pos.x - pos2.x) +
-                        (pos.y - pos2.y) * (pos.y - pos2.y) +
-                        (pos.z - pos2.z) * (pos.z - pos2.z);
+                                  (pos.y - pos2.y) * (pos.y - pos2.y) +
+                                  (pos.z - pos2.z) * (pos.z - pos2.z);
 
                     csTicks time = now - last;
 
                     // We need to filter some to prevent overloading the network
-                    if ((dist2 > 1.0) || (dist2 > .04 && time > 2000) || (instance != oldInstance))
+                    if((dist2 > 1.0) || (dist2 > .04 && time > 2000) || (instance != oldInstance))
                     {
                         count_actual++;
                         msg.Add(obj->GetEID(), pos, sector, obj->GetInstance(),
-                                   cacheManager->GetMsgStrings());
+                                cacheManager->GetMsgStrings());
                         obj->SetLastSuperclientPos(pos,instance,now);
                     }
                 }
@@ -512,26 +512,26 @@ void GEMSupervisor::GetAllEntityPos(csArray<psAllEntityPosMessage>& update)
         msg.msg->Reset();
         // Now correct the first value, which is the count of following entities
         // SetLength has allready allocated the int16_t for this.
-        msg.msg->Add((int16_t)count_actual);  
+        msg.msg->Add((int16_t)count_actual);
         update.Push(msg);
     }
 }
 
-void GEMSupervisor::AttachObject( iObject* object, gemObject* gobject )
+void GEMSupervisor::AttachObject(iObject* object, gemObject* gobject)
 {
     csRef<psGemServerMeshAttach> attacher = csPtr<psGemServerMeshAttach>(new psGemServerMeshAttach(gobject));
-    attacher->SetName( object->GetName() );
+    attacher->SetName(object->GetName());
     csRef<iObject> attacher_obj(scfQueryInterface<iObject>(attacher));
 
-    object->ObjAdd( attacher_obj );
+    object->ObjAdd(attacher_obj);
 }
 
-void GEMSupervisor::UnattachObject( iObject* object, gemObject* gobject )
+void GEMSupervisor::UnattachObject(iObject* object, gemObject* gobject)
 {
-    csRef<psGemServerMeshAttach> attacher (CS::GetChildObject<psGemServerMeshAttach>(object));
-    if (attacher)
+    csRef<psGemServerMeshAttach> attacher(CS::GetChildObject<psGemServerMeshAttach>(object));
+    if(attacher)
     {
-        if (attacher->GetObject() == gobject)
+        if(attacher->GetObject() == gobject)
         {
             csRef<iObject> attacher_obj(scfQueryInterface<iObject>(attacher));
             object->ObjRemove(attacher_obj);
@@ -539,12 +539,12 @@ void GEMSupervisor::UnattachObject( iObject* object, gemObject* gobject )
     }
 }
 
-gemObject* GEMSupervisor::FindAttachedObject( iObject* object )
+gemObject* GEMSupervisor::FindAttachedObject(iObject* object)
 {
     gemObject* found = 0;
 
     csRef<psGemServerMeshAttach> attacher(CS::GetChildObject<psGemServerMeshAttach>(object));
-    if ( attacher )
+    if(attacher)
     {
         found = attacher->GetObject();
     }
@@ -552,52 +552,52 @@ gemObject* GEMSupervisor::FindAttachedObject( iObject* object )
     return found;
 }
 
-csArray<gemObject*> GEMSupervisor::FindNearbyEntities( iSector* sector, const csVector3& pos, float radius, bool doInvisible )
+csArray<gemObject*> GEMSupervisor::FindNearbyEntities(iSector* sector, const csVector3 &pos, float radius, bool doInvisible)
 {
     csArray<gemObject*> list;
 
-    csRef<iMeshWrapperIterator> obj_it =  engine->GetNearbyMeshes( sector, pos, radius );
-    while (obj_it->HasNext())
+    csRef<iMeshWrapperIterator> obj_it =  engine->GetNearbyMeshes(sector, pos, radius);
+    while(obj_it->HasNext())
     {
         iMeshWrapper* m = obj_it->Next();
-        if (!doInvisible)
+        if(!doInvisible)
         {
             bool invisible = m->GetFlags().Check(CS_ENTITY_INVISIBLE);
-            if (invisible)
+            if(invisible)
                 continue;
         }
 
         gemObject* object = FindAttachedObject(m->QueryObject());
 
-        if (object)
+        if(object)
         {
-            list.Push( object );
+            list.Push(object);
         }
     }
 
     return list;
 }
 
-csArray<gemObject*> GEMSupervisor::FindSectorEntities( iSector* sector, bool doInvisible )
+csArray<gemObject*> GEMSupervisor::FindSectorEntities(iSector* sector, bool doInvisible)
 {
     csArray<gemObject*> list;
 
     csRef<iMeshList> obj_it =  sector->GetMeshes();
-    for(int i = 0; i < obj_it->GetCount(); i++)  
+    for(int i = 0; i < obj_it->GetCount(); i++)
     {
         iMeshWrapper* m = obj_it->Get(i);
-        if (!doInvisible)
+        if(!doInvisible)
         {
             bool invisible = m->GetFlags().Check(CS_ENTITY_INVISIBLE);
-            if (invisible)
+            if(invisible)
                 continue;
         }
 
         gemObject* object = FindAttachedObject(m->QueryObject());
 
-        if (object)
+        if(object)
         {
-            list.Push( object );
+            list.Push(object);
         }
     }
 
@@ -606,13 +606,13 @@ csArray<gemObject*> GEMSupervisor::FindSectorEntities( iSector* sector, bool doI
 
 /*****************************************************************/
 
-csString GetDefaultBehavior(const csString & dfltBehaviors, int behaviorNum)
+csString GetDefaultBehavior(const csString &dfltBehaviors, int behaviorNum)
 {
     csStringArray behaviors;
     psString dflt(dfltBehaviors);
 
     dflt.Split(behaviors);
-    if (behaviorNum < (int)behaviors.GetSize())
+    if(behaviorNum < (int)behaviors.GetSize())
         return behaviors[behaviorNum];
     else
         return "";
@@ -625,7 +625,7 @@ gemObject::gemObject(GEMSupervisor* gemsupervisor,
                      const char* factname,
                      InstanceID myInstance,
                      iSector* room,
-                     const csVector3& pos,
+                     const csVector3 &pos,
                      float rotangle,
                      int clientnum) : factname(factname)
 {
@@ -648,7 +648,7 @@ gemObject::gemObject(GEMSupervisor* gemsupervisor,
 
     InitMesh(name,pos,rotangle,room);
 
-    if (!InitProximityList(DEF_PROX_DIST,clientnum))
+    if(!InitProximityList(DEF_PROX_DIST,clientnum))
     {
         Error1("Could not create gemObject because prox list could not be Init'd.");
         return;
@@ -676,7 +676,7 @@ gemItem* gemObject::GetItemPtr()
 
 psItem* gemObject::GetItem()
 {
-    gemItem *itemPtr = GetItemPtr();
+    gemItem* itemPtr = GetItemPtr();
     if(itemPtr)
         return itemPtr->GetItemData();
 
@@ -708,7 +708,7 @@ const char* gemObject::GetName()
     return name;
 }
 
-void gemObject::SetName(const char *n)
+void gemObject::SetName(const char* n)
 {
     name = n;
 }
@@ -733,13 +733,13 @@ void gemObject::Disconnect()
 {
     while(receivers.GetSize() > 0)
     {
-        iDeleteObjectCallback *receiver = receivers.Pop();
+        iDeleteObjectCallback* receiver = receivers.Pop();
         receiver->DeleteObjectCallback(this);
     }
 }
 
 
-void gemObject::Broadcast(int clientnum, bool control )
+void gemObject::Broadcast(int clientnum, bool control)
 {
     CPrintf(CON_DEBUG, "Base Object Broadcast!\n");
 }
@@ -747,26 +747,26 @@ void gemObject::Broadcast(int clientnum, bool control )
 void gemObject::SetAlive(bool flag, bool queue)
 {
     bool changed = is_alive != flag;
-    
+
     is_alive = flag;
-    if (!flag)
+    if(!flag)
     {
         GetCharacterData()->GetHPRate().SetBase(0);  // This keeps dead guys from regen'ing HP
         GetCharacterData()->GetManaRate().SetBase(0);  // This keeps dead guys from regen'ing Mana
-        BroadcastTargetStatDR( psserver->GetNetManager()->GetConnections() );
+        BroadcastTargetStatDR(psserver->GetNetManager()->GetConnections());
     }
 
-    gemActor * actor = GetActorPtr();
+    gemActor* actor = GetActorPtr();
 
-    if (queue && changed && actor )
+    if(queue && changed && actor)
     {
-        psserver->GetNPCManager()->QueueFlagPerception( actor );
+        psserver->GetNPCManager()->QueueFlagPerception(actor);
     }
 }
 
 
-void gemObject::InitMesh(const char *name,
-                         const csVector3& pos,
+void gemObject::InitMesh(const char* name,
+                         const csVector3 &pos,
                          const float rotangle,
                          iSector* room)
 {
@@ -789,17 +789,17 @@ void gemObject::InitMesh(const char *name,
     Move(pos,rotangle,room);
 }
 
-iMeshWrapper *gemObject::GetMeshWrapper()
+iMeshWrapper* gemObject::GetMeshWrapper()
 {
     return pcmesh->GetMesh();
 }
 
-void gemObject::Move(const csVector3& pos,float rotangle, iSector* room)
+void gemObject::Move(const csVector3 &pos,float rotangle, iSector* room)
 {
     pcmesh->MoveMesh(room, rotangle, pos);
 }
 
-bool gemObject::IsNear(gemObject *obj, float radius, bool ignoreY)
+bool gemObject::IsNear(gemObject* obj, float radius, bool ignoreY)
 {
     return RangeTo(obj, ignoreY) < radius;
 }
@@ -807,13 +807,13 @@ bool gemObject::IsNear(gemObject *obj, float radius, bool ignoreY)
 float gemObject::RangeTo(gemObject* obj, bool ignoreY, bool ignoreInstance)
 {
     // Ugly hack : if an AL got (0,0,0) as a position, bypass the check
-    if ((GetALPtr() && GetPosition() == csVector3(0,0,0)) || (obj->GetALPtr() && obj->GetPosition() == csVector3(0,0,0)))
+    if((GetALPtr() && GetPosition() == csVector3(0,0,0)) || (obj->GetALPtr() && obj->GetPosition() == csVector3(0,0,0)))
         return 0.0f;
 
     return proxlist->RangeTo(obj, ignoreY, ignoreInstance);
 }
 
-bool gemObject::IsUpdateReq (csVector3 const &pos,csVector3 const &oldPos)
+bool gemObject::IsUpdateReq(csVector3 const &pos,csVector3 const &oldPos)
 {
     return (pos-oldPos).SquaredNorm() >= DEF_UPDATE_DIST*DEF_UPDATE_DIST;
 }
@@ -825,20 +825,20 @@ bool gemObject::InitProximityList(float radius,int clientnum)
     proxlist->Initialize(clientnum,this); // store these for fast access later
 
     // A client should always subscribe to itself
-    if (clientnum)
+    if(clientnum)
     {
         proxlist->StartMutualWatching(clientnum,this,0.0);
     }
     return true;
 }
 
-void gemObject::UpdateProxList( bool force )
+void gemObject::UpdateProxList(bool force)
 {
 #ifdef PSPROXDEBUG
     psString log;
 #endif
 
-    if (!force && !proxlist->CheckUpdateRequired())  // This allows updates only if moved some way away
+    if(!force && !proxlist->CheckUpdateRequired())   // This allows updates only if moved some way away
         return;
 
 #ifdef PSPROXDEBUG
@@ -847,8 +847,8 @@ void gemObject::UpdateProxList( bool force )
 #endif
 
     // Find nearby entities
-    const csVector3 & pos = GetPosition();
-    iSector *sector = GetSector();
+    const csVector3 &pos = GetPosition();
+    iSector* sector = GetSector();
 
     csTicks time = csGetTicks();
 
@@ -862,32 +862,32 @@ void gemObject::UpdateProxList( bool force )
     size_t player_count = 0;
 
     proxlist->ClearTouched();
-    for (size_t i=0; i<count; i++)
+    for(size_t i=0; i<count; i++)
     {
-        gemObject *nearobj = nearlist[i];
-        if (!nearobj)
+        gemObject* nearobj = nearlist[i];
+        if(!nearobj)
             continue;
 
         // Most npcs and objects don't watch each other.
-        if (!GetClientID() && !alwaysWatching && !nearobj->GetClientID() && !nearobj->AlwaysWatching())
+        if(!GetClientID() && !alwaysWatching && !nearobj->GetClientID() && !nearobj->AlwaysWatching())
             continue;
 
         float range = proxlist->RangeTo(nearobj);
 #ifdef PSPROXDEBUG
-        log.AppendFmt("%s is %1.2fm away from %s\n",GetName(),range,nearobj->GetName() );
+        log.AppendFmt("%s is %1.2fm away from %s\n",GetName(),range,nearobj->GetName());
 #endif
 
-        if (SeesObject(nearobj, range))
+        if(SeesObject(nearobj, range))
         {
 #ifdef PSPROXDEBUG
             log.AppendFmt(" and is seen.\n-%s (client %i) can see %s\n",GetName(),GetClientID(),nearobj->GetName());
 #endif
-            if (proxlist->StartWatching(nearobj, range) || force)
+            if(proxlist->StartWatching(nearobj, range) || force)
             {
 #ifdef PSPROXDEBUG
                 log.AppendFmt("-%s (client %i) started watching %s\n",GetName(),GetClientID(),nearobj->GetName());
 #endif
-                if (GetClientID()!=0)
+                if(GetClientID()!=0)
                 {
 #ifdef PSPROXDEBUG
                     log.AppendFmt("-%s sent to client %s\n",nearobj->GetName(),GetName());
@@ -904,18 +904,18 @@ void gemObject::UpdateProxList( bool force )
 #endif
         }
 
-        if ((!nearobj->GetClient() || (nearobj->GetClient() && nearobj->GetClient()->IsReady())) && nearobj->SeesObject(this, range))
+        if((!nearobj->GetClient() || (nearobj->GetClient() && nearobj->GetClient()->IsReady())) && nearobj->SeesObject(this, range))
         {
 #ifdef PSPROXDEBUG
             log.AppendFmt("-%s can see %s\n",nearobj->GetName(),GetName());
 #endif
             // true means new addition, false means already on list
-            if (nearobj->GetProxList()->StartWatching(this, range) || force)
+            if(nearobj->GetProxList()->StartWatching(this, range) || force)
             {
 #ifdef PSPROXDEBUG
                 log.AppendFmt("-%s started watching %s\n",nearobj->GetName(),GetName());
 #endif
-                if (nearobj->GetClientID()!=0)
+                if(nearobj->GetClientID()!=0)
                 {
 #ifdef PSPROXDEBUG
                     log.AppendFmt("Big send -%s sent to client %s\n",GetName(),nearobj->GetName());
@@ -933,10 +933,10 @@ void gemObject::UpdateProxList( bool force )
     }
 
     // See how our tally did, and step down on the next update if it's too big.
-    if (player_count > PROX_LIST_SHRINK_THRESHOLD)
+    if(player_count > PROX_LIST_SHRINK_THRESHOLD)
     {
         prox_distance_current-=PROX_LIST_STEP_SIZE;
-        if (prox_distance_current<2)
+        if(prox_distance_current<2)
         {
             prox_distance_current=2;
         }
@@ -949,10 +949,10 @@ void gemObject::UpdateProxList( bool force )
      *          as long as SHRINK, REGROW and STEP are defined with some sanity it should be a rare
      *          occurance.
      */
-    if (player_count < PROX_LIST_REGROW_THRESHOLD && prox_distance_current < prox_distance_desired)
+    if(player_count < PROX_LIST_REGROW_THRESHOLD && prox_distance_current < prox_distance_desired)
     {
         prox_distance_current+=PROX_LIST_STEP_SIZE;
-        if (prox_distance_current>prox_distance_desired)
+        if(prox_distance_current>prox_distance_desired)
         {
             prox_distance_current=prox_distance_desired;
         }
@@ -960,12 +960,12 @@ void gemObject::UpdateProxList( bool force )
 
     // Now remove those that should be no more connected to out object
 
-    gemObject *obj;
+    gemObject* obj;
 
     size_t debug_count = 0;
-    if (GetClientID() != 0)
+    if(GetClientID() != 0)
     {
-        while (proxlist->GetUntouched_ObjectThatIWatch(obj))
+        while(proxlist->GetUntouched_ObjectThatIWatch(obj))
         {
             debug_count++;
 #ifdef PSPROXDEBUG
@@ -977,23 +977,23 @@ void gemObject::UpdateProxList( bool force )
             //               obj->GetPosition(pos,yrot,sector);
             //                CPrintf(CON_SPAM, "Removing %s at (%1.2f, %1.2f, %1.2f) in sector %s.\n",obj->GetName(),pos.x,pos.y,pos.z,sector->QueryObject()->GetName() );
 
-            psRemoveObject remove( GetClientID(), obj->GetEID() );
+            psRemoveObject remove(GetClientID(), obj->GetEID());
             remove.SendMessage();
             proxlist->EndWatching(obj);
         }
     }
 
-    if (csGetTicks() - time > 500 || player_count > 100)
+    if(csGetTicks() - time > 500 || player_count > 100)
     {
         csString status;
         status.Format("Warning: Spent %u time getting untouched objects in proxlist for %s, %zu nearby entities, distance %g, location: %g %g %g %s!",
-                      csGetTicks() - time, GetName(), player_count, prox_distance_current, pos.x, pos.y, pos.z, (const char *)sector->QueryObject()->GetName());
+                      csGetTicks() - time, GetName(), player_count, prox_distance_current, pos.x, pos.y, pos.z, (const char*)sector->QueryObject()->GetName());
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
-    while (proxlist->GetUntouched_ObjectThatWatchesMe(obj))
+    while(proxlist->GetUntouched_ObjectThatWatchesMe(obj))
     {
-        if (obj->GetClientID() != 0)
+        if(obj->GetClientID() != 0)
         {
 #ifdef PSPROXDEBUG
             log.AppendFmt("-removing %s from client %s\n",GetName(),obj->GetName());
@@ -1005,7 +1005,7 @@ void gemObject::UpdateProxList( bool force )
         }
     }
 
-    if (csGetTicks() - time > 500 || player_count > 100)
+    if(csGetTicks() - time > 500 || player_count > 100)
     {
         csString status;
         status.Format("Warning: Spent %u time touching entities in proxlist for %s,"
@@ -1020,7 +1020,7 @@ void gemObject::UpdateProxList( bool force )
 }
 
 
-csArray<PublishDestination>& gemObject::GetMulticastClients()
+csArray<PublishDestination> &gemObject::GetMulticastClients()
 {
     return proxlist->GetClients();
 }
@@ -1030,25 +1030,25 @@ uint32  gemObject::GetClientID()
     return proxlist->GetClientID();
 }
 
-csArray< gemObject* > *gemObject::GetObjectsInRange( float range )
+csArray< gemObject* >* gemObject::GetObjectsInRange(float range)
 {
-    csArray< gemObject* > *objectsInRange = new csArray< gemObject* >();
+    csArray< gemObject* >* objectsInRange = new csArray< gemObject* >();
 
     // Find nearby entities
     csVector3 pos;
-    iSector *sector;
+    iSector* sector;
     GetPosition(pos,sector);
-    csArray<gemObject*> nearlist = cel->FindNearbyEntities( sector, pos, range);
+    csArray<gemObject*> nearlist = cel->FindNearbyEntities(sector, pos, range);
 
     size_t count = nearlist.GetSize();
 
-    for (size_t i=0; i<count; i++)
+    for(size_t i=0; i<count; i++)
     {
-        gemObject *nearobj = nearlist[i];
-        if (!nearobj)
+        gemObject* nearobj = nearlist[i];
+        if(!nearobj)
             continue;
 
-        objectsInRange->Push( nearobj );
+        objectsInRange->Push(nearobj);
 
         /*
         float range = proxlist->RangeTo(nearobj);
@@ -1068,18 +1068,18 @@ csArray< gemObject* > *gemObject::GetObjectsInRange( float range )
     return objectsInRange;
 }
 
-void gemObject::GetPosition(csVector3& pos, float& yrot,iSector*& sector)
+void gemObject::GetPosition(csVector3 &pos, float &yrot,iSector* &sector)
 {
     yrot = GetAngle();
     GetPosition(pos, sector);
 }
 
-const csVector3 & gemObject::GetPosition()
+const csVector3 &gemObject::GetPosition()
 {
     return GetMeshWrapper()->GetMovable()->GetPosition();
 }
 
-void gemObject::GetPosition(csVector3& pos, iSector*& sector)
+void gemObject::GetPosition(csVector3 &pos, iSector* &sector)
 {
     pos = GetPosition();
     sector = GetSector();
@@ -1093,7 +1093,7 @@ float gemObject::GetAngle()
 
 iSector* gemObject::GetSector()
 {
-    if (GetMeshWrapper()->GetMovable()->GetSectors()->GetCount())
+    if(GetMeshWrapper()->GetMovable()->GetSectors()->GetCount())
         return GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);
     return NULL;
 }
@@ -1104,12 +1104,12 @@ float gemObject::GetVelocity()
 }
 
 
-void gemObject::SendBehaviorMessage(const csString & str, gemObject *actor)
+void gemObject::SendBehaviorMessage(const csString &str, gemObject* actor)
 {
     Error3("gemObject %s got behavior message %s in error.",GetName(),str.GetData());
 }
 
-csString gemObject::GetDefaultBehavior(const csString & dfltBehaviors)
+csString gemObject::GetDefaultBehavior(const csString &dfltBehaviors)
 {
     Error3("gemObject %s got default behavior message %s in error.",GetName(),dfltBehaviors.GetData());
     return "";
@@ -1130,13 +1130,13 @@ void gemObject::Dump()
 //--------------------------------------------------------------------------------------
 
 gemActiveObject::gemActiveObject(GEMSupervisor* gemSupervisor, EntityManager* entitymanager, CacheManager* cachemanager, const char* name,
-                                     const char* factname,
-                                     InstanceID myInstance,
-                                     iSector* room,
-                                     const csVector3& pos,
-                                     float rotangle,
-                                     int clientnum)
-                                     : gemObject(gemSupervisor,entitymanager,cachemanager,name,factname,myInstance,room,pos,rotangle,clientnum)
+                                 const char* factname,
+                                 InstanceID myInstance,
+                                 iSector* room,
+                                 const csVector3 &pos,
+                                 float rotangle,
+                                 int clientnum)
+    : gemObject(gemSupervisor,entitymanager,cachemanager,name,factname,myInstance,room,pos,rotangle,clientnum)
 {
     //if entity is not set, object is not a success
 //    if (entity != NULL)
@@ -1148,24 +1148,24 @@ gemActiveObject::gemActiveObject(GEMSupervisor* gemSupervisor, EntityManager* en
 
 }
 
-void gemActiveObject::Broadcast(int clientnum, bool control )
+void gemActiveObject::Broadcast(int clientnum, bool control)
 {
-    CPrintf(CON_DEBUG, "Active Object Broadcast" );
+    CPrintf(CON_DEBUG, "Active Object Broadcast");
 }
 
-csString gemActiveObject::GetDefaultBehavior(const csString & dfltBehaviors)
+csString gemActiveObject::GetDefaultBehavior(const csString &dfltBehaviors)
 {
     return ::GetDefaultBehavior(dfltBehaviors, 0);
 }
 
-void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
+void gemActiveObject::SendBehaviorMessage(const csString &msg_id, gemObject* actor)
 {
     unsigned int clientnum = actor->GetClientID();
 
-    if ( msg_id == "select" )
+    if(msg_id == "select")
     {
         // If the player is in range of the item.
-        if ( RangeTo(actor) < RANGE_TO_SELECT )
+        if(RangeTo(actor) < RANGE_TO_SELECT)
         {
             int options = 0;
 
@@ -1175,26 +1175,26 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 
         return;
     }
-    else if ( msg_id == "context" )
+    else if(msg_id == "context")
     {
         // If the player is in range of the item.
-        if ( RangeTo(actor) < RANGE_TO_SELECT && actor->IsAlive() )
+        if(RangeTo(actor) < RANGE_TO_SELECT && actor->IsAlive())
         {
             int options = psGUIInteractMessage::EXAMINE | psGUIInteractMessage::USE;
 
-            if (IsConstructible()) options |= psGUIInteractMessage::CONSTRUCT;
-            if (IsContainer()) options |= psGUIInteractMessage::COMBINE;
-            if (IsPickupable())  options |= psGUIInteractMessage::PICKUP;
-            if (IsLockable())
+            if(IsConstructible()) options |= psGUIInteractMessage::CONSTRUCT;
+            if(IsContainer()) options |= psGUIInteractMessage::COMBINE;
+            if(IsPickupable())  options |= psGUIInteractMessage::PICKUP;
+            if(IsLockable())
             {
-                if( IsLocked())
+                if(IsLocked())
                     options |= psGUIInteractMessage::UNLOCK;
                 else
                     options |= psGUIInteractMessage::LOCK;
             }
 
             // Check if there are something to send
-            if (!options)
+            if(!options)
                 return;
 
             // Always possible to close menu
@@ -1205,16 +1205,16 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
         }
         return;
     }
-    else if ( msg_id == "pickup")
+    else if(msg_id == "pickup")
     {
         // Check if the char is dead
-        if (!actor->IsAlive())
+        if(!actor->IsAlive())
         {
             psserver->SendSystemInfo(clientnum,"You can't pick up items when you're dead.");
             return;
         }
         // Check if the item is pickupable
-        if (!IsPickupable())
+        if(!IsPickupable())
         {
             psserver->SendSystemInfo(clientnum,"You can't pick up %s.", GetName());
             return;
@@ -1222,13 +1222,13 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
         CS_ASSERT(false);
     }
 
-    else if (msg_id == "use")
+    else if(msg_id == "use")
         psserver->GetWorkManager()->HandleUse(actor->GetClient());
-    else if (msg_id == "combine")
+    else if(msg_id == "combine")
         psserver->GetWorkManager()->HandleCombine(actor->GetClient());
-    else if (msg_id == "unlock")
+    else if(msg_id == "unlock")
         ; //???????
-    else if (msg_id == "examine")
+    else if(msg_id == "examine")
         psserver->GetCharManager()->ViewItem(actor->GetClient(), actor->GetEID().Unbox(), PSCHARACTER_SLOT_NONE);
 
     return;
@@ -1239,15 +1239,15 @@ void gemActiveObject::SendBehaviorMessage(const csString & msg_id, gemObject *ac
 //--------------------------------------------------------------------------------------
 
 gemItem::gemItem(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, EntityManager* entitymanager, csWeakRef<psItem> item,
-                     const char* factname,
-                     InstanceID instance,
-                     iSector* room,
-                     const csVector3& pos,
-                     float xrotangle,
-                     float yrotangle,
-                     float zrotangle,
-                     int clientnum)
-                     : gemActiveObject(gemsupervisor, entitymanager, cachemanager, item->GetName(),factname,instance,room,pos,yrotangle,clientnum)
+                 const char* factname,
+                 InstanceID instance,
+                 iSector* room,
+                 const csVector3 &pos,
+                 float xrotangle,
+                 float yrotangle,
+                 float zrotangle,
+                 int clientnum)
+    : gemActiveObject(gemsupervisor, entitymanager, cachemanager, item->GetName(),factname,instance,room,pos,yrotangle,clientnum)
 {
     itemdata=item;
     matname=item->GetTextureName();
@@ -1255,7 +1255,7 @@ gemItem::gemItem(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, Entit
     yRot=yrotangle;
     zRot=zrotangle;
     itemType.Format("Item(%s)",itemdata->GetItemType());
-    itemdata->SetGemObject( this );
+    itemdata->SetGemObject(this);
     cel->AddItemEntity(this);
     tribeID = 0;
 }
@@ -1273,42 +1273,42 @@ double gemItem::CalcFunction(MathEnvironment* env, const char* f, const double* 
 }
 
 
-void gemItem::Broadcast(int clientnum, bool control )
+void gemItem::Broadcast(int clientnum, bool control)
 {
     int flags = 0;
-    if (!IsPickupable()) flags |= psPersistItem::NOPICKUP;
-    if (IsUsingCD() || GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
+    if(!IsPickupable()) flags |= psPersistItem::NOPICKUP;
+    if(IsUsingCD() || GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
 
-    psPersistItem mesg(  clientnum,
-                         eid,
-                         -2,
-                         name,
-                         factname,
-                         matname,
-                         GetSectorName(),
-                         GetPosition(),
-                         xRot,
-                         yRot,
-                         zRot,
-                         flags,
-                         cacheManager->GetMsgStrings(),
-                         0  // Don't send tribeID to clients
-                         );
+    psPersistItem mesg(clientnum,
+                       eid,
+                       -2,
+                       name,
+                       factname,
+                       matname,
+                       GetSectorName(),
+                       GetPosition(),
+                       xRot,
+                       yRot,
+                       zRot,
+                       flags,
+                       cacheManager->GetMsgStrings(),
+                       0  // Don't send tribeID to clients
+                      );
 
     mesg.Multicast(GetMulticastClients(),clientnum,PROX_LIST_ANY_RANGE);
 }
 
-void gemItem::SetPosition(const csVector3& pos,float angle, iSector* sector, InstanceID instance)
+void gemItem::SetPosition(const csVector3 &pos,float angle, iSector* sector, InstanceID instance)
 {
     Move(pos, angle, sector);
     SetInstance(instance);
 
     psSectorInfo* sectorInfo = NULL;
-    if (sector != NULL)
+    if(sector != NULL)
         sectorInfo = cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
-    if (sectorInfo != NULL)
+    if(sectorInfo != NULL)
     {
-        itemdata->SetLocationInWorld(instance, sectorInfo, pos.x, pos.y, pos.z, angle );
+        itemdata->SetLocationInWorld(instance, sectorInfo, pos.x, pos.y, pos.z, angle);
         itemdata->Save(false);
     }
 
@@ -1325,7 +1325,7 @@ void gemItem::SetRotation(float xrotangle, float yrotangle, float zrotangle)
     itemdata->Save(false);
 }
 
-void gemItem::GetRotation(float& xrotangle, float& yrotangle, float& zrotangle)
+void gemItem::GetRotation(float &xrotangle, float &yrotangle, float &zrotangle)
 {
     xrotangle = this->xRot;
     yrotangle = this->yRot;
@@ -1334,45 +1334,45 @@ void gemItem::GetRotation(float& xrotangle, float& yrotangle, float& zrotangle)
 
 float gemItem::GetBaseAdvertiseRange()
 {
-    if (itemdata==NULL)
+    if(itemdata==NULL)
     {
         return gemObject::GetBaseAdvertiseRange();
     }
     return itemdata->GetVisibleDistance();
 }
 
-bool gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities)
+bool gemItem::Send(int clientnum, bool , bool to_superclients, psPersistAllEntities* allEntities)
 {
     int flags = 0;
-    if (!IsPickupable()) flags |= psPersistItem::NOPICKUP;
-    if (IsUsingCD() || GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
+    if(!IsPickupable()) flags |= psPersistItem::NOPICKUP;
+    if(IsUsingCD() || GetItem()->GetSector()->GetIsColliding()) flags |= psPersistItem::COLLIDE;
 
-    psPersistItem mesg(  clientnum,
-                         eid,
-                         -2,
-                         name,
-                         factname,
-                         matname,
-                         GetSectorName(),
-                         GetPosition(),
-                         xRot,
-                         yRot,
-                         zRot,
-                         flags,
-                         cacheManager->GetMsgStrings(),
-                         (to_superclients || allEntities)?GetTribeID():0, // Don't send tribe ids to clients
-                         (to_superclients || allEntities)?GetItem()->GetUID():0);
+    psPersistItem mesg(clientnum,
+                       eid,
+                       -2,
+                       name,
+                       factname,
+                       matname,
+                       GetSectorName(),
+                       GetPosition(),
+                       xRot,
+                       yRot,
+                       zRot,
+                       flags,
+                       cacheManager->GetMsgStrings(),
+                       (to_superclients || allEntities)?GetTribeID():0, // Don't send tribe ids to clients
+                       (to_superclients || allEntities)?GetItem()->GetUID():0);
 
-    if (clientnum && !to_superclients)
+    if(clientnum && !to_superclients)
     {
         mesg.SendMessage();
     }
 
-    if (to_superclients)
+    if(to_superclients)
     {
         Debug1(LOG_SUPERCLIENT, clientnum, "Sending gemItem to superclients.\n");
 
-        if (clientnum == 0) // Send to all superclients
+        if(clientnum == 0)  // Send to all superclients
         {
             mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
         }
@@ -1382,7 +1382,7 @@ bool gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
         }
     }
 
-    if (allEntities)
+    if(allEntities)
     {
         return allEntities->AddEntityMessage(mesg.msg);
     }
@@ -1391,25 +1391,55 @@ bool gemItem::Send( int clientnum, bool , bool to_superclients, psPersistAllEnti
 }
 
 //Here we check the flag to see if we can pick up this item
-bool gemItem::IsPickupable() { return !itemdata->GetIsNoPickup(); }
+bool gemItem::IsPickupable()
+{
+    return !itemdata->GetIsNoPickup();
+}
 
-bool gemItem::IsPickupableStrong() { return !itemdata->GetIsNoPickupStrong(); }
+bool gemItem::IsPickupableStrong()
+{
+    return !itemdata->GetIsNoPickupStrong();
+}
 
-bool gemItem::IsPickupableWeak() { return !itemdata->GetIsNoPickupWeak(); }
+bool gemItem::IsPickupableWeak()
+{
+    return !itemdata->GetIsNoPickupWeak();
+}
 
-bool gemItem::IsLockable() { return itemdata->GetIsLockable();}
+bool gemItem::IsLockable()
+{
+    return itemdata->GetIsLockable();
+}
 
-bool gemItem::IsLocked() { return itemdata->GetIsLocked();}
+bool gemItem::IsLocked()
+{
+    return itemdata->GetIsLocked();
+}
 
-bool gemItem::IsConstructible() { return itemdata->GetIsConstructible();}
+bool gemItem::IsConstructible()
+{
+    return itemdata->GetIsConstructible();
+}
 
-bool gemItem::IsUsingCD() { return itemdata->GetIsCD();}
+bool gemItem::IsUsingCD()
+{
+    return itemdata->GetIsCD();
+}
 
-bool gemItem::IsSecurityLocked() { return itemdata->GetIsSecurityLocked();}
+bool gemItem::IsSecurityLocked()
+{
+    return itemdata->GetIsSecurityLocked();
+}
 
-bool gemItem::IsContainer() { return itemdata->GetIsContainer();}
+bool gemItem::IsContainer()
+{
+    return itemdata->GetIsContainer();
+}
 
-bool gemItem::GetCanTransform() { return itemdata->GetCanTransform();}
+bool gemItem::GetCanTransform()
+{
+    return itemdata->GetCanTransform();
+}
 
 bool gemItem::GetVisibility()
 {
@@ -1418,162 +1448,162 @@ bool gemItem::GetVisibility()
     return true;
 }
 
-void gemItem::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
+void gemItem::SendBehaviorMessage(const csString &msg_id, gemObject* actor)
 {
     unsigned int clientnum = actor->GetClientID();
-    if ( msg_id == "pickup")
+    if(msg_id == "pickup")
     {
         // Check if the char is dead
-         if (!actor->IsAlive())
-         {
-             psserver->SendSystemInfo(clientnum,"You can't pick up items when you're dead.");
-             return;
-         }
-         // Check if the item is pickupable
-         if (!IsPickupable())
-         {
-             psserver->SendSystemInfo(clientnum,"You can't pick up %s.", GetName());
-             return;
-         }
+        if(!actor->IsAlive())
+        {
+            psserver->SendSystemInfo(clientnum,"You can't pick up items when you're dead.");
+            return;
+        }
+        // Check if the item is pickupable
+        if(!IsPickupable())
+        {
+            psserver->SendSystemInfo(clientnum,"You can't pick up %s.", GetName());
+            return;
+        }
 
-         // Check if the item is in range
-         if (!(RangeTo(actor) < RANGE_TO_SELECT))
-         {
-             if (!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
-             {
-                 psserver->SendSystemInfo(clientnum,"You're too far away to pick up %s.", GetName());
-                 return;
-             }
-         }
+        // Check if the item is in range
+        if(!(RangeTo(actor) < RANGE_TO_SELECT))
+        {
+            if(!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
+            {
+                psserver->SendSystemInfo(clientnum,"You're too far away to pick up %s.", GetName());
+                return;
+            }
+        }
 
-         psItem* item = GetItemData();
+        psItem* item = GetItemData();
 
-         // Check if item is guarded
-         if (!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
-         {
-             PID guardCharacterID = item->GetGuardingCharacterID();
-             gemActor* guardActor = cel->FindPlayerEntity(guardCharacterID);
-             if (guardCharacterID.IsValid() &&
-                 guardCharacterID != actor->GetCharacterData()->GetPID() &&
-                 guardActor &&
-                 guardActor->InsideGuardedArea(item->GetGemObject()) &&
-                 (guardActor->GetInstance() == this->GetInstance()))
-             {
-                 psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
-                                          guardActor->GetCharacterData()->GetCharFullName());
-                 return;
-             }
-         }
+        // Check if item is guarded
+        if(!psserver->CheckAccess(actor->GetClient(), "pickup override", false))
+        {
+            PID guardCharacterID = item->GetGuardingCharacterID();
+            gemActor* guardActor = cel->FindPlayerEntity(guardCharacterID);
+            if(guardCharacterID.IsValid() &&
+                    guardCharacterID != actor->GetCharacterData()->GetPID() &&
+                    guardActor &&
+                    guardActor->InsideGuardedArea(item->GetGemObject()) &&
+                    (guardActor->GetInstance() == this->GetInstance()))
+            {
+                psserver->SendSystemInfo(clientnum,"You notice that the item is being guarded by %s",
+                                         guardActor->GetCharacterData()->GetCharFullName());
+                return;
+            }
+        }
 
-         // Cache values from item, because item might be deleted by Add
-         csString qname = item->GetQuantityName();
-         gemContainer* container = dynamic_cast<gemContainer*>(this);
+        // Cache values from item, because item might be deleted by Add
+        csString qname = item->GetQuantityName();
+        gemContainer* container = dynamic_cast<gemContainer*>(this);
 
-         uint32 origUID = item->GetUID();
-	     csString itemName = item->GetName();
-         unsigned short origStackCount = item->GetStackCount();
+        uint32 origUID = item->GetUID();
+        csString itemName = item->GetName();
+        unsigned short origStackCount = item->GetStackCount();
 
-         gemActor* gActor = actor->GetActorPtr();
-         psCharacter* chardata = NULL;
-         if (gActor) chardata = gActor->GetCharacterData();
-         if (chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
-         {
-             Client* client = actor->GetClient();
-             if (!client)
-             {
-                 Debug2(LOG_ANY,clientnum,"User action from unknown client!  Clientnum:%d\n",clientnum);
-                 return;
-             }
-             client->SetTargetObject(NULL);
-             // item is deleted if we pickup money
-             if(item)
-             {
-                 item->ScheduleRespawn();
-                 psPickupEvent evt(
-                            chardata->GetPID(),
-			    chardata->GetCharName(),
-                            item->GetUID(),
-			    item->GetName(),
-                            item->GetStackCount(),
-                            (int)item->GetCurrentStats()->GetQuality(),
-                            0
-                            );
-                 evt.FireEvent();
-             }
-             else
-             {
-                 psPickupEvent evt(
-                                chardata->GetPID(),
-				chardata->GetCharName(),
-                                origUID,
-				itemName,
-                                origStackCount,
-                                0,
-                                0
-                                );
-                 evt.FireEvent();
-             }
+        gemActor* gActor = actor->GetActorPtr();
+        psCharacter* chardata = NULL;
+        if(gActor) chardata = gActor->GetCharacterData();
+        if(chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
+        {
+            Client* client = actor->GetClient();
+            if(!client)
+            {
+                Debug2(LOG_ANY,clientnum,"User action from unknown client!  Clientnum:%d\n",clientnum);
+                return;
+            }
+            client->SetTargetObject(NULL);
+            // item is deleted if we pickup money
+            if(item)
+            {
+                item->ScheduleRespawn();
+                psPickupEvent evt(
+                    chardata->GetPID(),
+                    chardata->GetCharName(),
+                    item->GetUID(),
+                    item->GetName(),
+                    item->GetStackCount(),
+                    (int)item->GetCurrentStats()->GetQuality(),
+                    0
+                );
+                evt.FireEvent();
+            }
+            else
+            {
+                psPickupEvent evt(
+                    chardata->GetPID(),
+                    chardata->GetCharName(),
+                    origUID,
+                    itemName,
+                    origStackCount,
+                    0,
+                    0
+                );
+                evt.FireEvent();
+            }
 
-             psSystemMessage newmsg(clientnum, MSG_INFO_BASE, "%s picked up %s", actor->GetName(), qname.GetData() );
-             newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
+            psSystemMessage newmsg(clientnum, MSG_INFO_BASE, "%s picked up %s", actor->GetName(), qname.GetData());
+            newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
 
-             psserver->GetCharManager()->UpdateItemViews(clientnum);
+            psserver->GetCharManager()->UpdateItemViews(clientnum);
 
-             if(GetItemData()) cel->RemoveItemEntity(this);
-             entityManager->RemoveActor(this);  // Destroy this
-         }
-         else
-         {
+            if(GetItemData()) cel->RemoveItemEntity(this);
+            entityManager->RemoveActor(this);  // Destroy this
+        }
+        else
+        {
 
-             /* TODO: Include support for partial pickup of stacks
+            /* TODO: Include support for partial pickup of stacks
 
-             // Check if part of a stack where picked up
-             if (item && count > item->GetStackCount())
-             {
-                 count = count - item->GetStackCount();
-                 qname = psItem::GetQuantityName(item->GetName(),count);
+            // Check if part of a stack where picked up
+            if (item && count > item->GetStackCount())
+            {
+                count = count - item->GetStackCount();
+                qname = psItem::GetQuantityName(item->GetName(),count);
 
-                 psSystemMessage newmsg(client, MSG_INFO, "%s picked up %s", actor->GetName(), qname.GetData() );
-                 newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
+                psSystemMessage newmsg(client, MSG_INFO, "%s picked up %s", actor->GetName(), qname.GetData() );
+                newmsg.Multicast(actor->GetMulticastClients(),0,RANGE_TO_SELECT);
 
-                 psserver->GetCharManager()->UpdateItemViews(clientnum);
+                psserver->GetCharManager()->UpdateItemViews(clientnum);
 
-                 csString buf;
-                 buf.Format("%s, %s, %s, \"%s\", %d, %d", actor->GetName(), "World", "Pickup", GetName(), 0, 0);
-                 psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+                csString buf;
+                buf.Format("%s, %s, %s, \"%s\", %d, %d", actor->GetName(), "World", "Pickup", GetName(), 0, 0);
+                psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
 
-             }
-             */
+            }
+            */
 
-             // Assume inventory is full so tell player about that to.
-             psserver->SendSystemInfo(clientnum, "You can't carry anymore %s",GetName());
-         }
+            // Assume inventory is full so tell player about that to.
+            psserver->SendSystemInfo(clientnum, "You can't carry anymore %s",GetName());
+        }
     }
     // Command for taking everything in a container.
-    else if (msg_id == "takeall")
+    else if(msg_id == "takeall")
     {
-       SendBehaviorMessageTakeAll(msg_id, actor, true);
+        SendBehaviorMessageTakeAll(msg_id, actor, true);
     }
     else if(msg_id == "takestackall")
     {
-       SendBehaviorMessageTakeAll(msg_id, actor, false);
+        SendBehaviorMessageTakeAll(msg_id, actor, false);
     }
     else
     {
         gemActiveObject::SendBehaviorMessage(msg_id, actor);
     }
-    
+
 }
 
 // Implement SendBehaviorMessage for takeall and takestackall
-void gemItem::SendBehaviorMessageTakeAll(const csString & msg_id, gemObject *obj, bool precise)
+void gemItem::SendBehaviorMessageTakeAll(const csString &msg_id, gemObject* obj, bool precise)
 {
     Client* fromClient = obj->GetClient();
     if(!fromClient)
     {
         printf("Command /%s can't find valid Client - something's wrong", msg_id.GetData());
     }
-            
+
     //printf("Attempting to do MoveAllFromContainer requested by client number %d\n", fromClient->GetClientNum());
     psCharacter* chr = obj->GetCharacterData();
     gemActor* actor = chr->GetActor();
@@ -1589,7 +1619,7 @@ void gemItem::SendBehaviorMessageTakeAll(const csString & msg_id, gemObject *obj
     if(!targetObject)
     {
         psserver->SendSystemError(fromClient->GetClientNum(),
-        "You need to target a container to %s.", msg_id.GetData());
+                                  "You need to target a container to %s.", msg_id.GetData());
         return;
     }
 
@@ -1597,7 +1627,7 @@ void gemItem::SendBehaviorMessageTakeAll(const csString & msg_id, gemObject *obj
     if(!targetObject->IsValid())
     {
         psserver->SendSystemError(fromClient->GetClientNum(),
-        "You need to target a container to %s.", msg_id.GetData());
+                                  "You need to target a container to %s.", msg_id.GetData());
         return;
     }
 
@@ -1607,7 +1637,7 @@ void gemItem::SendBehaviorMessageTakeAll(const csString & msg_id, gemObject *obj
     if(!worldContainer)
     {
         psserver->SendSystemError(fromClient->GetClientNum(),
-        "You need to target a container to %s.", msg_id.GetData());
+                                  "You need to target a container to %s.", msg_id.GetData());
         return;
     }
 
@@ -1615,7 +1645,7 @@ void gemItem::SendBehaviorMessageTakeAll(const csString & msg_id, gemObject *obj
     if(!worldContainer->IsContainer())
     {
         psserver->SendSystemError(fromClient->GetClientNum(),
-        "Can not put item into another item %s.",worldContainer->GetItem()->GetName());
+                                  "Can not put item into another item %s.",worldContainer->GetItem()->GetName());
         return;
     }
 
@@ -1623,7 +1653,7 @@ void gemItem::SendBehaviorMessageTakeAll(const csString & msg_id, gemObject *obj
     if(fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
     {
         psserver->SendSystemError(fromClient->GetClientNum(),
-        "You are not in range to use %s.",worldContainer->GetItem()->GetName());
+                                  "You are not in range to use %s.",worldContainer->GetItem()->GetName());
         return;
     }
 
@@ -1648,8 +1678,8 @@ void gemItem::SendBehaviorMessageTakeAll(const csString & msg_id, gemObject *obj
             //Check the removing was succesful
             if(!newItem)
             {
-               printf("/takeall: Removing %s by %d unsuccesful", currentItem->GetName(), fromClient->GetClientNum());
-               continue;
+                printf("/takeall: Removing %s by %d unsuccesful", currentItem->GetName(), fromClient->GetClientNum());
+                continue;
             }
 
             if(precise)
@@ -1678,22 +1708,22 @@ void gemItem::SendBehaviorMessageTakeAll(const csString & msg_id, gemObject *obj
 //--------------------------------------------------------------------------------------
 
 gemContainer::gemContainer(GEMSupervisor* gemsupervisor, CacheManager* cachemanager,
-		EntityManager* entitymanager, csWeakRef<psItem> item,
-             const char* factname,
-             InstanceID myInstance,
-             iSector* room,
-             const csVector3& pos,
-             float xrotangle,
-             float yrotangle,
-             float zrotangle,
-             int clientnum)
-             : gemItem(gemsupervisor,cachemanager,entitymanager,item,factname,myInstance,room,pos,xrotangle,yrotangle,zrotangle,clientnum)
+                           EntityManager* entitymanager, csWeakRef<psItem> item,
+                           const char* factname,
+                           InstanceID myInstance,
+                           iSector* room,
+                           const csVector3 &pos,
+                           float xrotangle,
+                           float yrotangle,
+                           float zrotangle,
+                           int clientnum)
+    : gemItem(gemsupervisor,cachemanager,entitymanager,item,factname,myInstance,room,pos,xrotangle,yrotangle,zrotangle,clientnum)
 {
 }
 
-bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot, csString &reason)
+bool gemContainer::CanAdd(unsigned short amountToAdd, psItem* item, int slot, csString &reason)
 {
-    if (!item)
+    if(!item)
     {
         reason = ""; // No reason since this is an internal error
         return false;
@@ -1709,9 +1739,9 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot, cs
     gemActor* guardingActor = cel->FindPlayerEntity(guardID);
 
     // Test if container is guarded by someone else who is near
-    if (guardID.IsValid() && (guardID != item->GetOwningCharacterID() && 
-                              guardID != item->GetGuardingCharacterID())
-        && guardingActor && guardingActor->InsideGuardedArea(this))
+    if(guardID.IsValid() && (guardID != item->GetOwningCharacterID() &&
+                             guardID != item->GetGuardingCharacterID())
+            && guardingActor && guardingActor->InsideGuardedArea(this))
     {
         reason = " because container is guarded";
         return false;
@@ -1724,12 +1754,12 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot, cs
 
     float currentSize = 0;
     gemContainer::psContainerIterator iter(this);
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         psItem* child = iter.Next();
         currentSize += child->GetTotalStackSize();
     }
-    if (item->GetItemSize()*amountToAdd + currentSize > itemdata->GetContainerMaxSize())
+    if(item->GetItemSize()*amountToAdd + currentSize > itemdata->GetContainerMaxSize())
     {
         reason = " because the item is to large to fitt";
         return false;
@@ -1742,13 +1772,13 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem *item, int slot, cs
     return result;
 }
 
-bool gemContainer::CanTake(Client *client, psItem* item)
+bool gemContainer::CanTake(Client* client, psItem* item)
 {
-    if (!client || !item)
+    if(!client || !item)
         return false;
 
     // Allow developers to take anything
-    if (client->GetSecurityLevel() >= GM_DEVELOPER)
+    if(client->GetSecurityLevel() >= GM_DEVELOPER)
         return true;
 
     /* \note
@@ -1757,20 +1787,20 @@ bool gemContainer::CanTake(Client *client, psItem* item)
      * NPCOwned container, or NoPickup items in a PickUpable container
      */
     //not allowed to take npcowned or nopickup items in a container
-    if (item->GetIsNpcOwned() || item->GetIsNoPickup())
+    if(item->GetIsNpcOwned() || item->GetIsNoPickup())
         return false;
 
-    psItem *containeritem = GetItem();
+    psItem* containeritem = GetItem();
     CS_ASSERT(containeritem);
 
     // Check for npc-owned or locked container
-    if (client->GetSecurityLevel() < GM_LEVEL_2)
+    if(client->GetSecurityLevel() < GM_LEVEL_2)
     {
-        if (containeritem->GetIsNpcOwned())
+        if(containeritem->GetIsNpcOwned())
         {
             return false;
         }
-        if (containeritem->GetIsLocked())
+        if(containeritem->GetIsLocked())
         {
             psserver->SendSystemError(client->GetClientNum(), "You cannot take an item from a locked container!");
             return false;
@@ -1781,8 +1811,8 @@ bool gemContainer::CanTake(Client *client, psItem* item)
     PID guard = item->GetGuardingCharacterID();
     gemActor* guardingActor = cel->FindPlayerEntity(guard);
 
-    if ((!guard.IsValid() || guard == client->GetCharacterData()->GetPID() || !guardingActor) ||
-        (!guardingActor->InsideGuardedArea(this)))
+    if((!guard.IsValid() || guard == client->GetCharacterData()->GetPID() || !guardingActor) ||
+            (!guardingActor->InsideGuardedArea(this)))
     {
         return true;
     }
@@ -1790,7 +1820,7 @@ bool gemContainer::CanTake(Client *client, psItem* item)
     return false;
 }
 
-bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bool test)
+bool gemContainer::AddToContainer(psItem* item, Client* fromClient, int slot, bool test)
 {
     // Slot changing and item creation in craft is done at the very end of event.
     // A new item is created from scratch and replaces the previous item stack and all.
@@ -1798,43 +1828,43 @@ bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bo
     // Checks in craft code to make sure original item is what is expected before the item is replaced.
 
     // If slot number not specified put into first open slot
-    if (slot == PSCHARACTER_SLOT_NONE)
+    if(slot == PSCHARACTER_SLOT_NONE)
     {
-        for (int i = 0; i < SlotCount(); i++)
+        for(int i = 0; i < SlotCount(); i++)
         {
-            if( FindItemInSlot(i) == NULL)
+            if(FindItemInSlot(i) == NULL)
             {
                 slot = i;
                 break;
             }
         }
     }
-    if (slot < 0 || slot >= SlotCount())
+    if(slot < 0 || slot >= SlotCount())
         return false;
 
     // printf("Adding %s to GEM container %s in slot %d.\n", item->GetName(), GetName(), slot);
 
     // If the destination slot is occupied, try and look for an empty slot.
-    if (FindItemInSlot(slot))
+    if(FindItemInSlot(slot))
         return AddToContainer(item, fromClient, PSCHARACTER_SLOT_NONE, test);
 
-    if (test)
+    if(test)
         return true;
 
     // If the gemContainer we are dropping the item into is not pickupable then we
     // guard the item placed inside.  Otherwise the item becomes public.
-    if (fromClient)
+    if(fromClient)
     {
         /* put the player behind the client as guard */
         item->SetGuardingCharacterID(fromClient->GetCharacterData()->GetPID());
     }
-    if (item->GetOwningCharacterID().IsValid())
+    if(item->GetOwningCharacterID().IsValid())
     {
         /* item comes from a player () */
         item->SetGuardingCharacterID(item->GetOwningCharacterID());
     }
 
-    if (!GetItem()->GetIsNoPickup() && item->GetOwningCharacterID().IsValid())
+    if(!GetItem()->GetIsNoPickup() && item->GetOwningCharacterID().IsValid())
         GetItem()->SetGuardingCharacterID(item->GetOwningCharacterID());
 
     item->SetOwningCharacter(NULL);
@@ -1847,10 +1877,10 @@ bool gemContainer::AddToContainer(psItem *item, Client *fromClient, int slot, bo
     return true;
 }
 
-bool gemContainer::RemoveFromContainer(psItem *item,Client *fromClient)
+bool gemContainer::RemoveFromContainer(psItem* item,Client* fromClient)
 {
     // printf("Removing %s from container now.\n", item->GetName() );
-    if (itemlist.Delete(item))
+    if(itemlist.Delete(item))
     {
         item->UpdateView(fromClient, eid, true);
         return true;
@@ -1859,7 +1889,7 @@ bool gemContainer::RemoveFromContainer(psItem *item,Client *fromClient)
         return false;
 }
 
-psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Client *fromClient, int stackCount)
+psItem* gemContainer::RemoveFromContainer(psItem* itemStack, int fromSlot, Client* fromClient, int stackCount)
 {
     // printf("Removing %s from container now.\n", itemStack->GetName() );
 
@@ -1867,7 +1897,7 @@ psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Clien
     bool clear = false;
 
     // If the stack count is the taken amount then we can delete the entire stack from the itemlist
-    if ( itemStack->GetStackCount() == stackCount )
+    if(itemStack->GetStackCount() == stackCount)
     {
         item = itemStack;
         itemlist.Delete(itemStack);
@@ -1888,30 +1918,30 @@ psItem* gemContainer::RemoveFromContainer(psItem *itemStack, int fromSlot, Clien
 }
 
 
-psItem *gemContainer::FindItemInSlot(int slot, int stackCount)
+psItem* gemContainer::FindItemInSlot(int slot, int stackCount)
 {
-    if (slot < 0 || slot >= SlotCount())
+    if(slot < 0 || slot >= SlotCount())
     {
         Error3("FindItemSlot Slot index %d is outside [0..%d]",slot,SlotCount());
         return NULL;
     }
     psContainerIterator it(this);
-    while (it.HasNext())
+    while(it.HasNext())
     {
         // Check for specific slot
         //  These are small arrays so no need to hash index
         psItem* item = it.Next();
-        if (item == NULL)
+        if(item == NULL)
         {
             Error1("Null item in container list.");
             return NULL;
         }
 
         // Return the item in parrent location slot
-        if (item->GetLocInParent() == slot)
+        if(item->GetLocInParent() == slot)
         {
             // If the item is here and the stack count we want is available.
-            if ( stackCount == -1 || item->GetStackCount() >= stackCount )
+            if(stackCount == -1 || item->GetStackCount() >= stackCount)
             {
                 return item;
             }
@@ -1924,32 +1954,32 @@ psItem *gemContainer::FindItemInSlot(int slot, int stackCount)
     return NULL;
 }
 
-gemContainer::psContainerIterator::psContainerIterator(gemContainer *containerItem)
+gemContainer::psContainerIterator::psContainerIterator(gemContainer* containerItem)
 {
     UseContainerItem(containerItem);
 }
 
 bool gemContainer::psContainerIterator::HasNext()
 {
-    if (current + 1 < container->CountItems() )
+    if(current + 1 < container->CountItems())
         return true;
     return false;
 }
 
-psItem *gemContainer::psContainerIterator::Next()
+psItem* gemContainer::psContainerIterator::Next()
 {
-    if (!HasNext())
+    if(!HasNext())
         return NULL;
 
     current++;
     return container->GetIndexItem(current);
 }
 
-psItem *gemContainer::psContainerIterator::RemoveCurrent(Client *fromClient)
+psItem* gemContainer::psContainerIterator::RemoveCurrent(Client* fromClient)
 {
-    if (current < container->CountItems() )
+    if(current < container->CountItems())
     {
-        psItem *item = container->GetIndexItem(current);
+        psItem* item = container->GetIndexItem(current);
         container->RemoveFromContainer(item,fromClient);
         psserver->GetWorkManager()->StopWork(fromClient, item);
         current--; // This adjusts so that the next "Next()" call actually returns the next item and doesn't skip one.
@@ -1958,7 +1988,7 @@ psItem *gemContainer::psContainerIterator::RemoveCurrent(Client *fromClient)
     return NULL;
 }
 
-void gemContainer::psContainerIterator::UseContainerItem(gemContainer *containerItem)
+void gemContainer::psContainerIterator::UseContainerItem(gemContainer* containerItem)
 {
     container=containerItem;
     current = SIZET_NOT_FOUND;
@@ -1968,17 +1998,17 @@ void gemContainer::psContainerIterator::UseContainerItem(gemContainer *container
 // gemActionLocation
 //--------------------------------------------------------------------------------------
 
-gemActionLocation::gemActionLocation(GEMSupervisor* gemSupervisor,EntityManager* entitymanager,CacheManager* cachemanager,psActionLocation *action, iSector *isec, int clientnum)
-                                     : gemActiveObject(gemSupervisor,entitymanager,cachemanager,action->name,
-                                                       action->meshname,
-                                                       action->GetInstance(),
-                                                       isec,
-                                                       action->position,
-                                                       0.0f,
-                                                       clientnum)
+gemActionLocation::gemActionLocation(GEMSupervisor* gemSupervisor,EntityManager* entitymanager,CacheManager* cachemanager,psActionLocation* action, iSector* isec, int clientnum)
+    : gemActiveObject(gemSupervisor,entitymanager,cachemanager,action->name,
+                      action->meshname,
+                      action->GetInstance(),
+                      isec,
+                      action->position,
+                      0.0f,
+                      clientnum)
 {
     this->action = action;
-    action->SetGemObject( this );
+    action->SetGemObject(this);
 
     // action locations use the AL ID as their EID for some reason
     // ugly hack, to put the AL in the entity hash
@@ -1996,34 +2026,34 @@ gemActionLocation::gemActionLocation(GEMSupervisor* gemSupervisor,EntityManager*
 
     csRef< iEngine > engine =  csQueryRegistry<iEngine> (psserver->GetObjectReg());
     csRef< iMeshWrapper > nullmesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", "pos_anchor", isec, action->position);
-    if ( !nullmesh )
+    if(!nullmesh)
     {
         Error1("Could not create gemActionLocation because crystalspace.mesh.onbject.null could not be created.");
         return ;
     }
     csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (nullmesh->GetMeshObject());
-    if (!state)
+    if(!state)
     {
         Error1("No NullMeshState.");
         return ;
     }
     state->SetRadius(1.0);
 
-    pcmesh->SetMesh( nullmesh );
+    pcmesh->SetMesh(nullmesh);
 
     Move(action->GetPosition(), 0, isec);
 }
 
-void gemActionLocation::Broadcast(int clientnum, bool control )
+void gemActionLocation::Broadcast(int clientnum, bool control)
 {
     psPersistActionLocation mesg(
-                                    clientnum,
-                                    eid,
-                                    -2,
-                                    name,
-                                    GetSectorName(),
-                                    action->meshname
-                                 );
+        clientnum,
+        eid,
+        -2,
+        name,
+        GetSectorName(),
+        action->meshname
+    );
 
     mesg.Multicast(GetMulticastClients(),clientnum,PROX_LIST_ANY_RANGE);
 
@@ -2040,9 +2070,9 @@ float gemActionLocation::GetBaseAdvertiseRange()
     return 10000.0f;
 }
 
-bool gemActionLocation::SeesObject(gemObject * object, float range)
+bool gemActionLocation::SeesObject(gemObject* object, float range)
 {
-    if (worldInstance == object->GetInstance())
+    if(worldInstance == object->GetInstance())
     {
         return true;
     }
@@ -2052,19 +2082,19 @@ bool gemActionLocation::SeesObject(gemObject * object, float range)
     }
 }
 
-bool gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPersistAllEntities *allEntities )
+bool gemActionLocation::Send(int clientnum, bool , bool to_superclients, psPersistAllEntities* allEntities)
 {
     psPersistActionLocation mesg(
-                                    clientnum,
-                                    eid,
-                                    -2,
-                                    name.GetData(),
-                                    GetSectorName(),
-                                    action->meshname
-                                 );
+        clientnum,
+        eid,
+        -2,
+        name.GetData(),
+        GetSectorName(),
+        action->meshname
+    );
 
 
-    if (clientnum && !to_superclients)
+    if(clientnum && !to_superclients)
     {
         mesg.SendMessage();
     }
@@ -2096,25 +2126,25 @@ bool gemActionLocation::Send( int clientnum, bool , bool to_superclients, psPers
 
 void FrozenBuffable::OnChange()
 {
-    actor->SetAllowedToMove( !(Current() > 0) );
+    actor->SetAllowedToMove(!(Current() > 0));
 }
 
 //--------------------------------------------------------------------------------------
 // gemActor
 //--------------------------------------------------------------------------------------
 
-gemActor::gemActor(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, EntityManager* entitymanager, psCharacter *chardata,
-                       const char* factname,
-                       InstanceID myInstance,
-                       iSector* room,
-                       const csVector3& pos,
-                       float rotangle,
-                       int clientnum) :
-  gemObject(gemsupervisor,entitymanager,cachemanager,chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
-psChar(chardata), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
-lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
-  movementMode(0), isAllowedToMove(true), atRest(true), player_mode(PSCHARACTER_MODE_PEACE), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
-nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
+gemActor::gemActor(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, EntityManager* entitymanager, psCharacter* chardata,
+                   const char* factname,
+                   InstanceID myInstance,
+                   iSector* room,
+                   const csVector3 &pos,
+                   float rotangle,
+                   int clientnum) :
+    gemObject(gemsupervisor,entitymanager,cachemanager,chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
+    psChar(chardata), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
+    lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
+    movementMode(0), isAllowedToMove(true), atRest(true), player_mode(PSCHARACTER_MODE_PEACE), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
+    nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
 {
     forcedSector = NULL;
     entityManager = entitymanager;
@@ -2127,7 +2157,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
 
     // Store a safe reference to the client
     clientRef = psserver->GetConnections()->FindAny(clientnum);
-    if (clientnum && !clientRef)
+    if(clientnum && !clientRef)
     {
         Error3("Failed to find client %d for %s!", clientnum, ShowID(pid));
         return;
@@ -2135,7 +2165,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
 
     SetAlive(true, false); // Set alive but don't queue
 
-    if (!InitLinMove(pos,rotangle,room))
+    if(!InitLinMove(pos,rotangle,room))
     {
         Error1("Could not initialize LinMove prop class, so actor not created.");
         return;
@@ -2143,18 +2173,18 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
 
     chardata->SetActor(this);
 
-    if (!InitCharData(clientRef))
+    if(!InitCharData(clientRef))
     {
         Error1("Could not init char data.  Actor not created.");
         return;
     }
 
-    if (psChar->IsStatue())
+    if(psChar->IsStatue())
         player_mode = PSCHARACTER_MODE_STATUE;
     combat_stance = CombatManager::GetStance(cachemanager,"None");
 
     Debug6(LOG_NPC,GetEID().Unbox(),"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
-        factname,pos.x,pos.y,pos.z,GetSectorName());
+           factname,pos.x,pos.y,pos.z,GetSectorName());
 
     SetPrevTeleportLocation(pos, rotangle, GetSector(), myInstance);
 
@@ -2166,7 +2196,7 @@ nevertired(false), infinitemana(false), instantcast(false), safefall(false), giv
 
 gemActor::~gemActor()
 {
-    if (activeReports > 0)
+    if(activeReports > 0)
     {
         LogLine(csString().Format("-- %s has quit --", GetFirstName()).GetData());
         activeReports = 1; // force RemoveChatReport() to stop logging.
@@ -2178,12 +2208,12 @@ gemActor::~gemActor()
 
     cel->RemoveActorEntity(this);
 
-    while (!activeSpells.IsEmpty())
+    while(!activeSpells.IsEmpty())
     {
         delete activeSpells.Pop();
     }
 
-    if (psChar)
+    if(psChar)
     {
         // Not deleting here anymore, but pushing to the global cache
 
@@ -2201,18 +2231,18 @@ double gemActor::GetProperty(MathEnvironment* env, const char* prop)
 {
     csString property(prop);
 
-    if (property == "CombatStance")
+    if(property == "CombatStance")
     {
         // Backwards compatibility.
         return GetCombatStance().stance_id;
     }
-    else if (property == "IsAdvisorBanned")
+    else if(property == "IsAdvisorBanned")
     {
-        return (double) (GetClient() ? GetClient()->IsAdvisorBanned() : true);
+        return (double)(GetClient() ? GetClient()->IsAdvisorBanned() : true);
     }
-    else if (property == "AdvisorPoints")
+    else if(property == "AdvisorPoints")
     {
-        return (double) (GetClient() ? GetClient()->GetAdvisorPoints() : 0);
+        return (double)(GetClient() ? GetClient()->GetAdvisorPoints() : 0);
     }
 
     CS_ASSERT(psChar);
@@ -2222,18 +2252,18 @@ double gemActor::GetProperty(MathEnvironment* env, const char* prop)
 double gemActor::CalcFunction(MathEnvironment* env, const char* f, const double* params)
 {
     csString func(f);
-    if (func == "ActiveSpellCount")
+    if(func == "ActiveSpellCount")
     {
         return ActiveSpellCount(env->GetString(params[0]));
     }
-    else if (func == "RangeTo")
+    else if(func == "RangeTo")
     {
         // Ultimately this should probably go in gemObject::CalcFunction, but
         // we'd need to check both gemObject and psCharacter, and that's a bit
         // of a pain with the current interface.
         return RangeTo((gemObject*)(intptr_t)params[0]);
     }
-    else if (func.StartsWith("SendSystem"))
+    else if(func.StartsWith("SendSystem"))
     {
         uint32 clientID = GetClientID();
         if(!clientID)
@@ -2248,23 +2278,23 @@ double gemActor::CalcFunction(MathEnvironment* env, const char* f, const double*
         Debug2(LOG_SCRIPT, pid.Unbox(),"got format string '%s'", format.GetData());
         csString string = MathScriptEngine::FormatMessage(format,argc,args);
 
-        if (func == "SendSystemInfo")
+        if(func == "SendSystemInfo")
         {
             psserver->SendSystemInfo(clientID,string);
         }
-        else if (func == "SendSystemBaseInfo")
+        else if(func == "SendSystemBaseInfo")
         {
             psserver->SendSystemInfo(clientID,string);
         }
-        else if (func == "SendSystemResult")
+        else if(func == "SendSystemResult")
         {
             psserver->SendSystemResult(clientID,string);
         }
-        else if (func == "SendSystemOK")
+        else if(func == "SendSystemOK")
         {
             psserver->SendSystemOK(clientID,string);
         }
-        else if (func == "SendSystemError")
+        else if(func == "SendSystemError")
         {
             psserver->SendSystemError(clientID,string);
         }
@@ -2296,25 +2326,25 @@ bool gemActor::MoveToSpawnPos(int32_t delay, csString background, csVector2 poin
     iSector* startingSector;
 
     //Get the spawn position for this actor, taking in account the range.
-    if (!GetSpawnPos(startingPos,startingYrot,startingSector, true))
+    if(!GetSpawnPos(startingPos,startingYrot,startingSector, true))
         return false;
 
     pcmove->SetOnGround(false);
     Teleport(startingSector, startingPos, startingYrot, DEFAULT_INSTANCE, delay, background, point1, point2, widget);
-    
+
     psGenericEvent evt(GetClientID(), psGenericEvent::SPAWN_MOVE);
     evt.FireEvent();
 
     return true;
 }
 
-bool gemActor::GetSpawnPos(csVector3& pos, float& yrot, iSector*& sector, bool useRange)
+bool gemActor::GetSpawnPos(csVector3 &pos, float &yrot, iSector* &sector, bool useRange)
 {
     float x, y, z, range;
     const char* sectorname;
 
-    psRaceInfo *raceinfo = psChar->GetRaceInfo();
-    if (!raceinfo)
+    psRaceInfo* raceinfo = psChar->GetRaceInfo();
+    if(!raceinfo)
         return false;
 
 
@@ -2338,7 +2368,7 @@ bool gemActor::GetSpawnPos(csVector3& pos, float& yrot, iSector*& sector, bool u
     pos = csVector3(x, y, z);
 
     sector = entityManager->FindSector(sectorname);
-    if (!sector)
+    if(!sector)
         return false;
     else
         return true;
@@ -2346,7 +2376,7 @@ bool gemActor::GetSpawnPos(csVector3& pos, float& yrot, iSector*& sector, bool u
 
 void gemActor::SetAllowedToMove(bool newvalue)
 {
-    if (isAllowedToMove == newvalue)
+    if(isAllowedToMove == newvalue)
         return;
 
     isAllowedToMove = newvalue;
@@ -2356,88 +2386,88 @@ void gemActor::SetAllowedToMove(bool newvalue)
     psMoveLockMessage msg(GetClientID(),!isAllowedToMove);
     msg.SendMessage();
 
-    // @todo: Notify super clients... 
+    // @todo: Notify super clients...
 }
 
 int gemActor::GetTargetType(gemObject* target)
 {
-    if (!target)
+    if(!target)
     {
         return TARGET_NONE; /* No Target */
     }
 
     gemActor* targetActor = target->GetActorPtr();
 
-    if (targetActor == NULL)
+    if(targetActor == NULL)
     {
         return TARGET_ITEM; /* Item */
     }
 
-    if (!target->IsAlive())
+    if(!target->IsAlive())
     {
         return TARGET_DEAD;
     }
 
     Client* attackerClient = GetClient();
 
-    if (attackerClient && attackerClient->IsGM())
+    if(attackerClient && attackerClient->IsGM())
     {
         // GMs can interpret targets as either friends or foe...even self.
         // This allows them to attack or cast spells on anyone.
         return TARGET_SELF | TARGET_FRIEND | TARGET_FOE;
     }
 
-    if (this == target)
+    if(this == target)
     {
         return TARGET_SELF; /* Self */
     }
 
-    if (GetCharacterData()->IsNPC() && target->GetCharacterData()->IsNPC())
+    if(GetCharacterData()->IsNPC() && target->GetCharacterData()->IsNPC())
     {
         // NPCs can interpret targets as either friends or foe...even self.
         // This allows them to attack or cast spells on any other NPC.
         return TARGET_SELF | TARGET_FRIEND | TARGET_FOE;
     }
-    
 
-    if (target->GetCharacterData()->GetImperviousToAttack())
+
+    if(target->GetCharacterData()->GetImperviousToAttack())
     {
         return TARGET_FRIEND; /* Impervious NPC */
     }
 
     // Is target a NPC?
     Client* targetclient = target->GetClient();
-    if (!targetclient)
+    if(!targetclient)
     {
-        if (target->GetCharacterData()->IsPet())
+        if(target->GetCharacterData()->IsPet())
         {
             csString msg;
 
             // Pet's target type depends on its owner's (enable when they can defend themselves)
-            gemObject* owner = psserver->entitymanager->GetGEM()->FindPlayerEntity( target->GetCharacterData()->GetOwnerID() );
-            if ( !owner || !IsAllowedToAttack(owner,msg) )
+            gemObject* owner = psserver->entitymanager->GetGEM()->FindPlayerEntity(target->GetCharacterData()->GetOwnerID());
+            if(!owner || !IsAllowedToAttack(owner,msg))
                 return TARGET_FRIEND;
         }
         return TARGET_FOE; /* Foe */
     }
 
-    if (targetActor->GetInvincibility())
+    if(targetActor->GetInvincibility())
         return TARGET_FRIEND; /* Invincible GM */
 
-    if (targetActor->attackable)
+    if(targetActor->attackable)
         return TARGET_FOE; /* attackable GM */
 
     // Only clients are in duels
-    if (attackerClient && targetclient)
+    if(attackerClient && targetclient)
     {
         // Challenged to a duel?
-        if (attackerClient->IsDuelClient(target->GetClientID())
-            || targetclient->IsDuelClient(GetClientID()))
+        if(attackerClient->IsDuelClient(target->GetClientID())
+                || targetclient->IsDuelClient(GetClientID()))
         {
             return TARGET_FOE; /* Attackable player */
         }
     }
-    
+
 
     // In PvP region?
     csVector3 attackerpos, targetpos;
@@ -2446,30 +2476,30 @@ int gemActor::GetTargetType(gemObject* target)
     GetPosition(attackerpos, yrot, attackersector);
     target->GetPosition(targetpos, yrot, targetsector);
 
-    if (psserver->GetCombatManager()->InPVPRegion(attackerpos,attackersector)
-        && psserver->GetCombatManager()->InPVPRegion(targetpos,targetsector))
+    if(psserver->GetCombatManager()->InPVPRegion(attackerpos,attackersector)
+            && psserver->GetCombatManager()->InPVPRegion(targetpos,targetsector))
     {
         return TARGET_FOE; /* Attackable player */
     }
 
     // Is this a player who has hit you and run out of a PVP area?
-    for (size_t i=0; i< GetDamageHistoryCount(); i++)
+    for(size_t i=0; i< GetDamageHistoryCount(); i++)
     {
         gemActor* attacker = GetDamageHistory((int) i)->Attacker();
         // If the target has ever hit you, you can attack them back.  Logging out clears this.
-        if (attacker && attacker == target)
+        if(attacker && attacker == target)
             return TARGET_FOE;
     }
 
     // Declared war?
     psGuildInfo* attackguild = GetGuild();
     psGuildInfo* targetguild = target->GetGuild();
-    if (attackguild && targetguild &&
-        targetguild->IsGuildWarActive(attackguild))
+    if(attackguild && targetguild &&
+            targetguild->IsGuildWarActive(attackguild))
     {
         return TARGET_FOE; /* Attackable player */
     }
-    
+
     if(InGroup() && targetActor->InGroup())
     {
         csRef<PlayerGroup> AttackerGroup = GetGroup();
@@ -2482,27 +2512,27 @@ int gemActor::GetTargetType(gemObject* target)
 }
 
 
-bool gemActor::IsAllowedToAttack(gemObject * target, csString& msg)
+bool gemActor::IsAllowedToAttack(gemObject* target, csString &msg)
 {
     msg = "";
 
     int type = GetTargetType(target);
 
-    if (type == TARGET_NONE)
+    if(type == TARGET_NONE)
         msg = "You must select a target to attack.";
-    else if (type & TARGET_ITEM)
+    else if(type & TARGET_ITEM)
         msg = "You can't attack an inanimate object.";
-    else if (type & TARGET_DEAD)
+    else if(type & TARGET_DEAD)
         msg.Format("%s is already dead.",target->GetName());
-    else if (type & TARGET_FOE)
+    else if(type & TARGET_FOE)
     {
         gemActor* foe = target->GetActorPtr();
         CS_ASSERT(foe != NULL); // Since this is a foe it should have a actor.
 
         gemActor* lastAttacker = NULL;
-        if (target->HasKillStealProtection() && !foe->CanBeAttackedBy(this, lastAttacker))
+        if(target->HasKillStealProtection() && !foe->CanBeAttackedBy(this, lastAttacker))
         {
-            if (lastAttacker)
+            if(lastAttacker)
             {
                 msg.Format("You must be grouped with %s to attack %s.",
                            lastAttacker->GetName(), foe->GetName());
@@ -2513,12 +2543,12 @@ bool gemActor::IsAllowedToAttack(gemObject * target, csString& msg)
             }
         }
     }
-    else if (type & TARGET_FRIEND)
+    else if(type & TARGET_FRIEND)
         msg.Format("You cannot attack %s.",target->GetName());
-    else if (type & TARGET_SELF)
+    else if(type & TARGET_SELF)
         msg = "You cannot attack yourself.";
 
-    if (!msg.IsEmpty())
+    if(!msg.IsEmpty())
     {
         return false;
     }
@@ -2527,29 +2557,29 @@ bool gemActor::IsAllowedToAttack(gemObject * target, csString& msg)
 
 void gemActor::Sit()
 {
-    if (GetMode() == PSCHARACTER_MODE_PEACE 
-        && AtRest() && !IsFalling())
+    if(GetMode() == PSCHARACTER_MODE_PEACE
+            && AtRest() && !IsFalling())
     {
         SetMode(PSCHARACTER_MODE_SIT);
-        psserver->GetUserManager()->Emote("%s takes a seat.", "%s takes a seat by %s.", "sit", this );
+        psserver->GetUserManager()->Emote("%s takes a seat.", "%s takes a seat by %s.", "sit", this);
     }
     else
     {
         Debug2(LOG_SUPERCLIENT, 0, "%s Failed to sit.\n",ShowID(GetEID()));
     }
-    
+
 }
 
 void gemActor::Stand()
 {
-    if (GetMode() == PSCHARACTER_MODE_SIT)
+    if(GetMode() == PSCHARACTER_MODE_SIT)
     {
         SetMode(PSCHARACTER_MODE_PEACE);
         psUserActionMessage anim(GetClientID(), GetEID(), "stand up");
-        anim.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE );
+        anim.Multicast(GetMulticastClients(),0,PROX_LIST_ANY_RANGE);
         psserver->GetUserManager()->Emote("%s stands up.", "%s stands up.", "stand", this);
     }
-    else if (GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
+    else if(GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
     {
         psserver->SendSystemError(GetClientID(), "You can't stand up because you're overloaded!");
     }
@@ -2557,8 +2587,8 @@ void gemActor::Stand()
 
 void gemActor::SetAllowedToDisconnect(bool allowed)
 {
-    Client * client = GetClient();
-    if (client)
+    Client* client = GetClient();
+    if(client)
     {
         client->SetAllowedToDisconnect(allowed);
     }
@@ -2570,7 +2600,7 @@ bool gemActor::MoveToValidPos(bool force)
 {
     // Don't allow /unstick within 15 seconds of starting a fall...that way,
     // people can't jump off a cliff and use it to save themselves.
-    if (!force && (!isFalling || (csGetTicks() - fallStartTime < UNSTICK_TIME)))
+    if(!force && (!isFalling || (csGetTicks() - fallStartTime < UNSTICK_TIME)))
         return false;
 
     isFalling = false;
@@ -2580,7 +2610,7 @@ bool gemActor::MoveToValidPos(bool force)
     return true;
 }
 
-void gemActor::GetValidPos(csVector3& pos, float& yrot, iSector*& sector, InstanceID &instance)
+void gemActor::GetValidPos(csVector3 &pos, float &yrot, iSector* &sector, InstanceID &instance)
 {
     pos = valid_location.pos;
     yrot = valid_location.yrot;
@@ -2623,13 +2653,13 @@ void gemActor::SetMasqueradeLevel(int level)
     psserver->GetNPCManager()->QueueFlagPerception(this);
 }
 
-bool gemActor::SeesObject(gemObject * object, float range)
+bool gemActor::SeesObject(gemObject* object, float range)
 {
     bool res = (worldInstance == object->GetInstance() || object->GetInstance() == INSTANCE_ALL || GetInstance() == INSTANCE_ALL)
-                  &&
+               &&
                (GetBaseAdvertiseRange() >= range)
-                  &&
-               (object==this  ||  object->GetVisibility()  ||  GetViewAllObjects() );
+               &&
+               (object==this  ||  object->GetVisibility()  ||  GetViewAllObjects());
 
 #ifdef PSPROXDEBUG
     psString log;
@@ -2666,14 +2696,14 @@ csPtr<PlayerGroup> gemActor::GetGroup()
 void gemActor::Defeat()
 {
     // Auto-unlock after a few seconds if not explicitly killed first
-    psSpareDefeatedEvent *evt = new psSpareDefeatedEvent(this);
+    psSpareDefeatedEvent* evt = new psSpareDefeatedEvent(this);
     psserver->GetEventManager()->Push(evt);
 
     // Interrupt spells currently cast. This has to be done
     // before setting character mode as the interrupting may
     // set the character back to PEACE.
     InterruptSpellCasting();
-    
+
     // Set the character mode to defeated.
     SetMode(PSCHARACTER_MODE_DEFEATED);
 
@@ -2683,7 +2713,7 @@ void gemActor::Defeat()
     CancelActiveSpellsWhichDamage();
     if(psChar->GetHP() < 1) // make sure we won't die instantly
     {
-    	psChar->SetHitPoints(1);
+        psChar->SetHitPoints(1);
     }
 }
 
@@ -2703,15 +2733,15 @@ void gemActor::Resurrect()
     // Check if the current player is in npcroom or tutorial. In that case we
     // teleport back to npcroom or tutorial on resurrect. Otherwise we teleport
     // to DR.
-    iSector *sector = pcmove->GetSector();
-    
+    iSector* sector = pcmove->GetSector();
+
     //get the sector info to check if this sector has a special death sector defined
     psSectorInfo* sectorInfo = NULL;
     if(sector)
         sectorInfo = cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
-    
+
     //if the sector was found and there is text in the sector try teleporting there.
-    if (sectorInfo && sectorInfo->GetDeathSector().Length())
+    if(sectorInfo && sectorInfo->GetDeathSector().Length())
     {
         Teleport(sectorInfo->GetDeathSector(), sectorInfo->GetDeathCord(), sectorInfo->GetDeathRot(), DEFAULT_INSTANCE);
     }
@@ -2741,7 +2771,7 @@ void gemActor::Resurrect()
     //other reasoning.
     if(!sectorInfo || sectorInfo->GetDeathRestoreMana())
         psChar->SetMana(psChar->GetMaxMana().Base());
-    
+
     //reset HP only in sectors restoring it, to prevent exploits using /die in death maps or for
     //other reasoning, in the other cases set only the minimum amount to keep the player alive and not
     //make him loop die.
@@ -2755,43 +2785,43 @@ void gemActor::Resurrect()
     psChar->GetHPRate().SetBase(HP_REGEN_RATE);
     psChar->GetManaRate().SetBase(MANA_REGEN_RATE);
 
-    BroadcastTargetStatDR( psserver->GetNetManager()->GetConnections() );
+    BroadcastTargetStatDR(psserver->GetNetManager()->GetConnections());
 }
 
-void gemActor::InvokeAttackScripts(gemActor *defender, psItem *weapon)
+void gemActor::InvokeAttackScripts(gemActor* defender, psItem* weapon)
 {
     MathEnvironment env;
     env.Define("Attacker", this);
     env.Define("Defender", defender);
     env.Define("Weapon",   weapon);
 
-    for (size_t i = 0; i < onAttackScripts.GetSize(); i++)
+    for(size_t i = 0; i < onAttackScripts.GetSize(); i++)
     {
         onAttackScripts[i]->Run(&env);
     }
 }
 
-void gemActor::InvokeDefenseScripts(gemActor *attacker, psItem *weapon)
+void gemActor::InvokeDefenseScripts(gemActor* attacker, psItem* weapon)
 {
     MathEnvironment env;
     env.Define("Attacker", attacker);
     env.Define("Defender", this);
     env.Define("Weapon",   weapon);
 
-    for (size_t i = 0; i < onDefenseScripts.GetSize(); i++)
+    for(size_t i = 0; i < onDefenseScripts.GetSize(); i++)
     {
         onDefenseScripts[i]->Run(&env);
     }
 }
 
-void gemActor::InvokeNearlyDeadScripts(gemActor *attacker, psItem *weapon)
+void gemActor::InvokeNearlyDeadScripts(gemActor* attacker, psItem* weapon)
 {
     MathEnvironment env;
     env.Define("Attacker", attacker);
     env.Define("Defender", this);
     env.Define("Weapon",   weapon);
 
-    for (size_t i = 0; i < onNearlyDeadScripts.GetSize(); i++)
+    for(size_t i = 0; i < onNearlyDeadScripts.GetSize(); i++)
     {
         onNearlyDeadScripts[i]->Run(&env);
     }
@@ -2806,7 +2836,7 @@ void gemActor::InvokeMovementScripts()
     env.Define("LocY", pos.y);
     env.Define("LocZ", pos.z);
 
-    for (size_t i = 0; i < onMovementScripts.GetSize(); i++)
+    for(size_t i = 0; i < onMovementScripts.GetSize(); i++)
     {
         onMovementScripts[i]->Run(&env);
     }
@@ -2817,14 +2847,14 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
     static csWeakRef<MathScript> doDamageScript = NULL;
 
     // Handle trivial "already dead" case
-    if ( !IsAlive())
+    if(!IsAlive())
     {
-        if (attacker && attacker->GetClientID() )
+        if(attacker && attacker->GetClientID())
             psserver->SendSystemInfo(attacker->GetClientID(),"It's already dead.");
         return;
     }
 
-    if (!doDamageScript)
+    if(!doDamageScript)
     {
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(doDamageScript, "DoDamageScript");
     }
@@ -2839,13 +2869,13 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
     else
     {
         // Successful attack, if >30% max hp then interrupt spell
-        if (damage > psChar->GetMaxHP().Current() * 0.3F)
+        if(damage > psChar->GetMaxHP().Current() * 0.3F)
         {
             InterruptSpellCasting();
         }
     }
 
-    if (GetCharacterData()->GetHP() - damage < 0)
+    if(GetCharacterData()->GetHP() - damage < 0)
     {
         damage = GetCharacterData()->GetHP();
     }
@@ -2856,9 +2886,9 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
     psChar->AdjustHitPoints(-damage);
     float hp = psChar->GetHP();
 
-    if (damage != 0.0)
+    if(damage != 0.0)
     {
-        if (attacker != NULL)
+        if(attacker != NULL)
         {
             Debug5(LOG_COMBAT, attacker->GetPID().Unbox(), "%s do damage %1.2f on %s to new hp %1.2f", attacker->GetName(), damage, GetName(), hp);
         }
@@ -2873,7 +2903,7 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
     }
 
     // Death takes some special work
-    if (fabs(hp) < 0.0005f || GetMode() == PSCHARACTER_MODE_DEFEATED)  // check for dead
+    if(fabs(hp) < 0.0005f || GetMode() == PSCHARACTER_MODE_DEFEATED)   // check for dead
     {
         // for now, if the actor is on a mount, he's dropped off it
         if(GetMount())
@@ -2882,11 +2912,11 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
         }
 
         // If no explicit killer, look for the last person to cast a DoT spell.
-        if (!attacker && dmgHistory.GetSize() > 0)
+        if(!attacker && dmgHistory.GetSize() > 0)
         {
-            for (int i = (int) dmgHistory.GetSize() - 1; i >= 0; i--)
+            for(int i = (int) dmgHistory.GetSize() - 1; i >= 0; i--)
             {
-                if (dynamic_cast<DOTHistory*>(dmgHistory[i]))
+                if(dynamic_cast<DOTHistory*>(dmgHistory[i]))
                 {
                     attacker = dmgHistory[i]->Attacker();
                     break;
@@ -2894,7 +2924,7 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
             }
         }
         // If in a duel, don't immediately kill...defeat.
-        if (attacker && GetMode() != PSCHARACTER_MODE_DEFEATED && GetClient() && GetClient()->IsDuelClient(attacker->GetClientID()))
+        if(attacker && GetMode() != PSCHARACTER_MODE_DEFEATED && GetClient() && GetClient()->IsDuelClient(attacker->GetClientID()))
         {
             Defeat();
             psserver->SendSystemError(GetClientID(), "You've been defeated by %s!", attacker->GetName());
@@ -2905,7 +2935,7 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
             psDeathEvent death(this,attacker);
             death.FireEvent();
 
-            if (GetMode() == PSCHARACTER_MODE_DEFEATED && attacker)
+            if(GetMode() == PSCHARACTER_MODE_DEFEATED && attacker)
             {
                 psserver->SendSystemError(GetClientID(), "You've been slain by %s!", attacker->GetName());
                 GetClient()->AnnounceToDuelClients(attacker, "slain");
@@ -2918,12 +2948,12 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
 
         // if damage due to spell then spell is ending anyway, so no need to force
         // 'stop attack.'
-        if (attacker && attacker->GetMode() == PSCHARACTER_MODE_COMBAT &&
-            (!attacker->GetClient() || attacker->GetClient()->GetTargetObject() == this))
+        if(attacker && attacker->GetMode() == PSCHARACTER_MODE_COMBAT &&
+                (!attacker->GetClient() || attacker->GetClient()->GetTargetObject() == this))
         {
             psserver->combatmanager->StopAttack(attacker);
         }
-        
+
         MulticastDRUpdate();
     }
 
@@ -2933,7 +2963,7 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
 
 void gemActor::AddAttackerHistory(gemActor* attacker, float damage)
 {
-    if (!attacker || damage <= 0)
+    if(!attacker || damage <= 0)
         return;
 
     dmgHistory.Push(new DamageHistory(attacker, damage));
@@ -2942,20 +2972,20 @@ void gemActor::AddAttackerHistory(gemActor* attacker, float damage)
 void gemActor::AddAttackerHistory(gemActor* attacker, float hpRate, csTicks duration)
 {
     // only record health drain, not health gain
-    if (!attacker || hpRate >= 0)
+    if(!attacker || hpRate >= 0)
         return;
 
     dmgHistory.Push(new DOTHistory(attacker, hpRate, duration));
 }
 
-void gemActor::RemoveAttackerHistory(gemActor * attacker)
+void gemActor::RemoveAttackerHistory(gemActor* attacker)
 {
-    if (attacker && dmgHistory.GetSize() > 0)
+    if(attacker && dmgHistory.GetSize() > 0)
     {
         // Count backwards to avoid trouble with shifting indexes
-        for (size_t i = dmgHistory.GetSize() - 1; i != (size_t) -1; i--)
+        for(size_t i = dmgHistory.GetSize() - 1; i != (size_t) -1; i--)
         {
-            if (dmgHistory[i]->Attacker() == attacker)
+            if(dmgHistory[i]->Attacker() == attacker)
             {
                 dmgHistory.DeleteIndex(i);
             }
@@ -2963,23 +2993,23 @@ void gemActor::RemoveAttackerHistory(gemActor * attacker)
     }
 }
 
-bool gemActor::CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) const
+bool gemActor::CanBeAttackedBy(gemActor* attacker, gemActor* &lastAttacker) const
 {
     lastAttacker = NULL;
     csTicks lasttime = csGetTicks();
 
-    for (int i = (int)GetDamageHistoryCount(); i>0; i--)
+    for(int i = (int)GetDamageHistoryCount(); i>0; i--)
     {
         const AttackerHistory* lasthit = GetDamageHistory(i-1);
 
         // any 15 second gap is enough to make us stop looking
-        if ((lasttime - lasthit->TimeOfAttack()) > 15000)
+        if((lasttime - lasthit->TimeOfAttack()) > 15000)
         {
             return true;
         }
         lasttime = lasthit->TimeOfAttack();
 
-        if (lasthit->Attacker().IsValid())
+        if(lasthit->Attacker().IsValid())
         {
             lastAttacker = lasthit->Attacker();
         }
@@ -2990,8 +3020,8 @@ bool gemActor::CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) cons
 
         // If someone else, except for attacker pet, hit first and attacker not grouped with them,
         // attacker locked out
-        if (lastAttacker != attacker && !attacker->IsGroupedWith(lastAttacker, true) &&
-             !attacker->IsMyPet(lastAttacker))
+        if(lastAttacker != attacker && !attacker->IsGroupedWith(lastAttacker, true) &&
+                !attacker->IsMyPet(lastAttacker))
         {
             return false;
         }
@@ -3002,7 +3032,7 @@ bool gemActor::CanBeAttackedBy(gemActor* attacker, gemActor*& lastAttacker) cons
 
 bool gemActor::HasBeenAttackedBy(gemActor* attacker)
 {
-    for (int i = (int)GetDamageHistoryCount(); i>0; i--)
+    for(int i = (int)GetDamageHistoryCount(); i>0; i--)
     {
         const AttackerHistory* hit = GetDamageHistory(i-1);
 
@@ -3011,16 +3041,16 @@ bool gemActor::HasBeenAttackedBy(gemActor* attacker)
         {
             return true;
         }
-    }    
+    }
     return false;
 }
 
 
 void gemActor::UpdateStats()
 {
-    if (psChar)
+    if(psChar)
     {
-        if (psChar->UpdateStatDRData(csGetTicks()))
+        if(psChar->UpdateStatDRData(csGetTicks()))
         {
             // There are dirty stats that need to be published
             SendGroupStats();
@@ -3038,33 +3068,33 @@ void gemActor::HandleDeath()
     // want to be continually notified of deaths
     while(deathReceivers.GetSize() > 0)
     {
-        iDeathCallback *receiver = deathReceivers.Pop();
+        iDeathCallback* receiver = deathReceivers.Pop();
         receiver->DeathCallback(this);
     }
 }
 
 void gemActor::SendGroupStats()
 {
-    if (InGroup() || GetClientID())
+    if(InGroup() || GetClientID())
     {
         psChar->SendStatDRMessage(GetClientID(), eid, 0, InGroup() ? GetGroup() : NULL);
     }
-    
+
     BroadcastTargetStatDR(entityManager->GetClients());
 }
 
-bool gemActor::Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities  )
+bool gemActor::Send(int clientnum, bool control, bool to_superclients, psPersistAllEntities* allEntities)
 {
     csRef<PlayerGroup> group = this->GetGroup();
     csString texparts;
     csString equipmentParts;
 
-    psChar->MakeTextureString( texparts );
-    psChar->MakeEquipmentString( equipmentParts );
+    psChar->MakeTextureString(texparts);
+    psChar->MakeEquipmentString(equipmentParts);
 
     csString guildName;
     guildName.Clear();
-    if ( psChar->GetGuild() && !psChar->GetGuild()->IsSecret() )
+    if(psChar->GetGuild() && !psChar->GetGuild()->IsSecret())
     {
         guildName = psChar->GetGuild()->GetName();
     }
@@ -3079,69 +3109,69 @@ bool gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
 
     // The following flags will be percepted to the NPC client in the FlagPerception message
     // upon change.
-    if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
-    if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
-    if (IsAlive())           flags |= psPersistActor::IS_ALIVE;
+    if(!GetVisibility())    flags |= psPersistActor::INVISIBLE;
+    if(GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
+    if(IsAlive())           flags |= psPersistActor::IS_ALIVE;
 
     Client* targetClient = psserver->GetConnections()->Find(clientnum);
-    if (targetClient && targetClient->GetCharacterData())
+    if(targetClient && targetClient->GetCharacterData())
     {
-        if (((GetClient()->GetSecurityLevel() >= GM_LEVEL_0) &&
-            GetCharacterData()->GetGuild()) ||
-            (targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
-            targetClient->GetCharacterData()->Knows(psChar))
+        if(((GetClient()->GetSecurityLevel() >= GM_LEVEL_0) &&
+                GetCharacterData()->GetGuild()) ||
+                (targetClient->GetSecurityLevel() >= GM_LEVEL_0) ||
+                targetClient->GetCharacterData()->Knows(psChar))
         {
             flags |= psPersistActor::NAMEKNOWN;
         }
     }
 
-    psPersistActor mesg( clientnum,
-                         securityLevel,
-                         masqueradeLevel,
-                         control,
-                         name,
-                         guildName,
-                         psChar->GetRaceInfo()->GetMeshName(),
-                         psChar->GetRaceInfo()->GetTextureName(),
-                         psChar->GetRaceInfo()->GetName(),
-                         GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
-                         GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
-                         psChar->GetRaceInfo()->gender,
-                         psChar->GetRaceInfo()->GetScale(),
-                         GetMount() ? GetMount()->GetRaceInfo()->GetScale() : 1,
-                         psChar->GetHelmGroup(),
-                         psChar->GetBracerGroup(),
-                         psChar->GetBeltGroup(),
-                         psChar->GetCloakGroup(),
-                         top, bottom,offset,
-                         texparts,
-                         equipmentParts,
-                         DRcounter,
-                         eid,
-                         cacheManager->GetMsgStrings(),
-                         pcmove,
-                         movementMode,
-                         GetMode(),
-                         (to_superclients || allEntities) ? pid : 0, // playerID should not be distributed to clients
-                         groupID,
-                         0, // ownerEID
-                         flags, 
-                         0, // masterID
-                         (to_superclients || allEntities)
-                         );
+    psPersistActor mesg(clientnum,
+                        securityLevel,
+                        masqueradeLevel,
+                        control,
+                        name,
+                        guildName,
+                        psChar->GetRaceInfo()->GetMeshName(),
+                        psChar->GetRaceInfo()->GetTextureName(),
+                        psChar->GetRaceInfo()->GetName(),
+                        GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
+                        GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
+                        psChar->GetRaceInfo()->gender,
+                        psChar->GetRaceInfo()->GetScale(),
+                        GetMount() ? GetMount()->GetRaceInfo()->GetScale() : 1,
+                        psChar->GetHelmGroup(),
+                        psChar->GetBracerGroup(),
+                        psChar->GetBeltGroup(),
+                        psChar->GetCloakGroup(),
+                        top, bottom,offset,
+                        texparts,
+                        equipmentParts,
+                        DRcounter,
+                        eid,
+                        cacheManager->GetMsgStrings(),
+                        pcmove,
+                        movementMode,
+                        GetMode(),
+                        (to_superclients || allEntities) ? pid : 0, // playerID should not be distributed to clients
+                        groupID,
+                        0, // ownerEID
+                        flags,
+                        0, // masterID
+                        (to_superclients || allEntities)
+                       );
 
     // Only send to client
-    if (clientnum && !to_superclients)
+    if(clientnum && !to_superclients)
     {
         mesg.SendMessage();
     }
 
-    if (to_superclients)
+    if(to_superclients)
     {
         Debug1(LOG_SUPERCLIENT, clientnum, "Sending gemActor to superclients.\n");
 
         mesg.SetInstance(GetInstance());
-        if (clientnum == 0) // Send to all superclients
+        if(clientnum == 0)  // Send to all superclients
         {
             mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
         }
@@ -3151,7 +3181,7 @@ bool gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
         }
     }
 
-    if (allEntities)
+    if(allEntities)
     {
         return allEntities->AddEntityMessage(mesg.msg);
     }
@@ -3161,15 +3191,15 @@ bool gemActor::Send( int clientnum, bool control, bool to_superclients, psPersis
 
 void gemActor::Broadcast(int clientnum, bool control)
 {
-    csArray<PublishDestination>& dest = GetMulticastClients();
-    for (unsigned long i = 0 ; i < dest.GetSize(); i++)
+    csArray<PublishDestination> &dest = GetMulticastClients();
+    for(unsigned long i = 0 ; i < dest.GetSize(); i++)
     {
-        if (dest[i].dist < PROX_LIST_ANY_RANGE)
+        if(dest[i].dist < PROX_LIST_ANY_RANGE)
             Send(dest[i].client, control, false);
     }
 
     // Update the labels of people in your secret guild
-    if ( psChar->GetGuild() && psChar->GetGuild()->IsSecret() )
+    if(psChar->GetGuild() && psChar->GetGuild()->IsSecret())
     {
         psUpdatePlayerGuildMessage update(
             clientnum,
@@ -3180,7 +3210,7 @@ void gemActor::Broadcast(int clientnum, bool control)
     }
 }
 
-gemObject *gemActor::FindNearbyActorName(const char *name)
+gemObject* gemActor::FindNearbyActorName(const char* name)
 {
     return proxlist->FindObjectName(name);
 }
@@ -3193,19 +3223,19 @@ const char* gemActor::GetGuildName()
         return NULL;
 }
 
-bool gemActor::AddChatReport(gemActor *reporter)
+bool gemActor::AddChatReport(gemActor* reporter)
 {
     activeReports++;
 
     csString cssBuffer("");
     csString cssTempLine("");
 
-    if (activeReports == 1)
+    if(activeReports == 1)
     {
         // this is the first report. Let's open the log file
         // and write all buffered history in it...
         csRef<iVFS> vfs =  csQueryRegistry<iVFS> (cel->object_reg);
-        if (!vfs)
+        if(!vfs)
         {
             activeReports = 0;
             Error1("Query for vfs plugin failed!");
@@ -3216,7 +3246,7 @@ bool gemActor::AddChatReport(gemActor *reporter)
         csString cssFilename = csString().Format("/this/logs/report_chat_%s.log", GetFirstName());
 
         logging_chat_file = vfs->Open(cssFilename.GetData(), VFS_FILE_APPEND);
-        if (!logging_chat_file)
+        if(!logging_chat_file)
         {
             Error1("Error, could not open log file to append.");
             activeReports = 0;
@@ -3225,8 +3255,8 @@ bool gemActor::AddChatReport(gemActor *reporter)
 
         Notify2(LOG_ANY, "Logging of chat messages for '%s' started\n", ShowID(pid));
 
-        const csVector3 & pos = GetPosition();
-        iSector *sector = GetSector();
+        const csVector3 &pos = GetPosition();
+        iSector* sector = GetSector();
 
         int degrees = (int)(GetAngle() * 180.0f / PI);
 
@@ -3237,12 +3267,12 @@ bool gemActor::AddChatReport(gemActor *reporter)
         cssBuffer.AppendFmt("Starting to log player %s (%s).\n", GetName(), ShowID(pid));
         cssBuffer.AppendFmt("Player has %d security level.\n", securityLevel);
         cssBuffer.AppendFmt("At position (%1.2f, %1.2f, %1.2f) angle: %d in sector: %s, instance: %d.\n",
-            pos.x, pos.y, pos.z, degrees, sectorName.GetData(), worldInstance);
-        cssBuffer.AppendFmt("Total time connected is %1.1f hours.\n", (GetCharacterData()->GetTimeConnected() / 3600.0f) );
+                            pos.x, pos.y, pos.z, degrees, sectorName.GetData(), worldInstance);
+        cssBuffer.AppendFmt("Total time connected is %1.1f hours.\n", (GetCharacterData()->GetTimeConnected() / 3600.0f));
         cssBuffer.AppendFmt("================================================================\n");
         // Write existing chat history
         size_t length = chatHistory.GetSize();
-        for (size_t i=0; i<length; i++)
+        for(size_t i=0; i<length; i++)
         {
             chatHistory[i].GetLogLine(cssTempLine);
             cssBuffer += cssTempLine;
@@ -3266,7 +3296,7 @@ void gemActor::RemoveChatReport()
 {
     activeReports--;
 
-    if (activeReports == 0)
+    if(activeReports == 0)
     {
         // This is the last /report for this client that expires,
         // so we terminate logging and close the file.
@@ -3281,22 +3311,39 @@ void gemActor::RemoveChatReport()
     }
 }
 
-bool gemActor::LogChatMessage(const char *who, const psChatMessage &msg)
+bool gemActor::LogChatMessage(const char* who, const psChatMessage &msg)
 {
     csString cssLine("");
 
     // Format according to chat type
-    switch (msg.iChatType)
+    switch(msg.iChatType)
     {
-        case CHAT_SHOUT: cssLine.Format("%s shouts: %s", who, msg.sText.GetData()); break;
-        case CHAT_SAY: cssLine.Format("%s says: %s", who, msg.sText.GetData()); break;
-        case CHAT_CHANNEL: cssLine.Format("Channel %d> %s: %s", msg.channelID, who, msg.sText.GetData()); break;
-        case CHAT_TELL: cssLine.Format("%s tells %s: %s", who, msg.sPerson.GetData(), msg.sText.GetData()); break;
-        case CHAT_GUILD: cssLine.Format("GuildChat from %s: %s", who, msg.sText.GetData()); break;
-        case CHAT_ALLIANCE: cssLine.Format("AllianceChat from %s: %s", who, msg.sText.GetData()); break;
-        case CHAT_GROUP: cssLine.Format("GroupChat from %s: %s", who, msg.sText.GetData()); break;
-        case CHAT_AUCTION: cssLine.Format("Auction from %s: %s", who, msg.sText.GetData()); break;
-        default: return false; // We do not log any other chat types.
+        case CHAT_SHOUT:
+            cssLine.Format("%s shouts: %s", who, msg.sText.GetData());
+            break;
+        case CHAT_SAY:
+            cssLine.Format("%s says: %s", who, msg.sText.GetData());
+            break;
+        case CHAT_CHANNEL:
+            cssLine.Format("Channel %d> %s: %s", msg.channelID, who, msg.sText.GetData());
+            break;
+        case CHAT_TELL:
+            cssLine.Format("%s tells %s: %s", who, msg.sPerson.GetData(), msg.sText.GetData());
+            break;
+        case CHAT_GUILD:
+            cssLine.Format("GuildChat from %s: %s", who, msg.sText.GetData());
+            break;
+        case CHAT_ALLIANCE:
+            cssLine.Format("AllianceChat from %s: %s", who, msg.sText.GetData());
+            break;
+        case CHAT_GROUP:
+            cssLine.Format("GroupChat from %s: %s", who, msg.sText.GetData());
+            break;
+        case CHAT_AUCTION:
+            cssLine.Format("Auction from %s: %s", who, msg.sText.GetData());
+            break;
+        default:
+            return false; // We do not log any other chat types.
     }
     return LogLine(cssLine.GetData());
 }
@@ -3311,7 +3358,7 @@ bool gemActor::LogLine(const char* szLine)
     // Add to chat history
     ChatHistoryEntry cheNew(szLine);
 
-    if (!IsLoggingChat()) // Check if we're logging. If not, store the message in the history and bail out.
+    if(!IsLoggingChat())  // Check if we're logging. If not, store the message in the history and bail out.
     {
         chatHistory.Push(cheNew);
 
@@ -3319,8 +3366,8 @@ bool gemActor::LogLine(const char* szLine)
         time_t check = time(0) - CHAT_HISTORY_LIFETIME;
         // We delete lines older than current time + CHAT_HISTORY_LIFETIME
         // if the history size is not lowest than the minimum
-        while ( (chatHistory.GetSize()>CHAT_HISTORY_MINIMUM_SIZE) &&
-            chatHistory.Get(0)._time < check)
+        while((chatHistory.GetSize()>CHAT_HISTORY_MINIMUM_SIZE) &&
+                chatHistory.Get(0)._time < check)
         {
             chatHistory.DeleteIndex(0);
         }
@@ -3337,14 +3384,14 @@ bool gemActor::LogLine(const char* szLine)
 * Determines the right size and height for the collider for the sprite
 * and sets the actual position of the sprite.
 */
-bool gemActor::InitLinMove (const csVector3& pos,
-                            float angle, iSector* sector)
+bool gemActor::InitLinMove(const csVector3 &pos,
+                           float angle, iSector* sector)
 {
     pcmove = new psLinearMovement(psserver->GetObjectReg());
 
     // Check if we're using sizes from the db.
     csVector3 size;
-    psRaceInfo *raceinfo = psChar->GetRaceInfo();
+    psRaceInfo* raceinfo = psChar->GetRaceInfo();
     raceinfo->GetSize(size);
     float width = size.x;
     float height = size.y;
@@ -3357,17 +3404,17 @@ bool gemActor::InitLinMove (const csVector3& pos,
     // Now check if the size within limits.
     // Can't be to small or the ExtrapolatePosition in NPCClient
     // will take to long to process.
-    if (width < 0.2)
+    if(width < 0.2)
     {
         Warning4(LOG_ANY, "Raceinfo width %.2f is too small for %s(%s). Using default.", width, GetName(), ShowID(pid));
         width = 0.8F;
     }
-    if (depth < 0.2*1.33)
+    if(depth < 0.2*1.33)
     {
         Warning4(LOG_ANY, "Raceinfo depth %.2f is too small for %s(%s). Using default.", depth, GetName(), ShowID(pid));
         depth = 0.6F*1.33F;
     }
-    if (height < 0.2F)
+    if(height < 0.2F)
     {
         Warning4(LOG_ANY, "Raceinfo height %.2f is too small for %s(%s). Using default.", height, GetName(), ShowID(pid));
         height = 1.4F;
@@ -3409,14 +3456,14 @@ bool gemActor::SetupCharData()
 
 bool gemActor::InitCharData(Client* c)
 {
-    if ( !c )
+    if(!c)
     {
         // NPC
-        SetSecurityLevel( -1 );
+        SetSecurityLevel(-1);
     }
     else
     {
-        SetSecurityLevel( c->GetSecurityLevel() );
+        SetSecurityLevel(c->GetSecurityLevel());
         SetGMDefaults();
     }
 
@@ -3424,23 +3471,23 @@ bool gemActor::InitCharData(Client* c)
 
 }
 
-void gemActor::SetTextureParts(const char *parts)
+void gemActor::SetTextureParts(const char* parts)
 {
 }
 
-void gemActor::SetEquipment(const char *equip)
+void gemActor::SetEquipment(const char* equip)
 {
 }
 
 const char* gemActor::GetModeStr()
 {
-    static const char *strs[] = {"unknown","doing nothing","in combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued", "playing an instrument" };
+    static const char* strs[] = {"unknown","doing nothing","in combat","spell casting","working","dead","sitting","carrying too much","exhausted", "defeated", "statued", "playing an instrument" };
     return strs[player_mode];
 }
 
 bool gemActor::CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to)
 {
-    switch (to)
+    switch(to)
     {
         case PSCHARACTER_MODE_DEFEATED:
             return from != PSCHARACTER_MODE_DEAD;
@@ -3468,29 +3515,29 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
 {
     // Assume combat messages need to be sent anyway, because the stance may have changed.
     // TODO: integrate this with extraData and remove this workaround?
-    if (player_mode == newmode && newmode != PSCHARACTER_MODE_COMBAT)
+    if(player_mode == newmode && newmode != PSCHARACTER_MODE_COMBAT)
         return;
 
-    if (newmode < PSCHARACTER_MODE_PEACE || newmode >= PSCHARACTER_MODE_COUNT)
+    if(newmode < PSCHARACTER_MODE_PEACE || newmode >= PSCHARACTER_MODE_COUNT)
     {
         Error3("Unhandled mode: %d switching to %d", player_mode, newmode);
         return;
     }
 
-    if (!CanSwitchMode(player_mode, newmode))
+    if(!CanSwitchMode(player_mode, newmode))
         return;
 
     // Force mode to be OVERWEIGHT if encumbered and the proposed mode isn't
     // more important.
-    if (!psChar->Inventory().HasEnoughUnusedWeight(0) && CanSwitchMode(newmode, PSCHARACTER_MODE_OVERWEIGHT))
+    if(!psChar->Inventory().HasEnoughUnusedWeight(0) && CanSwitchMode(newmode, PSCHARACTER_MODE_OVERWEIGHT))
         newmode = PSCHARACTER_MODE_OVERWEIGHT;
 
-    if (newmode != PSCHARACTER_MODE_COMBAT)
+    if(newmode != PSCHARACTER_MODE_COMBAT)
     {
         SetCombatStance(CombatManager::GetStance(cacheManager,"None"));
     }
 
-    if (newmode == PSCHARACTER_MODE_COMBAT)
+    if(newmode == PSCHARACTER_MODE_COMBAT)
         extraData = combat_stance.stance_id;
 
     psModeMessage msg(GetClientID(), GetEID(), (uint8_t) newmode, extraData);
@@ -3513,7 +3560,7 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
                            newmode != PSCHARACTER_MODE_DEFEATED);
 
     // cancel ongoing work
-    if (player_mode == PSCHARACTER_MODE_WORK && workEvent)
+    if(player_mode == PSCHARACTER_MODE_WORK && workEvent)
     {
         workEvent->Interrupt();
         workEvent = NULL;
@@ -3525,7 +3572,7 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
         psserver->GetSongManager()->StopSong(this, true);
     }
 
-    switch (newmode)
+    switch(newmode)
     {
         case PSCHARACTER_MODE_EXHAUSTED:
         case PSCHARACTER_MODE_COMBAT:
@@ -3557,15 +3604,15 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
 
     player_mode = newmode;
 
-    if (newmode == PSCHARACTER_MODE_PEACE || newmode == PSCHARACTER_MODE_SPELL_CASTING)
+    if(newmode == PSCHARACTER_MODE_PEACE || newmode == PSCHARACTER_MODE_SPELL_CASTING)
         ProcessStamina();
 }
 
-void gemActor::SetCombatStance(const Stance & stance)
+void gemActor::SetCombatStance(const Stance &stance)
 {
     CS_ASSERT(stance.stance_id >= 0 && stance.stance_id <= cacheManager->stances.GetSize());
 
-    if (combat_stance.stance_id == stance.stance_id)
+    if(combat_stance.stance_id == stance.stance_id)
         return;
 
     combat_stance = stance;
@@ -3575,7 +3622,7 @@ void gemActor::SetCombatStance(const Stance & stance)
 // This function should only be run on initial load
 void gemActor::SetGMDefaults()
 {
-    if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default invincible") )
+    if(cacheManager->GetCommandManager()->Validate(securityLevel, "default invincible"))
     {
         invincible = true;
         safefall = true;
@@ -3583,7 +3630,7 @@ void gemActor::SetGMDefaults()
         infinitemana = true;
     }
 
-    if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default invisible") )
+    if(cacheManager->GetCommandManager()->Validate(securityLevel, "default invisible"))
     {
         visible = false;
     }
@@ -3593,7 +3640,7 @@ void gemActor::SetGMDefaults()
         viewAllObjects = true;
     }
 
-    if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default infinite inventory") )
+    if(cacheManager->GetCommandManager()->Validate(securityLevel, "default infinite inventory"))
     {
         SetFiniteInventory(false);
     }
@@ -3601,28 +3648,28 @@ void gemActor::SetGMDefaults()
     questtester = false;  // Always off by default
 }
 
-void gemActor::SetDefaults( bool player )
+void gemActor::SetDefaults(bool player)
 {
-    if (player)
+    if(player)
     {
-        if (invincible)
+        if(invincible)
         {
-            SetInvincibility( false );
+            SetInvincibility(false);
         }
         safefall = false;
         nevertired = false;
         infinitemana = false;
-        if (!GetVisibility())
+        if(!GetVisibility())
         {
-            SetVisibility( true );
+            SetVisibility(true);
         }
-        if (GetViewAllObjects())
+        if(GetViewAllObjects())
         {
-            SetViewAllObjects( false );
+            SetViewAllObjects(false);
         }
-        if (!GetFiniteInventory())
+        if(!GetFiniteInventory())
         {
-            SetFiniteInventory( true );
+            SetFiniteInventory(true);
         }
         questtester = false;
         instantcast = false;
@@ -3632,32 +3679,32 @@ void gemActor::SetDefaults( bool player )
     }
     else
     {
-        if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default invincible") )
+        if(cacheManager->GetCommandManager()->Validate(securityLevel, "default invincible"))
         {
-            if (invincible)
+            if(invincible)
             {
-                SetInvincibility( true );
+                SetInvincibility(true);
             }
             safefall = true;
             nevertired = true;
             infinitemana = true;
         }
-        if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default invisible") )
+        if(cacheManager->GetCommandManager()->Validate(securityLevel, "default invisible"))
         {
-            if (GetVisibility())
+            if(GetVisibility())
             {
-                SetVisibility( false );
+                SetVisibility(false);
             }
-            if (!GetViewAllObjects())
+            if(!GetViewAllObjects())
             {
-                SetViewAllObjects( true );
+                SetViewAllObjects(true);
             }
         }
-        if ( cacheManager->GetCommandManager()->Validate(securityLevel, "default infinite inventory") )
+        if(cacheManager->GetCommandManager()->Validate(securityLevel, "default infinite inventory"))
         {
-            if (GetFiniteInventory())
+            if(GetFiniteInventory())
             {
-                SetFiniteInventory( false );
+                SetFiniteInventory(false);
             }
         }
         questtester = false;
@@ -3674,11 +3721,11 @@ void gemActor::SetInstance(InstanceID worldInstance)
     this->worldInstance = worldInstance;
 }
 
-void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
+void gemActor::Teleport(const char* sectorName, const csVector3 &pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
 {
     csRef<iEngine> engine = csQueryRegistry<iEngine>(psserver->GetObjectReg());
-    iSector *sector = engine->GetSectors()->FindByName(sectorName);
-    if (!sector)
+    iSector* sector = engine->GetSectors()->FindByName(sectorName);
+    if(!sector)
     {
         Bug2("Sector %s is not found!", sectorName);
         return;
@@ -3686,18 +3733,18 @@ void gemActor::Teleport(const char *sectorName, const csVector3 & pos, float yro
     Teleport(sector, pos, yrot, instance, loadDelay, background, point1, point2, widget);
 }
 
-void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
+void gemActor::Teleport(iSector* sector, const csVector3 &pos, float yrot, InstanceID instance, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
 {
     SetInstance(instance);
     Teleport(sector, pos, yrot, loadDelay, background, point1, point2, widget);
 }
 
-void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
+void gemActor::Teleport(iSector* sector, const csVector3 &pos, float yrot, int32_t loadDelay, csString background, csVector2 point1, csVector2 point2, csString widget)
 {
     StopMoving();
     SetPosition(pos, yrot, sector);
 
-    if (GetClient())
+    if(GetClient())
         GetClient()->SetCheatMask(MOVE_CHEAT, true); // Tell paladin one of these is OK.
 
     UpdateProxList();
@@ -3706,10 +3753,10 @@ void gemActor::Teleport(iSector *sector, const csVector3 & pos, float yrot, int3
     BroadcastTargetStatDR(entityManager->GetClients()); //we need to update the stats too
 }
 
-void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
+void gemActor::SetPosition(const csVector3 &pos,float angle, iSector* sector)
 {
     // Verify the location first. CS cannot handle positions greater than 100000.
-    if (fabs(pos.x) > 100000 || fabs(pos.y) > 100000 || fabs(pos.z) > 100000)
+    if(fabs(pos.x) > 100000 || fabs(pos.y) > 100000 || fabs(pos.z) > 100000)
     {
         MoveToSpawnPos();
         Error5("Attempted to set position of actor pid %d to %g %g %g", pid.Unbox(), pos.x, pos.y, pos.z);
@@ -3719,11 +3766,11 @@ void gemActor::SetPosition(const csVector3& pos,float angle, iSector* sector)
     Move(pos, angle, sector);
 
     psSectorInfo* sectorInfo = NULL;
-    if (sector != NULL)
+    if(sector != NULL)
         sectorInfo = cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
-    if (sectorInfo != NULL)
+    if(sectorInfo != NULL)
     {
-        psChar->SetLocationInWorld(worldInstance, sectorInfo, pos.x, pos.y, pos.z, angle );
+        psChar->SetLocationInWorld(worldInstance, sectorInfo, pos.x, pos.y, pos.z, angle);
         UpdateValidLocation(pos, angle, sector, worldInstance, true);
     }
 }
@@ -3736,42 +3783,42 @@ void gemActor::ProcessStamina()
     ProcessStamina(vel, true);
 }
 
-void gemActor::ProcessStamina(const csVector3& velocity, bool force)
+void gemActor::ProcessStamina(const csVector3 &velocity, bool force)
 {
     // GM flag
-    if (nevertired)
+    if(nevertired)
         return;
 
     csTicks now = csGetTicks();
 
-    if (lastDR == 0)
+    if(lastDR == 0)
         lastDR = now;
 
     csTicks elapsed = now - lastDR;
 
     // Update once a second, or on any updates with upward motion
-    if (elapsed > 1000 || velocity.y > SMALL_EPSILON || force)
+    if(elapsed > 1000 || velocity.y > SMALL_EPSILON || force)
     {
         lastDR += elapsed;
 
         float times = 1.0f;
 
-            /* If we're slow or forced, we need to multiply the stamina with the secs passed.
-             * DR updates are sent when speed changes, so it should be quite accurate.
-             */
-            times = float(elapsed) / 1000.0f;
+        /* If we're slow or forced, we need to multiply the stamina with the secs passed.
+         * DR updates are sent when speed changes, so it should be quite accurate.
+         */
+        times = float(elapsed) / 1000.0f;
 
         atRest = velocity.IsZero();
 
-        #ifdef STAMINA_PROCESS_DEBUG
-            printf("Processing stamina with %u elapsed since last\n", elapsed );
-        #endif
+#ifdef STAMINA_PROCESS_DEBUG
+        printf("Processing stamina with %u elapsed since last\n", elapsed);
+#endif
 
         ApplyStaminaCalculations(velocity,times);
     }
 }
 
-void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
+void gemActor::ApplyStaminaCalculations(const csVector3 &v, float times)
 {
     csVector3 thisV = lastV;
     lastV=v;
@@ -3784,29 +3831,29 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         return;
     }
 
-    if ( atRest )
+    if(atRest)
     {
-        #ifdef STAMINA_PROCESS_DEBUG
-            printf("Not moving\n");
-        #endif
+#ifdef STAMINA_PROCESS_DEBUG
+        printf("Not moving\n");
+#endif
 
-        if (GetMode() == PSCHARACTER_MODE_PEACE || GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
+        if(GetMode() == PSCHARACTER_MODE_PEACE || GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
             psChar->SetStaminaRegenerationStill();
-        else if (GetMode() == PSCHARACTER_MODE_SIT)
+        else if(GetMode() == PSCHARACTER_MODE_SIT)
             psChar->SetStaminaRegenerationSitting();
     }
     else // Moving
     {
         // unwork stuff
-        if (GetMode() == PSCHARACTER_MODE_WORK)
+        if(GetMode() == PSCHARACTER_MODE_WORK)
         {
             SetMode(PSCHARACTER_MODE_PEACE);
             psserver->SendSystemInfo(GetClientID(),"You stop working.");
         }
 
-        #ifdef STAMINA_PROCESS_DEBUG
-            printf("Moving @");
-        #endif
+#ifdef STAMINA_PROCESS_DEBUG
+        printf("Moving @");
+#endif
 
         // Compute stuff
         /*
@@ -3821,9 +3868,9 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         double Angle; ///< angle between velocity vector and X-Z plane
 
         double XZvel = csQsqrt(thisV.x*thisV.x + thisV.z*thisV.z);
-        if (thisV.y > EPSILON)
+        if(thisV.y > EPSILON)
         {
-            if (XZvel > EPSILON)
+            if(XZvel > EPSILON)
             {
                 Speed = csQsqrt(thisV.y*thisV.y + XZvel*XZvel);
                 Angle = atan(thisV.y / XZvel);
@@ -3840,9 +3887,9 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
             Angle = 0.0f;
         }
 
-        #ifdef STAMINA_PROCESS_DEBUG
-            printf(" %f %f =>", float(Speed), float(Angle) );
-        #endif
+#ifdef STAMINA_PROCESS_DEBUG
+        printf(" %f %f =>", float(Speed), float(Angle));
+#endif
 
         // Stuff goes in
         MathEnvironment env;
@@ -3860,15 +3907,15 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
         float value = drain->GetValue();
         //value *= times;
 
-        #ifdef STAMINA_PROCESS_DEBUG
-            printf(" %f\n", value );
-        #endif
+#ifdef STAMINA_PROCESS_DEBUG
+        printf(" %f\n", value);
+#endif
 
         // Apply stuff
-        if (GetMode() == PSCHARACTER_MODE_PEACE || GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
+        if(GetMode() == PSCHARACTER_MODE_PEACE || GetMode() == PSCHARACTER_MODE_SPELL_CASTING)
         {
             psChar->SetStaminaRegenerationWalk();
-            VitalBuffable & pRate = psChar->GetPStaminaRate();
+            VitalBuffable &pRate = psChar->GetPStaminaRate();
             pRate.SetBase(pRate.Base()-value);
         }
         else  // Another regen in place
@@ -3878,33 +3925,33 @@ void gemActor::ApplyStaminaCalculations(const csVector3& v, float times)
     }
 
     // Check stuff
-    if (psChar->GetStamina(true) < 0.05f)
+    if(psChar->GetStamina(true) < 0.05f)
     {
-        #ifdef STAMINA_PROCESS_DEBUG
-            printf("Stopping\n");
-        #endif
+#ifdef STAMINA_PROCESS_DEBUG
+        printf("Stopping\n");
+#endif
 
         SetMode(PSCHARACTER_MODE_EXHAUSTED);
         psChar->SetStaminaRegenerationStill();
         psserver->SendSystemResult(GetClientID(),"You're too exhausted to move");
     }
-    else if (GetMode() == PSCHARACTER_MODE_EXHAUSTED)
+    else if(GetMode() == PSCHARACTER_MODE_EXHAUSTED)
     {
         SetMode(PSCHARACTER_MODE_PEACE);
     }
 }
 
-bool gemActor::SetDRData(psDRMessage& drmsg)
+bool gemActor::SetDRData(psDRMessage &drmsg)
 {
-    if (!drmsg.IsNewerThan(DRcounter))
+    if(!drmsg.IsNewerThan(DRcounter))
     {
-    	return false; // don't do the rest of this if this msg is out of date
+        return false; // don't do the rest of this if this msg is out of date
     }
     // If this DR came from a client which has not accepted the force position message at least once then we must
     // ignore it as it must be out of date
     if(forcedSector)
     {
-        if (drmsg.sector != forcedSector)
+        if(drmsg.sector != forcedSector)
         {
             return false;
         }
@@ -3918,18 +3965,18 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
 
 
     // Apply stamina only on PCs
-    if (GetClientID())
+    if(GetClientID())
         ProcessStamina(drmsg.vel + drmsg.worldVel);
 
-    if (drmsg.sector != NULL)
+    if(drmsg.sector != NULL)
     {
         UpdateValidLocation(drmsg.pos, drmsg.yrot, drmsg.sector, worldInstance);
-        psSectorInfo* sectorInfo = cacheManager->GetSectorInfoByName( drmsg.sector->QueryObject()->GetName() );
-        if (sectorInfo != NULL)
+        psSectorInfo* sectorInfo = cacheManager->GetSectorInfoByName(drmsg.sector->QueryObject()->GetName());
+        if(sectorInfo != NULL)
         {
-            psChar->SetLocationInWorld(worldInstance,sectorInfo, drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot );
+            psChar->SetLocationInWorld(worldInstance,sectorInfo, drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot);
 
-            if (IsSpellCasting() && drmsg.vel.SquaredNorm() > 13.0f)
+            if(IsSpellCasting() && drmsg.vel.SquaredNorm() > 13.0f)
             {
                 InterruptSpellCasting();
             }
@@ -3940,10 +3987,10 @@ bool gemActor::SetDRData(psDRMessage& drmsg)
     return true;
 }
 
-void gemActor::UpdateValidLocation(const csVector3 & pos, float yrot, iSector *sector, InstanceID instance, bool force)
+void gemActor::UpdateValidLocation(const csVector3 &pos, float yrot, iSector* sector, InstanceID instance, bool force)
 {
     // 10m hops
-    if (force || (!isFalling && (pos - newvalid_location.pos).SquaredNorm() > 100.0f))
+    if(force || (!isFalling && (pos - newvalid_location.pos).SquaredNorm() > 100.0f))
     {
         valid_location = newvalid_location;
         newvalid_location.pos = pos;
@@ -3966,7 +4013,7 @@ void gemActor::MoveToLastPos()
     Teleport(last_location.sector, last_location.pos, last_location.yrot, last_location.instance);
 }
 
-void gemActor::GetLastLocation(csVector3& pos, float& yrot, iSector*& sector, InstanceID &instance)
+void gemActor::GetLastLocation(csVector3 &pos, float &yrot, iSector* &sector, InstanceID &instance)
 {
     pos = last_location.pos;
     yrot = last_location.yrot;
@@ -3974,7 +4021,7 @@ void gemActor::GetLastLocation(csVector3& pos, float& yrot, iSector*& sector, In
     instance = last_location.instance;
 }
 
-void gemActor::SetPrevTeleportLocation(const csVector3& pos, float yrot, iSector* sector, InstanceID instance)
+void gemActor::SetPrevTeleportLocation(const csVector3 &pos, float yrot, iSector* sector, InstanceID instance)
 {
     prev_teleport_location.pos = pos;
     prev_teleport_location.yrot = yrot;
@@ -3982,7 +4029,7 @@ void gemActor::SetPrevTeleportLocation(const csVector3& pos, float yrot, iSector
     prev_teleport_location.instance = instance;
 }
 
-void gemActor::GetPrevTeleportLocation(csVector3& pos, float& yrot, iSector*& sector, InstanceID& instance)
+void gemActor::GetPrevTeleportLocation(csVector3 &pos, float &yrot, iSector* &sector, InstanceID &instance)
 {
     pos = prev_teleport_location.pos;
     yrot = prev_teleport_location.yrot;
@@ -3995,7 +4042,7 @@ void gemActor::MulticastDRUpdate()
     bool on_ground;
     float yrot,ang_vel;
     csVector3 pos,vel,worldVel;
-    iSector *sector;
+    iSector* sector;
     pcmove->GetDRData(on_ground,pos,yrot,sector,vel,worldVel,ang_vel);
     psDRMessage drmsg(0, eid, on_ground, movementMode, DRcounter,
                       pos,yrot,sector, "", vel,worldVel,ang_vel,
@@ -4023,14 +4070,14 @@ bool gemActor::UpdateDR()
     return true;
 }
 
-void gemActor::GetLastSuperclientPos(csVector3& pos, InstanceID& instance, csTicks& last) const
+void gemActor::GetLastSuperclientPos(csVector3 &pos, InstanceID &instance, csTicks &last) const
 {
     pos = lastSentSuperclientPos;
     instance = lastSentSuperclientInstance;
     last = lastSentSuperclientTick;
 }
 
-void gemActor::SetLastSuperclientPos(const csVector3& pos, InstanceID instance, const csTicks& now)
+void gemActor::SetLastSuperclientPos(const csVector3 &pos, InstanceID instance, const csTicks &now)
 {
     lastSentSuperclientPos = pos;
     lastSentSuperclientInstance = instance;
@@ -4038,12 +4085,12 @@ void gemActor::SetLastSuperclientPos(const csVector3& pos, InstanceID instance, 
 }
 
 
-float gemActor::GetRelativeFaction(gemActor *speaker)
+float gemActor::GetRelativeFaction(gemActor* speaker)
 {
     return GetCharacterData()->GetFactions()->FindWeightedDiff(speaker->GetCharacterData()->GetFactions());
 }
 
-void gemActor::SetGroup(PlayerGroup * group)
+void gemActor::SetGroup(PlayerGroup* group)
 {
     PlayerGroup* oldGroup = this->group;
     this->group = group;
@@ -4126,33 +4173,33 @@ bool gemActor::InGroup() const
     return group.IsValid();
 }
 
-bool gemActor::IsGroupedWith(gemActor *other, bool IncludePets) const
+bool gemActor::IsGroupedWith(gemActor* other, bool IncludePets) const
 {
     return group.IsValid() && group->HasMember(other, IncludePets);
 }
 
 void gemActor::RemoveFromGroup()
 {
-    if (group.IsValid())
+    if(group.IsValid())
     {
         group->Remove(this);
     }
 }
 
-bool gemActor::IsMyPet(gemActor *other) const
+bool gemActor::IsMyPet(gemActor* other) const
 {
-    Client * client = GetClient();
+    Client* client = GetClient();
 
-    if (!client) return false; // Can't own a pet if no client
+    if(!client) return false;  // Can't own a pet if no client
 
     return GetClient()->IsMyPet(other);
 }
 
 
 
-void gemActor::SendGroupMessage(MsgEntry *me)
+void gemActor::SendGroupMessage(MsgEntry* me)
 {
-    if (group.IsValid())
+    if(group.IsValid())
     {
         group->Broadcast(me);
     }
@@ -4163,50 +4210,50 @@ void gemActor::SendGroupMessage(MsgEntry *me)
 }
 
 
-void gemActor::SendTargetStatDR(Client *client)
+void gemActor::SendTargetStatDR(Client* client)
 {
     psChar->SendStatDRMessage(client->GetClientNum(), eid, DIRTY_VITAL_ALL);
 }
 
-void gemActor::BroadcastTargetStatDR(ClientConnectionSet *clients)
+void gemActor::BroadcastTargetStatDR(ClientConnectionSet* clients)
 {
 
     // Send statDR to all clients that have this client targeted
     csArray<PublishDestination> &c = GetMulticastClients();
-    for (size_t i=0; i < c.GetSize(); i++)
+    for(size_t i=0; i < c.GetSize(); i++)
     {
-        Client *cl = clients->Find(c[i].client);
-        if (!cl)  // not ready yet
+        Client* cl = clients->Find(c[i].client);
+        if(!cl)   // not ready yet
             continue;
-        if ((gemActor*)cl->GetTargetObject() == this)  // client has this actor targeted
+        if((gemActor*)cl->GetTargetObject() == this)   // client has this actor targeted
         {
             SendTargetStatDR(cl);
         }
     }
 
     // Send statDR to player's client
-    Client * actorClient = clients->FindPlayer(pid);
-    if (actorClient != NULL)
+    Client* actorClient = clients->FindPlayer(pid);
+    if(actorClient != NULL)
     {
         psChar->SendStatDRMessage(actorClient->GetClientNum(), eid, 0);
     }
 }
 
-csString gemActor::GetDefaultBehavior(const csString & dfltBehaviors)
+csString gemActor::GetDefaultBehavior(const csString &dfltBehaviors)
 {
     return ::GetDefaultBehavior(dfltBehaviors, 1);
 }
 
-void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
+void gemActor::SendBehaviorMessage(const csString &msg_id, gemObject* actor)
 {
-    if ( msg_id == "context" )
+    if(msg_id == "context")
     {
         // If the player is in range of the item.
-        if ( RangeTo(actor) < RANGE_TO_SELECT && actor->IsAlive() )
+        if(RangeTo(actor) < RANGE_TO_SELECT && actor->IsAlive())
         {
-            if (actor->GetClientID() == 0)
+            if(actor->GetClientID() == 0)
                 return;
-            if (!actor->GetCharacterData())
+            if(!actor->GetCharacterData())
                 return;
 
             int options = 0;
@@ -4215,52 +4262,52 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
 
             // Get the actor who is targetting. The target is *this.
             gemActor* activeActor = dynamic_cast<gemActor*>(actor);
-            if (activeActor && activeActor->GetClientID() != 0)
+            if(activeActor && activeActor->GetClientID() != 0)
             {
                 if(activeActor->GetMount() && this == actor)
                     options |= psGUIInteractMessage::UNMOUNT;
-                
-                if ( (activeActor->GetMode() == PSCHARACTER_MODE_PEACE || activeActor->GetMode() == PSCHARACTER_MODE_SIT) && this != activeActor )
+
+                if((activeActor->GetMode() == PSCHARACTER_MODE_PEACE || activeActor->GetMode() == PSCHARACTER_MODE_SIT) && this != activeActor)
                     options |= psGUIInteractMessage::EXCHANGE;
 
                 // Can we attack this player?
                 csString msg; // Not used
-                if (IsAlive() && activeActor->IsAlive() && activeActor->IsAllowedToAttack(this,msg))
+                if(IsAlive() && activeActor->IsAlive() && activeActor->IsAllowedToAttack(this,msg))
                     options |= psGUIInteractMessage::ATTACK;
 
                 /*Options for a wedding or a divorce, in order to show the proper button.
                  *If the character is married with the target, the only option is to divorce.*/
 
-                if ( activeActor->GetCharacterData()->GetIsMarried()
-                     && this != activeActor
-                     && !strcmp( activeActor->GetCharacterData()->GetSpouseName(), GetCharacterData()->GetActor()->GetName() ) )
+                if(activeActor->GetCharacterData()->GetIsMarried()
+                        && this != activeActor
+                        && !strcmp(activeActor->GetCharacterData()->GetSpouseName(), GetCharacterData()->GetActor()->GetName()))
                 {
                     options |= psGUIInteractMessage::DIVORCE;
                 }
                 //If the target is not married, then we can ask to marry him/her. Otherwise, no other option is valid.
                 //However the target must be of the opposite sex, except in the Kran case.
-                else if ( !activeActor->GetCharacterData()->GetIsMarried() &&
-                          !GetCharacterData()->GetIsMarried() && this != activeActor )
+                else if(!activeActor->GetCharacterData()->GetIsMarried() &&
+                        !GetCharacterData()->GetIsMarried() && this != activeActor)
                 {
-                    if ( ( GetCharacterData()->GetRaceInfo()->gender == PSCHARACTER_GENDER_NONE &&
-                           activeActor->GetCharacterData()->GetRaceInfo()->gender == PSCHARACTER_GENDER_NONE ) ||
-                         ( GetCharacterData()->GetRaceInfo()->gender !=
-                           activeActor->GetCharacterData()->GetRaceInfo()->gender &&
-                           GetCharacterData()->GetRaceInfo()->gender != PSCHARACTER_GENDER_NONE
-                           && activeActor->GetCharacterData()->GetRaceInfo()->gender != PSCHARACTER_GENDER_NONE ) )
+                    if((GetCharacterData()->GetRaceInfo()->gender == PSCHARACTER_GENDER_NONE &&
+                            activeActor->GetCharacterData()->GetRaceInfo()->gender == PSCHARACTER_GENDER_NONE) ||
+                            (GetCharacterData()->GetRaceInfo()->gender !=
+                             activeActor->GetCharacterData()->GetRaceInfo()->gender &&
+                             GetCharacterData()->GetRaceInfo()->gender != PSCHARACTER_GENDER_NONE
+                             && activeActor->GetCharacterData()->GetRaceInfo()->gender != PSCHARACTER_GENDER_NONE))
                     {
                         options |= psGUIInteractMessage::MARRIAGE;
                     }
                 }
 
                 // Introduce yourself
-                if (IsAlive() && GetCharacterData()->Knows(activeActor->GetCharacterData()))
+                if(IsAlive() && GetCharacterData()->Knows(activeActor->GetCharacterData()))
                 {
                     options |= psGUIInteractMessage::INTRODUCE;
                 }
             }
 
-            if (!options)
+            if(!options)
                 return;
 
             // Always possible to close menu
@@ -4271,31 +4318,31 @@ void gemActor::SendBehaviorMessage(const csString & msg_id, gemObject *actor)
             guimsg.SendMessage();
         }
     }
-    else if (msg_id == "playerdesc")
+    else if(msg_id == "playerdesc")
         psserver->usermanager->SendCharacterDescription(actor->GetClient(),
-                                                        this, false, false, "behaviorMsg");
-    else if (msg_id == "exchange")
+                this, false, false, "behaviorMsg");
+    else if(msg_id == "exchange")
         psserver->exchangemanager->StartExchange(actor->GetClient(), true);
-    else if (msg_id == "attack")
+    else if(msg_id == "attack")
         psserver->usermanager->Attack(CombatManager::GetStance(cacheManager,"Normal"), actor->GetClient());
 }
 
-void gemActor::SetAction(const char *anim,csTicks& timeDelay)
+void gemActor::SetAction(const char* anim,csTicks &timeDelay)
 {
-    if (!anim)
+    if(!anim)
         return;
     psOverrideActionMessage action(0, eid, anim);
     action.Multicast(GetMulticastClients(),-1,0);
 }
 
-float gemActor::FallEnded(const csVector3& pos, iSector* sector)
+float gemActor::FallEnded(const csVector3 &pos, iSector* sector)
 {
     isFalling = false;
 
-    psWorld *psworld = entityManager->GetWorld();
+    psWorld* psworld = entityManager->GetWorld();
 
     // Convert fallStartPos into coordinate system of fall end sector.
-    if (!psworld->WarpSpace(fallStartSector,sector,fallStartPos))
+    if(!psworld->WarpSpace(fallStartSector,sector,fallStartPos))
     {
         // If we can't warp space, someone probably teleported between two
         // sectors without portals to one another.
@@ -4307,7 +4354,7 @@ float gemActor::FallEnded(const csVector3& pos, iSector* sector)
     return fallStartPos.y - pos.y;
 }
 
-void gemActor::FallBegan(const csVector3& pos, iSector* sector)
+void gemActor::FallBegan(const csVector3 &pos, iSector* sector)
 {
     isFalling = true;
 
@@ -4316,7 +4363,7 @@ void gemActor::FallBegan(const csVector3& pos, iSector* sector)
     this->fallStartTime = csGetTicks();
 }
 
-void gemActor::AttachScript(ProgressionScript *script, int type)
+void gemActor::AttachScript(ProgressionScript* script, int type)
 {
     CS_ASSERT(script);
     switch(type)
@@ -4336,7 +4383,7 @@ void gemActor::AttachScript(ProgressionScript *script, int type)
     };
 }
 
-void gemActor::DetachScript(ProgressionScript *script, int type)
+void gemActor::DetachScript(ProgressionScript* script, int type)
 {
     switch(type)
     {
@@ -4355,9 +4402,9 @@ void gemActor::DetachScript(ProgressionScript *script, int type)
     };
 }
 
-void gemActor::AddActiveSpell(ActiveSpell *asp)
+void gemActor::AddActiveSpell(ActiveSpell* asp)
 {
-    if( !asp ) 
+    if(!asp)
     {
         return;
     }
@@ -4366,56 +4413,57 @@ void gemActor::AddActiveSpell(ActiveSpell *asp)
     csString   lname = asp->Name();
     psSpell*   lspell;
     csString   imageName;
-    if( !lname )
+    if(!lname)
     {
     }
-    else if( lname )
+    else if(lname)
     {
         psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(lname);
-        if( !lspell )
+        if(!lspell)
         {
             imageName = csString();
         }
         else
         {
             imageName = lspell->GetImage();
-            if( !imageName )
+            if(!imageName)
             {
                 imageName = csString();
             }
         }
     }
 
-    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Duration(), lname, imageName );
+    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Duration(), lname, imageName);
     outgoing.SendMessage();
 }
 
-bool gemActor::RemoveActiveSpell(ActiveSpell *asp)
+bool gemActor::RemoveActiveSpell(ActiveSpell* asp)
 {
-    if (activeSpells.Delete(asp))
+    if(activeSpells.Delete(asp))
     {
-        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Duration(), asp->Name(), csString() );
+        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Duration(), asp->Name(), csString());
         outgoing.SendMessage();
         return true;
-    }    return false;
+    }
+    return false;
 }
 
-ActiveSpell* gemActor::FindActiveSpell(const csString & name, SPELL_TYPE type)
+ActiveSpell* gemActor::FindActiveSpell(const csString &name, SPELL_TYPE type)
 {
-    for (size_t i = 0; i < activeSpells.GetSize(); i++)
+    for(size_t i = 0; i < activeSpells.GetSize(); i++)
     {
-        if (activeSpells[i]->Name() == name && activeSpells[i]->Type() == type)
+        if(activeSpells[i]->Name() == name && activeSpells[i]->Type() == type)
             return activeSpells[i];
     }
     return NULL;
 }
 
-int gemActor::ActiveSpellCount(const csString & name)
+int gemActor::ActiveSpellCount(const csString &name)
 {
     int count = 0;
-    for (size_t i = 0; i < activeSpells.GetSize(); i++)
+    for(size_t i = 0; i < activeSpells.GetSize(); i++)
     {
-        if (activeSpells[i]->Name() == name)
+        if(activeSpells[i]->Name() == name)
             ++count;
     }
     return count;
@@ -4424,10 +4472,10 @@ int gemActor::ActiveSpellCount(const csString & name)
 void gemActor::CancelActiveSpellsForDeath()
 {
     // Cancel any spells marked to expire on death.
-    for (size_t i = activeSpells.GetSize() - 1; i != (size_t) -1; i--)
+    for(size_t i = activeSpells.GetSize() - 1; i != (size_t) -1; i--)
     {
-        ActiveSpell *asp = activeSpells[i];
-        if (asp->CancelOnDeath() && asp->Cancel())
+        ActiveSpell* asp = activeSpells[i];
+        if(asp->CancelOnDeath() && asp->Cancel())
             delete asp;
     }
 }
@@ -4435,15 +4483,15 @@ void gemActor::CancelActiveSpellsForDeath()
 void gemActor::CancelActiveSpellsWhichDamage()
 {
     // Cancel any spells marked to expire on death.
-    for (size_t i = activeSpells.GetSize() - 1; i != (size_t) -1; i--)
+    for(size_t i = activeSpells.GetSize() - 1; i != (size_t) -1; i--)
     {
-        ActiveSpell *asp = activeSpells[i];
-        if (asp->DamagesHP() && asp->Cancel())
+        ActiveSpell* asp = activeSpells[i];
+        if(asp->DamagesHP() && asp->Cancel())
             delete asp;
     }
 }
 
-int gemActor::FindAnimIndex(const char *name)
+int gemActor::FindAnimIndex(const char* name)
 {
     return cacheManager->GetMsgStrings()->Request(name);
 }
@@ -4470,7 +4518,7 @@ bool gemActor::SetMesh(const char* meshname)
         csRef<iMeshWrapper> newmesh = engine->CreateMeshWrapper(meshname);
         pcmesh->SetMesh(newmesh);
 
-        if (pcmove)
+        if(pcmove)
         {
             delete pcmove;
             pcmove = NULL;
@@ -4480,7 +4528,7 @@ bool gemActor::SetMesh(const char* meshname)
         SetPosition(pos,angle,sector);
         MulticastDRUpdate();
 
-        if ( pcmesh->GetMesh() )
+        if(pcmesh->GetMesh())
         {
             UpdateProxList(true);
             return true;
@@ -4500,7 +4548,7 @@ float gemActor::GetVelocity()
 bool gemActor::InsideGuardedArea(gemObject* object)
 {
     // Is inside own guard range?
-    if (RangeTo(object) <= RANGE_TO_GUARD)
+    if(RangeTo(object) <= RANGE_TO_GUARD)
     {
         return true;
     }
@@ -4509,26 +4557,26 @@ bool gemActor::InsideGuardedArea(gemObject* object)
         // Check if inside familiar/pet range?
         // TODO: Add some skill check here?
         Client* client = GetClient();
-        if (client)
+        if(client)
         {
             gemActor* familiar = client->GetFamiliar();
-            if (familiar && (familiar->RangeTo(object) <= RANGE_TO_GUARD))
+            if(familiar && (familiar->RangeTo(object) <= RANGE_TO_GUARD))
             {
                 return true;
-            } 
+            }
             else
             {
                 size_t num = client->GetNumPets();
                 for(size_t n = 0; n < num; n++)
                 {
                     gemActor* pet = client->GetPet(n);
-                    if (pet && (pet->RangeTo(object) <= RANGE_TO_GUARD))
+                    if(pet && (pet->RangeTo(object) <= RANGE_TO_GUARD))
                     {
                         return true;
-                    } 
+                    }
                 }
             }
-            
+
         }
     }
     return false;
@@ -4540,19 +4588,19 @@ bool gemActor::InsideGuardedArea(gemObject* object)
 /// ChatHistoryEntry(const char*, time_t = 0)
 /// Info: Constructor. When no time is given, current time is used.
 gemActor::ChatHistoryEntry::ChatHistoryEntry(const char* szLine, time_t t)
-: _time(t?t:time(0)), _line(szLine) {}
+    : _time(t?t:time(0)), _line(szLine) {}
 
 /// void GetLogLine(csString&) const
 /// Info: Prepends a string representation of the time to this chat line
 /// so it can be written to a log file. The resulting line is
 /// written to 'line' argument (reference).
 /// Note: this function also applies \n to the line end.
-void gemActor::ChatHistoryEntry::GetLogLine(csString& line) const
+void gemActor::ChatHistoryEntry::GetLogLine(csString &line) const
 {
     tm* gmtm = gmtime(&_time);
     csString cssTime = csString().Format("%d-%02d-%02d %02d:%02d:%02d",
-        gmtm->tm_year+1900, gmtm->tm_mon+1, gmtm->tm_mday,
-        gmtm->tm_hour, gmtm->tm_min, gmtm->tm_sec);
+                                         gmtm->tm_year+1900, gmtm->tm_mon+1, gmtm->tm_mday,
+                                         gmtm->tm_hour, gmtm->tm_min, gmtm->tm_sec);
     line.Format("[%s] %s\n", cssTime.GetData(), _line.GetData());
 }
 
@@ -4560,15 +4608,15 @@ void gemActor::ChatHistoryEntry::GetLogLine(csString& line) const
 //--------------------------------------------------------------------------------------
 
 gemNPC::gemNPC(GEMSupervisor* gemsupervisor, CacheManager* cachemanager,
-		EntityManager *entitymanager,
-		psCharacter *chardata,
-                   const char* factname,
-                   InstanceID instance,
-                   iSector* room,
-                   const csVector3& pos,
-                   float rotangle,
-                   int clientnum)
-                   : gemActor(gemsupervisor,cachemanager,entitymanager,chardata,factname,instance,room,pos,rotangle,clientnum)
+               EntityManager* entitymanager,
+               psCharacter* chardata,
+               const char* factname,
+               InstanceID instance,
+               iSector* room,
+               const csVector3 &pos,
+               float rotangle,
+               int clientnum)
+    : gemActor(gemsupervisor,cachemanager,entitymanager,chardata,factname,instance,room,pos,rotangle,clientnum)
 {
     npcdialog = NULL;
     superClientID = 0;
@@ -4585,12 +4633,12 @@ gemNPC::gemNPC(GEMSupervisor* gemsupervisor, CacheManager* cachemanager,
     //}
 
     pcmove->SetOnGround(true);
-    
+
     combat_stance = CombatManager::GetStance(cachemanager,"Normal");
 
-    if (chardata->GetOwnerID().IsValid())
+    if(chardata->GetOwnerID().IsValid())
     {
-        this->SetOwner( cel->FindPlayerEntity( chardata->GetOwnerID() ) );
+        this->SetOwner(cel->FindPlayerEntity(chardata->GetOwnerID()));
     }
     Debug3(LOG_NPC,GetEID().Unbox(), "Created npc firstname:%s, lastname:%s\n",chardata->GetCharName(), chardata->GetCharLastName());
 }
@@ -4602,13 +4650,13 @@ gemNPC::~gemNPC()
     npcdialog = NULL;
 }
 
-void gemNPC::SetCombatStance(const Stance & stance)
+void gemNPC::SetCombatStance(const Stance &stance)
 {
     // NPCs don't have stances yet
     // Stance never changes from PSCHARACTER_STANCE_NORMAL for NPCs
 }
 
-void gemNPC::SetPosition(const csVector3& pos,float angle, iSector* sector)
+void gemNPC::SetPosition(const csVector3 &pos,float angle, iSector* sector)
 {
     gemActor::SetPosition(pos,angle,sector);
     UpdateProxList(true);
@@ -4616,14 +4664,14 @@ void gemNPC::SetPosition(const csVector3& pos,float angle, iSector* sector)
 
 void gemNPC::SetupDialog(PID npcID, PID masterNpcID, bool force)
 {
-    if (!force)
+    if(!force)
         force = dict->FindKnowledgeArea(name);  // present in Quest Script but not in the queried table
 
-    if (force || db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0
-              || (masterNpcID != 0 && npcID != masterNpcID && db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", masterNpcID.Unbox()) > 0))
+    if(force || db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", npcID.Unbox()) > 0
+            || (masterNpcID != 0 && npcID != masterNpcID && db->SelectSingleNumber("SELECT count(*) FROM npc_knowledge_areas WHERE player_id=%d", masterNpcID.Unbox()) > 0))
     {
         npcdialog = new psNPCDialog(this);
-        if (npcdialog->Initialize(db,npcID))
+        if(npcdialog->Initialize(db,npcID))
         {
             //we load the inherited KA after because this makes them essentially of **lower priority** as the array
             //in psnpcdialog, even if it supports ordering, is never ordered, and relies on mysql ordering.
@@ -4633,8 +4681,8 @@ void gemNPC::SetupDialog(PID npcID, PID masterNpcID, bool force)
         else
         {
             Error2("Failed to initialize NPC dialog for %s\n", ShowID(npcID));
-        } 
-        if (force)
+        }
+        if(force)
         {
             csString newArea(name);
             newArea.Downcase();
@@ -4644,13 +4692,13 @@ void gemNPC::SetupDialog(PID npcID, PID masterNpcID, bool force)
     }
 }
 
-void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gemActor *player)
+void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gemActor* player)
 {
     // printf("%s received Player approach message %d about player %s.\n",
     //        GetName(), type, player->GetName() );
-    csTicks *which_avail = NULL;  // points to 1 of 3 times in gemNPC
+    csTicks* which_avail = NULL;  // points to 1 of 3 times in gemNPC
 
-    if (npcdialog)
+    if(npcdialog)
     {
         csString trigger;
         csTicks now = csGetTicks();
@@ -4658,7 +4706,7 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
         {
             case psNPCCommandsMessage::PCPT_LONGRANGEPLAYER:
 
-                if (now > nextLongRangeAvail)
+                if(now > nextLongRangeAvail)
                 {
                     trigger = "!longrange";
                     which_avail = &nextLongRangeAvail;
@@ -4668,7 +4716,7 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
 
             case psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER:
 
-                if (now > nextShortRangeAvail)
+                if(now > nextShortRangeAvail)
                 {
                     trigger = "!shortrange";
                     which_avail = &nextShortRangeAvail;
@@ -4678,7 +4726,7 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
 
             case psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER:
 
-                if (now > nextVeryShortRangeAvail)
+                if(now > nextVeryShortRangeAvail)
                 {
                     trigger = "!veryshortrange";
                     which_avail = &nextVeryShortRangeAvail;
@@ -4693,10 +4741,10 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
                 break;
         }
 
-        if (which_avail)
+        if(which_avail)
         {
-            NpcResponse *resp = npcdialog->FindXMLResponse(player->GetClient(),trigger);
-            if (resp)
+            NpcResponse* resp = npcdialog->FindXMLResponse(player->GetClient(),trigger);
+            if(resp)
             {
                 resp->ExecuteScript(player, this);
             }
@@ -4708,21 +4756,21 @@ void gemNPC::ReactToPlayerApproach(psNPCCommandsMessage::PerceptionType type,gem
     }
 }
 
-void gemNPC::ShowPopupMenu(Client *client)
+void gemNPC::ShowPopupMenu(Client* client)
 {
     RegisterSpeaker(client);
 
-    NpcResponse *resp = NULL;
+    NpcResponse* resp = NULL;
     NpcDialogMenu menu;
 
-    csArray<QuestAssignment*>& quests = client->GetCharacterData()->GetQuestMgr().GetAssignedQuests();
+    csArray<QuestAssignment*> &quests = client->GetCharacterData()->GetQuestMgr().GetAssignedQuests();
 
     // Merge current spot in active quests first
-    for (size_t i=0; i < quests.GetSize(); i++)
+    for(size_t i=0; i < quests.GetSize(); i++)
     {
         quests[i]->GetQuest();
         // If the quest is completed or the last response was not from this NPC, then skip
-        if (quests[i]->last_response_from_npc_pid != pid || quests[i]->status == 'C')
+        if(quests[i]->last_response_from_npc_pid != pid || quests[i]->status == 'C')
         {
             // printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
             continue;
@@ -4731,7 +4779,7 @@ void gemNPC::ShowPopupMenu(Client *client)
         int last_response = quests[i]->last_response;
         // printf("Got last response %d\n", last_response);
 
-        if (last_response != -1) // within a quest step
+        if(last_response != -1)  // within a quest step
         {
             resp = dict->FindResponse(last_response);
             if(resp) //TODO: this happens needs some investigation on the reason
@@ -4746,11 +4794,11 @@ void gemNPC::ShowPopupMenu(Client *client)
     }
 
     // Also offer default choices in case a new quest should be started
-    NpcDialogMenu *npcmenu = dict->FindMenu( name );
-    if (npcmenu)
+    NpcDialogMenu* npcmenu = dict->FindMenu(name);
+    if(npcmenu)
         menu.Add(npcmenu);
 
-    if (menu.triggers.GetSize())
+    if(menu.triggers.GetSize())
         menu.ShowMenu(client,0, this);
     else
         psserver->SendSystemError(client->GetClientNum(), "This NPC has no quest for you, but might have other things to say.");
@@ -4758,7 +4806,7 @@ void gemNPC::ShowPopupMenu(Client *client)
 
 void gemNPC::SetOwner(gemObject* newOwner)
 {
-    if (newOwner)
+    if(newOwner)
     {
         this->owner = newOwner;
         this->GetCharacterData()->SetOwnerID(newOwner->GetCharacterData()->GetPID());
@@ -4767,12 +4815,12 @@ void gemNPC::SetOwner(gemObject* newOwner)
         this->owner = NULL;
 }
 
-csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
+csString gemNPC::GetDefaultBehavior(const csString &dfltBehaviors)
 {
     int behNum;
-    if (psChar->IsMerchant())
+    if(psChar->IsMerchant())
         behNum = 2;
-    else if (IsAlive() && GetCharacterData()->GetImperviousToAttack() && GetNPCDialogPtr() != NULL)
+    else if(IsAlive() && GetCharacterData()->GetImperviousToAttack() && GetNPCDialogPtr() != NULL)
     {
         behNum = 6;
         //temporary code to support old clients. when netbumping move this to a more appropriate number.
@@ -4780,7 +4828,7 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
         if(::GetDefaultBehavior(dfltBehaviors, behNum) == "")
             return csString("talk");
     }
-    else if (IsAlive())
+    else if(IsAlive())
         behNum = 3;
     else
         behNum = 4;
@@ -4788,15 +4836,15 @@ csString gemNPC::GetDefaultBehavior(const csString & dfltBehaviors)
     return ::GetDefaultBehavior(dfltBehaviors, behNum);
 }
 
-void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
+void gemNPC::SendBehaviorMessage(const csString &msg_id, gemObject* obj)
 {
-    gemActor *actor = obj->GetActorPtr();
+    gemActor* actor = obj->GetActorPtr();
     CS_ASSERT(actor);
     unsigned int client = actor->GetClientID();
-    if ( msg_id == "select" )
+    if(msg_id == "select")
     {
         // If the player is in range of the item.
-        if ( RangeTo(actor) < RANGE_TO_SELECT )
+        if(RangeTo(actor) < RANGE_TO_SELECT)
         {
             int options = 0;
 
@@ -4806,40 +4854,40 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
 
         return;
     }
-    else if ( msg_id == "context" )
+    else if(msg_id == "context")
     {
         // If the player is in range of the item and if player is alive.
-        if ( RangeTo(actor) <= RANGE_TO_SELECT && actor->IsAlive() )
+        if(RangeTo(actor) <= RANGE_TO_SELECT && actor->IsAlive())
         {
             int options = 0;
 
             // Pet?
-            if (psChar->IsPet())
+            if(psChar->IsPet())
             {
                 // Mine?
-                if (psChar->GetOwnerID() == actor->GetCharacterData()->GetPID())
+                if(psChar->GetOwnerID() == actor->GetCharacterData()->GetPID())
                 {
                     options |= psGUIInteractMessage::VIEWSTATS;
                     options |= psGUIInteractMessage::DISMISS;
 
                     // If we are in a peaceful mode we can possibly do some trading.
-                    if (actor->GetMode() == PSCHARACTER_MODE_PEACE)
+                    if(actor->GetMode() == PSCHARACTER_MODE_PEACE)
                         options |= psGUIInteractMessage::GIVE;
 
                     //If we are alive then we can talk with an NPC
-                    if (IsAlive())
+                    if(IsAlive())
                         options |= psGUIInteractMessage::NPCTALK;
                 }
                 else
                     options |= psGUIInteractMessage::PLAYERDESC;
             }
-            else if (psChar->IsMount())
+            else if(psChar->IsMount())
             {
                 // Mine? for now bypass
-                if (true) //(psChar->GetOwnerID() == actor->GetCharacterData()->GetPID())
+                if(true)  //(psChar->GetOwnerID() == actor->GetCharacterData()->GetPID())
                 {
                     //bypass viewstat for now as mounts aren't owned
-                    //options |= psGUIInteractMessage::VIEWSTATS; 
+                    //options |= psGUIInteractMessage::VIEWSTATS;
                     options |= psGUIInteractMessage::PLAYERDESC;
                     if(actor->GetMount())
                         options |= psGUIInteractMessage::UNMOUNT;
@@ -4847,11 +4895,11 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
                         options |= psGUIInteractMessage::MOUNT;
 
                     // If we are in a peaceful mode we can possibly do some trading.
-                    if (actor->GetMode() == PSCHARACTER_MODE_PEACE)
+                    if(actor->GetMode() == PSCHARACTER_MODE_PEACE)
                         options |= psGUIInteractMessage::GIVE;
 
                     //If we are alive then we can talk with an NPC
-                    if (IsAlive())
+                    if(IsAlive())
                         options |= psGUIInteractMessage::NPCTALK;
                 }
                 else
@@ -4862,48 +4910,48 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
                 options |= psGUIInteractMessage::PLAYERDESC;
 
                 // Loot a dead character
-                if (!IsAlive())
+                if(!IsAlive())
                 {
                     options |= psGUIInteractMessage::LOOT;
                 }
 
                 // If we are in a peaceful mode we can possibly do some trading.
-                if (ExchangeManager::ExchangeCheck(actor->GetClient(), this))
+                if(ExchangeManager::ExchangeCheck(actor->GetClient(), this))
                 {
                     options |= psGUIInteractMessage::GIVE; // Exchange
                 }
-                
+
                 // Bank with a banker
                 if((actor->GetMode() == PSCHARACTER_MODE_PEACE) && psChar->IsBanker() && IsAlive())
                 {
                     options |= psGUIInteractMessage::BANK;
                 }
-                
+
                 // Trade with a merchant
-                if (ServerCharManager::TradingCheck(actor->GetClient(), this))
+                if(ServerCharManager::TradingCheck(actor->GetClient(), this))
                 {
                     options |= psGUIInteractMessage::BUYSELL; // Traide
                 }
-                
+
                 // If we are in a peaceful mode we can possibly do some training.
-                if ((actor->GetMode() == PSCHARACTER_MODE_PEACE) && psChar->IsTrainer() && IsAlive())
+                if((actor->GetMode() == PSCHARACTER_MODE_PEACE) && psChar->IsTrainer() && IsAlive())
                 {
                     options |= psGUIInteractMessage::TRAIN;
                 }
 
                 // If we are alive then we can talk with an NPC
-                if (IsAlive())
+                if(IsAlive())
                 {
                     options |= psGUIInteractMessage::NPCTALK;
                 }
 
                 // Can we attack this NPC?
                 csString msg; // Not used
-                if (IsAlive() && actor && actor->IsAllowedToAttack(this,msg))
+                if(IsAlive() && actor && actor->IsAllowedToAttack(this,msg))
                 {
                     options |= psGUIInteractMessage::ATTACK;
                 }
-                    
+
                 if(IsAlive() && psChar->IsStorage())
                 {
                     options |= psGUIInteractMessage::STORAGE;
@@ -4911,7 +4959,7 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
             }
 
             // Check if there is something to send
-            if (!options)
+            if(!options)
                 return;
 
             // Always possible to close menu
@@ -4921,18 +4969,18 @@ void gemNPC::SendBehaviorMessage(const csString & msg_id, gemObject *obj)
             guimsg.SendMessage();
         }
     }
-    else if (msg_id == "buysell")
+    else if(msg_id == "buysell")
         psserver->GetCharManager()->BeginTrading(actor->GetClient(), this, "sell");
-    else if (msg_id == "give")
+    else if(msg_id == "give")
         psserver->exchangemanager->StartExchange(actor->GetClient(), false);
-    else if (msg_id == "playerdesc")
+    else if(msg_id == "playerdesc")
         psserver->usermanager->SendCharacterDescription(actor->GetClient(),
-                                                        this, false, false, "behaviorMsg");
-    else if (msg_id == "attack")
+                this, false, false, "behaviorMsg");
+    else if(msg_id == "attack")
         psserver->usermanager->Attack(CombatManager::GetStance(cacheManager,"Normal"), actor->GetClient());
-    else if (msg_id == "loot")
+    else if(msg_id == "loot")
         psserver->usermanager->Loot(actor->GetClient());
-    else if (msg_id == "talk")
+    else if(msg_id == "talk")
         ShowPopupMenu(actor->GetClient());
 }
 
@@ -4947,7 +4995,7 @@ void gemNPC::RemoveLootablePlayer(PID playerID)
     {
         if(lootablePlayers[i] == playerID)
             lootablePlayers[i] = -1; // Should not be possible to find a player with this id.
-                                     // Fast and client is removed from table;
+        // Fast and client is removed from table;
     }
 }
 
@@ -4962,7 +5010,7 @@ bool gemNPC::IsLootablePlayer(PID playerID)
     return false;
 }
 
-Client *gemNPC::GetRandomLootClient(int range)
+Client* gemNPC::GetRandomLootClient(int range)
 {
     if(lootablePlayers.GetSize() == 0)
         return NULL;
@@ -4979,16 +5027,17 @@ Client *gemNPC::GetRandomLootClient(int range)
         ++which;
         if(which == (int)lootablePlayers.GetSize())
             which = 0;
-    } while (which != first);
+    }
+    while(which != first);
 
-    Client *found;
+    Client* found;
 
     for(size_t i = 0; i < temp.GetSize(); i++)
     {
         found = EntityManager::GetSingleton().GetClients()->FindPlayer(temp[i]);
 
         if(found && found->GetActor() &&
-           found->GetActor()->RangeTo(this) < range)
+                found->GetActor()->RangeTo(this) < range)
         {
             return found;
         }
@@ -5001,24 +5050,24 @@ void gemNPC::Say(const char* sayText, Client* who, bool sayPublic, csTicks &time
 {
     int chtype = CHAT_NPC; // Default type is NPC.
 
-    if (!sayText)
+    if(!sayText)
     {
         return; // Nothing to say so return
     }
-    
-    if (who && !sayPublic) // specific client specified means use /tell not /say
+
+    if(who && !sayPublic)  // specific client specified means use /tell not /say
     {
         Notify2(LOG_CHAT,"Private NPC Response: %s\n", sayText);
-        
+
         // Some NPC responses are now in the form of private tells.
         psChatMessage newMsg(who->GetClientNum(), eid, GetName(), 0, sayText, chtype, false);
-        
+
         // first response gets 1 second delay to simulate NPC thinking
         // subsequent ones add to the current time delay, and send delayed
-        if (timeDelay==0)
+        if(timeDelay==0)
             timeDelay = (csTicks)(1000);
         psserver->GetEventManager()->SendMessageDelayed(newMsg.msg,timeDelay);
-        
+
         timeDelay += (csTicks)(2000 + 50*strlen(sayText));
     }
     else
@@ -5026,10 +5075,10 @@ void gemNPC::Say(const char* sayText, Client* who, bool sayPublic, csTicks &time
         Notify2(LOG_CHAT,"Public NPC Response: %s\n", sayText);
         // Some NPC responses are now in the form of public /says.
         psChatMessage newMsg(0, eid, GetName(), 0, sayText, chtype, false);
-        newMsg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
+        newMsg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE);
     }
-    
-    if (who)
+
+    if(who)
     {
         // This perception allows the superclient to know about the dialog with a specific person.
         psserver->GetNPCManager()->QueueTalkPerception(who->GetActor(), this);
@@ -5040,16 +5089,16 @@ void gemNPC::ActionCommand(bool actionMy, bool actionNarrate, const char* actTex
 {
     int chtype = CHAT_NPC_ME; // Default type is ME.
 
-    if (actionMy)
+    if(actionMy)
     {
         chtype = CHAT_NPC_MY;
     }
-    else if (actionNarrate)
+    else if(actionNarrate)
     {
         chtype = CHAT_NPC_NARRATE;
     }
-        
-    if (who && !actionPublic)
+
+    if(who && !actionPublic)
     {
         Notify2(LOG_CHAT,"Private NPC action: %s\n", actText);
 
@@ -5058,7 +5107,7 @@ void gemNPC::ActionCommand(bool actionMy, bool actionNarrate, const char* actTex
 
         // first response gets 1 second delay to simulate NPC thinking
         // subsequent ones add to the current time delay, and send delayed
-        if (timeDelay==0)
+        if(timeDelay==0)
             timeDelay = (csTicks)(1000);
         psserver->GetEventManager()->SendMessageDelayed(msg.msg,timeDelay);
 
@@ -5069,40 +5118,40 @@ void gemNPC::ActionCommand(bool actionMy, bool actionNarrate, const char* actTex
         Notify2(LOG_CHAT,"Public NPC action: %s\n", actText);
         // Some NPC actions are now in the form of public /me, or /mys
         psChatMessage msg(0, eid, GetName(), 0, actText, chtype, false);
-        msg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE );
+        msg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE);
     }
 }
 
-void gemNPC::AddBadText(const char *playerSaid, const char *trigger)
+void gemNPC::AddBadText(const char* playerSaid, const char* trigger)
 {
-    for (size_t i=0; i< badText.GetSize(); i++)
+    for(size_t i=0; i< badText.GetSize(); i++)
     {
-        if (badText[i]->said == playerSaid)
+        if(badText[i]->said == playerSaid)
         {
             badText[i]->count++;
             badText[i]->when = csGetTicks();
             return;
         }
     }
-    DialogCounter *dlg = new DialogCounter;
+    DialogCounter* dlg = new DialogCounter;
     dlg->count   = 1;
     dlg->said    = playerSaid;
     dlg->trigger = trigger;
     dlg->when    = csGetTicks();
     badText.Push(dlg);
-    badText.Sort( &gemNPC::DialogCounter::Compare );
-    if (badText.GetSize() > 64)
+    badText.Sort(&gemNPC::DialogCounter::Compare);
+    if(badText.GetSize() > 64)
         delete badText.Pop();  // never let >64 items in
 }
 
-void gemNPC::GetBadText(size_t first,size_t last, csStringArray& saidArray, csStringArray& trigArray)
+void gemNPC::GetBadText(size_t first,size_t last, csStringArray &saidArray, csStringArray &trigArray)
 {
     saidArray.Empty();
     trigArray.Empty();
 
-    for (size_t i=first-1; i<last; i++)
+    for(size_t i=first-1; i<last; i++)
     {
-        if (i>=badText.GetSize())
+        if(i>=badText.GetSize())
             continue;
 
         saidArray.Push(badText[i]->said);
@@ -5112,33 +5161,33 @@ void gemNPC::GetBadText(size_t first,size_t last, csStringArray& saidArray, csSt
     }
 }
 
-bool gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistAllEntities *allEntities )
+bool gemNPC::Send(int clientnum, bool control, bool to_superclients, psPersistAllEntities* allEntities)
 {
     csString texparts;
     csString equipmentParts;
     EID ownerEID;
 
-    psChar->MakeTextureString( texparts );
-    psChar->MakeEquipmentString( equipmentParts );
+    psChar->MakeTextureString(texparts);
+    psChar->MakeEquipmentString(equipmentParts);
 
     csString guildName;
     guildName.Clear();
-    if ( psChar->GetGuild() && !psChar->GetGuild()->IsSecret() )
+    if(psChar->GetGuild() && !psChar->GetGuild()->IsSecret())
         guildName = psChar->GetGuild()->GetName();
 
-    if ( this->owner.IsValid())
+    if(this->owner.IsValid())
     {
         ownerEID = owner->GetEID();
     }
 
     uint32_t flags = psPersistActor::NPC;
 
-    if (!GetVisibility())    flags |= psPersistActor::INVISIBLE;
-    if (GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
-    if (IsAlive())           flags |= psPersistActor::IS_ALIVE;
+    if(!GetVisibility())    flags |= psPersistActor::INVISIBLE;
+    if(GetInvincibility())  flags |= psPersistActor::INVINCIBLE;
+    if(IsAlive())           flags |= psPersistActor::IS_ALIVE;
 
     Client* targetClient = psserver->GetConnections()->Find(clientnum);
-    if (targetClient && targetClient->GetCharacterData())
+    if(targetClient && targetClient->GetCharacterData())
     {
         flags |= psPersistActor::NAMEKNOWN;
 
@@ -5149,50 +5198,50 @@ bool gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
     }
 
     psPersistActor mesg(
-                         clientnum,
-                         securityLevel,
-                         masqueradeLevel,
-                         control,
-                         name,
-                         guildName,
-                         psChar->GetRaceInfo()->GetMeshName(),
-                         psChar->GetRaceInfo()->GetTextureName(),
-                         psChar->GetRaceInfo()->GetName(),
-                         GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
-                         GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
-                         psChar->GetRaceInfo()->gender,
-                         psChar->GetRaceInfo()->GetScale(),
-                         GetMount() ? GetMount()->GetRaceInfo()->GetScale() : 1,
-                         psChar->GetHelmGroup(),
-                         psChar->GetBracerGroup(),
-                         psChar->GetBeltGroup(),
-                         psChar->GetCloakGroup(),
-                         top, bottom,offset,
-                         texparts,
-                         equipmentParts,
-                         DRcounter,
-                         eid,
-                         cacheManager->GetMsgStrings(),
-                         pcmove,
-                         movementMode,
-                         GetMode(),
-                         (to_superclients || allEntities) ? pid : 0, // playerID should not be distributed to clients
-                         0, // groupID
-                         ownerEID,
-                         flags,
-                         (to_superclients || allEntities) ? psChar->GetMasterNPCID() : 0,
-                         (to_superclients || allEntities)
-                         );
+        clientnum,
+        securityLevel,
+        masqueradeLevel,
+        control,
+        name,
+        guildName,
+        psChar->GetRaceInfo()->GetMeshName(),
+        psChar->GetRaceInfo()->GetTextureName(),
+        psChar->GetRaceInfo()->GetName(),
+        GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
+        GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
+        psChar->GetRaceInfo()->gender,
+        psChar->GetRaceInfo()->GetScale(),
+        GetMount() ? GetMount()->GetRaceInfo()->GetScale() : 1,
+        psChar->GetHelmGroup(),
+        psChar->GetBracerGroup(),
+        psChar->GetBeltGroup(),
+        psChar->GetCloakGroup(),
+        top, bottom,offset,
+        texparts,
+        equipmentParts,
+        DRcounter,
+        eid,
+        cacheManager->GetMsgStrings(),
+        pcmove,
+        movementMode,
+        GetMode(),
+        (to_superclients || allEntities) ? pid : 0, // playerID should not be distributed to clients
+        0, // groupID
+        ownerEID,
+        flags,
+        (to_superclients || allEntities) ? psChar->GetMasterNPCID() : 0,
+        (to_superclients || allEntities)
+    );
 
-    if (clientnum && !to_superclients)
+    if(clientnum && !to_superclients)
     {
         mesg.SendMessage();
     }
 
-    if (to_superclients)
+    if(to_superclients)
     {
         mesg.SetInstance(GetInstance());
-        if (clientnum == 0) // Send to all superclients
+        if(clientnum == 0)  // Send to all superclients
         {
             Debug1(LOG_SUPERCLIENT, clientnum, "Sending gemNPC to superclients.\n");
             mesg.Multicast(psserver->GetNPCManager()->GetSuperClients(),0,PROX_LIST_ANY_RANGE);
@@ -5202,7 +5251,7 @@ bool gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
             mesg.SendMessage();
         }
     }
-    if (allEntities)
+    if(allEntities)
     {
         return allEntities->AddEntityMessage(mesg.msg);
     }
@@ -5212,17 +5261,17 @@ bool gemNPC::Send( int clientnum, bool control, bool to_superclients, psPersistA
 
 void gemNPC::Broadcast(int clientnum, bool control)
 {
-    csArray<PublishDestination>& dest = GetMulticastClients();
-    for (unsigned long i = 0 ; i < dest.GetSize(); i++)
+    csArray<PublishDestination> &dest = GetMulticastClients();
+    for(unsigned long i = 0 ; i < dest.GetSize(); i++)
     {
-        if (dest[i].dist < PROX_LIST_ANY_RANGE)
+        if(dest[i].dist < PROX_LIST_ANY_RANGE)
             Send(dest[i].client, control, false);
     }
 
-    csArray<PublishDestination>& destSuper = psserver->GetNPCManager()->GetSuperClients();
-    for (unsigned long i = 0 ; i < destSuper.GetSize(); i++)
+    csArray<PublishDestination> &destSuper = psserver->GetNPCManager()->GetSuperClients();
+    for(unsigned long i = 0 ; i < destSuper.GetSize(); i++)
     {
-        if (destSuper[i].dist < PROX_LIST_ANY_RANGE)
+        if(destSuper[i].dist < PROX_LIST_ANY_RANGE)
             Send(destSuper[i].client, control, true);
     }
 
@@ -5236,11 +5285,11 @@ void gemNPC::SendGroupStats()
     psserver->GetNPCManager()->QueueStatDR(this, statsDirtyFlags);
 
     // Distribute PET stats to owner client
-    if (GetCharacterData()->IsPet())
+    if(GetCharacterData()->IsPet())
     {
         // Get Client ID of Owner
-        gemObject *owner = GetOwner();
-        if (owner && owner->GetClientID())
+        gemObject* owner = GetOwner();
+        if(owner && owner->GetClientID())
         {
             GetCharacterData()->SendStatDRMessage(owner->GetClientID(), eid, statsDirtyFlags);
         }
@@ -5263,7 +5312,7 @@ void gemNPC::ForcePositionUpdate()
     psAllEntityPosMessage msg;
     //we send just one position update
     msg.SetLength(1,0);
-    iSector *sector = GetSector();
+    iSector* sector = GetSector();
     csVector3 position = GetPosition();
     csTicks now = csGetTicks();
     //we add the data and flag this position update as forced
@@ -5281,22 +5330,22 @@ public:
     psCheckSpeakerEvent(EID eid)
         : psGameEvent(0, 65000,"psCheckSpeakerEvent"), eid(eid)
     {
-        
+
     }
 
     virtual void Trigger()
     {
         gemNPC* npc = psserver->entitymanager->GetGEM()->FindNPCEntity(eid);
-        if (npc)
+        if(npc)
         {
             npc->CheckSpeakers();
         }
     }
-    
+
 private:
 
     EID eid;
-};    
+};
 
 void gemNPC::RegisterSpeaker(Client* client)
 {
@@ -5304,7 +5353,7 @@ void gemNPC::RegisterSpeaker(Client* client)
 
     speakers++;
 
-    if (first)
+    if(first)
     {
         psserver->GetNPCManager()->QueueSpokenToPerception(this, true);
     }
@@ -5319,13 +5368,13 @@ void gemNPC::CheckSpeakers()
     bool last = (speakers == 1);
 
     speakers--;
-    
-    if (speakers <= 0)
+
+    if(speakers <= 0)
     {
         speakers = 0;
     }
-    
-    if (last)
+
+    if(last)
     {
         psserver->GetNPCManager()->QueueSpokenToPerception(this, false);
     }
