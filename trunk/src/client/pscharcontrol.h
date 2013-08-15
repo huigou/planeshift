@@ -66,10 +66,10 @@ struct psControl
         KEYBOARD,  ///< Keypress
         MOUSE      ///< Mouseclick
     };
-        
+
     psControl(const char* n, PressType t, TriggerFunction f)
         : name(n), state(false), device(NONE), button(0), mods(0), type(t), function(f), data(NULL) {}
-    
+
     csString name;             ///< Name of this control
     bool state;                ///< Is this active?
     Device device;             ///< Location of button
@@ -124,38 +124,41 @@ class psControlManager
 public:
     psControlManager(iEventNameRegistry* eventname_reg, psTriggerHandler* handler);
 
-    bool HandleEvent( iEvent &event );
+    bool HandleEvent(iEvent &event);
 
     /// Creates a new trigger
-    void NewTrigger( const char* name, psControl::PressType type, psControl::TriggerFunction function );
-    
-    /// Sets a trigger to the desired button
-    bool MapTrigger( const char* name, psControl::Device device, uint button, uint32 mods );
+    void NewTrigger(const char* name, psControl::PressType type, psControl::TriggerFunction function);
 
-    void ResetTrigger( psControl* trigger );  ///< Resets a trigger's mapping
+    /// Sets a trigger to the desired button
+    bool MapTrigger(const char* name, psControl::Device device, uint button, uint32 mods);
+
+    void ResetTrigger(psControl* trigger);    ///< Resets a trigger's mapping
     void ResetAllTriggers();                  ///< Resets all mappings
 
     /// Gets a trigger from the master list by name
-    psControl* GetTrigger( const char* name );
+    psControl* GetTrigger(const char* name);
 
     /// Gets a mapped trigger for a device by button
-    psControl* GetMappedTrigger( psControl::Device device, uint button, uint32 mods );
-    
+    psControl* GetMappedTrigger(psControl::Device device, uint button, uint32 mods);
+
     /// Gets all mapped triggers for a device by button ignoring mods
-    csArray<psControl*>* GetMappedTriggers( psControl::Device device, uint button);
+    csArray<psControl*>* GetMappedTriggers(psControl::Device device, uint button);
 
     /// Get the full array of triggers
-    const csPDelArray<psControl>& GetAllTriggers() { return triggers; }
+    const csPDelArray<psControl> &GetAllTriggers()
+    {
+        return triggers;
+    }
 
     /// Assign 'ptr' to all psControls starting with 'name'
-    bool SetTriggerData( const char* name, const void* ptr );
+    bool SetTriggerData(const char* name, const void* ptr);
 
 protected:
     typedef csHash<psControl*,uint> psControlMap;  ///< Each device gets a hash map of buttons to triggers
 
     psControlMap keyboard;   ///< List of all keyboard triggers
     psControlMap mouse;      ///< List of all mouse triggers
-    
+
     csPDelArray<psControl> triggers;  ///< Master list of all triggers
 
     // Event ID cache
@@ -165,15 +168,15 @@ protected:
     csEventID event_mouse_up;
 
     /// Gets the control from a map with the specified button and mods (if not found, finds without mods)
-    static psControl* GetFromMap( const psControlMap &ctrlmap, uint button, uint32 mods );
+    static psControl* GetFromMap(const psControlMap &ctrlmap, uint button, uint32 mods);
 
     /// Gets the controls from a map with the specified button
-    csArray<psControl*>* GetArrayFromMap( const psControlMap &ctrlmap, uint button);
+    csArray<psControl*>* GetArrayFromMap(const psControlMap &ctrlmap, uint button);
 
     /// Handles an input event
-    void HandleButton( psControl::Device device, uint button, uint32 mods, bool newState );
+    void HandleButton(psControl::Device device, uint button, uint32 mods, bool newState);
 
-    
+
 };
 
 
@@ -191,26 +194,26 @@ public:
     ~psTriggerHandler();
 
     // Functions called by triggers  (psControl stores pointers to these)
-    void HandleBrightnessUp         (const psControl* trigger, bool value);
-    void HandleBrightnessDown         (const psControl* trigger, bool value);
-    void HandleBrightnessReset         (const psControl* trigger, bool value);
-    void HandleMovement         (const psControl* trigger, bool value);
-    void HandleMovementJump     (const psControl* trigger, bool value);
-    void HandleMode             (const psControl* trigger, bool value);
-    void HandleAutoMove         (const psControl* trigger, bool value);
-    void HandleLook             (const psControl* trigger, bool value);
-    void HandleZoom             (const psControl* trigger, bool value);
-    void HandleMouseLook        (const psControl* trigger, bool value);
-    void HandleMouseLookToggle  (const psControl* trigger, bool value);
-    void HandleMouseZoom        (const psControl* trigger, bool value);
-    void HandleMouseMove        (const psControl* trigger, bool value);
-    void HandleCameraMode       (const psControl* trigger, bool value);
-    void HandleCenterCamera     (const psControl* trigger, bool value);
-    void HandleMovementAction   (const psControl* trigger, bool value);
-    void HandleShortcut         (const psControl* trigger, bool value);
-    void HandleWindow           (const psControl* trigger, bool value);
-    void HandleModeRun          (const psControl* trigger, bool value);
-    void HandleModeSneak        (const psControl* trigger, bool value);
+    void HandleBrightnessUp(const psControl* trigger, bool value);
+    void HandleBrightnessDown(const psControl* trigger, bool value);
+    void HandleBrightnessReset(const psControl* trigger, bool value);
+    void HandleMovement(const psControl* trigger, bool value);
+    void HandleMovementJump(const psControl* trigger, bool value);
+    void HandleMode(const psControl* trigger, bool value);
+    void HandleAutoMove(const psControl* trigger, bool value);
+    void HandleLook(const psControl* trigger, bool value);
+    void HandleZoom(const psControl* trigger, bool value);
+    void HandleMouseLook(const psControl* trigger, bool value);
+    void HandleMouseLookToggle(const psControl* trigger, bool value);
+    void HandleMouseZoom(const psControl* trigger, bool value);
+    void HandleMouseMove(const psControl* trigger, bool value);
+    void HandleCameraMode(const psControl* trigger, bool value);
+    void HandleCenterCamera(const psControl* trigger, bool value);
+    void HandleMovementAction(const psControl* trigger, bool value);
+    void HandleShortcut(const psControl* trigger, bool value);
+    void HandleWindow(const psControl* trigger, bool value);
+    void HandleModeRun(const psControl* trigger, bool value);
+    void HandleModeSneak(const psControl* trigger, bool value);
 
 protected:
     psCharController* charcontrol;
@@ -233,22 +236,25 @@ public:
     bool IsReady();
 
     ///Takes an event from psEngine, and dispatch it to either psControlManager or psMovementManager
-    bool HandleEvent(iEvent& event);
+    bool HandleEvent(iEvent &event);
 
     /// Provides access to the movement system
-    psMovementManager* GetMovementManager() { return &movement; }
+    psMovementManager* GetMovementManager()
+    {
+        return &movement;
+    }
 
     /// Get a trigger by name
-    const psControl* GetTrigger( const char* name );
-    
+    const psControl* GetTrigger(const char* name);
+
     /// Get the triger mapped to a button, or NULL if none
-    const psControl* GetMappedTrigger( psControl::Device device, uint button, uint32 mods );
+    const psControl* GetMappedTrigger(psControl::Device device, uint button, uint32 mods);
 
     /// Changes the button set for a trigger. Returns false if does not exist or button is taken.
-    bool RemapTrigger( const char* name, psControl::Device device, uint button, uint32 mods );
+    bool RemapTrigger(const char* name, psControl::Device device, uint button, uint32 mods);
 
     /// Returns true if the trigger exists and is mapped to the specified combo
-    bool MatchTrigger( const char* name, psControl::Device device, uint button, uint32 mods );
+    bool MatchTrigger(const char* name, psControl::Device device, uint button, uint32 mods);
 
     /// loads the character-specific custom key mappings
     void LoadKeyFile();

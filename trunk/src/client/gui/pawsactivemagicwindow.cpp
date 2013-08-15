@@ -42,7 +42,7 @@
 //////////////////////////////////////////////////////////////////////
 
 pawsActiveMagicWindow::pawsActiveMagicWindow() :
-    buffList( NULL ),
+    buffList(NULL),
     configPopup(NULL),
     show(true),
     useImages(true),
@@ -54,7 +54,7 @@ pawsActiveMagicWindow::pawsActiveMagicWindow() :
 
 void pawsActiveMagicWindow::OnResize()
 {
-    if( GetScreenFrame().Width() > GetScreenFrame().Height() )
+    if(GetScreenFrame().Width() > GetScreenFrame().Height())
     {
         Orientation = ScrollMenuOptionHORIZONTAL;
     }
@@ -62,7 +62,7 @@ void pawsActiveMagicWindow::OnResize()
     {
         Orientation = ScrollMenuOptionVERTICAL;
     }
-    if( buffList!=NULL )
+    if(buffList!=NULL)
     {
         buffList->SetOrientation(Orientation);
         buffList->OnResize();
@@ -79,18 +79,18 @@ bool pawsActiveMagicWindow::PostSetup()
     buffList  = (pawsScrollMenu*)FindWidget("BuffBar");
     if(!buffList)
         return false;
-    buffList->SetEditLock( ScrollMenuOptionDISABLED );
-    if( autoResize )
+    buffList->SetEditLock(ScrollMenuOptionDISABLED);
+    if(autoResize)
     {
-        buffList->SetLeftScroll( ScrollMenuOptionDISABLED );
-        buffList->SetRightScroll( ScrollMenuOptionDISABLED );
+        buffList->SetLeftScroll(ScrollMenuOptionDISABLED);
+        buffList->SetRightScroll(ScrollMenuOptionDISABLED);
         buffList->AutoResize();
-        AutoResize( );
+        AutoResize();
     }
     else
     {
-        buffList->SetLeftScroll( ScrollMenuOptionDYNAMIC );
-        buffList->SetRightScroll( ScrollMenuOptionDYNAMIC );
+        buffList->SetLeftScroll(ScrollMenuOptionDYNAMIC);
+        buffList->SetRightScroll(ScrollMenuOptionDYNAMIC);
     }
 
     showWindow              = (pawsCheckBox*)FindWidget("ShowActiveMagicWindow");
@@ -100,7 +100,7 @@ bool pawsActiveMagicWindow::PostSetup()
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_ACTIVEMAGIC);
 
     // If no active magic, hide the window.
-    if( buffList->GetSize() < 1 && showWindow->GetState() == false )
+    if(buffList->GetSize() < 1 && showWindow->GetState() == false)
     {
         showWindow->Hide();
     }
@@ -115,36 +115,36 @@ bool pawsActiveMagicWindow::PostSetup()
     return true;
 }
 
-bool pawsActiveMagicWindow::Setup(iDocumentNode *node)
+bool pawsActiveMagicWindow::Setup(iDocumentNode* node)
 {
     useImages  = true;
 
-    if( node->GetAttributeValue("name") && strcmp( "ActiveMagicWindow", node->GetAttributeValue("name"))==0 )
+    if(node->GetAttributeValue("name") && strcmp("ActiveMagicWindow", node->GetAttributeValue("name"))==0)
     {
         csRef<iDocumentAttributeIterator> attiter = node->GetAttributes();
         csRef<iDocumentAttribute> subnode;
 
-        while ( attiter->HasNext() )
+        while(attiter->HasNext())
         {
 
             subnode = attiter->Next();
-            if( strcmp( "useImages", subnode->GetName() )==0 )
+            if(strcmp("useImages", subnode->GetName())==0)
             {
-                if( strcmp( "false", subnode->GetValue() )==0 )
+                if(strcmp("false", subnode->GetValue())==0)
                 {
                     useImages=false;
                 }
             }
-            else if( strcmp( "autoResize", subnode->GetName() )==0 )
+            else if(strcmp("autoResize", subnode->GetName())==0)
             {
-                if( strcmp( "false", subnode->GetValue() )==0 )
+                if(strcmp("false", subnode->GetValue())==0)
                 {
                     autoResize=false;
                 }
             }
-            else if( strcmp( "showEffects", subnode->GetName() )==0 )
+            else if(strcmp("showEffects", subnode->GetName())==0)
             {
-                if( strcmp( "true", subnode->GetValue() )==0 )
+                if(strcmp("true", subnode->GetValue())==0)
                 {
                     showEffects=true;
                 }
@@ -156,7 +156,7 @@ bool pawsActiveMagicWindow::Setup(iDocumentNode *node)
 }
 
 
-void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
+void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 {
     if(!configPopup)
         configPopup = (pawsConfigPopup*)PawsManager::GetSingleton().FindWidget("ConfigPopup");
@@ -164,51 +164,51 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
     psGUIActiveMagicMessage incoming(me);
     csList<csString> rowEntry;
     show = showWindow->GetState() ? false : true;
-    if (!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
+    if(!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
         ShowBehind();
 
-    if(incoming.duration==0 && showEffects==false )
+    if(incoming.duration==0 && showEffects==false)
     {
         return;
     }
 
-    switch ( incoming.command )
+    switch(incoming.command)
     {
         case psGUIActiveMagicMessage::Add:
         {
             rowEntry.PushBack(incoming.name);
 
-            if( incoming.type == BUFF )
+            if(incoming.type == BUFF)
             {
-                if( useImages )
+                if(useImages)
                 {
                     csRef<iPawsImage> image;
 
-                    if( incoming.image.Length() >0 )
+                    if(incoming.image.Length() >0)
                     {
-                         image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
+                        image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
                     }
                     else
                     {
                         image = NULL;
                     }
-                    if (image)
+                    if(image)
                     {
-                        buffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), 0, this, false );
+                        buffList->LoadSingle(incoming.name, incoming.image, incoming.name, csString(""), 0, this, false);
                     }
                     else
                     {
-                        buffList->LoadSingle( incoming.name, csString( "/planeshift/materials/crystal_ball_icon.dds" ), incoming.name, csString( "" ), 0, this, false );
+                        buffList->LoadSingle(incoming.name, csString("/planeshift/materials/crystal_ball_icon.dds"), incoming.name, csString(""), 0, this, false);
                     }
                 }
                 else
                 {
-                    buffList->LoadSingle( incoming.name, csString( "" ), incoming.name, csString( "" ), 0, this, false );
+                    buffList->LoadSingle(incoming.name, csString(""), incoming.name, csString(""), 0, this, false);
                 }
-                buffList->SetEditLock( ScrollMenuOptionDISABLED );
-                if( autoResize )
+                buffList->SetEditLock(ScrollMenuOptionDISABLED);
+                if(autoResize)
                 {
-                    AutoResize( );
+                    AutoResize();
                 }
                 else
                 {
@@ -217,35 +217,35 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
             }
             else // incoming.type == DEBUFF
             {
-                if( useImages )
+                if(useImages)
                 {
                     csRef<iPawsImage> image;
 
-                    if( incoming.image.Length() >0 )
+                    if(incoming.image.Length() >0)
                     {
-                         image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
+                        image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
                     }
                     else
                     {
                         image = NULL;
                     }
-                    if (image)
+                    if(image)
                     {
-                        buffList->LoadSingle( incoming.name, incoming.image, incoming.name, csString( "" ), -1, this, false );
+                        buffList->LoadSingle(incoming.name, incoming.image, incoming.name, csString(""), -1, this, false);
                     }
                     else
                     {
-                        buffList->LoadSingle( incoming.name, csString( "danger_01" ), incoming.name, csString( "" ), -1, this, false );
+                        buffList->LoadSingle(incoming.name, csString("danger_01"), incoming.name, csString(""), -1, this, false);
                     }
                 }
                 else
                 {
-                    buffList->LoadSingle( incoming.name, csString( "" ), incoming.name, csString( "" ), -1, this, false );
+                    buffList->LoadSingle(incoming.name, csString(""), incoming.name, csString(""), -1, this, false);
                 }
                 //buffList->SetEditLock( ScrollMenuOptionDISABLED );
-                if( autoResize )
+                if(autoResize)
                 {
-                    AutoResize( );
+                    AutoResize();
                 }
                 else
                 {
@@ -257,18 +257,18 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
         }
         case psGUIActiveMagicMessage::Remove:
         {
-                buffList->RemoveByName( incoming.name );
-                if( autoResize )
-                {
-                    AutoResize( );
-                }
-                else
-                {
-                   buffList->Resize();
-                }
+            buffList->RemoveByName(incoming.name);
+            if(autoResize)
+            {
+                AutoResize();
+            }
+            else
+            {
+                buffList->Resize();
+            }
 
             // If no active magic, hide the window.
-            if( buffList->GetSize() < 1 )
+            if(buffList->GetSize() < 1)
                 Hide();
 
             break;
@@ -276,55 +276,55 @@ void pawsActiveMagicWindow::HandleMessage( MsgEntry* me )
     }
 }
 
-void pawsActiveMagicWindow::AutoResize( )
+void pawsActiveMagicWindow::AutoResize()
 {
     int horizPadding = 0,
         vertPadding = 0,
         buffSize = 0,
         t = 0;
 
-    if( !buffList )
+    if(!buffList)
     {
         return;
     }
 
-    if( Orientation == ScrollMenuOptionHORIZONTAL )
+    if(Orientation == ScrollMenuOptionHORIZONTAL)
     {
         buffSize = buffList->AutoResize();
-        if( buffSize == 0 )
+        if(buffSize == 0)
         {
             buffSize = buffList->GetButtonWidth();
         }
 
-        SetSize( buffSize+buffList->GetButtonWidth(), GetScreenFrame().Height() );
-        if( GetScreenFrame().xmax > psengine->GetG2D()->GetWidth() ) //sticking off the edge of the screen
+        SetSize(buffSize+buffList->GetButtonWidth(), GetScreenFrame().Height());
+        if(GetScreenFrame().xmax > psengine->GetG2D()->GetWidth())   //sticking off the edge of the screen
         {
             //t = GetScreenFrame().xmax - psengine->GetG2D()->GetWidth();
             t = buffList->GetTotalButtonWidth();
-            if(  GetScreenFrame().xmin - t < 0 )
+            if(GetScreenFrame().xmin - t < 0)
             {
                 t = -GetScreenFrame().xmin; //should put the window at the left ede of the screen
             }
-            else 
+            else
             {
                 t = -(GetScreenFrame().xmax - psengine->GetG2D()->GetWidth());
             }
-            MoveDelta( t, 0 );
+            MoveDelta(t, 0);
         }
     }
     else
     {
         buffSize = buffList->AutoResize();
-        if( buffSize == 0 )
+        if(buffSize == 0)
         {
             buffSize = buffList->GetButtonHeight();
         }
 
-        SetSize( GetScreenFrame().Width(), buffSize+buffList->GetButtonHeight() );
+        SetSize(GetScreenFrame().Width(), buffSize+buffList->GetButtonHeight());
 
-        if( GetScreenFrame().ymax > psengine->GetG2D()->GetHeight() ) //sticking off the bottom of the screen
+        if(GetScreenFrame().ymax > psengine->GetG2D()->GetHeight())   //sticking off the bottom of the screen
         {
-            MoveDelta( 0, -(GetScreenFrame().ymax - psengine->GetG2D()->GetHeight()) );
+            MoveDelta(0, -(GetScreenFrame().ymax - psengine->GetG2D()->GetHeight()));
         }
     }
 }
@@ -335,32 +335,32 @@ void pawsActiveMagicWindow::Close()
 }
 
 bool pawsActiveMagicWindow::LoadSetting()
-{    
+{
     csRef<iDocument> doc;
     csRef<iDocumentNode> root,activeMagicNode, activeMagicOptionsNode;
     csString option;
 
     doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_ACTIVEMAGIC_FILE_NAME);
-    if (doc == NULL)
+    if(doc == NULL)
     {
         //load the default configuration file in case the user one fails (missing or damaged)
-        doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_ACTIVEMAGIC_FILE_NAME_DEF);    
-        if (doc == NULL)
+        doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_ACTIVEMAGIC_FILE_NAME_DEF);
+        if(doc == NULL)
         {
             Error2("Failed to parse file %s", CONFIG_ACTIVEMAGIC_FILE_NAME_DEF);
             return false;
-        }    
+        }
     }
-   
+
     root = doc->GetRoot();
-    if (root == NULL)
+    if(root == NULL)
     {
         Error1("activemagic_def.xml or activemagic.xml has no XML root");
         return false;
     }
-    
+
     activeMagicNode = root->GetNode("activemagic");
-    if (activeMagicNode == NULL)
+    if(activeMagicNode == NULL)
     {
         Error1("activemagic_def.xml or activemagic.xml has no <activemagic> tag");
         return false;
@@ -368,15 +368,15 @@ bool pawsActiveMagicWindow::LoadSetting()
 
     // Load options for Active Magic Window
     activeMagicOptionsNode = activeMagicNode->GetNode("activemagicoptions");
-    if (activeMagicOptionsNode != NULL)
+    if(activeMagicOptionsNode != NULL)
     {
         csRef<iDocumentNodeIterator> oNodes = activeMagicOptionsNode->GetNodes();
         while(oNodes->HasNext())
         {
             csRef<iDocumentNode> option = oNodes->Next();
-            csString nodeName (option->GetValue());
+            csString nodeName(option->GetValue());
 
-            if (nodeName == "showWindow")
+            if(nodeName == "showWindow")
                 showWindow->SetState(!option->GetAttributeValueAsBool("value"));
         }
     }
@@ -389,9 +389,9 @@ void pawsActiveMagicWindow::SaveSetting()
     csRef<iFile> file;
     file = psengine->GetVFS()->Open(CONFIG_ACTIVEMAGIC_FILE_NAME,VFS_FILE_WRITE);
 
-    csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem ());
+    csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem());
 
-    csRef<iDocument> doc = docsys->CreateDocument();        
+    csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,defaultRoot, activeMagicNode, activeMagicOptionsNode, showWindowNode;
 
     root = doc->CreateRoot();

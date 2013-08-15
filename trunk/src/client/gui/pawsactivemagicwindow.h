@@ -61,7 +61,7 @@ public:
     ///Saves the configuration file
     void SaveSetting();
 
-    void AutoResize( );
+    void AutoResize();
 
     /**
       * Check-box which gives the user a opportunity to show or
