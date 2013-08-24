@@ -281,6 +281,7 @@ INSERT INTO `item_stats` VALUES (423,'B','Public Blank Map',1.00,5.00,1,0,0,'BUL
 
 -- Music
 INSERT INTO `item_stats` VALUES (424,'B','Blank Score',1.00,5.00,1,0,0,'BULK LEFTHAND RIGHTHAND','STACKABLE BUY_PERSONALISE CREATIVE WRITEABLE',0.00,-1,1,1,'0','0','0',0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,'weapons#jug01a','/planeshift/weapons/jug01a_icon.dds','','','','','0',3,50.00,'GENERIC',NULL,0.00,NULL,0.00,NULL,0.00,'0',0,0.0000,0,0,0,0,NULL,'nosound',99,NULL,NULL,'<creative type=\"music\"><content></content></creative>',-1,2,"",'Y');
+INSERT INTO `item_stats` VALUES (425,'B','Lute',5.00,5.00,100,0,0,'BULK LEFTHAND RIGHTHAND','STACKABLE',0.00,-1,-1,-1,'0','0','0',0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,'tools#lute01a','/planeshift/materials/lute01a_icon.dds','','','','','0',27,1000.00,'TOOL','',0.00,'',0.00,'',0.00,'0',0,0.0000,0,0,0,0,'0','nosound',50,'',NULL,NULL,-1,2,"",'Y');
 
 -- Buff items
 INSERT INTO `item_stats` VALUES (129,'B','Ring of HP',1.00,25.00,1,0,0,'BULK LEFTFINGER RIGHTFINGER','STACKABLE',0.10,-1,-1,-1,'0','0','0',0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,0.00,'weapons#jug01a','/planeshift/weapons/jug01a_icon.dds','','','','','0',3,0.00,'GENERIC','',0.00,'',0.00,'',0.00,'0',0,0.0000,0,0,0,0,'0','nosound',50,'<apply aim=\"Actor\" type=\"buff\" name=\"Extra HP\"><hp-max value=\"100\"/></apply>',NULL,NULL,-1,2,"",'Y');
