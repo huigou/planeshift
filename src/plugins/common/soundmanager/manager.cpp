@@ -183,13 +183,13 @@ Play3DSound(const char* name, bool loop, size_t loopstart, size_t loopend,
             csVector3 dir, float mindist, float maxdist, float rad,
             int type3d, SoundHandle* &handle, bool dopplerEffect)
 {
-    // checking if the listener is within the given range
-    // TODO REMOVE THIS WHEN CS WILL MANAGE CORRECTLY MAXDIST
     if(!Initialised)
     {
         return false;
     }
 
+    // checking if the listener is within the given range
+    // TODO REMOVE THIS WHEN CS WILL MANAGE CORRECTLY MAXDIST
     csVector3 rangeVec = pos - soundSystem->GetListenerPosition();
     float range = rangeVec.Norm();
 

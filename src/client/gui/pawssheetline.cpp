@@ -46,6 +46,7 @@
 #define SINGLE_STAFF_FONT_SIZE 0.75f        // the multiplier of the font's size when switching from the double staff to the single one.
 
 // Font's characters
+#define SYMBOL_ENCODING_BASE 0xf000
 #define G_CLEF_SONORA '&' | SYMBOL_ENCODING_BASE
 #define F_CLEF_SONORA '?' | SYMBOL_ENCODING_BASE
 #define SHARP_SONORA '#' | SYMBOL_ENCODING_BASE
@@ -230,7 +231,7 @@ void Chord::AddNote(int position, int alter, bool rest)
             notesLength = 0;
         }
 
-        // keep the highest note first for a better rendering
+        // keep the highest note first to simplify drawing
         for(size_t i = 0; i < notesLength; i++)
         {
             // if this note is already in the chord: overwrite
