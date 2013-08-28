@@ -1,0 +1,8 @@
+SubDir TOP src common music ;
+
+Library sound
+	: [ Wildcard *.cpp *.h ]
+	: noinstall
+;
+
+ExternalLibs music : CRYSTAL ;
