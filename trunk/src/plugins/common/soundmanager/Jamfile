@@ -6,5 +6,5 @@ Plugin soundmngr
 	: [ Wildcard *.cpp *.h ]
 ;
 ExternalLibs soundmngr : CRYSTAL ;
-LinkWith soundmngr : psutil ;
+LinkWith soundmngr : psutil psmusic ;
 CompileGroups soundmngr : psclient ;

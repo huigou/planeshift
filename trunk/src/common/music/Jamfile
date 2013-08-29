@@ -1,8 +1,8 @@
 SubDir TOP src common music ;
 
-Library sound
+Library psmusic
 	: [ Wildcard *.cpp *.h ]
 	: noinstall
 ;
 
-ExternalLibs music : CRYSTAL ;
+ExternalLibs psmusic : CRYSTAL ;
