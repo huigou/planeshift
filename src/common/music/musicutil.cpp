@@ -19,7 +19,7 @@
 
 
 #include <psconfig.h>
-#include "music.h"
+#include "musicutil.h"
 
 //====================================================================================
 // Crystal Space Includes

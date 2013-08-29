@@ -30,7 +30,7 @@
 //====================================================================================
 // Project Includes
 //====================================================================================
-#include <util/music.h>
+#include <music/musicutil.h>
 #include <gui/pawsmusicwindow.h>
 #include <paws/pawsmanager.h>
 #include <net/clientmsghandler.h>

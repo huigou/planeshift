@@ -34,7 +34,7 @@
 #include <paws/pawsborder.h>
 #include <paws/pawsbutton.h>
 #include <paws/pawscrollbar.h>
-#include <util/music.h>
+#include <music/musicutil.h>
 
 //====================================================================================
 // Local Includes
