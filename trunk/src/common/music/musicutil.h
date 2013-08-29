@@ -1,7 +1,7 @@
 /*
- * music.h, Author: Andrea Rizzi <88whacko@gmail.com>
+ * musicutil.h, Author: Andrea Rizzi <88whacko@gmail.com>
  *
- * Copyright (C) 2001-2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef PSMUSIC_H
-#define PSMUSIC_H
+#ifndef MUSIC_UTIL_H
+#define MUSIC_UTIL_H
 
 
 //====================================================================================
@@ -29,7 +29,7 @@
 #include <iutil/document.h>
 
 /**
- * \addtogroup common_util
+ * \addtogroup common_music
  * @{ */
 
 /**
@@ -208,105 +208,105 @@ struct ScoreStatistics
 
 
 /**
- * This class contains a set of functions that are usefull for the processing of music
+ * This namespace contains a set of functions that are usefull for the processing of music
  * and musical scores.
  */
-class psMusic
+namespace psMusic
 {
-public:
-    /**
-     * Turns the given pitch into the next one in the scale.
-     *
-     * @param pitch the pitch of the note.
-     * @param octave the octave of the note.
-     */
-    static void NextPitch(char &pitch, uint &octave);
 
-    /**
-     * Turns the given pitch into the previous one in the scale.
-     *
-     * @param pitch the pitch of the note.
-     * @param octave the octave of the note.
-     */
-    static void PreviousPitch(char &pitch, uint &octave);
+/**
+ * Turns the given pitch into the next one in the scale.
+ *
+ * @param pitch the pitch of the note.
+ * @param octave the octave of the note.
+ */
+void NextPitch(char &pitch, uint &octave);
 
-    /**
-     * Turns the given pitch into the enharmonic equivalent.
-     * @param pitch the pitch of the note.
-     * @param accidental the alteration of the note.
-     */
-    static void EnharmonicPitch(char &pitch, int &accidental);
+/**
+ * Turns the given pitch into the previous one in the scale.
+ *
+ * @param pitch the pitch of the note.
+ * @param octave the octave of the note.
+ */
+void PreviousPitch(char &pitch, uint &octave);
 
-    /**
-     * Gets the XML nodes representing the measures contained in the musical score.
-     *
-     * @param score the musical score.
-     * @param measures a reference to a csRefArray that will contain the XML nodes.
-     * @return true if the document is a valid musical score, false otherwise.
-     */
-    static bool GetMeasures(csRef<iDocument> score, csRefArray<iDocumentNode> &measures);
+/**
+ * Turns the given pitch into the enharmonic equivalent.
+ * @param pitch the pitch of the note.
+ * @param accidental the alteration of the note.
+ */
+void EnharmonicPitch(char &pitch, int &accidental);
 
-    /**
-     * Returns the statistics of the score.
-     *
-     * @param musicalScore the musical score.
-     * @param stats the retrieved statistics of the given score.
-     * @return true if the document is a valid musical score, false otherwise.
-     */
-    static bool GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stats);
+/**
+ * Gets the XML nodes representing the measures contained in the musical score.
+ *
+ * @param score the musical score.
+ * @param measures a reference to a csRefArray that will contain the XML nodes.
+ * @return true if the document is a valid musical score, false otherwise.
+ */
+bool GetMeasures(csRef<iDocument> score, csRefArray<iDocumentNode> &measures);
 
-    /**
-     * Gets the attributes in the first measure of the given score.
-     *
-     * The provided attributes are always valid. If the musical score contains non valid attributes
-     * (e.g. beatType <= 0), they are set to a valid default value.
-     *
-     * @param musicalScore the musical score.
-     * @param quarterDivisions the number of divisions in a quarter for the score.
-     * @param fifths the tonality of the score.
-     * @param beats beats of the song.
-     * @param beatType the beat type of the song.
-     * @param tempo the beat per minutes of the song.
-     * @return true if the document is a valid musical score and the attributes could be
-     * found in the first measure, false otherwise. False is returned also if there are
-     * not measures in the given score.
-     */
-    static bool GetAttributes(csRef<iDocument> musicalScore, int &quarterDivisions,
-        int &fifths, int &beats, int &beatType, int &tempo);
+/**
+ * Returns the statistics of the score.
+ *
+ * @param musicalScore the musical score.
+ * @param stats the retrieved statistics of the given score.
+ * @return true if the document is a valid musical score, false otherwise.
+ */
+bool GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stats);
 
-    /**
-     * Compress a song with the zlib compression algorithm.
-     *
-     * @attention the output string is not a normal string but a sequence of bytes. It
-     * could contain null characters. Do not treat it like a null terminated string.
-     *
-     * @param inputScore the musical sheet in uncompressed XML format.
-     * @param outputScore at the end this string will contain the compressed score.
-     * @return true if the compression is done without errors, false otherwise.
-     */
-    static bool ZCompressSong(const csString &inputScore, csString &outputScore);
+/**
+ * Gets the attributes in the first measure of the given score.
+ *
+ * The provided attributes are always valid. If the musical score contains non valid attributes
+ * (e.g. beatType <= 0), they are set to a valid default value.
+ *
+ * @param musicalScore the musical score.
+ * @param quarterDivisions the number of divisions in a quarter for the score.
+ * @param fifths the tonality of the score.
+ * @param beats beats of the song.
+ * @param beatType the beat type of the song.
+ * @param tempo the beat per minutes of the song.
+ * @return true if the document is a valid musical score and the attributes could be
+ * found in the first measure, false otherwise. False is returned also if there are
+ * not measures in the given score.
+ */
+bool GetAttributes(csRef<iDocument> musicalScore, int &quarterDivisions,
+                   int &fifths, int &beats, int &beatType, int &tempo);
 
-    /**
-     * Decompress a song with the zlib compression algorithm.
-     *
-     * @param inputScore the compressed musical sheet.
-     * @param outputScore at the end this string will contain the uncompressed score.
-     * @return true if the decompression is done without errors, false otherwise.
-     */
-    static bool ZDecompressSong(const csString &inputScore, csString &outputScore);
+/**
+ * Compress a song with the zlib compression algorithm.
+ *
+ * @attention the output string is not a normal string but a sequence of bytes. It
+ * could contain null characters. Do not treat it like a null terminated string.
+ *
+ * @param inputScore the musical sheet in uncompressed XML format.
+ * @param outputScore at the end this string will contain the compressed score.
+ * @return true if the compression is done without errors, false otherwise.
+ */
+bool ZCompressSong(const csString &inputScore, csString &outputScore);
 
-private:
-    /**
-     * Checks if the given document is a valid musical score and provide the \<part\> node.
-     *
-     * @param musicalScore the musical score.
-     * @param partNode a reference that will contain the part XML node.
-     * @return true if the document is valid, false otherwise.
-     */
-    static bool CheckValidity(csRef<iDocument> musicalScore, csRef<iDocumentNode> &partNode);
-};
+/**
+ * Decompress a song with the zlib compression algorithm.
+ *
+ * @param inputScore the compressed musical sheet.
+ * @param outputScore at the end this string will contain the uncompressed score.
+ * @return true if the decompression is done without errors, false otherwise.
+ */
+bool ZDecompressSong(const csString &inputScore, csString &outputScore);
+
+/**
+ * Checks if the given document is a valid musical score and provide the \<part\> node.
+ *
+ * @param musicalScore the musical score.
+ * @param partNode a reference that will contain the part XML node.
+ * @return true if the document is valid, false otherwise.
+ */
+bool CheckValidity(csRef<iDocument> musicalScore, csRef<iDocumentNode> &partNode);
+
+}
 
 /** @} */
 
-#endif // PSMUSIC_H
+#endif // MUSIC_UTIL_H
 
