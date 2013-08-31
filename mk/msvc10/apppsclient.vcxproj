@@ -1580,6 +1580,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libeffects.vcxproj">
       <Project>{A04BE757-E4C1-A003-8FDB-47430BC64269}</Project>
     </ProjectReference>
+    <ProjectReference Include="libpsmusic.vcxproj">
+      <Project>{ACECF49B-03F9-65EC-B7B0-27B65393FFE7}</Project>
+    </ProjectReference>
     <ProjectReference Include="libpsutil.vcxproj">
       <Project>{D9DEA6DD-ED82-1526-6BBF-851FF399854C}</Project>
     </ProjectReference>

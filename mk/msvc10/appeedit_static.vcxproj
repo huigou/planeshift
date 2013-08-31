@@ -1577,6 +1577,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libplaneshift_database_staticplugins.vcxproj">
       <Project>{5DFC8F2F-79FD-89B5-6EEC-FDEEB1E3225D}</Project>
     </ProjectReference>
+    <ProjectReference Include="libpsmusic.vcxproj">
+      <Project>{ACECF49B-03F9-65EC-B7B0-27B65393FFE7}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
