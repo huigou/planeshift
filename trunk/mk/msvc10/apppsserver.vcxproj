@@ -1613,6 +1613,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libpsrpgrules.vcxproj">
       <Project>{4B7B2CDB-4DE7-2E3D-0FF6-EA8AC90E4A27}</Project>
     </ProjectReference>
+    <ProjectReference Include="libpsmusic.vcxproj">
+      <Project>{ACECF49B-03F9-65EC-B7B0-27B65393FFE7}</Project>
+    </ProjectReference>
     <ProjectReference Include="libwordnet.vcxproj">
       <Project>{A4D92586-089F-D6D3-52C4-F11AA71CA951}</Project>
     </ProjectReference>

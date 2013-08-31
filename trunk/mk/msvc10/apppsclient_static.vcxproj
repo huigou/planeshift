@@ -1586,6 +1586,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libeffects.vcxproj">
       <Project>{A04BE757-E4C1-A003-8FDB-47430BC64269}</Project>
     </ProjectReference>
+    <ProjectReference Include="libpsmusic.vcxproj">
+      <Project>{ACECF49B-03F9-65EC-B7B0-27B65393FFE7}</Project>
+    </ProjectReference>
     <ProjectReference Include="libbreakpad.vcxproj">
       <Project>{7BD0DB32-E0AD-E520-81A6-F53D07433A63}</Project>
     </ProjectReference>
