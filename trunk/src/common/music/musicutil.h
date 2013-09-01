@@ -24,6 +24,7 @@
 //====================================================================================
 // Crystal Space Includes
 //====================================================================================
+#include <cssysdef.h>
 #include <csutil/refarr.h>
 #include <csutil/csstring.h>
 #include <iutil/document.h>
@@ -213,6 +214,16 @@ struct ScoreStatistics
  */
 namespace psMusic
 {
+
+enum Accidental
+{
+    NO_ACCIDENTAL,
+    DOUBLE_FLAT,
+    FLAT,
+    NATURAL,
+    SHARP,
+    DOUBLE_SHARP
+};
 
 /**
  * Turns the given pitch into the next one in the scale.
