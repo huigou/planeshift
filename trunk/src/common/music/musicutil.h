@@ -215,6 +215,29 @@ struct ScoreStatistics
 namespace psMusic
 {
 
+/**
+ * Unit measure for duration in in terms of divisions per quarter. If you change this
+ * constants you must change the values in the enum Duration too.
+ */
+#define DURATION_QUARTER_DIVISIONS 16 // unit measure is a sixteenth
+
+/**
+ * The number associated to each duration is the number of quarter divisions as specified
+ * in DURATION_QUARTER_DIVISIONS.
+ */
+enum Duration
+{
+    SIXTEENTH_DURATION      = 1,
+    EIGHTH_DURATION         = 2,
+    DOTTED_EIGHTH_DURATION  = 3,
+    QUARTER_DURATION        = 4,
+    DOTTED_QUARTER_DURATION = 6,
+    HALF_DURATION           = 8,
+    DOTTED_HALF_DURATION    = 12,
+    WHOLE_DURATION          = 16,
+    DOTTED_WHOLE_DURATION   = 24
+};
+
 enum Accidental
 {
     NO_ACCIDENTAL,

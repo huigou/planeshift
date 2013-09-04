@@ -49,17 +49,67 @@ using namespace psMusic;
  * \addtogroup common_music
  * @{ */
 
+/**
+ * An element of a measure with a given duration. It can be a rest, a single note or a
+ * chord.
+ */
+class MeasureElement
+{
+public:
+    /**
+     * Constructor.
+     *
+     * @param duration The duration of this element.
+     */
+    MeasureElement(Duration duration);
+
+    /**
+     * Get the duration of this element.
+     *
+     * @return The duration of this element.
+     */
+    Duration GetDuration() { return duration; }
+
+    /**
+     * Set the duration of this element.
+     *
+     * @param newDuration the new duration for this element.
+     */
+    virtual void SetDuration(Duration newDuration) { duration = newDuration; }
+
+private:
+    Duration duration;
+};
+
+//--------------------------------------------------
+
+/**
+ * Represent a rest in the score. The class does not have particular members but its
+ * extension could.
+ */
+class Rest: public MeasureElement
+{
+public:
+    /**
+     * Constructor.
+     *
+     * @param duration The duration of this rest.
+     */
+    Rest(Duration duration);
+};
+
 //--------------------------------------------------
 
 /**
  * A single note in a musical score.
  */
-class Note
+class Note: public MeasureElement
 {
 public:
     /**
      * Used to keep track of previous altered notes in the current measure. Hides the
-     * implementation of note context updating to other classes.
+     * implementation of note context updating to other classes. It must be resetted at
+     * every measure and updated at every note.
      */
     class NoteContext
     {
@@ -73,10 +123,16 @@ public:
          * Get an eventual accidental that previously appeared in the same measure.
          *
          * @param note The note that should be checked.
-         * @return The accidental in case there where previous altered notes or
-         * NO_ACCIDENTAL if none.
+         * @return The accidental of the previous note within the same measure having the
+         * same name and octave as the given one. In case no previous note satisfying the
+         * requirements is found, NO_ACCIDENTAL is returned.
          */
         Accidental GetPreviousAccidental(const Note &note) const;
+
+        /**
+         * Empty the list of previously altered note.
+         */
+        void ResetContext();
 
         /**
          * Update the list of previous accidental if the given note has any.
@@ -85,15 +141,10 @@ public:
          */
         void UpdateContext(const Note &context);
 
-        /**
-         * Empty the list of previously altered note.
-         */
-        void ResetContext();
-
     private:
         /**
         * Previous notes with a written accidental. Accidentals are indexed by note octave
-        * and name. Must be resetted at every measure and updated at every note.
+        * and name.
         */
         csHash<csHash<Accidental, char>, int> prevAccidentals;
     };
@@ -108,8 +159,9 @@ public:
      * is not related to the tonality of the piece but only on its representation. In
      * other words the variable accidental must be different than UNALTERED if and only if
      * an actual accidental is written on the musical score.
+     * @param duration The duration of this note.
      */
-    Note(char name, int octave, Accidental accidental);
+    Note(char name, int octave, Accidental writtenAccidental, Duration duration);
 
     /**
      * Get the note name.
@@ -127,15 +179,52 @@ public:
     int GetOctave() const { return octave; }
 
     /**
-     * Get the accidental of the played note. This, depending on the tonality, may not be
-     * the same as the written accidental.
+     * Get the accidental of the played note. This takes into account the written
+     * accidental, the tonality and previous accidental in the same measure.
      *
      * @param context The context where tonality and previous accidentals are kept.
      * @return The accidental with which the note must be played in the context of the
-     * tonality of the piece. An eventual accidental written on the score have the
-     * priority.
+     * tonality of the piece. An eventual accidental written on the score previously
+     * have the priority.
      */
     Accidental GetPlayedAccidental(const ScoreContext &context) const;
+
+    /**
+     * Get the written accidental.
+     *
+     * @return The accidental written on the score for this note.
+     */
+    Accidental GetWrittenAccidental() const { return writtenAccidental; }
+
+    /**
+     * Equal operator.
+     *
+     * @param note The note to be compared with.
+     * @return True if the given note has the same name and octave.
+     */
+    bool operator==(const Note &note) const;
+
+    /**
+     * Set the note name.
+     *
+     * @param name The uppercase name of the note (C, D, E, F, G, A or B).
+     */
+    void SetName(char name);
+
+    /**
+     * Set the note octave number.
+     *
+     * @param newOctave The octave number of this note. Octave number 4 is the one that
+     * contains the central C on the piano.
+     */
+    void SetOctave(int octave);
+
+    /**
+     * Set the written accidental.
+     *
+     * @param accidental The accidental written on the score for this note.
+     */
+    void SetWrittenAccidental(Accidental accidental);
 
 private:
     char name; ///< Uppercase name of the note (C, D, E, F, G, A or B).
@@ -146,13 +235,63 @@ private:
      * anything to do with the tonality. With this representation, one does not have to
      * modify all the notes in the score when changing the tonality of the piece.
      */
-    Accidental accidental;
+    Accidental writtenAccidental;
 };
 
 //--------------------------------------------------
 
-class Chord
+/**
+ * A group of notes that must be played together.
+ */
+ class Chord: public MeasureElement
 {
+public:
+    /**
+     * Constructor.
+     */
+    Chord(Duration duration);
+
+    /**
+     * Copy a note into the chord. If a note with the same name and octave already exists
+     * this will overwrite it or, in other words, its accidental will be overwritten.
+     *
+     * @param name Name of the note (C, D, E, F, G, A or B). Must be uppercase.
+     * @param octave Octave number. Octave number 4 is the one that contains the central
+     * C on the piano.
+     * @param accidental The accidental with which the note is written on the score.
+     * @return True if no note was overwritten, false otherwise.
+     */
+    bool AddNote(char name, int octave, Accidental writtenAccidental);
+
+    /**
+     * Remove all the notes from the chord without releasing the allocated memory.
+     */
+    void Empty() { notes.Empty(); }
+
+    /**
+     * Get the number of notes in this chord.
+     *
+     * @return the number of notes in this chord.
+     */
+    size_t GetSize() const { return notes.GetSize(); }
+
+    /**
+     * Delete a note with the same name and octave.
+     *
+     * @param note The note that must be deleted.
+     * @return True if the note was found, false otherwise.
+     */
+    bool RemoveNote(char name, int octave);
+
+    /**
+     * Set the duration of this element.
+     *
+     * @param duration the new duration for this element.
+     */
+    void SetDuration(Duration duration);
+
+private:
+    csArray<Note> notes; ///< The sequence of notes in the chord.
 };
 
 //--------------------------------------------------
@@ -171,11 +310,6 @@ public:
         int tempo; ///< Quarter notes per minute (BPM).
         int beats; ///< Numerator of the time signature.
         int beatType; ///< Denominator of the time signature.
-
-        /**
-         * Unit of measure for notes duration in terms of divisions per quarter.
-         */
-        int quarterDivisions;
 
         /**
          * Number of accidentals in the key signature. Positive for sharps, negative for
