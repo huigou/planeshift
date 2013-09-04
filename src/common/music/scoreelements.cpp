@@ -40,6 +40,23 @@
 #define PREV_ACCIDENTALS_NAME_SIZE 7
 #define PREV_ACCIDENTALS_OCTAVE_SIZE 10
 
+// 2 notes is the minimum for a chord and it very rarely gets over 5 notes
+#define NOTES_IN_CAPACITY 5
+
+//--------------------------------------------------
+
+MeasureElement::MeasureElement(Duration duration_)
+: duration(duration_)
+{
+}
+
+//--------------------------------------------------
+
+Rest::Rest(Duration duration)
+: MeasureElement(duration)
+{
+}
+
 //--------------------------------------------------
 
 Note::NoteContext::NoteContext()
@@ -60,26 +77,6 @@ Accidental Note::NoteContext::GetPreviousAccidental(const Note &note) const
     return prevAccidental;
 }
 
-void Note::NoteContext::UpdateContext(const Note &note)
-{
-    if(note.accidental != NO_ACCIDENTAL)
-    {
-        csHash<Accidental, char>* nameHash =
-            prevAccidentals.GetElementPointer(note.octave);
-
-        if(nameHash == 0)
-        {
-            nameHash = &prevAccidentals.Put(note.octave,
-                csHash<Accidental, char>::csHash(PREV_ACCIDENTALS_NAME_SIZE));
-            nameHash->Put(note.name, note.accidental);
-        }
-        else
-        {
-            nameHash->PutUnique(note.name, note.accidental);
-        }
-    }
-}
-
 void Note::NoteContext::ResetContext()
 {
     // we delete only the internal hash elements so that we don't have to reallocate
@@ -95,10 +92,30 @@ void Note::NoteContext::ResetContext()
     }
 }
 
-Note::Note(char name_, int octave_, Accidental accidental_)
-: name(name_), octave(octave_), accidental(accidental_)
+void Note::NoteContext::UpdateContext(const Note &note)
 {
-    CS_ASSERT(name >= 'A' && name <= 'G');
+    if(note.writtenAccidental != NO_ACCIDENTAL)
+    {
+        csHash<Accidental, char>* nameHash =
+            prevAccidentals.GetElementPointer(note.octave);
+
+        if(nameHash == 0)
+        {
+            nameHash = &prevAccidentals.Put(note.octave,
+                csHash<Accidental, char>::csHash(PREV_ACCIDENTALS_NAME_SIZE));
+            nameHash->Put(note.name, note.writtenAccidental);
+        }
+        else
+        {
+            nameHash->PutUnique(note.name, note.writtenAccidental);
+        }
+    }
+}
+
+Note::Note(char name_, int octave_, Accidental writtenAccidental_, Duration duration_)
+: MeasureElement(duration_), octave(octave_), writtenAccidental(writtenAccidental_)
+{
+    SetName(name_);
 }
 
 Accidental Note::GetPlayedAccidental(const ScoreContext &context) const
@@ -109,9 +126,9 @@ Accidental Note::GetPlayedAccidental(const ScoreContext &context) const
     CS_ASSERT(fifths >= -7 && fifths <= 7);
 
     // accidentals written for this note have priority
-    if(accidental != NO_ACCIDENTAL)
+    if(writtenAccidental != NO_ACCIDENTAL)
     {
-        return accidental;
+        return writtenAccidental;
     }
 
     // then accidentals written on previous note with same name and octave
@@ -199,11 +216,70 @@ Accidental Note::GetPlayedAccidental(const ScoreContext &context) const
     return NO_ACCIDENTAL;
 }
 
+bool Note::operator==(const Note &note) const
+{
+    return this->name == note.name && this->octave == note.octave;
+}
+
+void Note::SetName(char newName)
+{
+    name = newName;
+
+    CS_ASSERT(name >= 'A' && name <= 'G');
+}
+
+void Note::SetOctave(int newOctave)
+{
+    octave = newOctave;
+}
+
+void Note::SetWrittenAccidental(Accidental accidental)
+{
+    writtenAccidental = accidental;
+}
+
+//--------------------------------------------------
+
+Chord::Chord(Duration duration)
+: MeasureElement(duration), notes(NOTES_IN_CAPACITY)
+{
+}
+
+bool Chord::AddNote(char name, int octave, Accidental writtenAccidental)
+{
+    Note note(name, octave, writtenAccidental, GetDuration());
+    size_t noteIdx = notes.Find(note);
+    if(noteIdx == csArrayItemNotFound)
+    {
+        notes.Push(note);
+        return true;
+    }
+    else
+    {
+        notes[noteIdx].SetWrittenAccidental(note.GetWrittenAccidental());
+        return false;
+    }
+}
+
+bool Chord::RemoveNote(char name, int octave)
+{
+    Note note(name, octave, NO_ACCIDENTAL, GetDuration());
+    return notes.Delete(note);
+}
+
+void Chord::SetDuration(Duration duration_)
+{
+    MeasureElement::SetDuration(duration_);
+    for(size_t i = 0; i < notes.GetSize(); i++)
+    {
+        notes[i].SetDuration(duration_);
+    }
+}
+
 //--------------------------------------------------
 
 Measure::MeasureAttributes::MeasureAttributes()
 : tempo(UNDEFINED_MEASURE_ATTRIBUTE), beats(UNDEFINED_MEASURE_ATTRIBUTE),
-beatType(UNDEFINED_MEASURE_ATTRIBUTE), quarterDivisions(UNDEFINED_MEASURE_ATTRIBUTE),
-fifths(UNDEFINED_MEASURE_ATTRIBUTE)
+beatType(UNDEFINED_MEASURE_ATTRIBUTE), fifths(UNDEFINED_MEASURE_ATTRIBUTE)
 {
 }
