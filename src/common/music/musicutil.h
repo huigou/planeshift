@@ -215,6 +215,16 @@ struct ScoreStatistics
 namespace psMusic
 {
 
+enum Accidental
+{
+    NO_ACCIDENTAL,
+    DOUBLE_FLAT,
+    FLAT,
+    NATURAL,
+    SHARP,
+    DOUBLE_SHARP
+};
+
 /**
  * Unit measure for duration in in terms of divisions per quarter. If you change this
  * constants you must change the values in the enum Duration too.
@@ -236,16 +246,6 @@ enum Duration
     DOTTED_HALF_DURATION    = 12,
     WHOLE_DURATION          = 16,
     DOTTED_WHOLE_DURATION   = 24
-};
-
-enum Accidental
-{
-    NO_ACCIDENTAL,
-    DOUBLE_FLAT,
-    FLAT,
-    NATURAL,
-    SHARP,
-    DOUBLE_SHARP
 };
 
 /**
