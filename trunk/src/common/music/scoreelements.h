@@ -264,7 +264,7 @@ public:
     bool AddNote(char name, int octave, Accidental writtenAccidental);
 
     /**
-     * Remove all the notes from the chord without releasing the allocated memory.
+     * Remove all the notes from the chord.
      */
     void Empty() { notes.Empty(); }
 
@@ -299,14 +299,95 @@ private:
 class Measure
 {
 public:
+    
     /**
-     * Keep general attributes that can change from a measure to another like key signature,
-     * beats and tempo. Some attributes can be undefined. This means that the specific
-     * attribute takes the same value as in the previous measure. Undefined attributes take
-     * the value UNDEFINED_MEASURE_ATTRIBUTE.
+     * Keep general attributes that can change from a measure to another like key
+     * signature, beats and tempo. Some attributes can be undefined. This means that the
+     * specific attribute takes the same value of the same attribute in the previous
+     * measure. Undefined attributes take the value UNDEFINED_MEASURE_ATTRIBUTE.
      */
-    struct MeasureAttributes
+    class MeasureAttributes
     {
+    public:
+        /**
+         * Initialize all attributes to UNDEFINED_MEASURE_ATTRIBUTE.
+         */
+        MeasureAttributes();
+
+        /**
+         * Get the numerator of the time signature.
+         *
+         * @return The numerator of the time signature.
+         */
+        int GetBeats() const { return beats; }
+
+        /**
+         * Get the denominator of the time signature.
+         *
+         * @return The denominator of the time signature.
+         */
+        int GetBeatType() const { return beatType; }
+
+        /**
+         * Get the tonality as the number of accidentals in the key signature.
+         *
+         * @return The number of accidentals in the key signature. Positive for sharps,
+         * negative for flats.
+         */
+        int GetFifths() const { return fifths; }
+
+        /**
+         * Get the tempo.
+         *
+         * @return The tempo in quarter notes per minute.
+         */
+        int GetTempo() const { return tempo; }
+
+        /**
+         * Check if all attributes are undefined.
+         *
+         * @return True if all attributes are undefined, false otherwise.
+         */
+        bool IsUndefined() const;
+
+        /**
+         * Set the numerator of the time signature.
+         *
+         * @param beats The new numerator of the time signature.
+         */
+        void SetBeats(int beats) { this->beats = beats; }
+
+        /**
+         * Set the denominator of the time signature.
+         *
+         * @param beatType The new denominator of the time signature.
+         */
+        void SetBeatType(int beatType) { this->beatType = beatType; }
+
+        /**
+         * Set the key signature as the number of accidentals.
+         *
+         * @param fifths The number of accidentals in the key signature. Positive for
+         * sharps, negative for flats.
+         */
+        void SetFifths(int fifths) { this->fifths = fifths; }
+
+        /**
+         * Set the tempo.
+         *
+         * @param tempo The new tempo.
+         */
+        void SetTempo(int tempo) { this->tempo = tempo; }
+
+        /**
+         * Update the measure context with the attributes of the given measure.
+         * Attributes that are undefined in the given object are not updated.
+         *
+         * @param measure The measure with the new attributes.
+         */
+        void UpdateAttributes(const MeasureAttributes &attributes);
+
+    private:
         int tempo; ///< Quarter notes per minute (BPM).
         int beats; ///< Numerator of the time signature.
         int beatType; ///< Denominator of the time signature.
@@ -316,9 +397,181 @@ public:
          * flats.
          */
         int fifths;
-
-        MeasureAttributes();
     };
+
+    /**
+     * Constructor.
+     */
+    Measure();
+
+    /**
+     * Destructor.
+     */
+    ~Measure();
+
+    /**
+     * Delete the element in position n. If n is not a valid index it does nothing.
+     *
+     * @param n The index of the measure element.
+     */
+    void DeleteElement(size_t n);
+
+    /**
+     * Delete all elements from the measure.
+     */
+    void DeleteAllElements();
+
+    /**
+     * Remove the elements at the end of the measures that exceeds the total duration or
+     * push a rest if there are not enough elements. The total duration is determined
+     * from the beat and beat type contained in the attributes. Attributes specified in
+     * this measure have priority. If they are undefined, the given attributes are used
+     * instead.
+     *
+     * @param attributes Attributes of previous measures. This can be a null pointer if
+     * this measure specifies both beat and beat type. If this is not the case however,
+     * the parameter must specify at least information about beat and beat type.
+     */
+    void Fit(const MeasureAttributes* attributes);
+
+    /**
+     * Get a copy of the attributes of this measure.
+     *
+     * @return The attributes of this measure.
+     */
+    MeasureAttributes GetAttributes() const;
+
+    /**
+     * Get the element at position n.
+     *
+     * @param n The index of the element.
+     * @return The element or 0 if n is not a valid index.
+     */
+    MeasureElement* GetElement(size_t n) { return elements.Get(n); }
+
+    /**
+     * Get the number of elements in this measure.
+     *
+     * @return The number of elements in this measure.
+     */
+    int GetNElements() { return elements.GetSize(); }
+
+    /**
+     * Get the number of time the repeat at the end of this measure must be performed.
+     *
+     * @return The number of time the repeat must be performed or 0 if there is not a
+     * repeat at the end of the measure.
+     */
+    int GetNEndRepeat() const { return nEndRepeat; }
+
+    /**
+     * Insert the given element after element n. The element will be deallocated when the
+     * measure is deleted. If n is greater than the number of elements in this measure,
+     * the element is pushed at the end.
+     *
+     * @param n The number of the element after which the given element must be inserted.
+     * @param element The element to insert in the measure.
+     */
+    void InsertElement(size_t n, MeasureElement* element);
+
+    /**
+     * Return true if this is an ending measure.
+     *
+     * @return True if this is an ending measure, false otherwise.
+     */
+    bool IsEnding() const { return isEnding; }
+
+    /**
+     * Return true if this measure starts a repeat.
+     *
+     * @return True if this is the start of a repeat, false otherwise.
+     */
+    bool IsStartRepeat() const { return isStartRepeat; }
+
+    /**
+     * Push an element after all the elements currently in the measure. The element will
+     * be deallocated when the measure is deleted.
+     *
+     * @param element The element to push in the measure.
+     */
+    void PushElement(MeasureElement* element);
+
+    /**
+     * Set the beat information. Both beats and beatType must be defined. If only one of
+     * them is undefined, both of them will be saved as undefined.
+     *
+     * @param beats The numerator of the time signature.
+     * @param beatType The denominator of the time signature.
+     */
+    void SetBeat(int beats, int beatType);
+
+    /**
+     * Set this measure as an ending.
+     *
+     * @param isEnding True if this is an ending, false otherwise.
+     */
+    void SetEnding(bool isEnding);
+
+    /**
+     * @copydoc Measure::MeasureAttributes::SetFifths()
+     */
+    void SetFifths(int fifths);
+
+    /**
+     * Set the number of time the repeat at the end of this measure must be performed.
+     *
+     * @param nEndRepeat The number of time the repeat must be performed or 0 if this
+     * measure does not end a repeat.
+     */
+    void SetNEndRepeat(int nEndRepeat);
+
+    /**
+     * Set this measure to start a repeat.
+     *
+     * @param isEnding True if this is the start of a repeat, false otherwise.
+     */
+    void SetStartRepeat(bool isStartRepeat);
+
+    /**
+     * @copydoc Measure::MeasureAttributes::SetTempo()
+     */
+    void SetTempo(int tempo);
+
+private:
+    bool isEnding; ///< True if this is an ending measure.
+    bool isStartRepeat; ///< True if this measure starts a repeat.
+    int nEndRepeat; ///< Number of times the repeat must be performed.
+    csArray<MeasureElement*> elements; ///< Elements of this measure.
+
+    /**
+     * Attributes of this measure. We keep this allocated object only if the measure
+     * actually have some attributes that are defined.
+     */
+    MeasureAttributes* attributes;
+
+    /**
+     * Create a new MeasureAttributes object if it does not exists already.
+     */
+    void CreateAttributes();
+
+    /**
+     * Delete the attributes (if it exists) and free the memory.
+     */
+    void DeleteAttributes();
+
+    /**
+     * Returns the biggest duration that can be represented on the score which is less
+     * or equal to the given one.
+     *
+     * @param duration The maximum duration that must be returned.
+     * @return The duration value.
+     */
+    Duration GetBiggestDuration(int duration) const;
+
+    /**
+     * Delete the MeasureAttributes object if all its attributes are undefined.
+     */
+    void UpdateAttributes();
 };
 
 //--------------------------------------------------
@@ -340,7 +593,7 @@ struct ScoreContext
     /**
      * Attributes specified in the score up to now. Must be updated at every measure.
      */
-    Measure::MeasureAttributes prevAttributes;
+    Measure::MeasureAttributes measureAttributes;
 };
 
 /** @} */
