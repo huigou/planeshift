@@ -37,7 +37,6 @@ LinkStaticPlugins psserver_static :
   null2d
   null3d
   nullmesh
-  rendstep_std
   rm_unshadowed
   reporter
   shadermgr
