@@ -46,7 +46,7 @@
 #define FULL_DEBUG_DUMP
 //
 
-MsgHandler *psMessageCracker::msghandler;
+MsgHandler* psMessageCracker::msghandler;
 
 
 void psMessageCracker::SendMessage()
@@ -57,7 +57,7 @@ void psMessageCracker::SendMessage()
 }
 
 
-void psMessageCracker::Multicast(csArray<PublishDestination>& multi, uint32_t except, float range)
+void psMessageCracker::Multicast(csArray<PublishDestination> &multi, uint32_t except, float range)
 {
     CS_ASSERT(valid);
     CS_ASSERT(msg);
@@ -75,28 +75,28 @@ void psMessageCracker::FireEvent()
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharDeleteMessage,MSGTYPE_CHAR_DELETE);
 
-psCharDeleteMessage::psCharDeleteMessage( const char* name, uint32_t client )
+psCharDeleteMessage::psCharDeleteMessage(const char* name, uint32_t client)
 {
     if(!name)
         return;
 
-    msg.AttachNew(new MsgEntry( strlen(name) + 1 ));
+    msg.AttachNew(new MsgEntry(strlen(name) + 1));
 
-    msg->SetType( MSGTYPE_CHAR_DELETE );
+    msg->SetType(MSGTYPE_CHAR_DELETE);
     msg->clientnum = client;
-    msg->Add( name );
+    msg->Add(name);
 
-    valid = !(msg->overrun );
+    valid = !(msg->overrun);
 }
 
-psCharDeleteMessage::psCharDeleteMessage( MsgEntry* message )
+psCharDeleteMessage::psCharDeleteMessage(MsgEntry* message)
 {
     if(!message)
         return;
     charName = message->GetStr();
 }
 
-csString psCharDeleteMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCharDeleteMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -111,7 +111,7 @@ csString psCharDeleteMessage::ToString(NetBase::AccessPointers * /*accessPointer
 PSF_IMPLEMENT_MSG_FACTORY(psPreAuthenticationMessage,MSGTYPE_PREAUTHENTICATE);
 
 psPreAuthenticationMessage::psPreAuthenticationMessage(uint32_t clientnum,
-    uint32_t version)
+        uint32_t version)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
@@ -124,9 +124,9 @@ psPreAuthenticationMessage::psPreAuthenticationMessage(uint32_t clientnum,
     valid=!(msg->overrun);
 }
 
-psPreAuthenticationMessage::psPreAuthenticationMessage(MsgEntry *message)
+psPreAuthenticationMessage::psPreAuthenticationMessage(MsgEntry* message)
 {
-    if (!message)
+    if(!message)
         return;
 
     netversion = message->GetUInt32();
@@ -140,7 +140,7 @@ bool psPreAuthenticationMessage::NetVersionOk()
     return netversion == PS_NETVERSION;
 }
 
-csString psPreAuthenticationMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPreAuthenticationMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -154,10 +154,10 @@ csString psPreAuthenticationMessage::ToString(NetBase::AccessPointers * /*access
 PSF_IMPLEMENT_MSG_FACTORY(psAuthenticationMessage,MSGTYPE_AUTHENTICATE);
 
 psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
-    const char *userid,const char *password, const char* os, const char* gfxcard, const char* gfxversion, const char *password256, uint32_t version)
+        const char* userid,const char* password, const char* os, const char* gfxcard, const char* gfxversion, const char* password256, uint32_t version)
 {
 
-    if (!userid || !password)
+    if(!userid || !password)
     {
         msg = NULL;
         return;
@@ -181,9 +181,9 @@ psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
     valid=!(msg->overrun);
 }
 
-psAuthenticationMessage::psAuthenticationMessage(MsgEntry *message)
+psAuthenticationMessage::psAuthenticationMessage(MsgEntry* message)
 {
-    if (!message)
+    if(!message)
         return;
 
     netversion = message->GetUInt32();
@@ -192,7 +192,7 @@ psAuthenticationMessage::psAuthenticationMessage(MsgEntry *message)
     os_ = message->GetStr();
     gfxcard_ = message->GetStr();
     gfxversion_ = message->GetStr();
-    if (!message->IsEmpty())
+    if(!message->IsEmpty())
     {
         sPassword256 = message->GetStr();
     }
@@ -206,7 +206,7 @@ bool psAuthenticationMessage::NetVersionOk()
     return netversion == PS_NETVERSION;
 }
 
-csString psAuthenticationMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psAuthenticationMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -220,17 +220,17 @@ csString psAuthenticationMessage::ToString(NetBase::AccessPointers * /*accessPoi
 
 PSF_IMPLEMENT_MSG_FACTORY(psAuthApprovedMessage,MSGTYPE_AUTHAPPROVED);
 
-psAuthApprovedMessage::psAuthApprovedMessage (uint32_t clientnum,
-    PID playerID, uint8_t numChars)
+psAuthApprovedMessage::psAuthApprovedMessage(uint32_t clientnum,
+        PID playerID, uint8_t numChars)
 {
     msgClientValidToken = clientnum;
     msgPlayerID = playerID;
     msgNumOfChars = numChars;
 }
 
-psAuthApprovedMessage::psAuthApprovedMessage(MsgEntry *message)
+psAuthApprovedMessage::psAuthApprovedMessage(MsgEntry* message)
 {
-    if (!message)
+    if(!message)
         return;
 
     msgClientValidToken = message->GetUInt32();
@@ -238,9 +238,9 @@ psAuthApprovedMessage::psAuthApprovedMessage(MsgEntry *message)
     msgNumOfChars       = message->GetUInt8();
 }
 
-void psAuthApprovedMessage::AddCharacter(const char *fullname, const char *race,
-                                         const char *mesh, const char *traits,
-                                         const char *equipment)
+void psAuthApprovedMessage::AddCharacter(const char* fullname, const char* race,
+        const char* mesh, const char* traits,
+        const char* equipment)
 {
     contents.Push(fullname);
     contents.Push(race);
@@ -249,10 +249,10 @@ void psAuthApprovedMessage::AddCharacter(const char *fullname, const char *race,
     contents.Push(equipment);
 }
 
-void psAuthApprovedMessage::GetCharacter(MsgEntry *message,
-                                         csString& fullname, csString& race,
-                                         csString& mesh, csString& traits,
-                                         csString& equipment)
+void psAuthApprovedMessage::GetCharacter(MsgEntry* message,
+        csString &fullname, csString &race,
+        csString &mesh, csString &traits,
+        csString &equipment)
 {
     fullname  = message->GetStr();
     race      = message->GetStr();
@@ -265,7 +265,7 @@ void psAuthApprovedMessage::ConstructMsg()
 {
     size_t msgSize = sizeof(uint32_t)*2 + sizeof(uint8_t);
 
-    for (size_t i = 0; i < contents.GetSize(); ++i)
+    for(size_t i = 0; i < contents.GetSize(); ++i)
         msgSize += strlen(contents[i]) + 1;
 
     msg.AttachNew(new MsgEntry(msgSize));
@@ -277,11 +277,11 @@ void psAuthApprovedMessage::ConstructMsg()
     msg->Add(msgPlayerID.Unbox());
     msg->Add(msgNumOfChars);
 
-    for (size_t i = 0; i < contents.GetSize(); ++i)
+    for(size_t i = 0; i < contents.GetSize(); ++i)
         msg->Add(contents[i]);
 }
 
-csString psAuthApprovedMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psAuthApprovedMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -295,7 +295,7 @@ csString psAuthApprovedMessage::ToString(NetBase::AccessPointers * /*accessPoint
 
 PSF_IMPLEMENT_MSG_FACTORY(psPreAuthApprovedMessage,MSGTYPE_PREAUTHAPPROVED);
 
-psPreAuthApprovedMessage::psPreAuthApprovedMessage (uint32_t clientnum)
+psPreAuthApprovedMessage::psPreAuthApprovedMessage(uint32_t clientnum)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
@@ -308,9 +308,9 @@ psPreAuthApprovedMessage::psPreAuthApprovedMessage (uint32_t clientnum)
     valid=!(msg->overrun);
 }
 
-psPreAuthApprovedMessage::psPreAuthApprovedMessage(MsgEntry *message)
+psPreAuthApprovedMessage::psPreAuthApprovedMessage(MsgEntry* message)
 {
-    if (!message)
+    if(!message)
         return;
 
     ClientNum = message->GetUInt32();
@@ -319,7 +319,7 @@ psPreAuthApprovedMessage::psPreAuthApprovedMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psPreAuthApprovedMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPreAuthApprovedMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -333,12 +333,12 @@ csString psPreAuthApprovedMessage::ToString(NetBase::AccessPointers * /*accessPo
 PSF_IMPLEMENT_MSG_FACTORY(psAuthRejectedMessage,MSGTYPE_AUTHREJECTED);
 
 psAuthRejectedMessage::psAuthRejectedMessage(uint32_t clientnum,
-    const char *reason)
+        const char* reason)
 {
-    if (!reason)
+    if(!reason)
         return;
 
-    msg.AttachNew(new MsgEntry( strlen(reason)+1 ));
+    msg.AttachNew(new MsgEntry(strlen(reason)+1));
 
     msg->SetType(MSGTYPE_AUTHREJECTED);
     msg->clientnum      = clientnum;
@@ -349,9 +349,9 @@ psAuthRejectedMessage::psAuthRejectedMessage(uint32_t clientnum,
     valid=!(msg->overrun);
 }
 
-psAuthRejectedMessage::psAuthRejectedMessage(MsgEntry *message)
+psAuthRejectedMessage::psAuthRejectedMessage(MsgEntry* message)
 {
-    if (!message)
+    if(!message)
         return;
 
     msgReason = message->GetStr();
@@ -360,7 +360,7 @@ psAuthRejectedMessage::psAuthRejectedMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psAuthRejectedMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psAuthRejectedMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -373,9 +373,9 @@ csString psAuthRejectedMessage::ToString(NetBase::AccessPointers * /*accessPoint
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharacterPickerMessage,MSGTYPE_AUTHCHARACTER);
 
-psCharacterPickerMessage::psCharacterPickerMessage( const char* characterName )
+psCharacterPickerMessage::psCharacterPickerMessage(const char* characterName)
 {
-    msg.AttachNew(new MsgEntry( strlen(characterName)+1 ));
+    msg.AttachNew(new MsgEntry(strlen(characterName)+1));
 
     msg->SetType(MSGTYPE_AUTHCHARACTER);
     msg->clientnum      = 0;
@@ -387,7 +387,7 @@ psCharacterPickerMessage::psCharacterPickerMessage( const char* characterName )
 }
 
 
-psCharacterPickerMessage::psCharacterPickerMessage( MsgEntry* message )
+psCharacterPickerMessage::psCharacterPickerMessage(MsgEntry* message)
 {
     characterName = message->GetStr();
 
@@ -395,7 +395,7 @@ psCharacterPickerMessage::psCharacterPickerMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psCharacterPickerMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCharacterPickerMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -422,7 +422,7 @@ psCharacterApprovedMessage::psCharacterApprovedMessage(uint32_t clientnum)
 
 psCharacterApprovedMessage::psCharacterApprovedMessage(MsgEntry* /*message*/)
 {
-   // No data, always valid
+    // No data, always valid
 }
 
 csString psCharacterApprovedMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
@@ -439,10 +439,10 @@ csString psCharacterApprovedMessage::ToString(NetBase::AccessPointers* /*accessP
 
 PSF_IMPLEMENT_MSG_FACTORY(psChatMessage,MSGTYPE_CHAT);
 
-psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char *person, const char * other,
-                 const char *chatMessage, uint8_t type, bool translate, uint16_t channelID)
+psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char* person, const char* other,
+                             const char* chatMessage, uint8_t type, bool translate, uint16_t channelID)
 {
-    if (!chatMessage || !person)
+    if(!chatMessage || !person)
         return;
 
     iChatType = type;
@@ -453,7 +453,7 @@ psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char *person, con
 
     bool includeOther = iChatType == CHAT_ADVISOR;
     size_t sz = strlen(person) + 1 + strlen(chatMessage) + 1 + sizeof(uint8_t)*2 + sizeof(uint32_t);
-    if (includeOther)
+    if(includeOther)
         sz += strlen(other) + 1;
 
     bool chanMsg = iChatType == CHAT_CHANNEL;
@@ -472,16 +472,16 @@ psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char *person, con
     msg->Add(actorid.Unbox());
     if(chanMsg)
         msg->Add(channelID);
-    if (includeOther)
+    if(includeOther)
         msg->Add(other);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psChatMessage::psChatMessage(MsgEntry *message)
+psChatMessage::psChatMessage(MsgEntry* message)
 {
-    if (!message)
+    if(!message)
         return;
 
     iChatType = message->GetUInt8();
@@ -494,7 +494,7 @@ psChatMessage::psChatMessage(MsgEntry *message)
     actor     = message->GetUInt32();
     if(chanMsg)
         channelID = message->GetUInt16();
-    if (includeOther && !message->IsEmpty())
+    if(includeOther && !message->IsEmpty())
         sOther = message->GetStr();
 
     // Sets valid flag based on message overrun state
@@ -503,7 +503,7 @@ psChatMessage::psChatMessage(MsgEntry *message)
 }
 
 
-csString psChatMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psChatMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -516,27 +516,44 @@ csString psChatMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
     return msgtext;
 }
 
-const char *psChatMessage::GetTypeText()
+const char* psChatMessage::GetTypeText()
 {
-    switch (iChatType)
+    switch(iChatType)
     {
-        case CHAT_SAY:        return "Say";
-        case CHAT_TELL:       return "Tell";
-        case CHAT_AWAY:       return "Tell";
-        case CHAT_NPC:        return "TellNPC";
-        case CHAT_TELLSELF:   return "TellSelf";
-        case CHAT_GROUP:      return "GroupMsg";
-        case CHAT_SHOUT:      return "Shout";
-        case CHAT_GM:         return "GM";
-        case CHAT_GUILD:      return "GuildChat";
-        case CHAT_ALLIANCE:   return "AllianceChat";
-        case CHAT_AUCTION:    return "Auction";
-        case CHAT_PET_ACTION: return "Action";
-        case CHAT_REPORT:     return "Report";
-        case CHAT_ADVISOR:    return "Advisor";
-        case CHAT_ADVICE:     return "Advice";
-        case CHAT_CHANNEL:    return "Channel";
-        default:              return "Unknown";
+        case CHAT_SAY:
+            return "Say";
+        case CHAT_TELL:
+            return "Tell";
+        case CHAT_AWAY:
+            return "Tell";
+        case CHAT_NPC:
+            return "TellNPC";
+        case CHAT_TELLSELF:
+            return "TellSelf";
+        case CHAT_GROUP:
+            return "GroupMsg";
+        case CHAT_SHOUT:
+            return "Shout";
+        case CHAT_GM:
+            return "GM";
+        case CHAT_GUILD:
+            return "GuildChat";
+        case CHAT_ALLIANCE:
+            return "AllianceChat";
+        case CHAT_AUCTION:
+            return "Auction";
+        case CHAT_PET_ACTION:
+            return "Action";
+        case CHAT_REPORT:
+            return "Report";
+        case CHAT_ADVISOR:
+            return "Advisor";
+        case CHAT_ADVICE:
+            return "Advice";
+        case CHAT_CHANNEL:
+            return "Channel";
+        default:
+            return "Unknown";
     }
 }
 
@@ -563,7 +580,7 @@ psChannelJoinMessage::psChannelJoinMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psChannelJoinMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psChannelJoinMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString text;
     text.Format("Channel name: %s", channel.GetData());
@@ -595,7 +612,7 @@ psChannelJoinedMessage::psChannelJoinedMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psChannelJoinedMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psChannelJoinedMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString text;
     text.Format("Channel ID: %d, name: %s", id, channel.GetData());
@@ -625,7 +642,7 @@ psChannelLeaveMessage::psChannelLeaveMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psChannelLeaveMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psChannelLeaveMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString text;
     text.Format("Channel ID: %d", chanID);
@@ -635,7 +652,7 @@ csString psChannelLeaveMessage::ToString(NetBase::AccessPointers * /*accessPoint
 // ---------------------------------------------------------------------------
 
 psSystemMessageSafe::psSystemMessageSafe(uint32_t clientnum, uint32_t msgtype,
-                 const char *text)
+        const char* text)
 {
     char str[MAXSYSTEMMSGSIZE];
 
@@ -658,7 +675,7 @@ psSystemMessageSafe::psSystemMessageSafe(uint32_t clientnum, uint32_t msgtype,
 
 PSF_IMPLEMENT_MSG_FACTORY(psSystemMessage,MSGTYPE_SYSTEM);
 
-psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char *fmt, ... )
+psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char* fmt, ...)
 {
     char str[MAXSYSTEMMSGSIZE];
     va_list args;
@@ -685,7 +702,7 @@ psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const cha
     valid=!(msg->overrun);
 }
 
-psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char *fmt, va_list args )
+psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const char* fmt, va_list args)
 {
     char str[MAXSYSTEMMSGSIZE];
 
@@ -704,7 +721,7 @@ psSystemMessage::psSystemMessage(uint32_t clientnum, uint32_t msgtype, const cha
     valid=!(msg->overrun);
 }
 
-psSystemMessage::psSystemMessage(MsgEntry *message)
+psSystemMessage::psSystemMessage(MsgEntry* message)
 {
     type    = message->GetUInt32();
     msgline = message->GetStr();
@@ -713,7 +730,7 @@ psSystemMessage::psSystemMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psSystemMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psSystemMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -726,26 +743,26 @@ csString psSystemMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psPetitionMessage,MSGTYPE_PETITION);
 
-psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo> *petition, const char* errMsg,
-                     bool succeed, int type, bool gm)
+psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>* petition, const char* errMsg,
+                                     bool succeed, int type, bool gm)
 {
     size_t petitionLen = (petition != NULL ? petition->GetSize():0);
     size_t messageSize = 0;
     size_t errLen = 0;
-    if ( errMsg )
+    if(errMsg)
     {
         errLen = strlen(errMsg)+1;
     }
-    psPetitionInfo *curr;
+    psPetitionInfo* curr;
 
-    for (size_t i = 0; i < petitionLen; i++)
+    for(size_t i = 0; i < petitionLen; i++)
     {
         curr = &petition->Get(i);
 
         messageSize+= sizeof(int32_t);                // Petition ID
         messageSize+= curr->petition.Length()+1;      // Petition String
         messageSize+= curr->status.Length()+1;        // Petition status string
-        if ( !gm )
+        if(!gm)
         {
             messageSize+=curr->created.Length()+1;
             messageSize+=curr->assignedgm.Length()+1;
@@ -769,8 +786,8 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
                                sizeof(int32_t)));    // Space for type int32_t
 
 
-     //+ (maxPetitionTextLen + 250)* (petitionLen+1) + sizeof(errMsg) +
-     //       sizeof(succeed) + sizeof(int32_t) + sizeof(gm));
+    //+ (maxPetitionTextLen + 250)* (petitionLen+1) + sizeof(errMsg) +
+    //       sizeof(succeed) + sizeof(int32_t) + sizeof(gm));
 
     msg->SetType(MSGTYPE_PETITION);
     msg->clientnum      = clientnum;
@@ -778,8 +795,8 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
 
     msg->Add((int32_t)petitionLen);
     msg->Add(gm);
-    psPetitionInfo *current;
-    for (size_t i = 0; i < petitionLen; i++)
+    psPetitionInfo* current;
+    for(size_t i = 0; i < petitionLen; i++)
     {
         current = &petition->Get(i);
         msg->Add((int32_t)current->id);
@@ -788,7 +805,7 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
         msg->Add(current->created.GetData());
         msg->Add(current->assignedgm.GetData());
         // Add specified fields based upon GM status or not
-        if (!gm)
+        if(!gm)
         {
             msg->Add(current->resolution.GetData());
         }
@@ -806,18 +823,18 @@ psPetitionMessage::psPetitionMessage(uint32_t clientnum, csArray<psPetitionInfo>
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 
-    if (valid)
+    if(valid)
         msg->ClipToCurrentSize();
 }
 
-psPetitionMessage::psPetitionMessage(MsgEntry *message)
+psPetitionMessage::psPetitionMessage(MsgEntry* message)
 {
     // Get the petitions
     int count = message->GetInt32();
     isGM = message->GetBool();
     psPetitionInfo current;
 
-    for (int i = 0; i < count; i++)
+    for(int i = 0; i < count; i++)
     {
         // Set each property in psPetitionInfo:
         current.id = message->GetInt32();
@@ -827,7 +844,7 @@ psPetitionMessage::psPetitionMessage(MsgEntry *message)
         current.assignedgm = message->GetStr();
 
         // Check GM fields or user fields:
-        if (!isGM)
+        if(!isGM)
         {
             current.resolution = message->GetStr();
         }
@@ -850,13 +867,13 @@ psPetitionMessage::psPetitionMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psPetitionMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPetitionMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("IsGM: %s",(isGM?"true":"false"));
 
-    for (size_t i = 0; i < petitions.GetSize(); i++)
+    for(size_t i = 0; i < petitions.GetSize(); i++)
     {
         psPetitionInfo current = petitions[i];
 
@@ -865,7 +882,7 @@ csString psPetitionMessage::ToString(NetBase::AccessPointers * /*accessPointers*
                           current.status.GetDataSafe());
 
         // Check GM fields or user fields:
-        if (!isGM)
+        if(!isGM)
         {
             msgtext.AppendFmt(" Created: '%s' AssignedGM: '%s')",
                               current.created.GetDataSafe(),
@@ -905,11 +922,11 @@ psPetitionRequestMessage::psPetitionRequestMessage(bool gm, const char* requestC
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 
-    if (valid)
+    if(valid)
         msg->ClipToCurrentSize();
 }
 
-psPetitionRequestMessage::psPetitionRequestMessage(MsgEntry *message)
+psPetitionRequestMessage::psPetitionRequestMessage(MsgEntry* message)
 {
     isGM = message->GetBool();
     request = message->GetStr();
@@ -920,7 +937,7 @@ psPetitionRequestMessage::psPetitionRequestMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psPetitionRequestMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPetitionRequestMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -947,11 +964,11 @@ psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, int gmSets)
     msg->Add(gmSettings);
 
     valid=!(msg->overrun);
-    if (valid)
+    if(valid)
         msg->ClipToCurrentSize();
 }
 
-psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerArray, int type)
+psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo>* playerArray, int type)
 {
     size_t playerCount = (playerArray == NULL ? 0 : playerArray->GetSize());
     msg.AttachNew(new MsgEntry(sizeof(playerCount) + 250 * (playerCount+1) + sizeof(type)));
@@ -961,7 +978,7 @@ psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerAr
 
     msg->Add((int32_t)type);
     msg->Add((uint32_t)playerCount);
-    for (size_t i=0; i<playerCount; i++)
+    for(size_t i=0; i<playerCount; i++)
     {
         PlayerInfo playerInfo = playerArray->Get(i);
 
@@ -974,21 +991,21 @@ psGMGuiMessage::psGMGuiMessage(uint32_t clientnum, csArray<PlayerInfo> *playerAr
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
-    if (valid)
+    if(valid)
         msg->ClipToCurrentSize();
 }
 
 
-psGMGuiMessage::psGMGuiMessage(MsgEntry *message)
+psGMGuiMessage::psGMGuiMessage(MsgEntry* message)
 {
     type = message->GetInt32();
 
-    if (type == TYPE_GETGMSETTINGS)
+    if(type == TYPE_GETGMSETTINGS)
         gmSettings = message->GetInt32();
     else
     {
         size_t playerCount = message->GetUInt32();
-        for (size_t i=0; i<playerCount; i++)
+        for(size_t i=0; i<playerCount; i++)
         {
             PlayerInfo playerInfo;
             playerInfo.name = message->GetStr();
@@ -1005,11 +1022,11 @@ psGMGuiMessage::psGMGuiMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psGMGuiMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGMGuiMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    for (size_t i=0; i < players.GetSize(); i++)
+    for(size_t i=0; i < players.GetSize(); i++)
     {
         PlayerInfo p = players[i];
         msgtext.AppendFmt(" %zu(Name: '%s' Last: '%s'"
@@ -1029,7 +1046,7 @@ csString psGMGuiMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGuildCmdMessage,MSGTYPE_GUILDCMD);
 
-psGuildCmdMessage::psGuildCmdMessage(const char *cmd)
+psGuildCmdMessage::psGuildCmdMessage(const char* cmd)
 {
     msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
@@ -1042,7 +1059,7 @@ psGuildCmdMessage::psGuildCmdMessage(const char *cmd)
     valid=!(msg->overrun);
 }
 
-psGuildCmdMessage::psGuildCmdMessage(MsgEntry *message)
+psGuildCmdMessage::psGuildCmdMessage(MsgEntry* message)
 {
     valid = true;
     level = 0;
@@ -1051,65 +1068,65 @@ psGuildCmdMessage::psGuildCmdMessage(MsgEntry *message)
 
     command = words[0];
 
-    if (command == "/newguild" || command == "/endguild" || command == "/guildname" || command == "/guildpoints" || command == "/allianceleader")
+    if(command == "/newguild" || command == "/endguild" || command == "/guildname" || command == "/guildpoints" || command == "/allianceleader")
     {
         guildname = words.GetTail(1);
         return;
     }
-    if (command == "/guildinvite" || command == "/guildremove" || command == "/allianceinvite" || command == "/getmemberpermissions")
+    if(command == "/guildinvite" || command == "/guildremove" || command == "/allianceinvite" || command == "/getmemberpermissions")
     {
         player = words[1];
         return;
     }
-    if (command == "/setmemberpermissions")
+    if(command == "/setmemberpermissions")
     {
         player = words[1];
         subCmd = words[2];
         permission = words[3];
         return;
     }
-    if (command == "/guildlevel")
+    if(command == "/guildlevel")
     {
         level = words.GetInt(1);
         levelname = words.GetTail(2);
         return;
     }
-    if (command == "/guildmembers")
+    if(command == "/guildmembers")
     {
         level = words.GetInt(1);
         return;
     }
-    if (command == "/guildpromote")
+    if(command == "/guildpromote")
     {
         player = words[1];
         level = words.GetInt(2);
         return;
     }
-    if (command == "/guildsecret")
+    if(command == "/guildsecret")
     {
         secret = words[1];
         return;
     }
-    if (command == "/guildweb")
+    if(command == "/guildweb")
     {
         web_page = words.GetTail(1);
         return;
     }
-    if (command == "/guildmotd")
+    if(command == "/guildmotd")
     {
         motd = words.GetTail(1);
         return;
     }
-    if (command == "/newalliance" || command == "/allianceremove")
+    if(command == "/newalliance" || command == "/allianceremove")
     {
         alliancename = words.GetTail(1);
         return;
     }
-    if (command == "/endalliance" ||
-             command == "/allianceleave" ||
-             command == "/guildinfo" ||
-             command == "/guildwar"    ||
-             command == "/guildyield" )
+    if(command == "/endalliance" ||
+            command == "/allianceleave" ||
+            command == "/guildinfo" ||
+            command == "/guildwar"    ||
+            command == "/guildyield")
     {
         return;
     }
@@ -1117,62 +1134,62 @@ psGuildCmdMessage::psGuildCmdMessage(MsgEntry *message)
     valid = false;
 }
 
-csString psGuildCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGuildCmdMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Command: '%s'",command.GetDataSafe());
 
-    if (command == "/newguild" || command == "/endguild" || command == "/guildname" || command == "/guildpoints" )
+    if(command == "/newguild" || command == "/endguild" || command == "/guildname" || command == "/guildpoints")
     {
         msgtext.AppendFmt("GuildName: '%s'",guildname.GetDataSafe());
         return msgtext;
     }
-    if (command == "/guildinvite" || command == "/guildremove" || command == "/allianceinvite")
+    if(command == "/guildinvite" || command == "/guildremove" || command == "/allianceinvite")
     {
         msgtext.AppendFmt("Player: '%s'",player.GetDataSafe());
         return msgtext;
     }
-    if (command == "/guildlevel")
+    if(command == "/guildlevel")
     {
         msgtext.AppendFmt("Level: %d LevelName: '%s'",level,levelname.GetDataSafe());
         return msgtext;
     }
-    if (command == "/guildmembers")
+    if(command == "/guildmembers")
     {
         msgtext.AppendFmt("Level: %d",level);
         return msgtext;
     }
-    if (command == "/guildpromote")
+    if(command == "/guildpromote")
     {
         msgtext.AppendFmt("Player: '%s' Level: %d",player.GetDataSafe(),level);
         return msgtext;
     }
-    if (command == "/guildsecret")
+    if(command == "/guildsecret")
     {
         msgtext.AppendFmt("Secret: '%s'",secret.GetDataSafe());
         return msgtext;
     }
-    if (command == "/guildweb")
+    if(command == "/guildweb")
     {
         msgtext.AppendFmt("Web page: '%s'",web_page.GetDataSafe());
         return msgtext;
     }
-    if (command == "/guildmotd")
+    if(command == "/guildmotd")
     {
         msgtext.AppendFmt("Motd: '%s'",motd.GetDataSafe());
         return msgtext;
     }
-    if (command == "/newalliance" || command == "/allianceremove" || command == "/allianceleader")
+    if(command == "/newalliance" || command == "/allianceremove" || command == "/allianceleader")
     {
         msgtext.AppendFmt("AlianceName: '%s'",alliancename.GetDataSafe());
         return msgtext;
     }
-    if (command == "/endalliance" ||
-             command == "/allianceleave" ||
-             command == "/guildinfo" ||
-             command == "/guildwar"    ||
-             command == "/guildyield" )
+    if(command == "/endalliance" ||
+            command == "/allianceleave" ||
+            command == "/guildinfo" ||
+            command == "/guildwar"    ||
+            command == "/guildyield")
     {
         return msgtext;
     }
@@ -1186,8 +1203,8 @@ csString psGuildCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUIGuildMessage,MSGTYPE_GUIGUILD);
 
-psGUIGuildMessage::psGUIGuildMessage( uint32_t command,
-                                      csString commandData)
+psGUIGuildMessage::psGUIGuildMessage(uint32_t command,
+                                     csString commandData)
 {
     msg.AttachNew(new MsgEntry(sizeof(command)      +
                                commandData.Length() +
@@ -1196,16 +1213,16 @@ psGUIGuildMessage::psGUIGuildMessage( uint32_t command,
     msg->SetType(MSGTYPE_GUIGUILD);
     msg->clientnum  = 0;
 
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(command);
+    msg->Add(commandData);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUIGuildMessage::psGUIGuildMessage( uint32_t clientNum,
-                                      uint32_t command,
-                                      csString commandData)
+psGUIGuildMessage::psGUIGuildMessage(uint32_t clientNum,
+                                     uint32_t command,
+                                     csString commandData)
 {
     msg.AttachNew(new MsgEntry(sizeof(command)      +
                                commandData.Length() +
@@ -1214,16 +1231,16 @@ psGUIGuildMessage::psGUIGuildMessage( uint32_t clientNum,
     msg->SetType(MSGTYPE_GUIGUILD);
     msg->clientnum  = clientNum;
 
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(command);
+    msg->Add(commandData);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUIGuildMessage::psGUIGuildMessage( MsgEntry* message )
+psGUIGuildMessage::psGUIGuildMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     command   = message->GetUInt32();
@@ -1233,7 +1250,7 @@ psGUIGuildMessage::psGUIGuildMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUIGuildMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUIGuildMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -1247,7 +1264,7 @@ csString psGUIGuildMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psGroupCmdMessage,MSGTYPE_GROUPCMD);
 
-psGroupCmdMessage::psGroupCmdMessage(const char *cmd)
+psGroupCmdMessage::psGroupCmdMessage(const char* cmd)
 {
     msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
@@ -1260,7 +1277,7 @@ psGroupCmdMessage::psGroupCmdMessage(const char *cmd)
     valid=!(msg->overrun);
 }
 
-psGroupCmdMessage::psGroupCmdMessage(uint32_t clientnum,const char *cmd)
+psGroupCmdMessage::psGroupCmdMessage(uint32_t clientnum,const char* cmd)
 {
     msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
@@ -1275,22 +1292,22 @@ psGroupCmdMessage::psGroupCmdMessage(uint32_t clientnum,const char *cmd)
 }
 
 
-psGroupCmdMessage::psGroupCmdMessage(MsgEntry *message)
+psGroupCmdMessage::psGroupCmdMessage(MsgEntry* message)
 {
     valid = true;
 
     WordArray words(message->GetStr());
     command = words[0];
 
-    if (command == "/invite" || command == "/groupremove" || command == "/groupchallenge")
+    if(command == "/invite" || command == "/groupremove" || command == "/groupchallenge")
     {
         player = words[1];
         return;
     }
-    if (command == "/disband" ||
-         command == "/leavegroup" ||
-         command == "/groupmembers" ||
-         command == "/groupyield")
+    if(command == "/disband" ||
+            command == "/leavegroup" ||
+            command == "/groupmembers" ||
+            command == "/groupyield")
     {
         return;
     }
@@ -1298,17 +1315,17 @@ psGroupCmdMessage::psGroupCmdMessage(MsgEntry *message)
     valid = false;
 }
 
-csString psGroupCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGroupCmdMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Command: '%s'", command.GetDataSafe());
-    if (command == "/invite" || command == "/groupremove")
+    if(command == "/invite" || command == "/groupremove")
     {
         msgtext.AppendFmt("Player: '%s'", player.GetDataSafe());
         return msgtext;
     }
-    if (command == "/disband" ||
+    if(command == "/disband" ||
             command == "/leavegroup" ||
             command == "/groupmembers")
     {
@@ -1326,7 +1343,7 @@ csString psGroupCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psUserCmdMessage,MSGTYPE_USERCMD);
 
-psUserCmdMessage::psUserCmdMessage(const char *cmd)
+psUserCmdMessage::psUserCmdMessage(const char* cmd)
 {
     msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
@@ -1339,7 +1356,7 @@ psUserCmdMessage::psUserCmdMessage(const char *cmd)
     valid=!(msg->overrun);
 }
 
-psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
+psUserCmdMessage::psUserCmdMessage(MsgEntry* message)
 {
     valid = true;
 
@@ -1347,132 +1364,132 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
 
     command = words[0];
 
-    if (command == "/who")
+    if(command == "/who")
     {
         filter = words.GetTail(1);
         return;
     }
-    if (command == "/buddy")
+    if(command == "/buddy")
     {
         player = words[1]; //Holds the name of the player we are going to add/remove from the buddy list
         action = words[2]; //Holds if the player asked explictly to add or remove a buddy
         return;
     }
-    if ( command == "/pos" )
+    if(command == "/pos")
     {
         player = words.GetTail(1);
         return;
     }
-    if ( command == "/admin" )
+    if(command == "/admin")
     {
         if(words.GetCount() > 1)
             level = words.GetInt(1);
         else
             level = -1;
     }
-    if ( command == "/spawn" ||
-         command == "/unstick" ||
-         command == "/die" ||
-         command == "/train" ||
-         command == "/use" ||
-         command == "/stopattack" ||
-         command == "/starttrading" ||
-         command == "/stoptrading" ||
-         command == "/quests" ||
-         command == "/tip" ||
-         command == "/motd" ||
-         command == "/challenge" ||
-         command == "/yield" ||
-         command == "/npcmenu" ||
-         command == "/sit" ||
-         command == "/stand" ||
-         command == "/unmount")
+    if(command == "/spawn" ||
+            command == "/unstick" ||
+            command == "/die" ||
+            command == "/train" ||
+            command == "/use" ||
+            command == "/stopattack" ||
+            command == "/starttrading" ||
+            command == "/stoptrading" ||
+            command == "/quests" ||
+            command == "/tip" ||
+            command == "/motd" ||
+            command == "/challenge" ||
+            command == "/yield" ||
+            command == "/npcmenu" ||
+            command == "/sit" ||
+            command == "/stand" ||
+            command == "/unmount")
     {
         return;
     }
-    if (command == "/attack")
+    if(command == "/attack")
     {
         stance = words.Get(1);
         return;
     }
-    if (command == "/roll")
+    if(command == "/roll")
     {
-        if (words.GetCount() == 1)
+        if(words.GetCount() == 1)
         {
             dice  = 1;
             sides = 6;
-                        dtarget = 0;
+            dtarget = 0;
         }
-        else if (words.GetCount() == 2)
+        else if(words.GetCount() == 2)
         {
             dice  = 1;
             sides = words.GetInt(1);
-                        dtarget = 0;
+            dtarget = 0;
         }
-        else if (words.GetCount() == 3)
+        else if(words.GetCount() == 3)
         {
             dice = words.GetInt(1);
             sides = words.GetInt(2);
-                        dtarget = 0;
+            dtarget = 0;
         }
-                else
-                {
-                        dice = words.GetInt(1);
-                        sides = words.GetInt(2);
-                        dtarget = words.GetInt(3);
-                }
+        else
+        {
+            dice = words.GetInt(1);
+            sides = words.GetInt(2);
+            dtarget = words.GetInt(3);
+        }
         return;
     }
-    if ( command == "/assist" )
+    if(command == "/assist")
     {
         player = words[1];
         return;
     }
-    if ( command == "/marriage" )
+    if(command == "/marriage")
     {
         action = words.Get(1);
-        if ( action == "propose" )
+        if(action == "propose")
         {
             player = words.Get(2);
             text = words.GetTail(3);
         }
-        else if ( action == "divorce" )
+        else if(action == "divorce")
         {
             text = words.GetTail(2);
         }
         return;
     }
-    if ( command == "/bank" )
+    if(command == "/bank")
     {
         action = words.Get(1);
         return;
     }
-    if ( command == "/pickup" )
+    if(command == "/pickup")
     {
         target = words.Get(1);
         return;
     }
-    if ( command == "/guard" )
+    if(command == "/guard")
     {
         target = words.Get(1);
         action = words.Get(2);
         return;
     }
-    if ( command == "/mount" )
+    if(command == "/mount")
     {
         target = words.Get(1);
         return;
     }
-    if ( command == "/rotate" )
+    if(command == "/rotate")
     {
         target = words.Get(1);
         action = words.GetTail(2);
         return;
     }
-    if ( command == "/loot" )
+    if(command == "/loot")
     {
         short i = 1;
-        
+
         if(words.Get(i) == "roll")
         {
             dice = 1;
@@ -1480,7 +1497,7 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
         }
         else
             dice = 0;
-        
+
         action = words.Get(i);
         if(action == "items")
         {
@@ -1493,43 +1510,43 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry *message)
     valid = false;
 }
 
-csString psUserCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psUserCmdMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Command: '%s'", command.GetDataSafe());
-    if (command == "/who")
+    if(command == "/who")
     {
         msgtext.AppendFmt("Filter: '%s'", filter.GetDataSafe());
         return msgtext;
     }
-    if (command == "/buddy" || command == "/pos" || command == "/assist")
+    if(command == "/buddy" || command == "/pos" || command == "/assist")
     {
         msgtext.AppendFmt("Player: '%s'", player.GetDataSafe());
         return msgtext;
     }
-    if (command == "/attack")
+    if(command == "/attack")
     {
         msgtext.AppendFmt("Stance: '%s'", stance.GetDataSafe());
         return msgtext;
     }
-    if (command == "/roll")
+    if(command == "/roll")
     {
-        if (target)
+        if(target)
             msgtext.AppendFmt("Rolled '%d' '%d' sided dice with a target of '%d'", dice, sides, dtarget);
         else
             msgtext.AppendFmt("Rolled '%d' '%d' sided dice", dice, sides);
         return msgtext;
     }
-    if (command == "/marriage")
+    if(command == "/marriage")
     {
         msgtext.AppendFmt("Action: %s ", action.GetData());
-        if (player.Length())
+        if(player.Length())
             msgtext.AppendFmt("Player: %s ", player.GetData());
         msgtext.AppendFmt("Message: %s", text.GetData());
         return msgtext;
     }
-    if (command == "/loot")
+    if(command == "/loot")
     {
         msgtext.AppendFmt("Action: %s ", action.GetData());
         if(action == "items")
@@ -1542,17 +1559,17 @@ csString psUserCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/
         msgtext.AppendFmt("Loot Action: %s", (dice) ? "LOOT_ROLL" : "LOOT_SELF");
         return msgtext;
     }
-    if (command == "/spawn" || command == "/unstick" ||
-         command == "/die" ||  command == "/train" ||
-         command == "/use" ||  command == "/stopattack" ||
-         command == "/starttrading" ||
-         command == "/stoptrading" || command == "/quests" ||
-         command == "/tip" || command == "/motd" ||
-         command == "/challenge" || command == "/yield" ||
-         command == "/admin" ||
-         command == "/list" ||
-         command == "/sit" || command == "/stand" ||
-         command == "/bank")
+    if(command == "/spawn" || command == "/unstick" ||
+            command == "/die" ||  command == "/train" ||
+            command == "/use" ||  command == "/stopattack" ||
+            command == "/starttrading" ||
+            command == "/stoptrading" || command == "/quests" ||
+            command == "/tip" || command == "/motd" ||
+            command == "/challenge" || command == "/yield" ||
+            command == "/admin" ||
+            command == "/list" ||
+            command == "/sit" || command == "/stand" ||
+            command == "/bank")
     {
         return msgtext;
     }
@@ -1566,7 +1583,7 @@ csString psUserCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/
 
 PSF_IMPLEMENT_MSG_FACTORY(psWorkCmdMessage,MSGTYPE_WORKCMD);
 
-psWorkCmdMessage::psWorkCmdMessage(const char *cmd)
+psWorkCmdMessage::psWorkCmdMessage(const char* cmd)
 {
     msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
@@ -1581,7 +1598,7 @@ psWorkCmdMessage::psWorkCmdMessage(const char *cmd)
 }
 
 
-psWorkCmdMessage::psWorkCmdMessage(MsgEntry *message)
+psWorkCmdMessage::psWorkCmdMessage(MsgEntry* message)
 {
     valid = true;
 
@@ -1589,14 +1606,14 @@ psWorkCmdMessage::psWorkCmdMessage(MsgEntry *message)
 
     command = words[0].Slice(1);
 
-    if (command == "use" ||
-        command == "combine" ||
-        command == "construct")
+    if(command == "use" ||
+            command == "combine" ||
+            command == "construct")
     {
         return;
     }
 
-    if (command == "repair")
+    if(command == "repair")
     {
         repairSlotName = words[1];
         return;
@@ -1605,18 +1622,18 @@ psWorkCmdMessage::psWorkCmdMessage(MsgEntry *message)
     //in case all the above fails conside this a message for handle production (natural resources)
     //this means this must be last. workmanager will check if the command is actually valid
     filter = words[1];
-    if (filter == "for")
+    if(filter == "for")
     {
         filter = words[2];
     }
 }
 
-csString psWorkCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psWorkCmdMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Command: '%s'",command.GetDataSafe());
-    if (command == "/dig")
+    if(command == "/dig")
     {
         msgtext.AppendFmt(" Filter: '%s'",filter.GetDataSafe());
     }
@@ -1628,7 +1645,7 @@ csString psWorkCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/
 
 PSF_IMPLEMENT_MSG_FACTORY(psAdminCmdMessage,MSGTYPE_ADMINCMD);
 
-psAdminCmdMessage::psAdminCmdMessage(const char *cmd)
+psAdminCmdMessage::psAdminCmdMessage(const char* cmd)
 {
     msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
@@ -1642,7 +1659,7 @@ psAdminCmdMessage::psAdminCmdMessage(const char *cmd)
     valid=!(msg->overrun);
 }
 
-psAdminCmdMessage::psAdminCmdMessage(const char *cmd, uint32_t client)
+psAdminCmdMessage::psAdminCmdMessage(const char* cmd, uint32_t client)
 {
     msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
@@ -1656,13 +1673,13 @@ psAdminCmdMessage::psAdminCmdMessage(const char *cmd, uint32_t client)
     valid=!(msg->overrun);
 }
 
-psAdminCmdMessage::psAdminCmdMessage(MsgEntry *message)
+psAdminCmdMessage::psAdminCmdMessage(MsgEntry* message)
 {
     valid = true;
     cmd = message->GetStr();
 }
 
-csString psAdminCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psAdminCmdMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -1675,7 +1692,7 @@ csString psAdminCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psGenericCmdMessage,MSGTYPE_GENERICCMD);
 
-psGenericCmdMessage::psGenericCmdMessage(const char *cmd)
+psGenericCmdMessage::psGenericCmdMessage(const char* cmd)
 {
     msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
@@ -1689,7 +1706,7 @@ psGenericCmdMessage::psGenericCmdMessage(const char *cmd)
     valid=!(msg->overrun);
 }
 
-psGenericCmdMessage::psGenericCmdMessage(const char *cmd, uint32_t client)
+psGenericCmdMessage::psGenericCmdMessage(const char* cmd, uint32_t client)
 {
     msg.AttachNew(new MsgEntry(strlen(cmd) + 1));
 
@@ -1703,13 +1720,13 @@ psGenericCmdMessage::psGenericCmdMessage(const char *cmd, uint32_t client)
     valid=!(msg->overrun);
 }
 
-psGenericCmdMessage::psGenericCmdMessage(MsgEntry *message)
+psGenericCmdMessage::psGenericCmdMessage(MsgEntry* message)
 {
     valid = true;
     cmd = message->GetStr();
 }
 
-csString psGenericCmdMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGenericCmdMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -1722,9 +1739,9 @@ csString psGenericCmdMessage::ToString(NetBase::AccessPointers * /*accessPointer
 
 PSF_IMPLEMENT_MSG_FACTORY(psDisconnectMessage,MSGTYPE_DISCONNECT);
 
-psDisconnectMessage::psDisconnectMessage(uint32_t clientnum, EID actorid, const char *reason)
+psDisconnectMessage::psDisconnectMessage(uint32_t clientnum, EID actorid, const char* reason)
 {
-    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + strlen(reason) + 1 ));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + strlen(reason) + 1));
 
     msg->SetType(MSGTYPE_DISCONNECT);
     msg->clientnum      = clientnum;
@@ -1736,10 +1753,10 @@ psDisconnectMessage::psDisconnectMessage(uint32_t clientnum, EID actorid, const 
     valid=!(msg->overrun);
 }
 
-psDisconnectMessage::psDisconnectMessage(MsgEntry *message)
+psDisconnectMessage::psDisconnectMessage(MsgEntry* message)
 {
     // Is this valid?  Do any psDisconnectMessage messages get created with no data?
-    if (!message)
+    if(!message)
         return;
 
     actor     = message->GetUInt32();
@@ -1749,7 +1766,7 @@ psDisconnectMessage::psDisconnectMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psDisconnectMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psDisconnectMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -1762,9 +1779,9 @@ csString psDisconnectMessage::ToString(NetBase::AccessPointers * /*accessPointer
 
 PSF_IMPLEMENT_MSG_FACTORY(psUserActionMessage,MSGTYPE_USERACTION);
 
-psUserActionMessage::psUserActionMessage(uint32_t clientnum, EID target, const char *action, const char *dfltBehaviors)
+psUserActionMessage::psUserActionMessage(uint32_t clientnum, EID target, const char* action, const char* dfltBehaviors)
 {
-    msg.AttachNew(new MsgEntry( strlen(action) + 1 + strlen(dfltBehaviors) + 1 + sizeof(uint32_t) ));
+    msg.AttachNew(new MsgEntry(strlen(action) + 1 + strlen(dfltBehaviors) + 1 + sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_USERACTION);
     msg->clientnum      = clientnum;
@@ -1777,9 +1794,9 @@ psUserActionMessage::psUserActionMessage(uint32_t clientnum, EID target, const c
     valid=!(msg->overrun);
 }
 
-psUserActionMessage::psUserActionMessage(MsgEntry *message)
+psUserActionMessage::psUserActionMessage(MsgEntry* message)
 {
-    if (!message)
+    if(!message)
         return;
 
     target = EID(message->GetUInt32());
@@ -1790,7 +1807,7 @@ psUserActionMessage::psUserActionMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psUserActionMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psUserActionMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -1804,7 +1821,7 @@ csString psUserActionMessage::ToString(NetBase::AccessPointers * /*accessPointer
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUIInteractMessage,MSGTYPE_GUIINTERACT);
 
-psGUIInteractMessage::psGUIInteractMessage (uint32_t client, uint32_t options, csString command)
+psGUIInteractMessage::psGUIInteractMessage(uint32_t client, uint32_t options, csString command)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint32_t) + command.Length() + 1));
 
@@ -1819,9 +1836,9 @@ psGUIInteractMessage::psGUIInteractMessage (uint32_t client, uint32_t options, c
 }
 
 
-psGUIInteractMessage::psGUIInteractMessage( MsgEntry *message )
+psGUIInteractMessage::psGUIInteractMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     options = message->GetUInt32();
@@ -1831,64 +1848,64 @@ psGUIInteractMessage::psGUIInteractMessage( MsgEntry *message )
     valid=!(message->overrun);
 }
 
-csString psGUIInteractMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUIInteractMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.Append("Options:");
-    if (options & psGUIInteractMessage::PICKUP)
+    if(options & psGUIInteractMessage::PICKUP)
         msgtext.Append(" PICKUP");
-    if (options & psGUIInteractMessage::EXAMINE)
+    if(options & psGUIInteractMessage::EXAMINE)
         msgtext.Append(" EXAMINE");
-    if (options & psGUIInteractMessage::UNLOCK)
+    if(options & psGUIInteractMessage::UNLOCK)
         msgtext.Append(" UNLOCK");
-    if (options & psGUIInteractMessage::LOCK)
+    if(options & psGUIInteractMessage::LOCK)
         msgtext.Append(" LOCK");
-    if (options & psGUIInteractMessage::LOOT)
+    if(options & psGUIInteractMessage::LOOT)
         msgtext.Append(" LOOT");
-    if (options & psGUIInteractMessage::BUYSELL)
+    if(options & psGUIInteractMessage::BUYSELL)
         msgtext.Append(" BUYSELL");
-    if (options & psGUIInteractMessage::GIVE)
+    if(options & psGUIInteractMessage::GIVE)
         msgtext.Append(" GIVE");
-    if (options & psGUIInteractMessage::CLOSE)
+    if(options & psGUIInteractMessage::CLOSE)
         msgtext.Append(" CLOSE");
-    if (options & psGUIInteractMessage::USE)
+    if(options & psGUIInteractMessage::USE)
         msgtext.Append(" USE");
-    if (options & psGUIInteractMessage::PLAYERDESC)
+    if(options & psGUIInteractMessage::PLAYERDESC)
         msgtext.Append(" PLAYERDESC");
-    if (options & psGUIInteractMessage::ATTACK)
+    if(options & psGUIInteractMessage::ATTACK)
         msgtext.Append(" ATTACK");
-    if (options & psGUIInteractMessage::COMBINE)
+    if(options & psGUIInteractMessage::COMBINE)
         msgtext.Append(" COMBINE");
-    if (options & psGUIInteractMessage::CONSTRUCT)
+    if(options & psGUIInteractMessage::CONSTRUCT)
         msgtext.Append(" CONSTRUCT");
-    if (options & psGUIInteractMessage::EXCHANGE)
+    if(options & psGUIInteractMessage::EXCHANGE)
         msgtext.Append(" EXCHANGE");
-    if (options & psGUIInteractMessage::BANK)
+    if(options & psGUIInteractMessage::BANK)
         msgtext.Append(" BANK");
-    if (options & psGUIInteractMessage::TRAIN)
+    if(options & psGUIInteractMessage::TRAIN)
         msgtext.Append(" TRAIN");
-    if (options & psGUIInteractMessage::NPCTALK)
+    if(options & psGUIInteractMessage::NPCTALK)
         msgtext.Append(" NPCTALK");
-    if (options & psGUIInteractMessage::VIEWSTATS)
+    if(options & psGUIInteractMessage::VIEWSTATS)
         msgtext.Append(" VIEWSTATS");
-    if (options & psGUIInteractMessage::DISMISS)
+    if(options & psGUIInteractMessage::DISMISS)
         msgtext.Append(" DISMISS");
-    if (options & psGUIInteractMessage::MARRIAGE)
+    if(options & psGUIInteractMessage::MARRIAGE)
         msgtext.Append(" MARRIAGE");
-    if (options & psGUIInteractMessage::DIVORCE)
+    if(options & psGUIInteractMessage::DIVORCE)
         msgtext.Append(" DIVORCE");
-    if (options & psGUIInteractMessage::ENTER)
+    if(options & psGUIInteractMessage::ENTER)
         msgtext.Append(" ENTER");
-    if (options & psGUIInteractMessage::ENTERLOCKED)
+    if(options & psGUIInteractMessage::ENTERLOCKED)
         msgtext.Append(" ENTERLOCKED");
-    if (options & psGUIInteractMessage::MOUNT)
+    if(options & psGUIInteractMessage::MOUNT)
         msgtext.Append(" MOUNT");
-    if (options & psGUIInteractMessage::UNMOUNT)
+    if(options & psGUIInteractMessage::UNMOUNT)
         msgtext.Append(" UNMOUNT");
-    if (options & psGUIInteractMessage::STORAGE)
+    if(options & psGUIInteractMessage::STORAGE)
         msgtext.Append(" STORAGE");
-    if (options & psGUIInteractMessage::GENERIC)
+    if(options & psGUIInteractMessage::GENERIC)
         msgtext.Append(" GENERIC");
 
     msgtext.AppendFmt(" Command: '%s'",genericCommand.GetDataSafe());
@@ -1901,23 +1918,23 @@ csString psGUIInteractMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psMapActionMessage,MSGTYPE_MAPACTION);
 
-psMapActionMessage::psMapActionMessage( uint32_t clientnum, uint32_t cmd, const char *xml )
+psMapActionMessage::psMapActionMessage(uint32_t clientnum, uint32_t cmd, const char* xml)
 {
-    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + strlen( xml ) + 1));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + strlen(xml) + 1));
 
-    msg->SetType( MSGTYPE_MAPACTION );
+    msg->SetType(MSGTYPE_MAPACTION);
     msg->clientnum      = clientnum;
 
-    msg->Add( cmd );
-    msg->Add( xml );
+    msg->Add(cmd);
+    msg->Add(xml);
 
     // Sets valid flag based on message overrun state
     valid = !(msg->overrun);
 }
 
-psMapActionMessage::psMapActionMessage( MsgEntry *message )
+psMapActionMessage::psMapActionMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     command   = message->GetUInt32();
@@ -1927,19 +1944,33 @@ psMapActionMessage::psMapActionMessage( MsgEntry *message )
     valid = !(message->overrun);
 }
 
-csString psMapActionMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMapActionMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext,cmd;
     cmd = "UNKOWN";
-    switch (command)
+    switch(command)
     {
-    case QUERY:         cmd = "QUERY"; break;
-    case NOT_HANDLED:   cmd = "NOT_HANDLED"; break;
-    case SAVE:          cmd = "SAVE"; break;
-    case LIST:          cmd = "LIST"; break;
-    case LIST_QUERY:    cmd = "LIST_QUERY"; break;
-    case DELETE_ACTION: cmd = "DELETE_ACTION"; break;
-    case RELOAD_CACHE:  cmd = "RELOAD_CACHE"; break;
+        case QUERY:
+            cmd = "QUERY";
+            break;
+        case NOT_HANDLED:
+            cmd = "NOT_HANDLED";
+            break;
+        case SAVE:
+            cmd = "SAVE";
+            break;
+        case LIST:
+            cmd = "LIST";
+            break;
+        case LIST_QUERY:
+            cmd = "LIST_QUERY";
+            break;
+        case DELETE_ACTION:
+            cmd = "DELETE_ACTION";
+            break;
+        case RELOAD_CACHE:
+            cmd = "RELOAD_CACHE";
+            break;
     }
 
 
@@ -1952,7 +1983,7 @@ csString psMapActionMessage::ToString(NetBase::AccessPointers * /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psModeMessage,MSGTYPE_MODE);
 
-psModeMessage::psModeMessage (uint32_t client, EID actorID, uint8_t mode, uint32_t value)
+psModeMessage::psModeMessage(uint32_t client, EID actorID, uint8_t mode, uint32_t value)
 {
     msg.AttachNew(new MsgEntry(2*sizeof(uint32_t) + sizeof(uint8_t)));
 
@@ -1967,9 +1998,9 @@ psModeMessage::psModeMessage (uint32_t client, EID actorID, uint8_t mode, uint32
     valid=!(msg->overrun);
 }
 
-psModeMessage::psModeMessage(MsgEntry *message)
+psModeMessage::psModeMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     actorID = EID(message->GetUInt32());
@@ -1980,7 +2011,7 @@ psModeMessage::psModeMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psModeMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psModeMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -1993,7 +2024,7 @@ csString psModeMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psMoveLockMessage,MSGTYPE_MOVELOCK);
 
-psMoveLockMessage::psMoveLockMessage (uint32_t client, bool lock)
+psMoveLockMessage::psMoveLockMessage(uint32_t client, bool lock)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint8_t)));
 
@@ -2007,9 +2038,9 @@ psMoveLockMessage::psMoveLockMessage (uint32_t client, bool lock)
 }
 
 
-psMoveLockMessage::psMoveLockMessage(MsgEntry *message )
+psMoveLockMessage::psMoveLockMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     locked = message->GetBool();
@@ -2018,7 +2049,7 @@ psMoveLockMessage::psMoveLockMessage(MsgEntry *message )
     valid=!(message->overrun);
 }
 
-csString psMoveLockMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMoveLockMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2032,9 +2063,9 @@ csString psMoveLockMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psWeatherMessage,MSGTYPE_WEATHER);
 
-psWeatherMessage::psWeatherMessage(uint32_t client, int minute, int hour, int day, int month, int year )
+psWeatherMessage::psWeatherMessage(uint32_t client, int minute, int hour, int day, int month, int year)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint32_t) + 5*sizeof(uint8_t) ));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + 5*sizeof(uint8_t)));
 
     msg->SetType(MSGTYPE_WEATHER);
     msg->clientnum      = client;
@@ -2057,9 +2088,9 @@ psWeatherMessage::psWeatherMessage(uint32_t client, psWeatherMessage::NetWeather
         strlen(info.sector) + 1; // sector
 
     uint8_t type = (uint8_t)WEATHER;
-    if (info.has_downfall)
+    if(info.has_downfall)
     {
-        if (info.downfall_is_snow)
+        if(info.downfall_is_snow)
         {
             type |= (uint8_t)SNOW;
         }
@@ -2069,29 +2100,29 @@ psWeatherMessage::psWeatherMessage(uint32_t client, psWeatherMessage::NetWeather
         }
         size += sizeof(uint32_t) * 2;
     }
-    if (info.has_fog)
+    if(info.has_fog)
     {
         type |= (uint8_t)FOG;
         size += sizeof(uint32_t) * 5;
     }
-    if (info.has_lightning)
+    if(info.has_lightning)
     {
         type |= (uint8_t)LIGHTNING;
     }
 
-    msg.AttachNew(new MsgEntry( size ));
+    msg.AttachNew(new MsgEntry(size));
 
     msg->SetType(MSGTYPE_WEATHER);
     msg->clientnum      = client;
 
     msg->Add(type);
     msg->Add(info.sector);
-    if (info.has_downfall)
+    if(info.has_downfall)
     {
         msg->Add((uint32_t)info.downfall_drops);
         msg->Add((uint32_t)info.downfall_fade);
     }
-    if (info.has_fog)
+    if(info.has_fog)
     {
         msg->Add((uint32_t)info.fog_density);
         msg->Add((uint32_t)info.fog_fade);
@@ -2104,13 +2135,13 @@ psWeatherMessage::psWeatherMessage(uint32_t client, psWeatherMessage::NetWeather
     valid=!(msg->overrun);
 }
 
-psWeatherMessage::psWeatherMessage(MsgEntry *message )
+psWeatherMessage::psWeatherMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     type   = message->GetUInt8();
-    if (type == DAYNIGHT)
+    if(type == DAYNIGHT)
     {
         minute = (int)message->GetUInt8();
         hour   = (int)message->GetUInt8();
@@ -2120,12 +2151,12 @@ psWeatherMessage::psWeatherMessage(MsgEntry *message )
     }
     else
     {
-        if (type & (uint8_t)SNOW)
+        if(type & (uint8_t)SNOW)
         {
             weather.has_downfall = true;
             weather.downfall_is_snow = true;
         }
-        else if (type & (uint8_t)RAIN)
+        else if(type & (uint8_t)RAIN)
         {
             weather.has_downfall = true;
             weather.downfall_is_snow = false;
@@ -2135,7 +2166,7 @@ psWeatherMessage::psWeatherMessage(MsgEntry *message )
             weather.has_downfall = false;
             weather.downfall_is_snow = false;
         }
-        if (type & (uint8_t)FOG)
+        if(type & (uint8_t)FOG)
         {
             weather.has_fog = true;
         }
@@ -2143,7 +2174,7 @@ psWeatherMessage::psWeatherMessage(MsgEntry *message )
         {
             weather.has_fog = false;
         }
-        if (type & (uint8_t)LIGHTNING)
+        if(type & (uint8_t)LIGHTNING)
         {
             weather.has_lightning = true;
         }
@@ -2155,7 +2186,7 @@ psWeatherMessage::psWeatherMessage(MsgEntry *message )
         type = WEATHER;
 
         weather.sector  = message->GetStr();
-        if (weather.has_downfall)
+        if(weather.has_downfall)
         {
             weather.downfall_drops   = (int)message->GetUInt32();
             weather.downfall_fade    = (int)message->GetUInt32();
@@ -2165,7 +2196,7 @@ psWeatherMessage::psWeatherMessage(MsgEntry *message )
             weather.downfall_drops = 0;
             weather.downfall_fade = 0;
         }
-        if (weather.has_fog)
+        if(weather.has_fog)
         {
             weather.fog_density = (int)message->GetUInt32();
             weather.fog_fade    = (int)message->GetUInt32();
@@ -2180,48 +2211,48 @@ psWeatherMessage::psWeatherMessage(MsgEntry *message )
             weather.r = weather.g = weather.b = 0;
         }
 
-     }
+    }
 
     // Sets valid flag based on message overrun state
     valid=!(message->overrun);
 }
 
-csString psWeatherMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psWeatherMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    if (type == DAYNIGHT)
+    if(type == DAYNIGHT)
     {
         msgtext.AppendFmt("Type: DAYNIGHT Time: %d:%02d Date: %d-%d-%d",hour,minute,year,month,day);
     }
     else
     {
         msgtext.AppendFmt("Type: WEATHER( ");
-        if (weather.has_downfall)
+        if(weather.has_downfall)
         {
             msgtext.AppendFmt("DOWNFALL");
         }
-        if (weather.downfall_is_snow)
+        if(weather.downfall_is_snow)
         {
             msgtext.AppendFmt(" SNOW");
         }
-        if (weather.has_fog)
+        if(weather.has_fog)
         {
             msgtext.AppendFmt(" FOG");
         }
-        if (weather.has_lightning)
+        if(weather.has_lightning)
         {
             msgtext.AppendFmt(" LIGHTNING");
         }
 
         msgtext.AppendFmt(" ) Sector: '%s'",weather.sector.GetDataSafe());
 
-        if (weather.has_downfall)
+        if(weather.has_downfall)
         {
             msgtext.AppendFmt(" DownfallDrops: %d DownfallFade: %d",
                               weather.downfall_drops,weather.downfall_fade);
         }
-        if (weather.has_fog)
+        if(weather.has_fog)
         {
             msgtext.AppendFmt(" FogDensity: %d FogFade: %d RGB: (%d,%d,%d)",
                               weather.fog_density,weather.fog_fade,
@@ -2237,9 +2268,9 @@ csString psWeatherMessage::ToString(NetBase::AccessPointers * /*accessPointers*/
 
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psGUIInventoryMessage,MSGTYPE_GUIINVENTORY);
 
-psGUIInventoryMessage::psGUIInventoryMessage(uint8_t command, uint32_t size )
+psGUIInventoryMessage::psGUIInventoryMessage(uint8_t command, uint32_t size)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint8_t)  + size ));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)  + size));
 
     msg->SetType(MSGTYPE_GUIINVENTORY);
     msg->clientnum      = 0;
@@ -2251,24 +2282,24 @@ psGUIInventoryMessage::psGUIInventoryMessage(uint8_t command, uint32_t size )
 }
 
 
-psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message, NetBase::AccessPointers* accessPointers)
+psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry* message, NetBase::AccessPointers* accessPointers)
 {
-    if (!message)
+    if(!message)
         return;
 
     command = message->GetUInt8();
 
-    switch ( command )
+    switch(command)
     {
         case LIST:
         case UPDATE_LIST:
         {
             totalItems = message->GetUInt32();
-            if (command == UPDATE_LIST)
+            if(command == UPDATE_LIST)
                 totalEmptiedSlots = message->GetUInt32();
             maxWeight = message->GetFloat();
             version = message->GetUInt32();
-            for ( size_t x = 0; x < totalItems; x++ )
+            for(size_t x = 0; x < totalItems; x++)
             {
                 ItemDescription item;
                 item.name          = message->GetStr();
@@ -2283,14 +2314,14 @@ psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message, NetBase::AccessP
                 item.purifyStatus  = message->GetUInt8();
                 items.Push(item);
             }
-            if (command == UPDATE_LIST)
+            if(command == UPDATE_LIST)
             {
-                for ( size_t x = 0; x < totalEmptiedSlots; x++ )
+                for(size_t x = 0; x < totalEmptiedSlots; x++)
                 {
-                   ItemDescription emptied;
-                   emptied.container = message->GetUInt32();
-                   emptied.slot = message->GetUInt32();
-                   items.Push(emptied);
+                    ItemDescription emptied;
+                    emptied.container = message->GetUInt32();
+                    emptied.slot = message->GetUInt32();
+                    items.Push(emptied);
                 }
             }
 
@@ -2304,40 +2335,40 @@ psGUIInventoryMessage::psGUIInventoryMessage(MsgEntry *message, NetBase::AccessP
 
 
 psGUIInventoryMessage::psGUIInventoryMessage(uint32_t clientnum,
-                                             uint8_t command,
-                                             uint32_t totalItems,
-                                             uint32_t totalEmptiedSlots,
-                                             float maxWeight,
-                                             uint32_t cache_version,
-                                             size_t msgsize)
+        uint8_t command,
+        uint32_t totalItems,
+        uint32_t totalEmptiedSlots,
+        float maxWeight,
+        uint32_t cache_version,
+        size_t msgsize)
 {
     // add on this header size
-    msg.AttachNew(new MsgEntry( msgsize + sizeof(uint8_t) + sizeof(uint32_t) * 3 + sizeof(float) ));
+    msg.AttachNew(new MsgEntry(msgsize + sizeof(uint8_t) + sizeof(uint32_t) * 3 + sizeof(float)));
     msg->SetType(MSGTYPE_GUIINVENTORY);
     msg->clientnum      = clientnum;
 
     msg->Add(command);
-    msg->Add(totalItems );
-    if (command == UPDATE_LIST)
+    msg->Add(totalItems);
+    if(command == UPDATE_LIST)
         msg->Add(totalEmptiedSlots);
-    msg->Add( maxWeight );
-    msg->Add( cache_version );
+    msg->Add(maxWeight);
+    msg->Add(cache_version);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-void psGUIInventoryMessage::AddItem( const char* name,
-                                     const char* meshName,
-                                     const char* materialName,
-                                     int containerID,
-                                     int slotID,
-                                     int stackcount,
-                                     float weight,
-                                     float size,
-                                     const char* icon,
-                                     int purifyStatus,
-                                     csStringSet* msgstrings )
+void psGUIInventoryMessage::AddItem(const char* name,
+                                    const char* meshName,
+                                    const char* materialName,
+                                    int containerID,
+                                    int slotID,
+                                    int stackcount,
+                                    float weight,
+                                    float size,
+                                    const char* icon,
+                                    int purifyStatus,
+                                    csStringSet* msgstrings)
 {
     msg->Add(name);
     msg->Add(msgstrings->Request(meshName).GetHash());
@@ -2357,7 +2388,7 @@ void psGUIInventoryMessage::AddItem( const char* name,
     valid=!(msg->overrun);
 }
 
-void psGUIInventoryMessage::AddMoney( const psMoney & money)
+void psGUIInventoryMessage::AddMoney(const psMoney &money)
 {
     msg->Add(money.ToString());
 
@@ -2365,49 +2396,49 @@ void psGUIInventoryMessage::AddMoney( const psMoney & money)
     valid=!(msg->overrun);
 }
 
-void psGUIInventoryMessage::AddEmptySlot( int containerID, int slotID )
+void psGUIInventoryMessage::AddEmptySlot(int containerID, int slotID)
 {
     msg->Add((uint32_t)containerID);
     msg->Add((uint32_t)slotID);
 }
 
-csString psGUIInventoryMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUIInventoryMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Command: %d", command);
-    if (command == LIST || command == UPDATE_LIST)
+    if(command == LIST || command == UPDATE_LIST)
     {
         msgtext.AppendFmt(" Total Items: %zu Max Weight: %.3f Cache Version: %d", totalItems, maxWeight, version);
 
         msgtext.AppendFmt(" List: ");
-        for ( size_t x = 0; x < totalItems; x++ )
+        for(size_t x = 0; x < totalItems; x++)
         {
             msgtext.AppendFmt("%d x '%s' ", items[x].stackcount, items[x].name.GetDataSafe());
 
 #ifdef FULL_DEBUG_DUMP
             msgtext.AppendFmt("(Container: %d Slot: %d Weight: %.3f Size: %.3f Icon: '%s' Purified: %d), ",
-            items[x].container,
-            items[x].slot,
-            items[x].weight,
-            items[x].size,
-            items[x].iconImage.GetDataSafe(),
-            items[x].purifyStatus);
+                              items[x].container,
+                              items[x].slot,
+                              items[x].weight,
+                              items[x].size,
+                              items[x].iconImage.GetDataSafe(),
+                              items[x].purifyStatus);
 #endif
         }
-        if (command == UPDATE_LIST)
+        if(command == UPDATE_LIST)
         {
             msgtext.AppendFmt(" Total Emptied Slots: %zu", totalEmptiedSlots);
 
 #ifdef FULL_DEBUG_DUMP
-            for ( size_t x = 0; x < totalEmptiedSlots; x++ )
+            for(size_t x = 0; x < totalEmptiedSlots; x++)
             {
                 msgtext.AppendFmt(" (Container: %d Slot: %d),",
-                items[totalItems+x].container, items[totalItems+x].slot);
+                                  items[totalItems+x].container, items[totalItems+x].slot);
             }
 #endif
         }
-    msgtext.AppendFmt(" Money: %s", money.ToUserString().GetDataSafe());
+        msgtext.AppendFmt(" Money: %s", money.ToUserString().GetDataSafe());
     }
 
     return msgtext;
@@ -2419,9 +2450,9 @@ PSF_IMPLEMENT_MSG_FACTORY(psNewSectorMessage,MSGTYPE_NEWSECTOR);
 
 // Leaving this one marshalled the old way.  This message is NEVER sent on
 // the network.
-psNewSectorMessage::psNewSectorMessage(const csString & oldSector, const csString & newSector, csVector3 pos)
+psNewSectorMessage::psNewSectorMessage(const csString &oldSector, const csString &newSector, csVector3 pos)
 {
-    msg.AttachNew(new MsgEntry( 1024 ));
+    msg.AttachNew(new MsgEntry(1024));
 
     msg->SetType(MSGTYPE_NEWSECTOR);
     msg->clientnum      = 0; // msg never sent on network. client only
@@ -2436,9 +2467,9 @@ psNewSectorMessage::psNewSectorMessage(const csString & oldSector, const csStrin
 }
 
 
-psNewSectorMessage::psNewSectorMessage( MsgEntry *message )
+psNewSectorMessage::psNewSectorMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     oldSector = message->GetStr();
@@ -2450,12 +2481,12 @@ psNewSectorMessage::psNewSectorMessage( MsgEntry *message )
     // Since this message is never sent, we don't adjust the valid flag
 }
 
-csString psNewSectorMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psNewSectorMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Old sector: '%s' New sector: '%s' Pos: (%.3f,%.3f,%.3f)",
-            oldSector.GetDataSafe(), newSector.GetDataSafe(), pos.x, pos.y, pos.z);
+                      oldSector.GetDataSafe(), newSector.GetDataSafe(), pos.x, pos.y, pos.z);
 
     return msgtext;
 }
@@ -2466,14 +2497,14 @@ PSF_IMPLEMENT_MSG_FACTORY(psLootItemMessage,MSGTYPE_LOOTITEM);
 
 psLootItemMessage::psLootItemMessage(int client, EID entity, int item, int action)
 {
-    msg.AttachNew(new MsgEntry(2*sizeof(int32_t) + sizeof(uint8_t) ));
+    msg.AttachNew(new MsgEntry(2*sizeof(int32_t) + sizeof(uint8_t)));
 
     msg->SetType(MSGTYPE_LOOTITEM);
     msg->clientnum      = client;
 
     msg->Add(entity.Unbox());
-    msg->Add( (int32_t) item);
-    msg->Add( (uint8_t) action);
+    msg->Add((int32_t) item);
+    msg->Add((uint8_t) action);
     valid=!(msg->overrun);
 }
 
@@ -2485,7 +2516,7 @@ psLootItemMessage::psLootItemMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psLootItemMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psLootItemMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2510,7 +2541,7 @@ psLootMessage::psLootMessage(MsgEntry* msg)
     valid=!(msg->overrun);
 }
 
-void psLootMessage::Populate(EID entity, csString& lootstr, int cnum)
+void psLootMessage::Populate(EID entity, csString &lootstr, int cnum)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint32_t) + lootstr.Length() + 1));
 
@@ -2518,11 +2549,11 @@ void psLootMessage::Populate(EID entity, csString& lootstr, int cnum)
     msg->clientnum      = cnum;
 
     msg->Add(entity.Unbox());
-    msg->Add( lootstr );
+    msg->Add(lootstr);
     valid=!(msg->overrun);
 }
 
-csString psLootMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psLootMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2550,18 +2581,18 @@ psQuestListMessage::psQuestListMessage(MsgEntry* msg)
     valid=!(msg->overrun);
 }
 
-void psQuestListMessage::Populate(csString& queststr, int cnum)
+void psQuestListMessage::Populate(csString &queststr, int cnum)
 {
     msg.AttachNew(new MsgEntry(sizeof(int) + queststr.Length() + 1));
 
     msg->SetType(MSGTYPE_QUESTLIST);
     msg->clientnum      = cnum;
 
-    msg->Add( queststr );
+    msg->Add(queststr);
     valid=!(msg->overrun);
 }
 
-csString psQuestListMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psQuestListMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2574,9 +2605,9 @@ csString psQuestListMessage::ToString(NetBase::AccessPointers * /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psQuestInfoMessage,MSGTYPE_QUESTINFO);
 
-psQuestInfoMessage::psQuestInfoMessage(int cnum, int cmd, int id, const char *name, const char *info)
+psQuestInfoMessage::psQuestInfoMessage(int cnum, int cmd, int id, const char* name, const char* info)
 {
-    if (name)
+    if(name)
     {
         csString escpxml_info = EscpXML(info);
         xml.Format("<QuestNotebook><Description text=\"%s\"/></QuestNotebook>",escpxml_info.GetData());
@@ -2589,15 +2620,15 @@ psQuestInfoMessage::psQuestInfoMessage(int cnum, int cmd, int id, const char *na
     msg->SetType(MSGTYPE_QUESTINFO);
     msg->clientnum = cnum;
 
-    msg->Add( (uint8_t) cmd );
+    msg->Add((uint8_t) cmd);
 
-    if (cmd == CMD_QUERY || cmd == CMD_DISCARD)
+    if(cmd == CMD_QUERY || cmd == CMD_DISCARD)
     {
-        msg->Add( (int32_t) id );
+        msg->Add((int32_t) id);
     }
-    else if (cmd == CMD_INFO)
+    else if(cmd == CMD_INFO)
     {
-        msg->Add( xml );
+        msg->Add(xml);
     }
     msg->ClipToCurrentSize();
 
@@ -2607,22 +2638,22 @@ psQuestInfoMessage::psQuestInfoMessage(int cnum, int cmd, int id, const char *na
 psQuestInfoMessage::psQuestInfoMessage(MsgEntry* msg)
 {
     command = msg->GetUInt8();
-    if (command == CMD_QUERY || command == CMD_DISCARD)
+    if(command == CMD_QUERY || command == CMD_DISCARD)
         id = msg->GetInt32();
-    else if (command == CMD_INFO)
+    else if(command == CMD_INFO)
         xml = msg->GetStr();
     valid=!(msg->overrun);
 }
 
 
-csString psQuestInfoMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psQuestInfoMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Command: %d", command);
-    if (command == CMD_QUERY || command == CMD_DISCARD)
+    if(command == CMD_QUERY || command == CMD_DISCARD)
         msgtext.AppendFmt(" Id: %d", id);
-    else if (command == CMD_INFO)
+    else if(command == CMD_INFO)
         msgtext.AppendFmt(" XML: '%s'", xml.GetDataSafe());
 
     return msgtext;
@@ -2632,22 +2663,22 @@ csString psQuestInfoMessage::ToString(NetBase::AccessPointers * /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psOverrideActionMessage,MSGTYPE_OVERRIDEACTION);
 
-psOverrideActionMessage::psOverrideActionMessage(int client, EID entity, const char *action, int duration)
+psOverrideActionMessage::psOverrideActionMessage(int client, EID entity, const char* action, int duration)
 {
     size_t strlength = 0;
-    if (action)
+    if(action)
         strlength = strlen(action) + 1;
 
-    msg.AttachNew(new MsgEntry( sizeof(entity) +
-                        strlength +
-                        sizeof(duration) ));
+    msg.AttachNew(new MsgEntry(sizeof(entity) +
+                               strlength +
+                               sizeof(duration)));
 
     msg->SetType(MSGTYPE_OVERRIDEACTION);
     msg->clientnum  = client;
 
     msg->Add(entity.Unbox());
-    msg->Add( action );
-    msg->Add( (uint32_t)duration );
+    msg->Add(action);
+    msg->Add((uint32_t)duration);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -2655,7 +2686,7 @@ psOverrideActionMessage::psOverrideActionMessage(int client, EID entity, const c
 
 psOverrideActionMessage::psOverrideActionMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     entity_id = EID(message->GetUInt32());
@@ -2666,7 +2697,7 @@ psOverrideActionMessage::psOverrideActionMessage(MsgEntry* message)
     valid=!(message->overrun);
 }
 
-csString psOverrideActionMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psOverrideActionMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2679,43 +2710,43 @@ csString psOverrideActionMessage::ToString(NetBase::AccessPointers * /*accessPoi
 
 PSF_IMPLEMENT_MSG_FACTORY(psEquipmentMessage,MSGTYPE_EQUIPMENT);
 
-psEquipmentMessage::psEquipmentMessage( uint32_t clientNum,
-                                        EID actorid,
-                                        uint8_t type,
-                                        int slot,
-                                        csString& meshName,
-                                        csString& part,
-                                        csString& texture,
-                                        csString& partMesh,
-                                        csString& removedMesh)
+psEquipmentMessage::psEquipmentMessage(uint32_t clientNum,
+                                       EID actorid,
+                                       uint8_t type,
+                                       int slot,
+                                       csString &meshName,
+                                       csString &part,
+                                       csString &texture,
+                                       csString &partMesh,
+                                       csString &removedMesh)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint32_t)*2 +
-                        sizeof(uint8_t) +
-                        meshName.Length()+1 +
-                        part.Length()+1 +
-                        texture.Length()+1 +
-                        partMesh.Length()+1 +
-                        removedMesh.Length()+1));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t)*2 +
+                               sizeof(uint8_t) +
+                               meshName.Length()+1 +
+                               part.Length()+1 +
+                               texture.Length()+1 +
+                               partMesh.Length()+1 +
+                               removedMesh.Length()+1));
 
     msg->SetType(MSGTYPE_EQUIPMENT);
     msg->clientnum  = clientNum;
 
-    msg->Add( type );
+    msg->Add(type);
     msg->Add(actorid.Unbox());
-    msg->Add( (uint32_t)slot );
-    msg->Add( meshName );
-    msg->Add( part );
-    msg->Add( texture );
-    msg->Add( partMesh );
-    msg->Add( removedMesh );
+    msg->Add((uint32_t)slot);
+    msg->Add(meshName);
+    msg->Add(part);
+    msg->Add(texture);
+    msg->Add(partMesh);
+    msg->Add(removedMesh);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psEquipmentMessage::psEquipmentMessage( MsgEntry* message )
+psEquipmentMessage::psEquipmentMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     type        = message->GetUInt8();
@@ -2731,7 +2762,7 @@ psEquipmentMessage::psEquipmentMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psEquipmentMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psEquipmentMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2751,44 +2782,44 @@ csString psEquipmentMessage::ToString(NetBase::AccessPointers * /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUIMerchantMessage,MSGTYPE_GUIMERCHANT);
 
-psGUIMerchantMessage::psGUIMerchantMessage( uint8_t command,
-                                            csString commandData)
+psGUIMerchantMessage::psGUIMerchantMessage(uint8_t command,
+        csString commandData)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
-                        commandData.Length() +
-                        1));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t) +
+                               commandData.Length() +
+                               1));
 
     msg->SetType(MSGTYPE_GUIMERCHANT);
     msg->clientnum  = 0;
 
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(command);
+    msg->Add(commandData);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUIMerchantMessage::psGUIMerchantMessage( uint32_t clientNum,
-                                            uint8_t command,
-                                            csString commandData)
+psGUIMerchantMessage::psGUIMerchantMessage(uint32_t clientNum,
+        uint8_t command,
+        csString commandData)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
-                        commandData.Length() +
-                        1));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t) +
+                               commandData.Length() +
+                               1));
 
     msg->SetType(MSGTYPE_GUIMERCHANT);
     msg->clientnum  = clientNum;
 
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(command);
+    msg->Add(commandData);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUIMerchantMessage::psGUIMerchantMessage( MsgEntry* message )
+psGUIMerchantMessage::psGUIMerchantMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     command   = message->GetUInt8();
@@ -2798,7 +2829,7 @@ psGUIMerchantMessage::psGUIMerchantMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUIMerchantMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUIMerchantMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2815,44 +2846,44 @@ csString psGUIMerchantMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUIStorageMessage,MSGTYPE_GUIMERCHANT);
 
-psGUIStorageMessage::psGUIStorageMessage( uint8_t command,
-                                            csString commandData)
+psGUIStorageMessage::psGUIStorageMessage(uint8_t command,
+        csString commandData)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
-                        commandData.Length() +
-                        1));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t) +
+                               commandData.Length() +
+                               1));
 
     msg->SetType(MSGTYPE_GUISTORAGE);
     msg->clientnum  = 0;
 
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(command);
+    msg->Add(commandData);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUIStorageMessage::psGUIStorageMessage( uint32_t clientNum,
-                                            uint8_t command,
-                                            csString commandData)
+psGUIStorageMessage::psGUIStorageMessage(uint32_t clientNum,
+        uint8_t command,
+        csString commandData)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
-                        commandData.Length() +
-                        1));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t) +
+                               commandData.Length() +
+                               1));
 
     msg->SetType(MSGTYPE_GUISTORAGE);
     msg->clientnum  = clientNum;
 
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(command);
+    msg->Add(commandData);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUIStorageMessage::psGUIStorageMessage( MsgEntry* message )
+psGUIStorageMessage::psGUIStorageMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     command   = message->GetUInt8();
@@ -2862,7 +2893,7 @@ psGUIStorageMessage::psGUIStorageMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUIStorageMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUIStorageMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2880,44 +2911,44 @@ csString psGUIStorageMessage::ToString(NetBase::AccessPointers * /*accessPointer
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUIGroupMessage,MSGTYPE_GUIGROUP);
 
-psGUIGroupMessage::psGUIGroupMessage( uint8_t command,
-                                      csString commandData)
+psGUIGroupMessage::psGUIGroupMessage(uint8_t command,
+                                     csString commandData)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
-                        commandData.Length() +
-                        1));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t) +
+                               commandData.Length() +
+                               1));
 
     msg->SetType(MSGTYPE_GUIGROUP);
     msg->clientnum  = 0;
 
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(command);
+    msg->Add(commandData);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUIGroupMessage::psGUIGroupMessage( uint32_t clientNum,
-                                      uint8_t command,
-                                      csString commandData)
+psGUIGroupMessage::psGUIGroupMessage(uint32_t clientNum,
+                                     uint8_t command,
+                                     csString commandData)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint8_t) +
-                        commandData.Length() +
-                        1));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t) +
+                               commandData.Length() +
+                               1));
 
     msg->SetType(MSGTYPE_GUIGROUP);
     msg->clientnum  = clientNum;
 
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(command);
+    msg->Add(commandData);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUIGroupMessage::psGUIGroupMessage( MsgEntry* message )
+psGUIGroupMessage::psGUIGroupMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     command   = message->GetUInt8();
@@ -2927,7 +2958,7 @@ psGUIGroupMessage::psGUIGroupMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUIGroupMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUIGroupMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2951,7 +2982,7 @@ void psCraftCancelMessage::SetCraftTime(int craftTime, uint32_t client)
     msg->Add(craftTime);
 }
 
-csString psCraftCancelMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCraftCancelMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2964,7 +2995,7 @@ csString psCraftCancelMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psSpellCancelMessage,MSGTYPE_SPELL_CANCEL);
 
-csString psSpellCancelMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psSpellCancelMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -2985,17 +3016,17 @@ psSpellBookMessage::psSpellBookMessage()
     size = 0;
 }
 
-psSpellBookMessage::psSpellBookMessage( uint32_t client )
+psSpellBookMessage::psSpellBookMessage(uint32_t client)
 {
     this->client = client;
     size = 0;
 }
 
-psSpellBookMessage::psSpellBookMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers )
+psSpellBookMessage::psSpellBookMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers)
 {
     size_t length = me->GetUInt32();
 
-    for ( size_t x = 0; x < length; x++ )
+    for(size_t x = 0; x < length; x++)
     {
         psSpellBookMessage::NetworkSpell ns;
         ns.name = me->GetStr();
@@ -3007,15 +3038,15 @@ psSpellBookMessage::psSpellBookMessage( MsgEntry* me, NetBase::AccessPointers* a
         ns.glyphs[2] = me->GetStr();
         ns.glyphs[3] = me->GetStr();
         ns.image = accessPointers->Request(csStringID(me->GetUInt32()));
-        spells.Push( ns );
+        spells.Push(ns);
     }
 
 }
 
-void psSpellBookMessage::AddSpell(const csString& name, const csString& description, const csString& way, int realm, const csString& glyph0, const csString& glyph1, const csString& glyph2, const csString& glyph3, const csString& image)
+void psSpellBookMessage::AddSpell(const csString &name, const csString &description, const csString &way, int realm, const csString &glyph0, const csString &glyph1, const csString &glyph2, const csString &glyph3, const csString &image)
 {
     size+=(uint32_t)(name.Length() + description.Length() + way.Length()+ sizeof(int)+ 8 +
-    glyph0.Length()+glyph1.Length()+glyph2.Length()+glyph3.Length() + sizeof(uint32_t));
+                     glyph0.Length()+glyph1.Length()+glyph2.Length()+glyph3.Length() + sizeof(uint32_t));
 
     psSpellBookMessage::NetworkSpell ns;
     ns.name = name;
@@ -3028,51 +3059,51 @@ void psSpellBookMessage::AddSpell(const csString& name, const csString& descript
     ns.glyphs[3] = glyph3;
     ns.image = image;
 
-    spells.Push( ns );
+    spells.Push(ns);
 }
 
 void psSpellBookMessage::Construct(csStringSet* msgstrings)
 {
-    msg.AttachNew(new MsgEntry( size + sizeof(int) ));
+    msg.AttachNew(new MsgEntry(size + sizeof(int)));
     msg->SetType(MSGTYPE_SPELL_BOOK);
     msg->clientnum = client;
 
-    msg->Add( (uint32_t)spells.GetSize() );
-    for ( size_t x = 0; x < spells.GetSize(); x++ )
+    msg->Add((uint32_t)spells.GetSize());
+    for(size_t x = 0; x < spells.GetSize(); x++)
     {
-        msg->Add( spells[x].name );
-        msg->Add( spells[x].description );
-        msg->Add( spells[x].way );
-        msg->Add( (uint32_t)spells[x].realm);
-        msg->Add( spells[x].glyphs[0] );
-        msg->Add( spells[x].glyphs[1] );
-        msg->Add( spells[x].glyphs[2] );
-        msg->Add( spells[x].glyphs[3] );
+        msg->Add(spells[x].name);
+        msg->Add(spells[x].description);
+        msg->Add(spells[x].way);
+        msg->Add((uint32_t)spells[x].realm);
+        msg->Add(spells[x].glyphs[0]);
+        msg->Add(spells[x].glyphs[1]);
+        msg->Add(spells[x].glyphs[2]);
+        msg->Add(spells[x].glyphs[3]);
         msg->Add(msgstrings->Request(spells[x].image).GetHash());
     }
 }
 
 
 
-csString psSpellBookMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psSpellBookMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    for ( size_t x = 0; x < spells.GetSize(); x++ )
+    for(size_t x = 0; x < spells.GetSize(); x++)
     {
         msgtext.AppendFmt("Spell: '%s' Way: '%s' Realm: %d image: %s",
-            spells[x].name.GetDataSafe(),
-            spells[x].way.GetDataSafe(),
-            spells[x].realm,
-            spells[x].image.GetDataSafe());
+                          spells[x].name.GetDataSafe(),
+                          spells[x].way.GetDataSafe(),
+                          spells[x].realm,
+                          spells[x].image.GetDataSafe());
         msgtext.AppendFmt("Glyphs: '%s', '%s', '%s', '%s' ",
-            spells[x].glyphs[0].GetDataSafe(),
-            spells[x].glyphs[1].GetDataSafe(),
-            spells[x].glyphs[2].GetDataSafe(),
-            spells[x].glyphs[3].GetDataSafe());
+                          spells[x].glyphs[0].GetDataSafe(),
+                          spells[x].glyphs[1].GetDataSafe(),
+                          spells[x].glyphs[2].GetDataSafe(),
+                          spells[x].glyphs[3].GetDataSafe());
 #ifdef FULL_DEBUG_DUMP
         msgtext.AppendFmt("Description: '%s'",
-            spells[x].description.GetDataSafe());
+                          spells[x].description.GetDataSafe());
 #endif
     }
 
@@ -3083,20 +3114,20 @@ csString psSpellBookMessage::ToString(NetBase::AccessPointers * /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psPurifyGlyphMessage,MSGTYPE_PURIFY_GLYPH);
 
-psPurifyGlyphMessage::psPurifyGlyphMessage( uint32_t glyphID )
+psPurifyGlyphMessage::psPurifyGlyphMessage(uint32_t glyphID)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint32_t) ));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_PURIFY_GLYPH);
-    msg->Add( glyphID );
+    msg->Add(glyphID);
 }
 
-psPurifyGlyphMessage::psPurifyGlyphMessage( MsgEntry* me )
+psPurifyGlyphMessage::psPurifyGlyphMessage(MsgEntry* me)
 {
     glyph = me->GetUInt32();
 }
 
-csString psPurifyGlyphMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPurifyGlyphMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -3109,22 +3140,22 @@ csString psPurifyGlyphMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psSpellCastMessage,MSGTYPE_SPELL_CAST);
 
-psSpellCastMessage::psSpellCastMessage( csString &spellName, float kFactor )
+psSpellCastMessage::psSpellCastMessage(csString &spellName, float kFactor)
 {
-    msg.AttachNew(new MsgEntry( spellName.Length() + 1 + sizeof(float) ));
+    msg.AttachNew(new MsgEntry(spellName.Length() + 1 + sizeof(float)));
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_SPELL_CAST);
-    msg->Add( spellName );
-    msg->Add( kFactor );
+    msg->Add(spellName);
+    msg->Add(kFactor);
 }
 
-psSpellCastMessage::psSpellCastMessage( MsgEntry* me )
+psSpellCastMessage::psSpellCastMessage(MsgEntry* me)
 {
     spell = me->GetStr();
     kFactor = me->GetFloat();
 }
 
-csString psSpellCastMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psSpellCastMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -3137,35 +3168,35 @@ csString psSpellCastMessage::ToString(NetBase::AccessPointers * /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psGlyphAssembleMessage,MSGTYPE_GLYPH_ASSEMBLE);
 
-psGlyphAssembleMessage::psGlyphAssembleMessage(  int slot0, int slot1, int slot2, int slot3, bool info)
+psGlyphAssembleMessage::psGlyphAssembleMessage(int slot0, int slot1, int slot2, int slot3, bool info)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint32_t) * 4 + sizeof(uint8_t) ));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) * 4 + sizeof(uint8_t)));
     msg->SetType(MSGTYPE_GLYPH_ASSEMBLE);
     msg->clientnum = 0;
-    msg->Add( (uint32_t)slot0 );
-    msg->Add( (uint32_t)slot1 );
-    msg->Add( (uint32_t)slot2 );
-    msg->Add( (uint32_t)slot3 );
-    msg->Add( (uint8_t)info );
+    msg->Add((uint32_t)slot0);
+    msg->Add((uint32_t)slot1);
+    msg->Add((uint32_t)slot2);
+    msg->Add((uint32_t)slot3);
+    msg->Add((uint8_t)info);
 }
 
-psGlyphAssembleMessage::psGlyphAssembleMessage( uint32_t client,
-                                                csString name,
-                                                csString image,
-                                                csString description )
+psGlyphAssembleMessage::psGlyphAssembleMessage(uint32_t client,
+        csString name,
+        csString image,
+        csString description)
 {
-    msg.AttachNew(new MsgEntry( name.Length() + description.Length() + image.Length() + 3 ));
+    msg.AttachNew(new MsgEntry(name.Length() + description.Length() + image.Length() + 3));
     msg->SetType(MSGTYPE_GLYPH_ASSEMBLE);
     msg->clientnum = client;
-    msg->Add( name );
-    msg->Add( image );
-    msg->Add( description );
+    msg->Add(name);
+    msg->Add(image);
+    msg->Add(description);
 
 }
 
-psGlyphAssembleMessage::psGlyphAssembleMessage( MsgEntry* me )
+psGlyphAssembleMessage::psGlyphAssembleMessage(MsgEntry* me)
 {
-    if (me->GetSize() == sizeof(uint32_t) * 4 + sizeof(uint8_t))
+    if(me->GetSize() == sizeof(uint32_t) * 4 + sizeof(uint8_t))
     {
         FromClient(me);
         msgFromServer = false;
@@ -3177,7 +3208,7 @@ psGlyphAssembleMessage::psGlyphAssembleMessage( MsgEntry* me )
     }
 }
 
-void psGlyphAssembleMessage::FromClient( MsgEntry* me )
+void psGlyphAssembleMessage::FromClient(MsgEntry* me)
 {
     glyphs[0] = me->GetUInt32();
     glyphs[1] = me->GetUInt32();
@@ -3186,21 +3217,21 @@ void psGlyphAssembleMessage::FromClient( MsgEntry* me )
     info = me->GetBool();
 }
 
-void psGlyphAssembleMessage::FromServer( MsgEntry* me )
+void psGlyphAssembleMessage::FromServer(MsgEntry* me)
 {
     name = me->GetStr();
     image = me->GetStr();
     description = me->GetStr();
 }
 
-csString psGlyphAssembleMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGlyphAssembleMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    if (msgFromServer)
+    if(msgFromServer)
     {
         msgtext.AppendFmt("Name: '%s' Image: '%s' Description: '%s'",
-                name.GetDataSafe(), image.GetDataSafe(), description.GetDataSafe());
+                          name.GetDataSafe(), image.GetDataSafe(), description.GetDataSafe());
     }
     else
     {
@@ -3214,11 +3245,11 @@ csString psGlyphAssembleMessage::ToString(NetBase::AccessPointers * /*accessPoin
 
 PSF_IMPLEMENT_MSG_FACTORY(psRequestGlyphsMessage,MSGTYPE_GLYPH_REQUEST);
 
-psRequestGlyphsMessage::psRequestGlyphsMessage( uint32_t client )
+psRequestGlyphsMessage::psRequestGlyphsMessage(uint32_t client)
 {
     this->client = client;
     size = 0;
-    if ( client == 0 )
+    if(client == 0)
     {
         msg.AttachNew(new MsgEntry());
         msg->SetType(MSGTYPE_GLYPH_REQUEST);
@@ -3230,8 +3261,8 @@ psRequestGlyphsMessage::~psRequestGlyphsMessage()
 {
 }
 
-void psRequestGlyphsMessage::AddGlyph( csString name, csString image, int purifiedStatus,
-                                       int way, int statID )
+void psRequestGlyphsMessage::AddGlyph(csString name, csString image, int purifiedStatus,
+                                      int way, int statID)
 {
     size+=name.Length() + image.Length() + sizeof(int)*4+2;
 
@@ -3242,32 +3273,32 @@ void psRequestGlyphsMessage::AddGlyph( csString name, csString image, int purifi
     ng.way = way;
     ng.statID = statID;
 
-    glyphs.Push( ng );
+    glyphs.Push(ng);
 }
 
 
 void psRequestGlyphsMessage::Construct()
 {
-    msg.AttachNew(new MsgEntry( size + sizeof(int) ));
+    msg.AttachNew(new MsgEntry(size + sizeof(int)));
     msg->SetType(MSGTYPE_GLYPH_REQUEST);
     msg->clientnum = client;
 
-    msg->Add( (uint32_t)glyphs.GetSize() );
-    for ( size_t x = 0; x < glyphs.GetSize(); x++ )
+    msg->Add((uint32_t)glyphs.GetSize());
+    for(size_t x = 0; x < glyphs.GetSize(); x++)
     {
-        msg->Add( glyphs[x].name );
-        msg->Add( glyphs[x].image );
-        msg->Add( glyphs[x].purifiedStatus );
-        msg->Add( glyphs[x].way );
-        msg->Add( glyphs[x].statID );
+        msg->Add(glyphs[x].name);
+        msg->Add(glyphs[x].image);
+        msg->Add(glyphs[x].purifiedStatus);
+        msg->Add(glyphs[x].way);
+        msg->Add(glyphs[x].statID);
     }
 }
 
-psRequestGlyphsMessage::psRequestGlyphsMessage( MsgEntry* me )
+psRequestGlyphsMessage::psRequestGlyphsMessage(MsgEntry* me)
 {
     size_t length = me->GetUInt32();
 
-    for ( size_t x = 0; x < length; x++ )
+    for(size_t x = 0; x < length; x++)
     {
         psRequestGlyphsMessage::NetworkGlyph ng;
         ng.name = me->GetStr();
@@ -3276,22 +3307,22 @@ psRequestGlyphsMessage::psRequestGlyphsMessage( MsgEntry* me )
         ng.way = me->GetUInt32();
         ng.statID = me->GetUInt32();
 
-        glyphs.Push( ng );
+        glyphs.Push(ng);
     }
 }
 
-csString psRequestGlyphsMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psRequestGlyphsMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    for ( size_t x = 0; x < glyphs.GetSize(); x++ )
+    for(size_t x = 0; x < glyphs.GetSize(); x++)
     {
         msgtext.AppendFmt("Name: '%s' Image: '%s' Purified Status: %d Way: %d Stat Id: %d; ",
-            glyphs[x].name.GetDataSafe(),
-            glyphs[x].image.GetDataSafe(),
-            glyphs[x].purifiedStatus,
-            glyphs[x].way,
-            glyphs[x].statID);
+                          glyphs[x].name.GetDataSafe(),
+                          glyphs[x].image.GetDataSafe(),
+                          glyphs[x].purifiedStatus,
+                          glyphs[x].way,
+                          glyphs[x].statID);
     }
 
     return msgtext;
@@ -3309,7 +3340,7 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg.AttachNew(new MsgEntry(effectName.Length() + 1 + sizeof(csVector3)
                                + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)
                                + (scale4!=0.0?4*sizeof(float):(scale3!=0.0?3*sizeof(float):(scale2!=0.0?2*sizeof(float):(scale1!=0.0?sizeof(float):0))))));
-    
+
 
     msg->SetType(MSGTYPE_EFFECT);
     msg->clientnum = clientNum;
@@ -3322,21 +3353,21 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(targetID.Unbox());
     msg->Add((uint32_t)0);
     msg->Add((uint32_t)uid);
-    if (scale1 != 0.0 || scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
+    if(scale1 != 0.0 || scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
     {
-       msg->Add(scale1);
+        msg->Add(scale1);
     }
-    if (scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
+    if(scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
     {
-       msg->Add(scale2);
+        msg->Add(scale2);
     }
-    if (scale3 != 0.0 || scale4 != 0.0)
+    if(scale3 != 0.0 || scale4 != 0.0)
     {
-       msg->Add(scale3);
+        msg->Add(scale3);
     }
-    if (scale4 != 0.0)
+    if(scale4 != 0.0)
     {
-       msg->Add(scale4);
+        msg->Add(scale4);
     }
     valid = !(msg->overrun);
 }
@@ -3361,21 +3392,21 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
     msg->Add(targetID.Unbox());
     msg->Add(duration);
     msg->Add(uid);
-    if (scale1 != 0.0 || scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
+    if(scale1 != 0.0 || scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
     {
-       msg->Add(scale1);
+        msg->Add(scale1);
     }
-    if (scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
+    if(scale2 != 0.0 || scale3 != 0.0 || scale4 != 0.0)
     {
-       msg->Add(scale2);
+        msg->Add(scale2);
     }
-    if (scale3 != 0.0 || scale4 != 0.0)
+    if(scale3 != 0.0 || scale4 != 0.0)
     {
-       msg->Add(scale3);
+        msg->Add(scale3);
     }
-    if (scale4 != 0.0)
+    if(scale4 != 0.0)
     {
-       msg->Add(scale4);
+        msg->Add(scale4);
     }
 
     valid = !(msg->overrun);
@@ -3383,7 +3414,7 @@ psEffectMessage::psEffectMessage(uint32_t clientNum, const csString &effectName,
 
 psEffectMessage::psEffectMessage(MsgEntry* message)
 {
-    if (!message)
+    if(!message)
         return;
 
     name = message->GetStr();
@@ -3394,7 +3425,7 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     targetID = EID(message->GetUInt32());
     duration = message->GetUInt32();
     uid = message->GetUInt32();
-    if (message->HasMore(sizeof(float)))
+    if(message->HasMore(sizeof(float)))
     {
         scale[0] = message->GetFloat();
     }
@@ -3402,7 +3433,7 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     {
         scale[0] = 0.0;
     }
-    if (message->HasMore(sizeof(float)))
+    if(message->HasMore(sizeof(float)))
     {
         scale[1] = message->GetFloat();
     }
@@ -3410,7 +3441,7 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     {
         scale[1] = 0.0;
     }
-    if (message->HasMore(sizeof(float)))
+    if(message->HasMore(sizeof(float)))
     {
         scale[2] = message->GetFloat();
     }
@@ -3418,7 +3449,7 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     {
         scale[2] = 0.0;
     }
-    if (message->HasMore(sizeof(float)))
+    if(message->HasMore(sizeof(float)))
     {
         scale[3] = message->GetFloat();
     }
@@ -3429,7 +3460,7 @@ psEffectMessage::psEffectMessage(MsgEntry* message)
     valid = !(message->overrun);
 }
 
-csString psEffectMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psEffectMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -3449,7 +3480,7 @@ csString psEffectMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 PSF_IMPLEMENT_MSG_FACTORY(psGUITargetUpdateMessage,MSGTYPE_GUITARGETUPDATE);
 
 psGUITargetUpdateMessage::psGUITargetUpdateMessage(uint32_t clientNum,
-                                                   EID targetID)
+        EID targetID)
 {
     msg.AttachNew(new MsgEntry(2*sizeof(uint32_t)));
 
@@ -3462,9 +3493,9 @@ psGUITargetUpdateMessage::psGUITargetUpdateMessage(uint32_t clientNum,
     valid=!(msg->overrun);
 }
 
-psGUITargetUpdateMessage::psGUITargetUpdateMessage(MsgEntry *message)
+psGUITargetUpdateMessage::psGUITargetUpdateMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     targetID = message->GetUInt32();
@@ -3473,7 +3504,7 @@ psGUITargetUpdateMessage::psGUITargetUpdateMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psGUITargetUpdateMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUITargetUpdateMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -3494,7 +3525,7 @@ psMsgStringsMessage::psMsgStringsMessage()
     msg->clientnum = 0;
 }
 
-psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& digest)
+psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csMD5::Digest &digest)
 {
     msg.AttachNew(new MsgEntry(2*sizeof(uint32_t) + sizeof(csMD5::Digest) + sizeof(bool)));
     msg->SetType(MSGTYPE_MSGSTRINGS);
@@ -3504,33 +3535,33 @@ psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& dige
     msg->Add(true);
 }
 
-psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csMD5::Digest& digest, char* stringsdata,
-                                         unsigned long size, uint32_t num_strings)
+psMsgStringsMessage::psMsgStringsMessage(uint32_t clientnum, csMD5::Digest &digest, char* stringsdata,
+        unsigned long size, uint32_t num_strings)
 {
     msg.AttachNew(new MsgEntry(4*sizeof(uint32_t) + sizeof(csMD5::Digest) +
-        sizeof(bool) + sizeof(char) * size));
+                               sizeof(bool) + sizeof(char) * size));
     msg->SetType(MSGTYPE_MSGSTRINGS);
     msg->clientnum = clientnum;
 
     msg->Add(&digest, sizeof(csMD5::Digest));
-    if (num_strings > 0 )
+    if(num_strings > 0)
     {
-       msg->Add(false);
-       msg->Add(num_strings);
-       msg->Add(stringsdata, size);
+        msg->Add(false);
+        msg->Add(num_strings);
+        msg->Add(stringsdata, size);
     }
     else
     {
-       msg->Add(true);
+        msg->Add(true);
     }
     // Sets valid flag based on message overrun state
     valid = !(msg->overrun);
 }
 
-psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
-  :msgstrings(NULL), nstrings(0)
+psMsgStringsMessage::psMsgStringsMessage(MsgEntry* message)
+    :msgstrings(NULL), nstrings(0)
 {
-    if (!message)
+    if(!message)
         return;
 
     uint32_t length = 0;
@@ -3548,7 +3579,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
      *  and cause the new call to fail below, or just an obscene value and cause memory
      *  to thrash.
      */
-    if (nstrings<1 || nstrings>2044)
+    if(nstrings<1 || nstrings>2044)
     {
         printf("Threw away strings message, invalid number of strings %d\n",(int)nstrings);
         valid=false;
@@ -3558,13 +3589,13 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     // Read the data
     const void* data = message->GetBufferPointerUnsafe(length);
 
-    if (message->overrun)
+    if(message->overrun)
     {
         valid=false;
         return;
     }
 
-    char *buff = new char[PACKING_BUFFSIZE];  // Holds packed strings after decompression
+    char* buff = new char[PACKING_BUFFSIZE];  // Holds packed strings after decompression
 
     // Ready
     z_stream z;
@@ -3575,7 +3606,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     z.next_in = NULL;
 
     // Set
-    if (inflateInit(&z) != Z_OK)
+    if(inflateInit(&z) != Z_OK)
     {
         valid=false;
         delete [] buff;
@@ -3592,7 +3623,7 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     int res = inflate(&z,Z_FINISH);
     inflateEnd(&z);
 
-    if (res != Z_STREAM_END)
+    if(res != Z_STREAM_END)
     {
         valid=false;
         delete [] buff;
@@ -3601,10 +3632,10 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
 
     size_t pos = 0;
     msgstrings = new csStringHashReversible(nstrings);
-    for (uint32_t i=0; i<nstrings; i++)
+    for(uint32_t i=0; i<nstrings; i++)
     {
         // Unpack ID
-        uint32 *p = (uint32*)(buff+pos);
+        uint32* p = (uint32*)(buff+pos);
         uint32 id = csLittleEndian::UInt32(*p);
         pos += sizeof(uint32);
 
@@ -3613,12 +3644,12 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
         pos += strlen(string)+1;
 
         // csStringSet::Register() cannot handle NULL pointers
-        if (string[0] == '\0')
+        if(string[0] == '\0')
             msgstrings->Register("",id);
         else
             msgstrings->Register(string,id);
 
-        if (pos > z.total_out)
+        if(pos > z.total_out)
         {
             delete msgstrings;
             delete [] buff;
@@ -3630,30 +3661,30 @@ psMsgStringsMessage::psMsgStringsMessage(MsgEntry *message)
     delete[] buff;
 }
 
-csString psMsgStringsMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMsgStringsMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Digest: %s ", digest?digest->HEXString().GetDataSafe():"(NULL)");
     msgtext.AppendFmt("Only carrying digest: %s",only_carrying_digest?"True":"False");
-    if (only_carrying_digest)
+    if(only_carrying_digest)
     {
-       return msgtext;
+        return msgtext;
     }
 
     msgtext.AppendFmt(" Number of Strings: %d", nstrings);
 
 #ifdef FULL_DEBUG_DUMP
     uint32_t s = 1;
-    if (msgstrings)
+    if(msgstrings)
     {
-       csStringSet::GlobalIterator it = msgstrings->GetIterator();
-       while (it.HasNext())
-       {
-          const char* string;
-          it.Next(string);
-          msgtext.AppendFmt(", %d: '%s'", s++, string);
-       }
+        csStringSet::GlobalIterator it = msgstrings->GetIterator();
+        while(it.HasNext())
+        {
+            const char* string;
+            it.Next(string);
+            msgtext.AppendFmt(", %d: '%s'", s++, string);
+        }
     }
 #endif
 
@@ -3665,30 +3696,30 @@ csString psMsgStringsMessage::ToString(NetBase::AccessPointers * /*accessPointer
 PSF_IMPLEMENT_MSG_FACTORY(psCharacterDataMessage,MSGTYPE_CHARACTERDATA);
 
 psCharacterDataMessage::psCharacterDataMessage(uint32_t clientnum,
-                                               csString fullname,
-                                               csString race_name,
-                                               csString mesh_name,
-                                               csString traits,
-                                               csString equipment)
+        csString fullname,
+        csString race_name,
+        csString mesh_name,
+        csString traits,
+        csString equipment)
 {
     msg.AttachNew(new MsgEntry(fullname.Length() + race_name.Length()
-                       + mesh_name.Length() + traits.Length()
-                       + equipment.Length() + 5 );
+                               + mesh_name.Length() + traits.Length()
+                               + equipment.Length() + 5);
 
-    msg->SetType(MSGTYPE_CHARACTERDATA);
-    msg->clientnum      = clientnum;
+                  msg->SetType(MSGTYPE_CHARACTERDATA);
+                  msg->clientnum      = clientnum;
 
-    msg->Add( (const char*) fullname);
-    msg->Add( (const char*) race_name);
-    msg->Add( (const char*) mesh_name);
-    msg->Add( (const char*) traits);
-    msg->Add( (const char*) equipment);
+                  msg->Add((const char*) fullname);
+                  msg->Add((const char*) race_name);
+                  msg->Add((const char*) mesh_name);
+                  msg->Add((const char*) traits);
+                  msg->Add((const char*) equipment);
 
-    // Sets valid flag based on message overrun state
-    valid=!(msg->overrun);
+                  // Sets valid flag based on message overrun state
+                  valid=!(msg->overrun);
 }
 
-psCharacterDataMessage::psCharacterDataMessage(MsgEntry *message)
+              psCharacterDataMessage::psCharacterDataMessage(MsgEntry* message)
 {
     fullname = message->GetStr();
     race_name = message->GetStr();
@@ -3700,7 +3731,7 @@ psCharacterDataMessage::psCharacterDataMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psCharacterDataMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCharacterDataMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -3719,33 +3750,33 @@ csString psCharacterDataMessage::ToString(NetBase::AccessPointers * /*accessPoin
 PSF_IMPLEMENT_MSG_FACTORY(psCombatEventMessage,MSGTYPE_COMBATEVENT);
 
 psCombatEventMessage::psCombatEventMessage(uint32_t clientnum,
-                                           int event_type,
-                                           EID attacker,
-                                           EID target,
-                                           int targetLocation,
-                                           float damage,
-                                           int attack_anim,
-                                           int defense_anim)
+        int event_type,
+        EID attacker,
+        EID target,
+        int targetLocation,
+        float damage,
+        int attack_anim,
+        int defense_anim)
 {
-    switch (event_type)
+    switch(event_type)
     {
         case COMBAT_DODGE:
         case COMBAT_BLOCK:
         case COMBAT_MISS:
         case COMBAT_DEATH:
 
-            msg.AttachNew(new MsgEntry(sizeof(uint8_t) + 4 * sizeof(uint32_t) + sizeof(int8_t) ));
+            msg.AttachNew(new MsgEntry(sizeof(uint8_t) + 4 * sizeof(uint32_t) + sizeof(int8_t)));
 
             msg->SetType(MSGTYPE_COMBATEVENT);
             msg->clientnum      = clientnum;
 
-            msg->Add( (uint8_t)  event_type);
-            msg->Add( (uint32_t) attack_anim );
-            msg->Add( (uint32_t) defense_anim );
+            msg->Add((uint8_t)  event_type);
+            msg->Add((uint32_t) attack_anim);
+            msg->Add((uint32_t) defense_anim);
 
             msg->Add(attacker.Unbox());
             msg->Add(target.Unbox());
-            msg->Add( (int8_t)   targetLocation );
+            msg->Add((int8_t)   targetLocation);
 
             // Sets valid flag based on message overrun state
             valid=!(msg->overrun);
@@ -3754,19 +3785,19 @@ psCombatEventMessage::psCombatEventMessage(uint32_t clientnum,
         case COMBAT_DAMAGE:
         case COMBAT_DAMAGE_NEARLY_DEAD:
 
-            msg.AttachNew(new MsgEntry(sizeof(uint8_t) + 4 * sizeof(uint32_t) + sizeof(int8_t) + sizeof(float) ));
+            msg.AttachNew(new MsgEntry(sizeof(uint8_t) + 4 * sizeof(uint32_t) + sizeof(int8_t) + sizeof(float)));
 
             msg->SetType(MSGTYPE_COMBATEVENT);
             msg->clientnum      = clientnum;
 
-            msg->Add( (uint8_t)  event_type);
-            msg->Add( (uint32_t) attack_anim );
-            msg->Add( (uint32_t) defense_anim );
+            msg->Add((uint8_t)  event_type);
+            msg->Add((uint32_t) attack_anim);
+            msg->Add((uint32_t) defense_anim);
 
             msg->Add(attacker.Unbox());
             msg->Add(target.Unbox());
-            msg->Add( (int8_t)   targetLocation );
-            msg->Add( (float)    damage );
+            msg->Add((int8_t)   targetLocation);
+            msg->Add((float)    damage);
 
             // Sets valid flag based on message overrun state
             valid=!(msg->overrun);
@@ -3784,7 +3815,7 @@ void psCombatEventMessage::SetClientNum(int cnum)
     msg->clientnum = cnum;
 }
 
-psCombatEventMessage::psCombatEventMessage(MsgEntry *message)
+psCombatEventMessage::psCombatEventMessage(MsgEntry* message)
 {
     event_type  = message->GetUInt8();
     attack_anim = message->GetUInt32();
@@ -3793,7 +3824,7 @@ psCombatEventMessage::psCombatEventMessage(MsgEntry *message)
     target_id = EID(message->GetUInt32());
     target_location = message->GetInt8();
 
-    if (event_type == COMBAT_DAMAGE || event_type == COMBAT_DAMAGE_NEARLY_DEAD)
+    if(event_type == COMBAT_DAMAGE || event_type == COMBAT_DAMAGE_NEARLY_DEAD)
     {
         damage = message->GetFloat();
     }
@@ -3805,13 +3836,13 @@ psCombatEventMessage::psCombatEventMessage(MsgEntry *message)
 }
 
 
-csString psCombatEventMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCombatEventMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Event Type: %d Attack Anim: %d Defense Anim: %d Attacker: %d Target: %d Location: %d",
-            event_type, attack_anim, defense_anim, attacker_id.Unbox(), target_id.Unbox(), target_location);
-    if (event_type == COMBAT_DAMAGE)
+                      event_type, attack_anim, defense_anim, attacker_id.Unbox(), target_id.Unbox(), target_location);
+    if(event_type == COMBAT_DAMAGE)
     {
         msgtext.AppendFmt(" Damage: %.3f", damage);
     }
@@ -3825,7 +3856,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psSoundEventMessage,MSGTYPE_SOUND_EVENT);
 
 psSoundEventMessage::psSoundEventMessage(uint32_t clientnum, uint32_t type)
 {
-    msg.AttachNew(new MsgEntry(1 * sizeof(int) ));
+    msg.AttachNew(new MsgEntry(1 * sizeof(int)));
     msg->SetType(MSGTYPE_SOUND_EVENT);
     msg->clientnum = clientnum;
     msg->Add((uint32_t)type);
@@ -3838,7 +3869,7 @@ psSoundEventMessage::psSoundEventMessage(MsgEntry* msg)
     valid=!(msg->overrun);
 }
 
-csString psSoundEventMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psSoundEventMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -3858,14 +3889,14 @@ psStatDRMessage::psStatDRMessage(uint32_t clientnum, EID eid, csArray<float> fVi
     msg->clientnum = clientnum;
     msg->SetType(MSGTYPE_STATDRUPDATE);
 
-    msg->Add( eid.Unbox() );
-    msg->Add( (uint32_t)flags );
+    msg->Add(eid.Unbox());
+    msg->Add((uint32_t)flags);
 
-    for (size_t i = 0; i < fVitals.GetSize(); i++)
+    for(size_t i = 0; i < fVitals.GetSize(); i++)
     {
         msg->Add(fVitals[i]);
     }
-    for (size_t i = 0; i < uiVitals.GetSize(); i++)
+    for(size_t i = 0; i < uiVitals.GetSize(); i++)
     {
         msg->Add(uiVitals[i]);
     }
@@ -3890,7 +3921,7 @@ psStatDRMessage::psStatDRMessage()
 psStatDRMessage::psStatDRMessage(MsgEntry* me)
 {
     entityid = EID(me->GetUInt32());
-    if (me->GetSize() <= 0)
+    if(me->GetSize() <= 0)
     {
         request = true;
         return;
@@ -3898,66 +3929,66 @@ psStatDRMessage::psStatDRMessage(MsgEntry* me)
     else
     {
         request = false;
-        
+
         statsDirty = me->GetUInt32();
-        
-        if (statsDirty & DIRTY_VITAL_HP)
+
+        if(statsDirty & DIRTY_VITAL_HP)
         {
             hp = me->GetFloat();
         }
-        
-        if (statsDirty & DIRTY_VITAL_HP_RATE)
+
+        if(statsDirty & DIRTY_VITAL_HP_RATE)
         {
             hp_rate = me->GetFloat();
         }
-        
-        if (statsDirty & DIRTY_VITAL_MANA)
+
+        if(statsDirty & DIRTY_VITAL_MANA)
         {
             mana = me->GetFloat();
         }
-        
-        if (statsDirty & DIRTY_VITAL_MANA_RATE)
+
+        if(statsDirty & DIRTY_VITAL_MANA_RATE)
         {
             mana_rate = me->GetFloat();
         }
-        
-        if (statsDirty & DIRTY_VITAL_PYSSTAMINA)
+
+        if(statsDirty & DIRTY_VITAL_PYSSTAMINA)
         {
             pstam = me->GetFloat();
         }
 
-        if (statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
+        if(statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
         {
             pstam_rate = me->GetFloat();
         }
-        
-        if (statsDirty & DIRTY_VITAL_MENSTAMINA)
+
+        if(statsDirty & DIRTY_VITAL_MENSTAMINA)
         {
             mstam = me->GetFloat();
         }
-        
-        if (statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
+
+        if(statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
         {
             mstam_rate = me->GetFloat();
         }
-        
-        if (statsDirty & DIRTY_VITAL_EXPERIENCE)
+
+        if(statsDirty & DIRTY_VITAL_EXPERIENCE)
         {
             exp = me->GetInt32();
         }
-        
-        if (statsDirty & DIRTY_VITAL_PROGRESSION)
+
+        if(statsDirty & DIRTY_VITAL_PROGRESSION)
         {
             prog = me->GetInt32();
         }
-        
+
         counter = me->GetUInt8();
     }
-    
+
     valid=!(me->overrun);
 }
 
-csString psStatDRMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psStatDRMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
     if(request)
@@ -3970,59 +4001,59 @@ csString psStatDRMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
         msgtext.AppendFmt(" Dirty: %X ", statsDirty);
 
-        if (statsDirty & DIRTY_VITAL_HP)
+        if(statsDirty & DIRTY_VITAL_HP)
         {
             msgtext.AppendFmt(" HP: %.2f",hp);
         }
-        
-        if (statsDirty & DIRTY_VITAL_HP_RATE)
+
+        if(statsDirty & DIRTY_VITAL_HP_RATE)
         {
             msgtext.AppendFmt(" HP RATE: %.2f",hp_rate);
         }
-        
-        if (statsDirty & DIRTY_VITAL_MANA)
+
+        if(statsDirty & DIRTY_VITAL_MANA)
         {
             msgtext.AppendFmt(" MANA: %.2f",mana);
         }
-        
-        if (statsDirty & DIRTY_VITAL_MANA_RATE) 
+
+        if(statsDirty & DIRTY_VITAL_MANA_RATE)
         {
             msgtext.AppendFmt(" MANA RATE: %.2f",mana_rate);
         }
-        
-        if (statsDirty & DIRTY_VITAL_PYSSTAMINA)
+
+        if(statsDirty & DIRTY_VITAL_PYSSTAMINA)
         {
             msgtext.AppendFmt(" PYSSTA: %.2f",pstam);
         }
-        
-        if (statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
+
+        if(statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
         {
             msgtext.AppendFmt(" PYSSTA RATE: %.2f",pstam_rate);
         }
-        
-        if (statsDirty & DIRTY_VITAL_MENSTAMINA)
+
+        if(statsDirty & DIRTY_VITAL_MENSTAMINA)
         {
             msgtext.AppendFmt(" MENSTA: %.2f",mstam);
         }
-        
-        if (statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
+
+        if(statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
         {
             msgtext.AppendFmt(" MENSTA RATE: %.2f",mstam_rate);
         }
-        
-        if (statsDirty & DIRTY_VITAL_EXPERIENCE)
+
+        if(statsDirty & DIRTY_VITAL_EXPERIENCE)
         {
             msgtext.AppendFmt(" EXP: %.2f",exp);
         }
-        
-        if (statsDirty & DIRTY_VITAL_PROGRESSION)
+
+        if(statsDirty & DIRTY_VITAL_PROGRESSION)
         {
             msgtext.AppendFmt(" PP: %.2f",prog);
         }
-        
+
         msgtext.AppendFmt(" C: %d",counter);
     }
-    
+
     return msgtext;
 }
 
@@ -4030,14 +4061,14 @@ csString psStatDRMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psStatsMessage,MSGTYPE_STATS);
 
-psStatsMessage::psStatsMessage( uint32_t client, float maxHP, float maxMana, float maxWeight, float maxCapacity )
+psStatsMessage::psStatsMessage(uint32_t client, float maxHP, float maxMana, float maxWeight, float maxCapacity)
 {
-    msg.AttachNew(new MsgEntry( sizeof(float)*4 ));
-    msg->Add( maxHP );
-    msg->Add( maxMana );
-    msg->Add( maxWeight );
-    msg->Add( maxCapacity );
-    msg->SetType( MSGTYPE_STATS );
+    msg.AttachNew(new MsgEntry(sizeof(float)*4));
+    msg->Add(maxHP);
+    msg->Add(maxMana);
+    msg->Add(maxWeight);
+    msg->Add(maxCapacity);
+    msg->SetType(MSGTYPE_STATS);
     msg->clientnum = client;
 
     valid=!(msg->overrun);
@@ -4046,13 +4077,13 @@ psStatsMessage::psStatsMessage( uint32_t client, float maxHP, float maxMana, flo
 psStatsMessage::psStatsMessage()
 {
     msg.AttachNew(new MsgEntry());
-    msg->SetType( MSGTYPE_STATS );
+    msg->SetType(MSGTYPE_STATS);
     msg->clientnum = 0;
     valid=!(msg->overrun);
 }
 
 
-psStatsMessage::psStatsMessage( MsgEntry* me )
+psStatsMessage::psStatsMessage(MsgEntry* me)
 {
     if(me->GetSize() <= 0)
     {
@@ -4070,17 +4101,17 @@ psStatsMessage::psStatsMessage( MsgEntry* me )
 }
 
 
-csString psStatsMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psStatsMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    if (request)
+    if(request)
     {
         msgtext.AppendFmt("Request for Stats");
     }
     else
     {
         msgtext.AppendFmt("HP: %.3f Mana: %.3f Weight: %.3f Capacity: %.3f",
-                          hp, mana, weight, capacity );
+                          hp, mana, weight, capacity);
     }
 
     return msgtext;
@@ -4090,112 +4121,112 @@ csString psStatsMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUISkillMessage, MSGTYPE_GUISKILL);
 
-const char * psGUISkillMessage::SkillCommandString[] = 
-    {"REQUEST","BUY_SkILL","SKILL_LIST","SKILL_SELECTED","DESCRIPTION","QUIT"};
-        
+const char* psGUISkillMessage::SkillCommandString[] =
+{"REQUEST","BUY_SkILL","SKILL_LIST","SKILL_SELECTED","DESCRIPTION","QUIT"};
 
-psGUISkillMessage::psGUISkillMessage( uint8_t command,
-                                      csString commandData)
+
+psGUISkillMessage::psGUISkillMessage(uint8_t command,
+                                     csString commandData)
 {
-    msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
-                        commandData.Length() + 1 +
-                        skillCache.size()));
+    msg.AttachNew(new MsgEntry(sizeof(bool) + sizeof(uint8_t) +
+                               commandData.Length() + 1 +
+                               skillCache.size()));
 
     msg->SetType(MSGTYPE_GUISKILL);
     msg->clientnum  = 0;
 
-    msg->Add( false ); //We didn't add stats
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(false);   //We didn't add stats
+    msg->Add(command);
+    msg->Add(commandData);
     skillCache.write(msg);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUISkillMessage::psGUISkillMessage( uint32_t clientNum,
-                                      uint8_t command,
-                                      csString commandData,
-                                      psSkillCache *skills,
-                                      uint32_t str,
-                                      uint32_t end,
-                                      uint32_t agi,
-                                      uint32_t inl,
-                                      uint32_t wil,
-                                      uint32_t chr,
-                                      uint32_t hp,
-                                      uint32_t man,
-                                      uint32_t physSta,
-                                      uint32_t menSta,
-                                      uint32_t hpMax,
-                                      uint32_t manMax,
-                                      uint32_t physStaMax,
-                                      uint32_t menStaMax,
-                                      bool openWin,
-                                      int32_t focus,
-                                      int32_t selSkillCat,
-                                      bool isTraining)
+psGUISkillMessage::psGUISkillMessage(uint32_t clientNum,
+                                     uint8_t command,
+                                     csString commandData,
+                                     psSkillCache* skills,
+                                     uint32_t str,
+                                     uint32_t end,
+                                     uint32_t agi,
+                                     uint32_t inl,
+                                     uint32_t wil,
+                                     uint32_t chr,
+                                     uint32_t hp,
+                                     uint32_t man,
+                                     uint32_t physSta,
+                                     uint32_t menSta,
+                                     uint32_t hpMax,
+                                     uint32_t manMax,
+                                     uint32_t physStaMax,
+                                     uint32_t menStaMax,
+                                     bool openWin,
+                                     int32_t focus,
+                                     int32_t selSkillCat,
+                                     bool isTraining)
 {
     //Function begins
-    msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
-                        commandData.Length() + 1+
-                        (skills ? skills->size() : skillCache.size()) +
-                        sizeof(str)+
-                        sizeof(end)+
-                        sizeof(agi)+
-                        sizeof(inl)+
-                        sizeof(wil)+
-                        sizeof(chr)+
-                        sizeof(hp)+
-                        sizeof(man)+
-                        sizeof(physSta)+
-                        sizeof(menSta)+
-                        sizeof(hpMax)+
-                        sizeof(manMax)+
-                        sizeof(physStaMax)+
-                        sizeof(menStaMax)+
-                        sizeof(bool) +
-                        sizeof(focus)+
-                        sizeof(selSkillCat)+
-                        sizeof(bool)
-                        ));
+    msg.AttachNew(new MsgEntry(sizeof(bool) + sizeof(uint8_t) +
+                               commandData.Length() + 1+
+                               (skills ? skills->size() : skillCache.size()) +
+                               sizeof(str)+
+                               sizeof(end)+
+                               sizeof(agi)+
+                               sizeof(inl)+
+                               sizeof(wil)+
+                               sizeof(chr)+
+                               sizeof(hp)+
+                               sizeof(man)+
+                               sizeof(physSta)+
+                               sizeof(menSta)+
+                               sizeof(hpMax)+
+                               sizeof(manMax)+
+                               sizeof(physStaMax)+
+                               sizeof(menStaMax)+
+                               sizeof(bool) +
+                               sizeof(focus)+
+                               sizeof(selSkillCat)+
+                               sizeof(bool)
+                              ));
 
     msg->SetType(MSGTYPE_GUISKILL);
     msg->clientnum  = clientNum;
 
-    msg->Add( true ); //We added stats
-    msg->Add( command );
-    msg->Add( commandData );
-    if (skills)
+    msg->Add(true);   //We added stats
+    msg->Add(command);
+    msg->Add(commandData);
+    if(skills)
         skills->write(msg);
     else
         skillCache.write(msg);
-    msg->Add( str );
-    msg->Add( end );
-    msg->Add( agi );
-    msg->Add( inl );
-    msg->Add( wil );
-    msg->Add( chr );
-    msg->Add( hp );
-    msg->Add( man );
-    msg->Add( physSta );
-    msg->Add( menSta);
-    msg->Add( hpMax );
-    msg->Add( manMax );
-    msg->Add( physStaMax );
-    msg->Add( menStaMax);
-    msg->Add( openWin );
-    msg->Add( focus );
-    msg->Add( selSkillCat );
-    msg->Add( isTraining );
+    msg->Add(str);
+    msg->Add(end);
+    msg->Add(agi);
+    msg->Add(inl);
+    msg->Add(wil);
+    msg->Add(chr);
+    msg->Add(hp);
+    msg->Add(man);
+    msg->Add(physSta);
+    msg->Add(menSta);
+    msg->Add(hpMax);
+    msg->Add(manMax);
+    msg->Add(physStaMax);
+    msg->Add(menStaMax);
+    msg->Add(openWin);
+    msg->Add(focus);
+    msg->Add(selSkillCat);
+    msg->Add(isTraining);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUISkillMessage::psGUISkillMessage( MsgEntry* message )
+psGUISkillMessage::psGUISkillMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     includeStats = message->GetBool(); //First added value indicates if we added stats or not
@@ -4203,7 +4234,7 @@ psGUISkillMessage::psGUISkillMessage( MsgEntry* message )
     commandData = message->GetStr();
     skillCache.read(message);
 
-    if (includeStats)
+    if(includeStats)
     {
         strength = message->GetUInt32();
         endurance = message->GetUInt32();
@@ -4229,7 +4260,7 @@ psGUISkillMessage::psGUISkillMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psGUISkillMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUISkillMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -4238,16 +4269,16 @@ csString psGUISkillMessage::ToString(NetBase::AccessPointers * /*accessPointers*
     msgtext.AppendFmt("Data: '%s' ", commandData.GetDataSafe());
     msgtext.AppendFmt("SkillCache: %s ", skillCache.ToString().GetData());
 #endif
-    if (includeStats)
+    if(includeStats)
     {
         msgtext.AppendFmt("Str: %d End: %d Agi: %d Int: %d Wil: %d Cha: %d ",
-            strength, endurance, agility, intelligence, will, charisma);
+                          strength, endurance, agility, intelligence, will, charisma);
         msgtext.AppendFmt("HP: %d (Max: %d) Mana: %d (Max: %d) ", hitpoints, hitpointsMax, mana, manaMax);
         msgtext.AppendFmt("Physical Stamina: %d (Max: %d) Mental Stamina: %d (Max %d) ",
-            physStamina, physStaminaMax, menStamina, menStaminaMax);
+                          physStamina, physStaminaMax, menStamina, menStaminaMax);
         msgtext.AppendFmt("Focus Skill: %d Skill Cat: %d ", focusSkill, skillCat);
         msgtext.AppendFmt("Window '%s' Training '%s'",
-            (openWindow ? "open" : "closed"), (trainingWindow ? "open" : "closed"));
+                          (openWindow ? "open" : "closed"), (trainingWindow ? "open" : "closed"));
     }
 
     return msgtext;
@@ -4258,108 +4289,108 @@ csString psGUISkillMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 PSF_IMPLEMENT_MSG_FACTORY(psGUIBankingMessage, MSGTYPE_BANKING);
 
 psGUIBankingMessage::psGUIBankingMessage(uint32_t clientNum, uint8_t command, bool guild,
-                                         int circles, int octas, int hexas, int trias,
-                                         int circlesBanked, int octasBanked, int hexasBanked,
-                                         int triasBanked, int maxCircles, int maxOctas, int maxHexas,
-                                         int maxTrias, float exchangeFee, bool forceOpen)
+        int circles, int octas, int hexas, int trias,
+        int circlesBanked, int octasBanked, int hexasBanked,
+        int triasBanked, int maxCircles, int maxOctas, int maxHexas,
+        int maxTrias, float exchangeFee, bool forceOpen)
 {
     msg.AttachNew(new MsgEntry(sizeof(bool) +
-                       sizeof(bool) +
-                       sizeof(uint8_t) +
-                       sizeof(bool) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(float) +
-                       sizeof(bool)));
+                               sizeof(bool) +
+                               sizeof(uint8_t) +
+                               sizeof(bool) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(float) +
+                               sizeof(bool)));
 
     msg->SetType(MSGTYPE_BANKING);
     msg->clientnum  = clientNum;
-    msg->Add( true );
-    msg->Add( false );
-    msg->Add( command );
-    msg->Add( guild );
-    msg->Add( circles );
-    msg->Add( octas );
-    msg->Add( hexas );
-    msg->Add( trias );
-    msg->Add( circlesBanked );
-    msg->Add( octasBanked );
-    msg->Add( hexasBanked );
-    msg->Add( triasBanked );
-    msg->Add( maxCircles );
-    msg->Add( maxOctas );
-    msg->Add( maxHexas );
-    msg->Add( maxTrias );
-    msg->Add( exchangeFee );
-    msg->Add( forceOpen );
+    msg->Add(true);
+    msg->Add(false);
+    msg->Add(command);
+    msg->Add(guild);
+    msg->Add(circles);
+    msg->Add(octas);
+    msg->Add(hexas);
+    msg->Add(trias);
+    msg->Add(circlesBanked);
+    msg->Add(octasBanked);
+    msg->Add(hexasBanked);
+    msg->Add(triasBanked);
+    msg->Add(maxCircles);
+    msg->Add(maxOctas);
+    msg->Add(maxHexas);
+    msg->Add(maxTrias);
+    msg->Add(exchangeFee);
+    msg->Add(forceOpen);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
 psGUIBankingMessage::psGUIBankingMessage(uint8_t command, bool guild,
-                                         int circles, int octas, int hexas,int trias)
+        int circles, int octas, int hexas,int trias)
 {
     msg.AttachNew(new MsgEntry(sizeof(bool) +
-                       sizeof(bool) +
-                       sizeof(uint8_t) +
-                       sizeof(bool) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int) +
-                       sizeof(int)));
+                               sizeof(bool) +
+                               sizeof(uint8_t) +
+                               sizeof(bool) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int) +
+                               sizeof(int)));
 
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_BANKING);
-    msg->Add( false );
-    msg->Add( false );
-    msg->Add( command );
-    msg->Add( guild );
-    msg->Add( circles );
-    msg->Add( octas );
-    msg->Add( hexas );
-    msg->Add( trias );
+    msg->Add(false);
+    msg->Add(false);
+    msg->Add(command);
+    msg->Add(guild);
+    msg->Add(circles);
+    msg->Add(octas);
+    msg->Add(hexas);
+    msg->Add(trias);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
 psGUIBankingMessage::psGUIBankingMessage(uint8_t command, bool guild,
-                                         int coins, int coin)
+        int coins, int coin)
 {
     msg.AttachNew(new MsgEntry(sizeof(bool) +
-                       sizeof(bool) +
-                       sizeof(uint8_t) +
-                       sizeof(bool) +
-                       sizeof(int) +
-                       sizeof(int)));
+                               sizeof(bool) +
+                               sizeof(uint8_t) +
+                               sizeof(bool) +
+                               sizeof(int) +
+                               sizeof(int)));
 
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_BANKING);
-    msg->Add( false );
-    msg->Add( true );
-    msg->Add( command );
-    msg->Add( guild );
-    msg->Add( coins );
-    msg->Add( coin );
+    msg->Add(false);
+    msg->Add(true);
+    msg->Add(command);
+    msg->Add(guild);
+    msg->Add(coins);
+    msg->Add(coin);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psGUIBankingMessage::psGUIBankingMessage(MsgEntry *message)
+psGUIBankingMessage::psGUIBankingMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     sendingFull = message->GetBool();
@@ -4398,7 +4429,7 @@ psGUIBankingMessage::psGUIBankingMessage(MsgEntry *message)
     valid=!(message->overrun);
 }
 
-csString psGUIBankingMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUIBankingMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -4417,102 +4448,102 @@ csString psGUIBankingMessage::ToString(NetBase::AccessPointers * /*accessPointer
 
 PSF_IMPLEMENT_MSG_FACTORY(psPetSkillMessage,MSGTYPE_PET_SKILL);
 
-psPetSkillMessage::psPetSkillMessage( uint8_t command,
-                                      csString commandData)
+psPetSkillMessage::psPetSkillMessage(uint8_t command,
+                                     csString commandData)
 {
-    msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
-                        commandData.Length() +
-                        1));
+    msg.AttachNew(new MsgEntry(sizeof(bool) + sizeof(uint8_t) +
+                               commandData.Length() +
+                               1));
 
     msg->SetType(MSGTYPE_PET_SKILL);
     msg->clientnum  = 0;
 
-    msg->Add( false ); //We didn't add stats
-    msg->Add( command );
-    msg->Add( commandData );
+    msg->Add(false);   //We didn't add stats
+    msg->Add(command);
+    msg->Add(commandData);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psPetSkillMessage::psPetSkillMessage( uint32_t clientNum,
-                                      uint8_t command,
-                                      csString commandData,
-                                      uint32_t str,
-                                      uint32_t end,
-                                      uint32_t agi,
-                                      uint32_t inl,
-                                      uint32_t wil,
-                                      uint32_t chr,
-                                      uint32_t hp,
-                                      uint32_t man,
-                                      uint32_t physSta,
-                                      uint32_t menSta,
-                                      uint32_t hpMax,
-                                      uint32_t manMax,
-                                      uint32_t physStaMax,
-                                      uint32_t menStaMax,
-                                      bool openWin,
-                                      int32_t focus)
+psPetSkillMessage::psPetSkillMessage(uint32_t clientNum,
+                                     uint8_t command,
+                                     csString commandData,
+                                     uint32_t str,
+                                     uint32_t end,
+                                     uint32_t agi,
+                                     uint32_t inl,
+                                     uint32_t wil,
+                                     uint32_t chr,
+                                     uint32_t hp,
+                                     uint32_t man,
+                                     uint32_t physSta,
+                                     uint32_t menSta,
+                                     uint32_t hpMax,
+                                     uint32_t manMax,
+                                     uint32_t physStaMax,
+                                     uint32_t menStaMax,
+                                     bool openWin,
+                                     int32_t focus)
 {
     //Function begins
-    msg.AttachNew(new MsgEntry( sizeof(bool) + sizeof(uint8_t) +
-                        commandData.Length() + 1+
-                        sizeof(str)+
-                        sizeof(end)+
-                        sizeof(agi)+
-                        sizeof(inl)+
-                        sizeof(wil)+
-                        sizeof(chr)+
-                        sizeof(hp)+
-                        sizeof(man)+
-                        sizeof(physSta)+
-                        sizeof(menSta)+
-                        sizeof(hpMax)+
-                        sizeof(manMax)+
-                        sizeof(physStaMax)+
-                        sizeof(menStaMax)+
-                        sizeof(bool) +
-                        sizeof(focus)
-                        ));
+    msg.AttachNew(new MsgEntry(sizeof(bool) + sizeof(uint8_t) +
+                               commandData.Length() + 1+
+                               sizeof(str)+
+                               sizeof(end)+
+                               sizeof(agi)+
+                               sizeof(inl)+
+                               sizeof(wil)+
+                               sizeof(chr)+
+                               sizeof(hp)+
+                               sizeof(man)+
+                               sizeof(physSta)+
+                               sizeof(menSta)+
+                               sizeof(hpMax)+
+                               sizeof(manMax)+
+                               sizeof(physStaMax)+
+                               sizeof(menStaMax)+
+                               sizeof(bool) +
+                               sizeof(focus)
+                              ));
 
     msg->SetType(MSGTYPE_PET_SKILL);
     msg->clientnum  = clientNum;
 
-    msg->Add( true ); //We added stats
-    msg->Add( command );
-    msg->Add( commandData );
-    msg->Add( str );
-    msg->Add( end );
-    msg->Add( agi );
-    msg->Add( inl );
-    msg->Add( wil );
-    msg->Add( chr );
-    msg->Add( hp );
-    msg->Add( man );
-    msg->Add( physSta );
-    msg->Add( menSta);
-    msg->Add( hpMax );
-    msg->Add( manMax );
-    msg->Add( physStaMax );
-    msg->Add( menStaMax);
-    msg->Add( openWin );
-    msg->Add( focus );
+    msg->Add(true);   //We added stats
+    msg->Add(command);
+    msg->Add(commandData);
+    msg->Add(str);
+    msg->Add(end);
+    msg->Add(agi);
+    msg->Add(inl);
+    msg->Add(wil);
+    msg->Add(chr);
+    msg->Add(hp);
+    msg->Add(man);
+    msg->Add(physSta);
+    msg->Add(menSta);
+    msg->Add(hpMax);
+    msg->Add(manMax);
+    msg->Add(physStaMax);
+    msg->Add(menStaMax);
+    msg->Add(openWin);
+    msg->Add(focus);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psPetSkillMessage::psPetSkillMessage( MsgEntry* message )
+psPetSkillMessage::psPetSkillMessage(MsgEntry* message)
 {
-    if ( !message )
+    if(!message)
         return;
 
     includeStats = message->GetBool(); //First added value indicates if we added stats or not
     command   = message->GetUInt8();
     commandData = message->GetStr();
 
-    if (includeStats)
+    if(includeStats)
     {
         strength = message->GetUInt32();
         endurance = message->GetUInt32();
@@ -4536,19 +4567,19 @@ psPetSkillMessage::psPetSkillMessage( MsgEntry* message )
     valid=!(message->overrun);
 }
 
-csString psPetSkillMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPetSkillMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Command: %d ", command );
+    msgtext.AppendFmt("Command: %d ", command);
 
-    if (includeStats)
+    if(includeStats)
     {
         msgtext.AppendFmt("Str: %d End: %d Agi: %d Int: %d Wil: %d Cha: %d ",
-                strength, endurance, agility, intelligence, will, charisma);
+                          strength, endurance, agility, intelligence, will, charisma);
         msgtext.AppendFmt("HP: %d (Max: %d) Mana: %d (Max: %d) ", hitpoints, hitpointsMax, mana, manaMax);
         msgtext.AppendFmt("Physical Stamina: %d (Max: %d) Mental Stamina: %d (Max %d) ",
-                physStamina, physStaminaMax, menStamina, menStaminaMax);
+                          physStamina, physStaminaMax, menStamina, menStaminaMax);
         msgtext.AppendFmt("Focus Skill: %d ", focusSkill);
         msgtext.AppendFmt("Window '%s'", (openWindow ? "open" : "closed"));
     }
@@ -4564,9 +4595,9 @@ csString psPetSkillMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psDRMessage,MSGTYPE_DEAD_RECKONING);
 
 void psDRMessage::CreateMsgEntry(uint32_t client, NetBase::AccessPointers* accessPointers,
-                                 iSector *sector, csString sectorName)
+                                 iSector* sector, csString sectorName)
 {
-    if (sector)
+    if(sector)
     {
         sectorName = sector->QueryObject()->GetName();
     }
@@ -4575,7 +4606,7 @@ void psDRMessage::CreateMsgEntry(uint32_t client, NetBase::AccessPointers* acces
 
     int sectorNameLen = (sectorNameStrId == csInvalidStringID) ? sectorName.Length() : 0;
 
-    msg.AttachNew(new MsgEntry( sizeof(uint32)*12 + sizeof(uint8)*4 + (sectorNameLen?sectorNameLen+1:0) ));
+    msg.AttachNew(new MsgEntry(sizeof(uint32)*12 + sizeof(uint8)*4 + (sectorNameLen?sectorNameLen+1:0)));
 
     msg->SetType(MSGTYPE_DEAD_RECKONING);
     msg->clientnum = client;
@@ -4583,7 +4614,7 @@ void psDRMessage::CreateMsgEntry(uint32_t client, NetBase::AccessPointers* acces
 
 psDRMessage::psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
                          NetBase::AccessPointers* accessPointers,
-                         psLinearMovement *linmove, uint8_t mode)
+                         psLinearMovement* linmove, uint8_t mode)
 {
     linmove->GetDRData(on_ground,pos,yrot,sector,vel,worldVel,ang_vel);
 
@@ -4599,15 +4630,15 @@ psDRMessage::psDRMessage(uint32_t client, EID mappedid, uint8_t counter,
 
 psDRMessage::psDRMessage(uint32_t client, EID mappedid,
                          bool on_ground, uint8_t mode, uint8_t counter,
-                         const csVector3& pos, float yrot,iSector *sector, csString sectorName,
-                         const csVector3& vel, csVector3& worldVel, float ang_vel,
+                         const csVector3 &pos, float yrot,iSector* sector, csString sectorName,
+                         const csVector3 &vel, csVector3 &worldVel, float ang_vel,
                          NetBase::AccessPointers* accessPointers)
 {
     CreateMsgEntry(client, accessPointers, sector, sectorName);
 
     WriteDRInfo(client, mappedid,
-         on_ground, mode, counter, pos, yrot, sector, sectorName,
-         vel,worldVel, ang_vel , accessPointers->msgstrings);
+                on_ground, mode, counter, pos, yrot, sector, sectorName,
+                vel,worldVel, ang_vel , accessPointers->msgstrings);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -4615,94 +4646,94 @@ psDRMessage::psDRMessage(uint32_t client, EID mappedid,
 
 #define ISNONZERO(x) (fabsf(x) > SMALL_EPSILON)
 
-uint8_t psDRMessage::GetDataFlags(const csVector3& v, const csVector3& wv, float yrv, uint8_t mode)
+uint8_t psDRMessage::GetDataFlags(const csVector3 &v, const csVector3 &wv, float yrv, uint8_t mode)
 {
     uint8_t flags = NOT_MOVING;
-    if ( mode != ON_GOUND )
+    if(mode != ON_GOUND)
         flags |= ACTOR_MODE;
-    if ( ISNONZERO(yrv) )
+    if(ISNONZERO(yrv))
         flags |= ANG_VELOCITY;
-    if ( ISNONZERO(v.x) )
+    if(ISNONZERO(v.x))
         flags |= X_VELOCITY;
-    if ( ISNONZERO(v.y) )
+    if(ISNONZERO(v.y))
         flags |= Y_VELOCITY;
-    if ( ISNONZERO(v.z) )
+    if(ISNONZERO(v.z))
         flags |= Z_VELOCITY;
-    if ( ISNONZERO(wv.x) )
+    if(ISNONZERO(wv.x))
         flags |= X_WORLDVELOCITY;
-    if ( ISNONZERO(wv.y) )
+    if(ISNONZERO(wv.y))
         flags |= Y_WORLDVELOCITY;
-    if ( ISNONZERO(wv.z) )
+    if(ISNONZERO(wv.z))
         flags |= Z_WORLDVELOCITY;
     return flags;
 }
 
 void psDRMessage::WriteDRInfo(uint32_t /*client*/, EID mappedid,
-                        bool on_ground, uint8_t mode, uint8_t counter,
-                        const csVector3& pos, float yrot, iSector *sector,
-                        csString sectorName, const csVector3& vel, csVector3& worldVel,
-                        float ang_vel, csStringSet* msgstrings, bool donewriting)
+                              bool on_ground, uint8_t mode, uint8_t counter,
+                              const csVector3 &pos, float yrot, iSector* sector,
+                              csString sectorName, const csVector3 &vel, csVector3 &worldVel,
+                              float ang_vel, csStringSet* msgstrings, bool donewriting)
 {
     if(sector)
         sectorName = sector->QueryObject()->GetName();
     csStringID sectorNameStrId = msgstrings ? msgstrings->Request(sectorName) : csInvalidStringID;
 
-    msg->Add( mappedid.Unbox() );
-    msg->Add( counter );
+    msg->Add(mappedid.Unbox());
+    msg->Add(counter);
 
-    if (on_ground)
+    if(on_ground)
         mode |= ON_GOUND;  // Pack falling status with mode
 
     // Store packing information
     uint8_t dataflags = GetDataFlags(vel, worldVel, ang_vel, mode);
-    msg->Add( dataflags );
+    msg->Add(dataflags);
 
-    if (dataflags & ACTOR_MODE)
-        msg->Add( mode );
-    if (dataflags & ANG_VELOCITY)
-        msg->Add( ang_vel );
-    if (dataflags & X_VELOCITY)
-        msg->Add( vel.x );
-    if (dataflags & Y_VELOCITY)
-        msg->Add( vel.y );
-    if (dataflags & Z_VELOCITY)
-        msg->Add( vel.z );
-    if (dataflags & X_WORLDVELOCITY)
-        msg->Add( worldVel.x );
-    if (dataflags & Y_WORLDVELOCITY)
-        msg->Add( worldVel.y );
-    if (dataflags & Z_WORLDVELOCITY)
-        msg->Add( worldVel.z );
+    if(dataflags & ACTOR_MODE)
+        msg->Add(mode);
+    if(dataflags & ANG_VELOCITY)
+        msg->Add(ang_vel);
+    if(dataflags & X_VELOCITY)
+        msg->Add(vel.x);
+    if(dataflags & Y_VELOCITY)
+        msg->Add(vel.y);
+    if(dataflags & Z_VELOCITY)
+        msg->Add(vel.z);
+    if(dataflags & X_WORLDVELOCITY)
+        msg->Add(worldVel.x);
+    if(dataflags & Y_WORLDVELOCITY)
+        msg->Add(worldVel.y);
+    if(dataflags & Z_WORLDVELOCITY)
+        msg->Add(worldVel.z);
 
-    msg->Add( pos.x );
-    msg->Add( pos.y );
-    msg->Add( pos.z );
+    msg->Add(pos.x);
+    msg->Add(pos.y);
+    msg->Add(pos.z);
 
-    msg->Add( (uint8_t) (yrot * 256 / TWO_PI) ); // Quantize radians to 0-255
+    msg->Add((uint8_t)(yrot * 256 / TWO_PI));    // Quantize radians to 0-255
 
-    msg->Add( (uint32_t) sectorNameStrId );
+    msg->Add((uint32_t) sectorNameStrId);
 
-    if (sectorNameStrId == csInvalidStringID)
+    if(sectorNameStrId == csInvalidStringID)
         msg->Add(sectorName);
 
-    if (donewriting)  // If we're not writing anymore data after this, shrink to fit
+    if(donewriting)   // If we're not writing anymore data after this, shrink to fit
         msg->ClipToCurrentSize();
 }
 
-psDRMessage::psDRMessage( void *data, int size, NetBase::AccessPointers* accessPointers )
+psDRMessage::psDRMessage(void* data, int size, NetBase::AccessPointers* accessPointers)
 {
     msg.AttachNew(new MsgEntry(size,PRIORITY_HIGH));
     memcpy(msg->bytes->payload,data,size);
     ReadDRInfo(msg, accessPointers);
 }
 
-psDRMessage::psDRMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers )
+psDRMessage::psDRMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers)
 {
     msg = NULL;
     ReadDRInfo(me,accessPointers);
 }
 
-void psDRMessage::operator=(psDRMessage& other)
+void psDRMessage::operator=(psDRMessage &other)
 {
     entityid   = other.entityid;
     counter    = other.counter;
@@ -4725,7 +4756,7 @@ void psDRMessage::ReadDRInfo(MsgEntry* me, NetBase::AccessPointers* accessPointe
     // Find out what's packed here
     uint8_t dataflags = me->GetUInt8();
 
-    if (dataflags & ACTOR_MODE)
+    if(dataflags & ACTOR_MODE)
     {
         mode = me->GetInt8();
         on_ground = (mode & ON_GOUND) != 0;
@@ -4767,7 +4798,7 @@ bool psDRMessage::IsNewerThan(uint8_t oldCounter)
     return (uint8_t)(counter-oldCounter) <= 127;
 }
 
-csString psDRMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psDRMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -4778,7 +4809,7 @@ csString psDRMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 #ifdef FULL_DEBUG_DUMP
     msgtext.AppendFmt("Vel(%.2f,%.2f,%.2f) ",vel.x,vel.y,vel.z);
     msgtext.AppendFmt("WVel(%.2f,%.2f,%.2f) ",worldVel.x,worldVel.y,worldVel.z);
-    if (on_ground)
+    if(on_ground)
         msgtext.Append("OnGround ");
     else
         msgtext.Append("Flying ");
@@ -4795,9 +4826,9 @@ csString psDRMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psForcePositionMessage, MSGTYPE_FORCE_POSITION);
 
 psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequenceNumber,
-                                               const csVector3 & pos, float yRot, iSector *sector, float vel,
-                                               csStringSet *msgstrings, uint32_t time, csString loadBackground,
-                                               csVector2 start, csVector2 dest, csString loadWidget)
+        const csVector3 &pos, float yRot, iSector* sector, float vel,
+        csStringSet* msgstrings, uint32_t time, csString loadBackground,
+        csVector2 start, csVector2 dest, csString loadWidget)
 {
     CS_ASSERT(sector);
     csString sectorName = sector->QueryObject()->GetName();
@@ -4810,11 +4841,11 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
 
     msg->Add(pos);
     msg->Add(yRot);
-    
+
     msg->Add((uint32_t) sectorNameStrId);
-    if (sectorNameStrId == csInvalidStringID)
+    if(sectorNameStrId == csInvalidStringID)
         msg->Add(sectorName);
-    
+
     msg->Add(time);
     msg->Add(loadBackground);
 
@@ -4832,15 +4863,15 @@ psForcePositionMessage::psForcePositionMessage(uint32_t client, uint8_t sequence
     valid=!(msg->overrun);
 }
 
-psForcePositionMessage::psForcePositionMessage(MsgEntry *me, NetBase::AccessPointers* accessPointers)
+psForcePositionMessage::psForcePositionMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers)
 {
     pos = me->GetVector3();
-    yrot = me->GetFloat();    
+    yrot = me->GetFloat();
 
     csStringID sectorNameStrId = (csStringID) me->GetUInt32();
     sectorName = sectorNameStrId != csInvalidStringID ? accessPointers->Request(sectorNameStrId) : me->GetStr();
     sector = !sectorName.IsEmpty() ? accessPointers->engine->GetSectors()->FindByName(sectorName) : NULL;
-    
+
     loadTime = me->GetUInt32();
     backgroundname = me->GetStr();
 
@@ -4855,7 +4886,7 @@ psForcePositionMessage::psForcePositionMessage(MsgEntry *me, NetBase::AccessPoin
     valid = !(me->overrun);
 }
 
-void psForcePositionMessage::operator=(psForcePositionMessage & other)
+void psForcePositionMessage::operator=(psForcePositionMessage &other)
 {
     pos    = other.pos;
     yrot   = other.yrot;
@@ -4863,7 +4894,7 @@ void psForcePositionMessage::operator=(psForcePositionMessage & other)
     vel    = other.vel;
 }
 
-csString psForcePositionMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psForcePositionMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
     msgtext.AppendFmt("Sector: %s ", sectorName.GetDataSafe());
@@ -4927,17 +4958,17 @@ csString psRequestAllObjects::ToString(NetBase::AccessPointers* /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psPersistWorld,MSGTYPE_PERSIST_WORLD);
 
-psPersistWorld::psPersistWorld( uint32_t clientNum, csVector3 pos, const char* sector )
+psPersistWorld::psPersistWorld(uint32_t clientNum, csVector3 pos, const char* sector)
 {
     msg.AttachNew(new MsgEntry(sizeof(csVector3) + strlen(sector) + 1));
 
     msg->SetType(MSGTYPE_PERSIST_WORLD);
     msg->clientnum  = clientNum;
 
-    msg->Add( pos.x );
-    msg->Add( pos.y );
-    msg->Add( pos.z );
-    msg->Add( sector );
+    msg->Add(pos.x);
+    msg->Add(pos.y);
+    msg->Add(pos.z);
+    msg->Add(sector);
 }
 
 psPersistWorld::psPersistWorld(MsgEntry* me)
@@ -4989,28 +5020,28 @@ psPersistAllEntities::psPersistAllEntities(MsgEntry* me)
 csString psPersistAllEntities::ToString(NetBase::AccessPointers* accessPointers)
 {
     csString msgtext;
-    while (true)
+    while(true)
     {
-        MsgEntry *entity = GetEntityMessage();
-        if (!entity) break;
+        MsgEntry* entity = GetEntityMessage();
+        if(!entity) break;
 
-        if (entity->GetType() == MSGTYPE_PERSIST_ACTOR)
+        if(entity->GetType() == MSGTYPE_PERSIST_ACTOR)
         {
-            psPersistActor mesg( entity, accessPointers, true );
+            psPersistActor mesg(entity, accessPointers, true);
             msgtext += " Actor: ";
-            msgtext += mesg.ToString( accessPointers );
+            msgtext += mesg.ToString(accessPointers);
             msgtext += "\n";
         }
-        else if (entity->GetType() == MSGTYPE_PERSIST_ITEM)
+        else if(entity->GetType() == MSGTYPE_PERSIST_ITEM)
         {
-            psPersistItem mesg( entity, accessPointers );
+            psPersistItem mesg(entity, accessPointers);
             msgtext += " Item: ";
-            msgtext += mesg.ToString( accessPointers );
+            msgtext += mesg.ToString(accessPointers);
             msgtext += "\n";
         }
         else
         {
-            Error2("Unhandled type of entity (%d) in AllEntities message.",entity->GetType() );
+            Error2("Unhandled type of entity (%d) in AllEntities message.",entity->GetType());
         }
 
         delete entity;
@@ -5019,30 +5050,30 @@ csString psPersistAllEntities::ToString(NetBase::AccessPointers* accessPointers)
     return msgtext;
 }
 
-bool psPersistAllEntities::AddEntityMessage(MsgEntry *newEnt)
+bool psPersistAllEntities::AddEntityMessage(MsgEntry* newEnt)
 {
     size_t addSize = newEnt->GetSize();
 
-    if (msg->GetSize() > msg->current + addSize + 2*sizeof(uint32_t)) // big enough for next msg
+    if(msg->GetSize() > msg->current + addSize + 2*sizeof(uint32_t))  // big enough for next msg
     {
         // we are copying the bytes out of one message into the buffer of another.  handle with care
-        msg->Add( newEnt->bytes,(uint32_t)newEnt->bytes->GetTotalSize() );
+        msg->Add(newEnt->bytes,(uint32_t)newEnt->bytes->GetTotalSize());
         return true;
     }
     return false;
 }
 
-MsgEntry *psPersistAllEntities::GetEntityMessage()
+MsgEntry* psPersistAllEntities::GetEntityMessage()
 {
-    if (msg->overrun)
+    if(msg->overrun)
         return NULL;
 
     uint32_t len = 0;
-    void *data = msg->GetBufferPointerUnsafe(len);
+    void* data = msg->GetBufferPointerUnsafe(len);
 
-    if (data)
+    if(data)
     {
-        MsgEntry *newEnt = new MsgEntry((psMessageBytes *)data);
+        MsgEntry* newEnt = new MsgEntry((psMessageBytes*)data);
         return newEnt;  // Caller must delete this ptr itself
     }
     return NULL;
@@ -5053,39 +5084,39 @@ MsgEntry *psPersistAllEntities::GetEntityMessage()
 
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psPersistActor,MSGTYPE_PERSIST_ACTOR);
 
-psPersistActor::psPersistActor( uint32_t clientNum,
-                                int type,
-                                int masqueradeType,
-                                bool control,
-                                const char* name,
-                                const char* guild,
-                                const char* factname,
-                                const char* matname,
-                                const char* race,
-                                const char* mountFactname,
-                                const char* MounterAnim,
-                                unsigned short int gender,
-                                float scale,
-                                float /*mountscale*/,
-                                const char* helmGroup,
-                                const char* /*bracerGroup*/,
-                                const char* BeltGroup,
-                                const char* CloakGroup,
-                                csVector3 collTop, csVector3 collBottom, csVector3 collOffSet,
-                                const char* texParts,
-                                const char* equipmentParts,
-                                uint8_t counter,
-                                EID mappedid, csStringSet* msgstrings, psLinearMovement *linmove,
-                                uint8_t movementMode,
-                                uint8_t serverMode,
-                                PID playerID,
-                                uint32_t groupID,
-                                EID ownerEID,
-                                uint32_t flags,
-                                PID masterID,
-                                bool forNPClient)
+psPersistActor::psPersistActor(uint32_t clientNum,
+                               int type,
+                               int masqueradeType,
+                               bool control,
+                               const char* name,
+                               const char* guild,
+                               const char* factname,
+                               const char* matname,
+                               const char* race,
+                               const char* mountFactname,
+                               const char* MounterAnim,
+                               unsigned short int gender,
+                               float scale,
+                               float /*mountscale*/,
+                               const char* helmGroup,
+                               const char* /*bracerGroup*/,
+                               const char* BeltGroup,
+                               const char* CloakGroup,
+                               csVector3 collTop, csVector3 collBottom, csVector3 collOffSet,
+                               const char* texParts,
+                               const char* equipmentParts,
+                               uint8_t counter,
+                               EID mappedid, csStringSet* msgstrings, psLinearMovement* linmove,
+                               uint8_t movementMode,
+                               uint8_t serverMode,
+                               PID playerID,
+                               uint32_t groupID,
+                               EID ownerEID,
+                               uint32_t flags,
+                               PID masterID,
+                               bool forNPClient)
 {
-    msg.AttachNew(new MsgEntry( MAX_MESSAGE_SIZE ));
+    msg.AttachNew(new MsgEntry(MAX_MESSAGE_SIZE));
 
     msg->SetType(MSGTYPE_PERSIST_ACTOR);
     msg->clientnum  = clientNum;
@@ -5093,48 +5124,48 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     linmove->GetDRData(on_ground,pos,yrot,sector,vel, worldVel, ang_vel);
 
     WriteDRInfo(clientNum, mappedid, on_ground, movementMode, counter, pos, yrot, sector, csString(),
-        vel, worldVel, ang_vel, msgstrings, false);
+                vel, worldVel, ang_vel, msgstrings, false);
 
-    msg->Add( (uint32_t) type );
-    msg->Add( (uint32_t) masqueradeType );
-    msg->Add( control );
-    msg->Add( name );
+    msg->Add((uint32_t) type);
+    msg->Add((uint32_t) masqueradeType);
+    msg->Add(control);
+    msg->Add(name);
 
-    if ( guild == 0 )
-        msg->Add( " " );
+    if(guild == 0)
+        msg->Add(" ");
     else
-        msg->Add( guild );
+        msg->Add(guild);
 
-    msg->Add( msgstrings->Request(factname).GetHash() );
-    msg->Add( msgstrings->Request(matname).GetHash() );
-    msg->Add( msgstrings->Request(race).GetHash() );
-    msg->Add( msgstrings->Request(mountFactname).GetHash() );
-    msg->Add( msgstrings->Request(MounterAnim).GetHash() );
-    msg->Add( gender );
-    msg->Add( helmGroup );
-    msg->Add( BracerGroup );
-    msg->Add( BeltGroup );
-    msg->Add( CloakGroup );
-    msg->Add( collTop );
-    msg->Add( collBottom );
-    msg->Add( collOffSet );
-    msg->Add( texParts );
-    msg->Add( equipmentParts );
-    msg->Add( serverMode );
+    msg->Add(msgstrings->Request(factname).GetHash());
+    msg->Add(msgstrings->Request(matname).GetHash());
+    msg->Add(msgstrings->Request(race).GetHash());
+    msg->Add(msgstrings->Request(mountFactname).GetHash());
+    msg->Add(msgstrings->Request(MounterAnim).GetHash());
+    msg->Add(gender);
+    msg->Add(helmGroup);
+    msg->Add(BracerGroup);
+    msg->Add(BeltGroup);
+    msg->Add(CloakGroup);
+    msg->Add(collTop);
+    msg->Add(collBottom);
+    msg->Add(collOffSet);
+    msg->Add(texParts);
+    msg->Add(equipmentParts);
+    msg->Add(serverMode);
     posPlayerID = (int) msg->current;
-    if (forNPClient)
+    if(forNPClient)
     {
         // Only NPC client should have the playerID.
         msg->Add(playerID.Unbox());
     }
     else
     {
-        msg->Add( (uint32_t)0 );
+        msg->Add((uint32_t)0);
     }
-    msg->Add( groupID );
+    msg->Add(groupID);
     msg->Add(ownerEID.Unbox());
     posInstance = (int) msg->current;
-    msg->Add( (int32_t)0 );
+    msg->Add((int32_t)0);
     msg->Add(scale);
     msg->Add(mountScale);
     //add this only for the npcclient probably other data can be added to this like playerid, ownerid and instance
@@ -5142,15 +5173,15 @@ psPersistActor::psPersistActor( uint32_t clientNum,
     {
         msg->Add(masterID.Unbox());
     }
-    if (flags) // No point sending 0, has to be at the end
+    if(flags)  // No point sending 0, has to be at the end
     {
-        msg->Add( flags );
+        msg->Add(flags);
     }
 
     msg->ClipToCurrentSize();
 }
 
-psPersistActor::psPersistActor( MsgEntry* me, NetBase::AccessPointers* accessPointers, bool forNPClient )
+psPersistActor::psPersistActor(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool forNPClient)
 {
     ReadDRInfo(me, accessPointers);
 
@@ -5159,7 +5190,7 @@ psPersistActor::psPersistActor( MsgEntry* me, NetBase::AccessPointers* accessPoi
     control     = me->GetBool();
     name        = me->GetStr();
     guild       = me->GetStr();
-    if ( guild == " " )
+    if(guild == " ")
         guild.Clear();
 
     factname      = accessPointers->Request(csStringID(me->GetUInt32()));
@@ -5195,18 +5226,18 @@ psPersistActor::psPersistActor( MsgEntry* me, NetBase::AccessPointers* accessPoi
     else
         masterID = 0;
 
-    if (!me->IsEmpty())
+    if(!me->IsEmpty())
         flags   = me->GetUInt32();
     else
         flags   = 0;
     csString msgtext;
 }
 
-csString psPersistActor::ToString(NetBase::AccessPointers * accessPointers)
+csString psPersistActor::ToString(NetBase::AccessPointers* accessPointers)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("DR: %s ", psDRMessage::ToString(accessPointers).GetData() );
+    msgtext.AppendFmt("DR: %s ", psDRMessage::ToString(accessPointers).GetData());
     msgtext.AppendFmt(" Type: %d",type);
     msgtext.AppendFmt(" MaskType: %d",masqueradeType);
     msgtext.AppendFmt(" Control: %s",(control?"true":"false"));
@@ -5229,11 +5260,11 @@ csString psPersistActor::ToString(NetBase::AccessPointers * accessPointers)
     msgtext.AppendFmt(" Instance: %d",instance);
     msgtext.AppendFmt(" MasterID: %d",masterID.Unbox());
     msgtext.AppendFmt(" Flags:");
-    if (flags & INVISIBLE) msgtext.AppendFmt(" INVISIBLE");
-    if (flags & INVINCIBLE) msgtext.AppendFmt(" INVINCIBLE");
-    if (flags & NPC) msgtext.AppendFmt(" NPC");
-    if (flags & IS_ALIVE) msgtext.AppendFmt(" IS_ALIVE");
-    if (flags & NAMEKNOWN) msgtext.AppendFmt(" NAMEKNOWN");
+    if(flags & INVISIBLE) msgtext.AppendFmt(" INVISIBLE");
+    if(flags & INVINCIBLE) msgtext.AppendFmt(" INVINCIBLE");
+    if(flags & NPC) msgtext.AppendFmt(" NPC");
+    if(flags & IS_ALIVE) msgtext.AppendFmt(" IS_ALIVE");
+    if(flags & NAMEKNOWN) msgtext.AppendFmt(" NAMEKNOWN");
 
     return msgtext;
 }
@@ -5248,28 +5279,28 @@ void psPersistActor::SetInstance(InstanceID instance)
 
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psPersistItem,MSGTYPE_PERSIST_ITEM);
 
-psPersistItem::psPersistItem( uint32_t clientNum,
-                              EID eid,
-                              int type,
-                              const char* name,
-                              const char* factname,
-                              const char* matname,
-                              const char* sector,
-                              csVector3 pos,
-                              float xRot,
-                              float yRot,
-                              float zRot,
-                              uint32_t flags,
-                              csStringSet* msgstrings,
-                              uint32_t tribeID,
-                              uint32_t uid)
+psPersistItem::psPersistItem(uint32_t clientNum,
+                             EID eid,
+                             int type,
+                             const char* name,
+                             const char* factname,
+                             const char* matname,
+                             const char* sector,
+                             csVector3 pos,
+                             float xRot,
+                             float yRot,
+                             float zRot,
+                             uint32_t flags,
+                             csStringSet* msgstrings,
+                             uint32_t tribeID,
+                             uint32_t uid)
 {
-    msg.AttachNew(new MsgEntry( MAX_MESSAGE_SIZE ));
+    msg.AttachNew(new MsgEntry(MAX_MESSAGE_SIZE));
 
     msg->SetType(MSGTYPE_PERSIST_ITEM);
     msg->clientnum  = clientNum;
 
-    msg->Add( eid.Unbox() );
+    msg->Add(eid.Unbox());
     msg->Add((uint32_t) type);
     msg->Add(name);
     msg->Add(msgstrings->Request(factname).GetHash());
@@ -5279,24 +5310,24 @@ psPersistItem::psPersistItem( uint32_t clientNum,
     msg->Add(xRot);
     msg->Add(yRot);
     msg->Add(zRot);
-    if (tribeID != 0 )
+    if(tribeID != 0)
     {
         flags |= TRIBEID;
     }
-    if (uid != 0)
+    if(uid != 0)
     {
         flags |= ITEM_UID;
     }
-    if (flags) // No point sending 0, only enties called out by flags can follow
+    if(flags)  // No point sending 0, only enties called out by flags can follow
     {
-        msg->Add( flags );
+        msg->Add(flags);
     }
     // Only entities called out by flags can follow flags
-    if (flags & TRIBEID)
+    if(flags & TRIBEID)
     {
         msg->Add(tribeID);
     }
-    if (flags & ITEM_UID)
+    if(flags & ITEM_UID)
     {
         msg->Add(uid);
     }
@@ -5305,7 +5336,7 @@ psPersistItem::psPersistItem( uint32_t clientNum,
 }
 
 
-psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPointers )
+psPersistItem::psPersistItem(MsgEntry* me, NetBase::AccessPointers* accessPointers)
     :tribeID(0),flags(0)
 {
     eid         = EID(me->GetUInt32());
@@ -5318,21 +5349,21 @@ psPersistItem::psPersistItem( MsgEntry* me, NetBase::AccessPointers * accessPoin
     xRot        = me->GetFloat();
     yRot        = me->GetFloat();
     zRot        = me->GetFloat();
-    if (!me->IsEmpty())
+    if(!me->IsEmpty())
     {
         flags   = me->GetUInt32();
-        if (flags & TRIBEID)
+        if(flags & TRIBEID)
         {
             tribeID     = me->GetInt32();
         }
-        if (flags & ITEM_UID)
+        if(flags & ITEM_UID)
         {
             uid = me->GetUInt32();
         }
     }
 }
 
-csString psPersistItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPersistItem::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5361,30 +5392,30 @@ csString psPersistItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psPersistActionLocation,MSGTYPE_PERSIST_ACTIONLOCATION);
 
-psPersistActionLocation::psPersistActionLocation( uint32_t clientNum,
-                                EID eid,
-                                int type,
-                                const char* name,
-                                const char* sector,
-                                const char* mesh
-                               )
+psPersistActionLocation::psPersistActionLocation(uint32_t clientNum,
+        EID eid,
+        int type,
+        const char* name,
+        const char* sector,
+        const char* mesh
+                                                )
 {
-    msg.AttachNew(new MsgEntry( 5000 ));
+    msg.AttachNew(new MsgEntry(5000));
 
     msg->SetType(MSGTYPE_PERSIST_ACTIONLOCATION);
     msg->clientnum  = clientNum;
 
     msg->Add(eid.Unbox());
-    msg->Add( (uint32_t) type );
-    msg->Add( name );
-    msg->Add( sector );
-    msg->Add( mesh );
+    msg->Add((uint32_t) type);
+    msg->Add(name);
+    msg->Add(sector);
+    msg->Add(mesh);
 
     msg->ClipToCurrentSize();
 }
 
 
-psPersistActionLocation::psPersistActionLocation( MsgEntry* me )
+psPersistActionLocation::psPersistActionLocation(MsgEntry* me)
 {
     eid         = EID(me->GetUInt32());
     type        = me->GetUInt32();
@@ -5393,7 +5424,7 @@ psPersistActionLocation::psPersistActionLocation( MsgEntry* me )
     mesh        = me->GetStr();
 }
 
-csString psPersistActionLocation::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPersistActionLocation::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5409,7 +5440,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psRemoveObject,MSGTYPE_REMOVE_OBJECT);
 
 psRemoveObject::psRemoveObject(uint32_t clientNum, EID objectEID)
 {
-    msg.AttachNew(new MsgEntry( sizeof( uint32_t) ));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_REMOVE_OBJECT);
     msg->clientnum  = clientNum;
@@ -5418,12 +5449,12 @@ psRemoveObject::psRemoveObject(uint32_t clientNum, EID objectEID)
     valid=!(msg->overrun);
 }
 
-psRemoveObject::psRemoveObject( MsgEntry* me )
+psRemoveObject::psRemoveObject(MsgEntry* me)
 {
     objectEID = EID(me->GetUInt32());
 }
 
-csString psRemoveObject::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psRemoveObject::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5436,29 +5467,29 @@ csString psRemoveObject::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psBuddyListMsg,MSGTYPE_BUDDY_LIST);
 
-psBuddyListMsg::psBuddyListMsg( uint32_t client, int totalBuddies )
+psBuddyListMsg::psBuddyListMsg(uint32_t client, int totalBuddies)
 {
     // Possible overflow here!
-    msg.AttachNew(new MsgEntry( totalBuddies*100+10 ));
+    msg.AttachNew(new MsgEntry(totalBuddies*100+10));
     msg->SetType(MSGTYPE_BUDDY_LIST);
     msg->clientnum = client;
 
-    buddies.SetSize( totalBuddies );
+    buddies.SetSize(totalBuddies);
 }
 
-psBuddyListMsg::psBuddyListMsg( MsgEntry* me )
+psBuddyListMsg::psBuddyListMsg(MsgEntry* me)
 {
     int totalBuddies = me->GetUInt32();
-    buddies.SetSize( totalBuddies );
+    buddies.SetSize(totalBuddies);
 
-    for ( int x = 0; x < totalBuddies; x++ )
+    for(int x = 0; x < totalBuddies; x++)
     {
         buddies[x].name = me->GetStr();
         buddies[x].online = me->GetBool();
     }
 }
 
-void psBuddyListMsg::AddBuddy( int num, const char* name, bool onlineStatus )
+void psBuddyListMsg::AddBuddy(int num, const char* name, bool onlineStatus)
 {
     buddies[num].name = name;
     buddies[num].online = onlineStatus;
@@ -5466,26 +5497,26 @@ void psBuddyListMsg::AddBuddy( int num, const char* name, bool onlineStatus )
 
 void psBuddyListMsg::Build()
 {
-    msg->Add( (uint32_t)buddies.GetSize() );
+    msg->Add((uint32_t)buddies.GetSize());
 
-    for ( size_t x = 0; x < buddies.GetSize(); x++ )
+    for(size_t x = 0; x < buddies.GetSize(); x++)
     {
-        msg->Add( buddies[x].name );
-        msg->Add( buddies[x].online );
+        msg->Add(buddies[x].name);
+        msg->Add(buddies[x].online);
     }
     msg->ClipToCurrentSize();
 
     valid=!(msg->overrun);
 }
 
-csString psBuddyListMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psBuddyListMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    for ( size_t x = 0; x < buddies.GetSize(); x++ )
+    for(size_t x = 0; x < buddies.GetSize(); x++)
     {
         msgtext.AppendFmt("Name: '%s' %s ",
-                buddies[x].name.GetDataSafe(), (buddies[x].online ? "Online" : "Offline"));
+                          buddies[x].name.GetDataSafe(), (buddies[x].online ? "Online" : "Offline"));
     }
 
     return msgtext;
@@ -5495,7 +5526,7 @@ csString psBuddyListMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psBuddyStatus,MSGTYPE_BUDDY_STATUS);
 
-csString psBuddyStatus::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psBuddyStatus::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5508,12 +5539,12 @@ csString psBuddyStatus::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psMOTDMessage,MSGTYPE_MOTD);
 
-csString psMOTDMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMOTDMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Tip: '%s' MOTD: '%s' Guild: '%s' Guild MOTD: '%s'",
-            tip.GetDataSafe(), motd.GetDataSafe(), guild.GetDataSafe(), guildmotd.GetDataSafe()  );
+                      tip.GetDataSafe(), motd.GetDataSafe(), guild.GetDataSafe(), guildmotd.GetDataSafe());
 
     return msgtext;
 }
@@ -5522,7 +5553,7 @@ csString psMOTDMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psMOTDRequestMessage,MSGTYPE_MOTDREQUEST);
 
-csString psMOTDRequestMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMOTDRequestMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5535,7 +5566,7 @@ csString psMOTDRequestMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psQuestionResponseMsg,MSGTYPE_QUESTIONRESPONSE);
 
-csString psQuestionResponseMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psQuestionResponseMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5548,7 +5579,7 @@ csString psQuestionResponseMsg::ToString(NetBase::AccessPointers * /*accessPoint
 
 PSF_IMPLEMENT_MSG_FACTORY(psQuestionMessage,MSGTYPE_QUESTION);
 
-csString psQuestionMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psQuestionMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5561,12 +5592,12 @@ csString psQuestionMessage::ToString(NetBase::AccessPointers * /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psAdviceMessage,MSGTYPE_ADVICE);
 
-csString psAdviceMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psAdviceMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Command: '%s' Target: '%s' Message: '%s'",
-            sCommand.GetDataSafe(), sTarget.GetDataSafe(), sMessage.GetDataSafe());
+                      sCommand.GetDataSafe(), sTarget.GetDataSafe(), sMessage.GetDataSafe());
 
     return msgtext;
 }
@@ -5575,13 +5606,13 @@ csString psAdviceMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGUIActiveMagicMessage,MSGTYPE_ACTIVEMAGIC);
 
-csString psGUIActiveMagicMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGUIActiveMagicMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext(command == Add ? "Add " : "Remove ");
 
-    if (type == BUFF)
+    if(type == BUFF)
         msgtext.Append("buff ");
-    else if (type == DEBUFF)
+    else if(type == DEBUFF)
         msgtext.Append("debuff ");
 
     msgtext.Append(name);
@@ -5592,7 +5623,7 @@ csString psGUIActiveMagicMessage::ToString(NetBase::AccessPointers * /*accessPoi
 
 PSF_IMPLEMENT_MSG_FACTORY(psSlotMovementMsg,MSGTYPE_SLOT_MOVEMENT);
 
-csString psSlotMovementMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psSlotMovementMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5607,19 +5638,19 @@ csString psSlotMovementMsg::ToString(NetBase::AccessPointers * /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psCmdDropMessage,MSGTYPE_CMDDROP);
 
-psCmdDropMessage::psCmdDropMessage( int quantity, csString &itemName, bool container, bool guarded, bool inplace)
+psCmdDropMessage::psCmdDropMessage(int quantity, csString &itemName, bool container, bool guarded, bool inplace)
 {
-    msg.AttachNew(new MsgEntry( sizeof( int32_t ) + itemName.Length() + sizeof(bool)*3 + 1 ));
+    msg.AttachNew(new MsgEntry(sizeof(int32_t) + itemName.Length() + sizeof(bool)*3 + 1));
 
     msg->SetType(MSGTYPE_CMDDROP);
-    msg->Add( (int32_t) quantity );
-    msg->Add( itemName );
-    msg->Add( container );
-    msg->Add( guarded );
+    msg->Add((int32_t) quantity);
+    msg->Add(itemName);
+    msg->Add(container);
+    msg->Add(guarded);
     msg->Add(inplace);
 }
 
-psCmdDropMessage::psCmdDropMessage( MsgEntry* me )
+psCmdDropMessage::psCmdDropMessage(MsgEntry* me)
 {
     quantity  = me->GetInt32();
     itemName  = me->GetStr();
@@ -5628,7 +5659,7 @@ psCmdDropMessage::psCmdDropMessage( MsgEntry* me )
     inplace = me->GetBool();
 }
 
-csString psCmdDropMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCmdDropMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5641,7 +5672,7 @@ csString psCmdDropMessage::ToString(NetBase::AccessPointers * /*accessPointers*/
 
 PSF_IMPLEMENT_MSG_FACTORY(psQuestionCancelMessage,MSGTYPE_QUESTIONCANCEL);
 
-csString psQuestionCancelMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psQuestionCancelMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5654,7 +5685,7 @@ csString psQuestionCancelMessage::ToString(NetBase::AccessPointers * /*accessPoi
 
 PSF_IMPLEMENT_MSG_FACTORY(psGuildMOTDSetMessage,MSGTYPE_GUILDMOTDSET);
 
-csString psGuildMOTDSetMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGuildMOTDSetMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5667,23 +5698,23 @@ csString psGuildMOTDSetMessage::ToString(NetBase::AccessPointers * /*accessPoint
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharacterDetailsMessage,MSGTYPE_CHARACTERDETAILS);
 
-psCharacterDetailsMessage::psCharacterDetailsMessage( int clientnum,
-                                                      const csString& name2s,
-                                                      unsigned short int gender2s,
-                                                      const csString& race2s,
-                                                      const csString& desc2s,
-                                                      const csArray<NetworkDetailSkill>& skills2s,
-                                                      const csString& desc_ooc,
-                                                      const csString& creationinfo,
-                                                      const csString& requestor)
+psCharacterDetailsMessage::psCharacterDetailsMessage(int clientnum,
+        const csString &name2s,
+        unsigned short int gender2s,
+        const csString &race2s,
+        const csString &desc2s,
+        const csArray<NetworkDetailSkill> &skills2s,
+        const csString &desc_ooc,
+        const csString &creationinfo,
+        const csString &requestor)
 {
     size_t size = sizeof(uint32_t);
-    for ( size_t x = 0; x < skills2s.GetSize(); x++ )
+    for(size_t x = 0; x < skills2s.GetSize(); x++)
     {
         size += sizeof(uint32_t) + skills2s[x].text.Length()+1;
     }
 
-    msg.AttachNew(new MsgEntry( desc2s.Length()+1 + sizeof(gender2s) + name2s.Length() + 1 + race2s.Length() + 1 + desc_ooc.Length() + 1 + creationinfo.Length() + 1 + requestor.Length() + 1 + size));
+    msg.AttachNew(new MsgEntry(desc2s.Length()+1 + sizeof(gender2s) + name2s.Length() + 1 + race2s.Length() + 1 + desc_ooc.Length() + 1 + creationinfo.Length() + 1 + requestor.Length() + 1 + size));
 
     msg->SetType(MSGTYPE_CHARACTERDETAILS);
     msg->clientnum = clientnum;
@@ -5696,15 +5727,15 @@ psCharacterDetailsMessage::psCharacterDetailsMessage( int clientnum,
     msg->Add(creationinfo);
     msg->Add(requestor);
 
-    msg->Add( (uint32_t)skills2s.GetSize() );
-    for (size_t x = 0; x < skills2s.GetSize(); x++)
+    msg->Add((uint32_t)skills2s.GetSize());
+    for(size_t x = 0; x < skills2s.GetSize(); x++)
     {
-        msg->Add( (uint32_t)skills2s[x].category );
-        msg->Add( skills2s[x].text );
+        msg->Add((uint32_t)skills2s[x].category);
+        msg->Add(skills2s[x].text);
     }
 }
 
-psCharacterDetailsMessage::psCharacterDetailsMessage( MsgEntry* me )
+psCharacterDetailsMessage::psCharacterDetailsMessage(MsgEntry* me)
 {
     name         = me->GetStr();
     gender       = me->GetUInt16();
@@ -5714,7 +5745,7 @@ psCharacterDetailsMessage::psCharacterDetailsMessage( MsgEntry* me )
     creationinfo = me->GetStr();
     requestor    = me->GetStr();
     uint32_t len = me->GetUInt32();
-    for (uint32_t x = 0; x < len; x++)
+    for(uint32_t x = 0; x < len; x++)
     {
         NetworkDetailSkill s;
 
@@ -5724,16 +5755,16 @@ psCharacterDetailsMessage::psCharacterDetailsMessage( MsgEntry* me )
     }
 }
 
-csString psCharacterDetailsMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCharacterDetailsMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Name: '%s' Gender: %d Race: '%s' Description: '%s' OOC Description: %s Character Creation Info: %s Requestor: '%s'",
-        name.GetDataSafe(), gender, race.GetDataSafe(), desc.GetDataSafe(), desc_ooc.GetDataSafe(), creationinfo.GetDataSafe(), requestor.GetDataSafe());
-    for ( size_t x = 0; x < skills.GetSize(); x++ )
+                      name.GetDataSafe(), gender, race.GetDataSafe(), desc.GetDataSafe(), desc_ooc.GetDataSafe(), creationinfo.GetDataSafe(), requestor.GetDataSafe());
+    for(size_t x = 0; x < skills.GetSize(); x++)
     {
         msgtext.AppendFmt(" Skill: '%s' Category: '%d'",
-            skills[x].text.GetDataSafe(), skills[x].category );
+                          skills[x].text.GetDataSafe(), skills[x].category);
     }
 
     return msgtext;
@@ -5743,12 +5774,12 @@ csString psCharacterDetailsMessage::ToString(NetBase::AccessPointers * /*accessP
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharacterDetailsRequestMessage,MSGTYPE_CHARDETAILSREQUEST);
 
-csString psCharacterDetailsRequestMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCharacterDetailsRequestMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Is Me? %s Is Simple? %s Requestor: '%s'",
-            (isMe?"True":"False"), (isSimple?"True":"False"), requestor.GetDataSafe());
+                      (isMe?"True":"False"), (isSimple?"True":"False"), requestor.GetDataSafe());
 
     return msgtext;
 }
@@ -5757,7 +5788,7 @@ csString psCharacterDetailsRequestMessage::ToString(NetBase::AccessPointers * /*
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharacterDescriptionUpdateMessage,MSGTYPE_CHARDESCUPDATE);
 
-csString psCharacterDescriptionUpdateMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCharacterDescriptionUpdateMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5787,7 +5818,7 @@ psViewActionLocationMessage::psViewActionLocationMessage(MsgEntry* me)
     description = me->GetStr();
 }
 
-csString psViewActionLocationMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psViewActionLocationMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -5802,16 +5833,16 @@ PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psViewItemDescription,MSGTYPE_VIEW_ITEM
 
 psViewItemDescription::psViewItemDescription(int containerID, int slotID)
 {
-    msg.AttachNew(new MsgEntry( sizeof(int32_t)*2 + sizeof(uint8_t)));
+    msg.AttachNew(new MsgEntry(sizeof(int32_t)*2 + sizeof(uint8_t)));
     msg->SetType(MSGTYPE_VIEW_ITEM);
     msg->clientnum = 0;
 
-    msg->Add( (uint8_t)REQUEST );
-    msg->Add( (int32_t)containerID );
-    msg->Add( (uint32_t)slotID );
+    msg->Add((uint8_t)REQUEST);
+    msg->Add((int32_t)containerID);
+    msg->Add((uint32_t)slotID);
 }
 
-psViewItemDescription::psViewItemDescription(uint32_t to, const char *itemName, const char *description, const char *icon, uint32_t stackCount)
+psViewItemDescription::psViewItemDescription(uint32_t to, const char* itemName, const char* description, const char* icon, uint32_t stackCount)
 {
     csString name(itemName);
     csString desc(description);
@@ -5820,28 +5851,28 @@ psViewItemDescription::psViewItemDescription(uint32_t to, const char *itemName, 
     msg.AttachNew(new MsgEntry(sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(uint32_t)));
     msg->SetType(MSGTYPE_VIEW_ITEM);
     msg->clientnum = to;
-    
-    msg->Add( (uint8_t)DESCR );
-    msg->Add( !IS_CONTAINER ); // Allways false
-    msg->Add( itemName );
-    msg->Add( description );
-    msg->Add( icon );
-    msg->Add( stackCount );
+
+    msg->Add((uint8_t)DESCR);
+    msg->Add(!IS_CONTAINER);   // Allways false
+    msg->Add(itemName);
+    msg->Add(description);
+    msg->Add(icon);
+    msg->Add(stackCount);
 }
 
-psViewItemDescription::psViewItemDescription( MsgEntry* me, NetBase::AccessPointers* accessPointers )
+psViewItemDescription::psViewItemDescription(MsgEntry* me, NetBase::AccessPointers* accessPointers)
 {
     format = me->GetUInt8();
 
-    if ( format == REQUEST )
+    if(format == REQUEST)
     {
         containerID = me->GetInt32();
         slotID      = me->GetUInt32();
 
-        if (containerID == CONTAINER_INVENTORY_BULK) // must adjust slot number up
+        if(containerID == CONTAINER_INVENTORY_BULK)  // must adjust slot number up
             slotID += PSCHARACTER_SLOT_BULK1;
     }
-    else if ( format == DESCR )
+    else if(format == DESCR)
     {
         hasContents = me->GetBool(); // Will return false.
 
@@ -5853,21 +5884,21 @@ psViewItemDescription::psViewItemDescription( MsgEntry* me, NetBase::AccessPoint
     }
 }
 
-csString psViewItemDescription::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psViewItemDescription::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    if ( format == REQUEST )
+    if(format == REQUEST)
     {
         msgtext.AppendFmt("Container ID: %d Slot ID: %d", containerID, slotID);
     }
-    else if ( format == DESCR )
+    else if(format == DESCR)
     {
         msgtext.AppendFmt("Name: '%s' Description: '%s' Icon: '%s' Stack Count: %d ",
-                itemName,
-                itemDescription,
-                itemIcon,
-                stackCount);
+                          itemName,
+                          itemDescription,
+                          itemIcon,
+                          stackCount);
     }
 
     return msgtext;
@@ -5879,16 +5910,16 @@ PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psViewContainerDescription,MSGTYPE_VIEW
 
 psViewContainerDescription::psViewContainerDescription(int containerID, int slotID)
 {
-    msg.AttachNew(new MsgEntry( sizeof(int32_t)*2 + sizeof(uint8_t)));
+    msg.AttachNew(new MsgEntry(sizeof(int32_t)*2 + sizeof(uint8_t)));
     msg->SetType(MSGTYPE_VIEW_CONTAINER);
     msg->clientnum = 0;
 
-    msg->Add( (uint8_t)REQUEST );
-    msg->Add( (int32_t)containerID );
-    msg->Add( (uint32_t)slotID );
+    msg->Add((uint8_t)REQUEST);
+    msg->Add((int32_t)containerID);
+    msg->Add((uint32_t)slotID);
 }
 
-psViewContainerDescription::psViewContainerDescription(uint32_t to, const char *itemName, const char *description, const char *icon, uint32_t stackCount)
+psViewContainerDescription::psViewContainerDescription(uint32_t to, const char* itemName, const char* description, const char* icon, uint32_t stackCount)
 {
     csString name(itemName);
     csString desc(description);
@@ -5898,10 +5929,10 @@ psViewContainerDescription::psViewContainerDescription(uint32_t to, const char *
     this->itemDescription = description;
     this->itemIcon = icon;
     this->to = to;
-    msgSize = (int) (sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(int32_t) + sizeof(int32_t) + sizeof(uint32_t));
+    msgSize = (int)(sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(int32_t) + sizeof(int32_t) + sizeof(uint32_t));
 }
 
-void psViewContainerDescription::AddContents(const char *name, const char *meshName, const char *materialName, const char *icon, int purifyStatus, int slot, int stack)
+void psViewContainerDescription::AddContents(const char* name, const char* meshName, const char* materialName, const char* icon, int purifyStatus, int slot, int stack)
 {
     ContainerContents item;
     item.name = name;
@@ -5912,7 +5943,7 @@ void psViewContainerDescription::AddContents(const char *name, const char *meshN
     item.slotID = slot;
     item.stackCount = stack;
 
-    contents.Push( item );
+    contents.Push(item);
     int namesize = name?(int)strlen(name):0;
     int iconsize = icon?(int)strlen(icon):0;
     msgSize += (int)(namesize + iconsize + 3 + sizeof(int)*5);
@@ -5920,43 +5951,43 @@ void psViewContainerDescription::AddContents(const char *name, const char *meshN
 
 void psViewContainerDescription::ConstructMsg(csStringSet* msgstrings)
 {
-    msg.AttachNew(new MsgEntry( msgSize ));
+    msg.AttachNew(new MsgEntry(msgSize));
     msg->SetType(MSGTYPE_VIEW_CONTAINER);
     msg->clientnum = to;
 
-    msg->Add( (uint8_t)DESCR );
-    msg->Add( IS_CONTAINER );
-    msg->Add( itemName );
-    msg->Add( itemDescription );
-    msg->Add( itemIcon );
-    msg->Add( (int32_t)containerID );
-    msg->Add( (int32_t)maxContainerSlots);
-    msg->Add( (uint32_t)contents.GetSize() );
-    for ( size_t n = 0; n < contents.GetSize(); n++ )
+    msg->Add((uint8_t)DESCR);
+    msg->Add(IS_CONTAINER);
+    msg->Add(itemName);
+    msg->Add(itemDescription);
+    msg->Add(itemIcon);
+    msg->Add((int32_t)containerID);
+    msg->Add((int32_t)maxContainerSlots);
+    msg->Add((uint32_t)contents.GetSize());
+    for(size_t n = 0; n < contents.GetSize(); n++)
     {
-        msg->Add( contents[n].name );
-        msg->Add( contents[n].icon );
-        msg->Add( msgstrings->Request(contents[n].meshName).GetHash() );
-        msg->Add( msgstrings->Request(contents[n].materialName).GetHash() );
-        msg->Add( contents[n].purifyStatus );
-        msg->Add( (uint32_t)contents[n].slotID );
-        msg->Add( (uint32_t)contents[n].stackCount );
+        msg->Add(contents[n].name);
+        msg->Add(contents[n].icon);
+        msg->Add(msgstrings->Request(contents[n].meshName).GetHash());
+        msg->Add(msgstrings->Request(contents[n].materialName).GetHash());
+        msg->Add(contents[n].purifyStatus);
+        msg->Add((uint32_t)contents[n].slotID);
+        msg->Add((uint32_t)contents[n].stackCount);
     }
 }
 
-psViewContainerDescription::psViewContainerDescription( MsgEntry* me, NetBase::AccessPointers* accessPointers )
+psViewContainerDescription::psViewContainerDescription(MsgEntry* me, NetBase::AccessPointers* accessPointers)
 {
     format = me->GetUInt8();
 
-    if ( format == REQUEST )
+    if(format == REQUEST)
     {
         containerID = me->GetInt32();
         slotID      = me->GetUInt32();
 
-        if (containerID == CONTAINER_INVENTORY_BULK) // must adjust slot number up
+        if(containerID == CONTAINER_INVENTORY_BULK)  // must adjust slot number up
             slotID += PSCHARACTER_SLOT_BULK1;
     }
-    else if ( format == DESCR )
+    else if(format == DESCR)
     {
         hasContents = me->GetBool();
 
@@ -5964,18 +5995,18 @@ psViewContainerDescription::psViewContainerDescription( MsgEntry* me, NetBase::A
         itemDescription = me->GetStr();
         itemIcon = me->GetStr();
 
-        if (me->GetType() == MSGTYPE_VIEW_ITEM)
+        if(me->GetType() == MSGTYPE_VIEW_ITEM)
             stackCount = me->GetUInt32();
         else
             stackCount = 0;
 
-        if ( hasContents )
+        if(hasContents)
         {
             containerID = me->GetInt32();
             maxContainerSlots = me->GetInt32();
             size_t length = me->GetUInt32();
 
-            for ( size_t n = 0; n < length; n++ )
+            for(size_t n = 0; n < length; n++)
             {
                 ContainerContents item;
                 item.name = me->GetStr();
@@ -5985,33 +6016,33 @@ psViewContainerDescription::psViewContainerDescription( MsgEntry* me, NetBase::A
                 item.purifyStatus = me->GetUInt32();
                 item.slotID = me->GetUInt32();
                 item.stackCount = me->GetUInt32();
-                contents.Push( item );
+                contents.Push(item);
             }
         }
     }
 }
 
-csString psViewContainerDescription::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psViewContainerDescription::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    if ( format == REQUEST )
+    if(format == REQUEST)
     {
         msgtext.AppendFmt("Container ID: %d Slot ID: %d", containerID, slotID);
     }
-    else if ( format == DESCR )
+    else if(format == DESCR)
     {
         msgtext.AppendFmt("Name: '%s' Description: '%s' Icon: '%s' Stack Count: %d ",
-                itemName,
-                itemDescription,
-                itemIcon,
-                stackCount);
+                          itemName,
+                          itemDescription,
+                          itemIcon,
+                          stackCount);
 
-        if ( hasContents )
+        if(hasContents)
         {
             msgtext.AppendFmt("Container ID: %d Max Slots: %d Contains", containerID, maxContainerSlots);
 
-            for (size_t n = 0; n < contents.GetSize(); n++)
+            for(size_t n = 0; n < contents.GetSize(); n++)
             {
                 msgtext.AppendFmt("%sName: '%s' Icon: '%s' Purify Status: %d Slot ID: %d Stack Count: %d ",
                                   n?", ":"; ",
@@ -6032,10 +6063,10 @@ csString psViewContainerDescription::ToString(NetBase::AccessPointers * /*access
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psViewItemUpdate,MSGTYPE_UPDATE_ITEM);
 
 psViewItemUpdate::psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID, bool clearSlot,
-                                   const char *itemName, const char *icon, const char* meshName,
-                                   const char *materialName, uint32_t stackCount, EID ownerID, csStringSet* msgstrings)
+                                   const char* itemName, const char* icon, const char* meshName,
+                                   const char* materialName, uint32_t stackCount, EID ownerID, csStringSet* msgstrings)
 {
-    msg.AttachNew(new MsgEntry( sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + strlen(meshName) + strlen(materialName) + 1 + sizeof(stackCount) + sizeof(uint32_t) ));
+    msg.AttachNew(new MsgEntry(sizeof(containerID)+1 + sizeof(slotID) + sizeof(clearSlot) + strlen(itemName)+1 + strlen(icon)+1 + strlen(meshName) + strlen(materialName) + 1 + sizeof(stackCount) + sizeof(uint32_t)));
     msg->SetType(MSGTYPE_UPDATE_ITEM);
     msg->clientnum = to;
     msg->Add(containerID.Unbox());
@@ -6062,7 +6093,7 @@ psViewItemUpdate::psViewItemUpdate(uint32_t to, EID containerID, uint32_t slotID
 //    msg->Add( stackCount );
 //}
 
-psViewItemUpdate::psViewItemUpdate( MsgEntry* me, NetBase::AccessPointers* accessPointers )
+psViewItemUpdate::psViewItemUpdate(MsgEntry* me, NetBase::AccessPointers* accessPointers)
 {
     containerID = EID(me->GetUInt32());
     slotID = me->GetUInt32();
@@ -6075,19 +6106,19 @@ psViewItemUpdate::psViewItemUpdate( MsgEntry* me, NetBase::AccessPointers* acces
     materialName = accessPointers->Request(csStringID(me->GetUInt32()));
 }
 
-csString psViewItemUpdate::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psViewItemUpdate::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Container ID: %d Slot ID: %d Clear Slot? %s Name: '%s' Icon: '%s' meshName: '%s' materialName: '%s' Stack Count: %d",
-            containerID.Unbox(),
-            slotID,
-            (clearSlot?"True":"False"),
-            name.GetDataSafe(),
-            icon.GetDataSafe(),
-            meshName.GetDataSafe(),
-            materialName.GetDataSafe(),
-            stackCount);
+                      containerID.Unbox(),
+                      slotID,
+                      (clearSlot?"True":"False"),
+                      name.GetDataSafe(),
+                      icon.GetDataSafe(),
+                      meshName.GetDataSafe(),
+                      materialName.GetDataSafe(),
+                      stackCount);
 
     return msgtext;
 }
@@ -6096,7 +6127,7 @@ csString psViewItemUpdate::ToString(NetBase::AccessPointers * /*accessPointers*/
 
 PSF_IMPLEMENT_MSG_FACTORY(psReadBookTextMessage,MSGTYPE_READ_BOOK);
 
-psReadBookTextMessage::psReadBookTextMessage(uint32_t clientNum, csString& itemName, csString& bookText, bool canWrite, int slotID, int containerID, csString backgroundImg)
+psReadBookTextMessage::psReadBookTextMessage(uint32_t clientNum, csString &itemName, csString &bookText, bool canWrite, int slotID, int containerID, csString backgroundImg)
 {
     msg.AttachNew(new MsgEntry(itemName.Length()+1 + bookText.Length()+1+1+2*sizeof(uint32_t)+backgroundImg.Length()+1));
     msg->SetType(MSGTYPE_READ_BOOK);
@@ -6110,7 +6141,7 @@ psReadBookTextMessage::psReadBookTextMessage(uint32_t clientNum, csString& itemN
 
 }
 
-psReadBookTextMessage::psReadBookTextMessage(MsgEntry* me )
+psReadBookTextMessage::psReadBookTextMessage(MsgEntry* me)
 {
     name=me->GetStr();
     text=me->GetStr();
@@ -6120,7 +6151,7 @@ psReadBookTextMessage::psReadBookTextMessage(MsgEntry* me )
     backgroundImg = me->GetStr();
 }
 
-csString psReadBookTextMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psReadBookTextMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -6135,7 +6166,7 @@ csString psReadBookTextMessage::ToString(NetBase::AccessPointers * /*accessPoint
 
 //------------------------------------------------------------------------------
 PSF_IMPLEMENT_MSG_FACTORY(psWriteBookMessage, MSGTYPE_WRITE_BOOK);
-psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString& title, csString& content, bool success, int slotID, int containerID)
+psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString &title, csString &content, bool success, int slotID, int containerID)
 {
     //uint8_t for the flag, a bool, 2 uints for the item reference, content length + 1 for the content
     msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(bool)+2*sizeof(uint32_t)+title.Length()+1+content.Length()+1));
@@ -6160,7 +6191,7 @@ psWriteBookMessage::psWriteBookMessage(int slotID, int containerID)
     msg->Add(containerID);
 }
 
-psWriteBookMessage::psWriteBookMessage(int slotID, int containerID, csString& title, csString& content)
+psWriteBookMessage::psWriteBookMessage(int slotID, int containerID, csString &title, csString &content)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint8_t)+2*sizeof(uint32_t)+title.Length()+1+content.Length()+1));
     msg->SetType(MSGTYPE_WRITE_BOOK);
@@ -6172,7 +6203,7 @@ psWriteBookMessage::psWriteBookMessage(int slotID, int containerID, csString& ti
     msg->Add(content);
 }
 
-psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString& title, bool success)
+psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString &title, bool success)
 {
     msg = new MsgEntry(sizeof(uint8_t)+title.Length()+1+sizeof(bool));
     msg->SetType(MSGTYPE_WRITE_BOOK);
@@ -6184,34 +6215,34 @@ psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString& title, bool
 
 psWriteBookMessage::psWriteBookMessage(MsgEntry* me)
 {
-  messagetype = me->GetUInt8();
-  switch (messagetype)
-  {
-      case REQUEST:
-          slotID = me->GetUInt32();
-          containerID = me->GetUInt32();
-          break;
-      case RESPONSE:
-          success = me->GetBool();
-          slotID = me->GetUInt32();
-          containerID = me->GetUInt32();
-          title = me->GetStr();
-          content = me->GetStr();
-          break;
-      case SAVE:
-          slotID = me->GetUInt32();
-          containerID = me->GetUInt32();
-          title = me->GetStr();
-          content = me->GetStr();
-          break;
-      case SAVERESPONSE:
-          title = me->GetStr();
-          success = me->GetBool();
-          break;
-  }
+    messagetype = me->GetUInt8();
+    switch(messagetype)
+    {
+        case REQUEST:
+            slotID = me->GetUInt32();
+            containerID = me->GetUInt32();
+            break;
+        case RESPONSE:
+            success = me->GetBool();
+            slotID = me->GetUInt32();
+            containerID = me->GetUInt32();
+            title = me->GetStr();
+            content = me->GetStr();
+            break;
+        case SAVE:
+            slotID = me->GetUInt32();
+            containerID = me->GetUInt32();
+            title = me->GetStr();
+            content = me->GetStr();
+            break;
+        case SAVERESPONSE:
+            title = me->GetStr();
+            success = me->GetBool();
+            break;
+    }
 }
 
-csString psWriteBookMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psWriteBookMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 #ifdef FULL_DEBUG_DUMP
@@ -6220,14 +6251,14 @@ csString psWriteBookMessage::ToString(NetBase::AccessPointers * /*accessPointers
 
     switch(messagetype)
     {
-       case REQUEST:
+        case REQUEST:
             msgtext.AppendFmt("Write Book REQUEST for slot %d, container %d", slotID, containerID);
             break;
-       case RESPONSE:
+        case RESPONSE:
             msgtext.AppendFmt("Write Book RESPONSE for slot %d, container %d.  Successful? %s  Title: \"%s\"",
                               slotID, containerID, success?"true":"false", title.GetDataSafe());
             break;
-       case SAVE:
+        case SAVE:
             msgtext.AppendFmt("Write Book SAVE for slot %d, container %d. Title: \"%s\"",
                               slotID, containerID, title.GetDataSafe());
 #ifdef FULL_DEBUG_DUMP
@@ -6235,10 +6266,11 @@ csString psWriteBookMessage::ToString(NetBase::AccessPointers * /*accessPointers
             msgtext.AppendFmt(" Text:\n%s\n*the end*", textForDebug.GetDataSafe());
 #endif
             break;
-       case SAVERESPONSE:
+        case SAVERESPONSE:
             msgtext.AppendFmt("Write Book SAVERESPONSE Successful? %s  Title: \"%s\"",
                               success?"true":"false", title.GetDataSafe());
-            break;    }
+            break;
+    }
 
     return msgtext;
 }
@@ -6246,7 +6278,7 @@ csString psWriteBookMessage::ToString(NetBase::AccessPointers * /*accessPointers
 //------------------------------------------------------------------------------
 PSF_IMPLEMENT_MSG_FACTORY(psQuestRewardMessage,MSGTYPE_QUESTREWARD);
 
-csString psQuestRewardMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psQuestRewardMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -6259,22 +6291,22 @@ csString psQuestRewardMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psExchangeMoneyMsg,MSGTYPE_EXCHANGE_MONEY);
 
-psExchangeMoneyMsg::psExchangeMoneyMsg( uint32_t client, int container,
-                        int trias, int hexas, int circles,int octas )
+psExchangeMoneyMsg::psExchangeMoneyMsg(uint32_t client, int container,
+                                       int trias, int hexas, int circles,int octas)
 {
-    msg.AttachNew(new MsgEntry( sizeof(int) * 5 ));
+    msg.AttachNew(new MsgEntry(sizeof(int) * 5));
     msg->SetType(MSGTYPE_EXCHANGE_MONEY);
     msg->clientnum = client;
 
-    msg->Add( (uint32_t)container );
-    msg->Add( (uint32_t)trias );
-    msg->Add( (uint32_t)hexas );
-    msg->Add( (uint32_t)circles );
-    msg->Add( (uint32_t)octas );
+    msg->Add((uint32_t)container);
+    msg->Add((uint32_t)trias);
+    msg->Add((uint32_t)hexas);
+    msg->Add((uint32_t)circles);
+    msg->Add((uint32_t)octas);
 }
 
 
-psExchangeMoneyMsg::psExchangeMoneyMsg( MsgEntry* me )
+psExchangeMoneyMsg::psExchangeMoneyMsg(MsgEntry* me)
 {
     container = me->GetUInt32();
     trias = me->GetUInt32();
@@ -6283,12 +6315,12 @@ psExchangeMoneyMsg::psExchangeMoneyMsg( MsgEntry* me )
     octas = me->GetUInt32();
 }
 
-csString psExchangeMoneyMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psExchangeMoneyMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Container: %d %d trias, %d hexas, %d circles, %d octas",
-            container, trias, hexas, circles, octas);
+                      container, trias, hexas, circles, octas);
 
     return msgtext;
 }
@@ -6297,7 +6329,7 @@ csString psExchangeMoneyMsg::ToString(NetBase::AccessPointers * /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psExchangeRequestMsg,MSGTYPE_EXCHANGE_REQUEST);
 
-psExchangeRequestMsg::psExchangeRequestMsg( bool withPlayer )
+psExchangeRequestMsg::psExchangeRequestMsg(bool withPlayer)
 {
     msg.AttachNew(new MsgEntry(1 + 1));
     msg->SetType(MSGTYPE_EXCHANGE_REQUEST);
@@ -6307,24 +6339,24 @@ psExchangeRequestMsg::psExchangeRequestMsg( bool withPlayer )
     msg->Add(withPlayer);
 }
 
-psExchangeRequestMsg::psExchangeRequestMsg(uint32_t client, csString& playerName, bool withPlayer)
+psExchangeRequestMsg::psExchangeRequestMsg(uint32_t client, csString &playerName, bool withPlayer)
 {
-    msg.AttachNew(new MsgEntry( playerName.Length() + 1 + 1));
+    msg.AttachNew(new MsgEntry(playerName.Length() + 1 + 1));
     msg->SetType(MSGTYPE_EXCHANGE_REQUEST);
     msg->clientnum = client;
 
-    msg->Add( playerName );
-    msg->Add( withPlayer );
+    msg->Add(playerName);
+    msg->Add(withPlayer);
 }
 
 
-psExchangeRequestMsg::psExchangeRequestMsg( MsgEntry* me )
+psExchangeRequestMsg::psExchangeRequestMsg(MsgEntry* me)
 {
     player = me->GetStr();
     withPlayer = me->GetBool();
 }
 
-csString psExchangeRequestMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psExchangeRequestMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -6337,31 +6369,31 @@ csString psExchangeRequestMsg::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psExchangeAddItemMsg,MSGTYPE_EXCHANGE_ADD_ITEM);
 
-psExchangeAddItemMsg::psExchangeAddItemMsg( uint32_t clientNum,
-                                            const csString& name,
-                                            const csString& meshFactName,
-                                            const csString& materialName,
-                                            int containerID,
-                                            int slot,
-                                            int stackcount,
-                                            const csString& icon,
-                                            csStringSet* msgstrings )
+psExchangeAddItemMsg::psExchangeAddItemMsg(uint32_t clientNum,
+        const csString &name,
+        const csString &meshFactName,
+        const csString &materialName,
+        int containerID,
+        int slot,
+        int stackcount,
+        const csString &icon,
+        csStringSet* msgstrings)
 {
     msg.AttachNew(new MsgEntry(1000));
     msg->SetType(MSGTYPE_EXCHANGE_ADD_ITEM);
     msg->clientnum = clientNum;
 
-    msg->Add( name );
-    msg->Add( msgstrings->Request(meshFactName) );
-    msg->Add( msgstrings->Request(materialName) );
-    msg->Add( (uint32_t) containerID );
-    msg->Add( (uint32_t) slot );
-    msg->Add( (uint32_t) stackcount );
-    msg->Add( icon );
+    msg->Add(name);
+    msg->Add(msgstrings->Request(meshFactName));
+    msg->Add(msgstrings->Request(materialName));
+    msg->Add((uint32_t) containerID);
+    msg->Add((uint32_t) slot);
+    msg->Add((uint32_t) stackcount);
+    msg->Add(icon);
     msg->ClipToCurrentSize();
 }
 
-psExchangeAddItemMsg::psExchangeAddItemMsg( MsgEntry* me, NetBase::AccessPointers* accessPointers )
+psExchangeAddItemMsg::psExchangeAddItemMsg(MsgEntry* me, NetBase::AccessPointers* accessPointers)
 {
     name         = me->GetStr();
     meshFactName = accessPointers->Request(csStringID(me->GetUInt32()));
@@ -6372,12 +6404,12 @@ psExchangeAddItemMsg::psExchangeAddItemMsg( MsgEntry* me, NetBase::AccessPointer
     icon         = me->GetStr();
 }
 
-csString psExchangeAddItemMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psExchangeAddItemMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Name: '%s' Container: %d Slot: %d Stack Count: %d Icon: '%s'",
-            name.GetDataSafe(), container, slot, stackCount, icon.GetDataSafe());
+                      name.GetDataSafe(), container, slot, stackCount, icon.GetDataSafe());
 
     return msgtext;
 }
@@ -6386,18 +6418,18 @@ csString psExchangeAddItemMsg::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psExchangeRemoveItemMsg,MSGTYPE_EXCHANGE_REMOVE_ITEM);
 
-psExchangeRemoveItemMsg::psExchangeRemoveItemMsg( uint32_t client, int container, int slot, int newStack )
+psExchangeRemoveItemMsg::psExchangeRemoveItemMsg(uint32_t client, int container, int slot, int newStack)
 {
-    msg.AttachNew(new MsgEntry( sizeof( int ) * 3 ));
+    msg.AttachNew(new MsgEntry(sizeof(int) * 3));
     msg->SetType(MSGTYPE_EXCHANGE_REMOVE_ITEM);
     msg->clientnum = client;
 
-    msg->Add( (uint32_t)container );
-    msg->Add( (uint32_t)slot );
-    msg->Add( (uint32_t)newStack );
+    msg->Add((uint32_t)container);
+    msg->Add((uint32_t)slot);
+    msg->Add((uint32_t)newStack);
 }
 
-psExchangeRemoveItemMsg::psExchangeRemoveItemMsg( MsgEntry* msg )
+psExchangeRemoveItemMsg::psExchangeRemoveItemMsg(MsgEntry* msg)
 {
     container       = msg->GetUInt32();
     slot            = msg->GetUInt32();
@@ -6405,7 +6437,7 @@ psExchangeRemoveItemMsg::psExchangeRemoveItemMsg( MsgEntry* msg )
 }
 
 
-csString psExchangeRemoveItemMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psExchangeRemoveItemMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -6418,7 +6450,7 @@ csString psExchangeRemoveItemMsg::ToString(NetBase::AccessPointers * /*accessPoi
 
 PSF_IMPLEMENT_MSG_FACTORY(psExchangeAcceptMsg,MSGTYPE_EXCHANGE_ACCEPT);
 
-psExchangeAcceptMsg::psExchangeAcceptMsg( uint32_t client )
+psExchangeAcceptMsg::psExchangeAcceptMsg(uint32_t client)
 {
     msg.AttachNew(new MsgEntry());
     msg->SetType(MSGTYPE_EXCHANGE_ACCEPT);
@@ -6442,29 +6474,29 @@ csString psExchangeAcceptMsg::ToString(NetBase::AccessPointers* /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psExchangeStatusMsg,MSGTYPE_EXCHANGE_STATUS);
 
-psExchangeStatusMsg::psExchangeStatusMsg( uint32_t client, bool playerAccept, bool targetAccept )
+psExchangeStatusMsg::psExchangeStatusMsg(uint32_t client, bool playerAccept, bool targetAccept)
 {
-    msg.AttachNew(new MsgEntry( sizeof(bool)*2 ));
+    msg.AttachNew(new MsgEntry(sizeof(bool)*2));
     msg->SetType(MSGTYPE_EXCHANGE_STATUS);
     msg->clientnum = client;
-    msg->Add( playerAccept );
-    msg->Add( targetAccept );
+    msg->Add(playerAccept);
+    msg->Add(targetAccept);
 
 }
 
-psExchangeStatusMsg::psExchangeStatusMsg( MsgEntry* me )
+psExchangeStatusMsg::psExchangeStatusMsg(MsgEntry* me)
 {
     playerAccept = me->GetBool();
     otherAccept = me->GetBool();
 }
 
-csString psExchangeStatusMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psExchangeStatusMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Player %s, Other Player %s",
-            (playerAccept?"accepted":"rejected"),
-        (otherAccept?"accepted":"rejected"));
+                      (playerAccept?"accepted":"rejected"),
+                      (otherAccept?"accepted":"rejected"));
 
     return msgtext;
 }
@@ -6473,7 +6505,7 @@ csString psExchangeStatusMsg::ToString(NetBase::AccessPointers * /*accessPointer
 
 PSF_IMPLEMENT_MSG_FACTORY(psExchangeEndMsg,MSGTYPE_EXCHANGE_END);
 
-psExchangeEndMsg::psExchangeEndMsg( uint32_t client )
+psExchangeEndMsg::psExchangeEndMsg(uint32_t client)
 {
     msg.AttachNew(new MsgEntry());
     msg->SetType(MSGTYPE_EXCHANGE_END);
@@ -6499,13 +6531,13 @@ PSF_IMPLEMENT_MSG_FACTORY(psUpdateObjectNameMessage,MSGTYPE_NAMECHANGE);
 
 psUpdateObjectNameMessage::psUpdateObjectNameMessage(uint32_t client, EID eid, const char* newName)
 {
-    msg.AttachNew(new MsgEntry( strlen(newName)+1 + sizeof(uint32_t)));
+    msg.AttachNew(new MsgEntry(strlen(newName)+1 + sizeof(uint32_t)));
 
     msg->SetType(MSGTYPE_NAMECHANGE);
     msg->clientnum = client;
 
     msg->Add(eid.Unbox());
-    msg->Add( newName );
+    msg->Add(newName);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -6532,13 +6564,13 @@ PSF_IMPLEMENT_MSG_FACTORY(psUpdatePlayerGuildMessage,MSGTYPE_GUILDCHANGE);
 
 psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage(uint32_t client, int total, const char* newGuild)
 {
-    msg.AttachNew(new MsgEntry( strlen(newGuild)+1 + (sizeof(uint32_t) * (total+1) )));
+    msg.AttachNew(new MsgEntry(strlen(newGuild)+1 + (sizeof(uint32_t) * (total+1))));
 
     msg->SetType(MSGTYPE_GUILDCHANGE);
     msg->clientnum = client;
 
     msg->Add((uint32_t)total);
-    msg->Add( newGuild );
+    msg->Add(newGuild);
 
     valid = false; // need to add first
 }
@@ -6556,7 +6588,7 @@ psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage(uint32_t client, EID enti
     AddPlayer(entity);
 }
 
-psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage( MsgEntry* me )
+psUpdatePlayerGuildMessage::psUpdatePlayerGuildMessage(MsgEntry* me)
 {
     int total     = (int)me->GetUInt32();
     newGuildName  = me->GetStr();
@@ -6573,13 +6605,13 @@ void psUpdatePlayerGuildMessage::AddPlayer(EID id)
     valid=!(msg->overrun);
 }
 
-csString psUpdatePlayerGuildMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psUpdatePlayerGuildMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("New Guild Name: '%s' Player IDs: ", newGuildName.GetDataSafe());
 
-    for (size_t i = 0; i < objectID.GetSize(); i++)
+    for(size_t i = 0; i < objectID.GetSize(); i++)
     {
         msgtext.AppendFmt("%d, ", objectID[i]);
     }
@@ -6599,19 +6631,19 @@ psUpdatePlayerGroupMessage::psUpdatePlayerGroupMessage(int clientnum, EID object
     msg->clientnum = clientnum;
 
     msg->Add(objectID.Unbox());
-    msg->Add( groupID );
+    msg->Add(groupID);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
 }
 
-psUpdatePlayerGroupMessage::psUpdatePlayerGroupMessage( MsgEntry* me )
+psUpdatePlayerGroupMessage::psUpdatePlayerGroupMessage(MsgEntry* me)
 {
     objectID      = EID(me->GetUInt32());
     groupID       = me->GetUInt32();
 }
 
-csString psUpdatePlayerGroupMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psUpdatePlayerGroupMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -6624,40 +6656,40 @@ csString psUpdatePlayerGroupMessage::ToString(NetBase::AccessPointers * /*access
 
 PSF_IMPLEMENT_MSG_FACTORY(psNameCheckMessage,MSGTYPE_CHAR_CREATE_NAME);
 
-psNameCheckMessage::psNameCheckMessage( const char* newname )
+psNameCheckMessage::psNameCheckMessage(const char* newname)
 {
     csString name(newname);
-    msg.AttachNew(new MsgEntry( strlen(newname)+2));
+    msg.AttachNew(new MsgEntry(strlen(newname)+2));
 
     msg->SetType(MSGTYPE_CHAR_CREATE_NAME);
 
     csString lastname,firstname(name.Slice(0,name.FindFirst(' ')));
-    if (name.FindFirst(' ') != SIZET_NOT_FOUND)
+    if(name.FindFirst(' ') != SIZET_NOT_FOUND)
         lastname = name.Slice(name.FindFirst(' ')+1,name.Length());
 
-    msg->Add( firstname );
-    msg->Add( lastname );
+    msg->Add(firstname);
+    msg->Add(lastname);
 }
 
-psNameCheckMessage::psNameCheckMessage( const char* firstName, const char* lastName )
+psNameCheckMessage::psNameCheckMessage(const char* firstName, const char* lastName)
 {
-    msg.AttachNew(new MsgEntry( strlen(firstName)+strlen(lastName)+2));
+    msg.AttachNew(new MsgEntry(strlen(firstName)+strlen(lastName)+2));
 
     msg->SetType(MSGTYPE_CHAR_CREATE_NAME);
 
-    msg->Add( firstName );
-    msg->Add( lastName );
+    msg->Add(firstName);
+    msg->Add(lastName);
 }
 
 
-psNameCheckMessage::psNameCheckMessage( uint32_t client, bool accept, const char* reason )
+psNameCheckMessage::psNameCheckMessage(uint32_t client, bool accept, const char* reason)
 {
-    msg.AttachNew(new MsgEntry( sizeof(bool) + strlen(reason)+1 ));
+    msg.AttachNew(new MsgEntry(sizeof(bool) + strlen(reason)+1));
 
     msg->SetType(MSGTYPE_CHAR_CREATE_NAME);
     msg->clientnum = client;
-    msg->Add( accept );
-    msg->Add( reason );
+    msg->Add(accept);
+    msg->Add(reason);
 }
 
 psNameCheckMessage::psNameCheckMessage(MsgEntry* /*me*/)
@@ -6674,34 +6706,34 @@ psNameCheckMessage::psNameCheckMessage(MsgEntry* /*me*/)
 }
 
 
-void psNameCheckMessage::FromClient( MsgEntry* me )
+void psNameCheckMessage::FromClient(MsgEntry* me)
 {
     firstName = me->GetStr();
     lastName = me->GetStr();
 }
 
-void psNameCheckMessage::FromServer( MsgEntry* me )
+void psNameCheckMessage::FromServer(MsgEntry* me)
 {
     accepted = me->GetBool();
     reason = me->GetStr();
 }
 
-csString psNameCheckMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psNameCheckMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("TODO");
-/* When the FromClient/FromServer issue is sorted in psNameCheckMessage(MsgEntry *) function...
-    if (msgFromServer)
-    {
-        msgtext.AppendFmt("Name Check: %s Reason: '%s'",
-                (accepted?"Accepted":"Rejected"), reason.GetDataSafe);
-    }
-    else
-    {
-       msgText.AppendFmt("Name: '%s %s'", firstName.GetDataSafe(), lastName.GetDataSafe());
-    }
-*/
+    /* When the FromClient/FromServer issue is sorted in psNameCheckMessage(MsgEntry *) function...
+        if (msgFromServer)
+        {
+            msgtext.AppendFmt("Name Check: %s Reason: '%s'",
+                    (accepted?"Accepted":"Rejected"), reason.GetDataSafe);
+        }
+        else
+        {
+           msgText.AppendFmt("Name: '%s %s'", firstName.GetDataSafe(), lastName.GetDataSafe());
+        }
+    */
     return msgtext;
 }
 
@@ -6709,34 +6741,34 @@ csString psNameCheckMessage::ToString(NetBase::AccessPointers * /*accessPointers
 
 PSF_IMPLEMENT_MSG_FACTORY(psPingMsg,MSGTYPE_PING);
 
-psPingMsg::psPingMsg( MsgEntry* me )
+psPingMsg::psPingMsg(MsgEntry* me)
 {
     id = me->GetInt32();
     flags = me->GetUInt8();
 }
 
-psPingMsg::psPingMsg( uint32_t client, uint32_t id, uint8_t flags )
+psPingMsg::psPingMsg(uint32_t client, uint32_t id, uint8_t flags)
 {
-    msg.AttachNew(new MsgEntry( sizeof(uint32_t) + sizeof(uint8_t) ,PRIORITY_LOW ));
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t) + sizeof(uint8_t) ,PRIORITY_LOW));
 
     msg->SetType(MSGTYPE_PING);
     msg->clientnum = client;
-    msg->Add( id );
-    msg->Add( flags );
+    msg->Add(id);
+    msg->Add(flags);
 }
 
-csString psPingMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPingMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("ID: %d flags:", id);
-    if (flags & PINGFLAG_REQUESTFLAGS)
+    if(flags & PINGFLAG_REQUESTFLAGS)
         msgtext.Append(" REQUESTFLAGS");
-    if (flags & PINGFLAG_READY)
+    if(flags & PINGFLAG_READY)
         msgtext.Append(" READY");
-    if (flags & PINGFLAG_HASBEENREADY)
+    if(flags & PINGFLAG_HASBEENREADY)
         msgtext.Append(" HASBEENREADY");
-    if (flags & PINGFLAG_SERVERFULL)
+    if(flags & PINGFLAG_SERVERFULL)
         msgtext.Append(" SERVERFULL");
 
     return msgtext;
@@ -6750,9 +6782,9 @@ psHeartBeatMsg::psHeartBeatMsg(MsgEntry* /*me*/)
 {
 }
 
-psHeartBeatMsg::psHeartBeatMsg( uint32_t client )
+psHeartBeatMsg::psHeartBeatMsg(uint32_t client)
 {
-    msg.AttachNew(new MsgEntry( 0 ,PRIORITY_HIGH ));
+    msg.AttachNew(new MsgEntry(0 ,PRIORITY_HIGH));
 
     msg->SetType(MSGTYPE_HEART_BEAT);
     msg->clientnum = client;
@@ -6773,19 +6805,19 @@ PSF_IMPLEMENT_MSG_FACTORY(psLockpickMessage,MSGTYPE_LOCKPICK);
 
 psLockpickMessage::psLockpickMessage(const char* password)
 {
-    msg.AttachNew(new MsgEntry( strlen(password) +1 ));
+    msg.AttachNew(new MsgEntry(strlen(password) +1));
 
     msg->SetType(MSGTYPE_LOCKPICK);
     msg->clientnum = 0;
-    msg->Add( password );
+    msg->Add(password);
 }
 
-psLockpickMessage::psLockpickMessage( MsgEntry* me )
+psLockpickMessage::psLockpickMessage(MsgEntry* me)
 {
     password = me->GetStr();
 }
 
-csString psLockpickMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psLockpickMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -6801,27 +6833,27 @@ PSF_IMPLEMENT_MSG_FACTORY(psGMSpawnItems,MSGTYPE_GMSPAWNITEMS);
 psGMSpawnItems::psGMSpawnItems(uint32_t client,const char* type,unsigned int size)
 {
     msg.AttachNew(new MsgEntry(
-                        strlen(type) +1 +
-                        sizeof(bool) + size + sizeof(uint32_t)
-                        ));
+                      strlen(type) +1 +
+                      sizeof(bool) + size + sizeof(uint32_t)
+                  ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEMS);
     msg->clientnum = client;
-    msg->Add( type );
-    msg->Add( false );
+    msg->Add(type);
+    msg->Add(false);
 }
 
 psGMSpawnItems::psGMSpawnItems(const char* type)
 {
     msg.AttachNew(new MsgEntry(
-                        strlen(type) +1 +
-                        sizeof(bool)
-                        ));
+                      strlen(type) +1 +
+                      sizeof(bool)
+                  ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEMS);
     msg->clientnum = 0;
-    msg->Add( type );
-    msg->Add( true );
+    msg->Add(type);
+    msg->Add(true);
 }
 
 psGMSpawnItems::psGMSpawnItems(MsgEntry* me)
@@ -6832,7 +6864,7 @@ psGMSpawnItems::psGMSpawnItems(MsgEntry* me)
     if(!request)
     {
         unsigned int length = me->GetUInt32();
-        for(unsigned int i = 0;i < length;i++)
+        for(unsigned int i = 0; i < length; i++)
         {
             Item item;
             item.name = me->GetStr();
@@ -6844,20 +6876,20 @@ psGMSpawnItems::psGMSpawnItems(MsgEntry* me)
     }
 }
 
-csString psGMSpawnItems::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGMSpawnItems::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Type: '%s' ", type.GetDataSafe());
 
 #ifdef FULL_DEBUG_DUMP
-    if (!request)
+    if(!request)
     {
-        for (size_t i = 0; i < items.GetSize(); i++)
+        for(size_t i = 0; i < items.GetSize(); i++)
         {
             msgtext.AppendFmt("Name: '%s' Mesh: '%s', ",
-                    items[i].name.GetDataSafe(),
-                    items[i].mesh.GetDataSafe());
+                              items[i].name.GetDataSafe(),
+                              items[i].mesh.GetDataSafe());
         }
     }
 #endif
@@ -6880,19 +6912,19 @@ psGMSpawnTypes::psGMSpawnTypes(uint32_t client,unsigned int size)
 psGMSpawnTypes::psGMSpawnTypes(MsgEntry* me)
 {
     unsigned int length = me->GetUInt32();
-    for(unsigned int i = 0;i < length;i++)
+    for(unsigned int i = 0; i < length; i++)
     {
         types.Push(me->GetStr());
     }
 }
 
-csString psGMSpawnTypes::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGMSpawnTypes::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Types: ");
 
-    for (size_t i = 0; i < types.GetSize(); i++)
+    for(size_t i = 0; i < types.GetSize(); i++)
     {
         msgtext.AppendFmt("'%s', ", types[i].GetDataSafe());
     }
@@ -6919,46 +6951,46 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                              bool pickupableWeak,
                              bool random,
                              float quality
-                             )
+                            )
 {
     msg.AttachNew(new MsgEntry(
-                        strlen(item) +1    // item
-                        + sizeof(uint32_t) // count
-                        + sizeof(bool)     // locked
-                        + sizeof(bool)     // lockable
-                        + strlen(lskill)+1 // lskill
-                        + sizeof(int32_t)  // lstr
-                        + sizeof(bool)     // pickupable
-                        + sizeof(bool)     // collidable
-                        + sizeof(bool)     // pickable
-                        + sizeof(bool)     // transient
-                        + sizeof(bool)     // settingitem
-                        + sizeof(bool)     // npc owned
-                        + sizeof(bool)     // random
-                        + sizeof(float)    // quality
-                        + sizeof(bool)     // pickupableWeak
-                      ));
+                      strlen(item) +1    // item
+                      + sizeof(uint32_t) // count
+                      + sizeof(bool)     // locked
+                      + sizeof(bool)     // lockable
+                      + strlen(lskill)+1 // lskill
+                      + sizeof(int32_t)  // lstr
+                      + sizeof(bool)     // pickupable
+                      + sizeof(bool)     // collidable
+                      + sizeof(bool)     // pickable
+                      + sizeof(bool)     // transient
+                      + sizeof(bool)     // settingitem
+                      + sizeof(bool)     // npc owned
+                      + sizeof(bool)     // random
+                      + sizeof(float)    // quality
+                      + sizeof(bool)     // pickupableWeak
+                  ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEM);
     msg->clientnum = 0;
-    msg->Add( item );
-    msg->Add( (uint32_t)count );
-    msg->Add( lockable);
-    msg->Add( locked );
-    msg->Add( lskill );
-    msg->Add( (int32_t)lstr );
-    msg->Add( pickupable );
-    msg->Add( collidable );
-    msg->Add( Unpickable );
-    msg->Add( Transient );
-    msg->Add( SettingItem );
-    msg->Add( NPCOwned );
+    msg->Add(item);
+    msg->Add((uint32_t)count);
+    msg->Add(lockable);
+    msg->Add(locked);
+    msg->Add(lskill);
+    msg->Add((int32_t)lstr);
+    msg->Add(pickupable);
+    msg->Add(collidable);
+    msg->Add(Unpickable);
+    msg->Add(Transient);
+    msg->Add(SettingItem);
+    msg->Add(NPCOwned);
     msg->Add(random);
     msg->Add(quality);
     msg->Add(pickupableWeak);
 }
 
-psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
+psGMSpawnItem::psGMSpawnItem(MsgEntry* me)
 {
     item = me->GetStr();
     count = me->GetUInt32();
@@ -6974,7 +7006,7 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
     NPCOwned = me->GetBool();
     random = me->GetBool();
     quality = me->GetFloat();
-    if (!me->IsEmpty())
+    if(!me->IsEmpty())
     {
         pickupableWeak = me->GetBool();
     }
@@ -6984,26 +7016,26 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry *me)
     }
 }
 
-csString psGMSpawnItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGMSpawnItem::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s Random: %s Unpickable: %s SettingItem: %s NPC Owned: %s Transient: %s Quality %f pickupable Weak %s",
-        item.GetDataSafe(),
-        count,
-        (lockable ? "True" : "False"),
-        (locked ? "Locked" : "Unlocked"),
-        lskill.GetDataSafe(),
-        lstr,
-        (pickupable ? "True" : "False"),
-        (collidable ? "True" : "False"),
-        (random ? "True" : "False"),
-        (Unpickable ? "True" : "False"),
-        (SettingItem ? "True" : "False"),
-        (NPCOwned ? "True" : "False"),
-        (Transient ? "True" : "False"),
-        quality,
-        (pickupableWeak ? "True" : "False"));
+                      item.GetDataSafe(),
+                      count,
+                      (lockable ? "True" : "False"),
+                      (locked ? "Locked" : "Unlocked"),
+                      lskill.GetDataSafe(),
+                      lstr,
+                      (pickupable ? "True" : "False"),
+                      (collidable ? "True" : "False"),
+                      (random ? "True" : "False"),
+                      (Unpickable ? "True" : "False"),
+                      (SettingItem ? "True" : "False"),
+                      (NPCOwned ? "True" : "False"),
+                      (Transient ? "True" : "False"),
+                      quality,
+                      (pickupableWeak ? "True" : "False"));
 
     return msgtext;
 }
@@ -7012,23 +7044,23 @@ csString psGMSpawnItem::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psLootRemoveMessage,MSGTYPE_LOOTREMOVE);
 
-psLootRemoveMessage::psLootRemoveMessage( uint32_t client,int item )
+psLootRemoveMessage::psLootRemoveMessage(uint32_t client,int item)
 {
     msg.AttachNew(new MsgEntry(
-                        sizeof(int)
-                        ));
+                      sizeof(int)
+                  ));
 
     msg->SetType(MSGTYPE_LOOTREMOVE);
     msg->clientnum = client;
-    msg->Add( (int32_t)item );
+    msg->Add((int32_t)item);
 }
 
-psLootRemoveMessage::psLootRemoveMessage(MsgEntry *me)
+psLootRemoveMessage::psLootRemoveMessage(MsgEntry* me)
 {
     id = me->GetInt32();
 }
 
-csString psLootRemoveMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psLootRemoveMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -7041,7 +7073,7 @@ csString psLootRemoveMessage::ToString(NetBase::AccessPointers * /*accessPointer
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharCreateTraitsMessage,MSGTYPE_CHAR_CREATE_TRAITS);
 
-csString psCharCreateTraitsMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCharCreateTraitsMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -7089,7 +7121,7 @@ csString psClientStatusMessage::ToString(NetBase::AccessPointers* /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psMoveModMsg,MSGTYPE_MOVEMOD);
 
-psMoveModMsg::psMoveModMsg(uint32_t client, ModType type, const csVector3& move, float Yrot)
+psMoveModMsg::psMoveModMsg(uint32_t client, ModType type, const csVector3 &move, float Yrot)
 {
     msg.AttachNew(new MsgEntry(1 + 4*sizeof(uint32)));
     msg->SetType(MSGTYPE_MOVEMOD);
@@ -7097,7 +7129,7 @@ psMoveModMsg::psMoveModMsg(uint32_t client, ModType type, const csVector3& move,
 
     msg->Add((uint8_t)type);
 
-    if (type != NONE)
+    if(type != NONE)
     {
         msg->Add(move);
         msg->Add(Yrot);
@@ -7114,7 +7146,7 @@ psMoveModMsg::psMoveModMsg(MsgEntry* me)
 {
     type = (ModType)me->GetUInt8();
 
-    if (type != NONE)
+    if(type != NONE)
     {
         movementMod = me->GetVector3();
         rotationMod = me->GetFloat();
@@ -7126,14 +7158,14 @@ psMoveModMsg::psMoveModMsg(MsgEntry* me)
     }
 }
 
-csString psMoveModMsg::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMoveModMsg::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("type %d move(%.2f,%.2f,%.2f) rot(%.2f)",
                       (int)type,
                       movementMod.x, movementMod.y, movementMod.z,
-                      rotationMod );
+                      rotationMod);
 
     return msgtext;
 }
@@ -7150,11 +7182,11 @@ psMsgRequestMovement::psMsgRequestMovement()
     msg->ClipToCurrentSize();
 }
 
-psMsgRequestMovement::psMsgRequestMovement(MsgEntry * /*me*/)
+psMsgRequestMovement::psMsgRequestMovement(MsgEntry* /*me*/)
 {
 }
 
-csString psMsgRequestMovement::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMsgRequestMovement::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
     msgtext.Format("Requesting movements");
@@ -7178,7 +7210,7 @@ psMovementInfoMessage::psMovementInfoMessage(size_t modes, size_t moves)
     msg->Add((uint32_t)moves);
 }
 
-psMovementInfoMessage::psMovementInfoMessage(MsgEntry * me)
+psMovementInfoMessage::psMovementInfoMessage(MsgEntry* me)
 {
     msg = me;
 
@@ -7220,7 +7252,7 @@ void psMovementInfoMessage::GetMove(uint32 &id, const char* &name, csVector3 &ba
     base_rotate = msg->GetVector3();
 }
 
-csString psMovementInfoMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMovementInfoMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
     msgtext.Format("%zu modes and %zu moves",modes,moves);
@@ -7232,7 +7264,7 @@ csString psMovementInfoMessage::ToString(NetBase::AccessPointers * /*accessPoint
 PSF_IMPLEMENT_MSG_FACTORY(psMsgCraftingInfo,MSGTYPE_CRAFT_INFO);
 
 
-csString psMsgCraftingInfo::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMsgCraftingInfo::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -7245,7 +7277,7 @@ csString psMsgCraftingInfo::ToString(NetBase::AccessPointers * /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psTraitChangeMessage,MSGTYPE_CHANGE_TRAIT);
 
-csString psTraitChangeMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psTraitChangeMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -7258,7 +7290,7 @@ csString psTraitChangeMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psTutorialMessage,MSGTYPE_TUTORIAL);
 
-csString psTutorialMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psTutorialMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -7378,12 +7410,12 @@ psMGStartStopMessage::psMGStartStopMessage(uint32_t client, bool start)
     msg->Add(start);
 }
 
-psMGStartStopMessage::psMGStartStopMessage(MsgEntry *me)
+psMGStartStopMessage::psMGStartStopMessage(MsgEntry* me)
 {
     msgStart = me->GetBool();
 }
 
-csString psMGStartStopMessage::ToString(NetBase::AccessPointers * /* accessPointers */)
+csString psMGStartStopMessage::ToString(NetBase::AccessPointers* /* accessPointers */)
 {
     csString msgText;
     msgText.AppendFmt("Start: %s", msgStart ? "Yes" : "No");
@@ -7395,30 +7427,30 @@ csString psMGStartStopMessage::ToString(NetBase::AccessPointers * /* accessPoint
 PSF_IMPLEMENT_MSG_FACTORY(psMGBoardMessage, MSGTYPE_MINIGAME_BOARD);
 
 psMGBoardMessage::psMGBoardMessage(uint32_t client, uint8_t counter,
-                                   uint32_t gameID, uint16_t options, int8_t cols, int8_t rows, uint8_t *layout,
-                                   uint8_t numOfPieces, uint8_t *pieces)
+                                   uint32_t gameID, uint16_t options, int8_t cols, int8_t rows, uint8_t* layout,
+                                   uint8_t numOfPieces, uint8_t* pieces)
     : msgLayout(0)
 {
     // We need tiles/2 number of bytes and one extra byte for odd number of tiles
     int layoutSize = cols * rows / 2;
-    if (cols * rows % 2 != 0)
+    if(cols * rows % 2 != 0)
         layoutSize++;
 
     int piecesSize = numOfPieces / 2;
-    if (numOfPieces % 2 != 0)
+    if(numOfPieces % 2 != 0)
         piecesSize++;
 
     msg.AttachNew(new MsgEntry(
-            sizeof(uint8_t) +       // counter
-            sizeof(uint32_t) +      // game ID
-            sizeof(uint16_t) +      // options
-            sizeof(int8_t) +        // cols
-            sizeof(int8_t) +        // rows
-            sizeof(uint32_t) +      // number of bytes in layout
-            layoutSize +            // layout
-            sizeof(uint8_t) +       // number of available pieces
-            sizeof(uint32_t) +      // number of bytes in the pieces array
-            piecesSize));            // available pieces
+                      sizeof(uint8_t) +       // counter
+                      sizeof(uint32_t) +      // game ID
+                      sizeof(uint16_t) +      // options
+                      sizeof(int8_t) +        // cols
+                      sizeof(int8_t) +        // rows
+                      sizeof(uint32_t) +      // number of bytes in layout
+                      layoutSize +            // layout
+                      sizeof(uint8_t) +       // number of available pieces
+                      sizeof(uint32_t) +      // number of bytes in the pieces array
+                      piecesSize));            // available pieces
 
     msg->SetType(MSGTYPE_MINIGAME_BOARD);
     msg->clientnum = client;
@@ -7434,7 +7466,7 @@ psMGBoardMessage::psMGBoardMessage(uint32_t client, uint8_t counter,
 
 }
 
-psMGBoardMessage::psMGBoardMessage(MsgEntry *me)
+psMGBoardMessage::psMGBoardMessage(MsgEntry* me)
     : msgLayout(0)
 {
     msg = me;
@@ -7446,10 +7478,10 @@ psMGBoardMessage::psMGBoardMessage(MsgEntry *me)
     msgRows = msg->GetInt8();
 
     uint32_t size = 0;
-    msgLayout = (uint8_t *)msg->GetBufferPointerUnsafe(size);
+    msgLayout = (uint8_t*)msg->GetBufferPointerUnsafe(size);
 
     msgNumOfPieces = msg->GetInt8();
-    msgPieces = (uint8_t *)msg->GetBufferPointerUnsafe(size);
+    msgPieces = (uint8_t*)msg->GetBufferPointerUnsafe(size);
 }
 
 bool psMGBoardMessage::IsNewerThan(uint8_t oldCounter)
@@ -7457,7 +7489,7 @@ bool psMGBoardMessage::IsNewerThan(uint8_t oldCounter)
     return (uint8_t)(msgCounter-oldCounter) <= 127;
 }
 
-csString psMGBoardMessage::ToString(NetBase::AccessPointers * /* accessPointers */)
+csString psMGBoardMessage::ToString(NetBase::AccessPointers* /* accessPointers */)
 {
     csString msgText;
     msgText.AppendFmt("GameID: %u", msgGameID);
@@ -7465,12 +7497,12 @@ csString psMGBoardMessage::ToString(NetBase::AccessPointers * /* accessPointers 
     msgText.AppendFmt(" Rows: %d", msgRows);
     msgText.AppendFmt(" Cols: %d", msgCols);
     msgText.Append(" Layout: ");
-    if (msgLayout)
+    if(msgLayout)
     {
         int layoutSize = msgCols * msgRows / 2;
-        if (msgCols * msgRows % 2 != 0)
+        if(msgCols * msgRows % 2 != 0)
             layoutSize++;
-        for (int i = 0; i < layoutSize; i++)
+        for(int i = 0; i < layoutSize; i++)
             msgText.AppendFmt("%02X", msgLayout[i]);
     }
     else
@@ -7478,9 +7510,9 @@ csString psMGBoardMessage::ToString(NetBase::AccessPointers * /* accessPointers 
         msgText.Append("<default>");
     }
     msgText.Append(" Pieces: %d ", msgNumOfPieces);
-    if (msgNumOfPieces > 0)
+    if(msgNumOfPieces > 0)
     {
-        for (int i = 0; i < msgNumOfPieces; i++)
+        for(int i = 0; i < msgNumOfPieces; i++)
             msgText.AppendFmt("%02X", msgPieces[i]);
     }
     else
@@ -7497,19 +7529,19 @@ PSF_IMPLEMENT_MSG_FACTORY(psEntranceMessage, MSGTYPE_ENTRANCE);
 
 psEntranceMessage::psEntranceMessage(EID entranceID)
 {
-    msg.AttachNew(new MsgEntry( sizeof(int32_t)));
+    msg.AttachNew(new MsgEntry(sizeof(int32_t)));
     msg->SetType(MSGTYPE_ENTRANCE);
     msg->clientnum = 0;
 
     msg->Add(entranceID.Unbox());
 }
 
-psEntranceMessage::psEntranceMessage( MsgEntry* me )
+psEntranceMessage::psEntranceMessage(MsgEntry* me)
 {
     entranceID = EID(me->GetUInt32());
 }
 
-csString psEntranceMessage::ToString(NetBase::AccessPointers * /* accessPointers */)
+csString psEntranceMessage::ToString(NetBase::AccessPointers* /* accessPointers */)
 {
     csString msgText;
     msgText.AppendFmt("EntranceID: %u", entranceID.Unbox());
@@ -7522,15 +7554,15 @@ csString psEntranceMessage::ToString(NetBase::AccessPointers * /* accessPointers
 PSF_IMPLEMENT_MSG_FACTORY(psMGUpdateMessage, MSGTYPE_MINIGAME_UPDATE);
 
 psMGUpdateMessage::psMGUpdateMessage(uint32_t client, uint8_t counter,
-                                     uint32_t gameID, uint8_t numUpdates, uint8_t *updates)
+                                     uint32_t gameID, uint8_t numUpdates, uint8_t* updates)
     : msgUpdates(0)
 {
     msg.AttachNew(new MsgEntry(
-            sizeof(uint8_t) +       // counter
-            sizeof(uint32_t) +      // game iD
-            sizeof(uint8_t) +       // numUpdates
-            sizeof(uint32_t) +      // number of bytes in updates
-            2*numUpdates));          // updates
+                      sizeof(uint8_t) +       // counter
+                      sizeof(uint32_t) +      // game iD
+                      sizeof(uint8_t) +       // numUpdates
+                      sizeof(uint32_t) +      // number of bytes in updates
+                      2*numUpdates));          // updates
 
     msg->SetType(MSGTYPE_MINIGAME_UPDATE);
     msg->clientnum = client;
@@ -7542,7 +7574,7 @@ psMGUpdateMessage::psMGUpdateMessage(uint32_t client, uint8_t counter,
 
 }
 
-psMGUpdateMessage::psMGUpdateMessage(MsgEntry *me)
+psMGUpdateMessage::psMGUpdateMessage(MsgEntry* me)
     : msgUpdates(0)
 {
     msg = me;
@@ -7552,7 +7584,7 @@ psMGUpdateMessage::psMGUpdateMessage(MsgEntry *me)
     msgNumUpdates = msg->GetUInt8();
 
     uint32_t size = 0;
-    msgUpdates = (uint8_t *)msg->GetBufferPointerUnsafe(size);
+    msgUpdates = (uint8_t*)msg->GetBufferPointerUnsafe(size);
 }
 
 bool psMGUpdateMessage::IsNewerThan(uint8_t oldCounter)
@@ -7560,15 +7592,15 @@ bool psMGUpdateMessage::IsNewerThan(uint8_t oldCounter)
     return (uint8_t)(msgCounter-oldCounter) <= 127;
 }
 
-csString psMGUpdateMessage::ToString(NetBase::AccessPointers * /* accessPointers */)
+csString psMGUpdateMessage::ToString(NetBase::AccessPointers* /* accessPointers */)
 {
     csString msgText;
     msgText.AppendFmt("GameID: %u", msgGameID);
     msgText.AppendFmt(" NumUpdates: %u", msgNumUpdates);
     msgText.Append(" Updates: ");
-    if (msgUpdates)
+    if(msgUpdates)
     {
-        for (uint8_t i = 0; i < msgNumUpdates; i++)
+        for(uint8_t i = 0; i < msgNumUpdates; i++)
         {
             int col = (int)((msgUpdates[2*i] & 0xF0) >> 4);
             int row = (int)(msgUpdates[2*i] & 0x0F);
@@ -7594,14 +7626,14 @@ psGMEventListMessage::psGMEventListMessage()
 
 psGMEventListMessage::psGMEventListMessage(MsgEntry* msg)
 {
-    if (!msg)
+    if(!msg)
         return;
 
     gmEventsXML = msg->GetStr();
-    valid =! (msg->overrun);
+    valid =!(msg->overrun);
 }
 
-void psGMEventListMessage::Populate(csString& gmeventStr, int clientnum)
+void psGMEventListMessage::Populate(csString &gmeventStr, int clientnum)
 {
     msg.AttachNew(new MsgEntry(sizeof(int)+gmeventStr.Length()+1));
 
@@ -7613,7 +7645,7 @@ void psGMEventListMessage::Populate(csString& gmeventStr, int clientnum)
     valid=!(msg->overrun);
 }
 
-csString psGMEventListMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGMEventListMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
@@ -7625,9 +7657,9 @@ csString psGMEventListMessage::ToString(NetBase::AccessPointers * /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psGMEventInfoMessage,MSGTYPE_GMEVENT_INFO);
 
-psGMEventInfoMessage::psGMEventInfoMessage(int cnum, int cmd, int id, const char *name, const char *info, bool Evaluatable)
+psGMEventInfoMessage::psGMEventInfoMessage(int cnum, int cmd, int id, const char* name, const char* info, bool Evaluatable)
 {
-    if (name)
+    if(name)
     {
         csString escpxml_info = EscpXML(info);
         xml.Format("<QuestNotebook><Description text=\"%s\"/></QuestNotebook>",escpxml_info.GetData());
@@ -7644,16 +7676,16 @@ psGMEventInfoMessage::psGMEventInfoMessage(int cnum, int cmd, int id, const char
 
     msg->Add((uint8_t) cmd);
 
-    if (cmd == CMD_QUERY || cmd == CMD_DISCARD)
+    if(cmd == CMD_QUERY || cmd == CMD_DISCARD)
     {
         msg->Add((int32_t) id);
     }
-    else if (cmd == CMD_INFO)
+    else if(cmd == CMD_INFO)
     {
         msg->Add(xml);
         msg->Add((uint8_t) Evaluatable);
     }
-    else if (cmd == CMD_EVAL)
+    else if(cmd == CMD_EVAL)
     {
         msg->Add((int32_t) id);
         msg->Add(xml);
@@ -7666,14 +7698,14 @@ psGMEventInfoMessage::psGMEventInfoMessage(int cnum, int cmd, int id, const char
 psGMEventInfoMessage::psGMEventInfoMessage(MsgEntry* msg)
 {
     command = msg->GetUInt8();
-    if (command == CMD_QUERY || command == CMD_DISCARD)
+    if(command == CMD_QUERY || command == CMD_DISCARD)
         id = msg->GetInt32();
-    else if (command == CMD_INFO)
+    else if(command == CMD_INFO)
     {
         xml = msg->GetStr();
         Evaluatable = msg->GetBool();
     }
-    else if (command == CMD_EVAL)
+    else if(command == CMD_EVAL)
     {
         id = msg->GetInt32();
         xml = msg->GetStr();
@@ -7683,14 +7715,14 @@ psGMEventInfoMessage::psGMEventInfoMessage(MsgEntry* msg)
 }
 
 
-csString psGMEventInfoMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGMEventInfoMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
     msgtext.AppendFmt("Command: %d", command);
-    if (command == CMD_QUERY || command == CMD_DISCARD)
+    if(command == CMD_QUERY || command == CMD_DISCARD)
         msgtext.AppendFmt(" Id: %d", id);
-    else if (command == CMD_INFO)
+    else if(command == CMD_INFO)
         msgtext.AppendFmt(" XML: '%s'", xml.GetDataSafe());
 
     return msgtext;
@@ -7712,9 +7744,9 @@ psFactionMessage::psFactionMessage(MsgEntry* message)
     cmd         = message->GetInt8();
     int facts   = message->GetInt32();
 
-    for ( int z = 0; z < facts; z++ )
+    for(int z = 0; z < facts; z++)
     {
-        psFactionMessage::FactionPair *fp = new psFactionMessage::FactionPair;
+        psFactionMessage::FactionPair* fp = new psFactionMessage::FactionPair;
         fp->faction = message->GetStr();
         fp->rating  = message->GetInt32();
 
@@ -7723,9 +7755,9 @@ psFactionMessage::psFactionMessage(MsgEntry* message)
 }
 
 
-void psFactionMessage::AddFaction( csString factionName, int rating )
+void psFactionMessage::AddFaction(csString factionName, int rating)
 {
-    psFactionMessage::FactionPair *pair = new psFactionMessage::FactionPair;
+    psFactionMessage::FactionPair* pair = new psFactionMessage::FactionPair;
     pair->faction = factionName;
     pair->rating = rating;
 
@@ -7737,7 +7769,7 @@ void psFactionMessage::BuildMsg()
 {
     size_t size = sizeof(uint8_t)+sizeof(int32_t);
 
-    for ( size_t z = 0; z < factionInfo.GetSize(); z++ )
+    for(size_t z = 0; z < factionInfo.GetSize(); z++)
     {
         size += factionInfo[z]->faction.Length()+1;
         size += sizeof(int32_t);
@@ -7759,7 +7791,7 @@ void psFactionMessage::BuildMsg()
     valid=!(msg->overrun);
 }
 
-csString psFactionMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psFactionMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
     msgtext.AppendFmt("Command: %d", cmd);
@@ -7786,12 +7818,12 @@ csString GetMsgTypeName(int msgType)
     return psfMsgTypeName(msgType);
 }
 
-void DecodeMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex, csString& msgtext, int& filterNumber)
+void DecodeMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex, csString &msgtext, int &filterNumber)
 {
     MsgEntry msg(me); // Take a copy to make sure we dont destroy the message.
-                      // Can't do this const since current pointers are modified
-                      // when parsing messages.
-    psMessageCracker * cracker = NULL;
+    // Can't do this const since current pointers are modified
+    // when parsing messages.
+    psMessageCracker* cracker = NULL;
 
 
     csString msgname = GetMsgTypeName(me->bytes->type).GetDataSafe();
@@ -7804,12 +7836,12 @@ void DecodeMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool f
 
 
     // First print the hex of the message if not filtered
-    if (!filterhex)
+    if(!filterhex)
     {
         msgtext.Append(" : ");
         size_t size = me->bytes->GetSize();
 
-        for (size_t i = 0; i < size; i++)
+        for(size_t i = 0; i < size; i++)
         {
             msgtext.AppendFmt(" %02X",(unsigned char)me->bytes->payload[i]);
         }
@@ -7817,7 +7849,7 @@ void DecodeMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool f
 
     // Than get the cracker and print the decoded message from the ToString function.
     cracker = psfCreateMsg(me->bytes->type,&msg,accessPointers);
-    if (cracker)
+    if(cracker)
     {
         msgtext.Append(" > ");
         msgtext.Append(cracker->ToString(accessPointers));
@@ -7840,56 +7872,56 @@ typedef struct
     csPDelArray<MsgFactoryItem> messages;
 } MsgFactory;
 
-static MsgFactory * msgfactory = NULL;
+static MsgFactory* msgfactory = NULL;
 
 class MsgFactoryImpl
 {
 public:
     MsgFactoryImpl()
     {
-        if (msgfactory == NULL) msgfactory = new MsgFactory;
+        if(msgfactory == NULL) msgfactory = new MsgFactory;
     }
 
     virtual ~MsgFactoryImpl()
     {
-        if (msgfactory) delete msgfactory;
+        if(msgfactory) delete msgfactory;
         msgfactory = NULL;
     }
 } psfMsgFactoryImpl;
 
-MsgFactoryItem * psfFindFactory(int msgtype)
+MsgFactoryItem* psfFindFactory(int msgtype)
 {
-    for (size_t n = 0; n < msgfactory->messages.GetSize(); n++)
+    for(size_t n = 0; n < msgfactory->messages.GetSize(); n++)
     {
-        if (msgfactory->messages[n]->msgtype == msgtype)
+        if(msgfactory->messages[n]->msgtype == msgtype)
             return msgfactory->messages[n];
     }
     return NULL;
 }
 
-MsgFactoryItem * psfFindFactory(const char* msgtypename)
+MsgFactoryItem* psfFindFactory(const char* msgtypename)
 {
-    for (size_t n = 0; n < msgfactory->messages.GetSize(); n++)
+    for(size_t n = 0; n < msgfactory->messages.GetSize(); n++)
     {
-        if (msgfactory->messages[n]->msgtypename == msgtypename)
+        if(msgfactory->messages[n]->msgtypename == msgtypename)
             return msgfactory->messages[n];
     }
     return NULL;
 }
 
 
-void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, const char * msgtypename)
+void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, const char* msgtypename)
 {
-    if (msgfactory == NULL) msgfactory = new MsgFactory;
+    if(msgfactory == NULL) msgfactory = new MsgFactory;
 
-    MsgFactoryItem * factory = psfFindFactory(msgtype);
-    if (factory)
+    MsgFactoryItem* factory = psfFindFactory(msgtype);
+    if(factory)
     {
         Error2("Multiple factories for %s",msgtypename);
         return;
     }
 
-    MsgFactoryItem * newfac = new MsgFactoryItem;
+    MsgFactoryItem* newfac = new MsgFactoryItem;
     newfac->factoryfunc = factoryfunc;
     newfac->msgtype = msgtype;
     newfac->msgtypename = msgtypename;
@@ -7899,12 +7931,12 @@ void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, c
 
 psMessageCracker* psfCreateMsg(int msgtype,
                                MsgEntry* me,
-                               NetBase::AccessPointers * accessPointers )
+                               NetBase::AccessPointers* accessPointers)
 {
-    if (!msgfactory) return NULL;
+    if(!msgfactory) return NULL;
 
-    MsgFactoryItem * factory = psfFindFactory(msgtype);
-    if (factory)
+    MsgFactoryItem* factory = psfFindFactory(msgtype);
+    if(factory)
         return factory->factoryfunc(me,accessPointers);
 
     return NULL;
@@ -7912,21 +7944,21 @@ psMessageCracker* psfCreateMsg(int msgtype,
 
 csString psfMsgTypeName(int msgtype)
 {
-    if (!msgfactory) return "No factory";
+    if(!msgfactory) return "No factory";
 
-    MsgFactoryItem * factory = psfFindFactory(msgtype);
-    if (factory)
+    MsgFactoryItem* factory = psfFindFactory(msgtype);
+    if(factory)
         return factory->msgtypename;
 
     return csString().Format("unknown (type=%i)", msgtype);
 }
 
-int psfMsgType(const char * msgtypename)
+int psfMsgType(const char* msgtypename)
 {
-    if (!msgfactory) return -1;
+    if(!msgfactory) return -1;
 
-    MsgFactoryItem * factory = psfFindFactory(msgtypename);
-    if (factory)
+    MsgFactoryItem* factory = psfFindFactory(msgtypename);
+    if(factory)
         return factory->msgtype;
 
     return -1;
@@ -7936,16 +7968,16 @@ int psfMsgType(const char * msgtypename)
 
 PSF_IMPLEMENT_MSG_FACTORY(psSequenceMessage,MSGTYPE_SEQUENCE);
 
-psSequenceMessage::psSequenceMessage(int cnum, const char *name, int cmd, int count)
+psSequenceMessage::psSequenceMessage(int cnum, const char* name, int cmd, int count)
 {
     msg.AttachNew(new MsgEntry(strlen(name) + 1 + sizeof(uint8_t) + sizeof(int32_t)));
 
     msg->SetType(MSGTYPE_SEQUENCE);
     msg->clientnum = cnum;
 
-    msg->Add( name );
-    msg->Add( (uint8_t)cmd );
-    msg->Add( (int32_t) count );
+    msg->Add(name);
+    msg->Add((uint8_t)cmd);
+    msg->Add((int32_t) count);
     msg->ClipToCurrentSize();
 
     valid=!(msg->overrun);
@@ -8000,18 +8032,18 @@ csString psPlaySoundMessage::ToString(NetBase::AccessPointers* /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharCreateCPMessage,MSGTYPE_CHAR_CREATE_CP);
 
-psCharCreateCPMessage::psCharCreateCPMessage( uint32_t client, int32_t rID, int32_t CPVal )
+psCharCreateCPMessage::psCharCreateCPMessage(uint32_t client, int32_t rID, int32_t CPVal)
 {
     msg.AttachNew(new MsgEntry(100));
-    msg->SetType(MSGTYPE_CHAR_CREATE_CP );
+    msg->SetType(MSGTYPE_CHAR_CREATE_CP);
     msg->clientnum = client;
     msg->Add(rID);
     msg->Add(CPVal);
     msg->ClipToCurrentSize();
-    valid = !(msg->overrun );
+    valid = !(msg->overrun);
 }
 
-psCharCreateCPMessage::psCharCreateCPMessage( MsgEntry* message )
+psCharCreateCPMessage::psCharCreateCPMessage(MsgEntry* message)
 {
     if(!message)
     {
@@ -8021,7 +8053,7 @@ psCharCreateCPMessage::psCharCreateCPMessage( MsgEntry* message )
     CPValue = message->GetUInt32();
 }
 
-csString psCharCreateCPMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psCharCreateCPMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
     //msgtext.AppendFmt("Race '%i': has '%i' cppoints", raceID, CPValue);
@@ -8030,7 +8062,7 @@ csString psCharCreateCPMessage::ToString(NetBase::AccessPointers * /*accessPoint
 
 PSF_IMPLEMENT_MSG_FACTORY(psCharIntroduction,MSGTYPE_INTRODUCTION);
 
-psCharIntroduction::psCharIntroduction( )
+psCharIntroduction::psCharIntroduction()
 {
     msg.AttachNew(new MsgEntry(100));
     msg->SetType(MSGTYPE_INTRODUCTION);
@@ -8051,42 +8083,42 @@ csString psCharIntroduction::ToString(NetBase::AccessPointers* /*accessPointers*
 
 PSF_IMPLEMENT_MSG_FACTORY(psCachedFileMessage,MSGTYPE_CACHEFILE);
 
-psCachedFileMessage::psCachedFileMessage( uint32_t client, uint8_t sequence, const char *pathname, iDataBuffer *contents)
+psCachedFileMessage::psCachedFileMessage(uint32_t client, uint8_t sequence, const char* pathname, iDataBuffer* contents)
 {
     printf("::Building cached file message for '%s', sequence %d, size %zu.\n",
            pathname, sequence, contents?contents->GetSize():0);
 
     // We send the hash along with it to save as the filename on the client
-    if (pathname[0] == '(')  // timestamp always starts with '('
+    if(pathname[0] == '(')   // timestamp always starts with '('
     {
         hash = csMD5::Encode(pathname).HexString();
-        printf("::Hashed %s to %s.\n", pathname, hash.GetData() );
+        printf("::Hashed %s to %s.\n", pathname, hash.GetData());
     }
     else
         hash = pathname;
 
     uint32_t size = contents ? (uint32_t)contents->GetSize() : 0;
-    msg.AttachNew(new MsgEntry(hash.Length()+1 + size + sizeof(uint32_t),PRIORITY_HIGH,sequence) );
+    msg.AttachNew(new MsgEntry(hash.Length()+1 + size + sizeof(uint32_t),PRIORITY_HIGH,sequence));
 
     msg->SetType(MSGTYPE_CACHEFILE);
     msg->clientnum = client;
     msg->Add(hash);
-    if (contents)
+    if(contents)
         msg->Add(contents->GetData(), size);
     else
         msg->Add(size);
 }
 
-psCachedFileMessage::psCachedFileMessage( MsgEntry* me )
+psCachedFileMessage::psCachedFileMessage(MsgEntry* me)
 {
     hash = me->GetStr();
-    printf("::Received cached message for file '%s'.\n", hash.GetDataSafe() );
+    printf("::Received cached message for file '%s'.\n", hash.GetDataSafe());
 
     uint32_t size=0;
-    char *ptr = (char *)me->GetBufferPointerUnsafe(size);
-    if (ptr)
+    char* ptr = (char*)me->GetBufferPointerUnsafe(size);
+    if(ptr)
     {
-        databuf = csPtr<iDataBuffer> (new csDataBuffer (ptr, size, false));
+        databuf = csPtr<iDataBuffer> (new csDataBuffer(ptr, size, false));
     }
 }
 
@@ -8102,18 +8134,18 @@ psDialogMenuMessage::psDialogMenuMessage()
     valid = false;
 }
 
-psDialogMenuMessage::psDialogMenuMessage( MsgEntry *me )
+psDialogMenuMessage::psDialogMenuMessage(MsgEntry* me)
 {
     xml = me->GetStr();
 }
 
-void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText,
-                                      const csString& triggerText, uint32_t flags)
+void psDialogMenuMessage::AddResponse(uint32_t id, const csString &menuText,
+                                      const csString &triggerText, uint32_t flags)
 {
     psDialogMenuMessage::DialogResponse new_response;
 
     csString escTriggerText(triggerText);
-    if (triggerText.GetAt(0) == '<')  // escape xml characters before putting in xml
+    if(triggerText.GetAt(0) == '<')   // escape xml characters before putting in xml
     {
         escTriggerText.ReplaceAll("<","&lt;");
         escTriggerText.ReplaceAll(">","&gt;");
@@ -8124,7 +8156,7 @@ void psDialogMenuMessage::AddResponse(uint32_t id, const csString& menuText,
     new_response.triggerText = escTriggerText;
     new_response.flags       = flags;
 
-    responses.Push( new_response );
+    responses.Push(new_response);
 }
 
 void psDialogMenuMessage::BuildMsg(int clientnum)
@@ -8132,27 +8164,27 @@ void psDialogMenuMessage::BuildMsg(int clientnum)
     xml = "<dlgmenu><options>";
 
     int counter=1;
-    for( size_t i = 0; i < responses.GetSize(); i++ )
+    for(size_t i = 0; i < responses.GetSize(); i++)
     {
         csString choice = responses[i].menuText.GetData();
-        if (choice.GetAt(0) == 'h' && choice.GetAt(1) == ':') // heading tag
+        if(choice.GetAt(0) == 'h' && choice.GetAt(1) == ':')  // heading tag
         {
             choice.DeleteAt(0,2); // take out tag
-            xml.AppendFmt("<row heading=\"1\"><text>%s</text>", choice.GetData() );
+            xml.AppendFmt("<row heading=\"1\"><text>%s</text>", choice.GetData());
         }
         else
         {
-            xml.AppendFmt("<row><text>%d. %s</text>",counter++, responses[i].menuText.GetData() );
+            xml.AppendFmt("<row><text>%d. %s</text>",counter++, responses[i].menuText.GetData());
         }
-        xml.AppendFmt("<trig>%s</trig></row>",responses[i].triggerText.GetData() );
+        xml.AppendFmt("<trig>%s</trig></row>",responses[i].triggerText.GetData());
     }
     xml += "</options></dlgmenu>";
 
-    msg.AttachNew( new MsgEntry( xml.Length() + 1 ) );
-    msg->SetType( MSGTYPE_DIALOG_MENU );
+    msg.AttachNew(new MsgEntry(xml.Length() + 1));
+    msg->SetType(MSGTYPE_DIALOG_MENU);
     msg->clientnum = clientnum;
 
-    msg->Add( xml );
+    msg->Add(xml);
 
     valid = !(msg->overrun);
 }
@@ -8160,10 +8192,10 @@ void psDialogMenuMessage::BuildMsg(int clientnum)
 csString psDialogMenuMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString text;
-    for( size_t i = 0; i < responses.GetSize(); i++ )
+    for(size_t i = 0; i < responses.GetSize(); i++)
     {
-        text.AppendFmt( "Menu: (%d) %s -> %s\n",responses[ i ].id,
-            responses[i].menuText.GetDataSafe(), responses[ i ].triggerText.GetDataSafe() );
+        text.AppendFmt("Menu: (%d) %s -> %s\n",responses[ i ].id,
+                       responses[i].menuText.GetDataSafe(), responses[ i ].triggerText.GetDataSafe());
     }
 
     return text;
@@ -8172,7 +8204,7 @@ csString psDialogMenuMessage::ToString(NetBase::AccessPointers* /*accessPointers
 PSF_IMPLEMENT_MSG_FACTORY(psSimpleStringMessage,MSGTYPE_SIMPLE_STRING);
 
 
-psSimpleStringMessage::psSimpleStringMessage( uint32_t client,MSG_TYPES type, const char *string)
+psSimpleStringMessage::psSimpleStringMessage(uint32_t client,MSG_TYPES type, const char* string)
 {
     msg.AttachNew(new MsgEntry(strlen(string)+1));
     msg->SetType(type);
@@ -8191,43 +8223,43 @@ psSimpleStringMessage::psSimpleStringMessage(MsgEntry* me)
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psSimpleRenderMeshMessage, MSGTYPE_SIMPLE_RENDER_MESH);
 
 
-psSimpleRenderMeshMessage::psSimpleRenderMeshMessage( uint32_t client, NetBase::AccessPointers* accessPointers, const char* name, uint16_t index, uint16_t count, const iSector* sector, const csSimpleRenderMesh& simpleRenderMesh )
+psSimpleRenderMeshMessage::psSimpleRenderMeshMessage(uint32_t client, NetBase::AccessPointers* accessPointers, const char* name, uint16_t index, uint16_t count, const iSector* sector, const csSimpleRenderMesh &simpleRenderMesh)
 {
     msg.AttachNew(new MsgEntry(MAX_MESSAGE_SIZE));
     msg->SetType(MSGTYPE_SIMPLE_RENDER_MESH);
     msg->clientnum = client;
-    
-    msg->Add( sector, accessPointers->msgstrings, accessPointers->msgstringshash );
-    msg->Add( name );
-    msg->Add( index );
-    msg->Add( count );
-    msg->Add( simpleRenderMesh.alphaType.autoAlphaMode );
-    if (simpleRenderMesh.alphaType.autoAlphaMode == false)
+
+    msg->Add(sector, accessPointers->msgstrings, accessPointers->msgstringshash);
+    msg->Add(name);
+    msg->Add(index);
+    msg->Add(count);
+    msg->Add(simpleRenderMesh.alphaType.autoAlphaMode);
+    if(simpleRenderMesh.alphaType.autoAlphaMode == false)
     {
-        msg->Add( (uint32_t)simpleRenderMesh.alphaType.alphaType );
+        msg->Add((uint32_t)simpleRenderMesh.alphaType.alphaType);
     }
     else
     {
         // TODO: autoModeTexture
     }
-    msg->Add( (uint32_t)simpleRenderMesh.indexCount );
-    for (size_t i = 0; i < simpleRenderMesh.indexCount; i++)
+    msg->Add((uint32_t)simpleRenderMesh.indexCount);
+    for(size_t i = 0; i < simpleRenderMesh.indexCount; i++)
     {
-        msg->Add( (uint32_t)simpleRenderMesh.indices[i] );
+        msg->Add((uint32_t)simpleRenderMesh.indices[i]);
     }
-    msg->Add( (uint32_t)simpleRenderMesh.meshtype );
-    msg->Add( (uint32_t)simpleRenderMesh.mixmode );
-    msg->Add( (uint32_t)simpleRenderMesh.vertexCount );
-    msg->Add( (bool)(simpleRenderMesh.colors != NULL) );
-    for (size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
+    msg->Add((uint32_t)simpleRenderMesh.meshtype);
+    msg->Add((uint32_t)simpleRenderMesh.mixmode);
+    msg->Add((uint32_t)simpleRenderMesh.vertexCount);
+    msg->Add((bool)(simpleRenderMesh.colors != NULL));
+    for(size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
     {
-        msg->Add( simpleRenderMesh.vertices[i] );
-        if (simpleRenderMesh.colors)
+        msg->Add(simpleRenderMesh.vertices[i]);
+        if(simpleRenderMesh.colors)
         {
-            msg->Add( simpleRenderMesh.colors[i] );
+            msg->Add(simpleRenderMesh.colors[i]);
         }
     }
-    msg->Add( (uint32_t)simpleRenderMesh.z_buf_mode );
+    msg->Add((uint32_t)simpleRenderMesh.z_buf_mode);
 
     msg->ClipToCurrentSize();
 
@@ -8236,12 +8268,12 @@ psSimpleRenderMeshMessage::psSimpleRenderMeshMessage( uint32_t client, NetBase::
 
 psSimpleRenderMeshMessage::psSimpleRenderMeshMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers)
 {
-    sector = me->GetSector( accessPointers->msgstrings, accessPointers->msgstringshash, accessPointers->engine );
+    sector = me->GetSector(accessPointers->msgstrings, accessPointers->msgstringshash, accessPointers->engine);
     name = me->GetStr();
     index = me->GetUInt16();
     count = me->GetUInt16();
     simpleRenderMesh.alphaType.autoAlphaMode = me->GetBool();
-    if (simpleRenderMesh.alphaType.autoAlphaMode == false)
+    if(simpleRenderMesh.alphaType.autoAlphaMode == false)
     {
         simpleRenderMesh.alphaType.alphaType = (csAlphaMode::AlphaType)me->GetUInt32();
     }
@@ -8251,9 +8283,9 @@ psSimpleRenderMeshMessage::psSimpleRenderMeshMessage(MsgEntry* me, NetBase::Acce
     }
     simpleRenderMesh.indexCount = (uint)me->GetUInt32();
     simpleRenderMesh.indices = new uint[simpleRenderMesh.indexCount];
-    for (size_t i = 0; i < simpleRenderMesh.indexCount; i++)
+    for(size_t i = 0; i < simpleRenderMesh.indexCount; i++)
     {
-        msg->Add( (uint32_t)simpleRenderMesh.indices[i] );
+        msg->Add((uint32_t)simpleRenderMesh.indices[i]);
     }
     simpleRenderMesh.meshtype = (csRenderMeshType)me->GetUInt32();
     simpleRenderMesh.mixmode = (uint)me->GetUInt32();
@@ -8262,15 +8294,15 @@ psSimpleRenderMeshMessage::psSimpleRenderMeshMessage(MsgEntry* me, NetBase::Acce
     csVector3* vertices = new csVector3[simpleRenderMesh.vertexCount];
     simpleRenderMesh.vertices = vertices;
     csVector4* colors = NULL;
-    if (hasColors)
+    if(hasColors)
     {
         colors = new csVector4[simpleRenderMesh.vertexCount];
         simpleRenderMesh.colors = colors;
     }
-    for (size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
+    for(size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
     {
         vertices[i] = me->GetVector3();
-        if (hasColors)
+        if(hasColors)
         {
             colors[i] = me->GetVector4();
         }
@@ -8287,10 +8319,10 @@ csString psSimpleRenderMeshMessage::ToString(NetBase::AccessPointers* accessPoin
     msgtext.AppendFmt("sector: %s meshtype: %d vertexcount: %d",
                       sector ? sector->QueryObject()->GetName():"(null)",
                       simpleRenderMesh.meshtype,simpleRenderMesh.vertexCount);
-    for (size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
+    for(size_t i = 0; i < simpleRenderMesh.vertexCount; i++)
     {
         msgtext.AppendFmt(" %zu: v: %s",i,toString(simpleRenderMesh.vertices[i]).GetData());
-        if (simpleRenderMesh.colors)
+        if(simpleRenderMesh.colors)
         {
             msgtext.AppendFmt(" c: %s",toString(simpleRenderMesh.colors[i]).GetData());
         }
@@ -8302,7 +8334,7 @@ csString psSimpleRenderMeshMessage::ToString(NetBase::AccessPointers* accessPoin
 PSF_IMPLEMENT_MSG_FACTORY(psMechanismActivateMessage, MSGTYPE_MECS_ACTIVATE);
 
 psMechanismActivateMessage::psMechanismActivateMessage(uint32_t client, const char* sectorname,
-                      const char* meshName, const char* mechanismScript)
+        const char* meshName, const char* mechanismScript)
 {
     msg.AttachNew(new MsgEntry(strlen(sectorname) + 1 + strlen(meshName) + 1 + strlen(mechanismScript) + 1));
 
@@ -8323,11 +8355,11 @@ psMechanismActivateMessage::psMechanismActivateMessage(MsgEntry* msg)
 
 PSF_IMPLEMENT_MSG_FACTORY(psOrderedMessage,MSGTYPE_ORDEREDTEST);
 
-psOrderedMessage::psOrderedMessage( uint32_t client, int valueToSend, int sequenceNumber)
+psOrderedMessage::psOrderedMessage(uint32_t client, int valueToSend, int sequenceNumber)
 {
     printf("Creating orderedMessage with sequence number %d, value %d.\n", sequenceNumber, valueToSend);
 
-    msg.AttachNew(new MsgEntry(sizeof(uint32_t),PRIORITY_HIGH, (uint8_t)sequenceNumber) );
+    msg.AttachNew(new MsgEntry(sizeof(uint32_t),PRIORITY_HIGH, (uint8_t)sequenceNumber));
     msg->SetType(MSGTYPE_ORDEREDTEST);
     msg->clientnum = client;
     msg->Add(valueToSend);

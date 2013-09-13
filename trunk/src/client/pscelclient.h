@@ -74,13 +74,13 @@ class psSolid;
 class UnresolvedPos
 {
 public:
-    GEMClientObject * entity;  ///< our object ..
+    GEMClientObject* entity;   ///< our object ..
 
     csVector3 pos;             ///< .. and its position that could not be set
     csVector3 rot;
     csString sector;
 
-    UnresolvedPos(GEMClientObject * entity, const csVector3 & pos, const csVector3 & rot, const csString & sector)
+    UnresolvedPos(GEMClientObject* entity, const csVector3 &pos, const csVector3 &rot, const csString &sector)
     {
         this->entity  = entity;
         this->pos     = pos;
@@ -143,17 +143,17 @@ private:
     void LoadEffectItems();
 
     csRedBlackTreeMap<csString, csRef<InstanceObject>,csFixedSizeAllocator<sizeof(CS::Container::RedBlackTreeNode<
-                      csRedBlackTreePayload<csString,csRef<InstanceObject> > >)>, CS::Container::RedBlackTreeOrderingStrictWeak > instanceObjects;
+            csRedBlackTreePayload<csString,csRef<InstanceObject> > >)>, CS::Container::RedBlackTreeOrderingStrictWeak > instanceObjects;
 
     csRedBlackTreeMap<csString, csRef<iMeshFactoryWrapper>,csFixedSizeAllocator<sizeof(CS::Container::RedBlackTreeNode<
-                      csRedBlackTreePayload<csString,csRef<iMeshFactoryWrapper> > >)>, CS::Container::RedBlackTreeOrderingStrictWeak > nullFactories;
+            csRedBlackTreePayload<csString,csRef<iMeshFactoryWrapper> > >)>, CS::Container::RedBlackTreeOrderingStrictWeak > nullFactories;
 
 public:
 
     psCelClient();
     virtual ~psCelClient();
 
-    bool Initialize (iObjectRegistry* object_reg, MsgHandler* msghandler);
+    bool Initialize(iObjectRegistry* object_reg, MsgHandler* msghandler);
 
     void RequestServerWorld();
     bool IsReady();
@@ -166,23 +166,38 @@ public:
 
     void RemoveObject(GEMClientObject* entity);
 
-    psClientDR* GetClientDR()       { return clientdr; }
-    const csPDelArray<GEMClientObject>& GetEntities () const { return entities; }
+    psClientDR* GetClientDR()
+    {
+        return clientdr;
+    }
+    const csPDelArray<GEMClientObject> &GetEntities() const
+    {
+        return entities;
+    }
     bool IsMeshSubjectToAction(const char* sector,const char* mesh);
-    GEMClientActor * GetActorByName(const char * name, bool trueName = true) const;
+    GEMClientActor* GetActorByName(const char* name, bool trueName = true) const;
 
     virtual void HandleMessage(MsgEntry* me);
 
     void SetupWorldColliders();
 
-    psEntityLabels * GetEntityLabels() { return entityLabels; }
-    psShadowManager * GetShadowManager() { return shadowManager; }
+    psEntityLabels* GetEntityLabels()
+    {
+        return entityLabels;
+    }
+    psShadowManager* GetShadowManager()
+    {
+        return shadowManager;
+    }
 
-    GEMClientActor* GetMainPlayer() { return local_player; }
+    GEMClientActor* GetMainPlayer()
+    {
+        return local_player;
+    }
 
     /** Check if the item has an effect attached to it and process it if so. */
-    void HandleItemEffect( const char* factName, csRef<iMeshWrapper> mw, bool onGround = true, const char* slot = 0,
-                           csHash<int, csString> *effectids = 0, csHash<int, csString> *lightids = 0 );
+    void HandleItemEffect(const char* factName, csRef<iMeshWrapper> mw, bool onGround = true, const char* slot = 0,
+                          csHash<int, csString>* effectids = 0, csHash<int, csString>* lightids = 0);
 
     /** Called when new world maps were loaded
         CelClient looks for GEM Objects which have sectors with unknown name and checks if this name is known now */
@@ -190,22 +205,34 @@ public:
 
     /** Called when a region of the world is deleted from the client (because we don't need it loaded now)
         CelClient removes all GEMClientObjects that are in this region */
-    void OnRegionsDeleted(csArray<iCollection *>& regions);
+    void OnRegionsDeleted(csArray<iCollection*> &regions);
 
-    psWorld* GetWorld() const { return gameWorld; }
+    psWorld* GetWorld() const
+    {
+        return gameWorld;
+    }
 
     /** This is called when position of some entity could not be resolved (see the UnresolvedPos struct)
       * It adds this position to list of unresolved positions which we will attempt to resolve later
       * and moves the entity to special sector that keeps these unfortunate entities.
       */
-    void HandleUnresolvedPos(GEMClientObject * entity, const csVector3 & pos, const csVector3& rot, const csString & sector);
+    void HandleUnresolvedPos(GEMClientObject* entity, const csVector3 &pos, const csVector3 &rot, const csString &sector);
 
     void PruneEntities();
 
-    bool IsUnresSector(iSector* sector) { return unresSector == sector;}
-    iSector* GetUnresSector() { return unresSector; }
+    bool IsUnresSector(iSector* sector)
+    {
+        return unresSector == sector;
+    }
+    iSector* GetUnresSector()
+    {
+        return unresSector;
+    }
 
-    int GetRequestStatus() { return requeststatus; }
+    int GetRequestStatus()
+    {
+        return requeststatus;
+    }
 
     /// Add one new actor or item entity from the queue.
     void CheckEntityQueues();
@@ -221,7 +248,7 @@ public:
       * @param object The Crystal Space object we want to attach our client object to.
       * @param clientObject The client object we want to attach.
       */
-    void AttachObject( iObject* object, GEMClientObject* clientObject);
+    void AttachObject(iObject* object, GEMClientObject* clientObject);
 
     /** Unattach a client object from a Crystal Space object.
       * In most cases the Crystal Space object is a meshwrapper.
@@ -229,7 +256,7 @@ public:
       * @param object The Crystal Space object we want to unattach our client object from.
       * @param clientObject The client object we want to unattach.
       */
-    void UnattachObject( iObject* object, GEMClientObject* clientObject);
+    void UnattachObject(iObject* object, GEMClientObject* clientObject);
 
     /** See if there is a client object attached to a given object.
       *
@@ -237,7 +264,7 @@ public:
       *
       * @return A GEMClientObject if it exists that is attached to the Crystal Space object.
       */
-    GEMClientObject* FindAttachedObject (iObject* object);
+    GEMClientObject* FindAttachedObject(iObject* object);
 
 
     /** Create a list of all nearby GEM objects.
@@ -248,7 +275,7 @@ public:
       *
       * @return A csArray<> of all the objects in the given radius.
       */
-    csArray<GEMClientObject*> FindNearbyEntities (iSector* sector, const csVector3& pos, float radius, bool doInvisible = false);
+    csArray<GEMClientObject*> FindNearbyEntities(iSector* sector, const csVector3 &pos, float radius, bool doInvisible = false);
 
     /**
      * Search for an instance object and return it if existing. Else return 0 csPtr.
@@ -268,51 +295,54 @@ public:
     csPtr<iMeshFactoryWrapper> FindNullFactory(const char* name) const;
     void AddNullFactory(const char* name, csRef<iMeshFactoryWrapper> object);
     void RemoveNullFactory(const char* name);
-    
+
     /** Substituites in a string the group identifiers like $H $B etc depending on the race of the player.
-     * 
+     *
      *  @param string The string where do to the replacements
-     */ 
+     */
     void replaceRacialGroup(csString &string);
 
-    bool InstanceItems() { return instantiateItems; }
+    bool InstanceItems()
+    {
+        return instantiateItems;
+    }
 
 protected:
     /** Finds given entity in list of unresolved entities */
-    csList<UnresolvedPos*>::Iterator FindUnresolvedPos(GEMClientObject * entity);
+    csList<UnresolvedPos*>::Iterator FindUnresolvedPos(GEMClientObject* entity);
 
     int requeststatus;
     csRef<iVFS>         vfs;
     csRef<MsgHandler>   msghandler;
     psClientDR* clientdr;
 
-    psEntityLabels * entityLabels;
-    psShadowManager * shadowManager;
+    psEntityLabels* entityLabels;
+    psShadowManager* shadowManager;
 
     psWorld* gameWorld;
 
-    void HandleWorld( MsgEntry* me );
-    void HandleActor( MsgEntry* me );
-    void HandleItem( MsgEntry* me );
-    void HandleActionLocation( MsgEntry* me );
-    void HandleObjectRemoval( MsgEntry* me );
-    void HandleNameChange( MsgEntry* me );
-    void HandleGuildChange( MsgEntry* me );
-    void HandleGroupChange( MsgEntry* me );
+    void HandleWorld(MsgEntry* me);
+    void HandleActor(MsgEntry* me);
+    void HandleItem(MsgEntry* me);
+    void HandleActionLocation(MsgEntry* me);
+    void HandleObjectRemoval(MsgEntry* me);
+    void HandleNameChange(MsgEntry* me);
+    void HandleGuildChange(MsgEntry* me);
+    void HandleGroupChange(MsgEntry* me);
 
-    void HandleMecsActivate( MsgEntry* me );
+    void HandleMecsActivate(MsgEntry* me);
 
     void AddEntity(GEMClientObject* obj);
 
     /** Handles a stats message from the server.
       * This basically just publishes the data to PAWS so various widgets can be updated.
       */
-    void HandleStats( MsgEntry* me );
+    void HandleStats(MsgEntry* me);
 
     GEMClientActor* local_player;
 
     csList<UnresolvedPos*> unresPos;   ///< list of entities with unresolved location
-    iSector * unresSector;             ///< sector where we keep these entities
+    iSector* unresSector;              ///< sector where we keep these entities
 };
 
 enum GEMOBJECT_TYPE
@@ -334,7 +364,10 @@ public:
     GEMClientObject(psCelClient* cel, EID id);
     virtual ~GEMClientObject();
 
-    virtual GEMOBJECT_TYPE GetObjectType() { return GEM_OBJECT; }
+    virtual GEMOBJECT_TYPE GetObjectType()
+    {
+        return GEM_OBJECT;
+    }
 
     /** Performs helm group substitutions. */
     void SubstituteRacialMeshFact();
@@ -342,14 +375,14 @@ public:
     /** Start loading the mesh. */
     void LoadMesh();
 
-    /** Set the position of mesh 
+    /** Set the position of mesh
      * @param pos the coordinates of the mesh
      * @param rotangle the y axis rotation of the mesh
      * @param room the sector in which the mesh is moved to
      */
-    void Move(const csVector3& pos, const csVector3& rotangle, const char* room);
+    void Move(const csVector3 &pos, const csVector3 &rotangle, const char* room);
 
-    /** Set the rotation of mesh 
+    /** Set the rotation of mesh
      * @param xRot the variable used to set the x rotation of the item
      * @param yRot the variable used to set the x rotation of the item
      * @param zRot the variable used to set the z rotation of the item
@@ -357,7 +390,7 @@ public:
     void Rotate(float xRot, float yRot, float zRot);
 
     /** Set position of entity */
-    virtual void SetPosition(const csVector3& pos, const csVector3& rot, iSector* sector);
+    virtual void SetPosition(const csVector3 &pos, const csVector3 &rot, iSector* sector);
 
     /** Get position of entity */
     virtual csVector3 GetPosition();
@@ -376,61 +409,100 @@ public:
     virtual iSectorList* GetSectors() const;
 
     /** Return the bounding box of this entity. */
-    virtual const csBox3& GetBBox() const;
+    virtual const csBox3 &GetBBox() const;
 
-    EID GetEID() { return eid; }
+    EID GetEID()
+    {
+        return eid;
+    }
     csRef<iMeshWrapper> pcmesh;
 
     virtual int GetMasqueradeType();
 
-    int GetType() { return type; }
+    int GetType()
+    {
+        return type;
+    }
 
-    virtual const char* GetName() { return name; }
+    virtual const char* GetName()
+    {
+        return name;
+    }
     virtual void ChangeName(const char* name);
 
-    const char* GetFactName() { return factName; }
+    const char* GetFactName()
+    {
+        return factName;
+    }
 
-    psEffect* GetEntityLabel() { return entitylabel; }
-    void      SetEntityLabel(psEffect* el) { entitylabel = el; }
+    psEffect* GetEntityLabel()
+    {
+        return entitylabel;
+    }
+    void      SetEntityLabel(psEffect* el)
+    {
+        entitylabel = el;
+    }
 
-    psEffect * GetShadow() { return shadow; }
-    void SetShadow(psEffect * shadow) { this->shadow = shadow; }
+    psEffect* GetShadow()
+    {
+        return shadow;
+    }
+    void SetShadow(psEffect* shadow)
+    {
+        this->shadow = shadow;
+    }
 
     /**
      * Indicate if this object is alive
      */
-    virtual bool IsAlive() { return false; }
+    virtual bool IsAlive()
+    {
+        return false;
+    }
 
     /** Get the flag bit field.
       * @return The bit field that contains the flags on this actor.
       */
-    int Flags() { return flags; }
+    int Flags()
+    {
+        return flags;
+    }
 
-     /** Get the mesh that this object has.
-      * @return The iMeshWrapper or 0 if no mesh.
-      */
-     csRef<iMeshWrapper> GetMesh() const;
+    /** Get the mesh that this object has.
+     * @return The iMeshWrapper or 0 if no mesh.
+     */
+    csRef<iMeshWrapper> GetMesh() const;
 
-     virtual void Update();
+    virtual void Update();
 
-     float RangeTo(GEMClientObject * obj, bool ignoreY);
+    float RangeTo(GEMClientObject* obj, bool ignoreY);
 
-     bool HasShadow() const { return hasShadow; }
+    bool HasShadow() const
+    {
+        return hasShadow;
+    }
 
-     bool HasLabel() const { return hasLabel; }
+    bool HasLabel() const
+    {
+        return hasLabel;
+    }
 
-     /**
-      * Delayed mesh loading.
-      */
-     virtual bool CheckLoadStatus() { return false; }
+    /**
+     * Delayed mesh loading.
+     */
+    virtual bool CheckLoadStatus()
+    {
+        return false;
+    }
 
-     /**
-      * Delayed load 'post-process'.
-      */
-     virtual void PostLoad(bool /*nullmesh*/) { }
+    /**
+     * Delayed load 'post-process'.
+     */
+    virtual void PostLoad(bool /*nullmesh*/) { }
 
 protected:
-    static psCelClient *cel;
+    static psCelClient* cel;
 
     csString name;
     csString factName;
@@ -440,7 +512,7 @@ protected:
 
     int flags;                      ///< Various flags on the entity.
     psEffect* entitylabel;
-    psEffect * shadow;
+    psEffect* shadow;
     bool hasLabel;
     bool hasShadow;
 
@@ -462,10 +534,13 @@ class GEMClientActor : public GEMClientObject
 {
 public:
 
-    GEMClientActor( psCelClient* cel, psPersistActor& mesg );
+    GEMClientActor(psCelClient* cel, psPersistActor &mesg);
     virtual ~GEMClientActor();
 
-    virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ACTOR; }
+    virtual GEMOBJECT_TYPE GetObjectType()
+    {
+        return GEM_ACTOR;
+    }
 
     /** When receiving a psPersistActor message for the actor we currently
      *  control, some of our data (notably DRcounter) is probably newer
@@ -474,7 +549,7 @@ public:
      *
      * @param oldActor The actor to copy data from.
      */
-    void CopyNewestData(GEMClientActor& oldActor);
+    void CopyNewestData(GEMClientActor &oldActor);
 
     /** Get the last position of this object.
       *
@@ -482,57 +557,78 @@ public:
       * @param yrot The Y-Axis rotation of the object. [CHANGED]
       * @param sector The sector of the object is in [CHANGED]
       */
-    void GetLastPosition (csVector3& pos, float& yrot, iSector*& sector);
+    void GetLastPosition(csVector3 &pos, float &yrot, iSector* &sector);
 
     /** Get the object velocity.
       *
       * @return The velocity of the object as a vector.
       */
-    const csVector3 GetVelocity () const;
+    const csVector3 GetVelocity() const;
 
-    virtual void SetPosition(const csVector3& pos, float rot, iSector* sector);
+    virtual void SetPosition(const csVector3 &pos, float rot, iSector* sector);
 
     /** Set the velocity of the actor.
      */
-    void SetVelocity(const csVector3& vel);
+    void SetVelocity(const csVector3 &vel);
 
     /** Set the rotation of the actor.
      */
     void SetYRotation(const float yrot);
-    
-    void SetAlive( bool aliveFlag, bool newactor );
-    virtual bool IsAlive() { return alive; }
-    virtual int GetMasqueradeType() { return masqueradeType; }
+
+    void SetAlive(bool aliveFlag, bool newactor);
+    virtual bool IsAlive()
+    {
+        return alive;
+    }
+    virtual int GetMasqueradeType()
+    {
+        return masqueradeType;
+    }
 
     /** Get the condition manager on this actor.
       */
-    psClientVitals* GetVitalMgr() { return vitalManager; }
+    psClientVitals* GetVitalMgr()
+    {
+        return vitalManager;
+    }
 
     csVector3 Pos() const;
     csVector3 Rot() const;
-    iSector *GetSector() const;
+    iSector* GetSector() const;
 
     virtual const char* GetName(bool realName = true);
 
-    const char* GetGuildName() { return guildName; }
-    void SetGuildName(const char* guild) { guildName = guild; }
+    const char* GetGuildName()
+    {
+        return guildName;
+    }
+    void SetGuildName(const char* guild)
+    {
+        guildName = guild;
+    }
 
-    bool NeedDRUpdate(unsigned char& priority);
+    bool NeedDRUpdate(unsigned char &priority);
     void SendDRUpdate(unsigned char priority,csStringHashReversible* msgstrings);
-    void SetDRData(psDRMessage& drmsg);
+    void SetDRData(psDRMessage &drmsg);
     void StopMoving(bool worldVel = false);
 
-    psCharAppearance* CharAppearance() { return charApp; }
+    psCharAppearance* CharAppearance()
+    {
+        return charApp;
+    }
 
     psLinearMovement* linmove;
 
     /// The Vital of the player with regards to his health/mana/fatigue/etc.
-    psClientVitals *vitalManager;
+    psClientVitals* vitalManager;
 
     void SetMode(uint8_t mode, bool newactor = false);
-    uint8_t GetMode() { return serverMode; }
+    uint8_t GetMode()
+    {
+        return serverMode;
+    }
     void SetIdleAnimation(const char* anim);
-    void SetAnimationVelocity(const csVector3& velocity);
+    void SetAnimationVelocity(const csVector3 &velocity);
     bool SetAnimation(const char* anim, int duration=0);
     void RefreshCal3d();  ///< Reloads iSpriteCal3DState
 
@@ -547,7 +643,7 @@ public:
      * This optimal routine tries to get the animation index given an
      * animation csStringID.
      */
-    int GetAnimIndex (csStringHashReversible* msgstrings, csStringID animid);
+    int GetAnimIndex(csStringHashReversible* msgstrings, csStringID animid);
 
     // The following hash is used by GetAnimIndex().
     csHash<int,csStringID> anim_hash;
@@ -577,16 +673,28 @@ public:
     // Access functions for the group var
     bool IsGroupedWith(GEMClientActor* actor);
     bool IsOwnedBy(GEMClientActor* actor);
-    unsigned int GetGroupID() { return groupID; }
-    void SetGroupID(unsigned int id) { groupID = id; }
-    EID  GetOwnerEID()       { return ownerEID; }
-    void SetOwnerEID(EID id) { ownerEID = id; }
+    unsigned int GetGroupID()
+    {
+        return groupID;
+    }
+    void SetGroupID(unsigned int id)
+    {
+        groupID = id;
+    }
+    EID  GetOwnerEID()
+    {
+        return ownerEID;
+    }
+    void SetOwnerEID(EID id)
+    {
+        ownerEID = id;
+    }
 
     csPDelArray<Trait> traitList;
 
     /** Get the movment system this object is using.
       */
-    psLinearMovement& Movement();
+    psLinearMovement &Movement();
 
     virtual void Update();
 
@@ -638,15 +746,18 @@ protected:
 class GEMClientItem : public GEMClientObject
 {
 public:
-    GEMClientItem( psCelClient* cel, psPersistItem& mesg );
+    GEMClientItem(psCelClient* cel, psPersistItem &mesg);
     virtual ~GEMClientItem();
 
-    virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ITEM; }
-    
+    virtual GEMOBJECT_TYPE GetObjectType()
+    {
+        return GEM_ITEM;
+    }
+
     /**
       * Delayed mesh loading.
       */
-     virtual bool CheckLoadStatus();
+    virtual bool CheckLoadStatus();
 
 protected:
     virtual void PostLoad();
@@ -677,11 +788,17 @@ private:
 class GEMClientActionLocation : public GEMClientObject
 {
 public:
-    GEMClientActionLocation( psCelClient* cel, psPersistActionLocation& mesg );
+    GEMClientActionLocation(psCelClient* cel, psPersistActionLocation &mesg);
 
-    virtual GEMOBJECT_TYPE GetObjectType() { return GEM_ACTION_LOC; }
+    virtual GEMOBJECT_TYPE GetObjectType()
+    {
+        return GEM_ACTION_LOC;
+    }
 
-    const char* GetMeshName() { return meshname; }
+    const char* GetMeshName()
+    {
+        return meshname;
+    }
 
 protected:
     csString meshname;

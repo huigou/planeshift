@@ -57,49 +57,49 @@
 // Convenience Functions
 //============================================================================
 
-gemObject* GetObject(const MathEnvironment* env, const csString& varName)
+gemObject* GetObject(const MathEnvironment* env, const csString &varName)
 {
     MathVar* var = env->Lookup(varName);
-    if (!var)
+    if(!var)
         return NULL;
 
     gemObject* obj = dynamic_cast<gemObject*>(var->GetObject()); // cast from iScriptableVar
     return obj;
 }
 
-gemActor* GetActor(const MathEnvironment* env, const csString& varName)
+gemActor* GetActor(const MathEnvironment* env, const csString &varName)
 {
     MathVar* var = env->Lookup(varName);
-    if (!var)
+    if(!var)
         return NULL;
 
     gemActor* actor = dynamic_cast<gemActor*>(var->GetObject()); // cast from iScriptableVar
     return actor;
 }
 
-gemNPC* GetNPC(const MathEnvironment* env, const csString& varName)
+gemNPC* GetNPC(const MathEnvironment* env, const csString &varName)
 {
     MathVar* var = env->Lookup(varName);
-    if (!var)
+    if(!var)
         return NULL;
 
     gemNPC* npc = dynamic_cast<gemNPC*>(var->GetObject()); // cast from iScriptableVar
     return npc;
 }
 
-psCharacter* GetCharacter(const MathEnvironment* env, const csString& varName)
+psCharacter* GetCharacter(const MathEnvironment* env, const csString &varName)
 {
     MathVar* var = env->Lookup(varName);
-    if (!var)
+    if(!var)
         return NULL;
 
     // Try a direct cast...
     psCharacter* c = dynamic_cast<psCharacter*>(var->GetObject()); // cast from iScriptableVar
-    if (!c)
+    if(!c)
     {
         // Maybe it's an actor - if so, we can extract it...
         gemActor* a = dynamic_cast<gemActor*>(var->GetObject());
-        if (a)
+        if(a)
             c = a->GetCharacterData();
     }
     return c;
@@ -116,10 +116,10 @@ public:
 
     void Trigger()
     {
-        if (!asp.IsValid())
+        if(!asp.IsValid())
             return;
 
-        if (asp->Cancel())
+        if(asp->Cancel())
             delete asp;
     }
 
@@ -194,19 +194,19 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         VitalBuffable* buffable = NULL;
-        if (vital == "mana-rate")
+        if(vital == "mana-rate")
             buffable = &target->GetCharacterData()->GetManaRate();
-        else if (vital == "pstamina-rate")
+        else if(vital == "pstamina-rate")
             buffable = &target->GetCharacterData()->GetPStaminaRate();
-        else if (vital == "mstamina-rate")
+        else if(vital == "mstamina-rate")
             buffable = &target->GetCharacterData()->GetMStaminaRate();
-        else if (vital == "hp-max")
+        else if(vital == "hp-max")
             buffable = &target->GetCharacterData()->GetMaxHP();
-        else if (vital == "mana-max")
+        else if(vital == "mana-max")
             buffable = &target->GetCharacterData()->GetMaxMana();
-        else if (vital == "pstamina-max")
+        else if(vital == "pstamina-max")
             buffable = &target->GetCharacterData()->GetMaxPStamina();
-        else if (vital == "mstamina-max")
+        else if(vital == "mstamina-max")
             buffable = &target->GetCharacterData()->GetMaxMStamina();
         CS_ASSERT(buffable);
 
@@ -248,10 +248,10 @@ public:
     {
         float val = value->Evaluate(env);
 
-        VitalBuffable& buffable = target->GetCharacterData()->GetHPRate();
+        VitalBuffable &buffable = target->GetCharacterData()->GetHPRate();
         buffable.Buff(asp, val);
         asp->Add(buffable, "<hp-rate value=\"%f\"/>", val);
-        if (val < 0)
+        if(val < 0)
             asp->MarkAsDamagingHP();
 
         gemActor* atk = GetActor(env, attacker); // may be NULL
@@ -274,17 +274,17 @@ public:
     bool Load(iDocumentNode* node)
     {
         csString type(node->GetValue());
-        if (type == "agi")
+        if(type == "agi")
             stat = PSITEMSTATS_STAT_AGILITY;
-        else if (type == "end")
+        else if(type == "end")
             stat = PSITEMSTATS_STAT_ENDURANCE;
-        else if (type == "str")
+        else if(type == "str")
             stat = PSITEMSTATS_STAT_STRENGTH;
-        else if (type == "cha")
+        else if(type == "cha")
             stat = PSITEMSTATS_STAT_CHARISMA;
-        else if (type == "int")
+        else if(type == "int")
             stat = PSITEMSTATS_STAT_INTELLIGENCE;
-        else if (type == "wil")
+        else if(type == "wil")
             stat = PSITEMSTATS_STAT_WILL;
         else
         {
@@ -298,7 +298,7 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         int val = (int) value->Evaluate(env);
-        SkillRank & buffable = target->GetCharacterData()->GetSkillRank(statToSkill(stat));
+        SkillRank &buffable = target->GetCharacterData()->GetSkillRank(statToSkill(stat));
         buffable.Buff(asp, val);
 
         const char* strs[] = {"str", "agi", "end", "int", "wil", "cha"};
@@ -315,13 +315,16 @@ protected:
 class SkillAOp : public Applied2
 {
 public:
-    SkillAOp(CacheManager* cachemanager) : Applied2() { this->cachemanager = cachemanager; }
+    SkillAOp(CacheManager* cachemanager) : Applied2()
+    {
+        this->cachemanager = cachemanager;
+    }
     virtual ~SkillAOp() { }
 
     bool Load(iDocumentNode* node)
     {
         psSkillInfo* info = cachemanager->GetSkillByName(node->GetAttributeValue("name"));
-        if (!info)
+        if(!info)
         {
             Error2("Found <skill name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
             return false;
@@ -333,7 +336,7 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         int val = (int) value->Evaluate(env);
-        SkillRank& buffable = target->GetCharacterData()->GetSkillRank(skill);
+        SkillRank &buffable = target->GetCharacterData()->GetSkillRank(skill);
         buffable.Buff(asp, val);
 
         asp->Add(buffable, "<skill name=\"%s\" value=\"%d\"/>", name.GetData(), val);
@@ -361,7 +364,7 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         int val = (int) value->Evaluate(env);
-        Buffable<int>& buffable = target->GetCharacterData()->GetBuffableVariable(name);
+        Buffable<int> &buffable = target->GetCharacterData()->GetBuffableVariable(name);
         buffable.Buff(asp, val);
 
         asp->Add(buffable, "<variable name=\"%s\" value=\"%d\"/>", name.GetData(), val);
@@ -386,9 +389,9 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         Multiplier* mod = NULL;
-        if (type == "atk")
+        if(type == "atk")
             mod = &target->GetCharacterData()->AttackModifier();
-        else if (type == "def")
+        else if(type == "def")
             mod = &target->GetCharacterData()->DefenseModifier();
         CS_ASSERT(mod);
 
@@ -419,7 +422,7 @@ public:
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        psRaceInfo *race = psserver->GetCacheManager()->GetRaceInfoByNameGender(value,psserver->GetCacheManager()->ConvertGenderString(sex));
+        psRaceInfo* race = psserver->GetCacheManager()->GetRaceInfoByNameGender(value,psserver->GetCacheManager()->ConvertGenderString(sex));
         target->GetCharacterData()->GetOverridableRace().Override(asp, race);
         asp->Add(target->GetCharacterData()->GetOverridableRace(), "<race value=\"%s\" sex=\"%s\"/>", value.GetData(), sex.GetData());
     }
@@ -445,8 +448,8 @@ public:
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-    	MuteBuffable& buffable = target->GetClient()->GetBuffableMute();
-    	buffable.Buff(asp, 1);
+        MuteBuffable &buffable = target->GetClient()->GetBuffableMute();
+        buffable.Buff(asp, 1);
         asp->Add(buffable, "<mute />");
     }
 };
@@ -468,8 +471,8 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
 
-    	FrozenBuffable& buffable = target->GetBuffableFrozen();
-    	buffable.Buff(asp, 1);
+        FrozenBuffable &buffable = target->GetBuffableFrozen();
+        buffable.Buff(asp, 1);
         asp->Add(buffable, "<freeze />");
     }
 };
@@ -481,11 +484,14 @@ class CanSummonFamiliarAOp : public AppliedOp
 public:
     virtual ~CanSummonFamiliarAOp() { }
 
-    bool Load(iDocumentNode* node) { return true; }
+    bool Load(iDocumentNode* node)
+    {
+        return true;
+    }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        Buffable<int>& b = target->GetCharacterData()->GetCanSummonFamiliar();
+        Buffable<int> &b = target->GetCharacterData()->GetCanSummonFamiliar();
         b.Buff(asp, 1);
         asp->Add(b, "<can-summon-familiar/>");
     }
@@ -497,12 +503,12 @@ public:
 class MsgCancel : public iCancelAction
 {
 public:
-    MsgCancel(int clientnum, const csString& undo) : clientnum(clientnum), undo(undo) { }
+    MsgCancel(int clientnum, const csString &undo) : clientnum(clientnum), undo(undo) { }
     virtual ~MsgCancel() { }
 
     void Cancel()
     {
-        if (!undo.IsEmpty())
+        if(!undo.IsEmpty())
             psserver->SendSystemInfo(clientnum, "%s", undo.GetData());
     }
 protected:
@@ -528,20 +534,20 @@ public:
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        if (target && target->GetClientID())
+        if(target && target->GetClientID())
         {
             csString finalText(text);
             env->InterpolateString(finalText);
 
-            if (type == "ok")
+            if(type == "ok")
             {
                 psserver->SendSystemOK(target->GetClientID(), finalText);
             }
-            else if (type == "result")
+            else if(type == "result")
             {
                 psserver->SendSystemResult(target->GetClientID(), finalText);
             }
-            else if (type == "error")
+            else if(type == "error")
             {
                 psserver->SendSystemError(target->GetClientID(), finalText);
             }
@@ -606,14 +612,17 @@ private:
 class FxAOp : public AppliedOp
 {
 public:
-    FxAOp(CacheManager *cachemanager) : AppliedOp() {cacheManager = cachemanager; }
+    FxAOp(CacheManager* cachemanager) : AppliedOp()
+    {
+        cacheManager = cachemanager;
+    }
     virtual ~FxAOp() { }
 
     bool Load(iDocumentNode* node)
     {
         name   = node->GetAttributeValue("name");
         source = node->GetAttributeValue("source");
-        if (source.IsEmpty())
+        if(source.IsEmpty())
         {
             offset.x = node->GetAttributeValueAsFloat("x");
             offset.y = node->GetAttributeValueAsFloat("y");
@@ -626,7 +635,7 @@ public:
     {
         gemObject* anchor = NULL;
         // Convert from the source to an offset.
-        if (!source.IsEmpty())
+        if(!source.IsEmpty())
         {
             anchor = GetObject(env, source);
 
@@ -649,7 +658,7 @@ public:
 
         // this may be backwards
         psEffectMessage fx(0, name, offset, target->GetEID(), target->GetEID(), asp->Duration(), uid);
-        if (!fx.valid)
+        if(!fx.valid)
         {
             Error1("Error: <fx> could not create valid psEffectMessage\n");
             return;
@@ -658,8 +667,8 @@ public:
 
         // One problem with the above...it doesn't get shown to people who walk up to it later.
 
-        FxCancel *cancel = new FxCancel(target, uid);
-        if (offset == 0)
+        FxCancel* cancel = new FxCancel(target, uid);
+        if(offset == 0)
         {
             asp->Add(cancel, "<fx name=\"%s\"/>", name.GetData());
         }
@@ -673,8 +682,8 @@ protected:
     csString name;
     csString source;  ///< The name of the MathVar containing the entity the effect originates from (optional)
     csVector3 offset; ///< An offset from the target which the effect originates from
-    
-    CacheManager *cacheManager;
+
+    CacheManager* cacheManager;
 };
 
 //----------------------------------------------------------------------------
@@ -688,7 +697,7 @@ public:
 
     void Cancel()
     {
-        if (!actor.IsValid())
+        if(!actor.IsValid())
             return;
 
         actor->DetachScript(script, type);
@@ -705,19 +714,23 @@ protected:
 class OnAOp : public AppliedOp
 {
 public:
-    OnAOp(EntityManager* entitymanager, CacheManager* cachemanager) : AppliedOp() {this->entitymanager = entitymanager; this->cachemanager = cachemanager; }
+    OnAOp(EntityManager* entitymanager, CacheManager* cachemanager) : AppliedOp()
+    {
+        this->entitymanager = entitymanager;
+        this->cachemanager = cachemanager;
+    }
     virtual ~OnAOp() { }
 
     bool Load(iDocumentNode* node)
     {
         csString typ(node->GetAttributeValue("type"));
-        if (typ == "attack")
+        if(typ == "attack")
             type = ATTACK;
-        else if (typ == "defense")
+        else if(typ == "defense")
             type = DEFENSE;
-        else if (typ == "nearlydead")
+        else if(typ == "nearlydead")
             type = NEARLYDEAD;
-        else if (typ == "move")
+        else if(typ == "move")
             type = MOVE;
         else
         {
@@ -732,7 +745,7 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         // Substitute any @{...} expressions.
-        if (!Quasiquote(self, env))
+        if(!Quasiquote(self, env))
             return;
 
         // Now, parse and load the script (but don't run it)...
@@ -743,7 +756,7 @@ public:
         target->AttachScript(body, type);
         OnCancel* cancel = new OnCancel(target, type, body);
         csString xml = GetNodeXML(self); // this doesn't give <hp/> style attributes...should fix
-                                         // or find another way to do it, nobody else uses this
+        // or find another way to do it, nobody else uses this
         asp->Add(cancel, "%s", xml.GetData());
     }
 
@@ -752,29 +765,29 @@ protected:
     {
         // 1. Handle quasiquoted expressions in attributes
         csRef<iDocumentAttributeIterator> it = top->GetAttributes();
-        while (it->HasNext())
+        while(it->HasNext())
         {
             csRef<iDocumentAttribute> attr = it->Next();
             csString text = attr->GetValue();
             csString varName;
             size_t pos = (size_t)-1;
             // It'd probably be better to use psString::Interpolate and give it an optional char param for @ or $
-            while ((pos = text.Find("@{", pos+1)) != SIZET_NOT_FOUND)
+            while((pos = text.Find("@{", pos+1)) != SIZET_NOT_FOUND)
             {
                 size_t end = text.Find("}", pos+2);
-                if (end == SIZET_NOT_FOUND)
+                if(end == SIZET_NOT_FOUND)
                 {
                     Error2("Error: Unterminated quasiquote found in attribute >%s<.", text.GetData());
                     return false;
                 }
-                if (end <= pos+3)
+                if(end <= pos+3)
                 {
                     Error2("Error: Empty quasiquote - @{} - found in attribute >%s<.", text.GetData());
                     return false;
                 }
                 text.SubString(varName, pos+2, end-(pos+2));
                 MathVar* var = env->Lookup(varName);
-                if (!var)
+                if(!var)
                 {
                     Error2("Error: Quasiquote @{%s} not found in environment.", varName.GetData());
                     return false;
@@ -787,10 +800,10 @@ protected:
 
         // 2. Recurse.
         csRef<iDocumentNodeIterator> nit = top->GetNodes();
-        while (nit->HasNext())
+        while(nit->HasNext())
         {
             csRef<iDocumentNode> child = nit->Next();
-            if (!Quasiquote(child, env))
+            if(!Quasiquote(child, env))
                 return false;
         }
         return true;
@@ -807,7 +820,7 @@ protected:
  *
  * <let vars="Roll = 300;" />
  *   (Roll will be defined here, till the end of the apply block.)
- * 
+ *
  * @note this works by modifying the environment of the applicative script.
  */
 class LetAOp : public AppliedOp
@@ -816,7 +829,7 @@ public:
     LetAOp() : AppliedOp(), bindings(NULL) { }
     virtual ~LetAOp()
     {
-        if (bindings)
+        if(bindings)
             delete bindings;
     }
 
@@ -845,7 +858,7 @@ ApplicativeScript::ApplicativeScript() : duration(NULL)
 
 ApplicativeScript::~ApplicativeScript()
 {
-    if (duration)
+    if(duration)
     {
         delete duration;
         duration = NULL;
@@ -857,19 +870,19 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse(script);
-    if (error)
+    if(error)
     {
         Error2("Couldn't parse XML for applicative script: %s", script);
         return NULL;
     }
     csRef<iDocumentNode> root = doc->GetRoot();
-    if (!root)
+    if(!root)
     {
         Error2("No XML root in applicative script: %s", script);
         return NULL;
     }
     csRef<iDocumentNode> top = root->GetNode("apply");
-    if (!top)
+    if(!top)
     {
         Error2("Could not find <apply> node in: %s", script);
         return NULL;
@@ -879,14 +892,14 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
 
 ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top)
 {
-    if (!top->GetAttributeValue("name"))
+    if(!top->GetAttributeValue("name"))
         return NULL;
 
     SPELL_TYPE type;
     csString typ(top->GetAttributeValue("type"));
-    if (typ == "buff")
+    if(typ == "buff")
         type = BUFF;
-    else if (typ == "debuff")
+    else if(typ == "debuff")
         type = DEBUFF;
     else
         return NULL;
@@ -898,28 +911,28 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
 {
     CS_ASSERT(name);
     ApplicativeScript* script = new ApplicativeScript;
-    if (!script)
+    if(!script)
         return NULL;
 
     script->aim = top->GetAttributeValue("aim");
     script->name = name;
     script->type = type;
 
-    if (duration)
+    if(duration)
         script->duration = MathExpression::Create(duration);
 
-    if (script->aim.IsEmpty() || script->name.IsEmpty() || (duration && !script->duration))
+    if(script->aim.IsEmpty() || script->name.IsEmpty() || (duration && !script->duration))
     {
         delete script;
         return NULL;
     }
 
     csRef<iDocumentNodeIterator> it = top->GetNodes();
-    while (it->HasNext())
+    while(it->HasNext())
     {
         csRef<iDocumentNode> node = it->Next();
 
-        if (node->GetType() != CS_NODE_ELEMENT) // not sure if this is really necessary...
+        if(node->GetType() != CS_NODE_ELEMENT)  // not sure if this is really necessary...
             continue;
 
         csString elem = node->GetValue();
@@ -927,73 +940,73 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
         AppliedOp* op = NULL;
 
         // buffables
-        if (elem == "hp-rate")
+        if(elem == "hp-rate")
         {
             op = new HPRateAOp;
         }
-        else if (elem == "mana-rate" || elem == "pstamina-rate" || elem == "mstamina-rate" || elem == "hp-max" || elem == "mana-max" || elem == "pstamina-max" || elem == "mstamina-max")
+        else if(elem == "mana-rate" || elem == "pstamina-rate" || elem == "mstamina-rate" || elem == "hp-max" || elem == "mana-max" || elem == "pstamina-max" || elem == "mstamina-max")
         {
             op = new VitalAOp;
         }
-        else if (elem == "atk" || elem == "def")
+        else if(elem == "atk" || elem == "def")
         {
             op = new CombatModAOp;
         }
-        else if (elem == "agi" || elem == "end" || elem == "str" || elem == "cha" || elem == "int" || elem == "wil")
+        else if(elem == "agi" || elem == "end" || elem == "str" || elem == "cha" || elem == "int" || elem == "wil")
         {
             op = new StatsAOp;
         }
-        else if (elem == "skill")
+        else if(elem == "skill")
         {
             op = new SkillAOp(cachemanager);
         }
-        else if (elem == "faction")
+        else if(elem == "faction")
         {
             continue;
         }
-        else if (elem == "animal-affinity")
+        else if(elem == "animal-affinity")
         {
             continue;
         }
-        else if (elem == "variable-int")
+        else if(elem == "variable-int")
         {
             op = new VariableIntAOp();
         }
         // overridables
-        else if (elem == "race")
+        else if(elem == "race")
         {
             op = new RaceAOp;
         }
-        else if (elem == "mute")
+        else if(elem == "mute")
         {
             op = new MuteAOp;
         }
-        else if (elem == "freeze")
+        else if(elem == "freeze")
         {
             op = new FreezeAOp;
         }
-        else if (elem == "pos")
+        else if(elem == "pos")
         {
             continue;
         }
         // other
-        else if (elem == "can-summon-familiar")
+        else if(elem == "can-summon-familiar")
         {
             op = new CanSummonFamiliarAOp;
         }
-        else if (elem == "msg")
+        else if(elem == "msg")
         {
             op = new MsgAOp;
         }
-        else if (elem == "fx")
+        else if(elem == "fx")
         {
             op = new FxAOp(cachemanager);
         }
-        else if (elem == "on")
+        else if(elem == "on")
         {
             op = new OnAOp(entitymanager, cachemanager);
         }
-        else if (elem == "let")
+        else if(elem == "let")
         {
             op = new LetAOp;
         }
@@ -1004,7 +1017,7 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
             return NULL;
         }
 
-        if (op->Load(node))
+        if(op->Load(node))
         {
             script->ops.Push(op);
         }
@@ -1028,7 +1041,7 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
     ActiveSpell* asp = new ActiveSpell(name, type, dticks);
 
     csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
-    while (it.HasNext())
+    while(it.HasNext())
     {
         AppliedOp* op = it.Next();
         op->Run(env, target, asp);
@@ -1036,7 +1049,7 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
 
     asp->Register(target);
 
-    if (duration && registerCancelEvent)
+    if(duration && registerCancelEvent)
     {
         psCancelSpellEvent* evt = new psCancelSpellEvent(dticks, asp);
         psserver->GetEventManager()->Push(evt);
@@ -1071,10 +1084,14 @@ public:
 class ApplyOp : public ImperativeOp
 {
 public:
-	ApplyOp(EntityManager* entitymanager, CacheManager* cachemanager) {this->entitymanager = entitymanager; this->cachemanager = cachemanager; }
+    ApplyOp(EntityManager* entitymanager, CacheManager* cachemanager)
+    {
+        this->entitymanager = entitymanager;
+        this->cachemanager = cachemanager;
+    }
     virtual ~ApplyOp()
     {
-        if (aps)
+        if(aps)
             delete aps;
         aps = NULL;
     }
@@ -1101,12 +1118,16 @@ protected:
 class ApplyLinkedOp : public ImperativeOp
 {
 public:
-	ApplyLinkedOp(EntityManager* entitymanager, CacheManager* cachemanager) {this->entitymanager = entitymanager; this->cachemanager = cachemanager; }
+    ApplyLinkedOp(EntityManager* entitymanager, CacheManager* cachemanager)
+    {
+        this->entitymanager = entitymanager;
+        this->cachemanager = cachemanager;
+    }
     virtual ~ApplyLinkedOp()
     {
-        if (buff)
+        if(buff)
             delete buff;
-        if (debuff)
+        if(debuff)
             delete debuff;
         buff = NULL;
         debuff = NULL;
@@ -1115,7 +1136,7 @@ public:
     bool Load(iDocumentNode* top)
     {
         csString name(top->GetAttributeValue("name"));
-        if (name.IsEmpty())
+        if(name.IsEmpty())
         {
             Error1("<apply-linked> node is missing a name attribute.");
             return false;
@@ -1159,14 +1180,14 @@ class LetOp : public ImperativeOp
 public:
     LetOp(EntityManager* entitymanager, CacheManager* cachemanager) : ImperativeOp(), bindings(NULL), body(NULL)
     {
-    	this->entitymanager = entitymanager;
-    	this->cachemanager = cachemanager;
+        this->entitymanager = entitymanager;
+        this->cachemanager = cachemanager;
     }
     virtual ~LetOp()
     {
-        if (bindings)
+        if(bindings)
             delete bindings;
-        if (body)
+        if(body)
             delete body;
     }
 
@@ -1208,16 +1229,16 @@ class IfOp : public ImperativeOp
 public:
     IfOp(EntityManager* entitymanager, CacheManager* cachemanager) : ImperativeOp(), thenBranch(NULL), elseBranch(NULL), condition(NULL)
     {
-    	this->entitymanager = entitymanager;
-    	this->cachemanager = cachemanager;
+        this->entitymanager = entitymanager;
+        this->cachemanager = cachemanager;
     }
     virtual ~IfOp()
     {
-        if (thenBranch)
+        if(thenBranch)
             delete thenBranch;
-        if (elseBranch)
+        if(elseBranch)
             delete elseBranch;
-        if (condition)
+        if(condition)
             delete condition;
     }
 
@@ -1227,7 +1248,7 @@ public:
         csRef<iDocumentNode> thenNode = node->GetNode("then");
         csRef<iDocumentNode> elseNode = node->GetNode("else");
 
-        if (!thenNode)
+        if(!thenNode)
         {
             Error1("Missing <then> in <if>.");
             return false;
@@ -1235,7 +1256,7 @@ public:
 
         thenBranch = ProgressionScript::Create(entitymanager, cachemanager, "<then> clause", thenNode);
 
-        if (elseNode)
+        if(elseNode)
             elseBranch = ProgressionScript::Create(entitymanager, cachemanager, "<else> clause", elseNode);
 
         return (condition && thenBranch && (elseBranch || !elseNode));
@@ -1243,9 +1264,9 @@ public:
 
     virtual void Run(MathEnvironment* env)
     {
-        if (condition->Evaluate(env) != 0.0)
+        if(condition->Evaluate(env) != 0.0)
             thenBranch->Run(env);
-        else if (elseBranch)
+        else if(elseBranch)
             elseBranch->Run(env);
     }
 
@@ -1281,20 +1302,20 @@ public:
     {
         gemActor* actor = GetActor(env, aim);
 
-        if (actor && actor->GetClientID())
+        if(actor && actor->GetClientID())
         {
             csString finalText(text);
             env->InterpolateString(finalText);
 
-            if (type == "ok")
+            if(type == "ok")
             {
                 psserver->SendSystemOK(actor->GetClientID(), finalText);
             }
-            else if (type == "result")
+            else if(type == "result")
             {
                 psserver->SendSystemResult(actor->GetClientID(), finalText);
             }
-            else if (type == "error")
+            else if(type == "error")
             {
                 psserver->SendSystemError(actor->GetClientID(), finalText);
             }
@@ -1334,7 +1355,7 @@ public:
     {
         gemNPC* npc = GetNPC(env, aim);
 
-        if (npc)
+        if(npc)
         {
             csString finalCmd(cmd);
             env->InterpolateString(finalCmd);
@@ -1373,11 +1394,11 @@ public:
         aim = cancel->GetAttributeValue("aim");
 
         csString typ(cancel->GetAttributeValue("type"));
-        if (typ == "all")
+        if(typ == "all")
             type = ALL;
-        else if (typ == "ordered")
+        else if(typ == "ordered")
             type = ORDERED;
-        else if (typ == "random")
+        else if(typ == "random")
             type = RANDOM;
         else
         {
@@ -1386,20 +1407,20 @@ public:
         }
 
         csRef<iDocumentNodeIterator> it = cancel->GetNodes();
-        while (it->HasNext())
+        while(it->HasNext())
         {
             csRef<iDocumentNode> node = it->Next();
 
-            if (node->GetType() != CS_NODE_ELEMENT) // not sure if this is really necessary...
+            if(node->GetType() != CS_NODE_ELEMENT)  // not sure if this is really necessary...
                 continue;
 
             Spell spell;
             spell.name = node->GetAttributeValue("name");
 
             typ = node->GetAttributeValue("type");
-            if (typ == "buff")
+            if(typ == "buff")
                 spell.type = BUFF;
-            else if (typ == "debuff")
+            else if(typ == "debuff")
                 spell.type = DEBUFF;
             else
             {
@@ -1420,36 +1441,36 @@ public:
 
         // Find which potentially cancellable spells are actually active
         csArray<ActiveSpell*> asps;
-        for (size_t i = 0; i < spells.GetSize(); i++)
+        for(size_t i = 0; i < spells.GetSize(); i++)
         {
             ActiveSpell* asp = actor->FindActiveSpell(spells[i].name, spells[i].type);
-            if (asp)
+            if(asp)
                 asps.Push(asp);
         }
 
-        if (asps.IsEmpty())
+        if(asps.IsEmpty())
             return;
 
-        switch (type)
+        switch(type)
         {
             case ORDERED:
             {
-                if (asps[0]->Cancel())
+                if(asps[0]->Cancel())
                     delete asps[0];
                 break;
             }
             case RANDOM:
             {
                 ActiveSpell* asp = asps[psserver->GetRandom(asps.GetSize())];
-                if (asp->Cancel())
+                if(asp->Cancel())
                     delete asp;
                 break;
             }
             case ALL:
             {
-                for (size_t i = 0; i < asps.GetSize(); i++)
+                for(size_t i = 0; i < asps.GetSize(); i++)
                 {
-                    if (asps[i]->Cancel())
+                    if(asps[i]->Cancel())
                         delete asps[i];
                 }
                 break;
@@ -1499,7 +1520,7 @@ public:
         gemObject* target = GetObject(env, targetVar);
         gemObject* source = target;
         float scale = 0.0f;
-        if (!sourceVar.IsEmpty())
+        if(!sourceVar.IsEmpty())
             source = GetObject(env, sourceVar);
 
         if(effectScale)
@@ -1507,10 +1528,10 @@ public:
             scale = effectScale->Evaluate(env);
         }
 
-        if (attached)
+        if(attached)
         {
             psEffectMessage fx(0, name, csVector3(0,0,0), source->GetEID(), target->GetEID(), 0, scale);
-            if (!fx.valid)
+            if(!fx.valid)
             {
                 Error1("Error: <fx> could not create valid psEffectMessage\n");
                 return;
@@ -1529,7 +1550,7 @@ public:
 
             // Send effect message
             psEffectMessage fx(0, name, pos, 0, 0, 0, scale);
-            if (!fx.valid)
+            if(!fx.valid)
             {
                 Error1("Error: <fx> could not create valid psEffectMessage\n");
                 return;
@@ -1605,7 +1626,10 @@ protected:
 class DestroyOp : public Imperative1
 {
 public:
-    DestroyOp(EntityManager* entitymanager) : Imperative1() {this->entitymanager = entitymanager; }
+    DestroyOp(EntityManager* entitymanager) : Imperative1()
+    {
+        this->entitymanager = entitymanager;
+    }
     virtual ~DestroyOp() { }
 
     void Run(MathEnvironment* env)
@@ -1622,7 +1646,17 @@ protected:
 class TeleportOp : public Imperative1
 {
 public:
-    TeleportOp(EntityManager* entitymanager) : Imperative1() { entityManager = entitymanager; loadDelay = NULL; background = ""; point1X = NULL; point1X = NULL; point1Y = NULL; point2X = NULL; point2Y = NULL; }
+    TeleportOp(EntityManager* entitymanager) : Imperative1()
+    {
+        entityManager = entitymanager;
+        loadDelay = NULL;
+        background = "";
+        point1X = NULL;
+        point1X = NULL;
+        point1Y = NULL;
+        point2X = NULL;
+        point2Y = NULL;
+    }
     virtual ~TeleportOp()
     {
         if(loadDelay)
@@ -1649,7 +1683,7 @@ public:
 
     bool Load(iDocumentNode* node)
     {
-        if (!Imperative1::Load(node))
+        if(!Imperative1::Load(node))
             return false;
 
         if(node->GetAttribute("delay"))
@@ -1666,7 +1700,7 @@ public:
         {
             widget = node->GetAttributeValue("widget");
         }
-    
+
         if(node->GetAttribute("x1") && node->GetAttribute("y1") && node->GetAttribute("x2") && node->GetAttribute("y2"))
         {
             point1X = MathExpression::Create(node->GetAttributeValue("x1"));
@@ -1675,18 +1709,18 @@ public:
             point2Y = MathExpression::Create(node->GetAttributeValue("y2"));
         }
 
-        if (node->GetAttribute("location"))
+        if(node->GetAttribute("location"))
         {
             type = NAMED;
             destination = node->GetAttributeValue("location");
             return destination == "spawn";
         }
-        else if (node->GetAttribute("sector"))
+        else if(node->GetAttribute("sector"))
         {
             destination = node->GetAttributeValue("sector");
             type = SECTOR;
 
-            if (node->GetAttribute("x") && node->GetAttribute("y") && node->GetAttribute("z"))
+            if(node->GetAttribute("x") && node->GetAttribute("y") && node->GetAttribute("z"))
             {
                 type |= XYZ;
                 pos.x = node->GetAttributeValueAsFloat("x");
@@ -1694,7 +1728,7 @@ public:
                 pos.z = node->GetAttributeValueAsFloat("z");
             }
 
-            if (node->GetAttribute("instance"))
+            if(node->GetAttribute("instance"))
             {
                 type |= INSTANCE;
                 instance = (InstanceID) node->GetAttributeValueAsInt("instance");
@@ -1735,7 +1769,7 @@ public:
             point2.y = point2Y->Evaluate(env);
         }
 
-        if (type == NAMED)
+        if(type == NAMED)
         {
             // we only handle "spawn" for now...
             actor->MoveToSpawnPos(loadDelayInt, background, point1, point2, widget);
@@ -1745,27 +1779,27 @@ public:
             iSector* sector;
             csVector3 destPos;
 
-            if (type & XYZ)
+            if(type & XYZ)
             {
                 sector = entityManager->GetEngine()->FindSector(destination);
                 destPos = pos;
             }
             else
             {
-                if (!psserver->GetAdminManager()->GetStartOfMap(0, destination, sector, destPos))
+                if(!psserver->GetAdminManager()->GetStartOfMap(0, destination, sector, destPos))
                 {
                     Error2("Could not get start of map >%s<.", destination.GetDataSafe());
                     return;
                 }
             }
 
-            if (!sector)
+            if(!sector)
             {
                 Error2("Could not find sector >%s<.", destination.GetDataSafe());
                 return;
             }
 
-            if (type & INSTANCE)
+            if(type & INSTANCE)
                 actor->Teleport(sector, destPos, 0.0, instance, loadDelayInt, background, point1, point2, widget);
             else
                 actor->Teleport(sector, destPos, 0.0, loadDelayInt, background, point1, point2, widget);
@@ -1778,14 +1812,14 @@ protected:
     csString destination;
     csVector3 pos;
     InstanceID instance;
-    MathExpression *loadDelay; ///<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
+    MathExpression* loadDelay; ///<The delay the loading screen shall have, in seconds; YOU DON'T HAVE TO DEFINE IT
     csString background;       ///<The background of the loading screen; YOU DON'T HAVE TO DEFINE IT
     csString widget;           ///< The replacement widget used for the loading screen
-    MathExpression *point1X;   ///<Defines x cordinate start of animation
-    MathExpression *point1Y;   ///<Defines y cordinate start of animation
-    MathExpression *point2X;   ///<Defines x cordinate end of animation
-    MathExpression *point2Y;   ///<Defines y cordinate end of animation
-    
+    MathExpression* point1X;   ///<Defines x cordinate start of animation
+    MathExpression* point1Y;   ///<Defines y cordinate start of animation
+    MathExpression* point2X;   ///<Defines x cordinate end of animation
+    MathExpression* point2Y;   ///<Defines y cordinate end of animation
+
     EntityManager* entityManager;
 };
 
@@ -1796,7 +1830,7 @@ protected:
  *
  * <mana aim="Caster" value="-5"/>
  */
-class VitalOp : public Imperative2 
+class VitalOp : public Imperative2
 {
 public:
     VitalOp() : Imperative2() { }
@@ -1812,11 +1846,11 @@ public:
     {
         psCharacter* c = GetCharacter(env, aim);
         float val = value->Evaluate(env);
-        if (vital == "mana")
+        if(vital == "mana")
             c->AdjustMana(val);
-        else if (vital == "pstamina")
+        else if(vital == "pstamina")
             c->AdjustStamina(val, true);
-        else if (vital == "mstamina")
+        else if(vital == "mstamina")
             c->AdjustStamina(val, false);
         else
             CS_ASSERT(false);
@@ -1853,7 +1887,7 @@ public:
         gemActor* atk = GetActor(env, attacker); // may be NULL
         float val = value->Evaluate(env);
 
-        if (val < 0)
+        if(val < 0)
             target->DoDamage(atk, -val);
         else
             target->GetCharacterData()->AdjustHitPoints(val);
@@ -1882,17 +1916,17 @@ public:
     bool Load(iDocumentNode* node)
     {
         csString type(node->GetValue());
-        if (type == "agi")
+        if(type == "agi")
             stat = PSITEMSTATS_STAT_AGILITY;
-        else if (type == "end")
+        else if(type == "end")
             stat = PSITEMSTATS_STAT_ENDURANCE;
-        else if (type == "str")
+        else if(type == "str")
             stat = PSITEMSTATS_STAT_STRENGTH;
-        else if (type == "cha")
+        else if(type == "cha")
             stat = PSITEMSTATS_STAT_CHARISMA;
-        else if (type == "int")
+        else if(type == "int")
             stat = PSITEMSTATS_STAT_INTELLIGENCE;
-        else if (type == "wil")
+        else if(type == "wil")
             stat = PSITEMSTATS_STAT_WILL;
         else
         {
@@ -1907,7 +1941,7 @@ public:
     {
         psCharacter* c = GetCharacter(env, aim);
         int val = (int) value->Evaluate(env);
-        SkillRank & buffable = c->GetSkillRank(statToSkill(stat));
+        SkillRank &buffable = c->GetSkillRank(statToSkill(stat));
         buffable.SetBase(buffable.Base() + val);
     }
 
@@ -1927,7 +1961,10 @@ protected:
 class FactionOp : public Imperative3
 {
 public:
-    FactionOp(CacheManager* cachemanager) : Imperative3() { this->cachemanager = cachemanager; }
+    FactionOp(CacheManager* cachemanager) : Imperative3()
+    {
+        this->cachemanager = cachemanager;
+    }
     virtual ~FactionOp() { }
 
     bool Load(iDocumentNode* node)
@@ -1942,11 +1979,11 @@ public:
 
     void Run(MathEnvironment* env)
     {
-        Faction *currentFaction = faction;
+        Faction* currentFaction = faction;
         psCharacter* c = GetCharacter(env, aim);
         int val = (int) value->Evaluate(env);
         //we didn't find a valid faction name during load: it means it's a variable.
-        if (!currentFaction)
+        if(!currentFaction)
         {
             //evaluate the variable so we can get it's value
             MathVar* factionVar = env->Lookup(variableName);
@@ -1955,7 +1992,7 @@ public:
                 Error2("Faction Imperative Op Run with invalid faction name variable: %s", variableName.GetData());
                 return;
             }
-            
+
             csString factionName = factionVar->GetString();
             currentFaction = cachemanager->GetFaction(factionName.GetData());
             if(!currentFaction) //we still didn't find a valid faction abort.
@@ -1969,7 +2006,7 @@ public:
 protected:
 
     ///Used to store the faction in case it's found during Load(). It's null in case it wasn't found.
-    Faction *faction;
+    Faction* faction;
     /** Used to store the faction name math expression in case the faction couldn't be found.
      *  It's uninitialized in case it's not used as the code shouldn't use it in that case.
      */
@@ -2009,7 +2046,7 @@ public:
         MathVar* valueVar = env->Lookup(variableValue);
         csString varName;
         csString varValue;
-        
+
         if(nameVar)
             varName = nameVar->GetString();
         else //if the variable was not found try getting the value associated directly (not in <let>)
@@ -2061,7 +2098,7 @@ public:
             varName = nameVar->GetString();
         else //if the variable was not found try getting the value associated directly (not in <let>)
             varName = variableName;
-        
+
         c->UnSetVariable(varName);
     }
 protected:
@@ -2082,7 +2119,10 @@ protected:
 class SkillOp : public Imperative3
 {
 public:
-    SkillOp(CacheManager* cachemanager) : Imperative3() { this->cachemanager = cachemanager; }
+    SkillOp(CacheManager* cachemanager) : Imperative3()
+    {
+        this->cachemanager = cachemanager;
+    }
     virtual ~SkillOp() { }
 
     bool Load(iDocumentNode* node)
@@ -2094,18 +2134,18 @@ public:
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
-        
+
         //evaluate the variables so we can get it's value
         MathVar* nameVar = env->Lookup(skillName);
         csString varName;
-        
+
         if(nameVar)
             varName = nameVar->GetString();
         else //if the variable was not found try getting the value associated directly (not in <let>)
             varName = skillName;
 
         psSkillInfo* info = cachemanager->GetSkillByName(varName);
-        if (!info)
+        if(!info)
         {
             Error2("Found <skill aim=\"...\" name=\"%s\">, but no such skill exists.", varName.GetData());
             return;
@@ -2113,7 +2153,7 @@ public:
 
         PSSKILL skill = info->id;
         int val = (int) value->Evaluate(env);
-        SkillRank& buffable = c->GetSkillRank(skill);
+        SkillRank &buffable = c->GetSkillRank(skill);
         buffable.SetBase(buffable.Base() + val);
         c->SetSkillRank(info->id,buffable.Base());
     }
@@ -2146,12 +2186,12 @@ public:
     {
         psCharacter* c = GetCharacter(env, aim);
         float exp = value->Evaluate(env);
-        if (notify)
+        if(notify)
         {
             c->AddExperiencePointsNotify((unsigned int)exp);
         }
         else
-        {           
+        {
             c->AddExperiencePoints((unsigned int)exp);
         }
     }
@@ -2177,7 +2217,7 @@ public:
 
     bool Load(iDocumentNode* node)
     {
-        if (!Imperative3::Load(node))
+        if(!Imperative3::Load(node))
             return false;
 
         name.Downcase();
@@ -2202,14 +2242,14 @@ public:
         csRef<iDocumentNode> node;
         bool found = false;
 
-        if (!error)
+        if(!error)
         {
             // Find existing node
             csRef<iDocumentNodeIterator> it = xmlDoc->GetRoot()->GetNodes();
-            while (it->HasNext())
+            while(it->HasNext())
             {
                 node = it->Next();
-                if (name.CompareNoCase(node->GetAttributeValue("name")))
+                if(name.CompareNoCase(node->GetAttributeValue("name")))
                 {
                     found = true;
                     break;
@@ -2218,10 +2258,10 @@ public:
         }
 
         // Add new node if one doesn't exist
-        if (!found)
+        if(!found)
         {
             csString attrNode = psserver->GetProgressionManager()->GetAffinityCategories().Get(name, "");
-            if (!attrNode.IsEmpty())
+            if(!attrNode.IsEmpty())
             {
                 node = xmlDoc->GetRoot()->CreateNodeBefore(CS_NODE_ELEMENT);
                 node->SetValue("category");
@@ -2236,7 +2276,7 @@ public:
         }
 
         // Modify Value
-        if (node)
+        if(node)
         {
             float oldValue = node->GetAttributeValueAsFloat("value");
             float delta = value->Evaluate(env);
@@ -2269,7 +2309,10 @@ public:
 class ActionOp : public Imperative1
 {
 public:
-    ActionOp(CacheManager* cachemanager) {cacheManager = cachemanager; }
+    ActionOp(CacheManager* cachemanager)
+    {
+        cacheManager = cachemanager;
+    }
     virtual ~ActionOp() { }
 
     bool Load(iDocumentNode* node)
@@ -2286,7 +2329,7 @@ public:
 
         // Returns the next inactive entrance action location
         psActionLocation* actionLocation = psserver->GetActionManager()->FindAvailableEntrances(sector);
-        if (!actionLocation)
+        if(!actionLocation)
         {
             Error2("Error: <action/> - no available action location entrances found for %s.\n", sector.GetData());
             return;
@@ -2298,7 +2341,7 @@ public:
 
         // Get lock ID for this entrance
         uint32 lockID = actionLocation->GetInstanceID();
-        if (!lockID)
+        if(!lockID)
         {
             Error2("Error: <action/> - no available action location entrances found for %s.\n", sector.GetData());
             return;
@@ -2306,7 +2349,7 @@ public:
 
         // Get the ItemStats based on the name provided.
         psItemStats* itemstats=cacheManager->GetBasicItemStatsByName(keyStat.GetData());
-        if (!itemstats)
+        if(!itemstats)
         {
             Error2("Error: <action stat=\"%s\"/> specified, but no corresponding psItemStats found.\n", keyStat.GetData());
             return;
@@ -2345,7 +2388,7 @@ public:
 protected:
     csString sector;            ///< sector name of action location entrance to activate
     csString keyStat;           ///< Item stat name to use for making new key
-    
+
     CacheManager* cacheManager;
 };
 
@@ -2375,25 +2418,28 @@ protected:
 class KeyOp : public Imperative1
 {
 public:
-    KeyOp(CacheManager* cachemanager) : Imperative1() {cacheManager = cachemanager; }
+    KeyOp(CacheManager* cachemanager) : Imperative1()
+    {
+        cacheManager = cachemanager;
+    }
     virtual ~KeyOp() { }
 
     bool Load(iDocumentNode* node)
     {
         csString funct(node->GetAttributeValue("funct"));
-        if (funct == "make")
+        if(funct == "make")
         {
             function = MAKE;
             lockID = node->GetAttributeValueAsInt("lockID");
             keyStat = node->GetAttributeValue("stat");
             location = node->GetAttributeValue("location");
-            if (!location.IsEmpty() && location != "inventory" && location != "ground" )
+            if(!location.IsEmpty() && location != "inventory" && location != "ground")
             {
                 Error2("Error: <key funct=\"make\" location=\"%s\"/> is not valid.\n", location.GetData());
                 return false;
             }
         }
-        else if (funct == "modify")
+        else if(funct == "modify")
         {
             function = MODIFY;
             keyID = node->GetAttributeValueAsInt("statID");
@@ -2412,13 +2458,13 @@ public:
         // Get character data
         psCharacter* c = GetCharacter(env, aim);
 
-        switch (function)
+        switch(function)
         {
             case MAKE:
             {
                 // Get the ItemStats based on the name provided.
                 psItemStats* itemstats = cacheManager->GetBasicItemStatsByName(keyStat.GetData());
-                if (!itemstats)
+                if(!itemstats)
                 {
                     Error2("Error: <key funct=\"make\" stat=\"%s\"/> specified, but no corresponding psItemStats found.\n", keyStat.GetData());
                     return;
@@ -2428,7 +2474,7 @@ public:
                 CS_ASSERT(keyItem);
 
                 // Assign the lock, make it a master key and load it
-                if (lockID)
+                if(lockID)
                 {
                     keyItem->SetIsMasterKey(true);
                     keyItem->AddOpenableLock(lockID);
@@ -2436,7 +2482,7 @@ public:
                 }
 
                 // Now put it somewhere
-                if (location == "inventory")
+                if(location == "inventory")
                 {
                     c->Inventory().AddOrDrop(keyItem, false);
                 }
@@ -2451,7 +2497,7 @@ public:
             {
                 // Get key item from bulk and assign the lock
                 psItem* keyItem = c->Inventory().FindItemID(keyID);
-                if (keyItem)
+                if(keyItem)
                 {
                     keyItem->AddOpenableLock(lockID);
                     keyItem->Save(false);
@@ -2466,7 +2512,8 @@ public:
     }
 
 protected:
-    enum KeyOpFunctions {
+    enum KeyOpFunctions
+    {
         MAKE,  // Make new key
         MODIFY // Modify existing key
     } function;                 ///< Operation function
@@ -2474,7 +2521,7 @@ protected:
     uint32 lockID;              ///< Instance ID of lock to assign to key
     csString keyStat;           ///< Item stat name to use for making new key
     uint32 keyID;               ///< Key instance ID to check lock
-    
+
     CacheManager* cacheManager;
 };
 
@@ -2500,7 +2547,7 @@ public:
 
     virtual ~ItemOp()
     {
-        if (count)
+        if(count)
         {
             delete count;
         }
@@ -2512,7 +2559,7 @@ public:
         count = MathExpression::Create(node->GetAttributeValue("count"));
 
         csString location = node->GetAttributeValue("location");
-        if (!location.IsEmpty() && location != "inventory" && location != "ground")
+        if(!location.IsEmpty() && location != "inventory" && location != "ground")
         {
             Error2("Error: Invalid location in <item location=\"%s\"/>\n", location.GetData());
             return false;
@@ -2531,31 +2578,31 @@ public:
     {
         psCharacter* c = GetCharacter(env, aim);
         int stackCount = count->Evaluate(env);
-        if (stackCount <= 0)
+        if(stackCount <= 0)
         {
             return;
         }
 
-        if (placeOnGround)
+        if(placeOnGround)
         {
             psItem* iteminstance = CreateItem(true, stackCount);
-            if (!iteminstance)
+            if(!iteminstance)
                 return;
 
             c->DropItem(iteminstance);
         }
-        else if (name.CompareNoCase("tria") || name.CompareNoCase("hexa") || name.CompareNoCase("octa") || name.CompareNoCase("circle"))
+        else if(name.CompareNoCase("tria") || name.CompareNoCase("hexa") || name.CompareNoCase("octa") || name.CompareNoCase("circle"))
         {
             // Handle money specially
             psMoney money;
 
-            if (name.CompareNoCase("tria"))
+            if(name.CompareNoCase("tria"))
                 money.SetTrias(stackCount);
-            else if (name.CompareNoCase("hexa"))
+            else if(name.CompareNoCase("hexa"))
                 money.SetHexas(stackCount);
-            else if (name.CompareNoCase("octa"))
+            else if(name.CompareNoCase("octa"))
                 money.SetOctas(stackCount);
-            else if (name.CompareNoCase("circle"))
+            else if(name.CompareNoCase("circle"))
                 money.SetCircles(stackCount);
 
             psMoney charMoney = c->Money();
@@ -2565,7 +2612,7 @@ public:
         else
         {
             psItem* iteminstance = CreateItem(false, stackCount);
-            if (!iteminstance)
+            if(!iteminstance)
                 return;
 
             c->Inventory().AddOrDrop(iteminstance, false);
@@ -2576,17 +2623,17 @@ public:
     {
         // Get the ItemStats based on the name provided.
         psItemStats* itemstats = cacheManager->GetBasicItemStatsByName(name.GetData());
-        if (!itemstats)
+        if(!itemstats)
         {
             Error2("Error: <item name=\"%s\"/> specified, but no corresponding psItemStats exists.\n", name.GetData());
             return NULL;
         }
 
         psItem* item = itemstats->InstantiateBasicItem(transient);
-        if (!item)
+        if(!item)
             return NULL;
 
-        if (!item->GetIsStackable())
+        if(!item->GetIsStackable())
         {
             Error3("Error: <item name=\"%s\" count=\"%d\"/> specified, but that item isn't stackable.\n", name.GetData(), stackCount);
         }
@@ -2595,7 +2642,7 @@ public:
             item->SetStackCount(stackCount);
         }
 
-        
+
         //if we have to randomize the item we do it now.
         if(randomize)
             cacheManager->RandomizeItem(item, randomCost, randomLevel);
@@ -2630,19 +2677,22 @@ protected:
 class CreateFamiliarOp : public Imperative1
 {
 public:
-    CreateFamiliarOp(EntityManager* entitymanager) { entityManager = entitymanager; }
+    CreateFamiliarOp(EntityManager* entitymanager)
+    {
+        entityManager = entitymanager;
+    }
     virtual ~CreateFamiliarOp() { }
 
     bool Load(iDocumentNode* node)
     {
         masterPID = node->GetAttributeValueAsInt("masterID");
         return Imperative1::Load(node);
-    }        
+    }
 
     void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
-        if (!actor->GetClientID())
+        if(!actor->GetClientID())
         {
             Error2("Error: <createfamiliar/> needs a valid client for actor '%s'.\n", actor->GetName());
             return;
@@ -2655,13 +2705,13 @@ public:
         }*/
 
         gemNPC* familiar = entityManager->CreateFamiliar(actor, masterPID);
-        if (!familiar)
+        if(!familiar)
         {
             Error2("Failed to create familiar for %s.\n", actor->GetName());
         }
     }
-    
-    private:
+
+private:
     PID masterPID;
     EntityManager* entityManager;
 };
@@ -2691,7 +2741,7 @@ public:
         unsigned int num = (unsigned int) expr->Evaluate(env);
 
         gemActor* actor = GetActor(env, aim);
-        if (!actor || !actor->GetClientID())
+        if(!actor || !actor->GetClientID())
         {
             Error2("Error: <tutorialmsg/> needs a valid client for actor '%s'.\n", actor? "null" : actor->GetName());
             return;
@@ -2741,7 +2791,7 @@ public:
 
         gemActor* actor = GetActor(env, aim);
 
-        if (actor && actor->GetClientID())
+        if(actor && actor->GetClientID())
         {
             psMechanismActivateMessage msg(actor->GetClientID(), sector.GetData(), mesh.GetData(), script.GetData());
             msg.SendMessage();
@@ -2761,7 +2811,7 @@ protected:
 //============================================================================
 ProgressionScript::~ProgressionScript()
 {
-    while (!ops.IsEmpty())
+    while(!ops.IsEmpty())
     {
         delete ops.Pop();
     }
@@ -2772,19 +2822,19 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager,CacheM
     csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse(script);
-    if (error)
+    if(error)
     {
         Error2("Couldn't parse XML for progression script >%s<.", name);
         return NULL;
     }
     csRef<iDocumentNode> root = doc->GetRoot();
-    if (!root)
+    if(!root)
     {
         Error2("No XML root in progression script >%s<.", name);
         return NULL;
     }
     csRef<iDocumentNode> top = root->GetNode("script");
-    if (!top)
+    if(!top)
     {
         Error2("Could not find <script> tag in progression script >%s<!", name);
         return NULL;
@@ -2799,119 +2849,119 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
     csRef<iDocumentNodeIterator> it = top->GetNodes();
 
     ProgressionScript* script = new ProgressionScript(name);
-    while (it->HasNext())
+    while(it->HasNext())
     {
         csRef<iDocumentNode> node = it->Next();
 
-        if (node->GetType() != CS_NODE_ELEMENT) // not sure if this is really necessary...
+        if(node->GetType() != CS_NODE_ELEMENT)  // not sure if this is really necessary...
             continue;
 
         csString elem = node->GetValue();
 
         ImperativeOp* op = NULL;
 
-        if (elem == "let")
+        if(elem == "let")
         {
             op = new LetOp(entitymanager, cachemanager);
         }
-        else if (elem == "if")
+        else if(elem == "if")
         {
             op = new IfOp(entitymanager, cachemanager);
         }
-        else if (elem == "exp")
+        else if(elem == "exp")
         {
             op = new ExpOp;
         }
-        else if (elem == "apply")
+        else if(elem == "apply")
         {
             op = new ApplyOp(entitymanager, cachemanager);
         }
-        else if (elem == "apply-linked")
+        else if(elem == "apply-linked")
         {
             op = new ApplyLinkedOp(entitymanager, cachemanager);
         }
-        else if (elem == "msg")
+        else if(elem == "msg")
         {
             op = new MsgOp;
         }
-        else if (elem == "npccmd")
+        else if(elem == "npccmd")
         {
             op = new NPCCmdOp;
         }
-        else if (elem == "fx")
+        else if(elem == "fx")
         {
             op = new FxOp;
         }
-        else if (elem == "cancel")
+        else if(elem == "cancel")
         {
             op = new CancelOp;
         }
-        else if (elem == "destroy")
+        else if(elem == "destroy")
         {
             op = new DestroyOp(entitymanager);
         }
-        else if (elem == "teleport")
+        else if(elem == "teleport")
         {
             op = new TeleportOp(entitymanager);
         }
-        else if (elem == "fog" || elem == "rain" || elem == "snow" || elem == "lightning" || elem == "weather")
+        else if(elem == "fog" || elem == "rain" || elem == "snow" || elem == "lightning" || elem == "weather")
         {
             printf("TODO: implement <%s> used in script >%s<\n", elem.GetData(), name);
             continue;
         }
-        else if (elem == "hp")
+        else if(elem == "hp")
         {
             op = new HPOp;
         }
-        else if (elem == "mana" || elem == "pstamina" || elem == "mstamina")
+        else if(elem == "mana" || elem == "pstamina" || elem == "mstamina")
         {
             op = new VitalOp;
         }
-        else if (elem == "agi" || elem == "end" || elem == "str" || elem == "cha" || elem == "int" || elem == "wil")
+        else if(elem == "agi" || elem == "end" || elem == "str" || elem == "cha" || elem == "int" || elem == "wil")
         {
             op = new StatsOp;
         }
-        else if (elem == "skill")
+        else if(elem == "skill")
         {
             op = new SkillOp(cachemanager);
         }
-        else if (elem == "faction")
+        else if(elem == "faction")
         {
             op = new FactionOp(cachemanager);
         }
-        else if (elem == "variableset")
+        else if(elem == "variableset")
         {
             op = new VariableSetOp();
         }
-        else if (elem == "variableunset")
+        else if(elem == "variableunset")
         {
             op = new VariableUnSetOp();
         }
-        else if (elem == "animal-affinity")
+        else if(elem == "animal-affinity")
         {
             op = new AnimalAffinityOp;
         }
-        else if (elem == "action")
+        else if(elem == "action")
         {
             op = new ActionOp(cachemanager);
         }
-        else if (elem == "key")
+        else if(elem == "key")
         {
             op = new KeyOp(cachemanager);
         }
-        else if (elem == "item")
+        else if(elem == "item")
         {
             op = new ItemOp(cachemanager);
         }
-        else if (elem == "create-familiar")
+        else if(elem == "create-familiar")
         {
             op = new CreateFamiliarOp(entitymanager);
         }
-        else if (elem == "tutorialmsg")
+        else if(elem == "tutorialmsg")
         {
             op = new TutorialMsgOp();
         }
-        else if (elem == "mechanism")
+        else if(elem == "mechanism")
         {
             op = new MechanismMsgOp();
         }
@@ -2921,7 +2971,7 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
             return NULL;
         }
 
-        if (op->Load(node))
+        if(op->Load(node))
         {
             script->ops.Push(op);
         }
@@ -2938,7 +2988,7 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
 void ProgressionScript::Run(MathEnvironment* env)
 {
     csArray<ImperativeOp*>::Iterator it = ops.GetIterator();
-    while (it.HasNext())
+    while(it.HasNext())
     {
         ImperativeOp* op = it.Next();
         op->Run(env);
