@@ -60,8 +60,6 @@ if $(HAVE_STATIC_PLUGINS) = "yes"
   particlesldr
   ptanimimg
   ptpdlight
-  rendloop_loader
-  rendstep_std
   reporter
   rm_shadow_pssm
   rm_unshadowed

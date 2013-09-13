@@ -68,8 +68,6 @@ LinkStaticPlugins psnpcclient_static :
   particles
   particlesldr
   ptanimimg
-  rendloop_loader
-  rendstep_std
   reporter
   sequence
   shadermgr

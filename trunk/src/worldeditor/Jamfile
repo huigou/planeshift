@@ -48,7 +48,6 @@ STATIC.PLUGINLIST =
   particlesldr
   ptanimimg
   ptpdlight
-  rendstep_std
   reporter
   rm_unshadowed
   shadermgr
