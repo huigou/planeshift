@@ -300,6 +300,8 @@ protected:
     void HandleGuildChange( MsgEntry* me );
     void HandleGroupChange( MsgEntry* me );
 
+    void HandleMecsActivate( MsgEntry* me );
+
     void AddEntity(GEMClientObject* obj);
 
     /** Handles a stats message from the server.

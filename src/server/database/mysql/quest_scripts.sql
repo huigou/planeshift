@@ -62,6 +62,7 @@ INSERT INTO `quest_scripts` (`id`, `quest_id`, `script`) VALUES
 	('210',209,'P:can I help\r\nMenu: I\'ll solve a riddle for a tria.\r\n\r\nMerchant: Ok that is fun.  I like riddles.  What is my favorite color?\r\n\r\nAssign Quest\r\n\r\n...\r\n\r\nP: *. P: blue\r\nMenu: That isn\'t a riddle, little man.  Menu: ?=Favorite color\r\n\r\nM: I don\'t care what you think of my riddle!  What is my favorite color?\r\nM: Yes, blue is my favorite color.  Isn\'t it a wonderful color?  Here is your reward.\r\nGive 1 tria.\r\n'),
 	('211',210,'P:can tell fortune\r\nMenu: I\'ve heard you can read the future.\r\n\r\nSmith: Pay me 5 tria and I\'ll tell you about your love life.\r\n\r\nPlayer gives Smith 5 tria.\r\nMenu: Give him 5 tria for your fortune.\r\n\r\nSmith: Huzzah!  Payment for services has been received... Now let me read your future...\r\n\r\nAssign Quest\r\n\r\n...\r\n\r\nP: tell fortune\r\nMenu: So??? What\'s going to happen in my love life?\r\n\r\nSmith: You are coding a game for goodness sakes! One doesn\'t have to be a psychic to know your love life is going to suffer.  Now go away!\r\n'),
 	('212',211,'P:give me familiar\r\nMenu:Could you give me a familiar?\r\n\r\nMerchant: Yes\r\nGive 1 Ring of Familiar.\r\nRun Script create_familiar.\r\n');
+  ('213',212,'P:activate mechanism\r\nMenu:Can you please move those ingots for me?\r\n\r\nSmith: Yes\r\nRun Script mechanism <<\'npc1_ingots\'>>.\r\n');
 /*!40000 ALTER TABLE `quest_scripts` ENABLE KEYS*/;
 UNLOCK TABLES;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS*/;

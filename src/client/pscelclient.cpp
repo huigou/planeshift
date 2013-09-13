@@ -123,6 +123,7 @@ psCelClient::~psCelClient()
         msghandler->Unsubscribe(this, MSGTYPE_GUILDCHANGE);
         msghandler->Unsubscribe(this, MSGTYPE_GROUPCHANGE);
         msghandler->Unsubscribe(this, MSGTYPE_STATS);
+        msghandler->Unsubscribe(this, MSGTYPE_MECS_ACTIVATE);
     }
 
     if(clientdr)
@@ -164,6 +165,9 @@ bool psCelClient::Initialize(iObjectRegistry* object_reg, MsgHandler* newmsghand
     msghandler->Subscribe(this, MSGTYPE_GUILDCHANGE);
     msghandler->Subscribe(this, MSGTYPE_GROUPCHANGE);
     msghandler->Subscribe(this, MSGTYPE_STATS);
+
+    // mechanisms
+    msghandler->Subscribe(this, MSGTYPE_MECS_ACTIVATE);
 
     clientdr = new psClientDR;
     if(!clientdr->Initialize(object_reg, this, msghandler))
@@ -653,6 +657,30 @@ void psCelClient::HandleStats(MsgEntry* me)
 
 }
 
+void psCelClient::HandleMecsActivate(MsgEntry* me)
+{
+    psMechanismActivateMessage msg(me);
+
+    Error1("Received HandleMecsActivate message!");
+
+    Error2("Received HandleMecsActivate message sector: %s!", msg.sectorName.GetData());
+
+    Error2("Received HandleMecsActivate message mesh: %s!", msg.meshName.GetData());
+
+    Error2("Received HandleMecsActivate message script: %s!", msg.mechanismScript.GetData());
+
+    csRef<iMeshWrapper> objectWrapper = psengine->GetEngine()->FindMeshObject (msg.meshName);
+
+    // object found, move the object
+    if (objectWrapper) {
+        Error2("Found mesh! %s", objectWrapper->QueryObject()->GetName());
+        csReversibleTransform& tr = objectWrapper->GetMovable()->GetTransform();
+        csVector3 v (-2, 0, 0);
+        tr.Translate (v);
+        objectWrapper->GetMovable()->UpdateMove();
+    }
+}
+
 void psCelClient::ForceEntityQueues()
 {
     while(!newActorQueue.IsEmpty())
@@ -800,6 +828,12 @@ void psCelClient::HandleMessage(MsgEntry* me)
         case MSGTYPE_GROUPCHANGE:
         {
             HandleGroupChange(me);
+            break;
+        }
+
+        case MSGTYPE_MECS_ACTIVATE:
+        {
+            HandleMecsActivate(me);
             break;
         }
 
