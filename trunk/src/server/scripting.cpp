@@ -2705,6 +2705,57 @@ protected:
     MathExpression* expr;               ///< The database ID (subtracted of 1001) of the tutorial tip
 };
 
+/**
+ * MechanismMsgOp - activate a mechanism:
+ *
+ * <mechanism aim="Caster" sector="NPCRoom" mesh="test" script="move up 3"/>
+ */
+class MechanismMsgOp : public Imperative1
+{
+public:
+    virtual ~MechanismMsgOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        sector = node->GetAttributeValue("sector");
+        mesh = node->GetAttributeValue("mesh");
+        script = node->GetAttributeValue("script");
+        expr = MathExpression::Create(node->GetAttributeValue("mesh"));
+
+        return Imperative1::Load(node) && expr!=NULL;
+    }
+
+    virtual void Run(MathEnvironment* env)
+    {
+        Error1("Running MechanismMsgOp");
+
+        //evaluate the variable so we can get it's value
+        MathVar* meshVar = env->Lookup("Mesh");
+        if(!meshVar)
+        {
+            Error1("MechanismMsgOp Run with invalid 'Mesh' name variable.");
+            return;
+        }
+        mesh = meshVar->GetString();
+        Error2("MechanismMsgOp Run with mesh name variable: %s", mesh.GetData());
+
+        gemActor* actor = GetActor(env, aim);
+
+        if (actor && actor->GetClientID())
+        {
+            psMechanismActivateMessage msg(actor->GetClientID(), sector.GetData(), mesh.GetData(), script.GetData());
+            msg.SendMessage();
+            Error1("Running MechanismMsgOp - SENT message to client");
+        }
+    }
+
+protected:
+    csString sector;      ///< the sector where the mesh to activate is
+    csString mesh;        ///< the mesh to activate
+    csString script;      ///< xml containing the commands for the mesh
+    MathExpression* expr; ///< The mesh name passed as parameter
+};
+
 //============================================================================
 // Progression script implementation (imperative mode)
 //============================================================================
@@ -2859,6 +2910,10 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         else if (elem == "tutorialmsg")
         {
             op = new TutorialMsgOp();
+        }
+        else if (elem == "mechanism")
+        {
+            op = new MechanismMsgOp();
         }
         else
         {

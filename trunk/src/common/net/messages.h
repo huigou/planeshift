@@ -277,7 +277,10 @@ enum MSG_TYPES
     MSGTYPE_SIMPLE_RENDER_MESH,
     MSGTYPE_NPC_WORKDONE,
     MSGTYPE_PATH_NETWORK,
-    MSGTYPE_LOCATION
+    MSGTYPE_LOCATION,
+
+    // mechanisms
+    MSGTYPE_MECS_ACTIVATE
 };
 
 class psMessageCracker;
@@ -5881,6 +5884,42 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 };
+
+/**
+ * This message is used by the server to activate one mechanism client side.
+ */
+class psMechanismActivateMessage: public psMessageCracker
+{
+public:
+    /**
+     * Constructor.
+     * @param client the client's ID.
+     * @param sectorname the sector where the mechanism resides.
+     * @param meshName the name of the mesh to activate.
+     * @param mechanismScript the script to run on the selected mesh.
+     */
+    psMechanismActivateMessage(uint32_t client, const char* sectorname, 
+                      const char* meshName, const char* mechanismScript);
+
+    /**
+     * Constructor from a MsgEntry.
+     * @param me the message entry.
+     */
+    psMechanismActivateMessage(MsgEntry* me);
+
+    // From psMessageCracker
+    PSF_DECLARE_MSG_FACTORY();
+
+    virtual csString ToString(NetBase::AccessPointers* /*accessPointers*/)
+    {
+        return csString("not implemented");
+    }
+
+    csString sectorName;
+    csString meshName;
+    csString mechanismScript;
+};
+
 
 /**
 *  Class to implement sequential delivery of net messages
