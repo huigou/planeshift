@@ -391,7 +391,7 @@ public:
 typedef psMessageCracker* (*psfMsgFactoryFunc)(MsgEntry* me, NetBase::AccessPointers* accessPointers);
 
 csString GetMsgTypeName(int msgType);
-void DecodeMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex, csString& msgText, int& filterNumber);
+void DecodeMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex, csString &msgText, int &filterNumber);
 
 void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, const char* msgtypename);
 psMessageCracker* psfCreateMsg(int msgtype,
@@ -2479,7 +2479,7 @@ public:
      * @param targetID    Name of the new target to display.
      */
     psGUITargetUpdateMessage(uint32_t clientNum, EID targetID);
-    
+
     psGUITargetUpdateMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -2748,8 +2748,8 @@ public:
                    QUIT
                  };
 
-    static const char * SkillCommandString[];
-    
+    static const char* SkillCommandString[];
+
     /**
      * Constucts a new equipment message to go on the network.
      *
@@ -3702,17 +3702,18 @@ public:
                             csTicks duration,
                             const csString &name,
                             const csString &image)
-    {   //                                                 + duration         +
+    {
+        //                                                 + duration         +
         size_t    msgSize = sizeof(bool) + sizeof(uint8_t) + sizeof(uint32_t) + sizeof(int32_t);
 
-        if( name && name.Length()>0 )
+        if(name && name.Length()>0)
             msgSize += name.Length() +1;
         else
             msgSize += sizeof(uint8_t);
 
-        if( image )
+        if(image)
         {
-            if( image.Length()>0 )
+            if(image.Length()>0)
             {
                 msgSize += image.Length() +1;
             }
@@ -3722,19 +3723,19 @@ public:
             msgSize += sizeof(uint8_t);
         }
 
-        msg.AttachNew(new MsgEntry( msgSize ) );
+        msg.AttachNew(new MsgEntry(msgSize));
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
         msg->Add((uint8_t)cmd);
         msg->Add((uint8_t)type);
-        if( name && name.Length()>0 )
+        if(name && name.Length()>0)
             msg->Add(name);
-        else 
+        else
             msg->Add((uint8_t)0);
 
-        if( image && image.Length()>0 )
-            msg->Add(image); 
-        else 
+        if(image && image.Length()>0)
+            msg->Add(image);
+        else
             msg->Add((uint8_t)0);
 
         msg->Add((uint32_t)duration);
@@ -4224,7 +4225,7 @@ public:
      * @param isContainer True if this item is a container.
      */
     psViewContainerDescription(uint32_t to, const char* itemName, const char* description, const char* icon,
-                          uint32_t stackCount);
+                               uint32_t stackCount);
 
     /** Crack out the details from the message.
       * This will look at the packet and figure out if it is a single item or a container.
@@ -5898,8 +5899,8 @@ public:
      * @param meshName the name of the mesh to activate.
      * @param mechanismScript the script to run on the selected mesh.
      */
-    psMechanismActivateMessage(uint32_t client, const char* sectorname, 
-                      const char* meshName, const char* mechanismScript);
+    psMechanismActivateMessage(uint32_t client, const char* sectorname,
+                               const char* meshName, const char* mechanismScript);
 
     /**
      * Constructor from a MsgEntry.

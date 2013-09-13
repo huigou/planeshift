@@ -73,7 +73,10 @@ public:
     static ProgressionScript* Create(EntityManager* entitymanager,CacheManager* cachemanager, const char* name, const char* script);
     static ProgressionScript* Create(EntityManager* entitymanager,CacheManager* cachemanager, const char* name, iDocumentNode* top);
 
-    const csString& Name() { return name; }
+    const csString &Name()
+    {
+        return name;
+    }
     void Run(MathEnvironment* env);
 
 protected:
@@ -124,7 +127,7 @@ protected:
 
     union
     {
-        psItem   * item;
+        psItem*    item;
         gemObject* obj;
         //Location loc;
     };

@@ -669,14 +669,15 @@ void psCelClient::HandleMecsActivate(MsgEntry* me)
 
     Error2("Received HandleMecsActivate message script: %s!", msg.mechanismScript.GetData());
 
-    csRef<iMeshWrapper> objectWrapper = psengine->GetEngine()->FindMeshObject (msg.meshName);
+    csRef<iMeshWrapper> objectWrapper = psengine->GetEngine()->FindMeshObject(msg.meshName);
 
     // object found, move the object
-    if (objectWrapper) {
+    if(objectWrapper)
+    {
         Error2("Found mesh! %s", objectWrapper->QueryObject()->GetName());
-        csReversibleTransform& tr = objectWrapper->GetMovable()->GetTransform();
-        csVector3 v (-2, 0, 0);
-        tr.Translate (v);
+        csReversibleTransform &tr = objectWrapper->GetMovable()->GetTransform();
+        csVector3 v(-2, 0, 0);
+        tr.Translate(v);
         objectWrapper->GetMovable()->UpdateMove();
     }
 }
@@ -1711,11 +1712,11 @@ void GEMClientActor::SetDRData(psDRMessage &drmsg)
             iSector* cur_sector;
             linmove->GetLastPosition(cur_pos,cur_yrot,cur_sector);
 
-            if (DoLogDebug(LOG_DRDATA))
+            if(DoLogDebug(LOG_DRDATA))
             {
                 Debug(LOG_DRDATA, GetEID().Unbox(), "%s, %s, %s, %s, %f, %f, %f, %f, %s, %f, %f, %f, %f, %f, %f, %f",
                       "PSCLIENT", "OLD", ShowID(GetEID()),"?", cur_pos.x, cur_pos.y, cur_pos.z, cur_yrot,
-                      cur_sector->QueryObject()->GetName(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 );
+                      cur_sector->QueryObject()->GetName(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
                 Debug(LOG_DRDATA, GetEID().Unbox(), "%s, %s, %s, %s, %f, %f, %f, %f, %s, %f, %f, %f, %f, %f, %f, %f",
                       "PSCLIENT", "SET", ShowID(GetEID()),drmsg.on_ground?"TRUE":"FALSE", drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot,
@@ -1782,7 +1783,7 @@ void GEMClientActor::SetPosition(const csVector3 &pos, float rot, iSector* secto
     linmove->SetPosition(pos, rot, sector);
 }
 
-void GEMClientActor::SetVelocity(const csVector3& vel)
+void GEMClientActor::SetVelocity(const csVector3 &vel)
 {
     linmove->SetVelocity(vel);
 }
@@ -1844,7 +1845,7 @@ bool GEMClientActor::IsGroupedWith(GEMClientActor* actor)
 
 bool GEMClientActor::IsOwnedBy(GEMClientActor* actor)
 {
-    if (actor && actor->GetOwnerEID() == GetOwnerEID() && GetOwnerEID() != 0)
+    if(actor && actor->GetOwnerEID() == GetOwnerEID() && GetOwnerEID() != 0)
     {
         return true;
     }
@@ -2175,7 +2176,7 @@ bool GEMClientActor::CheckLoadStatus()
         if(scale >= 0)
         {
             csRef<iMovable> movable = mesh->GetMovable();
-            csReversibleTransform & trans = movable->GetTransform();
+            csReversibleTransform &trans = movable->GetTransform();
             csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
 
             // Normalize the mesh scale to the base scale of the mesh.
