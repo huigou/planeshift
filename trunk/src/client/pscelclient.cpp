@@ -661,23 +661,55 @@ void psCelClient::HandleMecsActivate(MsgEntry* me)
 {
     psMechanismActivateMessage msg(me);
 
-    Error1("Received HandleMecsActivate message!");
+    Debug1(LOG_ACTIONLOCATION,0,"Received HandleMecsActivate message!");
 
-    Error2("Received HandleMecsActivate message mesh: %s!", msg.meshName.GetData());
+    Debug2(LOG_ACTIONLOCATION,0,"Received HandleMecsActivate message mesh: %s!", msg.meshName.GetData());
 
-    Error2("Received HandleMecsActivate message move: %s!", msg.move.GetData());
+    Debug2(LOG_ACTIONLOCATION,0,"Received HandleMecsActivate message move: %s!", msg.move.GetData());
 
-    Error2("Received HandleMecsActivate message rot: %s!", msg.rot.GetData());
+    Debug2(LOG_ACTIONLOCATION,0,"Received HandleMecsActivate message rot: %s!", msg.rot.GetData());
 
     csRef<iMeshWrapper> objectWrapper = psengine->GetEngine()->FindMeshObject(msg.meshName);
 
-    // object found, move the object
+    // object found
     if(objectWrapper)
     {
-        Error2("Found mesh! %s", objectWrapper->QueryObject()->GetName());
-        csReversibleTransform &tr = objectWrapper->GetMovable()->GetTransform();
-        csVector3 v(-2, 0, 0);
-        tr.Translate(v);
+        // move the object
+        if (msg.move && msg.move!="") {
+            Debug2(LOG_ACTIONLOCATION,0,"Found mesh move! %s", objectWrapper->QueryObject()->GetName());
+            csReversibleTransform &tr = objectWrapper->GetMovable()->GetTransform();
+            csStringArray tokens;
+            tokens.SplitString(msg.move, ",");
+            csVector3 v(atof(tokens.Get(0)), atof(tokens.Get(1)), atof(tokens.Get(2)));
+            tr.Translate(v);
+        } else if (msg.rot && msg.rot!="") {
+            Debug2(LOG_ACTIONLOCATION,0,"Found mesh rotate! %s", objectWrapper->QueryObject()->GetName());
+            csStringArray tokens;
+            tokens.SplitString(msg.rot, ",");
+
+            // calculate the rotation matrix from the pitch-roll-yaw angles
+            csYRotMatrix3 pitch(atof(tokens.Get(0)));
+            csYRotMatrix3 roll(atof(tokens.Get(1)));
+            csZRotMatrix3 yaw(atof(tokens.Get(2)));
+
+            // obtain current transform
+            const csReversibleTransform &movTrans = objectWrapper->GetMovable()->GetTransform();
+
+            // obtain the point to use as base for the rotation
+            csVector3 rotBase = movTrans.GetOrigin();
+
+            // obtain orignal translation
+            csVector3 origTrans = movTrans.GetO2TTranslation();
+
+            // create the final transformation
+            // move to center - apply roll and yaw
+            csReversibleTransform trans(roll*yaw,-rotBase);
+            // apply pitch, revert move to center and move to final position
+            trans = trans * csReversibleTransform(pitch,rotBase+origTrans);
+
+            // set new transformation
+            objectWrapper->GetMovable()->SetTransform(trans);
+        }
         objectWrapper->GetMovable()->UpdateMove();
     }
 }
