@@ -663,11 +663,11 @@ void psCelClient::HandleMecsActivate(MsgEntry* me)
 
     Error1("Received HandleMecsActivate message!");
 
-    Error2("Received HandleMecsActivate message sector: %s!", msg.sectorName.GetData());
-
     Error2("Received HandleMecsActivate message mesh: %s!", msg.meshName.GetData());
 
-    Error2("Received HandleMecsActivate message script: %s!", msg.mechanismScript.GetData());
+    Error2("Received HandleMecsActivate message move: %s!", msg.move.GetData());
+
+    Error2("Received HandleMecsActivate message rot: %s!", msg.rot.GetData());
 
     csRef<iMeshWrapper> objectWrapper = psengine->GetEngine()->FindMeshObject(msg.meshName);
 

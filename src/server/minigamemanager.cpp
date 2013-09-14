@@ -569,6 +569,16 @@ bool psMiniGameSession::Load(csString &responseString)
             Error2("Ignoring invalid script for %s.", gameName);
         }
     }
+    // read parameters for the script
+    csString param0(boardNode->GetAttributeValue("Param0"));
+    if (param0.Length() > 0)
+        paramZero = param0;
+    csString param1(boardNode->GetAttributeValue("Param1"));
+    if (param1.Length() > 0)
+        paramOne = param1;
+    csString param2(boardNode->GetAttributeValue("Param2"));
+    if (param2.Length() > 0)
+        paramTwo = param2;
 
     // Setup the game board
     gameBoard.Setup(gameBoardDef, layout);
@@ -997,8 +1007,14 @@ void psMiniGameSession::Update(Client *client, psMGUpdateMessage &msg)
                     Client *winnerClient = clients->Find(winningPlayer->playerID);
                     if (winnerClient)
                     {
+                        // passes a parameter to the script to run
+                        csString parameters = "Param0='"+paramZero+"';"+"Param1='"+paramOne+"';"+"Param2='"+paramTwo+"'";
+                        csWeakRef<MathScript> bindings = MathScript::Create("RunScript bindings", parameters);
+
                         MathEnvironment env;
                         env.Define("Winner", winnerClient->GetActor());
+                        env.Define("Target", winnerClient->GetActor()); // needed if called by an action location
+                        bindings->Evaluate(&env);
                         if (gameBoard.GetNumPlayers() == 1)
                         {
                             progScript->Run(&env);

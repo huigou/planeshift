@@ -8333,24 +8333,24 @@ csString psSimpleRenderMeshMessage::ToString(NetBase::AccessPointers* accessPoin
 
 PSF_IMPLEMENT_MSG_FACTORY(psMechanismActivateMessage, MSGTYPE_MECS_ACTIVATE);
 
-psMechanismActivateMessage::psMechanismActivateMessage(uint32_t client, const char* sectorname,
-        const char* meshName, const char* mechanismScript)
+psMechanismActivateMessage::psMechanismActivateMessage(uint32_t client, const char* meshName,
+        const char* move, const char* rot)
 {
-    msg.AttachNew(new MsgEntry(strlen(sectorname) + 1 + strlen(meshName) + 1 + strlen(mechanismScript) + 1));
+    msg.AttachNew(new MsgEntry(strlen(meshName) + 1 + strlen(move) + 1 + strlen(rot) + 1));
 
     msg->SetType(MSGTYPE_MECS_ACTIVATE);
     msg->clientnum = client;
 
-    msg->Add(sectorname);
     msg->Add(meshName);
-    msg->Add(mechanismScript);
+    msg->Add(move);
+    msg->Add(rot);
 }
 
 psMechanismActivateMessage::psMechanismActivateMessage(MsgEntry* msg)
 {
-    sectorName = msg->GetStr();
     meshName = msg->GetStr();
-    mechanismScript = msg->GetStr();
+    move = msg->GetStr();
+    rot = msg->GetStr();
 }
 
 PSF_IMPLEMENT_MSG_FACTORY(psOrderedMessage,MSGTYPE_ORDEREDTEST);
