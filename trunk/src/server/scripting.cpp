@@ -2758,7 +2758,7 @@ protected:
 /**
  * MechanismMsgOp - activate a mechanism:
  *
- * <mechanism aim="Caster" sector="NPCRoom" mesh="test" script="move up 3"/>
+ * <mechanism aim="Target" mesh="Mesh" move="Move" rot="Rot" />
  */
 class MechanismMsgOp : public Imperative1
 {
@@ -2767,10 +2767,12 @@ public:
 
     bool Load(iDocumentNode* node)
     {
-        sector = node->GetAttributeValue("sector");
         mesh = node->GetAttributeValue("mesh");
-        script = node->GetAttributeValue("script");
+        move = node->GetAttributeValue("move");
+        rot = node->GetAttributeValue("rot");
         expr = MathExpression::Create(node->GetAttributeValue("mesh"));
+        expr = MathExpression::Create(node->GetAttributeValue("move"));
+        expr = MathExpression::Create(node->GetAttributeValue("rot"));
 
         return Imperative1::Load(node) && expr!=NULL;
     }
@@ -2789,20 +2791,31 @@ public:
         mesh = meshVar->GetString();
         Error2("MechanismMsgOp Run with mesh name variable: %s", mesh.GetData());
 
+        MathVar* moveVar = env->Lookup("Move");
+        MathVar* rotVar = env->Lookup("Rot");
+        if(!moveVar && !rotVar)
+        {
+            Error1("MechanismMsgOp Run needs at least one between move and rot parameters");
+            return;
+        }
+        move = moveVar->GetString();
+        rot = rotVar->GetString();
+        Error4("MechanismMsgOp Run with move variable: %s and rot variable: %s", mesh.GetData(), move.GetData(), rot.GetData());
+
         gemActor* actor = GetActor(env, aim);
 
         if(actor && actor->GetClientID())
         {
-            psMechanismActivateMessage msg(actor->GetClientID(), sector.GetData(), mesh.GetData(), script.GetData());
+            psMechanismActivateMessage msg(actor->GetClientID(), mesh.GetData(), move.GetData(), rot.GetData());
             msg.SendMessage();
             Error1("Running MechanismMsgOp - SENT message to client");
         }
     }
 
 protected:
-    csString sector;      ///< the sector where the mesh to activate is
     csString mesh;        ///< the mesh to activate
-    csString script;      ///< xml containing the commands for the mesh
+    csString move;        ///< the movement coords x,y,z
+    csString rot;         ///< the rotation matrix
     MathExpression* expr; ///< The mesh name passed as parameter
 };
 

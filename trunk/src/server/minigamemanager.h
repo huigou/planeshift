@@ -223,6 +223,11 @@ private:
     /// style of minigame
     MinigameStyle minigameStyle;
 
+    /// parameters to pass to a script
+    csString paramZero;
+    csString paramOne;
+    csString paramTwo;
+
     /// resend board layouts as was, e.g. correcting an illegal move
     void ResendBoardLayout(MinigamePlayer *player);
 

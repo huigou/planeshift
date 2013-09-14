@@ -5899,8 +5899,8 @@ public:
      * @param meshName the name of the mesh to activate.
      * @param mechanismScript the script to run on the selected mesh.
      */
-    psMechanismActivateMessage(uint32_t client, const char* sectorname,
-                               const char* meshName, const char* mechanismScript);
+    psMechanismActivateMessage(uint32_t client, const char* meshName,
+                               const char* move, const char* rot);
 
     /**
      * Constructor from a MsgEntry.
@@ -5916,9 +5916,9 @@ public:
         return csString("not implemented");
     }
 
-    csString sectorName;
     csString meshName;
-    csString mechanismScript;
+    csString move;
+    csString rot;
 };
 
 
