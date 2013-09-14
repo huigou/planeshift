@@ -2779,7 +2779,7 @@ public:
 
     virtual void Run(MathEnvironment* env)
     {
-        Error1("Running MechanismMsgOp");
+        Debug1(LOG_ACTIONLOCATION,0,"Running MechanismMsgOp");
 
         //evaluate the variable so we can get it's value
         MathVar* meshVar = env->Lookup("Mesh");
@@ -2789,7 +2789,7 @@ public:
             return;
         }
         mesh = meshVar->GetString();
-        Error2("MechanismMsgOp Run with mesh name variable: %s", mesh.GetData());
+        Debug2(LOG_ACTIONLOCATION,0,"MechanismMsgOp Run with mesh name variable: %s", mesh.GetData());
 
         MathVar* moveVar = env->Lookup("Move");
         MathVar* rotVar = env->Lookup("Rot");
@@ -2800,7 +2800,7 @@ public:
         }
         move = moveVar->GetString();
         rot = rotVar->GetString();
-        Error4("MechanismMsgOp Run with move variable: %s and rot variable: %s", mesh.GetData(), move.GetData(), rot.GetData());
+        Debug3(LOG_ACTIONLOCATION,0,"MechanismMsgOp Run with move variable: %s and rot variable: %s", move.GetData(), rot.GetData());
 
         gemActor* actor = GetActor(env, aim);
 
@@ -2808,7 +2808,7 @@ public:
         {
             psMechanismActivateMessage msg(actor->GetClientID(), mesh.GetData(), move.GetData(), rot.GetData());
             msg.SendMessage();
-            Error1("Running MechanismMsgOp - SENT message to client");
+            Debug1(LOG_ACTIONLOCATION,0,"Running MechanismMsgOp - SENT message to client");
         }
     }
 

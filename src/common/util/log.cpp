@@ -69,7 +69,8 @@ const char *flagnames[] = {
                         "LOG_USER",
                         "LOG_LOOT",
                         "LOG_DUELS",
-                        "LOG_DRDATA"
+                        "LOG_DRDATA",
+                        "LOG_ACTIONLOCATION"
 }; // End of flagnames
 
 const char *flagsetting[] = {
@@ -106,7 +107,8 @@ const char *flagsetting[] = {
                         "PlaneShift.Log.User",
                         "PlaneShift.Log.Loot",
                         "PlaneShift.Log.Duels",
-                        "PlaneShift.Log.DRData"
+                        "PlaneShift.Log.DRData",
+                        "PlaneShift.Log.ActionLocation"
 }; // End of flagsettings
 
 bool DoLog(int severity, LOG_TYPES type, uint32 filter_id)
