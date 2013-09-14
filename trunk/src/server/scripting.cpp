@@ -52,6 +52,7 @@
 #include "events.h"
 #include "gem.h"
 #include "psserver.h"
+#include "psproxlist.h"
 
 //============================================================================
 // Convenience Functions
@@ -2804,11 +2805,24 @@ public:
 
         gemActor* actor = GetActor(env, aim);
 
+        // send message to client about mechanism activated
         if(actor && actor->GetClientID())
         {
             psMechanismActivateMessage msg(actor->GetClientID(), mesh.GetData(), move.GetData(), rot.GetData());
             msg.SendMessage();
             Debug1(LOG_ACTIONLOCATION,0,"Running MechanismMsgOp - SENT message to client");
+        }
+
+        // send message to all players in range
+        csArray<PublishDestination> proxList = actor->GetProxList()->GetClients();
+        for(size_t i = 0; i < proxList.GetSize(); i++)
+        {
+            if(actor->GetClientID() == proxList[i].client)
+            {
+                continue;
+            }
+            psMechanismActivateMessage msg(proxList[i].client, mesh.GetData(), move.GetData(), rot.GetData());
+            msg.SendMessage();
         }
     }
 
