@@ -77,6 +77,35 @@ struct MinigamePlayer
  * by a unique name. The name of the game board is defined in the action_locations table (name field).
  *
  * The game itself is defined in the gameboards db table. 
+ * gameboard options include:
+ * - name : the name of the board
+ * - layout : the layout of the board in terms of tiles and shape
+ * - numColumns, numRows : the size x,y of the full board
+ * - numPlayers: defines if it's a single player or multiplayer minigame
+ * - gameboardOptions: White/Black (colors the board white or black), Plain (makes it one color), Checked (checkerboard)
+ * - gameRules:
+ *     PlayerTurns can be 'Ordered' (order of players' moves enforced)
+ *              or 'StrictOrdered' (as Ordered, and all players must be present)
+ *              or 'Relaxed' (default - free for all).
+ *     MoveType can be 'MoveOnly' (player can only move existing pieces),
+ *              or 'PlaceOnly' (player can only place new pieces on the board; cant move others),
+ *              or 'PlaceOrMovePiece' (default - either move existing or place new pieces).
+ *     MoveablePieces can be 'Own' (player can only move their own pieces)
+ *                    or 'Any' (default - player can move any piece in play).
+ *     MoveTo can be 'Vacancy' (player can move pieces to vacant squares only)
+ *            or 'Anywhere' (default - can move to any square, vacant or occupied).
+ * - endgames: 
+ *  <MGEndGame>
+ *   <EndGame Coords="relative"/"absolute" [SourceTile="T"] [Winner="T"]>
+ *    <Coord Col="0-15" Row="0-15" Tile="T" />
+ *   </EndGame>
+ *  </MGEndGame>
+ *  where T : A = any valid piece / W = any white piece / B = any black piece
+ *            E = empty tile / F = follows source piece
+ *  Each <EndGame> has 1 or more <Coord> spec.
+ *  Each <MGEndGame> has 1 or more <EndGame>.
+ *  Endgames can be left blank.
+ * 
  * The response string specifies the name to the record in gameboards
  * and an optional prepared layout & is expected to have the
  * following format:
@@ -86,7 +115,7 @@ struct MinigamePlayer
  * \</Examine\>
  *
  * The Layout attribute defines the layout of the game board and optionally also preset game
- * pieces on it. Optional - to override the default.
+ * pieces on it. Optional - to override the default set in the database.
  *
  * The Session attribute allows a game to be personal (restricted to one-player games)
  * whereby only the player sees the game, no other players or watchers. One such
