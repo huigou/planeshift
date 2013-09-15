@@ -112,24 +112,25 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
 		CS_ALLOC_STACK_ARRAY(PS_CHAR, tempPath, pathLen);
 		GetTempPathW(pathLen, tempPath);
 		szComments[0] = '\0';
+
+        wrapperCrash_handler = new ExceptionHandler(tempPath,
+                                                              NULL,
+                                                              UploadDump,
+                                                              NULL /*context*/,
+                                                              ExceptionHandler::HANDLER_ALL);
+
 #else
 		static const PS_CHAR tempPath[] = "/tmp";
-#endif
-
         google_breakpad::MinidumpDescriptor descriptor(tempPath);
 		
 		wrapperCrash_handler = new ExceptionHandler(descriptor,
 				NULL,
 				UploadDump,
 				NULL,
-#ifdef WIN32
-				ExceptionHandler::HANDLER_ALL,
-                                -1
-#else
 				true,
-                                -1
-#endif
+                -1
 				);
+#endif
         BreakPadWrapper::wrapperCrash_handler = wrapperCrash_handler;
 #ifdef WIN32
 		wrapperCrash_sender = new CrashReportSender(L"");
@@ -234,19 +235,24 @@ bool UploadDump(const PS_CHAR* dump_path,
                      EXCEPTION_POINTERS* exinfo,
                      MDRawAssertionInfo* assertion,
                      bool succeeded) 
+{
 #else
 static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
                      void* context,
                      bool succeeded)
-#endif
 {
-fprintf( stderr, "****UploadDump sending file \n");
-sleep(5);
-fprintf( stderr, "****UploadDump descriptor location = %x  dir = %s\n", &descriptor, descriptor.path() );
-    time_t crash_time = time(NULL);
+
+    const wchar_t* dump_path = descriptor.path();
+    fprintf( stderr, "****UploadDump sending file \n");
+    sleep(5);
+    fprintf( stderr, "****UploadDump descriptor location = %x  dir = %s\n", &descriptor, descriptor.path() );
+#endif
+
     PS_CHAR path_file[PS_PATH_MAX + 1];
 	path_file[0] = '\0';
-    PS_STRNCAT(path_file, descriptor.path(), PS_PATH_MAX );
+    PS_STRNCAT(path_file, dump_path, PS_PATH_MAX );
+
+    time_t crash_time = time(NULL);
 
 #ifdef WIN32
 
