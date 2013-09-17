@@ -264,5 +264,5 @@ INSERT INTO progression_events VALUES("send_tutorial_msg",
     '<script><let vars="TipNum=Param0"><tutorialmsg aim="Target" num="TipNum"/></let></script>');
 
 INSERT INTO progression_events VALUES("mechanism",
-    '<script><let vars="Mesh=Param0"><mechanism aim="Target" sector="NPCRoom" mesh="Mesh" script="move up 3"/></let></script>');
+    '<script><let vars="Mesh=Param0;Move=Param1;Rot=Param2"><mechanism aim="Target" mesh="Mesh" move="Move" rot="Rot" /></let></script>');
     
