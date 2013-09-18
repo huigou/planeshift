@@ -130,6 +130,9 @@ public:
     /// pack string layout into binary array
     void PackLayoutString(const char *layoutStr, uint8_t *packedLayout);
 
+    /// pack a single piece into binary form
+    uint8_t PackPiece(char pieceStr);
+
     /// returns gameboard layout options
     uint16_t GetGameboardOptions(void) { return gameboardOptions; };
 

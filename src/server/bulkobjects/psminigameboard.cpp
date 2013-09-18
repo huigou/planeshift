@@ -132,6 +132,19 @@ void psMiniGameBoardDef::PackLayoutString(const char *layoutStr, uint8_t *packed
     }
 }
 
+uint8_t psMiniGameBoardDef::PackPiece (char pieceStr)
+{
+    uint8_t v = 0x0F;
+    if (isxdigit(pieceStr))
+    {
+        char ch = toupper(pieceStr);
+        v = (uint8_t)(ch - '0');
+        if (ch >= 'A')
+            v -= (uint8_t)('A' - '0') - 10;
+    }
+    return v;
+}
+
 bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
 {
     if (rulesXMLstr.StartsWith("<GameRules>", false))
@@ -329,7 +342,7 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                                   egTileSpec->tile = tile;
                                                   if (tile==SPECIFIC_TILE) {
                                                       const char* specificPiece = coordNode->GetAttributeValue("Piece");
-                                                      egTileSpec->specificTile = specificPiece[0];
+                                                      egTileSpec->specificTile = psMiniGameBoardDef::PackPiece(specificPiece[0]);
                                                   }
                                             }
                                             else
@@ -502,7 +515,7 @@ bool psMiniGameBoard::DetermineEndgame(Endgame_TileType& winningPiece)
                     break;
                 if (endgameTile->tile == SPECIFIC_TILE && endgameTile->specificTile != tileAtPos)
                     break;
-
+                 
                 // if here, then the pattern has another match
                 patternsMatched++;
             }
