@@ -79,7 +79,8 @@ enum Endgame_TileType
     WHITE_PIECE,
     BLACK_PIECE,
     NO_PIECE,
-    FOLLOW_SOURCE_TILE
+    FOLLOW_SOURCE_TILE,
+    SPECIFIC_TILE
 };
 
 struct Endgame_TileSpec
@@ -87,6 +88,7 @@ struct Endgame_TileSpec
     int col;
     int row;
     Endgame_TileType tile;
+    uint8_t specificTile;
 };
 
 struct Endgame_Spec

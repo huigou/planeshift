@@ -327,6 +327,10 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                                   egTileSpec->col = egCol;
                                                   egTileSpec->row = egRow;
                                                   egTileSpec->tile = tile;
+                                                  if (tile==SPECIFIC_TILE) {
+                                                      const char* specificPiece = coordNode->GetAttributeValue("Piece");
+                                                      egTileSpec->specificTile = specificPiece[0];
+                                                  }
                                             }
                                             else
                                             {
@@ -382,6 +386,9 @@ bool psMiniGameBoardDef::EvaluateTileTypeStr(csString TileTypeStr, Endgame_TileT
                 break;
             case 'F':
             case 'f': tileType = FOLLOW_SOURCE_TILE;  // tile has piece as per first tile in pattern
+                break;
+            case 'S':
+            case 's': tileType = SPECIFIC_TILE;  // has to be a specific tile
                 break;
             default: return false;
                 break;
@@ -492,6 +499,8 @@ bool psMiniGameBoard::DetermineEndgame(Endgame_TileType& winningPiece)
                 if (endgameTile->tile == BLACK_PIECE && (tileAtPos < BLACK_1 || tileAtPos > BLACK_7))
                     break;
                 if (endgameTile->tile == FOLLOW_SOURCE_TILE)
+                    break;
+                if (endgameTile->tile == SPECIFIC_TILE && endgameTile->specificTile != tileAtPos)
                     break;
 
                 // if here, then the pattern has another match
