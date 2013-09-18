@@ -97,11 +97,11 @@ struct MinigamePlayer
  * - endgames: 
  *  <MGEndGame>
  *   <EndGame Coords="relative"/"absolute" [SourceTile="T"] [Winner="T"]>
- *    <Coord Col="0-15" Row="0-15" Tile="T" />
+ *    <Coord Col="0-15" Row="0-15" Tile="T" [Piece="X"] />
  *   </EndGame>
  *  </MGEndGame>
  *  where T : A = any valid piece / W = any white piece / B = any black piece
- *            E = empty tile / F = follows source piece
+ *            E = empty tile / F = follows source piece / S = specific pieces
  *  Each <EndGame> has 1 or more <Coord> spec.
  *  Each <MGEndGame> has 1 or more <EndGame>.
  *  Endgames can be left blank.
