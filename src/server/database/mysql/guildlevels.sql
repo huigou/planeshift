@@ -21,15 +21,15 @@ CREATE TABLE guildlevels (
 # Dumping data for table 'guildlevels'
 #
 
-INSERT INTO guildlevels VALUES("1","9","Maximus",65535);
-INSERT INTO guildlevels VALUES("1","8","Mogul",3);
-INSERT INTO guildlevels VALUES("1","7","Grand Master",3);
-INSERT INTO guildlevels VALUES("1","6","High Master",3);
-INSERT INTO guildlevels VALUES("1","5","Master",3);
-INSERT INTO guildlevels VALUES("1","4","Peon",3);
-INSERT INTO guildlevels VALUES("1","3","Adept",3);
-INSERT INTO guildlevels VALUES("1","2","Novice",3);
-INSERT INTO guildlevels VALUES("1","1","Apprentice",3);
+INSERT INTO guildlevels VALUES("444","9","Maximus",65535);
+INSERT INTO guildlevels VALUES("444","8","Mogul",3);
+INSERT INTO guildlevels VALUES("444","7","Grand Master",3);
+INSERT INTO guildlevels VALUES("444","6","High Master",3);
+INSERT INTO guildlevels VALUES("444","5","Master",3);
+INSERT INTO guildlevels VALUES("444","4","Peon",3);
+INSERT INTO guildlevels VALUES("444","3","Adept",3);
+INSERT INTO guildlevels VALUES("444","2","Novice",3);
+INSERT INTO guildlevels VALUES("444","1","Apprentice",3);
 INSERT INTO guildlevels VALUES("11","9","Maximus",65535);
 INSERT INTO guildlevels VALUES("11","8","Mogul",3);
 INSERT INTO guildlevels VALUES("11","7","Grand Master",3);

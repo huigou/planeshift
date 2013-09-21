@@ -34,8 +34,4 @@ CREATE TABLE guilds (
 # Dumping data for table 'guilds'
 #
 
-# 2010-Apr-05 They do not meet the start criteria so they will be delted. This cause the server to crash.
-# For now disable them
-#
-#INSERT INTO guilds VALUES("1","Insomniac Developers","2","www.yahoo.com","2002-05-08 00:07:37","0","N",100,"Guild MOTD", 1, 1, 1, 1, 1);
-#INSERT INTO guilds VALUES("11","Karmic Fanboys","1","www.linux.org","2003-07-25 00:07:37","0","N",100,"", 1, 0, 0, 0, 0);
+INSERT INTO guilds VALUES("444","Insomniac Developers","2","www.planeshift.it","2002-05-08 00:07:37","0","N",100,"Guild MOTD", 1, 1, 1, 1, 1);
