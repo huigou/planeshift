@@ -28,7 +28,7 @@
 //=============================================================================
 // Project Includes
 //=============================================================================
-#include "psstdint.h" 
+#include "psstdint.h"
 
 //=============================================================================
 // Local Includes
@@ -67,6 +67,14 @@ enum Rule_MovePiecesTo
 {
     ANYWHERE,
     VACANCY_ONLY
+};
+enum Rule_MoveDirection
+{
+    ANY,
+    VERTICAL,
+    HORIZONTAL,
+    CROSS,
+    DIAGONAL
 };
 
 /**
@@ -113,28 +121,40 @@ class psMiniGameBoardDef
 public:
 
     psMiniGameBoardDef(const uint8_t defCols, const uint8_t defRows,
-                       const char *defLayout, const char *defPieces,
+                       const char* defLayout, const char* defPieces,
                        const uint8_t defPlayers, const int16_t options);
 
     ~psMiniGameBoardDef();
 
     /// Returns the number of columns.
-    uint8_t GetCols() const { return cols; }
-    
+    uint8_t GetCols() const
+    {
+        return cols;
+    }
+
     /// Returns the number of rows.
-    uint8_t GetRows() const { return rows; }
+    uint8_t GetRows() const
+    {
+        return rows;
+    }
 
     /// returns layout size
-    int GetLayoutSize() const { return layoutSize; };
+    int GetLayoutSize() const
+    {
+        return layoutSize;
+    };
 
     /// pack string layout into binary array
-    void PackLayoutString(const char *layoutStr, uint8_t *packedLayout);
+    void PackLayoutString(const char* layoutStr, uint8_t* packedLayout);
 
     /// pack a single piece into binary form
     uint8_t PackPiece(char pieceStr);
 
     /// returns gameboard layout options
-    uint16_t GetGameboardOptions(void) { return gameboardOptions; };
+    uint16_t GetGameboardOptions(void)
+    {
+        return gameboardOptions;
+    };
 
     /// decipher simple game rules from XML
     bool DetermineGameRules(csString rulesXMLstr, csString name);
@@ -143,15 +163,18 @@ public:
     bool DetermineEndgameSpecs(csString endgameXMLstr, csString name);
 
     /// clear endgame settings away
-    void ClearOutEndgames(void) { endgames.Empty(); };
+    void ClearOutEndgames(void)
+    {
+        endgames.Empty();
+    };
 
 private:
     /// layout size
     int layoutSize;
 
     /// The initial game board layout with tiles and pieces.
-    uint8_t *layout;
-        
+    uint8_t* layout;
+
     /// The number of columns.
     uint8_t cols;
 
@@ -162,7 +185,7 @@ private:
     uint8_t numPieces;
 
     /// The package list of available game pieces.
-    uint8_t *pieces;
+    uint8_t* pieces;
 
     /// Number of players required for game.
     uint8_t numPlayers;
@@ -175,16 +198,18 @@ private:
     Rule_MovePieceType movePieceTypeRule;
     Rule_MoveablePieces moveablePiecesRule;
     Rule_MovePiecesTo movePiecesToRule;
+    Rule_MoveDirection moveDirectionRule;
+    int moveDistanceRule;
 
     /// Endgame specifications
     csArray<Endgame_Spec*> endgames;
-    bool EvaluateTileTypeStr(csString TileTypeStr, Endgame_TileType& tileType);
+    bool EvaluateTileTypeStr(csString TileTypeStr, Endgame_TileType &tileType);
 
 };
 
 
 /** Wrapper class for game board.
- * 
+ *
  * Wrapper class for a mini-game in play, and exists singly with a
  * unique mini-game session.
  */
@@ -197,22 +222,37 @@ public:
     ~psMiniGameBoard();
 
     /// Sets up the game board layout.
-    void Setup(psMiniGameBoardDef *newGameDef, uint8_t *preparedLayout);
+    void Setup(psMiniGameBoardDef* newGameDef, uint8_t* preparedLayout);
 
     /// Returns the number of columns.
-    uint8_t GetCols() const { return gameBoardDef->cols; }
-    
+    uint8_t GetCols() const
+    {
+        return gameBoardDef->cols;
+    }
+
     /// Returns the number of rows.
-    uint8_t GetRows() const { return gameBoardDef->rows; }
+    uint8_t GetRows() const
+    {
+        return gameBoardDef->rows;
+    }
 
     /// Returns the packed game board layout.
-    uint8_t *GetLayout() const { return layout; };
+    uint8_t* GetLayout() const
+    {
+        return layout;
+    };
 
     /// Returns the number of available pieces.
-    uint8_t GetNumPieces() const { return gameBoardDef->numPieces; }
+    uint8_t GetNumPieces() const
+    {
+        return gameBoardDef->numPieces;
+    }
 
     /// Returns the package list of available pieces.
-    uint8_t *GetPieces() const { return gameBoardDef->pieces; }
+    uint8_t* GetPieces() const
+    {
+        return gameBoardDef->pieces;
+    }
 
     /// Gets the tile state from the specified column and row.
     uint8_t Get(uint8_t col, uint8_t row) const;
@@ -221,16 +261,39 @@ public:
     void Set(uint8_t col, uint8_t row, uint8_t state);
 
     /// returns number of players
-    uint8_t GetNumPlayers(void) { return gameBoardDef->numPlayers; };
+    uint8_t GetNumPlayers(void)
+    {
+        return gameBoardDef->numPlayers;
+    };
 
     /// return Game rules
-    Rule_PlayerTurn GetPlayerTurnRule(void) { return gameBoardDef->playerTurnRule; };
-    Rule_MovePieceType GetMovePieceTypeRule(void) { return gameBoardDef->movePieceTypeRule; };
-    Rule_MoveablePieces GetMoveablePiecesRule(void) { return gameBoardDef->moveablePiecesRule; };
-    Rule_MovePiecesTo GetMovePiecesToRule (void) { return gameBoardDef->movePiecesToRule; };
+    Rule_PlayerTurn GetPlayerTurnRule(void)
+    {
+        return gameBoardDef->playerTurnRule;
+    };
+    Rule_MovePieceType GetMovePieceTypeRule(void)
+    {
+        return gameBoardDef->movePieceTypeRule;
+    };
+    Rule_MoveablePieces GetMoveablePiecesRule(void)
+    {
+        return gameBoardDef->moveablePiecesRule;
+    };
+    Rule_MovePiecesTo GetMovePiecesToRule(void)
+    {
+        return gameBoardDef->movePiecesToRule;
+    };
+    Rule_MoveDirection GetMoveDirectionRule(void)
+    {
+        return gameBoardDef->moveDirectionRule;
+    };
+    int GetMoveDistanceRule(void)
+    {
+        return gameBoardDef->moveDistanceRule;
+    };
 
     /// determine if the current layout matches an endgame pattern. Returns true or false appropriately.
-    bool DetermineEndgame(Endgame_TileType& winningPiece);
+    bool DetermineEndgame(Endgame_TileType &winningPiece);
 
 private:
 
@@ -238,10 +301,10 @@ private:
     Endgame_TileType EndgameWinner(uint8_t winningTileState);
 
     /// The current game board layout with tiles and pieces.
-    uint8_t *layout;
-        
+    uint8_t* layout;
+
     /// game board definition
-    psMiniGameBoardDef *gameBoardDef;
+    psMiniGameBoardDef* gameBoardDef;
 };
 
 #endif
