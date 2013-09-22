@@ -42,7 +42,7 @@ using namespace psMiniGame;
 //#define DEBUG_MINIGAMES
 
 psMiniGameBoardDef::psMiniGameBoardDef(const uint8_t noCols, const uint8_t noRows,
-                                       const char *layoutStr, const char *piecesStr,
+                                       const char* layoutStr, const char* piecesStr,
                                        const uint8_t defPlayers, const int16_t options)
 {
     // rows & columns setup
@@ -51,7 +51,7 @@ psMiniGameBoardDef::psMiniGameBoardDef(const uint8_t noCols, const uint8_t noRow
 
     // layout setup
     layoutSize = cols * rows / 2;
-    if ((cols * rows % 2) != 0)
+    if((cols * rows % 2) != 0)
         layoutSize++;
 
     // Convert the layout string into a packed binary array
@@ -61,26 +61,26 @@ psMiniGameBoardDef::psMiniGameBoardDef(const uint8_t noCols, const uint8_t noRow
     // Get the list of available pieces
     pieces = NULL;
     uint8_t numPieces = 0;
-    
+
     // Pack the list of pieces
     numPieces = (uint8_t)strlen(piecesStr);
     size_t piecesSize = numPieces / 2;
-    if (numPieces % 2)
+    if(numPieces % 2)
         piecesSize++;
 
     pieces = new uint8_t[piecesSize];
 
-    for (size_t i = 0; i < numPieces; i++)
+    for(size_t i = 0; i < numPieces; i++)
     {
         uint8_t v = 0;
-        if (isxdigit(piecesStr[i]))
+        if(isxdigit(piecesStr[i]))
         {
             char ch = toupper(piecesStr[i]);
             v = (uint8_t)(ch - '0');
-            if (ch >= 'A')
+            if(ch >= 'A')
                 v -= (uint8_t)('A' - '0') - 10;
         }
-        if (i % 2)
+        if(i % 2)
             pieces[i/2] |= v;
         else
             pieces[i/2] = (v << 4);
@@ -94,15 +94,16 @@ psMiniGameBoardDef::psMiniGameBoardDef(const uint8_t noCols, const uint8_t noRow
     movePieceTypeRule = PLACE_OR_MOVE;
     moveablePiecesRule = ANY_PIECE;
     movePiecesToRule = ANYWHERE;
+    moveDistanceRule = -1;
 
     endgames.Empty();
 }
 
 psMiniGameBoardDef::~psMiniGameBoardDef()
 {
-    if (layout)
+    if(layout)
         delete[] layout;
-    if (pieces)
+    if(pieces)
         delete[] pieces;
     while(!endgames.IsEmpty())
     {
@@ -113,33 +114,33 @@ psMiniGameBoardDef::~psMiniGameBoardDef()
     }
 }
 
-void psMiniGameBoardDef::PackLayoutString(const char *layoutStr, uint8_t *packedLayout)
+void psMiniGameBoardDef::PackLayoutString(const char* layoutStr, uint8_t* packedLayout)
 {
-    for (size_t i = 0; i < strlen(layoutStr); i++)
+    for(size_t i = 0; i < strlen(layoutStr); i++)
     {
         uint8_t v = 0x0F;
-        if (isxdigit(layoutStr[i]))
+        if(isxdigit(layoutStr[i]))
         {
             char ch = toupper(layoutStr[i]);
             v = (uint8_t)(ch - '0');
-            if (ch >= 'A')
+            if(ch >= 'A')
                 v -= (uint8_t)('A' - '0') - 10;
         }
-        if (i % 2)
+        if(i % 2)
             packedLayout[i/2] |= v;
         else
             packedLayout[i/2] = (v << 4);
     }
 }
 
-uint8_t psMiniGameBoardDef::PackPiece (char pieceStr)
+uint8_t psMiniGameBoardDef::PackPiece(char pieceStr)
 {
     uint8_t v = 0x0F;
-    if (isxdigit(pieceStr))
+    if(isxdigit(pieceStr))
     {
         char ch = toupper(pieceStr);
         v = (uint8_t)(ch - '0');
-        if (ch >= 'A')
+        if(ch >= 'A')
             v -= (uint8_t)('A' - '0') - 10;
     }
     return v;
@@ -147,33 +148,33 @@ uint8_t psMiniGameBoardDef::PackPiece (char pieceStr)
 
 bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
 {
-    if (rulesXMLstr.StartsWith("<GameRules>", false))
+    if(rulesXMLstr.StartsWith("<GameRules>", false))
     {
         csRef<iDocument> doc = ParseString(rulesXMLstr);
-        if (doc)
+        if(doc)
         {
             csRef<iDocumentNode> root = doc->GetRoot();
-            if (root)
+            if(root)
             {
                 csRef<iDocumentNode> topNode = root->GetNode("GameRules");
-                if (topNode)
+                if(topNode)
                 {
                     csRef<iDocumentNode> rulesNode = topNode->GetNode("Rules");
-                    if (rulesNode )
+                    if(rulesNode)
                     {
                         // PlayerTurns can be 'Ordered' (order of players' moves enforced)
                         // or 'StrictOrdered' (as Ordered, and all players must be present)
                         // or 'Relaxed' (default - free for all).
-                        csString playerTurnsVal (rulesNode->GetAttributeValue("PlayerTurns"));
-                        if (playerTurnsVal.Downcase() == "ordered")
+                        csString playerTurnsVal(rulesNode->GetAttributeValue("PlayerTurns"));
+                        if(playerTurnsVal.Downcase() == "ordered")
                         {
                             playerTurnRule = ORDERED;
                         }
-                        else if (playerTurnsVal.Downcase() == "strictordered")
+                        else if(playerTurnsVal.Downcase() == "strictordered")
                         {
                             playerTurnRule = STRICT_ORDERED;
                         }
-                        else if (!playerTurnsVal.IsEmpty() && playerTurnsVal.Downcase() != "relaxed")
+                        else if(!playerTurnsVal.IsEmpty() && playerTurnsVal.Downcase() != "relaxed")
                         {
                             Error3("\"%s\" Rule PlayerTurns \"%s\" not recognised. Defaulting to \'Relaxed\'.",
                                    name.GetDataSafe(), playerTurnsVal.GetDataSafe());
@@ -182,16 +183,16 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
                         // MoveType can be 'MoveOnly' (player can only move existing pieces),
                         // 'PlaceOnly' (player can only place new pieces on the board; cant move others),
                         // or 'PlaceOrMovePiece' (default - either move existing or place new pieces).
-                        csString moveTypeVal (rulesNode->GetAttributeValue("MoveType"));
-                        if (moveTypeVal.Downcase() == "moveonly")
+                        csString moveTypeVal(rulesNode->GetAttributeValue("MoveType"));
+                        if(moveTypeVal.Downcase() == "moveonly")
                         {
                             movePieceTypeRule = MOVE_ONLY;
                         }
-                        else if (moveTypeVal.Downcase() == "placeonly")
+                        else if(moveTypeVal.Downcase() == "placeonly")
                         {
                             movePieceTypeRule = PLACE_ONLY;
                         }
-                        else if (!moveTypeVal.IsEmpty() && moveTypeVal.Downcase() != "placeormovepiece")
+                        else if(!moveTypeVal.IsEmpty() && moveTypeVal.Downcase() != "placeormovepiece")
                         {
                             Error3("\"%s\" Rule MoveType \"%s\" not recognised. Defaulting to \'PlaceOrMovePiece\'.",
                                    name.GetDataSafe(), moveTypeVal.GetDataSafe());
@@ -199,12 +200,12 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
 
                         // MoveablePieces can be 'Own' (player can only move their own pieces) or
                         // 'Any' (default - player can move any piece in play).
-                        csString moveablePiecesVal (rulesNode->GetAttributeValue("MoveablePieces"));
-                        if (moveablePiecesVal.Downcase() == "own")
+                        csString moveablePiecesVal(rulesNode->GetAttributeValue("MoveablePieces"));
+                        if(moveablePiecesVal.Downcase() == "own")
                         {
                             moveablePiecesRule = OWN_PIECES_ONLY;
                         }
-                        else if (!moveablePiecesVal.IsEmpty() && moveablePiecesVal.Downcase() != "any")
+                        else if(!moveablePiecesVal.IsEmpty() && moveablePiecesVal.Downcase() != "any")
                         {
                             Error3("\"%s\" Rule MoveablePieces \"%s\" not recognised. Defaulting to \'Any\'.",
                                    name.GetDataSafe(), moveablePiecesVal.GetDataSafe());
@@ -212,23 +213,51 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
 
                         // MoveTo can be 'Vacancy' (player can move pieces to vacant squares only) or
                         // 'Anywhere' (default - can move to any square, vacant or occupied).
-                        csString moveToVal (rulesNode->GetAttributeValue("MoveTo"));
-                        if (moveToVal.Downcase() == "vacancy")
+                        csString moveToVal(rulesNode->GetAttributeValue("MoveTo"));
+                        if(moveToVal.Downcase() == "vacancy")
                         {
                             movePiecesToRule = VACANCY_ONLY;
                         }
-                        else if (!moveToVal.IsEmpty() && moveToVal.Downcase() != "anywhere")
+                        else if(!moveToVal.IsEmpty() && moveToVal.Downcase() != "anywhere")
                         {
                             Error3("\"%s\" Rule MoveTo \"%s\" not recognised. Defaulting to \'Anywhere\'.",
                                    name.GetDataSafe(), moveToVal.GetDataSafe());
                         }
+
+                        // MoveDirection can be 'Vertical', 'Horizontal', 'Cross', 'Diagonal' or 'Any' (default)
+                        csString moveDirection(rulesNode->GetAttributeValue("MoveDirection"));
+                        if(moveDirection.Downcase() == "vertical")
+                        {
+                            moveDirectionRule = VERTICAL;
+                        }
+                        else if(moveDirection.Downcase() == "horizontal")
+                        {
+                            moveDirectionRule = HORIZONTAL;
+                        }
+                        else if(moveDirection.Downcase() == "cross")
+                        {
+                            moveDirectionRule = CROSS;
+                        }
+                        else if(moveDirection.Downcase() == "diagonal")
+                        {
+                            moveDirectionRule = DIAGONAL;
+                        }
+                        else if(!moveToVal.IsEmpty() && moveToVal.Downcase() != "any")
+                        {
+                            Error3("\"%s\" Rule MoveDirection \"%s\" not recognised. Defaulting to \'Any\'.",
+                                   name.GetDataSafe(), moveDirection.GetDataSafe());
+                        }
+
+                        // MoveDistance can be an integer number
+                        moveDistanceRule = rulesNode->GetAttributeValueAsInt("MoveDistance");
+
                         return true;
                     }
                 }
             }
         }
     }
-    else if (rulesXMLstr.IsEmpty())   // if no rules defined at all, dont worry - keep defaults
+    else if(rulesXMLstr.IsEmpty())    // if no rules defined at all, dont worry - keep defaults
     {
         return true;
     }
@@ -245,35 +274,35 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
 // </MGEndGame>
 bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString name)
 {
-    if (endgameXMLstr.StartsWith("<MGEndGame>", false))
+    if(endgameXMLstr.StartsWith("<MGEndGame>", false))
     {
         csRef<iDocument> doc = ParseString(endgameXMLstr);
-        if (doc)
+        if(doc)
         {
             csRef<iDocumentNode> root = doc->GetRoot();
-            if (root)
+            if(root)
             {
                 // <MGEndGame>
                 csRef<iDocumentNode> topNode = root->GetNode("MGEndGame");
-                if (topNode)
+                if(topNode)
                 {
                     //  <EndGame Coords="relative"/"absolute" [SourceTile="T"] [Winner="T"]>
                     csRef<iDocumentNodeIterator> egNodes = topNode->GetNodes("EndGame");
-                    if (egNodes)
+                    if(egNodes)
                     {
-                        while (egNodes->HasNext())
+                        while(egNodes->HasNext())
                         {
                             csRef<iDocumentNode> egNode = egNodes->Next();
-                            if (egNode)
+                            if(egNode)
                             {
                                 // Coords="relative"/"absolute"
                                 Endgame_Spec* endgame = new Endgame_Spec;
-                                csString posAbsVal (egNode->GetAttributeValue("Coords"));
-                                if (posAbsVal.Downcase() == "relative")
+                                csString posAbsVal(egNode->GetAttributeValue("Coords"));
+                                if(posAbsVal.Downcase() == "relative")
                                 {
                                     endgame->positionsAbsolute = false;
                                 }
-                                else if (posAbsVal.Downcase() == "absolute")
+                                else if(posAbsVal.Downcase() == "absolute")
                                 {
                                     endgame->positionsAbsolute = true;
                                 }
@@ -286,13 +315,13 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                 }
 
                                 //  [SourceTile="T"] (optional)
-                                csString srcTileVal (egNode->GetAttributeValue("SourceTile"));
+                                csString srcTileVal(egNode->GetAttributeValue("SourceTile"));
                                 Endgame_TileType srcTile;
-                                if (EvaluateTileTypeStr(srcTileVal, srcTile) && srcTile != FOLLOW_SOURCE_TILE)
+                                if(EvaluateTileTypeStr(srcTileVal, srcTile) && srcTile != FOLLOW_SOURCE_TILE)
                                 {
                                     endgame->sourceTile = srcTile;
                                 }
-                                else if (endgame->positionsAbsolute == false)
+                                else if(endgame->positionsAbsolute == false)
                                 {
                                     delete endgame;
                                     Error2("Error in EndGame XML for \"%s\" minigame: SourceTile setting misunderstood.",
@@ -301,49 +330,50 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                 }
 
                                 //  [Winner="T"] (optional)
-                                csString winningPieceVal (egNode->GetAttributeValue("Winner"));
+                                csString winningPieceVal(egNode->GetAttributeValue("Winner"));
                                 Endgame_TileType winningTile;
                                 endgame->winner = NO_PIECE;  // default - no winner specified
-                                if (EvaluateTileTypeStr(winningPieceVal, winningTile) &&
-                                    (winningTile == WHITE_PIECE || winningTile == BLACK_PIECE))
+                                if(EvaluateTileTypeStr(winningPieceVal, winningTile) &&
+                                        (winningTile == WHITE_PIECE || winningTile == BLACK_PIECE))
                                 {
                                     endgame->winner = winningTile;    // winner is white or black player
                                 }
 
                                 //   <Coord Col="?" Row="?" Tile="T" />
                                 csRef<iDocumentNodeIterator> coordNodes = egNode->GetNodes("Coord");
-                                if (coordNodes)
+                                if(coordNodes)
                                 {
-                                    while (coordNodes->HasNext())
+                                    while(coordNodes->HasNext())
                                     {
                                         csRef<iDocumentNode> coordNode = coordNodes->Next();
-                                        if (coordNode)
+                                        if(coordNode)
                                         {
                                             //   Col="?" Row="?"
                                             Endgame_TileSpec* egTileSpec = new Endgame_TileSpec;
                                             int egCol = coordNode->GetAttributeValueAsInt("Col");
                                             int egRow = coordNode->GetAttributeValueAsInt("Row");
-                                            if (abs(egCol) >= GAMEBOARD_MAX_COLS || abs(egRow) >= GAMEBOARD_MAX_ROWS)
+                                            if(abs(egCol) >= GAMEBOARD_MAX_COLS || abs(egRow) >= GAMEBOARD_MAX_ROWS)
                                             {
                                                 delete endgame;
                                                 delete egTileSpec;
                                                 Error2("Error in EndGame XML for \"%s\" minigame: Col/Row spec out of range.",
-                                                        name.GetDataSafe());
+                                                       name.GetDataSafe());
                                                 return false;
                                             }
 
                                             //   Tile="T"
-                                            csString tileVal (coordNode->GetAttributeValue("Tile"));
+                                            csString tileVal(coordNode->GetAttributeValue("Tile"));
                                             Endgame_TileType tile;
-                                            if (EvaluateTileTypeStr(tileVal, tile))
+                                            if(EvaluateTileTypeStr(tileVal, tile))
                                             {
-                                                  egTileSpec->col = egCol;
-                                                  egTileSpec->row = egRow;
-                                                  egTileSpec->tile = tile;
-                                                  if (tile==SPECIFIC_TILE) {
-                                                      const char* specificPiece = coordNode->GetAttributeValue("Piece");
-                                                      egTileSpec->specificTile = psMiniGameBoardDef::PackPiece(specificPiece[0]);
-                                                  }
+                                                egTileSpec->col = egCol;
+                                                egTileSpec->row = egRow;
+                                                egTileSpec->tile = tile;
+                                                if(tile==SPECIFIC_TILE)
+                                                {
+                                                    const char* specificPiece = coordNode->GetAttributeValue("Piece");
+                                                    egTileSpec->specificTile = psMiniGameBoardDef::PackPiece(specificPiece[0]);
+                                                }
                                             }
                                             else
                                             {
@@ -356,7 +386,7 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                                 return false;
                                             }
 
-                                            endgame->endgameTiles.Push(egTileSpec); 
+                                            endgame->endgameTiles.Push(egTileSpec);
                                         }
                                     }
                                 }
@@ -365,12 +395,12 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                         }
                     }
 
-                   return true;
+                    return true;
                 }
             }
         }
     }
-    else if (endgameXMLstr.IsEmpty())   // if no endgames defined at all, then no worries
+    else if(endgameXMLstr.IsEmpty())    // if no endgames defined at all, then no worries
     {
         return true;
     }
@@ -379,31 +409,38 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
     return false;
 }
 
-bool psMiniGameBoardDef::EvaluateTileTypeStr(csString TileTypeStr, Endgame_TileType& tileType)
+bool psMiniGameBoardDef::EvaluateTileTypeStr(csString TileTypeStr, Endgame_TileType &tileType)
 {
-    if (TileTypeStr.Length() == 1)
+    if(TileTypeStr.Length() == 1)
     {
-        switch (TileTypeStr.GetAt(0))
+        switch(TileTypeStr.GetAt(0))
         {
             case 'A':
-            case 'a': tileType = PLAYED_PIECE;        // tile has any played piece on
+            case 'a':
+                tileType = PLAYED_PIECE;        // tile has any played piece on
                 break;
             case 'W':
-            case 'w': tileType = WHITE_PIECE;         // tile has white piece
+            case 'w':
+                tileType = WHITE_PIECE;         // tile has white piece
                 break;
             case 'B':
-            case 'b': tileType = BLACK_PIECE;         // tile has black piece
+            case 'b':
+                tileType = BLACK_PIECE;         // tile has black piece
                 break;
             case 'E':
-            case 'e': tileType = NO_PIECE;            // empty tile
+            case 'e':
+                tileType = NO_PIECE;            // empty tile
                 break;
             case 'F':
-            case 'f': tileType = FOLLOW_SOURCE_TILE;  // tile has piece as per first tile in pattern
+            case 'f':
+                tileType = FOLLOW_SOURCE_TILE;  // tile has piece as per first tile in pattern
                 break;
             case 'S':
-            case 's': tileType = SPECIFIC_TILE;  // has to be a specific tile
+            case 's':
+                tileType = SPECIFIC_TILE;  // has to be a specific tile
                 break;
-            default: return false;
+            default:
+                return false;
                 break;
         }
 
@@ -422,21 +459,21 @@ psMiniGameBoard::psMiniGameBoard()
 
 psMiniGameBoard::~psMiniGameBoard()
 {
-    if (layout)
+    if(layout)
         delete[] layout;
 }
 
-void psMiniGameBoard::Setup(psMiniGameBoardDef *newGameDef, uint8_t *preparedLayout)
+void psMiniGameBoard::Setup(psMiniGameBoardDef* newGameDef, uint8_t* preparedLayout)
 {
     // Delete the previous layout
-    if (layout)
+    if(layout)
         delete[] layout;
 
     gameBoardDef = newGameDef;
 
     layout = new uint8_t[gameBoardDef->layoutSize];
 
-    if (!preparedLayout)
+    if(!preparedLayout)
         memcpy(layout, gameBoardDef->layout, gameBoardDef->layoutSize);
     else
         memcpy(layout, preparedLayout, gameBoardDef->layoutSize);
@@ -444,12 +481,12 @@ void psMiniGameBoard::Setup(psMiniGameBoardDef *newGameDef, uint8_t *preparedLay
 
 uint8_t psMiniGameBoard::Get(uint8_t col, uint8_t row) const
 {
-    if (col >= gameBoardDef->cols || row >= gameBoardDef->rows || !layout)
+    if(col >= gameBoardDef->cols || row >= gameBoardDef->rows || !layout)
         return DISABLED_TILE;
 
     int idx = row*gameBoardDef->cols + col;
     uint8_t v = layout[idx/2];
-    if (idx % 2)
+    if(idx % 2)
         return v & 0x0F;
     else
         return (v & 0xF0) >> 4;
@@ -457,71 +494,71 @@ uint8_t psMiniGameBoard::Get(uint8_t col, uint8_t row) const
 
 void psMiniGameBoard::Set(uint8_t col, uint8_t row, uint8_t state)
 {
-    if (col >= gameBoardDef->cols || row >= gameBoardDef->rows || !layout)
+    if(col >= gameBoardDef->cols || row >= gameBoardDef->rows || !layout)
         return;
 
     int idx = row*gameBoardDef->cols + col;
     uint8_t v = layout[idx/2];
-    if (idx % 2)
+    if(idx % 2)
     {
-        if ((v & 0x0F) != DISABLED_TILE)
+        if((v & 0x0F) != DISABLED_TILE)
             layout[idx/2] = (v & 0xF0) + (state & 0x0F);
     }
     else
     {
-        if ((v & 0xF0) >> 4 != DISABLED_TILE)
+        if((v & 0xF0) >> 4 != DISABLED_TILE)
             layout[idx/2] = (v & 0x0F) + ((state & 0x0F) << 4);
     }
 }
 
-bool psMiniGameBoard::DetermineEndgame(Endgame_TileType& winningPiece)
+bool psMiniGameBoard::DetermineEndgame(Endgame_TileType &winningPiece)
 {
-    if (gameBoardDef->endgames.IsEmpty())
+    if(gameBoardDef->endgames.IsEmpty())
         return false;
 
     // look through each endgame spec individually...
     csArray<Endgame_Spec*>::Iterator egIterator(gameBoardDef->endgames.GetIterator());
-    while (egIterator.HasNext())
+    while(egIterator.HasNext())
     {
         size_t patternsMatched;
         uint8_t tileAtPos;
         Endgame_Spec* endgame = egIterator.Next();
-        if (endgame->positionsAbsolute)
+        if(endgame->positionsAbsolute)
         {
             // endgame absolute pattern: check each position for the required pattern
             // ... and then through each tile for the endgame pattern
             patternsMatched = 0;
             csArray<Endgame_TileSpec*>::Iterator egTileIterator(endgame->endgameTiles.GetIterator());
-            while (egTileIterator.HasNext())
+            while(egTileIterator.HasNext())
             {
                 Endgame_TileSpec* endgameTile = egTileIterator.Next();
-                if (endgameTile->col > gameBoardDef->cols || endgameTile->row > gameBoardDef->rows ||
-                    endgameTile->col < 0 || endgameTile->row < 0)
+                if(endgameTile->col > gameBoardDef->cols || endgameTile->row > gameBoardDef->rows ||
+                        endgameTile->col < 0 || endgameTile->row < 0)
                     break;
 
                 tileAtPos = Get(endgameTile->col, endgameTile->row);
 
-                if (tileAtPos == DISABLED_TILE || endgame->sourceTile == FOLLOW_SOURCE_TILE)
+                if(tileAtPos == DISABLED_TILE || endgame->sourceTile == FOLLOW_SOURCE_TILE)
                     break;
-                if (endgameTile->tile == PLAYED_PIECE && tileAtPos == EMPTY_TILE)
+                if(endgameTile->tile == PLAYED_PIECE && tileAtPos == EMPTY_TILE)
                     break;
-                if (endgameTile->tile == NO_PIECE && tileAtPos != EMPTY_TILE)
+                if(endgameTile->tile == NO_PIECE && tileAtPos != EMPTY_TILE)
                     break;
-                if (endgameTile->tile == WHITE_PIECE && (tileAtPos < WHITE_1 || tileAtPos > WHITE_7))
+                if(endgameTile->tile == WHITE_PIECE && (tileAtPos < WHITE_1 || tileAtPos > WHITE_7))
                     break;
-                if (endgameTile->tile == BLACK_PIECE && (tileAtPos < BLACK_1 || tileAtPos > BLACK_7))
+                if(endgameTile->tile == BLACK_PIECE && (tileAtPos < BLACK_1 || tileAtPos > BLACK_7))
                     break;
-                if (endgameTile->tile == FOLLOW_SOURCE_TILE)
+                if(endgameTile->tile == FOLLOW_SOURCE_TILE)
                     break;
-                if (endgameTile->tile == SPECIFIC_TILE && endgameTile->specificTile != tileAtPos)
+                if(endgameTile->tile == SPECIFIC_TILE && endgameTile->specificTile != tileAtPos)
                     break;
-                 
+
                 // if here, then the pattern has another match
                 patternsMatched++;
             }
 
             // if all patterns matched, a winner
-            if (endgame->endgameTiles.GetSize() == patternsMatched)
+            if(endgame->endgameTiles.GetSize() == patternsMatched)
             {
                 // determine winning piece - using last tile of the pattern if no explicit winner is defined.
                 winningPiece = (endgame->winner != NO_PIECE) ? endgame->winner : EndgameWinner(tileAtPos);
@@ -532,38 +569,38 @@ bool psMiniGameBoard::DetermineEndgame(Endgame_TileType& winningPiece)
         {
             // endgame relative pattern: check each piece in play for pattern relative to the piece
             uint8_t colCount, rowCount;
-            for (rowCount=0; rowCount<gameBoardDef->rows; rowCount++)
+            for(rowCount=0; rowCount<gameBoardDef->rows; rowCount++)
             {
-                for (colCount=0; colCount<gameBoardDef->cols; colCount++)
+                for(colCount=0; colCount<gameBoardDef->cols; colCount++)
                 {
                     // look for next initial played piece
                     uint8_t initialTile = Get(colCount, rowCount);
-                    if ((initialTile >= WHITE_1 && initialTile <= WHITE_7 &&
-                         (endgame->sourceTile == WHITE_PIECE || endgame->sourceTile == PLAYED_PIECE)) ||
-                        (initialTile >= BLACK_1 && initialTile <= BLACK_7 &&
-                         (endgame->sourceTile == BLACK_PIECE || endgame->sourceTile == PLAYED_PIECE)))
+                    if((initialTile >= WHITE_1 && initialTile <= WHITE_7 &&
+                            (endgame->sourceTile == WHITE_PIECE || endgame->sourceTile == PLAYED_PIECE)) ||
+                            (initialTile >= BLACK_1 && initialTile <= BLACK_7 &&
+                             (endgame->sourceTile == BLACK_PIECE || endgame->sourceTile == PLAYED_PIECE)))
                     {
                         // ... and then through each tile for the endgame pattern
                         patternsMatched = 0;
                         csArray<Endgame_TileSpec*>::Iterator egTileIterator(endgame->endgameTiles.GetIterator());
-                        while (egTileIterator.HasNext())
+                        while(egTileIterator.HasNext())
                         {
                             Endgame_TileSpec* endgameTile = egTileIterator.Next();
-                            if (colCount+endgameTile->col > gameBoardDef->cols || rowCount+endgameTile->row > gameBoardDef->rows ||
-                                colCount+endgameTile->col < 0 || rowCount+endgameTile->row < 0)
+                            if(colCount+endgameTile->col > gameBoardDef->cols || rowCount+endgameTile->row > gameBoardDef->rows ||
+                                    colCount+endgameTile->col < 0 || rowCount+endgameTile->row < 0)
                                 break;
                             tileAtPos = Get(colCount+endgameTile->col, rowCount+endgameTile->row);
-                            if (tileAtPos == DISABLED_TILE || endgame->sourceTile == FOLLOW_SOURCE_TILE)
+                            if(tileAtPos == DISABLED_TILE || endgame->sourceTile == FOLLOW_SOURCE_TILE)
                                 break;
-                            if (endgameTile->tile == PLAYED_PIECE && (tileAtPos < WHITE_1 || tileAtPos > BLACK_7))
+                            if(endgameTile->tile == PLAYED_PIECE && (tileAtPos < WHITE_1 || tileAtPos > BLACK_7))
                                 break;
-                            if (endgameTile->tile == WHITE_PIECE && (tileAtPos < WHITE_1 || tileAtPos > WHITE_7))
+                            if(endgameTile->tile == WHITE_PIECE && (tileAtPos < WHITE_1 || tileAtPos > WHITE_7))
                                 break;
-                            if (endgameTile->tile == BLACK_PIECE && (tileAtPos < BLACK_1 || tileAtPos > BLACK_7))
+                            if(endgameTile->tile == BLACK_PIECE && (tileAtPos < BLACK_1 || tileAtPos > BLACK_7))
                                 break;
-                            if (endgameTile->tile == NO_PIECE && tileAtPos != EMPTY_TILE)
+                            if(endgameTile->tile == NO_PIECE && tileAtPos != EMPTY_TILE)
                                 break;
-                            if (endgameTile->tile == FOLLOW_SOURCE_TILE && tileAtPos != initialTile)
+                            if(endgameTile->tile == FOLLOW_SOURCE_TILE && tileAtPos != initialTile)
                                 break;
 
                             // if here, then the pattern has another match
@@ -571,7 +608,7 @@ bool psMiniGameBoard::DetermineEndgame(Endgame_TileType& winningPiece)
                         }
 
                         // if all patterns matched, a winner
-                        if (endgame->endgameTiles.GetSize() == patternsMatched)
+                        if(endgame->endgameTiles.GetSize() == patternsMatched)
                         {
                             // determine winning piece - using last tile of the pattern if no explicit winner is defined.
                             winningPiece = (endgame->winner != NO_PIECE) ? endgame->winner : EndgameWinner(tileAtPos);
@@ -589,11 +626,11 @@ bool psMiniGameBoard::DetermineEndgame(Endgame_TileType& winningPiece)
 Endgame_TileType psMiniGameBoard::EndgameWinner(uint8_t winningTileState)
 {
     // determine winning piece - using passed-in state of winning tile.
-    if (winningTileState >= WHITE_1 && winningTileState <= WHITE_7)
+    if(winningTileState >= WHITE_1 && winningTileState <= WHITE_7)
     {
         return WHITE_PIECE;
     }
-    else if (winningTileState >= BLACK_1 && winningTileState <= BLACK_7)
+    else if(winningTileState >= BLACK_1 && winningTileState <= BLACK_7)
     {
         return BLACK_PIECE;
     }

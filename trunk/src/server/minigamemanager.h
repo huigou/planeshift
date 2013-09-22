@@ -64,7 +64,7 @@ struct MinigamePlayer
     int idleCounter;
 
     /// point to next player to move
-    MinigamePlayer *nextMover;
+    MinigamePlayer* nextMover;
 
     /// identifies colour pieces for player TODO this is temp
     int blackOrWhite;
@@ -76,7 +76,7 @@ struct MinigamePlayer
  * Game sessions are bound to a game board (action location) and identified
  * by a unique name. The name of the game board is defined in the action_locations table (name field).
  *
- * The game itself is defined in the gameboards db table. 
+ * The game itself is defined in the gameboards db table.
  * gameboard options include:
  * - name : the name of the board
  * - layout : the layout of the board in terms of tiles and shape
@@ -90,11 +90,13 @@ struct MinigamePlayer
  *     MoveType can be 'MoveOnly' (player can only move existing pieces),
  *              or 'PlaceOnly' (player can only place new pieces on the board; cant move others),
  *              or 'PlaceOrMovePiece' (default - either move existing or place new pieces).
+ *     MoveDistance can be an integer number
+ *     MoveDirection can be 'Vertical', 'Horizontal', 'Cross', 'Diagonal'
  *     MoveablePieces can be 'Own' (player can only move their own pieces)
  *                    or 'Any' (default - player can move any piece in play).
  *     MoveTo can be 'Vacancy' (player can move pieces to vacant squares only)
  *            or 'Anywhere' (default - can move to any square, vacant or occupied).
- * - endgames: 
+ * - endgames:
  *  <MGEndGame>
  *   <EndGame Coords="relative"/"absolute" [SourceTile="T"] [Winner="T"]>
  *    <Coord Col="0-15" Row="0-15" Tile="T" [Piece="X"] />
@@ -105,7 +107,7 @@ struct MinigamePlayer
  *  Each <EndGame> has 1 or more <Coord> spec.
  *  Each <MGEndGame> has 1 or more <EndGame>.
  *  Endgames can be left blank.
- * 
+ *
  * The response string specifies the name to the record in gameboards
  * and an optional prepared layout & is expected to have the
  * following format:
@@ -137,18 +139,27 @@ class psMiniGameSession : public iDeleteObjectCallback
 {
 public:
 
-    psMiniGameSession(MiniGameManager *mng, gemActionLocation *obj, const char *name);
+    psMiniGameSession(MiniGameManager* mng, gemActionLocation* obj, const char* name);
 
     ~psMiniGameSession();
 
     /// Returns the game session ID
-    const uint32_t GetID() const { return id; }
+    const uint32_t GetID() const
+    {
+        return id;
+    }
 
     /// Returns the session name.
-    const csString& GetName() const { return name; }
+    const csString &GetName() const
+    {
+        return name;
+    }
 
     /// Returns the game options.
-    uint16_t GetOptions() const { return options; }
+    uint16_t GetOptions() const
+    {
+        return options;
+    }
 
     /**
      * Loads the game.
@@ -164,16 +175,16 @@ public:
     void Restart();
 
     /// Adds a player to the session.
-    void AddPlayer(Client *client);
+    void AddPlayer(Client* client);
 
     /// Removes a player from the session.
-    void RemovePlayer(Client *client);
+    void RemovePlayer(Client* client);
 
     /// Returns true if it is valid for this player to update the game board.
-    bool IsValidToUpdate(Client *client) const;
+    bool IsValidToUpdate(Client* client) const;
 
     /// Updates the game board. NB! Call IsValidToUpdate() first to verify that updating is valid.
-    void Update(Client *client, psMGUpdateMessage &msg);
+    void Update(Client* client, psMGUpdateMessage &msg);
 
     /**
      * Sends the current game board to the given player.
@@ -185,9 +196,9 @@ public:
 
     /// Broadcast the current game board layout to all the players/watchers.
     void Broadcast();
-    
+
     /// Handles disconnected players.
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 
     /// Checks for idle players and players too far away
     void Idle();
@@ -196,10 +207,16 @@ public:
     bool GameSessionActive(void);
 
     /// Sets session to be reset (i.e. deleted and restarted next play)
-    void SetSessionReset(void) { toReset = true; }
+    void SetSessionReset(void)
+    {
+        toReset = true;
+    }
 
     /// Gets reset status of session
-    bool GetSessionReset(void) { return toReset; }
+    bool GetSessionReset(void)
+    {
+        return toReset;
+    }
 
     /// returns whether this is a public session or not.
     bool IsSessionPublic(void);
@@ -207,7 +224,7 @@ public:
 protected:
 
     /// Game manager.
-    MiniGameManager *manager;
+    MiniGameManager* manager;
 
     /// The game session ID (equals to the action location ID)
     uint32_t id;
@@ -237,7 +254,7 @@ protected:
     bool toReset;
 
     /// pointer to next player to move
-    MinigamePlayer *nextPlayerToMove;
+    MinigamePlayer* nextPlayerToMove;
 
 private:
     /// flag for when end game reached (i.e. game over).
@@ -258,12 +275,12 @@ private:
     csString paramTwo;
 
     /// resend board layouts as was, e.g. correcting an illegal move
-    void ResendBoardLayout(MinigamePlayer *player);
+    void ResendBoardLayout(MinigamePlayer* player);
 
     /// Game rule checking function
-    bool GameMovePassesRules(MinigamePlayer *player,
+    bool GameMovePassesRules(MinigamePlayer* player,
                              int8_t col1, int8_t row1, int8_t state1,
-                             int8_t col2=-1, int8_t row2=-1, int8_t state2=-1); 
+                             int8_t col2=-1, int8_t row2=-1, int8_t state2=-1);
 };
 
 
@@ -283,7 +300,7 @@ public:
     ~MiniGameManager();
 
     /// returns session by its id.
-    psMiniGameSession *GetSessionByID(uint32_t id);
+    psMiniGameSession* GetSessionByID(uint32_t id);
 
     /// Idle function to check for idle players and players too far away.
     void Idle();
@@ -292,7 +309,7 @@ public:
     bool Initialise();
 
     /// Find & return game board definition
-    psMiniGameBoardDef *FindGameDef(csString gameName);
+    psMiniGameBoardDef* FindGameDef(csString gameName);
 
     /// reset all sessions, prob due to reloading action locations
     void ResetAllGameSessions(void);
@@ -300,22 +317,22 @@ public:
 protected:
 
     /// Handle start and stop messages
-    void HandleStartStop(MsgEntry *me, Client *client);
+    void HandleStartStop(MsgEntry* me, Client* client);
 
     /// handles a client that has made a move.
-    void HandleGameUpdate(MsgEntry *me, Client *client);
+    void HandleGameUpdate(MsgEntry* me, Client* client);
 
     /// client requests start of game session.
-    void HandleStartGameRequest(Client *client);
+    void HandleStartGameRequest(Client* client);
 
     /// client handles stopping of game session.
-    void HandleStopGameRequest(Client *client);
+    void HandleStopGameRequest(Client* client);
 
     /// a client is removed from a game session.
-    void RemovePlayerFromSessions(psMiniGameSession *session, Client *client, uint32_t clientID);
+    void RemovePlayerFromSessions(psMiniGameSession* session, Client* client, uint32_t clientID);
 
     /// requests a session to be reset.
-    void ResetGameSession(psMiniGameSession *sessionToReset);
+    void ResetGameSession(psMiniGameSession* sessionToReset);
 
     /// function parses game options string from gameboards DB table.
     int16_t ParseGameboardOptions(psString optionsStr);
@@ -323,10 +340,10 @@ protected:
     csPDelArray<psMiniGameSession> sessions;
 
     /// Maps players to game sessions for quicker access.
-    csHash<psMiniGameSession *, uint32_t> playerSessions;
+    csHash<psMiniGameSession*, uint32_t> playerSessions;
 
     /// Minigame board definitions by name
-    csHash<psMiniGameBoardDef *, csString> gameBoardDef;
+    csHash<psMiniGameBoardDef*, csString> gameBoardDef;
 };
 
 /** @} */
