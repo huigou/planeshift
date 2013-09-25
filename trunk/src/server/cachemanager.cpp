@@ -401,6 +401,7 @@ void CacheManager::UnloadAll()
     }
 
     delete lootRandomizer;
+    delete [] compressed_msg_strings;
     // ToDo: unload everything else
 }
 
