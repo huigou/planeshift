@@ -1660,10 +1660,7 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
         case CHAT_NPC_MY:
         {
-            size_t len = msg.sPerson.Length() - 1;
-            buff.Format(msg.sPerson.GetAt(len) == 's' ?
-                        "%s' %s" : "%s's %s",
-                        msg.sPerson.GetData(), msg.sText.GetData());
+            buff.Format("%s's %s", (const char *)msg.sPerson, ((const char *)msg.sText));
             colour = settings.npcColor;
             break;
         }
