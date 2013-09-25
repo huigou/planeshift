@@ -76,8 +76,12 @@ void psCharacterQuestManager::Initialize(psCharacter* cOwner)
 
 psCharacterQuestManager::~psCharacterQuestManager()
 {
+    while (assignedQuests.GetSize())
+    {
+        delete assignedQuests.Pop();
+    }
     assignedQuests.DeleteAll();
-}    
+}
 
 
 QuestAssignment *psCharacterQuestManager::IsQuestAssigned(int id)
