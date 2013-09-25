@@ -703,14 +703,16 @@ NpcResponse *NPCDialogDict::AddResponse(const char *response_text,
             csString actionSegment;
             resp.SubString(actionSegment,start+1,end-start-1);
              // If action does not start with npc's name, it is a 3rd person statement, not /me
-            if (strncasecmp(actionSegment,npc_first_name,strlen(npc_first_name)))
+            if (strncasecmp(actionSegment,npc_first_name,npc_first_name.Length()))
             {
                 opStr.AppendFmt("<narrate text=\"%s\"/>", EscpXML(actionSegment.GetDataSafe()).GetDataSafe() );
             }
             else // now look for /me or /my because the npc name matches
             {
                 size_t spc = actionSegment.FindFirst(" ");
-                if (resp[strlen(npc_name)] == '\'' || resp[npc_first_name.Length()] == '\'') // apostrophe after name means /my
+                // apostrophe after name means /my
+                if (actionSegment[strlen(npc_name)] == '\'' ||
+                    actionSegment[npc_first_name.Length()] == '\'')
                 {
                     actionSegment.DeleteAt(0,spc+1);
                     opStr.AppendFmt("<actionmy text=\"%s\"/>", EscpXML(actionSegment.GetDataSafe()).GetDataSafe() );
