@@ -145,22 +145,11 @@ bool BgLoader::Light::LoadObject(bool wait)
 	parent->GetLights()->Add(light);
     }
 
-    // Load all light sequences.
-    bool ready = ObjectLoader<Sequence>::LoadObjects(wait);
-
-    if(ready)
-    {
-        ready &= ObjectLoader<Trigger>::LoadObjects(wait);
-    }
-
-    return ready;
+    return true;
 }
 
 void BgLoader::Light::UnloadObject()
 {
-    ObjectLoader<Trigger>::UnloadObjects();
-    ObjectLoader<Sequence>::UnloadObjects();
-
     Loadable::CheckRemove<iLight,ObjectNames::light>(light);
 }
 
@@ -289,16 +278,6 @@ bool BgLoader::MeshObj::LoadObject(bool wait)
         ready = TrivialLoadable<iMeshWrapper,ObjectNames::meshobj>::LoadObject(wait);
     }
 
-    if(ready)
-    {
-        ready = ObjectLoader<Sequence>::LoadObjects(wait);
-    }
-
-    if(ready)
-    {
-        ready &= ObjectLoader<Trigger>::LoadObjects(wait);
-    }
-
     return ready;
 }
 
@@ -346,9 +325,6 @@ void BgLoader::MeshObj::FinishObject()
 
 void BgLoader::MeshObj::UnloadObject()
 {
-    ObjectLoader<Trigger>::UnloadObjects();
-    ObjectLoader<Sequence>::UnloadObjects();
-
     TrivialLoadable<iMeshWrapper,ObjectNames::meshobj>::UnloadObject();
 
     ObjectLoader<Texture>::UnloadObjects();
