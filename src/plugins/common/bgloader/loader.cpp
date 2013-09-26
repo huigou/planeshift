@@ -44,7 +44,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 SCF_IMPLEMENT_FACTORY(BgLoader)
 
 BgLoader::BgLoader(iBase *p)
-  : scfImplementationType (this, p), loadOffset(0), delayedOffset(0), loadCount(0),
+  : scfImplementationType (this, p), loadOffset(0), delayedOffset(0),
     loadRange(500), validPosition(false), loadStep(0), currRot_h(0), currRot_v(0), resetHitbeam(true)
 {
 }
@@ -63,7 +63,7 @@ bool BgLoader::Initialize(iObjectRegistry* object_reg)
 
     engine = csQueryRegistry<iEngine> (object_reg);
     g2d = csQueryRegistryOrLoad<iGraphics2D> (object_reg, "crystalspace.graphics2d.null");
-    tloader = csQueryRegistryOrLoad<iThreadedLoader> (object_reg, "crystalspace.level.loader");
+    tloader = csQueryRegistryOrLoad<iThreadedLoader> (object_reg, "crystalspace.level.threadedloader");
     tman = csQueryRegistry<iThreadManager> (object_reg);
     vfs = csQueryRegistry<iVFS> (object_reg);
     parserData.svstrings = csQueryRegistryTagInterface<iShaderVarStringSet>(object_reg, "crystalspace.shader.variablenameset");

@@ -78,6 +78,15 @@ namespace ObjectNames
     extern const char sector[7];
 }
 
+/**
+ * The BgLoader is a wrapper around the Crystalspace iThreadedLoader interface.
+ * The main idea is to read all the files that iThreadedLoader would read
+ * but instead of creating the iEngine objects, the XML information is saved
+ * and used later to create the iEngine objects. The iEngine objects are
+ * created when the player's character is moved across sectors or comes within
+ * visible range of an object. Thus, the BgLoader can load and unload
+ * iEngine objects as needed, saving memory and load time.
+ */
 class BgLoader : public ThreadedCallable<BgLoader>,
                  public scfImplementation3<BgLoader,
                                            iBgLoader,
@@ -170,7 +179,7 @@ public:
    /**
     * Returns the number of objects currently loading.
     */
-    size_t GetLoadingCount() { return loadCount; }
+    size_t GetLoadingCount() { return loadList.GetSize(); }
 
    /**
     * Returns a pointer to the object registry.
@@ -312,7 +321,6 @@ public:
     void RegisterPendingObject(Loadable* obj)
     {
         CS::Threading::RecursiveMutexScopedLock lock(loadLock);
-        ++loadCount;
         loadList.Push(obj);
     }
 
@@ -328,8 +336,6 @@ public:
             --loadOffset;
         }
         loadList.DeleteIndex(index);
-
-        --loadCount;
     }
 
     // register delayed loader
@@ -374,6 +380,9 @@ private:
     class Sector;
     class Zone;
     class Texture;
+    class MeshObj;
+    class Sequence;
+    class Light;
     struct ParserData;
     struct GlobalParserData;
 
@@ -394,6 +403,9 @@ private:
         }
     };
 
+    /**
+     * LockedType is used to store BgLoader objects.
+     */
     template<typename T, bool check = true> struct LockedType
     {
     public:
@@ -402,7 +414,7 @@ private:
         csStringSet stringSet;
         CS::Threading::ReadWriteMutex lock;
 
-        csPtr<T> Get(const csString& name)
+        csPtr<T> Get(const char* name)
         {
             csRef<T> object;
             CS::Threading::ScopedReadLock scopedLock(lock);
@@ -444,7 +456,7 @@ private:
             }
         }
 
-        void Delete(const csString& name)
+        void Delete(const char* name)
         {
             CS::Threading::ScopedWriteLock scopedLock(lock);
             if(stringSet.Contains(name))
@@ -479,6 +491,7 @@ private:
         }
     };
 
+    // Loaded unconditionally - not range based.
     class AlwaysLoaded
     {
     public:
@@ -493,6 +506,9 @@ private:
         }
     };
 
+    /**
+     * Base class for BgLoader objects.
+     */
     class Loadable : public csObject
     {
     public:
@@ -511,6 +527,9 @@ private:
         {
         }
 
+        /*
+         * Return true if underlying CS object was loaded.
+         */
         bool Load(bool wait = false)
         {
             CS::Threading::RecursiveMutexScopedLock lock(busy);
@@ -857,8 +876,7 @@ private:
                 csRef<iBase> rawObj = status->GetResultRefPtr();
                 if(rawObj.IsValid())
                 {
-                    csRef<T> obj = scfQueryInterface<T>(status->GetResultRefPtr());
-                    return csPtr<T>(obj);
+                    return scfQueryInterface<T>(rawObj);
                 }
             }
 
@@ -1027,17 +1045,22 @@ private:
         }
 
         // workaround for bug in gcc 4.0: fails to parse default function argument in template classes
-        const csRef<T>& GetDependency(const csString& name) const
+        const csRef<T>& GetDependency(const char* name) const
         {
             return GetDependency(name, csRef<T>());
         }
 
-        const csRef<T>& GetDependency(const csString& name, const csRef<T>& fallbackobj) const
+        const csRef<T>& GetDependency(const char* name, const csRef<T>& fallbackobj) const
         {
             CS::Threading::RecursiveMutexScopedLock lock(busy);
-            HashObjectType fallback(fallbackobj);
             const HashObjectType& ref = objects.Get(name,fallbackobj);
             return ref.obj;
+        }
+
+        bool HasDependency(const char* name) const
+        {
+            CS::Threading::RecursiveMutexScopedLock lock(busy);
+            return objects.Contains(name);
         }
 
         HashType& GetDependencies()
@@ -1147,28 +1170,55 @@ private:
         void ParseMaterialReference(GlobalParserData& data, const char* name, const char* parentName, const char* type);
     };
 
-    class Trigger : public TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>, public AlwaysLoaded
+    class Trigger : public ObjectLoader<Sequence>,
+                    public ObjectLoader<MeshObj>,
+                    public ObjectLoader<Light>,
+                    public TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>,
+                    public AlwaysLoaded
     {
     public:
+        using ObjectLoader<Sequence>::AddDependency;
+        using ObjectLoader<MeshObj>::AddDependency;
+        using ObjectLoader<Light>::AddDependency;
+
         Trigger(BgLoader* parent) : TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>(parent)
         {
         }
 
         bool LoadObject(bool wait)
         {
-            return TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>::LoadObject(true);
+            bool ready = ObjectLoader<Sequence>::LoadObjects(true);
+            ready &= ObjectLoader<MeshObj>::LoadObjects(true);
+            ready &= ObjectLoader<Light>::LoadObjects(true);
+            ready &= TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>::LoadObject(true);
+            return ready;
+            //return TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>::LoadObject(true);
+        }
+
+        void UnloadObject()
+        {
+            TrivialLoadable<iSequenceTrigger,ObjectNames::trigger>::UnloadObject();
+            ObjectLoader<Sequence>::UnloadObjects();
+            ObjectLoader<MeshObj>::UnloadObjects();
+            ObjectLoader<Light>::UnloadObjects();
         }
 
         bool Parse(iDocumentNode* node, ParserData& data);
     };
 
-    class Sequence : public ObjectLoader<Sequence>, public ObjectLoader<Trigger>,
+    class Sequence : public ObjectLoader<Sequence>,
+                     public ObjectLoader<Trigger>,
+                     public ObjectLoader<Light>,
+                     public ObjectLoader<MeshObj>,
+                     public MaterialLoader,
                      public TrivialLoadable<iSequenceWrapper,ObjectNames::sequence>,
                      public AlwaysLoaded
     {
     public:
         using ObjectLoader<Sequence>::AddDependency;
         using ObjectLoader<Trigger>::AddDependency;
+        using ObjectLoader<Light>::AddDependency;
+        using ObjectLoader<MeshObj>::AddDependency;
 
         Sequence(BgLoader* parent) : TrivialLoadable<iSequenceWrapper,ObjectNames::sequence>(parent)
         {
@@ -1182,6 +1232,11 @@ private:
             wait = true;
 
             bool ready = true;
+            if(ready)
+            {
+                ready = ObjectLoader<MeshObj>::LoadObjects(wait);
+            }
+
             if(ready)
             {
                 ready = ObjectLoader<Sequence>::LoadObjects(wait);
@@ -1201,20 +1256,17 @@ private:
 
         void UnloadObject()
         {
-            ObjectLoader<Trigger>::UnloadObjects();
-            ObjectLoader<Sequence>::UnloadObjects();
             TrivialLoadable<iSequenceWrapper,ObjectNames::sequence>::UnloadObject();
+            ObjectLoader<Sequence>::UnloadObjects();
+            ObjectLoader<Trigger>::UnloadObjects();
+            ObjectLoader<MeshObj>::UnloadObjects();
         }
     };
 
-    class Light : public Loadable, public RangeBased, public ObjectLoader<Sequence>,
-                  public ObjectLoader<Trigger>
+    class Light : public Loadable, public RangeBased
     {
     public:
         typedef iLight ObjectType;
-
-        using ObjectLoader<Sequence>::AddDependency;
-        using ObjectLoader<Trigger>::AddDependency;
 
         Light(BgLoader* parent) : Loadable(parent)
         {
@@ -1227,8 +1279,7 @@ private:
 
         csPtr<iLight> GetObject()
         {
-            csRef<iLight> obj(light);
-            return csPtr<iLight>(obj);
+            return csPtr<iLight>(light);
         }
 
     private:
@@ -1371,15 +1422,12 @@ private:
 
     class MeshObj : public TrivialLoadable<iMeshWrapper,ObjectNames::meshobj>,
                     public RangeBased, public ObjectLoader<Texture>,
-                    public MaterialLoader, public ObjectLoader<MeshFact>,
-                    public ObjectLoader<Sequence>, public ObjectLoader<Trigger>
+                    public MaterialLoader, public ObjectLoader<MeshFact>
     {
     public:
         using ObjectLoader<Texture>::AddDependency;
         using ObjectLoader<Material>::AddDependency;
         using ObjectLoader<MeshFact>::AddDependency;
-        using ObjectLoader<Sequence>::AddDependency;
-        using ObjectLoader<Trigger>::AddDependency;
 
         MeshObj(BgLoader* parent) : TrivialLoadable<iMeshWrapper,ObjectNames::meshobj>(parent)
         {
@@ -1729,6 +1777,8 @@ private:
     /* Internal unloading methods. */
     void CleanDisconnectedSectors(Sector* sector);
 
+    bool LoadSequencesAndTriggers (iDocumentNode* snode, iDocumentNode* tnode, ParserData& data);
+
     // Pointers to other needed plugins.
     iObjectRegistry* object_reg;
     csRef<iEngine> engine;
@@ -1748,9 +1798,6 @@ private:
     size_t delayedOffset;
     csArray<csPtrKey<Loadable> > loadList;
     csArray<csPtrKey<iDelayedLoader> > delayedLoadList;
-
-    // number of objects currently loading
-    size_t loadCount;
 
     // Our load range ^_^
     float loadRange;

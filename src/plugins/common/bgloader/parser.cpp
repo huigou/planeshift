@@ -75,18 +75,18 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     {
                         csRef<iDocumentNode> shaderNode(nodeItr->Next());
 
-                        csString typeName(shaderNode->GetNode("type")->GetContentsValue());
-                        csString shaderName(shaderNode->GetAttributeValue("name"));
+                        const char* typeName = shaderNode->GetNode("type")->GetContentsValue();
+                        const char* shaderName = shaderNode->GetAttributeValue("name");
 
                         csRef<iDocumentNode> file = shaderNode->GetNode("file");
                         if(file.IsValid())
                         {
-                            csString fileName(file->GetContentsValue());
+                            const char* fileName = file->GetContentsValue();
                             if(parserData.shaders.Contains(fileName) == csArrayItemNotFound)
                             {
                                 CS::Threading::ScopedWriteLock lock(parserData.shaderLock);
-                                parserData.shaders.Push(file->GetContentsValue());
-                                csRef<iThreadReturn> shaderRet = tloader->LoadShader(path, file->GetContentsValue());
+                                parserData.shaders.Push(fileName);
+                                csRef<iThreadReturn> shaderRet = tloader->LoadShader(path, fileName);
                                 if(parserData.config.blockShaderLoad)
                                 {
                                     shaderRet->Wait();
@@ -107,18 +107,18 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     while(nodeItr->HasNext())
                     {
                         csRef<iDocumentNode> aliasNode(nodeItr->Next());
-                        csString shaderName(aliasNode->GetAttributeValue("name"));
+                        const char* shaderName = aliasNode->GetAttributeValue("name");
                         csString aliasName(aliasNode->GetAttributeValue("alias"));
 
                         csRef<iDocumentNode> file = aliasNode->GetNode("file");
                         if(file.IsValid())
                         {
-                            csString fileName(file->GetContentsValue());
+                            const char* fileName = file->GetContentsValue();
                             if(parserData.shaders.Contains(fileName) == csArrayItemNotFound)
                             {
                                 CS::Threading::ScopedWriteLock lock(parserData.shaderLock);
-                                parserData.shaders.Push(file->GetContentsValue());
-                                csRef<iThreadReturn> shaderRet = tloader->LoadShader(path, file->GetContentsValue());
+                                parserData.shaders.Push(fileName);
+                                csRef<iThreadReturn> shaderRet = tloader->LoadShader(path, fileName);
                                 if(parserData.config.blockShaderLoad)
                                 {
                                     shaderRet->Wait();
@@ -409,7 +409,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
 
                 case PARSERTOKEN_SECTOR:
                 {
-                    csString sectorName = node->GetContentsValue();
+                    const char* sectorName = node->GetContentsValue();
                     targetSector = csRef<Sector>(parserData.data.sectors.Get(sectorName));
 
                     if(!targetSector)
@@ -759,7 +759,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 case PARSERTOKEN_SETFOG:
                 case PARSERTOKEN_FADEFOG:
                 {
-                    csString name(node->GetAttributeValue("sector"));
+                    const char* name = node->GetAttributeValue("sector");
                     csRef<Sector> s = parserData.data.sectors.Get(name);
 
                     if(s.IsValid())
@@ -770,7 +770,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid sector reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid sector reference '%s' in sequence '%s'", name, GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
@@ -784,18 +784,17 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 case PARSERTOKEN_ROTATE:
                 case PARSERTOKEN_MOVE:
                 {
-                    csString name(node->GetAttributeValue("mesh"));
+                    const char* name = node->GetAttributeValue("mesh");
                     csRef<MeshObj> m = parserData.data.meshes.Get(name);
 
                     if(m.IsValid())
                     {
-                        m->AddDependency(self);
-                        parents.Push(m);
+                        AddDependency(m);
                     }
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid mesh reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid mesh reference '%s' in sequence '%s'", name, GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
@@ -808,18 +807,17 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 case PARSERTOKEN_FADELIGHT:
                 case PARSERTOKEN_SETLIGHT:
                 {
-                    csString name(node->GetAttributeValue("light"));
+                    const char* name = node->GetAttributeValue("light");
                     csRef<Light> l = parserData.lights.Get(name);
 
                     if(l.IsValid())
                     {
-                        l->AddDependency(self);
-                        parents.Push(l);
+                        AddDependency(l);
                     }
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid light reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid light reference '%s' in sequence '%s'", name, GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
@@ -829,7 +827,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 // sequence types operating on a sequence.
                 case PARSERTOKEN_RUN:
                 {
-                    csString name(node->GetAttributeValue("sequence"));
+                    const char* name = node->GetAttributeValue("sequence");
                     csRef<Sequence> seq = parserData.sequences.Get(name);
 
                     if(seq.IsValid())
@@ -840,7 +838,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid sequence reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid sequence reference '%s' in sequence '%s'", name, GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
@@ -853,7 +851,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 case PARSERTOKEN_CHECK:
                 case PARSERTOKEN_TEST:
                 {
-                    csString name(node->GetAttributeValue("trigger"));
+                    const char* name = node->GetAttributeValue("trigger");
                     csRef<Trigger> t = parserData.triggers.Get(name);
 
                     if(t.IsValid())
@@ -863,14 +861,14 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid trigger reference '%s' in sequence '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid trigger reference '%s' in sequence '%s'", name, GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
                 }
                 break;
 
-                // miscallenous sequence types.
+                // miscellanous sequence types.
                 case PARSERTOKEN_DELAY:
                 case PARSERTOKEN_SETVAR:
                 default:
@@ -923,7 +921,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 // triggers fired by a sector.
                 case PARSERTOKEN_SECTORVIS:
                 {
-                    csString name(node->GetAttributeValue("sector"));
+                    const char* name = node->GetAttributeValue("sector");
                     csRef<Sector> s = parserData.data.sectors.Get(name);
 
                     if(s.IsValid())
@@ -934,7 +932,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid sector reference '%s' in trigger '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid sector reference '%s' in trigger '%s'", name, GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
@@ -944,18 +942,17 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 // triggers fired by a mesh.
                 case PARSERTOKEN_ONCLICK:
                 {
-                    csString name(node->GetAttributeValue("mesh"));
+                    const char* name = node->GetAttributeValue("mesh");
                     csRef<MeshObj> m = parserData.data.meshes.Get(name);
 
                     if(m.IsValid())
                     {
-                        m->AddDependency(self);
-                        parents.Push(m);
+                        AddDependency(m);
                     }
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid mesh reference '%s' in trigger '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid mesh reference '%s' in trigger '%s'", name, GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
@@ -965,18 +962,17 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 // triggers fired by a light.
                 case PARSERTOKEN_LIGHTVALUE:
                 {
-                    csString name(node->GetAttributeValue("light"));
+                    const char* name = node->GetAttributeValue("light");
                     csRef<Light> l = parserData.lights.Get(name);
 
                     if(l.IsValid())
                     {
-                        l->AddDependency(self);
-                        parents.Push(l);
+                        AddDependency(l);
                     }
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid light reference '%s' in trigger '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid light reference '%s' in trigger '%s'", name, GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
@@ -986,25 +982,30 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 // triggers fired by a sequence.
                 case PARSERTOKEN_FIRE:
                 {
-                    csString name(node->GetAttributeValue("sequence"));
+                    const char* name = node->GetAttributeValue("sequence");
                     csRef<Sequence> seq = parserData.sequences.Get(name);
 
                     if(seq.IsValid())
                     {
-                        seq->AddDependency(self);
-                        parents.Push(seq);
+                        // Since sequences are parsed first, if it has
+                        // a dependency on this trigger, there is a loop.
+                        if(seq->ObjectLoader<Trigger>::HasDependency(GetName()))
+                        {
+                            seq->ObjectLoader<Trigger>::RemoveDependency(this);
+                        }
+                        AddDependency(seq);
                     }
                     else
                     {
                         csString msg;
-                        msg.Format("Invalid sequence reference '%s' in trigger '%s'", name.GetData(), GetName());
+                        msg.Format("Invalid sequence reference '%s' in trigger '%s'", name, GetName());
                         CS_ASSERT_MSG(msg.GetData(), false);
                         failed = true;
                     }
                 }
                 break;
 
-                // triggers fired by a miscallenous operation.
+                // triggers fired by a miscellanous operation.
                 case PARSERTOKEN_MANUAL:
                 default:
                 {
@@ -1099,6 +1100,8 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 bool portalsOnly = parserData.config.portalsOnly;
                 bool meshesOnly = parserData.config.meshesOnly;
                 data.parsedMeshFact = false;
+                csRef<iDocumentNode> sequences;
+                csRef<iDocumentNode> triggers;
 
                 csRef<iDocumentNodeIterator> nodeIt(root->GetNodes());
                 while(nodeIt->HasNext())
@@ -1230,7 +1233,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                         // Parse sector.
                         case PARSERTOKEN_SECTOR:
                         {
-                            csString name(node->GetAttributeValue("name"));
+                            const char* name = node->GetAttributeValue("name");
                             csRef<Sector> sector = parserData.sectors.Get(name);
                             if(!sector.IsValid())
                             {
@@ -1243,7 +1246,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 parserData.sectors.Delete(name);
 
                                 csString msg;
-                                msg.Format("Sector %s failed to parse!", name.GetData());
+                                msg.Format("Sector %s failed to parse!", name);
                                 CS_ASSERT_MSG(msg.GetData(), false);
                             }
                         }
@@ -1269,39 +1272,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             {
                                 break;
                             }
-
-                            // do a 2 pass parsing of sequences
-                            // first create all sequences.
-                            csRef<iDocumentNodeIterator> sequenceIt(node->GetNodes("sequence"));
-                            while(sequenceIt->HasNext())
-                            {
-                                csRef<iDocumentNode> sequenceNode(sequenceIt->Next());
-                                csString sequenceName(sequenceNode->GetAttributeValue("name"));
-
-                                csRef<Sequence> seq;
-                                seq.AttachNew(new Sequence(this));
-                                data.sequences.Put(seq, sequenceName);
-                            }
-
-                            // now actually parse them.
-                            sequenceIt = node->GetNodes("sequence");
-                            while(sequenceIt->HasNext())
-                            {
-                                csRef<iDocumentNode> sequenceNode(sequenceIt->Next());
-                                csString sequenceName(sequenceNode->GetAttributeValue("name"));
-
-                                csRef<Sequence> seq = data.sequences.Get(sequenceName);
-
-                                if(!seq->Parse(sequenceNode, data))
-                                {
-                                    // failed to parse the sequence, remove it from the lookup table
-                                    data.sequences.Delete(sequenceName);
-
-                                    csString msg;
-                                    msg.Format("Sequence %s failed to parse!", sequenceName.GetData());
-                                    CS_ASSERT_MSG(msg.GetData(), false);
-                                }
-                            }
+                            sequences = node;
                         }
                         break;
 
@@ -1311,35 +1282,15 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                             {
                                 break;
                             }
-
-                            csRef<iDocumentNodeIterator> triggerIt(node->GetNodes("trigger"));
-                            while(triggerIt->HasNext())
-                            {
-                                csRef<iDocumentNode> triggerNode(triggerIt->Next());
-                                csString triggerName(triggerNode->GetAttributeValue("name"));
-
-                                csRef<Trigger> trigger = data.triggers.Get(triggerName);
-                                if(!trigger.IsValid())
-                                {
-                                    // not yet loaded, attach a new one
-                                    trigger.AttachNew(new Trigger(this));
-                                    data.triggers.Put(trigger, triggerName);
-                                }
-
-                                if(!trigger->Parse(triggerNode, data))
-                                {
-                                    // failed to parse the trigger, remove it from the lookup table
-                                    data.triggers.Delete(triggerName);
-
-                                    csString msg;
-                                    msg.Format("Trigger %s failed to parse!", triggerName.GetData());
-                                    CS_ASSERT_MSG(msg.GetData(), false);
-                                }
-                            }
+                            triggers = node;
                         }
                         break;
                     }
                 }
+                // Sequences and triggers are parsed at the end because
+                // all sectors and other objects need to be present.
+                if (!LoadSequencesAndTriggers(sequences, triggers, data))
+                    return false;
             }
 
             // Wait for plugin and shader loads to finish.
@@ -1348,6 +1299,121 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
         
         return true;
     }
+
+  bool BgLoader::LoadSequencesAndTriggers (iDocumentNode* snode,
+                                           iDocumentNode* tnode,
+                                           ParserData& data)
+  {
+    // We load sequences and triggers in three passes.
+    // In the first pass, we will create all triggers.
+    // In the second pass, we will create and parse sequences.
+    // In the third pass, we will parse the triggers.
+    // This will create the data structures and dependencies but
+    // not the actual Crystalspace engine data structures until
+    // they are visible or needed.
+    // It also makes sure that sequences are created before triggers
+    // regardless of the order they may appear in the XML file.
+
+    if (tnode)
+    {
+      csRef<iDocumentNodeIterator> it = tnode->GetNodes ();
+      while (it->HasNext ())
+      {
+        csRef<iDocumentNode> child = it->Next ();
+        if (child->GetType () != CS_NODE_ELEMENT)
+          continue;
+        const char* value = child->GetValue ();
+        csStringID id = parserData.xmltokens.Request (value);
+        switch (id)
+        {
+        case PARSERTOKEN_TRIGGER:
+          {
+            const char* name = child->GetAttributeValue ("name");
+            csRef<Trigger> trig;
+            trig.AttachNew(new Trigger(this));
+            data.triggers.Put(trig, name);
+            trig->SetName(name);
+          }
+          break;
+        default:
+          parserData.syntaxService->ReportBadToken (child);
+          return false;
+        }
+      }
+    }
+
+    if (snode)
+    {
+      csRef<iDocumentNodeIterator> it = snode->GetNodes ();
+      while (it->HasNext ())
+      {
+        csRef<iDocumentNode> child = it->Next ();
+        if (child->GetType () != CS_NODE_ELEMENT)
+          continue;
+        const char* value = child->GetValue ();
+        csStringID id = parserData.xmltokens.Request (value);
+        switch (id)
+        {
+        case PARSERTOKEN_SEQUENCE:
+          {
+            const char* name = child->GetAttributeValue ("name");
+            csRef<Sequence> seq;
+            seq.AttachNew(new Sequence(this));
+            data.sequences.Put(seq, name);
+            if (!seq->Parse (child, data))
+            {
+              data.sequences.Delete(name);
+              csString msg;
+              msg.Format("Sequence %s failed to parse!", name);
+              CS_ASSERT_MSG(msg.GetData(), false);
+              return false;
+            }
+            break;
+          }
+        default:
+          parserData.syntaxService->ReportBadToken (child);
+          return false;
+        }
+      }
+    }
+
+    if (tnode)
+    {
+      csRef<iDocumentNodeIterator> it = tnode->GetNodes ();
+      while (it->HasNext ())
+      {
+        csRef<iDocumentNode> child = it->Next ();
+        if (child->GetType () != CS_NODE_ELEMENT)
+          continue;
+        const char* value = child->GetValue ();
+        csStringID id = parserData.xmltokens.Request (value);
+        switch (id)
+        {
+        case PARSERTOKEN_TRIGGER:
+          {
+            const char* name = child->GetAttributeValue ("name");
+            csRef<Trigger> trig (data.triggers.Get(name));
+            if (!trig->Parse (child, data))
+            {
+              // failed to parse the trigger, remove it from the lookup table
+              data.triggers.Delete(name);
+              csString msg;
+              msg.Format("Trigger %s failed to parse!", name);
+              CS_ASSERT_MSG(msg.GetData(), false);
+              return false;
+            }
+            break;
+          }
+        default:
+          parserData.syntaxService->ReportBadToken (child);
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
 }
 CS_PLUGIN_NAMESPACE_END(bgLoader)
 
