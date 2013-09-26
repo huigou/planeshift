@@ -256,7 +256,7 @@ bool psEntity::CanPlay(int time, float range) const
     return false;
 }
 
-void psEntity::SetState(uint newState, bool forceChange, bool setReady)
+void psEntity::SetState(int newState, bool forceChange, bool setReady)
 {
     EntityState* entityState;
 

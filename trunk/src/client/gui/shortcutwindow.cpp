@@ -322,7 +322,6 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         {
             //get a ptr to the txture manager so we can look at the elementList, which stores the icon names.
             pawsTextureManager *tm = PawsManager::GetSingleton().GetTextureManager();
-            int i = tm->elementList.GetSize();
         
             //build an array of the icon names
             csHash<csRef<iPawsImage>, csString>::GlobalIterator Iter(tm->elementList.GetIterator());
@@ -367,7 +366,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                 {
                     //remove key bindings
                     csString editedCmd;
-                    editedCmd.Format("Shortcut %d",edit+1);
+                    editedCmd.Format("Shortcut %zd",edit+1);
                     psengine->GetCharControl()->RemapTrigger(editedCmd,psControl::NONE,0,0);
 
                     ((pawsDnDButton *)editedButton)->Clear();
@@ -650,7 +649,7 @@ void pawsShortcutWindow::SaveCommands(void)
     CommandFileName.Insert( 0, "/planeshift/userdata/options/shortcutcommands_" );
     CommandFileName.Append( ".xml" );
     bool found = false;
-    int i;
+    size_t i;
     for (i = 0;i < cmds.GetSize();i++)
     {
         if (cmds[i].IsEmpty())
@@ -677,12 +676,12 @@ void pawsShortcutWindow::SaveCommands(void)
         if (cmds[i].IsEmpty())
             continue;
         parent = parentMain->CreateNodeBefore (CS_NODE_ELEMENT);
-        temp.Format("shortcut%d", i + 1);
+        temp.Format("shortcut%zd", i + 1);
         parent->SetValue(temp);
 
         if (names[i].IsEmpty())
         {
-            temp.Format("%d", i);
+            temp.Format("%zd", i);
             parent->SetAttribute("name", temp);
         }
         else
@@ -820,7 +819,7 @@ bool pawsShortcutWindow::OnFingering(csString string, psControl::Device device, 
         return true;
 
     csString editedCmd;
-    editedCmd.Format("Shortcut %d",edit+1);
+    editedCmd.Format("Shortcut %zd",edit+1);
 
     bool changed = false;
 

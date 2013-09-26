@@ -137,7 +137,6 @@ void NavGen::Run()
         csRef<iStringArray> meshFiles = vfs->FindFiles(meshes);
         csRef<iStringArray> worldFiles = vfs->FindFiles(world);
 
-        size_t loadCount = meshFiles->GetSize() + worldFiles->GetSize();
         size_t progress = 0;
 
         csPrintf("Caching meshes...\n");
@@ -212,7 +211,6 @@ void NavGen::Run()
         }
 
         csPrintf("Finishing world load...\n");
-        size_t loadCount = loader->GetLoadingCount();
         while(loader->GetLoadingCount())
         {
             loader->ContinueLoading(true);
@@ -242,7 +240,7 @@ void NavGen::Run()
         // get list of loaded sectors
         csRefArray<iSector> sectors;
         csRef<iSectorList> sectorList = engine->GetSectors();
-        for(size_t i = 0; i < sectorList->GetCount(); i++)
+        for(int i = 0; i < sectorList->GetCount(); i++)
         {
             sectors.Push(sectorList->Get(i));
         }

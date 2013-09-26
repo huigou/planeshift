@@ -360,7 +360,7 @@ void Chord::Draw(pawsSheetLine* pawsLine, Chord* selectedChord, int horizontalPo
     int vCPos;                  // vertical position of the central C
 
     int prevNotePos;
-    int lastDownNote;           // position of the last note that must be drawn downwards
+    size_t lastDownNote;        // position of the last note that must be drawn downwards
 
     size_t notesLength = notes.GetSize();
 
@@ -440,7 +440,7 @@ void Chord::Draw(pawsSheetLine* pawsLine, Chord* selectedChord, int horizontalPo
     // drawing chord
     for(size_t i = 0; i < notesLength; i++)
     {
-        short int notePos = notes[i].position;
+        int notePos = notes[i].position;
 
         int nextHPosUpString = horizontalPos;
         int nextHPosLowString = horizontalPos;
@@ -1557,7 +1557,7 @@ bool SheetLine::SetSize(uint newSize, pawsSheetLine* pawsLine)
         size = newSize;
     }
 
-    if(noteLength != pawsLine->noteCharLength)
+    if(noteLength != (uint)pawsLine->noteCharLength)
     {
         isChanged = true;
         noteLength = pawsLine->noteCharLength;

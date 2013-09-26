@@ -791,7 +791,9 @@ static void tracenomins(SynsetPtr synptr, int dbase)
 {
     int i, j, idx;
     SynsetPtr cursyn;
+#ifdef FOOP
     long int prlist[1024];
+#endif
     char prefix[40], tbuf[20];
 
     interface_doevents();
@@ -823,16 +825,20 @@ static void tracenomins(SynsetPtr synptr, int dbase)
 
 	    /* only print synset once, even if more than one link */
 
-	    for (j = 0; j < idx; j++) {
 #ifdef FOOP
+	    for (j = 0; j < idx; j++) {
 		if (synptr->ptroff[i] == prlist[j]) {
 		    break;
 		}
-#endif
 	    }
+#else
+            j = idx;
+#endif
 
 	    if (j == idx) {
+#ifdef FOOP
 		prlist[idx++] = synptr->ptroff[i];
+#endif
 		printspaces(TRACEP, 2);
 		printsynset("=> ", cursyn, "\n", DEFON, ALLWORDS,
 			    SKIP_ANTS, PRINT_MARKER);

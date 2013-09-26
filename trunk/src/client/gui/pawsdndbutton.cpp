@@ -285,6 +285,7 @@ void pawsDnDButton::Draw()
 
 bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
 {
+#if 0
     bool empty;
 
     if(GetMaskingImage())
@@ -299,6 +300,7 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
     {
         empty = true;
     }
+#endif
 
     if(button==csmbLeft && (dragDrop || psengine->GetSlotManager()->IsDragging()))
     {

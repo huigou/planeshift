@@ -62,7 +62,7 @@ void ClientSongManager::PlayMainPlayerSong(uint32_t itemID, const csString &musi
 {
     // updating state
     sheet = musicalSheet;
-    mainSongID = PENDING;
+    mainSongID = (uint)PENDING;
 
     // request to server
     psMusicalSheetMessage musicalSheetMessage(0, itemID, true, true, "", sheet);
@@ -97,7 +97,7 @@ void ClientSongManager::Update()
 
     // checking main player song
     if(mainSongID != NO_SONG
-       && mainSongID != PENDING
+       && mainSongID != (uint)PENDING
        && !sndMngr->IsSoundValid(mainSongID))
     {
         StopMainPlayerSong(false);
@@ -209,7 +209,7 @@ void ClientSongManager::HandleMessage(MsgEntry* message)
         {
             csString errorStr;
 
-            if(mainSongID == PENDING) // no instrument equipped, invalid MusicXML or low skill
+            if(mainSongID == (uint)PENDING) // no instrument equipped, invalid MusicXML or low skill
             {
                 // updating mainSongId
                 mainSongID = NO_SONG;

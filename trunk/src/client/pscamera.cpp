@@ -725,7 +725,6 @@ bool psCamera::Draw()
     csVector3 oldTarget = GetTarget(CAMERA_ACTUAL_DATA);
     view->GetCamera()->OnlyPortals(true);
     bool mirrored = view->GetCamera()->IsMirrored();
-    csVector3 oldOrigin = view->GetCamera()->GetTransform().GetOrigin();
 
     // Do a hitbeam between Position and Target to find the correct sector and coordinates.
     view->GetCamera()->GetTransform().SetOrigin(actorPos);
@@ -1708,11 +1707,10 @@ void psCamera::CalculateFromYawPitchRoll(int mode)
 {
     float cosYaw, sinYaw;
     float cosPit, sinPit;
-    float cosRol, sinRol;
+    // at this point, our camera doesn't support Roll
 
     cosYaw = cosf(GetYaw(mode));    sinYaw = sinf(GetYaw(mode));
     cosPit = cosf(GetPitch(mode));  sinPit = sinf(GetPitch(mode));
-    cosRol = 1.0f;                        sinRol = 0.0f;  // at this point, our camera doesn't support Roll
 
     if (cosPit == 0.0f)
         cosPit = 0.001f;
@@ -1739,11 +1737,10 @@ void psCamera::CalculatePositionFromYawPitchRoll(int mode)
 {
     float cosYaw, sinYaw;
     float cosPit, sinPit;
-    float cosRol, sinRol;
+    // at this point, our camera doesn't support Roll
 
     cosYaw = cosf(GetYaw(mode));    sinYaw = sinf(GetYaw(mode));
     cosPit = cosf(GetPitch(mode));  sinPit = sinf(GetPitch(mode));
-    cosRol = 1.0f;                        sinRol = 0.0f;  // at this point, our camera doesn't support Roll
 
     if (cosPit == 0.0f)
         cosPit = 0.001f;
@@ -1847,7 +1844,6 @@ void psCamera::AdaptDistanceClipping()
     const float INITIAL_DISTANCE = 200;     // we begin from this value
     static bool calledFirstTime = true;
 
-    static csTicks lastTime;                // when was this method last called ?
     csTicks currTime;                       // the current time
     static float lastChangeTime;            // when did we change the distance last time ?
 
@@ -1860,7 +1856,6 @@ void psCamera::AdaptDistanceClipping()
     if (calledFirstTime)
     {
         calledFirstTime = false;
-        lastTime = csGetTicks();
         lastChangeTime = csGetTicks();
         return;
     }
@@ -1908,8 +1903,6 @@ void psCamera::AdaptDistanceClipping()
     }
 
     //Error2("%s", debug.GetData());
-
-    lastTime = currTime;
 }
 
 

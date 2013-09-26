@@ -2658,13 +2658,6 @@ unsigned char* celNavMeshBuilder::BuildTile(const int tx, const int ty, const fl
 
 iCelNavMesh* celNavMeshBuilder::LoadNavMesh (iFile* file)
 {
-  float bMin[3];
-  float bMax[3];
-  for (int i = 0; i < 3; i++)
-  {
-    bMin[i] = boundingMin[i];
-    bMax[i] = boundingMax[i];
-  }
   navMesh.AttachNew(new celNavMesh(objectRegistry));
   navMesh->LoadNavMesh(file);
   return navMesh;

@@ -102,7 +102,7 @@ void Note::NoteContext::UpdateContext(const Note &note)
         if(nameHash == 0)
         {
             nameHash = &prevAccidentals.Put(note.octave,
-                csHash<Accidental, char>::csHash(PREV_ACCIDENTALS_NAME_SIZE));
+                csHash<Accidental, char>(PREV_ACCIDENTALS_NAME_SIZE));
             nameHash->Put(note.name, note.writtenAccidental);
         }
         else
@@ -398,7 +398,6 @@ void Measure::Fit(const MeasureAttributes* attributes_)
     else if(currDuration < measDuration) // fill
     {
         Duration tempDuration;
-        MeasureElement* rest = 0;
 
         while(currDuration < measDuration)
         {

@@ -111,8 +111,6 @@ bool pawsScrollMenu::Setup(iDocumentNode* node)
 
 bool pawsScrollMenu::PostSetup()
 {
-    size_t i;
-
     //set defaults
     buttonHeight = screenFrame.Height();
     buttonWidth = buttonHeight;
@@ -205,7 +203,7 @@ void pawsScrollMenu::OnResize()
 
         if(screenFrame.Width() > screenFrame.Height())   //horizontal case
         {
-            //leftEdge =  (LeftScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2 + BUTTON_PADDING:0) \
+            //leftEdge =  (LeftScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2 + BUTTON_PADDING:0)
             //            + (EditLockMode>0?buttonHeight/2:0) +BUTTON_PADDING;
             //edgeSpace = leftEdge + (RightScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2 + BUTTON_PADDING:0);
             leftEdge = (LeftScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0) \
@@ -287,11 +285,11 @@ void pawsScrollMenu::LayoutButtons()
         int buttonCol = buttonLocation==0?BUTTON_PADDING:buttonLocation,
             buttonRow = 1;
 
-        for(int i=0; i<Buttons.GetSize(); i++)
+        for(size_t i=0; i<Buttons.GetSize(); i++)
         {
             if(!Buttons[i])
             {
-                printf("pawsScrollMenu::OnResize - ERROR Button[ %i ] is null\n", i);
+                printf("pawsScrollMenu::OnResize - ERROR Button[ %zi ] is null\n", i);
                 continue;
             }
             //perform layout
@@ -494,7 +492,7 @@ bool pawsScrollMenu::OnButtonReleased(int mouseButton, int keyModifier, pawsWidg
     {
         case 101:    //Edit Lock Button - prevents editing & drag-n-drop
         {
-            for(int i=0; i<Buttons.GetSize(); i++)
+            for(size_t i=0; i<Buttons.GetSize(); i++)
             {
                 ((pawsDnDButton*)Buttons[i])->SetDnDLock(EditLockButton->GetState());
             }
@@ -521,7 +519,7 @@ bool pawsScrollMenu::OnButtonReleased(int mouseButton, int keyModifier, pawsWidg
 
 bool pawsScrollMenu::LoadArrays(csArray<csString> &name, csArray<csString> &icon, csArray<csString> &toolTip, csArray<csString> &action, int baseIndex, pawsWidget* widget)
 {
-    int innerSize = 0;
+    size_t innerSize = 0;
 
     if(widget)
     {
@@ -545,10 +543,8 @@ bool pawsScrollMenu::LoadArrays(csArray<csString> &name, csArray<csString> &icon
         innerSize = innerSize<toolTip.GetSize()?toolTip.GetSize():innerSize;
     }
 
-    for(int i=0; i<innerSize; i++)
+    for(size_t i=0; i<innerSize; i++)
     {
-        int buttonPos;
-
         pawsDnDButton* button;
         button = new pawsDnDButton;
         ButtonHolder->AddChild(button);
@@ -587,11 +583,9 @@ bool pawsScrollMenu::LoadArrays(csArray<csString> &name, csArray<csString> &icon
 
 bool pawsScrollMenu::LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget, bool IsEnabled)
 {
-    int buttonPos;
-
     pawsDnDButton* button;
     button = new pawsDnDButton;
-    if(Index>Buttons.GetSize() || Index==-1)
+    if((size_t)Index>Buttons.GetSize() || Index==-1)
     {
         //append
         ButtonHolder->AddChild(button);
@@ -636,12 +630,9 @@ bool pawsScrollMenu::RemoveByName(csString name)
 
     if(match!=NULL)
     {
-        int preRemovalSize = ButtonHolder->GetChildrenCount(),
-            postRemovalSize = 0;
         ButtonHolder->RemoveChild(match);
-        postRemovalSize = ButtonHolder->GetChildrenCount();
 
-        for(int i=0; i<Buttons.GetSize(); i++)
+        for(size_t i=0; i<Buttons.GetSize(); i++)
         {
             if(Buttons[i]==match)
             {
@@ -682,7 +673,7 @@ int pawsScrollMenu::GetTotalButtonWidth()
 {
     int total=0;
 
-    for(int i=0; i< Buttons.GetSize(); i++)
+    for(size_t i=0; i< Buttons.GetSize(); i++)
     {
         if(Buttons[i])
             total+= CalcButtonSize((pawsDnDButton*)Buttons[i]);
@@ -801,7 +792,7 @@ void pawsScrollMenu::SetEditLock(int mode)
     else
     {
         EditLockMode=false;
-        for(int i=0; i<Buttons.GetSize(); i++)
+        for(size_t i=0; i<Buttons.GetSize(); i++)
         {
             ((pawsDnDButton*)Buttons[i])->SetDnDLock(false);
         }

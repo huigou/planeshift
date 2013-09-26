@@ -1157,7 +1157,7 @@ bool celHNavStructBuilder::InstantiateNavMeshBuilders ()
   csRefArray<iSector>::Iterator it = sectors.GetIterator();
   int numSectors = sectors.GetSize();
   int currentSector = 1;
-  csPrintf("Total sectors to parse: \n", numSectors);
+  csPrintf("Total sectors to parse: %d\n", numSectors);
   while (it.HasNext())
   {
     csPrintf("Parsing sector %d/%d \n", currentSector, numSectors);
@@ -1423,7 +1423,7 @@ iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* dir
   csHash<csRef<iSector>, const char*> sectors;
   if(!ParseMeshes(meshesNode, sectors, navStruct, vfs, params))
   {
-      return false;
+      return 0;
   }
 
   // Read high level graph
@@ -1431,7 +1431,7 @@ iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* dir
   csRef<iCelGraph> graph = scfCreateInstance<iCelGraph>("cel.celgraph");
   if(!ParseGraph(graphNode, graph, sectors))
   {
-      return false;
+      return 0;
   }
   navStruct->SetHighLevelGraph(graph);
 
