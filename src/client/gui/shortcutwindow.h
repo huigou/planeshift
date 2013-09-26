@@ -142,7 +142,7 @@ protected:
 
     csString buttonBackgroundImage;
 
-    int edit;
+    size_t edit;
     pawsWidget *editedButton;
 
     virtual void HandleMessage(MsgEntry *msg);

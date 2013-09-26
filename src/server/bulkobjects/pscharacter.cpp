@@ -928,7 +928,6 @@ void psCharacter::SetLastLoginTime(const char* last_login, bool save)
     if(!last_login)
     {
         time_t curr=time(0);
-        tm result;
         //TOFIX: gmtime is not thread safe, but windows uses gmtime_s() and linux gmtime_r()
         //       so we need a wrapper function or similar
         tm* gmtm = gmtime(&curr);

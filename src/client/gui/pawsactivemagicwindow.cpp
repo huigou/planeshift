@@ -278,9 +278,7 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 
 void pawsActiveMagicWindow::AutoResize()
 {
-    int horizPadding = 0,
-        vertPadding = 0,
-        buffSize = 0,
+    int buffSize = 0,
         t = 0;
 
     if(!buffList)

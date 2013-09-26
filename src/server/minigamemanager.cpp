@@ -1274,6 +1274,8 @@ bool psMiniGameSession::GameMovePassesRules(MinigamePlayer* mover,
             case DIAGONAL :
                 if(row1==row2 || col1==col2) return false;
                 break;
+            default:
+                break;
         }
     }
 

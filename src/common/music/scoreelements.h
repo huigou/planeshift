@@ -63,6 +63,8 @@ public:
      */
     MeasureElement(Duration duration);
 
+    virtual ~MeasureElement() {}
+
     /**
      * Get the duration of this element.
      *

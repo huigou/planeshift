@@ -1332,7 +1332,7 @@ bool psCharAppearance::SetTrait(Trait * trait)
         trait = trait->next_trait;
     }
 
-    return true;
+    return result;
 }
 
 void psCharAppearance::DefaultMaterial(csString& part)

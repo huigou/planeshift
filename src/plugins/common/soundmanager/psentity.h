@@ -182,7 +182,7 @@ public:
     /**
      * Gets the state of the entity
      */
-    uint GetState()
+    int GetState()
     {
         return state;
     };
@@ -199,7 +199,7 @@ public:
      * play the new state sounds by stopping any eventual playing sound and
      * resetting the delay.
      */
-    void SetState(uint state, bool forceChange, bool setReady);
+    void SetState(int state, bool forceChange, bool setReady);
 
     /**
      * Force this entity to play the sound associated to its current state.
@@ -243,7 +243,7 @@ private:
         int timeOfDayStart;         ///< time when this entity starts playing.
         int timeOfDayEnd;           ///< time when this entity stops.
 
-        uint fallbackState;         ///< the stateID that is activated after this one.
+        int fallbackState;          ///< the stateID that is activated after this one.
         float fallbackProbability;  ///< the probability per second that the fallbackState is activated.
 
         int references;             ///< how many psEntity point to this EntityState.
@@ -254,7 +254,7 @@ private:
     bool isFactoryEntity;               ///< true if this is a factory entity, false if it's a mesh entity.
     csString entityName;                ///< name of the entity associated to this object.
 
-    uint state;                         ///< current state of this entity. A negative value means that this entity is in an undefined state.
+    int state;                         ///< current state of this entity. A negative value means that this entity is in an undefined state.
     int when;                           ///< counter to keep track when it has been played - zero means i may play at any time (in ms)
     uint id;                            ///< the id of the mesh object whose sound is controlled by this entity.
     float minRange;                     ///< minimum distance at which this entity can be heard

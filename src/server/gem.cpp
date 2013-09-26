@@ -4411,7 +4411,6 @@ void gemActor::AddActiveSpell(ActiveSpell* asp)
     activeSpells.Push(asp);
 
     csString   lname = asp->Name();
-    psSpell*   lspell;
     csString   imageName;
     if(!lname)
     {

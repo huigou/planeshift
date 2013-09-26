@@ -48,8 +48,6 @@ bool peMenu::PostSetup()
 
 bool peMenu::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
 {
-pawsFileNavigation * pawsFN;
-
     pePawsManager * pePaws = static_cast<pePawsManager *>(PawsManager::GetSingletonPtr());
     switch ( widget->GetID() )
     {
@@ -60,7 +58,7 @@ pawsFileNavigation * pawsFN;
 
     case 101:
     case 102:
-        pawsFN = pawsFileNavigation::Create("/this/data/gui/","|*.xml|",
+        (void) pawsFileNavigation::Create("/this/data/gui/","|*.xml|",
                                    new OnFileSelected( this , widget->GetID() ), "data/pawseditor/filenavigation.xml");
         return true;
         break;

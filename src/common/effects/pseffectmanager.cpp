@@ -219,7 +219,6 @@ bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * par
 
 bool psEffectManager::LoadFromDirectory(const csString & path, bool includeSubDirs, iView * parentView)
 {
-    bool success = true;
 #ifndef DONT_DO_EFFECTS
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psCSSetup::object_reg);
     assert(vfs);
@@ -256,7 +255,7 @@ bool psEffectManager::LoadFromDirectory(const csString & path, bool includeSubDi
             {
                 if (!LoadFromDirectory(file, true, parentView))
                 {
-                    success = false;
+                    return false;
                 }
             }
         }
