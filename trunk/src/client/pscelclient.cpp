@@ -2101,7 +2101,7 @@ void GEMClientActor::RefreshCal3d()
     }
     if(cal3dstate)
     {
-        cal3dstate->SetCyclicBlendFactor(0.1);
+        cal3dstate->SetCyclicBlendFactor(0.1f);
     }
     CS_ASSERT(cal3dstate || animeshObject);
 }

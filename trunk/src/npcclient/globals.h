@@ -29,7 +29,7 @@
 
 // Forward declarations
 class psNPCClient;
-class iDataConnection;
+struct iDataConnection;
 
 extern psNPCClient* npcclient; ///< Global connection to the NPC Client.
 

@@ -521,7 +521,7 @@ void Tribe::UpdateDeathRate()
 
     float rate = delta;
 
-    float N = 0.9;
+    float N = 0.9f;
 
     deathRate = (1.0-N)*rate + N*deathRate;
     lastDeath = now;
@@ -536,7 +536,7 @@ void Tribe::UpdateResourceRate(int amount)
 
     float rate = delta/amount;
 
-    float N = 0.9;
+    float N = 0.9f;
 
     resourceRate = (1.0-N)*rate + N*resourceRate;
     lastResource = now;
