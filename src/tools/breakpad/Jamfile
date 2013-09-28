@@ -1,6 +1,4 @@
 SubDir TOP src tools breakpad ;
-if $(REPORTER)
-{
   if $(TARGET.OS) = "WIN32"
   {
     Library breakpad :
@@ -16,6 +14,7 @@ if $(REPORTER)
   {
       Library breakpad :
        [ Wildcard client mac handler : *.cc ]
+       [ Wildcard client mac crash_generation : *.cc ]
       ;
   }
 
@@ -30,9 +29,10 @@ if $(REPORTER)
        [ Wildcard client : *.cc ]
        [ Wildcard client linux handler : *.cc ]
        [ Wildcard client linux minidump_writer : *.cc ]
-       [ Wildcard client linux sender : *.cc ]
-       [ Wildcard third_party linux src : *.cc ]
+       [ Wildcard client linux crash_generation : *.cc ]
+       [ Wildcard client linux log : *.cc ]
+       [ Wildcard third_party curl : *.cc ]
+       [ Wildcard third_party lss : *.cc ]
       ;
     }
   }
-}
