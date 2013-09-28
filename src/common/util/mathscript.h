@@ -35,7 +35,7 @@ double round(double value);
 
 class MathScript;
 class MathVar;
-class iDataConnection;
+struct iDataConnection;
 
 /**
  * \addtogroup common_util

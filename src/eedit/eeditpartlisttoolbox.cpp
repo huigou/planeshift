@@ -139,7 +139,7 @@ private:
     float Min, Max, Step;
 
 public:
-    ParticleParameterFloatRow(const char* name, float Min=0, float Max=1, float Step=.1)
+    ParticleParameterFloatRow(const char* name, float Min=0, float Max=1, float Step=.1f)
 	: ParticleParameterRow(name), Min(Min), Max(Max), Step(Step) { }
 
     virtual float GetValue() = 0;
@@ -204,7 +204,7 @@ protected:
     csRef<iParticleBuiltinEmitterSphere> sphere;
 public:
     PPSphereRadius (iParticleBuiltinEmitterSphere* sphere)
-	: ParticleParameterFloatRow("SRadius", 0, 1000, .1), sphere(sphere) { }
+	: ParticleParameterFloatRow("SRadius", 0, 1000, .1f), sphere(sphere) { }
     virtual float GetValue() { return sphere->GetRadius(); }
     virtual void SetValue(float v) { sphere->SetRadius(v); }
 };
@@ -215,7 +215,7 @@ protected:
     csRef<iParticleBuiltinEmitterCone> cone;
 public:
     PPConeAngle (iParticleBuiltinEmitterCone* cone)
-	: ParticleParameterFloatRow("CAngle", 0, 3.1415926, .1), cone(cone) { }
+	: ParticleParameterFloatRow("CAngle", 0, 3.1415926f, .1f), cone(cone) { }
     virtual float GetValue() { return cone->GetConeAngle(); }
     virtual void SetValue(float v) { cone->SetConeAngle(v); }
 };
@@ -226,7 +226,7 @@ protected:
     csRef<iParticleBuiltinEmitterCylinder> cylinder;
 public:
     PPCylinderRadius (iParticleBuiltinEmitterCylinder* cylinder)
-	: ParticleParameterFloatRow("CRadius", 0, 1000, .1), cylinder(cylinder) { }
+	: ParticleParameterFloatRow("CRadius", 0, 1000, .1f), cylinder(cylinder) { }
     virtual float GetValue() { return cylinder->GetRadius(); }
     virtual void SetValue(float v) { cylinder->SetRadius(v); }
 };
@@ -275,7 +275,7 @@ class PPTTL : public ParticleParameterMinMaxRow
 protected:
     csRef<iParticleEmitter> emit;
 public:
-    PPTTL (iParticleEmitter* emit) : ParticleParameterMinMaxRow("TTL", 0, 1000, .1), emit(emit) { }
+    PPTTL (iParticleEmitter* emit) : ParticleParameterMinMaxRow("TTL", 0, 1000, .1f), emit(emit) { }
     virtual float GetMinValue()
     {
 	float ttlmin, ttlmax;
@@ -307,7 +307,7 @@ class PPInitialMass : public ParticleParameterMinMaxRow
 protected:
     csRef<iParticleEmitter> emit;
 public:
-    PPInitialMass (iParticleEmitter* emit) : ParticleParameterMinMaxRow("Mass", 0, 1000, .1), emit(emit) { }
+    PPInitialMass (iParticleEmitter* emit) : ParticleParameterMinMaxRow("Mass", 0, 1000, .1f), emit(emit) { }
     virtual float GetMinValue()
     {
 	float massmin, massmax;
@@ -382,7 +382,7 @@ protected:
     csRef<iParticleBuiltinEmitterBox> box;
 public:
     ParticleParameterBoxVector3Row (const char* name, iParticleBuiltinEmitterBox* box)
-	: ParticleParameterVector3Row (name, -100000, 100000, .1), box(box) { }
+	: ParticleParameterVector3Row (name, -100000, 100000, .1f), box(box) { }
 };
 
 class PPBoxDir1 : public ParticleParameterBoxVector3Row
@@ -492,7 +492,7 @@ protected:
     csRef<iParticleBuiltinEffectorForce> force;
 public:
     PPAcceleration (iParticleBuiltinEffectorForce* force)
-	: ParticleParameterVector3Row ("Acceleration", -1000, 1000, .1), force(force) { }
+	: ParticleParameterVector3Row ("Acceleration", -1000, 1000, .1f), force(force) { }
     virtual csVector3 GetVector() { return force->GetAcceleration(); }
     virtual void SetVector(const csVector3& v) { force->SetAcceleration(v); }
 };
@@ -503,7 +503,7 @@ protected:
     csRef<iParticleBuiltinEffectorForce> force;
 public:
     PPForce (iParticleBuiltinEffectorForce* force)
-	: ParticleParameterVector3Row ("Force", -1000, 1000, .1), force(force) { }
+	: ParticleParameterVector3Row ("Force", -1000, 1000, .1f), force(force) { }
     virtual csVector3 GetVector() { return force->GetForce(); }
     virtual void SetVector(const csVector3& v) { force->SetForce(v); }
 };
@@ -514,7 +514,7 @@ protected:
     csRef<iParticleBuiltinEffectorForce> force;
 public:
     PPRandomAcceleration (iParticleBuiltinEffectorForce* force)
-	: ParticleParameterVector3Row ("RandomAcc", -1000, 1000, .1), force(force) { }
+	: ParticleParameterVector3Row ("RandomAcc", -1000, 1000, .1f), force(force) { }
     virtual csVector3 GetVector() { return force->GetRandomAcceleration(); }
     virtual void SetVector(const csVector3& v) { force->SetRandomAcceleration(v); }
 };
@@ -525,7 +525,7 @@ protected:
     csRef<iParticleBuiltinEmitterBase> emitBase;
 public:
     PPEmitPos (iParticleBuiltinEmitterBase* emitBase)
-	: ParticleParameterVector3Row ("Pos", -1000, 1000, .1), emitBase(emitBase) { }
+	: ParticleParameterVector3Row ("Pos", -1000, 1000, .1f), emitBase(emitBase) { }
     virtual csVector3 GetVector() { return emitBase->GetPosition(); }
     virtual void SetVector(const csVector3& v) { emitBase->SetPosition(v); }
 };
@@ -536,7 +536,7 @@ protected:
     csRef<iParticleBuiltinEmitterBase> emitBase;
 public:
     PPEmitLinVel (iParticleBuiltinEmitterBase* emitBase)
-	: ParticleParameterVector3Row ("VelLinear", -1000, 1000, .1), emitBase(emitBase) { }
+	: ParticleParameterVector3Row ("VelLinear", -1000, 1000, .1f), emitBase(emitBase) { }
     virtual csVector3 GetVector()
     {
 	csVector3 linear, angular;
@@ -557,7 +557,7 @@ protected:
     csRef<iParticleBuiltinEmitterBase> emitBase;
 public:
     PPEmitAngVel (iParticleBuiltinEmitterBase* emitBase)
-	: ParticleParameterVector3Row ("VelAngul", -1000, 1000, .1), emitBase(emitBase) { }
+	: ParticleParameterVector3Row ("VelAngul", -1000, 1000, .1f), emitBase(emitBase) { }
     virtual csVector3 GetVector()
     {
 	csVector3 linear, angular;
@@ -578,7 +578,7 @@ protected:
     csRef<iParticleBuiltinEmitterCone> cone;
 public:
     PPConeExtent (iParticleBuiltinEmitterCone* cone)
-	: ParticleParameterVector3Row ("CExtent", -1000, 1000, .1), cone(cone) { }
+	: ParticleParameterVector3Row ("CExtent", -1000, 1000, .1f), cone(cone) { }
     virtual csVector3 GetVector() { return cone->GetExtent(); }
     virtual void SetVector(const csVector3& v) { cone->SetExtent(v); }
 };
@@ -589,7 +589,7 @@ protected:
     csRef<iParticleBuiltinEmitterCylinder> cylinder;
 public:
     PPCylinderExtent (iParticleBuiltinEmitterCylinder* cylinder)
-	: ParticleParameterVector3Row ("CExtent", -1000, 1000, .1), cylinder(cylinder) { }
+	: ParticleParameterVector3Row ("CExtent", -1000, 1000, .1f), cylinder(cylinder) { }
     virtual csVector3 GetVector() { return cylinder->GetExtent(); }
     virtual void SetVector(const csVector3& v) { cylinder->SetExtent(v); }
 };
@@ -632,7 +632,7 @@ public:
 	csColor4 color;
 	float ttl;
 	lin->GetColor(index,color,ttl);
-	tb->valueNumSpinBox->SetRange(0, 1000000, .1);
+	tb->valueNumSpinBox->SetRange(0, 1000000, .1f);
 	tb->valueScroll1->SetMinValue(0);
 	tb->valueScroll1->SetMaxValue(1);
 	tb->valueScroll2->SetMinValue(0);
@@ -802,7 +802,7 @@ public:
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
-	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->valueNumSpinBox->Show();
 	tb->valueNumSpinBox->SetValue (vfield->GetFParameter(index));
 	tb->addParButton->Show();
@@ -857,13 +857,13 @@ public:
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
 	csVector3 v = vfield->GetVParameter(index);
-	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->valueNumSpinBox->Show();
 	tb->valueNumSpinBox->SetValue (v.x);
-	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->value2NumSpinBox->Show();
 	tb->value2NumSpinBox->SetValue (v.y);
-	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->value3NumSpinBox->Show();
 	tb->value3NumSpinBox->SetValue (v.z);
 	tb->addParButton->Show();
@@ -1043,7 +1043,7 @@ public:
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
-	tb->valueNumSpinBox->SetRange(0, 1000000, .1);
+	tb->valueNumSpinBox->SetRange(0, 1000000, .1f);
 	tb->valueNumSpinBox->Show();
 	const csParticleParameterSet& par = lin->GetParameterSet(index);
 	tb->valueNumSpinBox->SetValue (par.mass);
@@ -1070,7 +1070,7 @@ public:
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
-	tb->valueNumSpinBox->SetRange(0, 1000000, .1);
+	tb->valueNumSpinBox->SetRange(0, 1000000, .1f);
 	tb->valueNumSpinBox->Show();
 	tb->valueNumSpinBox->SetValue (lin->GetEndTTL(index));
 	tb->addParButton->Show();
@@ -1103,11 +1103,11 @@ public:
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
-	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->valueNumSpinBox->Show();
-	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->value2NumSpinBox->Show();
-	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->value3NumSpinBox->Show();
 	const csParticleParameterSet& par = lin->GetParameterSet(index);
 	tb->valueNumSpinBox->SetValue (par.linearVelocity.x);
@@ -1143,11 +1143,11 @@ public:
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
-	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->valueNumSpinBox->Show();
-	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->value2NumSpinBox->Show();
-	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value3NumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->value3NumSpinBox->Show();
 	const csParticleParameterSet& par = lin->GetParameterSet(index);
 	tb->valueNumSpinBox->SetValue (par.angularVelocity.x);
@@ -1233,9 +1233,9 @@ public:
     }
     virtual void FillParticleEditor(EEditParticleListToolbox* tb)
     {
-	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->valueNumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->valueNumSpinBox->Show();
-	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1);
+	tb->value2NumSpinBox->SetRange(-100000, 1000000, .1f);
 	tb->value2NumSpinBox->Show();
 	const csParticleParameterSet& par = lin->GetParameterSet(index);
 	tb->valueNumSpinBox->SetValue (par.particleSize.x);
