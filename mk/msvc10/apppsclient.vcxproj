@@ -1589,6 +1589,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ProjectReference Include="libfparser.vcxproj">
       <Project>{56CFA369-1F2F-7609-9E86-069C1B5F5651}</Project>
     </ProjectReference>
+    <ProjectReference Include="libbreakpad.vcxproj">
+      <Project>{7BD0DB32-E0AD-E520-81A6-F53D07433A63}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
