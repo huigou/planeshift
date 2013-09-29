@@ -572,15 +572,6 @@ private:
     void DeleteAttributes();
 
     /**
-     * Returns the biggest duration that can be represented on the score which is less
-     * or equal to the given one.
-     *
-     * @param duration The maximum duration that must be returned.
-     * @return The duration value.
-     */
-    psMusic::Duration GetBiggestDuration(int duration) const;
-
-    /**
      * Delete the MeasureAttributes object if all its attributes are undefined.
      */
     void UpdateAttributes();

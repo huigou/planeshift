@@ -248,6 +248,16 @@ enum Duration
     DOTTED_WHOLE_DURATION   = 24
 };
 
+
+/**
+ * Returns the biggest duration that can be represented on the score which is less
+ * or equal to the given one.
+ *
+ * @param duration The maximum duration as the number of DURATION_QUARTER_DIVISIONS.
+ * @return The duration value.
+ */
+Duration GetBiggestDuration(int duration);
+
 /**
  * Turns the given pitch into the next one in the scale.
  *

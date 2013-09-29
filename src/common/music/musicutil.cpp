@@ -32,6 +32,28 @@
 #define SCORE_COMPRESSION_FACTOR 3
 
 
+psMusic::Duration psMusic::GetBiggestDuration(int duration)
+{
+    if(DOTTED_WHOLE_DURATION <= duration)
+        return DOTTED_WHOLE_DURATION;
+    else if(WHOLE_DURATION <= duration)
+        return WHOLE_DURATION;
+    else if(DOTTED_HALF_DURATION <= duration)
+        return DOTTED_HALF_DURATION;
+    else if(HALF_DURATION <= duration)
+        return HALF_DURATION;
+    else if(DOTTED_QUARTER_DURATION <= duration)
+        return DOTTED_QUARTER_DURATION;
+    else if(QUARTER_DURATION <= duration)
+        return QUARTER_DURATION;
+    else if(DOTTED_EIGHTH_DURATION <= duration)
+        return DOTTED_EIGHTH_DURATION;
+    else if(EIGHTH_DURATION <= duration)
+        return EIGHTH_DURATION;
+    
+    return SIXTEENTH_DURATION;
+}
+
 void psMusic::NextPitch(char &pitch, uint &octave)
 {
     switch(pitch)
