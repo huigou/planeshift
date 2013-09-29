@@ -39,73 +39,21 @@
 //------------------------------------------------------------------------------------
 // Forward Declarations
 //------------------------------------------------------------------------------------
+// A chord rarely have more than 6 notes
+#define MEASURE_ELEMENT_NOTES_CAPACITY_GROWTH 4
 #define UNDEFINED_MEASURE_ATTRIBUTE -100
 
-struct ScoreContext;
-
-using namespace psMusic;
+class ScoreContext;
+class MeasureElement;
 
 /**
  * \addtogroup common_music
  * @{ */
 
 /**
- * An element of a measure with a given duration. It can be a rest, a single note or a
- * chord.
- */
-class MeasureElement
-{
-public:
-    /**
-     * Constructor.
-     *
-     * @param duration The duration of this element.
-     */
-    MeasureElement(Duration duration);
-
-    virtual ~MeasureElement() {}
-
-    /**
-     * Get the duration of this element.
-     *
-     * @return The duration of this element.
-     */
-    Duration GetDuration() { return duration; }
-
-    /**
-     * Set the duration of this element.
-     *
-     * @param newDuration the new duration for this element.
-     */
-    virtual void SetDuration(Duration newDuration) { duration = newDuration; }
-
-private:
-    Duration duration;
-};
-
-//--------------------------------------------------
-
-/**
- * Represent a rest in the score. The class does not have particular members but its
- * extension could.
- */
-class Rest: public MeasureElement
-{
-public:
-    /**
-     * Constructor.
-     *
-     * @param duration The duration of this rest.
-     */
-    Rest(Duration duration);
-};
-
-//--------------------------------------------------
-
-/**
  * A single note in a musical score.
  */
-class Note: public MeasureElement
+class Note
 {
 public:
     /**
@@ -129,7 +77,7 @@ public:
          * same name and octave as the given one. In case no previous note satisfying the
          * requirements is found, NO_ACCIDENTAL is returned.
          */
-        Accidental GetPreviousAccidental(const Note &note) const;
+        psMusic::Accidental GetPreviousAccidental(const Note &note) const;
 
         /**
          * Empty the list of previously altered note.
@@ -137,18 +85,26 @@ public:
         void ResetContext();
 
         /**
+         * Update the list of previous accidental with all the notes in the given measure
+         * element.
+         *
+         * @param element The current element.
+         */
+        void UpdateContext(const MeasureElement &element);
+
+        /**
          * Update the list of previous accidental if the given note has any.
          *
          * @param note The current played note.
          */
-        void UpdateContext(const Note &context);
+        void UpdateContext(const Note &note);
 
     private:
         /**
         * Previous notes with a written accidental. Accidentals are indexed by note octave
         * and name.
         */
-        csHash<csHash<Accidental, char>, int> prevAccidentals;
+        csHash<csHash<psMusic::Accidental, char>, int> prevAccidentals;
     };
 
     /**
@@ -161,9 +117,8 @@ public:
      * is not related to the tonality of the piece but only on its representation. In
      * other words the variable accidental must be different than UNALTERED if and only if
      * an actual accidental is written on the musical score.
-     * @param duration The duration of this note.
      */
-    Note(char name, int octave, Accidental writtenAccidental, Duration duration);
+    Note(char name, int octave, psMusic::Accidental writtenAccidental);
 
     /**
      * Get the note name.
@@ -189,14 +144,14 @@ public:
      * tonality of the piece. An eventual accidental written on the score previously
      * have the priority.
      */
-    Accidental GetPlayedAccidental(const ScoreContext &context) const;
+    psMusic::Accidental GetPlayedAccidental(const ScoreContext &context) const;
 
     /**
      * Get the written accidental.
      *
      * @return The accidental written on the score for this note.
      */
-    Accidental GetWrittenAccidental() const { return writtenAccidental; }
+    psMusic::Accidental GetWrittenAccidental() const { return writtenAccidental; }
 
     /**
      * Equal operator.
@@ -226,7 +181,7 @@ public:
      *
      * @param accidental The accidental written on the score for this note.
      */
-    void SetWrittenAccidental(Accidental accidental);
+    void SetWrittenAccidental(psMusic::Accidental accidental);
 
 private:
     char name; ///< Uppercase name of the note (C, D, E, F, G, A or B).
@@ -237,21 +192,24 @@ private:
      * anything to do with the tonality. With this representation, one does not have to
      * modify all the notes in the score when changing the tonality of the piece.
      */
-    Accidental writtenAccidental;
+    psMusic::Accidental writtenAccidental;
 };
 
 //--------------------------------------------------
 
 /**
- * A group of notes that must be played together.
+ * An element of a measure with a given duration. It can be a rest, a single note or a
+ * group of notes with same duration that must be played together (a chord).
  */
- class Chord: public MeasureElement
+class MeasureElement
 {
 public:
     /**
-     * Constructor.
+     * Constructor. The default element is a rest of the given duration.
+     *
+     * @param duration The duration of this element.
      */
-    Chord(Duration duration);
+    MeasureElement(psMusic::Duration duration);
 
     /**
      * Copy a note into the chord. If a note with the same name and octave already exists
@@ -263,19 +221,41 @@ public:
      * @param accidental The accidental with which the note is written on the score.
      * @return True if no note was overwritten, false otherwise.
      */
-    bool AddNote(char name, int octave, Accidental writtenAccidental);
+    bool AddNote(char name, int octave, psMusic::Accidental writtenAccidental);
 
     /**
-     * Remove all the notes from the chord.
+     * Get the duration of this element.
+     *
+     * @return The duration of this element.
      */
-    void Empty() { notes.Empty(); }
+    psMusic::Duration GetDuration() { return duration; }
 
     /**
      * Get the number of notes in this chord.
      *
-     * @return the number of notes in this chord.
+     * @return the number of notes in this chord, 0 if this is a rest.
      */
-    size_t GetSize() const { return notes.GetSize(); }
+    size_t GetNNotes() const { return notes.GetSize(); }
+
+    /**
+     * Return the n-th note in the element.
+     *
+     * @param n The number of the note in the element.
+     * @return The n-th note in the element.
+     */
+    Note &GetNote(size_t n) { return notes[n]; }
+
+    /**
+     * @copydoc Note::GetNote(size_t)
+     */
+    const Note &GetNote(size_t n) const { return notes[n]; }
+
+    /**
+     * Return whether this element is a rest or not.
+     *
+     * @return True if this is a rest.
+     */
+    bool IsRest() const { return notes.GetSize() == 0; }
 
     /**
      * Delete a note with the same name and octave.
@@ -290,14 +270,26 @@ public:
      *
      * @param duration the new duration for this element.
      */
-    void SetDuration(Duration duration);
+    void SetDuration(psMusic::Duration duration) { this->duration = duration; }
+
+    /**
+     * Set this element to be a rest. All existing notes are deleted.
+     */
+    void SetRest() { notes.Empty(); }
 
 private:
-    csArray<Note> notes; ///< The sequence of notes in the chord.
+    psMusic::Duration duration; ///< The duration of this element.
+
+    ///< The sequence of notes in the chord.
+    csArray<Note, csArrayElementHandler<Note>, CS::Container::ArrayAllocDefault,
+        csArrayCapacityFixedGrow<MEASURE_ELEMENT_NOTES_CAPACITY_GROWTH>> notes;
 };
 
 //--------------------------------------------------
 
+/**
+ * A measure containing measure elements.
+ */
 class Measure
 {
 public:
@@ -416,12 +408,12 @@ public:
      *
      * @param n The index of the measure element.
      */
-    void DeleteElement(size_t n);
+    void DeleteElement(size_t n) { elements.DeleteIndex(n); }
 
     /**
      * Delete all elements from the measure.
      */
-    void DeleteAllElements();
+    void DeleteAllElements() { elements.Empty(); }
 
     /**
      * Remove the elements at the end of the measures that exceeds the total duration or
@@ -434,7 +426,7 @@ public:
      * this measure specifies both beat and beat type. If this is not the case however,
      * the parameter must specify at least information about beat and beat type.
      */
-    void Fit(const MeasureAttributes* attributes);
+    void Fit(const MeasureAttributes* const attributes);
 
     /**
      * Get a copy of the attributes of this measure.
@@ -447,16 +439,21 @@ public:
      * Get the element at position n.
      *
      * @param n The index of the element.
-     * @return The element or 0 if n is not a valid index.
+     * @return The element.
      */
-    MeasureElement* GetElement(size_t n) { return elements.Get(n); }
+    MeasureElement &GetElement(size_t n) { return elements[n]; }
+
+    /**
+     * @copydoc Measure::GetElement(size_t)
+     */
+    const MeasureElement &GetElement(size_t n) const { return elements[n]; }
 
     /**
      * Get the number of elements in this measure.
      *
      * @return The number of elements in this measure.
      */
-    int GetNElements() { return elements.GetSize(); }
+    size_t GetNElements() const { return elements.GetSize(); }
 
     /**
      * Get the number of time the repeat at the end of this measure must be performed.
@@ -467,14 +464,20 @@ public:
     int GetNEndRepeat() const { return nEndRepeat; }
 
     /**
-     * Insert the given element after element n. The element will be deallocated when the
-     * measure is deleted. If n is greater than the number of elements in this measure,
-     * the element is pushed at the end.
+     * Insert a copy of the given element after element n. If n is greater than the
+     * number of elements in this measure, the element is pushed at the end.
      *
      * @param n The number of the element after which the given element must be inserted.
      * @param element The element to insert in the measure.
      */
-    void InsertElement(size_t n, MeasureElement* element);
+    void InsertElement(size_t n, const MeasureElement &element);
+
+    /**
+     * Check if the measure has at least one element.
+     *
+     * @return True if this measure does not contain elements, false otherwise.
+     */
+    bool IsEmpty() const { return elements.GetSize() == 0; }
 
     /**
      * Return true if this is an ending measure.
@@ -484,19 +487,26 @@ public:
     bool IsEnding() const { return isEnding; }
 
     /**
-     * Return true if this measure starts a repeat.
+     * Return true if this measure ends a repeat section.
      *
-     * @return True if this is the start of a repeat, false otherwise.
+     * @return True if this is the end of a repeat section, false otherwise.
+     */
+    bool IsEndRepeat() const { return nEndRepeat > 0; }
+
+    /**
+     * Return true if this measure starts a repeat section.
+     *
+     * @return True if this is the start of a repeat section, false otherwise.
      */
     bool IsStartRepeat() const { return isStartRepeat; }
 
     /**
-     * Push an element after all the elements currently in the measure. The element will
-     * be deallocated when the measure is deleted.
+     * Push a copy of the given element after all the elements currently in the measure.
      *
      * @param element The element to push in the measure.
+     * @return The index of the pushed element.
      */
-    void PushElement(MeasureElement* element);
+    size_t PushElement(const MeasureElement &element) { return elements.Push(element); }
 
     /**
      * Set the beat information. Both beats and beatType must be defined. If only one of
@@ -528,9 +538,9 @@ public:
     void SetNEndRepeat(int nEndRepeat);
 
     /**
-     * Set this measure to start a repeat.
+     * Set this measure to start a repeat section.
      *
-     * @param isEnding True if this is the start of a repeat, false otherwise.
+     * @param isEnding True if this is the start of a repeat section, false otherwise.
      */
     void SetStartRepeat(bool isStartRepeat);
 
@@ -541,9 +551,9 @@ public:
 
 private:
     bool isEnding; ///< True if this is an ending measure.
-    bool isStartRepeat; ///< True if this measure starts a repeat.
+    bool isStartRepeat; ///< True if this measure starts a repeat section.
     int nEndRepeat; ///< Number of times the repeat must be performed.
-    csArray<MeasureElement*> elements; ///< Elements of this measure.
+    csArray<MeasureElement> elements; ///< Elements of this measure.
 
     /**
      * Attributes of this measure. We keep this allocated object only if the measure
@@ -568,7 +578,7 @@ private:
      * @param duration The maximum duration that must be returned.
      * @return The duration value.
      */
-    Duration GetBiggestDuration(int duration) const;
+    psMusic::Duration GetBiggestDuration(int duration) const;
 
     /**
      * Delete the MeasureAttributes object if all its attributes are undefined.
@@ -579,14 +589,13 @@ private:
 //--------------------------------------------------
 
 /**
- * Keep track of previous accidentals in the same measure and attributes of previous
- * measures when they are not specified in the current one. This struct make sense only
- * when it refers to a specific point in the musical score.
+ * This is used to keep track of everything needed to play a score and provide some
+ * utility functions for this purpose. This class make sense only when it refers to a
+ * specific point in the musical score.
  */
-struct ScoreContext
+class ScoreContext
 {
-    // TODO how to handle repeats for measure attributes?
-
+public:
     /**
      * Used to keep track of previous accidentals in the same measure.
      */
@@ -596,6 +605,60 @@ struct ScoreContext
      * Attributes specified in the score up to now. Must be updated at every measure.
      */
     Measure::MeasureAttributes measureAttributes;
+
+    /**
+     * Constructor.
+     */
+    ScoreContext();
+
+    /**
+     * Return the number of times the eventual repeat in the given measure has been
+     * performed.
+     *
+     * @return The number of times the repeat in the given measure has been performed or
+     * 0 if the measure does not end a repeat section.
+     */
+    int GetNPerformedRepeats(int measureID) const;
+
+    /**
+     * Restore the context of the last measure containing a start repeat. If no explicit
+     * start repeats have been found, the function assumes it to be the first measure.
+     *
+     * @return The ID of the last measure encountered that starts a repeat.
+     */
+    int RestoreLastStartRepeat();
+
+    /**
+     * Update the context with the new measure. This resets also previous accidentals.
+     * Note that you still have to call Update(MeasureElement &) to update the list of
+     * previous accidentals with the first note of this measure.
+     *
+     * @param measureID The ID of the updated measure.
+     * @param measure The new measure reached by the cursor.
+     */
+    void Update(int measureID, const Measure &measure);
+
+    /**
+     * Keep the list of previous accidentals updated.
+     *
+     * @param element The new element reached by the cursor.
+     */
+    void Update(const MeasureElement &element);
+
+private:
+    int lastStartRepeatID; ///< The ID of the last measure containing a start repeat.
+
+    /**
+     * Cache element used to store attributes in the last measure containins a start
+     * repeat.
+     */
+    Measure::MeasureAttributes lastStartRepeatAttributes;
+
+    /**
+     * Keeps track of the repeat sections already performed. It is indexed by measure index and
+     * contains the number of times the repeat has been already performed.
+     */
+    csHash<int, int> repeatsDone;
 };
 
 /** @} */
