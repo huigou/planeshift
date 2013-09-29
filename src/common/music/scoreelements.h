@@ -40,7 +40,7 @@
 // Forward Declarations
 //------------------------------------------------------------------------------------
 // A chord rarely have more than 6 notes
-#define MEASURE_ELEMENT_NOTES_CAPACITY_GROWTH 4
+#define MEAS_ELEM_NOTES_CAPACITY_GROWTH 4
 #define UNDEFINED_MEASURE_ATTRIBUTE -100
 
 class ScoreContext;
@@ -280,9 +280,9 @@ public:
 private:
     psMusic::Duration duration; ///< The duration of this element.
 
-    ///< The sequence of notes in the chord.
+    typedef csArrayCapacityFixedGrow<MEAS_ELEM_NOTES_CAPACITY_GROWTH> NotesArrayCapacity;
     csArray<Note, csArrayElementHandler<Note>, CS::Container::ArrayAllocDefault,
-        csArrayCapacityFixedGrow<MEASURE_ELEMENT_NOTES_CAPACITY_GROWTH>> notes;
+        NotesArrayCapacity> notes; ///< The sequence of notes in the chord.
 };
 
 //--------------------------------------------------
