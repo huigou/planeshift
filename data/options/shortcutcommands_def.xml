@@ -9,7 +9,7 @@
     <shortcut7 name="Yield">/yield</shortcut7>
     <shortcut8 name="Next Player">/target next player</shortcut8>
     <shortcut9 name="Next NPC">/target next npc</shortcut9>
-    <shortcut10 name="Greet">/greet</shortcut10>
+    <shortcut10 name="Greet">/emote greet</shortcut10>
     <shortcut11 name="Online">/who</shortcut11>
     <shortcut12 name="Clear target">/target clear</shortcut12>
     <shortcut13 name="Train">/train</shortcut13>
