@@ -204,6 +204,12 @@ bool pawsShortcutWindow::PostSetup()
     }
 
     MenuBar      = (pawsScrollMenu*)FindWidget( "MenuBar" );
+    if( MenuBar==NULL )
+    {
+        psSystemMessage msg(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Missing MenuBar widget, probably due to obsolete skin"));
+        return false;
+    }
+
     MenuBar->setButtonWidth( buttonWidth );
     MenuBar->SetEditMode( EditMode );
     if( scrollSize>1 )
@@ -264,13 +270,15 @@ bool pawsShortcutWindow::OnButtonPressed( int mouseButton, int keyModifier, paws
 
 bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
 {
-    if( ((pawsDnDButton* )widget)->IsDragDropInProgress() )
+    pawsDnDButton* dndb = dynamic_cast <pawsDnDButton*> (widget);
+    if( dndb && dndb->IsDragDropInProgress() )
     {
         SaveCommands();
         ((pawsDnDButton*)widget)->SetDragDropInProgress( 0 );
-        return true;
+        dndb->SetDragDropInProgress( 0 );
+	return true;
     }
-    if(  psengine->GetSlotManager()->IsDragging() )
+    if( psengine->GetSlotManager()->IsDragging() )
     {
         return true;
     }
@@ -536,7 +544,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     {
         return false;
     }
-return true;
+    return true;
 }
 
 void pawsShortcutWindow::ResetEditWindow()
