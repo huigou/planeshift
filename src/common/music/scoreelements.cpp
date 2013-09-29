@@ -34,28 +34,12 @@
 //------------------------------------------------------------------------------------
 // Forward Declarations
 //------------------------------------------------------------------------------------
+using namespace psMusic;
 
 // 10 octaves are more than enough and each octave contains maximum
 // 7 notes so there is really no need of a bigger hash table
 #define PREV_ACCIDENTALS_NAME_SIZE 7
 #define PREV_ACCIDENTALS_OCTAVE_SIZE 5
-
-// 2 notes is the minimum for a chord and it very rarely gets over 5 notes
-#define NOTES_IN_CAPACITY 5
-
-//--------------------------------------------------
-
-MeasureElement::MeasureElement(Duration duration_)
-: duration(duration_)
-{
-}
-
-//--------------------------------------------------
-
-Rest::Rest(Duration duration)
-: MeasureElement(duration)
-{
-}
 
 //--------------------------------------------------
 
@@ -112,8 +96,16 @@ void Note::NoteContext::UpdateContext(const Note &note)
     }
 }
 
-Note::Note(char name_, int octave_, Accidental writtenAccidental_, Duration duration_)
-: MeasureElement(duration_), octave(octave_), writtenAccidental(writtenAccidental_)
+void Note::NoteContext::UpdateContext(const MeasureElement &element)
+{
+    for(size_t i = 0; i < element.GetNNotes(); i++)
+    {
+        UpdateContext(element.GetNote(i));
+    }
+}
+
+Note::Note(char name_, int octave_, Accidental writtenAccidental_)
+: octave(octave_), writtenAccidental(writtenAccidental_)
 {
     SetName(name_);
 }
@@ -239,14 +231,14 @@ void Note::SetWrittenAccidental(Accidental accidental)
 
 //--------------------------------------------------
 
-Chord::Chord(Duration duration)
-: MeasureElement(duration), notes(NOTES_IN_CAPACITY)
+MeasureElement::MeasureElement(Duration duration_)
+: duration(duration_)
 {
 }
 
-bool Chord::AddNote(char name, int octave, Accidental writtenAccidental)
+bool MeasureElement::AddNote(char name, int octave, Accidental writtenAccidental)
 {
-    Note note(name, octave, writtenAccidental, GetDuration());
+    Note note(name, octave, writtenAccidental);
     size_t noteIdx = notes.Find(note);
     if(noteIdx == csArrayItemNotFound)
     {
@@ -260,19 +252,10 @@ bool Chord::AddNote(char name, int octave, Accidental writtenAccidental)
     }
 }
 
-bool Chord::RemoveNote(char name, int octave)
+bool MeasureElement::RemoveNote(char name, int octave)
 {
-    Note note(name, octave, NO_ACCIDENTAL, GetDuration());
+    Note note(name, octave, NO_ACCIDENTAL);
     return notes.Delete(note);
-}
-
-void Chord::SetDuration(Duration duration_)
-{
-    MeasureElement::SetDuration(duration_);
-    for(size_t i = 0; i < notes.GetSize(); i++)
-    {
-        notes[i].SetDuration(duration_);
-    }
 }
 
 //--------------------------------------------------
@@ -320,26 +303,6 @@ Measure::Measure()
 Measure::~Measure()
 {
     DeleteAttributes();
-
-    DeleteAllElements();
-}
-
-void Measure::DeleteElement(size_t n)
-{
-    if(n < elements.GetSize())
-    {
-        delete elements.Get(n);
-        elements.DeleteIndex(n);
-    }
-}
-
-void Measure::DeleteAllElements()
-{
-    for(size_t i = 0; i < elements.GetSize(); i++)
-    {
-        delete elements.Get(i);
-    }
-    elements.Empty();
 }
 
 void Measure::Fit(const MeasureAttributes* attributes_)
@@ -374,20 +337,20 @@ void Measure::Fit(const MeasureAttributes* attributes_)
     // Determining which notes exceed the measure
     while(cutIdx < elements.GetSize() && currDuration <= measDuration)
     {
-        currDuration += elements.Get(cutIdx)->GetDuration();
+        currDuration += elements[cutIdx].GetDuration();
         cutIdx++;
     }
 
     // Cutting or filling
     if(currDuration > measDuration) // cut
     {
-        int prevDuration = currDuration - elements.Get(cutIdx)->GetDuration();
+        int prevDuration = currDuration - elements.Get(cutIdx).GetDuration();
 
         // If there's a note that exceeds the measure duration we can cut it first
         if(prevDuration < measDuration)
         {
             Duration tempDuration = GetBiggestDuration(measDuration - prevDuration);
-            elements.Get(cutIdx)->SetDuration(tempDuration);
+            elements.Get(cutIdx).SetDuration(tempDuration);
             cutIdx++;
         }
         for(size_t i = elements.GetSize() - 1; i >= cutIdx; i--)
@@ -402,8 +365,7 @@ void Measure::Fit(const MeasureAttributes* attributes_)
         while(currDuration < measDuration)
         {
             tempDuration = GetBiggestDuration(measDuration - currDuration);
-            MeasureElement* rest = new Rest(tempDuration);
-            PushElement(rest);
+            PushElement(MeasureElement(tempDuration));
             currDuration += tempDuration;
         }
     }
@@ -418,19 +380,12 @@ Measure::MeasureAttributes Measure::GetAttributes() const
     return *attributes;
 }
 
-void Measure::InsertElement(size_t n, MeasureElement* element)
+void Measure::InsertElement(size_t n, const MeasureElement &element)
 {
-    CS_ASSERT(element != 0);
     if(!elements.Insert(n, element))
     {
         PushElement(element);
     }
-}
-
-void Measure::PushElement(MeasureElement* element)
-{
-    CS_ASSERT(element != 0);
-    elements.Push(element);
 }
 
 void Measure::SetBeat(int beats, int beatType)
@@ -454,8 +409,8 @@ void Measure::SetBeat(int beats, int beatType)
     {
         attributes->SetBeats(beats);
         attributes->SetBeatType(beatType);
+        UpdateAttributes();
     }
-    UpdateAttributes();
 }
 
 void Measure::SetEnding(bool isEnding_)
@@ -473,8 +428,8 @@ void Measure::SetFifths(int fifths)
     if(attributes != 0)
     {
         attributes->SetFifths(fifths);
+        UpdateAttributes();
     }
-    UpdateAttributes();
 }
 
 void Measure::SetNEndRepeat(int nEndRepeat_)
@@ -498,8 +453,8 @@ void Measure::SetTempo(int tempo)
     if(attributes != 0)
     {
         attributes->SetTempo(tempo);
+        UpdateAttributes();
     }
-    UpdateAttributes();
 }
 
 void Measure::CreateAttributes()
@@ -521,8 +476,6 @@ void Measure::DeleteAttributes()
 
 Duration Measure::GetBiggestDuration(int duration) const
 {
-    CS_ASSERT(duration > 0);
-
     if(DOTTED_WHOLE_DURATION <= duration)
         return DOTTED_WHOLE_DURATION;
     else if(WHOLE_DURATION <= duration)
@@ -545,8 +498,54 @@ Duration Measure::GetBiggestDuration(int duration) const
 
 void Measure::UpdateAttributes()
 {
-    if(attributes->IsUndefined())
+    if(attributes != 0)
     {
-        DeleteAttributes();
+        if(attributes->IsUndefined())
+        {
+            DeleteAttributes();
+        }
+    }
+}
+
+//--------------------------------------------------
+
+ScoreContext::ScoreContext()
+: lastStartRepeatID(0)
+{
+}
+
+int ScoreContext::GetNPerformedRepeats(int measureID) const
+{
+    return repeatsDone.Get(measureID, 0);
+}
+
+int ScoreContext::RestoreLastStartRepeat()
+{
+    measureAttributes = lastStartRepeatAttributes;
+    return lastStartRepeatID;
+}
+
+void ScoreContext::Update(const MeasureElement &element)
+{
+    noteContext.UpdateContext(element);
+}
+
+void ScoreContext::Update(int measureID, const Measure &measure)
+{
+    noteContext.ResetContext();
+    measureAttributes.UpdateAttributes(measure.GetAttributes());
+
+    if(measure.IsStartRepeat())
+    {
+        lastStartRepeatID = measureID;
+        lastStartRepeatAttributes = measureAttributes;
+
+        // we don't need previous repeats anymore at this point
+        repeatsDone.DeleteAll();
+    }
+
+    if(measure.GetNEndRepeat() > 0 && !repeatsDone.Contains(measureID))
+    {
+        repeatsDone.Put(measureID, 0);
     }
 }
