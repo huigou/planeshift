@@ -85,6 +85,9 @@
 /// The number of characters per email account
 #define CHARACTERS_ALLOWED 4
 
+/// The max number of items which can be stored in one category at a banker NPC
+#define MAX_ITEMS_IN_CATEGORY 200
+
 ServerCharManager::ServerCharManager(CacheManager* cachemanager, GEMSupervisor* gemsupervisor)
 {
     cacheManager = cachemanager;
@@ -1559,6 +1562,12 @@ bool ServerCharManager::SendStorageItems( Client *client, psCharacter* character
         if (items[z]->IsEquipped())
             continue;
 
+        // we safely send only the first MAX_ITEMS_IN_CATEGORY stacks to avoid server sending a corrupted list
+        if (z>=MAX_ITEMS_IN_CATEGORY) {
+            psserver->SendSystemError(client->GetClientNum(), "The list of items exceeds the allowed max. Showing only the first %d.",MAX_ITEMS_IN_CATEGORY);
+            break;
+        }
+
         csString escpxml_name = EscpXML(items[z]->GetName());
         csString escpxml_imagename = EscpXML(items[z]->GetImageName());
         item.Format("<ITEM ID=\"%u\" "
@@ -1743,24 +1752,27 @@ void ServerCharManager::HandleStorageCategory(psGUIStorageMessage& msg, Client *
     if (VerifyStorage(client, character,&storage,"category","",storageNode->GetAttributeValueAsInt("ID")))
     {
         csString category = storageNode->GetAttributeValue("CATEGORY");
+        // check if category exists
         psItemCategory * itemCategory = cacheManager->GetItemCategoryByName(category);
         if (!itemCategory)
         {
-            CPrintf(CON_DEBUG, "Player %s fails to get items in category %s. Unkown category!\n",
+            CPrintf(CON_DEBUG, "Player %s fails to get items in category %s. Unknown category!\n",
                 character->GetCharName(), (const char*)category);
             return;
         }
+        // check if banker is alive
         if (!storage->GetActor()->IsAlive())
         {
             psserver->SendSystemInfo(client->GetClientNum(), "You can't manage your storage with a dead storage owner.");
             return;
         }
 
-        // Send item list for given category
+        // Send banker item list for given category
         if (character->GetTradingStatus() == psCharacter::WITHDRAWING)
         {
             SendStorageItems( client, character, itemCategory );
         }
+        // Send player item list for given category
         else
         {
             SendPlayerItems( client, itemCategory, true );
@@ -1906,6 +1918,15 @@ void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *cli
             return;
         }
 
+        // Check if category didn't exceed the max number of items
+        // We allow max 200 items in a category to avoid network size message overflow
+        csArray<psItem*> items = client->GetCharacterData()->Inventory().GetItemsInCategory(item->GetCategory(),true);
+        if (items.GetSize()>=MAX_ITEMS_IN_CATEGORY)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You can't store more than %d stacks in a single category.",MAX_ITEMS_IN_CATEGORY);
+            return;
+        }
+
         count = csMin(count, (int)item->GetStackCount());
         csString name(item->GetName());
 
@@ -1920,7 +1941,7 @@ void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *cli
         SendPlayerMoney(client, true);
         SendPlayerItems( client, item->GetCategory(), true );
 
-        //move item to player storage
+        // move item to player storage
         character->Inventory().AddStorageItem(item);
         item->SetLocInParent(PSCHARACTER_SLOT_STORAGE);
         item->Save(false);
