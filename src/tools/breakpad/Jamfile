@@ -6,6 +6,7 @@ SubDir TOP src tools breakpad ;
      [ Wildcard client windows crash_generation : *.cc ]
      [ Wildcard client windows handler : *.cc ]
      [ Wildcard client windows sender : *.cc ]
+     [ Wildcard client windows common : *.cc ]
     ;
     MsvcDefine breakpad : UNICODE _UNICODE ;
   }
