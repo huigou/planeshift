@@ -3,10 +3,10 @@ SubDir TOP src tools breakpad ;
   {
     Library breakpad :
      [ Wildcard common windows : *.cc *.h ]
-     [ Wildcard client windows crash_generation : *.cc ]
-     [ Wildcard client windows handler : *.cc ]
-     [ Wildcard client windows sender : *.cc ]
-     [ Wildcard client windows common : *.cc ]
+     [ Wildcard client windows crash_generation : *.cc *.h ]
+     [ Wildcard client windows handler : *.cc *.h ]
+     [ Wildcard client windows sender : *.cc *.h ]
+     [ Wildcard client windows common : *.h ]
     ;
     MsvcDefine breakpad : UNICODE _UNICODE ;
   }
