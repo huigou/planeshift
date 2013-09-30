@@ -1757,6 +1757,30 @@
 			Name="Header Files"
 			Filter="">
 			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\common\auto_critical_section.h">
+			</File>
+			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\common\ipc_protocol.h">
+			</File>
+			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\crash_generation\client_info.h">
+			</File>
+			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\crash_generation\crash_generation_client.h">
+			</File>
+			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\crash_generation\crash_generation_server.h">
+			</File>
+			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\crash_generation\minidump_generator.h">
+			</File>
+			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\handler\exception_handler.h">
+			</File>
+			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\sender\crash_report_sender.h">
+			</File>
+			<File
 				RelativePath="..\..\src\tools\breakpad\common\windows\guid_string.h">
 			</File>
 			<File
