@@ -1364,6 +1364,14 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\tools\breakpad\common\windows\string_utils.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\tools\breakpad\client\windows\common\auto_critical_section.h" />
+    <ClInclude Include="..\..\src\tools\breakpad\client\windows\common\ipc_protocol.h" />
+    <ClInclude Include="..\..\src\tools\breakpad\client\windows\crash_generation\client_info.h" />
+    <ClInclude Include="..\..\src\tools\breakpad\client\windows\crash_generation\crash_generation_client.h" />
+    <ClInclude Include="..\..\src\tools\breakpad\client\windows\crash_generation\crash_generation_server.h" />
+    <ClInclude Include="..\..\src\tools\breakpad\client\windows\crash_generation\minidump_generator.h" />
+    <ClInclude Include="..\..\src\tools\breakpad\client\windows\handler\exception_handler.h" />
+    <ClInclude Include="..\..\src\tools\breakpad\client\windows\sender\crash_report_sender.h" />
     <ClInclude Include="..\..\src\tools\breakpad\common\windows\guid_string.h" />
     <ClInclude Include="..\..\src\tools\breakpad\common\windows\http_upload.h" />
     <ClInclude Include="..\..\src\tools\breakpad\common\windows\string_utils-inl.h" />
