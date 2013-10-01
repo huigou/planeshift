@@ -1732,6 +1732,9 @@
 				RelativePath="..\..\src\tools\breakpad\client\windows\crash_generation\client_info.cc">
 			</File>
 			<File
+				RelativePath="..\..\src\tools\breakpad\client\windows\crash_generation\crash_generation_client.cc">
+			</File>
+			<File
 				RelativePath="..\..\src\tools\breakpad\client\windows\crash_generation\crash_generation_server.cc">
 			</File>
 			<File
