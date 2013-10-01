@@ -1355,6 +1355,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\tools\breakpad\client\windows\crash_generation\client_info.cc" />
+    <ClCompile Include="..\..\src\tools\breakpad\client\windows\crash_generation\crash_generation_client.cc" />
     <ClCompile Include="..\..\src\tools\breakpad\client\windows\crash_generation\crash_generation_server.cc" />
     <ClCompile Include="..\..\src\tools\breakpad\client\windows\crash_generation\minidump_generator.cc" />
     <ClCompile Include="..\..\src\tools\breakpad\client\windows\handler\exception_handler.cc" />
