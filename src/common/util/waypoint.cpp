@@ -274,9 +274,7 @@ void Waypoint::RemoveAlias(csString aliasName)
     {
         if (aliasName.CompareNoCase(aliases[i]->alias))
         {
-            WaypointAlias* alias = aliases[i];
             aliases.DeleteIndexFast(i);
-            delete alias;
             return;
         }
     }
