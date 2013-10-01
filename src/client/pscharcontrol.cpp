@@ -136,7 +136,10 @@ uint32 GetPSMouseMods(const iEvent* event)
         return 0;
     }
     uint32 modifiers;
-    event->Retrieve("keyModifiers", modifiers);
+    const void* m;
+    size_t mSize;
+    (void) event->Retrieve("keyModifiers", m, mSize);
+    modifiers = csKeyEventHelper::GetModifiersBits (*((csKeyModifiers*)m));
     return modifiers & PS_MODS_MASK;
 }
 
