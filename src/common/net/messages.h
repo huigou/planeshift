@@ -394,6 +394,7 @@ csString GetMsgTypeName(int msgType);
 void DecodeMessage(MsgEntry* me, NetBase::AccessPointers* accessPointers, bool filterhex, csString &msgText, int &filterNumber);
 
 void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, const char* msgtypename);
+void psfUnRegisterMsgFactories(void);
 psMessageCracker* psfCreateMsg(int msgtype,
                                MsgEntry* me,
                                NetBase::AccessPointers* accessPointers);

@@ -7929,6 +7929,12 @@ void psfRegisterMsgFactoryFunction(psfMsgFactoryFunc factoryfunc, int msgtype, c
     msgfactory->messages.Push(newfac);
 }
 
+void psfUnRegisterMsgFactories(void)
+{
+    if (msgfactory)
+        msgfactory->messages.DeleteAll();
+}
+
 psMessageCracker* psfCreateMsg(int msgtype,
                                MsgEntry* me,
                                NetBase::AccessPointers* accessPointers)
