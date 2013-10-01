@@ -134,9 +134,9 @@ INSERT INTO `item_instances` VALUES (140,2,0,0,26,1,0,0,0,0,0,0,0,0,0,0,0,50,50,
 
 # Wooden bowl and contents
 INSERT INTO `item_instances` VALUES (75,0,0,0,0,1,0,0,0,3,-3.7,1.07,-180.58,0,0,0,0,50,50,70,0,'NOPICKUP',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (76,0,2,70,1,1,0,0,0,3,0,0,0,0,0,0,0,50,-1,60,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (77,0,2,70,2,2,0,0,0,3,0,0,0,0,0,0,0,50,-1,61,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (78,0,2,70,3,7,0,0,0,3,0,0,0,0,0,0,0,50,-1,62,0,'',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (76,0,2,75,1,1,0,0,0,3,0,0,0,0,0,0,0,50,-1,60,0,'',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (77,0,2,75,2,2,0,0,0,3,0,0,0,0,0,0,0,50,-1,61,0,'',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (78,0,2,75,3,7,0,0,0,3,0,0,0,0,0,0,0,50,-1,62,0,'',0,-1,'','','',NULL,'0',0,0,0);
 
 # Book container and contents
 INSERT INTO `item_instances` VALUES (80,0,0,0,0,1,0,0,0,3,-56.16,-3,-154.73,0,4.74,0,0,50,50,234,0,'NOPICKUP',0,-1,'','','',NULL,'0',0,0,0);
