@@ -72,12 +72,6 @@ SoundSystemManager::~SoundSystemManager ()
 
     UpdateSound();
 
-    // FIXME we must delete all SoundControls
-    for (size_t i = 0; i < soundController.GetSize(); i++)
-    {
-        delete soundController[i];
-    }
-    
     soundController.DeleteAll();
 
     delete soundSystem;
@@ -214,7 +208,6 @@ Play3DSound (const char *name, bool loop, size_t loopstart, size_t loopend,
 void SoundSystemManager::StopSound (SoundHandle *handle)
 {
     soundHandles.Delete(handle);
-    delete handle;
 }
 
 /*

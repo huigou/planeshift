@@ -27,7 +27,7 @@
 #include <cssysdef.h>
 #include <iutil/objreg.h>
 #include <csgeom/vector3.h>
-#include <csutil/array.h>
+#include <csutil/parray.h>
 
 class SoundSystem;
 class SoundData;
@@ -160,9 +160,9 @@ class SoundSystemManager
     private:
     SoundSystem         *soundSystem;
     SoundData           *soundData;
-    csArray<SoundControl *> soundController;    ///< array which contains  all SoundControls
+    csPDelArray<SoundControl> soundController;  ///< array which contains all SoundControls
 
-    csArray<SoundHandle *>  soundHandles;       ///< array which contains all SoundHandles
+    csPDelArray<SoundHandle> soundHandles;      ///< array which contains all SoundHandles
 
     csTicks                 SndTime;            ///< current csticks
     csTicks                 LastUpdateTime;     ///< when the last update happened
