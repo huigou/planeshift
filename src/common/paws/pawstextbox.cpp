@@ -2655,7 +2655,7 @@ unsigned int pawsDocumentView::ProcessPictureInfo(iDocumentNode* node)
 void pawsDocumentView::OrganizeContent(const char* newtext)
 {
     csString str(newtext);
-    csRef<iDocumentNode> root = ParseStringGetNode(str, "Contents");
+    csRef<iDocumentNode> root = ParseStringGetNode(str, "Contents", false);
 
     if(root == 0)
         return;
@@ -3029,7 +3029,7 @@ unsigned int pawsMultiPageDocumentView::ProcessPictureInfo(iDocumentNode* node)
 void pawsMultiPageDocumentView::OrganizeContent(const char* newtext)
 {
     csString str(newtext);
-    csRef<iDocumentNode> root = ParseStringGetNode(str, "Contents");
+    csRef<iDocumentNode> root = ParseStringGetNode(str, "Contents", false);
 
     if(root == 0)
         return;
