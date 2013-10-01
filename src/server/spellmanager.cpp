@@ -116,6 +116,12 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
         }
     }
     
+    if (assembler.GetSize() == 0)
+    {
+        psserver->SendSystemError(client->GetClientNum(), "There are no glyphs in the research slots.");
+        return;
+    }
+
     if (!client->GetCharacterData()->Inventory().HasPurifiedGlyphs(assembler))
     {
         Error2("Client %i tried to research spell with glyphs he actually doesn't have", client->GetClientNum());
