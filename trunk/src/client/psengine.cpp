@@ -1997,6 +1997,9 @@ int main(int argc, char* argv[])
     delete psengine;
     psengine = NULL;
 
+    // Free registered message factories.
+    psfUnRegisterMsgFactories();
+
     delete CSSetup;
 
     Notify1(LOG_ANY,"Destroying application...");

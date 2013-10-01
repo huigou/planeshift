@@ -30,6 +30,7 @@
 #include "util/serverconsole.h"
 #include "util/log.h"
 #include "util/pscssetup.h"
+#include "net/messages.h"
 
 
 // ----------------------------------------------------------------
@@ -79,7 +80,9 @@ int main(int argc, char **argv)
     psserver->MainLoop ();
     
     delete psserver;
-    
+
+    // Free registered message factories.
+    psfUnRegisterMsgFactories();
 
     // Save Configuration
     csRef<iConfigManager> cfgmgr= csQueryRegistry<iConfigManager> (object_reg);
