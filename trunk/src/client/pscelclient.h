@@ -342,7 +342,7 @@ protected:
     GEMClientActor* local_player;
 
     csList<UnresolvedPos*> unresPos;   ///< list of entities with unresolved location
-    iSector* unresSector;              ///< sector where we keep these entities
+    csRef<iSector> unresSector;        ///< sector where we keep these entities
 };
 
 enum GEMOBJECT_TYPE

@@ -126,16 +126,20 @@ psCelClient::~psCelClient()
         msghandler->Unsubscribe(this, MSGTYPE_MECS_ACTIVATE);
     }
 
-    if(clientdr)
-        delete clientdr;
-    if(entityLabels)
-        delete entityLabels;
-    if(shadowManager)
-        delete shadowManager;
-
+    delete clientdr;
+    delete entityLabels;
+    delete shadowManager;
 
     entities.DeleteAll();
     entities_hash.DeleteAll();
+
+    // Delete effectItems
+    csHash<ItemEffect*, csString>::GlobalIterator i = effectItems.GetIterator();
+    while (i.HasNext())
+    {
+        delete i.Next();
+    }
+    effectItems.DeleteAll();
 }
 
 
@@ -380,7 +384,11 @@ void psCelClient::LoadEffectItems()
                     ie->lights.PushSmart(li);
                 }
                 ie->activeOnGround = itemeffect->GetAttributeValueAsBool("activeonground");
-                effectItems.PutUnique(csString(itemeffect->GetAttributeValue("meshname")), ie);
+                csString meshname = itemeffect->GetAttributeValue("meshname");
+                if (!effectItems.Get(meshname, 0))
+                    effectItems.Put(meshname, ie);
+                else
+                    delete ie;
             }
         }
     }
@@ -1156,6 +1164,7 @@ GEMClientObject::~GEMClientObject()
         cel->UnattachObject(pcmesh->QueryObject(), this);
         psengine->GetEngine()->RemoveObject(pcmesh);
     }
+    psengine->UnregisterDelayedLoader(this);
 }
 
 int GEMClientObject::GetMasqueradeType(void)
@@ -1618,11 +1627,7 @@ csVector3 GEMClientActor::Rot() const
 
 iSector* GEMClientActor::GetSector() const
 {
-    csVector3 pos;
-    float yrot;
-    iSector* sector;
-    linmove->GetLastPosition(pos,yrot, sector);
-    return sector;
+    return linmove->GetSector();
 }
 
 bool GEMClientActor::NeedDRUpdate(unsigned char &priority)
