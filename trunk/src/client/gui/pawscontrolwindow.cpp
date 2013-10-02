@@ -98,6 +98,7 @@ bool pawsControlWindow::PostSetup()
     AddWindow( "SkillWindow" ,       "SkillsButton" );
     AddWindow( "QuestNotebook" ,     "QuestButton" );
     AddWindow( "GuildWindow" ,       "GuildButton" );
+    AddWindow( "ActiveMagicWindow" ,       "ActiveMagicButton" );
 
     keyboard = csQueryRegistry<iKeyboardDriver> (PawsManager::GetSingleton().GetObjectRegistry());
 
@@ -418,6 +419,11 @@ void pawsControlWindow::Register( pawsControlledWindow* window )
     Icon * icon = new Icon;
     icon->window = window;
     icon->theirButton = FindButtonFromWindow( window->GetName() );
+    if( icon->theirButton==NULL )
+    {
+        Error2("pawsControlWindow::Register couldn't find window %s!", window->GetName() );
+        return;
+    }
     icon->orgRes = icon->theirButton->GetBackground();
     icon->IsActive = false;
     icon->IsOver = false;
