@@ -49,7 +49,7 @@
         </widget>
 
         <widget name="HelpButton" factory="pawsButton" id="300" tooltip="Help" sound="gui.toolbar">
-            <frame x="192" y="1" width="64" height="64" /> 
+            <frame x="192" y="1" width="64" height="64" />
             <bgimage resource="HelpButton" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -172,6 +172,17 @@
         <widget name="SkillsButton" factory="pawsButton" id="1400" tooltip="Stats and Skills" sound="gui.toolbar">
             <frame x="896" y="1" width="64" height="64" />
             <bgimage resource="SkillsButton" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_BOTTOM" />
+                <attach point="PROPORTIONAL_TOP" />
+            </attachpoints>
+        </widget>
+
+        <widget name="ActiveMagicButton" factory="pawsButton" id="1500" tooltip="Active Magic Bar" sound="gui.toolbar">
+            <frame x="960" y="1" width="64" height="64" />
+            <bgimage resource="HotBarButton" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
