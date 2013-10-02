@@ -957,7 +957,7 @@ bool MathExpression::Parse(const char *exp)
         tokens.Push(exp+start);
 
     // return statements are treated specially
-    if (tokens[0] == "return")
+    if (tokens.GetSize() && tokens[0] == "return")
     {
         tokens.DeleteIndex(0);
         opcode |= MATH_BREAK;
