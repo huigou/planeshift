@@ -1497,7 +1497,7 @@ class FxOp : public ImperativeOp
 {
 public:
     FxOp() : ImperativeOp(), effectScale(NULL) { }
-    virtual ~FxOp() { }
+    virtual ~FxOp() { delete effectScale; }
 
     bool Load(iDocumentNode* top)
     {
@@ -1652,7 +1652,6 @@ public:
         entityManager = entitymanager;
         loadDelay = NULL;
         background = "";
-        point1X = NULL;
         point1X = NULL;
         point1Y = NULL;
         point2X = NULL;
@@ -2541,7 +2540,7 @@ protected:
 class ItemOp : public Imperative1
 {
 public:
-    ItemOp(CacheManager* cachemanager)
+    ItemOp(CacheManager* cachemanager) : Imperative1(), count(NULL)
     {
         cacheManager = cachemanager;
     }
@@ -2728,8 +2727,8 @@ private:
 class TutorialMsgOp : public Imperative1
 {
 public:
-    TutorialMsgOp() : Imperative1() { }
-    virtual ~TutorialMsgOp() { }
+    TutorialMsgOp() : Imperative1(), expr(0) { }
+    virtual ~TutorialMsgOp() { delete expr; }
 
     bool Load(iDocumentNode* top)
     {
@@ -2764,18 +2763,27 @@ protected:
 class MechanismMsgOp : public Imperative1
 {
 public:
-    virtual ~MechanismMsgOp() { }
+    MechanismMsgOp() : Imperative1(), expr1(NULL), expr2(NULL), expr3(NULL)
+    {
+    }
+
+    virtual ~MechanismMsgOp()
+    {
+        delete expr1;
+        delete expr2;
+        delete expr3;
+    }
 
     bool Load(iDocumentNode* node)
     {
         mesh = node->GetAttributeValue("mesh");
         move = node->GetAttributeValue("move");
         rot = node->GetAttributeValue("rot");
-        expr = MathExpression::Create(node->GetAttributeValue("mesh"));
-        expr = MathExpression::Create(node->GetAttributeValue("move"));
-        expr = MathExpression::Create(node->GetAttributeValue("rot"));
+        expr1 = MathExpression::Create(node->GetAttributeValue("mesh"));
+        expr2 = MathExpression::Create(node->GetAttributeValue("move"));
+        expr3 = MathExpression::Create(node->GetAttributeValue("rot"));
 
-        return Imperative1::Load(node) && expr!=NULL;
+        return Imperative1::Load(node) && expr1 && expr2 && expr3;
     }
 
     virtual void Run(MathEnvironment* env)
@@ -2830,7 +2838,9 @@ protected:
     csString mesh;        ///< the mesh to activate
     csString move;        ///< the movement coords x,y,z
     csString rot;         ///< the rotation matrix
-    MathExpression* expr; ///< The mesh name passed as parameter
+    MathExpression* expr1;
+    MathExpression* expr2;
+    MathExpression* expr3;
 };
 
 //============================================================================
