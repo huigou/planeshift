@@ -394,8 +394,11 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlo
 
         if (slotDesc->name.CompareNoCase(itemName))
         {
-            from = slotDesc;
-            break;  // We found an item, so breaking the search
+            if (slotDesc->containerID == CONTAINER_INVENTORY_BULK)
+            {
+                from = slotDesc;
+                break;  // We found an item, so breaking the search
+            }
         }
     }
 
