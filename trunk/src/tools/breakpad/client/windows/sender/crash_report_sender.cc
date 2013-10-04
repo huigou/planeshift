@@ -61,17 +61,19 @@ ReportResult CrashReportSender::SendCrashReport(
     const wstring &url, const map<wstring, wstring> &parameters,
     const wstring &dump_file_name, wstring *report_code) {
   int today = GetCurrentDate();
+  wprintf(L"CrashReportSender::SendCrashReport 1 %s %s\n",url.c_str(), dump_file_name.c_str());
   if (today == last_sent_date_ &&
       max_reports_per_day_ != -1 &&
       reports_sent_ >= max_reports_per_day_) {
     return RESULT_THROTTLED;
   }
+  fprintf(stderr,"CrashReportSender::SendCrashReport 2\n");
 
   int http_response = 0;
   bool result = HTTPUpload::SendRequest(
     url, parameters, dump_file_name, L"upload_file_minidump", NULL, report_code,
     &http_response);
-
+  fprintf(stderr,"CrashReportSender::SendCrashReport 3\n");
   if (result) {
     ReportSent(today);
     return RESULT_SUCCEEDED;

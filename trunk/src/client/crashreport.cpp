@@ -19,12 +19,13 @@
 // Code for wrapping around Google Breakpad.
 
 #include <psconfig.h>
+#include "util/log.h"
 
 // Mac uses a different breakpad library. Disabled in Debug.
 #if defined(CS_DEBUG) || defined(CS_PLATFORM_MACOSX)
 #undef USE_BREAKPAD
 #endif
-
+#define USE_BREAKPAD
 #ifdef USE_BREAKPAD
 #ifdef WIN32
 #include "resource.h"
@@ -227,8 +228,17 @@ BOOL CALLBACK CrashReportProc(HWND hwndDlg,
 } 
 #endif
 
-// This function should not modify the heap!
+
 #ifdef WIN32
+std::wstring s2ws(const std::string& str)
+{
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+    std::wstring wstrTo( size_needed, 0 );
+    MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+    return wstrTo;
+}
+
+// This function should not modify the heap!
 bool UploadDump(const PS_CHAR* dump_path,
                      const PS_CHAR* minidump_id,
                      void* context,
@@ -248,11 +258,22 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
     fprintf( stderr, "****UploadDump descriptor location = %x  dir = %s\n", &descriptor, descriptor.path() );
 #endif
 
-    PS_CHAR path_file[PS_PATH_MAX + 1];
-	path_file[0] = '\0';
-    PS_STRNCAT(path_file, dump_path, PS_PATH_MAX );
+	Error1("Upload DUMP started");
 
     time_t crash_time = time(NULL);
+
+    PS_CHAR path_file[PS_PATH_MAX + 1];
+	path_file[0] = '\0';
+    PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
+    PS_CHAR* p_path = path_file;
+    
+    PS_STRNCAT(path_file, dump_path, PS_PATH_MAX);
+    p_path += PS_STRLEN(path_file);
+    PS_STRCAT(path_file, PS_PATH_SEP);
+    p_path += PS_STRLEN(PS_PATH_SEP);
+    PS_STRNCAT(path_file, minidump_id, p_path_end - p_path);
+    p_path += PS_STRLEN(minidump_id);
+    PS_STRNCAT(path_file, DUMP_EXTENSION, p_path_end - p_path);
 
 #ifdef WIN32
 
@@ -282,6 +303,9 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 
     bool result = false;
 #ifdef WIN32
+	wprintf(L"WIN32 SendReport url %s\n",crash_post_url);
+	wprintf(L"WIN32 SendReport path_file %s\n",path_file);
+	wprintf(L"WIN32 SendReport dump_path %s\n",dump_path);
     ReportResult reportResult = BreakPadWrapper::wrapperCrash_sender->SendCrashReport(crash_post_url,
 		    BPwrapper.parameters,
 		    path_file,
