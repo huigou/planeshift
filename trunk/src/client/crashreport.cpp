@@ -230,13 +230,6 @@ BOOL CALLBACK CrashReportProc(HWND hwndDlg,
 
 
 #ifdef WIN32
-std::wstring s2ws(const std::string& str)
-{
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
-    std::wstring wstrTo( size_needed, 0 );
-    MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
-    return wstrTo;
-}
 
 // This function should not modify the heap!
 bool UploadDump(const PS_CHAR* dump_path,
@@ -265,17 +258,18 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
     PS_CHAR path_file[PS_PATH_MAX + 1];
 	path_file[0] = '\0';
     PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
-    PS_CHAR* p_path = path_file;
     
     PS_STRNCAT(path_file, dump_path, PS_PATH_MAX);
+
+
+#ifdef WIN32
+    PS_CHAR* p_path = path_file;
     p_path += PS_STRLEN(path_file);
     PS_STRCAT(path_file, PS_PATH_SEP);
     p_path += PS_STRLEN(PS_PATH_SEP);
     PS_STRNCAT(path_file, minidump_id, p_path_end - p_path);
     p_path += PS_STRLEN(minidump_id);
     PS_STRNCAT(path_file, DUMP_EXTENSION, p_path_end - p_path);
-
-#ifdef WIN32
 
 	INT_PTR dialogResult = DialogBox(GetModuleHandle(0), 
               MAKEINTRESOURCE(IDD_CRASH), 
