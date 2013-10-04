@@ -26,6 +26,7 @@
 #undef USE_BREAKPAD
 #endif
 #define USE_BREAKPAD
+
 #ifdef USE_BREAKPAD
 #ifdef WIN32
 #include "resource.h"
@@ -245,7 +246,7 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
                      bool succeeded)
 {
 
-    const wchar_t* dump_path = descriptor.path();
+    const char* dump_path = descriptor.path();
     fprintf( stderr, "****UploadDump sending file \n");
     sleep(5);
     fprintf( stderr, "****UploadDump descriptor location = %x  dir = %s\n", &descriptor, descriptor.path() );
