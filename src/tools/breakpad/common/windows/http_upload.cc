@@ -72,12 +72,12 @@ bool HTTPUpload::SendRequest(const wstring &url,
   if (response_code) {
     *response_code = 0;
   }
-
+  wprintf(L"HTTPUpload::SendRequest 1 %s %s \n",url.c_str(), upload_file.c_str());
   // TODO(bryner): support non-ASCII parameter names
   if (!CheckParameters(parameters)) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::SendRequest 2\n");
   // Break up the URL and make sure we can handle it
   wchar_t scheme[16], host[256], path[256];
   URL_COMPONENTS components;
@@ -89,26 +89,29 @@ bool HTTPUpload::SendRequest(const wstring &url,
   components.dwHostNameLength = sizeof(host) / sizeof(host[0]);
   components.lpszUrlPath = path;
   components.dwUrlPathLength = sizeof(path) / sizeof(path[0]);
+  wprintf(L"HTTPUpload::SendRequest %s \n",url.c_str());
   if (!InternetCrackUrl(url.c_str(), static_cast<DWORD>(url.size()),
                         0, &components)) {
     return false;
   }
+  fprintf(stderr,"HTTPUpload::SendRequest 3\n");
   bool secure = false;
   if (wcscmp(scheme, L"https") == 0) {
     secure = true;
   } else if (wcscmp(scheme, L"http") != 0) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::SendRequest 4\n");
   AutoInternetHandle internet(InternetOpen(kUserAgent,
                                            INTERNET_OPEN_TYPE_PRECONFIG,
                                            NULL,  // proxy name
                                            NULL,  // proxy bypass
                                            0));   // flags
+  fprintf(stderr,"HTTPUpload::SendRequest 5\n");
   if (!internet.get()) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::SendRequest 6\n");
   AutoInternetHandle connection(InternetConnect(internet.get(),
                                                 host,
                                                 components.nPort,
@@ -117,10 +120,11 @@ bool HTTPUpload::SendRequest(const wstring &url,
                                                 INTERNET_SERVICE_HTTP,
                                                 0,       // flags
                                                 NULL));  // context
+  fprintf(stderr,"HTTPUpload::SendRequest 7\n");
   if (!connection.get()) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::SendRequest 8\n");
   DWORD http_open_flags = secure ? INTERNET_FLAG_SECURE : 0;
   http_open_flags |= INTERNET_FLAG_NO_COOKIES;
   AutoInternetHandle request(HttpOpenRequest(connection.get(),
@@ -131,10 +135,11 @@ bool HTTPUpload::SendRequest(const wstring &url,
                                              NULL,    // agent type
                                              http_open_flags,
                                              NULL));  // context
+  fprintf(stderr,"HTTPUpload::SendRequest 9\n");
   if (!request.get()) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::SendRequest 10\n");
   wstring boundary = GenerateMultipartBoundary();
   wstring content_type_header = GenerateRequestHeader(boundary);
   HttpAddRequestHeaders(request.get(),
@@ -147,7 +152,7 @@ bool HTTPUpload::SendRequest(const wstring &url,
                            file_part_name, boundary, &request_body)) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::SendRequest 11\n");
   if (timeout) {
     if (!InternetSetOption(request.get(),
                            INTERNET_OPTION_SEND_TIMEOUT,
@@ -273,15 +278,16 @@ bool HTTPUpload::GenerateRequestBody(const map<wstring, wstring> &parameters,
                                      const wstring &boundary,
                                      string *request_body) {
   vector<char> contents;
+  wprintf(L"HTTPUpload::GenerateRequestBody 1 %s %s\n",upload_file.c_str(), file_part_name.c_str());
   if (!GetFileContents(upload_file, &contents)) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::GenerateRequestBody 2\n");
   string boundary_str = WideToUTF8(boundary);
   if (boundary_str.empty()) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::GenerateRequestBody 3\n");
   request_body->clear();
 
   // Append each of the parameter pairs as a form-data part
@@ -292,30 +298,31 @@ bool HTTPUpload::GenerateRequestBody(const map<wstring, wstring> &parameters,
                          WideToUTF8(pos->first) + "\"\r\n\r\n" +
                          WideToUTF8(pos->second) + "\r\n");
   }
-
+  fprintf(stderr,"HTTPUpload::GenerateRequestBody 4\n");
   // Now append the upload file as a binary (octet-stream) part
   string filename_utf8 = WideToUTF8(upload_file);
   if (filename_utf8.empty()) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::GenerateRequestBody 5\n");
   string file_part_name_utf8 = WideToUTF8(file_part_name);
   if (file_part_name_utf8.empty()) {
     return false;
   }
-
+  fprintf(stderr,"HTTPUpload::GenerateRequestBody 6\n");
   request_body->append("--" + boundary_str + "\r\n");
   request_body->append("Content-Disposition: form-data; "
                        "name=\"" + file_part_name_utf8 + "\"; "
                        "filename=\"" + filename_utf8 + "\"\r\n");
   request_body->append("Content-Type: application/octet-stream\r\n");
   request_body->append("\r\n");
-
+  fprintf(stderr,"HTTPUpload::GenerateRequestBody 7\n");
   if (!contents.empty()) {
       request_body->append(&(contents[0]), contents.size());
   }
   request_body->append("\r\n");
   request_body->append("--" + boundary_str + "--\r\n");
+  fprintf(stderr,"HTTPUpload::GenerateRequestBody 8\n");
   return true;
 }
 
@@ -327,13 +334,16 @@ bool HTTPUpload::GetFileContents(const wstring &filename,
   // wchar_t* filename, so use _wfopen directly in that case.  For VC8 and
   // later, _wfopen has been deprecated in favor of _wfopen_s, which does
   // not exist in earlier versions, so let the ifstream open the file itself.
+  wprintf(L"HTTPUpload::GetFileContents 1 %s \n",filename.c_str());
 #if _MSC_VER >= 1400  // MSVC 2005/8
   ifstream file;
   file.open(filename.c_str(), ios::binary);
 #else  // _MSC_VER >= 1400
   ifstream file(_wfopen(filename.c_str(), L"rb"));
 #endif  // _MSC_VER >= 1400
+  fprintf(stderr,"HTTPUpload::GetFileContents 2\n");
   if (file.is_open()) {
+	  fprintf(stderr,"HTTPUpload::GetFileContents 3\n");
     file.seekg(0, ios::end);
     std::streamoff length = file.tellg();
     // Check for loss of data when converting lenght from std::streamoff into
