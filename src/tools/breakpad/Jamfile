@@ -1,4 +1,6 @@
 SubDir TOP src tools breakpad ;
+if $(REPORTER)
+{
   if $(TARGET.OS) = "WIN32"
   {
     Library breakpad :
@@ -37,3 +39,4 @@ SubDir TOP src tools breakpad ;
       ;
     }
   }
+}
