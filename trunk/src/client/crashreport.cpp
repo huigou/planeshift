@@ -25,7 +25,6 @@
 #if defined(CS_DEBUG) || defined(CS_PLATFORM_MACOSX)
 #undef USE_BREAKPAD
 #endif
-#define USE_BREAKPAD
 
 #ifdef USE_BREAKPAD
 #ifdef WIN32
