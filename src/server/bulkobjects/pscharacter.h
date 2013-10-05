@@ -806,7 +806,7 @@ public:
     void GetSkillBaseValues(MathEnvironment* env);
 
     // iCachedObject Functions below
-    virtual void ProcessCacheTimeout() {};  ///< required for iCachedObject but not used here
+    virtual void ProcessCacheTimeout() {}  ///< required for iCachedObject but not used here
     virtual void* RecoverObject()
     {
         return this;    ///< Turn iCachedObject ptr into psCharacter
@@ -862,7 +862,7 @@ public:
     void SetOldLastName(const char* oldLastName)
     {
         this->oldlastname = oldLastName;
-    };
+    }
 
     const char* GetCharName() const
     {
@@ -1287,7 +1287,7 @@ public:
     bool IsNPC()
     {
         return characterType == PSCHARACTER_TYPE_NPC;
-    };
+    }
 
     /**
      * Used to determine if this character is a player.
@@ -1297,22 +1297,22 @@ public:
     bool IsPlayer()
     {
         return characterType == PSCHARACTER_TYPE_PLAYER;
-    };
+    }
 
     /// Used to determine if this NPC is a pet
     bool IsPet()
     {
         return (characterType == PSCHARACTER_TYPE_PET || characterType == PSCHARACTER_TYPE_MOUNTPET);
-    };
+    }
     /// Used to determine if this NPC is a mount
     bool IsMount()
     {
         return (characterType == PSCHARACTER_TYPE_MOUNT || characterType == PSCHARACTER_TYPE_MOUNTPET);
-    };
+    }
     PID  GetFamiliarID(size_t id)
     {
         return familiarsId.GetSize() > id ? familiarsId.Get(id) : 0;
-    };
+    }
     void SetFamiliarID(PID v);
     bool CanSummonFamiliar(int id)
     {
@@ -1325,19 +1325,19 @@ public:
     const char* GetAnimalAffinity()
     {
         return animalAffinity.GetDataSafe();
-    };
+    }
     void SetAnimialAffinity(const char* v)
     {
         animalAffinity = v;
-    };
+    }
     PID  GetOwnerID()
     {
         return ownerId;
-    };
+    }
     void SetOwnerID(PID v)
     {
         ownerId = v;
-    };
+    }
 
     bool UpdateStatDRData(csTicks now);
     bool SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group = NULL);
