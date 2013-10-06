@@ -1637,7 +1637,7 @@ void psItem::CombineStack(psItem* &stackme)
         if(!schedule)   // Absorb schedule
             SetScheduledItem(stackme->schedule);
 
-        stackme->schedule = NULL; // Prevent deleting of shedule later in delete in RemoveInstance
+        stackme->schedule = NULL; // Prevent deleting of schedule later in delete in RemoveInstance
     }
 
     // Average the qualities and set stack count
@@ -2685,7 +2685,7 @@ void psItem::ScheduleRespawn()
         delete schedule;
     }
 
-    // Remove this shedule for this item, since we don't want an item in for example
+    // Remove this schedule for this item, since we don't want an item in for example
     // the inventory to call respawn when it's dropped and picked up again
     schedule = NULL;
 }
