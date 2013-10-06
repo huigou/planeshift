@@ -2164,7 +2164,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     }
                     else
                     {
-                        psserver->SendSystemInfo(me->clientnum, "You familiar is avoiding you.");
+                        psserver->SendSystemInfo(me->clientnum, "Your familiar is avoiding you.");
                     }
                     return;
                 }
