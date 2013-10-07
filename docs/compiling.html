@@ -298,6 +298,7 @@ Welcome to the PlaneShift Compiling Guide, please follow the instruction below c
     <a href="#npcserver">Get the NPC Server Running</a><br />
     <span class="Linux"><a href="#scripts">Mini Scripts</a> <i>(optional)</i><br /></span>
     <a href="#runclient">Get the Client Running</a><br />
+	<a href="#troubleshooting">Common problems / Troubleshooting</a><br />
     <a href="#help">Getting Help</a><br />
     <a href="#credits">Credits</a>
 </p>
@@ -697,7 +698,7 @@ continue as indicated.<br /></p>
     <span class="commandBox">#apt-get install libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev libjpeg62-dev python2.6-dev libspeex-dev</span>
 <strong> BOTH of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
 </div>
-http://developer.download.nvidia.com/cg/Cg_2.2/Cg-2.2_February2010_x86_64.tgz
+
 <div class="Linux">
     <h3>nVidia Toolkit</h3>
     <p>Since Crystal Space needs it (independently from your graphic card, so <i>even if you have an ATI card</i>), you
@@ -2035,6 +2036,27 @@ If you want to generate your own navmesh, you can launch the navgen program.<br/
 <!--************************************************************************************************-->
 <!--************************************************************************************************-->
 
+
+<h2><a name="troubleshooting">Common Problems / Troubleshooting</a></h2>
+
+<h3> LINUX </h3>
+<p><b>Problem:</b> You are getting this error:</p>
+/home/luke/ps/planeshift/./out/linux/debug/src/client/static/_cs_static_use_CRYSTAL.cpp:44: undefined reference to `csStaticPluginInit::glshader_cg::glshader_cg()'<br/>
+collect2: error: ld returned 1 exit status<br/>
+<br/>
+<b>Solution:</b> You need to install the nvidia cg toolkit, see above from instructions.<br/>
+<br/>
+<br/>
+<b>Problem:</b> You are getting an error while compiling static client like:<br/>
+<br/>
+...failed Archive ./out/linux/debug/libs/libplaneshift_database_staticplugins-0.5.a ...<br/>
+...skipped psclient_static for lack of planeshift_database_staticplugins...<br/>
+<br/>
+<b>Solution:</b> Edit the file planeshift/src/plugins/Jamfile and comment out this line: <br/>
+#SubInclude TOP src plugins database ; <br/>
+<br/>
+
+
 <h2><a name="help">Getting Help</a></h2>
 <p>If you have trouble getting any of this to work, please feel free to contact us and we will do our best to help.<br />
 There is an IRC channel dedicated to providing help with building PlaneShift:</p>
@@ -2043,6 +2065,7 @@ There is an IRC channel dedicated to providing help with building PlaneShift:</p
     <b>Server:</b> irc.freenode.net<br />
     <b>Channel:</b> #PlaneShift-build
 </p>
+
 
 <h2><a name="credits">Credits</a></h2>
 
