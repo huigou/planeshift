@@ -137,7 +137,7 @@ STATIC.PLUGINLIST.PS =
   dummysndmngr
 ;
 
-if $(TARGET.OS) != "WIN32" { STATIC.PLUGINLIST.PS += spellchecker ; }
+if $(TARGET.OS) != "WIN32" { if $(HUNSPELL.AVAILABLE) { STATIC.PLUGINLIST.PS += spellchecker ; } }
 
 LinkStaticPlugins psclient_static :
   $(STATIC.PLUGINLIST.PS)
