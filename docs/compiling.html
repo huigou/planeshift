@@ -555,6 +555,12 @@ continue as indicated.<br /></p>
 </div>
 
 <div class="Linux-Generic">
+    <h3>Autoconf and Libtool</h3>
+    <p>To configure the solutions before compilation you will need Autoconf and Libtool. You can find those in your package manager.</p>
+	
+	<h3>gcc and g++</h3>
+    <p>To compile the sources you will need gcc and g++. You can find those in your package manager.</p>
+	
     <h3>Jam</h3>
     <p>You will need a tool called Jam. Jam is a replacement for make. It's a bit easier to maintain and create
     custom builds. If you do not already have Jam, you can find it at <a href="ftp://ftp.perforce.com/jam/">ftp://ftp.perforce.com/jam/</a> - install it system wide. You can also use your distro's package manager to install it.</p>
@@ -659,9 +665,9 @@ continue as indicated.<br /></p>
 <div class="Linux-Ubuntu">
     <p> Make sure the universe repository is enabled.<br />
     Fetch all the required packages using the following command:
-    <p class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev libxcursor-dev</p>
+    <p class="commandBox"># sudo apt-get --assume-yes install libjpeg-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev libxcursor-dev</p>
     In case you are using intrepid, we can fetch all the required packages using the following command:<br />
-    <p class="commandBox"># sudo apt-get --assume-yes install libjpeg62-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev libxcursor-dev</p>
+    <p class="commandBox"># sudo apt-get --assume-yes install libjpeg-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev libxcursor-dev</p>
 
 
 <strong> ALL of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
@@ -927,9 +933,6 @@ then<br /><br />
     so it can know to build the sprcal3d plugin.</p>
     <p><a href="http://home.gna.org/cal3d/">Cal3D Home</a></p>
     <p class="commandBox">$HOME/development$ svn co -r CAL3D_SOURCE_REV svn://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</p>
-
-    <p>In case of a slow download use the following command:</p>
-    <p class="commandBox">$HOME/development$ svn co -r CAL3D_SOURCE_REV http://svn.gna.org/svn/cal3d/trunk/cal3d cal3d</p>
 
     <h3>Crystal Space (CS)</h3>
     <p>Crystal Space 3D SDK is the engine that we use for rendering and sound.</p>
