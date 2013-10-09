@@ -1,7 +1,7 @@
 /*
  * crashreport.cpp by Andrew Dai
  *
- * Copyright (C) 2010 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2010 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -23,6 +23,13 @@
 
 // Mac uses a different breakpad library. Disabled in Debug.
 #if defined(CS_DEBUG) || defined(CS_PLATFORM_MACOSX)
+#undef USE_BREAKPAD
+#endif
+
+// TOFIX: Breakpad at the moment works only on windows, so we temporary enable it only on that platform
+#ifdef WIN32
+#define USE_BREAKPAD
+#elif
 #undef USE_BREAKPAD
 #endif
 
@@ -61,7 +68,7 @@ typedef std::string BpString;
 #define PS_STRCAT strcat
 #define PS_STRLEN strlen
 /// Helper macro for string literals
-#define STR(s)		s
+#define STR(s)          s
 #endif
 
 static const PS_CHAR crash_post_url[] = STR("http://194.116.72.94/crash-reports/submit");
@@ -99,12 +106,15 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 
 PS_CHAR szComments[1500];
 
+#ifdef CS_PLATFORM_UNIX
+	   google_breakpad::MinidumpDescriptor descriptor;
+#endif
 
 // Initialise the crash dumper.
 class BreakPadWrapper
 {
 public:
-	BreakPadWrapper() {
+		BreakPadWrapper() {
 fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
 
 
@@ -121,60 +131,64 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
                                                               ExceptionHandler::HANDLER_ALL);
 
 #else
-		static const PS_CHAR tempPath[] = "/tmp";
-        google_breakpad::MinidumpDescriptor descriptor(tempPath);
-		
-		wrapperCrash_handler = new ExceptionHandler(descriptor,
-				NULL,
-				UploadDump,
-				NULL,
-				true,
-                -1
-				);
+				static const PS_CHAR* tempPath = "/tmp";
+				descriptor = MinidumpDescriptor(tempPath);
+
+	fprintf( stderr, "****BreakpadWrappe descriptor location = %x  \n", &descriptor);
+
+				wrapperCrash_handler = new ExceptionHandler(descriptor,
+								NULL,
+								UploadDump,
+								NULL,
+								true,
+				-1
+								);
 #endif
-        BreakPadWrapper::wrapperCrash_handler = wrapperCrash_handler;
+
 #ifdef WIN32
 		wrapperCrash_sender = new CrashReportSender(L"");
 #else
 		http_layer = new LibcurlWrapper();
 #endif
-		// Set up parameters
+				// Set up parameters
 
-		parameters[STR("BuildDate")] = STR(__DATE__) STR(" ") STR(__TIME__);
-	    
-	    // Set process starttime parameter
-	    time_t start_time = time(NULL);
-	    // Reserve space for player name, gfx card info etc because we can't use the heap
-	    // when handling the crash.
-		parameters[STR("PlayerName")] = STR("");
-		parameters[STR("PlayerName")].reserve(256);
-		parameters[STR("Platform")] = STR(CS_PLATFORM_NAME);
-		parameters[STR("Processor")] =
-                STR(CS_PROCESSOR_NAME) STR("(") STR(QUOTE(CS_PROCESSOR_SIZE)) STR(")");
-		parameters[STR("Compiler")] = STR(CS_COMPILER_NAME);
-		parameters[STR("Renderer")] = STR("");
-		parameters[STR("Renderer")].reserve(256);
-		parameters[STR("RendererVersion")] = STR("");
-		parameters[STR("RendererVersion")].reserve(256);
-		parameters[STR("CrashTime")] = STR("");
-		parameters[STR("CrashTime")].reserve(32);
-		parameters[STR("Comments")] = STR("");
-		parameters[STR("Comments")].reserve(1500);
-		PS_CHAR timeBuffer[128];
+				parameters[STR("BuildDate")] = STR(__DATE__) STR(" ") STR(__TIME__);
+
+			// Set process starttime parameter
+			time_t start_time = time(NULL);
+			// Reserve space for player name, gfx card info etc because we can't use the heap
+			// when handling the crash.
+				parameters[STR("PlayerName")] = STR("");
+				parameters[STR("PlayerName")].reserve(256);
+				parameters[STR("Platform")] = STR(CS_PLATFORM_NAME);
+				parameters[STR("Processor")] =
+				STR(CS_PROCESSOR_NAME) STR("(") STR(QUOTE(CS_PROCESSOR_SIZE)) STR(")");
+				parameters[STR("Compiler")] = STR(CS_COMPILER_NAME);
+				parameters[STR("Renderer")] = STR("");
+				parameters[STR("Renderer")].reserve(256);
+				parameters[STR("RendererVersion")] = STR("");
+				parameters[STR("RendererVersion")].reserve(256);
+				parameters[STR("CrashTime")] = STR("");
+				parameters[STR("CrashTime")].reserve(32);
+				parameters[STR("Comments")] = STR("");
+				parameters[STR("Comments")].reserve(1500);
+				PS_CHAR timeBuffer[128];
+
 #ifdef WIN32
 		swprintf(timeBuffer, L"%I64u", start_time);
 #else
 		sprintf(timeBuffer, "%lu", start_time);
 #endif
-		parameters[STR("StartupTime")] = timeBuffer;
-		parameters[STR("ProductName")] = STR("PlaneShift");
-		parameters[STR("Version")] = STR(PS_VERSION);
-		report_code.reserve(512);
+				parameters[STR("StartupTime")] = timeBuffer;
+				parameters[STR("ProductName")] = STR("PlaneShift");
+				parameters[STR("Version")] = STR(PS_VERSION);
+				report_code.reserve(512);
 
-	}
-	~BreakPadWrapper() {
-		delete wrapperCrash_handler;
-		wrapperCrash_handler = NULL;
+		}
+		~BreakPadWrapper() {
+				delete wrapperCrash_handler;
+				wrapperCrash_handler = NULL;
+
 #ifdef WIN32
 		delete wrapperCrash_sender;
 		wrapperCrash_sender = NULL;
@@ -182,22 +196,26 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
 		delete http_layer;
 		http_layer = NULL;
 #endif
-	}
-	
+
+		}
+
 #ifdef WIN32
 	static CrashReportSender* wrapperCrash_sender;
 #else
 	static LibcurlWrapper* http_layer;
 #endif
-	std::map<BpString, BpString> parameters;
-	BpString report_code;	
-	
-//private:
-	static ExceptionHandler* wrapperCrash_handler;
 
+		std::map<BpString, BpString> parameters;
+		BpString report_code;
+
+//private:
+		static google_breakpad::ExceptionHandler* wrapperCrash_handler;
+
+//        google_breakpad::MinidumpDescriptor descriptor;
 };
 
 ExceptionHandler* BreakPadWrapper::wrapperCrash_handler = NULL;
+
 #ifdef WIN32
 CrashReportSender* BreakPadWrapper::wrapperCrash_sender = NULL;
 #else
@@ -241,26 +259,26 @@ bool UploadDump(const PS_CHAR* dump_path,
 {
 #else
 static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
-                     void* context,
-                     bool succeeded)
+					 void* context,
+					 bool succeeded)
 {
 
-    const char* dump_path = descriptor.path();
-    fprintf( stderr, "****UploadDump sending file \n");
-    sleep(5);
-    fprintf( stderr, "****UploadDump descriptor location = %x  dir = %s\n", &descriptor, descriptor.path() );
+	const char* dump_path = descriptor.path();
+	fprintf( stderr, "****UploadDump sending file \n");
+	sleep(5);
+	fprintf( stderr, "****UploadDump descriptor location = %x  \n", &descriptor);
+	fprintf( stderr, "****UploadDump descriptor dir = %s\n", descriptor.path() );
 #endif
 
-	Error1("Upload DUMP started");
+		Error1("Upload DUMP started");
 
-    time_t crash_time = time(NULL);
+	time_t crash_time = time(NULL);
 
-    PS_CHAR path_file[PS_PATH_MAX + 1];
-	path_file[0] = '\0';
-    PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
-    
-    PS_STRNCAT(path_file, dump_path, PS_PATH_MAX);
+	PS_CHAR path_file[PS_PATH_MAX + 1];
+		path_file[0] = '\0';
+	PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
 
+	PS_STRNCAT(path_file, dump_path, PS_PATH_MAX);
 
 #ifdef WIN32
     PS_CHAR* p_path = path_file;
@@ -280,19 +298,21 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 #endif
 
 
-    SetParameter (BPwrapper.parameters[STR("Renderer")], psEngine::hwRenderer);
-    SetParameter (BPwrapper.parameters[STR("RendererVersion")], psEngine::hwVersion);
-    SetParameter (BPwrapper.parameters[STR("PlayerName")], psEngine::playerName);
-    BPwrapper.parameters[STR("Comments")] = szComments;
-    PS_CHAR timeBuffer[128];
+	SetParameter (BPwrapper.parameters[STR("Renderer")], psEngine::hwRenderer);
+	SetParameter (BPwrapper.parameters[STR("RendererVersion")], psEngine::hwVersion);
+	SetParameter (BPwrapper.parameters[STR("PlayerName")], psEngine::playerName);
+	BPwrapper.parameters[STR("Comments")] = szComments;
+	PS_CHAR timeBuffer[128];
+
 #ifdef WIN32
     swprintf(timeBuffer, L"%I64u", crash_time);
 #else
     sprintf(timeBuffer, "%lu", crash_time);
 #endif
-    BPwrapper.parameters[STR("CrashTime")] = timeBuffer;
 
-    fprintf(stderr, "PlaneShift has quit unexpectedly!\n\nA report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nPlease consult the PlaneShift forums for more details.\nAttempting to upload crash report.\n");
+	BPwrapper.parameters[STR("CrashTime")] = timeBuffer;
+
+	fprintf(stderr, "PlaneShift has quit unexpectedly!\n\nA report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nPlease consult the PlaneShift forums for more details.\nAttempting to upload crash report.\n");
 
 
     bool result = false;
@@ -307,24 +327,23 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
     if(reportResult == RESULT_SUCCEEDED)
 	    result = true;
 #elif defined(CS_PLATFORM_UNIX)
-    if(!BPwrapper.http_layer->Init())
-    {
-        printf("Unable to start correctly libcurl!\n");
-        return false;
+	if(!BPwrapper.http_layer->Init())
+	{
+		printf("Unable to start correctly libcurl!\n");
+		return false;
     }
-    // Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
-    //if (BPwrapper.http_layer->AddFile(path_file, "upload_file_minidump")) {
-    if (BPwrapper.http_layer->AddFile( descriptor.path(), "upload_file_minidump")) {
-	    result = BPwrapper.http_layer->SendRequest(crash_post_url,
-			    BPwrapper.parameters,
-			    &BPwrapper.report_code);
+	// Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
+	if (BPwrapper.http_layer->AddFile(path_file, "upload_file_minidump")) {
+	//if (BPwrapper.http_layer->AddFile( descriptor.path(), "upload_file_minidump")) {
+			result = BPwrapper.http_layer->SendRequest(crash_post_url,
+							BPwrapper.parameters,
+							&BPwrapper.report_code);
     }
-    else 
-    {
-	    printf("Could not add minidump file.\n");
-	    return false;
+	else
+	{
+			printf("Could not add minidump file.\n");
+			return false;
     }
-
 #endif
     if(result && !BPwrapper.report_code.empty())
     {
@@ -334,11 +353,11 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 #else
 	    printf("%s\n", BPwrapper.report_code.c_str());
 #endif
-	    return succeeded;
-    }
-    else if(!result)
-    {
-	    printf("Report upload failed. ");
+			return succeeded;
+	}
+	else if(!result)
+	{
+			printf("Report upload failed. ");
 #ifdef WIN32
 	    if (reportResult == RESULT_FAILED) {
 		    printf("Could not reach server.\n");
@@ -350,19 +369,18 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 		    ::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
 	    }
 #endif
-	    return false;
-    }
-    else // result is true but report code is empty.
-    {
-	    printf("Report upload failed: Unknown reason.\n");
+			return false;
+	}
+	else // result is true but report code is empty.
+	{
+			printf("Report upload failed: Unknown reason.\n");
 #ifdef WIN32
 	    ::MessageBoxA( NULL, "Report upload failed: Unknown reason.", "PlaneShift", MB_OK + MB_ICONERROR );
 #endif
-	    return false;
-    }
-    return false;
+			return false;
+	}
+	return false;
 }
 
 
 #endif // USE_BREAKPAD
-
