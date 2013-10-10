@@ -738,10 +738,10 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
     if (container)
         stack = false;
 
-    /** If we were passed ANY_BULK_SLOT or ANY_EMPTY_BULK_SLOT we need to scan the possible
+    /** If we were passed PSCHARACTER_SLOT_NONE we need to scan the possible
      * slots and try to find a valid place to put this item.  (non-negative slot number)
      * Otherwise, we'll just skip over these and attempt to place in the given slot.  If
-     * that fails, we'll return false and possibly call this again specifying ANY_BULK_SLOT.
+     * that fails, we'll return false and possibly call this again specifying PSCHARACTER_SLOT_NONE.
      */
     size_t i;
     size_t itemIndex = SIZET_NOT_FOUND;
@@ -749,7 +749,7 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
 
 
     // Next see if we can stack this with an existing stack in inventory
-    if (stack && slot == ANY_BULK_SLOT && item->GetIsStackable())
+    if (stack && slot == PSCHARACTER_SLOT_NONE && item->GetIsStackable())
     {
 
         itemIndices = FindCompatibleStackedItems(item, true, precise);
