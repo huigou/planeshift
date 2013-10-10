@@ -66,9 +66,9 @@ bool psInventoryCacheServer::HasSlotModified (INVENTORY_SLOT_NUMBER slot)
 
 bool psInventoryCacheServer::ClearSlot(INVENTORY_SLOT_NUMBER slot)
 {
-    if (slot<ANY_EMPTY_BULK_SLOT || slot>=PSCHARACTER_SLOT_BULK_END)
+    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK_END)
     {
-        SetCacheStatus(INVALID);    // somethings gone wrong; force entire
+        SetCacheStatus(INVALID);    // something has gone wrong; force entire
                                     // inventory update next time
         return false;
     }

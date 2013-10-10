@@ -76,8 +76,6 @@ struct glyphSlotInfo
 
 //-----------------------------------------------------------------------------
 
-#define ANY_EMPTY_BULK_SLOT  -2
-
 /** This class handles the details behind a characters inventory system.
   */
 class psCharacterInventory
@@ -234,7 +232,7 @@ public:
      * @param test Are we just testing if we can put this into the slot
      * @param stack Should the item be stacked?
      * @param slot The slot in which we want to place an item.
-     *             (may be a slot number, ANY_BULK_SLOT, or ANY_EMPTY_BULK_SLOT)
+     *             (may be a slot number, or PSCHARACTER_SLOT_NONE)
      * @param container Pointer to container.
      * @param precise Says whathever if the stacking should be precise and not ignore
      *                properties like quality.
