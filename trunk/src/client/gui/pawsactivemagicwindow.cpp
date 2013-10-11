@@ -167,111 +167,63 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
     if(!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
         ShowBehind();
 
-    if(incoming.duration==0 && showEffects==false)
+    size_t    numSpells=incoming.name.GetSize();
+
+    buffList->Clear();
+
+    if( numSpells==0 )
     {
-        return;
+        Hide();
     }
-
-    switch(incoming.command)
+    else
     {
-        case psGUIActiveMagicMessage::Add:
+        for( int i=0; i<numSpells; i++ )
         {
-            rowEntry.PushBack(incoming.name);
-
-            if(incoming.type == BUFF)
+            if(incoming.duration[i]==0 && showEffects==false)
             {
-                if(useImages)
-                {
-                    csRef<iPawsImage> image;
-
-                    if(incoming.image.Length() >0)
-                    {
-                        image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
-                    }
-                    else
-                    {
-                        image = NULL;
-                    }
-                    if(image)
-                    {
-                        buffList->LoadSingle(incoming.name, incoming.image, incoming.name, csString(""), 0, this, false);
-                    }
-                    else
-                    {
-                        buffList->LoadSingle(incoming.name, csString("/planeshift/materials/crystal_ball_icon.dds"), incoming.name, csString(""), 0, this, false);
-                    }
-                }
-                else
-                {
-                    buffList->LoadSingle(incoming.name, csString(""), incoming.name, csString(""), 0, this, false);
-                }
-                buffList->SetEditLock(ScrollMenuOptionDISABLED);
-                if(autoResize)
-                {
-                    AutoResize();
-                }
-                else
-                {
-                    buffList->Resize();
-                }
+    	        continue;
             }
-            else // incoming.type == DEBUFF
+    	    rowEntry.PushBack(incoming.name[i]);
+    
+            if(useImages)
             {
-                if(useImages)
+                csRef<iPawsImage> image;
+                if(incoming.image[i].Length() >0)
                 {
-                    csRef<iPawsImage> image;
-
-                    if(incoming.image.Length() >0)
-                    {
-                        image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image);
-                    }
-                    else
-                    {
-                        image = NULL;
-                    }
-                    if(image)
-                    {
-                        buffList->LoadSingle(incoming.name, incoming.image, incoming.name, csString(""), -1, this, false);
-                    }
-                    else
-                    {
-                        buffList->LoadSingle(incoming.name, csString("danger_01"), incoming.name, csString(""), -1, this, false);
-                    }
+                    image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image[i]);
                 }
                 else
                 {
-                    buffList->LoadSingle(incoming.name, csString(""), incoming.name, csString(""), -1, this, false);
+                    image = NULL;
                 }
-                //buffList->SetEditLock( ScrollMenuOptionDISABLED );
-                if(autoResize)
+                if(image)
                 {
-                    AutoResize();
+                    buffList->LoadSingle(incoming.name[i], incoming.image[i], incoming.name[i], csString(""), 0, this, false);
                 }
                 else
                 {
-                    buffList->Resize();
+                    if( incoming.type[i]==BUFF )
+                    {
+                        buffList->LoadSingle(incoming.name[i], csString("/planeshift/materials/crystal_ball_icon.dds"), incoming.name[i], csString(""), 0, this, false);
+                    }
+                    else
+                    {
+                        buffList->LoadSingle(incoming.name[i], csString("danger_01"), incoming.name[i], csString(""), -1, this, false);
+                    }
                 }
-            }
-
-            break;
-        }
-        case psGUIActiveMagicMessage::Remove:
-        {
-            buffList->RemoveByName(incoming.name);
-            if(autoResize)
-            {
-                AutoResize();
             }
             else
             {
-                buffList->Resize();
+                buffList->LoadSingle(incoming.name[i], csString(""), incoming.name[i], csString(""), 0, this, false);
             }
-
-            // If no active magic, hide the window.
-            if(buffList->GetSize() < 1)
-                Hide();
-
-            break;
+        }
+        if(autoResize)
+        {
+            AutoResize();
+        }
+        else
+        {
+            buffList->Resize();
         }
     }
 }

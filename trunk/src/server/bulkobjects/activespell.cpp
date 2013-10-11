@@ -53,6 +53,9 @@ protected:
 
 //----------------------------------------------------------------------------
 
+ActiveSpell::ActiveSpell(const csString& name, SPELL_TYPE type, csTicks duration) : name(name), type(type), duration(duration), cancelOnDeath(true), damagesHP(false), target(NULL), registrationTime(0)
+{ }
+
 void ActiveSpell::Add(iSpellModifier& mod, const char* fmt, ...)
 {
     CS_ASSERT(registrationTime == 0);
@@ -139,4 +142,7 @@ csString ActiveSpell::Persist() const
                  script.GetData());
     return apply;
 }
-
+void ActiveSpell::SetImage( csString imageName )
+{
+    image = imageName;
+}

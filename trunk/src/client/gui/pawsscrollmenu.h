@@ -77,6 +77,7 @@ public:
     bool LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget, bool IsEnabled);
 
     bool RemoveByName(csString name);
+    bool Clear();
     int  GetSize();
     int  GetButtonWidth();
     int  GetButtonHeight();

@@ -644,6 +644,19 @@ bool pawsScrollMenu::RemoveByName(csString name)
     return true;
 }
 
+bool pawsScrollMenu::Clear()
+{
+    for(size_t i=0; i<Buttons.GetSize(); i++)
+    {
+        pawsWidget*    match = NULL;
+
+        match=ButtonHolder->GetChild(i);
+        ButtonHolder->RemoveChild(match);
+        Buttons.DeleteIndex(i);
+    }
+    return true;
+}
+
 int pawsScrollMenu::GetSize()
 {
     return ButtonHolder->GetChildrenCount();
@@ -742,8 +755,7 @@ bool pawsScrollMenu::OnMouseDown(int button, int modifiers, int x, int y)
         ScrollDown();
         return true;
     }
-    parent->OnMouseDown(button, modifiers, GetScreenFrame().xmin + x, GetScreenFrame().ymin + y);
-    return true;
+    return parent->OnMouseDown(button, modifiers, GetScreenFrame().xmin + x, GetScreenFrame().ymin + y);
 }
 
 bool pawsScrollMenu::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers)
