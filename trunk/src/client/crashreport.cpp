@@ -29,7 +29,7 @@
 // TOFIX: Breakpad at the moment works only on windows, so we temporary enable it only on that platform
 #ifdef WIN32
 #define USE_BREAKPAD
-#elif
+#else
 #undef USE_BREAKPAD
 #endif
 
