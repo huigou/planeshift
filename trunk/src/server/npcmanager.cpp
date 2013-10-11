@@ -1951,6 +1951,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
     csString prevFirstName, prevLastName;
     csString fullName, prevFullName;
     const char* typeStr = "familiar";
+    PID familiarID;
 
     Client* owner = clients->FindAny(me->clientnum);
     if(!owner)
@@ -1958,8 +1959,6 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
         Error2("invalid client object from psPETCommandMessage from client %u.\n",me->clientnum);
         return;
     }
-
-    PID familiarID = owner->GetCharacterData()->GetFamiliarID(strtoul(msg.target.GetDataSafe(),NULL,0));
 
     if(!msg.valid)
     {
@@ -1969,51 +1968,77 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
 
     WordArray words(msg.options);
 
-    // Operator did give a name, lets see if we find the named pet.
-    if(msg.target.Length() != 0 && familiarID == 0)
+    // All pet commands operate on the currently summoned pet except
+    // for the SUMMON command.
+    if(msg.command == psPETCommandMessage::CMD_SUMMON)
     {
-        size_t numPets = owner->GetNumPets();
-        for(size_t i = 0; i < numPets; i++)
+        if(owner->GetFamiliar() ||
+           (owner->GetActor()->GetMount() &&
+            owner->GetActor()->GetMount()->GetOwnerID() == owner->GetPID()))
         {
-            pet = dynamic_cast <gemNPC*>(owner->GetPet(i));
-            if(pet && msg.target.CompareNoCase(pet->GetCharacterData()->GetCharName()))
-            {
-                if(i)
-                {
-                    typeStr = "pet";
-                }
-                break;
-            }
-            else
-            {
-                pet = NULL;
-            }
+            psserver->SendSystemInfo(me->clientnum,
+                    "Your familiar has already been summoned.");
+            return;
         }
 
-        if(!pet)
+        if(!owner->GetCharacterData()->CanSummonFamiliar())
         {
-            psserver->SendSystemInfo(me->clientnum, "You do not have a pet named '%s'.", msg.target.Slice(0, msg.target.Length() - 1).GetData());
+            psserver->SendSystemInfo(me->clientnum,
+                    "You need to equip the item your familiar is bound to.");
             return;
+        }
+
+        char* end = NULL;
+        size_t targetID = strtoul(words[0].GetDataSafe(), &end, 0);
+
+        // Operator did give a name, let's see if we find the named pet.
+        if(words[0].Length() != 0 && (end == NULL || *end))
+        {
+            chardata = owner->GetCharacterData();
+            size_t numPets = chardata->GetNumFamiliars();
+            for(size_t i = 0; i < numPets; i++)
+            {
+                PID pid = chardata->GetFamiliarID(i);
+
+                Result result(db->Select("SELECT name FROM characters WHERE id = %u", pid.Unbox()));
+                if(result.IsValid() && result.Count())
+                {
+                    if(words[0].CompareNoCase(result[0]["name"]))
+                    {
+                        familiarID = pid;
+                        break;
+                    }
+                }
+            }
+            if(!familiarID.IsValid())
+            {
+                psserver->SendSystemInfo(me->clientnum, "You do not have a pet named '%s'.", words[0].GetData());
+                return;
+            }
+        }
+        else
+        {
+            familiarID = owner->GetCharacterData()->GetFamiliarID(targetID);
+            if(!familiarID.IsValid())
+            {
+                psserver->SendSystemInfo(me->clientnum, "You have no familiar to command.");
+                return;
+            }
         }
     }
     else
     {
-        if(!familiarID.IsValid())
+        pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
+        if(!pet)
         {
-            psserver->SendSystemInfo(me->clientnum,"You have no familiar to command.");
+            psserver->SendSystemInfo(me->clientnum, "You have no familiar to command.");
             return;
         }
-        else
-        {
-            pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
-        }
     }
-
 
     switch(msg.command)
     {
         case psPETCommandMessage::CMD_FOLLOW :
-            if(pet != NULL)
             {
                 PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
                 if(!session)
@@ -2037,14 +2062,8 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     }
                 }
             }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum, "You have no %s to command", typeStr);
-                return;
-            }
             break;
         case psPETCommandMessage::CMD_STAY :
-            if(pet != NULL)
             {
                 PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
                 if(!session)
@@ -2064,15 +2083,9 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
 
                 }
             }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum, "You have no %s to command", typeStr);
-                return;
-            }
             break;
         case psPETCommandMessage::CMD_DISMISS :
-
-            if(pet != NULL && pet->IsValid())
+            if(pet->IsValid())
             {
                 PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
 
@@ -2094,37 +2107,12 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
             }
             else
             {
-                if(familiarID.IsValid())
-                {
-                    psserver->SendSystemInfo(me->clientnum, "Your pet has already returned to the netherworld.");
-                }
-                else
-                {
-                    psserver->SendSystemInfo(me->clientnum, "You have no familiar to command.");
-                }
+                psserver->SendSystemInfo(me->clientnum, "Your pet has already returned to the netherworld.");
                 return;
             }
-
-
             break;
         case psPETCommandMessage::CMD_SUMMON :
-
             // Attach to Familiar
-            //familiarID = familiarID;
-
-            if(owner->GetFamiliar() || (owner->GetActor()->GetMount() && owner->GetActor()->GetMount()->GetOwnerID() == owner->GetPID()))
-            {
-                psserver->SendSystemInfo(me->clientnum, "Your familiar has already been summoned.");
-                return;
-            }
-
-            if(!owner->GetCharacterData()->CanSummonFamiliar(strtoul(msg.target.GetDataSafe(),NULL,0)))
-            {
-                psserver->SendSystemInfo(me->clientnum, "You need to equip the item your familiar is bound to.");
-                return;
-            }
-
-            if(familiarID.IsValid())
             {
                 PetOwnerSession* session = NULL;
 
@@ -2214,15 +2202,8 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW);
                 }
             }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum,"You have no familiar to command.");
-                return;
-            }
-
             break;
         case psPETCommandMessage::CMD_ATTACK :
-            if(pet != NULL)
             {
                 PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
                 if(!session)
@@ -2285,14 +2266,8 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     }
                 }
             }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum, "You have no %s to command", typeStr);
-                return;
-            }
             break;
         case psPETCommandMessage::CMD_STOPATTACK :
-            if(pet != NULL)
             {
                 PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
                 if(!session)
@@ -2311,44 +2286,25 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     }
                 }
             }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum, "You have no %s to command", typeStr);
-                return;
-            }
             break;
         case psPETCommandMessage::CMD_ASSIST :
-            if(pet != NULL)
             {
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 3))
                 {
                     QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ASSIST);
                 }
             }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum, "You have no %s to command",typeStr);
-                return;
-            }
             break;
         case psPETCommandMessage::CMD_GUARD :
-            if(pet != NULL)
             {
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 2))
                 {
                     QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_GUARD);
                 }
             }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum, "You have no %s to command",typeStr);
-                return;
-            }
             break;
         case psPETCommandMessage::CMD_NAME :
-            if(pet != NULL)
             {
-
                 if(!CanPetHearYou(me->clientnum, owner, pet, typeStr))
                 {
                     return;
@@ -2446,14 +2402,8 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                                          prevFullName.GetData(),
                                          fullName.GetData());
             }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum,"You have no %s to command",typeStr);
-                return;
-            }
             break;
         case psPETCommandMessage::CMD_TARGET :
-            if(pet != NULL)
             {
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr))
                 {
@@ -2488,11 +2438,6 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                         psserver->SendSystemInfo(me->clientnum, "Cannot find '%s' to target.", firstName.GetData());
                     }
                 }
-            }
-            else
-            {
-                psserver->SendSystemInfo(me->clientnum,"You have no %s to command",typeStr);
-                return;
             }
             break;
     }
