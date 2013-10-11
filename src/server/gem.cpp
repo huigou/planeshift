@@ -2144,7 +2144,8 @@ gemActor::gemActor(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, Ent
     psChar(chardata), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
     lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
     movementMode(0), isAllowedToMove(true), atRest(true), player_mode(PSCHARACTER_MODE_PEACE), spellCasting(NULL), workEvent(NULL), pcmove(NULL),
-    nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false)
+    nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false), attackable(false),
+    activeMagic_seq(0)
 {
     forcedSector = NULL;
     entityManager = entitymanager;
@@ -4427,7 +4428,7 @@ void gemActor::AddActiveSpell(ActiveSpell* asp)
     }
     asp->SetImage( image );
 
-    psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, 0 ); // <---add message index tracking!
+    psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence() ); // <---add message index tracking!
     outgoing.SendMessage();
 }
 
@@ -4435,7 +4436,7 @@ bool gemActor::RemoveActiveSpell(ActiveSpell* asp)
 {
     if(activeSpells.Delete(asp))
     {
-        psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, 0 ); // <---add message index tracking!
+        psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence() ); // <---add message index tracking!
         outgoing.SendMessage();
         return true;
     }
