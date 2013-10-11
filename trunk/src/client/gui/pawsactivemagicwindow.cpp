@@ -158,10 +158,17 @@ bool pawsActiveMagicWindow::Setup(iDocumentNode* node)
 
 void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 {
+    static uint32_t    lastIndex = 0;
     if(!configPopup)
         configPopup = (pawsConfigPopup*)PawsManager::GetSingleton().FindWidget("ConfigPopup");
 
     psGUIActiveMagicMessage incoming(me);
+
+    if( incoming.index - lastIndex < 0 )
+    {
+        Error1( "Discarding out-of-sequence Active Magic list\n" );
+        return;
+    }
     csList<csString> rowEntry;
     show = showWindow->GetState() ? false : true;
     if(!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)

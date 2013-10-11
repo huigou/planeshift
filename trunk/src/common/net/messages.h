@@ -3697,14 +3697,13 @@ public:
 class psGUIActiveMagicMessage : public psMessageCracker
 {
 public:
-    long int	msgIndex;		//message number, used to ensure messages are processed in the correct order. increases by one for each message.
     
     enum commandType { Add, Remove, List };
 
     psGUIActiveMagicMessage(uint32_t clientNum, csArray<ActiveSpell*> spells, uint32_t index )
     {
-        //                  MSGTYPE_ACTIVEMAGIC + clientNum        + valid        + index            + spellCount;
-        size_t    msgSize = sizeof(uint8_t)     + sizeof(uint32_t) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t); 
+        //                  MSGTYPE_ACTIVEMAGIC + clientNum        + command         + valid        + index            + spellCount;
+        size_t    msgSize = sizeof(uint8_t)     + sizeof(uint32_t) + sizeof(uint8_t) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t); 
 
 	size_t    numSpells = spells.GetSize();
 
@@ -3731,6 +3730,7 @@ public:
         msg.AttachNew(new MsgEntry(msgSize));
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
+        msg->Add((uint8_t)psGUIActiveMagicMessage::List);
         msg->Add((uint32_t)index);
         msg->Add((uint32_t)numSpells);
         for( size_t i=0; i<numSpells; i++ )
@@ -3754,8 +3754,11 @@ public:
     /// Crack this message off the network.
     psGUIActiveMagicMessage(MsgEntry* message)
     {
+        //what type of message : Add, Remove or List. retained so older style messages won't make the system crash.
+        command = (commandType)message->GetUInt8();
+
 	//what is the index number of this message?
-	long index = message->GetUInt32();
+	index = message->GetUInt32();
 
 	//how many spells are in the message?
 	size_t totalSpells = message->GetUInt32();
@@ -3781,7 +3784,8 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-    csArray<commandType> command;
+    uint32_t             index;
+    commandType command;
     csArray<SPELL_TYPE>  type;
     csArray<uint32>      duration;
     csArray<uint32>      registrationTime;

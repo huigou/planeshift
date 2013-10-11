@@ -1272,6 +1272,12 @@ protected:
 
     bool CanSwitchMode(PSCHARACTER_MODE from, PSCHARACTER_MODE to);
 
+    /**
+     * active magic message seq
+     */
+     uint32_t activeMagic_seq;
+
+
 public:
     psLinearMovement* pcmove;
 
@@ -1825,6 +1831,15 @@ public:
      * Guarded are is a circle of RANGE_TO_GUARD around player and pet.
      */
     virtual bool InsideGuardedArea(gemObject* object);
+
+    /**
+     * Get the activeMagic sequence, updating to the next value;
+     */
+    uint32_t GetActiveMagicSequence()
+    {
+        activeMagic_seq++;
+        return activeMagic_seq;
+    }
 };
 
 //-----------------------------------------------------------------------------
