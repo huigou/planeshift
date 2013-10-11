@@ -33,6 +33,7 @@
 //=============================================================================
 #include "buffable.h"
 
+
 struct iDocumentNode;
 class gemActor;
 
@@ -67,7 +68,7 @@ public:
 class ActiveSpell : public CS::Utility::WeakReferenced
 {
 public:
-    ActiveSpell(const csString& name, SPELL_TYPE type, csTicks duration) : name(name), type(type), duration(duration), cancelOnDeath(true), damagesHP(false), target(NULL), registrationTime(0) { }
+    ActiveSpell(const csString& name, SPELL_TYPE type, csTicks duration);
     ~ActiveSpell() { }
 
     // These are only used by progression scripts, for loading/initializing it.
@@ -84,8 +85,11 @@ public:
     bool DamagesHP() { return damagesHP; }
 
     const csString& Name() const { return name; }
+    const csString& Image() const { return image; }
     SPELL_TYPE      Type() const { return type; }
     csTicks Duration() const { return duration; }
+    csTicks RegistrationTime() const { return registrationTime; }
+    void SetImage( csString imageName );
 
     /**
      * If Cancel() returns true, you're responsible for freeing the ActiveSpell's memory.
@@ -103,6 +107,7 @@ public:
 
 protected:
     csString name;            ///< The name of the spell
+    csString image;            ///< The icon representing the spell
     SPELL_TYPE type;          ///< Spell type - buff, debuff, etc.
     csString script;          ///< the contents of an \<apply\> node which recreates this effect
     csTicks duration;         ///< How long this spell lasts

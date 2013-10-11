@@ -34,6 +34,8 @@
 #include "util/skillcache.h"
 #include <ivideo/graph3d.h>
 
+#include "bulkobjects/activespell.h"
+
 /**
  * \addtogroup messages
  * @{ */
@@ -3695,63 +3697,78 @@ public:
 class psGUIActiveMagicMessage : public psMessageCracker
 {
 public:
-    enum commandType { Add, Remove };
+    long int	msgIndex;		//message number, used to ensure messages are processed in the correct order. increases by one for each message.
+    
+    enum commandType { Add, Remove, List };
 
-    psGUIActiveMagicMessage(uint32_t clientNum,
-                            commandType cmd,
-                            SPELL_TYPE type,
-                            csTicks duration,
-                            const csString &name,
-                            const csString &image)
+    psGUIActiveMagicMessage(uint32_t clientNum, csArray<ActiveSpell*> spells, uint32_t index )
     {
-        //                                                 + duration         +
-        size_t    msgSize = sizeof(bool) + sizeof(uint8_t) + sizeof(uint32_t) + sizeof(int32_t);
+        //                  MSGTYPE_ACTIVEMAGIC + clientNum        + valid        + index            + spellCount;
+        size_t    msgSize = sizeof(uint8_t)     + sizeof(uint32_t) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t); 
 
-        if(name && name.Length()>0)
-            msgSize += name.Length() +1;
-        else
-            msgSize += sizeof(uint8_t);
+	size_t    numSpells = spells.GetSize();
 
-        if(image)
+        for( size_t i=0; i<numSpells; i++ )
         {
-            if(image.Length()>0)
+            msgSize += sizeof(uint8_t);     //SPELL_TYPE 
+            msgSize += sizeof(uint32_t);    //duration
+            msgSize += sizeof(uint32_t);    //registrationTime
+            if(spells[i]->Name() && spells[i]->Name().Length()>0)
+                msgSize += (spells[i]->Name().Length()+1);
+            else
+                msgSize += sizeof(uint8_t);
+    
+            if(spells[i]->Image() && spells[i]->Image().Length()>0)
             {
-                msgSize += image.Length() +1;
+                msgSize += (spells[i]->Image().Length()+1);
             }
-        }
-        else
-        {
-            msgSize += sizeof(uint8_t);
+            else
+            {
+                msgSize += sizeof(uint8_t);
+            }
         }
 
         msg.AttachNew(new MsgEntry(msgSize));
         msg->SetType(MSGTYPE_ACTIVEMAGIC);
         msg->clientnum = clientNum;
-        msg->Add((uint8_t)cmd);
-        msg->Add((uint8_t)type);
-        if(name && name.Length()>0)
-            msg->Add(name);
-        else
-            msg->Add((uint8_t)0);
-
-        if(image && image.Length()>0)
-            msg->Add(image);
-        else
-            msg->Add((uint8_t)0);
-
-        msg->Add((uint32_t)duration);
-
+        msg->Add((uint32_t)index);
+        msg->Add((uint32_t)numSpells);
+        for( size_t i=0; i<numSpells; i++ )
+        {
+            msg->Add((uint8_t)spells[i]->Type());
+            msg->Add((uint32_t)spells[i]->Duration());
+            msg->Add((uint32_t)spells[i]->RegistrationTime());
+            if(spells[i]->Name() && spells[i]->Name().Length()>0)
+                msg->Add(spells[i]->Name().GetData());
+            else
+                msg->Add((uint8_t)0);
+    
+            if(spells[i]->Image() && spells[i]->Image().Length()>0)
+                msg->Add(spells[i]->Image().GetData());
+            else
+                msg->Add((uint8_t)0);
+        }
         valid = !(msg->overrun);
     }
 
     /// Crack this message off the network.
     psGUIActiveMagicMessage(MsgEntry* message)
     {
-        command = (commandType) message->GetUInt8();
-        type = (SPELL_TYPE) message->GetUInt8();
-        name = message->GetStr();          //if there was no name when the message was sent, this should read a null string
-        image = message->GetStr();         //if there was no name when the message was sent, this should read a null string
-        duration = message->GetUInt32();
+	//what is the index number of this message?
+	long index = message->GetUInt32();
+
+	//how many spells are in the message?
+	size_t totalSpells = message->GetUInt32();
+
+	//read the spells
+	for( size_t i; i<totalSpells; i++ )
+	{
+	    type.Push( (SPELL_TYPE) message->GetUInt8() );
+	    duration.Push( message->GetUInt32());
+	    registrationTime.Push( message->GetUInt32());
+	    name.Push( message->GetStr());          //if there was no name when the message was sent, this should read a null string
+	    image.Push( message->GetStr());         //if there was no name when the message was sent, this should read a null string
+	}
         valid = true;
     }
 
@@ -3764,11 +3781,12 @@ public:
      */
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
-    commandType command;
-    SPELL_TYPE type;
-    uint32     duration;
-    csString name;
-    csString image;
+    csArray<commandType> command;
+    csArray<SPELL_TYPE>  type;
+    csArray<uint32>      duration;
+    csArray<uint32>      registrationTime;
+    csArray<csString>    name;
+    csArray<csString>    image;
 };
 
 //-----------------------------------------------------------------------------

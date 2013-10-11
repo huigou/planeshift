@@ -4410,29 +4410,24 @@ void gemActor::AddActiveSpell(ActiveSpell* asp)
     }
     activeSpells.Push(asp);
 
-    csString   lname = asp->Name();
-    csString   imageName;
-    if(!lname)
-    {
-    }
-    else if(lname)
-    {
-        psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(lname);
-        if(!lspell)
-        {
-            imageName = csString();
-        }
-        else
-        {
-            imageName = lspell->GetImage();
-            if(!imageName)
-            {
-                imageName = csString();
-            }
-        }
-    }
+    psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(asp->Name());
+    csString   image;
 
-    psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Add, asp->Type(), asp->Duration(), lname, imageName);
+    if(!lspell)
+    {
+        image = csString();
+    }
+    else
+    {
+        image = lspell->GetImage();
+        if(!image)
+        {
+            image = csString();
+        }
+    }
+    asp->SetImage( image );
+
+    psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, 0 ); // <---add message index tracking!
     outgoing.SendMessage();
 }
 
@@ -4440,7 +4435,7 @@ bool gemActor::RemoveActiveSpell(ActiveSpell* asp)
 {
     if(activeSpells.Delete(asp))
     {
-        psGUIActiveMagicMessage outgoing(GetClientID(), psGUIActiveMagicMessage::Remove, asp->Type(), asp->Duration(), asp->Name(), csString());
+        psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, 0 ); // <---add message index tracking!
         outgoing.SendMessage();
         return true;
     }
