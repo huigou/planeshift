@@ -1307,9 +1307,13 @@ public:
         return familiarsId.GetSize() > id ? familiarsId.Get(id) : 0;
     }
     void SetFamiliarID(PID v);
-    bool CanSummonFamiliar(int id)
+    size_t GetNumFamiliars()
     {
-        return GetFamiliarID(id) != 0 && canSummonFamiliar.Current() > 0;
+        return familiarsId.GetSize();
+    }
+    bool CanSummonFamiliar()
+    {
+        return canSummonFamiliar.Current() > 0;
     }
     Buffable<int> &GetCanSummonFamiliar()
     {
