@@ -195,6 +195,9 @@ public:
     /// Add Session for pets
     PetOwnerSession *CreatePetOwnerSession( gemActor *, psCharacter * );
 
+    /// Dismiss active (summoned) pet.
+    void DismissPet( gemNPC* pet, Client *owner );
+
     /// Remove Session for pets
     void RemovePetOwnerSession( PetOwnerSession *session );
 

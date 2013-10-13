@@ -260,6 +260,12 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner, PID masterPID)
     npc->GetCharacterData()->NPC_SetSpawnRuleID( 0 );
     npc->SetOwner( owner );
 
+    gemNPC* pet = dynamic_cast <gemNPC*>(owner->GetClient()->GetFamiliar());
+    if (pet)
+    {
+        // Dismiss active (summoned) pet.
+        psserver->GetNPCManager()->DismissPet( pet, owner->GetClient() );
+    }
     owner->GetClient()->SetFamiliar( npc );
     owner->GetCharacterData()->SetFamiliarID( familiarID );
 
