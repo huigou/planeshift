@@ -2087,23 +2087,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
         case psPETCommandMessage::CMD_DISMISS :
             if(pet->IsValid())
             {
-                PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
-
-                // Check for an existing session
-                if(!session)
-                {
-                    CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName());
-                }
-                else
-                {
-                    session->isActive = false;
-                }
-
-                psserver->CharacterLoader.SaveCharacterData(pet->GetCharacterData(), pet, true);
-
-                CPrintf(CON_NOTIFY, "NPCManager Removing familiar %s from owner %s.\n", pet->GetName(), owner->GetName());
-                owner->SetFamiliar(NULL);
-                entityManager->RemoveActor(pet);
+                DismissPet(pet, owner);
             }
             else
             {
@@ -2443,6 +2427,26 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
     }
 }
 
+void NPCManager::DismissPet( gemNPC* pet, Client *owner )
+{
+    PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
+
+    // Check for an existing session
+    if(!session)
+    {
+        CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName());
+    }
+    else
+    {
+        session->isActive = false;
+    }
+
+    psserver->CharacterLoader.SaveCharacterData(pet->GetCharacterData(), pet, true);
+
+    CPrintf(CON_NOTIFY, "NPCManager Removing familiar %s from owner %s.\n", pet->GetName(), owner->GetName());
+    owner->SetFamiliar(NULL);
+    entityManager->RemoveActor(pet);
+}
 
 void NPCManager::PrepareMessage()
 {
