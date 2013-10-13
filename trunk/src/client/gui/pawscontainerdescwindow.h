@@ -49,11 +49,6 @@ public:
      */
     ContainerID GetContainerID() { return containerID; }
 
-    /**
-     * Return the slot.
-     */
-    pawsSlot* GetSlot(int slotID);
-
 private:
     void HandleUpdateItem( MsgEntry* me );
     void HandleViewContainer( MsgEntry* me );

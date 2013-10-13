@@ -57,9 +57,6 @@ public:
     /** Tells if the amount of money is Zero (null) */
     bool IsNoAmount();
 
-    /** Returns pawsItemSlot that represents given coin */
-    pawsSlot * GetSlot(int coin);
-
     void SetContainer( int containerID );
     void Drag( bool dragOn );
 

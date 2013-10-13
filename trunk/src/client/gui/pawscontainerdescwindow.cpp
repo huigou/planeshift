@@ -338,22 +338,3 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
 
     return true;
 }
-
-pawsSlot* pawsContainerDescWindow::GetSlot(int slotID)
-{
-    int col = slotID%6;
-    int row = (slotID-col)/6;
-
-    if (col > 0 && col < contents->GetTotalColumns())
-    {
-        pawsListBoxRow* listRow = contents->GetRow(row);
-        if (listRow)
-        {
-            return dynamic_cast <pawsSlot*> (listRow->GetColumn(col));
-        }
-    }
-
-    return NULL;
-}
-
-

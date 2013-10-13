@@ -232,19 +232,6 @@ bool pawsMoney::IsNoAmount()
     return false;
 }
 
-pawsSlot * pawsMoney::GetSlot(int coin)
-{
-    switch (coin)
-    {
-        case MONEY_CIRCLES:  return circles;
-        case MONEY_OCTAS:    return octas;
-        case MONEY_HEXAS:    return hexas;
-        case MONEY_TRIAS:    return trias;
-        default: CS_ASSERT(0);
-    }    
-    return 0;
-}
-
 void pawsMoney::RecalculateAmount()
 {
     amount  = this->trias->StackCount();
