@@ -4871,7 +4871,17 @@ void gemNPC::SendBehaviorMessage(const csString &msg_id, gemObject* obj)
 
                     //If we are alive then we can talk with an NPC
                     if(IsAlive())
+                    {
                         options |= psGUIInteractMessage::NPCTALK;
+                        if(psChar->IsMount() &&
+                           psChar->GetOwnerID() == actor->GetCharacterData()->GetPID())
+                        {
+                            if(actor->GetMount())
+                                options |= psGUIInteractMessage::UNMOUNT;
+                            else
+                                options |= psGUIInteractMessage::MOUNT;
+                        }
+                    }
                 }
                 else
                     options |= psGUIInteractMessage::PLAYERDESC;
