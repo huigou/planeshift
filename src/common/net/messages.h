@@ -3756,6 +3756,11 @@ public:
     {
         //what type of message : Add, Remove or List. retained so older style messages won't make the system crash.
         command = (commandType)message->GetUInt8();
+        if( command != List )
+        {
+            valid = false;
+            return;
+        }
 
 	//what is the index number of this message?
 	index = message->GetUInt32();
