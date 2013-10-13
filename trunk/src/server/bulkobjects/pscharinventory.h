@@ -76,7 +76,7 @@ struct glyphSlotInfo
 
 //-----------------------------------------------------------------------------
 
-/** This class handles the details behind a characters inventory system.
+/** This class handles the details behind a character's inventory system.
   */
 class psCharacterInventory
 {

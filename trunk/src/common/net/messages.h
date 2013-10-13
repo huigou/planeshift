@@ -1649,7 +1649,7 @@ public:
      * should normally be only done on the client.
      * @param command The type that this inventory message is. Should be one of the
      *                 defined enums. Default is request for inventory.
-     * @param size The max size of this message.  Can be cliped when sent on the network.
+     * @param size The max size of this message.  Can be clipped when sent on the network.
      */
     psGUIInventoryMessage(uint8_t command = REQUEST, uint32_t size=0);
 
@@ -1658,7 +1658,7 @@ public:
      * Create a new message that will be used for an inventory list.
      *
      * This is usually done by the server to create a message to be sent
-     * to the client about the players inventory. It needs to know totalItems
+     * to the client about the player's inventory. It needs to know totalItems
      * so it can write that to the message first.
      *
      * @param clientNum   Client destination.
@@ -3692,7 +3692,7 @@ public:
  *
  * This message is used to manage the active spells window. The
  * client psActiveSpellWindow and server psProgressionManager will deal with
- * this messages.
+ * this message.
  */
 class psGUIActiveMagicMessage : public psMessageCracker
 {
@@ -3776,6 +3776,7 @@ public:
     }
 
     PSF_DECLARE_MSG_FACTORY();
+
     /**
      *  Converts the message into human readable string.
      *
