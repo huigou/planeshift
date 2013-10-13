@@ -74,8 +74,6 @@ bool pawsActiveMagicWindow::PostSetup()
 {
     pawsWidget::PostSetup();
 
-    configPopup = 0;
-
     buffList  = (pawsScrollMenu*)FindWidget("BuffBar");
     if(!buffList)
         return false;
@@ -163,6 +161,8 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
         configPopup = (pawsConfigPopup*)PawsManager::GetSingleton().FindWidget("ConfigPopup");
 
     psGUIActiveMagicMessage incoming(me);
+    if( !incoming.valid )
+        return;
 
     if( incoming.index - lastIndex < 0 )
     {
