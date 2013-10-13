@@ -2862,35 +2862,35 @@ Usage:
          <Contents>
           <content type="text">This is the main command to interact with your pets.
 
-  For all the following commands [pet-name,] is either the name of your pet or it's number. If no [petname,] is given the first found pet of the ones you have currently summoned is used. Do not forget to add the "," after the name or number of your pet. Use quotes for petname with multiple names.
+  All of the following commands affect the currently summoned pet. The summon command takes one addition argument where [pet-name] is either the first name of your pet or it's number. If no [pet-name] is given, the first pet of the ones you own is summoned.
 
 Usage:
-/pet [pet-name,] assist
+/pet assist
 (This makes your pet assist you in combat by attacking your current target.)
 
-/pet [pet-name,] attack
+/pet attack
 (Your pet will attack your current target.)
 
-/pet [pet-name,] dismiss
+/pet dismiss
 (This dismisses your pet.)
 
-/pet [pet-name,] follow
+/pet follow
 (Your pet will follow you wherever you go)
 
-/pet [pet-name,] name [new-name]
+/pet name [new-name]
 (Renames your pet to [new-name].)
 
-/pet [pet-name,] guard
-(Your pets guards its current position.)
+/pet guard
+(Your pet guards its current position.)
 
-/pet [pet-name,] stay
+/pet stay
 (Your pet will stay at its current position and not follow you anymore.)
 
-/pet [pet-name,] summon
+/pet summon [pet-name]
 (Summons your pet. You need to have the necessary item equipped for this to work.)
 
-/pet [pet-name,] target [target]
-(Sets the target of your pet. If no target is given the target of your character will be uses. If [target] is "me" your pet will target your character. Otherwise [target] is interpreted as the name of the target you want to set.
+/pet target [target]
+(Sets the target of your pet. If no target is given, the target of your character will be used. If [target] is "me", your pet will target your character. Otherwise, [target] is interpreted as the name of the target you want to set.
           </content>
          </Contents>
         </topic>
