@@ -146,6 +146,7 @@ pawsChatWindow::pawsChatWindow()
     settings.yourColorMix = true;
     settings.joindefaultchannel = true;
     settings.defaultlastchat = true;
+    settings.looseFocusOnSend = false;
     settings.tabSetting = 1023; //enables all tabs
 
     for (int i = 0; i < CHAT_END; i++)
@@ -2021,7 +2022,7 @@ bool pawsChatWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers
         case CSKEY_ENTER:
         {
             if (settings.looseFocusOnSend || !strcmp(inputText->GetText(), ""))
-                PawsManager::GetSingleton().SetCurrentFocusedWidget((pawsWidget*)PawsManager::GetSingleton().GetMainWidget());
+                PawsManager::GetSingleton().SetCurrentFocusedWidget(NULL);
 
             csString text = inputText->GetText();
             inputText->Clear();
@@ -2196,9 +2197,6 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
         }
 
         currLine.Free(); // Set to NULL
-
-        PawsManager::GetSingleton().SetCurrentFocusedWidget( inputText );
-        BringToTop( inputText );
     }
 }
 
