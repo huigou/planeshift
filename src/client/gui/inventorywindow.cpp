@@ -336,52 +336,6 @@ void pawsInventoryWindow::Dequip( const char* itemName )
     }
 }
 
-void pawsInventoryWindow::UpdateFromContainer(ContainerID fromContainerID, int fromSlotID, int fromStackCount, int takenStackCount)
-{
-    pawsSlot* fromSlot = NULL;
-
-    // Find the fromSlot
-    if (fromContainerID == CONTAINER_INVENTORY_BULK)
-    {
-        if (fromContainerID >= 0 && fromContainerID < INVENTORY_BULK_COUNT)
-        {
-            fromSlot = bulkSlots[fromSlotID];
-        }
-        else
-        {
-            int slotID = fromSlotID % 100;
-            int locationInParent = (fromSlotID-slotID)/100;
-
-            pawsContainerDescWindow* containerDescWindow = (pawsContainerDescWindow*)PawsManager::GetSingleton().FindWidget("ContainerDescWindow");
-            if (containerDescWindow)
-            {
-                if (containerDescWindow->GetContainerID() == locationInParent)
-                {
-                    fromSlot = containerDescWindow->GetSlot( slotID );
-                }
-            }
-        }
-
-    }
-
-    if (fromSlot)
-    {
-        // Prechange the slot, client side
-        if (fromStackCount > takenStackCount)
-        {
-            fromSlot->StackCount(fromStackCount - takenStackCount);
-        }
-        else
-        {
-            fromSlot->Clear();
-        }
-    }
-    else
-    {
-        // Found no slot!!!
-    }
-}
-
 void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlotID )
 {
     csArray<psInventoryCache::CachedItemDescription*>::Iterator iter = psengine->GetInventoryCache()->GetSortedIterator();
@@ -406,8 +360,6 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlo
     {
         int container   = from->containerID;
         int slot        = from->slot;
-
-        UpdateFromContainer(container, slot, from->stackCount, stackCount);
 
         if (container == CONTAINER_INVENTORY_BULK)
         {
