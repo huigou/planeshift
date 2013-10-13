@@ -107,41 +107,38 @@ bool psInventoryCache::SetInventoryItem(int slot,
                                         csString iconImage,
                                         int purifyStatus)
 {
-    if (itemhash.Get(slot,NULL))
+    CachedItemDescription* id = itemhash.Get(slot, NULL);
+    if (!id)
     {
-        CachedItemDescription* id = itemhash.Get(slot,NULL);
-        itemBySlot.Delete(id);
-        delete id;
+        id = new CachedItemDescription;
+        id->slot = slot;
+        itemhash.PutUnique(slot, id);
+        itemBySlot.InsertSorted(id, CachedItemDescription::CompareSlot);
     }
 
-    //printf("Setting item %s in slot %d\n", name.GetDataSafe(), slot);
+    id->containerID = containerID;
+    id->name = name;
+    id->meshName = meshName;
+    id->materialName = materialName;
+    id->weight = weight;
+    id->size = size;
+    id->stackCount = stackCount;
+    id->iconImage = iconImage;
+    id->purifyStatus = purifyStatus;
 
-    CachedItemDescription* newItem = new CachedItemDescription;
-    newItem->slot = slot;
-    newItem->containerID = containerID;
-    newItem->name = name;
-    newItem->meshName = meshName;
-    newItem->materialName = materialName;
-    newItem->weight = weight;
-    newItem->size = size;
-    newItem->stackCount = stackCount;
-    newItem->iconImage = iconImage;
-    newItem->purifyStatus = purifyStatus;
-
-    itemhash.PutUnique(slot, newItem);
-    itemBySlot.InsertSorted(newItem, CachedItemDescription::CompareSlot);
-
-    if (newItem && newItem->stackCount>0 && newItem->iconImage.Length() != 0)
+    // Don't publish slot updates for items in containers.
+    // That is handled by pawsContainerDescWindow.
+    if (id->stackCount>0 && id->iconImage.Length() != 0 && slot < 100)
     {
         csString sigData, data;
         sigData.Format("invslot_%d", slot);
 
-        data.Format( "%s %d %d %s %s %s", newItem->iconImage.GetData(),
-                     newItem->stackCount,
-                     newItem->purifyStatus,
-                     newItem->meshName.GetData(),
-                     newItem->materialName.GetData(),
-                     newItem->name.GetData());
+        data.Format( "%s %d %d %s %s %s", id->iconImage.GetData(),
+                     id->stackCount,
+                     id->purifyStatus,
+                     id->meshName.GetData(),
+                     id->materialName.GetData(),
+                     id->name.GetData());
 
         PawsManager::GetSingleton().Publish(sigData, data);
     }

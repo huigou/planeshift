@@ -104,7 +104,7 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
         mesg.stackCount = -1; // hardcoded signal that item is not owned by this player
     }
 
-    sigData.Format("invslot_%d", mesg.containerID.Unbox() * 100 + mesg.slotID + 16);
+    sigData.Format("invslot_%d", mesg.containerID.Unbox() * 100 + mesg.slotID);
     if (!mesg.clearSlot)
     {
         data.Format("%s %d %d %s %s %s", mesg.icon.GetData(), mesg.stackCount, 0, mesg.meshName.GetData(), mesg.materialName.GetData(), mesg.name.GetData());
@@ -166,27 +166,27 @@ void pawsContainerDescWindow::HandleViewContainer( MsgEntry* me )
                     slot->SetSlotID(i*cols+j);
                     //slot->SetDefaultToolTip("Empty");
 
+                    // Note that the server adds +16 to the slotID that the
+                    // client sends so we subscribe to the slotID+16
+                    // but publish without the +16 to compensate.
                     csString slotName;
-                    slotName.Format("invslot_%d", mesg.containerID * 100 + i*cols+j + 16); // container slot + next two digit slot number
+                    slotName.Format("invslot_%d", mesg.containerID * 100 + i*cols+j + (mesg.containerID < 100 ? 16 : 0));
                     slot->SetSlotName(slotName);
                     Debug3(LOG_CHARACTER, 0, "Container slot %d subscribing to %s.", i*cols+j, slotName.GetData());
                     // New slots must subscribe to sigClear* -before-
                     // invslot_n, or else the cached clear signal will override
                     // the signal with the cached slot data, resulting in an
                     // empty window.
-                    if (containerID < 100)
-                        PawsManager::GetSingleton().Subscribe("sigClearInventorySlots", slot);
                     PawsManager::GetSingleton().Subscribe("sigClearContainerSlots", slot);
                     PawsManager::GetSingleton().Subscribe(slotName, slot);
                 }
             }
         }
-        if (containerID > 100)
-            PawsManager::GetSingleton().Publish("sigClearContainerSlots");
+        PawsManager::GetSingleton().Publish("sigClearContainerSlots");
         for (size_t i=0; i < mesg.contents.GetSize(); i++)
         {
             csString sigData, data;
-            sigData.Format("invslot_%u", mesg.containerID * 100 + mesg.contents[i].slotID + 16);
+            sigData.Format("invslot_%u", mesg.containerID * 100 + mesg.contents[i].slotID);
 
             data.Format( "%s %d %d %s %s %s", mesg.contents[i].icon.GetData(),
                          mesg.contents[i].stackCount,
