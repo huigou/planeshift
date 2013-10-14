@@ -1703,7 +1703,7 @@ csArray<psItem*> psCharacter::RemoveLootItems(csArray<csString> categories)
         {
             for(size_t i = 0; i < categories.GetSize(); i++)
             {
-                if(lootPending[x]->GetCategory()->name.Downcase().Find(categories[i]) != csArrayItemNotFound)
+                if(lootPending[x]->GetCategory()->name.Find(categories[i], 0, true) != csArrayItemNotFound)
                 {
                     items.Push(lootPending[x]);
                     lootPending.DeleteIndex(x);
