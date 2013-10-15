@@ -167,6 +167,12 @@ const char* GetSettingName(int id);
 #define Notify6(type, a,b,c,d,e,f) \
     { if (DoLogNotify(type)){ \
         pslog::LogMessage (__FILE__, __LINE__, __FUNCTION__, CS_REPORTER_SEVERITY_NOTIFY, type, 0, a, b, c, d, e, f); }}
+#define Notify7(type, a,b,c,d,e,f,g) \
+    { if (DoLogNotify(type)){ \
+        pslog::LogMessage (__FILE__, __LINE__, __FUNCTION__, CS_REPORTER_SEVERITY_NOTIFY, type, 0, a, b, c, d, e, f, g); }}
+#define Notify8(type, a,b,c,d,e,f,g,h) \
+    { if (DoLogNotify(type)){ \
+        pslog::LogMessage (__FILE__, __LINE__, __FUNCTION__, CS_REPORTER_SEVERITY_NOTIFY, type, 0, a, b, c, d, e, f, g, h); }}
 
 #define Warning1(type, a) \
     { if (DoLogWarning(type)){ \
