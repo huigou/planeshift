@@ -1200,7 +1200,7 @@ void psUserCommands::HandleMessage(MsgEntry *msg)
 }
 
 // Starting from startingEntity, this function returns the next nearest or
-// furthest PC, NPC or ITEM.  If startingEntity is NULL, it returns the the nearest
+// furthest PC, NPC or ITEM.  If startingEntity is NULL, it returns the nearest
 // or furthest PC, NPC or ITEM from the player.  If the search doesn't find a new
 // target because we are already at the furthest or nearest entity, it cycles
 // around to the nearest or furthest entity respectively.
@@ -1317,6 +1317,8 @@ GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
 {
     psCelClient* cel = psengine->GetCelClient();
     csVector3 myPos = cel->GetMainPlayer()->GetPosition();
+    GEMClientObject* bestObject = NULL;
+    float distance = 0.0f;
 
     // Find all entities within a certain radius.
     csArray<GEMClientObject*> entities = cel->FindNearbyEntities(cel->GetMainPlayer()->GetSector(),
@@ -1332,11 +1334,18 @@ GEMClientObject* psUserCommands::FindEntityWithName(const char *name)
         GEMClientObject* object = entities[i];
         CS_ASSERT( object );
 
-        if (csString(object->GetName()).StartsWith(name, true))
-            return object;
+        if (!csString(object->GetName()).StartsWith(name, true))
+            continue;
+        csVector3 pos(object->GetPosition());
+        float seDistance = csSquaredDist::PointPoint(myPos, pos);
+        if (!bestObject || seDistance < distance)
+        {
+            bestObject = object;
+            distance = seDistance;
+        }
     }
 
-    return NULL;
+    return bestObject;
 }
 
 csString psUserCommands::FormatTarget(const csString& target)
