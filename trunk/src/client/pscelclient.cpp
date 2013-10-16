@@ -27,6 +27,7 @@
 #include <cstool/collider.h>
 #include <iutil/cfgmgr.h>
 #include <iutil/objreg.h>
+#include <iutil/plugin.h>
 #include <iutil/stringarray.h>
 #include <iutil/vfs.h>
 #include <ivaria/collider.h>
@@ -40,6 +41,7 @@
 #include <imesh/objmodel.h>
 #include <imesh/spritecal3d.h>
 #include <imesh/nullmesh.h>
+#include <ivaria/engseq.h>
 #include <ivideo/material.h>
 #include <csgeom/math3d.h>
 
@@ -669,8 +671,6 @@ void psCelClient::HandleMecsActivate(MsgEntry* me)
 {
     psMechanismActivateMessage msg(me);
 
-    Debug1(LOG_ACTIONLOCATION,0,"Received HandleMecsActivate message!");
-
     Debug2(LOG_ACTIONLOCATION,0,"Received HandleMecsActivate message mesh: %s!", msg.meshName.GetData());
 
     Debug2(LOG_ACTIONLOCATION,0,"Received HandleMecsActivate message move: %s!", msg.move.GetData());
@@ -682,43 +682,29 @@ void psCelClient::HandleMecsActivate(MsgEntry* me)
     // object found
     if(objectWrapper)
     {
+		// creates a sequence to move/rotate the object
+		csRef<iEngineSequenceManager> sequenceMngr = csQueryRegistryOrLoad<iEngineSequenceManager> (object_reg,"crystalspace.utilities.sequence.engine", false);
+		csRef<iSequenceWrapper> sequence = sequenceMngr->CreateSequence("mechanisms");
+		csRef<iParameterESM> meshParam = sequenceMngr->CreateParameterESM(objectWrapper);
+		const int ANIM_DURATION = 5000;
         // move the object
         if (msg.move && msg.move!="") {
             Debug2(LOG_ACTIONLOCATION,0,"Found mesh move! %s", objectWrapper->QueryObject()->GetName());
-            csReversibleTransform &tr = objectWrapper->GetMovable()->GetTransform();
             csStringArray tokens;
             tokens.SplitString(msg.move, ",");
             csVector3 v(atof(tokens.Get(0)), atof(tokens.Get(1)), atof(tokens.Get(2)));
-            tr.Translate(v);
+			sequence->AddOperationMoveDuration(0,meshParam,v,ANIM_DURATION);
+			sequenceMngr->RunSequenceByName("mechanisms",0);
+		// rotates the object
         } else if (msg.rot && msg.rot!="") {
             Debug2(LOG_ACTIONLOCATION,0,"Found mesh rotate! %s", objectWrapper->QueryObject()->GetName());
             csStringArray tokens;
             tokens.SplitString(msg.rot, ",");
 
-            // calculate the rotation matrix from the pitch-roll-yaw angles
-            csYRotMatrix3 pitch(atof(tokens.Get(0)));
-            csYRotMatrix3 roll(atof(tokens.Get(1)));
-            csZRotMatrix3 yaw(atof(tokens.Get(2)));
+			sequence->AddOperationRotateDuration (0, meshParam, 0, atof(tokens.Get(0)), 1, atof(tokens.Get(1)), 2, atof(tokens.Get(2)), csVector3(0,0,0), ANIM_DURATION, true);
+			sequenceMngr->RunSequenceByName("mechanisms",0);
 
-            // obtain current transform
-            const csReversibleTransform &movTrans = objectWrapper->GetMovable()->GetTransform();
-
-            // obtain the point to use as base for the rotation
-            csVector3 rotBase = movTrans.GetOrigin();
-
-            // obtain orignal translation
-            csVector3 origTrans = movTrans.GetO2TTranslation();
-
-            // create the final transformation
-            // move to center - apply roll and yaw
-            csReversibleTransform trans(roll*yaw,-rotBase);
-            // apply pitch, revert move to center and move to final position
-            trans = trans * csReversibleTransform(pitch,rotBase+origTrans);
-
-            // set new transformation
-            objectWrapper->GetMovable()->SetTransform(trans);
         }
-        objectWrapper->GetMovable()->UpdateMove();
     }
 }
 
