@@ -626,7 +626,7 @@ void ServerCharManager::BeginTrading(Client * client, gemObject * target, const 
     psCharacter* character = client->GetCharacterData();
 
     ///////////
-    // Check preconditions for traiding.
+    // Check preconditions for trading.
     // Range check is outside TradingCheck to prevent dublicate range checks in gemNPC::SendBehaviorMessage
 
     // Check within select range
