@@ -66,6 +66,14 @@ struct psMovement
     psVelocity motion;    ///< Motion aplied for this movement
 };
 
+/// Used to save movement state to detect changes.
+struct psMoveState
+{
+    uint activeMoves;
+    bool autoMove;
+    bool sneaking;
+};
+
 /** Manages main character movements.
  *
  *  Starts/stops modes and movements for the controled character.  Modes and movements
@@ -197,6 +205,20 @@ public:
 
     void SetSneaking(bool v) { sneaking = v; }
     bool Sneaking() { return sneaking; }
+
+    void SaveMoveState(psMoveState& state)
+    {
+        state.activeMoves = activeMoves;
+        state.autoMove = autoMove;
+        state.sneaking = sneaking;
+    }
+
+    bool MoveStateChanged(psMoveState& state)
+    {
+        return state.activeMoves != activeMoves ||
+               state.autoMove != autoMove ||
+               state.sneaking != sneaking;
+    }
 };
 
 #endif

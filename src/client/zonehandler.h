@@ -28,6 +28,7 @@
 //=============================================================================
 #include "net/cmdbase.h"
 #include "paws/pawstexturemanager.h"
+#include "psmovement.h"
 
 //=============================================================================
 // Local Includes
@@ -135,11 +136,12 @@ public:
      * the player is moved to the target position.
      *
      * @param pos The target position in the new zone
+     * @param yrot The target rotation angle in the new zone
      * @param sector The name of the target zone
      * @param vel Target velocity
      * @param force Whether to force the loading of the target zone
      */
-    void LoadZone(csVector3 pos, const char* sector, csVector3 vel, bool force = false);
+    void LoadZone(csVector3 pos, float yrot, const char* sector, csVector3 vel, bool force = false);
 
     /** @brief Called after drawing on screen has finished.
      *
@@ -154,7 +156,7 @@ public:
      * @param newSector Target sector to move to
      * @param Vel Target velocity
      */
-    void MovePlayerTo(const csVector3 &Pos, const csString &newSector, const csVector3 &Vel);
+    void MovePlayerTo(const csVector3 &Pos, float yRot, const csString &newSector, const csVector3 &Vel);
 
     /** @brief Handles delay and dot animation
     *
@@ -193,6 +195,8 @@ protected:
     csString sectorToLoad; ///< The sector that needs to be loaded
     csVector3 newPos; ///< The target location the player will move to after loading
     csVector3 newVel; ///< The velocity the player will have after loading
+    float newyrot; ///< The rotation the player will have after loading
+    psMoveState moveState;
     bool loading; ///< Whether a new zone is currently being loaded
     csString forcedBackgroundImg; ///<String which holds the background of the loading screen
     csTicks forcedLoadingEndTime;///<Holds how long the loading shall be delayed
