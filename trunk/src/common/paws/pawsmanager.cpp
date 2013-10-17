@@ -1497,7 +1497,7 @@ void PawsManager::Subscribe(const char* dataname,iPAWSSubscriber* listener)
     {
         PAWSData lastKnownValue;
 
-        // Check for entries without sibscriber and store lastKnownValue
+        // Check for entries without subscriber and store lastKnownValue
         while(iter.HasNext())
         {
             PAWSSubscription* p = iter.Next();
