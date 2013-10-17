@@ -565,6 +565,8 @@ public:
       */
     const csVector3 GetVelocity() const;
 
+    float GetYRotation() const;
+
     virtual void SetPosition(const csVector3 &pos, float rot, iSector* sector);
 
     /** Set the velocity of the actor.

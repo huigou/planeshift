@@ -196,22 +196,24 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
     Notify3(LOG_LOAD, "Crossed from sector %s to sector %s.", msg.oldSector.GetData(), msg.newSector.GetData());
 
     csVector3 velocity = csVector3(0.0f);
+    float yrot = 0.0f;
     // load current speed on sector crossing if the player is valid (not during game loading)
     if(celclient->GetMainPlayer())
     {
         velocity = celclient->GetMainPlayer()->GetVelocity();
-        Notify4(LOG_LOAD, "Velocity %f %f %f", velocity.x, velocity.y, velocity.z);
+        yrot = celclient->GetMainPlayer()->GetYRotation();
     }
 
-    LoadZone(msg.pos, msg.newSector, velocity);
+    LoadZone(msg.pos, yrot, msg.newSector, velocity);
 }
 
-void ZoneHandler::LoadZone(csVector3 pos, const char* sector, csVector3 vel, bool force)
+void ZoneHandler::LoadZone(csVector3 pos, float yrot, const char* sector, csVector3 vel, bool force)
 {
     if((loading || !strcmp(sector, LOADING_SECTOR)) && !force)
         return;
 
     newPos = pos;
+    newyrot = yrot;
     newVel = vel;
     csString sectorBackup = sectorToLoad; // cache old sector
     sectorToLoad = sector;
@@ -224,8 +226,21 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, csVector3 vel, boo
         return;
     }
 
-    // Move player to the loading sector.
-    MovePlayerTo(csVector3(0.0f), LOADING_SECTOR, csVector3(0.0f));
+    // Save current movement state before stopping.
+    psengine->GetCharControl()->GetMovementManager()->SaveMoveState(moveState);
+
+    GEMClientActor* player = celclient->GetMainPlayer();
+    if(player)
+    {
+        // Stop player moving.
+        player->SetVelocity(csVector3(0.0f));
+
+        // Send DR update so others see player stop.
+        psClientDR* dr = celclient->GetClientDR();
+        csStringHashReversible* msgstrings = dr->GetMsgStrings();
+        if(msgstrings)
+            player->SendDRUpdate(PRIORITY_HIGH, msgstrings);
+    }
 
     // load target location
     if(!psengine->BackgroundWorldLoading())
@@ -292,24 +307,20 @@ void ZoneHandler::LoadZone(csVector3 pos, const char* sector, csVector3 vel, boo
         psengine->ForceRefresh();
     }
     else
-        MovePlayerTo(newPos, sectorToLoad, newVel);
+        MovePlayerTo(newPos, newyrot, sectorToLoad, newVel);
 }
 
-void ZoneHandler::MovePlayerTo(const csVector3 &Pos, const csString &newSector, const csVector3 &Vel)
+void ZoneHandler::MovePlayerTo(const csVector3 &Pos, float yrot,
+                               const csString &newSector, const csVector3 &Vel)
 {
     if(!celclient->IsReady())
         return;
 
-    csVector3 pos;
-    float yrot;
-    iSector* sector;
-
-    celclient->GetMainPlayer()->GetLastPosition(pos, yrot, sector);             // retrieve last yrot
-
-    sector = psengine->GetEngine()->FindSector(newSector);
+    iSector* sector = psengine->GetEngine()->FindSector(newSector);
     if(sector != NULL)
     {
-        Notify8(LOG_LOAD, "Setting position of player %f %f %f in sector '%s' velocity: %f %f %f", Pos.x, Pos.y, Pos.z, newSector.GetData(), Vel.x, Vel.y, Vel.z);
+        Notify9(LOG_LOAD, "Setting position of player %f %f %f rot %f in sector '%s' velocity: %f %f %f",
+            Pos.x, Pos.y, Pos.z, yrot, newSector.GetData(), Vel.x, Vel.y, Vel.z);
         celclient->GetMainPlayer()->SetPosition(Pos, yrot, sector);          // set new position
         celclient->GetMainPlayer()->SetVelocity(Vel);
     }
@@ -325,8 +336,18 @@ void ZoneHandler::OnDrawingFinished()
     {
         if(psengine->GetLoader()->GetLoadingCount() == 0 && csGetTicks() >= forcedLoadingEndTime)
         {
+            // This is a bit of a hack. The problem is that we want to
+            // stop movement while the loading screen is visible but not
+            // restore the saved velocity if the player has changed movement
+            // keys.
+            if (celclient->GetMainPlayer() &&
+                psengine->GetCharControl()->GetMovementManager()->MoveStateChanged(moveState))
+            {
+                newVel = celclient->GetMainPlayer()->GetVelocity();
+            }
+
             // move player to new pos
-            MovePlayerTo(newPos, sectorToLoad, newVel);
+            MovePlayerTo(newPos, newyrot, sectorToLoad, newVel);
 
             if(psengine->HasLoadedMap())
                 loadWindow->Hide();

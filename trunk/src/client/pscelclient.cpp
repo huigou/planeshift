@@ -1593,6 +1593,11 @@ const csVector3 GEMClientActor::GetVelocity() const
     return linmove->GetVelocity();
 }
 
+float GEMClientActor::GetYRotation() const
+{
+    return linmove->GetYRotation();
+}
+
 csVector3 GEMClientActor::Pos() const
 {
     csVector3 pos;
