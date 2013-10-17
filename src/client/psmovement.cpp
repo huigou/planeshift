@@ -208,13 +208,13 @@ bool psMovementManager::HandleEvent( iEvent &event )
 
     if (event.Name == event_frame)
     {
-        // If we we've returned to the ground, update allowed velocity
+        // If we've returned to the ground, update allowed velocity
         if ((!onGround && actor->Movement().IsOnGround()) ||
-        		(onGround && !actor->Movement().IsOnGround()))
+                (onGround && !actor->Movement().IsOnGround()))
             UpdateVelocity();
 
-		// UpdateMouseLook will take care of "recent mouse-look turning" based on "bool mouseLook"
-		UpdateMouseLook();
+            // UpdateMouseLook will take care of "recent mouse-look turning" based on "bool mouseLook"
+            UpdateMouseLook();
 
         if (mouseMove)
             UpdateRunTo();
@@ -559,13 +559,13 @@ void psMovementManager::UpdateVelocity()
      */
     onGround = actor->Movement().IsOnGround();
 
-	// Apply mode's modifier
+    // Apply mode's modifier
     vel *= actormode->modifier;
     if (onGround)  // Normal
     {
 
         #ifdef MOVE_DEBUG
-		    printf("On Ground: Applying velocity modifier (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
+            printf("On Ground: Applying velocity modifier (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
                     actormode->modifier.move.x,actormode->modifier.move.y,actormode->modifier.move.z,
                     actormode->modifier.rotate.x,actormode->modifier.rotate.y,actormode->modifier.rotate.z);
             printf("On Ground: Changing velocity to (%.2f,%.2f,%.2f),(%.2f,%.2f,%.2f)\n",
@@ -594,9 +594,9 @@ void psMovementManager::UpdateVelocity()
                     vel.rotate.x,vel.rotate.y,vel.rotate.z);
         #endif
 
-		// Add to existing velocity
-		if (vel.move.y <= 0 && (vel.move.x != 0 || vel.move.z != 0))
-			actor->Movement().SetVelocity(csVector3(vel.move.x,0,vel.move.z));
+        // Add to existing velocity
+        if (vel.move.y <= 0 && (vel.move.x != 0 || vel.move.z != 0))
+            actor->Movement().SetVelocity(csVector3(vel.move.x,0,vel.move.z));
 
         // Set rotation
         actor->Movement().SetAngularVelocity( vel.rotate );
@@ -710,8 +710,8 @@ void psMovementManager::UpdateMouseLook()
 
 void psMovementManager::MouseLook(iEvent& ev)
 {
-	if (!ready || !actor)
-		return;
+    if (!ready || !actor)
+        return;
 
     psCamera* camera = psengine->GetPSCamera();
     iGraphics2D* g2d = psengine->GetG2D();
@@ -783,8 +783,8 @@ void psMovementManager::MouseZoom(iEvent& ev)
 
 void psMovementManager::SetRunToPos(psPoint& mouse)
 {
-	if (!ready || !actor)
-		return;
+    if (!ready || !actor)
+        return;
 
     csVector3 tmp, tmpDiff;
     iMeshWrapper *mesh = psengine->GetPSCamera()->Get3DPointFrom2D(mouse.x, mouse.y, &tmp, &tmpDiff);
@@ -816,8 +816,8 @@ void psMovementManager::CancelRunTo()
 
 void psMovementManager::UpdateRunTo()
 {
-	if (!ready || !actor)
-		return;
+    if (!ready || !actor)
+        return;
 
     if (runToMarkerID != 0 && !locked)
     {
