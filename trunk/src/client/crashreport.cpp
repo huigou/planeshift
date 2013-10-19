@@ -260,10 +260,7 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& pdescriptor,
 					 bool succeeded)
 {
 
-	fprintf( stderr, "****UploadDump sending file \n");
 execl( "./pslaunch", "--uploaddump=/tmp/2b9fa65f-56ba-0387-1db760a9-2dfe1341.dmp", NULL );
-fprintf( stderr, "****UploadDump exec error %i!\n", errno );
-fflush(stderr);
         
 	const char* dump_path = descriptor.path();
 #endif
