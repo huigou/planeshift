@@ -303,6 +303,8 @@ void psCelClient::AddEntity(GEMClientObject* obj)
         GEMClientObject* target = psengine->GetCharManager()->GetTarget();
         if(target == existing)
         {
+            //we need to forcefully unlock the old target as this is going to get deleted.
+            psengine->GetCharManager()->LockTarget(false);
             psengine->GetCharManager()->SetTarget(obj, "select", false);
             psengine->GetPSCamera()->npcTargetReplaceIfEqual(existing, obj);
         }
