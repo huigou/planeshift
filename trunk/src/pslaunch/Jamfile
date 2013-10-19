@@ -2,10 +2,10 @@ SubDir TOP src pslaunch ;
 
 ApplicationIcon win32 : pslaunch : [ ConcatDirs $(TOP) support icons icon1.ico ] ;
 Application pslaunch :
-	[ Wildcard *.cpp *.cc *.h ]
+	[ Wildcard *.cpp *.h ]
 ;
 
-ExternalLibs pslaunch : CRYSTAL CURL BREAKPAD;
+ExternalLibs pslaunch : CRYSTAL CURL ;
 CompileGroups pslaunch : client ;
 LinkWith pslaunch : xdelta3 paws psutil fparser ;
 
