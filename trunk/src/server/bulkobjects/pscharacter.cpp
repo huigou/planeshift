@@ -1155,7 +1155,7 @@ OverridableRace &psCharacter::GetOverridableRace()
 
 void psCharacter::SetFamiliarID(PID v)
 {
-    familiarsId.Push(v);
+    familiarsId.InsertSorted(v);
 
     csString sql;
     sql.Format("INSERT INTO character_relationships VALUES (%u, %d, 'familiar', '')", pid.Unbox(), v.Unbox());
