@@ -261,7 +261,7 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& pdescriptor,
 {
 
 	fprintf( stderr, "****UploadDump sending file \n");
-execl( "/home/joe/development/planeshift/trunk/pslaunch", "--uploaddump=/tmp/2b9fa65f-56ba-0387-1db760a9-2dfe1341.dmp", NULL );
+execl( "./pslaunch", "--uploaddump=/tmp/2b9fa65f-56ba-0387-1db760a9-2dfe1341.dmp", NULL );
 fprintf( stderr, "****UploadDump exec error %i!\n", errno );
 fflush(stderr);
         
