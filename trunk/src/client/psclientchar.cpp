@@ -510,9 +510,9 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
 
         // get the target
         GEMClientObject* gemTarget = cel->FindObject(effect.targetID);
-        iMeshWrapper *target = anchor;
+        iMeshWrapper *meshtarget = anchor;
         if (gemTarget)
-            target = gemTarget->GetMesh();
+            meshtarget = gemTarget->GetMesh();
 
         // render the actual effect
         if (psengine->GetEffectManager ())
@@ -524,14 +524,14 @@ void psClientCharManager::HandleEffect( MsgEntry* me )
             if (anchor)
             {
                 effectID = psengine->GetEffectManager()->RenderEffect(effect.name, effect.offset,
-                                                                      anchor, target, up, uniqueIDOverride,
+                                                                      anchor, meshtarget, up, uniqueIDOverride,
                                                                       false, effect.scale);
             }
             else
             {
                 iSector * sector = psengine->GetPSCamera()->GetICamera()->GetCamera()->GetSector(); // Sector should come in the message
                 effectID = psengine->GetEffectManager()->RenderEffect(effect.name, sector,
-                                                                      effect.offset, target,
+                                                                      effect.offset, meshtarget,
                                                                       up, uniqueIDOverride, effect.scale);
             }
 

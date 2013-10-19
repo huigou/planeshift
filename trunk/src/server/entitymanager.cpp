@@ -250,7 +250,7 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner, PID masterPID)
     // Create Familiar using new ID
     this->CreateNPC( familiarID , false); //Do not update proxList, we will do that later.
 
-    gemNPC * npc = psserver->entitymanager->GetGEM()->FindNPCEntity( familiarID );
+    gemNPC* npc = gem->FindNPCEntity( familiarID );
     if (npc == NULL)
     {
         psserver->SendSystemError( owner->GetClientID(), "Could not find GEM and set its location.");
@@ -259,6 +259,12 @@ gemNPC* EntityManager::CreateFamiliar (gemActor *owner, PID masterPID)
 
     npc->GetCharacterData()->NPC_SetSpawnRuleID( 0 );
     npc->SetOwner( owner );
+
+    // take the actor off his mount if he is on one.
+    if (owner->GetMount())
+    {
+        RemoveRideRelation(owner);
+    }
 
     gemNPC* pet = dynamic_cast <gemNPC*>(owner->GetClient()->GetFamiliar());
     if (pet)
@@ -328,7 +334,7 @@ gemNPC* EntityManager::CloneNPC ( psCharacter *chardata )
     // Create npc using new ID
     this->CreateNPC( npcPID , false); //Do not update proxList, we will do that later.
 
-    gemNPC * npc = psserver->entitymanager->GetGEM()->FindNPCEntity( npcPID );
+    gemNPC* npc = gem->FindNPCEntity( npcPID );
     if (npc == NULL)
     {
         Error1("Could not find GEM and set its location.");
@@ -525,7 +531,7 @@ gemNPC* EntityManager::CreatePet (Client *client, int masterFamiliarID)
 
     EID familiarID = this->CreateNPC(petData, false); // Do not update proxList, we will do that later.
 
-    gemNPC * npc = psserver->entitymanager->GetGEM()->FindNPCEntity( familiarID );
+    gemNPC* npc = gem->FindNPCEntity( familiarID );
     if (npc == NULL)
     {
         psserver->SendSystemError( client->GetClientNum(), "Could not find GEM and set its location.");
