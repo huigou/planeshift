@@ -48,6 +48,9 @@ CS_IMPLEMENT_APPLICATION
 
 psLauncherGUI* psLaunchGUI;
 
+void UploadDump( const char * file, const char *uploadargs );
+
+
 using namespace CS::Threading;
 
 psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient)
@@ -386,20 +389,34 @@ void psLauncherGUI::PerformRepair()
 int main(int argc, char* argv[])
 {
     // Select between GUI and console mode.
-    bool console = false;
-    bool help = false;
+    bool      console = false;
+    bool      help = false;
+    csString  upload("");
+    csString  uploadArgs("");
+
+fprintf( stderr, "pslaunch parsing args :\n" );
+
     for(int i=0; i<argc; i++)
     {
         csString s(argv[i]);
+fprintf( stderr, "\t%s\n", s.GetData() );
         if(s.CompareNoCase("--console") || s.CompareNoCase("-console") ||
                 s.CompareNoCase("--switch") || s.CompareNoCase("-switch") ||
-                s.CompareNoCase("--repair") || s.CompareNoCase("-repair"))
+                s.CompareNoCase("--switch") || s.CompareNoCase("-switch") )
         {
             console = true;
         }
         else if(s.CompareNoCase("--help") || s.CompareNoCase("-help"))
         {
             help = true;
+        }
+        else if(s.StartsWith("--uploaddump",true) || s.StartsWith("-uploaddump",true))
+        {
+            upload=s.Slice( s.FindFirst( '=', 0 )+1);
+        }
+        else if(s.StartsWith("--args",true) || s.StartsWith("-args",true))
+        {
+            uploadArgs=s.Slice( s.FindFirst( '=', 0 )+1);
         }
     }
 
@@ -418,11 +435,12 @@ int main(int argc, char* argv[])
     {
         printf("PlaneShift Updater Version %1.2f for %s.\n"
                 "Launcher and updater for Planeshift\n\n"
-                "pslaunch [--help] [--console] [--repair] [--switch]\n\n"
-                "--help      Displays this help dialog\n"
-                "--console   Run updater without the GUI\n"
-                "--switch    Switch active updater mirror\n"
-                "--repair    Check for any problems and prompt to repair them\n",
+                "pslaunch [--help] [--console] [--repair] [--switch] [--uploaddump=/path/to/123456789.dmp]\n\n"
+                "--help          Displays this help dialog\n"
+                "--console       Run updater without the GUI\n"
+                "--switch        Switch active updater mirror\n"
+                "--repair        Check for any problems and prompt to repair them\n"
+                "--uploaddump    Send a Planshift dumpfile to the dev team for analysis\n",
                 UPDATER_VERSION, (new Config())->GetPlatform());
     }
     else if(console)
@@ -456,6 +474,10 @@ int main(int argc, char* argv[])
         delete updater;
         engine = NULL;
         updater = NULL;
+    }
+    else if(!upload.IsEmpty() )
+    {
+        UploadDump( upload.GetData(), uploadArgs.GetData() );
     }
     else
     {
