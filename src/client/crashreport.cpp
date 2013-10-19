@@ -265,10 +265,22 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& pdescriptor,
 	//printf ("descriptor %s\n",uploadBuffer);
 	//execl( "./pslaunch", uploadBuffer, NULL );
 
-	printf ("before\n");
-	execl( "/bin/ls", 0 );
-    printf ("done\n");
-    return true;
+	pid_t pid = sys_fork();
+	printf ("pid %d \n",pid);
+	if (pid == 0) {
+		printf ("the first process. exit\n");
+		printf ("before\n");
+		//execl( "/bin/ls", 0 );
+		printf ("done\n");
+		return false;
+	} else {
+		printf ("I'm the new process\n");
+		return true;
+	}
+
+	exit(1);
+
+	return true;
 	const char* dump_path = descriptor.path();
 #endif
 
