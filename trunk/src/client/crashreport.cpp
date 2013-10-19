@@ -26,13 +26,6 @@
 #undef USE_BREAKPAD
 #endif
 
-// TOFIX: Breakpad at the moment works only on windows, so we temporary enable it only on that platform
-#ifdef WIN32
-#define USE_BREAKPAD
-#else
-#undef USE_BREAKPAD
-#endif
-
 #ifdef USE_BREAKPAD
 #ifdef WIN32
 #include "resource.h"
@@ -109,6 +102,7 @@ PS_CHAR szComments[1500];
 #ifdef CS_PLATFORM_UNIX
 	   google_breakpad::MinidumpDescriptor descriptor;
 #endif
+char uploadBuffer[1024];
 
 // Initialise the crash dumper.
 class BreakPadWrapper
@@ -178,11 +172,15 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
 		swprintf(timeBuffer, L"%I64u", start_time);
 #else
 		sprintf(timeBuffer, "%lu", start_time);
+sprintf( uploadBuffer, "--uploaddump=%-512.512s", descriptor.path() );
+fprintf( stderr, "********upload arg set to \"%s\"\n", wrapperCrash_handler->minidump_descriptor().path() );
 #endif
 				parameters[STR("StartupTime")] = timeBuffer;
 				parameters[STR("ProductName")] = STR("PlaneShift");
 				parameters[STR("Version")] = STR(PS_VERSION);
 				report_code.reserve(512);
+
+
 
 		}
 		~BreakPadWrapper() {
@@ -211,7 +209,6 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
 //private:
 		static google_breakpad::ExceptionHandler* wrapperCrash_handler;
 
-//        google_breakpad::MinidumpDescriptor descriptor;
 };
 
 ExceptionHandler* BreakPadWrapper::wrapperCrash_handler = NULL;
@@ -258,16 +255,17 @@ bool UploadDump(const PS_CHAR* dump_path,
                      bool succeeded) 
 {
 #else
-static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
+static bool UploadDump( const google_breakpad::MinidumpDescriptor& pdescriptor,
 					 void* context,
 					 bool succeeded)
 {
 
-	const char* dump_path = descriptor.path();
 	fprintf( stderr, "****UploadDump sending file \n");
-	sleep(5);
-	fprintf( stderr, "****UploadDump descriptor location = %x  \n", &descriptor);
-	fprintf( stderr, "****UploadDump descriptor dir = %s\n", descriptor.path() );
+execl( "/home/joe/development/planeshift/trunk/pslaunch", "--uploaddump=/tmp/2b9fa65f-56ba-0387-1db760a9-2dfe1341.dmp", NULL );
+fprintf( stderr, "****UploadDump exec error %i!\n", errno );
+fflush(stderr);
+        
+	const char* dump_path = descriptor.path();
 #endif
 
 		Error1("Upload DUMP started");
@@ -295,6 +293,16 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
               (DLGPROC)CrashReportProc);
 	if(dialogResult == 0 || dialogResult == -1)
 		::MessageBoxA( NULL, "A report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nFor concerns about privacy, please see http://watson.microsoft.com/dw/1033/dcp.asp. Please consult the PlaneShift forums for more details.", "PlaneShift has quit unexpectedly!", MB_OK + MB_ICONERROR );
+    swprintf(timeBuffer, L"%I64u", crash_time);
+	wprintf(L"WIN32 SendReport url %s\n",crash_post_url);
+	wprintf(L"WIN32 SendReport path_file %s\n",path_file);
+	wprintf(L"WIN32 SendReport dump_path %s\n",dump_path);
+    ReportResult reportResult = BreakPadWrapper::wrapperCrash_sender->SendCrashReport(crash_post_url,
+		    BPwrapper.parameters,
+		    path_file,
+		    &BPwrapper.report_code);
+    if(reportResult == RESULT_SUCCEEDED)
+	    result = true;
 #endif
 
 
@@ -305,7 +313,6 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 	PS_CHAR timeBuffer[128];
 
 #ifdef WIN32
-    swprintf(timeBuffer, L"%I64u", crash_time);
 #else
     sprintf(timeBuffer, "%lu", crash_time);
 #endif
@@ -317,33 +324,7 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 
     bool result = false;
 #ifdef WIN32
-	wprintf(L"WIN32 SendReport url %s\n",crash_post_url);
-	wprintf(L"WIN32 SendReport path_file %s\n",path_file);
-	wprintf(L"WIN32 SendReport dump_path %s\n",dump_path);
-    ReportResult reportResult = BreakPadWrapper::wrapperCrash_sender->SendCrashReport(crash_post_url,
-		    BPwrapper.parameters,
-		    path_file,
-		    &BPwrapper.report_code);
-    if(reportResult == RESULT_SUCCEEDED)
-	    result = true;
 #elif defined(CS_PLATFORM_UNIX)
-	if(!BPwrapper.http_layer->Init())
-	{
-		printf("Unable to start correctly libcurl!\n");
-		return false;
-    }
-	// Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
-	if (BPwrapper.http_layer->AddFile(path_file, "upload_file_minidump")) {
-	//if (BPwrapper.http_layer->AddFile( descriptor.path(), "upload_file_minidump")) {
-			result = BPwrapper.http_layer->SendRequest(crash_post_url,
-							BPwrapper.parameters,
-							&BPwrapper.report_code);
-    }
-	else
-	{
-			printf("Could not add minidump file.\n");
-			return false;
-    }
 #endif
     if(result && !BPwrapper.report_code.empty())
     {
@@ -351,7 +332,6 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 #ifdef WIN32
 	    ::MessageBoxW( NULL, BPwrapper.report_code.c_str(), L"Report upload successful. Thanks.", MB_OK );
 #else
-	    printf("%s\n", BPwrapper.report_code.c_str());
 #endif
 			return succeeded;
 	}
