@@ -25,6 +25,7 @@
 #if defined(CS_DEBUG) || defined(CS_PLATFORM_MACOSX)
 #undef USE_BREAKPAD
 #endif
+#define USE_BREAKPAD
 
 #ifdef USE_BREAKPAD
 #ifdef WIN32
@@ -172,96 +173,102 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
 		swprintf(timeBuffer, L"%I64u", start_time);
 #else
 		sprintf(timeBuffer, "%lu", start_time);
-	sprintf( uploadBuffer, "--uploaddump=%-512.512s", wrapperCrash_handler->minidump_descriptor().path() );
-	fprintf( stderr, "********upload arg set to \"%s\"\n", uploadBuffer );
-	#endif
-					parameters[STR("StartupTime")] = timeBuffer;
-					parameters[STR("ProductName")] = STR("PlaneShift");
-					parameters[STR("Version")] = STR(PS_VERSION);
-					report_code.reserve(512);
+sprintf( uploadBuffer, "--uploaddump=%-512.512s", descriptor.path() );
+fprintf( stderr, "********upload arg set to \"%s\"\n", wrapperCrash_handler->minidump_descriptor().path() );
+#endif
+				parameters[STR("StartupTime")] = timeBuffer;
+				parameters[STR("ProductName")] = STR("PlaneShift");
+				parameters[STR("Version")] = STR(PS_VERSION);
+				report_code.reserve(512);
 
 
 
-			}
-			~BreakPadWrapper() {
-					delete wrapperCrash_handler;
-					wrapperCrash_handler = NULL;
+		}
+		~BreakPadWrapper() {
+				delete wrapperCrash_handler;
+				wrapperCrash_handler = NULL;
 
-	#ifdef WIN32
-			delete wrapperCrash_sender;
-			wrapperCrash_sender = NULL;
-	#else
-			delete http_layer;
-			http_layer = NULL;
-	#endif
+#ifdef WIN32
+		delete wrapperCrash_sender;
+		wrapperCrash_sender = NULL;
+#else
+		delete http_layer;
+		http_layer = NULL;
+#endif
 
-			}
+		}
 
-	#ifdef WIN32
-		static CrashReportSender* wrapperCrash_sender;
-	#else
-		static LibcurlWrapper* http_layer;
-	#endif
+#ifdef WIN32
+	static CrashReportSender* wrapperCrash_sender;
+#else
+	static LibcurlWrapper* http_layer;
+#endif
 
-			std::map<BpString, BpString> parameters;
-			BpString report_code;
+		std::map<BpString, BpString> parameters;
+		BpString report_code;
 
-	//private:
-			static google_breakpad::ExceptionHandler* wrapperCrash_handler;
+//private:
+		static google_breakpad::ExceptionHandler* wrapperCrash_handler;
 
-	};
+};
 
-	ExceptionHandler* BreakPadWrapper::wrapperCrash_handler = NULL;
+ExceptionHandler* BreakPadWrapper::wrapperCrash_handler = NULL;
 
-	#ifdef WIN32
-	CrashReportSender* BreakPadWrapper::wrapperCrash_sender = NULL;
-	#else
-	LibcurlWrapper* BreakPadWrapper::http_layer = NULL;
-	#endif
+#ifdef WIN32
+CrashReportSender* BreakPadWrapper::wrapperCrash_sender = NULL;
+#else
+LibcurlWrapper* BreakPadWrapper::http_layer = NULL;
+#endif
 
-	// At global scope to ensure we hook in as early as possible.
-	BreakPadWrapper BPwrapper;
+// At global scope to ensure we hook in as early as possible.
+BreakPadWrapper BPwrapper;
 
-	#ifdef WIN32
-	BOOL CALLBACK CrashReportProc(HWND hwndDlg, 
-				     UINT message, 
-				     WPARAM wParam, 
-				     LPARAM lParam) 
-	{ 
-	    switch (message) 
-	    { 
-		case WM_COMMAND: 
-		    switch (LOWORD(wParam)) 
-		    { 
-			case IDOK: 
-			    GetDlgItemTextW(hwndDlg, IDC_COMMENTS, szComments, 1500); 
-			    EndDialog(hwndDlg, wParam); 
-			    return TRUE; 
-		    } 
-	    } 
-	    return FALSE; 
-	} 
-	#endif
+#ifdef WIN32
+BOOL CALLBACK CrashReportProc(HWND hwndDlg, 
+                             UINT message, 
+                             WPARAM wParam, 
+                             LPARAM lParam) 
+{ 
+    switch (message) 
+    { 
+        case WM_COMMAND: 
+            switch (LOWORD(wParam)) 
+            { 
+                case IDOK: 
+                    GetDlgItemTextW(hwndDlg, IDC_COMMENTS, szComments, 1500); 
+                    EndDialog(hwndDlg, wParam); 
+                    return TRUE; 
+            } 
+    } 
+    return FALSE; 
+} 
+#endif
 
 
-	#ifdef WIN32
+#ifdef WIN32
 
-	// This function should not modify the heap!
-	bool UploadDump(const PS_CHAR* dump_path,
-			     const PS_CHAR* minidump_id,
-			     void* context,
-			     EXCEPTION_POINTERS* exinfo,
-			     MDRawAssertionInfo* assertion,
-			     bool succeeded) 
-	{
-	#else
-	static bool UploadDump( const google_breakpad::MinidumpDescriptor& pdescriptor,
-						 void* context,
-						 bool succeeded)
-	{
+// This function should not modify the heap!
+bool UploadDump(const PS_CHAR* dump_path,
+                     const PS_CHAR* minidump_id,
+                     void* context,
+                     EXCEPTION_POINTERS* exinfo,
+                     MDRawAssertionInfo* assertion,
+                     bool succeeded) 
+{
+#else
+static bool UploadDump( const google_breakpad::MinidumpDescriptor& pdescriptor,
+					 void* context,
+					 bool succeeded)
+{
 
-	execl( "./pslaunch", uploadBuffer, NULL );
-        
+	//sprintf( uploadBuffer, "--console --uploaddump=%-512.512s", pdescriptor.path() );
+	//printf ("descriptor %s\n",uploadBuffer);
+	//execl( "./pslaunch", uploadBuffer, NULL );
+
+	printf ("before\n");
+	execl( "/bin/ls", 0 );
+    printf ("done\n");
+    return true;
 	const char* dump_path = descriptor.path();
 #endif
 
