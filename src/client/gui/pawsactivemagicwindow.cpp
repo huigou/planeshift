@@ -43,6 +43,7 @@
 
 pawsActiveMagicWindow::pawsActiveMagicWindow() :
     buffList(NULL),
+    lastIndex(0),
     configPopup(NULL),
     show(true),
     useImages(true),
@@ -156,7 +157,6 @@ bool pawsActiveMagicWindow::Setup(iDocumentNode* node)
 
 void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 {
-    static uint32_t    lastIndex = 0;
     if(!configPopup)
         configPopup = (pawsConfigPopup*)PawsManager::GetSingleton().FindWidget("ConfigPopup");
 
@@ -164,9 +164,9 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
     if( !incoming.valid )
         return;
 
-    if( incoming.index - lastIndex < 0 )
+    // Use signed comparison to handle sequence number wrap around.
+    if( (int)incoming.index - (int)lastIndex < 0 )
     {
-        Error1( "Discarding out-of-sequence Active Magic list\n" );
         return;
     }
     csList<csString> rowEntry;
@@ -198,10 +198,6 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
                 if(incoming.image[i].Length() >0)
                 {
                     image = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(incoming.image[i]);
-                }
-                else
-                {
-                    image = NULL;
                 }
                 if(image)
                 {
