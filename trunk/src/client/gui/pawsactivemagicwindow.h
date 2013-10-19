@@ -72,6 +72,7 @@ public:
 private:
 
     pawsScrollMenu*  buffList;
+    uint32_t         lastIndex;    ///<Version number of the last list received
 
     pawsConfigPopup* configPopup;  ///<This is used to point to a instance of ConfigPopup
 

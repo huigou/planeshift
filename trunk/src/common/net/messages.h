@@ -3700,7 +3700,7 @@ public:
     
     enum commandType { Add, Remove, List };
 
-    psGUIActiveMagicMessage(uint32_t clientNum, csArray<ActiveSpell*> spells, uint32_t index )
+    psGUIActiveMagicMessage(uint32_t clientNum, csArray<ActiveSpell*>& spells, uint32_t index )
     {
         //                  MSGTYPE_ACTIVEMAGIC + clientNum        + command         + valid        + index            + spellCount;
         size_t    msgSize = sizeof(uint8_t)     + sizeof(uint32_t) + sizeof(uint8_t) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t); 
@@ -3711,20 +3711,8 @@ public:
         {
             msgSize += sizeof(uint8_t);     //SPELL_TYPE 
             msgSize += sizeof(uint32_t);    //duration
-            msgSize += sizeof(uint32_t);    //registrationTime
-            if(spells[i]->Name() && spells[i]->Name().Length()>0)
-                msgSize += (spells[i]->Name().Length()+1);
-            else
-                msgSize += sizeof(uint8_t);
-    
-            if(spells[i]->Image() && spells[i]->Image().Length()>0)
-            {
-                msgSize += (spells[i]->Image().Length()+1);
-            }
-            else
-            {
-                msgSize += sizeof(uint8_t);
-            }
+            msgSize += spells[i]->Name().Length() + 1;
+            msgSize += spells[i]->Image().Length() + 1;
         }
 
         msg.AttachNew(new MsgEntry(msgSize));
@@ -3737,16 +3725,8 @@ public:
         {
             msg->Add((uint8_t)spells[i]->Type());
             msg->Add((uint32_t)spells[i]->Duration());
-            msg->Add((uint32_t)spells[i]->RegistrationTime());
-            if(spells[i]->Name() && spells[i]->Name().Length()>0)
-                msg->Add(spells[i]->Name().GetData());
-            else
-                msg->Add((uint8_t)0);
-    
-            if(spells[i]->Image() && spells[i]->Image().Length()>0)
-                msg->Add(spells[i]->Image().GetData());
-            else
-                msg->Add((uint8_t)0);
+            msg->Add(spells[i]->Name().GetData());
+            msg->Add(spells[i]->Image().GetData());
         }
         valid = !(msg->overrun);
     }
@@ -3769,11 +3749,10 @@ public:
 	size_t totalSpells = message->GetUInt32();
 
 	//read the spells
-	for( size_t i; i<totalSpells; i++ )
+	for( size_t i=0; i<totalSpells; i++ )
 	{
 	    type.Push( (SPELL_TYPE) message->GetUInt8() );
 	    duration.Push( message->GetUInt32());
-	    registrationTime.Push( message->GetUInt32());
 	    name.Push( message->GetStr());          //if there was no name when the message was sent, this should read a null string
 	    image.Push( message->GetStr());         //if there was no name when the message was sent, this should read a null string
 	}
@@ -3794,7 +3773,6 @@ public:
     commandType command;
     csArray<SPELL_TYPE>  type;
     csArray<uint32>      duration;
-    csArray<uint32>      registrationTime;
     csArray<csString>    name;
     csArray<csString>    image;
 };

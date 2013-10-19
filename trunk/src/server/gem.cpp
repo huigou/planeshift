@@ -4413,18 +4413,9 @@ void gemActor::AddActiveSpell(ActiveSpell* asp)
 
     psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(asp->Name());
     csString   image;
-
-    if(!lspell)
-    {
-        image = csString();
-    }
-    else
+    if(lspell)
     {
         image = lspell->GetImage();
-        if(!image)
-        {
-            image = csString();
-        }
     }
     asp->SetImage( image );
 
