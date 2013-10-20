@@ -2880,6 +2880,8 @@ csString pawsWidget::GetPathInWidgetTree()
 
 void pawsWidget::SetMaskingImage(const char* image)
 {
+    if (image == NULL || *image == '\0')
+        return;
     maskImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
     if (!maskImage)
     {
