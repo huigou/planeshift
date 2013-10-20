@@ -48,6 +48,8 @@ CS_IMPLEMENT_APPLICATION
 
 psLauncherGUI* psLaunchGUI;
 
+void UploadDump( const char * file, const char *uploadargs );
+
 using namespace CS::Threading;
 
 psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient)
@@ -388,18 +390,32 @@ int main(int argc, char* argv[])
     // Select between GUI and console mode.
     bool console = false;
     bool help = false;
+	bool uploaddump = false;
+    csString  dumpUpload("");
+    csString  dumpUploadArgs("");
+
     for(int i=0; i<argc; i++)
     {
         csString s(argv[i]);
         if(s.CompareNoCase("--console") || s.CompareNoCase("-console") ||
                 s.CompareNoCase("--switch") || s.CompareNoCase("-switch") ||
-                s.CompareNoCase("--repair") || s.CompareNoCase("-repair"))
+                s.CompareNoCase("--repair") || s.CompareNoCase("-repair") ||
+				s.CompareNoCase("--uploaddump") || s.CompareNoCase("-uploaddump"))
         {
             console = true;
         }
         else if(s.CompareNoCase("--help") || s.CompareNoCase("-help"))
         {
             help = true;
+        }
+        else if(s.StartsWith("--uploaddump",true) || s.StartsWith("-uploaddump",true))
+        {
+            dumpUpload=s.Slice( s.FindFirst( '=', 0 )+1);
+            uploaddump = true;
+        }
+        else if(s.StartsWith("--args",true) || s.StartsWith("-args",true))
+        {
+            dumpUploadArgs=s.Slice( s.FindFirst( '=', 0 )+1);
         }
     }
 
@@ -422,10 +438,62 @@ int main(int argc, char* argv[])
                 "--help      Displays this help dialog\n"
                 "--console   Run updater without the GUI\n"
                 "--switch    Switch active updater mirror\n"
-                "--repair    Check for any problems and prompt to repair them\n",
+                "--repair        Check for any problems and prompt to repair them\n"
+                "--uploaddump    Send a Planeshift dumpfile to the dev team for analysis\n",
                 UPDATER_VERSION, (new Config())->GetPlatform());
     }
-    else if(console)
+	else if (uploaddump) {
+		// based on : http://www.fifi.org/doc/libcurl-ssl-dev/examples/postit2.c
+
+        CURL* curl = curl_easy_init();
+        struct curl_httppost* post = NULL;
+        struct curl_httppost* last = NULL;
+        struct curl_slist *headerlist=NULL;
+        char buf[] = "Expect:";
+
+        /* upload to this place */
+        curl_easy_setopt(curl, CURLOPT_URL,"http://194.116.72.94/crash-reports/submit");
+
+        /* Add simple file section */
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "sendfile",
+                      CURLFORM_FILE, dumpUpload.GetData(), CURLFORM_END);
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "filename",
+                      CURLFORM_FILE, dumpUpload.GetData(), CURLFORM_END);
+
+		 /* enable verbose for easier tracing */
+		 curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+		  /* initalize custom header list (stating that Expect: 100-continue is not
+		     wanted */
+		  //headerlist = curl_slist_append(headerlist, buf);
+		  //curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+
+		 /* Set the form info */
+		 curl_easy_setopt(curl, CURLOPT_HTTPPOST, post);
+
+		// Perform the upload
+		CURLcode res = curl_easy_perform(curl);
+
+        /* Check for errors */
+        if(res != CURLE_OK) {
+          fprintf(stderr, "curl_easy_perform() failed: %s\n",
+                  curl_easy_strerror(res));
+
+        }
+        else {
+          double speed_upload, total_time;
+          /* now extract transfer info */
+          curl_easy_getinfo(curl, CURLINFO_SPEED_UPLOAD, &speed_upload);
+          curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total_time);
+
+          fprintf(stderr, "Speed: %.3f bytes/sec during %.3f seconds\n",
+                  speed_upload, total_time);
+
+        }
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+
+	} else if(console)
     {
         // Set up CS
         psUpdater* updater = new psUpdater(argc, argv);
