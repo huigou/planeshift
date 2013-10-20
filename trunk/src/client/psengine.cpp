@@ -1294,7 +1294,6 @@ void psEngine::LoadGame()
         case LS_LOAD_SCREEN:
         {
             paws->LoadWidget("loadwindow.xml");
-            LoadPawsWidget("Active Magic window","activemagicwindow.xml");
 
             pawsLoadWindow* window = dynamic_cast <pawsLoadWindow*>(paws->FindWidget("LoadWindow"));
             if(!window)
@@ -1446,7 +1445,7 @@ void psEngine::LoadGame()
             LoadPawsWidget("Character description window","chardescwindow.xml");
             LoadPawsWidget("Quest reward window",     "questrewardwindow.xml");
             LoadPawsWidget("GM Spawn interface",      "gmspawn.xml");
-            //LoadPawsWidget( "Active Magic window",   "activemagicwindow.xml" );
+            LoadPawsWidget("Active Magic window",     "activemagicwindow.xml");
             LoadPawsWidget("Small Inventory Window",  "smallinventory.xml");
             LoadPawsWidget("GM Action Location Edit", "gmaddeditaction.xml");
             LoadPawsWidget("Crafting",                "craft.xml");
