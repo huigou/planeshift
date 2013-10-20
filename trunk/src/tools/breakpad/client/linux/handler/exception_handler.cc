@@ -305,7 +305,6 @@ void ExceptionHandler::SignalHandler(int sig, siginfo_t* info, void* uc) {
   pthread_mutex_lock(&handler_stack_mutex_);
 
 fprintf( stderr, "****signal handler active********\n" );
-sleep( 120 );
 
   // Sometimes, Breakpad runs inside a process where some other buggy code
   // saves and restores signal handlers temporarily with 'signal'
@@ -499,7 +498,6 @@ fprintf( stderr, "**** ExceptionHandler::GenerateDump stack exists****\n" );
       ThreadEntry, stack, CLONE_FILES | CLONE_FS | CLONE_UNTRACED,
       &thread_arg, NULL, NULL, NULL);
 
-sleep( 120 );
   int r, status;
   // Allow the child to ptrace us
 fprintf( stderr, "**** ExceptionHandler::GenerateDump setting up to allow child to trace****\n" );
