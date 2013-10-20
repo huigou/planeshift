@@ -26,12 +26,9 @@
 #undef USE_BREAKPAD
 #endif
 
-// TOFIX: Breakpad at the moment works only on windows, so we temporary enable it only on that platform
-#ifdef WIN32
+// Force breakpad usage
 #define USE_BREAKPAD
-#else
-#undef USE_BREAKPAD
-#endif
+
 
 #ifdef USE_BREAKPAD
 #ifdef WIN32
@@ -108,6 +105,7 @@ PS_CHAR szComments[1500];
 
 #ifdef CS_PLATFORM_UNIX
 	   google_breakpad::MinidumpDescriptor descriptor;
+	   char uploadBuffer[1024];
 #endif
 
 // Initialise the crash dumper.
@@ -264,13 +262,18 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 {
 
 	const char* dump_path = descriptor.path();
-	fprintf( stderr, "****UploadDump sending file \n");
-	sleep(5);
-	fprintf( stderr, "****UploadDump descriptor location = %x  \n", &descriptor);
-	fprintf( stderr, "****UploadDump descriptor dir = %s\n", descriptor.path() );
-#endif
 
-		Error1("Upload DUMP started");
+	// on linux at the moment we just call pslaunch to upload the dump
+	printf("PlaneShift has quit unexpectedly!\n\nA report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nPlease consult the PlaneShift forums for more details.\nAttempting to upload crash report.\n");
+
+	printf( "****UploadDump sending file %s \n",descriptor.path());
+	sprintf( uploadBuffer, "./pslaunch --uploaddump=%-512.512s", descriptor.path() );
+	system (uploadBuffer);
+	printf( "done\n");
+	return false;
+
+
+#endif
 
 	time_t crash_time = time(NULL);
 
