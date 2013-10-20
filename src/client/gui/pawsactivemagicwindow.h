@@ -38,12 +38,12 @@ class pawsConfigPopup;
 
 /** This handles all the details about how the spell cancel works.
  */
-class pawsActiveMagicWindow : public pawsWidget, public psClientNetSubscriber
+class pawsActiveMagicWindow : public pawsControlledWindow, public psClientNetSubscriber
 {
 public:
 
     pawsActiveMagicWindow();
-    virtual ~pawsActiveMagicWindow() {};
+    virtual ~pawsActiveMagicWindow() {}
 
     bool PostSetup();
     bool Setup(iDocumentNode* node);
