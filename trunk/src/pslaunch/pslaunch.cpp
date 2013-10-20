@@ -455,10 +455,24 @@ int main(int argc, char* argv[])
         curl_easy_setopt(curl, CURLOPT_URL,"http://194.116.72.94/crash-reports/submit");
 
         /* Add simple file section */
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "sendfile",
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "upload_file_minidump",
                       CURLFORM_FILE, dumpUpload.GetData(), CURLFORM_END);
+
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "name",
+                     CURLFORM_COPYCONTENTS, "upload_file_minidump",
+                     CURLFORM_END);
+
          curl_formadd(&post, &last, CURLFORM_COPYNAME, "filename",
-                      CURLFORM_FILE, dumpUpload.GetData(), CURLFORM_END);
+                     CURLFORM_COPYCONTENTS, dumpUpload.GetData(),
+                     CURLFORM_END);
+
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "ProductName",
+                     CURLFORM_COPYCONTENTS, "PlaneShift",
+                     CURLFORM_END);
+
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "Version",
+                     CURLFORM_COPYCONTENTS, "0.5.10", // FIX ME !!!!!!!!!!!!!!
+                     CURLFORM_END);
 
 		 /* enable verbose for easier tracing */
 		 curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
