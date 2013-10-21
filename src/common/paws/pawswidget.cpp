@@ -392,7 +392,8 @@ void pawsWidget::RemoveChild( pawsWidget* widget )
     if ( !widget )
         return;
 
-    children.Delete( widget );
+    if (children.Delete(widget))
+        widget->SetParent(NULL);
 }
 
 void pawsWidget::DeleteChild( pawsWidget* widget )
@@ -2881,7 +2882,10 @@ csString pawsWidget::GetPathInWidgetTree()
 void pawsWidget::SetMaskingImage(const char* image)
 {
     if (image == NULL || *image == '\0')
+    {
+        maskImage = 0;
         return;
+    }
     maskImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
     if (!maskImage)
     {
@@ -2977,14 +2981,9 @@ const char *pawsWidget::FindDefaultWidgetStyle(const char *factoryName)
 {
     static csString style;
 
-    if (name=="ChatWindow")
-        printf("Finding default style for factory '%s'\n", factoryName);
-
     style = defaultWidgetStyles.Get(factoryName,csString("not found"));
     if (style == "not found" && parent != NULL)
     {
-        if (name=="ChatWindow")
-            printf("No default style found for factory '%s'. Checking parent.\n", factoryName);
         // walk up the chain of parents
         return parent->FindDefaultWidgetStyle(factoryName);
     }
@@ -2992,8 +2991,6 @@ const char *pawsWidget::FindDefaultWidgetStyle(const char *factoryName)
         return NULL;
     else
     {
-        if (name=="ChatWindow")
-            printf("Default style '%s' found for factory '%s'\n", style.GetData(), factoryName);
         return style;
     }
 }
