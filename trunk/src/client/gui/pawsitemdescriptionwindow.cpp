@@ -70,7 +70,7 @@ bool pawsItemDescriptionWindow::PostSetup()
 void pawsItemDescriptionWindow::HandleMessage( MsgEntry* me )
 {   
     Show();
-    psViewItemDescription mesg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
+    psViewItemDescription mesg(me, psengine->GetNetManager()->GetConnection()->GetAccessPointers());
     description->SetText( mesg.itemDescription );
     csString nameStr;
     nameStr = mesg.itemName;

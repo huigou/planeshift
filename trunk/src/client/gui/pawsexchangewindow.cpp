@@ -299,7 +299,7 @@ void pawsExchangeWindow::HandleMessage( MsgEntry* me )
         ///////////////////////////////////////////////////////////        
         case MSGTYPE_EXCHANGE_ADD_ITEM:
         {
-            psExchangeAddItemMsg item(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());                        
+            psExchangeAddItemMsg item(me, psengine->GetNetManager()->GetConnection()->GetAccessPointers());                        
             pawsSlot* itemSlot = 0;
             
             if ( item.container == CONTAINER_EXCHANGE_OFFERING )

@@ -93,7 +93,7 @@ bool pawsContainerDescWindow::PostSetup()
 
 void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
 {
-    psViewItemUpdate mesg( me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers() );
+    psViewItemUpdate mesg( me, psengine->GetNetManager()->GetConnection()->GetAccessPointers() );
     csString sigData, data;
 
     // We send ownerID to multiple clients, so each client must decide if the item is owned by
@@ -120,7 +120,7 @@ void pawsContainerDescWindow::HandleUpdateItem( MsgEntry* me )
 void pawsContainerDescWindow::HandleViewContainer( MsgEntry* me )
 {
     Show();
-    psViewContainerDescription mesg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
+    psViewContainerDescription mesg(me, psengine->GetNetManager()->GetConnection()->GetAccessPointers());
 
     description->SetText( mesg.itemDescription );
     name->SetText( mesg.itemName );

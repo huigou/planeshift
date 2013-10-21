@@ -66,7 +66,7 @@ void GUIHandler::HandleMessage(MsgEntry* me)
 
 void GUIHandler::HandleInventory(MsgEntry* me)
 {
-    psGUIInventoryMessage incoming(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
+    psGUIInventoryMessage incoming(me, psengine->GetNetManager()->GetConnection()->GetAccessPointers());
 
     // drop inventory list, if its version is older than the current.
     // this may happen due to UDP latency.
