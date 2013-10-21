@@ -1,5 +1,4 @@
-// Copyright (c) 2006, Google Inc.
-// All rights reserved.
+// Copyright 2013 Google Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -27,50 +26,34 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// guid_string.cc: Convert GUIDs to strings.
-//
-// See guid_string.h for documentation.
+// Utilities for loading debug streams and tables from a PDB file.
 
-#include <wchar.h>
-
-#include "../../common/windows/string_utils-inl.h"
-
-#include "../../common/windows/guid_string.h"
+#include <Windows.h>
+#include <dia2.h>
 
 namespace google_breakpad {
 
-// static
-wstring GUIDString::GUIDToWString(GUID *guid) {
-  wchar_t guid_string[37];
-  swprintf(
-      guid_string, sizeof(guid_string) / sizeof(guid_string[0]),
-      L"%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-      guid->Data1, guid->Data2, guid->Data3,
-      guid->Data4[0], guid->Data4[1], guid->Data4[2],
-      guid->Data4[3], guid->Data4[4], guid->Data4[5],
-      guid->Data4[6], guid->Data4[7]);
+// Find the debug stream of the given |name| in the given |session|. Returns
+// true on success, false on error of if the stream does not exist. On success
+// the stream will be returned via |debug_stream|.
+bool FindDebugStream(const wchar_t* name,
+                     IDiaSession* session,
+                     IDiaEnumDebugStreamData** debug_stream);
 
-  // remove when VC++7.1 is no longer supported
-  guid_string[sizeof(guid_string) / sizeof(guid_string[0]) - 1] = L'\0';
+// Finds the first table implementing the COM interface with ID |iid| in the
+// given |session|. Returns true on success, false on error or if no such
+// table is found. On success the table will be returned via |table|.
+bool FindTable(REFIID iid, IDiaSession* session, void** table);
 
-  return wstring(guid_string);
-}
-
-// static
-wstring GUIDString::GUIDToSymbolServerWString(GUID *guid) {
-  wchar_t guid_string[33];
-  swprintf(
-      guid_string, sizeof(guid_string) / sizeof(guid_string[0]),
-      L"%08X%04X%04X%02X%02X%02X%02X%02X%02X%02X%02X",
-      guid->Data1, guid->Data2, guid->Data3,
-      guid->Data4[0], guid->Data4[1], guid->Data4[2],
-      guid->Data4[3], guid->Data4[4], guid->Data4[5],
-      guid->Data4[6], guid->Data4[7]);
-
-  // remove when VC++7.1 is no longer supported
-  guid_string[sizeof(guid_string) / sizeof(guid_string[0]) - 1] = L'\0';
-
-  return wstring(guid_string);
+// A templated version of FindTable. Finds the first table implementing type
+// |InterfaceType| in the given |session|. Returns true on success, false on
+// error or if no such table is found. On success the table will be returned via
+// |table|.
+template<typename InterfaceType>
+bool FindTable(IDiaSession* session, InterfaceType** table) {
+  return FindTable(__uuidof(InterfaceType),
+                   session,
+                   reinterpret_cast<void**>(table));
 }
 
 }  // namespace google_breakpad
