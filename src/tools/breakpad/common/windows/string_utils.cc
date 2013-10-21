@@ -30,7 +30,7 @@
 #include <cassert>
 #include <vector>
 
-#include "common/windows/string_utils-inl.h"
+#include "../../common/windows/string_utils-inl.h"
 
 namespace google_breakpad {
 

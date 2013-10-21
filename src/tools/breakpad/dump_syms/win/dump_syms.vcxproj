@@ -81,20 +81,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\common\windows\dia_util.h" />
-    <ClInclude Include="..\..\..\common\windows\guid_string.h" />
     <ClInclude Include="..\..\..\common\windows\omap_internal.h" />
-    <ClInclude Include="..\..\..\common\windows\omap.h" />
-    <ClInclude Include="..\..\..\common\windows\pdb_source_line_writer.h" />
     <ClInclude Include="..\..\..\common\windows\string_utils-inl.h" />
+    <ClInclude Include="..\..\common\windows\dia_util.h" />
+    <ClInclude Include="..\..\common\windows\guid_string.h" />
+    <ClInclude Include="..\..\common\windows\omap.h" />
+    <ClInclude Include="..\..\common\windows\pdb_source_line_writer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\common\windows\dia_util.cc" />
+    <ClCompile Include="..\..\common\windows\dia_util.cc" />
+    <ClCompile Include="..\..\common\windows\guid_string.cc" />
+    <ClCompile Include="..\..\common\windows\omap.cc" />
+    <ClCompile Include="..\..\common\windows\pdb_source_line_writer.cc" />
+    <ClCompile Include="..\..\common\windows\string_utils.cc" />
     <ClCompile Include="dump_syms.cc" />
-    <ClCompile Include="..\..\..\common\windows\guid_string.cc" />
-    <ClCompile Include="..\..\..\common\windows\omap.cc" />
-    <ClCompile Include="..\..\..\common\windows\pdb_source_line_writer.cc" />
-    <ClCompile Include="..\..\..\common\windows\string_utils.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
