@@ -209,7 +209,7 @@ void psClientDR::ResetMsgStrings()
 
 void psClientDR::HandleDeadReckon( MsgEntry* me )
 {
-    psDRMessage drmsg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers() );
+    psDRMessage drmsg(me, psengine->GetNetManager()->GetConnection()->GetAccessPointers() );
     GEMClientActor* gemActor = (GEMClientActor*)celclient->FindObject( drmsg.entityid );
      
     if (!gemActor)
@@ -243,7 +243,7 @@ void psClientDR::HandleDeadReckon( MsgEntry* me )
 
 void psClientDR::HandleForcePosition(MsgEntry *me)
 {
-    psForcePositionMessage msg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
+    psForcePositionMessage msg(me, psengine->GetNetManager()->GetConnection()->GetAccessPointers());
 
     if(last_sector != msg.sectorName)
     {
@@ -392,8 +392,8 @@ void psClientDR::HandleStrings( MsgEntry* me )
         doc->Write(psengine->GetVFS(), "/planeshift/userdata/cache/commonstrings");
     }
 
-    ((psNetManager*)psengine->GetNetManager())->GetConnection()->SetMsgStrings(0, msgstrings);
-    ((psNetManager*)psengine->GetNetManager())->GetConnection()->SetEngine(psengine->GetEngine());
+    psengine->GetNetManager()->GetConnection()->SetMsgStrings(0, msgstrings);
+    psengine->GetNetManager()->GetConnection()->SetEngine(psengine->GetEngine());
     gotStrings = true;
 
     // Update status.
