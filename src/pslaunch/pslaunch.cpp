@@ -502,7 +502,8 @@ int main(int argc, char* argv[])
 
           fprintf(stderr, "Speed: %.3f bytes/sec during %.3f seconds\n",
                   speed_upload, total_time);
-
+          //delete the dumpfile if the upload was successful
+          unlink( dumpUpload.GetData() );
         }
         /* always cleanup */
         curl_easy_cleanup(curl);
