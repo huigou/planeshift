@@ -90,13 +90,13 @@ void GUIHandler::HandleInventory(MsgEntry* me)
     {
         inventoryCache->SetInventoryItem(incoming.items[z].slot,
                                          incoming.items[z].container,
-                                         incoming.items[z].name.GetData(),
-                                         incoming.items[z].meshName.GetData(),
-                                         incoming.items[z].materialName.GetData(),
+                                         incoming.items[z].name,
+                                         incoming.items[z].meshName,
+                                         incoming.items[z].materialName,
                                          incoming.items[z].weight,
                                          incoming.items[z].size,
                                          incoming.items[z].stackcount,
-                                         incoming.items[z].iconImage.GetData(),
+                                         incoming.items[z].iconImage,
                                          incoming.items[z].purifyStatus);
 
         itemWeight += incoming.items[z].weight;
