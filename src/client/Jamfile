@@ -14,7 +14,6 @@ Application psclient : [ Wildcard *.cpp *.h ] ;
 ExternalLibs psclient : CRYSTAL CAL3D BREAKPAD ;
 CompileGroups psclient : client ;
 COMMONLIBS = gui psnet psengine psrpgrules psutil paws effects fparser psmusic ;
-LinkWith psclient : gui psnet psengine psrpgrules psutil paws effects fparser psmusic ;
 if $(REPORTER)
 {
   if $(TARGET.OS) = "MACOS_X" { COMMONLIBS += crashreport ; }
