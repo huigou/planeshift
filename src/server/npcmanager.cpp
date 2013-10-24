@@ -2031,7 +2031,13 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
         pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
         if(!pet)
         {
-            psserver->SendSystemInfo(me->clientnum, "You have no familiar to command.");
+            // There is no separate gemNPC while mounted (actor is the player).
+            // Instead of saying there is no familiar to command, return a more
+            // useful message.
+            psserver->SendSystemInfo(me->clientnum,
+                owner->GetActor()->GetMount() ?
+                    "You can't command your familiar while mounted." :
+                    "You have no summoned familiar to command.");
             return;
         }
     }
