@@ -177,8 +177,10 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
 #else
 		sprintf(timeBuffer, "%lu", start_time);
 #endif
+                // MANDATORY ATTRIBUTES, without those the parsing server side will not work
 				parameters[STR("StartupTime")] = timeBuffer;
 				parameters[STR("ProductName")] = STR("PlaneShift");
+                parameters[STR("ReleaseChannel")] = STR("release");
 				parameters[STR("Version")] = STR(PS_VERSION);
 				report_code.reserve(512);
 
