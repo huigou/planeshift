@@ -470,6 +470,10 @@ int main(int argc, char* argv[])
                      CURLFORM_COPYCONTENTS, "PlaneShift",
                      CURLFORM_END);
 
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "ReleaseChannel",
+                     CURLFORM_COPYCONTENTS, "release",
+                     CURLFORM_END);
+
          curl_formadd(&post, &last, CURLFORM_COPYNAME, "Version",
                      CURLFORM_COPYCONTENTS, "0.5.10", // FIX ME !!!!!!!!!!!!!!
                      CURLFORM_END);
@@ -479,8 +483,10 @@ int main(int argc, char* argv[])
 
 		  /* initalize custom header list (stating that Expect: 100-continue is not
 		     wanted */
-		  //headerlist = curl_slist_append(headerlist, buf);
+		  headerlist = curl_slist_append(headerlist, "Content-Disposition: form-data; name=\"example\"");
 		  //curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+
+         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
 
 		 /* Set the form info */
 		 curl_easy_setopt(curl, CURLOPT_HTTPPOST, post);
