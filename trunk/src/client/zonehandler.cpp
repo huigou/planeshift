@@ -229,18 +229,8 @@ void ZoneHandler::LoadZone(csVector3 pos, float yrot, const char* sector, csVect
     // Save current movement state before stopping.
     psengine->GetCharControl()->GetMovementManager()->SaveMoveState(moveState);
 
-    GEMClientActor* player = celclient->GetMainPlayer();
-    if(player)
-    {
-        // Stop player moving.
-        player->SetVelocity(csVector3(0.0f));
-
-        // Send DR update so others see player stop.
-        psClientDR* dr = celclient->GetClientDR();
-        csStringHashReversible* msgstrings = dr->GetMsgStrings();
-        if(msgstrings)
-            player->SendDRUpdate(PRIORITY_HIGH, msgstrings);
-    }
+    // Move player to the loading sector.
+    MovePlayerTo(csVector3(0.0f), 0.0f, LOADING_SECTOR, csVector3(0.0f));
 
     // load target location
     if(!psengine->BackgroundWorldLoading())
