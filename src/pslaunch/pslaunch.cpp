@@ -443,8 +443,18 @@ int main(int argc, char* argv[])
                 UPDATER_VERSION, (new Config())->GetPlatform());
     }
 	else if (uploaddump) {
-		// based on : http://www.fifi.org/doc/libcurl-ssl-dev/examples/postit2.c
+        // Set up CS (DONE ONLY TO GET VFS)
+        psUpdater* updater = new psUpdater(argc, argv);
 
+        // Initialize updater engine. (DONE ONLY TO GET VFS)
+        UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "pslaunch");
+
+        // read parameters from file (linux only at the moment)
+    	csRef<iVFS> vfs = engine->GetVFS();
+    	csRef<iConfigFile> configFile;
+        configFile->Load("/planeshift/userdata/crash/crash.params",vfs);
+
+		// based on : http://www.fifi.org/doc/libcurl-ssl-dev/examples/postit2.c
         CURL* curl = curl_easy_init();
         struct curl_httppost* post = NULL;
         struct curl_httppost* last = NULL;
@@ -475,7 +485,23 @@ int main(int argc, char* argv[])
                      CURLFORM_END);
 
          curl_formadd(&post, &last, CURLFORM_COPYNAME, "Version",
-                     CURLFORM_COPYCONTENTS, "0.5.10", // FIX ME !!!!!!!!!!!!!!
+                     CURLFORM_COPYCONTENTS, configFile->GetStr("Version"),
+                     CURLFORM_END);
+
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "PlayerName",
+                     CURLFORM_COPYCONTENTS, configFile->GetStr("PlayerName"),
+                     CURLFORM_END);
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "Renderer",
+                     CURLFORM_COPYCONTENTS, configFile->GetStr("Renderer"),
+                     CURLFORM_END);
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "RendererVersion",
+                     CURLFORM_COPYCONTENTS, configFile->GetStr("RendererVersion"),
+                     CURLFORM_END);
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "CrashTime",
+                     CURLFORM_COPYCONTENTS, configFile->GetStr("CrashTime"),
+                     CURLFORM_END);
+         curl_formadd(&post, &last, CURLFORM_COPYNAME, "Processor",
+                     CURLFORM_COPYCONTENTS, configFile->GetStr("Processor"),
                      CURLFORM_END);
 
 		 /* enable verbose for easier tracing */
