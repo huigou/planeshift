@@ -443,6 +443,7 @@ int main(int argc, char* argv[])
                 UPDATER_VERSION, (new Config())->GetPlatform());
     }
 	else if (uploaddump) {
+		printf ("PSUpdater --uploaddump executing...\n");
         // Set up CS (DONE ONLY TO GET VFS)
         psUpdater* updater = new psUpdater(argc, argv);
 
@@ -452,6 +453,7 @@ int main(int argc, char* argv[])
         // read parameters from file (linux only at the moment)
     	csRef<iVFS> vfs = engine->GetVFS();
     	csRef<iConfigFile> configFile;
+    	configFile.AttachNew(new csConfigFile("/planeshift/userdata/crash/crash.params",vfs));
         configFile->Load("/planeshift/userdata/crash/crash.params",vfs);
 
 		// based on : http://www.fifi.org/doc/libcurl-ssl-dev/examples/postit2.c
