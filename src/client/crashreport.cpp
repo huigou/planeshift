@@ -20,6 +20,8 @@
 
 #include <psconfig.h>
 #include "util/log.h"
+#include <csutil/cfgfile.h>
+#include <iutil/vfs.h>
 
 // Mac uses a different breakpad library. Disabled in Debug.
 #if defined(CS_DEBUG) || defined(CS_PLATFORM_MACOSX)
@@ -102,11 +104,13 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 #endif
 
 PS_CHAR szComments[1500];
+static const PS_CHAR* tempPath;
 
 #ifdef CS_PLATFORM_UNIX
 	   google_breakpad::MinidumpDescriptor descriptor;
 	   char uploadBuffer[1024];
 #endif
+
 
 // Initialise the crash dumper.
 class BreakPadWrapper
@@ -129,10 +133,13 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
                                                               ExceptionHandler::HANDLER_ALL);
 
 #else
-				static const PS_CHAR* tempPath = "/tmp";
-				descriptor = MinidumpDescriptor(tempPath);
+	// find PlaneShift app dir ??? psengine not valid yet???
+	//csRef<iVFS> vfs = psengine->GetVFS();
 
-	fprintf( stderr, "****BreakpadWrappe descriptor location = %x  \n", &descriptor);
+    static const PS_CHAR* tempPath = "/tmp";
+	descriptor = MinidumpDescriptor(tempPath);
+
+	fprintf( stderr, "****BreakpadWrapper descriptor location = %x  \n", &descriptor);
 
 				wrapperCrash_handler = new ExceptionHandler(descriptor,
 								NULL,
@@ -265,27 +272,15 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 
 	const char* dump_path = descriptor.path();
 
-	// on linux at the moment we just call pslaunch to upload the dump
-	printf("PlaneShift has quit unexpectedly!\n\nA report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nPlease consult the PlaneShift forums for more details.\nAttempting to upload crash report.\n");
-
-	printf( "****UploadDump sending file %s \n",descriptor.path());
-	sprintf( uploadBuffer, "./pslaunch --uploaddump=%-512.512s", descriptor.path() );
-	system (uploadBuffer);
-	printf( "done\n");
-	return false;
-
-
 #endif
 
-	time_t crash_time = time(NULL);
-
+#ifdef WIN32
 	PS_CHAR path_file[PS_PATH_MAX + 1];
 		path_file[0] = '\0';
 	PS_CHAR* p_path_end = path_file + PS_PATH_MAX;
 
 	PS_STRNCAT(path_file, dump_path, PS_PATH_MAX);
 
-#ifdef WIN32
     PS_CHAR* p_path = path_file;
     p_path += PS_STRLEN(path_file);
     PS_STRCAT(path_file, PS_PATH_SEP);
@@ -300,27 +295,51 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
               (DLGPROC)CrashReportProc);
 	if(dialogResult == 0 || dialogResult == -1)
 		::MessageBoxA( NULL, "A report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nFor concerns about privacy, please see http://watson.microsoft.com/dw/1033/dcp.asp. Please consult the PlaneShift forums for more details.", "PlaneShift has quit unexpectedly!", MB_OK + MB_ICONERROR );
+
+	// Comments are available only on Windows at the moment
+	BPwrapper.parameters[STR("Comments")] = szComments;
 #endif
 
-
-	SetParameter (BPwrapper.parameters[STR("Renderer")], psEngine::hwRenderer);
-	SetParameter (BPwrapper.parameters[STR("RendererVersion")], psEngine::hwVersion);
-	SetParameter (BPwrapper.parameters[STR("PlayerName")], psEngine::playerName);
-	BPwrapper.parameters[STR("Comments")] = szComments;
+	time_t crash_time = time(NULL);
 	PS_CHAR timeBuffer[128];
-
 #ifdef WIN32
     swprintf(timeBuffer, L"%I64u", crash_time);
 #else
     sprintf(timeBuffer, "%lu", crash_time);
 #endif
 
+	SetParameter (BPwrapper.parameters[STR("Renderer")], psEngine::hwRenderer);
+	SetParameter (BPwrapper.parameters[STR("RendererVersion")], psEngine::hwVersion);
+	SetParameter (BPwrapper.parameters[STR("PlayerName")], psEngine::playerName);
 	BPwrapper.parameters[STR("CrashTime")] = timeBuffer;
 
 	fprintf(stderr, "PlaneShift has quit unexpectedly!\n\nA report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nPlease consult the PlaneShift forums for more details.\nAttempting to upload crash report.\n");
 
+#ifdef WIN32
+#else
+	// on linux at the moment we just call pslaunch to upload the dump
+	printf( "****UploadDump sending file %s \n",descriptor.path());
+
+	// write file with parameters in the .PlaneShift app dir
+	csRef<iVFS> vfs = psengine->GetVFS();
+	csRef<iConfigFile> configFile;
+	configFile.AttachNew(new csConfigFile("/planeshift/userdata/crash/crash.params",vfs));
+
+	for (std::map<BpString,BpString>::iterator pos = BPwrapper.parameters.begin(); pos != BPwrapper.parameters.end(); ++pos) {
+		configFile->SetStr((*pos).first.c_str(),(*pos).second.c_str());
+	}
+	configFile->Save();
+
+	// call pslaunch for upload
+	sprintf( uploadBuffer, "./pslaunch --uploaddump=%-512.512s", descriptor.path() );
+	system (uploadBuffer);
+	printf( "done\n");
+	return false;
+
+#endif
 
     bool result = false;
+
 #ifdef WIN32
 	wprintf(L"WIN32 SendReport url %s\n",crash_post_url);
 	wprintf(L"WIN32 SendReport path_file %s\n",path_file);
@@ -338,7 +357,7 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 		return false;
     }
 	// Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
-	if (BPwrapper.http_layer->AddFile(path_file, "upload_file_minidump")) {
+	if (BPwrapper.http_layer->AddFile(dump_path, "upload_file_minidump")) {
 	//if (BPwrapper.http_layer->AddFile( descriptor.path(), "upload_file_minidump")) {
 			result = BPwrapper.http_layer->SendRequest(crash_post_url,
 							BPwrapper.parameters,
