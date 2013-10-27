@@ -205,8 +205,6 @@ ExceptionHandler::ExceptionHandler(const MinidumpDescriptor& descriptor,
       callback_context_(callback_context),
       minidump_descriptor_(descriptor),
       crash_handler_(NULL) {
-printf( "******exception handler intialized*********\n" );
-printf( "******exception handler descriptor = %s*********\n", minidump_descriptor_.path() );
   if (server_fd >= 0)
     crash_generation_client_.reset(CrashGenerationClient::TryCreate(server_fd));
 
@@ -222,13 +220,10 @@ printf( "******exception handler descriptor = %s*********\n", minidump_descripto
   }
   handler_stack_->push_back(this);
   pthread_mutex_unlock(&handler_stack_mutex_);
-printf( "******exception handler location = %x, descriptor = %s*********\n", &minidump_descriptor_, minidump_descriptor_.path() );
-printf( "******exception handler intialization complete*********\n" );
 }
 
 // Runs before crashing: normal context.
 ExceptionHandler::~ExceptionHandler() {
-fprintf( stderr, "****ExceptionHandler::~ExceptionHandler****\n" );
   pthread_mutex_lock(&handler_stack_mutex_);
   std::vector<ExceptionHandler*>::iterator handler =
       std::find(handler_stack_->begin(), handler_stack_->end(), this);
@@ -238,7 +233,6 @@ fprintf( stderr, "****ExceptionHandler::~ExceptionHandler****\n" );
     RestoreHandlersLocked();
   }
   pthread_mutex_unlock(&handler_stack_mutex_);
-fprintf( stderr, "****ExceptionHandler::~ExceptionHandler terminated****\n" );
 }
 
 // Runs before crashing: normal context.
@@ -304,8 +298,6 @@ void ExceptionHandler::SignalHandler(int sig, siginfo_t* info, void* uc) {
   // All the exception signals are blocked at this point.
   pthread_mutex_lock(&handler_stack_mutex_);
 
-fprintf( stderr, "****signal handler active********\n" );
-
   // Sometimes, Breakpad runs inside a process where some other buggy code
   // saves and restores signal handlers temporarily with 'signal'
   // instead of 'sigaction'. This loses the SA_SIGINFO flag associated
@@ -368,7 +360,6 @@ fprintf( stderr, "****signal handler active********\n" );
     // No need to reissue the signal. It will automatically trigger again,
     // when we return from the signal handler.
   }
-fprintf( stderr, "****signal handler completed********\n" );
 }
 
 struct ThreadArgument {
@@ -383,7 +374,6 @@ struct ThreadArgument {
 // context here: see the top of the file.
 // static
 int ExceptionHandler::ThreadEntry(void *arg) {
-fprintf( stderr, "**** ExceptionHandler::ThreadEntry\n" );
   const ThreadArgument *thread_arg = reinterpret_cast<ThreadArgument*>(arg);
 
   // Block here until the crashing process unblocks us when
@@ -394,20 +384,16 @@ bool result;
 
   result=thread_arg->handler->DoDump(thread_arg->pid, thread_arg->context,
                                      thread_arg->context_size) == false;
-fprintf( stderr, "**** ExceptionHandler::ThreadEntry completed\n" );
    return result;
 }
 
 // This function runs in a compromised context: see the top of the file.
 // Runs on the crashing thread.
 bool ExceptionHandler::HandleSignal(int sig, siginfo_t* info, void* uc) {
-fprintf( stderr, "**** ExceptionHandler::HandleSignal\n" );
   if (filter_ && !filter_(callback_context_))
   {
-fprintf( stderr, "**** ExceptionHandler::HandleSignal filtered\n" );
     return false;
   }
-fprintf( stderr, "**** ExceptionHandler::HandleSignal NOT filtered\n" );
 
   // Allow ourselves to be dumped if the signal is trusted.
   bool signal_trusted = info->si_code > 0;
@@ -430,14 +416,13 @@ fprintf( stderr, "**** ExceptionHandler::HandleSignal NOT filtered\n" );
 #endif
   context.tid = syscall(__NR_gettid);
   if (crash_handler_ != NULL) {
-fprintf( stderr, "**** crash_handler_ !=NULL\n" );
     if (crash_handler_(&context, sizeof(context), callback_context_)) {
       return true;
     }
   }
   else
   {
-fprintf( stderr, "**** crash_handler_ is NULL\n" );
+    fprintf( stderr, "**** crash_handler_ is NULL\n" );
   }
   return GenerateDump(&context);
 }
@@ -457,17 +442,16 @@ bool ExceptionHandler::SimulateSignalDelivery(int sig) {
 
 // This function may run in a compromised context: see the top of the file.
 bool ExceptionHandler::GenerateDump(CrashContext *context) {
-fprintf( stderr, "**** ExceptionHandler::GenerateDump****\n" );
+    fprintf( stderr, "**** ExceptionHandler::GenerateDump****\n" );
   if (IsOutOfProcess())
     return crash_generation_client_->RequestDump(context, sizeof(*context));
-fprintf( stderr, "**** ExceptionHandler::GenerateDump Is IN process****\n" );
 
   static const unsigned kChildStackSize = 8000;
   PageAllocator allocator;
   uint8_t* stack = (uint8_t*) allocator.Alloc(kChildStackSize);
   if (!stack)
     return false;
-fprintf( stderr, "**** ExceptionHandler::GenerateDump stack exists****\n" );
+
   // clone() needs the top-most address. (scrub just to be safe)
   stack += kChildStackSize;
   my_memset(stack - 16, 0, 16);
@@ -500,7 +484,6 @@ fprintf( stderr, "**** ExceptionHandler::GenerateDump stack exists****\n" );
 
   int r, status;
   // Allow the child to ptrace us
-fprintf( stderr, "**** ExceptionHandler::GenerateDump setting up to allow child to trace****\n" );
   sys_prctl(PR_SET_PTRACER, child);
   SendContinueSignalToChild();
   do {
@@ -524,7 +507,6 @@ fprintf( stderr, "**** ExceptionHandler::GenerateDump setting up to allow child 
   }
   else
   {
-fprintf( stderr, "**** ExceptionHandler::GenerateDump callback_ == NULL\n" );
     return false;
   }
   return success;
@@ -532,7 +514,7 @@ fprintf( stderr, "**** ExceptionHandler::GenerateDump callback_ == NULL\n" );
 
 // This function runs in a compromised context: see the top of the file.
 void ExceptionHandler::SendContinueSignalToChild() {
-fprintf( stderr, "****ExceptionHandler::SendContinueSignalToChild****\n" );
+
   static const char okToContinueMessage = 'a';
   int r;
   r = HANDLE_EINTR(sys_write(fdes[1], &okToContinueMessage, sizeof(char)));
@@ -585,7 +567,6 @@ bool result;
                                         mapping_list_,
                                         app_memory_list_);
   }
-fprintf( stderr, "****ExceptionHandler::DoDump completed\n" );
   return result;
 }
 
@@ -593,7 +574,6 @@ fprintf( stderr, "****ExceptionHandler::DoDump completed\n" );
 bool ExceptionHandler::WriteMinidump(const string& dump_path,
                                      MinidumpCallback callback,
                                      void* callback_context) {
-fprintf( stderr, "**** ExceptionHandler::WriteMinidump 1****\n" );
   MinidumpDescriptor descriptor(dump_path);
   ExceptionHandler eh(descriptor, NULL, callback, callback_context, false, -1);
   return eh.WriteMinidump();
@@ -607,7 +587,6 @@ fprintf( stderr, "**** ExceptionHandler::WriteMinidump 1****\n" );
 __attribute__((optimize("no-omit-frame-pointer")))
 #endif
 bool ExceptionHandler::WriteMinidump() {
-fprintf( stderr, "**** ExceptionHandler::WriteMinidump 2****\n" );
   if (!IsOutOfProcess() && !minidump_descriptor_.IsFD()) {
     // Update the path of the minidump so that this can be called multiple times
     // and new files are created for each minidump.  This is done before the
@@ -723,7 +702,6 @@ bool ExceptionHandler::WriteMinidumpForChild(pid_t child,
                                              const string& dump_path,
                                              MinidumpCallback callback,
                                              void* callback_context) {
-fprintf( stderr, "**** ExceptionHandler::WriteMinidumpForChild****\n" );
   // This function is not run in a compromised context.
   MinidumpDescriptor descriptor(dump_path);
   descriptor.UpdatePath();
