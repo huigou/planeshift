@@ -4,7 +4,7 @@
             buttonimage="Scaling Button"
             visible="no" configurable="yes"
             savepositions="yes" movable="yes" resizable="yes" keepaspect="no" >
-<font name="cupandtalon.ttf" r="255" g="228" b="181" size="12"/>
+<font name="LiberationSans-Regular.ttf" r="255" g="228" b="181" size="12"/>
             
 
         <frame x="5" y="50" width="528" height="90" border="yes" />
