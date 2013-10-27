@@ -132,6 +132,8 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
                                                               NULL /*context*/,
                                                               ExceptionHandler::HANDLER_ALL);
 
+		wrapperCrash_sender = new CrashReportSender(L"");
+
 #else
 	// find PlaneShift app dir ??? psengine not valid yet???
 	//csRef<iVFS> vfs = psengine->GetVFS();
@@ -139,22 +141,17 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
     static const PS_CHAR* tempPath = "/tmp";
 	descriptor = MinidumpDescriptor(tempPath);
 
-	fprintf( stderr, "****BreakpadWrapper descriptor location = %x  \n", &descriptor);
+	//fprintf( stderr, "****BreakpadWrapper descriptor location = %x  \n", &descriptor);
 
-				wrapperCrash_handler = new ExceptionHandler(descriptor,
-								NULL,
-								UploadDump,
-								NULL,
-								true,
-				-1
-								);
+	wrapperCrash_handler = new ExceptionHandler(descriptor,
+					NULL,
+					UploadDump,
+					NULL,
+					true,
+	-1
+					);
 #endif
 
-#ifdef WIN32
-		wrapperCrash_sender = new CrashReportSender(L"");
-#else
-		http_layer = new LibcurlWrapper();
-#endif
 				// Set up parameters
 
 				parameters[STR("BuildDate")] = STR(__DATE__) STR(" ") STR(__TIME__);
@@ -199,17 +196,12 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
 #ifdef WIN32
 		delete wrapperCrash_sender;
 		wrapperCrash_sender = NULL;
-#else
-		delete http_layer;
-		http_layer = NULL;
 #endif
 
 		}
 
 #ifdef WIN32
 	static CrashReportSender* wrapperCrash_sender;
-#else
-	static LibcurlWrapper* http_layer;
 #endif
 
 		std::map<BpString, BpString> parameters;
@@ -225,8 +217,6 @@ ExceptionHandler* BreakPadWrapper::wrapperCrash_handler = NULL;
 
 #ifdef WIN32
 CrashReportSender* BreakPadWrapper::wrapperCrash_sender = NULL;
-#else
-LibcurlWrapper* BreakPadWrapper::http_layer = NULL;
 #endif
 
 // At global scope to ensure we hook in as early as possible.
@@ -350,24 +340,6 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
 		    &BPwrapper.report_code);
     if(reportResult == RESULT_SUCCEEDED)
 	    result = true;
-#elif defined(CS_PLATFORM_UNIX)
-	if(!BPwrapper.http_layer->Init())
-	{
-		printf("Unable to start correctly libcurl!\n");
-		return false;
-    }
-	// Don't use GoogleCrashdumpUploader as it doesn't allow custom parameters.
-	if (BPwrapper.http_layer->AddFile(dump_path, "upload_file_minidump")) {
-	//if (BPwrapper.http_layer->AddFile( descriptor.path(), "upload_file_minidump")) {
-			result = BPwrapper.http_layer->SendRequest(crash_post_url,
-							BPwrapper.parameters,
-							&BPwrapper.report_code);
-    }
-	else
-	{
-			printf("Could not add minidump file.\n");
-			return false;
-    }
 #endif
     if(result && !BPwrapper.report_code.empty())
     {
