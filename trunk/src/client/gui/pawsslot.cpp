@@ -212,7 +212,7 @@ void pawsSlot::Draw()
         frame.ymin += excess/2;
         frame.ymax -= excess/2;
     }
-    //Deal with money slots that are wider than thay are high
+    //Deal with money slots that are wider than they are high
     if (frame.Height() < frame.Width())
     {
         int excess = frame.Width() - frame.Height();
