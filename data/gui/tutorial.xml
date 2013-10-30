@@ -2,12 +2,12 @@
 
     <widget name="Tutorial" factory="pawsTutorialWindow" resizeable="no" visible="no" movable="yes">
         <frame x="300" y="150" width="400" height="300" border="yes" style="New Standard GUI" />
-        <bgimage resource="Tutorial Background" />
+        <bgimage resource="Scaling Widget Background" />
         <title resource="Scaling Title Bar" text="PlaneShift Tutorial" align="left" close_button="yes"/>
         <font name="LiberationSans-Regular.ttf" r="192" g="96" b="0" />
 
         <widget name="TutorialInstructions" factory="pawsMultiLineTextBox" >
-            <font name="LiberationSans-Regular.ttf" r="0" g="0" b="0" />
+            <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" />
             <frame x="30" y="30" width="340" height="260" border="no"/>
         </widget>
 
