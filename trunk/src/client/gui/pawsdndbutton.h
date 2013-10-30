@@ -45,49 +45,40 @@ class pawsDnDButton : public pawsButton
 {
 public:
     pawsDnDButton();
-    pawsDnDButton(const pawsDnDButton &pb);
     virtual ~pawsDnDButton();
 
     virtual bool Setup(iDocumentNode* node);
     bool SelfPopulate(iDocumentNode* node);
 
-    virtual void Draw();
-
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
     virtual bool OnMouseUp(int button, int modifiers, int x, int y);
     virtual void MouseOver(bool value);
 
-
-    bool                GetLock()
-    {
-        return GetState();
-    };
-    //void                SetLock(bool val) {locked=val; };
-    csRef<iPawsImage>   GetMaskingImage();
+    iPawsImage* GetMaskingImage();
 
     void SetDrag(int isDragDrop)
     {
         dragDrop = isDragDrop;
-    };
+    }
     bool PlaceItem(const char* imageName, const char* Name, const char* toolTip, const char* action);
 
     csArray<csString>* GetImageNameCallback()
     {
         return ImageNameCallback;
-    };
+    }
     void SetImageNameCallback(csArray<csString>* in)
     {
         ImageNameCallback=in;
-    };
+    }
 
     csArray<csString>* GetNameCallback()
     {
         return NameCallback;
-    };
+    }
     void SetNameCallback(csArray<csString>* in)
     {
         NameCallback=in;
-    };
+    }
     const char* GetName()
     {
         if(NameCallback)
@@ -105,27 +96,27 @@ public:
     csArray<csString>* GetActionCallback()
     {
         return ActionCallback;
-    };
+    }
     void SetActionCallback(csArray<csString>* in)
     {
         ActionCallback=in;
-    };
+    }
 
     void SetIndexBase(int indexBase)
     {
         this->indexBase=indexBase;
-    };
+    }
     int GetIndexBase()
     {
         return indexBase;
-    };
+    }
 
     void SetMaskingImage(const char* image);
 
     int ContainerID()
     {
         return containerID;
-    };
+    }
     void SetAction(const char* act)
     {
         SetAction(csString(act));
@@ -150,23 +141,14 @@ public:
         return NULL;
     }
 
-    void SetUseLock(bool locked)
-    {
-        UseLock = locked;
-    };
-    bool GetUseLock()
-    {
-        return UseLock;
-    };
-
     void SetDnDLock(bool locked)
     {
         DnDLock = locked;
-    };
+    }
     bool GetDnDLock()
     {
         return DnDLock;
-    };
+    }
 
     /***
      * Remove all contents of button.
@@ -200,11 +182,7 @@ protected:
 
     virtual bool CheckKeyHandled(int keyCode);
 
-    bool             UseLock; // true = locked, false = enabled.
     bool             DnDLock; // true = locked, false = enabled.
-
-
-
 };
 
 //----------------------------------------------------------------------
