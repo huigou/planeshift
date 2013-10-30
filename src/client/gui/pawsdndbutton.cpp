@@ -44,6 +44,8 @@
 //////////////////////////////////////////////////////////////////////
 
 pawsDnDButton::pawsDnDButton() :
+    pawsButton(),
+    dragDrop(1),
     dragDropInProgress(0),
     action(""),
     containerID(0),
@@ -52,25 +54,12 @@ pawsDnDButton::pawsDnDButton() :
     ImageNameCallback(NULL),
     NameCallback(NULL),
     ActionCallback(NULL),
-    editMode(0)
+    editMode(0),
+    DnDLock(false)
 {
-    down = false;
-    notify = NULL;
-    toggle = false;
-    flash = 0;
-    flashtype = FLASH_REGULAR;
-    keybinding = 0;
-    changeOnMouseOver = false;
-    originalFontColour = -1;
     factory = "pawsDnDButton";
-    dragDrop = 1;
-    keepaspect = true;
 }
 
-pawsDnDButton::pawsDnDButton(const pawsDnDButton &pb)
-{
-    factory = "pawsDnDButton";
-}
 bool pawsDnDButton::Setup(iDocumentNode* node)
 {
     // Check for toggle
@@ -193,94 +182,8 @@ bool pawsDnDButton::SelfPopulate(iDocumentNode* node)
     return true;
 }
 
-
 pawsDnDButton::~pawsDnDButton()
 {
-}
-
-void pawsDnDButton::Draw()
-{
-    pawsWidget::Draw();
-    int drawAlpha = -1;
-    if(parent && parent->GetMaxAlpha() >= 0)
-    {
-        fadeVal = parent->GetFadeVal();
-        alpha = parent->GetMaxAlpha();
-        alphaMin = parent->GetMinAlpha();
-        drawAlpha = (int)(alphaMin + (alpha-alphaMin) * fadeVal * 0.010);
-    }
-    if(down)
-    {
-        if(!enabled && greyDownImage)
-            greyDownImage->Draw(screenFrame, drawAlpha);
-        else if(pressedImage)
-            pressedImage->Draw(screenFrame, drawAlpha);
-    }
-    else if(flash==0)
-    {
-        if(!enabled && greyUpImage)
-            greyUpImage->Draw(screenFrame, drawAlpha);
-        else if(releasedImage)
-            releasedImage->Draw(screenFrame, drawAlpha);
-    }
-    else // Flash the button if it's not depressed.
-    {
-        if(flashtype == FLASH_HIGHLIGHT)
-        {
-            SetColour(graphics2D->FindRGB(255,0,0));
-            if(releasedImage)
-                releasedImage->Draw(screenFrame, drawAlpha);
-        }
-        else
-        {
-            if(flash <= 10)
-            {
-                flash++;
-                switch(flashtype)
-                {
-                    case FLASH_REGULAR:
-                        if(pressedImage)
-                            pressedImage->Draw(screenFrame);
-                        break;
-                    case FLASH_SPECIAL:
-                        if(specialFlashImage)
-                            specialFlashImage->Draw(screenFrame);
-                        break;
-                    default:
-                        // Unexpected flash
-                        Error1("Unknown flash type!");
-                }
-            }
-            else
-            {
-                if(flash == 30)
-                    flash = 1;
-                else flash++;
-                if(releasedImage) releasedImage->Draw(screenFrame, drawAlpha);
-            }
-        }
-    }
-    if(!(buttonLabel.IsEmpty()))
-    {
-        int drawX=0;
-        int drawY=0;
-        int width=0;
-        int height=0;
-
-        GetFont()->GetDimensions(buttonLabel , width, height);
-
-        int midX = screenFrame.Width() / 2;
-        int midY = screenFrame.Height() / 2;
-
-        drawX = screenFrame.xmin + midX - width/2;
-        drawY = screenFrame.ymin + midY - height/2;
-        drawY -= 2; // correction
-
-        if(down)
-            DrawWidgetText(buttonLabel, drawX + downTextOffsetX, drawY + downTextOffsetY);
-        else
-            DrawWidgetText(buttonLabel, drawX + upTextOffsetX, drawY + upTextOffsetY);
-    }
 }
 
 bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
@@ -376,7 +279,7 @@ bool pawsDnDButton::OnMouseUp(int button, int modifiers, int x, int y)
     return false;
 }
 
-csRef<iPawsImage> pawsDnDButton::GetMaskingImage()
+iPawsImage* pawsDnDButton::GetMaskingImage()
 {
     return maskImage;
 }
@@ -461,7 +364,6 @@ void pawsDnDButton::SetMaskingImage(const char* image)
         ImageNameCallback->Get(id-indexBase).Replace(image);
     }
     pawsWidget::SetMaskingImage(image);
-    return;
 }
 
 void pawsDnDButton::Clear()
