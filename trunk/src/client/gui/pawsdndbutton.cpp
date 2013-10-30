@@ -310,7 +310,7 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
         if(!GetDnDLock())
         {
             psengine->GetSlotManager()->CancelDrag();
-            pawsButton::OnMouseDown(button, modifiers, x, y);
+            return pawsButton::OnMouseDown(button, modifiers, x, y);
         }
         else
         {
@@ -325,15 +325,13 @@ bool pawsDnDButton::OnMouseDown(int button, int modifiers, int x, int y)
             mgr->Handle(this);
 
             dragDropInProgress = true;
+            return true;
         }
-
     }
     else
     {
-        pawsButton::OnMouseDown(button, modifiers, x, y);
+        return pawsButton::OnMouseDown(button, modifiers, x, y);
     }
-
-    return false;
 }
 
 bool pawsDnDButton::CheckKeyHandled(int keyCode)
