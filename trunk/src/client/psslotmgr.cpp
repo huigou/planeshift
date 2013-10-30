@@ -46,6 +46,7 @@ psSlotManager::psSlotManager()
     isDragging = false;
     isPlacing = false;
     isRotating = false;
+    draggingSlot.stackCount = 0;
 
     // Initialize event shortcuts
     MouseMove = csevMouseMove (psengine->GetEventNameRegistry(), 0);
