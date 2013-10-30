@@ -1750,10 +1750,12 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
                 craftInfo->secSkillId = proc->GetSecondarySkillId();
                 craftInfo->minSecSkill = proc->GetMinSecondarySkill();
                 craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
-                craftInfo->craftStepDescription.Append(".\n");
-
-                craftInfo->craftStepDescription.Insert( 0, "   " );
-                newArray->Push(craftInfo);
+                if( !(craftInfo->craftStepDescription.IsEmpty()))
+                {
+                    craftInfo->craftStepDescription.Append(".\n");
+                    craftInfo->craftStepDescription.Insert( 0, "   " );
+                    newArray->Push(craftInfo);
+                }
             }
         }
     }
@@ -1852,9 +1854,7 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
 
 
     psTradeTransformations*    t = sortedArray->Get(0);
-    //    uint32      itemID = t->GetItemId();
     uint32      processID = t->GetProcessId();
-    //    uint32      resultID = t->GetResultId();
     int         lastPrimarySkillId;
     uint32      lastPrimarySkillLvl;
     int         lastSecondarySkillId;
@@ -1888,13 +1888,11 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
 
     for(size_t j=1; j<sortedArray->GetSize(); j++)
     {
-        printf("DEBUG : sortedArray(%zu), itemcount = %d\n", j, itemCounter);
         psTradeTransformations*    u = sortedArray->Get(j);
         csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(u->GetProcessId());
 
         for(size_t k=0; k<procArray->GetSize(); k++)
         {
-//printf( "DEBUG : sortedArray(%d), proc(%d), itemcount = %d\n", j, k, itemCounter );
             proc = procArray->Get(k);
             if(proc->GetEquipementId() != 0)
             {
@@ -1917,8 +1915,6 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
                     craftInfo->minSecSkill = proc->GetMinSecondarySkill();
 
                     craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
-//printf( "DEBUG : (1)craftStepDescription = %s\n", craftInfo->craftStepDescription.GetData() );
-                    //itemCounter=1;
                     continue;
                 }
                 /*                else if( proc->GetSecondarySkillId() != lastSecondarySkillId )
@@ -1938,7 +1934,6 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
                                     craftInfo->minSecSkill = proc->GetMinSecondarySkill();
 
                                     craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
-                //printf( "DEBUG : (2)craftStepDescription = %s\n", craftInfo->craftStepDescription.GetData() );
                                     //itemCounter=1;
                                     continue;
                                 }
@@ -1951,15 +1946,23 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
                     craftInfo->craftStepDescription.Append(", ");
                     //}
                     craftInfo->craftStepDescription.Append(toolStats->GetName());
-//printf( "DEBUG : (3)craftStepDescription = %s\n", craftInfo->craftStepDescription.GetData() );
                     itemCounter++;
+                }
+                else
+                {
+                    craftInfo->craftStepDescription.Append( " <tool " );
+                    craftInfo->craftStepDescription.Append( toolStats->GetName() );
+                    craftInfo->craftStepDescription.Append( "> " );
                 }
             }
         }
     }
-    craftInfo->craftStepDescription.Insert( 0, "   " );
-    craftInfo->craftStepDescription.Append(".\n");
-    newArray->Push(craftInfo);
+    if( !(craftInfo->craftStepDescription.IsEmpty()))
+    {
+        craftInfo->craftStepDescription.Insert( 0, "   " );
+        craftInfo->craftStepDescription.Append(".\n");
+        newArray->Push(craftInfo);
+    }
 
     return true;
 }
@@ -2216,16 +2219,19 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
     // Get tool name if one exists
     if(proc->GetEquipementId() != 0)
     {
+        csString temp;
         psItemStats* toolStats = GetBasicItemStatsByID(proc->GetEquipementId());
         if(!toolStats)
         {
             Error2("No tool id %u", proc->GetEquipementId());
-            desc.Append("\n");
-            return desc;
+            temp.Format(" <tool %i> ", proc->GetEquipementId() );
+            desc.Append(temp);
         }
-        csString temp;
-        temp.Format(" with a %s", toolStats->GetName());
-        desc.Append(temp);
+        else
+        {
+            temp.Format(" with a %s", toolStats->GetName());
+            desc.Append(temp);
+        }
     }
     return desc;
 }
@@ -2250,11 +2256,12 @@ csString CacheManager::CreateComboCraftDescription(Result* currentComb)
         if(!itemStats)
         {
             Error2("No item stats for id %u", combId);
-            return desc;
+            desc.Append( "<item ");
+            desc.Append( combId );
+            desc.Append( "> ");
         }
-
+        else if(combMinQty == combMaxQty)
         // Check if min and max is same
-        if(combMinQty == combMaxQty)
         {
             if(combMinQty == 1)
             {
@@ -2279,7 +2286,9 @@ csString CacheManager::CreateComboCraftDescription(Result* currentComb)
     if(!resultItemStats)
     {
         Error2("No item stats for id %u", (*currentComb)[0].GetInt("result_id"));
-        return desc;
+        desc.Append( " <item ");
+        desc.Append(  (*currentComb)[0].GetInt("result_id") );
+        desc.Append( "> ");
     }
 
     // Add result part of description

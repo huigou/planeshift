@@ -3330,9 +3330,9 @@ void psItem::GetTransInfoString(psCharacter* character, uint32 designID, csStrin
             query.Format("select * from skills where skill_id=%d", secSkill);
             Result result(db->Select(query));
 
-            transString.Append("With higher ");
+            transString.Append("[[");
             transString.Append(result[0].GetString("Name"));
-            transString.Append(" skill you could: ");
+            transString.Append("]]");
             transString.Append(craftArray->Get(count)->craftStepDescription);
             continue;
         }

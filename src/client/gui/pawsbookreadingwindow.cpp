@@ -172,7 +172,7 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
             psMsgCraftingInfo mesg(me);
             csString text(mesg.craftInfo);
             text.ReplaceAll( "[[", "   With Higher " );
-            text.ReplaceAll( "]]  ", " skill you could: " );
+            text.ReplaceAll( "]]", " skill you could: " );
 
             if(text && descriptionCraft && descriptionCraftRight)
             {
