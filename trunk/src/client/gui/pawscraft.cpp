@@ -51,48 +51,9 @@ void pawsCraftWindow::HandleMessage( MsgEntry* me )
     psMsgCraftingInfo mesg(me);
     csString text(mesg.craftInfo);
     text.ReplaceAll( "[[", "   With higher ");
-    text.ReplaceAll( "]]   ", " skill you could: " );
+    text.ReplaceAll( "]]", " skill you could: " );
     if (text)
         textBox->SetText(text.GetData());
-/*
-    if ( itemTree )
-        delete itemTree;
-        
-    itemTree = (pawsSimpleTree*) (PawsManager::GetSingleton().CreateWidget("pawsSimpleTree"));
-    if (itemTree == NULL)
-    {
-        Error1("Could not create widget pawsSimpleTree");
-        return; 
-    }
-        
-    AddChild(itemTree);
-    itemTree->SetRelativeFrame(37,29,GetActualWidth(198),GetActualHeight(224));
-    itemTree->SetNotify(this);
-    itemTree->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_LEFT);
-    itemTree->SetScrollBars(false, true);
-    itemTree->Resize();
-    itemTree->SetDefaultColor(psengine->GetG2D()->FindRGB(255,255,255));
-        
-
-    itemTree->InsertChildL("", "Root", "", "");
-
-    // Change the title of the window that of the pattern.
-    csString title("Crafting: ");
-    title.Append( mesg.pattern );    
-    SetTitle( title );      
-         
-    for ( size_t z = 0; z <  mesg.items.GetSize(); z++ )
-    {
-        Add( "Root", "Root", mesg.items[z] );
-    }         
-    
-    pawsTreeNode * child = itemTree->GetRoot()->GetFirstChild();
-    while (child != NULL)
-    {
-        child->CollapseAll();
-        child = child->GetNextSibling();
-    }   
-*/    
 }
 
 /*
