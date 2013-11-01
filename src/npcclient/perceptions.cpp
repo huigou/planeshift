@@ -651,41 +651,26 @@ void OwnerActionPerception::ExecutePerception( NPC *pet, float weight )
 
 //---------------------------------------------------------------------------------
 
-NPCCmdPerception::NPCCmdPerception( const char *command, NPC * self ) : Perception("npccmd")
+NPCCmdPerception::NPCCmdPerception( const char *command, NPC * self ) : Perception(command)
 {
-    this->cmd = command;
     this->self = self;
 }
 
 bool NPCCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 {
-    csString global_event("npccmd:global:");
-    global_event.Append(cmd);
-
-    if (global_event.CompareNoCase(reaction->GetEventType()))
+    if (name == reaction->GetEventType() &&
+        (name.StartsWith("npccmd:global:", true) ||
+         (name.StartsWith("npccmd:self:", true) && npc == self)))
     {
-        NPCDebug(npc, 15, "Matched reaction '%s' to perception '%s'.",reaction->GetEventType().GetDataSafe(), global_event.GetData() );
+        NPCDebug(npc, 15, "Matched reaction '%s' to perception '%s' with npc(%s).",
+                 reaction->GetEventType().GetDataSafe(), name.GetData(), npc->GetName() );
         return true;
     }
     else
     {
-        NPCDebug(npc, 16, "No matched reaction '%s' to perception '%s'.",reaction->GetEventType().GetDataSafe(), global_event.GetData() );
-    }
-    
-
-    csString self_event("npccmd:self:");
-    self_event.Append(cmd);
-
-    if (self_event.CompareNoCase(reaction->GetEventType()) && npc == self)
-    {
-        NPCDebug(npc, 15, "Matched reaction '%s' to perception '%s'.",reaction->GetEventType().GetDataSafe(), self_event.GetData() );
-        return true;
-    }
-    else
-    {
-        NPCDebug(npc, 16, "No matched reaction '%s' to perception '%s' for self(%s) with npc(%s).",
-                 reaction->GetEventType().GetDataSafe(), self_event.GetData(), 
-                 self->GetName(), npc->GetName() );
+        NPCDebug(npc, 16, "No matched reaction '%s' with npc(%s) to perception '%s' with npc(%s).",
+                 reaction->GetEventType().GetDataSafe(), npc->GetName(),
+                 name.GetData(), self->GetName() );
     }
     
     return false;
@@ -693,7 +678,7 @@ bool NPCCmdPerception::ShouldReact( Reaction *reaction, NPC *npc )
 
 Perception *NPCCmdPerception::MakeCopy()
 {
-    NPCCmdPerception *p = new NPCCmdPerception( cmd, self );
+    NPCCmdPerception *p = new NPCCmdPerception( name, self );
     return p;
 }
 

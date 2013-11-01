@@ -35,6 +35,7 @@ INSERT INTO player_spells VALUES("2","5","4");
 INSERT INTO player_spells VALUES("2","6","5");
 INSERT INTO player_spells VALUES("2","7","6");
 INSERT INTO player_spells VALUES("2","8","7");
+INSERT INTO player_spells VALUES("2","10","8");
 
 
 # NPC SpellMaster1 spells
