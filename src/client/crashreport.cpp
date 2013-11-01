@@ -232,12 +232,15 @@ BOOL CALLBACK CrashReportProc(HWND hwndDlg,
     { 
         case WM_COMMAND: 
             switch (LOWORD(wParam)) 
-            { 
+            {
                 case IDOK: 
                     GetDlgItemTextW(hwndDlg, IDC_COMMENTS, szComments, 1500); 
-                    EndDialog(hwndDlg, wParam); 
-                    return TRUE; 
-            } 
+                    EndDialog(hwndDlg, wParam);
+                    return TRUE;
+                case IDCANCEL:
+                    EndDialog(hwndDlg, wParam);
+                    return FALSE;
+            }
     } 
     return FALSE; 
 } 
@@ -283,8 +286,11 @@ static bool UploadDump( const google_breakpad::MinidumpDescriptor& descriptor,
               MAKEINTRESOURCE(IDD_CRASH), 
 			  psEngine::hwnd, 
               (DLGPROC)CrashReportProc);
-	if(dialogResult == 0 || dialogResult == -1)
-		::MessageBoxA( NULL, "A report containing only information strictly necessary to identify this problem will be sent to the PlaneShift developers.\nFor concerns about privacy, please see http://watson.microsoft.com/dw/1033/dcp.asp. Please consult the PlaneShift forums for more details.", "PlaneShift has quit unexpectedly!", MB_OK + MB_ICONERROR );
+
+    // exit if user clicked on cancel
+    if (dialogResult == IDCANCEL) {
+       return true;
+    }
 
 	// Comments are available only on Windows at the moment
 	BPwrapper.parameters[STR("Comments")] = szComments;
