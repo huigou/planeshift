@@ -501,7 +501,6 @@ public:
 class NPCCmdPerception : public Perception
 {
 protected:
-    csString cmd;
     NPC * self;
 
 public:

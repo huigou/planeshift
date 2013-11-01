@@ -158,6 +158,21 @@ INSERT INTO progression_events VALUES("cast Identify",
        </let>
      </script>');
 
+INSERT INTO progression_events VALUES("cast Fear",
+    '<script>
+       <msg aim="Caster" text="You create an horrible dome of fear around ${Target}."/>
+       <apply aim="Target" name="Fear" type="debuff" duration="3000*Power">
+         <atk value="0.7"/>
+         <def value="0.7"/>
+         <wil value="-Power"/>
+       </apply>
+       <if t="Target:IsNPC = 1">
+         <then>
+           <npccmd aim="Target" cmd="npccmd:self:flee"/>
+         </then>
+       </if>
+     </script>');
+
 # Char creation events - god
 INSERT INTO progression_events VALUES ('charcreate_2','<script><skill aim="Actor" name="Crystal Way" value="2"/><int  aim="Actor" value="3"/><animal-affinity aim="Actor" name="daylight" value="2"/></script>');
 
@@ -265,4 +280,4 @@ INSERT INTO progression_events VALUES("send_tutorial_msg",
 
 INSERT INTO progression_events VALUES("mechanism",
     '<script><let vars="Mesh=Param0;Move=Param1;Rot=Param2"><mechanism aim="Target" mesh="Mesh" move="Move" rot="Rot" /></let></script>');
-    
+

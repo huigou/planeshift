@@ -85,6 +85,13 @@ INSERT INTO sc_npctypes VALUES("4","Fight","",0,"","","","","","1",
    <percept event="local_move" />      <!-- Local navigation -->
 </behavior> 
 
+<behavior name="Flee" decay="1" completion_decay="-1" resume="yes" >
+   <emote cmd="/flee" />
+   <loop iterations="3">
+      <locate obj="point" range="4" destination="Move" />
+      <percept event="local_move" />   <!-- Local navigation to random point -->
+   </loop>
+</behavior>
 
 <react event="fight"               behavior="Fight" />
 <react event="attack"              behavior="Fight" weight="1" /> <!-- Add 1 to hate list -->
@@ -93,6 +100,8 @@ INSERT INTO sc_npctypes VALUES("4","Fight","",0,"","","","","","1",
 <react event="failed to attack"    behavior="FailedToAttack" />
 
 <react event="failed endpoint"     behavior="FailedEndpoint" /> <!-- When move do not reach endpoint. -->
+<react event="npccmd:self:flee"    behavior="Flee" /> <!-- flee when Fear spell is cast. -->
+<react event="flee"                behavior="Flee" /> <!-- flee when flee is percepted. -->
 
 <!-- Stop chas if target is out of chase range -->
 <react event="target out of chase" behavior="Chase" absolute="0" only_interrupt="Chase"/>
