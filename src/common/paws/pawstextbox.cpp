@@ -1047,12 +1047,19 @@ pawsEditTextBox::pawsEditTextBox() : password(false),
     GetFont()->GetMaxSize(dummy, lineHeight);
     lineHeight -=2;
 
+    // spellchecker works only on linux
+    #ifdef CS_PLATFORM_UNIX
     //get the spellchecker plugin
     spellChecker = csQueryRegistryOrLoad<iSpellChecker>(PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.planeshift.spellchecker");
+    #endif
+
 }
 pawsEditTextBox::pawsEditTextBox(const pawsEditTextBox &origin): pawsWidget(origin),
-    spellChecker(origin.spellChecker),
-    spellChecked(origin.spellChecked),
+    // spellchecker works only on linux
+    #ifdef CS_PLATFORM_UNIX
+      spellChecker(origin.spellChecker),
+      spellChecked(origin.spellChecked),
+    #endif
     typoColour(origin.typoColour),
     words(origin.words)
 {
