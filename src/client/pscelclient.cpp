@@ -684,9 +684,11 @@ void psCelClient::HandleMecsActivate(MsgEntry* me)
     // object found
     if(objectWrapper)
     {
+        // name of the sequence needs to be unique
+        csString sequenceName = msg.meshName.Append(msg.move).Append(msg.rot);
 		// creates a sequence to move/rotate the object
 		csRef<iEngineSequenceManager> sequenceMngr = csQueryRegistryOrLoad<iEngineSequenceManager> (object_reg,"crystalspace.utilities.sequence.engine", false);
-		csRef<iSequenceWrapper> sequence = sequenceMngr->CreateSequence("mechanisms");
+		csRef<iSequenceWrapper> sequence = sequenceMngr->CreateSequence(sequenceName);
 		csRef<iParameterESM> meshParam = sequenceMngr->CreateParameterESM(objectWrapper);
 		const int ANIM_DURATION = 5000;
         // move the object
@@ -696,7 +698,7 @@ void psCelClient::HandleMecsActivate(MsgEntry* me)
             tokens.SplitString(msg.move, ",");
             csVector3 v(atof(tokens.Get(0)), atof(tokens.Get(1)), atof(tokens.Get(2)));
 			sequence->AddOperationMoveDuration(0,meshParam,v,ANIM_DURATION);
-			sequenceMngr->RunSequenceByName("mechanisms",0);
+			sequenceMngr->RunSequenceByName(sequenceName,0);
 		// rotates the object
         } else if (msg.rot && msg.rot!="") {
             Debug2(LOG_ACTIONLOCATION,0,"Found mesh rotate! %s", objectWrapper->QueryObject()->GetName());
@@ -704,7 +706,7 @@ void psCelClient::HandleMecsActivate(MsgEntry* me)
             tokens.SplitString(msg.rot, ",");
 
 			sequence->AddOperationRotateDuration (0, meshParam, 0, atof(tokens.Get(0)), 1, atof(tokens.Get(1)), 2, atof(tokens.Get(2)), csVector3(0,0,0), ANIM_DURATION, true);
-			sequenceMngr->RunSequenceByName("mechanisms",0);
+			sequenceMngr->RunSequenceByName(sequenceName,0);
 
         }
     }
