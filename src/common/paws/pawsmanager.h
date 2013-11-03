@@ -253,7 +253,7 @@ public:
     /// Returns the mouse.
     pawsMouse* GetMouse() { return mouse; }
 
-    /// Returns the resized image.
+    /// Returns the resize button image.
     csRef<iPawsImage> GetResizeImage() { return resizeImg; }
 
     /**

@@ -622,7 +622,7 @@ bool PawsManager::HandleMouseDown(csMouseEventData &data)
         if(modalWidget != NULL)
         {
             // Check to see if the widget is a child of the modal widget.
-            // These are the only components allowed access durning modal
+            // These are the only components allowed access durring modal
             // mode
             pawsWidget* check = modalWidget->FindWidget(widget->GetName(), false);
             if(check != widget)
@@ -639,10 +639,10 @@ bool PawsManager::HandleMouseDown(csMouseEventData &data)
 
             if(widget != mainWidget)
             {
-if( widget->GetParent() )
-{
-                widget->GetParent()->BringToTop(widget);
-}
+                if( widget->GetParent() )
+                {
+                    widget->GetParent()->BringToTop(widget);
+                }
             }
 
             // Distribute the event to the widget

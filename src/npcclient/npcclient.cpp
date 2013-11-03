@@ -1162,7 +1162,7 @@ void psNPCClient::TriggerEvent(Perception* pcpt, float maxRange,
 {
     bool foundUser = false;
 
-    // Only trigger NPCs that has this percpetion type registered as a reaction.
+    // Only trigger NPCs that have this percpetion type registered as a reaction.
     csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator(pcpt->GetName()));
     while (iter.HasNext())
     {
