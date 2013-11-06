@@ -72,6 +72,8 @@ public:
     bool OnMouseDown( int button, int modifiers, int x, int y );
     bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
     bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
+    bool OnScroll(int direction, pawsScrollBar* widget);
+
     void OnResize();
     bool OnFingering(csString string, psControl::Device device, uint button, uint32 mods);
 
@@ -148,12 +150,17 @@ protected:
     virtual void HandleMessage(MsgEntry *msg);
 
 private:
+    //status bars, optional;configured in XML
     pawsProgressBar *main_hp;
     pawsProgressBar *main_mana;
     pawsProgressBar *phys_stamina;
     pawsProgressBar *ment_stamina;
     pawsScrollMenu  *MenuBar;
 
+    //custom controls, optional;configured in XML
+    pawsButton      *UpButton;
+    pawsButton      *DownButton;
+    pawsScrollBar   *iconScrollBar;
 
     csArray<csString>    allIcons;
     csArray<csString>    allNames; //not populated at this time...

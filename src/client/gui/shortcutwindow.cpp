@@ -42,6 +42,9 @@
 #define CLEAR_BUTTON            1103
 #define CLEAR_ICON_BUTTON       1104
 
+#define UP_BUTTON               1105
+#define DOWN_BUTTON             1106
+
 
 #define SHORTCUT_BUTTON_OFFSET  2000
 #define PALETTE_BUTTON_OFFSET  10000
@@ -60,6 +63,8 @@ pawsShortcutWindow::pawsShortcutWindow() :
     iconDisplay(NULL),
     iconDisplayID(0),
     editedButton(NULL),
+    UpButton(NULL),
+    DownButton(NULL),
     position(0),
     buttonWidth(0),                     //added 20130726 - ticket 6087
     scrollSize(0),                      //added 20130726 - ticket 6087
@@ -208,6 +213,24 @@ bool pawsShortcutWindow::PostSetup()
     {
         psSystemMessage msg(0,MSG_ERROR,PawsManager::GetSingleton().Translate("Missing MenuBar widget, probably due to obsolete skin"));
         return false;
+    }
+
+    UpButton       = (pawsButton*)FindWidget( "Up Arrow" );
+    if( UpButton!=NULL )
+    {
+        MenuBar->SetLeftScroll(ScrollMenuOptionDISABLED );
+    }
+    DownButton     = (pawsButton*)FindWidget( "Down Arrow" );
+    if( DownButton!=NULL )
+    {
+        MenuBar->SetRightScroll(ScrollMenuOptionDISABLED );
+    }
+    iconScrollBar     = (pawsScrollBar*)FindWidget( "iconScroll" );
+    if( iconScrollBar!=NULL )
+    {
+        iconScrollBar->SetMaxValue( NUM_SHORTCUTS-1 );
+        iconScrollBar->SetMinValue( 0 );
+        MenuBar->SetScrollWidget( iconScrollBar );
     }
 
     MenuBar->setButtonWidth( buttonWidth );
@@ -471,6 +494,22 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     
             return true;
         }
+        case UP_BUTTON:
+        {
+            if( UpButton!=NULL )
+            {
+                MenuBar->ScrollUp();
+            }
+            return true;
+        }
+        case DOWN_BUTTON:
+        {
+            if( DownButton!=NULL )
+            {
+                MenuBar->ScrollDown();
+            }
+            return true;
+        }
     }            // switch( ... )
     if ( mouseButton == csmbLeft && !(keyModifier & CSMASK_CTRL))    //if left mouse button clicked
     {
@@ -545,6 +584,26 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         return false;
     }
     return true;
+}
+
+bool pawsShortcutWindow::OnScroll(int direction, pawsScrollBar* widget)
+{
+    if( widget )
+    {
+        float pos = widget->GetCurrentValue();
+        if( pos>NUM_SHORTCUTS-1 )
+        {
+            pos=NUM_SHORTCUTS-1;
+            widget->SetCurrentValue( NUM_SHORTCUTS-1 );
+        }
+        else if( pos<0 )
+        {
+            pos=0.0;
+            widget->SetCurrentValue( 0.0 );
+        }
+        MenuBar->ScrollToPosition( pos );
+    }
+ return true;
 }
 
 void pawsShortcutWindow::ResetEditWindow()
@@ -803,8 +862,8 @@ void pawsShortcutWindow::ExecuteCommand(int shortcutNum )
 
 const csString& pawsShortcutWindow::GetCommandName(int shortcutNum )
 {
-    //if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
-    if (shortcutNum < 0 )
+    if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
+    //if (shortcutNum < 0 )
     {
         static csString error("Out of range");
         return error;

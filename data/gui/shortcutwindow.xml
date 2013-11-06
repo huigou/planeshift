@@ -81,6 +81,40 @@
 	</widget>
 <!-- -->
 
+<!-- custom defined controls
+    IF YOU DON'T KNOW WHAT THIS IS THEN DON'T USE IT! This feature is essentially useful only for skin designers.
+    If left commented out or removed  the shortcutwindow uses the default scrolling controls built into the pawsscrollmenu
+
+        <widget name="Up Arrow" factory="pawsButton" text="" toggle="no" id="1105" notify="ShortcutMenu" style="Standard Button">
+            <frame x="10" y="25" width="50" height="24" />
+            <bgimage resource="arrowLeft" />
+            <notify name="ShortcutMenu" />
+            <label text="Set" />
+            <attachpoints>
+                <attach point="ATTACH_LEFT" />
+                <attach point="ATTACH_TOP" />
+            </attachpoints>
+        </widget>
+
+        <widget name="Down Arrow" factory="pawsButton" text="" toggle="no" id="1106" notify="ShortcutMenu" style="Standard Button">
+            <frame x="480" y="25" width="50" height="24" />
+            <bgimage resource="arrowRight" />
+            <notify name="ShortcutMenu" />
+            <label text="Set" />
+            <attachpoints>
+                <attach point="ATTACH_RIGHT" />
+                <attach point="ATTACH_TOP" />
+            </attachpoints>
+        </widget>
+
+        <widget name="iconScroll" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
+            <frame x="70" y="28" width="420" height="15" border="no" />
+            <attachpoints>
+                <attach point="ATTACH_TOP" />
+            </attachpoints>
+        </widget>
+-->
+
 
 
 <!-- the scrolling menu-bar 

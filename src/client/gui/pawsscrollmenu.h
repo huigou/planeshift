@@ -101,6 +101,7 @@ public:
 
     bool ScrollUp();
     bool ScrollDown();
+    bool ScrollToPosition( float pos );
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
     virtual bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers);
 
@@ -116,15 +117,13 @@ public:
     void setButtonWidth(int width);
     void setScrollIncrement(int incr);
     void setScrollProportion(float prop);
+    bool SetScrollWidget( pawsScrollBar* sb);
     void SetOrientation(int Orientation);
     int  AutoResize();
     void SetEditMode(int val)
     {
         EditMode = val;
     }
-
-
-
 
 protected:
 
@@ -182,7 +181,8 @@ protected:
 
     int   buttonWidth,
           buttonHeight,
-          scrollIncrement;
+          scrollIncrement,
+          currentButton;
     float scrollProportion;
     bool  buttonWidthDynamic;
 
@@ -203,6 +203,8 @@ protected:
     bool                   EditLock;                 //true = editing prevented, false = editing allowed
 
     pawsWidget*            callbackWidget;
+
+    pawsScrollBar*         scrollBarWidget;
 
     int                    Orientation;
     int                    EditMode;

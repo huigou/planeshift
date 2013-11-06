@@ -29,6 +29,7 @@
 #include "paws/pawsmainwidget.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsbutton.h"
+#include "paws/pawscrollbar.h"
 #include "gui/pawsdndbutton.h"
 #include "pawsscrollmenu.h"
 #include "paws/pawstexturemanager.h"
@@ -52,6 +53,7 @@ pawsScrollMenu::pawsScrollMenu() :
     buttonHeight(0),
     scrollIncrement(1.0),
     scrollProportion(0.0),
+    currentButton(0),
     buttonWidthDynamic(false),
     ButtonHolder(NULL),
     buttonLocation(0),
@@ -65,6 +67,7 @@ pawsScrollMenu::pawsScrollMenu() :
     EditLockMode(0),               //enabled, disabled, (dynamic==>enabled)
     EditLock(true),                 //true = editing prevented, false = editing allowed
     callbackWidget(NULL),
+    scrollBarWidget(NULL),
     Orientation(ScrollMenuOptionHORIZONTAL)
 {
 }
@@ -280,6 +283,8 @@ void pawsScrollMenu::OnResize()
 void pawsScrollMenu::LayoutButtons()
 {
     int buttonSize;
+
+
     if(Buttons.GetSize()>0)
     {
         int buttonCol = buttonLocation==0?BUTTON_PADDING:buttonLocation,
@@ -392,53 +397,6 @@ bool pawsScrollMenu::ScrollUp()
 
     if(Buttons.GetSize()>0)
     {
-        //else
-        {
-            if(scrollIncrement == 0 && scrollProportion == 0.0f)
-            {
-                scrollProportion = 0.5f;
-            }
-            if(scrollProportion > 0)
-            {
-                float sprop;
-
-                if(screenFrame.Width() > screenFrame.Height())
-                {
-                    sprop = (float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth;
-                }
-                else
-                {
-                    sprop = ((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)*((float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth);
-                }
-                sprop = sprop*scrollProportion;
-                scrollIncrement = (int)sprop;
-                if(scrollIncrement<1)
-                {
-                    scrollIncrement = 1;
-                }
-                scrollIncrement = scrollIncrement*buttonWidth;
-            }
-            moveDist = scrollIncrement;
-        }
-        if(Buttons[0]->GetScreenFrame().xmin + scrollIncrement > ButtonHolder->GetScreenFrame().xmin)
-            //if(Buttons[0]->GetScreenFrame().xmin > ButtonHolder->GetScreenFrame().xmin)
-        {
-            moveDist = (ButtonHolder->GetScreenFrame().xmin-Buttons[0]->GetScreenFrame().xmin)+BUTTON_PADDING;   //xmin should be negative...
-        }
-        buttonLocation+=moveDist;
-
-        OnResize();
-        return true;
-    }
-    return false;
-}
-
-bool pawsScrollMenu::ScrollDown()
-{
-    int moveDist;
-
-    if(Buttons.GetSize()>0)   //if there's a least one button
-    {
         if(scrollIncrement == 0 && scrollProportion == 0.0f)
         {
             scrollProportion = 0.5f;
@@ -453,33 +411,93 @@ bool pawsScrollMenu::ScrollDown()
             }
             else
             {
-                sprop = (((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)-1)*((float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth);
+                sprop = ((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)*((float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth);
             }
             sprop = sprop*scrollProportion;
             scrollIncrement = (int)sprop;
-            if(scrollIncrement<1)
+            if(scrollIncrement<0)
             {
-                scrollIncrement = 1;
+                scrollIncrement = 0;
             }
-            scrollIncrement = scrollIncrement*buttonWidth;
         }
-        if(scrollIncrement<buttonWidth)
+        currentButton-=scrollIncrement;
+        if( currentButton<0 )
         {
-            scrollIncrement = buttonWidth;
+            currentButton=0;
         }
-        moveDist = scrollIncrement;
-        if(Buttons[Buttons.GetSize()-1]->GetScreenFrame().xmax-scrollIncrement < ButtonHolder->GetScreenFrame().xmax && Buttons[Buttons.GetSize()-1]->GetScreenFrame().ymax <  ButtonHolder->GetScreenFrame().ymax)
-        {
-            moveDist = (((int)((Buttons[Buttons.GetSize()-1]->GetScreenFrame().xmax-ButtonHolder->GetScreenFrame().xmax)/buttonWidth))*buttonWidth);
-        }
-        buttonLocation-=moveDist;
+        ScrollToPosition( currentButton );
 
-        OnResize();
         return true;
     }
     return false;
 }
 
+bool pawsScrollMenu::ScrollDown()
+{
+    if(Buttons.GetSize()>0)   //if there's a least one button
+    {
+        if(scrollIncrement == 0 && scrollProportion == 0.0f)
+        {
+            scrollProportion = 0.5f;
+        }
+        if(scrollProportion > 0)
+        {
+            //convert proportion to buttonwidths
+            float sprop;
+
+            //get display width as a num of buttonwidths
+            if(screenFrame.Width() > screenFrame.Height())
+            {
+                sprop = (float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth; 
+            }
+            else
+            {
+                sprop = (((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)-1)*((float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth);
+            }
+            sprop = sprop*scrollProportion;
+            scrollIncrement = (int)sprop;
+            if(scrollIncrement<0)
+            {
+                scrollIncrement = 0;
+            }
+        }
+        currentButton+=scrollIncrement;
+        if( currentButton>Buttons.GetSize()-1 )
+        {
+            currentButton=Buttons.GetSize()-1;
+        }
+        ScrollToPosition( currentButton );
+
+        return true;
+    }
+    return false;
+}
+
+bool pawsScrollMenu::ScrollToPosition( float pos )
+{
+    int total=0;
+
+    currentButton = (int) pos;
+    for(size_t i=0; i< pos; i++)  //calculate the width of all the buttons to the left of the indicated one
+    {
+        if(Buttons[i])
+            total+= CalcButtonSize((pawsDnDButton*)Buttons[i]);
+    }
+
+    if( scrollBarWidget!=NULL )
+    {
+        scrollBarWidget->SetCurrentValue( pos, false, false );
+    }
+    buttonLocation=-total+BUTTON_PADDING;
+    OnResize();
+    return true;
+}
+
+bool pawsScrollMenu::SetScrollWidget( pawsScrollBar* sb)
+{
+    scrollBarWidget = sb;
+    return true;
+}
 
 bool pawsScrollMenu::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
 {
@@ -646,7 +664,7 @@ bool pawsScrollMenu::RemoveByName(csString name)
 
 bool pawsScrollMenu::Clear()
 {
-    for(size_t i=0; i<Buttons.GetSize(); i++)
+    for(size_t i=0; i<ButtonHolder->GetChildrenCount(); i++)
     {
         pawsWidget*    match = NULL;
 
