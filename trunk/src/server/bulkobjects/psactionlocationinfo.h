@@ -109,6 +109,9 @@ public:
     /// Returns true if this action location is a minigame board
     bool IsGameBoard() const { return isGameBoard; }
 
+    /// Returns true if this action location will run a script and can be examined
+    bool IsExamineScript() const { return isExamineScript; }
+
     /// Returns true if this action location is an entrance
     bool IsEntrance() const { return isEntrance; }
     void SetIsEntrance(bool flag) { isEntrance = flag; }
@@ -178,6 +181,10 @@ public:
     ///  The delete operator is overriden to call PoolAllocator template functions
     void operator delete(void *);
 
+    /// Get script to run
+    csString GetScriptToRun() { return scriptToRun; }
+    csString GetScriptParameters() { return scriptParameters; }
+
     uint32 id;
     size_t master_id;
 
@@ -205,6 +212,7 @@ private:
     void SetupReturn(csRef<iDocumentNode> returnNode);
     void SetupContainer(csRef<iDocumentNode> containerNode);
     void SetupGameboard(csRef<iDocumentNode> boardNode);
+    void SetupScript(csRef<iDocumentNode> scriptNode);
     void SetupDescription(csRef<iDocumentNode> descriptionNode);
 
     /// Flag indicating that this action location is a container
@@ -224,6 +232,13 @@ private:
 
     /// Flag indicator that location has return tag
     bool isReturn;
+
+    /// Flag indicator that location will run a script and can be examined
+    bool isExamineScript;
+
+    /// Parameters used by the script to execute
+    csString scriptToRun;
+    csString scriptParameters;
 
     ///  This is either a container ID or a lock ID
     InstanceID instanceID;

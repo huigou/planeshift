@@ -94,6 +94,7 @@
 #include "globals.h"
 #include "progressionmanager.h"
 #include "workmanager.h"
+#include "actionmanager.h"
 #include "cachemanager.h"
 #include "psproxlist.h"
 #include "spellmanager.h"
@@ -1222,8 +1223,15 @@ void gemActiveObject::SendBehaviorMessage(const csString &msg_id, gemObject* act
         CS_ASSERT(false);
     }
 
-    else if(msg_id == "use")
+    else if(msg_id == "use") {
+        // if is an action location
+        if (GetALPtr()!=NULL)
+            psserver->GetActionManager()->HandleUse(GetALPtr(), actor->GetClient());
+
+        // if it's a container
         psserver->GetWorkManager()->HandleUse(actor->GetClient());
+
+    }
     else if(msg_id == "combine")
         psserver->GetWorkManager()->HandleCombine(actor->GetClient());
     else if(msg_id == "unlock")

@@ -721,6 +721,11 @@ void ActionManager::HandleExamineOperation(psActionLocation* action, Client* cli
     {
         options |= psGUIInteractMessage::PLAYGAME;
     }
+    // Or an examine + script action
+    else if(action->IsExamineScript())
+    {
+        options |= psGUIInteractMessage::USE;
+    }
     // Everything else
     else if(realItem)
     {
@@ -738,7 +743,24 @@ void ActionManager::HandleExamineOperation(psActionLocation* action, Client* cli
     interactMsg.SendMessage();
 }
 
+// Handle /use command
+void ActionManager::HandleUse(gemActionLocation* actionlocation, Client* client)
+{
 
+    // find the script
+    ProgressionScript* progScript = psserver->GetProgressionManager()->FindScript(actionlocation->GetAction()->GetScriptToRun().GetData());
+    if(progScript)
+    {
+        csString parameters = actionlocation->GetAction()->GetScriptParameters();
+        // passes the parameters to the script to run
+        csWeakRef<MathScript> bindings = MathScript::Create("RunScript bindings", parameters);
+
+        MathEnvironment env;
+        env.Define("Target", client->GetActor()); // needed if called by an action location
+        bindings->Evaluate(&env);
+        progScript->Run(&env);
+    }
+}
 
 void ActionManager::HandleScriptOperation(psActionLocation* action, gemActor* actor)
 {

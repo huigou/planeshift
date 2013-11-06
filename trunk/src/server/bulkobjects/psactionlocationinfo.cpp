@@ -606,6 +606,13 @@ bool psActionLocation::ParseResponse()
             SetupGameboard(boardNode);
         }
 
+        // Do Scripts
+        csRef<iDocumentNode> scriptNode = topNode->GetNode("Script");
+        if ( scriptNode ) 
+        {
+            SetupScript(scriptNode);
+        }
+
         // Do Descriptions
         csRef<iDocumentNode> descriptionNode = topNode->GetNode( "Description" );
         if ( descriptionNode ) 
@@ -729,6 +736,29 @@ void psActionLocation::SetupContainer(csRef<iDocumentNode> containerNode)
 void psActionLocation::SetupGameboard(csRef<iDocumentNode> boardNode)
 {
     isGameBoard = true;
+}
+
+// Setup script tag
+//
+// Script example:
+// <Examine>
+//   <Script="mechanisms" Param0="lavacave_mvrock01" Param1="0,10,0" Param2="" />
+//   <Description> This mechanism seems made by dwarven hands</Description>
+// </Examine>
+void psActionLocation::SetupScript(csRef<iDocumentNode> scriptNode)
+{
+    // read parameters for the script
+    csString name(scriptNode->GetAttributeValue("name"));
+    if(name.Length() > 0)
+        scriptToRun = name;
+    csString param0(scriptNode->GetAttributeValue("Param0"));
+    csString param1(scriptNode->GetAttributeValue("Param1"));
+    csString param2(scriptNode->GetAttributeValue("Param2"));
+
+    scriptParameters= "Param0='"+param0+"';"+"Param1='"+param1+"';"+"Param2='"+param2+"'";
+
+    isExamineScript = true;
+
 }
 
 // Setup description tag
