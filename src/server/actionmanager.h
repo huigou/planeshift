@@ -138,6 +138,12 @@ public:
     void HandleMapAction( MsgEntry *msg, Client *client );
 
     /**
+     * Handles the /use command on an AL or the click on use button.
+     * @param client            The client that issued the use command
+     */
+    void HandleUse(gemActionLocation* actionlocation, Client* client);
+
+    /**
      * Remove all active trigger flag for this client and action location.
      *
      * @param actorEID       The EID of the actor to remove from the given action location.
