@@ -252,7 +252,7 @@ void ServerCharManager::ViewItem(Client* client, int containerID, INVENTORY_SLOT
             }
 
             // Check for minigames or entrances
-            else if (action->IsGameBoard() || action->IsEntrance())
+            else if (action->IsGameBoard() || action->IsEntrance() || action->IsExamineScript())
             {
                 csString description = action->GetDescription();
                 if (!description.IsEmpty())
