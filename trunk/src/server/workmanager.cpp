@@ -57,6 +57,7 @@
 #include "psserverchar.h"
 #include "playergroup.h"
 #include "entitymanager.h"
+#include "actionmanager.h"
 #include "weathermanager.h"
 #include "cachemanager.h"
 #include "globals.h"
@@ -216,7 +217,15 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client* client)
 
     if(msg.command == "use")
     {
-        HandleUse(client);
+        // Check if it's an action location, then pass the job to ActionManager
+        gemObject* target = client->GetTargetObject();
+        gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+        if(gemAction) {
+            psserver->GetActionManager()->HandleUse(gemAction, client);
+
+        // otherwise let it handle to WorkManager
+        } else
+            HandleUse(client);
     }
     else if(msg.command == "combine")
     {
