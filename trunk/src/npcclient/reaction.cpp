@@ -50,7 +50,7 @@
 Reaction::Reaction()
 {
     desireValue   = 0.0f;
-    desireType    = DESIRE_GUARANTIED;
+    desireType    = DESIRE_GUARANTEED;
     range         = 0;
     activeOnly    = false;
     inactiveOnly  = false;
@@ -71,10 +71,9 @@ bool Reaction::Load(iDocumentNode *node,BehaviorSet& behaviors)
         Error3("Event type with variables not allowed for %s. From node: %s",eventType.GetData(),node->GetValue());
         return false;
     }
-    
 
-    // Default to guarantied
-    desireType = DESIRE_GUARANTIED;
+    // Default to guaranteed
+    desireType = DESIRE_GUARANTEED;
     desireValue = 0.0f;
     
     if (node->GetAttribute("delta"))
@@ -325,8 +324,8 @@ void Reaction::React(NPC *who, Perception *pcpt)
             NPCDebug(who, 10, "Adding %1.1f need to behavior %s", desireValue, affected[i]->GetName());
             affected[i]->ApplyNeedDelta(who, desireValue);
             break;
-        case DESIRE_GUARANTIED:
-            NPCDebug(who, 10, "Guarantied need to behavior %s", affected[i]->GetName());
+        case DESIRE_GUARANTEED:
+            NPCDebug(who, 10, "Guaranteed need to behavior %s", affected[i]->GetName());
             
             float highest = who->GetBrain()->GetHighestNeed(who);
             if (who->GetCurrentBehavior() != affected[i])
