@@ -5053,7 +5053,7 @@ void gemNPC::Say(const char* sayText, Client* who, bool sayPublic, csTicks &time
 
     if(who && !sayPublic)  // specific client specified means use /tell not /say
     {
-        Notify2(LOG_CHAT,"Private NPC Response: %s\n", sayText);
+        Notify2(LOG_NPC,"Private NPC Response: %s\n", sayText);
 
         // Some NPC responses are now in the form of private tells.
         psChatMessage newMsg(who->GetClientNum(), eid, GetName(), 0, sayText, chtype, false);
@@ -5068,7 +5068,7 @@ void gemNPC::Say(const char* sayText, Client* who, bool sayPublic, csTicks &time
     }
     else
     {
-        Notify2(LOG_CHAT,"Public NPC Response: %s\n", sayText);
+        Notify2(LOG_NPC,"Public NPC Response: %s\n", sayText);
         // Some NPC responses are now in the form of public /says.
         psChatMessage newMsg(0, eid, GetName(), 0, sayText, chtype, false);
         newMsg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE);
@@ -5096,7 +5096,7 @@ void gemNPC::ActionCommand(bool actionMy, bool actionNarrate, const char* actTex
 
     if(who && !actionPublic)
     {
-        Notify2(LOG_CHAT,"Private NPC action: %s\n", actText);
+        Notify2(LOG_NPC,"Private NPC action: %s\n", actText);
 
         // Some NPC actions are now in the form of private actions.
         psChatMessage msg(who->GetClientNum(), eid, GetName(), 0, actText, chtype, false);
@@ -5111,7 +5111,7 @@ void gemNPC::ActionCommand(bool actionMy, bool actionNarrate, const char* actTex
     }
     else
     {
-        Notify2(LOG_CHAT,"Public NPC action: %s\n", actText);
+        Notify2(LOG_NPC,"Public NPC action: %s\n", actText);
         // Some NPC actions are now in the form of public /me, or /mys
         psChatMessage msg(0, eid, GetName(), 0, actText, chtype, false);
         msg.Multicast(GetMulticastClients(), 0, CHAT_SAY_RANGE);

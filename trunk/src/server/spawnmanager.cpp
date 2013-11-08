@@ -1044,7 +1044,7 @@ void SpawnManager::HandleDeathEvent(MsgEntry *me,Client *notused)
     }
     else  // Handle NPC dying
     {
-        Debug1(LOG_NPC, 0,"Killing npc in spawnmanager.\n");
+        Debug1(LOG_SPAWN, 0,"Killing npc in spawnmanager.\n");
         // Remove NPC and queue for respawn
         KillNPC(death.deadActor, death.killer);
     }

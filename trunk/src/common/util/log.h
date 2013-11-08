@@ -34,41 +34,110 @@ struct iObjectRegistry;
 enum LOG_TYPES
 {
     LOG_ANY,
+
+    // Lights update, time of the day, snow, fog, rain, lightning messages
     LOG_WEATHER,
+
+    // Item spawned, hunt location added, NPCs spawned or killed
     LOG_SPAWN,
+
+    // Entities and gemobjects added/removed (NPCs, items, action locations)
     LOG_CELPERSIST,
+
+    // UI widget loading, and interaction
     LOG_PAWS,
+
+    // player added to a group
     LOG_GROUP,
+
+    // PaladinJr, speed cheat detection, item cheat detection
     LOG_CHEAT,
+
+    // Player movement and falling down
     LOG_LINMOVE,
+
+    // casting spell and success rate
     LOG_SPELLS,
+
+    // Character creation messages
     LOG_NEWCHAR,
+
+    // Bunch of actions sent to superclient: new entities, sit, die, spell casting, switch player mode, crafting
     LOG_SUPERCLIENT,
+
+    // Bank, storage, exchange of items between players
     LOG_EXCHANGES,
+
+    // GM Commands
     LOG_ADMIN,
+
+    // Messages on how many objects have been loaded at server startup
     LOG_STARTUP,
+
+    // Traits, sockets, material change on meshes
     LOG_CHARACTER,
+
+    // server connections, login, authentication request, disconnects
     LOG_CONNECTIONS,
+
+    // players chat
     LOG_CHAT,
+
+    // Mix of everything, needs a rework. npcclient messages, authentication, malformed messages
     LOG_NET,
+
+    // Loading screen between zones, sector crossing
     LOG_LOAD,
+
+    // NPCClient perceptions handling. NPC Dialogues resolution
     LOG_NPC,
+
+    // Crafting
     LOG_TRADE,
+
+    // server side and clien side handling of sounds
     LOG_SOUND,
+
+    // combat resolution, damage, loot, stances, animations
     LOG_COMBAT,
+
+    // gaining XP, spending XP and training
     LOG_SKILLXP,
+
+    // Startup quest parsing. In game assign, discard, complete quests. Dialogues on quests
     LOG_QUESTS,
+
+    // mathscript (rarely used)
     LOG_SCRIPT,
-    LOG_MARRIAGE,
+
+    // Buddy list, marriage, alliances
+    LOG_RELATIONSHIPS,
+
+    // server <-> client low level communication (very verbose!)
     LOG_MESSAGES,
+
+    // addeding/deleting objects from CacheManager
     LOG_CACHE,
+
+    // Pets management. Rarely used.
     LOG_PETS,
+
+    // Mix of user/item actions. may need rework.
     LOG_USER,
+
+    // Random treasure generation
     LOG_LOOT,
+
+    // Never used!!
     LOG_DUELS,
+
+    // Dead reckoning positional/navigation data (very verbose)
     LOG_DRDATA,
+
+    // Action Locations, puzzles and mechanisms
     LOG_ACTIONLOCATION,
-// NOTE: Remember to update the flagnames and flagsettings tables in log.cpp when addning new entries
+
+// NOTE: Remember to update the flagnames and flagsettings tables in log.cpp when adding new entries
     MAX_FLAGS
 };
 

@@ -232,7 +232,7 @@ void psNetConnection::Run ()
             laststatdisplay = currentticks;
 
             
-            if (pslog::disp_flag[LOG_LOAD])
+            if (pslog::disp_flag[LOG_NET])
             {
                 printf("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
                 printf("+ Currently using %1.2fKbps out, %1.2fkbps in...\n",
