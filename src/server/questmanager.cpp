@@ -900,6 +900,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char *script)
                        mainQuest->GetName(),block.GetData());
                 lastError.Format("Could not determine triggers in script '%s', in line <%s>", mainQuest->GetName(),block.GetData());
 
+                delete menu;
                 return line_number;
             }
 
