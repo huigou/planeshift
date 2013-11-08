@@ -1173,7 +1173,7 @@ bool ServerCharManager::VerifyTrade( Client * client, psCharacter * character, p
     if (!*merchant)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You can only buy from a merchant.");
-        Debug4(LOG_CHARACTER,client->GetClientNum(),"Player %s failed to %s item %s. No merchant!\n",
+        Debug4(LOG_EXCHANGES,client->GetClientNum(),"Player %s failed to %s item %s. No merchant!\n",
                 character->GetCharName(), trade, itemName);
         return false;
     }
@@ -1519,7 +1519,7 @@ bool ServerCharManager::VerifyStorage( Client * client, psCharacter * character,
     if (!*storage)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You can only store item with someone owning a storage.");
-        Debug4(LOG_CHARACTER,client->GetClientNum(),"Player %s failed to %s item %s. No storage!\n",
+        Debug4(LOG_EXCHANGES,client->GetClientNum(),"Player %s failed to %s item %s. No storage!\n",
                 character->GetCharName(), trade, itemName);
         return false;
     }

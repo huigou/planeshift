@@ -635,7 +635,7 @@ void psServer::RemovePlayer(uint32_t clientnum,const char* reason)
 
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 
-    Notify3(LOG_CHARACTER, "Remove player '%s' (%d)", client->GetName(),client->GetClientNum());
+    Notify3(LOG_CONNECTIONS, "Remove player '%s' (%d)", client->GetName(),client->GetClientNum());
 
     client->Disconnect();
 

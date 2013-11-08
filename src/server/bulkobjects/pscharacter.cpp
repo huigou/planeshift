@@ -842,7 +842,7 @@ bool psCharacter::LoadMarriageInfo(Result &result)
 
             SetSpouseName(spouseName);
 
-            Notify2(LOG_MARRIAGE, "Successfully loaded marriage info for %s", name.GetData());
+            Notify2(LOG_RELATIONSHIPS, "Successfully loaded marriage info for %s", name.GetData());
             break;
         }
     }

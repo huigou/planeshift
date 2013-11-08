@@ -93,7 +93,7 @@ public:
             psserver->SendSystemError( proposerClient->GetClientNum(),
                 tempStr.GetData() );
                         
-            Debug3( LOG_MARRIAGE, proposerClient->GetClientNum(),"%s rejected the marriage proposal from %s.", proposedCharFirstName, proposerFirstName );
+            Debug3( LOG_RELATIONSHIPS, proposerClient->GetClientNum(),"%s rejected the marriage proposal from %s.", proposedCharFirstName, proposerFirstName );
             return;
         }
 
@@ -114,7 +114,7 @@ public:
         tempStr.Format( "Congratulations! You are now married to %s", proposerFirstName );
         psserver->SendSystemResult( proposedClient->GetClientNum(), tempStr.GetData() );
 
-        Debug3( LOG_MARRIAGE, proposerClient->GetClientNum(),"\n%s is now married to %s.\n", proposedCharFirstName, proposerFirstName );
+        Debug3( LOG_RELATIONSHIPS, proposerClient->GetClientNum(),"\n%s is now married to %s.\n", proposedCharFirstName, proposerFirstName );
     }
 };
 
@@ -172,7 +172,7 @@ public:
             psserver->SendSystemError( divorcerClient->GetClientNum(),
                 tempStr.GetData() );
                         
-            Debug3( LOG_MARRIAGE, clientnum, "%s rejected the divorce request from %s.", 
+            Debug3( LOG_RELATIONSHIPS, clientnum, "%s rejected the divorce request from %s.", 
                     divorcedFirstName.GetDataSafe(), divorcerFirstName.GetDataSafe() );
             return;
         }
@@ -184,7 +184,7 @@ public:
         psserver->SendSystemResult( divorcerClient->GetClientNum(), "You are now divorced." );
         psserver->SendSystemResult( divorcedClient->GetClientNum(), "You are now divorced.");
 
-        Debug3( LOG_MARRIAGE, divorcedClient->GetClientNum(),"%s divorced from %s.", divorcerFirstName.GetData(), divorcedFirstName.GetData() );
+        Debug3( LOG_RELATIONSHIPS, divorcedClient->GetClientNum(),"%s divorced from %s.", divorcerFirstName.GetData(), divorcedFirstName.GetData() );
       
     }
 };
@@ -312,7 +312,7 @@ void psMarriageManager::Propose( Client* client, csString proposedCharName, csSt
         PendingQuestion* invite = new PendingMarriageProposal( client, proposedClient, tempStr.GetData() );
         psserver->questionmanager->SendQuestion(invite);
 
-        Debug3( LOG_MARRIAGE, client->GetClientNum(),"%s has proposed %s for Marriage", proposerName.GetData(), proposedCharName.GetData() );
+        Debug3( LOG_RELATIONSHIPS, client->GetClientNum(),"%s has proposed %s for Marriage", proposerName.GetData(), proposedCharName.GetData() );
     }
     else
     {
@@ -369,7 +369,7 @@ void psMarriageManager::Divorce( Client* client, csString divorceMsg )
         PendingQuestion *invite = new PendingMarriageDivorce( client, divorcedClient, tempStr.GetData() );
         psserver->questionmanager->SendQuestion(invite);
 
-        Debug3( LOG_MARRIAGE, client->GetClientNum(),"%s wants to divorce from %s", divorcerName.GetData(), divorcedChar.GetData() );
+        Debug3( LOG_RELATIONSHIPS, client->GetClientNum(),"%s wants to divorce from %s", divorcerName.GetData(), divorcedChar.GetData() );
       
     }
     else
@@ -428,7 +428,7 @@ bool psMarriageManager::PerformMarriage(  psCharacter* charData,  psCharacter* s
 	 charData->SetSpouseName( spouseFullName );
 	 spouseData->SetSpouseName( charFullName );
 
-    Notify3( LOG_MARRIAGE, "SetSpouseName(): %s now has %s as spouse.", charFullName, spouseFullName );
+    Notify3( LOG_RELATIONSHIPS, "SetSpouseName(): %s now has %s as spouse.", charFullName, spouseFullName );
     return true;
 }
 
