@@ -482,10 +482,10 @@ void psCharacterInventory::Unequip(psItem *item)
 
 bool psCharacterInventory::CheckSlotRequirements(psItem *item, INVENTORY_SLOT_NUMBER proposedSlot, unsigned short stackCount)
 {
-    CS_ASSERT(proposedSlot != PSCHARACTER_SLOT_NONE);
-    CS_ASSERT(item != NULL); // attempting either is probably bad
+    CS_ASSERT(item != NULL);
 
-    if(proposedSlot < PSCHARACTER_SLOT_NONE)
+    // Make sure it is a usable slot number.
+    if(proposedSlot < 0)
         return false;
 
     if (stackCount == 0)
@@ -744,7 +744,6 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
      * that fails, we'll return false and possibly call this again specifying PSCHARACTER_SLOT_NONE.
      */
     size_t i;
-    size_t itemIndex = SIZET_NOT_FOUND;
     csArray<size_t> itemIndices;
 
 
@@ -782,11 +781,11 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
     }
 
     // Next check the main bulk slots
-    if (itemIndex == SIZET_NOT_FOUND && slot < 0)
+    if (slot < 0)
     {
         for (i=PSCHARACTER_SLOT_BULK1; i<PSCHARACTER_SLOT_BULK_END; i++)
         {
-            itemIndex = FindSlotIndex(NULL,(INVENTORY_SLOT_NUMBER) i );
+            size_t itemIndex = FindSlotIndex(NULL,(INVENTORY_SLOT_NUMBER) i );
             if (itemIndex == SIZET_NOT_FOUND)
             {
                 if (test)
@@ -824,11 +823,10 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
                 return true;
             }
         }
-        itemIndex = SIZET_NOT_FOUND;
     }
 
     // Now try looking for a container
-    if (itemIndex == SIZET_NOT_FOUND && slot < 0 && !item->GetIsContainer())
+    if (slot < 0 && !item->GetIsContainer())
     {
         for (i=1; i<inventory.GetSize(); i++)
         {
@@ -860,6 +858,7 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
         }
     }
 
+    // Check to see if the proposed slot is usable.
     if (!CheckSlotRequirements(item, slot))
         return false; // -1 means add failed
     
