@@ -93,6 +93,7 @@ psActionLocation::psActionLocation() : gemAction( NULL )
     isEntrance = false;
     isLockable = false;
     isReturn = false;
+    isExamineScript = false;
     enterScript = NULL;
     entranceType.Clear();
     instanceID = 0;
