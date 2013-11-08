@@ -82,7 +82,7 @@ protected:
         DESIRE_NONE,
         DESIRE_DELTA,
         DESIRE_ABSOLUTE,
-        DESIRE_GUARANTIED
+        DESIRE_GUARANTEED
     };
     
     DesireType desireType;    ///< Indicate the type of desire change this reaction has.
