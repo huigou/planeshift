@@ -393,7 +393,9 @@ void pawsScrollMenu::OnResizeStop()
 
 bool pawsScrollMenu::ScrollUp()
 {
-    int moveDist;
+    float sprop;
+    float menuPixels;
+    int   tButton;
 
     if(Buttons.GetSize()>0)
     {
@@ -403,7 +405,6 @@ bool pawsScrollMenu::ScrollUp()
         }
         if(scrollProportion > 0)
         {
-            float sprop;
 
             if(screenFrame.Width() > screenFrame.Height())
             {
@@ -420,11 +421,32 @@ bool pawsScrollMenu::ScrollUp()
                 scrollIncrement = 0;
             }
         }
-        currentButton-=scrollIncrement;
+
+//only scroll as far as the first undisplayed button otherwise buttons are skipped entirely. this is a side effect of allowing varying button sizes.
+        float currentPixelPos = GetTotalButtonWidth( currentButton );
+        if(screenFrame.Width() > screenFrame.Height())
+        {
+            menuPixels = (float)ButtonHolder->GetScreenFrame().Width(); 
+        }
+        else
+        {
+            menuPixels = (((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)-1)*((float)ButtonHolder->GetScreenFrame().Width());
+        }
+        for( tButton = currentButton-1; tButton>currentButton-scrollIncrement; tButton-- )
+        {
+                long visiblePixels = currentPixelPos- GetTotalButtonWidth( tButton ) ;
+                if( visiblePixels > menuPixels )
+                {
+                    break;
+                }
+        }
+        currentButton=tButton+1;
+
         if( currentButton<0 )
         {
             currentButton=0;
         }
+
         ScrollToPosition( currentButton );
 
         return true;
@@ -434,6 +456,10 @@ bool pawsScrollMenu::ScrollUp()
 
 bool pawsScrollMenu::ScrollDown()
 {
+    float sprop;
+    float menuPixels;
+    int   tButton;
+
     if(Buttons.GetSize()>0)   //if there's a least one button
     {
         if(scrollIncrement == 0 && scrollProportion == 0.0f)
@@ -443,7 +469,6 @@ bool pawsScrollMenu::ScrollDown()
         if(scrollProportion > 0)
         {
             //convert proportion to buttonwidths
-            float sprop;
 
             //get display width as a num of buttonwidths
             if(screenFrame.Width() > screenFrame.Height())
@@ -461,7 +486,27 @@ bool pawsScrollMenu::ScrollDown()
                 scrollIncrement = 0;
             }
         }
-        currentButton+=scrollIncrement;
+
+//only scroll as far as the first undisplayed button otherwise buttons are skipped entirely. this is a side effect of allowing varying button sizes.
+        float currentPixelPos = GetTotalButtonWidth( currentButton );
+        if(screenFrame.Width() > screenFrame.Height())
+        {
+            menuPixels = (float)ButtonHolder->GetScreenFrame().Width(); 
+        }
+        else
+        {
+            menuPixels = (((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)-1)*((float)ButtonHolder->GetScreenFrame().Width());
+        }
+        for( tButton = currentButton + 1; tButton<=currentButton+scrollIncrement; tButton++ )
+        {
+                long visiblePixels = GetTotalButtonWidth( tButton ) - currentPixelPos;
+                if( visiblePixels >= menuPixels )
+                {
+                    break;
+                }
+        }
+        currentButton=tButton-1;
+
         if( currentButton>Buttons.GetSize()-1 )
         {
             currentButton=Buttons.GetSize()-1;
@@ -711,6 +756,23 @@ int pawsScrollMenu::GetTotalButtonWidth()
     }
     return total;
 }
+
+int pawsScrollMenu::GetTotalButtonWidth(int targetButton)
+{
+    int total=0;
+    if( targetButton>Buttons.GetSize() )
+    {
+        targetButton=Buttons.GetSize();
+    }
+
+    for(size_t i=0; i< targetButton; i++)
+    {
+        if(Buttons[i])
+            total+= CalcButtonSize((pawsDnDButton*)Buttons[i]);
+    }
+    return total;
+}
+
 
 int pawsScrollMenu::CalcButtonSize(pawsDnDButton* target)
 {

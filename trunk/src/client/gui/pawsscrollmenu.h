@@ -84,6 +84,7 @@ public:
     int  GetButtonHolderWidth();
     int  GetButtonHolderHeight();
     int  GetTotalButtonWidth();
+    int  GetTotalButtonWidth(int targetButton);
     int  GetOrientation();
     int  GetEditMode()
     {
