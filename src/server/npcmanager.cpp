@@ -1989,7 +1989,8 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
         }
 
         char* end = NULL;
-        size_t targetID = strtoul(words[0].GetDataSafe(), &end, 0);
+        size_t targetID = strtoul(words[0].IsEmpty() ?
+            msg.target.GetDataSafe() : words[0].GetDataSafe(), &end, 0);
 
         // Operator did give a name, let's see if we find the named pet.
         if(words[0].Length() != 0 && (end == NULL || *end))
