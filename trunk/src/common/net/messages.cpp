@@ -5246,6 +5246,8 @@ csString psPersistActor::ToString(NetBase::AccessPointers* accessPointers)
     msgtext.AppendFmt(" Factname: '%s'",factname.GetDataSafe());
     msgtext.AppendFmt(" Base Material: '%s'", matname.GetDataSafe());
     msgtext.AppendFmt(" Race: '%s'",race.GetDataSafe());
+    msgtext.AppendFmt(" Gender: '%u'",gender);
+    msgtext.AppendFmt(" Scale: '%.3f'",scale);
     msgtext.AppendFmt(" Mount Race: '%s'",mountFactname.GetDataSafe());
     msgtext.AppendFmt(" Mounter Anim: '%s'",MounterAnim.GetDataSafe());
     msgtext.AppendFmt(" Top: (%.3f,%.3f,%.3f)",top.x,top.y,top.z);

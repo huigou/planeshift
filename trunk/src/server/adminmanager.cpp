@@ -2681,7 +2681,7 @@ AdminCmdDataMorph::AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psA
         found = true;
         index++;
     }
-    //always allow list whathever there is a target or not
+    // always allow list whathever there is a target or not
     if(words.GetCount() == index + 1 && words[index] == "list")
     {
         subCommand = words[index++];
@@ -2703,7 +2703,7 @@ AdminCmdDataMorph::AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psA
             raceName = words[index++];
             //if there is another entry (specifying the gender)
             //use it else use a default.
-            if(words.GetCount() == index + 1)
+            if(words.GetCount() >= index + 1)
             {
                 genderName = words[index++];
             }
@@ -2711,6 +2711,17 @@ AdminCmdDataMorph::AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psA
             {
                 genderName = "m";
             }
+
+            // if there is another entry, it's the scale
+            if(words.GetCount() >= index + 1)
+            {
+                scale = words[index++];
+            }
+            else
+            {
+                scale = "";
+            }
+
         }
     }
     // no target -> syntax error
@@ -2724,7 +2735,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataMorph)
 
 csString AdminCmdDataMorph::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + "\" racename|list|reset [gender]";
+    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + "\" racename|list|reset [gender] [scale]";
 }
 
 AdminCmdDataSetSkill::AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
@@ -11509,6 +11520,8 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataMorph* data = dynamic_cast<AdminCmdDataMorph*>(cmddata);
+
+    // lists all races you can morph into
     if(data->subCommand == "list")
     {
         static csString list;
@@ -11532,6 +11545,7 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
         return;
     }
 
+    // check if the target is valid
     if(!data->targetClient || !data->targetClient->GetActor())
     {
         psserver->SendSystemError(me->clientnum,"Invalid target for morph");
@@ -11547,15 +11561,18 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
 
     gemActor* target = data->targetClient->GetActor();
 
-    //if the user issued a reset restore the basic race
+    // if the user issued a reset restore the basic race
     if(data->subCommand == "reset")
     {
         psserver->SendSystemInfo(me->clientnum, "Resetting race for %s", data->targetClient->GetName());
         target->GetCharacterData()->GetOverridableRace().Cancel(MORPH_FAKE_ACTIVESPELL);
+
+        // unset the scale variable
+        target->GetCharacterData()->UnSetVariable("scale");
     }
     else
     {
-        //otherwise set the defined race by race name and gender
+        // otherwise set the defined race by race name and gender
         psRaceInfo* race = psserver->GetCacheManager()->GetRaceInfoByNameGender(data->raceName, psserver->GetCacheManager()->ConvertGenderString(data->genderName)) ;
         if(!race)
         {
@@ -11564,7 +11581,12 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
                                       data->raceName.GetData(), data->genderName.GetData());
             return;
         }
-        //override the race using a fake spell
+
+        // set scale if specified
+        if (data->scale)
+            target->GetCharacterData()->SetVariable("scale",data->scale);
+
+        // override the race using a fake spell
         psserver->SendSystemInfo(me->clientnum, "Overriding race for %s to %s", data->targetClient->GetName(), data->raceName.GetData());
         target->GetCharacterData()->GetOverridableRace().Override(MORPH_FAKE_ACTIVESPELL, race);
     }

@@ -1211,7 +1211,7 @@ bool psCharacter::HasVariableDefined(const csString &name)
     return charVariables.Contains(name);
 }
 
-csString psCharacter::GetVariableValue(csString &name)
+csString psCharacter::GetVariableValue(const csString &name)
 {
     return charVariables.Get(name, charVariable()).value;
 }
