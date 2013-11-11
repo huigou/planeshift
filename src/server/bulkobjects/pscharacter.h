@@ -954,6 +954,11 @@ public:
      */
     OverridableRace &GetOverridableRace();
 
+    /** Gets the scale including any buffs.
+     *  @return A float which contains the final scale of the model.
+     */
+    float GetScale();
+
     /**
      * Add a new explored area.
      *

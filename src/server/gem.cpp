@@ -3126,13 +3126,6 @@ bool gemActor::Send(int clientnum, bool control, bool to_superclients, psPersist
         }
     }
 
-    // use overridden scale if specified
-    float baseScale = psChar->GetRaceInfo()->GetScale();
-    csString scaleVar = GetCharacterData()->GetVariableValue("scale");
-    // for some reason basescale is empty, otherwise we should use this line:
-    //float scale =  (scaleVar && scaleVar!="") ? atof(scaleVar.GetData())*baseScale : baseScale;
-    //printf ("DEBUG: Base scale %f , persist New Scale %s %f\n",baseScale, GetCharacterData()->GetCharName(),scale);
-    float scale =  (scaleVar && scaleVar!="") ? atof(scaleVar.GetData()) : baseScale;
     psPersistActor mesg(clientnum,
                         securityLevel,
                         masqueradeLevel,
@@ -3145,7 +3138,7 @@ bool gemActor::Send(int clientnum, bool control, bool to_superclients, psPersist
                         GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
                         GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
                         psChar->GetRaceInfo()->gender,
-                        scale,
+                        psChar->GetScale(),
                         GetMount() ? GetMount()->GetRaceInfo()->GetScale() : 1,
                         psChar->GetHelmGroup(),
                         psChar->GetBracerGroup(),

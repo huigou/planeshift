@@ -1143,6 +1143,17 @@ void OverridableRace::OnChange()
     }
 }
 
+float psCharacter::GetScale()
+{
+    // use overridden scale if specified
+    float baseScale = GetRaceInfo()->GetScale();
+    float scaleVar = atof(GetVariableValue("scale").GetData());
+    float scale =  scaleVar>0 ? scaleVar*baseScale : baseScale;
+    printf ("DEBUG: Base scale %f , scaleVar: %f, persist New Scale %s %f\n",baseScale, scaleVar, GetCharName(),scale);
+
+    return scale;
+}
+
 psRaceInfo* psCharacter::GetRaceInfo()
 {
     return race.Current();
