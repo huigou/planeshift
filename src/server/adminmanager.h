@@ -2086,6 +2086,7 @@ public:
     csString subCommand; ///< subcommand (if any)
     csString raceName;   ///< name of the race to morph to
     csString genderName; ///< name of the gender to morph to
+    csString scale;      ///< optional scale
 
     /** @brief Creates obj for specified command that needs a reason.
      */

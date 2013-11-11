@@ -1049,7 +1049,7 @@ public:
      * @param name The name of the variable to search for.
      * @return A csString with the value of the variable.
      */
-    csString GetVariableValue(csString &name);
+    csString GetVariableValue(const csString &name);
 
     /**
      * Returns the reference to a buffable variable.
