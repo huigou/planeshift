@@ -319,7 +319,8 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
         BubbleChatType mixType;
         if(chatMsg.sText.StartsWith("/my")) //we have to add an 's
         {
-            firstName.Append("'s");
+            size_t len = firstName.Length() - 1;
+            firstName.Append(firstName.GetAt(len) == 's' ? "'" : "'s");
             subType = GetTemplate(CHATBUBBLE_MY);
         }
         else
