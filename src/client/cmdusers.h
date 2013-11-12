@@ -75,13 +75,12 @@ protected:
         PSENTITYTYPE_PLAYER_CHARACTER,
         PSENTITYTYPE_NON_PLAYER_CHARACTER,
         PSENTITYTYPE_ITEM,
+        PSENTITYTYPE_NAME,
         PSENTITYTYPE_NO_TARGET
     };
 
-
-    
     GEMClientObject* FindEntityWithName(const char *name);
-    
+
     /** @brief Returns a target string formatted to be sent in a message
      * 
      * This function would be called on a target input by the player,
@@ -96,7 +95,8 @@ protected:
     csString FormatTarget(const csString& target = "target");
 
     void UpdateTarget(SearchDirection searchDirection,
-                      EntityTypes entityType);
+                      EntityTypes entityType,
+                      const char* name);
 
 
     /// Struct to hold our emote data.

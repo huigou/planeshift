@@ -627,31 +627,46 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/target")
     {
         if (words[1].IsEmpty()) {
-            return "You can use /target [self|clear] or /target [prev|next] [item|npc|player|any].";
+            return "You can use /target [self|clear] or /target [prev|next|nearest] [item|npc|player|any].";
         } else if (words[1] == "self")
             psengine->GetCharManager()->SetTarget(psengine->GetCelClient()->GetMainPlayer(),"select");
         else
         {
+            SearchDirection dir;
             csString tail;
-            if(words[1] == "next" || words[1] == "prev")
+            if(words[1] == "next")
+            {
+                dir = SEARCH_FORWARD;
                 tail = words.GetTail(2);
+            }
+            else if(words[1] == "prev")
+            {
+                dir = SEARCH_BACK;
+                tail = words.GetTail(2);
+            }
+            else if(words[1] == "nearest")
+            {
+                dir = SEARCH_NONE;
+                tail = words.GetTail(2);
+            }
             else
+            {
+                dir = SEARCH_NONE;
                 tail = words.GetTail(1);
-
-            SearchDirection dir = (words[1] == "prev") ? SEARCH_BACK : SEARCH_FORWARD;
+            }
 
             if (tail == "item")
-                UpdateTarget(dir,PSENTITYTYPE_ITEM);
+                UpdateTarget(dir, PSENTITYTYPE_ITEM, NULL);
             else if (tail == "npc")
-                UpdateTarget(dir, PSENTITYTYPE_NON_PLAYER_CHARACTER);
+                UpdateTarget(dir, PSENTITYTYPE_NON_PLAYER_CHARACTER, NULL);
             else if (tail == "player" || tail == "pc")
-                UpdateTarget(dir, PSENTITYTYPE_PLAYER_CHARACTER);
+                UpdateTarget(dir, PSENTITYTYPE_PLAYER_CHARACTER, NULL);
             else if (tail == "any")
-                UpdateTarget(dir, PSENTITYTYPE_NO_TARGET);
+                UpdateTarget(dir, PSENTITYTYPE_NO_TARGET, NULL);
             else if (tail == "clear")
-                psengine->GetCharManager()->SetTarget(NULL,"select");
+                psengine->GetCharManager()->SetTarget(NULL, "select");
             else
-                psengine->GetCharManager()->SetTarget(FindEntityWithName(tail),"select");
+                UpdateTarget(dir, PSENTITYTYPE_NAME, tail);
         }
     }
 
@@ -1205,7 +1220,8 @@ void psUserCommands::HandleMessage(MsgEntry *msg)
 // target because we are already at the furthest or nearest entity, it cycles
 // around to the nearest or furthest entity respectively.
 void psUserCommands::UpdateTarget(SearchDirection searchDirection,
-                                  EntityTypes entityType)
+                                  EntityTypes entityType,
+                                  const char *name)
 {
     GEMClientObject* startingEntity = psengine->GetCharManager()->GetTarget();
     psCelClient* cel = psengine->GetCelClient();
@@ -1243,7 +1259,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     // Loop entity is the entity returned if we're already at the last entity
     // and need to cycle through.
     GEMClientObject* loopObject = startingEntity;
-    float loopDistance = (searchDirection == SEARCH_FORWARD) ? FLT_MAX : 0;
+    float loopDistance = (searchDirection == SEARCH_BACK) ? 0 : FLT_MAX;
 
     // Iterate through the entity list looking for the nearest one.
     size_t entityCount = entities.GetSize();
@@ -1252,9 +1268,8 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
     {
         GEMClientObject* object = entities[i];
 
-        GEMClientObject* other = ( startingEntity == NULL ) ? NULL : startingEntity;
-
-        if (object == myEntity || object == other)
+        if (object == myEntity ||
+            (object == startingEntity && searchDirection != SEARCH_NONE))
         {
             continue;
         }
@@ -1266,7 +1281,9 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
 
         if ((entityType == PSENTITYTYPE_PLAYER_CHARACTER && eType < 0)
             || (entityType == PSENTITYTYPE_NON_PLAYER_CHARACTER && (eType >= 0 || eType == -2))
-            || (entityType == PSENTITYTYPE_ITEM && eType != -2))
+            || (entityType == PSENTITYTYPE_ITEM && eType != -2)
+            || (entityType == PSENTITYTYPE_NAME &&
+                !csString(object->GetName()).StartsWith(name, true)))
             continue;
 
         csVector3 pos = object->GetPosition();
@@ -1277,7 +1294,7 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
         // This is the distance from the starting entity to the current one.
         // If it's negative, the current entity is invalid for the search
         // (it can still be a valid loop entity, but never a best entity.)
-        float dist = ((startingEntity != NULL)
+        float dist = ((startingEntity && searchDirection != SEARCH_NONE)
                       ? ((searchDirection == SEARCH_FORWARD)
                          ? ((seDistance < distFromMe)
                             ? csSquaredDist::PointPoint(sePos, pos)
@@ -1288,8 +1305,8 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
                       : seDistance - distFromMe);
 
         // Update loop entity.
-        if ((searchDirection == SEARCH_FORWARD && distFromMe < loopDistance)
-            || (searchDirection == SEARCH_BACK && distFromMe > loopDistance))
+        if ((searchDirection == SEARCH_BACK && distFromMe > loopDistance) ||
+            distFromMe < loopDistance)
         {
             loopObject = object;
             loopDistance = distFromMe;
