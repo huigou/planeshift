@@ -1432,7 +1432,7 @@ GEMClientActor::GEMClientActor(psCelClient* cel, psPersistActor &mesg)
     if(CloakGroup.Length() == 0)
         CloakGroup = factName;
 
-    Debug3(LOG_CELPERSIST, 0, "Actor %s(%s) Received", mesg.name.GetData(), ShowID(mesg.entityid));
+    Debug4(LOG_CELPERSIST, 0, "Actor %s(%s) Received, scale: %f", mesg.name.GetData(), ShowID(mesg.entityid),scale);
 
     // Set up a temporary nullmesh.  The real mesh may need to be background
     // loaded, but since the mesh stores position, etc., it's important to
@@ -1746,11 +1746,11 @@ void GEMClientActor::SetDRData(psDRMessage &drmsg)
 
             if(DoLogDebug(LOG_DRDATA))
             {
-                Debug(LOG_DRDATA, GetEID().Unbox(), "%s, %s, %s, %s, %f, %f, %f, %f, %s, %f, %f, %f, %f, %f, %f, %f",
+                Debug(LOG_DRDATA, GetEID().Unbox(), "DRDATA: %s, %s, %s, %s, pos(%f,%f,%f), rot(%f), %s, %f, %f, %f, %f, %f, %f, %f",
                       "PSCLIENT", "OLD", ShowID(GetEID()),"?", cur_pos.x, cur_pos.y, cur_pos.z, cur_yrot,
                       cur_sector->QueryObject()->GetName(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-                Debug(LOG_DRDATA, GetEID().Unbox(), "%s, %s, %s, %s, %f, %f, %f, %f, %s, %f, %f, %f, %f, %f, %f, %f",
+                Debug(LOG_DRDATA, GetEID().Unbox(), "DRDATA: %s, %s, %s, %s, pos(%f, %f, %f), rot(%f), %s, %f, %f, %f, %f, %f, %f, %f",
                       "PSCLIENT", "SET", ShowID(GetEID()),drmsg.on_ground?"TRUE":"FALSE", drmsg.pos.x, drmsg.pos.y, drmsg.pos.z, drmsg.yrot,
                       drmsg.sector->QueryObject()->GetName(), drmsg.vel.x, drmsg.vel.y, drmsg.vel.z, drmsg.worldVel.x, drmsg.worldVel.y, drmsg.worldVel.z, drmsg.ang_vel);
             }
@@ -2212,7 +2212,9 @@ bool GEMClientActor::CheckLoadStatus()
             csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
 
             // Normalize the mesh scale to the base scale of the mesh.
+            Debug4(LOG_CELPERSIST,0,"DEBUG: Normalize scale: %f / %f = %f\n",scale, sprite->GetScaleFactor(), scale / sprite->GetScaleFactor());
             scale = scale / sprite->GetScaleFactor();
+            linmove->SetScale(scale);
 
             // Apply the resize transformation.
             trans = csReversibleTransform(1.0f / scale * csMatrix3(),csVector3(0)) * trans;

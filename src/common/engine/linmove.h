@@ -105,6 +105,8 @@ public:
   const csVector3 GetPosition () const;
   const csVector3 GetFullPosition () const;
 
+  void SetScale(float set_scale) { scale = set_scale; }
+
   virtual void GetLastPosition (csVector3& pos, float& yrot, iSector*& sector) const;
   virtual void GetLastFullPosition (csVector3& pos, float& yrot, iSector*& sector);
   virtual void SetPosition (const csVector3& pos, float yrot, const iSector* sector);
@@ -290,6 +292,8 @@ protected:
 
   float xRot;
   float zRot;
+
+  float scale;
 
   // Path vars
   csRef<iPath> path;

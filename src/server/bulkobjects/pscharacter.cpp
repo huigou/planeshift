@@ -1145,9 +1145,15 @@ void OverridableRace::OnChange()
 
 float psCharacter::GetScale()
 {
-    // use overridden scale if specified
+    // baseScale is based on cal3d file, example kran: 0.024
     float baseScale = GetRaceInfo()->GetScale();
-    float scaleVar = atof(GetVariableValue("scale").GetData());
+
+    // scaleVar is a user entered scale, so for 10% more it's 1.1
+    float scaleVar = 0;
+    if (GetVariableValue("scale"))
+        scaleVar = atof(GetVariableValue("scale").GetData());
+
+    // use overridden scale if specified
     float scale =  scaleVar>0 ? scaleVar*baseScale : baseScale;
     printf ("DEBUG: Base scale %f , scaleVar: %f, persist New Scale %s %f\n",baseScale, scaleVar, GetCharName(),scale);
 

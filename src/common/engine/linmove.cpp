@@ -57,6 +57,7 @@
 #include "linmove.h"
 #include "colldet.h"
 #include "util/strutil.h"
+#include "util/log.h"
 
 
 // collision detection variables
@@ -159,6 +160,8 @@ psLinearMovement::psLinearMovement (iObjectRegistry* object_reg)
     * loaded or not
     */
     topSize.Set (0, 0, 0);
+
+    scale = -1;
 }
 
 
@@ -1012,14 +1015,23 @@ void psLinearMovement::SetPosition (const csVector3& pos, float yrot,
     {
         StackTrace("Setting position without sector");
     }
-    
+
+    Debug4(LOG_CELPERSIST,0,"DEBUG: psLinearMovement::SetPosition %s current transform: %s scale %f \n", mesh->QueryObject()->GetName(), mesh->GetMovable()->GetTransform().Description().GetData(),scale);
 
     // Position and Sector
     mesh->GetMovable ()->SetPosition ((iSector *)sector,pos);
 
-    // Rotation
-    csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
-    mesh->GetMovable ()->GetTransform ().SetO2T (matrix);
+    // at first loading scale may not be yet set
+    if (scale>0) {
+        // Rotation and scale
+        csMatrix3 rotMatrix = (csMatrix3) csYRotMatrix3 (yrot);
+        csMatrix3 scaleMatrix = csMatrix3 (1/scale,0,0, 0,1/scale,0, 0,0,1/scale);
+        mesh->GetMovable ()->GetTransform ().SetO2T (scaleMatrix*rotMatrix);
+    } else  {
+        // Rotation only
+        csMatrix3 rotMatrix = (csMatrix3) csYRotMatrix3 (yrot);
+        mesh->GetMovable ()->GetTransform ().SetO2T (rotMatrix);
+    }
 
     mesh->GetMovable ()->UpdateMove ();
 }
@@ -1042,7 +1054,6 @@ void psLinearMovement::SetDRData (bool on_ground,
     {
         colldet->SetOnGround (on_ground);
     }
-
     SetPosition (pos,yrot,sector);
     SetVelocity (vel);
     ClearWorldVelocity ();
