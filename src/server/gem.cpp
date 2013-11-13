@@ -5206,7 +5206,7 @@ bool gemNPC::Send(int clientnum, bool control, bool to_superclients, psPersistAl
         GetMount() ? GetMount()->GetRaceInfo()->mesh_name : "null",
         GetMount() ? GetMount()->GetRaceInfo()->GetMounterAnim() : "null",
         psChar->GetRaceInfo()->gender,
-        psChar->GetRaceInfo()->GetScale(),
+        psChar->GetScale(),
         GetMount() ? GetMount()->GetRaceInfo()->GetScale() : 1,
         psChar->GetHelmGroup(),
         psChar->GetBracerGroup(),
