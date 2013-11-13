@@ -1155,7 +1155,7 @@ float psCharacter::GetScale()
 
     // use overridden scale if specified
     float scale =  scaleVar>0 ? scaleVar*baseScale : baseScale;
-    printf ("DEBUG: Base scale %f , scaleVar: %f, persist New Scale %s %f\n",baseScale, scaleVar, GetCharName(),scale);
+    Debug5 (LOG_CELPERSIST, 0, "DEBUG: Base scale %f , scaleVar: %f, persist New Scale %s %f\n",baseScale, scaleVar, GetCharName(),scale);
 
     return scale;
 }
