@@ -2669,10 +2669,10 @@ protected:
  * Create familiar for actor.
  *
  * Syntax:
- *    <createfamiliar aim="Actor"/>
+ *    <createfamiliar aim="Actor" masterId="masterId" />
  * Examples:
  *    Create a familiar near actor and send message:
- *        <createfamiliar aim="Actor"/><msg text="Your new familiar appears nearby."/>
+ *        <createfamiliar aim="Actor" masterId="1001"/><msg text="Your new familiar appears nearby."/>
  */
 class CreateFamiliarOp : public Imperative1
 {
@@ -2697,12 +2697,6 @@ public:
             Error2("Error: <createfamiliar/> needs a valid client for actor '%s'.\n", actor->GetName());
             return;
         }
-
-        /*if (actor->GetCharacterData()->GetFamiliarID() != 0)
-        {
-            psserver->SendSystemInfo(actor->GetClientID(), "You already have a familiar, please take care of it.");
-            return;
-        }*/
 
         gemNPC* familiar = entityManager->CreateFamiliar(actor, masterPID);
         if(!familiar)
