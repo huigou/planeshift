@@ -217,14 +217,15 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client* client)
 
     if(msg.command == "use")
     {
-        // Check if it's an action location, then pass the job to ActionManager
+        // Check if it's an action location with a script, then pass the job to ActionManager
         gemObject* target = client->GetTargetObject();
         gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
-        if(gemAction) {
-            psserver->GetActionManager()->HandleUse(gemAction, client);
+        bool examineScript = false;
+        if(gemAction)
+            examineScript = psserver->GetActionManager()->HandleUse(gemAction, client);
 
         // otherwise let it handle to WorkManager
-        } else
+        if (!examineScript)
             HandleUse(client);
     }
     else if(msg.command == "combine")

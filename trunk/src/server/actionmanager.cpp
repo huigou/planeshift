@@ -744,7 +744,7 @@ void ActionManager::HandleExamineOperation(psActionLocation* action, Client* cli
 }
 
 // Handle /use command
-void ActionManager::HandleUse(gemActionLocation* actionlocation, Client* client)
+bool ActionManager::HandleUse(gemActionLocation* actionlocation, Client* client)
 {
 
     // find the script
@@ -759,7 +759,9 @@ void ActionManager::HandleUse(gemActionLocation* actionlocation, Client* client)
         env.Define("Target", client->GetActor()); // needed if called by an action location
         bindings->Evaluate(&env);
         progScript->Run(&env);
+        return true;
     }
+    return false;
 }
 
 void ActionManager::HandleScriptOperation(psActionLocation* action, gemActor* actor)

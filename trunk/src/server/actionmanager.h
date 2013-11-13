@@ -141,7 +141,7 @@ public:
      * Handles the /use command on an AL or the click on use button.
      * @param client            The client that issued the use command
      */
-    void HandleUse(gemActionLocation* actionlocation, Client* client);
+    bool HandleUse(gemActionLocation* actionlocation, Client* client);
 
     /**
      * Remove all active trigger flag for this client and action location.
