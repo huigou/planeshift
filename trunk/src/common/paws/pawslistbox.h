@@ -100,9 +100,6 @@ public:
     /// A single mouse click (left button) highlights the row
     bool OnMouseDown(int button, int modifiers, int x, int y );
 
-    /// A single mouse click (left button) highlights the row
-    bool OnButtonPressed(int button, int modifiers, pawsWidget* widget);
-
     /// A double click selects the row.
     bool OnDoubleClick(int button, int modifiers, int x, int y);
 

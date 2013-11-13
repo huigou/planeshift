@@ -136,14 +136,7 @@ bool pawsSlot::OnMouseDown( int button, int modifiers, int x, int y )
             mgr->Handle( this, grabOne, grabAll );
             return true;
         }
-        else if ( parent )
-        {
-            return parent->OnButtonPressed(button, modifiers, this);
-        }
-        else
-        {
-            return pawsWidget::OnMouseDown(button, modifiers, x, y );
-        }
+        return pawsWidget::OnMouseDown(button, modifiers, x, y);
     }
 }
 

@@ -91,6 +91,7 @@ public:
     bool PostSetup();
     void Show();
     void Hide();
+    bool OnMouseDown(int button, int modifiers, int x, int y);
     bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
 
 protected:
