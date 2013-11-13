@@ -1479,16 +1479,6 @@ bool pawsListBoxRow::OnMouseDown(int button, int modifiers, int x, int y)
     return parentBox->Select( this );
 }
 
-bool pawsListBoxRow::OnButtonPressed(int button, int modifiers, pawsWidget* widget)
-{
-    // Heading rows are not clickable or selectable
-    if (isHeading)
-        return true;
-
-    pawsListBox* parentBox = (pawsListBox*)parent;
-    return parentBox->Select(this);
-}
-
 bool pawsListBoxRow::OnDoubleClick(int button, int /*modifiers*/, int /*x*/, int /*y*/)
 {
     // Heading rows are not clickable or selectable
