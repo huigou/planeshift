@@ -608,6 +608,8 @@ void ExchangingCharacter::GetOfferingCSV(csString& buff)
 bool ExchangingCharacter::GetExchangedItems(csString& text)
 {
     text.Clear();
+    int count = 0;
+    size_t last_len = 0;
 
     // RMS: Loop through all items offered
     for (int i=0; i < EXCHANGE_SLOT_COUNT; i++)
@@ -616,23 +618,28 @@ bool ExchangingCharacter::GetExchangedItems(csString& text)
         psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
         if (item != NULL)
         {
+            last_len = text.Length();
+            count++;
             text += item->GetQuantityName(item->GetName(),itemInSlot->exchangeStackCount, item->GetCreative(), true);
             text += ", ";
+            printf("text[%d] '%s'\n", i, text.GetData()); // XXX
         }
     }
 
     // RMS: Add the money count
     if (offeringMoney.GetTotal() > 0)
     {
+        last_len = text.Length();
+        count++;
         text.AppendFmt("%i Tria, ", offeringMoney.GetTotal());
     }
-    if (!text.IsEmpty())
+    if (count)
     {
         text.Truncate(text.Length() - 2);
-        size_t lastSep = text.FindLast(',');
-        if (lastSep != (size_t)-1)
+        if (count > 1)
         {
-            csString tempText = text.Slice(0, lastSep) + " and" + text.Slice(lastSep+1);
+            csString tempText = text.Slice(0, last_len - (count == 2 ? 2 : 1))
+                + " and" + text.Slice(last_len - 1);
             text = tempText;
         }
         return true;
