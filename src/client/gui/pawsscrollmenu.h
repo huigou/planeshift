@@ -68,7 +68,6 @@ public:
     void OnResizeStop();
     int  CalcButtonSize(pawsDnDButton* target);
     void LayoutButtons();
-    virtual void MouseOver(bool value);
 
     virtual bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* reporter);
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
@@ -98,15 +97,11 @@ public:
     virtual bool Setup(iDocumentNode* node);
     bool SelfPopulate(iDocumentNode* node);
 
-    virtual void Draw();
-
     bool ScrollUp();
     bool ScrollDown();
     bool ScrollToPosition( float pos );
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
     virtual bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers);
-
-    virtual bool IsEnabled() const;
 
     void SetEditLock(int mode);
     bool IsEditable()
@@ -127,58 +122,6 @@ public:
     }
 
 protected:
-
-    /// Track to see if the button is down.
-    bool down;
-
-    /// Image to draw when button is pressed or when the mouse enters.
-    csRef<iPawsImage> pressedImage;
-
-    /// Image to draw when button is released or when the mouse exits.
-    csRef<iPawsImage> releasedImage;
-
-    csRef<iPawsImage> greyUpImage;
-    csRef<iPawsImage> greyDownImage;
-
-    /// Image to draw when button is released.
-    csRef<iPawsImage> specialFlashImage;
-
-    /// Check to see if this is a toggle button.
-    bool toggle;
-
-    /// Text shown in button
-    csString buttonLabel;
-
-    /// Keyboard equivalent of clicking on this button
-    char keybinding;
-
-    /// Widget to which event notifications are sent. If NULL, notifications go to parent
-    pawsWidget* notify;
-
-    /// Style -- right now only ShadowText supported
-    int style;
-
-    bool enabled;
-
-    /// The state if the button is flashing, 0 is no flashing
-    int flash;
-
-    /// Type of flash (regular/special)
-//    FLASH_STATE flashtype;
-
-    /// Button can trigger sound effects with this
-    csString sound_click;
-    int upTextOffsetX;
-    int upTextOffsetY;
-    int downTextOffsetX;
-    int downTextOffsetY;
-
-    ///Used when restoring from highlight state
-    int originalFontColour;
-
-    /// Whether or not to change image on mouse enter/exit.
-    bool changeOnMouseOver;
-
 
     int   buttonWidth,
           buttonHeight,
