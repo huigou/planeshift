@@ -403,3 +403,25 @@ void pawsDnDButton::MouseOver(bool value)
 {
 }
 
+void pawsDnDButton::DrawMask()
+{
+    // Draw the masking image
+    int drawAlpha = -1;
+    if (fade && parent && parent->GetMaxAlpha() >= 0 && bgImage && maskImage)
+    {
+        fadeVal = parent->GetFadeVal();
+        alpha = parent->GetMaxAlpha();
+        alphaMin = parent->GetMinAlpha();
+        drawAlpha = (int)(alphaMin + (alpha-alphaMin) * fadeVal * 0.010);
+    }
+    if (maskImage)
+    {
+        int imageX;
+
+        imageX = screenFrame.xmin+(screenFrame.Width()/2)-(screenFrame.Height()/2);
+
+        graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
+        maskImage->Draw(imageX, screenFrame.ymin, screenFrame.Height(), screenFrame.Height(), drawAlpha);
+    }
+}
+

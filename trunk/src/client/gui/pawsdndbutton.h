@@ -166,6 +166,8 @@ public:
     void SetDragDropInProgress(int val);
     int IsDragDropInProgress();
 
+    void DrawMask();
+
 
 protected:
     psSlotManager*       mgr;
