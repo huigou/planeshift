@@ -40,23 +40,14 @@
 //////////////////////////////////////////////////////////////////////
 
 pawsScrollMenu::pawsScrollMenu() :
-    notify(NULL),
-    toggle(0),
-    enabled(1),
-    upTextOffsetX(0),
-    upTextOffsetY(0),
-    downTextOffsetX(0),
-    downTextOffsetY(0),
-    changeOnMouseOver(0),
-    flash(0),
     buttonWidth(0),
     buttonHeight(0),
-    scrollIncrement(1.0),
-    scrollProportion(0.0),
+    scrollIncrement(0.0),
+    scrollProportion(0.5),
     currentButton(0),
-    buttonWidthDynamic(false),
+    buttonWidthDynamic(true),
     ButtonHolder(NULL),
-    buttonLocation(0),
+    buttonLocation(BUTTON_PADDING),
     LeftScrollButton(NULL),
     LeftScrollMode(0),
     LeftScrollVisible(true),
@@ -64,8 +55,7 @@ pawsScrollMenu::pawsScrollMenu() :
     RightScrollMode(0),
     RightScrollVisible(true),
     EditLockButton(NULL),
-    EditLockMode(0),               //enabled, disabled, (dynamic==>enabled)
-    EditLock(true),                 //true = editing prevented, false = editing allowed
+    EditLockMode(ScrollMenuOptionDISABLED), //enabled, disabled, (dynamic==>enabled)
     callbackWidget(NULL),
     scrollBarWidget(NULL),
     Orientation(ScrollMenuOptionHORIZONTAL)
@@ -75,7 +65,6 @@ pawsScrollMenu::pawsScrollMenu() :
 pawsScrollMenu::~pawsScrollMenu()
 {
 }
-
 
 bool pawsScrollMenu::Setup(iDocumentNode* node)
 {
@@ -117,9 +106,6 @@ bool pawsScrollMenu::PostSetup()
     //set defaults
     buttonHeight = screenFrame.Height();
     buttonWidth = buttonHeight;
-    buttonWidthDynamic = true;
-    scrollIncrement = 0;
-    scrollProportion = 0.5;
 
     EditLockButton = new pawsButton;
     AddChild(EditLockButton);
@@ -817,12 +803,6 @@ bool pawsScrollMenu::SelfPopulate(iDocumentNode* node)
     return true;
 }
 
-
-void pawsScrollMenu::Draw()
-{
-    pawsWidget::Draw();
-}
-
 bool pawsScrollMenu::OnMouseDown(int button, int modifiers, int x, int y)
 {
     if(button == csmbWheelUp || button == csmbHWheelLeft)
@@ -841,11 +821,6 @@ bool pawsScrollMenu::OnMouseDown(int button, int modifiers, int x, int y)
 bool pawsScrollMenu::OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers)
 {
     return pawsWidget::OnKeyDown(keyCode, key, modifiers);
-}
-
-bool pawsScrollMenu::IsEnabled() const
-{
-    return true;
 }
 
 void pawsScrollMenu::SetLeftScroll(int mode)
@@ -915,9 +890,4 @@ int pawsScrollMenu::AutoResize()
         SetSize(GetScreenFrame().Width(), Buttons.GetSize()*buttonHeight);
         return Buttons.GetSize()*buttonHeight;
     }
-}
-
-
-void pawsScrollMenu::MouseOver(bool value)
-{
 }
