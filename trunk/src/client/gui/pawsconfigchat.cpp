@@ -85,6 +85,7 @@ pawsConfigChat::pawsConfigChat()
     helpG = NULL;
     helpB = NULL;
     loose = NULL;
+    mouseFocus = NULL;
     badwordsIncoming = NULL;
     badwordsOutgoing = NULL;
     echoScreenInSystem = NULL;
@@ -155,6 +156,7 @@ bool pawsConfigChat::PostSetup()
     helpG = (pawsEditTextBox*)FindWidget("helptextg");
     helpB = (pawsEditTextBox*)FindWidget("helptextb");
     loose = (pawsCheckBox*)FindWidget("loosefocus");
+    mouseFocus = (pawsCheckBox*)FindWidget("mousefocus");
     badwordsIncoming = (pawsCheckBox*)FindWidget("badwordsincoming");
     badwordsOutgoing = (pawsCheckBox*)FindWidget("badwordsoutgoing");
     selectTabStyleGroup = dynamic_cast<pawsRadioButtonGroup*> (FindWidget("selecttabstyle"));
@@ -175,6 +177,7 @@ bool pawsConfigChat::LoadConfig()
     ChatSettings &settings = chatWindow->GetSettings();
 
     loose->SetState(settings.looseFocusOnSend);
+    mouseFocus->SetState(settings.mouseFocus);
     echoScreenInSystem->SetState(settings.echoScreenInSystem);
     mainBrackets->SetState(settings.mainBrackets);
     yourColorMix->SetState(settings.yourColorMix);
@@ -238,6 +241,7 @@ bool pawsConfigChat::SaveConfig()
     SET_CHAT_VALUE(tell);
     SET_CHAT_VALUE(chat);
     settings.looseFocusOnSend = loose->GetState();
+    settings.mouseFocus = mouseFocus->GetState();
     settings.enableBadWordsFilterIncoming = badwordsIncoming->GetState();
     settings.enableBadWordsFilterOutgoing = badwordsOutgoing->GetState();    
 

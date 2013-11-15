@@ -341,7 +341,7 @@ bool pawsButton::OnMouseEnter()
         SetState(true, false);
     }
 
-    return true;
+    return pawsWidget::OnMouseEnter();
 }
 
 bool pawsButton::OnMouseExit()
@@ -351,7 +351,7 @@ bool pawsButton::OnMouseExit()
         SetState(false, false);
     }
 
-    return true;
+    return pawsWidget::OnMouseExit();
 }
 
 bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )

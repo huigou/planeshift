@@ -94,6 +94,7 @@ protected:
     pawsEditTextBox* helpB;
     
     pawsCheckBox* loose;
+    pawsCheckBox* mouseFocus;
     pawsCheckBox* badwordsIncoming, *badwordsOutgoing;
     pawsRadioButtonGroup* selectTabStyleGroup;
     pawsCheckBox* echoScreenInSystem;

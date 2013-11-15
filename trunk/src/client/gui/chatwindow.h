@@ -85,6 +85,7 @@ struct ChatSettings
     bool joindefaultchannel;
     bool defaultlastchat;
     bool looseFocusOnSend;
+    bool mouseFocus;
     bool dirtyLogChannelFile[CHAT_END]; ///< Stores if the log file name was changed.
     csString logChannelFile[CHAT_END];  ///< Stores the log files to use for each chat type
     csString channelBracket[CHAT_END];  ///< Stores the brackets to add for each chat type
@@ -147,6 +148,8 @@ public:
     bool OnMenuAction(pawsWidget * widget, const pawsMenuAction & action);
     bool PostSetup();
 
+    bool OnChildMouseEnter(pawsWidget* widget);
+    bool OnChildMouseExit(pawsWidget* widget);
 
     bool OnMouseDown( int button, int modifiers, int x , int y );
 

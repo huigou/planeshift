@@ -1622,6 +1622,8 @@ bool pawsWidget::OnMouseEnter()
 
 bool pawsWidget::OnChildMouseEnter(pawsWidget* /*widget*/)
 {
+    if ( parent )
+        return parent->OnChildMouseEnter( this );
     return true;
 }
 
@@ -1634,6 +1636,8 @@ bool pawsWidget::OnMouseExit()
 
 bool pawsWidget::OnChildMouseExit(pawsWidget* /*child*/)
 {
+    if ( parent )
+        return parent->OnChildMouseExit( this );
     return true;
 }
 
