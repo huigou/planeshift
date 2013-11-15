@@ -3303,9 +3303,9 @@ public:
     csString MounterAnim;               ///< The anim to be used by the mounter.
     unsigned short int gender;
     csString helmGroup;                 ///< Used for helm groupings.
-    csString BracerGroup;               ///< Used for bracers groupings.
-    csString BeltGroup;                 ///< Used for belt groupings.
-    csString CloakGroup;                ///< Used for cloak groupings.
+    csString bracerGroup;               ///< Used for bracers groupings.
+    csString beltGroup;                 ///< Used for belt groupings.
+    csString cloakGroup;                ///< Used for cloak groupings.
     csVector3 top, bottom, offset;
     csString texParts;
     csString equipment;
