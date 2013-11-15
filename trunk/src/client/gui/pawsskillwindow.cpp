@@ -299,6 +299,12 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
 
                     bool flush = (train != incoming.trainingWindow) || incoming.openWindow;
                     train=incoming.trainingWindow;
+                    if (train)
+                    {
+                        factRequest = false;
+                        factions.DeleteAll();
+                        factionList->Clear();
+                    }
 
                     int selectedRowIdx = -1;
                     HandleSkillList(&skillCache, incoming.focusSkill, &selectedRowIdx, flush);
