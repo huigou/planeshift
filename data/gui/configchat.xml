@@ -120,7 +120,7 @@
             </widget>
 
             <widget name="selecttabstyle" factory="pawsRadioButtonGroup">
-                <frame x="255" y="30" width="150" height="120" />
+                <frame x="255" y="0" width="150" height="120" />
                 <widget factory="pawsTextBox" name="">
                     <frame x="10" y="0" width="180" height="20" border="no" />
                     <text string="Auto Tab selection:"/>
@@ -140,28 +140,33 @@
             </widget>
 
             <widget name="joindefaultchannel" factory="pawsCheckBox">
-                <frame x="255" y="140" width="160" height="20" />
+                <frame x="255" y="120" width="160" height="20" />
                 <text string="Join default channel"/>
             </widget>
 
             <widget name="echoscreeninsystem" factory="pawsCheckBox">
-                <frame x="255" y="160" width="160" height="20" />
+                <frame x="255" y="140" width="160" height="20" />
                 <text string="Echo screen text" />
             </widget>
 
             <widget name="mainbrackets" factory="pawsCheckBox">
-                <frame x="255" y="180" width="160" height="20" />
+                <frame x="255" y="160" width="160" height="20" />
                 <text string="Main chat brackets" />
             </widget>
 
             <widget name="yourcolormix" factory="pawsCheckBox">
-                <frame x="255" y="200" width="160" height="20" />
+                <frame x="255" y="180" width="160" height="20" />
                 <text string="Mix yourtext color" />
             </widget>
 
             <widget name="loosefocus" factory="pawsCheckBox">
-                <frame x="255" y="220" width="160" height="20"/>
+                <frame x="255" y="200" width="160" height="20"/>
                 <text string="Lose focus on send" />
+            </widget>
+
+            <widget name="mousefocus" factory="pawsCheckBox">
+                <frame x="255" y="220" width="160" height="20"/>
+                <text string="Focus on mouse over" />
             </widget>
 
             <widget name="defaultlastchat" factory="pawsCheckBox">
