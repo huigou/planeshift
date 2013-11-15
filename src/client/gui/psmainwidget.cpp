@@ -242,7 +242,7 @@ bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers 
     //if we are using mouselook we don't want these to trigger or we would have some
     //funny effects (like being unable to get out of mouse look without exiting the
     //chat window targeting)
-    if(!psengine->GetCharControl()->GetMovementManager()->MouseLook())
+    if(!charctrl->GetMovementManager()->MouseLook())
     {
         if ( charctrl->MatchTrigger("Toggle chat",psControl::KEYBOARD,keyCode,modifiers) )
         {
@@ -311,7 +311,7 @@ bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers 
     if (charctrl->MatchTrigger("Toggle MouseLook", psControl::KEYBOARD, keyCode, modifiers) || 
     	charctrl->MatchTrigger("MouseLook", psControl::KEYBOARD, keyCode, modifiers))
     {
-        psengine->GetCharControl()->GetMovementManager()->MouseLookCanAct(true);
+        charctrl->GetMovementManager()->MouseLookCanAct(true);
     }
     
     return false;
@@ -319,7 +319,6 @@ bool psMainWidget::OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers 
  }
  //If we return true, it will not parse the keycode to CharControl
  return true;
-    
 }
 
 bool psMainWidget::OnMouseDown( int button, int keyModifier, int x, int y )
