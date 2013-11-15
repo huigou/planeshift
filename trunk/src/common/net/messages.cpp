@@ -5143,9 +5143,9 @@ psPersistActor::psPersistActor(uint32_t clientNum,
     msg->Add(msgstrings->Request(MounterAnim).GetHash());
     msg->Add(gender);
     msg->Add(helmGroup);
-    msg->Add(BracerGroup);
-    msg->Add(BeltGroup);
-    msg->Add(CloakGroup);
+    msg->Add(bracerGroup);
+    msg->Add(beltGroup);
+    msg->Add(cloakGroup);
     msg->Add(collTop);
     msg->Add(collBottom);
     msg->Add(collOffSet);
