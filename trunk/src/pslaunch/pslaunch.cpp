@@ -442,8 +442,9 @@ int main(int argc, char* argv[])
                 "--uploaddump    Send a Planeshift dumpfile to the dev team for analysis\n",
                 UPDATER_VERSION, (new Config())->GetPlatform());
     }
-	else if (uploaddump) {
-		printf ("PSUpdater --uploaddump executing...\n");
+    else if (uploaddump)
+    {
+        printf ("PSUpdater --uploaddump executing...\n");
         // Set up CS (DONE ONLY TO GET VFS)
         psUpdater* updater = new psUpdater(argc, argv);
 
@@ -456,79 +457,81 @@ int main(int argc, char* argv[])
     	configFile.AttachNew(new csConfigFile("/planeshift/userdata/crash/crash.params",vfs));
         configFile->Load("/planeshift/userdata/crash/crash.params",vfs);
 
-		// based on : http://www.fifi.org/doc/libcurl-ssl-dev/examples/postit2.c
+        // based on : http://www.fifi.org/doc/libcurl-ssl-dev/examples/postit2.c
         CURL* curl = curl_easy_init();
         struct curl_httppost* post = NULL;
         struct curl_httppost* last = NULL;
         struct curl_slist *headerlist=NULL;
-        char buf[] = "Expect:";
+        //char buf[] = "Expect:";
 
         /* upload to this place */
         curl_easy_setopt(curl, CURLOPT_URL,"http://194.116.72.94/crash-reports/submit");
 
         /* Add simple file section */
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "upload_file_minidump",
-                      CURLFORM_FILE, dumpUpload.GetData(), CURLFORM_END);
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "upload_file_minidump",
+                     CURLFORM_FILE, dumpUpload.GetData(), CURLFORM_END);
 
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "name",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "name",
                      CURLFORM_COPYCONTENTS, "upload_file_minidump",
                      CURLFORM_END);
 
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "filename",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "filename",
                      CURLFORM_COPYCONTENTS, dumpUpload.GetData(),
                      CURLFORM_END);
 
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "ProductName",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "ProductName",
                      CURLFORM_COPYCONTENTS, "PlaneShift",
                      CURLFORM_END);
 
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "ReleaseChannel",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "ReleaseChannel",
                      CURLFORM_COPYCONTENTS, "release",
                      CURLFORM_END);
 
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "Version",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "Version",
                      CURLFORM_COPYCONTENTS, configFile->GetStr("Version"),
                      CURLFORM_END);
 
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "PlayerName",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "PlayerName",
                      CURLFORM_COPYCONTENTS, configFile->GetStr("PlayerName"),
                      CURLFORM_END);
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "Renderer",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "Renderer",
                      CURLFORM_COPYCONTENTS, configFile->GetStr("Renderer"),
                      CURLFORM_END);
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "RendererVersion",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "RendererVersion",
                      CURLFORM_COPYCONTENTS, configFile->GetStr("RendererVersion"),
                      CURLFORM_END);
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "CrashTime",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "CrashTime",
                      CURLFORM_COPYCONTENTS, configFile->GetStr("CrashTime"),
                      CURLFORM_END);
-         curl_formadd(&post, &last, CURLFORM_COPYNAME, "Processor",
+        curl_formadd(&post, &last, CURLFORM_COPYNAME, "Processor",
                      CURLFORM_COPYCONTENTS, configFile->GetStr("Processor"),
                      CURLFORM_END);
 
-		 /* enable verbose for easier tracing */
-		 curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        /* enable verbose for easier tracing */
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
-		  /* initalize custom header list (stating that Expect: 100-continue is not
-		     wanted */
-		  headerlist = curl_slist_append(headerlist, "Content-Disposition: form-data; name=\"example\"");
-		  //curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+        /* initalize custom header list (stating that Expect: 100-continue is not
+           wanted */
+        headerlist = curl_slist_append(headerlist, "Content-Disposition: form-data; name=\"example\"");
+        //curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
 
-         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
 
-		 /* Set the form info */
-		 curl_easy_setopt(curl, CURLOPT_HTTPPOST, post);
+        /* Set the form info */
+        curl_easy_setopt(curl, CURLOPT_HTTPPOST, post);
 
-		// Perform the upload
-		CURLcode res = curl_easy_perform(curl);
+        // Perform the upload
+	CURLcode res = curl_easy_perform(curl);
 
         /* Check for errors */
-        if(res != CURLE_OK) {
+        if(res != CURLE_OK)
+        {
           fprintf(stderr, "curl_easy_perform() failed: %s\n",
                   curl_easy_strerror(res));
 
         }
-        else {
+        else
+        {
           double speed_upload, total_time;
           /* now extract transfer info */
           curl_easy_getinfo(curl, CURLINFO_SPEED_UPLOAD, &speed_upload);
@@ -542,7 +545,7 @@ int main(int argc, char* argv[])
         /* always cleanup */
         curl_easy_cleanup(curl);
 
-	} else if(console)
+    } else if(console)
     {
         // Set up CS
         psUpdater* updater = new psUpdater(argc, argv);
