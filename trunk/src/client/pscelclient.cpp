@@ -1116,10 +1116,12 @@ void psCelClient::replaceRacialGroup(csString &string)
         BeltReplacement = GetMainPlayer()->BeltGroup;
         CloakReplacement = GetMainPlayer()->CloakGroup;
     }
+    Debug2(LOG_CELPERSIST,0,"DEBUG: replacing string %s",string.GetData());
     string.ReplaceAll("$H", HelmReplacement);
     string.ReplaceAll("$B", BracerReplacement);
     string.ReplaceAll("$E", BeltReplacement);
     string.ReplaceAll("$C", CloakReplacement);
+    Debug2(LOG_CELPERSIST,0," replaced:  %s \n",string.GetData());
 }
 
 //-------------------------------------------------------------------------------
@@ -1432,7 +1434,7 @@ GEMClientActor::GEMClientActor(psCelClient* cel, psPersistActor &mesg)
     if(CloakGroup.Length() == 0)
         CloakGroup = factName;
 
-    Debug4(LOG_CELPERSIST, 0, "Actor %s(%s) Received, scale: %f", mesg.name.GetData(), ShowID(mesg.entityid),scale);
+    Debug5(LOG_CELPERSIST, 0, "Actor %s(%s) Received, scale: %f, Bracergroup: %s", mesg.name.GetData(), ShowID(mesg.entityid),scale, BracerGroup.GetData());
 
     // Set up a temporary nullmesh.  The real mesh may need to be background
     // loaded, but since the mesh stores position, etc., it's important to
