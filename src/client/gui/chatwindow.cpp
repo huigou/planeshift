@@ -147,6 +147,7 @@ pawsChatWindow::pawsChatWindow()
     settings.joindefaultchannel = true;
     settings.defaultlastchat = true;
     settings.looseFocusOnSend = false;
+    settings.mouseFocus = false;
     settings.tabSetting = 1023; //enables all tabs
 
     for (int i = 0; i < CHAT_END; i++)
@@ -362,7 +363,9 @@ void pawsChatWindow::LoadChatSettings()
 
             if (nodeName == "loose")
                 settings.looseFocusOnSend = option->GetAttributeValueAsBool("value", false);
-            if (nodeName == "tabSetting")
+            else if (nodeName == "mouseFocus")
+                settings.mouseFocus = option->GetAttributeValueAsBool("value", false);
+            else if (nodeName == "tabSetting")
                 settings.tabSetting = option->GetAttributeValueAsInt("value");
             else if (nodeName == "selecttabstyle")
                 settings.selectTabStyle = (int)option->GetAttributeValueAsInt("value");
@@ -1134,10 +1137,10 @@ void pawsChatWindow::SaveChatSettings()
     csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem ());
 
     csRef<iDocument> doc = docsys->CreateDocument();
-    csRef<iDocumentNode> root, chatNode, colorNode, optionNode,looseNode,filtersNode,
+    csRef<iDocumentNode> root, chatNode, colorNode, optionNode, looseNode, filtersNode,
                          badWordsNode, badWordsTextNode, tabCompletionNode, completionItemNode, cNode, logNode, selectTabStyleNode,
                          echoScreenInSystemNode, mainBracketsNode, yourColorMixNode, joindefaultchannelNode, tabSettingNode, 
-                         defaultlastchatNode, spellCheckerNode, spellCheckerWordNode, mainTabNode, flashingNode, flashingOnCharNode, node;
+                         defaultlastchatNode, spellCheckerNode, spellCheckerWordNode, mainTabNode, flashingNode, flashingOnCharNode, node, mouseNode;
 
     root = doc->CreateRoot();
 
@@ -1174,6 +1177,10 @@ void pawsChatWindow::SaveChatSettings()
     looseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     looseNode->SetValue("loose");
     looseNode->SetAttributeAsInt("value",(int)settings.looseFocusOnSend);
+
+    mouseNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
+    mouseNode->SetValue("mouseFocus");
+    mouseNode->SetAttributeAsInt("value",(int)settings.mouseFocus);
 
     tabSettingNode = optionNode->CreateNodeBefore(CS_NODE_ELEMENT,0);
     tabSettingNode->SetValue("tabSetting");
@@ -1922,6 +1929,24 @@ void pawsChatWindow::SubscribeCommands()
 bool pawsChatWindow::InputActive()
 {
     return inputText->HasFocus();
+}
+
+bool pawsChatWindow::OnChildMouseEnter(pawsWidget* widget)
+{
+    if (settings.mouseFocus)
+    {
+        PawsManager::GetSingleton().SetCurrentFocusedWidget(inputText);
+    }
+    return true;
+}
+
+bool pawsChatWindow::OnChildMouseExit(pawsWidget* widget)
+{
+    if (settings.mouseFocus)
+    {
+        PawsManager::GetSingleton().SetCurrentFocusedWidget(NULL);
+    }
+    return true;
 }
 
 bool pawsChatWindow::OnMouseDown( int button, int modifiers, int x , int y )

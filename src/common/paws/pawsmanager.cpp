@@ -771,8 +771,9 @@ bool PawsManager::HandleMouseMove(csMouseEventData &data)
             // Handle mouse over for 
             if(widget && widget != mouseoverWidget)
             {
+                if(mouseoverWidget)
+                    mouseoverWidget->OnMouseExit();
                 widget->OnMouseEnter();
-                if(mouseoverWidget) mouseoverWidget->OnMouseExit();
             }
 
             mouseoverWidget = widget;
@@ -1097,9 +1098,10 @@ void PawsManager::SetCurrentFocusedWidget(pawsWidget* widget)
 {
     if(widget == NULL)
     {
-        SetCurrentFocusedWidget(mainWidget);
-        return;
+        widget = mainWidget;
     }
+    if(currentFocusedWidget == widget)
+        return;
 
     // Allow widget to be focused if it is a child of the modal widget, or if there is no modal widget.
     if(!modalWidget || modalWidget->FindWidget(widget->GetName(), false))
