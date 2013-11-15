@@ -5201,9 +5201,9 @@ psPersistActor::psPersistActor(MsgEntry* me, NetBase::AccessPointers* accessPoin
 
     gender      = me->GetInt16();
     helmGroup   = me->GetStr();
-    BracerGroup = me->GetStr();
-    BeltGroup   = me->GetStr();
-    CloakGroup  = me->GetStr();
+    bracerGroup = me->GetStr();
+    beltGroup   = me->GetStr();
+    cloakGroup  = me->GetStr();
 
     top         = me->GetVector3();
     bottom      = me->GetVector3();
