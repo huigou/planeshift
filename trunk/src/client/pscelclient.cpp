@@ -1388,9 +1388,9 @@ GEMClientActor::GEMClientActor(psCelClient* cel, psPersistActor &mesg)
     mountFactname = mesg.mountFactname;
     MounterAnim = mesg.MounterAnim;
     helmGroup = mesg.helmGroup;
-    BracerGroup = mesg.BracerGroup;
-    BeltGroup = mesg.BeltGroup;
-    CloakGroup = mesg.CloakGroup;
+    BracerGroup = mesg.bracerGroup;
+    BeltGroup = mesg.beltGroup;
+    CloakGroup = mesg.cloakGroup;
     type = mesg.type;
     masqueradeType = mesg.masqueradeType;
     guildName = mesg.guild;
