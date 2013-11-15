@@ -277,7 +277,8 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
     {
         case MSGTYPE_FACTION_INFO:
         {
-            HandleFactionMsg(me);
+            if (!train)
+                HandleFactionMsg(me);
             break;
         }
 
@@ -289,14 +290,6 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
             {
                 case psGUISkillMessage::SKILL_LIST:
                 {
-                    skillString = "no";
-                    if (!IsVisible() && incoming.openWindow)
-                    {
-                        Show();
-                    }
-                    skillString = incoming.commandData;
-                    skillCache.apply(&incoming.skillCache);
-
                     bool flush = (train != incoming.trainingWindow) || incoming.openWindow;
                     train=incoming.trainingWindow;
                     if (train)
@@ -305,6 +298,14 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                         factions.DeleteAll();
                         factionList->Clear();
                     }
+
+                    skillString = "no";
+                    if (!IsVisible() && incoming.openWindow)
+                    {
+                        Show();
+                    }
+                    skillString = incoming.commandData;
+                    skillCache.apply(&incoming.skillCache);
 
                     int selectedRowIdx = -1;
                     HandleSkillList(&skillCache, incoming.focusSkill, &selectedRowIdx, flush);
@@ -722,7 +723,7 @@ void pawsSkillWindow::Show()
 
     // If this is the first time the window is open then we need to get our
     // full list of faction information.
-    if (!factRequest)
+    if (!train && !factRequest)
     {
         psFactionMessage factionRequest(0, psFactionMessage::MSG_FULL_LIST);
         factionRequest.BuildMsg();
@@ -736,6 +737,7 @@ void pawsSkillWindow::Hide()
     outgoing.SendMessage();
     skillCache.clear();
     pawsControlledWindow::Hide();
+    train = false;
 }
 
 
