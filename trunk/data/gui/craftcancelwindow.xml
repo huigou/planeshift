@@ -2,21 +2,21 @@
 
 <widget name="CraftCancelWindow" factory="pawsCraftCancelWindow" visible="yes" savepositions="yes" movable="yes" resizable="no" style="New Standard GUI">
 
-    <frame x="0" y="200" width="170" height="94" border="no" />
+    <frame x="0" y="200" width="170" height="74" border="no" />
     <title resource="Scaling Title Bar" text="Crafting" align="left" />
-    <bgimage resource="Scaling Widget Background" alpha="128" />
+    <bgimage resource="Scaling Widget Background" />
 
     <!-- Spell Progress -->
     <widget name="CraftProgress" factory="pawsProgressBar">
         <frame x="17" y="23" width="136" height="6" border="no" />
         <bgimage resource="Progressbar Background" />
-        <color     r="0" g="0" b="50" />
-        <fadecolor r="0" g="0" b="255" />
+        <color     r="108" g="217" b="74" />
+        <fadecolor r="108" g="217" b="74" />
     </widget>
 
     <!-- Cancel button -->
     <widget name="Cancel" factory="pawsButton" id="100">
-        <frame x="45" y="60" width="80" height="24" border="no"/>
+        <frame x="45" y="40" width="80" height="24" border="no"/>
         <bgimage resource="Standard Button" />
         <label text="Cancel" />
     </widget>
