@@ -703,7 +703,8 @@ public:
 
 
     /**
-     * Returns the location of this item in it's parent item or in the players equipment, bulk or bank as appropriate.
+     * Returns the location of this item in its parent item or in the
+     * player's equipment, bulk or bank as appropriate.
      */
     INVENTORY_SLOT_NUMBER GetLocInParent(bool adjustSlot=false);
 
