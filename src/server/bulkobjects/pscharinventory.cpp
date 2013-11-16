@@ -634,14 +634,13 @@ INVENTORY_SLOT_NUMBER psCharacterInventory::FindFreeEquipSlot(psItem* itemToPlac
 
 int psCharacterInventory::FindFirstOpenSlot(psItem *container)
 {
-    INVENTORY_SLOT_NUMBER max = PSCHARACTER_SLOT_BULK1;
-    if (!container)
-        max = PSCHARACTER_SLOT_BULK_END;
+    int max = container->GetContainerMaxSlots() + PSCHARACTER_SLOT_BULK1;
+    int containerBase = container->GetLocInParent(true)*100;
 
-    for (int i=PSCHARACTER_SLOT_BULK1; i<PSCHARACTER_SLOT_BULK1 + max; i++)
+    // I know this seems odd, but items in containers start at index 16.
+    for (int i = PSCHARACTER_SLOT_BULK1; i < max; i++)
     {
-        int containerBase = (container) ? container->GetLocInParent(true)*100 : 0 ;
-        size_t index = FindSlotIndex(container,(INVENTORY_SLOT_NUMBER) (containerBase+i) );
+        size_t index = FindSlotIndex(container, (INVENTORY_SLOT_NUMBER)(containerBase+i));
         if (index == SIZET_NOT_FOUND) // slot not taken
             return i;
     }
@@ -692,7 +691,8 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
         
         if (tocheck->GetContainerID())
         {
-            float size = FindItemID(tocheck->GetContainerID())->GetContainerMaxSize() - GetContainedSize(FindItemID(tocheck->GetContainerID()));
+            psItem* container = FindItemID(tocheck->GetContainerID());
+            float size = container->GetContainerMaxSize() - GetContainedSize(container);
             if(size/item->GetItemSize() < fits)
                 fits = (size_t)(size/item->GetItemSize());
         }
@@ -755,7 +755,8 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
         for (i=0; i<itemIndices.GetSize(); i++)
         {
             float size=0;
-            if(inventory[itemIndices[i]].item->GetContainerID()){
+            if(inventory[itemIndices[i]].item->GetContainerID())
+            {
                 size = GetContainedSize(FindItemID(inventory[itemIndices[i]].item->GetContainerID()));
             }
             if (!inventory[itemIndices[i]].item->GetContainerID() || size + item->GetTotalStackSize() <= FindItemID(inventory[itemIndices[i]].item->GetContainerID())->GetContainerMaxSize()) // adequate space in container
@@ -830,19 +831,20 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
     {
         for (i=1; i<inventory.GetSize(); i++)
         {
-            if (inventory[i].item->GetIsContainer())
+            psItem* inv = inventory[i].item;
+            if (inv->GetIsContainer())
             {
-                float size = GetContainedSize(inventory[i].item);
-                if (size + item->GetTotalStackSize() <= inventory[i].item->GetContainerMaxSize()) // adequate space in container
+                float size = GetContainedSize(inv);
+                if (size + item->GetTotalStackSize() <= inv->GetContainerMaxSize()) // adequate space in container
                 {
-                    INVENTORY_SLOT_NUMBER containerSlot = (INVENTORY_SLOT_NUMBER)FindFirstOpenSlot(inventory[i].item);
-                    if (containerSlot == PSCHARACTER_SLOT_NONE)
+                    int containerSlot = FindFirstOpenSlot(inv);
+                    if (containerSlot < 0)
                         return false;
 
                     if (test)
                         return true; // not really doing it here
 
-                    item->UpdateInventoryStatus(owner, inventory[i].item->GetUID(),containerSlot);
+                    item->UpdateInventoryStatus(owner, inv->GetUID(), (INVENTORY_SLOT_NUMBER)containerSlot);
                     item->Save(false);
                     // Get item into inventory
                     psCharacterInventoryItem newItem(item);
@@ -1106,9 +1108,6 @@ psItem *psCharacterInventory::RemoveItemID(uint32 itemID, int count, bool storag
 
 psItem *psCharacterInventory::RemoveItem(psItem *container, INVENTORY_SLOT_NUMBER slot, int count )
 {
-    if (slot%100<0 || slot%100>=PSCHARACTER_SLOT_BULK_END)
-        return NULL;
-
     size_t itemIndex = FindSlotIndex(container,slot);
     if (itemIndex == SIZET_NOT_FOUND)
         return NULL;
