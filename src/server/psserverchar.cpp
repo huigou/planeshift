@@ -908,9 +908,11 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
             bool stackable = currentitem->GetIsStackable();
             int partcount = 1;
 
-            if (stackable) // if it's stackable, try to add in on existing stacks, first
+            // if it's stackable, try to add it on existing stacks, first
+            if (stackable)
             {
-                for (psItem * newstack; (newstack = character->Inventory().AddStacked(currentitem, partcount)); )
+                psItem* newstack;
+                while ((newstack = character->Inventory().AddStacked(currentitem, partcount)) != NULL)
                 {
                     newcount += partcount;
 
@@ -919,11 +921,11 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 
                     psBuyEvent evt(
                         character->GetPID(),
-            character->GetCharName(),
+                        character->GetCharName(),
                         merchant->GetPID(),
-            merchant->GetCharName(),
+                        merchant->GetCharName(),
                         newstack->GetUID(),
-            newstack->GetName(),
+                        newstack->GetName(),
                         partcount,
                         (int)newstack->GetCurrentStats()->GetQuality(),
                         partcost.GetTotal()
@@ -942,11 +944,11 @@ void ServerCharManager::HandleMerchantBuy(psGUIMerchantMessage& msg, Client *cli
 
                 psBuyEvent evt(
                     character->GetPID(),
-            character->GetCharName(),
+                    character->GetCharName(),
                     merchant->GetPID(),
-            merchant->GetCharName(),
+                    merchant->GetCharName(),
                     currentitem->GetUID(),
-            currentitem->GetName(),
+                    currentitem->GetName(),
                     partcount,
                     (int)currentitem->GetCurrentStats()->GetQuality(),
                     partcost.GetTotal()
