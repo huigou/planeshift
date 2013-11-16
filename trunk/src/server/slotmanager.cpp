@@ -546,16 +546,8 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
         
         case CONTAINER_WORLD:
         {
-            psItem *srcItem = chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) srcSlot);
-            if (!srcItem->IsInUse())
-            {
-                psItem* newItem = chr->Inventory().RemoveItem(NULL, (INVENTORY_SLOT_NUMBER) srcSlot, msg.stackCount);
-                chr->DropItem(newItem, msg.posWorld, msg.rot);
-            }
-            else
-            {
-                psserver->SendSystemError(fromClient->GetClientNum(), "You cannot drop an item you are using.");
-            }
+            psItem* newItem = chr->Inventory().RemoveItemID(itemProposed->GetUID(), msg.stackCount);
+            chr->DropItem(newItem, msg.posWorld, msg.rot);
             break;
         }
 
