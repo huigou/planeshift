@@ -1759,9 +1759,6 @@
 				RelativePath="..\..\src\tools\breakpad\common\windows\omap.cc">
 			</File>
 			<File
-				RelativePath="..\..\src\tools\breakpad\common\windows\omap_unittest.cc">
-			</File>
-			<File
 				RelativePath="..\..\src\tools\breakpad\common\windows\pdb_source_line_writer.cc">
 			</File>
 			<File

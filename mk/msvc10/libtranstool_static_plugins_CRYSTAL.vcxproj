@@ -172,7 +172,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|Win32'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|Win32'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|Win32'">..\..\out\release10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.5-vc10</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.6-vc10</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugWithStaticLibs|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugWithStaticLibs|Win32'">..\..\out\debug10\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugWithStaticLibs|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -180,7 +180,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|Win32'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.5-vc10_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.6-vc10_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithStaticLibs|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithStaticLibs|Win32'">..\..\out\debug10\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithStaticLibs|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -188,7 +188,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|Win32'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.5-vc10_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.6-vc10_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithStaticLibs|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithStaticLibs|Win32'">..\..\out\debug10\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithStaticLibs|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -196,7 +196,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|Win32'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.5-vc10_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.6-vc10_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithStaticLibs|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithStaticLibs|Win32'">..\..\out\debug10\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithStaticLibs|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -204,7 +204,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|Win32'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.5-vc10_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.6-vc10_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithStaticLibs|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithStaticLibs|Win32'">..\..\out\debug10\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithStaticLibs|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -212,7 +212,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|Win32'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|Win32'">..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.5-vc10_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|Win32'">transtool_static_plugins_CRYSTAL-0.6-vc10_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseWithStaticLibs|x64'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseWithStaticLibs|x64'">..\..\out\release10-x64\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseWithStaticLibs|x64'">..\..\out\release10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -220,7 +220,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|x64'">false</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|x64'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|x64'">..\..\out\release10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.5-vc10-x64</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ReleaseWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.6-vc10-x64</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugWithStaticLibs|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugWithStaticLibs|x64'">..\..\out\debug10-x64\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugWithStaticLibs|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -228,7 +228,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|x64'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithStaticLibs|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithStaticLibs|x64'">..\..\out\debug10-x64\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithStaticLibs|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -236,7 +236,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|x64'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MemoryTrackerWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithStaticLibs|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithStaticLibs|x64'">..\..\out\debug10-x64\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithStaticLibs|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -244,7 +244,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|x64'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RefTrackerWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithStaticLibs|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithStaticLibs|x64'">..\..\out\debug10-x64\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithStaticLibs|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -252,7 +252,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|x64'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='ThreadCheckerWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d</TargetName>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithStaticLibs|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithStaticLibs|x64'">..\..\out\debug10-x64\libs\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithStaticLibs|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
@@ -260,7 +260,7 @@
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|x64'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|x64'">..\..\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|x64'">..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\</IntDir>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DebugPSReleaseCSCELWithDlls|x64'">transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseWithStaticLibs|Win32'">
     <ClCompile>
@@ -317,7 +317,7 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <ProgramDataBaseFileName>..\..\out\release10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\release10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -335,9 +335,9 @@ copy /y "$(TargetPath)" ..\..\out\release10\bin\
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10.dll</OutputFile>
       <ImportLibrary>..\..\out\release10\libs\libtranstool_static_plugins_CRYSTAL.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\release10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\release10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -411,7 +411,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -427,9 +427,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -503,7 +503,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -519,9 +519,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -595,7 +595,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -611,9 +611,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -687,7 +687,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -703,9 +703,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -779,7 +779,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x86\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x86\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -795,9 +795,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.5-vc10_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10\build\libtranstool_static_plugins_CRYSTAL\Win32\transtool_static_plugins_CRYSTAL-0.6-vc10_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -875,7 +875,7 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <ProgramDataBaseFileName>..\..\out\release10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\release10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -893,9 +893,9 @@ copy /y "$(TargetPath)" ..\..\out\release10-x64\bin\
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10-x64.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10-x64.dll</OutputFile>
       <ImportLibrary>..\..\out\release10-x64\libs\libtranstool_static_plugins_CRYSTAL.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\release10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\release10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins.lib libcrystalspace.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -969,7 +969,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -985,9 +985,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -1061,7 +1061,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_MEMORY_TRACKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1077,9 +1077,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -1153,7 +1153,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_REF_TRACKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1169,9 +1169,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -1245,7 +1245,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>_DEBUG;CS_DEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;CS_THREAD_CHECKER;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1261,9 +1261,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace_d.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -1337,7 +1337,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
       <MinimalRebuild>true</MinimalRebuild>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDataBaseFileName>
       <PreprocessorDefinitions>NDEBUG;CS_WIN32_CSCONFIG;__CRYSTAL_SPACE__;CS_SUPPORTS_MMX;_WINDOWS;WIN32;CS_USE_SHARED_LIBS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>.;..\..;..\..\include\msvc;..\..\include;..\..\src\client;..\..\src\server;..\..\src\common;..\..\src\tools\wordnet;..\..\src\tools\breakpad;..\..\src\tools\breakpad\third_party\linux\include;..\..\..\CS\include;..\..\..\CS\winlibs\x64\include;..\..\..\CS\win32libs\include;$(CRYSTAL)\include;$(CRYSTAL)\winlibs\x64\include;$(CRYSTAL)\win32libs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -1353,9 +1353,9 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;LIBCMTD;MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.dll</OutputFile>
+      <OutputFile>..\..\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.dll</OutputFile>
       <ImportLibrary>..\..\out\debug10-x64\libs\libtranstool_static_plugins_CRYSTAL_d.lib</ImportLibrary>
-      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.5-vc10-x64_d.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>..\..\out\debug10-x64\build\libtranstool_static_plugins_CRYSTAL\x64\transtool_static_plugins_CRYSTAL-0.6-vc10-x64_d.pdb</ProgramDatabaseFile>
       <AdditionalOptions>libcrystalspace_staticplugins_d.lib libcrystalspace_d.lib zlib.lib  %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>libcrystalspace.lib;ws2_32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>

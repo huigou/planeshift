@@ -1364,7 +1364,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\tools\breakpad\common\windows\guid_string.cc" />
     <ClCompile Include="..\..\src\tools\breakpad\common\windows\http_upload.cc" />
     <ClCompile Include="..\..\src\tools\breakpad\common\windows\omap.cc" />
-    <ClCompile Include="..\..\src\tools\breakpad\common\windows\omap_unittest.cc" />
     <ClCompile Include="..\..\src\tools\breakpad\common\windows\pdb_source_line_writer.cc" />
     <ClCompile Include="..\..\src\tools\breakpad\common\windows\string_utils.cc" />
   </ItemGroup>
