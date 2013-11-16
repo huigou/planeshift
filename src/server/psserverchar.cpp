@@ -1930,7 +1930,7 @@ void ServerCharManager::HandleStorageStore(psGUIStorageMessage& msg, Client *cli
         count = csMin(count, (int)item->GetStackCount());
         csString name(item->GetName());
 
-        item = character->Inventory().RemoveItem(NULL,item->GetLocInParent(true), count);
+        item = character->Inventory().RemoveItemID(itemID, count);
         if (item == NULL)
         {
             Error3("RemoveItem failed while selling to merchant %s %i", name.GetDataSafe(), count);
