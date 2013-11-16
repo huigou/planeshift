@@ -1,15 +1,16 @@
 <widget_description>
-    <widget name="ChatWindow" factory="pawsChatWindow" visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="no" configurable="yes" style="New Standard GUI" scalefont="no">
+    <widget name="ChatWindow" factory="pawsChatWindow" visible="yes" savepositions="yes" movable="yes" resizable="yes" keepaspect="no" configurable="yes" style="New Standard GUI" scalefont="no" alpha="0">
 
-        <frame x="300" y="400" width="505" height="150" border="no" />
+        <frame x="300" y="400" width="510" height="150" border="no" />
         <minframe width="350" height="100" />
         <maxframe width="1000" height="1000" />
         <title resource="Scaling Title Bar" text="Communication" align="left" close_button="yes"/>
         <bgimage resource="Scaling Widget Background" />
 
+		
          <widget name="InputText" factory="pawsEditTextBox" alwaysontop="yes">
-            <frame x="65" y="125" width="430" height="25" border="no" />
-        <attachpoints>
+            <frame x="65" y="125" width="435" height="25" border="no" />
+			<attachpoints>
                 <attach point="ATTACH_RIGHT" />
                 <attach point="ATTACH_BOTTOM" />
                 <attach point="ATTACH_LEFT" />
@@ -135,7 +136,8 @@
 
 
             <widget name="MainText" factory="pawsMessageTextBox" visible="no" id="1100">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -148,7 +150,8 @@
         </subscriptions>
             </widget>
             <widget name="SystemText" factory="pawsMessageTextBox" visible="no" id="1101">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -161,7 +164,8 @@
             <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
             <widget name="NpcText" factory="pawsMessageTextBox" visible="no" id="1102">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -174,7 +178,8 @@
             <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
             <widget name="TellText" factory="pawsMessageTextBox" visible="no" id="1103">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -187,7 +192,8 @@
             <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
             <widget name="GuildText" factory="pawsMessageTextBox" visible="no" id="1104">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />>
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -200,7 +206,8 @@
             <pawsScrollBar width="20"  maxValue="1.0" />
            </widget>
             <widget name="AllianceText" factory="pawsMessageTextBox" visible="no" id="1109">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -213,7 +220,8 @@
             <pawsScrollBar width="20"  maxValue="1.0" />
            </widget>
             <widget name="GroupText" factory="pawsMessageTextBox" visible="no" id="1105">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -226,7 +234,8 @@
             <pawsScrollBar width="20"  maxValue="1.0" />
             </widget>
             <widget name="AuctionText" factory="pawsMessageTextBox" visible="no" id="1106">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -240,7 +249,8 @@
             </widget>
 
             <widget name="ChannelsText" factory="pawsMessageTextBox" visible="no" id="1108">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
@@ -254,7 +264,8 @@
             </widget>
 
             <widget name="HelpText" factory="pawsMessageTextBox" visible="no" id="1107">
-                <frame x="65" y="0" width="435" height="125" border="no" />
+                <frame x="65" y="0" width="435" height="120" border="no" />
+				<bgimage resource="Scaling Field Background" />
                 <attachpoints>
                     <attach point="ATTACH_RIGHT" />
                     <attach point="ATTACH_TOP" />
