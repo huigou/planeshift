@@ -185,11 +185,11 @@ bool psLauncherGUI::InitApp()
     event_handler = csPtr<EventHandler> (new EventHandler (this));
     csEventID esub[] = 
     {
-            csevFrame (object_reg),
-            csevMouseEvent (object_reg),
-            csevKeyboardEvent (object_reg),
-            csevQuit (object_reg),
-            CS_EVENTLIST_END
+        csevFrame (object_reg),
+        csevMouseEvent (object_reg),
+        csevKeyboardEvent (object_reg),
+        csevQuit (object_reg),
+        CS_EVENTLIST_END
     };
     queue->RegisterListener(event_handler, esub);
 
@@ -338,7 +338,6 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
     return false;
 }
 
-
 void psLauncherGUI::FrameLimit()
 {
     csTicks sleeptime;
@@ -390,7 +389,7 @@ int main(int argc, char* argv[])
     // Select between GUI and console mode.
     bool console = false;
     bool help = false;
-	bool uploaddump = false;
+    bool uploaddump = false;
     csString  dumpUpload("");
     csString  dumpUploadArgs("");
 
@@ -398,9 +397,9 @@ int main(int argc, char* argv[])
     {
         csString s(argv[i]);
         if(s.CompareNoCase("--console") || s.CompareNoCase("-console") ||
-                s.CompareNoCase("--switch") || s.CompareNoCase("-switch") ||
-                s.CompareNoCase("--repair") || s.CompareNoCase("-repair") ||
-				s.CompareNoCase("--uploaddump") || s.CompareNoCase("-uploaddump"))
+           s.CompareNoCase("--switch") || s.CompareNoCase("-switch") ||
+           s.CompareNoCase("--repair") || s.CompareNoCase("-repair") ||
+           s.CompareNoCase("--uploaddump") || s.CompareNoCase("-uploaddump"))
         {
             console = true;
         }
@@ -422,7 +421,6 @@ int main(int argc, char* argv[])
     // Must be done when no other threads are running!
     curl_global_init(CURL_GLOBAL_ALL);
 
-
     // Convert args to an array of csString.
     csStringArray args;
     for(int i=0; i<argc; i++)
@@ -433,14 +431,14 @@ int main(int argc, char* argv[])
     if(help)
     {
         printf("PlaneShift Updater Version %1.2f for %s.\n"
-                "Launcher and updater for Planeshift\n\n"
-                "pslaunch [--help] [--console] [--repair] [--switch]\n\n"
-                "--help      Displays this help dialog\n"
-                "--console   Run updater without the GUI\n"
-                "--switch    Switch active updater mirror\n"
-                "--repair        Check for any problems and prompt to repair them\n"
-                "--uploaddump    Send a Planeshift dumpfile to the dev team for analysis\n",
-                UPDATER_VERSION, (new Config())->GetPlatform());
+               "Launcher and updater for Planeshift\n\n"
+               "pslaunch [--help] [--console] [--repair] [--switch]\n\n"
+               "--help      Displays this help dialog\n"
+               "--console   Run updater without the GUI\n"
+               "--switch    Switch active updater mirror\n"
+               "--repair        Check for any problems and prompt to repair them\n"
+               "--uploaddump    Send a Planeshift dumpfile to the dev team for analysis\n",
+               UPDATER_VERSION, (new Config())->GetPlatform());
     }
     else if (uploaddump)
     {
@@ -452,9 +450,9 @@ int main(int argc, char* argv[])
         UpdaterEngine* engine = new UpdaterEngine(args, updater->GetObjectRegistry(), "pslaunch");
 
         // read parameters from file (linux only at the moment)
-    	csRef<iVFS> vfs = engine->GetVFS();
-    	csRef<iConfigFile> configFile;
-    	configFile.AttachNew(new csConfigFile("/planeshift/userdata/crash/crash.params",vfs));
+        csRef<iVFS> vfs = engine->GetVFS();
+        csRef<iConfigFile> configFile;
+        configFile.AttachNew(new csConfigFile("/planeshift/userdata/crash/crash.params",vfs));
         configFile->Load("/planeshift/userdata/crash/crash.params",vfs);
 
         // based on : http://www.fifi.org/doc/libcurl-ssl-dev/examples/postit2.c
@@ -510,18 +508,18 @@ int main(int argc, char* argv[])
         /* enable verbose for easier tracing */
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
-        /* initalize custom header list (stating that Expect: 100-continue is not
-           wanted */
+        /*
+         * Initalize custom header list
+         * (stating that Expect: 100-continue is not wanted)
+         */
         headerlist = curl_slist_append(headerlist, "Content-Disposition: form-data; name=\"example\"");
-        //curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
-
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
 
         /* Set the form info */
         curl_easy_setopt(curl, CURLOPT_HTTPPOST, post);
 
         // Perform the upload
-	CURLcode res = curl_easy_perform(curl);
+        CURLcode res = curl_easy_perform(curl);
 
         /* Check for errors */
         if(res != CURLE_OK)
@@ -545,7 +543,8 @@ int main(int argc, char* argv[])
         /* always cleanup */
         curl_easy_cleanup(curl);
 
-    } else if(console)
+    }
+    else if(console)
     {
         // Set up CS
         psUpdater* updater = new psUpdater(argc, argv);
