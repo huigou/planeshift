@@ -47,6 +47,7 @@ psSlotManager::psSlotManager()
     isPlacing = false;
     isRotating = false;
     draggingSlot.stackCount = 0;
+    last_count = -1;
 
     // Initialize event shortcuts
     MouseMove = csevMouseMove (psengine->GetEventNameRegistry(), 0);
@@ -210,6 +211,7 @@ void psSlotManager::OnNumberEntered(const char* /*name*/, int param, int count)
     if (!parent)
         return;
 
+    last_count = count;
     int purifyStatus = parent->GetPurifyStatus();
     int newStack = parent->StackCount() - count;
 
@@ -363,8 +365,8 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
                     csString max;
                     max.Format("Max %d", stackCount );
 
-                    pawsNumberPromptWindow::Create(max,
-                                                   -1, 1, stackCount, this, "StackCount", tmpID);
+                    pawsNumberPromptWindow::Create(max, last_count,
+                                                   1, stackCount, this, "StackCount", tmpID);
                 }
             }
         }
