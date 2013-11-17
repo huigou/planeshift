@@ -17,7 +17,7 @@
     <frame name="ActiveMagicFrame" x="320" y="200" width="330" height="54" border="yes" />
         <minframe width="58" height="58" /> 
         <maxframe width="2000" height="1000" />
-        <bgimage resource="Back" alpha="255" />
+        <bgimage resource="Scaling Field Background" alpha="255" />
 
     <widget name="BuffBar" factory="pawsScrollMenu">
         <frame x="0" y="4" width="320" height="48" border="no" resizable="yes" />
