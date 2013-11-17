@@ -39,7 +39,7 @@ struct iObjectRegistry;
 #endif
 
 #ifndef APPNAME
-#define APPNAME "PlaneShift Arcane Chrysalis (" PS_VERSION ")"
+#define APPNAME "PlaneShift Azure Spirit (" PS_VERSION ")"
 #endif
 
 #ifdef CS_COMPILER_GCC
