@@ -44,6 +44,7 @@
 //////////////////////////////////////////////////////////////////////
 
 pawsDnDButton::pawsDnDButton() :
+    mgr(NULL),
     pawsButton(),
     dragDrop(1),
     dragDropInProgress(0),
