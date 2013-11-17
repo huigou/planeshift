@@ -19,9 +19,15 @@ Ralph "Jilare" Campbell, for improving memory management, removing memory leaks,
 
 &Settings
 
-Mordaan, for bug fixing many quests, spellchecking and work on quest chains.
+Mordaan, for new quests, quest chains reorganization, spellchecking and more.
 
-Venalan, for bug fixing many quests, spellchecking and work on quest chains.
+Venalan, for new quests, NPC dialogues, NPC lore, work on quest chains.
+
+Taya, for many quests, settings item placement, and testing
+
+Rigwyn, for writing settings books and quests
+
+Cirerey, for Klyros history books, new quests
 
 Giacomo "drJack" Mariani, for the wizard quests, overall background ideas, and factions.
 
@@ -46,6 +52,14 @@ Arco "Arcooo" Mul, for lava cave model.
 
 Alex "Zalk" Constantino, for the molthrir plate armor.
 
+&Rules
+
+Davide "eonwind" Vescovini, for extensive work on crafting rules, in particular alchemy and herbalism and for improving the NPCs scripted AI.
+
+George "Tuathanach" Parkinson for expanding crafting rules for rare metal weapons and Mace Making.
+
+Eddie "Rheos" Payne for expanding crafting rules for cooking fish dishes.
+
 &Music and sounds
 
 Jerome "Tuux" Ornech, for environment sounds, spells sounds, creatures sounds, nice videos and good french accent.
@@ -66,11 +80,7 @@ Thanks to Kevin Budd for providing the flute sounds.
 
 Casey "Sarva" Kerrigan, for his work as GM Team Leader, constant presence in game, support of our events, and coordination of GM activities
 
-The GM Team: Daxa, Dohmo, Durgrem, Janner, Marathal, Norra, Rhumdor, Taulus, Veluriane, Venalan, Zeetra and Zordian for holding events, answering petitions, testing and more ...
-
-&Rules
-
-Davide "eonwind" Vescovini, for extensive work on crafting rules, in particular alchemy and herbalism.
+The GM Team: Sarva, Daxa, Sarko, Gythul, Pathogatha for holding events, answering petitions, testing and more ...
 
 @Very Special Thanks to
 
