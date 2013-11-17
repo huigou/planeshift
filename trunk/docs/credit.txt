@@ -19,17 +19,17 @@ Ralph "Jilare" Campbell, for improving memory management, removing memory leaks,
 
 &Settings
 
-Mordaan, for new quests, quest chains reorganization, spellchecking and more.
+Mordaan, for new quests and books, quest chains reorganization, spellchecking and more.
 
-Venalan, for new quests, NPC dialogues, NPC lore, work on quest chains.
+Venalan, for new quests and books, NPC dialogues, NPC lore, work on quest chains.
 
-Taya, for many quests, settings item placement, and testing
-
-Rigwyn, for writing settings books and quests
+Taya, for many quests and books, NPC dialog and descriptions, settings item placement, and testing.
 
 Cirerey, for Klyros history books, new quests
 
 Giacomo "drJack" Mariani, for the wizard quests, overall background ideas, and factions.
+
+Mariana, Laggninja, and Teshia for writing books.
 
 
 &2D Art
