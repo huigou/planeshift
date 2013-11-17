@@ -94,6 +94,7 @@ private:
     psPoint basePoint;
 
     csArray<pawsSlot*> slotsInUse;
+    int last_count;
 
     csEventID MouseMove; ///< Shortcut for event mouse move
     csEventID MouseDown; ///< Shortcut for event mouse down
