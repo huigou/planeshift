@@ -229,6 +229,13 @@ ResultPractice = 1;
 ResultModifier = RepairAmount;
 ");
 
+INSERT INTO math_scripts VALUES( "Calculate Lockpicking Experience",
+"
+ResultPractice = 1;
+ResultModifier = 1;
+");
+
+
 INSERT INTO math_scripts VALUES( "Calculate Mining Experience",
 "
 ResultPractice = if(Success, 1, 0);
