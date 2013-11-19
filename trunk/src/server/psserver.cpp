@@ -738,7 +738,8 @@ void psServer::SendSystemInfo(int clientnum, const char* fmt, ...)
     csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
 
-    psSystemMessage newmsg(clientnum ,MSG_INFO, cssLine.GetData());
+    // As the message fmt was already parsed there is no need to do it again.
+    psSystemMessageSafe newmsg(clientnum ,MSG_INFO, cssLine.GetData());
 
     if(newmsg.valid)
     {
@@ -763,7 +764,8 @@ void psServer::SendSystemBaseInfo(int clientnum, const char* fmt, ...)
     csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
 
-    psSystemMessage newmsg(clientnum ,MSG_INFO_BASE, cssLine.GetData());
+    // As the message fmt was already parsed there is no need to do it again.
+    psSystemMessageSafe newmsg(clientnum ,MSG_INFO_BASE, cssLine.GetData());
 
     if(newmsg.valid)
     {
@@ -788,7 +790,8 @@ void psServer::SendSystemResult(int clientnum, const char* fmt, ...)
     csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
 
-    psSystemMessage newmsg(clientnum ,MSG_RESULT, cssLine.GetData());
+    // As the message fmt was already parsed there is no need to do it again.
+    psSystemMessageSafe newmsg(clientnum ,MSG_RESULT, cssLine.GetData());
 
     if(newmsg.valid)
     {
@@ -813,7 +816,8 @@ void psServer::SendSystemOK(int clientnum, const char* fmt, ...)
     csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
 
-    psSystemMessage newmsg(clientnum ,MSG_OK, cssLine.GetData());
+    // As the message fmt was already parsed there is no need to do it again.
+    psSystemMessageSafe newmsg(clientnum ,MSG_OK, cssLine.GetData());
 
     if(newmsg.valid)
     {
@@ -838,7 +842,8 @@ void psServer::SendSystemError(int clientnum, const char* fmt, ...)
     csString cssLine = csString().FormatV(fmt, args);
     va_end(args);
 
-    psSystemMessage newmsg(clientnum ,MSG_ERROR, cssLine.GetData());
+    // As the message fmt was already parsed there is no need to do it again.
+    psSystemMessageSafe newmsg(clientnum ,MSG_ERROR, cssLine.GetData());
 
     if(newmsg.valid)
     {
