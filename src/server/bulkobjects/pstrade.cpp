@@ -248,6 +248,14 @@ double psTradeProcesses::GetProperty(MathEnvironment* env, const char* ptr)
     {
         return GetSecondaryPracticePts();
     }
+    else if (property == "WorkItemId")
+    {
+        return GetWorkItemId();
+    }
+    else if (property == "EquipmentId")
+    {
+        return GetEquipementId();
+    }
 
     Error2("Requested psTradeProcesses property not found '%s'", ptr);
     return 0;
