@@ -136,6 +136,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_result, "Calculate Repair Result");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_quality, "Calculate Repair Quality");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_exp, "Calculate Repair Experience");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpicking_exp, "Calculate Lockpicking Experience");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_chance, "Calculate Mining Odds");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_exp, "Calculate Mining Experience");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_exp, "Calculate Transformation Experience");
@@ -149,6 +150,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Result'", calc_repair_result.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Quality'", calc_repair_quality.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Experience'", calc_repair_exp.IsValid());
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Lockpicking Experience'", calc_lockpicking_exp.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Odds'", calc_mining_chance.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Experience'", calc_mining_exp.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Experience'", calc_transform_exp.IsValid());
@@ -4061,6 +4063,7 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
     // Execute mathscript to get lockpicking time
     MathEnvironment env;
     env.Define("LockQuality", item->GetItemQuality());
+    env.Define("Object", item);
 
     //check if there is need to reload the script. We don't check if the script is valid as before.
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpick_time, "Lockpicking Time");
@@ -4111,6 +4114,28 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
             psserver->SendSystemOK(workEvent->client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());
             workEvent->object->SetIsLocked(!locked);
             workEvent->object->Save(false);
+
+            // Calculate practice points.
+
+            int practicePoints;
+            float modifier;
+            {
+                MathEnvironment env;
+                env.Define("Object", workEvent->object);
+                env.Define("Worker", workEvent->client->GetCharacterData());
+                env.Define("RequiredSkill", skill);
+                env.Define("PlayerSkill", rank);
+                env.Define("LockStrength", workEvent->object->GetLockStrength());
+
+                // Update the script if needed. Here we don't protect against bad scripts.
+                psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpicking_exp, "Calculate Lockpicking Experience");
+                calc_lockpicking_exp->Evaluate(&env);
+                practicePoints   = env.Lookup("ResultPractice")->GetRoundValue();
+                modifier = env.Lookup("ResultModifier")->GetValue();
+            }
+
+            // Assign points and exp.
+            workEvent->client->GetCharacterData()->CalculateAddExperience(skill, practicePoints, modifier);
         }
         else
         {
