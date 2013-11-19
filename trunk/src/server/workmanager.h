@@ -329,6 +329,7 @@ protected:
     csWeakRef<MathScript> calc_repair_result;               ///< This is the calculation for how many points of quality are added in a repair.
     csWeakRef<MathScript> calc_repair_quality;              ///< This calculates the item ending quality and max quality at the end of repair.
     csWeakRef<MathScript> calc_repair_exp;                  ///< This is the calculation for the experience to assign to player for repairing.
+    csWeakRef<MathScript> calc_lockpicking_exp;             ///< This is the calculation for the experience to assign to player for lockpicking.
     csWeakRef<MathScript> calc_mining_chance;               ///< This is the calculation for chance of successful mining.
     csWeakRef<MathScript> calc_mining_exp;                  ///< This is the calculation for the experience to assign to player for mining.
     csWeakRef<MathScript> calc_transform_exp;               ///< This is the calculation for the experience to assign to player for trasformations.
