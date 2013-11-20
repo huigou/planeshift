@@ -267,7 +267,7 @@ bool EEditApp::Init()
     editWindow =     (pawsEEdit *)          paws->FindWidget("eedit");
 
     // Register our event handler
-    event_handler = csPtr<EventHandler> (new EventHandler (this));
+    event_handler.AttachNew(new EventHandler (this));
     csEventID esub[] = {
 	  csevFrame (object_reg),
 	  csevMouseEvent (object_reg),

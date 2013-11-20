@@ -196,7 +196,8 @@ bool WorldEditor::Init()
     paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
 
     // Register our event handler
-    csRef<EventHandler> event_handler = csPtr<EventHandler> (new EventHandler (this));
+    csRef<EventHandler> event_handler;
+    event_handler.AttachNew(new EventHandler (this));
     csEventID esub[] = 
     {
         csevFrame (objectReg),

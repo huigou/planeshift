@@ -106,7 +106,8 @@ bool pawsMainWidget::LoadGUIKeys( const char* guiKeyFile )
     csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
 
     csRef<iDataBuffer> buf = vfs->ReadFile( guiKeyFile );
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem> ( new csTinyDocumentSystem );
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
 
     if ( !buf || !buf->GetSize() )
     {

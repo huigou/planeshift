@@ -8126,7 +8126,7 @@ psCachedFileMessage::psCachedFileMessage(MsgEntry* me)
     char* ptr = (char*)me->GetBufferPointerUnsafe(size);
     if(ptr)
     {
-        databuf = csPtr<iDataBuffer> (new csDataBuffer(ptr, size, false));
+        databuf.AttachNew(new csDataBuffer (ptr, size, false));
     }
 }
 

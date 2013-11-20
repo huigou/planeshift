@@ -46,7 +46,7 @@ pawsPrefManager::pawsPrefManager()
     objectReg = PawsManager::GetSingleton().GetObjectRegistry();
 
     vfs =  csQueryRegistry<iVFS > ( objectReg);
-    xml = csPtr<iDocumentSystem> ( new csTinyDocumentSystem ); 
+    xml.AttachNew(new csTinyDocumentSystem); 
     graphics2D =  csQueryRegistry<iGraphics2D > ( objectReg);
 
     defaultFont = defaultScaledFont = NULL;

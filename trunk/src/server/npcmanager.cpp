@@ -881,7 +881,8 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 psDRMessage drmsg(data,len,psserver->GetNetManager()->GetAccessPointers()); // alternate method of cracking
 
                 // copy the DR data into an iDataBuffer
-                csRef<iDataBuffer> databuf = csPtr<iDataBuffer> (new csDataBuffer(len));
+                csRef<iDataBuffer> databuf;
+                databuf.AttachNew(new csDataBuffer(len));
                 memcpy(databuf->GetData(), data, len);
                 // find the entity and Set the DR data for it
                 gemActor* actor = dynamic_cast<gemActor*>(gemSupervisor->FindObject(drmsg.entityid));
@@ -3412,7 +3413,8 @@ void NPCManager::HandlePetSkill(MsgEntry* me,Client* client)
         }
         case psPetSkillMessage::SKILL_SELECTED:
         {
-            csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+            csRef<iDocumentSystem> xml;
+            xml.AttachNew(new csTinyDocumentSystem);
 
             CS_ASSERT(xml);
 

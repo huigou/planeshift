@@ -118,9 +118,9 @@ PawsManager::PawsManager(iObjectRegistry* object, const char* skin, const char* 
     KeyboardDown = csevKeyboardDown(objectReg);
     KeyboardUp = csevKeyboardUp(objectReg);
 
-    vfs =  csQueryRegistry<iVFS > (objectReg);
-    xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
-    csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (objectReg);
+    vfs = csQueryRegistry<iVFS> (objectReg);
+    xml.AttachNew(new csTinyDocumentSystem);
+    csRef<iConfigManager> cfg = csQueryRegistry<iConfigManager> (objectReg);
 
     // Getting sound manager
     soundManager = csQueryRegistryOrLoad<iSoundManager>(objectReg, "iSoundManager");

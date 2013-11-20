@@ -189,7 +189,7 @@ GuildManager::GuildManager(ClientConnectionSet *cs,
     clients    = cs;
     chatserver = chat;  // Needed to GUILDSAY things.
 
-    xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    xml.AttachNew(new csTinyDocumentSystem);
     CS_ASSERT( xml );
 
     Subscribe(&GuildManager::HandleCmdMessage,MSGTYPE_GUILDCMD,REQUIRE_READY_CLIENT);

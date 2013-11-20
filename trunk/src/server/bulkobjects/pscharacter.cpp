@@ -604,7 +604,8 @@ bool psCharacter::Load(iResultRow &row)
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     // Load merchant info
-    csRef<psMerchantInfo> merchant = csPtr<psMerchantInfo>(new psMerchantInfo());
+    csRef<psMerchantInfo> merchant;
+    merchant.AttachNew(new psMerchantInfo());
     if(merchant->Load(use_id))
     {
         merchantInfo = merchant;
@@ -618,7 +619,8 @@ bool psCharacter::Load(iResultRow &row)
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     // Load trainer info
-    csRef<psTrainerInfo> trainer = csPtr<psTrainerInfo>(new psTrainerInfo());
+    csRef<psTrainerInfo> trainer;
+    trainer.AttachNew(new psTrainerInfo());
     if(trainer->Load(use_id))
     {
         trainerInfo = trainer;

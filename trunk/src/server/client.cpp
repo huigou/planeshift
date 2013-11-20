@@ -95,8 +95,7 @@ bool Client::Initialize(LPSOCKADDR_IN addr, uint32_t clientnum)
     Client::clientnum=clientnum;
     Client::valid=true;
 
-    outqueue = csPtr<NetPacketQueueRefCount>
-      (new NetPacketQueueRefCount (MAXCLIENTQUEUESIZE));
+    outqueue.AttachNew(new NetPacketQueueRefCount (MAXCLIENTQUEUESIZE));
     if (!outqueue)
         ERRORHALT("No Memory!");
 

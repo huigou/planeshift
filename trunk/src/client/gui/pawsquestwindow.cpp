@@ -617,7 +617,8 @@ void pawsQuestListWindow::SaveNotes(const char* fileName)
 
     // Save quest notes to a local file
     char temp[20];
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDocumentNode> root = doc->CreateRoot();
     csRef<iDocumentNode> parentMain = root->CreateNodeBefore(CS_NODE_ELEMENT);

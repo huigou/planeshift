@@ -868,7 +868,8 @@ ApplicativeScript::~ApplicativeScript()
 
 ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, CacheManager* cachemanager, const char* script)
 {
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse(script);
     if(error)
@@ -2234,7 +2235,8 @@ public:
         //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
         //     ...
         //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
-        csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+        csRef<iDocumentSystem> xml;
+        xml.AttachNew(new csTinyDocumentSystem);
         CS_ASSERT(xml != NULL);
         csRef<iDocument> xmlDoc = xml->CreateDocument();
         const char* error = xmlDoc->Parse(chr->GetAnimalAffinity());
@@ -2850,7 +2852,8 @@ ProgressionScript::~ProgressionScript()
 
 ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager,CacheManager* cachemanager, const char* name, const char* script)
 {
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse(script);
     if(error)

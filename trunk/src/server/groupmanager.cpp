@@ -730,7 +730,8 @@ void GroupManager::SendLeave(gemActor * client)
 
 csPtr<PlayerGroup> GroupManager::NewGroup(gemActor * leader)
 {
-    csRef<PlayerGroup> group = csPtr<PlayerGroup>(new PlayerGroup(this,leader));
+    csRef<PlayerGroup> group;
+    group.AttachNew(new PlayerGroup(this,leader));
 
     groups.Push(group);
 

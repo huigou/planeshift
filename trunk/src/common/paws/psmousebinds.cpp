@@ -161,7 +161,7 @@ bool psMouseBinds::LoadFromFile(iObjectRegistry* object_reg, const csString& fil
         Error2("Could not find file: %s", filename.GetData());
         return false;
     }
-    xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    xml.AttachNew(new csTinyDocumentSystem);
     assert(xml);
     doc = xml->CreateDocument();
     assert(doc);

@@ -261,7 +261,8 @@ NameGenerationSystem::~NameGenerationSystem()
 bool NameGenerationSystem::LoadDatabase( iObjectRegistry* objectReg )
 {
     csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( objectReg);
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);    
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);    
     
     csRef<iDataBuffer> buff = vfs->ReadFile( PHONICS_LIST );
 

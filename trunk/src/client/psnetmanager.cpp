@@ -58,26 +58,26 @@ bool psNetManager::Initialize( iObjectRegistry* newobjreg )
 
     connection->SetEngine(psengine->GetEngine());
 
-    msghandler = csPtr<ClientMsgHandler> (new ClientMsgHandler);
+    msghandler.AttachNew(new ClientMsgHandler);
     bool rc = msghandler->Initialize((NetBase*) connection, object_reg);
     if (!rc)
         return false;
 
-    cmdhandler = csPtr<CmdHandler> (new CmdHandler(object_reg));
+    cmdhandler.AttachNew(new CmdHandler(object_reg));
 
-    usercmds = csPtr<psUserCommands> (new psUserCommands(msghandler, cmdhandler, object_reg));
+    usercmds.AttachNew(new psUserCommands(msghandler, cmdhandler, object_reg));
     if (!usercmds->LoadEmotes())
     {
         return false;
     }
     
-    guildcmds = csPtr<psGuildCommands>(new psGuildCommands(msghandler, cmdhandler, object_reg ));
-    groupcmds = csPtr<psGroupCommands> (new psGroupCommands(msghandler, cmdhandler, object_reg));
+    guildcmds.AttachNew(new psGuildCommands(msghandler, cmdhandler, object_reg));
+    groupcmds.AttachNew(new psGroupCommands(msghandler, cmdhandler, object_reg));
     
-    utilcmds = csPtr<psUtilityCommands> (new psUtilityCommands(msghandler, cmdhandler, object_reg));
-    admincmds = csPtr<psAdminCommands> (new psAdminCommands(msghandler, cmdhandler, object_reg));
+    utilcmds.AttachNew(new psUtilityCommands(msghandler, cmdhandler, object_reg));
+    admincmds.AttachNew(new psAdminCommands(msghandler, cmdhandler, object_reg));
 
-    authclient = csPtr<psAuthenticationClient> (new psAuthenticationClient(GetMsgHandler()));
+    authclient.AttachNew(new psAuthenticationClient(GetMsgHandler()));
 
     return true;
 }

@@ -1026,7 +1026,8 @@ void psCelClient::PruneEntities()
 
 void psCelClient::AttachObject(iObject* object, GEMClientObject* clientObject)
 {
-    csRef<psGemMeshAttach> attacher = csPtr<psGemMeshAttach> (new psGemMeshAttach(clientObject));
+    csRef<psGemMeshAttach> attacher;
+    attacher.AttachNew(new psGemMeshAttach(clientObject));
     attacher->SetName(clientObject->GetName());  // @@@ For debugging mostly.
     csRef<iObject> attacher_obj(scfQueryInterface<iObject> (attacher));
     object->ObjAdd(attacher_obj);

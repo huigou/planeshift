@@ -515,7 +515,8 @@ csString UpdaterEngine::GetCurrentClientVersion() {
 csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDocument>* document)
 {
     // Load xml.
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     if (!xml)
     {
         PrintOutput("Could not load the XML Document System\n");

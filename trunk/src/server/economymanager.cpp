@@ -108,7 +108,8 @@ void EconomyManager::AddTransaction(csRef<TransactionEntity> trans, bool moneyIn
 
     if (!supplyDemandInfo.Contains(trans->item))
     {
-        csRef<ItemSupplyDemandInfo> newInfo = csPtr<ItemSupplyDemandInfo>(new ItemSupplyDemandInfo);
+        csRef<ItemSupplyDemandInfo> newInfo;
+        newInfo.AttachNew(new ItemSupplyDemandInfo);
         supplyDemandInfo.Put(trans->item, newInfo);
     }
 
@@ -190,7 +191,8 @@ csRef<ItemSupplyDemandInfo> EconomyManager::GetItemSupplyDemandInfo(unsigned int
 {
     if (!supplyDemandInfo.Contains(itemId))
     {
-        csRef<ItemSupplyDemandInfo> newInfo = csPtr<ItemSupplyDemandInfo> (new ItemSupplyDemandInfo);
+        csRef<ItemSupplyDemandInfo> newInfo;
+        newInfo.AttachNew(new ItemSupplyDemandInfo);
         supplyDemandInfo.Put(itemId, newInfo);
     }
     return *supplyDemandInfo[itemId];

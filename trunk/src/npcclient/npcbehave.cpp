@@ -151,7 +151,8 @@ bool NPCType::Load(iResultRow &row)
     inBoundsPerception    = row.GetString("in_bounds");
     fallingPerception     = row.GetString("falling");
 
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse(row.GetString("script"));
     if(error)

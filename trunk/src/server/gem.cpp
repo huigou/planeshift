@@ -519,7 +519,8 @@ void GEMSupervisor::GetAllEntityPos(csArray<psAllEntityPosMessage> &update)
 
 void GEMSupervisor::AttachObject(iObject* object, gemObject* gobject)
 {
-    csRef<psGemServerMeshAttach> attacher = csPtr<psGemServerMeshAttach>(new psGemServerMeshAttach(gobject));
+    csRef<psGemServerMeshAttach> attacher;
+    attacher.AttachNew(new psGemServerMeshAttach(gobject));
     attacher->SetName(object->GetName());
     csRef<iObject> attacher_obj(scfQueryInterface<iObject>(attacher));
 

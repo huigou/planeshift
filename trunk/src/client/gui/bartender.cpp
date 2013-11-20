@@ -106,7 +106,8 @@ bool pawsBartenderWindow::PostSetup()
 pawsBartenderWindow::~pawsBartenderWindow()
 {
     //prepares the file for writing
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDocumentNode> root = doc->CreateRoot ();
     csRef<iDocumentNode> bartenderNode = root->CreateNodeBefore(CS_NODE_ELEMENT);
