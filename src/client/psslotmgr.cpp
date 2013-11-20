@@ -373,8 +373,11 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
     }
     else
     {
-        //do nothing if it's the same slot 
-        if(slot == draggingSlot.slot )
+        // Do nothing if it's the same slot and we aren't dropping a split stack.
+        // Note that crafters use this to pick up one item from a stack,
+        // drop it on the stack, and have the server put the item in a
+        // different slot.
+        if(slot == draggingSlot.slot && !draggingSlot.split)
         {
             CancelDrag();
             return;
