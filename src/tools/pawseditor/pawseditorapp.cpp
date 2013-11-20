@@ -202,7 +202,7 @@ bool PawsEditorApp::Init()
     skinSelector = (peSkinSelector *) paws->FindWidget( "peSkinSelector" );
 
     // Register our event handler
-    event_handler = csPtr<EventHandler> (new EventHandler (this));
+    event_handler.AttachNew(new EventHandler (this));
     csEventID esub[] = {
 	  csevFrame (object_reg),
 	  csevMouseEvent (object_reg),

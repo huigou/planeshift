@@ -72,7 +72,7 @@
 psCamera::psCamera()
         : psCmdBase(psengine->GetMsgHandler(), psengine->GetCmdHandler(), PawsManager::GetSingleton().GetObjectRegistry())
 {
-    view = csPtr<iView> (new csView(psengine->GetEngine(), psengine->GetG3D()));
+    view.AttachNew(new csView(psengine->GetEngine(), psengine->GetG3D()));
     view->GetCamera()->SetViewportSize (psengine->GetG3D()->GetWidth(),
         psengine->GetG3D()->GetHeight());
 

@@ -283,8 +283,8 @@ csRef<iDocument> ParseFile(iObjectRegistry* object_reg, const csString & name)
         return NULL;
     }
     xml =  csQueryRegistry<iDocumentSystem> (object_reg);
-    if (!xml)
-        xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    if (!xml.IsValid())
+        xml.AttachNew(new csTinyDocumentSystem);
     assert(xml);
     doc = xml->CreateDocument();
     assert(doc);
@@ -300,7 +300,7 @@ csRef<iDocument> ParseFile(iObjectRegistry* object_reg, const csString & name)
 csRef<iDocument> ParseString(const csString & str, bool notify)
 {
     csRef<iDocumentSystem> xml;
-    xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    xml.AttachNew(new csTinyDocumentSystem);
     CS_ASSERT(xml != NULL);
     csRef<iDocument> doc  = xml->CreateDocument();
     const char* error = doc->Parse(str);

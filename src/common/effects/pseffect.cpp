@@ -246,7 +246,7 @@ unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, i
     // create a listener for the attached position if it exists
     if (attachPos)
     {
-        positionListener = (csPtr<psEffectMovableListener>) new psEffectMovableListener;
+        positionListener.AttachNew(new psEffectMovableListener);
         attachPos->GetMovable()->AddListener(positionListener);
         attachPos->GetMovable()->UpdateMove();
     }
@@ -254,7 +254,7 @@ unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, i
     // create a listener for the attached target if it exists
     if (attachTarget)
     {
-        targetListener = (csPtr<psEffectMovableListener>) new psEffectMovableListener;
+        targetListener.AttachNew(new psEffectMovableListener);
         attachTarget->GetMovable()->AddListener(targetListener);
         attachTarget->GetMovable()->UpdateMove();
     }
@@ -371,7 +371,7 @@ unsigned int psEffect::Render(iSector * sector, const csVector3 & offset, iMeshW
     // create a listener for the attached position if it exists
     if (attachPos)
     {
-        positionListener = (csPtr<psEffectMovableListener>) new psEffectMovableListener;
+        positionListener.AttachNew(new psEffectMovableListener);
         attachPos->GetMovable()->AddListener(positionListener);
         attachPos->GetMovable()->UpdateMove();
     }
@@ -379,7 +379,7 @@ unsigned int psEffect::Render(iSector * sector, const csVector3 & offset, iMeshW
     // create a listener for the attached target if it exists
     if (attachTarget)
     {
-        targetListener = (csPtr<psEffectMovableListener>) new psEffectMovableListener;
+        targetListener.AttachNew(new psEffectMovableListener);
         attachTarget->GetMovable()->AddListener(targetListener);
         attachTarget->GetMovable()->UpdateMove();
     }

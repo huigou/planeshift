@@ -264,7 +264,7 @@ psEngine::psEngine(iObjectRegistry* objectreg, psCSSetup* CSSetup)
 
     drawScreen = true;
 
-    cal3DCallbackLoader = csPtr<psCal3DCallbackLoader> (new psCal3DCallbackLoader(objectreg));
+    cal3DCallbackLoader.AttachNew(new psCal3DCallbackLoader(objectreg));
 
     BrightnessCorrection = 0.0f;
 
@@ -581,7 +581,7 @@ bool psEngine::Initialize(int level)
         // Initialize Networking
         if(!netmanager)
         {
-            netmanager = csPtr<psNetManager> (new psNetManager);
+            netmanager.AttachNew(new psNetManager);
 
             if(!netmanager->Initialize(object_reg))
             {
@@ -593,12 +593,12 @@ bool psEngine::Initialize(int level)
 
         inventoryCache = new psInventoryCache();
         guiHandler = new GUIHandler();
-        celclient = csPtr<psCelClient> (new psCelClient());
+        celclient.AttachNew(new psCelClient());
         slotManager = new psSlotManager();
         songManager = new ClientSongManager();
-        modehandler = csPtr<ModeHandler> (new ModeHandler(celclient,netmanager->GetMsgHandler(),object_reg));
-        actionhandler = csPtr<ActionHandler> (new ActionHandler(netmanager->GetMsgHandler(), object_reg));
-        zonehandler = csPtr<ZoneHandler> (new ZoneHandler(netmanager->GetMsgHandler(), celclient));
+        modehandler.AttachNew(new ModeHandler(celclient,netmanager->GetMsgHandler(),object_reg));
+        actionhandler.AttachNew(new ActionHandler(netmanager->GetMsgHandler(), object_reg));
+        zonehandler.AttachNew(new ZoneHandler(netmanager->GetMsgHandler(), celclient));
         questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
 
         if(!zonehandler->IsValid())
@@ -1185,7 +1185,7 @@ inline void psEngine::UpdatePerFrame()
         celclient->GetMainPlayer()->GetVitalMgr()->Predict(csGetTicks(),"Self");
 
         // Update stats for Target if Target is there and has stats
-        GEMClientObject* target = psengine->GetCharManager()->GetTarget();
+        GEMClientObject* target = charmanager->GetTarget();
         if(target && target->GetType() != -2)
         {
             GEMClientActor* actor = dynamic_cast<GEMClientActor*>(target);

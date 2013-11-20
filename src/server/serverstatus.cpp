@@ -75,7 +75,8 @@ void psServerStatusRunEvent::Trigger ()
     csString reportString;
     csString timeString;
     
-    csRef<iDocumentSystem> docSystem = csPtr<iDocumentSystem> (new csTinyDocumentSystem ());
+    csRef<iDocumentSystem> docSystem;
+    docSystem.AttachNew(new csTinyDocumentSystem ());
     csRef<iDocument> doc = docSystem->CreateDocument();
     csRef<iDocumentNode> rootNode = doc->CreateRoot();
 

@@ -49,7 +49,7 @@ pawsTextureManager::pawsTextureManager( iObjectRegistry* object )
     objectReg = object;
 
     vfs =  csQueryRegistry<iVFS > ( objectReg);
-    xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    xml.AttachNew(new csTinyDocumentSystem);
 }
 
 pawsTextureManager::~pawsTextureManager()

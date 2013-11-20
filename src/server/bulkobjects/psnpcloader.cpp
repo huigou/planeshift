@@ -73,7 +73,8 @@ bool psNPCLoader::LoadFromFile(csString &filename)
         return false;
     }
 
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse(data);
     if ( error )
@@ -164,7 +165,8 @@ bool psNPCLoader::LoadDialogsFromFile(csString &filename)
         return false;
     }
 
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse(data);
     if ( error )
@@ -846,7 +848,8 @@ bool psNPCLoader::SaveToFile(int id, csString &filename)
     npcID = id;
     area  = npc->GetCharName();
 
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDocumentNode> root = doc->CreateRoot ();
     npcRoot = root->CreateNodeBefore(CS_NODE_ELEMENT);
@@ -886,7 +889,8 @@ bool psNPCLoader::SaveDialogsToFile(csString &area, csString &filename, int ques
 {
     filename.Insert(0,"/this/");
 
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDocumentNode> root = doc->CreateRoot ();
 

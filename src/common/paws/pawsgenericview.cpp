@@ -118,7 +118,7 @@ bool pawsGenericView::LoadMap( const char* map, const char* sector )
              return false;
     }
 
-    view = csPtr<iView> (new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
+    view.AttachNew(new csView( engine, PawsManager::GetSingleton().GetGraphics3D() ));
     if (engine->GetCameraPositions()->GetCount() > 0)
     {
         iCameraPosition * cp = engine->GetCameraPositions()->Get(0);

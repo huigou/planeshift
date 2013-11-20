@@ -342,7 +342,8 @@ void pawsActiveMagicWindow::SaveSetting()
     csRef<iFile> file;
     file = psengine->GetVFS()->Open(CONFIG_ACTIVEMAGIC_FILE_NAME,VFS_FILE_WRITE);
 
-    csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem());
+    csRef<iDocumentSystem> docsys;
+    docsys.AttachNew(new csTinyDocumentSystem());
 
     csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,defaultRoot, activeMagicNode, activeMagicOptionsNode, showWindowNode;

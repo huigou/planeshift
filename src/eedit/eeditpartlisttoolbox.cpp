@@ -2047,7 +2047,8 @@ bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier,
 	if (wnd)
 	{
 	    EEditRequestCombo* rc = static_cast<EEditRequestCombo*> (wnd);
-	    csRef<CreateEmitCB> cb = csPtr<CreateEmitCB> (new CreateEmitCB(this));
+	    csRef<CreateEmitCB> cb;
+	    cb.AttachNew(new CreateEmitCB(this));
 	    rc->SetCallback(cb);
 	    rc->ClearChoices();
 	    rc->AddChoice("Sphere");
@@ -2064,7 +2065,8 @@ bool EEditParticleListToolbox::OnButtonPressed(int mouseButton, int keyModifier,
 	if (wnd)
 	{
 	    EEditRequestCombo* rc = static_cast<EEditRequestCombo*> (wnd);
-	    csRef<CreateEffectCB> cb = csPtr<CreateEffectCB> (new CreateEffectCB(this));
+	    csRef<CreateEffectCB> cb;
+	    cb.AttachNew(new CreateEffectCB(this));
 	    rc->SetCallback(cb);
 	    rc->ClearChoices();
 	    rc->AddChoice("Force");

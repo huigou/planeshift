@@ -264,7 +264,8 @@ void SpawnManager::PreloadLootRules()
 #if 0
 bool SpawnManager::LoadWaypointsAsSpawnRanges()
 {
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     const char *xmlfile = "/planeshift/data/npcdefs.xml";
 
     csRef<iDataBuffer> buff = vfs->ReadFile(xmlfile);

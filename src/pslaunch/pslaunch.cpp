@@ -182,7 +182,7 @@ bool psLauncherGUI::InitApp()
     paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
 
     // Register our event handler
-    event_handler = csPtr<EventHandler> (new EventHandler (this));
+    event_handler.AttachNew(new EventHandler (this));
     csEventID esub[] = 
     {
         csevFrame (object_reg),

@@ -496,19 +496,19 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     if(!questmanager->Initialize())
         return false;
 
-    chatmanager = csPtr<ChatManager> (new ChatManager);
+    chatmanager.AttachNew(new ChatManager);
     Debug1(LOG_STARTUP,0,"Started Chat Manager");
 
-    guildmanager = csPtr<GuildManager>(new GuildManager(GetConnections(), chatmanager));
+    guildmanager.AttachNew(new GuildManager(GetConnections(), chatmanager));
     Debug1(LOG_STARTUP,0,"Started Guild Manager");
 
-    questionmanager = csPtr<QuestionManager>(new QuestionManager());
+    questionmanager.AttachNew(new QuestionManager());
     Debug1(LOG_STARTUP,0,"Started Question Manager");
 
-    advicemanager = csPtr<AdviceManager>(new AdviceManager(database));
+    advicemanager.AttachNew(new AdviceManager(database));
     Debug1(LOG_STARTUP,0,"Started Advice Manager");
 
-    groupmanager = csPtr<GroupManager>(new GroupManager(GetConnections(), chatmanager));
+    groupmanager.AttachNew(new GroupManager(GetConnections(), chatmanager));
     Debug1(LOG_STARTUP,0,"Started Group Manager");
 
     charmanager = new ServerCharManager(cachemanager, entitymanager->GetGEM());
@@ -524,10 +524,10 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     tutorialmanager = new TutorialManager(GetConnections());
 
-    actionmanager = csPtr<ActionManager>(new ActionManager(database));
+    actionmanager.AttachNew(new ActionManager(database));
     Debug1(LOG_STARTUP,0,"Started Action Manager");
 
-    authserver = csPtr<AuthenticationServer>(new AuthenticationServer(GetConnections(), usermanager, guildmanager));
+    authserver.AttachNew(new AuthenticationServer(GetConnections(), usermanager, guildmanager));
     Debug1(LOG_STARTUP,0,"Started Authentication Server");
 
     exchangemanager = new ExchangeManager(GetConnections());

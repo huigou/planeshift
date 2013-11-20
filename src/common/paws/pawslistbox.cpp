@@ -969,7 +969,8 @@ void pawsListBox::SetTotalColumns( int numCols )
 
 void pawsListBox::SetColumnDef( int col, int width, int height, const char* widgetDesc )
 {
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
 
     csRef<iDocument> doc= xml->CreateDocument();
     doc->Parse( widgetDesc );
@@ -1515,7 +1516,8 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
 
     widget->SetParent( this );
     //widget->Load( def[column].widgetNode );
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDocumentNode> node = doc->CreateRoot();
     node = node->CreateNodeBefore(CS_NODE_ELEMENT);

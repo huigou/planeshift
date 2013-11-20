@@ -1134,7 +1134,8 @@ void pawsChatWindow::SaveChatSettings()
         return;
     }
 
-    csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem ());
+    csRef<iDocumentSystem> docsys;
+    docsys.AttachNew(new csTinyDocumentSystem ());
 
     csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root, chatNode, colorNode, optionNode, looseNode, filtersNode,

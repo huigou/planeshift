@@ -354,7 +354,8 @@ void pawsNpcDialogWindow::LoadQuest(csString xmlstr)
     questInfo.DeleteAll();
     displayIndex = 0;
 
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
 
     csRef<iDocument> doc= xml->CreateDocument();
     const char* error = doc->Parse(xmlstr);
@@ -887,7 +888,8 @@ void pawsNpcDialogWindow::SaveSetting()
     csRef<iFile> file;
     file = psengine->GetVFS()->Open(CONFIG_NPCDIALOG_FILE_NAME,VFS_FILE_WRITE);
 
-    csRef<iDocumentSystem> docsys = csPtr<iDocumentSystem> (new csTinyDocumentSystem());
+    csRef<iDocumentSystem> docsys;
+    docsys.AttachNew(new csTinyDocumentSystem);
 
     csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,defaultRoot, npcDialogNode, npcDialogOptionsNode, useNpcDialogNode;

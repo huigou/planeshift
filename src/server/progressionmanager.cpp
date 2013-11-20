@@ -269,7 +269,8 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
         }
         case psGUISkillMessage::SKILL_SELECTED:
         {
-            csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+            csRef<iDocumentSystem> xml;
+	    xml.AttachNew(new csTinyDocumentSystem);
 
             CS_ASSERT( xml );
 
@@ -361,7 +362,8 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
         case psGUISkillMessage::BUY_SKILL:
         {
             Debug1(LOG_SKILLXP, client->GetClientNum(),"---------------Buying Skill-------------\n");
-            csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+            csRef<iDocumentSystem> xml;
+	    xml.AttachNew(new csTinyDocumentSystem);
 
             CS_ASSERT( xml );
 

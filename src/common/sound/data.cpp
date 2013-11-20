@@ -266,7 +266,7 @@ bool SoundData::LoadSoundLib (const char* filename, iObjectRegistry* objectReg)
     SoundFile                      *snd;        ///< soundfile
 
     if (!(xml = csQueryRegistry<iDocumentSystem> (objectReg)))
-      xml = csPtr<iDocumentSystem> (new csTinyDocumentSystem);
+      xml.AttachNew(new csTinyDocumentSystem);
 
     buff = vfs->ReadFile(filename);
 

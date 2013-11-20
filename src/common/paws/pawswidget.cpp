@@ -2706,7 +2706,8 @@ void pawsWidget::SetFontStyle(int style)
 
 bool pawsWidget::SelfPopulateXML( const char *xmlstr )
 {
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
 
     csRef<iDocument> doc= xml->CreateDocument();
     const char *error = doc->Parse( xmlstr );

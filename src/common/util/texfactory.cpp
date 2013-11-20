@@ -43,7 +43,7 @@ bool psTextureFactory::Initialize(iObjectRegistry* object_reg,const char *xmlfil
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (object_reg);
     csRef<iDocumentSystem> xml =  csQueryRegistry<iDocumentSystem> (object_reg);
     if (!xml)
-        xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+        xml.AttachNew(new csTinyDocumentSystem);
     if (!vfs || !xml)
         return false;
 
@@ -142,7 +142,7 @@ csPtr<iImage> psTextureFactory::CreateTextureImage(const char *xmlspec)
     csRef<iDocumentNode> node;
     csRef<iDocumentSystem> xmlDoc =  csQueryRegistry<iDocumentSystem> (object_reg);
     if (!xmlDoc)
-        xmlDoc = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+        xmlDoc.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> xml = xmlDoc->CreateDocument();
     xml->Parse(xmlspec);
 

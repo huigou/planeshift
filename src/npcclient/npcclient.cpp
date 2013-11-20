@@ -388,7 +388,8 @@ void psNPCClient::SaveLogSettings()
 
 csRef<iDocumentNode> psNPCClient::GetRootNode(const char* xmlfile)
 {
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
 
     csRef<iDataBuffer> buff = vfs->ReadFile(xmlfile);
 
@@ -427,7 +428,8 @@ Tribe* psNPCClient::GetTribe(int id)
 
 bool psNPCClient::AddNPCType(csString newType)
 {
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument>       doc = xml->CreateDocument();
     const char*            error = doc->Parse(newType);
     if(error)
@@ -2193,7 +2195,8 @@ void psNPCClient::CatchCommand(const char* cmd)
 
 void psNPCClient::AttachObject(iObject* object, gemNPCObject* gobject)
 {
-    csRef<psNpcMeshAttach> attacher = csPtr<psNpcMeshAttach>(new psNpcMeshAttach(gobject));
+    csRef<psNpcMeshAttach> attacher;
+    attacher.AttachNew(new psNpcMeshAttach(gobject));
     attacher->SetName(object->GetName());
     csRef<iObject> attacher_obj(scfQueryInterface<iObject>(attacher));
 

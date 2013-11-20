@@ -548,7 +548,8 @@ bool LoadPrerequisiteXML(iDocumentNode * topNode, psQuest * self, csRef<psQuestP
 
 bool LoadPrerequisiteXML(csRef<psQuestPrereqOp>& prerequisite, psQuest * self, csString script)
 {
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     csRef<iDocument> doc = xml->CreateDocument();
     const char* error = doc->Parse( script );
     if ( error )

@@ -38,7 +38,8 @@ bool pawsStyles::LoadStyles(const csString & fileName)
         Error2("Could not find file: %s", fileName.GetData());
         return false;
     }
-    csRef<iDocumentSystem> xml = csPtr<iDocumentSystem>(new csTinyDocumentSystem);
+    csRef<iDocumentSystem> xml;
+    xml.AttachNew(new csTinyDocumentSystem);
     assert(xml);
     csRef<iDocument> doc = xml->CreateDocument();
     assert(doc);
