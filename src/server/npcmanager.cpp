@@ -1370,6 +1370,10 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
 
                     if(chardata && chardata->Inventory().Add(item))
                     {
+                        // Ownership for the psItem is now the character's
+                        // inventory so don't delete it when we destroy
+                        // the gemItem.
+                        gItem->ClearItemData();
                         entityManager->RemoveActor(gItem);  // Destroy this
                     }
                     else

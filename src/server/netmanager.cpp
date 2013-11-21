@@ -83,18 +83,14 @@ public:
 };
 
 
-NetManager::NetManager(csRef<CS::Threading::Thread> _thread)
+NetManager::NetManager()
     : NetBase (1000),stop_network(false)
 {
-    thread=_thread;
     port=0;
 }
 
 NetManager::~NetManager()
 {
-    stop_network = true;
-    thread->Wait ();
-    thread = NULL;
 }
 
 bool NetManager::Initialize(CacheManager* cachemanager, int client_firstmsg, int npcclient_firstmsg, int timeout)
@@ -115,12 +111,12 @@ bool NetManager::Initialize(CacheManager* cachemanager, int client_firstmsg, int
     return true;
 }
 
-class NetManagerStarter : public CS::Threading::Runnable
+class NetManagerStarter : public CS::Threading::Runnable, public Singleton<NetManagerStarter>
 {
-	CacheManager *cacheManager;
+    CacheManager *cacheManager;
 public:
-    csRef<NetManager> netManager;
-    csRef<CS::Threading::Thread> thread;
+    NetManager* netManager;
+    CS::Threading::Thread* thread;
     CS::Threading::Mutex doneMutex;
     CS::Threading::Condition initDone;
     int client_firstmsg;
@@ -130,6 +126,8 @@ public:
 
     NetManagerStarter(CacheManager *cachemanager, int _client_firstmsg, int _npcclient_firstmsg, int _timeout)
     {
+        netManager = NULL;
+        thread = NULL;
     	cacheManager = cachemanager;
         client_firstmsg = _client_firstmsg;
         npcclient_firstmsg = _npcclient_firstmsg;
@@ -141,7 +139,7 @@ public:
         {
             CS::Threading::MutexScopedLock lock (doneMutex);
             // construct the netManager is its own thread to avoid wrong warnings of dynamic thread checking via valgrind
-            netManager.AttachNew(new NetManager(thread));
+            netManager = new NetManager();
             if (!netManager->Initialize(cacheManager, client_firstmsg, npcclient_firstmsg,
                     timeout))
             {
@@ -161,18 +159,16 @@ public:
 
 NetManager* NetManager::Create(CacheManager* cacheManager, int client_firstmsg, int npcclient_firstmsg, int timeout)
 {
-    csRef<NetManagerStarter> netManagerStarter;
-    netManagerStarter.AttachNew (new NetManagerStarter(cacheManager, client_firstmsg, npcclient_firstmsg, timeout));
-    csRef<CS::Threading::Thread> thread;
-    thread.AttachNew (new CS::Threading::Thread (netManagerStarter));
-    netManagerStarter->thread = thread;
+    NetManagerStarter* netManagerStarter =
+        new NetManagerStarter(cacheManager, client_firstmsg, npcclient_firstmsg, timeout);
+    netManagerStarter->thread = new CS::Threading::Thread (netManagerStarter);
 
     // wait for initialization to be finished
     {
         CS::Threading::MutexScopedLock lock (netManagerStarter->doneMutex);
-        thread->Start();
+        netManagerStarter->thread->Start();
         
-        if (!thread->IsRunning())
+        if (!netManagerStarter->thread->IsRunning())
         {
             return NULL;        
         }
@@ -180,6 +176,18 @@ NetManager* NetManager::Create(CacheManager* cacheManager, int client_firstmsg, 
         netManagerStarter->initDone.Wait(netManagerStarter->doneMutex);
     }
     return netManagerStarter->netManager;
+}
+
+void NetManager::Destroy()
+{
+    // Handle stopping and destroying the network thread in the main thread.
+    NetManagerStarter* netManagerStarter =
+        NetManagerStarter::GetSingletonPtr();
+    netManagerStarter->netManager->stop_network = true;
+    netManagerStarter->thread->Wait();
+    delete netManagerStarter->netManager;
+    delete netManagerStarter->thread;
+    delete netManagerStarter;
 }
 
 bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
@@ -464,7 +472,6 @@ void NetManager::Run ()
 
     printf("Network thread started!\n");
 
-    stop_network = false;
     while ( !stop_network )
     {
         if (!IsReady())

@@ -111,7 +111,7 @@ public:
 
     bool CreateActionLocation(psActionLocation *instance, bool transient);
 
-    gemItem* CreateItem(psItem*& iteminstance, bool transient, int tribeID = 0);
+    gemItem* CreateItem(psItem* iteminstance, bool transient, int tribeID = 0);
     gemItem* MoveItemToWorld(psItem*       keyItem,
                              InstanceID  instance,
                              psSectorInfo* sectorinfo,

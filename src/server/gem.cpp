@@ -240,10 +240,10 @@ void GEMSupervisor::AddItemEntity(gemItem* item)
     Debug3(LOG_CELPERSIST,0,"Item added to supervisor with %s and UID:%u.\n", ShowID(item->GetEID()), item->GetItem()->GetUID());
 }
 
-void GEMSupervisor::RemoveItemEntity(gemItem* item)
+void GEMSupervisor::RemoveItemEntity(gemItem* item, uint32 uid)
 {
-    items_by_uid.Delete(item->GetItem()->GetUID(), item);
-    Debug3(LOG_CELPERSIST,0,"Item <%s, %u> removed from supervisor.\n", ShowID(item->GetEID()), item->GetItem()->GetUID());
+    items_by_uid.Delete(uid, item);
+    Debug3(LOG_CELPERSIST,0,"Item <%s, %u> removed from supervisor.\n", ShowID(item->GetEID()), uid);
 }
 
 void GEMSupervisor::RemoveEntity(gemObject* which)
@@ -1239,7 +1239,7 @@ void gemActiveObject::SendBehaviorMessage(const csString &msg_id, gemObject* act
 // gemItem
 //--------------------------------------------------------------------------------------
 
-gemItem::gemItem(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, EntityManager* entitymanager, csWeakRef<psItem> item,
+gemItem::gemItem(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, EntityManager* entitymanager, psItem* item,
                  const char* factname,
                  InstanceID instance,
                  iSector* room,
@@ -1509,6 +1509,10 @@ void gemItem::SendBehaviorMessage(const csString &msg_id, gemObject* actor)
         if(gActor) chardata = gActor->GetCharacterData();
         if(chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
         {
+            // We passed the item to the character's inventory so don't
+            // dereference the pointer or delete it.
+            itemdata = NULL;
+
             Client* client = actor->GetClient();
             if(!client)
             {
@@ -1550,7 +1554,10 @@ void gemItem::SendBehaviorMessage(const csString &msg_id, gemObject* actor)
 
             psserver->GetCharManager()->UpdateItemViews(clientnum);
 
-            if(GetItemData()) cel->RemoveItemEntity(this);
+            if(GetItemData())
+            {
+                cel->RemoveItemEntity(this, origUID);
+            }
             entityManager->RemoveActor(this);  // Destroy this
         }
         else
@@ -1709,7 +1716,7 @@ void gemItem::SendBehaviorMessageTakeAll(const csString &msg_id, gemObject* obj,
 //--------------------------------------------------------------------------------------
 
 gemContainer::gemContainer(GEMSupervisor* gemsupervisor, CacheManager* cachemanager,
-                           EntityManager* entitymanager, csWeakRef<psItem> item,
+                           EntityManager* entitymanager, psItem* item,
                            const char* factname,
                            InstanceID myInstance,
                            iSector* room,
@@ -1720,6 +1727,14 @@ gemContainer::gemContainer(GEMSupervisor* gemsupervisor, CacheManager* cachemana
                            int clientnum)
     : gemItem(gemsupervisor,cachemanager,entitymanager,item,factname,myInstance,room,pos,xrotangle,yrotangle,zrotangle,clientnum)
 {
+}
+
+gemContainer::~gemContainer()
+{
+    while (itemlist.GetSize())
+    {
+        delete itemlist.Pop();
+    }
 }
 
 bool gemContainer::CanAdd(unsigned short amountToAdd, psItem* item, int slot, csString &reason)
@@ -2173,6 +2188,7 @@ gemActor::gemActor(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, Ent
         return;
     }
 
+    combat_stance = CombatManager::GetStance(cachemanager,"None");
     chardata->SetActor(this);
 
     if(!InitCharData(clientRef))
@@ -2183,7 +2199,6 @@ gemActor::gemActor(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, Ent
 
     if(psChar->IsStatue())
         player_mode = PSCHARACTER_MODE_STATUE;
-    combat_stance = CombatManager::GetStance(cachemanager,"None");
 
     Debug6(LOG_NPC,GetEID().Unbox(),"Successfully created actor %s at %1.2f,%1.2f,%1.2f in sector %s.\n",
            factname,pos.x,pos.y,pos.z,GetSectorName());

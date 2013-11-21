@@ -647,6 +647,12 @@ int psCharacterInventory::FindFirstOpenSlot(psItem *container)
     return PSCHARACTER_SLOT_NONE;
 }
 
+//
+// Note that the semantics for the ownership of the 'item' pointer is
+// a bit strange.
+// If false is returned, the caller retains ownership.
+// If true is returned, the caller transfers ownership to the character's inventory or world.
+//
 bool psCharacterInventory::AddOrDrop(psItem *&item, bool stack)
 {
     if (Add(item, false, stack))
@@ -725,6 +731,13 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
     return NULL;
 }
 
+//
+// Note that the semantics for the ownership of the 'item' pointer is
+// a bit strange.
+// If false is returned, the caller retains ownership.
+// If 'test' is true, the caller retains ownership.
+// If 'test' is false, the caller transfers ownership to the character's inventory.
+//
 bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_SLOT_NUMBER slot, gemContainer* container, bool precise)
 {
 
@@ -767,6 +780,7 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
                 inventory[itemIndices[i]].item->CombineStack(item);
 
                 // Here we update the passed in parameter so it points at the merged stack instead of the item that is gone now
+                delete item;
                 item = inventory[itemIndices[i]].item;
 
                 // Save new combined stack to db

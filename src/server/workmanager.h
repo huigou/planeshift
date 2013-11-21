@@ -843,7 +843,7 @@ private:
     float resultQuality;
     float KFactor;
     INVENTORY_SLOT_NUMBER transSlot;
-    csWeakRef<psItem> item;
+    psItem* item;
     psItem* workItem;
     int transType;
 };

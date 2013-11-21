@@ -349,7 +349,7 @@ class NpcResponse
     };
 
     NpcResponse();
-    virtual ~NpcResponse() {}
+    virtual ~NpcResponse();
     
     bool Load(iResultRow& row);
 

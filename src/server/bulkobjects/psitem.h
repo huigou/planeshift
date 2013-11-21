@@ -234,7 +234,7 @@ public:
 *  TODO: Add effect data - such as spell effects or poision or whatever.
 *  TODO: Merge various mutually exclusive stats into unions to save space.
 */
-class psItem : public iScriptableVar, public iDeleteObjectCallback, public CS::Utility::WeakReferenced
+class psItem : public iScriptableVar, public iDeleteObjectCallback
 {
 public:
 
