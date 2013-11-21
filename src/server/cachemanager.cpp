@@ -339,18 +339,6 @@ void CacheManager::UnloadAll()
     }
 
     {
-        csHash<psGuildAlliance*>::GlobalIterator it(alliance_by_id.GetIterator());
-        while(it.HasNext())
-        {
-            psGuildAlliance* alliance = it.Next();
-            delete alliance;
-        }
-        alliance_by_id.Empty();
-    }
-
-    guildinfo_by_id.Empty();
-
-    {
         csHash<psItemStats*, csString>::GlobalIterator it(itemStats_NameHash.GetIterator());
         while(it.HasNext())
             delete it.Next();
@@ -398,6 +386,26 @@ void CacheManager::UnloadAll()
         skillinfo_IDHash.DeleteAll();
         skillinfo_NameHash.DeleteAll();
         skillinfo_CategoryHash.DeleteAll();
+    }
+
+    {
+        csHash<psGuildAlliance*>::GlobalIterator it(alliance_by_id.GetIterator());
+        while(it.HasNext())
+        {
+            psGuildAlliance* alliance = it.Next();
+            delete alliance;
+        }
+        alliance_by_id.Empty();
+    }
+
+    {
+        csHash<psGuildInfo*>::GlobalIterator it(guildinfo_by_id.GetIterator());
+        while(it.HasNext())
+        {
+            psGuildInfo* ginfo = it.Next();
+            delete ginfo;
+        }
+        guildinfo_by_id.Empty();
     }
 
     delete lootRandomizer;
@@ -3665,7 +3673,7 @@ unsigned int CacheManager::NewAccountInfo(psAccountInfo* ainfo)
     return id;
 }
 
-csWeakRef<psGuildInfo> CacheManager::FindGuild(unsigned int id)
+psGuildInfo* CacheManager::FindGuild(unsigned int id)
 {
     psGuildInfo* g = guildinfo_by_id.Get(id, 0);
     if(g)
@@ -3684,9 +3692,9 @@ csWeakRef<psGuildInfo> CacheManager::FindGuild(unsigned int id)
     return NULL;
 }
 
-csWeakRef<psGuildInfo> CacheManager::FindGuild(const csString &name)
+psGuildInfo* CacheManager::FindGuild(const csString &name)
 {
-    csHash<csRef<psGuildInfo> >::GlobalIterator gIter = guildinfo_by_id.GetIterator();
+    csHash<psGuildInfo*>::GlobalIterator gIter = guildinfo_by_id.GetIterator();
     while(gIter.HasNext())
     {
         psGuildInfo* guild = gIter.Next();
@@ -3727,10 +3735,8 @@ bool CacheManager::CreateGuild(const char* guildname, Client* client)
 void CacheManager::RemoveGuild(psGuildInfo* which)
 {
     guildinfo_by_id.Delete(which->GetID(),which);
+    delete which;
 }
-
-
-
 
 psGuildAlliance* CacheManager::FindAlliance(unsigned int id)
 {

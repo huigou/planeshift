@@ -152,7 +152,7 @@ public:
  * Primary database table   : guilds <br\>
  * Secondary database tables: characters, guild_wars, guildlevels
  */
-class psGuildInfo : public csRefCount, public CS::Utility::WeakReferenced
+class psGuildInfo
 {
 protected:
     int id;                          ///< UID of the guild.
@@ -841,8 +841,8 @@ public:
 protected:
     int id;                          ///< The ID of the alliance, used for storing in the DB
     csString name;                   ///< Viewable name of the alliance
-    csRef<psGuildInfo> leader;       ///< Leader of the alliance, must also be a member
-    csRefArray<psGuildInfo> members; ///< Array of the members of this alliance
+    psGuildInfo* leader;             ///< Leader of the alliance, must also be a member
+    csArray<psGuildInfo*> members;   ///< Array of the members of this alliance
 };
 
 /** @} */
