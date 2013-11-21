@@ -1218,6 +1218,14 @@ If you update a repository, you will need to recompile that repository and each 
 
 <h2><a name="compile">Compile the Code</a></h2>
 
+Please note that PlaneShift uses Breakpad as crash reporting tool. If you don't want to compile with breakpad, please do the following:<br/>
+<br/>
+1) Edit src/client/crashreport.cpp and remove this line:<br/>
+<br/>
+Force breakpad usage<br/>
+#define USE_BREAKPAD<br/>
+<br/>
+
 <div class="GCC">
     <div class="FreeBSD" >
     <p>If you have a dual core or better processor then you can take advantage of parallel make or jam by adding -j3 after the command. You can replace 3 with the number of jobs you want to run in parallel.</p>
