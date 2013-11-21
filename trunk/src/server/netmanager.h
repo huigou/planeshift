@@ -46,10 +46,10 @@ class CacheManager;
  * other threads can register a message queue and the network thread will sort
  * messages for them and put them in their queue.
  */
-class NetManager : public NetBase, public CS::Threading::Runnable
+class NetManager : public NetBase
 {
 public:
-    NetManager(csRef<CS::Threading::Thread> _thread);
+    NetManager();
     ~NetManager();
 
     /**
@@ -71,6 +71,8 @@ public:
     bool Initialize(CacheManager* cachemanager, int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
     
     static NetManager* Create(CacheManager* cacheManager, int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
+
+    static void Destroy();
 
     /**
      * This broadcasts the same msg out to a bunch of Clients.
@@ -216,8 +218,6 @@ private:
      */
     void CheckResendPkts(void);
 
-    csRef<CS::Threading::Thread> thread;
-   
     /// list of connected clients
     ClientConnectionSet clients;
 

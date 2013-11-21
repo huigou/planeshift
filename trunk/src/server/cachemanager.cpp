@@ -1701,6 +1701,7 @@ bool CacheManager::freeTradeTransformationsByPatternAndGroup(csHash<csHash<csPDe
                     delete iArray;
                 }
             }
+            delete iHash;
         }
     }
 
@@ -1721,8 +1722,12 @@ bool CacheManager::freeTradeTransformationsByPatternAndGroup(csHash<csHash<csPDe
                     delete iArray;
                 }
             }
+            delete iHash;
         }
     }
+
+    delete txItemHash;
+    delete txResultHash;
 
     return false;
 }

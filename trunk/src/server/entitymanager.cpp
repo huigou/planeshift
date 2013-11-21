@@ -86,6 +86,7 @@ EntityManager::EntityManager()
 {
     serverdr = NULL;
     ready = hasBeenReady = false;
+    gem = NULL;
     gameWorld = 0;
     moveinfomsg = NULL;
 }
@@ -843,8 +844,7 @@ gemItem *EntityManager::MoveItemToWorld(psItem       *chrItem,
     return obj;
 }
 
-
-gemItem* EntityManager::CreateItem(psItem *& iteminstance, bool transient, int tribeID)
+gemItem* EntityManager::CreateItem(psItem* iteminstance, bool transient, int tribeID)
 {
     psSectorInfo *sectorinfo;
     csVector3 newpos;

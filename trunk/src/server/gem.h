@@ -189,7 +189,7 @@ public:
     void AddActorEntity(gemActor* actor);
     void RemoveActorEntity(gemActor* actor);
     void AddItemEntity(gemItem* item);
-    void RemoveItemEntity(gemItem* item);
+    void RemoveItemEntity(gemItem* item, uint32 uid);
 
     void RemovePlayerFromLootables(PID playerID);
 
@@ -763,7 +763,7 @@ public:
 class gemItem : public gemActiveObject
 {
 protected:
-    csWeakRef<psItem> itemdata;
+    psItem* itemdata;
     csString itemType;
     float xRot;
     float yRot;
@@ -774,7 +774,7 @@ public:
     gemItem(GEMSupervisor* gemsupervisor,
             CacheManager* cachemanager,
             EntityManager* entitymanager,
-            csWeakRef<psItem> item,
+            psItem* item,
             const char* factname,
             InstanceID myInstance,
             iSector* room,
@@ -783,6 +783,11 @@ public:
             float yrotangle,
             float zrotangle,
             int clientnum);
+
+    virtual ~gemItem()
+    {
+        delete itemdata;
+    }
 
     void SetTribeID(uint32_t id)
     {
@@ -800,6 +805,10 @@ public:
     psItem* GetItemData()
     {
         return itemdata;
+    }
+    void ClearItemData()
+    {
+        itemdata = NULL;
     }
 
 
@@ -927,7 +936,7 @@ protected:
 public:
     gemContainer(GEMSupervisor* gemSupervisor, CacheManager* cachemanager,
                  EntityManager* entitymanager,
-                 csWeakRef<psItem> item,
+                 psItem* item,
                  const char* factname,
                  InstanceID myInstance,
                  iSector* room,
@@ -936,6 +945,8 @@ public:
                  float yrotangle,
                  float zrotangle,
                  int clientnum);
+
+    ~gemContainer();
 
     /**
      * Check if a item can be added to a container.

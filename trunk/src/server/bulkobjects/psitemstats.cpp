@@ -640,12 +640,13 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     strTmpAmmoList.Split(strTmpAmmoListArray, ',');
     while (!strTmpAmmoListArray.IsEmpty())
     {
-        csString currAmmo = strTmpAmmoListArray.Pop();
-        unsigned int ammoID = atoi(currAmmo.GetDataSafe());
+        char* currAmmo = strTmpAmmoListArray.Pop();
+        unsigned int ammoID = atoi(currAmmo);
         if (ammoID != 0)
         {
             ammo_types.Add(ammoID);
         }
+        delete [] currAmmo;
     }
 
 

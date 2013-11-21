@@ -168,6 +168,8 @@ psServer::~psServer()
             }
         }
         while(p);
+
+        NetManager::Destroy();
     }
 
     delete economymanager;
@@ -176,7 +178,6 @@ psServer::~psServer()
     delete entitymanager;
     delete usermanager;
     delete exchangemanager;
-    delete netmanager;
     delete marriageManager;
     delete spawnmanager;
     delete adminmanager;

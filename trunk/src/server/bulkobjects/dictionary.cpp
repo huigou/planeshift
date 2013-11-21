@@ -95,6 +95,9 @@ NPCDialogDict::~NPCDialogDict()
     csHash<NpcResponse*>::GlobalIterator responsesIter(responses.GetIterator());
     while(responsesIter.HasNext())
         delete responsesIter.Next();
+    csHash<NpcDialogMenu*, csString>::GlobalIterator menuIter(initial_popup_menus.GetIterator());
+    while(menuIter.HasNext())
+        delete menuIter.Next();
     wnclose();
     dict = NULL;
 }
@@ -427,6 +430,7 @@ bool NPCDialogDict::LoadResponses(iDataConnection *db)
         if (!AddTrigger(db,trigger_id,newresp->id))
         {
             Error2("Failed to load trigger for resp: %d",newresp->id);
+            delete newresp;
             return false;
         }
 
@@ -1194,6 +1198,11 @@ NpcResponse::NpcResponse()
     quest = NULL;
     menu = NULL;
     active_quest = -1;
+}
+
+NpcResponse::~NpcResponse()
+{
+    delete menu;
 }
 
 bool NpcResponse::Load(iResultRow& row)
