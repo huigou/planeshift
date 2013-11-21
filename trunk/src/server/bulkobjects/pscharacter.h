@@ -736,7 +736,7 @@ public:
         guildinfo = g;
     }
     /// Return the active guild, if any for this character.
-    csWeakRef<psGuildInfo> GetGuild()
+    psGuildInfo* GetGuild()
     {
         return guildinfo;
     }
@@ -1671,7 +1671,7 @@ protected:
     bool LoadGMEvents();
 
     psCharacterInventory        inventory;                    ///< Character's inventory handler.
-    csWeakRef<psGuildInfo>      guildinfo;
+    psGuildInfo*                guildinfo;
     StatSet                     modifiers;
     SkillSet                    skills;
     csSet<PID>                  acquaintances;

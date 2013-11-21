@@ -591,7 +591,7 @@ public:
     {
         return 0;
     }
-    virtual csWeakRef<psGuildInfo> GetGuild()
+    virtual psGuildInfo* GetGuild()
     {
         return 0;
     }
@@ -1565,7 +1565,7 @@ public:
     }
 
     const char* GetGuildName();
-    csWeakRef<psGuildInfo> GetGuild()
+    psGuildInfo* GetGuild()
     {
         return psChar->GetGuild();
     }
