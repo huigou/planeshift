@@ -648,10 +648,10 @@ int psCharacterInventory::FindFirstOpenSlot(psItem *container)
 }
 
 //
-// Note that the semantics for the ownership of the 'item' pointer is
-// a bit strange.
-// If false is returned, the caller retains ownership.
-// If true is returned, the caller transfers ownership to the character's inventory or world.
+// Note that ownership of the 'item' pointer is
+// transfered to the character's inventory or the world.
+// The item pointer is updated to the resulting item and may be NULL
+// if the item was Money.
 //
 bool psCharacterInventory::AddOrDrop(psItem *&item, bool stack)
 {
@@ -763,7 +763,6 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
     // Next see if we can stack this with an existing stack in inventory
     if (stack && slot == PSCHARACTER_SLOT_NONE && item->GetIsStackable())
     {
-
         itemIndices = FindCompatibleStackedItems(item, true, precise);
         for (i=0; i<itemIndices.GetSize(); i++)
         {
@@ -778,10 +777,6 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
                     return true; // not really doing it here
 
                 inventory[itemIndices[i]].item->CombineStack(item);
-
-                // Here we update the passed in parameter so it points at the merged stack instead of the item that is gone now
-                delete item;
-                item = inventory[itemIndices[i]].item;
 
                 // Save new combined stack to db
                 inventory[itemIndices[i]].item->Save(true);
