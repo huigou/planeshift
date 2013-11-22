@@ -2469,8 +2469,8 @@ Usage: /drop [quantity] any noguard inplace [item-name]
           <content type="text">This command allows you to equip items from your inventory.
 
 Usage:
-/equip [quantity] [item-name]
-(Equips [quantity] amounts of an item with the name [item-name]. If no [quantity] is given one item will be equipped. If you have several items with the name [item-name] in your inventory the first found will be equipped. Items that can be equiped in the hand-slots will be first equipped to the right hand and only to the left hand if the right hand is already full.)
+/equip [quantity] [location] [item-name]
+(Equips [quantity] amounts of an item with the name [item-name] to the inventory slot [location]. If no [quantity] is given, one item will be equipped. If no [location] is given, the central "doll figure" is used. If you have several items with the name [item-name] in your inventory, the first found with the matching quantity will be equipped. Otherwise, the last item with a matching name is used. Possible [location] names are: lefthand, righthand, leftfinger, rightfinger, helm, neck, back, arms, gloves, boots, legs, belt, bracers, torso, mind.)
           </content>
          </Contents>
         </topic>
@@ -2732,7 +2732,7 @@ Usage:
 
   Usage:
   /show [windowname]
-  (Opens the window with the name [windowname]. If the window was already opened it is closed again. Possible names are: activemagic, bag, buddy, chat, glyph, group, guild, help, info, inv, petition, quest, shortcut, skills, spells
+  (Opens the window with the name [windowname]. If the window was already opened it is closed again. Possible names are: activemagic, bag, buddy, chat, glyph, group, guild, help, info, inv, options, petition, quest, shortcut, skills, spells.)
           </content>
          </Contents>
         </topic>
