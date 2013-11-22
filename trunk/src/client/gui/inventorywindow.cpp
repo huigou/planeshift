@@ -361,12 +361,18 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlo
         int container   = from->containerID;
         int slot        = from->slot;
 
-        if (container == CONTAINER_INVENTORY_BULK)
-        {
-            slot -= PSCHARACTER_SLOT_BULK1;
-            container =  (INVENTORY_SLOT_NUMBER)(slot/100);
-            slot = slot%100;
-        }
+        // Since we are about to move the item from inventory to the
+        // equipped slots, move it in the cache so we don't find it again.
+        // The server will soon update our inventory and equipped slots
+        // so this won't be noticed except by shortcut commands that try
+        // to search the cached inventory again before the server update.
+        psengine->GetInventoryCache()->MoveItem( container, slot,
+                CONTAINER_INVENTORY_EQUIPMENT, toSlotID, stackCount );
+
+        // Adjust container and slot ID for message format.
+        slot -= PSCHARACTER_SLOT_BULK1;
+        container = (INVENTORY_SLOT_NUMBER)(slot / 100);
+        slot = slot % 100;
 
         psSlotMovementMsg msg( container, slot,
                                CONTAINER_INVENTORY_EQUIPMENT, toSlotID,

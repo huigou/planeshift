@@ -96,6 +96,54 @@ bool psInventoryCache::EmptyInventoryItem(int slot, int /*container*/)
     return true;
 }
 
+bool psInventoryCache::MoveItem(int from_containerID, int from_slot,
+                                int to_containerID, int to_slot, int stackCount)
+{
+    CachedItemDescription* from = itemhash.Get(from_slot, NULL);
+    if (from)
+    {
+        if (from->stackCount == stackCount)
+        {
+            CachedItemDescription* to = itemhash.Get(to_slot, NULL);
+            if (!to)
+            {
+                // Move the whole stack.
+                itemBySlot.Delete(from);
+                itemhash.DeleteAll(from_slot);
+                from->slot = to_slot;
+                from->containerID = to_containerID;
+                itemhash.PutUnique(to_slot, from);
+                itemBySlot.InsertSorted(from, CachedItemDescription::CompareSlot);
+            }
+            else
+            {
+                // Swap entries.
+                // This isn't perfect since there is no error checking but
+                // the server should be updating the contents soon anyway.
+                itemBySlot.Delete(from);
+                itemhash.DeleteAll(from_slot);
+                itemBySlot.Delete(to);
+                itemhash.DeleteAll(to_slot);
+                from->slot = to_slot;
+                from->containerID = to_containerID;
+                to->slot = from_slot;
+                to->containerID = from_containerID;
+                itemhash.PutUnique(to_slot, from);
+                itemBySlot.InsertSorted(from, CachedItemDescription::CompareSlot);
+                itemhash.PutUnique(from_slot, to);
+                itemBySlot.InsertSorted(to, CachedItemDescription::CompareSlot);
+            }
+        }
+        else if (from->stackCount > stackCount)
+        {
+            // Being lazy here.
+            // Just update the stack count instead of splitting it.
+            from->stackCount -= stackCount;
+        }
+    }
+    return true;
+}
+
 bool psInventoryCache::SetInventoryItem(int slot,
                                         int containerID,
                                         csString name,

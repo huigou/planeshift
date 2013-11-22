@@ -97,6 +97,16 @@ public:
     void EmptyInventory(void);
 
     /**
+     * Move items from one slot to another.
+     *
+     * @param fromcontainer From container number
+     * @param fromslot From slot number
+     * @return bool Success flag
+     */
+    bool MoveItem(int from_containerID, int from_slot,
+                  int to_containerID, int to_slot, int stackCount);
+
+    /**
      * Get item from container slot.
      *
      * @param slot: Slot number
