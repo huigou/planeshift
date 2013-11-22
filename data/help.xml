@@ -2677,7 +2677,7 @@ Usage:
           </content>
          </Contents>
         </topic>
-        <topic name="report">
+        <topic name="/report">
          <Contents>
           <content type="text">With this command you can report players who don't follow the rules. The server will logs of all actions done by this player starting already a few minutes before you executed the command and lasting until some minutes after that. This is meant to have proof for GMs of rude behaviour, cheating, or other misbehaviour of a player.
 
