@@ -350,8 +350,12 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlo
         {
             if (slotDesc->containerID == CONTAINER_INVENTORY_BULK)
             {
+                // We found an item with a matching name.
+                // If the stack count matches the desired amount, we are done.
+                // Otherwise, keep looking for a better match.
                 from = slotDesc;
-                break;  // We found an item, so breaking the search
+                if (slotDesc->stackCount == stackCount)
+                    break;
             }
         }
     }
