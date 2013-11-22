@@ -1635,9 +1635,11 @@ void psItem::CombineStack(psItem* &stackme)
     if(stackme->schedule)
     {
         if(!schedule)   // Absorb schedule
+        {
             SetScheduledItem(stackme->schedule);
-
-        stackme->schedule = NULL; // Prevent deleting of schedule later in delete in RemoveInstance
+            // Prevent deleting of schedule later in delete in RemoveInstance
+            stackme->schedule = NULL;
+        }
     }
 
     // Average the qualities and set stack count
@@ -2733,6 +2735,7 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
 
             // Transfer the spawning rules for it to pass it forward
             psScheduledItem* newsch = new psScheduledItem(*this);
+            delete item->GetScheduledItem();
             item->SetScheduledItem(newsch);
 
             lastSpawn = csGetTicks();
