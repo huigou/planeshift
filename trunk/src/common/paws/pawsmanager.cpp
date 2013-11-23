@@ -1228,12 +1228,13 @@ void PawsManager::SetDragDropWidget(pawsWidget* dragDropWidget)
 }
 
 #define RegisterFactory(factoryclass)   \
-    factory = new factoryclass();
+    factory = new factoryclass(); \
+    CS_ASSERT(factory);
 
 
 void PawsManager::RegisterFactories()
 {
-    pawsWidgetFactory* factory;
+    pawsWidgetFactory* factory = NULL;
 
     RegisterFactory(pawsBaseWidgetFactory);
     RegisterFactory(pawsButtonFactory);
