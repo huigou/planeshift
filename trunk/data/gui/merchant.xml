@@ -3,13 +3,14 @@
 
     <frame x="100" y="100" width="620" height="400" border="yes" />
     <title resource="Scaling Title Bar" text="Merchant" align="left" close_button="yes"/>
-
-    <widget name="Transact" factory="pawsButton" id="100" tooltip="Exchange items">
+	<font  r="121" g="147" b="42" size="15"/>
+	
+    <widget name="Transact" factory="pawsButton" id="100" tooltip="Buy/Sell items">
         <frame x="560" y="10" width="48" height="48" border="no" />
         <bgimage resource="MerchantTrade" alpha="0" />
     </widget>
 
-     <widget name="TransactAll" factory="pawsButton" id="110" tooltip="Exchange all items">
+     <widget name="TransactAll" factory="pawsButton" id="110" tooltip="Buy/Sell all selected items">
        <frame x="560" y="62" width="48" height="48" border="no" />
        <bgimage resource="MerchantTrade" alpha="0" />
     </widget>
@@ -20,7 +21,7 @@
             <text string="ALL" horizAdjust="CENTRE" />
     </widget>
 
-     <widget name="TransactSingle" factory="pawsButton" id="120" tooltip="Exchange one item">
+     <widget name="TransactSingle" factory="pawsButton" id="120" tooltip="Buy/Sell one item">
        <frame x="560" y="114" width="48" height="48" border="no" />
        <bgimage resource="MerchantTrade" alpha="0" />
     </widget>
