@@ -47,14 +47,14 @@ pawsGenericView::pawsGenericView()
 
 pawsGenericView::pawsGenericView(const pawsGenericView& origin)
                 :pawsWidget(origin),
-                col(origin.col),
-                engine(origin.engine),
-                //idName(origin.idName),
-                loadedMap(origin.loadedMap),
-                mapName(origin.mapName),
-                objectPos(origin.objectPos),
                 stage(origin.stage),
-                view(origin.view)
+                view(origin.view),
+                engine(origin.engine),
+                col(origin.col),
+                objectPos(origin.objectPos),
+                //idName(origin.idName),
+                mapName(origin.mapName),
+                loadedMap(origin.loadedMap)
 {
 
 }
