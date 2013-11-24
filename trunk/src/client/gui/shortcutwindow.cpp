@@ -54,11 +54,11 @@
 //=============================================================================
 
 pawsShortcutWindow::pawsShortcutWindow() :
-    subWidget(NULL),
-    shortcutText(NULL),
     textBox(NULL),
     labelBox(NULL),
+    shortcutText(NULL),
     title(NULL),
+    subWidget(NULL),
     iconPalette(NULL),
     iconDisplay(NULL),
     iconDisplayID(0),
