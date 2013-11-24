@@ -48,6 +48,7 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Actions sounds" trans="" />
   <item orig="Active" trans="" />
   <item orig="Active Magic" trans="" />
+  <item orig="Active Magic Bar" trans="" />
   <item orig="Active Spells" trans="" />
   <item orig="Activity:" trans="" />
   <item orig="Actual FPS may vary." trans="" />
@@ -126,6 +127,9 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Buy Skill Level" trans="" />
   <item orig="Buy Skill Rank" trans="" />
   <item orig="Buy/Sell" trans="" />
+  <item orig="Buy/Sell all selected items" trans="" />
+  <item orig="Buy/Sell items" trans="" />
+  <item orig="Buy/Sell one item" trans="" />
   <item orig="Bye!" trans="" />
   <item orig="CC" trans="" />
   <item orig="CHARACTER CREATION" trans="" />
@@ -162,6 +166,7 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Circles available to withdraw." trans="" />
   <item orig="Claim" trans="" />
   <item orig="Clear" trans="" />
+  <item orig="Clear Icon" trans="" />
   <item orig="Click a character name below, then click Join. Or click New Character." trans="" />
   <item orig="Click to see Instructions" trans="" />
   <item orig="Close" trans="" />
@@ -741,6 +746,9 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Stop Attack" trans="" />
   <item orig="Storage" trans="" />
   <item orig="Store" trans="" />
+  <item orig="Store/Withdraw all selected items" trans="" />
+  <item orig="Store/Withdraw items" trans="" />
+  <item orig="Store/Withdraw one item" trans="" />
   <item orig="Strength on the lock" trans="" />
   <item orig="Study" trans="" />
   <item orig="Study Item" trans="" />
