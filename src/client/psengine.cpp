@@ -51,7 +51,8 @@ if (!myref)                                                  \
 }                                                            \
  
 #define RegisterFactory(factoryclass)   \
-    factory = new factoryclass();
+    factory = new factoryclass(); \
+    CS_ASSERT(factory);
 
 //////////////////////////////////////////////////////////////////////////////
 
