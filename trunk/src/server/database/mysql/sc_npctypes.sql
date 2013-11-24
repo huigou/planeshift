@@ -1388,3 +1388,6 @@ INSERT INTO sc_npctypes VALUES("142","FightNearestNPC","DoNothing,InRegion,Fight
 
 <react event="death"               behavior="FightNearestNPC" absolute="0" />
 <react event="death"               behavior="Loot" range="5" />');
+
+INSERT INTO sc_npctypes VALUES("143","SizeMove","MoveTest2",0,"$run","","","","","0",
+'<empty/>');

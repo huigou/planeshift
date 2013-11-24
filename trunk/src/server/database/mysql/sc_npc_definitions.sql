@@ -71,3 +71,6 @@ INSERT INTO sc_npc_definitions VALUES("100","NPC Fighter 1","FightNearestNPC","n
 INSERT INTO sc_npc_definitions VALUES("101","NPC Fighter 2","FightNearestNPC","npc_battlefield","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("102","NPC Fighter 3","FightNearestNPC","npc_battlefield","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("103","NPC Fighter 4","FightNearestNPC","npc_battlefield","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("104","Small Mover","SizeMove","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("105","Large Mover","SizeMove","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("106","Huge Mover","SizeMove","","0.00","0.00","0","N","N");
