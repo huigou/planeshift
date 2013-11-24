@@ -390,9 +390,13 @@ bool pawsButton::OnMouseDown( int button, int modifiers, int x, int y )
     }
 
     if (notify != NULL)
+    {
         return notify->CheckButtonPressed( button, modifiers, this );
+    }
     else if ( parent )
+    {
         return parent->CheckButtonPressed( button, modifiers, this );
+    }
 
     return false;
 }
@@ -429,11 +433,11 @@ bool pawsButton::OnMouseUp( int button, int modifiers, int x, int y )
 
     if (notify != NULL)
     {
-        notify->OnButtonReleased( button, modifiers, this );
+        notify->CheckButtonReleased( button, modifiers, this );
     }        
     else if ( parent )
     {
-        return parent->OnButtonReleased( button, modifiers, this );
+        return parent->CheckButtonReleased( button, modifiers, this );
     }
 
     return false;
