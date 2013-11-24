@@ -1198,7 +1198,7 @@ void pawsEditTextBox::Draw()
     {
         // Get the number of characters to draw
         int maxChars;
-        maxChars = GetFont()->GetLength(text.GetData() + start, screenFrame.Width()-margin*2);
+        maxChars = GetFont()->GetLength(text.GetData() + start, screenFrame.Width() - margin*2 - 8);
 
         if((int)cursorPosition > start + maxChars)
         {
@@ -1290,7 +1290,7 @@ void pawsEditTextBox::Draw()
 
                     DrawWidgetText(tmp.Slice(wordStart, wordEnd-wordStart).GetData(), textXPos, screenFrame.ymin + textCenterY + margin);
 
-                    // get the x-offest for the next word
+                    // get the x-offset for the next word
                     int textWidth, textHeight;
                     GetFont()->GetDimensions(tmp.Slice(wordStart, wordEnd-wordStart).GetData(), textWidth, textHeight);
                     textXPos += textWidth;
@@ -1504,14 +1504,7 @@ bool pawsEditTextBox::OnMouseDown(int button, int modifiers, int x, int y)
         }
         else
         {
-            // The click where in the text. Finding cursosr position in text.
-
-            if(textWidth > boxWidth)
-            {
-                x += textWidth - boxWidth;
-            }
-
-            // Find exact letter mouse was clicked on
+            // Find the exact letter the mouse was clicked on.
             int xlast;
             int xlast2=0;
             int charLen = 0;
