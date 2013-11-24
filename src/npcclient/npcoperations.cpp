@@ -3980,6 +3980,9 @@ bool PerceptOperation::CheckCondition(NPC* npc)
     env.Define("NPC",                      npc);
     env.Define("Result",                   0.0);
 
+    // TODO: Define target, (Primary player targets... HOW to do this??)
+    //env.Define("Target",                 targetGemObject);
+
     //this is going to crash if the script cannot be found.
     calcCondition->Evaluate(&env);
 

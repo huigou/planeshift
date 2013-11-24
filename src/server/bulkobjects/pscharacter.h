@@ -955,9 +955,21 @@ public:
     OverridableRace &GetOverridableRace();
 
     /** Gets the scale including any buffs.
+     *
+     *  Scale consist of a baseScale value from RaceInfo mutliplied with any buffs.
+     *
      *  @return A float which contains the final scale of the model.
      */
     float GetScale();
+
+    /** Gets the user scale value.
+     *
+     *  Use @see GetScale to get final model scale value. This function
+     *  return the scale from character_values and any buffs. 
+     *
+     *  @return A float which contains the user scale value.
+     */
+    float GetScaleValue();
 
     /**
      * Add a new explored area.

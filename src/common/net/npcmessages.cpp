@@ -206,16 +206,18 @@ psNPCRaceListMessage::psNPCRaceListMessage(MsgEntry *message)
         ri.walkSpeed = message->GetFloat();
         ri.runSpeed = message->GetFloat();
         ri.size = message->GetVector3();
+        ri.scale = message->GetFloat();
         raceInfo.Push(ri);
     }
 }
 
-void psNPCRaceListMessage::AddRace(csString& name, float walkSpeed, float runSpeed, const csVector3& size, bool last)
+void psNPCRaceListMessage::AddRace(csString& name, float walkSpeed, float runSpeed, const csVector3& size, float scale, bool last)
 {
     msg->Add(name.GetDataSafe());
     msg->Add( (float)walkSpeed);
     msg->Add( (float)runSpeed);
     msg->Add( size );
+    msg->Add( (float)scale );
     if (last)
     {
         msg->ClipToCurrentSize();
@@ -227,10 +229,11 @@ csString psNPCRaceListMessage::ToString(NetBase::AccessPointers * /*accessPointe
     csString msgtext;
     for (size_t c = 0; c < raceInfo.GetSize(); c++)
     {
-        msgtext.AppendFmt(" name: '%s' walkSpeed: %.2f runSpeed %.2f size %s",
+        msgtext.AppendFmt(" name: '%s' walkSpeed: %.2f runSpeed %.2f size %s scale %.2f",
                           raceInfo[c].name.GetDataSafe(),
                           raceInfo[c].walkSpeed,raceInfo[c].runSpeed,
-                          toString(raceInfo[c].size).GetDataSafe());
+                          toString(raceInfo[c].size).GetDataSafe(),
+                          raceInfo[c].scale);
     }
     
     return msgtext;

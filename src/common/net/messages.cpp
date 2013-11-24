@@ -5097,7 +5097,7 @@ psPersistActor::psPersistActor(uint32_t clientNum,
                                const char* MounterAnim,
                                unsigned short int gender,
                                float scale,
-                               float /*mountscale*/,
+                               float mountScale,
                                const char* helmGroup,
                                const char* bracerGroup,
                                const char* beltGroup,
@@ -5222,9 +5222,13 @@ psPersistActor::psPersistActor(MsgEntry* me, NetBase::AccessPointers* accessPoin
     mountScale = me->GetFloat();
 
     if(forNPClient || playerID.IsValid())
+    {
         masterID = PID(me->GetUInt32());
+    }
     else
+    {
         masterID = 0;
+    }
 
     if(!me->IsEmpty())
         flags   = me->GetUInt32();

@@ -158,10 +158,11 @@ public:
 
     typedef struct
     {
-        csString  name; // On average the name should not exceed 100 characters
+        csString  name;      ///< On average the name should not exceed 100 characters
         float     walkSpeed;
         float     runSpeed;
         csVector3 size;
+        float     scale;     ///< The scale override of this race.
     } NPCRaceInfo_t;
     
 
@@ -178,7 +179,7 @@ public:
     /**
      * Add Race Info to the message
      */
-    void AddRace(csString& name, float walkSpeed, float runSpeed, const csVector3& size, bool last);
+    void AddRace(csString& name, float walkSpeed, float runSpeed, const csVector3& size, float scale, bool last);
 
     /**
      * Convert the message into human readable string.

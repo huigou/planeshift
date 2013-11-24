@@ -75,7 +75,14 @@ void celHPath::Initialize(iCelPath* highLevelPath)
       if(hlPath->HasNext())
       {
         src = hlPath->Next();
-        dst = hlPath->Next();
+        if(hlPath->HasNext())
+        {
+          dst = hlPath->Next();
+        }
+        else
+        {
+          break;
+        }
       }
       else
       {
@@ -732,7 +739,7 @@ iCelHPath* celHNavStruct::ShortestPath (iMapNode* from, iMapNode* goal)
   hlGraph->RemoveNode(goalNodeIdx);
   hlGraph->RemoveNode(fromNodeIdx);  
 
-  if (hlPath->GetNodeCount() == 0)
+  if (hlPath->GetNodeCount() <= 1)
   {
     return 0;
   }

@@ -56,7 +56,7 @@ class csStringHashReversible;
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
 // no inadvertent overlaps.
-#define PS_NPCNETVERSION 0x1032
+#define PS_NPCNETVERSION 0x1033
 
 enum Slot_Containers
 {
@@ -3320,9 +3320,9 @@ public:
     uint32_t flags;
     InstanceID instance;
 
-    int posPlayerID; ///< Remember the position the playerID in the generated message
-    int posInstance; ///< Remember the position of the instance field in the generated message
-    float scale; ///< Stores the scale of the actor
+    int posPlayerID;  ///< Remember the position the playerID in the generated message
+    int posInstance;  ///< Remember the position of the instance field in the generated message
+    float scale;      ///< Stores the scale of the actor. Total model scale
     float mountScale; ///< Stores the scale of the mounted actor
 };
 
