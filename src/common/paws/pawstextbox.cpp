@@ -1480,9 +1480,6 @@ void pawsEditTextBox::Clear()
 bool pawsEditTextBox::OnMouseDown(int button, int modifiers, int x, int y)
 {
     x -= (screenFrame.xmin+margin+4); // Adjust x to be relative to the text box
-    int textWidth;
-    int boxWidth = (screenFrame.xmax + margin) - (screenFrame.xmin + margin);
-    int dummy;
 
     //Force the cursor to blink
     blink = true;
@@ -1496,7 +1493,10 @@ bool pawsEditTextBox::OnMouseDown(int button, int modifiers, int x, int y)
     }
     else
     {
-        GetFont()->GetDimensions(text.GetData() + start,textWidth,dummy);
+        int textWidth;
+        int dummy;
+
+        GetFont()->GetDimensions(text.GetData() + start, textWidth, dummy);
         if(x >= textWidth)
         {
             // The click where after all text. Moving cursor to end of text.
