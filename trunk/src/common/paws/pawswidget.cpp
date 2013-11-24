@@ -297,6 +297,11 @@ const char *pawsWidget::GetFilename()
 
 bool pawsWidget::CheckButtonPressed( int button, int modifiers, pawsWidget* pressedWidget )
 {
+    return OnButtonPressed( button, modifiers, pressedWidget );
+}
+
+bool pawsWidget::CheckButtonReleased( int button, int modifiers, pawsWidget* pressedWidget )
+{
     if ( pressedWidget->GetName()!=NULL  &&  GetCloseName()!=NULL  &&  strcmp( pressedWidget->GetName(),GetCloseName())==0 )
     {
         if (modifiers == (CSMASK_CTRL | CSMASK_ALT))
@@ -307,7 +312,9 @@ bool pawsWidget::CheckButtonPressed( int button, int modifiers, pawsWidget* pres
         return true;
     }
     else
-        return OnButtonPressed( button, modifiers, pressedWidget );
+    {
+        return OnButtonReleased( button, modifiers, pressedWidget );
+    }
 }
 
 /*

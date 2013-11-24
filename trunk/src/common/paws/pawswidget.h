@@ -461,6 +461,16 @@ public:
     virtual bool CheckButtonPressed( int button, int modifiers, pawsWidget* pressedWidget );
 
     /**
+     * Test button for activity.
+     *
+     * @param button The button to test.
+     * @param modifiers Modifier to use.
+     * @param pressedWidget The widget with the event.
+     * @return TRUE if pressed, FALSE otherwise
+     */    
+    virtual bool CheckButtonReleased( int button, int modifiers, pawsWidget* pressedWidget );
+    
+    /**
      * Allow pawsButton to simulate button pushes based on keypresses.
      * Return true if key is handled.
      */

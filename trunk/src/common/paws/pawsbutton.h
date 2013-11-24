@@ -51,11 +51,11 @@ public:
     
     void SetUpImage(const csString & image);
     void SetDownImage(const csString & image);
-	void SetGreyUpImage(const csString & greyUpImage);
-	void SetGreyDownImage(const csString & greyDownImage);
+    void SetGreyUpImage(const csString & greyUpImage);
+    void SetGreyDownImage(const csString & greyDownImage);
 
-	/* Specify the image to use for special flashing in chat window */
-	void SetOnSpecialImage(const csString & image);
+    /* Specify the image to use for special flashing in chat window */
+    void SetOnSpecialImage(const csString & image);
 
     void SetSound(const char *sound);
 
@@ -72,14 +72,14 @@ public:
     virtual bool GetState  () { return down; }
     /// Set the toggle attribute. To change toggle state use SetState
     virtual void SetToggle ( bool t )      { toggle = t; }
-	virtual void SetEnabled(bool enabled);
-	virtual bool IsEnabled() const;
+    virtual void SetEnabled(bool enabled);
+    virtual bool IsEnabled() const;
     virtual void SetNotify(pawsWidget * widget);
 
     void SetText(const char* text);
     const char* GetText() { return buttonLabel; }
     
-	/* Button flashing used mainly in chatwindow */
+    /* Button flashing used mainly in chatwindow */
     virtual void Flash ( bool state, FLASH_STATE type = FLASH_REGULAR ) 
 	{
 		if (state && !down) 
@@ -109,10 +109,10 @@ protected:
     /// Image to draw when button is released or when the mouse exits.
     csRef<iPawsImage> releasedImage;
 
-	csRef<iPawsImage> greyUpImage;
-	csRef<iPawsImage> greyDownImage;
+    csRef<iPawsImage> greyUpImage;
+    csRef<iPawsImage> greyDownImage;
 
-	/// Image to draw when button is released.
+    /// Image to draw when button is released.
     csRef<iPawsImage> specialFlashImage;
 
     /// Check to see if this is a toggle button.
