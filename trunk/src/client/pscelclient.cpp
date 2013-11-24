@@ -1402,6 +1402,7 @@ GEMClientActor::GEMClientActor(psCelClient* cel, psPersistActor &mesg)
     partName = factName;
     matName = mesg.matname;
     scale = mesg.scale;
+    baseScale = 1.0;
     mountScale = mesg.mountScale;
     ownerEID = mesg.ownerEID;
     lastSentVelocity = lastSentRotation = 0.0f;
@@ -1766,16 +1767,21 @@ void GEMClientActor::SetDRData(psDRMessage &drmsg)
             }
             else
             {
+                float scaleValue = scale / baseScale;
+            
+                csVector3 vel = drmsg.vel/scaleValue;
+                csVector3 worldVel = drmsg.worldVel/scaleValue;
+
                 // Force hard DR update on sector change, low speed, or large delta pos
                 if(drmsg.sector != cur_sector || (drmsg.vel < 0.1f) || (csSquaredDist::PointPoint(cur_pos,drmsg.pos) > 25.0f))
                 {
                     // Do hard DR when it would make you slide
-                    linmove->SetDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+                    linmove->SetDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,vel,worldVel,drmsg.ang_vel);
                 }
                 else
                 {
                     // Do soft DR when moving
-                    linmove->SetSoftDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
+                    linmove->SetSoftDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,vel,worldVel,drmsg.ang_vel);
                 }
 
                 DRcounter = drmsg.counter;
@@ -1918,7 +1924,6 @@ bool GEMClientActor::SetAnimation(const char* anim, int duration)
         int repeat = (int)(duration / ani_duration);
 
         csRef<iSpriteCal3DFactoryState> sprite =
-
             scfQueryInterface<iSpriteCal3DFactoryState> (pcmesh->GetFactory()->GetMeshObjectFactory());
 
 
@@ -2216,7 +2221,8 @@ bool GEMClientActor::CheckLoadStatus()
 
             // Normalize the mesh scale to the base scale of the mesh.
             Debug4(LOG_CELPERSIST,0,"DEBUG: Normalize scale: %f / %f = %f\n",scale, sprite->GetScaleFactor(), scale / sprite->GetScaleFactor());
-            scale = scale / sprite->GetScaleFactor();
+            baseScale = sprite->GetScaleFactor();  
+            scale = scale / baseScale;
             linmove->SetScale(scale);
 
             // Apply the resize transformation.

@@ -232,6 +232,7 @@ protected:
     float              ang_vel,vel;
     float              walkVelocity;
     float              runVelocity;
+    float              scale;                ///< Model scale value
     csString           region_name;          ///< Region name as loaded from db
     LocationType*      region;               ///< Cached pointer to the region
     bool               insideRegion;         ///< State variable for inside outside region checks.
@@ -539,9 +540,34 @@ protected:
      */
     void ReplaceLocations(csString &result);
 
+    /**
+     * Set total scale for model.
+     */
+    void SetScale(float scale);
+
+    /**
+     * Return the scale value used to scale speed/walk etc.
+     */
+    float GetScaleValue();
+
+    /**
+     * Return the angular velocity of this NPC.
+     */
     float GetAngularVelocity();
+
+    /**
+     * Return the ?override? velocity for this NPC.
+     */
     float GetVelocity();
+
+    /**
+     * Return the walk velocity for this NPC.
+     */
     float GetWalkVelocity();
+
+    /**
+     * Return the run velocity for this NPC.
+     */
     float GetRunVelocity();
 
     csString &GetRegionName()

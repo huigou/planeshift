@@ -1150,17 +1150,31 @@ float psCharacter::GetScale()
     // baseScale is based on cal3d file, example kran: 0.024
     float baseScale = GetRaceInfo()->GetScale();
 
-    // scaleVar is a user entered scale, so for 10% more it's 1.1
-    float scaleVar = 0;
-    if (GetVariableValue("scale"))
-        scaleVar = atof(GetVariableValue("scale").GetData());
+    // scaleValue is a user entered scale, so for 10% more it's 1.1
+    float scaleVar = GetScaleValue();
 
     // use overridden scale if specified
-    float scale =  scaleVar>0 ? scaleVar*baseScale : baseScale;
+    float scale =  scaleVar*baseScale;
     Debug5 (LOG_CELPERSIST, 0, "DEBUG: Base scale %f , scaleVar: %f, persist New Scale %s %f\n",baseScale, scaleVar, GetCharName(),scale);
 
     return scale;
 }
+
+float psCharacter::GetScaleValue()
+{
+    // scaleVar is a user entered scale, so for 10% more it's 1.1
+    float scaleVar = 1.0;
+
+    if (GetVariableValue("scale"))
+    {
+        scaleVar = atof(GetVariableValue("scale").GetData());
+    }
+
+    // TODO: add any other "user" modificaitons to scale (Buffs).
+
+    return scaleVar;
+}
+
 
 psRaceInfo* psCharacter::GetRaceInfo()
 {

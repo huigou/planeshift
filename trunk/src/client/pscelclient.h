@@ -670,6 +670,7 @@ public:
     csTicks lastDRUpdateTime;
     unsigned short gender;
     float scale;
+    float baseScale;
     float mountScale;
 
     // Access functions for the group var

@@ -137,6 +137,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
 
     ang_vel=vel=999;
     walkVelocity=runVelocity=0.0; // Will be cached
+    scale=1.0;
     region=NULL;
     insideRegion = true; // We assume that we start inside the region, if it exists
     insideTribeHome = true; // We assume that we start inside tribe home.
@@ -739,6 +740,24 @@ bool NPC::CopyLocate(csString source, csString destination, unsigned int flags)
     return true;
 }
 
+void NPC::SetScale(float scale)
+{
+    this->scale = scale;
+}
+
+float NPC::GetScaleValue()
+{
+    psNPCRaceListMessage::NPCRaceInfo_t* raceInfo = GetRaceInfo();
+    
+    if (raceInfo)
+    {
+       return scale/GetRaceInfo()->scale;
+    }
+
+    return scale;
+}
+
+
 float NPC::GetAngularVelocity()
 {
     if(ang_vel == 999)
@@ -763,7 +782,7 @@ float NPC::GetWalkVelocity()
         walkVelocity = npcclient->GetWalkVelocity(npcActor->GetRace());
     }
 
-    return walkVelocity;
+    return walkVelocity*GetScaleValue();
 }
 
 float NPC::GetRunVelocity()
@@ -774,7 +793,7 @@ float NPC::GetRunVelocity()
         runVelocity = npcclient->GetRunVelocity(npcActor->GetRace());
     }
 
-    return runVelocity;
+    return runVelocity*GetScaleValue();
 }
 
 LocationType* NPC::GetRegion()
@@ -853,8 +872,9 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Spawn position:       %s\n",toString(spawnPosition,spawnSector).GetDataSafe());
     CPrintf(CON_CMDOUTPUT, "Ang vel:              %.2f\n",ang_vel);
     CPrintf(CON_CMDOUTPUT, "Vel:                  %.2f\n",vel);
-    CPrintf(CON_CMDOUTPUT, "Walk velocity:        %.2f\n",walkVelocity);
-    CPrintf(CON_CMDOUTPUT, "Run velocity:         %.2f\n",runVelocity);
+    CPrintf(CON_CMDOUTPUT, "Walk velocity:        %.2f\n",GetWalkVelocity());
+    CPrintf(CON_CMDOUTPUT, "Run velocity:         %.2f\n",GetRunVelocity());
+    CPrintf(CON_CMDOUTPUT, "Scale value:          %.2f\n",GetScaleValue());
     CPrintf(CON_CMDOUTPUT, "HP(Value/Max/Rate):   %.1f/%.1f/%.1f\n",GetHP(),GetMaxHP(),GetHPRate());
     CPrintf(CON_CMDOUTPUT, "Mana(V/M/R):          %.1f/%.1f/%.1f\n",GetMana(),GetMaxMana(),GetManaRate());
     CPrintf(CON_CMDOUTPUT, "PStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetPysStamina(),GetMaxPysStamina(),GetPysStaminaRate());
