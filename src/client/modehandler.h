@@ -155,7 +155,7 @@ protected:
     csRef<psCelClient>      celclient;
     csRef<MsgHandler>       msghandler;
     csRef<iEngine>          engine;
-	csRef<iVFS>				vfs;
+    csRef<iVFS>             vfs;
 
     // Each element represents an hour of the day.
     csPDelArray<LightingList> lights;

@@ -193,8 +193,6 @@ bool ModeHandler::LoadLightingLevels()
     if(!vfs)
         return false;
 
-    csRef<iDocumentSystem> xml = psengine->GetXMLParser();
-
     csRef<iDataBuffer> buf(vfs->ReadFile("/planeshift/world/lighting.xml"));
 
     if(!buf || !buf->GetSize())
@@ -203,7 +201,7 @@ bool ModeHandler::LoadLightingLevels()
         return false;
     }
 
-    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDocument> doc = psengine->GetXMLParser()->CreateDocument();
 
     const char* error = doc->Parse(buf);
     if(error)

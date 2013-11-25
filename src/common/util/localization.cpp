@@ -30,13 +30,7 @@
 // CLIENT INCLUDES
 #include "localization.h"
 
-
-
 #define DEFAULT_FILE_PATH "/this/"
-
-
-csRef<iDocument> ParseFile(iObjectRegistry* object_reg, const csString & name);
-
 
 psLocalization::psLocalization()
 {

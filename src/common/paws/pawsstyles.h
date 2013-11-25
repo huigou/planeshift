@@ -89,7 +89,7 @@ protected:
       * 'beingInh' contains all styles whose inheritance is just being recursively calculated
                    - this is used to detect cycles in the inheritance relationships 
       */
-    void InheritFromParent(csRef <iDocumentNode> & style, STRING_HASH(bool) & alreadyInh, STRING_HASH(bool) & beingInh);
+    void InheritFromParent(iDocumentNode* style, STRING_HASH(bool) & alreadyInh, STRING_HASH(bool) & beingInh);
     
     iObjectRegistry* objectReg;
     

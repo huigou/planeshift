@@ -149,7 +149,7 @@ int ProgressCallback(void *clientp, double finalSize, double dlnow, double /*ult
     return UpdaterEngine::GetSingletonPtr()->CheckQuit() ? 1 : 0;
 }
 
-Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
+Downloader::Downloader(iVFS* _vfs, UpdaterConfig* _config)
 {
     this->Init(_vfs);
 
@@ -159,7 +159,7 @@ Downloader::Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config)
     activeMirrorID = startingMirrorID;    
 }
 
-Downloader::Downloader(csRef<iVFS> _vfs)
+Downloader::Downloader(iVFS* _vfs)
 {
     this->Init(_vfs);
 }
@@ -173,7 +173,7 @@ Downloader::~Downloader()
     delete fileUtil;
 }
 
-void Downloader::Init(csRef<iVFS> _vfs)
+void Downloader::Init(iVFS* _vfs)
 {
     curl = curl_easy_init();
     curlerror = new char[CURL_ERROR_SIZE];

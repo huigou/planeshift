@@ -220,7 +220,7 @@ void ActionManager::HandleQueryMessage(csString xml, Client* client)
     }
 }
 
-void ActionManager::LoadXML(csRef<iDocumentNode> topNode)
+void ActionManager::LoadXML(iDocumentNode* topNode)
 {
     csRef<iDocumentNode> node;
 
@@ -264,7 +264,7 @@ void ActionManager::LoadXML(csRef<iDocumentNode> topNode)
 }
 
 
-bool ActionManager::HandleSelectQuery(csRef<iDocumentNode> topNode, Client* client)
+bool ActionManager::HandleSelectQuery(iDocumentNode* topNode, Client* client)
 {
     bool handled = false;
 

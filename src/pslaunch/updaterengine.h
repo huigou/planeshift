@@ -214,12 +214,12 @@ public:
     UpdaterConfig* GetConfig() const { return config; }
 
     /* Return VFS */
-    csRef<iVFS> GetVFS() const { return vfs; }
+    iVFS* GetVFS() const { return vfs; }
 
     csString GetCurrentClientVersion();
 
     // Find the config node given an xml file name.
-    csRef<iDocumentNode> GetRootNode(const char* fileName, csRef<iDocument>* document = 0);
+    csPtr<iDocumentNode> GetRootNode(const char* fileName, csRef<iDocument>* document = 0);
 
     /*
     * Starts and finishes a self update

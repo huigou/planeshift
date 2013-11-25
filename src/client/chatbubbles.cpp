@@ -71,7 +71,7 @@ bool psChatBubbles::Load(const char * filename, bool saveAgain)
 {
     csRef<iDocument> doc;
     csRef<iDocumentNode> root;
-    csRef<iVFS> vfs;
+    iVFS* vfs;
     csRef<iDocumentSystem>  xml;
     const char* error;
 

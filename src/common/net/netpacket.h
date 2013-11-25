@@ -209,15 +209,15 @@ public:
                       uint32_t id, uint32_t off, uint32_t totalsize, uint16_t sz,
                       const char *bytes);
 
-    psNetPacketEntry (csRef<psNetPacketEntry> )
+    psNetPacketEntry (psNetPacketEntry* )
     {
         CS_ASSERT(false);
     }
 
     ~psNetPacketEntry();
     
-    bool Append(csRef<psNetPacketEntry> next);
-    csRef <psNetPacketEntry> GetNextPacket(psNetPacket* &packetdata);
+    bool Append(psNetPacketEntry* next);
+    csPtr<psNetPacketEntry> GetNextPacket(psNetPacket* &packetdata);
 
 
     void* GetData()

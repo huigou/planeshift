@@ -22,7 +22,7 @@
 
 #include "pawstitle.h"
 
-pawsTitle::pawsTitle(pawsWidget * parent, csRef<iDocumentNode> node)
+pawsTitle::pawsTitle(pawsWidget * parent, iDocumentNode* node)
          : titleAlign(PTA_CENTER), scaleWidth(true), width(1.0f), height(16), text(""), textAlign(PTA_CENTER)
 {
 	parent->AddChild(this);

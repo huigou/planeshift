@@ -36,7 +36,7 @@
 
 #include "fileutil.h"
 
-FileUtil::FileUtil(csRef<iVFS> _vfs)
+FileUtil::FileUtil(iVFS* _vfs)
 {
     vfs = _vfs;
 }

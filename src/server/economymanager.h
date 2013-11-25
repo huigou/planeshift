@@ -83,14 +83,14 @@ public:
     void HandleDropMessage(MsgEntry *me,Client *client);
     void HandleLootMessage(MsgEntry *me,Client *client);
 
-    void AddTransaction(csRef<TransactionEntity> trans, bool sell, const char* type);
+    void AddTransaction(TransactionEntity* trans, bool sell, const char* type);
 
     TransactionEntity* GetTransaction(int id);
     unsigned int GetTotalTransactions();
     void ClearTransactions();
     void ScheduleDrop(csTicks ticks,bool loop);
 
-    csRef<ItemSupplyDemandInfo> GetItemSupplyDemandInfo(unsigned int itemId);
+    ItemSupplyDemandInfo* GetItemSupplyDemandInfo(unsigned int itemId);
     
     struct Economy
     {
@@ -110,7 +110,6 @@ public:
 protected:
     csArray< csRef<TransactionEntity> > history;
     csHash< csRef<ItemSupplyDemandInfo> > supplyDemandInfo;
-    
 };
 
 

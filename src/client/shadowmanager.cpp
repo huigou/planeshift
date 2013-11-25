@@ -40,7 +40,7 @@
 
 bool psShadowManager::WithinRange(GEMClientObject * object, const csBox3 & bbox) const
 {
-    if (!object || !object->GetMesh().IsValid())
+    if (!object || !object->GetMesh())
         return false;
 
     if (shadowRange < 0)
@@ -84,8 +84,7 @@ bool psShadowManager::Load(const char * filename)
 {
     csRef<iDocument> doc;
     csRef<iDocumentNode> root;
-    csRef<iVFS> vfs;
-    csRef<iDocumentSystem>  xml;
+    iVFS* vfs;
     const char* error;
 
     vfs = psengine->GetVFS();
@@ -97,8 +96,7 @@ bool psShadowManager::Load(const char * filename)
         return false;
     }
     
-    xml = psengine->GetXMLParser ();
-    doc = xml->CreateDocument();
+    doc = psengine->GetXMLParser()->CreateDocument();
     assert(doc);
     error = doc->Parse( buff );
     if ( error )

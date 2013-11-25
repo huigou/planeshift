@@ -267,7 +267,7 @@ void psXMLTag::GetTagName( psString& str)
 }
 
 
-csRef<iDocument> ParseFile(iObjectRegistry* object_reg, const csString & name)
+csPtr<iDocument> ParseFile(iObjectRegistry* object_reg, const csString & name)
 {
     csRef<iVFS> vfs;
     csRef<iDocumentSystem>  xml;
@@ -294,10 +294,10 @@ csRef<iDocument> ParseFile(iObjectRegistry* object_reg, const csString & name)
         Error3("Parse error in %s: %s", name.GetData(), error);
         return NULL;
     }
-    return doc;    
+    return csPtr<iDocument>(doc);    
 }
 
-csRef<iDocument> ParseString(const csString & str, bool notify)
+csPtr<iDocument> ParseString(const csString & str, bool notify)
 {
     csRef<iDocumentSystem> xml;
     xml.AttachNew(new csTinyDocumentSystem);
@@ -312,17 +312,16 @@ csRef<iDocument> ParseString(const csString & str, bool notify)
         }
         return NULL;
     }
-    return doc;
+    return csPtr<iDocument>(doc);
 }
 
-csRef<iDocumentNode> ParseStringGetNode(const csString & str, const csString & topNodeName, bool notify)
+csPtr<iDocumentNode> ParseStringGetNode(const csString & str, const csString & topNodeName, bool notify)
 {
     csRef<iDocument> doc = ParseString(str, notify);
     if (doc == NULL) return NULL;
     csRef<iDocumentNode> root = doc->GetRoot();
     if (root == NULL) return NULL;
-    csRef<iDocumentNode> topNode = root->GetNode(topNodeName);
-    return topNode;
+    return root->GetNode(topNodeName);
 }
 
 csString EscpXML(const char * str)
@@ -349,7 +348,7 @@ csString EscpXML(const char * str)
     return ret;
 }
 
-csString GetNodeXML(csRef<iDocumentNode> node, bool childrenOnly)
+csString GetNodeXML(iDocumentNode* node, bool childrenOnly)
 {
     psString xml;
     csRef<iDocumentNodeIterator> nodes;
@@ -395,7 +394,7 @@ csString GetNodeXML(csRef<iDocumentNode> node, bool childrenOnly)
     return xml;
 }
 
-void CopyXMLNode(csRef<iDocumentNode> source, csRef<iDocumentNode> target, int mode)
+void CopyXMLNode(iDocumentNode* source, iDocumentNode* target, int mode)
 {
     if (mode == 0)
     {

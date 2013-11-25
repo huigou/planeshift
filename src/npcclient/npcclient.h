@@ -658,7 +658,7 @@ public:
      *
      * @param xmlfile Name of the xml file to find the root node of.
      */
-    csRef<iDocumentNode> GetRootNode(const char* xmlfile);
+    csPtr<iDocumentNode> GetRootNode(const char* xmlfile);
 
     /**
      * Add an NPCType

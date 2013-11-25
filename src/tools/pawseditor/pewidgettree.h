@@ -37,7 +37,7 @@ class peWidgetTree : public pawsWidget
 {
 public:
 
-    void LoadWidget(csRef<iDocumentNode> widgetNode);
+    void LoadWidget(iDocumentNode* widgetNode);
 
     // implemented virtual functions from pawsWidgets
     bool PostSetup();
@@ -45,7 +45,7 @@ public:
 
 private:
 
-    void BuildWidgetTree(pawsSimpleTreeNode *parent, csRef<iDocumentNode> widgetNode);
+    void BuildWidgetTree(pawsSimpleTreeNode *parent, iDocumentNode* widgetNode);
 
     pawsTree * widgetItemsTree;
     pawsSimpleTreeNode * widgetItemsRoot;

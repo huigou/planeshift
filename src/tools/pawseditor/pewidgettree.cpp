@@ -57,7 +57,7 @@ bool peWidgetTree::OnSelected( pawsWidget* widget)
     return true;
 }
 
-void peWidgetTree::LoadWidget(csRef<iDocumentNode> widgetNode)
+void peWidgetTree::LoadWidget(iDocumentNode* widgetNode)
 {
     widgetItemsTree->Clear();
     
@@ -89,7 +89,7 @@ void peWidgetTree::LoadWidget(csRef<iDocumentNode> widgetNode)
     }
 }
 
-void peWidgetTree::BuildWidgetTree(pawsSimpleTreeNode *parent, csRef<iDocumentNode> widgetNode)
+void peWidgetTree::BuildWidgetTree(pawsSimpleTreeNode *parent, iDocumentNode* widgetNode)
 {
     csString name;
     csRef<iDocumentNodeIterator> iter = widgetNode->GetNodes();

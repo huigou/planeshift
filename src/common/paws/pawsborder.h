@@ -99,10 +99,10 @@ public:
     csRect GetRect();
 
     void SetTitle(const char *t, bool shadow = true);
-    void SetTitleImage(csRef<iPawsImage> drawable) { titleImage = drawable; } // This will take delete responsibility
+    void SetTitleImage(iPawsImage* drawable) { titleImage = drawable; } // This will take delete responsibility
     void SetTitleAlign(int al)        { align = al; }
 
-    csRef<iPawsImage> GetTitleImage() { return titleImage; }
+    iPawsImage* GetTitleImage() { return titleImage; }
     const char* GetTitle() { return title; }
 
 protected:

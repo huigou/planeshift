@@ -89,7 +89,7 @@ void pawsStyles::InheritStyles()
     }
 }
 
-void pawsStyles::InheritFromParent(csRef <iDocumentNode> & style, STRING_HASH(bool) & alreadyInh, STRING_HASH(bool) & beingInh)
+void pawsStyles::InheritFromParent(iDocumentNode* style, STRING_HASH(bool) & alreadyInh, STRING_HASH(bool) & beingInh)
 {
     csString name = style->GetAttributeValue("name");
     csString inherit = style->GetAttributeValue("inherit");

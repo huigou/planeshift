@@ -196,7 +196,7 @@ public:
     }
 
     /** Check if the item has an effect attached to it and process it if so. */
-    void HandleItemEffect(const char* factName, csRef<iMeshWrapper> mw, bool onGround = true, const char* slot = 0,
+    void HandleItemEffect(const char* factName, iMeshWrapper* mw, bool onGround = true, const char* slot = 0,
                           csHash<int, csString>* effectids = 0, csHash<int, csString>* lightids = 0);
 
     /** Called when new world maps were loaded
@@ -472,7 +472,7 @@ public:
     /** Get the mesh that this object has.
      * @return The iMeshWrapper or 0 if no mesh.
      */
-    csRef<iMeshWrapper> GetMesh() const;
+    iMeshWrapper* GetMesh() const;
 
     virtual void Update();
 

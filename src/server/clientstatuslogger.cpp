@@ -34,7 +34,7 @@
 /**
 *
 */
-void ClientStatusLogger::AddBasicNode(csRef<iDocumentNode> parent, const char* fieldName, 
+void ClientStatusLogger::AddBasicNode(iDocumentNode* parent, const char* fieldName, 
                                       const char* text)
 {
     csRef<iDocumentNode> infoNode;
@@ -48,7 +48,7 @@ void ClientStatusLogger::AddBasicNode(csRef<iDocumentNode> parent, const char* f
 /**
 *
 */
-void ClientStatusLogger::AddBasicNode(csRef<iDocumentNode> parent, const char* fieldName, 
+void ClientStatusLogger::AddBasicNode(iDocumentNode* parent, const char* fieldName, 
                                       int data)
 {
     csRef<iDocumentNode> infoNode;
@@ -62,20 +62,20 @@ void ClientStatusLogger::AddBasicNode(csRef<iDocumentNode> parent, const char* f
 /**
 *
 */
-csRef<iDocumentNode> ClientStatusLogger::AddContainerNode(csRef<iDocumentNode> parent, 
+csPtr<iDocumentNode> ClientStatusLogger::AddContainerNode(iDocumentNode* parent, 
                                                           const char* fieldName)
 {
     csRef<iDocumentNode> containerNode;
     containerNode = parent->CreateNodeBefore(CS_NODE_ELEMENT);
     containerNode->SetValue(fieldName);
 
-    return containerNode;
+    return csPtr<iDocumentNode>(containerNode);
 }
 
 /**
 *
 */
-void ClientStatusLogger::LogBasicInfo(Client* client, csRef<iDocumentNode> node)
+void ClientStatusLogger::LogBasicInfo(Client* client, iDocumentNode* node)
 {
     AddBasicNode(node, "PlayerName", client->GetName());
     AddBasicNode(node, "SecurityLevel", client->GetSecurityLevel());
@@ -105,7 +105,7 @@ void ClientStatusLogger::LogClientInfo(Client* client)
 /**
 *
 */
-void ClientStatusLogger::LogConnectionInfo(Client* client, csRef<iDocumentNode> node)
+void ClientStatusLogger::LogConnectionInfo(Client* client, iDocumentNode* node)
 {
     csRef<iDocumentNode> connNode = AddContainerNode(node, "Connection");
 
@@ -127,7 +127,7 @@ void ClientStatusLogger::LogConnectionInfo(Client* client, csRef<iDocumentNode> 
 /**
 *
 */
-void ClientStatusLogger::LogGuildInfo(Client* client, csRef<iDocumentNode> node)
+void ClientStatusLogger::LogGuildInfo(Client* client, iDocumentNode* node)
 {
 
     gemActor* actor = client->GetActor();
@@ -154,7 +154,7 @@ void ClientStatusLogger::LogGuildInfo(Client* client, csRef<iDocumentNode> node)
 /**
 *  This constructor must always be used.
 */
-ClientStatusLogger::ClientStatusLogger(csRef<iDocumentNode> statusNode)
+ClientStatusLogger::ClientStatusLogger(iDocumentNode* statusNode)
 : statusRootNode(statusNode)
 {
     startTime = csGetTicks();

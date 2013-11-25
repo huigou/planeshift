@@ -514,12 +514,12 @@ csVector2 PawsEditorApp::GetMousePointer()
     return mousePointer;
 }
 
-csRef<iConfigManager> PawsEditorApp::GetConfigManager()
+iConfigManager* PawsEditorApp::GetConfigManager()
 {
     return cfgmgr;
 }
 
-csRef<iVFS> PawsEditorApp::GetVFS()
+iVFS* PawsEditorApp::GetVFS()
 {
     return vfs;
 }
@@ -567,7 +567,7 @@ void PawsEditorApp::TakeScreenshot(const csString & fileName)
     printf("Screenshot taken.\n");
 }
 
-csRef<iDocumentNode> PawsEditorApp::ParseWidgetFile( const char* widgetFile )
+csPtr<iDocumentNode> PawsEditorApp::ParseWidgetFile( const char* widgetFile )
 {
     csRef<iDocument> doc = ParseFile(paws->GetObjectRegistry(), widgetFile);  
 
@@ -585,11 +585,11 @@ csRef<iDocumentNode> PawsEditorApp::ParseWidgetFile( const char* widgetFile )
     csRef<iDocumentNode> widgetNode = root->GetNode("widget_description");
     if (!widgetNode)
         Error2("File %s has no <widget_description> tag", widgetFile);
-    return widgetNode;
+    return csPtr<iDocumentNode>(widgetNode);
 }
 
 
-csRef<iDocumentNode> PawsEditorApp::ParseWidgetFile_mod( const char* widgetFile )
+csPtr<iDocumentNode> PawsEditorApp::ParseWidgetFile_mod( const char* widgetFile )
 {
     vfs =  csQueryRegistry<iVFS > (object_reg);
     assert(vfs);
@@ -641,7 +641,7 @@ csRef<iDocumentNode> PawsEditorApp::ParseWidgetFile_mod( const char* widgetFile 
         widgetintnode->SetAttribute("savepositions", "no");
     }
     
-    return widgetNode;
+    return csPtr<iDocumentNode>(widgetNode);
 }
 
 void PawsEditorApp::ReloadWidget()

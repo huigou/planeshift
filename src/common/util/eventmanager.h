@@ -52,19 +52,15 @@ protected:
 	void TrackEventTimes(csTicks timeTaken,MsgEntry *msg);
 
 public:
-    EventManager(csRef<CS::Threading::Thread> _thread);
     EventManager();
     virtual ~EventManager();
 
     // Thread main loop, handling timed events and inbound messages
     virtual void Run ();
 
-	// Called by external threads to make the Run() loop stop.
+    // Called by external threads to make the Run() loop stop.
     void Stop() { stop = true; }
 
-	/// Implementation of singleton pattern
-    static csRef<EventManager> Create(int queuelen);
-    
     /// Add new event to scheduler queue.
     void Push(psGameEvent *event);
 

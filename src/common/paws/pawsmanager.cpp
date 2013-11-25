@@ -883,7 +883,7 @@ void PawsManager::RegisterWidgetFactory(pawsWidgetFactory* fact)
     factories.Push(fact);
 }
 
-csRef<iDocumentNode> PawsManager::ParseWidgetFile(const char* widgetFile)
+csPtr<iDocumentNode> PawsManager::ParseWidgetFile(const char* widgetFile)
 {
     csRef<iDocument> doc;
     const char* error;
@@ -909,7 +909,7 @@ csRef<iDocumentNode> PawsManager::ParseWidgetFile(const char* widgetFile)
         csRef<iDocumentNode> widgetNode = root->GetNode("widget_description");
         if(!widgetNode)
             Error2("File %s has no <widget_description> tag", widgetFile);
-        return widgetNode;
+        return csPtr<iDocumentNode>(widgetNode);
     }
     else
     {

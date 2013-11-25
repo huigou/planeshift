@@ -37,7 +37,7 @@ void psOptions::EnsureSubscription(const char * name)
     PawsManager::GetSingleton().Subscribe(name, this);
 }
 
-psOptions::psOptions(const char * filename, csRef<iVFS> vfs)
+psOptions::psOptions(const char * filename, iVFS* vfs)
          : filename(filename)
 {
     configFile.AttachNew(new csConfigFile(filename, vfs));

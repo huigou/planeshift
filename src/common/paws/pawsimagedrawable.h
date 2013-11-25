@@ -63,7 +63,7 @@ private:
     bool PreparePixmap();
 
 public:
-    pawsImageDrawable(csRef<iDocumentNode> node);
+    pawsImageDrawable(iDocumentNode* node);
     pawsImageDrawable(const char * file, const char * resource, bool tiled, const csRect & textureRect, int alpha, int transR, int transG, int transB);
     pawsImageDrawable(const char * file, const char * resource);
 

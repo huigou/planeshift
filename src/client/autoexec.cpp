@@ -35,7 +35,6 @@
 Autoexec::Autoexec() : enabled(false)
 {
       csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
-      csRef<iDocumentSystem> xml = psengine->GetXMLParser ();
 
     // Check if there have been created a custom file
     // else use the default file.
@@ -97,11 +96,10 @@ csString Autoexec::getCommands(csString name)
 void Autoexec::LoadCommands(const char * fileName)
 {
     csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iDocumentSystem> xml = psengine->GetXMLParser ();
 
     csRef<iDocumentNode> root, autoexecNode, optionsNode;
 
-    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDocument> doc = psengine->GetXMLParser()->CreateDocument();
     csRef<iDataBuffer> buf (vfs->ReadFile (fileName));
     if (!buf || !buf->GetSize ())
     {

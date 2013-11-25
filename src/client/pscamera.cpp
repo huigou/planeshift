@@ -408,8 +408,7 @@ bool psCamera::LoadFromFile(bool useDefault, bool overrideCurrent)
     csRef<iDocument> doc;
     csRef<iDocumentNode> root, camNode, settingNode;
     csRef<iDocumentNodeIterator> xmlbinds;
-    csRef<iVFS> vfs;
-    csRef<iDocumentSystem>  xml;
+    iVFS* vfs;
     const char* error;
 
     vfs = psengine->GetVFS();
@@ -420,8 +419,7 @@ bool psCamera::LoadFromFile(bool useDefault, bool overrideCurrent)
         Error2("Could not find file: %s", fileName.GetData());
         return false;
     }
-    xml = psengine->GetXMLParser ();
-    doc = xml->CreateDocument();
+    doc = psengine->GetXMLParser()->CreateDocument();
     assert(doc);
     error = doc->Parse( buff );
     if ( error )

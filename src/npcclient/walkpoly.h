@@ -156,7 +156,7 @@ public:
     psSeed(csVector3 pos, iSector * sector, float quality);
     psSeed(csVector3 edgePos, csVector3 pos, iSector * sector, float quality);
     void SaveToString(csString & str);
-    void LoadFromXML(iDocumentNode * node, csRef<iEngine> engine);
+    void LoadFromXML(iDocumentNode * node, iEngine* engine);
     bool CheckValidity(psMapWalker * walker);
     
     bool edgeSeed;
@@ -354,7 +354,7 @@ public:
     bool CollidesWithPolys(psWalkPolyMap & map, csList<psWalkPoly*> * polys);
     
     void SaveToString(csString & str);
-    void LoadFromXML(iDocumentNode * node, csRef<iEngine> engine);
+    void LoadFromXML(iDocumentNode * node, iEngine* engine);
     
     /** Populates the 'conts' array  */
     void CalcConts(psWalkPolyMap & map);

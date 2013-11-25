@@ -340,7 +340,7 @@ bool NetBase::CheckIn()
     * Now either send this packet to BuildMessage, or loop through
     * subpackets if they are merged.
     */
-    csRef<psNetPacketEntry> splitpacket = pkt;
+    csRef<psNetPacketEntry> splitpacket;
     psNetPacket      *packetdata = NULL;
 
     do
@@ -365,7 +365,7 @@ bool NetBase::Flush(MsgQueue* /*queue*/)
 }
 
 
-bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
+bool NetBase::HandleAck(psNetPacketEntry* pkt, Connection* connection,
                         LPSOCKADDR_IN addr)
 {
     psNetPacket* packet = pkt->packet;
@@ -487,7 +487,7 @@ bool NetBase::HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection,
 }
 
 
-bool NetBase::CheckDoublePackets(Connection* connection, csRef<psNetPacketEntry> pkt)
+bool NetBase::CheckDoublePackets(Connection* connection, psNetPacketEntry* pkt)
 {
     csArray<uint32_t> offsets = connection->packethistoryhash.GetAll(pkt->packet->pktid);
     if(!offsets.IsEmpty())
@@ -669,7 +669,7 @@ bool NetBase::SendMergedPackets(NetPacketQueue *q)
 }
 
 
-bool NetBase::SendSinglePacket(csRef<psNetPacketEntry> pkt)
+bool NetBase::SendSinglePacket(psNetPacketEntry* pkt)
 {
     if (!SendFinalPacket (pkt))
     {
@@ -703,7 +703,7 @@ bool NetBase::SendSinglePacket(csRef<psNetPacketEntry> pkt)
 }
 
 
-bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt)
+bool NetBase::SendFinalPacket(psNetPacketEntry* pkt)
 {
     Connection* connection = GetConnByNum(pkt->clientnum);
     if (!connection)
@@ -724,7 +724,7 @@ bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt)
 }
 
 
-bool NetBase::SendFinalPacket(csRef<psNetPacketEntry> pkt, LPSOCKADDR_IN addr)
+bool NetBase::SendFinalPacket(psNetPacketEntry* pkt, LPSOCKADDR_IN addr)
 {
     // send packet...
 #ifdef PACKETDEBUG
@@ -1232,7 +1232,7 @@ void NetBase::CheckFragmentTimeouts(void)
 }
 
 
-bool NetBase::BuildMessage(csRef<psNetPacketEntry> pkt, Connection* &connection,
+bool NetBase::BuildMessage(psNetPacketEntry* pkt, Connection* &connection,
                            LPSOCKADDR_IN addr)
 {
     if (connection)
@@ -1431,7 +1431,7 @@ bool NetBase::QueueMessage(MsgEntry *me)
 
 
 void NetBase::HandleCompletedMessage(MsgEntry *me, Connection* &connection,
-                                     LPSOCKADDR_IN addr,csRef<psNetPacketEntry> pkt)
+                                     LPSOCKADDR_IN addr, psNetPacketEntry* pkt)
 {
     profs->AddReceivedMsg(me);
     

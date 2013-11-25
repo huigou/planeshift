@@ -533,7 +533,7 @@ void psCharAppearance::SetSkinTone(csString& part, csString& material)
     }
 }
 
-void psCharAppearance::ApplyRider(csRef<iMeshWrapper> mesh)
+void psCharAppearance::ApplyRider(iMeshWrapper* mesh)
 {
     baseMesh->GetFlags().Set(CS_ENTITY_NODECAL);
     csString keyName = "socket_back";
@@ -922,7 +922,7 @@ bool psCharAppearance::Attach(const char* socketName, const char* meshFactName, 
         return false;
     }
 
-    csRef<iBgLoader> loader(psengine->GetLoader());
+    iBgLoader* loader = psengine->GetLoader();
     csRef<iThreadReturn> factory = loader->LoadFactory(meshFactName);
     if(!factory.IsValid() || (factory->IsFinished() && !factory->WasSuccessful()))
     {
@@ -1048,7 +1048,8 @@ void psCharAppearance::ProcessAttach(iMeshWrapper* meshWrap, const char* socket)
     else
     {
         engine->RemoveObject(meshWrap);
-        Notify2(LOG_CHARACTER, "Failed to set mesh on socket '%s'.", socket);
+        Notify3(LOG_CHARACTER, "Failed to set mesh '%s' on socket '%s'.",
+                meshWrap->QueryObject()->GetName(), socket);
     }
 }
 

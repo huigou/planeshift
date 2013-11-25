@@ -665,7 +665,7 @@ bool ExchangingCharacter::GetExchangedItems(csString& text)
  * Common base for different kinds of exchanges
  */
 
-Exchange::Exchange(Client* starter, bool automaticExchange, csRef<ExchangeManager> manager)
+Exchange::Exchange(Client* starter, bool automaticExchange, ExchangeManager* manager)
         : starterChar( starter->GetClientNum(), starter->GetCharacterData()->Inventory() )
 {
     id = next_id++;
@@ -821,7 +821,7 @@ int Exchange::next_id = 1;
 
 //------------------------------------------------------------------------------
 
-PlayerToPlayerExchange::PlayerToPlayerExchange(Client* player, Client* target, csRef<ExchangeManager> manager)
+PlayerToPlayerExchange::PlayerToPlayerExchange(Client* player, Client* target, ExchangeManager* manager)
                        :Exchange(player, false, manager), targetChar(target->GetClientNum(),target->GetCharacterData()->Inventory() )
 {
     targetClient = target;
@@ -1178,7 +1178,7 @@ psItem* PlayerToPlayerExchange::GetTargetOffer(int slot)
 *
 ***********************************************************************************/
 
-PlayerToNPCExchange::PlayerToNPCExchange(Client* player, gemObject* target, bool automaticExchange, int questID, csRef<ExchangeManager> manager)
+PlayerToNPCExchange::PlayerToNPCExchange(Client* player, gemObject* target, bool automaticExchange, int questID, ExchangeManager* manager)
                     : Exchange(player, automaticExchange, manager)
 {
     this->target = target;

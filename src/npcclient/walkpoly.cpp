@@ -1029,7 +1029,7 @@ void psSeed::SaveToString(csString & str)
         pos.x, pos.y, pos.z, edgePos.x, edgePos.y, edgePos.z, sector->QueryObject()->GetName(), quality, int(edgeSeed));
     
 }
-void psSeed::LoadFromXML(iDocumentNode * node, csRef<iEngine> engine)
+void psSeed::LoadFromXML(iDocumentNode * node, iEngine* engine)
 {
     pos.x = node->GetAttributeValueAsFloat("x");
     pos.y = node->GetAttributeValueAsFloat("y");
@@ -3029,7 +3029,7 @@ void psWalkPolyMap::Generate(psNPCClient* npcclient, psSeedSet & seeds, iSector 
     delete walker;
 }
 
-void psWalkPoly::LoadFromXML(iDocumentNode * node, csRef<iEngine> engine)
+void psWalkPoly::LoadFromXML(iDocumentNode * node, iEngine* engine)
 {
     id = node->GetAttributeValueAsInt("id");
     sector = engine->FindSector(node->GetAttributeValue("sector"));

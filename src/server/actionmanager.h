@@ -205,8 +205,8 @@ protected:
      */
     void HandleQueryMessage( csString xml, Client *client );
     
-    void LoadXML( csRef<iDocumentNode> topNode );
-    bool HandleSelectQuery( csRef<iDocumentNode> topNode, Client *client );
+    void LoadXML( iDocumentNode* topNode );
+    bool HandleSelectQuery( iDocumentNode* topNode, Client *client );
     bool ProcessMatches( csArray<psActionLocation *> matches, Client *client );
 
     /**

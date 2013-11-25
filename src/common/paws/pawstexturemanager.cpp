@@ -156,7 +156,7 @@ csPtr<iPawsImage> pawsTextureManager::GetOrAddPawsImage(const char * name)
 }
 
 
-void pawsTextureManager::AddPawsImage(csRef<iPawsImage> element)
+void pawsTextureManager::AddPawsImage(csRef<iPawsImage>& element)
 {
     // printf("Adding pawsImage called %s\n", element->GetName() );
     elementList.Put(element->GetName(), element);

@@ -308,7 +308,7 @@ void psANode::RestoreConnectionsFromNeighbours()
     }
 }
 
-void psANode::LoadBasicsFromXML(csRef<iDocumentNode> node, psWalkPolyMap * wpMap, csRef<iEngine> engine)
+void psANode::LoadBasicsFromXML(iDocumentNode* node, psWalkPolyMap* wpMap, iEngine* engine)
 {
     id = node->GetAttributeValueAsInt("id");
     point.x = node->GetAttributeValueAsFloat("x");
@@ -327,7 +327,7 @@ void psANode::LoadBasicsFromXML(csRef<iDocumentNode> node, psWalkPolyMap * wpMap
     }
 }
 
-void psANode::LoadEdgesFromXML(csRef<iDocumentNode> node, psAMap & map)
+void psANode::LoadEdgesFromXML(iDocumentNode* node, psAMap& map)
 {
     csRef<iDocumentNodeIterator> it = node->GetNodes();
     while (it->HasNext())

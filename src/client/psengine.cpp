@@ -1670,7 +1670,7 @@ bool psEngine::LoadConfirmationSettings()
     csRef<iDocumentNode> root, mainNode, optionNode;
 
     csString fileName = "/planeshift/userdata/options/confirmation.xml";
-    if(!psengine->GetVFS()->Exists(fileName))
+    if(!vfs->Exists(fileName))
     {
         fileName = "/planeshift/data/options/confirmation_def.xml";
     }
@@ -1717,7 +1717,7 @@ bool psEngine::LoadSoundSettings(bool forceDef)
     if(!forceDef)
         fileName = "/planeshift/userdata/options/sound.xml";
 
-    if(forceDef || !psengine->GetVFS()->Exists(fileName))
+    if(forceDef || !vfs->Exists(fileName))
     {
         fileName = "/planeshift/data/options/sound_def.xml";
     }
@@ -1864,7 +1864,6 @@ bool psEngine::LoadCustomPawsWidgets(const char* filename)
 {
     csRef<iDocument> doc;
     csRef<iDocumentNode> root;
-    csRef<iDocumentSystem>  xml;
     const char* error;
 
     csRef<iDataBuffer> buff = vfs->ReadFile(filename);
@@ -1873,8 +1872,7 @@ bool psEngine::LoadCustomPawsWidgets(const char* filename)
         Error2("Could not find file: %s", filename);
         return false;
     }
-    xml = psengine->GetXMLParser();
-    doc = xml->CreateDocument();
+    doc = xmlparser->CreateDocument();
     assert(doc);
     error = doc->Parse(buff);
     if(error)

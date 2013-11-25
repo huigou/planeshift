@@ -701,7 +701,10 @@ void pawsMenu::DoAction(pawsIMenuItem * item)
         if (action.params.GetSize() == 1)
             submenuNode = FindFirstWidget(doc);
         else if (action.params.GetSize() == 2)
-            submenuNode = FindSubmenuNode(doc->GetRoot(), action.params[1]);
+        {
+            csRef<iDocumentNode> root = doc->GetRoot();
+            submenuNode = FindSubmenuNode(root, action.params[1]);
+        }
         if (submenuNode == NULL)
         {
             Error1("Submenu XML node not found");
@@ -731,7 +734,7 @@ void pawsMenu::DoAction(pawsIMenuItem * item)
    }
 }
 
-csRef<iDocumentNode> pawsMenu::FindSubmenuNode(csRef<iDocumentNode> node, const csString & name)
+csPtr<iDocumentNode> pawsMenu::FindSubmenuNode(iDocumentNode* node, const csString & name)
 {
     csRef<iDocumentNodeIterator> iter;
     csRef<iDocumentNode> child, foundNode;
@@ -742,7 +745,7 @@ csRef<iDocumentNode> pawsMenu::FindSubmenuNode(csRef<iDocumentNode> node, const 
 
     nodeName = node->GetAttributeValue("name");
     if (nodeName == name)
-        return node;
+        return csPtr<iDocumentNode>(node);
 
     iter = node->GetNodes();
     while (iter->HasNext())
@@ -750,7 +753,7 @@ csRef<iDocumentNode> pawsMenu::FindSubmenuNode(csRef<iDocumentNode> node, const 
         child = iter->Next();
         foundNode = FindSubmenuNode(child, name);
         if (foundNode != NULL)
-            return foundNode;
+            return csPtr<iDocumentNode>(foundNode);
     }
     return NULL;
 }

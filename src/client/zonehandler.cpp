@@ -162,8 +162,7 @@ bool ZoneHandler::LoadZoneInfo()
     if(!vfs)
         return false;
 
-    iDocumentSystem* xml = psengine->GetXMLParser();
-    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDocument> doc = psengine->GetXMLParser()->CreateDocument();
 
     csRef<iFile> file = vfs->Open("/planeshift/data/zoneinfo.xml", VFS_FILE_READ);
     if(!file)

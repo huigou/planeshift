@@ -70,7 +70,7 @@ public:
 	int				outlineColor;
 
 public:
-    psEffect2DTextElement(int zOrder, const csRef<iFont> & font, const char * text, int x, int y, int fgColor, int bgColor, int outlineColor, int shadowColor, int alpha);
+    psEffect2DTextElement(int zOrder, iFont* font, const char * text, int x, int y, int fgColor, int bgColor, int outlineColor, int shadowColor, int alpha);
     virtual ~psEffect2DTextElement();
     virtual void Draw(iGraphics3D * g3d, iGraphics2D * g2d);
 };
@@ -86,7 +86,7 @@ public:
 	bool                  tiled;
 
 public:
-    psEffect2DImgElement(int zOrder, csRef<iTextureHandle> texHandle, const csRect & texRect, const csRect & destRect, int alpha, bool tiled);
+    psEffect2DImgElement(int zOrder, iTextureHandle* texHandle, const csRect & texRect, const csRect & destRect, int alpha, bool tiled);
     virtual ~psEffect2DImgElement();
     virtual void Draw(iGraphics3D * g3d, iGraphics2D * g2d);
 };

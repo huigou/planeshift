@@ -69,7 +69,6 @@ pawsGmGUIWindow::pawsGmGUIWindow()
         : psCmdBase( NULL,NULL,  PawsManager::GetSingleton().GetObjectRegistry() )
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
-    xml = psengine->GetXMLParser ();
 
     cmdsource = psengine->GetCmdHandler();
     chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");

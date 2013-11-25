@@ -66,7 +66,7 @@ class FileUtil
 private:
     csRef<iVFS> vfs;
 public:
-    FileUtil(csRef<iVFS> vfs);
+    FileUtil(iVFS* vfs);
     ~FileUtil();
     /* Tests if the file exists and returns data about the file. */
     csPtr<FileStat> StatFile(const char* path);

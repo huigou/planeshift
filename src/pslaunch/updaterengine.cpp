@@ -512,7 +512,7 @@ csString UpdaterEngine::GetCurrentClientVersion() {
     return clientVersion.GetData();
 }
 
-csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDocument>* document)
+csPtr<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDocument>* document)
 {
     // Load xml.
     csRef<iDocumentSystem> xml;
@@ -559,7 +559,7 @@ csRef<iDocumentNode> UpdaterEngine::GetRootNode(const char* nodeName, csRef<iDoc
         return NULL;
     }
 
-    return root;
+    return csPtr<iDocumentNode>(root);
 }
 
 /**
