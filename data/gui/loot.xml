@@ -1,6 +1,6 @@
 <widget_description>
 
-<widget name="LootWindow" factory="pawsLootWindow" visible="no" movable="yes" style="New Standard GUI">
+<widget name="LootWindow" factory="pawsLootWindow" visible="no" movable="yes" style="New Standard GUI" savepositions="yes" >
     <frame x="100" y="100" width="290" height="400" border="yes" />
     <title resource="Scaling Title Bar" text="Loot" align="left" close_button="yes" />
 

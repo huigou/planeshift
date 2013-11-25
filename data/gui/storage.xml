@@ -1,5 +1,5 @@
 <widget_description>
-<widget name="StorageWindow" factory="pawsStorageWindow" visible="no" movable="yes" style="New Standard GUI">
+<widget name="StorageWindow" factory="pawsStorageWindow" visible="no" movable="yes" style="New Standard GUI" savepositions="yes" >
 
     <frame x="100" y="100" width="620" height="400" border="yes" />
     <title resource="Scaling Title Bar" text="Storage" align="left" close_button="yes"/>

@@ -1,6 +1,6 @@
 <widget_description>
 
-    <widget name="BookReadingWindow" factory="pawsBookReadingWindow" visible="no" movable="yes" style="New Standard GUI">
+    <widget name="BookReadingWindow" factory="pawsBookReadingWindow" visible="no" movable="yes" style="New Standard GUI" savepositions="yes" >
         <frame x="100" y="70" width="721" height="478" border="yes"/>
         <bgimage resource="Book Background" />
         <title resource="Scaling Title Bar" text="Read Book" align="left" close_button="yes"/>
