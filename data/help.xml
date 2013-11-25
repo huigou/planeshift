@@ -2208,7 +2208,7 @@ Usage:
           <content type="text">This command shows the karma points of your guild. Guild karma increases if an enemy guild surrenders to your guild (Though it's not clear if this already works properly in game.)
 
 Usage:
-/guildkarma
+/guildpoints
 (Prints your guild's karma points to the system chat tab.)
           </content>
          </Contents>
