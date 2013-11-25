@@ -254,7 +254,7 @@ public:
     pawsMouse* GetMouse() { return mouse; }
 
     /// Returns the resize button image.
-    csRef<iPawsImage> GetResizeImage() { return resizeImg; }
+    iPawsImage* GetResizeImage() { return resizeImg; }
 
     /**
      * Locate a widget by name.
@@ -591,7 +591,7 @@ protected:
      *
      * @return NULL on failure.
      */
-    csRef<iDocumentNode> ParseWidgetFile( const char* widgetFile );
+    csPtr<iDocumentNode> ParseWidgetFile( const char* widgetFile );
 
     /// PAWS style definitions.
     pawsStyles * styles;

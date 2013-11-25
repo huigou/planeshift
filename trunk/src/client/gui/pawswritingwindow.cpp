@@ -156,7 +156,7 @@ void pawsWritingWindow::OnStringEntered(const char* /*name*/, int /*param*/, con
     const unsigned int MAX_BOOK_FILE_SIZE = 60000;
 
     csString fileName;
-    csRef<iVFS> vfs = psengine->GetVFS();
+    iVFS* vfs = psengine->GetVFS();
     if (!value)
         return;
 

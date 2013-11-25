@@ -60,7 +60,7 @@ private:
 	PAWS_TITLE_ALIGN GetAlign(const char * alignText);
 
 public:
-	pawsTitle(pawsWidget * parent, csRef<iDocumentNode> node);
+	pawsTitle(pawsWidget * parent, iDocumentNode* node);
 
         pawsTitle(const pawsTitle & origin);
 

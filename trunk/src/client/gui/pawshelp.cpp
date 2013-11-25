@@ -31,8 +31,7 @@
 pawsHelp::pawsHelp()
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
-    xml = psengine->GetXMLParser ();
-    helpDoc = xml->CreateDocument();
+    helpDoc = psengine->GetXMLParser()->CreateDocument();
     csString filename(PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("data/help.xml"));
     //This is an example for displaying pictures and texts in the help window.
     //csString filename(PawsManager::GetSingleton().GetLocalization()->FindLocalizedFile("data/helpviewdocument.xml"));

@@ -27,7 +27,7 @@
 
 iObjectRegistry* UpdaterConfig::object_reg = NULL;
 
-UpdaterConfig::UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs)
+UpdaterConfig::UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, iVFS* _vfs)
 {
     // Initialize the config manager.
     object_reg = _object_reg;
@@ -125,7 +125,7 @@ Config::Config()
     updaterVersionLatestMinor = 0;
 }
 
-bool Config::LoadMirrors(csRef<iDocumentNode> node)
+bool Config::LoadMirrors(iDocumentNode* node)
 {
     // Get mirrors.
     csRef<iDocumentNode> mirrorNode = node->GetNode("mirrors");
@@ -157,7 +157,7 @@ bool Config::LoadMirrors(csRef<iDocumentNode> node)
     return (mirrors.GetSize() > 0);
 }
 
-bool Config::Initialize(csRef<iDocumentNode> node)
+bool Config::Initialize(iDocumentNode* node)
 {
     // Get activity state.
     active = node->GetAttributeValueAsBool("active", true);

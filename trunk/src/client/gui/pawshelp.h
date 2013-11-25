@@ -43,7 +43,6 @@ protected:
     csRef<iDocumentNode> RetrieveHelp(pawsTreeNode* node, csRef<iDocumentNode> helpRoot);
 
     csRef<iVFS> vfs;
-    csRef<iDocumentSystem> xml;
     csRef<iDocument> helpDoc;
     //BinaryRBTree<csString> helpIndex;
     pawsSimpleTree* helpTree;

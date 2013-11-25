@@ -52,7 +52,7 @@ void psEffect2DElement::Draw(iGraphics3D* /*g3d*/, iGraphics2D* /*g2d*/)
 {
 }
 
-psEffect2DTextElement::psEffect2DTextElement(int zOrder, const csRef<iFont> & font, const char * text, int x, int y, int fgColor, int bgColor, int outlineColor, int shadowColor, int alpha)
+psEffect2DTextElement::psEffect2DTextElement(int zOrder, iFont* font, const char * text, int x, int y, int fgColor, int bgColor, int outlineColor, int shadowColor, int alpha)
                      : psEffect2DElement(zOrder, alpha), font(font), x(x), y(y), fgColor(fgColor), bgColor(bgColor), shadowColor(shadowColor), outlineColor(outlineColor)
 {
     strncpy(this->text, text, PS_EFFECT_2D_TEXT_MAX_CHARS);
@@ -84,7 +84,7 @@ void psEffect2DTextElement::Draw(iGraphics3D* /*g3d*/, iGraphics2D* g2d)
     g2d->Write(font, x, y, fgColor, bgColor, text);    
 }
 
-psEffect2DImgElement::psEffect2DImgElement(int zOrder, csRef<iTextureHandle> texHandle, const csRect & texRect, const csRect & destRect, int alpha, bool tiled)
+psEffect2DImgElement::psEffect2DImgElement(int zOrder, iTextureHandle* texHandle, const csRect & texRect, const csRect & destRect, int alpha, bool tiled)
                     : psEffect2DElement(zOrder, alpha), texHandle(texHandle), texRect(texRect), destRect(destRect), tiled(tiled)
 {
 }

@@ -276,7 +276,7 @@ protected:
      * Searches for node with attribute "name" equal to parameter in 'node' and its children.
      * If succeeds returns pointer to the node found, or returns NULL.
      */
-    csRef<iDocumentNode> FindSubmenuNode(csRef<iDocumentNode> node, const csString & name);
+    csPtr<iDocumentNode> FindSubmenuNode(iDocumentNode* node, const csString & name);
     
     /**
      * Sets positions of the Sticky and Close buttons

@@ -143,7 +143,7 @@ psEffectManager::~psEffectManager()
 	delete effect2DRenderer;
 }
 
-csRef<iThreadReturn> psEffectManager::LoadEffects(const csString & fileName, iView * parentView)
+csPtr<iThreadReturn> psEffectManager::LoadEffects(const csString & fileName, iView * parentView)
 {
 #ifndef DONT_DO_EFFECTS
     view = parentView;
@@ -207,7 +207,8 @@ bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * par
             csString effectFile = fileNode->GetAttributeValue("file");
             if (vfs->Exists(effectFile))
             {
-                threadReturns.Push(LoadEffects(effectFile, parentView));
+                csRef<iThreadReturn> eff = LoadEffects(effectFile, parentView);
+                threadReturns.Push(eff);
             }
         }
     }
@@ -261,7 +262,8 @@ bool psEffectManager::LoadFromDirectory(const csString & path, bool includeSubDi
         }
         else if (len > 4 && ((lastChar == 'f' || lastChar == 'F') && (file[len-2] == 'f' || file[len-2] == 'F') && (file[len-3] == 'e' || file[len-3] == 'E') && file[len-4] == '.'))
         {
-            threadReturns.Push(LoadEffects(file, parentView));
+            csRef<iThreadReturn> eff = LoadEffects(file, parentView);
+            threadReturns.Push(eff);
         }
     }
 #endif
@@ -375,7 +377,7 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorL
 }
 
 unsigned int psEffectManager::AttachLight(const char* name, const csVector3& pos,
-  	float radius, const csColor& colour, csRef<iMeshWrapper> mw)
+  	float radius, const csColor& colour, iMeshWrapper* mw)
 {
     psLight* pslight = new psLight(object_reg);
     unsigned int uniqueID = pslight->AttachLight(name, pos, radius, colour, mw);

@@ -386,7 +386,7 @@ void psNPCClient::SaveLogSettings()
 }
 
 
-csRef<iDocumentNode> psNPCClient::GetRootNode(const char* xmlfile)
+csPtr<iDocumentNode> psNPCClient::GetRootNode(const char* xmlfile)
 {
     csRef<iDocumentSystem> xml;
     xml.AttachNew(new csTinyDocumentSystem);
@@ -411,7 +411,7 @@ csRef<iDocumentNode> psNPCClient::GetRootNode(const char* xmlfile)
         Error2("No XML root in %s", xmlfile);
         return NULL;
     }
-    return root;
+    return csPtr<iDocumentNode>(root);
 }
 
 Tribe* psNPCClient::GetTribe(int id)

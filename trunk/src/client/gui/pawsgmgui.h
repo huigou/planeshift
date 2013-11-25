@@ -85,7 +85,6 @@ protected:
     CmdHandler *cmdsource;
 
     csRef<iVFS> vfs;
-    csRef<iDocumentSystem> xml;
 
     void SetSecurity();
 

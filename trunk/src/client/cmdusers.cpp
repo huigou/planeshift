@@ -1139,7 +1139,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         }
         else
         {
-            csRef<iVFS> vfs = psengine->GetVFS();
+            iVFS* vfs = psengine->GetVFS();
             // lets construct the filename from the first argument
             csString FileName("/planeshift/userdata/descriptions/");
             FileName.Append(words[1]);
@@ -1173,7 +1173,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         }
         else
         {
-            csRef<iVFS> vfs = psengine->GetVFS();
+            iVFS* vfs = psengine->GetVFS();
             // lets construct the filename from the first argument
             csString FileName("/planeshift/userdata/descriptions/");
             FileName.Append(words[1]);

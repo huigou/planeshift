@@ -98,7 +98,7 @@ void pawsMouse::ChangeImage( const char* imageName )
     SetOSMouse(cursorImage);
 }
 
-void pawsMouse::ChangeImage(csRef<iPawsImage> drawable)
+void pawsMouse::ChangeImage(iPawsImage* drawable)
 {
     if(basicCursor)
     {
@@ -110,7 +110,7 @@ void pawsMouse::ChangeImage(csRef<iPawsImage> drawable)
     SetOSMouse(cursorImage);
 }
 
-void pawsMouse::SetOSMouse(csRef<iPawsImage> drawable)
+void pawsMouse::SetOSMouse(iPawsImage* drawable)
 {
     pawsImageDrawable * pwDraw = dynamic_cast<pawsImageDrawable *>((iPawsImage *)drawable);
     if (!pwDraw)

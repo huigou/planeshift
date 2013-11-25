@@ -1190,7 +1190,7 @@ void pawsMusicWindow::Save()
     csString fileName;
     csString path;
     csString xml;
-    csRef<iVFS> vfs = psengine->GetVFS();
+    iVFS* vfs = psengine->GetVFS();
     csRef<iConfigManager> configMgr = psengine->GetConfig();
 
     // if in edit mode the sheet is not consistent

@@ -122,7 +122,6 @@ protected:
     csArray<csString> icon;
 
     csRef<iVFS> vfs;
-    csRef<iDocumentSystem> xml;
 
     // The widget that holds the command data during editing
     pawsMultilineEditTextBox* textBox;

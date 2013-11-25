@@ -162,8 +162,8 @@ public:
     void SaveToString(csString & str);
     
     //wpMap can be NULL
-    void LoadBasicsFromXML(csRef<iDocumentNode> node, psWalkPolyMap * wpMap, csRef<iEngine> engine);
-    void LoadEdgesFromXML(csRef<iDocumentNode> node, psAMap & map);
+    void LoadBasicsFromXML(iDocumentNode* node, psWalkPolyMap* wpMap, iEngine* engine);
+    void LoadEdgesFromXML(iDocumentNode* node, psAMap & map);
     
     void DumpJS();
     

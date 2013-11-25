@@ -33,11 +33,11 @@ typedef void CURL;
 class Downloader
 {
 public:
-    Downloader(csRef<iVFS> _vfs, UpdaterConfig* _config);
-    Downloader(csRef<iVFS> _vfs);
+    Downloader(iVFS* _vfs, UpdaterConfig* _config);
+    Downloader(iVFS* _vfs);
     ~Downloader();
 
-    void Init(csRef<iVFS> _vfs);
+    void Init(iVFS* _vfs);
 
     /*
      * If URL is false; download a file from 'file' and save to 'dest'.

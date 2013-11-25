@@ -33,18 +33,18 @@ class ClientStatusLogger
 public:
     void LogClientInfo(Client* client); ///< write client status info to doc
 
-    ClientStatusLogger(csRef<iDocumentNode> statusNode);
+    ClientStatusLogger(iDocumentNode* statusNode);
 private:
     csRef<iDocumentNode> statusRootNode; ///< top node for all status entries
     csTicks startTime;
 
-    void AddBasicNode(csRef<iDocumentNode> parent, const char* fieldName, const char* text);
-    void AddBasicNode(csRef<iDocumentNode> parent, const char* fieldName, int data);
-    csRef<iDocumentNode> AddContainerNode(csRef<iDocumentNode> parent, const char* fieldName);
+    void AddBasicNode(iDocumentNode* parent, const char* fieldName, const char* text);
+    void AddBasicNode(iDocumentNode* parent, const char* fieldName, int data);
+    csPtr<iDocumentNode> AddContainerNode(iDocumentNode* parent, const char* fieldName);
 
-    void LogBasicInfo(Client* client, csRef<iDocumentNode> node);
-    void LogConnectionInfo(Client* client, csRef<iDocumentNode> node);
-    void LogGuildInfo(Client* client, csRef<iDocumentNode> node);
+    void LogBasicInfo(Client* client, iDocumentNode* node);
+    void LogConnectionInfo(Client* client, iDocumentNode* node);
+    void LogGuildInfo(Client* client, iDocumentNode* node);
 
     ClientStatusLogger() {}
 };

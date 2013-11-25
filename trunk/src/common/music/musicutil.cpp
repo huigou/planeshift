@@ -185,7 +185,7 @@ void psMusic::EnharmonicPitch(char &pitch, int &accidental)
     }
 }
 
-bool psMusic::GetMeasures(csRef<iDocument> musicalScore, csRefArray<iDocumentNode> &measures)
+bool psMusic::GetMeasures(iDocument* musicalScore, csRefArray<iDocumentNode> &measures)
 {
     csRef<iDocumentNode> partNode;
     csRef<iDocumentNode> measureNode;
@@ -209,7 +209,7 @@ bool psMusic::GetMeasures(csRef<iDocument> musicalScore, csRefArray<iDocumentNod
     return true;
 }
 
-bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stats)
+bool psMusic::GetStatistics(iDocument* musicalScore, ScoreStatistics &stats)
 {
     int beats;
     int quarterDivisions;
@@ -448,7 +448,7 @@ bool psMusic::GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stat
     return true;
 }
 
-bool psMusic::GetAttributes(csRef<iDocument> musicalScore, int &quarterDivisions,
+bool psMusic::GetAttributes(iDocument* musicalScore, int &quarterDivisions,
                           int &fifths, int &beats, int &beatType, int &tempo)
 {
     csRef<iDocumentNode> partNode;
@@ -651,7 +651,7 @@ bool psMusic::ZDecompressSong(const csString &inputScore, csString &outputScore)
     return true;
 }
 
-bool psMusic::CheckValidity(csRef<iDocument> musicalScore, csRef<iDocumentNode> &partNode)
+bool psMusic::CheckValidity(iDocument* musicalScore, csRef<iDocumentNode> &partNode)
 {
     csRef<iDocumentNode> documentRoot;
     csRef<iDocumentNode> rootNode;

@@ -38,7 +38,7 @@
 
 
 
-pawsFrameDrawable::pawsFrameDrawable(csRef<iDocumentNode> node)
+pawsFrameDrawable::pawsFrameDrawable(iDocumentNode* node)
   : scfImplementationType (this)
 {
     defaultTransparentColourBlue  = -1;
@@ -107,7 +107,7 @@ const char *pawsFrameDrawable::GetName() const
     return resourceName;
 }
 
-void pawsFrameDrawable::LoadPiece(csRef<iDocumentNode> node, FRAME_DRAWABLE_PIECE piece)
+void pawsFrameDrawable::LoadPiece(iDocumentNode* node, FRAME_DRAWABLE_PIECE piece)
 {
     bool tiled = node->GetAttributeValueAsBool("tile");
     csRect textureRect;

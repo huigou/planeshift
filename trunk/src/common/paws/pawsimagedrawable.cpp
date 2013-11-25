@@ -128,7 +128,7 @@ bool pawsImageDrawable::PreparePixmap()
     return true;     
 }
 
-pawsImageDrawable::pawsImageDrawable(csRef<iDocumentNode> node)
+pawsImageDrawable::pawsImageDrawable(iDocumentNode* node)
                  : scfImplementationType (this)
 {
     debugImageErrors = false;

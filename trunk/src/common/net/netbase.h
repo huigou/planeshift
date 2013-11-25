@@ -520,7 +520,7 @@ protected:
      * This takes incoming packets and examines them for priority.
      * If pkt is ACK, it finds the awaiting ack pkt and removes it.
      */
-    bool HandleAck(csRef<psNetPacketEntry> pkt, Connection* connection, LPSOCKADDR_IN addr);
+    bool HandleAck(psNetPacketEntry* pkt, Connection* connection, LPSOCKADDR_IN addr);
 
     /**
      * This cycles through set of pkts awaiting ack and resends old ones.
@@ -533,7 +533,7 @@ protected:
      * This takes incoming packets and rebuilds psMessages from them. If/when a
      * complete message is reassembled, it calls HandleCompletedMessage().
      */
-    bool BuildMessage(csRef<psNetPacketEntry> pkt,Connection* &connection,LPSOCKADDR_IN addr);
+    bool BuildMessage(psNetPacketEntry* pkt,Connection* &connection,LPSOCKADDR_IN addr);
 
     /**
      * This checks the list of packets waiting to be assembled into complete messages.
@@ -558,12 +558,12 @@ protected:
     void HandleCompletedMessage(MsgEntry *me,
                 Connection* &connection,
                 LPSOCKADDR_IN addr,
-                csRef<psNetPacketEntry> pkt);
+                psNetPacketEntry* pkt);
 
     /**
      * This tries to drop packets that received doubled
      */
-    bool CheckDoublePackets (Connection* connection, csRef<psNetPacketEntry> pkt);
+    bool CheckDoublePackets (Connection* connection, psNetPacketEntry* pkt);
 
 
     /**
@@ -575,17 +575,17 @@ protected:
     /**
      * This does the sending and puts the packet in "awaiting ack" if necessary.
      */
-    bool SendSinglePacket(csRef<psNetPacketEntry> pkt);
+    bool SendSinglePacket(psNetPacketEntry* pkt);
 
     /**
      * Send packet to the clientnum given by clientnum in psNetPacketEntry
      */
-    bool SendFinalPacket(csRef<psNetPacketEntry> pkt);
+    bool SendFinalPacket(psNetPacketEntry* pkt);
 
     /**
      * This only sends out a packet
      */
-    bool SendFinalPacket(csRef<psNetPacketEntry> pkt, LPSOCKADDR_IN addr);
+    bool SendFinalPacket(psNetPacketEntry* pkt, LPSOCKADDR_IN addr);
 
     /** Outgoing message queue */
     csRef<NetPacketQueueRefCount> NetworkQueue;

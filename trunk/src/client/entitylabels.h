@@ -197,7 +197,7 @@ protected:
      * References to some system-wide objects that we use
      */
     csRef<iEventQueue> eventQueue;
-    csRef<iVFS> vfs;
+    iVFS* vfs;
     psCelClient* celClient;
 
     /// Declare our event handler

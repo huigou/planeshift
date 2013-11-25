@@ -49,7 +49,7 @@ bool pawsBartenderWindow::PostSetup()
 {
     //prepares to load the file
     csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iDocumentSystem> xml = psengine->GetXMLParser ();
+    iDocumentSystem* xml = psengine->GetXMLParser ();
     csRef<iDocumentNode> root, bartenderNode;
     csRef<iDocument> doc = xml->CreateDocument();
     csRef<iDataBuffer> buf (vfs->ReadFile (BARTENDER_FILE));

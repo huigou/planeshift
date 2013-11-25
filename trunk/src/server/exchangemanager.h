@@ -201,7 +201,7 @@ protected:
 class Exchange : public iDeleteObjectCallback
 {
 public:
-    Exchange( Client* starter, bool automaticExchange, csRef<ExchangeManager> manager);
+    Exchange( Client* starter, bool automaticExchange, ExchangeManager* manager);
     virtual ~Exchange();
 
     /**
@@ -306,7 +306,7 @@ protected:
 class PlayerToPlayerExchange : public Exchange
 {
 public:
-    PlayerToPlayerExchange(Client* client, Client* target, csRef<ExchangeManager> manager);
+    PlayerToPlayerExchange(Client* client, Client* target, ExchangeManager* manager);
     virtual ~PlayerToPlayerExchange();
 
     bool CheckExchange(uint32_t clientNum, bool checkRange=false);
@@ -372,7 +372,7 @@ private:
 class PlayerToNPCExchange : public Exchange
 {
 public:
-    PlayerToNPCExchange(Client* starter, gemObject* target, bool automaticExchange, int questID, csRef<ExchangeManager> manager);
+    PlayerToNPCExchange(Client* starter, gemObject* target, bool automaticExchange, int questID, ExchangeManager* manager);
     virtual ~PlayerToNPCExchange();
     gemObject * GetTargetGEM();
     bool CheckExchange(uint32_t clientNum, bool checkRange=false);

@@ -155,12 +155,12 @@ public:
      *  @param node The reference to the main node of an xml document containing the mirror list.
      *  @return FALSE if the mirrors entry was not found or no mirrors were added during the parsing.
      */
-    bool LoadMirrors(csRef<iDocumentNode> node);
+    bool LoadMirrors(iDocumentNode* node);
 
     /**
      * Init a xml config file.
      */
-    bool Initialize(csRef<iDocumentNode> node);
+    bool Initialize(iDocumentNode* node);
 
     /**
      * Get our platform string.
@@ -218,7 +218,7 @@ private:
 class UpdaterConfig : public Singleton<UpdaterConfig>
 {
 public:
-    UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, csRef<iVFS> _vfs);
+    UpdaterConfig(csStringArray& args, iObjectRegistry* _object_reg, iVFS* _vfs);
     ~UpdaterConfig();
 
     /**
@@ -285,7 +285,7 @@ public:
     /**
      * Returns the configfile for the app.
      */
-    csRef<iConfigFile> GetConfigFile() const { return configFile; }
+    iConfigFile* GetConfigFile() const { return configFile; }
 
     void SetSelfUpdating(bool t) { selfUpdating = t ? 1 : 0; }
 

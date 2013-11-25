@@ -145,7 +145,7 @@ public:
       * on the back of the mount
       * @param mesh The mount's mesh
       */
-    void ApplyRider(csRef<iMeshWrapper> mesh);
+    void ApplyRider(iMeshWrapper* mesh);
 
     /** Equip an item onto the model.
       * @param slotname    The socket we want to place the item.

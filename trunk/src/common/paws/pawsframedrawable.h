@@ -76,12 +76,12 @@ private:
     int      defaultTransparentColourGreen;
     int      defaultTransparentColourBlue;
 
-    void LoadPiece(csRef<iDocumentNode> node, FRAME_DRAWABLE_PIECE piece);
+    void LoadPiece(iDocumentNode* node, FRAME_DRAWABLE_PIECE piece);
     void DrawPiece(FRAME_DRAWABLE_PIECE p, int x, int y, int w, int h, int alpha, bool scaleX=false, bool scaleY=false);
     void DrawPiece(FRAME_DRAWABLE_PIECE p, int x, int y, int alpha);
 
 public:
-    pawsFrameDrawable(csRef<iDocumentNode> node);
+    pawsFrameDrawable(iDocumentNode* node);
 
     virtual ~pawsFrameDrawable();
 

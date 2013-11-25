@@ -77,7 +77,7 @@ EconomyManager::~EconomyManager()
     //do nothing
 }
 
-void EconomyManager::AddTransaction(csRef<TransactionEntity> trans, bool moneyIn, const char* type)
+void EconomyManager::AddTransaction(TransactionEntity* trans, bool moneyIn, const char* type)
 {
     if(!trans)
         return;
@@ -187,7 +187,7 @@ void EconomyManager::ClearTransactions()
     supplyDemandInfo.DeleteAll();
 }
 
-csRef<ItemSupplyDemandInfo> EconomyManager::GetItemSupplyDemandInfo(unsigned int itemId)
+ItemSupplyDemandInfo* EconomyManager::GetItemSupplyDemandInfo(unsigned int itemId)
 {
     if (!supplyDemandInfo.Contains(itemId))
     {

@@ -402,7 +402,7 @@ void psCelClient::LoadEffectItems()
     }
 }
 
-void psCelClient::HandleItemEffect(const char* factName, csRef<iMeshWrapper> mw, bool onGround, const char* slot,
+void psCelClient::HandleItemEffect(const char* factName, iMeshWrapper* mw, bool onGround, const char* slot,
                                    csHash<int, csString>* effectids, csHash<int, csString>* lightids)
 {
     ItemEffect* ie = effectItems.Get(factName, 0);
@@ -1290,7 +1290,7 @@ const csBox3 &GEMClientObject::GetBBox() const
     }
 }
 
-csRef<iMeshWrapper> GEMClientObject::GetMesh() const
+iMeshWrapper* GEMClientObject::GetMesh() const
 {
     return pcmesh;
 }

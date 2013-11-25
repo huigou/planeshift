@@ -61,7 +61,7 @@ public:
      * @param imageName A resource name to use as the image.
      */
     void ChangeImage( const char* imageName );
-    void ChangeImage(csRef<iPawsImage> drawable);
+    void ChangeImage(iPawsImage* drawable);
 
     void Draw();
     void Hide(bool h = true);
@@ -107,7 +107,7 @@ protected:
 
     csRef<iImage> image;
 
-    void SetOSMouse(csRef<iPawsImage> mouseImage);
+    void SetOSMouse(iPawsImage* mouseImage);
 };
 
 /** @} */

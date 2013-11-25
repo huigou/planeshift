@@ -95,7 +95,7 @@ public:
      * @param parentView the CS viewport that views the effects
      * @return true on success, false otherwise
      */
-    csRef<iThreadReturn> LoadEffects(const csString & fileName, iView * parentView);
+    csPtr<iThreadReturn> LoadEffects(const csString & fileName, iView * parentView);
 
     /**
      * Loads the effect files listed in the given effects list.
@@ -174,7 +174,7 @@ public:
                               const unsigned int uniqueIDOverride = 0, const float* scale = NULL);
 
     unsigned int AttachLight(const char* name, const csVector3& pos,
-  	float radius, const csColor& colour, csRef<iMeshWrapper> mw);
+  	float radius, const csColor& colour, iMeshWrapper* mw);
     void DetachLight(unsigned int lightID);
 
     /**

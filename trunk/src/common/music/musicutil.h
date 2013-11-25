@@ -288,7 +288,7 @@ void EnharmonicPitch(char &pitch, int &accidental);
  * @param measures a reference to a csRefArray that will contain the XML nodes.
  * @return true if the document is a valid musical score, false otherwise.
  */
-bool GetMeasures(csRef<iDocument> score, csRefArray<iDocumentNode> &measures);
+bool GetMeasures(iDocument* score, csRefArray<iDocumentNode> &measures);
 
 /**
  * Returns the statistics of the score.
@@ -297,7 +297,7 @@ bool GetMeasures(csRef<iDocument> score, csRefArray<iDocumentNode> &measures);
  * @param stats the retrieved statistics of the given score.
  * @return true if the document is a valid musical score, false otherwise.
  */
-bool GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stats);
+bool GetStatistics(iDocument* musicalScore, ScoreStatistics &stats);
 
 /**
  * Gets the attributes in the first measure of the given score.
@@ -315,7 +315,7 @@ bool GetStatistics(csRef<iDocument> musicalScore, ScoreStatistics &stats);
  * found in the first measure, false otherwise. False is returned also if there are
  * not measures in the given score.
  */
-bool GetAttributes(csRef<iDocument> musicalScore, int &quarterDivisions,
+bool GetAttributes(iDocument* musicalScore, int &quarterDivisions,
                    int &fifths, int &beats, int &beatType, int &tempo);
 
 /**
@@ -346,7 +346,7 @@ bool ZDecompressSong(const csString &inputScore, csString &outputScore);
  * @param partNode a reference that will contain the part XML node.
  * @return true if the document is valid, false otherwise.
  */
-bool CheckValidity(csRef<iDocument> musicalScore, csRef<iDocumentNode> &partNode);
+bool CheckValidity(iDocument* musicalScore, csRef<iDocumentNode> &partNode);
 
 }
 

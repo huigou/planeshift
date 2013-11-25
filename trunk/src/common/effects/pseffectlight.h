@@ -44,7 +44,7 @@ public:
     ~psLight();
 
     unsigned int AttachLight(const char* name, const csVector3& pos,
-  	float radius, const csColor& colour, csRef<iMeshWrapper> mw);
+  	float radius, const csColor& colour, iMeshWrapper* mw);
     bool Update();
 
 private:

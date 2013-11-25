@@ -124,7 +124,7 @@ bool pawsCharDescription::OnButtonPressed(int /*mouseButton*/, int /*keyModifier
         }
         case BTN_SAVE:
         {
-            csRef<iVFS> vfs = psengine->GetVFS();
+            iVFS* vfs = psengine->GetVFS();
             csString FileName; //stores the filename to use for saving: char_name_description.txt
             csString DescriptionData; //the data taken from char description
 
@@ -145,7 +145,7 @@ bool pawsCharDescription::OnButtonPressed(int /*mouseButton*/, int /*keyModifier
         }
         case BTN_LOAD:
         {
-            csRef<iVFS> vfs = psengine->GetVFS();
+            iVFS* vfs = psengine->GetVFS();
             csString FileName; //stores the filename to use for loading: char_name_description.txt
             csString DescriptionData; //the data taken from char description
 

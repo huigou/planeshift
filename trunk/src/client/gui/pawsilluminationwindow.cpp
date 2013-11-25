@@ -569,7 +569,7 @@ void pawsSketchWindow::OnStringEntered(const char* name, int /*param*/, const ch
     else if (!strcasecmp(name,"FileNameBox"))
     {
         //we got to load the sketch we were asked for
-        csRef<iVFS> vfs = psengine->GetVFS();
+        iVFS* vfs = psengine->GetVFS();
         csString tempFileName;
         tempFileName.Format("/planeshift/userdata/sketches/%s", value);
         if (!vfs->Exists(tempFileName))
@@ -729,7 +729,7 @@ void pawsSketchWindow::ChangeSketchName()
 void pawsSketchWindow::SaveSketch()
 {
     csString xml = toXML();
-    csRef<iVFS> vfs = psengine->GetVFS();
+    iVFS* vfs = psengine->GetVFS();
     unsigned int tempNumber = 0;
     //searchs for a free sketch slot in the user directory and write in it
     csString tempFileNameTemplate = "/planeshift/userdata/sketches/%s.xml", tempFileName;

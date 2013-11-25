@@ -144,19 +144,19 @@ public:
     /** Gets the Configuration Manager
      *   @return the configuration manager.
      */
-    csRef<iConfigManager> GetConfigManager();
+    iConfigManager* GetConfigManager();
 
-    /** Gets the Configuration Manager
-     *   @return the configuration manager.
+    /** Gets the VFS Manager
+     *   @return the VFS manager.
      */
-    csRef<iVFS> GetVFS();
+    iVFS* GetVFS();
 
     /** Exits the application.
      */
     void Exit();
     
-    csRef<iDocumentNode> ParseWidgetFile( const char* widgetFile );
-    csRef<iDocumentNode> ParseWidgetFile_mod( const char* widgetFile );
+    csPtr<iDocumentNode> ParseWidgetFile( const char* widgetFile );
+    csPtr<iDocumentNode> ParseWidgetFile_mod( const char* widgetFile );
     void OpenWidget(const csString & text);
     void ReloadWidget();
     void OpenImageList(const csString & text);

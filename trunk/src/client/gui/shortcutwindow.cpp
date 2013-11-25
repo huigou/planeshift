@@ -71,7 +71,6 @@ pawsShortcutWindow::pawsShortcutWindow() :
     EditMode(0)                     // 0 = edit lock prevents drag, 1 = edit lock prevent all editing
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
-    xml = psengine->GetXMLParser ();
 
     LoadCommandsFile();
     psengine->GetCharControl()->LoadKeyFile();
@@ -643,7 +642,7 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
 {
     int number;
     // Read button commands
-    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iDocument> doc = psengine->GetXMLParser()->CreateDocument();
     
     csRef<iDataBuffer> buf (vfs->ReadFile (fileName));
     if (!buf || !buf->GetSize ())
