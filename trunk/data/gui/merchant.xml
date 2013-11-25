@@ -1,5 +1,5 @@
 <widget_description>
-<widget name="MerchantWindow" factory="pawsMerchantWindow" visible="no" movable="yes" style="New Standard GUI">
+<widget name="MerchantWindow" factory="pawsMerchantWindow" visible="no" movable="yes" style="New Standard GUI" savepositions="yes" >
 
     <frame x="100" y="100" width="620" height="400" border="yes" />
     <title resource="Scaling Title Bar" text="Merchant" align="left" close_button="yes"/>

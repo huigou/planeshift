@@ -1,6 +1,6 @@
 <widget_description>
 
-<widget name="ExchangeWindow" factory="pawsExchangeWindow" visible="no" movable="yes" style="New Standard GUI">
+<widget name="ExchangeWindow" factory="pawsExchangeWindow" visible="no" movable="yes" style="New Standard GUI" savepositions="yes">
     <frame x="100" y="100" width="350" height="390" border="yes" />
     <title resource="Scaling Title Bar" text="Exchange" align="left" close_button="yes"/>
 

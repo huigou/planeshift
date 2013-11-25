@@ -1,5 +1,5 @@
 <widget_description>
-  <pawsNpcDialogWindow name="NPCDialogWindow" xmlbinding="dlgmenu" visible="no" savepositions="no" movable="yes" scalefont="yes" keepaspect="no" configurable="yes" resizable="yes" style="New Standard GUI">
+  <pawsNpcDialogWindow name="NPCDialogWindow" xmlbinding="dlgmenu" visible="no" savepositions="yes" movable="yes" scalefont="yes" keepaspect="no" configurable="yes" resizable="yes" style="New Standard GUI">
 
     <frame x="0" y="0" width="500" height="250" border="yes" />
     <minframe width="300" height="125" />
