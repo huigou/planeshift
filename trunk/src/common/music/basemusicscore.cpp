@@ -38,7 +38,7 @@
 
 
 BaseMusicalScore::BaseMusicalScore()
-: mode(EDIT), cursor(new Cursor(this, EDIT))
+    : cursor(new Cursor(this, EDIT)), mode(EDIT)
 {
 }
 
@@ -120,7 +120,7 @@ bool BaseMusicalScore::Cursor::Advance(bool ignoreEndOfMeasure)
 
     // check if this is the last element of the current measure
     isLastElem = (currElementIdx == score->measures[currMeasureIdx].GetNElements() - 1);
-    if(IsEndOfMeasure() || isLastElem && ignoreEndOfMeasure)
+    if(IsEndOfMeasure() || (isLastElem && ignoreEndOfMeasure))
     {
         currElementIdx = 0;
 

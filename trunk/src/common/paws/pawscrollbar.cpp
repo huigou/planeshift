@@ -80,21 +80,41 @@ pawsScrollBar::pawsScrollBar()
 }
 
 pawsScrollBar::pawsScrollBar(const pawsScrollBar& origin)
-                :pawsWidget(origin),
-                clock(origin.clock),
-                currentValue(origin.currentValue),
-                downGrey(origin.downGrey),
-                downHeight(origin.downHeight), downOffsetx(origin.downOffsetx), downOffsety(origin.downOffsety),
-                downPressed(origin.downPressed), downUnpressed(origin.downUnpressed), downWidth(origin.downWidth),
-                horizontal(origin.horizontal), lastButton(origin.lastButton), lastModifiers(origin.lastModifiers),
-                limited(origin.limited), maxValue(origin.maxValue), minValue(origin.minValue), mouseDown(origin.mouseDown),
-                mouseIsDraggingThumb(origin.mouseIsDraggingThumb), reversed(origin.reversed), scrollTicks(origin.scrollTicks),
-                thumbMoving(origin.thumbMoving), thumbStopped(origin.thumbStopped), tickValue(origin.tickValue),
-                upHeight(origin.upHeight), upOffsetx(origin.upOffsetx), upOffsety(origin.upOffsety), upUnpressed(origin.upUnpressed), upWidth(origin.upWidth)
+    :pawsWidget(origin),
+     currentValue(origin.currentValue),
+     maxValue(origin.maxValue),
+     minValue(origin.minValue),
+     tickValue(origin.tickValue),
+     clock(origin.clock),
+     scrollTicks(origin.scrollTicks),
+     mouseDown(origin.mouseDown),
+     reversed(origin.reversed),
+     lastButton(origin.lastButton),
+     lastModifiers(origin.lastModifiers),
+     mouseIsDraggingThumb(origin.mouseIsDraggingThumb),
+     upGrey(origin.upGrey),
+     upUnpressed(origin.upUnpressed),
+     upPressed(origin.upPressed),
+     upOffsetx(origin.upOffsetx),
+     upOffsety(origin.upOffsety),
+     upWidth(origin.upWidth),
+     upHeight(origin.upHeight),
+     downGrey(origin.downGrey),
+     downUnpressed(origin.downUnpressed),
+     downPressed(origin.downPressed),
+     downOffsetx(origin.downOffsetx),
+     downOffsety(origin.downOffsety),
+     downWidth(origin.downWidth),
+     downHeight(origin.downHeight),
+     thumbStopped(origin.thumbStopped),
+     thumbMoving(origin.thumbMoving),
+     horizontal(origin.horizontal),
+     limited(origin.limited)
 {
     upButton = downButton = NULL;
     thumb = NULL;
     lastWidget = 0;
+    thumbDragPoint = 0;
 
     for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
     {

@@ -296,7 +296,7 @@ void Measure::MeasureAttributes::UpdateAttributes(
 }
 
 Measure::Measure()
-: attributes(0), isEnding(false), isStartRepeat(false), nEndRepeat(0)
+  : isEnding(false), isStartRepeat(false), nEndRepeat(0), attributes(0)
 {
 }
 

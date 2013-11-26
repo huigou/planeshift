@@ -87,14 +87,14 @@ pawsNumberPromptWindow::pawsNumberPromptWindow()
     factory = "pawsNumberPromptWindow";
 }
 pawsNumberPromptWindow::pawsNumberPromptWindow(const pawsNumberPromptWindow & origin)
-                    :pawsPromptWindow(origin),
-                    action(origin.action),
-                    lastValidText(origin.lastValidText),
-                    maxDigits(origin.maxDigits),
-                    maxNumber(origin.maxNumber),
-                    minNumber(origin.minNumber),
-                    name(origin.name),
-                    param(origin.param)
+    :pawsPromptWindow(origin),
+     maxNumber(origin.maxNumber),
+     minNumber(origin.minNumber),
+     maxDigits(origin.maxDigits),
+     lastValidText(origin.lastValidText),
+     action(origin.action),
+     name(origin.name),
+     param(origin.param)
 {
     pawsNumberInput * input = dynamic_cast<pawsNumberInput*>(inputWidget);
     if(input)

@@ -96,13 +96,14 @@ pawsMenuItem::pawsMenuItem()
 
     graphics2d    = PawsManager::GetSingleton().GetGraphics2D();
 }
+
 pawsMenuItem::pawsMenuItem(const pawsMenuItem & origin):
-                border(origin.border),
-                checkboxEnabled(origin.checkboxEnabled),
-                graphics2d(origin.graphics2d),
-                imageEnabled(origin.imageEnabled),
-                spacing(origin.spacing),
-                pawsIMenuItem(origin)
+    pawsIMenuItem(origin),
+    imageEnabled(origin.imageEnabled),
+    checkboxEnabled(origin.checkboxEnabled),
+    spacing(origin.spacing),
+    border(origin.border),
+    graphics2d(origin.graphics2d)
 {
     action.name = origin.action.name;
     for (unsigned int i = 0 ; i < origin.action.params.GetSize() ; i++)
@@ -399,14 +400,14 @@ pawsMenu::pawsMenu()
 }
 
 pawsMenu::pawsMenu(const pawsMenu & origin):
-            align(origin.align),
-            arrowImage(origin.arrowImage),
-            autosize(origin.autosize),
-            graphics2d(origin.graphics2d),
-            notifyTarget(NULL),
-            parentMenu(NULL),
-            sticky(origin.sticky),
-            pawsIMenu(origin)
+    pawsIMenu(origin),
+    parentMenu(NULL),
+    notifyTarget(NULL),
+    arrowImage(origin.arrowImage),
+    align(origin.align),
+    autosize(origin.autosize),
+    sticky(origin.sticky),
+    graphics2d(origin.graphics2d)
 {
     stickyButton  = NULL;
     closeButton   = NULL;

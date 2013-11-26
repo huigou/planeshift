@@ -43,8 +43,8 @@ pawsScrollMenu::pawsScrollMenu() :
     buttonWidth(0),
     buttonHeight(0),
     scrollIncrement(0.0),
-    scrollProportion(0.5),
     currentButton(0),
+    scrollProportion(0.5),
     buttonWidthDynamic(true),
     ButtonHolder(NULL),
     buttonLocation(BUTTON_PADDING),
@@ -493,9 +493,9 @@ bool pawsScrollMenu::ScrollDown()
         }
         currentButton=tButton-1;
 
-        if( currentButton>Buttons.GetSize()-1 )
+        if( currentButton >= (int)Buttons.GetSize() )
         {
-            currentButton=Buttons.GetSize()-1;
+            currentButton = Buttons.GetSize()-1;
         }
         ScrollToPosition( currentButton );
 
@@ -743,9 +743,10 @@ int pawsScrollMenu::GetTotalButtonWidth()
     return total;
 }
 
-int pawsScrollMenu::GetTotalButtonWidth(int targetButton)
+int pawsScrollMenu::GetTotalButtonWidth(unsigned int targetButton)
 {
     int total=0;
+
     if( targetButton>Buttons.GetSize() )
     {
         targetButton=Buttons.GetSize();
@@ -754,8 +755,11 @@ int pawsScrollMenu::GetTotalButtonWidth(int targetButton)
     for(size_t i=0; i< targetButton; i++)
     {
         if(Buttons[i])
+        {
             total+= CalcButtonSize((pawsDnDButton*)Buttons[i]);
+        }
     }
+
     return total;
 }
 

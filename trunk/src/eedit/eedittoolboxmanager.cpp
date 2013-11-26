@@ -40,16 +40,27 @@ bool RegisterToolboxFactories()
 {
     pawsWidgetFactory * factory;
     factory = new EEditPositionToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditTargetToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditCameraToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditRenderToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditParticleListToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditLoadEffectToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditEditEffectToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditLoadMapToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditErrorToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditFPSToolboxFactory();
+    CS_ASSERT(factory);
     factory = new EEditShortcutsToolboxFactory();
+    CS_ASSERT(factory);
     return true;
 }
 
