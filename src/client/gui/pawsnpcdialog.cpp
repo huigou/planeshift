@@ -304,7 +304,7 @@ bool pawsNpcDialogWindow::OnButtonPressed(int button, int keyModifier, pawsWidge
         return true;
 
     }
-    return OnButtonPressed(button, keyModifier, widget);
+    return pawsWidget::OnButtonPressed(button, keyModifier, widget);
 }
 
 bool pawsNpcDialogWindow::OnMouseDown(int button, int modifiers, int x , int y)
