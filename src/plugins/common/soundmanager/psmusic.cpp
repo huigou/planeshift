@@ -133,7 +133,10 @@ void psMusic::Loop()
 
 void psMusic::UpdateHandleCallback()
 {
-    handle->SetCallback(this, &StopCallback);
+    if(handle != NULL)
+    {
+        handle->SetCallback(this, &StopCallback);
+    }
 }
 
 void psMusic::StopCallback(void* object)
