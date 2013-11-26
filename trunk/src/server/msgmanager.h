@@ -185,7 +185,9 @@ class MessageManager : public MessageManagerBase
         {
             CS::Threading::RecursiveMutexScopedLock lock(mutex);
             handlers.Empty();
-            return GetEventManager()->UnsubscribeAll(this);
+            if(psserver->GetEventManager())
+                return GetEventManager()->UnsubscribeAll(this);
+            return false;
         }
         
         /**
