@@ -106,7 +106,7 @@ PawsEditorApp::~PawsEditorApp()
 
 void PawsEditorApp::SevereError(const char* msg)
 {
-    csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, APP_NAME, msg);
+    csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, APP_NAME, "%s", msg);
 }
 
 bool PawsEditorApp::Init()

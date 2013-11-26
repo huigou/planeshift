@@ -172,13 +172,21 @@ bool EEditInputboxManager::RegisterFactories() const
 {
     pawsWidgetFactory * factory;
     factory = new EEditSelectFloatFactory();
+    CS_ASSERT(factory);
     factory = new EEditSelectStringFactory();
+    CS_ASSERT(factory);
     factory = new EEditSelectVec3Factory();
+    CS_ASSERT(factory);
     factory = new EEditSelectYesNoFactory();
+    CS_ASSERT(factory);
     factory = new EEditSelectListFactory();
+    CS_ASSERT(factory);
     factory = new EEditSelectNewAnchorFactory();
+    CS_ASSERT(factory);
     factory = new EEditSelectEditAnchorFactory();
+    CS_ASSERT(factory);
     factory = new EEditSelectNewAnchorKeyFrameFactory();
+    CS_ASSERT(factory);
     return true;
 }
 

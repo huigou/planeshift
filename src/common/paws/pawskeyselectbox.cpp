@@ -36,12 +36,12 @@ pawsKeySelectBox::~pawsKeySelectBox()
 }
 
 pawsKeySelectBox::pawsKeySelectBox(const pawsKeySelectBox& origin)
-                    :key(origin.key),
-                    modifiers(origin.modifiers),
-                    text(origin.text),
-                    textX(origin.textX),
-                    textY(origin.textY),
-                    pawsWidget(origin)
+    :pawsWidget(origin),
+     text(origin.text),
+     key(origin.key),
+     modifiers(origin.modifiers),
+     textX(origin.textX),
+     textY(origin.textY)
 {
 
 }

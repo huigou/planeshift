@@ -136,7 +136,7 @@ EEditApp::~EEditApp()
 
 void EEditApp::SevereError(const char* msg)
 {
-    csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, APP_NAME, msg);
+    csReport(object_reg, CS_REPORTER_SEVERITY_ERROR, APP_NAME, "%s", msg);
 }
 
 bool EEditApp::Init()
@@ -963,6 +963,7 @@ void EEditApp::RegisterFactories()
     pawsWidgetFactory* factory;
     
     factory = new pawsEEditFactory();
+    CS_ASSERT(factory);
 
     // Use the toolbox manager to register all toolbox
     // window factories
@@ -975,6 +976,7 @@ void EEditApp::RegisterFactories()
     // Register the factories of all other custom made
     // paws widgets here
     factory = new EEditRequestComboFactory();
+    CS_ASSERT(factory);
 }
 
 void EEditApp::Update()

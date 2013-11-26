@@ -44,18 +44,18 @@
 //////////////////////////////////////////////////////////////////////
 
 pawsDnDButton::pawsDnDButton() :
-    mgr(NULL),
     pawsButton(),
+    mgr(NULL),
     dragDrop(1),
     dragDropInProgress(0),
     action(""),
     containerID(0),
     indexBase(0),
+    editMode(0),
     Callback(NULL),
     ImageNameCallback(NULL),
     NameCallback(NULL),
     ActionCallback(NULL),
-    editMode(0),
     DnDLock(false)
 {
     factory = "pawsDnDButton";

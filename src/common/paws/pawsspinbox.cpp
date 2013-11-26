@@ -64,10 +64,13 @@ pawsSpinBox::pawsSpinBox()
 }
 
 pawsSpinBox::pawsSpinBox(const pawsSpinBox& origin)
-            :pawsWidget(origin),
-            max(origin.max),min(origin.min),inc(origin.inc),
-            spinState(origin.spinState),spinCounter(origin.spinCounter),
-            globalTimer(origin.globalTimer)
+    :pawsWidget(origin),
+     globalTimer(origin.globalTimer),
+     spinCounter(origin.spinCounter),
+     spinState(origin.spinState),
+     max(origin.max),
+     min(origin.min),
+     inc(origin.inc)
 {
     downButton = 0;
     upButton = 0;

@@ -56,7 +56,7 @@ private:
     bool  complete;
 
     int   start_r,start_g,start_b;
-    int      diff_r,diff_g,diff_b;
+    int   diff_r,diff_g,diff_b;
 };
 
 CREATE_PAWS_FACTORY( pawsProgressBar );
