@@ -1507,11 +1507,17 @@ void gemItem::SendBehaviorMessage(const csString &msg_id, gemObject* actor)
         gemActor* gActor = actor->GetActorPtr();
         psCharacter* chardata = NULL;
         if(gActor) chardata = gActor->GetCharacterData();
-        if(chardata && chardata->Inventory().Add(item,false, true, PSCHARACTER_SLOT_NONE, container))
+
+        if(chardata && chardata->Inventory().Add(item, false, true, PSCHARACTER_SLOT_NONE, container))  // Test = false, Stack = true
         {
             // We passed the item to the character's inventory so don't
             // dereference the pointer or delete it.
             itemdata = NULL;
+            if (container)
+            {
+                container->CleareWithoutDelete();
+            }
+            
 
             Client* client = actor->GetClient();
             if(!client)
@@ -1736,6 +1742,12 @@ gemContainer::~gemContainer()
         delete itemlist.Pop();
     }
 }
+
+void gemContainer::CleareWithoutDelete()
+{
+    itemlist.Empty();
+}
+
 
 bool gemContainer::CanAdd(unsigned short amountToAdd, psItem* item, int slot, csString &reason)
 {
