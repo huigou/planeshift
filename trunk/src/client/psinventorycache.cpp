@@ -84,6 +84,7 @@ void psInventoryCache::EmptyInventory(void)
     itemBySlot.Empty();
 
     PawsManager::GetSingleton().Publish("sigClearInventorySlots");
+    PawsManager::GetSingleton().Publish("sigClearContainerSlots");
 }
 
 bool psInventoryCache::EmptyInventoryItem(int slot, int /*container*/)
@@ -174,9 +175,11 @@ bool psInventoryCache::SetInventoryItem(int slot,
     id->iconImage = iconImage;
     id->purifyStatus = purifyStatus;
 
-    // Don't publish slot updates for items in containers.
-    // That is handled by pawsContainerDescWindow.
-    if (id->stackCount>0 && id->iconImage.Length() != 0 && slot < 100)
+    // Publish slot updates for items including containers.
+    // The pawsContainerDescWindow will also publish for slots but this
+    // message is the only sent on changes in inventory due to sell and
+    // storage where the slot in questin is in a container.
+    if (id->stackCount>0 && id->iconImage.Length() != 0)
     {
         csString sigData, data;
         sigData.Format("invslot_%d", slot);
