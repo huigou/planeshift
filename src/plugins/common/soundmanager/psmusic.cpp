@@ -112,23 +112,35 @@ void psMusic::Stop()
 
 void psMusic::SetManaged()
 {
-    handle->SetAutoRemove(false);
+    if(handle != NULL)
+    {
+        handle->SetAutoRemove(false);
+    }
 }
 
 void psMusic::SetUnManaged()
 {
-    handle->SetAutoRemove(true);
+    if(handle != NULL)
+    {
+        handle->SetAutoRemove(true);
+    }
 }
 
 void psMusic::DontLoop()
 {
-    handle->sndstream->SetLoopState(DONT_LOOP);
+    if(handle != NULL)
+    {
+        handle->sndstream->SetLoopState(DONT_LOOP);
+    }
 }
 
 void psMusic::Loop()
 {
-    handle->sndstream->SetLoopState(LOOP);
-    handle->sndstream->Unpause();
+    if(handle != NULL)
+    {
+        handle->sndstream->SetLoopState(LOOP);
+        handle->sndstream->Unpause();
+    }
 }
 
 void psMusic::UpdateHandleCallback()
