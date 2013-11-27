@@ -167,7 +167,11 @@ void psCharacterInventory::SetBasicWeapon(psRaceInfo *race)
     //delete the fist if it was already loaded. (we expect this in the first position of the inventory array.
     //if this changes this must be changed too.
     if(inventory.GetSize())
-		delete inventory.Get(0).GetItem();
+    {
+        psItem* item = inventory.Get(0).GetItem();
+        delete item;
+        inventory.DeleteIndex(0);
+    }
 
     psItem *fist = fistStats->InstantiateBasicItem();
     equipment[PSCHARACTER_SLOT_LEFTHAND].default_if_empty = fist;
@@ -176,8 +180,7 @@ void psCharacterInventory::SetBasicWeapon(psRaceInfo *race)
     equipment[PSCHARACTER_SLOT_RIGHTHAND].EquipmentFlags |= PSCHARACTER_EQUIPMENTFLAG_AUTOATTACK | PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY;
 
     psCharacterInventoryItem newItem(fist); // default item in inv index 0 every time, so we don't have to check for NULL everywhere
-    inventory.DeleteIndex(0);
-    inventory.Insert(0,fist);
+    inventory.Insert(0, newItem);
 }
 
 void psCharacterInventory::CalculateLimits()
@@ -415,6 +418,7 @@ bool psCharacterInventory::AddLoadedItem(uint32 parentID, INVENTORY_SLOT_NUMBER 
     // Get item into inventory
     psCharacterInventoryItem newItem(item);
     size_t i = inventory.Push(newItem);
+    Debug3(LOG_ITEM,0,"Pushed item %u into inventory at %zu",item->GetUID(),i);
     if (slot < PSCHARACTER_SLOT_BULK1)
         equipment[slot].itemIndexEquipped = i;
 
@@ -740,6 +744,7 @@ psItem * psCharacterInventory::AddStacked(psItem *& item, int & added)
 //
 bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_SLOT_NUMBER slot, gemContainer* container, bool precise)
 {
+    Debug4(LOG_ITEM, 0, "%s item %s to slot %d",test?"Test add":"Add", item->GetName(), slot);
 
     if (item->GetBaseStats()->IsMoney())
     {
@@ -806,7 +811,8 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
                 item->Save(false);
                 // Get item into inventory
                 psCharacterInventoryItem newItem(item);
-                inventory.Push(newItem);
+                size_t logIndex = inventory.Push(newItem);
+                Debug3(LOG_ITEM,0,"Pushed item %u into inventory at %zu",item->GetUID(),logIndex);
 
                 if ( container )
                 {
@@ -816,11 +822,12 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
                     while (iter.HasNext())
                     {
                         psItem* child = iter.Next();
-                        size_t slot = child->GetLocInParent() + PSCHARACTER_SLOT_BULK1;
+                        size_t containerItemSlot = child->GetLocInParent() + PSCHARACTER_SLOT_BULK1;
                         //iter.RemoveCurrent();
                         psCharacterInventoryItem newItem(child);
-                        inventory.Push(newItem);
-                        child->UpdateInventoryStatus(owner, parent, (INVENTORY_SLOT_NUMBER) slot);
+                        size_t logIndex = inventory.Push(newItem);
+                        Debug3(LOG_ITEM,0,"Pushed item %u into inventory at %zu",child->GetUID(),logIndex);
+                        child->UpdateInventoryStatus(owner, parent, (INVENTORY_SLOT_NUMBER) (containerItemSlot + slot*100) );
                         child->Save(false);
                     }
                 }
@@ -857,7 +864,8 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
                     item->Save(false);
                     // Get item into inventory
                     psCharacterInventoryItem newItem(item);
-                    inventory.Push(newItem);
+                    size_t logIndex = inventory.Push(newItem);
+                    Debug3(LOG_ITEM,0,"Pushed item %u into inventory at %zu",item->GetUID(),logIndex);
 
                     UpdateEncumbrance();
 
@@ -888,7 +896,8 @@ bool psCharacterInventory::Add(psItem *&item, bool test, bool stack, INVENTORY_S
         return true; // not really doing it here
     
     psCharacterInventoryItem newItem(item);
-    inventory.Push(newItem);
+    size_t logIndex = inventory.Push(newItem);
+    Debug3(LOG_ITEM,0,"Pushed item %u into inventory at %zu",item->GetUID(),logIndex);
     
     item->UpdateInventoryStatus(owner, parentID, slot);
     item->Save(false);
@@ -1029,6 +1038,8 @@ bool psCharacterInventory::hasItemName(csString & itemname, bool includeEquipmen
 
 psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count, bool storage)
 {
+    Debug4(LOG_ITEM, 0, "Remove %d item(s) from %sIndex %zu", count, (storage?"storage":"item"), itemIndex);
+
     psItem* currentItem = storage ? storageInventory[itemIndex] : inventory[itemIndex].item;
     if (currentItem==NULL)
         return NULL;
@@ -1066,6 +1077,7 @@ psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count, bool 
         }
         else
         {
+            Debug3(LOG_ITEM,0,"Removing item %u from inventory at %zu",currentItem->GetUID(),itemIndex);
             inventory.DeleteIndex(itemIndex);  // Take out of inventory master list
             UpdateEncumbrance();
             currentItem->UpdateInventoryStatus(owner, 0, PSCHARACTER_SLOT_NONE);
@@ -1073,7 +1085,14 @@ psItem *psCharacterInventory::RemoveItemIndex(size_t itemIndex, int count, bool 
             for (size_t slot = 0; slot < INVENTORY_EQUIP_COUNT; slot++)
             {
                 if (equipment[slot].itemIndexEquipped > itemIndex)
+                {
                     equipment[slot].itemIndexEquipped--;
+                }
+                else if (equipment[slot].itemIndexEquipped == itemIndex)
+                {
+                    equipment[slot].itemIndexEquipped = 0;
+                }
+                
             }
         }
 

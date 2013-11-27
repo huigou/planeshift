@@ -137,6 +137,9 @@ enum LOG_TYPES
     // Action Locations, puzzles and mechanisms
     LOG_ACTIONLOCATION,
 
+    // Log item related transactions
+    LOG_ITEM,
+
 // NOTE: Remember to update the flagnames and flagsettings tables in log.cpp when adding new entries
     MAX_FLAGS
 };

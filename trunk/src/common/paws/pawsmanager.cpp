@@ -1475,7 +1475,7 @@ void PawsManager::UnSubscribe(iPAWSSubscriber* listener)
 
 void PawsManager::Subscribe(const char* dataname,iPAWSSubscriber* listener)
 {
-    // printf("Subscription to %s, from %p.\n", dataname, listener);
+    Debug3(LOG_PAWS,0,"Subscription to %s, from %p.", dataname, listener);
 
     // Check for duplicates.
     PAWSSubscriptionsHash::Iterator iter = subscriptions.GetIterator(dataname);
@@ -1527,7 +1527,8 @@ void PawsManager::Subscribe(const char* dataname,iPAWSSubscriber* listener)
 
 void PawsManager::Publish(const csString &dataname,PAWSData &data)
 {
-    // printf("Publishing to %s.\n", dataname.GetData());
+    Debug2(LOG_PAWS,0,"Publishing to %s.", dataname.GetData());
+
     PAWSSubscriptionsHash::Iterator iter = subscriptions.GetIterator(dataname);
     if(!iter.HasNext())   // no one has subscribed yet, so just save value
     {

@@ -197,10 +197,13 @@ psItem::psItem() : transformationEvent(NULL), gItem(NULL), pendingsave(false), l
     AddLootModifier(0);
 
     rarity = 0;
+
+    Debug2(LOG_ITEM, 0, "Item at %p created", this );
 }
 
 psItem::~psItem()
 {
+    Debug4(LOG_ITEM, 0, "Item at %p %s:%u dtor called", this, GetName(), GetUID());
     // printf("In item %s:%u dtor...\n", GetName(), uid);
 
     //remove the itemModifiers class as it's no more needed
@@ -956,6 +959,8 @@ bool psItem::GetIsUnique() const
 void psItem::SetUID(uint32 v)
 {
     uid=v;
+
+    Debug3(LOG_ITEM, 0, "Item at %p got uid %d", this, GetUID() );
 }
 
 void psItem::SetStackCount(unsigned short v)
@@ -1251,6 +1256,8 @@ void psItem::SetBaseStats(psItemStats* statptr)
 
 void psItem::UpdateInventoryStatus(psCharacter* owner,uint32 parent_id, INVENTORY_SLOT_NUMBER slot)
 {
+    Debug4(LOG_ITEM, 0, "Update inventory status for %u parent_id %d slot %d", GetUID(), parent_id, slot );
+
     if(IsEquipped() && owning_character)
     {
         owning_character->Inventory().Unequip(this);
@@ -1765,6 +1772,9 @@ const char* psItem::GetName() const
     //then check if the item modifier overlay gives a name to this item.
     if(itemModifiers->active && !itemModifiers->name.IsEmpty())
         return itemModifiers->name;
+
+    // In case current stat isn't set yet just return no item stat.
+    if (!current_stats) return "(No item stat)";
 
     //fallback to the standard item name
     return current_stats->GetName();
@@ -2560,6 +2570,8 @@ csString psItem::GetOpenableLockNames()
 
 void  psItem::SetLocInParent(INVENTORY_SLOT_NUMBER location)
 {
+    Debug3(LOG_ITEM, 0, "Set location in parent %d for %u", location, GetUID() );
+
     loc_in_parent = (INVENTORY_SLOT_NUMBER)(location % 100); // only last 2 digits are actual slot location
 }
 
