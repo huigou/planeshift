@@ -1047,11 +1047,11 @@ void ServerCharManager::HandleMerchantSell(psGUIMerchantMessage& msg, Client *cl
 
         // Record
         psSellEvent evt(character->GetPID(),
-            character->GetCharName(),
+                        character->GetCharName(),
                         merchant->GetPID(),
-            merchant->GetCharName(),
+                        merchant->GetCharName(),
                         item->GetUID(),
-            item->GetName(),
+                        item->GetName(),
                         count,
                         (int)item->GetCurrentStats()->GetQuality(),
                         cost.GetTotal() );

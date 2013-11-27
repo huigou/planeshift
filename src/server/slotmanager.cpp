@@ -68,11 +68,13 @@ bool SlotManager::Initialize()
 
 void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
 {
-//printf( "SlotManager::HandleSlotMovement begins\n" );
+    Debug1(LOG_ITEM, me->clientnum, "SlotManager::HandleSlotMovement begins." );
+
     psSlotMovementMsg mesg(me);
-//printf("Got slot movement message for %d stacked items.\n", mesg.stackCount);
-//printf("--> From container %d, slot %d\n", mesg.fromContainer, mesg.fromSlot);
-//printf("--> To   container %d, slot %d\n", mesg.toContainer, mesg.toSlot);
+
+    Debug2(LOG_ITEM, me->clientnum, "Got slot movement message for %d stacked items.", mesg.stackCount);
+    Debug3(LOG_ITEM, me->clientnum, "--> From container %d, slot %d", mesg.fromContainer, mesg.fromSlot);
+    Debug3(LOG_ITEM, me->clientnum, "--> To   container %d, slot %d", mesg.toContainer, mesg.toSlot);
 
     // If stacks are less than 1 then we should not do anything server wise.
     // This means the player does not own the item.
@@ -132,7 +134,7 @@ void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
             LogCSV::GetSingleton().Write(CSV_STATUS, status);
     }
 
-//printf( "SlotManager::HandleSlotMovement ends\n" );
+    Debug1(LOG_ITEM, me->clientnum, "SlotManager::HandleSlotMovement ends." );
     return;
 }
 
@@ -311,7 +313,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             //INVENTORY_SLOT_NUMBER destSlot = (INVENTORY_SLOT_NUMBER) (msg.toSlot + (int) PSCHARACTER_SLOT_BULK1);
             psItem* newItem;
             
-            if (chr->Inventory().Add(itemProposed, true))
+            if (chr->Inventory().Add(itemProposed, true)) // Test = true
             {
                 // Now that it was successful, take it out of the world container
                 //worldContainer->RemoveFromContainer(itemProposed,fromClient);                                
@@ -423,7 +425,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
         //Error2("Couldn't find item in proposed srcSlot %d.\b", srcSlot);
         return;
     }
-    // printf("Proposing to move item %s\n", itemProposed->GetName());
+    Debug3(LOG_ITEM, 0, "Proposing to move item %s from slot %d", itemProposed->GetName(), srcSlot);
 
     if (itemProposed->IsInUse())
     {
