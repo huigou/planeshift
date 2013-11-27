@@ -949,6 +949,13 @@ public:
     ~gemContainer();
 
     /**
+     * Clear list of items without delting them.
+     *
+     * Used when item is moved from world to inventory.
+     */
+    void CleareWithoutDelete();
+
+    /**
      * Check if a item can be added to a container.
      */
     bool CanAdd(unsigned short amountToAdd, psItem* item, int slot, csString &reason);
