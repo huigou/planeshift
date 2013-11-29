@@ -1567,6 +1567,54 @@ void psNPCClient::ListAllEntities(const char* pattern, bool onlyCharacters)
 {
     if(onlyCharacters)
     {
+
+        if(strcasecmp(pattern, "summary")==0)
+        {
+            int numChars = 0;
+            int alive = 0;
+
+            for(size_t i=0; i < all_gem_objects.GetSize(); i++)
+            {
+                gemNPCActor* actor = dynamic_cast<gemNPCActor*>(all_gem_objects[i]);
+                if(!actor || actor->GetNPC())
+                    continue;
+
+                numChars++;
+
+                if(actor->IsAlive())
+                    alive++;
+            }
+            CPrintf(CON_CMDOUTPUT, "Actor summary for %d actors: %d alive\n",
+                    numChars, alive);
+            
+            return; // No point continue since no actor should be named summary :)
+        } else if (strcasecmp(pattern,"stats") == 0)
+        {
+            CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-17s %-17s %-17s %-17s\n",
+                    "PID", "EID", "Name",
+                    "HP", "Mana","PStamina","MStamina");
+            for(size_t i=0; i < all_gem_objects.GetSize(); i++)
+            {
+                gemNPCActor* actor = dynamic_cast<gemNPCActor*>(all_gem_objects[i]);
+                if(!actor || actor->GetNPC())
+                    continue;
+
+                CPrintf(CON_CMDOUTPUT, "%-7u %-5d %-30s %5.1f/%5.1f/%5.1f %5.1f/%5.1f/%5.1f %5.1f/%5.1f/%5.1f %5.1f/%5.1f/%5.1f \n" ,
+                        actor->GetPID().Unbox(),
+                        actor->GetEID().Unbox(),
+                        actor->GetName(),
+                        actor->GetHP(),actor->GetMaxHP(),actor->GetHPRate(),
+                        actor->GetMana(),actor->GetMaxMana(),actor->GetManaRate(),
+                        actor->GetPysStamina(),actor->GetMaxPysStamina(),actor->GetPysStaminaRate(),
+                        actor->GetMenStamina(),actor->GetMaxMenStamina(),actor->GetMenStaminaRate()
+                        );
+            }
+            
+            return;
+        }
+        
+        // Default behavior
+
         CPrintf(CON_CMDOUTPUT, "%-9s %-5s %-10s %-30s %-3s %-3s %-5s\n" ,
                 "Player ID", "EID","Type","Name","Vis","Inv","Alive");
         for(size_t i=0; i < all_gem_objects.GetSize(); i++)

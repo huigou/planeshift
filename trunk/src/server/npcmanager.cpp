@@ -2666,7 +2666,7 @@ void NPCManager::QueueSpellPerception(gemActor* caster, gemObject* target,const 
     Debug4(LOG_NPC, caster->GetEID().Unbox(), "Added perception: %s cast a %s spell on %s.\n", caster->GetName(), spell_cat_name, target->GetName());
 }
 
-void NPCManager::QueueStatDR(gemNPC* npc, unsigned int statsDirtyFlags )
+void NPCManager::QueueStatDR(gemActor* npc, unsigned int statsDirtyFlags )
 {
     CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)+sizeof(uint16_t)+MSG_SIZEOF_FLOAT*12);
     outbound->msg->Add((int8_t) psNPCCommandsMessage::PCPT_STAT_DR);

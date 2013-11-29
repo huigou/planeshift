@@ -1229,8 +1229,12 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     break;
                 }
 
-                npc->SetHP(hp);
-                npc->SetMaxHP(maxHP);
+                if (npc->GetActor())
+                {
+                    npc->GetActor()->SetHP(hp);
+                    npc->GetActor()->SetMaxHP(maxHP);
+                }
+                
 
                 gemNPCObject* attacker_ent = npcclient->FindEntityID(attackerEID);
                 if(!attacker_ent)
@@ -1321,62 +1325,66 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     menStaminaRate = list.msg->GetFloat();
                 }
 
-                NPC* npc = npcclient->FindNPC(entityEID);
-
-                if(!npc)
+                gemNPCActor* entity = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(entityEID));
+                if (!entity)
                 {
                     break;
                 }
                 
-                NPCDebug(npc, 5, "Got StatDR Perception: HP: %.2f/.2f %.2f Mana: %.2f/%.2f %.2f PysStamina: %.2f/%.2f %.2f MenStamina: %.2f/%.2f %.2f",
-                         hp,maxHP,hpRate,mana,maxMana,manaRate,pysStamina,maxPysStamina,pysStaminaRate,menStamina,maxMenStamina,menStaminaRate);
+                NPC* npc = npcclient->FindNPC(entityEID);
+                if(npc)
+                {
+                    NPCDebug(npc, 5, "Got StatDR Perception: HP: %.2f/.2f %.2f Mana: %.2f/%.2f %.2f PysStamina: %.2f/%.2f %.2f MenStamina: %.2f/%.2f %.2f",
+                             hp,maxHP,hpRate,mana,maxMana,manaRate,pysStamina,maxPysStamina,pysStaminaRate,menStamina,maxMenStamina,menStaminaRate);
+                }
+                
                 if (statsDirtyFlags & DIRTY_VITAL_HP)
                 {
-                    npc->SetHP(hp);
+                    entity->SetHP(hp);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_HP_MAX)
                 {
-                    npc->SetMaxHP(maxHP);
+                    entity->SetMaxHP(maxHP);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_HP_RATE)
                 {
-                    npc->SetHPRate(hpRate);
+                    entity->SetHPRate(hpRate);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_MANA)
                 {
-                    npc->SetMana(mana);
+                    entity->SetMana(mana);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
                 {
-                    npc->SetMaxMana(maxMana);
+                    entity->SetMaxMana(maxMana);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_MANA_RATE)
                 {
-                    npc->SetManaRate(manaRate);
+                    entity->SetManaRate(manaRate);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
                 {
-                    npc->SetPysStamina(pysStamina);
+                    entity->SetPysStamina(pysStamina);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_MAX)
                 {
-                    npc->SetMaxPysStamina(maxPysStamina);
+                    entity->SetMaxPysStamina(maxPysStamina);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_RATE)
                 {
-                    npc->SetPysStaminaRate(pysStaminaRate);
+                    entity->SetPysStaminaRate(pysStaminaRate);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
                 {
-                    npc->SetMenStamina(menStamina);
+                    entity->SetMenStamina(menStamina);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
                 {
-                    npc->SetMaxMenStamina(maxMenStamina);
+                    entity->SetMaxMenStamina(maxMenStamina);
                 }
                 if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_RATE)
                 {
-                    npc->SetMenStaminaRate(menStaminaRate);
+                    entity->SetMenStaminaRate(menStaminaRate);
                 }
                 break;
             }

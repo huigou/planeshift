@@ -2174,6 +2174,11 @@ unsigned int psCharacter::GetStatsDirtyFlags() const
     return vitals->GetStatsDirtyFlags();
 }
 
+void psCharacter::SetAllStatsDirty()
+{
+    vitals->SetAllStatsDirty();
+}
+
 void psCharacter::ClearStatsDirtyFlags(unsigned int dirtyFlags)
 {
     vitals->ClearStatsDirtyFlags(dirtyFlags);

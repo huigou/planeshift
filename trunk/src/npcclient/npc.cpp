@@ -1367,128 +1367,76 @@ psNPCRaceListMessage::NPCRaceInfo_t* NPC::GetRaceInfo()
     return raceInfo;
 }
 
-void NPC::SetHP(float hp)
-{
-    this->hp.SetValue(hp, csGetTicks());
-}
-
 float NPC::GetHP()
 {
-    hp.Update(csGetTicks());
-    return hp.GetValue();
-}
-
-void NPC::SetMaxHP(float maxHP)
-{
-    hp.SetMax(maxHP);
+    if (!npcActor) return 0.0;
+    return npcActor->GetHP();
 }
 
 float NPC::GetMaxHP() const
 {
-    return hp.GetMax();
-}
-
-void NPC::SetHPRate(float hpRate)
-{
-    hp.SetRate( hpRate, csGetTicks() );
+    if (!npcActor) return 0.0;
+    return npcActor->GetMaxHP();
 }
 
 float NPC::GetHPRate() const
 {
-    return hp.GetRate();
+    if (!npcActor) return 0.0;
+    return npcActor->GetHPRate();
 }
 
-void NPC::SetMana(float mana)
-{
-    this->mana.SetValue(mana, csGetTicks() );
-}
-   
 float NPC::GetMana()
 {
-    mana.Update(csGetTicks());
-    return mana.GetValue();
+    if (!npcActor) return 0.0;
+    return npcActor->GetMana();
 }
 
-void NPC::SetMaxMana(float maxMana)
-{
-    mana.SetMax(maxMana);
-}
-    
 float NPC::GetMaxMana() const
 {
-    return mana.GetMax();
+    if (!npcActor) return 0.0;
+    return npcActor->GetMaxMana();
 }
     
-void NPC::SetManaRate(float manaRate)
-{
-    mana.SetRate(manaRate, csGetTicks());
-}
-   
 float NPC::GetManaRate() const
 {
-    return mana.GetRate();
+    if (!npcActor) return 0.0;
+    return npcActor->GetManaRate();
 }
 
-void NPC::SetPysStamina(float pysStamina)
-{
-    this->pysStamina.SetValue(pysStamina, csGetTicks());
-}
-    
 float NPC::GetPysStamina()
 {
-    pysStamina.Update(csGetTicks());
-    return pysStamina.GetValue();
-}
-    
-void NPC::SetMaxPysStamina(float maxPysStamina)
-{
-    pysStamina.SetMax( maxPysStamina );
+    if (!npcActor) return 0.0;
+    return npcActor->GetPysStamina();
 }
     
 float NPC::GetMaxPysStamina() const
 {
-    return pysStamina.GetMax();
-}
-    
-void NPC::SetPysStaminaRate(float pysStaminaRate)
-{
-    pysStamina.SetRate(pysStaminaRate, csGetTicks());
+    if (!npcActor) return 0.0;
+    return npcActor->GetMaxPysStamina();
 }
     
 float NPC::GetPysStaminaRate() const
 {
-    return pysStamina.GetRate();
+    if (!npcActor) return 0.0;
+    return npcActor->GetPysStaminaRate();
 }
     
-void NPC::SetMenStamina(float menStamina)
-{
-    this->menStamina.SetValue( menStamina, csGetTicks());
-}
-   
 float NPC::GetMenStamina()
 {
-    menStamina.Update(csGetTicks());
-    return menStamina.GetValue();
-}
-    
-void NPC::SetMaxMenStamina(float maxMenStamina)
-{
-    menStamina.SetMax( maxMenStamina );
+    if (!npcActor) return 0.0;
+    return npcActor->GetMenStamina();
 }
     
 float NPC::GetMaxMenStamina() const
 {
-    return menStamina.GetMax();
+    if (!npcActor) return 0.0;
+    return npcActor->GetMaxMenStamina();
 }
 
-void NPC::SetMenStaminaRate(float menStaminaRate)
-{
-    menStamina.SetRate( menStaminaRate, csGetTicks());
-}
-   
 float NPC::GetMenStaminaRate() const
 {
-    return menStamina.GetRate();
+    if (!npcActor) return 0.0;
+    return npcActor->GetMenStaminaRate();
 }
     
 void NPC::TakeControl(gemNPCActor* actor)
@@ -1649,6 +1597,18 @@ double NPC::GetProperty(MathEnvironment* env, const char* ptr)
         if (target)
         {
             return GetEntityHate(target);
+        }
+        else
+        {
+            return 0.0;
+        }
+    }
+    if (property == "HasTarget")
+    {
+        gemNPCActor* target = dynamic_cast<gemNPCActor*>(GetTarget());
+        if (target)
+        {
+            return 1.0;
         }
         else
         {
