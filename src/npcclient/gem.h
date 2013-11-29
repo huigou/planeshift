@@ -33,6 +33,7 @@
 // Local Includes
 //=============================================================================
 #include "npcclient.h"
+#include "stat.h"
 
 /**
  * \addtogroup npcclient
@@ -129,7 +130,7 @@ protected:
 };
 
 
-class gemNPCActor : public gemNPCObject
+class gemNPCActor : public gemNPCObject, public iScriptableVar
 {
 public:
 
@@ -149,11 +150,142 @@ public:
     virtual void AttachNPC(NPC * newNPC);
     virtual NPC *GetNPC() { return npc; }
 
+
+    /**
+     * Set the actor HP
+     */
+    void SetHP(float hp);
+    
+    /**
+     * Get the actor HP
+     */
+    float GetHP();
+
+    /**
+     * Set the actor MaxHP
+     */
+    void SetMaxHP(float maxHP);
+    
+    /**
+     * Get the actor MaxHP
+     */
+    float GetMaxHP() const;
+
+    /**
+     * Set the actor HP
+     */
+    void SetHPRate(float hpRate);
+    
+    /**
+     * Get the actor HPRate
+     */
+    float GetHPRate() const;
+
+    /**
+     * Set the actor Mana
+     */
+    void SetMana(float mana);
+    
+    /**
+     * Get the actor Mana
+     */
+    float GetMana();
+    
+    /**
+     * Set the actor MaxMana
+     */
+    void SetMaxMana(float maxMana);
+    
+    /**
+     * Get the actor MaxMana
+     */
+    float GetMaxMana() const;
+    
+    /**
+     * Set the actor ManaRate
+     */
+    void SetManaRate(float manaRate);
+    
+    /**
+     * Get the actor ManaRate
+     */
+    float GetManaRate() const;
+    
+    /**
+     * Set the actor PysStamina
+     */
+    void SetPysStamina(float pysStamina);
+    
+    /**
+     * Get the actor PysStamina
+     */
+    float GetPysStamina();
+    
+    /**
+     * Set the actor MaxPysStamina
+     */
+    void SetMaxPysStamina(float maxPysStamina);
+    
+    /**
+     * Get the actor MaxPysStamina
+     */
+    float GetMaxPysStamina() const;
+    
+    /**
+     * Set the actor PysStaminaRate
+     */
+    void SetPysStaminaRate(float pysStaminaRate);
+    
+    /**
+     * Get the actor PysStaminaRate
+     */
+    float GetPysStaminaRate() const;
+    
+    /**
+     * Set the actor MenStamina
+     */
+    void SetMenStamina(float menStamina);
+    
+    /**
+     * Get the actor MenStamina
+     */
+    float GetMenStamina();
+    
+    /**
+     * Set the actor MaxMenStamina
+     */
+    void SetMaxMenStamina(float maxMenStamina);
+    
+    /**
+     * Get the actor MaxMenStamina
+     */
+    float GetMaxMenStamina() const;
+    
+    /**
+     * Set the actor MenStaminaRate
+     */
+    void SetMenStaminaRate(float menStaminaRate);
+    
+    /**
+     * Get the actor MenStaminaRate
+     */
+    float GetMenStaminaRate() const;
+    
     /** Set the within tribe.
      * @return true if a new within tribe is set
      */
     virtual bool SetWithinTribe(Tribe* tribe,Tribe** oldTribe = NULL);
 
+private:
+    /** @name iScriptableVar implementation
+     * Functions that implement the iScriptableVar interface. 
+     */
+    ///@{
+    virtual double GetProperty(MathEnvironment* env, const char* ptr);
+    virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
+    virtual const char* ToString();
+    ///@}    
+    
 protected:
 
     bool InitLinMove(const csVector3& pos,float angle, const char* sector,
@@ -168,6 +300,12 @@ protected:
     NPC *npc;
 
     Tribe* withinTribe; /// Points to the tribe home where this tribe is inside.
+
+    // Stats
+    Stat               hp;
+    Stat               mana;
+    Stat               pysStamina;
+    Stat               menStamina;
 };
 
 

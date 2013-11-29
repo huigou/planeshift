@@ -241,6 +241,58 @@ bool gemNPCActor::SetWithinTribe(Tribe* tribe, Tribe** oldTribe)
     return result;
 }
 
+double gemNPCActor::GetProperty(MathEnvironment* env, const char* ptr)
+{
+    csString property(ptr);
+    if (property == "HP")
+    {
+        return GetHP();
+    }
+    if (property == "MaxHP")
+    {
+        return GetMaxHP();
+    }
+    if (property == "Mana")
+    {
+        return GetMana();
+    }
+    if (property == "MaxMana")
+    {
+        return GetMaxMana();
+    }
+    if (property == "PStamina")
+    {
+        return GetPysStamina();
+    }
+    if (property == "MaxPStamina")
+    {
+        return GetMaxPysStamina();
+    }
+    if (property == "MStamina")
+    {
+        return GetMenStamina();
+    }
+    if (property == "MaxMStamina")
+    {
+        return GetMaxMenStamina();
+    }
+
+    Error2("Requested gemNPCActor property not found '%s'", ptr);
+    return 0.0;
+}
+
+double gemNPCActor::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
+{
+    csString function(functionName);
+
+    Error2("Requested gemNPCActor function not found '%s'", functionName);
+    return 0.0;
+}
+
+const char* gemNPCActor::ToString()
+{
+    return "Actor";
+}
 
 bool gemNPCActor::InitCharData( const char* textParts, const char* equipment )
 {                   
@@ -258,6 +310,131 @@ bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sec
     pcmove->SetPosition(pos,angle,engine->FindSector(sector));
     
     return true;  // right now this func never fail, but might later.
+}
+
+
+void gemNPCActor::SetHP(float hp)
+{
+    this->hp.SetValue(hp, csGetTicks());
+}
+
+float gemNPCActor::GetHP()
+{
+    hp.Update(csGetTicks());
+    return hp.GetValue();
+}
+
+void gemNPCActor::SetMaxHP(float maxHP)
+{
+    hp.SetMax(maxHP);
+}
+
+float gemNPCActor::GetMaxHP() const
+{
+    return hp.GetMax();
+}
+
+void gemNPCActor::SetHPRate(float hpRate)
+{
+    hp.SetRate( hpRate, csGetTicks() );
+}
+
+float gemNPCActor::GetHPRate() const
+{
+    return hp.GetRate();
+}
+
+void gemNPCActor::SetMana(float mana)
+{
+    this->mana.SetValue(mana, csGetTicks() );
+}
+   
+float gemNPCActor::GetMana()
+{
+    mana.Update(csGetTicks());
+    return mana.GetValue();
+}
+
+void gemNPCActor::SetMaxMana(float maxMana)
+{
+    mana.SetMax(maxMana);
+}
+    
+float gemNPCActor::GetMaxMana() const
+{
+    return mana.GetMax();
+}
+    
+void gemNPCActor::SetManaRate(float manaRate)
+{
+    mana.SetRate(manaRate, csGetTicks());
+}
+   
+float gemNPCActor::GetManaRate() const
+{
+    return mana.GetRate();
+}
+
+void gemNPCActor::SetPysStamina(float pysStamina)
+{
+    this->pysStamina.SetValue(pysStamina, csGetTicks());
+}
+    
+float gemNPCActor::GetPysStamina()
+{
+    pysStamina.Update(csGetTicks());
+    return pysStamina.GetValue();
+}
+    
+void gemNPCActor::SetMaxPysStamina(float maxPysStamina)
+{
+    pysStamina.SetMax( maxPysStamina );
+}
+    
+float gemNPCActor::GetMaxPysStamina() const
+{
+    return pysStamina.GetMax();
+}
+    
+void gemNPCActor::SetPysStaminaRate(float pysStaminaRate)
+{
+    pysStamina.SetRate(pysStaminaRate, csGetTicks());
+}
+    
+float gemNPCActor::GetPysStaminaRate() const
+{
+    return pysStamina.GetRate();
+}
+    
+void gemNPCActor::SetMenStamina(float menStamina)
+{
+    this->menStamina.SetValue( menStamina, csGetTicks());
+}
+   
+float gemNPCActor::GetMenStamina()
+{
+    menStamina.Update(csGetTicks());
+    return menStamina.GetValue();
+}
+    
+void gemNPCActor::SetMaxMenStamina(float maxMenStamina)
+{
+    menStamina.SetMax( maxMenStamina );
+}
+    
+float gemNPCActor::GetMaxMenStamina() const
+{
+    return menStamina.GetMax();
+}
+
+void gemNPCActor::SetMenStaminaRate(float menStaminaRate)
+{
+    menStamina.SetRate( menStaminaRate, csGetTicks());
+}
+   
+float gemNPCActor::GetMenStaminaRate() const
+{
+    return menStamina.GetRate();
 }
 
 

@@ -98,6 +98,10 @@ public:
      */
     unsigned int GetStatsDirtyFlags() const;
 
+    /** Set all vitals dirty.
+     */
+    void SetAllStatsDirty();
+    
     /** Cleare the dirty flags for vitals.
      */
     void ClearStatsDirtyFlags( unsigned int dirtyFlags );

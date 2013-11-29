@@ -197,6 +197,12 @@ unsigned int psServerVitals::GetStatsDirtyFlags() const
     return statsDirty;
 }
 
+void psServerVitals::SetAllStatsDirty()
+{
+    statsDirty = DIRTY_VITAL_ALL;
+}
+
+
 void psServerVitals::ClearStatsDirtyFlags( unsigned int dirtyFlags )
 {
     statsDirty &= ~dirtyFlags;

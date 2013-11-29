@@ -1195,6 +1195,11 @@ public:
     unsigned int GetStatsDirtyFlags() const;
 
     /**
+     * Set all vital stats dirty.
+     */
+    void SetAllStatsDirty();
+    
+    /**
      * Cleare the dirty flags for vitals.
      */
     void ClearStatsDirtyFlags(unsigned int dirtyFlags);

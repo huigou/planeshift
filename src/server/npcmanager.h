@@ -114,8 +114,8 @@ public:
     /// Let the superclient know that a spell has been cast.
     void QueueSpellPerception(gemActor *caster, gemObject *target,const char *spell_cat, uint32_t spell_category, float severity);
 
-    //// Let the superclient know the stats of the npc
-    void QueueStatDR(gemNPC *npc, unsigned int statsDirtyFlags );
+    //// Let the superclient know the stats of the actor
+    void QueueStatDR(gemActor *actor, unsigned int statsDirtyFlags );
 
     /// Let the superclient know that one enemy is close.
     void QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type, gemActor *npc, gemActor *player, float relative_faction);

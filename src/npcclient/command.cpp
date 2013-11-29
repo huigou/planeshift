@@ -176,7 +176,7 @@ int com_list (const char* arg)
     {
         CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|help|loc|npc|path|race|reactions|recipe|tribe|warpspace|waypoint] <pattern|EID>\n");
         CPrintf(CON_CMDOUTPUT,"Sub commands:\n");
-        CPrintf(CON_CMDOUTPUT,"  npc [summary|stats|<pattern>]\n");
+        CPrintf(CON_CMDOUTPUT,"  char|npc [summary|stats|<pattern>]\n");
         return 0;
     }
 

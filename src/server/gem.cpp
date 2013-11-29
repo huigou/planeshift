@@ -351,19 +351,13 @@ void GEMSupervisor::FillNPCList(MsgEntry* msg, AccountID superclientID)
 
 void GEMSupervisor::SendAllNPCStats(AccountID superclientID)
 {
-    csHash<gemObject*, EID>::GlobalIterator iter(entities_by_eid.GetIterator());
+    csHash<gemActor*, PID>::GlobalIterator iter(actors_by_pid.GetIterator());
 
     while(iter.HasNext())
     {
-        gemObject* obj = iter.Next();
-        if(obj->GetSuperclientID() == superclientID)
-        {
-            gemNPC* npc = obj->GetNPCPtr();
-            if(npc)
-            {
-                psserver->npcmanager->QueueStatDR(npc, DIRTY_VITAL_ALL);
-            }
-        }
+        gemActor* actor = iter.Next();
+
+        psserver->npcmanager->QueueStatDR(actor, DIRTY_VITAL_ALL);
     }
 }
 
@@ -2814,7 +2808,11 @@ void gemActor::Resurrect()
     psChar->GetHPRate().SetBase(HP_REGEN_RATE);
     psChar->GetManaRate().SetBase(MANA_REGEN_RATE);
 
-    BroadcastTargetStatDR(psserver->GetNetManager()->GetConnections());
+    // Just to force sending of all stats. Not only the one that was changed due to adjustment abow.
+    psChar->SetAllStatsDirty();
+
+    // Publish stats to all liseners
+    SendGroupStats();
 }
 
 void gemActor::InvokeAttackScripts(gemActor* defender, psItem* weapon)
@@ -3100,10 +3098,18 @@ void gemActor::HandleDeath()
         iDeathCallback* receiver = deathReceivers.Pop();
         receiver->DeathCallback(this);
     }
+
+    psChar->SetAllStatsDirty();
+    SendGroupStats();
 }
 
 void gemActor::SendGroupStats()
 {
+    // First we update super clients. Updating stats to clients (Targeted entities)
+    // will cause the stats dirty flag to be cleared so we do this update first.
+    unsigned int statsDirtyFlags = GetCharacterData()->GetStatsDirtyFlags();
+    psserver->GetNPCManager()->QueueStatDR(this, statsDirtyFlags);
+
     if(InGroup() || GetClientID())
     {
         psChar->SendStatDRMessage(GetClientID(), eid, 0, InGroup() ? GetGroup() : NULL);
@@ -5303,10 +5309,7 @@ void gemNPC::Broadcast(int clientnum, bool control)
 
 void gemNPC::SendGroupStats()
 {
-    // First we update super clients. Updating stats to clients (Targeted entities)
-    // will cause the stats dirty flag to be cleared so we do this update first.
     unsigned int statsDirtyFlags = GetCharacterData()->GetStatsDirtyFlags();
-    psserver->GetNPCManager()->QueueStatDR(this, statsDirtyFlags);
 
     // Distribute PET stats to owner client
     if(GetCharacterData()->IsPet())
