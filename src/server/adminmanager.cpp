@@ -5011,7 +5011,11 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cm
         return; // Done
     }
 
-    char ipaddr[20] = {0};
+#ifdef INCLUDE_IPV6_SUPPORT
+    char ipAddr[INET6_ADDRSTRLEN];
+#else
+    char ipAddr[INET_ADDRSTRLEN];
+#endif
     csString name, ipAddress, securityLevel;
     PID playerId;
     AccountID accountId;
@@ -5036,8 +5040,12 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cm
         if(targetclient)  // Player
         {
             name = targetclient->GetName();
-            targetclient->GetIPAddress(ipaddr);
-            ipAddress = ipaddr;
+#ifdef INCLUDE_IPV6_SUPPORT
+            targetclient->GetIPAddress(ipAddr, INET6_ADDRSTRLEN);
+#else
+            targetclient->GetIPAddress(ipAddr, INET_ADDRSTRLEN);
+#endif
+            ipAddress = ipAddr;
             accountId = data->GetAccountID(me->clientnum);
 
             // Because of /deputize we'll need to get the real SL from DB

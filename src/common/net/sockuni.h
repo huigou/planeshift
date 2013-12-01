@@ -36,24 +36,45 @@
  * \addtogroup common_net
  * @{ */
 
+//#define INCLUDE_IPV6_SUPPORT true
+
 /* define some types */
 #ifndef SOCKET
 #define SOCKET    int
 #endif
+
+#ifndef IN_ADDR
+#ifdef INCLUDE_IPV6_SUPPORT
+#define IN_ADDR struct in6_addr
+#else
+#define IN_ADDR struct in_addr
+#endif
+#endif
+
 #ifndef SOCKADDR_IN
+#ifdef INCLUDE_IPV6_SUPPORT
+#define SOCKADDR_IN struct sockaddr_in6
+#else
 #define SOCKADDR_IN struct sockaddr_in
 #endif
+#endif
+
 #ifndef LPSOCKADDR
 #define LPSOCKADDR  struct sockaddr *
 #endif
+
 #ifndef LPSOCKADDR_IN
+#ifdef INCLUDE_IPV6_SUPPORT
+#define LPSOCKADDR_IN    struct sockaddr_in6 *
+#else
 #define LPSOCKADDR_IN    struct sockaddr_in *
 #endif
+#endif
 
-#define SOCK_SENDTO(a,b,c,d,e,f)    sendto(a,(const void *) b,c,d,e,f)
-#define SOCK_RECVFROM(a,b,c,d,e,f)    recvfrom(a,(void *) b,c,d,e,f)
-#define SOCK_IOCTL(a,b,c)        ioctl(a,b,c)
-#define SOCK_CLOSE(a)            close(a)
+#define SOCK_SENDTO(a,b,c,d,e,f)                        sendto(a,(const void *) b,c,d,e,f)
+#define SOCK_RECVFROM(a,b,c,d,e,f)                      recvfrom(a,(void *) b,c,d,e,f)
+#define SOCK_IOCTL(a,b,c)                               ioctl(a,b,c)
+#define SOCK_CLOSE(a)                                   close(a)
 #define SOCK_SELECT(max,read,write,except,timeout)      select(max,read,write,except,timeout)
 
 #define INVALID_SOCKET    -1

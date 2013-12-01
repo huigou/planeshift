@@ -220,7 +220,7 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
             0, 0, (uint32_t) pong.msg->bytes->GetTotalSize(),
             (uint16_t) pong.msg->bytes->GetTotalSize(), pong.msg->bytes));
 
-        SendFinalPacket(pkt,addr);
+        SendFinalPacket(pkt, addr);
         return false;
     }
 
@@ -232,6 +232,8 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
     Client* client = clients.Add(addr);
     if (!client)
         return false;
+
+    Debug3(LOG_CONNECTIONS, client->GetClientNum(), "New client %d connected from %s", client->GetClientNum(), client->GetIPAddress().GetDataSafe())
 
     // This is for the accept message that will be sent back
     me->clientnum = client->GetClientNum();
@@ -748,11 +750,16 @@ void NetManager::CheckLinkDead()
                 if(!pClient->AllowDisconnect())
                     continue;
 
-                char ipaddr[20];
-                pClient->GetIPAddress(ipaddr);
+#ifdef INCLUDE_IPV6_SUPPORT
+                char ipAddr[INET6_ADDRSTRLEN];
+                pClient->GetIPAddress(ipAddr, INET6_ADDRSTRLEN);
+#else
+                char ipAddr[INET_ADDRSTRLEN];
+                pClient->GetIPAddress(ipAddr, INET_ADDRSTRLEN);
+#endif
 
                 csString status;
-                status.Format("%s, %u, Client (%s) went linkdead.", ipaddr, pClient->GetClientNum(), pClient->GetName());
+                status.Format("%s, %u, Client (%s) went linkdead.", ipAddr, pClient->GetClientNum(), pClient->GetName());
                 psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 
                 /* This simulates receipt of this message from the client

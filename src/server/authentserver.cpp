@@ -348,12 +348,6 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     {
         // Account not banned; try IP range
         ban = banmanager.GetBanByIPRange(client->GetIPRange());
-        // 2 day IP ban limit removed
-        //if (ban && ban->end && now > ban->start + IP_RANGE_BAN_TIME)
-        //{  
-        //    // Only ban by IP range for the first 2 days
-        //    ban = NULL;
-        //}
     }
     if (ban)
     {
@@ -432,9 +426,14 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
 
     // Get the struct to refresh
     // Update last login ip and time
-    char addr[20];
-    client->GetIPAddress(addr);
-    acctinfo->lastloginip = addr;
+#ifdef INCLUDE_IPV6_SUPPORT
+    char ipAddr[INET6_ADDRSTRLEN];
+    client->GetIPAddress(ipAddr, INET6_ADDRSTRLEN);
+#else
+    char ipAddr[INET_ADDRSTRLEN];
+    client->GetIPAddress(ipAddr, INET_ADDRSTRLEN);
+#endif
+    acctinfo->lastloginip = ipAddr;
 
     tm* gmtm = gmtime(&now);
     csString timeStr;
@@ -531,7 +530,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
-    status.Format("%s - %s, %u, Logged in", addr, (const char*) msg.sUser, me->clientnum);
+    status.Format("%s - %s, %u, Logged in", ipAddr, (const char*) msg.sUser, me->clientnum);
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 }
 

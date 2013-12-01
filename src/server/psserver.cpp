@@ -412,6 +412,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
            (const char*) serveraddr, port);
     if(!netmanager->Bind(serveraddr, port))
     {
+        Error1("Failed to bind");
         delete netmanager;
         netmanager = NULL;
         return false;
@@ -628,11 +629,16 @@ void psServer::RemovePlayer(uint32_t clientnum,const char* reason)
         return;
     }
 
-    char ipaddr[20];
-    client->GetIPAddress(ipaddr);
+#ifdef INCLUDE_IPV6_SUPPORT
+    char ipAddr[INET6_ADDRSTRLEN];
+    client->GetIPAddress(ipAddr, INET6_ADDRSTRLEN);
+#else
+    char ipAddr[INET_ADDRSTRLEN];
+    client->GetIPAddress(ipAddr, INET_ADDRSTRLEN);
+#endif
 
     csString status;
-    status.Format("%s, %u, Client (%s) removed", ipaddr, client->GetClientNum(), client->GetName());
+    status.Format("%s, %u, Client (%s) removed", ipAddr, client->GetClientNum(), client->GetName());
 
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 

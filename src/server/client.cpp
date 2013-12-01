@@ -91,7 +91,6 @@ Client::~Client()
 bool Client::Initialize(LPSOCKADDR_IN addr, uint32_t clientnum)
 {
     Client::addr=*addr;
-    CS_ASSERT_MSG("Unexpected size for IP address structure!", sizeof(addr->sin_addr.s_addr) + sizeof(addr->sin_port) == 6);
     Client::clientnum=clientnum;
     Client::valid=true;
 
@@ -334,6 +333,71 @@ int Client::GetAllianceID()
         return 0;
     
     return guild->GetAllianceID();
+}
+
+void Client::GetIPAddress(char *addrStr, socklen_t size)
+{
+#ifdef INCLUDE_IPV6_SUPPORT
+    inet_ntop(AF_INET6, &addr.sin6_addr, addrStr, size);
+#else
+    unsigned int a1,a2,a3,a4;
+#ifdef WIN32
+    unsigned long a = addr.sin_addr.S_un.S_addr;
+#else
+    unsigned long a = addr.sin_addr.s_addr;
+#endif
+
+    if (addrStr)
+    {
+        a1 = a&0x000000FF;
+        a2 = (a&0x0000FF00)>>8;
+        a3 = (a&0x00FF0000)>>16;
+        a4 = (a&0xFF000000)>>24;
+        sprintf(addrStr,"%d.%d.%d.%d",a1,a2,a3,a4);
+    }
+#endif
+}
+
+csString Client::GetIPAddress()
+{
+#ifdef INCLUDE_IPV6_SUPPORT
+    char ipaddr[INET6_ADDRSTRLEN] = {0};
+    GetIPAddress(ipaddr, INET6_ADDRSTRLEN);
+#else
+    char ipaddr[INET_ADDRSTRLEN] = {0};
+    GetIPAddress(ipaddr, INET_ADDRSTRLEN);
+#endif
+    return csString(ipaddr);
+}
+
+
+csString Client::GetIPRange(int octets)
+{
+#ifdef INCLUDE_IPV6_SUPPORT
+    char ipaddr[INET6_ADDRSTRLEN] = {0};
+    GetIPAddress(ipaddr, INET6_ADDRSTRLEN);
+#else
+    char ipaddr[INET_ADDRSTRLEN] = {0};
+    GetIPAddress(ipaddr, INET_ADDRSTRLEN);
+#endif
+    return GetIPRange(ipaddr,octets);
+}
+
+csString Client::GetIPRange(const char* ipaddr, int octets)
+{
+    csString range(ipaddr);
+    for (size_t i=0; i<range.Length(); i++)
+    {
+        if (range[i] == '.')
+            --octets;
+        
+        if (!octets)
+        {
+            range[i+1] = '\0';
+            break;
+        }
+    }
+    return range;
 }
 
 unsigned int Client::GetAccountTotalOnlineTime()
