@@ -230,19 +230,28 @@ bool NetBase::CheckIn()
     psNetPacket *bufpacket = psNetPacket::NetPacketFromBuffer(input_buffer,packetlen);
     if (bufpacket==NULL)
     {
-        char addrText[INET_ADDRSTRLEN];
 
         //for win32 for now only inet_ntoa as inet_ntop wasn't supported till vista.
         //it has the same degree of compatibility of the previous code and it's supported till win2000
-        #ifdef WIN32
+#ifdef INCLUDE_IPV6_SUPPORT
+        char addrText[INET6_ADDRSTRLEN];
+        //there was a failure in conversion if null
+        if(!inet_ntop(addr.sin6_family,&addr.sin6_addr, addrText, sizeof(addrText)))
+        {
+            strncpy(addrText, "UNKNOWN", INET_ADDRSTRLEN);
+        }
+#else
+        char addrText[INET_ADDRSTRLEN];
+#ifdef WIN32
         strncpy(addrText, inet_ntoa(addr.sin_addr), INET_ADDRSTRLEN);
-        #else
+#else
         //there was a failure in conversion if null
         if(!inet_ntop(addr.sin_family,&addr.sin_addr, addrText, sizeof(addrText)))
         {
             strncpy(addrText, "UNKNOWN", INET_ADDRSTRLEN);
         }
-        #endif
+#endif
+#endif
 
         // The data received was too small to make a full packet.
         if (connection)
@@ -264,19 +273,27 @@ bool NetBase::CheckIn()
     // Check for too-big packets - no harm in processing them, but probably a bug somewhere
     if (bufpacket->GetPacketSize() < static_cast<unsigned int>(packetlen))
     {
-        char addrText[INET_ADDRSTRLEN];
-
         //for win32 for now only inet_ntoa as inet_ntop wasn't supported till vista.
         //it has the same degree of compatibility of the previous code and it's supported till win2000
-        #ifdef WIN32
+#ifdef INCLUDE_IPV6_SUPPORT
+        char addrText[INET6_ADDRSTRLEN];
+        //there was a failure in conversion if null
+        if(!inet_ntop(addr.sin6_family,&addr.sin6_addr, addrText, sizeof(addrText)))
+        {
+            strncpy(addrText, "UNKNOWN", INET_ADDRSTRLEN);
+        }
+#else
+        char addrText[INET_ADDRSTRLEN];
+#ifdef WIN32
         strncpy(addrText, inet_ntoa(addr.sin_addr), INET_ADDRSTRLEN);
-        #else
+#else
         //there was a failure in conversion if null
         if(!inet_ntop(addr.sin_family,&addr.sin_addr, addrText, sizeof(addrText)))
         {
             strncpy(addrText, "UNKNOWN", INET_ADDRSTRLEN);
         }
-        #endif
+#endif
+#endif
         
         if (connection)
         {
@@ -850,9 +867,12 @@ bool NetBase::Init(bool autobind)
     if(pipe(pipe_fd) != 0)
         Error1("Error creating self pipe");
 #endif
-    
-    mysocket = socket (AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
+#ifdef INCLUDE_IPV6_SUPPORT    
+    mysocket = socket (AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
+#else
+    mysocket = socket (AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+#endif
     /* set to non blocking operation */
     unsigned long arg=1;
     err = SOCK_IOCTL (mysocket, FIONBIO, &arg);
@@ -865,7 +885,14 @@ bool NetBase::Init(bool autobind)
 
     if (autobind)
     {
-        if (!Bind ((int) INADDR_ANY, 0))
+#ifdef INCLUDE_IPV6_SUPPORT
+        struct in6_addr anyaddr = IN6ADDR_ANY_INIT;
+#else
+        struct in_addr anyaddr;
+        anyaddr.s_addr = INADDR_ANY;
+#endif
+
+        if (!Bind ( anyaddr, 0))
         {
             Close(SOCKET_CLOSE_FORCED);
             return false;
@@ -878,13 +905,22 @@ bool NetBase::Init(bool autobind)
 
 bool NetBase::Bind (const char* str, int port)
 {
-    int addr = inet_addr(str);
+    IN_ADDR addr;
+
+#ifdef INCLUDE_IPV6_SUPPORT
+    if (!inet_pton(AF_INET6, str, &addr))
+    {
+        return false;
+    }
+#else
+    addr.s_addr = inet_addr(str);
+#endif
 
     return Bind(addr, port);
 }
 
 
-bool NetBase::Bind (int addr, int port)
+bool NetBase::Bind (const IN_ADDR &addr, int port)
 {
     int err;
     SOCKADDR_IN sockaddr;
@@ -893,13 +929,18 @@ bool NetBase::Bind (int addr, int port)
         return false;
 
     memset ((void*) &sockaddr, 0, sizeof(SOCKADDR_IN));
+#ifdef INCLUDE_IPV6_SUPPORT
+    sockaddr.sin6_family = AF_INET6;                         
+    sockaddr.sin6_addr = addr;                       
+    sockaddr.sin6_port = htons(port);
+#else
     sockaddr.sin_family = AF_INET;                         
-    sockaddr.sin_addr.s_addr = addr;                       
+    sockaddr.sin_addr = addr;                       
     sockaddr.sin_port = htons(port);
-
+#endif
     err = bind (mysocket, (LPSOCKADDR) &sockaddr, sizeof(SOCKADDR_IN));
     if (err < 0)
-    {                                                                      
+    {                    
         Error1("bind() failed");
         return false;
     }
@@ -920,6 +961,48 @@ void NetBase::Close(bool force)
 
 int NetBase::GetIPByName(LPSOCKADDR_IN addr, const char *name)
 {
+#ifdef INCLUDE_IPV6_SUPPORT
+    struct addrinfo  hints;
+    struct addrinfo* result;
+    struct addrinfo* res;
+
+
+    memset(&hints, 0, sizeof(struct addrinfo));
+    hints.ai_family = AF_INET6; // AF_UNSPEC;    /* Allow IPv4 or IPv6 */
+    hints.ai_socktype = SOCK_DGRAM; /* Datagram socket */
+    hints.ai_flags = (AI_V4MAPPED | AI_ADDRCONFIG);
+    hints.ai_protocol = 0;          /* Any protocol */
+
+    int error = getaddrinfo(name, NULL, &hints, &result);
+    if (error != 0)
+    {
+        Error3("gettaddrinfo: %s\n->Host: %s",gai_strerror(error),name);
+        return -1;
+    }
+    for (res = result; res != NULL; res = res->ai_next)
+    {     
+        void *ptr;
+        
+        switch (res->ai_family)
+        {
+        case AF_INET:
+          ptr = &((struct sockaddr_in *) res->ai_addr)->sin_addr;
+          break;
+        case AF_INET6:
+          ptr = &((struct sockaddr_in6 *) res->ai_addr)->sin6_addr;
+          break;
+        }
+        char addrStr[INET6_ADDRSTRLEN] = {0};
+        inet_ntop(res->ai_family, ptr, addrStr, INET6_ADDRSTRLEN );
+        printf("===============0> IP for %s is %s\n",name, addrStr);
+
+        addr->sin6_family = res->ai_family;
+        memcpy(&addr->sin6_addr,ptr,res->ai_addrlen);
+    }
+    
+    freeaddrinfo(result);
+    return 0;
+#else
     struct hostent *hentry;
 
     hentry = gethostbyname (name);
@@ -928,6 +1011,7 @@ int NetBase::GetIPByName(LPSOCKADDR_IN addr, const char *name)
 
     addr->sin_addr.s_addr = ((struct in_addr *) hentry->h_addr)->s_addr;
     return 0;
+#endif
 }
 
 

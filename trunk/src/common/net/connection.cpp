@@ -92,8 +92,13 @@ bool psNetConnection::Connect(const char *servaddr, int port)
     //    Debug2(LOG_NET, 0,"psNetConnection::Connect this=%p",this);
 
     server = new Connection;
+#ifdef INCLUDE_IPV6_SUPPORT
+    server->addr.sin6_family = AF_INET6;
+    server->addr.sin6_port   = htons(port);
+#else
     server->addr.sin_family = AF_INET;
     server->addr.sin_port   = htons(port);
+#endif
     server->nameAddr = servaddr;
     err = GetIPByName (&server->addr, servaddr);
     if (err)
@@ -152,8 +157,13 @@ psNetConnection::Connection *psNetConnection::GetConnByIP (LPSOCKADDR_IN addr)
         return 0;
 
     // check if it's the server
+#ifdef INCLUDE_IPV6_SUPPORT
+    if (server->addr.sin6_port==addr->sin6_port &&
+        memcmp(server->addr.sin6_addr.s6_addr,addr->sin6_addr.s6_addr,16)==0)
+#else
     if (server->addr.sin_port==addr->sin_port &&
         server->addr.sin_addr.s_addr==addr->sin_addr.s_addr)
+#endif
     return server;
    
 #ifdef DEBUG

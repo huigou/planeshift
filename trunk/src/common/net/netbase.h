@@ -226,7 +226,7 @@ public:
 
     /** Binds the socket to the specified address (only needed on server */
     bool Bind(const char* addr, int port);
-    bool Bind(int addr, int port);
+    bool Bind(const IN_ADDR &addr, int port);
 
     /**
      * This class describes connections to other computers - so it contains

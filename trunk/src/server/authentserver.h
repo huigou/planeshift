@@ -39,15 +39,12 @@ class Client;
 struct BanEntry
 {
     AccountID account;
-    csString ipRange;
-    time_t   start;
-    time_t   end;
-    csString reason;
-    bool banIP;
+    csString  ipRange;
+    time_t    start;
+    time_t    end;
+    csString  reason;
+    bool      banIP;
 };
-
-// Length of time the server can ban by IP range //Removed
-//#define IP_RANGE_BAN_TIME 60*60*24*2  // 2 days
 
 /// Holds list of banned accounts and IP ranges
 class BanManager
@@ -133,7 +130,10 @@ public:
      * Updates the status of the client. Currently is used to set client to ready.
      */
     void HandleStatusUpdate(MsgEntry *me, Client *client);
-    
+
+    /**
+     * Get the Ban Manager that hold information regarding baned clients.
+     */
     BanManager* GetBanManager() { return &banmanager; }
 
 

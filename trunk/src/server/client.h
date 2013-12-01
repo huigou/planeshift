@@ -111,8 +111,11 @@ public:
      */
     void SetAllowedToDisconnect(bool allowed);
 
-    /// Permit the player to disconnect? Players cannot quit while in combat (includes spell casting).
-    /// Also causes the client to be set as a zombie indicating that the server knows the connection has been broken.
+    /**
+     * Permit the player to disconnect? Players cannot quit while in combat
+     * (includes spell casting). Also causes the client to be set as a zombie
+     * indicating that the server knows the connection has been broken.
+     */
     bool AllowDisconnect();
 
     /// Check if a zombie is allowed to disconnect. Called from the network thread
@@ -179,12 +182,6 @@ public:
      */
     int GetTargetClientID();
 
-    /**
-     * Get the current selected object id.
-     * @return -1 if no target selected
-     */
-    //    int GetTargetObjectID();
-
     uint32_t GetClientNum() const { return clientnum; }
 
     /// The account number for this client.
@@ -198,10 +195,6 @@ public:
     int GetExchangeID() { return exchangeID; }
     void SetExchangeID(int ID) { exchangeID = ID; }
 
-    /// The object number for this client.
-    //    int GetObjectID() { return objectID; }
-    //    void SetObjectID(int ID) { objectID = ID; }
-
     /// The security level of this player
     int GetSecurityLevel() const { return securityLevel; }
     void SetSecurityLevel(int level) { securityLevel=level; }
@@ -212,13 +205,13 @@ public:
     int GetGuildID();
     /// the alliance id value if the player is member of a guild in an alliance
     int GetAllianceID();
-    //    bool IsGuildSecret() { return guild_is_secret; }
 
     void SetReady(bool rdy) { ready = rdy; }
     bool IsReady() { return ready; }
 
-    /** Builds a list of target type names associated with a target type
-     *  bitmap (formed by OR-ing TARGET_TYPES).
+    /**
+     * Builds a list of target type names associated with a target type
+     * bitmap (formed by OR-ing TARGET_TYPES).
      *
      * @param targetType A target type bitmap.
      * @param targetDesc [CHANGES] Gets filled in with a comma-separated list
@@ -226,19 +219,6 @@ public:
      */
     static void GetTargetTypeName(int32_t targetType, csString& targetDesc);
 
-    //    void SetExchange(csRef<ExchangeManager> exch);
-
-    /*
-    typedef enum
-    { NOT_TRADING, SELLING, BUYING} TradingStatus;
-
-    void SetTradingStatus( TradingStatus trading, int merchantID)
-    { tradingStatus = trading; this->merchantID = merchantID; }
-
-    TradingStatus GetTradingStatus() { return tradingStatus; }
-    int GetMerchantID() { return merchantID; }
-    */
-    
     /**
      * A zombie client is a client that is prevented from disconnecting because
      * of combat, spellcasting, or defeted.
@@ -250,55 +230,17 @@ public:
     bool IsSuperClient() { return superclient; }
     bool IsPlayerClient() { return (!superclient); }
 
-    long GetIPAddress(char *addr)
-    {
-        unsigned int a1,a2,a3,a4;
-#ifdef WIN32
-        unsigned long a = this->addr.sin_addr.S_un.S_addr;
-#else
-        unsigned long a = this->addr.sin_addr.s_addr;
-#endif
+    /**
+     * Return a string representing the ip address of this client.
+     */
+    void GetIPAddress(char *addrStr, socklen_t size);
+    csString GetIPAddress();
 
-        if (addr)
-        {
-            a1 = a&0x000000FF;
-            a2 = (a&0x0000FF00)>>8;
-            a3 = (a&0x00FF0000)>>16;
-            a4 = (a&0xFF000000)>>24;
-            sprintf(addr,"%d.%d.%d.%d",a1,a2,a3,a4);
-        }
-        return a;
-    }
+    csString GetIPRange(int octets=3);
 
-    csString GetIPRange(int octets=3)
-    {
-        char ipaddr[20] = {0};
-        GetIPAddress(ipaddr);
-        return GetIPRange(ipaddr,octets);
-    }
-
-    static csString GetIPRange(const char* ipaddr, int octets=3)
-    {
-        csString range(ipaddr);
-        for (size_t i=0; i<range.Length(); i++)
-        {
-            if (range[i] == '.')
-                --octets;
-    
-            if (!octets)
-            {
-                range[i+1] = '\0';
-                break;
-            }
-        }
-        return range;
-    }
+    static csString GetIPRange(const char* ipaddr, int octets=3);
 
     NetBase::Connection* GetConnection() const { return (NetBase::Connection*)this; }
-
-    //    bool SetTradingStopped(bool stopped);
-
-    //    bool ReadyToExchange();
 
     const SOCKADDR_IN& GetAddress() const { return addr; }
 

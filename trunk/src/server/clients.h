@@ -27,23 +27,24 @@
 class ClientIterator;
 class iResultRow;
 
-class SockAddress{
+class SockAddress
+{
 public:
+    SockAddress(const SOCKADDR_IN &sock);
+    bool operator< (const SockAddress& other) const;
+private:
+    // Define a few operators as privat so that we know
+    // that they are not used.
+    bool operator> (const SockAddress& other) const;
+    bool operator= (const SockAddress& other) const;
+    bool operator== (const SockAddress& other) const;
+    
+#ifdef INCLUDE_IPV6_SUPPORT
+    SOCKADDR_IN addr;
+#else
     uint32_t port;
     uint32_t addr;
-    SockAddress(const SOCKADDR_IN &sock)
-    {
-        port = sock.sin_port;
-        addr = sock.sin_addr.s_addr;
-    }
-    bool operator< (const SockAddress& other) const
-    {
-        if(addr < other.addr)
-            return true;
-        else if(addr > other.addr)
-            return false;
-        return port < other.port;
-    }
+#endif
 };
 
 template<> class csHashComputer<SockAddress> :

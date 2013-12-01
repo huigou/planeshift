@@ -26,6 +26,36 @@
 #include "util/log.h"
 #include "netmanager.h"
 
+
+SockAddress::SockAddress(const SOCKADDR_IN &sock)
+{
+#ifdef INCLUDE_IPV6_SUPPORT
+    addr = sock;
+#else
+    port = sock.sin_port;
+    addr = sock.sin_addr.s_addr;
+#endif
+}
+
+bool SockAddress::operator< (const SockAddress& other) const
+{
+#ifdef INCLUDE_IPV6_SUPPORT
+    int result = memcmp(&addr.sin6_addr, &other.addr.sin6_addr, 16);
+    if(result < 0)
+        return true;
+    else if(result > 0)
+        return false;
+    return addr.sin6_port < other.addr.sin6_port;    
+#else
+    if(addr < other.addr)
+        return true;
+    else if(addr > other.addr)
+        return false;
+    return port < other.port;
+#endif
+}
+
+
 ClientConnectionSet::ClientConnectionSet():addrHash(307),hash(307)
 {
 }

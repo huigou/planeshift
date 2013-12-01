@@ -110,8 +110,14 @@ void ClientStatusLogger::LogConnectionInfo(Client* client, iDocumentNode* node)
     csRef<iDocumentNode> connNode = AddContainerNode(node, "Connection");
 
     // IP address
-    char ipAddr[32];
-    client->GetIPAddress(ipAddr);
+#ifdef INCLUDE_IPV6_SUPPORT
+    char ipAddr[INET6_ADDRSTRLEN];
+    client->GetIPAddress(ipAddr, INET6_ADDRSTRLEN);
+#else
+    char ipAddr[INET_ADDRSTRLEN];
+    client->GetIPAddress(ipAddr, INET_ADDRSTRLEN);
+#endif
+
     AddBasicNode(connNode, "IPAddress", ipAddr);
 
     NetBase::Connection* conn = client->GetConnection();
