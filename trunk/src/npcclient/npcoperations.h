@@ -1056,7 +1056,7 @@ protected:
 
 public:
 
-    MovePathOperation(): ScriptOperation("MovePath"), anchor(0), path(0) { }
+    MovePathOperation(): ScriptOperation("MovePath"), path(0), anchor(0) { }
     virtual ~MovePathOperation() { delete anchor; }
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
