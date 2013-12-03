@@ -183,6 +183,10 @@ NPC::~NPC()
         delete bufferMemory;
         bufferMemory = NULL;
     }
+
+    LocateHash::GlobalIterator iter = storedLocates.GetIterator();
+    while(iter.HasNext())
+        delete iter.Next();
 }
 
 void NPC::Tick()
