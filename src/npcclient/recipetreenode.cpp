@@ -56,6 +56,14 @@ RecipeTreeNode::RecipeTreeNode(Recipe* newRecipe, int newCost, RecipeTreeNode* p
     requirementParseType = REQ_CONCENTRATED; 
 }
 
+RecipeTreeNode::~RecipeTreeNode()
+{
+    while(!children.IsEmpty())
+    {
+        delete children.Pop();
+    }
+}
+
 void RecipeTreeNode::AddChild(RecipeTreeNode* child)
 {
     children.Push(child);
@@ -86,6 +94,7 @@ bool RecipeTreeNode::RemoveChild(RecipeTreeNode* child)
         if(children[i] == child)
         {
             children.Delete(child);
+            delete child;
             return true;
         }
         if(children[i]->RemoveChild(child))

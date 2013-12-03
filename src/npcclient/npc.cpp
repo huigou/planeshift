@@ -1756,6 +1756,11 @@ void NPC::ReplaceLocations(csString &result)
 
 //-----------------------------------------------------------------------------
 
+HateList::~HateList()
+{
+    Clear();
+}
+
 void HateList::AddHate(EID entity_id, float delta)
 {
     HateListEntry* h = hatelist.Get(entity_id, 0);
@@ -1819,11 +1824,19 @@ gemNPCActor* HateList::GetMostHated(NPC* npc, csVector3 &pos, iSector* sector, f
 
 bool HateList::Remove(EID entity_id)
 {
+    HateListEntry* h = hatelist.Get(entity_id, 0);
+    if(h)
+        delete h;
     return hatelist.DeleteAll(entity_id);
 }
 
 void HateList::Clear()
 {
+    csHash<HateListEntry*, EID>::GlobalIterator iter = hatelist.GetIterator();
+    while(iter.HasNext())
+    {
+        delete iter.Next();
+    }
     hatelist.DeleteAll();
 }
 

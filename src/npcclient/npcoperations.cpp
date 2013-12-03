@@ -3549,6 +3549,7 @@ bool MovePathOperation::Load(iDocumentNode *node)
 
     // Internal variables set to defaults
     path = NULL;
+    delete anchor;
     anchor = NULL;
     return true;
 }
@@ -3560,11 +3561,6 @@ ScriptOperation *MovePathOperation::MakeCopy()
     op->pathname  = pathname;
     op->anim      = anim;
     op->direction = direction;
-
-    // Internal variables set to defaults
-    op->path     = NULL;
-    op->anchor   = NULL;
-
     return op;
 }
 
@@ -5270,6 +5266,7 @@ WanderOperation::WanderOperation(const WanderOperation* other)
 
 WanderOperation::~WanderOperation()
 {
+    delete currentPathPointIterator;
 }
 
 

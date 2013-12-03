@@ -54,7 +54,7 @@
 
 psCollisionDetection::psCollisionDetection (iObjectRegistry* object_reg)
 {
-    cdsys = csQueryRegistry<iCollideSystem> (object_reg);
+    csRef<iCollideSystem> cdsys = csQueryRegistry<iCollideSystem> (object_reg);
     if (!cdsys)
     {
         return;
@@ -62,7 +62,7 @@ psCollisionDetection::psCollisionDetection (iObjectRegistry* object_reg)
     colliderActor.SetCollideSystem (cdsys);
     colliderActor.SetGravity (19.2f);
 
-    engine = csQueryRegistry<iEngine> (object_reg);
+    csRef<iEngine> engine = csQueryRegistry<iEngine> (object_reg);
     if (!engine)
     {
         return;
