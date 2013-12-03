@@ -177,12 +177,12 @@ void pawsContainerDescWindow::HandleViewContainer( MsgEntry* me )
                     // invslot_n, or else the cached clear signal will override
                     // the signal with the cached slot data, resulting in an
                     // empty window.
-                    PawsManager::GetSingleton().Subscribe("sigClearContainerSlots", slot);
+                    PawsManager::GetSingleton().Subscribe(mesg.containerID < 100? "sigClearInventoryContainerSlots" : "sigClearContainerSlots", slot);
                     PawsManager::GetSingleton().Subscribe(slotName, slot);
                 }
             }
         }
-        PawsManager::GetSingleton().Publish("sigClearContainerSlots");
+        PawsManager::GetSingleton().Publish(mesg.containerID < 100? "sigClearInventoryContainerSlots" : "sigClearContainerSlots");
         for (size_t i=0; i < mesg.contents.GetSize(); i++)
         {
             csString sigData, data;
