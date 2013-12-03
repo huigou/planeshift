@@ -84,7 +84,7 @@ void psInventoryCache::EmptyInventory(void)
     itemBySlot.Empty();
 
     PawsManager::GetSingleton().Publish("sigClearInventorySlots");
-    PawsManager::GetSingleton().Publish("sigClearContainerSlots");
+    PawsManager::GetSingleton().Publish("sigClearInventoryContainerSlots");
 }
 
 bool psInventoryCache::EmptyInventoryItem(int slot, int /*container*/)
