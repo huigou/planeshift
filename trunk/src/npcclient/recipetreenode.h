@@ -73,6 +73,7 @@ public:
 
     /** Constructor */
     RecipeTreeNode(Recipe* newRecipe, int newCost, RecipeTreeNode* parent = NULL);
+    ~RecipeTreeNode();
 
     /** Add a new child */
     void AddChild(RecipeTreeNode* child);

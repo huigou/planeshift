@@ -1801,7 +1801,9 @@ void NetworkManager::HandleDisconnect(MsgEntry* msg)
     // reconnect which will cause BIG problems.
     Disconnect();
     CPrintf(CON_WARNING, "Reconnect disabled...\n");
-    exit(-1);
+#if 1
+    npcclient->GetEventManager()->Stop();
+#else
     if(!reconnect && false)
     {
         connected = ready = false;
@@ -1815,6 +1817,7 @@ void NetworkManager::HandleDisconnect(MsgEntry* msg)
         psNPCReconnect* recon = new psNPCReconnect(60000, this, false);
         npcclient->GetEventManager()->Push(recon);
     }
+#endif
 }
 
 void NetworkManager::HandleNPCWorkDone(MsgEntry* me)

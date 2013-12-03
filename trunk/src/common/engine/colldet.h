@@ -77,9 +77,6 @@ protected:
 
   csColliderActor colliderActor;
 
-  csRef<iCollideSystem> cdsys;
-  csWeakRef<iEngine> engine;
-
   bool useCD;           ///< Enable collision detection flag.
   
   //Collision vars

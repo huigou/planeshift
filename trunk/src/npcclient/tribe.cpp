@@ -54,7 +54,11 @@ const char* Tribe::AssetTypeStr[] = {"ASSET_TYPE_ITEM","ASSET_TYPE_BUILDING","AS
 const char* Tribe::AssetStatusStr[] = {"ASSET_STATUS_NOT_APPLICABLE","ASSET_STATUS_NOT_USED","ASSET_STATUS_INCONSTRUCTION","ASSET_STATUS_CONSTRUCTED"};
 
 Tribe::Tribe(EventManager *eventmngr)
-    :homeSector(0),accWealthGrowth(0.0),deathRate(0.0),resourceRate(0.0)
+    : tribalRecipe(0),
+      homeSector(0),
+      accWealthGrowth(0.0),
+      deathRate(0.0),
+      resourceRate(0.0)
 {
     lastGrowth   = csGetTicks();
     lastDeath    = csGetTicks();
@@ -65,6 +69,11 @@ Tribe::Tribe(EventManager *eventmngr)
 
 Tribe::~Tribe()
 {
+    delete tribalRecipe;
+
+    csList<Memory*>::Iterator it(memories);
+    while (it.HasNext())
+        delete it.Next();
 }
 
 bool Tribe::Load(iResultRow& row)

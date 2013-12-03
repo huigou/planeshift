@@ -86,6 +86,7 @@ public:
         this->engine = engine;
         this->world = world;
     }
+    ~HateList();
 
     void AddHate(EID entity_id, float delta);
 

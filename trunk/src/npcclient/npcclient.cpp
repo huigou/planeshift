@@ -91,6 +91,7 @@ psNPCClient* psNPCClient::npcclient = NULL;
 psNPCClient::psNPCClient() : serverconsole(NULL)
 {
     npcclient     = this;  // Static pointer to self
+    connection    = NULL;
     world         = NULL;
     //    PFMaps       = NULL;
     pathNetwork   = NULL;
@@ -107,8 +108,10 @@ psNPCClient::psNPCClient() : serverconsole(NULL)
 
 psNPCClient::~psNPCClient()
 {
-
-
+    csArray<Tribe*>::Iterator tribeIter(tribes.GetIterator());
+    while(tribeIter.HasNext())
+        delete tribeIter.Next();
+    tribes.Empty();
 
     csArray<NPC*>::Iterator npcIter(npcs.GetIterator());
     while(npcIter.HasNext())
@@ -125,6 +128,7 @@ psNPCClient::~psNPCClient()
     delete mathScriptEngine;
 
     running = false;
+    delete connection;
     delete network;
     delete serverconsole;
     delete database;
