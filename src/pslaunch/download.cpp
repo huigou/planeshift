@@ -386,7 +386,7 @@ uint Downloader::CycleActiveMirror()
 {
     activeMirrorID++;
     // If we've reached the end, go back to the beginning of the list.
-    if(activeMirrorID == config->GetCurrentConfig()->GetMirrors().GetSize())
+    if(activeMirrorID >= config->GetCurrentConfig()->GetMirrors().GetSize())
         activeMirrorID = 0;
     // If true, we've reached our start point. Break the loop.
     if(activeMirrorID == startingMirrorID)
