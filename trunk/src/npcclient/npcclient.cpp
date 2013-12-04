@@ -892,7 +892,7 @@ bool psNPCClient::ReadNPCsFromDatabase()
                     Error3("Failed to load tribe brain for NPC %s(%s)",npc->GetName(),ShowID(npc->GetPID()));
                     return false;
                 }
-                npc->SetBrain(brain, eventmanager);
+                npc->SetBrain(brain);
                 loadedNPCs++;
                 // this NPC is not part of a tribe
             }
@@ -959,8 +959,7 @@ bool psNPCClient::LoadTribes()
     }
     for(int i=0; i<(int)rs.Count(); i++)
     {
-        Tribe* tribe = new Tribe(eventmanager);
-        tribe->SetRecipeManager(recipemanager);
+        Tribe* tribe = new Tribe(eventmanager, recipemanager);
 
         if(tribe->Load(rs[i]))
         {

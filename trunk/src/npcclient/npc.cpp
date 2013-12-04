@@ -127,6 +127,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     lastDrAngVel(0),
     tick(NULL)
 {
+    oldbrain=NULL;
     brain=NULL;
     pid=0;
     last_update=0;
@@ -410,6 +411,7 @@ void NPC::Load(const char* name, PID pid, NPCType* type, const char* region_name
     SetDebugging(debugging);
     this->disabled = disabled;
     this->brain = new NPCType(*type, this);
+    origtype = type->GetName();
 }
 
 Behavior* NPC::GetCurrentBehavior()
@@ -422,9 +424,9 @@ NPCType* NPC::GetBrain()
     return brain;
 }
 
-void NPC::SetBrain(NPCType* type, EventManager* eventmanager)
+void NPC::SetBrain(NPCType* type)
 {
-    delete this->brain;
+    oldbrain = brain;
     this->type = type->GetName();
     this->brain = new NPCType(*type, this);
 
@@ -494,6 +496,7 @@ bool NPC::Load(iResultRow &row, csHash<NPCType*, const char*> &npctypes, EventMa
     }
 
     brain = new NPCType(*t, this); // deep copy constructor
+    origtype = t->GetName();
 
     return true; // success
 }
@@ -546,6 +549,15 @@ void NPC::Advance(csTicks when)
     if(last_update && !disabled)
     {
         brain->Advance(when-last_update, this);
+
+        // Check for a SetBrain() operation.
+        // We can delete the old brain now that the stack is unwound and
+        // we aren't using the old pointers.
+        if(oldbrain)
+        {
+            delete oldbrain;
+            oldbrain = NULL;
+        }
 
         UpdateControlled();
     }

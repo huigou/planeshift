@@ -2037,6 +2037,165 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
             }
         }
     }
+    else if(!msg.target.IsEmpty())
+    {
+        // Client has specified a specific NPC to command.
+        size_t inx = strtoul(msg.target.GetData(), NULL, 0);
+        pet = dynamic_cast <gemNPC*>(owner->GetPet(inx));
+        if(!pet)
+        {
+            // There is no separate gemNPC while mounted (actor is the player).
+            // Instead of saying there is no familiar to command, return a more
+            // useful message.
+            psserver->SendSystemInfo(me->clientnum,
+                    "You have no pet numbered '%zu' to command.", inx);
+            return;
+        }
+        switch(msg.command)
+        {
+        case psPETCommandMessage::CMD_FOLLOW :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                   WillPetReact(me->clientnum, owner, pet, typeStr, 1))
+                {
+                    // If no target, target owner
+                    if(!pet->GetTarget())
+                    {
+                        pet->SetTarget(owner->GetActor());
+                    }
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW);
+                }
+            }
+            break;
+        case psPETCommandMessage::CMD_STAY :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                   WillPetReact(me->clientnum, owner, pet, typeStr, 1))
+                {
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_STAY);
+                }
+            }
+            break;
+        case psPETCommandMessage::CMD_ATTACK :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                   WillPetReact(me->clientnum, owner, pet, typeStr, 4))
+                {
+                    gemActor* lastAttacker = NULL;
+                    gemObject* trg = pet->GetTarget();
+                    if(trg != NULL)
+                    {
+                        gemActor* targetActor = trg->GetActorPtr();
+                        /* We check if the owner can attack the other entity in order to not allow players
+                         * to override permissions and at the same time allowing pet<->player, pet<->pet
+                         * when in pvp. We allow gm to do anything they want (can attack everything including
+                         * their own pet just like how it happens with players
+                         */
+                        csString msg; // Not used
+                        if(targetActor == NULL ||
+                           !owner->GetActor()->IsAllowedToAttack(trg, msg) ||
+                           (trg == pet && !owner->IsGM()))
+                        {
+                            psserver->SendSystemInfo(me->clientnum,"Your pet refuses.");
+                        }
+                        else if(targetActor && !targetActor->CanBeAttackedBy(pet,lastAttacker))
+                        {
+                            csString tmp;
+                            if(lastAttacker)
+                            {
+                                tmp.Format("You must be grouped with %s for your pet to attack %s.",
+                                           lastAttacker->GetName(), trg->GetName());
+                            }
+                            else
+                            {
+                                tmp.Format("Your pet is not allowed to attack right now.");
+                            }
+                            psserver->SendSystemInfo(me->clientnum,tmp.GetDataSafe());
+                        }
+                        else
+                        {
+                            Stance stance = CombatManager::GetStance(cacheManager, "Aggressive");
+                            if(words.GetCount() != 0)
+                            {
+                                stance.stance_id = words.GetInt(0);
+                            }
+                            QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK);
+                        }
+                    }
+                    else
+                    {
+                        psserver->SendSystemInfo(me->clientnum, "Your pet needs a target to attack.");
+                    }
+                }
+            }
+            break;
+        case psPETCommandMessage::CMD_STOPATTACK :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                   WillPetReact(me->clientnum, owner, pet, typeStr, 4))
+                {
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK);
+                }
+            }
+            break;
+        case psPETCommandMessage::CMD_ASSIST :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                   WillPetReact(me->clientnum, owner, pet, typeStr, 3))
+                {
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ASSIST);
+                }
+            }
+            break;
+        case psPETCommandMessage::CMD_GUARD :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                   WillPetReact(me->clientnum, owner, pet, typeStr, 2))
+                {
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_GUARD);
+                }
+            }
+            break;
+        case psPETCommandMessage::CMD_TARGET :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr))
+                {
+                    if(words.GetCount() == 0)
+                    {
+                        psserver->SendSystemInfo(me->clientnum, "You must specify a name for your pet to target.");
+                        return;
+                    }
+
+                    firstName = words.Get(0);
+                    if(words.GetCount() > 1)
+                    {
+                        lastName = words.GetTail(1);
+                    }
+                    gemObject* target = psserver->GetAdminManager()->FindObjectByString(firstName,owner->GetActor());
+
+                    firstName = NormalizeCharacterName(firstName);
+
+                    if(firstName == "Me")
+                    {
+                        firstName = owner->GetName();
+                    }
+                    lastName = NormalizeCharacterName(lastName);
+
+                    if(target)
+                    {
+                        pet->SetTarget(target);
+                        psserver->SendSystemInfo(me->clientnum, "%s has successfully targeted %s." , pet->GetName(), target->GetName());
+                    }
+                    else
+                    {
+                        psserver->SendSystemInfo(me->clientnum, "Cannot find '%s' to target.", firstName.GetData());
+                    }
+                }
+            }
+            break;
+        }
+        return;
+    }
     else
     {
         pet = dynamic_cast <gemNPC*>(owner->GetFamiliar());
@@ -2066,7 +2225,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
 
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
                 {
-                    // If no target target owner
+                    // If no target, target owner
                     if(!pet->GetTarget())
                     {
                         pet->SetTarget(owner->GetActor());
@@ -2195,7 +2354,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                         session->ReceivedTraining();
                     }
                     // Have the pet auto follow when summoned
-                    // If no target target owner
+                    // If no target, target owner
                     if(!pet->GetTarget())
                     {
                         pet->SetTarget(owner->GetActor());
@@ -2242,7 +2401,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                             }
                             else
                             {
-                                tmp.Format("Your pet are not allowed to attack right now.");
+                                tmp.Format("Your pet is not allowed to attack right now.");
                             }
                             psserver->SendSystemInfo(me->clientnum,tmp.GetDataSafe());
                         }
@@ -2470,8 +2629,6 @@ void NPCManager::PrepareMessage()
     outbound = new psNPCCommandsMessage(0,MAX_NPC_COMMANS_MESSAGE_SIZE);
     cmd_count = 0;
 }
-
-
 
 void NPCManager::CheckSendPerceptionQueue(size_t expectedAddSize)
 {

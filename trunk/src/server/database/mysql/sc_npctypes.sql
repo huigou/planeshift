@@ -93,6 +93,11 @@ INSERT INTO sc_npctypes VALUES("4","Fight","",0,"","","","","","1",
    </loop>
 </behavior>
 
+<!-- when Charme spell affects the NPC change its brain to Minion -->
+<behavior name="Charme" completion_decay="-1" >
+   <change_brain brain="Minion" />
+</behavior>
+
 <react event="fight"               behavior="Fight" />
 <react event="attack"              behavior="Fight" weight="1" /> <!-- Add 1 to hate list -->
 <react event="damage"              behavior="Fight" delta="20" weight="2" /> <!-- Add double damage to hate list -->
@@ -100,6 +105,7 @@ INSERT INTO sc_npctypes VALUES("4","Fight","",0,"","","","","","1",
 <react event="failed to attack"    behavior="FailedToAttack" />
 
 <react event="failed endpoint"     behavior="FailedEndpoint" /> <!-- When move do not reach endpoint. -->
+<react event="npccmd:self:charme"  behavior="Charme" /> <!-- change behaviour when Charme spell is cast. -->
 <react event="npccmd:self:flee"    behavior="Flee" /> <!-- flee when Fear spell is cast. -->
 <react event="flee"                behavior="Flee" /> <!-- flee when flee is percepted. -->
 
@@ -527,7 +533,19 @@ INSERT INTO sc_npctypes VALUES("108","Minion","DoNothing",0,"","","","","","1",
    <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
    <move vel="2" anim="walk" duration="1.0"/>
 </behavior>
-	
+
+<!-- Reload the standard behaviour (if different) stored in the -->
+<!-- sc_npc_definitions table, behaviour triggered by the npccmd interface -->
+<!-- when the Charme spell expires -->
+<behavior name="Reload" completion_decay="-1" >
+   <!-- TODO: the change_brain operation use the same function like the -->
+   <!-- /changenpctype command for GMs, unfortunately it doesn\'t suppport -->
+   <!-- the "reload" parameter useful to reload the standard brain stored -->
+   <!-- in the sc_npc_definitions table which is supported by the GM command. -->
+   <change_brain brain="reload" />
+</behavior>
+
+<react event="npccmd:self:reload"   behavior="Reload" />
 <react event="ownercmd:stay"        behavior="follow,follow_chase,follow_turn"       absolute="0"   only_interrupt="follow,follow_chase,follow_turn" />
 <react event="owner out of chase"   behavior="follow,follow_chase,follow_turn"       absolute="0"   only_interrupt="follow,follow_chase,follow_turn" />
 <react event="ownercmd:follow"      behavior="follow"       delta=  "100"  inactive_only="true" />

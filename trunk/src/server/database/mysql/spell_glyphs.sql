@@ -34,3 +34,5 @@ INSERT INTO spell_glyphs VALUES("8","15","0"); #Energy
 INSERT INTO spell_glyphs VALUES("8","14","1"); #Door
 INSERT INTO spell_glyphs VALUES("9","57","0"); #Sphere
 INSERT INTO spell_glyphs VALUES("10","150","0"); #Fear
+INSERT INTO spell_glyphs VALUES("11","20","0"); #Bond
+INSERT INTO spell_glyphs VALUES("11","44","1"); #Creature

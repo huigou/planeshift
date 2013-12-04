@@ -156,7 +156,9 @@ protected:
 
     typedef csHash<csString,csString> BufferHash;
 
+    NPCType*           oldbrain;        ///< delete at checkpoint
     NPCType*           brain;
+    csString           origtype;        ///< Name of NPCType for 'reload'
     csString           type;
     PID                pid;
     csString           name;
@@ -299,13 +301,13 @@ protected:
 
     Behavior* GetCurrentBehavior();
     NPCType*  GetBrain();
+    const char* GetOrigBrainType() { return origtype; }
 
     /**
      * Sets a new brain (npctype)  to this npc.
      * @param type The new type to assign to this npc.
-     * @param eventmanager A pointer to the npcclient eventmanager.
      */
-    void SetBrain(NPCType* type, EventManager* eventmanager);
+    void SetBrain(NPCType* type);
 
     /**
      * Callback for debug scope timers

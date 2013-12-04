@@ -996,7 +996,7 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
     for(; i<requirements.GetSize(); i++)
     {
         RDebug(tribe, 5, "Parsing req(index:%zu) for recipe %s of type: %s\n", 
-               i,bestRecipe->recipe->GetName().GetData(),
+               i, recipe->GetName().GetData(),
                RecipeTreeNode::RequirementParseTypeString[bestRecipe->requirementParseType]);
 
 

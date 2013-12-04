@@ -53,7 +53,7 @@
 const char* Tribe::AssetTypeStr[] = {"ASSET_TYPE_ITEM","ASSET_TYPE_BUILDING","ASSET_TYPE_BUILDINGSPOT"};
 const char* Tribe::AssetStatusStr[] = {"ASSET_STATUS_NOT_APPLICABLE","ASSET_STATUS_NOT_USED","ASSET_STATUS_INCONSTRUCTION","ASSET_STATUS_CONSTRUCTED"};
 
-Tribe::Tribe(EventManager *eventmngr)
+Tribe::Tribe(EventManager *eventmngr, RecipeManager* rm)
     : tribalRecipe(0),
       homeSector(0),
       accWealthGrowth(0.0),
@@ -65,6 +65,7 @@ Tribe::Tribe(EventManager *eventmngr)
     lastResource = csGetTicks();
     lastAdvance  = csGetTicks();
     eventManager = eventmngr;
+    recipeManager = rm;
 }
 
 Tribe::~Tribe()
