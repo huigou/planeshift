@@ -173,6 +173,41 @@ INSERT INTO progression_events VALUES("cast Fear",
        </if>
      </script>');
 
+INSERT INTO progression_events VALUES("cast Charme",
+    '<script>
+     <if t="Caster:ActiveSpellCount(\'Charme\') &lt; 1">
+      <then>
+       <let vars="Duration=24;">
+        <if t="Target:IsNPC">
+          <then>
+            <apply-linked name="Charme" duration="1000*Duration">
+              <buff aim="Caster">
+                <msg aim="Caster" text="You charmed ${Target}&apos;s mind." undo="You can no longer affect ${Target}&apos;s mind." />
+              </buff>
+              <debuff aim="Target">
+                <msg text="${Caster} bind your mind." undo="${Caster} can no longer bind your mind."/>
+                <!-- Sent a command to change the target brain so it can be later -->
+                <!-- TODO: npccmd operation lacks an Applied mode operations (scripting.cpp) -->
+                <!-- this can prove very handy to issue a commmand when the script is -->
+                <!-- applied and an undo command when the duration expire -->
+                <npccmd aim="Target" cmd="npccmd:self:charme" undo="npccmd:self:reload" />
+                <!-- TODO Add the target to the list of pets for "duration" time -->
+                <!-- example: <add_pet aim="Target" owner="Caster" -->
+              </debuff>
+            </apply-linked>
+          </then>
+          <else>
+            <msg aim="Caster" text="You cannot affect ${Target}&apos;s mind with this spell."/>
+          </else>
+        </if>
+      </let>
+     </then>
+     <else>
+      <msg aim="Caster" text="${Target} is already affected by Charme or you&apos;re already bound to another target."/>
+     </else>
+    </if>
+   </script>');
+
 # Char creation events - god
 INSERT INTO progression_events VALUES ('charcreate_2','<script><skill aim="Actor" name="Crystal Way" value="2"/><int  aim="Actor" value="3"/><animal-affinity aim="Actor" name="daylight" value="2"/></script>');
 

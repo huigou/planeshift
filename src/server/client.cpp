@@ -80,7 +80,7 @@ Client::Client ()
     mute.Initialize(this);
     SetMute(false);
 
-    // pets[0] is a special case for the players familiar.
+    // pets[0] is a special case for the player's familiar.
     pets.Insert(0, PID(0));
 }
 
@@ -226,9 +226,17 @@ void Client::AddPet( gemActor *pet )
 {
     pets.Push(pet->GetPID());
 }
-void Client::RemovePet( size_t index )
+
+void Client::RemovePet( size_t i )
 {
-    pets.DeleteIndex(index);
+    // Be careful to not cause pet numbers to be reordered.
+    if (i > 0)
+    {
+        if (i == pets.GetSize() - 1)
+            pets.Truncate(i);
+        else
+            pets[i] = PID(0);
+    }
 }
 
 gemActor* Client::GetPet(size_t i)

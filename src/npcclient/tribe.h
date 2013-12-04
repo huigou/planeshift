@@ -150,7 +150,7 @@ public:
     /**
      * Construct a new tribe object.
      */
-    Tribe(EventManager* eventmngr);
+    Tribe(EventManager* eventmngr, RecipeManager* rm);
 
     /**
      * Destruct a tribe object.

@@ -759,7 +759,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (  words[0] == "/pet")
     {
-        const char *errorMsg = "You must enter the text. e.g /pet [petname,] <follow|stay|dismiss|summon|attack|guard|assist|name|target> <options>";
+        const char *errorMsg = "You must enter the text. e.g /pet [petnumber,] <follow|stay|dismiss|summon|attack|guard|assist|name|target> <options>";
 
         if (words.GetCount() < 2)
             return errorMsg;

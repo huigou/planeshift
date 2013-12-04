@@ -500,11 +500,140 @@ public:
 
 //----------------------------------------------------------------------------
 
+/// A cancel action that sends the "undo" part of <npccmd text="..." undo="..."/>.
+class NPCCancel : public iCancelAction
+{
+public:
+    NPCCancel(PID targetID, const csString &undo) : targetID(targetID), undo(undo) { }
+    virtual ~NPCCancel() { }
+
+    void Cancel()
+    {
+        gemActor* target = psserver->entitymanager->GetGEM()->FindPlayerEntity(targetID);
+        if(target && !undo.IsEmpty())
+        {
+            psserver->GetNPCManager()->QueueNPCCmdPerception(target, undo);
+        }
+    }
+
+protected:
+    PID targetID;
+    csString undo;
+};
+
+/**
+ * NPCAOp - over time npc command sending:
+ *
+ * <npccmd aim="Caster" cmd="spam spam spam spam...!"/>
+ */
+class NPCAOp : public AppliedOp
+{
+public:
+    virtual ~NPCAOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        aim = node->GetAttributeValue("aim");
+        cmd = node->GetAttributeValue("cmd");
+        undo = node->GetAttributeValue("undo");
+        return true;
+    }
+
+    virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    {
+        if(target)
+        {
+            csString finalCmd(cmd);
+            env->InterpolateString(finalCmd);
+            csString undoCmd(undo);
+            env->InterpolateString(undoCmd);
+
+            psserver->GetNPCManager()->QueueNPCCmdPerception(target, finalCmd);
+            NPCCancel* cancel = new NPCCancel(target->GetPID(), undoCmd);
+            asp->Add(cancel, "<npccmd aim=\"%s\" cmd=\"%s\" undo=\"%s\"/>",
+                     aim.GetData(), finalCmd.GetData(), undoCmd.GetData());
+        }
+    }
+
+protected:
+    csString aim; ///< name of the MathScript var to aim at
+    csString cmd; ///< cmd to send to the npc
+    csString undo; ///< cmd to send when canceled
+};
+
+//----------------------------------------------------------------------------
+
+/// A cancel action that handles pet remove.
+class PetCancel : public iCancelAction
+{
+public:
+    PetCancel(uint32_t clientnum, size_t inx) : clientnum(clientnum), inx(inx) { }
+    virtual ~PetCancel() { }
+
+    void Cancel()
+    {
+        Client* client = psserver->GetConnections()->FindAny(clientnum);
+        if(client)
+        {
+            client->RemovePet(inx);
+        }
+    }
+
+protected:
+    uint32_t clientnum;
+    size_t inx;
+};
+
+/**
+ * PetAOp - Add target to caster's list of pets:
+ *
+ * <add_pet aim="Target" owner="Caster"/>
+ */
+class PetAOp : public AppliedOp
+{
+public:
+    virtual ~PetAOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        owner = node->GetAttributeValue("owner");
+        return true;
+    }
+
+    virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    {
+        MathVar *var = env->Lookup(owner);
+        if(!var || var->Type() != VARTYPE_OBJ)
+        {
+            return;
+        }
+        gemActor* caster = dynamic_cast<gemActor*>(var->GetObject());
+        if(!var)
+        {
+            return;
+        }
+        Client* client = caster->GetClient();
+        if(client)
+        {
+            size_t inx = client->GetNumPets();
+            client->AddPet(target);
+
+            PetCancel* cancel = new PetCancel(client->GetClientNum(), inx);
+            asp->Add(cancel, "<add_pet owner=\"%s\"/>", owner.GetData());
+        }
+    }
+
+protected:
+    csString owner; ///< name the MathScript var of the owner
+};
+
+//----------------------------------------------------------------------------
+
 /// A cancel action that sends the "undo" part of <msg text="..." undo="..."/>.
 class MsgCancel : public iCancelAction
 {
 public:
-    MsgCancel(int clientnum, const csString &undo) : clientnum(clientnum), undo(undo) { }
+    MsgCancel(uint32_t clientnum, const csString &undo) : clientnum(clientnum), undo(undo) { }
     virtual ~MsgCancel() { }
 
     void Cancel()
@@ -513,7 +642,7 @@ public:
             psserver->SendSystemInfo(clientnum, "%s", undo.GetData());
     }
 protected:
-    int clientnum;
+    uint32_t clientnum;
     csString undo;
 };
 
@@ -859,11 +988,7 @@ ApplicativeScript::ApplicativeScript() : duration(NULL)
 
 ApplicativeScript::~ApplicativeScript()
 {
-    if(duration)
-    {
-        delete duration;
-        duration = NULL;
-    }
+    delete duration;
 }
 
 ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, CacheManager* cachemanager, const char* script)
@@ -996,6 +1121,14 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
         {
             op = new CanSummonFamiliarAOp;
         }
+        else if(elem == "npccmd")
+        {
+            op = new NPCAOp;
+        }
+        else if(elem == "add_pet")
+        {
+            op = new PetAOp;
+        }
         else if(elem == "msg")
         {
             op = new MsgAOp;
@@ -1124,15 +1257,14 @@ public:
     {
         this->entitymanager = entitymanager;
         this->cachemanager = cachemanager;
-    }
-    virtual ~ApplyLinkedOp()
-    {
-        if(buff)
-            delete buff;
-        if(debuff)
-            delete debuff;
         buff = NULL;
         debuff = NULL;
+    }
+
+    virtual ~ApplyLinkedOp()
+    {
+        delete buff;
+        delete debuff;
     }
 
     bool Load(iDocumentNode* top)

@@ -1102,11 +1102,9 @@ ScriptOperation *ChangeBrainOperation::MakeCopy()
 ScriptOperation::OperationResult ChangeBrainOperation::Run(NPC *npc, bool interrupted)
 {
     csString brainVariablesReplaced = psGameObject::ReplaceNPCVariables(npc, brain);
-
-    if (!npc->GetTarget())
+    if(brainVariablesReplaced == "reload")
     {
-        NPCDebug(npc, 5, "ChangeBrain operation failed with no target given");
-        return OPERATION_FAILED;
+        brainVariablesReplaced = npc->GetOrigBrainType();
     }
 
     NPCType* type = npcclient->FindNPCType(brainVariablesReplaced.GetDataSafe());
@@ -1116,9 +1114,9 @@ ScriptOperation::OperationResult ChangeBrainOperation::Run(NPC *npc, bool interr
         return OPERATION_FAILED;
     }
     
-    NPCDebug(npc, 5, "ChangeBrain to %s for %s", brainVariablesReplaced.GetDataSafe(),npc->GetTarget()->GetName());
+    NPCDebug(npc, 5, "ChangeBrain to %s for %s", brainVariablesReplaced.GetDataSafe(), npc->GetName());
 
-    npc->SetBrain(type, npcclient->GetEventManager());
+    npc->SetBrain(type);
 
     return OPERATION_COMPLETED;  // Nothing more to do for this op.
 }

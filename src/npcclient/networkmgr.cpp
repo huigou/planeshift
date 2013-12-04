@@ -1751,15 +1751,9 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 NPCDebug(npc, 5, "Got change brain request to %s from client %u.", brainType.GetDataSafe(), clientNum);
 
                 bool reload = (brainType == "reload");
-
                 if(reload)
                 {
-                    brainType = npc->GetBrain()->GetName();
-                    if(!npcclient->LoadNPCTypes())
-                    {
-                        QueueSystemInfoCommand(clientNum,"Failed to reload npctypes.");
-                        break;
-                    }
+                    brainType = npc->GetOrigBrainType();
                 }
 
                 //search for the requested npc type
@@ -1772,7 +1766,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 }
 
                 //if found set it
-                npc->SetBrain(type, npcclient->GetEventManager());
+                npc->SetBrain(type);
                 QueueSystemInfoCommand(clientNum,"Brain %s %s.",brainType.GetDataSafe(),reload?"reloaded":"changed");
                 break;
             }
