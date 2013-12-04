@@ -999,6 +999,7 @@ void NPC::ClearState()
 {
     NPCDebug(this, 5, "ClearState");
     brain->ClearState(this);
+    delete last_perception;
     last_perception = NULL;
     hatelist.Clear();
     SetAlive(false);
