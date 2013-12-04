@@ -114,17 +114,24 @@ void Stat::SetRate( float rate, csTicks now )
 
 
 
-NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys): checked(false), hatelist(npcclient, engine, world), tick(NULL)
+NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys)
+  : checked(false),
+    hatelist(npcclient, engine, world),
+    DRcounter(0),
+    lastDrPosition(0),
+    lastDrSector(NULL),
+    lastDrTime(csGetTicks()),
+    lastDrMoving(false),
+    lastDrYRot(0.0),
+    lastDrVel(0),
+    lastDrAngVel(0),
+    tick(NULL)
 {
     brain=NULL;
     pid=0;
     last_update=0;
     npcActor=NULL;
     movable=NULL;
-    DRcounter=0;
-    lastDrSector = NULL;
-    lastDrTime = csGetTicks();
-    lastDrMoving = false;
 
     // Set up the locates
     activeLocate = new Locate();
@@ -151,6 +158,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     disabled = false;
     fallCounter = 0;
     owner_id = 0;
+    target_id = 0;
     this->npcclient = npcclient;
     this->networkmanager = networkmanager;
     this->world = world;
