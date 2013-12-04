@@ -185,14 +185,11 @@ INSERT INTO progression_events VALUES("cast Charme",
                 <msg aim="Caster" text="You charmed ${Target}&apos;s mind." undo="You can no longer affect ${Target}&apos;s mind." />
               </buff>
               <debuff aim="Target">
-                <msg text="${Caster} bind your mind." undo="${Caster} can no longer bind your mind."/>
-                <!-- Sent a command to change the target brain so it can be later -->
-                <!-- TODO: npccmd operation lacks an Applied mode operations (scripting.cpp) -->
-                <!-- this can prove very handy to issue a commmand when the script is -->
-                <!-- applied and an undo command when the duration expire -->
+                <msg text="${Caster} bound your mind." undo="${Caster} can no longer bind your mind."/>
+                <!-- Send a command to change the target brain so it can be undone later. -->
                 <npccmd aim="Target" cmd="npccmd:self:charme" undo="npccmd:self:reload" />
-                <!-- TODO Add the target to the list of pets for "duration" time -->
-                <!-- example: <add_pet aim="Target" owner="Caster" -->
+                <!-- Add the target to the list of pets for "duration" time -->
+                <add_pet owner="Caster" />
               </debuff>
             </apply-linked>
           </then>
