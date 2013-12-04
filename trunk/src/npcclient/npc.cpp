@@ -115,9 +115,7 @@ void Stat::SetRate( float rate, csTicks now )
 
 
 NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys)
-  : checked(false),
-    hatelist(npcclient, engine, world),
-    DRcounter(0),
+  : DRcounter(0),
     lastDrPosition(0),
     lastDrSector(NULL),
     lastDrTime(csGetTicks()),
@@ -125,6 +123,8 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     lastDrYRot(0.0),
     lastDrVel(0),
     lastDrAngVel(0),
+    checked(false),
+    hatelist(npcclient, engine, world),
     tick(NULL)
 {
     oldbrain=NULL;
