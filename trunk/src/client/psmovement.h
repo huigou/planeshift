@@ -201,7 +201,20 @@ public:
     void UpdateRunTo();
     
     void ToggleAutoMove();
-    void ToggleRun();
+    
+    /** Toggle the character run mode.
+     *
+     * @return Return the current run state.
+     */
+    bool ToggleRun();
+
+    /** Set the character run mode.
+     *
+     * True to enable run mode. False to disable.
+     *
+     * @return Return the current run state.
+     */
+    bool SetRun(bool runState);
 
     void SetSneaking(bool v) { sneaking = v; }
     bool Sneaking() { return sneaking; }

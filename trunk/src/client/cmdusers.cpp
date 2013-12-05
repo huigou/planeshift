@@ -139,6 +139,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/setoocdesc",    this); // set the ooc description of a char
     cmdsource->Subscribe("/loaddesc",      this); // load a description for this char from a file
     cmdsource->Subscribe("/loadoocdesc",   this); // load a ooc description for this char from a file
+    cmdsource->Subscribe("/togglerun",     this); // Change the run/walk status of the character
 }
 
 psUserCommands::~psUserCommands()
@@ -218,6 +219,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/setoocdesc",            this);
     cmdsource->Unsubscribe("/loaddesc",              this);
     cmdsource->Unsubscribe("/loadoocdesc",           this);
+    cmdsource->Unsubscribe("/togglerun",             this);
 
 
 
@@ -1199,6 +1201,37 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             return "Character OOC description loaded.";
 
         }
+    }
+    else if (words[0] == "/togglerun")
+    {
+        static const char* enabledMessage = "Run mode enabled";
+        static const char* disabledMessage = "Run mode disabled";
+        
+        if (words.GetCount() < 2)
+        {
+            if (psengine->GetCharControl()->GetMovementManager()->ToggleRun())
+            {
+                return enabledMessage;
+            }
+            else
+            {
+                return disabledMessage;
+            }
+        }
+        else if (words.GetCount() == 2)
+        {
+            if (words[1] == "run")
+            {
+                psengine->GetCharControl()->GetMovementManager()->SetRun(true);
+                return enabledMessage;
+            }
+            else if (words[1] == "walk")
+            {
+                psengine->GetCharControl()->GetMovementManager()->SetRun(false);
+                return disabledMessage;
+            }
+        }
+        return "Usage: /togglerun [run|walk]";
     }
     else
     {
