@@ -988,7 +988,7 @@ void psMovementManager::ToggleAutoMove()
     }
 }
 
-void psMovementManager::ToggleRun()
+bool psMovementManager::ToggleRun()
 {
     if(toggleRun)
     {
@@ -1002,4 +1002,24 @@ void psMovementManager::ToggleRun()
         Start(run);
         toggleRun = true;
     }
+
+    return toggleRun;
+}
+
+bool psMovementManager::SetRun(bool runState)
+{
+    if (runState)
+    {
+        defaultmode = run;
+        Start(run);
+        toggleRun = true;
+    }
+    else
+    {
+        defaultmode = walk;
+        Start(walk);
+        toggleRun = false;
+    }
+
+    return toggleRun;
 }

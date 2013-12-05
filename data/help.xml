@@ -2816,6 +2816,22 @@ Usage:
           </content>
          </Contents>
         </topic>
+        <topic name="/togglerun">
+         <Contents>
+          <content type="text">This command allows you to change the current movement state of your character between running and walking.
+
+Usage:
+/togglerun
+(Toggle between moving and running. If your character was walking the character will no be running and if your character was running the character will now be walking.)
+
+/togglerun walk
+(Put the character in the walk state. If your character was already walking nothing happens.)
+
+/togglerun run
+(Put the character in the run state. If your character was already running nothing happens.)
+          </content>
+         </Contents>
+        </topic>
         <topic name="/unstick">
          <Contents>
           <content type="text">This command might help you in case your character is stuck in the 3d environment. In some cases it can move your character back to a valid location.
