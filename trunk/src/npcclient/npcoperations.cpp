@@ -1130,6 +1130,7 @@ ChaseOperation::ChaseOperation()
       // Instance variables
       targetEID(EID(0)),
       offsetAngle(0.0),
+      adaptivVelScale(1.0),
       // Operation parameters
       // Initialized in the load function
       type(NEAREST_PLAYER),
@@ -1146,6 +1147,7 @@ ChaseOperation::ChaseOperation( const ChaseOperation* other )
     : MovementOperation( other ),
       // Instance variables
       targetEID(other->targetEID),
+      adaptivVelScale(1.0),
       // Operation parameters
       type(other->type),
       searchRange(other->searchRange),
@@ -1153,7 +1155,8 @@ ChaseOperation::ChaseOperation( const ChaseOperation* other )
       offsetAttribute(other->offsetAttribute),
       offsetAngleMax(other->offsetAngleMax),
       sideOffset(other->sideOffset),
-      offsetRelativeHeading(other->offsetRelativeHeading)
+      offsetRelativeHeading(other->offsetRelativeHeading),
+      adaptivVelocityScript(other->adaptivVelocityScript)
 { 
     // Select a offset_angle for this instance of chase
     offsetAngle = (2.0f*psGetRandom()-1.0f)*offsetAngleMax;
@@ -1237,6 +1240,11 @@ bool ChaseOperation::Load(iDocumentNode *node)
     LoadVelocity(node);
     LoadCheckMoveOk(node);
     ang_vel = node->GetAttributeValueAsFloat("ang_vel");
+
+    if (node->GetAttributeValue("adaptiv_vel_script"))
+    {
+        adaptivVelocityScript = node->GetAttributeValue("adaptiv_vel_script");
+    }
 
     return true;
 }
@@ -1498,6 +1506,13 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
     float targetRot;
     psGameObject::GetPosition(targetEntity, targetPos, targetRot, targetSector);
 
+    // This prevents NPCs from wanting to occupy the same physical space as something else
+    if (offsetRelativeHeading)
+    {
+        offsetDelta = CalculateOffsetDelta(npc, myPos, mySector, endPos, endSector, targetRot );
+    }
+    targetPos -= offsetDelta;
+    // TODO: Check if new targetPos is within same sector!!!
 
     // Check if we shold stop chaseing
     float distance = npcclient->GetWorld()->Distance(myPos,mySector,targetPos,targetSector);
@@ -1513,16 +1528,54 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
         return false;
     }
 
-    // This prevents NPCs from wanting to occupy the same physical space as something else
-    if (offsetRelativeHeading)
+    if (!adaptivVelocityScript.IsEmpty())
     {
-        offsetDelta = CalculateOffsetDelta(npc, myPos, mySector, endPos, endSector, targetRot );
+        adaptivVelScale = AdaptivVelocity(npc, distance);
+        NPCDebug(npc, 9, "Distance to target %.2f adaptiv scale %.2f",distance,adaptivVelScale);
     }
-    targetPos -= offsetDelta;
-    // TODO: Check if new targetPos is within same sector!!!
+    
 
     return true;
 }
+
+float ChaseOperation::AdaptivVelocity(NPC* npc, float distance)
+{
+    if (!calcAdaptivVelocity.IsValid())
+    {
+        if (!npcclient->GetMathScriptEngine()->CheckAndUpdateScript(calcAdaptivVelocity, adaptivVelocityScript))
+        {
+            Error2("Failed to load math script for AdaptivVelocity '%s'",adaptivVelocityScript.GetDataSafe());
+            return 0.0;
+        }
+    }
+
+    MathEnvironment env;
+
+    env.Define("NPCClient",                npcclient);
+    env.Define("NPC",                      npc);
+    env.Define("Distance",                 distance);
+    env.Define("AdaptivVelScale",          adaptivVelScale);
+
+    gemNPCActor* target = dynamic_cast<gemNPCActor*>(npc->GetTarget());
+    if (target)
+    {
+        env.Define("Target",                 target);
+    }
+
+    //this is going to crash if the script cannot be found.
+    calcAdaptivVelocity->Evaluate(&env);
+
+    MathVar* result   = env.Lookup("AdaptivVelScale");
+
+    return result->GetValue();
+}
+
+
+float ChaseOperation::GetVelocity(NPC* npc)
+{
+    return ScriptOperation::GetVelocity(npc)*adaptivVelScale;
+}
+
 
 //---------------------------------------------------------------------------
 

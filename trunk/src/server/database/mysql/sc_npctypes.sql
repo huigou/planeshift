@@ -1409,3 +1409,15 @@ INSERT INTO sc_npctypes VALUES("142","FightNearestNPC","DoNothing,InRegion,Fight
 
 INSERT INTO sc_npctypes VALUES("143","SizeMove","MoveTest2",0,"$run","","","","","0",
 '<empty/>');
+
+INSERT INTO sc_npctypes VALUES("144","ChaseTest3","DoNothing",0,"","","","","","0",
+'<behavior name="init" initial="1000" completion_decay="-1" >
+   <!--debug level="0" /-->
+   <nop/>
+</behavior>
+<behavior name="chase" initial="100" >
+   <locate obj="entity:pid:22" />  <!-- Locate MoveMaster2 -->
+   <chase type="target" side_offset="2" offset_relative_heading="true" anim="walk" adaptiv_vel_script="TestAdaptivVel" />
+   <wait anim="stand" duration="1" />  <!-- Could be a watch operation!! -->
+</behavior>');
+
