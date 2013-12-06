@@ -74,3 +74,4 @@ INSERT INTO sc_npc_definitions VALUES("103","NPC Fighter 4","FightNearestNPC","n
 INSERT INTO sc_npc_definitions VALUES("104","Small Mover","SizeMove","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("105","Large Mover","SizeMove","","0.00","0.00","0","N","N");
 INSERT INTO sc_npc_definitions VALUES("106","Huge Mover","SizeMove","","0.00","0.00","0","N","N");
+INSERT INTO sc_npc_definitions VALUES("107","Chaser3","ChaseTest3","","0.00","0.00","0","N","N");

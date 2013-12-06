@@ -636,3 +636,12 @@ INSERT INTO math_scripts VALUES( "trade_delete_item",
 "
 Worker:DeleteItem(0, 1); //
 " );
+
+INSERT INTO math_scripts VALUES( "TestAdaptivVel",
+"if (Distance > 5.0 & AdaptivVelScale < 4.0)
+{
+   AdaptivVelScale=AdaptivVelScale + 0.1;
+} else if (Distance < 1.0 & AdaptivVelScale > 0.5)
+{
+   AdaptivVelScale=AdaptivVelScale - 0.1;
+}" );

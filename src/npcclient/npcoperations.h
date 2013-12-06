@@ -219,8 +219,14 @@ public:
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy()=0;
 
-    float GetVelocity(NPC* npc);
-    float GetAngularVelocity(NPC* npc);
+    /** Return the velocity for the npc.
+     *
+     *  Determined by the script this could be the
+     *  walk, run, or a defined velocity.
+     */
+    virtual float GetVelocity(NPC* npc);
+    
+    virtual float GetAngularVelocity(NPC* npc);
     bool LoadVelocity(iDocumentNode* node);
     
     /** Load attributes for the CheckMoveOk check
@@ -460,6 +466,8 @@ protected:
     EID              targetEID;              ///< The EID of the chased target
     float            offsetAngle;            ///< The actual offset angle in radians
     csVector3        offsetDelta;            ///< The actual delta relative to target
+    float            adaptivVelScale;               ///< Scale of velocity for adaptive vel.
+    csWeakRef<MathScript> calcAdaptivVelocity; ///< This is the particular calculation for adaptiv velocity.
     //@}
 
     /** @name Operation Parameters
@@ -475,6 +483,7 @@ protected:
     float            offsetAngleMax;         ///< The maximum offset angle in radians
     float            sideOffset;             ///< Add a offset to the side of the target
     bool             offsetRelativeHeading;  ///< Set to true will make the offset relative target heading
+    csString         adaptivVelocityScript;  ///< Script to do adaptiv velocity adjustments.
     //@}
     
     enum
@@ -552,6 +561,19 @@ public:
      * Resolve the offset attribute.
      */
     virtual float GetOffset(NPC* npc) const;
+
+    /** Return adapativ velocity adjustment.
+     *
+     *  Should return a value percent vise adjustment. Eg. 1.1 adjust velocity
+     *  up with 10%.
+     */
+    float AdaptivVelocity(NPC* npc, float distance);
+    
+    /** Return the velocity adjusted by adaptivVelScale
+     *
+     */
+    virtual float GetVelocity(NPC* npc);
+    
     
     /** Make a deep copy of this operation.
      *
