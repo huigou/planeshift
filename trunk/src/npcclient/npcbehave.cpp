@@ -60,7 +60,7 @@
 #include "globals.h"
 
 NPCType::NPCType()
-    :npc(NULL),ang_vel(999),vel(999),velSource(VEL_DEFAULT)
+    :npc(NULL),ang_vel(999),vel(999),velSource(ScriptOperation::VEL_DEFAULT)
 {
 }
 
@@ -134,15 +134,15 @@ bool NPCType::Load(iResultRow &row)
     }
     else if(velStr == "$WALK")
     {
-        velSource = VEL_WALK;
+        velSource = ScriptOperation::VEL_WALK;
     }
     else if (velStr == "$RUN")
     {
-        velSource = VEL_RUN;
+        velSource = ScriptOperation::VEL_RUN;
     }
     else if(row.GetFloat("vel"))
     {
-        velSource = VEL_USER;
+        velSource = ScriptOperation::VEL_USER;
         vel = row.GetFloat("vel");
     }
 
@@ -293,15 +293,15 @@ bool NPCType::Load(iDocumentNode *node)
     }
     else if (velStr == "$WALK")
     {
-        velSource = VEL_WALK;
+        velSource = ScriptOperation::VEL_WALK;
     }
     else if (velStr == "$RUN")
     {
-        velSource = VEL_RUN;
+        velSource = ScriptOperation::VEL_RUN;
     }
     else if (node->GetAttributeValueAsFloat("vel") )
     {
-        velSource = VEL_USER;
+        velSource = ScriptOperation::VEL_USER;
         vel = node->GetAttributeValueAsFloat("vel");
     }
 
@@ -505,17 +505,24 @@ float NPCType::GetAngularVelocity(NPC * /*npc*/)
 float NPCType::GetVelocity(NPC *npc)
 {
     switch (velSource){
-    case VEL_DEFAULT:
+    case ScriptOperation::VEL_DEFAULT:
         return 1.5;
-    case VEL_USER:
+    case ScriptOperation::VEL_USER:
         return vel;
-    case VEL_WALK:
+    case ScriptOperation::VEL_WALK:
         return npc->GetWalkVelocity();
-    case VEL_RUN:
+    case ScriptOperation::VEL_RUN:
         return npc->GetRunVelocity();
     }
     return 0.0; // Should not return
 }
+
+void NPCType::SetVelSource(ScriptOperation::VelSource velSource, float vel)
+{
+    this->velSource = velSource;
+    this->vel = vel;
+}
+
 
 const csString& NPCType::GetCollisionPerception() const
 {
@@ -1125,13 +1132,13 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new EquipOperation;
         }
-        else if ( strcmp( node->GetValue(), "idle" ) == 0 )
-        {
-            op = new BusyOperation(false);
-        }
         else if ( strcmp( node->GetValue(), "hate_list" ) == 0 )
         {
             op = new HateListOperation;
+        }
+        else if ( strcmp( node->GetValue(), "idle" ) == 0 )
+        {
+            op = new BusyOperation(false);
         }
         else if ( strcmp( node->GetValue(), "invisible" ) == 0 )
         {
@@ -1146,6 +1153,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
             op = new LoopBeginOperation;
             beginLoopWhere = (int)sequence.GetSize(); // Where will sequence be pushed
             postLoadBeginLoop = true;
+        }
+        else if ( strcmp( node->GetValue(), "loot" ) == 0 )
+        {
+            op = new LootOperation;
         }
         else if ( strcmp( node->GetValue(), "melee" ) == 0 )
         {
@@ -1251,6 +1262,10 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         {
             op = new UnbuildOperation;
         }
+        else if ( strcmp( node->GetValue(), "vel_source" ) == 0 )
+        {
+            op = new VelSourceOperation();
+        }
         else if ( strcmp( node->GetValue(), "visible" ) == 0 )
         {
             op = new VisibleOperation;
@@ -1270,10 +1285,6 @@ bool Behavior::LoadScript(iDocumentNode *node,bool top_level)
         else if ( strcmp( node->GetValue(), "work" ) == 0 )
         {
             op = new WorkOperation;
-        }
-        else if ( strcmp( node->GetValue(), "loot" ) == 0 )
-        {
-            op = new LootOperation;
         }
         else
         {

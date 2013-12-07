@@ -534,6 +534,16 @@ INSERT INTO sc_npctypes VALUES("108","Minion","DoNothing",0,"","","","","","1",
    <move vel="2" anim="walk" duration="1.0"/>
 </behavior>
 
+<behavior name="walk" decay="0" growth="0" initial="0">
+   <vel_source vel="$WALK" />
+   <talk text="Pet slow down" target="false" />
+</behavior>
+<behavior name="run" decay="0" growth="0" initial="0">
+   <vel_source vel="$RUN" />
+   <talk text="Pet seams eager" target="false" />
+</behavior>
+
+
 <!-- Reload the standard behaviour (if different) stored in the -->
 <!-- sc_npc_definitions table, behaviour triggered by the npccmd interface -->
 <!-- when the Charme spell expires -->
@@ -554,6 +564,8 @@ INSERT INTO sc_npctypes VALUES("108","Minion","DoNothing",0,"","","","","","1",
 
 <react event="ownercmd:stopattack"  behavior="attack,attack_turn,attack_chase"       absolute= "0" />
 <react event="ownercmd:attack"      behavior="attack"       delta=  "200"  inactive_only="true" weight="10" />
+<react event="ownercmd:walk"        behavior="walk" />
+<react event="ownercmd:run"         behavior="run" />
 <react event="collision"            behavior="attack_turn"  delta=  "100" />
 <react event="damage"               behavior="attack"       delta=  "200"  inactive_only="true" weight="1" />
 <react event="target out of range"  behavior="attack_chase"  />');

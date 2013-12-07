@@ -510,22 +510,18 @@ void OwnerCmdPerception::ExecutePerception( NPC *pet, float weight )
     
     switch ( this->command )
     {
+    case psPETCommandMessage::CMD_WALK : // Walk
+    case psPETCommandMessage::CMD_RUN : // Run
     case psPETCommandMessage::CMD_FOLLOW : // Follow
-        break;
     case psPETCommandMessage::CMD_STAY : // Stay
-        break;
     case psPETCommandMessage::CMD_GUARD : // Guard
-        break;
     case psPETCommandMessage::CMD_ASSIST : // Assist
-        break;
     case psPETCommandMessage::CMD_NAME : // Name
-        break; 
     case psPETCommandMessage::CMD_TARGET : // Target
-        break;
     case psPETCommandMessage::CMD_SUMMON : // Summon
-        break;
     case psPETCommandMessage::CMD_DISMISS : // Dismiss
         break;
+
     case psPETCommandMessage::CMD_ATTACK : // Attack
         if (pet->GetTarget())
         {
@@ -539,6 +535,8 @@ void OwnerCmdPerception::ExecutePerception( NPC *pet, float weight )
         break;
 
     case psPETCommandMessage::CMD_STOPATTACK : // StopAttack
+        break;
+    case psPETCommandMessage::CMD_LAST : // Last
         break;
     }
 }
@@ -579,6 +577,15 @@ csString OwnerCmdPerception::BuildName(psPETCommandMessage::PetCommand_t command
         break; 
     case psPETCommandMessage::CMD_TARGET :
         event.Append( "target" );
+        break;
+    case psPETCommandMessage::CMD_WALK: 
+        event.Append( "walk" );
+        break;
+    case psPETCommandMessage::CMD_RUN: 
+        event.Append( "run" );
+        break;
+    case psPETCommandMessage::CMD_LAST: 
+        event.Append( "last" );
         break;
     }
     return event;

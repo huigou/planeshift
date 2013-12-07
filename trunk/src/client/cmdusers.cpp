@@ -761,7 +761,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (  words[0] == "/pet")
     {
-        const char *errorMsg = "You must enter the text. e.g /pet [petnumber,] <follow|stay|dismiss|summon|attack|guard|assist|name|target> <options>";
+        const char *errorMsg = "You must enter the text. e.g /pet [petnumber,] <assist|attack|dismiss|follow|guard|name|run|stay|summon|target|walk> <options>";
 
         if (words.GetCount() < 2)
             return errorMsg;
@@ -797,16 +797,18 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
         pCommand.Upcase();
         int command;
-        if      ( pCommand == "FOLLOW" )    { command = psPETCommandMessage::CMD_FOLLOW;      }
-        else if ( pCommand == "STAY" )      { command = psPETCommandMessage::CMD_STAY;        }
-        else if ( pCommand == "DISMISS" )   { command = psPETCommandMessage::CMD_DISMISS;     }
-        else if ( pCommand == "SUMMON" )    { command = psPETCommandMessage::CMD_SUMMON;      }
+        if      ( pCommand == "ASSIST" )    { command = psPETCommandMessage::CMD_ASSIST;      }
         else if ( pCommand == "ATTACK" )    { command = psPETCommandMessage::CMD_ATTACK;      }
+        else if ( pCommand == "DISMISS" )   { command = psPETCommandMessage::CMD_DISMISS;     }
+        else if ( pCommand == "FOLLOW" )    { command = psPETCommandMessage::CMD_FOLLOW;      }
         else if ( pCommand == "GUARD" )     { command = psPETCommandMessage::CMD_GUARD;       }
-        else if ( pCommand == "ASSIST" )    { command = psPETCommandMessage::CMD_ASSIST;      }
-        else if ( pCommand == "STOPATTACK" ){ command = psPETCommandMessage::CMD_STOPATTACK;  }
         else if ( pCommand == "NAME" )      { command = psPETCommandMessage::CMD_NAME;        }
+        else if ( pCommand == "RUN" )       { command = psPETCommandMessage::CMD_RUN;         }
+        else if ( pCommand == "STAY" )      { command = psPETCommandMessage::CMD_STAY;        }
+        else if ( pCommand == "STOPATTACK" ){ command = psPETCommandMessage::CMD_STOPATTACK;  }
+        else if ( pCommand == "SUMMON" )    { command = psPETCommandMessage::CMD_SUMMON;      }
         else if ( pCommand == "TARGET" )    { command = psPETCommandMessage::CMD_TARGET;      }
+        else if ( pCommand == "WALK" )      { command = psPETCommandMessage::CMD_WALK;        }
         else                                { return errorMsg; }
 
         switch ( command )

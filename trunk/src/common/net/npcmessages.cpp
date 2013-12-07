@@ -1320,7 +1320,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psPETCommandMessage,MSGTYPE_PET_COMMAND);
 
 const char * psPETCommandMessage::petCommandString[]=
     {"CMD_FOLLOW","CMD_STAY","CMD_DISMISS","CMD_SUMMON","CMD_ATTACK",
-     "CMD_GUARD","CMD_ASSIST","CMD_STOPATTACK","CMD_NAME","CMD_TARGET"};
+     "CMD_GUARD","CMD_ASSIST","CMD_STOPATTACK","CMD_NAME","CMD_TARGET","CMD_RUN","CMD_WALK","CMD_LAST"};
 
 psPETCommandMessage::psPETCommandMessage(uint32_t clientToken, int cmd, const char * target, const char * options )
 {
@@ -1346,7 +1346,12 @@ psPETCommandMessage::psPETCommandMessage(MsgEntry *message)
     if (!message)
         return;
 
-    command = message->GetInt32();    
+    command = message->GetInt32();
+    // Check within range
+    if (command < 0 || command > CMD_LAST)
+    {
+        command = CMD_LAST;
+    }
     target  = message->GetStr();    
     options = message->GetStr();
 }
