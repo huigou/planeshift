@@ -1886,8 +1886,6 @@ void NPCManager::UpdateWorldPositions()
 
 bool NPCManager::CanPetHearYou(int clientnum, Client* owner, gemNPC* pet, const char* type)
 {
-    //TODO: Add a range check
-
     MathEnvironment env;
     env.Define("Skill", owner->GetCharacterData()->GetSkillRank(GetPetSkill()).Current());
 
@@ -1948,7 +1946,7 @@ bool NPCManager::WillPetReact(int clientnum, Client* owner, gemNPC* pet, const c
         return true;
     }
 
-    psserver->SendSystemInfo(clientnum, "Your %s does not react to your command", type);
+    psserver->SendSystemInfo(clientnum, "Your %s does not react to your command.", type);
     return false;
 }
 
@@ -2053,7 +2051,47 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
         }
         switch(msg.command)
         {
+        // Level 0 commands, will allways react
+        case psPETCommandMessage::CMD_TARGET :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr))
+                {
+                    if(words.GetCount() == 0)
+                    {
+                        psserver->SendSystemInfo(me->clientnum, "You must specify a name for your pet to target.");
+                        return;
+                    }
+
+                    firstName = words.Get(0);
+                    if(words.GetCount() > 1)
+                    {
+                        lastName = words.GetTail(1);
+                    }
+                    gemObject* target = psserver->GetAdminManager()->FindObjectByString(firstName,owner->GetActor());
+
+                    firstName = NormalizeCharacterName(firstName);
+
+                    if(firstName == "Me")
+                    {
+                        firstName = owner->GetName();
+                    }
+                    lastName = NormalizeCharacterName(lastName);
+
+                    if(target)
+                    {
+                        pet->SetTarget(target);
+                        psserver->SendSystemInfo(me->clientnum, "%s has successfully targeted %s." , pet->GetName(), target->GetName());
+                    }
+                    else
+                    {
+                        psserver->SendSystemInfo(me->clientnum, "Cannot find '%s' to target.", firstName.GetData());
+                    }
+                }
+            }
+            break;
+        // Level 1 commands
         case psPETCommandMessage::CMD_FOLLOW :
+        case psPETCommandMessage::CMD_STAY :
             {
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
                    WillPetReact(me->clientnum, owner, pet, typeStr, 1))
@@ -2063,16 +2101,39 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     {
                         pet->SetTarget(owner->GetActor());
                     }
-                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW);
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
                 }
             }
             break;
-        case psPETCommandMessage::CMD_STAY :
+        // Level 2 commands
+        case psPETCommandMessage::CMD_GUARD :
+        case psPETCommandMessage::CMD_RUN :
+        case psPETCommandMessage::CMD_WALK :
             {
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
-                   WillPetReact(me->clientnum, owner, pet, typeStr, 1))
+                   WillPetReact(me->clientnum, owner, pet, typeStr, 2))
                 {
-                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_STAY);
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
+                }
+            }
+            break;
+        // Level 3 commands
+        case psPETCommandMessage::CMD_ASSIST :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                   WillPetReact(me->clientnum, owner, pet, typeStr, 3))
+                {
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
+                }
+            }
+            break;
+        // Level 4 commands
+        case psPETCommandMessage::CMD_STOPATTACK :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                   WillPetReact(me->clientnum, owner, pet, typeStr, 4))
+                {
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
                 }
             }
             break;
@@ -2125,70 +2186,6 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     else
                     {
                         psserver->SendSystemInfo(me->clientnum, "Your pet needs a target to attack.");
-                    }
-                }
-            }
-            break;
-        case psPETCommandMessage::CMD_STOPATTACK :
-            {
-                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
-                   WillPetReact(me->clientnum, owner, pet, typeStr, 4))
-                {
-                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK);
-                }
-            }
-            break;
-        case psPETCommandMessage::CMD_ASSIST :
-            {
-                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
-                   WillPetReact(me->clientnum, owner, pet, typeStr, 3))
-                {
-                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ASSIST);
-                }
-            }
-            break;
-        case psPETCommandMessage::CMD_GUARD :
-            {
-                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
-                   WillPetReact(me->clientnum, owner, pet, typeStr, 2))
-                {
-                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_GUARD);
-                }
-            }
-            break;
-        case psPETCommandMessage::CMD_TARGET :
-            {
-                if(CanPetHearYou(me->clientnum, owner, pet, typeStr))
-                {
-                    if(words.GetCount() == 0)
-                    {
-                        psserver->SendSystemInfo(me->clientnum, "You must specify a name for your pet to target.");
-                        return;
-                    }
-
-                    firstName = words.Get(0);
-                    if(words.GetCount() > 1)
-                    {
-                        lastName = words.GetTail(1);
-                    }
-                    gemObject* target = psserver->GetAdminManager()->FindObjectByString(firstName,owner->GetActor());
-
-                    firstName = NormalizeCharacterName(firstName);
-
-                    if(firstName == "Me")
-                    {
-                        firstName = owner->GetName();
-                    }
-                    lastName = NormalizeCharacterName(lastName);
-
-                    if(target)
-                    {
-                        pet->SetTarget(target);
-                        psserver->SendSystemInfo(me->clientnum, "%s has successfully targeted %s." , pet->GetName(), target->GetName());
-                    }
-                    else
-                    {
-                        psserver->SendSystemInfo(me->clientnum, "Cannot find '%s' to target.", firstName.GetData());
                     }
                 }
             }
@@ -2455,11 +2452,13 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 }
             }
             break;
+        case psPETCommandMessage::CMD_RUN :
+        case psPETCommandMessage::CMD_WALK :
         case psPETCommandMessage::CMD_GUARD :
             {
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 2))
                 {
-                    QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_GUARD);
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
                 }
             }
             break;

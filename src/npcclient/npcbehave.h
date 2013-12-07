@@ -193,13 +193,6 @@ public:
  */
 class NPCType
 {
-    enum VelSource {
-        VEL_DEFAULT,
-        VEL_USER,
-        VEL_WALK,
-        VEL_RUN
-    };
-    
 protected:
     NPC*                  npc;       ///< Pointer to the NPC for this brain.
     csString              name;      ///< The name of this NPC type.
@@ -211,7 +204,7 @@ protected:
     float                 vel;       ///< Default vel for this NPCType.
                                      ///< Will be used for all behaviors unless overriden
                                      ///< by each behavior.
-    VelSource             velSource; ///< 
+    ScriptOperation::VelSource             velSource; ///< 
 
     csString              collisionPerception;   ///< Global perception value for falling
     csString              outOfBoundsPerception; ///< Global perception value for falling
@@ -281,6 +274,10 @@ public:
      */
     float GetVelocity(NPC *npc);
 
+    /** Set a new velocity source.
+     */
+    void SetVelSource(ScriptOperation::VelSource velSource, float vel);
+    
     /** Return the percpetion to fire for collisions.
      */
     const csString& GetCollisionPerception() const;

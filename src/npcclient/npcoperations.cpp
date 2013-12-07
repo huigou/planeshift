@@ -4724,6 +4724,34 @@ void RotateOperation::InterruptOperation(NPC *npc)
 
 //---------------------------------------------------------------------------
 
+bool VelSourceOperation::Load(iDocumentNode *node)
+{
+    csString velAttribute = node->GetAttributeValue("vel");
+    if (velAttribute.IsEmpty())
+    {
+        Error1("Script operation must have a vel attribute");
+        return false;
+    }
+
+    return LoadVelocity(node);
+}
+
+ScriptOperation *VelSourceOperation::MakeCopy()
+{
+    VelSourceOperation *op = new VelSourceOperation;
+    op->velSource = velSource;
+    op->vel = vel;
+    return op;
+}
+
+ScriptOperation::OperationResult VelSourceOperation::Run(NPC *npc, bool interrupted)
+{
+    npc->GetBrain()->SetVelSource(velSource, vel);
+    return OPERATION_COMPLETED; // Nothing more to do for this op.
+}
+
+//---------------------------------------------------------------------------
+
 bool ProgressScriptOperation::Load(iDocumentNode *node)
 {
     scriptName = node->GetAttributeValue("name");

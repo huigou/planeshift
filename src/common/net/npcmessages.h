@@ -399,7 +399,10 @@ public:
         CMD_ASSIST,
         CMD_STOPATTACK,
         CMD_NAME,
-        CMD_TARGET
+        CMD_TARGET,
+        CMD_RUN,
+        CMD_WALK,
+        CMD_LAST // LAST command, insert new commands before this
     } PetCommand_t;
 
     static const char *petCommandString[];

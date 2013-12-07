@@ -68,6 +68,7 @@ class Behavior;
 */
 class ScriptOperation
 {
+public:
     enum VelSource {
         VEL_DEFAULT,
         VEL_USER,
@@ -75,7 +76,6 @@ class ScriptOperation
         VEL_RUN
     };
 
-public:
     // Used to indicate the result of the Run and Advance operations.
     enum OperationResult {
         OPERATION_NOT_COMPLETED, ///< Used to indicate that an operation will complete at a later stage
@@ -1357,6 +1357,25 @@ public:
     virtual void InterruptOperation(NPC* npc);
     
     float SeekAngle(NPC* npc, float targetYRot);           // Finds an angle which won't lead to a collision
+};
+
+//-----------------------------------------------------------------------------
+
+/**
+* Vel set the velocity source of the brain to run or walk.
+*/
+class VelSourceOperation : public ScriptOperation
+{
+protected:
+public:
+
+    VelSourceOperation(): ScriptOperation("VelSource")
+    {
+    }
+    virtual ~VelSourceOperation() { }
+    virtual bool Load(iDocumentNode* node);
+    virtual ScriptOperation* MakeCopy();
+    virtual OperationResult Run(NPC* npc,bool interrupted);
 };
 
 //-----------------------------------------------------------------------------
