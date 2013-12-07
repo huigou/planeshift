@@ -638,10 +638,11 @@ protected:
      * -# Calculate time required for repair based on item and skill level
      * -# Calculate result after repair
      * -# Queue time event to trigger when repair is complete, if not canceled.
-     * @param client The client that issues the command
+     * @param actor The actor that issues the command
+     * @param client The client that issues the command, NULL if NPCClient
      * @param repairSlotName the slot name which should be repaired.
      */
-    void HandleRepair(Client* client, const csString &repairSlotName);
+    void HandleRepair(gemActor* actor, Client* client, const csString &repairSlotName);
 
     /**
      * Handle production events from clients.

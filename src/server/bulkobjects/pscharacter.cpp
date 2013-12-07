@@ -2136,8 +2136,6 @@ void psCharacter::SetStaminaRegenerationWork(int skill)
     if(ratePhy) GetPStaminaRate().SetBase(ratePhy->GetValue());
     if(rateMen) GetMStaminaRate().SetBase(rateMen->GetValue());
 
-    //GetPStaminaRate().SetBase(GetPStaminaRate().Base()-6.0*(100-factor)/100);
-    //GetMStaminaRate().SetBase(GetMStaminaRate().Base()-6.0*(100-factor)/100);
 }
 
 void psCharacter::CalculateMaxStamina()

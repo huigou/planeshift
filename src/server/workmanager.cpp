@@ -213,7 +213,7 @@ void WorkManager::Initialize()
     }
 }
 
-void WorkManager::HandleWorkCommand(MsgEntry* me,Client* client)
+void WorkManager::HandleWorkCommand(MsgEntry* me, Client* client)
 {
     psWorkCmdMessage msg(me);
 
@@ -237,7 +237,7 @@ void WorkManager::HandleWorkCommand(MsgEntry* me,Client* client)
 
     else if(msg.command == "repair")
     {
-        HandleRepair(client, msg.repairSlotName);
+        HandleRepair(client->GetActor(), client, msg.repairSlotName);
     }
     else if(msg.command == "construct")
     {
@@ -291,16 +291,35 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client* client)
 // Repair
 //-----------------------------------------------------------------------------
 
-void WorkManager::HandleRepair(Client* client, const csString &repairSlotName)
+void WorkManager::HandleRepair(gemActor* actor, Client* client, const csString &repairSlotName)
 {
     // Make sure client isn't already busy digging, etc.
-    if(client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
+    if(actor->GetMode() != PSCHARACTER_MODE_PEACE)
     {
-        psserver->SendSystemError(client->GetClientNum(),"You cannot repair anything because you are %s.", client->GetActor()->GetModeStr());
+        if(client)
+        {
+            psserver->SendSystemError(client->GetClientNum(),"You cannot repair anything because you are %s.", actor->GetModeStr());
+        }
+        else
+        {
+            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s cannot repair anything because you are %s.", actor->GetName(), actor->GetModeStr()); 
+        }
         return;
     }
 
-    // No stamina checking yet for repairs.  Never discussed.
+    // Need to have work stamina and generaly not beeing exhausted. 
+    if(!CheckStamina(actor->GetCharacterData()))
+    {
+        if(client)
+        {
+            psserver->SendSystemError(client->GetClientNum(),"You cannot repair because you are too tired.");
+        }
+        else
+        {
+            Debug2(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s cannot repair because you are too tired.", actor->GetName());
+        }
+        return;
+    }
 
     // Check for repairable item in precised or default(right hand) slot
     int slotTarget;
@@ -529,40 +548,38 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char* rew
         return;
     }
 
-    int mode = actor->GetMode();
-
     // Make sure client isn't already busy digging, etc.
-    if(mode != PSCHARACTER_MODE_PEACE)
+    if(actor->GetMode() != PSCHARACTER_MODE_PEACE)
     {
         if(client)
         {
-            psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are already busy.",resourcesActions.Get(type));
+            psserver->SendSystemError(client->GetClientNum(), "You cannot %s because you are %s.", resourcesActions.Get(type), actor->GetModeStr());
         }
         else
         {
-            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s cannot %s because you are already busy.",actor->GetName(),resourcesActions.Get(type));
+            Debug4(LOG_SUPERCLIENT,actor->GetEID().Unbox(), "%s cannot %s because you are %s.", actor->GetName(), resourcesActions.Get(type), actor->GetModeStr());
         }
         return;
     }
 
-    // check stamina
+    // Need to have work stamina
     if(!CheckStamina(actor->GetCharacterData()))
     {
         if(client)
         {
-            psserver->SendSystemError(client->GetClientNum(),"You cannot %s because you are too tired.",resourcesActions.Get(type));
+            psserver->SendSystemError(client->GetClientNum(), "You cannot %s because you are too tired.", resourcesActions.Get(type));
         }
         else
         {
-            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s cannot %s because you are too tired.",actor->GetName(),resourcesActions.Get(type));
+            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(), "%s cannot %s because you are too tired.", actor->GetName(), resourcesActions.Get(type));
         }
         return;
     }
 
     csVector3 pos;
 
-    // Make sure they are not in the same loc as the last dig.
-    // skip this check for NPCs
+    // Make sure they are not in the same loc as the last production.
+    // skip this check for NPCs.
     actor->GetLastProductionPos(pos);
     if(client && SameProductionPosition(actor, pos))
     {

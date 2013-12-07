@@ -569,8 +569,8 @@ bool ServerCharManager::TradingCheck(Client * client, gemObject * target, csStri
     PSCHARACTER_MODE mode = client->GetActor()->GetMode();
 
     // Make sure that we are not busy with something else
-    if ((mode != PSCHARACTER_MODE_PEACE) && (mode != PSCHARACTER_MODE_SIT) && (mode != PSCHARACTER_MODE_OVERWEIGHT)
-        && mode != (PSCHARACTER_MODE_EXHAUSTED))
+    if ((mode != PSCHARACTER_MODE_PEACE) && (mode != PSCHARACTER_MODE_SIT) &&
+        (mode != PSCHARACTER_MODE_OVERWEIGHT) && (mode != PSCHARACTER_MODE_EXHAUSTED))
     {
         if (errorMessage)
         {
@@ -1607,8 +1607,8 @@ void ServerCharManager::BeginStoring(Client * client, gemObject * target, const 
     PSCHARACTER_MODE mode = client->GetActor()->GetMode();
 
     // Make sure that we are not busy with something else
-    if (mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_SIT && mode != PSCHARACTER_MODE_OVERWEIGHT
-        && mode != PSCHARACTER_MODE_EXHAUSTED)
+    if ((mode != PSCHARACTER_MODE_PEACE) && (mode != PSCHARACTER_MODE_SIT) &&
+        (mode != PSCHARACTER_MODE_OVERWEIGHT) && (mode != PSCHARACTER_MODE_EXHAUSTED))
     {
         psserver->SendSystemError(client->GetClientNum(), "You cannot check the storage because you are already busy.");
         return;
