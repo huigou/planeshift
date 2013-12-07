@@ -37,7 +37,9 @@ CREATE TABLE `natural_resources` (
   `anim_duration_seconds` int(10) unsigned default '0' COMMENT 'animation duration',
   `item_id_reward` int(10) unsigned default '0' COMMENT 'item given to player when successful',
   `reward_nickname` varchar(30) default '0' COMMENT 'name of the item given as used in commands and maps',
-  `action` varchar(45) NOT NULL COMMENT 'command needed to harvest: dig/harvest/fish',  `amount` int(10) unsigned default NULL COMMENT 'if not null, items will be spawned as hunt_location',  `interval` int(11) NOT NULL default '0' COMMENT 'if amount not null, msec interval for spawning item when picked up',  `max_random` int(11) NOT NULL default '0' COMMENT 'Maximum random interval modifier in msecs',
+  `action` varchar(45) NOT NULL COMMENT 'command needed to harvest: dig/harvest/fish',  `amount` int(10) unsigned default NULL COMMENT 'if not null, items will be spawned as hunt_location',
+  `interval` int(11) NOT NULL default '0' COMMENT 'if amount not null, msec interval for spawning item when picked up',
+  `max_random` int(11) NOT NULL default '0' COMMENT 'Maximum random interval modifier in msecs',
   PRIMARY KEY  (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
