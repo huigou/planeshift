@@ -1823,6 +1823,9 @@
 				RelativePath="..\..\src\npcclient\recipetreenode.h">
 			</File>
 			<File
+				RelativePath="..\..\src\npcclient\stat.h">
+			</File>
+			<File
 				RelativePath="..\..\src\npcclient\status.h">
 			</File>
 			<File
