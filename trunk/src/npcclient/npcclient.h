@@ -97,7 +97,7 @@ public:
      * Create the NPC Client application class.
      */
     psNPCClient();
-    
+
     /**
      * Cleans up all allocated memory and removes all the players from the world.
      */
@@ -273,7 +273,7 @@ public:
     /**
      * Add a race info to the race info list
      */
-    void AddRaceInfo(const psNPCRaceListMessage::NPCRaceInfo_t& raceInfo);
+    void AddRaceInfo(const psNPCRaceListMessage::NPCRaceInfo_t &raceInfo);
 
     /**
      * Get pointer to a race info to the given race name.
@@ -314,7 +314,7 @@ public:
     /**
      * Register a reaction for an NPC with the client. Used to speed up FirePerception.
      */
-    void RegisterReaction(NPC *npc, Reaction *reaction);
+    void RegisterReaction(NPC* npc, Reaction* reaction);
 
     /**
      * Sends a perception to all npcs.
@@ -565,7 +565,7 @@ public:
     {
         return gameMinute;
     }
-    
+
     /**
      * Get the hour of the game time of day.
      */
@@ -573,7 +573,7 @@ public:
     {
         return gameHour;
     }
-    
+
     /**
      * Get the day of the game time of day.
      */
@@ -581,7 +581,7 @@ public:
     {
         return gameDay;
     }
-    
+
     /**
      * Get the month of the game time of day.
      */
@@ -589,7 +589,7 @@ public:
     {
         return gameMonth;
     }
-    
+
     /**
      * Get the year of the game time of day.
      */
@@ -598,7 +598,7 @@ public:
         return gameYear;
     }
     ///@}
-    
+
     /**
      * Attach a server gemObject to a Crystal Space object.
      *
@@ -682,7 +682,7 @@ public:
      * Load NPC Types from DB.
      */
     bool LoadNPCTypes();
-    
+
     /**
      * Fire perception
      *
@@ -717,14 +717,14 @@ public:
     }
 
     /** @name iScriptableVar implementation
-     * Functions that implement the iScriptableVar interface. 
+     * Functions that implement the iScriptableVar interface.
      */
     ///@{
     virtual double GetProperty(MathEnvironment* env, const char* ptr);
     virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     virtual const char* ToString();
     ///@}
-    
+
 protected:
     /**
      * Read NPCs from the DB.
@@ -756,8 +756,8 @@ protected:
     /**
      * Find all actors that are in a tribe home and percept tribe and actor if it is an NPC.
      */
-    void PerceptProximityTribeHome();    
-    
+    void PerceptProximityTribeHome();
+
 public:
     static psNPCClient*             npcclient;
 protected:
@@ -786,12 +786,12 @@ protected:
     csArray<gemNPCObject*>          all_gem_objects;
     csArray<gemNPCItem*>            all_gem_items;
     csArray<gemNPCActor*>           all_gem_actors;
-    
+
     csHash<psNPCRaceListMessage::NPCRaceInfo_t,csString>     raceInfos; ///< Information about all the races.
 
     csHash<NPC*,csString>           allReactions;     ///< Hash of all registered reactions.
-    csArray<csString>               notUsedReactions; ///< List of not matched reactions. 
-    
+    csArray<csString>               notUsedReactions; ///< List of not matched reactions.
+
     csRef<iCollideSystem>           cdsys;
 
     psWorld*                        world;
