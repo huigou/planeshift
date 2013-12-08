@@ -341,7 +341,11 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         int tail = 1;
         int quantity = atoi(words[1]);
         if (quantity > 0)
+        {
             tail++;
+            if ( tail >= words.GetCount() )
+                return "Usage: /equip  [stack count] [slot] [item name]";
+        }
         else
             quantity = 1;
 
@@ -353,11 +357,14 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         {
             slotID = toSlot->ID();
             tail++;
+            if ( tail >= words.GetCount() )
+                return "Usage: /equip  [stack count] [slot] [item name]";
         }
 
         csString itemName;
         itemName = words.GetTail(tail);
-        window->Equip( itemName, quantity, slotID );
+        if (!window->Equip( itemName, quantity, slotID ))
+            return "Usage: /equip  [stack count] [slot] [item name]";
     }
 
     else if ( words[0] == "/dequip" )
