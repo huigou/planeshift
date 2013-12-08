@@ -336,7 +336,7 @@ void pawsInventoryWindow::Dequip( const char* itemName )
     }
 }
 
-void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlotID )
+bool pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlotID )
 {
     csArray<psInventoryCache::CachedItemDescription*>::Iterator iter = psengine->GetInventoryCache()->GetSortedIterator();
     psInventoryCache::CachedItemDescription* from = NULL;
@@ -382,7 +382,9 @@ void pawsInventoryWindow::Equip( const char* itemName, int stackCount, int toSlo
                                CONTAINER_INVENTORY_EQUIPMENT, toSlotID,
                                stackCount );
         msg.SendMessage();
+        return true;
     }
+    return false;
 }
 
 //search for items in bulk, then in equipped slots
