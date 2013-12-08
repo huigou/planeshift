@@ -1169,20 +1169,20 @@ void psNPCClient::TriggerEvent(Perception* pcpt, float maxRange,
 
     // Only trigger NPCs that have this percpetion type registered as a reaction.
     csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator(pcpt->GetName()));
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         NPC* npc = iter.Next();
-        
+
         // skip disabled NPCs
-        if (npc->IsDisabled())
+        if(npc->IsDisabled())
             continue;
 
         npc->TriggerEvent(pcpt, maxRange, basePos, baseSector, sameSector);
         foundUser = true;
     }
-    if (!foundUser)
+    if(!foundUser)
     {
-        notUsedReactions.PushSmart( pcpt->GetName() );
+        notUsedReactions.PushSmart(pcpt->GetName());
     }
 }
 
@@ -1300,7 +1300,7 @@ NPCType* psNPCClient::FindNPCType(const char* npctype_name)
     return npctypes.Get(npctype_name, NULL);
 }
 
-void psNPCClient::AddRaceInfo(const psNPCRaceListMessage::NPCRaceInfo_t& raceInfo)
+void psNPCClient::AddRaceInfo(const psNPCRaceListMessage::NPCRaceInfo_t &raceInfo)
 {
     raceInfos.PutUnique(raceInfo.name,raceInfo);
 }
@@ -1472,7 +1472,8 @@ void psNPCClient::ListAllNPCs(const char* pattern)
                 npcs.GetSize(), disabled, alive, entity, behaviour, brain);
 
         return; // No point continue since no npc should be named summary :)
-    } else if (strcasecmp(pattern,"stats") == 0)
+    }
+    else if(strcasecmp(pattern,"stats") == 0)
     {
         CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-17s %-17s %-17s %-17s\n",
                 "NPC ID", "EID", "Name",
@@ -1487,9 +1488,9 @@ void psNPCClient::ListAllNPCs(const char* pattern)
                     npcs[i]->GetMana(),npcs[i]->GetMaxMana(),npcs[i]->GetManaRate(),
                     npcs[i]->GetPysStamina(),npcs[i]->GetMaxPysStamina(),npcs[i]->GetPysStaminaRate(),
                     npcs[i]->GetMenStamina(),npcs[i]->GetMaxMenStamina(),npcs[i]->GetMenStaminaRate()
-                    );
+                   );
         }
-        
+
         return;
     }
 
@@ -1589,9 +1590,10 @@ void psNPCClient::ListAllEntities(const char* pattern, bool onlyCharacters)
             }
             CPrintf(CON_CMDOUTPUT, "Actor summary for %d actors: %d alive\n",
                     numChars, alive);
-            
+
             return; // No point continue since no actor should be named summary :)
-        } else if (strcasecmp(pattern,"stats") == 0)
+        }
+        else if(strcasecmp(pattern,"stats") == 0)
         {
             CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-17s %-17s %-17s %-17s\n",
                     "PID", "EID", "Name",
@@ -1610,12 +1612,12 @@ void psNPCClient::ListAllEntities(const char* pattern, bool onlyCharacters)
                         actor->GetMana(),actor->GetMaxMana(),actor->GetManaRate(),
                         actor->GetPysStamina(),actor->GetMaxPysStamina(),actor->GetPysStaminaRate(),
                         actor->GetMenStamina(),actor->GetMaxMenStamina(),actor->GetMenStaminaRate()
-                        );
+                       );
             }
-            
+
             return;
         }
-        
+
         // Default behavior
 
         CPrintf(CON_CMDOUTPUT, "%-9s %-5s %-10s %-30s %-3s %-3s %-5s\n" ,
@@ -1809,7 +1811,7 @@ void psNPCClient::ListReactions(const char* pattern)
     // Extract uniq lists of NPCs and reactions
     {
         csHash<NPC*,csString>::GlobalIterator iter(allReactions.GetIterator());
-        while (iter.HasNext())
+        while(iter.HasNext())
         {
             csTuple2<NPC*,csString> item = iter.NextTuple();
             npcs.PushSmart(item.first);
@@ -1819,20 +1821,20 @@ void psNPCClient::ListReactions(const char* pattern)
 
     CPrintf(CON_CMDOUTPUT, "Registered reactions (Per NPC):\n");
     csArray<NPC*>::Iterator npcIter = npcs.GetIterator();
-    while (npcIter.HasNext())
+    while(npcIter.HasNext())
     {
         NPC* npc = npcIter.Next();
         CPrintf(CON_CMDOUTPUT, "NPC: %s(%s):\n",npc->GetName(),ShowID(npc->GetEID()));
         csString result;
         csString delim = "";
         csHash<NPC*,csString>::GlobalIterator iter(allReactions.GetIterator());
-        while (iter.HasNext())
+        while(iter.HasNext())
         {
             csTuple2<NPC*,csString> item = iter.NextTuple();
-            if (item.first == npc)
+            if(item.first == npc)
             {
                 csString reaction = item.second;
-                if (result.Length() > 70)
+                if(result.Length() > 70)
                 {
                     CPrintf(CON_CMDOUTPUT,"%s\n",result.GetDataSafe());
                     delim = "";
@@ -1846,17 +1848,17 @@ void psNPCClient::ListReactions(const char* pattern)
     }
     CPrintf(CON_CMDOUTPUT, "Registered reactions (Per Reaction):\n");
     csArray<csString>::Iterator reactionIter = reactions.GetIterator();
-    while (reactionIter.HasNext())
+    while(reactionIter.HasNext())
     {
         csString reaction = reactionIter.Next();
         CPrintf(CON_CMDOUTPUT, "Reaction: \"%s\"\n",reaction.GetDataSafe());
         csString result;
         csString delim = "";
         csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator(reaction));
-        while (iter.HasNext())
+        while(iter.HasNext())
         {
             NPC* npc = iter.Next();
-            if (result.Length() > 70)
+            if(result.Length() > 70)
             {
                 CPrintf(CON_CMDOUTPUT,"%s\n",result.GetDataSafe());
                 delim = "";
@@ -1867,15 +1869,15 @@ void psNPCClient::ListReactions(const char* pattern)
         }
         CPrintf(CON_CMDOUTPUT,"%s\n",result.GetDataSafe());
     }
-    
+
     CPrintf(CON_CMDOUTPUT, "Not used reactions:\n");
     csArray<csString>::Iterator notUsedIter(notUsedReactions.GetIterator());
-    while (notUsedIter.HasNext())
+    while(notUsedIter.HasNext())
     {
         csString type = notUsedIter.Next();
         CPrintf(CON_CMDOUTPUT, "%s\n",type.GetDataSafe());
     }
-    
+
 }
 
 
@@ -1942,11 +1944,11 @@ void psNPCClient::HandleDeath(NPC* who)
 
     // If enity update entity as well
     gemNPCActor* entity = who->GetActor();
-    if (entity)
+    if(entity)
     {
         entity->SetAlive(false);
     }
-    
+
     if(who->GetTribe())
     {
         who->GetTribe()->HandleDeath(who);
@@ -1975,7 +1977,7 @@ void psNPCClient::PerceptProximityItems()
     csList<NPC*> npcList;
     {
         csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator("item sensed"));
-        while (iter.HasNext())
+        while(iter.HasNext())
         {
             NPC* npc = iter.Next();
             npcList.PushBack(npc);
@@ -1983,7 +1985,7 @@ void psNPCClient::PerceptProximityItems()
     }
     {
         csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator("item adjacent"));
-        while (iter.HasNext())
+        while(iter.HasNext())
         {
             NPC* npc = iter.Next();
             npcList.PushBack(npc);
@@ -1991,13 +1993,13 @@ void psNPCClient::PerceptProximityItems()
     }
     {
         csHash<NPC*,csString>::Iterator iter(allReactions.GetIterator("item nearby"));
-        while (iter.HasNext())
+        while(iter.HasNext())
         {
             NPC* npc = iter.Next();
             npcList.PushBack(npc);
         }
     }
-    
+
     while(check_count--)
     {
         current_long_range_perception_index++;
@@ -2027,12 +2029,12 @@ void psNPCClient::PerceptProximityItems()
             bboxPersonal.AddBoundingVertexSmart(item_pos+csVector3(PERSONAL_RANGE_PERCEPTION));
 
             csList<NPC*>::Iterator iter(npcList);
-            while (iter.HasNext())
+            while(iter.HasNext())
             {
                 NPC* npc = iter.Next();
 
                 // skip disabled NPCs
-                if (npc->IsDisabled())
+                if(npc->IsDisabled())
                     continue;
 
                 if(npc->GetActor() == NULL)
