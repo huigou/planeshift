@@ -1386,6 +1386,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\npcclient\reaction.h" />
     <ClInclude Include="..\..\src\npcclient\recipe.h" />
     <ClInclude Include="..\..\src\npcclient\recipetreenode.h" />
+    <ClInclude Include="..\..\src\npcclient\stat.h" />
     <ClInclude Include="..\..\src\npcclient\status.h" />
     <ClInclude Include="..\..\src\npcclient\tribe.h" />
     <ClInclude Include="..\..\src\npcclient\walkpoly.h" />

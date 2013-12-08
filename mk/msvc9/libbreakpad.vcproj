@@ -1747,19 +1747,10 @@
 				RelativePath="..\..\src\tools\breakpad\client\windows\sender\crash_report_sender.cc">
 			</File>
 			<File
-				RelativePath="..\..\src\tools\breakpad\common\windows\dia_util.cc">
-			</File>
-			<File
 				RelativePath="..\..\src\tools\breakpad\common\windows\guid_string.cc">
 			</File>
 			<File
 				RelativePath="..\..\src\tools\breakpad\common\windows\http_upload.cc">
-			</File>
-			<File
-				RelativePath="..\..\src\tools\breakpad\common\windows\omap.cc">
-			</File>
-			<File
-				RelativePath="..\..\src\tools\breakpad\common\windows\pdb_source_line_writer.cc">
 			</File>
 			<File
 				RelativePath="..\..\src\tools\breakpad\common\windows\string_utils.cc">
@@ -1793,22 +1784,10 @@
 				RelativePath="..\..\src\tools\breakpad\client\windows\sender\crash_report_sender.h">
 			</File>
 			<File
-				RelativePath="..\..\src\tools\breakpad\common\windows\dia_util.h">
-			</File>
-			<File
 				RelativePath="..\..\src\tools\breakpad\common\windows\guid_string.h">
 			</File>
 			<File
 				RelativePath="..\..\src\tools\breakpad\common\windows\http_upload.h">
-			</File>
-			<File
-				RelativePath="..\..\src\tools\breakpad\common\windows\omap.h">
-			</File>
-			<File
-				RelativePath="..\..\src\tools\breakpad\common\windows\omap_internal.h">
-			</File>
-			<File
-				RelativePath="..\..\src\tools\breakpad\common\windows\pdb_source_line_writer.h">
 			</File>
 			<File
 				RelativePath="..\..\src\tools\breakpad\common\windows\string_utils-inl.h">
