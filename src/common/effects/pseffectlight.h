@@ -43,8 +43,8 @@ public:
     psLight(iObjectRegistry* object_reg);
     ~psLight();
 
-    unsigned int AttachLight(const char* name, const csVector3& pos,
-  	float radius, const csColor& colour, iMeshWrapper* mw);
+    unsigned int AttachLight(const char* name, const csVector3 &pos,
+                             float radius, const csColor &colour, iMeshWrapper* mw);
     bool Update();
 
 private:

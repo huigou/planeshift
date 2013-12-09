@@ -36,8 +36,8 @@
 #include "util/pscssetup.h"
 #include "util/log.h"
 
-psEffectObjSimpMesh::psEffectObjSimpMesh(iView * parentView, psEffect2DRenderer * renderer2d)
-                   : psEffectObj(parentView, renderer2d)
+psEffectObjSimpMesh::psEffectObjSimpMesh(iView* parentView, psEffect2DRenderer* renderer2d)
+    : psEffectObj(parentView, renderer2d)
 {
 }
 
@@ -49,7 +49,7 @@ psEffectObjSimpMesh::~psEffectObjSimpMesh()
     }
 }
 
-bool psEffectObjSimpMesh::Load(iDocumentNode *node, iLoaderContext* ldr_context)
+bool psEffectObjSimpMesh::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
 
     // get the attributes
@@ -57,36 +57,36 @@ bool psEffectObjSimpMesh::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     materialName.Clear();
     fileName.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
-        else if (attrName == "material")
+        else if(attrName == "material")
             materialName = attr->GetValue();
-        else if (attrName == "file")
+        else if(attrName == "file")
             fileName = csString("/this/art/effects/") + attr->GetValue();
-        else if (attrName == "mesh")
+        else if(attrName == "mesh")
             meshName = attr->GetValue();
     }
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
     }
-    
+
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psCSSetup::object_reg);
     assert(vfs);
-    
-    if (!vfs->Exists(fileName))
+
+    if(!vfs->Exists(fileName))
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj without specifying an existing mesh file.\n");
         return false;
     }
-    
-    if (!psEffectObj::Load(node, ldr_context))
+
+    if(!psEffectObj::Load(node, ldr_context))
         return false;
 
     return PostSetup();
@@ -98,10 +98,10 @@ bool psEffectObjSimpMesh::Render(const csVector3 &up)
     csString effectID = "effect_simpmesh_";
     effectID += nextUniqueID++;
 
-    iMeshWrapper *templateMesh = engine->FindMeshObject(meshName);
-    if (!templateMesh)
+    iMeshWrapper* templateMesh = engine->FindMeshObject(meshName);
+    if(!templateMesh)
         return false;
-    
+
 //    csRef<iMeshObject> newObj = templateMesh->GetMeshObject()->Clone();
 //    if (!newObj)
 //        newObj = templateMesh->GetMeshObject();
@@ -113,7 +113,7 @@ bool psEffectObjSimpMesh::Render(const csVector3 &up)
     mesh = engine->CreateMeshWrapper(templateMesh->GetMeshObject(), effectID);
 
     // mesh has been loaded before hand
-    if (!mesh)
+    if(!mesh)
         return false;
 
     // do the up vector
@@ -129,7 +129,7 @@ bool psEffectObjSimpMesh::Render(const csVector3 &up)
     mesh->SetRenderPriority(priority);
 
     // disable culling
-    csStringID viscull_id = globalStringSet->Request ("viscull");
+    csStringID viscull_id = globalStringSet->Request("viscull");
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 
     return true;
@@ -137,29 +137,29 @@ bool psEffectObjSimpMesh::Render(const csVector3 &up)
 
 bool psEffectObjSimpMesh::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady())  // wait for anchor to be ready
         return true;
 
-    if (!psEffectObj::Update(elapsed))
+    if(!psEffectObj::Update(elapsed))
         return false;
-    
-    if (keyFrames->GetSize() == 0)
+
+    if(keyFrames->GetSize() == 0)
         return true;
-    
+
     // do stuff here
-    
+
     return true;
 }
 
-psEffectObj *psEffectObjSimpMesh::Clone() const
+psEffectObj* psEffectObjSimpMesh::Clone() const
 {
-    psEffectObjSimpMesh *newObj = new psEffectObjSimpMesh(view, renderer2d);
+    psEffectObjSimpMesh* newObj = new psEffectObjSimpMesh(view, renderer2d);
     CloneBase(newObj);
 
     // simp mesh specific
     newObj->fileName = fileName;
     newObj->meshName = meshName;
-    
+
     return newObj;
 }
 

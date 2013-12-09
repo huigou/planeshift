@@ -16,7 +16,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
+
 #ifndef PS_EFFECT_MANAGER_HEADER
 #define PS_EFFECT_MANAGER_HEADER
 
@@ -69,16 +69,19 @@ public:
     psEffectLoader();
 
     /// Sets the effect manager
-    void SetManager(psEffectManager *manager);
+    void SetManager(psEffectManager* manager);
 
     // used to handle and parse the <addon> tags.
-    csPtr<iBase> Parse(iDocumentNode * node, iStreamSource*, iLoaderContext * ldr_context, iBase * context);
+    csPtr<iBase> Parse(iDocumentNode* node, iStreamSource*, iLoaderContext* ldr_context, iBase* context);
 
-    bool IsThreadSafe() { return true; }
+    bool IsThreadSafe()
+    {
+        return true;
+    }
 
 private:
-    psEffectManager *manager;
-    CS::Threading::ReadWriteMutex parseLock; 
+    psEffectManager* manager;
+    CS::Threading::ReadWriteMutex parseLock;
 };
 
 
@@ -95,7 +98,7 @@ public:
      * @param parentView the CS viewport that views the effects
      * @return true on success, false otherwise
      */
-    csPtr<iThreadReturn> LoadEffects(const csString & fileName, iView * parentView);
+    csPtr<iThreadReturn> LoadEffects(const csString &fileName, iView* parentView);
 
     /**
      * Loads the effect files listed in the given effects list.
@@ -104,7 +107,7 @@ public:
      * @param parentView the CS viewport that views the effects
      * @return true on success, false otherwise
      */
-    bool LoadFromEffectsList(const csString & fileName, iView * parentView);
+    bool LoadFromEffectsList(const csString &fileName, iView* parentView);
 
     /**
      * Loads all effect files that can be found in a directory path.
@@ -114,7 +117,7 @@ public:
      * @param parentView      The CS viewport that views the effects.
      * @return                True on success, false otherwise.
      */
-    bool LoadFromDirectory(const csString & path, bool includeSubDirs, iView * parentView);
+    bool LoadFromDirectory(const csString &path, bool includeSubDirs, iView* parentView);
 
     /**
      * Deletes an effect.
@@ -137,8 +140,8 @@ public:
      * @param scale input to the scale params for effects
      * @return 0 on failure, a unique ID of the effect otherwise
      */
-    unsigned int RenderEffect(const csString & effectName, const csVector3 & offset, iMeshWrapper * attachPos, 
-                              iMeshWrapper * attachTarget=0, const csVector3 & up=csVector3(0,1,0), 
+    unsigned int RenderEffect(const csString &effectName, const csVector3 &offset, iMeshWrapper* attachPos,
+                              iMeshWrapper* attachTarget=0, const csVector3 &up=csVector3(0,1,0),
                               const unsigned int uniqueIDOverride = 0, bool rotateWithMesh = false, const float* scale = NULL);
 
     /**
@@ -153,8 +156,8 @@ public:
      * @param scale input to the scale params for effects
      * @return 0 on failure, a unique ID of the effect otherwise
      */
-    unsigned int RenderEffect(const csString & effectName, iSector * sector, const csVector3 & pos, 
-                              iMeshWrapper * attachTarget, const csVector3 & up=csVector3(0,1,0), 
+    unsigned int RenderEffect(const csString &effectName, iSector* sector, const csVector3 &pos,
+                              iMeshWrapper* attachTarget, const csVector3 &up=csVector3(0,1,0),
                               const unsigned int uniqueIDOverride = 0, const float* scale = NULL);
 
     /**
@@ -169,12 +172,12 @@ public:
      * @param scale input to the scale params for effects
      * @return 0 on failure, a unique ID of the effect otherwise
      */
-    unsigned int RenderEffect(const csString & effectName, iSectorList * sectors, const csVector3 & pos, 
-                              iMeshWrapper * attachTarget=0, const csVector3 & up=csVector3(0,1,0), 
+    unsigned int RenderEffect(const csString &effectName, iSectorList* sectors, const csVector3 &pos,
+                              iMeshWrapper* attachTarget=0, const csVector3 &up=csVector3(0,1,0),
                               const unsigned int uniqueIDOverride = 0, const float* scale = NULL);
 
-    unsigned int AttachLight(const char* name, const csVector3& pos,
-  	float radius, const csColor& colour, iMeshWrapper* mw);
+    unsigned int AttachLight(const char* name, const csVector3 &pos,
+                             float radius, const csColor &colour, iMeshWrapper* mw);
     void DetachLight(unsigned int lightID);
 
     /**
@@ -183,7 +186,7 @@ public:
      * @param elapsed the time in ms that has elapsed
      */
     void Update(csTicks elapsed = 0);
-    
+
     /**
      * Clears all effects.
      */
@@ -191,27 +194,27 @@ public:
 
     /**
      * Gets the effect with the given ID.
-     * 
+     *
      * @param ID the id of the effect (the value returned by RenderEffect)
      * @return a reference to the effect, 0 if the effect could not be found
      */
-    psEffect * FindEffect(unsigned int ID) const;
-    
+    psEffect* FindEffect(unsigned int ID) const;
+
     /**
      * Finds an effect by the given name.
      *
      * @param name the name of the effect to find
      * @return the effect if it found it, null if not
      */
-    psEffect * FindEffect(const csString &name) const;
+    psEffect* FindEffect(const csString &name) const;
 
     /**
      * Gets a global iterator that will iterate over all effect factories.
      *
      * @return the iterator.
      */
-    csHash<psEffect *, csString>::GlobalIterator GetEffectsIterator();
-    
+    csHash<psEffect*, csString>::GlobalIterator GetEffectsIterator();
+
 
     /**
      * Hide or Show the effect.
@@ -221,13 +224,19 @@ public:
      */
     void ShowEffect(unsigned int id,bool value = true);
 
-    void AddEffect(const char *name, psEffect *effect);
+    void AddEffect(const char* name, psEffect* effect);
 
-    iView *GetView() const { return view; }
+    iView* GetView() const
+    {
+        return view;
+    }
 
-    void Render2D(iGraphics3D * g3d, iGraphics2D * g2d);
+    void Render2D(iGraphics3D* g3d, iGraphics2D* g2d);
 
-    psEffect2DRenderer * Get2DRenderer() const { return effect2DRenderer; }
+    psEffect2DRenderer* Get2DRenderer() const
+    {
+        return effect2DRenderer;
+    }
 
 private:
 
@@ -237,25 +246,25 @@ private:
     csRef<iVirtualClock> vc;
 
     /**
-     * The collection of effects that don't do anything themselves, they're just ready to be quickly copied when a 
+     * The collection of effects that don't do anything themselves, they're just ready to be quickly copied when a
      * new effect is needed.
      */
-    csHash<psEffect *, csString> effectFactories;
+    csHash<psEffect*, csString> effectFactories;
 
     /// the actual effects that are seen
-    csHash<psEffect *, unsigned int> actualEffects;
+    csHash<psEffect*, unsigned int> actualEffects;
 
     /// Effects are stored in a collection to make them easier to manage.
     csRef<iCollection> effectsCollection;
 
-    iView * view;
+    iView* view;
 
     /// Loader plugin for loading PS effects. We keep it here for unregistering in the destructor.
     csRef<psEffectLoader> effectLoader;
 
-    psEffect2DRenderer * effect2DRenderer;
+    psEffect2DRenderer* effect2DRenderer;
 
-    csHash<psLight *, unsigned int> lightList;
+    csHash<psLight*, unsigned int> lightList;
 };
 
 /** @} */

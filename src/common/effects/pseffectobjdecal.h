@@ -36,15 +36,15 @@ class psEffect2DRenderer;
 class psEffectObjDecal : public psEffectObj
 {
 public:
-    psEffectObjDecal(iView *parentView, psEffect2DRenderer * renderer2d);
+    psEffectObjDecal(iView* parentView, psEffect2DRenderer* renderer2d);
     virtual ~psEffectObjDecal();
 
     // inheritted function overloads
-    virtual bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
+    virtual bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     virtual bool Render(const csVector3 &up);
     virtual bool Update(csTicks elapsed);
-    virtual psEffectObj *Clone() const;
-    
+    virtual psEffectObj* Clone() const;
+
 
 protected:
 
@@ -56,7 +56,7 @@ protected:
     virtual bool PostSetup();
 
     csRef<iDecalManager>    decalMgr;
-    iDecal *                decal;
+    iDecal*                 decal;
     csRef<iDecalTemplate>   decalTemplate;
 
     // cached values of the current decal so we know if we have to refresh the decal

@@ -39,8 +39,8 @@
 #include "util/pscssetup.h"
 #include "util/log.h"
 
-psEffectObjParticles::psEffectObjParticles(iView * parentView, psEffect2DRenderer * renderer2d)
-                     :psEffectObj(parentView, renderer2d)
+psEffectObjParticles::psEffectObjParticles(iView* parentView, psEffect2DRenderer* renderer2d)
+    :psEffectObj(parentView, renderer2d)
 {
 }
 
@@ -50,36 +50,36 @@ psEffectObjParticles::~psEffectObjParticles()
     //    pstate->Stop();
 }
 
-bool psEffectObjParticles::Load(iDocumentNode *node, iLoaderContext* ldr_context)
+bool psEffectObjParticles::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
-    
+
     // get the attributes
     name.Clear();
     materialName.Clear();
     factName.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
-        else if (attrName == "material")
+        else if(attrName == "material")
             materialName = attr->GetValue();
-        else if (attrName == "fact")
+        else if(attrName == "fact")
             factName = attr->GetValue();
-        
+
     }
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
     }
-    
-    if (!psEffectObj::Load(node, ldr_context))
+
+    if(!psEffectObj::Load(node, ldr_context))
         return false;
-        
+
     return PostSetup(ldr_context);
 }
 
@@ -92,12 +92,12 @@ bool psEffectObjParticles::Render(const csVector3 &up)
     mesh = engine->CreateMeshWrapper(meshFact, effectID);
 
     // mesh has been loaded before hand
-    if (!mesh)
+    if(!mesh)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't load desired mesh!\n");
         return false;
     }
-    
+
     // do the up vector
     objUp = up;
     csReversibleTransform rt;
@@ -109,10 +109,10 @@ bool psEffectObjParticles::Render(const csVector3 &up)
     mesh->GetFlags().Set(CS_ENTITY_NOHITBEAM);
     mesh->SetZBufMode(zFunc);
     mesh->SetRenderPriority(priority);
-	mesh->GetMeshObject()->SetMixMode (mixmode);
+    mesh->GetMeshObject()->SetMixMode(mixmode);
 
     // disable culling
-    csStringID viscull_id = globalStringSet->Request ("viscull");
+    csStringID viscull_id = globalStringSet->Request("viscull");
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 
     // obj specific
@@ -124,10 +124,10 @@ bool psEffectObjParticles::Render(const csVector3 &up)
     //}
 
     // add the custom material if set
-    if (!materialName.IsEmpty())
+    if(!materialName.IsEmpty())
     {
         csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
-        if (mat != 0)
+        if(mat != 0)
             mesh->GetMeshObject()->SetMaterialWrapper(mat);
     }
 
@@ -141,39 +141,39 @@ bool psEffectObjParticles::Render(const csVector3 &up)
 
 bool psEffectObjParticles::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady())  // wait for anchor to be ready
         return true;
 
-    if (!psEffectObj::Update(elapsed))
+    if(!psEffectObj::Update(elapsed))
         return false;
 
-    if (keyFrames->GetSize() == 0)
+    if(keyFrames->GetSize() == 0)
         return true;
-    
+
     // do stuff here
-    if (keyFrames->Get(currKeyFrame)->actions[psEffectObjKeyFrame::KA_ANIMATE] < 0 && isAnimating)
+    if(keyFrames->Get(currKeyFrame)->actions[psEffectObjKeyFrame::KA_ANIMATE] < 0 && isAnimating)
     {
         //pstate->Stop();
         isAnimating = false;
     }
-    else if (keyFrames->Get(currKeyFrame)->actions[psEffectObjKeyFrame::KA_ANIMATE] > 0 && !isAnimating)
+    else if(keyFrames->Get(currKeyFrame)->actions[psEffectObjKeyFrame::KA_ANIMATE] > 0 && !isAnimating)
     {
         //pstate->Start();
-        isAnimating = true;        
+        isAnimating = true;
     }
 
     return true;
 }
 
-psEffectObj *psEffectObjParticles::Clone() const
+psEffectObj* psEffectObjParticles::Clone() const
 {
-    psEffectObjParticles *newObj = new psEffectObjParticles(view, renderer2d);
+    psEffectObjParticles* newObj = new psEffectObjParticles(view, renderer2d);
     CloneBase(newObj);
 
     // simp mesh specific
     newObj->factName = factName;
     newObj->isAnimating = isAnimating;
-    
+
     return newObj;
 }
 
@@ -184,7 +184,7 @@ bool psEffectObjParticles::PostSetup(iLoaderContext* ldr_context)
     facName += uniqueID++;
 
     meshFact = ldr_context->FindMeshFactory(factName);
-    if (!meshFact)
+    if(!meshFact)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects",
                  "Could not find factory: %s\n", factName.GetData());

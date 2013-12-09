@@ -39,8 +39,8 @@
 #include "util/pscssetup.h"
 #include "util/log.h"
 
-psEffectObjMesh::psEffectObjMesh(iView * parentView, psEffect2DRenderer * renderer2d)
-                : psEffectObj(parentView, renderer2d)
+psEffectObjMesh::psEffectObjMesh(iView* parentView, psEffect2DRenderer* renderer2d)
+    : psEffectObj(parentView, renderer2d)
 {
 }
 
@@ -62,35 +62,35 @@ psEffectObjMesh::~psEffectObjMesh()
     sprState.Invalidate();
 }
 
-bool psEffectObjMesh::Load(iDocumentNode *node, iLoaderContext * ldr_context)
+bool psEffectObjMesh::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
     globalStringSet = csQueryRegistryTagInterface<iStringSet>
-                        (psCSSetup::object_reg, "crystalspace.shared.stringset");
-	        
+                      (psCSSetup::object_reg, "crystalspace.shared.stringset");
+
     // get the attributes
     name.Clear();
     materialName.Clear();
     factName.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
-        else if (attrName == "material")
+        else if(attrName == "material")
             materialName = attr->GetValue();
-        else if (attrName == "fact")
+        else if(attrName == "fact")
             factName = attr->GetValue();
     }
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
     }
-    
-    if (!psEffectObj::Load(node, ldr_context))
+
+    if(!psEffectObj::Load(node, ldr_context))
         return false;
 
     return PostSetup(ldr_context);
@@ -122,57 +122,57 @@ bool psEffectObjMesh::Render(const csVector3 &up)
     mesh->SetRenderPriority(priority);
 
     // disable culling
-    csStringID viscull_id = globalStringSet->Request ("viscull");
+    csStringID viscull_id = globalStringSet->Request("viscull");
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 
     // add the custom material if set
-    if (!materialName.IsEmpty())
+    if(!materialName.IsEmpty())
     {
         csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
-        if (mat.IsValid())
+        if(mat.IsValid())
         {
             mesh->GetMeshObject()->SetMaterialWrapper(mat);
         }
     }
 
-    // obj specific    
+    // obj specific
     sprState =  scfQueryInterface<iSprite3DState> (mesh->GetMeshObject());
 
-    if (sprState)
+    if(sprState)
     {
         sprState->EnableTweening(true);
         sprState->SetAction("default");
         sprState->SetLighting(false);
 
-        if (mixmode != CS_FX_ALPHA)
+        if(mixmode != CS_FX_ALPHA)
         {
             sprState->SetMixMode(mixmode);
         }
     }
-    
+
     mesh->GetMeshObject()->SetColor(csColor(1.0f, 1.0f, 1.0f));
-    
+
     return true;
 }
 
 bool psEffectObjMesh::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady())  // wait for anchor to be ready
         return true;
 
-    if (!psEffectObj::Update(elapsed))
+    if(!psEffectObj::Update(elapsed))
         return false;
 
-    if (keyFrames->GetSize() == 0)
+    if(keyFrames->GetSize() == 0)
         return true;
-    
+
     // COLOUR
     float lerpfactor = LERP_FACTOR;
     csVector3 lerpColour = LERP_VEC_KEY(KA_COLOUR,lerpfactor);
     mesh->GetMeshObject()->SetColor(csColor(lerpColour.x, lerpColour.y, lerpColour.z));
 
     // ALPHA
-    if (mixmode == CS_FX_ALPHA)
+    if(mixmode == CS_FX_ALPHA)
     {
         float lerpAlpha = LERP_KEY(KA_ALPHA,lerpfactor);
         sprState->SetMixMode(CS_FX_SETALPHA(lerpAlpha));
@@ -181,19 +181,19 @@ bool psEffectObjMesh::Update(csTicks elapsed)
     return true;
 }
 
-psEffectObj *psEffectObjMesh::Clone() const
+psEffectObj* psEffectObjMesh::Clone() const
 {
-    psEffectObjMesh *newObj = new psEffectObjMesh(view, renderer2d);
+    psEffectObjMesh* newObj = new psEffectObjMesh(view, renderer2d);
     CloneBase(newObj);
 
     // mesh specific
     newObj->factName = factName;
-    
+
     return newObj;
 }
 
-bool psEffectObjMesh::PostSetup(iLoaderContext * ldr_context)
-{   
+bool psEffectObjMesh::PostSetup(iLoaderContext* ldr_context)
+{
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(psCSSetup::object_reg);
     factory = loader->LoadFactory(factName, true);
 
@@ -206,7 +206,7 @@ bool psEffectObjMesh::PostSetup(iLoaderContext * ldr_context)
         meshFact = scfQueryInterface<iMeshFactoryWrapper>(factory->GetResultRefPtr());
     }
 
-    if (!meshFact.IsValid())
+    if(!meshFact.IsValid())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't find mesh factory %s in effect %s\n", factName.GetData(), name.GetData());
         return false;

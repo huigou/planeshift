@@ -73,7 +73,7 @@ public:
      *          </ul>
      * @return the effect anchor if successfull, 0 otherwise.
      */
-    psEffectAnchor * CreateAnchor(const csString & type);
+    psEffectAnchor* CreateAnchor(const csString &type);
 
     /**
      * Adds an effect anchor to this effect.
@@ -81,7 +81,7 @@ public:
      * @param anchor a valid effect anchor.
      * @return the index of the effect anchor; Can be accessed with GetAnchor(index)
      */
-    size_t AddAnchor(psEffectAnchor * anchor);
+    size_t AddAnchor(psEffectAnchor* anchor);
 
     /**
      * Loads the effect from an xml node.
@@ -92,8 +92,8 @@ public:
      * @param ldr_context the current loader context.
      * @return true on success, false otherwise.
      */
-    bool Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer * renderer2d,
-              iLoaderContext * ldr_context);
+    bool Load(iDocumentNode* node, iView* parentView, psEffect2DRenderer* renderer2d,
+              iLoaderContext* ldr_context);
 
     /**
      * Renders the effect.
@@ -107,23 +107,23 @@ public:
      * @param rotateWithMesh Should the effect rotate with the mesh.
      * @return 0 on failure, a unique ID on success
      */
-    unsigned int Render(iSectorList * sectors, const csVector3 & offset, iMeshWrapper * attachPos, 
-                        iMeshWrapper * attachTarget, const csVector3 & up, const unsigned int uniqueIDOverride = 0,
+    unsigned int Render(iSectorList* sectors, const csVector3 &offset, iMeshWrapper* attachPos,
+                        iMeshWrapper* attachTarget, const csVector3 &up, const unsigned int uniqueIDOverride = 0,
                         bool rotateWithMesh = false);
- 
+
     /**
      * Renders the effect.
      *
      * @param sector the starting sector of the effect
      * @param offset the offset of the position of the effect
      * @param attachPos the object to attoch the effect to, 0 for 0,0,0
-     * @param attachTarget the target of the effect, 0 for 
+     * @param attachTarget the target of the effect, 0 for
      * @param up the base up vector of the effect
      * @param uniqueIDOverride overrides the unique ID of the effect (for things like group effects)
      * @return 0 on failure, a unique ID on success
      */
-    unsigned int Render(iSector * sector, const csVector3 & offset, iMeshWrapper * attachPos, 
-                        iMeshWrapper * attachTarget, const csVector3 & up, const unsigned int uniqueIDOverride = 0);
+    unsigned int Render(iSector* sector, const csVector3 &offset, iMeshWrapper* attachPos,
+                        iMeshWrapper* attachTarget, const csVector3 &up, const unsigned int uniqueIDOverride = 0);
 
     /**
      * Updates the spell effect -- called every frame.
@@ -136,7 +136,7 @@ public:
     /**
      * Clones the effect.
      */
-    psEffect * Clone() const;
+    psEffect* Clone() const;
 
     /**
      * Returns the uniqueID of this effect
@@ -183,7 +183,7 @@ public:
      * @param idx the index of the anchor to grab
      * @return the effect anchor at the given index
      */
-    psEffectAnchor * GetAnchor(size_t idx) const;
+    psEffectAnchor* GetAnchor(size_t idx) const;
 
     /**
      * Finds an effect anchor of the given name.
@@ -191,7 +191,7 @@ public:
      * @param anchorName the name of the anchor to find
      * @return the anchor if it's found, 0 otherwise
      */
-    psEffectAnchor * FindAnchor(const csString & anchorName) const;
+    psEffectAnchor* FindAnchor(const csString &anchorName) const;
 
     /**
      * Returns the number of effect objs in this effect.
@@ -206,7 +206,7 @@ public:
      * @param idx the index of the obj to grab
      * @return the effect obj at the given index
      */
-    psEffectObj * GetObj(size_t idx) const;
+    psEffectObj* GetObj(size_t idx) const;
 
     /**
      * Finds an effect obj of the given name.
@@ -214,19 +214,19 @@ public:
      * @param objName the name of the obj to find
      * @return the obj if it's found, 0 otherwise
      */
-    psEffectObj * FindObj(const csString & objName) const;
+    psEffectObj* FindObj(const csString &objName) const;
 
     /**
      * Gets the name of the effect.
      *
      * @return the name of the effect
      */
-    const csString & GetName() const;
+    const csString &GetName() const;
 
     /**
      * @todo comment this
      */
-    psEffectObjTextable * GetMainTextObj() const;
+    psEffectObjTextable* GetMainTextObj() const;
 
     /**
      * Returns visibility value.
@@ -256,8 +256,8 @@ private:
     {
     private:
         bool movableDead;
-		bool movableChanged;
-		iMovable* movable;
+        bool movableChanged;
+        iMovable* movable;
 
     public:
         psEffectMovableListener()
@@ -288,7 +288,7 @@ private:
             this->movable = 0;
             movableChanged = false;
         }
-        
+
         /**
          * Checks to see if the movable has disappeared.
          *
@@ -307,11 +307,11 @@ private:
          * @param newTransf a container to store the new transform of the movable
          * @return true if the movable has changed since this function was called last
          */
-        bool GrabNewData(iSectorList *& newSectors, csVector3 & newPos, csMatrix3 & newTransf)
+        bool GrabNewData(iSectorList* &newSectors, csVector3 &newPos, csMatrix3 &newTransf)
         {
-            if (!movableChanged || !movable)
+            if(!movableChanged || !movable)
                 return false;
-            
+
             newPos = movable->GetFullPosition();
             newSectors = movable->GetSectors();
             newTransf = movable->GetFullTransform().GetT2O();
@@ -327,9 +327,9 @@ private:
          * @param newTransf a container to store the new transform of the movable
          * @return true if the movable has changed since this function was called last
          */
-        bool GrabNewData(csVector3 & newPos, csMatrix3 & newTransf)
+        bool GrabNewData(csVector3 &newPos, csMatrix3 &newTransf)
         {
-            if (!movableChanged || !movable)
+            if(!movableChanged || !movable)
                 return false;
 
             newPos = movable->GetFullPosition();
@@ -340,13 +340,13 @@ private:
 
         csVector3 GetPosition()
         {
-			if (movable)
-				return movable->GetFullPosition();
-			else
-				return csVector3(0, 0, 0);
+            if(movable)
+                return movable->GetFullPosition();
+            else
+                return csVector3(0, 0, 0);
         }
     };
-    
+
     csRef<psEffectMovableListener> positionListener;
     csRef<psEffectMovableListener> targetListener;
 
@@ -358,7 +358,7 @@ private:
     csPDelArray<psEffectObj> effectObjs;
 
     size_t mainTextObj;
-    psEffect2DRenderer * renderer2d;
+    psEffect2DRenderer* renderer2d;
 };
 
 /** @} */

@@ -38,22 +38,22 @@
 
 static int zorder = 0;
 
-psEffectObjText2D::psEffectObjText2D(iView * parentView, psEffect2DRenderer * renderer2d)
-               : psEffectObj(parentView, renderer2d)
+psEffectObjText2D::psEffectObjText2D(iView* parentView, psEffect2DRenderer* renderer2d)
+    : psEffectObj(parentView, renderer2d)
 {
 }
 
 psEffectObjText2D::~psEffectObjText2D()
 {
     size_t a = elems.GetSize();
-    while (a)
+    while(a)
     {
         --a;
         renderer2d->Remove2DElement(elems[a]);
     }
 }
 
-bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> & elements)
+bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> &elements)
 {
     size_t elementCount = elements.GetSize();
     size_t a;
@@ -63,14 +63,14 @@ bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> & elements)
     maxHeight = 0;
 
     // calculate dimensions
-    for (a=0; a<elementCount; ++a)
+    for(a=0; a<elementCount; ++a)
     {
         int right = elements[a].x + elements[a].width;
         int bottom = elements[a].y + elements[a].height;
 
-        if (right > maxWidth)
+        if(right > maxWidth)
             maxWidth = right;
-        if (bottom > maxHeight)
+        if(bottom > maxHeight)
             maxHeight = bottom;
     }
 
@@ -79,13 +79,13 @@ bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> & elements)
 
     // draw the backgrounds
     len = backgroundElems.GetSize();
-    for (a=0; a<len; ++a)
+    for(a=0; a<len; ++a)
     {
         csRect destRect;
-        psEffectBackgroundElem * elem = &backgroundElems[a];
-        
+        psEffectBackgroundElem* elem = &backgroundElems[a];
+
         // horizontal align
-        switch (elem->align)
+        switch(elem->align)
         {
             case EA_TOP_LEFT:
             case EA_LEFT:
@@ -96,7 +96,7 @@ bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> & elements)
             case EA_TOP:
             case EA_CENTER:
             case EA_BOTTOM:
-                if (elem->scale)
+                if(elem->scale)
                 {
                     destRect.xmin = -w;
                     destRect.xmax = w;
@@ -113,12 +113,12 @@ bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> & elements)
                 destRect.xmin = w;
                 destRect.xmax = w + elem->umax - elem->umin;
                 break;
-	    default:
-	        break;
+            default:
+                break;
         }
-        
+
         // vertical align
-        switch (elem->align)
+        switch(elem->align)
         {
             case EA_TOP_LEFT:
             case EA_TOP:
@@ -129,7 +129,7 @@ bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> & elements)
             case EA_LEFT:
             case EA_CENTER:
             case EA_RIGHT:
-                if (elem->scale)
+                if(elem->scale)
                 {
                     destRect.ymin = -h;
                     destRect.ymax = h;
@@ -146,20 +146,20 @@ bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> & elements)
                 destRect.ymin = h;
                 destRect.ymax = h + elem->vmax - elem->vmin;
                 break;
-	    default:
-	        break;
+            default:
+                break;
         }
 
-        if (elem->scale)
+        if(elem->scale)
         {
             // if it's scaled and has an offset, then the offset should scale both sides, otherwise it's just a translation
-            if (elem->align == EA_TOP || elem->align == EA_BOTTOM || elem->align == EA_CENTER)
+            if(elem->align == EA_TOP || elem->align == EA_BOTTOM || elem->align == EA_CENTER)
                 destRect.xmin -= elem->offsetx;
             else
                 destRect.xmin += elem->offsetx;
             destRect.xmax += elem->offsetx;
 
-            if (elem->align == EA_LEFT || elem->align == EA_RIGHT || elem->align == EA_CENTER)
+            if(elem->align == EA_LEFT || elem->align == EA_RIGHT || elem->align == EA_CENTER)
                 destRect.ymin -= elem->offsety;
             else
                 destRect.ymin += elem->offsety;
@@ -172,30 +172,30 @@ bool psEffectObjText2D::SetText(const csArray<psEffectTextElement> & elements)
             destRect.ymin += elem->offsety;
             destRect.ymax += elem->offsety;
         }
-    
+
         csRect tr(elem->umin, elem->vmin, elem->umax, elem->vmax);
         elems.Push(renderer2d->Add2DElement(new psEffect2DImgElement(zorder++, backgroundMat->GetMaterial()->GetTexture(), tr, destRect, 0, elem->tile)));
     }
-    
+
     // draw all the text elements
-    for (a=0; a<elementCount; ++a)
+    for(a=0; a<elementCount; ++a)
         DrawTextElement(elements[a]);
 
     return true;
 }
 
-bool psEffectObjText2D::SetText(const csArray<psEffectTextRow> & rows)
+bool psEffectObjText2D::SetText(const csArray<psEffectTextRow> &rows)
 {
     const size_t len = rows.GetSize();
     static csArray<psEffectTextElement> elemBuffer;
     psEffectTextElement newElem;
-    const psEffectTextRow * row = 0;
+    const psEffectTextRow* row = 0;
     int y = 0;
 
     elemBuffer.Empty();
 
     // Loop through all rows
-    for (size_t a=0; a<len; ++a)
+    for(size_t a=0; a<len; ++a)
     {
         row = &rows[a];
 
@@ -217,9 +217,9 @@ bool psEffectObjText2D::SetText(const csArray<psEffectTextRow> & rows)
     }
 
     // draw the batch of text elements
-    if (!SetText(elemBuffer))
+    if(!SetText(elemBuffer))
         return false;
-    
+
     return true;
 }
 
@@ -227,7 +227,7 @@ bool psEffectObjText2D::SetText(int rows, ...)
 {
     static csArray<psEffectTextElement> elemBuffer;
     psEffectTextElement newElem;
-    psEffectTextRow * row = 0;
+    psEffectTextRow* row = 0;
 
     elemBuffer.Empty();
 
@@ -239,7 +239,7 @@ bool psEffectObjText2D::SetText(int rows, ...)
     // Loop through all rows
     for(int i = 0; i < rows; i++)
     {
-        row = va_arg(arg, psEffectTextRow *);
+        row = va_arg(arg, psEffectTextRow*);
 
         // Text and Formatting
         newElem.colour = row->colour;
@@ -260,15 +260,15 @@ bool psEffectObjText2D::SetText(int rows, ...)
     va_end(arg);
 
     // draw the batch of text elements
-    if (!SetText(elemBuffer))
+    if(!SetText(elemBuffer))
         return false;
 
     return true;
 }
 
-bool psEffectObjText2D::Load(iDocumentNode * node, iLoaderContext* ldr_context)
+bool psEffectObjText2D::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
-    if (!psEffectObj::Load(node, ldr_context))
+    if(!psEffectObj::Load(node, ldr_context))
         return false;
 
     // default text attributes
@@ -278,29 +278,29 @@ bool psEffectObjText2D::Load(iDocumentNode * node, iLoaderContext* ldr_context)
 
     // read text attributes
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
 
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
-        else if (attrName == "font")
+        else if(attrName == "font")
             fontName = attr->GetValue();
-        else if (attrName == "fontsize")
+        else if(attrName == "fontsize")
             fontSize = attr->GetValueAsInt();
     }
     csString backAlignText = node->GetAttributeValue("align");
     backAlignText.Downcase();
-    if (backAlignText == "top")
+    if(backAlignText == "top")
         backgroundAlign = EA_TOP;
-    else if (backAlignText == "bottom")
+    else if(backAlignText == "bottom")
         backgroundAlign = EA_BOTTOM;
     else
         backgroundAlign = EA_CENTER;
 
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
@@ -309,15 +309,15 @@ bool psEffectObjText2D::Load(iDocumentNode * node, iLoaderContext* ldr_context)
     csRef<iDocumentNode> dataNode = node->GetNode("background");
 
     backgroundMat = effectsCollection->FindMaterial(dataNode->GetAttributeValue("material"));
-    if (!backgroundMat)
+    if(!backgroundMat)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects",
-                "Declared background without a valid material\n");
+                 "Declared background without a valid material\n");
         return false;
     }
 
     csRef<iDocumentNodeIterator> elemNodes = dataNode->GetNodes("elem");
-    while (elemNodes->HasNext())
+    while(elemNodes->HasNext())
     {
         dataNode = elemNodes->Next();
         psEffectBackgroundElem elem = { EA_NONE, 0, 0, 0, 0, true, 0, 0, 0 };
@@ -325,23 +325,23 @@ bool psEffectObjText2D::Load(iDocumentNode * node, iLoaderContext* ldr_context)
         // align
         csString alignText = dataNode->GetAttributeValue("align");
         alignText.Downcase();
-        if (alignText == "top-left")
+        if(alignText == "top-left")
             elem.align = EA_TOP_LEFT;
-        else if (alignText == "top")
+        else if(alignText == "top")
             elem.align = EA_TOP;
-        else if (alignText == "top-right")
+        else if(alignText == "top-right")
             elem.align = EA_TOP_RIGHT;
-        else if (alignText == "left")
+        else if(alignText == "left")
             elem.align = EA_LEFT;
-        else if (alignText == "center")
+        else if(alignText == "center")
             elem.align = EA_CENTER;
-        else if (alignText == "right")
+        else if(alignText == "right")
             elem.align = EA_RIGHT;
-        else if (alignText == "bottom-left")
+        else if(alignText == "bottom-left")
             elem.align = EA_BOTTOM_LEFT;
-        else if (alignText == "bottom")
+        else if(alignText == "bottom")
             elem.align = EA_BOTTOM;
-        else if (alignText == "bottom-right")
+        else if(alignText == "bottom-right")
             elem.align = EA_BOTTOM_RIGHT;
 
         // uv
@@ -352,8 +352,8 @@ bool psEffectObjText2D::Load(iDocumentNode * node, iLoaderContext* ldr_context)
 
         // scale
         elem.scale = dataNode->GetAttributeValueAsBool("scale", true);
-		elem.tile = dataNode->GetAttributeValueAsBool("tile", false);
-        
+        elem.tile = dataNode->GetAttributeValueAsBool("tile", false);
+
         // offset
         elem.offsetx = dataNode->GetAttributeValueAsInt("offsetx");
         elem.offsety = dataNode->GetAttributeValueAsInt("offsety");
@@ -365,14 +365,14 @@ bool psEffectObjText2D::Load(iDocumentNode * node, iLoaderContext* ldr_context)
     return PostSetup();
 }
 
-bool psEffectObjText2D::Render(const csVector3& /*up*/)
+bool psEffectObjText2D::Render(const csVector3 & /*up*/)
 {
     return true;
 }
 
 bool psEffectObjText2D::AttachToAnchor(psEffectAnchor* newAnchor)
 {
-    if (newAnchor && newAnchor->GetMesh())
+    if(newAnchor && newAnchor->GetMesh())
         anchorMesh = newAnchor->GetMesh();
     anchor = newAnchor;
     return true;
@@ -383,14 +383,14 @@ bool psEffectObjText2D::Update(csTicks elapsed)
     size_t a, len;
     int lerpAlpha = 255;
 
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady())  // wait for anchor to be ready
         return true;
 
     life += elapsed;
-    if (life > animLength && killTime <= 0)
+    if(life > animLength && killTime <= 0)
     {
         life %= animLength;
-        if (!life)
+        if(!life)
             life += animLength;
     }
 
@@ -398,7 +398,7 @@ bool psEffectObjText2D::Update(csTicks elapsed)
 
     // calculate 2D position of text
     csVector3 p = anchorMesh->GetMovable()->GetPosition();
-    if (keyFrames->GetSize() > 0)
+    if(keyFrames->GetSize() > 0)
     {
         currKeyFrame = FindKeyFrameByTime(life);
         nextKeyFrame = (currKeyFrame + 1) % keyFrames->GetSize();
@@ -409,13 +409,13 @@ bool psEffectObjText2D::Update(csTicks elapsed)
         p += LERP_VEC_KEY(KA_POS,lerpfactor);
 
         // calculate alpha
-        lerpAlpha = (int) (LERP_KEY(KA_ALPHA,lerpfactor) * 255);
+        lerpAlpha = (int)(LERP_KEY(KA_ALPHA,lerpfactor) * 255);
     }
 
     // transform 3D to camera
     p = view->GetCamera()->GetTransform().Other2This(p);
     csVector2 sp;
-    if (p.z <= 0.0f)
+    if(p.z <= 0.0f)
         sp.Set(-5000.0f, -5000.0f);
     else
     {
@@ -426,31 +426,31 @@ bool psEffectObjText2D::Update(csTicks elapsed)
 
     len = elems.GetSize();
     int yAlign = 0;
-    if (backgroundAlign == EA_TOP)
+    if(backgroundAlign == EA_TOP)
         yAlign = -maxHeight / 2;
-    else if (backgroundAlign == EA_BOTTOM)
+    else if(backgroundAlign == EA_BOTTOM)
         yAlign = maxHeight / 2;
 
-    for (a=0; a<len; ++a)
+    for(a=0; a<len; ++a)
     {
         elems[a]->originx = (int)sp.x;
         elems[a]->originy = (int)sp.y + yAlign;
         elems[a]->SetAlpha(lerpAlpha);
     }
 
-    if (killTime <= 0)
+    if(killTime <= 0)
         return true;
 
     killTime -= elapsed;
-    if (killTime <= 0)
+    if(killTime <= 0)
         return false;
 
     return true;
 }
 
-psEffectObj * psEffectObjText2D::Clone() const
+psEffectObj* psEffectObjText2D::Clone() const
 {
-    psEffectObjText2D * newObj = new psEffectObjText2D(view, renderer2d);
+    psEffectObjText2D* newObj = new psEffectObjText2D(view, renderer2d);
     CloneBase(newObj);
 
     newObj->g3d = g3d;
@@ -467,7 +467,7 @@ psEffectObj * psEffectObjText2D::Clone() const
     newObj->backgroundAlign = backgroundAlign;
     newObj->backgroundMat = backgroundMat;
     newObj->backgroundElems = backgroundElems;
-    
+
     return newObj;
 }
 
@@ -475,7 +475,7 @@ bool psEffectObjText2D::PostSetup()
 {
     // get reference to iGraphics3D and iGraphics2D
     g3d =  csQueryRegistry<iGraphics3D> (psCSSetup::object_reg);
-    if (!g3d)
+    if(!g3d)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't get iGraphics3D plugin!");
         return false;
@@ -484,7 +484,7 @@ bool psEffectObjText2D::PostSetup()
 
     // get reference to texture manager
     txtmgr = g3d->GetTextureManager();
-    if (!txtmgr)
+    if(!txtmgr)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't get iTextureManager!");
         return false;
@@ -496,10 +496,10 @@ bool psEffectObjText2D::PostSetup()
     return true;
 }
 
-void psEffectObjText2D::DrawTextElement(const psEffectTextElement & element)
+void psEffectObjText2D::DrawTextElement(const psEffectTextElement &element)
 {
     int x = 0;
-    switch (element.align)
+    switch(element.align)
     {
         case ETA_LEFT:
             x = -maxWidth / 2;
@@ -513,9 +513,9 @@ void psEffectObjText2D::DrawTextElement(const psEffectTextElement & element)
     }
 
     int y = element.y - maxHeight / 2;
-    const char * text = element.text;
+    const char* text = element.text;
 
-    psEffect2DTextElement * textElem = new psEffect2DTextElement(zorder++, font, text, x, y, element.colour, -1, element.hasOutline ? element.outlineColour : -1, element.hasShadow ? element.shadowColour : -1, 0);
+    psEffect2DTextElement* textElem = new psEffect2DTextElement(zorder++, font, text, x, y, element.colour, -1, element.hasOutline ? element.outlineColour : -1, element.hasShadow ? element.shadowColour : -1, 0);
     elems.Push(renderer2d->Add2DElement(textElem));
 }
 

@@ -54,22 +54,22 @@ private:
     csArray<uint16> height;
 
 public:
-    psEffectObjLabel(iView *parentView, psEffect2DRenderer * renderer2d);
+    psEffectObjLabel(iView* parentView, psEffect2DRenderer* renderer2d);
     virtual ~psEffectObjLabel();
 
     /** Creates a material that will fit an array of text elements and draws those elements.
      */
-    virtual bool SetText(const csArray<psEffectTextElement> & elements);
-    virtual bool SetText(const csArray<psEffectTextRow> & rows);
+    virtual bool SetText(const csArray<psEffectTextElement> &elements);
+    virtual bool SetText(const csArray<psEffectTextRow> &rows);
     virtual bool SetText(int rows, ...);
 
-    bool Load(iDocumentNode * node, iLoaderContext* ldr_context);
+    bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     void LoadGlyphs(csString name);
-    psEffectObj * Clone() const;
+    psEffectObj* Clone() const;
     // inherited function overloads
     virtual bool Render(const csVector3 &up);
     virtual bool Update(csTicks elapsed);
-    virtual void CloneBase(psEffectObj * newObj) const;
+    virtual void CloneBase(psEffectObj* newObj) const;
 
 protected:
     /** performs the post setup (after the effect obj has been loaded).
@@ -77,7 +77,7 @@ protected:
      */
     bool PostSetup();
 
-    void DrawTextElement(const psEffectTextElement & element);
+    void DrawTextElement(const psEffectTextElement &element);
 
     /** Creates a mesh factory for this quad.
      */

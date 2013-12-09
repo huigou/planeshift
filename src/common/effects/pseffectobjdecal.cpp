@@ -41,8 +41,8 @@
 
 
 #ifdef PS_EFFECT_ENABLE_DECAL
-psEffectObjDecal::psEffectObjDecal(iView * parentView, psEffect2DRenderer * renderer2d)
-               : psEffectObj(parentView, renderer2d)
+psEffectObjDecal::psEffectObjDecal(iView* parentView, psEffect2DRenderer* renderer2d)
+    : psEffectObj(parentView, renderer2d)
 {
     decal = NULL;
     // get the decal manager
@@ -51,18 +51,18 @@ psEffectObjDecal::psEffectObjDecal(iView * parentView, psEffect2DRenderer * rend
 
 psEffectObjDecal::~psEffectObjDecal()
 {
-    if (decal)
+    if(decal)
         decalMgr->DeleteDecal(decal);
 }
 
-bool psEffectObjDecal::Load(iDocumentNode *node, iLoaderContext* ldr_context)
+bool psEffectObjDecal::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
-    if (!decalMgr)
+    if(!decalMgr)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "No decal plugin.\n");
         return false;
     }
-    
+
     // get the attributes
     name.Clear();
     materialName.Clear();
@@ -76,52 +76,52 @@ bool psEffectObjDecal::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     float bottomClipScale = 0.5f;
     float perpendicularFaceThreshold = 0.05f;
     float perpendicularFaceOffset = 0.01f;
-    
+
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
-        else if (attrName == "material")
+        else if(attrName == "material")
             materialName = attr->GetValue();
-        else if (attrName == "polygonnormalthreshold")
+        else if(attrName == "polygonnormalthreshold")
             polygonNormalThreshold = attr->GetValueAsFloat();
-        else if (attrName == "decaloffset")
+        else if(attrName == "decaloffset")
             decalOffset = attr->GetValueAsFloat();
     }
-    
+
     csRef<iDocumentNode> dataNode = node->GetNode("texCoords");
-    if (dataNode)
+    if(dataNode)
     {
         minTexCoord.Set(dataNode->GetAttributeValueAsFloat("minU"), dataNode->GetAttributeValueAsFloat("minV"));
         maxTexCoord.Set(dataNode->GetAttributeValueAsFloat("maxU"), dataNode->GetAttributeValueAsFloat("maxV"));
     }
 
     dataNode = node->GetNode("topClip");
-    if (dataNode)
+    if(dataNode)
     {
         hasTopClip = dataNode->GetAttributeValueAsBool("enabled");
         topClipScale = dataNode->GetAttributeValueAsFloat("scaleDist");
     }
-    
+
     dataNode = node->GetNode("bottomClip");
-    if (dataNode)
+    if(dataNode)
     {
         hasBottomClip = dataNode->GetAttributeValueAsBool("enabled");
         bottomClipScale = dataNode->GetAttributeValueAsFloat("scaleDist");
     }
 
     dataNode = node->GetNode("perpendicularFace");
-    if (dataNode)
+    if(dataNode)
     {
         perpendicularFaceThreshold = dataNode->GetAttributeValueAsFloat("threshold");
         perpendicularFaceOffset = dataNode->GetAttributeValueAsFloat("offset");
     }
-    
-    if (name.IsEmpty())
+
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
@@ -129,7 +129,7 @@ bool psEffectObjDecal::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 
     // load material
     csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
-    if (!mat)
+    if(!mat)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
@@ -144,10 +144,10 @@ bool psEffectObjDecal::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     decalTemplate->SetTexCoords(minTexCoord, maxTexCoord);
     decalTemplate->SetPerpendicularFaceThreshold(perpendicularFaceThreshold);
     decalTemplate->SetPerpendicularFaceOffset(perpendicularFaceOffset);
-    
-    if (!psEffectObj::Load(node, ldr_context))
+
+    if(!psEffectObj::Load(node, ldr_context))
         return false;
-    
+
     return PostSetup();
 }
 
@@ -156,17 +156,17 @@ bool psEffectObjDecal::Render(const csVector3 &up)
     static unsigned int uniqueID = 0;
     csString meshName = "effect_decal_";
     meshName += uniqueID++;
-    
+
     // create a nullmesh as placeholder
     mesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", meshName);
     mesh->GetFlags().Set(CS_ENTITY_NOHITBEAM);
-	csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());
-    if (!state)
+    csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());
+    if(!state)
     {
-		Error1("No NullMeshState.");
+        Error1("No NullMeshState.");
         return false;
     }
-	state->SetRadius(1.0);
+    state->SetRadius(1.0);
 
     // do the up vector
     objUp = up;
@@ -186,15 +186,15 @@ bool psEffectObjDecal::Render(const csVector3 &up)
 
 bool psEffectObjDecal::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady())  // wait for anchor to be ready
         return true;
 
-    if (!psEffectObj::Update(elapsed))
+    if(!psEffectObj::Update(elapsed))
         return false;
 
     float heightScale = 1.0f;
-    if (keyFrames->GetSize() > 0)
-      heightScale = LERP_KEY(KA_HEIGHT,LERP_FACTOR);
+    if(keyFrames->GetSize() > 0)
+        heightScale = LERP_KEY(KA_HEIGHT,LERP_FACTOR);
 
     const csReversibleTransform t = mesh->GetMovable()->GetFullTransform();
     const csVector3 newPos = t.GetOrigin();
@@ -202,15 +202,15 @@ bool psEffectObjDecal::Update(csTicks elapsed)
     const csVector3 newNormal = t.GetUp();
     const float newWidth = baseScale;
     const float newHeight = baseScale * heightScale;
-    if (!decal
-        || newPos != pos
-        || newUp != up
-        || newNormal != normal
-        || newWidth != width
-        || newHeight != height)
+    if(!decal
+            || newPos != pos
+            || newUp != up
+            || newNormal != normal
+            || newWidth != width
+            || newHeight != height)
     {
-        decal = decalMgr->CreateDecal(decalTemplate, mesh->GetMovable()->GetSectors()->Get(0), newPos, newUp, 
-                newNormal, newWidth, newHeight, decal);
+        decal = decalMgr->CreateDecal(decalTemplate, mesh->GetMovable()->GetSectors()->Get(0), newPos, newUp,
+                                      newNormal, newWidth, newHeight, decal);
 
         pos = newPos;
         up = newUp;
@@ -222,14 +222,14 @@ bool psEffectObjDecal::Update(csTicks elapsed)
     return true;
 }
 
-psEffectObj * psEffectObjDecal::Clone() const
+psEffectObj* psEffectObjDecal::Clone() const
 {
-    psEffectObjDecal * newObj = new psEffectObjDecal(view, renderer2d);
+    psEffectObjDecal* newObj = new psEffectObjDecal(view, renderer2d);
     CloneBase(newObj);
 
     newObj->decalMgr = decalMgr;
     newObj->decalTemplate = decalTemplate;
-    
+
     return newObj;
 }
 

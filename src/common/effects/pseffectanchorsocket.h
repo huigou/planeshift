@@ -37,32 +37,35 @@ public:
     ~psEffectAnchorSocket();
 
     // inheritted function overloads
-    bool Load(iDocumentNode * node);
-    bool Create(const csVector3 & offset, iMeshWrapper * posAttach, bool rotateWithMesh = false);
+    bool Load(iDocumentNode* node);
+    bool Create(const csVector3 &offset, iMeshWrapper* posAttach, bool rotateWithMesh = false);
     bool Update(csTicks elapsed);
-    psEffectAnchor * Clone() const;
+    psEffectAnchor* Clone() const;
 
     // these functions are overridden, because the parent mesh takes care of position/sectoring
     // we want to override these functions, because the default behaviour is for the effect to manage it
-    void SetRotBase(const csMatrix3& /*newRotBase*/) {}
-    void SetPosition(const csVector3& /*basePos*/, iSector* /*sector*/, const csMatrix3& /*transf*/) {}
-    void SetPosition(const csVector3& /*basePos*/, iSectorList* /*sectors*/, const csMatrix3& /*transf*/) {}
+    void SetRotBase(const csMatrix3 & /*newRotBase*/) {}
+    void SetPosition(const csVector3 & /*basePos*/, iSector* /*sector*/, const csMatrix3 & /*transf*/) {}
+    void SetPosition(const csVector3 & /*basePos*/, iSectorList* /*sectors*/, const csMatrix3 & /*transf*/) {}
 
     /** Gets the name of the socket where this anchor is attached.
      *   @return the name of the socket.
      */
-    const csString & GetSocketName() const { return socketName; }
+    const csString &GetSocketName() const
+    {
+        return socketName;
+    }
 
     /** Sets the socket where this anchor is attached.
      *   @param name the name of the socket.
      */
-    void SetSocket(const char * name);
-    
+    void SetSocket(const char* name);
+
 private:
 
     csString socketName;
-    iSpriteCal3DSocket * socket;
-    size_t meshID;    
+    iSpriteCal3DSocket* socket;
+    size_t meshID;
     csVector3 initPos;
     csRef<iSpriteCal3DState> cal3d;
 };

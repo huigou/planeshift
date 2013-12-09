@@ -41,7 +41,7 @@
 #include "isoundmngr.h"
 
 
-psEffectObjSound::psEffectObjSound(iView *parentView, psEffect2DRenderer * renderer2d)
+psEffectObjSound::psEffectObjSound(iView* parentView, psEffect2DRenderer* renderer2d)
     : psEffectObj(parentView, renderer2d)
 {
     soundManager = csQueryRegistryOrLoad<iSoundManager>(psCSSetup::object_reg, "iSoundManager");
@@ -65,9 +65,9 @@ psEffectObjSound::~psEffectObjSound()
     soundManager->StopSound(soundID);
 }
 
-bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
+bool psEffectObjSound::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
-    if (!psEffectObj::Load(node, ldr_context))
+    if(!psEffectObj::Load(node, ldr_context))
         return false;
 
     // get the attributes
@@ -77,20 +77,20 @@ bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     maxDist = 100000.0f;
     loop = false;
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
-        else if (attrName == "resource")
+        else if(attrName == "resource")
             soundName = attr->GetValue();
-        else if (attrName == "loop")
+        else if(attrName == "loop")
             loop = attr->GetValueAsBool();
     }
 
-    if (!loop && killTime <= 0)
+    if(!loop && killTime <= 0)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Can't have a looping sound effect without a death.\n");
         return false;
@@ -112,7 +112,7 @@ bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
         maxDist = dataNode->GetContentsValueAsFloat();
     }
 
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
@@ -121,7 +121,7 @@ bool psEffectObjSound::Load(iDocumentNode *node, iLoaderContext* ldr_context)
     return PostSetup();
 }
 
-bool psEffectObjSound::Render(const csVector3& /*up*/)
+bool psEffectObjSound::Render(const csVector3 & /*up*/)
 {
     static unsigned long nextUniqueID = 0;
     effectID += nextUniqueID++;
@@ -130,9 +130,9 @@ bool psEffectObjSound::Render(const csVector3& /*up*/)
     return true;
 }
 
-bool psEffectObjSound::AttachToAnchor(psEffectAnchor * newAnchor)
+bool psEffectObjSound::AttachToAnchor(psEffectAnchor* newAnchor)
 {
-    if (newAnchor && newAnchor->GetMesh())
+    if(newAnchor && newAnchor->GetMesh())
         anchorMesh = newAnchor->GetMesh();
     anchor = newAnchor;
     return true;
@@ -140,28 +140,28 @@ bool psEffectObjSound::AttachToAnchor(psEffectAnchor * newAnchor)
 
 bool psEffectObjSound::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady())  // wait for anchor to be ready
         return true;
 
     life += elapsed;
-    if (life > animLength && killTime <= 0)
+    if(life > animLength && killTime <= 0)
     {
         life %= animLength;
-        if (!life)
+        if(!life)
             life += animLength;
     }
 
-    if (killTime > 0)
+    if(killTime > 0)
     {
         killTime -= elapsed;
-        if (killTime <= 0)
+        if(killTime <= 0)
             return false;
     }
 
     // getting source position
     csVector3 soundPos = anchorMesh->GetMovable()->GetPosition();
 
-    if (keyFrames->GetSize() > 0)
+    if(keyFrames->GetSize() > 0)
     {
         currKeyFrame = FindKeyFrameByTime(life);
         nextKeyFrame = (currKeyFrame + 1) % keyFrames->GetSize();
@@ -177,12 +177,12 @@ bool psEffectObjSound::Update(csTicks elapsed)
     }
 
     // playing sound
-    if (!isAlive && life >= birth)
+    if(!isAlive && life >= birth)
     {
         if(loop || !playedOnce)
         {
             soundID = soundManager->PlaySound(soundName, loop, iSoundManager::EFFECT_SNDCTRL,
-                soundPos, csVector3(0,0,0), minDist, maxDist);
+                                              soundPos, csVector3(0,0,0), minDist, maxDist);
 
             if(soundID != 0) // sound not played
             {
@@ -195,9 +195,9 @@ bool psEffectObjSound::Update(csTicks elapsed)
     return true;
 }
 
-psEffectObj *psEffectObjSound::Clone() const
+psEffectObj* psEffectObjSound::Clone() const
 {
-    psEffectObjSound *newObj = new psEffectObjSound(view, renderer2d);
+    psEffectObjSound* newObj = new psEffectObjSound(view, renderer2d);
     CloneBase(newObj);
 
     // simp mesh specific

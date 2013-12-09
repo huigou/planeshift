@@ -36,14 +36,14 @@ public:
     {
     private:
         psEffectObjSpire* parent;
-                        
-      public:
-        MeshAnimControl ( psEffectObjSpire* parent ) : scfImplementationType (this)
+
+    public:
+        MeshAnimControl(psEffectObjSpire* parent) : scfImplementationType(this)
         {
             this->parent = parent;
         }
-        
-        virtual ~MeshAnimControl ()
+
+        virtual ~MeshAnimControl()
         {
             parent = 0;
         }
@@ -51,17 +51,41 @@ public:
         void Update(csTicks /*current*/, int /*num_verts*/, uint32 /*version_id*/)
         {
         }
-        
-        // genmesh animation control
-        bool AnimatesVertices() const { return true; }
-        bool AnimatesTexels() const { return true; }
-        bool AnimatesNormals() const { return false; }
-        bool AnimatesColors()const { return true; }
-        bool AnimatesBBoxRadius () const { return false; }
 
-        const csBox3& UpdateBoundingBox (csTicks /*current*/, uint32 /*version_id*/, const csBox3& bbox) { return bbox; }
-        const float UpdateRadius (csTicks /*current*/, uint32 /*version_id*/, const float radius) { return radius; }
-        const csBox3* UpdateBoundingBoxes (csTicks /*current*/, uint32 /*version_id*/) { return nullptr; }
+        // genmesh animation control
+        bool AnimatesVertices() const
+        {
+            return true;
+        }
+        bool AnimatesTexels() const
+        {
+            return true;
+        }
+        bool AnimatesNormals() const
+        {
+            return false;
+        }
+        bool AnimatesColors()const
+        {
+            return true;
+        }
+        bool AnimatesBBoxRadius() const
+        {
+            return false;
+        }
+
+        const csBox3 &UpdateBoundingBox(csTicks /*current*/, uint32 /*version_id*/, const csBox3 &bbox)
+        {
+            return bbox;
+        }
+        const float UpdateRadius(csTicks /*current*/, uint32 /*version_id*/, const float radius)
+        {
+            return radius;
+        }
+        const csBox3* UpdateBoundingBoxes(csTicks /*current*/, uint32 /*version_id*/)
+        {
+            return nullptr;
+        }
         const csVector3* UpdateVertices(csTicks current, const csVector3* verts, int num_verts, uint32 version_id);
         const csVector2* UpdateTexels(csTicks current, const csVector2* texels, int num_texels, uint32 version_id);
         const csVector3* UpdateNormals(csTicks /*current*/, const csVector3* normals,
@@ -69,18 +93,18 @@ public:
         {
             return normals;
         }
-        const csColor4* UpdateColors(csTicks current, const csColor4* colors, int num_colors, uint32 version_id);        
+        const csColor4* UpdateColors(csTicks current, const csColor4* colors, int num_colors, uint32 version_id);
     };
     csRef<MeshAnimControl> meshControl;
     friend struct MeshAnimControl;
 
 
-    
-    psEffectObjSpire(iView *parentView, psEffect2DRenderer * renderer2d);
+
+    psEffectObjSpire(iView* parentView, psEffect2DRenderer* renderer2d);
     virtual ~psEffectObjSpire();
 
     // inheritted function overloads
-    bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
+    bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     bool Render(const csVector3 &up);
     bool Update(csTicks elapsed);
     psEffectObj* Clone() const;
@@ -93,7 +117,7 @@ public:
         SPI_ASTERIX,
         SPI_STAR,
         SPI_LAYERED,
-        
+
         SPI_COUNT
     };
 
@@ -108,7 +132,7 @@ private:
      *   \param height      The height of the new spire.
      *   \param padding     The padding between segments for certain spires.
      */
-    static void CalculateData(int shape, int segments, csVector3 * verts, csVector2 * texels, float topScale=1, float height=1, float padding=1);
+    static void CalculateData(int shape, int segments, csVector3* verts, csVector2* texels, float topScale=1, float height=1, float padding=1);
 
     /** performs the post setup (after the effect obj has been loaded).
      *  Things like create mesh factory, etc are initialized here.
@@ -120,9 +144,9 @@ private:
     int shape;
     int segments;
 
-    csVector3 * vert;
-    csVector2 * texel;
-    csColor4 *  colour;
+    csVector3* vert;
+    csVector2* texel;
+    csColor4*   colour;
     int vertCount;
 };
 

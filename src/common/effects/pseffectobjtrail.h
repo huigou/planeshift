@@ -37,31 +37,55 @@ public:
     {
     private:
         psEffectObjTrail* parent;
-                        
-      public:
-        // genmesh animation control
-        bool AnimatesVertices() const { return true; }
-        bool AnimatesTexels() const { return false; }
-        bool AnimatesNormals() const { return false; }
-        bool AnimatesColors()const { return true; }
-        bool AnimatesBBoxRadius () const { return false; }
 
-        MeshAnimControl ( psEffectObjTrail* parent ) : scfImplementationType (this)
+    public:
+        // genmesh animation control
+        bool AnimatesVertices() const
+        {
+            return true;
+        }
+        bool AnimatesTexels() const
+        {
+            return false;
+        }
+        bool AnimatesNormals() const
+        {
+            return false;
+        }
+        bool AnimatesColors()const
+        {
+            return true;
+        }
+        bool AnimatesBBoxRadius() const
+        {
+            return false;
+        }
+
+        MeshAnimControl(psEffectObjTrail* parent) : scfImplementationType(this)
         {
             this->parent = parent;
         }
-        virtual ~MeshAnimControl ()
+        virtual ~MeshAnimControl()
         {
             parent = 0;
         }
-        
+
         void Update(csTicks /*current*/, int /*num_verts*/, uint32 /*version_id*/)
         {
         }
 
-        const csBox3& UpdateBoundingBox (csTicks /*current*/, uint32 /*version_id*/, const csBox3& bbox) { return bbox; }
-        const float UpdateRadius (csTicks /*current*/, uint32 /*version_id*/, const float radius) { return radius; }
-        const csBox3* UpdateBoundingBoxes (csTicks /*current*/, uint32 /*version_id*/) { return nullptr; }
+        const csBox3 &UpdateBoundingBox(csTicks /*current*/, uint32 /*version_id*/, const csBox3 &bbox)
+        {
+            return bbox;
+        }
+        const float UpdateRadius(csTicks /*current*/, uint32 /*version_id*/, const float radius)
+        {
+            return radius;
+        }
+        const csBox3* UpdateBoundingBoxes(csTicks /*current*/, uint32 /*version_id*/)
+        {
+            return nullptr;
+        }
         const csVector3* UpdateVertices(csTicks current, const csVector3* verts, int num_verts, uint32 version_id);
         const csVector2* UpdateTexels(csTicks /*current*/, const csVector2* texels,
                                       int /*num_texels*/, uint32 /*version_id*/)
@@ -73,19 +97,19 @@ public:
         {
             return normals;
         }
-        const csColor4* UpdateColors(csTicks current, const csColor4* colors, int num_colors, uint32 version_id);        
+        const csColor4* UpdateColors(csTicks current, const csColor4* colors, int num_colors, uint32 version_id);
     };
     csRef<MeshAnimControl> meshControl;
     friend struct MeshAnimControl;
-          
-    psEffectObjTrail(iView *parentView, psEffect2DRenderer * renderer2d);
+
+    psEffectObjTrail(iView* parentView, psEffect2DRenderer* renderer2d);
     ~psEffectObjTrail();
 
     // inheritted function overloads
-    bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
+    bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     bool Render(const csVector3 &up);
     bool Update(csTicks elapsed);
-    psEffectObj *Clone() const;
+    psEffectObj* Clone() const;
 
 
 private:
@@ -96,12 +120,12 @@ private:
     bool PostSetup();
 
     csRef<iGeneralMeshState> genState;
-    
+
     int segments;
 
-    csVector3 * vert;
-    csColor4 * colour;
-    bool * missingUpdate;
+    csVector3* vert;
+    csColor4* colour;
+    bool* missingUpdate;
 
     int currSegment;
     bool setMesh;
@@ -110,7 +134,7 @@ private:
     float updateTotal;
     float updateLeft;
 
-    csCatmullRomSpline * spline[2];
+    csCatmullRomSpline* spline[2];
 
     float alpha;
 

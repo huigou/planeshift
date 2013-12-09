@@ -69,41 +69,41 @@ psEffect::~psEffect()
     effectObjs.DeleteAll();
 }
 
-psEffectAnchor * psEffect::CreateAnchor(const csString & type)
+psEffectAnchor* psEffect::CreateAnchor(const csString &type)
 {
-    if (type == "basic")
+    if(type == "basic")
         return new psEffectAnchorBasic();
-    else if (type == "spline")
+    else if(type == "spline")
         return new psEffectAnchorSpline();
-    else if (type == "socket")
+    else if(type == "socket")
         return new psEffectAnchorSocket();
-    
+
     csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Unknown anchor type: %s\n", type.GetData());
     return 0;
 }
 
-size_t psEffect::AddAnchor(psEffectAnchor * anchor)
+size_t psEffect::AddAnchor(psEffectAnchor* anchor)
 {
     effectAnchors.Push(anchor);
     return effectAnchors.GetSize()-1;
 }
 
-bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer * renderer2d, iLoaderContext * ldr_context)
+bool psEffect::Load(iDocumentNode* node, iView* parentView, psEffect2DRenderer* renderer2d, iLoaderContext* ldr_context)
 {
     csRef<iDocumentNodeIterator> xmlbinds;
-    
+
     // get the attributes
     name.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
     }
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect with no name.\n");
         return false;
@@ -112,17 +112,17 @@ bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer
     // anchors
     xmlbinds = node->GetNodes("anchor");
     csRef<iDocumentNode> anchorNode;
-    while (xmlbinds->HasNext())
+    while(xmlbinds->HasNext())
     {
         anchorNode = xmlbinds->Next();
 
-        psEffectAnchor * anchor = 0;
+        psEffectAnchor* anchor = 0;
 
         // create a anchor from the given type string
         anchor = CreateAnchor(anchorNode->GetAttributeValue("type"));
-        if (anchor)
+        if(anchor)
         {
-            if (anchor->Load(anchorNode))
+            if(anchor->Load(anchorNode))
                 AddAnchor(anchor);
             else
             {
@@ -138,84 +138,84 @@ bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer
     // objs
     xmlbinds = node->GetNodes("obj");
     csRef<iDocumentNode> objNode;
-    while (xmlbinds->HasNext())
+    while(xmlbinds->HasNext())
     {
         objNode = xmlbinds->Next();
 
-        psEffectObj *obj = 0;
+        psEffectObj* obj = 0;
 
         csString type = objNode->GetAttributeValue("type");
         type.Downcase();
-        if (type == "quad")
+        if(type == "quad")
         {
             obj = new psEffectObjQuad(parentView, renderer2d);
         }
-        else if (type == "spire")
+        else if(type == "spire")
         {
             obj = new psEffectObjSpire(parentView, renderer2d);
         }
-        else if (type == "mesh")
+        else if(type == "mesh")
         {
             obj = new psEffectObjMesh(parentView, renderer2d);
         }
-        else if (type == "simpmesh")
+        else if(type == "simpmesh")
         {
             obj = new psEffectObjSimpMesh(parentView, renderer2d);
         }
-        else if (type == "particles")
+        else if(type == "particles")
         {
             obj = new psEffectObjParticles(parentView, renderer2d);
         }
-        else if (type == "sound")
+        else if(type == "sound")
         {
             obj = new psEffectObjSound(parentView, renderer2d);
         }
-        else if (type == "star")
+        else if(type == "star")
         {
             obj = new psEffectObjStar(parentView, renderer2d);
         }
-        else if (type == "text")
+        else if(type == "text")
         {
             obj = new psEffectObjText(parentView, renderer2d);
         }
-        else if (type == "label")
+        else if(type == "label")
         {
             obj = new psEffectObjLabel(parentView, renderer2d);
         }
-        else if (type == "trail")
+        else if(type == "trail")
         {
             obj = new psEffectObjTrail(parentView, renderer2d);
         }
 #ifdef PS_EFFECT_ENABLE_DECAL
-        else if (type == "decal")
+        else if(type == "decal")
         {
             obj = new psEffectObjDecal(parentView, renderer2d);
 #endif // PS_EFFECT_ENABLE_DECAL
         }
-        else if (type == "text2d")
+        else if(type == "text2d")
         {
             obj = new psEffectObjText2D(parentView, renderer2d);
         }
-        else if (type == "light")
+        else if(type == "light")
         {
             obj = new psEffectObjLight(parentView, renderer2d);
         }
-            
-        if (obj)
+
+        if(obj)
         {
-            if (obj->Load(objNode, ldr_context))
+            if(obj->Load(objNode, ldr_context))
             {
                 effectObjs.Push(obj);
-                if (mainTextObj == (size_t)(-1))
+                if(mainTextObj == (size_t)(-1))
                 {
-                    psEffectObjTextable * textObj = dynamic_cast<psEffectObjTextable *>(obj);
-                    if (textObj)
+                    psEffectObjTextable* textObj = dynamic_cast<psEffectObjTextable*>(obj);
+                    if(textObj)
                         mainTextObj = effectObjs.GetSize()-1;
                 }
             }
             else
             {
-                csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", 
+                csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects",
                          "Problem with an effect obj in: %s/%s\n", type.GetData(), name.GetData());
 
                 delete obj;
@@ -231,20 +231,20 @@ bool psEffect::Load(iDocumentNode * node, iView * parentView, psEffect2DRenderer
     return true;
 }
 
-unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, iMeshWrapper * attachPos, 
-                              iMeshWrapper * attachTarget, const csVector3 & up, const unsigned int uniqueIDOverride,
+unsigned int psEffect::Render(iSectorList* sectors, const csVector3 &offset, iMeshWrapper* attachPos,
+                              iMeshWrapper* attachTarget, const csVector3 &up, const unsigned int uniqueIDOverride,
                               bool rotateWithMesh)
 {
     bool hasSuccess = false;
 
-    if (!sectors)
+    if(!sectors)
         return false; // no sectorlist
 
-    if (sectors->GetCount() == 0)
+    if(sectors->GetCount() == 0)
         return false; // no sectors
 
     // create a listener for the attached position if it exists
-    if (attachPos)
+    if(attachPos)
     {
         positionListener.AttachNew(new psEffectMovableListener);
         attachPos->GetMovable()->AddListener(positionListener);
@@ -252,7 +252,7 @@ unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, i
     }
 
     // create a listener for the attached target if it exists
-    if (attachTarget)
+    if(attachTarget)
     {
         targetListener.AttachNew(new psEffectMovableListener);
         attachTarget->GetMovable()->AddListener(targetListener);
@@ -260,8 +260,9 @@ unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, i
     }
 
     // build a rotation matrix that points from the position to the target
-    csMatrix3 rotBase;  rotBase.Identity();
-    if (attachPos && attachTarget)
+    csMatrix3 rotBase;
+    rotBase.Identity();
+    if(attachPos && attachTarget)
     {
         // make the base angle point towards the target
         csVector3 diff = attachPos->GetMovable()->GetFullPosition() - attachTarget->GetMovable()->GetFullPosition();
@@ -271,189 +272,64 @@ unsigned int psEffect::Render(iSectorList * sectors, const csVector3 & offset, i
         //rotBase = csYRotMatrix3(3.14159f - atan2(-diff.x, -diff.z));
     }
 
-    // For absolute positioning (not attached to a position mesh), the offset is actually the base pos and not an 
+    // For absolute positioning (not attached to a position mesh), the offset is actually the base pos and not an
     // offset at all. This code ensures that the offset is 0,0,0 and basepos is the offset for such a case.
     csVector3 usedOffset = offset;
-    if (!attachPos)
+    if(!attachPos)
         usedOffset = csVector3(0,0,0);
-    
+
     // the base position is either the offset (absolute position) or the attached mesh if it exists.
     csVector3 newPos = offset;
-    csMatrix3 posTransf; posTransf.Identity();
-    if (attachPos)
+    csMatrix3 posTransf;
+    posTransf.Identity();
+    if(attachPos)
     {
         newPos = attachPos->GetMovable()->GetFullPosition();
         posTransf = attachPos->GetMovable()->GetFullTransform().GetT2O();
     }
-    
+
     csMatrix3 targetTransf = posTransf;
-    if (attachTarget)
+    if(attachTarget)
         targetTransf = attachTarget->GetMovable()->GetFullTransform().GetT2O();
-    
+
     // effect anchors
-    for (size_t i=0; i<effectAnchors.GetSize(); ++i)
+    for(size_t i=0; i<effectAnchors.GetSize(); ++i)
     {
-        if (effectAnchors[i]->Create(usedOffset, attachPos, rotateWithMesh))
+        if(effectAnchors[i]->Create(usedOffset, attachPos, rotateWithMesh))
         {
             hasSuccess = true;
 
             effectAnchors[i]->SetPosition(newPos, sectors, posTransf);
-            
+
             // target of the anchor is either the given target if it exists or the position
-            if (attachTarget)
+            if(attachTarget)
                 effectAnchors[i]->SetTarget(attachTarget->GetMovable()->GetFullPosition(), targetTransf);
             else
                 effectAnchors[i]->SetTarget(newPos, posTransf);
 
             // if we're attached to both a position and target then orient the anchor
-            if (attachPos && attachTarget)
+            if(attachPos && attachTarget)
                 effectAnchors[i]->SetRotBase(rotBase);
         }
     }
 
     // effect objs
-    for (size_t i=0; i<effectObjs.GetSize(); ++i)
+    for(size_t i=0; i<effectObjs.GetSize(); ++i)
     {
-        if (effectObjs[i]->Render(up))
-        {
-            hasSuccess = true;
-            
-            psEffectAnchor * anchor = FindAnchor(effectObjs[i]->GetAnchorName());
-            if (!anchor)
-            {
-                csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", 
-                        "Couldn't find effect anchor: %s, in: %s\n", 
-                        effectObjs[i]->GetAnchorName().GetData(), name.GetData());
-            }
-            else
-            {
-                if (!effectObjs[i]->AttachToAnchor(anchor))
-                {
-                    csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_WARNING, "planeshift_effects",
-                            "Couldn't attach obj to %s in %s\n",
-                            effectObjs[i]->GetAnchorName().GetData(), name.GetData());
-                }
-            }
-            
-            // update the position of this obj
-            if (attachPos)
-            {
-                effectObjs[i]->SetPosition(posTransf);
-                if (!targetListener)
-                    effectObjs[i]->SetTarget(posTransf);
-            }
-
-            // update the target of this obj
-            if (attachTarget)
-                effectObjs[i]->SetTarget(targetTransf);
-
-            // if we're attached to both a position and target then orient the anchor
-            if (attachPos && attachTarget)
-                effectObjs[i]->SetRotBase(rotBase);
-        }
-    }
-
-    if (!hasSuccess)
-        return 0;
-
-    uniqueID = (uniqueIDOverride > 0 ? uniqueIDOverride : ++genUniqueID);
-    return uniqueID;
-}
-
-unsigned int psEffect::Render(iSector * sector, const csVector3 & offset, iMeshWrapper * attachPos,
-                              iMeshWrapper * attachTarget, const csVector3 & up, const unsigned int uniqueIDOverride)
-{
-    bool hasSuccess = false;
-
-    if (!sector)
-        return false; // no sector
-
-    // create a listener for the attached position if it exists
-    if (attachPos)
-    {
-        positionListener.AttachNew(new psEffectMovableListener);
-        attachPos->GetMovable()->AddListener(positionListener);
-        attachPos->GetMovable()->UpdateMove();
-    }
-
-    // create a listener for the attached target if it exists
-    if (attachTarget)
-    {
-        targetListener.AttachNew(new psEffectMovableListener);
-        attachTarget->GetMovable()->AddListener(targetListener);
-        attachTarget->GetMovable()->UpdateMove();
-    }
-
-    // build a rotation matrix that points from the position to the target
-    csMatrix3 rotBase;  rotBase.Identity();
-    if (attachPos && attachTarget)
-    {
-        // make the base angle point towards the target
-        csVector3 diff = attachPos->GetMovable()->GetFullPosition() - attachTarget->GetMovable()->GetFullPosition();
-        csReversibleTransform transf;
-        transf.LookAt(diff, csVector3(0,1,0));
-        rotBase = transf.GetT2O();
-        //rotBase = csYRotMatrix3(3.14159f - atan2(-diff.x, -diff.z));
-    }
-
-    // For absolute positioning (not attached to a position mesh), the offset is actually the base pos and not an 
-    // offset at all. This code ensures that the offset is 0,0,0 and basepos is the offset for such a case.
-    csVector3 usedOffset = offset;
-    if (!attachPos)
-        usedOffset = csVector3(0,0,0);
-    
-    // the base position is either the offset (absolute position) or the attached mesh if it exists.
-    csVector3 newPos = offset;
-    csMatrix3 posTransf; posTransf.Identity();
-    if (attachPos)
-    {
-        newPos = attachPos->GetMovable()->GetFullPosition();
-        posTransf = attachPos->GetMovable()->GetFullTransform().GetT2O();
-    }
-    
-    csMatrix3 targetTransf = posTransf;
-    if (attachTarget)
-        targetTransf = attachTarget->GetMovable()->GetFullTransform().GetT2O();
-    
-    // effect anchors
-    for (size_t i=0; i<effectAnchors.GetSize(); ++i)
-    {
-        if (effectAnchors[i]->Create(usedOffset, attachPos))
+        if(effectObjs[i]->Render(up))
         {
             hasSuccess = true;
 
-            effectAnchors[i]->SetPosition(newPos, sector, posTransf);
-            
-            // target of the anchor is either the given target if it exists or the position
-            if (attachTarget)
-                effectAnchors[i]->SetTarget(attachTarget->GetMovable()->GetFullPosition(),
-                                            targetTransf);
-            else
-                effectAnchors[i]->SetTarget(newPos, posTransf);
-
-            // if we're attached to both a position and target then orient the anchor
-            if (attachPos && attachTarget)
-                effectAnchors[i]->SetRotBase(rotBase);
-        }
-    }
-
-    // effect objs
-    for (size_t i=0; i<effectObjs.GetSize(); ++i)
-    {
-        if (effectObjs[i]->Render(up))
-        {
-            hasSuccess = true;
-            
-            psEffectAnchor * anchor = FindAnchor(effectObjs[i]->GetAnchorName());
-            if (!anchor)
+            psEffectAnchor* anchor = FindAnchor(effectObjs[i]->GetAnchorName());
+            if(!anchor)
             {
                 csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects",
-                         "Couldn't find effect anchor: %s, in: %s\n", 
+                         "Couldn't find effect anchor: %s, in: %s\n",
                          effectObjs[i]->GetAnchorName().GetData(), name.GetData());
             }
             else
             {
-                if (!effectObjs[i]->AttachToAnchor(anchor))
+                if(!effectObjs[i]->AttachToAnchor(anchor))
                 {
                     csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_WARNING, "planeshift_effects",
                              "Couldn't attach obj to %s in %s\n",
@@ -462,25 +338,153 @@ unsigned int psEffect::Render(iSector * sector, const csVector3 & offset, iMeshW
             }
 
             // update the position of this obj
-            if (attachPos)
+            if(attachPos)
             {
                 effectObjs[i]->SetPosition(posTransf);
-                if (!targetListener)
+                if(!targetListener)
                     effectObjs[i]->SetTarget(posTransf);
             }
 
             // update the target of this obj
-            if (attachTarget)
+            if(attachTarget)
                 effectObjs[i]->SetTarget(targetTransf);
 
-            
             // if we're attached to both a position and target then orient the anchor
-            if (attachPos && attachTarget)
+            if(attachPos && attachTarget)
                 effectObjs[i]->SetRotBase(rotBase);
         }
     }
 
-    if (!hasSuccess)
+    if(!hasSuccess)
+        return 0;
+
+    uniqueID = (uniqueIDOverride > 0 ? uniqueIDOverride : ++genUniqueID);
+    return uniqueID;
+}
+
+unsigned int psEffect::Render(iSector* sector, const csVector3 &offset, iMeshWrapper* attachPos,
+                              iMeshWrapper* attachTarget, const csVector3 &up, const unsigned int uniqueIDOverride)
+{
+    bool hasSuccess = false;
+
+    if(!sector)
+        return false; // no sector
+
+    // create a listener for the attached position if it exists
+    if(attachPos)
+    {
+        positionListener.AttachNew(new psEffectMovableListener);
+        attachPos->GetMovable()->AddListener(positionListener);
+        attachPos->GetMovable()->UpdateMove();
+    }
+
+    // create a listener for the attached target if it exists
+    if(attachTarget)
+    {
+        targetListener.AttachNew(new psEffectMovableListener);
+        attachTarget->GetMovable()->AddListener(targetListener);
+        attachTarget->GetMovable()->UpdateMove();
+    }
+
+    // build a rotation matrix that points from the position to the target
+    csMatrix3 rotBase;
+    rotBase.Identity();
+    if(attachPos && attachTarget)
+    {
+        // make the base angle point towards the target
+        csVector3 diff = attachPos->GetMovable()->GetFullPosition() - attachTarget->GetMovable()->GetFullPosition();
+        csReversibleTransform transf;
+        transf.LookAt(diff, csVector3(0,1,0));
+        rotBase = transf.GetT2O();
+        //rotBase = csYRotMatrix3(3.14159f - atan2(-diff.x, -diff.z));
+    }
+
+    // For absolute positioning (not attached to a position mesh), the offset is actually the base pos and not an
+    // offset at all. This code ensures that the offset is 0,0,0 and basepos is the offset for such a case.
+    csVector3 usedOffset = offset;
+    if(!attachPos)
+        usedOffset = csVector3(0,0,0);
+
+    // the base position is either the offset (absolute position) or the attached mesh if it exists.
+    csVector3 newPos = offset;
+    csMatrix3 posTransf;
+    posTransf.Identity();
+    if(attachPos)
+    {
+        newPos = attachPos->GetMovable()->GetFullPosition();
+        posTransf = attachPos->GetMovable()->GetFullTransform().GetT2O();
+    }
+
+    csMatrix3 targetTransf = posTransf;
+    if(attachTarget)
+        targetTransf = attachTarget->GetMovable()->GetFullTransform().GetT2O();
+
+    // effect anchors
+    for(size_t i=0; i<effectAnchors.GetSize(); ++i)
+    {
+        if(effectAnchors[i]->Create(usedOffset, attachPos))
+        {
+            hasSuccess = true;
+
+            effectAnchors[i]->SetPosition(newPos, sector, posTransf);
+
+            // target of the anchor is either the given target if it exists or the position
+            if(attachTarget)
+                effectAnchors[i]->SetTarget(attachTarget->GetMovable()->GetFullPosition(),
+                                            targetTransf);
+            else
+                effectAnchors[i]->SetTarget(newPos, posTransf);
+
+            // if we're attached to both a position and target then orient the anchor
+            if(attachPos && attachTarget)
+                effectAnchors[i]->SetRotBase(rotBase);
+        }
+    }
+
+    // effect objs
+    for(size_t i=0; i<effectObjs.GetSize(); ++i)
+    {
+        if(effectObjs[i]->Render(up))
+        {
+            hasSuccess = true;
+
+            psEffectAnchor* anchor = FindAnchor(effectObjs[i]->GetAnchorName());
+            if(!anchor)
+            {
+                csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects",
+                         "Couldn't find effect anchor: %s, in: %s\n",
+                         effectObjs[i]->GetAnchorName().GetData(), name.GetData());
+            }
+            else
+            {
+                if(!effectObjs[i]->AttachToAnchor(anchor))
+                {
+                    csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_WARNING, "planeshift_effects",
+                             "Couldn't attach obj to %s in %s\n",
+                             effectObjs[i]->GetAnchorName().GetData(), name.GetData());
+                }
+            }
+
+            // update the position of this obj
+            if(attachPos)
+            {
+                effectObjs[i]->SetPosition(posTransf);
+                if(!targetListener)
+                    effectObjs[i]->SetTarget(posTransf);
+            }
+
+            // update the target of this obj
+            if(attachTarget)
+                effectObjs[i]->SetTarget(targetTransf);
+
+
+            // if we're attached to both a position and target then orient the anchor
+            if(attachPos && attachTarget)
+                effectObjs[i]->SetRotBase(rotBase);
+        }
+    }
+
+    if(!hasSuccess)
         return 0;
 
     uniqueID = (uniqueIDOverride > 0 ? uniqueIDOverride : ++genUniqueID);
@@ -491,46 +495,47 @@ bool psEffect::Update(csTicks elapsed)
 {
     bool updatePos = false;
     bool updateTarget = false;
-    iSectorList * newSectors = NULL;
+    iSectorList* newSectors = NULL;
     csVector3 newPos;
     csVector3 newTarget;
     csMatrix3 newPosTransf;
     csMatrix3 newTargetTransf;
 
-    if (positionListener)
+    if(positionListener)
     {
         // if the attachMesh is gone, remove the effect
-        if (positionListener->IsMovableDead())
+        if(positionListener->IsMovableDead())
             return false;
 
         // if the attachMesh has moved, then flag a position update
-        if (positionListener->GrabNewData(newSectors, newPos, newPosTransf))
+        if(positionListener->GrabNewData(newSectors, newPos, newPosTransf))
         {
-            if (!newSectors)
+            if(!newSectors)
                 return false; // no sector list
 
-            if (newSectors->GetCount() == 0)
+            if(newSectors->GetCount() == 0)
                 return false; // not in any sector
 
             csString sector(newSectors->Get(0)->QueryObject()->GetName());
-            if (sector.Compare("SectorWhereWeKeepEntitiesResidingInUnloadedMaps"))
+            if(sector.Compare("SectorWhereWeKeepEntitiesResidingInUnloadedMaps"))
                 return true; // in a sector not loaded
-            
+
             updatePos = true;
         }
     }
-    if (targetListener)
+    if(targetListener)
     {
         // if the targetMesh has moved, then flag a target update
-        if (targetListener->GrabNewData(newTarget, newTargetTransf))
+        if(targetListener->GrabNewData(newTarget, newTargetTransf))
             updateTarget = true;
     }
-    
+
     // build a rotation matrix that points from the anchor to the target
-    csMatrix3 rotBase;  rotBase.Identity();
-    if (updatePos || updateTarget)
+    csMatrix3 rotBase;
+    rotBase.Identity();
+    if(updatePos || updateTarget)
     {
-        if (targetListener && positionListener)
+        if(targetListener && positionListener)
         {
             // make the base angle point towards the target
             csVector3 diff = positionListener->GetPosition() - targetListener->GetPosition();
@@ -540,62 +545,62 @@ bool psEffect::Update(csTicks elapsed)
             //rotBase = csYRotMatrix3(3.14159f - atan2(-diff.x, -diff.z));
         }
     }
-    
+
     // effect anchors
-    for ( size_t a = effectAnchors.GetSize(); a-- > 0; )
+    for(size_t a = effectAnchors.GetSize(); a-- > 0;)
     {
         psEffectAnchor* anchor = effectAnchors[a];
-        if (!anchor)
+        if(!anchor)
             continue;
 
         // update the position of this anchor
-        if (updatePos)
+        if(updatePos)
         {
             effectAnchors[a]->SetPosition(newPos, newSectors, newPosTransf);
-            if (!targetListener)
+            if(!targetListener)
                 anchor->SetTarget(newPos, newPosTransf);
         }
 
         // update the target of this anchor
-        if (updateTarget)
+        if(updateTarget)
             anchor->SetTarget(newTarget, newTargetTransf);
 
         // update the direction/orientation of this anchor
-        if (updatePos || updateTarget)
+        if(updatePos || updateTarget)
             anchor->SetRotBase(rotBase);
 
         // update the actual anchor
-        if (!anchor->Update(elapsed))
+        if(!anchor->Update(elapsed))
             effectAnchors.DeleteIndex(a); // anchor has told us it doesn't want to live anymore
     }
-    
+
     // effect objs
-    for ( size_t a = effectObjs.GetSize(); a-- > 0; )
+    for(size_t a = effectObjs.GetSize(); a-- > 0;)
     {
-        if (!effectObjs[a])
+        if(!effectObjs[a])
             continue;
 
         // update the position of this obj
-        if (updatePos)
+        if(updatePos)
         {
             effectObjs[a]->SetPosition(newPosTransf);
-            if (!targetListener)
+            if(!targetListener)
                 effectObjs[a]->SetTarget(newPosTransf);
         }
 
         // update the target of this obj
-        if (updateTarget)
+        if(updateTarget)
             effectObjs[a]->SetTarget(newTargetTransf);
 
         // update the orientation of the obj
-        if (updatePos || updateTarget)
+        if(updatePos || updateTarget)
             effectObjs[a]->SetRotBase(rotBase);
 
         // update the actual obj
-        if (!effectObjs[a]->Update(elapsed))
+        if(!effectObjs[a]->Update(elapsed))
             effectObjs.DeleteIndex(a); // obj has told us it doesn't want to live anymore
     }
-    
+
     return (effectObjs.GetSize() != 0);
 }
 
@@ -624,7 +629,7 @@ bool psEffect::SetFrameParamScalings(const float* scale)
     bool result = false;
     for(size_t a = 0; a < effectObjs.GetSize(); ++a)
     {
-        if (effectObjs[a]->SetFrameParamScalings(scale))
+        if(effectObjs[a]->SetFrameParamScalings(scale))
         {
             result = true;
         }
@@ -632,15 +637,15 @@ bool psEffect::SetFrameParamScalings(const float* scale)
     return result;
 }
 
-psEffect * psEffect::Clone() const
+psEffect* psEffect::Clone() const
 {
-    psEffect * newEffect = new psEffect();
+    psEffect* newEffect = new psEffect();
     newEffect->name = name;
 
-    for (size_t a=0; a<effectAnchors.GetSize(); ++a)
+    for(size_t a=0; a<effectAnchors.GetSize(); ++a)
         newEffect->effectAnchors.Push(effectAnchors[a]->Clone());
-    
-    for (size_t b=0; b<effectObjs.GetSize(); ++b)
+
+    for(size_t b=0; b<effectObjs.GetSize(); ++b)
         newEffect->effectObjs.Push(effectObjs[b]->Clone());
 
     newEffect->mainTextObj = mainTextObj;
@@ -655,7 +660,7 @@ unsigned int psEffect::GetUniqueID() const
 float psEffect::GetAnimLength() const
 {
     float ret = 0;
-    for (size_t a=0; a<effectObjs.GetSize(); ++a)
+    for(size_t a=0; a<effectObjs.GetSize(); ++a)
         ret = (effectObjs[a]->GetAnimLength() > ret ? effectObjs[a]->GetAnimLength() : ret);
     return ret;
 }
@@ -665,7 +670,7 @@ size_t psEffect::GetAnchorCount() const
     return effectAnchors.GetSize();
 }
 
-psEffectAnchor * psEffect::GetAnchor(size_t idx) const
+psEffectAnchor* psEffect::GetAnchor(size_t idx) const
 {
     return effectAnchors[idx];
 }
@@ -675,22 +680,22 @@ size_t psEffect::GetObjCount() const
     return effectObjs.GetSize();
 }
 
-psEffectObj * psEffect::GetObj(size_t idx) const
+psEffectObj* psEffect::GetObj(size_t idx) const
 {
     return effectObjs[idx];
 }
 
-const csString & psEffect::GetName() const
+const csString &psEffect::GetName() const
 {
     return name;
 }
 
-psEffectObjTextable * psEffect::GetMainTextObj() const
+psEffectObjTextable* psEffect::GetMainTextObj() const
 {
-    if (effectObjs.GetSize() <= mainTextObj)
+    if(effectObjs.GetSize() <= mainTextObj)
         return 0;
 
-    return dynamic_cast<psEffectObjTextable *>(effectObjs[mainTextObj]);
+    return dynamic_cast<psEffectObjTextable*>(effectObjs[mainTextObj]);
 }
 
 /*
@@ -708,21 +713,21 @@ bool psEffect::SetText(const char * text)
 }
 */
 
-psEffectObj * psEffect::FindObj(const csString & objName) const
+psEffectObj* psEffect::FindObj(const csString &objName) const
 {
-    for (size_t a=0; a<effectObjs.GetSize(); ++a)
+    for(size_t a=0; a<effectObjs.GetSize(); ++a)
     {
-        if (effectObjs[a]->GetName() == objName)
+        if(effectObjs[a]->GetName() == objName)
             return effectObjs[a];
     }
     return 0;
 }
 
-psEffectAnchor * psEffect::FindAnchor(const csString & anchorName) const
+psEffectAnchor* psEffect::FindAnchor(const csString &anchorName) const
 {
-    for (size_t a=0; a<effectAnchors.GetSize(); ++a)
+    for(size_t a=0; a<effectAnchors.GetSize(); ++a)
     {
-        if (effectAnchors[a]->GetName() == anchorName)
+        if(effectAnchors[a]->GetName() == anchorName)
             return effectAnchors[a];
     }
     return 0;

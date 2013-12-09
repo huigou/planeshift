@@ -27,8 +27,8 @@
 #include <iengine/scenenode.h>
 #include <iengine/sector.h>
 
-psEffectObjLight::psEffectObjLight(iView * parentView, psEffect2DRenderer * renderer2d)
-                :psEffectObj(parentView, renderer2d)
+psEffectObjLight::psEffectObjLight(iView* parentView, psEffect2DRenderer* renderer2d)
+    :psEffectObj(parentView, renderer2d)
 {
 }
 
@@ -46,7 +46,7 @@ psEffectObjLight::~psEffectObjLight()
 
 bool psEffectObjLight::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
-    if (!psEffectObj::Load(node, ldr_context))
+    if(!psEffectObj::Load(node, ldr_context))
         return false;
 
     radius = 10.f;
@@ -138,7 +138,7 @@ bool psEffectObjLight::AttachToAnchor(psEffectAnchor* anchor)
     return false;
 }
 
-bool psEffectObjLight::Render(const csVector3& /*up*/)
+bool psEffectObjLight::Render(const csVector3 & /*up*/)
 {
     if(light.IsValid())
         return true;
@@ -157,14 +157,14 @@ bool psEffectObjLight::Render(const csVector3& /*up*/)
 
 bool psEffectObjLight::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady() || !anchorMesh->GetMovable()->GetSectors()->GetCount()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady() || !anchorMesh->GetMovable()->GetSectors()->GetCount())  // wait for anchor to be ready
         return true;
 
     life += elapsed;
-    if (life > animLength && killTime <= 0)
+    if(life > animLength && killTime <= 0)
     {
         life %= animLength;
-        if (!life)
+        if(!life)
         {
             life += animLength;
         }
@@ -184,10 +184,10 @@ bool psEffectObjLight::Update(csTicks elapsed)
         light->SetColor(c);
     }
 
-    if (killTime > 0)
+    if(killTime > 0)
     {
         killTime -= elapsed;
-        if (killTime <= 0)
+        if(killTime <= 0)
             return false;
     }
 

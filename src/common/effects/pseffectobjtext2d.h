@@ -54,14 +54,14 @@ enum psEffectBackgroundAlign
 struct psEffectBackgroundElem
 {
     psEffectBackgroundAlign     align;
-    
+
     int                         umin;
     int                         vmin;
     int                         umax;
     int                         vmax;
-    
+
     bool                        scale;
-	bool                        tile;
+    bool                        tile;
     int                         offsetx;
     int                         offsety;
 };
@@ -72,7 +72,7 @@ private:
     csRef<iGraphics3D>      g3d;
     csRef<iGraphics2D>      g2d;
     csRef<iTextureManager>  txtmgr;
-    
+
     // font
     csString            fontName;
     int                 fontSize;
@@ -82,31 +82,31 @@ private:
     int                 maxHeight;
 
     psEffectBackgroundAlign             backgroundAlign;
-    iMaterialWrapper *                  backgroundMat;
+    iMaterialWrapper*                   backgroundMat;
     csArray<psEffectBackgroundElem>     backgroundElems;
 
-    csArray<psEffect2DElement *>    elems;
+    csArray<psEffect2DElement*>    elems;
 
 public:
-    psEffectObjText2D(iView * parentView, psEffect2DRenderer * renderer2d);
+    psEffectObjText2D(iView* parentView, psEffect2DRenderer* renderer2d);
     ~psEffectObjText2D();
 
     // draws 2d text
-    bool SetText(const csArray<psEffectTextElement> & elements);
-    bool SetText(const csArray<psEffectTextRow> & rows);
+    bool SetText(const csArray<psEffectTextElement> &elements);
+    bool SetText(const csArray<psEffectTextRow> &rows);
     bool SetText(int rows, ...);
 
     // inheritted function overloads
-    bool Load(iDocumentNode * node, iLoaderContext* ldr_context);
+    bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     bool Render(const csVector3 &up);
-    bool AttachToAnchor(psEffectAnchor * newAnchor);
+    bool AttachToAnchor(psEffectAnchor* newAnchor);
     bool Update(csTicks elapsed);
-    psEffectObj * Clone() const;
+    psEffectObj* Clone() const;
 
 protected:
 
     bool PostSetup();
-    void DrawTextElement(const psEffectTextElement & element);
+    void DrawTextElement(const psEffectTextElement &element);
 };
 
 /** @} */
