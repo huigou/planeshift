@@ -1,7 +1,7 @@
 /*
  * solid.h by Andrew Craig <andrew@hydlaa.com>
  *
- * Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -17,8 +17,8 @@
  *
  */
 
- #ifndef SOLID_HEADER
- #define SOLID_HEADER
+#ifndef SOLID_HEADER
+#define SOLID_HEADER
 
 //=============================================================================
 // Crystal Space Includes
@@ -41,26 +41,26 @@ struct iObjectRegistry;
 
 
 /** Collider creation class.
-  * For any objects that want to collide with other things use this class and 
-  * pass in the mesh to be used. 
+  * For any objects that want to collide with other things use this class and
+  * pass in the mesh to be used.
   */
 class psSolid
 {
 public:
     /** Create a blank collider.
-      * @param objectReg The Crystal Space object registry needed to create the 
+      * @param objectReg The Crystal Space object registry needed to create the
       *                   collider wrappers.
       */
     psSolid(iObjectRegistry* objectReg);
-    
+
     ~psSolid();
-    
-    /** Set the mesh that we want to use as the colliding one. 
-      * @param mesh The CEL pcmesh object that has the mesh we want to use as the 
+
+    /** Set the mesh that we want to use as the colliding one.
+      * @param mesh The CEL pcmesh object that has the mesh we want to use as the
       *             collding one.
-      */ 
+      */
     void SetMesh(iMeshWrapper* mesh);
-    
+
     /** Complete the setup of the class and create the collider wrappers.
      */
     void Setup();
@@ -68,14 +68,14 @@ public:
     /** Get the collider object this class creates.
       * @return The created collider object.
       */
-    iCollider* GetCollider ();    
-    
+    iCollider* GetCollider();
+
 private:
     csRef<iObjectRegistry> objectReg;               ///< Needed to create the collider wrapper.
     csWeakRef<iMeshWrapper> mesh;                        ///< The mesh we are using to collide with.
-    csRef<csColliderWrapper> colliderWrap;          ///< The actual collider wrapper. 
-    
-    bool noCollider;                                ///< true if we have a collider wrapper, false otherwise. 
+    csRef<csColliderWrapper> colliderWrap;          ///< The actual collider wrapper.
+
+    bool noCollider;                                ///< true if we have a collider wrapper, false otherwise.
 };
 
 #endif

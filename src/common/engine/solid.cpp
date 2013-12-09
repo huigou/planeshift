@@ -1,7 +1,7 @@
 /*
  * solid.cpp by Andrew Craig <andrew@hydlaa.com>
  *
- * Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -46,7 +46,7 @@ psSolid::psSolid(iObjectRegistry* object)
 
 psSolid::~psSolid()
 {
-    if ( colliderWrap && colliderWrap->GetObjectParent() )
+    if(colliderWrap && colliderWrap->GetObjectParent())
     {
         colliderWrap->GetObjectParent()->ObjRemove(static_cast<iObject*>(colliderWrap));
     }
@@ -60,37 +60,37 @@ void psSolid::SetMesh(iMeshWrapper* pcmesh)
 }
 
 
-void psSolid::Setup ()
+void psSolid::Setup()
 {
     colliderWrap = 0;
     noCollider = false;
-    GetCollider ();
+    GetCollider();
 }
 
 
 iCollider* psSolid::GetCollider()
 {
-    if ( colliderWrap )
+    if(colliderWrap)
     {
         return colliderWrap->GetCollider();
     }
-    
-    if ( noCollider )
+
+    if(noCollider)
     {
         return 0;
-    }        
-    
-    if ( mesh )
+    }
+
+    if(mesh)
     {
         csRef<iCollideSystem> collideSystem = csQueryRegistry<iCollideSystem>(objectReg);
-        
+
         colliderWrap = csColliderHelper::InitializeCollisionWrapper(collideSystem, mesh);
         if(colliderWrap)
         {
             return colliderWrap->GetCollider();
         }
     }
-    
+
     noCollider = true;
     return 0;
 }
