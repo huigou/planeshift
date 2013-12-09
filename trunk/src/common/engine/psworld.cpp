@@ -2,7 +2,7 @@
  * psworld.cpp - author Matze Braun <MatzeBraun@gmx.de> and
  *              Keith Fulton <keith@paqrat.com>
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -64,13 +64,13 @@ bool psWorld::Initialize(iObjectRegistry* objectReg)
     return true;
 }
 
-bool psWorld::NewRegion(const char *mapfile)
+bool psWorld::NewRegion(const char* mapfile)
 {
     regions->Push(mapfile);
     if(!loader->LoadZones(regions))
     {
-	// Oh no, failed so don't try again!
-	regions->Pop();
+        // Oh no, failed so don't try again!
+        regions->Pop();
         return false;
     }
 
@@ -80,13 +80,13 @@ bool psWorld::NewRegion(const char *mapfile)
     return true;
 }
 
-void psWorld::GetAllRegionNames(csString& str)
+void psWorld::GetAllRegionNames(csString &str)
 {
     str.Clear();
-    for (unsigned i=0; i < regions->GetSize(); i++)
+    for(unsigned i=0; i < regions->GetSize(); i++)
     {
-        str.Append( regions->Get(i) );
-        str.Append( "|" );
+        str.Append(regions->Get(i));
+        str.Append("|");
     }
 }
 
@@ -102,27 +102,27 @@ void psWorld::BuildWarpCache()
 
     for(int i=0; i<sectorCount; i++)
     {
-        const csSet<csPtrKey<iMeshWrapper> >& portals = engine->GetSectors()->Get(i)->GetPortalMeshes();
+        const csSet<csPtrKey<iMeshWrapper> > &portals = engine->GetSectors()->Get(i)->GetPortalMeshes();
         Debug3(LOG_STARTUP,0," %zu portal meshes for %s",portals.GetSize(),
-            engine->GetSectors()->Get(i)->QueryObject()->GetName());
+               engine->GetSectors()->Get(i)->QueryObject()->GetName());
 
-        csSet<csPtrKey<iMeshWrapper> >::GlobalIterator it = portals.GetIterator ();
-        while (it.HasNext ())
+        csSet<csPtrKey<iMeshWrapper> >::GlobalIterator it = portals.GetIterator();
+        while(it.HasNext())
         {
-            iMeshWrapper* portal_mesh = it.Next ();
-            iPortalContainer* pc = portal_mesh->GetPortalContainer ();
-            for (int j = 0 ; j < pc->GetPortalCount () ; j++)
+            iMeshWrapper* portal_mesh = it.Next();
+            iPortalContainer* pc = portal_mesh->GetPortalContainer();
+            for(int j = 0 ; j < pc->GetPortalCount() ; j++)
             {
-                iPortal* portal = pc->GetPortal (j);
-                if (portal->CompleteSector(0))
+                iPortal* portal = pc->GetPortal(j);
+                if(portal->CompleteSector(0))
                 {
-                    if (engine->GetSectors()->Find(portal->GetSector()) != -1)
+                    if(engine->GetSectors()->Find(portal->GetSector()) != -1)
                     {
                         const csReversibleTransform warp = portal->GetWarp();
 
                         // Check the values and issue warning for strange values.
                         csVector3 v_o2t = warp.GetO2TTranslation();
-                        if (fabs(v_o2t.x) > 1.0e+10 || fabs(v_o2t.y) > 1.0e+10 || fabs(v_o2t.z) > 1.0e+10)
+                        if(fabs(v_o2t.x) > 1.0e+10 || fabs(v_o2t.y) > 1.0e+10 || fabs(v_o2t.z) > 1.0e+10)
                         {
                             Error3("Warpspace with very large o2t translation:  %s: %s",
                                    portal->GetName(),warp.Description().GetData());
@@ -142,9 +142,9 @@ void psWorld::DumpWarpCache()
     for(size_t i=0; i<transarray.GetSize(); i++)
     {
         csHash<csReversibleTransform*, csPtrKey<iSector> >::GlobalIterator it =  transarray[i].GetIterator();
-        iSector * fromSector = engine->GetSectors()->Get((int)i);
+        iSector* fromSector = engine->GetSectors()->Get((int)i);
         CPrintf(CON_CMDOUTPUT,"%s\n",fromSector->QueryObject()->GetName());
-        while (it.HasNext())
+        while(it.HasNext())
         {
             csPtrKey<iSector>  sector;
             csReversibleTransform* rt = it.Next(sector);
@@ -155,15 +155,15 @@ void psWorld::DumpWarpCache()
 }
 
 
-bool psWorld::WarpSpace(const iSector* from, const iSector* to, csVector3& pos)
+bool psWorld::WarpSpace(const iSector* from, const iSector* to, csVector3 &pos)
 {
     if(from == to)
         return true; // No need to transform, pos ok.
 
     int i = engine->GetSectors()->Find((iSector*)from);
-    if (i == -1)
+    if(i == -1)
     {
-        return false; // Didn't find transformation, pos not ok. 
+        return false; // Didn't find transformation, pos not ok.
     }
 
     csReversibleTransform* transform = transarray[i].Get((iSector*)to);
@@ -176,15 +176,15 @@ bool psWorld::WarpSpace(const iSector* from, const iSector* to, csVector3& pos)
     return false; // Didn't find transformation, pos not ok.
 }
 
-bool psWorld::WarpSpaceRelative(const iSector* from, const iSector* to, csVector3& pos)
+bool psWorld::WarpSpaceRelative(const iSector* from, const iSector* to, csVector3 &pos)
 {
     if(from == to)
         return true; // No need to transform, pos ok.
 
     int i = engine->GetSectors()->Find((iSector*)from);
-    if (i == -1)
+    if(i == -1)
     {
-        return false; // Didn't find transformation, pos not ok. 
+        return false; // Didn't find transformation, pos not ok.
     }
 
     csReversibleTransform* transform = transarray[i].Get((iSector*)to);
@@ -199,32 +199,32 @@ bool psWorld::WarpSpaceRelative(const iSector* from, const iSector* to, csVector
 
 bool psWorld::Connected(const iSector* from, const iSector* to)
 {
-    if (from == to)
+    if(from == to)
         return true;
 
     int i = engine->GetSectors()->Find((iSector*)from);
-    if (i == -1)
+    if(i == -1)
         return false;
 
-    if (transarray.GetSize() == 0)
+    if(transarray.GetSize() == 0)
         return true;
-       
+
     csReversibleTransform* transform = transarray[i].Get((iSector*)to);
-    if (transform)
+    if(transform)
         return true;
 
     return false;
 }
 
-float psWorld::Distance(const csVector3& from_pos, const iSector* from_sector, csVector3 to_pos, const iSector* to_sector)
+float psWorld::Distance(const csVector3 &from_pos, const iSector* from_sector, csVector3 to_pos, const iSector* to_sector)
 {
-    if (from_sector == to_sector)
+    if(from_sector == to_sector)
     {
         return (from_pos - to_pos).Norm();
     }
     else
     {
-        if (WarpSpace(to_sector, from_sector, to_pos))
+        if(WarpSpace(to_sector, from_sector, to_pos))
         {
             return (from_pos - to_pos).Norm();
         }
@@ -237,33 +237,33 @@ float psWorld::Distance(const csVector3& from_pos, const iSector* from_sector, c
 }
 
 
-float psWorld::Distance(iMeshWrapper * ent1, iMeshWrapper * ent2)
+float psWorld::Distance(iMeshWrapper* ent1, iMeshWrapper* ent2)
 {
     csVector3 pos1,pos2;
-    iSector *sector1,*sector2;
-    
+    iSector* sector1,*sector2;
+
 
     GetPosition(ent1,pos1,NULL,sector1);
     GetPosition(ent2,pos2,NULL,sector2);
-    
+
     return Distance(pos1,sector1,pos2,sector2);
 }
 
 
 
-void psWorld::GetPosition(iMeshWrapper *pcmesh, csVector3& pos, float* yrot,iSector*& sector)
+void psWorld::GetPosition(iMeshWrapper* pcmesh, csVector3 &pos, float* yrot,iSector* &sector)
 {
     pos = pcmesh->GetMovable()->GetPosition();
 
     // rotation
-    if (yrot)
+    if(yrot)
     {
         csMatrix3 transf = pcmesh->GetMovable()->GetTransform().GetT2O();
         *yrot = Matrix2YRot(transf);
     }
 
     // Sector
-    if (pcmesh->GetMovable()->GetSectors()->GetCount())
+    if(pcmesh->GetMovable()->GetSectors()->GetCount())
     {
         sector = pcmesh->GetMovable()->GetSectors()->Get(0);
     }
@@ -274,7 +274,7 @@ void psWorld::GetPosition(iMeshWrapper *pcmesh, csVector3& pos, float* yrot,iSec
 }
 
 
-float psWorld::Matrix2YRot(const csMatrix3& mat)
+float psWorld::Matrix2YRot(const csMatrix3 &mat)
 {
     csVector3 vec(0,0,1);
     vec = mat * vec;
@@ -286,10 +286,10 @@ float psWorld::Matrix2YRot(const csMatrix3& mat)
     return result;
 }
 
-csVector3 psWorld::Matrix2Rot(const csMatrix3& mat)
+csVector3 psWorld::Matrix2Rot(const csMatrix3 &mat)
 {
     csVector3 rot(0);
-    
+
     // obtain yaw
     csVector3 vec(0,1,0);
     vec = mat * vec;
@@ -297,7 +297,7 @@ csVector3 psWorld::Matrix2Rot(const csMatrix3& mat)
 
     // obtain roll
     rot.y = atan2(vec.z/sin(rot.z), -vec.x/sin(rot.z));
-    
+
     // obtain pitch
     vec = mat * csVector3(0,0,1);
     vec = csZRotMatrix3(-rot.z) * csYRotMatrix3(-rot.y) * vec; // reverse roll and yaw here to ease our job

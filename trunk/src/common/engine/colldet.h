@@ -57,39 +57,39 @@ class csColliderWrapper;
 class psCollisionDetection
 {
 public:
-  psCollisionDetection(iObjectRegistry* object_reg);
-  virtual ~psCollisionDetection();
+    psCollisionDetection(iObjectRegistry* object_reg);
+    virtual ~psCollisionDetection();
 
-  virtual bool Init (const csVector3& body, const csVector3& legs, const csVector3& shift, iMeshWrapper* mesh);
-  
-  virtual bool IsOnGround () const;
-  virtual void SetOnGround (bool flag);
-  virtual void UseCD (bool flag);
+    virtual bool Init(const csVector3 &body, const csVector3 &legs, const csVector3 &shift, iMeshWrapper* mesh);
 
-  virtual bool AdjustForCollisions (csVector3& oldpos,
-                            csVector3& newpos,
-                            csVector3& vel,
-                            float delta,
-                            iMovable* movable);
+    virtual bool IsOnGround() const;
+    virtual void SetOnGround(bool flag);
+    virtual void UseCD(bool flag);
 
-protected:              
-  csRef<iMeshWrapper> mesh;
+    virtual bool AdjustForCollisions(csVector3 &oldpos,
+                                     csVector3 &newpos,
+                                     csVector3 &vel,
+                                     float delta,
+                                     iMovable* movable);
 
-  csColliderActor colliderActor;
+protected:
+    csRef<iMeshWrapper> mesh;
 
-  bool useCD;           ///< Enable collision detection flag.
-  
-  //Collision vars
-  csVector3 shift;
-  csVector3 topSize;
-  csVector3 bottomSize;
+    csColliderActor colliderActor;
 
-  // Try to find the collider for an object. Can return 0 if there is none.
-  // This function uses csColliderWrapper if present. If not it will try
-  // if there is a pcsolid to get a collider from.
-  iCollider* FindCollider (iObject* object);
-  
+    bool useCD;           ///< Enable collision detection flag.
+
+    //Collision vars
+    csVector3 shift;
+    csVector3 topSize;
+    csVector3 bottomSize;
+
+    // Try to find the collider for an object. Can return 0 if there is none.
+    // This function uses csColliderWrapper if present. If not it will try
+    // if there is a pcsolid to get a collider from.
+    iCollider* FindCollider(iObject* object);
+
 };
 
-#endif 
+#endif
 
