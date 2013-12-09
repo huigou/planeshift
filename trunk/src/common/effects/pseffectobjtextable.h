@@ -55,8 +55,8 @@ struct psEffectTextElement : public psEffectTextRow
 class psEffectObjTextable
 {
 public:
-    virtual bool SetText(const csArray<psEffectTextElement> & elements) = 0;
-    virtual bool SetText(const csArray<psEffectTextRow> & rows) = 0;
+    virtual bool SetText(const csArray<psEffectTextElement> &elements) = 0;
+    virtual bool SetText(const csArray<psEffectTextRow> &rows) = 0;
     virtual bool SetText(int rows, ...) = 0;
     virtual ~psEffectObjTextable() {};
 };

@@ -33,21 +33,21 @@ class psEffectObjMesh : public psEffectObj
 {
 public:
 
-    psEffectObjMesh(iView *parentView, psEffect2DRenderer * renderer2d);
+    psEffectObjMesh(iView* parentView, psEffect2DRenderer* renderer2d);
     ~psEffectObjMesh();
 
     // inheritted function overloads
-    bool Load(iDocumentNode *node, iLoaderContext * ldr_context);
+    bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     bool Render(const csVector3 &up);
     bool Update(csTicks elapsed);
-    psEffectObj *Clone() const;
+    psEffectObj* Clone() const;
 
 private:
 
     /** performs the post setup (after the effect obj has been loaded).
      *  Things like create mesh factory, etc are initialized here.
      */
-    bool PostSetup(iLoaderContext * ldr_context);
+    bool PostSetup(iLoaderContext* ldr_context);
 
     csString factName;
     csRef<iThreadReturn> factory;

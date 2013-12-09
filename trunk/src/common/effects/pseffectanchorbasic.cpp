@@ -33,7 +33,7 @@
 #include "util/log.h"
 
 psEffectAnchorBasic::psEffectAnchorBasic()
-                    :psEffectAnchor()
+    :psEffectAnchor()
 {
 }
 
@@ -41,32 +41,32 @@ psEffectAnchorBasic::~psEffectAnchorBasic()
 {
 }
 
-bool psEffectAnchorBasic::Load(iDocumentNode * node)
+bool psEffectAnchorBasic::Load(iDocumentNode* node)
 {
     // get the attributes
     name.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
     }
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect relative anchor with no name.\n");
         return false;
     }
-    
-    if (!psEffectAnchor::Load(node))
+
+    if(!psEffectAnchor::Load(node))
         return false;
 
     return true;
 }
 
-bool psEffectAnchorBasic::Create(const csVector3& offset, iMeshWrapper* /*posAttach*/, bool rotateWithMesh)
+bool psEffectAnchorBasic::Create(const csVector3 &offset, iMeshWrapper* /*posAttach*/, bool rotateWithMesh)
 {
     static unsigned long nextUniqueID = 0;
     csString anchorID = "effect_anchor_basic_";
@@ -77,10 +77,10 @@ bool psEffectAnchorBasic::Create(const csVector3& offset, iMeshWrapper* /*posAtt
     this->rotateWithMesh = rotateWithMesh;
 
     mesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", anchorID);
-        csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());
-    if (!state)
+    csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());
+    if(!state)
     {
-		Error1("No NullMeshState.");
+        Error1("No NullMeshState.");
         return false;
     }
     state->SetRadius(1.0);
@@ -92,20 +92,20 @@ bool psEffectAnchorBasic::Create(const csVector3& offset, iMeshWrapper* /*posAtt
 
 bool psEffectAnchorBasic::Update(csTicks elapsed)
 {
-    if (!psEffectAnchor::Update(elapsed))
+    if(!psEffectAnchor::Update(elapsed))
         return false;
-    
+
     // do stuff here
-    
+
     return true;
 }
 
-psEffectAnchor * psEffectAnchorBasic::Clone() const
+psEffectAnchor* psEffectAnchorBasic::Clone() const
 {
-    psEffectAnchorBasic * newObj = new psEffectAnchorBasic();
+    psEffectAnchorBasic* newObj = new psEffectAnchorBasic();
     CloneBase(newObj);
 
     // basic anchor specific
-    
+
     return newObj;
 }

@@ -40,8 +40,8 @@
 
 #define NUM_GLYPHS 256
 
-psEffectObjLabel::psEffectObjLabel(iView * parentView, psEffect2DRenderer * renderer2d)
-               : psEffectObj(parentView, renderer2d)
+psEffectObjLabel::psEffectObjLabel(iView* parentView, psEffect2DRenderer* renderer2d)
+    : psEffectObj(parentView, renderer2d)
 {
     meshFact = 0;
     mesh = 0;
@@ -59,55 +59,55 @@ psEffectObjLabel::psEffectObjLabel(iView * parentView, psEffect2DRenderer * rend
 
 psEffectObjLabel::~psEffectObjLabel()
 {
-    if( meshFact )
+    if(meshFact)
     {
         engine->RemoveObject(meshFact);
     }
-    if( mesh )
+    if(mesh)
     {
         engine->RemoveObject(mesh);
     }
     //printf("label destroyed\n");
 }
 
-bool psEffectObjLabel::Load(iDocumentNode *node, iLoaderContext* ldr_context)
-{	        
+bool psEffectObjLabel::Load(iDocumentNode* node, iLoaderContext* ldr_context)
+{
     // get the attributes
     name.Clear();
     materialName.Clear();
     sizeFileName.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
 
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
-        else if (attrName == "material")
+        else if(attrName == "material")
             materialName = attr->GetValue();
-        else if (attrName == "sizefile")
+        else if(attrName == "sizefile")
             sizeFileName = attr->GetValue();
-        else if (attrName == "labelwidth")
+        else if(attrName == "labelwidth")
             labelwidth = attr->GetValueAsFloat();
     }
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
     }
-    if (materialName.IsEmpty())
+    if(materialName.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no material.\n");
         return false;
     }
-    if (!sizeFileName.IsEmpty())
+    if(!sizeFileName.IsEmpty())
     {
         LoadGlyphs(sizeFileName);
-    } 
-    
-    if (!psEffectObj::Load(node, ldr_context))
+    }
+
+    if(!psEffectObj::Load(node, ldr_context))
     {
         return false;
     }
@@ -117,16 +117,16 @@ bool psEffectObjLabel::Load(iDocumentNode *node, iLoaderContext* ldr_context)
 
 void psEffectObjLabel::LoadGlyphs(csString filename)
 {
-    csRef<iVFS> vfs = csQueryRegistry<iVFS > ( psCSSetup::object_reg );
+    csRef<iVFS> vfs = csQueryRegistry<iVFS > (psCSSetup::object_reg);
     csRef<iDocumentSystem> xml = csQueryRegistry<iDocumentSystem> (psCSSetup::object_reg);
     csRef<iDocument> doc = xml->CreateDocument();
-    csRef<iDataBuffer> buf (vfs->ReadFile (filename));
-    if (!buf || !buf->GetSize ())
+    csRef<iDataBuffer> buf(vfs->ReadFile(filename));
+    if(!buf || !buf->GetSize())
     {
         return ;
     }
-    const char* error = doc->Parse( buf );
-    if ( error )
+    const char* error = doc->Parse(buf);
+    if(error)
     {
         Error2("Error loading glyphs file: %s", error);
         return ;
@@ -135,17 +135,18 @@ void psEffectObjLabel::LoadGlyphs(csString filename)
     csRef<iDocumentNodeIterator> iter = doc->GetRoot()->GetNode("glyphs")->GetNodes();
     int number;
 
-    while ( iter->HasNext() )
+    while(iter->HasNext())
     {
-        csRef<iDocumentNode> child = iter->Next(); if ( child->GetType() != CS_NODE_ELEMENT )
+        csRef<iDocumentNode> child = iter->Next();
+        if(child->GetType() != CS_NODE_ELEMENT)
             continue;
-        if (strcmp(child->GetValue(),"glyph"))
+        if(strcmp(child->GetValue(),"glyph"))
         {
             Error2("Unknown child %s encountered", child->GetValue());
             continue;
         }
         number = child->GetAttributeValueAsInt("id");
-        if (number < 0 || number >= NUM_GLYPHS)
+        if(number < 0 || number >= NUM_GLYPHS)
             continue;
         width[number] = child->GetAttributeValueAsInt("width");
         height[number] = child->GetAttributeValueAsInt("height");
@@ -170,13 +171,13 @@ bool psEffectObjLabel::CreateMeshFact()
     static unsigned int uniqueID = 0;
     csString facName = "effect_label_fac_";
     facName += uniqueID++;
-    
-    meshFact = engine->CreateMeshFactory ("crystalspace.mesh.object.genmesh", facName.GetData());
+
+    meshFact = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", facName.GetData());
     effectsCollection->Add(meshFact->QueryObject());
-    
-    iMeshObjectFactory * fact = meshFact->GetMeshObjectFactory();
+
+    iMeshObjectFactory* fact = meshFact->GetMeshObjectFactory();
     facState =  scfQueryInterface<iGeneralFactoryState> (fact);
-    if (!facState)
+    if(!facState)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't create genmesh: %s\n", name.GetData());
         return false;
@@ -184,7 +185,7 @@ bool psEffectObjLabel::CreateMeshFact()
 
     // setup the material
     csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
-    if (mat)
+    if(mat)
     {
         fact->SetMaterialWrapper(mat);
     }
@@ -192,15 +193,15 @@ bool psEffectObjLabel::CreateMeshFact()
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "No material for label mesh: %s\n", materialName.GetData());
     }
-    
+
 #if 0
     facState->SetVertexCount(4);
 
     // we have to set the vertices so that the quad actually gets rendered
-    facState->GetVertices()[0].Set( 0.5f, 0,  0.5f);
+    facState->GetVertices()[0].Set(0.5f, 0,  0.5f);
     facState->GetVertices()[1].Set(-0.5f, 0,  0.5f);
     facState->GetVertices()[2].Set(-0.5f, 0, -0.5f);
-    facState->GetVertices()[3].Set( 0.5f, 0, -0.5f);
+    facState->GetVertices()[3].Set(0.5f, 0, -0.5f);
     facState->GetTexels()[0].Set(5.0/8,4.0/16);
     facState->GetTexels()[1].Set(4.0/8,4.0/16);
     facState->GetTexels()[2].Set(4.0/8,5.0/16);
@@ -225,7 +226,7 @@ bool psEffectObjLabel::Render(const csVector3 &up)
 {
     //printf("label: render\n");
     if(!CreateMeshFact())
-      return false;
+        return false;
 
     objUp = up;
 
@@ -235,7 +236,7 @@ bool psEffectObjLabel::Render(const csVector3 &up)
 
     // create a mesh wrapper from the factory we just created
     mesh = engine->CreateMeshWrapper(meshFact, effectID.GetData());
-    if (!mesh)
+    if(!mesh)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't create meshwrapper in label effect\n");
         return false;
@@ -261,37 +262,37 @@ bool psEffectObjLabel::Render(const csVector3 &up)
     mesh->SetRenderPriority(priority);
 
     // disable culling
-    
-    csStringID viscull_id = globalStringSet->Request ("viscull");
+
+    csStringID viscull_id = globalStringSet->Request("viscull");
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 
     genState =  scfQueryInterface<iGeneralMeshState> (mesh->GetMeshObject());
 
     // obj specific
 
-    if (mixmode != CS_FX_ALPHA)
-      mesh->GetMeshObject()->SetMixMode(mixmode);  // to check
-      // genState->SetMixMode(mixmode); //was not working with latest CS
+    if(mixmode != CS_FX_ALPHA)
+        mesh->GetMeshObject()->SetMixMode(mixmode);  // to check
+    // genState->SetMixMode(mixmode); //was not working with latest CS
 
     return true;
 }
 
 bool psEffectObjLabel::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady())  // wait for anchor to be ready
         return true;
 
-    if (!psEffectObj::Update(elapsed))
+    if(!psEffectObj::Update(elapsed))
         return false;
 
     return true;
 }
 
-void psEffectObjLabel::CloneBase(psEffectObj * newObj) const
+void psEffectObjLabel::CloneBase(psEffectObj* newObj) const
 {
     psEffectObj::CloneBase(newObj);
 
-    psEffectObjLabel * newLabelObj = dynamic_cast<psEffectObjLabel *>(newObj);
+    psEffectObjLabel* newLabelObj = dynamic_cast<psEffectObjLabel*>(newObj);
 
     newLabelObj->materialName = materialName;
     newLabelObj->labelwidth = labelwidth;
@@ -305,25 +306,25 @@ void psEffectObjLabel::CloneBase(psEffectObj * newObj) const
     }
 }
 
-psEffectObj * psEffectObjLabel::Clone() const
+psEffectObj* psEffectObjLabel::Clone() const
 {
     //printf("label: cloning\n");
-    psEffectObjLabel * newObj = new psEffectObjLabel(view, renderer2d);
+    psEffectObjLabel* newObj = new psEffectObjLabel(view, renderer2d);
     CloneBase(newObj);
-    
+
     return newObj;
 }
 
-bool psEffectObjLabel::SetText(const csArray<psEffectTextElement>& /*elements*/)
+bool psEffectObjLabel::SetText(const csArray<psEffectTextElement> & /*elements*/)
 {
-   Error1("settext <array> not supported");
-   return false;
+    Error1("settext <array> not supported");
+    return false;
 }
 
-bool psEffectObjLabel::SetText(const csArray<psEffectTextRow>& /*rows*/)
+bool psEffectObjLabel::SetText(const csArray<psEffectTextRow> & /*rows*/)
 {
-   Error1("settext <textrow> not supported");
-   return false;
+    Error1("settext <textrow> not supported");
+    return false;
 }
 
 bool psEffectObjLabel::SetText(int rows, ...)
@@ -332,7 +333,7 @@ bool psEffectObjLabel::SetText(int rows, ...)
 
     static csArray<psEffectTextElement> elemBuffer;
     psEffectTextElement newElem;
-    psEffectTextRow * row = 0;
+    psEffectTextRow* row = 0;
     int y = 0;
 
     // calculate dimensions of text area
@@ -345,9 +346,9 @@ bool psEffectObjLabel::SetText(int rows, ...)
     va_start(arg, rows);
 
     // Loop through all rows
-    for (int a=0; a<rows; a++)
+    for(int a=0; a<rows; a++)
     {
-        row = va_arg(arg, psEffectTextRow *);
+        row = va_arg(arg, psEffectTextRow*);
 
         // Text and Formatting
         newElem.colour = row->colour;
@@ -360,16 +361,16 @@ bool psEffectObjLabel::SetText(int rows, ...)
         newElem.width = 0;
         newElem.height = 0;
         for(uint b=0; b<newElem.text.Length(); b++)
-        {     
-            
+        {
+
             if(newElem.text[b] >= NUM_GLYPHS)
             {
                 newElem.text[b] = 0;
                 Error2("UNSUPPORTED CHARACTERS: %s\n", newElem.text.GetData());
-            }     
+            }
 
             newElem.width += width[newElem.text[b]];
-            if( newElem.height < height[newElem.text[b]] )
+            if(newElem.height < height[newElem.text[b]])
             {
                 newElem.height = height[newElem.text[b]];
             }
@@ -383,20 +384,20 @@ bool psEffectObjLabel::SetText(int rows, ...)
         int right = newElem.x + newElem.width;
         int bottom = newElem.y + newElem.height;
 
-        if (right > maxWidth)
+        if(right > maxWidth)
             maxWidth = right;
-        if (bottom > maxHeight)
+        if(bottom > maxHeight)
             maxHeight = bottom;
     }
     va_end(arg);
 
     CS_ASSERT(facState!=0);
-    iMeshObjectFactory * fact = meshFact->GetMeshObjectFactory();
+    iMeshObjectFactory* fact = meshFact->GetMeshObjectFactory();
     int mw,mh;
     fact->GetMaterialWrapper()->GetMaterial()->GetTexture()->GetOriginalDimensions(mw, mh);
 
-    facState->SetVertexCount( (int)lettercount * 4 );
-    facState->SetTriangleCount( (int)lettercount * 2 );
+    facState->SetVertexCount((int)lettercount * 4);
+    facState->SetTriangleCount((int)lettercount * 2);
 
     size_t elementCount = elemBuffer.GetSize();
     int cp = 0;
@@ -404,8 +405,8 @@ bool psEffectObjLabel::SetText(int rows, ...)
     for(size_t i=0; i<elementCount; i++)
     {
         int x = elemBuffer[i].width;
-        
-        switch (elemBuffer[i].align)
+
+        switch(elemBuffer[i].align)
         {
             case ETA_LEFT:
                 x = maxWidth;
@@ -436,9 +437,9 @@ bool psEffectObjLabel::SetText(int rows, ...)
             fx2 = (float)(x+width[c]) * scalefactor - labelwidth/2.0;
             fy2 = (float)(maxHeight/2 - y + height[c]) * scalefactor;
             //printf("rendering char %d pos %d,%d w/h %d,%d xp/yp %d,%d - %f %f %f %f\n", cp/4, x, y, width[c], height[c], xpos[c], ypos[c], fx1, fy1, fx2, fy2);
-            facState->GetVertices()[cp  ].Set(fx2,0,fy1); 
-            facState->GetVertices()[cp+1].Set(fx1,0,fy1); 
-            facState->GetVertices()[cp+2].Set(fx1,0,fy2); 
+            facState->GetVertices()[cp  ].Set(fx2,0,fy1);
+            facState->GetVertices()[cp+1].Set(fx1,0,fy1);
+            facState->GetVertices()[cp+2].Set(fx1,0,fy2);
             facState->GetVertices()[cp+3].Set(fx2,0,fy2);
             //printf("character %c: x %d y %d w %d\n", c, xpos[c], ypos[c], width[c]);
             float fracx1 = (float)xpos[c] / mw;
@@ -446,22 +447,22 @@ bool psEffectObjLabel::SetText(int rows, ...)
             float fracx2 = (float)(xpos[c]+width[c]) / mw;
             float fracy2 = (float)(ypos[c]+height[c]) / mh;
             //printf("texels %c %d,%d - %f %f %f %f\n", text[j], xpos[c], ypos[c], fracx1, fracy1, fracx2, fracy2);
-            facState->GetTexels()[cp  ].Set( fracx2, fracy2 );
-            facState->GetTexels()[cp+1].Set( fracx1, fracy2 );
-            facState->GetTexels()[cp+2].Set( fracx1, fracy1 );
-            facState->GetTexels()[cp+3].Set( fracx2, fracy1 );
+            facState->GetTexels()[cp  ].Set(fracx2, fracy2);
+            facState->GetTexels()[cp+1].Set(fracx1, fracy2);
+            facState->GetTexels()[cp+2].Set(fracx1, fracy1);
+            facState->GetTexels()[cp+3].Set(fracx2, fracy1);
             facState->GetNormals()[0].Set(0,1,0);
             facState->GetNormals()[1].Set(0,1,0);
             facState->GetNormals()[2].Set(0,1,0);
             facState->GetNormals()[3].Set(0,1,0);
-            facState->GetTriangles()[(cp/2)  ].Set( cp  , cp+2, cp+3);
-            facState->GetTriangles()[(cp/2)+1].Set( cp+2, cp  , cp+1);
+            facState->GetTriangles()[(cp/2)  ].Set(cp  , cp+2, cp+3);
+            facState->GetTriangles()[(cp/2)+1].Set(cp+2, cp  , cp+1);
             cp += 4;
             x += width[c];
         }
         csVector3 color((float)((newElem.colour>>16) & 255)/255.0F,
-                      (float)((newElem.colour>> 8) & 255)/255.0F,
-                      (float)((newElem.colour    ) & 255)/255.0F);
+                        (float)((newElem.colour>> 8) & 255)/255.0F,
+                        (float)((newElem.colour) & 255)/255.0F);
         CS::ShaderVarStringID varName = stringSet->Request("color modulation");
         csShaderVariable* var = mesh->GetSVContext()->GetVariableAdd(varName);
         if(var)

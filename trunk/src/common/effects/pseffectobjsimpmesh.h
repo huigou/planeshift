@@ -32,14 +32,14 @@ class psEffectObjSimpMesh : public psEffectObj
 {
 public:
 
-    psEffectObjSimpMesh(iView *parentView, psEffect2DRenderer * renderer2d);
+    psEffectObjSimpMesh(iView* parentView, psEffect2DRenderer* renderer2d);
     ~psEffectObjSimpMesh();
 
     // inheritted function overloads
-    bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
+    bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     bool Render(const csVector3 &up);
     bool Update(csTicks elapsed);
-    psEffectObj *Clone() const;
+    psEffectObj* Clone() const;
 
 private:
 

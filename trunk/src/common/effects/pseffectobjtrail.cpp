@@ -38,8 +38,8 @@
 #include "util/log.h"
 #include "util/pscssetup.h"
 
-psEffectObjTrail::psEffectObjTrail(iView *parentView, psEffect2DRenderer * renderer2d)
-                : psEffectObj(parentView, renderer2d)
+psEffectObjTrail::psEffectObjTrail(iView* parentView, psEffect2DRenderer* renderer2d)
+    : psEffectObj(parentView, renderer2d)
 {
     vert = 0;
     colour = 0;
@@ -49,7 +49,7 @@ psEffectObjTrail::psEffectObjTrail(iView *parentView, psEffect2DRenderer * rende
 
     spline[0] = 0;
     spline[1] = 0;
-    
+
     meshControl.AttachNew(new MeshAnimControl(this));
 }
 
@@ -63,52 +63,52 @@ psEffectObjTrail::~psEffectObjTrail()
     delete spline[1];
 }
 
-bool psEffectObjTrail::Load(iDocumentNode *node, iLoaderContext* ldr_context)
+bool psEffectObjTrail::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
     // get the attributes
     name.Clear();
     materialName.Clear();
     segments = 10;
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
-        else if (attrName == "material")
+        else if(attrName == "material")
             materialName = attr->GetValue();
-        else if (attrName == "segments")
-        segments = attr->GetValueAsInt();
+        else if(attrName == "segments")
+            segments = attr->GetValueAsInt();
     }
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
     }
-    if (materialName.IsEmpty())
+    if(materialName.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj without a material.\n");
         return false;
     }
 
     csRef<iDocumentNode> dataNode;
-    
+
     // updatelen
     updateLen = 1000.0f;
     dataNode = node->GetNode("updatelen");
-    if (dataNode)
+    if(dataNode)
         updateLen = dataNode->GetContentsValueAsFloat();
 
     // middle
     dataNode = node->GetNode("middle");
-    if (dataNode)
+    if(dataNode)
         useMid = true;
     else
         useMid = false;
-    
-    if (!psEffectObj::Load(node, ldr_context))
+
+    if(!psEffectObj::Load(node, ldr_context))
         return false;
 
     return PostSetup();
@@ -137,7 +137,7 @@ bool psEffectObjTrail::Render(const csVector3 &up)
     mesh->SetRenderPriority(priority);
 
     // disable culling
-    csStringID viscull_id = globalStringSet->Request ("viscull");
+    csStringID viscull_id = globalStringSet->Request("viscull");
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 
     // obj specific
@@ -146,16 +146,16 @@ bool psEffectObjTrail::Render(const csVector3 &up)
     mesh->GetMeshObject()->SetColor(csColor(1,1,1)); // to check
     //genState->SetColor(csColor(1,1,1)); was not working with latest CS
 
-    if (mixmode != CS_FX_ALPHA)
-      mesh->GetMeshObject()->SetMixMode(mixmode);  // to check
-      //genState->SetMixMode(mixmode); was not working with latest CS
+    if(mixmode != CS_FX_ALPHA)
+        mesh->GetMeshObject()->SetMixMode(mixmode);  // to check
+    //genState->SetMixMode(mixmode); was not working with latest CS
 
-    genState->SetAnimationControl((iGenMeshAnimationControl *)meshControl);
+    genState->SetAnimationControl((iGenMeshAnimationControl*)meshControl);
 
     vert = new csVector3[segments*2+2];
     colour = new csColor4[segments*2+2];
     missingUpdate = new bool[segments+1];
-    for (int a=0; a<=segments; ++a)
+    for(int a=0; a<=segments; ++a)
         missingUpdate[a] = false;
 
     currSegment = 0;
@@ -170,22 +170,22 @@ bool psEffectObjTrail::Render(const csVector3 &up)
 
 bool psEffectObjTrail::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady())  // wait for anchor to be ready
         return true;
 
     life += elapsed;
-    if (life > animLength && killTime <= 0)
+    if(life > animLength && killTime <= 0)
     {
         life %= animLength;
-        if (!life)
+        if(!life)
             life += animLength;
     }
 
     isAlive |= (life >= birth);
 
-    if (!setMesh && isAlive)
+    if(!setMesh && isAlive)
     {
-        if (!anchorMesh)
+        if(!anchorMesh)
             return false;
 
         mesh->GetMovable()->SetSector(anchorMesh->GetMovable()->GetSectors()->Get(0));
@@ -194,14 +194,14 @@ bool psEffectObjTrail::Update(csTicks elapsed)
 
         setMesh = true;
     }
-    if (isAlive && anchorMesh && dir == DT_NONE)
+    if(isAlive && anchorMesh && dir == DT_NONE)
         matBase = anchorMesh->GetMovable()->GetFullTransform().GetT2O();
 
-    if (killTime > 0)
+    if(killTime > 0)
     {
         // age the effect obj
         killTime -= elapsed;
-        if (killTime <= 0)
+        if(killTime <= 0)
             return false;
     }
 
@@ -212,13 +212,13 @@ bool psEffectObjTrail::Update(csTicks elapsed)
     float height = 1.0f;
     alpha = 1.0f;
 
-    if (keyFrames->GetSize() > 0)
+    if(keyFrames->GetSize() > 0)
     {
         currKeyFrame = FindKeyFrameByTime(life);
         nextKeyFrame = currKeyFrame + 1;
-        if (nextKeyFrame >= keyFrames->GetSize())
+        if(nextKeyFrame >= keyFrames->GetSize())
             nextKeyFrame = 0;
-       
+
         // grab and lerp values
         float lerpfactor = LERP_FACTOR;
         rot = LERP_VEC_KEY(KA_ROT,lerpfactor);
@@ -232,18 +232,18 @@ bool psEffectObjTrail::Update(csTicks elapsed)
     matBase *= csZRotMatrix3(rot.z) * csYRotMatrix3(rot.y) * csXRotMatrix3(rot.x);
     csMatrix3 matRot = csZRotMatrix3(spin.z) * csYRotMatrix3(spin.y) * csXRotMatrix3(spin.x);
 
-    if (updateTotal < updateLen && currSegment <= segments)
+    if(updateTotal < updateLen && currSegment <= segments)
     {
         csVector3 offset = anchorMesh->GetMovable()->GetFullPosition() - mesh->GetMovable()->GetFullPosition();
 
         updateLeft -= elapsed;
         updateTotal += elapsed;
-        if (updateLeft <= 0.0f)
+        if(updateLeft <= 0.0f)
         {
             // calculate data
-            for (int a=currSegment; a<=segments; ++a)
+            for(int a=currSegment; a<=segments; ++a)
             {
-                if (useMid)
+                if(useMid)
                 {
                     vert[a*2  ].Set(offset + matBase * (posOffset + matRot * csVector3(0, height/2.0f,0)));
                     vert[a*2+1].Set(offset + matBase * (posOffset + matRot * csVector3(0,-height/2.0f,0)));
@@ -276,7 +276,7 @@ bool psEffectObjTrail::Update(csTicks elapsed)
             bool done = false;
             while(updateLeft <= 0.0f)
             {
-                if (done && currSegment <= segments)
+                if(done && currSegment <= segments)
                     missingUpdate[currSegment] = true;
                 done = true;
                 updateLeft += updateLen / (float)segments;
@@ -284,18 +284,18 @@ bool psEffectObjTrail::Update(csTicks elapsed)
             }
 
             // update missing points
-            for (int a=0; a<=segments; ++a)
+            for(int a=0; a<=segments; ++a)
             {
-                if (missingUpdate[a])
+                if(missingUpdate[a])
                 {
                     spline[0]->Calculate(a);
                     vert[a*2  ].Set(spline[0]->GetInterpolatedDimension(0),
                                     spline[0]->GetInterpolatedDimension(1),
-                                    spline[0]->GetInterpolatedDimension(2));                
+                                    spline[0]->GetInterpolatedDimension(2));
                     spline[1]->Calculate(a);
                     vert[a*2+1].Set(spline[1]->GetInterpolatedDimension(0),
                                     spline[1]->GetInterpolatedDimension(1),
-                                    spline[1]->GetInterpolatedDimension(2));                
+                                    spline[1]->GetInterpolatedDimension(2));
                 }
             }
         }
@@ -303,9 +303,9 @@ bool psEffectObjTrail::Update(csTicks elapsed)
     return true;
 }
 
-psEffectObj *psEffectObjTrail::Clone() const
+psEffectObj* psEffectObjTrail::Clone() const
 {
-    psEffectObjTrail * newObj = new psEffectObjTrail(view, renderer2d);
+    psEffectObjTrail* newObj = new psEffectObjTrail(view, renderer2d);
     CloneBase(newObj);
 
     // trail specific
@@ -321,7 +321,7 @@ bool psEffectObjTrail::PostSetup()
     static unsigned int uniqueID = 0;
     csString facName = "effect_trail_fac_";
     facName += uniqueID++;
-    meshFact = engine->CreateMeshFactory ("crystalspace.mesh.object.genmesh", facName.GetData());
+    meshFact = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", facName.GetData());
     effectsCollection->Add(meshFact->QueryObject());
 
     // create the actual sprite3d data
@@ -330,7 +330,7 @@ bool psEffectObjTrail::PostSetup()
 
     // setup the material
     csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
-    if (!mat)
+    if(!mat)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't find effect material: %s\n", materialName.GetData());
         return false;
@@ -338,7 +338,7 @@ bool psEffectObjTrail::PostSetup()
     fact->SetMaterialWrapper(mat);
 
     facState->SetVertexCount(2*segments+2);
-    for (int b=0; b<=segments; ++b)
+    for(int b=0; b<=segments; ++b)
     {
         facState->GetVertices()[b*2  ].Set(0, 1, (float)b / (float)segments);
         facState->GetVertices()[b*2+1].Set(0, 0, (float)b / (float)segments);
@@ -348,11 +348,11 @@ bool psEffectObjTrail::PostSetup()
     }
 
     animLength = 10;
-    if (keyFrames->GetSize() > 0)
+    if(keyFrames->GetSize() > 0)
         animLength += keyFrames->Get(keyFrames->GetSize()-1)->time;
 
     facState->SetTriangleCount(4*segments);
-    for (int q=0; q<segments; ++q)
+    for(int q=0; q<segments; ++q)
     {
         facState->GetTriangles()[q*4  ].Set(q*2, q*2+1, q*2+2);
         facState->GetTriangles()[q*4+1].Set(q*2, q*2+2, q*2+1);
@@ -364,13 +364,13 @@ bool psEffectObjTrail::PostSetup()
 }
 
 const csVector3* psEffectObjTrail::MeshAnimControl::UpdateVertices(csTicks /*current*/, const csVector3* /*verts*/,
-                                                                   int /*num_verts*/, uint32 /*version_id*/)
+        int /*num_verts*/, uint32 /*version_id*/)
 {
     return parent->vert;
 }
 
 const csColor4* psEffectObjTrail::MeshAnimControl::UpdateColors(csTicks /*current*/, const csColor4* /*colors*/,
-                                                                int /*num_colors*/, uint32 /*version_id*/)
+        int /*num_colors*/, uint32 /*version_id*/)
 {
     return parent->colour;
 }

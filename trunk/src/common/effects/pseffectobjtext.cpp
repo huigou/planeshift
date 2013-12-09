@@ -41,24 +41,24 @@
 
 #define TEXT_BUFFER 5
 
-psEffectObjText::psEffectObjText(iView * parentView, psEffect2DRenderer * renderer2d)
-               : psEffectObjQuad(parentView, renderer2d)
+psEffectObjText::psEffectObjText(iView* parentView, psEffect2DRenderer* renderer2d)
+    : psEffectObjQuad(parentView, renderer2d)
 {
 }
 
 psEffectObjText::~psEffectObjText()
 {
-    if (meshFact)
+    if(meshFact)
         engine->RemoveObject(meshFact);
 
-    if (generatedMat)
+    if(generatedMat)
         engine->RemoveObject(generatedMat);
 
-    if (generatedTex)
+    if(generatedTex)
         engine->RemoveObject(generatedTex);
 }
 
-bool psEffectObjText::SetText(const csArray<psEffectTextElement> & elements)
+bool psEffectObjText::SetText(const csArray<psEffectTextElement> &elements)
 {
     size_t elementCount = elements.GetSize();
     size_t a;
@@ -66,26 +66,26 @@ bool psEffectObjText::SetText(const csArray<psEffectTextElement> & elements)
     static unsigned int uniqueID = 0;
     csString matName = "effect_text_mat_";
     matName += uniqueID++;
-  
+
     // delete the old material
-    if (generatedMat)
+    if(generatedMat)
         engine->RemoveObject(generatedMat);
 
-    if (generatedTex)
+    if(generatedTex)
         engine->RemoveObject(generatedTex);
-    
+
     // calculate dimensions of text area
     int maxWidth = 0;
     int maxHeight = 0;
 
-    for (a=0; a<elementCount; ++a)
+    for(a=0; a<elementCount; ++a)
     {
         int right = elements[a].x + elements[a].width;
         int bottom = elements[a].y + elements[a].height;
 
-        if (right > maxWidth)
+        if(right > maxWidth)
             maxWidth = right;
-        if (bottom > maxHeight)
+        if(bottom > maxHeight)
             maxHeight = bottom;
     }
 
@@ -114,28 +114,28 @@ bool psEffectObjText::SetText(const csArray<psEffectTextElement> & elements)
     g3d->BeginDraw(CSDRAW_2DGRAPHICS);
 
     // initialize background
-    g2d->DrawBox(0, 0, texPO2Width, texPO2Height, g2d->FindRGB (51, 51, 254));
-    
+    g2d->DrawBox(0, 0, texPO2Width, texPO2Height, g2d->FindRGB(51, 51, 254));
+
     // draw all the text elements
-    for (a=0; a<elementCount; ++a)
+    for(a=0; a<elementCount; ++a)
         DrawTextElement(elements[a]);
 
     g3d->FinishDraw();
     return true;
 }
 
-bool psEffectObjText::SetText(const csArray<psEffectTextRow> & rows)
+bool psEffectObjText::SetText(const csArray<psEffectTextRow> &rows)
 {
     const size_t len = rows.GetSize();
     static csArray<psEffectTextElement> elemBuffer;
     psEffectTextElement newElem;
-    const psEffectTextRow * row = 0;
+    const psEffectTextRow* row = 0;
     int y = 0;
 
     elemBuffer.Empty();
 
     // Loop through all rows
-    for (size_t a=0; a<len; ++a)
+    for(size_t a=0; a<len; ++a)
     {
         row = &rows[a];
 
@@ -157,7 +157,7 @@ bool psEffectObjText::SetText(const csArray<psEffectTextRow> & rows)
     }
 
     // draw the batch of text elements
-    if (SetText(elemBuffer))
+    if(SetText(elemBuffer))
     {
         mesh->GetMeshObject()->SetMaterialWrapper(generatedMat);
         return true;
@@ -169,7 +169,7 @@ bool psEffectObjText::SetText(int rows, ...)
 {
     static csArray<psEffectTextElement> elemBuffer;
     psEffectTextElement newElem;
-    psEffectTextRow * row = 0;
+    psEffectTextRow* row = 0;
 
     elemBuffer.Empty();
 
@@ -181,7 +181,7 @@ bool psEffectObjText::SetText(int rows, ...)
     // Loop through all rows
     for(int i = 0; i < rows; i++)
     {
-        row = va_arg(arg, psEffectTextRow *);
+        row = va_arg(arg, psEffectTextRow*);
 
         // Text and Formatting
         newElem.colour = row->colour;
@@ -202,7 +202,7 @@ bool psEffectObjText::SetText(int rows, ...)
     va_end(arg);
 
     // draw the batch of text elements
-    if (SetText(elemBuffer))
+    if(SetText(elemBuffer))
     {
         mesh->GetMeshObject()->SetMaterialWrapper(generatedMat);
         return true;
@@ -210,7 +210,7 @@ bool psEffectObjText::SetText(int rows, ...)
     return false;
 }
 
-bool psEffectObjText::Load(iDocumentNode * node, iLoaderContext* ldr_context)
+bool psEffectObjText::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
     // default text attributes
     fontName = "/this/data/ttf/LiberationSans-Regular.ttf";
@@ -218,27 +218,27 @@ bool psEffectObjText::Load(iDocumentNode * node, iLoaderContext* ldr_context)
 
     // read text attributes
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
 
-        if (attrName == "font")
+        if(attrName == "font")
             fontName = attr->GetValue();
-        else if (attrName == "fontquality")
+        else if(attrName == "fontquality")
             fontSize = attr->GetValueAsInt();
     }
 
-    if (!psEffectObjQuad::Load(node, ldr_context))
-      return false;
+    if(!psEffectObjQuad::Load(node, ldr_context))
+        return false;
 
     return true;
 }
 
-psEffectObj * psEffectObjText::Clone() const
+psEffectObj* psEffectObjText::Clone() const
 {
-    psEffectObjText * newObj = new psEffectObjText(view, renderer2d);
+    psEffectObjText* newObj = new psEffectObjText(view, renderer2d);
     CloneBase(newObj);
 
     newObj->g3d = g3d;
@@ -254,12 +254,12 @@ psEffectObj * psEffectObjText::Clone() const
 
 bool psEffectObjText::PostSetup()
 {
-    if (!psEffectObjQuad::PostSetup())
-      return false;
+    if(!psEffectObjQuad::PostSetup())
+        return false;
 
     // get reference to iGraphics3D and iGraphics2D
     g3d =  csQueryRegistry<iGraphics3D> (psCSSetup::object_reg);
-    if (!g3d)
+    if(!g3d)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't get iGraphics3D plugin!");
         return false;
@@ -268,7 +268,7 @@ bool psEffectObjText::PostSetup()
 
     // get reference to texture manager
     txtmgr = g3d->GetTextureManager();
-    if (!txtmgr)
+    if(!txtmgr)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't get iTextureManager!");
         return false;
@@ -280,11 +280,11 @@ bool psEffectObjText::PostSetup()
     return true;
 }
 
-void psEffectObjText::DrawTextElement(const psEffectTextElement & element)
+void psEffectObjText::DrawTextElement(const psEffectTextElement &element)
 {
     int x = 0;
     bool antiAlias = false;
-    switch (element.align)
+    switch(element.align)
     {
         case ETA_LEFT:
             x = TEXT_BUFFER;
@@ -298,8 +298,8 @@ void psEffectObjText::DrawTextElement(const psEffectTextElement & element)
     }
 
     int y = TEXT_BUFFER + element.y;
-    const char * text = element.text;
-    if (element.hasOutline)
+    const char* text = element.text;
+    if(element.hasOutline)
     {
         // so, um, change this
         g2d->Write(font, x,   y-2, element.outlineColour, -1, text, (antiAlias ? 0 : CS_WRITE_NOANTIALIAS));
@@ -312,7 +312,7 @@ void psEffectObjText::DrawTextElement(const psEffectTextElement & element)
         g2d->Write(font, x-2, y-2, element.outlineColour, -1, text, (antiAlias ? 0 : CS_WRITE_NOANTIALIAS));
     }
 
-    if (element.hasShadow)
+    if(element.hasShadow)
         g2d->Write(font, x+2, y+2, element.shadowColour, -1, text, (antiAlias ? 0 : CS_WRITE_NOANTIALIAS));
 
     g2d->Write(font, x, y, element.colour, -1, text, (antiAlias ? 0 : CS_WRITE_NOANTIALIAS));

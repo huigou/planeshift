@@ -36,10 +36,10 @@ public:
     ~psEffectAnchorSpline();
 
     // inheritted function overloads
-    bool Load(iDocumentNode * node);
-    bool Create(const csVector3 & offset, iMeshWrapper * posAttach, bool rotateWithMesh = false);
+    bool Load(iDocumentNode* node);
+    bool Create(const csVector3 &offset, iMeshWrapper* posAttach, bool rotateWithMesh = false);
     bool Update(csTicks elapsed);
-    psEffectAnchor * Clone() const;
+    psEffectAnchor* Clone() const;
 
     /** Performs things like building the spline from the keyframes.
      *   @return true on success, false otherwise
@@ -48,7 +48,7 @@ public:
 
 private:
 
-    csCatmullRomSpline * spline;
+    csCatmullRomSpline* spline;
 };
 
 /** @} */

@@ -36,31 +36,55 @@ public:
     {
     private:
         psEffectObjStar* parent;
-                        
-      public:
+
+    public:
         // genmesh animation control
-        bool AnimatesVertices() const { return true; }
-        bool AnimatesTexels() const { return false; }
-        bool AnimatesNormals() const { return false; }
-        bool AnimatesColors()const { return true; }
-        bool AnimatesBBoxRadius () const { return false; }
-      
-        MeshAnimControl ( psEffectObjStar* parent ) : scfImplementationType (this)
+        bool AnimatesVertices() const
+        {
+            return true;
+        }
+        bool AnimatesTexels() const
+        {
+            return false;
+        }
+        bool AnimatesNormals() const
+        {
+            return false;
+        }
+        bool AnimatesColors()const
+        {
+            return true;
+        }
+        bool AnimatesBBoxRadius() const
+        {
+            return false;
+        }
+
+        MeshAnimControl(psEffectObjStar* parent) : scfImplementationType(this)
         {
             this->parent = parent;
         }
-        virtual ~MeshAnimControl ()
+        virtual ~MeshAnimControl()
         {
             parent = 0;
         }
-        
+
         void Update(csTicks /*elapsed*/, int /*num_verts*/, uint32 /*version_id*/)
         {
         }
 
-        const csBox3& UpdateBoundingBox (csTicks /*current*/, uint32 /*version_id*/, const csBox3& bbox) { return bbox; }
-        const float UpdateRadius (csTicks /*current*/, uint32 /*version_id*/, const float radius) { return radius; }
-        const csBox3* UpdateBoundingBoxes (csTicks /*current*/, uint32 /*version_id*/) { return nullptr; }
+        const csBox3 &UpdateBoundingBox(csTicks /*current*/, uint32 /*version_id*/, const csBox3 &bbox)
+        {
+            return bbox;
+        }
+        const float UpdateRadius(csTicks /*current*/, uint32 /*version_id*/, const float radius)
+        {
+            return radius;
+        }
+        const csBox3* UpdateBoundingBoxes(csTicks /*current*/, uint32 /*version_id*/)
+        {
+            return nullptr;
+        }
         const csVector3* UpdateVertices(csTicks current, const csVector3* verts, int num_verts, uint32 version_id);
         const csVector2* UpdateTexels(csTicks /*current*/, const csVector2* texels,
                                       int /*num_texels*/, uint32 /*version_id*/)
@@ -72,20 +96,20 @@ public:
         {
             return normals;
         }
-        const csColor4* UpdateColors(csTicks current, const csColor4* colors, int num_colors, uint32 version_id);        
+        const csColor4* UpdateColors(csTicks current, const csColor4* colors, int num_colors, uint32 version_id);
     };
     csRef<MeshAnimControl> meshControl;
     friend struct MeshAnimControl;
-    
-    psEffectObjStar(iView *parentView, psEffect2DRenderer * renderer2d);
+
+    psEffectObjStar(iView* parentView, psEffect2DRenderer* renderer2d);
     ~psEffectObjStar();
 
     // inheritted function overloads
-    bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
+    bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     bool Render(const csVector3 &up);
     bool Update(csTicks elapsed);
-    psEffectObj *Clone() const;
-    
+    psEffectObj* Clone() const;
+
 private:
 
     /** Creates rays for each segment using random directions.
@@ -101,11 +125,11 @@ private:
 
     int segments;
 
-    csVector3 * rays;
-    csVector3 * perp;
+    csVector3* rays;
+    csVector3* perp;
 
-    csVector3 * vert;
-    csColor4 *  colour;
+    csVector3* vert;
+    csColor4*   colour;
 };
 
 /** @} */

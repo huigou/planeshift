@@ -34,8 +34,8 @@
 #include "util/pscssetup.h"
 
 // keep track of the interpolation types for each key frame
-const int lerpTypes[psEffectAnchorKeyFrame::KA_COUNT] = 
-{ 
+const int lerpTypes[psEffectAnchorKeyFrame::KA_COUNT] =
+{
     psEffectAnchorKeyFrame::IT_NONE,  /* BLANK */
     psEffectAnchorKeyFrame::IT_LERP,  /* POS_X */
     psEffectAnchorKeyFrame::IT_LERP,  /* POS_Y */
@@ -45,75 +45,75 @@ const int lerpTypes[psEffectAnchorKeyFrame::KA_COUNT] =
     psEffectAnchorKeyFrame::IT_LERP,  /* TOTARGET_Z */
 };
 
-psEffectAnchorKeyFrame::psEffectAnchorKeyFrame() 
-                       :specAction(KA_COUNT)
+psEffectAnchorKeyFrame::psEffectAnchorKeyFrame()
+    :specAction(KA_COUNT)
 {
     specAction.Clear();
     SetDefaults();
 }
 
-psEffectAnchorKeyFrame::psEffectAnchorKeyFrame(iDocumentNode * node, const psEffectAnchorKeyFrame * prevKeyFrame) 
-                       :specAction(KA_COUNT)
+psEffectAnchorKeyFrame::psEffectAnchorKeyFrame(iDocumentNode* node, const psEffectAnchorKeyFrame* prevKeyFrame)
+    :specAction(KA_COUNT)
 {
     specAction.Clear();
-    
+
     csRef<iDocumentNodeIterator> xmlbinds;
-    
+
     time = atof(node->GetAttributeValue("time"));
 
     xmlbinds = node->GetNodes("action");
     csRef<iDocumentNode> keyNode;
     csRef<iDocumentAttribute> attr;
-    
-    if (!prevKeyFrame)
+
+    if(!prevKeyFrame)
         SetupFirstFrame();
 
     // set default values, if these are wrong then they'll be replaced on the second (lerp) pass
     SetDefaults();
 
-    while (xmlbinds->HasNext())
+    while(xmlbinds->HasNext())
     {
         keyNode = xmlbinds->Next();
         csString action = keyNode->GetAttributeValue("name");
         action.Downcase();
-        
-        if (action == "position")
+
+        if(action == "position")
         {
             attr = keyNode->GetAttribute("x");
-            if (attr)
+            if(attr)
             {
                 specAction.SetBit(KA_POS_X);
                 actions[KA_POS_X] = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("y");
-            if (attr)
+            if(attr)
             {
                 specAction.SetBit(KA_POS_Y);
                 actions[KA_POS_Y] = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("z");
-            if (attr)
+            if(attr)
             {
                 specAction.SetBit(KA_POS_Z);
                 actions[KA_POS_Z] = attr->GetValueAsFloat();
             }
         }
-        else if (action == "totarget")
+        else if(action == "totarget")
         {
             attr = keyNode->GetAttribute("x");
-            if (attr)
+            if(attr)
             {
                 specAction.SetBit(KA_TOTARGET_X);
                 actions[KA_TOTARGET_X] = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("y");
-            if (attr)
+            if(attr)
             {
                 specAction.SetBit(KA_TOTARGET_Y);
                 actions[KA_TOTARGET_Y] = attr->GetValueAsFloat();
             }
             attr = keyNode->GetAttribute("z");
-            if (attr)
+            if(attr)
             {
                 specAction.SetBit(KA_TOTARGET_Z);
                 actions[KA_TOTARGET_Z] = attr->GetValueAsFloat();
@@ -162,7 +162,7 @@ psEffectAnchor::psEffectAnchor()
     objOffset = csVector3(0,0,0);
     posTransf.Identity();
     targetTransf.Identity();
-    
+
     dir = DT_NONE;
 
     keyFrames.AttachNew(new psEffectAnchorKeyFrameGroup);
@@ -175,36 +175,36 @@ psEffectAnchor::psEffectAnchor()
 
 psEffectAnchor::~psEffectAnchor()
 {
-    if (mesh)
+    if(mesh)
         engine->RemoveObject(mesh);
 }
 
-bool psEffectAnchor::Load(iDocumentNode *node)
+bool psEffectAnchor::Load(iDocumentNode* node)
 {
     name = node->GetAttributeValue("name");
-    
+
     csRef<iDocumentNode> dataNode;
-    
+
     // direction
     dataNode = node->GetNode("dir");
     dir = DT_NONE;
-    if (dataNode)
+    if(dataNode)
     {
         SetDirectionType(dataNode->GetContentsValue());
     }
-    
+
     // KEYFRAMES
     csRef<iDocumentNodeIterator> xmlbinds;
     xmlbinds = node->GetNodes("keyFrame");
     csRef<iDocumentNode> keyNode;
 
     animLength = 0;
-    psEffectAnchorKeyFrame * prevKeyFrame = 0;
-    while (xmlbinds->HasNext())
+    psEffectAnchorKeyFrame* prevKeyFrame = 0;
+    while(xmlbinds->HasNext())
     {
         keyNode = xmlbinds->Next();
-        psEffectAnchorKeyFrame * keyFrame = new psEffectAnchorKeyFrame(keyNode, prevKeyFrame);
-        if (keyFrame->time > animLength)
+        psEffectAnchorKeyFrame* keyFrame = new psEffectAnchorKeyFrame(keyNode, prevKeyFrame);
+        if(keyFrame->time > animLength)
             animLength = keyFrame->time;
         prevKeyFrame = keyFrame;
         keyFrames->Push(keyFrame);
@@ -218,43 +218,43 @@ bool psEffectAnchor::Load(iDocumentNode *node)
     return true;
 }
 
-bool psEffectAnchor::Create(const csVector3& /*offset*/, iMeshWrapper* /*posAttach*/, bool /*rotateWithMesh*/)
+bool psEffectAnchor::Create(const csVector3 & /*offset*/, iMeshWrapper* /*posAttach*/, bool /*rotateWithMesh*/)
 {
     return false;
 }
 
 bool psEffectAnchor::Update(csTicks elapsed)
 {
-    if (animLength < 10)
+    if(animLength < 10)
         animLength = 10;
 
     life += (float)elapsed;
-    if (life > animLength)
+    if(life > animLength)
         life = fmod(life,animLength);
-    if (!life)
+    if(!life)
         life += animLength;
 
-    if (keyFrames->GetSize() == 0)
+    if(keyFrames->GetSize() == 0)
         return true;
 
     currKeyFrame = FindKeyFrameByTime(life);
     nextKeyFrame = currKeyFrame+1;
-    if (nextKeyFrame >= keyFrames->GetSize())
+    if(nextKeyFrame >= keyFrames->GetSize())
         nextKeyFrame = 0;
 
     // TOTARGET
     objTargetOffset = lerpVec(
-            csVector3(keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_X],
-                      keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Y],
-                      keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Z]),
-            csVector3(keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_X],
-                      keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Y],
-                      keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Z]),
-            keyFrames->Get(currKeyFrame)->time, keyFrames->Get(nextKeyFrame)->time, life);
-    
+                          csVector3(keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_X],
+                                    keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Y],
+                                    keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Z]),
+                          csVector3(keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_X],
+                                    keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Y],
+                                    keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Z]),
+                          keyFrames->Get(currKeyFrame)->time, keyFrames->Get(nextKeyFrame)->time, life);
+
     TransformOffset(objTargetOffset);
 
-    
+
     // POSITION
     objOffset = lerpVec(csVector3(keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_POS_X],
                                   keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_POS_Y],
@@ -263,14 +263,14 @@ bool psEffectAnchor::Update(csTicks elapsed)
                                   keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_POS_Y],
                                   keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_POS_Z]),
                         keyFrames->Get(currKeyFrame)->time, keyFrames->Get(nextKeyFrame)->time, life);
-    
+
     // adjust position by direction if there is one
-    if (dir == DT_TARGET)
+    if(dir == DT_TARGET)
         objOffset = targetTransf * csVector3(-objOffset.x, objOffset.y, -objOffset.z);
-    else if (dir == DT_ORIGIN)
+    else if(dir == DT_ORIGIN)
         objOffset = posTransf * csVector3(-objOffset.x, objOffset.y, -objOffset.z);
-        
-    
+
+
     mesh->GetMovable()->SetPosition(objEffectPos + objBasePos + objTargetOffset + objOffset);
     //mesh->GetMovable()->SetTransform(matBase);
     mesh->GetMovable()->UpdateMove();
@@ -278,7 +278,7 @@ bool psEffectAnchor::Update(csTicks elapsed)
     return true;
 }
 
-void psEffectAnchor::CloneBase(psEffectAnchor * newAnchor) const
+void psEffectAnchor::CloneBase(psEffectAnchor* newAnchor) const
 {
     newAnchor->name = name;
     newAnchor->life = 0;
@@ -290,17 +290,17 @@ void psEffectAnchor::CloneBase(psEffectAnchor * newAnchor) const
     newAnchor->keyFrames = keyFrames;
 }
 
-psEffectAnchor * psEffectAnchor::Clone() const
+psEffectAnchor* psEffectAnchor::Clone() const
 {
-    psEffectAnchor * newObj = new psEffectAnchor();
+    psEffectAnchor* newObj = new psEffectAnchor();
     CloneBase(newObj);
 
-    return newObj; 
+    return newObj;
 }
 
-void psEffectAnchor::SetPosition(const csVector3 & basePos, iSector * sector, const csMatrix3 & transf)
+void psEffectAnchor::SetPosition(const csVector3 &basePos, iSector* sector, const csMatrix3 &transf)
 {
-    if (sector)
+    if(sector)
     {
         objEffectPos = basePos;
         posTransf = transf;
@@ -313,9 +313,9 @@ void psEffectAnchor::SetPosition(const csVector3 & basePos, iSector * sector, co
     }
 }
 
-void psEffectAnchor::SetPosition(const csVector3 & basePos, iSectorList * sectors, const csMatrix3 & transf)
+void psEffectAnchor::SetPosition(const csVector3 &basePos, iSectorList* sectors, const csMatrix3 &transf)
 {
-    if (sectors)
+    if(sectors)
     {
         objEffectPos = basePos;
         posTransf = transf;
@@ -326,14 +326,14 @@ void psEffectAnchor::SetPosition(const csVector3 & basePos, iSectorList * sector
         mesh->GetMovable()->SetPosition(objEffectPos + posTransf*objBasePos + objTargetOffset + objOffset);
         mesh->GetMovable()->GetSectors()->RemoveAll();
         mesh->GetMovable()->SetSector(sectors->Get(0));
-        for (int a=1; a<sectors->GetCount(); ++a)
+        for(int a=1; a<sectors->GetCount(); ++a)
             mesh->GetMovable()->GetSectors()->Add(sectors->Get(a));
     }
 }
 
-void psEffectAnchor::TransformOffset(csVector3 & offset)
+void psEffectAnchor::TransformOffset(csVector3 &offset)
 {
-    if (offset.x != 0 || offset.y != 0 || offset.z != 0)
+    if(offset.x != 0 || offset.y != 0 || offset.z != 0)
     {
         // distance scale
         float tarDiff = -(target - objEffectPos).Norm();
@@ -344,36 +344,36 @@ void psEffectAnchor::TransformOffset(csVector3 & offset)
     }
 }
 
-const char * psEffectAnchor::GetDirectionType() const
+const char* psEffectAnchor::GetDirectionType() const
 {
-    switch (dir)
+    switch(dir)
     {
-    case DT_TARGET:
-        return "target";
-    case DT_ORIGIN:
-        return "origin";
+        case DT_TARGET:
+            return "target";
+        case DT_ORIGIN:
+            return "origin";
     }
     return "none";
 }
 
-void psEffectAnchor::SetDirectionType(const char * newDir)
+void psEffectAnchor::SetDirectionType(const char* newDir)
 {
     csString dirName = newDir;
     dirName.Downcase();
-    if (dirName == "target")
+    if(dirName == "target")
         dir = DT_TARGET;
-    else if (dirName == "origin")
+    else if(dirName == "origin")
         dir = DT_ORIGIN;
-    else if (dirName == "none")
+    else if(dirName == "none")
         dir = DT_NONE;
 }
 
 size_t psEffectAnchor::AddKeyFrame(float time)
 {
-    psEffectAnchorKeyFrame * newKeyFrame = new psEffectAnchorKeyFrame();
+    psEffectAnchorKeyFrame* newKeyFrame = new psEffectAnchorKeyFrame();
 
     // if there are no other keys then this is the first frame.
-    if (keyFrames->GetSize() == 0)
+    if(keyFrames->GetSize() == 0)
         newKeyFrame->SetupFirstFrame();
 
     newKeyFrame->time = time;
@@ -387,9 +387,9 @@ size_t psEffectAnchor::AddKeyFrame(float time)
 
 size_t psEffectAnchor::FindKeyFrameByTime(float time) const
 {
-    for ( size_t a = keyFrames->GetSize(); a-- > 0; )
+    for(size_t a = keyFrames->GetSize(); a-- > 0;)
     {
-        if (keyFrames->Get(a)->time < time)
+        if(keyFrames->Get(a)->time < time)
             return a;
     }
     return 0;
@@ -397,9 +397,9 @@ size_t psEffectAnchor::FindKeyFrameByTime(float time) const
 
 bool psEffectAnchor::FindNextKeyFrameWithAction(size_t startFrame, size_t action, size_t &index) const
 {
-    for (size_t a=startFrame; a<keyFrames->GetSize(); a++)
+    for(size_t a=startFrame; a<keyFrames->GetSize(); a++)
     {
-        if (a == 0 || keyFrames->Get(a)->specAction.IsBitSet(action))
+        if(a == 0 || keyFrames->Get(a)->specAction.IsBitSet(action))
         {
             index = a;
             return true;
@@ -413,12 +413,12 @@ void psEffectAnchor::FillInLerps()
     // this code is crap, but doing it this way allows everything else to be decently nice, clean, and efficient
     size_t a,b,nextIndex;
 
-    for (size_t k=0; k<psEffectAnchorKeyFrame::KA_COUNT; ++k)
+    for(size_t k=0; k<psEffectAnchorKeyFrame::KA_COUNT; ++k)
     {
         a = 0;
-        while (FindNextKeyFrameWithAction(a+1, k, nextIndex))
+        while(FindNextKeyFrameWithAction(a+1, k, nextIndex))
         {
-            for (b=a+1; b<nextIndex; ++b)
+            for(b=a+1; b<nextIndex; ++b)
             {
                 switch(lerpTypes[k])
                 {
@@ -429,11 +429,11 @@ void psEffectAnchor::FillInLerps()
                         keyFrames->Get(b)->actions[k] = keyFrames->Get(nextIndex)->actions[k];
                         break;
                     case psEffectAnchorKeyFrame::IT_LERP:
-                        keyFrames->Get(b)->actions[k] = lerp(keyFrames->Get(a)->actions[k], 
-                                keyFrames->Get(nextIndex)->actions[k], 
-                                keyFrames->Get(a)->time,
-                                keyFrames->Get(nextIndex)->time,
-                                keyFrames->Get(b)->time);
+                        keyFrames->Get(b)->actions[k] = lerp(keyFrames->Get(a)->actions[k],
+                                                             keyFrames->Get(nextIndex)->actions[k],
+                                                             keyFrames->Get(a)->time,
+                                                             keyFrames->Get(nextIndex)->time,
+                                                             keyFrames->Get(b)->time);
                         break;
                 }
             }
@@ -441,9 +441,9 @@ void psEffectAnchor::FillInLerps()
         }
 
         // no matter what the interpolation type (as long as we have one), just clamp the end
-        if (lerpTypes[k] != psEffectAnchorKeyFrame::IT_NONE)
+        if(lerpTypes[k] != psEffectAnchorKeyFrame::IT_NONE)
         {
-            for (b=a+1; b<keyFrames->GetSize(); ++b)
+            for(b=a+1; b<keyFrames->GetSize(); ++b)
                 keyFrames->Get(b)->actions[k] = keyFrames->Get(a)->actions[k];
         }
     }

@@ -36,15 +36,15 @@
 #include "util/log.h"
 #include "util/pscssetup.h"
 
-psEffectObjStar::psEffectObjStar(iView * parentView, psEffect2DRenderer * renderer2d)
-                : psEffectObj(parentView, renderer2d)
+psEffectObjStar::psEffectObjStar(iView* parentView, psEffect2DRenderer* renderer2d)
+    : psEffectObj(parentView, renderer2d)
 {
     rays = 0;
     perp = 0;
 
     vert = 0;
     colour = 0;
-    meshControl.AttachNew(new MeshAnimControl(this));    
+    meshControl.AttachNew(new MeshAnimControl(this));
 }
 
 psEffectObjStar::~psEffectObjStar()
@@ -56,37 +56,37 @@ psEffectObjStar::~psEffectObjStar()
     delete [] colour;
 }
 
-bool psEffectObjStar::Load(iDocumentNode *node, iLoaderContext* ldr_context)
+bool psEffectObjStar::Load(iDocumentNode* node, iLoaderContext* ldr_context)
 {
     // get the attributes
     name.Clear();
     materialName.Clear();
     segments = 10;
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
-        else if (attrName == "material")
+        else if(attrName == "material")
             materialName = attr->GetValue();
-        else if (attrName == "segments")
+        else if(attrName == "segments")
             segments = attr->GetValueAsInt();
     }
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj with no name.\n");
         return false;
     }
-    if (materialName.IsEmpty())
+    if(materialName.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect obj without a material.\n");
         return false;
     }
-    
-    if (!psEffectObj::Load(node, ldr_context))
+
+    if(!psEffectObj::Load(node, ldr_context))
         return false;
 
     return PostSetup();
@@ -115,7 +115,7 @@ bool psEffectObjStar::Render(const csVector3 &up)
     mesh->SetRenderPriority(priority);
 
     // disable culling
-    csStringID viscull_id = globalStringSet->Request ("viscull");
+    csStringID viscull_id = globalStringSet->Request("viscull");
     mesh->GetMeshObject()->GetObjectModel()->SetTriangleData(viscull_id, 0);
 
     // obj specific
@@ -124,11 +124,11 @@ bool psEffectObjStar::Render(const csVector3 &up)
     mesh->GetMeshObject()->SetColor(csColor(1,1,1)); // to check
     //genState->SetColor(csColor(1,1,1)); was not working with latest CS
 
-    if (mixmode != CS_FX_ALPHA)
-      mesh->GetMeshObject()->SetMixMode(mixmode);  // to check
-      //genState->SetMixMode(mixmode); was not working with latest CS
+    if(mixmode != CS_FX_ALPHA)
+        mesh->GetMeshObject()->SetMixMode(mixmode);  // to check
+    //genState->SetMixMode(mixmode); was not working with latest CS
 
-    genState->SetAnimationControl((iGenMeshAnimationControl *)meshControl);
+    genState->SetAnimationControl((iGenMeshAnimationControl*)meshControl);
 
     GenerateRays();
     vert = new csVector3[segments*3];
@@ -139,18 +139,18 @@ bool psEffectObjStar::Render(const csVector3 &up)
 
 bool psEffectObjStar::Update(csTicks elapsed)
 {
-    if (!anchor || !anchor->IsReady()) // wait for anchor to be ready
+    if(!anchor || !anchor->IsReady())  // wait for anchor to be ready
         return true;
 
-    if (!psEffectObj::Update(elapsed))
+    if(!psEffectObj::Update(elapsed))
         return false;
-    
+
     float topScale = 1.0f;
     float height = 1.0f;
 
     csVector3 lerpColour = csVector3(1,1,1);
     float lerpAlpha = 1;
-    if (keyFrames->GetSize() > 0)
+    if(keyFrames->GetSize() > 0)
     {
         // COLOUR
         float lerpfactor = LERP_FACTOR;
@@ -161,7 +161,7 @@ bool psEffectObjStar::Update(csTicks elapsed)
         height = LERP_KEY(KA_HEIGHT,lerpfactor);
     }
 
-    for (int b=0; b<segments; ++b)
+    for(int b=0; b<segments; ++b)
     {
         // vertex data
         csVector3 ray = rays[b] * height;
@@ -177,9 +177,9 @@ bool psEffectObjStar::Update(csTicks elapsed)
     return true;
 }
 
-psEffectObj *psEffectObjStar::Clone() const
+psEffectObj* psEffectObjStar::Clone() const
 {
-    psEffectObjStar *newObj = new psEffectObjStar(view, renderer2d);
+    psEffectObjStar* newObj = new psEffectObjStar(view, renderer2d);
     CloneBase(newObj);
 
     // star specific
@@ -196,8 +196,8 @@ void psEffectObjStar::GenerateRays()
     // ray is the direction of the segment, perp is like the rotation
     rays = new csVector3[segments];
     perp = new csVector3[segments];
-        
-    for (int b=0; b<segments; ++b)
+
+    for(int b=0; b<segments; ++b)
     {
         // generate a random unit vector for the direction of this segment
         rays[b].z = -1.0f + 2.0f*(float)rand() / (float)RAND_MAX;
@@ -223,7 +223,7 @@ bool psEffectObjStar::PostSetup()
     static unsigned int uniqueID = 0;
     csString facName = "effect_star_fac_";
     facName += uniqueID++;
-    meshFact = engine->CreateMeshFactory ("crystalspace.mesh.object.genmesh", facName.GetData());
+    meshFact = engine->CreateMeshFactory("crystalspace.mesh.object.genmesh", facName.GetData());
     effectsCollection->Add(meshFact->QueryObject());
 
     // create the actual sprite3d data
@@ -232,7 +232,7 @@ bool psEffectObjStar::PostSetup()
 
     // setup the material
     csRef<iMaterialWrapper> mat = effectsCollection->FindMaterial(materialName);
-    if (!mat)
+    if(!mat)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Couldn't find effect material: %s\n", materialName.GetData());
         return false;
@@ -245,7 +245,7 @@ bool psEffectObjStar::PostSetup()
     //float height = 1.0f;
 
     facState->SetVertexCount(3*segments);
-    for (int b=0; b<segments; ++b)
+    for(int b=0; b<segments; ++b)
     {
         // vertex data
         facState->GetVertices()[b*3  ].Set(0, 0, 0);
@@ -259,16 +259,16 @@ bool psEffectObjStar::PostSetup()
 
         // normals
         facState->GetNormals()[b*3  ].Set(-rays[b]);
-        facState->GetNormals()[b*3+1].Set( rays[b]);
-        facState->GetNormals()[b*3+2].Set( rays[b]);
+        facState->GetNormals()[b*3+1].Set(rays[b]);
+        facState->GetNormals()[b*3+2].Set(rays[b]);
     }
 
     animLength = 10;
-    if (keyFrames->GetSize() > 0)
+    if(keyFrames->GetSize() > 0)
         animLength += keyFrames->Get(keyFrames->GetSize()-1)->time;
 
     facState->SetTriangleCount(2*segments);
-    for (int q=0; q<segments; ++q)
+    for(int q=0; q<segments; ++q)
     {
         facState->GetTriangles()[q*2  ].Set(q*3, q*3+1, q*3+2);
         facState->GetTriangles()[q*2+1].Set(q*3, q*3+2, q*3+1);
@@ -278,13 +278,13 @@ bool psEffectObjStar::PostSetup()
 }
 
 const csVector3* psEffectObjStar::MeshAnimControl::UpdateVertices(csTicks /*current*/, const csVector3* /*verts*/,
-                                                                  int /*num_verts*/, uint32 /*version_id*/)
+        int /*num_verts*/, uint32 /*version_id*/)
 {
     return parent->vert;
 }
 
 const csColor4* psEffectObjStar::MeshAnimControl::UpdateColors(csTicks /*current*/, const csColor4* /*colors*/,
-                                                               int /*num_colors*/, uint32 /*version_id*/)
+        int /*num_colors*/, uint32 /*version_id*/)
 {
     return parent->colour;
 }

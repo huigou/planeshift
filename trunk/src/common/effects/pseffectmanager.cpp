@@ -57,21 +57,21 @@ csPtr<iBase> psEffectLoader::Parse(iDocumentNode* node, iStreamSource* /*istream
                                    iBase* context)
 {
 #ifndef DONT_DO_EFFECTS
-    if (manager)
+    if(manager)
     {
         csRef<iDocumentNodeIterator> xmlbinds;
 
         xmlbinds = node->GetNodes("effect");
         csRef<iDocumentNode> effectNode;
-        while (xmlbinds->HasNext())
+        while(xmlbinds->HasNext())
         {
             effectNode = xmlbinds->Next();
 
-            psEffect * newEffect = new psEffect();
+            psEffect* newEffect = new psEffect();
             newEffect->Load(effectNode, manager->GetView(), manager->Get2DRenderer(), ldr_context);
 
             parseLock.UpgradeLock();
-            if (manager->FindEffect(newEffect->GetName()))
+            if(manager->FindEffect(newEffect->GetName()))
             {
                 parseLock.UpgradeUnlock();
                 csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Duplicate effect '%s' found!", newEffect->GetName().GetData());
@@ -80,7 +80,7 @@ csPtr<iBase> psEffectLoader::Parse(iDocumentNode* node, iStreamSource* /*istream
             else
             {
                 parseLock.UpgradeUnlockAndWriteLock();
-                manager->AddEffect((const char *)newEffect->GetName(), newEffect);
+                manager->AddEffect((const char*)newEffect->GetName(), newEffect);
                 parseLock.WriteUnlock();
             }
         }
@@ -98,7 +98,7 @@ psEffectManager::psEffectManager(iObjectRegistry* objReg) : object_reg(objReg)
 
     effectLoader.AttachNew(new psEffectLoader());
     effectLoader->SetManager(this);
-    psCSSetup::object_reg->Register((psEffectLoader *)effectLoader, "PSEffects");
+    psCSSetup::object_reg->Register((psEffectLoader*)effectLoader, "PSEffects");
 
     effect2DRenderer = new psEffect2DRenderer();
 
@@ -112,38 +112,38 @@ psEffectManager::~psEffectManager()
 {
 #ifndef DONT_DO_EFFECTS
 
-    csHash<psEffect *, csString>::GlobalIterator it = effectFactories.GetIterator();
-    while (it.HasNext())
+    csHash<psEffect*, csString>::GlobalIterator it = effectFactories.GetIterator();
+    while(it.HasNext())
     {
-        psEffect * tmpEffect = it.Next();
+        psEffect* tmpEffect = it.Next();
         delete tmpEffect;
     }
     effectFactories.DeleteAll();
-   
-    csHash<psEffect *>::GlobalIterator itActual = actualEffects.GetIterator();
-    while (itActual.HasNext())
+
+    csHash<psEffect*>::GlobalIterator itActual = actualEffects.GetIterator();
+    while(itActual.HasNext())
     {
-        psEffect * tmpEffect = itActual.Next();
+        psEffect* tmpEffect = itActual.Next();
         delete tmpEffect;
     }
     actualEffects.DeleteAll();
     effectsCollection->ReleaseAllObjects();
 
-    csArray<psLight *> lights = lightList.GetAll();
-    while (lights.GetSize())
+    csArray<psLight*> lights = lightList.GetAll();
+    while(lights.GetSize())
     {
-      delete lights.Pop();
+        delete lights.Pop();
     }
 
     lightList.DeleteAll();
 #endif
     effectLoader->SetManager(NULL);
-    psCSSetup::object_reg->Unregister((psEffectLoader *)effectLoader, "PSEffects");
+    psCSSetup::object_reg->Unregister((psEffectLoader*)effectLoader, "PSEffects");
 
-	delete effect2DRenderer;
+    delete effect2DRenderer;
 }
 
-csPtr<iThreadReturn> psEffectManager::LoadEffects(const csString & fileName, iView * parentView)
+csPtr<iThreadReturn> psEffectManager::LoadEffects(const csString &fileName, iView* parentView)
 {
 #ifndef DONT_DO_EFFECTS
     view = parentView;
@@ -154,13 +154,13 @@ csPtr<iThreadReturn> psEffectManager::LoadEffects(const csString & fileName, iVi
 #endif
 }
 
-bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * parentView)
+bool psEffectManager::LoadFromEffectsList(const csString &fileName, iView* parentView)
 {
 #ifndef DONT_DO_EFFECTS
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psCSSetup::object_reg);
     assert(vfs);
-    
-    if (!vfs->Exists(fileName))
+
+    if(!vfs->Exists(fileName))
         return false;
 
     csRef<iDocument> doc;
@@ -169,7 +169,7 @@ bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * par
     const char* error;
 
     csRef<iDataBuffer> buff = vfs->ReadFile(fileName);
-    if (buff == 0)
+    if(buff == 0)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Could not find file: %s", fileName.GetData());
         return false;
@@ -177,18 +177,18 @@ bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * par
     xml =  csQueryRegistry<iDocumentSystem> (psCSSetup::object_reg);
     doc = xml->CreateDocument();
     assert(doc);
-    error = doc->Parse( buff );
-    if ( error )
+    error = doc->Parse(buff);
+    if(error)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects",
                  "Parse error in %s: %s", fileName.GetData(), error);
         return false;
     }
-    if (doc == 0)
+    if(doc == 0)
         return false;
 
     csRef<iDocumentNode> root = doc->GetRoot();
-    if (root == 0)
+    if(root == 0)
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "No root in XML");
         return false;
@@ -196,16 +196,16 @@ bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * par
 
     csRefArray<iThreadReturn> threadReturns;
     csRef<iDocumentNode> listNode = root->GetNode("effectsFileList");
-    if (listNode != 0)
+    if(listNode != 0)
     {
         xmlbinds = listNode->GetNodes("effectsFile");
         csRef<iDocumentNode> fileNode;
-        while (xmlbinds->HasNext())
+        while(xmlbinds->HasNext())
         {
             fileNode = xmlbinds->Next();
 
             csString effectFile = fileNode->GetAttributeValue("file");
-            if (vfs->Exists(effectFile))
+            if(vfs->Exists(effectFile))
             {
                 csRef<iThreadReturn> eff = LoadEffects(effectFile, parentView);
                 threadReturns.Push(eff);
@@ -218,19 +218,19 @@ bool psEffectManager::LoadFromEffectsList(const csString & fileName, iView * par
     return true;
 }
 
-bool psEffectManager::LoadFromDirectory(const csString & path, bool includeSubDirs, iView * parentView)
+bool psEffectManager::LoadFromDirectory(const csString &path, bool includeSubDirs, iView* parentView)
 {
 #ifndef DONT_DO_EFFECTS
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psCSSetup::object_reg);
     assert(vfs);
 
-    if (!vfs->Exists(path))
+    if(!vfs->Exists(path))
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Failed to load effects from directory; %s does not exist", path.GetData());
         return false;
     }
 
-    if (!vfs->ChDir(path))
+    if(!vfs->ChDir(path))
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Failed to load effects from directory; %s read failed", path.GetData());
         return false;
@@ -239,28 +239,28 @@ bool psEffectManager::LoadFromDirectory(const csString & path, bool includeSubDi
     csRefArray<iThreadReturn> threadReturns;
 
     csRef<iStringArray> files = vfs->FindFiles("*");
-    for (size_t a=0; a<files->GetSize(); ++a)
+    for(size_t a=0; a<files->GetSize(); ++a)
     {
-        const char * file = files->Get(a);
-        if (file[0] == '.')
+        const char* file = files->Get(a);
+        if(file[0] == '.')
             continue;
 
-        if (strcmp(file, path) == 0)
+        if(strcmp(file, path) == 0)
             continue;
 
         size_t len = strlen(file);
         char lastChar = file[len-1];
-        if (lastChar == '/' || lastChar == '\\')
+        if(lastChar == '/' || lastChar == '\\')
         {
-            if (includeSubDirs)
+            if(includeSubDirs)
             {
-                if (!LoadFromDirectory(file, true, parentView))
+                if(!LoadFromDirectory(file, true, parentView))
                 {
                     return false;
                 }
             }
         }
-        else if (len > 4 && ((lastChar == 'f' || lastChar == 'F') && (file[len-2] == 'f' || file[len-2] == 'F') && (file[len-3] == 'e' || file[len-3] == 'E') && file[len-4] == '.'))
+        else if(len > 4 && ((lastChar == 'f' || lastChar == 'F') && (file[len-2] == 'f' || file[len-2] == 'F') && (file[len-3] == 'e' || file[len-3] == 'E') && file[len-4] == '.'))
         {
             csRef<iThreadReturn> eff = LoadEffects(file, parentView);
             threadReturns.Push(eff);
@@ -274,13 +274,13 @@ bool psEffectManager::LoadFromDirectory(const csString & path, bool includeSubDi
 bool psEffectManager::DeleteEffect(unsigned int effectID)
 {
 #ifndef DONT_DO_EFFECTS
-    if (effectID == 0)
+    if(effectID == 0)
         return true;
-   
-    csArray<psEffect *> effects;
+
+    csArray<psEffect*> effects;
 
     effects = actualEffects.GetAll(effectID);
-    while (effects.GetSize())
+    while(effects.GetSize())
     {
         delete effects.Pop();
     }
@@ -290,30 +290,30 @@ bool psEffectManager::DeleteEffect(unsigned int effectID)
     return true;
 }
 
-unsigned int psEffectManager::RenderEffect(const csString & effectName, const csVector3 & offset, 
-                                           iMeshWrapper * attachPos, iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride, bool rotateWithMesh, const float* scale)
+unsigned int psEffectManager::RenderEffect(const csString &effectName, const csVector3 &offset,
+        iMeshWrapper* attachPos, iMeshWrapper* attachTarget, const csVector3 &up,
+        const unsigned int uniqueIDOverride, bool rotateWithMesh, const float* scale)
 {
 #ifndef DONT_DO_EFFECTS
-    if (!attachPos)
+    if(!attachPos)
         return 0;
-    
+
     // check if it's a single effect
-    psEffect * currEffect = FindEffect(effectName);
-    if (currEffect != 0)
+    psEffect* currEffect = FindEffect(effectName);
+    if(currEffect != 0)
     {
         currEffect = currEffect->Clone();
-        if (scale != NULL)
+        if(scale != NULL)
         {
-            if (!currEffect->SetFrameParamScalings(scale))
+            if(!currEffect->SetFrameParamScalings(scale))
             {
                 Error2("Received scale factor for effect %s that don't use param scaling",effectName.GetDataSafe());
             }
         }
 
-        const unsigned int uniqueID = currEffect->Render(attachPos->GetMovable()->GetSectors(), offset, attachPos, 
-                                                         attachTarget, up.Unit(), uniqueIDOverride, rotateWithMesh);
-        
+        const unsigned int uniqueID = currEffect->Render(attachPos->GetMovable()->GetSectors(), offset, attachPos,
+                                      attachTarget, up.Unit(), uniqueIDOverride, rotateWithMesh);
+
         actualEffects.Put(uniqueID, currEffect);
         return uniqueID;
     }
@@ -321,24 +321,24 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, const cs
     return 0;
 }
 
-unsigned int psEffectManager::RenderEffect(const csString & effectName, iSector * sector, const csVector3 & pos, 
-                                           iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride, const float* scale)
+unsigned int psEffectManager::RenderEffect(const csString &effectName, iSector* sector, const csVector3 &pos,
+        iMeshWrapper* attachTarget, const csVector3 &up,
+        const unsigned int uniqueIDOverride, const float* scale)
 {
 #ifndef DONT_DO_EFFECTS
     // check if it's a single effect
-    psEffect * currEffect = FindEffect(effectName);
-    if (currEffect != 0)
+    psEffect* currEffect = FindEffect(effectName);
+    if(currEffect != 0)
     {
         currEffect = currEffect->Clone();
-        if (scale != NULL)
+        if(scale != NULL)
         {
-            if (!currEffect->SetFrameParamScalings(scale))
+            if(!currEffect->SetFrameParamScalings(scale))
             {
                 Error2("Received scale factor for effect %s that don't use param scaling",effectName.GetDataSafe());
             }
         }
-    
+
         unsigned int uniqueID = currEffect->Render(sector, pos, 0, attachTarget, up.Unit(), uniqueIDOverride);
         actualEffects.Put(uniqueID, currEffect);
         return uniqueID;
@@ -348,20 +348,20 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSector 
     return 0;
 }
 
-unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorList * sectors, const csVector3 & pos, 
-                                           iMeshWrapper * attachTarget, const csVector3 & up, 
-                                           const unsigned int uniqueIDOverride, const float* scale)
+unsigned int psEffectManager::RenderEffect(const csString &effectName, iSectorList* sectors, const csVector3 &pos,
+        iMeshWrapper* attachTarget, const csVector3 &up,
+        const unsigned int uniqueIDOverride, const float* scale)
 {
 #ifndef DONT_DO_EFFECTS
     // check if it's a single effect
-    psEffect * currEffect = FindEffect(effectName);
-    if (currEffect != 0)
+    psEffect* currEffect = FindEffect(effectName);
+    if(currEffect != 0)
     {
         currEffect = currEffect->Clone();
 
-        if (scale != NULL)
+        if(scale != NULL)
         {
-            if (!currEffect->SetFrameParamScalings(scale))
+            if(!currEffect->SetFrameParamScalings(scale))
             {
                 Error2("Received scale factor for effect %s that don't use param scaling",effectName.GetDataSafe());
             }
@@ -373,11 +373,11 @@ unsigned int psEffectManager::RenderEffect(const csString & effectName, iSectorL
     }
 #endif
     return 0;
-   
+
 }
 
-unsigned int psEffectManager::AttachLight(const char* name, const csVector3& pos,
-  	float radius, const csColor& colour, iMeshWrapper* mw)
+unsigned int psEffectManager::AttachLight(const char* name, const csVector3 &pos,
+        float radius, const csColor &colour, iMeshWrapper* mw)
 {
     psLight* pslight = new psLight(object_reg);
     unsigned int uniqueID = pslight->AttachLight(name, pos, radius, colour, mw);
@@ -387,15 +387,15 @@ unsigned int psEffectManager::AttachLight(const char* name, const csVector3& pos
 
 void psEffectManager::DetachLight(unsigned int lightID)
 {
-    if (lightID == 0)
+    if(lightID == 0)
         return;
-   
-    csArray<psLight *> lights;
+
+    csArray<psLight*> lights;
 
     lights = lightList.GetAll(lightID);
-    while (lights.GetSize())
+    while(lights.GetSize())
     {
-      delete lights.Pop();
+        delete lights.Pop();
     }
 
     lightList.DeleteAll(lightID);
@@ -405,58 +405,58 @@ void psEffectManager::Update(csTicks elapsed)
 {
 #ifndef DONT_DO_EFFECTS
 
-    if (elapsed == 0)
+    if(elapsed == 0)
         elapsed = vc->GetElapsedTicks();
-   
-    csHash<psEffect *, unsigned int>::GlobalIterator it = actualEffects.GetIterator();
+
+    csHash<psEffect*, unsigned int>::GlobalIterator it = actualEffects.GetIterator();
     csList<unsigned int> ids_to_delete;
-    csList<psEffect *> effects_to_delete;
-    while (it.HasNext())
+    csList<psEffect*> effects_to_delete;
+    while(it.HasNext())
     {
         unsigned int id = 0;
-        psEffect * effect = it.Next(id);
+        psEffect* effect = it.Next(id);
 
-        if (!effect)
+        if(!effect)
             continue;
 
         // update the effect itself
-        if (!effect->Update(elapsed))
+        if(!effect->Update(elapsed))
         {
             ids_to_delete.PushBack(id);
             effects_to_delete.PushBack(effect);
         }
     }
 
-    while (!effects_to_delete.IsEmpty())
+    while(!effects_to_delete.IsEmpty())
     {
-        psEffect * effect = effects_to_delete.Front();
+        psEffect* effect = effects_to_delete.Front();
         actualEffects.Delete(ids_to_delete.Front(),effect);
         delete effect;
         effects_to_delete.PopFront();
         ids_to_delete.PopFront();
     }
 
-    csList<psLight *> lights_to_delete;
-    csHash<psLight *, unsigned int>::GlobalIterator itr = lightList.GetIterator();
+    csList<psLight*> lights_to_delete;
+    csHash<psLight*, unsigned int>::GlobalIterator itr = lightList.GetIterator();
     while(itr.HasNext())
     {
         unsigned int id = 0;
-        psLight * light = itr.Next(id);
+        psLight* light = itr.Next(id);
 
-        if (!light)
+        if(!light)
             continue;
 
         // update the effect itself
-        if (!light->Update())
+        if(!light->Update())
         {
             ids_to_delete.PushBack(id);
             lights_to_delete.PushBack(light);
         }
     }
 
-    while (!lights_to_delete.IsEmpty())
+    while(!lights_to_delete.IsEmpty())
     {
-        psLight * light = lights_to_delete.Front();
+        psLight* light = lights_to_delete.Front();
         lightList.Delete(ids_to_delete.Front(),light);
         delete light;
         lights_to_delete.PopFront();
@@ -468,41 +468,41 @@ void psEffectManager::Update(csTicks elapsed)
 void psEffectManager::Clear()
 {
 #ifndef DONT_DO_EFFECTS
-    csHash<psEffect *, csString>::GlobalIterator it = effectFactories.GetIterator();
-    while (it.HasNext())
+    csHash<psEffect*, csString>::GlobalIterator it = effectFactories.GetIterator();
+    while(it.HasNext())
         delete it.Next();
     effectFactories.DeleteAll();
-   
-    csHash<psEffect *>::GlobalIterator itActual = actualEffects.GetIterator();
-    while (itActual.HasNext())
+
+    csHash<psEffect*>::GlobalIterator itActual = actualEffects.GetIterator();
+    while(itActual.HasNext())
         delete itActual.Next();
     actualEffects.DeleteAll();
-        
+
     effectsCollection->ReleaseAllObjects();
 
 #endif
 }
 
-psEffect * psEffectManager::FindEffect(unsigned int ID) const
+psEffect* psEffectManager::FindEffect(unsigned int ID) const
 {
 #ifndef DONT_DO_EFFECTS
-    if (ID == 0)
+    if(ID == 0)
         return 0;
-   
+
     return actualEffects.Get(ID, 0);
 #endif
     return 0;
 }
 
-psEffect * psEffectManager::FindEffect(const csString & name) const
+psEffect* psEffectManager::FindEffect(const csString &name) const
 {
 #ifndef DONT_DO_EFFECTS
-    return effectFactories.Get((const char *)name, 0);
+    return effectFactories.Get((const char*)name, 0);
 #endif
     return 0;
 }
 
-csHash<psEffect *, csString>::GlobalIterator psEffectManager::GetEffectsIterator()
+csHash<psEffect*, csString>::GlobalIterator psEffectManager::GetEffectsIterator()
 {
     return effectFactories.GetIterator();
 }
@@ -523,12 +523,12 @@ void psEffectManager::ShowEffect(unsigned int id,bool value)
         eff->Hide();
 }
 
-void psEffectManager::AddEffect(const char *name, psEffect *effect)
+void psEffectManager::AddEffect(const char* name, psEffect* effect)
 {
     effectFactories.Put(name, effect);
 }
 
-void psEffectManager::Render2D(iGraphics3D * g3d, iGraphics2D * g2d)
+void psEffectManager::Render2D(iGraphics3D* g3d, iGraphics2D* g2d)
 {
-	effect2DRenderer->Render(g3d, g2d);
+    effect2DRenderer->Render(g3d, g2d);
 }

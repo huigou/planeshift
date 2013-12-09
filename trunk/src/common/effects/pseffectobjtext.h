@@ -43,7 +43,7 @@ class psEffectObjText : public psEffectObjQuad, public psEffectObjTextable
 private:
     // needed managers
     csRef<iGraphics3D>      g3d;
-    iGraphics2D *           g2d;
+    iGraphics2D*            g2d;
     csRef<iTextureManager>  txtmgr;
 
     // font
@@ -62,18 +62,18 @@ private:
     int             texPO2Height;
 
 public:
-    psEffectObjText(iView * parentView, psEffect2DRenderer * renderer2d);
+    psEffectObjText(iView* parentView, psEffect2DRenderer* renderer2d);
     ~psEffectObjText();
 
     /** Creates a material that will fit an array of text elements and draws those elements.
      */
-    virtual bool SetText(const csArray<psEffectTextElement> & elements);
-    virtual bool SetText(const csArray<psEffectTextRow> & rows);
+    virtual bool SetText(const csArray<psEffectTextElement> &elements);
+    virtual bool SetText(const csArray<psEffectTextRow> &rows);
     virtual bool SetText(int rows, ...);
 
     // inheritted function overloads
-    bool Load(iDocumentNode * node, iLoaderContext* ldr_context);
-    psEffectObj * Clone() const;
+    bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
+    psEffectObj* Clone() const;
 
 protected:
     /** performs the post setup (after the effect obj has been loaded).
@@ -81,15 +81,15 @@ protected:
      */
     bool PostSetup();
 
-    void DrawTextElement(const psEffectTextElement & element);
+    void DrawTextElement(const psEffectTextElement &element);
 
     inline int ToPowerOf2(int n)
     {
-        for (int a=sizeof(int) * 8-1; a>0; --a)
+        for(int a=sizeof(int) * 8-1; a>0; --a)
         {
-            if (n & (1 << a))
+            if(n & (1 << a))
             {
-                if (n == (1 << a))
+                if(n == (1 << a))
                     return n;
                 else
                     return (1 << (a+1));

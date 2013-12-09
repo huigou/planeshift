@@ -33,7 +33,7 @@
 #include "util/log.h"
 
 psEffectAnchorSpline::psEffectAnchorSpline()
-                     :psEffectAnchor()
+    :psEffectAnchor()
 {
     spline = new csCatmullRomSpline(3,0);
 }
@@ -43,32 +43,32 @@ psEffectAnchorSpline::~psEffectAnchorSpline()
     delete spline;
 }
 
-bool psEffectAnchorSpline::Load(iDocumentNode * node)
+bool psEffectAnchorSpline::Load(iDocumentNode* node)
 {
     // get the attributes
     name.Clear();
     csRef<iDocumentAttributeIterator> attribIter = node->GetAttributes();
-    while (attribIter->HasNext())
+    while(attribIter->HasNext())
     {
         csRef<iDocumentAttribute> attr = attribIter->Next();
         csString attrName = attr->GetName();
         attrName.Downcase();
-        if (attrName == "name")
+        if(attrName == "name")
             name = attr->GetValue();
     }
-    if (name.IsEmpty())
+    if(name.IsEmpty())
     {
         csReport(psCSSetup::object_reg, CS_REPORTER_SEVERITY_ERROR, "planeshift_effects", "Attempting to create an effect spline anchor with no name.\n");
         return false;
     }
-    
-    if (!psEffectAnchor::Load(node))
+
+    if(!psEffectAnchor::Load(node))
         return false;
 
     return PostSetup();
 }
 
-bool psEffectAnchorSpline::Create(const csVector3& offset, iMeshWrapper* /*posAttach*/, bool rotateWithMesh)
+bool psEffectAnchorSpline::Create(const csVector3 &offset, iMeshWrapper* /*posAttach*/, bool rotateWithMesh)
 {
     static unsigned long nextUniqueID = 0;
     csString anchorID = "effect_anchor_spline";
@@ -79,13 +79,13 @@ bool psEffectAnchorSpline::Create(const csVector3& offset, iMeshWrapper* /*posAt
     this->rotateWithMesh = rotateWithMesh;
 
     mesh = engine->CreateMeshWrapper("crystalspace.mesh.object.null", anchorID);
-	csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());
-    if (!state)
+    csRef<iNullMeshState> state =  scfQueryInterface<iNullMeshState> (mesh->GetMeshObject());
+    if(!state)
     {
-		Error1("No NullMeshState.");
+        Error1("No NullMeshState.");
         return false;
     }
-	state->SetRadius(1.0);
+    state->SetRadius(1.0);
     isReady = true;
 
     return true;
@@ -94,33 +94,33 @@ bool psEffectAnchorSpline::Create(const csVector3& offset, iMeshWrapper* /*posAt
 bool psEffectAnchorSpline::Update(csTicks elapsed)
 {
     life += (float)elapsed;
-    if (life > animLength)
+    if(life > animLength)
         life = fmod(life,animLength);
-    if (!life)
+    if(!life)
         life += animLength;
 
-    if (keyFrames->GetSize() == 0)
+    if(keyFrames->GetSize() == 0)
         objTargetOffset = csVector3(0,0,0);
     else
     {
         currKeyFrame = FindKeyFrameByTime(life);
         nextKeyFrame = currKeyFrame+1;
-        if (nextKeyFrame >= keyFrames->GetSize())
+        if(nextKeyFrame >= keyFrames->GetSize())
             nextKeyFrame = 0;
-    
+
         // TOTARGET
         objTargetOffset = lerpVec(
-                csVector3(keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_X],
-                          keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Y],
-                          keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Z]),
-                csVector3(keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_X],
-                          keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Y],
-                          keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Z]),
-                keyFrames->Get(currKeyFrame)->time, keyFrames->Get(nextKeyFrame)->time, life);
-    
-        TransformOffset(objTargetOffset);    
+                              csVector3(keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_X],
+                                        keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Y],
+                                        keyFrames->Get(currKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Z]),
+                              csVector3(keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_X],
+                                        keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Y],
+                                        keyFrames->Get(nextKeyFrame)->actions[psEffectAnchorKeyFrame::KA_TOTARGET_Z]),
+                              keyFrames->Get(currKeyFrame)->time, keyFrames->Get(nextKeyFrame)->time, life);
+
+        TransformOffset(objTargetOffset);
     }
-    
+
     // POSITION
     spline->Calculate(life);
     objOffset = csVector3(spline->GetInterpolatedDimension(0),
@@ -128,9 +128,9 @@ bool psEffectAnchorSpline::Update(csTicks elapsed)
                           spline->GetInterpolatedDimension(2));
 
     // adjust position by direction if there is one
-    if (dir == DT_TARGET)
+    if(dir == DT_TARGET)
         objOffset = targetTransf * csVector3(-objOffset.x, objOffset.y, -objOffset.z);
-    else if (dir == DT_ORIGIN)
+    else if(dir == DT_ORIGIN)
         objOffset = posTransf * csVector3(-objOffset.x, objOffset.y, -objOffset.z);
 
     // apply it
@@ -140,14 +140,14 @@ bool psEffectAnchorSpline::Update(csTicks elapsed)
     return true;
 }
 
-psEffectAnchor * psEffectAnchorSpline::Clone() const
+psEffectAnchor* psEffectAnchorSpline::Clone() const
 {
-    psEffectAnchorSpline * newObj = new psEffectAnchorSpline();
+    psEffectAnchorSpline* newObj = new psEffectAnchorSpline();
     CloneBase(newObj);
 
     // spline anchor specific
     newObj->spline = spline->Clone();
-    
+
     return newObj;
 }
 
@@ -155,14 +155,14 @@ bool psEffectAnchorSpline::PostSetup()
 {
     int count = 0;
     // fill in the spline according to the position we got from the keyframes
-    for (size_t a=0; a<keyFrames->GetSize(); ++a)
+    for(size_t a=0; a<keyFrames->GetSize(); ++a)
     {
-        if (keyFrames->Get(a)->specAction.IsBitSet(psEffectAnchorKeyFrame::KA_POS_X)
-         || keyFrames->Get(a)->specAction.IsBitSet(psEffectAnchorKeyFrame::KA_POS_Y)
-         || keyFrames->Get(a)->specAction.IsBitSet(psEffectAnchorKeyFrame::KA_POS_Z))
+        if(keyFrames->Get(a)->specAction.IsBitSet(psEffectAnchorKeyFrame::KA_POS_X)
+                || keyFrames->Get(a)->specAction.IsBitSet(psEffectAnchorKeyFrame::KA_POS_Y)
+                || keyFrames->Get(a)->specAction.IsBitSet(psEffectAnchorKeyFrame::KA_POS_Z))
         {
             int idx = spline->GetPointCount();
-            if (count >= idx)
+            if(count >= idx)
                 spline->InsertPoint(idx-1);
             spline->SetTimeValue(count, keyFrames->Get(a)->time);
             spline->SetDimensionValue(0, count, keyFrames->Get(a)->actions[psEffectAnchorKeyFrame::KA_POS_X]);

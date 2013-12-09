@@ -51,8 +51,8 @@ psLight::~psLight()
     engine->RemoveObject(light);
 }
 
-unsigned int psLight::AttachLight(const char* name, const csVector3& pos,
-  	float radius, const csColor& colour, iMeshWrapper* mw)
+unsigned int psLight::AttachLight(const char* name, const csVector3 &pos,
+                                  float radius, const csColor &colour, iMeshWrapper* mw)
 {
     baseColour = colour;
     csString lightName = name;

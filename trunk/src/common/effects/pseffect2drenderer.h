@@ -40,7 +40,7 @@ class psEffect2DElement
 {
 protected:
     int zOrder;
-	int alpha;
+    int alpha;
 
 public:
     int originx;
@@ -50,9 +50,9 @@ public:
     psEffect2DElement(int zOrder, int alpha);
     virtual ~psEffect2DElement();
     int GetZOrder() const;
-	int GetAlpha() const;
-	void SetAlpha(int alpha);
-    virtual void Draw(iGraphics3D * g3d, iGraphics2D * g2d);
+    int GetAlpha() const;
+    void SetAlpha(int alpha);
+    virtual void Draw(iGraphics3D* g3d, iGraphics2D* g2d);
 };
 
 /** A 2D Text Effect Element
@@ -66,13 +66,13 @@ public:
     int             y;
     int             fgColor;
     int             bgColor;
-	int				shadowColor;
-	int				outlineColor;
+    int				shadowColor;
+    int				outlineColor;
 
 public:
-    psEffect2DTextElement(int zOrder, iFont* font, const char * text, int x, int y, int fgColor, int bgColor, int outlineColor, int shadowColor, int alpha);
+    psEffect2DTextElement(int zOrder, iFont* font, const char* text, int x, int y, int fgColor, int bgColor, int outlineColor, int shadowColor, int alpha);
     virtual ~psEffect2DTextElement();
-    virtual void Draw(iGraphics3D * g3d, iGraphics2D * g2d);
+    virtual void Draw(iGraphics3D* g3d, iGraphics2D* g2d);
 };
 
 /** A 2D Image Effect Element
@@ -80,15 +80,15 @@ public:
 class psEffect2DImgElement : public psEffect2DElement
 {
 public:
-	csRef<iTextureHandle> texHandle;
-	csRect                texRect;
+    csRef<iTextureHandle> texHandle;
+    csRect                texRect;
     csRect                destRect;
-	bool                  tiled;
+    bool                  tiled;
 
 public:
-    psEffect2DImgElement(int zOrder, iTextureHandle* texHandle, const csRect & texRect, const csRect & destRect, int alpha, bool tiled);
+    psEffect2DImgElement(int zOrder, iTextureHandle* texHandle, const csRect &texRect, const csRect &destRect, int alpha, bool tiled);
     virtual ~psEffect2DImgElement();
-    virtual void Draw(iGraphics3D * g3d, iGraphics2D * g2d);
+    virtual void Draw(iGraphics3D* g3d, iGraphics2D* g2d);
 };
 
 /** The manager of all 2D effect elements.
@@ -102,13 +102,13 @@ public:
     psEffect2DRenderer();
     ~psEffect2DRenderer();
 
-    psEffect2DElement * Add2DElement(psEffect2DElement * elem);
-    void Remove2DElement(psEffect2DElement * elem);
+    psEffect2DElement* Add2DElement(psEffect2DElement* elem);
+    void Remove2DElement(psEffect2DElement* elem);
     void Remove2DElementByIndex(size_t index);
     void RemoveAll2DElements();
     size_t Get2DElementCount() const;
 
-    void Render(iGraphics3D * g3d, iGraphics2D * g2d);
+    void Render(iGraphics3D* g3d, iGraphics2D* g2d);
 };
 
 /** @} */

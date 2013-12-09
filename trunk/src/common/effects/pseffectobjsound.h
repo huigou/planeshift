@@ -33,15 +33,15 @@ class psEffectObjSound : public psEffectObj
 {
 public:
 
-    psEffectObjSound(iView * parentView, psEffect2DRenderer * renderer2d);
+    psEffectObjSound(iView* parentView, psEffect2DRenderer* renderer2d);
     ~psEffectObjSound();
 
     // inheritted function overloads
-    bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
+    bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     bool Render(const csVector3 &up);
     bool Update(csTicks elapsed);
-    bool AttachToAnchor(psEffectAnchor * newAnchor);
-    psEffectObj *Clone() const;
+    bool AttachToAnchor(psEffectAnchor* newAnchor);
+    psEffectObj* Clone() const;
 
 
 private:
@@ -58,7 +58,7 @@ private:
     float minDist;
     float maxDist;
 
-	csString effectID;
+    csString effectID;
 
     float volumeMultiplier;
     bool loop;

@@ -31,34 +31,58 @@ class psEffectObjQuad : public psEffectObj
 public:
     struct MeshAnimControl : public scfImplementation1<MeshAnimControl, iGenMeshAnimationControl>
     {
-        private:
+    private:
         psEffectObjQuad* parent;
-                        
-        public:      
-        MeshAnimControl ( psEffectObjQuad* parent ) : scfImplementationType (this)
+
+    public:
+        MeshAnimControl(psEffectObjQuad* parent) : scfImplementationType(this)
         {
             this->parent = parent;
         }
-        
-        virtual ~MeshAnimControl ()
+
+        virtual ~MeshAnimControl()
         {
             parent = 0;
         }
-    
+
         void Update(csTicks /*elapsed*/, int /*num_verts*/, uint32 /*version_id*/)
         {
         }
 
         // genmesh animation control
-        bool AnimatesVertices() const { return false; }
-        bool AnimatesTexels() const { return true; }
-        bool AnimatesNormals() const { return false; }
-        bool AnimatesColors() const { return false; }
-        bool AnimatesBBoxRadius () const { return false; }
+        bool AnimatesVertices() const
+        {
+            return false;
+        }
+        bool AnimatesTexels() const
+        {
+            return true;
+        }
+        bool AnimatesNormals() const
+        {
+            return false;
+        }
+        bool AnimatesColors() const
+        {
+            return false;
+        }
+        bool AnimatesBBoxRadius() const
+        {
+            return false;
+        }
 
-        const csBox3& UpdateBoundingBox (csTicks /*current*/, uint32 /*version_id*/, const csBox3& bbox) { return bbox; }
-        const float UpdateRadius (csTicks /*current*/, uint32 /*version_id*/, const float radius) { return radius; }
-        const csBox3* UpdateBoundingBoxes (csTicks /*current*/, uint32 /*version_id*/) { return nullptr; }
+        const csBox3 &UpdateBoundingBox(csTicks /*current*/, uint32 /*version_id*/, const csBox3 &bbox)
+        {
+            return bbox;
+        }
+        const float UpdateRadius(csTicks /*current*/, uint32 /*version_id*/, const float radius)
+        {
+            return radius;
+        }
+        const csBox3* UpdateBoundingBoxes(csTicks /*current*/, uint32 /*version_id*/)
+        {
+            return nullptr;
+        }
         const csVector3* UpdateVertices(csTicks current, const csVector3* verts, int num_verts, uint32 version_id);
         const csVector2* UpdateTexels(csTicks current, const csVector2* texels, int num_texels, uint32 version_id);
         const csVector3* UpdateNormals(csTicks /*current*/, const csVector3* normals, int /*num_normals*/,
@@ -75,16 +99,16 @@ public:
     csRef<MeshAnimControl> meshControl;
     friend struct MeshAnimControl;
 
-    psEffectObjQuad(iView *parentView, psEffect2DRenderer * renderer2d);
+    psEffectObjQuad(iView* parentView, psEffect2DRenderer* renderer2d);
     virtual ~psEffectObjQuad();
 
     // inheritted function overloads
-    virtual bool Load(iDocumentNode *node, iLoaderContext* ldr_context);
+    virtual bool Load(iDocumentNode* node, iLoaderContext* ldr_context);
     virtual bool Render(const csVector3 &up);
     virtual bool Update(csTicks elapsed);
-    virtual void CloneBase(psEffectObj * newObj) const;
-    virtual psEffectObj *Clone() const;
-    
+    virtual void CloneBase(psEffectObj* newObj) const;
+    virtual psEffectObj* Clone() const;
+
 
 protected:
 
@@ -102,7 +126,7 @@ protected:
      *  material is needed per mesh (a unique material requires a unique mesh fact).
      */
     virtual bool UseUniqueMeshFact() const;
-    
+
     csRef<iGeneralMeshState> genState;
 
     csVector3 			vert[4];
