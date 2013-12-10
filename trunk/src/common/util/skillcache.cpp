@@ -25,7 +25,7 @@
 //-------------------------------------------------------------------
 int count = 0;
 psSkillCacheItem::psSkillCacheItem(psSkillCacheItem *item)
-    : removed(false), modified(true)
+    : modified(true)
 {
     skillId = item->skillId;
     nameId = item->nameId;
@@ -271,16 +271,17 @@ void psSkillCache::apply(psSkillCache *list)
             if (item)
             {
                 item->update(second);
+                if (item->isModified())
+                    modified = true;
             }
             else
             {
                 item = new psSkillCacheItem(second);
                 skillCache.PushBack(item);
+                modified = true;
             }
         }
     }
-
-    modified = true;
 }
 
 void psSkillCache::addItem(int /*skillId*/, psSkillCacheItem *item)
@@ -470,7 +471,6 @@ csString psSkillCache::ToString() const
     return result;
 }
 
-
 bool psSkillCache::deleteItem(psSkillCacheItem *item)
 {
     psSkillCacheIter p(skillCache);
@@ -482,6 +482,7 @@ bool psSkillCache::deleteItem(psSkillCacheItem *item)
             skillCache.Delete(p);
             delete item;
             removed = true;
+            modified = true;
             return true;
         }
     }
