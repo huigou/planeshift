@@ -338,7 +338,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if ( words.GetCount() < 2 )
             return "Usage: /equip  [stack count] [slot] [item name]";
 
-        int tail = 1;
+        size_t tail = 1;
         int quantity = atoi(words[1]);
         if (quantity > 0)
         {
