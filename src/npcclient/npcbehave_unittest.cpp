@@ -1,7 +1,7 @@
 /*
  * npcbehave_unittest.cpp by Andrew Dai
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -38,31 +38,34 @@
 
 psNPCClient* npcclient;
 
-class BehaviorSetTest : public testing::Test {
+class BehaviorSetTest : public testing::Test
+{
 protected:
-    BehaviorSetTest(): behaviorset(&eventmgr) {
-        if (iSCF::SCF == 0)
+    BehaviorSetTest(): behaviorset(&eventmgr)
+    {
+        if(iSCF::SCF == 0)
             scfInitialize(0);
         objreg = new csObjectRegistry();
-        
+
         npcclient = new psNPCClient;
-        
+
         npc = new NPC(npcclient, NULL, NULL, NULL, NULL);
         npc->SetAlive(true);
-        
+
         behavior = new Behavior("test_behavior");
-        
+
         behavior->SetDecay(20)->SetGrowth(50)->SetCompletionDecay(100)->SetInitial(200);
-        
+
         behaviorset.Add(behavior);
     }
-    
-    ~BehaviorSetTest() {
+
+    ~BehaviorSetTest()
+    {
         delete npc;
         delete npcclient;
         delete objreg;
     }
-    
+
     iObjectRegistry* objreg;
     BehaviorSet behaviorset;
     Behavior* behavior;
@@ -70,18 +73,21 @@ protected:
     EventManager eventmgr;
 };
 
-TEST_F(BehaviorSetTest, AddSameName) {
+TEST_F(BehaviorSetTest, AddSameName)
+{
     Behavior* behavior2 = new Behavior("test_behavior");
     EXPECT_FALSE(behaviorset.Add(behavior2));
-    
+
 }
 
-TEST_F(BehaviorSetTest, Find) {   
+TEST_F(BehaviorSetTest, Find)
+{
     EXPECT_EQ(behavior, behaviorset.Find("test_behavior"));
     EXPECT_EQ(NULL, behaviorset.Find("test"));
 }
 
-TEST_F(BehaviorSetTest, Advance2Behaviors) {
+TEST_F(BehaviorSetTest, Advance2Behaviors)
+{
     Behavior* behavior2 = new Behavior("test_behavior2");
     behavior2->SetDecay(20)->SetGrowth(100)->SetCompletionDecay(100)->SetInitial(10);
     behaviorset.Add(behavior2);

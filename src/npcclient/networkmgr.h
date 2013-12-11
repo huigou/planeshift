@@ -1,7 +1,7 @@
 /*
  * networkmgr.h
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -53,17 +53,17 @@ class gemNPCItem;
 /**
  * Handle all network messages inn and out of the NPC Client.
  */
-class NetworkManager : public psClientNetSubscriber 
+class NetworkManager : public psClientNetSubscriber
 {
 protected:
-    MsgHandler *msghandler;
-    psNetConnection *connection;
+    MsgHandler* msghandler;
+    psNetConnection* connection;
     bool ready;
     bool connected;
 
-    // Command Message Queue  
-    psNPCCommandsMessage *outbound;
-    csHash<NPC*,PID>      cmd_dr_outbound; /// Entities queued for sending of DR. 
+    // Command Message Queue
+    psNPCCommandsMessage* outbound;
+    csHash<NPC*,PID>      cmd_dr_outbound; /// Entities queued for sending of DR.
     int                   cmd_count;       /// Number of command messages queued
 
     void RequestAllObjects();
@@ -73,119 +73,119 @@ protected:
      *
      * @param msg        The undecoded message to handle.
      */
-    bool HandleMapList(MsgEntry *msg);
-    
+    bool HandleMapList(MsgEntry* msg);
+
     /**
      * Handle a list of npcs received from server.
      *
      * @param msg        The undecoded message to handle.
      */
-    bool HandleNPCList(MsgEntry *msg);
+    bool HandleNPCList(MsgEntry* msg);
 
     /**
      * Handle update update of positions from server.
      *
      * @param msg        The undecoded message to handle.
      */
-    void HandlePositionUpdates(MsgEntry *msg);
+    void HandlePositionUpdates(MsgEntry* msg);
 
     /**
      * Handle new entities from server.
      *
      * @param msg        The undecoded message to handle.
      */
-    void HandlePersistMessage(MsgEntry *msg);
+    void HandlePersistMessage(MsgEntry* msg);
 
     /**
      * Handle perceptions from the server.
      *
      * @param msg        The undecoded message to handle.
      */
-    void HandlePerceptions(MsgEntry *msg);
+    void HandlePerceptions(MsgEntry* msg);
 
     /**
      * Handle command to disconnect from server.
      *
      * @param msg        The undecoded message to handle.
      */
-    void HandleDisconnect(MsgEntry *msg);
+    void HandleDisconnect(MsgEntry* msg);
 
     /**
      * Handle time updates from server.
      *
      * @param msg        The undecoded message to handle.
      */
-    void HandleTimeUpdate(MsgEntry *msg);
+    void HandleTimeUpdate(MsgEntry* msg);
 
     /**
      * Handle information from server that work is done.
      *
      * @param msg        The undecoded message to handle.
      */
-    void HandleNPCWorkDone(MsgEntry *msg);
+    void HandleNPCWorkDone(MsgEntry* msg);
 
     /**
      * Handle information from server about NPCs to use.
      *
      * @param msg        The undecoded message to handle.
      */
-    void HandleNewNpc(MsgEntry *msg);
-    
+    void HandleNewNpc(MsgEntry* msg);
+
     /**
-     * 
+     *
      *
      * @param me         The undecoded message to handle.
      */
-    void HandleConsoleCommand(MsgEntry *me);
+    void HandleConsoleCommand(MsgEntry* me);
 
     /**
      * Handle list of races from server.
      *
      * @param me         The undecoded message to handle.
      */
-    void HandleRaceList( MsgEntry* me );
+    void HandleRaceList(MsgEntry* me);
 
     /**
      * Handle list of all entities from server.
      *
      * @param message        The undecoded message to handle.
      */
-    void HandleAllEntities(MsgEntry *message);
+    void HandleAllEntities(MsgEntry* message);
 
     /**
      * Handle an actor from server.
      *
      * @param msg        The undecoded message to handle.
      */
-    void HandleActor( MsgEntry* msg );
+    void HandleActor(MsgEntry* msg);
 
     /**
-     * Handle a new item from server. 
+     * Handle a new item from server.
      *
      * @param me         The undecoded message to handle.
      */
-    void HandleItem( MsgEntry* me );
+    void HandleItem(MsgEntry* me);
 
     /**
      * Handle removal of an object from server.
      *
      * @param me         The undecoded message to handle.
      */
-    void HandleObjectRemoval( MsgEntry* me );
+    void HandleObjectRemoval(MsgEntry* me);
 
     /**
      * Handle changes to path network from server.
      *
      * @param me         The undecoded message to handle.
      */
-    void HandlePathNetwork(MsgEntry *me);
+    void HandlePathNetwork(MsgEntry* me);
 
     /**
      * Handle location changes from server.
      *
      * @param me         The undecoded message to handle.
      */
-    void HandleLocation(MsgEntry *me);
+    void HandleLocation(MsgEntry* me);
 
     csString host,password,user;
     int port;
@@ -195,7 +195,7 @@ public:
     /**
      * Construct the network manager.
      */
-    NetworkManager(MsgHandler *mh,psNetConnection* conn, iEngine* engine);
+    NetworkManager(MsgHandler* mh,psNetConnection* conn, iEngine* engine);
 
     /**
      * Destructor.
@@ -207,12 +207,15 @@ public:
      *
      * @param pMsg        The undecoded message to handle.
      */
-    virtual void HandleMessage(MsgEntry *pMsg);
+    virtual void HandleMessage(MsgEntry* pMsg);
 
-    void Authenticate(csString& host,int port,csString& user,csString& pass);
-    bool IsReady() { return ready; }
+    void Authenticate(csString &host,int port,csString &user,csString &pass);
+    bool IsReady()
+    {
+        return ready;
+    }
     void Disconnect();
-    
+
     /**
      * Checks if the npc command message could overrun if the neededSize is tried to be added.
      *
@@ -221,7 +224,7 @@ public:
      */
     void CheckCommandsOverrun(size_t neededSize);
 
- private:
+private:
 
     /**
      * Send a DR Data command to server.
@@ -234,12 +237,12 @@ public:
      */
     void QueueDRDataCommand(NPC* npc);
 
- public:
+public:
     /**
      * Prepare a new command message allow for queuing of new commands.
      */
     void PrepareCommandMessage();
- 
+
     /**
      * Send the queued commands.
      *
@@ -255,8 +258,8 @@ public:
      *
      * @param npc      Queue DR data for this NPC.
      */
-    void QueueDRData(NPC * npc );
-    
+    void QueueDRData(NPC* npc);
+
     /**
      * Queue the NPC for an DR Update to the server.
      *
@@ -265,12 +268,12 @@ public:
      *
      * @param npc      Queue DR data for this NPC.
      */
-    void QueueDRData2(NPC * npc );
+    void QueueDRData2(NPC* npc);
 
     /**
      * Call to remove queued dr updates when entities are removed/deleted.
      */
-    void DequeueDRData(NPC * npc );
+    void DequeueDRData(NPC* npc);
 
     /**
      * Queue an Attack Command for an NPC to the server.
@@ -279,8 +282,8 @@ public:
      * @param target   The target for the NPC or NULL to stop attack
      * @param stance   The stance to be used
      */
-    void QueueAttackCommand(gemNPCActor *attacker, gemNPCActor *target, const char* stance);
-    
+    void QueueAttackCommand(gemNPCActor* attacker, gemNPCActor* target, const char* stance);
+
     /**
      * Send a script command to server
      *
@@ -288,7 +291,7 @@ public:
      * @param target          The current target of then npc
      * @param scriptName      The name of the progression script to run at server
      */
-    void QueueScriptCommand(gemNPCActor *npc, gemNPCObject *target, const csString& scriptName);
+    void QueueScriptCommand(gemNPCActor* npc, gemNPCObject* target, const csString &scriptName);
 
     /**
      * Send a sit command to server
@@ -297,7 +300,7 @@ public:
      * @param target          The current target of then npc
      * @param sit             True if sitting, false if standing
      */
-    void QueueSitCommand(gemNPCActor *npc, gemNPCObject *target, bool sit);
+    void QueueSitCommand(gemNPCActor* npc, gemNPCObject* target, bool sit);
 
     /**
      * Send a spawn command to server
@@ -306,19 +309,19 @@ public:
      * @param father          If the father is known point to the father, use mother if unknow.
      * @param tribeMemberType What type of tribe member is this.
      */
-    void QueueSpawnCommand(gemNPCActor *mother, gemNPCActor *father, const csString& tribeMemberType);
+    void QueueSpawnCommand(gemNPCActor* mother, gemNPCActor* father, const csString &tribeMemberType);
 
     /**
      * Send a spawn building command to server
      *
      * @param spawner      The entity that spawned the building
-     * @param where        Containing the desired location  
+     * @param where        Containing the desired location
      * @param sector       The sector in which we want a spawn.
      * @param buildingName The name of the building. Or more exactly... of the mesh for it.
      * @param tribeID      The owner of this building
      * @param pickupable   Should the building be possible to pick up
      */
-    void QueueSpawnBuildingCommand(gemNPCActor *spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID, bool pickupable);
+    void QueueSpawnBuildingCommand(gemNPCActor* spawner, csVector3 where, iSector* sector, const char* buildingName, int tribeID, bool pickupable);
 
     /**
      * Send a unbuild command to server
@@ -326,8 +329,8 @@ public:
      * @param unbuilder    The entity that unbuild the building
      * @param building     The building.
      */
-    void QueueUnbuildCommand(gemNPCActor *unbuilder, gemNPCItem* building);
-    
+    void QueueUnbuildCommand(gemNPCActor* unbuilder, gemNPCItem* building);
+
     /**
      * Queue a talk command to the server
      *
@@ -339,7 +342,7 @@ public:
      * @param publicTalk      True if this should be published. False will be a wisper.
      * @param text            The text to talk.
      */
-    void QueueTalkCommand(gemNPCActor *speaker, gemNPCActor* target, psNPCCommandsMessage::PerceptionTalkType talkType, bool publicTalk, const char* text);
+    void QueueTalkCommand(gemNPCActor* speaker, gemNPCActor* target, psNPCCommandsMessage::PerceptionTalkType talkType, bool publicTalk, const char* text);
 
     /**
      * Queue a change in visibility.
@@ -347,7 +350,7 @@ public:
      * @param entity          The entity to change visibility.
      * @param status          The new visibility status. True or False.
      */
-    void QueueVisibilityCommand(gemNPCActor *entity, bool status);
+    void QueueVisibilityCommand(gemNPCActor* entity, bool status);
 
     /**
      * Queue a command to pickup a item.
@@ -356,7 +359,7 @@ public:
      * @param item            The item to pick up.
      * @param count           The number of items to pick up of a stack.
      */
-    void QueuePickupCommand(gemNPCActor *entity, gemNPCObject *item, int count);
+    void QueuePickupCommand(gemNPCActor* entity, gemNPCObject* item, int count);
 
     /**
      * Send an emote command to server
@@ -365,27 +368,27 @@ public:
      * @param target          The current target of then npc
      * @param cmd             The emotion
      */
-    void QueueEmoteCommand(gemNPCActor *npc, gemNPCObject *target, const csString& cmd);
+    void QueueEmoteCommand(gemNPCActor* npc, gemNPCObject* target, const csString &cmd);
 
     /**
      * Send a command to equip an equipment.
      */
-    void QueueEquipCommand(gemNPCActor *entity, csString item, csString slot, int count);
+    void QueueEquipCommand(gemNPCActor* entity, csString item, csString slot, int count);
 
     /**
      * Send a command to dequip an equipment.
      */
-    void QueueDequipCommand(gemNPCActor *entity, csString slot);
+    void QueueDequipCommand(gemNPCActor* entity, csString slot);
 
     /**
      * Send a command to start working.
      */
-    void QueueWorkCommand(gemNPCActor *entity, const csString& type, const csString& resource);
+    void QueueWorkCommand(gemNPCActor* entity, const csString &type, const csString &resource);
 
     /**
      * Send a command to transfere an item between two entities.
      */
-    void QueueTransferCommand(gemNPCActor *entity, csString item, int count, csString target);
+    void QueueTransferCommand(gemNPCActor* entity, csString item, int count, csString target);
 
     /**
      * Send a command to delete a npc.
@@ -395,7 +398,7 @@ public:
     /**
      * Send a command to drop the content of a slot.
      */
-    void QueueDropCommand(gemNPCActor *entity, csString slot);
+    void QueueDropCommand(gemNPCActor* entity, csString slot);
 
     /**
      * Send a command to resurrect.
@@ -413,8 +416,8 @@ public:
      * @param entity           The entity to change.
      * @param impervious       Set to true if temporarily impervious should be turned on.
      */
-    void QueueTemporarilyImperviousCommand(gemNPCActor * entity, bool impervious);
-    
+    void QueueTemporarilyImperviousCommand(gemNPCActor* entity, bool impervious);
+
     /**
      * Send an system info command to the client.
      *
@@ -427,46 +430,46 @@ public:
      * Send a command to do an assessment.
      *
      */
-    void QueueAssessCommand(gemNPCActor* entity, gemNPCObject* target, const csString& physicalAssessmentPerception,
-                            const csString& magicalAssessmentPerception,  const csString& overallAssessmentPerception);
+    void QueueAssessCommand(gemNPCActor* entity, gemNPCObject* target, const csString &physicalAssessmentPerception,
+                            const csString &magicalAssessmentPerception,  const csString &overallAssessmentPerception);
 
     /**
      * Send a command to start cast a spell.
      */
-    void QueueCastCommand(gemNPCActor* entity, gemNPCObject* target, const csString& spell, float kFactor);
+    void QueueCastCommand(gemNPCActor* entity, gemNPCObject* target, const csString &spell, float kFactor);
 
     /**
      * Send a command to change the busy state.
      */
-    void QueueBusyCommand(gemNPCActor* entity, bool busy );
+    void QueueBusyCommand(gemNPCActor* entity, bool busy);
 
     /**
      * Send a command start controll an entity.
      */
-    void QueueControlCommand(gemNPCActor* controllingEntity, gemNPCActor* controlledEntity );
-    
+    void QueueControlCommand(gemNPCActor* controllingEntity, gemNPCActor* controlledEntity);
+
     /**
      * Send a command to loot selected target.
      */
-    void QueueLootCommand(gemNPCActor *entity, EID targetEID, const csString& type);
+    void QueueLootCommand(gemNPCActor* entity, EID targetEID, const csString &type);
 
     /**
      * Send a console command.
      *
      * @param cmd          The command to send.
      */
-    void SendConsoleCommand(const char *cmd);
+    void SendConsoleCommand(const char* cmd);
 
     /**
      * Get the message string table.
      */
-    csStringHashReversible * GetMsgStrings();
-    
+    csStringHashReversible* GetMsgStrings();
+
     /**
      * Convert a common string id into the corresponding string
      */
-    const char * GetCommonString(uint32_t cstr_id);
-    
+    const char* GetCommonString(uint32_t cstr_id);
+
     /**
      * Convert a string into a common string id
      */
@@ -483,7 +486,7 @@ public:
     void ReConnect();
 
     bool reconnect; ///< Set to true if reconnect should be done.
-    
+
 private:
     iEngine* engine;
 };
@@ -491,11 +494,11 @@ private:
 class psNPCReconnect : public psGameEvent
 {
 protected:
-    NetworkManager *networkMgr;
+    NetworkManager* networkMgr;
     bool authent;
 
 public:
-    psNPCReconnect(int offsetticks, NetworkManager *mgr, bool authent);
+    psNPCReconnect(int offsetticks, NetworkManager* mgr, bool authent);
     virtual void Trigger();  // Abstract event processing function
 };
 

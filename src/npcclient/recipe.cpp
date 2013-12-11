@@ -1,7 +1,7 @@
 /*
 * recipe.cpp             by Zee (RoAnduku@gmail.com)
 *
-* Copyright (C) 2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -39,15 +39,17 @@
 #include "recipe.h"
 #include "npc.h"
 
-const char* Recipe::RequirementTypeString[] = 
-    {"REQ_TYPE_BUILDING",
-     "REQ_TYPE_ITEM",
-     "REQ_TYPE_KNOWLEDGE",
-     "REQ_TYPE_MEMORY",
-     "REQ_TYPE_RECIPE",
-     "REQ_TYPE_RESOURCE",
-     "REQ_TYPE_TRADER",
-     "REQ_TYPE_TRIBESMAN"};    
+const char* Recipe::RequirementTypeString[] =
+{
+    "REQ_TYPE_BUILDING",
+    "REQ_TYPE_ITEM",
+    "REQ_TYPE_KNOWLEDGE",
+    "REQ_TYPE_MEMORY",
+    "REQ_TYPE_RECIPE",
+    "REQ_TYPE_RESOURCE",
+    "REQ_TYPE_TRADER",
+    "REQ_TYPE_TRIBESMAN"
+};
 
 
 Recipe::Recipe()
@@ -66,7 +68,7 @@ csStringArray SplitFunctions(csString buffer)
     for(size_t i=0; i<lines.GetSize(); i++)
     {
         csString line = lines.Get(i);
-        
+
         if(line.IsEmpty())
         {
             continue; // Skip blank lines
@@ -82,7 +84,7 @@ csStringArray SplitFunctions(csString buffer)
         {
             csString function = functions.Get(j);
             function.Trim();
-            if (function.IsEmpty())
+            if(function.IsEmpty())
             {
                 continue; // Skip empty functions
             }
@@ -93,7 +95,7 @@ csStringArray SplitFunctions(csString buffer)
 }
 
 
-bool Recipe::Load(iResultRow &row) 
+bool Recipe::Load(iResultRow &row)
 {
     csStringArray unparsedReq;
     csString      reqText;
@@ -101,7 +103,7 @@ bool Recipe::Load(iResultRow &row)
     int isUnique = row.GetInt("uniqueness");
     id           = row.GetInt("id");
     name         = row["name"];
-    
+
     // Set persistance
     if(pers == 1) persistence = true;
 
@@ -119,7 +121,7 @@ bool Recipe::Load(iResultRow &row)
     {
         Requirement newReq;
         newReq.reqText = unparsedReq.Get(i);
-        
+
         // Split into function & argument 1 & argument 2
         csStringArray explodedReq;
         explodedReq.SplitString(newReq.reqText, "(,)");
@@ -129,7 +131,7 @@ bool Recipe::Load(iResultRow &row)
         // Flags used to check parameters
         bool recipeRequired = false;
         bool bufferRequired = false;
-        
+
         // And check its contents
         if(reqText == "building")
         {
@@ -178,9 +180,9 @@ bool Recipe::Load(iResultRow &row)
 
         newReq.name = explodedReq.Get(index++);
         newReq.quantity = explodedReq.Get(index++);
-        if (recipeRequired)
+        if(recipeRequired)
         {
-            if (explodedReq.GetSize() > index)
+            if(explodedReq.GetSize() > index)
             {
                 newReq.recipe = explodedReq.Get(index++);
             }
@@ -191,9 +193,9 @@ bool Recipe::Load(iResultRow &row)
                 return false;
             }
         }
-        if (bufferRequired)
+        if(bufferRequired)
         {
-            if (explodedReq.GetSize() > index)
+            if(explodedReq.GetSize() > index)
             {
                 newReq.buffer = explodedReq.Get(index++);
             }
@@ -221,10 +223,10 @@ void Recipe::Dump()
     CPrintf(CON_NOTIFY, "Unique: %d \n", unique);
 }
 
-void Recipe::DumpAlgorithm() 
+void Recipe::DumpAlgorithm()
 {
     CPrintf(CON_NOTIFY, "Algorithms:\n");
-    if (algorithm.GetSize())
+    if(algorithm.GetSize())
     {
         for(size_t i=0; i<algorithm.GetSize(); i++)
         {
@@ -237,10 +239,10 @@ void Recipe::DumpAlgorithm()
     }
 }
 
-void Recipe::DumpRequirements() 
+void Recipe::DumpRequirements()
 {
     CPrintf(CON_NOTIFY, "Requirements:\n");
-    if (requirements.GetSize())
+    if(requirements.GetSize())
     {
         for(size_t i=0; i<requirements.GetSize(); i++)
         {
@@ -254,7 +256,7 @@ void Recipe::DumpRequirements()
 }
 
 
-RecipeManager::RecipeManager(psNPCClient* NPCClient, EventManager* eventManager) 
+RecipeManager::RecipeManager(psNPCClient* NPCClient, EventManager* eventManager)
 {
     npcclient    = NPCClient;
     eventmanager = eventManager;
@@ -262,7 +264,7 @@ RecipeManager::RecipeManager(psNPCClient* NPCClient, EventManager* eventManager)
 
 RecipeManager::~RecipeManager()
 {
-    while (!recipes.IsEmpty())
+    while(!recipes.IsEmpty())
     {
         Recipe* recipe = recipes.Pop();
         delete recipe;
@@ -290,13 +292,13 @@ csString RecipeManager::Preparse(csString function, Tribe* tribe)
     return function;
 }
 
-bool RecipeManager::LoadRecipes() 
+bool RecipeManager::LoadRecipes()
 {
     Result rs(db->Select("SELECT * FROM tribe_recipes"));
 
     if(!rs.IsValid())
     {
-        Error2("Could not load recipes from the database. Reason: %s", db->GetLastError() );
+        Error2("Could not load recipes from the database. Reason: %s", db->GetLastError());
         return false;
     }
 
@@ -310,18 +312,18 @@ bool RecipeManager::LoadRecipes()
     return true;
 }
 
-bool RecipeManager::AddTribe(Tribe *tribe)
+bool RecipeManager::AddTribe(Tribe* tribe)
 {
     TribeData newTribe;
     newTribe.tribeID = tribe->GetID();
 
     // Get Tribal Recipe
     newTribe.tribalRecipe = tribe->GetTribalRecipe();
-        
+
     csStringArray tribeStats = newTribe.tribalRecipe->GetAlgorithm();
     csStringArray keywords;
     csString      keyword;
-    
+
     // Get Tribe Stats
     for(size_t i=0; i<tribeStats.GetSize(); i++)
     {
@@ -331,7 +333,7 @@ bool RecipeManager::AddTribe(Tribe *tribe)
         if(keyword == "aggressivity")
         {
             newTribe.aggressivity = keywords.Get(1);
-        } 
+        }
         else if(keyword == "brain")
         {
             newTribe.brain = keywords.Get(1);
@@ -347,20 +349,20 @@ bool RecipeManager::AddTribe(Tribe *tribe)
         else if(keyword == "sleepPeriod")
         {
             newTribe.sleepPeriod = keywords.Get(1);
-            if ((newTribe.sleepPeriod != "diurnal") &&
-                (newTribe.sleepPeriod != "nocturnal") &&
-                (newTribe.sleepPeriod != "nosleep"))
+            if((newTribe.sleepPeriod != "diurnal") &&
+                    (newTribe.sleepPeriod != "nocturnal") &&
+                    (newTribe.sleepPeriod != "nosleep"))
             {
                 Error2("Recipe sleepPeriod(%s) with unkown period. Use: diurnal|nocturnal|nosleep",keywords.Get(1));
                 return false;
             }
-            
+
         }
         else if(keyword == "loadRecipe")
         {
             Recipe* newRecipe = GetRecipe(csString(keywords.Get(1)));
 
-            if (!newRecipe)
+            if(!newRecipe)
             {
                 Error2("Recipe not found for loadRecipe(%s)",keywords.Get(1));
                 return false;
@@ -369,13 +371,13 @@ bool RecipeManager::AddTribe(Tribe *tribe)
             if(strncmp(keywords.Get(2), "distributed", 11) == 0)
             {
                 tribe->AddRecipe(newRecipe, newTribe.tribalRecipe, true);
-            } 
+            }
             else
             {
                 tribe->AddRecipe(newRecipe, newTribe.tribalRecipe, false);
             }
         }
-        else 
+        else
         {
             Error2("Unknown tribe stat: '%s'. Abandon ship.", keywords[0]);
             return false;
@@ -386,7 +388,7 @@ bool RecipeManager::AddTribe(Tribe *tribe)
 
     // Add structure to array
     tribeData.Push(newTribe);
-    
+
     // Add tribes pointer to RM's array
     tribes.Push(tribe);
 
@@ -396,7 +398,7 @@ bool RecipeManager::AddTribe(Tribe *tribe)
     return true;
 }
 
-bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>& npcs, Recipe* recipe)
+bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*> &npcs, Recipe* recipe)
 {
     RDebug(tribe, 5, "Parse Function: '%s'",function.GetDataSafe());
 
@@ -411,7 +413,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
     functionParts.SplitString(function, "()");
     functionBody = functionParts.Get(0);
     functionArguments.SplitString(functionParts.Get(1), ",");
-    
+
     // Due split, empty items may be in the array
     for(size_t i=0; i<functionArguments.GetSize(); i++)
     {
@@ -420,8 +422,8 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
     }
 
     int argSize = functionArguments.GetSize();
-    
-    // On each of the following conditions we check function number and arguments 
+
+    // On each of the following conditions we check function number and arguments
     // and then apply the function effect
 
     if(functionBody == "aggressivity")
@@ -501,13 +503,13 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         whatLocation[1] = atoi(functionArguments.Get(1));
         whatLocation[2] = atoi(functionArguments.Get(2));
         tribe->AddMemory("work",whatLocation,
-                        tribe->GetHomeSector(),
-                        10,NULL);
+                         tribe->GetHomeSector(),
+                         10,NULL);
 
         return true;
     }
     else if(functionBody == "goWork")
-    {  
+    {
         if(argSize != 1)
         {
             DumpError(recipe->GetName(), functionBody.GetData(), 4, argSize);
@@ -541,7 +543,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
             return false;
         }
         tribe->AddCyclicRecipe(GetRecipe(functionArguments.Get(0)),
-                                   atoi(functionArguments.Get(1)));
+                               atoi(functionArguments.Get(1)));
 
         return true;
     }
@@ -568,7 +570,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
             DumpError(recipe->GetName(), functionBody.GetData(), 1, argSize);
             return false;
         }
-        
+
         Tribe::Asset* spot = tribe->GetAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, functionArguments.Get(0), Tribe::ASSET_STATUS_NOT_USED);
 
         if(!spot)
@@ -612,7 +614,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         where[2] = atoi(functionArguments.Get(2));
         iSector* sector = NULL; // Position for spots are delta values from tribe home so sector dosn't apply.
 
-        if (!tribe->GetAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingName, where, sector))
+        if(!tribe->GetAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingName, where, sector))
         {
             tribe->AddAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingName, where, sector, Tribe::ASSET_STATUS_NOT_USED);
         }
@@ -676,7 +678,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
             DumpError(recipe->GetName(), functionBody.GetData(), 0, argSize);
             return false;
         }
-        
+
         tribe->SendPerception("tribe:explore", npcs);
         return true;
     }
@@ -689,11 +691,11 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         }
 
         csString target = functionArguments.Get(0);
-        if (target == "selection")
+        if(target == "selection")
         {
             tribe->SendPerception(functionArguments.Get(1), npcs);
         }
-        else if (target == "tribe")
+        else if(target == "tribe")
         {
             tribe->SendPerception(functionArguments.Get(1));
         }
@@ -712,14 +714,14 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
             return false;
         }
         csString target = functionArguments.Get(0);
-        if (target == "selection")
+        if(target == "selection")
         {
             for(size_t i=0; i<npcs.GetSize(); i++)
             {
                 npcs[i]->SetBuffer(functionArguments.Get(1),functionArguments.Get(2));
             }
         }
-        else if (target == "tribe")
+        else if(target == "tribe")
         {
             tribe->SetBuffer(functionArguments.Get(1),functionArguments.Get(2));
         }
@@ -756,7 +758,8 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
         {
             // We have a distributed requirements recipe
             tribe->AddRecipe(GetRecipe(functionArguments.Get(0)), recipe, true);
-        } else
+        }
+        else
         {
             // We have a non distributed requirements recipe
             tribe->AddRecipe(GetRecipe(functionArguments.Get(0)), recipe, false);
@@ -797,11 +800,11 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     if(requirement.type == Recipe::REQ_TYPE_BUILDING)
     {
         int count = tribe->AssetQuantity(Tribe::ASSET_TYPE_BUILDING, name);
-        if (count >= quantity) 
+        if(count >= quantity)
         {
             return true; // We have the required number of buildings
         }
-        
+
         // Load receipes for each of the missing building
         for(int i=0; i<(quantity-count); i++)
         {
@@ -811,7 +814,7 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     }
     else if(requirement.type == Recipe::REQ_TYPE_TRIBESMAN)
     {
-        if (quantity < 0)
+        if(quantity < 0)
         {
             return false;
         }
@@ -831,7 +834,7 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
             // Just wait for members to free for basic recipes
             return false;
         }
-        
+
         if(tribe->CanGrow() && tribe->ShouldGrow())
         {
             // Start ... erm... cell-dividing :)
@@ -857,11 +860,11 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
     else if(requirement.type == Recipe::REQ_TYPE_ITEM)
     {
         int count = tribe->AssetQuantity(Tribe::ASSET_TYPE_ITEM, name);
-        if (count >= quantity) 
+        if(count >= quantity)
         {
             return true; // We have the required number of items
         }
-        
+
         // Load receipes for each of the missing building
         for(int i=0; i<(quantity-count); i++)
         {
@@ -889,13 +892,13 @@ bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tri
         float random = psGetRandom();
         bool probably = (random < ((float)quantity/100.0));
 
-        if (probably || !tribe->FindMemory(name))
+        if(probably || !tribe->FindMemory(name))
         {
             // Explore for not found memory
             tribe->AddRecipe(GetRecipe(requirement.recipe), recipe);
             return false;
         }
-        
+
         return true;
     }
     else
@@ -914,14 +917,15 @@ void RecipeManager::CreateGlobalNPCType(Tribe* tribe)
 
     assembledType = "<npctype name=\"tribe_";
     assembledType.Append(tribe->GetID());
-    if (currentTribe->brain != "")
+    if(currentTribe->brain != "")
     {
-       assembledType.Append("\" parent=\"");
-       assembledType.Append(currentTribe->brain);
-       assembledType.Append("\">");
-    } else
+        assembledType.Append("\" parent=\"");
+        assembledType.Append(currentTribe->brain);
+        assembledType.Append("\">");
+    }
+    else
     {
-       assembledType.Append("\" parent=\"AbstractTribesman\">");
+        assembledType.Append("\" parent=\"AbstractTribesman\">");
     }
 
     // Aggressivity Trait
@@ -990,12 +994,12 @@ int RecipeManager::ApplyRecipe(RecipeTreeNode* bestRecipe, Tribe* tribe, int ste
     // selectedNPCs will keep the npcs required for the recipe
     // It is used so that the ParseFunction method can fire perceptions on them
     csArray<NPC*>                selectedNPCs;
-    
+
     // Check all requirements
     size_t i = (bestRecipe->requirementParseType == RecipeTreeNode::REQ_DISTRIBUTED) ? bestRecipe->nextReq : 0;
     for(; i<requirements.GetSize(); i++)
     {
-        RDebug(tribe, 5, "Parsing req(index:%zu) for recipe %s of type: %s\n", 
+        RDebug(tribe, 5, "Parsing req(index:%zu) for recipe %s of type: %s\n",
                i, recipe->GetName().GetData(),
                RecipeTreeNode::RequirementParseTypeString[bestRecipe->requirementParseType]);
 
@@ -1056,14 +1060,14 @@ Recipe* RecipeManager::GetRecipe(csString recipeName)
             return recipes[i];
         }
     }
-    
+
 
     // Could not find it
     CPrintf(CON_ERROR, "Could not find recipe %s.\n", recipeName.GetData());
     return NULL;
 }
 
-RecipeManager::TribeData* RecipeManager::GetTribeData(Tribe *tribe)
+RecipeManager::TribeData* RecipeManager::GetTribeData(Tribe* tribe)
 {
     for(size_t i=0; i<tribeData.GetSize(); i++)
         if(tribeData[i].tribeID == tribe->GetID())

@@ -1,7 +1,7 @@
 /*
  * command.cpp
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -85,34 +85,34 @@ int com_locationtest(const char* line)
 {
     WordArray words(line,false);
 
-    if (words.GetCount() < 5)
+    if(words.GetCount() < 5)
     {
         CPrintf(CON_CMDOUTPUT,"Syntax: loctest loc sector x y z\n");
         return 0;
     }
 
-    LocationType * loc = npcclient->FindRegion(words[0]);
-    if (!loc)
+    LocationType* loc = npcclient->FindRegion(words[0]);
+    if(!loc)
     {
         CPrintf(CON_CMDOUTPUT,"Location '%s' not found\n",words[0].GetDataSafe());
         return 0;
     }
 
-    iSector * sector = npcclient->GetEngine()->FindSector(words[1]);
-    if (!sector)
+    iSector* sector = npcclient->GetEngine()->FindSector(words[1]);
+    if(!sector)
     {
         CPrintf(CON_CMDOUTPUT,"Sector '%s' not found\n",words[1].GetDataSafe());
         return 0;
     }
-    
+
     float x = atof(words[2]);
     float y = atof(words[3]);
     float z = atof(words[4]);
 
     csVector3 pos(x,y,z);
-    
 
-    if (loc->CheckWithinBounds(npcclient->GetEngine(),pos,sector))
+
+    if(loc->CheckWithinBounds(npcclient->GetEngine(),pos,sector))
     {
         CPrintf(CON_CMDOUTPUT,"Within loc\n");
     }
@@ -126,40 +126,40 @@ int com_locationtest(const char* line)
 
 /* Print out help for ARG, or for all of the commands if ARG is
    not present. */
-int com_help (const char* arg)
+int com_help(const char* arg)
 {
     register int i;
     int printed = 0;
-    
+
     CPrintf(CON_CMDOUTPUT, "\n");
-    for (i = 0; commands[i].name; i++)
+    for(i = 0; commands[i].name; i++)
     {
-        if (!*arg || (strcmp (arg, commands[i].name) == 0))
+        if(!*arg || (strcmp(arg, commands[i].name) == 0))
         {
-            CPrintf (CON_CMDOUTPUT, "%-12s %s.\n", commands[i].name, commands[i].doc);
+            CPrintf(CON_CMDOUTPUT, "%-12s %s.\n", commands[i].name, commands[i].doc);
             printed++;
         }
     }
-    
-    if (!printed)
+
+    if(!printed)
     {
-    CPrintf (CON_CMDOUTPUT, "No commands match `%s'.  Possibilities are:\n", arg);
-    
-    for (i = 0; commands[i].name; i++)
-    {
-        /* Print in six columns. */
-        if (printed == 6)
+        CPrintf(CON_CMDOUTPUT, "No commands match `%s'.  Possibilities are:\n", arg);
+
+        for(i = 0; commands[i].name; i++)
         {
-        printed = 0;
-        CPrintf (CON_CMDOUTPUT, "\n");
+            /* Print in six columns. */
+            if(printed == 6)
+            {
+                printed = 0;
+                CPrintf(CON_CMDOUTPUT, "\n");
+            }
+
+            CPrintf(CON_CMDOUTPUT, "%s\t", commands[i].name);
+            printed++;
         }
-        
-        CPrintf (CON_CMDOUTPUT, "%s\t", commands[i].name);
-        printed++;
-    }
-    
-    if (printed)
-        CPrintf(CON_CMDOUTPUT, "\n");
+
+        if(printed)
+            CPrintf(CON_CMDOUTPUT, "\n");
     }
 
     CPrintf(CON_CMDOUTPUT, "\n");
@@ -168,11 +168,11 @@ int com_help (const char* arg)
 }
 
 /* List entity given. */
-int com_list (const char* arg)
+int com_list(const char* arg)
 {
     WordArray words(arg,false);
 
-    if (words.GetCount() == 0 || strncasecmp(words[0],"help",1) == 0)
+    if(words.GetCount() == 0 || strncasecmp(words[0],"help",1) == 0)
     {
         CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|help|loc|npc|path|race|reactions|recipe|tribe|warpspace|waypoint] <pattern|EID>\n");
         CPrintf(CON_CMDOUTPUT,"Sub commands:\n");
@@ -181,50 +181,50 @@ int com_list (const char* arg)
     }
 
     // Compare all strings up to the point that is needed to uniq identify them.
-    if (strncasecmp(words[0],"char",1) == 0)
+    if(strncasecmp(words[0],"char",1) == 0)
     {
         npcclient->ListAllEntities(words[1],true);
     }
-    else if (strncasecmp(words[0],"ent",1) == 0)
+    else if(strncasecmp(words[0],"ent",1) == 0)
     {
         npcclient->ListAllEntities(words[1],false);
     }
-    else if (strncasecmp(words[0],"loc",1) == 0)
+    else if(strncasecmp(words[0],"loc",1) == 0)
     {
         npcclient->ListLocations(words[1]);
     }
-    else if (strncasecmp(words[0],"npc",1) == 0)
+    else if(strncasecmp(words[0],"npc",1) == 0)
     {
         npcclient->ListAllNPCs(words[1]);
     }
-    else if (strncasecmp(words[0],"path",1) == 0)
+    else if(strncasecmp(words[0],"path",1) == 0)
     {
         npcclient->ListPaths(words[1]);
     }
-    else if (strncasecmp(words[0],"race",2) == 0)
+    else if(strncasecmp(words[0],"race",2) == 0)
     {
         if(!npcclient->DumpRace(words[1]))
         {
             CPrintf(CON_CMDOUTPUT, "No Race with id '%s' found.\n", words[1].GetDataSafe());
-        }        
+        }
     }
-    else if (strncasecmp(words[0],"reactions",3) == 0)
+    else if(strncasecmp(words[0],"reactions",3) == 0)
     {
         npcclient->ListReactions(words[1]);
     }
-    else if (strncasecmp(words[0],"recipe",3) == 0)
+    else if(strncasecmp(words[0],"recipe",3) == 0)
     {
         npcclient->ListTribeRecipes(words[1]);
     }
-    else if (strncasecmp(words[0],"tribe",1) == 0)
+    else if(strncasecmp(words[0],"tribe",1) == 0)
     {
         npcclient->ListTribes(words[1]);
     }
-    else if (strncasecmp(words[0],"warpspace",3) == 0)
+    else if(strncasecmp(words[0],"warpspace",3) == 0)
     {
         npcclient->GetWorld()->DumpWarpCache();
     }
-    else if ((strncasecmp(words[0],"waypoint",3) == 0) || strncasecmp(words[0],"wp",2) == 0)
+    else if((strncasecmp(words[0],"waypoint",3) == 0) || strncasecmp(words[0],"wp",2) == 0)
     {
         npcclient->ListWaypoints(words[1]);
     }
@@ -239,48 +239,48 @@ int com_list (const char* arg)
 
 int com_setmaxout(const char* arg)
 {
-    if (!arg || strlen (arg) == 0)
+    if(!arg || strlen(arg) == 0)
     {
-        CPrintf (CON_CMDOUTPUT, "Use one of the following values to control output on standard output:\n");
-        CPrintf (CON_CMDOUTPUT, "  1: only output of server commands\n");
-        CPrintf (CON_CMDOUTPUT, "  2: 1 + bug\n");
-        CPrintf (CON_CMDOUTPUT, "  3: 2 + errors\n");
-        CPrintf (CON_CMDOUTPUT, "  4: 3 + warnings\n");
-        CPrintf (CON_CMDOUTPUT, "  5: 4 + notifications\n");
-        CPrintf (CON_CMDOUTPUT, "  6: 5 + debug messages\n");
-        CPrintf (CON_CMDOUTPUT, "  7: 6 + spam\n");
-        CPrintf (CON_CMDOUTPUT, "Current level: %d\n",ConsoleOut::GetMaximumOutputClassStdout());
+        CPrintf(CON_CMDOUTPUT, "Use one of the following values to control output on standard output:\n");
+        CPrintf(CON_CMDOUTPUT, "  1: only output of server commands\n");
+        CPrintf(CON_CMDOUTPUT, "  2: 1 + bug\n");
+        CPrintf(CON_CMDOUTPUT, "  3: 2 + errors\n");
+        CPrintf(CON_CMDOUTPUT, "  4: 3 + warnings\n");
+        CPrintf(CON_CMDOUTPUT, "  5: 4 + notifications\n");
+        CPrintf(CON_CMDOUTPUT, "  6: 5 + debug messages\n");
+        CPrintf(CON_CMDOUTPUT, "  7: 6 + spam\n");
+        CPrintf(CON_CMDOUTPUT, "Current level: %d\n",ConsoleOut::GetMaximumOutputClassStdout());
         return 0;
     }
     int msg = CON_SPAM;;
-    sscanf (arg, "%d", &msg);
-    if (msg < CON_CMDOUTPUT) msg = CON_CMDOUTPUT;
-    if (msg > CON_SPAM) msg = CON_SPAM;
-    ConsoleOut::SetMaximumOutputClassStdout ((ConsoleOutMsgClass)msg);
+    sscanf(arg, "%d", &msg);
+    if(msg < CON_CMDOUTPUT) msg = CON_CMDOUTPUT;
+    if(msg > CON_SPAM) msg = CON_SPAM;
+    ConsoleOut::SetMaximumOutputClassStdout((ConsoleOutMsgClass)msg);
     return 0;
 }
 
 int com_setmaxfile(const char* arg)
 {
-    if (!arg || strlen (arg) == 0)
+    if(!arg || strlen(arg) == 0)
     {
-        CPrintf (CON_CMDOUTPUT, "Use one of the following values to control output on output file:\n");
-        CPrintf (CON_CMDOUTPUT, "  0: no output at all\n");
-        CPrintf (CON_CMDOUTPUT, "  1: only output of server commands\n");
-        CPrintf (CON_CMDOUTPUT, "  2: 1 + bug\n");
-        CPrintf (CON_CMDOUTPUT, "  3: 2 + errors\n");
-        CPrintf (CON_CMDOUTPUT, "  4: 3 + warnings\n");
-        CPrintf (CON_CMDOUTPUT, "  5: 4 + notifications\n");
-        CPrintf (CON_CMDOUTPUT, "  6: 5 + debug messages\n");
-        CPrintf (CON_CMDOUTPUT, "  7: 6 + spam\n");
-        CPrintf (CON_CMDOUTPUT, "Current level: %d\n",ConsoleOut::GetMaximumOutputClassFile());
+        CPrintf(CON_CMDOUTPUT, "Use one of the following values to control output on output file:\n");
+        CPrintf(CON_CMDOUTPUT, "  0: no output at all\n");
+        CPrintf(CON_CMDOUTPUT, "  1: only output of server commands\n");
+        CPrintf(CON_CMDOUTPUT, "  2: 1 + bug\n");
+        CPrintf(CON_CMDOUTPUT, "  3: 2 + errors\n");
+        CPrintf(CON_CMDOUTPUT, "  4: 3 + warnings\n");
+        CPrintf(CON_CMDOUTPUT, "  5: 4 + notifications\n");
+        CPrintf(CON_CMDOUTPUT, "  6: 5 + debug messages\n");
+        CPrintf(CON_CMDOUTPUT, "  7: 6 + spam\n");
+        CPrintf(CON_CMDOUTPUT, "Current level: %d\n",ConsoleOut::GetMaximumOutputClassFile());
         return 0;
     }
     int msg = CON_SPAM;;
-    sscanf (arg, "%d", &msg);
-    if (msg < CON_NONE) msg = CON_NONE;
-    if (msg > CON_SPAM) msg = CON_SPAM;
-    ConsoleOut::SetMaximumOutputClassFile ((ConsoleOutMsgClass)msg);
+    sscanf(arg, "%d", &msg);
+    if(msg < CON_NONE) msg = CON_NONE;
+    if(msg > CON_SPAM) msg = CON_SPAM;
+    ConsoleOut::SetMaximumOutputClassFile((ConsoleOutMsgClass)msg);
     return 0;
 }
 
@@ -310,11 +310,11 @@ int com_info(const char* line)
     return 0;
 }
 
-int com_debugnpc(const char*line)
+int com_debugnpc(const char* line)
 {
     WordArray words(line);
 
-    if (!*line)
+    if(!*line)
     {
         CPrintf(CON_CMDOUTPUT, "Please specify: <npc_id> [<log_level>]\n");
         return 0;
@@ -329,7 +329,7 @@ int com_debugnpc(const char*line)
         return 0;
     }
 
-    if (words.GetCount() >= 2)
+    if(words.GetCount() >= 2)
     {
         int level = atoi(words[1]);
         npc->SetDebugging(level);
@@ -346,15 +346,15 @@ int com_debugnpc(const char*line)
             CPrintf(CON_CMDOUTPUT, "Debugging for NPC %s switched OFF.\n", npc->GetName());
         }
     }
-    
+
     return 0;
 }
 
-int com_debugtribe(const char*line)
+int com_debugtribe(const char* line)
 {
     WordArray words(line);
 
-    if (!*line)
+    if(!*line)
     {
         CPrintf(CON_CMDOUTPUT, "Please specify: <tribe_id> [<log_level>]\n");
         return 0;
@@ -369,7 +369,7 @@ int com_debugtribe(const char*line)
         return 0;
     }
 
-    if (words.GetCount() >= 2)
+    if(words.GetCount() >= 2)
     {
         int level = atoi(words[1]);
         tribe->SetDebugging(level);
@@ -386,15 +386,15 @@ int com_debugtribe(const char*line)
             CPrintf(CON_CMDOUTPUT, "Debugging for Tribe %s switched OFF.\n", tribe->GetName());
         }
     }
-    
+
     return 0;
 }
 
-int com_setbuffer(const char*line)
+int com_setbuffer(const char* line)
 {
     WordArray words(line,false);
 
-    if (!*line || words.GetCount() != 3)
+    if(!*line || words.GetCount() != 3)
     {
         CPrintf(CON_CMDOUTPUT, "Please specify: <npc_id> <buffer_name> <buffer_value>\n");
         return 0;
@@ -412,13 +412,13 @@ int com_setbuffer(const char*line)
     npc->SetBuffer(words[1],words[2]);
 
     CPrintf(CON_CMDOUTPUT, "Setting buffer %s to %s for NPC %s.\n", words[1].GetDataSafe(), words[2].GetDataSafe(), npc->GetName());
-    
+
     return 0;
 }
 
 int com_setlog(const char* line)
 {
-    if (!*line)
+    if(!*line)
     {
         CPrintf(CON_CMDOUTPUT, "Please specify: <log> <true/false> <filter_id>\n");
         CPrintf(CON_CMDOUTPUT, "            or: all <true/false> \n");
@@ -428,10 +428,10 @@ int com_setlog(const char* line)
     csString log(words[0]);
     csString flagword(words[1]);
     csString filter(words[2]);
-    
+
     bool flag;
-    if (flagword.IsEmpty() || tolower(flagword.GetAt(0)) == 't' ||
-        tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
+    if(flagword.IsEmpty() || tolower(flagword.GetAt(0)) == 't' ||
+            tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
     {
         flag=true;
     }
@@ -447,7 +447,7 @@ int com_setlog(const char* line)
     }
 
     pslog::SetFlag(log, flag, filter_id);
-    
+
     npcclient->SaveLogSettings();
 
     return 0;
@@ -455,9 +455,9 @@ int com_setlog(const char* line)
 
 int com_filtermsg(const char* arg)
 {
-    
+
     CPrintf(CON_CMDOUTPUT ,"%s\n",npcclient->GetNetConnection()->LogMessageFilter(arg).GetDataSafe());
-    
+
     return 0;
 }
 
@@ -509,7 +509,8 @@ int com_status(const char*)
  *
  * Make sure the last entry contain 0 for all entries to terminate the list.
  */
-const COMMAND commands[] = {
+const COMMAND commands[] =
+{
     { "debugnpc",     false, com_debugnpc,     "Switches the debug mode on 1 NPC"},
     { "debugtribe",   false, com_debugtribe,   "Switches the debug mode on 1 Tribe"},
     { "disable",      false, com_disable,      "Disable a enabled NPC. [all | pattern | EID]"},

@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -60,47 +60,47 @@ psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementati
 gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
     :eid(id), visible(true), invincible(false), instance(DEFAULT_INSTANCE)
 {
-}    
+}
 
 gemNPCObject::~gemNPCObject()
 {
     delete pcmesh;
 }
 
-void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room, InstanceID instance)
+void gemNPCObject::Move(const csVector3 &pos, float rotangle,  const char* room, InstanceID instance)
 {
     SetInstance(instance);
     Move(pos,rotangle,room);
 }
 
 
-void gemNPCObject::Move(const csVector3& pos, float rotangle,  const char* room)
+void gemNPCObject::Move(const csVector3 &pos, float rotangle,  const char* room)
 {
     // Position and sector
     iSector* sector = psNPCClient::npcclient->GetEngine()->FindSector(room);
-    if ( sector == NULL )
+    if(sector == NULL)
     {
         CPrintf(CON_DEBUG, "Can't move npc object %s. Sector %s not found!\n", ShowID(eid), room);
         return;
     }
-    pcmesh->MoveMesh( sector , pos );
+    pcmesh->MoveMesh(sector , pos);
 
     // Rotation
-    csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (rotangle);
-    pcmesh->GetMesh()->GetMovable()->GetTransform().SetO2T (matrix);
-   
-}    
+    csMatrix3 matrix = (csMatrix3) csYRotMatrix3(rotangle);
+    pcmesh->GetMesh()->GetMovable()->GetTransform().SetO2T(matrix);
 
-bool gemNPCObject::InitMesh(    const char *factname,
-                                const char *filename,
-                                const csVector3& pos,
-                                const float rotangle,
-                                const char* room
-                             )
+}
+
+bool gemNPCObject::InitMesh(const char* factname,
+                            const char* filename,
+                            const csVector3 &pos,
+                            const float rotangle,
+                            const char* room
+                           )
 {
     pcmesh = new npcMesh(psNPCClient::npcclient->GetObjectReg(), this, psNPCClient::npcclient);
 
-    csRef<iEngine> engine = csQueryRegistry<iEngine> (psNPCClient::npcclient->GetObjectReg());    
+    csRef<iEngine> engine = csQueryRegistry<iEngine> (psNPCClient::npcclient->GetObjectReg());
     csRef<iMeshWrapper> mesh;
 
     if(csString("").Compare(filename) || csString("nullmesh").Compare(factname))
@@ -156,32 +156,32 @@ bool gemNPCObject::InitMesh(    const char *factname,
     return true;
 }
 
-void gemNPCObject::SetAlive(bool alive )
+void gemNPCObject::SetAlive(bool alive)
 {
     isAlive = alive;
 }
 
 
-void gemNPCObject::SetPosition(csVector3& pos, iSector* sector, InstanceID* instance)
+void gemNPCObject::SetPosition(csVector3 &pos, iSector* sector, InstanceID* instance)
 {
     psGameObject::SetPosition(this, pos, sector);
 
-    if (instance)
+    if(instance)
     {
         SetInstance(*instance);
     }
 }
 
-iMeshWrapper *gemNPCObject::GetMeshWrapper()
+iMeshWrapper* gemNPCObject::GetMeshWrapper()
 {
     return pcmesh->GetMesh();
 }
 
 //-------------------------------------------------------------------------------
- 
 
-gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg) 
-    : gemNPCObject( npcclient, mesg.entityid ), pcmove(NULL), npc(NULL), withinTribe(NULL)
+
+gemNPCActor::gemNPCActor(psNPCClient* npcclient, psPersistActor &mesg)
+    : gemNPCObject(npcclient, mesg.entityid), pcmove(NULL), npc(NULL), withinTribe(NULL)
 {
     name = mesg.name;
     type = mesg.type;
@@ -189,36 +189,36 @@ gemNPCActor::gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg)
     ownerEID = mesg.ownerEID;
     race = mesg.race;
 
-    SetInvisible( (mesg.flags & psPersistActor::INVISIBLE)?  true : false );
-    SetInvincible( (mesg.flags & psPersistActor::INVINCIBLE) ?  true : false );
-    SetAlive( (mesg.flags & psPersistActor::IS_ALIVE) ?  true : false );
-    SetInstance( mesg.instance );
+    SetInvisible((mesg.flags & psPersistActor::INVISIBLE)?  true : false);
+    SetInvincible((mesg.flags & psPersistActor::INVINCIBLE) ?  true : false);
+    SetAlive((mesg.flags & psPersistActor::IS_ALIVE) ?  true : false);
+    SetInstance(mesg.instance);
 
     Debug3(LOG_CELPERSIST, eid.Unbox(), "Actor %s(%s) Received\n", mesg.name.GetData(), ShowID(mesg.entityid));
 
     csString filename;
     filename.Format("/planeshift/models/%s/%s.cal3d", mesg.factname.GetData(), mesg.factname.GetData());
-    InitMesh( mesg.factname, filename, mesg.pos, mesg.yrot, mesg.sectorName );
-    InitLinMove( mesg.pos, mesg.yrot, mesg.sectorName, mesg.top, mesg.bottom, mesg.offset );
-    InitCharData( mesg.texParts, mesg.equipment );  
+    InitMesh(mesg.factname, filename, mesg.pos, mesg.yrot, mesg.sectorName);
+    InitLinMove(mesg.pos, mesg.yrot, mesg.sectorName, mesg.top, mesg.bottom, mesg.offset);
+    InitCharData(mesg.texParts, mesg.equipment);
 }
 
 gemNPCActor::~gemNPCActor()
 {
-    if (npc)
+    if(npc)
     {
         npc->ClearState();
         npc->SetActor(NULL);
         npc = NULL;
     }
-    if (pcmove)
+    if(pcmove)
     {
         delete pcmove;
         pcmove = NULL;
     }
 }
 
-void gemNPCActor::AttachNPC(NPC * newNPC)
+void gemNPCActor::AttachNPC(NPC* newNPC)
 {
     npc = newNPC;
     npc->SetActor(this);
@@ -230,49 +230,49 @@ bool gemNPCActor::SetWithinTribe(Tribe* tribe, Tribe** oldTribe)
     // Check if this is a new tribe
     bool result = (tribe != withinTribe);
 
-    if (oldTribe)
+    if(oldTribe)
     {
         *oldTribe = withinTribe;
     }
 
     // Update the within tribe
     withinTribe = tribe;
-    
+
     return result;
 }
 
 double gemNPCActor::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
-    if (property == "HP")
+    if(property == "HP")
     {
         return GetHP();
     }
-    if (property == "MaxHP")
+    if(property == "MaxHP")
     {
         return GetMaxHP();
     }
-    if (property == "Mana")
+    if(property == "Mana")
     {
         return GetMana();
     }
-    if (property == "MaxMana")
+    if(property == "MaxMana")
     {
         return GetMaxMana();
     }
-    if (property == "PStamina")
+    if(property == "PStamina")
     {
         return GetPysStamina();
     }
-    if (property == "MaxPStamina")
+    if(property == "MaxPStamina")
     {
         return GetMaxPysStamina();
     }
-    if (property == "MStamina")
+    if(property == "MStamina")
     {
         return GetMenStamina();
     }
-    if (property == "MaxMStamina")
+    if(property == "MaxMStamina")
     {
         return GetMaxMenStamina();
     }
@@ -294,21 +294,21 @@ const char* gemNPCActor::ToString()
     return "Actor";
 }
 
-bool gemNPCActor::InitCharData( const char* textParts, const char* equipment )
-{                   
-    return true;    
-}    
+bool gemNPCActor::InitCharData(const char* textParts, const char* equipment)
+{
+    return true;
+}
 
-bool gemNPCActor::InitLinMove(const csVector3& pos, float angle, const char* sector,
-                              csVector3 top, csVector3 bottom, csVector3 offset )
+bool gemNPCActor::InitLinMove(const csVector3 &pos, float angle, const char* sector,
+                              csVector3 top, csVector3 bottom, csVector3 offset)
 {
     pcmove =  new psLinearMovement(psNPCClient::npcclient->GetObjectReg());
 
     csRef<iEngine> engine =  csQueryRegistry<iEngine> (psNPCClient::npcclient->GetObjectReg());
 
-    pcmove->InitCD(top, bottom, offset, GetMeshWrapper()); 
+    pcmove->InitCD(top, bottom, offset, GetMeshWrapper());
     pcmove->SetPosition(pos,angle,engine->FindSector(sector));
-    
+
     return true;  // right now this func never fail, but might later.
 }
 
@@ -336,7 +336,7 @@ float gemNPCActor::GetMaxHP() const
 
 void gemNPCActor::SetHPRate(float hpRate)
 {
-    hp.SetRate( hpRate, csGetTicks() );
+    hp.SetRate(hpRate, csGetTicks());
 }
 
 float gemNPCActor::GetHPRate() const
@@ -346,9 +346,9 @@ float gemNPCActor::GetHPRate() const
 
 void gemNPCActor::SetMana(float mana)
 {
-    this->mana.SetValue(mana, csGetTicks() );
+    this->mana.SetValue(mana, csGetTicks());
 }
-   
+
 float gemNPCActor::GetMana()
 {
     mana.Update(csGetTicks());
@@ -359,17 +359,17 @@ void gemNPCActor::SetMaxMana(float maxMana)
 {
     mana.SetMax(maxMana);
 }
-    
+
 float gemNPCActor::GetMaxMana() const
 {
     return mana.GetMax();
 }
-    
+
 void gemNPCActor::SetManaRate(float manaRate)
 {
     mana.SetRate(manaRate, csGetTicks());
 }
-   
+
 float gemNPCActor::GetManaRate() const
 {
     return mana.GetRate();
@@ -379,49 +379,49 @@ void gemNPCActor::SetPysStamina(float pysStamina)
 {
     this->pysStamina.SetValue(pysStamina, csGetTicks());
 }
-    
+
 float gemNPCActor::GetPysStamina()
 {
     pysStamina.Update(csGetTicks());
     return pysStamina.GetValue();
 }
-    
+
 void gemNPCActor::SetMaxPysStamina(float maxPysStamina)
 {
-    pysStamina.SetMax( maxPysStamina );
+    pysStamina.SetMax(maxPysStamina);
 }
-    
+
 float gemNPCActor::GetMaxPysStamina() const
 {
     return pysStamina.GetMax();
 }
-    
+
 void gemNPCActor::SetPysStaminaRate(float pysStaminaRate)
 {
     pysStamina.SetRate(pysStaminaRate, csGetTicks());
 }
-    
+
 float gemNPCActor::GetPysStaminaRate() const
 {
     return pysStamina.GetRate();
 }
-    
+
 void gemNPCActor::SetMenStamina(float menStamina)
 {
-    this->menStamina.SetValue( menStamina, csGetTicks());
+    this->menStamina.SetValue(menStamina, csGetTicks());
 }
-   
+
 float gemNPCActor::GetMenStamina()
 {
     menStamina.Update(csGetTicks());
     return menStamina.GetValue();
 }
-    
+
 void gemNPCActor::SetMaxMenStamina(float maxMenStamina)
 {
-    menStamina.SetMax( maxMenStamina );
+    menStamina.SetMax(maxMenStamina);
 }
-    
+
 float gemNPCActor::GetMaxMenStamina() const
 {
     return menStamina.GetMax();
@@ -429,18 +429,18 @@ float gemNPCActor::GetMaxMenStamina() const
 
 void gemNPCActor::SetMenStaminaRate(float menStaminaRate)
 {
-    menStamina.SetRate( menStaminaRate, csGetTicks());
+    menStamina.SetRate(menStaminaRate, csGetTicks());
 }
-   
+
 float gemNPCActor::GetMenStaminaRate() const
 {
     return menStamina.GetRate();
 }
 
 
-gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg) 
+gemNPCItem::gemNPCItem(psNPCClient* npcclient, psPersistItem &mesg)
     : gemNPCObject(npcclient, mesg.eid), flags(NONE)
-{        
+{
     name = mesg.name;
     Debug3(LOG_CELPERSIST, 0, "Item %s(%s) Received", mesg.name.GetData(), ShowID(mesg.eid));
     type = mesg.type;
@@ -452,8 +452,8 @@ gemNPCItem::gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg)
         Error2("Item %s has bad data! Check cstr_gfx_mesh for this item!\n", mesg.name.GetData());
     }
 
-    InitMesh( mesg.factname.GetDataSafe(), "", mesg.pos, mesg.yRot, mesg.sector );
-    if (mesg.flags & psPersistItem::NOPICKUP) flags |= NOPICKUP;
+    InitMesh(mesg.factname.GetDataSafe(), "", mesg.pos, mesg.yRot, mesg.sector);
+    if(mesg.flags & psPersistItem::NOPICKUP) flags |= NOPICKUP;
 }
 
 gemNPCItem::~gemNPCItem()

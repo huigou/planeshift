@@ -355,7 +355,7 @@ void NetworkManager::HandleActor(MsgEntry* msg)
         obj->SetInvincible((mesg.flags & psPersistActor::INVINCIBLE) ? true : false);
         obj->SetAlive((mesg.flags & psPersistActor::IS_ALIVE) ? true : false);
         NPC* npc = obj->GetNPC();
-        if (npc)
+        if(npc)
         {
             npc->SetAlive(obj->IsAlive());
             npc->SetScale(mesg.scale);
@@ -395,10 +395,10 @@ void NetworkManager::HandleActor(MsgEntry* msg)
 
     // Values that is retrived through the perist but is stored on the NPC object needs to be updated
     NPC* npc = actor->GetNPC();
-    if (npc)
+    if(npc)
     {
-       npc->SetScale(mesg.scale);
-       //       npc->SetScaleValue(mesg.scaleValue);
+        npc->SetScale(mesg.scale);
+        //       npc->SetScaleValue(mesg.scaleValue);
     }
 }
 
@@ -909,7 +909,7 @@ bool NetworkManager::HandleMapList(MsgEntry* msg)
     psMapListMessage list(msg);
     CPrintf(CON_CMDOUTPUT,"\n");
 
-    if (list.map.GetSize() == 0)
+    if(list.map.GetSize() == 0)
     {
         CPrintf(CON_ERROR, "NO maps to load\n");
         exit(1);
@@ -962,7 +962,7 @@ bool NetworkManager::HandleNPCList(MsgEntry* msg)
 
         // enable the NPC on NPCCLient if it has an associated npcclient ID
         NPC* npc = npcclient->FindNPCByPID(pid);
-        if (npc)
+        if(npc)
             npc->Disable(false);
 
         // print the received NPC
@@ -1229,12 +1229,12 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     break;
                 }
 
-                if (npc->GetActor())
+                if(npc->GetActor())
                 {
                     npc->GetActor()->SetHP(hp);
                     npc->GetActor()->SetMaxHP(maxHP);
                 }
-                
+
 
                 gemNPCObject* attacker_ent = npcclient->FindEntityID(attackerEID);
                 if(!attacker_ent)
@@ -1255,10 +1255,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
             {
                 EID who = EID(list.msg->GetUInt32());
                 NPC* npc = npcclient->FindNPC(who);
-                
+
                 DeathPerception pcpt(who);
                 npcclient->TriggerEvent(&pcpt); // Broadcast
-                
+
                 if(npc)
                 {
                     NPCDebug(npc, 5, "Got Death message");
@@ -1276,113 +1276,113 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 float pysStamina = 0.0, maxPysStamina = 0.0, pysStaminaRate = 0.0;
                 float menStamina = 0.0, maxMenStamina = 0.0, menStaminaRate = 0.0;
 
-                if (statsDirtyFlags & DIRTY_VITAL_HP)
+                if(statsDirtyFlags & DIRTY_VITAL_HP)
                 {
                     hp = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_HP_MAX)
+                if(statsDirtyFlags & DIRTY_VITAL_HP_MAX)
                 {
                     maxHP = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_HP_RATE)
+                if(statsDirtyFlags & DIRTY_VITAL_HP_RATE)
                 {
                     hpRate = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MANA)
+                if(statsDirtyFlags & DIRTY_VITAL_MANA)
                 {
                     mana = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
+                if(statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
                 {
                     maxMana = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MANA_RATE)
+                if(statsDirtyFlags & DIRTY_VITAL_MANA_RATE)
                 {
                     manaRate = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
+                if(statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
                 {
                     pysStamina = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_MAX)
+                if(statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_MAX)
                 {
                     maxPysStamina = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_RATE)
+                if(statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_RATE)
                 {
                     pysStaminaRate = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
+                if(statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
                 {
                     menStamina = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
+                if(statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
                 {
                     maxMenStamina = list.msg->GetFloat();
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_RATE)
+                if(statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_RATE)
                 {
                     menStaminaRate = list.msg->GetFloat();
                 }
 
                 gemNPCActor* entity = dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(entityEID));
-                if (!entity)
+                if(!entity)
                 {
                     break;
                 }
-                
+
                 NPC* npc = npcclient->FindNPC(entityEID);
                 if(npc)
                 {
                     NPCDebug(npc, 5, "Got StatDR Perception: HP: %.2f/.2f %.2f Mana: %.2f/%.2f %.2f PysStamina: %.2f/%.2f %.2f MenStamina: %.2f/%.2f %.2f",
                              hp,maxHP,hpRate,mana,maxMana,manaRate,pysStamina,maxPysStamina,pysStaminaRate,menStamina,maxMenStamina,menStaminaRate);
                 }
-                
-                if (statsDirtyFlags & DIRTY_VITAL_HP)
+
+                if(statsDirtyFlags & DIRTY_VITAL_HP)
                 {
                     entity->SetHP(hp);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_HP_MAX)
+                if(statsDirtyFlags & DIRTY_VITAL_HP_MAX)
                 {
                     entity->SetMaxHP(maxHP);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_HP_RATE)
+                if(statsDirtyFlags & DIRTY_VITAL_HP_RATE)
                 {
                     entity->SetHPRate(hpRate);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MANA)
+                if(statsDirtyFlags & DIRTY_VITAL_MANA)
                 {
                     entity->SetMana(mana);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
+                if(statsDirtyFlags & DIRTY_VITAL_MANA_MAX)
                 {
                     entity->SetMaxMana(maxMana);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MANA_RATE)
+                if(statsDirtyFlags & DIRTY_VITAL_MANA_RATE)
                 {
                     entity->SetManaRate(manaRate);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
+                if(statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA)
                 {
                     entity->SetPysStamina(pysStamina);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_MAX)
+                if(statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_MAX)
                 {
                     entity->SetMaxPysStamina(maxPysStamina);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_RATE)
+                if(statsDirtyFlags & DIRTY_VITAL_PYSSTAMINA_RATE)
                 {
                     entity->SetPysStaminaRate(pysStaminaRate);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
+                if(statsDirtyFlags & DIRTY_VITAL_MENSTAMINA)
                 {
                     entity->SetMenStamina(menStamina);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
+                if(statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_MAX)
                 {
                     entity->SetMaxMenStamina(maxMenStamina);
                 }
-                if (statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_RATE)
+                if(statsDirtyFlags & DIRTY_VITAL_MENSTAMINA_RATE)
                 {
                     entity->SetMenStaminaRate(menStaminaRate);
                 }
@@ -1403,7 +1403,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(npc)
                 {
                     NPCDebug(npc, 5, "Got Spell Perception %s is casting %s on me.",
-                                (caster_ent)?caster_ent->GetName():"(unknown entity)",type.GetDataSafe());
+                             (caster_ent)?caster_ent->GetName():"(unknown entity)",type.GetDataSafe());
                 }
 
                 if(!caster_ent || !target_ent)
@@ -1413,10 +1413,10 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 csVector3 pos;
                 psGameObject::GetPosition(target_ent, pos, sector);
 
-                if (npc)
+                if(npc)
                 {
                     SpellPerception pcpt_self("spell:self",caster_ent,target_ent,type,severity);
-                    npc->TriggerEvent(&pcpt_self, -1, NULL, NULL, true); 
+                    npc->TriggerEvent(&pcpt_self, -1, NULL, NULL, true);
                 }
 
                 SpellPerception pcpt_target("spell:target",caster_ent,target_ent,type,severity);
@@ -1441,7 +1441,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     break;  // This perception is not our problem
 
                 NPCDebug(npc, 5, "Range perception: NPC: %s, player: %s, faction: %.0f",
-                            ShowID(npcEID), ShowID(playerEID), faction);
+                         ShowID(npcEID), ShowID(playerEID), faction);
 
                 gemNPCObject* npc_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(npcEID);
                 gemNPCObject* player = npcclient->FindEntityID(playerEID);
@@ -1469,7 +1469,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     pcpt_name.Append("adjacent");
 
                 NPCDebug(npc, 5, "Got Player %s in Range of %s with the %s Perception, with faction %d",
-                            player->GetName(), npc_ent->GetName(), pcpt_name.GetData(), int(faction));
+                         player->GetName(), npc_ent->GetName(), pcpt_name.GetData(), int(faction));
 
                 FactionPerception pcpt(pcpt_name, int (faction), player);
 
@@ -1493,9 +1493,9 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(npc)
                 {
                     NPCDebug(npc, 5, "Got OwnerCmd %d Perception from %s for %s with target %s",
-                                command,(owner)?owner->GetName():"(unknown entity)",
-                                (pet)?pet->GetName():"(unknown entity)",
-                                (target)?target->GetName():"(none)");
+                             command,(owner)?owner->GetName():"(unknown entity)",
+                             (pet)?pet->GetName():"(unknown entity)",
+                             (target)?target->GetName():"(none)");
                 }
 
                 if(!npc | !owner || !pet)
@@ -1519,8 +1519,8 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 if(npc)
                 {
                     NPCDebug(npc, 5, "Got OwnerAction %d Perception from %s for %s",
-                                action,(owner)?owner->GetName():"(unknown entity)",
-                                (pet)?pet->GetName():"(unknown entity)");
+                             action,(owner)?owner->GetName():"(unknown entity)",
+                             (pet)?pet->GetName():"(unknown entity)");
                 }
 
                 if(!npc || !owner || !pet)
@@ -1562,13 +1562,13 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                     break;
 
                 NPCDebug(npc, 5, "Got Inventory %s Perception from %s for %d %s\n",
-                            (inserted?"Add":"Remove"),owner->GetName(),
-                            count,item_name.GetData());
+                         (inserted?"Add":"Remove"),owner->GetName(),
+                         count,item_name.GetData());
 
                 iSector* sector;
                 csVector3 pos;
                 psGameObject::GetPosition(owner, pos, sector);
-                
+
                 csString str;
                 str.Format("inventory:%s",(inserted?"added":"removed"));
 
@@ -1611,7 +1611,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 obj->SetInvincible((flags & psNPCCommandsMessage::INVINCIBLE) ? true : false);
                 obj->SetAlive((flags & psNPCCommandsMessage::IS_ALIVE));
                 NPC* npc = obj->GetNPC();
-                if (npc)
+                if(npc)
                 {
                     npc->SetAlive(obj->IsAlive());
                 }
@@ -1918,7 +1918,7 @@ void NetworkManager::QueueDRDataCommand(NPC* npc)
     psDRMessage drmsg(0,entity->GetEID(),onGround,mode,counter,myPos,yrot,mySector,csString(),
                       vel,worldVel,angVel,connection->GetAccessPointers());
 
-    if (DoLogDebug(LOG_DRDATA))
+    if(DoLogDebug(LOG_DRDATA))
     {
         Debug(LOG_DRDATA, entity->GetEID().Unbox(), "%s, %s, %s, %s, %f, %f, %f, %f, %s, %f, %f, %f, %f, %f, %f, %f",
               "NPCCLIENT", "SET", ShowID(entity->GetEID()),onGround?"TRUE":"FALSE", myPos.x, myPos.y, myPos.z, yrot,
@@ -2393,7 +2393,7 @@ void NetworkManager::QueueControlCommand(gemNPCActor* controllingEntity, gemNPCA
     cmd_count++;
 }
 
-void NetworkManager::QueueLootCommand(gemNPCActor* entity, EID targetEID, const csString& type)
+void NetworkManager::QueueLootCommand(gemNPCActor* entity, EID targetEID, const csString &type)
 {
     CheckCommandsOverrun(sizeof(uint8_t) + sizeof(uint32_t) + (type.Length()+1));
 

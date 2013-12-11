@@ -1,7 +1,7 @@
 /*
 * recipetreenode.h
 *
-* Copyright (C) 2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -49,16 +49,17 @@ class Recipe;
  * nodes with no wait time and no children. Besides, it keeps the relations between recipes.
  */
 
-class RecipeTreeNode {
+class RecipeTreeNode
+{
 public:
-    typedef enum 
+    typedef enum
     {
         REQ_CONCENTRATED,
         REQ_DISTRIBUTED
     } RequirementParseType;
-    static const char * RequirementParseTypeString[];
+    static const char* RequirementParseTypeString[];
 
-    
+
     Recipe*                  recipe;     ///< The recipe this leaf is about
     int                      priority;   ///< The priority of this recipe. (Level in tree, where root = 0)
     int                      wait;       ///< Wait time
@@ -67,7 +68,7 @@ public:
 
     RequirementParseType     requirementParseType; ///< Holds the way the Recipe Manager should meet requirements
     int                      nextReq;    ///< Next requirement that should be met
-    
+
     RecipeTreeNode*          parent;   ///< Link to parent node
     csArray<RecipeTreeNode*> children; ///< Link to children nodes
 
@@ -88,15 +89,21 @@ public:
     bool RemoveChild(Recipe* child);
 
     /** Returns true if it's root */
-    bool IsRoot() { return parent == NULL; };
+    bool IsRoot()
+    {
+        return parent == NULL;
+    };
 
     /** Returns true if it's a leaf */
-    bool IsLeaf() { return children.GetSize() == 0; }
+    bool IsLeaf()
+    {
+        return children.GetSize() == 0;
+    }
 
     /** Gets a recipe from this tree */
     RecipeTreeNode* GetTreeRecipe(Recipe* searchRecipe);
 
-    /** 
+    /**
      * Gets Next Recipe. (highest level leaf with no wait time)
      * It's best to use it on the root node, since it runs a BFS and can ignore recipes otherwise.
      */
@@ -109,9 +116,15 @@ public:
     void UpdateWaitTimes(int delta);
 
     /** Dump tree to console */
-    void DumpRecipeTree() { DumpRecipeTree(1); }
+    void DumpRecipeTree()
+    {
+        DumpRecipeTree(1);
+    }
     void DumpRecipeTree(int index);
-    void DumpRecipeTreeRecipes() { DumpRecipeTreeRecipes(1); }
+    void DumpRecipeTreeRecipes()
+    {
+        DumpRecipeTreeRecipes(1);
+    }
     void DumpRecipeTreeRecipes(int index);
 };
 

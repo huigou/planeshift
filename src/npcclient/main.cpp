@@ -31,13 +31,13 @@ CS_IMPLEMENT_APPLICATION
 #include <iutil/cmdline.h>
 
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 
     psCSSetup* CSSetup = new psCSSetup(argc, argv, "/this/npcclient.cfg",0);
-    iObjectRegistry *object_reg = CSSetup->InitCS();
+    iObjectRegistry* object_reg = CSSetup->InitCS();
 
-    pslog::Initialize (object_reg);
+    pslog::Initialize(object_reg);
 
     csRef<iCommandLineParser> clp = csQueryRegistry<iCommandLineParser>(object_reg);
 
@@ -49,9 +49,9 @@ int main(int argc, char **argv)
     csString portStr = clp->GetOption("port");
     int port = atoi(portStr.GetDataSafe());
 
-    if (!npcclient->Initialize(object_reg,host,user,pass,port))
+    if(!npcclient->Initialize(object_reg,host,user,pass,port))
     {
-        CPrintf (CON_ERROR, COL_RED "error while initializing NpcClient!\n" COL_NORMAL);
+        CPrintf(CON_ERROR, COL_RED "error while initializing NpcClient!\n" COL_NORMAL);
         return 1;
     }
 
@@ -63,14 +63,14 @@ int main(int argc, char **argv)
         CS_ASSERT_MSG("GUI failed to initialise!", gui->Initialise());
     }
 
-    npcclient->MainLoop ();
+    npcclient->MainLoop();
 
     delete gui;
     delete npcclient;
 
     // Save Configuration
     csRef<iConfigManager> cfgmgr= csQueryRegistry<iConfigManager> (object_reg);
-    if (cfgmgr)
+    if(cfgmgr)
         cfgmgr->Save();
     cfgmgr = NULL;
 

@@ -1,7 +1,7 @@
 /*
 * perceptions.h
 *
-* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -68,7 +68,7 @@ public:
      *
      * @param name            The name of the perception.
      */
-     Perception(const char* name):name(name) {}
+    Perception(const char* name):name(name) {}
 
     /**
      * Constructor.
@@ -91,14 +91,14 @@ public:
      *
      * @return true if reaction should be reacted to.
      */
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
+    virtual bool ShouldReact(Reaction* reaction,NPC* npc);
 
     /**
      * Make a copy of this perception.
      *
      * @return the copy.
      */
-    virtual Perception *MakeCopy();
+    virtual Perception* MakeCopy();
 
     /**
      * All preconditions has been checked, now excecute the perception.
@@ -106,7 +106,7 @@ public:
      * @param npc             The target of the percpetion.
      * @param weight          Indicate how much the HateList of the npc should be changed. Value comes from the reaction.
      */
-    virtual void ExecutePerception(NPC *npc,float weight);
+    virtual void ExecutePerception(NPC* npc,float weight);
 
     /**
      * Some perception has a target/source.
@@ -115,7 +115,10 @@ public:
      *
      * @return the target of this perception.
      */
-    virtual gemNPCObject *GetTarget() { return NULL; }
+    virtual gemNPCObject* GetTarget()
+    {
+        return NULL;
+    }
 
     /**
      * Get the name of the perception.
@@ -125,14 +128,14 @@ public:
      *
      * @return the name of the perception.
      */
-    virtual const csString& GetName() const;
+    virtual const csString &GetName() const;
 
     /**
      * Get the type of the perception.
      *
      * @return the type of the perception.
      */
-    const csString& GetType() const;
+    const csString &GetType() const;
 
     /**
      * Set the type of the perception.
@@ -152,12 +155,15 @@ public:
      *
      * @return true if there where a location.
      */
-    virtual bool GetLocation(csVector3& pos, iSector*& sector);
+    virtual bool GetLocation(csVector3 &pos, iSector* &sector);
 
     /**
      * Get the radius of the perception.
      */
-    virtual float GetRadius() const { return 0.0; }
+    virtual float GetRadius() const
+    {
+        return 0.0;
+    }
 
     /**
      * Get a text description of the perception.
@@ -181,11 +187,11 @@ protected:
 
 public:
     TimePerception(int hour, int minute, int year, int month, int day)
-    : Perception("time"), gameHour(hour),gameMinute(minute),gameYear(year),gameMonth(month),gameDay(day)  {    }
+        : Perception("time"), gameHour(hour),gameMinute(minute),gameYear(year),gameMonth(month),gameDay(day)  {    }
     virtual ~TimePerception() {}
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
-    virtual Perception *MakeCopy();
+    virtual bool ShouldReact(Reaction* reaction,NPC* npc);
+    virtual Perception* MakeCopy();
     virtual csString ToString(NPC* npc);
 
     /**
@@ -209,14 +215,17 @@ protected:
     csWeakRef<gemNPCActor> player;
 
 public:
-    FactionPerception(const char *n,int d,gemNPCObject *p)
-    : Perception(n), factionDelta(d), player((gemNPCActor *)p)  {    }
+    FactionPerception(const char* n,int d,gemNPCObject* p)
+        : Perception(n), factionDelta(d), player((gemNPCActor*)p)  {    }
     virtual ~FactionPerception() {}
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
-    virtual Perception *MakeCopy();
-    virtual gemNPCObject *GetTarget() { return player; }
-    virtual void ExecutePerception(NPC *npc,float weight);
+    virtual bool ShouldReact(Reaction* reaction,NPC* npc);
+    virtual Perception* MakeCopy();
+    virtual gemNPCObject* GetTarget()
+    {
+        return player;
+    }
+    virtual void ExecutePerception(NPC* npc,float weight);
 };
 
 //-----------------------------------------------------------------------------
@@ -231,12 +240,15 @@ protected:
     csWeakRef<gemNPCObject> item;
 
 public:
-    ItemPerception(const char *n,gemNPCObject *i)
-    : Perception(n), item(i)  {    }
+    ItemPerception(const char* n,gemNPCObject* i)
+        : Perception(n), item(i)  {    }
     virtual ~ItemPerception() {}
 
-    virtual Perception *MakeCopy();
-    virtual gemNPCObject *GetTarget() { return item; }
+    virtual Perception* MakeCopy();
+    virtual gemNPCObject* GetTarget()
+    {
+        return item;
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -248,17 +260,17 @@ public:
 class LocationPerception : public Perception
 {
 protected:
-    Location *location;
+    Location* location;
 
 public:
-    LocationPerception(const char *n, const char*type, Location * location, iEngine* engine)
-    : Perception(n,type), location(location), engine(engine)  {}
+    LocationPerception(const char* n, const char* type, Location* location, iEngine* engine)
+        : Perception(n,type), location(location), engine(engine)  {}
     virtual ~LocationPerception() {}
 
-    virtual Perception *MakeCopy();
-    virtual bool GetLocation(csVector3& pos, iSector*& sector);
+    virtual Perception* MakeCopy();
+    virtual bool GetLocation(csVector3 &pos, iSector* &sector);
     virtual float GetRadius() const;
-    
+
 private:
     iEngine* engine;
 };
@@ -277,12 +289,12 @@ protected:
     float radius;
 
 public:
-    PositionPerception(const char *n, const char*type,InstanceID& instance, iSector* sector, csVector3& pos, float yrot, float radius)
+    PositionPerception(const char* n, const char* type,InstanceID &instance, iSector* sector, csVector3 &pos, float yrot, float radius)
         : Perception(n,type), instance(instance), sector(sector), pos(pos), yrot(yrot), radius(radius)  {}
     virtual ~PositionPerception() {}
 
-    virtual Perception *MakeCopy();
-    virtual bool GetLocation(csVector3& pos, iSector*& sector);
+    virtual Perception* MakeCopy();
+    virtual bool GetLocation(csVector3 &pos, iSector* &sector);
     virtual float GetRadius() const;
 };
 
@@ -302,12 +314,15 @@ protected:
     csWeakRef<gemNPCActor> attacker;
 
 public:
-    AttackPerception(const char *n,gemNPCObject *attack)
+    AttackPerception(const char* n,gemNPCObject* attack)
         : Perception(n), attacker((gemNPCActor*) attack) { }
 
-    virtual Perception *MakeCopy();
-    virtual void ExecutePerception(NPC *npc,float weight);
-    virtual gemNPCObject *GetTarget() { return attacker; }
+    virtual Perception* MakeCopy();
+    virtual void ExecutePerception(NPC* npc,float weight);
+    virtual gemNPCObject* GetTarget()
+    {
+        return attacker;
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -324,15 +339,15 @@ class GroupAttackPerception : public Perception
 {
 protected:
     csWeakRef<gemNPCObject> attacker;
-    csArray<gemNPCObject *> attacker_ents;
+    csArray<gemNPCObject*> attacker_ents;
     csArray<int> bestSkillSlots;
 
 public:
-    GroupAttackPerception(const char *n,csArray<gemNPCObject *> & ents, csArray<int> & slots)
+    GroupAttackPerception(const char* n,csArray<gemNPCObject*> &ents, csArray<int> &slots)
         : Perception(n), attacker_ents(ents), bestSkillSlots(slots) { }
 
-    virtual Perception *MakeCopy();
-    virtual void ExecutePerception(NPC *npc,float weight);
+    virtual Perception* MakeCopy();
+    virtual void ExecutePerception(NPC* npc,float weight);
 };
 
 //-----------------------------------------------------------------------------
@@ -350,12 +365,15 @@ protected:
     float damage;
 
 public:
-    DamagePerception(const char *n,gemNPCObject *attack,float dmg)
+    DamagePerception(const char* n,gemNPCObject* attack,float dmg)
         : Perception(n), attacker((gemNPCActor*)attack), damage(dmg) { }
 
-    virtual Perception *MakeCopy();
-    virtual void ExecutePerception(NPC *npc,float weight);
-    virtual gemNPCObject *GetTarget() { return attacker; }
+    virtual Perception* MakeCopy();
+    virtual void ExecutePerception(NPC* npc,float weight);
+    virtual gemNPCObject* GetTarget()
+    {
+        return attacker;
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -378,12 +396,15 @@ protected:
     float       spell_severity;
 
 public:
-    SpellPerception(const char *name,gemNPCObject *caster,gemNPCObject *target, const char *spell_type, float severity);
+    SpellPerception(const char* name,gemNPCObject* caster,gemNPCObject* target, const char* spell_type, float severity);
 
-    virtual bool ShouldReact(Reaction *reaction,NPC *npc);
-    virtual Perception *MakeCopy();
-    virtual gemNPCObject* GetTarget() { return caster; } 
-    virtual void ExecutePerception(NPC *npc,float weight);
+    virtual bool ShouldReact(Reaction* reaction,NPC* npc);
+    virtual Perception* MakeCopy();
+    virtual gemNPCObject* GetTarget()
+    {
+        return caster;
+    }
+    virtual void ExecutePerception(NPC* npc,float weight);
 };
 
 //-----------------------------------------------------------------------------
@@ -405,8 +426,8 @@ public:
     DeathPerception(EID ent_id)
         : Perception("death"), who(ent_id) { }
 
-    virtual Perception *MakeCopy();
-    virtual void ExecutePerception(NPC *npc,float weight);
+    virtual Perception* MakeCopy();
+    virtual void ExecutePerception(NPC* npc,float weight);
 };
 
 //-----------------------------------------------------------------------------
@@ -418,21 +439,35 @@ class InventoryPerception : public Perception
 {
 protected:
     csVector3 pos;
-    iSector * sector;
+    iSector* sector;
     float     radius;
     int       count;
 
 public:
-    InventoryPerception(const char *n,const char *t,const int c, const csVector3& p, iSector* s, float r)
-        : Perception(n), pos(p), radius(r), count(c) { type = t; sector = s; }
+    InventoryPerception(const char* n,const char* t,const int c, const csVector3 &p, iSector* s, float r)
+        : Perception(n), pos(p), radius(r), count(c)
+    {
+        type = t;
+        sector = s;
+    }
 
-    virtual Perception *MakeCopy();
-    virtual bool GetLocation(csVector3& pos, iSector*& sector)
-        { pos = this->pos; sector = this->sector; return true; }
+    virtual Perception* MakeCopy();
+    virtual bool GetLocation(csVector3 &pos, iSector* &sector)
+    {
+        pos = this->pos;
+        sector = this->sector;
+        return true;
+    }
 
-    virtual float GetRadius() const { return radius; }
-    virtual int GetCount() const { return count; }
-    
+    virtual float GetRadius() const
+    {
+        return radius;
+    }
+    virtual int GetCount() const
+    {
+        return count;
+    }
+
 };
 
 /** @} */
@@ -458,12 +493,15 @@ protected:
     csWeakRef<gemNPCActor> target;
 
 public:
-    OwnerCmdPerception(const char *n, psPETCommandMessage::PetCommand_t command, gemNPCObject *owner, gemNPCObject *pet, gemNPCObject *target);
+    OwnerCmdPerception(const char* n, psPETCommandMessage::PetCommand_t command, gemNPCObject* owner, gemNPCObject* pet, gemNPCObject* target);
 
-    virtual bool ShouldReact( Reaction *reaction, NPC *pet );
-    virtual Perception *MakeCopy();
-    virtual void ExecutePerception( NPC *pet, float weight );
-    virtual gemNPCObject *GetTarget() { return target; }
+    virtual bool ShouldReact(Reaction* reaction, NPC* pet);
+    virtual Perception* MakeCopy();
+    virtual void ExecutePerception(NPC* pet, float weight);
+    virtual gemNPCObject* GetTarget()
+    {
+        return target;
+    }
     static csString BuildName(psPETCommandMessage::PetCommand_t command);
 };
 
@@ -483,11 +521,11 @@ protected:
     csWeakRef<gemNPCObject> pet;
 
 public:
-    OwnerActionPerception(const char *n, int action, gemNPCObject *owner, gemNPCObject *pet );
+    OwnerActionPerception(const char* n, int action, gemNPCObject* owner, gemNPCObject* pet);
 
-    virtual bool ShouldReact( Reaction *reaction, NPC *pet );
-    virtual Perception *MakeCopy();
-    virtual void ExecutePerception( NPC *pet, float weight );
+    virtual bool ShouldReact(Reaction* reaction, NPC* pet);
+    virtual Perception* MakeCopy();
+    virtual void ExecutePerception(NPC* pet, float weight);
 };
 
 //-----------------------------------------------------------------------------
@@ -501,13 +539,13 @@ public:
 class NPCCmdPerception : public Perception
 {
 protected:
-    NPC * self;
+    NPC* self;
 
 public:
-    NPCCmdPerception(const char *command, NPC * self);
+    NPCCmdPerception(const char* command, NPC* self);
 
-    virtual bool ShouldReact( Reaction *reaction, NPC *npc );
-    virtual Perception *MakeCopy();
+    virtual bool ShouldReact(Reaction* reaction, NPC* npc);
+    virtual Perception* MakeCopy();
 };
 
 /** @} */

@@ -1,7 +1,7 @@
 /*
 * npcoperations.h
 *
-* Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -69,7 +69,8 @@ class Behavior;
 class ScriptOperation
 {
 public:
-    enum VelSource {
+    enum VelSource
+    {
         VEL_DEFAULT,
         VEL_USER,
         VEL_WALK,
@@ -77,7 +78,8 @@ public:
     };
 
     // Used to indicate the result of the Run and Advance operations.
-    enum OperationResult {
+    enum OperationResult
+    {
         OPERATION_NOT_COMPLETED, ///< Used to indicate that an operation will complete at a later stage
         OPERATION_COMPLETED,     ///< All parts of this operation has been completed
         OPERATION_FAILED         ///< The operation failed
@@ -90,14 +92,14 @@ public:
         INTERRUPTED,
         COMPLETED
     };
-    
+
 protected:
     ////////////////////////////////////////////////////////////
     // Start of instance temp variables. These dosn't need to be copied.
     csString             name;
 
     csVector3            interrupted_position;
-    iSector             *interrupted_sector;
+    iSector*             interrupted_sector;
     float                interrupted_angle;
 
     int                  consecCollisions; ///< Shared by move functions. Used by CheckMoveOk to detect collisions
@@ -120,7 +122,7 @@ protected:
     float                ang_vel;              ///< Shared angular velocity, used by all that rotates
 
     // Start Check Move OK parameters
-    // Configuration paramters. Set by using LoadCheckMoveOk    
+    // Configuration paramters. Set by using LoadCheckMoveOk
     csString             collision;       ///< Perception names to use for collision detected by CheckMoveOk
     csString             outOfBounds;     ///< Perception names to use for out of bounds detected by CheckMoveOk
     csString             inBounds;        ///< Perception names to use for in bounds detected by CheckMoveOk
@@ -128,14 +130,14 @@ protected:
     bool                 checkTribeHome;  ///< Set to true if the tribe home should be checked by CheckMoveOk
     // End Check Move OK parameters
 
-    
+
     // End of shared values between operations
     ////////////////////////////////////////////////////////////
 
     /// This function is used by MoveTo AND Navigate operations
-    int StartMoveTo(NPC* npc, const csVector3& dest, iSector* sector, float vel,const char* action, float &angle);
-    
-    void TurnTo(NPC* npc,const csVector3& dest, iSector* destsect, csVector3& forward, float &angle);
+    int StartMoveTo(NPC* npc, const csVector3 &dest, iSector* sector, float vel,const char* action, float &angle);
+
+    void TurnTo(NPC* npc,const csVector3 &dest, iSector* destsect, csVector3 &forward, float &angle);
 
     /// Utility function used by many operation to stop movement of an NPC.
     static void StopMovement(NPC* npc);
@@ -150,16 +152,22 @@ public:
     virtual OperationResult Advance(float timedelta,NPC* npc);
 
     virtual void InterruptOperation(NPC* npc);
-    virtual bool AtInterruptedPosition(const csVector3& pos, const iSector* sector);
-    virtual bool AtInterruptedAngle(const csVector3& pos, const iSector* sector, float angle);
+    virtual bool AtInterruptedPosition(const csVector3 &pos, const iSector* sector);
+    virtual bool AtInterruptedAngle(const csVector3 &pos, const iSector* sector, float angle);
     virtual bool AtInterruptedPosition(NPC* npc);
     virtual bool AtInterruptedAngle(NPC* npc);
 
-    virtual void SetState(State state) { this->state = state; }
-    virtual State GetState() const  { return state; }
-    
+    virtual void SetState(State state)
+    {
+        this->state = state;
+    }
+    virtual State GetState() const
+    {
+        return state;
+    }
 
- private:
+
+private:
     /** Send a collition perception to the npc.
      *
      * Get the collisiont detection for this operation.
@@ -168,8 +176,8 @@ public:
      * @param npc The npc to percept.
      */
     void SendCollitionPerception(NPC* npc);
-    
- public:
+
+public:
     /** Check if the move where ok.
      *
      * Check if a move operation has collided, walked out of bounds, or walked in bound. Will
@@ -177,7 +185,7 @@ public:
      *
      */
     virtual bool CheckMoveOk(NPC* npc, csVector3 oldPos, iSector* oldSector,
-                             const csVector3 & newPos, iSector* newSector, int resultFromExtrapolate );
+                             const csVector3 &newPos, iSector* newSector, int resultFromExtrapolate);
 
     /** Check if the end point where ok.
      *
@@ -185,36 +193,36 @@ public:
      * Fire perceptions if not at end position.
      *
      */
-    virtual bool CheckEndPointOk(NPC* npc, const csVector3& myPos, iSector* mySector,
-                                 const csVector3 & endPos, iSector* endSector);
-    
+    virtual bool CheckEndPointOk(NPC* npc, const csVector3 &myPos, iSector* mySector,
+                                 const csVector3 &endPos, iSector* endSector);
+
     /** Return the Collision perception event name.
      *
      *  Will use the perception of the operation if defined, or it will
      *  check if a global perception event name is defined for the brain.
      */
-    virtual const csString& GetCollisionPerception(NPC* npc); 
+    virtual const csString &GetCollisionPerception(NPC* npc);
 
     /** Return the Out of Bounds perception event name.
      *
      *  Will use the perception of the operation if defined, or it will
      *  check if a global perception event name is defined for the brain.
      */
-    virtual const csString& GetOutOfBoundsPerception(NPC* npc); 
+    virtual const csString &GetOutOfBoundsPerception(NPC* npc);
 
     /** Return the In Bounds perception event name.
      *
      *  Will use the perception of the operation if defined, or it will
      *  check if a global perception event name is defined for the brain.
      */
-    virtual const csString& GetInBoundsPerception(NPC* npc); 
+    virtual const csString &GetInBoundsPerception(NPC* npc);
 
     /** Return the Falling perception event name.
      *
      *  Will use the falling perception of the operation if defined, or it will
      *  check if a global fall perception event name is defined for the brain.
      */
-    virtual const csString& GetFallingPerception(NPC* npc); 
+    virtual const csString &GetFallingPerception(NPC* npc);
 
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy()=0;
@@ -225,10 +233,10 @@ public:
      *  walk, run, or a defined velocity.
      */
     virtual float GetVelocity(NPC* npc);
-    
+
     virtual float GetAngularVelocity(NPC* npc);
     bool LoadVelocity(iDocumentNode* node);
-    
+
     /** Load attributes for the CheckMoveOk check
      *
      * @param node The node to load attributes from.
@@ -241,7 +249,7 @@ public:
      *
      */
     void CopyCheckMoveOk(ScriptOperation*  source);
-    
+
     /** Move a point somwhere random within radius of the orignial point.
      *
      * Will add a random part to the dest. The margin can
@@ -256,7 +264,10 @@ public:
     void AddRandomRange(csVector3 &dest, float radius, float margin = 0.0);
     void SetAnimation(NPC* npc, const char* name);
 
-    virtual const char* GetName() const { return name.GetDataSafe(); };
+    virtual const char* GetName() const
+    {
+        return name.GetDataSafe();
+    };
 
     /**
      * Called when the run operation return OPERATION_FAILED.
@@ -280,7 +291,7 @@ protected:
     // Instance variables
     csRef<iCelHPath> path;
 
-    // Cache values for end position 
+    // Cache values for end position
     csVector3 endPos;
     iSector*  endSector;
 
@@ -290,11 +301,11 @@ protected:
     csString         action;        ///< The animation used during chase
 
     // Constructor
-    MovementOperation( const MovementOperation* other );
+    MovementOperation(const MovementOperation* other);
 
 public:
 
-    MovementOperation( const char*  name );
+    MovementOperation(const char*  name);
 
     virtual ~MovementOperation() { }
 
@@ -416,7 +427,7 @@ protected:
      */
     CastOperation(const CastOperation* other);
 
- public:
+public:
     CastOperation();
     virtual ~CastOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
@@ -442,7 +453,7 @@ protected:
      */
     ChangeBrainOperation(const ChangeBrainOperation* other);
 
- public:
+public:
     ChangeBrainOperation();
     virtual ~ChangeBrainOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
@@ -478,14 +489,14 @@ protected:
     int              type;                   ///< The type of chase to perform
     float            searchRange;            ///< Search for targets within this range
     float            chaseRange;             ///< Chase as long targets are within this range.
-                                             ///< Chase forever if set to -1.
+    ///< Chase forever if set to -1.
     csString         offsetAttribute;        ///< Used to stop a offset from the target.
     float            offsetAngleMax;         ///< The maximum offset angle in radians
     float            sideOffset;             ///< Add a offset to the side of the target
     bool             offsetRelativeHeading;  ///< Set to true will make the offset relative target heading
     csString         adaptivVelocityScript;  ///< Script to do adaptiv velocity adjustments.
     //@}
-    
+
     enum
     {
         NEAREST_ACTOR,   ///< Sense Players and NPC's
@@ -494,7 +505,7 @@ protected:
         OWNER,           ///< Sense only the owner
         TARGET           ///< Sense only target
     };
-    static const char * typeStr[];
+    static const char* typeStr[];
 
     /** Constructor for this operation, used by the MakeCopy.
      *
@@ -568,13 +579,13 @@ public:
      *  up with 10%.
      */
     float AdaptivVelocity(NPC* npc, float distance);
-    
+
     /** Return the velocity adjusted by adaptivVelScale
      *
      */
     virtual float GetVelocity(NPC* npc);
-    
-    
+
+
     /** Make a deep copy of this operation.
      *
      *  MakeCopy will make a copy of all Operation Parameters and reset each
@@ -621,7 +632,7 @@ protected:
      */
     DeleteNPCOperation(const DeleteNPCOperation* other);
 
- public:
+public:
     DeleteNPCOperation();
     virtual ~DeleteNPCOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
@@ -644,11 +655,21 @@ protected:
 
     // Instance temp variables. These dosn't need to be copied.
     float remaining;
-    
-    MoveOperation(const char*  n): ScriptOperation(n) { duration = 0; ang_vel = 0; angle = 0; }
+
+    MoveOperation(const char*  n): ScriptOperation(n)
+    {
+        duration = 0;
+        ang_vel = 0;
+        angle = 0;
+    }
 public:
 
-    MoveOperation(): ScriptOperation("Move") { duration = 0; ang_vel = 0; angle = 0; }
+    MoveOperation(): ScriptOperation("Move")
+    {
+        duration = 0;
+        ang_vel = 0;
+        angle = 0;
+    }
     virtual ~MoveOperation() { }
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
@@ -690,7 +711,10 @@ protected:
     float radius;
 public:
 
-    CircleOperation(): MoveOperation("Circle") { radius = 0.0f; }
+    CircleOperation(): MoveOperation("Circle")
+    {
+        radius = 0.0f;
+    }
     virtual ~CircleOperation() { }
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
@@ -709,7 +733,7 @@ protected:
     bool control;  // Should this operation take or release control
 public:
 
-    ControlOperation( bool control ): ScriptOperation("Control"), control(control) { }
+    ControlOperation(bool control): ScriptOperation("Control"), control(control) { }
     virtual ~ControlOperation() { }
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
@@ -746,7 +770,7 @@ class DequipOperation : public ScriptOperation
 {
 protected:
     csString slot;
-    
+
 public:
 
     DequipOperation(): ScriptOperation("Dequip") {};
@@ -863,7 +887,7 @@ protected:
     csString item;
     csString slot;
     int      count; // Number of items to pick up from a stack
-    
+
 public:
 
     EquipOperation(): ScriptOperation("Equip") {};
@@ -884,7 +908,7 @@ protected:
     /**
      * Flags definitions for use in the flags variable.
      */
-    enum 
+    enum
     {
         MAX_HATE = 0x0001,
         MIN_HATE = 0x0002,
@@ -936,7 +960,7 @@ protected:
     // Instance variables
     bool        staticLocated;
     NPC::Locate storedStaticLocated;
-    
+
     // Operation parameters
     csString  object;
     float     range;
@@ -947,7 +971,7 @@ protected:
     bool      locateInvincible;    ///< Locate invincible targets
     csString  destination;         ///< Alternate destination instead of "Active" locate.
 
-    
+
 public:
     LocateOperation();
     LocateOperation(const LocateOperation* other);
@@ -975,7 +999,10 @@ public:
 
 public:
 
-    LoopBeginOperation(): ScriptOperation("BeginLoop") { iterations=0; }
+    LoopBeginOperation(): ScriptOperation("BeginLoop")
+    {
+        iterations=0;
+    }
     virtual ~LoopBeginOperation() { }
 
     virtual OperationResult Run(NPC* npc,bool interrupted);
@@ -998,7 +1025,12 @@ protected:
 
 public:
 
-    LoopEndOperation(int which,int iterations): ScriptOperation("LoopEnd") { loopback_op = which; this->iterations = iterations; current = 0;}
+    LoopEndOperation(int which,int iterations): ScriptOperation("LoopEnd")
+    {
+        loopback_op = which;
+        this->iterations = iterations;
+        current = 0;
+    }
     virtual ~LoopEndOperation() { }
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1021,11 +1053,16 @@ protected:
     bool         attackInvincible;
     csString     stance;
     csString     attackMostHatedTribeTarget; ///< Melee operation "tribe" attribute. When set to true the
-                                             ///< melee operation will use the most hated of all the tribe
-                                             ///< members when deciding target.
+    ///< melee operation will use the most hated of all the tribe
+    ///< members when deciding target.
 public:
 
-    MeleeOperation(): ScriptOperation("Melee") { attacked_ent=NULL; seek_range=0; melee_range=0;}
+    MeleeOperation(): ScriptOperation("Melee")
+    {
+        attacked_ent=NULL;
+        seek_range=0;
+        melee_range=0;
+    }
     virtual ~MeleeOperation() {}
 
     virtual bool Load(iDocumentNode* node);
@@ -1079,7 +1116,10 @@ protected:
 public:
 
     MovePathOperation(): ScriptOperation("MovePath"), path(0), anchor(0) { }
-    virtual ~MovePathOperation() { delete anchor; }
+    virtual ~MovePathOperation()
+    {
+        delete anchor;
+    }
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
 
@@ -1132,12 +1172,12 @@ protected:
     float     endAngle;    ///< The angle of the target
     iSector*  endSector;   ///< The sector of the target of the navigate
     csVector3 endPos;      ///< The end position of the target of the navigate
-        
+
 public:
 
     NavigateOperation();
 protected:
-    NavigateOperation(const NavigateOperation* other );
+    NavigateOperation(const NavigateOperation* other);
 public:
     virtual ~NavigateOperation() {};
 
@@ -1155,7 +1195,7 @@ public:
 //-----------------------------------------------------------------------------
 
 /** No Operation(NOP) Operation
- * 
+ *
  */
 class NOPOperation : public ScriptOperation
 {
@@ -1172,19 +1212,20 @@ public:
 //-----------------------------------------------------------------------------
 
 /** Send a custon perception from a behavior script
- * 
+ *
  * Will send the custom perception at the given time in the script.
  */
 class PerceptOperation : public ScriptOperation
 {
 protected:
-    enum TargetType {
+    enum TargetType
+    {
         SELF,
         ALL,
         TRIBE,
         TARGET
     };
-    
+
     class DelayedPerceptOperationGameEvent : public psGameEvent
     {
     protected:
@@ -1194,7 +1235,7 @@ protected:
         float      maxRange;
 
     public:
-        DelayedPerceptOperationGameEvent(int offsetTicks, NPC* npc, Perception& pcpt, TargetType target, float maxRange);
+        DelayedPerceptOperationGameEvent(int offsetTicks, NPC* npc, Perception &pcpt, TargetType target, float maxRange);
         virtual void Trigger();  // Abstract event processing function
         virtual csString ToString() const;
     };
@@ -1216,7 +1257,7 @@ public:
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();
     virtual bool CheckCondition(NPC* npc);
-    static void TriggerEvent(NPC* npc, Perception& pcpt, TargetType target, float maxRange);
+    static void TriggerEvent(NPC* npc, Perception &pcpt, TargetType target, float maxRange);
 };
 
 //-----------------------------------------------------------------------------
@@ -1231,7 +1272,7 @@ protected:
     csString object;
     csString slot;
     int      count; // Number of items to pick up from a stack
-    
+
 public:
 
     PickupOperation(): ScriptOperation("Pickup") {};
@@ -1293,7 +1334,7 @@ class RewardOperation : public ScriptOperation
 protected:
     csString resource; ///< The Resource to be rewarded to the tribe.
     int count;         ///< The number of the resource to reward to the tribe.
-    
+
 public:
 
     RewardOperation(): ScriptOperation("Reward") {};
@@ -1306,14 +1347,14 @@ public:
 //-----------------------------------------------------------------------------
 
 /**
-* Rotating requires storing or determining the angle to 
+* Rotating requires storing or determining the angle to
 * rotate to, and the animation action.
 */
 class RotateOperation : public ScriptOperation
 {
 protected:
     enum
-    {   
+    {
         ROT_UNKNOWN,
         ROT_ABSOLUTE,               // Rotate to this world angle
         ROT_RELATIVE,               // Rotate delta angle from current npd heading
@@ -1329,9 +1370,9 @@ protected:
     float     delta_angle;          // Value to rotate for relative rotation
 
     float     target_angle;         // Calculated end rotation for every rotation and
-                                    // input to absolute rotation
+    // input to absolute rotation
     float     angle_delta;          // Calculated angle that is needed to rotate to target_angle
-    
+
     csString  action;               // Animation to use in the rotation
 
     // Instance temp variables. These dosn't need to be copied.
@@ -1340,9 +1381,11 @@ public:
 
     RotateOperation(): ScriptOperation("Rotate")
     {
-        vel=0; ang_vel=999; 
+        vel=0;
+        ang_vel=999;
         op_type=ROT_UNKNOWN;
-        min_range=0; max_range=0;
+        min_range=0;
+        max_range=0;
         delta_angle=0;
         target_angle=0;
         angle_delta=0;
@@ -1355,7 +1398,7 @@ public:
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual OperationResult Advance(float timedelta,NPC* npc);
     virtual void InterruptOperation(NPC* npc);
-    
+
     float SeekAngle(NPC* npc, float targetYRot);           // Finds an angle which won't lead to a collision
 };
 
@@ -1417,9 +1460,9 @@ protected:
         UNKNOWN = 0,
         START = 1,
         STOP = 2,
-        LOOP = 3  
+        LOOP = 3
     };
-    
+
     csString sequenceName;
     int      cmd;    // See enum above
     int      count;  // Number of times to run the sequence
@@ -1446,7 +1489,7 @@ protected:
         NPC_BUFFER = 0,
         TRIBE_BUFFER = 1
     };
-    
+
     csString buffer;
     csString value;
     int      type;
@@ -1517,7 +1560,7 @@ class TalkOperation : public ScriptOperation
 {
 protected:
     typedef psNPCCommandsMessage::PerceptionTalkType TalkType;
-    
+
     csString talkText;   ///< The text to send to the clients
     TalkType talkType;   ///< What kind of talk, default say
     bool     talkPublic; ///< Should this be public or only to the target
@@ -1644,7 +1687,10 @@ protected:
 
 public:
 
-    WaitOperation(): ScriptOperation("Wait") { duration=0; }
+    WaitOperation(): ScriptOperation("Wait")
+    {
+        duration=0;
+    }
     virtual ~WaitOperation() { }
 
     virtual OperationResult Run(NPC* npc,bool interrupted);
@@ -1667,10 +1713,10 @@ protected:
 
     class WanderRouteFilter : public psPathNetwork::RouteFilter
     {
-      public:
-        WanderRouteFilter( WanderOperation*  parent ):parent(parent){};
-        virtual bool Filter( const Waypoint* waypoint ) const;
-      protected:
+    public:
+        WanderRouteFilter(WanderOperation*  parent):parent(parent) {};
+        virtual bool Filter(const Waypoint* waypoint) const;
+    protected:
         WanderOperation*  parent;
     };
 
@@ -1720,10 +1766,10 @@ protected:
     /** Calculate the edgeList to be used by wander.
      *
      *  Will calculate a list of edges between start and end for wander.
-     *  For random wander the list is empty but still returning true. 
+     *  For random wander the list is empty but still returning true.
      */
     OperationResult CalculateEdgeList(NPC* npc);
-    
+
 
     /** Set the current path point iterator.
      */
@@ -1740,7 +1786,10 @@ public:
 
     /** Clear list of edges
      */
-    void EdgeListClear() { edgeList.DeleteAll(); }
+    void EdgeListClear()
+    {
+        edgeList.DeleteAll();
+    }
 
     /** Get the next edge for local destination
      *
@@ -1766,7 +1815,7 @@ public:
 
     /* Utility function to calcualte distance from npc to destPoint.
      */
-    static float DistanceToDestPoint( NPC* npc, const csVector3& destPos, const iSector* destSector );
+    static float DistanceToDestPoint(NPC* npc, const csVector3 &destPos, const iSector* destSector);
 
 
     virtual OperationResult Run(NPC* npc,bool interrupted);
@@ -1785,7 +1834,7 @@ class WatchOperation : public ScriptOperation
 protected:
     float     watchRange;
     int       type;
-    float     searchRange;       ///<  Used for watch of type NEAREST_* 
+    float     searchRange;       ///<  Used for watch of type NEAREST_*
     bool      watchInvisible;
     bool      watchInvincible;
 
@@ -1800,10 +1849,14 @@ protected:
         TARGET
     };
     static const char*  typeStr[];
-    
+
 public:
 
-    WatchOperation(): ScriptOperation("Watch") { watchedEnt=NULL; watchRange=0; }
+    WatchOperation(): ScriptOperation("Watch")
+    {
+        watchedEnt=NULL;
+        watchRange=0;
+    }
     virtual ~WatchOperation() {}
 
     virtual bool Load(iDocumentNode* node);
@@ -1813,7 +1866,7 @@ public:
     virtual OperationResult Advance(float timedelta,NPC* npc);
     virtual void InterruptOperation(NPC* npc);
 
- private:
+private:
     bool OutOfRange(NPC* npc);
 };
 

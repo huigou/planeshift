@@ -1,7 +1,7 @@
 /*
 * recipe.h
 *
-* Copyright (C) 2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -57,7 +57,8 @@ class Recipe
 public:
 
     /** Types of requirements */
-    typedef enum {
+    typedef enum
+    {
         REQ_TYPE_BUILDING,
         REQ_TYPE_ITEM,
         REQ_TYPE_KNOWLEDGE,
@@ -68,7 +69,7 @@ public:
         REQ_TYPE_TRIBESMAN
     } RequirementType;
     static const char* RequirementTypeString[];
-    
+
     /** Data structure to keep information about requirements */
     struct Requirement
     {
@@ -99,19 +100,34 @@ public:
     void DumpRequirements();
 
     /** Getter for Recipe's ID */
-    int GetID() { return id; }
+    int GetID()
+    {
+        return id;
+    }
 
     /** Getter for Recipe's Name */
-    csString GetName() { return name; }
+    csString GetName()
+    {
+        return name;
+    }
 
     /** Getter for Recipe's Algorithm */
-    csStringArray GetAlgorithm() { return algorithm; }
+    csStringArray GetAlgorithm()
+    {
+        return algorithm;
+    }
 
     /** Getter for Persistance */
-    bool IsPersistent() { return persistence; }
+    bool IsPersistent()
+    {
+        return persistence;
+    }
 
     /** Getter for Requirements */
-    csArray<Requirement> GetRequirements() { return requirements; }
+    csArray<Requirement> GetRequirements()
+    {
+        return requirements;
+    }
 
 private:
     bool                    persistence;  ///< True if recipe never ends
@@ -151,7 +167,8 @@ public:
     };
 
     /** Keeps details about the matches between script actions and NPC Operations */
-    struct Correspondence {
+    struct Correspondence
+    {
         csString      function;        ///< Function written in the database
         csStringArray npcOperations;   ///< More than one operation can be applied for a function
     };
@@ -186,7 +203,7 @@ public:
      * @param tribe The tribe to be added.
      * @return True if the tribe where added successfully
      */
-    bool AddTribe(Tribe *tribe);
+    bool AddTribe(Tribe* tribe);
 
     /** Compute global npctype
      *
@@ -212,7 +229,7 @@ public:
      * @param recipe      The recipe this function belongs to
      * @return            True if function is done, false if it needs wait time.
      */
-    bool ParseFunction(csString function, Tribe* tribe, csArray<NPC*>& npcs, Recipe* recipe);
+    bool ParseFunction(csString function, Tribe* tribe, csArray<NPC*> &npcs, Recipe* recipe);
 
     /** Check Requirement
      *
@@ -245,7 +262,7 @@ public:
     Recipe* GetRecipe(csString recipesName);
 
     /** Get computed tribeData for a tribe */
-    TribeData* GetTribeData(Tribe *tribe);
+    TribeData* GetTribeData(Tribe* tribe);
 
 private:
     /** Dump Error */

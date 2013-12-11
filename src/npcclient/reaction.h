@@ -1,7 +1,7 @@
 /*
 * reaction.h by Anders Reggestad <andersr@pvv.org>
 *
-* Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@ class Reaction
 {
 protected:
     friend class NPCType;
-    
+
     // members making up the "if statement"
     csString  eventType;
     float     range;
@@ -84,7 +84,7 @@ protected:
         DESIRE_ABSOLUTE,
         DESIRE_GUARANTEED
     };
-    
+
     DesireType desireType;    ///< Indicate the type of desire change this reaction has.
     float      desireValue;   ///< The value to use for the desire type.
     float      weight;        ///< The weight to apply to deltas.
@@ -93,13 +93,15 @@ protected:
 
 public:
     Reaction();
-    Reaction(Reaction& other, BehaviorSet& behaviors) 
-    { DeepCopy(other,behaviors); }
+    Reaction(Reaction &other, BehaviorSet &behaviors)
+    {
+        DeepCopy(other,behaviors);
+    }
 
-    void DeepCopy(Reaction& other, BehaviorSet& behaviors);
+    void DeepCopy(Reaction &other, BehaviorSet &behaviors);
 
-    bool Load(iDocumentNode *node, BehaviorSet& behaviors);
-    void React(NPC *who, Perception *pcpt);
+    bool Load(iDocumentNode* node, BehaviorSet &behaviors);
+    void React(NPC* who, Perception* pcpt);
 
     /**
      * Check if the player should react to this reaction
@@ -110,7 +112,7 @@ public:
      * @param entity          The entity tho check for visibility and invincibility
      */
     bool ShouldReact(gemNPCObject* entity);
-    
+
     /**
      * Check if this is a behavior that shouldn't be interrupted
      *
@@ -118,7 +120,7 @@ public:
      * @return True if this is a behavior that shouldn't be interrupted.
      */
     bool DoNotInterrupt(Behavior* behavior);
-    
+
     /** Check if this is a behavior is on the only interrupt list if set.
      *
      * If there is a limitation on behaviors to interrupt for this
@@ -129,10 +131,16 @@ public:
      * @return True if this is a behavior that isn't allowed to interrupt.
      */
     bool OnlyInterrupt(Behavior* behavior);
-    
-    const csString& GetEventType() const;
-    float           GetRange()          { return range;        }
-    int             GetFactionDiff()    { return factionDiff; }
+
+    const csString &GetEventType() const;
+    float           GetRange()
+    {
+        return range;
+    }
+    int             GetFactionDiff()
+    {
+        return factionDiff;
+    }
     bool            GetValueValid(int i);
     int             GetValue(int i);
     bool            GetRandomValid(int i);
@@ -147,8 +155,11 @@ public:
     const csString  GetType(NPC* npc) const;
     char            GetOp();
     csString        GetAffectedBehaviors();
-    const csString& GetLastTriggerd()   { return lastTriggered; }
-    
+    const csString &GetLastTriggerd()
+    {
+        return lastTriggered;
+    }
+
 };
 
 /** @} */

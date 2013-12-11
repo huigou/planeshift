@@ -1,7 +1,7 @@
 /*
 * status.h
 *
-* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -39,17 +39,17 @@ class NPCStatus
 {
 public:
     /** Reads config files, starts periodical status generator */
-    static bool Initialize (iObjectRegistry* objreg);
-    
+    static bool Initialize(iObjectRegistry* objreg);
+
     /** Has the generator run in a while */
     static void ScheduleNextRun();
-    
+
     /// Interval in milliseconds to generate a report file.
     static csTicks reportRate;
-    
+
     /// File that it should log to.
     static csString reportFile;
-    
+
     static unsigned int count;
 };
 
