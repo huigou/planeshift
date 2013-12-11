@@ -207,12 +207,12 @@ void ScriptOperation::InterruptOperation(NPC *npc)
 
 bool ScriptOperation::AtInterruptedPosition(const csVector3& pos, const iSector* sector)
 {
-    return (npcclient->GetWorld()->Distance(pos,sector,interrupted_position,interrupted_sector) < 0.5f);
+    return (npcclient->GetWorld()->Distance2(pos,sector,interrupted_position,interrupted_sector) < 0.5f);
 }
 
 bool ScriptOperation::AtInterruptedAngle(const csVector3& pos, const iSector* sector, float angle)
 {
-    return (npcclient->GetWorld()->Distance(pos,sector,interrupted_position,interrupted_sector) < 0.5f &&
+    return (npcclient->GetWorld()->Distance2(pos,sector,interrupted_position,interrupted_sector) < 0.5f &&
             fabs(angle - interrupted_angle) < 0.01f);
 }
 
@@ -423,8 +423,8 @@ bool ScriptOperation::CheckMoveOk(NPC *npc, csVector3 oldPos, iSector* oldSector
 bool ScriptOperation::CheckEndPointOk(NPC* npc, const csVector3& myPos, iSector* mySector,
                                       const csVector3 & endPos, iSector* endSector)
 {
-    float deviation = npcclient->GetWorld()->Distance( myPos, mySector, 
-                                                       endPos, endSector );
+    float deviation = npcclient->GetWorld()->Distance2( myPos, mySector, 
+                                                        endPos, endSector );
     if (deviation > 1.0)
     {
         NPCDebug(npc, 5, "Movement endet at %s failed to reach destination %s by %.2fm",
@@ -651,8 +651,8 @@ bool PathReachedEndPoint(NPC* npc, iCelHPath* path, const csVector3& endPos, iSe
 {
     // Check if path end point is at the correct possition
     iMapNode* finalDest = path->GetLast();
-    float deviation = npcclient->GetWorld()->Distance( endPos, endSector, 
-                                                       finalDest->GetPosition(), finalDest->GetSector());
+    float deviation = npcclient->GetWorld()->Distance2( endPos, endSector, 
+                                                        finalDest->GetPosition(), finalDest->GetSector());
     if (deviation > 1.0)
     {
         NPCDebug(npc, 5, "Path endet at % failed to reach destination %s by %.2fm",
@@ -671,6 +671,13 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, bool interrupt
     iSector* mySector;
     csVector3 myPos;
 
+    // Reset the consec collisions counter each time a movment operation is started
+    if (!interrupted)
+    {
+        consecCollisions = 0;
+    }
+    
+
     psGameObject::GetPosition(npc->GetActor(), myPos, mySector);
 
     if (!GetEndPosition(npc, myPos, mySector, endPos, endSector))
@@ -684,7 +691,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, bool interrupt
     {
         // Lets check if we are at the end position. The ShortestPath dosn't
         // seams to work to well if the start and end is the same.
-        float distance = npcclient->GetWorld()->Distance(myPos, mySector, endPos, endSector);
+        float distance = npcclient->GetWorld()->Distance2(myPos, mySector, endPos, endSector);
         if (distance < 0.5)
         {
             NPCDebug(npc, 5, "We are done..");
@@ -718,8 +725,8 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC *npc, bool interrupt
         iMapNode* dest = path->Next();
         StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
                     action, dummyAngle);
-        currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
-                                                           dest->GetPosition(), dest->GetSector());
+        currentDistance =  npcclient->GetWorld()->Distance2(myPos, mySector,
+                                                            dest->GetPosition(), dest->GetSector());
 
         return OPERATION_NOT_COMPLETED; // This behavior isn't done yet
     }
@@ -761,7 +768,7 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
         {
             // Lets check if we are at the end position. The ShortestPath dosn't
             // seams to work to well if the start and end is the same.
-            float distance = npcclient->GetWorld()->Distance(myPos, mySector, endPos, endSector);
+            float distance = npcclient->GetWorld()->Distance2(myPos, mySector, endPos, endSector);
             if (distance < 0.5)
             {
                 NPCDebug(npc, 5, "We are done....");
@@ -789,12 +796,12 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
         iMapNode* dest = path->Next();
         StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
                     action, angle);
-        currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
+        currentDistance =  npcclient->GetWorld()->Distance2(myPos, mySector,
                                                            dest->GetPosition(), dest->GetSector());
     }
 
     iMapNode* dest = path->Current();
-    float distance = npcclient->GetWorld()->Distance(myPos,mySector,dest->GetPosition(),dest->GetSector());
+    float distance = npcclient->GetWorld()->Distance2(myPos,mySector,dest->GetPosition(),dest->GetSector());
     if (distance >= INFINITY_DISTANCE)
     {
         NPCDebug(npc, 5, "No connection found..");
@@ -830,7 +837,7 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
             dest = path->Next();
             StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
                         action, angle);
-            currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
+            currentDistance =  npcclient->GetWorld()->Distance2(myPos, mySector,
                                                                dest->GetPosition(), dest->GetSector());
         }
     }
@@ -865,7 +872,7 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
         NPCDebug(npc, 8, "New world position pos=%s rot=%.2f bodyVel=%s worldVel=%s angVel=%.2f dist=%.2f",
                  toString(myNewPos,myNewSector).GetDataSafe(),myRot,
                  toString(bodyVel).GetDataSafe(),toString(worldVel).GetDataSafe(),ang_vel,
-                 npcclient->GetWorld()->Distance(myNewPos, myNewSector, myPos, mySector));
+                 npcclient->GetWorld()->Distance2(myNewPos, myNewSector, myPos, mySector));
 
         CheckMoveOk(npc, myPos, mySector, myNewPos, myNewSector, ret);
     }
@@ -5601,7 +5608,7 @@ float WanderOperation::DistanceToDestPoint( NPC* npc, const csVector3& destPos, 
 
     npc->GetLinMove()->GetLastPosition(myPos, myRot, mySector);
 
-    return  npcclient->GetWorld()->Distance(myPos, mySector, destPos, destSector);
+    return  npcclient->GetWorld()->Distance2(myPos, mySector, destPos, destSector);
 }
 
 
@@ -5672,8 +5679,8 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
     csVector3 destPos = destPoint->GetPosition();
     destPos += currentPointOffset;
 
-    float distance = npcclient->GetWorld()->Distance(myPos, mySector,
-                                                     destPos, destPoint->GetSector(npcclient->GetEngine()));
+    float distance = npcclient->GetWorld()->Distance2(myPos, mySector,
+                                                      destPos, destPoint->GetSector(npcclient->GetEngine()));
 
     NPCDebug(npc, 6, "Current localDest %s at %s dist %.2f",
              destPoint->GetName().GetData(),
@@ -5707,8 +5714,8 @@ ScriptOperation::OperationResult WanderOperation::Advance(float timedelta,NPC *n
             destPos = destPoint->GetPosition();
             destPos += currentPointOffset;
 
-            currentDistance =  npcclient->GetWorld()->Distance(myPos, mySector,
-                                                               destPos, destPoint->GetSector(npcclient->GetEngine()));
+            currentDistance =  npcclient->GetWorld()->Distance2(myPos, mySector,
+                                                                destPos, destPoint->GetSector(npcclient->GetEngine()));
             distance = currentDistance; // Update this to the distance to the new point as well.
 
             NPCDebug(npc, 6, "New localDest %s at range %.2f",
