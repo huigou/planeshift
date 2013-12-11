@@ -1,7 +1,7 @@
 /*
 * tribe.cpp
 *
-* Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -53,7 +53,7 @@
 const char* Tribe::AssetTypeStr[] = {"ASSET_TYPE_ITEM","ASSET_TYPE_BUILDING","ASSET_TYPE_BUILDINGSPOT"};
 const char* Tribe::AssetStatusStr[] = {"ASSET_STATUS_NOT_APPLICABLE","ASSET_STATUS_NOT_USED","ASSET_STATUS_INCONSTRUCTION","ASSET_STATUS_CONSTRUCTED"};
 
-Tribe::Tribe(EventManager *eventmngr, RecipeManager* rm)
+Tribe::Tribe(EventManager* eventmngr, RecipeManager* rm)
     : tribalRecipe(0),
       homeSector(0),
       accWealthGrowth(0.0),
@@ -73,11 +73,11 @@ Tribe::~Tribe()
     delete tribalRecipe;
 
     csList<Memory*>::Iterator it(memories);
-    while (it.HasNext())
+    while(it.HasNext())
         delete it.Next();
 }
 
-bool Tribe::Load(iResultRow& row)
+bool Tribe::Load(iResultRow &row)
 {
     id                              = row.GetInt("id");
     name                            = row["name"];
@@ -96,22 +96,22 @@ bool Tribe::Load(iResultRow& row)
 
     wealthResourceGrowth            = row.GetFloat("wealth_resource_growth");
     wealthResourceGrowthActive      = row.GetFloat("wealth_resource_growth_active");
-    wealthResourceGrowthActiveLimit = row.GetInt("wealth_resource_growth_active_limit"); 
-        
+    wealthResourceGrowthActiveLimit = row.GetInt("wealth_resource_growth_active_limit");
+
     reproductionCost                = row.GetInt("reproduction_cost");
     npcIdleBehavior                 = row["npc_idle_behavior"];
 
     return true;
 }
 
-bool Tribe::LoadMember(iResultRow& row)
+bool Tribe::LoadMember(iResultRow &row)
 {
     MemberID mID;
     mID.pid               = row.GetInt("member_id");
     mID.tribeMemberType   = row["member_type"];
 
     membersId.Push(mID);
-    
+
     return true;
 }
 
@@ -133,10 +133,10 @@ bool Tribe::AddMember(PID pid, const char* tribeMemberType)
     return true;
 }
 
-bool Tribe::LoadMemory(iResultRow& row)
+bool Tribe::LoadMemory(iResultRow &row)
 {
-    Memory * memory = new Memory;
-    
+    Memory* memory = new Memory;
+
     memory->id   = row.GetInt("id");
     memory->name = row["name"];
     memory->pos = csVector3(row.GetFloat("loc_x"),row.GetFloat("loc_y"),row.GetFloat("loc_z"));
@@ -145,29 +145,29 @@ bool Tribe::LoadMemory(iResultRow& row)
     // Try to find the sector. Will probably fail at this point.
     memory->sector = npcclient->GetEngine()->FindSector(memory->sectorName);
     memory->npc = NULL; // Not a private memory
-    
+
     memories.PushBack(memory);
 
     return true;
 }
 
-int GetSectorID(iDataConnection *db,const char* name)
+int GetSectorID(iDataConnection* db,const char* name)
 {
     // Load all with same master location type
-    Result rs(db->Select("select id from sectors where name='%s'",name)); 
+    Result rs(db->Select("select id from sectors where name='%s'",name));
 
-    if (!rs.IsValid())
+    if(!rs.IsValid())
     {
-        Error2("Could not find sector id from db: %s",db->GetLastError() );
+        Error2("Could not find sector id from db: %s",db->GetLastError());
         return -1;
     }
     return rs[0].GetInt("id");
 }
 
-void Tribe::SaveMemory(Memory * memory)
+void Tribe::SaveMemory(Memory* memory)
 {
-    const char * fields[] = 
-        {"tribe_id","name","loc_x","loc_y","loc_z","sector_id","radius"};
+    const char* fields[] =
+    {"tribe_id","name","loc_x","loc_y","loc_z","sector_id","radius"};
     psStringArray values;
     values.FormatPush("%d",GetID());
     values.FormatPush("%s",memory->name.GetDataSafe());
@@ -176,9 +176,9 @@ void Tribe::SaveMemory(Memory * memory)
     values.FormatPush("%.2f",memory->pos.z);
     values.FormatPush("%d",GetSectorID(db,memory->GetSector()->QueryObject()->GetName()));
     values.FormatPush("%.2f",memory->radius);
-    
+
     memory->id = db->GenericInsertWithID("sc_tribe_memories",fields,values);
-    if (id == 0)
+    if(id == 0)
     {
         CPrintf(CON_ERROR, "Failed to save memory for tribe: %s.\n",
                 db->GetLastError());
@@ -186,7 +186,7 @@ void Tribe::SaveMemory(Memory * memory)
     }
 }
 
-bool Tribe::LoadResource(iResultRow& row)
+bool Tribe::LoadResource(iResultRow &row)
 {
     Resource newRes;
     newRes.id     = row.GetInt("id");
@@ -200,17 +200,17 @@ bool Tribe::LoadResource(iResultRow& row)
 
 void Tribe::SaveResource(Resource* resource, bool newResource)
 {
-    const char * fields[] = 
-        {"tribe_id","name","amount"};
+    const char* fields[] =
+    {"tribe_id","name","amount"};
     psStringArray values;
     values.FormatPush("%d",GetID());
     values.FormatPush("%s",resource->name.GetDataSafe());
     values.FormatPush("%d",resource->amount);
 
-    if (newResource)
+    if(newResource)
     {
         resource->id = db->GenericInsertWithID("sc_tribe_resources",fields,values);
-        if (id == 0)
+        if(id == 0)
         {
             CPrintf(CON_ERROR, "Failed to save resource for tribe: %s.\n",
                     db->GetLastError());
@@ -221,24 +221,24 @@ void Tribe::SaveResource(Resource* resource, bool newResource)
     {
         csString id;
         id.Format("%d",resource->id);
-        
-        if (!db->GenericUpdateWithID("sc_tribe_resources","id",id,fields,values))
+
+        if(!db->GenericUpdateWithID("sc_tribe_resources","id",id,fields,values))
         {
             CPrintf(CON_ERROR, "Failed to save resource for tribe: %s.\n",
                     db->GetLastError());
             return;
         }
-        
+
     }
-    
+
 }
 
 
-bool Tribe::CheckAttach(NPC * npc)
+bool Tribe::CheckAttach(NPC* npc)
 {
-    for (size_t i=0; i < membersId.GetSize(); i++)
+    for(size_t i=0; i < membersId.GetSize(); i++)
     {
-        if (npc->GetPID() == membersId[i].pid)
+        if(npc->GetPID() == membersId[i].pid)
         {
             // Found a member so attach to the tribe.
             return AttachMember(npc, membersId[i].tribeMemberType);
@@ -248,24 +248,24 @@ bool Tribe::CheckAttach(NPC * npc)
     return true; // Not part of tribe but didn't fail either
 }
 
-bool Tribe::AttachMember(NPC * npc, const char* tribeMemberType)
+bool Tribe::AttachMember(NPC* npc, const char* tribeMemberType)
 {
     // Some checks to see if this NPC is fitt for this Tribe
-    Behavior * idleBehavior = npc->GetBrain()->Find(npcIdleBehavior.GetDataSafe());
-    if (!idleBehavior)
+    Behavior* idleBehavior = npc->GetBrain()->Find(npcIdleBehavior.GetDataSafe());
+    if(!idleBehavior)
     {
         Error4("Trying to attach a NPC %s(%u) to tribe without matching idle behavior of %s",
-	       npc->GetName(),npc->GetPID().Unbox(), npcIdleBehavior.GetDataSafe());
+               npc->GetName(),npc->GetPID().Unbox(), npcIdleBehavior.GetDataSafe());
         // Dump the behavior list so that we see what behaviors we have for this npc.
-	    npc->DumpBehaviorList();
+        npc->DumpBehaviorList();
         return false;
     }
 
     npc->SetTribe(this);
-    npc->SetTribeMemberType( tribeMemberType );
-    for (size_t i=0; i < members.GetSize(); i++)
+    npc->SetTribeMemberType(tribeMemberType);
+    for(size_t i=0; i < members.GetSize(); i++)
     {
-        if (npc->GetPID() == members[i]->GetPID())
+        if(npc->GetPID() == members[i]->GetPID())
         {
             return true;
         }
@@ -278,7 +278,7 @@ bool Tribe::AttachMember(NPC * npc, const char* tribeMemberType)
 }
 
 
-bool Tribe::HandleDeath(NPC * npc)
+bool Tribe::HandleDeath(NPC* npc)
 {
     deadMembers.Push(npc);
 
@@ -292,27 +292,27 @@ bool Tribe::HandleDeath(NPC * npc)
 int Tribe::AliveCount() const
 {
     int count = 0;
-    for (size_t i=0; i < members.GetSize(); i++)
+    for(size_t i=0; i < members.GetSize(); i++)
     {
-        NPC *npc = members[i];
-        if (npc->IsAlive()) count++;
+        NPC* npc = members[i];
+        if(npc->IsAlive()) count++;
     }
     return count;
 }
 
 
-void Tribe::HandlePerception(NPC * npc, Perception *perception)
+void Tribe::HandlePerception(NPC* npc, Perception* perception)
 {
     csString name = perception->GetName();
-    
+
     CS::Utility::StringArray<> strarr;
     strarr.SplitString(name, ":");
     csString pcptName = strarr[0];
-    
-    if (pcptName == "transfer")
+
+    if(pcptName == "transfer")
     {
-        InventoryPerception *invPcpt = dynamic_cast<InventoryPerception*>(perception);
-        if (!invPcpt) return;
+        InventoryPerception* invPcpt = dynamic_cast<InventoryPerception*>(perception);
+        if(!invPcpt) return;
 
         AddResource(perception->GetType(),invPcpt->GetCount());
     }
@@ -320,19 +320,19 @@ void Tribe::HandlePerception(NPC * npc, Perception *perception)
 
 void Tribe::AddResource(csString resource, int amount, csString nick)
 {
-    for (size_t i=0; i < resources.GetSize(); i++)
+    for(size_t i=0; i < resources.GetSize(); i++)
     {
-        if (resources[i].name == resource)
+        if(resources[i].name == resource)
         {
             resources[i].amount += amount;
             resources[i].nick = nick;
             SaveResource(&resources[i],false); // Update resource
 
-            if (resource == GetNeededResource() && amount > 0)
+            if(resource == GetNeededResource() && amount > 0)
             {
-                UpdateResourceRate( amount );
+                UpdateResourceRate(amount);
             }
-            
+
             return;
         }
     }
@@ -342,17 +342,17 @@ void Tribe::AddResource(csString resource, int amount, csString nick)
     SaveResource(&newRes,true); // New resource
     resources.Push(newRes);
 
-    if (resource == GetNeededResource() && amount > 0)
+    if(resource == GetNeededResource() && amount > 0)
     {
-        UpdateResourceRate( amount );
+        UpdateResourceRate(amount);
     }
 }
 
 int Tribe::CountResource(csString resource) const
 {
-    for (size_t i=0; i < resources.GetSize(); i++)
+    for(size_t i=0; i < resources.GetSize(); i++)
     {
-        if (resources[i].name == resource)
+        if(resources[i].name == resource)
         {
             return resources[i].amount;
         }
@@ -361,27 +361,27 @@ int Tribe::CountResource(csString resource) const
 }
 
 
-void Tribe::Advance(csTicks when, EventManager *eventmgr)
+void Tribe::Advance(csTicks when, EventManager* eventmgr)
 {
     int delta = when - lastAdvance;
-    if (delta < 0) // Handle wrappover of tick
+    if(delta < 0)  // Handle wrappover of tick
     {
         delta = 250; // We just set it to the event timer.
     }
     lastAdvance = when;
 
     // Manage Wealth
-    if ( when - lastGrowth > 1000)
+    if(when - lastGrowth > 1000)
     {
         float growth;
-        
+
         // We need to help tribes that have no members with some resources
         // so that they can spawn the first entity
-        if (AliveCount() <= 0 && CountResource(wealthResourceName) < reproductionCost)
+        if(AliveCount() <= 0 && CountResource(wealthResourceName) < reproductionCost)
         {
             growth = wealthResourceGrowth;
         }
-        else if (CountResource(wealthResourceName) < wealthResourceGrowthActiveLimit)
+        else if(CountResource(wealthResourceName) < wealthResourceGrowthActiveLimit)
         {
             // Some tribes need constant growth in wealth, though capped to a limit
             // to prevent tribes with no strain on the resources to grow
@@ -399,11 +399,11 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
         int amount = int(floor(accWealthGrowth));
         accWealthGrowth -= amount;
 
-        if(amount != 0) AddResource(wealthResourceName, amount );
-        
+        if(amount != 0) AddResource(wealthResourceName, amount);
+
         lastGrowth = when;
     }
-    else if (when - lastGrowth < 0) // Handle wrappoer of tick
+    else if(when - lastGrowth < 0)  // Handle wrappoer of tick
     {
         lastGrowth = when;
     }
@@ -413,10 +413,10 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
     int      decreaseValue = delta; // Set it to change the scale on recipe wait times
 
     // Manage cyclic recipes
-    for(size_t i=0;i<cyclicRecipes.GetSize();i++)
+    for(size_t i=0; i<cyclicRecipes.GetSize(); i++)
     {
         cyclicRecipes[i].timeLeft -= decreaseValue;
-        
+
         if(cyclicRecipes[i].timeLeft <= 0)
         {
             // Add the recipe and reset counter
@@ -425,10 +425,10 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
             newNode->priority = CYCLIC_RECIPE_PRIORITY;
             cyclicRecipes[i].timeLeft = cyclicRecipes[i].timeTotal;
         }
-    } 
-    
-    // Manage standard recipes 
-    for(size_t i=0;i < members.GetSize(); i++)
+    }
+
+    // Manage standard recipes
+    for(size_t i=0; i < members.GetSize(); i++)
     {
         NPC*       npc = members[i];
         Behavior*  behavior = npc->GetCurrentBehavior();
@@ -465,7 +465,7 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
             // Get best recipe. (highest level, no wait time)
             RecipeTreeNode* bestRecipe = tribalRecipe->GetNextRecipe();
 
-            if(!bestRecipe) 
+            if(!bestRecipe)
             {
                 // Something went wrong... it should never re-parse the tribal recipe
                 // High chances to be a scripting error
@@ -475,14 +475,14 @@ void Tribe::Advance(csTicks when, EventManager *eventmgr)
             if(bestRecipe->wait <= 0)
             {
                 RDebug(this, 5, "Applying recipe %s.", bestRecipe->recipe->GetName().GetDataSafe());
-                
+
                 bestRecipe->nextStep = recipeManager->ApplyRecipe(
-                    bestRecipe, this, bestRecipe->nextStep);
+                                           bestRecipe, this, bestRecipe->nextStep);
             }
 
             // If nextStep is -1 => Recipe is Completed
             if(bestRecipe->nextStep == -1)
-            { 
+            {
                 // TODO -- Remove TimeStamp
                 csString rName = bestRecipe->recipe->GetName();
                 if(rName != "do nothing")
@@ -512,14 +512,14 @@ bool Tribe::CanGrow() const
     return CountResource(wealthResourceName) >= reproductionCost;
 }
 
-void Tribe::LocalDebugReport(const csString& debugString)
+void Tribe::LocalDebugReport(const csString &debugString)
 {
     CPrintf(CON_CMDOUTPUT, "%s (%d)> %s\n", GetName(), id, debugString.GetDataSafe());
 }
-    
-void Tribe::RemoteDebugReport(uint32_t clientNum, const csString& debugString)
+
+void Tribe::RemoteDebugReport(uint32_t clientNum, const csString &debugString)
 {
-   npcclient->GetNetworkMgr()->QueueSystemInfoCommand(clientNum,"%s (%d)> %s", GetName(), id, debugString.GetDataSafe()); 
+    npcclient->GetNetworkMgr()->QueueSystemInfoCommand(clientNum,"%s (%d)> %s", GetName(), id, debugString.GetDataSafe());
 }
 
 void Tribe::UpdateDeathRate()
@@ -554,7 +554,7 @@ void Tribe::UpdateResourceRate(int amount)
 
 iSector* Tribe::GetHomeSector()
 {
-    if (!homeSector)
+    if(!homeSector)
     {
         homeSector = npcclient->GetEngine()->GetSectors()->FindByName(homeSectorName);
     }
@@ -565,13 +565,13 @@ iSector* Tribe::GetHomeSector()
 int Tribe::GetMaxSize() const
 {
     int size = maxSize;
-    
-    if (size == -1 || size > TRIBE_UNLIMITED_SIZE)
+
+    if(size == -1 || size > TRIBE_UNLIMITED_SIZE)
     {
         size = TRIBE_UNLIMITED_SIZE; // NPC Client definition of unlimited size
     }
 
-    return size; 
+    return size;
 }
 
 int Tribe::GetReproductionCost() const
@@ -581,14 +581,14 @@ int Tribe::GetReproductionCost() const
 
 
 
-void Tribe::GetHome(csVector3& pos, float& radius, iSector* &sector)
-{ 
-    pos = homePos; 
-    radius = homeRadius; 
-    if (homeSector == NULL)
+void Tribe::GetHome(csVector3 &pos, float &radius, iSector* &sector)
+{
+    pos = homePos;
+    radius = homeRadius;
+    if(homeSector == NULL)
     {
         homeSector = npcclient->GetEngine()->FindSector(homeSectorName);
-        if (!homeSector)
+        if(!homeSector)
         {
             Error3("Failed to find sector for tribe %s home for homeSectorName: %s",
                    GetName(),homeSectorName.GetDataSafe());
@@ -597,27 +597,27 @@ void Tribe::GetHome(csVector3& pos, float& radius, iSector* &sector)
     sector = homeSector;
 }
 
-void Tribe::SetHome(const csVector3& pos, float radius, iSector* sector)
-{ 
-    homePos = pos; 
+void Tribe::SetHome(const csVector3 &pos, float radius, iSector* sector)
+{
+    homePos = pos;
     homeSector = sector;
     homeSectorName = sector->QueryObject()->GetName();
     homeRadius = radius;
-    
+
     // Consider adding storrage of this new position to DB here
     // TODO: Store to DB.
 }
 
-bool Tribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSector* sector)
+bool Tribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3 &pos, const iSector* sector)
 {
     float dist = npcclient->GetWorld()->Distance(homePos, homeSector, pos, sector);
 
-    if (npc)
+    if(npc)
     {
         NPCDebug(npc, 5, "Range to tribe with radius %.2f is %.2f",homeRadius,dist);
     }
 
-    if (dist > homeRadius)
+    if(dist > homeRadius)
     {
         return false;
     }
@@ -628,16 +628,16 @@ bool Tribe::CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSe
 }
 
 
-bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csVector3& locatedPos, iSector* &locatedSector, float range, bool random)
+bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector* startSector, csVector3 &locatedPos, iSector* &locatedSector, float range, bool random)
 {
     float locatedRange=0.0;
     Tribe::Memory* memory = NULL;
-    
-    if (psGetRandom(100) > 10) // 10% chance for go explore a new resource arae
+
+    if(psGetRandom(100) > 10)  // 10% chance for go explore a new resource arae
     {
         csString neededResource = GetNeededResource();
 
-        if (random)
+        if(random)
         {
             memory = FindRandomMemory(neededResource,startPos,startSector,range,&locatedRange);
         }
@@ -645,7 +645,7 @@ bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csV
         {
             memory = FindNearestMemory(neededResource,startPos,startSector,range,&locatedRange);
         }
-        if (memory)
+        if(memory)
         {
             NPCDebug(npc, 5, "Found needed resource: %s at %s",neededResource.GetDataSafe(),toString(memory->pos,memory->GetSector()).GetDataSafe());
         }
@@ -653,12 +653,12 @@ bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csV
         {
             NPCDebug(npc, 5, "Didn't find needed resource: %s",neededResource.GetDataSafe());
         }
-        
+
     }
-    if (!memory)
+    if(!memory)
     {
         csString area = GetNeededResourceAreaType();
-        if (random)
+        if(random)
         {
             memory = FindRandomMemory(area,startPos,startSector,range,&locatedRange);
         }
@@ -667,7 +667,7 @@ bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csV
             memory = FindNearestMemory(area,startPos,startSector,range,&locatedRange);
         }
 
-        if (memory)
+        if(memory)
         {
             NPCDebug(npc, 5, "Found resource area: %s at %s",area.GetDataSafe(),toString(memory->pos,memory->GetSector()).GetDataSafe());
         }
@@ -677,9 +677,9 @@ bool Tribe::GetResource(NPC* npc, csVector3 startPos, iSector * startSector, csV
         }
 
     }
-    if (!memory)
+    if(!memory)
     {
-        NPCDebug(npc, 5, "Couldn't locate resource for npc.",npc->GetName() );
+        NPCDebug(npc, 5, "Couldn't locate resource for npc.",npc->GetName());
         return false;
     }
 
@@ -700,7 +700,7 @@ Tribe::Memory* Tribe::GetResource(csString resourceName, NPC* npc)
     npc->GetActiveLocate(pos,sector,rot);
 
     memory = FindNearestMemory(resourceName.GetData(), pos, sector, range, &locatedRange);
-    
+
     if(!memory)
     {
         memory = FindNearestMemory("mine", pos, sector, range, &locatedRange);
@@ -740,7 +740,7 @@ int Tribe::GetWealthResourceGrowthActiveLimit() const
 }
 
 
-void Tribe::Memorize(NPC * npc, Perception * perception)
+void Tribe::Memorize(NPC* npc, Perception* perception)
 {
     // Retriv date from the perception
     csString  name = perception->GetType();
@@ -748,42 +748,42 @@ void Tribe::Memorize(NPC * npc, Perception * perception)
     csVector3 pos;
     iSector*  sector = NULL;
 
-    if (!perception->GetLocation(pos,sector))
+    if(!perception->GetLocation(pos,sector))
     {
         NPCDebug(npc, 5, "Failed to memorize '%s' perception without valid position",name.GetDataSafe());
         return;
     }
-        
+
     // Store the perception if not known from before
 
     Memory* memory = FindPrivMemory(name,pos,sector,radius,npc);
-    if (memory)
+    if(memory)
     {
         NPCDebug(npc, 5, "Has this in private knowledge -> do nothing");
         return;
     }
-    
+
     memory = FindMemory(name,pos,sector,radius);
-    if (memory)
+    if(memory)
     {
         NPCDebug(npc, 5, "Has this in tribe knowledge -> do nothing");
         return;
     }
-    
+
     NPCDebug(npc, 5, "Store in private memory: '%s' %.2f %.2f %2f %.2f '%s'",name.GetDataSafe(),pos.x,pos.y,pos.z,radius,npc->GetName());
     AddMemory(name,pos,sector,radius,npc);
 }
 
-Tribe::Memory* Tribe::FindPrivMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC * npc)
+Tribe::Memory* Tribe::FindPrivMemory(csString name,const csVector3 &pos, iSector* sector, float radius, NPC* npc)
 {
     csList<Memory*>::Iterator it(memories);
-    while (it.HasNext())
+    while(it.HasNext())
     {
-        Memory * memory = it.Next();
-        if (memory->name == name && memory->GetSector() == sector && memory->npc == npc)
+        Memory* memory = it.Next();
+        if(memory->name == name && memory->GetSector() == sector && memory->npc == npc)
         {
             float dist = (memory->pos - pos).Norm();
-            if (dist <= radius)
+            if(dist <= radius)
             {
                 return memory;
             }
@@ -792,16 +792,16 @@ Tribe::Memory* Tribe::FindPrivMemory(csString name,const csVector3& pos, iSector
     return NULL; // Found nothing
 }
 
-Tribe::Memory* Tribe::FindMemory(csString name,const csVector3& pos, iSector* sector, float radius)
+Tribe::Memory* Tribe::FindMemory(csString name,const csVector3 &pos, iSector* sector, float radius)
 {
     csList<Memory*>::Iterator it(memories);
-    while (it.HasNext())
+    while(it.HasNext())
     {
-        Memory * memory = it.Next();
-        if (memory->name == name && memory->GetSector() == sector && memory->npc == NULL)
+        Memory* memory = it.Next();
+        if(memory->name == name && memory->GetSector() == sector && memory->npc == NULL)
         {
             float dist = (memory->pos - pos).Norm();
-            if (dist <= radius)
+            if(dist <= radius)
             {
                 return memory;
             }
@@ -813,10 +813,10 @@ Tribe::Memory* Tribe::FindMemory(csString name,const csVector3& pos, iSector* se
 Tribe::Memory* Tribe::FindMemory(csString name)
 {
     csList<Memory*>::Iterator it(memories);
-    while (it.HasNext())
+    while(it.HasNext())
     {
-        Memory * memory = it.Next();
-        if (memory->name == name && memory->npc == NULL)
+        Memory* memory = it.Next();
+        if(memory->name == name && memory->npc == NULL)
         {
             return memory;
         }
@@ -824,9 +824,9 @@ Tribe::Memory* Tribe::FindMemory(csString name)
     return NULL; // Found nothing
 }
 
-void Tribe::AddMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC * npc)
+void Tribe::AddMemory(csString name,const csVector3 &pos, iSector* sector, float radius, NPC* npc)
 {
-    Memory * memory    = new Memory;
+    Memory* memory    = new Memory;
     memory->id         = -1;
     memory->name       = name;
     memory->pos        = pos;
@@ -837,15 +837,15 @@ void Tribe::AddMemory(csString name,const csVector3& pos, iSector* sector, float
     memories.PushBack(memory);
 }
 
-void Tribe::ShareMemories(NPC * npc)
+void Tribe::ShareMemories(NPC* npc)
 {
     csList<Memory*>::Iterator it(memories);
-    while (it.HasNext())
+    while(it.HasNext())
     {
-        Memory * memory = it.Next();
-        if (memory->npc == npc)
+        Memory* memory = it.Next();
+        if(memory->npc == npc)
         {
-            if (FindMemory(memory->name,memory->pos,memory->GetSector(),memory->radius))
+            if(FindMemory(memory->name,memory->pos,memory->GetSector(),memory->radius))
             {
                 // Tribe know this so delete the memory.
                 memories.Delete(it);
@@ -857,15 +857,15 @@ void Tribe::ShareMemories(NPC * npc)
                 SaveMemory(memory);
             }
         }
-    }    
+    }
 }
 
 iSector* Tribe::Asset::GetSector()
 {
-    if (sector) return sector;
+    if(sector) return sector;
 
-    if (sectorName.IsEmpty()) return NULL;
-    
+    if(sectorName.IsEmpty()) return NULL;
+
     sector = npcclient->GetEngine()->FindSector(sectorName);
     return sector;
 }
@@ -878,43 +878,43 @@ gemNPCItem* Tribe::Asset::GetItem()
 
 iSector* Tribe::Memory::GetSector()
 {
-    if (sector) return sector;
+    if(sector) return sector;
 
     sector = npcclient->GetEngine()->FindSector(sectorName);
     return sector;
 }
 
-void Tribe::ForgetMemories(NPC * npc)
+void Tribe::ForgetMemories(NPC* npc)
 {
     csList<Memory*>::Iterator it(memories);
-    while (it.HasNext())
+    while(it.HasNext())
     {
-        Memory * memory = it.Next();
-        if (memory->npc == npc)
+        Memory* memory = it.Next();
+        if(memory->npc == npc)
         {
             memories.Delete(it);
             delete memory;
         }
-    }    
+    }
 }
 
-Tribe::Memory *Tribe::FindNearestMemory(const char *name, const csVector3& pos, const iSector* sector, float range, float *foundRange)
+Tribe::Memory* Tribe::FindNearestMemory(const char* name, const csVector3 &pos, const iSector* sector, float range, float* foundRange)
 {
-    Memory * nearest = NULL;
+    Memory* nearest = NULL;
 
     float minRange = range*range;    // Working with Squared values
-    if (range == -1) minRange = -1;  // -1*-1 = 1, will use -1 later
-    
-    csList<Memory*>::Iterator it(memories);
-    while (it.HasNext())
-    {
-        Memory * memory = it.Next();   
+    if(range == -1) minRange = -1;   // -1*-1 = 1, will use -1 later
 
-        if (memory->name == name && memory->npc == NULL)
+    csList<Memory*>::Iterator it(memories);
+    while(it.HasNext())
+    {
+        Memory* memory = it.Next();
+
+        if(memory->name == name && memory->npc == NULL)
         {
             float dist2 = npcclient->GetWorld()->Distance(pos,sector,memory->pos,memory->GetSector());
-            
-            if (minRange < 0 || dist2 < minRange)
+
+            if(minRange < 0 || dist2 < minRange)
             {
                 minRange = dist2;
                 nearest = memory;
@@ -922,7 +922,7 @@ Tribe::Memory *Tribe::FindNearestMemory(const char *name, const csVector3& pos, 
         }
     }
 
-    if (nearest && foundRange)  // found closest one
+    if(nearest && foundRange)   // found closest one
     {
         *foundRange = sqrt(minRange);
     }
@@ -930,24 +930,24 @@ Tribe::Memory *Tribe::FindNearestMemory(const char *name, const csVector3& pos, 
     return nearest;
 }
 
-Tribe::Memory *Tribe::FindRandomMemory(const char *name, const csVector3& pos, const iSector* sector, float range, float *foundRange)
+Tribe::Memory* Tribe::FindRandomMemory(const char* name, const csVector3 &pos, const iSector* sector, float range, float* foundRange)
 {
     csArray<Memory*> nearby;
     csArray<float> dist;
 
     float minRange = range*range;    // Working with Squared values
-    if (range == -1) minRange = -1;  // -1*-1 = 1, will use -1 later
+    if(range == -1) minRange = -1;   // -1*-1 = 1, will use -1 later
 
     csList<Memory*>::Iterator it(memories);
-    while (it.HasNext())
+    while(it.HasNext())
     {
-        Memory * memory = it.Next();
+        Memory* memory = it.Next();
 
-        if (memory->name == name && memory->npc == NULL)
+        if(memory->name == name && memory->npc == NULL)
         {
             float dist2 = npcclient->GetWorld()->Distance(pos,sector,memory->pos,memory->GetSector());
 
-            if (minRange < 0 || dist2 < minRange)
+            if(minRange < 0 || dist2 < minRange)
             {
                 nearby.Push(memory);
                 dist.Push(dist2);
@@ -955,24 +955,24 @@ Tribe::Memory *Tribe::FindRandomMemory(const char *name, const csVector3& pos, c
         }
     }
 
-    if (nearby.GetSize()>0)  // found one or more closer than range
+    if(nearby.GetSize()>0)   // found one or more closer than range
     {
         size_t pick = psGetRandom((uint32)nearby.GetSize());
-        
-        if (foundRange) *foundRange = sqrt(dist[pick]);
+
+        if(foundRange) *foundRange = sqrt(dist[pick]);
 
         return nearby[pick];
     }
     return NULL;
 }
 
-void Tribe::TriggerEvent(Perception *pcpt, float maxRange,
-                         csVector3 *basePos, iSector *baseSector)
+void Tribe::TriggerEvent(Perception* pcpt, float maxRange,
+                         csVector3* basePos, iSector* baseSector)
 {
-    for (size_t i=0; i < members.GetSize(); i++)
+    for(size_t i=0; i < members.GetSize(); i++)
     {
-        NPC *npc = members[i];
-        npc->TriggerEvent( pcpt, maxRange, basePos, baseSector );
+        NPC* npc = members[i];
+        npc->TriggerEvent(pcpt, maxRange, basePos, baseSector);
     }
 }
 
@@ -998,28 +998,28 @@ gemNPCActor* Tribe::GetMostHated(NPC* npc, float range, bool includeOutsideRegio
 {
     float mostHatedAmount = 0.0;
     gemNPCActor* mostHated = NULL;
-    
+
     csVector3  pos;
     iSector*   sector;
-    
-    psGameObject::GetPosition(npc->GetActor(), pos, sector );
 
-    for (size_t i=0; i < members.GetSize(); i++)
+    psGameObject::GetPosition(npc->GetActor(), pos, sector);
+
+    for(size_t i=0; i < members.GetSize(); i++)
     {
-        NPC *member = members[i];
+        NPC* member = members[i];
         float hateValue = 0;
 
         gemNPCActor* hated = member->GetMostHated(pos, sector, range, NULL,
-                                                  includeOutsideRegion, includeInvisible, includeInvincible,
-                                                  &hateValue );
-        if (!mostHated || hateValue > mostHatedAmount)
+                             includeOutsideRegion, includeInvisible, includeInvincible,
+                             &hateValue);
+        if(!mostHated || hateValue > mostHatedAmount)
         {
             mostHatedAmount = hateValue;
             mostHated = hated;
         }
     }
 
-    if (hate)
+    if(hate)
     {
         *hate = mostHatedAmount;
     }
@@ -1034,9 +1034,9 @@ void Tribe::ScopedTimerCallback(const ScopedTimer* timer)
     npcclient->ListTribes(GetName());
 }
 
-Recipe* Tribe::GetTribalRecipe() 
-{ 
-    return tribalRecipe->recipe; 
+Recipe* Tribe::GetTribalRecipe()
+{
+    return tribalRecipe->recipe;
 }
 
 void Tribe::UpdateRecipeData(int delta)
@@ -1097,20 +1097,20 @@ bool Tribe::CheckKnowledge(csString knowHow)
             return true;
         }
     }
-    
+
     return false;
 }
 
 void Tribe::SaveKnowledge(csString knowHow)
 {
-    const char * fields[] =
-        { "tribe_id", "knowledge" };
+    const char* fields[] =
+    { "tribe_id", "knowledge" };
     psStringArray values;
     values.FormatPush("%d", GetID());
     values.FormatPush("%s", knowHow.GetDataSafe());
 
     int result = db->GenericInsertWithID("sc_tribe_knowledge",fields,values);
-    if (result == 0)
+    if(result == 0)
     {
         CPrintf(CON_ERROR, "Failed to save knowledge for tribe. Reason: %s.\n",
                 db->GetLastError());
@@ -1181,7 +1181,7 @@ void Tribe::ModifyWait(Recipe* recipe, int delta)
     tribalRecipe->ModifyWait(recipe, delta);
 }
 
-bool Tribe::CheckMembers(const csString& type, int number)
+bool Tribe::CheckMembers(const csString &type, int number)
 {
 
     // Handle special case where name is 'number'
@@ -1192,14 +1192,14 @@ bool Tribe::CheckMembers(const csString& type, int number)
         {
             return true;
         }
-        
+
         return false;
     }
 
     for(size_t i=0; i<members.GetSize(); i++)
     {
         NPC* member = members[i];
-        
+
         if(!member->GetCurrentBehavior())
         {
             // Discard Members with no Behavior
@@ -1207,7 +1207,7 @@ bool Tribe::CheckMembers(const csString& type, int number)
             continue;
         }
 
-        if ((member->GetTribeMemberType() != type) && (type != "any"))
+        if((member->GetTribeMemberType() != type) && (type != "any"))
         {
             // Just skip any members of wrong type.
             continue;
@@ -1247,23 +1247,23 @@ bool Tribe::CheckAsset(Tribe::AssetType type, csString name, int number)
     for(size_t i=0; i<assets.GetSize(); i++)
     {
         Asset* asset = assets[i];
-        
+
         if(asset->type == type && asset->name == name)
         {
             // If the building exists && is not just a spot for construction
             if(asset->type == Tribe::ASSET_TYPE_BUILDING)
             {
-                if (asset->status == Tribe::ASSET_STATUS_CONSTRUCTED || asset->status == Tribe::ASSET_STATUS_INCONSTRUCTION)
+                if(asset->status == Tribe::ASSET_STATUS_CONSTRUCTED || asset->status == Tribe::ASSET_STATUS_INCONSTRUCTION)
                 {
                     number -= asset->quantity;
                 }
             }
-            else if (asset->type == Tribe::ASSET_TYPE_ITEM)
+            else if(asset->type == Tribe::ASSET_TYPE_ITEM)
             {
                 number -= asset->quantity;
             }
         }
-        if (number < 0) return true;
+        if(number < 0) return true;
     }
     return false;
 }
@@ -1271,11 +1271,11 @@ bool Tribe::CheckAsset(Tribe::AssetType type, csString name, int number)
 size_t Tribe::AssetQuantity(Tribe::AssetType type, csString name)
 {
     size_t quantity = 0;
-    
+
     for(size_t i=0; i<assets.GetSize(); i++)
     {
         Asset* asset = assets[i];
-        
+
         if(asset->type == type && asset->name == name)
         {
             quantity += asset->quantity;
@@ -1288,7 +1288,7 @@ void Tribe::Build(NPC* npc, bool pickupable)
 {
     Asset* buildingSpot = npc->GetBuildingSpot();
 
-    if (buildingSpot->status == ASSET_STATUS_INCONSTRUCTION)
+    if(buildingSpot->status == ASSET_STATUS_INCONSTRUCTION)
     {
         csVector3 buildingPos = npc->GetTribe()->GetHomePosition();
         iSector*  buildingSector = npc->GetTribe()->GetHomeSector();
@@ -1310,7 +1310,7 @@ void Tribe::Unbuild(NPC* npc, gemNPCItem* building)
     NPCDebug(npc, 6, "Unbuilding building %s",building->GetName());
 
     Asset* buildingAsset = GetAsset(building);
-    if (buildingAsset)
+    if(buildingAsset)
     {
         buildingAsset->status = ASSET_STATUS_NOT_USED;
         buildingAsset->quantity = 0;
@@ -1321,9 +1321,9 @@ void Tribe::Unbuild(NPC* npc, gemNPCItem* building)
 
         buildingPos -= buildingAsset->pos;
 
-        Asset* buildingSpot = GetNearestAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingAsset->name, Tribe::ASSET_STATUS_CONSTRUCTED, 
-                                              buildingPos, NULL, 5.0, NULL );
-        if (buildingSpot)
+        Asset* buildingSpot = GetNearestAsset(Tribe::ASSET_TYPE_BUILDINGSPOT, buildingAsset->name, Tribe::ASSET_STATUS_CONSTRUCTED,
+                                              buildingPos, NULL, 5.0, NULL);
+        if(buildingSpot)
         {
             buildingSpot->status = Tribe::ASSET_STATUS_NOT_USED;
             SaveAsset(buildingSpot);
@@ -1351,7 +1351,7 @@ void Tribe::HandlePersistItem(gemNPCItem* item)
 
     // Check if we have this item as an asset
     Asset* asset = GetAsset(item->GetUID());
-    if (asset)
+    if(asset)
     {
         asset->item = item;
     }
@@ -1360,7 +1360,7 @@ void Tribe::HandlePersistItem(gemNPCItem* item)
         // TODO: Find buildings and items and add them seperate, for now add as BUILDING.
 
         asset = GetAsset(Tribe::ASSET_TYPE_BUILDING, item->GetName(), position, sector);
-        if (asset)
+        if(asset)
         {
             asset->item = item;
             asset->itemUID = item->GetUID();
@@ -1378,7 +1378,7 @@ void Tribe::HandlePersistItem(gemNPCItem* item)
 }
 
 
-csArray<NPC*> Tribe::SelectNPCs(const csString& type, const char* number)
+csArray<NPC*> Tribe::SelectNPCs(const csString &type, const char* number)
 {
     int           count = atoi(number);
     csArray<NPC*> npcs;
@@ -1390,7 +1390,7 @@ csArray<NPC*> Tribe::SelectNPCs(const csString& type, const char* number)
     {
         NPC* member = members[i];
 
-        if ((member->GetTribeMemberType() != type) && !selectAny)
+        if((member->GetTribeMemberType() != type) && !selectAny)
         {
             // Just skip any members of wrong type.
             continue;
@@ -1420,7 +1420,7 @@ csArray<NPC*> Tribe::SelectNPCs(const csString& type, const char* number)
     return npcs;
 }
 
-csString Tribe::GetBuffer(const csString& bufferName)
+csString Tribe::GetBuffer(const csString &bufferName)
 {
     csString value = tribeBuffer.Get(bufferName,"");
 
@@ -1429,24 +1429,24 @@ csString Tribe::GetBuffer(const csString& bufferName)
     return value;
 }
 
-void Tribe::SetBuffer(const csString& bufferName, const csString& value)
+void Tribe::SetBuffer(const csString &bufferName, const csString &value)
 {
     RDebug(this, 5, "Set Buffer(%s,%s)",bufferName.GetDataSafe(),value.GetDataSafe());
 
     tribeBuffer.PutUnique(bufferName,value);
 }
 
-void Tribe::ReplaceBuffers(csString& result)
+void Tribe::ReplaceBuffers(csString &result)
 {
     BufferHash::GlobalIterator iter = tribeBuffer.GetIterator();
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         csString bufferName;
         csString value = iter.Next(bufferName);
         csString replace("$TBUFFER[");
         replace += bufferName;
         replace += "]";
-        
+
         result.ReplaceAll(replace,value);
     }
 }
@@ -1467,7 +1467,7 @@ void Tribe::LoadAsset(iResultRow &row)
     asset->itemUID = row.GetInt("itemID");
     asset->sectorName = row["sector_name"];
     // Try to find the sector. Will probably fail at this point.
-    if (!asset->sectorName.IsEmpty())
+    if(!asset->sectorName.IsEmpty())
     {
         asset->sector = npcclient->GetEngine()->FindSector(asset->sectorName);
     }
@@ -1483,18 +1483,18 @@ void Tribe::LoadAsset(iResultRow &row)
 
 void Tribe::SaveAsset(Tribe::Asset* asset, bool deletion)
 {
-    if (deletion)
+    if(deletion)
     {
-        if (db->Command("DELETE FROM sc_tribe_assets WHERE id=%u",asset->id))
+        if(db->Command("DELETE FROM sc_tribe_assets WHERE id=%u",asset->id))
         {
             asset->id = -1;
         }
     }
     else
     {
-        const char * fields[] =
-            {"tribe_id", "name", "type","coordX", "coordY", "coordZ", "sector_id", "itemID", "quantity", "status"};
-        
+        const char* fields[] =
+        {"tribe_id", "name", "type","coordX", "coordY", "coordZ", "sector_id", "itemID", "quantity", "status"};
+
         psStringArray values;
         values.FormatPush("%d",GetID());
         values.FormatPush("%s",asset->name.GetData());
@@ -1506,7 +1506,7 @@ void Tribe::SaveAsset(Tribe::Asset* asset, bool deletion)
         values.FormatPush("%d",asset->itemUID);
         values.FormatPush("%d",asset->quantity);
         values.FormatPush("%d",asset->status);
-        
+
         if(asset->id == -1)
         {
             // It's a new entry
@@ -1522,7 +1522,7 @@ void Tribe::SaveAsset(Tribe::Asset* asset, bool deletion)
             // Old entry updated
             csString id;
             id.Format("%d",asset->id);
-            
+
             if(!db->GenericUpdateWithID("sc_tribe_assets","id",id,fields,values))
             {
                 CPrintf(CON_ERROR, "Failed to save asset for tribe: %s.\n", db->GetLastError());
@@ -1551,7 +1551,7 @@ void Tribe::AddAsset(Tribe::AssetType type, csString name, gemNPCItem* item, int
     asset->type     = type;
     asset->name     = name;
     asset->item     = item;
-    if (asset->item)
+    if(asset->item)
     {
         asset->itemUID  = asset->item->GetUID();
     }
@@ -1575,7 +1575,7 @@ Tribe::Asset* Tribe::AddAsset(Tribe::AssetType type, csString name, csVector3 po
     asset->item     = NULL;
     asset->itemUID  = 0;
     asset->pos      = position;
-    if (sector != NULL)
+    if(sector != NULL)
     {
         asset->sectorName = sector->QueryObject()->GetName();
     }
@@ -1606,7 +1606,7 @@ Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name)
             return assets[i];
         }
     }
-    
+
     // If we get here, the asset does not exist and we return a null one
     return NULL;
 }
@@ -1620,7 +1620,7 @@ Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, Tribe::Asset
             return assets[i];
         }
     }
-    
+
     // If we get here, the asset does not exist and we return a null one
     return NULL;
 }
@@ -1634,7 +1634,7 @@ Tribe::Asset* Tribe::GetAsset(Tribe::AssetType type, csString name, csVector3 wh
             return assets[i];
         }
     }
-    
+
     return NULL;
 }
 
@@ -1647,7 +1647,7 @@ Tribe::Asset* Tribe::GetAsset(gemNPCItem* item)
             return assets[i];
         }
     }
-    
+
     return NULL;
 }
 
@@ -1660,7 +1660,7 @@ Tribe::Asset* Tribe::GetAsset(uint32_t itemUID)
             return assets[i];
         }
     }
-    
+
     return NULL;
 }
 
@@ -1669,27 +1669,27 @@ Tribe::Asset* Tribe::GetAsset(uint32_t itemUID)
 Tribe::Asset* Tribe::GetRandomAsset(Tribe::AssetType type, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range)
 {
     csArray<Tribe::Asset*> nearby;
-    
+
     for(size_t i=0; i<assets.GetSize(); i++)
     {
         if(assets[i]->type == type && assets[i]->status == status)
         {
             float dist = npcclient->GetWorld()->Distance(pos,sector,assets[i]->pos,assets[i]->GetSector());
-        
-            if (range < 0 || dist < range)
+
+            if(range < 0 || dist < range)
             {
                 nearby.Push(assets[i]);
             }
         }
     }
 
-    if (nearby.GetSize()>0)  // found one or more closer than range
+    if(nearby.GetSize()>0)   // found one or more closer than range
     {
         size_t pick = psGetRandom((uint32)nearby.GetSize());
-        
+
         return nearby[pick];
     }
-    
+
     // If we get here, the asset does not exist and we return a null one
     return NULL;
 }
@@ -1703,8 +1703,8 @@ Tribe::Asset* Tribe::GetNearestAsset(Tribe::AssetType type, Tribe::AssetStatus s
         if(assets[i]->type == type && assets[i]->status == status)
         {
             float dist = npcclient->GetWorld()->Distance(pos,sector,assets[i]->pos,assets[i]->GetSector());
-        
-            if (range < 0 || dist < range)
+
+            if(range < 0 || dist < range)
             {
                 nearest = assets[i];
                 range = dist;
@@ -1712,35 +1712,35 @@ Tribe::Asset* Tribe::GetNearestAsset(Tribe::AssetType type, Tribe::AssetStatus s
         }
     }
 
-    if (locatedRange) *locatedRange = range;
+    if(locatedRange) *locatedRange = range;
 
     return nearest;
 }
-    
+
 Tribe::Asset* Tribe::GetRandomAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range)
 {
     csArray<Tribe::Asset*> nearby;
-    
+
     for(size_t i=0; i<assets.GetSize(); i++)
     {
         if(assets[i]->type == type && assets[i]->name == name && assets[i]->status == status)
         {
             float dist = npcclient->GetWorld()->Distance(pos,sector,assets[i]->pos,assets[i]->GetSector());
-        
-            if (range < 0 || dist < range)
+
+            if(range < 0 || dist < range)
             {
                 nearby.Push(assets[i]);
             }
         }
     }
 
-    if (nearby.GetSize()>0)  // found one or more closer than range
+    if(nearby.GetSize()>0)   // found one or more closer than range
     {
         size_t pick = psGetRandom((uint32)nearby.GetSize());
-        
+
         return nearby[pick];
     }
-    
+
     // If we get here, the asset does not exist and we return a null one
     return NULL;
 }
@@ -1755,8 +1755,8 @@ Tribe::Asset* Tribe::GetNearestAsset(Tribe::AssetType type, csString name, Tribe
         if(assets[i]->type == type && assets[i]->name == name && assets[i]->status == status)
         {
             float dist = npcclient->GetWorld()->Distance(pos,sector,assets[i]->pos,assets[i]->GetSector());
-        
-            if (range < 0 || dist < range)
+
+            if(range < 0 || dist < range)
             {
                 nearest = assets[i];
                 range = dist;
@@ -1764,7 +1764,7 @@ Tribe::Asset* Tribe::GetNearestAsset(Tribe::AssetType type, csString name, Tribe
         }
     }
 
-    if (locatedRange) *locatedRange = range;
+    if(locatedRange) *locatedRange = range;
 
     return nearest;
 }
@@ -1844,7 +1844,7 @@ void Tribe::DumpBuffers()
             "Name", "Value");
 
     csHash<csString,csString>::GlobalIterator iter = tribeBuffer.GetIterator();
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         csString bufferName;
         csString value = iter.Next(bufferName);
@@ -1858,15 +1858,15 @@ void Tribe::DumpBuffers()
 
 void Tribe::ProspectMine(NPC* npc, csString resource, csString nick)
 {
-    if (!npc->GetActor())
+    if(!npc->GetActor())
     {
         return;
     }
 
     csVector3  pos;
     iSector*   sector;
-    
-    psGameObject::GetPosition(npc->GetActor(), pos, sector );
+
+    psGameObject::GetPosition(npc->GetActor(), pos, sector);
 
     // Add this mine to the npcs memory
     AddMemory(resource,pos,sector,5,npc);

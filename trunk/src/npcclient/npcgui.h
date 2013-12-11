@@ -43,51 +43,51 @@ struct iObjectRegistry;
 class NpcGui
 {
 public:
-  NpcGui(iObjectRegistry* object_reg, psNPCClient* npcclient);
-  ~NpcGui();
+    NpcGui(iObjectRegistry* object_reg, psNPCClient* npcclient);
+    ~NpcGui();
 
-  bool Initialise();
+    bool Initialise();
 
 private:
-  iObjectRegistry* object_reg;
-  psNPCClient* npcclient;
-  csRef<iGraphics3D> g3d;
-  csRef<iGraphics2D> g2d;
+    iObjectRegistry* object_reg;
+    psNPCClient* npcclient;
+    csRef<iGraphics3D> g3d;
+    csRef<iGraphics2D> g2d;
 
-  // PAWS
-  PawsManager*    paws;
-  pawsMainWidget* mainWidget;
+    // PAWS
+    PawsManager*    paws;
+    pawsMainWidget* mainWidget;
 
-  // Event handling.
-  DeclareGenericEventHandler(EventHandler, NpcGui, "planeshift.launcher");
-  csRef<EventHandler> event_handler;
-  csRef<iEventQueue> queue;
+    // Event handling.
+    DeclareGenericEventHandler(EventHandler, NpcGui, "planeshift.launcher");
+    csRef<EventHandler> event_handler;
+    csRef<iEventQueue> queue;
 
-  /* Handles an event from the event handler */
-  bool HandleEvent (iEvent &ev);
+    /* Handles an event from the event handler */
+    bool HandleEvent(iEvent &ev);
 
-  /* keeps track of whether the window is visible or not. */
-  bool drawScreen;
+    /* keeps track of whether the window is visible or not. */
+    bool drawScreen;
 
-  /* Limits the frame rate either by sleeping. */
-  void FrameLimit();
+    /* Limits the frame rate either by sleeping. */
+    void FrameLimit();
 
-  /* Time when the last frame was drawn. */
-  csTicks elapsed;
+    /* Time when the last frame was drawn. */
+    csTicks elapsed;
 
-  /* Widget for npcclient gui. */
-  pawsNPCClientWindowFactory* guiWidget;
+    /* Widget for npcclient gui. */
+    pawsNPCClientWindowFactory* guiWidget;
 };
 
 class pawsNPCClientWindow : public pawsWidget
 {
 public:
-  pawsNPCClientWindow();
+    pawsNPCClientWindow();
 
-private:  
+private:
 };
 
-CREATE_PAWS_FACTORY( pawsNPCClientWindow );
+CREATE_PAWS_FACTORY(pawsNPCClientWindow);
 
 /** @} */
 

@@ -61,23 +61,24 @@
 #include "npcbehave.h"
 
 
-void Stat::Update( csTicks now )
+void Stat::Update(csTicks now)
 {
     // No point in updating when rate is not set
-    if (rate == 0.0)
+    if(rate == 0.0)
     {
         lastUpdate = now;
         return;
     }
-    
+
     float delta = (now - lastUpdate)/1000.0;
-    
+
     value += delta*rate;
-    
-    if (value < 0.0)
+
+    if(value < 0.0)
     {
         value = 0.0;
-    } else if (value > max)
+    }
+    else if(value > max)
     {
         value = max;
     }
@@ -85,22 +86,22 @@ void Stat::Update( csTicks now )
     lastUpdate = now;
 }
 
-void Stat::SetValue( float value, csTicks now )
+void Stat::SetValue(float value, csTicks now)
 {
     this->value = value;
     lastUpdate = now;
 }
 
-void Stat::SetMax( float max )
+void Stat::SetMax(float max)
 {
     this->max = max;
-    if (value > max)
+    if(value > max)
     {
         value = max;
     }
 }
 
-void Stat::SetRate( float rate, csTicks now )
+void Stat::SetRate(float rate, csTicks now)
 {
     // Update value to now.
     Update(now);
@@ -115,17 +116,17 @@ void Stat::SetRate( float rate, csTicks now )
 
 
 NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys)
-  : DRcounter(0),
-    lastDrPosition(0),
-    lastDrSector(NULL),
-    lastDrTime(csGetTicks()),
-    lastDrMoving(false),
-    lastDrYRot(0.0),
-    lastDrVel(0),
-    lastDrAngVel(0),
-    checked(false),
-    hatelist(npcclient, engine, world),
-    tick(NULL)
+    : DRcounter(0),
+      lastDrPosition(0),
+      lastDrSector(NULL),
+      lastDrTime(csGetTicks()),
+      lastDrMoving(false),
+      lastDrYRot(0.0),
+      lastDrVel(0),
+      lastDrAngVel(0),
+      checked(false),
+      hatelist(npcclient, engine, world),
+      tick(NULL)
 {
     oldbrain=NULL;
     brain=NULL;
@@ -224,7 +225,7 @@ void NPC::Tick()
 
 void NPC::TickPostProcess(csTicks when)
 {
-    if (!npcActor) return;
+    if(!npcActor) return;
 
     psLinearMovement* linmove = GetLinMove();
     bool onGround;
@@ -241,17 +242,17 @@ void NPC::TickPostProcess(csTicks when)
 
     // Check if there are any change in rotatation or velocity. Thies changes will influcence the visual effect
     // so update at once.
-    if ((fabs(myYRot - lastDrYRot) > 0.01) || (fabs(myAngVel - lastDrAngVel) > 0.01) || ((myVel-lastDrVel).Norm() > 0.1))
+    if((fabs(myYRot - lastDrYRot) > 0.01) || (fabs(myAngVel - lastDrAngVel) > 0.01) || ((myVel-lastDrVel).Norm() > 0.1))
     {
         npcclient->GetNetworkMgr()->QueueDRData2(this);
         // lastDrPosition, lastDrSector, lastDrTime will be updated when actually sending the Dr to server
         // in the network manager.
         lastDrMoving = true;
     }
-    else if ((distance > 0.1)) // Moving
+    else if((distance > 0.1))  // Moving
     {
         // At least queue once every 3 seconds when moving
-        if ((when - lastDrTime) > 3000)
+        if((when - lastDrTime) > 3000)
         {
             npcclient->GetNetworkMgr()->QueueDRData2(this);
             // lastDrPosition, lastDrSector, lastDrTime will be updated when actually sending the Dr to server
@@ -262,7 +263,7 @@ void NPC::TickPostProcess(csTicks when)
     else
     {
         // Update twice when stop moving...
-        if (lastDrMoving && ((when - lastDrTime) > 1000) )
+        if(lastDrMoving && ((when - lastDrTime) > 1000))
         {
             lastDrMoving = false;
             npcclient->GetNetworkMgr()->QueueDRData(this);
@@ -632,11 +633,11 @@ gemNPCActor* NPC::GetMostHated(float range, bool includeOutsideRegion, bool incl
 }
 
 
-gemNPCActor* NPC::GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeOutsideRegion, 
+gemNPCActor* NPC::GetMostHated(csVector3 &pos, iSector* sector, float range, LocationType* region, bool includeOutsideRegion,
                                bool includeInvisible, bool includeInvincible, float* hate)
 {
     gemNPCActor* hated = hatelist.GetMostHated(this, pos, sector, range, region,
-                                               includeOutsideRegion, includeInvisible, includeInvincible, hate);
+                         includeOutsideRegion, includeInvisible, includeInvincible, hate);
 
     if(hated)
     {
@@ -653,7 +654,7 @@ gemNPCActor* NPC::GetMostHated(csVector3 &pos, iSector* sector, float range, Loc
 
 void NPC::AddToHateList(gemNPCActor* attacker, float delta)
 {
-    if (GetActor() && (GetActor() != attacker))
+    if(GetActor() && (GetActor() != attacker))
     {
         NPCDebug(this, 5, "Adding %1.2f to hatelist score for %s(%s).",
                  delta, attacker->GetName(), ShowID(attacker->GetEID()));
@@ -772,10 +773,10 @@ void NPC::SetScale(float scale)
 float NPC::GetScaleValue()
 {
     psNPCRaceListMessage::NPCRaceInfo_t* raceInfo = GetRaceInfo();
-    
-    if (raceInfo)
+
+    if(raceInfo)
     {
-       return scale/GetRaceInfo()->scale;
+        return scale/GetRaceInfo()->scale;
     }
 
     return scale;
@@ -844,9 +845,9 @@ void NPC::Disable(bool disable)
 
     disabled = disable;
 
-    if (GetActor())
+    if(GetActor())
     {
-        if (disabled)
+        if(disabled)
         {
             // Stop the movement
 
@@ -867,7 +868,7 @@ void NPC::Disable(bool disable)
         }
     }
 }
-    
+
 
 void NPC::DumpState()
 {
@@ -914,7 +915,7 @@ void NPC::DumpState()
     CPrintf(CON_CMDOUTPUT, "Last perception:      %s\n",last_perception?last_perception->GetName().GetDataSafe():"(None)");
     CPrintf(CON_CMDOUTPUT, "Fall counter:         %d\n", GetFallCounter());
     csString types;
-    for (size_t m=0; m < autoMemorizeTypes.GetSize(); m++)
+    for(size_t m=0; m < autoMemorizeTypes.GetSize(); m++)
     {
         types.AppendFmt("%s%s",m?",":"",autoMemorizeTypes.Get(m).GetDataSafe());
     }
@@ -1247,9 +1248,9 @@ void NPC::AddAutoMemorize(csString types)
 {
     csArray<csString> typeArray = psSplit(types,',');
 
-    for (size_t i=0; i < typeArray.GetSize(); i++)
+    for(size_t i=0; i < typeArray.GetSize(); i++)
     {
-        if (!typeArray[i].IsEmpty())
+        if(!typeArray[i].IsEmpty())
         {
             // Push at tail if not already present
             autoMemorizeTypes.PushSmart(typeArray[i]);
@@ -1262,7 +1263,7 @@ void NPC::AddAutoMemorize(csString types)
 void NPC::RemoveAutoMemorize(csString types)
 {
     csArray<csString> typeArray = psSplit(types,',');
-    for (size_t i=0; i < typeArray.GetSize(); i++)
+    for(size_t i=0; i < typeArray.GetSize(); i++)
     {
         autoMemorizeTypes.Delete(typeArray[i]);
     }
@@ -1270,19 +1271,19 @@ void NPC::RemoveAutoMemorize(csString types)
     NPCDebug(this, 10, "Removed Auto Memorize Types: %s",types.GetDataSafe());
 }
 
-bool NPC::ContainAutoMemorizeType(const csString& type)
+bool NPC::ContainAutoMemorizeType(const csString &type)
 {
-    return ( (!type.IsEmpty()) && ((autoMemorizeTypes.Get(0) == "all") || (autoMemorizeTypes.Find(type) != csArrayItemNotFound)));
+    return ((!type.IsEmpty()) && ((autoMemorizeTypes.Get(0) == "all") || (autoMemorizeTypes.Find(type) != csArrayItemNotFound)));
 }
 
-void NPC::LocalDebugReport(const csString& debugString)
+void NPC::LocalDebugReport(const csString &debugString)
 {
     CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), debugString.GetDataSafe());
 }
-    
-void NPC::RemoteDebugReport(uint32_t clientNum, const csString& debugString)
+
+void NPC::RemoteDebugReport(uint32_t clientNum, const csString &debugString)
 {
-   networkmanager->QueueSystemInfoCommand(clientNum,"%s (%s)> %s", GetName(), ShowID(pid), debugString.GetDataSafe()); 
+    networkmanager->QueueSystemInfoCommand(clientNum,"%s (%s)> %s", GetName(), ShowID(pid), debugString.GetDataSafe());
 }
 
 
@@ -1394,76 +1395,76 @@ psNPCRaceListMessage::NPCRaceInfo_t* NPC::GetRaceInfo()
 
 float NPC::GetHP()
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetHP();
 }
 
 float NPC::GetMaxHP() const
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetMaxHP();
 }
 
 float NPC::GetHPRate() const
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetHPRate();
 }
 
 float NPC::GetMana()
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetMana();
 }
 
 float NPC::GetMaxMana() const
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetMaxMana();
 }
-    
+
 float NPC::GetManaRate() const
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetManaRate();
 }
 
 float NPC::GetPysStamina()
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetPysStamina();
 }
-    
+
 float NPC::GetMaxPysStamina() const
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetMaxPysStamina();
 }
-    
+
 float NPC::GetPysStaminaRate() const
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetPysStaminaRate();
 }
-    
+
 float NPC::GetMenStamina()
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetMenStamina();
 }
-    
+
 float NPC::GetMaxMenStamina() const
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetMaxMenStamina();
 }
 
 float NPC::GetMenStaminaRate() const
 {
-    if (!npcActor) return 0.0;
+    if(!npcActor) return 0.0;
     return npcActor->GetMenStaminaRate();
 }
-    
+
 void NPC::TakeControl(gemNPCActor* actor)
 {
     controlledActors.PushSmart(csWeakRef<gemNPCActor>(actor));
@@ -1608,18 +1609,18 @@ Tribe::Asset* NPC::GetBuildingSpot()
 double NPC::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
-    if (property == "InsideTribeHome")
+    if(property == "InsideTribeHome")
     {
-    	return insideTribeHome?1.0:0.0;
+        return insideTribeHome?1.0:0.0;
     }
-    if (property == "InsideRegion")
+    if(property == "InsideRegion")
     {
-    	return insideRegion?1.0:0.0;
+        return insideRegion?1.0:0.0;
     }
-    if (property == "Hate")
+    if(property == "Hate")
     {
         gemNPCActor* target = dynamic_cast<gemNPCActor*>(GetTarget());
-        if (target)
+        if(target)
         {
             return GetEntityHate(target);
         }
@@ -1628,10 +1629,10 @@ double NPC::GetProperty(MathEnvironment* env, const char* ptr)
             return 0.0;
         }
     }
-    if (property == "HasTarget")
+    if(property == "HasTarget")
     {
         gemNPCActor* target = dynamic_cast<gemNPCActor*>(GetTarget());
-        if (target)
+        if(target)
         {
             return 1.0;
         }
@@ -1640,35 +1641,35 @@ double NPC::GetProperty(MathEnvironment* env, const char* ptr)
             return 0.0;
         }
     }
-    if (property == "HP")
+    if(property == "HP")
     {
         return GetHP();
     }
-    if (property == "MaxHP")
+    if(property == "MaxHP")
     {
         return GetMaxHP();
     }
-    if (property == "Mana")
+    if(property == "Mana")
     {
         return GetMana();
     }
-    if (property == "MaxMana")
+    if(property == "MaxMana")
     {
         return GetMaxMana();
     }
-    if (property == "PStamina")
+    if(property == "PStamina")
     {
         return GetPysStamina();
     }
-    if (property == "MaxPStamina")
+    if(property == "MaxPStamina")
     {
         return GetMaxPysStamina();
     }
-    if (property == "MStamina")
+    if(property == "MStamina")
     {
         return GetMenStamina();
     }
-    if (property == "MaxMStamina")
+    if(property == "MaxMStamina")
     {
         return GetMaxMenStamina();
     }

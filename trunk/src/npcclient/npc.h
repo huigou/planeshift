@@ -165,7 +165,7 @@ protected:
     csTicks            last_update;
     gemNPCActor*       npcActor;
     iMovable*          movable;
-    
+
     uint8_t            DRcounter;
     csVector3          lastDrPosition;
     iSector*           lastDrSector;
@@ -206,7 +206,7 @@ protected:
     Stat               mana;
     Stat               pysStamina;
     Stat               menStamina;
-    
+
     csArray< csWeakRef<gemNPCActor> > controlledActors; ///< Actors that are dragged/pushed around by this NPC.
 
     // Initial position checks
@@ -227,7 +227,7 @@ protected:
 
     HateList           hatelist;
 
- public:
+public:
 
     NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world, iEngine* engine, iCollideSystem* cdsys);
     virtual ~NPC();
@@ -248,9 +248,9 @@ protected:
         return movable;
     }
     psLinearMovement*     GetLinMove();
-    
-    uint8_t               GetDRCounter(csTicks when, const csVector3& pos, float yRot, iSector* sector,
-                                       const csVector3& vel, float angVel)
+
+    uint8_t               GetDRCounter(csTicks when, const csVector3 &pos, float yRot, iSector* sector,
+                                       const csVector3 &vel, float angVel)
     {
         lastDrTime = when;
         lastDrPosition = pos;
@@ -301,7 +301,10 @@ protected:
 
     Behavior* GetCurrentBehavior();
     NPCType*  GetBrain();
-    const char* GetOrigBrainType() { return origtype; }
+    const char* GetOrigBrainType()
+    {
+        return origtype;
+    }
 
     /**
      * Sets a new brain (npctype)  to this npc.
@@ -334,17 +337,17 @@ protected:
      * Dump all state information for npc.
      */
     void DumpState();
-    
+
     /**
      * Dump all behaviors for npc.
      */
     void DumpBehaviorList();
-    
+
     /**
      * Dump all reactions for npc.
      */
     void DumpReactionList();
-    
+
     /**
      * Dump all hated entities for npc.
      */
@@ -354,7 +357,7 @@ protected:
      * Dump all hated entities for npc. Using debug prints at level 5.
      */
     void DumpHateList(NPC* npc);
-    
+
     /**
      * Dump the debug log for npc
      */
@@ -483,7 +486,7 @@ protected:
     bool CopyLocate(csString source, csString destination, unsigned int flags);
 
     /**
-     * Replace a location. 
+     * Replace a location.
      *
      * This replace $LOCATION[\<location\>.\<attribute\>].
      */
@@ -595,25 +598,28 @@ protected:
     /**
      * Check if the NPC has anything to automemorize.
      */
-    bool HasAutoMemorizeTypes() const { return !autoMemorizeTypes.IsEmpty(); }
+    bool HasAutoMemorizeTypes() const
+    {
+        return !autoMemorizeTypes.IsEmpty();
+    }
 
     /**
      * Check if the type is contained in the NPC autoMemorize store
      */
-    bool ContainAutoMemorizeType(const csString& type);
+    bool ContainAutoMemorizeType(const csString &type);
 
- private:
+private:
     /**
      * Callback function to report local debug.
      */
-    virtual void LocalDebugReport(const csString& debugString);
-    
+    virtual void LocalDebugReport(const csString &debugString);
+
     /**
      * Callback function to report remote debug.
      */
-    virtual void RemoteDebugReport(uint32_t clientNum, const csString& debugString);
-    
- public:
+    virtual void RemoteDebugReport(uint32_t clientNum, const csString &debugString);
+
+public:
     gemNPCObject* GetTarget();
     void SetTarget(gemNPCObject* t);
 
@@ -695,47 +701,47 @@ protected:
      * Get the npc Mana
      */
     float GetMana();
-    
+
     /**
      * Get the npc MaxMana
      */
     float GetMaxMana() const;
-    
+
     /**
      * Get the npc ManaRate
      */
     float GetManaRate() const;
-    
+
     /**
      * Get the npc PysStamina
      */
     float GetPysStamina();
-    
+
     /**
      * Get the npc MaxPysStamina
      */
     float GetMaxPysStamina() const;
-    
+
     /**
      * Get the npc PysStaminaRate
      */
     float GetPysStaminaRate() const;
-    
+
     /**
      * Get the npc MenStamina
      */
     float GetMenStamina();
-    
+
     /**
      * Get the npc MaxMenStamina
      */
     float GetMaxMenStamina() const;
-    
+
     /**
      * Get the npc MenStaminaRate
      */
     float GetMenStaminaRate() const;
-    
+
     /**
      * Take control of another entity.
      */
@@ -752,7 +758,7 @@ protected:
     void UpdateControlled();
 
     /**
-     * 
+     *
      */
     void CheckPosition();
 
@@ -804,7 +810,7 @@ protected:
      * @return The content of the named buffer.
      */
     csString GetBuffer(const csString &bufferName);
-    
+
     /**
      * Set/Update the value of a named buffer.
      *
@@ -812,7 +818,7 @@ protected:
      * @param value The value to put in the buffer.
      */
     void SetBuffer(const csString &bufferName, const csString &value);
-    
+
     /**
      * Replace $NBUFFER[x] with values from the NPC buffer.
      *
@@ -849,14 +855,14 @@ protected:
 
 private:
     /** @name iScriptableVar implementation
-     * Functions that implement the iScriptableVar interface. 
+     * Functions that implement the iScriptableVar interface.
      */
     ///@{
     virtual double GetProperty(MathEnvironment* env, const char* ptr);
     virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     virtual const char* ToString();
     ///@}
-    
+
 private:
     psNPCTick*        tick;
     psNPCClient*      npcclient;

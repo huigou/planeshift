@@ -1,7 +1,7 @@
 /*
  * stat.h
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -37,39 +37,48 @@ public:
     /**
      * Update the stat to now.
      */
-    void Update( csTicks now );
+    void Update(csTicks now);
 
     /**
      * Set the stat value.
      */
-    void SetValue( float value, csTicks now );
+    void SetValue(float value, csTicks now);
 
     /**
      * Set the maximum stat value.
      */
-    void SetMax( float max );
+    void SetMax(float max);
 
     /**
      * Set the regeneration value for this stat.
      */
-    void SetRate( float rate, csTicks now );
+    void SetRate(float rate, csTicks now);
 
     /**
      * Return the current value of the stat.
      *
      * Call Update before to get the extrapolated value.
      */
-    float GetValue() const { return value; }
+    float GetValue() const
+    {
+        return value;
+    }
 
     /**
      * Get the max stat value
      */
-    float GetMax() const { return max; }
+    float GetMax() const
+    {
+        return max;
+    }
 
     /**
      * Get the regeneration rate.
      */
-    float GetRate() const { return rate; }
+    float GetRate() const
+    {
+        return rate;
+    }
 private:
     float   value;         ///< Value of the stat
     float   max;           ///< Maximum value of the stat

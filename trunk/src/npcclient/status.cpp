@@ -1,7 +1,7 @@
 /*
-* status.cpp 
+* status.cpp
 *
-* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -45,42 +45,42 @@ class psNPCStatusRunEvent : public psGameEvent
 {
 public:
     psNPCStatusRunEvent(csTicks interval);
-    void Trigger();    
+    void Trigger();
 };
 
 psNPCStatusRunEvent::psNPCStatusRunEvent(csTicks interval)
-         : psGameEvent(0, interval, "psNPCStatusRunEvent")
+    : psGameEvent(0, interval, "psNPCStatusRunEvent")
 {
 
 }
 
 //-----------------------------------------------------------------------------
 
-void psNPCStatusRunEvent::Trigger ()
+void psNPCStatusRunEvent::Trigger()
 {
     struct tm currentTime;
     time_t now;
-            
+
     csString reportString;
     csString timeString;
-    
-    time( &now );
-    currentTime = *gmtime( &now );
-    timeString = asctime( &currentTime );
 
-        
+    time(&now);
+    currentTime = *gmtime(&now);
+    timeString = asctime(&currentTime);
+
+
     reportString.Format("<npc_report time=\"%s\" now=\"%ld\" number=\"%u\">\n",
-        timeString.GetData(), now, NPCStatus::count);
-    reportString.Append( "</npc_report>" );
-    
-    csRef<iFile> logFile = npcclient->GetVFS()->Open( NPCStatus::reportFile, VFS_FILE_WRITE );
-    if (logFile.IsValid())
+                        timeString.GetData(), now, NPCStatus::count);
+    reportString.Append("</npc_report>");
+
+    csRef<iFile> logFile = npcclient->GetVFS()->Open(NPCStatus::reportFile, VFS_FILE_WRITE);
+    if(logFile.IsValid())
     {
-      logFile->Write( reportString, reportString.Length() );
-      logFile->Flush();
+        logFile->Write(reportString, reportString.Length());
+        logFile->Flush();
     }
 
-        
+
     NPCStatus::count++;
     NPCStatus::ScheduleNextRun();
 }
@@ -90,23 +90,23 @@ csString        NPCStatus::reportFile;
 unsigned int    NPCStatus::count;
 
 
-bool NPCStatus::Initialize (iObjectRegistry* objreg)
+bool NPCStatus::Initialize(iObjectRegistry* objreg)
 {
     csRef<iConfigManager> configmanager =  csQueryRegistry<iConfigManager> (objreg);
-    if (!configmanager)
+    if(!configmanager)
     {
         return false;
     }
-    
-    bool reportOn = configmanager->GetInt ("PlaneShift.NPCClient.Status.Report", 0) ? true : false;  
+
+    bool reportOn = configmanager->GetInt("PlaneShift.NPCClient.Status.Report", 0) ? true : false;
     if(!reportOn)
     {
         return true;
-    }        
-    
-    reportRate = configmanager->GetInt ("PlaneShift.NPCClient.Status.Rate", 1000);
-    reportFile = configmanager->GetStr ("PlaneShift.NPCClient.Status.LogFile", "/this/npcfile");
-       
+    }
+
+    reportRate = configmanager->GetInt("PlaneShift.NPCClient.Status.Rate", 1000);
+    reportFile = configmanager->GetStr("PlaneShift.NPCClient.Status.LogFile", "/this/npcfile");
+
     ScheduleNextRun();
     return true;
 }

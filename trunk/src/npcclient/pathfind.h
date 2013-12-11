@@ -53,9 +53,9 @@ class psPFMap
 {
 public:
     csString name;
-    iCollection * region;
-    psWalkPolyMap * wpMap;
-    psAMap * aMap;
+    iCollection* region;
+    psWalkPolyMap* wpMap;
+    psAMap* aMap;
 };
 
 /***************************************************************************//**
@@ -64,20 +64,20 @@ public:
 class psPFMaps
 {
 public:
-    psPFMaps(iObjectRegistry * objReg);
-    psPFMap * GetRegionBySector(const csString & sectorName);
-    psPFMap * GetRegionBySector(iSector * sector);
-    psPFMap * FindRegionByName(const csString & regionName);
-    
+    psPFMaps(iObjectRegistry* objReg);
+    psPFMap* GetRegionBySector(const csString &sectorName);
+    psPFMap* GetRegionBySector(iSector* sector);
+    psPFMap* FindRegionByName(const csString &regionName);
+
 protected:
-    iCollection * GetCSRegionOfSector(const csString & sectorName);
-    
+    iCollection* GetCSRegionOfSector(const csString &sectorName);
+
     csList<psPFMap*> regions;
-    
+
     /// sector name ---> psPFMap
     csHash<psPFMap*, csString> regionMap;
-    
-    iObjectRegistry * objReg;
+
+    iObjectRegistry* objReg;
     csRef<iEngine> engine;
 };
 
@@ -89,8 +89,8 @@ protected:
 class psAEdge
 {
 public:
-    psAEdge(psANode * neighbour, float cost);
-    psANode * neighbour;
+    psAEdge(psANode* neighbour, float cost);
+    psANode* neighbour;
     float cost;    /**< How hard is it for a NPC to walk along this edge - influenced
                        by length and terrain properties */
 };
@@ -109,14 +109,14 @@ class psACluster
 public:
     bool Contains(psANode* node);
     bool AddNode(psANode* node);
-    void DeleteNode(psANode * node);
-    
-    void GrowClusterFrom(psANode * start, int level, csList <psANode*> & unassigned);
-    
+    void DeleteNode(psANode* node);
+
+    void GrowClusterFrom(psANode* start, int level, csList <psANode*> &unassigned);
+
 protected:
 
     int CalcFreeBorderSize(int level);
-    
+
     csList <psANode*> parts;
     csList <psANode*> exits;
 };
@@ -131,7 +131,7 @@ enum psAState {AState_open, AState_closed, AState_unknown};
 
 
 /************************************************************************//**
-* Describes one A* node and keeps temporary state for the current run 
+* Describes one A* node and keeps temporary state for the current run
 * of A* algorithm. This temporary state is valid for one run of A* only.
 * We don't clean it before each A* run, rather we keep number of the A*
 * run where it was used. Before we process this node in the current A*, we check
@@ -143,53 +143,53 @@ class psANode
 public:
     psANode();
     ~psANode();
-    psANode(const csVector3 & point);
-    psANode(const csVector3 & point, iSector * sector);
-    
+    psANode(const csVector3 &point);
+    psANode(const csVector3 &point, iSector* sector);
+
     /** This must be called before we work with this node - it checks
         if our node needs to be inited and does the initialization if needed */
     void EnsureNodeIsInited(int currARunNum);
-    
-    void SetBestPrev(psANode * bestPrev, float cost);
-    void CalcHeur(psANode * goal);
-    void AddEdge(psANode * neighbour, float cost, int level, bool bidirectional=true);
-    void DeleteEdges(psANode * neighbour);
-    
-    void ConnectToPoly(psWalkPoly * poly, bool bidirectional);
-    
-    bool ShouldBePruned(psAMap & map);
-    
-    void SaveToString(csString & str);
-    
+
+    void SetBestPrev(psANode* bestPrev, float cost);
+    void CalcHeur(psANode* goal);
+    void AddEdge(psANode* neighbour, float cost, int level, bool bidirectional=true);
+    void DeleteEdges(psANode* neighbour);
+
+    void ConnectToPoly(psWalkPoly* poly, bool bidirectional);
+
+    bool ShouldBePruned(psAMap &map);
+
+    void SaveToString(csString &str);
+
     //wpMap can be NULL
     void LoadBasicsFromXML(iDocumentNode* node, psWalkPolyMap* wpMap, iEngine* engine);
-    void LoadEdgesFromXML(iDocumentNode* node, psAMap & map);
-    
+    void LoadEdgesFromXML(iDocumentNode* node, psAMap &map);
+
     void DumpJS();
-    
-    psWalkPoly * GetSomePoly();
-    
+
+    psWalkPoly* GetSomePoly();
+
     //works on 0th level only !
     void DeleteConnectionsFromNeighbours();
     void RestoreConnectionsFromNeighbours();
-    
+
     //on 0th level
-    float GetEdgeCost(psANode * neighbour);
-    
+    float GetEdgeCost(psANode* neighbour);
+
     csVector3 point;
-    iSector * sector;
+    iSector* sector;
     csArray<csArray<psAEdge> > edges;
     psACluster* cluster;
-    
+
     int id;
-    psWalkPoly * poly1, * poly2;
+    psWalkPoly* poly1, * poly2;
     static int nextID;
-    
+
     /* The following variables are temporary A* state valid for one A* run only */
     int ARunNum;          /**< number of the A* run */
     psAState state;
-    psANode * prevInOpen, * nextInOpen;  /**  */
-    psANode * bestPrev;
+    psANode* prevInOpen, * nextInOpen;   /**  */
+    psANode* bestPrev;
     float bestCost;
     float heur;
     float total;
@@ -199,75 +199,81 @@ class psAPath
 {
 public:
     psAPath();
-    psAPath(psPFMaps * regions);
-    
-    void SetMaps(psPFMaps * maps);
-    
-    void AddNodeToFront(psANode * node);
-    
+    psAPath(psPFMaps* regions);
+
+    void SetMaps(psPFMaps* maps);
+
+    void AddNodeToFront(psANode* node);
+
     // resets
-    void SetDest(const csVector3 & dest);
-    csVector3 GetDest() { return dest; }
-    
-    void CalcLocalDest(const csVector3 & currPoint, iSector * currSector, csVector3 & localDest);
-    
+    void SetDest(const csVector3 &dest);
+    csVector3 GetDest()
+    {
+        return dest;
+    }
+
+    void CalcLocalDest(const csVector3 &currPoint, iSector* currSector, csVector3 &localDest);
+
     void Dump();
     void ResetNodes();
-    
+
     ///calculates cost from first to last node, ignores 'dest'
     float CalcCost();
-    
+
 protected:
-    
-    csList<psANode*>::Iterator FindDirectNode(const csVector3 & currPoint);
-    void InsertSubpath(psAPath & subpath);
-    csString GetRegionNameOfSector(const csString & sectorName);
-    psANode * GetNthNode(int n);
-    void RandomizeFirst(const csVector3 & currPoint);
-    
-    bool CalcLocalDestFromLocalPath(const csVector3 & currPoint, csVector3 & localDest);
-    
-    psANode * FindNearbyANode(const csVector3 & pos, iSector * sector);
-    
+
+    csList<psANode*>::Iterator FindDirectNode(const csVector3 &currPoint);
+    void InsertSubpath(psAPath &subpath);
+    csString GetRegionNameOfSector(const csString &sectorName);
+    psANode* GetNthNode(int n);
+    void RandomizeFirst(const csVector3 &currPoint);
+
+    bool CalcLocalDestFromLocalPath(const csVector3 &currPoint, csVector3 &localDest);
+
+    psANode* FindNearbyANode(const csVector3 &pos, iSector* sector);
+
     csVector3 dest;
     csList<psANode*> nodes;
-    psPFMaps * maps;
+    psPFMaps* maps;
 };
 
 /** Keeper of all our A* info */
 class psAMap
 {
 public:
-    psAMap(iObjectRegistry * objReg);
+    psAMap(iObjectRegistry* objReg);
     psAMap();
-    
-    void SetObjReg(iObjectRegistry * objReg) { this->objReg=objReg; }
-    void AddNode(psANode * node);
-    
+
+    void SetObjReg(iObjectRegistry* objReg)
+    {
+        this->objReg=objReg;
+    }
+    void AddNode(psANode* node);
+
     void PruneSuperfluous();
-    
-    /** Builds hierachy of A* nodes - it clusters the nodes, 
+
+    /** Builds hierachy of A* nodes - it clusters the nodes,
         then clusters their clusters... etc. */
     void BuildHierarchy();
-    
+
     /** Returns path between two nodes on given level of hierarchy.
         All nodes in the returned path will be on this level of hierarchy.
         Returns true when path was found */
-    bool RunA(psANode * start, psANode * goal, int level, int maxExpands, psAPath & path);
-    
+    bool RunA(psANode* start, psANode* goal, int level, int maxExpands, psAPath &path);
+
     void DumpJS();
-    
-    bool LoadFromString(const csString & str, psWalkPolyMap * wpMap);
-    bool LoadFromFile(const csString & path, psWalkPolyMap * wpMap);
-    void SaveToString(csString & str);
-    bool SaveToFile(const csString & path);
-    
+
+    bool LoadFromString(const csString &str, psWalkPolyMap* wpMap);
+    bool LoadFromFile(const csString &path, psWalkPolyMap* wpMap);
+    void SaveToString(csString &str);
+    bool SaveToFile(const csString &path);
+
     psANode* FindNode(int id);
 
 protected:
     csList <psANode*> nodes;
     csList <psACluster*> clusters;
-    iObjectRegistry * objReg;
+    iObjectRegistry* objReg;
     csRef<iVFS> vfs;
 };
 

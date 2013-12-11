@@ -1,7 +1,7 @@
 /*
 * gemmesh.h by Andrew Craig <andrew@hydlaa.com>
 *
-* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@
 #include "npcmesh.h"
 #include "npcclient.h"
 
-npcMesh::npcMesh( iObjectRegistry* objreg, gemNPCObject* owner, psNPCClient* super)
+npcMesh::npcMesh(iObjectRegistry* objreg, gemNPCObject* owner, psNPCClient* super)
 {
     objectReg = objreg;
     gemOwner = owner;
@@ -56,19 +56,19 @@ iMeshFactoryWrapper* npcMesh::LoadMeshFactory(const char* fileName, const char* 
     csRef<iThreadedLoader> loader = csQueryRegistry<iThreadedLoader>(objectReg);
 
     csRef<iThreadReturn> ret = loader->LoadFileWait(vfs->GetCwd(), fileName);
-    
+
     csRef<iMeshFactoryWrapper> imesh_fact = 0;
 
-    if ( ret->WasSuccessful() )
+    if(ret->WasSuccessful())
     {
-        if ( !ret->GetResultRefPtr().IsValid() )
+        if(!ret->GetResultRefPtr().IsValid())
         {
             imesh_fact = engine->FindMeshFactory(factoryName);
         }
         else
         {
             imesh_fact = scfQueryInterface<iMeshFactoryWrapper>(ret->GetResultRefPtr());
-        }     
+        }
     }
 
 
@@ -76,28 +76,28 @@ iMeshFactoryWrapper* npcMesh::LoadMeshFactory(const char* fileName, const char* 
 }
 
 
-bool npcMesh::SetMesh( const char* factoryName, const char* fileName )
+bool npcMesh::SetMesh(const char* factoryName, const char* fileName)
 {
     bool result = false;
     RemoveMesh();
 
     csRef<iMeshFactoryWrapper> mesh_fact = engine->GetMeshFactories()->FindByName(factoryName);
 
-    if ( !mesh_fact )
+    if(!mesh_fact)
     {
-        mesh_fact = LoadMeshFactory(fileName, factoryName); 
+        mesh_fact = LoadMeshFactory(fileName, factoryName);
     }
 
-    if ( mesh_fact )
+    if(mesh_fact)
     {
-        mesh = engine->CreateMeshWrapper( mesh_fact ,factoryName );
-        if ( gem )
+        mesh = engine->CreateMeshWrapper(mesh_fact ,factoryName);
+        if(gem)
         {
             gem->AttachObject(mesh->QueryObject(), gemOwner);
         }
         result = true;
     }
-    
+
     return result;
 }
 
@@ -106,14 +106,14 @@ iMeshWrapper* npcMesh::GetMesh()
     return mesh;
 }
 
-void npcMesh::SetMesh( iMeshWrapper* newMesh )
+void npcMesh::SetMesh(iMeshWrapper* newMesh)
 {
     RemoveMesh();
     mesh = newMesh;
 
-    if ( newMesh )
+    if(newMesh)
     {
-        if ( gem )
+        if(gem)
         {
             gem->AttachObject(newMesh->QueryObject(), gemOwner);
         }
@@ -122,9 +122,9 @@ void npcMesh::SetMesh( iMeshWrapper* newMesh )
 
 void npcMesh::RemoveMesh()
 {
-    if (mesh)
+    if(mesh)
     {
-        if ( gem )
+        if(gem)
         {
             gem->UnattachObject(mesh->QueryObject(), gemOwner);
         }
@@ -133,16 +133,16 @@ void npcMesh::RemoveMesh()
     }
 }
 
-void npcMesh::MoveMesh( iSector* sector, const csVector3& position )
+void npcMesh::MoveMesh(iSector* sector, const csVector3 &position)
 {
-    if (mesh)
+    if(mesh)
     {
-        if (sector)
+        if(sector)
         {
-            mesh->GetMovable()->SetSector( sector );
+            mesh->GetMovable()->SetSector(sector);
         }
 
-        mesh->GetMovable()->SetPosition( position );
+        mesh->GetMovable()->SetPosition(position);
         mesh->GetMovable()->UpdateMove();
     }
 }

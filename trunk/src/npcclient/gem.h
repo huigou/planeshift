@@ -1,6 +1,6 @@
 /*
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -49,8 +49,8 @@ class npcMesh;
 /** Helper class to attach a PlaneShift npc gem object to a particular mesh.
   */
 class psNpcMeshAttach : public scfImplementationExt1<psNpcMeshAttach,
-                                                           csObject,
-                                                           scfFakeInterface<psNpcMeshAttach> >
+    csObject,
+    scfFakeInterface<psNpcMeshAttach> >
 {
 public:
     SCF_INTERFACE(psNpcMeshAttach, 0, 0, 1);
@@ -62,10 +62,13 @@ public:
 
     /** Get the npc Object that the mesh has attached.
      */
-    gemNPCObject* GetObject() { return object; }
+    gemNPCObject* GetObject()
+    {
+        return object;
+    }
 
 private:
-    gemNPCObject* object;          ///< The object that is attached to a iMeshWrapper object. 
+    gemNPCObject* object;          ///< The object that is attached to a iMeshWrapper object.
 };
 
 //-----------------------------------------------------------------------------
@@ -77,42 +80,93 @@ class gemNPCObject : public CS::Utility::WeakReferenced
 public:
     gemNPCObject(psNPCClient* npcclient, EID id);
     virtual ~gemNPCObject();
-    
-    bool InitMesh(const char *factname,const char *filename,
-                  const csVector3& pos,const float rotangle, const char* sector );
-    
-    iMeshWrapper *GetMeshWrapper();
-    void Move(const csVector3& pos, float rotangle, const char* room);
-    void Move(const csVector3& pos, float rotangle, const char* room, InstanceID instance);
-    
-    EID GetEID() { return eid; }
-    npcMesh* pcmesh;   
-    
-    int GetType() { return type; }
-    
-    const char* GetName() { return name.GetDataSafe(); }
-    virtual PID GetPID() { return PID(0); }
 
-    virtual const char* GetObjectType(){ return "Object"; }
-    virtual gemNPCActor *GetActorPtr() { return NULL; }
+    bool InitMesh(const char* factname,const char* filename,
+                  const csVector3 &pos,const float rotangle, const char* sector);
 
-    virtual bool IsPickable() { return false; }
-    virtual bool IsVisible() { return visible; }
-    virtual bool IsInvisible() { return !visible; }
-    virtual void SetVisible(bool vis) { visible = vis; }
-    virtual void SetInvisible(bool invis) { SetVisible(!invis); }
+    iMeshWrapper* GetMeshWrapper();
+    void Move(const csVector3 &pos, float rotangle, const char* room);
+    void Move(const csVector3 &pos, float rotangle, const char* room, InstanceID instance);
 
-    virtual bool IsInvincible() { return invincible; }
-    virtual void SetInvincible(bool inv) { invincible = inv; }
+    EID GetEID()
+    {
+        return eid;
+    }
+    npcMesh* pcmesh;
 
-    virtual bool IsAlive() { return isAlive; }
-    virtual void SetAlive(bool alive );
+    int GetType()
+    {
+        return type;
+    }
 
-    virtual NPC *GetNPC() { return NULL; }
+    const char* GetName()
+    {
+        return name.GetDataSafe();
+    }
+    virtual PID GetPID()
+    {
+        return PID(0);
+    }
 
-    virtual void SetPosition(csVector3& pos, iSector* sector = NULL, InstanceID* instance = NULL);
-    virtual void SetInstance( InstanceID instance ) { this->instance = instance; }
-    virtual InstanceID GetInstance(){ return instance; };
+    virtual const char* GetObjectType()
+    {
+        return "Object";
+    }
+    virtual gemNPCActor* GetActorPtr()
+    {
+        return NULL;
+    }
+
+    virtual bool IsPickable()
+    {
+        return false;
+    }
+    virtual bool IsVisible()
+    {
+        return visible;
+    }
+    virtual bool IsInvisible()
+    {
+        return !visible;
+    }
+    virtual void SetVisible(bool vis)
+    {
+        visible = vis;
+    }
+    virtual void SetInvisible(bool invis)
+    {
+        SetVisible(!invis);
+    }
+
+    virtual bool IsInvincible()
+    {
+        return invincible;
+    }
+    virtual void SetInvincible(bool inv)
+    {
+        invincible = inv;
+    }
+
+    virtual bool IsAlive()
+    {
+        return isAlive;
+    }
+    virtual void SetAlive(bool alive);
+
+    virtual NPC* GetNPC()
+    {
+        return NULL;
+    }
+
+    virtual void SetPosition(csVector3 &pos, iSector* sector = NULL, InstanceID* instance = NULL);
+    virtual void SetInstance(InstanceID instance)
+    {
+        this->instance = instance;
+    }
+    virtual InstanceID GetInstance()
+    {
+        return instance;
+    };
 
 protected:
     static csRef<iMeshFactoryWrapper> nullfact;
@@ -123,9 +177,9 @@ protected:
     bool visible;
     bool invincible;
     bool isAlive;
-    
+
     InstanceID  instance;
-    
+
     csRef<iThreadReturn> factory;
 };
 
@@ -134,28 +188,46 @@ class gemNPCActor : public gemNPCObject, public iScriptableVar
 {
 public:
 
-    gemNPCActor( psNPCClient* npcclient, psPersistActor& mesg);
+    gemNPCActor(psNPCClient* npcclient, psPersistActor &mesg);
     virtual ~gemNPCActor();
-    
+
     psLinearMovement* pcmove;
-    
-    virtual PID GetPID() { return playerID; }
-    virtual EID GetOwnerEID() { return ownerEID; }
 
-    csString& GetRace() { return race; };
+    virtual PID GetPID()
+    {
+        return playerID;
+    }
+    virtual EID GetOwnerEID()
+    {
+        return ownerEID;
+    }
 
-    virtual const char* GetObjectType(){ return "Actor"; }    
-    virtual gemNPCActor *GetActorPtr() { return this; }
+    csString &GetRace()
+    {
+        return race;
+    };
 
-    virtual void AttachNPC(NPC * newNPC);
-    virtual NPC *GetNPC() { return npc; }
+    virtual const char* GetObjectType()
+    {
+        return "Actor";
+    }
+    virtual gemNPCActor* GetActorPtr()
+    {
+        return this;
+    }
+
+    virtual void AttachNPC(NPC* newNPC);
+    virtual NPC* GetNPC()
+    {
+        return npc;
+    }
 
 
     /**
      * Set the actor HP
      */
     void SetHP(float hp);
-    
+
     /**
      * Get the actor HP
      */
@@ -165,7 +237,7 @@ public:
      * Set the actor MaxHP
      */
     void SetMaxHP(float maxHP);
-    
+
     /**
      * Get the actor MaxHP
      */
@@ -175,7 +247,7 @@ public:
      * Set the actor HP
      */
     void SetHPRate(float hpRate);
-    
+
     /**
      * Get the actor HPRate
      */
@@ -185,92 +257,92 @@ public:
      * Set the actor Mana
      */
     void SetMana(float mana);
-    
+
     /**
      * Get the actor Mana
      */
     float GetMana();
-    
+
     /**
      * Set the actor MaxMana
      */
     void SetMaxMana(float maxMana);
-    
+
     /**
      * Get the actor MaxMana
      */
     float GetMaxMana() const;
-    
+
     /**
      * Set the actor ManaRate
      */
     void SetManaRate(float manaRate);
-    
+
     /**
      * Get the actor ManaRate
      */
     float GetManaRate() const;
-    
+
     /**
      * Set the actor PysStamina
      */
     void SetPysStamina(float pysStamina);
-    
+
     /**
      * Get the actor PysStamina
      */
     float GetPysStamina();
-    
+
     /**
      * Set the actor MaxPysStamina
      */
     void SetMaxPysStamina(float maxPysStamina);
-    
+
     /**
      * Get the actor MaxPysStamina
      */
     float GetMaxPysStamina() const;
-    
+
     /**
      * Set the actor PysStaminaRate
      */
     void SetPysStaminaRate(float pysStaminaRate);
-    
+
     /**
      * Get the actor PysStaminaRate
      */
     float GetPysStaminaRate() const;
-    
+
     /**
      * Set the actor MenStamina
      */
     void SetMenStamina(float menStamina);
-    
+
     /**
      * Get the actor MenStamina
      */
     float GetMenStamina();
-    
+
     /**
      * Set the actor MaxMenStamina
      */
     void SetMaxMenStamina(float maxMenStamina);
-    
+
     /**
      * Get the actor MaxMenStamina
      */
     float GetMaxMenStamina() const;
-    
+
     /**
      * Set the actor MenStaminaRate
      */
     void SetMenStaminaRate(float menStaminaRate);
-    
+
     /**
      * Get the actor MenStaminaRate
      */
     float GetMenStaminaRate() const;
-    
+
     /** Set the within tribe.
      * @return true if a new within tribe is set
      */
@@ -278,26 +350,26 @@ public:
 
 private:
     /** @name iScriptableVar implementation
-     * Functions that implement the iScriptableVar interface. 
+     * Functions that implement the iScriptableVar interface.
      */
     ///@{
     virtual double GetProperty(MathEnvironment* env, const char* ptr);
     virtual double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
     virtual const char* ToString();
-    ///@}    
-    
+    ///@}
+
 protected:
 
-    bool InitLinMove(const csVector3& pos,float angle, const char* sector,
+    bool InitLinMove(const csVector3 &pos,float angle, const char* sector,
                      csVector3 top, csVector3 bottom, csVector3 offset);
-                     
-    bool InitCharData(const char* textures, const char* equipment);        
-    
+
+    bool InitCharData(const char* textures, const char* equipment);
+
     PID playerID;
     EID ownerEID;
     csString race;
-    
-    NPC *npc;
+
+    NPC* npc;
 
     Tribe* withinTribe; /// Points to the tribe home where this tribe is inside.
 
@@ -317,11 +389,14 @@ public:
         NONE           = 0,
         NOPICKUP       = 1 << 0
     };
-    
-    gemNPCItem( psNPCClient* npcclient, psPersistItem& mesg);
+
+    gemNPCItem(psNPCClient* npcclient, psPersistItem &mesg);
     virtual ~gemNPCItem();
-    
-    virtual const char* GetObjectType(){ return "Item"; }
+
+    virtual const char* GetObjectType()
+    {
+        return "Item";
+    }
 
     virtual bool IsPickable();
 

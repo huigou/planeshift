@@ -1,7 +1,7 @@
 /*
 * tribe.h
 *
-* Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -109,7 +109,7 @@ public:
          * Save the asset.
          */
         void        Save();
-        
+
         /**
          * Get the sector of the Asset.
          */
@@ -146,7 +146,7 @@ public:
         int     timeTotal;  ///< Total number of ticks to cycle
         int     timeLeft;   ///< Number of ticks left before re-execution
     };
-   
+
     /**
      * Construct a new tribe object.
      */
@@ -160,18 +160,18 @@ public:
     /**
      * Load the tribe object.
      */
-    bool Load(iResultRow& row);
+    bool Load(iResultRow &row);
 
     /**
      * Load and add a new member to the tribe.
      */
-    bool LoadMember(iResultRow& row);
+    bool LoadMember(iResultRow &row);
 
     /**
      * Load and add a new resource to the tribe.
      */
-    bool LoadResource(iResultRow& row);
-    
+    bool LoadResource(iResultRow &row);
+
     /**
      * Adds a new member to the tribe.
      */
@@ -205,7 +205,7 @@ public:
     /**
      * Handled a perception given to this tribe.
      */
-    void HandlePerception(NPC * npc, Perception * perception);
+    void HandlePerception(NPC* npc, Perception* perception);
 
     /**
      * Add a new resource to the tribe resource table.
@@ -216,24 +216,58 @@ public:
      * Return the amount of a given resource
      */
     int CountResource(csString resource) const;
-    
+
     /**
      * Advance the tribe.
      */
-    void Advance(csTicks when,EventManager *eventmgr);
+    void Advance(csTicks when,EventManager* eventmgr);
 
-    int GetID() { return id; }
-    const char* GetName() { return name.GetDataSafe(); }
-    size_t GetMemberIDCount() { return membersId.GetSize(); }
-    size_t GetMemberCount() { return members.GetSize(); }
-    NPC * GetMember(size_t i) { return members[i]; }
-    size_t GetResourceCount() { return resources.GetSize(); }
-    const Resource& GetResource(size_t n) { return resources[n]; }
-    csList<Memory*>::Iterator GetMemoryIterator() { csList<Memory*>::Iterator it(memories); return it; };
-    csString GetNPCIdleBehavior() { return npcIdleBehavior; }
-    csVector3 GetHomePosition() { return homePos; }
+    int GetID()
+    {
+        return id;
+    }
+    const char* GetName()
+    {
+        return name.GetDataSafe();
+    }
+    size_t GetMemberIDCount()
+    {
+        return membersId.GetSize();
+    }
+    size_t GetMemberCount()
+    {
+        return members.GetSize();
+    }
+    NPC* GetMember(size_t i)
+    {
+        return members[i];
+    }
+    size_t GetResourceCount()
+    {
+        return resources.GetSize();
+    }
+    const Resource &GetResource(size_t n)
+    {
+        return resources[n];
+    }
+    csList<Memory*>::Iterator GetMemoryIterator()
+    {
+        csList<Memory*>::Iterator it(memories);
+        return it;
+    };
+    csString GetNPCIdleBehavior()
+    {
+        return npcIdleBehavior;
+    }
+    csVector3 GetHomePosition()
+    {
+        return homePos;
+    }
     iSector* GetHomeSector();
-    csString GetHomeSectorName() { return homeSectorName; }
+    csString GetHomeSectorName()
+    {
+        return homeSectorName;
+    }
 
     /**
      * Calculate the maximum number of members for the tribe.
@@ -245,16 +279,16 @@ public:
      * Return the reproduction cost for this tribe.
      */
     int GetReproductionCost() const;
-    
+
     /**
      * Get home position for the tribe.
      */
-    void GetHome(csVector3& pos, float& radius, iSector* &sector);
+    void GetHome(csVector3 &pos, float &radius, iSector* &sector);
 
     /**
      * Set home position for the tribe.
      */
-    void SetHome(const csVector3& pos, float radius, iSector* sector);
+    void SetHome(const csVector3 &pos, float radius, iSector* sector);
 
     /**
      * Check if the position is within the bounds of the tribe home
@@ -264,19 +298,19 @@ public:
      * @param sector The sector to check
      * @return True if position is within bounds of the tribe home
      */
-    bool CheckWithinBoundsTribeHome(NPC* npc, const csVector3& pos, const iSector* sector);
-    
+    bool CheckWithinBoundsTribeHome(NPC* npc, const csVector3 &pos, const iSector* sector);
+
     /**
      * Get a memorized location for resources
      */
-    bool GetResource(NPC* npc, csVector3 startPos, iSector * startSector,
-                     csVector3& pos, iSector* &sector, float range, bool random);
+    bool GetResource(NPC* npc, csVector3 startPos, iSector* startSector,
+                     csVector3 &pos, iSector* &sector, float range, bool random);
 
     /**
      * Get the closest Memory regarding a resource or the closest
      * non-prospected mine.
      */
-    Tribe::Memory* GetResource(csString resourceName, NPC *npc);
+    Tribe::Memory* GetResource(csString resourceName, NPC* npc);
 
     /**
      * Get the most needed resource for this tribe.
@@ -319,8 +353,8 @@ public:
      * @return Return the wealth growth limit
      */
     int GetWealthResourceGrowthActiveLimit() const;
-    
-    
+
+
     /**
      * Check if the tribe can grow by checking the tribes wealth
      */
@@ -337,17 +371,17 @@ public:
      * personal until NPC return home. Personal perceptions
      * will be deleted if NPC die.
      */
-    void Memorize(NPC* npc, Perception * perception);
-    
+    void Memorize(NPC* npc, Perception* perception);
+
     /**
      * Find a privat memory
      */
-    Memory* FindPrivMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC* npc);
+    Memory* FindPrivMemory(csString name,const csVector3 &pos, iSector* sector, float radius, NPC* npc);
 
     /**
      * Find a memory
      */
-    Memory* FindMemory(csString name,const csVector3& pos, iSector* sector, float radius);
+    Memory* FindMemory(csString name,const csVector3 &pos, iSector* sector, float radius);
 
     /**
      * Find a memory
@@ -357,17 +391,17 @@ public:
     /**
      * Add a new memory to the tribe
      */
-    void AddMemory(csString name,const csVector3& pos, iSector* sector, float radius, NPC* npc);
+    void AddMemory(csString name,const csVector3 &pos, iSector* sector, float radius, NPC* npc);
 
     /**
      * Share privat memories with the other npcs. Should be called when npc return to home.
      */
-    void ShareMemories(NPC * npc);
+    void ShareMemories(NPC* npc);
 
     /**
      * Save a memory to the db
      */
-    void SaveMemory(Memory * memory);
+    void SaveMemory(Memory* memory);
 
     /**
      * Load all stored memories from db.
@@ -377,17 +411,17 @@ public:
     /**
      * Forget privat memories. Should be called when npc die.
      */
-    void ForgetMemories(NPC * npc);
+    void ForgetMemories(NPC* npc);
 
     /**
      * Find nearest memory to a position.
      */
-    Memory* FindNearestMemory(const char* name,const csVector3& pos, const iSector* sector, float range = -1.0, float *foundRange = NULL);
+    Memory* FindNearestMemory(const char* name,const csVector3 &pos, const iSector* sector, float range = -1.0, float* foundRange = NULL);
 
     /**
      * Find a random memory within range to a position.
      */
-    Memory* FindRandomMemory(const char* name,const csVector3& pos, const iSector* sector, float range = -1.0, float *foundRange = NULL);
+    Memory* FindRandomMemory(const char* name,const csVector3 &pos, const iSector* sector, float range = -1.0, float* foundRange = NULL);
 
     /**
      * Send a perception to all members of the tribe
@@ -424,9 +458,9 @@ public:
      * @param pcpt    The perception name to be sent
      */
     void SendPerception(const char* pcpt);
-    
+
     /**
-     * Find the most hated entity for tribe within range 
+     * Find the most hated entity for tribe within range
      *
      *  Check the hate list and retrive most hated entity within range
      *  of the given NPC.
@@ -453,20 +487,29 @@ public:
      *
      * @return The Exponential smoothed death rate.
      */
-    float GetDeathRate() { return deathRate; }
-    
+    float GetDeathRate()
+    {
+        return deathRate;
+    }
+
     /**
      * Retrive resource rate average value from tribe.
      *
      * @return The Exponential smoothed resource rate.
      */
-    float GetResourceRate() { return resourceRate; }
-    
+    float GetResourceRate()
+    {
+        return resourceRate;
+    }
+
     /**
      * Sets the tribe's recipe manager.
      */
-    void SetRecipeManager(RecipeManager* rm) { recipeManager = rm; }
-    
+    void SetRecipeManager(RecipeManager* rm)
+    {
+        recipeManager = rm;
+    }
+
     /**
      * Get the main recipe.
      */
@@ -508,7 +551,10 @@ public:
     /**
      * Add a knowledge token
      */
-    void AddKnowledge(csString knowHow) { knowledge.Push(knowHow); }
+    void AddKnowledge(csString knowHow)
+    {
+        knowledge.Push(knowHow);
+    }
 
     /**
      * Check if knowledge is known.
@@ -550,7 +596,7 @@ public:
     /**
      * Check to see if enough members are idle.
      */
-    bool CheckMembers(const csString& type, int number);
+    bool CheckMembers(const csString &type, int number);
 
     /**
      * Check to see if enough resources are available.
@@ -566,7 +612,7 @@ public:
      * Return the quanitity of the given asset type matching the name.
      */
     size_t AssetQuantity(Tribe::AssetType type, csString name);
-   
+
     /**
      * Build a building on the current NPC building spot.
      */
@@ -576,17 +622,17 @@ public:
      * Tear down a building.
      */
     void Unbuild(NPC* npc, gemNPCItem* building);
-    
+
     /**
      * Handle persist items that should be assets.
      */
     void HandlePersistItem(gemNPCItem* item);
-    
+
     /**
      * Returns pointers to required npcs for a task.
      */
-    csArray<NPC*> SelectNPCs(const csString& type, const char* number);
-    
+    csArray<NPC*> SelectNPCs(const csString &type, const char* number);
+
     /**
      * Return a named buffer from the NPC.
      *
@@ -595,22 +641,22 @@ public:
      * @param  bufferName The name of the buffer to retrive.
      * @return Buffer value
      */
-    csString GetBuffer(const csString& bufferName);
-    
+    csString GetBuffer(const csString &bufferName);
+
     /**
      * Set/Update the value of a named buffer.
      *
      * @param bufferName      The buffer name.
      * @param value           The value to put in the buffer.
      */
-    void SetBuffer(const csString& bufferName, const csString& value);
-    
+    void SetBuffer(const csString &bufferName, const csString &value);
+
     /**
      * Replace $TBUFFER[x] with values from the NPC buffer.
      *
      * @param result String to replace buffers in.
      */
-    void ReplaceBuffers(csString& result);
+    void ReplaceBuffers(csString &result);
 
     /**
      * Modify Wait Time for a recipe.
@@ -651,7 +697,7 @@ public:
      * Get asset.
      */
     Asset* GetAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status);
-    
+
     /**
      * Get an asset based on name and position.
      */
@@ -676,7 +722,7 @@ public:
      * Get nearest asset.
      */
     Asset* GetNearestAsset(Tribe::AssetType type, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range, float* locatedRange = NULL);
-    
+
     /**
      * Get an asset.
      */
@@ -686,7 +732,7 @@ public:
      * Get an asset.
      */
     Asset* GetNearestAsset(Tribe::AssetType type, csString name, Tribe::AssetStatus status, csVector3 pos, iSector* sector, float range, float* locatedRange = NULL);
-    
+
     /**
      * Delete item assets.
      */
@@ -726,12 +772,12 @@ private:
     /**
      * Callback function to report local debug.
      */
-    virtual void LocalDebugReport(const csString& debugString);
-    
+    virtual void LocalDebugReport(const csString &debugString);
+
     /**
      * Callback function to report remote debug.
      */
-    virtual void RemoteDebugReport(uint32_t clientNum, const csString& debugString);
+    virtual void RemoteDebugReport(uint32_t clientNum, const csString &debugString);
 
     /**
      * Update the deathRate variable.
@@ -741,7 +787,7 @@ private:
     /**
      * Update the resourceRate variable.
      */
-    void UpdateResourceRate( int amount );
+    void UpdateResourceRate(int amount);
 
     int                       id;                               ///< The id of the tribe.
     csString                  name;                             ///< The name of the tribe.
@@ -761,7 +807,7 @@ private:
     csString                  homeSectorName;                   ///< The sector name where home is.
     iSector*                  homeSector;                       ///< The resolved sector name.
     /**  @} */
-    
+
     int                       maxSize;
     BufferHash                tribeBuffer;                      ///< Buffer used to hold data for recipe's functions
     csString                  wealthResourceName;
@@ -775,7 +821,7 @@ private:
     csString                  npcIdleBehavior;                  ///< The name of the behavior that indicate that the member is idle
     csString                  wealthGatherNeed;
     csList<Memory*>           memories;
-    
+
     csTicks                   lastGrowth;
     csTicks                   lastAdvance;
 

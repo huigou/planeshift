@@ -1,7 +1,7 @@
 /*
 * recipetreenode.cpp             by Zee (RoAnduku@gmail.com)
 *
-* Copyright (C) 2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
 //=============================================================================
 #include "recipetreenode.h"
 
-const char * RecipeTreeNode::RequirementParseTypeString[] = {"REQ_CONCENTRATED","REQ_DISTRIBUTED"};
+const char* RecipeTreeNode::RequirementParseTypeString[] = {"REQ_CONCENTRATED","REQ_DISTRIBUTED"};
 
 
 RecipeTreeNode::RecipeTreeNode(Recipe* newRecipe, int newCost, RecipeTreeNode* parent)
@@ -53,7 +53,7 @@ RecipeTreeNode::RecipeTreeNode(Recipe* newRecipe, int newCost, RecipeTreeNode* p
 
     // Requirement parsing inits
     nextReq    = 0;
-    requirementParseType = REQ_CONCENTRATED; 
+    requirementParseType = REQ_CONCENTRATED;
 }
 
 RecipeTreeNode::~RecipeTreeNode()
@@ -179,7 +179,7 @@ RecipeTreeNode* RecipeTreeNode::GetNextRecipe()
             queue.Push(node->children[i]);
         }
     }
-    
+
     return bestNode == this ? NULL : bestNode;
 }
 
@@ -187,7 +187,7 @@ void RecipeTreeNode::UpdateWaitTimes(int delta)
 {
     // Substract the delta from the wait
     wait -= delta;
-    if (wait < 0)
+    if(wait < 0)
     {
         wait = 0;
     }
@@ -204,7 +204,7 @@ bool RecipeTreeNode::ModifyWait(Recipe* theRecipe, int delta)
     {
         // Add the delta to the waiting time.
         wait += delta;
-        if (wait < 0)
+        if(wait < 0)
         {
             wait = 0;
         }
