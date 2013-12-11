@@ -236,6 +236,29 @@ float psWorld::Distance(const csVector3 &from_pos, const iSector* from_sector, c
     }
 }
 
+float psWorld::Distance2(const csVector3 &from_pos, const iSector* from_sector, csVector3 to_pos, const iSector* to_sector)
+{
+    if(from_sector == to_sector)
+    {
+        float dx = from_pos.x - to_pos.x;
+        float dz = from_pos.z - to_pos.z;
+        return sqrt(dx*dx + dz*dz);
+    }
+    else
+    {
+        if(WarpSpace(to_sector, from_sector, to_pos))
+        {
+            float dx = from_pos.x - to_pos.x;
+            float dz = from_pos.z - to_pos.z;
+            return sqrt(dx*dx + dz*dz);
+        }
+        else
+        {
+            return INFINITY_DISTANCE; // No transformation found, so just set larg distance.
+        }
+    }
+}
+
 
 float psWorld::Distance(iMeshWrapper* ent1, iMeshWrapper* ent2)
 {

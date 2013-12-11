@@ -124,6 +124,10 @@ public:
     /// Return INFINITY_DISTANCE if no connection sectors where found
     float Distance(const csVector3 &from_pos, const iSector* from_sector, csVector3 to_pos, const iSector* to_sector);
 
+    /// Calculate the 2d distance between two to points either in same or different sectors.
+    /// Return INFINITY_DISTANCE if no connection sectors where found
+    float Distance2(const csVector3 &from_pos, const iSector* from_sector, csVector3 to_pos, const iSector* to_sector);
+
     /// Calculate the distance between two meshes either in same or different sectors.
     float Distance(iMeshWrapper* ent1, iMeshWrapper* ent2);
 
