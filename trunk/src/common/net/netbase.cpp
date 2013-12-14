@@ -47,11 +47,6 @@
 #include "util/serverconsole.h"
 #include "util/strutil.h"
 
-//temporary definition for os lacking this
-#ifndef INET_ADDRSTRLEN
-#define INET_ADDRSTRLEN 16
-#endif
-
 // Static members
 int NetBase::socklibrefcount=0;
 NetBase::AccessPointers NetBase::accessPointers = {NULL,NULL,NULL};

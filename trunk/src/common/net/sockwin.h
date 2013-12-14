@@ -14,9 +14,16 @@
 #include <winsock.h>
 #undef _INC_WINDOWS
 
+
 /**
  * \addtogroup common_net
  * @{ */
+
+// INET_ADDRSTRLEN is defined in the ws2ipdef.h file for windows part of winsock 2.
+// Until that is included we need to include it her.
+#ifndef INET_ADDRSTRLEN
+#define INET_ADDRSTRLEN 22
+#endif
 
 #define SOCK_SENDTO(a,b,c,d,e,f)    sendto(a,(const char *)b,c,d,e,f)
 #define SOCK_RECVFROM(a,b,c,d,e,f)    recvfrom(a,(char *)b,c,d,e,f)
