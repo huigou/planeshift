@@ -2122,6 +2122,49 @@ public:
     virtual csString GetHelpMessage();
 };
 
+/** @brief Class for scale command.
+ */
+class AdminCmdDataScale : public AdminCmdDataTarget
+{
+public:
+    csString subCommand; ///< subcommand (if any)
+    csString scale;      ///< optional scale
+
+    /** @brief Creates obj for specified command that needs a reason.
+     */
+    AdminCmdDataScale()
+    : AdminCmdDataTarget("/scale", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
+    {};
+    
+    /** @brief Parses the given message and stores its data.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     */
+    AdminCmdDataScale(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    virtual ~AdminCmdDataScale()
+    {};
+
+     /** @brief Creates an object containing the parsed data for morphing.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+     */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    /** @brief Returns a helpmessage that fits to the parser of the class.
+     * @return csString: a help message to send back to the client
+     */
+    virtual csString GetHelpMessage();
+};
+
+
 /** @brief Class for setskill command.
  */
 class AdminCmdDataSetSkill : public AdminCmdDataTarget
@@ -4251,6 +4294,16 @@ protected:
      * @param client The GM client the command came from.
      */
     void Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+
+    /**
+     * Temporarily changes the scale for an actor.
+     *
+     * @param me incoming message from gm client
+     * @param msg The cracked command message.
+     * @param data A pointer to the command parser object with target data
+     * @param client The GM client the command came from.
+     */
+    void Scale(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
 
     /**
      * Temporarily changes the security level for a player.
