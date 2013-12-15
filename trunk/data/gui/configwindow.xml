@@ -103,6 +103,16 @@ Changing the language can be done ONLY in the PlaneShift Launcher. To do this yo
                     <attr name="SectionName" value="chatlogs"/>
                     <attr name="factory" value="pawsConfigChatLogs"/>
                 </widget>
+                <widget factory="pawsSimpleTreeNode" label="Shortcut Bar">
+                    <attr name="SectionName" value="shortcut"/>
+                    <attr name="factory" value="pawsConfigShortcut"/>
+                </widget>
+                <widget factory="pawsSimpleTreeNode" label="Active Magic Bar">
+                    <attr name="SectionName" value="activemagic"/>
+<!--
+                    <attr name="factory" value="pawsConfigActiveMagic"/>
+-->
+                </widget>
             </widget>
 
             <widget factory="pawsSimpleTreeNode" label="Confirmations">

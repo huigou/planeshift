@@ -58,6 +58,7 @@ pawsShortcutWindow::pawsShortcutWindow() :
     labelBox(NULL),
     shortcutText(NULL),
     title(NULL),
+    textSpacing(0),
     subWidget(NULL),
     iconPalette(NULL),
     iconDisplay(NULL),
@@ -165,12 +166,65 @@ bool pawsShortcutWindow::Setup(iDocumentNode *node)
                         EditMode=1;
                     }
                 }
+                else if( strcasecmp( "textSpacing", subnode->GetName() )==0 )
+                {
+                    textSpacing=subnode->GetValueAsInt();
+                }
             }
             break;
         }
     }
 
     return true;
+}
+
+int pawsShortcutWindow::GetMonitorState()
+{
+    if( main_hp == NULL && main_mana == NULL &&  phys_stamina == NULL &&  ment_stamina == NULL  )
+    { //if ALL of them are undefined, then disable the config control
+        return -1;
+    }
+    //if ANY of them exists, then show/hide should be avail
+    return int(GetProperty( NULL, "visible" ));
+}
+void pawsShortcutWindow::StartMonitors()
+{
+    if( main_hp != NULL )
+    {
+        main_hp->Show();
+    }
+    if( main_mana != NULL )
+    {
+        main_mana->Show();
+    }
+    if( phys_stamina != NULL )
+    {
+        phys_stamina->Show();
+    }
+    if( ment_stamina != NULL )
+    {
+        ment_stamina->Show();
+    }
+}
+
+void pawsShortcutWindow::StopMonitors()
+{
+    if( main_hp != NULL )
+    {
+        main_hp->Hide();
+    }
+    if( main_mana != NULL )
+    {
+        main_mana->Hide();
+    }
+    if( phys_stamina != NULL )
+    {
+        phys_stamina->Hide();
+    }
+    if( ment_stamina != NULL )
+    {
+        ment_stamina->Hide();
+    }
 }
 
 
@@ -232,16 +286,19 @@ bool pawsShortcutWindow::PostSetup()
         MenuBar->SetScrollWidget( iconScrollBar );
     }
 
-    MenuBar->setButtonWidth( buttonWidth );
+    MenuBar->SetButtonWidth( buttonWidth );
     MenuBar->SetEditMode( EditMode );
     if( scrollSize>1 )
     {
-        MenuBar->setScrollIncrement( (int)scrollSize );
+        MenuBar->SetScrollIncrement( (int)scrollSize );
     }
     else
     {
-        MenuBar->setScrollProportion( scrollSize );
+        MenuBar->SetScrollProportion( scrollSize );
     }
+    
+    MenuBar->SetButtonPaddingWidth( textSpacing );
+
     //set to a default minimum size...expands as needed
     n =  names;
     for( i=0; i<names.GetSize(); i++ )
@@ -255,6 +312,8 @@ bool pawsShortcutWindow::PostSetup()
     }
     MenuBar->LoadArrays( names, icon, n, cmds, 2000, this);
     position = 0;
+
+    LoadUserPrefs();
 
     return true;
 }
@@ -932,4 +991,170 @@ void pawsShortcutWindow::Show()
     psStatDRMessage msg;
     msg.SendMessage();
     pawsControlledWindow::Show();
+}
+
+bool pawsShortcutWindow::LoadUserPrefs()
+{
+    csRef<iDocument> doc;
+    csRef<iDocumentNode> root, mainNode, optionNode;
+
+    pawsScrollMenu* MenuBar = (pawsScrollMenu*)(FindWidget( "MenuBar",true ));
+    if( MenuBar==NULL )
+    {
+        Error1( "pawsShortcutWindow::LoadUserPrefs unable to get MenuBar\n");
+        return false;
+    }
+
+    csString fileName;
+    fileName = "/planeshift/userdata/options/configshortcut.xml";
+
+    if(!vfs->Exists(fileName))
+    {
+       return true; //no saved config to load.
+    }
+
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(), fileName);
+    if(doc == NULL)
+    {
+        Error2("pawsShortcutWindow::LoadUserPrefs Failed to parse file %s", fileName.GetData());
+        return false;
+    }
+    root = doc->GetRoot();
+    if(root == NULL)
+    {
+        Error2("pawsShortcutWindow::LoadUserPrefs : %s has no XML root",fileName.GetData());
+        return false;
+    }
+    mainNode = root->GetNode("shortcut");
+    if(mainNode == NULL)
+    {
+        Error2("pawsShortcutWindow::LoadUserPrefs %s has no <shortcut> tag",fileName.GetData());
+        return false;
+    }
+
+    optionNode = mainNode->GetNode("buttonHeight");
+    if(optionNode != NULL)
+        MenuBar->SetButtonHeight( optionNode->GetAttributeValueAsInt("value", true));
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve buttonHeight node");
+    }
+
+    optionNode = mainNode->GetNode("buttonWidthMode");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "buttonWidthAutomatic", optionNode->GetAttributeValue("active") )==0 )
+        {
+            MenuBar->SetButtonWidth( 0 );
+        }
+        else
+        {
+            optionNode = mainNode->GetNode("buttonWidth");
+            if(optionNode != NULL)
+                MenuBar->SetButtonWidth( optionNode->GetAttributeValueAsInt("value", true));
+            else
+            {
+                Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve buttonWidth");
+                return false;
+            }
+        }
+    }
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve buttonWidthMode");
+    }
+
+    optionNode = mainNode->GetNode("leftScroll");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
+            MenuBar->SetLeftScroll( ScrollMenuOptionENABLED );
+        else if( strcasecmp( "buttonScrollAuto",  optionNode->GetAttributeValue("active") )==0 )
+            MenuBar->SetLeftScroll( ScrollMenuOptionDYNAMIC );
+        else if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
+            MenuBar->SetLeftScroll( ScrollMenuOptionDISABLED );
+    }
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve leftScroll node");
+    }
+
+    optionNode = mainNode->GetNode("rightScroll");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
+            MenuBar->SetRightScroll( ScrollMenuOptionENABLED );
+        else if( strcasecmp( "buttonScrollAuto",  optionNode->GetAttributeValue("active") )==0 )
+            MenuBar->SetRightScroll( ScrollMenuOptionDYNAMIC );
+        else if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
+            MenuBar->SetRightScroll( ScrollMenuOptionDISABLED );
+    }
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve rightScroll node");
+    }
+
+    optionNode = mainNode->GetNode("healthAndMana");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "no",  optionNode->GetAttributeValue("on") )==0 )
+            StopMonitors();
+        else
+            StartMonitors();
+    }
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve healthAndMana node");
+    }
+
+    optionNode = mainNode->GetNode("buttonBackgroundName");
+    if(optionNode != NULL)
+    {
+        MenuBar->SetButtonBackground(  optionNode->GetAttributeValue("value"));
+    }
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve buttonBackgroundName node");
+    }
+
+    optionNode = mainNode->GetNode("buttonBackground");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "no", optionNode->GetAttributeValue("on") )==0 )
+        {
+            MenuBar->SetButtonBackground("");
+        }
+    }
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve buttonBackground node");
+    }
+
+    optionNode = mainNode->GetNode("textSize");
+    if(optionNode != NULL)
+        MenuBar->SetButtonFont( MenuBar->GetButtonFontName(), optionNode->GetAttributeValueAsInt("value", true));
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve textSize node");
+    }
+
+    optionNode = mainNode->GetNode("textFont");
+    if(optionNode != NULL)
+    {
+        MenuBar->SetButtonFont(optionNode->GetAttributeValue("value"), MenuBar->GetFontSize());
+    }
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve textFont node");
+    }
+
+    optionNode = mainNode->GetNode("textSpacing");
+    if(optionNode != NULL)
+        MenuBar->SetButtonPaddingWidth( optionNode->GetAttributeValueAsInt("value", true));
+    else
+    {
+        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve textSpacing node");
+    }
+
+    return true;
 }

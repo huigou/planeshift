@@ -109,10 +109,13 @@ public:
         return EditLockButton->GetState();
     }
     void SetLeftScroll(int mode);
+    int GetLeftScroll();
     void SetRightScroll(int mode);
-    void setButtonWidth(int width);
-    void setScrollIncrement(int incr);
-    void setScrollProportion(float prop);
+    int GetRightScroll();
+    void SetButtonWidth(int width);
+    void SetButtonHeight(int height);
+    void SetScrollIncrement(int incr);
+    void SetScrollProportion(float prop);
     bool SetScrollWidget( pawsScrollBar* sb);
     void SetOrientation(int Orientation);
     int  AutoResize();
@@ -121,18 +124,46 @@ public:
         EditMode = val;
     }
 
+    void SetButtonPaddingWidth( int width )
+    {
+        paddingWidth = width;
+    }
+    int GetButtonPaddingWidth()
+    {
+        return paddingWidth;
+    }
+    void SetButtonBackground( const char* image );
+    csString GetButtonBackground();
+    void SetButtonFont( const char* Font, int size );
+    char const * GetButtonFontName();
+    float GetButtonFontSize();
+   /**
+    * return the name of the font
+    */
+    char const * GetFontName()
+    {
+        return fontName;
+    }
+
+    void SetTextSpacing( int v );
+
+
+
+
 protected:
 
-    int   buttonWidth,
-          buttonHeight,
-          scrollIncrement,
-          currentButton;
-    float scrollProportion;
-    bool  buttonWidthDynamic;
+    int                    buttonWidth,
+                           buttonHeight,
+                           scrollIncrement,
+                           currentButton,
+                           paddingWidth;
+
+    float                  scrollProportion;
+    bool                   buttonWidthDynamic;
 
     pawsWidget*            ButtonHolder;
-    csArray<pawsWidget*> Buttons;
-    int                   buttonLocation;
+    csArray<pawsWidget*>   Buttons;
+    int                    buttonLocation;
 
     pawsButton*            LeftScrollButton;
     int                    LeftScrollMode;

@@ -136,6 +136,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigchattabcompletion.h"
 #include "gui/pawsconfigchatlogs.h"
 #include "gui/pawsconfigsound.h"
+#include "gui/pawsconfigshortcut.h"
 #include "gui/pawsconfigentitylabels.h"
 #include "gui/pawsconfigentityinter.h"
 #include "gui/pawsconfigautoexec.h"
@@ -480,6 +481,7 @@ bool psEngine::Initialize(int level)
         if(!LoadConfirmationSettings())
             return false;
 
+
         // Register our event handlers.
         event_frame = csevFrame(object_reg);
         event_canvashidden = csevCanvasHidden(object_reg,g2d);
@@ -805,6 +807,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory(pawsConfigCameraFactory);
     RegisterFactory(pawsConfigChatFactory);
     RegisterFactory(pawsConfigSoundFactory);
+    RegisterFactory(pawsConfigShortcutFactory);
     RegisterFactory(pawsConfigEntityLabelsFactory);
     RegisterFactory(pawsConfigEntityInteractionFactory);
     RegisterFactory(pawsConfigAutoexecFactory);
