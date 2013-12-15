@@ -109,6 +109,22 @@ public:
 
     void Show();
 
+    void StartMonitors();
+    void StopMonitors();
+    int GetMonitorState();
+   /**
+    * return the name of the font
+    */
+    char const * GetFontName()
+    {
+        return fontName;
+    }
+
+   /**
+    * Load the preferences set by the Shortcut Configuration interface
+    */
+    bool LoadUserPrefs();
+
 protected:
     /// chat window for easy access
     pawsChatWindow* chatWindow;
@@ -148,6 +164,7 @@ protected:
 
     virtual void HandleMessage(MsgEntry *msg);
 
+
 private:
     //status bars, optional;configured in XML
     pawsProgressBar *main_hp;
@@ -167,6 +184,7 @@ private:
 
     size_t            position;
     size_t            buttonWidth;
+    int               textSpacing;
     float             scrollSize;
     int               EditMode;
 };

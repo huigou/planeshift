@@ -56,6 +56,24 @@ public:
 
     iPawsImage* GetMaskingImage();
 
+    void SetTextOffsetY( int offset ) 
+    {
+        upTextOffsetY = offset;
+        downTextOffsetY = offset;
+    }
+    int GetTextOffsetY()
+    {
+        return upTextOffsetY;
+    }
+    void SetTextOffsetX( int offset ) 
+    {
+        upTextOffsetX = offset;
+        downTextOffsetX = offset;
+    }
+    int GetTextOffsetX()
+    {
+        return upTextOffsetX;
+    }
     void SetDrag(int isDragDrop)
     {
         dragDrop = isDragDrop;
@@ -168,6 +186,14 @@ public:
 
     void DrawMask();
 
+   /**
+    * return the name of the font
+    */
+    char const * GetFontName()
+    {
+        return fontName;
+    }
+ 
 
 protected:
     psSlotManager*       mgr;

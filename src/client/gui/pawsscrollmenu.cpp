@@ -42,6 +42,7 @@
 pawsScrollMenu::pawsScrollMenu() :
     buttonWidth(0),
     buttonHeight(0),
+    paddingWidth(0),
     scrollIncrement(0.0),
     currentButton(0),
     scrollProportion(0.5),
@@ -143,11 +144,18 @@ bool pawsScrollMenu::PostSetup()
     return true;
 }
 
-void pawsScrollMenu::setButtonWidth(int width)
+void pawsScrollMenu::SetButtonWidth(int width)
 {
     if(width>0)
     {
-        buttonWidth = width;
+        if( width<buttonHeight )
+        {
+            buttonWidth = buttonHeight;
+        }
+        else
+        {
+            buttonWidth = width;
+        }
         buttonWidthDynamic = false;
     }
     else
@@ -157,13 +165,33 @@ void pawsScrollMenu::setButtonWidth(int width)
     }
 }
 
-void pawsScrollMenu::setScrollIncrement(int incr)
+void pawsScrollMenu::SetButtonHeight(int height)
+{
+    if( height < 16 ) //selecting 16 as a lower bound just because we need some reasonable constraints and auto height is not an option.
+    {
+        buttonHeight = 16;
+    }
+    else if( height > screenFrame.Height() )
+    {
+        buttonHeight = screenFrame.Height();
+    }
+    else 
+    {
+        buttonHeight = height;
+    }
+    if( buttonHeight > GetButtonWidth() && GetButtonWidth() != 0 )
+    {
+        SetButtonWidth( height );
+    }
+}
+
+void pawsScrollMenu::SetScrollIncrement(int incr)
 {
     scrollIncrement = incr;
     scrollProportion = 0.0f;
 }
 
-void pawsScrollMenu::setScrollProportion(float prop)
+void pawsScrollMenu::SetScrollProportion(float prop)
 {
     scrollProportion = prop;
     scrollIncrement  = 0;
@@ -713,6 +741,8 @@ int pawsScrollMenu::GetSize()
 
 int pawsScrollMenu::GetButtonWidth()
 {
+    if( buttonWidthDynamic==true )
+        return 0;
     return buttonWidth;
 }
 
@@ -784,15 +814,12 @@ int pawsScrollMenu::CalcButtonSize(pawsDnDButton* target)
     }
     else if(target->GetText() && strlen(target->GetText())>0)
     {
-        // if we want to display text in buttons without images...
-        int paddingWidth,
-            textWidth,
+        int textWidth,
             height,
             finalWidth;
 
         target->GetFont()->GetDimensions(target->GetText(), textWidth, height);
-        target->GetFont()->GetDimensions("MM", paddingWidth, height);
-        finalWidth = ((int)((paddingWidth+textWidth)/buttonWidth)+1)*buttonWidth;
+        finalWidth = ((int)(((paddingWidth*2)+textWidth)/buttonWidth)+1)*buttonWidth; //calc number of buttonwidths
 
         return finalWidth;
     }
@@ -833,11 +860,20 @@ void pawsScrollMenu::SetLeftScroll(int mode)
     if(LeftScrollMode == ScrollMenuOptionENABLED)
     {
         LeftScrollVisible=true;
+        if( LeftScrollButton )
+            LeftScrollButton->Show();
     }
     else
     {
         LeftScrollVisible=false;
+        if( LeftScrollButton )
+            LeftScrollButton->Hide();
     }
+}
+
+int pawsScrollMenu::GetLeftScroll()
+{
+    return LeftScrollMode;
 }
 
 void pawsScrollMenu::SetRightScroll(int mode)
@@ -846,11 +882,20 @@ void pawsScrollMenu::SetRightScroll(int mode)
     if(RightScrollMode == ScrollMenuOptionENABLED)
     {
         RightScrollVisible=true;
+        if( RightScrollButton )
+            RightScrollButton->Show();
     }
     else
     {
         RightScrollVisible=false;
+        if( RightScrollButton )
+            RightScrollButton->Hide();
     }
+}
+
+int pawsScrollMenu::GetRightScroll()
+{
+    return RightScrollMode;
 }
 
 void pawsScrollMenu::SetEditLock(int mode)
@@ -894,4 +939,39 @@ int pawsScrollMenu::AutoResize()
         SetSize(GetScreenFrame().Width(), Buttons.GetSize()*buttonHeight);
         return Buttons.GetSize()*buttonHeight;
     }
+}
+
+void pawsScrollMenu::SetButtonBackground( const char* image )
+{
+    for(size_t i=0; i<Buttons.GetSize(); i++)
+    {
+        ((pawsDnDButton*)Buttons[i])->SetBackground(image);
+    }
+}
+
+csString pawsScrollMenu::GetButtonBackground( )
+{
+    return ((pawsDnDButton*)Buttons[0])->GetBackground();
+}
+
+void pawsScrollMenu::SetButtonFont( const char* Font, int size )
+{
+    for(size_t i=0; i<Buttons.GetSize(); i++)
+    {
+        ((pawsDnDButton*)Buttons[i])->SetFont(Font, size);
+    }
+}
+
+char const * pawsScrollMenu::GetButtonFontName( )
+{
+    if( ((pawsDnDButton*)Buttons[0])->GetFontName()==NULL )
+    {
+        return PawsManager::GetSingleton().GetPrefs()->GetDefaultFontName();
+    }
+    return ((pawsDnDButton*)Buttons[0])->GetFontName();
+}
+
+float pawsScrollMenu::GetButtonFontSize( )
+{
+    return ((pawsDnDButton*)Buttons[0])->GetFontSize();
 }

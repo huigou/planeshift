@@ -4,7 +4,7 @@
             buttonimage="Scaling Button"
             visible="no" configurable="yes"
             savepositions="yes" movable="yes" resizable="yes" keepaspect="no" >
-<font name="LiberationSans-Regular.ttf" r="255" g="228" b="181" size="12"/>
+<font name="cupandtalon.ttf" r="255" g="228" b="181" size="12"/>
             
 
         <frame x="5" y="50" width="528" height="100" border="yes" />
@@ -124,13 +124,15 @@
         Widget attributes:
             buttonWidth - may be set to a number of pixels to force a sepcific width, or the word "auto" to set the width dynamically; default is "auto".
                 When set to auto, the width of the icon buttons is controlled by the valus of the height attribute of the frame and minframe. Frame should never be smaller than minframe.
-                forcing the width is intended to support text shortcuts; icons will look really bad at this point.
+                forcing the width is intended to support text shortcuts.
 
             scrollSize  - may be set to a number between 0 and 1 to scroll that portion of the menu width (eg. 0.5 = scroll 1/2 of the visible icons), or a number > 1 to scroll by that many pixels.
 
             editMode    - set to "all" to prevent drag-n-drop as well as rt-click editing when the EditLock is set. default is to allow rt-click editing even when the EditLock is set, to maintain backward compatibility.
 
-        <widget name="MenuBar" factory="pawsScrollMenu" buttonWidth="128" scrollSize="0.75" >
+            textSpacing - number of pixels between text and button edges; default is 0.
+
+        <widget name="MenuBar" factory="pawsScrollMenu" buttonWidth="128" scrollSize="0.75" textSpacing="4" >
 -->
         <widget name="MenuBar" factory="pawsScrollMenu">
             <frame x="0" y="55" height="48" width="520" border="no" />
