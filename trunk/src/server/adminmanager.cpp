@@ -2738,6 +2738,61 @@ csString AdminCmdDataMorph::GetHelpMessage()
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + "\" racename|list|reset [gender] [scale]";
 }
 
+AdminCmdDataScale::AdminCmdDataScale(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
+    : AdminCmdDataTarget("/scale", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
+{
+    size_t index = 1;
+    bool found = false;
+
+    // when help is requested, return immediate
+    if(IsHelp(words[1]))
+        return;
+
+    // when first word is a valid target
+    if(ParseTarget(msgManager, me, msg, client, words[index]))
+    {
+        found = true;
+        index++;
+    }
+
+    // when first word is a target or the client has selected a target
+    if(words.GetCount() >= index + 1 && (found || (IsTargetType(ADMINCMD_TARGET_CLIENTTARGET))))
+    {
+        // test for a subcommand then
+        if(words[index] == "reset")
+        {
+            subCommand = words[index++];
+            if(words.GetCount() > index + 1)
+                ParseError(me, "Subcommand " + subCommand + " does not have any parameters");
+        }
+        else
+        {
+            // if there is another entry, it's the scale
+            if(words.GetCount() >= index + 1)
+            {
+                scale = words[index++];
+            }
+            else
+            {
+                scale = "";
+            }
+
+        }
+    }
+    // no target -> syntax error
+    else
+    {
+        ParseError(me,"No target given");
+    }
+}
+
+ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataScale)
+
+csString AdminCmdDataScale::GetHelpMessage()
+{
+    return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + "\" reset|<scale>";
+}
+
 AdminCmdDataSetSkill::AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/setskill", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), sourcePlayer(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), subCommand(),  skillData("",0,0,false)
 {
@@ -4251,6 +4306,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataWeatherEffect("/rain"));
     RegisterMsgFactoryFunction(new AdminCmdDataFog());
     RegisterMsgFactoryFunction(new AdminCmdDataModify());
+    RegisterMsgFactoryFunction(new AdminCmdDataScale());
 
     RegisterMsgFactoryFunction(new AdminCmdDataMorph());
     RegisterMsgFactoryFunction(new AdminCmdDataSetSkill());
@@ -4627,6 +4683,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     else if(data->command == "/morph")
     {
         Morph(me, msg, data, client);
+    }
+    else if(data->command == "/scale")
+    {
+        Scale(me, msg, data, client);
     }
     else if(data->command == "/setskill")
     {
@@ -11597,6 +11657,42 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
         // override the race using a fake spell
         psserver->SendSystemInfo(me->clientnum, "Overriding race for %s to %s", data->targetClient->GetName(), data->raceName.GetData());
         target->GetCharacterData()->GetOverridableRace().Override(MORPH_FAKE_ACTIVESPELL, race);
+    }
+}
+
+void AdminManager::Scale(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
+{
+    AdminCmdDataScale* data = dynamic_cast<AdminCmdDataScale*>(cmddata);
+
+    // check if the target is valid
+    if(!data->targetClient || !data->targetClient->GetActor())
+    {
+        psserver->SendSystemError(me->clientnum,"Invalid target for morph");
+        return;
+    }
+
+    gemActor* target = data->targetClient->GetActor();
+
+    // if the user issued a reset restore the basic race
+    if(data->subCommand == "reset")
+    {
+        psserver->SendSystemInfo(me->clientnum, "Resetting scale for %s", data->targetClient->GetName());
+        // unset the scale variable
+        target->GetCharacterData()->UnSetVariable("scale");
+        target->Broadcast(me->clientnum, false);
+        target->Send(me->clientnum, false, false);
+    }
+    else
+    {
+        if (data->scale)
+        {
+            target->GetCharacterData()->SetVariable("scale",data->scale);
+            target->Broadcast(me->clientnum, false);
+            target->Send(me->clientnum, false, false);
+        }
+
+        // override the race using a fake spell
+        psserver->SendSystemInfo(me->clientnum, "Overriding scale for %s to %s", data->targetClient->GetName(), data->scale.GetData());
     }
 }
 
