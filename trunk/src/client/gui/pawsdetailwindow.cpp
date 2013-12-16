@@ -58,6 +58,7 @@
 //////////////////////////////////////////////////////////////////////
 
 pawsDetailWindow::pawsDetailWindow()
+    :lastTab(NULL)
 {
     target = NULL;
     details_editable = false;
@@ -86,6 +87,10 @@ bool pawsDetailWindow::PostSetup()
     pawsButton* button = (pawsButton*)FindWidget( "ShowDescr" );
     if(button)
     {
+        if (lastTab && lastTab != button)
+        {
+            lastTab->SetState(false);
+        }
         lastTab = button;
         button->SetState(true);
     }
@@ -158,6 +163,10 @@ void pawsDetailWindow::UpdateTabsVisibility(bool Skills, bool CharCreation, bool
     if(!lastTab->IsVisible())
     {
         pawsButton* button = (pawsButton*)FindWidget( "ShowDescr" );
+        if (lastTab && lastTab != button)
+        {
+            lastTab->SetState(false);
+        }
         lastTab = button;
         button->SetState(true);
     }
