@@ -109,7 +109,7 @@ public:
     gemNPCActor* GetMostHated(NPC* npc, csVector3 &pos, iSector* sector, float range, LocationType* region,
                               bool includeOutsideRegion, bool includeInvisible, bool includeInvincible, float* hate);
     bool Remove(EID entity_id);
-    void DumpHateList(const csVector3 &myPos, iSector* mySector);
+    void DumpHateList(csString &output, const csVector3 &myPos, iSector* mySector);
     void DumpHateList(NPC* npc, const csVector3 &myPos, iSector* mySector);
     void Clear();
     float GetHate(EID ent);
@@ -323,7 +323,7 @@ public:
      * This funcion is both used by the "/info" in the client
      * and the "info \<pid\> npcclient console command.
      */
-    csString Info();
+    csString Info(const csString &infoRequestSubCmd);
 
     /**
      * Dump all information for one NPC to the console.
@@ -336,22 +336,22 @@ public:
     /**
      * Dump all state information for npc.
      */
-    void DumpState();
+    void DumpState(csString &output);
 
     /**
      * Dump all behaviors for npc.
      */
-    void DumpBehaviorList();
+    void DumpBehaviorList(csString &output);
 
     /**
      * Dump all reactions for npc.
      */
-    void DumpReactionList();
+    void DumpReactionList(csString &output);
 
     /**
      * Dump all hated entities for npc.
      */
-    void DumpHateList();
+    void DumpHateList(csString &output);
 
     /**
      * Dump all hated entities for npc. Using debug prints at level 5.
@@ -361,8 +361,23 @@ public:
     /**
      * Dump the debug log for npc
      */
-    void DumpDebugLog();
+    void DumpDebugLog(csString &output);
 
+    /**
+     * Dump the memory for npc
+     */
+    void DumpMemory(csString &output);
+
+    /**
+     * Dump the controlled npcs for npc
+     */
+    void DumpControlled(csString &output);
+
+    /**
+     * Clear the NPCs state.
+     *
+     * Brain, hatelist, etc. is cleared. 
+     */
     void ClearState();
 
     /**

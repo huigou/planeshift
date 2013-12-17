@@ -280,8 +280,34 @@ void NPC::ScopedTimerCallback(const ScopedTimer* timer)
     Dump();
 }
 
-csString NPC::Info()
+csString NPC::Info(const csString &infoRequestSubCmd)
 {
+    csString output;
+
+    DumpState(output);
+    output.Append("\n");
+
+    DumpBehaviorList(output);
+    output.Append("\n");
+
+    DumpReactionList(output);
+    output.Append("\n");
+
+    DumpHateList(output);
+    output.Append("\n");
+
+    DumpDebugLog(output);
+    output.Append("\n");
+
+    DumpMemory(output);
+    output.Append("\n");
+    
+    DumpControlled(output);
+    output.Append("\n");
+
+    return output;
+
+    /*
     csString reply;
     // Position and instance
     {
@@ -327,66 +353,40 @@ csString NPC::Info()
     reply.AppendFmt(" Fall counter: %d\n", GetFallCounter());
     reply.AppendFmt(" Brain: '%s'\n",GetBrain()->GetName());
     reply.AppendFmt(" Current Behavior: '%s'",GetCurrentBehavior()?GetCurrentBehavior()->GetName():"(None)");
-
-    return reply;
+    */
 }
 
 void NPC::Dump()
 {
-    DumpState();
-    CPrintf(CON_CMDOUTPUT,"\n");
+    csString output;
+    
+    DumpState(output);
+    output.Append("\n");
 
-    DumpBehaviorList();
-    CPrintf(CON_CMDOUTPUT,"\n");
+    DumpBehaviorList(output);
+    output.Append("\n");
 
-    DumpReactionList();
-    CPrintf(CON_CMDOUTPUT,"\n");
+    DumpReactionList(output);
+    output.Append("\n");
 
-    DumpHateList();
-    CPrintf(CON_CMDOUTPUT,"\n");
+    DumpHateList(output);
+    output.Append("\n");
 
-    DumpDebugLog();
-    CPrintf(CON_CMDOUTPUT,"\n");
+    DumpDebugLog(output);
+    output.Append("\n");
 
-    // Dump it's memory buffer
-    CPrintf(CON_CMDOUTPUT, "Buffers:\n");
-    int index = 0;
-    BufferHash::GlobalIterator iter = npcBuffer.GetIterator();
-    while(iter.HasNext())
+    DumpMemory(output);
+    output.Append("\n");
+    
+    DumpControlled(output);
+    output.Append("\n");
+
+    // Display output to Cmd Output
+    csStringArray lines(output, "\n");
+    for (size_t i = 0; i < lines.GetSize(); i++)
     {
-        csString bufferName;
-        csString value = iter.Next(bufferName);
-        CPrintf(CON_CMDOUTPUT, "String buffer(%d): %s = %s\n",index++,bufferName.GetDataSafe(),value.GetDataSafe());
+        CPrintf(CON_CMDOUTPUT,"%s\n",lines[i]);
     }
-    CPrintf(CON_CMDOUTPUT, "Memory buffer:\n");
-    if(bufferMemory)
-    {
-        CPrintf(CON_CMDOUTPUT, "Name: %s\n", bufferMemory->name.GetData());
-        CPrintf(CON_CMDOUTPUT, "Pos: x:%f y:%f z:%f\n",
-                bufferMemory->pos[0],
-                bufferMemory->pos[1],
-                bufferMemory->pos[2]);
-        CPrintf(CON_CMDOUTPUT, "Has Sector:\n");
-        if(bufferMemory->GetSector())
-            CPrintf(CON_CMDOUTPUT, "Yes\n");
-        else
-            CPrintf(CON_CMDOUTPUT, "No\n");
-    }
-    else
-    {
-        CPrintf(CON_CMDOUTPUT, "Empty\n");
-    }
-
-    csString controlled;
-    for(size_t i = 0; i < controlledActors.GetSize(); i++)
-    {
-        if(controlledActors[i].IsValid())
-        {
-            controlled.AppendFmt(" %s",controlledActors[i]->GetName());
-        }
-    }
-    CPrintf(CON_CMDOUTPUT, "Controlled: %s\n",controlled.GetDataSafe());
-
 }
 
 EID NPC::GetEID()
@@ -870,7 +870,7 @@ void NPC::Disable(bool disable)
 }
 
 
-void NPC::DumpState()
+void NPC::DumpState(csString &output)
 {
     csVector3 loc;
     iSector* sector;
@@ -883,90 +883,90 @@ void NPC::DumpState()
         instance = npcActor->GetInstance();
     }
 
-    CPrintf(CON_CMDOUTPUT, "States for %s (%s)\n", name.GetData(), ShowID(pid));
-    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
-    CPrintf(CON_CMDOUTPUT, "Position:             %s\n",npcActor?toString(loc,sector).GetDataSafe():"(none)");
-    CPrintf(CON_CMDOUTPUT, "Rotation:             %.2f\n",rot);
-    CPrintf(CON_CMDOUTPUT, "Instance:             %d\n",instance);
-    CPrintf(CON_CMDOUTPUT, "Debugging:            %d\n",GetDebugging());
-    CPrintf(CON_CMDOUTPUT, "Debug clients:        %s\n",GetRemoteDebugClientsString().GetDataSafe());
-    CPrintf(CON_CMDOUTPUT, "DR Counter:           %d\n",DRcounter);
-    CPrintf(CON_CMDOUTPUT, "Alive:                %s\n",alive?"True":"False");
-    CPrintf(CON_CMDOUTPUT, "Disabled:             %s\n",disabled?"True":"False");
-    CPrintf(CON_CMDOUTPUT, "Checked:              %s\n",checked?"True":"False");
-    CPrintf(CON_CMDOUTPUT, "Spawn position:       %s\n",toString(spawnPosition,spawnSector).GetDataSafe());
-    CPrintf(CON_CMDOUTPUT, "Ang vel:              %.2f\n",ang_vel);
-    CPrintf(CON_CMDOUTPUT, "Vel:                  %.2f\n",vel);
-    CPrintf(CON_CMDOUTPUT, "Walk velocity:        %.2f\n",GetWalkVelocity());
-    CPrintf(CON_CMDOUTPUT, "Run velocity:         %.2f\n",GetRunVelocity());
-    CPrintf(CON_CMDOUTPUT, "Scale value:          %.2f\n",GetScaleValue());
-    CPrintf(CON_CMDOUTPUT, "HP(Value/Max/Rate):   %.1f/%.1f/%.1f\n",GetHP(),GetMaxHP(),GetHPRate());
-    CPrintf(CON_CMDOUTPUT, "Mana(V/M/R):          %.1f/%.1f/%.1f\n",GetMana(),GetMaxMana(),GetManaRate());
-    CPrintf(CON_CMDOUTPUT, "PStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetPysStamina(),GetMaxPysStamina(),GetPysStaminaRate());
-    CPrintf(CON_CMDOUTPUT, "MStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetMenStamina(),GetMaxMenStamina(),GetMenStaminaRate());
-    CPrintf(CON_CMDOUTPUT, "Owner:                %s\n",GetOwnerName());
-    CPrintf(CON_CMDOUTPUT, "Race:                 %s\n",GetRaceInfo()?GetRaceInfo()->name.GetDataSafe():"(None)");
-    CPrintf(CON_CMDOUTPUT, "Region:               %s\n",GetRegion()?GetRegion()->GetName():"(None)");
-    CPrintf(CON_CMDOUTPUT, "Inside region:        %s\n",insideRegion?"Yes":"No");
-    CPrintf(CON_CMDOUTPUT, "Tribe:                %s\n",GetTribe()?GetTribe()->GetName():"(None)");
-    CPrintf(CON_CMDOUTPUT, "TribeMemberType:      %s\n",GetTribeMemberType().GetDataSafe());
-    CPrintf(CON_CMDOUTPUT, "Inside tribe home:    %s\n",insideTribeHome?"Yes":"No");
-    CPrintf(CON_CMDOUTPUT, "Target:               %s\n",GetTarget()?GetTarget()->GetName():"");
-    CPrintf(CON_CMDOUTPUT, "Last perception:      %s\n",last_perception?last_perception->GetName().GetDataSafe():"(None)");
-    CPrintf(CON_CMDOUTPUT, "Fall counter:         %d\n", GetFallCounter());
+    output.AppendFmt("States for %s (%s)\n", name.GetData(), ShowID(pid));
+    output.AppendFmt("---------------------------------------------\n");
+    output.AppendFmt("Position:             %s\n",npcActor?toString(loc,sector).GetDataSafe():"(none)");
+    output.AppendFmt("Rotation:             %.2f\n",rot);
+    output.AppendFmt("Instance:             %d\n",instance);
+    output.AppendFmt("Debugging:            %d\n",GetDebugging());
+    output.AppendFmt("Debug clients:        %s\n",GetRemoteDebugClientsString().GetDataSafe());
+    output.AppendFmt("DR Counter:           %d\n",DRcounter);
+    output.AppendFmt("Alive:                %s\n",alive?"True":"False");
+    output.AppendFmt("Disabled:             %s\n",disabled?"True":"False");
+    output.AppendFmt("Checked:              %s\n",checked?"True":"False");
+    output.AppendFmt("Spawn position:       %s\n",toString(spawnPosition,spawnSector).GetDataSafe());
+    output.AppendFmt("Ang vel:              %.2f\n",ang_vel);
+    output.AppendFmt("Vel:                  %.2f\n",vel);
+    output.AppendFmt("Walk velocity:        %.2f\n",GetWalkVelocity());
+    output.AppendFmt("Run velocity:         %.2f\n",GetRunVelocity());
+    output.AppendFmt("Scale value:          %.2f\n",GetScaleValue());
+    output.AppendFmt("HP(Value/Max/Rate):   %.1f/%.1f/%.1f\n",GetHP(),GetMaxHP(),GetHPRate());
+    output.AppendFmt("Mana(V/M/R):          %.1f/%.1f/%.1f\n",GetMana(),GetMaxMana(),GetManaRate());
+    output.AppendFmt("PStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetPysStamina(),GetMaxPysStamina(),GetPysStaminaRate());
+    output.AppendFmt("MStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetMenStamina(),GetMaxMenStamina(),GetMenStaminaRate());
+    output.AppendFmt("Owner:                %s\n",GetOwnerName());
+    output.AppendFmt("Race:                 %s\n",GetRaceInfo()?GetRaceInfo()->name.GetDataSafe():"(None)");
+    output.AppendFmt("Region:               %s\n",GetRegion()?GetRegion()->GetName():"(None)");
+    output.AppendFmt("Inside region:        %s\n",insideRegion?"Yes":"No");
+    output.AppendFmt("Tribe:                %s\n",GetTribe()?GetTribe()->GetName():"(None)");
+    output.AppendFmt("TribeMemberType:      %s\n",GetTribeMemberType().GetDataSafe());
+    output.AppendFmt("Inside tribe home:    %s\n",insideTribeHome?"Yes":"No");
+    output.AppendFmt("Target:               %s\n",GetTarget()?GetTarget()->GetName():"");
+    output.AppendFmt("Last perception:      %s\n",last_perception?last_perception->GetName().GetDataSafe():"(None)");
+    output.AppendFmt("Fall counter:         %d\n", GetFallCounter());
     csString types;
     for(size_t m=0; m < autoMemorizeTypes.GetSize(); m++)
     {
         types.AppendFmt("%s%s",m?",":"",autoMemorizeTypes.Get(m).GetDataSafe());
     }
-    CPrintf(CON_CMDOUTPUT, "AutoMemorize:         \"%s\"\n",types.GetDataSafe());
-    CPrintf(CON_CMDOUTPUT, "Brain:                %s\n\n", brain->GetName());
+    output.AppendFmt("AutoMemorize:         \"%s\"\n",types.GetDataSafe());
+    output.AppendFmt("Brain:                %s\n\n", brain->GetName());
 
-    CPrintf(CON_CMDOUTPUT, "Locates for %s (%s)\n", name.GetData(), ShowID(pid));
-    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
+    output.AppendFmt("Locates for %s (%s)\n", name.GetData(), ShowID(pid));
+    output.AppendFmt("---------------------------------------------\n");
     LocateHash::GlobalIterator iter = storedLocates.GetIterator();
     while(iter.HasNext())
     {
         csString name;
         Locate* locate = iter.Next(name);
-        CPrintf(CON_CMDOUTPUT, "%-15s Position:  %s\n",name.GetDataSafe(),toString(locate->pos,locate->sector).GetDataSafe());
-        CPrintf(CON_CMDOUTPUT, "%-15s Angle:     %.2f\n","",locate->angle);
-        CPrintf(CON_CMDOUTPUT, "%-15s Radius:    %.2f\n","",locate->radius);
-        CPrintf(CON_CMDOUTPUT, "%-15s WP:        %s\n","",locate->wp?locate->wp->GetName():"");
+        output.AppendFmt("%-15s Position:  %s\n",name.GetDataSafe(),toString(locate->pos,locate->sector).GetDataSafe());
+        output.AppendFmt("%-15s Angle:     %.2f\n","",locate->angle);
+        output.AppendFmt("%-15s Radius:    %.2f\n","",locate->radius);
+        output.AppendFmt("%-15s WP:        %s\n","",locate->wp?locate->wp->GetName():"");
 
     }
 
 }
 
 
-void NPC::DumpBehaviorList()
+void NPC::DumpBehaviorList(csString &output)
 {
-    CPrintf(CON_CMDOUTPUT, "Behaviors for %s (%s)\n", name.GetData(), ShowID(pid));
-    CPrintf(CON_CMDOUTPUT, "---------------------------------------------------------\n");
+    output.AppendFmt("Behaviors for %s (%s)\n", name.GetData(), ShowID(pid));
+    output.AppendFmt("---------------------------------------------------------\n");
 
-    brain->DumpBehaviorList(this);
+    brain->DumpBehaviorList(output, this);
 }
 
-void NPC::DumpReactionList()
+void NPC::DumpReactionList(csString &output)
 {
-    CPrintf(CON_CMDOUTPUT, "Reactions for %s (%s)\n", name.GetData(), ShowID(pid));
-    CPrintf(CON_CMDOUTPUT, "---------------------------------------------------------\n");
+    output.AppendFmt("Reactions for %s (%s)\n", name.GetData(), ShowID(pid));
+    output.AppendFmt("---------------------------------------------------------\n");
 
-    brain->DumpReactionList(this);
+    brain->DumpReactionList(output, this);
 }
 
-void NPC::DumpHateList()
+void NPC::DumpHateList(csString &output)
 {
     iSector* sector=NULL;
     csVector3 pos;
 
-    CPrintf(CON_CMDOUTPUT, "Hate list for %s (%s)\n", name.GetData(), ShowID(pid));
-    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
+    output.AppendFmt("Hate list for %s (%s)\n", name.GetData(), ShowID(pid));
+    output.AppendFmt("---------------------------------------------\n");
 
     if(GetActor())
     {
         psGameObject::GetPosition(GetActor(),pos,sector);
-        hatelist.DumpHateList(pos,sector);
+        hatelist.DumpHateList(output,pos,sector);
     }
 }
 
@@ -984,15 +984,60 @@ void NPC::DumpHateList(NPC* npc)
     }
 }
 
-void NPC::DumpDebugLog()
+void NPC::DumpDebugLog(csString &output)
 {
-    CPrintf(CON_CMDOUTPUT, "Debug log for %s (%s)\n", name.GetData(), ShowID(pid));
-    CPrintf(CON_CMDOUTPUT, "---------------------------------------------\n");
+    output.AppendFmt("Debug log for %s (%s)\n", name.GetData(), ShowID(pid));
+    output.AppendFmt("---------------------------------------------\n");
     for(size_t i = 0; i < debugLog.GetSize(); i++)
     {
-        CPrintf(CON_CMDOUTPUT,"%2d %s\n",i,debugLog[(nextDebugLogEntry+i)%debugLog.GetSize()].GetDataSafe());
+        output.AppendFmt("%2zu %s\n",i,debugLog[(nextDebugLogEntry+i)%debugLog.GetSize()].GetDataSafe());
     }
 
+}
+
+void NPC::DumpMemory(csString &output)
+{
+    // Dump it's memory buffer
+    output.AppendFmt("Buffers:\n");
+    int index = 0;
+    BufferHash::GlobalIterator iter = npcBuffer.GetIterator();
+    while(iter.HasNext())
+    {
+        csString bufferName;
+        csString value = iter.Next(bufferName);
+        output.AppendFmt("String buffer(%d): %s = %s\n",index++,bufferName.GetDataSafe(),value.GetDataSafe());
+    }
+    output.AppendFmt("Memory buffer:\n");
+    if(bufferMemory)
+    {
+        output.AppendFmt("Name: %s\n", bufferMemory->name.GetData());
+        output.AppendFmt("Pos: x:%f y:%f z:%f\n",
+                bufferMemory->pos[0],
+                bufferMemory->pos[1],
+                bufferMemory->pos[2]);
+        output.AppendFmt("Has Sector:\n");
+        if(bufferMemory->GetSector())
+            output.AppendFmt("Yes\n");
+        else
+            output.AppendFmt("No\n");
+    }
+    else
+    {
+        output.AppendFmt("Empty\n");
+    }
+}
+
+void NPC::DumpControlled(csString &output)
+{
+    csString controlled;
+    for(size_t i = 0; i < controlledActors.GetSize(); i++)
+    {
+        if(controlledActors[i].IsValid())
+        {
+            controlled.AppendFmt(" %s",controlledActors[i]->GetName());
+        }
+    }
+    output.AppendFmt("Controlled: %s\n",controlled.GetDataSafe());
 }
 
 
@@ -1278,12 +1323,20 @@ bool NPC::ContainAutoMemorizeType(const csString &type)
 
 void NPC::LocalDebugReport(const csString &debugString)
 {
-    CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), debugString.GetDataSafe());
+    csStringArray list(debugString,"\n");
+    for (size_t i = 0; i < list.GetSize(); i++)
+    {
+        CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), list[i]);
+    }
 }
 
 void NPC::RemoteDebugReport(uint32_t clientNum, const csString &debugString)
 {
-    networkmanager->QueueSystemInfoCommand(clientNum,"%s (%s)> %s", GetName(), ShowID(pid), debugString.GetDataSafe());
+    csStringArray list(debugString,"\n");
+    for (size_t i = 0; i < list.GetSize(); i++)
+    {
+        networkmanager->QueueSystemInfoCommand(clientNum,"%s (%s)> %s", GetName(), ShowID(pid), list[i]);
+    }
 }
 
 
@@ -1875,11 +1928,11 @@ float HateList::GetHate(EID ent)
         return 0;
 }
 
-void HateList::DumpHateList(const csVector3 &myPos, iSector* mySector)
+void HateList::DumpHateList(csString &output, const csVector3 &myPos, iSector* mySector)
 {
     csHash<HateListEntry*, EID>::GlobalIterator iter = hatelist.GetIterator();
 
-    CPrintf(CON_CMDOUTPUT, "%6s %-20s %5s %-40s %5s %s\n",
+    output.AppendFmt("%6s %-20s %5s %-40s %5s %s\n",
             "Entity","Name", "Hated","Pos","Range","Flags");
 
     while(iter.HasNext())
@@ -1897,19 +1950,19 @@ void HateList::DumpHateList(const csVector3 &myPos, iSector* mySector)
             {
                 sectorName = sector->QueryObject()->GetName();
             }
-            CPrintf(CON_CMDOUTPUT,"%6d %-20s %5.1f %-40s %5.1f%s%s",
+            output.AppendFmt("%6d %-20s %5.1f %-40s %5.1f%s%s",
                     h->entity_id.Unbox(), obj->GetName(), h->hate_amount, toString(pos, sector).GetDataSafe(),
                     world->Distance(pos,sector,myPos,mySector), obj->IsInvisible()?" Invisible":"", obj->IsInvincible()?" Invincible":"");
-            CPrintf(CON_CMDOUTPUT,"\n");
+            output.AppendFmt("\n");
         }
         else
         {
             // This is an error situation. Should not hate something that isn't online.
-            CPrintf(CON_CMDOUTPUT, "Entity: %u Hated: %.1f\n", h->entity_id.Unbox(), h->hate_amount);
+            output.AppendFmt("Entity: %u Hated: %.1f\n", h->entity_id.Unbox(), h->hate_amount);
         }
 
     }
-    CPrintf(CON_CMDOUTPUT, "\n");
+    output.AppendFmt("\n");
 }
 
 void HateList::DumpHateList(NPC* npc, const csVector3 &myPos, iSector* mySector)

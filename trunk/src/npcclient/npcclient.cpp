@@ -1557,7 +1557,7 @@ bool psNPCClient::InfoNPC(const char* pattern)
         NPC* npc = npcs[i];
         if(npc->GetPID() == id)
         {
-            csString info = npc->Info();
+            csString info = npc->Info("all");
             CPrintf(CON_CMDOUTPUT, "Info for %s(%s)\n%s\n",
                     npc->GetName(), ShowID(npc->GetPID()), info.GetDataSafe());
             return true;

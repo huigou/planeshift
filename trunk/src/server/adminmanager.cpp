@@ -5169,7 +5169,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cm
             if(client->GetSecurityLevel() >= GM_LEVEL_0)
             {
                 // Queue info request perception (Perception as command to superclient)
-                psserver->GetNPCManager()->QueueInfoRequestPerception(npc, client, "");
+                psserver->GetNPCManager()->QueueInfoRequestPerception(npc, client, "all");
             }
             return; // Done
         }

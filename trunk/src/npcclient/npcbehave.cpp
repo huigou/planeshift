@@ -454,12 +454,12 @@ csString NPCType::InfoReactions(NPC* npc)
     return reply;
 }
 
-void NPCType::DumpReactionList(NPC* npc)
+void NPCType::DumpReactionList(csString &output, NPC* npc)
 {
-    CPrintf(CON_CMDOUTPUT, "%-25s %-25s %-5s %-10s %-20s %s\n","Reaction","Type","Range","Value","Last","Affects");
+    output.AppendFmt("%-25s %-25s %-5s %-10s %-20s %s\n","Reaction","Type","Range","Value","Last","Affects");
     for(size_t i=0; i<reactions.GetSize(); i++)
     {
-        CPrintf(CON_CMDOUTPUT, "%-25s %-25s %5.1f %-10s %-20s %s\n",
+        output.AppendFmt("%-25s %-25s %5.1f %-10s %-20s %s\n",
                 reactions[i]->GetEventType().GetDataSafe(),reactions[i]->GetType(npc).GetDataSafe(),
                 reactions[i]->GetRange(),
                 reactions[i]->GetValue().GetDataSafe(),
@@ -636,7 +636,9 @@ Behavior* BehaviorSet::Schedule(NPC* npc)
     {
         if(npc->IsDebugging(3))
         {
-            npc->DumpBehaviorList();
+            csString output;
+            npc->DumpBehaviorList(output);
+            NPCDebug(npc, 3, output.GetDataSafe());
         }
         NPCDebug(npc, 15,"NO Active or no applicable behavior.");
         return NULL;
@@ -737,7 +739,9 @@ void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
             // Dump bahaviour list if changed
             if(npc->IsDebugging(3))
             {
-                npc->DumpBehaviorList();
+                csString output;
+                npc->DumpBehaviorList(output);
+                NPCDebug(npc,3,output.GetDataSafe());
             }
 
             // If the interrupt has change the needs, try once
@@ -836,9 +840,9 @@ Behavior* BehaviorSet::Find(const char* name)
     return NULL;
 }
 
-void BehaviorSet::DumpBehaviorList(NPC* npc)
+void BehaviorSet::DumpBehaviorList(csString &output, NPC* npc)
 {
-    CPrintf(CON_CMDOUTPUT, "Appl. IA %-30s %6s %6s %5s\n","Behavior","Curr","New","Step");
+    output.AppendFmt("Appl. IA %-30s %6s %6s %5s\n","Behavior","Curr","New","Step");
 
     for(size_t i=0; i<behaviors.GetSize(); i++)
     {
@@ -848,7 +852,7 @@ void BehaviorSet::DumpBehaviorList(NPC* npc)
             applicable = 'Y';
         }
 
-        CPrintf(CON_CMDOUTPUT, "%c     %s%s %-30s %6.1f %6.1f %2d/%-2d\n",applicable,
+        output.AppendFmt("%c     %s%s %-30s %6.1f %6.1f %2zu/%-2zu\n",applicable,
                 (behaviors[i]->IsInterrupted()?"!":" "),
                 (behaviors[i]->IsActive()?"*":" "),
                 behaviors[i]->GetName(),behaviors[i]->CurrentNeed(),

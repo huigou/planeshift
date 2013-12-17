@@ -254,10 +254,13 @@ bool Tribe::AttachMember(NPC* npc, const char* tribeMemberType)
     Behavior* idleBehavior = npc->GetBrain()->Find(npcIdleBehavior.GetDataSafe());
     if(!idleBehavior)
     {
-        Error4("Trying to attach a NPC %s(%u) to tribe without matching idle behavior of %s",
-               npc->GetName(),npc->GetPID().Unbox(), npcIdleBehavior.GetDataSafe());
         // Dump the behavior list so that we see what behaviors we have for this npc.
-        npc->DumpBehaviorList();
+        csString output;
+        npc->DumpBehaviorList(output);
+
+        Error5("Trying to attach a NPC %s(%u) to tribe without matching idle behavior of %s\n%s",
+               npc->GetName(),npc->GetPID().Unbox(), npcIdleBehavior.GetDataSafe(),
+               output.GetDataSafe());
         return false;
     }
 
