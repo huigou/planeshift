@@ -1723,7 +1723,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 // Send reply back in 3 parts. Since they only can hold a limited chars per message.
 
                 csString reply("NPCClient: ");
-                reply.Append(npc->Info());
+                reply.Append(npc->Info(infoRequestSubCmd));
                 QueueSystemInfoCommand(clientNum,reply);
 
                 QueueSystemInfoCommand(clientNum," Behaviors: %s",npc->GetBrain()->InfoBehaviors(npc).GetDataSafe());

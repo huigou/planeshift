@@ -1826,7 +1826,19 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                     Debug1(LOG_SUPERCLIENT, clientnum, "Couldn't find client.\n");
                     break;
                 }
-                psserver->SendSystemInfo(client->GetClientNum(),reply);
+                if (reply.Length() < MAXSYSTEMMSGSIZE)
+                {
+                    psserver->SendSystemInfo(client->GetClientNum(),reply);
+                }
+                else
+                {
+                    csStringArray list(reply,"\n");
+                    for (size_t i = 0; i < list.GetSize(); i++)
+                    {
+                        psserver->SendSystemInfo(client->GetClientNum(),list[i]);
+                    }
+                }
+                
                 break;
             }
 

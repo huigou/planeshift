@@ -3368,7 +3368,9 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC* n
         {
             if(npc->IsDebugging(5))
             {
-                npc->DumpHateList();
+                csString output;
+                npc->DumpHateList(output);
+                NPCDebug(npc, 5, output.GetDataSafe());
             }
             NPCDebug(npc, 8, "No hated target in seek range (%2.2f)!", seek_range);
             npc->GetCurrentBehavior()->ApplyNeedDelta(npc, -5); // don't want to fight as badly
