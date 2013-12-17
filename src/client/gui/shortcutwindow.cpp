@@ -58,7 +58,6 @@ pawsShortcutWindow::pawsShortcutWindow() :
     labelBox(NULL),
     shortcutText(NULL),
     title(NULL),
-    textSpacing(0),
     subWidget(NULL),
     iconPalette(NULL),
     iconDisplay(NULL),
@@ -68,6 +67,7 @@ pawsShortcutWindow::pawsShortcutWindow() :
     DownButton(NULL),
     position(0),
     buttonWidth(0),                     //added 20130726 - ticket 6087
+    textSpacing(0),
     scrollSize(0),                      //added 20130726 - ticket 6087
     EditMode(0)                     // 0 = edit lock prevents drag, 1 = edit lock prevent all editing
 {
