@@ -42,9 +42,9 @@
 pawsScrollMenu::pawsScrollMenu() :
     buttonWidth(0),
     buttonHeight(0),
-    paddingWidth(0),
     scrollIncrement(0.0),
     currentButton(0),
+    paddingWidth(0),
     scrollProportion(0.5),
     buttonWidthDynamic(true),
     ButtonHolder(NULL),
