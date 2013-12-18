@@ -787,7 +787,7 @@ bool RecipeManager::ParseFunction(csString function, Tribe* tribe, csArray<NPC*>
     return false;
 }
 
-bool RecipeManager::ParseRequirement(Recipe::Requirement requirement, Tribe* tribe, Recipe* recipe)
+bool RecipeManager::ParseRequirement(const Recipe::Requirement &requirement, Tribe* tribe, Recipe* recipe)
 {
     csString name = Preparse(requirement.name, tribe);
     int      quantity = atoi(Preparse(requirement.quantity, tribe));

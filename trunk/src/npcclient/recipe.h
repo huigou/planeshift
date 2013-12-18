@@ -242,7 +242,7 @@ public:
      * @param recipe      The recipe this requirement belongs to
      * @return            True if all requirements are met, false otherwise.
      */
-    bool ParseRequirement(Recipe::Requirement requirement, Tribe* tribe, Recipe* recipe);
+    bool ParseRequirement(const Recipe::Requirement &requirement, Tribe* tribe, Recipe* recipe);
 
     /** Apply Recipe
      *
