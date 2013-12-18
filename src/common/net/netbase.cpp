@@ -233,7 +233,7 @@ bool NetBase::CheckIn()
         //there was a failure in conversion if null
         if(!inet_ntop(addr.sin6_family,&addr.sin6_addr, addrText, sizeof(addrText)))
         {
-            strncpy(addrText, "UNKNOWN", INET_ADDRSTRLEN);
+            strncpy(addrText, "UNKNOWN", INET6_ADDRSTRLEN);
         }
 #else
         char addrText[INET_ADDRSTRLEN];

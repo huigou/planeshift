@@ -92,7 +92,6 @@ public:
     {
         return eid;
     }
-    npcMesh* pcmesh;
 
     int GetType()
     {
@@ -167,6 +166,8 @@ public:
     {
         return instance;
     };
+
+    npcMesh* pcmesh;
 
 protected:
     static csRef<iMeshFactoryWrapper> nullfact;
