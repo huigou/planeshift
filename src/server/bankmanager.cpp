@@ -101,7 +101,7 @@ psMoneyGameEvent::psMoneyGameEvent(int delayTicks, BankManager *bankMan)
 }
 
 template<class T>
-void BankManager::TaxAccount(T guildOrChar, MoneyEvent monEvt, int index)
+void BankManager::TaxAccount(T guildOrChar, MoneyEvent &monEvt, int index)
 {
     // Check if the money is available. Else do Something Bad.
     int moneyAvail;

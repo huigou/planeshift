@@ -1012,6 +1012,8 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             inplace = true;
         }
 
+        // Search for money, and assign the moneySlot according to type of
+        // coins found.
         if ( words[i] == "tria" || (words[i] == "hexa" && (moneySlot=1)) ||
            (words[i] == "octa" && (moneySlot=2)) || (words[i] == "circle" && (moneySlot=3)) )
         {

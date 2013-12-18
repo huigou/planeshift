@@ -60,7 +60,7 @@ protected:
 
 
     template<class T>
-    void TaxAccount(T guildOrChar, MoneyEvent monEvt, int index);
+    void TaxAccount(T guildOrChar, MoneyEvent &monEvt, int index);
     
 private:
     void SendBankWindow(Client* client, bool guild, bool forceOpen);
