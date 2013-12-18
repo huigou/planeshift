@@ -874,7 +874,7 @@ void NPC::DumpState(csString &output)
 {
     csVector3 loc;
     iSector* sector;
-    float rot;
+    float rot = 0.0;
     InstanceID instance = INSTANCE_ALL;
 
     if(npcActor)
