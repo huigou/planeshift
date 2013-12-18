@@ -494,6 +494,7 @@ void NetworkManager::HandlePathNetwork(MsgEntry* me)
                 if(!startWaypoint)
                 {
                     Error2("Failed to find start waypoint %d\n",msg.startId);
+                    delete path;
                     return;
                 }
 
@@ -501,6 +502,7 @@ void NetworkManager::HandlePathNetwork(MsgEntry* me)
                 if(!stopWaypoint)
                 {
                     Error2("Failed to find stop waypoint %d\n",msg.stopId);
+                    delete path;
                     return;
                 }
 

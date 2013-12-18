@@ -219,6 +219,7 @@ bool NPCType::Load(iResultRow &row)
                                 // Though now give error, until needed.
                                 Error5("NPCType(%s) reaction of type '%s' already connected to '%s' in '%s'", row["id"],
                                        r->GetEventType().GetDataSafe(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
+                                delete r;
                                 return false;
                                 // delete reactions[i];
                                 //reactions.DeleteIndex(i);
@@ -362,6 +363,7 @@ bool NPCType::Load(iDocumentNode* node)
                                 // Though now give error, until needed.
                                 Error4("Reaction of type '%s' already connected to '%s' in '%s'",
                                        r->GetEventType().GetDataSafe(),reactions[i]->affected[j]->GetName(), name.GetDataSafe());
+                                delete r;
                                 return false;
                                 // delete reactions[i];
                                 //reactions.DeleteIndex(i);
