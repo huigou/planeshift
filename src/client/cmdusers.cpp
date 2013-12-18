@@ -853,7 +853,9 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         csString targetString;
 
         if (words[1].IsEmpty())
+        {
             targetString = FormatTarget();
+        }
         else if (words[1] == "on" || words[1] == "off")
         {
             onoff = 1;
@@ -863,7 +865,9 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         {
             targetString = FormatTarget(words[1]);
             if(!words[2].IsEmpty())
+            {
                 onoff = 2;
+            }
         }
 
         if (!targetString.IsEmpty())
@@ -872,8 +876,10 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             newCmd.Append("/guard ");
             newCmd.Append(targetString);
             if(onoff > 0)
+            {
                 newCmd.Append(" ");
                 newCmd.Append(words[onoff]);
+            }
             psUserCmdMessage cmdmsg(newCmd);
             cmdmsg.SendMessage();
         }
@@ -885,9 +891,13 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     {
         csString targetString;
         if (words[1].IsEmpty())
+        {
             targetString = FormatTarget();
+        }
         else
+        {
             targetString = FormatTarget(words[1]);
+        }
 
         if (!targetString.IsEmpty())
         {

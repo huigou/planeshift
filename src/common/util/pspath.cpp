@@ -336,6 +336,7 @@ psPathPoint* psPath::InsertPoint(iDataConnection *db, int index, const csVector3
 
     if (!pp->Create(db,id))
     {
+        delete pp;
         return NULL;
     }
 
