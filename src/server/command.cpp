@@ -1195,7 +1195,7 @@ csString get_item_modifiers(psItem *item)
         modifiers += stats->GetName ();
     }
     }
-    if (!use_comma) modifiers.Clear();
+    if (!use_comma) modifiers += "none)";
     else modifiers += ")";
     return modifiers;
 }
@@ -1400,7 +1400,7 @@ void com_showinv_item(bool moreiteminfo, psItem *currentitem, const char* slotna
         }
         else
         {
-            output.AppendFmt("(%s) %s\n",slotname, siextra.GetData());
+            output.AppendFmt("(%s) Extra: %s\n",slotname, siextra.GetData());
          //   CPrintf(CON_CMDOUTPUT ,"%s (%s) %s\n",currentitem->GetName(),slotname,
          //   siextra.GetData());
         }
