@@ -32,19 +32,19 @@
 
             <!-- Vitals: numbers -->
             <widget name="HPFrac" factory="pawsTextBox">
-                <frame x="100" y="10" width="240" height="15" border="no" />
+                <frame x="100" y="12" width="240" height="15" border="no" />
                 <text horizAdjust="LEFT" />
             </widget>
             <widget name="ManaFrac" factory="pawsTextBox">
-                <frame x="100" y="55" width="240" height="15" border="no" />
+                <frame x="100" y="57" width="240" height="15" border="no" />
                 <text horizAdjust="LEFT" />
             </widget>
             <widget name="PysStaminaFrac" factory="pawsTextBox">
-                <frame x="100" y="31" width="240" height="15" border="no" />
+                <frame x="100" y="27" width="240" height="15" border="no" />
                 <text horizAdjust="LEFT" />
             </widget>
             <widget name="MenStaminaFrac" factory="pawsTextBox">
-                <frame x="100" y="76" width="240" height="15" border="no"/>
+                <frame x="100" y="72" width="240" height="15" border="no"/>
                 <text horizAdjust="LEFT" />
             </widget>
             <widget name="ExperiencePerc" factory="pawsTextBox" visible="no">
@@ -72,7 +72,7 @@
                 </subscriptions>
             </widget>
             <widget name="PysStaminaBar" factory="pawsProgressBar">
-                <frame x="165" y="26" width="170" height="8" border="no" />
+                <frame x="165" y="26" width="170" height="9" border="no" />
                     <color r="100" g="50" b="50" />
                     <fadecolor r="150" g="75" b="75" />
                 <subscriptions>
@@ -80,7 +80,7 @@
                 </subscriptions>
             </widget>
             <widget name="MenStaminaBar" factory="pawsProgressBar">
-                <frame x="165" y="71" width="170" height="8" border="no" />
+                <frame x="165" y="71" width="170" height="9" border="no" />
                     <color r="50" g="50"  b="150" />
                     <fadecolor r="75" g="75" b="200" />
                 <subscriptions>

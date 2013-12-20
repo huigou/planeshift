@@ -2,7 +2,7 @@
 
 <widget name="BuddyWindow" factory="pawsBuddyWindow" visible="no" savepositions="yes" movable="yes" keepaspect="no" configurable="yes" resizable="yes" style="New Standard GUI">
 
-    <frame x="0" y="100" width="170" height="300" border="yes" />
+    <frame x="0" y="100" width="180" height="300" border="yes" />
     <minframe width="165" height="230" />
     <maxframe width="200" height="860" />
     <title resource="Scaling Title Bar" text="Friends" align="left" close_button="yes" />
@@ -28,12 +28,12 @@
 
         </widget>
 
-    <widget name="BuddyButtons" factory="pawsWidget">
+    <widget name="BuddyButtons" factory="pawsWidget" selectable="0">
     <frame x="0" y="265" width="170" height="30" border="yes" />
 
 
         <widget name="edit" factory="pawsButton" toggle="no" id="4000" style="Scaling Button">
-            <frame x="5" y="5" width="45" height="20" border="yes" />
+            <frame x="5" y="5" width="40" height="20" border="yes" />
             <label text="Edit" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -44,7 +44,7 @@
         </widget>
 
         <widget name="add" factory="pawsButton" toggle="no" id="3000" style="Scaling Button">
-            <frame x="55" y="5" width="45" height="20" border="yes" />
+            <frame x="54" y="5" width="40" height="20" border="yes" />
             <label text="Add" />
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
@@ -55,7 +55,7 @@
         </widget>
 
         <widget name="remove" factory="pawsButton" toggle="no" id="2000" style="Scaling Button">
-            <frame x="105" y="5" width="60" height="20" border="yes" />
+            <frame x="103" y="5" width="60" height="20" border="yes" />
             <label text="Remove" />
 
             <attachpoints>

@@ -15,27 +15,27 @@
 
         <!-- Path Buttons -->
         <widget name="Path 1" factory="pawsButton" id="1001" toggle="true">
-            <frame x="75" y="125" width="130" height="50" />
+            <frame x="65" y="125" width="150" height="50" />
             <bgimage resource="buttonSmallLong" />
         </widget>
         <widget name="Path 2" factory="pawsButton" id="1002" toggle="true">
-            <frame x="210" y="125" width="110" height="50" />
+            <frame x="215" y="125" width="110" height="50" />
             <bgimage resource="buttonSmallLong" />
         </widget>
         <widget name="Path 3" factory="pawsButton" id="1003" toggle="true">
-            <frame x="320" y="125" width="130" height="50" />
+            <frame x="325" y="125" width="140" height="50" />
             <bgimage resource="buttonSmallLong" />
         </widget>
         <widget name="Path 4" factory="pawsButton" id="1004" toggle="true">
-            <frame x="450" y="125" width="90" height="50" />
+            <frame x="465" y="125" width="90" height="50" />
             <bgimage resource="buttonSmallLong" />
         </widget>
         <widget name="Path 5" factory="pawsButton" id="1005" toggle="true">
-            <frame x="540" y="125" width="90" height="50" />
+            <frame x="555" y="125" width="90" height="50" />
             <bgimage resource="buttonSmallLong" />
         </widget>
         <widget name="Path 6" factory="pawsButton" id="1006" toggle="true">
-            <frame x="630" y="125" width="90" height="50" />
+            <frame x="645" y="125" width="90" height="50" />
             <bgimage resource="buttonSmallLong" />
         </widget>
 

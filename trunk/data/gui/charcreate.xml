@@ -48,7 +48,7 @@
             <buttondown resource="maleOn"/>
             <buttongrayup resource="maleOff"/>
             <buttongraydown resource="maleOff"/>
-            <label text="M" y="8"/>
+            <label text="M" x="1" y="8"/>
         </widget>
 
         <widget name="FemaleButton" factory="pawsButton" id="200">
@@ -155,7 +155,7 @@
         </widget>
 
        <widget name="randomName" factory="pawsButton" tooltip="Random name">
-            <frame x="610" y="113" width="120" height="21"/>
+            <frame x="610" y="113" width="125" height="40"/>
             <bgimage resource="buttonDefaultLong" />
             <font name="cupandtalon.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
             <label text="Suggest Name" />
