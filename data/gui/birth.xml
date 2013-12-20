@@ -37,6 +37,7 @@
             <frame x="200" y="150" width="59" height="25" border="no"/>
             <font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <listbox rows="6" height="20" text="" alpha="50"/>
+            <bgimage resource="blackbox" />
         </widget>
 
        <widget name="label" factory="pawsTextBox">
@@ -49,6 +50,7 @@
             <frame x="400" y="150" width="91" height="25" border="no"/>
             <font name="cupandtalon.ttf" r="255" g="255" b="255" size="13" sr="0" sg="0" sb="0" shadow="yes" resizetoscreen="yes" />
             <listbox rows="6" height="25" text="" alpha="100"/>
+            <bgimage resource="blackbox" />
         </widget>
 
         <widget name="label" factory="pawsTextBox">
