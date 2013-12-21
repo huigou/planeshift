@@ -1421,6 +1421,20 @@ void psItem::CancelEquipScript()
     }
 }
 
+const char* psItem::GetModifiersDescription()
+{
+    // script can be in the base_stats or in the itemModifiers
+    ApplicativeScript* script = (itemModifiers->active && itemModifiers->equip_script) ?
+                                itemModifiers->equip_script : base_stats->GetEquipScript();
+    if(!script)
+        return "no script";
+
+    const char* test = script->GetDescription();
+    printf("psItem::GetModifiersDescription() : %s\n",test);
+
+    return test;
+}
+
 bool psItem::CheckStackableWith(const psItem* otheritem, bool precise, bool checkStackCount, bool checkWorld) const
 {
     int i;
@@ -3123,6 +3137,14 @@ bool psItem::SendItemDescription(Client* client)
             armor_type += csString().Format("\n Pierce: %.2f", dmgPierce);
 
         itemInfo += armor_type;
+    }
+
+    // additional modifiers properties
+    if(!identifiable)
+    {
+        const char* description = GetModifiersDescription();
+        printf ("psItem::SendItemDescription: %s\n",description);
+        itemInfo.Append(description);
     }
 
     // Item is a container

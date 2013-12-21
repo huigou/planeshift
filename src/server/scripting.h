@@ -96,6 +96,8 @@ public:
     static ApplicativeScript* Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration);
 
     ActiveSpell* Apply(MathEnvironment* env, bool registerCancelEvent = true);
+    const char* GetDescription();
+
 protected:
     ApplicativeScript();
 

@@ -978,6 +978,8 @@ public:
     void RunEquipScript(gemActor* actor);
     void CancelEquipScript();
 
+    const char* GetModifiersDescription();
+
     /**
      * Check if otheritem is stackable with this item.
      *
