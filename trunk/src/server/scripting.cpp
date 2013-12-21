@@ -1236,7 +1236,7 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
     return asp;
 }
 
-const csString ApplicativeScript::GetDescription()
+const csString& ApplicativeScript::GetDescription()
 {
     if (!description.IsEmpty())
        return description;

@@ -1427,7 +1427,7 @@ const char* psItem::GetModifiersDescription()
     ApplicativeScript* script = (itemModifiers->active && itemModifiers->equip_script) ?
                                 itemModifiers->equip_script : base_stats->GetEquipScript();
     if(!script)
-        return "no script";
+        return "";
 
     return script->GetDescription();
 }
