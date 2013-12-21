@@ -138,7 +138,7 @@ public:
     virtual ~AppliedOp() { }
     virtual bool Load(iDocumentNode* node) = 0;
     virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp) = 0;
-    virtual const char * GetDescription() {
+    virtual const csString GetDescription() {
         return "";
     }
 };
@@ -196,13 +196,13 @@ public:
         return Applied1::Load(node);
     }
 
-    const char* GetDescription()
+    const csString GetDescription()
     {
         csString descr = vital;
         MathEnvironment env;
         float val = value->Evaluate(&env);
         descr.AppendFmt(": %0.1f\n",val);
-        return descr.GetData();
+        return descr;
     }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
@@ -309,13 +309,13 @@ public:
         return Applied1::Load(node);
     }
 
-    const char* GetDescription()
+    const csString GetDescription()
     {
         csString descr = statname;
         MathEnvironment env;
         int val = (int)value->Evaluate(&env);
         descr.AppendFmt(": %d\n",val);
-        return descr.GetData();
+        return descr;
     }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
@@ -347,7 +347,8 @@ public:
 
     bool Load(iDocumentNode* node)
     {
-        psSkillInfo* info = cachemanager->GetSkillByName(node->GetAttributeValue("name"));
+        skillname = node->GetAttributeValue("name");
+        psSkillInfo* info = cachemanager->GetSkillByName(skillname);
         if(!info)
         {
             Error2("Found <skill name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
@@ -355,6 +356,15 @@ public:
         }
         skill = info->id;
         return Applied1::Load(node);
+    }
+
+    const csString GetDescription()
+    {
+        csString descr = skillname;
+        MathEnvironment env;
+        int val = (int)value->Evaluate(&env);
+        descr.AppendFmt(": %d\n",val);
+        return descr;
     }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
@@ -369,6 +379,7 @@ public:
 protected:
     PSSKILL skill;
     CacheManager* cachemanager;
+    csString skillname;             /// < used for description
 };
 
 //----------------------------------------------------------------------------
@@ -408,6 +419,15 @@ public:
     {
         type = node->GetValue();
         return Applied1::Load(node);
+    }
+
+    const csString GetDescription()
+    {
+        csString descr = type;
+        MathEnvironment env;
+        int val = (int)value->Evaluate(&env);
+        descr.AppendFmt(": %d\n",val);
+        return descr;
     }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
@@ -1216,10 +1236,10 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
     return asp;
 }
 
-const char* ApplicativeScript::GetDescription()
+const csString ApplicativeScript::GetDescription()
 {
-    //if (!description.IsEmpty())
-    //   return description.GetData();
+    if (!description.IsEmpty())
+       return description;
 
     csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
     while(it.HasNext())
@@ -1229,7 +1249,7 @@ const char* ApplicativeScript::GetDescription()
     }
     printf("ApplicativeScript::GetDescription() : %s\n",description.GetData());
 
-    return description.GetData();
+    return description;
 }
 
 //============================================================================
