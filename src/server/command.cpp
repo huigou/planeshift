@@ -1188,12 +1188,12 @@ csString get_item_modifiers(psItem *item)
     for (i = 0 ; i < PSITEM_MAX_MODIFIERS ; i++)
     {
         psItemStats* stats = item->GetModifier(i);
-    if (stats)
-    {
-        if (use_comma) modifiers += ", ";
-        use_comma = true;
-        modifiers += stats->GetName ();
-    }
+        if (stats)
+        {
+            if (use_comma) modifiers += ", ";
+            use_comma = true;
+            modifiers += stats->GetName ();
+        }
     }
     if (!use_comma) modifiers += "none)";
     else modifiers += ")";

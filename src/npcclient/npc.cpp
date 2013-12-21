@@ -284,76 +284,99 @@ csString NPC::Info(const csString &infoRequestSubCmd)
 {
     csString output;
 
-    DumpState(output);
-    output.Append("\n");
+    if (infoRequestSubCmd == "all" || infoRequestSubCmd == "summary")
+    {
+        DumpState(output);
+        output.Append("\n");
+    }
 
-    DumpBehaviorList(output);
-    output.Append("\n");
-
-    DumpReactionList(output);
-    output.Append("\n");
-
-    DumpHateList(output);
-    output.Append("\n");
-
-    DumpDebugLog(output);
-    output.Append("\n");
-
-    DumpMemory(output);
-    output.Append("\n");
+    if (infoRequestSubCmd == "all")
+    {
+        DumpBehaviorList(output);
+        output.Append("\n");
+    }
     
-    DumpControlled(output);
-    output.Append("\n");
+    if (infoRequestSubCmd == "all")
+    {
+        DumpReactionList(output);
+        output.Append("\n");
+    }
+    
+    if (infoRequestSubCmd == "all")
+    {
+        DumpHateList(output);
+        output.Append("\n");
+    }
+    
+    if (infoRequestSubCmd == "all")
+    {
+        DumpDebugLog(output);
+        output.Append("\n");
+    }
+    
+    if (infoRequestSubCmd == "all")
+    {
+        DumpMemory(output);
+        output.Append("\n");
+    }
+    
+    if (infoRequestSubCmd == "all")
+    {
+        DumpControlled(output);
+        output.Append("\n");
+    }
+    
+
+    if (infoRequestSubCmd == "old")
+    {
+        // Position and instance
+        {
+            csVector3 pos;
+            iSector* sector;
+            float rot = 0.0;
+            InstanceID instance = INSTANCE_ALL;
+            
+            if(npcActor)
+            {
+                psGameObject::GetPosition(npcActor,pos,rot,sector);
+                instance = npcActor->GetInstance();
+            }
+            output.AppendFmt(" Pos: %s Rot: %.2f Inst: %d\n",
+                             npcActor?toString(pos,sector).GetDataSafe():"(none)", rot, instance);
+        }
+        output.AppendFmt(" DR Counter: %d ", DRcounter);
+        output.AppendFmt("%s\n",disabled?"Disabled ":"");
+        
+        output.AppendFmt(" Active locate: ( Pos: %s Angle: %.1f deg Radius: %.2f WP: %s )\n",
+                         toString(activeLocate->pos,activeLocate->sector).GetDataSafe(),
+                         activeLocate->angle*180/PI,activeLocate->radius,
+                         activeLocate->wp?activeLocate->wp->GetName():"(None)");
+        output.AppendFmt(" Spawn pos: %s\n", toString(spawnPosition,spawnSector).GetDataSafe());
+        if(GetOwner())
+        {
+            output.AppendFmt(" Owner: %s\n",GetOwnerName());
+        }
+        if(GetRegion())
+        {
+            output.AppendFmt(" Region( Name: %s Inside: %s )\n", GetRegion()->GetName(), insideRegion?"Yes":"No");
+        }
+        if(GetTribe())
+        {
+        output.AppendFmt(" Tribe( Name: %s Type: %s Inside home: %s )\n",
+                         GetTribe()->GetName(),GetTribeMemberType().GetDataSafe(),insideTribeHome?"Yes":"No");
+        }
+        if(GetTarget())
+        {
+            output.AppendFmt(" Target: %s\n",GetTarget()->GetName());
+        }
+        output.AppendFmt(" Last perception: '%s'\n",last_perception?last_perception->GetName().GetDataSafe():"(None)");
+        output.AppendFmt(" Fall counter: %d\n", GetFallCounter());
+        output.AppendFmt(" Brain: '%s'\n",GetBrain()->GetName());
+        output.AppendFmt(" Current Behavior: '%s'",GetCurrentBehavior()?GetCurrentBehavior()->GetName():"(None)");
+    }
 
     return output;
 
-    /*
-    csString reply;
-    // Position and instance
-    {
-        csVector3 pos;
-        iSector* sector;
-        float rot;
-        InstanceID instance = INSTANCE_ALL;
-
-        if(npcActor)
-        {
-            psGameObject::GetPosition(npcActor,pos,rot,sector);
-            instance = npcActor->GetInstance();
-        }
-        reply.AppendFmt(" Pos: %s Rot: %.2f Inst: %d\n",
-                        npcActor?toString(pos,sector).GetDataSafe():"(none)", rot, instance);
-    }
-    reply.AppendFmt(" DR Counter: %d ", DRcounter);
-    reply.AppendFmt("%s\n",disabled?"Disabled ":"");
-
-    reply.AppendFmt(" Active locate: ( Pos: %s Angle: %.1f deg Radius: %.2f WP: %s )\n",
-                    toString(activeLocate->pos,activeLocate->sector).GetDataSafe(),
-                    activeLocate->angle*180/PI,activeLocate->radius,
-                    activeLocate->wp?activeLocate->wp->GetName():"(None)");
-    reply.AppendFmt(" Spawn pos: %s\n", toString(spawnPosition,spawnSector).GetDataSafe());
-    if(GetOwner())
-    {
-        reply.AppendFmt(" Owner: %s\n",GetOwnerName());
-    }
-    if(GetRegion())
-    {
-        reply.AppendFmt(" Region( Name: %s Inside: %s )\n", GetRegion()->GetName(), insideRegion?"Yes":"No");
-    }
-    if(GetTribe())
-    {
-        reply.AppendFmt(" Tribe( Name: %s Type: %s Inside home: %s )\n",
-                        GetTribe()->GetName(),GetTribeMemberType().GetDataSafe(),insideTribeHome?"Yes":"No");
-    }
-    if(GetTarget())
-    {
-        reply.AppendFmt(" Target: %s\n",GetTarget()->GetName());
-    }
-    reply.AppendFmt(" Last perception: '%s'\n",last_perception?last_perception->GetName().GetDataSafe():"(None)");
-    reply.AppendFmt(" Fall counter: %d\n", GetFallCounter());
-    reply.AppendFmt(" Brain: '%s'\n",GetBrain()->GetName());
-    reply.AppendFmt(" Current Behavior: '%s'",GetCurrentBehavior()?GetCurrentBehavior()->GetName():"(None)");
-    */
 }
 
 void NPC::Dump()
@@ -872,20 +895,20 @@ void NPC::Disable(bool disable)
 
 void NPC::DumpState(csString &output)
 {
-    csVector3 loc;
+    csVector3 pos;
     iSector* sector;
     float rot = 0.0;
     InstanceID instance = INSTANCE_ALL;
 
     if(npcActor)
     {
-        psGameObject::GetPosition(npcActor,loc,rot,sector);
+        psGameObject::GetPosition(npcActor,pos,rot,sector);
         instance = npcActor->GetInstance();
     }
 
     output.AppendFmt("States for %s (%s)\n", name.GetData(), ShowID(pid));
     output.AppendFmt("---------------------------------------------\n");
-    output.AppendFmt("Position:             %s\n",npcActor?toString(loc,sector).GetDataSafe():"(none)");
+    output.AppendFmt("Position:             %s\n",npcActor?toString(pos,sector).GetDataSafe():"(none)");
     output.AppendFmt("Rotation:             %.2f\n",rot);
     output.AppendFmt("Instance:             %d\n",instance);
     output.AppendFmt("Debugging:            %d\n",GetDebugging());
@@ -921,6 +944,7 @@ void NPC::DumpState(csString &output)
     }
     output.AppendFmt("AutoMemorize:         \"%s\"\n",types.GetDataSafe());
     output.AppendFmt("Brain:                %s\n\n", brain->GetName());
+    output.AppendFmt("Current Behavior:     '%s'",GetCurrentBehavior()?GetCurrentBehavior()->GetName():"(None)");
 
     output.AppendFmt("Locates for %s (%s)\n", name.GetData(), ShowID(pid));
     output.AppendFmt("---------------------------------------------\n");

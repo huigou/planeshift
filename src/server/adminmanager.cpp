@@ -1596,6 +1596,60 @@ csString AdminCmdDataLoadQuest::GetHelpMessage()
     return "Syntax: \"" + command + " <questname>\"";
 }
 
+AdminCmdDataInfo::AdminCmdDataInfo(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
+    : AdminCmdDataTarget("/info", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), subCmd("summary")
+{
+    size_t index = 1;
+
+    // when help is requested, return immediate
+    if(IsHelp(words[index]))
+        return;
+
+    // try to parse the first word for a target
+    if(ParseTarget(msgManager, me, msg, client, words[index]))
+    {
+        index++;
+    }
+    // if first word is not a target and the client has not selected a target
+    else if(!IsTargetType(ADMINCMD_TARGET_CLIENTTARGET) &&
+            !IsTargetType(ADMINCMD_TARGET_STRING))
+    {
+        ParseError(me, "No target given");
+    }
+
+    // /info is allowed
+    if(words.GetCount() == index)
+    {
+        // no action required
+        subCmd = "summary";
+    }
+    else if(words.GetCount() == (index + 1))
+    {
+        if (words[index] == "all" ||
+            words[index] == "summary" ||
+            words[index] == "old")
+        {
+            subCmd = words[index];
+        }
+        else
+        {
+            ParseError(me, csString("Unknown sub command: ") + csString(words[index]));
+        }
+
+    }
+    else
+    {
+        ParseError(me, "Not enough parameters");
+    }
+}
+
+ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataInfo)
+
+csString AdminCmdDataInfo::GetHelpMessage()
+{
+    return "Syntax: \"" + command + " summary|all|help\"";
+}
+
 AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50)
 {
@@ -4282,6 +4336,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataDebugTribe());
     RegisterMsgFactoryFunction(new AdminCmdDataSetStackable());
     RegisterMsgFactoryFunction(new AdminCmdDataLoadQuest());
+    RegisterMsgFactoryFunction(new AdminCmdDataInfo());
     RegisterMsgFactoryFunction(new AdminCmdDataItem());
     RegisterMsgFactoryFunction(new AdminCmdDataKey());
 
@@ -4347,7 +4402,6 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/unban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_DATABASE));
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/banadvisor", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE));
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/unbanadvisor", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE));
-    RegisterMsgFactoryFunction(new AdminCmdDataTarget("/info", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE));
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/charlist", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE));
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/inspect", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET));
     RegisterMsgFactoryFunction(new AdminCmdDataTarget("/npc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_NPC));
@@ -4941,7 +4995,7 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage &msg, AdminCmd
 
 void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataInfo* data = dynamic_cast<AdminCmdDataInfo*>(cmddata);
 
     EID entityId;
     csString sectorName, regionName;
@@ -5169,7 +5223,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cm
             if(client->GetSecurityLevel() >= GM_LEVEL_0)
             {
                 // Queue info request perception (Perception as command to superclient)
-                psserver->GetNPCManager()->QueueInfoRequestPerception(npc, client, "all");
+                psserver->GetNPCManager()->QueueInfoRequestPerception(npc, client, data->subCmd);
             }
             return; // Done
         }
