@@ -139,7 +139,7 @@ public:
     virtual bool Load(iDocumentNode* node) = 0;
     virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp) = 0;
     virtual const char * GetDescription() {
-        return "AppliedOp Description";
+        return "";
     }
 };
 
@@ -155,6 +155,7 @@ public:
 
     bool Load(iDocumentNode* node)
     {
+        printf("DEBUG: value: %s",node->GetAttributeValue("value"));
         value = MathExpression::Create(node->GetAttributeValue("value"));
         return value != NULL;
     }
@@ -193,6 +194,16 @@ public:
     {
         vital = node->GetValue();
         return Applied1::Load(node);
+    }
+
+    const char* GetDescription()
+    {
+        csString descr = vital;
+        MathEnvironment env;
+        float val = value->Evaluate(&env);
+        printf("DEBUG: value1: %d",val);
+        descr.AppendFmt(": %d\n",value->Evaluate(&env));
+        return descr.GetData();
     }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
@@ -1198,7 +1209,9 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
 
 const char* ApplicativeScript::GetDescription()
 {
-    csString description;
+    //if (!description.IsEmpty())
+    //   return description.GetData();
+
     csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
     while(it.HasNext())
     {
