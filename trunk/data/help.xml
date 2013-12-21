@@ -3376,9 +3376,11 @@ Talk as if you are 'name'. Command can be say, shout, or worldshout. If you use 
   </topic>
   <topic name="/info">
    <Contents>
-    <content type="text">/info target
+    <content type="text">/info target [summary|all|help]
 
 Reports available information on an object/NPC/player (may be offline):  player ID from the database, account ID, IP address, total time connected, and item flags/spawn info.  Use this for bug reports about any stuck/glitched item/NPC/player.
+
+Summary and All give GMs possibility to extract different information about NPCs.
     </content>
    </Contents>
   </topic>
