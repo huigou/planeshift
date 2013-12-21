@@ -425,8 +425,8 @@ public:
     {
         csString descr = type;
         MathEnvironment env;
-        int val = (int)value->Evaluate(&env);
-        descr.AppendFmt(": %d\n",val);
+        float val = value->Evaluate(&env);
+        descr.AppendFmt(": %0.2f\n",val);
         return descr;
     }
 
