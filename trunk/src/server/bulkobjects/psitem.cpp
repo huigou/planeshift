@@ -1429,10 +1429,7 @@ const char* psItem::GetModifiersDescription()
     if(!script)
         return "no script";
 
-    const char* test = script->GetDescription();
-    printf("psItem::GetModifiersDescription() : %s\n",test);
-
-    return test;
+    return script->GetDescription();
 }
 
 bool psItem::CheckStackableWith(const psItem* otheritem, bool precise, bool checkStackCount, bool checkWorld) const
@@ -3144,6 +3141,7 @@ bool psItem::SendItemDescription(Client* client)
     {
         const char* description = GetModifiersDescription();
         printf ("psItem::SendItemDescription: %s\n",description);
+        itemInfo += "\n";
         itemInfo.Append(description);
     }
 
