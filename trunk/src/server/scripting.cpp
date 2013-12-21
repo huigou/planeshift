@@ -138,6 +138,9 @@ public:
     virtual ~AppliedOp() { }
     virtual bool Load(iDocumentNode* node) = 0;
     virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp) = 0;
+    virtual const char * GetDescription() {
+        return "AppliedOp Description";
+    }
 };
 
 /// A base class with a "value" attribute backed by a MathExpression.
@@ -1191,6 +1194,20 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
     }
 
     return asp;
+}
+
+const char* ApplicativeScript::GetDescription()
+{
+    csString description;
+    csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
+    while(it.HasNext())
+    {
+        AppliedOp* op = it.Next();
+        description += op->GetDescription();
+    }
+    printf("ApplicativeScript::GetDescription() : %s\n",description.GetData());
+
+    return description.GetData();
 }
 
 //============================================================================
