@@ -1175,6 +1175,47 @@ public:
 
 /** @brief Class for commands creating items.
  */
+class AdminCmdDataInfo : public AdminCmdDataTarget
+{
+public:
+    csString subCmd; ///< Sub of commands
+
+    /** @brief Creates obj for specified command that needs a reason.
+     */
+    AdminCmdDataInfo()
+        : AdminCmdDataTarget("/info", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), subCmd("summary")
+    {};
+    
+    /** @brief Parses the given message and stores its data.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     */
+    AdminCmdDataInfo(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    virtual ~AdminCmdDataInfo()
+    {};
+
+     /** @brief Creates an object of the current class containing parsed data.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+     */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+
+    /** @brief Returns a helpmessage that fits to the parser of the class.
+     * @return csString: a help message to send back to the client
+     */
+    virtual csString GetHelpMessage();
+};
+
+/** @brief Class for commands creating items.
+ */
 class AdminCmdDataItem : public AdminCmdDataTarget
 {
 public:
