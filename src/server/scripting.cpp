@@ -201,8 +201,7 @@ public:
         csString descr = vital;
         MathEnvironment env;
         float val = value->Evaluate(&env);
-        printf("DEBUG: value1: %d",val);
-        descr.AppendFmt(": %d\n",value->Evaluate(&env));
+        descr.AppendFmt(": %0.1f\n",val);
         return descr.GetData();
     }
 
@@ -288,26 +287,35 @@ public:
 
     bool Load(iDocumentNode* node)
     {
-        csString type(node->GetValue());
-        if(type == "agi")
+        statname = node->GetValue();
+        if(statname == "agi")
             stat = PSITEMSTATS_STAT_AGILITY;
-        else if(type == "end")
+        else if(statname == "end")
             stat = PSITEMSTATS_STAT_ENDURANCE;
-        else if(type == "str")
+        else if(statname == "str")
             stat = PSITEMSTATS_STAT_STRENGTH;
-        else if(type == "cha")
+        else if(statname == "cha")
             stat = PSITEMSTATS_STAT_CHARISMA;
-        else if(type == "int")
+        else if(statname == "int")
             stat = PSITEMSTATS_STAT_INTELLIGENCE;
-        else if(type == "wil")
+        else if(statname == "wil")
             stat = PSITEMSTATS_STAT_WILL;
         else
         {
-            Error2("StatsAOp doesn't know what to do with <%s> tag.", type.GetData());
+            Error2("StatsAOp doesn't know what to do with <%s> tag.", statname.GetData());
             return false;
         }
 
         return Applied1::Load(node);
+    }
+
+    const char* GetDescription()
+    {
+        csString descr = statname;
+        MathEnvironment env;
+        int val = (int)value->Evaluate(&env);
+        descr.AppendFmt(": %d\n",val);
+        return descr.GetData();
     }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
@@ -322,6 +330,7 @@ public:
 
 protected:
     PSITEMSTATS_STAT stat; ///< which stat we're actually buffing
+    csString statname;     ///< used for description
 };
 
 //----------------------------------------------------------------------------
