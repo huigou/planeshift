@@ -1339,10 +1339,17 @@ public:
     {
         return mount;
     }
+    
     void SetMount(psCharacter* newMount)
     {
         mount = newMount;
     }
+
+    bool IsMounted()
+    {
+        return (mount != NULL);
+    }
+    
 
     PSCHARACTER_MODE GetMode()
     {

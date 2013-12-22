@@ -1626,8 +1626,9 @@ AdminCmdDataInfo::AdminCmdDataInfo(AdminManager* msgManager, MsgEntry* me, psAdm
     else if(words.GetCount() == (index + 1))
     {
         if (words[index] == "all" ||
-            words[index] == "summary" ||
-            words[index] == "old")
+            words[index] == "old" ||  // For now keep old output format with this option.
+            words[index] == "pet" ||
+            words[index] == "summary")
         {
             subCmd = words[index];
         }
@@ -1647,7 +1648,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataInfo)
 
 csString AdminCmdDataInfo::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " summary|all|help\"";
+    return "Syntax: \"" + command + " all|old|pet|summary\"";
 }
 
 AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
@@ -5222,6 +5223,11 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cm
 
             if(client->GetSecurityLevel() >= GM_LEVEL_0)
             {
+                if (npcChar->IsPet() && (data->subCmd == "all" || data->subCmd == "pet"))
+                {
+                    psserver->GetNPCManager()->PetInfo(client, npcChar);
+                }                
+
                 // Queue info request perception (Perception as command to superclient)
                 psserver->GetNPCManager()->QueueInfoRequestPerception(npc, client, data->subCmd);
             }

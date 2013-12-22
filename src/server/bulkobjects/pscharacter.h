@@ -901,15 +901,28 @@ public:
     }
 
     /**
-     * Set the last login time for the character in the format YYYY-MM-DD HH:MM:SS.
+     * Set the last login time for the character.
      */
-    void SetLastLoginTime(const char* last_login = NULL, bool save = true);
+    void SetLastLoginTime();
 
     /**
      * Retrive the last login time in the format YYYY-MM-DD HH:MM:SS.
      */
     csString GetLastLoginTime() const;
 
+    /**
+     * Set the elapsed time for pets.
+     */
+    void SetPetElapsedTime(double elapsedTime);
+
+    /**
+     * Retrive the elapsed time for pets.
+     */
+    double GetPetElapsedTime() const;
+
+    /**
+     * Set the name of the spouse.
+     */
     void SetSpouseName(const char* name);
 
     /**
@@ -1778,7 +1791,9 @@ protected:
     unsigned int timeconnected;
     csTicks startTimeThisSession;
 
-    csString lastlogintime;///< String value copied from the database containing the last login time
+    csString lastLoginTime;///< String value copied from the database containing the last login time
+    double petElapsedTime;
+    double lastSavedPetElapsedTime; ///< Store time for when the petElapsedTime was last saved to db.
 
     psMoney money;                                          ///< Current cash set on player.
     psMoney bankMoney;                                      ///< Money stored in the players bank account.
