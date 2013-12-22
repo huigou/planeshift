@@ -28,12 +28,12 @@ pawsStyles::pawsStyles(iObjectRegistry* objectReg)
     this->objectReg = objectReg;
 }
 
-bool pawsStyles::LoadStyles(const csString & fileName)
+bool pawsStyles::LoadStyles(const csString &fileName)
 {
-    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( objectReg);
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS > (objectReg);
     assert(vfs);
     csRef<iDataBuffer> buff = vfs->ReadFile(fileName);
-    if (buff == NULL)
+    if(buff == NULL)
     {
         Error2("Could not find file: %s", fileName.GetData());
         return false;
@@ -43,27 +43,27 @@ bool pawsStyles::LoadStyles(const csString & fileName)
     assert(xml);
     csRef<iDocument> doc = xml->CreateDocument();
     assert(doc);
-    const char* error = doc->Parse( buff );
-    if ( error )
+    const char* error = doc->Parse(buff);
+    if(error)
     {
         Error3("Parse error in %s: %s", fileName.GetData(), error);
         return false;
     }
     csRef<iDocumentNode> root = doc->GetRoot();
-    if (root == NULL) return false;
+    if(root == NULL) return false;
     csRef<iDocumentNode> topNode = root->GetNode("styles");
-    if (topNode == NULL)
+    if(topNode == NULL)
     {
         Error2("Missing <styles> tag in %s", fileName.GetData());
         return false;
     }
-    
+
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes("style");
-    while (iter->HasNext())
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> styleNode = iter->Next();
         csString name = styleNode->GetAttributeValue("name");
-        if (styles.In(csString(name)))
+        if(styles.In(csString(name)))
         {
             // This is not an error anymore.  Custom skins can and should supercede standard styles.
             //Error2("Warning: PAWS style '%s' defined more than once", name.GetData());
@@ -71,7 +71,7 @@ bool pawsStyles::LoadStyles(const csString & fileName)
         else
             styles.Put(csString(name), styleNode);
     }
-    
+
     InheritStyles();
     return true;
 }
@@ -79,9 +79,9 @@ bool pawsStyles::LoadStyles(const csString & fileName)
 void pawsStyles::InheritStyles()
 {
     STRING_HASH(bool) alreadyInh, beingInh;
-    
+
     STRING_HASH(csRef<iDocumentNode>)::GlobalIterator iter = styles.GetIterator();
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         csRef<iDocumentNode> style = iter.Next();
         beingInh.DeleteAll(); // this needs to be emptied for each recursive run
@@ -93,21 +93,21 @@ void pawsStyles::InheritFromParent(iDocumentNode* style, STRING_HASH(bool) & alr
 {
     csString name = style->GetAttributeValue("name");
     csString inherit = style->GetAttributeValue("inherit");
-    
-    if (inherit.IsEmpty())  // nothing to inherit from
+
+    if(inherit.IsEmpty())   // nothing to inherit from
         return;
 
-    if (beingInh.In(csString(name)))
+    if(beingInh.In(csString(name)))
     {
         Error1("Error: cyclic inheritance in PAWS styles !");
         return;
     }
-    
+
     beingInh.Put(csString(name), true);
     csRef <iDocumentNode> parent = styles.Get(csString(inherit), NULL);
-    if (parent != NULL)
+    if(parent != NULL)
     {
-        if (!alreadyInh.In(csString(inherit)))
+        if(!alreadyInh.In(csString(inherit)))
             InheritFromParent(parent, alreadyInh, beingInh);
         ApplyStyle(parent, style);
     }
@@ -116,19 +116,19 @@ void pawsStyles::InheritFromParent(iDocumentNode* style, STRING_HASH(bool) & alr
     alreadyInh.Put(csString(name), true);
 }
 
-void pawsStyles::ApplyStyle(const char * style, iDocumentNode * target)
+void pawsStyles::ApplyStyle(const char* style, iDocumentNode* target)
 {
-    if (!style)
+    if(!style)
         return;
 
-    iDocumentNode * styleXML = styles.Get(style, NULL);
-    if (styleXML != NULL)
+    iDocumentNode* styleXML = styles.Get(style, NULL);
+    if(styleXML != NULL)
         ApplyStyle(styleXML, target);
     else
         Error2("Error: PAWS style %s not found", style);
 }
 
-void pawsStyles::ApplyStyle(iDocumentNode * style, iDocumentNode * target)
+void pawsStyles::ApplyStyle(iDocumentNode* style, iDocumentNode* target)
 {
     CopyXMLNode(style, target, 3);
 }

@@ -53,14 +53,14 @@
     10. Font support by control
 */
 pawsMultilineEditTextBox::pawsMultilineEditTextBox() : cursorPosition(0),
-                                                       cursorLine(0),
-                                                       blink(true),
-                                                       vScrollBarWidth(VSCROLLBAR_WIDTH),
-                                                       topLine(0),
-                                                       vScrollBar(NULL),
-                                                       maxLen(0),
-                                                       spellChecked(false),
-                                                       typoColour(0xFF0000)
+    cursorLine(0),
+    blink(true),
+    vScrollBarWidth(VSCROLLBAR_WIDTH),
+    topLine(0),
+    vScrollBar(NULL),
+    maxLen(0),
+    spellChecked(false),
+    typoColour(0xFF0000)
 {
     factory = "pawsMultilineEditTextBox";
     clock = csQueryRegistry<iVirtualClock > (PawsManager::GetSingleton().GetObjectRegistry());
@@ -76,34 +76,34 @@ pawsMultilineEditTextBox::pawsMultilineEditTextBox() : cursorPosition(0),
     spellChecker = csQueryRegistryOrLoad<iSpellChecker>(PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.planeshift.spellchecker");
 }
 
-pawsMultilineEditTextBox::pawsMultilineEditTextBox(const pawsMultilineEditTextBox& origin)
-                        :pawsWidget(origin),
-                         clock(origin.clock),
-                         cursorPosition(origin.cursorPosition),
-                         cursorLine(origin.cursorLine),
-                         cursorLoc(origin.cursorLoc),
-                         blink(origin.blink),
-                         blinkTicks(origin.blinkTicks),
-                         text(origin.text),
-                         lineHeight(origin.lineHeight),
-                         vScrollBarWidth(origin.vScrollBarWidth),
-                         canDrawLines(origin.canDrawLines),
-                         topLine(origin.topLine),
-                         usingScrollBar(origin.usingScrollBar),
-                         maxWidth(origin.maxWidth),
-                         maxHeight(origin.maxHeight),
-                         yPos(origin.yPos),
-                         tmp(origin.tmp),
-                         maxLen(origin.maxLen),
-                         spellChecker(origin.spellChecker),
-                         spellChecked(origin.spellChecked),
-                         typoColour(origin.typoColour),
-                         lineTypos(origin.lineTypos)
+pawsMultilineEditTextBox::pawsMultilineEditTextBox(const pawsMultilineEditTextBox &origin)
+    :pawsWidget(origin),
+     clock(origin.clock),
+     cursorPosition(origin.cursorPosition),
+     cursorLine(origin.cursorLine),
+     cursorLoc(origin.cursorLoc),
+     blink(origin.blink),
+     blinkTicks(origin.blinkTicks),
+     text(origin.text),
+     lineHeight(origin.lineHeight),
+     vScrollBarWidth(origin.vScrollBarWidth),
+     canDrawLines(origin.canDrawLines),
+     topLine(origin.topLine),
+     usingScrollBar(origin.usingScrollBar),
+     maxWidth(origin.maxWidth),
+     maxHeight(origin.maxHeight),
+     yPos(origin.yPos),
+     tmp(origin.tmp),
+     maxLen(origin.maxLen),
+     spellChecker(origin.spellChecker),
+     spellChecked(origin.spellChecked),
+     typoColour(origin.typoColour),
+     lineTypos(origin.lineTypos)
 {
-    for (unsigned int i= 0 ; i < origin.lineInfo.GetSize(); i++)
+    for(unsigned int i= 0 ; i < origin.lineInfo.GetSize(); i++)
         lineInfo.Push(new MessageLine(*origin.lineInfo[i]));
     vScrollBar = 0;
-    for (unsigned int i = 0 ; i < origin.children.GetSize();i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.vScrollBar == origin.children[i])
             vScrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
@@ -128,114 +128,114 @@ bool pawsMultilineEditTextBox::OnKeyDown(utf32_char code, utf32_char key, int mo
 
     switch(key)
     {
-    case CSKEY_DEL:
-    {
-        position = GetCursorPosition(cursorLine, cursorLoc);
-        if(text.Length() > 0 && position < text.Length())
+        case CSKEY_DEL:
         {
-            text.DeleteAt(position, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position));
-            changed = true;
-        }
-        break;
-    }
-    case CSKEY_BACKSPACE:
-    {
-        position = GetCursorPosition(cursorLine, cursorLoc);
-        if(text.Length() > 0 && position > 0)//&& position <=text.Length())
-        {
-            position -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + position, position);
-            text.DeleteAt(position, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position));
-            repositionCursor = true;
-            changed = true;
-        }
-        break;
-    }
-    case CSKEY_LEFT:
-        position = GetCursorPosition(cursorLine, cursorLoc);
-        if(cursorLoc > 0)
-            cursorLoc -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + position, position);
-        else if(cursorLine > 0)
-        {
-            cursorLine--;
-            cursorLoc = lineInfo[cursorLine]->lineLength - 1;
+            position = GetCursorPosition(cursorLine, cursorLoc);
+            if(text.Length() > 0 && position < text.Length())
+            {
+                text.DeleteAt(position, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position));
+                changed = true;
+            }
             break;
         }
-        break;
-    case CSKEY_RIGHT:
-        position = GetCursorPosition(cursorLine, cursorLoc);
-        if(cursorLoc < lineInfo[cursorLine]->lineLength-lineInfo[cursorLine]->lineExtra)
+        case CSKEY_BACKSPACE:
         {
-            cursorLoc += csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position);
+            position = GetCursorPosition(cursorLine, cursorLoc);
+            if(text.Length() > 0 && position > 0)//&& position <=text.Length())
+            {
+                position -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + position, position);
+                text.DeleteAt(position, csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position));
+                repositionCursor = true;
+                changed = true;
+            }
+            break;
         }
-        else if(cursorLine < lineInfo.GetSize()-1)
+        case CSKEY_LEFT:
+            position = GetCursorPosition(cursorLine, cursorLoc);
+            if(cursorLoc > 0)
+                cursorLoc -= csUnicodeTransform::UTF8Rewind((const utf8_char*)text.GetData() + position, position);
+            else if(cursorLine > 0)
+            {
+                cursorLine--;
+                cursorLoc = lineInfo[cursorLine]->lineLength - 1;
+                break;
+            }
+            break;
+        case CSKEY_RIGHT:
+            position = GetCursorPosition(cursorLine, cursorLoc);
+            if(cursorLoc < lineInfo[cursorLine]->lineLength-lineInfo[cursorLine]->lineExtra)
+            {
+                cursorLoc += csUnicodeTransform::UTF8Skip((const utf8_char*)text.GetData() + position, text.Length() - position);
+            }
+            else if(cursorLine < lineInfo.GetSize()-1)
+            {
+                cursorLine++;
+                cursorLoc = 0;
+            }
+            else if(cursorLine == lineInfo.GetSize() - 1 && cursorLoc == lineInfo[cursorLine]->lineLength - 1)
+            {
+                //the case for the very last line, we allow to go to after the last character
+                cursorLoc++;
+            }
+            break;
+        case CSKEY_UP:
         {
-            cursorLine++;
+            if(cursorLine > 0)
+                cursorLine--;
+            if(cursorLoc > lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra)
+                cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
+            break;
+        }
+        case CSKEY_DOWN:
+        {
+            if(cursorLine < lineInfo.GetSize() - 1)
+                cursorLine++;
+            if(cursorLoc > lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra)
+                cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
+            break;
+        }
+        case CSKEY_END:
+        {
+            cursorLoc = lineInfo[cursorLine]->lineLength-lineInfo[cursorLine]->lineExtra;
+            break;
+        }
+        case CSKEY_HOME:
+        {
             cursorLoc = 0;
-        }
-        else if(cursorLine == lineInfo.GetSize() - 1 && cursorLoc == lineInfo[cursorLine]->lineLength - 1)
-        {
-          //the case for the very last line, we allow to go to after the last character
-           cursorLoc++;
-        }
-        break;
-    case CSKEY_UP:
-    {
-        if(cursorLine > 0)
-            cursorLine--;
-        if(cursorLoc > lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra)
-            cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
-        break;
-    }
-    case CSKEY_DOWN:
-    {
-        if(cursorLine < lineInfo.GetSize() - 1)
-            cursorLine++;
-        if(cursorLoc > lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra)
-            cursorLoc = lineInfo[cursorLine]->lineLength - lineInfo[cursorLine]->lineExtra;
-        break;
-    }
-    case CSKEY_END:
-    {
-        cursorLoc = lineInfo[cursorLine]->lineLength-lineInfo[cursorLine]->lineExtra;
-        break;
-    }
-    case CSKEY_HOME:
-    {
-        cursorLoc = 0;
-        break;
-    }
-    default:
-        if(CSKEY_IS_SPECIAL(key))
             break;
-
-        // Ignore ASCII control characters
-        if(key < 128 && !isprint(key) && key != CSKEY_ENTER)
-            break;
-        if(maxLen && text.Length() == maxLen)
-            break;
-
-        //Lookup the position.
-        position = GetCursorPosition(cursorLine, cursorLoc);
-        if(key == CSKEY_ENTER)
-        {
-            //our text flow algorithm will then break this into two lines.
-            text.Insert(position, '\n');
-            cursorLine++;
-            cursorLoc = 0;
         }
-        else
-        {
-            utf8_char utf8Char[5];
+        default:
+            if(CSKEY_IS_SPECIAL(key))
+                break;
 
-            int charLen = csUnicodeTransform::UTF32to8(utf8Char, 5, &key, 1);
-            text.Insert(position, (char *)utf8Char);
-            if(maxLen)
-                text.Truncate(maxLen);
-            repositionCursor = true;
-            position += charLen - 1;
-        }
+            // Ignore ASCII control characters
+            if(key < 128 && !isprint(key) && key != CSKEY_ENTER)
+                break;
+            if(maxLen && text.Length() == maxLen)
+                break;
 
-        changed = true;
+            //Lookup the position.
+            position = GetCursorPosition(cursorLine, cursorLoc);
+            if(key == CSKEY_ENTER)
+            {
+                //our text flow algorithm will then break this into two lines.
+                text.Insert(position, '\n');
+                cursorLine++;
+                cursorLoc = 0;
+            }
+            else
+            {
+                utf8_char utf8Char[5];
+
+                int charLen = csUnicodeTransform::UTF32to8(utf8Char, 5, &key, 1);
+                text.Insert(position, (char*)utf8Char);
+                if(maxLen)
+                    text.Truncate(maxLen);
+                repositionCursor = true;
+                position += charLen - 1;
+            }
+
+            changed = true;
     }
 
     if(changed)
@@ -244,7 +244,7 @@ bool pawsMultilineEditTextBox::OnKeyDown(utf32_char code, utf32_char key, int mo
         LayoutText();
 
         if(repositionCursor)
-           GetCursorLocation(position, cursorLine, cursorLoc);
+            GetCursorLocation(position, cursorLine, cursorLoc);
 
         if(subscribedVar)
             PawsManager::GetSingleton().Publish(subscribedVar, text);
@@ -339,7 +339,7 @@ bool pawsMultilineEditTextBox::OnMouseDown(int button, int modifiers, int x, int
 
 
 #if defined(CS_PLATFORM_UNIX) && defined(INCLUDE_CLIPBOARD)
-    if (button == csmbMiddle)
+    if(button == csmbMiddle)
     {
         // Only included for platforms using Middle button to past.
 
@@ -351,25 +351,25 @@ bool pawsMultilineEditTextBox::OnMouseDown(int button, int modifiers, int x, int
 #endif
 
 
-    return pawsWidget::OnMouseDown( button, modifiers, x ,y);
+    return pawsWidget::OnMouseDown(button, modifiers, x ,y);
 }
 
-bool pawsMultilineEditTextBox::OnClipboard( const csString& content )
+bool pawsMultilineEditTextBox::OnClipboard(const csString &content)
 {
     Debug2(LOG_PAWS, 0, "Received from clipboard: %s", content.GetDataSafe());
 
     size_t position = GetCursorPosition(cursorLine, cursorLoc);
-    if ( position >= text.Length() )
+    if(position >= text.Length())
     {
-        text.Append( content );
+        text.Append(content);
     }
     else
     {
-        text.Insert( position, content );
+        text.Insert(position, content);
     }
 
     if(maxLen)
-        text.Truncate( maxLen );
+        text.Truncate(maxLen);
     position += content.Length();
 
     LayoutText();
@@ -381,7 +381,7 @@ bool pawsMultilineEditTextBox::OnClipboard( const csString& content )
         topLine = cursorLine;
     SetupScrollBar();
 
-    if (subscribedVar)
+    if(subscribedVar)
     {
         PawsManager::GetSingleton().Publish(subscribedVar, text);
     }
@@ -455,7 +455,7 @@ void pawsMultilineEditTextBox::CalcMouseClick(int x, int y, size_t &cursorLine, 
 }
 
 
-void pawsMultilineEditTextBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
+void pawsMultilineEditTextBox::OnUpdateData(const char* /*dataname*/, PAWSData &value)
 {
     // This is called automatically whenever subscribed data is published.
     SetText(value.GetStr(), false);
@@ -465,7 +465,7 @@ bool pawsMultilineEditTextBox::OnScroll(int /*direction*/, pawsScrollBar* widget
 {
     topLine = (int)widget->GetCurrentValue();
     // if spellchecking is enabled we need to check now as the visible part of the text might have changed
-    if (spellChecked)
+    if(spellChecked)
     {
         checkSpelling();
     }
@@ -582,7 +582,7 @@ void pawsMultilineEditTextBox::LayoutText()
     PushLineInfo(tempString.Length(), totalCount, 0);
 
     // text layout changed...so checking spelling
-    if (spellChecked)
+    if(spellChecked)
     {
         checkSpelling();
     }
@@ -613,7 +613,7 @@ void pawsMultilineEditTextBox::Draw()
             DrawWidgetText(tmp, (int)screenFrame.xmin, (int)(screenFrame.ymin + yPos * lineHeight), -1, GetFontColour(), line-topLine);
             yPos++;
         }
-     }
+    }
 
     if(blink && hasFocus) // Draw the cursor
     {
@@ -622,15 +622,15 @@ void pawsMultilineEditTextBox::Draw()
         size_t realHeight = lineHeight * (cursorLine - topLine);
 
         graphics2D->DrawLine((float)(screenFrame.xmin + width + 1),
-            (float)(screenFrame.ymin + realHeight),
-            (float)(screenFrame.xmin + width + 1),
-            (float)(screenFrame.ymin + realHeight + lineHeight),
-            GetFontColour());
+                             (float)(screenFrame.ymin + realHeight),
+                             (float)(screenFrame.xmin + width + 1),
+                             (float)(screenFrame.ymin + realHeight + lineHeight),
+                             GetFontColour());
     }
 
 }
 
-void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t y, int style, int fg, int visLine)
+void pawsMultilineEditTextBox::DrawWidgetText(const char* text, size_t x, size_t y, int style, int fg, int visLine)
 {
     csRef<iFont> font = GetFont();
     if(style == -1)
@@ -647,7 +647,7 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
         if(style & FONT_STYLE_DROPSHADOW)
         {
             graphics2D->GetRGB(GetFontShadowColour(), r, g, b);
-            if (spellChecked && spellChecker)
+            if(spellChecked && spellChecker)
             {
                 drawTextSpellChecked(font, (int) x + 2, (int) y + 2, graphics2D->FindRGB(r, g, b, a), text, visLine);
             }
@@ -658,7 +658,7 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
         }
         graphics2D->GetRGB(GetFontColour(), r, g, b);
         // if spellchecking is enabled we need to use drawTextSpellChecked for the different colours
-        if (spellChecked && spellChecker)
+        if(spellChecked && spellChecker)
         {
             drawTextSpellChecked(font, (int) x, (int) y, graphics2D->FindRGB(r, g, b, a), text, visLine);
         }
@@ -671,7 +671,7 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
     {
         if(style & FONT_STYLE_DROPSHADOW)
         {
-            if (spellChecked && spellChecker)
+            if(spellChecked && spellChecker)
             {
                 drawTextSpellChecked(font, (int) x+2, (int) y+2, GetFontShadowColour(), text, visLine);
             }
@@ -681,7 +681,7 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
             }
         }
         // if spellchecking is enabled we need to use drawTextSpellChecked for the different colours
-        if (spellChecked && spellChecker)
+        if(spellChecked && spellChecker)
         {
             drawTextSpellChecked(font, (int) x, (int) y, fg, text, visLine);
         }
@@ -692,14 +692,14 @@ void pawsMultilineEditTextBox::DrawWidgetText(const char *text, size_t x, size_t
     }
 }
 
-void pawsMultilineEditTextBox::drawTextSpellChecked(iFont *font, int x, int y, int fg, csString str, int visLine)
+void pawsMultilineEditTextBox::drawTextSpellChecked(iFont* font, int x, int y, int fg, csString str, int visLine)
 {
     int wordStart = 0;
-    for (size_t i = 0; i < lineTypos[visLine].GetSize(); i++)
+    for(size_t i = 0; i < lineTypos[visLine].GetSize(); i++)
     {
         // first we find out what colour we need for this word
         int color;
-        if (lineTypos[visLine][i].correct)
+        if(lineTypos[visLine][i].correct)
         {
             // no type, just use the colour I got
             color = fg;
@@ -720,14 +720,14 @@ void pawsMultilineEditTextBox::drawTextSpellChecked(iFont *font, int x, int y, i
         graphics2D->Write(font, x, y, color, -1, tmp.GetDataSafe());
         // and advance x to the start of the next word
         int textWidth, textHeight;
-        font->GetDimensions( tmp.GetDataSafe(), textWidth, textHeight );
+        font->GetDimensions(tmp.GetDataSafe(), textWidth, textHeight);
         x += textWidth;
         // and also advance to the start of the next word
         wordStart = wordEnd;
     }
 }
 
-bool pawsMultilineEditTextBox::SelfPopulate(iDocumentNode *node)
+bool pawsMultilineEditTextBox::SelfPopulate(iDocumentNode* node)
 {
     if(node->GetAttributeValue("text"))
     {
@@ -769,10 +769,10 @@ bool pawsMultilineEditTextBox::Setup(iDocumentNode* node)
         // should the spellchecekr be used for this instance of the widget?
         spellChecked = settingNode->GetAttributeValueAsBool("enable", false);
         // What colour should we use for typos?
-        int r = settingNode->GetAttributeValueAsInt( "r", 255 );
-        int g = settingNode->GetAttributeValueAsInt( "g", 0 );
-        int b = settingNode->GetAttributeValueAsInt( "b", 0 );
-        typoColour = graphics2D->FindRGB( r, g, b );
+        int r = settingNode->GetAttributeValueAsInt("r", 255);
+        int g = settingNode->GetAttributeValueAsInt("g", 0);
+        int b = settingNode->GetAttributeValueAsInt("b", 0);
+        typoColour = graphics2D->FindRGB(r, g, b);
     }
 
     return true;
@@ -828,7 +828,7 @@ void pawsMultilineEditTextBox::GetLineRelative(size_t pos, size_t &start, size_t
 {
     size_t count = 0;
 
-    for(size_t i = 0; i < lineInfo.GetSize();i++)
+    for(size_t i = 0; i < lineInfo.GetSize(); i++)
     {
         count = lineInfo[i]->breakLine - lineInfo[i]->lineExtra;
         if(pos <= count)
@@ -867,7 +867,7 @@ csString pawsMultilineEditTextBox::GetLine(size_t lineNumber)
 size_t pawsMultilineEditTextBox::GetCursorPosition()
 {
     size_t count = 0;
-    for(size_t i = 0; i < cursorLine;i++)
+    for(size_t i = 0; i < cursorLine; i++)
     {
         size_t pos = lineInfo[i]->lineLength;
         count += pos;
@@ -894,16 +894,16 @@ void pawsMultilineEditTextBox::GetCursorLocation(size_t pos, size_t &destLine, s
     GetLineRelative(pos, start, end);
     for(size_t i = 0; i < lineInfo.GetSize(); i++)
     {
-       //Adjustment for wordwrap so final character is not exceeded by the cursor
-       if((pos > (lineInfo[i]->breakLine - lineInfo[i]->lineExtra)) && (i + 1 < lineInfo.GetSize()))
-       {
-          destLine++;
-       }
-       else
-       {
-           destCursor = pos - start;
-           return;
-       }
+        //Adjustment for wordwrap so final character is not exceeded by the cursor
+        if((pos > (lineInfo[i]->breakLine - lineInfo[i]->lineExtra)) && (i + 1 < lineInfo.GetSize()))
+        {
+            destLine++;
+        }
+        else
+        {
+            destCursor = pos - start;
+            return;
+        }
     }
 }
 
@@ -918,7 +918,7 @@ void pawsMultilineEditTextBox::SetMaxLength(unsigned int maxlen)
 void pawsMultilineEditTextBox::checkSpelling()
 {
     // of course we only want to do this if the spellchecker plugin exists
-    if (spellChecker)
+    if(spellChecker)
     {
         //clear the array with the boundries of the typos for each text line
         lineTypos.Empty();
@@ -941,7 +941,7 @@ void pawsMultilineEditTextBox::checkSpelling()
                 csString tmpString;
                 size_t oldSpace = 0;
                 size_t foundSpace = curLine.Find(" ", oldSpace);
-                while (foundSpace != (size_t)-1)
+                while(foundSpace != (size_t)-1)
                 {
                     curLine.SubString(tmpString, oldSpace, foundSpace-oldSpace);
                     // now do the spellchecking
@@ -956,7 +956,7 @@ void pawsMultilineEditTextBox::checkSpelling()
                 // now do the spellchecking
                 tmpWord.correct = spellChecker->correct(tmpString);
                 tmpWord.endPos = curLine.Length();
-                if (tmpWord.endPos > 0)
+                if(tmpWord.endPos > 0)
                 {
                     // save only if the word contains something
                     tmpLine.Push(tmpWord);

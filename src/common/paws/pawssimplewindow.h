@@ -27,7 +27,7 @@
  * @{ */
 
 /**
- * This is meant as a blank window that can be used for windows that are completely 
+ * This is meant as a blank window that can be used for windows that are completely
  * specified through data (some combination of scripts and pub/subs).
  */
 class pawsSimpleWindow : public pawsWidget

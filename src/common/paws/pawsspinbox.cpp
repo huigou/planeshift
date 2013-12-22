@@ -38,9 +38,9 @@ struct SpinBoxTimerEvent : public scfImplementation1<SpinBoxTimerEvent,iTimerEve
 
     virtual ~SpinBoxTimerEvent() {}
 
-    virtual bool Perform(iTimerEvent *ev)
+    virtual bool Perform(iTimerEvent* ev)
     {
-        if (spinbox)
+        if(spinbox)
             return spinbox->Perform(ev);
         return false;
     }
@@ -63,7 +63,7 @@ pawsSpinBox::pawsSpinBox()
 
 }
 
-pawsSpinBox::pawsSpinBox(const pawsSpinBox& origin)
+pawsSpinBox::pawsSpinBox(const pawsSpinBox &origin)
     :pawsWidget(origin),
      globalTimer(origin.globalTimer),
      spinCounter(origin.spinCounter),
@@ -76,14 +76,14 @@ pawsSpinBox::pawsSpinBox(const pawsSpinBox& origin)
     upButton = 0;
     text = 0;
     timerEvent = new SpinBoxTimerEvent(this);
-    
-    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+
+    for(unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
     {
         if(origin.downButton == origin.children[i])
             downButton = dynamic_cast<pawsButton*>(children[i]);
         else if(origin.upButton == origin.children[i])
             upButton = dynamic_cast<pawsButton*>(children[i]);
-        else if (origin.text == origin.children[i])
+        else if(origin.text == origin.children[i])
             text = dynamic_cast<pawsEditTextBox*>(children[i]);
 
         if(downButton!=0 && upButton != 0 && text != 0) break;
@@ -96,7 +96,7 @@ pawsSpinBox::~pawsSpinBox()
 
 bool pawsSpinBox::Perform(iTimerEvent* /*ev*/)
 {
-    if (spinState)
+    if(spinState)
     {
         Spin();
         spinCounter++;
@@ -106,10 +106,10 @@ bool pawsSpinBox::Perform(iTimerEvent* /*ev*/)
     return false;
 }
 
-bool pawsSpinBox::Setup( iDocumentNode* node )
+bool pawsSpinBox::Setup(iDocumentNode* node)
 {
-    csRef<iDocumentNode> textNode = node->GetNode( "number" );
-    if ( !textNode )
+    csRef<iDocumentNode> textNode = node->GetNode("number");
+    if(!textNode)
     {
         Error2("%s XML is defined incorrectly. No <number /> tag found", name.GetData());
         return false;
@@ -119,110 +119,110 @@ bool pawsSpinBox::Setup( iDocumentNode* node )
     csString Min(textNode->GetAttributeValue("min"));
     csString Max(textNode->GetAttributeValue("max"));
     csString Inc(textNode->GetAttributeValue("inc"));
-    
-    return ManualSetup( val, atof(Min.GetData()), atof(Max.GetData()), atof(Inc.GetData()), pos );
+
+    return ManualSetup(val, atof(Min.GetData()), atof(Max.GetData()), atof(Inc.GetData()), pos);
 }
 
 
-bool pawsSpinBox::ManualSetup( csString& value, float Min, float Max, float Inc, csString& pos )
+bool pawsSpinBox::ManualSetup(csString &value, float Min, float Max, float Inc, csString &pos)
 {
-     
+
     upButton   = new pawsButton;
-    AddChild( upButton );
+    AddChild(upButton);
     downButton = new pawsButton;
-    AddChild( downButton );
+    AddChild(downButton);
 
     csRect buttonsRect;
     csRect textRect;
-    
-    if ( pos == "left" )    
+
+    if(pos == "left")
     {
-        buttonsRect = csRect( defaultFrame.Width()-16, 0, 
-                              defaultFrame.Width(), defaultFrame.Height());
-                              
-        textRect   = csRect(  0, 4, defaultFrame.Width() - 16, defaultFrame.Height() );
-    }
-    
-    if ( pos == "right" )    
-    {
-        buttonsRect = csRect( 4, 0, 
-                              20, defaultFrame.Height() );
-                              
-        textRect   = csRect(  22, 4, defaultFrame.Width()-16, defaultFrame.Height() );
+        buttonsRect = csRect(defaultFrame.Width()-16, 0,
+                             defaultFrame.Width(), defaultFrame.Height());
+
+        textRect   = csRect(0, 4, defaultFrame.Width() - 16, defaultFrame.Height());
     }
 
-    upButton->SetRelativeFrame( buttonsRect.xmin, buttonsRect.ymin,
-                                buttonsRect.Width(), buttonsRect.Height()/2 );
+    if(pos == "right")
+    {
+        buttonsRect = csRect(4, 0,
+                             20, defaultFrame.Height());
+
+        textRect   = csRect(22, 4, defaultFrame.Width()-16, defaultFrame.Height());
+    }
+
+    upButton->SetRelativeFrame(buttonsRect.xmin, buttonsRect.ymin,
+                               buttonsRect.Width(), buttonsRect.Height()/2);
     upButton->SetUpImage("SpinUp");
     upButton->SetToggle(false);
     upButton->PostSetup();
 
-    downButton->SetRelativeFrame( buttonsRect.xmin, buttonsRect.ymin + buttonsRect.Height()/2,
-                                  buttonsRect.Width(), buttonsRect.Height()/2 );
+    downButton->SetRelativeFrame(buttonsRect.xmin, buttonsRect.ymin + buttonsRect.Height()/2,
+                                 buttonsRect.Width(), buttonsRect.Height()/2);
     downButton->SetUpImage("SpinDown");
     downButton->SetToggle(false);
     downButton->PostSetup();
-     
-    
+
+
     // Create the textbox that has the value
     csString str(value);
-    
+
     text = new pawsEditTextBox;
-    AddChild( text );
+    AddChild(text);
 
     // Puts the box at the edge of the text box widget
-    text->SetRelativeFrame( textRect.xmin, textRect.ymin,
-                            textRect.Width(), textRect.Height() );
+    text->SetRelativeFrame(textRect.xmin, textRect.ymin,
+                           textRect.Width(), textRect.Height());
     text->PostSetup();
     text->SetText(str);
-    text->SetID( id );
+    text->SetID(id);
 
     min = Min;
     max = Max;
     inc = Inc;
 
-    return true;     
+    return true;
 }
 
-void pawsSpinBox::SetRange (float Min, float Max, float Inc)
+void pawsSpinBox::SetRange(float Min, float Max, float Inc)
 {
     min = Min;
     max = Max;
     inc = Inc;
 }
 
-bool pawsSpinBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsSpinBox::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
 {
-    if (mouseButton == 4)
+    if(mouseButton == 4)
     {
         SetValue(GetValue() + inc);
-	parent->OnChange(this);
+        parent->OnChange(this);
         return true;
     }
-    else if (mouseButton == 5)
+    else if(mouseButton == 5)
     {
         SetValue(GetValue() - inc);
-	parent->OnChange(this);
+        parent->OnChange(this);
         return true;
     }
-    
-    if (widget == upButton)
+
+    if(widget == upButton)
     {
         spinState    = SPIN_UP;
         spinCounter = 0;
         globalTimer->AddTimerEvent(timerEvent,SPIN_START_DELAY);
         Spin();
     }
-    else if (widget == downButton)
+    else if(widget == downButton)
     {
         spinState    = SPIN_DOWN;
         spinCounter = 0;
         globalTimer->AddTimerEvent(timerEvent,SPIN_START_DELAY);
         Spin();
     }
-    
-    if ( parent ) 
-        return parent->OnButtonPressed( mouseButton, keyModifier, this );
+
+    if(parent)
+        return parent->OnButtonPressed(mouseButton, keyModifier, this);
 
     return false;
 }
@@ -233,9 +233,9 @@ void pawsSpinBox::Spin()
     float speed;
 
     // make the increments larger after some time
-    if (spinCounter>40)
+    if(spinCounter>40)
         speed = 10.0f;
-    else if (spinCounter>20)
+    else if(spinCounter>20)
         speed = 5.0f;
     else
         speed = 1.0f;
@@ -243,15 +243,15 @@ void pawsSpinBox::Spin()
     float val = atof(text->GetText());
 
     // calculate new value
-    if (spinState==SPIN_UP)
+    if(spinState==SPIN_UP)
         val += inc * speed;
-    else if (spinState==SPIN_DOWN)
+    else if(spinState==SPIN_DOWN)
         val -= inc * speed;
 
     // make sure the value is valid
-    if (val < min)
+    if(val < min)
         val = min;
-    if (val > max)
+    if(val > max)
         val = max;
 
     SetValue(val);
@@ -259,21 +259,21 @@ void pawsSpinBox::Spin()
 }
 
 
-void pawsSpinBox::OnLostFocus() 
+void pawsSpinBox::OnLostFocus()
 {
     // check if the value in the editbox is valid and
     // change it if necessary
     float val = GetValue();
-    if (val < min)
+    if(val < min)
         val = min;
-    if (val > max)
+    if(val > max)
         val = max;
     SetValue(val);
 
     // Convert the LostFocus to an OnChange.
     //  Since OnLostFocus() gives no information about which child lost focus
     //   it can be difficult for a parent to handle properly
-    if (parent)
+    if(parent)
     {
         parent->OnChange(this);
         parent->OnLostFocus();
@@ -281,17 +281,17 @@ void pawsSpinBox::OnLostFocus()
 }
 
 
-bool pawsSpinBox::OnButtonReleased( int button, int keyModifier, pawsWidget* widget)
+bool pawsSpinBox::OnButtonReleased(int button, int keyModifier, pawsWidget* widget)
 {
-    if ( widget == upButton || widget == downButton )
-    {    
+    if(widget == upButton || widget == downButton)
+    {
         spinState    = SPIN_STOP;
         spinCounter = 0;
         globalTimer->RemoveTimerEvent(timerEvent);
     }
 
-    if ( parent ) 
-        return parent->OnButtonReleased( button, keyModifier,widget );
+    if(parent)
+        return parent->OnButtonReleased(button, keyModifier,widget);
 
     return false;
 }

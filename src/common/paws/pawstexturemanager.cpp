@@ -44,38 +44,38 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsTextureManager::pawsTextureManager( iObjectRegistry* object )
+pawsTextureManager::pawsTextureManager(iObjectRegistry* object)
 {
     objectReg = object;
 
-    vfs =  csQueryRegistry<iVFS > ( objectReg);
+    vfs =  csQueryRegistry<iVFS > (objectReg);
     xml.AttachNew(new csTinyDocumentSystem);
 }
 
 pawsTextureManager::~pawsTextureManager()
 {
 }
-    
-bool pawsTextureManager::LoadImageList( const char* listName )
-{ 
-    Debug2(LOG_PAWS, 0, "Texture Manager parsing %s", listName);
-    csRef<iDataBuffer> buff = vfs->ReadFile( listName );
 
-    if ( !buff || !buff->GetSize() )
+bool pawsTextureManager::LoadImageList(const char* listName)
+{
+    Debug2(LOG_PAWS, 0, "Texture Manager parsing %s", listName);
+    csRef<iDataBuffer> buff = vfs->ReadFile(listName);
+
+    if(!buff || !buff->GetSize())
     {
         return false;
     }
 
     csRef<iDocument> doc = xml->CreateDocument();
-    const char* error = doc->Parse( buff );
-    if ( error )
+    const char* error = doc->Parse(buff);
+    if(error)
     {
         Error3("Error %s in %s", error, listName);
         return false;
     }
-    
+
     csRef<iDocumentNode> root = doc->GetRoot();
-    if (!root)
+    if(!root)
     {
         Error2("XML error in %s", listName);
         return false;
@@ -86,33 +86,33 @@ bool pawsTextureManager::LoadImageList( const char* listName )
     {
         Error2("Missing tag <image_list> in %s", listName);
         return false;
-    }   
-    
+    }
+
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
-    while ( iter->HasNext() )
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> node = iter->Next();
 
-        if ( node->GetType() != CS_NODE_ELEMENT )
+        if(node->GetType() != CS_NODE_ELEMENT)
             continue;
 
-        if (elementList.Contains(node->GetAttributeValue("resource")))
+        if(elementList.Contains(node->GetAttributeValue("resource")))
             continue;
 
         csRef<iPawsImage> element;
-        if (!strcmp(node->GetValue(), "image"))
+        if(!strcmp(node->GetValue(), "image"))
             element.AttachNew(new pawsImageDrawable(node));
-        else if (!strcmp(node->GetValue(), "frame"))
+        else if(!strcmp(node->GetValue(), "frame"))
             element.AttachNew(new pawsFrameDrawable(node));
         else
-            Error2("Illegal node name in imagelist.xml: %s", node->GetValue() );
+            Error2("Illegal node name in imagelist.xml: %s", node->GetValue());
 
         if(element.IsValid())
             AddPawsImage(element);
     }
 
-    return true;     
+    return true;
 }
 
 bool pawsTextureManager::AddImage(const char* resource)
@@ -127,17 +127,17 @@ bool pawsTextureManager::AddImage(const char* resource)
     return false;
 }
 
-void pawsTextureManager::Remove( const char* resource )
+void pawsTextureManager::Remove(const char* resource)
 {
     elementList.DeleteAll(resource);
 }
 
-csPtr<iPawsImage> pawsTextureManager::GetPawsImage(const char * name)
+csPtr<iPawsImage> pawsTextureManager::GetPawsImage(const char* name)
 {
     return csPtr<iPawsImage>(elementList.Get(name, 0));
 }
 
-csPtr<iPawsImage> pawsTextureManager::GetOrAddPawsImage(const char * name)
+csPtr<iPawsImage> pawsTextureManager::GetOrAddPawsImage(const char* name)
 {
     csRef<iPawsImage> image = elementList.Get(name, 0);
     if(!image.IsValid()) //if the image wasn't found
@@ -156,7 +156,7 @@ csPtr<iPawsImage> pawsTextureManager::GetOrAddPawsImage(const char * name)
 }
 
 
-void pawsTextureManager::AddPawsImage(csRef<iPawsImage>& element)
+void pawsTextureManager::AddPawsImage(csRef<iPawsImage> &element)
 {
     // printf("Adding pawsImage called %s\n", element->GetName() );
     elementList.Put(element->GetName(), element);

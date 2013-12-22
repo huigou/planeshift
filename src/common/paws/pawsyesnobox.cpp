@@ -44,11 +44,11 @@ pawsYesNoBox::pawsYesNoBox()
     noButton  = 0;
 }
 
-pawsYesNoBox::pawsYesNoBox(const pawsYesNoBox& origin)
-                :pawsWidget(origin),
-                handler(origin.handler),
-                owner(origin.owner),
-                useCustomIDs(origin.useCustomIDs)
+pawsYesNoBox::pawsYesNoBox(const pawsYesNoBox &origin)
+    :pawsWidget(origin),
+     handler(origin.handler),
+     owner(origin.owner),
+     useCustomIDs(origin.useCustomIDs)
 
 {
     notify = 0;
@@ -56,7 +56,7 @@ pawsYesNoBox::pawsYesNoBox(const pawsYesNoBox& origin)
     noButton = 0;
     text = 0;
 
-    for (unsigned int i = 0 ; i< origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i< origin.children.GetSize(); i++)
     {
         if(origin.text == origin.children[i])
             text = dynamic_cast<pawsMultiLineTextBox*>(children[i]);
@@ -76,14 +76,14 @@ pawsYesNoBox::~pawsYesNoBox()
 bool pawsYesNoBox::PostSetup()
 {
     text = dynamic_cast<pawsMultiLineTextBox*>(FindWidget("Message Box"));
-    if ( !text )
+    if(!text)
     {
         Error1("Error in pawsYesNoBox PostSetup");
         return false;
     }
 
     yesButton = FindWidget("YesButton");
-    noButton = FindWidget("NoButton"); 
+    noButton = FindWidget("NoButton");
     return true;
 }
 
@@ -93,75 +93,75 @@ void pawsYesNoBox::Hide()
     useCustomIDs = false;
 
     if(PawsManager::GetSingleton().GetModalWidget() == this)
-        PawsManager::GetSingleton().SetModalWidget( 0 );
+        PawsManager::GetSingleton().SetModalWidget(0);
 
     // Reset the ID's back to defaults
 
     SetID();
 }
 
-void pawsYesNoBox::SetID( int yes, int no )
+void pawsYesNoBox::SetID(int yes, int no)
 {
     useCustomIDs = true;
 
-    if ( yesButton ) yesButton->SetID( yes );
-    if ( noButton )  noButton->SetID( no );
+    if(yesButton) yesButton->SetID(yes);
+    if(noButton)  noButton->SetID(no);
 }
 
-void pawsYesNoBox::SetText( const char* newtext )
+void pawsYesNoBox::SetText(const char* newtext)
 {
     //text->Clear();
-    text->SetText( newtext );
+    text->SetText(newtext);
 }
 
-void pawsYesNoBox::SetNotify( pawsWidget* widget )
+void pawsYesNoBox::SetNotify(pawsWidget* widget)
 {
     notify = widget;
 }
 
-bool pawsYesNoBox::OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget )
-{    
+bool pawsYesNoBox::OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* widget)
+{
     // The parent is responsible for handling the button presses.
-    if ( notify )
+    if(notify)
     {
         bool result = notify->OnButtonReleased(mouseButton, keyModifier, widget);
         SetNotify(0);
         Hide();
         return result;
     }
-    else if ( handler )
+    else if(handler)
     {
-        if ( widget == yesButton )
-            handler( true , owner );
+        if(widget == yesButton)
+            handler(true , owner);
         else
-            handler( false, owner );
+            handler(false, owner);
         Hide();
         return true;
-    }        
-    
+    }
+
     return false;
 }
 
-void pawsYesNoBox::SetCallBack( YesNoResponseFunc handler , void* owner, const char* text )
+void pawsYesNoBox::SetCallBack(YesNoResponseFunc handler , void* owner, const char* text)
 {
     this->handler = handler;
     this->owner = owner;
-    
-    if (text == NULL)
+
+    if(text == NULL)
         text = "";
-    SetText( text );    
+    SetText(text);
 }
 
-pawsYesNoBox * pawsYesNoBox::Create(pawsWidget * notify, const csString & text,
-                                    int yesID, int noID)
+pawsYesNoBox* pawsYesNoBox::Create(pawsWidget* notify, const csString &text,
+                                   int yesID, int noID)
 {
-    pawsYesNoBox* dialog = dynamic_cast <pawsYesNoBox*> (PawsManager::GetSingleton().FindWidget("YesNoWindow"));
-    dialog->SetNotify( notify );
-    dialog->SetText( PawsManager::GetSingleton().Translate(text) );
-    dialog->SetID( yesID, noID );
+    pawsYesNoBox* dialog = dynamic_cast <pawsYesNoBox*>(PawsManager::GetSingleton().FindWidget("YesNoWindow"));
+    dialog->SetNotify(notify);
+    dialog->SetText(PawsManager::GetSingleton().Translate(text));
+    dialog->SetID(yesID, noID);
     dialog->Show();
-    PawsManager::GetSingleton().SetModalWidget( dialog );
-    dialog->MoveTo( (PawsManager::GetSingleton().GetGraphics2D()->GetWidth() - dialog->GetActualWidth(512) ) / 2,
-                       (PawsManager::GetSingleton().GetGraphics2D()->GetHeight() - dialog->GetActualHeight(256))/2 );
+    PawsManager::GetSingleton().SetModalWidget(dialog);
+    dialog->MoveTo((PawsManager::GetSingleton().GetGraphics2D()->GetWidth() - dialog->GetActualWidth(512)) / 2,
+                   (PawsManager::GetSingleton().GetGraphics2D()->GetHeight() - dialog->GetActualHeight(256))/2);
     return dialog;
 }

@@ -35,7 +35,7 @@ pawsKeySelectBox::~pawsKeySelectBox()
 {
 }
 
-pawsKeySelectBox::pawsKeySelectBox(const pawsKeySelectBox& origin)
+pawsKeySelectBox::pawsKeySelectBox(const pawsKeySelectBox &origin)
     :pawsWidget(origin),
      text(origin.text),
      key(origin.key),
@@ -54,12 +54,12 @@ bool pawsKeySelectBox::Setup(iDocumentNode* /*node*/)
 void pawsKeySelectBox::Draw()
 {
     pawsWidget::Draw();
-    DrawWidgetText((const char *)text, screenFrame.xmin + textX, screenFrame.ymin + textY);   
+    DrawWidgetText((const char*)text, screenFrame.xmin + textX, screenFrame.ymin + textY);
 }
 
 bool pawsKeySelectBox::OnKeyDown(utf32_char keyCode, utf32_char /*keyChar*/, int modifiers)
 {
-    if (!CSKEY_IS_MODIFIER(keyCode))
+    if(!CSKEY_IS_MODIFIER(keyCode))
         SetKey(keyCode, modifiers);
     return true;
 }
@@ -70,65 +70,65 @@ void pawsKeySelectBox::SetKey(int _key, int _modifiers)
     key = _key;
 
     text.Clear();
-    if (modifiers != 0)
+    if(modifiers != 0)
     {
-        if (modifiers & CSMASK_CTRL)
+        if(modifiers & CSMASK_CTRL)
             text = "Ctrl + ";
-        if (modifiers & CSMASK_ALT)
+        if(modifiers & CSMASK_ALT)
             text += "Alt + ";
-        if (modifiers & CSMASK_SHIFT)
+        if(modifiers & CSMASK_SHIFT)
             text += "Shift + ";
     }
 
     csKeyModifiers mods;
     memset(&mods, 0, sizeof(mods));
     text += csInputDefinition::GetKeyString(
-	PawsManager::GetSingleton().GetEventNameRegistry (), key, &mods, true);
+                PawsManager::GetSingleton().GetEventNameRegistry(), key, &mods, true);
     CalcTextPos();
 }
 
-const char * pawsKeySelectBox::GetText() const
+const char* pawsKeySelectBox::GetText() const
 {
     return text;
 }
 
-void pawsKeySelectBox::SetText(const char * keyText)
+void pawsKeySelectBox::SetText(const char* keyText)
 {
     text = keyText;
-    if (text.IsEmpty())
+    if(text.IsEmpty())
     {
         SetKey(0,0);
         return;
     }
 
     size_t spaceChar;
-    while ((spaceChar = text.FindFirst(' ')) > 0)
+    while((spaceChar = text.FindFirst(' ')) > 0)
         text.DeleteAt(spaceChar);
 
     utf32_char keyCode;
     utf32_char cookedCode;
     csKeyModifiers mods;
 
-    if (!csInputDefinition::ParseKey(PawsManager::GetSingleton().GetEventNameRegistry (),
-	  text, &keyCode, &cookedCode, &mods))
+    if(!csInputDefinition::ParseKey(PawsManager::GetSingleton().GetEventNameRegistry(),
+                                    text, &keyCode, &cookedCode, &mods))
     {
         SetKey(0,0);
         return;
     }
 
     modifiers = 0;
-    if (mods.modifiers[csKeyModifierTypeAlt] != 0)
+    if(mods.modifiers[csKeyModifierTypeAlt] != 0)
         modifiers |= CSMASK_ALT;
-    if (mods.modifiers[csKeyModifierTypeCtrl] != 0)
+    if(mods.modifiers[csKeyModifierTypeCtrl] != 0)
         modifiers |= CSMASK_CTRL;
-    if (mods.modifiers[csKeyModifierTypeShift] != 0)
+    if(mods.modifiers[csKeyModifierTypeShift] != 0)
         modifiers |= CSMASK_SHIFT;
 
     SetKey(keyCode, modifiers);
 }
 
 int pawsKeySelectBox::GetBorderStyle()
-{ 
+{
     return BORDER_SUNKEN;
 }
 

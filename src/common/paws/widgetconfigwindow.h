@@ -42,18 +42,23 @@ class WidgetConfigWindow : public pawsWidget
 public:
 
     WidgetConfigWindow();
-    virtual ~WidgetConfigWindow(){};
+    virtual ~WidgetConfigWindow() {};
 
     bool PostSetup();
-    bool OnScroll( int direction, pawsScrollBar* widget );
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+    bool OnScroll(int direction, pawsScrollBar* widget);
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
     /** Restores the settings of the widget being configured to their previous values.
      */
     void restoreSettings();
     /** Overrides the pawsWidget Close() in order to restore settings and null out
      *  the widget being configured.
      */
-    void Close() { restoreSettings(); configWidget = NULL; Hide(); }
+    void Close()
+    {
+        restoreSettings();
+        configWidget = NULL;
+        Hide();
+    }
 
     void SetConfigurableWidget(pawsWidget* w);
 
@@ -65,14 +70,14 @@ private:
     float    oldFadeSpeed;
     bool     oldFadeStatus;
     bool     oldFontStatus;
-    
+
     /// current values
     float   currentMinAlpha;
     float   currentMaxAlpha;
     float   currentFadeSpeed;
     bool    currentFadeStatus;
     bool    currentFontStatus;
-    
+
     /// The scrollbar for adjusting the min Alpha of a window
     pawsScrollBar*        scrollBarMinAlpha;
     pawsProgressBar*    progressBarMinAlpha;
@@ -84,8 +89,8 @@ private:
     /// The scrollbar for adjusting the fadespeed of a window
     pawsScrollBar*        scrollBarFadeSpeed;
     pawsProgressBar*    progressBarFadeSpeed;
-    
-    /// OK/Cancel buttons 
+
+    /// OK/Cancel buttons
     pawsButton*            buttonOK;
     pawsButton*            buttonCancel;
     pawsButton*            buttonApply;
@@ -102,10 +107,10 @@ private:
     pawsTextBox*        textFadeSpeedPct;   // current fade value in %
 
     /// pointer to the widget that will have it's settings changed
-    pawsWidget*    configWidget;  
+    pawsWidget*    configWidget;
 };
 
-CREATE_PAWS_FACTORY( WidgetConfigWindow );
+CREATE_PAWS_FACTORY(WidgetConfigWindow);
 
 
 /** @} */

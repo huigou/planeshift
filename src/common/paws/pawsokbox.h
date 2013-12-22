@@ -41,28 +41,28 @@ class pawsOkBox : public pawsWidget
 public:
 
     pawsOkBox();
-    pawsOkBox(const pawsOkBox& origin);
+    pawsOkBox(const pawsOkBox &origin);
     virtual ~pawsOkBox();
 
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
-    void SetNotify( pawsWidget* widget );
-    
-    bool PostSetup();
-    void SetText( const char* text );
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+    void SetNotify(pawsWidget* widget);
 
-   
+    bool PostSetup();
+    void SetText(const char* text);
+
+
 private:
 
     pawsMultiLineTextBox* text;
-    
-    pawsWidget* okButton;    
+
+    pawsWidget* okButton;
     pawsWidget* notify;
 };
 
-CREATE_PAWS_FACTORY( pawsOkBox );
+CREATE_PAWS_FACTORY(pawsOkBox);
 
 /** @} */
 
-#endif 
+#endif
 
 

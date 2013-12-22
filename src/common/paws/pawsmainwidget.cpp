@@ -43,11 +43,11 @@
 pawsMainWidget::pawsMainWidget()
 {
     screenFrame = csRect(0,0,graphics2D->GetWidth(),graphics2D->GetHeight());
-    if ( !LoadGUIKeys( "/this/data/guikeys.xml" ) )
+    if(!LoadGUIKeys("/this/data/guikeys.xml"))
         Error1("Failed to load GUI keys");
 
     clipRect = csRect(0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
-        alpha = -1;
+    alpha = -1;
 
     needsRender = true;
 }
@@ -60,24 +60,24 @@ pawsMainWidget::~pawsMainWidget()
 bool pawsMainWidget::OnKeyDown(utf32_char keyCode, utf32_char /*key*/, int modifiers)
 {
     pawsScriptKey* found = 0;
-    
-    for ( size_t x = 0; x < keys.GetSize(); x++ )
+
+    for(size_t x = 0; x < keys.GetSize(); x++)
     {
-        if ( keys[x]->key.codeRaw == (utf32_char)keyCode &&
-             csKeyEventHelper::GetModifiersBits( keys[x]->key.modifiers ) == (uint32)modifiers )
+        if(keys[x]->key.codeRaw == (utf32_char)keyCode &&
+                csKeyEventHelper::GetModifiersBits(keys[x]->key.modifiers) == (uint32)modifiers)
         {
-            found = keys[x];             
+            found = keys[x];
             break;
         }
     }
-             
 
-    if ( found )
+
+    if(found)
     {
-        pawsWidget* widget = FindWidget( found->widgetName );
-        if ( widget )
+        pawsWidget* widget = FindWidget(found->widgetName);
+        if(widget)
         {
-            widget->PerformAction( found->action );
+            widget->PerformAction(found->action);
             return true;
         }
     }
@@ -101,15 +101,15 @@ bool pawsMainWidget::OnDoubleClick(int /*button*/, int /*keyModifier*/, int /*x*
 }
 
 
-bool pawsMainWidget::LoadGUIKeys( const char* guiKeyFile )
+bool pawsMainWidget::LoadGUIKeys(const char* guiKeyFile)
 {
-    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS > (PawsManager::GetSingleton().GetObjectRegistry());
 
-    csRef<iDataBuffer> buf = vfs->ReadFile( guiKeyFile );
+    csRef<iDataBuffer> buf = vfs->ReadFile(guiKeyFile);
     csRef<iDocumentSystem> xml;
     xml.AttachNew(new csTinyDocumentSystem);
 
-    if ( !buf || !buf->GetSize() )
+    if(!buf || !buf->GetSize())
     {
         return false;
     }
@@ -118,52 +118,52 @@ bool pawsMainWidget::LoadGUIKeys( const char* guiKeyFile )
     if(!doc)
         return false;
 
-    const char* error = doc->Parse( buf );
-    
-    if ( error )
+    const char* error = doc->Parse(buf);
+
+    if(error)
     {
-        Error2("Error in XML: %s\n", error );
+        Error2("Error in XML: %s\n", error);
         return false;
     }
-    
+
     csRef<iDocumentNode> root = doc->GetRoot();
-    if ( !root ) return false;
+    if(!root) return false;
 
     csRef<iDocumentNode> topNode = root->GetNode("keys");
-    if ( !topNode ) 
+    if(!topNode)
     {
-        Error2("Missing <keys> tag in %s",guiKeyFile); 
+        Error2("Missing <keys> tag in %s",guiKeyFile);
         return false;
     }
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
-    
-    while ( iter->HasNext() )
+
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> node = iter->Next();
 
-        if ( strcmp( node->GetValue(), "key" ) == 0 )
+        if(strcmp(node->GetValue(), "key") == 0)
         {
-        
-            pawsScriptKey * key = new pawsScriptKey;
-            
-        const char* keyvalue = node->GetAttributeValue ("key");
-        csInputDefinition::ParseKey ( PawsManager::GetSingleton().GetEventNameRegistry (),
-	    keyvalue, &(key->key.codeRaw), &(key->key.codeCooked), &(key->key.modifiers) );
-                        
+
+            pawsScriptKey* key = new pawsScriptKey;
+
+            const char* keyvalue = node->GetAttributeValue("key");
+            csInputDefinition::ParseKey(PawsManager::GetSingleton().GetEventNameRegistry(),
+                                        keyvalue, &(key->key.codeRaw), &(key->key.codeCooked), &(key->key.modifiers));
+
             key->widgetName = node->GetAttributeValue("widgetname");
             key->action     = node->GetAttributeValue("action");
 
-            keys.Push( key ); 
+            keys.Push(key);
         }
     }
-    
+
     return true;
 }
 
 void pawsMainWidget::ApplyWindowSettingsOnChildren(pawsWidget* caller, int alphaMin, int alphaMax, float fadeSpeed, bool fade, bool scaleFont)
 {
-    for (size_t z = 0; z < children.GetSize(); z++ )
+    for(size_t z = 0; z < children.GetSize(); z++)
     {
         pawsWidget* wdg = children[z];
         if(wdg->IsConfigurable())

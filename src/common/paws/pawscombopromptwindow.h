@@ -35,8 +35,8 @@ class ComboWrapper;
 class iOnItemChosenAction
 {
 public:
-    virtual void OnItemChosen(const char *name,int param,int itemNum, const csString & itemText) = 0;
-        // can be -1
+    virtual void OnItemChosen(const char* name,int param,int itemNum, const csString &itemText) = 0;
+    // can be -1
     virtual ~iOnItemChosenAction() {};
 };
 
@@ -48,8 +48,8 @@ public:
     {
         SetRelativeFrameSize(width, height);
     }
-    ComboWrapper(){};
-    ComboWrapper(const ComboWrapper& origin)
+    ComboWrapper() {};
+    ComboWrapper(const ComboWrapper &origin)
         :pawsWidget(origin)
     {
     }
@@ -66,40 +66,40 @@ public:
         return true;
     }
 
-    pawsComboBox * combo;
+    pawsComboBox* combo;
 };
 CREATE_PAWS_FACTORY(ComboWrapper);
-/** 
- * pawsComboPromptWindow is window that lets the user choose item from combo box 
+/**
+ * pawsComboPromptWindow is window that lets the user choose item from combo box
  */
 class pawsComboPromptWindow : public pawsPromptWindow
 {
 public:
     pawsComboPromptWindow();
-    pawsComboPromptWindow(const pawsComboPromptWindow& origin);
+    pawsComboPromptWindow(const pawsComboPromptWindow &origin);
     //from pawsWidget:
     virtual bool PostSetup();
     virtual void Close();
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
-    
-    void NewOption(const csString & text);
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+
+    void NewOption(const csString &text);
     void Select(int optionNum);
-    
-    void SetAction(iOnItemChosenAction * action,const char *name, int param) 
-    { 
-        this->action = action; 
+
+    void SetAction(iOnItemChosenAction* action,const char* name, int param)
+    {
+        this->action = action;
         this->name   = name;
         this->param  = param;
     }
 
-    static pawsComboPromptWindow * Create(const csString & label, iOnItemChosenAction * action,const char*name, int param=0);
-    
+    static pawsComboPromptWindow* Create(const csString &label, iOnItemChosenAction* action,const char* name, int param=0);
+
 protected:
-    iOnItemChosenAction * action;
+    iOnItemChosenAction* action;
     csString name;
     int param;
 
-    ComboWrapper * wrapper;
+    ComboWrapper* wrapper;
 };
 
 CREATE_PAWS_FACTORY(pawsComboPromptWindow);

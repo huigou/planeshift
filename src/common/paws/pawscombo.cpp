@@ -34,42 +34,42 @@ pawsComboBox::pawsComboBox():
     useScrollBar(true),rows(0),rowHeight(0),listalpha(0),sorted(true)
 {
     factory = "pawsComboBox";
-    
+
     upButton = "Up Arrow";
     downButton = "Down Arrow";
     upButtonPressed = "Up Arrow Highlight";
     downButtonPressed = "Down Arrow Highlight";
 }
 
-pawsComboBox::pawsComboBox(const pawsComboBox& origin)
-                :pawsWidget(origin),
-                itemChoice(NULL),
-                listChoice(NULL),
-                arrow(NULL),
-                initalText(origin.initalText),
-                oldHeight(origin.oldHeight),
-                oldWidth(origin.oldWidth),
-                closed(origin.closed),
-                fliptotop(origin.fliptotop),
-                useScrollBar(origin.useScrollBar),
-                rows(origin.rows),
-                rowHeight(origin.rowHeight),
-                listalpha(origin.listalpha),
-                sorted(origin.sorted),
-                text(origin.text),
-                upButton(origin.upButton),
-                upButtonPressed(origin.upButtonPressed),
-                downButton(origin.downButton),
-                downButtonPressed(origin.downButtonPressed)
+pawsComboBox::pawsComboBox(const pawsComboBox &origin)
+    :pawsWidget(origin),
+     itemChoice(NULL),
+     listChoice(NULL),
+     arrow(NULL),
+     initalText(origin.initalText),
+     oldHeight(origin.oldHeight),
+     oldWidth(origin.oldWidth),
+     closed(origin.closed),
+     fliptotop(origin.fliptotop),
+     useScrollBar(origin.useScrollBar),
+     rows(origin.rows),
+     rowHeight(origin.rowHeight),
+     listalpha(origin.listalpha),
+     sorted(origin.sorted),
+     text(origin.text),
+     upButton(origin.upButton),
+     upButtonPressed(origin.upButtonPressed),
+     downButton(origin.downButton),
+     downButtonPressed(origin.downButtonPressed)
 {
-    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.children[i] == origin.arrow)
-            arrow = dynamic_cast<pawsButton *>(children[i]);
+            arrow = dynamic_cast<pawsButton*>(children[i]);
         else if(origin.children[i] == origin.itemChoice)
-            itemChoice = dynamic_cast<pawsTextBox *>(children[i]);
+            itemChoice = dynamic_cast<pawsTextBox*>(children[i]);
         else if(origin.children[i] == origin.listChoice)
-            listChoice = dynamic_cast<pawsListBox *>(children[i]);
+            listChoice = dynamic_cast<pawsListBox*>(children[i]);
 
         if(arrow != 0 && itemChoice != 0 && listChoice != 0) break;
     }
@@ -80,14 +80,14 @@ pawsComboBox::~pawsComboBox()
 
 }
 
-bool pawsComboBox::Setup( iDocumentNode* node ) 
-{ 
-    csRef<iDocumentNode> listNode = node->GetNode( "listbox" );
+bool pawsComboBox::Setup(iDocumentNode* node)
+{
+    csRef<iDocumentNode> listNode = node->GetNode("listbox");
     if(!listNode.IsValid())
     {
         return false;
     }
-    
+
     rows      = listNode->GetAttributeValueAsInt("rows");
     rowHeight = listNode->GetAttributeValueAsInt("height");
     text      = listNode->GetAttributeValue("text");
@@ -95,26 +95,26 @@ bool pawsComboBox::Setup( iDocumentNode* node )
     fliptotop = listNode->GetAttributeValueAsBool("fliptotop");
     sorted    = listNode->GetAttributeValueAsBool("sorted");
     useScrollBar = listNode->GetAttributeValueAsBool("useScrollBar", true);
-    
-	listNode = node->GetNode("button");
-	if (!listNode)
-	{
-		upButton = "Up Arrow";
-		downButton = "Down Arrow";
-		upButtonPressed = "Up Arrow Highlight";
-		downButtonPressed = "Down Arrow Highlight";
-	}
-	else
-	{
-		upButton   = listNode->GetAttributeValue("upButton");
-		downButton = listNode->GetAttributeValue("downButton");
-		upButtonPressed   = listNode->GetAttributeValue("upButtonPressed");
-		downButtonPressed = listNode->GetAttributeValue("downButtonPressed");
-	}
+
+    listNode = node->GetNode("button");
+    if(!listNode)
+    {
+        upButton = "Up Arrow";
+        downButton = "Down Arrow";
+        upButtonPressed = "Up Arrow Highlight";
+        downButtonPressed = "Down Arrow Highlight";
+    }
+    else
+    {
+        upButton   = listNode->GetAttributeValue("upButton");
+        downButton = listNode->GetAttributeValue("downButton");
+        upButtonPressed   = listNode->GetAttributeValue("upButtonPressed");
+        downButtonPressed = listNode->GetAttributeValue("downButtonPressed");
+    }
     return true;
 }
 
-bool pawsComboBox::PostSetup() 
+bool pawsComboBox::PostSetup()
 {
     bool ok = false;
 
@@ -122,65 +122,65 @@ bool pawsComboBox::PostSetup()
     // Create the drop arrow button that will cause the list box to drop.
     ///////////////////////////////////////////////////////////////////////
     arrow = new pawsButton;
-    AddChild( arrow );
+    AddChild(arrow);
 
     // Puts the button at the edge of the text box widget
-    arrow->SetRelativeFrame( defaultFrame.Width()-18, 4, 18, 16 );
+    arrow->SetRelativeFrame(defaultFrame.Width()-18, 4, 18, 16);
     arrow->SetUpImage(downButton);
     arrow->SetDownImage(downButtonPressed);
-    arrow->SetID( SHOW_LIST );
-    
-    ok = arrow->PostSetup();    
-    
-    
+    arrow->SetID(SHOW_LIST);
+
+    ok = arrow->PostSetup();
+
+
     ///////////////////////////////////////////////////////////////////////
     // Create the textbox that has the current selected choice
-    ///////////////////////////////////////////////////////////////////////    
+    ///////////////////////////////////////////////////////////////////////
     itemChoice = new pawsTextBox;
     itemChoice->SetBackground("Scaling Field Background");
-    AddChild( itemChoice );
+    AddChild(itemChoice);
 
     // Puts the button at the edge of the text box widget
-    itemChoice->SetRelativeFrame( 0 , 4, defaultFrame.Width()-23, defaultFrame.Height() );
+    itemChoice->SetRelativeFrame(0 , 4, defaultFrame.Width()-23, defaultFrame.Height());
     ok = ok && itemChoice->PostSetup();
 
     itemChoice->SetText(text);
-    itemChoice->SetID( SHOW_LIST );
-    
-    
+    itemChoice->SetID(SHOW_LIST);
+
+
     ///////////////////////////////////////////////////////////////////////
     // Create the drop down list box
-    ///////////////////////////////////////////////////////////////////////   
+    ///////////////////////////////////////////////////////////////////////
     listChoice = new pawsListBox;
-	AddChild( listChoice );
+    AddChild(listChoice);
 
-    if (fliptotop)
+    if(fliptotop)
     {
-        listChoice->SetRelativeFrame( 0 , 0, defaultFrame.Width(), rows*GetActualHeight(rowHeight)+15);
+        listChoice->SetRelativeFrame(0 , 0, defaultFrame.Width(), rows*GetActualHeight(rowHeight)+15);
     }
     else
     {
-        listChoice->SetRelativeFrame( 0 , defaultFrame.Height(), defaultFrame.Width(), rows*GetActualHeight(rowHeight)+15);
+        listChoice->SetRelativeFrame(0 , defaultFrame.Height(), defaultFrame.Width(), rows*GetActualHeight(rowHeight)+15);
     }
 
     listChoice->Hide();
-    listChoice->UseTitleRow( false ); 
-	listChoice->SetBackground("Scaling Widget Background");
-	listChoice->SetID( id );
+    listChoice->UseTitleRow(false);
+    listChoice->SetBackground("Scaling Widget Background");
+    listChoice->SetID(id);
     listChoice->SetBackgroundAlpha(listalpha);
     listChoice->UseBorder("line");
     listChoice->SetAlwaysOnTop(true);
     listChoice->SetName("ComboListBox");
     csString widgetDef("<widget name=\"Text\" factory=\"pawsTextBox\" ></widget>");
-    listChoice->SetTotalColumns( 1 );
+    listChoice->SetTotalColumns(1);
     if(useScrollBar)
     {
         ok = ok && listChoice->PostSetup();
-        listChoice->SetColumnDef( 0, defaultFrame.Width()-32, rowHeight, widgetDef );
+        listChoice->SetColumnDef(0, defaultFrame.Width()-32, rowHeight, widgetDef);
     }
     else
     {
-        listChoice->SetColumnDef( 0, defaultFrame.Width()-10, rowHeight, widgetDef );
+        listChoice->SetColumnDef(0, defaultFrame.Width()-10, rowHeight, widgetDef);
     }
 
     listChoice->SetSortingFunc(0, &textBoxSortFunc);
@@ -191,41 +191,41 @@ bool pawsComboBox::PostSetup()
 
 void pawsComboBox::SetSorted(bool sorting)
 {
-    sorted = sorting; 
-    if(listChoice) 
-        listChoice->SetSortedColumn(sorting? 0 : -1); 
+    sorted = sorting;
+    if(listChoice)
+        listChoice->SetSortedColumn(sorting? 0 : -1);
 }
 
-pawsListBoxRow* pawsComboBox::NewOption(const csString & text)
+pawsListBoxRow* pawsComboBox::NewOption(const csString &text)
 {
     if(!listChoice) return NULL;
-    pawsListBoxRow * row;
+    pawsListBoxRow* row;
     csList<csString> rowEntry;
     rowEntry.PushBack(text);
     row = listChoice->NewTextBoxRow(rowEntry);
-    return row;    
+    return row;
 }
 
 bool pawsComboBox::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
-    switch ( widget->GetID() )
+    switch(widget->GetID())
     {
         case SHOW_LIST:
         {
-            if ( closed )
+            if(closed)
             {
                 arrow->SetUpImage(upButton);
                 arrow->SetDownImage(upButtonPressed);
-                oldHeight = GetScreenFrame().Height();    
-                oldWidth  = GetScreenFrame().Width();    
-                SetSize( GetScreenFrame().Width(), defaultFrame.Height()+rows*GetActualHeight(rowHeight)+15 );
-                if (fliptotop)
+                oldHeight = GetScreenFrame().Height();
+                oldWidth  = GetScreenFrame().Width();
+                SetSize(GetScreenFrame().Width(), defaultFrame.Height()+rows*GetActualHeight(rowHeight)+15);
+                if(fliptotop)
                 {
                     MoveDelta(0,-1*(rows*GetActualHeight(rowHeight)+15));
                     itemChoice->MoveDelta(0,rows*GetActualHeight(rowHeight)+15);
                     arrow->MoveDelta(0,rows*GetActualHeight(rowHeight)+15);
                 }
-                                
+
                 listChoice->Show();
                 closed = false;
             }
@@ -233,8 +233,8 @@ bool pawsComboBox::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, paw
             {
                 arrow->SetUpImage(downButton);
                 arrow->SetDownImage(downButtonPressed);
-                SetSize( oldWidth, oldHeight );
-                if (fliptotop)
+                SetSize(oldWidth, oldHeight);
+                if(fliptotop)
                 {
                     MoveDelta(0,rows*GetActualHeight(rowHeight)+15);
                     itemChoice->MoveDelta(0,-1*(rows*GetActualHeight(rowHeight)+15));
@@ -245,32 +245,32 @@ bool pawsComboBox::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, paw
             }
             return true;
         }
-    }    
-    
+    }
+
     return false;
 }
 
 csString pawsComboBox::GetSelectedRowString()
 {
     pawsListBoxRow* row = listChoice->GetSelectedRow();
-    if (row == NULL) return "";
-    
-    pawsTextBox* thing = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
-    if (thing == NULL) return "";
-    
+    if(row == NULL) return "";
+
+    pawsTextBox* thing = dynamic_cast <pawsTextBox*>(row->GetColumn(0));
+    if(thing == NULL) return "";
+
     return thing->GetText();
 }
 
-void pawsComboBox::OnListAction( pawsListBox* widget, int status )
+void pawsComboBox::OnListAction(pawsListBox* widget, int status)
 {
     itemChoice->SetText(GetSelectedRowString());
-    
-    if (!closed)
+
+    if(!closed)
     {
         arrow->SetUpImage(downButton);
         arrow->SetDownImage(downButtonPressed);
-        SetSize( oldWidth, oldHeight );
-        if (fliptotop)
+        SetSize(oldWidth, oldHeight);
+        if(fliptotop)
         {
             MoveDelta(0,rows*GetActualHeight(rowHeight)+15);
             itemChoice->MoveDelta(0,-1*(rows*GetActualHeight(rowHeight)+15));
@@ -279,8 +279,8 @@ void pawsComboBox::OnListAction( pawsListBox* widget, int status )
         listChoice->Hide();
         closed = true;
     }
-    
-    parent->OnListAction( widget, status );
+
+    parent->OnListAction(widget, status);
 }
 
 int pawsComboBox::GetSelectedRowNum()
@@ -290,21 +290,21 @@ int pawsComboBox::GetSelectedRowNum()
 
 pawsListBoxRow* pawsComboBox::Select(int optionNum)
 {
-    pawsListBoxRow * row = listChoice->GetRow(optionNum);
-    
-    listChoice->Select(row);   
+    pawsListBoxRow* row = listChoice->GetRow(optionNum);
 
-    if ( row == NULL )
-        itemChoice->SetText( initalText );
+    listChoice->Select(row);
+
+    if(row == NULL)
+        itemChoice->SetText(initalText);
     else
-        itemChoice->SetText( GetSelectedRowString() );
-    
-    if (!closed)
+        itemChoice->SetText(GetSelectedRowString());
+
+    if(!closed)
     {
         arrow->SetUpImage("Down Arrow");
         arrow->SetDownImage("Down Arrow");
-        SetSize( oldWidth, oldHeight );
-        if (fliptotop)
+        SetSize(oldWidth, oldHeight);
+        if(fliptotop)
         {
             MoveDelta(0,rows*GetActualHeight(rowHeight)+15);
             itemChoice->MoveDelta(0,-1*(rows*GetActualHeight(rowHeight)+15));
@@ -315,22 +315,22 @@ pawsListBoxRow* pawsComboBox::Select(int optionNum)
     }
     return row;
 }
-pawsListBoxRow* pawsComboBox::Select(const char * text)
+pawsListBoxRow* pawsComboBox::Select(const char* text)
 {
-    pawsListBoxRow *row;
-    for (unsigned int i = 0; i < listChoice->GetRowCount(); i++ )
+    pawsListBoxRow* row;
+    for(unsigned int i = 0; i < listChoice->GetRowCount(); i++)
     {
         row = listChoice->GetRow(i);
-        pawsTextBox* thing = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
-        if ( thing )
+        pawsTextBox* thing = dynamic_cast <pawsTextBox*>(row->GetColumn(0));
+        if(thing)
         {
-            if ( !csStrCaseCmp(thing->GetText(), text) )
+            if(!csStrCaseCmp(thing->GetText(), text))
             {
-                return Select( i );
+                return Select(i);
             }
         }
     }
-    Select( -1 );
+    Select(-1);
     return NULL;
 }
 
@@ -347,9 +347,9 @@ int pawsComboBox::GetRowCount()
 
 bool pawsComboBox::Clear()
 {
-    if (!listChoice)
+    if(!listChoice)
         return false;
-    
+
     listChoice->Clear();
     itemChoice->SetText("");
 

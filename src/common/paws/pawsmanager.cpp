@@ -639,7 +639,7 @@ bool PawsManager::HandleMouseDown(csMouseEventData &data)
 
             if(widget != mainWidget)
             {
-                if( widget->GetParent() )
+                if(widget->GetParent())
                 {
                     widget->GetParent()->BringToTop(widget);
                 }
@@ -768,7 +768,7 @@ bool PawsManager::HandleMouseMove(csMouseEventData &data)
     {
         if((modalWidget == NULL) || widget->IsChildOf(modalWidget))
         {
-            // Handle mouse over for 
+            // Handle mouse over for
             if(widget && widget != mouseoverWidget)
             {
                 if(mouseoverWidget)
@@ -779,7 +779,7 @@ bool PawsManager::HandleMouseMove(csMouseEventData &data)
             mouseoverWidget = widget;
 
             // Now only handle fading if not modal windows are involved
-            if (modalWidget == NULL)
+            if(modalWidget == NULL)
             {
                 pawsWidget* widgetFade = widget;
 
@@ -791,8 +791,8 @@ bool PawsManager::HandleMouseMove(csMouseEventData &data)
                         widgetFade = mainParent;
                     }
                 }
-                
-                
+
+
                 if(lastfadeWidget != widgetFade && widgetFade && widgetFade->IsVisible())
                 {
                     if(lastfadeWidget && lastfadeWidget != mainWidget)
@@ -800,7 +800,7 @@ bool PawsManager::HandleMouseMove(csMouseEventData &data)
                         lastfadeWidget->MouseOver(false);
                     }
                     lastfadeWidget = widgetFade;
-                    
+
                     if(widgetFade != mainWidget)
                         widgetFade->MouseOver(true);                // Fade in
                 }

@@ -30,7 +30,7 @@ pawsProgressBar::pawsProgressBar()
     percent      = 0.0f;
     factory      = "pawsProgressBar";
 }
-pawsProgressBar::pawsProgressBar(const pawsProgressBar& origin)
+pawsProgressBar::pawsProgressBar(const pawsProgressBar &origin)
     :pawsWidget(origin),
      totalValue(origin.totalValue),
      currentValue(origin.currentValue),
@@ -45,10 +45,10 @@ pawsProgressBar::~pawsProgressBar()
 {
 }
 
-bool pawsProgressBar::Setup( iDocumentNode* node )
+bool pawsProgressBar::Setup(iDocumentNode* node)
 {
-    csRef<iDocumentNode> ColourNode = node->GetNode( "color" );
-    if ( ColourNode )
+    csRef<iDocumentNode> ColourNode = node->GetNode("color");
+    if(ColourNode)
     {
         start_r = ColourNode->GetAttributeValueAsInt("r");
         start_g = ColourNode->GetAttributeValueAsInt("g");
@@ -61,8 +61,8 @@ bool pawsProgressBar::Setup( iDocumentNode* node )
         start_b = 25;
     }
 
-    csRef<iDocumentNode> ColourNode2 = node->GetNode( "fadecolor" );
-    if ( ColourNode2 )
+    csRef<iDocumentNode> ColourNode2 = node->GetNode("fadecolor");
+    if(ColourNode2)
     {
         diff_r = ColourNode2->GetAttributeValueAsInt("r") - start_r;
         diff_g = ColourNode2->GetAttributeValueAsInt("g") - start_g;
@@ -77,7 +77,7 @@ bool pawsProgressBar::Setup( iDocumentNode* node )
     return true;
 }
 
-void pawsProgressBar::SetCurrentValue( float newValue )
+void pawsProgressBar::SetCurrentValue(float newValue)
 {
     currentValue = newValue;
 
@@ -89,12 +89,12 @@ void pawsProgressBar::Draw()
     ClipToParent(false);
 
     int alpha = 255;
-    if (parent
-      && !parent->GetBackground().IsEmpty()
-      && parent->isFadeEnabled()
-      && parent->GetMaxAlpha() != parent->GetMinAlpha())
+    if(parent
+            && !parent->GetBackground().IsEmpty()
+            && parent->isFadeEnabled()
+            && parent->GetMaxAlpha() != parent->GetMinAlpha())
         alpha = (int)
-        (255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
+                (255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
     DrawBackground();
     DrawProgressBar(screenFrame, PawsManager::GetSingleton().GetGraphics3D(), percent,
                     start_r, start_g, start_b,
@@ -104,49 +104,49 @@ void pawsProgressBar::Draw()
 }
 
 void pawsProgressBar::DrawProgressBar(
-                     const csRect & rect, iGraphics3D *graphics3D, float percent,
-                     int start_r, int start_g, int start_b,
-                     int diff_r,  int diff_g,  int diff_b, int alpha)
+    const csRect &rect, iGraphics3D* graphics3D, float percent,
+    int start_r, int start_g, int start_b,
+    int diff_r,  int diff_g,  int diff_b, int alpha)
 {
-  csSimpleRenderMesh mesh;
-  static uint indices[4] = {0, 1, 2, 3};
-  csVector3 verts[4];
-  csVector4 colors[4];
-  float fr1 = start_r / 255.0f;
-  float fg1 = start_g / 255.0f;
-  float fb1 = start_b / 255.0f;
-  float fr2 = fr1 + percent * (diff_r / 255.0f);
-  float fg2 = fg1 + percent * (diff_g / 255.0f);
-  float fb2 = fb1 + percent * (diff_b / 255.0f);
-  float fa = alpha / 255.0f;
+    csSimpleRenderMesh mesh;
+    static uint indices[4] = {0, 1, 2, 3};
+    csVector3 verts[4];
+    csVector4 colors[4];
+    float fr1 = start_r / 255.0f;
+    float fg1 = start_g / 255.0f;
+    float fb1 = start_b / 255.0f;
+    float fr2 = fr1 + percent * (diff_r / 255.0f);
+    float fg2 = fg1 + percent * (diff_g / 255.0f);
+    float fb2 = fb1 + percent * (diff_b / 255.0f);
+    float fa = alpha / 255.0f;
 
-  mesh.meshtype = CS_MESHTYPE_QUADS;
-  mesh.indexCount = 4;
-  mesh.indices = indices;
-  mesh.vertexCount = 4;
-  mesh.vertices = verts;
-  mesh.colors = colors;
-  mesh.mixmode = CS_FX_COPY;
-  mesh.alphaType.autoAlphaMode = false;
-  mesh.alphaType.alphaType = csAlphaMode::alphaSmooth;
+    mesh.meshtype = CS_MESHTYPE_QUADS;
+    mesh.indexCount = 4;
+    mesh.indices = indices;
+    mesh.vertexCount = 4;
+    mesh.vertices = verts;
+    mesh.colors = colors;
+    mesh.mixmode = CS_FX_COPY;
+    mesh.alphaType.autoAlphaMode = false;
+    mesh.alphaType.alphaType = csAlphaMode::alphaSmooth;
 
-  verts[0].Set (rect.xmin, rect.ymin, 0);
-  colors[0].Set (fr1, fg1, fb1, fa);
+    verts[0].Set(rect.xmin, rect.ymin, 0);
+    colors[0].Set(fr1, fg1, fb1, fa);
 
-  verts[1].Set (rect.xmin + (rect.Width() * percent), rect.ymin, 0);
-  colors[1].Set (fr2, fg2, fb2, fa);
+    verts[1].Set(rect.xmin + (rect.Width() * percent), rect.ymin, 0);
+    colors[1].Set(fr2, fg2, fb2, fa);
 
-  verts[2].Set (rect.xmin + (rect.Width() * percent), rect.ymax, 0);
-  colors[2].Set (fr2, fg2, fb2, fa);
+    verts[2].Set(rect.xmin + (rect.Width() * percent), rect.ymax, 0);
+    colors[2].Set(fr2, fg2, fb2, fa);
 
-  verts[3].Set (rect.xmin, rect.ymax, 0);
-  colors[3].Set (fr1, fg1, fb1, fa);
+    verts[3].Set(rect.xmin, rect.ymax, 0);
+    colors[3].Set(fr1, fg1, fb1, fa);
 
-  graphics3D->DrawSimpleMesh (mesh, csSimpleMeshScreenspace);
+    graphics3D->DrawSimpleMesh(mesh, csSimpleMeshScreenspace);
 }
 
-void pawsProgressBar::OnUpdateData(const char* /*dataname*/, PAWSData& value)
+void pawsProgressBar::OnUpdateData(const char* /*dataname*/, PAWSData &value)
 {
-    SetCurrentValue( value.GetFloat() );
+    SetCurrentValue(value.GetFloat());
 }
 

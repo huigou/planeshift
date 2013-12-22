@@ -42,11 +42,11 @@
 // converts one hexadecimal digit to decimal value
 int HexToDec4(char digit)
 {
-    if ((digit >= '0') && (digit <= '9'))
+    if((digit >= '0') && (digit <= '9'))
         return digit - '0';
-    else if ((digit >= 'A') && (digit <= 'Z'))
+    else if((digit >= 'A') && (digit <= 'Z'))
         return digit - 'A' + 10;
-    else if ((digit >= 'a') && (digit <= 'z'))
+    else if((digit >= 'a') && (digit <= 'z'))
         return digit - 'a' + 10;
     else
         return 0;
@@ -59,13 +59,13 @@ int HexToDec8(char first, char second)
 }
 
 // converts hexadecimal string to color in current pixel format
-int ParseColor(const csString & str, iGraphics2D *g2d)
+int ParseColor(const csString &str, iGraphics2D* g2d)
 {
     int r, g, b;
-    
-    if (str.Length() != 6)
+
+    if(str.Length() != 6)
         return false;
-        
+
     r = HexToDec8(str.GetAt(0), str.GetAt(1));
     g = HexToDec8(str.GetAt(2), str.GetAt(3));
     b = HexToDec8(str.GetAt(4), str.GetAt(5));
@@ -91,13 +91,13 @@ pawsTreeNode::pawsTreeNode()
     collapsed = false;
     factory = "pawsTreeNode";
 }
-pawsTreeNode::pawsTreeNode(const pawsTreeNode& origin)
-                :pawsWidget(origin),
-                tree(0),
-                collapsable(origin.collapsable),
-                collapsed(origin.collapsed)
+pawsTreeNode::pawsTreeNode(const pawsTreeNode &origin)
+    :pawsWidget(origin),
+     tree(0),
+     collapsable(origin.collapsable),
+     collapsed(origin.collapsed)
 {
-    for (unsigned int i = 0 ; i < origin.attrList.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.attrList.GetSize(); i++)
         attrList.Push(origin.attrList[i]);
 
     parent = 0;
@@ -112,7 +112,7 @@ pawsTreeNode::pawsTreeNode(const pawsTreeNode& origin)
         firstChild = dynamic_cast<pawsTreeNode*>(PawsManager::GetSingleton().CreateWidget(tmp->factory,tmp));
         firstChild->parent = this;
         firstChild->prevSibling = 0;
-        
+
         pawsTreeNode * pr = firstChild;
 
         while (tmp->nextSibling)//loop through all siblings [Depth First Search]
@@ -132,33 +132,33 @@ pawsTreeNode::~pawsTreeNode()
     Clear();
 }
 
-void pawsTreeNode::SetTree(pawsITreeStruct * _tree)
+void pawsTreeNode::SetTree(pawsITreeStruct* _tree)
 {
     tree = _tree;
 }
 
-csString pawsTreeNode::GetAttr(const csString & name)
-{    
-    for ( size_t x = 0; x < attrList.GetSize(); x++ )    
+csString pawsTreeNode::GetAttr(const csString &name)
+{
+    for(size_t x = 0; x < attrList.GetSize(); x++)
     {
-        if (attrList[x].name == name)
-            return attrList[x].value;        
+        if(attrList[x].name == name)
+            return attrList[x].value;
     }
     return "";
 }
 
-void pawsTreeNode::SetAttr(const csString & name, const csString & value)
+void pawsTreeNode::SetAttr(const csString &name, const csString &value)
 {
     TreeNodeAttribute attr;
-    
+
     attr.name  = name;
     attr.value = value;
     attrList.Push(attr);
-    
-    if (tree != NULL) tree->NodeChanged();
+
+    if(tree != NULL) tree->NodeChanged();
 }
 
-pawsTreeNode * pawsTreeNode::GetParent()
+pawsTreeNode* pawsTreeNode::GetParent()
 {
     return parent;
 }
@@ -168,30 +168,30 @@ void pawsTreeNode::SetParent(pawsTreeNode* _parent)
     parent = _parent;
 }
 
-pawsTreeNode * pawsTreeNode::GetFirstChild()
+pawsTreeNode* pawsTreeNode::GetFirstChild()
 {
     return firstChild;
 }
 
-pawsTreeNode * pawsTreeNode::FindNodeByPath(const csString& /*path*/)
+pawsTreeNode* pawsTreeNode::FindNodeByPath(const csString & /*path*/)
 {
     //not implemented yet
     return NULL;
 }
 
-pawsTreeNode * pawsTreeNode::FindChildByName(const csString& name, bool indirectToo)
+pawsTreeNode* pawsTreeNode::FindChildByName(const csString &name, bool indirectToo)
 {
-    pawsTreeNode * child, * foundIndirect;
+    pawsTreeNode* child, * foundIndirect;
 
     child = firstChild;
-    while (child != NULL)
+    while(child != NULL)
     {
-        if (name == child->name)
+        if(name == child->name)
             return child;
-        if (indirectToo)
+        if(indirectToo)
         {
             foundIndirect = child->FindChildByName(name, true);
-            if (foundIndirect != NULL)
+            if(foundIndirect != NULL)
                 return foundIndirect;
         }
 
@@ -200,51 +200,51 @@ pawsTreeNode * pawsTreeNode::FindChildByName(const csString& name, bool indirect
     return NULL;
 }
 
-pawsTreeNode * pawsTreeNode::GetPrevSibling()
+pawsTreeNode* pawsTreeNode::GetPrevSibling()
 {
     return prevSibling;
 }
 
-pawsTreeNode * pawsTreeNode::GetNextSibling()
+pawsTreeNode* pawsTreeNode::GetNextSibling()
 {
     return nextSibling;
 }
 
-void pawsTreeNode::SetPrevSibling(pawsTreeNode *node)
+void pawsTreeNode::SetPrevSibling(pawsTreeNode* node)
 {
     prevSibling = node;
 }
 
-void pawsTreeNode::SetNextSibling(pawsTreeNode *node)
+void pawsTreeNode::SetNextSibling(pawsTreeNode* node)
 {
     nextSibling = node;
 }
 
-void pawsTreeNode::SetFirstChild(pawsTreeNode * child)
+void pawsTreeNode::SetFirstChild(pawsTreeNode* child)
 {
     firstChild = child;
 }
 
-pawsTreeNode * pawsTreeNode::FindLastChild()
+pawsTreeNode* pawsTreeNode::FindLastChild()
 {
     return firstChild->FindLastSibling();
 }
 
-void pawsTreeNode::InsertChild(pawsTreeNode * node, pawsTreeNode * nextSibling)
+void pawsTreeNode::InsertChild(pawsTreeNode* node, pawsTreeNode* nextSibling)
 {
-    pawsTreeNode * prevSibling;
+    pawsTreeNode* prevSibling;
 
-    if (nextSibling != NULL)
+    if(nextSibling != NULL)
         prevSibling = nextSibling->GetPrevSibling();
     else
         prevSibling = FindLastChild();
 
     node->SetNextSibling(nextSibling);
     node->SetPrevSibling(prevSibling);
-    
-    if (nextSibling != NULL)
+
+    if(nextSibling != NULL)
         nextSibling->SetPrevSibling(node);
-    if (prevSibling != NULL)
+    if(prevSibling != NULL)
         prevSibling->SetNextSibling(node);
     else
         firstChild = node;
@@ -252,35 +252,35 @@ void pawsTreeNode::InsertChild(pawsTreeNode * node, pawsTreeNode * nextSibling)
     node->SetTree(tree);
 
     tree->NewNode(node);
-    
-    if (tree != NULL)
+
+    if(tree != NULL)
         tree->NodeChanged();
 }
 
-void pawsTreeNode::MoveChild(pawsTreeNode * node, pawsTreeNode * nextSibling)
+void pawsTreeNode::MoveChild(pawsTreeNode* node, pawsTreeNode* nextSibling)
 {
     RemoveChild(node);
     InsertChild(node, nextSibling);
-    
-    if (tree != NULL) tree->NodeChanged();
+
+    if(tree != NULL) tree->NodeChanged();
 }
 
-void pawsTreeNode::RemoveChild(pawsTreeNode * node)
+void pawsTreeNode::RemoveChild(pawsTreeNode* node)
 {
-    pawsTreeNode * prev = node->GetPrevSibling(),
-                 * next = node->GetNextSibling();
-    if (prev != NULL)
+    pawsTreeNode* prev = node->GetPrevSibling(),
+                  * next = node->GetNextSibling();
+    if(prev != NULL)
         prev->SetNextSibling(next);
     else
         firstChild = next;
-    if (next != NULL)
+    if(next != NULL)
         next->SetPrevSibling(prev);
 
-    if (tree != NULL)
+    if(tree != NULL)
         tree->RemoveNode(node);
 }
 
-void pawsTreeNode::DeleteChild(pawsTreeNode * node)
+void pawsTreeNode::DeleteChild(pawsTreeNode* node)
 {
     RemoveChild(node);
     delete node;
@@ -288,14 +288,14 @@ void pawsTreeNode::DeleteChild(pawsTreeNode * node)
 
 void pawsTreeNode::Clear()
 {
-    while (firstChild != NULL)
+    while(firstChild != NULL)
         DeleteChild(firstChild);
 }
 
 void pawsTreeNode::SetCollapsable(bool _collapsable)
 {
     collapsable = _collapsable;
-    if (!collapsable && collapsed)
+    if(!collapsable && collapsed)
         Expand();
 }
 
@@ -303,17 +303,17 @@ void pawsTreeNode::Expand()
 {
     collapsed = false;
     SetChildrenVisibAfterCollapseChange(true);
-    
-    if (tree != NULL) tree->NodeChanged();
+
+    if(tree != NULL) tree->NodeChanged();
 }
 
 void pawsTreeNode::ExpandAll()
 {
-    pawsTreeNode * child;
-    
+    pawsTreeNode* child;
+
     Expand();
     child = firstChild;
-    while (child != NULL)
+    while(child != NULL)
     {
         child->ExpandAll();
         child = child->GetNextSibling();
@@ -324,17 +324,17 @@ void pawsTreeNode::Collapse()
 {
     collapsed = true;
     SetChildrenVisibAfterCollapseChange(false);
-    
-    if (tree != NULL) tree->NodeChanged();
+
+    if(tree != NULL) tree->NodeChanged();
 }
 
 void pawsTreeNode::CollapseAll()
 {
-    pawsTreeNode * child;
-    
+    pawsTreeNode* child;
+
     Collapse();
     child = firstChild;
-    while (child != NULL)
+    while(child != NULL)
     {
         child->CollapseAll();
         child = child->GetNextSibling();
@@ -348,19 +348,19 @@ bool pawsTreeNode::IsCollapsed()
 
 bool pawsTreeNode::BuriedInRuins()
 {
-    if (parent == NULL)
+    if(parent == NULL)
         return false;
     return parent->IsCollapsed() || parent->BuriedInRuins();
 }
 
 void pawsTreeNode::SetChildrenVisibAfterCollapseChange(bool expanded)
 {
-    pawsTreeNode * child;
-    
+    pawsTreeNode* child;
+
     child = firstChild;
-    while (child != NULL)
+    while(child != NULL)
     {
-        if (expanded)
+        if(expanded)
         {
             child->Show();
         }
@@ -368,103 +368,103 @@ void pawsTreeNode::SetChildrenVisibAfterCollapseChange(bool expanded)
         {
             child->Hide();
         }
-        if ( ! child->IsCollapsed() )
+        if(! child->IsCollapsed())
             child->SetChildrenVisibAfterCollapseChange(expanded);
         child = child->GetNextSibling();
     }
-}    
+}
 
 int pawsTreeNode::GetRowNum()
 {
-    if (prevSibling != NULL)
+    if(prevSibling != NULL)
         return prevSibling->FindLowestSubtreeNode()->GetRowNum() + 1;
-    else if (parent != NULL)
+    else if(parent != NULL)
         return parent->GetRowNum() + 1;
     else
         return 0;
 }
 
-pawsTreeNode * pawsTreeNode::FindLastSibling()
+pawsTreeNode* pawsTreeNode::FindLastSibling()
 {
-    pawsTreeNode *sibling;
+    pawsTreeNode* sibling;
 
     sibling = this;
-    while ((sibling != NULL) && (sibling->GetNextSibling() != NULL))
+    while((sibling != NULL) && (sibling->GetNextSibling() != NULL))
         sibling = sibling->GetNextSibling();
     return sibling;
 }
 
-pawsTreeNode * pawsTreeNode::FindLowestSubtreeNode()
+pawsTreeNode* pawsTreeNode::FindLowestSubtreeNode()
 {
-    pawsTreeNode * lastChild;
+    pawsTreeNode* lastChild;
 
     lastChild = FindLastChild();
-    if (lastChild == NULL)
+    if(lastChild == NULL)
         return this;
     else
         return lastChild->FindLowestSubtreeNode();
 }
 
-pawsTreeNode * pawsTreeNode::FindNodeAbove()
+pawsTreeNode* pawsTreeNode::FindNodeAbove()
 {
-    if (prevSibling != NULL)
+    if(prevSibling != NULL)
         return prevSibling->FindLowestSubtreeNode();
     else
         return parent;
 }
 
-pawsTreeNode * pawsTreeNode::FindNodeBelow()
+pawsTreeNode* pawsTreeNode::FindNodeBelow()
 {
-    pawsTreeNode * node;
+    pawsTreeNode* node;
 
-    if (firstChild != NULL)
+    if(firstChild != NULL)
         return firstChild;
-    else if (nextSibling != NULL)
+    else if(nextSibling != NULL)
         return nextSibling;
     else
     {
         node = parent;
-        while ((node != NULL) && (node->GetNextSibling() == NULL))
+        while((node != NULL) && (node->GetNextSibling() == NULL))
             node = node->GetParent();
-        if (node != NULL)
+        if(node != NULL)
             return node->GetNextSibling();
         else
             return NULL;
     }
 }
 
-bool pawsTreeNode::Load(iDocumentNode *node)
+bool pawsTreeNode::Load(iDocumentNode* node)
 {
     csRef<iDocumentNodeIterator> xmlChildren, xmlAttrList;
     csRef<iDocumentNode> xmlChild, xmlAttr;
     csString factory;
-    pawsWidget *childAsWidget;
-    pawsTreeNode *childNode;
+    pawsWidget* childAsWidget;
+    pawsTreeNode* childNode;
 
     Clear();
 
     name = node->GetAttributeValue("name");
     xmlChildren = node->GetNodes("widget");
-    while (xmlChildren->HasNext())
+    while(xmlChildren->HasNext())
     {
         xmlChild = xmlChildren->Next();
 
-        factory = xmlChild->GetAttributeValue( "factory" );
-        childAsWidget = PawsManager::GetSingleton().CreateWidget( factory );
-        if ( !childAsWidget )
+        factory = xmlChild->GetAttributeValue("factory");
+        childAsWidget = PawsManager::GetSingleton().CreateWidget(factory);
+        if(!childAsWidget)
         {
             Error2("Could not create node from factory: %s", factory.GetData());
             return false;
         }
         childNode = dynamic_cast<pawsTreeNode*>(childAsWidget);
-        if (childNode == NULL)
+        if(childNode == NULL)
         {
             Error1("Created node is not pawsTreeNode");
             return false;
         }
         InsertChild(childNode);
 
-        if (!childNode->Load(xmlChild))
+        if(!childNode->Load(xmlChild))
         {
             Error1("Node failed to load");
             return false;
@@ -475,17 +475,17 @@ bool pawsTreeNode::Load(iDocumentNode *node)
     attrList.DeleteAll();
 
     xmlAttrList = node->GetNodes("attr");
-    while (xmlAttrList->HasNext())
+    while(xmlAttrList->HasNext())
     {
         xmlAttr = xmlAttrList->Next();
         SetAttr(xmlAttr->GetAttributeValue("name"), xmlAttr->GetAttributeValue("value"));
     }
-    
-    if (tree != NULL)
+
+    if(tree != NULL)
         tree->NodeChanged();
 
     csString collapsed = node->GetAttributeValue("collapsed");
-    if (collapsed == "yes")
+    if(collapsed == "yes")
         CollapseAll();
 
     return true;
@@ -505,7 +505,7 @@ pawsTreeStruct::pawsTreeStruct()
 
 pawsTreeStruct::~pawsTreeStruct()
 {
-    if (root != NULL)
+    if(root != NULL)
         delete root;
 }
 
@@ -513,58 +513,58 @@ void pawsTreeStruct::NodeChanged()
 {
     version++;
 }
-    
-void pawsTreeStruct::SetRoot(pawsTreeNode * _root)
+
+void pawsTreeStruct::SetRoot(pawsTreeNode* _root)
 {
-    if (root != NULL)
+    if(root != NULL)
         delete root;
 
     root = _root;
 }
 
-pawsTreeNode * pawsTreeStruct::FindNodeByName(const csString & name)
+pawsTreeNode* pawsTreeStruct::FindNodeByName(const csString &name)
 {
-    if (root != NULL)
+    if(root != NULL)
         return root->FindChildByName(name, true);
     else
         return NULL;
 }
 
-void pawsTreeStruct::InsertChild(pawsTreeNode * parent, pawsTreeNode * node, pawsTreeNode * nextSibling)
+void pawsTreeStruct::InsertChild(pawsTreeNode* parent, pawsTreeNode* node, pawsTreeNode* nextSibling)
 {
     parent->InsertChild(node, nextSibling);
 }
 
-void pawsTreeStruct::MoveChild(pawsTreeNode * node, pawsTreeNode * nextSibling)
+void pawsTreeStruct::MoveChild(pawsTreeNode* node, pawsTreeNode* nextSibling)
 {
-    pawsTreeNode * parent;
-    
+    pawsTreeNode* parent;
+
     parent = node->GetParent();
-    if (parent != NULL)
+    if(parent != NULL)
         parent->MoveChild(node, nextSibling);
 }
 
-void pawsTreeStruct::RemoveChild(pawsTreeNode * node)
+void pawsTreeStruct::RemoveChild(pawsTreeNode* node)
 {
-    pawsTreeNode * parent;
-    
+    pawsTreeNode* parent;
+
     parent = node->GetParent();
-    if (parent != NULL)
+    if(parent != NULL)
         parent->RemoveChild(node);
 }
 
-void pawsTreeStruct::DeleteChild(pawsTreeNode * node)
+void pawsTreeStruct::DeleteChild(pawsTreeNode* node)
 {
-    pawsTreeNode * parent;
-    
+    pawsTreeNode* parent;
+
     parent = node->GetParent();
-    if (parent != NULL)
+    if(parent != NULL)
         parent->DeleteChild(node);
 }
 
 void pawsTreeStruct::Clear()
 {
-    if (root != NULL)
+    if(root != NULL)
         root->Clear();
 }
 
@@ -572,15 +572,15 @@ void pawsTreeStruct::Clear()
 
 
 
-void pawsTreeStruct::InsertChild(const csString & parent, pawsTreeNode * node, const csString & nextSibling)
+void pawsTreeStruct::InsertChild(const csString &parent, pawsTreeNode* node, const csString &nextSibling)
 {
-    pawsTreeNode * parentNode, * nextSiblingNode;
+    pawsTreeNode* parentNode, * nextSiblingNode;
 
     parentNode = FindNodeByName(parent);
     // Allows a root to be added automatically.
-    if (!parentNode)
+    if(!parentNode)
     {
-        if (!root)
+        if(!root)
         {
             SetRoot(node);
             node->SetTree(this);
@@ -595,55 +595,55 @@ void pawsTreeStruct::InsertChild(const csString & parent, pawsTreeNode * node, c
     parentNode->InsertChild(node, nextSiblingNode);
 }
 
-void pawsTreeStruct::InsertChild(const csString & parent, pawsTreeNode * node)
+void pawsTreeStruct::InsertChild(const csString &parent, pawsTreeNode* node)
 {
-    pawsTreeNode * parentNode;
+    pawsTreeNode* parentNode;
 
     parentNode = FindNodeByName(parent);
-    if (parentNode == NULL) return;
+    if(parentNode == NULL) return;
 
     parentNode->InsertChild(node, NULL);
 }
 
-void pawsTreeStruct::MoveChild(const csString & name, const csString & nextSibling)
+void pawsTreeStruct::MoveChild(const csString &name, const csString &nextSibling)
 {
-    pawsTreeNode * node, * parentNode, * nextSiblingNode;
+    pawsTreeNode* node, * parentNode, * nextSiblingNode;
 
     node = FindNodeByName(name);
-    if (node == NULL) return;
+    if(node == NULL) return;
     nextSiblingNode = FindNodeByName(nextSibling);
-    if (nextSiblingNode == NULL) return;
+    if(nextSiblingNode == NULL) return;
 
     parentNode = node->GetParent();
-    if (parentNode != NULL)
+    if(parentNode != NULL)
         parentNode->MoveChild(node, nextSiblingNode);
 }
 
-void pawsTreeStruct::DeleteChild(const csString & name)
+void pawsTreeStruct::DeleteChild(const csString &name)
 {
-    pawsTreeNode * node, * parentNode;
+    pawsTreeNode* node, * parentNode;
 
     node = FindNodeByName(name);
-    if (node == NULL) return;
+    if(node == NULL) return;
 
     parentNode = node->GetParent();
-    if (parentNode != NULL)
+    if(parentNode != NULL)
         parentNode->DeleteChild(node);
     else
         Clear();
 }
 
-bool pawsTreeStruct::Load(iDocumentNode *node)
+bool pawsTreeStruct::Load(iDocumentNode* node)
 {
     csRef<iDocumentNode> xmlRoot;
     csString factory;
-    pawsWidget *rootAsWidget;
-    pawsTreeNode *newRoot;
+    pawsWidget* rootAsWidget;
+    pawsTreeNode* newRoot;
 
     version++;
 
     xmlRoot = node->GetNode("widget");
-    if (xmlRoot == NULL)
+    if(xmlRoot == NULL)
     {
         Error1("<widget> tag not found");
         return true;
@@ -651,14 +651,14 @@ bool pawsTreeStruct::Load(iDocumentNode *node)
 
     factory = xmlRoot->GetAttributeValue("factory");
     rootAsWidget = PawsManager::GetSingleton().CreateWidget(factory);
-    if (rootAsWidget == NULL)
+    if(rootAsWidget == NULL)
     {
         Error2("Could not create root from factory: %s", factory.GetData());
         return false;
     }
 
     newRoot = dynamic_cast<pawsTreeNode*>(rootAsWidget);
-    if (newRoot == NULL)
+    if(newRoot == NULL)
     {
         Error2("Root(%s) is not pawsTreeNode",rootAsWidget->GetType());
         delete rootAsWidget;
@@ -670,22 +670,22 @@ bool pawsTreeStruct::Load(iDocumentNode *node)
     return root->Load(xmlRoot);
 }
 
-pawsTreeNode * pawsTreeStruct::FindNodeAt(pawsTreeNode *parent, int x, int y)
+pawsTreeNode* pawsTreeStruct::FindNodeAt(pawsTreeNode* parent, int x, int y)
 {
-    pawsTreeNode *child, *foundIndirect;
+    pawsTreeNode* child, *foundIndirect;
     csRect frame;
 
-    if (parent->IsCollapsed())
+    if(parent->IsCollapsed())
         return NULL;
 
     child = parent->GetFirstChild();
-    while (child != NULL)
+    while(child != NULL)
     {
         frame = child->GetScreenFrame();
-        if (frame.Contains(x, y))
+        if(frame.Contains(x, y))
             return child;
         foundIndirect = FindNodeAt(child, x, y);
-        if (foundIndirect != NULL)
+        if(foundIndirect != NULL)
             return foundIndirect;
 
         child = child->GetNextSibling();
@@ -693,7 +693,7 @@ pawsTreeNode * pawsTreeStruct::FindNodeAt(pawsTreeNode *parent, int x, int y)
     return NULL;
 }
 
-pawsTreeNode * pawsTreeStruct::GetRoot()
+pawsTreeNode* pawsTreeStruct::GetRoot()
 {
     return root;
 }
@@ -705,7 +705,7 @@ pawsTreeNode * pawsTreeStruct::GetRoot()
 //////////////////////////////////////////////////////////////////////
 
 
-pawsStdTreeLayout::pawsStdTreeLayout(pawsTree * _tree, int _rowSpacing, int _levelSpacing)
+pawsStdTreeLayout::pawsStdTreeLayout(pawsTree* _tree, int _rowSpacing, int _levelSpacing)
 {
     tree           = _tree;
     rowSpacing     = _rowSpacing;
@@ -723,16 +723,16 @@ pawsStdTreeLayout::~pawsStdTreeLayout()
 
 void pawsStdTreeLayout::SetLayout()
 {
-    pawsTreeNode *root;
+    pawsTreeNode* root;
     csRect treeFrame;
     int treeX, treeY, maxX, maxY;
 
     // if the tree hasn't changed, we have nothing to update
-    if (lastVersion == tree->GetVersion())
+    if(lastVersion == tree->GetVersion())
         return;
 
     root = tree->GetRoot();
-    if (root == NULL)
+    if(root == NULL)
         return;
 
     treeFrame = tree->GetScreenFrame();
@@ -748,21 +748,21 @@ void pawsStdTreeLayout::SetLayout()
     lastVersion = tree->GetVersion();
 }
 
-void pawsStdTreeLayout::SetSubtreeLayout(pawsTreeNode * subtreeRoot, int x, int y, int & maxX, int & maxY)
+void pawsStdTreeLayout::SetSubtreeLayout(pawsTreeNode* subtreeRoot, int x, int y, int &maxX, int &maxY)
 {
-    pawsTreeNode *child;
+    pawsTreeNode* child;
     csRect frame;
 
     subtreeRoot->MoveTo(x, y);
     frame = subtreeRoot->GetScreenFrame();
-    if (frame.xmax > maxX)
+    if(frame.xmax > maxX)
         maxX = frame.xmax;
     maxY = frame.ymax;
 
-    if ( ! subtreeRoot->IsCollapsed() )
+    if(! subtreeRoot->IsCollapsed())
     {
         child = subtreeRoot->GetFirstChild();
-        while (child != NULL)
+        while(child != NULL)
         {
             SetSubtreeLayout(child, x + levelSpacing, maxY + rowSpacing, maxX, maxY);
             child = child->GetNextSibling();
@@ -781,7 +781,7 @@ void pawsStdTreeLayout::SetVertScroll(int _vertScroll)
     SetLayout();
 }
 
-void pawsStdTreeLayout::GetTreeSize(int & _width, int & _height)
+void pawsStdTreeLayout::GetTreeSize(int &_width, int &_height)
 {
     _width = width;
     _height = height;
@@ -793,8 +793,8 @@ void pawsStdTreeLayout::GetTreeSize(int & _width, int & _height)
 //
 //////////////////////////////////////////////////////////////////////
 
-pawsStdTreeDecorator::pawsStdTreeDecorator(pawsTree * _tree, iGraphics2D * _g2d, 
-                                           int _selectedColor, int _lineColor, int _collSpacing)
+pawsStdTreeDecorator::pawsStdTreeDecorator(pawsTree* _tree, iGraphics2D* _g2d,
+        int _selectedColor, int _lineColor, int _collSpacing)
 {
     tree              = _tree;
     g2d               = _g2d;
@@ -812,54 +812,54 @@ pawsStdTreeDecorator::~pawsStdTreeDecorator()
 
 void pawsStdTreeDecorator::Decorate()
 {
-    pawsTreeNode *root;
+    pawsTreeNode* root;
 
     root = tree->GetRoot();
-    if (root != NULL)
+    if(root != NULL)
         DecorateSubtree(root);
 }
 
-void pawsStdTreeDecorator::DecorateSubtree(pawsTreeNode * node)
+void pawsStdTreeDecorator::DecorateSubtree(pawsTreeNode* node)
 {
     csRef<iPawsImage> currImage;
-    pawsTreeNode * child;
+    pawsTreeNode* child;
     csRect nodeFrame, childFrame, collSignFrame;
-    int vertLineX, vertLineYMin, vertLineYMax;    
-            //coordinates of lines painted between siblings
+    int vertLineX, vertLineYMin, vertLineYMax;
+    //coordinates of lines painted between siblings
     int horizLineXMin, horizLineY;
-            //coordinates of lines painted between nodes and their collapse signs
+    //coordinates of lines painted between nodes and their collapse signs
     bool hasCollSign;    // has the currently processed node collapse/expand sign ?
 
 
     nodeFrame = node->GetScreenFrame();
 
-    if (node != tree->GetRoot())
+    if(node != tree->GetRoot())
     {
         // paints collapse/expand sign
         hasCollSign  =  node->IsCollapsable() && (node->GetFirstChild() != NULL);
-        if (hasCollSign)
+        if(hasCollSign)
         {
             GetCollapseSignFrame(node, collSignFrame);
-            if (node->IsCollapsed())
+            if(node->IsCollapsed())
                 currImage = expandImage;
-            else 
+            else
                 currImage = collImage;
 
-            if (currImage)
+            if(currImage)
                 currImage->Draw(collSignFrame);
         }
 
         // paints node selection box
-        if (node == tree->GetSelected())
+        if(node == tree->GetSelected())
             g2d->DrawBox(nodeFrame.xmin-2, nodeFrame.ymin, nodeFrame.Width()+4, nodeFrame.Height(), selectedColor);
     }
-    
-    if (node->IsCollapsed())
+
+    if(node->IsCollapsed())
         return;
 
     // paints children of node
     child = node->GetFirstChild();
-    if (child != NULL)
+    if(child != NULL)
     {
         childFrame = child->GetScreenFrame();
         vertLineX = (nodeFrame.xmin + childFrame.xmin) / 2;
@@ -870,15 +870,15 @@ void pawsStdTreeDecorator::DecorateSubtree(pawsTreeNode * node)
             hasCollSign = child->IsCollapsable() && (child->GetFirstChild() != NULL);
             childFrame = child->GetScreenFrame();
             GetCollapseSignFrame(child, collSignFrame);
-        
+
             horizLineY = (childFrame.ymin + childFrame.ymax) / 2;
             horizLineXMin = (hasCollSign) ? collSignFrame.xmax : vertLineX;
 
             vertLineYMax = (hasCollSign) ? collSignFrame.ymin-1 : horizLineY;
-            
-            if (child != tree->GetRoot() )
+
+            if(child != tree->GetRoot())
                 g2d->DrawLine(vertLineX, vertLineYMin, vertLineX, vertLineYMax, lineColor);
-    
+
             g2d->DrawLine(horizLineXMin, horizLineY, childFrame.xmin - 3, horizLineY, lineColor);
 
             // These draw an outline on the bounding box of the node widget to check bounds
@@ -886,34 +886,34 @@ void pawsStdTreeDecorator::DecorateSubtree(pawsTreeNode * node)
             //g2d->DrawLine(childFrame.xmin, childFrame.ymin, childFrame.xmin, childFrame.ymax, lineColor);
             //g2d->DrawLine(childFrame.xmin, childFrame.ymax, childFrame.xmax, childFrame.ymax, lineColor);
             //g2d->DrawLine(childFrame.xmax, childFrame.ymin, childFrame.xmax, childFrame.ymax, lineColor);
-           
+
             DecorateSubtree(child);
-            
+
             // determine vertLineYMin for next sibling
             vertLineYMin = (hasCollSign) ? collSignFrame.ymax+1 : horizLineY;
 
             child = child->GetNextSibling();
         }
-        while (child != NULL);
+        while(child != NULL);
     }
 }
 
 bool pawsStdTreeDecorator::OnMouseDown(int /*button*/, int /*modifiers*/, int x, int y)
 {
-    pawsTreeNode * target, * root;
+    pawsTreeNode* target, * root;
 
     root = tree->GetRoot();
-    if (root != NULL)
+    if(root != NULL)
     {
         target = FindCollapsingNodeInSubtree(root, x, y);
-        if (target != NULL)
+        if(target != NULL)
         {
             // has the currently processed node collapse/expand sign ?
-            bool hasCollSign  =  target->IsCollapsable() && 
+            bool hasCollSign  =  target->IsCollapsable() &&
                                  (target->GetFirstChild() != NULL);
-            if (hasCollSign)
+            if(hasCollSign)
             {
-                if (target->IsCollapsed())
+                if(target->IsCollapsed())
                     target->Expand();
                 else
                     target->Collapse();
@@ -923,7 +923,7 @@ bool pawsStdTreeDecorator::OnMouseDown(int /*button*/, int /*modifiers*/, int x,
     return true;
 }
 
-void pawsStdTreeDecorator::GetCollapseSignFrame(pawsTreeNode * node, csRect & rect)
+void pawsStdTreeDecorator::GetCollapseSignFrame(pawsTreeNode* node, csRect &rect)
 {
     csRect nodeFrame = node->GetScreenFrame();
     rect.SetPos(nodeFrame.xmin - collSpacing - 2,
@@ -931,27 +931,27 @@ void pawsStdTreeDecorator::GetCollapseSignFrame(pawsTreeNode * node, csRect & re
     rect.SetSize(10, 10);
 }
 
-pawsTreeNode * pawsStdTreeDecorator::FindCollapsingNodeInSubtree(pawsTreeNode * subtreeRoot, int x, int y)
+pawsTreeNode* pawsStdTreeDecorator::FindCollapsingNodeInSubtree(pawsTreeNode* subtreeRoot, int x, int y)
 {
     csRect signFrame;
-    pawsTreeNode * child, * found;
-    
-    
+    pawsTreeNode* child, * found;
+
+
     // has the currently processed node collapse/expand sign ?
-    bool hasCollSign  =  subtreeRoot->IsCollapsable() && 
+    bool hasCollSign  =  subtreeRoot->IsCollapsable() &&
                          (subtreeRoot->GetFirstChild() != NULL);
-    if (hasCollSign)
+    if(hasCollSign)
     {
         GetCollapseSignFrame(subtreeRoot, signFrame);
-        if (signFrame.Contains(x, y))
+        if(signFrame.Contains(x, y))
             return subtreeRoot;
     }
-        
+
     child = subtreeRoot->GetFirstChild();
-    while (child != NULL)
+    while(child != NULL)
     {
         found = FindCollapsingNodeInSubtree(child, x, y);
-        if (found != NULL)
+        if(found != NULL)
             return found;
         child = child->GetNextSibling();
     }
@@ -976,31 +976,31 @@ pawsTree::pawsTree()
 
     decor = 0;
     SetTreeDecorator(new pawsStdTreeDecorator(this, graphics2D, 0x666666, 0x999999, 13));
-    
+
     horizScrollBar = NULL;
     vertScrollBar = NULL;
 }
-void pawsTree::cloneTreeNodes(const pawsTree & origin)
+void pawsTree::cloneTreeNodes(const pawsTree &origin)
 {
-    csArray<pawsTreeNode *> oTreeNodes;//original tree nodes
-    csArray<pawsTreeNode *> TreeNodes;//this tree's tree nodes
-    for (unsigned int i = 0 ; i< origin.children.GetSize(); i++)
+    csArray<pawsTreeNode*> oTreeNodes; //original tree nodes
+    csArray<pawsTreeNode*> TreeNodes; //this tree's tree nodes
+    for(unsigned int i = 0 ; i< origin.children.GetSize(); i++)
     {
-        pawsTreeNode * tmp = dynamic_cast<pawsTreeNode*>(origin.children[i]);
+        pawsTreeNode* tmp = dynamic_cast<pawsTreeNode*>(origin.children[i]);
         if(tmp)
         {
             oTreeNodes.Push(tmp);
             TreeNodes.Push(dynamic_cast<pawsTreeNode*>(children[i]));
         }
     }
-    for (unsigned int i = 0 ; i< oTreeNodes.GetSize() ; i++)
+    for(unsigned int i = 0 ; i< oTreeNodes.GetSize() ; i++)
     {
-        pawsTreeNode * ocur = oTreeNodes[i];//original node
-        pawsTreeNode * cur = TreeNodes[i];//current node
+        pawsTreeNode* ocur = oTreeNodes[i]; //original node
+        pawsTreeNode* cur = TreeNodes[i]; //current node
 
         cur->SetTree(this);
 
-        for (unsigned int j = 0 ; j < oTreeNodes.GetSize() ; j++)
+        for(unsigned int j = 0 ; j < oTreeNodes.GetSize() ; j++)
         {
             if(ocur->GetParent() == oTreeNodes[j])
                 cur->SetParent(TreeNodes[j]);
@@ -1016,8 +1016,8 @@ void pawsTree::cloneTreeNodes(const pawsTree & origin)
             root = TreeNodes[i];
     }
 }
-pawsTree::pawsTree(const pawsTree& origin)
-            :pawsWidget(origin)
+pawsTree::pawsTree(const pawsTree &origin)
+    :pawsWidget(origin)
 {
     layout = 0;
     SetTreeLayout(new pawsStdTreeLayout(this, 5, 20));
@@ -1034,10 +1034,10 @@ pawsTree::pawsTree(const pawsTree& origin)
     if(origin.root)
         cloneTreeNodes(origin);
 
-    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.horizScrollBar == origin.children[i])
-            horizScrollBar = dynamic_cast<pawsScrollBar *>(children[i]);
+            horizScrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
         else if(origin.vertScrollBar == origin.children[i])
             vertScrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
 
@@ -1048,22 +1048,22 @@ pawsTree::pawsTree(const pawsTree& origin)
 
 pawsTree::~pawsTree()
 {
-    if (layout != NULL)
+    if(layout != NULL)
         delete layout;
-    if (decor != NULL)
+    if(decor != NULL)
         delete decor;
-    if (root != NULL)
+    if(root != NULL)
     {
         pawsWidget::DeleteChild(root);
         root = NULL;
     }
 }
 
-void pawsTree::SetRoot(pawsTreeNode * _root)
+void pawsTree::SetRoot(pawsTreeNode* _root)
 {
-    if (root != NULL)
+    if(root != NULL)
     {
-        if (selected == root)
+        if(selected == root)
             Deselect();
         pawsWidget::DeleteChild(root);
     }
@@ -1073,7 +1073,7 @@ void pawsTree::SetRoot(pawsTreeNode * _root)
 
 void pawsTree::SetScrollBars(bool horiz, bool vert)
 {
-    if (horiz && !horizScrollBar)
+    if(horiz && !horizScrollBar)
     {
         horizScrollBar = new pawsScrollBar;
         AddChild(horizScrollBar);
@@ -1083,27 +1083,27 @@ void pawsTree::SetScrollBars(bool horiz, bool vert)
         horizScrollBar->SetTickValue(20);
         horizScrollBar->Show();
     }
-    if (!horiz && horizScrollBar)
+    if(!horiz && horizScrollBar)
     {
         pawsWidget::DeleteChild(horizScrollBar);
         horizScrollBar = NULL;
-        if (layout)
+        if(layout)
             layout->SetHorizScroll(0);
     }
 
-    if (vert && !vertScrollBar)
+    if(vert && !vertScrollBar)
     {
         csString widgetStr;
 
         widgetStr.Format("<widget factory=\"pawsScrollBar\" name=\"scrollbar\" style=\"Standard Scrollbar\" direction=\"vertical\" tick=\"20\" minValue=\"0\" ><frame x=\"%d\" y=\"%d\" width=\"20\" height=\"%d\" /></widget>",
-            defaultFrame.Width()-20,0,defaultFrame.Height() );
+                         defaultFrame.Width()-20,0,defaultFrame.Height());
 
-        vertScrollBar = dynamic_cast<pawsScrollBar *>(PawsManager::GetSingleton().LoadWidgetFromString(widgetStr));
+        vertScrollBar = dynamic_cast<pawsScrollBar*>(PawsManager::GetSingleton().LoadWidgetFromString(widgetStr));
         AddChild(vertScrollBar);
 
 //        vertScrollBar = new pawsScrollBar;
 //        if (vertScrollBar == NULL)
-//        { 
+//        {
 //            Error1("Could not created pawsScrollBar");
 //            return;
 //        }
@@ -1114,36 +1114,38 @@ void pawsTree::SetScrollBars(bool horiz, bool vert)
 //        vertScrollBar->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT );
         vertScrollBar->Show();
     }
-    if (!vert && (vertScrollBar != NULL))
+    if(!vert && (vertScrollBar != NULL))
     {
         pawsWidget::DeleteChild(vertScrollBar);
         vertScrollBar = NULL;
-        if (layout)
-            layout->SetVertScroll(0);    
+        if(layout)
+            layout->SetVertScroll(0);
     }
     SetScrollBarMax();
 }
 
 
-void pawsTree::Select(pawsTreeNode *node)
+void pawsTree::Select(pawsTreeNode* node)
 {
     selected = node;
-    
+
     //we have to check if the selected element is outside sight. If so move the scrollbar
     //correctly in order to have it on screen.
-    
+
     if(selected->GetScreenFrame().ymin < GetScreenFrame().ymin) //the element is hidden in the top
-    {   //get the current position and move it relatively of the part which is hidden
+    {
+        //get the current position and move it relatively of the part which is hidden
         if(vertScrollBar) //just to be safe
             vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue()-(GetScreenFrame().ymin-selected->GetScreenFrame().ymin));
     }
     else if(selected->GetScreenFrame().ymax > GetScreenFrame().ymax) //the element is hidden in the bottom
-    {   //get the current position and move it relatively of the part which is hidden
+    {
+        //get the current position and move it relatively of the part which is hidden
         if(vertScrollBar) //just to be safe
             vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue()+(selected->GetScreenFrame().ymax-GetScreenFrame().ymax));
     }
-    
-    if (notificationTarget != NULL)
+
+    if(notificationTarget != NULL)
     {
         notificationTarget->OnSelected(node);
     }
@@ -1154,53 +1156,53 @@ void pawsTree::Deselect()
     selected = NULL;
 }
 
-pawsTreeNode * pawsTree::GetSelected()
+pawsTreeNode* pawsTree::GetSelected()
 {
     return selected;
 }
 
-bool pawsTree::Setup(iDocumentNode * node)
+bool pawsTree::Setup(iDocumentNode* node)
 {
     csRef<iDocumentNode> decorator = node->GetNode("decorator");
-    if (decorator)
+    if(decorator)
     {
         csRGBcolor selColour = csRGBcolor(102,102,102);
         csRGBcolor lineColour = csRGBcolor(153,153,153);
         int colSpacing = 13;
 
         csRef<iDocumentAttribute> selR = decorator->GetAttribute("selR");
-        if (selR) selColour.red = selR->GetValueAsInt();
+        if(selR) selColour.red = selR->GetValueAsInt();
         csRef<iDocumentAttribute> selG = decorator->GetAttribute("selG");
-        if (selG) selColour.green = selG->GetValueAsInt();
+        if(selG) selColour.green = selG->GetValueAsInt();
         csRef<iDocumentAttribute> selB = decorator->GetAttribute("selB");
-        if (selB) selColour.blue = selB->GetValueAsInt();
-        
+        if(selB) selColour.blue = selB->GetValueAsInt();
+
         csRef<iDocumentAttribute> lineR = decorator->GetAttribute("lineR");
-        if (lineR) lineColour.red = lineR->GetValueAsInt();
+        if(lineR) lineColour.red = lineR->GetValueAsInt();
         csRef<iDocumentAttribute> lineG = decorator->GetAttribute("lineG");
-        if (lineG) lineColour.green = lineG->GetValueAsInt();
+        if(lineG) lineColour.green = lineG->GetValueAsInt();
         csRef<iDocumentAttribute> lineB = decorator->GetAttribute("lineB");
-        if (lineB) lineColour.blue = lineB->GetValueAsInt();
+        if(lineB) lineColour.blue = lineB->GetValueAsInt();
 
         csRef<iDocumentAttribute> colSpace = decorator->GetAttribute("colSpacing");
-        if (colSpace) colSpacing = colSpace->GetValueAsInt();
-        
-        SetTreeDecorator(new pawsStdTreeDecorator(this, graphics2D, 
-            graphics2D->FindRGB(selColour.red, selColour.blue, selColour.green),
-            graphics2D->FindRGB(lineColour.red, lineColour.blue, lineColour.green),
-            colSpacing));
+        if(colSpace) colSpacing = colSpace->GetValueAsInt();
+
+        SetTreeDecorator(new pawsStdTreeDecorator(this, graphics2D,
+                         graphics2D->FindRGB(selColour.red, selColour.blue, selColour.green),
+                         graphics2D->FindRGB(lineColour.red, lineColour.blue, lineColour.green),
+                         colSpacing));
     }
-    
+
     csRef<iDocumentNode> layout = node->GetNode("layout");
-    if (layout)
+    if(layout)
     {
         int rowSpacingVal = 5;
         int levelSpacingVal = 20;
         csRef<iDocumentAttribute> rowSpacing = layout->GetAttribute("rowSpacing");
-        if (rowSpacing)
+        if(rowSpacing)
             rowSpacingVal = rowSpacing->GetValueAsInt();
         csRef<iDocumentAttribute> levelSpacing = layout->GetAttribute("levelSpacing");
-        if (levelSpacing)
+        if(levelSpacing)
             levelSpacingVal = levelSpacing->GetValueAsInt();
         SetTreeLayout(new pawsStdTreeLayout(this, rowSpacingVal, levelSpacingVal));
     }
@@ -1217,7 +1219,7 @@ void pawsTree::Draw()
 {
     csRect oldClip;
 
-    if (layout)
+    if(layout)
     {
         layout->SetLayout();
         SetScrollBarMax();
@@ -1225,18 +1227,18 @@ void pawsTree::Draw()
 
     ClipToParent(true);
     DrawBackground();
-    
+
     graphics2D->SetClipRect(screenFrame.xmin, screenFrame.ymin, screenFrame.xmax, screenFrame.ymax);
-    if (decor)
+    if(decor)
         decor->Decorate();
 
     ClipToParent(false);
     DrawChildren();
 }
 
-void pawsTree::SetTreeLayout(pawsITreeLayout * _layout)
+void pawsTree::SetTreeLayout(pawsITreeLayout* _layout)
 {
-    if (layout)
+    if(layout)
     {
         delete layout;
         layout = 0;
@@ -1245,9 +1247,9 @@ void pawsTree::SetTreeLayout(pawsITreeLayout * _layout)
     layout->SetLayout();
 }
 
-void pawsTree::SetTreeDecorator(pawsITreeDecorator *_decor)
+void pawsTree::SetTreeDecorator(pawsITreeDecorator* _decor)
 {
-    if (decor)
+    if(decor)
     {
         delete decor;
         decor = 0;
@@ -1257,46 +1259,46 @@ void pawsTree::SetTreeDecorator(pawsITreeDecorator *_decor)
 
 bool pawsTree::OnMouseDown(int button, int modifiers, int x, int y)
 {
-    if (button == csmbWheelUp)
+    if(button == csmbWheelUp)
     {
-        if (vertScrollBar)
+        if(vertScrollBar)
             vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue() - TREE_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    else if (button == csmbWheelDown)
+    else if(button == csmbWheelDown)
     {
-        if (vertScrollBar)
+        if(vertScrollBar)
             vertScrollBar->SetCurrentValue(vertScrollBar->GetCurrentValue() + TREE_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    else if (button == csmbHWheelLeft)
+    else if(button == csmbHWheelLeft)
     {
-        if (horizScrollBar)
+        if(horizScrollBar)
             horizScrollBar->SetCurrentValue(horizScrollBar->GetCurrentValue() - TREE_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    else if (button == csmbHWheelRight)
+    else if(button == csmbHWheelRight)
     {
-        if (horizScrollBar)
+        if(horizScrollBar)
             horizScrollBar->SetCurrentValue(horizScrollBar->GetCurrentValue() + TREE_MOUSE_SCROLL_AMOUNT);
         return true;
     }
     else
     {
-        pawsTreeNode *node = NULL;
+        pawsTreeNode* node = NULL;
 
-        if (root != NULL)
+        if(root != NULL)
         {
             node = FindNodeAt(root, x, y);
-            if (node != NULL)
+            if(node != NULL)
             {
                 Select(node);
                 return true;
             }
         }
-    
-        if (decor != NULL)
-            if (decor->OnMouseDown(button, modifiers, x, y))
+
+        if(decor != NULL)
+            if(decor->OnMouseDown(button, modifiers, x, y))
                 return true;
     }
     return false;
@@ -1304,56 +1306,59 @@ bool pawsTree::OnMouseDown(int button, int modifiers, int x, int y)
 
 bool pawsTree::OnKeyDown(utf32_char /*keyCode*/, utf32_char keyChar, int /*modifiers*/)
 {
-    pawsTreeNode *node;
+    pawsTreeNode* node;
 
-    switch (keyChar)
+    switch(keyChar)
     {
-    case CSKEY_UP:
-        if (selected != NULL)
-        {
-            node = selected;
-            do
+        case CSKEY_UP:
+            if(selected != NULL)
             {
-                node = node->FindNodeAbove();
-            } while ((node != NULL) && node->BuriedInRuins());
-            if ((node != NULL) && (node != root))
-                Select(node);
-        }
-        return true;
-
-    case CSKEY_DOWN:
-        if (selected != NULL)
-        {
-            node = selected;
-            do
-            {
-                node = node->FindNodeBelow();
-            } while ((node != NULL) && node->BuriedInRuins());
-            if (node != NULL)
-                Select(node);
-        }
-        return true;
-        
-    case CSKEY_ENTER:
-    case CSKEY_SPACE:
-        if (selected != NULL)
-        {
-            //Is the selected node expandable or collapsable?
-            if(selected->IsCollapsable() && selected->GetFirstChild() != NULL)
-            { //If so expand or collapse it depending on its status
-                if (selected->IsCollapsed())
-                    selected->Expand();
-                else
-                    selected->Collapse();
+                node = selected;
+                do
+                {
+                    node = node->FindNodeAbove();
+                }
+                while((node != NULL) && node->BuriedInRuins());
+                if((node != NULL) && (node != root))
+                    Select(node);
             }
-        }
-        //some notify?
-        return true;
+            return true;
+
+        case CSKEY_DOWN:
+            if(selected != NULL)
+            {
+                node = selected;
+                do
+                {
+                    node = node->FindNodeBelow();
+                }
+                while((node != NULL) && node->BuriedInRuins());
+                if(node != NULL)
+                    Select(node);
+            }
+            return true;
+
+        case CSKEY_ENTER:
+        case CSKEY_SPACE:
+            if(selected != NULL)
+            {
+                //Is the selected node expandable or collapsable?
+                if(selected->IsCollapsable() && selected->GetFirstChild() != NULL)
+                {
+                    //If so expand or collapse it depending on its status
+                    if(selected->IsCollapsed())
+                        selected->Expand();
+                    else
+                        selected->Collapse();
+                }
+            }
+            //some notify?
+            return true;
     }
     return false;
 }
 
-bool pawsTree::LoadChildren( iDocumentNode* node )
+bool pawsTree::LoadChildren(iDocumentNode* node)
 {
     return pawsTreeStruct::Load(node);
 }
@@ -1361,13 +1366,13 @@ bool pawsTree::LoadChildren( iDocumentNode* node )
 void pawsTree::SetScrollBarMax()
 {
     int width, height;
-    
-    if (layout != NULL)
+
+    if(layout != NULL)
     {
         layout->GetTreeSize(width, height);
-        if (horizScrollBar != NULL)
+        if(horizScrollBar != NULL)
         {
-            if( width > screenFrame.Width())
+            if(width > screenFrame.Width())
             {
                 horizScrollBar  -> SetMaxValue(csMax(0, width  - screenFrame.Width()));
                 if(!horizScrollBar->IsVisible()) //as this function is called continually we have to check if
@@ -1379,8 +1384,8 @@ void pawsTree::SetScrollBarMax()
                     horizScrollBar->Hide();
                 horizScrollBar->SetMaxValue(0);
             }
-         }
-        if (vertScrollBar != NULL)
+        }
+        if(vertScrollBar != NULL)
         {
             if(height > screenFrame.Height())
             {
@@ -1409,19 +1414,19 @@ bool pawsTree::OnScroll(int /*scrollDirection*/, pawsScrollBar* widget)
 
     scroll = (int)widget->GetCurrentValue();
     version++;
-    if (widget == horizScrollBar)
+    if(widget == horizScrollBar)
         layout->SetHorizScroll(scroll);
-    else if (widget == vertScrollBar)
+    else if(widget == vertScrollBar)
         layout->SetVertScroll(scroll);
 
     return true;
 }
 
-void pawsTree::NewNode(pawsTreeNode * node)
+void pawsTree::NewNode(pawsTreeNode* node)
 {
     pawsWidget::AddChild(node);
 }
-void pawsTree::RemoveNode(pawsTreeNode * node)
+void pawsTree::RemoveNode(pawsTreeNode* node)
 {
     pawsWidget::RemoveChild(node);
 }
@@ -1433,25 +1438,25 @@ void pawsTree::RemoveNode(pawsTreeNode * node)
 //
 //////////////////////////////////////////////////////////////////////
 
-pawsSeqTreeNode_widget::pawsSeqTreeNode_widget(pawsWidget * _w, int _width)
+pawsSeqTreeNode_widget::pawsSeqTreeNode_widget(pawsWidget* _w, int _width)
 {
     widget = _w;
     width = _width;
 }
 
-pawsSeqTreeNode::pawsSeqTreeNode(const pawsSeqTreeNode& origin)
-                :pawsTreeNode(origin)
+pawsSeqTreeNode::pawsSeqTreeNode(const pawsSeqTreeNode &origin)
+    :pawsTreeNode(origin)
 {
     csList<pawsSeqTreeNode_widget>::Iterator iter(origin.widgets);
     csArray<pawsSeqTreeNode_widget> arr;
-    while ((iter.HasNext()))
+    while((iter.HasNext()))
     {
         iter.Next();
         arr.Push(*iter);
     }
-    for (unsigned int i = 0 ; i < arr.GetSize(); i++)
+    for(unsigned int i = 0 ; i < arr.GetSize(); i++)
     {
-        for (unsigned int j = 0 ; j < origin.children.GetSize(); j++)
+        for(unsigned int j = 0 ; j < origin.children.GetSize(); j++)
         {
             if(arr[i].widget == origin.children[j])
             {
@@ -1460,10 +1465,10 @@ pawsSeqTreeNode::pawsSeqTreeNode(const pawsSeqTreeNode& origin)
             }
         }
     }
-    for (unsigned int i = 0 ; i< arr.GetSize(); i++)
+    for(unsigned int i = 0 ; i< arr.GetSize(); i++)
         widgets.PushBack(arr[i]);
 }
-void pawsSeqTreeNode::AddSeqWidget(pawsWidget * w, int width)
+void pawsSeqTreeNode::AddSeqWidget(pawsWidget* w, int width)
 {
     csRect widgetFrame;
 
@@ -1479,18 +1484,18 @@ void pawsSeqTreeNode::AddSeqWidget(pawsWidget * w, int width)
     SetRelativeFrameSize(newWidth, newHeight);
 }
 
-void pawsSeqTreeNode::AddSeqWidget(pawsWidget * widget)
+void pawsSeqTreeNode::AddSeqWidget(pawsWidget* widget)
 {
     int width = widget->GetScreenFrame().Width();
     AddSeqWidget(widget, width);
 }
 
-pawsWidget * pawsSeqTreeNode::GetSeqWidget(int index)
+pawsWidget* pawsSeqTreeNode::GetSeqWidget(int index)
 {
     csList<pawsSeqTreeNode_widget>::Iterator iter(widgets);
     int currIndex=0;
 
-    while ((iter.HasNext()))
+    while((iter.HasNext()))
     {
         iter.Next();
         if(currIndex == index)
@@ -1498,34 +1503,34 @@ pawsWidget * pawsSeqTreeNode::GetSeqWidget(int index)
 
         currIndex++;
     }
-    
+
     return NULL;
 }
-    
-bool pawsSeqTreeNode::Load(iDocumentNode *node)
+
+bool pawsSeqTreeNode::Load(iDocumentNode* node)
 {
     csRef<iDocumentNodeIterator> nodeWidgetChildren;
     csRef<iDocumentNode> nodewidgetNode, widgetNode;
     csString factory;
-    pawsWidget * newWidget;
-    
+    pawsWidget* newWidget;
+
     name = node->GetAttributeValue("name");
 
     nodewidgetNode = node->GetNode("nodewidget");
-    if (nodewidgetNode != NULL)
+    if(nodewidgetNode != NULL)
     {
         nodeWidgetChildren = nodewidgetNode->GetNodes("widget");
-        
-        while (nodeWidgetChildren->HasNext())
+
+        while(nodeWidgetChildren->HasNext())
         {
             //TODO: attributes for widgets like reserved width
             widgetNode = nodeWidgetChildren->Next();
 
             factory = widgetNode->GetAttributeValue("factory");
             newWidget = PawsManager::GetSingleton().CreateWidget(factory);
-            if (newWidget == NULL)
+            if(newWidget == NULL)
                 return false;
-            if ( ! newWidget->Load(widgetNode))
+            if(! newWidget->Load(widgetNode))
             {
                 delete newWidget;
                 return false;
@@ -1553,13 +1558,13 @@ pawsCheckTreeNode::pawsCheckTreeNode()
     widget = NULL;
 //    checkbox = NULL;
 }
-pawsCheckTreeNode::pawsCheckTreeNode(const pawsCheckTreeNode& origin)
-                    :pawsTreeNode(origin)
+pawsCheckTreeNode::pawsCheckTreeNode(const pawsCheckTreeNode &origin)
+    :pawsTreeNode(origin)
 {
     widget = 0;
     if(origin.widget)
     {
-        for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+        for(unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
         {
             if(origin.widget == origin.children[i])
                 widget = children[i];
@@ -1579,16 +1584,16 @@ void pawsCheckTreeNode::SetCheck(bool /*ch*/)
     //checkbox->Set(ch);
 }
 
-void pawsCheckTreeNode::SetWidget(pawsWidget * _widget)
+void pawsCheckTreeNode::SetWidget(pawsWidget* _widget)
 {
     csRect widgetFrame;
 
-    if (widget != NULL)
+    if(widget != NULL)
     {
         pawsWidget::DeleteChild(widget);
         widget =  NULL;
     }
-    
+
     widget = _widget;
     widgetFrame = widget->GetScreenFrame();
     AddChild(widget);
@@ -1609,13 +1614,13 @@ pawsWidgetTreeNode::pawsWidgetTreeNode()
     widget = NULL;
     factory = "pawsWidgetTreeNode";
 }
-pawsWidgetTreeNode::pawsWidgetTreeNode(const pawsWidgetTreeNode& origin)
-                    :pawsTreeNode(origin)
+pawsWidgetTreeNode::pawsWidgetTreeNode(const pawsWidgetTreeNode &origin)
+    :pawsTreeNode(origin)
 {
     widget = 0;
     if(origin.widget)
     {
-        for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+        for(unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
         {
             if(origin.widget == origin.children[i])
                 widget = children[i];
@@ -1624,10 +1629,10 @@ pawsWidgetTreeNode::pawsWidgetTreeNode(const pawsWidgetTreeNode& origin)
         }
     }
 }
-void pawsWidgetTreeNode::SetWidget(pawsWidget * _widget)
+void pawsWidgetTreeNode::SetWidget(pawsWidget* _widget)
 {
     csRect widgetFrame;
-    if (widget != NULL)
+    if(widget != NULL)
         pawsWidget::DeleteChild(widget);
 
     widget = _widget;
@@ -1637,32 +1642,32 @@ void pawsWidgetTreeNode::SetWidget(pawsWidget * _widget)
     AddChild(widget);
 }
 
-bool pawsWidgetTreeNode::Load(iDocumentNode *node)
+bool pawsWidgetTreeNode::Load(iDocumentNode* node)
 {
     csRef<iDocumentNode> nodewidgetNode, widgetNode;
     csString factory;
-    pawsWidget * newWidget;
-    
+    pawsWidget* newWidget;
+
     name = node->GetAttributeValue("name");
 
     nodewidgetNode = node->GetNode("nodewidget");
-    if (nodewidgetNode == NULL)
+    if(nodewidgetNode == NULL)
         return false;
     widgetNode = nodewidgetNode->GetNode("widget");
-    if (widgetNode == NULL)
+    if(widgetNode == NULL)
         return false;
-        
+
     factory = widgetNode->GetAttributeValue("factory");
     newWidget = PawsManager::GetSingleton().CreateWidget(factory);
-    if (newWidget == NULL)
+    if(newWidget == NULL)
         return false;
-    if ( ! newWidget->Load(widgetNode))
+    if(! newWidget->Load(widgetNode))
     {
         delete newWidget;
         return false;
     }
     SetWidget(newWidget);
-    
+
     return pawsTreeNode::Load(node);
 }
 
@@ -1681,12 +1686,12 @@ pawsSimpleTreeNode::pawsSimpleTreeNode()
     factory = "pawsSimpleTreeNode";
 }
 
-pawsSimpleTreeNode::pawsSimpleTreeNode(const pawsSimpleTreeNode& origin)
-                    :pawsCheckTreeNode(origin)
+pawsSimpleTreeNode::pawsSimpleTreeNode(const pawsSimpleTreeNode &origin)
+    :pawsCheckTreeNode(origin)
 {
     image = 0;
     textBox = 0;
-    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.image == origin.children[i])
             image = children[i];
@@ -1701,30 +1706,30 @@ pawsSimpleTreeNode::~pawsSimpleTreeNode()
 {
 }
 
-void pawsSimpleTreeNode::Set(int mode, bool /*checked*/, const csString& imageName, const csString& label)
+void pawsSimpleTreeNode::Set(int mode, bool /*checked*/, const csString &imageName, const csString &label)
 {
     csRect frame;
     int lastX;
-        
+
     assert(tree != NULL);
 
-    if (textBox != NULL)
+    if(textBox != NULL)
     {
         widget->DeleteChild(textBox);
         textBox = NULL;
     }
-    if (image != NULL)
+    if(image != NULL)
     {
         widget->DeleteChild(image);
         image = NULL;
     }
 
     lastX = screenFrame.xmin - 1;
-    if (mode & showCheckBox)
+    if(mode & showCheckBox)
     {
         assert("checkbox nodes are not currently implemented"==0);
     }
-    if (mode & showImage)
+    if(mode & showImage)
     {
         image = new pawsWidget();
         image->SetSize(20, 20);
@@ -1733,7 +1738,7 @@ void pawsSimpleTreeNode::Set(int mode, bool /*checked*/, const csString& imageNa
         widget->AddChild(image);
         lastX += 20;
     }
-    if (mode & showLabel)
+    if(mode & showLabel)
     {
         textBox = new pawsTextBox;
         textBox->SetParent(widget);
@@ -1741,7 +1746,7 @@ void pawsSimpleTreeNode::Set(int mode, bool /*checked*/, const csString& imageNa
         textBox->SetSizeByText(5,5);
         textBox->VertAdjust(pawsTextBox::vertCENTRE);
         textBox->MoveTo(lastX+1,0);
-        
+
         widget->AddChild(textBox);
         lastX += textBox->GetScreenFrame().Width();
     }
@@ -1751,14 +1756,14 @@ void pawsSimpleTreeNode::Set(int mode, bool /*checked*/, const csString& imageNa
     SetRelativeFrameSize(lastX - screenFrame.xmin, 20);
 }
 
-bool pawsSimpleTreeNode::Load(iDocumentNode *node)
+bool pawsSimpleTreeNode::Load(iDocumentNode* node)
 {
     csRef<iDocumentAttribute> labelAttr, imageAttr, checkedAttr;
     csString labelValue, imageValue;
     bool checkedValue = false;
     int mode;
 
-    if (!pawsCheckTreeNode::Load(node))
+    if(!pawsCheckTreeNode::Load(node))
         return false;
 
     mode = 0;
@@ -1766,19 +1771,19 @@ bool pawsSimpleTreeNode::Load(iDocumentNode *node)
     name = node->GetAttributeValue("name");
 
     checkedAttr  = node->GetAttribute("checked");
-    if (checkedAttr != NULL)
+    if(checkedAttr != NULL)
     {
         checkedValue = (checkedAttr->GetValueAsInt() == 1);
         mode |= showCheckBox;
     }
     imageAttr = node->GetAttribute("image");
-    if (imageAttr != NULL)
+    if(imageAttr != NULL)
     {
         imageValue = imageAttr->GetValue();
         mode |= showImage;
     }
     labelAttr = node->GetAttribute("label");
-    if (labelAttr != NULL)
+    if(labelAttr != NULL)
     {
         labelValue = PawsManager::GetSingleton().Translate(labelAttr->GetValue());
         mode |= showLabel;
@@ -1793,19 +1798,19 @@ pawsSimpleTree::pawsSimpleTree()
     factory = "pawsSimpleTree";
 }
 
-pawsSimpleTree::pawsSimpleTree(const pawsSimpleTree& origin)
-                :pawsTree(origin),
-                defaultColor(origin.defaultColor)
+pawsSimpleTree::pawsSimpleTree(const pawsSimpleTree &origin)
+    :pawsTree(origin),
+     defaultColor(origin.defaultColor)
 {
 }
 
-bool pawsSimpleTree::Setup(iDocumentNode *node)
+bool pawsSimpleTree::Setup(iDocumentNode* node)
 {
     csString colorStr;
 
     colorStr  =  node->GetAttributeValue("colour");
     name      = node->GetAttributeValue("name");
-    if (colorStr.GetData() != NULL)
+    if(colorStr.GetData() != NULL)
         defaultColor = ParseColor(colorStr.GetData(), graphics2D);
     else
         defaultColor = 0xffffff;
@@ -1823,25 +1828,25 @@ void pawsSimpleTree::SetDefaultColor(int _color)
     defaultColor = _color;
 }
 
-void pawsSimpleTree::InsertChildL(const csString & parent, const csString & name, const csString & label, const csString & nextSibling)
+void pawsSimpleTree::InsertChildL(const csString &parent, const csString &name, const csString &label, const csString &nextSibling)
 {
-    pawsSimpleTreeNode * node = new pawsSimpleTreeNode();
+    pawsSimpleTreeNode* node = new pawsSimpleTreeNode();
     pawsTreeStruct::InsertChild(parent, node, nextSibling);
     node->SetColour(defaultColor);
     node->Set(showLabel, false, "", label);
     node->SetName(name);
 }
-void pawsSimpleTree::InsertChildI(const csString & parent, const csString & name, const csString & image, const csString & nextSibling)
+void pawsSimpleTree::InsertChildI(const csString &parent, const csString &name, const csString &image, const csString &nextSibling)
 {
-    pawsSimpleTreeNode * node = new pawsSimpleTreeNode();
+    pawsSimpleTreeNode* node = new pawsSimpleTreeNode();
     pawsTreeStruct::InsertChild(parent, node, nextSibling);
     node->SetColour(defaultColor);
     node->Set(showImage, false, image, "");
     node->SetName(name);
 }
-void pawsSimpleTree::InsertChildIL(const csString & parent, const csString & name, const csString & image, const csString & label, const csString & nextSibling)
+void pawsSimpleTree::InsertChildIL(const csString &parent, const csString &name, const csString &image, const csString &label, const csString &nextSibling)
 {
-    pawsSimpleTreeNode * node = new pawsSimpleTreeNode();
+    pawsSimpleTreeNode* node = new pawsSimpleTreeNode();
     pawsTreeStruct::InsertChild(parent, node, nextSibling);
     node->SetColour(defaultColor);
     node->Set(showLabel | showImage, false, image, label);

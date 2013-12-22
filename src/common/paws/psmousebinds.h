@@ -73,7 +73,7 @@ public:
      * @param filename the vfs filename and path
      * @return true on success
      **/
-    bool LoadFromFile(iObjectRegistry* object_reg, const csString& filename);
+    bool LoadFromFile(iObjectRegistry* object_reg, const csString &filename);
 
 
     /**
@@ -83,7 +83,7 @@ public:
      * @param filename the vfs filename and path
      * @return true on success
      **/
-    bool SaveToFile(iObjectRegistry* object_reg, const csString& filename);
+    bool SaveToFile(iObjectRegistry* object_reg, const csString &filename);
 
 
     /**
@@ -92,10 +92,10 @@ public:
      * @param action the action that will be bound
      * @param event the mouse event that will trigger the action
      **/
-    void Bind(const csString& action, csMouseEventData& event);
-    
-    void Bind(const csString& action, csString& event, csString& ctrl);
-    void Bind(const csString& action, int button, int modifier );
+    void Bind(const csString &action, csMouseEventData &event);
+
+    void Bind(const csString &action, csString &event, csString &ctrl);
+    void Bind(const csString &action, int button, int modifier);
 
 
     /**
@@ -104,8 +104,8 @@ public:
      * @param option the name of the option to set
      * @param value the value to set the option to
      **/
-    void SetOnOff(const csString& option, csString& value);
-    void SetOnOff(const csString& option, bool value);
+    void SetOnOff(const csString &option, csString &value);
+    void SetOnOff(const csString &option, bool value);
 
 
     /**
@@ -114,8 +114,8 @@ public:
      * @param option the name of the option to set
      * @param value the value to set the option to
      **/
-    void SetInt(const csString& option, csString& value);
-    void SetInt(const csString& option, int value);
+    void SetInt(const csString &option, csString &value);
+    void SetInt(const csString &option, int value);
 
 
     /**
@@ -125,8 +125,8 @@ public:
      * @param event a variable that will hold the event
      * @return true if the action was found
      **/
-    bool GetBind(const csString& action, csMouseEventData& event);
-    bool GetBind(const csString& action, csString& button);
+    bool GetBind(const csString &action, csMouseEventData &event);
+    bool GetBind(const csString &action, csString &button);
 
     /**
      * Checks if a specific bind matches the given button and modifiers.
@@ -136,8 +136,8 @@ public:
      * @param modifiers the modifiers that you want to check against.
      * @return true if the action matches the given button and modifiers.
      */
-    bool CheckBind(const csString& action, int button, int modifiers);
-    
+    bool CheckBind(const csString &action, int button, int modifiers);
+
     /**
      * Gets the boolean value of the specified option.
      *
@@ -145,8 +145,8 @@ public:
      * @param value a variable that will hold the option value
      * @return true if the option was found
      **/
-    bool GetOnOff(const csString& option, csString& value);
-    bool GetOnOff(const csString& option, bool& value);
+    bool GetOnOff(const csString &option, csString &value);
+    bool GetOnOff(const csString &option, bool &value);
 
 
     /**
@@ -156,8 +156,8 @@ public:
      * @param value a variable that will hold the option value
      * @return true if the option was found
      **/
-    bool GetInt(const csString& option, csString& value);
-    bool GetInt(const csString& option, int& value);
+    bool GetInt(const csString &option, csString &value);
+    bool GetInt(const csString &option, int &value);
 
 
     /**
@@ -165,7 +165,7 @@ public:
      *
      * @param action the action to remove
      **/
-    void Unbind(const csString& action);
+    void Unbind(const csString &action);
 
 
     /**
@@ -173,7 +173,7 @@ public:
      *
      * @param option the option to remove
      **/
-    void RemoveOnOff(const csString& option);
+    void RemoveOnOff(const csString &option);
 
 
     /**
@@ -181,7 +181,7 @@ public:
      *
      * @param option the option to remove
      **/
-    void RemoveInt(const csString& option);
+    void RemoveInt(const csString &option);
 
 
     /**
@@ -201,7 +201,7 @@ protected:
      * @param action the action to search for
      * @return NULL iterator if action isn't found
      **/
-    psMouseBind* FindAction(const csString& action);
+    psMouseBind* FindAction(const csString &action);
 
 
     /**
@@ -210,7 +210,7 @@ protected:
      * @param option the option to search for
      * @return NULL iterator if option isn't found
      **/
-     psMouseOnOff* FindOnOff(const csString& option);
+    psMouseOnOff* FindOnOff(const csString &option);
 
 
     /**
@@ -219,7 +219,7 @@ protected:
      * @param option the option to search for
      * @return NULL iterator if option isn't found
      **/
-     psMouseInt* FindInt(const csString& option);
+    psMouseInt* FindInt(const csString &option);
 
     /// list of the binds
     csPDelArray<psMouseBind> binds;

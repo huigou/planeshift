@@ -66,7 +66,7 @@ public:
      * Basic constructor
      */
     pawsTextBox();
-    
+
     /**
      * Basic deconstructor
      */
@@ -434,7 +434,7 @@ public:
      * @param publish Publish the text.
      */
     void SetText(const char* text, bool publish = true);
-    
+
     virtual void OnUpdateData(const char* dataname,PAWSData &data);
 
     /**
@@ -1062,7 +1062,7 @@ protected:
      * @return How many pictures are defined to be displayed in a row in this node
      */
     unsigned int ProcessPictureInfo(iDocumentNode* node);
-    
+
     csArray<PictureInfo> picsInfo;///< Hold all the info parse from xml document
 };
 CREATE_PAWS_FACTORY(pawsDocumentView);
@@ -1088,12 +1088,12 @@ public:
      * @param text The xml content defined what to be display in the view
      */
     void SetText(const char* text);
-    
+
     /**
      * Draw the content include text and pictures.
      */
     void Draw();
-    
+
     void Resize();
 protected:
     /**
@@ -1104,7 +1104,7 @@ protected:
      * @param text The xml content defined what to be display in the view
      */
     void OrganizeContent(const char* text);
-    
+
     /**
      * Process the \<content type="pic"\>\</content\> node in the xml
      *

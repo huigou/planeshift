@@ -54,28 +54,48 @@ csString psMouseBinds::MouseButtonToString(uint button, uint32 modifiers)
 {
     csString str;
 
-    if (modifiers & CSMASK_CTRL)
+    if(modifiers & CSMASK_CTRL)
         str += CTRL_STR;
 
-    if (modifiers & CSMASK_ALT)
+    if(modifiers & CSMASK_ALT)
         str += ALT_STR;
 
-    if (modifiers & CSMASK_SHIFT)
+    if(modifiers & CSMASK_SHIFT)
         str += SHIFT_STR;
 
-    switch (button)
+    switch(button)
     {
-        case csmbLeft:       str += LEFTCLICK_STR;   break;
-        case csmbRight:      str += RIGHTCLICK_STR;  break;
-        case csmbMiddle:     str += MIDDLECLICK_STR; break;
-        case csmbWheelUp:    str += SCROLLUP_STR;    break;
-        case csmbWheelDown:  str += SCROLLDOWN_STR;  break;
-        case csmbHWheelLeft: str += SCROLLLEFT_STR;  break;
-        case csmbHWheelRight:str += SCROLLRIGHT_STR; break;
-        case csmbExtra1:     str += EXTRA1_STR;      break;
-        case csmbExtra2:     str += EXTRA2_STR;      break;
+        case csmbLeft:
+            str += LEFTCLICK_STR;
+            break;
+        case csmbRight:
+            str += RIGHTCLICK_STR;
+            break;
+        case csmbMiddle:
+            str += MIDDLECLICK_STR;
+            break;
+        case csmbWheelUp:
+            str += SCROLLUP_STR;
+            break;
+        case csmbWheelDown:
+            str += SCROLLDOWN_STR;
+            break;
+        case csmbHWheelLeft:
+            str += SCROLLLEFT_STR;
+            break;
+        case csmbHWheelRight:
+            str += SCROLLRIGHT_STR;
+            break;
+        case csmbExtra1:
+            str += EXTRA1_STR;
+            break;
+        case csmbExtra2:
+            str += EXTRA2_STR;
+            break;
         case csmbNone:
-        default:             str = NONE_STR;         break;
+        default:
+            str = NONE_STR;
+            break;
     }
 
     return str;
@@ -86,42 +106,42 @@ bool psMouseBinds::StringToMouseButton(const csString &str, uint &button, uint32
     size_t pos = 0;
     modifiers = 0;
 
-    if (str.StartsWith(CTRL_STR))
+    if(str.StartsWith(CTRL_STR))
     {
         modifiers |= CSMASK_CTRL;
         pos += strlen(CTRL_STR);
     }
 
-    if (str.Slice(pos).StartsWith(ALT_STR))
+    if(str.Slice(pos).StartsWith(ALT_STR))
     {
         modifiers |= CSMASK_ALT;
         pos += strlen(ALT_STR);
     }
 
-    if (str.Slice(pos).StartsWith(SHIFT_STR))
+    if(str.Slice(pos).StartsWith(SHIFT_STR))
     {
         modifiers |= CSMASK_SHIFT;
         pos += strlen(SHIFT_STR);
     }
 
     csString btn = str.Slice(pos);
-    if (btn == LEFTCLICK_STR)
+    if(btn == LEFTCLICK_STR)
         button = csmbLeft;
-    else if (btn == RIGHTCLICK_STR)
+    else if(btn == RIGHTCLICK_STR)
         button = csmbRight;
-    else if (btn == MIDDLECLICK_STR)
+    else if(btn == MIDDLECLICK_STR)
         button = csmbMiddle;
-    else if (btn == SCROLLUP_STR)
+    else if(btn == SCROLLUP_STR)
         button = csmbWheelUp;
-    else if (btn == SCROLLDOWN_STR)
+    else if(btn == SCROLLDOWN_STR)
         button = csmbWheelDown;
-    else if (btn == SCROLLLEFT_STR)
+    else if(btn == SCROLLLEFT_STR)
         button = csmbHWheelLeft;
-    else if (btn == SCROLLRIGHT_STR)
+    else if(btn == SCROLLRIGHT_STR)
         button = csmbHWheelRight;
-    else if (btn == EXTRA1_STR)
+    else if(btn == EXTRA1_STR)
         button = csmbExtra1;
-    else if (btn == EXTRA2_STR)
+    else if(btn == EXTRA2_STR)
         button = csmbExtra2;
     else
     {
@@ -139,7 +159,7 @@ csString OnOffToString(const bool onOff)
 }
 
 
-bool psMouseBinds::LoadFromFile(iObjectRegistry* object_reg, const csString& filename)
+bool psMouseBinds::LoadFromFile(iObjectRegistry* object_reg, const csString &filename)
 {
     csRef<iDocument> doc;
     csRef<iDocumentNode> root, mouseNode, actionNode;
@@ -153,10 +173,10 @@ bool psMouseBinds::LoadFromFile(iObjectRegistry* object_reg, const csString& fil
     csRef<iDocumentSystem>  xml;
     const char* error;
 
-    vfs =  csQueryRegistry<iVFS > ( object_reg);
+    vfs =  csQueryRegistry<iVFS > (object_reg);
     assert(vfs);
     csRef<iDataBuffer> buff = vfs->ReadFile(filename);
-    if (buff == NULL)
+    if(buff == NULL)
     {
         Error2("Could not find file: %s", filename.GetData());
         return false;
@@ -165,30 +185,30 @@ bool psMouseBinds::LoadFromFile(iObjectRegistry* object_reg, const csString& fil
     assert(xml);
     doc = xml->CreateDocument();
     assert(doc);
-    error = doc->Parse( buff );
-    if ( error )
+    error = doc->Parse(buff);
+    if(error)
     {
         Error3("Parse error in %s: %s", filename.GetData(), error);
         return false;
     }
 
-    if (doc == NULL) return false;
+    if(doc == NULL) return false;
 
     root = doc->GetRoot();
-    if (root == NULL)
+    if(root == NULL)
     {
         Error1("No root in XML");
         return false;
     }
     mouseNode = root->GetNode("mouse");
-    if (mouseNode == NULL)
+    if(mouseNode == NULL)
     {
         Error1("No <mouse> tag in XML");
         return false;
     }
 
     xmlbinds = mouseNode->GetNodes("Actions");
-    while (xmlbinds->HasNext())
+    while(xmlbinds->HasNext())
     {
         actionNode = xmlbinds->Next();
 
@@ -199,7 +219,7 @@ bool psMouseBinds::LoadFromFile(iObjectRegistry* object_reg, const csString& fil
     }
 
     xmlbinds = mouseNode->GetNodes("OnOff");
-    while (xmlbinds->HasNext())
+    while(xmlbinds->HasNext())
     {
         actionNode = xmlbinds->Next();
 
@@ -209,7 +229,7 @@ bool psMouseBinds::LoadFromFile(iObjectRegistry* object_reg, const csString& fil
     }
 
     xmlbinds = mouseNode->GetNodes("Int");
-    while (xmlbinds->HasNext())
+    while(xmlbinds->HasNext())
     {
         actionNode = xmlbinds->Next();
 
@@ -218,25 +238,25 @@ bool psMouseBinds::LoadFromFile(iObjectRegistry* object_reg, const csString& fil
         SetInt(option, value);
     }
 
-        
+
     int x, y;
-    if (!GetInt("VertSensitivity", y))
+    if(!GetInt("VertSensitivity", y))
         y = 10;
 
-    if (!GetInt("HorzSensitivity", x))
+    if(!GetInt("HorzSensitivity", x))
         x = 10;
 
     return true;
 }
 
 
-bool psMouseBinds::SaveToFile(iObjectRegistry* object_reg, const csString& filename)
+bool psMouseBinds::SaveToFile(iObjectRegistry* object_reg, const csString &filename)
 {
     csString xml;
 
-    xml += "<mouse>\n"; 
+    xml += "<mouse>\n";
     size_t x;
-    for ( x = 0; x < binds.GetSize(); x++ )      
+    for(x = 0; x < binds.GetSize(); x++)
     {
         xml += "    <Actions action=\"";
         xml += binds[x]->action;
@@ -244,39 +264,39 @@ bool psMouseBinds::SaveToFile(iObjectRegistry* object_reg, const csString& filen
         xml += binds[x]->event.Button;
         xml += "\" modifier=\"";
         xml += binds[x]->event.Modifiers;
-        xml += "\"/>\n";        
+        xml += "\"/>\n";
     }
-    for ( x = 0; x < boolOptions.GetSize(); x++ )      
+    for(x = 0; x < boolOptions.GetSize(); x++)
     {
         xml += "    <OnOff   option=\"";
         xml += boolOptions[x]->option;
         xml += "\" value=\"";
         xml += boolOptions[x]->value;
-        xml += "\"/>\n";        
+        xml += "\"/>\n";
     }
-    for ( x = 0; x < intOptions.GetSize(); x++ )      
+    for(x = 0; x < intOptions.GetSize(); x++)
     {
         xml += "    <Int     option=\"";
         xml += intOptions[x]->option;
         xml += "\" value=\"";
         xml += intOptions[x]->value;
-        xml += "\"/>\n";        
+        xml += "\"/>\n";
     }
     xml += "</mouse>\n";
 
 
-    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( object_reg);
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS > (object_reg);
     assert(vfs);
     return vfs->WriteFile(filename, xml.GetData(), xml.Length());
 }
 
 
-void psMouseBinds::Bind(const csString& action, csMouseEventData& event)
+void psMouseBinds::Bind(const csString &action, csMouseEventData &event)
 {
     psMouseBind* iter;
 
     iter = FindAction(action);
-    if (iter)
+    if(iter)
     {
         iter->event = event;
     }
@@ -290,40 +310,40 @@ void psMouseBinds::Bind(const csString& action, csMouseEventData& event)
 }
 
 
-void psMouseBinds::Bind(const csString& action, int button, int modifier )
+void psMouseBinds::Bind(const csString &action, int button, int modifier)
 {
     csMouseEventData mouse;
     mouse.Button = button;
     mouse.Modifiers = modifier;
 
-    Bind( action, mouse );
+    Bind(action, mouse);
 }
 
 
-void psMouseBinds::Bind(const csString& action, csString& button, csString& modifier)
+void psMouseBinds::Bind(const csString &action, csString &button, csString &modifier)
 {
     csMouseEventData mouse;
 
-    mouse.Button = atoi( button.GetData() );
+    mouse.Button = atoi(button.GetData());
     mouse.Modifiers = atoi(modifier.GetData());
 
-    Bind( action, mouse );
+    Bind(action, mouse);
 }
 
 
-void psMouseBinds::SetOnOff(const csString& option, csString& value)
+void psMouseBinds::SetOnOff(const csString &option, csString &value)
 {
     SetOnOff(option, (atoi(value.GetData()) != 0));
 }
 
 
-void psMouseBinds::SetOnOff(const csString& option, bool value)
+void psMouseBinds::SetOnOff(const csString &option, bool value)
 {
     psMouseOnOff* iter;
 
     iter = FindOnOff(option);
-    
-    if ( iter )
+
+    if(iter)
     {
         iter->value = value;
     }
@@ -337,17 +357,17 @@ void psMouseBinds::SetOnOff(const csString& option, bool value)
 }
 
 
-void psMouseBinds::SetInt(const csString& option, csString& value)
+void psMouseBinds::SetInt(const csString &option, csString &value)
 {
     SetInt(option, atoi(value.GetData()));
 }
 
 
-void psMouseBinds::SetInt(const csString& option, int value)
+void psMouseBinds::SetInt(const csString &option, int value)
 {
     psMouseInt* iter;
     iter = FindInt(option);
-    if (iter)
+    if(iter)
     {
         iter->value = value;
     }
@@ -361,12 +381,12 @@ void psMouseBinds::SetInt(const csString& option, int value)
 }
 
 
-bool psMouseBinds::GetBind(const csString& action, csMouseEventData& event)
+bool psMouseBinds::GetBind(const csString &action, csMouseEventData &event)
 {
     psMouseBind* iter;
 
     iter = FindAction(action);
-    if (iter)
+    if(iter)
     {
         event = iter->event;
         return true;
@@ -376,12 +396,12 @@ bool psMouseBinds::GetBind(const csString& action, csMouseEventData& event)
 }
 
 
-bool psMouseBinds::GetBind(const csString& action, csString& event)
+bool psMouseBinds::GetBind(const csString &action, csString &event)
 {
     psMouseBind* iter;
 
     iter = FindAction(action);
-    if (iter)
+    if(iter)
     {
         event = MouseButtonToString(iter->event.Button, iter->event.Modifiers);
         return true;
@@ -390,27 +410,27 @@ bool psMouseBinds::GetBind(const csString& action, csString& event)
         return false;
 }
 
-bool psMouseBinds::CheckBind(const csString& action, int button, int modifiers)
+bool psMouseBinds::CheckBind(const csString &action, int button, int modifiers)
 {
     csMouseEventData event;
-    if (GetBind(action, event))
+    if(GetBind(action, event))
     {
 #ifdef CS_PLATFORM_MACOSX
-    	if(event.Button == csmbRight && event.Modifiers == 0 && (button == csmbLeft && modifiers == CSMASK_CTRL ))
-    		return true;
+        if(event.Button == csmbRight && event.Modifiers == 0 && (button == csmbLeft && modifiers == CSMASK_CTRL))
+            return true;
 #endif
         return ((uint)button == event.Button && (uint)modifiers == event.Modifiers);
     }
-            
+
     return false;
 }
 
-bool psMouseBinds::GetOnOff(const csString& option, csString& value)
+bool psMouseBinds::GetOnOff(const csString &option, csString &value)
 {
     psMouseOnOff* iter;
 
     iter = FindOnOff(option);
-    if (iter)
+    if(iter)
     {
         value = OnOffToString(iter->value);
         return true;
@@ -420,12 +440,12 @@ bool psMouseBinds::GetOnOff(const csString& option, csString& value)
 }
 
 
-bool psMouseBinds::GetOnOff(const csString& option, bool& value)
+bool psMouseBinds::GetOnOff(const csString &option, bool &value)
 {
     psMouseOnOff* iter;
 
     iter = FindOnOff(option);
-    if (iter)
+    if(iter)
     {
         value = iter->value;
         return true;
@@ -435,12 +455,12 @@ bool psMouseBinds::GetOnOff(const csString& option, bool& value)
 }
 
 
-bool psMouseBinds::GetInt(const csString& option, csString& value)
+bool psMouseBinds::GetInt(const csString &option, csString &value)
 {
     psMouseInt* iter;
 
     iter = FindInt(option);
-    if (iter)
+    if(iter)
     {
         value.Clear();
         value += iter->value;
@@ -451,12 +471,12 @@ bool psMouseBinds::GetInt(const csString& option, csString& value)
 }
 
 
-bool psMouseBinds::GetInt(const csString& option, int& value)
+bool psMouseBinds::GetInt(const csString &option, int &value)
 {
     psMouseInt* iter;
 
     iter = FindInt(option);
-    if (iter)
+    if(iter)
     {
         value = iter->value;
         return true;
@@ -466,30 +486,30 @@ bool psMouseBinds::GetInt(const csString& option, int& value)
 }
 
 
-void psMouseBinds::Unbind(const csString& action)
+void psMouseBinds::Unbind(const csString &action)
 {
     psMouseBind* iter;
 
     iter = FindAction(action);
-    if (iter)
+    if(iter)
         binds.Delete(iter);
 }
 
 
-void psMouseBinds::RemoveOnOff(const csString& option)
+void psMouseBinds::RemoveOnOff(const csString &option)
 {
-    psMouseOnOff *iter;
+    psMouseOnOff* iter;
     iter = FindOnOff(option);
-    if (iter)
+    if(iter)
         boolOptions.Delete(iter);
 }
 
 
-void psMouseBinds::RemoveInt(const csString& option)
+void psMouseBinds::RemoveInt(const csString &option)
 {
     psMouseInt* iter;
     iter = FindInt(option);
-    if (iter)
+    if(iter)
         intOptions.Delete(iter);
 }
 
@@ -502,37 +522,37 @@ void psMouseBinds::UnbindAll()
 }
 
 
-psMouseBind* psMouseBinds::FindAction(const csString& action)
-{  
-    for ( size_t x = 0; x < binds.GetSize(); x++ )
+psMouseBind* psMouseBinds::FindAction(const csString &action)
+{
+    for(size_t x = 0; x < binds.GetSize(); x++)
     {
-        if ( binds[x]->action == action )
+        if(binds[x]->action == action)
             return binds[x];
-    }        
-        
+    }
+
     return 0;
 }
 
 
-psMouseOnOff* psMouseBinds::FindOnOff(const csString& option)
+psMouseOnOff* psMouseBinds::FindOnOff(const csString &option)
 {
-    for ( size_t x = 0; x < boolOptions.GetSize(); x++ )        
+    for(size_t x = 0; x < boolOptions.GetSize(); x++)
     {
-        if ( boolOptions[x]->option == option )
+        if(boolOptions[x]->option == option)
             return boolOptions[x];
     }
-    
+
     return 0;
 }
 
 
-psMouseInt* psMouseBinds::FindInt(const csString& option)
+psMouseInt* psMouseBinds::FindInt(const csString &option)
 {
-    for ( size_t x = 0; x < intOptions.GetSize(); x++ )        
+    for(size_t x = 0; x < intOptions.GetSize(); x++)
     {
-        if ( intOptions[x]->option == option )
+        if(intOptions[x]->option == option)
             return intOptions[x];
     }
-    
+
     return 0;
 }

@@ -40,7 +40,7 @@
 
 bool pawsImageDrawable::PreparePixmap()
 {
-    if (imageFileLocation.Length() == 0) // tileable background
+    if(imageFileLocation.Length() == 0)  // tileable background
     {
         isLoaded = true;
         return true;
@@ -62,32 +62,32 @@ bool pawsImageDrawable::PreparePixmap()
         int textureFormat = textureManager->GetTextureFormat();
 
         csRef<iImage> ifile;
-        csRef<iDataBuffer> buf( vfs->ReadFile( imageFileLocation, false ) );
+        csRef<iDataBuffer> buf(vfs->ReadFile(imageFileLocation, false));
 
-        if (!buf.IsValid())
+        if(!buf.IsValid())
         {
-            Error2( "Could not open image: >%s<", (const char*)imageFileLocation );
+            Error2("Could not open image: >%s<", (const char*)imageFileLocation);
             return false;
         }
 
-        ifile = imageLoader->Load( buf, textureFormat );
+        ifile = imageLoader->Load(buf, textureFormat);
 
 
-        if ( !ifile )
+        if(!ifile)
         {
-            Error2( "Image >%s< could not be loaded by the iImageID", 
-                (const char*)imageFileLocation );
+            Error2("Image >%s< could not be loaded by the iImageID",
+                   (const char*)imageFileLocation);
             return false;
         }
 
-        textureHandle = textureManager->RegisterTexture( ifile, 
-            CS_TEXTURE_2D |
-            CS_TEXTURE_3D |
-            CS_TEXTURE_NOMIPMAPS |
-            CS_TEXTURE_CLAMP |
-            CS_TEXTURE_NPOTS);
+        textureHandle = textureManager->RegisterTexture(ifile,
+                        CS_TEXTURE_2D |
+                        CS_TEXTURE_3D |
+                        CS_TEXTURE_NOMIPMAPS |
+                        CS_TEXTURE_CLAMP |
+                        CS_TEXTURE_NPOTS);
 
-        if (!textureHandle)
+        if(!textureHandle)
         {
             Error1("Failed to Register Texture");
             return false;
@@ -97,39 +97,39 @@ bool pawsImageDrawable::PreparePixmap()
         textureHandle->SetTextureClass("cegui");
 
         // Store wrapped handle in the engine for later use.
-	if (engine)
-	{
-	  tex = engine->GetTextureList()->NewTexture(textureHandle);
-	  tex->QueryObject()->SetName(imageFileLocation);
-	}
+        if(engine)
+        {
+            tex = engine->GetTextureList()->NewTexture(textureHandle);
+            tex->QueryObject()->SetName(imageFileLocation);
+        }
 
         // If colour key exists.
-        if ( defaultTransparentColourBlue  != -1 &&
-            defaultTransparentColourGreen != -1 &&
-            defaultTransparentColourRed   != -1 )
+        if(defaultTransparentColourBlue  != -1 &&
+                defaultTransparentColourGreen != -1 &&
+                defaultTransparentColourRed   != -1)
         {
-            textureHandle->SetKeyColor( defaultTransparentColourRed, 
-                defaultTransparentColourGreen, 
-                defaultTransparentColourBlue );
+            textureHandle->SetKeyColor(defaultTransparentColourRed,
+                                       defaultTransparentColourGreen,
+                                       defaultTransparentColourBlue);
         }
     }
 
     // Get other texture data.
     textureHandle->GetOriginalDimensions(width, height);
 
-    if ( textureRectangle.Width() == 0 || textureRectangle.Height() == 0 )
+    if(textureRectangle.Width() == 0 || textureRectangle.Height() == 0)
     {
         textureRectangle.xmax = width;
-        textureRectangle.ymax = height;        
+        textureRectangle.ymax = height;
     }
 
     //if we reach this point we are sure the image was loaded correctly. (note this doesn't mean image was assigned)
     isLoaded = true;
-    return true;     
+    return true;
 }
 
 pawsImageDrawable::pawsImageDrawable(iDocumentNode* node)
-                 : scfImplementationType (this)
+    : scfImplementationType(this)
 {
     debugImageErrors = false;
     defaultTransparentColourBlue  = -1;
@@ -140,18 +140,18 @@ pawsImageDrawable::pawsImageDrawable(iDocumentNode* node)
     defaultAlphaValue = 0;
 
     // Read off the image and file vars
-    imageFileLocation = node->GetAttributeValue( "file" );
-    resourceName = node->GetAttributeValue( "resource" );
+    imageFileLocation = node->GetAttributeValue("file");
+    resourceName = node->GetAttributeValue("resource");
 
     tiled = node->GetAttributeValueAsBool("tiled");
 
     csRef<iDocumentNodeIterator> iter = node->GetNodes();
-    while ( iter->HasNext() )
+    while(iter->HasNext())
     {
-        csRef<iDocumentNode> childNode = iter->Next();       
+        csRef<iDocumentNode> childNode = iter->Next();
 
         // Read the texture rectangle for this image.
-        if ( strcmp( childNode->GetValue(), "texturerect" ) == 0 )
+        if(strcmp(childNode->GetValue(), "texturerect") == 0)
         {
             textureRectangle.xmin = childNode->GetAttributeValueAsInt("x");
             textureRectangle.ymin = childNode->GetAttributeValueAsInt("y");
@@ -163,25 +163,25 @@ pawsImageDrawable::pawsImageDrawable(iDocumentNode* node)
         }
 
         // Read the default alpha value.
-        if ( strcmp( childNode->GetValue(), "alpha" ) == 0 )
+        if(strcmp(childNode->GetValue(), "alpha") == 0)
         {
-            defaultAlphaValue = childNode->GetAttributeValueAsInt("level");            
+            defaultAlphaValue = childNode->GetAttributeValueAsInt("level");
         }
 
         // Read the default transparent colour.
-        if ( strcmp( childNode->GetValue(), "trans" ) == 0 )
+        if(strcmp(childNode->GetValue(), "trans") == 0)
         {
-            defaultTransparentColourRed   = childNode->GetAttributeValueAsInt("r");            
-            defaultTransparentColourGreen = childNode->GetAttributeValueAsInt("g");            
-            defaultTransparentColourBlue  = childNode->GetAttributeValueAsInt("b");                                    
+            defaultTransparentColourRed   = childNode->GetAttributeValueAsInt("r");
+            defaultTransparentColourGreen = childNode->GetAttributeValueAsInt("g");
+            defaultTransparentColourBlue  = childNode->GetAttributeValueAsInt("b");
         }
     }
 
     PreparePixmap();
 }
 
-pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, bool tiled, const csRect & textureRect, int alpha, int transR, int transG, int transB)
-                 : scfImplementationType (this)
+pawsImageDrawable::pawsImageDrawable(const char* file, const char* resource, bool tiled, const csRect &textureRect, int alpha, int transR, int transG, int transB)
+    : scfImplementationType(this)
 {
     debugImageErrors = false;
 
@@ -198,7 +198,7 @@ pawsImageDrawable::pawsImageDrawable(const char * file, const char * resource, b
 }
 
 pawsImageDrawable::pawsImageDrawable(const char* file, const char* /*resource*/)
-                 : scfImplementationType (this)
+    : scfImplementationType(this)
 {
     debugImageErrors = false;
 
@@ -217,16 +217,16 @@ pawsImageDrawable::~pawsImageDrawable()
 {
 }
 
-const char * pawsImageDrawable::GetName() const
+const char* pawsImageDrawable::GetName() const
 {
     return resourceName;
 }
 
 void pawsImageDrawable::Draw(int x, int y, int alpha)
 {
-    if (!textureHandle)
+    if(!textureHandle)
         return;
-    if (alpha < 0)
+    if(alpha < 0)
         alpha = defaultAlphaValue;
     int w = textureRectangle.Width();
     int h = textureRectangle.Height();
@@ -239,24 +239,24 @@ void pawsImageDrawable::Draw(csRect rect, int alpha)
 }
 
 void pawsImageDrawable::Draw(int x, int y, int newWidth, int newHeight, int alpha)
-{   
+{
     int w = textureRectangle.Width();
     int h = textureRectangle.Height();
 
-    if (!textureHandle)
+    if(!textureHandle)
     {
-        if (debugImageErrors)
-            Error3("Image named >%s< (%s) was not loaded and could not be drawn.",resourceName.GetDataSafe(),imageFileLocation.GetDataSafe() );
+        if(debugImageErrors)
+            Error3("Image named >%s< (%s) was not loaded and could not be drawn.",resourceName.GetDataSafe(),imageFileLocation.GetDataSafe());
         return;
     }
-    if (alpha < 0)
+    if(alpha < 0)
         alpha = defaultAlphaValue;
-    if ( newWidth == 0 ) 
+    if(newWidth == 0)
         newWidth = width;
-    if ( newHeight == 0 )
+    if(newHeight == 0)
         newHeight = height;
 
-    if (!tiled)
+    if(!tiled)
         PawsManager::GetSingleton().GetGraphics3D()->DrawPixmap(textureHandle, x, y, newWidth, newHeight, textureRectangle.xmin, textureRectangle.ymin, w, h, alpha);
     else
     {
@@ -264,9 +264,9 @@ void pawsImageDrawable::Draw(int x, int y, int newWidth, int newHeight, int alph
         int top = y;
         int right = x + newWidth;
         int bottom = y + newHeight;
-        for (x=left; x<right;  x+=w)
+        for(x=left; x<right;  x+=w)
         {
-            for (y=top; y<bottom; y+=h)
+            for(y=top; y<bottom; y+=h)
             {
                 int dw = csMin<int>(w, right - x);
                 int dh = csMin<int>(h, bottom - y);
@@ -297,17 +297,17 @@ bool pawsImageDrawable::IsLoaded() const
 }
 
 //TODO: this piece of code looks dead. It's not called within the class and it's missing from the interface.
-iImage * pawsImageDrawable::GetImage()
+iImage* pawsImageDrawable::GetImage()
 {
-    if (image)
+    if(image)
         return image;
 
     csRef<iVFS> vfs = csQueryRegistry<iVFS>(PawsManager::GetSingleton().GetObjectRegistry());
-    csRef<iImageIO> imageLoader =  csQueryRegistry<iImageIO >( PawsManager::GetSingleton().GetObjectRegistry());
+    csRef<iImageIO> imageLoader =  csQueryRegistry<iImageIO >(PawsManager::GetSingleton().GetObjectRegistry());
 
     csRef<iDataBuffer> buf(vfs->ReadFile(imageFileLocation, false));
 
-    if (!buf || !buf->GetSize())
+    if(!buf || !buf->GetSize())
     {
         Error2("Could not open image: '%s'", imageFileLocation.GetData());
         return 0;
@@ -315,9 +315,9 @@ iImage * pawsImageDrawable::GetImage()
 
     image = imageLoader->Load(buf, CS_IMGFMT_ANY | CS_IMGFMT_ALPHA);
 
-    if (!image)
+    if(!image)
     {
-        Error2( "Could not load image: '%s'", imageFileLocation.GetData());
+        Error2("Could not load image: '%s'", imageFileLocation.GetData());
         return 0;
     }
 

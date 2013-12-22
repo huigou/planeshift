@@ -41,7 +41,7 @@ private:
     int width;
     int height;
 
-    /// The default alpha value that should be used. 
+    /// The default alpha value that should be used.
     int      defaultAlphaValue;
 
     /// The default transparent colour.
@@ -64,12 +64,12 @@ private:
 
 public:
     pawsImageDrawable(iDocumentNode* node);
-    pawsImageDrawable(const char * file, const char * resource, bool tiled, const csRect & textureRect, int alpha, int transR, int transG, int transB);
-    pawsImageDrawable(const char * file, const char * resource);
+    pawsImageDrawable(const char* file, const char* resource, bool tiled, const csRect &textureRect, int alpha, int transR, int transG, int transB);
+    pawsImageDrawable(const char* file, const char* resource);
 
     virtual ~pawsImageDrawable();
 
-    const char * GetName() const;
+    const char* GetName() const;
 
     void Draw(int x, int y, int alpha=-1);
     void Draw(csRect rect, int alpha=-1);
@@ -77,12 +77,12 @@ public:
 
     int GetWidth() const;
     int GetHeight() const;
-    void ExpandClipRect(csRect& /*clipRect*/) {};
+    void ExpandClipRect(csRect & /*clipRect*/) {};
 
     int GetDefaultAlpha() const;
 
-    bool IsLoaded() const;  
-    iImage * GetImage();
+    bool IsLoaded() const;
+    iImage* GetImage();
     int GetTransparentRed() const;
     int GetTransparentGreen() const;
     int GetTransparentBlue() const;

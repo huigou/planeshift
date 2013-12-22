@@ -30,7 +30,8 @@
  * @{ */
 
 /* Types of flash buttons, used in chat window */
-enum FLASH_STATE {
+enum FLASH_STATE
+{
     FLASH_REGULAR = 0,
     FLASH_HIGHLIGHT,
     FLASH_SPECIAL
@@ -43,57 +44,69 @@ class pawsButton : public pawsWidget
 {
 public:
     pawsButton();
-    pawsButton(const pawsButton& pb);
+    pawsButton(const pawsButton &pb);
     virtual ~pawsButton();
 
-    virtual bool Setup( iDocumentNode* node );
-    bool SelfPopulate( iDocumentNode *node);
-    
-    void SetUpImage(const csString & image);
-    void SetDownImage(const csString & image);
-    void SetGreyUpImage(const csString & greyUpImage);
-    void SetGreyDownImage(const csString & greyDownImage);
+    virtual bool Setup(iDocumentNode* node);
+    bool SelfPopulate(iDocumentNode* node);
+
+    void SetUpImage(const csString &image);
+    void SetDownImage(const csString &image);
+    void SetGreyUpImage(const csString &greyUpImage);
+    void SetGreyDownImage(const csString &greyDownImage);
 
     /* Specify the image to use for special flashing in chat window */
-    void SetOnSpecialImage(const csString & image);
+    void SetOnSpecialImage(const csString &image);
 
-    void SetSound(const char *sound);
+    void SetSound(const char* sound);
 
     virtual void Draw();
 
     virtual bool OnMouseEnter();
     virtual bool OnMouseExit();
-    virtual bool OnMouseDown( int button, int modifiers, int x, int y );
-    virtual bool OnMouseUp( int button, int modifiers, int x, int y );
-    virtual bool OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers );
+    virtual bool OnMouseDown(int button, int modifiers, int x, int y);
+    virtual bool OnMouseUp(int button, int modifiers, int x, int y);
+    virtual bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers);
 
-    virtual bool IsDown()  { return down; }
-    virtual void SetState  ( bool isDown, bool publish=true );
-    virtual bool GetState  () { return down; }
+    virtual bool IsDown()
+    {
+        return down;
+    }
+    virtual void SetState(bool isDown, bool publish=true);
+    virtual bool GetState()
+    {
+        return down;
+    }
     /// Set the toggle attribute. To change toggle state use SetState
-    virtual void SetToggle ( bool t )      { toggle = t; }
+    virtual void SetToggle(bool t)
+    {
+        toggle = t;
+    }
     virtual void SetEnabled(bool enabled);
     virtual bool IsEnabled() const;
-    virtual void SetNotify(pawsWidget * widget);
+    virtual void SetNotify(pawsWidget* widget);
 
     void SetText(const char* text);
-    const char* GetText() { return buttonLabel; }
-    
+    const char* GetText()
+    {
+        return buttonLabel;
+    }
+
     /* Button flashing used mainly in chatwindow */
-    virtual void Flash ( bool state, FLASH_STATE type = FLASH_REGULAR ) 
-	{
-		if (state && !down) 
-		{
-			flash = 1; 
-		}
-		else 
-		{
-			flash = 0; 
-			if (flashtype == FLASH_HIGHLIGHT)
-				SetColour(originalFontColour);
-		}
-		flashtype = type; 
-	}
+    virtual void Flash(bool state, FLASH_STATE type = FLASH_REGULAR)
+    {
+        if(state && !down)
+        {
+            flash = 1;
+        }
+        else
+        {
+            flash = 0;
+            if(flashtype == FLASH_HIGHLIGHT)
+                SetColour(originalFontColour);
+        }
+        flashtype = type;
+    }
 
 
 protected:
@@ -130,21 +143,21 @@ protected:
     /// Style -- right now only ShadowText supported
     int style;
 
-	bool enabled;
+    bool enabled;
 
     /// The state if the button is flashing, 0 is no flashing
     int flash;
 
-	/// Type of flash (regular/special)
+    /// Type of flash (regular/special)
     FLASH_STATE flashtype;
 
-	/// Button can trigger sound effects with this
+    /// Button can trigger sound effects with this
     csString sound_click;
-	int upTextOffsetX;
-	int upTextOffsetY;
-	int downTextOffsetX;
-	int downTextOffsetY;
-    
+    int upTextOffsetX;
+    int upTextOffsetY;
+    int downTextOffsetX;
+    int downTextOffsetY;
+
     ///Used when restoring from highlight state
     int originalFontColour;
 
@@ -153,8 +166,8 @@ protected:
 };
 
 //----------------------------------------------------------------------
-CREATE_PAWS_FACTORY( pawsButton );
+CREATE_PAWS_FACTORY(pawsButton);
 
 /** @} */
 
-#endif 
+#endif

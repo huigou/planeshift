@@ -32,10 +32,13 @@
 class pawsKeySelectBox : public pawsWidget
 {
 public:
-    pawsKeySelectBox(){factory = "pawsKeySelectBox";}
+    pawsKeySelectBox()
+    {
+        factory = "pawsKeySelectBox";
+    }
     virtual ~pawsKeySelectBox();
-    pawsKeySelectBox(const pawsKeySelectBox& origin);
-    bool Setup(iDocumentNode * node);
+    pawsKeySelectBox(const pawsKeySelectBox &origin);
+    bool Setup(iDocumentNode* node);
 
     void Draw();
 
@@ -47,25 +50,34 @@ public:
      */
     void SetKey(int _key, int _modifiers=0);
 
-    int GetKey() const { return key; }
-    int GetModifiers() const { return modifiers; }
+    int GetKey() const
+    {
+        return key;
+    }
+    int GetModifiers() const
+    {
+        return modifiers;
+    }
 
     /** Gets a text representation of the key combination.
      *   \return    A text representation of the key combination of this key select box.
      */
-    const char * GetText() const;
+    const char* GetText() const;
 
     /** Sets the key combination of this text box by parsing a representing key string.
      *   \param keyText     The string representation of the key combination.
      */
-    void SetText(const char * keyText);
+    void SetText(const char* keyText);
 
     int GetBorderStyle();
 
-    virtual bool GetFocusOverridesControls() const { return true; }
+    virtual bool GetFocusOverridesControls() const
+    {
+        return true;
+    }
 
 protected:
-    
+
     /** Calculates the position of the text after centering.
      */
     void CalcTextPos();

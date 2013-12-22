@@ -32,10 +32,10 @@ class pawsScrollBar;
  * @{ */
 
 /** Type of functions that are used to compare listbox rows during sorting: */
-typedef int (*listBoxSortingFunc)(pawsWidget * a, pawsWidget * b);
+typedef int (*listBoxSortingFunc)(pawsWidget* a, pawsWidget* b);
 
 /** Compare function that works with listbox columns that are pawsTextBox widgets: */
-int textBoxSortFunc(pawsWidget * widgetA, pawsWidget * widgetB);
+int textBoxSortFunc(pawsWidget* widgetA, pawsWidget* widgetB);
 
 
 //-----------------------------------------------------------------------------
@@ -82,23 +82,26 @@ class pawsListBoxRow : public pawsWidget
 {
 public:
     pawsListBoxRow();
-    pawsListBoxRow(const pawsListBoxRow& origin);
+    pawsListBoxRow(const pawsListBoxRow &origin);
     /// get a pointer to one of the columns of this row
-    pawsWidget* GetColumn( size_t column );
+    pawsWidget* GetColumn(size_t column);
 
     /// Get total columns
-    size_t GetTotalColumns(){return columns.GetSize();}
+    size_t GetTotalColumns()
+    {
+        return columns.GetSize();
+    }
 
     /// adds a column to this row
-    void AddColumn( int column, ColumnDef* def );
+    void AddColumn(int column, ColumnDef* def);
 
     /// creates the title row
-    void AddTitleColumn( int column, ColumnDef* def );
+    void AddTitleColumn(int column, ColumnDef* def);
 
     bool OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers);
 
     /// A single mouse click (left button) highlights the row
-    bool OnMouseDown(int button, int modifiers, int x, int y );
+    bool OnMouseDown(int button, int modifiers, int x, int y);
 
     /// A double click selects the row.
     bool OnDoubleClick(int button, int modifiers, int x, int y);
@@ -107,24 +110,33 @@ public:
     void SetHeading(bool flag);
 
     /// Returns the last index of the row
-    int GetLastIndex()const{return lastIndex;}
+    int GetLastIndex()const
+    {
+        return lastIndex;
+    }
 
     /// Sets the last index of the row. Is used by pawsListBox to update lastIndex variable when sorting.
-    void SetLastIndex(int index){lastIndex = index;}
-    
+    void SetLastIndex(int index)
+    {
+        lastIndex = index;
+    }
+
     /**
      * Handles hiding of the row. Used to give focus back to the list box
      * before hiding.
      */
     void Hide();
 
-    bool IsHeading() { return isHeading; }
+    bool IsHeading()
+    {
+        return isHeading;
+    }
 private:
     /// Store whether this row should be a heading or not
     bool isHeading;
 
     int lastIndex; ///< index of the related row
-    
+
     /// Store a list of columns for easy access.
     csArray<pawsWidget*> columns;
 
@@ -182,8 +194,8 @@ class pawsListBox : public pawsWidget
 {
 public:
     pawsListBox();
-    pawsListBox(const pawsListBox& origin);
-    bool Setup( iDocumentNode* node );
+    pawsListBox(const pawsListBox &origin);
+    bool Setup(iDocumentNode* node);
     bool PostSetup();
 
     virtual ~pawsListBox();
@@ -192,13 +204,16 @@ public:
      * @return A pointer to the selected row or NULL.
      */
 
-    int GetSelection() {  return selected;  }
+    int GetSelection()
+    {
+        return selected;
+    }
 
     /// Get selected row
     pawsListBoxRow* GetSelectedRow();
 
     /// Get text from specified column in the selected row
-    const char *GetSelectedText(size_t columnId);
+    const char* GetSelectedText(size_t columnId);
 
     /// Returns number of selected row (-1 if none is selected)
     int GetSelectedRowNum();
@@ -207,23 +222,23 @@ public:
     pawsListBoxRow* RemoveSelected();
 
     /// Remove based on widget id. Note this also deletes the row.
-    void Remove( int id );
+    void Remove(int id);
 
     /// Remove based on row pointer
-    void Remove (pawsListBoxRow* rowToRemove);
+    void Remove(pawsListBoxRow* rowToRemove);
 
-    void AddRow( pawsListBoxRow* row );
+    void AddRow(pawsListBoxRow* row);
 
     /// Get number of rows in listboz
     size_t GetRowCount();
 
     /// Get a particular row
-    pawsListBoxRow* GetRow( size_t x );
+    pawsListBoxRow* GetRow(size_t x);
 
     /// Creates a new row ( default at the end ) and returns a pointer to it.
-    pawsListBoxRow* NewRow( size_t position = (size_t)-1 );
+    pawsListBoxRow* NewRow(size_t position = (size_t)-1);
     /// Creates a new row ( default at the end ) filled by values from rowEntry and returns a pointer to it.
-    pawsListBoxRow* NewTextBoxRow( csList<csString> &rowEntry,size_t position = (size_t)-1 );
+    pawsListBoxRow* NewTextBoxRow(csList<csString> &rowEntry,size_t position = (size_t)-1);
 
     void Clear();
 
@@ -231,7 +246,7 @@ public:
     void SendOnListAction(int status);
 
     /// Highlights the selected row
-    bool Select( pawsListBoxRow* row, bool notify = true);
+    bool Select(pawsListBoxRow* row, bool notify = true);
 
     /// Highlights the selected row (by index)
     bool SelectByIndex(int index, bool notify = true);
@@ -239,11 +254,14 @@ public:
     /// Creates the title row
     void CreateTitleRow();
 
-    virtual bool OnScroll( int direction, pawsScrollBar* widget );
+    virtual bool OnScroll(int direction, pawsScrollBar* widget);
 
-    bool OnMouseDown(int button, int modifiers, int x, int y );
+    bool OnMouseDown(int button, int modifiers, int x, int y);
 
-    int GetTotalColumns() { return totalColumns; }
+    int GetTotalColumns()
+    {
+        return totalColumns;
+    }
 
     /**
      * Set how many columns this list box will have.
@@ -251,7 +269,7 @@ public:
      * This is usually for code constructed list boxes and creates a new
      * set of column definitions.
      */
-    void SetTotalColumns( int numCols );
+    void SetTotalColumns(int numCols);
 
     /**
      * Set how a column should be constructed.
@@ -263,21 +281,27 @@ public:
      * @param widgetDesc This is an XML description of the widget. Much the same as you
      *                   would find in the .xml files.
      */
-    void SetColumnDef( int col, int width, int height, const char* widgetDesc );
+    void SetColumnDef(int col, int width, int height, const char* widgetDesc);
 
-    void UseTitleRow( bool yes );
+    void UseTitleRow(bool yes);
 
     /**
      * Override the general self populate to handle creation of new rows.
      */
-    virtual bool SelfPopulate( iDocumentNode *node );
+    virtual bool SelfPopulate(iDocumentNode* node);
 
-    bool IsSelectable() { return selectable; }
+    bool IsSelectable()
+    {
+        return selectable;
+    }
 
     /**
      * Is this an autoID listbox
      */
-    bool IsAutoID(){ return autoID; }
+    bool IsAutoID()
+    {
+        return autoID;
+    }
 
     /**
      * Convert from an automatic ID to col/row
@@ -304,7 +328,10 @@ public:
      * When nothing is set the OnListAction messages will be sent
      * to the parent widget
      */
-    void SetNotify(pawsWidget* target){notifyTarget = target;};
+    void SetNotify(pawsWidget* target)
+    {
+        notifyTarget = target;
+    };
 
     /**
      * Gets and sets the column that the listbox is sorted by.
@@ -332,7 +359,7 @@ public:
     /**
      * Returns listbox cell of type pawsTextBox or NULL (when the cell does not exist or it is another type).
      */
-    pawsTextBox * GetTextCell(int rowNum, int colNum);
+    pawsTextBox* GetTextCell(int rowNum, int colNum);
 
     /**
      * Returns value of cell of type pawsTextBox.
@@ -342,9 +369,12 @@ public:
     /**
      * Sets value of cell of type pawsTextBox.
      */
-    void SetTextCellValue(int rowNum, int colNum, const csString & value);
+    void SetTextCellValue(int rowNum, int colNum, const csString &value);
 
-    void AutoScrollUpdate(bool v){autoUpdateScroll = v;}
+    void AutoScrollUpdate(bool v)
+    {
+        autoUpdateScroll = v;
+    }
 
     void SetScrollBarMaxValue();
     void MoveRow(int rownr,int dest);
@@ -364,12 +394,12 @@ protected:
     void CheckSortingArrow(int colNum, bool ascOrder);
     void DeleteSortingArrow(int colNum);
 
-    pawsWidget * GetColumnTitle(int colNum);
+    pawsWidget* GetColumnTitle(int colNum);
 
     /**
-     * Gets height of widget after vertical borders are being excluded 
+     * Gets height of widget after vertical borders are being excluded
      *
-     * @return Height of widget after subtracting vertical borders height 
+     * @return Height of widget after subtracting vertical borders height
      */
     int GetUnborderedHeight();
 
@@ -389,7 +419,7 @@ protected:
     bool autoResize;
     bool autoUpdateScroll;
 
-    ColumnDef *columnDef;
+    ColumnDef* columnDef;
 
     /// the widget that will be notified when a row is selected
     pawsWidget* notifyTarget;
@@ -405,7 +435,7 @@ protected:
      * This is static function that is used as argument to qsort() and a few variables that influence
      * how this function works.
      */
-    static int sort_cmp(const void * rowA, const void * rowB);
+    static int sort_cmp(const void* rowA, const void* rowB);
     static listBoxSortingFunc sort_sortFunc;
     static int sort_sortColNum;
     static bool sort_ascOrder;
@@ -422,7 +452,7 @@ protected:
     csString    arrowDown;
 };
 
-CREATE_PAWS_FACTORY ( pawsListBox );
+CREATE_PAWS_FACTORY(pawsListBox);
 
 
 /** @} */

@@ -999,9 +999,9 @@ bool pawsMessageTextBox::OnKeyDown(utf32_char keyCode, utf32_char key, int modif
 {
     //this function handles if the user uses the page up or down buttons on this text box
     //and scroll of exactly the size of lines which is shown in the textbox
-    switch (key)
+    switch(key)
     {
-    case CSKEY_PGUP: //go up
+        case CSKEY_PGUP: //go up
         {
             if(scrollBar)
             {
@@ -1009,7 +1009,7 @@ bool pawsMessageTextBox::OnKeyDown(utf32_char keyCode, utf32_char key, int modif
             }
             break;
         }
-    case CSKEY_PGDN: //go down
+        case CSKEY_PGDN: //go down
         {
             if(scrollBar)
             {
@@ -1017,7 +1017,7 @@ bool pawsMessageTextBox::OnKeyDown(utf32_char keyCode, utf32_char key, int modif
             }
             break;
         }
-    default:
+        default:
         {
             return pawsWidget::OnKeyDown(keyCode, key, modifiers);
         }
@@ -1048,18 +1048,18 @@ pawsEditTextBox::pawsEditTextBox() : password(false),
     lineHeight -=2;
 
     // spellchecker works only on linux
-    #ifdef CS_PLATFORM_UNIX
+#ifdef CS_PLATFORM_UNIX
     //get the spellchecker plugin
     spellChecker = csQueryRegistryOrLoad<iSpellChecker>(PawsManager::GetSingleton().GetObjectRegistry(), "crystalspace.planeshift.spellchecker");
-    #endif
+#endif
 
 }
 pawsEditTextBox::pawsEditTextBox(const pawsEditTextBox &origin): pawsWidget(origin),
     // spellchecker works only on linux
-    #ifdef CS_PLATFORM_UNIX
-      spellChecker(origin.spellChecker),
-      spellChecked(origin.spellChecked),
-    #endif
+#ifdef CS_PLATFORM_UNIX
+    spellChecker(origin.spellChecker),
+    spellChecked(origin.spellChecked),
+#endif
     typoColour(origin.typoColour),
     words(origin.words)
 {
@@ -2310,18 +2310,18 @@ pawsFadingTextBox::pawsFadingTextBox()
     factory = "pawsFadingTextBox";
 }
 pawsFadingTextBox::pawsFadingTextBox(const pawsFadingTextBox &origin):
-     pawsWidget(origin),
-     text(origin.text),
-     first(origin.first),
-     firstFont(origin.firstFont),
-     font(origin.font),
-     org_color(origin.org_color),
-     color(origin.color),
-     scolor(origin.scolor),
-     start(origin.start),
-     ymod(origin.ymod),
-     time(origin.time),
-     fadetime(origin.fadetime)
+    pawsWidget(origin),
+    text(origin.text),
+    first(origin.first),
+    firstFont(origin.firstFont),
+    font(origin.font),
+    org_color(origin.org_color),
+    color(origin.color),
+    scolor(origin.scolor),
+    start(origin.start),
+    ymod(origin.ymod),
+    time(origin.time),
+    fadetime(origin.fadetime)
 {
 
 }

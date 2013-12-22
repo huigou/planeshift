@@ -34,32 +34,32 @@ class pawsMultiLineTextBox;
 #define CONFIRM_NO  -20
 ////////////////////////////////////////////////////////////////////////////
 
-typedef void (*YesNoResponseFunc)(bool, void *);
+typedef void (*YesNoResponseFunc)(bool, void*);
 
-/** This is a yes/no box used to do confirms. 
+/** This is a yes/no box used to do confirms.
  */
 class pawsYesNoBox : public pawsWidget
 {
 public:
 
     pawsYesNoBox();
-    pawsYesNoBox(const pawsYesNoBox& origin);
+    pawsYesNoBox(const pawsYesNoBox &origin);
     virtual ~pawsYesNoBox();
 
-    bool OnButtonReleased( int mouseButton, int keyModifier, pawsWidget* widget );
-    void SetNotify( pawsWidget* widget );
-    
-    bool PostSetup();
-    void SetText( const char* text );
+    bool OnButtonReleased(int mouseButton, int keyModifier, pawsWidget* widget);
+    void SetNotify(pawsWidget* widget);
 
-    void SetID( int yes = CONFIRM_YES, int no = CONFIRM_NO );
+    bool PostSetup();
+    void SetText(const char* text);
+
+    void SetID(int yes = CONFIRM_YES, int no = CONFIRM_NO);
     void Hide();
-    void SetCallBack( YesNoResponseFunc handler , void* owner, const char* text );
-    
+    void SetCallBack(YesNoResponseFunc handler , void* owner, const char* text);
+
     /** Static function that creates and sets up pawsYesNoBox:
      */
-    static pawsYesNoBox * Create(pawsWidget * notify, const csString & text,
-                                    int yesID = CONFIRM_YES, int noID = CONFIRM_NO);
+    static pawsYesNoBox* Create(pawsWidget* notify, const csString &text,
+                                int yesID = CONFIRM_YES, int noID = CONFIRM_NO);
 private:
     YesNoResponseFunc handler;
     void* owner;
@@ -72,10 +72,10 @@ private:
     bool useCustomIDs;
 };
 
-CREATE_PAWS_FACTORY( pawsYesNoBox );
+CREATE_PAWS_FACTORY(pawsYesNoBox);
 
 /** @} */
 
-#endif 
+#endif
 
 

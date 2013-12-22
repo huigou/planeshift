@@ -43,13 +43,13 @@ public:
      * is provided, so that a single window can use 1 callback for
      * many fields.
      */
-    virtual void OnStringEntered(const char *name, int param,const char *value) = 0;
+    virtual void OnStringEntered(const char* name, int param,const char* value) = 0;
 
     /** Basic deconstructor */
     virtual ~iOnStringEnteredAction() {};
 };
 
-/** 
+/**
  * pawsStringPromptWindow is a window that lets the user enter a string
  */
 class pawsStringPromptWindow : public pawsPromptWindow
@@ -57,7 +57,7 @@ class pawsStringPromptWindow : public pawsPromptWindow
 public:
     /** Basic constructor */
     pawsStringPromptWindow();
-    pawsStringPromptWindow(const pawsStringPromptWindow& origin);
+    pawsStringPromptWindow(const pawsStringPromptWindow &origin);
     /**
      * Called when a button is released inside the window
      * Only relevant if widget is okButton or cancelButton
@@ -84,7 +84,7 @@ public:
      * @param widget The widget that changes
      * @return False
      */
-    virtual bool OnChange(pawsWidget * widget);
+    virtual bool OnChange(pawsWidget* widget);
 
     /**
      * Entry point to pawsStringPromptWindow
@@ -101,10 +101,10 @@ public:
      * @param maxlen Copied to Initialize
      * @return The widget that is created
      */
-    static pawsStringPromptWindow * Create(
-        const csString & label,
-        const csString & string, bool multiline, int width, int height,
-        iOnStringEnteredAction * action,const char *name,int param = 0,
+    static pawsStringPromptWindow* Create(
+        const csString &label,
+        const csString &string, bool multiline, int width, int height,
+        iOnStringEnteredAction* action,const char* name,int param = 0,
         bool modal = false, int maxlen = 0);
 
 protected:
@@ -120,15 +120,15 @@ protected:
      * @param param An optional parameter (not visible to user) - passed to the action
      * @param maxlen The maximum length of the string that is accepted
      */
-    void Initialize(const csString & label, const csString & string, bool multiline, int width, 
-                    int height, iOnStringEnteredAction *action, const char *name, int param = 0, int maxlen = 0);
+    void Initialize(const csString &label, const csString &string, bool multiline, int width,
+                    int height, iOnStringEnteredAction* action, const char* name, int param = 0, int maxlen = 0);
 
     /**
      * Executes action and destroys window.
      * Sends text, the prestored param and this widget's name to the action.
      * @param text The text to send to the action
      */
-    void CloseWindow(const csString & text);
+    void CloseWindow(const csString &text);
 
     /**
      * Executes action with text entered by user as parameter and destroys window
@@ -142,7 +142,7 @@ protected:
     /**
      * The action to call when this window is successfully destroyed
      */
-    iOnStringEnteredAction * action;
+    iOnStringEnteredAction* action;
     /**
      * The name of the window; is sent to the action when OK is pressed
      */

@@ -48,8 +48,8 @@ class pawsButton;
 /**
  * This a available->selected widget.
  *
- * This is a fairly complex widget set.  It is used for when you have a list of 
- * available options in one list box and a list of selected items in a second box 
+ * This is a fairly complex widget set.  It is used for when you have a list of
+ * available options in one list box and a list of selected items in a second box
  * and arrows to add/remove them from one to the other.
  *
  * This widget assumes that the left side is the available ones and the right side
@@ -62,47 +62,50 @@ class pawsButton;
  *          \<available width="200" rowheight="30" /\>
  *          \<selected width="200" rowheight="30" /\>
  *     \</widget\>
- */            
+ */
 class pawsSelectorBox : public pawsWidget
 {
 public:
     pawsSelectorBox();
-    pawsSelectorBox(const pawsSelectorBox& origin);
+    pawsSelectorBox(const pawsSelectorBox &origin);
     ~pawsSelectorBox();
-    
-    bool Setup( iDocumentNode* node );
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
-    void OnListAction( pawsListBox* widget, int status );
-    
+
+    bool Setup(iDocumentNode* node);
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+    void OnListAction(pawsListBox* widget, int status);
+
     /// Create a new entry in the available box.
     pawsListBoxRow* CreateOption();
-    
+
     /// Get the row that was moved from one list to the other.
-    pawsListBoxRow* GetMoved() { return moved; }
-    
+    pawsListBoxRow* GetMoved()
+    {
+        return moved;
+    }
+
     /// Remove the row with id from available list
-    void RemoveFromAvailable( int id );
-    
+    void RemoveFromAvailable(int id);
+
     /// Remove the row with id from selected list
-    void RemoveFromSelected( int id );
+    void RemoveFromSelected(int id);
 
     /// Return number of items in available list
     int GetAvailableCount(void);
-   
+
     /// Move row automatically, default available->selected
     bool SelectAndMoveRow(int rowNo, bool toSelected=true);
 
 private:
     pawsListBox* available;
     pawsListBox* selected;
-    
+
     pawsButton* add;
-    pawsButton* remove;    
-    
+    pawsButton* remove;
+
     pawsListBoxRow* moved;
 };
 
-CREATE_PAWS_FACTORY( pawsSelectorBox );
+CREATE_PAWS_FACTORY(pawsSelectorBox);
 
 
 /** @} */

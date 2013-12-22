@@ -44,9 +44,9 @@ pawsPromptWindow::pawsPromptWindow()
     spacing        = DEFAULT_SPACING;
     factory        = "pawsPromptWindow";
 }
-pawsPromptWindow::pawsPromptWindow(const pawsPromptWindow& origin)
-                    :pawsWidget(origin),
-                    spacing(origin.spacing)
+pawsPromptWindow::pawsPromptWindow(const pawsPromptWindow &origin)
+    :pawsWidget(origin),
+     spacing(origin.spacing)
 {
     inputWidget = 0;
     helperWidget = 0;
@@ -54,7 +54,7 @@ pawsPromptWindow::pawsPromptWindow(const pawsPromptWindow& origin)
     okButton = 0;
     cancelButton = 0;
 
-    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
     {
         if(origin.inputWidget == origin.children[i])
             inputWidget = children[i];
@@ -99,7 +99,7 @@ bool pawsPromptWindow::PostSetup()
     return true;
 }
 
-void pawsPromptWindow::SetLabel(const csString & label)
+void pawsPromptWindow::SetLabel(const csString &label)
 {
     this->label->SetText(label);
     this->label->SetSizeByText(5,5);
@@ -118,14 +118,14 @@ void pawsPromptWindow::LayoutWindow()
     assert(label && okButton && cancelButton && inputWidget);
 
     windowWidth = csMax(
-                        2 * spacing + label->GetDefaultFrame().Width(),
-                        csMax(
-                             4 * spacing + inputWidget->GetDefaultFrame().Width(),
-                             3 * spacing + okButton->GetDefaultFrame().Width() + cancelButton->GetDefaultFrame().Width()
-                           )
-                     );
-    windowHeight = 4 * spacing + label->GetDefaultFrame().Height() + inputWidget->GetDefaultFrame().Height() 
-                               + okButton->GetDefaultFrame().Height();
+                      2 * spacing + label->GetDefaultFrame().Width(),
+                      csMax(
+                          4 * spacing + inputWidget->GetDefaultFrame().Width(),
+                          3 * spacing + okButton->GetDefaultFrame().Width() + cancelButton->GetDefaultFrame().Width()
+                      )
+                  );
+    windowHeight = 4 * spacing + label->GetDefaultFrame().Height() + inputWidget->GetDefaultFrame().Height()
+                   + okButton->GetDefaultFrame().Height();
     if(helperWidget != NULL)
         windowHeight += spacing + helperWidget->GetDefaultFrame().Height();
     SetRelativeFrameSize(windowWidth, windowHeight);

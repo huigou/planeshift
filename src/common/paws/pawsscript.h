@@ -31,23 +31,23 @@ class pawsWidget;
 
 struct pawsScriptResult
 {
-    pawsWidget *widget;
-    MathVar    *var;
+    pawsWidget* widget;
+    MathVar*    var;
     csString    property;
 };
 
 class pawsScriptStatement
 {
 private:
-    MathScript *                script;
+    MathScript*                 script;
     MathEnvironment             env;
     csArray<pawsScriptResult>   scriptResults;
 
-    static void ChangedResultsVarCallback(void * arg);
+    static void ChangedResultsVarCallback(void* arg);
 public:
-    pawsScriptStatement(const char * script);
-    void AddLHSResult(pawsWidget * widget, const char * property, const char * name);
-    void AddRHSVar(iScriptableVar * v, const char * name);
+    pawsScriptStatement(const char* script);
+    void AddLHSResult(pawsWidget* widget, const char* property, const char* name);
+    void AddRHSVar(iScriptableVar* v, const char* name);
 
     void Execute();
 };
@@ -55,16 +55,16 @@ public:
 class pawsScript
 {
 private:
-    pawsScriptStatement * statement;
-    pawsWidget * widget;
+    pawsScriptStatement* statement;
+    pawsWidget* widget;
     csString scriptText;
 
-    bool NextChar(const char * script, size_t & currIndex, char & c, char & n);
-    bool Parse(const char * script);
+    bool NextChar(const char* script, size_t &currIndex, char &c, char &n);
+    bool Parse(const char* script);
 
-    pawsWidget * FindWidget(pawsWidget * widget, const char * name);
+    pawsWidget* FindWidget(pawsWidget* widget, const char* name);
 public:
-    pawsScript(pawsWidget * widget, const char * script);
+    pawsScript(pawsWidget* widget, const char* script);
     ~pawsScript();
 
     void Execute();

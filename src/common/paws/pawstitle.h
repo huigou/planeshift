@@ -30,50 +30,50 @@ class pawsTitle : public pawsWidget
 {
 private:
     enum PAWS_TITLE_ALIGN
-	{
-		PTA_LEFT = 0,
-		PTA_CENTER,
-		PTA_RIGHT,
+    {
+        PTA_LEFT = 0,
+        PTA_CENTER,
+        PTA_RIGHT,
 
-		PTA_COUNT
-	};
+        PTA_COUNT
+    };
 
-	struct pawsTitleButton
-	{
-		char             widgetName[64];
-		pawsWidget *     buttonWidget;
-		PAWS_TITLE_ALIGN align;
-		int              offsetx;
-		int              offsety;
-	};
-	csArray<pawsTitleButton> titleButtons;
+    struct pawsTitleButton
+    {
+        char             widgetName[64];
+        pawsWidget*      buttonWidget;
+        PAWS_TITLE_ALIGN align;
+        int              offsetx;
+        int              offsety;
+    };
+    csArray<pawsTitleButton> titleButtons;
 
-	PAWS_TITLE_ALIGN titleAlign;
-	bool             scaleWidth;
-	float            width;
-	int              height;
-	csString         text;
-	int              textOffsetx;
-	int              textOffsety;
-	PAWS_TITLE_ALIGN textAlign;
+    PAWS_TITLE_ALIGN titleAlign;
+    bool             scaleWidth;
+    float            width;
+    int              height;
+    csString         text;
+    int              textOffsetx;
+    int              textOffsety;
+    PAWS_TITLE_ALIGN textAlign;
 
-	PAWS_TITLE_ALIGN GetAlign(const char * alignText);
+    PAWS_TITLE_ALIGN GetAlign(const char* alignText);
 
 public:
-	pawsTitle(pawsWidget * parent, iDocumentNode* node);
+    pawsTitle(pawsWidget* parent, iDocumentNode* node);
 
-        pawsTitle(const pawsTitle & origin);
+    pawsTitle(const pawsTitle &origin);
 
-	virtual ~pawsTitle();
+    virtual ~pawsTitle();
 
-	bool Setup(iDocumentNode* node);
-	bool PostSetup();
-	void SetWindowRect(const csRect & windowRect);
-	void Draw();
+    bool Setup(iDocumentNode* node);
+    bool PostSetup();
+    void SetWindowRect(const csRect &windowRect);
+    void Draw();
 
-	void Resize() {}
-	void MoveDelta(int /*dx*/, int /*dy*/) {}
-	void MoveTo(int /*x*/, int /*y*/) {}
+    void Resize() {}
+    void MoveDelta(int /*dx*/, int /*dy*/) {}
+    void MoveTo(int /*x*/, int /*y*/) {}
 };
 
 /** @} */
