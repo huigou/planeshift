@@ -1,7 +1,7 @@
 /*
 * introductionmanager.cpp
 *
-* Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -56,20 +56,20 @@ IntroductionManager::~IntroductionManager()
     //do nothing
 }
 
-void IntroductionManager::HandleIntroduction(MsgEntry *me, Client *client)
+void IntroductionManager::HandleIntroduction(MsgEntry* me, Client* client)
 {
     psCharIntroduction msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
         return;
 
-    csArray<PublishDestination>& dest = client->GetActor()->GetMulticastClients();
-    for (size_t i = 0; i < dest.GetSize(); i++)
+    csArray<PublishDestination> &dest = client->GetActor()->GetMulticastClients();
+    for(size_t i = 0; i < dest.GetSize(); i++)
     {
-        if (dest[i].dist < CHAT_SAY_RANGE && client->GetClientNum() != (uint32_t) dest[i].client)
+        if(dest[i].dist < CHAT_SAY_RANGE && client->GetClientNum() != (uint32_t) dest[i].client)
         {
-            gemObject *obj = (gemObject*) dest[i].object;
-            gemActor *destActor = obj->GetActorPtr();
-            if (destActor && destActor->GetCharacterData()->Introduce(client->GetCharacterData()))
+            gemObject* obj = (gemObject*) dest[i].object;
+            gemActor* destActor = obj->GetActorPtr();
+            if(destActor && destActor->GetCharacterData()->Introduce(client->GetCharacterData()))
             {
                 client->GetActor()->Send(dest[i].client, false, false);
             }

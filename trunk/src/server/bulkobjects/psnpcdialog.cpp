@@ -71,35 +71,35 @@ extern "C" {
 
 //----------------------------------------------------------------------------
 
-void NpcTriggerSentence::AddToSentence(NpcTerm *next_word)
-{ 
-    assert(next_word!=NULL); 
-    terms.Push(next_word); 
+void NpcTriggerSentence::AddToSentence(NpcTerm* next_word)
+{
+    assert(next_word!=NULL);
+    terms.Push(next_word);
     str="";
 }
 
 
-const csString& NpcTriggerSentence::GetString()
+const csString &NpcTriggerSentence::GetString()
 {
-    if (str.Length())
+    if(str.Length())
         return str;
 
-    for (size_t i=0; i<terms.GetSize(); i++)
+    for(size_t i=0; i<terms.GetSize(); i++)
     {
         str.Append(terms[i]->term);
-        if (i<terms.GetSize()-1)
+        if(i<terms.GetSize()-1)
             str.Append(' ');
     }
     return str;
 }
 
-const char* NpcTriggerSentence::GeneralizeTerm(NPCDialogDict *dict,size_t which, size_t depth)
+const char* NpcTriggerSentence::GeneralizeTerm(NPCDialogDict* dict,size_t which, size_t depth)
 {
-    if (which >= terms.GetSize())
+    if(which >= terms.GetSize())
     {
         return NULL;
     }
-    
+
     str.Clear();
 
     return terms[which]->GetInterleavedHypernym(depth);
@@ -112,7 +112,7 @@ const char* NpcTriggerSentence::GeneralizeTerm(NPCDialogDict *dict,size_t which,
 
 
 
-psNPCDialog::psNPCDialog(gemNPC *npc)
+psNPCDialog::psNPCDialog(gemNPC* npc)
 {
     db = NULL;
     randomgen = NULL;
@@ -131,15 +131,15 @@ psNPCDialog::~psNPCDialog()
     }
 }
 
-bool psNPCDialog::Initialize( iDataConnection *db )
+bool psNPCDialog::Initialize(iDataConnection* db)
 {
     this->db = db;
 
-    if (!dict)
+    if(!dict)
     {
         dict = new NPCDialogDict;
 
-        if (!dict->Initialize(db))
+        if(!dict->Initialize(db))
         {
             delete dict;
             dict=NULL;
@@ -150,7 +150,7 @@ bool psNPCDialog::Initialize( iDataConnection *db )
 }
 
 
-bool psNPCDialog::Initialize(iDataConnection *db, PID NPCID)
+bool psNPCDialog::Initialize(iDataConnection* db, PID NPCID)
 {
     randomgen = psserver->rng;
     this->db = db;
@@ -159,7 +159,7 @@ bool psNPCDialog::Initialize(iDataConnection *db, PID NPCID)
     {
         dict.AttachNew(new NPCDialogDict());
 
-        if (!dict->Initialize(db))
+        if(!dict->Initialize(db))
         {
             return false;
         }
@@ -171,18 +171,18 @@ bool psNPCDialog::Initialize(iDataConnection *db, PID NPCID)
 bool psNPCDialog::LoadKnowledgeAreas(PID npcID)
 {
     Result result(db->Select("select area,priority"
-        "  from npc_knowledge_areas"
-        " where player_id=%u order by priority ASC", npcID.Unbox()));
+                             "  from npc_knowledge_areas"
+                             " where player_id=%u order by priority ASC", npcID.Unbox()));
 
-    if (!result.IsValid() )
+    if(!result.IsValid())
     {
         Error1("Cannot load knowledge areas into dictionary from database.");
         return false;
     }
 
-    for (unsigned int i=0; i<result.Count(); i++)
+    for(unsigned int i=0; i<result.Count(); i++)
     {
-        KnowledgeArea *newarea = new KnowledgeArea;
+        KnowledgeArea* newarea = new KnowledgeArea;
 
         // Downcase KA area before inserting into tree
         csString area = result[i]["area"];
@@ -198,54 +198,54 @@ bool psNPCDialog::LoadKnowledgeAreas(PID npcID)
 void psNPCDialog::DumpDialog()
 {
     CPrintf(CON_CMDOUTPUT,"Pri Knowledge area\n");
-    for ( size_t z = 0; z < knowareas.GetSize(); z++ )
+    for(size_t z = 0; z < knowareas.GetSize(); z++)
     {
-        KnowledgeArea *ka = knowareas[z];    
+        KnowledgeArea* ka = knowareas[z];
         CPrintf(CON_CMDOUTPUT,"%3d %s\n",ka->priority,ka->area.GetDataSafe());
-    }        
+    }
 }
 
-bool psNPCDialog::CheckPronouns(psString& text)
+bool psNPCDialog::CheckPronouns(psString &text)
 {
     int wordnum=1;
     psString word("temp");
 
-    while (word.Length())
+    while(word.Length())
     {
         word = GetWordNumber(text,wordnum++);
 
-        if (word == "him" || word=="he")
+        if(word == "him" || word=="he")
         {
-            if (!antecedent_him.IsEmpty())
+            if(!antecedent_him.IsEmpty())
                 text.ReplaceSubString(word,antecedent_him);
         }
 
-        if (word == "her" || word=="she")
+        if(word == "her" || word=="she")
         {
-            if (!antecedent_her.IsEmpty())
+            if(!antecedent_her.IsEmpty())
                 text.ReplaceSubString(word,antecedent_her);
         }
 
-        if (word == "them" || word=="they")
+        if(word == "them" || word=="they")
         {
-            if (!antecedent_them.IsEmpty())
+            if(!antecedent_them.IsEmpty())
                 text.ReplaceSubString(word,antecedent_them);
         }
 
-        if (word == "it")
+        if(word == "it")
         {
-            if (!antecedent_them.IsEmpty())
+            if(!antecedent_them.IsEmpty())
                 text.ReplaceSubString(word,antecedent_them);
         }
     }
     return true;
 }
 
-void psNPCDialog::CleanPunctuation(psString& str, bool cleanQMark)
+void psNPCDialog::CleanPunctuation(psString &str, bool cleanQMark)
 {
-    for (unsigned int i=0; i<str.Length(); i++)
+    for(unsigned int i=0; i<str.Length(); i++)
     {
-      if (ispunct(str.GetAt(i)) && str.GetAt(i)!='\'' && (str.GetAt(i)!='?' || cleanQMark))
+        if(ispunct(str.GetAt(i)) && str.GetAt(i)!='\'' && (str.GetAt(i)!='?' || cleanQMark))
         {
             str.DeleteAt(i);
             i--;
@@ -257,13 +257,13 @@ void psNPCDialog::CleanPunctuation(psString& str, bool cleanQMark)
     wordInName = "bla";
     npc_name = self->GetName();
     int num = 1;
-    while (wordInName.Length())
+    while(wordInName.Length())
     {
         wordInName = GetWordNumber(npc_name,num);
-        if (!wordInName.Length())
+        if(!wordInName.Length())
             break;
         int pos = (int)str.FindSubString(wordInName,0,XML_CASE_INSENSITIVE);
-        if (pos != -1)
+        if(pos != -1)
         {
             str.DeleteAt(pos,wordInName.Length());
         }
@@ -271,7 +271,7 @@ void psNPCDialog::CleanPunctuation(psString& str, bool cleanQMark)
     }
 }
 
-void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &trigger, Client *client)
+void psNPCDialog::FilterKnownTerms(const psString &text, NpcTriggerSentence &trigger, Client* client)
 {
     const size_t MAX_SENTENCE_LENGTH = 4;
     NpcTerm* term;
@@ -281,18 +281,18 @@ void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &tr
     size_t firstWord=0;
     csString candidate;
     bool morphed = false;
-    
-    if (!dict)   // Pointless to try if no dictionary loaded.
+
+    if(!dict)    // Pointless to try if no dictionary loaded.
         return;
-    
+
     Debug2(LOG_NPC, client->GetClientNum(),"Recognizing phrases in '%s'", text.GetData());
-    
-    while (firstWord<words.GetCount() && trigger.TermLength()<MAX_SENTENCE_LENGTH)
+
+    while(firstWord<words.GetCount() && trigger.TermLength()<MAX_SENTENCE_LENGTH)
     {
         if(!morphed)
             candidate = words.GetWords(firstWord, firstWord+numWordsInPhrase);
         term  = dict->FindTermOrSynonym(candidate);
-        if (term)
+        if(term)
         {
             trigger.AddToSentence(term);
             firstWord += numWordsInPhrase;
@@ -300,7 +300,7 @@ void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &tr
             morphed = false;
             continue;
         }
-        if (numWordsInPhrase > 1)
+        if(numWordsInPhrase > 1)
         {
             numWordsInPhrase--;
             continue;
@@ -308,7 +308,7 @@ void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &tr
         if(!morphed)   // try stemming the word to see if it matches
         {
             // assume all words are nouns
-            const char * morphedWord = morphword(const_cast<char *>(candidate.GetData()), NOUN);
+            const char* morphedWord = morphword(const_cast<char*>(candidate.GetData()), NOUN);
             if(morphedWord)
             {
                 candidate = morphedWord;
@@ -322,20 +322,20 @@ void psNPCDialog::FilterKnownTerms(const psString & text, NpcTriggerSentence &tr
         firstWord ++;
         numWordsInPhrase = (int)words.GetCount() - firstWord;
     }
-    
+
     Debug2(LOG_NPC, client->GetClientNum(),"Phrases recognized: '%s'", trigger.GetString().GetData());
 }
 
-void psNPCDialog::AddBadText(const char *text, const char *trigger)
+void psNPCDialog::AddBadText(const char* text, const char* trigger)
 {
     csString escText,escTrigger;
     csString escName;
     csString escSelfName;
-    
-    db->Escape( escText, text );
-    db->Escape( escName, currentClient->GetName() );
-    db->Escape( escSelfName, self->GetName() );
-    db->Escape( escTrigger, trigger);
+
+    db->Escape(escText, text);
+    db->Escape(escName, currentClient->GetName());
+    db->Escape(escSelfName, self->GetName());
+    db->Escape(escTrigger, trigger);
     int ret = db->Command("insert into npc_bad_text "
                           "(badtext,triggertext,player,npc,occurred) "
                           "values ('%s','%s','%s','%s',Now() )",
@@ -343,9 +343,9 @@ void psNPCDialog::AddBadText(const char *text, const char *trigger)
                           escTrigger.GetData(),
                           escName.GetData(),
                           escSelfName.GetData());
-    if ((uint)ret == QUERY_FAILED)
+    if((uint)ret == QUERY_FAILED)
     {
-        Error2("Inserting npc_bad_text failed: %s",db->GetLastError() );
+        Error2("Inserting npc_bad_text failed: %s",db->GetLastError());
     }
 
     self->AddBadText(text,trigger);  // Save bad text in RAM cache so Settings can get at it easily in-game.
@@ -353,38 +353,38 @@ void psNPCDialog::AddBadText(const char *text, const char *trigger)
 
 
 //Check current trigger with all prior responses in quests, and in general
-NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *trigger, int questID)
+NpcResponse* psNPCDialog::FindResponseWithAllPrior(const char* area,const char* trigger, int questID)
 {
-    NpcResponse *resp = NULL;
+    NpcResponse* resp = NULL;
     int lastresponse = -1;
     bool TestedWithoutLastResponse = false;
 
     //first try with last responses of all assigned quests
-    for (size_t q = 0; currentClient && q < currentClient->GetCharacterData()->GetQuestMgr().GetNumAssignedQuests(); q++)
+    for(size_t q = 0; currentClient && q < currentClient->GetCharacterData()->GetQuestMgr().GetNumAssignedQuests(); q++)
     {
         lastresponse = currentClient->GetCharacterData()->GetQuestMgr().GetAssignedQuestLastResponse(q);
-        if (lastresponse == -1)
-        { 
-            if (!TestedWithoutLastResponse)
+        if(lastresponse == -1)
+        {
+            if(!TestedWithoutLastResponse)
             {
-                resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient, questID); 
+                resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient, questID);
                 TestedWithoutLastResponse = true;
             }
         }
         else
         {
-            resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient, questID); 
+            resp = dict->FindResponse(self, area,trigger,0, lastresponse ,currentClient, questID);
         }
 
-        if (resp)
+        if(resp)
             break;
     }
-    if (!resp) //else, try old way with general last response
+    if(!resp)  //else, try old way with general last response
     {
         lastresponse = currentClient ? currentClient->GetCharacterData()->GetLastResponse() : -1;
-        if (lastresponse == -1)
-        { 
-            if (!TestedWithoutLastResponse)
+        if(lastresponse == -1)
+        {
+            if(!TestedWithoutLastResponse)
             {
                 resp = dict->FindResponse(self, area,trigger,0,lastresponse,currentClient, questID);
                 TestedWithoutLastResponse = true;
@@ -395,7 +395,7 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
             resp = dict->FindResponse(self, area,trigger,0,lastresponse,currentClient, questID);
         }
     }
-    if (currentClient && !resp && TestedWithoutLastResponse)
+    if(currentClient && !resp && TestedWithoutLastResponse)
     {
         //set general last response to -1 so it is not tested again later on
         //currentClient->GetCharacterData()->SetLastResponse(-1);
@@ -404,21 +404,21 @@ NpcResponse *psNPCDialog::FindResponseWithAllPrior(const char *area,const char *
     return resp;
 }
 
-NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text, int questID)
+NpcResponse* psNPCDialog::FindResponse(csString &trigger,const char* text, int questID)
 {
-    KnowledgeArea *area;
-    NpcResponse *resp = NULL;
+    KnowledgeArea* area;
+    NpcResponse* resp = NULL;
     csString trigger_error;
 
     //May be it is safe not to check for characterdata (now needed for GetLastRespons())
-    if (currentClient && currentClient->GetCharacterData() == NULL)
+    if(currentClient && currentClient->GetCharacterData() == NULL)
     {
         Error1("NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text) called with "
-            "currentClient->GetCharacterData() returning NULL.");
+               "currentClient->GetCharacterData() returning NULL.");
         return NULL;
     }
 
-    if (trigger.GetData() == NULL) 
+    if(trigger.GetData() == NULL)
         return NULL;
 
     trigger.Downcase();
@@ -426,19 +426,19 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text, int q
     trigger_error = trigger;
     trigger_error.Append(" error");
 
-    for (size_t z = 0; z < knowareas.GetSize(); z++)
+    for(size_t z = 0; z < knowareas.GetSize(); z++)
     {
         area = knowareas[z];
         Debug5(LOG_NPC, currentClient ? currentClient->GetClientNum() : 0,"NPC checking %s for trigger %s , with lastResponseID %d and questID %d...",
-            (const char *)area->area,(const char *)trigger, currentClient ? currentClient->GetCharacterData()->GetLastResponse() : -1, questID);
+               (const char*)area->area,(const char*)trigger, currentClient ? currentClient->GetCharacterData()->GetLastResponse() : -1, questID);
 
         resp = FindResponseWithAllPrior(area->area, trigger, questID);
-        if (!resp) // If no response found, try search for error trigger
+        if(!resp)  // If no response found, try search for error trigger
         {
             resp = FindResponseWithAllPrior(area->area, trigger_error, questID);
-            if (!resp) // If no response found, try search without last response
+            if(!resp)  // If no response found, try search without last response
             {
-                if (!currentClient || currentClient->GetCharacterData()->GetLastResponse() == -1)
+                if(!currentClient || currentClient->GetCharacterData()->GetLastResponse() == -1)
                 {
                     // No point testing without last response
                     // if last response where no last response.
@@ -446,10 +446,10 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text, int q
                 }
 
                 resp = dict->FindResponse(self, area->area,trigger,0,-1,currentClient, questID);
-                if (!resp) // If no response found, try search for error trigger without last response
+                if(!resp)  // If no response found, try search for error trigger without last response
                 {
                     resp = dict->FindResponse(self, area->area,trigger_error,0,-1,currentClient, questID);
-                    if (resp)
+                    if(resp)
                     {
                         // Force setting of type Error if error trigger found
                         resp->type = NpcResponse::ERROR_RESPONSE;
@@ -462,8 +462,8 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text, int q
                 resp->type = NpcResponse::ERROR_RESPONSE;
             }
         }
-        
-        if (resp)
+
+        if(resp)
         {
             Debug4(LOG_NPC, currentClient ? currentClient->GetClientNum() : 0,"Found response %d: %s (%s)",resp->id,resp->GetResponse(), resp->GetResponseScript().GetData());
             resp->triggerText = trigger;
@@ -474,12 +474,12 @@ NpcResponse *psNPCDialog::FindResponse(csString& trigger,const char *text, int q
     return resp;
 }
 
-void psNPCDialog::SubstituteKeywords(Client * player, csString& resp) const
+void psNPCDialog::SubstituteKeywords(Client* player, csString &resp) const
 {
     psString dollarsign("$"),response(resp);
     int where = response.FindSubString(dollarsign);
 
-    while (where!=-1)
+    while(where!=-1)
     {
         psString word2,word;
         response.GetWord(where+1,word2,psString::NO_PUNCT);
@@ -487,58 +487,58 @@ void psNPCDialog::SubstituteKeywords(Client * player, csString& resp) const
         word = "$";
         word.Append(word2);  // include $sign in subst.
 
-        if (word == "$playername")
+        if(word == "$playername")
         {
-            if (!response.ReplaceSubString(word,player->GetName()))
+            if(!response.ReplaceSubString(word,player->GetName()))
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
             }
         }
-        else if (word == "$playerrace")
-        {            
-            if (!response.ReplaceSubString(word, player->GetCharacterData()->GetRaceInfo()->GetName()))
+        else if(word == "$playerrace")
+        {
+            if(!response.ReplaceSubString(word, player->GetCharacterData()->GetRaceInfo()->GetName()))
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
             }
         }
-        else if (word == "$sir")
+        else if(word == "$sir")
         {
             csString sir(player->GetCharacterData()->GetRaceInfo()->GetHonorific());
-                
-            if (!response.ReplaceSubString(word,sir))
+
+            if(!response.ReplaceSubString(word,sir))
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
             }
         }
-        else if (word == "$his")
+        else if(word == "$his")
         {
             csString his(player->GetCharacterData()->GetRaceInfo()->GetPossessive());
-            if (!response.ReplaceSubString(word,his))
+            if(!response.ReplaceSubString(word,his))
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),player->GetName());
             }
         }
-        else if (word == "$time") //changes a $time variable with a sentence like night morning afternoon or evening
+        else if(word == "$time")  //changes a $time variable with a sentence like night morning afternoon or evening
         {
             csString timestr; //used to store the string which will be replaced in the text
 
             int clockHour = psserver->GetWeatherManager()->GetGameTODHour(); //gets the current hour
 
             //checks what type of string should be applied according to the hour
-            if ( clockHour < 6)
+            if(clockHour < 6)
                 timestr = "night";
-            else if ( clockHour < 12 )
+            else if(clockHour < 12)
                 timestr = "morning";
-            else if ( clockHour < 18 )    
+            else if(clockHour < 18)
                 timestr = "afternoon";
             else
                 timestr = "evening";
-            if (!response.ReplaceSubString(word,timestr))
+            if(!response.ReplaceSubString(word,timestr))
             {
                 Error4("Failed to replace substring %s in %s with %s",word.GetData(),response.GetData(),timestr.GetData());
             }
         }
-        else if (word == "$npc")
+        else if(word == "$npc")
         {
             if(response.ReplaceSubString(word,self->GetName()))
             {
@@ -550,10 +550,10 @@ void psNPCDialog::SubstituteKeywords(Client * player, csString& resp) const
     resp = response;
 }
 
-NpcResponse *psNPCDialog::FindOrGeneralizeTrigger(Client *client,NpcTriggerSentence& trigger,
-                                                  csArray<int>& gen_terms, int word)
+NpcResponse* psNPCDialog::FindOrGeneralizeTrigger(Client* client,NpcTriggerSentence &trigger,
+        csArray<int> &gen_terms, int word)
 {
-    NpcResponse *resp;
+    NpcResponse* resp;
     csStringArray generalized;
 
     bool hit;
@@ -561,9 +561,9 @@ NpcResponse *psNPCDialog::FindOrGeneralizeTrigger(Client *client,NpcTriggerSente
     // Perform breadth-first search on generalisations
 
     // Copy all terms into stringarray
-    for(size_t i=0;i<trigger.TermLength();i++)
+    for(size_t i=0; i<trigger.TermLength(); i++)
         generalized.Push(trigger.Term(i)->term);
-    
+
     // We do at least one search with no generalisations
     size_t depth = 0;
 
@@ -571,7 +571,7 @@ NpcResponse *psNPCDialog::FindOrGeneralizeTrigger(Client *client,NpcTriggerSente
     {
         hit = false;
 
-        for(size_t i=0;i<gen_terms.GetSize();i++)
+        for(size_t i=0; i<gen_terms.GetSize(); i++)
         {
             const char* hypernym = trigger.Term(gen_terms[i])->GetInterleavedHypernym(depth);
             if(hypernym)
@@ -583,17 +583,17 @@ NpcResponse *psNPCDialog::FindOrGeneralizeTrigger(Client *client,NpcTriggerSente
             csString generalized_copy;
 
             // Merge string
-            for(size_t i=0;i<generalized.GetSize();i++)
+            for(size_t i=0; i<generalized.GetSize(); i++)
             {
                 generalized_copy.Append(generalized[i]);
             }
-     
+
             Debug2(LOG_NPC, 0, "Searching for generalized trigger: %s'\n", generalized_copy.GetDataSafe());
 
             dict->CheckForTriggerGroup(generalized_copy);  // substitute master trigger if this is child trigger in group
 
-            resp = FindResponse( generalized_copy, trigger.GetString());
-            if (resp)
+            resp = FindResponse(generalized_copy, trigger.GetString());
+            if(resp)
             {
                 Debug2(LOG_NPC, client->GetClientNum(),"Found response to: '%s'", generalized_copy.GetData());
 
@@ -614,44 +614,45 @@ NpcResponse *psNPCDialog::FindOrGeneralizeTrigger(Client *client,NpcTriggerSente
             }
         }
         depth++;
-    } while (hit);
+    }
+    while(hit);
 
     return NULL;
 }
 
-NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
+NpcResponse* psNPCDialog::Respond(const char* text,Client* client)
 {
-    NpcResponse *resp = NULL;
+    NpcResponse* resp = NULL;
     NpcTriggerSentence trigger,generalized;
     psString pstext(text);
-	int questIDHint = -1;
+    int questIDHint = -1;
 
-	// Cut the first { } as quest hint, if it's there.
-	if(pstext.GetAt(0) == '{')
-	{
-		// As the starting element was found search the closing one.
-		size_t endPos = pstext.Find("}");
-		if(endPos != (size_t)-1)
-		{
-			csString id = pstext.Slice(1, endPos - 1);
-			// Quest id can only be positive.
-			unsigned long value = strtoul(id.GetData(), NULL, 0);
+    // Cut the first { } as quest hint, if it's there.
+    if(pstext.GetAt(0) == '{')
+    {
+        // As the starting element was found search the closing one.
+        size_t endPos = pstext.Find("}");
+        if(endPos != (size_t)-1)
+        {
+            csString id = pstext.Slice(1, endPos - 1);
+            // Quest id can only be positive.
+            unsigned long value = strtoul(id.GetData(), NULL, 0);
 
-			// Assign to the questIDHint and check for overflow attempts
-			questIDHint = value;
-			if(questIDHint < -1) 
-			{
-				questIDHint = -1;
-			}
+            // Assign to the questIDHint and check for overflow attempts
+            questIDHint = value;
+            if(questIDHint < -1)
+            {
+                questIDHint = -1;
+            }
 
-			// Remove the special command from the trigger.
-			pstext = pstext.Slice(endPos + 1);
-		}
-	}
+            // Remove the special command from the trigger.
+            pstext = pstext.Slice(endPos + 1);
+        }
+    }
 
     //limit text to the maximum allocated in wordnet.
-    pstext.Truncate(WORDBUF); 
-    
+    pstext.Truncate(WORDBUF);
+
     currentplayer = client->GetActor();
     currentClient = client;
 
@@ -661,7 +662,7 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
 
     // Replace him/he,her/she,them/they,it with the stored
     // antecedent
-    if (!CheckPronouns(pstext))
+    if(!CheckPronouns(pstext))
     {
         Debug2(LOG_NPC, currentClient->GetClientNum(),"Failed pronouns check for \"%s\"",pstext.GetDataSafe());
         return ErrorResponse(pstext,"(none)");
@@ -671,7 +672,7 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
     // eg. hello is replaced with greetings
     FilterKnownTerms(pstext, trigger, client);
 
-    if (trigger.TermLength() == 0)
+    if(trigger.TermLength() == 0)
     {
         Debug1(LOG_NPC, currentClient->GetClientNum(),"Failed filter known terms check");
         psString pstextError(text);
@@ -683,34 +684,34 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
     copy = trigger.GetString();
     dict->CheckForTriggerGroup(copy);  // substitute master trigger if this is child trigger in group
 
-	// This is the generic version that does not use WordNet
-	// First check with the hint, then check without the hint, no need to check also in the next part
-	// as these should be precise hits as generated from the menu.
-	if(questIDHint >= 0)
-	{
-		resp = FindResponse(copy, trigger.GetString(), questIDHint);
-	}
+    // This is the generic version that does not use WordNet
+    // First check with the hint, then check without the hint, no need to check also in the next part
+    // as these should be precise hits as generated from the menu.
+    if(questIDHint >= 0)
+    {
+        resp = FindResponse(copy, trigger.GetString(), questIDHint);
+    }
 
-	// If there is no hint, or the quest hint yielded nothing try without the hint.
-	if(!resp)
-	{
-		resp = FindResponse(copy, trigger.GetString());
-	}
+    // If there is no hint, or the quest hint yielded nothing try without the hint.
+    if(!resp)
+    {
+        resp = FindResponse(copy, trigger.GetString());
+    }
 
-	
+
     // Try each word (in reverse order) of the trigger by itself before giving up
-    if (!resp)
+    if(!resp)
     {
         WordArray words(trigger.GetString());
-        if (words.GetCount()>1) //no need to do this if there is only one word.
+        if(words.GetCount()>1)  //no need to do this if there is only one word.
         {
-            for (size_t i=words.GetCount(); i>0; i--)
+            for(size_t i=words.GetCount(); i>0; i--)
             {
                 csString word(words.Get(i-1));
                 Debug2(LOG_NPC, currentClient->GetClientNum(), "psNPCDialog::Respond: Trying word: '%s'\n", word.GetDataSafe());
 
                 resp = FindResponse(word, text);
-                if (resp)
+                if(resp)
                 {
                     resp->triggerText = trigger.GetString();
                     break;
@@ -719,23 +720,23 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
         }
     }
 
-    if (resp)
+    if(resp)
     {
         Debug2(LOG_NPC, currentClient->GetClientNum(),"Found response to: '%s'", copy.GetData());
 
         //May be it is safe not to check for characterdata (now needed for GetLastRespons())
-        if (currentClient->GetCharacterData() == NULL)
+        if(currentClient->GetCharacterData() == NULL)
         {
             Error1("NpcResponse *psNPCDialog::Respond(const char * text,Client *client) called with "
-                "currentClient->GetCharacterData() returning NULL.");
+                   "currentClient->GetCharacterData() returning NULL.");
         }
         else
         {
             Debug3(LOG_NPC, currentClient->GetClientNum(),"Setting last response %d: %s",resp->id,resp->GetResponse());
             currentClient->GetCharacterData()->SetLastResponse(resp->id);
             Debug4(LOG_NPC, currentClient->GetClientNum(),"Setting last response for quest '%s', %d: %s",
-               resp->quest ? resp->quest->GetName() : "none", resp->id, resp->GetResponse());
-            currentClient->GetCharacterData()->GetQuestMgr().SetAssignedQuestLastResponse(resp->quest,resp->id, currentClient->GetTargetObject() );
+                   resp->quest ? resp->quest->GetName() : "none", resp->id, resp->GetResponse());
+            currentClient->GetCharacterData()->GetQuestMgr().SetAssignedQuestLastResponse(resp->quest,resp->id, currentClient->GetTargetObject());
         }
 
         return resp; // Found what we are looking for
@@ -743,11 +744,11 @@ NpcResponse *psNPCDialog::Respond(const char * text,Client *client)
     else
     {
         Debug1(LOG_NPC, currentClient->GetClientNum(),"No response found");
-        return ErrorResponse(pstext,trigger.GetString() );
+        return ErrorResponse(pstext,trigger.GetString());
     }
 }
 
-NpcResponse *psNPCDialog::FindXMLResponse(Client *client, csString trigger, int questID)
+NpcResponse* psNPCDialog::FindXMLResponse(Client* client, csString trigger, int questID)
 {
     if(!client)
     {
@@ -763,12 +764,12 @@ NpcResponse *psNPCDialog::FindXMLResponse(Client *client, csString trigger, int 
     return FindResponse(trigger, trigger.GetDataSafe(), questID);
 }
 
-NpcResponse *psNPCDialog::RepeatedResponse(const psString& text, NpcResponse *resp, csTicks when, int times)
+NpcResponse* psNPCDialog::RepeatedResponse(const psString &text, NpcResponse* resp, csTicks when, int times)
 {
-    const char *time_description;
-    if (when < 30000)  // 30 seconds
+    const char* time_description;
+    if(when < 30000)   // 30 seconds
         time_description = "just now";
-    else if (when < 300000) // 5 minutes
+    else if(when < 300000)  // 5 minutes
         time_description = "recently";
     else
         time_description = "already";
@@ -776,11 +777,11 @@ NpcResponse *psNPCDialog::RepeatedResponse(const psString& text, NpcResponse *re
     csString key;
     key.Format("repeat %s %d",time_description,times);
     resp = FindResponse(key,text);
-    if (!resp)
+    if(!resp)
     {
         key.Format("repeat %s",time_description);
         resp = FindResponse(key,text);
-        if (!resp)
+        if(!resp)
         {
             key = "repeat";
             resp = FindResponse(key,text);
@@ -789,7 +790,7 @@ NpcResponse *psNPCDialog::RepeatedResponse(const psString& text, NpcResponse *re
     return resp;
 }
 
-NpcResponse *psNPCDialog::ErrorResponse(const psString & text, const char *trigger)
+NpcResponse* psNPCDialog::ErrorResponse(const psString &text, const char* trigger)
 {
     AddBadText(text,trigger);
 
@@ -800,60 +801,60 @@ NpcResponse *psNPCDialog::ErrorResponse(const psString & text, const char *trigg
         error = "unknown";
     }
 
-    NpcResponse *resp = FindResponse(error,text);
+    NpcResponse* resp = FindResponse(error,text);
 
     if(!resp && error.Compare("unknown"))
     {
-      error = "error";
-      resp = FindResponse(error,text);
+        error = "error";
+        resp = FindResponse(error,text);
     }
 
     // save the trigger that didn't work for possible display to devs
-    if (resp)
+    if(resp)
         resp->triggerText = trigger;
 
     return resp;
 }
 
-void psNPCDialog::UpdateAntecedents(NpcResponse *resp)
+void psNPCDialog::UpdateAntecedents(NpcResponse* resp)
 {
     // later this will need to be kept on a per player basis
     // but for now, its just one set
 
-    if (resp->her.Length())
+    if(resp->her.Length())
         antecedent_her = resp->her;
 
-    if (resp->him.Length())
+    if(resp->him.Length())
         antecedent_him = resp->him;
 
-    if (resp->it.Length())
+    if(resp->it.Length())
         antecedent_it = resp->it;
 
-    if (resp->them.Length())
+    if(resp->them.Length())
         antecedent_them = resp->them;
 
 }
 
-bool psNPCDialog::AddWord(const char *)
+bool psNPCDialog::AddWord(const char*)
 {
     return false;
 }
 
-bool psNPCDialog::AddSynonym(const char *,const char *)
+bool psNPCDialog::AddSynonym(const char*,const char*)
 {
     return false;
 }
 
-bool psNPCDialog::AddKnowledgeArea(const char *ka_name)
+bool psNPCDialog::AddKnowledgeArea(const char* ka_name)
 {
-	KnowledgeArea *newKA = new KnowledgeArea;
-	newKA->area = ka_name;
-	newKA->priority = 0; // priority only matters when sorting from the db table.  here it will always be last priority
-	knowareas.Push(newKA);
+    KnowledgeArea* newKA = new KnowledgeArea;
+    newKA->area = ka_name;
+    newKA->priority = 0; // priority only matters when sorting from the db table.  here it will always be last priority
+    knowareas.Push(newKA);
     return true;
 }
 
-bool psNPCDialog::AddResponse(const char *area,const char *words,const char *response,const char *minfaction)
+bool psNPCDialog::AddResponse(const char* area,const char* words,const char* response,const char* minfaction)
 {
     (void) area;
     (void) words;
@@ -862,7 +863,7 @@ bool psNPCDialog::AddResponse(const char *area,const char *words,const char *res
     return false;
 }
 
-bool psNPCDialog::AssignNPCArea(const char *npcname,const char *areaname)
+bool psNPCDialog::AssignNPCArea(const char* npcname,const char* areaname)
 {
     (void) npcname;
     (void) areaname;
@@ -895,33 +896,33 @@ void DialogHistory::AddToHistory(int playerID, int responseID, csTicks when)
     entry.responseID= responseID;
     entry.when      = when;
 
-    if (history.GetSize() < MAX_HISTORY_LEN)
+    if(history.GetSize() < MAX_HISTORY_LEN)
         history.Push(entry);
     else
     {
         history.Put(counter,entry);
         counter++;
-        if (counter == MAX_HISTORY_LEN)
+        if(counter == MAX_HISTORY_LEN)
             counter=0;
     }
 }
 
-bool DialogHistory::EverSaid(int playerID, int responseID, csTicks& howLongAgo, int& times)
+bool DialogHistory::EverSaid(int playerID, int responseID, csTicks &howLongAgo, int &times)
 {
     times      = 0;
     howLongAgo = 0;
 
-    for (size_t i=0; i<history.GetSize(); i++)
+    for(size_t i=0; i<history.GetSize(); i++)
     {
-        if (history[i].playerID   == playerID &&
-            history[i].responseID == responseID)
+        if(history[i].playerID   == playerID &&
+                history[i].responseID == responseID)
         {
             times++;
-            if (history[i].when > howLongAgo)
+            if(history[i].when > howLongAgo)
                 howLongAgo = history[i].when;
         }
     }
-    if (howLongAgo)
+    if(howLongAgo)
         howLongAgo = csGetTicks() - howLongAgo;  // need the delta here
 
     return (times > 0);
@@ -930,61 +931,61 @@ bool DialogHistory::EverSaid(int playerID, int responseID, csTicks& howLongAgo, 
 
 //--------------------------------------------------------------------------
 
-void psDialogManager::AddTrigger( psTriggerBlock* trigger )
+void psDialogManager::AddTrigger(psTriggerBlock* trigger)
 {
-    triggers.Push( trigger );
+    triggers.Push(trigger);
 }
 
 
-void psDialogManager::AddSpecialResponse( psSpecialResponse* response )
+void psDialogManager::AddSpecialResponse(psSpecialResponse* response)
 {
-    special.Push( response );
+    special.Push(response);
 }
 
 
-int psDialogManager::GetPriorID( int internalID )
+int psDialogManager::GetPriorID(int internalID)
 {
-    for (size_t x = 0; x < triggers.GetSize(); x++ )
+    for(size_t x = 0; x < triggers.GetSize(); x++)
     {
-        for (size_t z = 0; z < triggers[x]->attitudes.GetSize(); z++)
+        for(size_t z = 0; z < triggers[x]->attitudes.GetSize(); z++)
         {
             psAttitudeBlock* currAttitude = triggers[x]->attitudes[z];
 
-            if ( currAttitude->responseSet.givenID == internalID )
+            if(currAttitude->responseSet.givenID == internalID)
                 return currAttitude->responseSet.databaseID;
         }
     }
-           
-   return -1; 
+
+    return -1;
 }
 
 
 void psDialogManager::PrintInfo()
 {
     const size_t totalTrigs = triggers.GetSize();
-    
-    for ( uint z = 0; z < totalTrigs; z++ )
+
+    for(uint z = 0; z < totalTrigs; z++)
     {
         CPrintf(CON_CMDOUTPUT,"*******************\n");
         CPrintf(CON_CMDOUTPUT,"Trigger Complete  :\n");
         CPrintf(CON_CMDOUTPUT,"*******************\n");
 
         psTriggerBlock* currTrigger = triggers[z];
-   
-        printf("Prior responseID: %d\n", currTrigger->priorResponseID );
-        for (size_t x = 0; x < currTrigger->phraseList.GetSize(); x++)
+
+        printf("Prior responseID: %d\n", currTrigger->priorResponseID);
+        for(size_t x = 0; x < currTrigger->phraseList.GetSize(); x++)
         {
             CPrintf(CON_CMDOUTPUT,"Phrase: %s\n", currTrigger->phraseList[x]);
         }
 
         const size_t totalAttitudes = currTrigger->attitudes.GetSize();
-        for (uint x = 0; x < totalAttitudes; x++)
+        for(uint x = 0; x < totalAttitudes; x++)
         {
-            size_t total = 
+            size_t total =
                 currTrigger->attitudes[x]->responseSet.responses.GetSize();
-            for ( uint res = 0; res < total; res++ )
+            for(uint res = 0; res < total; res++)
             {
-                CPrintf(CON_CMDOUTPUT,"Response: %s\n", 
+                CPrintf(CON_CMDOUTPUT,"Response: %s\n",
                         currTrigger->attitudes[x]->responseSet.responses[res]);
             }
         }
@@ -993,21 +994,21 @@ void psDialogManager::PrintInfo()
 }
 
 
-int psDialogManager::InsertResponse( csString& response )
+int psDialogManager::InsertResponse(csString &response)
 {
     csString escape;
-    db->Escape( escape, response );
+    db->Escape(escape, response);
     db->Command("INSERT INTO npc_responses (response1,response2,response3,response4,response5,"
-                                           "pronoun_him, pronoun_her, pronoun_it, pronoun_them, script, quest_id) "
+                "pronoun_him, pronoun_her, pronoun_it, pronoun_them, script, quest_id) "
                 "VALUES (\"%s\",'','','','','','','','','',0)",
                 escape.GetData());
 
 
-    int id = db->SelectSingleNumber("SELECT last_insert_id()" );
+    int id = db->SelectSingleNumber("SELECT last_insert_id()");
     return id;
 }
 
-int psDialogManager::InsertResponseSet( psResponse &response )
+int psDialogManager::InsertResponseSet(psResponse &response)
 {
     csStringArray &responseSet = response.responses;
     csString script = response.script;
@@ -1016,46 +1017,47 @@ int psDialogManager::InsertResponseSet( psResponse &response )
     size_t total = responseSet.GetSize();
     csString buffer;
 
-    csString command( "INSERT INTO npc_responses (" );
+    csString command("INSERT INTO npc_responses (");
     csString values;
 
-    if ( total > 0 )
+    if(total > 0)
     {
-        buffer.Format(" response%d", 1 );
-        command.Append( buffer );
+        buffer.Format(" response%d", 1);
+        command.Append(buffer);
         buffer.Format(" \"%s\" ", responseSet[0]);
-        values.Append( buffer );
+        values.Append(buffer);
     }
 
-    for ( uint x = 1; x < 5;  x++ )
+    for(uint x = 1; x < 5;  x++)
     {
-        buffer.Format( " , response%d ", x+1 );
-        command.Append ( buffer );
-        if (x<total)
+        buffer.Format(" , response%d ", x+1);
+        command.Append(buffer);
+        if(x<total)
         {
             buffer.Format(" ,\"%s\" ", responseSet[x]);
-            values.Append( buffer );
-        } else
+            values.Append(buffer);
+        }
+        else
             values.Append(" ,\"\" ");
 
     }
 
-    command.Append ( ", pronoun_him, pronoun_her, pronoun_it, pronoun_them,script"); 
+    command.Append(", pronoun_him, pronoun_her, pronoun_it, pronoun_them,script");
     if(response.questID == -1)
         command.Append(")");
     else
         command.Append(", quest_id)");
 
     csString escape;
-    db->Escape( escape, script.GetDataSafe() );
-    buffer.Format( " VALUES ( %s, '%s','%s','%s','%s', '%s' ", 
-            (const char*)values,
-            response.pronoun_him.GetDataSafe(),
-            response.pronoun_her.GetDataSafe(),
-            response.pronoun_it.GetDataSafe(),
-            response.pronoun_them.GetDataSafe(),
-            escape.GetData());
-    if (response.questID == -1)
+    db->Escape(escape, script.GetDataSafe());
+    buffer.Format(" VALUES ( %s, '%s','%s','%s','%s', '%s' ",
+                  (const char*)values,
+                  response.pronoun_him.GetDataSafe(),
+                  response.pronoun_her.GetDataSafe(),
+                  response.pronoun_it.GetDataSafe(),
+                  response.pronoun_them.GetDataSafe(),
+                  escape.GetData());
+    if(response.questID == -1)
         buffer.Append(")");
     else
     {
@@ -1066,76 +1068,76 @@ int psDialogManager::InsertResponseSet( psResponse &response )
     command += csString(buffer);
 
 
-   
-    //Notify2("Final Command: %s\n", command.GetData()); 
-     
-    if ( !db->Command( command.GetData() ) )
+
+    //Notify2("Final Command: %s\n", command.GetData());
+
+    if(!db->Command(command.GetData()))
     {
         Error2("MYSQL ERROR: %s", db->GetLastError());
         Error2("LAST QUERY: %s", db->GetLastQuery());
         CPrintf(CON_ERROR,"%s\n",command.GetData());
-   }
+    }
 
-    int id = db->SelectSingleNumber("SELECT last_insert_id()" );
+    int id = db->SelectSingleNumber("SELECT last_insert_id()");
 
     return id;
 }
 
 
-int psDialogManager::InsertTrigger( const char* trigger, const char* area,
-                              int maxAttitude, int minAttitude,
-                              int responseID, int priorID, int questID )
+int psDialogManager::InsertTrigger(const char* trigger, const char* area,
+                                   int maxAttitude, int minAttitude,
+                                   int responseID, int priorID, int questID)
 {
     csString command;
 
     csString lower(trigger);
     lower.Downcase();
- 
+
     csString escLower;
     csString escArea;
-    db->Escape( escLower, lower );
-    db->Escape( escArea, area );
-    
-    if(questID == -1)
-    db->Command( "INSERT INTO npc_triggers ( trigger, "
-                                              " response_id, "
-                                              " prior_response_required, "
-                                              " min_attitude_required, "
-                                              " max_attitude_required, "
-                                              " area )"
-                                     " VALUES ( '%s', "
-                                                " %d , "
-                                                " %d , "
-                                                " %d , "
-                                                " %d , "
-                                                " '%s' ) ",
-                                            escLower.GetData() , 
-                                            responseID,
-                                            priorID,
-                                            minAttitude,
-                                            maxAttitude,
-                                            escArea.GetData());
-    else
-        db->Command( "INSERT INTO npc_triggers ( trigger, "
-                                              " response_id, "
-                                              " prior_response_required, "
-                                              " min_attitude_required, "
-                                              " max_attitude_required, "
-                                              " area, quest_id )"
-                                     " VALUES ( '%s', "
-                                                " %d , "
-                                                " %d , "
-                                                " %d , "
-                                                " %d , "
-                                                " '%s', %i) ",
-                                            escLower.GetData(), 
-                                            responseID,
-                                            priorID,
-                                            minAttitude,
-                                            maxAttitude,
-                                            escArea.GetData(), questID);
+    db->Escape(escLower, lower);
+    db->Escape(escArea, area);
 
-    int id = db->SelectSingleNumber("SELECT last_insert_id()" );
+    if(questID == -1)
+        db->Command("INSERT INTO npc_triggers ( trigger, "
+                    " response_id, "
+                    " prior_response_required, "
+                    " min_attitude_required, "
+                    " max_attitude_required, "
+                    " area )"
+                    " VALUES ( '%s', "
+                    " %d , "
+                    " %d , "
+                    " %d , "
+                    " %d , "
+                    " '%s' ) ",
+                    escLower.GetData() ,
+                    responseID,
+                    priorID,
+                    minAttitude,
+                    maxAttitude,
+                    escArea.GetData());
+    else
+        db->Command("INSERT INTO npc_triggers ( trigger, "
+                    " response_id, "
+                    " prior_response_required, "
+                    " min_attitude_required, "
+                    " max_attitude_required, "
+                    " area, quest_id )"
+                    " VALUES ( '%s', "
+                    " %d , "
+                    " %d , "
+                    " %d , "
+                    " %d , "
+                    " '%s', %i) ",
+                    escLower.GetData(),
+                    responseID,
+                    priorID,
+                    minAttitude,
+                    maxAttitude,
+                    escArea.GetData(), questID);
+
+    int id = db->SelectSingleNumber("SELECT last_insert_id()");
 
     return id;
 }
@@ -1145,79 +1147,79 @@ bool psDialogManager::WriteToDatabase()
 {
     // Add in all the responses
     const size_t totalTriggers = triggers.GetSize();
-  
-    for (uint x = 0; x < totalTriggers; x++ )
+
+    for(uint x = 0; x < totalTriggers; x++)
     {
         psTriggerBlock* currTrig = triggers[x];
-        
-        // Insert all the responses for this trigger. Each 
+
+        // Insert all the responses for this trigger. Each
         // attitude block represents a different response set.
-        for (size_t att = 0; att < currTrig->attitudes.GetSize(); att++)
+        for(size_t att = 0; att < currTrig->attitudes.GetSize(); att++)
         {
             psAttitudeBlock* currAttitude = currTrig->attitudes[att];
-            
-            int id = InsertResponseSet( currAttitude->responseSet );
 
-            // Store the database ID for later use by triggers. 
+            int id = InsertResponseSet(currAttitude->responseSet);
+
+            // Store the database ID for later use by triggers.
             currAttitude->responseSet.databaseID = id;
 
-            responseIDs.Push( id );
+            responseIDs.Push(id);
         }
     }
 
 
     // Add all the triggers
-    for (uint x = 0; x < totalTriggers; x++)
+    for(uint x = 0; x < totalTriggers; x++)
     {
         psTriggerBlock* currTrig = triggers[x];
- 
+
         // Figure out the correct prior id to use for the database
         int goodPriorResponseID = 0;
-        if ( currTrig->priorResponseID != 0 )
+        if(currTrig->priorResponseID != 0)
         {
-            goodPriorResponseID = GetPriorID(currTrig->priorResponseID );
+            goodPriorResponseID = GetPriorID(currTrig->priorResponseID);
         }
 
-        CS_ASSERT( goodPriorResponseID != -1 );
-            
-        for (size_t phi = 0; phi < currTrig->phraseList.GetSize(); phi++)
+        CS_ASSERT(goodPriorResponseID != -1);
+
+        for(size_t phi = 0; phi < currTrig->phraseList.GetSize(); phi++)
         {
             csString phrase(currTrig->phraseList[phi]);
 
-            for (size_t att = 0; att < currTrig->attitudes.GetSize(); att++)
+            for(size_t att = 0; att < currTrig->attitudes.GetSize(); att++)
             {
                 int attMax = currTrig->attitudes[att]->maxAttitude;
                 int attMin = currTrig->attitudes[att]->minAttitude;
-                int respID = currTrig->attitudes[att]->responseSet.databaseID; 
+                int respID = currTrig->attitudes[att]->responseSet.databaseID;
 
                 csString trigArea = currTrig->area;
-                if (trigArea.IsEmpty())
+                if(trigArea.IsEmpty())
                     trigArea = area;
 
-                int databaseID = InsertTrigger( phrase, trigArea.GetDataSafe(), 
-                                                attMax, attMin, 
-                                                respID, goodPriorResponseID, currTrig->questID );
+                int databaseID = InsertTrigger(phrase, trigArea.GetDataSafe(),
+                                               attMax, attMin,
+                                               respID, goodPriorResponseID, currTrig->questID);
 
-                triggerIDs.Push( databaseID );
+                triggerIDs.Push(databaseID);
             }
         }
     }
 
     // Add the special responses
     size_t totalSpecial = special.GetSize();
-    for (uint sp = 0; sp < totalSpecial; sp++)
+    for(uint sp = 0; sp < totalSpecial; sp++)
     {
-        psSpecialResponse *spResp = special[sp];
-        int responseID = InsertResponse( spResp->response );
-        int triggerID = InsertTrigger( spResp->type, 
-                                       area,
-                                       spResp->attMax,
-                                       spResp->attMin,
-                                       responseID,
-                                       0, spResp->questID );
+        psSpecialResponse* spResp = special[sp];
+        int responseID = InsertResponse(spResp->response);
+        int triggerID = InsertTrigger(spResp->type,
+                                      area,
+                                      spResp->attMax,
+                                      spResp->attMin,
+                                      responseID,
+                                      0, spResp->questID);
 
-        triggerIDs.Push( triggerID );
-        responseIDs.Push( responseID );
+        triggerIDs.Push(triggerID);
+        responseIDs.Push(responseID);
     }
 
     return false;
@@ -1225,7 +1227,7 @@ bool psDialogManager::WriteToDatabase()
 
 //--------------------------------------------------------------------------
 
-void psTriggerBlock::Create( csRef<iDocumentNode> triggerNode, int questID )
+void psTriggerBlock::Create(csRef<iDocumentNode> triggerNode, int questID)
 {
     area = triggerNode->GetAttributeValue("area");
     this->questID = questID;
@@ -1233,7 +1235,7 @@ void psTriggerBlock::Create( csRef<iDocumentNode> triggerNode, int questID )
     // Read in phrases
     //=================
     csRef<iDocumentNodeIterator> iter = triggerNode->GetNodes("phrase");
-    while ( iter->HasNext() )
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> phrasenode = iter->Next();
         phraseList.Push(phrasenode->GetAttributeValue("value"));
@@ -1244,14 +1246,14 @@ void psTriggerBlock::Create( csRef<iDocumentNode> triggerNode, int questID )
     // Read in attitude blocks
     //========================
     iter = triggerNode->GetNodes("attitude");
-    while ( iter->HasNext() )
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> attitudenode = iter->Next();
-        psAttitudeBlock* attitudeBlock = new psAttitudeBlock( manager );
+        psAttitudeBlock* attitudeBlock = new psAttitudeBlock(manager);
 
-        attitudeBlock->Create( attitudenode, questID );
+        attitudeBlock->Create(attitudenode, questID);
 
-        attitudes.Push( attitudeBlock );
+        attitudes.Push(attitudeBlock);
     }
 }
 
@@ -1259,15 +1261,15 @@ void psTriggerBlock::Create( csRef<iDocumentNode> triggerNode, int questID )
 
 int psAttitudeBlock::responseID = 0;
 
-void psAttitudeBlock::Create( csRef<iDocumentNode> attitudeNode, int questID )
+void psAttitudeBlock::Create(csRef<iDocumentNode> attitudeNode, int questID)
 {
     //=========================
     // Read the attitude values
     //=========================
-    csRef<iDocumentAttribute> maxattr = attitudeNode->GetAttribute( "max");
+    csRef<iDocumentAttribute> maxattr = attitudeNode->GetAttribute("max");
     csRef<iDocumentAttribute> minattr = attitudeNode->GetAttribute("min");
 
-    if  ( !minattr || !maxattr )
+    if(!minattr || !maxattr)
     {
         maxAttitude = 100;
         minAttitude = -100;
@@ -1282,7 +1284,7 @@ void psAttitudeBlock::Create( csRef<iDocumentNode> attitudeNode, int questID )
     // Read in the response tags
     //==========================
     csRef<iDocumentNodeIterator> iter = attitudeNode->GetNodes("response");
-    while ( iter->HasNext() )
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> responseNode = iter->Next();
         responseSet.responses.Push(responseNode->GetAttributeValue("say"));
@@ -1291,20 +1293,20 @@ void psAttitudeBlock::Create( csRef<iDocumentNode> attitudeNode, int questID )
     iter = attitudeNode->GetNodes("script");
 
     responseSet.script="";
-    while (iter->HasNext())
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> scriptNode = iter->Next();
         csString script = scriptNode->GetContentsValue();
 
         // remove \n and \r chars from the string
-        for (unsigned int i=0;i < script.Length();i++)
-            if (script.GetAt(i)!='\r'&&script.GetAt(i)!='\n')
+        for(unsigned int i=0; i < script.Length(); i++)
+            if(script.GetAt(i)!='\r'&&script.GetAt(i)!='\n')
                 responseSet.script+=script.GetAt(i);
     }
 
     csRef<iDocumentNode> pronounNode = attitudeNode->GetNode("pronoun");
 
-    if (pronounNode)
+    if(pronounNode)
     {
         responseSet.pronoun_him = pronounNode->GetAttributeValue("him");
         responseSet.pronoun_her = pronounNode->GetAttributeValue("her");
@@ -1320,22 +1322,22 @@ void psAttitudeBlock::Create( csRef<iDocumentNode> attitudeNode, int questID )
     //=======================================================
     iter = attitudeNode->GetNodes("trigger");
 
-    while( iter->HasNext() )
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> triggerNode = iter->Next();
-        psTriggerBlock* trigger = new psTriggerBlock( manager );
+        psTriggerBlock* trigger = new psTriggerBlock(manager);
 
-        trigger->Create( triggerNode, questID );
+        trigger->Create(triggerNode, questID);
 
         // The prior id for a sub trigger is the one for THIS attitude.
-        trigger->SetPrior( responseSet.givenID );
-        manager->AddTrigger( trigger );
+        trigger->SetPrior(responseSet.givenID);
+        manager->AddTrigger(trigger);
     }
 }
 
 //--------------------------------------------------------------------------
 
-psSpecialResponse::psSpecialResponse( csRef<iDocumentNode> responseNode, int questID )
+psSpecialResponse::psSpecialResponse(csRef<iDocumentNode> responseNode, int questID)
 {
     attMax = responseNode->GetAttributeValueAsInt("reactionMax");
     attMin = responseNode->GetAttributeValueAsInt("reactionMin");

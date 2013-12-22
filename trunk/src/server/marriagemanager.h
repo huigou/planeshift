@@ -1,5 +1,5 @@
 /* marriagemanager.h- Author: DivineLight
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@
 /**
  * This class manages all marriage related stuff.
  *
- * This class manages all marriage related functionality and has 
+ * This class manages all marriage related functionality and has
  * functions to retrieve/edit character's marriage related details.
  */
 class psMarriageManager
@@ -43,13 +43,13 @@ class psMarriageManager
 public:
 
     /// Propose
-    void Propose( Client* client, csString proposedCharName, csString proposeMsg );
-    
+    void Propose(Client* client, csString proposedCharName, csString proposeMsg);
+
     /// Confirm divorce
-    void ContemplateDivorce( Client* client, csString divorceMsg );
+    void ContemplateDivorce(Client* client, csString divorceMsg);
 
     /// Divorce
-    void Divorce( Client* client, csString divorceMsg );
+    void Divorce(Client* client, csString divorceMsg);
 
     /**
      * Sets spouse name for a given character Name
@@ -58,25 +58,25 @@ public:
      * @param spouseData  Pointer to spouse character's data.
      * @return true if successfull else returns false.
      */
-    bool PerformMarriage( psCharacter* charData, psCharacter* spouseData );
+    bool PerformMarriage(psCharacter* charData, psCharacter* spouseData);
 
     /**
-     * Deletes marriage information of given character name from DB and 
+     * Deletes marriage information of given character name from DB and
      * reverts any lastname changes and updates cached data.
      */
-    void DeleteMarriageInfo( psCharacter* charData );
+    void DeleteMarriageInfo(psCharacter* charData);
 
     /**
      * Used to update name in labels, guilds, targets, etc.
      */
-    void UpdateName ( psCharacter* charData );
+    void UpdateName(psCharacter* charData);
 
 private:
     /**
      * Creates a character's entry in "character_marriage_details"
      * table of DB if one is not present already.
      */
-    bool CreateMarriageEntry( psCharacter* charData,  psCharacter* spouseData );
+    bool CreateMarriageEntry(psCharacter* charData,  psCharacter* spouseData);
 };
 
 /** @} */

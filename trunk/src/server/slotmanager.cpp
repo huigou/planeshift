@@ -66,9 +66,9 @@ bool SlotManager::Initialize()
 }
 
 
-void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
+void SlotManager::HandleSlotMovement(MsgEntry* me, Client* fromClient)
 {
-    Debug1(LOG_ITEM, me->clientnum, "SlotManager::HandleSlotMovement begins." );
+    Debug1(LOG_ITEM, me->clientnum, "SlotManager::HandleSlotMovement begins.");
 
     psSlotMovementMsg mesg(me);
 
@@ -78,12 +78,12 @@ void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
 
     // If stacks are less than 1 then we should not do anything server wise.
     // This means the player does not own the item.
-    if (mesg.stackCount < 1)
+    if(mesg.stackCount < 1)
     {
         return;
     }
 
-    if (!fromClient->GetCharacterData())
+    if(!fromClient->GetCharacterData())
     {
         Error2("Could not find Character Data for client: %s", fromClient->GetName());
         return;
@@ -91,14 +91,14 @@ void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
 
     uint32 worldContainerID = 0;
     int otherContainerID = 0;
-    if (mesg.fromContainer > 1000)  // not an inventory slot
+    if(mesg.fromContainer > 1000)   // not an inventory slot
     {
         worldContainerID = mesg.fromContainer;
         otherContainerID = mesg.toContainer;
         mesg.fromContainer = CONTAINER_GEM_OBJECT;
     }
 
-    switch (mesg.fromContainer)
+    switch(mesg.fromContainer)
     {
         case CONTAINER_GEM_OBJECT:
             MoveFromWorldContainer(mesg, fromClient, worldContainerID);
@@ -123,7 +123,7 @@ void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
     //  also it updates glyphs as well
     if(worldContainerID == 0 || otherContainerID <= 100)
     {
-        psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());  
+        psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());
     }
     else
     {
@@ -134,33 +134,33 @@ void SlotManager::HandleSlotMovement(MsgEntry* me, Client *fromClient)
             LogCSV::GetSingleton().Write(CSV_STATUS, status);
     }
 
-    Debug1(LOG_ITEM, me->clientnum, "SlotManager::HandleSlotMovement ends." );
+    Debug1(LOG_ITEM, me->clientnum, "SlotManager::HandleSlotMovement ends.");
     return;
 }
 
-void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromClient, uint32 containerEntityID)
+void SlotManager::MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromClient, uint32 containerEntityID)
 {
     // printf("Moving item from world container %d, from slot %d.\n", containerEntityID, msg.fromSlot);
 
-    psCharacter *chr = fromClient->GetCharacterData();
+    psCharacter* chr = fromClient->GetCharacterData();
 
-    psItem *parentItem=NULL;
-    gemContainer *worldContainer=NULL;
+    psItem* parentItem=NULL;
+    gemContainer* worldContainer=NULL;
 
-    gemObject *obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
+    gemObject* obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
     worldContainer = dynamic_cast<gemContainer*>(obj);
-    if (!worldContainer)
+    if(!worldContainer)
     {
         Error2("Couldn't find any CEL entity id %d.", containerEntityID);
         return;
     }
     parentItem = worldContainer->GetItem();
-    if (!parentItem)
+    if(!parentItem)
     {
         Error2("No parent container item found for worldContainer %d.", containerEntityID);
         return;
     }
-    if (!parentItem->GetIsContainer())
+    if(!parentItem->GetIsContainer())
     {
         Error2("Cannot put item into another item %s.\n", parentItem->GetName());
         return;
@@ -168,55 +168,55 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
 
     // Check to see if that item exists in the container with the required amount.
     // This will return the entire stack of items despite the count that we want.
-    psItem *itemProposed = worldContainer->FindItemInSlot(msg.fromSlot, msg.stackCount);
+    psItem* itemProposed = worldContainer->FindItemInSlot(msg.fromSlot, msg.stackCount);
 
-    if (!itemProposed)
+    if(!itemProposed)
     {
         Error5("Cannot find any item in slot %d for container %s(%d) range of player is %g.", msg.fromSlot, parentItem->GetName(), parentItem->GetUID(), fromClient->GetActor()->RangeTo(worldContainer, true, true));
         return;
     }
 
-    if (!worldContainer->CanTake(fromClient,itemProposed))
+    if(!worldContainer->CanTake(fromClient,itemProposed))
     {
         Error2("Client %u tried to take item it doesn't own.", fromClient->GetClientNum());
         return;
     }
 
-    if (fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
+    if(fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
     {
         psserver->SendSystemError(fromClient->GetClientNum(),
-            "You are not in range to use %s.",worldContainer->GetItem()->GetName());
+                                  "You are not in range to use %s.",worldContainer->GetItem()->GetName());
         return;
     }
 
     psserver->GetWorkManager()->StopWork(fromClient, itemProposed);
-    
-    if (msg.toContainer > 100)
+
+    if(msg.toContainer > 100)
     {
         containerEntityID = msg.toContainer;
         msg.toContainer   = CONTAINER_GEM_OBJECT;
     }
 
-    switch (msg.toContainer)
+    switch(msg.toContainer)
     {
-        //---------------------------------------------------------------------
-        // Moving from a world container to another world container.  Possibly
-        // the same one but in a different slot.
-        //---------------------------------------------------------------------        
+            //---------------------------------------------------------------------
+            // Moving from a world container to another world container.  Possibly
+            // the same one but in a different slot.
+            //---------------------------------------------------------------------
         case CONTAINER_GEM_OBJECT:
         {
             // TODO: Talad would like to be able to put containers in world containers.
-            if (itemProposed->GetIsContainer())
+            if(itemProposed->GetIsContainer())
             {
                 psserver->SendSystemError(fromClient->GetClientNum(), "You may not put a container in a container.");
                 return;
             }
-            psItem *parentItem = NULL;
+            psItem* parentItem = NULL;
             worldContainer = NULL;
- 
-            gemObject *obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
+
+            gemObject* obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
             worldContainer = dynamic_cast<gemContainer*>(obj);
-            if (!worldContainer)
+            if(!worldContainer)
             {
                 Error2("Couldn't find any CEL entity id %d.", containerEntityID);
                 return;
@@ -224,12 +224,12 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
 
             parentItem = worldContainer->GetItem();
 
-            if (!parentItem)
+            if(!parentItem)
             {
                 Error2("No parent container item found for worldContainer %d.", containerEntityID);
                 return;
             }
-            if (!parentItem->GetIsContainer())
+            if(!parentItem->GetIsContainer())
             {
                 Error2("Cannot put item into another item %s.\n", parentItem->GetName());
                 return;
@@ -237,22 +237,22 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
 
             // Now take this out of slot and put in other slot
             // TODO: This should be msg.stackCount once we can split stacks inside a container.
-            
+
             psItem* newItem = NULL;
-                
+
             csString reason;
-            if (worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot, reason))
+            if(worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot, reason))
             {
                 newItem = worldContainer->RemoveFromContainer(itemProposed, msg.fromSlot,fromClient, msg.stackCount);
-                
+
                 //if (!worldContainer->RemoveFromContainer(itemProposed,fromClient) )
-                if ( !newItem ) 
+                if(!newItem)
                 {
                     Error1("Can not delete item from container");
                     return;
                 }
-                
-                if (!worldContainer->AddToContainer(newItem, fromClient, msg.toSlot))
+
+                if(!worldContainer->AddToContainer(newItem, fromClient, msg.toSlot))
                 {
                     Error2("Bad container slot %i when trying to add items to container", msg.toSlot);
                     return;
@@ -264,20 +264,20 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
                 parentItem->SendContainerContents(fromClient, containerEntityID);
                 return;
             }
-            
-            
+
+
             // Start work on item again
             // If the entire stack was taken then newItem will be the same as itemProposed.  If that is not the
             // case there was a stack split so setup work on the two stacks.
-            if ( newItem != itemProposed )
+            if(newItem != itemProposed)
             {
                 psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, itemProposed, itemProposed->GetStackCount());
-            }                
-            
-            if ( newItem )
-            {                
+            }
+
+            if(newItem)
+            {
                 psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, newItem, newItem->GetStackCount());
-            }                
+            }
 
             parentItem->SendContainerContents(fromClient, containerEntityID);
 
@@ -312,19 +312,19 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
             // After fixing Add, re-enable this.
             //INVENTORY_SLOT_NUMBER destSlot = (INVENTORY_SLOT_NUMBER) (msg.toSlot + (int) PSCHARACTER_SLOT_BULK1);
             psItem* newItem;
-            
-            if (chr->Inventory().Add(itemProposed, true)) // Test = true
+
+            if(chr->Inventory().Add(itemProposed, true))  // Test = true
             {
                 // Now that it was successful, take it out of the world container
-                //worldContainer->RemoveFromContainer(itemProposed,fromClient);                                
+                //worldContainer->RemoveFromContainer(itemProposed,fromClient);
                 newItem = worldContainer->RemoveFromContainer(itemProposed, msg.fromSlot,fromClient, msg.stackCount);
-                
-                // If we did not take the entire stack, restart the work on the items that are left over.                
-                if ( newItem != itemProposed )
+
+                // If we did not take the entire stack, restart the work on the items that are left over.
+                if(newItem != itemProposed)
                 {
                     psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, itemProposed, itemProposed->GetStackCount());
-                }   
-                
+                }
+
                 chr->Inventory().Add(newItem, false);
                 itemProposed->SetGuardingCharacterID(0);
 
@@ -342,22 +342,22 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromCli
     }
 }
 
-void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
+void SlotManager::MoveFromMoney(psSlotMovementMsg &msg, Client* fromClient)
 {
-    psCharacter *chr = fromClient->GetCharacterData();
+    psCharacter* chr = fromClient->GetCharacterData();
     // Remove the money from the character
-    
+
     // This can be caused by packet misordering
-    if (chr->Money().Get(msg.fromSlot) - msg.stackCount < 0) 
+    if(chr->Money().Get(msg.fromSlot) - msg.stackCount < 0)
     {
         psserver->SendSystemError(fromClient->GetClientNum(), "You do not have that much money.");
         return;
-    }                
+    }
 
     psMoney money;
     money.Adjust(msg.fromSlot, msg.stackCount);
-    
-    switch (msg.toContainer)
+
+    switch(msg.toContainer)
     {
         case CONTAINER_WORLD:
         {
@@ -367,8 +367,8 @@ void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
                 psserver->SendSystemError(fromClient->GetClientNum(), "You can't place a stack of more than %d items.", MAX_STACK_COUNT);
                 return;
             }
-            psItem *item = MakeMoneyItem((INVENTORY_SLOT_NUMBER)msg.fromSlot, msg.stackCount);
-            if (item)
+            psItem* item = MakeMoneyItem((INVENTORY_SLOT_NUMBER)msg.fromSlot, msg.stackCount);
+            if(item)
             {
                 // Remove the money from inventory, and put in world.
                 money.Set(-money.Get(3), -money.Get(2), -money.Get(1), -money.Get(0));
@@ -383,8 +383,8 @@ void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
         case CONTAINER_OFFERING_MONEY:
         case CONTAINER_EXCHANGE_OFFERING:
         {
-            Exchange *exchange = psserver->exchangemanager->GetExchange(fromClient->GetExchangeID());
-            if (!exchange)
+            Exchange* exchange = psserver->exchangemanager->GetExchange(fromClient->GetExchangeID());
+            if(!exchange)
             {
                 Error2("Client %s requested exchange slot movement but is not in an exchange.", fromClient->GetName());
                 return;
@@ -405,35 +405,35 @@ void SlotManager::MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient)
     }
 }
 
-void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
+void SlotManager::MoveFromInventory(psSlotMovementMsg &msg, Client* fromClient)
 {
     INVENTORY_SLOT_NUMBER srcSlot = PSCHARACTER_SLOT_NONE;
     INVENTORY_SLOT_NUMBER destSlot = PSCHARACTER_SLOT_NONE;
 
-    if (msg.fromContainer == CONTAINER_INVENTORY_BULK)
-        srcSlot = (INVENTORY_SLOT_NUMBER) (msg.fromSlot + (int)PSCHARACTER_SLOT_BULK1);
-    else if (msg.fromContainer == CONTAINER_INVENTORY_EQUIPMENT)
+    if(msg.fromContainer == CONTAINER_INVENTORY_BULK)
+        srcSlot = (INVENTORY_SLOT_NUMBER)(msg.fromSlot + (int)PSCHARACTER_SLOT_BULK1);
+    else if(msg.fromContainer == CONTAINER_INVENTORY_EQUIPMENT)
         srcSlot = (INVENTORY_SLOT_NUMBER) msg.fromSlot;
     else
-        srcSlot = (INVENTORY_SLOT_NUMBER) (msg.fromContainer * 100 + msg.fromSlot + (int)PSCHARACTER_SLOT_BULK1);
+        srcSlot = (INVENTORY_SLOT_NUMBER)(msg.fromContainer * 100 + msg.fromSlot + (int)PSCHARACTER_SLOT_BULK1);
 
-    psCharacter *chr = fromClient->GetCharacterData();
+    psCharacter* chr = fromClient->GetCharacterData();
 
-    psItem *itemProposed = chr->Inventory().GetItem(NULL, srcSlot);
-    if (!itemProposed)
+    psItem* itemProposed = chr->Inventory().GetItem(NULL, srcSlot);
+    if(!itemProposed)
     {
         //Error2("Couldn't find item in proposed srcSlot %d.\b", srcSlot);
         return;
     }
     Debug3(LOG_ITEM, 0, "Proposing to move item %s from slot %d", itemProposed->GetName(), srcSlot);
 
-    if (itemProposed->IsInUse())
+    if(itemProposed->IsInUse())
     {
         psserver->SendSystemError(fromClient->GetClientNum(), "You cannot move an item being used.");
         return;
     }
 
-    if (chr->Inventory().GetOfferedStackCount(itemProposed) > 0)
+    if(chr->Inventory().GetOfferedStackCount(itemProposed) > 0)
     {
         // printf("%s has %d in offered slot.\n", itemProposed->GetName(), chr->Inventory().GetOfferedStackCount(itemProposed));
         psserver->SendSystemError(fromClient->GetClientNum(), "You cannot move an item being exchanged.");
@@ -441,7 +441,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
     }
 
     containerEntityID = 0;
-    if (msg.toContainer > 100)
+    if(msg.toContainer > 100)
     {
         containerEntityID = msg.toContainer;
         msg.toContainer   = CONTAINER_GEM_OBJECT;
@@ -449,50 +449,50 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
 
     csString explanation;
 
-    switch (msg.toContainer)
+    switch(msg.toContainer)
     {
         case CONTAINER_GEM_OBJECT:
         {
             // TODO: Talad would like to be able to put containers in world containers.
-            if (itemProposed->GetIsContainer())
+            if(itemProposed->GetIsContainer())
             {
                 psserver->SendSystemError(fromClient->GetClientNum(), "You may not put a container in a container.");
                 return;
             }
-            psItem *parentItem=NULL;
+            psItem* parentItem=NULL;
             worldContainer=NULL;
- 
-            gemObject *obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
+
+            gemObject* obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
             worldContainer = dynamic_cast<gemContainer*>(obj);
-            if (!worldContainer)
+            if(!worldContainer)
             {
                 Error2("Couldn't find any CEL entity id %d.", containerEntityID);
                 return;
             }
             parentItem = worldContainer->GetItem();
-            if (!parentItem)
+            if(!parentItem)
             {
                 Error2("No parent container item found for worldContainer %d.", containerEntityID);
                 return;
             }
-            if (!parentItem->GetIsContainer())
+            if(!parentItem->GetIsContainer())
             {
                 Error2("Cannot put item into another item %s.\n", parentItem->GetName());
                 return;
             }
-            if (parentItem->GetIsNpcOwned() && fromClient->GetSecurityLevel() < GM_DEVELOPER)
+            if(parentItem->GetIsNpcOwned() && fromClient->GetSecurityLevel() < GM_DEVELOPER)
             {
                 psserver->SendSystemError(fromClient->GetClientNum(), "You may not use that container.");
                 return;
             }
-            if (fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
+            if(fromClient->GetActor()->RangeTo(worldContainer, true, true) > RANGE_TO_USE)
             {
                 psserver->SendSystemError(fromClient->GetClientNum(),
-                    "You are not in range to use %s.",worldContainer->GetItem()->GetName());
+                                          "You are not in range to use %s.",worldContainer->GetItem()->GetName());
                 return;
             }
             // don't allow players to put an item from in locked container
-            if (parentItem->GetIsLocked() && fromClient->GetSecurityLevel() < GM_LEVEL_2)
+            if(parentItem->GetIsLocked() && fromClient->GetSecurityLevel() < GM_LEVEL_2)
             {
                 psserver->SendSystemError(fromClient->GetClientNum(), "You cannot put an item in a locked container!");
                 return;
@@ -500,10 +500,10 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
 
             // Now take this out of inventory and put in container
             csString reason;
-            if (worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot, reason))
+            if(worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot, reason))
             {
-                psItem *newItem = chr->Inventory().RemoveItem(NULL, (INVENTORY_SLOT_NUMBER) srcSlot, msg.stackCount);
-                if (!newItem)
+                psItem* newItem = chr->Inventory().RemoveItem(NULL, (INVENTORY_SLOT_NUMBER) srcSlot, msg.stackCount);
+                if(!newItem)
                 {
                     psserver->SendSystemError(fromClient->GetClientNum(), "Couldn't find %d items in that slot.", msg.stackCount);
                     return;
@@ -523,21 +523,21 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
         case CONTAINER_EXCHANGE_OFFERING:
         {
             // TODO: Trading containers is broken (bugs.hydlaa.com #2659).
-            if (itemProposed->GetIsContainer())
+            if(itemProposed->GetIsContainer())
             {
                 psserver->SendSystemError(fromClient->GetClientNum(), "Trading containers is not yet implemented.");
                 return;
             }
 
-            Exchange *exchange = psserver->exchangemanager->GetExchange(fromClient->GetExchangeID());
-            if (!exchange)
+            Exchange* exchange = psserver->exchangemanager->GetExchange(fromClient->GetExchangeID());
+            if(!exchange)
             {
                 Error2("Client %s requested exchange slot movement but is not in an exchange.", fromClient->GetName());
                 return;
             }
 
             // We should probably swap items...for now, require an empty slot.
-            if (chr->Inventory().FindExchangeSlotOffered(msg.toSlot))
+            if(chr->Inventory().FindExchangeSlotOffered(msg.toSlot))
                 return;
 
             // printf("Adding item %s to exchange offering.\n", itemProposed->GetName());
@@ -545,7 +545,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             exchange->AddItem(fromClient, srcSlot, msg.stackCount, msg.toSlot);
             break;
         }
-        
+
         case CONTAINER_WORLD:
         {
             psItem* newItem = chr->Inventory().RemoveItemID(itemProposed->GetUID(), msg.stackCount);
@@ -567,17 +567,17 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
         default:
         {
             // Get the real destination slot from the message...
-            if (msg.toContainer == CONTAINER_INVENTORY_EQUIPMENT)
+            if(msg.toContainer == CONTAINER_INVENTORY_EQUIPMENT)
                 destSlot = (INVENTORY_SLOT_NUMBER) msg.toSlot;
-            else if (msg.toContainer == CONTAINER_INVENTORY_BULK)
-                destSlot = (INVENTORY_SLOT_NUMBER) (msg.toSlot + (int) PSCHARACTER_SLOT_BULK1);
+            else if(msg.toContainer == CONTAINER_INVENTORY_BULK)
+                destSlot = (INVENTORY_SLOT_NUMBER)(msg.toSlot + (int) PSCHARACTER_SLOT_BULK1);
             else
-                destSlot = (INVENTORY_SLOT_NUMBER) (msg.toContainer * 100 + msg.toSlot + (int) PSCHARACTER_SLOT_BULK1);
+                destSlot = (INVENTORY_SLOT_NUMBER)(msg.toContainer * 100 + msg.toSlot + (int) PSCHARACTER_SLOT_BULK1);
 
             // Handle anything dragged to the character doll
-            if (destSlot == PSCHARACTER_SLOT_NONE)
+            if(destSlot == PSCHARACTER_SLOT_NONE)
             {
-                if (itemProposed->GetBaseStats()->GetIsConsumable())
+                if(itemProposed->GetBaseStats()->GetIsConsumable())
                 {
                     int stackCount = csMin(msg.stackCount, (int)itemProposed->GetStackCount());
                     Consume(itemProposed, chr, stackCount);
@@ -586,21 +586,21 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                 else
                 {
                     destSlot = chr->Inventory().FindFreeEquipSlot(itemProposed);
-                    if (destSlot == PSCHARACTER_SLOT_NONE)
+                    if(destSlot == PSCHARACTER_SLOT_NONE)
                     {
                         psserver->SendSystemError(fromClient->GetClientNum(), "This item cannot be equipped.");
                         return;
                     }
                 }
             }
-                    
-            if (destSlot == srcSlot) // if you drop back on itself, don't do anything
+
+            if(destSlot == srcSlot)  // if you drop back on itself, don't do anything
                 return;
 
             // Disallow containers in containers
-            if (msg.toContainer > 0) // container item
+            if(msg.toContainer > 0)  // container item
             {
-                if (itemProposed->GetIsContainer())
+                if(itemProposed->GetIsContainer())
                 {
                     psserver->SendSystemError(fromClient->GetClientNum(), "You may not put a container in a container.");
                     return;
@@ -608,7 +608,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
             }
 
             // Check for slot compatibility
-            if (!chr->Inventory().CheckSlotRequirements(itemProposed, destSlot, msg.stackCount))
+            if(!chr->Inventory().CheckSlotRequirements(itemProposed, destSlot, msg.stackCount))
             {
                 psserver->SendSystemError(fromClient->GetClientNum(), "%s does not fit in that slot.", itemProposed->GetName());
                 return;
@@ -620,16 +620,16 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
 
 
             // Check for dest slot already occupied
-            psItem *item = chr->Inventory().GetItem(NULL, destSlot);
+            psItem* item = chr->Inventory().GetItem(NULL, destSlot);
             uint32_t srcparent = 0;
-            if (item)
+            if(item)
             {
                 // TODO: This is probably buggy when you hit max stack count...
-                if (item->CheckStackableWith(itemProposed, false))
+                if(item->CheckStackableWith(itemProposed, false))
                 {
                     // easy case is to stack compatible items
-                    psItem *stack = chr->Inventory().RemoveItem(NULL, srcSlot, msg.stackCount);
-                    if (!stack)
+                    psItem* stack = chr->Inventory().RemoveItem(NULL, srcSlot, msg.stackCount);
+                    if(!stack)
                         return;
 
                     item->CombineStack(stack);
@@ -637,58 +637,58 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                     // Updating Containers view if needed
                     if(destSlot > 99)
                     {
-                        chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (destSlot / 100))->SendContainerContents(fromClient, msg.toContainer);
+                        chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER)(destSlot / 100))->SendContainerContents(fromClient, msg.toContainer);
                     }
                     else if(srcSlot > 99)
                     {
-                        chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (srcSlot / 100))->SendContainerContents(fromClient, msg.fromContainer);
+                        chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER)(srcSlot / 100))->SendContainerContents(fromClient, msg.fromContainer);
                     }
                     return;
                 }
                 // printf("Proposed move will displace item %s\n", item->GetName());
-                if (srcSlot > 99)
+                if(srcSlot > 99)
                 {
-                    psItem *parentItem = chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (srcSlot/100));
-                    if (!parentItem)
+                    psItem* parentItem = chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER)(srcSlot/100));
+                    if(!parentItem)
                         return;
-                    if (!parentItem->GetIsContainer())
+                    if(!parentItem->GetIsContainer())
                     {
                         psserver->SendSystemError(fromClient->GetClientNum(), "Cannot put item into another item %s.", parentItem->GetName());
                         return;
                     }
                     srcparent = parentItem->GetUID();
                 }
-                if (msg.stackCount != itemProposed->GetStackCount())
+                if(msg.stackCount != itemProposed->GetStackCount())
                 {
                     psserver->SendSystemError(fromClient->GetClientNum(), "Cannot drop a partial stack on an existing item.");
                     return;
                 }
-                if (!chr->Inventory().CheckSlotRequirements(item, srcSlot))
+                if(!chr->Inventory().CheckSlotRequirements(item, srcSlot))
                 {
                     psserver->SendSystemError(fromClient->GetClientNum(), "You cannot swap with %s; it won't fit in that slot.", item->GetName());
                     return;
                 }
             }
-         
+
 
             // Get the parent item UID, if necessary.
             uint32_t parent = 0;
-            if (destSlot > 99)
+            if(destSlot > 99)
             {
-                psItem *parentItem = chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (destSlot / 100));
+                psItem* parentItem = chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER)(destSlot / 100));
                 CS_ASSERT(parentItem); // CheckSlotRequirements ensures this.
                 parent = parentItem->GetUID();
             }
             // printf("Ok!\n");
-            
+
             // At this point we're sure the items can all move where they need to, so just do it.
 
-            psItem *itemMoving = NULL;
+            psItem* itemMoving = NULL;
             // Check for splitting stack
-            if (msg.stackCount < itemProposed->GetStackCount())
+            if(msg.stackCount < itemProposed->GetStackCount())
             {
                 itemMoving = itemProposed->SplitStack(msg.stackCount);
-                if (chr->Inventory().Add(itemMoving, false, false, destSlot))
+                if(chr->Inventory().Add(itemMoving, false, false, destSlot))
                 {
                     itemProposed->Save(false);
                 }
@@ -696,7 +696,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                 {
                     itemProposed->CombineStack(itemMoving);
                 }
-                
+
             }
             else // entire stack
             {
@@ -705,40 +705,40 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient)
                 // DEEQUIP message must go to the client before the EQUIP
                 // message.  If not, the client gets a ghost-weapon mesh stuck
                 // in their hand - shouldn't have other ill effects though.
-                if (item)
+                if(item)
                     item->UpdateInventoryStatus(chr, 0, PSCHARACTER_SLOT_NONE);
                 itemMoving = itemProposed;
                 itemMoving->UpdateInventoryStatus(chr, parent, destSlot);
                 itemMoving->Save(false);
-                if (item)
+                if(item)
                 {
                     // If we pushed an item out of the way in that slot, put it where the other one came from
                     item->UpdateInventoryStatus(chr, srcparent, srcSlot);
                     item->Save(false);
                 }
-                
+
             }
             // Updating Containers view if needed
             if(destSlot > 99)
             {
-                chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (destSlot / 100))->SendContainerContents(fromClient, msg.toContainer);
+                chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER)(destSlot / 100))->SendContainerContents(fromClient, msg.toContainer);
             }
             else if(srcSlot > 99)
             {
-                chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER) (srcSlot / 100))->SendContainerContents(fromClient, msg.fromContainer);
+                chr->Inventory().GetItem(NULL, (INVENTORY_SLOT_NUMBER)(srcSlot / 100))->SendContainerContents(fromClient, msg.fromContainer);
             }
             break;
         }
     }
 }
 
-void SlotManager::MoveFromOfferedMoney(psSlotMovementMsg& msg, Client *fromClient)
+void SlotManager::MoveFromOfferedMoney(psSlotMovementMsg &msg, Client* fromClient)
 {
     psMoney money;
     money.Adjust(msg.fromSlot, msg.stackCount);
 
-    Exchange *exchange = psserver->exchangemanager->GetExchange(fromClient->GetExchangeID());
-    if (!exchange)
+    Exchange* exchange = psserver->exchangemanager->GetExchange(fromClient->GetExchangeID());
+    if(!exchange)
     {
         Error2("Client %s requested exchange slot movement but is not in an exchange.", fromClient->GetName());
         return;
@@ -749,32 +749,32 @@ void SlotManager::MoveFromOfferedMoney(psSlotMovementMsg& msg, Client *fromClien
     exchange->AdjustMoney(fromClient, money);
 }
 
-void SlotManager::MoveFromOffering(psSlotMovementMsg& msg, Client *fromClient)
+void SlotManager::MoveFromOffering(psSlotMovementMsg &msg, Client* fromClient)
 {
     INVENTORY_SLOT_NUMBER srcSlot = PSCHARACTER_SLOT_NONE;
 
     srcSlot = (INVENTORY_SLOT_NUMBER) msg.fromSlot;
 
-    psCharacter *chr = fromClient->GetCharacterData();
+    psCharacter* chr = fromClient->GetCharacterData();
 
-    psCharacterInventory::psCharacterInventoryItem *itemInSlot = chr->Inventory().FindExchangeSlotOffered(srcSlot);
-    psItem *itemProposed = itemInSlot ? itemInSlot->GetItem() : NULL;
+    psCharacterInventory::psCharacterInventoryItem* itemInSlot = chr->Inventory().FindExchangeSlotOffered(srcSlot);
+    psItem* itemProposed = itemInSlot ? itemInSlot->GetItem() : NULL;
 
-    if (!itemProposed)
+    if(!itemProposed)
     {
         Error2("Couldn't find item in offered srcSlot %d.\b", srcSlot);
         return;
     }
     // printf("Proposing to move item %s\n", itemProposed->GetName());
 
-    Exchange *exchange = psserver->exchangemanager->GetExchange(fromClient->GetExchangeID());
-    if (!exchange)
+    Exchange* exchange = psserver->exchangemanager->GetExchange(fromClient->GetExchangeID());
+    if(!exchange)
     {
         Error2("Client %s requested exchange slot movement but is not in an exchange.", fromClient->GetName());
         return;
     }
 
-    switch (msg.toContainer)
+    switch(msg.toContainer)
     {
         case CONTAINER_EXCHANGE_OFFERING:
         {
@@ -798,13 +798,13 @@ void SlotManager::MoveFromOffering(psSlotMovementMsg& msg, Client *fromClient)
 psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID)
 {
     // Container inside something
-    if (containerID >= 0 && containerID < 100)
+    if(containerID >= 0 && containerID < 100)
     {
         slotID = (INVENTORY_SLOT_NUMBER)(containerID * 100 + slotID + PSCHARACTER_SLOT_BULK1); // adjust slot number to contained slot
         return FindItem(client, CONTAINER_INVENTORY_BULK, slotID);
     }
 
-    switch (containerID)
+    switch(containerID)
     {
         case CONTAINER_INVENTORY_BULK:
         {
@@ -818,10 +818,10 @@ psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NU
         case CONTAINER_EXCHANGE_OFFERING:
         {
             Exchange* exchange = psserver->GetExchangeManager()->GetExchange(client->GetExchangeID());
-            if (!exchange) return NULL;
+            if(!exchange) return NULL;
 
             // Container is different from each perspective
-            if (exchange->GetStarterClient() == client)
+            if(exchange->GetStarterClient() == client)
                 return exchange->GetStarterOffer(slotID);
             else
                 return exchange->GetTargetOffer(slotID);
@@ -829,10 +829,10 @@ psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NU
         case CONTAINER_EXCHANGE_RECEIVING:
         {
             Exchange* exchange = psserver->GetExchangeManager()->GetExchange(client->GetExchangeID());
-            if (!exchange) return NULL;
+            if(!exchange) return NULL;
 
             // Container is different from each perspective
-            if (exchange->GetStarterClient() == client)
+            if(exchange->GetStarterClient() == client)
                 return exchange->GetTargetOffer(slotID);
             else
                 return exchange->GetStarterOffer(slotID);
@@ -841,11 +841,11 @@ psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NU
         default:  // Find container in world
         {
             gemObject* object = gemSupervisor->FindObject(EID(containerID));
-            if (object && slotID == -1)
+            if(object && slotID == -1)
                 return object->GetItem();
 
-            gemContainer *container = dynamic_cast<gemContainer*>(object);
-            if (container)
+            gemContainer* container = dynamic_cast<gemContainer*>(object);
+            if(container)
             {
                 return container->FindItemInSlot(slotID);
             }
@@ -859,41 +859,49 @@ psItem* SlotManager::FindItem(Client* client, int containerID, INVENTORY_SLOT_NU
 }
 
 psItem* SlotManager::MakeMoneyItem(INVENTORY_SLOT_NUMBER slot, int stackCount)
-{                
+{
     psItem* holdingItem =  new psItem();
     csString type("Tria");
-            
-    switch (slot)
+
+    switch(slot)
     {
-        case MONEY_TRIAS: type="Tria"; break;
-        case MONEY_HEXAS: type="Hexa"; break;
-        case MONEY_OCTAS: type="Octa"; break;
-        case MONEY_CIRCLES: type="Circle"; break;
+        case MONEY_TRIAS:
+            type="Tria";
+            break;
+        case MONEY_HEXAS:
+            type="Hexa";
+            break;
+        case MONEY_OCTAS:
+            type="Octa";
+            break;
+        case MONEY_CIRCLES:
+            type="Circle";
+            break;
         default:
             Error2("Unknown fromSlot: %d", slot);
             break;
     }
-            
-    psItemStats *stat = cacheManager->GetBasicItemStatsByName(type);
-    if (!stat)
+
+    psItemStats* stat = cacheManager->GetBasicItemStatsByName(type);
+    if(!stat)
     {
         Error2("Could not load basic item stat for %s", type.GetData());
-    }        
+    }
     else
-    {   
+    {
         holdingItem->SetBaseStats(stat);
         holdingItem->SetStackCount(stackCount);
     }
-    
+
     holdingItem->SetLoaded(); // Loaded and ready
 
-    return holdingItem;                                                            
+    return holdingItem;
 }
 
-void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
+void SlotManager::Consume(psItem* item, psCharacter* charData, int count)
 {
 
-    if (!item)
+    if(!item)
         return;
 
     // Use math function to determine effect of quality
@@ -904,14 +912,14 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     }
 
     csString scriptName = item->GetBaseStats()->GetConsumeScriptName();
-    if (scriptName.IsEmpty())
+    if(scriptName.IsEmpty())
     {
         Error2("No consume script for consumable item %s",item->GetName());
         return;
     }
-   
-    ProgressionScript *script = psserver->GetProgressionManager()->FindScript(scriptName);
-    if (!script)
+
+    ProgressionScript* script = psserver->GetProgressionManager()->FindScript(scriptName);
+    if(!script)
     {
         Error2("No event found for consume script >%s<.", scriptName.GetData());
         return;
@@ -921,15 +929,15 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     env.Define("Quality", item->GetMaxItemQuality());
     qualityScript->Evaluate(&env);
 
-    gemActor *actor = charData->GetActor();
+    gemActor* actor = charData->GetActor();
     env.Define("Actor", actor);
-    
+
     // Remove the item from inventory and destroy it
     psItem* consumedItem = charData->Inventory().RemoveItemID(item->GetUID(), count);
-    if (consumedItem)
+    if(consumedItem)
     {
         env.Define("Item", consumedItem);
-        for (unsigned short i = 0; i < consumedItem->GetStackCount(); i++)
+        for(unsigned short i = 0; i < consumedItem->GetStackCount(); i++)
         {
             script->Run(&env);
         }
@@ -938,27 +946,27 @@ void SlotManager::Consume(psItem* item, psCharacter *charData, int count)
     }
 }
 
-void SlotManager::HandleDropCommand(MsgEntry* me, Client *fromClient)
+void SlotManager::HandleDropCommand(MsgEntry* me, Client* fromClient)
 {
     psCmdDropMessage mesg(me);
-    if (mesg.quantity < 1)
+    if(mesg.quantity < 1)
     {
         mesg.quantity = 1;
         psserver->SendSystemInfo(fromClient->GetClientNum(), "You cannot drop less than one item.");
     }
-    if (mesg.quantity > 65)
+    if(mesg.quantity > 65)
     {
         mesg.quantity = 65;
         psserver->SendSystemInfo(fromClient->GetClientNum(), "You cannot drop more than a stack.");
     }
 
-    if (!fromClient->GetCharacterData())
+    if(!fromClient->GetCharacterData())
     {
         Error2("Could not find Character Data for client: %s", fromClient->GetName());
         return;
     }
 
-    psCharacter *chr = fromClient->GetCharacterData();    
+    psCharacter* chr = fromClient->GetCharacterData();
     psItem* stackItem = chr->Inventory().StackNumberItems(mesg.itemName, mesg.quantity, mesg.container);
 
     if(!stackItem)
@@ -969,7 +977,7 @@ void SlotManager::HandleDropCommand(MsgEntry* me, Client *fromClient)
     }
 
     int removeCount;
-    if (mesg.quantity < stackItem->GetStackCount())
+    if(mesg.quantity < stackItem->GetStackCount())
     {
         removeCount=mesg.quantity;
     }
@@ -982,7 +990,7 @@ void SlotManager::HandleDropCommand(MsgEntry* me, Client *fromClient)
     chr->DropItem(toDropItem, 0, 0, mesg.guarded, true, mesg.inplace);
 
 
-    psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());  
+    psserver->GetCharManager()->UpdateItemViews(fromClient->GetClientNum());
 
     return;
 }

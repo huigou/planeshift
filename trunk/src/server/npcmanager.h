@@ -60,12 +60,12 @@ class LocationType;
 class NPCManager : public MessageManager<NPCManager>
 {
 public:
-    NPCManager(ClientConnectionSet *pCCS,
-        psDatabase *db,
-        EventManager *evtmgr,
-        GEMSupervisor *gemsupervisor,
-        CacheManager *cachemanager,
-        EntityManager *entitymanager);
+    NPCManager(ClientConnectionSet* pCCS,
+               psDatabase* db,
+               EventManager* evtmgr,
+               GEMSupervisor* gemsupervisor,
+               CacheManager* cachemanager,
+               EntityManager* entitymanager);
 
     virtual ~NPCManager();
 
@@ -73,78 +73,78 @@ public:
     bool Initialize();
 
     /// Send a list of managed NPCs to a newly connecting superclient.
-    void SendNPCList(Client *client);
+    void SendNPCList(Client* client);
 
     /// Send stats for all managed NPCs to a newly connecting superclient.
-    void SendAllNPCStats(Client *client);
-    
+    void SendAllNPCStats(Client* client);
+
     /// Remove a disconnecting superclient from the active list.
-    void Disconnect(Client *client);
+    void Disconnect(Client* client);
 
     /// Communicate a entity added to connected superclients.
-    void AddEntity(gemObject *obj);
+    void AddEntity(gemObject* obj);
 
     /// Communicate a entity going away to connected superclients.
-    void RemoveEntity(MsgEntry *me);
+    void RemoveEntity(MsgEntry* me);
 
     /// Build a message with all changed world positions for superclients to get.
     void UpdateWorldPositions();
 
     /// Let the superclient know the result of an assessment
-    void QueueAssessPerception(EID entityEID, EID targetEID, const csString& physicalAssessmentPerception,
+    void QueueAssessPerception(EID entityEID, EID targetEID, const csString &physicalAssessmentPerception,
                                const csString &physicalAssessmentDifferencePerception,
-                               const csString &magicalAssessmentPerception,  
+                               const csString &magicalAssessmentPerception,
                                const csString &magicalAssessmentDifferencePerception,
                                const csString &overallAssessmentPerception,
                                const csString &overallAssessmentDifferencePerception);
 
-    
+
     /// Let the superclient know that a player has said something to one of its npcs.
-    void QueueTalkPerception(gemActor *speaker, gemNPC *target);
+    void QueueTalkPerception(gemActor* speaker, gemNPC* target);
 
     /// Let the superclient know that a player has attacked one of its npcs.
-    void QueueAttackPerception(gemActor *attacker,gemNPC *target);
+    void QueueAttackPerception(gemActor* attacker,gemNPC* target);
 
     /// Let the superclient know that a player has taken HP from one of its npcs.
-    void QueueDamagePerception(gemActor *attacker,gemNPC *target,float dmg);
+    void QueueDamagePerception(gemActor* attacker,gemNPC* target,float dmg);
 
     /// Let the superclient know that one of its npcs has died.
-    void QueueDeathPerception(gemObject *who);
+    void QueueDeathPerception(gemObject* who);
 
     /// Let the superclient know that a spell has been cast.
-    void QueueSpellPerception(gemActor *caster, gemObject *target,const char *spell_cat, uint32_t spell_category, float severity);
+    void QueueSpellPerception(gemActor* caster, gemObject* target,const char* spell_cat, uint32_t spell_category, float severity);
 
     //// Let the superclient know the stats of the actor
-    void QueueStatDR(gemActor *actor, unsigned int statsDirtyFlags );
+    void QueueStatDR(gemActor* actor, unsigned int statsDirtyFlags);
 
     /// Let the superclient know that one enemy is close.
-    void QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type, gemActor *npc, gemActor *player, float relative_faction);
+    void QueueEnemyPerception(psNPCCommandsMessage::PerceptionType type, gemActor* npc, gemActor* player, float relative_faction);
 
     /// Let the superclient know that one of its npcs has been commanded to stay.
-    void QueueOwnerCmdPerception(gemActor *owner, gemNPC *pet, psPETCommandMessage::PetCommand_t command);
+    void QueueOwnerCmdPerception(gemActor* owner, gemNPC* pet, psPETCommandMessage::PetCommand_t command);
 
     /// Let the superclient know that one of its npcs has a change in inventory.
-    void QueueInventoryPerception(gemActor *owner, psItem * itemdata, bool inserted);
+    void QueueInventoryPerception(gemActor* owner, psItem* itemdata, bool inserted);
 
     /// Let the superclient know that one of the actors flags has changed.
-    void QueueFlagPerception(gemActor *owner);
+    void QueueFlagPerception(gemActor* owner);
 
     /// Let the superclient know that a response has commanded a npc.
-    void QueueNPCCmdPerception(gemActor *owner, const csString& cmd);
+    void QueueNPCCmdPerception(gemActor* owner, const csString &cmd);
 
     /// Let the superclient know that a transfer has happend.
-    void QueueTransferPerception(gemActor *owner, psItem * itemdata, csString target);
-    
+    void QueueTransferPerception(gemActor* owner, psItem* itemdata, csString target);
+
     /// Let the superclient know the npc was spawned successfully.
-    void QueueSpawnedPerception(gemNPC *spawned, gemNPC *spawner, const csString& tribeMemberType );
+    void QueueSpawnedPerception(gemNPC* spawned, gemNPC* spawner, const csString &tribeMemberType);
 
     /// Let the superclient know that the npc was teleported
-    void QueueTeleportPerception(gemNPC* npc, csVector3& pos, float yrot, iSector* sector, InstanceID instance);
+    void QueueTeleportPerception(gemNPC* npc, csVector3 &pos, float yrot, iSector* sector, InstanceID instance);
 
     /// Let the superclient know that info where requested for a npc
     void QueueInfoRequestPerception(gemNPC* npc, Client* client, const char* infoRequestSubCmd);
 
-    /// Let the superclient know that an attempt to attack failed 
+    /// Let the superclient know that an attempt to attack failed
     void QueueFailedToAttackPerception(gemNPC* attacker, gemObject* target);
 
     /// Send a perception to the super client for the npc.
@@ -152,7 +152,7 @@ public:
 
     /// Send a spoken to perception to the super client for the npc
     void QueueSpokenToPerception(gemNPC* npc, bool spokenTo);
-    
+
     /**
      * Requests the npcclient to change the brain of this npc (the type) to another one.
      * @param npc The npc which will be changed.
@@ -181,7 +181,10 @@ public:
     void SendAllCommands(bool createNewTick);
 
     /// Get the vector of active superclients, used in Multicast().
-    csArray<PublishDestination>& GetSuperClients() { return superclients; }
+    csArray<PublishDestination> &GetSuperClients()
+    {
+        return superclients;
+    }
 
     /// Inform the npc about the reward granted after a work done
     void WorkDoneNotify(EID npcEID, csString reward, csString nick);
@@ -190,26 +193,29 @@ public:
     void NewNPCNotify(PID player_id, PID master_id, PID owner_id);
 
     /// Tell a superclient to control an existing npc.
-    void ControlNPC( gemNPC* npc );
+    void ControlNPC(gemNPC* npc);
 
     /// Add Session for pets
-    PetOwnerSession *CreatePetOwnerSession( gemActor *, psCharacter * );
+    PetOwnerSession* CreatePetOwnerSession(gemActor*, psCharacter*);
 
     /// Dismiss active (summoned) pet.
-    void DismissPet( gemNPC* pet, Client *owner );
+    void DismissPet(gemNPC* pet, Client* owner);
 
     /// Remove Session for pets
-    void RemovePetOwnerSession( PetOwnerSession *session );
+    void RemovePetOwnerSession(PetOwnerSession* session);
 
     /// Updates time in game for a pet
     void UpdatePetTime();
-    
+
     /**
      * Returns the skill used to handle pet operations.
      *
      * @return A PSSKILL which is the skill choosen to handle pet operations.
      */
-    PSSKILL GetPetSkill() { return (PSSKILL)petSkill->getValueAsInt(); }
+    PSSKILL GetPetSkill()
+    {
+        return (PSSKILL)petSkill->getValueAsInt();
+    }
 
     /**
      * Notify superclients that a location where adjusted.
@@ -220,7 +226,7 @@ public:
 
     /**
      * Notify superclients that a location where created.
-     * 
+     *
      * @param location The location that has been created.
      */
     void LocationCreated(Location* location);
@@ -245,14 +251,14 @@ public:
     /** Notify superclients that a location type has been deleted.
      * @param locationTypeName The name of the location type that has been deleted.
      */
-    void LocationTypeRemove(const csString& locationTypeName);
-    
+    void LocationTypeRemove(const csString &locationTypeName);
+
     /** Notify superclients that a waypoint where adjusted.
      * @param wp The waypoint that has been adjusted.
      */
     void WaypointAdjusted(Waypoint* wp);
 
-    /** Notify superclients that a pathpoint where adjusted. 
+    /** Notify superclients that a pathpoint where adjusted.
      * @param point The pathpoint that has been adjusted.
      */
     void PathPointAdjusted(psPathPoint* point);
@@ -273,21 +279,21 @@ public:
      * @param wp The waypoint that a alias where removed.
      * @param alias The alias that was removed.
      */
-    void WaypointRemoveAlias(const Waypoint* wp, const csString& alias);
+    void WaypointRemoveAlias(const Waypoint* wp, const csString &alias);
 
     /** Notify superclients that a flag has been changed for waypoint.
      * @param wp The waypoint that where changed.
      * @param flag The flag that where changed.
      * @param enable True if the flag where enabled.
      */
-    void WaypointSetFlag(const Waypoint* wp, const csString& flag, bool enable);
+    void WaypointSetFlag(const Waypoint* wp, const csString &flag, bool enable);
 
     /** Notify superclients that a flag has been changed for a path.
      * @param path The path that where changed.
      * @param flag The flag that where changed.
      * @param enable True if the flag where enabled.
      */
-    void PathSetFlag(const psPath* path, const csString& flag, bool enable);
+    void PathSetFlag(const psPath* path, const csString &flag, bool enable);
 
     /** Notify superclients that a waypoint has changed radius.
      * @param waypoint The waypoint that where changed.
@@ -324,64 +330,64 @@ public:
      * @param path The path where the point where removed.
      * @param pointId The point that where removed.
      */
-    void RemovePoint(const psPath* path, int pointId );
-    
+    void RemovePoint(const psPath* path, int pointId);
+
 protected:
 
     /// Handle a login message from a superclient.
-    void HandleAuthentRequest(MsgEntry *me,Client *client);
+    void HandleAuthentRequest(MsgEntry* me,Client* client);
 
     /// Handle a network msg with a list of npc directives.
-    void HandleCommandList(MsgEntry *me,Client *client);
+    void HandleCommandList(MsgEntry* me,Client* client);
 
     /// Catch an internal server event for damage so a perception can be sent about it.
-    void HandleDamageEvent(MsgEntry *me,Client *client);
+    void HandleDamageEvent(MsgEntry* me,Client* client);
 
     /// Catch an internal server event for death so a perception can be sent about it.
-    void HandleDeathEvent(MsgEntry *me,Client *client);
-    
-    void HandleNPCReady(MsgEntry *me,Client *client);
+    void HandleDeathEvent(MsgEntry* me,Client* client);
+
+    void HandleNPCReady(MsgEntry* me,Client* client);
 
     /// Handle debug meshes from superclient
     void HandleSimpleRenderMesh(MsgEntry* me, Client* client);
-    
+
     /// Send the list of maps for the superclient to load on startup.
-    void SendMapList(Client *client);
+    void SendMapList(Client* client);
 
     /// Send the list of races for the superclient to load on startup.
-    void SendRaces(Client *client);
+    void SendRaces(Client* client);
 
     /// Check if a pet is within range to react to commands
-    bool CanPetHearYou(int clientnum, Client *owner, gemNPC *pet, const char *type);
+    bool CanPetHearYou(int clientnum, Client* owner, gemNPC* pet, const char* type);
 
     /// Check if your pet will reacto to your command based on skills
-    bool WillPetReact(int clientnum, Client * owner, gemNPC * pet, const char * type, int level);
+    bool WillPetReact(int clientnum, Client* owner, gemNPC* pet, const char* type, int level);
 
     /// Handle network message with pet directives
-    void HandlePetCommand(MsgEntry *me, Client *client);
+    void HandlePetCommand(MsgEntry* me, Client* client);
 
     /// Handle network message with pet skills
-    void HandlePetSkill(MsgEntry * me, Client *client);
-    void SendPetSkillList( Client * client, bool forceOpen = true, PSSKILL focus = PSSKILL_NONE );
+    void HandlePetSkill(MsgEntry* me, Client* client);
+    void SendPetSkillList(Client* client, bool forceOpen = true, PSSKILL focus = PSSKILL_NONE);
 
- public:
+public:
     /// Notification that an pet has been killed.
     /// Upon notification of a killed pet this function will start a timer that prevent
     /// resummon of dead PETs.
-    void PetHasBeenKilled( gemNPC*  pet );
+    void PetHasBeenKilled(gemNPC*  pet);
 
     /**
      * Provide response for the /info commands for GMs for pets.
      */
     void PetInfo(Client* client, psCharacter* pet);
-    
- protected:
+
+protected:
     /// Handle network message with console commands from npcclient
-    void HandleConsoleCommand(MsgEntry *me,Client *client);
+    void HandleConsoleCommand(MsgEntry* me,Client* client);
 
     /// Create an empty command list message, waiting for items to be queued in it.
     void PrepareMessage();
-    
+
     /** Check if the perception queue is going to overflow with the next perception.
      *  If the queue is going to overflow it will automatically send the commands and clean up to allow
      *  new messages to be queued. Pet time updates and world position updates are still left to the npc
@@ -395,12 +401,12 @@ protected:
     csArray<PublishDestination> superclients;
 
     psDatabase*  database;
-    EventManager *eventmanager;
-    GEMSupervisor *gemSupervisor;
-    CacheManager *cacheManager;
-    EntityManager *entityManager;
+    EventManager* eventmanager;
+    GEMSupervisor* gemSupervisor;
+    CacheManager* cacheManager;
+    EntityManager* entityManager;
     ClientConnectionSet* clients;
-    psNPCCommandsMessage *outbound;
+    psNPCCommandsMessage* outbound;
     int cmd_count;
     optionEntry* petSkill;
 

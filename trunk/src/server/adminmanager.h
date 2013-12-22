@@ -133,7 +133,7 @@ public:
      * @return bool: true when reward is a zero gain, otherwise false
      */
     virtual bool IsZero(); ///< checks if the reward is zero
-    
+
 };
 
 /// @brief RewardDataFaction holds faction reward data
@@ -162,8 +162,8 @@ public:
     csString skillName;
     int skillDelta; ///< value to adjust the skill by/set it to
     unsigned int skillCap; ///< maximum value the skill should have
-    
-    /** determines whether the value to adjust the skill is relative or not 
+
+    /** determines whether the value to adjust the skill is relative or not
      */
     bool relativeSkill;
 
@@ -186,7 +186,7 @@ public:
       */
     csString skillName;
     int practice; ///< value to adjust the practice by/set it to
-    
+
     psRewardDataPractice(csString pSkillName, int pDelta);
 
     /** @brief checks if the reward is zero.
@@ -206,7 +206,7 @@ public:
       */
     int moneyCount;
     bool random; ///< whether the amount should be randomized or fix
-    
+
     /** @brief creates a money reward.
      * @param pmoneyType string containing trias,hexas,octas, ...
      * @param pmoneyCount amount of the money
@@ -223,10 +223,10 @@ public:
 /// @brief RewardDataItem holds item reward data.
 class psRewardDataItem : public psRewardData
 {
-public:   
+public:
     csString itemName; ///< name of the item to award
     unsigned short stackCount; ///< number of items to award
-    
+
     psRewardDataItem(csString pitemName, int pstackCount);
 
     /** @brief checks if the reward is zero
@@ -236,7 +236,7 @@ public:
 };
 
 /** @brief The different generic target types of admin command targets.
- * 
+ *
  * In this case target does not refer to the target of the client, but to
  * to the target of the command (the object that should be manipulated by the
  * command).
@@ -267,14 +267,14 @@ class AdminCmdData
 {
 public:
     csString command; ///< command name this obj contains data for
-    bool help; ///< flag for displaying help (true for displaying help) 
+    bool help; ///< flag for displaying help (true for displaying help)
     bool valid; ///< flag for setting content valid/invalid
 
     /** @brief creates data object for the specified command.
      * @param commandName name of the command (e.g. /ban)
      */
     AdminCmdData(csString commandName)
-    : command(commandName), help(false), valid(true)
+        : command(commandName), help(false), valid(true)
     {}
 
     /** @brief Parses the given message and stores its data.
@@ -294,7 +294,7 @@ public:
      * @param words command message to parse
      * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Retrieve help message for the command that fits to the data.
      * @return a help message to send back to the client
@@ -307,7 +307,7 @@ public:
      * @param me The incoming message from the GM
      * @param errmsg error message
      */
-    void ParseError(MsgEntry *me, const char* errmsg);
+    void ParseError(MsgEntry* me, const char* errmsg);
 
     /** @brief Logs the game master command.
      * @param gmClient issuing the command
@@ -321,7 +321,10 @@ public:
      *
      * @return bool if true we will ignore this command and not execute it.
      */
-    virtual bool IsQuietInvalid() { return false; }
+    virtual bool IsQuietInvalid()
+    {
+        return false;
+    }
 
 protected:
     /** @brief logs the game master command and target to the database.
@@ -339,7 +342,10 @@ protected:
      * @return bool if help word was found, otherwise false
      */
     bool IsHelp(const csString &word)
-    { help = (word == "help"); return help; }
+    {
+        help = (word == "help");
+        return help;
+    }
 };
 
 /** @brief Class for parsing a target of a admin command.
@@ -360,13 +366,13 @@ public:
     bool area; ///< Indicates that this is an area target so requires special handling.
     bool duplicateActor;
     csString target; ///< player that is target for the command
-    PID targetID; ///< stores PID when target is a player/npc/???? specified by PID 
+    PID targetID; ///< stores PID when target is a player/npc/???? specified by PID
 
     /** @brief default constructor.
      * @param targetTypes the allowed target types
      */
     AdminCmdTargetParser(int targetTypes)
-    : targetObject(NULL), targetActor(NULL), targetClient(NULL), duplicateActor(false), target(), targetID(), allowedTargetTypes(targetTypes), targetTypes(ADMINCMD_TARGET_UNKNOWN), targetAccountID()
+        : targetObject(NULL), targetActor(NULL), targetClient(NULL), duplicateActor(false), target(), targetID(), allowedTargetTypes(targetTypes), targetTypes(ADMINCMD_TARGET_UNKNOWN), targetAccountID()
     {}
 
     /** @brief the default destructor.
@@ -382,21 +388,27 @@ public:
      * @return bool: true when unknown, otherwise false
      */
     bool IsTargetTypeUnknown()
-    { return (targetTypes == ADMINCMD_TARGET_UNKNOWN); }
+    {
+        return (targetTypes == ADMINCMD_TARGET_UNKNOWN);
+    }
 
     /** Test whether the given target type is allowed or not.
       * @param targetType to test
       * @return bool: true if allowed, otherwise false
       */
     bool IsAllowedTargetType(ADMINCMD_TARGET_TYPES targetType)
-    { return (allowedTargetTypes & targetType); }
+    {
+        return (allowedTargetTypes & targetType);
+    }
 
     /** @brief Test whether the given target type is of the supplied type or not.
       * @param targetType to test for
       * @return bool: true if allowed, otherwise false
       */
     bool IsTargetType(ADMINCMD_TARGET_TYPES targetType)
-    { return (targetTypes & targetType); }
+    {
+        return (targetTypes & targetType);
+    }
 
     /** @brief Tries to parse the supplied string as a destination.
      * @param msgManager message manager that handles this command
@@ -406,7 +418,7 @@ public:
      * @param target string to parse as a destination
      * @return false when parsing the supplied string failed, otherwise true
      */
-    virtual bool ParseTarget(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, csString target);
+    virtual bool ParseTarget(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, csString target);
 
     /** @brief Returns a helpmessage string for the allowed types of the target.
      *
@@ -426,7 +438,9 @@ public:
      * @return bool: true when target online, otherwise false
      */
     bool IsOnline()
-    { return (targetObject != NULL); }
+    {
+        return (targetObject != NULL);
+    }
 
 protected:
     int allowedTargetTypes; ///< allowed destination types
@@ -440,7 +454,7 @@ protected:
      * @param word to check for a playername
      * @return bool: true, when player found, otherwise false
      */
-    bool GetPlayerAccountIDByPID(size_t gmClientNum, const csString& word);
+    bool GetPlayerAccountIDByPID(size_t gmClientNum, const csString &word);
 
     /** @brief Tries to resolve a player name to pid and accountid.
      *
@@ -473,7 +487,7 @@ protected:
      * @param allowduplicate is true when playerName can resolve to more than one client
      * @return true when client found, otherwise false
      */
-    bool GetPlayerClient(AdminManager* msgManager, size_t gmClientNum, const csString& playerName, bool allowduplicate);
+    bool GetPlayerClient(AdminManager* msgManager, size_t gmClientNum, const csString &playerName, bool allowduplicate);
 
     /** @brief resets the internal variables to their default values.
      *
@@ -514,13 +528,13 @@ public:
     /** @brief Retrieve help message for a specific subcommand.
      * @return a help message for a subcommand when the help was registered.
      */
-    virtual csString GetHelpMessage(const csString& subcommand);
+    virtual csString GetHelpMessage(const csString &subcommand);
 
     /** @brief test if a single word is a subcommand.
      * @param word single word (no whitespaces)
      * @return true when it is in the list of subcommands, otherwise false.
      */
-    bool IsSubCommand(const csString& word);
+    bool IsSubCommand(const csString &word);
 
     /** @brief add a new sub command with help text.
      * @param subcommand to register
@@ -535,17 +549,17 @@ public:
 class AdminCmdRewardParser
 {
 public:
-    AdminCmdSubCommandParser rewardTypes; ///< reward types 
+    AdminCmdSubCommandParser rewardTypes; ///< reward types
 
     csPDelArray<psRewardData> rewards;  ///< extracted rewards
     csString error; ///< only set when an error occured during parsing
 
-    
-    /** @brief Creates a reward parser with the default reward types. 
-     * @return  
+
+    /** @brief Creates a reward parser with the default reward types.
+     * @return
      */
     AdminCmdRewardParser();
-   
+
     ~AdminCmdRewardParser()
     {}
 
@@ -554,7 +568,7 @@ public:
      * @param words array containing a commands parameters
      * @return false when an error occured, otherwise true
      */
-    bool ParseWords(size_t index, const WordArray& words);
+    bool ParseWords(size_t index, const WordArray &words);
 
     /** @brief Returns a help message describing the rewards syntax.
      * @return help message for the rewards syntax
@@ -572,7 +586,8 @@ class AdminCmdOnOffToggleParser
 public:
     /** @brief detected settings recognized by the parser.
      */
-    enum ADMINCMD_SETTING_ONOFF {
+    enum ADMINCMD_SETTING_ONOFF
+    {
         ADMINCMD_SETTING_UNKNOWN = 0, ///< default is unknown setting
         ADMINCMD_SETTING_ON = 1, ///< when setting is 'on'
         ADMINCMD_SETTING_OFF, ///< when setting is 'off'
@@ -611,7 +626,7 @@ public:
      * Sets the internal variable error when a parsing error occurs.
      * @return bool: true when parsing succeeds, otherwise false
      */
-    bool ParseWord(const csString& word);
+    bool ParseWord(const csString &word);
 };
 
 /** @brief Base class for all commands that need a target to work on.
@@ -624,7 +639,7 @@ public:
      * @param targetTypes bitmask based on the ADMINCMD_TARGET_TYPES
      */
     AdminCmdDataTarget(csString commandName, int targetTypes)
-    : AdminCmdData(commandName), AdminCmdTargetParser(targetTypes)
+        : AdminCmdData(commandName), AdminCmdTargetParser(targetTypes)
     {}
 
     /** @brief Creates obj for the given command and allowed target types.
@@ -636,8 +651,8 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataTarget(csString commandName, int targetTypes, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
-    
+    AdminCmdDataTarget(csString commandName, int targetTypes, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
+
     virtual ~AdminCmdDataTarget()
     {}
 
@@ -653,7 +668,7 @@ public:
      * @param words command message to parse
      * @return AdminCmdData*: pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Retrieve help message for the command that fits to the data.
      * @return csString: a help message to send back to the client
@@ -663,7 +678,7 @@ public:
     /** @brief Logs the game master command.
      * @param gmClient issuing the command
      * @param cmd command message issued
-     * @return 
+     * @return
      */
     virtual bool LogGMCommand(Client* gmClient, const char* cmd);
 
@@ -671,7 +686,10 @@ public:
      *
      * @return bool true if this command evaluated an area command and so should be ignored.
      */
-    virtual bool IsQuietInvalid() { return IsTargetType(ADMINCMD_TARGET_AREA); }
+    virtual bool IsQuietInvalid()
+    {
+        return IsTargetType(ADMINCMD_TARGET_AREA);
+    }
 };
 
 /** @brief Class for commands that only need a target and a reason.
@@ -685,7 +703,7 @@ public:
      * @param command name of the command (e.g. /ban)
      */
     AdminCmdDataTargetReason(csString command)
-    : AdminCmdDataTarget(command, ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget(command, ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
     {};
 
     /** @brief Creates obj for specified command that needs a reason.
@@ -696,7 +714,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataTargetReason(csString command, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataTargetReason(csString command, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataTargetReason()
     {};
@@ -708,7 +726,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Retrieve help message for the command that fits to the data.
      * @return a help message to send back to the client
@@ -726,7 +744,7 @@ public:
     /** @brief Creates obj for specified command that needs a requestor.
      */
     AdminCmdDataDeath()
-    : AdminCmdDataTarget("/death",  ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
+        : AdminCmdDataTarget("/death",  ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
     {};
 
     /** @brief Creates obj for specified command that needs a requestor.
@@ -736,7 +754,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataDeath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataDeath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataDeath()
     {};
@@ -748,7 +766,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Retrieve help message for the command that fits to the data.
      * @return csString: a help message to send back to the client
@@ -766,7 +784,7 @@ public:
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataDeleteChar()
-    : AdminCmdDataTarget("/deletechar", ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID), requestor(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
+        : AdminCmdDataTarget("/deletechar", ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID), requestor(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
     {};
 
     /** @brief Creates obj for specified command that needs a reason.
@@ -776,7 +794,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataDeleteChar(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataDeleteChar(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataDeleteChar()
     {};
@@ -788,7 +806,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** Retrieve help message for the command that fits to the data.
      * @return csString: a help message to send back to the client
@@ -807,7 +825,7 @@ public:
     /** @brief Creates obj for specified command that updates a respawn point.
      */
     AdminCmdDataUpdateRespawn()
-    : AdminCmdDataTarget("/updaterespawn", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/updaterespawn", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
     {};
 
     /** @brief Creates obj for specified command that updates a respawn point.
@@ -817,9 +835,9 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataUpdateRespawn(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);    
+    AdminCmdDataUpdateRespawn(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
-    virtual ~AdminCmdDataUpdateRespawn() 
+    virtual ~AdminCmdDataUpdateRespawn()
     {};
 
     /** @brief Parses the given message and stores its data.
@@ -829,7 +847,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Retrieve help message for the command that fits to the data.
      * @return csString: a help message to send back to the client
@@ -851,7 +869,7 @@ public:
     /** @brief Creates obj for specified command that bans a player.
      */
     AdminCmdDataBan()
-    : AdminCmdDataTarget("/ban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
+        : AdminCmdDataTarget("/ban", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_ACCOUNT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
     {};
 
     /** Creates obj for specified command parsing the words banning a player.
@@ -861,7 +879,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataBan(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataBan(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataBan()
     {};
@@ -873,7 +891,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Retrieve help message for the command that fits to the data.
      * @return csString: a help message to send back to the client
@@ -894,7 +912,7 @@ public:
     AdminCmdDataKillNPC()
         : AdminCmdDataTarget("/killnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), reload(false), damage(0.0)
     {};
-    
+
     /** @brief Parses the given message for killing/reloadin a npc.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -902,20 +920,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataKillNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataKillNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataKillNPC()
     {};
 
-     /** @brief Creates a command data object of the current class containing the parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates a command data object of the current class containing the parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -934,9 +952,9 @@ public:
     /** @brief Creates obj for specified command that kills/reloads a npc.
      */
     AdminCmdDataPercept()
-    : AdminCmdDataTarget("/percept", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET )
+        : AdminCmdDataTarget("/percept", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message for percepting a npc.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -944,20 +962,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataPercept(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataPercept(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataPercept()
     {};
 
-     /** @brief Creates a command data object of the current class containing the parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates a command data object of the current class containing the parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -975,9 +993,9 @@ public:
     /** @brief Creates obj for specified command that changes npctype of a npc.
      */
     AdminCmdDataChangeNPCType()
-    : AdminCmdDataTarget("/changenpctype", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), npcType("")
+        : AdminCmdDataTarget("/changenpctype", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), npcType("")
     {};
-    
+
     /** @brief Parses the given message to change type of a npc.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -985,20 +1003,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataChangeNPCType(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataChangeNPCType(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataChangeNPCType()
     {};
 
-     /** @brief Creates a command data object of the current class containing the parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates a command data object of the current class containing the parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1018,7 +1036,7 @@ public:
     AdminCmdDataDebugNPC()
         : AdminCmdDataTarget("/debugnpc", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), debugLevel(0)
     {};
-    
+
     /** @brief Parses the given message to set debug level for npc.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1026,20 +1044,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataDebugNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataDebugNPC(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataDebugNPC()
     {};
 
-     /** @brief Creates a command data object of the current class containing the parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates a command data object of the current class containing the parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1059,7 +1077,7 @@ public:
     AdminCmdDataDebugTribe()
         : AdminCmdDataTarget("/debugtribe", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), debugLevel(0)
     {};
-    
+
     /** @brief Parses the given message to set debug level for npc.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1067,22 +1085,22 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataDebugTribe(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataDebugTribe(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /**
      * Destructor.
      */
     virtual ~AdminCmdDataDebugTribe() {};
 
-     /** @brief Creates a command data object of the current class containing the parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates a command data object of the current class containing the parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1101,9 +1119,9 @@ public:
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataSetStackable()
-    : AdminCmdDataTarget("/setstackable", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), subCommandList("info on off reset help")
+        : AdminCmdDataTarget("/setstackable", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), subCommandList("info on off reset help")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1111,20 +1129,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSetStackable(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSetStackable(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSetStackable()
     {};
 
-     /** @brief Creates a object of the current class containing parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData*: pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates a object of the current class containing parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData*: pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1142,9 +1160,9 @@ public:
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataLoadQuest()
-    : AdminCmdData("/loadquest")
+        : AdminCmdData("/loadquest")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1152,20 +1170,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataLoadQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataLoadQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataLoadQuest()
     {};
 
-     /** @brief Creates an object of the current class containing parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object of the current class containing parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1185,7 +1203,7 @@ public:
     AdminCmdDataInfo()
         : AdminCmdDataTarget("/info", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), subCmd("summary")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1193,20 +1211,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataInfo(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataInfo(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataInfo()
     {};
 
-     /** @brief Creates an object of the current class containing parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object of the current class containing parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1225,9 +1243,9 @@ public:
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataItem()
-    : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50)
+        : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1235,20 +1253,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataItem()
     {};
 
-     /** @brief Creates an object of the current class containing parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object of the current class containing parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1270,11 +1288,11 @@ public:
     /** @brief Creates obj for specified command managing locks.
      */
     AdminCmdDataKey()
-    : AdminCmdDataTarget("/key", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_CLIENTTARGET),
-            subCommandList("make makemaster copy clearlocks skel"),
-            subTargetCommandList("changelock makeunlockable securitylockable addlock removelock")
+        : AdminCmdDataTarget("/key", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_CLIENTTARGET),
+          subCommandList("make makemaster copy clearlocks skel"),
+          subTargetCommandList("changelock makeunlockable securitylockable addlock removelock")
     {};
-    
+
     /** @brief Parses the given lock manage message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1282,20 +1300,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataKey(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataKey(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataKey()
     {};
 
-     /** @brief Creates an object containing the parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1314,9 +1332,9 @@ public:
     /** @brief Creates obj for specified command that execute a script.
      */
     AdminCmdDataRunScript()
-    : AdminCmdDataTarget("/runscript", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET), origObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/runscript", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET), origObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1324,20 +1342,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataRunScript(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataRunScript(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataRunScript()
     {};
 
-     /** @brief Creates an object containing the parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1359,9 +1377,9 @@ public:
     /** @brief Creates obj for specified command that define a treasure hunt.
      */
     AdminCmdDataCrystal()
-    : AdminCmdDataTarget("/crystal", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING)
+        : AdminCmdDataTarget("/crystal", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1369,22 +1387,22 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataCrystal(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataCrystal(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataCrystal()
     {};
 
-     /** Creates an object containing the parsed data for a treasure hunt.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** Creates an object containing the parsed data for a treasure hunt.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
-    /** @brief Returns a helpmessage that fits to the parser of the class. 
+    /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
      */
     virtual csString GetHelpMessage();
@@ -1413,9 +1431,9 @@ public:
     /** @brief Creates obj for teleport command data
      */
     AdminCmdDataTeleport()
-    : AdminCmdDataTarget("/teleport", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_DATABASE), destList("here there last spawn restore"), destObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM)
+        : AdminCmdDataTarget("/teleport", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_DATABASE), destList("here there last spawn restore"), destObj(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM)
     {};
-    
+
     /** @brief Parses the given message and stores its data for teleporting.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1423,20 +1441,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataTeleport(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataTeleport(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataTeleport()
     {};
 
-     /** @brief Creates an object containing the parsed data for teleporting.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData*: pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for teleporting.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData*: pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1457,7 +1475,7 @@ public:
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataSlide()
-    : AdminCmdDataTarget("/slide", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/slide", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_OBJECT | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_CLIENTTARGET)
     {};
 
     /** @brief Parses the given message and stores its data.
@@ -1467,20 +1485,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSlide(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSlide(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSlide()
     {};
 
-     /** @brief Creates an object the parsed data for sliding.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object the parsed data for sliding.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1501,9 +1519,9 @@ public:
     /** @brief Creates obj for specified command that changes a players name.
      */
     AdminCmdDataChangeName()
-    : AdminCmdDataTarget("/changename", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), uniqueName(true), uniqueFirstName(true)
+        : AdminCmdDataTarget("/changename", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), uniqueName(true), uniqueFirstName(true)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1511,20 +1529,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataChangeName(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataChangeName(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataChangeName()
     {};
 
-     /** @brief Creates an object containing the parsed data for a name change.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for a name change.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1544,9 +1562,9 @@ public:
     /** Creates obj for specified command that changes a guild name.
      */
     AdminCmdDataChangeGuildName()
-    : AdminCmdData("/changeguildname")
+        : AdminCmdData("/changeguildname")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1554,20 +1572,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataChangeGuildName(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataChangeGuildName(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataChangeGuildName()
     {};
 
-     /** Creates an object containing the parsed data for a guildname change.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** Creates an object containing the parsed data for a guildname change.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1585,9 +1603,9 @@ public:
     /** @brief Creates obj for specified command that changes a guild leader.
      */
     AdminCmdDataChangeGuildLeader()
-    : AdminCmdDataTarget("/changeguildleader", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
+        : AdminCmdDataTarget("/changeguildleader", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1595,27 +1613,27 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataChangeGuildLeader(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataChangeGuildLeader(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataChangeGuildLeader()
     {};
 
-     /** Creates an object containing the parsed data for a guildleader change.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** Creates an object containing the parsed data for a guildleader change.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
      */
     virtual csString GetHelpMessage();
 };
- 
+
 /** @brief Class for petitions.
  */
 class AdminCmdDataPetition : public AdminCmdData
@@ -1626,9 +1644,9 @@ public:
     /** @brief Creates obj for specified command that creates petitions.
      */
     AdminCmdDataPetition()
-    : AdminCmdData("/petition")
+        : AdminCmdData("/petition")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1636,20 +1654,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataPetition(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataPetition(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataPetition()
     {};
 
-     /** @brief Creates an object containing the parsed data of a petition.
-     * @param msgManager message manager that handles this command
-     * @param msg psAdminCmdMessage containing the message
-     * @param me The incoming message from the GM
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data of a petition.
+    * @param msgManager message manager that handles this command
+    * @param msg psAdminCmdMessage containing the message
+    * @param me The incoming message from the GM
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1671,9 +1689,9 @@ public:
     /** @brief Creates obj for specified command that impersonates someone.
      */
     AdminCmdDataImpersonate()
-    : AdminCmdDataTarget("/impersonate", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT)
+        : AdminCmdDataTarget("/impersonate", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_OBJECT)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1681,20 +1699,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataImpersonate(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataImpersonate(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataImpersonate()
     {};
 
-     /** @brief Creates an object containing the parsed data for impersonate.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for impersonate.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1714,9 +1732,9 @@ public:
     /** @brief Creates obj for specified command that elevates someones rights.
      */
     AdminCmdDataDeputize()
-    : AdminCmdDataTarget("/deputize", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/deputize", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1724,20 +1742,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataDeputize(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataDeputize(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataDeputize()
     {};
 
-     /** @brief Creates an object containing the parsed data for deputizing.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for deputizing.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1755,9 +1773,9 @@ public:
     /** @brief Creates obj for specified command that awards rewards.
      */
     AdminCmdDataAward()
-    : AdminCmdDataTarget("/award", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/award", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1765,20 +1783,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataAward(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataAward(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataAward()
     {};
 
-     /** @brief Creates an object containing the parsed data for rewards.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for rewards.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1798,9 +1816,9 @@ public:
      * @param command name of the command (e.g. /ban)
      */
     AdminCmdDataItemTarget(csString command)
-    : AdminCmdDataTarget(command, ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA |ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET), stackCount(0)
+        : AdminCmdDataTarget(command, ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA |ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET), stackCount(0)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param command name of the command (e.g. /ban)
      * @param msgManager message manager that handles this command
@@ -1809,20 +1827,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataItemTarget(csString command, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataItemTarget(csString command, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataItemTarget()
     {};
 
-     /** @brief Creates an object containing the parsed data for item transfer.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for item transfer.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1838,9 +1856,9 @@ public:
     /** @brief Creates obj for specified item check command.
      */
     AdminCmdDataCheckItem()
-    : AdminCmdDataItemTarget("/checkitem")
+        : AdminCmdDataItemTarget("/checkitem")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1848,20 +1866,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataCheckItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataCheckItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataCheckItem()
     {};
 
-     /** @brief Creates an object containing the parsed data for an item check.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for an item check.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1876,15 +1894,15 @@ class AdminCmdDataSectorTarget : public AdminCmdData
 public:
     bool isClientSector; ///< true when sector of client is stored
     csString sectorName;    ///< name of the sector (when parsed successfully)
-    psSectorInfo *sectorInfo; ///< sector either found by sectorname or client position
+    psSectorInfo* sectorInfo; ///< sector either found by sectorname or client position
 
     /** @brief Creates obj for specified command that target a sector.
      * @param command name of the command (e.g. /ban)
      */
     AdminCmdDataSectorTarget(csString command)
-    : AdminCmdData(command), isClientSector(false), sectorInfo(NULL)
+        : AdminCmdData(command), isClientSector(false), sectorInfo(NULL)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param command name of the command (e.g. /ban)
      * @param msgManager message manager that handles this command
@@ -1893,35 +1911,35 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSectorTarget(csString command, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSectorTarget(csString command, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSectorTarget()
     {};
 
-     /** @brief Creates an object containing the parsed data targeting a sector.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data targeting a sector.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
      */
     virtual csString GetHelpMessage();
 
-   /** @brief Tries to parse the supplied string as a destination.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param target string to parse as a destination
-     * @return false when parsing the supplied string failed, otherwise true
-     */
-    virtual bool ParseTarget(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, csString target);
+    /** @brief Tries to parse the supplied string as a destination.
+      * @param msgManager message manager that handles this command
+      * @param me The incoming message from the GM
+      * @param msg psAdminCmdMessage containing the message
+      * @param client client of the network communication
+      * @param target string to parse as a destination
+      * @return false when parsing the supplied string failed, otherwise true
+      */
+    virtual bool ParseTarget(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, csString target);
 
 
     /** @brief Retrieves the current sector of the command issuing client.
@@ -1942,9 +1960,9 @@ public:
     /** Creates obj for specified command that change the weather.
      */
     AdminCmdDataWeather()
-    : AdminCmdDataSectorTarget("/weather"), enabled(false), type(0)
+        : AdminCmdDataSectorTarget("/weather"), enabled(false), type(0)
     {};
-    
+
     /** Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -1952,20 +1970,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataWeather(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataWeather(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataWeather()
     {};
 
-     /** Creates an object containing the parsed data for weather control.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** Creates an object containing the parsed data for weather control.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -1987,9 +2005,9 @@ public:
      * @param command name of the command (e.g. /ban)
      */
     AdminCmdDataWeatherEffect(csString command)
-    : AdminCmdDataSectorTarget(command), enabled(false), particleCount(4000), interval(600000), fadeTime(10000)
+        : AdminCmdDataSectorTarget(command), enabled(false), particleCount(4000), interval(600000), fadeTime(10000)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param command name of the command (e.g. /ban)
      * @param msgManager message manager that handles this command
@@ -1998,20 +2016,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataWeatherEffect(csString command, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataWeatherEffect(csString command, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataWeatherEffect()
     {};
 
-     /** @brief Creates an object containing the parsed weather effect data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed weather effect data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2035,7 +2053,7 @@ public:
     /** @brief Creates obj for specified command that control fog.
      */
     AdminCmdDataFog()
-    : AdminCmdDataSectorTarget("/fog"), enabled(false), density(200), fadeTime(10000), interval(0), r(200), g(200), b(200)
+        : AdminCmdDataSectorTarget("/fog"), enabled(false), density(200), fadeTime(10000), interval(0), r(200), g(200), b(200)
     {};
 
     /** @brief Parses the given message and stores its data.
@@ -2045,20 +2063,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataFog(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataFog(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataFog()
     {};
 
-     /** @brief Creates an object containing the parsed data for fog.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for fog.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2088,9 +2106,9 @@ public:
     /** @brief Creates obj for specified command that modifies an item.
      */
     AdminCmdDataModify()
-    : AdminCmdDataTarget("/modify", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), attributeList("pickupable unpickable transient npcowned collide settingitem")
+        : AdminCmdDataTarget("/modify", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), attributeList("pickupable unpickable transient npcowned collide settingitem")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2098,20 +2116,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataModify(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataModify(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataModify()
     {};
 
-     /** @brief Creates an object containing the parsed data for item modify.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for item modify.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2132,9 +2150,9 @@ public:
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataMorph()
-    : AdminCmdDataTarget("/morph", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
+        : AdminCmdDataTarget("/morph", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2142,20 +2160,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataMorph()
     {};
 
-     /** @brief Creates an object containing the parsed data for morphing.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for morphing.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2174,9 +2192,9 @@ public:
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataScale()
-    : AdminCmdDataTarget("/scale", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
+        : AdminCmdDataTarget("/scale", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_EID)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2184,20 +2202,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataScale(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataScale(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataScale()
     {};
 
-     /** @brief Creates an object containing the parsed data for morphing.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for morphing.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2211,10 +2229,10 @@ public:
 class AdminCmdDataSetSkill : public AdminCmdDataTarget
 {
 public:
-    /** target parser for possible source player 
+    /** target parser for possible source player
      * can also be optional, but then the target player must be specified.
      */
-    AdminCmdTargetParser sourcePlayer; 
+    AdminCmdTargetParser sourcePlayer;
     csString subCommand; ///< subcommand (copy)
     psRewardDataSkill skillData; ///< data about the skill to set
     /*
@@ -2226,9 +2244,9 @@ public:
     /** @brief Creates obj for specified command that change skill levels.
      */
     AdminCmdDataSetSkill()
-    : AdminCmdDataTarget("/setskill", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), sourcePlayer(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), subCommand(), skillData("",0,0,false)
+        : AdminCmdDataTarget("/setskill", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), sourcePlayer(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET), subCommand(), skillData("",0,0,false)
     {};
-    
+
     /** Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2236,20 +2254,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSetSkill()
     {};
 
-     /** @brief Creates an object containing the parsed data for skill levels.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for skill levels.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2272,9 +2290,9 @@ public:
     /** @brief Creates obj for specified command that set attribute values.
      */
     AdminCmdDataSet()
-    : AdminCmdDataTarget("/set", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME), subCommandList("list gm player"), attributeList("invincible invincibility invisibility invisible viewall nevertired nofalldamage infiniteinventory questtester infinitemana instantcast givekillexp attackable buddyhide"), setting()
+        : AdminCmdDataTarget("/set", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_ME), subCommandList("list gm player"), attributeList("invincible invincibility invisibility invisible viewall nevertired nofalldamage infiniteinventory questtester infinitemana instantcast givekillexp attackable buddyhide"), setting()
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2282,20 +2300,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSet(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSet(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSet()
     {};
 
-     /** @brief Creates an object containing the parsed data for attributes.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for attributes.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2315,9 +2333,9 @@ public:
     /** @brief Creates obj for specified command setting labels.
      */
     AdminCmdDataSetLabelColor()
-    : AdminCmdDataTarget("/setlabelcolor", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA  | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_EID), labelTypeList("normal alive dead npc tester gm gm1 player")
+        : AdminCmdDataTarget("/setlabelcolor", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA  | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_EID), labelTypeList("normal alive dead npc tester gm gm1 player")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2325,20 +2343,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSetLabelColor(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSetLabelColor(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSetLabelColor()
     {};
 
-     /** @brief Creates an object containing the parsed data for labelchange.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for labelchange.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2359,9 +2377,9 @@ public:
     /** @brief Creates obj for specified command creating a guildentrance.
      */
     AdminCmdDataAction()
-    : AdminCmdDataSectorTarget("/action"), subCommandList("create_entrance")
+        : AdminCmdDataSectorTarget("/action"), subCommandList("create_entrance")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2369,20 +2387,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataAction(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataAction(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataAction()
     {};
 
-     /** @brief Creates an object containing the parsed data for the action.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for the action.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2406,9 +2424,9 @@ public:
     /** @brief Creates obj for specified command that needs a reason
      */
     AdminCmdDataLocation()
-    : AdminCmdData("/location"), subCommandList("help adjust display hide")
+        : AdminCmdData("/location"), subCommandList("help adjust display hide")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2416,20 +2434,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataLocation(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataLocation()
     {};
 
-     /** @brief Creates an object the parsed data.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object the parsed data.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2467,9 +2485,9 @@ public:
     /** @brief Creates obj for specified command that manipulate paths.
      */
     AdminCmdDataPath()
-    : AdminCmdData("/path"), subCommandList("adjust alias display format help hide info point start stop"), aliasSubCommandList("add remove"), wpList("waypoints points"), subCmd(), defaultRadius(2.0)
+        : AdminCmdData("/path"), subCommandList("adjust alias display format help hide info point start stop"), aliasSubCommandList("add remove"), wpList("waypoints points"), subCmd(), defaultRadius(2.0)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2477,20 +2495,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataPath(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataPath()
     {};
 
-     /** @brief Creates an object containing the parsed data for paths.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for paths.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2519,9 +2537,9 @@ public:
     /** @brief Creates obj for specified command that concern game events.
      */
     AdminCmdDataGameMasterEvent()
-    : AdminCmdData("/event"), subCommandList("help list"), subCmd(), player(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdData("/event"), subCommandList("help list"), subCmd(), player(ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2529,20 +2547,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataGameMasterEvent(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataGameMasterEvent(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataGameMasterEvent()
     {};
 
-     /** @brief Creates an object containing the parsed data for an event.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for an event.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2561,9 +2579,9 @@ public:
     /** @brief Creates obj for specified command examine npc dialogs.
      */
     AdminCmdDataBadText()
-    : AdminCmdDataTarget("/badtext", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/badtext", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2571,20 +2589,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataBadText(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataBadText(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataBadText()
     {};
 
-     /** @brief Creates an object containing the parsed data for npc texts.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for npc texts.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2604,10 +2622,10 @@ public:
     /** @brief Creates obj for specified command that examine/modify quests.
      */
     AdminCmdDataQuest()
-    : AdminCmdDataTarget("/quest", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE),
-        subCommandList("complete list discard assign")
+        : AdminCmdDataTarget("/quest", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE),
+          subCommandList("complete list discard assign")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2615,20 +2633,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataQuest()
     {};
 
-     /** @brief Creates an object containing the parsed data for the quest.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for the quest.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2647,9 +2665,9 @@ public:
     /** @brief Creates obj for specified command that changes item quality.
      */
     AdminCmdDataSetQuality()
-    : AdminCmdDataTarget("/setquality", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA |ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/setquality", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA |ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2657,20 +2675,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSetQuality(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSetQuality(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSetQuality()
     {};
 
-     /** @brief Creates an object containing the parsed data item quality.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data item quality.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2691,9 +2709,9 @@ public:
     /** @brief Creates obj for specified command that sets/displays traits.
      */
     AdminCmdDataSetTrait()
-    : AdminCmdDataTarget("/settrait", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/settrait", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2701,20 +2719,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSetTrait(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSetTrait(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSetTrait()
     {};
 
-     /** @brief Creates an object containing the parsed data for traits.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for traits.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2733,9 +2751,9 @@ public:
     /** @brief Creates obj for specified command changing item name/description
      */
     AdminCmdDataSetItem()
-    : AdminCmdDataTarget("/setitemname", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/setitemname", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2743,20 +2761,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSetItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSetItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSetItem()
     {};
 
-     /** @brief Creates an object containing the parsed data for item naming.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for item naming.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2776,9 +2794,9 @@ public:
     /** @brief Creates obj for specified command that reloads item stats.
      */
     AdminCmdDataReload()
-    : AdminCmdData("/reload"), itemID(0)
+        : AdminCmdData("/reload"), itemID(0)
     {};
-    
+
     /** Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2786,20 +2804,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataReload(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataReload()
     {};
 
-     /** @brief Creates an object containing the parsed data for item reloading.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for item reloading.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2815,9 +2833,9 @@ public:
     /** @brief Creates obj for specified command that issues a player warning.
      */
     AdminCmdDataListWarnings()
-    : AdminCmdDataTarget("/listwarnings", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
+        : AdminCmdDataTarget("/listwarnings", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE)
     {};
-    
+
     /** Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2825,20 +2843,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataListWarnings(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataListWarnings(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataListWarnings()
     {};
 
-     /** @brief Creates an object containing the parsed data for warnings.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for warnings.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2857,9 +2875,9 @@ public:
     /** @brief Creates obj for specified command for quest dis-/en-abling.
      */
     AdminCmdDataDisableQuest()
-    : AdminCmdData("/disablequest")
+        : AdminCmdData("/disablequest")
     {};
-    
+
     /** Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2867,20 +2885,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataDisableQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataDisableQuest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataDisableQuest()
     {};
 
-     /** @brief Creates an object the parsed data for quest dis-/en-abling.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object the parsed data for quest dis-/en-abling.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2898,9 +2916,9 @@ public:
     /** @brief Creates obj for specified command that sets the killing exp.
      */
     AdminCmdDataSetKillExp()
-    : AdminCmdDataTarget("/setkillexp", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/setkillexp", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2908,20 +2926,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSetKillExp(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSetKillExp(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSetKillExp()
     {};
 
-     /** @brief Creates an object the parsed data for killing exp.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object the parsed data for killing exp.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2940,9 +2958,9 @@ public:
     /** @brief Creates obj for specified command that assigns factions.
      */
     AdminCmdDataAssignFaction()
-    : AdminCmdDataTarget("/assignfaction", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
+        : AdminCmdDataTarget("/assignfaction", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET)
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2950,20 +2968,20 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataAssignFaction(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataAssignFaction(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataAssignFaction()
     {};
 
-     /** @brief Creates an object containing the parsed data for factions.
-     * @param msgManager message manager that handles this command
-     * @param me The incoming message from the GM
-     * @param msg psAdminCmdMessage containing the message
-     * @param client client of the network communication
-     * @param words command message to parse
-     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /** @brief Creates an object containing the parsed data for factions.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -2982,9 +3000,9 @@ public:
     /** @brief Creates obj for specified command that ends the server.
      */
     AdminCmdDataServerQuit()
-    : AdminCmdData("/serverquit")
+        : AdminCmdData("/serverquit")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -2992,7 +3010,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataServerQuit(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataServerQuit(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataServerQuit()
     {};
@@ -3005,7 +3023,7 @@ public:
      * @param words command message to parse
      * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -3021,9 +3039,9 @@ public:
     /** @brief Creates obj for specified command that ends the server.
      */
     AdminCmdDataNPCClientQuit()
-    : AdminCmdData("/npcclientquit")
+        : AdminCmdData("/npcclientquit")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -3031,7 +3049,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataNPCClientQuit(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataNPCClientQuit(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataNPCClientQuit()
     {};
@@ -3044,7 +3062,7 @@ public:
      * @param words command message to parse
      * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -3062,7 +3080,7 @@ public:
     AdminCmdDataSimple(csString commandName)
         : AdminCmdData(commandName)
     {};
-    
+
     /**
      * Parses the given message and stores its data.
      *
@@ -3073,7 +3091,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataSimple(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataSimple(csString commandName, AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataSimple()
     {};
@@ -3086,7 +3104,7 @@ public:
      * @param words command message to parse
      * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /** @brief Returns a helpmessage that fits to the parser of the class.
      * @return csString: a help message to send back to the client
@@ -3106,9 +3124,9 @@ public:
     /** @brief Creates obj for specified command sending test message
      */
     AdminCmdDataRndMsgTest()
-    : AdminCmdData("/rndmsgtest")
+        : AdminCmdData("/rndmsgtest")
     {};
-    
+
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
      * @param me The incoming message from the GM
@@ -3116,22 +3134,22 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataRndMsgTest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataRndMsgTest(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataRndMsgTest()
     {};
 
-     /**
-      * Creates an object the parsed data for the test message.
-      *
-      * @param msgManager message manager that handles this command
-      * @param me The incoming message from the GM
-      * @param msg psAdminCmdMessage containing the message
-      * @param client client of the network communication
-      * @param words command message to parse
-      * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
-     */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    /**
+     * Creates an object the parsed data for the test message.
+     *
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /**
      * Returns a helpmessage that fits to the parser of the class.
@@ -3156,9 +3174,9 @@ public:
      * Creates obj for specified command that needs a reason
      */
     AdminCmdDataList()
-    : AdminCmdData("/list"), subCommandList("map")
+        : AdminCmdData("/list"), subCommandList("map")
     {};
-    
+
     /**
      * Parses the given message and stores its data.
      *
@@ -3168,7 +3186,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataList(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataList(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataList()
     {};
@@ -3183,7 +3201,7 @@ public:
      * @param words command message to parse
      * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /**
      * Returns the Helpmessageportion for the destination according to the type
@@ -3208,9 +3226,9 @@ public:
     /** Creates obj for specified command that needs a reason
      */
     AdminCmdDataTime()
-    : AdminCmdData("/time"), subCommandList("show set")
+        : AdminCmdData("/time"), subCommandList("show set")
     {};
-    
+
     /**
      * Parses the given message and stores its data.
      *
@@ -3220,7 +3238,7 @@ public:
      * @param client client of the network communication
      * @param words command message to parse
      */
-    AdminCmdDataTime(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    AdminCmdDataTime(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataTime()
     {};
@@ -3235,7 +3253,7 @@ public:
      * @param words command message to parse
      * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
      */
-    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage& msg, Client *client, WordArray &words);
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     /**
      * Returns the Helpmessageportion for the destination according to the type.
@@ -3266,7 +3284,7 @@ public:
      * @param datatypename Name of the command to search for (including /)
      * @return AdminCmdData is the search result or null if not found.
      */
-    AdminCmdData * FindFactory(csString datatypename);
+    AdminCmdData* FindFactory(csString datatypename);
 
     /*/* @brief Register a new AdminCmdData for a command.
      * @param func Factory function that creates data objects for the command
@@ -3303,7 +3321,7 @@ public:
      * @param client object of the client sending message.
      * @param requestedLevel the requested level
      */
-    void Admin(int clientnum, Client *client, int requestedLevel = -1);
+    void Admin(int clientnum, Client* client, int requestedLevel = -1);
 
     /** @brief This awards a certain amount of exp to the target.
       * @param gmClientnum ClientID of the issuer
@@ -3311,7 +3329,7 @@ public:
       * @param ppAward amount of exp to award. might be negative to punish instead
       */
     void AwardExperienceToTarget(int gmClientnum, Client* target, int ppAward);
-    
+
     /** @brief adjusts a faction standing of the target by a given value.
       * @param gmClientnum ClientID of the issuer
       * @param target pointer to the Client of the target
@@ -3330,7 +3348,7 @@ public:
       * @return bool FALSE if an error occured
       */
     bool ApplySkill(int gmClientNum, Client* target, psSkillInfo* skill, int value, bool relative = false, int cap = 0);
-    
+
     /** @brief universal function to award a target.
       * @param gmClientNum ClientID of the issuer
       * @param target pointer to the Client of the target
@@ -3342,48 +3360,51 @@ public:
     /**
      * Get sector and coordinates of starting point of a map.
      *
-     * @return return the success (true when successful). 
+     * @return return the success (true when successful).
      */
-    bool GetStartOfMap(int clientnum, const csString & map, iSector * & targetSector,  csVector3 & targetPoint);
-    
+    bool GetStartOfMap(int clientnum, const csString &map, iSector* &targetSector,  csVector3 &targetPoint);
+
     /** @brief wrapper for internal use from npc
      * @param pMsg Message sent by npc
      * @param client ??
      */
-    void HandleNpcCommand(MsgEntry *pMsg, Client *client);
+    void HandleNpcCommand(MsgEntry* pMsg, Client* client);
 
     /** @brief return the path network
      */
-    psPathNetwork* GetPathNetwork() { return pathNetwork; }
+    psPathNetwork* GetPathNetwork()
+    {
+        return pathNetwork;
+    }
 
 protected:
     /** Data object factory for parsing command data
      */
-    AdminCmdDataFactory *dataFactory; 
+    AdminCmdDataFactory* dataFactory;
 
-    /** @brief Test the first 8 chars after the command for 'me reset'. 
+    /** @brief Test the first 8 chars after the command for 'me reset'.
      * @param command the command string to test for 'me reset'.
      * @return bool: true when 'me reset' is found, otherwise false.
      */
-    bool IsReseting(const csString& command);
-    
+    bool IsReseting(const csString &command);
+
     /** @brief Parses message and executes contained admin command
      * @param pMsg Message sent by gm client
      * @param client sending gm client
      */
-    void HandleAdminCmdMessage(MsgEntry *pMsg, Client *client);
-    
+    void HandleAdminCmdMessage(MsgEntry* pMsg, Client* client);
+
     /** @brief Parses and executes petition related commands
      * @param pMsg Message sent by gm client
      * @param client sending gm client
      */
-    void HandlePetitionMessage(MsgEntry *pMsg, Client *client);
-    
+    void HandlePetitionMessage(MsgEntry* pMsg, Client* client);
+
     /** @brief Parses and executes commands sent by a gm GUI
      * @param pMsg gm GUI message sent by gm client
      * @param client sending gm client
      */
-    void HandleGMGuiMessage   (MsgEntry *pMsg, Client *client);
+    void HandleGMGuiMessage(MsgEntry* pMsg, Client* client);
 
     /** @brief Parses and executes commands for spawning items for a gm.
      *
@@ -3392,21 +3413,21 @@ protected:
      * @param me The incoming message from the GM
      * @param client sending gm client
      */
-    void SpawnItemInv         (MsgEntry* me, Client *client);
+    void SpawnItemInv(MsgEntry* me, Client* client);
 
     /** @brief Parses and executes commands for spawning items for a gm.
      * @param me The incoming message from the GM
      * @param msg gm item spawn message sent by gm client
      * @param client sending gm client
      */
-    void SpawnItemInv         (MsgEntry* me, psGMSpawnItem& msg, Client *client);
+    void SpawnItemInv(MsgEntry* me, psGMSpawnItem &msg, Client* client);
 
     /** @brief Handles a request to reload a quest from the database.
      *  @param msg The text name is in the msg.text field.
      * @param data A pointer to the command parser object with target data
      *  @param client The client we will send error codes back to.
      */
-    void HandleLoadQuest(psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void HandleLoadQuest(psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Get the list of characters in the same account of the provided one.
      *  @param me The incoming message from the GM
@@ -3414,7 +3435,7 @@ protected:
      *  @param data A pointer to the command parser object with target data
      *  @param client The GM client the command came from.
      */
-    void GetSiblingChars(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void GetSiblingChars(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
 
     /** @brief Retrieves information like ID, etc. about a target.
@@ -3423,7 +3444,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void GetInfo(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* data,Client *client);
+    void GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* data,Client* client);
 
 
     /** @brief Creates a new NPC by copying data from a master NPC.
@@ -3432,7 +3453,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void CreateNPC(MsgEntry *me,psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void CreateNPC(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Kill an npc in order to make it respawn, It can be used also to reload the data of the npc from the database
      *  @param me The incoming message from the GM
@@ -3440,7 +3461,7 @@ protected:
      *  @param data A pointer to the command parser object with target datat
      *  @param client The GM client the command came from.
      */
-    void KillNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void KillNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Percept a NPC
      *  @param me The incoming message from the GM
@@ -3448,15 +3469,15 @@ protected:
      *  @param data A pointer to the command parser object with target datat
      *  @param client The GM client the command came from.
      */
-    void Percept(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
-    
+    void Percept(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
+
     /** @brief Change the npctype (brain) of the npc.
      *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
      *  @param cmddata A pointer to the command parser object with target datat
      *  @param client The GM client the command came from.
      */
-    void ChangeNPCType(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client);
+    void ChangeNPCType(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client);
 
     /** @brief Change the NPC Debug level.
      *  @param me The incoming message from the GM
@@ -3464,15 +3485,15 @@ protected:
      *  @param cmddata A pointer to the command parser object with target datat
      *  @param client The GM client the command came from.
      */
-    void DebugNPC(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client);
-    
+    void DebugNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client);
+
     /** @brief Change the Tribe Debug level.
      *  @param me The incoming message from the GM
      *  @param msg The cracked command message.
      *  @param cmddata A pointer to the command parser object with target datat
      *  @param client The GM client the command came from.
      */
-    void DebugTribe(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* cmddata, Client *client);
+    void DebugTribe(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client);
 
     /** @brief Creates an item or loads GUI for item creation.
      *
@@ -3483,7 +3504,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void CreateItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void CreateItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Creates, destroys and changes keys and locks.
      * @param me The incoming message from the GM
@@ -3491,7 +3512,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void ModifyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void ModifyKey(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Exchanges the lock on an item.
      *
@@ -3503,19 +3524,19 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void ChangeLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void ChangeLock(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Toggles the lockability of a lock.
      *
-     * A lockable lock is set to unlockable and an 
+     * A lockable lock is set to unlockable and an
      * unlockable lock is set to lockable.
      *
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
-     * @param client The GM client the command came from.  
+     * @param client The GM client the command came from.
      */
-    void MakeUnlockable(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void MakeUnlockable(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Toggles the lock to be a security lock or not.
      *
@@ -3526,9 +3547,9 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void MakeSecurity(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void MakeSecurity(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
-    
+
     /** @brief Sets an item as a key or master key.
      *
      * The item needs to be placed in the right hand of the clients (gm)
@@ -3541,25 +3562,25 @@ protected:
      * @param client The GM client the command came from.
      * @param masterkey true for masterkey otherwise false.
      */
-    void MakeKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client, bool masterkey);
+    void MakeKey(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client, bool masterkey);
 
     /** @brief Creates a copy of a master key.
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
-     * @param key to copy  
+     * @param key to copy
      */
-    void CopyKey(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client, psItem* key);
+    void CopyKey(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client, psItem* key);
 
-    /** @brief A lock is added or removed from the list of locks a key can unlock. 
+    /** @brief A lock is added or removed from the list of locks a key can unlock.
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      * @param key to remove the lock from.
      */
-    void AddRemoveLock(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client,psItem* key);
+    void AddRemoveLock(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client,psItem* key);
 
     /** @brief Runs a progression script on the targetted client
      *  @param me The incoming message from the GM
@@ -3567,7 +3588,7 @@ protected:
      *  @param data A pointer to the command parser object with target data
      *  @param client The GM client the command came from.
      */
-    void RunScript(MsgEntry *me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void RunScript(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Creates a new hunt location.
      *
@@ -3580,7 +3601,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void CreateHuntLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void CreateHuntLocation(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Changes various parameters associated to the item
      *  @param me The incoming message from the GM
@@ -3588,7 +3609,7 @@ protected:
      *  @param data A pointer to the command parser object with target data
      *  @param client The GM client the command came from.
      */
-    void ModifyItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void ModifyItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Moves an object along a direction or turns it around the y axis.
      *
@@ -3600,8 +3621,8 @@ protected:
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
-     */ 
-    void Slide(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+     */
+    void Slide(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Teleport an offline character.
      * @param client The GM client the command came from.
@@ -3615,7 +3636,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Teleport(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void Teleport(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Get sector and coordinates of target of teleportation described by 'msg'.
      * @param client The GM client the command came from.
@@ -3628,7 +3649,7 @@ protected:
      * @param instance is the instance to teleport to.
      * @return true on success, otherwise fals
      */
-    bool GetTargetOfTeleport(Client *client, psAdminCmdMessage& msg, AdminCmdData* data, iSector * & targetSector,  csVector3 & targetPoint, float &yRot, gemObject *subject, InstanceID &instance);
+    bool GetTargetOfTeleport(Client* client, psAdminCmdMessage &msg, AdminCmdData* data, iSector* &targetSector,  csVector3 &targetPoint, float &yRot, gemObject* subject, InstanceID &instance);
 
     /** @brief Handles movement of objects for teleport and slide.
      * @param client The GM client the command came from.
@@ -3638,7 +3659,7 @@ protected:
      * @param sector The destination sector.
      * @param instance The destination instance.
      */
-    bool MoveObject(Client *client, gemObject *target, csVector3& pos, float yrot, iSector* sector, InstanceID instance);
+    bool MoveObject(Client* client, gemObject* target, csVector3 &pos, float yrot, iSector* sector, InstanceID instance);
 
     /** @brief This function sends a warning message from a GM to a player.
      *
@@ -3650,7 +3671,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void WarnMessage(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void WarnMessage(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief This function kicks a player off the server.
      *
@@ -3660,7 +3681,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void KickPlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void KickPlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief This function will mute a player until logoff.
      * @param me The incoming message from the GM
@@ -3668,7 +3689,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void MutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void MutePlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief This function will unmute a player.
      * @param me The incoming message from the GM
@@ -3676,7 +3697,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void UnmutePlayer(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void UnmutePlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Kills by doing a large amount of damage to target.
      * @param me The incoming message from the GM
@@ -3684,7 +3705,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Death( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void Death(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Impersonate a character.
      * @param me The incoming message from the GM
@@ -3692,7 +3713,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Impersonate(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void Impersonate(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Set various GM/debug abilities.
      *
@@ -3702,7 +3723,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void SetAttrib(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void SetAttrib(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Set the label color for char.
      * @param me The incoming message from the GM
@@ -3710,7 +3731,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void SetLabelColor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void SetLabelColor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /** @brief Divorce char1 and char2, if they're married.
      * @param me The incoming message from the GM
@@ -3730,7 +3751,7 @@ protected:
      * @param pos vector specifying the point
      * @param sectorName is the name of the sector for the point.
      */
-    int PathPointCreate(int pathID, int prevPointId, csVector3& pos, csString& sectorName);
+    int PathPointCreate(int pathID, int prevPointId, csVector3 &pos, csString &sectorName);
 
     /** @brief Lookup path information close to a point.
      *
@@ -3747,13 +3768,13 @@ protected:
      * @param indexPath index of the path
      * @param fraction ?
      * @param pointPath output of point of path
-     * @param rangePoint range of the point of path to the point 
+     * @param rangePoint range of the point of path to the point
      * @param indexPoint index of the point of path on the path
      */
-    void FindPath(csVector3 & pos, iSector * sector, float radius,
-                  Waypoint** wp, float *rangeWP,
-                  psPath ** path, float *rangePath, int *indexPath, float *fraction,
-                  psPath ** pointPath, float *rangePoint, int *indexPoint);
+    void FindPath(csVector3 &pos, iSector* sector, float radius,
+                  Waypoint** wp, float* rangeWP,
+                  psPath** path, float* rangePath, int* indexPath, float* fraction,
+                  psPath** pointPath, float* rangePoint, int* indexPoint);
 
     /** Implement the abstract function from the iEffectIDAllocator
      */
@@ -3765,21 +3786,21 @@ protected:
      * @param clearSelected Clear selected path when iterating.
      */
     void HideAllPaths(bool clearSelected);
-    
+
     /**
      * Hide all paths for a client.
      *
      * @param client The client to hide paths for.
      */
     void HidePaths(Client* client);
-    
+
     /**
      * Hide all waypoints for a client.
      *
      * @param client The client to hide waypoints for.
      */
     void HideWaypoints(Client* client);
-    
+
     /**
      * Hide all paths for a client in a sector.
      *
@@ -3787,7 +3808,7 @@ protected:
      * @param sector The sector to hide paths in.
      */
     void HidePaths(Client* client, iSector* sector);
-    
+
     /**
      * Hide all waypoints for a client in a sector.
      *
@@ -3795,26 +3816,26 @@ protected:
      * @param sector The sector to hide paths in.
      */
     void HideWaypoints(Client* client, iSector* sector);
-    
+
     /**
      * Show paths and waypoints for all clients that have enabled display.
      */
     void RedisplayAllPaths();
-    
+
     /**
      * Show paths for client in all sectors that has been enabled.
      *
      * @param client The client to show paths for.
      */
     void ShowPaths(Client* client);
-    
+
     /**
      * Show waypoint for client in all sectors that has been enabled.
      *
      * @param client The client to show waypoints for.
      */
     void ShowWaypoints(Client* client);
-    
+
     /**
      * Show path for a client in a given sector.
      *
@@ -3827,7 +3848,7 @@ protected:
      * Show waypoints for a client in a given sector.
      *
      * @param client The client to show waypoints for.
-     * @param sector The sector to show paths in. 
+     * @param sector The sector to show paths in.
      */
     void ShowWaypoints(Client* client, iSector* sector);
 
@@ -3840,7 +3861,7 @@ protected:
      * Update the display of waypoints in clients.
      */
     void UpdateDisplayWaypoint(Waypoint* wp);
-    
+
     /**
      * Handle online path editing.
      *
@@ -3849,7 +3870,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandlePath( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
+    void HandlePath(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Add new location point to DB.
@@ -3860,7 +3881,7 @@ protected:
      * @param name for the location.
      * @param radius for the location.
      */
-    int LocationCreate(int typeID, csVector3& pos, csString& sectorName, csString& name, int radius);
+    int LocationCreate(int typeID, csVector3 &pos, csString &sectorName, csString &name, int radius);
 
     /**
      * Handle display of locations
@@ -3895,7 +3916,7 @@ protected:
     /** Update location to all clients displaying locations.
      */
     void UpdateDisplayLocation(Location* location);
-    
+
     /**
      * Handle online path editing.
      *
@@ -3904,7 +3925,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleLocation( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleLocation(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Handle action location entrances.
@@ -3914,7 +3935,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleActionLocation(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleActionLocation(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Handles a user submitting a petition.
@@ -3924,7 +3945,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleAddPetition(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data,Client *client);
+    void HandleAddPetition(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data,Client* client);
 
     /**
      * Handles broadcasting the petition list dirty signal.
@@ -3943,7 +3964,7 @@ protected:
      * @param IsGMrequest manages if the list should be formated for gm or players. True is for gm.
      * @return true if the query succeded, false if there were errors.
      */
-    bool GetPetitionsArray(csArray<psPetitionInfo> &petitions, Client *client, bool IsGMrequest = false);
+    bool GetPetitionsArray(csArray<psPetitionInfo> &petitions, Client* client, bool IsGMrequest = false);
 
     /**
      * Retrieves a list of petitions.
@@ -3952,8 +3973,8 @@ protected:
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
-    void ListPetitions(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
-    
+    void ListPetitions(MsgEntry* me, psPetitionRequestMessage &msg, Client* client);
+
     /**
      * Cancels a petition.
      *
@@ -3961,8 +3982,8 @@ protected:
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
-    void CancelPetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
-    
+    void CancelPetition(MsgEntry* me, psPetitionRequestMessage &msg, Client* client);
+
     /**
      * Modifies a petition.
      *
@@ -3970,7 +3991,7 @@ protected:
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
-    void ChangePetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
+    void ChangePetition(MsgEntry* me, psPetitionRequestMessage &msg, Client* client);
 
     /**
      * Handles GM queries for dealing with petitions.
@@ -3979,8 +4000,8 @@ protected:
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
-    void GMListPetitions(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
-    
+    void GMListPetitions(MsgEntry* me, psPetitionRequestMessage &msg, Client* client);
+
     /**
      * Handles GM changes to petitions.
      *
@@ -3990,7 +4011,7 @@ protected:
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
-    void GMHandlePetition(MsgEntry* me, psPetitionRequestMessage& msg, Client *client);
+    void GMHandlePetition(MsgEntry* me, psPetitionRequestMessage &msg, Client* client);
 
     /**
      * Lists all players for a GM.
@@ -3999,7 +4020,7 @@ protected:
      * @param msg The cracked command message.
      * @param client The GM client the command came from.
      */
-    void SendGMPlayerList(MsgEntry* me, psGMGuiMessage& msg, Client *client);
+    void SendGMPlayerList(MsgEntry* me, psGMGuiMessage &msg, Client* client);
 
     /**
      * List command for information retrieval.
@@ -4010,7 +4031,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleList(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data,Client *client);
+    void HandleList(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data,Client* client);
 
     /**
      * Time command for setting of game time.
@@ -4020,8 +4041,8 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleTime(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data,Client *client);
-    
+    void HandleTime(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data,Client* client);
+
     /**
      * Changes the name of the player to the specified one.
      *
@@ -4030,7 +4051,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void ChangeName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void ChangeName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Changes the NPC's default spawn location.
@@ -4049,7 +4070,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Weather(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void Weather(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Controls the rain.
@@ -4060,7 +4081,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Rain(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void Rain(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Controls the snow.
@@ -4071,19 +4092,19 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Snow(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void Snow(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Controls the thunder.
      *
-     * Sending a sound command to the clients. 
+     * Sending a sound command to the clients.
      * Works only when it is raining.
      * @param me The incoming message from the GM
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Thunder(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void Thunder(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Controls the rain.
@@ -4094,7 +4115,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Fog(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void Fog(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Deletes a character from the database.
@@ -4110,7 +4131,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void DeleteCharacter( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client );
+    void DeleteCharacter(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Bans a name from being used.
@@ -4123,7 +4144,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void BanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void BanName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Unbans a name from not being used.
@@ -4136,8 +4157,8 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void UnBanName(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
-    
+    void UnBanName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
+
     /**
      * Bans an account
      *
@@ -4150,7 +4171,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-     void BanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void BanClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Unbans an account
@@ -4164,7 +4185,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void UnbanClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void UnbanClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Bans an account from advising
@@ -4179,8 +4200,8 @@ protected:
      * @param client The GM client the command came from.
      */
 
-    void BanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
-    
+    void BanAdvisor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
+
     /**
      * Unbans an account for advising
      *
@@ -4193,7 +4214,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void UnbanAdvisor(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void UnbanAdvisor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Retrieves a list of spawn types for from all items of the server.
@@ -4203,7 +4224,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void SendSpawnTypes (MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void SendSpawnTypes(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Sends items of the specified type to the GMs client.
@@ -4211,7 +4232,7 @@ protected:
      * @param me The incoming message from the GM
      * @param client The GM client the command came from.
      */
-    void SendSpawnItems (MsgEntry* me, Client *client);
+    void SendSpawnItems(MsgEntry* me, Client* client);
 
     /**
      * Changes the name of a guild.
@@ -4221,8 +4242,8 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void RenameGuild( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
-    
+    void RenameGuild(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
+
     /**
      * Changes the leader of a guild.
      *
@@ -4231,7 +4252,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void ChangeGuildLeader( MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Sends information about an award (reward) to the target and GM.
@@ -4253,7 +4274,7 @@ protected:
      * @param client The GM client the command came from.
      * @param target The target to award the experience to.
      */
-    void AwardExperience(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client, Client* target);
+    void AwardExperience(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client, Client* target);
 
     /**
      * Awards something to a player, by a GM.
@@ -4271,7 +4292,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void TransferItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void TransferItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Checks the presence of items.
@@ -4280,7 +4301,7 @@ protected:
      * @param msg The cracked command message.
      * @param data A pointer to the command parser object with target data
      */
-    void CheckItem(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data);
+    void CheckItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data);
 
     /**
      * Freezes a client, preventing it from doing anything.
@@ -4290,7 +4311,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void FreezeClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void FreezeClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Thaws a client, reversing a freeze command.
@@ -4300,7 +4321,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void ThawClient(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void ThawClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Retrieves detailed information about a character.
@@ -4312,7 +4333,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Inspect(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void Inspect(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Changes the skill of the target.
@@ -4324,7 +4345,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void SetSkill(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void SetSkill(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Temporarily changes the mesh for a player.
@@ -4334,7 +4355,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Morph(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Temporarily changes the scale for an actor.
@@ -4344,7 +4365,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void Scale(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client* client);
+    void Scale(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Temporarily changes the security level for a player.
@@ -4354,7 +4375,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void TempSecurityLevel(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void TempSecurityLevel(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Gets the given account number's security level from the DB.
@@ -4372,7 +4393,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleGMEvent(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Handle request to view bad text from the targeted NPC.
@@ -4381,7 +4402,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleBadText(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleBadText(psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Manipulate quests from characters.
@@ -4391,7 +4412,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleQuest(MsgEntry* me,psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Change quality of items.
@@ -4399,7 +4420,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleSetQuality(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleSetQuality(psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Decide whether an item is stackable or not.
@@ -4409,7 +4430,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void ItemStackable(MsgEntry* me, AdminCmdData* data, Client *client );
+    void ItemStackable(MsgEntry* me, AdminCmdData* data, Client* client);
 
     /**
      * Set trait of a char.
@@ -4418,7 +4439,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleSetTrait(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleSetTrait(psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Change name of items.
@@ -4427,7 +4448,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleSetItemName(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleSetItemName(psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Handle reloads from DB.
@@ -4437,7 +4458,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleReload(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleReload(psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * List warnings given to account.
@@ -4446,7 +4467,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleListWarnings(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void HandleListWarnings(psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Shows what the target used in command will afflict in the game.
@@ -4455,7 +4476,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void CheckTarget(psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void CheckTarget(psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Allows to disable/enable quests temporarily (server cache) or definitely (database).
@@ -4465,7 +4486,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void DisableQuest(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
+    void DisableQuest(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Allows to set an experience given to who kills the issing player.
@@ -4475,7 +4496,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void SetKillExp(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void SetKillExp(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Allows to change faction points of players.
@@ -4485,7 +4506,7 @@ protected:
      * @param data A pointer to the command parser object with target data.
      * @param client The target client which will have his faction points changed.
      */
-    void AssignFaction(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client);
+    void AssignFaction(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Allows to quit/reboot the server remotely from a client.
@@ -4495,7 +4516,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleServerQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
+    void HandleServerQuit(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Allows to quit/reboot the npcclient remotely from a client.
@@ -4505,7 +4526,7 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
+    void HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
 
     /**
      * Allows to get version the server remotely from a client.
@@ -4515,8 +4536,8 @@ protected:
      * @param data A pointer to the command parser object with target data
      * @param client The GM client the command came from.
      */
-    void HandleVersion(MsgEntry* me, psAdminCmdMessage& msg, AdminCmdData* data, Client *client );
-    
+    void HandleVersion(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
+
     /**
      * Adds a petition under the passed user's name to the 'petitions' table in the database.
      *
@@ -4536,7 +4557,7 @@ protected:
      * @param gmID: Is the id of the GM who is requesting petitions, ignored if playerID != -1
      * @return Returns a iResultSet which contains the set of all matching petitions for the user
      */
-    iResultSet *GetPetitions(PID playerID, PID gmID = PETITION_GM);
+    iResultSet* GetPetitions(PID playerID, PID gmID = PETITION_GM);
 
     /**
      * Cancels the specified petition if the player was its creator.
@@ -4598,7 +4619,7 @@ protected:
      * @return Returns either success or failure.
      */
     bool EscalatePetition(PID gmID, int gmLevel, int petitionID);
-    
+
     /**
      * Descalates the level of the specified petition.
      *
@@ -4624,13 +4645,13 @@ protected:
     /**
      * Messagetest sending 10 random messages to a client.
      *
-     * Sends 10 messages in random order to the client for 
+     * Sends 10 messages in random order to the client for
      * testing sequential delivery.
      * @param client: Client to be the recepient of the messages
      * @param data A pointer to the command parser object with target data
      * @return void
      */
-    void RandomMessageTest(AdminCmdData* data, Client *client);
+    void RandomMessageTest(AdminCmdData* data, Client* client);
 
     /**
      * Returns the last error generated by SQL
@@ -4638,7 +4659,7 @@ protected:
      * @return Returns a string that describes the last sql error.
      * @see iConnection::GetLastError()
      */
-    const char* GetLastSQLError ();
+    const char* GetLastSQLError();
 
     csString lasterror; ///< internal string used for formating and passing back errormessages
 

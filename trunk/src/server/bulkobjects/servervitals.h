@@ -45,7 +45,7 @@ class VitalBuffable : public Buffable<float>
 public:
     virtual ~VitalBuffable() { }
 
-    void Initialize(unsigned int *sDirty, int dirtyF)
+    void Initialize(unsigned int* sDirty, int dirtyF)
     {
         statsDirty = sDirty;
         dirtyFlag = dirtyF;
@@ -58,7 +58,7 @@ protected:
     }
 
     int dirtyFlag; ///< The bit value we should set when this becomes dirty.
-    unsigned int *statsDirty; ///< Pointer to the psServerVitals dirty bitfield.
+    unsigned int* statsDirty; ///< Pointer to the psServerVitals dirty bitfield.
 };
 
 /// A character vital (such as HP or Mana) - server side.
@@ -80,16 +80,16 @@ struct Vital
 class psServerVitals : public psVitalManager<Vital>
 {
 public:
-    psServerVitals(psCharacter * character);
+    psServerVitals(psCharacter* character);
 
-     /** Handles new Vital data construction for the server.
-      */
+    /** Handles new Vital data construction for the server.
+     */
     bool SendStatDRMessage(uint32_t clientnum, EID eid, unsigned int flags, csRef<PlayerGroup> group = NULL);
 
-    bool Update( csTicks now );
+    bool Update(csTicks now);
 
-    void SetExp( unsigned int exp );
-    void SetPP( unsigned int pp );
+    void SetExp(unsigned int exp);
+    void SetPP(unsigned int pp);
 
     void SetVital(int vitalName, int dirtyFlag, float value);
     void AdjustVital(int vitalName, int dirtyFlag, float delta);
@@ -101,11 +101,11 @@ public:
     /** Set all vitals dirty.
      */
     void SetAllStatsDirty();
-    
+
     /** Cleare the dirty flags for vitals.
      */
-    void ClearStatsDirtyFlags( unsigned int dirtyFlags );
-    
+    void ClearStatsDirtyFlags(unsigned int dirtyFlags);
+
 private:
     /// Clamps the vital's current value to be in the interval [0, max].
     void ClampVital(int vital);
@@ -117,12 +117,12 @@ private:
      *
      *  @return The new value of the field in the vital stat.
      */
-    Vital & DirtyVital(int vitalName, int dirtyFlag);
+    Vital &DirtyVital(int vitalName, int dirtyFlag);
 
     ///  @see  PS_DIRTY_VITALS
     unsigned int statsDirty;
     unsigned char version;
-    psCharacter *character;  ///< the character whose vitals we manage
+    psCharacter* character;  ///< the character whose vitals we manage
 };
 
 #endif

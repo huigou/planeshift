@@ -75,13 +75,13 @@ enum GUILD_PRIVILEGE
     RIGHTS_EDIT_POINTS        = 64,    ///< User can change guild points of players of lower level
 
     RIGHTS_EDIT_GUILD         = 128,   ///< User can change guild name, guild secrecy, guild web page, max guild points
-                                       ///< and can disband the guild
+    ///< and can disband the guild
 
     RIGHTS_EDIT_PUBLIC        = 256,   ///< User can edit public notes of players with a lower level.
-                                       ///< Public notes are visible to all guild members
+    ///< Public notes are visible to all guild members
 
     RIGHTS_EDIT_PRIVATE       = 512,   ///< User can view and edit private notes of players with a lower level.
-                                       ///< Private notes are only visible to people with this flag.
+    ///< Private notes are only visible to people with this flag.
 
     RIGHTS_VIEW_CHAT_ALLIANCE = 1024,  ///< User can view alliance chat (command /alliance /a)
 
@@ -109,7 +109,9 @@ struct psGuildLevel
      * @return True if this is the max guild level or \ref privileges has the bit
      */
     inline bool HasRights(GUILD_PRIVILEGE rights) const
-    { return (level == MAX_GUILD_LEVEL) || (privileges & rights); }
+    {
+        return (level == MAX_GUILD_LEVEL) || (privileges & rights);
+    }
 };
 
 //------------------------------------------------------------------------------
@@ -124,8 +126,8 @@ class psGuildMember
 public:
     PID char_id;                ///< The character ID of the person.
     csString name;              ///< The name of the member
-    psCharacter  *character;    ///< Pointer to the character data of the person.
-    psGuildLevel *guildlevel;   ///< Members current level.
+    psCharacter*  character;    ///< Pointer to the character data of the person.
+    psGuildLevel* guildlevel;   ///< Members current level.
     int guild_points;           ///< Their points in the guild.
     csString public_notes;      ///< The public notes the member has.
     csString private_notes;     ///< Private Guild notes for the player.
@@ -141,7 +143,9 @@ public:
      *         level has the privilege and the user does not have it exclusively removed.
      */
     bool HasRights(GUILD_PRIVILEGE rights)
-    { return (guildlevel->HasRights(rights) && !(removedPrivileges & rights)) || (privileges & rights); }
+    {
+        return (guildlevel->HasRights(rights) && !(removedPrivileges & rights)) || (privileges & rights);
+    }
 };
 
 //------------------------------------------------------------------------------
@@ -185,7 +189,7 @@ public:
      *
      * Initializes an empty guild that is invalid. \ref Load or \ref InsertNew()
      * must be called before this guild is populated with anything useful.
-     * 
+     *
      * @param name The name of the guild
      * @param founder The PID of the founder of the guild
      */
@@ -209,14 +213,14 @@ public:
 
     /**
      * Loads the guild based on the name of the guild
-     * 
+     *
      * Loads the guild information from the database.
      * If any of the information fails to load, false is immediately returned
      *
      * @param name The name of the guild to load
      * @return True if successful, false otherwise
      */
-    bool Load(const csString& name);
+    bool Load(const csString &name);
 
     /**
      * Loads guild information out of a DB result
@@ -227,7 +231,7 @@ public:
      * @param row The result to extract information out of
      * @return True if successful, false otherwise
      */
-    bool Load(iResultRow& row);
+    bool Load(iResultRow &row);
 
     /**
      * Inserts a new guild into the DB
@@ -259,7 +263,7 @@ public:
      *
      * @param player The player that connected
      */
-    void Connect(psCharacter *player);
+    void Connect(psCharacter* player);
 
     /**
      * Marks a player as being disconnted.
@@ -270,7 +274,7 @@ public:
      *
      * @param player The player that disconnected
      */
-    void Disconnect(psCharacter *player);
+    void Disconnect(psCharacter* player);
 
     /**
      * Updates the last login time for the player.
@@ -281,7 +285,7 @@ public:
      * @note The DB is not updated because it is managed separately
      * @param player The player that has changed its last login time
      */
-    void UpdateLastLogin(psCharacter *player);
+    void UpdateLastLogin(psCharacter* player);
 
     /**
      * Finds a member.
@@ -291,7 +295,7 @@ public:
      *
      * @return null if member was not found, the member otherwise
      */
-    psGuildMember *FindMember(const char *name) const;
+    psGuildMember* FindMember(const char* name) const;
 
     /**
      * Finds a member.
@@ -301,7 +305,7 @@ public:
      *
      * @return null if member was not found, the member otherwise
      */
-    psGuildMember *FindMember(PID char_id) const;
+    psGuildMember* FindMember(PID char_id) const;
 
     /**
      * Finds the leader.
@@ -312,7 +316,7 @@ public:
      * @note This function should never return null
      * @return null if the leader could not be found, the member otherwise
      */
-    psGuildMember *FindLeader() const;
+    psGuildMember* FindLeader() const;
 
     /**
      * Finds a level.
@@ -322,7 +326,7 @@ public:
      * @param level The level to look for
      * @return null if the level could not be found, the level otherwise
      */
-    psGuildLevel *FindLevel(int level) const;
+    psGuildLevel* FindLevel(int level) const;
 
     /**
      * Tests if the guild meets minimum requirements.
@@ -347,7 +351,7 @@ public:
      * @return True if everything went okay, false if the member was already part of
      * a guild or the DB update failed.
      */
-    bool AddNewMember(psCharacter *player, int level=1);
+    bool AddNewMember(psCharacter* player, int level=1);
 
     /**
      * Removes a member from this guild.
@@ -359,7 +363,7 @@ public:
      * @return True if everything went okay, false if the member wasn't part of this
      * guild or if the DB update failed.
      */
-    bool RemoveMember(psGuildMember *target);
+    bool RemoveMember(psGuildMember* target);
 
     /**
      * Renames a level within this guild.
@@ -372,7 +376,7 @@ public:
      * @param levelname The name for the level
      * @return False if the level did not exist or the DB update failed, true otherwise
      */
-    bool RenameLevel(int level, const char *levelname);
+    bool RenameLevel(int level, const char* levelname);
 
     /**
      * Sets a privilege flag on a level.
@@ -403,7 +407,7 @@ public:
      * @return True if successful, false if the level did not exist, the member already
      * had the correct privileges or the DB update failed.
      */
-    bool SetMemberPrivilege(psGuildMember *member, GUILD_PRIVILEGE privilege, bool on);
+    bool SetMemberPrivilege(psGuildMember* member, GUILD_PRIVILEGE privilege, bool on);
 
     /**
      * Changes a member's level.
@@ -415,7 +419,7 @@ public:
      * @param level The level to update to
      * @return False if the level did not exist or the DB update failed, true otherwise
      */
-    bool UpdateMemberLevel(psGuildMember *target, int level);
+    bool UpdateMemberLevel(psGuildMember* target, int level);
 
     /**
      * Override for \ref BankManager.
@@ -423,26 +427,29 @@ public:
      * @param money Passed to other func
      * @param unused Unused
      */
-    inline void AdjustMoney(const psMoney& money, bool unused)
+    inline void AdjustMoney(const psMoney &money, bool unused)
     {
         unused = unused;
         AdjustMoney(money);
     }
-    
+
     /**
      * Adjusts the money in this guild's bank.
      *
      * Simply updates \ref bankMoney and then calls \ref SaveBankMoney.
      * @param money The money values to adjust by
      */
-    void AdjustMoney(const psMoney& money);
+    void AdjustMoney(const psMoney &money);
 
     /**
      * Returns the amount of money this guild has in it's bank.
      *
      * @return \ref bankMoney
      */
-    inline psMoney& GetBankMoney() { return bankMoney; }
+    inline psMoney &GetBankMoney()
+    {
+        return bankMoney;
+    }
 
     /**
      * Performs the DB save for this bank's money.
@@ -468,7 +475,10 @@ public:
      *
      * @return \ref name
      */
-    inline const csString & GetName() const { return name; }
+    inline const csString &GetName() const
+    {
+        return name;
+    }
 
     /**
      *  Changes the max amount of points a member may have for this guild
@@ -484,7 +494,10 @@ public:
      *
      *  @return \ref max_guild_points
      */
-    inline int GetMaxMemberPoints() const { return max_guild_points; }
+    inline int GetMaxMemberPoints() const
+    {
+        return max_guild_points;
+    }
 
     /**
      * Sets a member's points in the guild.
@@ -498,7 +511,7 @@ public:
      * @return True if successful, false if points > \ref max_guild_points or if
      * the DB update failed.
      */
-    bool SetMemberPoints(psGuildMember * member, int points);
+    bool SetMemberPoints(psGuildMember* member, int points);
 
     /**
      * Sets a member's notes for the guild.
@@ -512,7 +525,7 @@ public:
      * @param isPublic True for public notes, false for private
      * @return True if successful, false if DB update failed.
      */
-    bool SetMemberNotes(psGuildMember * member, const csString & notes, bool isPublic);
+    bool SetMemberNotes(psGuildMember* member, const csString &notes, bool isPublic);
 
     /**
      * Sets the name for the guild.
@@ -524,13 +537,16 @@ public:
      * @return True if successful, false if DB update failed.
      */
     bool SetName(csString guildName);
-    
+
     /**
      * Gets the web page.
      *
      * @return web_page
      */
-    inline const csString & GetWebPage() const { return web_page; }
+    inline const csString &GetWebPage() const
+    {
+        return web_page;
+    }
 
     /**
      * Sets the web page.
@@ -541,7 +557,7 @@ public:
      * @param web_page The value to overwrite into \ref web_page
      * @return True if successful, false if DB update failed.
      */
-    bool SetWebPage(const csString & web_page);
+    bool SetWebPage(const csString &web_page);
 
     /**
      * Sets whether the guild is secret or not.
@@ -559,14 +575,20 @@ public:
      *
      * @return \ref secret
      */
-    inline bool IsSecret() const { return secret; }
+    inline bool IsSecret() const
+    {
+        return secret;
+    }
 
     /**
      *  Gets the MOTD string
      *
      * @return \ref motd
      */
-    inline const csString & GetMOTD() const { return motd; }
+    inline const csString &GetMOTD() const
+    {
+        return motd;
+    }
 
     /**
      * Sets the MOTD string.
@@ -576,15 +598,18 @@ public:
      * @param str The new value for the MOTD
      * @return True if successful, false if DB update failed.
      */
-    bool SetMOTD(const csString & str);
-    
+    bool SetMOTD(const csString &str);
+
     /**
      * Gets the karma points.
      *
      * @return \ref karma_points
      */
-    inline int GetKarmaPoints() const { return karma_points; }
-    
+    inline int GetKarmaPoints() const
+    {
+        return karma_points;
+    }
+
     /**
      * Sets the karma points.
      *
@@ -603,7 +628,7 @@ public:
      *
      * @param other The guild this guild is going to war with
      */
-    void AddGuildWar(psGuildInfo *other);
+    void AddGuildWar(psGuildInfo* other);
 
     /**
      * Checks if a guild war is active.
@@ -614,7 +639,7 @@ public:
      * @param other The other guild to check if there is a guild war
      * @return True if ther other guild is at war with this one
      */
-    bool IsGuildWarActive(psGuildInfo *other);
+    bool IsGuildWarActive(psGuildInfo* other);
 
     /**
      * Removes a guild war.
@@ -622,22 +647,28 @@ public:
      * Removes the other guild's ID from \ref guild_war_with_id. DB is
      * then updated through the command pump.
      */
-    void RemoveGuildWar(psGuildInfo *other);
+    void RemoveGuildWar(psGuildInfo* other);
 
     /**
      * Gets the ID of the alliance this guild belongs to.
      *
      * @return \ref alliance, 0 denotes no alliance
      */
-    inline int GetAllianceID() const { return alliance; }
+    inline int GetAllianceID() const
+    {
+        return alliance;
+    }
 
     /**
      *  Gets the ID of this guild
      *
      * @return \ref id
      */
-    inline int GetID() const { return id; }
-    
+    inline int GetID() const
+    {
+        return id;
+    }
+
     /**
      * Gets a const iterator for levels.
      *
@@ -647,7 +678,7 @@ public:
     {
         return levels.GetIterator();
     }
-    
+
     /**
      * Gets an iterator for level.
      *
@@ -657,7 +688,7 @@ public:
     {
         return levels.GetIterator();
     }
-    
+
     /**
      * Gets a const iterator for levels.
      *
@@ -667,7 +698,7 @@ public:
     {
         return members.GetIterator();
     }
-    
+
     /**
      * Gets an iterator for level.
      *
@@ -677,7 +708,7 @@ public:
     {
         return members.GetIterator();
     }
-    
+
     /**
      * Gets the number of members.
      *
@@ -700,12 +731,12 @@ public:
 class psGuildAlliance : public csRefCount
 {
 public:
-    
+
     /**
      * Basic constructor.
      */
     psGuildAlliance();
-    
+
     /**
      * Basic constructor with name parameter.
      *
@@ -713,7 +744,7 @@ public:
      *
      * @param n_name Sets \ref name
      */
-    psGuildAlliance(const csString & n_name);
+    psGuildAlliance(const csString &n_name);
 
     /**
      * INSERTs alliance data in database.
@@ -762,7 +793,7 @@ public:
      * @return True if everything was successful, false if either the update failed or
      * the guild is already part of the alliance.
      */
-    bool AddNewMember(psGuildInfo * member);
+    bool AddNewMember(psGuildInfo* member);
 
     /**
      * Checks if a guild is in this alliance.
@@ -772,7 +803,7 @@ public:
      * @param member The guild to check
      * @return True if the guild is in the alliance, false if it is not.
      */
-    bool CheckMembership(psGuildInfo * member) const;
+    bool CheckMembership(psGuildInfo* member) const;
 
     /**
      * Removes a guild from the alliance.
@@ -784,14 +815,17 @@ public:
      * @return True if successful, false if the guild is not a member or is the leader or
      * if the DB update fails.
      */
-    bool RemoveMember(psGuildInfo * member);
+    bool RemoveMember(psGuildInfo* member);
 
     /**
      * Gets the number of members in this alliance.
      *
      * @return The size of \ref members
      */
-    inline size_t GetMemberCount() const { return members.GetSize(); }
+    inline size_t GetMemberCount() const
+    {
+        return members.GetSize();
+    }
 
     /**
      * Gets a guild based off its index.
@@ -801,28 +835,37 @@ public:
      * @param memberNum Index of the guild to look up
      * @return The member in \ref members with the given index
      */
-    psGuildInfo * GetMember(int memberNum);
+    psGuildInfo* GetMember(int memberNum);
 
     /**
      * Gets the ID.
      *
      * @return \ref id
      */
-    inline int GetID() const { return id; }
+    inline int GetID() const
+    {
+        return id;
+    }
 
     /**
      * Gets the name.
      *
      * @return \ref name
      */
-    inline const csString & GetName() const { return name; }
+    inline const csString &GetName() const
+    {
+        return name;
+    }
 
     /**
      * Gets the leader.
      *
      * @return \ref leader
      */
-    inline psGuildInfo * GetLeader() const { return leader; }
+    inline psGuildInfo* GetLeader() const
+    {
+        return leader;
+    }
 
     /**
      * Sets a new alliance leader.
@@ -834,7 +877,7 @@ public:
      * @return True if successful, false if \ref CheckMembership fails or the DB
      * update fails.
      */
-    bool SetLeader(psGuildInfo * newLeader);
+    bool SetLeader(psGuildInfo* newLeader);
 
     static csString lastError;       ///< When a psGuildAlliance method fails (returns false), this contains a description of the problem
 

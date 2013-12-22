@@ -1,7 +1,7 @@
 /*
  * psglyph.h
  *
- * Copyright (C) 2001-2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -53,14 +53,17 @@ public:
 
     /** Return a string identifying this object as a Glyph
      */
-    virtual const char * GetItemType() { return "Glyph"; }
+    virtual const char* GetItemType()
+    {
+        return "Glyph";
+    }
 
-    virtual bool Load(iResultRow& row);
+    virtual bool Load(iResultRow &row);
 
-    virtual psItem *CreateNew();
-    virtual void Copy(psGlyph * target);
+    virtual psItem* CreateNew();
+    virtual void Copy(psGlyph* target);
 
-    virtual void SetOwningCharacter(psCharacter *owner);
+    virtual void SetOwningCharacter(psCharacter* owner);
 
     csString GlyphToXML();
     virtual int GetPurifyStatus() const;
@@ -70,12 +73,12 @@ public:
     bool Purified();
 
     virtual psItem* Clone();
-    
+
     ///  The new operator is overriden to call PoolAllocator template functions
-    void *operator new(size_t);
-    
+    void* operator new(size_t);
+
     ///  The delete operator is overriden to call PoolAllocator template functions
-    void operator delete(void *);
+    void operator delete(void*);
 
 private:
     /// Static reference to the pool for all psGlyph objects

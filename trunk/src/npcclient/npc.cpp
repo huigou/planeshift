@@ -284,50 +284,50 @@ csString NPC::Info(const csString &infoRequestSubCmd)
 {
     csString output;
 
-    if (infoRequestSubCmd == "all" || infoRequestSubCmd == "summary")
+    if(infoRequestSubCmd == "all" || infoRequestSubCmd == "summary")
     {
         DumpState(output);
         output.Append("\n");
     }
 
-    if (infoRequestSubCmd == "all")
+    if(infoRequestSubCmd == "all")
     {
         DumpBehaviorList(output);
         output.Append("\n");
     }
-    
-    if (infoRequestSubCmd == "all")
+
+    if(infoRequestSubCmd == "all")
     {
         DumpReactionList(output);
         output.Append("\n");
     }
-    
-    if (infoRequestSubCmd == "all")
+
+    if(infoRequestSubCmd == "all")
     {
         DumpHateList(output);
         output.Append("\n");
     }
-    
-    if (infoRequestSubCmd == "all")
+
+    if(infoRequestSubCmd == "all")
     {
         DumpDebugLog(output);
         output.Append("\n");
     }
-    
-    if (infoRequestSubCmd == "all")
+
+    if(infoRequestSubCmd == "all")
     {
         DumpMemory(output);
         output.Append("\n");
     }
-    
-    if (infoRequestSubCmd == "all")
+
+    if(infoRequestSubCmd == "all")
     {
         DumpControlled(output);
         output.Append("\n");
     }
-    
 
-    if (infoRequestSubCmd == "old")
+
+    if(infoRequestSubCmd == "old")
     {
         // Position and instance
         {
@@ -335,7 +335,7 @@ csString NPC::Info(const csString &infoRequestSubCmd)
             iSector* sector;
             float rot = 0.0;
             InstanceID instance = INSTANCE_ALL;
-            
+
             if(npcActor)
             {
                 psGameObject::GetPosition(npcActor,pos,rot,sector);
@@ -346,7 +346,7 @@ csString NPC::Info(const csString &infoRequestSubCmd)
         }
         output.AppendFmt(" DR Counter: %d ", DRcounter);
         output.AppendFmt("%s\n",disabled?"Disabled ":"");
-        
+
         output.AppendFmt(" Active locate: ( Pos: %s Angle: %.1f deg Radius: %.2f WP: %s )\n",
                          toString(activeLocate->pos,activeLocate->sector).GetDataSafe(),
                          activeLocate->angle*180/PI,activeLocate->radius,
@@ -362,8 +362,8 @@ csString NPC::Info(const csString &infoRequestSubCmd)
         }
         if(GetTribe())
         {
-        output.AppendFmt(" Tribe( Name: %s Type: %s Inside home: %s )\n",
-                         GetTribe()->GetName(),GetTribeMemberType().GetDataSafe(),insideTribeHome?"Yes":"No");
+            output.AppendFmt(" Tribe( Name: %s Type: %s Inside home: %s )\n",
+                             GetTribe()->GetName(),GetTribeMemberType().GetDataSafe(),insideTribeHome?"Yes":"No");
         }
         if(GetTarget())
         {
@@ -382,7 +382,7 @@ csString NPC::Info(const csString &infoRequestSubCmd)
 void NPC::Dump()
 {
     csString output;
-    
+
     DumpState(output);
     output.Append("\n");
 
@@ -400,13 +400,13 @@ void NPC::Dump()
 
     DumpMemory(output);
     output.Append("\n");
-    
+
     DumpControlled(output);
     output.Append("\n");
 
     // Display output to Cmd Output
     csStringArray lines(output, "\n");
-    for (size_t i = 0; i < lines.GetSize(); i++)
+    for(size_t i = 0; i < lines.GetSize(); i++)
     {
         CPrintf(CON_CMDOUTPUT,"%s\n",lines[i]);
     }
@@ -1036,9 +1036,9 @@ void NPC::DumpMemory(csString &output)
     {
         output.AppendFmt("Name: %s\n", bufferMemory->name.GetData());
         output.AppendFmt("Pos: x:%f y:%f z:%f\n",
-                bufferMemory->pos[0],
-                bufferMemory->pos[1],
-                bufferMemory->pos[2]);
+                         bufferMemory->pos[0],
+                         bufferMemory->pos[1],
+                         bufferMemory->pos[2]);
         output.AppendFmt("Has Sector:\n");
         if(bufferMemory->GetSector())
             output.AppendFmt("Yes\n");
@@ -1348,7 +1348,7 @@ bool NPC::ContainAutoMemorizeType(const csString &type)
 void NPC::LocalDebugReport(const csString &debugString)
 {
     csStringArray list(debugString,"\n");
-    for (size_t i = 0; i < list.GetSize(); i++)
+    for(size_t i = 0; i < list.GetSize(); i++)
     {
         CPrintf(CON_CMDOUTPUT, "%s (%s)> %s\n", GetName(), ShowID(pid), list[i]);
     }
@@ -1357,7 +1357,7 @@ void NPC::LocalDebugReport(const csString &debugString)
 void NPC::RemoteDebugReport(uint32_t clientNum, const csString &debugString)
 {
     csStringArray list(debugString,"\n");
-    for (size_t i = 0; i < list.GetSize(); i++)
+    for(size_t i = 0; i < list.GetSize(); i++)
     {
         networkmanager->QueueSystemInfoCommand(clientNum,"%s (%s)> %s", GetName(), ShowID(pid), list[i]);
     }
@@ -1957,7 +1957,7 @@ void HateList::DumpHateList(csString &output, const csVector3 &myPos, iSector* m
     csHash<HateListEntry*, EID>::GlobalIterator iter = hatelist.GetIterator();
 
     output.AppendFmt("%6s %-20s %5s %-40s %5s %s\n",
-            "Entity","Name", "Hated","Pos","Range","Flags");
+                     "Entity","Name", "Hated","Pos","Range","Flags");
 
     while(iter.HasNext())
     {
@@ -1975,8 +1975,8 @@ void HateList::DumpHateList(csString &output, const csVector3 &myPos, iSector* m
                 sectorName = sector->QueryObject()->GetName();
             }
             output.AppendFmt("%6d %-20s %5.1f %-40s %5.1f%s%s",
-                    h->entity_id.Unbox(), obj->GetName(), h->hate_amount, toString(pos, sector).GetDataSafe(),
-                    world->Distance(pos,sector,myPos,mySector), obj->IsInvisible()?" Invisible":"", obj->IsInvincible()?" Invincible":"");
+                             h->entity_id.Unbox(), obj->GetName(), h->hate_amount, toString(pos, sector).GetDataSafe(),
+                             world->Distance(pos,sector,myPos,mySector), obj->IsInvisible()?" Invisible":"", obj->IsInvincible()?" Invincible":"");
             output.AppendFmt("\n");
         }
         else

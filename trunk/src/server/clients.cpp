@@ -1,7 +1,7 @@
 /*
  * clients.cpp - Author: Keith Fulton
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@ SockAddress::SockAddress(const SOCKADDR_IN &sock)
 #endif
 }
 
-bool SockAddress::operator< (const SockAddress& other) const
+bool SockAddress::operator< (const SockAddress &other) const
 {
 #ifdef INCLUDE_IPV6_SUPPORT
     int result = memcmp(&addr.sin6_addr, &other.addr.sin6_addr, 16);
@@ -45,7 +45,7 @@ bool SockAddress::operator< (const SockAddress& other) const
         return true;
     else if(result > 0)
         return false;
-    return addr.sin6_port < other.addr.sin6_port;    
+    return addr.sin6_port < other.addr.sin6_port;
 #else
     if(addr < other.addr)
         return true;
@@ -62,8 +62,8 @@ ClientConnectionSet::ClientConnectionSet():addrHash(307),hash(307)
 
 ClientConnectionSet::~ClientConnectionSet()
 {
-    AddressHash::GlobalIterator it (addrHash.GetIterator ());
-    Client *p = NULL;
+    AddressHash::GlobalIterator it(addrHash.GetIterator());
+    Client* p = NULL;
     while(it.HasNext())
     {
         p = it.Next();
@@ -76,21 +76,22 @@ bool ClientConnectionSet::Initialize()
     return true;
 }
 
-Client *ClientConnectionSet::Add(LPSOCKADDR_IN addr)
+Client* ClientConnectionSet::Add(LPSOCKADDR_IN addr)
 {
     int newclientnum;
-    
+
     // Get a random uniq client number
     Client* testclient;
-    do 
+    do
     {
         newclientnum = psserver->rng->Get(0x8fffff); //make clientnum random
         testclient = FindAny(newclientnum);
-    } while (testclient != NULL);
+    }
+    while(testclient != NULL);
 
     // Have uniq client number, create the new client
     Client* client = new Client();
-    if (!client->Initialize(addr, newclientnum))
+    if(!client->Initialize(addr, newclientnum))
     {
         Bug1("Client Init failed?!?\n");
         delete client;
@@ -103,12 +104,12 @@ Client *ClientConnectionSet::Add(LPSOCKADDR_IN addr)
     return client;
 }
 
-void ClientConnectionSet::MarkDelete(Client *client)
+void ClientConnectionSet::MarkDelete(Client* client)
 {
-    CS::Threading::RecursiveMutexScopedLock lock (mutex);
-    
+    CS::Threading::RecursiveMutexScopedLock lock(mutex);
+
     uint32_t clientid = client->GetClientNum();
-    if (!addrHash.DeleteAll(client->GetAddress()))
+    if(!addrHash.DeleteAll(client->GetAddress()))
         Bug2("Couldn't delete client %d, it was never added!", clientid);
 
     hash.DeleteAll(clientid);
@@ -117,7 +118,7 @@ void ClientConnectionSet::MarkDelete(Client *client)
 
 void ClientConnectionSet::SweepDelete()
 {
-    CS::Threading::RecursiveMutexScopedLock lock (mutex);
+    CS::Threading::RecursiveMutexScopedLock lock(mutex);
 
     toDelete.Empty();
 }
@@ -139,101 +140,101 @@ size_t ClientConnectionSet::CountReadyPlayers() const
     while(it.HasNext())
     {
         Client* p = it.Next();
-        
-        if (p->IsReady() && p->IsPlayerClient())
+
+        if(p->IsReady() && p->IsPlayerClient())
         {
             count++;
         }
-        
+
     }
-    
+
     return count;
 }
 
 
 
-Client *ClientConnectionSet::FindAny(uint32_t clientnum)
+Client* ClientConnectionSet::FindAny(uint32_t clientnum)
 {
-    if (clientnum==0)
+    if(clientnum==0)
         return NULL;
 
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
     return hash.Get(clientnum, 0);
 }
 
-Client *ClientConnectionSet::Find(uint32_t clientnum)
+Client* ClientConnectionSet::Find(uint32_t clientnum)
 {
-    if (clientnum==0)
+    if(clientnum==0)
         return NULL;
 
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
     Client* temp = hash.Get(clientnum, 0);
 
-    if (temp && temp->IsReady())
+    if(temp && temp->IsReady())
         return temp;
     else
         return NULL;
 }
 
-Client *ClientConnectionSet::Find(const char* name)
+Client* ClientConnectionSet::Find(const char* name)
 {
-    if (!name)
+    if(!name)
     {
         Error1("name == 0!");
         return NULL;
     }
 
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    AddressHash::GlobalIterator it (addrHash.GetIterator ());
-    Client *p = NULL;
+    AddressHash::GlobalIterator it(addrHash.GetIterator());
+    Client* p = NULL;
     while(it.HasNext())
     {
         p = it.Next();
-        if (!p->GetName())
+        if(!p->GetName())
             continue;
 
-        if (!strcasecmp(p->GetName(), name))
+        if(!strcasecmp(p->GetName(), name))
             break;
         p = NULL;
     }
 
-    if (p && p->IsReady())
+    if(p && p->IsReady())
         return p;
     else
         return NULL;
 }
 
-Client *ClientConnectionSet::FindPlayer(PID playerID)
+Client* ClientConnectionSet::FindPlayer(PID playerID)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    AddressHash::GlobalIterator it (addrHash.GetIterator ());
+    AddressHash::GlobalIterator it(addrHash.GetIterator());
 
-    while (it.HasNext())
+    while(it.HasNext())
     {
-        Client *p = it.Next();
-        if (p->GetPID() == playerID)
+        Client* p = it.Next();
+        if(p->GetPID() == playerID)
             return p;
     }
 
     return NULL;
 }
 
-Client *ClientConnectionSet::FindAccount(AccountID accountID, uint32_t excludeClient)
+Client* ClientConnectionSet::FindAccount(AccountID accountID, uint32_t excludeClient)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    AddressHash::GlobalIterator it (addrHash.GetIterator ());
+    AddressHash::GlobalIterator it(addrHash.GetIterator());
 
-    while (it.HasNext())
+    while(it.HasNext())
     {
-        Client *p = it.Next();
-        if (p->GetAccountID() == accountID && p->GetClientNum() != excludeClient)
+        Client* p = it.Next();
+        if(p->GetAccountID() == accountID && p->GetClientNum() != excludeClient)
             return p;
     }
 
     return NULL;
 }
 
-Client *ClientConnectionSet::Find(LPSOCKADDR_IN addr)
+Client* ClientConnectionSet::Find(LPSOCKADDR_IN addr)
 {
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
 
@@ -242,24 +243,24 @@ Client *ClientConnectionSet::Find(LPSOCKADDR_IN addr)
 
 csRef<NetPacketQueueRefCount> ClientConnectionSet::FindQueueAny(uint32_t clientnum)
 {
-    if (clientnum==0)
+    if(clientnum==0)
         return NULL;
-    
+
     CS::Threading::RecursiveMutexScopedLock lock(mutex);
-    Client *client = hash.Get(clientnum, 0);
+    Client* client = hash.Get(clientnum, 0);
     if(client)
         return client->outqueue;
     else
         return NULL;
 }
 
-ClientIterator::ClientIterator (ClientConnectionSet& clients)
-: ClientConnectionSet::AddressHash::GlobalIterator (clients.addrHash.GetIterator()), mutex(clients.mutex)
+ClientIterator::ClientIterator(ClientConnectionSet &clients)
+    : ClientConnectionSet::AddressHash::GlobalIterator(clients.addrHash.GetIterator()), mutex(clients.mutex)
 {
     mutex.Lock();
 }
 
-ClientIterator::~ClientIterator ()
+ClientIterator::~ClientIterator()
 {
     mutex.Unlock();
 }

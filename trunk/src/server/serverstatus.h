@@ -1,7 +1,7 @@
 /*
  * serverstatus.h by Matze Braun <matze@braunis.de>
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -45,37 +45,37 @@
 struct iObjectRegistry;
 class psServer;
 
-/** This class generates logs at a particular interval that has information that 
- *  can be displayed later on a website. 
+/** This class generates logs at a particular interval that has information that
+ *  can be displayed later on a website.
  *
- *  At the moment it overwrites logs but can be easily changed to either create a 
+ *  At the moment it overwrites logs but can be easily changed to either create a
  *  unique log file for each report ( such as daily ).
  *
  * Log Format:
  *  &lt;server_report time="Time stamp for report" number="number of this report" &gt;
- *  &lt;player name="player name" 
- *             guild="guild name" 
- *             title="guild rank" 
- *             security="security level"  
+ *  &lt;player name="player name"
+ *             guild="guild name"
+ *             title="guild rank"
+ *             security="security level"
  *             secret="yes|no" /&gt;
- *  &lt;server_report&gt; 
+ *  &lt;server_report&gt;
  */
 
 class ServerStatus
 {
 public:
     /** Reads config files, starts periodical status generator */
-    static bool Initialize (iObjectRegistry* objreg);
-    
+    static bool Initialize(iObjectRegistry* objreg);
+
     /** Has the generator run in a while */
     static void ScheduleNextRun();
-    
+
     /// Interval in milliseconds to generate a report file.
     static csTicks reportRate;
-    
+
     /// File that it should log to.
     static csString reportFile;
-    
+
     static unsigned int count;
 
     static unsigned int mob_deathcount;

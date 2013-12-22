@@ -1,7 +1,7 @@
 /*
  * events.cpp
  *
- * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  * Author: Keith Fulton <keith@planeshift.it>
  */
 
@@ -48,22 +48,22 @@
 
 PSF_IMPLEMENT_MSG_FACTORY(psDamageEvent,MSGTYPE_DAMAGE_EVENT);
 
-psDamageEvent::psDamageEvent(gemActor *attack,gemActor *victim,float dmg)
+psDamageEvent::psDamageEvent(gemActor* attack,gemActor* victim,float dmg)
 {
-    msg.AttachNew(new MsgEntry(sizeof(gemActor*)*2 + sizeof(float) ,PRIORITY_LOW ));
+    msg.AttachNew(new MsgEntry(sizeof(gemActor*)*2 + sizeof(float) ,PRIORITY_LOW));
 
     msg->SetType(MSGTYPE_DAMAGE_EVENT);
-    msg->clientnum      = 0; 
-    msg->AddPointer( (uintptr_t) attack );
-    msg->AddPointer( (uintptr_t) victim );
-    msg->Add( dmg );
+    msg->clientnum      = 0;
+    msg->AddPointer((uintptr_t) attack);
+    msg->AddPointer((uintptr_t) victim);
+    msg->Add(dmg);
 
     valid=!(msg->overrun);
 }
 
-psDamageEvent::psDamageEvent( MsgEntry* event )
+psDamageEvent::psDamageEvent(MsgEntry* event)
 {
-    if (!event)
+    if(!event)
         return;
 
     attacker = (gemActor*)event->GetPointer();
@@ -71,10 +71,10 @@ psDamageEvent::psDamageEvent( MsgEntry* event )
     damage   = event->GetFloat();
 }
 
-csString psDamageEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psDamageEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("Attacker: %p Target: %p Damage: %f",(void*)attacker,(void*)target,damage);
 
     return msgtext;
@@ -84,32 +84,32 @@ csString psDamageEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psDeathEvent,MSGTYPE_DEATH_EVENT);
 
-psDeathEvent::psDeathEvent(gemActor *dead,gemActor *killer)
+psDeathEvent::psDeathEvent(gemActor* dead,gemActor* killer)
 {
-    msg.AttachNew(new MsgEntry(sizeof(gemActor*)*2 ,PRIORITY_LOW ));
+    msg.AttachNew(new MsgEntry(sizeof(gemActor*)*2 ,PRIORITY_LOW));
 
     msg->SetType(MSGTYPE_DEATH_EVENT);
     msg->clientnum = 0;
-    msg->AddPointer( (uintptr_t) dead );
-    msg->AddPointer( (uintptr_t) killer );
+    msg->AddPointer((uintptr_t) dead);
+    msg->AddPointer((uintptr_t) killer);
 
 
     valid=!(msg->overrun);
 }
 
-psDeathEvent::psDeathEvent( MsgEntry* event )
+psDeathEvent::psDeathEvent(MsgEntry* event)
 {
-    if (!event)
+    if(!event)
         return;
 
     deadActor = (gemActor*)event->GetPointer();
     killer    = (gemActor*)event->GetPointer();
 }
 
-csString psDeathEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psDeathEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("DeadActor: %p Killer: %p",(void*)deadActor,(void*)killer);
 
     return msgtext;
@@ -119,19 +119,19 @@ csString psDeathEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psTargetChangeEvent,MSGTYPE_TARGET_EVENT);
 
-psTargetChangeEvent::psTargetChangeEvent(gemActor *targeter, gemObject *targeted)
+psTargetChangeEvent::psTargetChangeEvent(gemActor* targeter, gemObject* targeted)
 {
     msg.AttachNew(new MsgEntry(sizeof(gemActor*) + sizeof(gemObject*), PRIORITY_LOW));
 
     msg->SetType(MSGTYPE_TARGET_EVENT);
     msg->clientnum = 0;
-    msg->AddPointer( (uintptr_t) targeter );
-    msg->AddPointer( (uintptr_t) targeted );    
-    
-    valid = ! (msg->overrun);
+    msg->AddPointer((uintptr_t) targeter);
+    msg->AddPointer((uintptr_t) targeted);
+
+    valid = !(msg->overrun);
 }
 
-psTargetChangeEvent::psTargetChangeEvent(MsgEntry *event)
+psTargetChangeEvent::psTargetChangeEvent(MsgEntry* event)
 {
     if(!event)
         return;
@@ -140,10 +140,10 @@ psTargetChangeEvent::psTargetChangeEvent(MsgEntry *event)
     target    = (gemObject*)event->GetPointer();
 }
 
-csString psTargetChangeEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psTargetChangeEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("Character: %p Target: %p",(void*)character,(void*)target);
 
     return msgtext;
@@ -153,36 +153,36 @@ csString psTargetChangeEvent::ToString(NetBase::AccessPointers * /*accessPointer
 
 PSF_IMPLEMENT_MSG_FACTORY(psZPointsGainedEvent,MSGTYPE_ZPOINT_EVENT);
 
-psZPointsGainedEvent::psZPointsGainedEvent( gemActor* actor, const char *name, int gained, bool rankup )
+psZPointsGainedEvent::psZPointsGainedEvent(gemActor* actor, const char* name, int gained, bool rankup)
 {
-    msg.AttachNew(new MsgEntry(sizeof(gemActor*) + 
-                       sizeof(int) + 
-                       sizeof(bool) +
-                       strlen(name)+1, PRIORITY_LOW));
-                       
-    msg->SetType(MSGTYPE_ZPOINT_EVENT);                   
+    msg.AttachNew(new MsgEntry(sizeof(gemActor*) +
+                               sizeof(int) +
+                               sizeof(bool) +
+                               strlen(name)+1, PRIORITY_LOW));
+
+    msg->SetType(MSGTYPE_ZPOINT_EVENT);
     msg->clientnum = actor->GetClientID();
-    msg->Add( name );
-    msg->AddPointer( (uintptr_t) actor );
-    msg->Add( (uint32_t)gained );
-    msg->Add( rankup );                             
- }
-   
-psZPointsGainedEvent::psZPointsGainedEvent( MsgEntry* event )
+    msg->Add(name);
+    msg->AddPointer((uintptr_t) actor);
+    msg->Add((uint32_t)gained);
+    msg->Add(rankup);
+}
+
+psZPointsGainedEvent::psZPointsGainedEvent(MsgEntry* event)
 {
-    if ( !event )
+    if(!event)
         return;
 
     skillName = event->GetStr();
     actor = (gemActor*)event->GetPointer();
-    amountGained = event->GetUInt32();  
-    rankUp = event->GetBool();    
+    amountGained = event->GetUInt32();
+    rankUp = event->GetBool();
 }
 
-csString psZPointsGainedEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psZPointsGainedEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("Skill: %s Actor: %p ZGained: %d RankUp: %s",
                       skillName.GetDataSafe(),(void*)actor,amountGained,(rankUp?"true":"false"));
 
@@ -197,23 +197,23 @@ psBuyEvent::psBuyEvent(PID from, const char* fromName, PID to, const char* toNam
 {
     // Merchant => Player
 
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(fromName) + 1 + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
-                       sizeof(item), PRIORITY_LOW));
-                       
-    msg->SetType(MSGTYPE_BUY_EVENT);                   
-    msg->clientnum = 0;  
+    msg.AttachNew(new MsgEntry((sizeof(int) * 4) + strlen(fromName) + 1 + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
+                               sizeof(item), PRIORITY_LOW));
+
+    msg->SetType(MSGTYPE_BUY_EVENT);
+    msg->clientnum = 0;
     msg->Add(from.Unbox());
     msg->Add(fromName);
     msg->Add(to.Unbox());
     msg->Add(toName);
-    msg->Add( item);
+    msg->Add(item);
     msg->Add(itemName);
-    msg->Add( (int32_t) stack);
-    msg->Add( (int32_t) quality);
-    msg->Add( (uint32_t) price);
+    msg->Add((int32_t) stack);
+    msg->Add((int32_t) quality);
+    msg->Add((uint32_t) price);
 }
 
-psBuyEvent::psBuyEvent( MsgEntry* event)
+psBuyEvent::psBuyEvent(MsgEntry* event)
 {
     if(!event)
         return;
@@ -232,10 +232,10 @@ psBuyEvent::psBuyEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psBuyEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psBuyEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("From: %s To: %s Item: '%d' Count: %d Quality: %d Price %d",
                       ShowID(trans->from), ShowID(trans->to), trans->item,
                       trans->count,trans->quality,trans->price);
@@ -251,23 +251,23 @@ psSellEvent::psSellEvent(PID from, const char* fromName, PID to, const char* toN
 {
     // Player => Merchant
 
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(fromName) + 1 + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
-                       sizeof(item), PRIORITY_LOW));
-                       
-    msg->SetType(MSGTYPE_SELL_EVENT);                   
-    msg->clientnum = 0;  
+    msg.AttachNew(new MsgEntry((sizeof(int) * 4) + strlen(fromName) + 1 + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
+                               sizeof(item), PRIORITY_LOW));
+
+    msg->SetType(MSGTYPE_SELL_EVENT);
+    msg->clientnum = 0;
     msg->Add(from.Unbox());
     msg->Add(fromName);
     msg->Add(to.Unbox());
     msg->Add(toName);
-    msg->Add( item);
+    msg->Add(item);
     msg->Add(itemName);
-    msg->Add( (int32_t) stack);
-    msg->Add( (int32_t) quality);
-    msg->Add( (uint32_t) price);
+    msg->Add((int32_t) stack);
+    msg->Add((int32_t) quality);
+    msg->Add((uint32_t) price);
 }
 
-psSellEvent::psSellEvent( MsgEntry* event)
+psSellEvent::psSellEvent(MsgEntry* event)
 {
     if(!event)
         return;
@@ -287,12 +287,12 @@ psSellEvent::psSellEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psSellEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psSellEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("From: %s To: %s Item: '%d' Count: %d Quality: %d Price %d",
-                      ShowID(trans->from), ShowID(trans->to), trans->item, 
+                      ShowID(trans->from), ShowID(trans->to), trans->item,
                       trans->count,trans->quality,trans->price);
 
     return msgtext;
@@ -304,31 +304,31 @@ PSF_IMPLEMENT_MSG_FACTORY(psPickupEvent,MSGTYPE_PICKUP_EVENT);
 psPickupEvent::psPickupEvent(PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price)
 {
     // Player => Merchant
-    
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
+
+    msg.AttachNew(new MsgEntry((sizeof(int) * 4) + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
                                sizeof(item), PRIORITY_LOW));
-    
-    msg->SetType(MSGTYPE_PICKUP_EVENT);                   
-    msg->clientnum = 0;  
+
+    msg->SetType(MSGTYPE_PICKUP_EVENT);
+    msg->clientnum = 0;
     msg->Add(to.Unbox());
     msg->Add(toName);
-    msg->Add( item);
+    msg->Add(item);
     msg->Add(itemName);
-    msg->Add( (int32_t) stack);
-    msg->Add( (int32_t) quality);
-    msg->Add( (uint32_t) price);
+    msg->Add((int32_t) stack);
+    msg->Add((int32_t) quality);
+    msg->Add((uint32_t) price);
 }
 
-psPickupEvent::psPickupEvent( MsgEntry* event)
+psPickupEvent::psPickupEvent(MsgEntry* event)
 {
     if(!event)
         return;
-    
+
     trans.AttachNew(new TransactionEntity()); // needs to be handled by economy manager
-    
+
     trans->to = PID(event->GetUInt32());
     trans->toName = event->GetStr();
-    
+
     trans->item = event->GetUInt32();
     trans->itemName = event->GetStr();
     trans->count = event->GetInt32();
@@ -336,14 +336,14 @@ psPickupEvent::psPickupEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psPickupEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psPickupEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("From: %s To: %s Item: '%d' Count: %d Quality: %d Price %d",
-                      ShowID(trans->from), ShowID(trans->to), trans->item, 
+                      ShowID(trans->from), ShowID(trans->to), trans->item,
                       trans->count,trans->quality,trans->price);
-    
+
     return msgtext;
 }
 
@@ -354,31 +354,31 @@ PSF_IMPLEMENT_MSG_FACTORY(psDropEvent,MSGTYPE_DROP_EVENT);
 psDropEvent::psDropEvent(PID from, const char* fromName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price)
 {
     // Player => Merchant
-    
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(fromName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
+
+    msg.AttachNew(new MsgEntry((sizeof(int) * 4) + strlen(fromName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
                                sizeof(item), PRIORITY_LOW));
-    
-    msg->SetType(MSGTYPE_DROP_EVENT);                   
-    msg->clientnum = 0;  
+
+    msg->SetType(MSGTYPE_DROP_EVENT);
+    msg->clientnum = 0;
     msg->Add(from.Unbox());
     msg->Add(fromName);
-    msg->Add( item);
+    msg->Add(item);
     msg->Add(itemName);
-    msg->Add( (int32_t) stack);
-    msg->Add( (int32_t) quality);
-    msg->Add( (uint32_t) price);
+    msg->Add((int32_t) stack);
+    msg->Add((int32_t) quality);
+    msg->Add((uint32_t) price);
 }
 
-psDropEvent::psDropEvent( MsgEntry* event)
+psDropEvent::psDropEvent(MsgEntry* event)
 {
     if(!event)
         return;
-    
+
     trans.AttachNew(new TransactionEntity()); // needs to be handled by economy manager
-    
+
     trans->from = PID(event->GetUInt32());
     trans->fromName = event->GetStr();
-    
+
     trans->item = event->GetUInt32();
     trans->itemName = event->GetStr();
     trans->count = event->GetInt32();
@@ -386,14 +386,14 @@ psDropEvent::psDropEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psDropEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psDropEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("From: %u To: %u Item: '%d' Count: %d Quality: %d Price %d",
-                      trans->from.Unbox(), trans->to.Unbox(), trans->item, 
+                      trans->from.Unbox(), trans->to.Unbox(), trans->item,
                       trans->count,trans->quality,trans->price);
-    
+
     return msgtext;
 }
 
@@ -404,35 +404,35 @@ PSF_IMPLEMENT_MSG_FACTORY(psLootEvent,MSGTYPE_LOOT_EVENT);
 psLootEvent::psLootEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price)
 {
     // Player => Merchant
-    
-    msg.AttachNew(new MsgEntry( (sizeof(int) * 4) + strlen(fromName) + 1 + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
+
+    msg.AttachNew(new MsgEntry((sizeof(int) * 4) + strlen(fromName) + 1 + strlen(toName) + 1 + strlen(itemName) + 1 + sizeof(unsigned int)+
                                sizeof(item), PRIORITY_LOW));
-    
-    msg->SetType(MSGTYPE_LOOT_EVENT);                   
-    msg->clientnum = 0;  
+
+    msg->SetType(MSGTYPE_LOOT_EVENT);
+    msg->clientnum = 0;
     msg->Add(from.Unbox());
     msg->Add(fromName);
     msg->Add(to.Unbox());
     msg->Add(toName);
-    msg->Add( item);
+    msg->Add(item);
     msg->Add(itemName);
-    msg->Add( (int32_t) stack);
-    msg->Add( (int32_t) quality);
-    msg->Add( (uint32_t) price);
+    msg->Add((int32_t) stack);
+    msg->Add((int32_t) quality);
+    msg->Add((uint32_t) price);
 }
 
-psLootEvent::psLootEvent( MsgEntry* event)
+psLootEvent::psLootEvent(MsgEntry* event)
 {
     if(!event)
         return;
-    
+
     trans.AttachNew(new TransactionEntity()); // needs to be handled by economy manager
-    
+
     trans->from = PID(event->GetUInt32());
     trans->fromName = event->GetStr();
     trans->to = PID(event->GetUInt32());
     trans->toName = event->GetStr();
-    
+
     trans->item = event->GetUInt32();
     trans->itemName = event->GetStr();
     trans->count = event->GetInt32();
@@ -440,14 +440,14 @@ psLootEvent::psLootEvent( MsgEntry* event)
     trans->price = event->GetUInt32();
 }
 
-csString psLootEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psLootEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("From: %s To: %s Item: '%d' Count: %d Quality: %d Price %d",
                       ShowID(trans->from), ShowID(trans->to), trans->item,
                       trans->count,trans->quality,trans->price);
-    
+
     return msgtext;
 }
 
@@ -456,18 +456,18 @@ csString psLootEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psConnectEvent,MSGTYPE_CONNECT_EVENT);
 
-psConnectEvent::psConnectEvent( int clientID )
+psConnectEvent::psConnectEvent(int clientID)
 {
     // Player => Merchant
 
-    msg.AttachNew(new MsgEntry( sizeof(int), PRIORITY_LOW));
-                       
-    msg->SetType(MSGTYPE_CONNECT_EVENT);                   
-    msg->clientnum = clientID;  
-    msg->Add( (int32_t) clientID );
+    msg.AttachNew(new MsgEntry(sizeof(int), PRIORITY_LOW));
+
+    msg->SetType(MSGTYPE_CONNECT_EVENT);
+    msg->clientnum = clientID;
+    msg->Add((int32_t) clientID);
 }
 
-psConnectEvent::psConnectEvent( MsgEntry* event)
+psConnectEvent::psConnectEvent(MsgEntry* event)
 {
     if(!event)
         return;
@@ -475,10 +475,10 @@ psConnectEvent::psConnectEvent( MsgEntry* event)
     client_id = event->GetInt32();
 }
 
-csString psConnectEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psConnectEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("ClientID: %d", client_id);
 
     return msgtext;
@@ -488,16 +488,16 @@ csString psConnectEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psMovementEvent,MSGTYPE_MOVEMENT_EVENT);
 
-psMovementEvent::psMovementEvent( int clientID )
+psMovementEvent::psMovementEvent(int clientID)
 {
-    msg.AttachNew(new MsgEntry( sizeof(int), PRIORITY_LOW));
-                       
-    msg->SetType(MSGTYPE_MOVEMENT_EVENT);                   
-    msg->clientnum = clientID;  
-    msg->Add( (int32_t) clientID );
+    msg.AttachNew(new MsgEntry(sizeof(int), PRIORITY_LOW));
+
+    msg->SetType(MSGTYPE_MOVEMENT_EVENT);
+    msg->clientnum = clientID;
+    msg->Add((int32_t) clientID);
 }
 
-psMovementEvent::psMovementEvent( MsgEntry* event)
+psMovementEvent::psMovementEvent(MsgEntry* event)
 {
     if(!event)
         return;
@@ -505,10 +505,10 @@ psMovementEvent::psMovementEvent( MsgEntry* event)
     client_id = event->GetInt32();
 }
 
-csString psMovementEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psMovementEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("ClientID: %d", client_id);
 
     return msgtext;
@@ -520,17 +520,17 @@ csString psMovementEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psGenericEvent,MSGTYPE_GENERIC_EVENT);
 
-psGenericEvent::psGenericEvent( int clientID, psGenericEvent::Type type )
+psGenericEvent::psGenericEvent(int clientID, psGenericEvent::Type type)
 {
-    msg.AttachNew(new MsgEntry( sizeof(int)*2, PRIORITY_LOW));
-                       
-    msg->SetType(MSGTYPE_GENERIC_EVENT);                   
-    msg->clientnum = clientID;  
-    msg->Add( (int32_t) type );
-    msg->Add( (int32_t) clientID );
+    msg.AttachNew(new MsgEntry(sizeof(int)*2, PRIORITY_LOW));
+
+    msg->SetType(MSGTYPE_GENERIC_EVENT);
+    msg->clientnum = clientID;
+    msg->Add((int32_t) type);
+    msg->Add((int32_t) clientID);
 }
 
-psGenericEvent::psGenericEvent( MsgEntry* event)
+psGenericEvent::psGenericEvent(MsgEntry* event)
 {
     if(!event)
         return;
@@ -539,10 +539,10 @@ psGenericEvent::psGenericEvent( MsgEntry* event)
     client_id = event->GetInt32();
 }
 
-csString psGenericEvent::ToString(NetBase::AccessPointers * /*accessPointers*/)
+csString psGenericEvent::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
-    
+
     msgtext.AppendFmt("Type: %d, ClientID: %d", eventType, client_id);
 
     return msgtext;

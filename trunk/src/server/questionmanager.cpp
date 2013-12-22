@@ -16,8 +16,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
- 
- 
+
+
 #include <psconfig.h>
 //=============================================================================
 // Crystal Space Includes
@@ -45,7 +45,7 @@ unsigned PendingQuestion::nextID = 0;
 *                   class PendingQuestion
 ***************************************************************/
 
-PendingQuestion::PendingQuestion(int clientnum, const csString & question, psQuestionMessage::questionType_t type)
+PendingQuestion::PendingQuestion(int clientnum, const csString &question, psQuestionMessage::questionType_t type)
 {
     id = nextID++;
     event = NULL;
@@ -63,21 +63,21 @@ PendingQuestion::PendingQuestion(int clientnum, const csString & question, psQue
 class psQuestionCancelEvent : public psGameEvent
 {
 protected:
-    QuestionManager *manager;
+    QuestionManager* manager;
 
 public:
-    PendingQuestion *question;
+    PendingQuestion* question;
     bool valid;
 
-    psQuestionCancelEvent(QuestionManager *mgr,
+    psQuestionCancelEvent(QuestionManager* mgr,
                           int delayticks,
-                          PendingQuestion *question);
+                          PendingQuestion* question);
     virtual void Trigger();  // Abstract event processing function
 };
 
 psQuestionCancelEvent::psQuestionCancelEvent
-                        (QuestionManager *mgr,int delayticks, PendingQuestion *q)
-  : psGameEvent(0,delayticks,"psQuestionCancelEvent")
+(QuestionManager* mgr,int delayticks, PendingQuestion* q)
+    : psGameEvent(0,delayticks,"psQuestionCancelEvent")
 {
     manager = mgr;
     question        = q;
@@ -87,7 +87,7 @@ psQuestionCancelEvent::psQuestionCancelEvent
 void psQuestionCancelEvent::Trigger()
 {
     // This is set to false by the Acceptance handler, so this won't cancel later
-    if (valid)
+    if(valid)
         manager->CancelQuestion(question);
 }
 
@@ -102,32 +102,32 @@ QuestionManager::QuestionManager()
 
 QuestionManager::~QuestionManager()
 {
-	csHash<PendingQuestion*>::GlobalIterator iter(questions.GetIterator());
-	while(iter.HasNext())
-		delete iter.Next();
+    csHash<PendingQuestion*>::GlobalIterator iter(questions.GetIterator());
+    while(iter.HasNext())
+        delete iter.Next();
 }
 
-void QuestionManager::HandleQuestionResponse(MsgEntry *me,Client *client)
+void QuestionManager::HandleQuestionResponse(MsgEntry* me,Client* client)
 {
     psQuestionResponseMsg msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
     {
         psserver->SendSystemError(me->clientnum, "Invalid QuestionResponse Message.");
         Error2("Failed to parse psQuestionResponseMsg from client %u.",me->clientnum);
         return;
     }
-    
+
     // Find the question that we got response to
-    PendingQuestion *question = questions.Get(msg.questionID, NULL);
-    if (!question)
+    PendingQuestion* question = questions.Get(msg.questionID, NULL);
+    if(!question)
     {
         Error2("Received psQuestionResponseMsg from client %u that was not questioned.",me->clientnum);
         return;
     }
 
-    if (question->event)
+    if(question->event)
     {
-      question->event->valid = false;  // This keeps the cancellation timeout from firing.
+        question->event->valid = false;  // This keeps the cancellation timeout from firing.
     }
 
     question->HandleAnswer(msg.answer);
@@ -136,7 +136,7 @@ void QuestionManager::HandleQuestionResponse(MsgEntry *me,Client *client)
     delete question;
 }
 
-void QuestionManager::SendQuestion(PendingQuestion *question)
+void QuestionManager::SendQuestion(PendingQuestion* question)
 {
     if(!question->ok)
         return;
@@ -146,13 +146,13 @@ void QuestionManager::SendQuestion(PendingQuestion *question)
                           question->question,
                           question->type);
     msg.SendMessage();
-    
+
     questions.Put(question->id, question);
 
-    Client * questionedClient = psserver->GetConnections()->Find(question->clientnum);
-    if (questionedClient != NULL)
+    Client* questionedClient = psserver->GetConnections()->Find(question->clientnum);
+    if(questionedClient != NULL)
     {
-        psQuestionCancelEvent *ev = new psQuestionCancelEvent(this,60000,question);
+        psQuestionCancelEvent* ev = new psQuestionCancelEvent(this,60000,question);
         question->event = ev;
         psserver->GetEventManager()->Push(ev);
     }
@@ -160,11 +160,11 @@ void QuestionManager::SendQuestion(PendingQuestion *question)
         Error2("Could not find client ! %i", question->clientnum);
 }
 
-void QuestionManager::CancelQuestion(PendingQuestion *question)
+void QuestionManager::CancelQuestion(PendingQuestion* question)
 {
     question->HandleTimeout();
-    
-    psQuestionCancelMessage cancel( question->clientnum, question->id );
+
+    psQuestionCancelMessage cancel(question->clientnum, question->id);
     cancel.SendMessage();
 
     questions.DeleteAll(question->id);

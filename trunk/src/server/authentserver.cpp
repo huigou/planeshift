@@ -1,7 +1,7 @@
 /*
  * AuthentServer.cpp by Keith Fulton <keith@paqrat.com>
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -59,10 +59,10 @@
 
 class CachedAuthMessage : public iCachedObject
 {
-public: 
-    psAuthApprovedMessage *msg;
+public:
+    psAuthApprovedMessage* msg;
 
-    CachedAuthMessage(psAuthApprovedMessage *message)
+    CachedAuthMessage(psAuthApprovedMessage* message)
     {
         msg = message;
     }
@@ -78,9 +78,9 @@ public:
     virtual void ProcessCacheTimeout()
     {
     }
-    
+
     /// Turn iCachedObject ptr into psAccountInfo
-    virtual void *RecoverObject()
+    virtual void* RecoverObject()
     {
         return this;
     }
@@ -89,13 +89,13 @@ public:
     virtual void DeleteSelf()
     {
         delete this;
-    }  
+    }
 };
 
 
-AuthenticationServer::AuthenticationServer(ClientConnectionSet *pCCS,
-                                               UserManager *usermgr,
-                                               GuildManager *gm)
+AuthenticationServer::AuthenticationServer(ClientConnectionSet* pCCS,
+        UserManager* usermgr,
+        GuildManager* gm)
 {
     clients      = pCCS;
     usermanager  = usermgr;
@@ -115,43 +115,43 @@ AuthenticationServer::~AuthenticationServer()
 }
 
 
-void AuthenticationServer::HandleAuthCharacter( MsgEntry* me, Client *client )
+void AuthenticationServer::HandleAuthCharacter(MsgEntry* me, Client* client)
 {
-    psCharacterPickerMessage charpick( me );
-    if (!charpick.valid)
+    psCharacterPickerMessage charpick(me);
+    if(!charpick.valid)
     {
         Debug1(LOG_NET,me->clientnum,"Mangled psCharacterPickerMessage received.\n");
         return;
-    } 
+    }
 
-    psCharacterList *charlist = psserver->CharacterLoader.LoadCharacterList( client->GetAccountID());
-    
-    if (!charlist)
+    psCharacterList* charlist = psserver->CharacterLoader.LoadCharacterList(client->GetAccountID());
+
+    if(!charlist)
     {
         Error1("Could not load Character List for account! Rejecting client!\n");
-        psserver->RemovePlayer( me->clientnum, "Could not load the list of characters for your account.  Please contact a PS Admin for help.");        
+        psserver->RemovePlayer(me->clientnum, "Could not load the list of characters for your account.  Please contact a PS Admin for help.");
         return;
-    } 
+    }
 
     int i;
-    for (i=0;i<MAX_CHARACTERS_IN_LIST;i++)
+    for(i=0; i<MAX_CHARACTERS_IN_LIST; i++)
     {
-        if (charlist->GetEntryValid(i))
+        if(charlist->GetEntryValid(i))
         {
             // Trim out whitespaces from name
             charpick.characterName.Trim();
-            csString listName( charlist->GetCharacterFullName(i) );
+            csString listName(charlist->GetCharacterFullName(i));
             listName.Trim();
-                                            
-            if ( charpick.characterName == listName )
+
+            if(charpick.characterName == listName)
             {
-                 client->SetPID(charlist->GetCharacterID(i));
-                 // Set client name in code to just firstname as other code depends on it
-                 client->SetName(charlist->GetCharacterName(i));
-                 psCharacterApprovedMessage out( me->clientnum );
-                 out.SendMessage();
-                 break;
-            }                     
+                client->SetPID(charlist->GetCharacterID(i));
+                // Set client name in code to just firstname as other code depends on it
+                client->SetName(charlist->GetCharacterName(i));
+                psCharacterApprovedMessage out(me->clientnum);
+                out.SendMessage();
+                break;
+            }
         }
     }
 
@@ -160,14 +160,14 @@ void AuthenticationServer::HandleAuthCharacter( MsgEntry* me, Client *client )
 }
 
 
-bool AuthenticationServer::CheckAuthenticationPreCondition(int clientnum, bool netversionok, const char * sUser)
+bool AuthenticationServer::CheckAuthenticationPreCondition(int clientnum, bool netversionok, const char* sUser)
 {
     /**
      * CHECK 1: Is Network protokol compatible?
      */
-    if (!netversionok)
+    if(!netversionok)
     {
-        psserver->RemovePlayer (clientnum, "You are not running the correct version of PlaneShift. Please launch the updater.");
+        psserver->RemovePlayer(clientnum, "You are not running the correct version of PlaneShift. Please launch the updater.");
         return false;
     }
 
@@ -176,23 +176,23 @@ bool AuthenticationServer::CheckAuthenticationPreCondition(int clientnum, bool n
      */
 
     // check if server is already ready (ie level loaded)
-    if (!psserver->IsReady())
+    if(!psserver->IsReady())
     {
-        if (psserver->HasBeenReady())
+        if(psserver->HasBeenReady())
         {
             // Locked
             psserver->RemovePlayer(clientnum,"The server is up but about to shutdown. Please try again in 2 minutes.");
 
-            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: Server does not accept connections anymore.", sUser );
+            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: Server does not accept connections anymore.", sUser);
         }
         else
         {
             // Not ready yet
             psserver->RemovePlayer(clientnum,"The server is up but not fully ready to go yet. Please try again in a few minutes.");
 
-            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: Server has not loaded a world map.\n", sUser );
+            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: Server has not loaded a world map.\n", sUser);
         }
-        
+
         return false;
     }
 
@@ -200,61 +200,61 @@ bool AuthenticationServer::CheckAuthenticationPreCondition(int clientnum, bool n
 }
 
 
-void AuthenticationServer::HandlePreAuthent(MsgEntry *me, Client *notused)
+void AuthenticationServer::HandlePreAuthent(MsgEntry* me, Client* notused)
 {
     psPreAuthenticationMessage msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
     {
         Debug1(LOG_NET,me->clientnum,"Mangled psPreAuthenticationMessage received.\n");
         return;
     }
 
-    if (!CheckAuthenticationPreCondition(me->clientnum,msg.NetVersionOk(),"pre"))
+    if(!CheckAuthenticationPreCondition(me->clientnum,msg.NetVersionOk(),"pre"))
         return;
-    
+
     psPreAuthApprovedMessage reply(me->clientnum);
     reply.SendMessage();
 }
 
-void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
+void AuthenticationServer::HandleAuthent(MsgEntry* me, Client* notused)
 {
     csTicks start = csGetTicks();
 
     psAuthenticationMessage msg(me); // This cracks message into members.
-    if (!msg.valid)
+    if(!msg.valid)
     {
         Debug1(LOG_NET,me->clientnum,"Mangled psAuthenticationMessage received.\n");
         return;
     }
 
-    if (!CheckAuthenticationPreCondition(me->clientnum, msg.NetVersionOk(),msg.sUser))
+    if(!CheckAuthenticationPreCondition(me->clientnum, msg.NetVersionOk(),msg.sUser))
         return;
 
     csString status;
-    status.Format("%s, %u, Received Authentication Message", (const char *) msg.sUser, me->clientnum);
+    status.Format("%s, %u, Received Authentication Message", (const char*) msg.sUser, me->clientnum);
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 
-    if ( msg.sUser.Length() == 0 || msg.sPassword.Length() == 0)
+    if(msg.sUser.Length() == 0 || msg.sPassword.Length() == 0)
     {
         psserver->RemovePlayer(me->clientnum,"No username or password entered");
 
         Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: No username or password.\n",
-                (const char *)msg.sUser);            
-        return;                
+                (const char*)msg.sUser);
+        return;
     }
-    
+
     // Check if login was correct
     Notify2(LOG_CONNECTIONS,"Check Login for: '%s'\n", (const char*)msg.sUser);
-    psAccountInfo *acctinfo=psserver->GetCacheManager()->GetAccountInfoByUsername((const char *)msg.sUser);
+    psAccountInfo* acctinfo=psserver->GetCacheManager()->GetAccountInfoByUsername((const char*)msg.sUser);
 
-    if ( !acctinfo )
+    if(!acctinfo)
     {
         // invalid
         psserver->RemovePlayer(me->clientnum,"Incorrect password or username.");
 
         Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected: No account found with that name.\n",
-                (const char *)msg.sUser);            
-        return;                
+                (const char*)msg.sUser);
+        return;
     }
 
     // Add account to cache to optimize repeated login attempts
@@ -278,7 +278,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
         if(strcmp(encoded_hash.GetData(), msg.sPassword.GetData())) // authentication error
         {
             psserver->RemovePlayer(me->clientnum, "Incorrect password or username.");
-            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).",(const char *)msg.sUser);
+            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Bad password).",(const char*)msg.sUser);
             // No delete necessary because AddToCache will auto-delete
             // delete acctinfo;
             return;
@@ -295,7 +295,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
      * Check if the client is already logged in
      */
     Client* existingClient = clients->FindAccount(acctinfo->accountid, me->clientnum);
-    if (existingClient)  // account already logged in
+    if(existingClient)   // account already logged in
     {
         // invalid authent message from a different client
         csString reason;
@@ -312,7 +312,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
 
         psserver->RemovePlayer(existingClient->GetClientNum(), reason);
         Notify2(LOG_CONNECTIONS,"User '%s' authentication request overrides an existing logged in user.\n",
-            (const char *)msg.sUser);
+                (const char*)msg.sUser);
 
         // No delete necessary because AddToCache will auto-delete
         // delete acctinfo;
@@ -322,14 +322,14 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time authenticating account ID %u, After password check", 
-            csGetTicks() - start, acctinfo->accountid);
+        status.Format("Warning: Spent %u time authenticating account ID %u, After password check",
+                      csGetTicks() - start, acctinfo->accountid);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
 
-    Client *client = clients->FindAny(me->clientnum);
-    if (!client)
+    Client* client = clients->FindAny(me->clientnum);
+    if(!client)
     {
         Bug2("Couldn't find client %d?!?",me->clientnum);
         // No delete necessary because AddToCache will auto-delete
@@ -338,20 +338,20 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     }
 
     client->SetName(msg.sUser);
-    client->SetAccountID( acctinfo->accountid );
-    
+    client->SetAccountID(acctinfo->accountid);
+
 
     // Check to see if the client is banned
     time_t now = time(0);
     BanEntry* ban = banmanager.GetBanByAccount(acctinfo->accountid);
-    if (ban == NULL)
+    if(ban == NULL)
     {
         // Account not banned; try IP range
         ban = banmanager.GetBanByIPRange(client->GetIPRange());
     }
-    if (ban)
+    if(ban)
     {
-        if (now > ban->end)  // Time served
+        if(now > ban->end)   // Time served
         {
             banmanager.RemoveBan(acctinfo->accountid);
         }
@@ -365,11 +365,11 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
                           timeinfo->tm_mday,
                           timeinfo->tm_hour,
                           timeinfo->tm_min,
-                          ban->reason.GetData() );
-    
+                          ban->reason.GetData());
+
             psserver->RemovePlayer(me->clientnum, banmsg);
-    
-            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Banned).",(const char *)msg.sUser);
+
+            Notify2(LOG_CONNECTIONS,"User '%s' authentication request rejected (Banned).",(const char*)msg.sUser);
             // No delete necessary because AddToCache will auto-delete
             // delete acctinfo;
             return;
@@ -381,20 +381,20 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time authenticating account ID %u, After ban check", 
-            csGetTicks() - start, acctinfo->accountid);
+        status.Format("Warning: Spent %u time authenticating account ID %u, After ban check",
+                      csGetTicks() - start, acctinfo->accountid);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
     /** Check to see if there are any players on that account.  All accounts should have
     *    at least one player in this function.
     */
-    psCharacterList *charlist = psserver->CharacterLoader.LoadCharacterList(acctinfo->accountid);
+    psCharacterList* charlist = psserver->CharacterLoader.LoadCharacterList(acctinfo->accountid);
 
-    if (!charlist)
+    if(!charlist)
     {
-        Error2("Could not load Character List for account! Rejecting client %s!\n",(const char *)msg.sUser);
-        psserver->RemovePlayer( me->clientnum, "Could not load the list of characters for your account.  Please contact a PS Admin for help.");
+        Error2("Could not load Character List for account! Rejecting client %s!\n",(const char*)msg.sUser);
+        psserver->RemovePlayer(me->clientnum, "Could not load the list of characters for your account.  Please contact a PS Admin for help.");
         delete acctinfo;
         return;
     }
@@ -402,19 +402,19 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     // cache will auto-delete this ptr if it times out
     psserver->GetCacheManager()->AddToCache(charlist, psserver->GetCacheManager()->MakeCacheName("list", client->GetAccountID().Unbox()),120);
 
-    
-     /**
-     * CHECK 6: Connection limit
-     * 
-     * We check against number of concurrent connections, but players with
-     * security rank of GameMaster or higher are not subject to this limit.
-     */
-    if (psserver->IsFull(clients->Count(),client)) 
+
+    /**
+    * CHECK 6: Connection limit
+    *
+    * We check against number of concurrent connections, but players with
+    * security rank of GameMaster or higher are not subject to this limit.
+    */
+    if(psserver->IsFull(clients->Count(),client))
     {
         // invalid
         psserver->RemovePlayer(me->clientnum, "The server is full right now.  Please try again in a few minutes.");
 
-        Notify2(LOG_CONNECTIONS, "User '%s' authentication request rejected: Too many connections.\n", (const char *)msg.sUser );
+        Notify2(LOG_CONNECTIONS, "User '%s' authentication request rejected: Too many connections.\n", (const char*)msg.sUser);
         // No delete necessary because AddToCache will auto-delete
         // delete acctinfo;
         status = "User limit hit!";
@@ -438,12 +438,12 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     tm* gmtm = gmtime(&now);
     csString timeStr;
     timeStr.Format("%d-%02d-%02d %02d:%02d:%02d",
-        gmtm->tm_year+1900,
-        gmtm->tm_mon+1,
-        gmtm->tm_mday,
-        gmtm->tm_hour,
-        gmtm->tm_min,
-        gmtm->tm_sec);
+                   gmtm->tm_year+1900,
+                   gmtm->tm_mon+1,
+                   gmtm->tm_mday,
+                   gmtm->tm_hour,
+                   gmtm->tm_min,
+                   gmtm->tm_sec);
 
     acctinfo->lastlogintime = timeStr;
     acctinfo->os = msg.os_;
@@ -451,36 +451,36 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     acctinfo->gfxversion = msg.gfxversion_;
     psserver->GetCacheManager()->UpdateAccountInfo(acctinfo);
 
-    iCachedObject *obj = psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("auth",acctinfo->accountid));
-    CachedAuthMessage *cam;
+    iCachedObject* obj = psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("auth",acctinfo->accountid));
+    CachedAuthMessage* cam;
 
-    if (!obj)
+    if(!obj)
     {
         // Send approval message
-        psAuthApprovedMessage *message = new psAuthApprovedMessage(me->clientnum,client->GetPID(), charlist->GetValidCount() );    
+        psAuthApprovedMessage* message = new psAuthApprovedMessage(me->clientnum,client->GetPID(), charlist->GetValidCount());
 
         if(csGetTicks() - start > 500)
         {
             csString status;
-            status.Format("Warning: Spent %u time authenticating account ID %u, After approval", 
-                csGetTicks() - start, acctinfo->accountid);
+            status.Format("Warning: Spent %u time authenticating account ID %u, After approval",
+                          csGetTicks() - start, acctinfo->accountid);
             psserver->GetLogCSV()->Write(CSV_STATUS, status);
         }
 
-        // Send out the character list to the auth'd player    
-        for (int i=0; i<MAX_CHARACTERS_IN_LIST; i++)
+        // Send out the character list to the auth'd player
+        for(int i=0; i<MAX_CHARACTERS_IN_LIST; i++)
         {
-            if (charlist->GetEntryValid(i))
+            if(charlist->GetEntryValid(i))
             {
                 // Quick load the characters to get enough info to send to the client
-                psCharacter* character = psserver->CharacterLoader.QuickLoadCharacterData( charlist->GetCharacterID(i), false );
-                if (character == NULL)
+                psCharacter* character = psserver->CharacterLoader.QuickLoadCharacterData(charlist->GetCharacterID(i), false);
+                if(character == NULL)
                 {
                     Error2("QuickLoadCharacterData failed for character '%s'", charlist->GetCharacterName(i));
                     continue;
                 }
 
-                Notify3(LOG_CHARACTER, "Sending %s to client %d\n", character->GetCharName(), me->clientnum );
+                Notify3(LOG_CHARACTER, "Sending %s to client %d\n", character->GetCharName(), me->clientnum);
                 character->AppendCharacterSelectData(*message);
 
                 delete character;
@@ -492,7 +492,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     else
     {
         // recover underlying object
-        cam = (CachedAuthMessage *)obj->RecoverObject();
+        cam = (CachedAuthMessage*)obj->RecoverObject();
         // update client id since new connection here
         cam->msg->msg->clientnum = me->clientnum;
     }
@@ -500,22 +500,22 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     cam->msg->SendMessage();
     psserver->GetCacheManager()->AddToCache(cam, psserver->GetCacheManager()->MakeCacheName("auth",acctinfo->accountid), 10);
 
-    SendMsgStrings(me->clientnum, true); 
-    
+    SendMsgStrings(me->clientnum, true);
+
     client->SetSpamPoints(acctinfo->spamPoints);
     client->SetAdvisorPoints(acctinfo->advisorPoints);
 
-    if (acctinfo->securitylevel >= GM_TESTER)
+    if(acctinfo->securitylevel >= GM_TESTER)
     {
         psserver->GetAdminManager()->Admin(me->clientnum, client);
     }
-    
-    if (psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default advisor"))
+
+    if(psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default advisor"))
     {
         psserver->GetAdviceManager()->AddAdvisor(client);
     }
 
-    if (psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default buddylisthide"))
+    if(psserver->GetCacheManager()->GetCommandManager()->Validate(client->GetSecurityLevel(), "default buddylisthide"))
     {
         client->SetBuddyListHide(true);
     }
@@ -525,8 +525,8 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     if(csGetTicks() - start > 500)
     {
         csString status;
-        status.Format("Warning: Spent %u time authenticating account ID %u, After load", 
-            csGetTicks() - start, acctinfo->accountid);
+        status.Format("Warning: Spent %u time authenticating account ID %u, After load",
+                      csGetTicks() - start, acctinfo->accountid);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
@@ -534,7 +534,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry *me, Client *notused)
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 }
 
-void AuthenticationServer::HandleDisconnect(MsgEntry* me,Client *client)
+void AuthenticationServer::HandleDisconnect(MsgEntry* me,Client* client)
 {
     psDisconnectMessage mesg(me);
 
@@ -546,12 +546,12 @@ void AuthenticationServer::HandleDisconnect(MsgEntry* me,Client *client)
     psserver->RemovePlayer(me->clientnum, "Your client has disconnected. If you are seeing this message a connection error has likely occurred.");
 }
 
-void AuthenticationServer::SendDisconnect(Client* client, const char *reason)
+void AuthenticationServer::SendDisconnect(Client* client, const char* reason)
 {
-    if (client->GetActor())
+    if(client->GetActor())
     {
         psDisconnectMessage msg(client->GetClientNum(), client->GetActor()->GetEID(), reason);
-        if (msg.valid)
+        if(msg.valid)
         {
             msg.msg->priority = PRIORITY_LOW;
             psserver->GetEventManager()->Broadcast(msg.msg, NetBase::BC_FINALPACKET);
@@ -564,14 +564,14 @@ void AuthenticationServer::SendDisconnect(Client* client, const char *reason)
     else
     {
         psDisconnectMessage msg(client->GetClientNum(), 0, reason);
-        if (msg.valid)
+        if(msg.valid)
         {
             psserver->GetEventManager()->Broadcast(msg.msg, NetBase::BC_FINALPACKET);
         }
     }
 }
 
-void AuthenticationServer::HandleStringsRequest(MsgEntry* me, Client *client)
+void AuthenticationServer::HandleStringsRequest(MsgEntry* me, Client* client)
 {
     SendMsgStrings(me->clientnum, false);
 }
@@ -587,7 +587,7 @@ void AuthenticationServer::SendMsgStrings(int cnum, bool send_digest)
     psserver->GetCacheManager()->GetCompressedMessageStrings(data, size, num_strings, digest);
 
     // send message strings hash table to client
-    if (send_digest)
+    if(send_digest)
     {
         psMsgStringsMessage msg(cnum, digest);
         CS_ASSERT(msg.valid);
@@ -607,7 +607,7 @@ void AuthenticationServer::HandleStatusUpdate(MsgEntry* me, Client* client)
     // printf("Got ClientStatus message!\n");
 
     // We ignore !ready messages because of abuse potential.
-    if (msg.ready)
+    if(msg.ready)
     {
         psConnectEvent evt(client->GetClientNum());
         evt.FireEvent();
@@ -618,16 +618,16 @@ void AuthenticationServer::HandleStatusUpdate(MsgEntry* me, Client* client)
 BanManager::BanManager()
 {
     Result result(db->Select("SELECT * FROM bans"));
-    if (!result.IsValid())
+    if(!result.IsValid())
         return;
 
     time_t now = time(0);
-    for (unsigned int i=0; i<result.Count(); i++)
+    for(unsigned int i=0; i<result.Count(); i++)
     {
         AccountID account = AccountID(result[i].GetUInt32("account"));
         time_t end = result[i].GetUInt32("end");
 
-        if (now > end)  // Time served
+        if(now > end)   // Time served
         {
             db->Command("DELETE FROM bans WHERE account='%u'", account.Unbox());
             continue;
@@ -640,13 +640,13 @@ BanManager::BanManager()
         newentry->ipRange = result[i]["ip_range"];
         newentry->reason = result[i]["reason"];
         newentry->banIP = result[i].GetUInt32("ban_ip") != 0;
-        
+
         // If account ban, add to list
-        if (newentry->account.IsValid())
+        if(newentry->account.IsValid())
             banList_IDHash.Put(newentry->account,newentry);
 
         // If IP range ban, add to list
-        if ( newentry->ipRange.Length() && newentry->banIP /*(!end || now < newentry->start + IP_RANGE_BAN_TIME)*/ )
+        if(newentry->ipRange.Length() && newentry->banIP /*(!end || now < newentry->start + IP_RANGE_BAN_TIME)*/)
             banList_IPRList.Push(newentry);
     }
 }
@@ -654,7 +654,7 @@ BanManager::BanManager()
 BanManager::~BanManager()
 {
     csHash<BanEntry*, AccountID>::GlobalIterator it(banList_IDHash.GetIterator());
-    while (it.HasNext())
+    while(it.HasNext())
     {
         BanEntry* entry = it.Next();
         delete entry;
@@ -664,7 +664,7 @@ BanManager::~BanManager()
 bool BanManager::RemoveBan(AccountID account)
 {
     BanEntry* ban = GetBanByAccount(account);
-    if (!ban)
+    if(!ban)
         return false;  // Not banned
 
     db->Command("DELETE FROM bans WHERE account='%u'", account.Unbox());
@@ -676,7 +676,7 @@ bool BanManager::RemoveBan(AccountID account)
 
 bool BanManager::AddBan(AccountID account, csString ipRange, time_t duration, csString reason, bool banIP)
 {
-    if (GetBanByAccount(account))
+    if(GetBanByAccount(account))
         return false;  // Already banned
 
     time_t now = time(0);
@@ -699,17 +699,17 @@ bool BanManager::AddBan(AccountID account, csString ipRange, time_t duration, cs
                           newentry->start,
                           newentry->end,
                           escaped.GetData(),
-                          newentry->banIP );
-    if (ret == -1)
+                          newentry->banIP);
+    if(ret == -1)
     {
         delete newentry;
         return false;
     }
 
-    if (newentry->account.IsValid())
+    if(newentry->account.IsValid())
         banList_IDHash.Put(newentry->account,newentry);
 
-    if (newentry->ipRange.Length() && newentry->banIP)
+    if(newentry->ipRange.Length() && newentry->banIP)
         banList_IPRList.Push(newentry);
 
     return true;
@@ -722,8 +722,8 @@ BanEntry* BanManager::GetBanByAccount(AccountID account)
 
 BanEntry* BanManager::GetBanByIPRange(csString IPRange)
 {
-    for (size_t i=0; i<banList_IPRList.GetSize(); i++)
-        if ( IPRange.StartsWith(banList_IPRList[i]->ipRange) )
+    for(size_t i=0; i<banList_IPRList.GetSize(); i++)
+        if(IPRange.StartsWith(banList_IPRList[i]->ipRange))
             return banList_IPRList[i];
     return NULL;
 }

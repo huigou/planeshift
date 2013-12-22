@@ -65,18 +65,18 @@ public:
     bool Initialize();
 
     /// Sends the client an inventory
-    virtual bool SendInventory( uint32_t clientNum, bool sendUpdatesOnly=true );
+    virtual bool SendInventory(uint32_t clientNum, bool sendUpdatesOnly=true);
 
-    void SendPlayerMoney( Client *client, bool storage = false);
+    void SendPlayerMoney(Client* client, bool storage = false);
 
     /// Update all views with items
-    virtual bool UpdateItemViews( uint32_t clientNum );
+    virtual bool UpdateItemViews(uint32_t clientNum);
 
     /** Sends out sound messages to the client
      *
      * @todo Modify to be able to send to all the people around client
      */
-    void SendOutPlaySoundMessage( uint32_t clientNum, const char* itemsound, const char* action );
+    void SendOutPlaySoundMessage(uint32_t clientNum, const char* itemsound, const char* action);
 
     /**
      * Sends out equipment messages to all the people around client.
@@ -93,10 +93,10 @@ public:
      *               psEquipmentMessage::EQUIP
      *
      */
-    void SendOutEquipmentMessages( gemActor* actor,
-                                   INVENTORY_SLOT_NUMBER slotID,
-                                   psItem* item,
-                                   int equipped );
+    void SendOutEquipmentMessages(gemActor* actor,
+                                  INVENTORY_SLOT_NUMBER slotID,
+                                  psItem* item,
+                                  int equipped);
 
     void ViewItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
 
@@ -106,51 +106,51 @@ public:
      * Will return true if trading is allowed. Returning a reasion in the errorMessage if a pointer is given.
      *
      */
-    static bool TradingCheck(Client * client, gemObject * target, csString * errorMessage = NULL);
+    static bool TradingCheck(Client* client, gemObject* target, csString* errorMessage = NULL);
 
     /**
      * Start trading.
      */
-    void BeginTrading(Client * client, gemObject * target, const csString & type);
-    
+    void BeginTrading(Client* client, gemObject* target, const csString &type);
+
     /** Handles a storing beginning.
      *  @param client The client sending us the message.
      *  @param target The target of the storage operation.
      *  @param type ?
      */
-    void BeginStoring(Client * client, gemObject * target, const csString & type);
+    void BeginStoring(Client* client, gemObject* target, const csString &type);
 
     bool IsBanned(const char* name);
 
     ///Checked if the character exists still or if it hasn't connected in two months.
-    bool HasConnected( csString name );
+    bool HasConnected(csString name);
 
 protected:
 
     void HandleBookWrite(MsgEntry* me, Client* client);
-    void HandleCraftTransInfo( MsgEntry * me, Client *client );
+    void HandleCraftTransInfo(MsgEntry* me, Client* client);
     /// Handles any incoming messages about the character gui.
-    void HandleInventoryMessage(MsgEntry* me, Client *client);
-    void HandleFaction(MsgEntry* me, Client *client);
-    void ViewItem( MsgEntry* me, Client *client);
-    void UpdateSketch( MsgEntry* me, Client *client);
+    void HandleInventoryMessage(MsgEntry* me, Client* client);
+    void HandleFaction(MsgEntry* me, Client* client);
+    void ViewItem(MsgEntry* me, Client* client);
+    void UpdateSketch(MsgEntry* me, Client* client);
     void UpdateMusicalSheet(MsgEntry* me, Client* client);
 
     // -------------------Merchant Handling -------------------------------
-    int CalculateMerchantPrice(psItem *item, Client *client, bool sellPrice);
-    bool SendMerchantItems( Client *client, psCharacter * merchant, psItemCategory * category);
-    void HandleMerchantMessage( MsgEntry* me, Client *client );
-    void HandleMerchantRequest(psGUIMerchantMessage& msg, Client *client);
-    void HandleMerchantCategory(psGUIMerchantMessage& msg, Client *client);
-    void HandleMerchantBuy(psGUIMerchantMessage& msg, Client *client);
-    void HandleMerchantSell(psGUIMerchantMessage& msg, Client *client);
-    void HandleMerchantView(psGUIMerchantMessage& msg, Client *client);
+    int CalculateMerchantPrice(psItem* item, Client* client, bool sellPrice);
+    bool SendMerchantItems(Client* client, psCharacter* merchant, psItemCategory* category);
+    void HandleMerchantMessage(MsgEntry* me, Client* client);
+    void HandleMerchantRequest(psGUIMerchantMessage &msg, Client* client);
+    void HandleMerchantCategory(psGUIMerchantMessage &msg, Client* client);
+    void HandleMerchantBuy(psGUIMerchantMessage &msg, Client* client);
+    void HandleMerchantSell(psGUIMerchantMessage &msg, Client* client);
+    void HandleMerchantView(psGUIMerchantMessage &msg, Client* client);
     // ------------------Storage Handling----------------------------------
     /** Handles a message coming from the client for making operations with his storage.
      *  @param me The message received from the client.
      *  @param client The client sending us the message.
      */
-    void HandleStorageMessage( MsgEntry* me, Client *client );
+    void HandleStorageMessage(MsgEntry* me, Client* client);
 
     /**
      * Sends to the client the stored items for this category.
@@ -160,52 +160,52 @@ protected:
      * @param category The category we are browsing
      * @return Always TRUE.
      */
-    bool SendStorageItems( Client *client, psCharacter * character, psItemCategory * category);
-    
+    bool SendStorageItems(Client* client, psCharacter* character, psItemCategory* category);
+
     /** Handles the request to access the storage from the player.
      *  @param msg The cracked message received from the client.
      *  @param client The client sending us the message.
      */
-    void HandleStorageRequest(psGUIStorageMessage& msg, Client *client);
+    void HandleStorageRequest(psGUIStorageMessage &msg, Client* client);
     /** Handles the request to change category from the player.
      *  @param msg The cracked message received from the client.
      *  @param client The client sending us the message.
      */
-    void HandleStorageCategory(psGUIStorageMessage& msg, Client *client);
+    void HandleStorageCategory(psGUIStorageMessage &msg, Client* client);
     /** Handles the request to withdraw an item from the NPC.
      *  @param msg The cracked message received from the client.
      *  @param client The client sending us the message.
      */
-    void HandleStorageWithdraw(psGUIStorageMessage& msg, Client *client);
+    void HandleStorageWithdraw(psGUIStorageMessage &msg, Client* client);
     /** Handles the request to store an item from the player.
      *  @param msg The cracked message received from the client.
      *  @param client The client sending us the message.
      */
-    void HandleStorageStore(psGUIStorageMessage& msg, Client *client);
+    void HandleStorageStore(psGUIStorageMessage &msg, Client* client);
     /** Handles the request to check informations about a stored item.
      *  @param msg The cracked message received from the client.
      *  @param client The client sending us the message.
      */
-    void HandleStorageView(psGUIStorageMessage& msg, Client *client);
+    void HandleStorageView(psGUIStorageMessage &msg, Client* client);
     // --------------------------------------------------------------------
 
-    bool SendPlayerItems( Client *client, psItemCategory * category, bool storage);
-   
+    bool SendPlayerItems(Client* client, psItemCategory* category, bool storage);
+
 
     /// Return true if all trade params are ok
-    bool VerifyTrade( Client * client, psCharacter * character, psCharacter ** merchant, psMerchantInfo ** info,
-                      const char * trade, const char * itemName, PID merchantID);
-                      
+    bool VerifyTrade(Client* client, psCharacter* character, psCharacter** merchant, psMerchantInfo** info,
+                     const char* trade, const char* itemName, PID merchantID);
+
     /// Return true if all storage params are ok
-    bool VerifyStorage( Client * client, psCharacter * character, psCharacter ** storage,
-                      const char * trade, const char * itemName, PID storageID);
+    bool VerifyStorage(Client* client, psCharacter* character, psCharacter** storage,
+                       const char* trade, const char* itemName, PID storageID);
 
     /// verifies that item dropped in mind slot is a valid goal
     bool VerifyGoal(Client* client, psCharacter* character, psItem* goal);
 
 //    ClientConnectionSet*    clients;
 
-    SlotManager *slotManager;
+    SlotManager* slotManager;
     CacheManager* cacheManager;
     GEMSupervisor* gemSupervisor;
 

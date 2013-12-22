@@ -1,7 +1,7 @@
 /*
  * pssectorinfo.h
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -57,61 +57,100 @@ public:
     double GetProperty(MathEnvironment* env, const char* ptr);
     /// This is used by the math scripting engine to get calculated values.
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
-    const char *ToString() { return name.GetDataSafe(); }
+    const char* ToString()
+    {
+        return name.GetDataSafe();
+    }
 
-    bool GetIsColliding() { return is_colliding; }
-    bool GetIsNonTransient() { return is_non_transient; }
+    bool GetIsColliding()
+    {
+        return is_colliding;
+    }
+    bool GetIsNonTransient()
+    {
+        return is_non_transient;
+    }
     /** Checks if this is set as a teleporting sector.
      *  A teleporting sector is a sector which teleports the player
      *  to defined sector (in teleportingSector/Cords/Rot) or spawn if not
      *  defined.
      *  @return TRUE if this is a teleporting sector.
      */
-    bool GetIsTeleporting() { return is_teleporting; }
+    bool GetIsTeleporting()
+    {
+        return is_teleporting;
+    }
     /** Checks if a teleporting sector will trigger the death penalty when used.
      *  @note this can be TRUE even if the previous isn't but it won't do anything.
      *  @return TRUE if this is a sector with death penalty.
      */
-    bool GetHasPenalty() { return has_penalty; }
-    
+    bool GetHasPenalty()
+    {
+        return has_penalty;
+    }
+
     /** Checks if a teleporting sector will trigger the death penalty when used.
      *  @note this can be TRUE even if the previous isn't but it won't do anything.
      *  @return TRUE if this is a sector with death penalty.
      */
-    bool GetDeathRestoreHP() { return deathRestoreHP; }
-    
-        /** Checks if a teleporting sector will trigger the death penalty when used.
-     *  @note this can be TRUE even if the previous isn't but it won't do anything.
-     *  @return TRUE if this is a sector with death penalty.
-     */
-    bool GetDeathRestoreMana() { return deathRestoreMana; }
-    
+    bool GetDeathRestoreHP()
+    {
+        return deathRestoreHP;
+    }
+
+    /** Checks if a teleporting sector will trigger the death penalty when used.
+    *  @note this can be TRUE even if the previous isn't but it won't do anything.
+    *  @return TRUE if this is a sector with death penalty.
+    */
+    bool GetDeathRestoreMana()
+    {
+        return deathRestoreMana;
+    }
+
     /** Gets the sector name we will teleport to when entering this sector.
      *  @return A csString containing the sector name.
      */
-    csString GetTeleportingSector() { return teleportingSector; }
+    csString GetTeleportingSector()
+    {
+        return teleportingSector;
+    }
     /** Gets the sector cordinates we will teleport to when entering this sector.
      *  @return A csVector3 containing the sector cordinates.
      */
-    csVector3 GetTeleportingCord() { return teleportingCords; }
+    csVector3 GetTeleportingCord()
+    {
+        return teleportingCords;
+    }
     /** Gets the rotation we will teleport to when entering this sector.
      *  @return A float containing the rotation.
      */
-    float GetTeleportingRot() { return teleportingRot; }
+    float GetTeleportingRot()
+    {
+        return teleportingRot;
+    }
 
     /** Gets the sector name we will teleport to when dieing in this sector.
      *  @return csString A csString containing the sector name.
      */
-    csString GetDeathSector() { return deathSector; }
+    csString GetDeathSector()
+    {
+        return deathSector;
+    }
     /** Gets the sector cordinates we will teleport to when dieing in this sector.
      *  @return A csVector3 containing the sector cordinates.
      */
-    csVector3 GetDeathCord() { return deathCords; }
+    csVector3 GetDeathCord()
+    {
+        return deathCords;
+    }
     /** Gets the rotation we will teleport to when dieing in this sector.
      *  @return A float containing the rotation.
      */
-    float GetDeathRot() { return deathRot; }
-    
+    float GetDeathRot()
+    {
+        return deathRot;
+    }
+
     unsigned int uid;
     csString  name;
 
@@ -140,7 +179,7 @@ public:
      *  @param newStatus The new status to assign to the weather event type (false for disabled)
      */
     void SetWeatherEnabled(unsigned int id, bool newStatus);
-    
+
     /** Gets the enabled status of a weather event type for this sector.
      *  @param id The id of the event @see psWeatherMessage
      *  @return A Boolean saying if the weather type is enabled and activable (has valid data.)
@@ -182,14 +221,14 @@ public:
      *  @param id The id of the weather type we are adding.
      */
     void AddWeatherTypeData(weatherTypeData newWeatherData, unsigned int id);
-    
+
     unsigned int current_rain_drops; ///< Drops
 
     bool is_raining;
     bool is_snowing;
     bool is_colliding;
     bool is_non_transient;
-    
+
     /// Sets if this sector will restore mana when the player dies in it.
     bool deathRestoreMana;
     /// Sets if this sector will restore hp when the player dies in it.
@@ -211,8 +250,8 @@ public:
     csVector3 deathCords;
     /// The destination rotation where to teleport on death from this sector
     float deathRot;
-    
-    
+
+
 
     // Fog
     unsigned int fog_density, fog_density_old;

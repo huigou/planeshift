@@ -86,27 +86,27 @@ bool psCharacterLoader::AccountOwner(const char* characterName, AccountID accoun
     return (count > 0);
 }
 
-psCharacterList *psCharacterLoader::LoadCharacterList(AccountID accountid)
+psCharacterList* psCharacterLoader::LoadCharacterList(AccountID accountid)
 {
     // Check the generic cache first
-    iCachedObject *obj = psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("list",accountid.Unbox()));
-    if (obj)
+    iCachedObject* obj = psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("list",accountid.Unbox()));
+    if(obj)
     {
         Notify2(LOG_CACHE,"Returning char object %p from cache.",obj->RecoverObject());
-        return (psCharacterList *)obj->RecoverObject();
+        return (psCharacterList*)obj->RecoverObject();
     }
 
     Notify1(LOG_CACHE,"******LOADING CHARACTER LIST*******");
     // Load if not in cache
     Result result(db->Select("SELECT id,name,lastname FROM characters WHERE account_id=%u ORDER BY id", accountid.Unbox()));
 
-    if (!result.IsValid())
+    if(!result.IsValid())
         return NULL;
 
-    psCharacterList *charlist = new psCharacterList;
+    psCharacterList* charlist = new psCharacterList;
 
-    charlist->SetValidCount( result.Count() );
-    for (unsigned int i=0;i<result.Count();i++)
+    charlist->SetValidCount(result.Count());
+    for(unsigned int i=0; i<result.Count(); i++)
     {
         charlist->SetEntryValid(i,true);
         charlist->SetCharacterID(i,result[i].GetInt("id"));
@@ -121,37 +121,37 @@ psCharacterList *psCharacterLoader::LoadCharacterList(AccountID accountid)
 *  and then loading each character data element with a seperate query.
 */
 
-psCharacter **psCharacterLoader::LoadAllNPCCharacterData(psSectorInfo *sector,int &count)
+psCharacter** psCharacterLoader::LoadAllNPCCharacterData(psSectorInfo* sector,int &count)
 {
-    psCharacter **charlist;
+    psCharacter** charlist;
     unsigned int i;
     count=0;
 
-    Result npcs( (sector)?
-        db->Select("SELECT * from characters where characters.loc_sector_id='%u' and npc_spawn_rule>0",sector->uid)
-        : db->Select("SELECT * from characters where npc_spawn_rule>0"));
+    Result npcs((sector)?
+                db->Select("SELECT * from characters where characters.loc_sector_id='%u' and npc_spawn_rule>0",sector->uid)
+                : db->Select("SELECT * from characters where npc_spawn_rule>0"));
 
 
-    if ( !npcs.IsValid() )
+    if(!npcs.IsValid())
     {
         Error3("Failed to load NPCs in Sector %s.   Error: %s",
-            sector==NULL?"ENTIRE WORLD":sector->name.GetData(),db->GetLastError());
+               sector==NULL?"ENTIRE WORLD":sector->name.GetData(),db->GetLastError());
         return NULL;
     }
 
-    if (npcs.Count()==0)
+    if(npcs.Count()==0)
     {
         Error2("No NPCs found to load in Sector %s.",
-            sector==NULL?"ENTIRE WORLD":sector->name.GetData());
+               sector==NULL?"ENTIRE WORLD":sector->name.GetData());
         return NULL;
     }
 
     charlist=new psCharacter *[npcs.Count()];
 
-    for (i=0; i<npcs.Count(); i++)
+    for(i=0; i<npcs.Count(); i++)
     {
         charlist[count]=new psCharacter();
-        if (!charlist[count]->Load(npcs[i]))
+        if(!charlist[count]->Load(npcs[i]))
         {
             delete charlist[count];
             charlist[count]=NULL;
@@ -163,32 +163,32 @@ psCharacter **psCharacterLoader::LoadAllNPCCharacterData(psSectorInfo *sector,in
     return charlist;
 }
 
-psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
+psCharacter* psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
 {
     //if (!forceReload)
     //{
-        // Check the generic cache first
-        iCachedObject *obj = psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("char", pid.Unbox()));
-        if (obj)
+    // Check the generic cache first
+    iCachedObject* obj = psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("char", pid.Unbox()));
+    if(obj)
+    {
+        if(!forceReload)
         {
-            if (!forceReload)
-            {
-                Debug2(LOG_CACHE, pid.Unbox(), "Returning char object %p from cache.\n", obj->RecoverObject());
+            Debug2(LOG_CACHE, pid.Unbox(), "Returning char object %p from cache.\n", obj->RecoverObject());
 
-                psCharacter *charData = (psCharacter *)obj->RecoverObject();
+            psCharacter* charData = (psCharacter*)obj->RecoverObject();
 
-                // Clear loot items
-                if (charData)
-                    charData->ClearLoot();
+            // Clear loot items
+            if(charData)
+                charData->ClearLoot();
 
-                return charData;
-            }
-            else //this is needed because if the item is cached it needs to be destroyed (and so saved) before we load it again
-            {
-                delete (psCharacter *)obj->RecoverObject();
-            }
+            return charData;
         }
-    //}   
+        else //this is needed because if the item is cached it needs to be destroyed (and so saved) before we load it again
+        {
+            delete(psCharacter*)obj->RecoverObject();
+        }
+    }
+    //}
 
 
     // Now load from the database if not found in cache
@@ -196,24 +196,24 @@ psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
 
     Result result(db->Select("SELECT * FROM characters WHERE id=%u", pid.Unbox()));
 
-    if (!result.IsValid())
+    if(!result.IsValid())
     {
         Error2("Character data invalid for %s.", ShowID(pid));
         return NULL;
     }
 
-    if (result.Count()>1)
+    if(result.Count()>1)
     {
         Error2("Character %s has multiple entries.  Check table constraints.", ShowID(pid));
         return NULL;
     }
-    if (result.Count()<1)
+    if(result.Count()<1)
     {
         Error2("Character %s has no character entry!", ShowID(pid));
         return NULL;
     }
 
-    psCharacter *chardata = new psCharacter();
+    psCharacter* chardata = new psCharacter();
 
     Debug2(LOG_CACHE, pid.Unbox(), "New character data ptr is %p.", chardata);
     if(csGetTicks() - start > 500)
@@ -224,13 +224,13 @@ psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
     // Read basic stats
-    if (!chardata->Load(result[0]))
+    if(!chardata->Load(result[0]))
     {
         if(csGetTicks() - start > 500)
         {
             csString status;
             status.Format("Warning: Spent %u time loading FAILED character %s",
-                csGetTicks() - start, ShowID(pid));
+                          csGetTicks() - start, ShowID(pid));
             psserver->GetLogCSV()->Write(CSV_STATUS, status);
         }
         Error2("Load failed for character %s.", ShowID(pid));
@@ -242,7 +242,7 @@ psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
     {
         csString status;
         status.Format("Warning: Spent %u time loading character %s %s:%d",
-            csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
+                      csGetTicks() - start, ShowID(pid), __FILE__, __LINE__);
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
@@ -252,19 +252,19 @@ psCharacter *psCharacterLoader::LoadCharacterData(PID pid, bool forceReload)
 }
 
 
-psCharacter *psCharacterLoader::QuickLoadCharacterData(PID pid, bool noInventory)
+psCharacter* psCharacterLoader::QuickLoadCharacterData(PID pid, bool noInventory)
 {
     Result result(db->Select("SELECT id, name, lastname, racegender_id FROM characters WHERE id=%u LIMIT 1", pid.Unbox()));
 
-    if (!result.IsValid() || result.Count() < 1)
+    if(!result.IsValid() || result.Count() < 1)
     {
         Error2("Character data invalid for %s.", ShowID(pid));
         return NULL;
     }
 
-    psCharacter *chardata = new psCharacter();
+    psCharacter* chardata = new psCharacter();
 
-    if (!chardata->QuickLoad(result[0], noInventory))
+    if(!chardata->QuickLoad(result[0], noInventory))
     {
         Error2("Quick load failed for character %s.", ShowID(pid));
         delete chardata;
@@ -275,44 +275,45 @@ psCharacter *psCharacterLoader::QuickLoadCharacterData(PID pid, bool noInventory
 }
 
 
-bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *chardata)
+bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter* chardata)
 {
-    const char *fieldnames[]= {
-            "account_id",
-            "name",
-            "lastname",
-            "racegender_id",
-            "character_type",
-            "description",
-            "description_ooc",
-            "creation_info",
-            "description_life",
-            "mod_hitpoints",
-            "base_hitpoints_max",
-            "mod_mana",
-            "base_mana_max",
-            "stamina_physical",
-            "stamina_mental",
-            "money_circles",
-            "money_trias",
-            "money_hexas",
-            "money_octas",
-            "bank_money_circles",
-            "bank_money_trias",
-            "bank_money_hexas",
-            "bank_money_octas",
-            "loc_x",
-            "loc_y",
-            "loc_z",
-            "loc_yrot",
-            "loc_sector_id",
-            "loc_instance",
-            "npc_spawn_rule",
-            "npc_master_id",
-            "npc_addl_loot_category_id",
-            "npc_impervious_ind",
-            "kill_exp",
-            "animal_affinity",
+    const char* fieldnames[]=
+    {
+        "account_id",
+        "name",
+        "lastname",
+        "racegender_id",
+        "character_type",
+        "description",
+        "description_ooc",
+        "creation_info",
+        "description_life",
+        "mod_hitpoints",
+        "base_hitpoints_max",
+        "mod_mana",
+        "base_mana_max",
+        "stamina_physical",
+        "stamina_mental",
+        "money_circles",
+        "money_trias",
+        "money_hexas",
+        "money_octas",
+        "bank_money_circles",
+        "bank_money_trias",
+        "bank_money_hexas",
+        "bank_money_octas",
+        "loc_x",
+        "loc_y",
+        "loc_z",
+        "loc_yrot",
+        "loc_sector_id",
+        "loc_instance",
+        "npc_spawn_rule",
+        "npc_master_id",
+        "npc_addl_loot_category_id",
+        "npc_impervious_ind",
+        "kill_exp",
+        "animal_affinity",
     };
     psStringArray values;
 
@@ -320,7 +321,7 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%s",chardata->GetCharName());
     values.FormatPush("%s",chardata->GetCharLastName());
     values.FormatPush("%u",chardata->GetOverridableRace().Base()->uid);
-    values.FormatPush("%u",chardata->GetCharType() );
+    values.FormatPush("%u",chardata->GetCharType());
     values.FormatPush("%s",chardata->GetDescription());
     values.FormatPush("%s",chardata->GetOOCDescription());
     values.FormatPush("%s",chardata->GetCreationInfo());
@@ -340,7 +341,7 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%u",chardata->BankMoney().GetHexas());
     values.FormatPush("%u",chardata->BankMoney().GetOctas());
     float x,y,z,yrot;
-    psSectorInfo *sectorinfo;
+    psSectorInfo* sectorinfo;
     InstanceID instance;
     chardata->GetLocationInWorld(instance,sectorinfo,x,y,z,yrot);
     values.FormatPush("%10.2f",x);
@@ -354,13 +355,13 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     values.FormatPush("%u",chardata->npcMasterId);
     values.FormatPush("%u",chardata->lootCategoryId);
     values.FormatPush("%c",chardata->GetImperviousToAttack() & ALWAYS_IMPERVIOUS ? 'Y' : 'N');
-    values.FormatPush("%u",chardata->GetKillExperience() );
-    values.FormatPush("%s",chardata->GetAnimalAffinity() );
+    values.FormatPush("%u",chardata->GetKillExperience());
+    values.FormatPush("%s",chardata->GetAnimalAffinity());
 
 
     unsigned int id=db->GenericInsertWithID("characters",fieldnames,values);
 
-    if (id==0)
+    if(id==0)
     {
         Error3("Failed to create new character for %s: %s", ShowID(accountid), db->GetLastError());
         return false;
@@ -371,12 +372,12 @@ bool psCharacterLoader::NewNPCCharacterData(AccountID accountid, psCharacter *ch
     return true;
 }
 
-bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chardata)
+bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter* chardata)
 {
     chardata->npcSpawnRuleId = 0;
     chardata->npcMasterId    = 0;
 
-    if (!NewNPCCharacterData(accountid, chardata))
+    if(!NewNPCCharacterData(accountid, chardata))
     {
         return false;
     }
@@ -384,16 +385,16 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
     size_t i;
 
     // traits
-    if (!ClearCharacterTraits(chardata->GetPID()))
+    if(!ClearCharacterTraits(chardata->GetPID()))
     {
         Error3("Failed to clear traits for character %s: %s.",
                ShowID(chardata->GetPID()), db->GetLastError());
     }
 
-    for (i=0;i<PSTRAIT_LOCATION_COUNT;i++)
+    for(i=0; i<PSTRAIT_LOCATION_COUNT; i++)
     {
-        psTrait *trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
-        if (trait!=NULL)
+        psTrait* trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
+        if(trait!=NULL)
         {
             SaveCharacterTrait(chardata->GetPID(),trait->uid);
         }
@@ -401,13 +402,13 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
 
 
     // skills
-    if (!ClearCharacterSkills(chardata->GetPID()))
+    if(!ClearCharacterSkills(chardata->GetPID()))
     {
         Error3("Failed to clear skills for character %s: %s.",
                ShowID(chardata->GetPID()), db->GetLastError());
     }
 
-    for (i=0;i<psserver->GetCacheManager()->GetSkillAmount();i++)
+    for(i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
     {
         unsigned int skillRank = chardata->Skills().GetSkillRank((PSSKILL) i).Base();
         unsigned int skillY = chardata->Skills().GetSkillKnowledge((PSSKILL) i);
@@ -418,28 +419,28 @@ bool psCharacterLoader::NewCharacterData(AccountID accountid, psCharacter *chard
     return true;
 }
 
-bool psCharacterLoader::UpdateQuestAssignments(psCharacter *chr)
+bool psCharacterLoader::UpdateQuestAssignments(psCharacter* chr)
 {
     return chr->GetQuestMgr().UpdateQuestAssignments();
 }
 
-bool psCharacterLoader::ClearCharacterSpell( psCharacter * character )
+bool psCharacterLoader::ClearCharacterSpell(psCharacter* character)
 {
     unsigned long result=db->CommandPump("DELETE FROM player_spells WHERE player_id='%u'", character->GetPID().Unbox());
-    if (result==QUERY_FAILED)
+    if(result==QUERY_FAILED)
         return false;
 
     return true;
 }
 
-bool psCharacterLoader::SaveCharacterSpell( psCharacter * character )
+bool psCharacterLoader::SaveCharacterSpell(psCharacter* character)
 {
     int index = 0;
-    while (psSpell * spell = character->GetSpellByIdx(index))
+    while(psSpell* spell = character->GetSpellByIdx(index))
     {
         unsigned long result=db->CommandPump("INSERT INTO player_spells (player_id,spell_id,spell_slot) VALUES('%u','%u','%u')",
-            character->GetPID().Unbox(), spell->GetID(), index);
-        if (result==QUERY_FAILED)
+                                             character->GetPID().Unbox(), spell->GetID(), index);
+        if(result==QUERY_FAILED)
             return false;
         index++;
     }
@@ -451,7 +452,7 @@ bool psCharacterLoader::SaveCharacterSpell( psCharacter * character )
 bool psCharacterLoader::ClearCharacterTraits(PID pid)
 {
     unsigned long result=db->CommandPump("DELETE FROM character_traits WHERE character_id='%u'", pid.Unbox());
-    if (result==QUERY_FAILED)
+    if(result==QUERY_FAILED)
         return false;
 
     return true;
@@ -460,7 +461,7 @@ bool psCharacterLoader::ClearCharacterTraits(PID pid)
 bool psCharacterLoader::SaveCharacterTrait(PID pid, unsigned int trait_id)
 {
     unsigned long result=db->CommandPump("INSERT INTO character_traits (character_id,trait_id) VALUES('%u','%u')", pid.Unbox(), trait_id);
-    if (result==QUERY_FAILED)
+    if(result==QUERY_FAILED)
         return false;
 
     return true;
@@ -469,7 +470,7 @@ bool psCharacterLoader::SaveCharacterTrait(PID pid, unsigned int trait_id)
 bool psCharacterLoader::ClearCharacterSkills(PID pid)
 {
     unsigned long result=db->CommandPump("DELETE FROM character_skills WHERE character_id='%u'", pid.Unbox());
-    if (result==QUERY_FAILED)
+    if(result==QUERY_FAILED)
         return false;
 
     return true;
@@ -481,16 +482,16 @@ bool psCharacterLoader::UpdateCharacterSkill(PID pid, unsigned int skill_id, uns
     csString sql;
 
     sql.Format("UPDATE character_skills SET skill_z=%u, skill_y=%u, skill_rank=%u WHERE character_id=%u AND skill_id=%u",
-        skill_z, skill_y, skill_rank, pid.Unbox(), (unsigned int) skill_id);
+               skill_z, skill_y, skill_rank, pid.Unbox(), (unsigned int) skill_id);
 
     unsigned long result=db->Command(sql);
 
     // If there was nothing to update we can add the skill to the database
-    if (result == 0)
+    if(result == 0)
     {
         return SaveCharacterSkill(pid, skill_id, skill_z, skill_y, skill_rank);
     }
-    else if ( result == 1 )
+    else if(result == 1)
     {
         return true;
     }
@@ -503,32 +504,32 @@ bool psCharacterLoader::UpdateCharacterSkill(PID pid, unsigned int skill_id, uns
 
 
 bool psCharacterLoader::SaveCharacterSkill(PID pid, unsigned int skill_id,
-                                           unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank)
+        unsigned int skill_z, unsigned int skill_y, unsigned int skill_rank)
 {
     // If a player has no knowledge of the skill then no need to add to database yet.
-    if ( skill_z == 0 && skill_y == 0 && skill_rank == 0 )
+    if(skill_z == 0 && skill_y == 0 && skill_rank == 0)
         return true;
 
     unsigned long result=db->CommandPump("INSERT INTO character_skills (character_id,skill_id,skill_y,skill_z,skill_rank) VALUES('%u','%u','%u','%u','%u')",
-        pid.Unbox(), skill_id, skill_y, skill_z, skill_rank);
-    if (result==QUERY_FAILED)
+                                         pid.Unbox(), skill_id, skill_y, skill_z, skill_rank);
+    if(result==QUERY_FAILED)
         return false;
 
     return true;
 }
 
-bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
+bool psCharacterLoader::DeleteCharacterData(PID pid, csString &error)
 {
     csString query;
-    query.Format( "SELECT name, lastname, guild_member_of, guild_level FROM characters where id='%u'\n", pid.Unbox());
-    Result result( db->Select(query) );
-    if ( !result.IsValid() || !result.Count() )
+    query.Format("SELECT name, lastname, guild_member_of, guild_level FROM characters where id='%u'\n", pid.Unbox());
+    Result result(db->Select(query));
+    if(!result.IsValid() || !result.Count())
     {
         error = "Invalid DB entry!";
         return false;
     }
 
-    iResultRow& row = result[0];
+    iResultRow &row = result[0];
 
     const char* charName = row["name"];
     const char* charLastName = row["lastname"];
@@ -539,20 +540,20 @@ bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
     int guildLevel = row.GetInt("guild_level");
 
     // If Guild leader? then can't delete
-    if ( guildLevel == 9 )
+    if(guildLevel == 9)
     {
         error = "Character is a guild leader";
         return false;
     }
 
     // Online? Kick
-    Client* zombieClient = psserver->GetConnections()->FindPlayer( pid );
-    if ( zombieClient )
+    Client* zombieClient = psserver->GetConnections()->FindPlayer(pid);
+    if(zombieClient)
         psserver->RemovePlayer(zombieClient->GetClientNum(),"This character is being deleted");
 
     // Remove the character from guild if he has joined any
-    psGuildInfo* guildinfo = psserver->GetCacheManager()->FindGuild( guild );
-    if ( guildinfo )
+    psGuildInfo* guildinfo = psserver->GetCacheManager()->FindGuild(guild);
+    if(guildinfo)
         guildinfo->RemoveMember(guildinfo->FindMember(pid));
 
     // Now delete this character and all refrences to him from DB
@@ -561,54 +562,54 @@ bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
 
     query.Format("SELECT character_id FROM character_relationships WHERE related_id=%u and relationship_type='spouse'",pid.Unbox());
     result = db->Select(query);
-    if ( !result.IsValid() )
+    if(!result.IsValid())
     {
         error = "Invalid DB entry!";
         return false;
     }
-    if (result.Count())
+    if(result.Count())
     {
         Client* divorcedClient = psserver->GetConnections()->FindPlayer(result[0].GetUInt32("character_id"));
-        if (divorcedClient != NULL)          //in other case it's not necessary to remove this data because it removes from DB
-            psserver->marriageManager->DeleteMarriageInfo(  divorcedClient->GetCharacterData() );
+        if(divorcedClient != NULL)           //in other case it's not necessary to remove this data because it removes from DB
+            psserver->marriageManager->DeleteMarriageInfo(divorcedClient->GetCharacterData());
     }
 
     query.Format("DELETE FROM character_relationships WHERE character_id=%u OR related_id=%u", pid.Unbox(), pid.Unbox());
-    db->CommandPump( query );
+    db->CommandPump(query);
 
     query.Format("DELETE FROM character_quests WHERE player_id=%u", pid.Unbox());
-    db->CommandPump( query );
+    db->CommandPump(query);
 
     query.Format("DELETE FROM character_skills WHERE character_id=%u", pid.Unbox());
-    db->CommandPump( query );
+    db->CommandPump(query);
 
     query.Format("DELETE FROM character_traits WHERE character_id=%u", pid.Unbox());
-    db->CommandPump( query );
+    db->CommandPump(query);
 
     query.Format("DELETE FROM player_spells WHERE player_id=%u", pid.Unbox());
-    db->CommandPump( query );
+    db->CommandPump(query);
 
     query.Format("DELETE FROM characters WHERE id=%u", pid.Unbox());
-    db->CommandPump( query );
+    db->CommandPump(query);
 
     /// Let GMEventManager sort the DB out, as it is a bit complex, and its cached too
-    if (!psserver->GetGMEventManager()->RemovePlayerFromGMEvents(pid))
+    if(!psserver->GetGMEventManager()->RemovePlayerFromGMEvents(pid))
     {
         Error2("Failed to remove %s from GM events database/cache", ShowID(pid));
     }
 
     csArray<gemObject*> list;
     psserver->entitymanager->GetGEM()->GetPlayerObjects(pid, list);
-    for ( size_t x = 0; x < list.GetSize(); x++ )
+    for(size_t x = 0; x < list.GetSize(); x++)
     {
         psserver->entitymanager->GetGEM()->RemoveEntity(list[x]);
     }
 
     query.Format("DELETE from item_instances WHERE char_id_owner=%u", pid.Unbox());
-    db->CommandPump( query );
+    db->CommandPump(query);
 
     query.Format("DELETE from introductions WHERE charid=%u OR introcharid=%u", pid.Unbox(), pid.Unbox());
-    db->CommandPump( query );
+    db->CommandPump(query);
 
     CPrintf(CON_DEBUG, "\nSuccessfully deleted character %s\n", ShowID(pid));
 
@@ -619,7 +620,7 @@ bool psCharacterLoader::DeleteCharacterData(PID pid, csString& error )
 // 08-02-2005 Borrillis:
 // NPC's should not save their locations back into the characters table
 // This causes mucho problems so don't "fix" it.
-bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor, bool charRecordOnly)
+bool psCharacterLoader::SaveCharacterData(psCharacter* chardata, gemActor* actor, bool charRecordOnly)
 {
     bool playerORpet = chardata->GetCharType() == PSCHARACTER_TYPE_PLAYER ||
                        chardata->GetCharType() == PSCHARACTER_TYPE_PET;
@@ -631,7 +632,7 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor
     {
         updatePlayer = db->NewUpdatePreparedStatement("characters", "id", 35, __FILE__, __LINE__); // 35 fields + 1 id field
     }
-    
+
     if(!playerORpet && updateNpc == NULL)
     {
         updateNpc = db->NewUpdatePreparedStatement("characters", "id", 28, __FILE__, __LINE__); // 28 fields + 1 id field
@@ -665,18 +666,18 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor
     targetUpdate->AddField("bank_money_hexas", chardata->BankMoney().GetHexas());
     targetUpdate->AddField("bank_money_octas", chardata->BankMoney().GetOctas());
 
-    if ( playerORpet ) // Only Pets and Players save location info
+    if(playerORpet)    // Only Pets and Players save location info
     {
         float yrot;
         csVector3 pos(0,0,0);
-        psSectorInfo *sectorinfo;
+        psSectorInfo* sectorinfo;
         csString sector;
         InstanceID instance;
-        if (!actor->IsAlive()) //resurrect the player where it should be before saving him.
+        if(!actor->IsAlive())  //resurrect the player where it should be before saving him.
         {
             actor->Resurrect();
         }
-            
+
         iSector* sec;
         // We want to save the last reported location
         actor->GetLastLocation(pos, yrot, sec, instance);
@@ -698,22 +699,22 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor
         targetUpdate->AddField("loc_instance", instance);
         //Saves the guild/alliance notification setting: this is done only when the client correctly quits.
         //This is to avoid flodding with setting changes as much as possible
-        targetUpdate->AddField("join_notifications", chardata->GetNotifications() );
+        targetUpdate->AddField("join_notifications", chardata->GetNotifications());
     }
 
     if(!chardata->GetLastLoginTime().GetData())
     {
         chardata->SetLastLoginTime();
     }
-    targetUpdate->AddField("last_login", chardata->GetLastLoginTime().GetData() );
+    targetUpdate->AddField("last_login", chardata->GetLastLoginTime().GetData());
 
     // Create XML for a new progression script that'll restore ActiveSpells.
     csString script;
     csArray<ActiveSpell*> asps = actor->GetActiveSpells();
-    if (!asps.IsEmpty())
+    if(!asps.IsEmpty())
     {
         script.Append("<script>");
-        for (size_t i = 0; i < asps.GetSize(); i++)
+        for(size_t i = 0; i < asps.GetSize(); i++)
             script.Append(asps[i]->Persist());
         script.Append("</script>");
     }
@@ -722,9 +723,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor
     targetUpdate->AddField("time_connected_sec", chardata->GetTotalOnlineTime());
     targetUpdate->AddField("experience_points", chardata->GetExperiencePoints()); // Save W
     // X is saved when changed
-    targetUpdate->AddField("animal_affinity", chardata->animalAffinity.GetDataSafe() );
+    targetUpdate->AddField("animal_affinity", chardata->animalAffinity.GetDataSafe());
     //fields.FormatPush("%u", chardata->owner_id );
-    targetUpdate->AddField("help_event_flags", chardata->helpEventFlags );
+    targetUpdate->AddField("help_event_flags", chardata->helpEventFlags);
     targetUpdate->AddField("description",chardata->GetDescription());
     targetUpdate->AddField("description_ooc",chardata->GetOOCDescription());
     targetUpdate->AddField("creation_info",chardata->GetCreationInfo());
@@ -737,18 +738,18 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor
         Error3("Failed to save character %s: %s", ShowID(chardata->GetPID()), db->GetLastError());
     }
 
-    if (charRecordOnly)
+    if(charRecordOnly)
         return true;   // some updates don't need to save off every table.
 
     // traits
-    if (!ClearCharacterTraits(chardata->GetPID()))
+    if(!ClearCharacterTraits(chardata->GetPID()))
     {
         Error3("Failed to clear traits for character %s: %s.", ShowID(chardata->GetPID()), db->GetLastError());
     }
-    for (i=0;i<PSTRAIT_LOCATION_COUNT;i++)
+    for(i=0; i<PSTRAIT_LOCATION_COUNT; i++)
     {
-        psTrait *trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
-        if (trait!=NULL)
+        psTrait* trait=chardata->GetTraitForLocation((PSTRAIT_LOCATION)i);
+        if(trait!=NULL)
         {
             SaveCharacterTrait(chardata->GetPID(),trait->uid);
         }
@@ -756,9 +757,9 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor
 
     // For all the skills we have update them. If the update fails it will automatically save a new
     // one to the database.
-    for (i=0;i<psserver->GetCacheManager()->GetSkillAmount();i++)
+    for(i=0; i<psserver->GetCacheManager()->GetSkillAmount(); i++)
     {
-        if (chardata->Skills().Get((PSSKILL) i).dirtyFlag)
+        if(chardata->Skills().Get((PSSKILL) i).dirtyFlag)
         {
             unsigned int skillY = chardata->Skills().GetSkillKnowledge((PSSKILL) i);
             unsigned int skillZ = chardata->Skills().GetSkillPractice((PSSKILL) i);
@@ -767,11 +768,11 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor
         }
     }
 
-    if (!ClearCharacterSpell(chardata))
+    if(!ClearCharacterSpell(chardata))
         Error3("Failed to clear spells for character %s: %s.", ShowID(chardata->GetPID()), db->GetLastError());
-    SaveCharacterSpell( chardata );
+    SaveCharacterSpell(chardata);
 
-    UpdateQuestAssignments( chardata );
+    UpdateQuestAssignments(chardata);
 
     //saves the faction to db
     chardata->UpdateFactions();
@@ -782,26 +783,26 @@ bool psCharacterLoader::SaveCharacterData(psCharacter *chardata, gemActor *actor
     return true;
 }
 
-unsigned int psCharacterLoader::InsertNewCharacterData(const char **fieldnames, psStringArray& fieldvalues)
+unsigned int psCharacterLoader::InsertNewCharacterData(const char** fieldnames, psStringArray &fieldvalues)
 {
     return db->GenericInsertWithID("characters",fieldnames,fieldvalues);
 }
 
-PID psCharacterLoader::FindCharacterID(const char *character_name, bool excludeNPCs )
+PID psCharacterLoader::FindCharacterID(const char* character_name, bool excludeNPCs)
 {
     csString escape;
 
     // Don't crash
-    if (character_name==NULL)
+    if(character_name==NULL)
         return 0;
     // Insufficient Escape Buffer space, and this is too long anyway
-    if (strlen(character_name)>32)
+    if(strlen(character_name)>32)
         return 0;
     db->Escape(escape,character_name);
 
     unsigned long result;
 
-    if ( !excludeNPCs )
+    if(!excludeNPCs)
     {
         result = db->SelectSingleNumber("SELECT id from characters where name='%s'",escape.GetData());
     }
@@ -813,15 +814,15 @@ PID psCharacterLoader::FindCharacterID(const char *character_name, bool excludeN
     return PID(result == QUERY_FAILED ? 0 : result);
 }
 
-PID psCharacterLoader::FindCharacterID(AccountID accountID, const char *character_name)
+PID psCharacterLoader::FindCharacterID(AccountID accountID, const char* character_name)
 {
     csString escape;
 
     // Don't crash
-    if (character_name==NULL)
+    if(character_name==NULL)
         return 0;
     // Insufficient Escape Buffer space, and this is too long anyway
-    if (strlen(character_name)>32)
+    if(strlen(character_name)>32)
         return 0;
     db->Escape(escape,character_name);
 
@@ -840,21 +841,21 @@ psSaveCharEvent::psSaveCharEvent(gemActor* object)
 {
     this->actor = NULL;
 
-    object->RegisterCallback( this );
+    object->RegisterCallback(this);
     this->actor = object;
 }
 
 psSaveCharEvent::~psSaveCharEvent()
 {
-    if ( this->actor )
+    if(this->actor)
     {
         this->actor->UnregisterCallback(this);
     }
 }
 
-void psSaveCharEvent::DeleteObjectCallback(iDeleteNotificationObject * object)
+void psSaveCharEvent::DeleteObjectCallback(iDeleteNotificationObject* object)
 {
-    if ( this->actor )
+    if(this->actor)
         this->actor->UnregisterCallback(this);
 
     this->actor = NULL;
@@ -864,7 +865,7 @@ void psSaveCharEvent::DeleteObjectCallback(iDeleteNotificationObject * object)
 
 void psSaveCharEvent::Trigger()
 {
-    psServer::CharacterLoader.SaveCharacterData( actor->GetCharacterData(), actor );
-    psSaveCharEvent *saver = new psSaveCharEvent(actor);
+    psServer::CharacterLoader.SaveCharacterData(actor->GetCharacterData(), actor);
+    psSaveCharEvent* saver = new psSaveCharEvent(actor);
     saver->QueueEvent();
 }

@@ -712,7 +712,7 @@ protected:
      *
      * @param txResultHash   Hash on result ID to find item ID
      * @param txItemHash     Hash on item ID to find result ID
-     * 
+     *
      * @return               true
      */
     bool loadTradeTransformationsByPatternAndGroup(Result* result, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txResultHash, csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32>* txItemHash);

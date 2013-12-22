@@ -1,7 +1,7 @@
 /*
  * clients.h - Author: Keith Fulton
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -31,14 +31,14 @@ class SockAddress
 {
 public:
     SockAddress(const SOCKADDR_IN &sock);
-    bool operator< (const SockAddress& other) const;
+    bool operator< (const SockAddress &other) const;
 private:
     // Define a few operators as privat so that we know
     // that they are not used.
-    bool operator> (const SockAddress& other) const;
-    bool operator= (const SockAddress& other) const;
-    bool operator== (const SockAddress& other) const;
-    
+    bool operator> (const SockAddress &other) const;
+    bool operator= (const SockAddress &other) const;
+    bool operator== (const SockAddress &other) const;
+
 #ifdef INCLUDE_IPV6_SUPPORT
     SOCKADDR_IN addr;
 #else
@@ -48,7 +48,7 @@ private:
 };
 
 template<> class csHashComputer<SockAddress> :
-public csHashComputerStruct<SockAddress> {};
+    public csHashComputerStruct<SockAddress> {};
 
 /**
  * This class is a list of several CLient objects, it's designed for finding
@@ -61,7 +61,7 @@ public:
     typedef csHash<Client*, SockAddress> AddressHash;
 protected:
     friend class ClientIterator;
-    
+
     AddressHash addrHash;
     csHash<Client*> hash;
     csPDelArray<Client> toDelete;
@@ -73,13 +73,13 @@ public:
 
     bool Initialize();
 
-    Client *Add(LPSOCKADDR_IN addr);
-    
+    Client* Add(LPSOCKADDR_IN addr);
+
     // Delete all clients marked to be deleted
     void SweepDelete();
-    
+
     // Mark this client as ready to be deleted
-    void MarkDelete(Client *client);
+    void MarkDelete(Client* client);
 
     /// Count the number of clients connected, including superclients
     size_t Count(void) const;
@@ -88,31 +88,31 @@ public:
     size_t CountReadyPlayers() const;
 
     ///  Find by 32bit id value, used in UDP messages, returns ready or not.
-    Client *FindAny(uint32_t id);
+    Client* FindAny(uint32_t id);
     ///  Find by 32bit id value, used in UDP messages.  Returns NULL if found but not ready.
-    Client *Find(uint32_t id);
+    Client* Find(uint32_t id);
     /// Find by player name, used for Chat and other purposes. Returns NULL if found but not ready.
-    Client *Find(const char* name);
+    Client* Find(const char* name);
     /// Find by player id
-    Client *FindPlayer(PID playerID);
+    Client* FindPlayer(PID playerID);
     /// Find by account id
-    Client *FindAccount(AccountID accountID, uint32_t excludeClient = 0);
+    Client* FindAccount(AccountID accountID, uint32_t excludeClient = 0);
     /// Find by IP addr and Port
-    Client *Find(LPSOCKADDR_IN addr);
-    
+    Client* Find(LPSOCKADDR_IN addr);
+
     csRef<NetPacketQueueRefCount> FindQueueAny(uint32_t id);
 };
 
 class ClientIterator : public ClientConnectionSet::AddressHash::GlobalIterator
 {
 public:
-    ClientIterator (ClientConnectionSet& clients);
-    ~ClientIterator ();
-    
+    ClientIterator(ClientConnectionSet &clients);
+    ~ClientIterator();
+
 private:
 
     /// This is a pointer to the mutex in the ClientConnectionSet class
-    CS::Threading::RecursiveMutex& mutex;
+    CS::Threading::RecursiveMutex &mutex;
 };
 
 

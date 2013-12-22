@@ -54,8 +54,8 @@ psGuildInfo::psGuildInfo() : lastNameChange(0)
 }
 
 psGuildInfo::psGuildInfo(csString name, PID founder) : id(0), name(name),
-                         founder(founder), karma_points(0), secret(false),
-                         lastNameChange(0), alliance(0)
+    founder(founder), karma_points(0), secret(false),
+    lastNameChange(0), alliance(0)
 {
     //do nothing
 }
@@ -85,7 +85,7 @@ bool psGuildInfo::Load(unsigned int id)
     return Load(result[0]);
 }
 
-bool psGuildInfo::Load(const csString& name)
+bool psGuildInfo::Load(const csString &name)
 {
     csString escName;
     db->Escape(escName, name);
@@ -100,7 +100,7 @@ bool psGuildInfo::Load(const csString& name)
     return Load(result[0]);
 }
 
-bool psGuildInfo::Load(iResultRow& row)
+bool psGuildInfo::Load(iResultRow &row)
 {
     motd = row["motd"];
     id = row.GetInt("id");
@@ -125,7 +125,7 @@ bool psGuildInfo::Load(iResultRow& row)
     unsigned int i, resultCount = result.Count();
     for(i = 0; i < resultCount; i++)
     {
-        psGuildLevel *gl = new psGuildLevel;
+        psGuildLevel* gl = new psGuildLevel;
         gl->level      = result[i].GetInt("level");
         gl->privileges = result[i].GetInt("rights");
         gl->title      = result[i]["level_name"];
@@ -134,8 +134,8 @@ bool psGuildInfo::Load(iResultRow& row)
 
     // Now preload members
     Result member(db->Select("select id,name,guild_level,guild_points,guild_public_notes,guild_private_notes, last_login, guild_additional_privileges, guild_denied_privileges"
-        "  from characters"
-        " where guild_member_of=%d",id));
+                             "  from characters"
+                             " where guild_member_of=%d",id));
 
     if(!member.IsValid())
     {
@@ -146,7 +146,7 @@ bool psGuildInfo::Load(iResultRow& row)
     resultCount = member.Count();
     for(i = 0; i < resultCount; i++)
     {
-        psGuildMember *gm = new psGuildMember;
+        psGuildMember* gm = new psGuildMember;
 
         gm->char_id = PID(member[i].GetUInt32("id"));
         gm->name    = NormalizeCharacterName(member[i]["name"]);
@@ -190,15 +190,15 @@ bool psGuildInfo::InsertNew()
     csString guildEsc;
     db->Escape(guildEsc, name);
 
-    if (db->Command("insert into guilds (name,char_id_founder,date_created,max_guild_points) "
-        "values ('%s', %d, Now(), %d )",
-        guildEsc.GetData(),
-        founder.Unbox(),
-        DEFAULT_MAX_GUILD_POINTS)
-        != 1)
+    if(db->Command("insert into guilds (name,char_id_founder,date_created,max_guild_points) "
+                   "values ('%s', %d, Now(), %d )",
+                   guildEsc.GetData(),
+                   founder.Unbox(),
+                   DEFAULT_MAX_GUILD_POINTS)
+            != 1)
     {
-        Error3 ("Couldn't create new guild.\nCommand was "
-            "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+        Error3("Couldn't create new guild.\nCommand was "
+               "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
         return false;
     }
 
@@ -225,7 +225,7 @@ bool psGuildInfo::InsertNew()
 
         query.AppendFmt("(%d, %d, '%s', %d )%s", id, i, level.GetData(), rights, comma.GetData());
 
-        psGuildLevel *lev = new psGuildLevel;
+        psGuildLevel* lev = new psGuildLevel;
         lev->level = i;
         lev->title = level;
         lev->privileges = rights;
@@ -235,14 +235,14 @@ bool psGuildInfo::InsertNew()
     if(db->Command(query) != MAX_GUILD_LEVEL)
     {
         Error3("Couldn't create guild levels.\nCommand was "
-                "<%s>.\nError returned was "
-                "<%s>\n", db->GetLastQuery(), db->GetLastError());
+               "<%s>.\nError returned was "
+               "<%s>\n", db->GetLastQuery(), db->GetLastError());
         return false;
     }
     return true;
 }
 
-psGuildLevel *psGuildInfo::FindLevel(int level) const
+psGuildLevel* psGuildInfo::FindLevel(int level) const
 {
     for(size_t i = 0; i < levels.GetSize(); i++)
     {
@@ -252,7 +252,7 @@ psGuildLevel *psGuildInfo::FindLevel(int level) const
     return NULL;
 }
 
-psGuildMember *psGuildInfo::FindMember(PID char_id) const
+psGuildMember* psGuildInfo::FindMember(PID char_id) const
 {
     for(size_t i = 0; i < members.GetSize(); i++)
     {
@@ -262,7 +262,7 @@ psGuildMember *psGuildInfo::FindMember(PID char_id) const
     return NULL;
 }
 
-psGuildMember *psGuildInfo::FindMember(const char *name) const
+psGuildMember* psGuildInfo::FindMember(const char* name) const
 {
     for(size_t i = 0; i < members.GetSize(); i++)
     {
@@ -272,9 +272,9 @@ psGuildMember *psGuildInfo::FindMember(const char *name) const
     return NULL;
 }
 
-psGuildMember * psGuildInfo::FindLeader() const
+psGuildMember* psGuildInfo::FindLeader() const
 {
-    for (size_t i = 0; i < members.GetSize(); i++)
+    for(size_t i = 0; i < members.GetSize(); i++)
     {
         if(members[i]->guildlevel->level == MAX_GUILD_LEVEL)
             return members[i];
@@ -282,7 +282,7 @@ psGuildMember * psGuildInfo::FindLeader() const
     return NULL;
 }
 
-void psGuildInfo::Connect(psCharacter *player)
+void psGuildInfo::Connect(psCharacter* player)
 {
     for(size_t i = 0; i < members.GetSize(); i++)
     {
@@ -295,12 +295,12 @@ void psGuildInfo::Connect(psCharacter *player)
     }
 }
 
-void psGuildInfo::Disconnect(psCharacter *player)
+void psGuildInfo::Disconnect(psCharacter* player)
 {
     // remove connection player <---> guild
     for(size_t i = 0; i < members.GetSize(); i++)
     {
-        if (members[i]->character == player)
+        if(members[i]->character == player)
         {
             player->SetGuild(NULL);
             members[i]->character = NULL;
@@ -309,12 +309,12 @@ void psGuildInfo::Disconnect(psCharacter *player)
     }
 }
 
-void psGuildInfo::UpdateLastLogin(psCharacter *player)
+void psGuildInfo::UpdateLastLogin(psCharacter* player)
 {
     //updates last login informations for this member
-    for (size_t i=0; i<members.GetSize(); i++)
+    for(size_t i=0; i<members.GetSize(); i++)
     {
-        if (members[i]->character == player)
+        if(members[i]->character == player)
         {
             members[i]->last_login = player->GetLastLoginTime();
             break;
@@ -322,29 +322,29 @@ void psGuildInfo::UpdateLastLogin(psCharacter *player)
     }
 }
 
-bool psGuildInfo::AddNewMember(psCharacter *player, int level)
+bool psGuildInfo::AddNewMember(psCharacter* player, int level)
 {
-    if (player->GetGuild())
+    if(player->GetGuild())
     {
         Error1("Player is already member of a guild!");
         return false;      // still member of old guild so can't join
     }
 
     // Set player's guild
-    if (db->Command("update characters "
-        "   set guild_member_of=%d, "
-        "       guild_level=%d,"
-        "       guild_points=0,"
-        "       guild_public_notes=NULL,"
-        "       guild_private_notes=NULL"
-        " where id=%u", id, level, player->GetPID().Unbox()) != 1)
+    if(db->Command("update characters "
+                   "   set guild_member_of=%d, "
+                   "       guild_level=%d,"
+                   "       guild_points=0,"
+                   "       guild_public_notes=NULL,"
+                   "       guild_private_notes=NULL"
+                   " where id=%u", id, level, player->GetPID().Unbox()) != 1)
     {
         Error3("Couldn't update guild for player.\nCommand was <%s>.\nError returned was <%s>\n",
-            db->GetLastQuery(),db->GetLastError());
+               db->GetLastQuery(),db->GetLastError());
         return false;
     }
 
-    psGuildMember *gm = new psGuildMember;
+    psGuildMember* gm = new psGuildMember;
 
     gm->char_id = player->GetPID();
     gm->character   = NULL;
@@ -362,7 +362,7 @@ bool psGuildInfo::AddNewMember(psCharacter *player, int level)
     return true;
 }
 
-bool psGuildInfo::RemoveMember(psGuildMember *target)
+bool psGuildInfo::RemoveMember(psGuildMember* target)
 {
     size_t i = members.Find(target);
 
@@ -370,21 +370,21 @@ bool psGuildInfo::RemoveMember(psGuildMember *target)
         return false;
 
     if(db->Command("update characters"
-                    "   set guild_member_of=0,"
-                    "       guild_level=0,"
-                    "       guild_points=0,"
-                    "       guild_public_notes=NULL,"
-                    "       guild_private_notes=NULL"
-                    " where id=%u", target->char_id.Unbox()) <= 0)
+                   "   set guild_member_of=0,"
+                   "       guild_level=0,"
+                   "       guild_points=0,"
+                   "       guild_public_notes=NULL,"
+                   "       guild_private_notes=NULL"
+                   " where id=%u", target->char_id.Unbox()) <= 0)
     {
         Error3("Couldn't update players to not be guild "
-            "members.\nCommand was <%s>.\nError returned was "
-            "<%s>\n",
-            db->GetLastQuery(),db->GetLastError());
+               "members.\nCommand was <%s>.\nError returned was "
+               "<%s>\n",
+               db->GetLastQuery(),db->GetLastError());
         return false;
     }
 
-    if (target->character)
+    if(target->character)
         Disconnect(target->character);
 
     members.DeleteIndex(i);
@@ -409,41 +409,41 @@ bool psGuildInfo::RemoveGuild()
     if(db->Command("delete from guilds where id=%d",id) != 1)
     {
         Error3("Couldn't remove guild.\nCommand was <%s>.\nError "
-            "returned was <%s>\n",
-            db->GetLastQuery(),db->GetLastError());
+               "returned was <%s>\n",
+               db->GetLastQuery(),db->GetLastError());
         return false;
     }
 
     if(db->Command("delete from guildlevels where guild_id=%d",
-        id) <= 0)
+                   id) <= 0)
     {
         Error3("Couldn't remove guild levels.\nCommand was "
-            "<%s>.\nError returned was <%s>\n",
-            db->GetLastQuery(),db->GetLastError());
+               "<%s>.\nError returned was <%s>\n",
+               db->GetLastQuery(),db->GetLastError());
         return false;
     }
 
-    if (db->Command("update characters "
-        "   set guild_member_of=0,"
-        "       guild_level=0,"
-        "       guild_points=0,"
-        "       guild_public_notes=NULL,"
-        "       guild_private_notes=NULL"
-        " where guild_member_of=%d",id) == QUERY_FAILED)
+    if(db->Command("update characters "
+                   "   set guild_member_of=0,"
+                   "       guild_level=0,"
+                   "       guild_points=0,"
+                   "       guild_public_notes=NULL,"
+                   "       guild_private_notes=NULL"
+                   " where guild_member_of=%d",id) == QUERY_FAILED)
     {
         Error3("Couldn't update players to not be guild "
-            "members.\nCommand was <%s>.\nError returned was "
-            "<%s>\n",
-            db->GetLastQuery(),db->GetLastError());
+               "members.\nCommand was <%s>.\nError returned was "
+               "<%s>\n",
+               db->GetLastQuery(),db->GetLastError());
         return false;
     }
 
     return true;
 }
 
-bool psGuildInfo::RenameLevel(int level, const char *levelname)
+bool psGuildInfo::RenameLevel(int level, const char* levelname)
 {
-    psGuildLevel *lev = FindLevel(level);
+    psGuildLevel* lev = FindLevel(level);
 
     if(!lev)
     {
@@ -454,10 +454,10 @@ bool psGuildInfo::RenameLevel(int level, const char *levelname)
     csString escLevel;
     db->Escape(escLevel, levelname);
     unsigned long res = db->Command("update guildlevels"
-        "   set level_name='%s'"
-        " where guild_id=%d"
-        "   and level=%d",
-        escLevel.GetData(), id, level);
+                                    "   set level_name='%s'"
+                                    " where guild_id=%d"
+                                    "   and level=%d",
+                                    escLevel.GetData(), id, level);
 
     if(res == QUERY_FAILED)
     {
@@ -467,14 +467,14 @@ bool psGuildInfo::RenameLevel(int level, const char *levelname)
     return true;
 }
 
-bool psGuildInfo::SetMOTD(const csString& str)
+bool psGuildInfo::SetMOTD(const csString &str)
 {
     csString escMOTD;
     db->Escape(escMOTD, str);
     unsigned long res = db->Command("update guilds"
-        "   set motd='%s'"
-        " where id=%d",
-        escMOTD.GetData(), id);
+                                    "   set motd='%s'"
+                                    " where id=%d",
+                                    escMOTD.GetData(), id);
 
     if(res == QUERY_FAILED)
     {
@@ -488,10 +488,10 @@ bool psGuildInfo::SetMOTD(const csString& str)
 bool psGuildInfo::SetKarmaPoints(int n_karma_points)
 {
     unsigned long res = db->Command("update guilds"
-         "  set karma_points=%d"
-         "where id=%d",
-         n_karma_points, id);
-    
+                                    "  set karma_points=%d"
+                                    "where id=%d",
+                                    n_karma_points, id);
+
     if(res == QUERY_FAILED)
     {
         Error2("sql error: %s", db->GetLastError());
@@ -503,13 +503,13 @@ bool psGuildInfo::SetKarmaPoints(int n_karma_points)
 
 bool psGuildInfo::SetPrivilege(int level, GUILD_PRIVILEGE privilege, bool on)
 {
-    psGuildLevel *lev = FindLevel(level);
+    psGuildLevel* lev = FindLevel(level);
 
     if(!lev)
     {
         return false;
     }
-    if (on)
+    if(on)
     {
         lev->privileges |= privilege;
     }
@@ -519,10 +519,10 @@ bool psGuildInfo::SetPrivilege(int level, GUILD_PRIVILEGE privilege, bool on)
     }
 
     unsigned long res = db->Command("update guildlevels"
-        "   set rights='%d'"
-        " where guild_id=%d"
-        "   and level=%d",
-        lev->privileges,id,level);
+                                    "   set rights='%d'"
+                                    " where guild_id=%d"
+                                    "   and level=%d",
+                                    lev->privileges,id,level);
 
     if(res == QUERY_FAILED)
     {
@@ -532,9 +532,9 @@ bool psGuildInfo::SetPrivilege(int level, GUILD_PRIVILEGE privilege, bool on)
     return true;
 }
 
-bool psGuildInfo::SetMemberPrivilege(psGuildMember *member, GUILD_PRIVILEGE privilege, bool on)
+bool psGuildInfo::SetMemberPrivilege(psGuildMember* member, GUILD_PRIVILEGE privilege, bool on)
 {
-    psGuildLevel *lev = member->guildlevel;
+    psGuildLevel* lev = member->guildlevel;
 
     // If the member has the rights whether inherited or specified, ignore
     if(!lev || member->HasRights(privilege) == on)
@@ -569,9 +569,9 @@ bool psGuildInfo::SetMemberPrivilege(psGuildMember *member, GUILD_PRIVILEGE priv
         }
     }
     unsigned long res = db->Command("update characters"
-            "   set guild_additional_privileges='%d', guild_denied_privileges='%d'"
-            " where id = '%d'",
-            member->privileges, member->removedPrivileges, member->char_id.Unbox());
+                                    "   set guild_additional_privileges='%d', guild_denied_privileges='%d'"
+                                    " where id = '%d'",
+                                    member->privileges, member->removedPrivileges, member->char_id.Unbox());
 
     if(res == QUERY_FAILED)
     {
@@ -581,9 +581,9 @@ bool psGuildInfo::SetMemberPrivilege(psGuildMember *member, GUILD_PRIVILEGE priv
     return true;
 }
 
-bool psGuildInfo::UpdateMemberLevel(psGuildMember *target, int level)
+bool psGuildInfo::UpdateMemberLevel(psGuildMember* target, int level)
 {
-    psGuildLevel *lev = FindLevel(level);
+    psGuildLevel* lev = FindLevel(level);
 
     if(!lev)
     {
@@ -602,7 +602,7 @@ bool psGuildInfo::UpdateMemberLevel(psGuildMember *target, int level)
     return true;
 }
 
-void psGuildInfo::AdjustMoney(const psMoney& money)
+void psGuildInfo::AdjustMoney(const psMoney &money)
 {
     bankMoney.AdjustCircles(money.GetCircles());
     bankMoney.AdjustOctas(money.GetOctas());
@@ -617,22 +617,22 @@ void psGuildInfo::SaveBankMoney()
 
     sql.AppendFmt("update guilds set bank_money_circles=%u, bank_money_trias=%u, bank_money_hexas=%u, bank_money_octas=%u where id=%u",
                   bankMoney.GetCircles(), bankMoney.GetTrias(), bankMoney.GetHexas(), bankMoney.GetOctas(), id);
-    if (db->Command(sql) != 1)
+    if(db->Command(sql) != 1)
     {
-        Error3 ("Couldn't save guild's bank money to database.\nCommand was "
-            "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+        Error3("Couldn't save guild's bank money to database.\nCommand was "
+               "<%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
     }
 }
 
-bool psGuildInfo::SetMemberPoints(psGuildMember * member, int points)
+bool psGuildInfo::SetMemberPoints(psGuildMember* member, int points)
 {
-    if (points > max_guild_points)
+    if(points > max_guild_points)
         return false;
 
     member->guild_points = points;
 
     unsigned long res = db->Command("UPDATE characters SET guild_points=%d WHERE id=%u", points, member->char_id.Unbox());
-    if (res != 1)
+    if(res != 1)
     {
         Error3("Couldn't save guild_points of %s: %s", ShowID(member->char_id), db->GetLastError());
         return false;
@@ -642,13 +642,13 @@ bool psGuildInfo::SetMemberPoints(psGuildMember * member, int points)
 
 bool psGuildInfo::SetMaxMemberPoints(int points)
 {
-    if (points > MAX_GUILD_POINTS_LIMIT)
+    if(points > MAX_GUILD_POINTS_LIMIT)
         points = MAX_GUILD_POINTS_LIMIT;
 
     max_guild_points = points;
 
     unsigned long res = db->Command("UPDATE guilds SET max_guild_points=%d WHERE id=%u", points, id);
-    if (res != 1)
+    if(res != 1)
     {
         Error3("Couldn't save max guild_points of %d: %s", id, db->GetLastError());
         return false;
@@ -656,11 +656,11 @@ bool psGuildInfo::SetMaxMemberPoints(int points)
     return true;
 }
 
-bool psGuildInfo::SetMemberNotes(psGuildMember * member, const csString & notes, bool isPublic)
+bool psGuildInfo::SetMemberNotes(psGuildMember* member, const csString &notes, bool isPublic)
 {
-    const char * dbName;
+    const char* dbName;
 
-    if (isPublic)
+    if(isPublic)
     {
         member->public_notes = notes;
         dbName = "guild_public_notes";
@@ -672,9 +672,9 @@ bool psGuildInfo::SetMemberNotes(psGuildMember * member, const csString & notes,
     }
 
     csString escNotes;
-    db->Escape( escNotes, notes );
+    db->Escape(escNotes, notes);
     unsigned long res = db->Command("UPDATE characters SET %s='%s' WHERE id=%u", dbName, escNotes.GetData(), member->char_id.Unbox());
-    if (res != 1)
+    if(res != 1)
     {
         Error4("Couldn't save %s of %s: %s", dbName, ShowID(member->char_id), db->GetLastError());
         return false;
@@ -699,21 +699,21 @@ unsigned int psGuildInfo::MinutesUntilUserChangeName() const
 
 bool psGuildInfo::SetName(csString guildName)
 {
-    if (name == guildName)
+    if(name == guildName)
         return true;
 
     name = guildName;
     lastNameChange = csGetTicks();
 
     csString escGuildName;
-    db->Escape( escGuildName, guildName );
+    db->Escape(escGuildName, guildName);
     unsigned long res = db->Command("update guilds"
-        "   set name='%s'"
-        " where id=%d",
-        escGuildName.GetData(),
-        id);
+                                    "   set name='%s'"
+                                    " where id=%d",
+                                    escGuildName.GetData(),
+                                    id);
 
-    if (res == QUERY_FAILED)
+    if(res == QUERY_FAILED)
     {
         Error2("sql error: %s", db->GetLastError());
         return false;
@@ -723,18 +723,18 @@ bool psGuildInfo::SetName(csString guildName)
 
 bool psGuildInfo::SetSecret(bool secretGuild)
 {
-    if (secret == secretGuild)
+    if(secret == secretGuild)
         return true;
 
     secret = secretGuild;
 
     unsigned long res = db->Command("update guilds"
-        "   set secret_ind='%c'"
-        " where id=%d",
-        secret?'Y':'N',
-        id);
+                                    "   set secret_ind='%c'"
+                                    " where id=%d",
+                                    secret?'Y':'N',
+                                    id);
 
-    if (res == QUERY_FAILED)
+    if(res == QUERY_FAILED)
     {
         Error2("sql error: %s", db->GetLastError());
         return false;
@@ -742,20 +742,20 @@ bool psGuildInfo::SetSecret(bool secretGuild)
     return true;
 }
 
-bool psGuildInfo::SetWebPage(const csString & web_page)
+bool psGuildInfo::SetWebPage(const csString &web_page)
 {
-    if (this->web_page == web_page)
+    if(this->web_page == web_page)
         return true;
 
     this->web_page = web_page;
 
     csString escWeb;
-    db->Escape( escWeb, web_page );
+    db->Escape(escWeb, web_page);
     unsigned long res = db->Command("update guilds"
-        "   set web_page='%s'"
-        "   where id=%d", escWeb.GetData(), id);
+                                    "   set web_page='%s'"
+                                    "   where id=%d", escWeb.GetData(), id);
 
-    if (res == QUERY_FAILED)
+    if(res == QUERY_FAILED)
     {
         Error2("sql error: %s", db->GetLastError());
         return false;
@@ -763,13 +763,13 @@ bool psGuildInfo::SetWebPage(const csString & web_page)
     return true;
 }
 
-void psGuildInfo::AddGuildWar(psGuildInfo *other)
+void psGuildInfo::AddGuildWar(psGuildInfo* other)
 {
-    guild_war_with_id.Push( other->id );
+    guild_war_with_id.Push(other->id);
     db->CommandPump("INSERT INTO guild_wars VALUES(%d, %d)", id, other->id);
 }
 
-bool psGuildInfo::IsGuildWarActive(psGuildInfo *other)
+bool psGuildInfo::IsGuildWarActive(psGuildInfo* other)
 {
     for(size_t i = 0; i < guild_war_with_id.GetSize(); i++)
     {
@@ -779,7 +779,7 @@ bool psGuildInfo::IsGuildWarActive(psGuildInfo *other)
     return false;
 }
 
-void psGuildInfo::RemoveGuildWar(psGuildInfo *other)
+void psGuildInfo::RemoveGuildWar(psGuildInfo* other)
 {
     guild_war_with_id.Delete(other->id);
     db->CommandPump("DELETE FROM guild_wars WHERE guild_a = %d and guild_b = %d", id, other->id);
@@ -803,7 +803,7 @@ psGuildAlliance::psGuildAlliance() :id(0), leader(NULL)
     //do nothing
 }
 
-psGuildAlliance::psGuildAlliance(const csString & n_name) : id(0), name(n_name), leader(NULL)
+psGuildAlliance::psGuildAlliance(const csString &n_name) : id(0), name(n_name), leader(NULL)
 {
     //do nothing
 }
@@ -839,7 +839,7 @@ bool psGuildAlliance::RemoveAlliance()
     return true;
 }
 
-bool psGuildAlliance::AddNewMember(psGuildInfo * member)
+bool psGuildAlliance::AddNewMember(psGuildInfo* member)
 {
     if(members.Find(member) != csArrayItemNotFound)
     {
@@ -859,12 +859,12 @@ bool psGuildAlliance::AddNewMember(psGuildInfo * member)
     return true;
 }
 
-bool psGuildAlliance::CheckMembership(psGuildInfo * member) const
+bool psGuildAlliance::CheckMembership(psGuildInfo* member) const
 {
     return members.Find(member) != csArrayItemNotFound;
 }
 
-bool psGuildAlliance::RemoveMember(psGuildInfo * member)
+bool psGuildAlliance::RemoveMember(psGuildInfo* member)
 {
     size_t index = members.Find(member);
 
@@ -893,14 +893,14 @@ bool psGuildAlliance::RemoveMember(psGuildInfo * member)
 
 bool psGuildAlliance::Load(int id)
 {
-    psGuildInfo * member;
+    psGuildInfo* member;
     int leaderID;
     unsigned int memberNum;
 
     this->id = id;
 
     // Load name and leader of alliance
-    
+
     Result result(db->Select("select name, leading_guild from alliances where id=%d", id));
     if(!result.IsValid())
     {
@@ -947,7 +947,7 @@ bool psGuildAlliance::Load(int id)
     return true;
 }
 
-bool psGuildAlliance::SetLeader(psGuildInfo * newLeader)
+bool psGuildAlliance::SetLeader(psGuildInfo* newLeader)
 {
     if(!CheckMembership(newLeader))
         return false;
@@ -962,7 +962,7 @@ bool psGuildAlliance::SetLeader(psGuildInfo * newLeader)
     return true;
 }
 
-psGuildInfo * psGuildAlliance::GetMember(int memberNum)
+psGuildInfo* psGuildAlliance::GetMember(int memberNum)
 {
     CS_ASSERT(memberNum >= 0 && (size_t)memberNum < members.GetSize());
     return members[memberNum];

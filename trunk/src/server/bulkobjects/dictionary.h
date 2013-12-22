@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *  
+ *
  */
 #ifndef PS_DICTIONARY_
 #define PS_DICTIONARY_
@@ -65,7 +65,7 @@ struct Faction;
 template<typename K, typename K2> class NpcTriggerOrdering : public CS::Container::RedBlackTreeOrderingTotal<NpcTrigger,NpcTrigger>
 {
 public:
-    NpcTriggerOrdering(NpcTrigger* const& a, NpcTrigger* const& b) : CS::Container::RedBlackTreeOrderingTotal<NpcTrigger,NpcTrigger>(*a,*b)
+    NpcTriggerOrdering(NpcTrigger* const &a, NpcTrigger* const &b) : CS::Container::RedBlackTreeOrderingTotal<NpcTrigger,NpcTrigger>(*a,*b)
     {
     }
 };
@@ -85,99 +85,99 @@ protected:
 
     /// This is a storage area for popup menus parsed during quest loading, which is done before NPCs are spawned.
     csHash<NpcDialogMenu*,csString>    initial_popup_menus;
-    
+
     int dynamic_id;
 
-    bool LoadSynonyms(iDataConnection *db);
-    bool LoadTriggerGroups(iDataConnection *db);
-    bool LoadTriggers(iDataConnection *db);
-    bool LoadResponses(iDataConnection *db);
-    bool LoadDisallowedWords(iDataConnection *db);
-    
+    bool LoadSynonyms(iDataConnection* db);
+    bool LoadTriggerGroups(iDataConnection* db);
+    bool LoadTriggers(iDataConnection* db);
+    bool LoadResponses(iDataConnection* db);
+    bool LoadDisallowedWords(iDataConnection* db);
+
     /** All unknown words from 'trigger' that are not disallowed are added to 'phrases'.
         All disallowed words from 'trigger' are removed from 'trigger' */
-    void AddWords(csString& trigger);
+    void AddWords(csString &trigger);
 
-    /** 
-     * Adds a new record to 'terms' 
+    /**
+     * Adds a new record to 'terms'
      *
      * @return A new term or and existing term if allready added.
      */
-    NpcTerm* AddTerm(const char *term);
+    NpcTerm* AddTerm(const char* term);
 
-    int AddTriggerGroupEntry(int id,const char *txt, int equivID);
-    csArray<NpcTrigger*> ParseMultiTrigger(NpcTrigger *parsetrig);
+    int AddTriggerGroupEntry(int id,const char* txt, int equivID);
+    csArray<NpcTrigger*> ParseMultiTrigger(NpcTrigger* parsetrig);
 
 public:
     NPCDialogDict();
     virtual ~NPCDialogDict();
 
-    bool Initialize(iDataConnection *db);
-        
-	bool FindKnowledgeArea(const csString& name);
+    bool Initialize(iDataConnection* db);
+
+    bool FindKnowledgeArea(const csString &name);
 
     /** Returns record of 'term' (or NULL if unknown) */
-    NpcTerm * FindTerm(const char *term);
-    
+    NpcTerm* FindTerm(const char* term);
+
     /** Returns synonym of 'term' (or NULL if unknown). If 'term' is known but has no synonym, then 'term' itself is returned */
-    NpcTerm * FindTermOrSynonym(const csString & term);
-    
-    NpcResponse *FindResponse(gemNPC * npc,
-                              const char *area,
-                              const char *trigger,
+    NpcTerm* FindTermOrSynonym(const csString &term);
+
+    NpcResponse* FindResponse(gemNPC* npc,
+                              const char* area,
+                              const char* trigger,
                               int faction,
                               int priorresponse,
-                              Client *client, 
+                              Client* client,
                               int questID = -1);
 
     /** Lookup the response with the given ID from responses */
-    NpcResponse * FindResponse(int responseID); 
+    NpcResponse* FindResponse(int responseID);
 
     /** Loads a trigger from database (its id=databaseID) */
-    bool AddTrigger( iDataConnection* db, int databaseID, int responseID );
+    bool AddTrigger(iDataConnection* db, int databaseID, int responseID);
 
     /** substitute master trigger if this is child trigger in group. return true if substituted */
-    bool CheckForTriggerGroup(csString& trigger);
-    
+    bool CheckForTriggerGroup(csString &trigger);
+
     /** Loads a response from database (its id=databaseID) */
-    void AddResponse( iDataConnection* db, int databaseID );
+    void AddResponse(iDataConnection* db, int databaseID);
 
     /** Adds a response dynamically not from the database. Supplies new_id if 0. */
-    NpcResponse *AddResponse(const char *response_text,
-                             const char *pronoun_him,
-                             const char *pronoun_her,
-                             const char *pronoun_it,
-                             const char *pronoun_them,
-                             const char *npc_name,
+    NpcResponse* AddResponse(const char* response_text,
+                             const char* pronoun_him,
+                             const char* pronoun_her,
+                             const char* pronoun_it,
+                             const char* pronoun_them,
+                             const char* npc_name,
                              int &new_id,
-                             psQuest * quest,
-							 const char *audio_path);
+                             psQuest* quest,
+                             const char* audio_path);
 
     /** Adds a scripted response */
-    NpcResponse *AddResponse(const char *script);
+    NpcResponse* AddResponse(const char* script);
 
-    NpcTrigger *AddTrigger(const char *k_area,
-                    const char *mytrigger,
-                    int prior_response, 
-                    int trigger_response);
+    NpcTrigger* AddTrigger(const char* k_area,
+                           const char* mytrigger,
+                           int prior_response,
+                           int trigger_response);
 
-    void DeleteTriggerResponse(NpcTrigger * trigger, int responseId);
+    void DeleteTriggerResponse(NpcTrigger* trigger, int responseId);
 
-	/// Find a stored initial trigger menu with the specified NPC name
-	NpcDialogMenu *FindMenu(const char *name);
+    /// Find a stored initial trigger menu with the specified NPC name
+    NpcDialogMenu* FindMenu(const char* name);
 
-	/// Store an initial trigger menu with the specified NPC name
-	void AddMenu(const char *name, NpcDialogMenu *menu);
+    /// Store an initial trigger menu with the specified NPC name
+    void AddMenu(const char* name, NpcDialogMenu* menu);
 
     /**
      * Dump the entire dictionary
      */
-    void Print(const char *area);
+    void Print(const char* area);
 };
 
-/** 
+/**
  * A phrase recognized by the dialog system. Each term can hold a pointer to a
- * synonym e.g. hello = greetings or a more general term e.g. "apple" --> "fruit". 
+ * synonym e.g. hello = greetings or a more general term e.g. "apple" --> "fruit".
  */
 class NpcTerm
 {
@@ -189,7 +189,7 @@ class NpcTerm
 
 public:
 
-    /** 
+    /**
      * The recognized phrase/term
      */
     csString term;
@@ -197,12 +197,12 @@ public:
     /**
      * Pointer to a synonym term.
      *
-     * If nonzero, phrase is translated to 'synonym' 
+     * If nonzero, phrase is translated to 'synonym'
      *
      * Phrases that have 'synonym' should have no 'moreGeneral' term,
      * because 'moreGeneral' of their 'synonym' is used instead of it
      */
-    NpcTerm* synonym;      
+    NpcTerm* synonym;
 
 
     /**
@@ -221,7 +221,7 @@ public:
             free_syns(hypernymSynNet);
     }
 
-    const char* GetInterleavedHypernym(size_t which);   
+    const char* GetInterleavedHypernym(size_t which);
 
     bool IsNoun();
 
@@ -236,9 +236,9 @@ class NpcTriggerGroupEntry
 public:
     int id;
     csString text;
-    NpcTriggerGroupEntry *parent;
+    NpcTriggerGroupEntry* parent;
 
-    NpcTriggerGroupEntry(int i,const char *txt,NpcTriggerGroupEntry *myParent=0)
+    NpcTriggerGroupEntry(int i,const char* txt,NpcTriggerGroupEntry* myParent=0)
     {
         id = i;
         text = txt;
@@ -257,19 +257,19 @@ public:
     //    int      questID;
 
     /// Load the trigger from a database
-    bool Load(iResultRow& row);
+    bool Load(iResultRow &row);
 
     /// Return true if there are one available response for this trigger
-    bool HaveAvailableResponses(Client * client, gemNPC * npc, NPCDialogDict * dict, csArray<int> *availableResponseList = NULL, int questID = -1 );
+    bool HaveAvailableResponses(Client* client, gemNPC* npc, NPCDialogDict* dict, csArray<int>* availableResponseList = NULL, int questID = -1);
 
     /// Return one of the members of responseIDlist array randomly
-    int  GetRandomResponse( const csArray<int> &availableResponseList);
+    int  GetRandomResponse(const csArray<int> &availableResponseList);
 
     /// Compare two triggers. Used when searching for triggers.
-    bool operator==(const NpcTrigger& other) const;
+    bool operator==(const NpcTrigger &other) const;
 
     /// Compare two triggers. Used when searching for triggers.
-    bool operator<=(const NpcTrigger& other) const;
+    bool operator<=(const NpcTrigger &other) const;
 };
 
 
@@ -283,11 +283,17 @@ protected:
     csString name;
 public:
     virtual ~ResponseOperation() {};
-    virtual bool Load(iDocumentNode *node) = 0;
+    virtual bool Load(iDocumentNode* node) = 0;
     virtual csString GetResponseScript() = 0;
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber) = 0;
-    const char *GetName() { return name; }
-    virtual bool IsPublic() { return false; }
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber) = 0;
+    const char* GetName()
+    {
+        return name;
+    }
+    virtual bool IsPublic()
+    {
+        return false;
+    }
 };
 
 /**
@@ -296,51 +302,51 @@ public:
 class NpcDialogMenu
 {
 protected:
-	struct DialogTrigger
-	{
-		unsigned int triggerID;
-		csString menuText;
-		csString trigger;
-        psQuest *quest;
+    struct DialogTrigger
+    {
+        unsigned int triggerID;
+        csString menuText;
+        csString trigger;
+        psQuest* quest;
         csRef<psQuestPrereqOp> prerequisite;
-	};
+    };
 
-	unsigned int counter; // ID counter
+    unsigned int counter; // ID counter
 
 public:
 
-	csArray<DialogTrigger> triggers;
+    csArray<DialogTrigger> triggers;
 
-	NpcDialogMenu();
+    NpcDialogMenu();
 
-	void AddTrigger( const csString &menuText, const csString &trigger, psQuest *quest, psQuestPrereqOp *script=NULL );
-	void Add( NpcDialogMenu *add);
-	void ShowMenu(Client *client,csTicks delay, gemNPC *npc);
-    void SetPrerequisiteScript(psQuestPrereqOp *script);
+    void AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, psQuestPrereqOp* script=NULL);
+    void Add(NpcDialogMenu* add);
+    void ShowMenu(Client* client,csTicks delay, gemNPC* npc);
+    void SetPrerequisiteScript(psQuestPrereqOp* script);
 };
 
 /**
  * This class holds several possible responses and an
- * action script for the npc to run whenever an 
+ * action script for the npc to run whenever an
  * appropriate trigger is triggered.
  */
 class NpcResponse
 {
- public:
+public:
     int      id;                 ///< xref from trigger response
     csString response[MAX_RESP]; ///< possible alternative answers for this response
-    /**\name record antecedents for next question pronouns 
+    /**\name record antecedents for next question pronouns
      * @{ */
     csString him,her,it,them;    /** @} */
     csString triggerText;        ///< This is the text that triggered the response.
-	csString voiceAudioPath[MAX_RESP];	 ///< Optional vfs path to audio file to stream on demand to the client
+    csString voiceAudioPath[MAX_RESP];	 ///< Optional vfs path to audio file to stream on demand to the client
     int type;                    ///< record the type of response
-    psQuest * quest;             ///< Quest that this respons is part of
+    psQuest* quest;              ///< Quest that this respons is part of
     int active_quest;            ///< which one should be run.  this is actually set by check quest avail op
     csTicks timeDelay;           ///< This tracks the current time delay for chat msgs in the responses, so a single script can have a sequence of things that take a while
     csPDelArray<ResponseOperation> script;  ///< list of ops in script to execute when triggered
     csRef<psQuestPrereqOp> prerequisite; ///< prerequisite for this Response to be available
-	NpcDialogMenu *menu;		///< List of possible player trigger replies for this response, for display to the player.
+    NpcDialogMenu* menu;		///< List of possible player trigger replies for this response, for display to the player.
 
     enum
     {
@@ -350,38 +356,51 @@ class NpcResponse
 
     NpcResponse();
     virtual ~NpcResponse();
-    
-    bool Load(iResultRow& row);
+
+    bool Load(iResultRow &row);
 
     void SetActiveQuest(int max);
-    int  GetActiveQuest() { return active_quest; }
+    int  GetActiveQuest()
+    {
+        return active_quest;
+    }
 
-    const char *GetResponse(int &number);
+    const char* GetResponse(int &number);
     /// Used for when a response number is unneeded (debug printf around in psnpcdialog)
-    const char *GetResponse() { int number = 0; return GetResponse(number); }
+    const char* GetResponse()
+    {
+        int number = 0;
+        return GetResponse(number);
+    }
 
     /// Returns the VFS path to the audio file which represents this response on the server, or NULL if one was not specified.
-    const char *GetVoiceFile(int &number) { return voiceAudioPath[number]; }
+    const char* GetVoiceFile(int &number)
+    {
+        return voiceAudioPath[number];
+    }
 
     /// Check for SayResponseOp with public flag set, which tells chat whether it is public or private.
     bool HasPublicResponse();
-    bool ParseResponseScript(const char *xmlstr,bool insertBeginning=false);
-    
+    bool ParseResponseScript(const char* xmlstr,bool insertBeginning=false);
+
     /**
      * Returns SIZET_NOT_FOUND (-1) if it fails, or csTicks of response duration if successful
      */
-    csTicks ExecuteScript(gemActor *player, gemNPC* target);
+    csTicks ExecuteScript(gemActor* player, gemNPC* target);
     csString GetResponseScript();
 
     // This is used so that the popup menu and the subsequent response can share the same filtering criteria
-    psQuestPrereqOp *GetPrerequisiteScript() { return prerequisite; }
+    psQuestPrereqOp* GetPrerequisiteScript()
+    {
+        return prerequisite;
+    }
 
     /**
      * Pars and append the xml based prerequisite script to the
      * prerequisite for this Response.
      *
      */
-    bool ParsePrerequisiteScript(const char *xmlstr,bool insertBeginning=false);
+    bool ParsePrerequisiteScript(const char* xmlstr,bool insertBeginning=false);
 
     /**
      * Add a prerequisite to the prerequisite for this response.
@@ -391,19 +410,19 @@ class NpcResponse
      * @return True if successfully added.
      */
     bool AddPrerequisite(csRef<psQuestPrereqOp> op, bool insertBeginning = false);
-    
+
     /**
      * Check if the prerequisite for this response is valid
      *
      * @param character The Character trying to get the response
      * @return True if prerequisite are all ok
      */
-    bool CheckPrerequisite(psCharacter * character);
+    bool CheckPrerequisite(psCharacter* character);
 };
 
 /**
  * This script operation chooses randomly between the responses
- * specified in the response columns and causes the server to 
+ * specified in the response columns and causes the server to
  * say one of them to the player.
  */
 class SayResponseOp : public ResponseOperation
@@ -412,14 +431,25 @@ public:
     /// Indicates whether the response dialog should be said publicly or /tell in private
     bool saypublic;
     /// Optional specific string to say, used by quest_scripts
-    csString *sayWhat;
+    csString* sayWhat;
 
-    SayResponseOp(bool is_public) { sayWhat=NULL; saypublic = is_public; name = "respond";}
-    virtual ~SayResponseOp() { if (sayWhat) delete sayWhat; }
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
-    virtual bool IsPublic() { return saypublic; }
+    SayResponseOp(bool is_public)
+    {
+        sayWhat=NULL;
+        saypublic = is_public;
+        name = "respond";
+    }
+    virtual ~SayResponseOp()
+    {
+        if(sayWhat) delete sayWhat;
+    }
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
+    virtual bool IsPublic()
+    {
+        return saypublic;
+    }
 };
 
 /**
@@ -431,16 +461,28 @@ class ActionResponseOp : public ResponseOperation
 protected:
     bool actionMy,actionNarrate;
     /// Indicates whether the response action should be shown publicly or in private
-    bool actionpublic; 
+    bool actionpublic;
     csString anim;
-    csString *actWhat;
+    csString* actWhat;
 public:
-    ActionResponseOp(bool my,bool narrate, bool is_public) { actionMy = my; actionNarrate=narrate; name = "action"; actionpublic = is_public; }
-    virtual ~ActionResponseOp() { if (actWhat) delete actWhat; }
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
-    virtual bool IsPublic() { return actionpublic; }
+    ActionResponseOp(bool my,bool narrate, bool is_public)
+    {
+        actionMy = my;
+        actionNarrate=narrate;
+        name = "action";
+        actionpublic = is_public;
+    }
+    virtual ~ActionResponseOp()
+    {
+        if(actWhat) delete actWhat;
+    }
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
+    virtual bool IsPublic()
+    {
+        return actionpublic;
+    }
 };
 
 /**
@@ -454,14 +496,17 @@ class NPCCmdResponseOp : public ResponseOperation
 protected:
     csString cmd;
 public:
-    NPCCmdResponseOp() { name = "npccmd"; }
+    NPCCmdResponseOp()
+    {
+        name = "npccmd";
+    }
     virtual ~NPCCmdResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
-class psQuest; 
+class psQuest;
 
 /**
  * This script operation checks to make sure a named quest
@@ -471,15 +516,19 @@ class psQuest;
 class VerifyQuestCompletedResponseOp : public ResponseOperation
 {
 protected:
-    psQuest *quest;        /// ptrs to cachemanager entries for quests. must have at least one.
+    psQuest* quest;        /// ptrs to cachemanager entries for quests. must have at least one.
     csString error_msg;    /// string with npc declining to play ball if quest is not completed
 
 public:
-    VerifyQuestCompletedResponseOp() { name="verifyquestcompleted"; quest=NULL; }
+    VerifyQuestCompletedResponseOp()
+    {
+        name="verifyquestcompleted";
+        quest=NULL;
+    }
     virtual ~VerifyQuestCompletedResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 
@@ -487,7 +536,7 @@ public:
  * This script operations is used to set character variables from npc dialogs.
  * It can set a name and a value to associated to it. Note that each name must
  * be unique for the current character or it will be overwritten.
- */ 
+ */
 class SetVariableResponseOp : public ResponseOperation
 {
 protected:
@@ -496,7 +545,10 @@ protected:
 
 public:
     /// Constructor. Practically does nothing.
-    SetVariableResponseOp() { name = "setvariable"; }
+    SetVariableResponseOp()
+    {
+        name = "setvariable";
+    }
 
     ///Destructor.
     virtual ~SetVariableResponseOp() {};
@@ -531,7 +583,7 @@ public:
  * This script operations is used to unset character variables from npc dialogs.
  * It can unset a name a variable from its name. Note that each name must
  * be unique for the current character or it will be overwritten.
- */ 
+ */
 class UnSetVariableResponseOp : public ResponseOperation
 {
 protected:
@@ -540,7 +592,10 @@ protected:
 public:
 
     /// Constructor. Practically does nothing.
-    UnSetVariableResponseOp() { name = "unsetvariable"; }
+    UnSetVariableResponseOp()
+    {
+        name = "unsetvariable";
+    }
 
     ///Destructor.
     virtual ~UnSetVariableResponseOp() {};
@@ -565,7 +620,7 @@ public:
      * @param timeDelay The time to wait before applying this script operation (ignored).
      * @param voiceNumber The voice to apply for this operation (ignored).
      * @return The function always returns true.
-     */   
+     */
     virtual bool Run(gemNPC* who, gemActor* target, NpcResponse* owner, csTicks &timeDelay, int &voiceNumber);
 };
 
@@ -578,16 +633,20 @@ public:
 class VerifyQuestAssignedResponseOp : public ResponseOperation
 {
 protected:
-    psQuest *quest;        /// ptrs to cachemanager entries for quests. must have at least one.
+    psQuest* quest;        /// ptrs to cachemanager entries for quests. must have at least one.
     csString error_msg;    /// string with npc declining to proceed because player does not have quest
 
 public:
-    VerifyQuestAssignedResponseOp() { name="verifyquestassigned"; quest=NULL; }
+    VerifyQuestAssignedResponseOp()
+    {
+        name="verifyquestassigned";
+        quest=NULL;
+    }
     VerifyQuestAssignedResponseOp(int quest);
     virtual ~VerifyQuestAssignedResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /*
@@ -599,8 +658,8 @@ public:
     FireEventResponseOp() { name="fireevent"; }
     virtual ~FireEventResponseOp() {};
     virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);    
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC *who, Client *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
 };
 */
 
@@ -612,16 +671,20 @@ public:
 class VerifyQuestNotAssignedResponseOp : public ResponseOperation
 {
 protected:
-    psQuest *quest;        /// ptrs to cachemanager entries for quests. must have at least one.
+    psQuest* quest;        /// ptrs to cachemanager entries for quests. must have at least one.
     csString error_msg;    /// string with npc declining to proceed because player does not have quest
 
 public:
-    VerifyQuestNotAssignedResponseOp() { name="verifyquestnotassigned"; quest=NULL; }
+    VerifyQuestNotAssignedResponseOp()
+    {
+        name="verifyquestnotassigned";
+        quest=NULL;
+    }
     VerifyQuestNotAssignedResponseOp(int quest);
     virtual ~VerifyQuestNotAssignedResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /**
@@ -631,19 +694,32 @@ public:
 class AssignQuestResponseOp : public ResponseOperation
 {
 protected:
-    psQuest *quest[MAX_RESP];  /// ptrs to cachemanager entries for quests. must have at least one.
+    psQuest* quest[MAX_RESP];  /// ptrs to cachemanager entries for quests. must have at least one.
     csString timeout_msg;  /// string with npc declinign to give quest
     int num_quests;        /// how many of the quests are valid.
 
 public:
-    AssignQuestResponseOp() { name="assign"; quest[0]=NULL; }
+    AssignQuestResponseOp()
+    {
+        name="assign";
+        quest[0]=NULL;
+    }
     virtual ~AssignQuestResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
-    const char *GetTimeoutMsg() { return timeout_msg; }
-    psQuest *GetQuest(int n) { return quest[n]; }
-    int      GetMaxQuests() { return num_quests; }
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
+    const char* GetTimeoutMsg()
+    {
+        return timeout_msg;
+    }
+    psQuest* GetQuest(int n)
+    {
+        return quest[n];
+    }
+    int      GetMaxQuests()
+    {
+        return num_quests;
+    }
 };
 
 /**
@@ -655,14 +731,21 @@ public:
 class AssignQuestSelectOp : public ResponseOperation
 {
 protected:
-    AssignQuestResponseOp *quest_op;
+    AssignQuestResponseOp* quest_op;
 
 public:
-    AssignQuestSelectOp(AssignQuestResponseOp *questop) { name = "questselect"; quest_op = questop; }
+    AssignQuestSelectOp(AssignQuestResponseOp* questop)
+    {
+        name = "questselect";
+        quest_op = questop;
+    }
     virtual ~AssignQuestSelectOp() {};
-    virtual bool Load(iDocumentNode *node) { return true; }
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node)
+    {
+        return true;
+    }
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 
@@ -675,14 +758,21 @@ public:
 class CheckQuestTimeoutOp : public ResponseOperation
 {
 protected:
-    AssignQuestResponseOp *quest_op;
+    AssignQuestResponseOp* quest_op;
 
 public:
-    CheckQuestTimeoutOp(AssignQuestResponseOp *questop) { name = "checkquesttimeout"; quest_op = questop; }
+    CheckQuestTimeoutOp(AssignQuestResponseOp* questop)
+    {
+        name = "checkquesttimeout";
+        quest_op = questop;
+    }
     virtual ~CheckQuestTimeoutOp() {};
-    virtual bool Load(iDocumentNode *node) { return true; }
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node)
+    {
+        return true;
+    }
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /**
@@ -692,15 +782,19 @@ public:
 class CompleteQuestResponseOp : public ResponseOperation
 {
 protected:
-    psQuest *quest;
+    psQuest* quest;
     csString error_msg;
 
 public:
-    CompleteQuestResponseOp() { name="complete"; quest=NULL; }
+    CompleteQuestResponseOp()
+    {
+        name="complete";
+        quest=NULL;
+    }
     virtual ~CompleteQuestResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /**
@@ -710,15 +804,19 @@ public:
 class UncompleteQuestResponseOp : public ResponseOperation
 {
 protected:
-    psQuest *quest;
+    psQuest* quest;
     csString error_msg;
 
 public:
-    UncompleteQuestResponseOp() { name="uncomplete"; quest=NULL; }
+    UncompleteQuestResponseOp()
+    {
+        name="uncomplete";
+        quest=NULL;
+    }
     virtual ~UncompleteQuestResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 class psItemStats;
@@ -730,16 +828,19 @@ class psItemStats;
 class GiveItemResponseOp : public ResponseOperation
 {
 protected:
-    psItemStats *itemstat;
+    psItemStats* itemstat;
     int count;
     float quality;
 
 public:
-    GiveItemResponseOp(): itemstat(NULL), count(1), quality(0) { name="give"; }
+    GiveItemResponseOp(): itemstat(NULL), count(1), quality(0)
+    {
+        name="give";
+    }
     virtual ~GiveItemResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 
@@ -749,21 +850,24 @@ public:
 class FactionResponseOp : public ResponseOperation
 {
 protected:
-    Faction * faction;
+    Faction* faction;
     int value;
 
 public:
-    FactionResponseOp() { name="faction"; }
+    FactionResponseOp()
+    {
+        name="faction";
+    }
     virtual ~FactionResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /**
  * This script operation invokes the progression manager to run a script,
  * as part of his response to a player event.
- * 
+ *
  * Syntax: \<run script="name" with="...mathscript to add bindings..."/\>
  */
 class RunScriptResponseOp : public ResponseOperation
@@ -774,11 +878,15 @@ protected:
     csWeakRef<MathScript> bindings;
 
 public:
-    RunScriptResponseOp() { name = "run"; bindings = NULL; }
+    RunScriptResponseOp()
+    {
+        name = "run";
+        bindings = NULL;
+    }
     virtual ~RunScriptResponseOp();
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /**
@@ -792,11 +900,14 @@ protected:
     psSkillInfo* skill;
 
 public:
-    TrainResponseOp() { name="train"; }
+    TrainResponseOp()
+    {
+        name="train";
+    }
     virtual ~TrainResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /**
@@ -808,11 +919,14 @@ class GuildAwardResponseOp : public ResponseOperation
 protected:
     int karma;
 public:
-    GuildAwardResponseOp() { name = "guild_award"; }
+    GuildAwardResponseOp()
+    {
+        name = "guild_award";
+    }
     virtual ~GuildAwardResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 
@@ -825,11 +939,14 @@ class OfferRewardResponseOp : public ResponseOperation
 protected:
     csArray<psItemStats*>  offer;
 public:
-    OfferRewardResponseOp() { name = "offer"; }
+    OfferRewardResponseOp()
+    {
+        name = "offer";
+    }
     virtual ~OfferRewardResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /**
@@ -839,14 +956,17 @@ public:
 class MoneyResponseOp : public ResponseOperation
 {
 protected:
-     psMoney money;
+    psMoney money;
 
 public:
-    MoneyResponseOp() { name = "money"; }
+    MoneyResponseOp()
+    {
+        name = "money";
+    }
     virtual ~MoneyResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /**
@@ -857,11 +977,14 @@ class IntroduceResponseOp : public ResponseOperation
 protected:
     csString targetName;
 public:
-    IntroduceResponseOp() { name = "introduce"; }
+    IntroduceResponseOp()
+    {
+        name = "introduce";
+    }
     virtual ~IntroduceResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /**
@@ -872,11 +995,14 @@ class DoAdminCommandResponseOp : public ResponseOperation
 protected:
     csString origCommandString, modifiedCommandString;
 public:
-    DoAdminCommandResponseOp() { name = "doadmincmd"; }
+    DoAdminCommandResponseOp()
+    {
+        name = "doadmincmd";
+    }
     virtual ~DoAdminCommandResponseOp() {};
-    virtual bool Load(iDocumentNode *node);
-    virtual csString GetResponseScript();    
-    virtual bool Run(gemNPC *who, gemActor *target,NpcResponse *owner,csTicks& timeDelay, int& voiceNumber);
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
 /** @} */

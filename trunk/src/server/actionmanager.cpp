@@ -337,12 +337,12 @@ void ActionManager::NotifyProximity(gemActor* actor, gemActionLocation* actionLo
         return;  // ActionLocation not of type PROXIMITY.
     }
 
-    if (range > actionLocation->radius)
+    if(range > actionLocation->radius)
     {
         return; // Outside range of action location.
     }
 
-    if (HasActiveTrigger(actor->GetEID(),actionLocation))
+    if(HasActiveTrigger(actor->GetEID(),actionLocation))
     {
         return; // Trigger is active for this client.
     }
@@ -785,7 +785,7 @@ void ActionManager::HandleScriptOperation(psActionLocation* action, gemActor* ac
         {
             env.Define("Item", realItem->GetItem());
         }
-        
+
         script->Run(&env);
     }
 }

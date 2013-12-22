@@ -978,7 +978,7 @@ public:
     /** Gets the user scale value.
      *
      *  Use @see GetScale to get final model scale value. This function
-     *  return the scale from character_values and any buffs. 
+     *  return the scale from character_values and any buffs.
      *
      *  @return A float which contains the user scale value.
      */
@@ -1211,7 +1211,7 @@ public:
      * Set all vital stats dirty.
      */
     void SetAllStatsDirty();
-    
+
     /**
      * Cleare the dirty flags for vitals.
      */

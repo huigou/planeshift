@@ -1,7 +1,7 @@
 /*
  * events.h
  *
- * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
+ *
  * Author: Keith Fulton <keith@planeshift.it>
  */
 
@@ -42,12 +42,12 @@ class gemObject;
 class psDamageEvent : public psMessageCracker
 {
 public:
-    gemActor *attacker;
-    gemActor *target;
+    gemActor* attacker;
+    gemActor* target;
     float     damage;
 
-    psDamageEvent(gemActor *attack,gemActor *victim,float dmg);
-    psDamageEvent( MsgEntry* event );
+    psDamageEvent(gemActor* attack,gemActor* victim,float dmg);
+    psDamageEvent(MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -64,11 +64,11 @@ public:
 class psDeathEvent : public psMessageCracker
 {
 public:
-    gemActor *deadActor;
-    gemActor *killer;
+    gemActor* deadActor;
+    gemActor* killer;
 
-    psDeathEvent(gemActor *dead, gemActor *killer);
-    psDeathEvent( MsgEntry* event );
+    psDeathEvent(gemActor* dead, gemActor* killer);
+    psDeathEvent(MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -84,12 +84,12 @@ public:
 
 class psTargetChangeEvent : public psMessageCracker
 {
- public:
-    gemActor *character;
-    gemObject *target;
+public:
+    gemActor* character;
+    gemObject* target;
 
-    psTargetChangeEvent(gemActor *targeter, gemObject *targeted);
-    psTargetChangeEvent(MsgEntry *event);
+    psTargetChangeEvent(gemActor* targeter, gemObject* targeted);
+    psTargetChangeEvent(MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -108,8 +108,8 @@ class psTargetChangeEvent : public psMessageCracker
 class psZPointsGainedEvent : public psMessageCracker
 {
 public:
-    psZPointsGainedEvent( gemActor* actor, const char* name, int gained, bool rankup );
-    psZPointsGainedEvent( MsgEntry *event );
+    psZPointsGainedEvent(gemActor* actor, const char* name, int gained, bool rankup);
+    psZPointsGainedEvent(MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -120,12 +120,12 @@ public:
      * @return Return a human readable string for the message.
      */
     virtual csString ToString(NetBase::AccessPointers*  accessPointers);
-    
+
 public:
     gemActor* actor;        /// The player that gained the points.
     int amountGained;       /// The amount that was gained.
     bool rankUp;            /// True if the amount gained caused a rank up
-    csString skillName;     /// The name of the skill points gained in.        
+    csString skillName;     /// The name of the skill points gained in.
 };
 
 
@@ -133,7 +133,7 @@ class psBuyEvent : public psMessageCracker
 {
 public:
     psBuyEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
-    psBuyEvent( MsgEntry* event);
+    psBuyEvent(MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -156,7 +156,7 @@ class psSellEvent : public psMessageCracker
 {
 public:
     psSellEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
-    psSellEvent( MsgEntry* event);
+    psSellEvent(MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -175,12 +175,12 @@ public:
 };
 class psPickupEvent : public psMessageCracker
 {
-    public:
+public:
     psPickupEvent(PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price);
-    psPickupEvent( MsgEntry* event);
-    
+    psPickupEvent(MsgEntry* event);
+
     PSF_DECLARE_MSG_FACTORY();
-        
+
     /**
      * Convert the message into human readable string.
      *
@@ -197,12 +197,12 @@ class psPickupEvent : public psMessageCracker
 
 class psDropEvent : public psMessageCracker
 {
-    public:
+public:
     psDropEvent(PID from, const char* fromName, unsigned int item, const char* itemName, int stack, int quality,unsigned int price);
-    psDropEvent( MsgEntry* event);
-        
+    psDropEvent(MsgEntry* event);
+
     PSF_DECLARE_MSG_FACTORY();
-        
+
     /**
      * Convert the message into human readable string.
      *
@@ -213,18 +213,18 @@ class psDropEvent : public psMessageCracker
 
     /**Contains informations about the specific event and will be taken in ownership by the economymanager for accounting.
      * They will all be freed after a certain amount of time.
-     */    
+     */
     csRef<TransactionEntity> trans;
 };
 
 class psLootEvent : public psMessageCracker
 {
-    public:
+public:
     psLootEvent(PID from, const char* fromName, PID to, const char* toName, unsigned int item, const char* itemName, int stack, int quality, unsigned int price);
-    psLootEvent( MsgEntry* event);
-    
+    psLootEvent(MsgEntry* event);
+
     PSF_DECLARE_MSG_FACTORY();
-    
+
     /**
      * Convert the message into human readable string.
      *
@@ -250,8 +250,8 @@ protected:
     int client_id;
 
 public:
-    psConnectEvent( int clientID );
-    psConnectEvent( MsgEntry* event);
+    psConnectEvent(int clientID);
+    psConnectEvent(MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -275,8 +275,8 @@ protected:
     int client_id;
 
 public:
-    psMovementEvent( int clientID );
-    psMovementEvent( MsgEntry* event);
+    psMovementEvent(int clientID);
+    psMovementEvent(MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
 
@@ -306,10 +306,10 @@ public:
 
     Type eventType;
     int client_id;
-    
 
-    psGenericEvent( int clientID, psGenericEvent::Type type );
-    psGenericEvent( MsgEntry* event);
+
+    psGenericEvent(int clientID, psGenericEvent::Type type);
+    psGenericEvent(MsgEntry* event);
 
     PSF_DECLARE_MSG_FACTORY();
 

@@ -376,7 +376,7 @@ public:
     /**
      * Clear the NPCs state.
      *
-     * Brain, hatelist, etc. is cleared. 
+     * Brain, hatelist, etc. is cleared.
      */
     void ClearState();
 

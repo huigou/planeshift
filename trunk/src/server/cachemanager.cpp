@@ -1763,10 +1763,10 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
                 craftInfo->secSkillId = proc->GetSecondarySkillId();
                 craftInfo->minSecSkill = proc->GetMinSecondarySkill();
                 craftInfo->craftStepDescription = CreateTransCraftDescription(t,proc);
-                if( !(craftInfo->craftStepDescription.IsEmpty()))
+                if(!(craftInfo->craftStepDescription.IsEmpty()))
                 {
                     craftInfo->craftStepDescription.Append(".\n");
-                    craftInfo->craftStepDescription.Insert( 0, "   " );
+                    craftInfo->craftStepDescription.Insert(0, "   ");
                     newArray->Push(craftInfo);
                 }
             }
@@ -1963,16 +1963,16 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
                 }
                 else
                 {
-                    craftInfo->craftStepDescription.Append( " <tool " );
-                    craftInfo->craftStepDescription.Append( toolStats->GetName() );
-                    craftInfo->craftStepDescription.Append( "> " );
+                    craftInfo->craftStepDescription.Append(" <tool ");
+                    craftInfo->craftStepDescription.Append(toolStats->GetName());
+                    craftInfo->craftStepDescription.Append("> ");
                 }
             }
         }
     }
-    if( !(craftInfo->craftStepDescription.IsEmpty()))
+    if(!(craftInfo->craftStepDescription.IsEmpty()))
     {
-        craftInfo->craftStepDescription.Insert( 0, "   " );
+        craftInfo->craftStepDescription.Insert(0, "   ");
         craftInfo->craftStepDescription.Append(".\n");
         newArray->Push(craftInfo);
     }
@@ -1992,7 +1992,7 @@ bool CacheManager::DescribeCombination(Result* combinations, csArray<CraftTransI
     //note that the skill mins are not used for combinations, so set them all to 0
     craftInfo->priSkillId = craftInfo->minPriSkill = craftInfo->secSkillId = craftInfo->minSecSkill = 0;
 
-    craftInfo->craftStepDescription.Insert( 0, "   " );
+    craftInfo->craftStepDescription.Insert(0, "   ");
     newArray->Push(craftInfo);
 
     return true;
@@ -2237,7 +2237,7 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
         if(!toolStats)
         {
             Error2("No tool id %u", proc->GetEquipementId());
-            temp.Format(" <tool %i> ", proc->GetEquipementId() );
+            temp.Format(" <tool %i> ", proc->GetEquipementId());
             desc.Append(temp);
         }
         else
@@ -2269,12 +2269,12 @@ csString CacheManager::CreateComboCraftDescription(Result* currentComb)
         if(!itemStats)
         {
             Error2("No item stats for id %u", combId);
-            desc.Append( "<item ");
-            desc.Append( combId );
-            desc.Append( "> ");
+            desc.Append("<item ");
+            desc.Append(combId);
+            desc.Append("> ");
         }
         else if(combMinQty == combMaxQty)
-        // Check if min and max is same
+            // Check if min and max is same
         {
             if(combMinQty == 1)
             {
@@ -2299,9 +2299,9 @@ csString CacheManager::CreateComboCraftDescription(Result* currentComb)
     if(!resultItemStats)
     {
         Error2("No item stats for id %u", (*currentComb)[0].GetInt("result_id"));
-        desc.Append( " <item ");
-        desc.Append(  (*currentComb)[0].GetInt("result_id") );
-        desc.Append( "> ");
+        desc.Append(" <item ");
+        desc.Append((*currentComb)[0].GetInt("result_id"));
+        desc.Append("> ");
     }
 
     // Add result part of description

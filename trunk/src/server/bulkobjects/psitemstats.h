@@ -103,7 +103,8 @@ enum PSITEMSTATS_STAT
 PSSKILL statToSkill(PSITEMSTATS_STAT stat);
 
 
-enum PSITEMSTATS_DAMAGETYPE {
+enum PSITEMSTATS_DAMAGETYPE
+{
     PSITEMSTATS_DAMAGETYPE_NONE  = -1,
     PSITEMSTATS_DAMAGETYPE_SLASH,
     PSITEMSTATS_DAMAGETYPE_BLUNT,
@@ -204,7 +205,8 @@ typedef unsigned int PSITEMSTATS_SLOTLIST;
 
 typedef unsigned int PSITEMSTATS_FLAGS;
 
-struct st_attribute_bonus {
+struct st_attribute_bonus
+{
     PSITEMSTATS_STAT attribute_id;
     short bonus_max;
 };
@@ -248,12 +250,21 @@ public:
     psItemArmorStats();
 
     /** Read the armour related details from the database. */
-    void ReadStats( iResultRow& row );
+    void ReadStats(iResultRow &row);
 
-    PSITEMSTATS_ARMORTYPE Type() { return armor_type; }
-    char Class() { return armor_class; }
-    float Protection( PSITEMSTATS_DAMAGETYPE dmgtype );
-    float Hardness() { return hardness; }
+    PSITEMSTATS_ARMORTYPE Type()
+    {
+        return armor_type;
+    }
+    char Class()
+    {
+        return armor_class;
+    }
+    float Protection(PSITEMSTATS_DAMAGETYPE dmgtype);
+    float Hardness()
+    {
+        return hardness;
+    }
 
 private:
     PSITEMSTATS_ARMORTYPE armor_type; ///< See the  PSITEMSTATS_ARMORTYPE enum for the list
@@ -276,20 +287,38 @@ public:
     /**
      * Read the weapon related details from the database.
      */
-    void ReadStats( iResultRow& row );
+    void ReadStats(iResultRow &row);
 
-    PSITEMSTATS_WEAPONTYPE Type() { return weapon_type; }
+    PSITEMSTATS_WEAPONTYPE Type()
+    {
+        return weapon_type;
+    }
 
     PSSKILL Skill(PSITEMSTATS_WEAPONSKILL_INDEX index);
 
-    float Latency() { return latency; }
+    float Latency()
+    {
+        return latency;
+    }
     float Damage(PSITEMSTATS_DAMAGETYPE dmgtype);
     float ExtraDamagePercent(PSITEMSTATS_DAMAGETYPE dmgtype);
 
-    float Penetration() { return penetration;}
-    float UntargetedBlockValue() { return untargeted_block_value;}
-    float TargetedBlockValue(){ return targeted_block_value;}
-    float CounterBlockValue(){ return counter_block_value; }
+    float Penetration()
+    {
+        return penetration;
+    }
+    float UntargetedBlockValue()
+    {
+        return untargeted_block_value;
+    }
+    float TargetedBlockValue()
+    {
+        return targeted_block_value;
+    }
+    float CounterBlockValue()
+    {
+        return counter_block_value;
+    }
 
     PSITEMSTATS_STAT AttributeBonusType(int index);
     float AttributeBonusMax(int index);
@@ -318,9 +347,12 @@ public:
     /**
      * Read the Ammo related details from the database.
      */
-    void ReadStats( iResultRow& row );
+    void ReadStats(iResultRow &row);
 
-    PSITEMSTATS_AMMOTYPE AmmoType() { return ammunition_type; }
+    PSITEMSTATS_AMMOTYPE AmmoType()
+    {
+        return ammunition_type;
+    }
 private:
     PSITEMSTATS_AMMOTYPE ammunition_type;
 };
@@ -349,7 +381,7 @@ public:
      * @return TRUE if the passed PID corresponds to the creator of this creative item.
      */
     bool IsThisTheCreator(PID characterID);
-    
+
     /**
      * Sets the player passed as the creator of this creative, in case someone doesn't own creation status
      * already, in that case it will be ignored.
@@ -357,8 +389,8 @@ public:
      * @param characterID The PID of the character who will be the creator of this creative defintion.
      * @param creatorStatus A status from PSITEMSTATS_CREATORSTATUS to which setting the creative.
      */
-    void SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus);
-    
+    void SetCreator(PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus);
+
     /**
      * Gets the creator and the status of the creator of this creative.
      *
@@ -367,7 +399,7 @@ public:
      * @return PID The pid of the character who created this creative in case it's valid, else will
      *             return 0 as PID.
      */
-    PID GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus);
+    PID GetCreator(PSITEMSTATS_CREATORSTATUS &creatorStatus);
 
 private:
     /**
@@ -375,8 +407,8 @@ private:
      *
      * @param row The database row as loaded from the database: must have at least a creative_definition column.
      */
-    void ReadStats( iResultRow& row);
-    
+    void ReadStats(iResultRow &row);
+
     /**
      * Read the Creative data from the internal creativeDefinitionXML, populating all the fields from it.
      */
@@ -385,7 +417,7 @@ private:
     /**
      * general write creative content.
      */
-    bool SetCreativeContent(PSITEMSTATS_CREATIVETYPE, const csString&, uint32);
+    bool SetCreativeContent(PSITEMSTATS_CREATIVETYPE, const csString &, uint32);
 
     /**
      * Format content for database.
@@ -410,7 +442,10 @@ private:
      * @param value TRUE to make this creative definition operate on item_instances, otherwise it will operate
      *              on item_stats.
      */
-    void setInstanceBased(bool value) { instanceBased = value; }
+    void setInstanceBased(bool value)
+    {
+        instanceBased = value;
+    }
 
     PSITEMSTATS_CREATIVETYPE creativeType;
 
@@ -420,7 +455,7 @@ private:
 
     PID creatorID;
     PSITEMSTATS_CREATORSTATUS creatorIDStatus;
-    
+
     /**
      * Indicates that when we save on the database we have to operate on item_instances, in place
      * of item_stats.
@@ -440,8 +475,8 @@ private:
 class psItemStats : public iScriptableVar
 {
 public:
-    psItemStats ();
-    ~psItemStats ();
+    psItemStats();
+    ~psItemStats();
 
 private:
     uint32       uid;
@@ -459,13 +494,13 @@ private:
     psItemCreativeStats creativeStats;
 
     float weight;
-    
+
     /**
      * Size of the longest dimension of this object, in cm
      * This is used to determine wether an item can fit inside of a container.
      */
     float size;
-    
+
     /**
      * Size of the longest dimension of the longest item this container can hold.
      * This is used to determine wether an item can fit inside of a container.
@@ -483,7 +518,7 @@ private:
     float decay_rate;
 
     /// Scripts The name of a progression script that this event can trigger on equip, unequip, or consuming.
-    ApplicativeScript *equipScript;
+    ApplicativeScript* equipScript;
     csString consumeScriptName;
 
     PSITEMSTATS_SLOTLIST valid_slots;
@@ -527,7 +562,7 @@ private:
     bool spawnable;
 
     /// Animation eye candy things
-    csPDelArray<psItemAnimation> *anim_list;
+    csPDelArray<psItemAnimation>* anim_list;
 
     /// These temporary fields point to strings used for the mesh, texture, part and image names respectively
     csString mesh_name;
@@ -561,7 +596,7 @@ private:
 
 
     psMoney price;
-    psItemCategory * category;
+    psItemCategory* category;
 
     csString sound;
     csString weapon_type;
@@ -575,29 +610,41 @@ private:
      *
      * @param row The database row to load information from.
      */
-    void LoadMeshRemoval( iResultRow& row );
+    void LoadMeshRemoval(iResultRow &row);
 
     /**
      * Loads in the valid slots from the database for this particular item.
      *
      * @param row The database row to load information from.
      */
-    void LoadSlots(iResultRow& row);
+    void LoadSlots(iResultRow &row);
 
     /**
      * Parses the flag information and sets the internal flags.
      *
      * @param row The database row to load information from.
      */
-    void ParseFlags(iResultRow& row);
+    void ParseFlags(iResultRow &row);
 
 public:
-    psItemArmorStats& Armor() { return armorStats; }
-    psItemWeaponStats& Weapon() { return weaponStats; }
-    psItemAmmoStats& Ammunition() { return ammoStats; }
+    psItemArmorStats &Armor()
+    {
+        return armorStats;
+    }
+    psItemWeaponStats &Weapon()
+    {
+        return weaponStats;
+    }
+    psItemAmmoStats &Ammunition()
+    {
+        return ammoStats;
+    }
 
-    bool ReadItemStats(iResultRow& row);
-    PSITEMSTATS_FLAGS GetFlags() { return flags; }
+    bool ReadItemStats(iResultRow &row);
+    PSITEMSTATS_FLAGS GetFlags()
+    {
+        return flags;
+    }
     // Interface
     bool GetIsMeleeWeapon();
     bool GetIsArmor();
@@ -616,7 +663,7 @@ public:
     bool GetIsConsumable();
     bool GetIsReadable();
     bool GetIsWriteable();
-    
+
     /**
      * Gets if the item should be allowed to be spawned.
      *
@@ -626,8 +673,11 @@ public:
     PSITEMSTATS_CREATIVETYPE GetCreative();
     bool GetBuyPersonalise();
     float GetRange() const;
-    PID GetCreator (PSITEMSTATS_CREATORSTATUS & creatorStatus);
-    csSet<unsigned int> GetAmmoTypeID() const { return ammo_types; }
+    PID GetCreator(PSITEMSTATS_CREATORSTATUS &creatorStatus);
+    csSet<unsigned int> GetAmmoTypeID() const
+    {
+        return ammo_types;
+    }
 
     float weaponRange;
 
@@ -637,15 +687,21 @@ public:
     bool IsMoney();
 
     uint32 GetUID();
-    const char *GetUIDStr();
-    const char *GetDescription() const;
-    void SetDescription(const char *v);
+    const char* GetUIDStr();
+    const char* GetDescription() const;
+    void SetDescription(const char* v);
     void SaveDescription(void);
     PSITEMSTATS_AMMOTYPE GetAmmoType();
-    float GetQuality() const { return item_quality; }
-    void SetQuality(float f){ item_quality = f; }
+    float GetQuality() const
+    {
+        return item_quality;
+    }
+    void SetQuality(float f)
+    {
+        item_quality = f;
+    }
 
-    void GetArmorVsWeaponType(csString& buff);
+    void GetArmorVsWeaponType(csString &buff);
     void SetArmorVsWeaponType(const char* v);
 
     float GetWeight();
@@ -679,20 +735,23 @@ public:
     csString FlagsToText();
 
 
-    const char *GetName() const;
+    const char* GetName() const;
     const csString GetDownCaseName();
     void SetUnique();
     bool GetUnique();
     void SetRandom();
     bool GetRandom();
-    
+
     /**
      * Used to get the creative definition so psitem can make it's own copy of it.
      *
      * @return psXMLString The creative definition xml data of this item.
      */
-    psXMLString getCreativeXML() { return creativeStats.creativeDefinitionXML; }
-    void SetName(const char *v);
+    psXMLString getCreativeXML()
+    {
+        return creativeStats.creativeDefinitionXML;
+    }
+    void SetName(const char* v);
     void SaveName(void);
 
     /**
@@ -700,18 +759,18 @@ public:
      *
      * Used for standalone or weilded mesh.
      */
-    const char *GetMeshName();
+    const char* GetMeshName();
 
-    void SetMeshName(const char *v);
+    void SetMeshName(const char* v);
 
     /**
      * Get the Texture Name for the item.
      *
      * Used when worn and attached to the mesh given by part name.
      */
-    const char *GetTextureName();
+    const char* GetTextureName();
 
-    void SetTextureName(const char *v);
+    void SetTextureName(const char* v);
 
     /**
      * Get the Part Name for the item.
@@ -719,9 +778,9 @@ public:
      * This is the name of the part that the texture should be attached to
      * if no change of mesh.
      */
-    const char *GetPartName();
+    const char* GetPartName();
 
-    void SetPartName(const char *v);
+    void SetPartName(const char* v);
 
     /**
      * Get the Part Mesh Name for the item.
@@ -729,9 +788,9 @@ public:
      * This is the new mesh to be attached to the location given
      * by the pattern Part Name.
      */
-    const char *GetPartMeshName();
+    const char* GetPartMeshName();
 
-    void SetPartMeshName(const char *v);
+    void SetPartMeshName(const char* v);
 
     /**
      * Get the Image Name for the item.
@@ -739,9 +798,9 @@ public:
      * Used in inventory and other location where item has to be presented
      * by a 2D image.
      */
-    const char *GetImageName();
+    const char* GetImageName();
 
-    void SetImageName(const char *v);
+    void SetImageName(const char* v);
 
     // For future use, see notes for mesh_index variables, etc.
     /*
@@ -756,22 +815,31 @@ public:
     */
 
     void SetPrice(int trias);
-    psMoney& GetPrice();
-    void SetCategory(psItemCategory * category);
+    psMoney &GetPrice();
+    void SetCategory(psItemCategory* category);
     psItemCategory* GetCategory();
-    csArray<INVENTORY_SLOT_NUMBER> GetSlots() { return valid_slots_array; }
+    csArray<INVENTORY_SLOT_NUMBER> GetSlots()
+    {
+        return valid_slots_array;
+    }
 
     //
-    const char *GetSound();
-    void SetSound(const char *v);
+    const char* GetSound();
+    void SetSound(const char* v);
 
-    ApplicativeScript* GetEquipScript() { return equipScript; }
-    const csString & GetConsumeScriptName() { return consumeScriptName; }
+    ApplicativeScript* GetEquipScript()
+    {
+        return equipScript;
+    }
+    const csString &GetConsumeScriptName()
+    {
+        return consumeScriptName;
+    }
 
     /**
      * Sets a new equip script and saves it to the DB.  Mostly for the loot generator.
      */
-    bool SetEquipScript(const csString & script);
+    bool SetEquipScript(const csString &script);
 
     /**
      * Gets the list of requirements of this item, used by psitem to check them over a player.
@@ -779,7 +847,7 @@ public:
      * @return A pointer to the start of the array of itemRequirement (they are 3 elements)
      */
     csArray<ItemRequirement> &GetRequirements();
-    bool SetRequirement(const csString & statName, float statValue);
+    bool SetRequirement(const csString &statName, float statValue);
 
     /**
      *  Called to create an instance of an item using basic item stats.
@@ -787,20 +855,29 @@ public:
      *  The item instance can be modified by the caller after it's created (modifiers, uniqueness, etc)
      *  You MUST call Loaded() on the returned item once it is in a ready state, to allow saving.
      */
-    psItem *InstantiateBasicItem(bool transient=false);
+    psItem* InstantiateBasicItem(bool transient=false);
 
     bool Save();
-    bool SetAttribute(const csString & op, const csString & attrName, float modifier);
+    bool SetAttribute(const csString &op, const csString &attrName, float modifier);
 
     /// return creative contents
-    const csString& GetMusicalSheet(void) { return creativeStats.content; }
-    const csString& GetSketch(void) { return creativeStats.content; }
-    const csString& GetLiteratureText(void) { return creativeStats.content; }
+    const csString &GetMusicalSheet(void)
+    {
+        return creativeStats.content;
+    }
+    const csString &GetSketch(void)
+    {
+        return creativeStats.content;
+    }
+    const csString &GetLiteratureText(void)
+    {
+        return creativeStats.content;
+    }
 
     /**
      * Write creative stuff such as lit text (eg book) or map data.
      */
-    bool SetCreation (PSITEMSTATS_CREATIVETYPE, const csString&, csString);
+    bool SetCreation(PSITEMSTATS_CREATIVETYPE, const csString &, csString);
 
     /**
      * creator (i.e. author, artist, etc) of creative things.
@@ -813,7 +890,7 @@ public:
      *
      * @return A csString containing the name of the background image assigned to the creative item.
      */
-    const csString& GetCreativeBackgroundImg();
+    const csString &GetCreativeBackgroundImg();
 
     /// Return true if this item was equipted with charges.
     bool HasCharges() const;
@@ -822,15 +899,21 @@ public:
     int GetMaxCharges() const;
 
     ///returns the special command assigned to this item
-    csString GetItemCommand() { return itemCommand; }
+    csString GetItemCommand()
+    {
+        return itemCommand;
+    }
 
     /**
      * Returns the name of the item.
      *
-     * @note Needed for iScriptableVar. 
+     * @note Needed for iScriptableVar.
      * @return the name of the item.
      */
-    const char* ToString() { return name.GetDataSafe(); }
+    const char* ToString()
+    {
+        return name.GetDataSafe();
+    }
 
     /**
      * Needed for iScriptableVar.
@@ -854,9 +937,9 @@ public:
 public:
 
     ///  The new operator is overriden to call PoolAllocator template functions
-    void *operator new(size_t);
+    void* operator new(size_t);
     ///  The delete operator is overriden to call PoolAllocator template functions
-    void operator delete(void *);
+    void operator delete(void*);
 
 private:
     /// Static reference to the pool for all psItem objects

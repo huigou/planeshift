@@ -59,14 +59,14 @@ protected:
     csArray<QuestRewardOffer*>  offers;
 
     csString lastError;     ///< Last error message to send to client on loadquest.
-    
+
     CacheManager* cacheManager;
 
     /**
      * Load all scripts from db
      */
     bool LoadQuestScripts();
-    int  ParseQuestScript(int id,const char *script);
+    int  ParseQuestScript(int id,const char* script);
     /** Does a first parsing of the script.
      *  @note curretly it just find substeps and creates the related quest in advance, so they can be used
      *        anywhere in prerequisites.
@@ -74,45 +74,45 @@ protected:
      *  @param script The entire quest script.
      *  @return the line number of the parse error if any.
      */
-    int  PreParseQuestScript(psQuest *mainQuest,const char *script);
+    int  PreParseQuestScript(psQuest* mainQuest,const char* script);
     void CutOutParenthesis(csString &response, csString &within,char start_char,char end_char);
 
-    bool GetResponseText(csString& block,csString& response,csString& file_path,
-                         csString& him, csString& her, csString& it, csString& them);
-    bool BuildTriggerList(csString& block,csStringArray& list);
+    bool GetResponseText(csString &block,csString &response,csString &file_path,
+                         csString &him, csString &her, csString &it, csString &them);
+    bool BuildTriggerList(csString &block,csStringArray &list);
 
-    bool BuildMenu(const csString& block,const csStringArray& list, psQuest *quest, NpcDialogMenu *menu);
+    bool BuildMenu(const csString &block,const csStringArray &list, psQuest* quest, NpcDialogMenu* menu);
 
-    int GetNPCFromBlock(WordArray words,csString& current_npc);
-    bool ParseItemList(const csString & input, csString & parsedItemList);
-    bool ParseItem(const char *text, psStringArray & xmlItems, psMoney & money);
+    int GetNPCFromBlock(WordArray words,csString &current_npc);
+    bool ParseItemList(const csString &input, csString &parsedItemList);
+    bool ParseItem(const char* text, psStringArray &xmlItems, psMoney &money);
 
-    NpcResponse *AddResponse(csString& current_npc,const char *response_text,
-                             int& last_response_id, psQuest * quest,
-                             csString& him, csString& her, csString& it, csString& them, csString& file_path);
-    bool         AddTrigger(csString& current_npc,const char *trigger,
-                            int prior_response_id,int trig_response, psQuest* quest, const psString& postfix);
-    void         MergeTriggerMenus(NpcDialogMenu *pending_menu, const csString& current_npc);
+    NpcResponse* AddResponse(csString &current_npc,const char* response_text,
+                             int &last_response_id, psQuest* quest,
+                             csString &him, csString &her, csString &it, csString &them, csString &file_path);
+    bool         AddTrigger(csString &current_npc,const char* trigger,
+                            int prior_response_id,int trig_response, psQuest* quest, const psString &postfix);
+    void         MergeTriggerMenus(NpcDialogMenu* pending_menu, const csString &current_npc);
 
-    void GetNextScriptLine(psString& scr, csString& block, size_t& start, int& line_number);
+    void GetNextScriptLine(psString &scr, csString &block, size_t &start, int &line_number);
     bool PrependPrerequisites(csString &substep_requireop,
                               csString &response_requireop,
                               bool quest_assigned_already,
-                              NpcResponse *last_response,
-                              psQuest *mainQuest);
+                              NpcResponse* last_response,
+                              psQuest* mainQuest);
 
-    bool HandlePlayerAction(csString& block,
-                            size_t& which_trigger,
-                            csString& current_npc,
-                            csStringArray& pending_triggers);
+    bool HandlePlayerAction(csString &block,
+                            size_t &which_trigger,
+                            csString &current_npc,
+                            csStringArray &pending_triggers);
 
-    bool HandleScriptCommand(csString& block,
-                             csString& response_requireop,
-                             csString& substep_requireop,
-                             NpcResponse *last_response,
-                             psQuest *mainQuest,
-                             bool& quest_assigned_already,
-                             psQuest *quest);
+    bool HandleScriptCommand(csString &block,
+                             csString &response_requireop,
+                             csString &substep_requireop,
+                             NpcResponse* last_response,
+                             psQuest* mainQuest,
+                             bool &quest_assigned_already,
+                             psQuest* quest);
 
     /** Parses a require command inner part.
      *  @note this functions doesn't handle the negations which are handled
@@ -122,7 +122,7 @@ protected:
      *  @param mainQuest A pointer to the main quest, used for quest name autocompletion
      *  @return A csString which has the xml result of the parsing
      */
-    csString ParseRequireCommand(csString& block, bool& result, psQuest *mainQuest);
+    csString ParseRequireCommand(csString &block, bool &result, psQuest* mainQuest);
 
     /** Parses a require command.
      *  @note this function handles no and not and calls parseRequireCommand for the inner parsing
@@ -131,7 +131,7 @@ protected:
      *  @param mainQuest A pointer to the main quest, used for quest name autocompletion
      *  @return A boolean indicating if the operation was successfull.
      */
-    bool HandleRequireCommand(csString& block, csString& response_requireop, psQuest *mainQuest);
+    bool HandleRequireCommand(csString &block, csString &response_requireop, psQuest* mainQuest);
 
     /** Checks if the quest name is existant, if it isn't it attemps to complete it
      *  with the name of the passed quest but only if the autocompleted version is found.
@@ -139,10 +139,10 @@ protected:
      *                   in the passed variable.
      *  @param mainQuest The quest where this questname was found to check for in quest completion.
      */
-    void AutocompleteQuestName(csString& questname, psQuest *mainQuest);
+    void AutocompleteQuestName(csString &questname, psQuest* mainQuest);
 
-    void HandleQuestInfo(MsgEntry *pMsg,Client *client);
-    void HandleQuestReward(MsgEntry *pMsg,Client *client);
+    void HandleQuestInfo(MsgEntry* pMsg,Client* client);
+    void HandleQuestReward(MsgEntry* pMsg,Client* client);
 
 private:
     /**
@@ -151,7 +151,7 @@ private:
      */
     class TaskEntry
     {
-        public:
+    public:
         csString text;        ///< The text contained by this note.
         int completionOrder;  ///< The completion order of the step, used to order entries by completion.
         int questOrder;       ///< The quest step order used in case the completion order is invalid.
@@ -188,8 +188,8 @@ public:
 
     bool Initialize();
 
-    void Assign(psQuest *quest, Client *who, gemNPC *assigner,csTicks timeDelay=0);
-    bool Complete(psQuest *quest, Client *who, csTicks timeDelay = 0);
+    void Assign(psQuest* quest, Client* who, gemNPC* assigner,csTicks timeDelay=0);
+    bool Complete(psQuest* quest, Client* who, csTicks timeDelay = 0);
 
     /**
      * Discards the requested step this is used by dictionary.
@@ -200,13 +200,16 @@ public:
      * @param who              The client which is discarding the quest.
      * @param timeDelay        The delay for messages.
      */
-    bool Uncomplete(psQuest *quest, Client *who, csTicks timeDelay = 0);
+    bool Uncomplete(psQuest* quest, Client* who, csTicks timeDelay = 0);
 
 
-    void OfferRewardsToPlayer(Client *who, csArray<psItemStats*> &offer,csTicks& timeDelay);
-    bool GiveRewardToPlayer(Client *who, psItemStats* item);
+    void OfferRewardsToPlayer(Client* who, csArray<psItemStats*> &offer,csTicks &timeDelay);
+    bool GiveRewardToPlayer(Client* who, psItemStats* item);
     bool LoadQuestScript(int id);
-    const char* LastError() { return lastError.GetData(); }
+    const char* LastError()
+    {
+        return lastError.GetData();
+    }
 };
 
 

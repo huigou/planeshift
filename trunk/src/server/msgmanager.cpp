@@ -38,19 +38,19 @@
 #include "clients.h"
 #include "entitymanager.h"
 
-bool MessageManagerBase::Verify(MsgEntry *pMsg,unsigned int flags,Client*& client)
+bool MessageManagerBase::Verify(MsgEntry* pMsg,unsigned int flags,Client* &client)
 {
     client = NULL;
 
-    gemObject *obj = NULL;
-    gemActor  *actor;
-    gemNPC    *npc;
+    gemObject* obj = NULL;
+    gemActor*  actor;
+    gemNPC*    npc;
 
-    if (flags == NO_VALIDATION)
+    if(flags == NO_VALIDATION)
         return true; // Nothing to validate
 
     client = psserver->GetConnections()->FindAny(pMsg->clientnum);
-    if (!client)
+    if(!client)
     {
         Warning3(LOG_NET, "MessageManager got unknown client %d with message %d!", pMsg->clientnum, pMsg->GetType());
         return false;
@@ -66,45 +66,45 @@ bool MessageManagerBase::Verify(MsgEntry *pMsg,unsigned int flags,Client*& clien
         if(!client->GetActor())
             return false;
     }
-    
-    if (flags & REQUIRE_READY_CLIENT)
+
+    if(flags & REQUIRE_READY_CLIENT)
     {
         // Infer the client MUST be ready to have sent this message.
         // NOTE: The sole purpose is to prevent the ready flag from being abused.
         //       This may still trigger ordinarily due to message reordering.
         client->SetReady(true);
     }
-    if (flags & (REQUIRE_TARGET|REQUIRE_TARGETNPC|REQUIRE_TARGETACTOR))
+    if(flags & (REQUIRE_TARGET|REQUIRE_TARGETNPC|REQUIRE_TARGETACTOR))
     {
         // Check to see if this client has an npc targeted
         obj = client->GetTargetObject();
-        if (!obj)
+        if(!obj)
         {
             psserver->SendSystemError(pMsg->clientnum, "You do not have a target selected.");
             return false;
         }
     }
-    if (flags & REQUIRE_TARGETACTOR)
+    if(flags & REQUIRE_TARGETACTOR)
     {
         actor = (obj) ? obj->GetActorPtr() : NULL;
-        if (!actor)
+        if(!actor)
         {
             psserver->SendSystemError(pMsg->clientnum, "You do not have a player or NPC selected.");
             return false;
         }
     }
-    if (flags & REQUIRE_TARGETNPC)
+    if(flags & REQUIRE_TARGETNPC)
     {
         npc = (obj) ? obj->GetNPCPtr() : NULL;
-        if (!npc)
+        if(!npc)
         {
             psserver->SendSystemError(pMsg->clientnum, "You do not have an NPC selected.");
             return false;
         }
     }
-    if (flags & REQUIRE_ALIVE)
+    if(flags & REQUIRE_ALIVE)
     {
-        if (!client->IsAlive())
+        if(!client->IsAlive())
         {
             psserver->SendSystemError(client->GetClientNum(),"You are dead, you cannot do that now.");
             return false;
@@ -113,35 +113,35 @@ bool MessageManagerBase::Verify(MsgEntry *pMsg,unsigned int flags,Client*& clien
     return true;
 }
 
-Client *MessageManagerBase::FindPlayerClient(const char *name)
+Client* MessageManagerBase::FindPlayerClient(const char* name)
 {
-    if (!name || strlen(name)==0)
+    if(!name || strlen(name)==0)
     {
         return NULL;
     }
- 
+
     csString playername = name;
     playername = NormalizeCharacterName(playername);
- 
-    Client * player = psserver->GetConnections()->Find(playername);
+
+    Client* player = psserver->GetConnections()->Find(playername);
     return player;
 }
 
-csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString target)
+csArray<csString> MessageManagerBase::DecodeCommandArea(Client* client, csString target)
 {
     csArray<csString> result;
 
-    if (!psserver->CheckAccess(client, "command area"))
+    if(!psserver->CheckAccess(client, "command area"))
         return result;
 
     csArray<csString> splitTarget = psSplit(target, ':');
     size_t splitSize = splitTarget.GetSize();
 
-    if ((splitSize < 3) || (splitTarget[2] != "map" && splitSize > 4) ||
-        ((splitTarget[2] == "map") && (splitSize > 5 || splitSize < 4)))
+    if((splitSize < 3) || (splitTarget[2] != "map" && splitSize > 4) ||
+            ((splitTarget[2] == "map") && (splitSize > 5 || splitSize < 4)))
     {
         psserver->SendSystemError(client->GetClientNum(),
-                "Try /$CMD area:item:range/map:mapname[:name]");
+                                  "Try /$CMD area:item:range/map:mapname[:name]");
         return result;
     }
 
@@ -151,7 +151,7 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
     csString nameFilter = "all";
 
     gemActor* self = client->GetActor();
-    if (!self)
+    if(!self)
     {
         psserver->SendSystemError(client->GetClientNum(), "You do not exist...");
         return result;
@@ -181,14 +181,14 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
     else
     {
         range = atoi(splitTarget[2].GetData());
-        if (range <= 0)
+        if(range <= 0)
         {
             psserver->SendSystemError(client->GetClientNum(),
-                "You must specify a positive integer for the area: range.");
+                                      "You must specify a positive integer for the area: range.");
             return result;
         }
     }
-    
+
     if(sector != NULL)
     {
         if(splitSize > 4)
@@ -196,30 +196,30 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
             nameFilter = splitTarget[4];
         }
     }
-    else if (splitSize > 3)
+    else if(splitSize > 3)
     {
         nameFilter = splitTarget[3];
     }
 
     bool allNames = true;
-    if (nameFilter.Length() && nameFilter != "all")
+    if(nameFilter.Length() && nameFilter != "all")
         allNames = false;
 
     int mode;
-    if (itemName == "players")
+    if(itemName == "players")
         mode = 0;
-    else if (itemName == "actors")
+    else if(itemName == "actors")
         mode = 1;
-    else if (itemName == "items")
+    else if(itemName == "items")
         mode = 2;
-    else if (itemName == "npcs")
+    else if(itemName == "npcs")
         mode = 3;
-    else if (itemName == "entities")
+    else if(itemName == "entities")
         mode = 4;
     else
     {
         psserver->SendSystemError(client->GetClientNum(),
-                "item must be players|actors|items|npcs|entities");
+                                  "item must be players|actors|items|npcs|entities");
         return result;
     }
 
@@ -237,114 +237,114 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client *client, csString
         nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos, range);
     }
     size_t count = nearlist.GetSize();
-    csArray<csString *> results;
+    csArray<csString*> results;
 
     csRegExpMatcher nameMatcher(nameFilter);
 
-    for (size_t i=0; i<count; i++)
+    for(size_t i=0; i<count; i++)
     {
-        gemObject *nearobj = nearlist[i];
-        if (!nearobj)
+        gemObject* nearobj = nearlist[i];
+        if(!nearobj)
             continue;
 
-        if (nearobj->GetInstance() != self->GetInstance())
+        if(nearobj->GetInstance() != self->GetInstance())
             continue;
 
-        if (!allNames)
+        if(!allNames)
         {
             csString nearobjName = nearobj->GetName();
-            if (!(nameMatcher.Match(nearobjName, csrxIgnoreCase) == csrxNoError))
+            if(!(nameMatcher.Match(nearobjName, csrxIgnoreCase) == csrxNoError))
                 continue;
         }
 
         csString newTarget;
 
-        switch (mode)
+        switch(mode)
         {
-        case 0: // Target players
-        {
-            if (nearobj->GetClientID())
+            case 0: // Target players
             {
-                newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
-                break;
+                if(nearobj->GetClientID())
+                {
+                    newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
+                    break;
+                }
+                else
+                    continue;
             }
-            else
-                continue;
-        }
-        case 1: // Target actors
-        {
-            if (nearobj->GetPID().IsValid())
+            case 1: // Target actors
             {
-                newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
-                break;
+                if(nearobj->GetPID().IsValid())
+                {
+                    newTarget.Format("pid:%d", nearobj->GetPID().Unbox());
+                    break;
+                }
+                else
+                    continue;
             }
-            else
-                continue;
-        }
-        case 2: // Target items
-        {
-            if (nearobj->GetItem())
+            case 2: // Target items
+            {
+                if(nearobj->GetItem())
+                {
+                    newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
+                    break;
+                }
+                else
+                    continue;
+            }
+            case 3: // Target NPCs
+            {
+                if(nearobj->GetNPCPtr())
+                {
+                    newTarget.Format("pid:%u", nearobj->GetPID().Unbox());
+                    break;
+                }
+                else
+                    continue;
+            }
+            case 4: // Target everything
             {
                 newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
                 break;
             }
-            else
-                continue;
-        }
-        case 3: // Target NPCs
-        {
-            if (nearobj->GetNPCPtr())
-            {
-                newTarget.Format("pid:%u", nearobj->GetPID().Unbox());
-                break;
-            }
-            else
-                continue;
-        }
-        case 4: // Target everything
-        {
-            newTarget.Format("eid:%u", nearobj->GetEID().Unbox());
-            break;
-        }
         }
 
         // Run this once for every target in range  (each one will be verified and logged seperately)
         result.Push(newTarget);
     }
-    if (result.IsEmpty())
+    if(result.IsEmpty())
     {
         psserver->SendSystemError(client->GetClientNum(),
-                "Nothing of specified type in range.");
+                                  "Nothing of specified type in range.");
     }
     return result;
 }
 
-gemObject* MessageManagerBase::FindObjectByString(const csString& str, gemActor * me) const
+gemObject* MessageManagerBase::FindObjectByString(const csString &str, gemActor* me) const
 {
     gemObject* found = NULL;
 
-    if ( str.StartsWith("pid:",true) ) // Find by player ID
+    if(str.StartsWith("pid:",true))    // Find by player ID
     {
         csString pid_str = str.Slice(4);
         PID pid = PID(strtoul(pid_str.GetDataSafe(), NULL, 10));
-        if (pid.IsValid())
+        if(pid.IsValid())
             found = psserver->entitymanager->GetGEM()->FindPlayerEntity(pid);
     }
-    else if ( str.StartsWith("eid:",true) ) // Find by entity ID
+    else if(str.StartsWith("eid:",true))    // Find by entity ID
     {
         csString eid_str = str.Slice(4);
         EID eid = EID(strtoul(eid_str.GetDataSafe(), NULL, 10));
-        if (eid.IsValid())
+        if(eid.IsValid())
             found = psserver->entitymanager->GetGEM()->FindObject(eid);
     }
-    else if ( str.StartsWith("itemid:",true) ) // Find by item UID
+    else if(str.StartsWith("itemid:",true))    // Find by item UID
     {
         csString itemid_str = str.Slice(7);
         uint32 itemID = strtoul(itemid_str.GetDataSafe(), NULL, 10);
-        if (itemID != 0)
+        if(itemID != 0)
             found = psserver->entitymanager->GetGEM()->FindItemEntity(itemID);
     }
-    else if ( me != NULL && str.CompareNoCase("me") ) // Return me
+    else if(me != NULL && str.CompareNoCase("me"))    // Return me
     {
         found = me;
     }

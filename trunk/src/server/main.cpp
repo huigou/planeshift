@@ -42,7 +42,7 @@ CS_IMPLEMENT_APPLICATION
 
 // global vars
 psServer* psserver;
-extern iDataConnection *db;
+extern iDataConnection* db;
 
 // ----------------------------------------------------------------
 #ifdef APPNAME
@@ -54,20 +54,20 @@ extern iDataConnection *db;
 #include "util/strutil.h"
 
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-    psCSSetup* CSSetup = new psCSSetup( argc, argv, "/this/psserver.cfg", 0 );
+    psCSSetup* CSSetup = new psCSSetup(argc, argv, "/this/psserver.cfg", 0);
 
-    iObjectRegistry *object_reg = CSSetup->InitCS();
+    iObjectRegistry* object_reg = CSSetup->InitCS();
 
-    pslog::Initialize (object_reg);
+    pslog::Initialize(object_reg);
 
-    // Start the server      
+    // Start the server
     psserver = new psServer;
-    
-    if (!psserver->Initialize(object_reg))
+
+    if(!psserver->Initialize(object_reg))
     {
-        CPrintf (CON_ERROR, COL_RED "Error while initializing server!\n" COL_NORMAL);
+        CPrintf(CON_ERROR, COL_RED "Error while initializing server!\n" COL_NORMAL);
 
         // Cleanup before exit
         delete psserver;
@@ -77,8 +77,8 @@ int main(int argc, char **argv)
         PS_PAUSEEXIT(1);
     }
 
-    psserver->MainLoop ();
-    
+    psserver->MainLoop();
+
     delete psserver;
 
     // Free registered message factories.
@@ -86,11 +86,11 @@ int main(int argc, char **argv)
 
     // Save Configuration
     csRef<iConfigManager> cfgmgr= csQueryRegistry<iConfigManager> (object_reg);
-    if (cfgmgr)
+    if(cfgmgr)
     {
         cfgmgr->Save();
     }
-    
+
     cfgmgr = NULL;
 
     delete CSSetup;

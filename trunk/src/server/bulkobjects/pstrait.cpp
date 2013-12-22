@@ -1,7 +1,7 @@
 /*
  * pstrait.cpp
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -31,7 +31,7 @@
 //=============================================================================
 #include "pstrait.h"
 
-const char *psTrait::locationString[] = {"NONE","FACE","HAIR_STYLE","BEARD_STYLE","HAIR_COLOR","SKIN_TONE","ITEM", "EYE_COLOR"};
+const char* psTrait::locationString[] = {"NONE","FACE","HAIR_STYLE","BEARD_STYLE","HAIR_COLOR","SKIN_TONE","ITEM", "EYE_COLOR"};
 
 psTrait::psTrait()
 {
@@ -40,50 +40,50 @@ psTrait::psTrait()
 }
 
 psTrait::~psTrait()
-{                  
-}
-
-const char * psTrait::GetLocationString() const
 {
-   return locationString[(int)location]; 
 }
 
-csString psTrait::ToXML( bool compact ) const
+const char* psTrait::GetLocationString() const
+{
+    return locationString[(int)location];
+}
+
+csString psTrait::ToXML(bool compact) const
 {
     csString str;
-    csString genderStr;   
-    switch (gender)
+    csString genderStr;
+    switch(gender)
     {
-    case PSCHARACTER_GENDER_NONE:
-        genderStr = "N";
-        break;
-    case PSCHARACTER_GENDER_MALE:
-        genderStr += "M";
-        break;
-    case PSCHARACTER_GENDER_FEMALE:
-        genderStr = "F";
-        break;
-    default:
-        genderStr = "M";
-        break;       
+        case PSCHARACTER_GENDER_NONE:
+            genderStr = "N";
+            break;
+        case PSCHARACTER_GENDER_MALE:
+            genderStr += "M";
+            break;
+        case PSCHARACTER_GENDER_FEMALE:
+            genderStr = "F";
+            break;
+        default:
+            genderStr = "M";
+            break;
     }
-    if (compact)
+    if(compact)
     {
         str.Format("<trait id=\"%u\" next=\"%u\""
-                  " loc=\"%s\" mesh=\"%u\""
-                  " mat=\"%u\" tex=\"%u\" shader=\"%s\"/>",
-                  uid,next_trait_uid,
-                  GetLocationString(),cstr_id_mesh,
-                  cstr_id_material,cstr_id_texture, shaderVar.GetData() ); 
+                   " loc=\"%s\" mesh=\"%u\""
+                   " mat=\"%u\" tex=\"%u\" shader=\"%s\"/>",
+                   uid,next_trait_uid,
+                   GetLocationString(),cstr_id_mesh,
+                   cstr_id_material,cstr_id_texture, shaderVar.GetData());
     }
     else
     {
         str.Format("<trait id=\"%u\" next=\"%u\" race=\"%d\" gender=\"%s\""
-                  " loc=\"%s\" name=\"%s\" mesh=\"%u\""
-                  " mat=\"%u\" tex=\"%u\" shader=\"%s\"/>",
-                  uid,next_trait_uid,race,genderStr.GetData(),
-                  GetLocationString(),name.GetData(),cstr_id_mesh,
-                  cstr_id_material,cstr_id_texture, shaderVar.GetData() ); 
+                   " loc=\"%s\" name=\"%s\" mesh=\"%u\""
+                   " mat=\"%u\" tex=\"%u\" shader=\"%s\"/>",
+                   uid,next_trait_uid,race,genderStr.GetData(),
+                   GetLocationString(),name.GetData(),cstr_id_mesh,
+                   cstr_id_material,cstr_id_texture, shaderVar.GetData());
     }
     return str;
 }

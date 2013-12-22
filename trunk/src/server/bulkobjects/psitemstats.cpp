@@ -46,15 +46,22 @@
 
 PSSKILL statToSkill(PSITEMSTATS_STAT stat)
 {
-    switch (stat)
+    switch(stat)
     {
-        case PSITEMSTATS_STAT_AGILITY:      return PSSKILL_AGI;
-        case PSITEMSTATS_STAT_ENDURANCE:    return PSSKILL_END;
-        case PSITEMSTATS_STAT_STRENGTH:     return PSSKILL_STR;
-        case PSITEMSTATS_STAT_CHARISMA:     return PSSKILL_CHA;
-        case PSITEMSTATS_STAT_INTELLIGENCE: return PSSKILL_INT;
-        case PSITEMSTATS_STAT_WILL:         return PSSKILL_WILL;
-        default:                            return PSSKILL_NONE;
+        case PSITEMSTATS_STAT_AGILITY:
+            return PSSKILL_AGI;
+        case PSITEMSTATS_STAT_ENDURANCE:
+            return PSSKILL_END;
+        case PSITEMSTATS_STAT_STRENGTH:
+            return PSSKILL_STR;
+        case PSITEMSTATS_STAT_CHARISMA:
+            return PSSKILL_CHA;
+        case PSITEMSTATS_STAT_INTELLIGENCE:
+            return PSSKILL_INT;
+        case PSITEMSTATS_STAT_WILL:
+            return PSSKILL_WILL;
+        default:
+            return PSSKILL_NONE;
     }
 }
 
@@ -70,12 +77,12 @@ psItemArmorStats::psItemArmorStats()
 
 float psItemArmorStats::Protection(PSITEMSTATS_DAMAGETYPE dmgtype)
 {
-    if (dmgtype <0 || dmgtype >= PSITEMSTATS_DAMAGETYPE_COUNT)
+    if(dmgtype <0 || dmgtype >= PSITEMSTATS_DAMAGETYPE_COUNT)
         return 0.0f;
     return damage_protection[dmgtype];
 }
 
-void psItemArmorStats::ReadStats( iResultRow& row )
+void psItemArmorStats::ReadStats(iResultRow &row)
 {
     hardness = row.GetFloat("armor_hardness");
     damage_protection[PSITEMSTATS_DAMAGETYPE_SLASH]     = row.GetFloat("dmg_slash");
@@ -83,13 +90,13 @@ void psItemArmorStats::ReadStats( iResultRow& row )
     damage_protection[PSITEMSTATS_DAMAGETYPE_PIERCE]    = row.GetFloat("dmg_pierce");
 
     csString temp(row["armorvsweapon_type"]);
-    if ( temp.Length() == 2 )
+    if(temp.Length() == 2)
     {
-        if (temp.GetAt(0) == '1')
+        if(temp.GetAt(0) == '1')
             armor_type = PSITEMSTATS_ARMORTYPE_LIGHT;
-        else if (temp.GetAt(0) == '2')
+        else if(temp.GetAt(0) == '2')
             armor_type = PSITEMSTATS_ARMORTYPE_MEDIUM;
-        else if (temp.GetAt(0) == '3')
+        else if(temp.GetAt(0) == '3')
             armor_type = PSITEMSTATS_ARMORTYPE_HEAVY;
 
         armor_class = temp.GetAt(1);
@@ -115,22 +122,22 @@ psItemWeaponStats::psItemWeaponStats()
     counter_block_value=0.0f;
 }
 
-void psItemWeaponStats::ReadStats( iResultRow& row )
+void psItemWeaponStats::ReadStats(iResultRow &row)
 {
-    csString type( row["item_type"] );
-    if ( type == "SWORD" )
+    csString type(row["item_type"]);
+    if(type == "SWORD")
         weapon_type = PSITEMSTATS_WEAPONTYPE_SWORD;
-    else if ( type == "AXE" )
+    else if(type == "AXE")
         weapon_type = PSITEMSTATS_WEAPONTYPE_AXE;
-    else if ( type == "DAGGER" )
+    else if(type == "DAGGER")
         weapon_type = PSITEMSTATS_WEAPONTYPE_DAGGER;
-    else if ( type == "HAMMER" )
+    else if(type == "HAMMER")
         weapon_type = PSITEMSTATS_WEAPONTYPE_HAMMER;
-    else if ( type == "BOW" )
+    else if(type == "BOW")
         weapon_type = PSITEMSTATS_WEAPONTYPE_BOW;
-    else if ( type == "CROSSBOW" )
+    else if(type == "CROSSBOW")
         weapon_type = PSITEMSTATS_WEAPONTYPE_CROSSBOW;
-    else if ( type == "SLING" )
+    else if(type == "SLING")
         weapon_type = PSITEMSTATS_WEAPONTYPE_SLING;
 
     weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_0] = psserver->GetCacheManager()->ConvertSkill(row.GetInt("item_skill_id_1"));
@@ -138,7 +145,7 @@ void psItemWeaponStats::ReadStats( iResultRow& row )
     weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_2] = psserver->GetCacheManager()->ConvertSkill(row.GetInt("item_skill_id_3"));
 
     latency = row.GetFloat("weapon_speed");
-    if (latency < 1.5F)
+    if(latency < 1.5F)
     {
         // Clamp weapon speed to maximum of 1 hit per 1.5 seconds to keep a fight from monopolizing the server
         latency = 1.5F;
@@ -164,28 +171,28 @@ void psItemWeaponStats::ReadStats( iResultRow& row )
 
 PSSKILL psItemWeaponStats::Skill(PSITEMSTATS_WEAPONSKILL_INDEX index)
 {
-    if (index < 0 || index >= PSITEMSTATS_WEAPONSKILL_INDEX_COUNT)
+    if(index < 0 || index >= PSITEMSTATS_WEAPONSKILL_INDEX_COUNT)
         return PSSKILL_NONE;
     return weapon_skill[index];
 }
 
 PSITEMSTATS_STAT psItemWeaponStats::AttributeBonusType(int index)
 {
-    if (index < 0 || index >= PSITEMSTATS_STAT_BONUS_COUNT)
+    if(index < 0 || index >= PSITEMSTATS_STAT_BONUS_COUNT)
         return PSITEMSTATS_STAT_NONE;
     return attribute_bonuses[index].attribute_id;
 }
 
 float psItemWeaponStats::AttributeBonusMax(int index)
 {
-    if (index < 0 || index >= PSITEMSTATS_STAT_BONUS_COUNT)
+    if(index < 0 || index >= PSITEMSTATS_STAT_BONUS_COUNT)
         return 0.0f;
     return attribute_bonuses[index].bonus_max;
 }
 
 float psItemWeaponStats::Damage(PSITEMSTATS_DAMAGETYPE dmgtype)
 {
-    if (dmgtype<0 || dmgtype >= PSITEMSTATS_DAMAGETYPE_COUNT)
+    if(dmgtype<0 || dmgtype >= PSITEMSTATS_DAMAGETYPE_COUNT)
         return 0.0f;
     return damages[dmgtype];
 }
@@ -200,14 +207,14 @@ psItemAmmoStats::~psItemAmmoStats()
 {
 }
 
-void psItemAmmoStats::ReadStats( iResultRow& row )
+void psItemAmmoStats::ReadStats(iResultRow &row)
 {
-    csString type( row["item_type"] );
-    if ( type == "ARROW" )
+    csString type(row["item_type"]);
+    if(type == "ARROW")
         ammunition_type = PSITEMSTATS_AMMOTYPE_ARROWS;
-    else if ( type == "BOLT" )
+    else if(type == "BOLT")
         ammunition_type = PSITEMSTATS_AMMOTYPE_BOLTS;
-    else if ( type == "ROCK" )
+    else if(type == "ROCK")
         ammunition_type = PSITEMSTATS_AMMOTYPE_ROCKS;
 }
 
@@ -228,7 +235,7 @@ psItemCreativeStats::~psItemCreativeStats()
 {
 }
 
-void psItemCreativeStats::ReadStats(iResultRow& row)
+void psItemCreativeStats::ReadStats(iResultRow &row)
 {
     creativeDefinitionXML = row["creative_definition"];
     ReadStats();
@@ -243,32 +250,32 @@ void psItemCreativeStats::ReadStats()
     // find type of creative thing from <creative type="...">
     int tagPos = creativeDefinitionXML.FindTag("creative");
     size_t len = creativeDefinitionXML.GetTag(0, creativeTag);
-    if (tagPos >=0 && len > 0)
+    if(tagPos >=0 && len > 0)
     {
         creativeTag.GetTagParm("type", creativeTypeStr);
         // atm, only literature (books, scrolls, etc), sketches (maps, etc) and musical scores supported
-        if (creativeTypeStr.Downcase() == "literature")
+        if(creativeTypeStr.Downcase() == "literature")
             creativeType = PSITEMSTATS_CREATIVETYPE_LITERATURE;
-        else if (creativeTypeStr.Downcase() == "sketch")
+        else if(creativeTypeStr.Downcase() == "sketch")
             creativeType = PSITEMSTATS_CREATIVETYPE_SKETCH;
         else if(creativeTypeStr.Downcase() == "music")
             creativeType = PSITEMSTATS_CREATIVETYPE_MUSIC;
 
         // get the creator (author, artist, etc)
         creativeTag.GetTagParm("creator", creatorStr);
-        if (creatorStr.Length() == 0)
+        if(creatorStr.Length() == 0)
         {
             creatorIDStatus = PSITEMSTATS_CREATOR_UNASSIGNED;     // creator not yet been assigned
             creatorID = 0;
         }
         else
         {
-            if (creatorStr == "public")
+            if(creatorStr == "public")
                 creatorIDStatus = PSITEMSTATS_CREATOR_PUBLIC;
             else
             {
                 creatorID = atoi(creatorStr.GetData());
-                if (creatorID == 0)
+                if(creatorID == 0)
                     creatorIDStatus = PSITEMSTATS_CREATOR_UNKNOWN; // creator no longer around
                 else
                     creatorIDStatus = PSITEMSTATS_CREATOR_VALID;   // valid
@@ -279,16 +286,16 @@ void psItemCreativeStats::ReadStats()
         creativeTag.GetTagParm("background", backgroundImg);
 
 
-        if (creativeType != PSITEMSTATS_CREATIVETYPE_NONE)
+        if(creativeType != PSITEMSTATS_CREATIVETYPE_NONE)
         {
             len = creativeDefinitionXML.GetWithinTagSection(0, "creative", contentXML);
-            if (len <= 0)
+            if(len <= 0)
                 creativeType = PSITEMSTATS_CREATIVETYPE_NONE;
             else
             {
                 // now extract the content: <content>[stuff...]</content>.
                 tagPos = contentXML.FindTag("content", 0);
-                if (tagPos >= 0)
+                if(tagPos >= 0)
                 {
                     // everythings good: go back happy
                     len = contentXML.GetWithinTagSection(0, "content", content);
@@ -302,16 +309,16 @@ void psItemCreativeStats::ReadStats()
     Error1("XML error in CREATIVE item");
 }
 
-void psItemCreativeStats::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
+void psItemCreativeStats::SetCreator(PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
 {
     // if creator already set (i.e. valid or public) it cant be changed so return straightaway.
-    if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC || creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+    if(creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC || creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
     {
         return;
     }
 
     creatorIDStatus = creatorStatus;
-    if (creatorStatus == PSITEMSTATS_CREATOR_VALID)
+    if(creatorStatus == PSITEMSTATS_CREATOR_VALID)
     {
         creatorID = characterID;
     }
@@ -329,24 +336,24 @@ bool psItemCreativeStats::IsThisTheCreator(PID characterID)
     // if characterID is creator of this item, or no creator assigned (then anyone can edit)
     // of if the item is 'public' then any can edit it.
     return ((creatorIDStatus == PSITEMSTATS_CREATOR_VALID && creatorID == characterID) ||
-        creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC ||
-        creatorIDStatus == PSITEMSTATS_CREATOR_UNASSIGNED);
+            creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC ||
+            creatorIDStatus == PSITEMSTATS_CREATOR_UNASSIGNED);
 }
 
-PID psItemCreativeStats::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
+PID psItemCreativeStats::GetCreator(PSITEMSTATS_CREATORSTATUS &creatorStatus)
 {
     creatorStatus = creatorIDStatus;
-    if (creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+    if(creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
         return creatorID;
     return PID(0);
 }
 
-bool psItemCreativeStats::SetCreativeContent(PSITEMSTATS_CREATIVETYPE updatedCreativeType, const csString& updatedCreative, uint32 uid)
+bool psItemCreativeStats::SetCreativeContent(PSITEMSTATS_CREATIVETYPE updatedCreativeType, const csString &updatedCreative, uint32 uid)
 {
-    if (creativeType == updatedCreativeType)
+    if(creativeType == updatedCreativeType)
     {
         content = updatedCreative;
-        if (FormatCreativeContent())
+        if(FormatCreativeContent())
         {
             SaveCreation(uid);
             return true;
@@ -363,12 +370,12 @@ bool psItemCreativeStats::FormatCreativeContent(void)
     creativeDefinitionXML = "<creative type=\"";
 
     // start of creative data xml
-    if (creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
+    if(creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
     {
         contentForXML.ReplaceAll("%", "%%");
         creativeDefinitionXML.Append("literature");
     }
-    else if (creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
+    else if(creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
         creativeDefinitionXML.Append("sketch");
     else if(creativeType == PSITEMSTATS_CREATIVETYPE_MUSIC)
         creativeDefinitionXML.Append("music");
@@ -376,11 +383,11 @@ bool psItemCreativeStats::FormatCreativeContent(void)
     creativeDefinitionXML.AppendFmt("\"");
 
     // add author, artist... if necessary
-    if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
+    if(creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
     {
         creativeDefinitionXML.AppendFmt(" creator=\"public\"");
     }
-    else if (creatorIDStatus != PSITEMSTATS_CREATOR_UNASSIGNED)
+    else if(creatorIDStatus != PSITEMSTATS_CREATOR_UNASSIGNED)
     {
         creativeDefinitionXML.AppendFmt(" creator=\"%u\"", creatorID.Unbox());
     }
@@ -392,7 +399,7 @@ bool psItemCreativeStats::FormatCreativeContent(void)
 
     creativeDefinitionXML.AppendFmt("><content>%s</content></creative>", contentForXML.GetDataSafe());
 
-    if (creativeDefinitionXML.Length() <= CREATIVEDEF_MAX)
+    if(creativeDefinitionXML.Length() <= CREATIVEDEF_MAX)
         return true;
 
     return false;
@@ -402,45 +409,45 @@ void psItemCreativeStats::SaveCreation(uint32 uid)
 {
     // save to database
     psStringArray values;
-    const char *fieldnames[] = {"creative_definition"};
+    const char* fieldnames[] = {"creative_definition"};
     csString litID;
 
     litID.Format("%u", uid);
     values.Push(this->creativeDefinitionXML);
 
-    if ( !db->GenericUpdateWithID(instanceBased? "item_instances" : "item_stats", "id", litID, fieldnames, values) )
+    if(!db->GenericUpdateWithID(instanceBased? "item_instances" : "item_stats", "id", litID, fieldnames, values))
     {
-        Error2("Failed to save text for item %u!", uid );
+        Error2("Failed to save text for item %u!", uid);
     }
 
 }
 
 /// Update the description of the book, etc.
 csString psItemCreativeStats::UpdateDescription(PSITEMSTATS_CREATIVETYPE creativeType,
-                                                csString title, csString author)
+        csString title, csString author)
 {
     csString newDescription = "No description yet";
 
-    if (creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
+    if(creativeType == PSITEMSTATS_CREATIVETYPE_LITERATURE)
     {
         newDescription = "A book, titled \"" + title + "\"";
 
-        if (creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+        if(creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
             newDescription.AppendFmt(" written by %s.", author.GetDataSafe());
-        else if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
+        else if(creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
             newDescription.Append(". Anyone can write in this book.");
         else
             newDescription.Append(". Unknown author.");
 
         newDescription.AppendFmt(" The book is %d characters long.", (int)content.Length());
     }
-    else if (creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
+    else if(creativeType == PSITEMSTATS_CREATIVETYPE_SKETCH)
     {
         newDescription = "A map, titled \"" + title + "\"";
 
-        if (creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
+        if(creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
             newDescription.AppendFmt(" drawn by %s.", author.GetDataSafe());
-        else if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
+        else if(creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
             newDescription.Append(". Anyone can draw this map.");
         else
             newDescription.Append(". Unknown artist.");
@@ -451,7 +458,7 @@ csString psItemCreativeStats::UpdateDescription(PSITEMSTATS_CREATIVETYPE creativ
 
         if(creatorIDStatus == PSITEMSTATS_CREATOR_VALID)
             newDescription.AppendFmt(" written by %s.", author.GetDataSafe());
-        else if (creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
+        else if(creatorIDStatus == PSITEMSTATS_CREATOR_PUBLIC)
             newDescription.Append(". Anyone can write in this book.");
         else
             newDescription.Append(". Unknown author.");
@@ -465,15 +472,15 @@ csString psItemCreativeStats::UpdateDescription(PSITEMSTATS_CREATIVETYPE creativ
 // Definition of the itempool for psItemStats
 PoolAllocator<psItemStats> psItemStats::itempool;
 
-void *psItemStats::operator new(size_t allocSize)
+void* psItemStats::operator new(size_t allocSize)
 {
     CS_ASSERT(allocSize<=sizeof(psItemStats));
-    return (void *)itempool.CallFromNew();
+    return (void*)itempool.CallFromNew();
 }
 
-void psItemStats::operator delete(void *releasePtr)
+void psItemStats::operator delete(void* releasePtr)
 {
-    itempool.CallFromDelete((psItemStats *)releasePtr);
+    itempool.CallFromDelete((psItemStats*)releasePtr);
 }
 
 
@@ -496,7 +503,7 @@ psItemStats::psItemStats()
     texturepart_name.Clear();
     image_name.Clear();
     category = NULL;
-    
+
     equipScript = NULL;
 
     visible_distance = DEF_PROX_DIST;
@@ -506,14 +513,14 @@ psItemStats::psItemStats()
 
 psItemStats::~psItemStats()
 {
-    if (equipScript)
+    if(equipScript)
     {
         delete equipScript;
         equipScript = NULL;
     }
 }
 
-bool psItemStats::ReadItemStats(iResultRow& row)
+bool psItemStats::ReadItemStats(iResultRow &row)
 {
     uid = row.GetUInt32("id");
     name = row["name"];
@@ -524,10 +531,10 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     equipScript = NULL;
 
     csString equipXML(row["equip_script"]);
-    if (!equipXML.IsEmpty())
+    if(!equipXML.IsEmpty())
     {
         equipScript = ApplicativeScript::Create(psserver->entitymanager, psserver->GetCacheManager(), equipXML);
-        if (!equipScript)
+        if(!equipScript)
         {
             Error4("Could not create ApplicativeScript for ItemStats %d (%s)'s equip script: %s.", uid, name.GetData(), equipXML.GetData());
             return false;
@@ -535,7 +542,7 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     }
 
     item_quality       = row.GetFloat("item_max_quality");
-    if (item_quality > 300)
+    if(item_quality > 300)
     {
         // Clamp item quality to 300 or less so cheats and bugs don't result in ridiculous items
         item_quality = 300;
@@ -548,30 +555,30 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     decay_rate          = row.GetFloat("decay_rate");
 
     // Load in the valid slots for the item.
-    LoadSlots( row );
+    LoadSlots(row);
 
     LoadMeshRemoval(row);
 
-    ParseFlags( row );
+    ParseFlags(row);
 
-    if (flags==0) // no type specified is illegal
+    if(flags==0)  // no type specified is illegal
     {
-        Error2("Item %s has no valid flags specified.",row["id"] );
+        Error2("Item %s has no valid flags specified.",row["id"]);
         return false;
     }
 
     SetArmorVsWeaponType(row["armorvsweapon_type"]);
 
-    weaponStats.ReadStats( row );
-    armorStats.ReadStats( row );
-    ammoStats.ReadStats( row );
-    if (flags & PSITEMSTATS_FLAG_CREATIVE)
+    weaponStats.ReadStats(row);
+    armorStats.ReadStats(row);
+    ammoStats.ReadStats(row);
+    if(flags & PSITEMSTATS_FLAG_CREATIVE)
     {
-        creativeStats.ReadStats( row );
+        creativeStats.ReadStats(row);
     }
 
     // Mesh, Texture, Part and Image strings
-    const char *meshname = row["cstr_gfx_mesh"];
+    const char* meshname = row["cstr_gfx_mesh"];
     if(!meshname)
     {
         Error2("Invalid 'cstr_gfx_mesh' for mesh '%s'\n", name.GetData());
@@ -579,15 +586,15 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     psserver->GetCacheManager()->AddCommonStringID(meshname);
     SetMeshName(meshname);
 
-    const char *texturename = row["cstr_gfx_texture"];
+    const char* texturename = row["cstr_gfx_texture"];
     psserver->GetCacheManager()->AddCommonStringID(texturename);
     SetTextureName(texturename);
 
-    const char *partname = row["cstr_part"];
+    const char* partname = row["cstr_part"];
     psserver->GetCacheManager()->AddCommonStringID(partname);
     SetPartName(partname);
 
-    const char *imagename = row["cstr_gfx_icon"];
+    const char* imagename = row["cstr_gfx_icon"];
     if(!imagename)
     {
         Error2("Invalid 'cstr_gfx_icon' for mesh '%s'\n", name.GetData());
@@ -595,14 +602,14 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     psserver->GetCacheManager()->AddCommonStringID(imagename);
     SetImageName(imagename);
 
-    const char *partmeshname = row["cstr_part_mesh"];
+    const char* partmeshname = row["cstr_part_mesh"];
     psserver->GetCacheManager()->AddCommonStringID(partmeshname);
     SetPartMeshName(partmeshname);
 
     SetPrice(row.GetInt("base_sale_price"));
     int categoryId = row.GetInt("category_id");
-    psItemCategory * category = psserver->GetCacheManager()->GetItemCategoryByID(categoryId);
-    if (!category)
+    psItemCategory* category = psserver->GetCacheManager()->GetItemCategoryByID(categoryId);
+    if(!category)
     {
         // Should not load without a category.
         Error3("None exsisting item category '%d' for itemstat '%d'",categoryId,uid);
@@ -638,11 +645,11 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     psString strTmpAmmoList = row["item_type_id_ammo"];
     csStringArray strTmpAmmoListArray;
     strTmpAmmoList.Split(strTmpAmmoListArray, ',');
-    while (!strTmpAmmoListArray.IsEmpty())
+    while(!strTmpAmmoListArray.IsEmpty())
     {
         char* currAmmo = strTmpAmmoListArray.Pop();
         unsigned int ammoID = atoi(currAmmo);
-        if (ammoID != 0)
+        if(ammoID != 0)
         {
             ammo_types.Add(ammoID);
         }
@@ -661,10 +668,10 @@ bool psItemStats::ReadItemStats(iResultRow& row)
     SetSound(row["sound"]);
 
     int anim_list_id = row.GetInt("item_anim_id");
-    if (anim_list_id)
+    if(anim_list_id)
     {
         anim_list = psserver->GetCacheManager()->FindAnimationList(anim_list_id);
-        if (!anim_list)
+        if(!anim_list)
         {
             Error3("Failed to find Item Animation '%d' for itemstat '%d'",
                    anim_list_id,uid);
@@ -686,16 +693,16 @@ bool psItemStats::ReadItemStats(iResultRow& row)
 }
 
 
-void psItemStats::ParseFlags( iResultRow& row )
+void psItemStats::ParseFlags(iResultRow &row)
 {
     psString flagstr(row["flags"]);
 
     int z = 0;
     // Iterates over all the flags in the list and adds that flag to the value if it
     // has been found in the flag string from the database.
-    while ( psserver->GetCacheManager()->ItemStatFlagArray[z].string != "END" )
+    while(psserver->GetCacheManager()->ItemStatFlagArray[z].string != "END")
     {
-        if (flagstr.FindSubString(psserver->GetCacheManager()->ItemStatFlagArray[z].string,0,true)!=-1)
+        if(flagstr.FindSubString(psserver->GetCacheManager()->ItemStatFlagArray[z].string,0,true)!=-1)
         {
             flags |= psserver->GetCacheManager()->ItemStatFlagArray[z].flag;
         }
@@ -703,14 +710,14 @@ void psItemStats::ParseFlags( iResultRow& row )
     }
 
     // Enforce extra rules: Container => !Stackable
-    if (GetIsContainer() && GetIsStackable())
+    if(GetIsContainer() && GetIsStackable())
     {
         flags &= ~PSITEMSTATS_FLAG_IS_STACKABLE;
         Error3("Invalid data: item_stats entry %u (%s) is a container and thus can't be stackable.", uid, name.GetData());
     }
 }
 
-void psItemStats::LoadMeshRemoval( iResultRow& row )
+void psItemStats::LoadMeshRemoval(iResultRow &row)
 {
     // Slots effects for this item
     csStringArray entries;
@@ -757,13 +764,13 @@ void psItemStats::LoadMeshRemoval( iResultRow& row )
             {
                 //else slice the string in the slotname and removed mesh parts
                 slotID = psserver->GetCacheManager()->slotNameHash.GetID
-                                                 (currentEntry.Slice(0, slotNameEnd).Trim());
+                         (currentEntry.Slice(0, slotNameEnd).Trim());
                 removedMesh = currentEntry.Slice(slotNameEnd+1).Trim();
             }
             //store it in the hash containing these combinations
             //NOTE: we use putunique as we want an unique entry in the hash.
             meshRemoval.PutUnique(slotID, removedMesh);
-        }   
+        }
         meshRemovalInfo.PutUnique(csHashCompute(meshName), meshRemoval);
     }
 }
@@ -779,9 +786,9 @@ csString psItemStats::GetSlotRemovedMesh(int slot, csString meshName)
         if(!result) //still missing return a blank text
             return "";
     }
-    
+
     //try first the specified slot
-    csString *meshes = result->GetElementPointer(slot);
+    csString* meshes = result->GetElementPointer(slot);
     if(!meshes)
     {
         //it wasn't found so fallback to the no slot entry
@@ -794,7 +801,7 @@ csString psItemStats::GetSlotRemovedMesh(int slot, csString meshName)
 
 }
 
-void psItemStats::LoadSlots( iResultRow& row )
+void psItemStats::LoadSlots(iResultRow &row)
 {
     // Valid slots
     csStringArray slots;
@@ -807,115 +814,115 @@ void psItemStats::LoadSlots( iResultRow& row )
 
         //checks what slot it is and push in an ordered fashion in order
         //to allow to define what slot has a precedence in /equip
-        if (currentSlot == "BULK")
+        if(currentSlot == "BULK")
         {
             valid_slots|=PSITEMSTATS_SLOT_BULK;
         }
-        else if (currentSlot == "RIGHTHAND")
+        else if(currentSlot == "RIGHTHAND")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_RIGHTHAND);
             valid_slots|=PSITEMSTATS_SLOT_RIGHTHAND;
         }
-        else if (currentSlot == "LEFTHAND")
+        else if(currentSlot == "LEFTHAND")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_LEFTHAND);
             valid_slots|=PSITEMSTATS_SLOT_LEFTHAND;
         }
-        else if (currentSlot == "BOTHHANDS")
+        else if(currentSlot == "BOTHHANDS")
         {
             valid_slots|=PSITEMSTATS_SLOT_BOTHHANDS;
             valid_slots_array.Push(PSCHARACTER_SLOT_BOTHHANDS);
         }
-        else if (currentSlot == "HELM")
+        else if(currentSlot == "HELM")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_HELM);
             valid_slots|=PSITEMSTATS_SLOT_HELM;
         }
-        else if (currentSlot == "LEFTFINGER")
+        else if(currentSlot == "LEFTFINGER")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_LEFTFINGER);
             valid_slots|=PSITEMSTATS_SLOT_LEFTFINGER;
         }
-        else if (currentSlot == "RIGHTFINGER")
+        else if(currentSlot == "RIGHTFINGER")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_RIGHTFINGER);
             valid_slots|=PSITEMSTATS_SLOT_RIGHTFINGER;
         }
-        else if (currentSlot == "NECK")
+        else if(currentSlot == "NECK")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_NECK);
             valid_slots|=PSITEMSTATS_SLOT_NECK;
         }
-        else if (currentSlot == "BACK")
+        else if(currentSlot == "BACK")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_BACK);
             valid_slots|=PSITEMSTATS_SLOT_BACK;
         }
-        else if (currentSlot == "ARMS")
+        else if(currentSlot == "ARMS")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_ARMS);
             valid_slots|=PSITEMSTATS_SLOT_ARMS;
         }
-        else if (currentSlot == "GLOVES")
+        else if(currentSlot == "GLOVES")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_GLOVES);
             valid_slots|=PSITEMSTATS_SLOT_GLOVES;
         }
-        else if (currentSlot == "BOOTS")
+        else if(currentSlot == "BOOTS")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_BOOTS);
             valid_slots|=PSITEMSTATS_SLOT_BOOTS;
         }
-        else if (currentSlot == "LEGS")
+        else if(currentSlot == "LEGS")
         {
             valid_slots|=PSITEMSTATS_SLOT_LEGS;
             valid_slots_array.Push(PSCHARACTER_SLOT_LEGS);
         }
-        else if (currentSlot == "BELT")
+        else if(currentSlot == "BELT")
         {
             valid_slots|=PSITEMSTATS_SLOT_BELT;
             valid_slots_array.Push(PSCHARACTER_SLOT_BELT);
         }
-        else if (currentSlot == "BRACERS")
+        else if(currentSlot == "BRACERS")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_BRACERS);
             valid_slots|=PSITEMSTATS_SLOT_BRACERS;
         }
-        else if (currentSlot == "TORSO")
+        else if(currentSlot == "TORSO")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_TORSO);
             valid_slots|=PSITEMSTATS_SLOT_TORSO;
         }
-        else if (currentSlot == "MIND")
+        else if(currentSlot == "MIND")
         {
             valid_slots_array.Push(PSCHARACTER_SLOT_MIND);
             valid_slots|=PSITEMSTATS_SLOT_MIND;
         }
-        else if (currentSlot == "BANK")
+        else if(currentSlot == "BANK")
         {
             valid_slots|=PSITEMSTATS_SLOT_BANK;
         }
-        else if (currentSlot == "CRYSTAL")
+        else if(currentSlot == "CRYSTAL")
         {
             valid_slots|=PSITEMSTATS_SLOT_CRYSTAL;
         }
-        else if (currentSlot == "AZURE")
+        else if(currentSlot == "AZURE")
         {
             valid_slots|=PSITEMSTATS_SLOT_AZURE;
         }
-        else if (currentSlot == "RED")
+        else if(currentSlot == "RED")
         {
             valid_slots|=PSITEMSTATS_SLOT_RED;
         }
-        else if (currentSlot == "DARK")
+        else if(currentSlot == "DARK")
         {
             valid_slots|=PSITEMSTATS_SLOT_DARK;
         }
-        else if (currentSlot == "BROWN")
+        else if(currentSlot == "BROWN")
         {
             valid_slots|=PSITEMSTATS_SLOT_BROWN;
         }
-        else if (currentSlot == "BLUE")
+        else if(currentSlot == "BLUE")
         {
             valid_slots|=PSITEMSTATS_SLOT_BLUE;
         }
@@ -954,14 +961,14 @@ bool psItemStats::Save()
     update->AddField("category_id", category->id);
     update->AddField("base_sale_price", price.GetTotal());
     // update->AddField("item_type_id_ammo", ammo_item_type_id);
-    if (this->anim_list)
-        update->AddField("item_anim_id", anim_list->Get(0)->id ); // item_anim_id
+    if(this->anim_list)
+        update->AddField("item_anim_id", anim_list->Get(0)->id);  // item_anim_id
     else
         update->AddField("item_anim_id", 0); // No anims
 
     update->AddField("flags", FlagsToText().GetDataSafe()); // save flags
 
-    update->AddField("description", description );                       // description
+    update->AddField("description", description);                        // description
     update->AddField("weapon_speed", weaponStats.Latency()); // weapon_speed
     update->AddField("weapon_block_targeted", weaponStats.TargetedBlockValue()); //weapon_block_targeted
     update->AddField("weapon_block_untargeted", weaponStats.UntargetedBlockValue()); //weapon_block_untargeted
@@ -969,9 +976,9 @@ bool psItemStats::Save()
 
     // Note that these are the same as armorStats.damage_protection - weaponStats is populated
     // for all kinds of items, and both are filled from the same DB columns.  So it doesn't matter.
-    update->AddField("dmg_slash", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_SLASH] );
-    update->AddField("dmg_blunt", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT] );
-    update->AddField("dmg_pierce", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE] );
+    update->AddField("dmg_slash", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_SLASH]);
+    update->AddField("dmg_blunt", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT]);
+    update->AddField("dmg_pierce", weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE]);
 
     update->AddField("cstr_gfx_mesh", mesh_name); //Mesh
 
@@ -986,7 +993,7 @@ bool psItemStats::Save()
     // equip/unequip events
     //update->AddField("equip_script", we haven't saved the script XML);
     //update->AddField("consume_script", consumeScriptName);
-    update->AddField("creative_definition", this->creativeStats.creativeDefinitionXML );
+    update->AddField("creative_definition", this->creativeStats.creativeDefinitionXML);
 
     // Save this entry
     update_ok &= update->Execute(GetUID());
@@ -1001,15 +1008,15 @@ void psItemStats::SetArmorVsWeaponType(const char* v)
     if(!v)
         return;
 
-    if (GetIsMeleeWeapon() || GetIsRangeWeapon())
+    if(GetIsMeleeWeapon() || GetIsRangeWeapon())
     {
         weapon_type = v;
     }
 }
 
-void psItemStats::GetArmorVsWeaponType(csString& buff)
+void psItemStats::GetArmorVsWeaponType(csString &buff)
 {
-    if (GetIsMeleeWeapon() || GetIsRangeWeapon())
+    if(GetIsMeleeWeapon() || GetIsRangeWeapon())
     {
         buff = weapon_type;
         return;
@@ -1047,28 +1054,28 @@ void psItemStats::GetArmorVsWeaponType(csString& buff)
     //buff = NULL;
     // @@@ Jorrit: I think the below is the intention rather then the above?
     // Fixes a warning.
-    buff.Clear ();
+    buff.Clear();
 }
 
 int psItemStats::GetAttackAnimID(unsigned int skill_level)
 {
-    if (anim_list)
+    if(anim_list)
     {
         int max;
-        for (max = 0; max < (int)anim_list->GetSize(); max++)
+        for(max = 0; max < (int)anim_list->GetSize(); max++)
         {
-            if (anim_list->Get(max)->min_level_required >(int) skill_level)
+            if(anim_list->Get(max)->min_level_required >(int) skill_level)
                 break;
         }
         int which = psserver->rng->Get(max);
-        if (anim_list->Get(which)->anim_id == csInvalidStringID)
+        if(anim_list->Get(which)->anim_id == csInvalidStringID)
         {
             anim_list->Get(which)->anim_id = psserver->GetCacheManager()->GetMsgStrings()->Request(anim_list->Get(which)->anim_name);
             return anim_list->Get(which)->anim_id;
         }
         else
         {
-            Debug2(LOG_COMBAT, uid, "Sending anim %s.\n",anim_list->Get(which)->anim_name.GetData() );
+            Debug2(LOG_COMBAT, uid, "Sending anim %s.\n",anim_list->Get(which)->anim_name.GetData());
             return anim_list->Get(which)->anim_id;
         }
     }
@@ -1093,10 +1100,10 @@ bool psItemStats::GetIsArmor()
 
 bool psItemStats::IsMoney()
 {
-    return ( (flags & PSITEMSTATS_FLAG_TRIA) ||
-             (flags & PSITEMSTATS_FLAG_HEXA) ||
-             (flags & PSITEMSTATS_FLAG_OCTA) ||
-             (flags & PSITEMSTATS_FLAG_CIRCLE) );
+    return ((flags & PSITEMSTATS_FLAG_TRIA) ||
+            (flags & PSITEMSTATS_FLAG_HEXA) ||
+            (flags & PSITEMSTATS_FLAG_OCTA) ||
+            (flags & PSITEMSTATS_FLAG_CIRCLE));
 }
 
 bool psItemStats::GetIsRangeWeapon()
@@ -1185,7 +1192,7 @@ float psItemStats::GetRange() const
     return weaponRange;
 }
 
-PID psItemStats::GetCreator (PSITEMSTATS_CREATORSTATUS& creatorStatus)
+PID psItemStats::GetCreator(PSITEMSTATS_CREATORSTATUS &creatorStatus)
 {
     return creativeStats.GetCreator(creatorStatus);
 }
@@ -1200,14 +1207,14 @@ uint32 psItemStats::GetUID()
     return uid;
 }
 
-const char *psItemStats::GetUIDStr()
+const char* psItemStats::GetUIDStr()
 {
     static char str[20];
     sprintf(str,"%u",uid);
     return str;
 }
 
-const char *psItemStats::GetName() const
+const char* psItemStats::GetName() const
 {
     return name.GetData();
 }
@@ -1215,55 +1222,55 @@ const char *psItemStats::GetName() const
 csString psItemStats::FlagsToText()
 {
     csString TempString = csString();
-    if (flags & PSITEMSTATS_FLAG_IS_A_MELEE_WEAPON)
+    if(flags & PSITEMSTATS_FLAG_IS_A_MELEE_WEAPON)
         TempString.Append("MELEEWEAPON ");
-    if (flags & PSITEMSTATS_FLAG_IS_A_RANGED_WEAPON)
+    if(flags & PSITEMSTATS_FLAG_IS_A_RANGED_WEAPON)
         TempString.Append("RANGEWEAPON ");
-    if (flags & PSITEMSTATS_FLAG_IS_A_SHIELD)
+    if(flags & PSITEMSTATS_FLAG_IS_A_SHIELD)
         TempString.Append("SHIELD ");
-    if (flags & PSITEMSTATS_FLAG_IS_AMMO)
+    if(flags & PSITEMSTATS_FLAG_IS_AMMO)
         TempString.Append("AMMO ");
-    if (flags & PSITEMSTATS_FLAG_IS_A_CONTAINER)
+    if(flags & PSITEMSTATS_FLAG_IS_A_CONTAINER)
         TempString.Append("CONTAINER ");
-    if (flags & PSITEMSTATS_FLAG_IS_A_TRAP)
+    if(flags & PSITEMSTATS_FLAG_IS_A_TRAP)
         TempString.Append("TRAP ");
-    if (flags & PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE)
+    if(flags & PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE)
         TempString.Append("CONSTRUCTIBLE ");
-    if (flags & PSITEMSTATS_FLAG_USES_AMMO)
+    if(flags & PSITEMSTATS_FLAG_USES_AMMO)
         TempString.Append("USESAMMO ");
-    if (flags & PSITEMSTATS_FLAG_IS_STACKABLE)
+    if(flags & PSITEMSTATS_FLAG_IS_STACKABLE)
         TempString.Append("STACKABLE ");
-    if (flags & PSITEMSTATS_FLAG_IS_GLYPH)
+    if(flags & PSITEMSTATS_FLAG_IS_GLYPH)
         TempString.Append("GLYPH ");
-    if (flags & PSITEMSTATS_FLAG_CAN_TRANSFORM)
+    if(flags & PSITEMSTATS_FLAG_CAN_TRANSFORM)
         TempString.Append("CANTRANSFORM ");
-    if (flags & PSITEMSTATS_FLAG_TRIA)
+    if(flags & PSITEMSTATS_FLAG_TRIA)
         TempString.Append("TRIA ");
-    if (flags & PSITEMSTATS_FLAG_HEXA)
+    if(flags & PSITEMSTATS_FLAG_HEXA)
         TempString.Append("HEXA ");
-    if (flags & PSITEMSTATS_FLAG_OCTA)
+    if(flags & PSITEMSTATS_FLAG_OCTA)
         TempString.Append("OCTA ");
-    if (flags & PSITEMSTATS_FLAG_CIRCLE)
+    if(flags & PSITEMSTATS_FLAG_CIRCLE)
         TempString.Append("CIRCLE ");
-    if (flags & PSITEMSTATS_FLAG_CONSUMABLE)
+    if(flags & PSITEMSTATS_FLAG_CONSUMABLE)
         TempString.Append("CONSUMABLE ");
-    if (flags & PSITEMSTATS_FLAG_IS_READABLE)
+    if(flags & PSITEMSTATS_FLAG_IS_READABLE)
         TempString.Append("READABLE ");
-    if (flags & PSITEMSTATS_FLAG_IS_ARMOR)
+    if(flags & PSITEMSTATS_FLAG_IS_ARMOR)
         TempString.Append("ARMOR ");
-    if (flags & PSITEMSTATS_FLAG_IS_EQUIP_STACKABLE)
+    if(flags & PSITEMSTATS_FLAG_IS_EQUIP_STACKABLE)
         TempString.Append("EQUIP_STACKABLE ");
-    if (flags & PSITEMSTATS_FLAG_IS_WRITEABLE)
+    if(flags & PSITEMSTATS_FLAG_IS_WRITEABLE)
         TempString.Append("WRITEABLE ");
-    if (flags & PSITEMSTATS_FLAG_NOPICKUP)
+    if(flags & PSITEMSTATS_FLAG_NOPICKUP)
         TempString.Append("NOPICKUP ");
-    if (flags & PSITEMSTATS_FLAG_AVERAGEQUALITY)
+    if(flags & PSITEMSTATS_FLAG_AVERAGEQUALITY)
         TempString.Append("AVERAGEQUALITY ");
-    if (flags & PSITEMSTATS_FLAG_CREATIVE)
+    if(flags & PSITEMSTATS_FLAG_CREATIVE)
         TempString.Append("CREATIVE ");
-    if (flags & PSITEMSTATS_FLAG_BUY_PERSONALISE)
+    if(flags & PSITEMSTATS_FLAG_BUY_PERSONALISE)
         TempString.Append("BUY_PERSONALISE ");
-    if (flags & PSITEMSTATS_FLAG_IS_RECHARGEABLE)
+    if(flags & PSITEMSTATS_FLAG_IS_RECHARGEABLE)
         TempString.Append("RECHARGEABLE ");
     return(TempString);
 }
@@ -1274,9 +1281,9 @@ const csString psItemStats::GetDownCaseName()
     return downcaseName.Downcase();
 }
 
-void psItemStats::SetName(const char *v)
+void psItemStats::SetName(const char* v)
 {
-    if (!v)
+    if(!v)
         return;
 
     psserver->GetCacheManager()->CacheNameChange(csString(name), csString(v));
@@ -1288,27 +1295,27 @@ void psItemStats::SaveName(void)
 {
     // save to database
     psStringArray values;
-    const char *fieldnames[] = {"name"};
+    const char* fieldnames[] = {"name"};
     csString itemStatsID;
 
     itemStatsID.Format("%u", uid);
     values.Push(this->name);
 
-    if ( !db->GenericUpdateWithID("item_stats", "id", itemStatsID, fieldnames, values) )
+    if(!db->GenericUpdateWithID("item_stats", "id", itemStatsID, fieldnames, values))
     {
-        Error2("Failed to save name for item %u!", uid );
+        Error2("Failed to save name for item %u!", uid);
     }
 
 }
 
-const char *psItemStats::GetDescription() const
+const char* psItemStats::GetDescription() const
 {
     return description;
 }
 
-void psItemStats::SetDescription(const char *v)
+void psItemStats::SetDescription(const char* v)
 {
-    if (!v)
+    if(!v)
         return;
 
     description = v;
@@ -1318,15 +1325,15 @@ void psItemStats::SaveDescription(void)
 {
     // save to database
     psStringArray values;
-    const char *fieldnames[] = {"description"};
+    const char* fieldnames[] = {"description"};
     csString itemStatsID;
 
     itemStatsID.Format("%u", uid);
     values.Push(this->description);
 
-    if ( !db->GenericUpdateWithID("item_stats", "id", itemStatsID, fieldnames, values) )
+    if(!db->GenericUpdateWithID("item_stats", "id", itemStatsID, fieldnames, values))
     {
-        Error2("Failed to save description for item %u!", uid );
+        Error2("Failed to save description for item %u!", uid);
     }
 
 }
@@ -1370,7 +1377,7 @@ PSITEMSTATS_SLOTLIST psItemStats::GetValidSlots()
 
 bool psItemStats::FitsInSlots(PSITEMSTATS_SLOTLIST slotmask)
 {
-    if ((valid_slots & slotmask)==slotmask)
+    if((valid_slots & slotmask)==slotmask)
         return true;
     return false;
 }
@@ -1381,44 +1388,44 @@ float psItemStats::GetDecayRate()
 }
 
 
-const char *psItemStats::GetMeshName()
+const char* psItemStats::GetMeshName()
 {
     return mesh_name;
 }
-void psItemStats::SetMeshName(const char *v)
+void psItemStats::SetMeshName(const char* v)
 {
     mesh_name=v;
 }
-const char *psItemStats::GetTextureName()
+const char* psItemStats::GetTextureName()
 {
     return texture_name;
 }
-void psItemStats::SetTextureName(const char *v)
+void psItemStats::SetTextureName(const char* v)
 {
     texture_name=v;
 }
-const char *psItemStats::GetPartName()
+const char* psItemStats::GetPartName()
 {
     return texturepart_name;
 }
-void psItemStats::SetPartName(const char *v)
+void psItemStats::SetPartName(const char* v)
 {
     texturepart_name=v;
 }
-const char *psItemStats::GetPartMeshName()
+const char* psItemStats::GetPartMeshName()
 {
     return partmesh_name;
 }
-void psItemStats::SetPartMeshName(const char *v)
+void psItemStats::SetPartMeshName(const char* v)
 {
     partmesh_name=v;
 }
 
-const char *psItemStats::GetImageName()
+const char* psItemStats::GetImageName()
 {
     return image_name;
 }
-void psItemStats::SetImageName(const char *v)
+void psItemStats::SetImageName(const char* v)
 {
     image_name=v;
 }
@@ -1449,40 +1456,40 @@ void psItemStats::SetPrice(int trias)
     price = psMoney(trias);
 }
 
-psMoney& psItemStats::GetPrice()
+psMoney &psItemStats::GetPrice()
 {
     return price;
 }
 
-void psItemStats::SetCategory(psItemCategory * item_category)
+void psItemStats::SetCategory(psItemCategory* item_category)
 {
     category = item_category;
 }
 
 
-psItemCategory * psItemStats::GetCategory()
+psItemCategory* psItemStats::GetCategory()
 {
     return category;
 }
 
-const char *psItemStats::GetSound()
+const char* psItemStats::GetSound()
 {
     return sound;
 }
 
-void psItemStats::SetSound(const char *v)
+void psItemStats::SetSound(const char* v)
 {
     sound = csString("item.") + v;
 }
 
-bool psItemStats::SetEquipScript(const csString & equipXML)
+bool psItemStats::SetEquipScript(const csString &equipXML)
 {
-    ApplicativeScript *aps = NULL;
+    ApplicativeScript* aps = NULL;
 
-    if (!equipXML.IsEmpty())
+    if(!equipXML.IsEmpty())
     {
         aps = ApplicativeScript::Create(psserver->entitymanager, psserver->GetCacheManager(), equipXML);
-        if (!aps)
+        if(!aps)
         {
             Error4("Could not create ApplicativeScript for ItemStats %u (%s)'s equip script: %s.", uid, name.GetData(), equipXML.GetData());
             return false;
@@ -1492,7 +1499,7 @@ bool psItemStats::SetEquipScript(const csString & equipXML)
     csString escXML;
     db->Escape(escXML, equipXML);
     unsigned long res = db->Command("UPDATE item_stats SET equip_script='%s' WHERE id=%u", escXML.GetData(), uid);
-    if (res == QUERY_FAILED)
+    if(res == QUERY_FAILED)
     {
         Error2("sql error: %s", db->GetLastError());
         return false;
@@ -1508,14 +1515,14 @@ csArray<ItemRequirement> &psItemStats::GetRequirements()
     return reqs;
 }
 
-bool psItemStats::SetRequirement(const csString & statName, float statValue)
+bool psItemStats::SetRequirement(const csString &statName, float statValue)
 {
     CS_ASSERT(!statName.IsEmpty());
 
     // If it's already required, use the higher of the two requirements.
-    for (size_t i = 0; i < reqs.GetSize(); i++)
+    for(size_t i = 0; i < reqs.GetSize(); i++)
     {
-        if (statName.CompareNoCase(reqs[i].name))
+        if(statName.CompareNoCase(reqs[i].name))
         {
             reqs[i].min_value = csMax(reqs[i].min_value, statValue);
             return true;
@@ -1536,11 +1543,11 @@ bool psItemStats::SetRequirement(const csString & statName, float statValue)
     return true;
 }
 
-psItem *psItemStats::InstantiateBasicItem(bool transient)
+psItem* psItemStats::InstantiateBasicItem(bool transient)
 {
-    psItem *newitem;
+    psItem* newitem;
 
-    if (this->GetIsGlyph())
+    if(this->GetIsGlyph())
     {
         newitem = new psGlyph();
     }
@@ -1552,7 +1559,7 @@ psItem *psItemStats::InstantiateBasicItem(bool transient)
     newitem->SetBaseStats(this);
     newitem->SetCurrentStats(this);
 
-    if (transient)
+    if(transient)
     {
         newitem->ScheduleRemoval();  // Remove from world in a few hrs if no one picks it up
     }
@@ -1560,7 +1567,7 @@ psItem *psItemStats::InstantiateBasicItem(bool transient)
     return newitem;  // MUST do newitem->Loaded() when it is safe to save!
 }
 
-bool psItemStats::SetAttribute(const csString & op, const csString & attrName, float modifier)
+bool psItemStats::SetAttribute(const csString &op, const csString &attrName, float modifier)
 {
     float* value[3] = { NULL, NULL, NULL };
     // Attribute Names:
@@ -1580,78 +1587,78 @@ bool psItemStats::SetAttribute(const csString & op, const csString & attrName, f
 
     csString AttributeName(attrName);
     AttributeName.Downcase();
-    if ( AttributeName.Compare( "item.weight" ) )
+    if(AttributeName.Compare("item.weight"))
     {
         value[0] = &this->weight;
     }
-    else if ( AttributeName.Compare( "item.speed" ) )
+    else if(AttributeName.Compare("item.speed"))
     {
         value[0] = &this->weaponStats.latency;
     }
-    else if ( AttributeName.Compare( "item.damage" ) )
+    else if(AttributeName.Compare("item.damage"))
     {
         value[0] = &this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_SLASH];
         value[1] = &this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT];
         value[2] = &this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
-    else if ( AttributeName.Compare( "item.damage.slash" ) )
+    else if(AttributeName.Compare("item.damage.slash"))
     {
         value[0] = &this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_SLASH];
     }
-    else if ( AttributeName.Compare( "item.damage.pierce" ) )
+    else if(AttributeName.Compare("item.damage.pierce"))
     {
         value[0] = &this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
-    else if ( AttributeName.Compare( "item.damage.blunt" ) )
+    else if(AttributeName.Compare("item.damage.blunt"))
     {
         value[0] = &this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT];
     }
-    else if ( AttributeName.Compare( "item.protection" ) )
+    else if(AttributeName.Compare("item.protection"))
     {
         value[0] = &this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_SLASH];
         value[1] = &this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_BLUNT];
         value[2] = &this->weaponStats.damages[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
-    else if ( AttributeName.Compare( "item.protection.slash" ) )
+    else if(AttributeName.Compare("item.protection.slash"))
     {
         value[0] = &this->armorStats.damage_protection[PSITEMSTATS_DAMAGETYPE_SLASH];
     }
-    else if ( AttributeName.Compare( "item.protection.pierce" ) )
+    else if(AttributeName.Compare("item.protection.pierce"))
     {
         value[0] = &this->armorStats.damage_protection[PSITEMSTATS_DAMAGETYPE_PIERCE];
     }
-    else if ( AttributeName.Compare( "item.protection.blunt" ) )
+    else if(AttributeName.Compare("item.protection.blunt"))
     {
         value[0] = &this->armorStats.damage_protection[PSITEMSTATS_DAMAGETYPE_BLUNT];
     }
 
     // Operations  = ADD, MUL, SET
-    for (int i = 0; i < 3; i++)
+    for(int i = 0; i < 3; i++)
     {
-        if (op.CompareNoCase("ADD"))
+        if(op.CompareNoCase("ADD"))
         {
-            if (value[i]) *value[i] += modifier;
+            if(value[i]) *value[i] += modifier;
         }
 
-        if (op.CompareNoCase("MUL"))
+        if(op.CompareNoCase("MUL"))
         {
-            if (value[i]) *value[i] *= modifier;
+            if(value[i]) *value[i] *= modifier;
         }
 
-        if (op.CompareNoCase("VAL"))
+        if(op.CompareNoCase("VAL"))
         {
-            if (value[i]) *value[i] = modifier;
+            if(value[i]) *value[i] = modifier;
         }
     }
 
     return true;
 }
 
-bool psItemStats::SetCreation (PSITEMSTATS_CREATIVETYPE creativeType, const csString& newCreation, csString creatorName)
+bool psItemStats::SetCreation(PSITEMSTATS_CREATIVETYPE creativeType, const csString &newCreation, csString creatorName)
 {
     csString newDescription;
 
-    if (creativeStats.SetCreativeContent(creativeType, newCreation, uid))
+    if(creativeStats.SetCreativeContent(creativeType, newCreation, uid))
     {
         newDescription = creativeStats.UpdateDescription(creativeType, name, creatorName);
         SetDescription(newDescription.GetDataSafe());
@@ -1662,7 +1669,7 @@ bool psItemStats::SetCreation (PSITEMSTATS_CREATIVETYPE creativeType, const csSt
     return false;
 }
 
-void psItemStats::SetCreator (PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
+void psItemStats::SetCreator(PID characterID, PSITEMSTATS_CREATORSTATUS creatorStatus)
 {
     creativeStats.SetCreator(characterID,creatorStatus);
 }
@@ -1700,11 +1707,11 @@ int psItemStats::GetMaxCharges() const
 }
 
 
-double psItemStats::GetProperty(MathEnvironment* env, const char *ptr)
+double psItemStats::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
     //returns the basic quality of this item.
-    if (property == "Quality")
+    if(property == "Quality")
     {
         return (double) GetQuality();
     }
@@ -1724,17 +1731,17 @@ double psItemStats::GetProperty(MathEnvironment* env, const char *ptr)
     return 0;
 }
 
-double psItemStats::CalcFunction(MathEnvironment* env, const char * functionName, const double * params)
+double psItemStats::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     csString function(functionName);
 
     //Checks if the name of the item is the given one.
     if(function == "IsNamed")
     {
-        return (double) (GetName() ==  env->GetString(params[0]))? 1.0f : 0.0f;
+        return (double)(GetName() ==  env->GetString(params[0]))? 1.0f : 0.0f;
     }
 
     CPrintf(CON_ERROR, "psItemStats::CalcFunction(%s) failed\n", functionName);
     return 0;
 }
-    
+

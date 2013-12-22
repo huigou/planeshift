@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *  
+ *
  */
 
 #include <psconfig.h>
@@ -46,21 +46,21 @@
 bool psTrainerInfo::Load(PID pid)
 {
     bool isTrainer = false;
-    
+
     Result trainerSkills(db->Select("SELECT * from trainer_skills where player_id=%u", pid.Unbox()));
-    if (trainerSkills.IsValid())
+    if(trainerSkills.IsValid())
     {
         int i,count=trainerSkills.Count();
 
-        for (i=0;i<count;i++)
+        for(i=0; i<count; i++)
         {
-            psSkillInfo * skillInfo = FindSkill(atoi(trainerSkills[i]["skill_id"]));
-            if (!skillInfo)
+            psSkillInfo* skillInfo = FindSkill(atoi(trainerSkills[i]["skill_id"]));
+            if(!skillInfo)
             {
                 Error1("Error! Skill could not be loaded. Skipping.\n");
                 continue;
             }
-            psTrainerSkill * skill = new psTrainerSkill;
+            psTrainerSkill* skill = new psTrainerSkill;
             skill->skill = skillInfo;
             skill->max_rank = atoi(trainerSkills[i]["max_rank"]);
             skill->min_rank = atoi(trainerSkills[i]["min_rank"]);
@@ -77,31 +77,31 @@ bool psTrainerInfo::TrainingInSkill(PSSKILL skill, unsigned int rank, float fact
 {
     csArray<psTrainerSkill*, csPDelArrayElementHandler<psTrainerSkill*> >::Iterator iter = skills.GetIterator();
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
-        psTrainerSkill * info = iter.Next();
+        psTrainerSkill* info = iter.Next();
 
-        if (info->skill->id == skill)
+        if(info->skill->id == skill)
         {
-        /*
-            printf("    Matching Skills\n" );
-            printf("    Compare rank(%d) >= (%d)info->min_rank\n", rank , info->min_rank );
-            printf("    Compare rank(%d) < (%d)info->max_rank\n", rank , info->max_rank );
-            printf("    Compare faction(%f) >= (%f)info->min_faction\n", faction, info->min_faction );
-        */            
-            if (rank >= (unsigned int)info->min_rank && rank < (unsigned int)info->max_rank && faction >= info->min_faction)
+            /*
+                printf("    Matching Skills\n" );
+                printf("    Compare rank(%d) >= (%d)info->min_rank\n", rank , info->min_rank );
+                printf("    Compare rank(%d) < (%d)info->max_rank\n", rank , info->max_rank );
+                printf("    Compare faction(%f) >= (%f)info->min_faction\n", faction, info->min_faction );
+            */
+            if(rank >= (unsigned int)info->min_rank && rank < (unsigned int)info->max_rank && faction >= info->min_faction)
                 return true;
         }
     }
     return false;
 }
 
-psSkillInfo * psTrainerInfo::FindSkill(int id)
+psSkillInfo* psTrainerInfo::FindSkill(int id)
 {
     return psserver->GetCacheManager()->GetSkillByID(id);
 }
 
-psSkillInfo * psTrainerInfo::FindSkill(const csString & name)
+psSkillInfo* psTrainerInfo::FindSkill(const csString &name)
 {
     return psserver->GetCacheManager()->GetSkillByName(name);
 }

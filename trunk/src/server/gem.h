@@ -1293,7 +1293,7 @@ protected:
     /**
      * active magic message seq
      */
-     uint32_t activeMagic_seq;
+    uint32_t activeMagic_seq;
 
 
 public:
@@ -1339,7 +1339,7 @@ public:
     {
         return mount;
     }
-    
+
     void SetMount(psCharacter* newMount)
     {
         mount = newMount;
@@ -1349,7 +1349,7 @@ public:
     {
         return (mount != NULL);
     }
-    
+
 
     PSCHARACTER_MODE GetMode()
     {

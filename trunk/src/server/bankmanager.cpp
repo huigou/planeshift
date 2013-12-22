@@ -64,7 +64,7 @@ BankManager::BankManager()
 
     for(uint currentRow = 0; currentRow < result.Count(); currentRow++)
     {
-        iResultRow& row = result[currentRow];
+        iResultRow &row = result[currentRow];
         MoneyEvent monEvt;
         monEvt.id = row.GetInt("id");
         monEvt.taxid = row.GetInt("taxid");
@@ -94,8 +94,8 @@ BankManager::~BankManager()
     //do nothing
 }
 
-psMoneyGameEvent::psMoneyGameEvent(int delayTicks, BankManager *bankMan)
-: psGameEvent(0, delayTicks, "psMoneyGameEvent")
+psMoneyGameEvent::psMoneyGameEvent(int delayTicks, BankManager* bankMan)
+    : psGameEvent(0, delayTicks, "psMoneyGameEvent")
 {
     bankManager = bankMan;
 }
@@ -112,7 +112,7 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent &monEvt, int index)
 
     if(monEvt.guild)
     {
-        psGuildInfo *g = (psGuildInfo*)guildOrChar;
+        psGuildInfo* g = (psGuildInfo*)guildOrChar;
         psMoney mon = g->GetBankMoney();
         moneyAvail = mon.GetTotal();
         circlesAvail = mon.GetCircles();
@@ -122,7 +122,7 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent &monEvt, int index)
     }
     else
     {
-        psCharacter *c = (psCharacter*)guildOrChar;
+        psCharacter* c = (psCharacter*)guildOrChar;
         psMoney* mon = GetTotalFunds(c, monEvt.guild);
         moneyAvail = mon->GetTotal();
         circlesAvail = mon->GetCircles();
@@ -142,8 +142,8 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent &monEvt, int index)
             monEvt.interval = 1;
             csString sql;
             sql.Format("UPDATE money_events SET latePayment=%u, inter=%u WHERE id=%u", 1, 1, monEvt.id);
-            if (db->Command(sql) != 1)
-                Error3 ("Couldn't mark payment as 'late' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+            if(db->Command(sql) != 1)
+                Error3("Couldn't mark payment as 'late' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
 
             // Trigger 'not paid' script.
             //psserver->GetProgressionManager()->CreateEvent("Money_Event", monEvt.npaid)->Run(0, 0, false);
@@ -161,16 +161,16 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent &monEvt, int index)
                 monEvts.DeleteIndex(index);
                 csString sql;
                 sql.Format("DELETE FROM money_events WHERE id=%u", monEvt.id);
-                if (db->Command(sql) != 1)
-                    Error3 ("Couldn't remove money event from database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+                if(db->Command(sql) != 1)
+                    Error3("Couldn't remove money event from database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
             }
             else
             {
                 // Update db with lateBy.
                 csString sql;
                 sql.Format("UPDATE money_events SET lateBy=%u WHERE id=%u", monEvt.lateBy, monEvt.id);
-                if (db->Command(sql) != 1)
-                    Error3 ("Couldn't update 'lateBy' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+                if(db->Command(sql) != 1)
+                    Error3("Couldn't update 'lateBy' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
             }
         }
 
@@ -183,8 +183,8 @@ void BankManager::TaxAccount(T guildOrChar, MoneyEvent &monEvt, int index)
         monEvt.latePayment = false;
         csString sql;
         sql.Format("UPDATE money_events SET latePayment=%u, lateBy=%u WHERE id=%u", 0, 0, monEvt.id);
-        if (db->Command(sql) != 1)
-            Error3 ("Couldn't unmark payment as 'late' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+        if(db->Command(sql) != 1)
+            Error3("Couldn't unmark payment as 'late' in database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
 
         // Paid
         //psserver->GetProgressionManager()->CreateEvent("Money_Event", monEvt.paid)->Run(0, 0, false);
@@ -278,8 +278,8 @@ void BankManager::ProcessTax()
                     monEvts.DeleteIndexFast(i);
                     csString sql;
                     sql.Format("DELETE FROM money_events WHERE id=%u", temp.id);
-                    if (db->Command(sql) != 1)
-                        Error3 ("Couldn't remove money event from database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+                    if(db->Command(sql) != 1)
+                        Error3("Couldn't remove money event from database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
                     return;
                 }
                 // Tax
@@ -293,8 +293,8 @@ void BankManager::ProcessTax()
                     monEvts.DeleteIndexFast(i);
                     csString sql;
                     sql.Format("DELETE FROM money_events WHERE id=%u", temp.id);
-                    if (db->Command(sql) != 1)
-                        Error3 ("Couldn't remove money event from database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+                    if(db->Command(sql) != 1)
+                        Error3("Couldn't remove money event from database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
                     return;
                 }
                 // Tax
@@ -325,14 +325,14 @@ void BankManager::ProcessTax()
                 monEvts.Get(i).interval = 7;
                 csString sql;
                 sql.AppendFmt("UPDATE money_events SET nextEvent=%u, inter=%u WHERE id=%u", nextEventDate, 7, temp.id);
-                if (db->Command(sql) != 1)
-                    Error3 ("Couldn't save next event date to database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
+                if(db->Command(sql) != 1)
+                    Error3("Couldn't save next event date to database.\nCommand was <%s>.\nError returned was <%s>\n",db->GetLastQuery(),db->GetLastError());
             }
         }
     }
 
     // Schedule the next check.
-    psMoneyGameEvent *event = new psMoneyGameEvent(DAY, this);
+    psMoneyGameEvent* event = new psMoneyGameEvent(DAY, this);
     psserver->GetEventManager()->Push(event);
 }
 
@@ -404,7 +404,7 @@ void BankManager::WithdrawFunds(Client* client, bool guild, int circles, int oct
     }
 }
 
-void BankManager::ExchangeFunds(Client *client, bool guild, int coins, int coin)
+void BankManager::ExchangeFunds(Client* client, bool guild, int coins, int coin)
 {
     if(coins < 0)
     {
@@ -427,7 +427,7 @@ void BankManager::ExchangeFunds(Client *client, bool guild, int coins, int coin)
 
     switch(coin)
     {
-    case CIRCLE:
+        case CIRCLE:
         {
             int coin2Tria = (int)((coins * 250) * (1 + fee/100));
             octasToDeduct = (coin2Tria / 50);
@@ -437,7 +437,7 @@ void BankManager::ExchangeFunds(Client *client, bool guild, int coins, int coin)
             character->AdjustMoney(psMoney(coins, 0, 0, 0), false);
             break;
         }
-    case OCTA:
+        case OCTA:
         {
             int coin2Tria = (int)((coins * 50) * (1 + fee/100));
             circlesToDeduct = (coin2Tria / 250);
@@ -447,7 +447,7 @@ void BankManager::ExchangeFunds(Client *client, bool guild, int coins, int coin)
             character->AdjustMoney(psMoney(0, coins, 0, 0), false);
             break;
         }
-    case HEXA:
+        case HEXA:
         {
             int coin2Tria = (int)((coins * 10) * (1 + fee/100));
             circlesToDeduct = (coin2Tria / 250);
@@ -457,7 +457,7 @@ void BankManager::ExchangeFunds(Client *client, bool guild, int coins, int coin)
             character->AdjustMoney(psMoney(0, 0, coins, 0), false);
             break;
         }
-    case TRIA:
+        case TRIA:
         {
             int coin2Tria = (int)(coins * (1 + fee/100));
             circlesToDeduct = (coin2Tria / 250);
@@ -467,8 +467,8 @@ void BankManager::ExchangeFunds(Client *client, bool guild, int coins, int coin)
             character->AdjustMoney(psMoney(0, 0, 0, coins), false);
             break;
         }
-    default:
-        return;
+        default:
+            return;
     }
 
     if(guild)
@@ -643,25 +643,25 @@ void BankManager::SendBankWindow(Client* client, bool guild, bool forceOpen)
     int maxTrias = CoinsForExchange(pschar, guild, TRIA, fee);
 
     psGUIBankingMessage newmsg(client->GetClientNum(),
-                             psGUIBankingMessage::VIEWBANK,
-                             guild,
-                             pschar->Money().GetCircles(),
-                             pschar->Money().GetOctas(),
-                             pschar->Money().GetHexas(),
-                             pschar->Money().GetTrias(),
-                             moneyBanked->GetCircles(),
-                             moneyBanked->GetOctas(),
-                             moneyBanked->GetHexas(),
-                             moneyBanked->GetTrias(),
-                             maxCircles,
-                             maxOctas,
-                             maxHexas,
-                             maxTrias,
-                             fee,
-                             forceOpen);
+                               psGUIBankingMessage::VIEWBANK,
+                               guild,
+                               pschar->Money().GetCircles(),
+                               pschar->Money().GetOctas(),
+                               pschar->Money().GetHexas(),
+                               pschar->Money().GetTrias(),
+                               moneyBanked->GetCircles(),
+                               moneyBanked->GetOctas(),
+                               moneyBanked->GetHexas(),
+                               moneyBanked->GetTrias(),
+                               maxCircles,
+                               maxOctas,
+                               maxHexas,
+                               maxTrias,
+                               fee,
+                               forceOpen);
 
     Debug2(LOG_EXCHANGES, client->GetClientNum(),"Sending psGUIBankingMessage w/ stats to %d, Valid: ",int(client->GetClientNum()));
-    if (newmsg.valid)
+    if(newmsg.valid)
     {
         Debug1(LOG_EXCHANGES, client->GetClientNum(),"Yes\n");
         psserver->GetEventManager()->SendMessage(newmsg.msg);
@@ -675,33 +675,33 @@ void BankManager::SendBankWindow(Client* client, bool guild, bool forceOpen)
 }
 
 
-void BankManager::HandleBanking( MsgEntry *me, Client *client )
+void BankManager::HandleBanking(MsgEntry* me, Client* client)
 {
     psGUIBankingMessage msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
     {
         Debug2(LOG_NET,me->clientnum,"Received unparsable psGUIBankingMessage from client %u.\n", me->clientnum);
         return;
     }
     // Check we're still near the banker.
-    gemObject *banker = NULL;
+    gemObject* banker = NULL;
     banker = client->GetTargetObject();
-    if (!banker || !banker->GetCharacterData() || !banker->GetCharacterData()->IsBanker())
+    if(!banker || !banker->GetCharacterData() || !banker->GetCharacterData()->IsBanker())
     {
         psserver->SendSystemError(client->GetClientNum(), "Your target must be a banker!");
         return;
     }
 
     // Check range
-    if (client->GetActor()->RangeTo(banker) > RANGE_TO_SELECT)
+    if(client->GetActor()->RangeTo(banker) > RANGE_TO_SELECT)
     {
         psserver->SendSystemError(client->GetClientNum(),
-            "You are not within range to interact with %s.",banker->GetCharacterData()->GetCharName());
+                                  "You are not within range to interact with %s.",banker->GetCharacterData()->GetCharName());
         return;
     }
 
     // Check that the banker is alive!
-    if (!banker->IsAlive())
+    if(!banker->IsAlive())
     {
         psserver->SendSystemError(client->GetClientNum(), "You can't interact with a dead banker!");
         return;
@@ -715,7 +715,7 @@ void BankManager::HandleBanking( MsgEntry *me, Client *client )
     }
 
     // Make sure that we're not busy doing something else.
-    if (client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
+    if(client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
     {
         csString err;
         err.Format("You can't access your bank account while %s.", client->GetActor()->GetModeStr());
@@ -726,21 +726,21 @@ void BankManager::HandleBanking( MsgEntry *me, Client *client )
     // Handle the message now.
     switch(msg.command)
     {
-    case psGUIBankingMessage::WITHDRAWFUNDS:
+        case psGUIBankingMessage::WITHDRAWFUNDS:
         {
             WithdrawFunds(client, msg.guild, msg.circles, msg.octas, msg.hexas, msg.trias);
             SendBankWindow(client, msg.guild, false);
             break;
         }
-    case psGUIBankingMessage::DEPOSITFUNDS:
+        case psGUIBankingMessage::DEPOSITFUNDS:
         {
             DepositFunds(client, msg.guild, msg.circles, msg.octas, msg.hexas, msg.trias);
             SendBankWindow(client, msg.guild, false);
             break;
         }
-    case psGUIBankingMessage::EXCHANGECOINS:
+        case psGUIBankingMessage::EXCHANGECOINS:
         {
-            psCharacter *pschar = client->GetCharacterData();
+            psCharacter* pschar = client->GetCharacterData();
             if(msg.coins > CoinsForExchange(pschar, msg.guild, msg.coin, CalculateFee(pschar, msg.guild)))
             {
                 psserver->SendSystemError(client->GetClientNum(), "You cannot exchange this much!");
@@ -757,26 +757,26 @@ void BankManager::HandleBanking( MsgEntry *me, Client *client )
 
 int BankManager::CoinsForExchange(psCharacter* pschar, bool guild, int type, float fee)
 {
-    psMoney *mon = GetTotalFunds(pschar, guild);
+    psMoney* mon = GetTotalFunds(pschar, guild);
 
     switch(type)
     {
-    case CIRCLE:
+        case CIRCLE:
         {
             int totalAvail = (int)((mon->GetTotal() - mon->GetCircles() * 250) * (100-fee) / 100);
             return (totalAvail / 250);
         }
-    case OCTA:
+        case OCTA:
         {
             int totalAvail = (int)((mon->GetTotal() - mon->GetOctas() * 50) * (100-fee) / 100);
             return (totalAvail / 50);
         }
-    case HEXA:
+        case HEXA:
         {
             int totalAvail = (int)((mon->GetTotal() - mon->GetHexas() * 10) * (100-fee) / 100);
             return (totalAvail / 10);
         }
-    case TRIA:
+        case TRIA:
         {
             int totalAvail = (int)((mon->GetTotal() - mon->GetTrias()) * (100-fee) / 100);
             return totalAvail;
@@ -786,14 +786,14 @@ int BankManager::CoinsForExchange(psCharacter* pschar, bool guild, int type, flo
     return 0;
 }
 
-int BankManager::CalculateAccountLevel(psCharacter *pschar, bool guild)
+int BankManager::CalculateAccountLevel(psCharacter* pschar, bool guild)
 {
     MathScript* script;
     MathEnvironment env;
 
-    if (guild)
+    if(guild)
     {
-        psGuildInfo *g = pschar->GetGuild();
+        psGuildInfo* g = pschar->GetGuild();
         if(!g)
         {
             return 0;
@@ -831,7 +831,7 @@ float BankManager::CalculateFee(psCharacter* pschar, bool guild)
     {
         return 0;
     }
-        
+
     CalcBankFeeScript->Evaluate(&env);
     MathVar* bankFee = env.Lookup("BankFee");
     return bankFee->GetValue();

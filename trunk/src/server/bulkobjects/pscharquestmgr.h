@@ -64,21 +64,21 @@ struct QuestAssignment
     unsigned int completionOrder;
 
     /// Since "quest" member can be nulled without notice, this accessor function attempts to refresh it if NULL
-    csWeakRef<psQuest>& GetQuest();
+    csWeakRef<psQuest> &GetQuest();
 
     /**
      * Checks if the quest(/step) assignment is marked as complete.
-     * 
+     *
      * @return True if the quest assignment is marked as complete.
      */
     bool IsCompleted();
-    
-    void SetQuest(psQuest *q);
+
+    void SetQuest(psQuest* q);
 protected:
 
     /// Quest ID saved in case quest gets nulled out from us
     int quest_id;
-    
+
     /// Weak pointer to the underlying quest relevant here
     csWeakRef<psQuest> quest;
 };
@@ -108,9 +108,9 @@ public:
 
     /** Check to see if a quest is assigned.
     *
-    *   @param id The unique database ID the quest has. 
+    *   @param id The unique database ID the quest has.
     *
-    *   @return  A valid QuestAssignment if the quest had been assigned. 
+    *   @return  A valid QuestAssignment if the quest had been assigned.
     *           Otherwise will return NULL if the quest has not been assigned.
     */
     QuestAssignment* IsQuestAssigned(int id);
@@ -148,7 +148,7 @@ public:
      * @param quest             The Quest object for the quest we want to discard.
      * @param force             Force the quest to be discarded regardless of any conditions.
      */
-    bool DiscardQuest(psQuest *quest, bool force = false);
+    bool DiscardQuest(psQuest* quest, bool force = false);
 
     /** Set an assigned quest last response.
     *
@@ -164,7 +164,10 @@ public:
     *
     *   @return The number of assigned quests.
     */
-    size_t GetNumAssignedQuests() { return assignedQuests.GetSize(); }
+    size_t GetNumAssignedQuests()
+    {
+        return assignedQuests.GetSize();
+    }
 
     /** Get the response of a particular quest.
     *
@@ -186,33 +189,36 @@ public:
      */
     bool UpdateQuestAssignments(bool forceUpdate = false);
 
-    /** Create a network message for all the assigned quests. 
+    /** Create a network message for all the assigned quests.
     *
     *   @param quests  The network message to populate with the current quest assignment information.
     *   @param cNum The client number the network message is for.
     *
     *   @return The number of quests that have been assigned.
     */
-    size_t GetAssignedQuests(psQuestListMessage& quests, int cNum);
+    size_t GetAssignedQuests(psQuestListMessage &quests, int cNum);
 
     /** Get a list of quests.
     *
     *   @return A csArray of the current QuestAssignments
     */
-    csArray<QuestAssignment*>& GetAssignedQuests() { return assignedQuests; }
+    csArray<QuestAssignment*> &GetAssignedQuests()
+    {
+        return assignedQuests;
+    }
 
     /** Checks to see if a quest has been assigned.
-    *   
+    *
     *   @param quest The quest object to check if is assigned or not.
-    *   
+    *
     *   @return true if the quest status is PSQUEST_ASSIGNED
     */
     bool CheckQuestAssigned(psQuest* quest);
 
     /** Checks to see if a quest has been completed.
-    *   
+    *
     *   @param quest The quest object to check if it has been completed or not.
-    *   
+    *
     *   @return true if the quest status is PSQUEST_COMPLETE
     */
     bool CheckQuestCompleted(psQuest* quest);

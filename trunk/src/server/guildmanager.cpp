@@ -64,11 +64,11 @@ class PendingGuildInvite : public PendingInvite
 public:
     int guildID;
 
-    PendingGuildInvite(Client *inviter,
-                       Client *invitee,
-                       const char *question,
+    PendingGuildInvite(Client* inviter,
+                       Client* invitee,
+                       const char* question,
                        int guildID)
-        : PendingInvite( inviter, invitee, true,
+        : PendingInvite(inviter, invitee, true,
                         question,"Accept","Decline",
                         "You have asked %s to join your guild.",
                         "%s has invited you to join a guild.",
@@ -82,7 +82,7 @@ public:
     };
     virtual ~PendingGuildInvite() {}
 
-    void HandleAnswer(const csString & answer);
+    void HandleAnswer(const csString &answer);
 };
 
 /**
@@ -94,11 +94,11 @@ public:
 class PendingSecretGuildMemberInvite : public PendingInvite
 {
 public:
-    PendingSecretGuildMemberInvite(Client *inviter,
-                       Client *invitee,
-                       const char *question,
-                       int guildID)
-        : PendingInvite( inviter, invitee, true,
+    PendingSecretGuildMemberInvite(Client* inviter,
+                                   Client* invitee,
+                                   const char* question,
+                                   int guildID)
+        : PendingInvite(inviter, invitee, true,
                         question,"Decline","",
                         "You have asked %s to join your guild.",
                         "%s has invited you to join a guild. You are already member of a secret guild so you cannot accept this offer.",
@@ -118,10 +118,10 @@ class PendingGuildWarInvite : public PendingInvite
 {
 public:
 
-    PendingGuildWarInvite(Client *inviter,
-                          Client *invitee,
-                          const char *question)
-        : PendingInvite( inviter, invitee, true,
+    PendingGuildWarInvite(Client* inviter,
+                          Client* invitee,
+                          const char* question)
+        : PendingInvite(inviter, invitee, true,
                         question,"Accept","Decline",
                         "You have challenged %s to a guild war.",
                         "%s has challenged you to a guild war.",
@@ -135,17 +135,17 @@ public:
 
     virtual ~PendingGuildWarInvite() {}
 
-    virtual void HandleAnswer(const csString & answer);
+    virtual void HandleAnswer(const csString &answer);
 };
 
 class psGuildCheckEvent : public psGameEvent
 {
 protected:
     int guildid;
-    GuildManager *guildmanager;
+    GuildManager* guildmanager;
 
 public:
-    psGuildCheckEvent(int guild_id, GuildManager *gm)
+    psGuildCheckEvent(int guild_id, GuildManager* gm)
         : psGameEvent(0,GUILD_KICK_GRACE *60*1000,"psGuildCheckEvent")
     {
         guildid      = guild_id;
@@ -163,10 +163,10 @@ public:
   * Returns guild of 'client'.
   * If he is not in a guild, NULL is returned and text message "You are not in a guild." is sent to the client
   */
-psGuildInfo* GetClientGuild(Client * client)
+psGuildInfo* GetClientGuild(Client* client)
 {
     psGuildInfo* guild = client->GetActor()->GetGuild();
-    if (!guild)
+    if(!guild)
     {
         psSystemMessage newmsg(client->GetClientNum(),MSG_ERROR,"You are not in a guild.");
         newmsg.SendMessage();
@@ -183,14 +183,14 @@ psGuildInfo* GetClientGuild(Client * client)
 
 
 
-GuildManager::GuildManager(ClientConnectionSet *cs,
-                           ChatManager *chat)
+GuildManager::GuildManager(ClientConnectionSet* cs,
+                           ChatManager* chat)
 {
     clients    = cs;
     chatserver = chat;  // Needed to GUILDSAY things.
 
     xml.AttachNew(new csTinyDocumentSystem);
-    CS_ASSERT( xml );
+    CS_ASSERT(xml);
 
     Subscribe(&GuildManager::HandleCmdMessage,MSGTYPE_GUILDCMD,REQUIRE_READY_CLIENT);
     Subscribe(&GuildManager::HandleGUIMessage,MSGTYPE_GUIGUILD,REQUIRE_READY_CLIENT);
@@ -205,10 +205,10 @@ GuildManager::~GuildManager()
 }
 
 
-void GuildManager::HandleCmdMessage( MsgEntry *me,Client *client )
+void GuildManager::HandleCmdMessage(MsgEntry* me,Client* client)
 {
     psGuildCmdMessage msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
     {
         psserver->SendSystemError(me->clientnum, "Command not supported by server yet.");
         Error2("Failed to parse psGuildCmdMessage from client %u.",me->clientnum);
@@ -217,91 +217,91 @@ void GuildManager::HandleCmdMessage( MsgEntry *me,Client *client )
 
     int clientnum = client->GetClientNum();
 
-    if (msg.command == "/newguild")
+    if(msg.command == "/newguild")
     {
         CreateGuild(msg,client);
     }
-    else if (msg.command == "/endguild")
+    else if(msg.command == "/endguild")
     {
         EndGuild(msg,client);
     }
-    else if (msg.command == "/guildname")
+    else if(msg.command == "/guildname")
     {
         ChangeGuildName(msg,client);
     }
-    else if (msg.command == "/guildinvite")
+    else if(msg.command == "/guildinvite")
     {
         Invite(msg,client);
     }
-    else if (msg.command == "/guildremove")
+    else if(msg.command == "/guildremove")
     {
         Remove(msg,client);
     }
-    else if (msg.command == "/guildlevel")
+    else if(msg.command == "/guildlevel")
     {
         Rename(msg,client);
     }
-    else if (msg.command == "/guildpromote")
+    else if(msg.command == "/guildpromote")
     {
         Promote(msg,client);
     }
-    else if (msg.command == "/guildmembers")
+    else if(msg.command == "/guildmembers")
     {
         ListMembers(msg,client);
     }
-    else if (msg.command == "/guildsecret")
+    else if(msg.command == "/guildsecret")
     {
         Secret(msg, client);
     }
-    else if (msg.command == "/guildweb")
+    else if(msg.command == "/guildweb")
     {
         Web(msg, client);
     }
-    else if (msg.command == "/guildmotd")
+    else if(msg.command == "/guildmotd")
     {
         MOTD(msg,client);
     }
-    else if (msg.command == "/guildwar")
+    else if(msg.command == "/guildwar")
     {
         GuildWar(msg,client);
     }
-    else if (msg.command == "/guildyield")
+    else if(msg.command == "/guildyield")
     {
         GuildYield(msg,client);
     }
-    else if (msg.command == "/guildpoints")
+    else if(msg.command == "/guildpoints")
     {
         SendGuildPoints(msg,client);
     }
-    else if (msg.command == "/newalliance")
+    else if(msg.command == "/newalliance")
     {
         NewAlliance(msg,client);
     }
-    else if (msg.command == "/getmemberpermissions")
+    else if(msg.command == "/getmemberpermissions")
     {
         GetMemberPermissions(msg,client);
     }
-    else if (msg.command == "/setmemberpermissions")
+    else if(msg.command == "/setmemberpermissions")
     {
         SetMemberPermissions(msg,client);
     }
-    else if (msg.command == "/allianceinvite")
+    else if(msg.command == "/allianceinvite")
     {
         AllianceInvite(msg,client);
     }
-    else if (msg.command == "/allianceremove")
+    else if(msg.command == "/allianceremove")
     {
         AllianceRemove(msg,client);
     }
-    else if (msg.command == "/allianceleave")
+    else if(msg.command == "/allianceleave")
     {
         AllianceLeave(msg,client);
     }
-    else if (msg.command == "/allianceleader")
+    else if(msg.command == "/allianceleader")
     {
         AllianceLeader(msg,client);
     }
-    else if (msg.command == "/endalliance")
+    else if(msg.command == "/endalliance")
     {
         EndAlliance(msg,client);
     }
@@ -311,82 +311,82 @@ void GuildManager::HandleCmdMessage( MsgEntry *me,Client *client )
     }
 }
 
-void GuildManager::HandleGUIMessage(MsgEntry *me,Client *client)
+void GuildManager::HandleGUIMessage(MsgEntry* me,Client* client)
 {
     psGUIGuildMessage msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
     {
         Error2("Failed to parse psGUIGuildMessage from client %u.",me->clientnum);
         return;
     }
     csRef<iDocument> doc  = xml->CreateDocument();
 
-    const char* error = doc->Parse( msg.commandData);
-    if ( error )
+    const char* error = doc->Parse(msg.commandData);
+    if(error)
     {
-        Error2("Error in XML: %s", error );
+        Error2("Error in XML: %s", error);
         return;
     }
 
     switch(msg.command)
     {
-    case psGUIGuildMessage::SUBSCRIBE_GUILD_DATA:
-        HandleSubscribeGuildData(client, doc->GetRoot());
-        break;
-    case psGUIGuildMessage::UNSUBSCRIBE_GUILD_DATA:
-        UnsubscribeGuildData(client);
-        break;
-    case psGUIGuildMessage::SET_ONLINE:
-        HandleSetOnline(client, doc->GetRoot());
-        break;
-    case psGUIGuildMessage::SET_GUILD_NOTIFICATION:
-        HandleSetGuildNotifications(client, doc->GetRoot());
-        break;
-    case psGUIGuildMessage::SET_ALLIANCE_NOTIFICATION:
-        HandleSetAllianceNotifications(client, doc->GetRoot());
-        break;
-    case psGUIGuildMessage::SET_LEVEL_RIGHT:
-        HandleSetLevelRight(client, doc->GetRoot());
-        break;
-    case psGUIGuildMessage::SET_MEMBER_POINTS:
-        HandleSetMemberPoints(client, doc->GetRoot());
-        break;
-    case psGUIGuildMessage::SET_MAX_GUILD_POINTS:
-        HandleSetMaxMemberPoints(client, doc->GetRoot());
-        break;
-    case psGUIGuildMessage::SET_MEMBER_PUBLIC_NOTES:
-        HandleSetMemberNotes(client, doc->GetRoot(), true);
-        break;
-    case psGUIGuildMessage::SET_MEMBER_PRIVATE_NOTES:
-        HandleSetMemberNotes(client, doc->GetRoot(), false);
-        break;
+        case psGUIGuildMessage::SUBSCRIBE_GUILD_DATA:
+            HandleSubscribeGuildData(client, doc->GetRoot());
+            break;
+        case psGUIGuildMessage::UNSUBSCRIBE_GUILD_DATA:
+            UnsubscribeGuildData(client);
+            break;
+        case psGUIGuildMessage::SET_ONLINE:
+            HandleSetOnline(client, doc->GetRoot());
+            break;
+        case psGUIGuildMessage::SET_GUILD_NOTIFICATION:
+            HandleSetGuildNotifications(client, doc->GetRoot());
+            break;
+        case psGUIGuildMessage::SET_ALLIANCE_NOTIFICATION:
+            HandleSetAllianceNotifications(client, doc->GetRoot());
+            break;
+        case psGUIGuildMessage::SET_LEVEL_RIGHT:
+            HandleSetLevelRight(client, doc->GetRoot());
+            break;
+        case psGUIGuildMessage::SET_MEMBER_POINTS:
+            HandleSetMemberPoints(client, doc->GetRoot());
+            break;
+        case psGUIGuildMessage::SET_MAX_GUILD_POINTS:
+            HandleSetMaxMemberPoints(client, doc->GetRoot());
+            break;
+        case psGUIGuildMessage::SET_MEMBER_PUBLIC_NOTES:
+            HandleSetMemberNotes(client, doc->GetRoot(), true);
+            break;
+        case psGUIGuildMessage::SET_MEMBER_PRIVATE_NOTES:
+            HandleSetMemberNotes(client, doc->GetRoot(), false);
+            break;
     }
 }
 
-void GuildManager::HandleMOTDSet(MsgEntry *me,Client *client)
+void GuildManager::HandleMOTDSet(MsgEntry* me,Client* client)
 {
     psGuildMOTDSetMessage msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
     {
         Error2("Failed to parse psGuildMOTDSetMessage from client %u.",me->clientnum);
     }
 
-    if (CheckClientRights(client,RIGHTS_EDIT_GUILD,"You don't have permission to change settings of your guild."))
+    if(CheckClientRights(client,RIGHTS_EDIT_GUILD,"You don't have permission to change settings of your guild."))
     {
-        if (msg.guildmotd.Length() > 200)
+        if(msg.guildmotd.Length() > 200)
         {
             psserver->SendSystemError(client->GetClientNum(),"The MOTD you tried to save is %i character long, the maximum is 200.",msg.guildmotd.Length());
             return;
         }
-        psGuildInfo *gi = client->GetActor()->GetGuild();
+        psGuildInfo* gi = client->GetActor()->GetGuild();
         gi->SetMOTD(msg.guildmotd);
         //Send notify to all guild members
-        psSystemMessage newmsg (client->GetClientNum(), MSG_INFO,
-                       "New guild message of the day: %s", gi->GetMOTD().GetData());
+        psSystemMessage newmsg(client->GetClientNum(), MSG_INFO,
+                               "New guild message of the day: %s", gi->GetMOTD().GetData());
         psserver->GetEventManager()->Broadcast(newmsg.msg,NetBase::BC_GUILD,gi->GetID());
         // Refresh MOTD for all guild members
         csString tip;
-        if (psserver->GetCacheManager()->GetTipLength() > 0)
+        if(psserver->GetCacheManager()->GetTipLength() > 0)
             psserver->GetCacheManager()->GetTipByID(psserver->GetRandom(psserver->GetCacheManager()->GetTipLength()), tip);
         psMOTDMessage motd(client->GetClientNum(), tip, psserver->GetMOTD(), gi->GetMOTD().GetData(), gi->GetName());
         psserver->GetEventManager()->Broadcast(motd.msg,NetBase::BC_GUILD,gi->GetID());
@@ -395,12 +395,12 @@ void GuildManager::HandleMOTDSet(MsgEntry *me,Client *client)
 
 /** Returns guild level of character connected as 'client' (zero if he has no level)
   */
-int GuildManager::GetClientLevel(Client * client)
+int GuildManager::GetClientLevel(Client* client)
 {
-    psGuildLevel * level;
+    psGuildLevel* level;
 
     level = client->GetActor()->GetGuildLevel();
-    if (level != NULL)
+    if(level != NULL)
         return level->level;
     else
         return 0;
@@ -408,15 +408,15 @@ int GuildManager::GetClientLevel(Client * client)
 
 /** Checks if 'client' has privilege 'priv' in his guild.
   */
-bool GuildManager::CheckClientRights(Client * client, GUILD_PRIVILEGE priv)
+bool GuildManager::CheckClientRights(Client* client, GUILD_PRIVILEGE priv)
 {
-    psGuildMember *member;
+    psGuildMember* member;
 
     member = client->GetActor()->GetGuildMembership();
-    if (member == NULL)
+    if(member == NULL)
         return false;
 
-    if (member->HasRights(priv))
+    if(member->HasRights(priv))
         return true;
     else
         return false;
@@ -425,9 +425,9 @@ bool GuildManager::CheckClientRights(Client * client, GUILD_PRIVILEGE priv)
 /** Checks if 'client' has privilege 'priv' in his guild.
   * If not, he is sent 'denialMsg'.
   */
-bool GuildManager::CheckClientRights(Client * client, GUILD_PRIVILEGE priv, const char * denialMsg)
+bool GuildManager::CheckClientRights(Client* client, GUILD_PRIVILEGE priv, const char* denialMsg)
 {
-    if (CheckClientRights(client, priv))
+    if(CheckClientRights(client, priv))
         return true;
     else
     {
@@ -436,42 +436,42 @@ bool GuildManager::CheckClientRights(Client * client, GUILD_PRIVILEGE priv, cons
     }
 }
 
-bool GuildManager::RetrieveOnlineOnly(iDocumentNode * root)
+bool GuildManager::RetrieveOnlineOnly(iDocumentNode* root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("r");
-    if (!topNode)
-         return true;
+    if(!topNode)
+        return true;
 
     csString onlineOnly = topNode->GetAttributeValue("onlineonly");
     return (onlineOnly == "yes");
 }
 
-bool GuildManager::RetrieveGuildNotifications(iDocumentNode * root)
+bool GuildManager::RetrieveGuildNotifications(iDocumentNode* root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("r");
-    if (!topNode)
-         return false;
+    if(!topNode)
+        return false;
 
     csString guildNotifications = topNode->GetAttributeValue("guildnotifications");
     return (guildNotifications == "yes");
 }
 
-bool GuildManager::RetrieveAllianceNotifications(iDocumentNode * root)
+bool GuildManager::RetrieveAllianceNotifications(iDocumentNode* root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("r");
-    if (!topNode)
-         return false;
+    if(!topNode)
+        return false;
 
     csString allianceNotifications = topNode->GetAttributeValue("alliancenotifications");
     return (allianceNotifications == "yes");
 }
 
-void GuildManager::HandleSubscribeGuildData(Client *client,iDocumentNode * root)
+void GuildManager::HandleSubscribeGuildData(Client* client,iDocumentNode* root)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
     {
         psGUIGuildMessage cmd(clientnum,psGUIGuildMessage::NOT_IN_GUILD,"");
         cmd.SendMessage();
@@ -479,12 +479,12 @@ void GuildManager::HandleSubscribeGuildData(Client *client,iDocumentNode * root)
     }
 
     // check if already subscribed
-    GuildNotifySubscription * subscr = FindNotifySubscr(client);
-    if (subscr != NULL)
+    GuildNotifySubscription* subscr = FindNotifySubscr(client);
+    if(subscr != NULL)
         return;
 
     subscr =
-                new GuildNotifySubscription(guild->GetID(), client->GetClientNum(), RetrieveOnlineOnly(root));
+        new GuildNotifySubscription(guild->GetID(), client->GetClientNum(), RetrieveOnlineOnly(root));
     notifySubscr.Push(subscr);
 
     SendGuildData(client);
@@ -493,34 +493,34 @@ void GuildManager::HandleSubscribeGuildData(Client *client,iDocumentNode * root)
     SendAllianceData(client);
 }
 
-void GuildManager::UnsubscribeGuildData(Client *client)
+void GuildManager::UnsubscribeGuildData(Client* client)
 {
-    GuildNotifySubscription * subscr = FindNotifySubscr(client);
-    if (subscr == NULL)
+    GuildNotifySubscription* subscr = FindNotifySubscr(client);
+    if(subscr == NULL)
         return;
 
     delete subscr;
     notifySubscr.Delete(subscr);
 }
 
-void GuildManager::HandleSetOnline(Client *client,iDocumentNode * root)
+void GuildManager::HandleSetOnline(Client* client,iDocumentNode* root)
 {
-    GuildNotifySubscription * subscr = FindNotifySubscr(client);
+    GuildNotifySubscription* subscr = FindNotifySubscr(client);
 
-    if (subscr != NULL)
+    if(subscr != NULL)
     {
         subscr->onlineOnly = RetrieveOnlineOnly(root);
         SendMemberData(client, subscr->onlineOnly);
     }
 }
 
-void GuildManager::HandleSetGuildNotifications(Client *client,iDocumentNode * root)
+void GuildManager::HandleSetGuildNotifications(Client* client,iDocumentNode* root)
 {
     if(client && client->GetCharacterData())
         client->GetCharacterData()->SetGuildNotifications(RetrieveGuildNotifications(root));
 }
 
-void GuildManager::HandleSetAllianceNotifications(Client *client,iDocumentNode * root)
+void GuildManager::HandleSetAllianceNotifications(Client* client,iDocumentNode* root)
 {
     if(client && client->GetCharacterData())
         client->GetCharacterData()->SetAllianceNotifications(RetrieveAllianceNotifications(root));
@@ -528,33 +528,33 @@ void GuildManager::HandleSetAllianceNotifications(Client *client,iDocumentNode *
 
 void GuildManager::SendNotifications(int guild, int msg)
 {
-    Client * client;
+    Client* client;
     size_t i;
 
-    for (i=0; i < notifySubscr.GetSize(); i++)
-        if (notifySubscr[i]->guild == guild)
+    for(i=0; i < notifySubscr.GetSize(); i++)
+        if(notifySubscr[i]->guild == guild)
         {
-            client = clients->Find( notifySubscr[i]->clientnum );
-            if (!client)
+            client = clients->Find(notifySubscr[i]->clientnum);
+            if(!client)
                 continue;
 
-            psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-            if (guild == NULL)
+            psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+            if(guild == NULL)
             {
                 Error2("Error - character %s is not in any guild but it has guild notifications subscribed", client->GetName());
                 continue;
             }
 
-            psUpdatePlayerGuildMessage update( client->GetClientNum(),
-                                               client->GetActor()->GetEID(),
-                                               guild->GetName() );
+            psUpdatePlayerGuildMessage update(client->GetClientNum(),
+                                              client->GetActor()->GetEID(),
+                                              guild->GetName());
 
-            if (guild->IsSecret())  // If this is a secret guild, we should only broadcast to members
-                psserver->GetEventManager()->Broadcast( update.msg, NetBase::BC_GUILD, guild->GetID() );
+            if(guild->IsSecret())   // If this is a secret guild, we should only broadcast to members
+                psserver->GetEventManager()->Broadcast(update.msg, NetBase::BC_GUILD, guild->GetID());
             else
-                psserver->GetEventManager()->Broadcast( update.msg, NetBase::BC_EVERYONE );
+                psserver->GetEventManager()->Broadcast(update.msg, NetBase::BC_EVERYONE);
 
-            switch (msg)
+            switch(msg)
             {
                 case psGUIGuildMessage::GUILD_DATA:
                     SendGuildData(client);
@@ -572,33 +572,33 @@ void GuildManager::SendNotifications(int guild, int msg)
         }
 }
 
-void GuildManager::SendAllianceNotifications(psGuildAlliance * alliance)
+void GuildManager::SendAllianceNotifications(psGuildAlliance* alliance)
 {
     int memberNum;
 
-    for (memberNum=0; memberNum < (int)alliance->GetMemberCount(); memberNum++)
+    for(memberNum=0; memberNum < (int)alliance->GetMemberCount(); memberNum++)
         SendNotifications(alliance->GetMember(memberNum)->GetID(), psGUIGuildMessage::ALLIANCE_DATA);
 }
 
-void GuildManager::SendNoAllianceNotifications(psGuildAlliance * alliance)
+void GuildManager::SendNoAllianceNotifications(psGuildAlliance* alliance)
 {
     int memberNum;
 
-    for (memberNum=0; memberNum < (int)alliance->GetMemberCount(); memberNum++)
+    for(memberNum=0; memberNum < (int)alliance->GetMemberCount(); memberNum++)
     {
         SendNoAllianceNotifications(alliance->GetMember(memberNum));
     }
 }
 
-void GuildManager::SendNoAllianceNotifications(psGuildInfo * guild)
+void GuildManager::SendNoAllianceNotifications(psGuildInfo* guild)
 {
     size_t notifNum;
 
-    for (notifNum=0; notifNum < notifySubscr.GetSize(); notifNum++)
-        if (notifySubscr[notifNum]->guild == guild->GetID())
+    for(notifNum=0; notifNum < notifySubscr.GetSize(); notifNum++)
+        if(notifySubscr[notifNum]->guild == guild->GetID())
         {
-            Client * client = clients->Find( notifySubscr[notifNum]->clientnum );
-            if (client != NULL)
+            Client* client = clients->Find(notifySubscr[notifNum]->clientnum);
+            if(client != NULL)
             {
                 psGUIGuildMessage cmd(client->GetClientNum(),psGUIGuildMessage::ALLIANCE_DATA,"<alliance name=\"\"></alliance>");
                 cmd.SendMessage();
@@ -606,70 +606,70 @@ void GuildManager::SendNoAllianceNotifications(psGuildInfo * guild)
         }
 }
 
-GuildNotifySubscription * GuildManager::FindNotifySubscr(Client * client)
+GuildNotifySubscription* GuildManager::FindNotifySubscr(Client* client)
 {
     int clientnum;
     size_t i;
 
     clientnum = client->GetClientNum();
 
-    for (i=0; i < notifySubscr.GetSize(); i++)
-        if (notifySubscr[i]->clientnum == clientnum)
+    for(i=0; i < notifySubscr.GetSize(); i++)
+        if(notifySubscr[i]->clientnum == clientnum)
             return notifySubscr[i];
     return NULL;
 }
 
-bool GuildManager::ParseRightString(csString privilege,  GUILD_PRIVILEGE& right)
+bool GuildManager::ParseRightString(csString privilege,  GUILD_PRIVILEGE &right)
 {
-    if (privilege == "view_chat")
+    if(privilege == "view_chat")
     {
         right = RIGHTS_VIEW_CHAT;
     }
-    else if (privilege == "chat")
+    else if(privilege == "chat")
     {
         right = RIGHTS_CHAT;
     }
-    else if (privilege == "invite")
+    else if(privilege == "invite")
     {
         right = RIGHTS_INVITE;
     }
-    else if (privilege == "remove")
+    else if(privilege == "remove")
     {
         right = RIGHTS_REMOVE;
     }
-    else if (privilege == "promote")
+    else if(privilege == "promote")
     {
         right = RIGHTS_PROMOTE;
     }
-    else if (privilege == "edit_level")
+    else if(privilege == "edit_level")
     {
         right = RIGHTS_EDIT_LEVEL;
     }
-    else if (privilege == "edit_points")
+    else if(privilege == "edit_points")
     {
         right = RIGHTS_EDIT_POINTS;
     }
-    else if (privilege == "edit_guild")
+    else if(privilege == "edit_guild")
     {
         right = RIGHTS_EDIT_GUILD;
     }
-    else if (privilege == "edit_public")
+    else if(privilege == "edit_public")
     {
         right = RIGHTS_EDIT_PUBLIC;
     }
-    else if (privilege == "edit_private")
+    else if(privilege == "edit_private")
     {
         right = RIGHTS_EDIT_PRIVATE;
     }
-    else if (privilege == "alliance_view_chat")
+    else if(privilege == "alliance_view_chat")
     {
         right = RIGHTS_VIEW_CHAT_ALLIANCE;
     }
-    else if (privilege == "alliance_chat")
+    else if(privilege == "alliance_chat")
     {
         right = RIGHTS_CHAT_ALLIANCE;
     }
-    else if (privilege == "guild_bank")
+    else if(privilege == "guild_bank")
     {
         right = RIGHTS_USE_BANK;
     }
@@ -681,10 +681,10 @@ bool GuildManager::ParseRightString(csString privilege,  GUILD_PRIVILEGE& right)
     return true;
 }
 
-void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
+void GuildManager::HandleSetLevelRight(Client* client, iDocumentNode* root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("l");
-    if (!topNode)
+    if(!topNode)
     {
         Error1("Error in XML: Can't find node l");
         return;
@@ -693,18 +693,18 @@ void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
     csString privilege = topNode->GetAttributeValue("privilege");
     csString state = topNode->GetAttributeValue("state");
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
     {
         psserver->SendSystemError(client->GetClientNum(),"You are not in a guild.");
         return;
     }
 
-    if ( ! IsLeader(client))
+    if(! IsLeader(client))
     {
-        if ( ! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights to edit privileges in your guild."))
+        if(! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights to edit privileges in your guild."))
             return;
-        if ( GetClientLevel(client) <= level )
+        if(GetClientLevel(client) <= level)
         {
             psserver->SendSystemError(client->GetClientNum(),"You do not have the rights to edit privileges of this level in your guild.");
             return;
@@ -715,19 +715,19 @@ void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
     if(!ParseRightString(privilege, right))
         return;
 
-    if ( ! IsLeader(client))
+    if(! IsLeader(client))
     {
-        if ( ! CheckClientRights(client, right, "You cannot change a privilege that you do not have yourself."))
+        if(! CheckClientRights(client, right, "You cannot change a privilege that you do not have yourself."))
         {
             return;
         }
     }
 
-    if (guild->SetPrivilege(level,right,state=="on"))
+    if(guild->SetPrivilege(level,right,state=="on"))
     {
-        psGuildLevel *lev = guild->FindLevel(level);
+        psGuildLevel* lev = guild->FindLevel(level);
 
-        if (lev != NULL)
+        if(lev != NULL)
             psserver->SendSystemInfo(client->GetClientNum(),"Privilege %s for level %s was turned %s",
                                      privilege.GetData(),lev->title.GetData(),state.GetData());
     }
@@ -735,27 +735,27 @@ void GuildManager::HandleSetLevelRight(Client * client, iDocumentNode* root)
     SendNotifications(guild->GetID(), psGUIGuildMessage::LEVEL_DATA);
 }
 
-void GuildManager::HandleSetMemberPoints(Client *client,iDocumentNode * root)
+void GuildManager::HandleSetMemberPoints(Client* client,iDocumentNode* root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("p");
-    if (topNode == NULL) return;
+    if(topNode == NULL) return;
 
     unsigned int char_id = topNode->GetAttributeValueAsInt("char_id");
     int points = topNode->GetAttributeValueAsInt("points");
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
         return;
 
-    psGuildMember * member = guild->FindMember(char_id);
-    if (member == NULL)
+    psGuildMember* member = guild->FindMember(char_id);
+    if(member == NULL)
         return;
 
-    if ( ! IsLeader(client))
+    if(! IsLeader(client))
     {
-        if ( !CheckClientRights(client, RIGHTS_EDIT_POINTS, "You do not have the rights to edit points in your guild."))
+        if(!CheckClientRights(client, RIGHTS_EDIT_POINTS, "You do not have the rights to edit points in your guild."))
             return;
-        if (GetClientLevel(client) <= member->guildlevel->level )
+        if(GetClientLevel(client) <= member->guildlevel->level)
         {
             psserver->SendSystemError(client->GetClientNum(),"You do not have the rights to edit points of this member.");
             return;
@@ -766,11 +766,11 @@ void GuildManager::HandleSetMemberPoints(Client *client,iDocumentNode * root)
 
     SendNotifications(guild->GetID(), psGUIGuildMessage::MEMBER_DATA);
 
-    if (member->character)
+    if(member->character)
     {
         Client* destclient = psserver->GetConnections()->FindAccount(member->character->GetAccountId());
 
-        if (destclient)
+        if(destclient)
         {
             psserver->SendSystemInfo(client->GetClientNum(), "%s now has %d points", member->name.GetData(), points);
             psserver->SendSystemInfo(destclient->GetClientNum(), "%s sets your guild points to %d",
@@ -787,20 +787,20 @@ void GuildManager::HandleSetMemberPoints(Client *client,iDocumentNode * root)
     }
 }
 
-void GuildManager::HandleSetMaxMemberPoints(Client *client,iDocumentNode * root)
+void GuildManager::HandleSetMaxMemberPoints(Client* client,iDocumentNode* root)
 {
     csRef<iDocumentNode> topNode = root->GetNode("mp");
-    if (topNode == NULL) return;
+    if(topNode == NULL) return;
 
     int points = topNode->GetAttributeValueAsInt("max_guild_points");
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
         return;
 
-    if ( ! IsLeader(client))
+    if(! IsLeader(client))
     {
-        if ( !CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have the rights to change the max guild points in your guild."))
+        if(!CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have the rights to change the max guild points in your guild."))
             return;
     }
 
@@ -810,29 +810,29 @@ void GuildManager::HandleSetMaxMemberPoints(Client *client,iDocumentNode * root)
 
 }
 
-void GuildManager::HandleSetMemberNotes(Client *client,iDocumentNode * root, bool isPublic)
+void GuildManager::HandleSetMemberNotes(Client* client,iDocumentNode* root, bool isPublic)
 {
     csRef<iDocumentNode> topNode = root->GetNode("n");
-    if (topNode == NULL) return;
+    if(topNode == NULL) return;
 
     unsigned int char_id = (unsigned int)topNode->GetAttributeValueAsInt("char_id");
     csString notes = topNode->GetAttributeValue("notes");
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
         return;
 
-    psGuildMember * member = guild->FindMember(char_id);
-    if (member == NULL)
+    psGuildMember* member = guild->FindMember(char_id);
+    if(member == NULL)
         return;
 
-    if (isPublic)
+    if(isPublic)
     {
-        if ( ! IsLeader(client))
+        if(! IsLeader(client))
         {
-            if ( !CheckClientRights(client, RIGHTS_EDIT_PUBLIC)
+            if(!CheckClientRights(client, RIGHTS_EDIT_PUBLIC)
                     ||
-                ( GetClientLevel(client) < member->guildlevel->level ) )
+                    (GetClientLevel(client) < member->guildlevel->level))
             {
                 psserver->SendSystemError(client->GetClientNum(),"You do not have the rights to edit public notes of this member.");
                 return;
@@ -843,12 +843,12 @@ void GuildManager::HandleSetMemberNotes(Client *client,iDocumentNode * root, boo
     {
         //allows to add private notes to others and to edit them for the member target of the
         //notes (else he will get an infinitely filling entry which he can't clean when read)
-        if ( !CheckClientRights(client, RIGHTS_EDIT_PRIVATE) && client->GetPID() != char_id)
+        if(!CheckClientRights(client, RIGHTS_EDIT_PRIVATE) && client->GetPID() != char_id)
         {
             psserver->SendSystemError(client->GetClientNum(),"You do not have the rights to edit private notes.");
             return;
         }
-        if (client->GetPID() != char_id)// if this is not my info
+        if(client->GetPID() != char_id) // if this is not my info
         {
             if(member->private_notes.Length()) // append the notes to the end
                 notes = member->private_notes + (member->private_notes.Length() ? "\n" : "") + notes;
@@ -860,18 +860,18 @@ void GuildManager::HandleSetMemberNotes(Client *client,iDocumentNode * root, boo
     SendNotifications(guild->GetID(), psGUIGuildMessage::MEMBER_DATA);
 }
 
-const char * DeNULL(const char * str)
+const char* DeNULL(const char* str)
 {
     return (str == NULL) ? "" : str;
 }
 
-void GuildManager::SendGuildData(Client *client)
+void GuildManager::SendGuildData(Client* client)
 {
     int clientnum = client->GetClientNum();
     csString open;
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
         return;
 
     csString escpxml_guild = EscpXML(guild->GetName());
@@ -886,27 +886,27 @@ void GuildManager::SendGuildData(Client *client)
     cmd.SendMessage();
 }
 
-const char * BoolToText(bool b)
+const char* BoolToText(bool b)
 {
     return b ? "true" : "false";
 }
 
-void GuildManager::SendLevelData(Client *client)
+void GuildManager::SendLevelData(Client* client)
 {
     int clientnum = client->GetClientNum();
     csString open;
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
         return;
 
     open.Append("<levellist>");
     csArray<psGuildLevel*>::Iterator lIter = guild->GetLevelIterator();
-    while (lIter.HasNext())
+    while(lIter.HasNext())
     {
         open.Append("<l>");
         psGuildLevel* level = lIter.Next();
-    csString escpxml = EscpXML(level->title);
+        csString escpxml = EscpXML(level->title);
         open.AppendFmt("<title text=\"%s\"/>",escpxml.GetData());
         open.AppendFmt("<level text=\"%d\"/>",level->level);
         open.AppendFmt("<view_chat down=\"%s\"/>",BoolToText(level->HasRights(RIGHTS_VIEW_CHAT)));
@@ -931,33 +931,33 @@ void GuildManager::SendLevelData(Client *client)
     cmd.SendMessage();
 }
 
-void GuildManager::SendMemberData(Client *client,bool onlineOnly)
+void GuildManager::SendMemberData(Client* client,bool onlineOnly)
 {
     int clientnum = client->GetClientNum();
 
     csString online, lastOnline;
     csString sectorName;
-    psSectorInfo * sector = NULL;
+    psSectorInfo* sector = NULL;
     csString open;
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
         return;
 
-    psGuildLevel * level = client->GetCharacterData()->GetGuildLevel();
-    if (level == NULL)
+    psGuildLevel* level = client->GetCharacterData()->GetGuildLevel();
+    if(level == NULL)
         return;
 
     // Member list
     open.Append("<memberlist>");
     csArray<psGuildMember*>::Iterator mIter = guild->GetMemberIterator();
-    while (mIter.HasNext())
+    while(mIter.HasNext())
     {
         sectorName.Clear();
 
         psGuildMember* member = mIter.Next();
-        Client * memberClient = clients->FindPlayer(member->char_id);
-        if (memberClient != NULL)
+        Client* memberClient = clients->FindPlayer(member->char_id);
+        if(memberClient != NULL)
         {
             online = "yes";
             psCharacter* character = memberClient->GetCharacterData();
@@ -967,7 +967,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
                 lastOnline = character->GetLastLoginTime();
                 lastOnline.Truncate(16);
             }
-            if (sector != NULL)
+            if(sector != NULL)
                 sectorName = sector->name;
         }
         else
@@ -976,7 +976,7 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
             lastOnline = member->last_login.Truncate(16);
         }
 
-        if (online=="yes"  ||  !onlineOnly)
+        if(online=="yes"  ||  !onlineOnly)
         {
             open.Append("<m>");
             csString escpxml = EscpXML(member->name);
@@ -995,13 +995,13 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
     // Information about members that is not in the member listbox
     open.Append("<memberinfo>");
     csArray<psGuildMember*>::Iterator mIter2 = guild->GetMemberIterator();
-    while (mIter2.HasNext())
+    while(mIter2.HasNext())
     {
         psGuildMember* member = mIter2.Next();
 
         // Only show private notes to yourself
         csString escpxml_privatenotes;
-        if (client->GetPID() == member->char_id)
+        if(client->GetPID() == member->char_id)
         {
             escpxml_privatenotes = EscpXML(member->private_notes);
         }
@@ -1014,33 +1014,33 @@ void GuildManager::SendMemberData(Client *client,bool onlineOnly)
 
     open.Append("</memberinfo>");
 
-    open.AppendFmt("<playerinfo char_id=\"%i\" guildnotifications=\"%i\" alliancenotifications=\"%i\"/>", 
-                    client->GetPID().Unbox(), client->GetCharacterData()->IsGettingGuildNotifications(),
-                    client->GetCharacterData()->IsGettingAllianceNotifications());
+    open.AppendFmt("<playerinfo char_id=\"%i\" guildnotifications=\"%i\" alliancenotifications=\"%i\"/>",
+                   client->GetPID().Unbox(), client->GetCharacterData()->IsGettingGuildNotifications(),
+                   client->GetCharacterData()->IsGettingAllianceNotifications());
 
     psGUIGuildMessage cmd(clientnum,psGUIGuildMessage::MEMBER_DATA,open);
     cmd.SendMessage();
 }
 
-csString GuildManager::MakeAllianceMemberXML(psGuildInfo * member, bool allianceLeader)
+csString GuildManager::MakeAllianceMemberXML(psGuildInfo* member, bool allianceLeader)
 {
     csString xml;
     csString name, isLeader, leaderName, online;
-    psGuildMember * leader;
+    psGuildMember* leader;
 
     name = member->GetName();
 
-    if (allianceLeader)
+    if(allianceLeader)
         isLeader = "leader";
     else
         isLeader.Clear();
 
     leader = member->FindLeader();
-    if (leader != NULL)
+    if(leader != NULL)
     {
         leaderName = leader->name;
 
-        if (clients->FindPlayer(leader->char_id) != NULL)
+        if(clients->FindPlayer(leader->char_id) != NULL)
             online = "yes";
         else
             online = "no";
@@ -1050,32 +1050,32 @@ csString GuildManager::MakeAllianceMemberXML(psGuildInfo * member, bool alliance
     csString escpxml_isleader = EscpXML(isLeader);
     csString escpxml_leadername = EscpXML(leaderName);
     xml.AppendFmt("<member name=\"%s\" isleader=\"%s\" leadername=\"%s\" online=\"%s\"/>",
-                     escpxml_name.GetData(), escpxml_isleader.GetData(), escpxml_leadername.GetData(), online.GetData());
+                  escpxml_name.GetData(), escpxml_isleader.GetData(), escpxml_leadername.GetData(), online.GetData());
     return xml;
 }
 
-void GuildManager::SendAllianceData(Client *client)
+void GuildManager::SendAllianceData(Client* client)
 {
     int clientnum = client->GetClientNum();
-    psGuildAlliance * alliance;
+    psGuildAlliance* alliance;
     csString xml;
     int memberNum;
 
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
         return;
 
-    if (guild->GetAllianceID() != 0)
+    if(guild->GetAllianceID() != 0)
     {
         alliance = psserver->GetCacheManager()->FindAlliance(guild->GetAllianceID());
-        if (alliance == NULL) return;
+        if(alliance == NULL) return;
 
-    csString escpxml = EscpXML(alliance->GetName());
+        csString escpxml = EscpXML(alliance->GetName());
         xml.AppendFmt("<alliance IamLeader=\"%i\" name=\"%s\">", guild==alliance->GetLeader(), escpxml.GetData());
-        for (memberNum=0; memberNum < (int)alliance->GetMemberCount(); memberNum++)
+        for(memberNum=0; memberNum < (int)alliance->GetMemberCount(); memberNum++)
         {
-            psGuildInfo * member = alliance->GetMember(memberNum);
+            psGuildInfo* member = alliance->GetMember(memberNum);
             xml += MakeAllianceMemberXML(member, member == alliance->GetLeader());
         }
     }
@@ -1087,33 +1087,33 @@ void GuildManager::SendAllianceData(Client *client)
     cmd.SendMessage();
 }
 
-void GuildManager::CheckMinimumRequirements(psGuildInfo *guild, gemActor *notify)
+void GuildManager::CheckMinimumRequirements(psGuildInfo* guild, gemActor* notify)
 {
     int clientid=0;
 
-    if (!guild->MeetsMinimumRequirements())
+    if(!guild->MeetsMinimumRequirements())
     {
         Warning5(LOG_ANY,
-           "Guild <%s>(%d) has %zu members and will be deleted in %d minutes.\n",
+                 "Guild <%s>(%d) has %zu members and will be deleted in %d minutes.\n",
                  guild->GetName().GetData(), guild->GetID(), guild->GetMemberCount(), GUILD_KICK_GRACE);
 
-        if (!notify) // If not auto-notifying the leader, find the leader if online
+        if(!notify)  // If not auto-notifying the leader, find the leader if online
         {
-            if (guild->FindLeader() && guild->FindLeader()->character && guild->FindLeader()->character->GetActor())
+            if(guild->FindLeader() && guild->FindLeader()->character && guild->FindLeader()->character->GetActor())
                 clientid = guild->FindLeader()->character->GetActor()->GetClientID();
         }
         else
             clientid = notify->GetClientID();
 
-        if (clientid)
+        if(clientid)
         {
             psserver->SendSystemInfo(clientid,
-                "You have %d minutes to meet guild minimum requirements "
-                "(%d+ members) or your guild will be disbanded.",
-                GUILD_KICK_GRACE, GUILD_MIN_MEMBERS );
+                                     "You have %d minutes to meet guild minimum requirements "
+                                     "(%d+ members) or your guild will be disbanded.",
+                                     GUILD_KICK_GRACE, GUILD_MIN_MEMBERS);
         }
-        
-        psGuildCheckEvent *event = new psGuildCheckEvent(guild->GetID(), this);
+
+        psGuildCheckEvent* event = new psGuildCheckEvent(guild->GetID(), this);
         psserver->GetEventManager()->Push(event);
     }
     else
@@ -1124,44 +1124,44 @@ void GuildManager::CheckMinimumRequirements(psGuildInfo *guild, gemActor *notify
 
 void GuildManager::RequirementsDeadline(int guild_id)
 {
-    psGuildInfo *guild = psserver->GetCacheManager()->FindGuild(guild_id);
+    psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(guild_id);
 
-    if (guild == NULL)
+    if(guild == NULL)
     {
         return;
     }
 
-    if (!guild->MeetsMinimumRequirements())
+    if(!guild->MeetsMinimumRequirements())
     {
         printf("Removing guild <%s>(%d) for failure to meet minimum requirements.\n",guild->GetName().GetDataSafe(),guild_id);
         EndGuild(guild,0);
     }
 }
 
-void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
+void GuildManager::CreateGuild(psGuildCmdMessage &msg,Client* client)
 {
     int clientnum = client->GetClientNum();
 
     // check if the player is already in a guild
-    if (client->GetCharacterData()->GetGuild() != NULL)
+    if(client->GetCharacterData()->GetGuild() != NULL)
     {
         psserver->SendSystemError(clientnum,"You are already in a guild.");
         return;
     }
 
-    if (msg.guildname.Length()==0)
+    if(msg.guildname.Length()==0)
     {
         psserver->SendSystemError(clientnum,"Please specify a guild name.");
         return;
     }
 
-    if (msg.guildname.Length()<5)
+    if(msg.guildname.Length()<5)
     {
         psserver->SendSystemError(clientnum,"Guild name must be at least five characters.");
         return;
     }
 
-    if (msg.guildname.Length() > 25)
+    if(msg.guildname.Length() > 25)
     {
         psserver->SendSystemError(clientnum,"Guild name must be at under 25 characters.");
         return;
@@ -1172,41 +1172,41 @@ void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
         psserver->SendSystemError(clientnum,"Guild name contains invaild characters (A-Z,a-z and space is allowed).");
         return;
     }
-    
+
     if(psserver->GetCharManager()->IsBanned(msg.guildname))
     {
         psserver->SendSystemError(clientnum, "The name %s is banned", msg.guildname.GetData());
         return;
     }
 
-    psCharacter *chardata=client->GetCharacterData();
-    if (chardata==NULL)
+    psCharacter* chardata=client->GetCharacterData();
+    if(chardata==NULL)
     {
         Error2("Guild creation attempted by character '%s' with no character data!",client->GetName());
         psserver->SendSystemError(clientnum,"An internal server error occcured (could not find your character data).");
         return;
     }
 
-    if (psserver->GetCacheManager()->FindGuild(msg.guildname))
+    if(psserver->GetCacheManager()->FindGuild(msg.guildname))
     {
         psserver->SendSystemError(clientnum,"A guild already exists with that name.");
         return;
     }
 
-    if (chardata->Money().GetTotal() < GUILD_FEE)
+    if(chardata->Money().GetTotal() < GUILD_FEE)
     {
         psserver->SendSystemError(clientnum,"It costs %d trias to create a guild.",GUILD_FEE);
         return;
     }
 
-    if (!psserver->GetCacheManager()->CreateGuild(msg.guildname, client) )
+    if(!psserver->GetCacheManager()->CreateGuild(msg.guildname, client))
     {
         psserver->SendSystemError(clientnum, db->GetLastError());
         return;
     }
     else
     {
-        psserver->SendSystemInfo(clientnum,"Guild '%s' created.  You have been charged %d tria.", (const char *)msg.guildname, GUILD_FEE);
+        psserver->SendSystemInfo(clientnum,"Guild '%s' created.  You have been charged %d tria.", (const char*)msg.guildname, GUILD_FEE);
     }
 
     // Charge the price now
@@ -1214,11 +1214,11 @@ void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
 
 
     // subscribe client to updates of his guild
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL) return;
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL) return;
 
-    GuildNotifySubscription * subscr =
-                new GuildNotifySubscription(guild->GetID(), client->GetClientNum(), true);
+    GuildNotifySubscription* subscr =
+        new GuildNotifySubscription(guild->GetID(), client->GetClientNum(), true);
     notifySubscr.Push(subscr);
 
     // send client data about guild - this will open GuildWindow for him
@@ -1232,44 +1232,44 @@ void GuildManager::CreateGuild(psGuildCmdMessage& msg,Client *client)
                                       client->GetActor()->GetEID(),
                                       guild->GetName());
 
-    update.Multicast(client->GetActor()->GetMulticastClients(),0,0 );
+    update.Multicast(client->GetActor()->GetMulticastClients(),0,0);
 
     // Now kick off guild minimum requirement timer
-    CheckMinimumRequirements(guild,client->GetActor() );
+    CheckMinimumRequirements(guild,client->GetActor());
 }
 
-void GuildManager::EndGuild(psGuildCmdMessage& msg,Client *client)
+void GuildManager::EndGuild(psGuildCmdMessage &msg,Client* client)
 {
-    if (client == NULL)
+    if(client == NULL)
     {
         return;
     }
-    
+
     int clientnum = client->GetClientNum();
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
     {
         psserver->SendSystemError(clientnum,"You are not in a guild.");
         return;
     }
 
-    if (!(const char *)msg.guildname || msg.guildname=="" )
+    if(!(const char*)msg.guildname || msg.guildname=="")
     {
         psserver->SendSystemError(clientnum,"Guild name must be specified for confirmation purposes.");
         return;
     }
 
-    if ( ! IsLeader(client))
+    if(! IsLeader(client))
     {
-        if ( ! CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have the rights to disband your guild."))
+        if(! CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have the rights to disband your guild."))
         {
             return;
         }
     }
-    
 
-    if (!guild->GetName().CompareNoCase(msg.guildname))
+
+    if(!guild->GetName().CompareNoCase(msg.guildname))
     {
         psserver->SendSystemError(clientnum,"The guild name you specified did not match the guild you are in. The guild was not disbanded.");
         return;
@@ -1278,17 +1278,17 @@ void GuildManager::EndGuild(psGuildCmdMessage& msg,Client *client)
     EndGuild(guild,clientnum);
 }
 
-void GuildManager::EndGuild(psGuildInfo *guild, int clientnum)
+void GuildManager::EndGuild(psGuildInfo* guild, int clientnum)
 {
-    if (guild == NULL)
+    if(guild == NULL)
     {
         Error2("Trying to remove (NULL) guild from client %d",clientnum);
         return;
     }
-    
+
 
     //if this guild is in an alliance, it must be removed from it
-    psGuildAlliance * alliance = psserver->GetCacheManager()->FindAlliance(guild->GetAllianceID());
+    psGuildAlliance* alliance = psserver->GetCacheManager()->FindAlliance(guild->GetAllianceID());
     if(alliance)
     {
         //if the guild is in an alliance we need to do some consistency checks.
@@ -1326,13 +1326,13 @@ void GuildManager::EndGuild(psGuildInfo *guild, int clientnum)
         }
     }
 
-    if (!guild->RemoveGuild() )
+    if(!guild->RemoveGuild())
     {
         psserver->SendSystemError(clientnum,db->GetLastError());
         return;
     }
 
-    if (clientnum)
+    if(clientnum)
     {
         psserver->SendSystemInfo(clientnum, "Guild has been disbanded.");
     }
@@ -1343,14 +1343,14 @@ void GuildManager::EndGuild(psGuildInfo *guild, int clientnum)
 
     while(i.HasNext())
     {
-        Client *p = i.Next();
-        if (p->GetActor() && (p->GetActor()->GetGuild() == guild))
+        Client* p = i.Next();
+        if(p->GetActor() && (p->GetActor()->GetGuild() == guild))
         {
             psUpdatePlayerGuildMessage update(p->GetClientNum(),
                                               p->GetActor()->GetEID(),
                                               "");
 
-            update.Multicast(p->GetActor()->GetMulticastClients(),0,0 );
+            update.Multicast(p->GetActor()->GetMulticastClients(),0,0);
 
             psserver->SendSystemInfo(p->GetClientNum(),"Your guild has been disbanded.");
             guild->Disconnect(p->GetActor()->GetCharacterData());
@@ -1360,15 +1360,15 @@ void GuildManager::EndGuild(psGuildInfo *guild, int clientnum)
     psserver->GetCacheManager()->RemoveGuild(guild);
 }
 
-void GuildManager::UnsubscribeWholeGuild(psGuildInfo * guild)
+void GuildManager::UnsubscribeWholeGuild(psGuildInfo* guild)
 {
     size_t subscrNum=0;
-    while (subscrNum < notifySubscr.GetSize())
+    while(subscrNum < notifySubscr.GetSize())
     {
-        if (notifySubscr[subscrNum]->guild == guild->GetID())
+        if(notifySubscr[subscrNum]->guild == guild->GetID())
         {
-            Client * member = clients->Find( notifySubscr[subscrNum]->clientnum );
-            if (member != NULL)
+            Client* member = clients->Find(notifySubscr[subscrNum]->clientnum);
+            if(member != NULL)
             {
                 psGUIGuildMessage msg(member->GetClientNum(), psGUIGuildMessage::CLOSE_WINDOW, "<x/>");
                 msg.SendMessage();
@@ -1382,34 +1382,34 @@ void GuildManager::UnsubscribeWholeGuild(psGuildInfo * guild)
     }
 }
 
-void GuildManager::ChangeGuildName(psGuildCmdMessage& msg,Client *client)
+void GuildManager::ChangeGuildName(psGuildCmdMessage &msg,Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(guild == NULL)
     {
         psserver->SendSystemError(clientnum,"You are not in a guild.");
         return;
     }
 
-    if (!(const char *)msg.guildname || msg.guildname=="" )
+    if(!(const char*)msg.guildname || msg.guildname=="")
     {
         psserver->SendSystemError(clientnum,"New guild name must be specified.");
         return;
     }
 
-    if ( ! IsLeader(client))
-        if (!CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have the rights to edit the name of your guild."))
+    if(! IsLeader(client))
+        if(!CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have the rights to edit the name of your guild."))
             return;
 
-    if (msg.guildname.Length()<5)
+    if(msg.guildname.Length()<5)
     {
         psserver->SendSystemError(clientnum,"Guild name must be at least five characters.");
         return;
     }
 
-    if (msg.guildname.Length() > 25)
+    if(msg.guildname.Length() > 25)
     {
         psserver->SendSystemError(clientnum,"Guild name must be at under 25 characters.");
         return;
@@ -1432,7 +1432,7 @@ void GuildManager::ChangeGuildName(psGuildCmdMessage& msg,Client *client)
         psserver->SendSystemError(clientnum, "The name %s is banned.", msg.guildname.GetData());
         return;
     }
-    
+
     // Check to make sure the guild name hasn't been changed too recently
     unsigned int minutesRemaining = guild->MinutesUntilUserChangeName();
     if(minutesRemaining)
@@ -1442,7 +1442,7 @@ void GuildManager::ChangeGuildName(psGuildCmdMessage& msg,Client *client)
         return;
     }
 
-    if (guild->SetName(msg.guildname))
+    if(guild->SetName(msg.guildname))
     {
         psserver->SendSystemInfo(clientnum,"Your guild name has been changed to: %s",msg.guildname.GetData());
     }
@@ -1454,40 +1454,40 @@ void GuildManager::ChangeGuildName(psGuildCmdMessage& msg,Client *client)
     SendNotifications(guild->GetID(), psGUIGuildMessage::GUILD_DATA);
 }
 
-void GuildManager::Invite(psGuildCmdMessage& msg,Client *client)
+void GuildManager::Invite(psGuildCmdMessage &msg,Client* client)
 {
     csString playerName;
     int clientnum = client->GetClientNum();
 
     playerName = NormalizeCharacterName(msg.player);
 
-    psGuildInfo * guild = client->GetCharacterData()->GetGuild();
-    if (!guild)
+    psGuildInfo* guild = client->GetCharacterData()->GetGuild();
+    if(!guild)
     {
         psserver->SendSystemError(clientnum,"You have to be in a guild to invite someone.");
         return;
     }
 
-    if ( ! IsLeader(client))
-        if ( ! CheckClientRights(client, RIGHTS_INVITE, "You do not have the rights to invite players into your guild."))
+    if(! IsLeader(client))
+        if(! CheckClientRights(client, RIGHTS_INVITE, "You do not have the rights to invite players into your guild."))
             return;
 
     // invited player must be online when invited
-    Client *invitee = clients->Find(playerName);
-    if (!invitee)
+    Client* invitee = clients->Find(playerName);
+    if(!invitee)
     {
         psserver->SendSystemError(clientnum,"%s is not online right now.",
-                                    (const char*) msg.player);
+                                  (const char*) msg.player);
         return;
     }
 
-    if (invitee == client)
+    if(invitee == client)
     {
         psserver->SendSystemError(clientnum,"You can't invite yourself.", invitee->GetName());
         return;
     }
 
-    if (invitee->IsSuperClient())
+    if(invitee->IsSuperClient())
     {
         psserver->SendSystemError(clientnum,"You cannot invite npc %s.",
                                   (const char*) playerName);
@@ -1496,10 +1496,10 @@ void GuildManager::Invite(psGuildCmdMessage& msg,Client *client)
 
     bool inviteeIsAlreadyInSecretGuild = false;
 
-    psGuildInfo * inviteeGuild = invitee->GetCharacterData()->GetGuild();
-    if (inviteeGuild != NULL)
+    psGuildInfo* inviteeGuild = invitee->GetCharacterData()->GetGuild();
+    if(inviteeGuild != NULL)
     {
-        if (!inviteeGuild->IsSecret() )
+        if(!inviteeGuild->IsSecret())
         {
             psserver->SendSystemError(clientnum, "That player is already a member of a guild.");
             return;
@@ -1508,11 +1508,11 @@ void GuildManager::Invite(psGuildCmdMessage& msg,Client *client)
             inviteeIsAlreadyInSecretGuild = true;
     }
 
-    PendingInvite *pnew;
+    PendingInvite* pnew;
     csString invitation;
 
-    invitation.Format("You have been invited to join the %s.  Click Yes to join this guild.",client->GetActor()->GetGuild()->GetName().GetData() );
-    if (inviteeIsAlreadyInSecretGuild)
+    invitation.Format("You have been invited to join the %s.  Click Yes to join this guild.",client->GetActor()->GetGuild()->GetName().GetData());
+    if(inviteeIsAlreadyInSecretGuild)
         pnew = new PendingSecretGuildMemberInvite(client,invitee,invitation,guild->GetID());
     else
         pnew = new PendingGuildInvite(client,invitee,invitation,guild->GetID());
@@ -1521,53 +1521,53 @@ void GuildManager::Invite(psGuildCmdMessage& msg,Client *client)
     psserver->questionmanager->SendQuestion(pnew);
 }
 
-void PendingGuildInvite::HandleAnswer(const csString & answer)
+void PendingGuildInvite::HandleAnswer(const csString &answer)
 {
-    Client * client = psserver->GetConnections()->Find(clientnum);
-    if (!client  ||  client->GetCharacterData()->GetGuild() != NULL)
+    Client* client = psserver->GetConnections()->Find(clientnum);
+    if(!client  ||  client->GetCharacterData()->GetGuild() != NULL)
         return;
 
     PendingInvite::HandleAnswer(answer);
-    if (answer == "yes")
+    if(answer == "yes")
         psserver->guildmanager->HandleJoinGuild(this);
 }
 
 
-void GuildManager::HandleJoinGuild(PendingGuildInvite *invite)
+void GuildManager::HandleJoinGuild(PendingGuildInvite* invite)
 {
-    Client * inviteeClient = clients->Find(invite->clientnum);
-    if (inviteeClient == NULL)
+    Client* inviteeClient = clients->Find(invite->clientnum);
+    if(inviteeClient == NULL)
         return;
 
-    Client * inviterClient = clients->Find(invite->inviterClientNum);
+    Client* inviterClient = clients->Find(invite->inviterClientNum);
     EID inviterEID;
-    if (inviterClient != NULL)
+    if(inviterClient != NULL)
         inviterEID = inviterClient->GetActor()->GetEID();
 
-    psGuildInfo * guild = psserver->GetCacheManager()->FindGuild(invite->guildID);
-    if (guild == NULL)
+    psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(invite->guildID);
+    if(guild == NULL)
         return;
 
-    if ( !guild->AddNewMember(inviteeClient->GetActor()->GetCharacterData() ) )
+    if(!guild->AddNewMember(inviteeClient->GetActor()->GetCharacterData()))
     {
         psserver->SendSystemError(invite->inviterClientNum, "Error joining guild! (%s)", db->GetLastError());
-        Error2("Error joining guild! (%s)",db->GetLastError() );
+        Error2("Error joining guild! (%s)",db->GetLastError());
         return;
     }
 
     csString text;
-    text.Format("Player %s has joined the guild!",invite->inviteeName.GetData() );
+    text.Format("Player %s has joined the guild!",invite->inviteeName.GetData());
     psChatMessage guildmsg(invite->inviterClientNum,0,"System",0,text,CHAT_GUILD, false);
     chatserver->SendGuild(invite->inviterName.GetData(), inviterEID, guild, guildmsg);
 
     SendNotifications(guild->GetID(), psGUIGuildMessage::MEMBER_DATA);
 
-    if (!guild->IsSecret())// update guild labels
+    if(!guild->IsSecret()) // update guild labels
     {
         psUpdatePlayerGuildMessage update(
-                inviteeClient->GetClientNum(),
-                inviteeClient->GetActor()->GetEID(),
-                guild->GetName() );
+            inviteeClient->GetClientNum(),
+            inviteeClient->GetActor()->GetEID(),
+            guild->GetName());
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);
     }
 
@@ -1580,45 +1580,45 @@ void GuildManager::HandleJoinGuild(PendingGuildInvite *invite)
     motd.SendMessage();
 }
 
-void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
+void GuildManager::Remove(psGuildCmdMessage &msg,Client* client)
 {
-    Client * targetClient;
+    Client* targetClient;
     csString name;
     int clientnum = client->GetClientNum();
     bool isRemoved = false; //holds if the player is being removed by someone else, if false he/she's leaving the guild by himself
 
-    psGuildInfo *gi = client->GetActor()->GetGuild();
-    if (!gi)
+    psGuildInfo* gi = client->GetActor()->GetGuild();
+    if(!gi)
     {
         psserver->SendSystemError(clientnum,"You are not in a guild.");
         return;
     }
 
-    if ( msg.player.Length() )
+    if(msg.player.Length())
         name = NormalizeCharacterName(msg.player);
     else
         name = client->GetName();
 
     // Find the named player in guild
-    psGuildMember *target = gi->FindMember(name);
-    if (!target)
+    psGuildMember* target = gi->FindMember(name);
+    if(!target)
     {
         psserver->SendSystemError(clientnum,"That player is not member of your guild.");
         return;
     }
 
     //check if someone is removing the player or the player is leaving by him/herself
-    if (client->GetPID() != target->char_id )
+    if(client->GetPID() != target->char_id)
         isRemoved = true;
 
     // Verify rights if the player is removing someone else from the guild
     if(isRemoved)
     {
-        if ( ! IsLeader(client))
+        if(! IsLeader(client))
         {
-            if ( !CheckClientRights(client, RIGHTS_REMOVE, "You do not have rights to remove someone from your guild."))
+            if(!CheckClientRights(client, RIGHTS_REMOVE, "You do not have rights to remove someone from your guild."))
                 return;
-            if (GetClientLevel(client) <= target->guildlevel->level)
+            if(GetClientLevel(client) <= target->guildlevel->level)
             {
                 psserver->SendSystemError(clientnum,"You can't remove players of same or higher level.");
                 return;
@@ -1629,7 +1629,7 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
     else
         targetClient = client;
 
-    if (target->guildlevel->level == MAX_GUILD_LEVEL)
+    if(target->guildlevel->level == MAX_GUILD_LEVEL)
     {
         psserver->SendSystemError(clientnum,"The leader cannot simply leave his guild. He must appoint a new leader first.");
         return;
@@ -1637,7 +1637,7 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
 
     gi->RemoveMember(target);
 
-    if (targetClient != NULL)
+    if(targetClient != NULL)
     {
         if(isRemoved)
             psserver->SendSystemInfo(targetClient->GetClientNum(),"You have been removed from your guild.");
@@ -1654,14 +1654,14 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
 
     csString text;
 
-    if (isRemoved) //check if the player left the guild or was removed from it
-        text.Format("Player %s has been removed from the guild.", (const char *)msg.player );
+    if(isRemoved)  //check if the player left the guild or was removed from it
+        text.Format("Player %s has been removed from the guild.", (const char*)msg.player);
     else
-        text.Format("Player %s has left the guild.", (const char *)msg.player );
+        text.Format("Player %s has left the guild.", (const char*)msg.player);
 
     psChatMessage guildmsg(0,0,"System",0,text,CHAT_GUILD, false);
 
-    if (guildmsg.valid)
+    if(guildmsg.valid)
         chatserver->SendGuild(client->GetCharacterData()->GetCharName(), client->GetActor()->GetEID(), gi, guildmsg);
 
     SendNotifications(gi->GetID(), psGUIGuildMessage::MEMBER_DATA);
@@ -1678,19 +1678,19 @@ void GuildManager::Remove(psGuildCmdMessage& msg,Client *client)
  * or
  * /guildlevel  (this will show all current level names)
  */
-void GuildManager::Rename(psGuildCmdMessage& msg,Client *client)
+void GuildManager::Rename(psGuildCmdMessage &msg,Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo *gi = client->GetActor()->GetGuild();
-    if (!gi)
+    psGuildInfo* gi = client->GetActor()->GetGuild();
+    if(!gi)
     {
         psserver->SendSystemError(clientnum,"You are not in a guild.");
         return;
     }
 
     // checks if levelnumber has been specified
-    if (msg.level <= 0 || msg.level > 9)
+    if(msg.level <= 0 || msg.level > 9)
     {
         psserver->SendSystemInfo(clientnum,"Your guild has these titles defined:");
         csArray<psGuildLevel*>::Iterator lIter = gi->GetLevelIterator();
@@ -1702,12 +1702,12 @@ void GuildManager::Rename(psGuildCmdMessage& msg,Client *client)
         return;
     }
 
-    if ( ! IsLeader(client))
-        if ( ! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights to rename levels of your guild."))
+    if(! IsLeader(client))
+        if(! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights to rename levels of your guild."))
             return;
 
     // checks if levelname has been specified
-    if (! (const char *)msg.levelname)
+    if(!(const char*)msg.levelname)
     {
         psserver->SendSystemError(clientnum,"You must specify the name after the level to rename a guild level.");
         return;
@@ -1719,19 +1719,19 @@ void GuildManager::Rename(psGuildCmdMessage& msg,Client *client)
         return;
     }
 
-    if (msg.levelname.Length()<3)
+    if(msg.levelname.Length()<3)
     {
         psserver->SendSystemError(clientnum,"Guild level name must be at least three characters.");
         return;
     }
 
-    if (msg.levelname.Length() > 25)
+    if(msg.levelname.Length() > 25)
     {
         psserver->SendSystemError(clientnum,"Guild level name must be at under 25 characters.");
         return;
     }
 
-    if (!gi->RenameLevel(msg.level,msg.levelname))
+    if(!gi->RenameLevel(msg.level,msg.levelname))
     {
         psserver->SendSystemError(clientnum,"SQL Error: %s",db->GetLastError());
         return;
@@ -1740,67 +1740,67 @@ void GuildManager::Rename(psGuildCmdMessage& msg,Client *client)
     psserver->SendSystemInfo(clientnum,"Guild level rename was successful.");
 
     csString text;
-    text.Format("Guild level %d is now called: %s", msg.level, (const char *)msg.levelname );
+    text.Format("Guild level %d is now called: %s", msg.level, (const char*)msg.levelname);
     psChatMessage guildmsg(clientnum,0,"System",0,text,CHAT_GUILD, false);
-    if (guildmsg.valid)
+    if(guildmsg.valid)
         chatserver->SendGuild(client->GetCharacterData()->GetCharName(), client->GetActor()->GetEID(), gi, guildmsg);
 
     SendNotifications(gi->GetID(), psGUIGuildMessage::LEVEL_DATA);
 }
 
-void GuildManager::Promote(psGuildCmdMessage& msg,Client *client)
+void GuildManager::Promote(psGuildCmdMessage &msg,Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo *guild = client->GetActor()->GetGuild();
-    if (!guild)
+    psGuildInfo* guild = client->GetActor()->GetGuild();
+    if(!guild)
     {
         psserver->SendSystemError(clientnum,"You are not in a guild.");
         return;
     }
 
-    if (! (const char *)msg.player)
+    if(!(const char*)msg.player)
     {
         psserver->SendSystemError(clientnum,"You must specify the player to promote someone.");
         return;
     }
 
-    if (msg.level <= 0 || msg.level > 9)
+    if(msg.level <= 0 || msg.level > 9)
     {
         psserver->SendSystemError(clientnum,"You must specify a level between 1 and 9 to promote someone.");
         return;
     }
 
-    psGuildMember *target = guild->FindMember(msg.player);
-    if (!target)
+    psGuildMember* target = guild->FindMember(msg.player);
+    if(!target)
     {
-        psserver->SendSystemError(clientnum,"Player %s is not a member of your guild.",(const char *)msg.player);
+        psserver->SendSystemError(clientnum,"Player %s is not a member of your guild.",(const char*)msg.player);
         return;
     }
 
-    if (target->guildlevel->level == MAX_GUILD_LEVEL)
+    if(target->guildlevel->level == MAX_GUILD_LEVEL)
     {
         psserver->SendSystemError(clientnum,"You can't just put leader to lower level. You must promote someone else to his place.");
         return;
     }
 
-    if ( ! IsLeader(client))
+    if(! IsLeader(client))
     {
-        if ( ! CheckClientRights(client, RIGHTS_PROMOTE, "You do not have the rights in your guild to promote someone."))
+        if(! CheckClientRights(client, RIGHTS_PROMOTE, "You do not have the rights in your guild to promote someone."))
             return;
-        if (GetClientLevel(client) <= target->guildlevel->level)
+        if(GetClientLevel(client) <= target->guildlevel->level)
         {
-            psserver->SendSystemError(clientnum,"You can't promote players of higher or equal level.",(const char *)msg.player);
+            psserver->SendSystemError(clientnum,"You can't promote players of higher or equal level.",(const char*)msg.player);
             return;
         }
-        if (GetClientLevel(client) <= msg.level)
+        if(GetClientLevel(client) <= msg.level)
         {
-            psserver->SendSystemError(clientnum,"You can't promote players to higher or equal level.",(const char *)msg.player);
+            psserver->SendSystemError(clientnum,"You can't promote players to higher or equal level.",(const char*)msg.player);
             return;
         }
     }
 
-    if (!guild->UpdateMemberLevel(target,msg.level))
+    if(!guild->UpdateMemberLevel(target,msg.level))
     {
         psserver->SendSystemError(clientnum,"SQL Error: %s",db->GetLastError());
         return;
@@ -1808,15 +1808,15 @@ void GuildManager::Promote(psGuildCmdMessage& msg,Client *client)
 
     // If we just promoted someone to highest level, we must also demote the current leader
     // (i.e. the player who did this action).
-    if (msg.level == MAX_GUILD_LEVEL)
+    if(msg.level == MAX_GUILD_LEVEL)
     {
-        psGuildMember *clientMembership = guild->FindMember(client->GetPID());
-        if (!clientMembership)
+        psGuildMember* clientMembership = guild->FindMember(client->GetPID());
+        if(!clientMembership)
         {
             psserver->SendSystemError(clientnum,"Internal error: membership of player not found.");
             return;
         }
-        if (!guild->UpdateMemberLevel(clientMembership, MAX_GUILD_LEVEL-1))
+        if(!guild->UpdateMemberLevel(clientMembership, MAX_GUILD_LEVEL-1))
         {
             psserver->SendSystemError(clientnum,"SQL Error: %s",db->GetLastError());
             return;
@@ -1826,112 +1826,112 @@ void GuildManager::Promote(psGuildCmdMessage& msg,Client *client)
     psserver->SendSystemInfo(clientnum,"Promotion successful.");
 
     csString text;
-    text.Format("%s has been promoted to '%s'", (const char *)msg.player, target->guildlevel->title.GetData() );
+    text.Format("%s has been promoted to '%s'", (const char*)msg.player, target->guildlevel->title.GetData());
     psChatMessage guildmsg(clientnum,0,"System",0,text,CHAT_GUILD, false);
-    if (guildmsg.valid)
+    if(guildmsg.valid)
         chatserver->SendGuild(client->GetCharacterData()->GetCharName(), client->GetActor()->GetEID(), guild, guildmsg);
 
     SendNotifications(guild->GetID(), psGUIGuildMessage::MEMBER_DATA);
 }
 
-void GuildManager::GetMemberPermissions(psGuildCmdMessage& msg,Client *client)
+void GuildManager::GetMemberPermissions(psGuildCmdMessage &msg,Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo *guild = client->GetActor()->GetGuild();
-    if (!guild)
+    psGuildInfo* guild = client->GetActor()->GetGuild();
+    if(!guild)
     {
         psserver->SendSystemError(clientnum,"You are not in a guild.");
         return;
     }
 
-    if (! (const char *)msg.player)
+    if(!(const char*)msg.player)
     {
         psserver->SendSystemError(clientnum,"You must specify the player to get the permissions.");
         return;
     }
 
-    psGuildMember *target = guild->FindMember(msg.player);
-    if (!target)
+    psGuildMember* target = guild->FindMember(msg.player);
+    if(!target)
     {
-        psserver->SendSystemError(clientnum,"Player %s is not a member of your guild.",(const char *)msg.player);
+        psserver->SendSystemError(clientnum,"Player %s is not a member of your guild.",(const char*)msg.player);
         return;
     }
 
 
-    if ( ! IsLeader(client))
+    if(! IsLeader(client))
     {
-        if ( ! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights in your guild to get the permissions."))
+        if(! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights in your guild to get the permissions."))
             return;
-        if (GetClientLevel(client) <= target->guildlevel->level)
+        if(GetClientLevel(client) <= target->guildlevel->level)
         {
-            psserver->SendSystemError(clientnum,"You can't get the permissions of a player of higher or equal level.",(const char *)msg.player);
+            psserver->SendSystemError(clientnum,"You can't get the permissions of a player of higher or equal level.",(const char*)msg.player);
             return;
         }
     }
 
-        csString permissionText = "Player " + msg.player + " has these permissions: ";
-        if(target->HasRights(RIGHTS_VIEW_CHAT))
-            permissionText.Append("view_chat ");
-        if(target->HasRights(RIGHTS_CHAT))
-            permissionText.Append("chat ");
-        if(target->HasRights(RIGHTS_INVITE))
-            permissionText.Append("invite ");
-        if(target->HasRights(RIGHTS_REMOVE))
-            permissionText.Append("remove ");
-        if(target->HasRights(RIGHTS_PROMOTE))
-            permissionText.Append("promote ");
-        if(target->HasRights(RIGHTS_EDIT_LEVEL))
-            permissionText.Append("edit_level ");
-        if(target->HasRights(RIGHTS_EDIT_POINTS))
-            permissionText.Append("edit_points ");
-        if(target->HasRights(RIGHTS_EDIT_GUILD))
-            permissionText.Append("edit_guild ");
-        if(target->HasRights(RIGHTS_EDIT_PUBLIC))
-            permissionText.Append("edit_public ");
-        if(target->HasRights(RIGHTS_EDIT_PRIVATE))
-            permissionText.Append("edit_private ");
-        if(target->HasRights(RIGHTS_VIEW_CHAT_ALLIANCE))
-            permissionText.Append("alliance_view_chat ");
-        if(target->HasRights(RIGHTS_CHAT_ALLIANCE))
-            permissionText.Append("alliance_chat ");
-        if(target->HasRights(RIGHTS_USE_BANK))
-            permissionText.Append("guild_bank ");
+    csString permissionText = "Player " + msg.player + " has these permissions: ";
+    if(target->HasRights(RIGHTS_VIEW_CHAT))
+        permissionText.Append("view_chat ");
+    if(target->HasRights(RIGHTS_CHAT))
+        permissionText.Append("chat ");
+    if(target->HasRights(RIGHTS_INVITE))
+        permissionText.Append("invite ");
+    if(target->HasRights(RIGHTS_REMOVE))
+        permissionText.Append("remove ");
+    if(target->HasRights(RIGHTS_PROMOTE))
+        permissionText.Append("promote ");
+    if(target->HasRights(RIGHTS_EDIT_LEVEL))
+        permissionText.Append("edit_level ");
+    if(target->HasRights(RIGHTS_EDIT_POINTS))
+        permissionText.Append("edit_points ");
+    if(target->HasRights(RIGHTS_EDIT_GUILD))
+        permissionText.Append("edit_guild ");
+    if(target->HasRights(RIGHTS_EDIT_PUBLIC))
+        permissionText.Append("edit_public ");
+    if(target->HasRights(RIGHTS_EDIT_PRIVATE))
+        permissionText.Append("edit_private ");
+    if(target->HasRights(RIGHTS_VIEW_CHAT_ALLIANCE))
+        permissionText.Append("alliance_view_chat ");
+    if(target->HasRights(RIGHTS_CHAT_ALLIANCE))
+        permissionText.Append("alliance_chat ");
+    if(target->HasRights(RIGHTS_USE_BANK))
+        permissionText.Append("guild_bank ");
 
-        psserver->SendSystemInfo(clientnum,permissionText.Trim().GetDataSafe());
+    psserver->SendSystemInfo(clientnum,permissionText.Trim().GetDataSafe());
 }
 
-void GuildManager::SetMemberPermissions(psGuildCmdMessage& msg,Client *client)
+void GuildManager::SetMemberPermissions(psGuildCmdMessage &msg,Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo *guild = client->GetActor()->GetGuild();
-    if (!guild)
+    psGuildInfo* guild = client->GetActor()->GetGuild();
+    if(!guild)
     {
         psserver->SendSystemError(clientnum,"You are not in a guild.");
         return;
     }
 
-    if (! (const char *)msg.player)
+    if(!(const char*)msg.player)
     {
         psserver->SendSystemError(clientnum,"You must specify the player to set the permissions.");
         return;
     }
 
-    psGuildMember *target = guild->FindMember(msg.player);
-    if (!target)
+    psGuildMember* target = guild->FindMember(msg.player);
+    if(!target)
     {
-        psserver->SendSystemError(clientnum,"Player %s is not a member of your guild.",(const char *)msg.player);
+        psserver->SendSystemError(clientnum,"Player %s is not a member of your guild.",(const char*)msg.player);
         return;
     }
 
-    if ( ! IsLeader(client))
+    if(! IsLeader(client))
     {
-        if ( ! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights in your guild to get the permissions."))
+        if(! CheckClientRights(client, RIGHTS_EDIT_LEVEL, "You do not have the rights in your guild to get the permissions."))
             return;
-        if (GetClientLevel(client) <= target->guildlevel->level)
+        if(GetClientLevel(client) <= target->guildlevel->level)
         {
-            psserver->SendSystemError(clientnum,"You can't get the permissions of a player of higher or equal level.",(const char *)msg.player);
+            psserver->SendSystemError(clientnum,"You can't get the permissions of a player of higher or equal level.",(const char*)msg.player);
             return;
         }
     }
@@ -1943,9 +1943,9 @@ void GuildManager::SetMemberPermissions(psGuildCmdMessage& msg,Client *client)
         return;
     }
 
-    if ( ! IsLeader(client))
+    if(! IsLeader(client))
     {
-        if ( ! CheckClientRights(client, right, "You cannot change a privilege that you do not have yourself."))
+        if(! CheckClientRights(client, right, "You cannot change a privilege that you do not have yourself."))
         {
             return;
         }
@@ -1974,43 +1974,43 @@ void GuildManager::SetMemberPermissions(psGuildCmdMessage& msg,Client *client)
 
 /** Sends list of guild members of given level as text messages to client
   */
-void ListMembersOfLevel(psGuildInfo * guild, int clientnum, int level)
+void ListMembersOfLevel(psGuildInfo* guild, int clientnum, int level)
 {
     csArray<psGuildMember*>::Iterator mIter = guild->GetMemberIterator();
     while(mIter.HasNext())
     {
-        psGuildMember * member = mIter.Next();
-        if (member->guildlevel->level == level)
+        psGuildMember* member = mIter.Next();
+        if(member->guildlevel->level == level)
             psserver->SendSystemInfo(clientnum,"%s: %s",
                                      member->name.GetData(),
-                                     member->guildlevel->title.GetData() );
+                                     member->guildlevel->title.GetData());
     }
 }
 
-void GuildManager::ListMembers(psGuildCmdMessage& msg,Client *client)
+void GuildManager::ListMembers(psGuildCmdMessage &msg,Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo *guild = client->GetActor()->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = client->GetActor()->GetGuild();
+    if(guild == NULL)
     {
         psserver->SendSystemError(clientnum,"You are not in a guild.");
         return;
     }
 
-    if (!msg.level)
-        for (int i=9; i>0; i--)
+    if(!msg.level)
+        for(int i=9; i>0; i--)
             ListMembersOfLevel(guild, clientnum, i);
     else
         ListMembersOfLevel(guild, clientnum, msg.level);
 }
 
-void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
+void GuildManager::Secret(psGuildCmdMessage &msg, Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo *guild = client->GetActor()->GetGuild();
-    if (!guild)
+    psGuildInfo* guild = client->GetActor()->GetGuild();
+    if(!guild)
     {
         psserver->SendSystemError(clientnum, "You are not in a guild.");
         return;
@@ -2018,7 +2018,7 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
 
     // If the player doesn't provide an argument, just report the current
     // status of the secrecy flag.
-    if (msg.secret.IsEmpty())
+    if(msg.secret.IsEmpty())
     {
         psserver->SendSystemInfo(clientnum,
                                  "Your guild's secrecy setting is: %s",
@@ -2026,31 +2026,31 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
         return;
     }
 
-    if ( ! IsLeader(client))
-        if ( ! CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have rights to change secrecy of your guild."))
+    if(! IsLeader(client))
+        if(! CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have rights to change secrecy of your guild."))
             return;
 
     // Change the argument to lowercase to get a case-insensitive match.
     msg.secret.Downcase();
 
     // Check for invalid arguments.
-    if (msg.secret != "on" && msg.secret != "off")
+    if(msg.secret != "on" && msg.secret != "off")
     {
         psserver->SendSystemError(clientnum,
-                                "Unrecognized /guildsecret argument \"%s\". Choose \"on\" or \"off\".",
-                                msg.secret.GetData());
+                                  "Unrecognized /guildsecret argument \"%s\". Choose \"on\" or \"off\".",
+                                  msg.secret.GetData());
         return;
     }
 
     const bool new_secrecy_value = (msg.secret == "on");
 
     // Only update the database if the value is really being changed.
-    if (new_secrecy_value != guild->IsSecret() )
+    if(new_secrecy_value != guild->IsSecret())
     {
-        if (!guild->SetSecret(new_secrecy_value))
+        if(!guild->SetSecret(new_secrecy_value))
         {
             psserver->SendSystemError(clientnum, "SQL Error: %s",
-                                    db->GetLastError());
+                                      db->GetLastError());
             return;
         }
     }
@@ -2063,58 +2063,58 @@ void GuildManager::Secret(psGuildCmdMessage &msg, Client *client)
 
     // If secrecy is on send a message to all others clearing guild name
     // else send a message to all others to show the guild name.
-    if (new_secrecy_value)
+    if(new_secrecy_value)
     {
         // Turn label off for everybody
         psUpdatePlayerGuildMessage update(
-                clientnum,
-                client->GetActor()->GetEID(),
-                "");
+            clientnum,
+            client->GetActor()->GetEID(),
+            "");
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);
 
         // Update guild members with the label
         psUpdatePlayerGuildMessage update2(
-                clientnum,
-                client->GetActor()->GetEID(),
-                guild->GetName() );
+            clientnum,
+            client->GetActor()->GetEID(),
+            guild->GetName());
         psserver->GetEventManager()->Broadcast(update2.msg,NetBase::BC_GUILD,guild->GetID());
     }
     else
     {
         // turn label on for everybody
         psUpdatePlayerGuildMessage update(
-                clientnum,
-                client->GetActor()->GetEID(),
-                guild->GetName() );
+            clientnum,
+            client->GetActor()->GetEID(),
+            guild->GetName());
         psserver->GetEventManager()->Broadcast(update.msg,NetBase::BC_EVERYONE);
     }
 }
 
-void GuildManager::Web(psGuildCmdMessage &msg, Client *client)
+void GuildManager::Web(psGuildCmdMessage &msg, Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo *guild = client->GetActor()->GetGuild();
-    if (!guild)
+    psGuildInfo* guild = client->GetActor()->GetGuild();
+    if(!guild)
     {
         psserver->SendSystemError(clientnum,"You are not in a guild.");
         return;
     }
 
-    if ( ! IsLeader(client))
-        if ( ! CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have rights to change web page of your guild."))
+    if(! IsLeader(client))
+        if(! CheckClientRights(client, RIGHTS_EDIT_GUILD, "You do not have rights to change web page of your guild."))
             return;
 
-    if (!msg.web_page.Length())
+    if(!msg.web_page.Length())
     {
         psserver->SendSystemError(clientnum,"You did not specify anything as your url.");
         return;
     }
 
     // Only update the database if the value is really being changed.
-    if (msg.web_page != guild->GetWebPage() )
+    if(msg.web_page != guild->GetWebPage())
     {
-        if (!guild->SetWebPage(msg.web_page))
+        if(!guild->SetWebPage(msg.web_page))
         {
             psserver->SendSystemError(clientnum, "Setting of web page failed");
             return;
@@ -2127,33 +2127,33 @@ void GuildManager::Web(psGuildCmdMessage &msg, Client *client)
     SendNotifications(guild->GetID(), psGUIGuildMessage::GUILD_DATA);
 }
 
-bool GuildManager::IsLeader(Client * client)
+bool GuildManager::IsLeader(Client* client)
 {
     return GetClientLevel(client) == MAX_GUILD_LEVEL;
 }
 
-void GuildManager::MOTD(psGuildCmdMessage &msg, Client *client)
+void GuildManager::MOTD(psGuildCmdMessage &msg, Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo *guild = client->GetActor()->GetGuild();
-    if (!guild)
+    psGuildInfo* guild = client->GetActor()->GetGuild();
+    if(!guild)
     {
         psSystemMessage newmsg(clientnum,MSG_ERROR,"You are not in a guild.");
         newmsg.SendMessage();
         return;
     }
 
-    if (msg.motd.IsEmpty())
+    if(msg.motd.IsEmpty())
     {
         psserver->SendSystemInfo(clientnum,
-            "Guild Message Of The Day: %s",
+                                 "Guild Message Of The Day: %s",
                                  (client->GetActor()->GetGuild()->GetMOTD().GetData()));
         return;
     }
 
-    if ( ! IsLeader(client))
-        if ( ! CheckClientRights(client, RIGHTS_EDIT_PUBLIC, "You do not have rights to change the message of the day in your guild."))
+    if(! IsLeader(client))
+        if(! CheckClientRights(client, RIGHTS_EDIT_PUBLIC, "You do not have rights to change the message of the day in your guild."))
             return;
 
     //All fine, let's change it already
@@ -2161,59 +2161,59 @@ void GuildManager::MOTD(psGuildCmdMessage &msg, Client *client)
 
     //Send notify to all guild members
     psSystemMessage newmsg(clientnum, MSG_INFO,
-                            "Guild message of the day updated");
+                           "Guild message of the day updated");
     psserver->GetEventManager()->Broadcast(newmsg.msg,NetBase::BC_GUILD,guild->GetID());
 
 
     SendNotifications(guild->GetID(), psGUIGuildMessage::GUILD_DATA);
 }
 
-void GuildManager::GuildWar(psGuildCmdMessage &msg, Client *client)
+void GuildManager::GuildWar(psGuildCmdMessage &msg, Client* client)
 {
     int clientnum = client->GetClientNum();
 
     // Check target dead
-    gemObject *target = client->GetTargetObject();
-    if (!target)
+    gemObject* target = client->GetTargetObject();
+    if(!target)
     {
         psserver->SendSystemError(clientnum,"You don't have another player targeted.");
         return;
     }
 
-    if (!target->IsAlive())
+    if(!target->IsAlive())
     {
         psserver->SendSystemError(clientnum, "You can't challenge a dead person");
         return;
     }
 
-    Client * targetClient = psserver->GetNetManager()->GetClient(target->GetClientID());
-    if (!targetClient)
+    Client* targetClient = psserver->GetNetManager()->GetClient(target->GetClientID());
+    if(!targetClient)
     {
         psserver->SendSystemError(clientnum, "You can challenge other players only");
         return;
     }
 
-    if (targetClient == client)
+    if(targetClient == client)
     {
         psserver->SendSystemError(clientnum,"You can't begin war with yourself.", targetClient->GetName());
         return;
     }
 
-    gemActor *wartarget = targetClient->GetActor();
+    gemActor* wartarget = targetClient->GetActor();
 
     // Check for pre-existing war with this person
-    psGuildInfo *attackguild = GetClientGuild(client);
-    if (attackguild == NULL)
+    psGuildInfo* attackguild = GetClientGuild(client);
+    if(attackguild == NULL)
         return;
 
-    psGuildInfo *targetguild = wartarget->GetGuild();
-    if (!targetguild)
+    psGuildInfo* targetguild = wartarget->GetGuild();
+    if(!targetguild)
     {
         psserver->SendSystemError(clientnum, "This player is not in a guild");
         return;
     }
 
-    if (attackguild->FindLeader()->character != client->GetActor()->GetCharacterData() )
+    if(attackguild->FindLeader()->character != client->GetActor()->GetCharacterData())
     {
         psserver->SendSystemError(clientnum, "You are not guild leader");
         return;
@@ -2221,19 +2221,19 @@ void GuildManager::GuildWar(psGuildCmdMessage &msg, Client *client)
 
     // Check to see if it can find a leader.  If no leader is found then the guild is in a bad
     // state and needs to be fixed by an admin.
-    if ( targetguild->FindLeader() == NULL )
+    if(targetguild->FindLeader() == NULL)
     {
-        psserver->SendSystemError(clientnum, "The guild %s has no leader. Please inform PlaneShift admins", targetguild->GetName().GetData() );
+        psserver->SendSystemError(clientnum, "The guild %s has no leader. Please inform PlaneShift admins", targetguild->GetName().GetData());
         return;
     }
 
-    if (targetguild->FindLeader()->character != wartarget->GetCharacterData() )
+    if(targetguild->FindLeader()->character != wartarget->GetCharacterData())
     {
         psserver->SendSystemError(clientnum, "This player is not guild leader");
         return;
     }
 
-    if (attackguild->IsGuildWarActive(targetguild))
+    if(attackguild->IsGuildWarActive(targetguild))
     {
         psserver->SendSystemError(clientnum,"You are already in a guild war with your target.");
         return;
@@ -2242,25 +2242,25 @@ void GuildManager::GuildWar(psGuildCmdMessage &msg, Client *client)
     // Challenge
     csString question;
     question.Format("%s has challenged your guild to a war!  Click on Accept to allow the war or Reject to ignore it.",
-                    client->GetName() );
-    PendingGuildWarInvite *invite = new PendingGuildWarInvite(client,
-                                                              targetClient,
-                                                              question);
+                    client->GetName());
+    PendingGuildWarInvite* invite = new PendingGuildWarInvite(client,
+            targetClient,
+            question);
     psserver->questionmanager->SendQuestion(invite);
 }
 
-void GuildManager::AcceptWar(PendingGuildWarInvite *invite)
+void GuildManager::AcceptWar(PendingGuildWarInvite* invite)
 {
-    Client * inviteeClient = clients->Find(invite->clientnum);
-    Client * inviterClient = clients->Find(invite->inviterClientNum);
+    Client* inviteeClient = clients->Find(invite->clientnum);
+    Client* inviterClient = clients->Find(invite->inviterClientNum);
 
-    if (!inviteeClient  ||  !inviterClient)
+    if(!inviteeClient  ||  !inviterClient)
         return;
 
-    psGuildInfo *attackguild = inviterClient->GetActor()->GetGuild();
-    psGuildInfo *targetguild = inviteeClient->GetActor()->GetGuild();
+    psGuildInfo* attackguild = inviterClient->GetActor()->GetGuild();
+    psGuildInfo* targetguild = inviteeClient->GetActor()->GetGuild();
 
-    if (!attackguild || !targetguild)
+    if(!attackguild || !targetguild)
         return;
 
     attackguild->AddGuildWar(targetguild);
@@ -2268,73 +2268,73 @@ void GuildManager::AcceptWar(PendingGuildWarInvite *invite)
 
     psSystemMessage sys(0,MSG_INFO,"%s and %s have started a guild war!",
                         attackguild->GetName().GetData(),
-                        targetguild->GetName().GetData() );
+                        targetguild->GetName().GetData());
     psserver->GetEventManager()->Broadcast(sys.msg,NetBase::BC_GUILD,attackguild->GetID());
     psserver->GetEventManager()->Broadcast(sys.msg,NetBase::BC_GUILD,targetguild->GetID());
 }
 
-void PendingGuildWarInvite::HandleAnswer(const csString & answer)
+void PendingGuildWarInvite::HandleAnswer(const csString &answer)
 {
-    Client * client = psserver->GetConnections()->Find(inviterClientNum);
-    if (!client) return;
-    psGuildInfo *attackguild = GetClientGuild(client);
-    if (!attackguild) return;
+    Client* client = psserver->GetConnections()->Find(inviterClientNum);
+    if(!client) return;
+    psGuildInfo* attackguild = GetClientGuild(client);
+    if(!attackguild) return;
 
-    Client * targetClient = psserver->GetConnections()->Find(clientnum);
-    if (!targetClient) return;
-    psGuildInfo *targetguild = GetClientGuild(targetClient);
-    if (!targetguild) return;
+    Client* targetClient = psserver->GetConnections()->Find(clientnum);
+    if(!targetClient) return;
+    psGuildInfo* targetguild = GetClientGuild(targetClient);
+    if(!targetguild) return;
 
-    if (attackguild->IsGuildWarActive(targetguild))
+    if(attackguild->IsGuildWarActive(targetguild))
         return;
 
     PendingInvite::HandleAnswer(answer);
-    if (answer == "yes")
+    if(answer == "yes")
         psserver->guildmanager->AcceptWar(this);
 }
 
-void GuildManager::GuildYield(psGuildCmdMessage &msg, Client *client)
+void GuildManager::GuildYield(psGuildCmdMessage &msg, Client* client)
 {
     int clientnum = client->GetClientNum();
 
     int winnerid = client->GetTargetClientID();
-    if (!winnerid)
+    if(!winnerid)
     {
         psserver->SendSystemError(client->GetClientNum(),"You don't have another player targeted.");
         return;
     }
 
-    psGuildInfo *loserguild = client->GetActor()->GetGuild();
-    if (!loserguild)
+    psGuildInfo* loserguild = client->GetActor()->GetGuild();
+    if(!loserguild)
     {
         psserver->SendSystemError(clientnum, "You are not in a guild");
         return;
     }
 
-    if (loserguild->FindLeader()->character != client->GetActor()->GetCharacterData() )
+    if(loserguild->FindLeader()->character != client->GetActor()->GetCharacterData())
     {
         psserver->SendSystemError(clientnum, "You are not guild leader");
         return;
     }
 
-    if ( client->GetTargetObject() == NULL )
+    if(client->GetTargetObject() == NULL)
     {
         psserver->SendSystemError(clientnum, "You must target the leader of the guild.");
         return;
     }
 
-    gemActor *target = client->GetTargetObject()->GetActorPtr();
-    if (!target)
+    gemActor* target = client->GetTargetObject()->GetActorPtr();
+    if(!target)
         return;
 
-    psGuildInfo *winnerguild = target->GetGuild();
-    if (!winnerguild)
+    psGuildInfo* winnerguild = target->GetGuild();
+    if(!winnerguild)
     {
         psserver->SendSystemError(clientnum, "Your target is not in a guild");
         return;
     }
 
-    if (!loserguild->IsGuildWarActive(winnerguild))
+    if(!loserguild->IsGuildWarActive(winnerguild))
     {
         psserver->SendSystemError(clientnum,"You are not in a guild war with your target.");
         return;
@@ -2350,18 +2350,18 @@ void GuildManager::GuildYield(psGuildCmdMessage &msg, Client *client)
     // Award guild karma points (33% of lower-ranked guild's points)
     int winnerkarmapoints = winnerguild->GetKarmaPoints();
     int loserkarmapoints = loserguild->GetKarmaPoints();
-    
+
     float delta = loserkarmapoints;
     if(winnerkarmapoints < delta)
         delta = winnerkarmapoints;
     delta /= 3;
 
-    if (!(int)delta)
+    if(!(int)delta)
         delta=1;
 
     csString str;
     str.Format("%1.0f karma points from %s awarded to %s.",
-               delta,loserguild->GetName().GetData(),winnerguild->GetName().GetData() );
+               delta,loserguild->GetName().GetData(),winnerguild->GetName().GetData());
 
     CPrintf(CON_DEBUG, str);
 
@@ -2388,11 +2388,11 @@ class PendingAllianceInvite : public PendingInvite
 public:
     int allianceID;
 
-    PendingAllianceInvite(Client *inviter,
-                          Client *invitee,
-                          const char *question,
+    PendingAllianceInvite(Client* inviter,
+                          Client* invitee,
+                          const char* question,
                           int allianceID)
-        : PendingInvite( inviter, invitee, true,
+        : PendingInvite(inviter, invitee, true,
                         question,"Accept","Decline",
                         "You have asked %s to join your alliance.",
                         "%s has invited you to join an alliance.",
@@ -2405,31 +2405,31 @@ public:
         this->allianceID = allianceID;
     }
 
-    void HandleAnswer(const csString & answer)
+    void HandleAnswer(const csString &answer)
     {
-        Client * client = psserver->GetConnections()->Find(clientnum);
-        if (!client) return;
-        psGuildInfo * guild = GetClientGuild(client);
-        if (!guild) return;
-        if (guild->GetAllianceID() != 0)
+        Client* client = psserver->GetConnections()->Find(clientnum);
+        if(!client) return;
+        psGuildInfo* guild = GetClientGuild(client);
+        if(!guild) return;
+        if(guild->GetAllianceID() != 0)
             return;
 
         PendingInvite::HandleAnswer(answer);
-        if (answer != "yes")
+        if(answer != "yes")
             return;
 
-        Client * inviteeClient = psserver->GetConnections()->Find(clientnum);
-        if (inviteeClient == NULL) return;
+        Client* inviteeClient = psserver->GetConnections()->Find(clientnum);
+        if(inviteeClient == NULL) return;
 
-        psGuildInfo * inviteeGuild = GetClientGuild(inviteeClient);
-        if (inviteeGuild == NULL) return;
+        psGuildInfo* inviteeGuild = GetClientGuild(inviteeClient);
+        if(inviteeGuild == NULL) return;
 
-        psGuildAlliance * alliance = psserver->GetCacheManager()->FindAlliance(allianceID);
-        if (alliance == NULL) return;
+        psGuildAlliance* alliance = psserver->GetCacheManager()->FindAlliance(allianceID);
+        if(alliance == NULL) return;
 
         alliance->AddNewMember(inviteeGuild);
         psserver->GetGuildManager()->SendAllianceNotifications(alliance);
-        
+
         if(client->GetActor())
         {
             csString text;
@@ -2437,7 +2437,7 @@ public:
             psChatMessage guildmsg(client->GetClientNum(),0,"System",0,text,CHAT_ALLIANCE, false);
             psserver->GetChatManager()->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
         }
-        
+
     }
 };
 
@@ -2449,7 +2449,7 @@ public:
   *
   * This function also returns pointers to player's guild and alliance as a secondary product.
   */
-bool GuildManager::CheckAllianceOperation(Client * client, bool checkLeaderGuild, psGuildInfo * & guild, psGuildAlliance * & alliance)
+bool GuildManager::CheckAllianceOperation(Client* client, bool checkLeaderGuild, psGuildInfo* &guild, psGuildAlliance* &alliance)
 {
     int clientnum = client->GetClientNum();
 
@@ -2457,28 +2457,28 @@ bool GuildManager::CheckAllianceOperation(Client * client, bool checkLeaderGuild
     alliance = NULL;
 
     guild = GetClientGuild(client);
-    if (guild == NULL) return false;
+    if(guild == NULL) return false;
 
-    if (guild->GetAllianceID() == 0)
+    if(guild->GetAllianceID() == 0)
     {
         psserver->SendSystemError(clientnum,"You guild is not in an alliance.");
         return false;
     }
 
-    if (GetClientLevel(client) != MAX_GUILD_LEVEL)
+    if(GetClientLevel(client) != MAX_GUILD_LEVEL)
     {
         psserver->SendSystemError(clientnum,"You are not guild leader.");
         return false;
     }
 
     alliance = psserver->GetCacheManager()->FindAlliance(guild->GetAllianceID());
-    if (alliance == NULL)
+    if(alliance == NULL)
     {
         psserver->SendSystemError(clientnum,"Internal error - alliance %d not found.", guild->GetAllianceID());
         return false;
     }
 
-    if (checkLeaderGuild   &&   alliance->GetLeader() != guild)
+    if(checkLeaderGuild   &&   alliance->GetLeader() != guild)
     {
         psserver->SendSystemError(clientnum,"Your guild is not alliance leader.");
         return false;
@@ -2488,39 +2488,39 @@ bool GuildManager::CheckAllianceOperation(Client * client, bool checkLeaderGuild
 }
 
 
-void GuildManager::NewAlliance(psGuildCmdMessage &msg, Client *client)
+void GuildManager::NewAlliance(psGuildCmdMessage &msg, Client* client)
 {
     int clientnum = client->GetClientNum();
 
-    psGuildInfo * guild = GetClientGuild(client);
-    if (guild == NULL) return;
+    psGuildInfo* guild = GetClientGuild(client);
+    if(guild == NULL) return;
 
-    if (GetClientLevel(client) != MAX_GUILD_LEVEL)
+    if(GetClientLevel(client) != MAX_GUILD_LEVEL)
     {
         psserver->SendSystemError(clientnum,"You are not guild leader.");
         return;
     }
 
-    if (guild->GetAllianceID() != 0)
+    if(guild->GetAllianceID() != 0)
     {
         psserver->SendSystemError(clientnum,"Your guild is already member of an alliance.");
         return;
     }
 
-    if (msg.alliancename.Length()==0)
+    if(msg.alliancename.Length()==0)
     {
         psserver->SendSystemError(clientnum,"Please specify name of the alliance.");
         return;
     }
 
-    if (psserver->GetCacheManager()->CreateAlliance(msg.alliancename, guild, client))
+    if(psserver->GetCacheManager()->CreateAlliance(msg.alliancename, guild, client))
         psserver->SendSystemInfo(clientnum, "Alliance \"%s\" was created.", msg.alliancename.GetData());
     else
         psserver->SendSystemInfo(clientnum, "Alliance creation failed: %s", psGuildAlliance::lastError.GetData());
 
 
-    psGuildAlliance * alliance = psserver->GetCacheManager()->FindAlliance(guild->GetAllianceID());
-    if (alliance != NULL)
+    psGuildAlliance* alliance = psserver->GetCacheManager()->FindAlliance(guild->GetAllianceID());
+    if(alliance != NULL)
     {
         SendAllianceNotifications(alliance);
 
@@ -2534,18 +2534,18 @@ void GuildManager::NewAlliance(psGuildCmdMessage &msg, Client *client)
     }
 }
 
-void GuildManager::AllianceInvite(psGuildCmdMessage &msg, Client *client)
+void GuildManager::AllianceInvite(psGuildCmdMessage &msg, Client* client)
 {
-    psGuildInfo * guild;
-    psGuildAlliance * alliance;
+    psGuildInfo* guild;
+    psGuildAlliance* alliance;
     csString inviteeName;
 
     int clientnum = client->GetClientNum();
 
-    if ( ! CheckAllianceOperation(client, true, guild, alliance))
+    if(! CheckAllianceOperation(client, true, guild, alliance))
         return;
 
-    if (msg.player.Length()==0)
+    if(msg.player.Length()==0)
     {
         psserver->SendSystemError(clientnum,"Please specify name of guild leader to be invited.");
         return;
@@ -2553,39 +2553,39 @@ void GuildManager::AllianceInvite(psGuildCmdMessage &msg, Client *client)
 
     inviteeName = NormalizeCharacterName(msg.player);
 
-    Client * inviteeClient = clients->Find(inviteeName);
-    if (inviteeClient == NULL)
+    Client* inviteeClient = clients->Find(inviteeName);
+    if(inviteeClient == NULL)
     {
         psserver->SendSystemError(clientnum,"\"%s\" is not online right now.", inviteeName.GetData());
         return;
     }
 
-    if (inviteeClient == client)
+    if(inviteeClient == client)
     {
         psserver->SendSystemError(clientnum,"You can't invite yourself.", inviteeName.GetData());
         return;
     }
 
-    psGuildInfo * inviteeGuild = GetClientGuild(inviteeClient);
-    if (inviteeGuild == NULL)
+    psGuildInfo* inviteeGuild = GetClientGuild(inviteeClient);
+    if(inviteeGuild == NULL)
     {
         psserver->SendSystemError(clientnum,"Player \"%s\" is not member of any guild.", inviteeName.GetData());
         return;
     }
 
-    if (alliance->CheckMembership(inviteeGuild))
+    if(alliance->CheckMembership(inviteeGuild))
     {
         psserver->SendSystemError(clientnum,"They are already members of your alliance.");
         return;
     }
 
-    if (inviteeGuild->GetAllianceID() != 0)
+    if(inviteeGuild->GetAllianceID() != 0)
     {
         psserver->SendSystemError(clientnum,"%s is already a member of an alliance.", inviteeName.GetData());
         return;
     }
 
-    if (GetClientLevel(inviteeClient) != MAX_GUILD_LEVEL)
+    if(GetClientLevel(inviteeClient) != MAX_GUILD_LEVEL)
     {
         psserver->SendSystemError(clientnum,"Player \"%s\" is not guild leader.", inviteeName.GetData());
         return;
@@ -2593,29 +2593,29 @@ void GuildManager::AllianceInvite(psGuildCmdMessage &msg, Client *client)
 
 
     csString invitation;
-    invitation.Format("You have been invited to join the %s alliance.  Click Accept to join this alliance.",alliance->GetName().GetData() );
-    PendingAllianceInvite *pnew = new PendingAllianceInvite(client, inviteeClient, invitation, alliance->GetID());
+    invitation.Format("You have been invited to join the %s alliance.  Click Accept to join this alliance.",alliance->GetName().GetData());
+    PendingAllianceInvite* pnew = new PendingAllianceInvite(client, inviteeClient, invitation, alliance->GetID());
     psserver->questionmanager->SendQuestion(pnew);
 }
 
-void GuildManager::AllianceRemove(psGuildCmdMessage &msg, Client *client)
+void GuildManager::AllianceRemove(psGuildCmdMessage &msg, Client* client)
 {
-    psGuildInfo * guild;
-    psGuildAlliance * alliance;
+    psGuildInfo* guild;
+    psGuildAlliance* alliance;
 
     int clientnum = client->GetClientNum();
 
-    if ( ! CheckAllianceOperation(client, false, guild, alliance))
+    if(! CheckAllianceOperation(client, false, guild, alliance))
         return;
 
-    if (msg.guildname.Length()==0)
+    if(msg.guildname.Length()==0)
     {
         psserver->SendSystemError(clientnum,"Please specify name of the guild to be removed from alliance.");
         return;
     }
 
-    psGuildInfo * removedGuild = psserver->GetCacheManager()->FindGuild(msg.guildname);
-    if (removedGuild == NULL)
+    psGuildInfo* removedGuild = psserver->GetCacheManager()->FindGuild(msg.guildname);
+    if(removedGuild == NULL)
     {
         psserver->SendSystemError(clientnum,"No such guild exists.");
         return;
@@ -2624,37 +2624,37 @@ void GuildManager::AllianceRemove(psGuildCmdMessage &msg, Client *client)
     RemoveMemberFromAlliance(client, guild, alliance, removedGuild);
 }
 
-void GuildManager::AllianceLeave(psGuildCmdMessage &msg, Client *client)
+void GuildManager::AllianceLeave(psGuildCmdMessage &msg, Client* client)
 {
-    psGuildInfo * guild;
-    psGuildAlliance * alliance;
+    psGuildInfo* guild;
+    psGuildAlliance* alliance;
 
-    if ( ! CheckAllianceOperation(client, false, guild, alliance))
+    if(! CheckAllianceOperation(client, false, guild, alliance))
         return;
 
     RemoveMemberFromAlliance(client, guild, alliance, guild);
 }
 
-void GuildManager::RemoveMemberFromAlliance(Client * client, psGuildInfo * guild, psGuildAlliance * alliance,
-                                            psGuildInfo * removedGuild)
+void GuildManager::RemoveMemberFromAlliance(Client* client, psGuildInfo* guild, psGuildAlliance* alliance,
+        psGuildInfo* removedGuild)
 {
     int clientnum = client->GetClientNum();
 
-    if (removedGuild == alliance->GetLeader())
+    if(removedGuild == alliance->GetLeader())
     {
         psserver->SendSystemError(clientnum,"Alliance leader cannot leave. Choose another leader first.");
         return;
     }
 
     // if one guild removes another one (and not just itself), it must be alliance leader
-    if (guild != removedGuild)
-        if (alliance->GetLeader() != guild)
+    if(guild != removedGuild)
+        if(alliance->GetLeader() != guild)
         {
             psserver->SendSystemError(clientnum,"Your guild must be alliance leader to be able to remove other guilds.");
             return;
         }
 
-    if (alliance->RemoveMember(removedGuild))
+    if(alliance->RemoveMember(removedGuild))
         psserver->SendSystemInfo(clientnum,"Guild \"%s\" was removed from alliance.", removedGuild->GetName().GetData());
     else
     {
@@ -2664,7 +2664,7 @@ void GuildManager::RemoveMemberFromAlliance(Client * client, psGuildInfo * guild
 
     SendNoAllianceNotifications(removedGuild);
     SendAllianceNotifications(alliance);
-    
+
     if(client->GetActor())
     {
         csString text;
@@ -2672,45 +2672,45 @@ void GuildManager::RemoveMemberFromAlliance(Client * client, psGuildInfo * guild
         psChatMessage guildmsg(client->GetClientNum(),0,"System",0,text,CHAT_ALLIANCE, false);
         chatserver->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
     }
-    
+
 }
 
-void GuildManager::AllianceLeader(psGuildCmdMessage &msg, Client *client)
+void GuildManager::AllianceLeader(psGuildCmdMessage &msg, Client* client)
 {
-    psGuildInfo * guild;
-    psGuildAlliance * alliance;
+    psGuildInfo* guild;
+    psGuildAlliance* alliance;
 
     int clientnum = client->GetClientNum();
 
-    if ( ! CheckAllianceOperation(client, true, guild, alliance))
+    if(! CheckAllianceOperation(client, true, guild, alliance))
         return;
 
-    if (msg.guildname.Length()==0)
+    if(msg.guildname.Length()==0)
     {
         psserver->SendSystemError(clientnum,"Please specify name of the guild to be new alliance leader.");
         return;
     }
 
-    psGuildInfo * newLeader = psserver->GetCacheManager()->FindGuild(msg.guildname);
-    if (newLeader == NULL)
+    psGuildInfo* newLeader = psserver->GetCacheManager()->FindGuild(msg.guildname);
+    if(newLeader == NULL)
     {
         psserver->SendSystemError(clientnum,"No such guild exists.");
         return;
     }
 
-    if (guild == newLeader)
+    if(guild == newLeader)
     {
         psserver->SendSystemError(clientnum,"You must specify other guild than your own.");
         return;
     }
 
-    if ( ! alliance->CheckMembership(newLeader))
+    if(! alliance->CheckMembership(newLeader))
     {
         psserver->SendSystemError(clientnum,"This guild is not member of your alliance !");
         return;
     }
 
-    if (alliance->SetLeader(newLeader))
+    if(alliance->SetLeader(newLeader))
         psserver->SendSystemInfo(clientnum,"Alliance leadership was transfered to %s.", newLeader->GetName().GetData());
     else
     {
@@ -2719,40 +2719,40 @@ void GuildManager::AllianceLeader(psGuildCmdMessage &msg, Client *client)
     }
 
     SendAllianceNotifications(alliance);
-    
+
     if(client->GetActor())
     {
         csString text;
         text.Format("The alliance leader is now %s!", newLeader->GetName().GetDataSafe());
         psChatMessage guildmsg(client->GetClientNum(),0,"System",0,text,CHAT_ALLIANCE, false);
         chatserver->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
-    } 
+    }
 }
 
-void GuildManager::EndAlliance(psGuildCmdMessage &msg, Client *client)
+void GuildManager::EndAlliance(psGuildCmdMessage &msg, Client* client)
 {
-    psGuildInfo * guild;
-    psGuildAlliance * alliance;
+    psGuildInfo* guild;
+    psGuildAlliance* alliance;
 
     int clientnum = client->GetClientNum();
 
-    if ( ! CheckAllianceOperation(client, true, guild, alliance))
+    if(! CheckAllianceOperation(client, true, guild, alliance))
         return;
 
-    
+
     if(client->GetActor())
     {
         csString text = "The alliance is being disbanded!";
         psChatMessage guildmsg(clientnum,0,"System",0,text,CHAT_ALLIANCE, false);
         chatserver->SendAlliance(client->GetName(), client->GetActor()->GetEID(), alliance, guildmsg);
-    } 
+    }
     EndAlliance(alliance, clientnum);
 }
 
-void GuildManager::EndAlliance(psGuildAlliance *alliance, int clientNum)
+void GuildManager::EndAlliance(psGuildAlliance* alliance, int clientNum)
 {
     SendNoAllianceNotifications(alliance);
-    if (psserver->GetCacheManager()->RemoveAlliance(alliance))
+    if(psserver->GetCacheManager()->RemoveAlliance(alliance))
         psserver->SendSystemInfo(clientNum,"Alliance was disbanded.");
     else
         psserver->SendSystemInfo(clientNum,"Failed to disband alliance: %s.", psGuildAlliance::lastError.GetData());
@@ -2761,23 +2761,23 @@ void GuildManager::EndAlliance(psGuildAlliance *alliance, int clientNum)
 
 bool GuildManager::FilterGuildName(const char* name)
 {
-    if (name == NULL)
+    if(name == NULL)
         return false;
 
     size_t len = strlen(name);
 
-    if ( (strspn(name,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ")
-                != len) )
+    if((strspn(name,"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ")
+            != len))
         return false;
 
-    if ((strspn(((const char*)name)+1,
-                     (const char*)"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ") != len - 1))
+    if((strspn(((const char*)name)+1,
+               (const char*)"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ") != len - 1))
         return false;
 
     return true;
 }
 
-void GuildManager::SendGuildPoints(psGuildCmdMessage& msg,Client *client)
+void GuildManager::SendGuildPoints(psGuildCmdMessage &msg,Client* client)
 {
     psGuildInfo* guild = NULL;
 

@@ -59,7 +59,7 @@ struct CachedData
     csString alternate;
     csRef<iDataBuffer> data;
 
-    CachedData(iDataBuffer *buffer, const char *n, const char *alt)
+    CachedData(iDataBuffer* buffer, const char* n, const char* alt)
     {
         data = buffer;
         key = n;
@@ -74,47 +74,47 @@ public:
     ChatManager();
     virtual ~ChatManager();
 
-    void HandleChatMessage (MsgEntry *me, Client *client);
-    void HandleCacheMessage(MsgEntry *me, Client *client);
-    void HandleChannelJoinMessage(MsgEntry *me, Client *client);
-    void HandleChannelLeaveMessage(MsgEntry *me, Client *client);
+    void HandleChatMessage(MsgEntry* me, Client* client);
+    void HandleCacheMessage(MsgEntry* me, Client* client);
+    void HandleChannelJoinMessage(MsgEntry* me, Client* client);
+    void HandleChannelLeaveMessage(MsgEntry* me, Client* client);
 
-    void SendNotice(psChatMessage& msg);
-    void SendServerChannelMessage(psChatMessage& msg, uint32_t channelID);
+    void SendNotice(psChatMessage &msg);
+    void SendServerChannelMessage(psChatMessage &msg, uint32_t channelID);
 
-    NpcResponse *CheckNPCEvent(Client *client,csString& trigger,gemNPC * &target);
+    NpcResponse* CheckNPCEvent(Client* client,csString &trigger,gemNPC* &target);
 
-    void RemoveAllChannels(Client *client);
+    void RemoveAllChannels(Client* client);
 
-    void SendGuild(const csString & sender, EID senderEID, psGuildInfo * guild, psChatMessage& msg);
+    void SendGuild(const csString &sender, EID senderEID, psGuildInfo* guild, psChatMessage &msg);
     ///actually sends the message to all connected members of the alliance
-    void SendAlliance(const csString & sender, EID senderEID, psGuildAlliance * alliance, psChatMessage& msg);
+    void SendAlliance(const csString &sender, EID senderEID, psGuildAlliance* alliance, psChatMessage &msg);
 
     /// Starts the process of sending the specified list of files to the client
-    void SendMultipleAudioFileHashes(Client *client, const char *voiceFile);
-    
+    void SendMultipleAudioFileHashes(Client* client, const char* voiceFile);
+
     csString channelsToString();
 
 protected:
     csPDelArray<CachedData> audioFileCache;
 
-    void SendTell(psChatMessage& msg, const char* who, Client *client, Client *target);
-    void SendSay(uint32_t clientNum, gemActor* actor, psChatMessage& msg, const char* who);
-    void SendGuild(Client * client, psChatMessage& msg);
+    void SendTell(psChatMessage &msg, const char* who, Client* client, Client* target);
+    void SendSay(uint32_t clientNum, gemActor* actor, psChatMessage &msg, const char* who);
+    void SendGuild(Client* client, psChatMessage &msg);
     ///gets the message from a client to dispatch to the alliance chat
-    void SendAlliance(Client * client, psChatMessage& msg);
-    void SendGroup(Client * client, psChatMessage& msg);
-    void SendShout(Client * client, psChatMessage& msg);
+    void SendAlliance(Client* client, psChatMessage &msg);
+    void SendGroup(Client* client, psChatMessage &msg);
+    void SendShout(Client* client, psChatMessage &msg);
 
-    NpcResponse *CheckNPCResponse(psChatMessage& msg,Client *client,gemNPC * &target);
+    NpcResponse* CheckNPCResponse(psChatMessage &msg,Client* client,gemNPC* &target);
 
     /// Starts the process of sending the specified file to the client
-    void SendAudioFileHash(Client *client, const char *voiceFile, csTicks delay);
+    void SendAudioFileHash(Client* client, const char* voiceFile, csTicks delay);
     /// Sends the actual file to the client if needed
-    void SendAudioFile(Client *client, const char *voiceFile);
+    void SendAudioFile(Client* client, const char* voiceFile);
 
     /// If this returns true, all went well.  If it returns false, the client was muted
-    bool FloodControl(csString& newMessage, Client *client);
+    bool FloodControl(csString &newMessage, Client* client);
 
     // Chat channel state
     // uint32_t here to allow hashing

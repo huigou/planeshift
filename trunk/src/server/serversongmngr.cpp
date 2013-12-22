@@ -1,7 +1,7 @@
 /*
  * serversongmngr.cpp, Author: Andrea Rizzi <88whacko@gmail.com>
  *
- * Copyright (C) 2001-2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -66,8 +66,8 @@ bool psEndSongEvent::CheckTrigger()
     // if the starting time is not the same it means that the player
     // stopped the song and now he's playing another one
     if(valid
-        && charActor->GetMode() == PSCHARACTER_MODE_PLAY
-        && charActor->GetCharacterData()->GetSongStartTime() == startingTime)
+            && charActor->GetMode() == PSCHARACTER_MODE_PLAY
+            && charActor->GetCharacterData()->GetSongStartTime() == startingTime)
     {
         return true;;
     }
@@ -129,7 +129,7 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
 
     if(musicMsg.valid && musicMsg.play)
     {
-        psItem *item = client->GetCharacterData()->Inventory().FindItemID(musicMsg.itemID);
+        psItem* item = client->GetCharacterData()->Inventory().FindItemID(musicMsg.itemID);
 
         // playing
         if(item != 0)
@@ -179,7 +179,7 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
             actorEID = charActor->GetEID().Unbox();
 
             // calculating song parameters
-            
+
             if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongPar, "Calculate Song Parameters"))
             {
                 canPlay = 0; // the song won't be played
@@ -249,7 +249,7 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
                 // mathscript Calculate Song Parameters but we still have to notify
                 // the client about the error in order to fix the GUI
                 psStopSongMessage sendedStopMsg(client->GetClientNum(), actorEID, true,
-                    psStopSongMessage::NO_SONG_ERROR);
+                                                psStopSongMessage::NO_SONG_ERROR);
                 sendedStopMsg.SendMessage();
             }
         }

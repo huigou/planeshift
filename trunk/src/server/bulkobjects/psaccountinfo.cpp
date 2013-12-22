@@ -1,7 +1,7 @@
 /*
  * psaccountinfo.cpp
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -43,20 +43,20 @@ psAccountInfo::~psAccountInfo()
 {
 }
 
-bool psAccountInfo::Load(iResultRow& row)
+bool psAccountInfo::Load(iResultRow &row)
 {
     accountid = row.GetUInt32("id");
     username  = row["username"];
     password  = row["password"];
     password256  = row["password256"];
-    
+
     createddate = row["created_date"];
     lastlogintime = row["last_login"];
     lastloginip = row["last_login_ip"];
     os = row["operating_system"];
     gfxcard = row["graphics_card"];
     gfxversion = row["graphics_version"];
-    
+
     spamPoints    = row.GetInt("spam_points");
     advisorPoints = row.GetInt("advisor_points");
 

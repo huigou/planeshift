@@ -48,7 +48,7 @@ struct TransactionEntity : public csRefCount
 {
     PID from;
     PID to;
-    
+
     csString fromName;
     csString toName;
     csString itemName;
@@ -60,7 +60,7 @@ struct TransactionEntity : public csRefCount
 
     bool moneyIn;
     int stamp;
-    
+
     TransactionEntity(): from(0), to(0), fromName("NA"), toName("NA"), itemName("NA"), item(0) { };
 };
 
@@ -77,11 +77,11 @@ public:
     EconomyManager();
     ~EconomyManager();
 
-    void HandleBuyMessage(MsgEntry *me,Client *client);
-    void HandleSellMessage(MsgEntry *me,Client *client);
-    void HandlePickupMessage(MsgEntry *me,Client *client);
-    void HandleDropMessage(MsgEntry *me,Client *client);
-    void HandleLootMessage(MsgEntry *me,Client *client);
+    void HandleBuyMessage(MsgEntry* me,Client* client);
+    void HandleSellMessage(MsgEntry* me,Client* client);
+    void HandlePickupMessage(MsgEntry* me,Client* client);
+    void HandleDropMessage(MsgEntry* me,Client* client);
+    void HandleLootMessage(MsgEntry* me,Client* client);
 
     void AddTransaction(TransactionEntity* trans, bool sell, const char* type);
 
@@ -91,7 +91,7 @@ public:
     void ScheduleDrop(csTicks ticks,bool loop);
 
     ItemSupplyDemandInfo* GetItemSupplyDemandInfo(unsigned int itemId);
-    
+
     struct Economy
     {
         // Money flowing in to the economy
@@ -101,10 +101,10 @@ public:
         // Money flowing out of the economy
         unsigned int buyingValue;
         unsigned int droppedValue;
-        
+
         Economy() : lootValue(0), sellingValue(0), pickupsValue(0), buyingValue(0), droppedValue(0) { };
     };
-    
+
     Economy economy;
 
 protected:
@@ -121,7 +121,7 @@ public:
 protected:
     EconomyManager* economy;
     csTicks eachTimeTicks;
-    bool loop;    
+    bool loop;
 };
 
 #endif

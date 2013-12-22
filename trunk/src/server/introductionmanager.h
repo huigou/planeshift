@@ -1,7 +1,7 @@
 /*
  * introductionmanager.h
  *
- * Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2007 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ public:
     ~IntroductionManager();
 
 protected:
-    void HandleIntroduction(MsgEntry *pMsg,Client *client);
+    void HandleIntroduction(MsgEntry* pMsg,Client* client);
 };
 
 #endif

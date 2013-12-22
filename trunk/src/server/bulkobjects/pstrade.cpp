@@ -55,7 +55,7 @@ psTradeCombinations::~psTradeCombinations()
 {
 }
 
-bool psTradeCombinations::Load(iResultRow& row)
+bool psTradeCombinations::Load(iResultRow &row)
 {
     id          = row.GetUInt32("id");
     patternId   = row.GetUInt32("pattern_id");
@@ -81,7 +81,7 @@ psTradeTransformations::psTradeTransformations()
     itemQty         = 0;
     penaltyPct      = 0.0;
     transPoints     = NULL;
-    transCached     = true;    
+    transCached     = true;
 }
 
 // Non-cache constructor
@@ -96,7 +96,7 @@ psTradeTransformations::psTradeTransformations(uint32 rId, int rQty, uint32 iId,
     itemQty         = iQty;
     penaltyPct      = 0.0;
     transPoints     = MathExpression::Create(tPoints);
-    transCached     = false;    
+    transCached     = false;
 }
 
 psTradeTransformations::~psTradeTransformations()
@@ -107,7 +107,7 @@ psTradeTransformations::~psTradeTransformations()
     }
 }
 
-bool psTradeTransformations::Load(iResultRow& row)
+bool psTradeTransformations::Load(iResultRow &row)
 {
     if(transPoints) delete transPoints;
 
@@ -123,7 +123,7 @@ bool psTradeTransformations::Load(iResultRow& row)
     return true;
 }
 
-double psTradeTransformations::GetProperty(MathEnvironment* env, const char *ptr)
+double psTradeTransformations::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
     if(property == "ItemQualityPenaltyPercent")
@@ -151,7 +151,7 @@ double psTradeTransformations::GetProperty(MathEnvironment* env, const char *ptr
     return 0;
 }
 
-double psTradeTransformations::CalcFunction(MathEnvironment* env, const char * functionName, const double * params)
+double psTradeTransformations::CalcFunction(MathEnvironment* env, const char* functionName, const double* params)
 {
     CPrintf(CON_ERROR, "psTradeTransformations::CalcFunction(%s) failed\n", functionName);
     return 0;
@@ -161,7 +161,7 @@ const char* psTradeTransformations::ToString()
 {
     return "transformation";
 }
-    
+
 
 ///////////////////////////////////////////////////////////////////////
 // Processes
@@ -172,7 +172,7 @@ psTradeProcesses::psTradeProcesses()
     name           .Clear();
     animation      .Clear();
     workItemId      = 0;
-    equipmentId     = 0;    
+    equipmentId     = 0;
     constraints    .Clear();
     garbageId       = 0;
     garbageQty      = 0;
@@ -208,51 +208,51 @@ double psTradeProcesses::CalcFunction(MathEnvironment* env, const char* function
 double psTradeProcesses::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
-    if (property == "PrimarySkillId")
+    if(property == "PrimarySkillId")
     {
         return GetPrimarySkillId();
     }
-    else if (property == "MaxPrimarySkill")
+    else if(property == "MaxPrimarySkill")
     {
         return GetMaxPrimarySkill();
     }
-    else if (property == "MinPrimarySkill")
+    else if(property == "MinPrimarySkill")
     {
         return GetMinPrimarySkill();
     }
-    else if (property == "PrimarySkillQualityFactor")
+    else if(property == "PrimarySkillQualityFactor")
     {
         return GetPrimaryQualFactor();
     }
-    else if (property == "PrimarySkillPracticePoints")
+    else if(property == "PrimarySkillPracticePoints")
     {
         return GetPrimaryPracticePts();
     }
-    else if (property == "SecondarySkillId")
+    else if(property == "SecondarySkillId")
     {
         return GetSecondarySkillId();
     }
-    else if (property == "MaxSecondarySkill")
+    else if(property == "MaxSecondarySkill")
     {
         return GetMaxSecondarySkill();
     }
-    else if (property == "MinSecondarySkill")
+    else if(property == "MinSecondarySkill")
     {
         return GetMinSecondarySkill();
     }
-    else if (property == "SecondarySkillQualityFactor")
+    else if(property == "SecondarySkillQualityFactor")
     {
         return GetSecondaryQualFactor();
     }
-    else if (property == "SecondarySkillPracticePoints")
+    else if(property == "SecondarySkillPracticePoints")
     {
         return GetSecondaryPracticePts();
     }
-    else if (property == "WorkItemId")
+    else if(property == "WorkItemId")
     {
         return GetWorkItemId();
     }
-    else if (property == "EquipmentId")
+    else if(property == "EquipmentId")
     {
         return GetEquipementId();
     }
@@ -262,7 +262,7 @@ double psTradeProcesses::GetProperty(MathEnvironment* env, const char* ptr)
 }
 
 
-bool psTradeProcesses::Load(iResultRow& row)
+bool psTradeProcesses::Load(iResultRow &row)
 {
     processId       = row.GetUInt32("process_id");
     subprocess      = row.GetInt("subprocess_number");
@@ -303,7 +303,7 @@ psTradePatterns::~psTradePatterns()
 {
 }
 
-bool psTradePatterns::Load(iResultRow& row)
+bool psTradePatterns::Load(iResultRow &row)
 {
     id              = row.GetUInt32("id");
     patternName     = row["pattern_name"];

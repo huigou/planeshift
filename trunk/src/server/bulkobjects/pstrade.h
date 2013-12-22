@@ -48,21 +48,42 @@ class psTradeCombinations;
  */
 class psTradeCombinations
 {
- public:
+public:
     psTradeCombinations();
     ~psTradeCombinations();
 
-    bool Load(iResultRow& row);
+    bool Load(iResultRow &row);
 
-    uint32 GetId() const { return id; }
-    uint32 GetPatternId() const { return patternId; }
-    uint32 GetResultId() const { return resultId; }
-    int GetResultQty() const { return resultQty; }
-    uint32 GetItemId() const { return itemId; }
-    int GetMinQty() const { return minQty; }
-    int GetMaxQty() const { return maxQty; }
+    uint32 GetId() const
+    {
+        return id;
+    }
+    uint32 GetPatternId() const
+    {
+        return patternId;
+    }
+    uint32 GetResultId() const
+    {
+        return resultId;
+    }
+    int GetResultQty() const
+    {
+        return resultQty;
+    }
+    uint32 GetItemId() const
+    {
+        return itemId;
+    }
+    int GetMinQty() const
+    {
+        return minQty;
+    }
+    int GetMaxQty() const
+    {
+        return maxQty;
+    }
 
- protected:
+protected:
     uint32 id;
     uint32 patternId;
     uint32 resultId;
@@ -78,29 +99,63 @@ class psTradeCombinations
  */
 class psTradeTransformations : public iScriptableVar
 {
- public:
+public:
     psTradeTransformations();
     psTradeTransformations(uint32 rId, int rQty, uint32 iId, int iQty, char* tPoints);
     ~psTradeTransformations();
 
-    bool Load(iResultRow& row);
+    bool Load(iResultRow &row);
 
-    uint32 GetId() const { return id; }
-    uint32 GetPatternId() const { return patternId; }
-    uint32 GetProcessId() const { return processId; }
-    uint32 GetResultId() const { return resultId; }
+    uint32 GetId() const
+    {
+        return id;
+    }
+    uint32 GetPatternId() const
+    {
+        return patternId;
+    }
+    uint32 GetProcessId() const
+    {
+        return processId;
+    }
+    uint32 GetResultId() const
+    {
+        return resultId;
+    }
 
-    int GetResultQty() const { return resultQty; }
+    int GetResultQty() const
+    {
+        return resultQty;
+    }
 
-    uint32 GetItemId() const { return itemId; }
-    void SetItemId(uint32 newItemId) { itemId = newItemId; }
+    uint32 GetItemId() const
+    {
+        return itemId;
+    }
+    void SetItemId(uint32 newItemId)
+    {
+        itemId = newItemId;
+    }
 
-    int GetItemQty() const { return itemQty; }
-    void SetItemQty(int newItemQty) { itemQty = newItemQty; }
+    int GetItemQty() const
+    {
+        return itemQty;
+    }
+    void SetItemQty(int newItemQty)
+    {
+        itemQty = newItemQty;
+    }
 
-    float GetItemQualityPenaltyPercent() const { return penaltyPct; }
+    float GetItemQualityPenaltyPercent() const
+    {
+        return penaltyPct;
+    }
 
-    int GetTransPoints() const { MathEnvironment env; return transPoints->Evaluate(&env); }
+    int GetTransPoints() const
+    {
+        MathEnvironment env;
+        return transPoints->Evaluate(&env);
+    }
 
     /**
      * Cache flag is used for garbage collection.
@@ -108,17 +163,20 @@ class psTradeTransformations : public iScriptableVar
      * If true transformation is cached and should not be deleted after use
      * otherwise it needs to be cleaned up
      */
-    int GetTransformationCacheFlag() { return transCached; }
+    int GetTransformationCacheFlag()
+    {
+        return transCached;
+    }
 
     /** @name iScriptableVar implementation
-     * Functions that implement the iScriptableVar interface. 
+     * Functions that implement the iScriptableVar interface.
      */
     ///@{
 
     /**
      * Returns the name of the current transform.
      *
-     * @note Needed for iScriptableVar. 
+     * @note Needed for iScriptableVar.
      * @return just "transform".
      */
     const char* ToString();
@@ -142,7 +200,7 @@ class psTradeTransformations : public iScriptableVar
     double GetProperty(MathEnvironment* env, const char* ptr);
     ///@}
 
- protected:
+protected:
     uint32 id;
     uint32 patternId;
     uint32 processId;
@@ -170,32 +228,92 @@ private:
  */
 class psTradeProcesses : public iScriptableVar
 {
- public:
+public:
     psTradeProcesses();
     ~psTradeProcesses();
 
-    bool Load(iResultRow& row);
+    bool Load(iResultRow &row);
 
-    uint32 GetProcessId() const { return processId; }
+    uint32 GetProcessId() const
+    {
+        return processId;
+    }
 
-    csString GetName() const { return name; }
-    csString GetAnimation() const { return animation; }
-    uint32 GetWorkItemId() const { return workItemId; }
-    uint32 GetEquipementId() const { return equipmentId; }
-    const char* GetConstraintString() const { return constraints; }
-    uint32 GetGarbageId() const { return garbageId; }
-    int GetGarbageQty() const { return garbageQty; }
-    int GetPrimarySkillId() const { return priSkillId; }
-    int GetSubprocessId() const { return subprocess; }
-    unsigned int GetMinPrimarySkill() const { return minPriSkill; }
-    unsigned int GetMaxPrimarySkill() const { return maxPriSkill; }
-    int GetPrimaryPracticePts() const { return priPracticePts; }    int GetPrimaryQualFactor() const { return priQualFactor; }
-    int GetSecondarySkillId() const { return secSkillId; }
-    unsigned int GetMinSecondarySkill() const { return minSecSkill; }
-    unsigned int GetMaxSecondarySkill() const { return maxSecSkill; }
-    int GetSecondaryPracticePts() const { return secPracticePts; }
-    int GetSecondaryQualFactor() const { return secQualFactor; }
-    csString& GetRenderEffect() { return renderEffect; }
+    csString GetName() const
+    {
+        return name;
+    }
+    csString GetAnimation() const
+    {
+        return animation;
+    }
+    uint32 GetWorkItemId() const
+    {
+        return workItemId;
+    }
+    uint32 GetEquipementId() const
+    {
+        return equipmentId;
+    }
+    const char* GetConstraintString() const
+    {
+        return constraints;
+    }
+    uint32 GetGarbageId() const
+    {
+        return garbageId;
+    }
+    int GetGarbageQty() const
+    {
+        return garbageQty;
+    }
+    int GetPrimarySkillId() const
+    {
+        return priSkillId;
+    }
+    int GetSubprocessId() const
+    {
+        return subprocess;
+    }
+    unsigned int GetMinPrimarySkill() const
+    {
+        return minPriSkill;
+    }
+    unsigned int GetMaxPrimarySkill() const
+    {
+        return maxPriSkill;
+    }
+    int GetPrimaryPracticePts() const
+    {
+        return priPracticePts;
+    }    int GetPrimaryQualFactor() const
+    {
+        return priQualFactor;
+    }
+    int GetSecondarySkillId() const
+    {
+        return secSkillId;
+    }
+    unsigned int GetMinSecondarySkill() const
+    {
+        return minSecSkill;
+    }
+    unsigned int GetMaxSecondarySkill() const
+    {
+        return maxSecSkill;
+    }
+    int GetSecondaryPracticePts() const
+    {
+        return secPracticePts;
+    }
+    int GetSecondaryQualFactor() const
+    {
+        return secQualFactor;
+    }
+    csString &GetRenderEffect()
+    {
+        return renderEffect;
+    }
 
     /**
      * Gets the script associated to this process.
@@ -204,7 +322,10 @@ class psTradeProcesses : public iScriptableVar
      *
      * @return A weak reference to the associated mathscript, if any.
      */
-    csWeakRef<MathScript> &GetScript() { return script; }
+    csWeakRef<MathScript> &GetScript()
+    {
+        return script;
+    }
 
     /**
      * Gets the name of the script associated to this process.
@@ -215,15 +336,18 @@ class psTradeProcesses : public iScriptableVar
      * @return A csString with the name of the script as taken from the
      *         database.
      */
-    csString GetScriptName() const { return scriptName; }
+    csString GetScriptName() const
+    {
+        return scriptName;
+    }
 
     /** @name iScriptableVar implementation
-     * Functions that implement the iScriptableVar interface. 
+     * Functions that implement the iScriptableVar interface.
      */
     ///@{
     /**
      * Returns the name of the current process.
-     *  @note Needed for iScriptableVar. 
+     *  @note Needed for iScriptableVar.
      *  @return the name of the process.
      */
     const char* ToString();
@@ -246,8 +370,8 @@ class psTradeProcesses : public iScriptableVar
      */
     double GetProperty(MathEnvironment* env, const char* ptr);
     ///@}
-    
- protected:
+
+protected:
     uint32 processId;
     int subprocess;
     csString name;
@@ -277,18 +401,33 @@ class psTradeProcesses : public iScriptableVar
  */
 class psTradePatterns
 {
- public:
+public:
     psTradePatterns();
     ~psTradePatterns();
-    bool Load(iResultRow& row);
+    bool Load(iResultRow &row);
 
-    uint32 GetId() const { return id; }
-    uint32 GetGroupPatternId() const { return groupPatternId; }
-    const char* GetPatternString() const { return patternName; }
-    uint32 GetDesignItemId() const { return designItemId; }
-    float GetKFactor() const { return KFactor; }
+    uint32 GetId() const
+    {
+        return id;
+    }
+    uint32 GetGroupPatternId() const
+    {
+        return groupPatternId;
+    }
+    const char* GetPatternString() const
+    {
+        return patternName;
+    }
+    uint32 GetDesignItemId() const
+    {
+        return designItemId;
+    }
+    float GetKFactor() const
+    {
+        return KFactor;
+    }
 
- protected:
+protected:
     uint32 id;
     uint32 groupPatternId;
     csString patternName;
@@ -303,8 +442,8 @@ class psTradePatterns
  */
 struct CombinationConstruction
 {
-    uint32 resultItem;     
-    int resultQuantity;                             
+    uint32 resultItem;
+    int resultQuantity;
     csPDelArray<psTradeCombinations> combinations;
 };
 

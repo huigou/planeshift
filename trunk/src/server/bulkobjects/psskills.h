@@ -1,7 +1,7 @@
 /*
  * psskills.h
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -41,7 +41,8 @@
 //typedef int PSSKILL;
 //#define PSSKILL_NONE -1
 
-enum PSSKILL {
+enum PSSKILL
+{
     PSSKILL_NONE            =   -1,
     PSSKILL_LIGHTARMOR      =   7,
     PSSKILL_MEDIUMARMOR     =   8,
@@ -74,7 +75,7 @@ public:
 //    void *operator new(size_t);
     ///  The delete operator is overriden to call PoolAllocator template functions
 //    void operator delete(void *);
-    
+
     PSSKILL id;
     csString name;
     csString description;
@@ -88,7 +89,7 @@ public:
 
 private:
     /// Static reference to the pool for all psSkillInfo objects
-//    static PoolAllocator<psSkillInfo> skillinfopool;    
+//    static PoolAllocator<psSkillInfo> skillinfopool;
 
 };
 

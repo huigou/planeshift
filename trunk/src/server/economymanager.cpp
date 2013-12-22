@@ -81,12 +81,12 @@ void EconomyManager::AddTransaction(TransactionEntity* trans, bool moneyIn, cons
 {
     if(!trans)
         return;
-    
+
     csString buf;
-    
+
     buf.Format("%s, %s, %s, %s, %u, %u", trans->fromName.GetDataSafe(), trans->toName.GetDataSafe(), type, trans->itemName.GetDataSafe(), trans->count, trans->price);
     psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
-    
+
     if(!trans->item)
         return;
 #ifdef ECONOMY_DEBUG
@@ -106,14 +106,14 @@ void EconomyManager::AddTransaction(TransactionEntity* trans, bool moneyIn, cons
 
     history.Push(trans);
 
-    if (!supplyDemandInfo.Contains(trans->item))
+    if(!supplyDemandInfo.Contains(trans->item))
     {
         csRef<ItemSupplyDemandInfo> newInfo;
         newInfo.AttachNew(new ItemSupplyDemandInfo);
         supplyDemandInfo.Put(trans->item, newInfo);
     }
 
-    if (moneyIn)
+    if(moneyIn)
     {
         (*supplyDemandInfo[trans->item])->sold+=trans->count;
     }
@@ -189,7 +189,7 @@ void EconomyManager::ClearTransactions()
 
 ItemSupplyDemandInfo* EconomyManager::GetItemSupplyDemandInfo(unsigned int itemId)
 {
-    if (!supplyDemandInfo.Contains(itemId))
+    if(!supplyDemandInfo.Contains(itemId))
     {
         csRef<ItemSupplyDemandInfo> newInfo;
         newInfo.AttachNew(new ItemSupplyDemandInfo);
@@ -199,7 +199,7 @@ ItemSupplyDemandInfo* EconomyManager::GetItemSupplyDemandInfo(unsigned int itemI
 }
 
 psEconomyDrop::psEconomyDrop(EconomyManager* manager,csTicks ticks, bool loop)
-            :psGameEvent(0,ticks,"psEconomyDrop")
+    :psGameEvent(0,ticks,"psEconomyDrop")
 {
     this->loop = loop;
     economy = manager;
@@ -219,10 +219,10 @@ void psEconomyDrop::Trigger()
     // Calculate the stat
     csString seperator;
     seperator.Format("Time: %d,Transactions recorded: %u",
-        (int)time(NULL),
-        economy->GetTotalTransactions()
-        );
-    psserver->GetLogCSV()->Write(CSV_ECONOMY, seperator );
+                     (int)time(NULL),
+                     economy->GetTotalTransactions()
+                    );
+    psserver->GetLogCSV()->Write(CSV_ECONOMY, seperator);
 #ifdef ECONOMY_DEBUG
     CPrintf(CON_DEBUG,seperator);
 #endif
@@ -230,14 +230,14 @@ void psEconomyDrop::Trigger()
     if(economy->GetTotalTransactions() > 0)
     {
         csArray<ItemCount> items;
-        for(unsigned int i = 0; i< economy->GetTotalTransactions();i++)
+        for(unsigned int i = 0; i< economy->GetTotalTransactions(); i++)
         {
             TransactionEntity* trans = economy->GetTransaction(i);
             if(trans)
             {
                 // Look if we already recorded the item once
                 bool found = false;
-                for(unsigned int z = 0; z < items.GetSize();z++)
+                for(unsigned int z = 0; z < items.GetSize(); z++)
                 {
                     if(items[z].item == trans->item && items[z].sold == trans->moneyIn)
                     {
@@ -264,53 +264,53 @@ void psEconomyDrop::Trigger()
                 // Dump it
                 csString str;
                 str.Format("%s,%d,%d,%d,%d,%d,%u,%d",
-                    trans->moneyIn?"moneyIn":"moneyOut",
-                    trans->count,
-                    trans->item,
-                    trans->quality,
-                    trans->from.Unbox(),
-                    trans->to.Unbox(),
-                    trans->price,
-                    (int)time(NULL) - trans->stamp);
+                           trans->moneyIn?"moneyIn":"moneyOut",
+                           trans->count,
+                           trans->item,
+                           trans->quality,
+                           trans->from.Unbox(),
+                           trans->to.Unbox(),
+                           trans->price,
+                           (int)time(NULL) - trans->stamp);
 
                 // Write
                 psserver->GetLogCSV()->Write(CSV_ECONOMY, str);
 
-    #ifdef ECONOMY_DEBUG
+#ifdef ECONOMY_DEBUG
                 CPrintf(CON_DEBUG,str);
-    #endif
+#endif
             }
         }
 
         unsigned int mosts = 0; // Sold
         unsigned int mostb = 0;  // Bought
         unsigned int mostv = 0; // Valuable
-        for(unsigned int z = 0; z < items.GetSize();z++)
+        for(unsigned int z = 0; z < items.GetSize(); z++)
         {
-            if (items[z].count > items[mosts].count && items[z].sold)
+            if(items[z].count > items[mosts].count && items[z].sold)
                 mosts = z;
 
-            if (items[z].count > items[mostb].count && !items[z].sold)
+            if(items[z].count > items[mostb].count && !items[z].sold)
                 mostb = z;
 
-            if (items[z].price > items[mostv].price)
+            if(items[z].price > items[mostv].price)
                 mostv = z;
         }
 
         // Write the ending stuff
         seperator.Format("Most valueable item: %d (%d), Most sold item: %d, Most bought item: %d",
-            items[mostv].item,
-            items[mostv].price,
-            items[mosts].item,
-            items[mostb].item
-            );
-        psserver->GetLogCSV()->Write(CSV_ECONOMY, seperator );
-    #ifdef ECONOMY_DEBUG
+                         items[mostv].item,
+                         items[mostv].price,
+                         items[mosts].item,
+                         items[mostb].item
+                        );
+        psserver->GetLogCSV()->Write(CSV_ECONOMY, seperator);
+#ifdef ECONOMY_DEBUG
         CPrintf(CON_DEBUG,seperator);
-    #endif
+#endif
         economy->ClearTransactions();
     }
-    
+
     if(loop)
         economy->ScheduleDrop(eachTimeTicks,true);
 }

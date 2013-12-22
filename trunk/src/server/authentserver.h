@@ -1,7 +1,7 @@
 /*
  * AuthentServer.h by Keith Fulton <keith@paqrat.com>
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -87,15 +87,15 @@ public:
      *     - MSGTYPE_DISCONNECT
      *     .
      * When either of these messages appear on the message queue, the corresponding
-     * function is called with the message as the argument. 
+     * function is called with the message as the argument.
      *
      * @param pCCS Reference to the client connection set.
      * @param usermgr Reference to the user manager.
      * @param gm Reference to the guild manager.
      */
-    AuthenticationServer(ClientConnectionSet *pCCS,
-                           UserManager *usermgr,
-                           GuildManager *gm);
+    AuthenticationServer(ClientConnectionSet* pCCS,
+                         UserManager* usermgr,
+                         GuildManager* gm);
 
     /**
      * Destructor.
@@ -118,7 +118,7 @@ public:
      * @param reason: A sting with the reason we are disconnecting the client.
      * @see psDisconnectMessage
      */
-    void SendDisconnect(Client* client,const char *reason);
+    void SendDisconnect(Client* client,const char* reason);
 
     /**
      * Util function to send string hash to client, because authentserver and
@@ -129,24 +129,27 @@ public:
     /**
      * Updates the status of the client. Currently is used to set client to ready.
      */
-    void HandleStatusUpdate(MsgEntry *me, Client *client);
+    void HandleStatusUpdate(MsgEntry* me, Client* client);
 
     /**
      * Get the Ban Manager that hold information regarding baned clients.
      */
-    BanManager* GetBanManager() { return &banmanager; }
+    BanManager* GetBanManager()
+    {
+        return &banmanager;
+    }
 
 
 protected:
 
     /// Holds a list of all the currently connect clients.
-    ClientConnectionSet *clients;
-    
+    ClientConnectionSet* clients;
+
     /// Is the user manager.
-    UserManager *usermanager;
-    
+    UserManager* usermanager;
+
     /// Is a manager for the guilds.
-    GuildManager *guildmanager;
+    GuildManager* guildmanager;
 
     /// Manages banned users and IP ranges
     BanManager banmanager;
@@ -155,7 +158,7 @@ protected:
      * Common preconditions for HandlePreAuthent and HandleAuthent
      */
     bool CheckAuthenticationPreCondition(int clientnum, bool netversionok, const char* sUser);
-    
+
     /**
      * Handles an authenticate message from the message queue.
      *
@@ -166,39 +169,39 @@ protected:
      *
      * @param me      Is a message entry that contains the authenticate message.
      * @param notused Not used.
-     * @see psAuthMessageApproved 
+     * @see psAuthMessageApproved
      */
-    void HandleAuthent(MsgEntry *me, Client *notused);
+    void HandleAuthent(MsgEntry* me, Client* notused);
 
     /**
      * Handles a request for messsage strings from a client.
      */
-    void HandleStringsRequest(MsgEntry* me, Client *notused);
+    void HandleStringsRequest(MsgEntry* me, Client* notused);
 
     /**
      * This just questsions a random number (clientnum) from server.
      *
      * It is used for authenticating
      */
-    void HandlePreAuthent(MsgEntry *me, Client *notused);
-    
+    void HandlePreAuthent(MsgEntry* me, Client* notused);
+
     /**
      * Handles a disconnect message from the message queue.
      *
      * This will remove the player from the server using
-     * psServer::RemovePlayer() 
+     * psServer::RemovePlayer()
      *
      * @param me Is the disconnect message that was recieved.
      * @param notused Not used.
      */
-    void HandleDisconnect(MsgEntry* me,Client *notused);
-    
+    void HandleDisconnect(MsgEntry* me,Client* notused);
+
     /**
      * Handles a message where a client picks his character to play with.
      *
      * Can remove the player using psServer::RemovePlayer if invalid.
      */
-    void HandleAuthCharacter(MsgEntry* me, Client *notused);    
+    void HandleAuthCharacter(MsgEntry* me, Client* notused);
 };
 
 #endif

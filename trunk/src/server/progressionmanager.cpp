@@ -78,11 +78,11 @@
 #include "introductionmanager.h"
 #include "adminmanager.h"
 
-ProgressionManager::ProgressionManager(ClientConnectionSet *ccs, CacheManager *cachemanager)
+ProgressionManager::ProgressionManager(ClientConnectionSet* ccs, CacheManager* cachemanager)
 {
     clients      = ccs;
     cacheManager = cachemanager;
-    
+
     if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_dynamic_experience, "Calculate Dynamic Experience"))
     {
         Error1("Could not find mathscript 'Calculate Dynamic Experience'");
@@ -103,11 +103,11 @@ bool ProgressionManager::Initialize()
 
     Result result_affinitycategories(db->Select("SELECT * from char_create_affinity"));
 
-    if ( result_affinitycategories.IsValid() )
+    if(result_affinitycategories.IsValid())
     {
-        for ( unsigned int x = 0; x < result_affinitycategories.Count(); x++ )
+        for(unsigned int x = 0; x < result_affinitycategories.Count(); x++)
         {
-            affinitycategories.Put( csString( result_affinitycategories[(unsigned long)x]["category"]).Downcase() , csString( result_affinitycategories[(unsigned long)x]["attribute"]).Downcase() );
+            affinitycategories.Put(csString(result_affinitycategories[(unsigned long)x]["category"]).Downcase() , csString(result_affinitycategories[(unsigned long)x]["attribute"]).Downcase());
         }
     }
 
@@ -115,12 +115,12 @@ bool ProgressionManager::Initialize()
 }
 
 
-void ProgressionManager::HandleZPointEvent(MsgEntry *me, Client *client)
+void ProgressionManager::HandleZPointEvent(MsgEntry* me, Client* client)
 {
     psZPointsGainedEvent evt(me);
 
     csString string;
-    string.Format("You've gained some practice points in %s.", evt.skillName.GetData() );
+    string.Format("You've gained some practice points in %s.", evt.skillName.GetData());
     psserver->SendSystemInfo(evt.actor->GetClientID(), string);
     if(evt.rankUp)
     {
@@ -128,23 +128,23 @@ void ProgressionManager::HandleZPointEvent(MsgEntry *me, Client *client)
         psserver->SendSystemResult(evt.actor->GetClientID(), string);
     }
 
-    SendSkillList(client, false, PSSKILL_NONE, client->GetCharacterData()->GetTrainer() != NULL );
+    SendSkillList(client, false, PSSKILL_NONE, client->GetCharacterData()->GetTrainer() != NULL);
 }
 
 
-void ProgressionManager::HandleDeathEvent(MsgEntry *me, Client *notused)
+void ProgressionManager::HandleDeathEvent(MsgEntry* me, Client* notused)
 {
     Debug1(LOG_COMBAT, me->clientnum,"Progression Manager handling Death Event\n");
     psDeathEvent evt(me);
 
     // Only award experience if the dead actor is a NPC and not a pet, or a GM with the givekillexp flag.
-    if (evt.killer && ((evt.deadActor->GetClientID()==0 && !evt.deadActor->GetCharacterData()->IsPet()) || evt.deadActor->givekillexp))
+    if(evt.killer && ((evt.deadActor->GetClientID()==0 && !evt.deadActor->GetCharacterData()->IsPet()) || evt.deadActor->givekillexp))
     {
         AllocateKillDamage(evt.deadActor, evt.deadActor->GetCharacterData()->GetKillExperience());
     }
 }
 
-void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
+void ProgressionManager::AllocateKillDamage(gemActor* deadActor, int exp)
 {
     csArray<gemActor*> attackers;
 
@@ -154,12 +154,12 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
 
     int i;
     // First build list of attackers and determine how far to go back and what total dmg was.
-    for (i = (int) deadActor->GetDamageHistoryCount(); i > 0; i--)
+    for(i = (int) deadActor->GetDamageHistoryCount(); i > 0; i--)
     {
         AttackerHistory* history = deadActor->GetDamageHistory(i-1);
 
         // 15 secs passed
-        if (lastTimestamp - history->TimeOfAttack() > 15000 && lastTimestamp != 0)
+        if(lastTimestamp - history->TimeOfAttack() > 15000 && lastTimestamp != 0)
         {
             Debug1(LOG_COMBAT, 0, "15 secs passed between hits, breaking loop\n");
             break;
@@ -171,13 +171,13 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
         bool found = false;
 
         gemActor* attacker = history->Attacker();
-        if (!attacker)
+        if(!attacker)
             continue;  // This attacker has disconnected since he did this damage.
 
         // Have we already added that player?
-        for (size_t j = 0; j < attackers.GetSize(); j++)
+        for(size_t j = 0; j < attackers.GetSize(); j++)
         {
-            if (attackers[j] == attacker)
+            if(attackers[j] == attacker)
             {
                 found = true;
                 break;
@@ -185,7 +185,7 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
         }
 
         // New player, add to list
-        if (!found)
+        if(!found)
         {
             attackers.Push(attacker);
         }
@@ -199,30 +199,30 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
         float dmgMade = 0;
         float mod = 0;
 
-        for (int j = (int) deadActor->GetDamageHistoryCount(); j > lastHistory; j--)
+        for(int j = (int) deadActor->GetDamageHistoryCount(); j > lastHistory; j--)
         {
             AttackerHistory* history = deadActor->GetDamageHistory(j-1);
-            if (history->Attacker() == attacker)
+            if(history->Attacker() == attacker)
             {
                 dmgMade += history->Damage();
             }
         }
 
-        if (!totalDamage)
+        if(!totalDamage)
         {
             Error2("%s was found to have zero totalDamage in damagehistory!", deadActor->GetName());
             continue;
         }
         // Use the latest HP (needs to be redesigned when NPCs can cast heal spells on eachoter)
         mod = dmgMade / totalDamage; // Get a 0.something value or 1 if we did all dmg
-        if (mod > 1.0)
+        if(mod > 1.0)
             mod = 1.0;
 
         int final = 0;
         if(exp <= 0) //use automatically generated experience if exp doesn't have a valid value
         {
             MathEnvironment env;
-            env.Define("Killer",    attacker); 	 
+            env.Define("Killer",    attacker);
             env.Define("DeadActor", deadActor);
             //check if the script is valid
             if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_dynamic_experience, "Calculate Dynamic Experience"))
@@ -245,23 +245,23 @@ void ProgressionManager::AllocateKillDamage(gemActor *deadActor, int exp)
     deadActor->ClearDamageHistory();
 }
 
-void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
+void ProgressionManager::HandleSkill(MsgEntry* me, Client* client)
 {
     psGUISkillMessage msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
     {
         Debug2(LOG_NET,me->clientnum,"Received unparsable psGUISkillMessage from client %u.\n",me->clientnum);
         return;
     }
 
     //    CPrintf(CON_DEBUG, "ProgressionManager::HandleSkill(%d,%s)\n",msg.command, (const char*)msg.commandData);
-    switch ( msg.command )
+    switch(msg.command)
     {
         case psGUISkillMessage::REQUEST:
         {
             // Clear the current skill cache
-            psCharacter * character = client->GetCharacterData();
-            if (character)
+            psCharacter* character = client->GetCharacterData();
+            if(character)
                 character->GetSkillCache()->clear();
 
             SendSkillList(client, true);
@@ -270,16 +270,16 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
         case psGUISkillMessage::SKILL_SELECTED:
         {
             csRef<iDocumentSystem> xml;
-	    xml.AttachNew(new csTinyDocumentSystem);
+            xml.AttachNew(new csTinyDocumentSystem);
 
-            CS_ASSERT( xml );
+            CS_ASSERT(xml);
 
             csRef<iDocument> invList  = xml->CreateDocument();
 
-            const char* error = invList->Parse( msg.commandData);
-            if ( error )
+            const char* error = invList->Parse(msg.commandData);
+            if(error)
             {
-                Error2("Error in XML: %s", error );
+                Error2("Error in XML: %s", error);
                 return;
             }
 
@@ -298,17 +298,17 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
 
             csString skillName = topNode->GetAttributeValue("NAME");
 
-            psSkillInfo * info = cacheManager->GetSkillByName(skillName);
-            Faction * faction = cacheManager->GetFactionByName(skillName);
+            psSkillInfo* info = cacheManager->GetSkillByName(skillName);
+            Faction* faction = cacheManager->GetFactionByName(skillName);
             csString buff;
             csString description;
             int cathegory;
-            if (info)
+            if(info)
             {
                 description = EscpXML(info->description).GetData();
                 cathegory = info->category;
             }
-            else if (faction)
+            else if(faction)
             {
                 description = faction->description;
                 cathegory = PSSKILLS_CATEGORY_FACTIONS;
@@ -329,29 +329,29 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
 
 
             psGUISkillMessage newmsg(client->GetClientNum(),
-                            psGUISkillMessage::DESCRIPTION,
-                            buff,
-                            NULL,
-                            (unsigned int)skillVal.Lookup("STR")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("END")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("AGI")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("INT")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("WIL")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("CHA")->GetRoundValue(),
-                            (unsigned int)(chr->GetHP()),
-                            (unsigned int)(chr->GetMana()),
-                            (unsigned int)(chr->GetStamina(true)),
-                            (unsigned int)(chr->GetStamina(false)),
-                            (unsigned int)(chr->GetMaxHP().Current()),
-                            (unsigned int)(chr->GetMaxMana().Current()),
-                            (unsigned int)(chr->GetMaxPStamina().Current()),
-                            (unsigned int)(chr->GetMaxMStamina().Current()),
-                            true,
-                            PSSKILL_NONE,
-                            -1,
-                            client->GetCharacterData()->GetTrainer() != NULL);
+                                     psGUISkillMessage::DESCRIPTION,
+                                     buff,
+                                     NULL,
+                                     (unsigned int)skillVal.Lookup("STR")->GetRoundValue(),
+                                     (unsigned int)skillVal.Lookup("END")->GetRoundValue(),
+                                     (unsigned int)skillVal.Lookup("AGI")->GetRoundValue(),
+                                     (unsigned int)skillVal.Lookup("INT")->GetRoundValue(),
+                                     (unsigned int)skillVal.Lookup("WIL")->GetRoundValue(),
+                                     (unsigned int)skillVal.Lookup("CHA")->GetRoundValue(),
+                                     (unsigned int)(chr->GetHP()),
+                                     (unsigned int)(chr->GetMana()),
+                                     (unsigned int)(chr->GetStamina(true)),
+                                     (unsigned int)(chr->GetStamina(false)),
+                                     (unsigned int)(chr->GetMaxHP().Current()),
+                                     (unsigned int)(chr->GetMaxMana().Current()),
+                                     (unsigned int)(chr->GetMaxPStamina().Current()),
+                                     (unsigned int)(chr->GetMaxMStamina().Current()),
+                                     true,
+                                     PSSKILL_NONE,
+                                     -1,
+                                     client->GetCharacterData()->GetTrainer() != NULL);
 
-            if (newmsg.valid)
+            if(newmsg.valid)
                 SendMessage(newmsg.msg);
             else
             {
@@ -363,16 +363,16 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
         {
             Debug1(LOG_SKILLXP, client->GetClientNum(),"---------------Buying Skill-------------\n");
             csRef<iDocumentSystem> xml;
-	    xml.AttachNew(new csTinyDocumentSystem);
+            xml.AttachNew(new csTinyDocumentSystem);
 
-            CS_ASSERT( xml );
+            CS_ASSERT(xml);
 
             csRef<iDocument> invList  = xml->CreateDocument();
 
-            const char* error = invList->Parse( msg.commandData);
-            if ( error )
+            const char* error = invList->Parse(msg.commandData);
+            if(error)
             {
-                Error2("Error in XML: %s", error );
+                Error2("Error in XML: %s", error);
                 return;
             }
 
@@ -392,19 +392,19 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
             csString skillName = topNode->GetAttributeValue("NAME");
             int skillAmount = topNode->GetAttributeValueAsInt("AMOUNT");
 
-            psSkillInfo * info = cacheManager->GetSkillByName(skillName);
+            psSkillInfo* info = cacheManager->GetSkillByName(skillName);
             Debug2(LOG_SKILLXP, client->GetClientNum(),"    Looking for: %s\n", (const char*)skillName);
 
-            if (!info)
+            if(!info)
             {
                 Error2("No skill with name %s found!",skillName.GetData());
-                Error2("Full Data Sent from Client was: %s\n", msg.commandData.GetData() );
+                Error2("Full Data Sent from Client was: %s\n", msg.commandData.GetData());
                 return;
             }
 
-            psCharacter * character = client->GetCharacterData();
+            psCharacter* character = client->GetCharacterData();
 
-            if (character->GetTrainer() == NULL)
+            if(character->GetTrainer() == NULL)
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "Can't buy skills when not training!");
@@ -412,10 +412,10 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
             }
 
             gemActor* actorTrainer = character->GetTrainer()->GetActor();
-            if ( actorTrainer )
+            if(actorTrainer)
             {
-                if ( (character->GetActor()->RangeTo(actorTrainer, false) > RANGE_TO_SELECT) ||
-                     (actorTrainer->GetVisibility() == false) )
+                if((character->GetActor()->RangeTo(actorTrainer, false) > RANGE_TO_SELECT) ||
+                        (actorTrainer->GetVisibility() == false))
                 {
                     psserver->SendSystemInfo(client->GetClientNum(),
                                              "Need to get a bit closer to understand the training.");
@@ -423,7 +423,7 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
                 }
             }
 
-            if (client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
+            if(client->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE)
             {
                 csString err;
                 err.Format("You can't train while %s.", client->GetActor()->GetModeStr());
@@ -431,10 +431,10 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
                 return;
             }
 
-            Debug2(LOG_SKILLXP, client->GetClientNum(),"    PP available: %u\n", character->GetProgressionPoints() );
+            Debug2(LOG_SKILLXP, client->GetClientNum(),"    PP available: %u\n", character->GetProgressionPoints());
 
             // Test for progression points
-            if ((int)character->GetProgressionPoints() < skillAmount)
+            if((int)character->GetProgressionPoints() < skillAmount)
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "You don't have enough progression points!");
@@ -443,13 +443,13 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
 
             // Test for money
 
-            if ((info->price * skillAmount) > character->Money())
+            if((info->price * skillAmount) > character->Money())
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "You don't have the money to buy this skill!");
                 return;
             }
-            if ( !character->CanTrain( info->id ) )
+            if(!character->CanTrain(info->id))
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "You cannot train this skill any higher yet!");
@@ -458,13 +458,13 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
 
             unsigned int current = character->Skills().GetSkillRank((PSSKILL) info->id).Base();
             float faction = actorTrainer->GetRelativeFaction(character->GetActor());
-            if ( !character->GetTrainer()->GetTrainerInfo()->TrainingInSkill((PSSKILL)info->id, current, faction))
+            if(!character->GetTrainer()->GetTrainerInfo()->TrainingInSkill((PSSKILL)info->id, current, faction))
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "You cannot train this skill currently.");
                 return;
             }
-            
+
             //crop skillamount to the real amount needed for training
             Skill &SelectedSkill = character->Skills().Get((PSSKILL) info->id);
             if(skillAmount > SelectedSkill.yCost-SelectedSkill.y)
@@ -488,61 +488,61 @@ void ProgressionManager::HandleSkill(MsgEntry *me, Client * client)
     }
 }
 
-void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL focus, bool isTraining )
+void ProgressionManager::SendSkillList(Client* client, bool forceOpen, PSSKILL focus, bool isTraining)
 {
-    psCharacter * character = client->GetCharacterData();
-    psCharacter * trainer = character->GetTrainer();
-    psTrainerInfo * trainerInfo = NULL;
+    psCharacter* character = client->GetCharacterData();
+    psCharacter* trainer = character->GetTrainer();
+    psTrainerInfo* trainerInfo = NULL;
     float faction = 0.0;
     int selectedSkillCat = -1; //This is used for storing the category of the selected skill
     int selectedSkillNameId = -1; // Name ID value of the selected skill
 
     // Get the current skill cache
-    psSkillCache *skills = character->GetSkillCache();
+    psSkillCache* skills = character->GetSkillCache();
 
     skills->setProgressionPoints(character->GetProgressionPoints());
 
-    if (trainer && trainer->GetActor())
+    if(trainer && trainer->GetActor())
     {
         trainerInfo = trainer->GetTrainerInfo();
         faction = trainer->GetActor()->GetRelativeFaction(character->GetActor());
     }
 
 
-    for (unsigned int skillID = 0; skillID < cacheManager->GetSkillAmount(); skillID++)
+    for(unsigned int skillID = 0; skillID < cacheManager->GetSkillAmount(); skillID++)
     {
-        psSkillInfo * info = cacheManager->GetSkillByID(skillID);
-        if (!info)
+        psSkillInfo* info = cacheManager->GetSkillByID(skillID);
+        if(!info)
         {
             Error2("Can't find skill %d",skillID);
             return;
         }
 
-        Skill & charSkill = character->Skills().Get((PSSKILL) skillID);
+        Skill &charSkill = character->Skills().Get((PSSKILL) skillID);
 
         // If we are training, send skills that the trainer is providing education in only
-        if  (
-                !trainerInfo
-                    ||
-                trainerInfo->TrainingInSkill((PSSKILL) skillID, character->Skills().GetSkillRank((PSSKILL) skillID).Base(), faction)
-             )
+        if(
+            !trainerInfo
+            ||
+            trainerInfo->TrainingInSkill((PSSKILL) skillID, character->Skills().GetSkillRank((PSSKILL) skillID).Base(), faction)
+        )
         {
 
             /* Get the ID value for the skill name string and find the skill
                in the cache. If it can't be found, skip this skill.
             */
             unsigned int skillNameId =
-                    cacheManager->FindCommonStringID(info->name);
+                cacheManager->FindCommonStringID(info->name);
 
-            if (skillNameId == 0)
+            if(skillNameId == 0)
             {
                 Error2("Can't find skill name \"%s\" in common strings", info->name.GetData());
                 continue;
             }
 
-            psSkillCacheItem *item = skills->getItemBySkillId(skillID);
+            psSkillCacheItem* item = skills->getItemBySkillId(skillID);
 
-            if (info->id == focus)
+            if(info->id == focus)
             {
                 selectedSkillNameId = (int)skillNameId;
                 selectedSkillCat=info->category;
@@ -550,7 +550,7 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
 
             unsigned int actualStat = character->Skills().GetSkillRank((PSSKILL) skillID).Current();
 
-            if (item)
+            if(item)
             {
                 item->update(charSkill.rank.Base(), actualStat,
                              charSkill.y, charSkill.yCost,
@@ -566,11 +566,11 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
                 skills->addItem(skillID, item);
             }
         }
-        else if (trainerInfo)
+        else if(trainerInfo)
         {
             // We are training, but this skill is not available for training
-            psSkillCacheItem *item = skills->getItemBySkillId(skillID);
-            if (item)
+            psSkillCacheItem* item = skills->getItemBySkillId(skillID);
+            if(item)
             {
                 item->setRemoved(true);
             }
@@ -581,31 +581,31 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
     character->GetSkillValues(&skillVal);
 
     psGUISkillMessage newmsg(client->GetClientNum(),
-                            psGUISkillMessage::SKILL_LIST,
-                            "",
-                            skills,
-                            (unsigned int)skillVal.Lookup("STR")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("END")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("AGI")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("INT")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("WIL")->GetRoundValue(),
-                            (unsigned int)skillVal.Lookup("CHA")->GetRoundValue(),
-                            (unsigned int)character->GetHP(),
-                            (unsigned int)character->GetMana(),
-                            (unsigned int)character->GetStamina(true),
-                            (unsigned int)character->GetStamina(false),
-                            (unsigned int)character->GetMaxHP().Current(),
-                            (unsigned int)character->GetMaxMana().Current(),
-                            (unsigned int)character->GetMaxPStamina().Current(),
-                            (unsigned int)character->GetMaxMStamina().Current(),
-                            forceOpen,
-                            selectedSkillNameId,
-                            selectedSkillCat,
-                            isTraining //If we are training the client must know it
+                             psGUISkillMessage::SKILL_LIST,
+                             "",
+                             skills,
+                             (unsigned int)skillVal.Lookup("STR")->GetRoundValue(),
+                             (unsigned int)skillVal.Lookup("END")->GetRoundValue(),
+                             (unsigned int)skillVal.Lookup("AGI")->GetRoundValue(),
+                             (unsigned int)skillVal.Lookup("INT")->GetRoundValue(),
+                             (unsigned int)skillVal.Lookup("WIL")->GetRoundValue(),
+                             (unsigned int)skillVal.Lookup("CHA")->GetRoundValue(),
+                             (unsigned int)character->GetHP(),
+                             (unsigned int)character->GetMana(),
+                             (unsigned int)character->GetStamina(true),
+                             (unsigned int)character->GetStamina(false),
+                             (unsigned int)character->GetMaxHP().Current(),
+                             (unsigned int)character->GetMaxMana().Current(),
+                             (unsigned int)character->GetMaxPStamina().Current(),
+                             (unsigned int)character->GetMaxMStamina().Current(),
+                             forceOpen,
+                             selectedSkillNameId,
+                             selectedSkillCat,
+                             isTraining //If we are training the client must know it
                             );
 
     Debug2(LOG_SKILLXP, client->GetClientNum(),"Sending psGUISkillMessage w/ stats to %d, Valid: ",int(client->GetClientNum()));
-    if (newmsg.valid)
+    if(newmsg.valid)
     {
         Debug1(LOG_SKILLXP, client->GetClientNum(),"Yes\n");
         SendMessage(newmsg.msg);
@@ -618,28 +618,28 @@ void ProgressionManager::SendSkillList(Client * client, bool forceOpen, PSSKILL 
     }
 }
 
-void ProgressionManager::StartTraining(Client * client, psCharacter * trainer)
+void ProgressionManager::StartTraining(Client* client, psCharacter* trainer)
 {
     client->GetCharacterData()->SetTrainer(trainer);
     SendSkillList(client, true, PSSKILL_NONE, client->GetCharacterData()->GetTrainer() != NULL);
 }
 
-ProgressionScript *ProgressionManager::FindScript(char const *name)
+ProgressionScript* ProgressionManager::FindScript(char const* name)
 {
     return cacheManager->GetProgressionScript(name);
 }
 
-void ProgressionManager::QueueEvent(psGameEvent *event)
+void ProgressionManager::QueueEvent(psGameEvent* event)
 {
     psserver->GetEventManager()->Push(event);
 }
 
-void ProgressionManager::SendMessage(MsgEntry *me)
+void ProgressionManager::SendMessage(MsgEntry* me)
 {
     psserver->GetEventManager()->SendMessage(me);
 }
 
-void ProgressionManager::Broadcast(MsgEntry *me)
+void ProgressionManager::Broadcast(MsgEntry* me)
 {
     psserver->GetEventManager()->Broadcast(me, NetBase::BC_EVERYONE);
 }

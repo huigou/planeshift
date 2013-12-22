@@ -24,7 +24,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/csstring.h>
- 
+
 //=============================================================================
 // Project Includes
 //=============================================================================
@@ -73,24 +73,36 @@ typedef csArray <psItemStats*> glyphList_t;
  */
 class psSpell : public iScriptableVar
 {
- public:
+public:
     psSpell();
     ~psSpell();
 
-    bool Load(iResultRow& row);
-    int GetID() const { return id; }
-    const csString& GetName() const { return name; }
-    const csString& GetImage() const { return image; }
-    const csString& GetDescription() const { return description; }
-    psSpellCost ManaCost(psCharacter *caster, float kFactor) const;
-    float PowerLevel(psCharacter *caster, float kFactor) const;
-    float ChanceOfCastSuccess(psCharacter *caster, float kFactor) const;
-    float ChanceOfResearchSuccess(psCharacter *researcher);
+    bool Load(iResultRow &row);
+    int GetID() const
+    {
+        return id;
+    }
+    const csString &GetName() const
+    {
+        return name;
+    }
+    const csString &GetImage() const
+    {
+        return image;
+    }
+    const csString &GetDescription() const
+    {
+        return description;
+    }
+    psSpellCost ManaCost(psCharacter* caster, float kFactor) const;
+    float PowerLevel(psCharacter* caster, float kFactor) const;
+    float ChanceOfCastSuccess(psCharacter* caster, float kFactor) const;
+    float ChanceOfResearchSuccess(psCharacter* researcher);
 
     /** Takes a list of glyphs and compares them to the correct sequence to
       * construct this spell.
       */
-    bool MatchGlyphs(const csArray<psItemStats*> & glyphs);
+    bool MatchGlyphs(const csArray<psItemStats*> &glyphs);
 
     /** Performs the necessary checks on the player to make sure they meet
      *  the requirements to cast this spell.
@@ -98,7 +110,7 @@ class psSpell : public iScriptableVar
      *  2) The player has the required glyphs (or "cast all spells" privs)
      *  3) The player has the required mana (or infinitemana set).
      */
-    bool CanCast(gemActor* caster, float kFactor, csString & reason, bool canCastAllSpells);
+    bool CanCast(gemActor* caster, float kFactor, csString &reason, bool canCastAllSpells);
 
     /**
      * Creates a new instance of this spell.
@@ -107,24 +119,36 @@ class psSpell : public iScriptableVar
      * @param kFactor The kFactor used.
      * @param client The client that cast the spell.
      */
-    void Cast(gemActor *caster, float kFactor, Client *client) const;
-    
+    void Cast(gemActor* caster, float kFactor, Client* client) const;
+
     /*
      * @param castingDuration The time it was waited before the spell could affect targets.
      */
-    void Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power, Client* client, csTicks castingDuration) const;
+    void Affect(gemActor* caster, gemObject* target, float range, float kFactor, float power, Client* client, csTicks castingDuration) const;
 
-    int GetRealm() { return realm; }
-    psWay* GetWay() { return way; }
-    csArray<psItemStats*>& GetGlyphList() { return glyphList; }
+    int GetRealm()
+    {
+        return realm;
+    }
+    psWay* GetWay()
+    {
+        return way;
+    }
+    csArray<psItemStats*> &GetGlyphList()
+    {
+        return glyphList;
+    }
 
     /** @name iScriptableVar implementation
-     * Functions that implement the iScriptableVar interface. 
+     * Functions that implement the iScriptableVar interface.
      */
     ///@{
     double GetProperty(MathEnvironment* env, const char* ptr);
     double CalcFunction(MathEnvironment* env, const char* functionName, const double* params);
-    const char* ToString() { return name.GetDataSafe(); }
+    const char* ToString()
+    {
+        return name.GetDataSafe();
+    }
     ///@}
 
 protected:
@@ -132,7 +156,7 @@ protected:
 
     int id;
     csString name;
-    psWay *way;
+    psWay* way;
     int realm;
     csString image;
     csString description;
@@ -147,15 +171,15 @@ protected:
 
     /// Math for various properties.
     /// Casting duration: (Power, WaySkill, RelatedStat) -> Seconds
-    MathExpression *castDuration;
+    MathExpression* castDuration;
     /// Maximum range to target allowed: (Power, WaySkill, RelatedStat) -> Meters
-    MathExpression *range;
+    MathExpression* range;
     /// AOE Radius: (Power, WaySkill, RelatedStat) -> Meters
-    MathExpression *aoeRadius;
+    MathExpression* aoeRadius;
     /// AOE Angle: (Power, WaySkill, RelatedStat) -> Degrees
-    MathExpression *aoeAngle;
+    MathExpression* aoeAngle;
     /// The progression script: (Power, Caster, Target) -> (side effects)
-    ProgressionScript *outcome;
+    ProgressionScript* outcome;
 
     /// List of glyphs required to assemble the technique.
     csArray<psItemStats*> glyphList;
@@ -202,7 +226,7 @@ public:
     void Interrupt();
 
     virtual void Trigger();  // Abstract event processing function
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 };
 
 /** @} */

@@ -54,7 +54,7 @@ class psDatabase;
 class ExchangingCharacter
 {
 public:
-    ExchangingCharacter( int client, psCharacterInventory& inv );
+    ExchangingCharacter(int client, psCharacterInventory &inv);
 
     /**
      * Inserts item to position 'itemNum'.
@@ -95,7 +95,7 @@ public:
      * Transfers offered items and money to an NPC 'npc'.
      *
      */
-    void TransferOffer(psCharacter *npc);
+    void TransferOffer(psCharacter* npc);
 
     /**
      * Transfers the trias from this exchanging player to a different player.
@@ -103,14 +103,17 @@ public:
      * @param targetClientNum The client id of the client that should be
      *                        receiving this characters offering money.
      */
-    void TransferMoney( int targetClientNum );
+    void TransferMoney(int targetClientNum);
 
     /**
      * Transfers the trias from this exchanging player to another character.
      */
-    void TransferMoney( psCharacter *target );
+    void TransferMoney(psCharacter* target);
 
-    psMoney GetOfferedMoney() { return offeringMoney; }
+    psMoney GetOfferedMoney()
+    {
+        return offeringMoney;
+    }
 
     /**
      * Change the amount of money this character is offering in the exchange.
@@ -119,9 +122,9 @@ public:
      * @param delta The amount to change by. Can be +/-
      */
     void AdjustMoney(int coin, int delta);
-    void AdjustMoney(const psMoney& amount);
+    void AdjustMoney(const psMoney &amount);
 
-    void GetOfferingCSV(csString& buff);
+    void GetOfferingCSV(csString &buff);
 
     /**
      * Constructs an XML list of the items that are being offered.
@@ -134,9 +137,9 @@ public:
      *
      * @param buff [CHANGES] Is where the resulting xml message is built.
      */
-    void GetOffering(csString& buff);
-    
-    psItem *GetOfferedItem(int slot);
+    void GetOffering(csString &buff);
+
+    psItem* GetOfferedItem(int slot);
 
     /**
      * Constructs a simple XML list of the items that are being offered.
@@ -150,12 +153,12 @@ public:
      * @param chr The character
      * @param exact Should the offer be exactly
      */
-    void GetSimpleOffering(csString& buff, psCharacter *chr, bool exact = true);
+    void GetSimpleOffering(csString &buff, psCharacter* chr, bool exact = true);
 
     /**
      * Update the money box for money that will be received by this character.
      */
-    void UpdateReceivingMoney( psMoney& money);
+    void UpdateReceivingMoney(psMoney &money);
 
     /**
      * Update the money box for money that is being offered by this character.
@@ -168,17 +171,17 @@ public:
      * Gets the total size of all the items that are offered.
      */
     float GetSumSize();
-    
+
     /**
      * Gets the total weight of all the items that are offered.
      */
     float GetSumWeight();
 
-    bool GetExchangedItems(csString& text);
-    
+    bool GetExchangedItems(csString &text);
+
 protected:
 
-    psCharacter *GetClientCharacter(int clientNum);
+    psCharacter* GetClientCharacter(int clientNum);
 
     /**
      * Stuff that was removed from character inventory and offered to the other character
@@ -187,7 +190,7 @@ protected:
     // csArray<psItem*> itemsOffered;
 
     int client;
-    psCharacterInventory *chrinv;
+    psCharacterInventory* chrinv;
 };
 
 //------------------------------------------------------------------------------
@@ -201,7 +204,7 @@ protected:
 class Exchange : public iDeleteObjectCallback
 {
 public:
-    Exchange( Client* starter, bool automaticExchange, ExchangeManager* manager);
+    Exchange(Client* starter, bool automaticExchange, ExchangeManager* manager);
     virtual ~Exchange();
 
     /**
@@ -211,7 +214,7 @@ public:
      * on both the clients without transfer of items.
      * @param client The client that has ended the exchange.
      */
-    virtual void HandleEnd(Client * client) = 0;
+    virtual void HandleEnd(Client* client) = 0;
 
     /**
      * One of the client has accepted the exchange.
@@ -221,7 +224,7 @@ public:
      * @param client The client that has accepted the exchange.
      * @return true If the exchange has ended.
      */
-    virtual bool HandleAccept(Client * client) = 0;
+    virtual bool HandleAccept(Client* client) = 0;
     // virtual bool Involves(psCharacter * character) = 0;
     // virtual bool Involves(psItem * item) = 0;
 
@@ -268,15 +271,24 @@ public:
     virtual bool RemoveItem(Client* fromClient, int slot, int stackCount);
 
     virtual psMoney GetOfferedMoney(Client* client);
-    virtual bool AdjustMoney( Client* client, int moneyType, int newMoney );
-    virtual bool AdjustMoney( Client* client, const psMoney& money );
-    int GetID() const { return id; }
-    bool CheckRange(int clientNum, gemObject * ourActor, gemObject * otherActor);
+    virtual bool AdjustMoney(Client* client, int moneyType, int newMoney);
+    virtual bool AdjustMoney(Client* client, const psMoney &money);
+    int GetID() const
+    {
+        return id;
+    }
+    bool CheckRange(int clientNum, gemObject* ourActor, gemObject* otherActor);
 
-    Client* GetStarterClient() { return starterClient; } // NILAYA: Should axe.
+    Client* GetStarterClient()
+    {
+        return starterClient;    // NILAYA: Should axe.
+    }
 
     psItem* GetStarterOffer(int slot);
-    virtual psItem* GetTargetOffer(int slot) { return NULL; }
+    virtual psItem* GetTargetOffer(int slot)
+    {
+        return NULL;
+    }
 
 protected:
     virtual void SendAddItemMessage(Client* fromClient, int slot, psCharacterInventory::psCharacterInventoryItem* item);
@@ -295,7 +307,7 @@ protected:
 
     bool exchangeEnded;    ///< exchange ended and should be deleted
     bool exchangeSuccess; ///< exchange was successful and items should not be returned to owners
-    
+
     bool automaticExchange; ///< the exchange is done entirely server side don't open windows on the client. This is used only with NPC!
 
     ExchangeManager* exchangeMgr;
@@ -310,12 +322,12 @@ public:
     virtual ~PlayerToPlayerExchange();
 
     bool CheckExchange(uint32_t clientNum, bool checkRange=false);
-    bool HandleAccept(Client * client);
-    void HandleEnd(Client * client);
+    bool HandleAccept(Client* client);
+    void HandleEnd(Client* client);
     void SendExchangeStatusToBoth();
     psMoney GetOfferedMoney(Client* client);
-    bool AdjustMoney( Client* client, int moneyType, int newMoney );
-    bool AdjustMoney( Client* client, const psMoney& money );
+    bool AdjustMoney(Client* client, int moneyType, int newMoney);
+    bool AdjustMoney(Client* client, const psMoney &money);
 
     /**
      * Add an offering item from a client.
@@ -328,7 +340,7 @@ public:
      * @return True if the item was added to the exchange correctly.
      */
     virtual bool AddItem(Client* fromClient, INVENTORY_SLOT_NUMBER fromSlot, int stackCount, int toSlot);
-    
+
     /**
      * Removes an item from the exchange.
      *
@@ -343,7 +355,7 @@ public:
      */
     virtual bool RemoveItem(Client* fromClient, int slot, int stackCount);
 
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 
     virtual psItem* GetTargetOffer(int slot);
 
@@ -374,13 +386,13 @@ class PlayerToNPCExchange : public Exchange
 public:
     PlayerToNPCExchange(Client* starter, gemObject* target, bool automaticExchange, int questID, ExchangeManager* manager);
     virtual ~PlayerToNPCExchange();
-    gemObject * GetTargetGEM();
+    gemObject* GetTargetGEM();
     bool CheckExchange(uint32_t clientNum, bool checkRange=false);
-    virtual void HandleEnd(Client * client);
-    virtual bool HandleAccept(Client * client);
+    virtual void HandleEnd(Client* client);
+    virtual bool HandleAccept(Client* client);
     //virtual bool Involves(psCharacter * character);
     //virtual bool Involves(psItem * item);
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 
 protected:
     /**
@@ -391,7 +403,7 @@ protected:
      * @param trigger A XML string of the items exchanged.
      * @return Return true if a trigger was run with sucess.
      */
-    bool CheckXMLResponse(Client * client, psNPCDialog *dlg, csString trigger);
+    bool CheckXMLResponse(Client* client, psNPCDialog* dlg, csString trigger);
 
     gemObject* target;
     int questID;
@@ -403,32 +415,35 @@ class ExchangeManager : public MessageManager<ExchangeManager>
 {
 public:
 
-    ExchangeManager(ClientConnectionSet *pCCS);
+    ExchangeManager(ClientConnectionSet* pCCS);
     virtual ~ExchangeManager();
 
-    static bool ExchangeCheck(Client * client, gemObject * target, csString * errorMessage = NULL);
-    
-    void StartExchange( Client* client, bool withPlayer, bool automaticExchange = false, int questID = -1);
+    static bool ExchangeCheck(Client* client, gemObject* target, csString* errorMessage = NULL);
 
-    void HandleExchangeRequest(MsgEntry *me,Client *client);
-    void HandleExchangeAccept (MsgEntry *me,Client *client);
-    void HandleExchangeEnd    (MsgEntry *me,Client *client);
-    void HandleAutoGive       (MsgEntry *me,Client *client);
+    void StartExchange(Client* client, bool withPlayer, bool automaticExchange = false, int questID = -1);
+
+    void HandleExchangeRequest(MsgEntry* me,Client* client);
+    void HandleExchangeAccept(MsgEntry* me,Client* client);
+    void HandleExchangeEnd(MsgEntry* me,Client* client);
+    void HandleAutoGive(MsgEntry* me,Client* client);
 
     /** Utility function to handle exchange objects */
-    Exchange * GetExchange(int id);
+    Exchange* GetExchange(int id);
 
     /** Adds given exchange to the exchange manager's exchanges list */
-    void AddExchange( Exchange* exchange ) { exchanges.Push(exchange); }
+    void AddExchange(Exchange* exchange)
+    {
+        exchanges.Push(exchange);
+    }
 
     /** Removes given exchange from the exchange manger's exchanges list */
-    void DeleteExchange(Exchange * exchange);
+    void DeleteExchange(Exchange* exchange);
 
 protected:
 
     ClientConnectionSet* clients;
 
-    psDatabase *database;
+    psDatabase* database;
 
     csPDelArray<Exchange> exchanges;
 };

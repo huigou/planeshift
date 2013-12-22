@@ -935,7 +935,7 @@ void psCharacter::SetLastLoginTime()
 
     time_t curr=time(0);
     tm  result;
-#ifdef WIN32        
+#ifdef WIN32
     tm* gmtm = &result;
     errno_t err = gmtime_s(&result, &curr);
 #else
@@ -975,7 +975,7 @@ void psCharacter::SetPetElapsedTime(double elapsedTime)
 
     // If new and last saved value differ for more than saveInterval store the
     // current value to db.
-    if (fabs(petElapsedTime - lastSavedPetElapsedTime) > saveInterval)
+    if(fabs(petElapsedTime - lastSavedPetElapsedTime) > saveInterval)
     {
         lastSavedPetElapsedTime = petElapsedTime;
         //Store in database
@@ -1179,7 +1179,7 @@ float psCharacter::GetScale()
 
     // use overridden scale if specified
     float scale =  scaleVar*baseScale;
-    Debug5 (LOG_CELPERSIST, 0, "DEBUG: Base scale %f , scaleVar: %f, persist New Scale %s %f\n",baseScale, scaleVar, GetCharName(),scale);
+    Debug5(LOG_CELPERSIST, 0, "DEBUG: Base scale %f , scaleVar: %f, persist New Scale %s %f\n",baseScale, scaleVar, GetCharName(),scale);
 
     return scale;
 }
@@ -1189,7 +1189,7 @@ float psCharacter::GetScaleValue()
     // scaleVar is a user entered scale, so for 10% more it's 1.1
     float scaleVar = 1.0;
 
-    if (GetVariableValue("scale"))
+    if(GetVariableValue("scale"))
     {
         scaleVar = atof(GetVariableValue("scale").GetData());
     }

@@ -27,8 +27,8 @@ class iDeleteObjectCallback;
 class iDeleteNotificationObject
 {
 public:
-    virtual void RegisterCallback(iDeleteObjectCallback * receiver) = 0;
-    virtual void UnregisterCallback(iDeleteObjectCallback * receiver) = 0;
+    virtual void RegisterCallback(iDeleteObjectCallback* receiver) = 0;
+    virtual void UnregisterCallback(iDeleteObjectCallback* receiver) = 0;
     virtual ~iDeleteNotificationObject() {}
 };
 
@@ -43,7 +43,7 @@ public:
 class iDeleteObjectCallback
 {
 public:
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object)=0;
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object)=0;
     virtual ~iDeleteObjectCallback() {}
 };
 

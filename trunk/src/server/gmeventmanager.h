@@ -85,7 +85,7 @@ public:
      * @param eventDescription event description.
      * @return true = success, false = failed.
      */
-    bool AddNewGMEvent (Client* client, csString eventName, csString eventDescription);
+    bool AddNewGMEvent(Client* client, csString eventName, csString eventDescription);
 
     /**
      * GM registers player into his/her event.
@@ -94,7 +94,7 @@ public:
      * @param target registeree player client.
      * @return true = success, false = failed.
      */
-    bool RegisterPlayerInGMEvent (Client* client, Client* target);
+    bool RegisterPlayerInGMEvent(Client* client, Client* target);
 
     /**
      * GM registers all players in range.
@@ -103,7 +103,7 @@ public:
      * @param range required range.
      * @return true = success, false = failed.
      */
-    bool RegisterPlayersInRangeInGMEvent (Client* client, float range);
+    bool RegisterPlayersInRangeInGMEvent(Client* client, float range);
 
     /**
      * A player completes an event.
@@ -113,7 +113,7 @@ public:
      * @param byTheControllerGM true if it is the controlling GM
      * @return true = success, false = failed.
      */
-    bool CompleteGMEvent (Client* client, PID gmID, bool byTheControllerGM = true);
+    bool CompleteGMEvent(Client* client, PID gmID, bool byTheControllerGM = true);
 
     /**
      * A player completes an event.
@@ -122,7 +122,7 @@ public:
      * @param eventName Name of the event.
      * @return true = success, false = failed.
      */
-    bool CompleteGMEvent (Client* client, csString eventName);
+    bool CompleteGMEvent(Client* client, csString eventName);
 
     /**
      * Sends a list of all events to client.
@@ -130,7 +130,7 @@ public:
      * @param client client pointer.
      * @return true = success, false = failed.
      */
-    bool ListGMEvents (Client* client);
+    bool ListGMEvents(Client* client);
 
     /**
      * A player is removed from a running event.
@@ -141,7 +141,7 @@ public:
      * @param target registeree player client to be removed.
      * @return true = success, false = failed.
      */
-    bool RemovePlayerFromGMEvent (Client* client, Client* target);
+    bool RemovePlayerFromGMEvent(Client* client, Client* target);
 
     /**
      * Reward players who complete an event
@@ -155,11 +155,11 @@ public:
      * @param reward The reward.
      * @return true = success, false = failed.
      */
-    bool RewardPlayersInGMEvent (Client* client,
-                                 RangeSpecifier rewardRecipient,
-                                 float range,
-                                 Client *target,
-				 psRewardData* reward);
+    bool RewardPlayersInGMEvent(Client* client,
+                                RangeSpecifier rewardRecipient,
+                                float range,
+                                Client* target,
+                                psRewardData* reward);
 
     /**
      * Returns all events for a player.
@@ -170,10 +170,10 @@ public:
      * @param completedEventsAsGM array of ids of completed events as GM.
      * @return int running event id.
      */
-    int GetAllGMEventsForPlayer (PID playerID,
-                                 csArray<int>& completedEvents,
-                                 int& runningEventAsGM,
-                                 csArray<int>& completedEventsAsGM);
+    int GetAllGMEventsForPlayer(PID playerID,
+                                csArray<int> &completedEvents,
+                                int &runningEventAsGM,
+                                csArray<int> &completedEventsAsGM);
 
     /**
      * Returns event details for a particular event.
@@ -183,20 +183,20 @@ public:
      * @param description description of event.
      * @return GMEventStatus status of event.
      */
-     GMEventStatus GetGMEventDetailsByID (int id,
-                                          csString& name,
-                                          csString& description);
+    GMEventStatus GetGMEventDetailsByID(int id,
+                                        csString &name,
+                                        csString &description);
 
-     /// handle message from client
-     virtual void HandleGMEventCommand(MsgEntry *me, Client *client);
+    /// handle message from client
+    virtual void HandleGMEventCommand(MsgEntry* me, Client* client);
 
-     /**
-      * Removes a player from any GM event they maybe involved with (eg player being deleted)
-      *
-      * @param playerID id of player being removed
-      * @return true = success
-      */
-     bool RemovePlayerFromGMEvents(PID playerID);
+    /**
+     * Removes a player from any GM event they maybe involved with (eg player being deleted)
+     *
+     * @param playerID id of player being removed
+     * @return true = success
+     */
+    bool RemovePlayerFromGMEvents(PID playerID);
 
     /**
      * GM attempts to assume control of an event, after originator has absconded.
@@ -254,7 +254,7 @@ private:
      * @param startIndex start index into array.
      * @return ptr to GM event structure, or NULL
      */
-    GMEvent* GetGMEventByGM(PID gmID, GMEventStatus status, int& startIndex);
+    GMEvent* GetGMEventByGM(PID gmID, GMEventStatus status, int &startIndex);
 
     /**
      * find a particular GM's event from them all.
@@ -264,7 +264,7 @@ private:
      * @param startIndex start index into array.
      * @return ptr to GM event structure, or NULL
      */
-    GMEvent* GetGMEventByName(csString eventName, GMEventStatus status, int& startIndex);
+    GMEvent* GetGMEventByName(csString eventName, GMEventStatus status, int &startIndex);
 
     /**
      * Find any event that a player may be/was registered to, returns index.
@@ -272,13 +272,13 @@ private:
      * get the index into the gmEvents array for the next event of a specified
      * status for a particular player. Note startIndex will be modified upon
      * return.
-     * 
+     *
      * @param playerID the player index.
      * @param status event of status looked for.
      * @param startIndex start index into array.
      * @return ptr to GM event structure.
      */
-    GMEvent* GetGMEventByPlayer(PID playerID, GMEventStatus status, int& startIndex);
+    GMEvent* GetGMEventByPlayer(PID playerID, GMEventStatus status, int &startIndex);
 
     /**
      * Return the index position of the particular player in an event
@@ -287,7 +287,7 @@ private:
      * @param Event ptr to GM event structure.
      * @return size_t the index position of the player
      */
-    size_t GetPlayerFromEvent(PID& PlayerID, GMEvent *Event);
+    size_t GetPlayerFromEvent(PID &PlayerID, GMEvent* Event);
 
     /**
      * Checks if a Player is allowed to evaluate an event
@@ -298,17 +298,17 @@ private:
      * @param Event ptr to GM event structure.
      * @return true if the player is allowed to evaluate an event
      */
-    bool CheckEvalStatus(PID PlayerID, GMEvent *Event);
+    bool CheckEvalStatus(PID PlayerID, GMEvent* Event);
 
     /**
      * Set if a player is allowed to evaluate an event.
      *
      * @param PlayerID the player index.
      * @param Event ptr to GM event structure.
-     * @param NewStatus true if the player is to be allowed to evaluate 
+     * @param NewStatus true if the player is to be allowed to evaluate
      *                    an event, else false
      */
-    void SetEvalStatus(PID PlayerID, GMEvent *Event, bool NewStatus);
+    void SetEvalStatus(PID PlayerID, GMEvent* Event, bool NewStatus);
 
     /**
      * Get next free event id number.

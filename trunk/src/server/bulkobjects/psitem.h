@@ -753,7 +753,7 @@ public:
     {
         return flags;
     }
-    
+
     void SetFlags(int f)
     {
         flags = f;

@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- * 
- * 
+ *
+ *
  */
 #ifndef __PS_IMP_PROXIMITYLIST__
 #define __PS_IMP_PROXIMITYLIST__
@@ -54,7 +54,7 @@ class EntityManager;
 class ProximityList
 {
 protected:
-    gemObject *self;
+    gemObject* self;
 
     csArray<PublishDestination> objectsThatWatchMe;   ///< What players are subscribed to my updates?
     csArray<gemObject*>  objectsThatIWatch;           ///< What objects am I subscribed to myself?
@@ -67,65 +67,71 @@ protected:
     bool         firstFrame;
     csVector3    oldPos;
     InstanceID  oldInstance;
-    
+
     EntityManager* entityManager;
 
     /** Adds 'interestedobject' to 'objectsThatWatchMe' */
-    void AddWatcher(gemObject *interestedobject, float range);
+    void AddWatcher(gemObject* interestedobject, float range);
 
     /** Removes 'interestedobject' from 'objectsThatWatchMe' */
-    void RemoveWatcher(gemObject *object);
+    void RemoveWatcher(gemObject* object);
 
-    bool IsNear(iSector *sector,csVector3& pos,gemObject *object,float radius);
-    bool FindObject(gemObject *object);
-    PublishDestination *FindObjectThatWatchesMe(gemObject *object, uint& x);
-    bool FindObjectThatIWatch(gemObject *object);
+    bool IsNear(iSector* sector,csVector3 &pos,gemObject* object,float radius);
+    bool FindObject(gemObject* object);
+    PublishDestination* FindObjectThatWatchesMe(gemObject* object, uint &x);
+    bool FindObjectThatIWatch(gemObject* object);
 
-    void TouchObjectThatWatchesMe(gemObject *object,float newrange);
+    void TouchObjectThatWatchesMe(gemObject* object,float newrange);
 
-    
-    void UpdatePublishDestRange(PublishDestination *pd, 
-                                gemObject *myself, 
-                                gemObject *object,
+
+    void UpdatePublishDestRange(PublishDestination* pd,
+                                gemObject* myself,
+                                gemObject* object,
                                 uint objIdx,
                                 float newrange);
 
 public:
-    ProximityList( iObjectRegistry* object_reg, gemObject *parent, EntityManager* entitymanager);
+    ProximityList(iObjectRegistry* object_reg, gemObject* parent, EntityManager* entitymanager);
     ~ProximityList();
 
-    bool Initialize(int cnum,gemObject *parent);
+    bool Initialize(int cnum,gemObject* parent);
 
     /** Creates relation watcher --> watched between our object and given object
       * Returns: true if new relation was added */
-    bool StartWatching(gemObject * object, float range);
+    bool StartWatching(gemObject* object, float range);
 
     /** Deletes relation watcher --> watched between our object and given object */
-    void EndWatching(gemObject * object);
+    void EndWatching(gemObject* object);
 
     /** Creates relation watcher --> watched in both directions between our object and given object */
-    bool StartMutualWatching(int othercnum, gemObject *otherObject,float range);
+    bool StartMutualWatching(int othercnum, gemObject* otherObject,float range);
 
     /** Deletes relation watcher --> watched in both directions between our object and given object */
-    bool EndMutualWatching(gemObject *fromobject);
+    bool EndMutualWatching(gemObject* fromobject);
 
-    csArray<PublishDestination>& GetClients() { return objectsThatWatchMe; }
-    int GetClientID() { return clientnum; }
+    csArray<PublishDestination> &GetClients()
+    {
+        return objectsThatWatchMe;
+    }
+    int GetClientID()
+    {
+        return clientnum;
+    }
 
     bool FindClient(uint32_t cnum);
-    gemObject *FindObjectName(const char *name);
+    gemObject* FindObjectName(const char* name);
 
     /**
      * Check if an update is required for this object based on moved range and changed instance.
      */
     bool CheckUpdateRequired();
-    float RangeTo( gemObject* object, bool ignoreY = false, bool ignoreInstance = false );
-    void DebugDumpContents(csString& out);
+    float RangeTo(gemObject* object, bool ignoreY = false, bool ignoreInstance = false);
+    void DebugDumpContents(csString &out);
 
     void ClearTouched();
     bool GetUntouched_ObjectThatWatchesMe(gemObject* &object);
     bool GetUntouched_ObjectThatIWatch(gemObject* &object);
 };
 
-#endif 
+#endif
 

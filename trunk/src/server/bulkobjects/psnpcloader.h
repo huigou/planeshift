@@ -1,7 +1,7 @@
 /*
  * psnpcloader.h - Author: Ian Donderwinkel
  *
- * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -37,7 +37,7 @@
 
 
 // adminmessage contains classes that are used to read the
-// responses, triggers, etc (psDialogManager) 
+// responses, triggers, etc (psDialogManager)
 class psCharacter;
 class psDialogManager;
 struct psTrainerSkill;
@@ -48,10 +48,10 @@ public:
 
     // loads npc data from a xml file and stores it in the database
     bool LoadFromFile(csString &filename);
-    
+
     // reads npc data from the database and stores it in a xml file
     bool SaveToFile(int id, csString &filename);
-    
+
     // removes a npc from the database
     bool RemoveFromDatabase(int npcid);
 
@@ -69,8 +69,8 @@ private:
     csString area;
     int questID;
 
-    psCharacter                 *npc;
-    psDialogManager             *dialogManager;
+    psCharacter*                 npc;
+    psDialogManager*             dialogManager;
     csArray<csString>           knowledgeAreas;
     csArray<int>                knowledgeAreasPriority;
     csArray<psTrainerSkill>     trainerSkills;

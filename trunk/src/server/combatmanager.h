@@ -1,7 +1,7 @@
 /*
  * combatmanager.h
  *
- * Copyright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -61,14 +61,14 @@ public:
     virtual ~CombatManager();
 
     /// This is how you start an attack sequence
-    bool AttackSomeone(gemActor *attacker, gemObject *target, Stance stance);
+    bool AttackSomeone(gemActor* attacker, gemObject* target, Stance stance);
 
     /// This is how you break an attack sequence off, through death or user command.
-    void StopAttack(gemActor *attacker);
+    void StopAttack(gemActor* attacker);
 
-    bool InPVPRegion(csVector3& pos, iSector* sector);
+    bool InPVPRegion(csVector3 &pos, iSector* sector);
 
-    void HandleCombatEvent(psCombatGameEvent *event);
+    void HandleCombatEvent(psCombatGameEvent* event);
 
     /** @brief Gets combat stance by name
      *
@@ -78,7 +78,7 @@ public:
      *  @param name: name of requested stance
      *  @return Returns combat stance.
      */
-    static const Stance & GetStance(CacheManager* cachemanager, csString name);
+    static const Stance &GetStance(CacheManager* cachemanager, csString name);
 
     /** @brief Gets increased combat stance of particular attacker
      *
@@ -88,8 +88,8 @@ public:
      *  @param attacker: gemActor that requests to raise his stance
      *  @return Returns combat stance.
      */
-    static const Stance & GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker);
-	
+    static const Stance &GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker);
+
     /** @brief Gets increased combat stance of particular attacker
      *
      *  If current combat stance is the lowest returns current combat stance
@@ -98,7 +98,7 @@ public:
      *  @param attacker: gemActor that requests to lower his stance
      *  @return Returns combat stance.
      */
-    static const Stance & GetLoweredActorStance(CacheManager* cachemanager, gemActor* attacker);
+    static const Stance &GetLoweredActorStance(CacheManager* cachemanager, gemActor* attacker);
 
     /***********************
      * Not implemented yet *
@@ -121,28 +121,28 @@ private:
     /// if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.
     csWeakRef<MathScript> staminacombat;
 
-    void HandleDeathEvent(MsgEntry *me,Client *client);
+    void HandleDeathEvent(MsgEntry* me,Client* client);
 
-    bool ValidDistance(gemObject *attacker, gemObject *target, psItem *Weapon);
-    void SetCombat(gemActor *combatant, Stance stance);
+    bool ValidDistance(gemObject* attacker, gemObject* target, psItem* Weapon);
+    void SetCombat(gemActor* combatant, Stance stance);
 
-    bool ValidCombatAngle(gemObject *attacker, gemObject *target,
-            psItem *Weapon);
-    void NotifyTarget(gemActor *attacker, gemObject *target);
-    void QueueNextEvent(psCombatGameEvent *event);
-    void QueueNextEvent(gemObject *attacker, INVENTORY_SLOT_NUMBER weaponslot,
-            gemObject *target, int attackerCID, int targetCID,
-            int previousResult = ATTACK_NOTCALCULATED);
+    bool ValidCombatAngle(gemObject* attacker, gemObject* target,
+                          psItem* Weapon);
+    void NotifyTarget(gemActor* attacker, gemObject* target);
+    void QueueNextEvent(psCombatGameEvent* event);
+    void QueueNextEvent(gemObject* attacker, INVENTORY_SLOT_NUMBER weaponslot,
+                        gemObject* target, int attackerCID, int targetCID,
+                        int previousResult = ATTACK_NOTCALCULATED);
 
-    void ApplyCombatEvent(psCombatGameEvent *event, int attack_result);
-    void DebugOutput(psCombatGameEvent *event, const MathEnvironment & env);
-    int CalculateAttack(psCombatGameEvent *event, psItem* subWeapon = NULL);
+    void ApplyCombatEvent(psCombatGameEvent* event, int attack_result);
+    void DebugOutput(psCombatGameEvent* event, const MathEnvironment &env);
+    int CalculateAttack(psCombatGameEvent* event, psItem* subWeapon = NULL);
 };
 
 class psSpareDefeatedEvent: public psGameEvent
 {
 public:
-    psSpareDefeatedEvent(gemActor *losr);
+    psSpareDefeatedEvent(gemActor* losr);
     void Trigger();
 
 protected:

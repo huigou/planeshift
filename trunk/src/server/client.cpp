@@ -52,7 +52,7 @@
 #include "cachemanager.h"
 #include "adminmanager.h"
 
-Client::Client ()
+Client::Client()
     : accumulatedLag(0), zombie(false), allowedToDisconnect(true), ready(false),
       accountID(0), playerID(0), securityLevel(0), superclient(false),
       name(""), pathPath(NULL), cheatMask(NO_CHEAT)
@@ -66,7 +66,7 @@ Client::Client ()
     detectedCheatCount = 0;
 
     nextFloodHistoryIndex = 0;
-    
+
     lastInventorySend = 0;
     lastGlyphSend = 0;
 
@@ -94,8 +94,8 @@ bool Client::Initialize(LPSOCKADDR_IN addr, uint32_t clientnum)
     Client::clientnum=clientnum;
     Client::valid=true;
 
-    outqueue.AttachNew(new NetPacketQueueRefCount (MAXCLIENTQUEUESIZE));
-    if (!outqueue)
+    outqueue.AttachNew(new NetPacketQueueRefCount(MAXCLIENTQUEUESIZE));
+    if(!outqueue)
         ERRORHALT("No Memory!");
 
     return true;
@@ -104,18 +104,18 @@ bool Client::Initialize(LPSOCKADDR_IN addr, uint32_t clientnum)
 bool Client::Disconnect()
 {
     // Make sure the advisor system knows this client is gone.
-    if ( isAdvisor )
+    if(isAdvisor)
     {
-        psserver->GetAdviceManager()->RemoveAdvisor( this->GetClientNum(), 0);
+        psserver->GetAdviceManager()->RemoveAdvisor(this->GetClientNum(), 0);
     }
 
-    if (GetActor() && GetActor()->InGroup())
+    if(GetActor() && GetActor()->InGroup())
     {
         GetActor()->RemoveFromGroup();
     }
 
     // Only save if an account has been found for this client.
-    if (accountID.IsValid())
+    if(accountID.IsValid())
     {
         SaveAccountData();
     }
@@ -130,7 +130,7 @@ bool Client::Disconnect()
     return true;
 }
 
-void Client::SetAllowedToDisconnect( bool allowed )
+void Client::SetAllowedToDisconnect(bool allowed)
 {
     allowedToDisconnect = allowed;
 }
@@ -171,39 +171,39 @@ bool Client::ZombieAllowDisconnect()
 
 void Client::SetTargetObject(gemObject* newobject, bool updateClientGUI)
 {
-    gemActor * myactor = GetActor();
-    if (myactor)
+    gemActor* myactor = GetActor();
+    if(myactor)
     {
         // We don't want to fire a target change event if the target hasn't changed.
-        if (newobject == myactor->GetTargetObject())
-           return;
+        if(newobject == myactor->GetTargetObject())
+            return;
 
         myactor->SetTargetObject(newobject);
 
-        psTargetChangeEvent targetevent( myactor, newobject );
+        psTargetChangeEvent targetevent(myactor, newobject);
         targetevent.FireEvent();
 
-	if (updateClientGUI)
-	{
+        if(updateClientGUI)
+        {
             psGUITargetUpdateMessage updateMessage(GetClientNum(), newobject? newobject->GetEID() : 0);
             updateMessage.SendMessage();
         }
     }
 }
 
-gemObject* Client::GetTargetObject() const 
+gemObject* Client::GetTargetObject() const
 {
-    gemActor * myactor = GetActor();
-    if (myactor)
+    gemActor* myactor = GetActor();
+    if(myactor)
     {
         return myactor->GetTargetObject();
     }
-    return NULL; 
+    return NULL;
 }
 
-void Client::SetFamiliar( gemActor *familiar )
+void Client::SetFamiliar(gemActor* familiar)
 {
-    if ( familiar )
+    if(familiar)
     {
         pets[0] = familiar->GetPID();
     }
@@ -215,24 +215,24 @@ void Client::SetFamiliar( gemActor *familiar )
 
 gemActor* Client::GetFamiliar()
 {
-    if (pets[0].IsValid())
+    if(pets[0].IsValid())
     {
         return psserver->entitymanager->GetGEM()->FindNPCEntity(pets[0]);
     }
     return NULL;
 }
 
-void Client::AddPet( gemActor *pet )
+void Client::AddPet(gemActor* pet)
 {
     pets.Push(pet->GetPID());
 }
 
-void Client::RemovePet( size_t i )
+void Client::RemovePet(size_t i)
 {
     // Be careful to not cause pet numbers to be reordered.
-    if (i > 0)
+    if(i > 0)
     {
-        if (i == pets.GetSize() - 1)
+        if(i == pets.GetSize() - 1)
             pets.Truncate(i);
         else
             pets[i] = PID(0);
@@ -241,7 +241,7 @@ void Client::RemovePet( size_t i )
 
 gemActor* Client::GetPet(size_t i)
 {
-    if (i >= pets.GetSize() || !pets[i].IsValid())
+    if(i >= pets.GetSize() || !pets[i].IsValid())
         return NULL;
 
     return psserver->entitymanager->GetGEM()->FindNPCEntity(pets[i]);
@@ -252,11 +252,11 @@ size_t Client::GetNumPets()
     return pets.GetSize();
 }
 
-bool Client::IsMyPet(gemActor * other) const
+bool Client::IsMyPet(gemActor* other) const
 {
-    for (size_t i = 0; i < pets.GetSize(); i++)
+    for(size_t i = 0; i < pets.GetSize(); i++)
     {
-        if (psserver->entitymanager->GetGEM()->FindNPCEntity( pets[i] ) == other)
+        if(psserver->entitymanager->GetGEM()->FindNPCEntity(pets[i]) == other)
         {
             return true;
         }
@@ -272,7 +272,7 @@ void Client::SetName(const char* n)
 const char* Client::GetName()
 {
     // If there is a character than get the first name of the character.
-    if (GetCharacterData())
+    if(GetCharacterData())
     {
         return GetCharacterData()->GetCharName();
     }
@@ -285,13 +285,13 @@ const char* Client::GetName()
 void Client::SetActor(gemActor* myactor)
 {
     actor = myactor;
-    if (actor == NULL)
+    if(actor == NULL)
     {
         allowedToDisconnect = true;
     }
 }
 
-psCharacter *Client::GetCharacterData()
+psCharacter* Client::GetCharacterData()
 {
     return (actor?actor->GetCharacterData():NULL);
 }
@@ -302,7 +302,7 @@ bool Client::ValidateDistanceToTarget(float range)
     gemObject* targetObject = GetTargetObject();
 
     // Check if target is set
-    if (!targetObject) return false;
+    if(!targetObject) return false;
 
     return actor->IsNear(targetObject, range);
 }
@@ -312,19 +312,19 @@ int Client::GetTargetClientID()
 {
     gemObject* targetObject = GetTargetObject();
     // Check if target is set
-    if (!targetObject) return -1;
+    if(!targetObject) return -1;
 
     return targetObject->GetClientID();
 }
 
 int Client::GetGuildID()
 {
-    psCharacter * mychar = GetCharacterData();
-    if (mychar == NULL)
+    psCharacter* mychar = GetCharacterData();
+    if(mychar == NULL)
         return 0;
 
-    psGuildInfo * guild = mychar->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = mychar->GetGuild();
+    if(guild == NULL)
         return 0;
 
     return guild->GetID();
@@ -332,18 +332,18 @@ int Client::GetGuildID()
 
 int Client::GetAllianceID()
 {
-    psCharacter * mychar = GetCharacterData();
-    if (mychar == NULL)
+    psCharacter* mychar = GetCharacterData();
+    if(mychar == NULL)
         return 0;
 
-    psGuildInfo * guild = mychar->GetGuild();
-    if (guild == NULL)
+    psGuildInfo* guild = mychar->GetGuild();
+    if(guild == NULL)
         return 0;
-    
+
     return guild->GetAllianceID();
 }
 
-void Client::GetIPAddress(char *addrStr, socklen_t size)
+void Client::GetIPAddress(char* addrStr, socklen_t size)
 {
 #ifdef INCLUDE_IPV6_SUPPORT
     inet_ntop(AF_INET6, &addr.sin6_addr, addrStr, size);
@@ -355,7 +355,7 @@ void Client::GetIPAddress(char *addrStr, socklen_t size)
     unsigned long a = addr.sin_addr.s_addr;
 #endif
 
-    if (addrStr)
+    if(addrStr)
     {
         a1 = a&0x000000FF;
         a2 = (a&0x0000FF00)>>8;
@@ -394,12 +394,12 @@ csString Client::GetIPRange(int octets)
 csString Client::GetIPRange(const char* ipaddr, int octets)
 {
     csString range(ipaddr);
-    for (size_t i=0; i<range.Length(); i++)
+    for(size_t i=0; i<range.Length(); i++)
     {
-        if (range[i] == '.')
+        if(range[i] == '.')
             --octets;
-        
-        if (!octets)
+
+        if(!octets)
         {
             range[i+1] = '\0';
             break;
@@ -412,7 +412,7 @@ unsigned int Client::GetAccountTotalOnlineTime()
 {
     unsigned int totalTimeConnected = GetCharacterData()->GetOnlineTimeThisSession();
     Result result(db->Select("SELECT SUM(time_connected_sec) FROM characters WHERE account_id = %d", accountID.Unbox()));
-    if (result.IsValid())
+    if(result.IsValid())
         totalTimeConnected += result[0].GetUInt32("SUM(time_connected_sec)");
 
     return totalTimeConnected;
@@ -420,28 +420,28 @@ unsigned int Client::GetAccountTotalOnlineTime()
 
 void Client::AddDuelClient(uint32_t clientnum)
 {
-    if (!IsDuelClient(clientnum))
+    if(!IsDuelClient(clientnum))
         duel_clients.Push(clientnum);
 }
 
-void Client::RemoveDuelClient(Client *client)
+void Client::RemoveDuelClient(Client* client)
 {
-    if (actor)
+    if(actor)
         actor->RemoveAttackerHistory(client->GetActor());
     duel_clients.Delete(client->GetClientNum());
 }
 
 void Client::ClearAllDuelClients()
 {
-    for (int i = 0; i < GetDuelClientCount(); i++)
+    for(int i = 0; i < GetDuelClientCount(); i++)
     {
-        Client *duelClient = psserver->GetConnections()->Find(duel_clients[i]);
-        if (duelClient)
+        Client* duelClient = psserver->GetConnections()->Find(duel_clients[i]);
+        if(duelClient)
         {
             // Also remove us from their list.
             duelClient->RemoveDuelClient(this);
 
-            if (actor)
+            if(actor)
                 actor->RemoveAttackerHistory(duelClient->GetActor());
         }
     }
@@ -463,17 +463,17 @@ bool Client::IsDuelClient(uint32_t clientnum)
     return (duel_clients.Find(clientnum) != csArrayItemNotFound);
 }
 
-void Client::AnnounceToDuelClients(gemActor *attacker, const char *event)
+void Client::AnnounceToDuelClients(gemActor* attacker, const char* event)
 {
-    for (size_t i = 0; i < duel_clients.GetSize(); i++)
+    for(size_t i = 0; i < duel_clients.GetSize(); i++)
     {
         uint32 duelClientID = duel_clients[i];
-        Client *duelClient = psserver->GetConnections()->Find(duelClientID);
-        if (duelClient)
+        Client* duelClient = psserver->GetConnections()->Find(duelClientID);
+        if(duelClient)
         {
-            if (!attacker)
+            if(!attacker)
                 psserver->SendSystemOK(duelClientID, "%s has %s %s!", GetName(), event, duelClient->GetName());
-            else if (duelClientID == attacker->GetClientID())
+            else if(duelClientID == attacker->GetClientID())
                 psserver->SendSystemOK(duelClientID, "You've %s %s!", event, GetName());
             else
                 psserver->SendSystemOK(duelClientID, "%s has %s %s!", attacker->GetName(), event, GetName());
@@ -481,7 +481,7 @@ void Client::AnnounceToDuelClients(gemActor *attacker, const char *event)
     }
 }
 
-void Client::FloodControl(uint8_t chatType, const csString & newMessage, const csString & recipient)
+void Client::FloodControl(uint8_t chatType, const csString &newMessage, const csString &recipient)
 {
     int matches = 0;
 
@@ -489,18 +489,18 @@ void Client::FloodControl(uint8_t chatType, const csString & newMessage, const c
     nextFloodHistoryIndex = (nextFloodHistoryIndex + 1) % floodMax;
 
     // Count occurances of this new message in the flood history.
-    for (int i = 0; i < floodMax; i++)
+    for(int i = 0; i < floodMax; i++)
     {
-        if (csGetTicks() - floodHistory[i].ticks < floodForgiveTime && floodHistory[i].chatType == chatType && floodHistory[i].text == newMessage && floodHistory[i].recipient == recipient)
+        if(csGetTicks() - floodHistory[i].ticks < floodForgiveTime && floodHistory[i].chatType == chatType && floodHistory[i].text == newMessage && floodHistory[i].recipient == recipient)
             matches++;
     }
 
-    if (matches >= floodMax)
+    if(matches >= floodMax)
     {
         SetMute(true);
         psserver->SendSystemError(clientnum, "BAM! Muted.");
     }
-    else if (matches >= floodWarn)
+    else if(matches >= floodWarn)
     {
         psserver->SendSystemError(clientnum, "Flood warning. Stop or you will be muted.");
     }
@@ -519,12 +519,12 @@ bool Client::IsGM() const
     return GetSecurityLevel() >= GM_LEVEL_0;
 }
 
-static inline void TestTarget(csString& targetDesc, int32_t targetType,
+static inline void TestTarget(csString &targetDesc, int32_t targetType,
                               enum TARGET_TYPES type, const char* desc)
 {
-    if (targetType & type)
+    if(targetType & type)
     {
-        if (targetDesc.Length() > 0)
+        if(targetDesc.Length() > 0)
         {
             targetDesc.Append((targetType > (type * 2)) ? ", " : ", or ");
         }
@@ -532,7 +532,7 @@ static inline void TestTarget(csString& targetDesc, int32_t targetType,
     }
 }
 
-void Client::GetTargetTypeName(int32_t targetType, csString& targetDesc)
+void Client::GetTargetTypeName(int32_t targetType, csString &targetDesc)
 {
     targetDesc.Clear();
     TestTarget(targetDesc, targetType, TARGET_NONE, "the surrounding area");
@@ -551,7 +551,7 @@ bool Client::IsAlive(void) const
 void Client::SaveAccountData()
 {
     // First penalty after relogging should not be death
-    if (spamPoints >= 2)
+    if(spamPoints >= 2)
         spamPoints = 1;
 
     // Save to the db
@@ -559,7 +559,7 @@ void Client::SaveAccountData()
                     spamPoints, advisorPoints, accountID.Unbox());
 }
 
-void Client::PathSetIsDisplaying( iSector* sector )
+void Client::PathSetIsDisplaying(iSector* sector)
 {
     pathDisplaySectors.PushBack(sector);
 }
@@ -580,7 +580,7 @@ bool Client::PathIsDisplaying()
 }
 
 
-void Client::WaypointSetIsDisplaying( iSector* sector )
+void Client::WaypointSetIsDisplaying(iSector* sector)
 {
     waypointDisplaySectors.PushBack(sector);
 }
@@ -600,7 +600,7 @@ bool Client::WaypointIsDisplaying()
     return !waypointDisplaySectors.IsEmpty();
 }
 
-void Client::LocationSetIsDisplaying( iSector* sector )
+void Client::LocationSetIsDisplaying(iSector* sector)
 {
     locationDisplaySectors.PushBack(sector);
 }
@@ -624,7 +624,7 @@ void Client::SetAdvisorBan(bool ban)
 {
     db->Command("UPDATE accounts SET advisor_ban = %d WHERE id = %d", (int) ban, accountID.Unbox());
 
-    if (isAdvisor)
+    if(isAdvisor)
         psserver->GetAdviceManager()->RemoveAdvisor(clientnum, clientnum);
 
     psserver->SendSystemError(clientnum, "You have been %s from advising by a GM.", ban ? "banned" : "unbanned");
@@ -634,30 +634,30 @@ bool Client::IsAdvisorBanned()
 {
     bool advisorBan = false;
     Result result(db->Select("SELECT advisor_ban FROM accounts WHERE id = %d", accountID.Unbox()));
-    if (result.IsValid())
+    if(result.IsValid())
         advisorBan = result[0].GetUInt32("advisor_ban") != 0;
 
     return advisorBan;
 }
 
-void Client::SetCheatMask(CheatFlags mask,bool flag )
+void Client::SetCheatMask(CheatFlags mask,bool flag)
 {
-    if (flag)
+    if(flag)
         cheatMask |= mask;
     else
         cheatMask &= (~mask);
 }
 
-OrderedMessageChannel *Client::GetOrderedMessageChannel(msgtype mtype)
+OrderedMessageChannel* Client::GetOrderedMessageChannel(msgtype mtype)
 {
-	OrderedMessageChannel *channel = orderedMessages.Get(mtype,NULL);
+    OrderedMessageChannel* channel = orderedMessages.Get(mtype,NULL);
 
-	if (!channel)
-	{
-		channel = new OrderedMessageChannel;
-		orderedMessages.Put(mtype, channel);
-	}
-	return channel;
+    if(!channel)
+    {
+        channel = new OrderedMessageChannel;
+        orderedMessages.Put(mtype, channel);
+    }
+    return channel;
 }
 
 void MuteBuffable::OnChange() {}

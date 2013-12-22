@@ -1,7 +1,7 @@
 /*
  * psglyph.cpp
  *
- * Copyright (C) 2001-2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -41,21 +41,21 @@ psGlyph::psGlyph()
 {
 }
 
-bool psGlyph::Load(iResultRow& row)
+bool psGlyph::Load(iResultRow &row)
 {
     psString flagstr(row["flags"]);
 
     // Set purify status
-    if (flagstr.FindSubString("PURIFYING",0,true)!=-1)
+    if(flagstr.FindSubString("PURIFYING",0,true)!=-1)
     {
         flags |= PSITEM_FLAG_PURIFYING;
     }
-    
-    if (flagstr.FindSubString("PURIFIED",0,true)!=-1)
+
+    if(flagstr.FindSubString("PURIFIED",0,true)!=-1)
     {
         flags |= PSITEM_FLAG_PURIFIED;
     }
-    
+
     return psItem::Load(row);
 }
 
@@ -84,7 +84,7 @@ bool psGlyph::Purified()
     return (flags & PSITEM_FLAG_PURIFIED) ? true : false;
 }
 
-psItem * psGlyph::Clone()
+psItem* psGlyph::Clone()
 {
     return new psGlyph();
 }
@@ -93,40 +93,40 @@ psItem * psGlyph::Clone()
 // Definition of the glyphpool for psGlyphs
 PoolAllocator<psGlyph> psGlyph::glyphpool;
 
-void *psGlyph::operator new(size_t allocSize)
+void* psGlyph::operator new(size_t allocSize)
 {
     CS_ASSERT(allocSize<=sizeof(psGlyph));
-    return (void *)glyphpool.CallFromNew();
+    return (void*)glyphpool.CallFromNew();
 }
 
-void psGlyph::operator delete(void *releasePtr)
+void psGlyph::operator delete(void* releasePtr)
 {
-    glyphpool.CallFromDelete((psGlyph *)releasePtr);
+    glyphpool.CallFromDelete((psGlyph*)releasePtr);
 }
 
-psItem *psGlyph::CreateNew()
+psItem* psGlyph::CreateNew()
 {
     return new psGlyph();
 }
 
-void psGlyph::Copy(psGlyph * target)
+void psGlyph::Copy(psGlyph* target)
 {
     psItem::Copy(target);
     target->SetFlags(flags & ~(PSITEM_FLAG_PURIFIED | PSITEM_FLAG_PURIFYING));
 }
 
-void psGlyph::SetOwningCharacter(psCharacter *owner)
+void psGlyph::SetOwningCharacter(psCharacter* owner)
 {
-    if (loaded && owner != GetOwningCharacter())
+    if(loaded && owner != GetOwningCharacter())
         UnPurify();
     psItem::SetOwningCharacter(owner);
 }
 
 int psGlyph::GetPurifyStatus() const
 {
-    if (flags & PSITEM_FLAG_PURIFIED)
+    if(flags & PSITEM_FLAG_PURIFIED)
         return 2;
-    else if (flags & PSITEM_FLAG_PURIFYING)
+    else if(flags & PSITEM_FLAG_PURIFYING)
         return 1;
     else
         return 0;

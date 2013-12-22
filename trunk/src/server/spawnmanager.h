@@ -78,20 +78,32 @@ public:
     /// Setup variables and compute area
     void Initialize(int idval,
                     int spawnruleid,
-                    const char *type_code,
+                    const char* type_code,
                     float rx1, float ry1, float rz1,
                     float rx2, float ry2, float rz2,
                     float radius,
-                    const char *sectorname);
+                    const char* sectorname);
 
-    void SetID(int idval) { id = idval; };
-    int GetID() { return id; }
+    void SetID(int idval)
+    {
+        id = idval;
+    };
+    int GetID()
+    {
+        return id;
+    }
 
     /// Get range's XZ area
-    float GetArea() { return area; };
+    float GetArea()
+    {
+        return area;
+    };
 
     /// Get spawn sector name
-    const csString& GetSector() { return spawnsector; }
+    const csString &GetSector()
+    {
+        return spawnsector;
+    }
 
     /// Randomly pick a position within the range
     const csVector3 PickPos();
@@ -137,7 +149,7 @@ protected:
     csHash<SpawnRange*> ranges;
 
     /// Rules for generating loot when this npc is killed.
-    LootEntrySet *loot;
+    LootEntrySet* loot;
 
     int dead_remain_time;
 
@@ -154,14 +166,20 @@ public:
                     float substodds,
                     int substplayer,
                     float x,float y,float z,float angle,
-                    const char *sector,
-                    LootEntrySet *loot_id,
+                    const char* sector,
+                    LootEntrySet* loot_id,
                     int dead_time,
                     float minSpacing,
                     InstanceID instance);
 
-    int  GetID() { return id; };
-    void SetID(int idval) { id = idval; };
+    int  GetID()
+    {
+        return id;
+    };
+    void SetID(int idval)
+    {
+        id = idval;
+    };
 
     /// Get random value between min and max spawn time, in ticks/msecs.
     int GetRespawnDelay();
@@ -174,17 +192,26 @@ public:
      *
      * @return True if this is a random area rule, or false if it is a fixed position.
      */
-    bool DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, InstanceID& instance);
+    bool DetermineSpawnLoc(psCharacter* ch, csVector3 &pos, float &angle, csString &sectorname, InstanceID &instance);
 
     /// Add a spawn range to current rule
-    void AddRange(SpawnRange *range);
+    void AddRange(SpawnRange* range);
 
     /// Get the Loot Rule set to generate loot
-    LootEntrySet *GetLootRules() { return loot; }
+    LootEntrySet* GetLootRules()
+    {
+        return loot;
+    }
 
-    int GetDeadRemainTime() { return dead_remain_time; }
+    int GetDeadRemainTime()
+    {
+        return dead_remain_time;
+    }
 
-    int GetMinSpawnSpacingDistance() { return minSpawnSpacingDistance; }
+    int GetMinSpawnSpacingDistance()
+    {
+        return minSpawnSpacingDistance;
+    }
 
 };
 
@@ -197,7 +224,7 @@ class psCharacter;
  */
 struct LootEntry
 {
-    psItemStats *item;
+    psItemStats* item;
     int   min_item; ///< The minimal amount of these items.
     int   max_item; ///< The maximum amount of these items.
     float probability;
@@ -217,17 +244,21 @@ protected:
     int id;
     csArray<LootEntry*> entries;
     float total_prob;
-    LootRandomizer *lootRandomizer;
+    LootRandomizer* lootRandomizer;
 
-    void CreateSingleLoot(psCharacter *chr);
-    void CreateMultipleLoot(psCharacter *chr, size_t numModifiers = 0);
+    void CreateSingleLoot(psCharacter* chr);
+    void CreateMultipleLoot(psCharacter* chr, size_t numModifiers = 0);
 
 public:
-    LootEntrySet(int idx) { id=idx; total_prob=0;}
+    LootEntrySet(int idx)
+    {
+        id=idx;
+        total_prob=0;
+    }
     ~LootEntrySet();
 
     /// This adds another item to the entries array
-    void AddLootEntry( LootEntry *entry );
+    void AddLootEntry(LootEntry* entry);
 
     /**
      * This calculates the loot for the killed character, given the
@@ -237,12 +268,15 @@ public:
      * @param character the character who has been killed
      * @param numModifiers max number of modifiers to use
      */
-    void CreateLoot( psCharacter *character, size_t numModifiers = 0 );
+    void CreateLoot(psCharacter* character, size_t numModifiers = 0);
 
     /**
      * Set the randomizer to use for random loot
      */
-    void SetRandomizer( LootRandomizer *rnd ) { lootRandomizer = rnd; }
+    void SetRandomizer(LootRandomizer* rnd)
+    {
+        lootRandomizer = rnd;
+    }
 };
 
 /** A structure to hold the clients that are pending a group loot question.
@@ -256,20 +290,20 @@ class PendingLootPrompt;
 class SpawnManager : public MessageManager<SpawnManager>
 {
 protected:
-    psDatabase             *database;
+    psDatabase*             database;
     csHash<SpawnRule*> rules;
     csHash<LootEntrySet*>   looting;
-    LootRandomizer         *lootRandomizer;
-    CacheManager *cacheManager;
-    EntityManager *entityManager;
-    GEMSupervisor *gem;
+    LootRandomizer*         lootRandomizer;
+    CacheManager* cacheManager;
+    EntityManager* entityManager;
+    GEMSupervisor* gem;
 
-    void HandleLootItem(MsgEntry *me,Client *client);
-    void HandleDeathEvent(MsgEntry *me,Client *notused);
+    void HandleLootItem(MsgEntry* me,Client* client);
+    void HandleDeathEvent(MsgEntry* me,Client* notused);
 
 public:
 
-    SpawnManager(psDatabase *db, CacheManager *cachemanager, EntityManager *entitymanager, GEMSupervisor *gemsupervisor);
+    SpawnManager(psDatabase* db, CacheManager* cachemanager, EntityManager* entitymanager, GEMSupervisor* gemsupervisor);
     virtual ~SpawnManager();
 
     /**
@@ -277,7 +311,10 @@ public:
      *
      * @return Returns a reference to the current loot randomizer.
      */
-    LootRandomizer* GetLootRandomizer() { return lootRandomizer; }
+    LootRandomizer* GetLootRandomizer()
+    {
+        return lootRandomizer;
+    }
 
     /**
      * Load all rules into memory for future use.
@@ -293,20 +330,20 @@ public:
     /**
      * Load NPC Waypoint paths as named linear spawn ranges.
      */
-    LoadWaypointsAsSpawnRanges(iDocumentNode *topNode);
+    LoadWaypointsAsSpawnRanges(iDocumentNode* topNode);
 #endif
 
     /**
      * Load all ranges for a rule.
      */
-    void LoadSpawnRanges(SpawnRule *rule);
+    void LoadSpawnRanges(SpawnRule* rule);
 
     /**
      * Load hunt location.
      *
      * @param sectorinfo The sector to load in. NULL means all sectors.
      */
-    void LoadHuntLocations(psSectorInfo *sectorinfo = 0);
+    void LoadHuntLocations(psSectorInfo* sectorinfo = 0);
 
     /**
      * Used by LoadHuntLocations() to spawn the hunt locations in game.
@@ -314,7 +351,7 @@ public:
      * @param result the result set to use for the spawm
      * @param sectorinfo The sector to load in. NULL means all sectors.
      */
-    void SpawnHuntLocations(Result &result, psSectorInfo *sectorinfo);
+    void SpawnHuntLocations(Result &result, psSectorInfo* sectorinfo);
 
     /**
      * Called at server startup to create all creatures currently marked as
@@ -325,18 +362,18 @@ public:
      * @param sectorinfo The sector we want to repopulate.
      *                   If NULL then respawn all sectors.
      */
-    void RepopulateLive(psSectorInfo *sectorinfo = 0);
+    void RepopulateLive(psSectorInfo* sectorinfo = 0);
 
     /**
      * Respawn a NPC given by playerID and find the position
      * from the spawnRule.
      */
-    void Respawn(PID playerID, SpawnRule* spawnRule );
+    void Respawn(PID playerID, SpawnRule* spawnRule);
 
     /**
      * Respawn a NPC in the given position.
      */
-    void Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, const char* sector);
+    void Respawn(psCharacter* chardata, InstanceID instance, csVector3 &where, float rot, const char* sector);
 
     /**
      * Adds all items to the world.
@@ -346,19 +383,19 @@ public:
      * @param sectorinfo The sector to respawn the items into. If NULL it will
      *                   respawn all items in all sectors.
      */
-    void RepopulateItems(psSectorInfo *sectorinfo = 0);
+    void RepopulateItems(psSectorInfo* sectorinfo = 0);
 
     /**
      * Sets the NPC as dead, plays the death animation and triggers the
      * loot generator.  Also queues the removal of the corpse.
      */
-    void KillNPC(gemActor *npc, gemActor * killer);
+    void KillNPC(gemActor* npc, gemActor* killer);
 
     /**
      * Kills the specified NPC, updates the database that he is "dead"
      * and queues him for respawn according to the spawn rules.
      */
-    void RemoveNPC(gemObject *obj);
+    void RemoveNPC(gemObject* obj);
 };
 
 
@@ -394,16 +431,16 @@ public:
 class psDespawnGameEvent : public psGameEvent
 {
 protected:
-    SpawnManager *spawnmanager;
-    GEMSupervisor *gem;
+    SpawnManager* spawnmanager;
+    GEMSupervisor* gem;
     int ticks;
     EID entity;
 
 public:
-    psDespawnGameEvent(SpawnManager *mgr,
-                       GEMSupervisor *gemSupervisor,
+    psDespawnGameEvent(SpawnManager* mgr,
+                       GEMSupervisor* gemSupervisor,
                        int delayticks,
-                       gemObject *obj);
+                       gemObject* obj);
 
     virtual void Trigger();  // Abstract event processing function
 };
@@ -411,7 +448,7 @@ public:
 class psItemSpawnEvent : public psGameEvent
 {
 public:
-    psItemSpawnEvent (psScheduledItem* item);
+    psItemSpawnEvent(psScheduledItem* item);
     virtual ~psItemSpawnEvent();
 
     void Trigger();  // Abstract event processing function

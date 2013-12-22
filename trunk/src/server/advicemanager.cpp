@@ -65,8 +65,8 @@ public:
 
     csString adviseeName;      ///< cache the name of the advisee
 
-    psAdviceRequestTimeoutGameEvent *requestEvent; ///< event to cancel the current request
-    psAdviceSessionTimeoutGameEvent *timeoutEvent; ///< event to cancel the current session
+    psAdviceRequestTimeoutGameEvent* requestEvent; ///< event to cancel the current request
+    psAdviceSessionTimeoutGameEvent* timeoutEvent; ///< event to cancel the current session
 
     csString lastRequest; ///< cache the text of the last request
     int status;           ///< current status of the session -- this should be changed to an enum
@@ -86,8 +86,8 @@ public:
         requestEvent = NULL;
     };
 
-    AdviceSession( AdviceManager *mgr, Client *Advisor,
-                   Client *Advisee, const char *request)
+    AdviceSession(AdviceManager* mgr, Client* Advisor,
+                  Client* Advisee, const char* request)
     {
         manager = mgr;
 
@@ -99,14 +99,14 @@ public:
 
         advisorPoints = 1;
         requestRetries = 0;
-        SetAdvisor( Advisor );
-        if (Advisee)
+        SetAdvisor(Advisor);
+        if(Advisee)
         {
             advisee = Advisee;
 
             AdviseeClientNum = Advisee->GetClientNum();
             adviseeName = Advisee->GetName();
-            advisee->GetActor()->RegisterCallback( this );
+            advisee->GetActor()->RegisterCallback(this);
         }
         lastRequest = request;
 
@@ -116,12 +116,12 @@ public:
 
     virtual ~AdviceSession()
     {
-        if ( advisor.IsValid()) advisor->GetActor()->UnregisterCallback( this );
-        if ( advisee.IsValid()) advisee->GetActor()->UnregisterCallback( this );
+        if(advisor.IsValid()) advisor->GetActor()->UnregisterCallback(this);
+        if(advisee.IsValid()) advisee->GetActor()->UnregisterCallback(this);
         // Cancel any timeouts tied to this session
-        if ( timeoutEvent )
+        if(timeoutEvent)
             timeoutEvent->valid = false;
-        if ( requestEvent )
+        if(requestEvent)
             requestEvent->valid = false;
     };
 
@@ -130,23 +130,23 @@ public:
         return advisee;
     };
 
-    void SetAdvisor( Client *newAdvisor)
+    void SetAdvisor(Client* newAdvisor)
     {
         // A NULL advisor is valid here, just clear the current advisor and return
-        if ( newAdvisor == NULL )
+        if(newAdvisor == NULL)
         {
             RemoveAdvisor();
             return;
         }
 
         // if there is a current advisor, unattach ourselves
-        if ( advisor.IsValid() )
-            advisor->GetActor()->UnregisterCallback( this );
+        if(advisor.IsValid())
+            advisor->GetActor()->UnregisterCallback(this);
 
         // assign new advisor
         advisor = newAdvisor;
         AdvisorClientNum = advisor->GetClientNum();
-        advisor->GetActor()->RegisterCallback( this );
+        advisor->GetActor()->RegisterCallback(this);
     };
 
     Client* GetAdvisor()
@@ -157,120 +157,120 @@ public:
     void RemoveAdvisor()
     {
         advisorPoints = 1;
-        if ( advisor.IsValid() )
-            advisor->GetActor()->UnregisterCallback( this );
+        if(advisor.IsValid())
+            advisor->GetActor()->UnregisterCallback(this);
         advisor = NULL;
         AdvisorClientNum = (uint32_t)-1;
     };
 
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object)
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object)
     {
-        gemActor *sender = (gemActor *)object;
+        gemActor* sender = (gemActor*)object;
 
-        if ( advisor.IsValid() && sender == advisor->GetActor() )
+        if(advisor.IsValid() && sender == advisor->GetActor())
         {
-            manager->CancelAdvisorSession( sender, this, "been canceled" );
-            SetAdvisor( NULL );
-            manager->RemoveSession( this );
+            manager->CancelAdvisorSession(sender, this, "been canceled");
+            SetAdvisor(NULL);
+            manager->RemoveSession(this);
         }
 
-        else if ( advisee.IsValid() && sender == advisee->GetActor() )
+        else if(advisee.IsValid() && sender == advisee->GetActor())
         {
-            manager->CancelAdvisorSession( sender, this, "been canceled" );
-            SetAdvisor( NULL );
-            advisee->GetActor()->UnregisterCallback( this );
-            manager->RemoveSession( this );
+            manager->CancelAdvisorSession(sender, this, "been canceled");
+            SetAdvisor(NULL);
+            advisee->GetActor()->UnregisterCallback(this);
+            manager->RemoveSession(this);
         }
     };
 
     void SessionTimeout()
     {
-        manager->CancelAdvisorSession( NULL, this, "timed out" );
+        manager->CancelAdvisorSession(NULL, this, "timed out");
         RemoveAdvisor();
     };
 };
 
 /****************************************************************************/
 
-psAdviceRequestTimeoutGameEvent::psAdviceRequestTimeoutGameEvent( AdviceManager *mgr,
-                                                                  int delayticks,
-                                                                  gemActor *advisee,
-                                                                  AdviceSession *adviceRequest )
-    : psGEMEvent( 0, delayticks, NULL,"psAdviceRequestTimeoutGameEvent" )
+psAdviceRequestTimeoutGameEvent::psAdviceRequestTimeoutGameEvent(AdviceManager* mgr,
+        int delayticks,
+        gemActor* advisee,
+        AdviceSession* adviceRequest)
+    : psGEMEvent(0, delayticks, NULL,"psAdviceRequestTimeoutGameEvent")
 {
     advicemanager  = mgr;
     adviceSession  = adviceRequest;
 
     //Handle dependencies ourselves since we have two.
-    if ( adviceSession->GetAdvisee() )
+    if(adviceSession->GetAdvisee())
     {
         adviseeActor = adviceSession->GetAdvisee()->GetActor();
-        if ( adviseeActor ) adviseeActor->RegisterCallback( this );
+        if(adviseeActor) adviseeActor->RegisterCallback(this);
     }
     else adviseeActor = NULL;
 
-    if ( adviceSession->GetAdvisor() )
+    if(adviceSession->GetAdvisor())
     {
         advisorActor = adviceSession->GetAdvisor()->GetActor();
-        if ( advisorActor ) advisorActor->RegisterCallback( this );
+        if(advisorActor) advisorActor->RegisterCallback(this);
     }
     else advisorActor = NULL;
 }
 
 psAdviceRequestTimeoutGameEvent::~psAdviceRequestTimeoutGameEvent()
 {
-    if ( adviseeActor != NULL ) adviseeActor->UnregisterCallback( this );
+    if(adviseeActor != NULL) adviseeActor->UnregisterCallback(this);
     adviseeActor = NULL;
 
-    if ( advisorActor != NULL ) advisorActor->UnregisterCallback( this );
+    if(advisorActor != NULL) advisorActor->UnregisterCallback(this);
     advisorActor = NULL;
 
-    if ( adviceSession->requestEvent == this ) adviceSession->requestEvent = NULL;
+    if(adviceSession->requestEvent == this) adviceSession->requestEvent = NULL;
 }
 
-void psAdviceRequestTimeoutGameEvent::DeleteObjectCallback(iDeleteNotificationObject * object)
+void psAdviceRequestTimeoutGameEvent::DeleteObjectCallback(iDeleteNotificationObject* object)
 {
-    gemActor *sender = (gemActor *)object;
+    gemActor* sender = (gemActor*)object;
 
-    if ( adviseeActor )
+    if(adviseeActor)
     {
-        if ( sender == adviseeActor )
+        if(sender == adviseeActor)
         {
-            psGEMEvent::DeleteObjectCallback( object );
-            adviseeActor->UnregisterCallback( this );
-            if ( advisorActor ) advisorActor->UnregisterCallback( this );
+            psGEMEvent::DeleteObjectCallback(object);
+            adviseeActor->UnregisterCallback(this);
+            if(advisorActor) advisorActor->UnregisterCallback(this);
             adviseeActor = advisorActor = NULL;
             return;
         }
     }
 
-    if ( advisorActor )
+    if(advisorActor)
     {
-        if ( sender == advisorActor )
+        if(sender == advisorActor)
         {
-            advisorActor->UnregisterCallback( this );
+            advisorActor->UnregisterCallback(this);
             advisorActor = NULL;
             adviceSession->RemoveAdvisor();
 
-            advicemanager->AdviceRequestTimeout( adviceSession );
+            advicemanager->AdviceRequestTimeout(adviceSession);
         }
     }
 }
 
 void psAdviceRequestTimeoutGameEvent::Trigger()
 {
-    advicemanager->AdviceRequestTimeout( adviceSession );
+    advicemanager->AdviceRequestTimeout(adviceSession);
 }
 
 
 /****************************************************************************/
 
 /****************************************************************************/
-psAdviceSessionTimeoutGameEvent::psAdviceSessionTimeoutGameEvent( AdviceManager *mgr,
-                                                                  int delayticks,
-                                                                  gemActor *advisee,
-                                                                  AdviceSession *adviceRequest)
-    : psGEMEvent( 0, delayticks, NULL,"psAdviceSessionTimeoutGameEvent" )
+psAdviceSessionTimeoutGameEvent::psAdviceSessionTimeoutGameEvent(AdviceManager* mgr,
+        int delayticks,
+        gemActor* advisee,
+        AdviceSession* adviceRequest)
+    : psGEMEvent(0, delayticks, NULL,"psAdviceSessionTimeoutGameEvent")
 {
     adviseeActor   = NULL;
     advisorActor   = NULL;
@@ -278,43 +278,43 @@ psAdviceSessionTimeoutGameEvent::psAdviceSessionTimeoutGameEvent( AdviceManager 
     adviceSession  = adviceRequest;
 
     //Handle dependencies ourselves since we have two.
-    if ( adviceSession->GetAdvisee() != NULL )
+    if(adviceSession->GetAdvisee() != NULL)
     {
         adviseeActor = adviceSession->GetAdvisee()->GetActor();
-        if ( adviseeActor ) adviseeActor->RegisterCallback( this );
+        if(adviseeActor) adviseeActor->RegisterCallback(this);
     }
 
     // This should only happen when this is an unanswered question.
     // This event is canceled and recreated each time there is any activity on the session,
     // so this should be filled in when an advisor either claims or answers the question.
-    if ( adviceSession->GetAdvisor() != NULL )
+    if(adviceSession->GetAdvisor() != NULL)
     {
         advisorActor = adviceSession->GetAdvisor()->GetActor();
-        if ( advisorActor ) advisorActor->RegisterCallback( this );
+        if(advisorActor) advisorActor->RegisterCallback(this);
     }
 
 }
 
 psAdviceSessionTimeoutGameEvent::~psAdviceSessionTimeoutGameEvent()
 {
-    if ( adviseeActor != NULL ) adviseeActor->UnregisterCallback( this );
+    if(adviseeActor != NULL) adviseeActor->UnregisterCallback(this);
     adviseeActor = NULL;
 
-    if ( advisorActor != NULL ) advisorActor->UnregisterCallback( this );
+    if(advisorActor != NULL) advisorActor->UnregisterCallback(this);
     advisorActor = NULL;
 
-    if ( adviceSession->timeoutEvent == this )adviceSession->timeoutEvent = NULL;
+    if(adviceSession->timeoutEvent == this)adviceSession->timeoutEvent = NULL;
 }
 
-void psAdviceSessionTimeoutGameEvent::DeleteObjectCallback(iDeleteNotificationObject * object)
+void psAdviceSessionTimeoutGameEvent::DeleteObjectCallback(iDeleteNotificationObject* object)
 {
     psGEMEvent::DeleteObjectCallback(object);
 
     //Handle dependencies ourselves since we have two.
-    if ( adviseeActor != NULL) adviseeActor->UnregisterCallback( this );
+    if(adviseeActor != NULL) adviseeActor->UnregisterCallback(this);
     adviseeActor = NULL;
 
-    if ( advisorActor != NULL ) advisorActor->UnregisterCallback( this );
+    if(advisorActor != NULL) advisorActor->UnregisterCallback(this);
     advisorActor = NULL;
 }
 
@@ -326,7 +326,7 @@ void psAdviceSessionTimeoutGameEvent::Trigger()
 /****************************************************************************/
 
 
-AdviceManager::AdviceManager(psDatabase *db)
+AdviceManager::AdviceManager(psDatabase* db)
 {
     advisors.Empty();
     advisorPos = 0;
@@ -338,34 +338,34 @@ AdviceManager::AdviceManager(psDatabase *db)
 
 AdviceManager::~AdviceManager()
 {
-	csHash<AdviceSession*>::GlobalIterator iter(AdviseeList.GetIterator());
-	while(iter.HasNext())
-		delete iter.Next();
+    csHash<AdviceSession*>::GlobalIterator iter(AdviseeList.GetIterator());
+    while(iter.HasNext())
+        delete iter.Next();
 }
 
-void AdviceManager::HandleAdviceMessage(MsgEntry *me,Client *client)
+void AdviceManager::HandleAdviceMessage(MsgEntry* me,Client* client)
 {
     psAdviceMessage msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
     {
         psserver->SendSystemError(me->clientnum, "Invalid AdviceRequest Message.");
         Error2("Failed to parse psAdviceRequestMsg from client %u.",me->clientnum);
         return;
     }
 
-    if ( msg.sCommand == "on" ) //this case handles /advisor on
+    if(msg.sCommand == "on")    //this case handles /advisor on
     {
         // Is account banned from advising?
-        if (client->IsAdvisorBanned())
+        if(client->IsAdvisorBanned())
         {
             psserver->SendSystemError(me->clientnum, "You are banned from advising!");
             return;
         }
         // GM's can always become advisors
-        if (client->GetSecurityLevel() < GM_TESTER)
+        if(client->GetSecurityLevel() < GM_TESTER)
         {
             // Has account been on for long enough?
-            if ((client->GetAccountTotalOnlineTime() / 3600) < 30)
+            if((client->GetAccountTotalOnlineTime() / 3600) < 30)
             {
                 psserver->SendSystemError(me->clientnum, "You must be in game for more than 30 hours to become an advisor.");
                 return;
@@ -373,27 +373,27 @@ void AdviceManager::HandleAdviceMessage(MsgEntry *me,Client *client)
         }
         AddAdvisor(client);
     }
-    else if ( msg.sCommand == "off" ) //this case handles /advisor off
+    else if(msg.sCommand == "off")    //this case handles /advisor off
     {
         RemoveAdvisor(client->GetClientNum(), me->clientnum);
     }
-    else if ( msg.sCommand == "sessions" ) //this case handles /advisor sessions
+    else if(msg.sCommand == "sessions")    //this case handles /advisor sessions
     {
-        HandleAdviseeList( client );
+        HandleAdviseeList(client);
     }
-    else if ( msg.sCommand == "requests" ) //this case handles /advisor requests
+    else if(msg.sCommand == "requests")    //this case handles /advisor requests
     {
-        HandleAdviceList( client );
+        HandleAdviceList(client);
     }
-    else if ( msg.sCommand == "list" ) //this case handles /advisor list
+    else if(msg.sCommand == "list")    //this case handles /advisor list
     {
-        HandleListAdvisors( client );
+        HandleListAdvisors(client);
     }
-    else if ( msg.sCommand == "/help" )
+    else if(msg.sCommand == "/help")
     {
-        if (!client->IsMute())
+        if(!client->IsMute())
         {
-            HandleAdviceRequest( client, msg.sMessage );
+            HandleAdviceRequest(client, msg.sMessage);
         }
         else
         {
@@ -403,53 +403,53 @@ void AdviceManager::HandleAdviceMessage(MsgEntry *me,Client *client)
         client->FloodControl(CHAT_ADVICE, msg.sMessage, msg.sTarget);
 
     }
-    else if ( msg.sCommand == "/advice" )
+    else if(msg.sCommand == "/advice")
     {
-        if (!client->IsMute())
+        if(!client->IsMute())
         {
-            HandleAdviceResponse( client, msg.sTarget, msg.sMessage );
+            HandleAdviceResponse(client, msg.sTarget, msg.sMessage);
         }
         else
         {
             //User is muted but tries to chat anyway. Remind the user that he/she/it is muted
             psserver->SendSystemInfo(client->GetClientNum(),"You can't send messages because you are muted.");
         }
-        if ( msg.sMessage.Length() != 0 )
+        if(msg.sMessage.Length() != 0)
             client->FloodControl(CHAT_ADVICE, msg.sMessage, msg.sTarget);
     }
     else //Last case. Should happen only with /advisor being used alone
     {
-        if (client->GetAdvisor())
+        if(client->GetAdvisor())
         {
-                psserver->SendSystemInfo(client->GetClientNum(),"You are an advisor.");
+            psserver->SendSystemInfo(client->GetClientNum(),"You are an advisor.");
         }
         else
         {
-                psserver->SendSystemInfo(client->GetClientNum(),"You are not an advisor.");
+            psserver->SendSystemInfo(client->GetClientNum(),"You are not an advisor.");
         }
     }
 }
 
-void AdviceManager::HandleAdviseeList( Client *advisor )
+void AdviceManager::HandleAdviseeList(Client* advisor)
 {
-    if ( !advisor->GetAdvisor() )
+    if(!advisor->GetAdvisor())
     {
         psserver->SendSystemInfo(advisor->GetClientNum(),"You need to be an advisor to use this command.");
         return;
     }
 
     // find existing Advicee in the List
-    AdviceSession *activeSession;
+    AdviceSession* activeSession;
     csString message("You are currently advising:");
-    csHash< AdviceSession* >::GlobalIterator loop( AdviseeList.GetIterator() );
+    csHash< AdviceSession* >::GlobalIterator loop(AdviseeList.GetIterator());
     bool found = false;
     while(loop.HasNext())
     {
-    	activeSession = loop.Next();
-        if (activeSession && activeSession->adviseeName.GetData() && activeSession->AdvisorClientNum == advisor->GetClientNum() )
+        activeSession = loop.Next();
+        if(activeSession && activeSession->adviseeName.GetData() && activeSession->AdvisorClientNum == advisor->GetClientNum())
         {
-            message.Append("\n     " );
-            message.Append( activeSession->adviseeName.GetData() );
+            message.Append("\n     ");
+            message.Append(activeSession->adviseeName.GetData());
             found = true;
         }
         else
@@ -457,32 +457,32 @@ void AdviceManager::HandleAdviseeList( Client *advisor )
             // bad activeSession here
         }
     }
-    if ( !found ) message.Append("\n     noone");
-    psserver->SendSystemInfo(advisor->GetClientNum(), message.GetData() );
+    if(!found) message.Append("\n     noone");
+    psserver->SendSystemInfo(advisor->GetClientNum(), message.GetData());
 }
 
-void AdviceManager::HandleAdviceList( Client *advisor )
+void AdviceManager::HandleAdviceList(Client* advisor)
 {
-    if ( !advisor->GetAdvisor() )
+    if(!advisor->GetAdvisor())
     {
         psserver->SendSystemInfo(advisor->GetClientNum(),"You need to be an advisor to use this command.");
         return;
     }
 
     // find existing Advicee in the List
-    AdviceSession *activeSession;
+    AdviceSession* activeSession;
 
-    csHash< AdviceSession* >::GlobalIterator loop( AdviseeList.GetIterator());
+    csHash< AdviceSession* >::GlobalIterator loop(AdviseeList.GetIterator());
 
     bool found = false;
 
     while(loop.HasNext())
     {
-    	activeSession = loop.Next();
-        if ( activeSession && activeSession->adviseeName.GetData() && activeSession->lastRequest.GetData()
-            && activeSession->status == SESSION_STATUS_UNKNOWN && !activeSession->answered )
+        activeSession = loop.Next();
+        if(activeSession && activeSession->adviseeName.GetData() && activeSession->lastRequest.GetData()
+                && activeSession->status == SESSION_STATUS_UNKNOWN && !activeSession->answered)
         {
-            psChatMessage msgAdvisor( advisor->GetClientNum(), 0, activeSession->adviseeName, 0, activeSession->lastRequest, CHAT_ADVICE_LIST, false);
+            psChatMessage msgAdvisor(advisor->GetClientNum(), 0, activeSession->adviseeName, 0, activeSession->lastRequest, CHAT_ADVICE_LIST, false);
             msgAdvisor.SendMessage();
             found = true;
         }
@@ -492,71 +492,71 @@ void AdviceManager::HandleAdviceList( Client *advisor )
         }
     }
 
-    if ( !found ) psserver->SendSystemInfo(advisor->GetClientNum(),"There are no messengers waiting for an advisor.");
+    if(!found) psserver->SendSystemInfo(advisor->GetClientNum(),"There are no messengers waiting for an advisor.");
 
 }
 
-void AdviceManager::HandleListAdvisors( Client *advisor )
+void AdviceManager::HandleListAdvisors(Client* advisor)
 {
     psserver->SendSystemInfo(advisor->GetClientNum(),"There are %u advisors online.", advisors.GetSize());
 
     // If your not a GM that's all you get to know
-    if ( advisor->GetSecurityLevel() < GM_TESTER || !advisors.GetSize())
+    if(advisor->GetSecurityLevel() < GM_TESTER || !advisors.GetSize())
         return;
 
     psserver->SendSystemInfo(advisor->GetClientNum(),"They are:", advisors.GetSize());
-    for (size_t i = 0; i < advisors.GetSize(); i++)
+    for(size_t i = 0; i < advisors.GetSize(); i++)
     {
-            Client * client = psserver->GetConnections()->Find(advisors[i].id);
-            //An advisor might have left the game in the same exact moment we are parsing this
-            //so better to check if it's still valid before going on
-            if(client)
-                psserver->SendSystemInfo(advisor->GetClientNum(),"%s %s", client->GetName(), advisors[i].GM ? "(GM)" : "");
+        Client* client = psserver->GetConnections()->Find(advisors[i].id);
+        //An advisor might have left the game in the same exact moment we are parsing this
+        //so better to check if it's still valid before going on
+        if(client)
+            psserver->SendSystemInfo(advisor->GetClientNum(),"%s %s", client->GetName(), advisors[i].GM ? "(GM)" : "");
 
     }
 }
 
-void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
+void AdviceManager::HandleAdviceRequest(Client* advisee, csString message)
 {
     //    psserver->SendSystemInfo( advisee->GetClientNum(), "Sorry for the inconvenience, you cannot request advice right now. The advice system is under maintenaince and will be available after a server restart soon.");
     //    return;
 
-    if ( advisee->GetAdvisor() )
+    if(advisee->GetAdvisor())
     {
-        psserver->SendSystemInfo( advisee->GetClientNum(), "You cannot request advice while you are an advisor. Lay down your advisor role using \"/advisor off\", then request advice.");
+        psserver->SendSystemInfo(advisee->GetClientNum(), "You cannot request advice while you are an advisor. Lay down your advisor role using \"/advisor off\", then request advice.");
         return;
     }
 
-    if ( advisors.GetSize() == 0 )                             //No advisors are online
+    if(advisors.GetSize() == 0)                                //No advisors are online
     {
         //Send back an message that there is no advisor online
-        psserver->SendSystemInfo( advisee->GetClientNum(),"The world has no advisors at the moment. You may ask for further help on IRC or on our forums. You may also try to ask players around you for help with \"/tell <player name> <message>\".");
+        psserver->SendSystemInfo(advisee->GetClientNum(),"The world has no advisors at the moment. You may ask for further help on IRC or on our forums. You may also try to ask players around you for help with \"/tell <player name> <message>\".");
         return;
     }
 
     // find existing Advicee in the List
-    AdviceSession *activeSession = AdviseeList.Get(advisee->GetClientNum(), NULL);
+    AdviceSession* activeSession = AdviseeList.Get(advisee->GetClientNum(), NULL);
 
     // Create an adviceSession if one doesn't exist and the message is valid
-    if ( !activeSession )
+    if(!activeSession)
     {
         WordArray words(message);
         // Check to make sure the request is 'good'
-        if ( words.GetCount() < 2 )
+        if(words.GetCount() < 2)
         {
-            psserver->SendSystemInfo( advisee->GetClientNum(),
+            psserver->SendSystemInfo(advisee->GetClientNum(),
                                      "An Advisor will need more information than this to help you, please include as much as you can in your request.");
             return;
         }
 
-        Debug2( LOG_ANY, advisee->GetClientNum(), "Creating AdviceSession for %d", advisee->GetClientNum() );
-        activeSession = new AdviceSession( this, NULL, advisee, message );
+        Debug2(LOG_ANY, advisee->GetClientNum(), "Creating AdviceSession for %d", advisee->GetClientNum());
+        activeSession = new AdviceSession(this, NULL, advisee, message);
         AdviseeList.Put(activeSession->AdviseeClientNum, activeSession);  // Advice is no longer pending.
     }
     else
     {
         // One unadvised unanswered question at a time
-        if (!activeSession->GetAdvisor() && !activeSession->answered)
+        if(!activeSession->GetAdvisor() && !activeSession->answered)
         {
             psserver->SendSystemError(advisee->GetClientNum(), "Please wait for an advisor to respond to your previous inquiry before asking another question.");
             return;
@@ -565,9 +565,9 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
     //at this point active session will always be valid because it's either recovered from the
     //stored sessions or it was just created.
     // Create psAdviceRequestTimeoutGameEvent to timeout question.
-    if (activeSession->timeoutEvent == NULL && activeSession->requestEvent == NULL)
+    if(activeSession->timeoutEvent == NULL && activeSession->requestEvent == NULL)
     {
-        psAdviceRequestTimeoutGameEvent *ev = new psAdviceRequestTimeoutGameEvent( this, ADVICE_QUESTION_TIMEOUT, advisee->GetActor(), activeSession );
+        psAdviceRequestTimeoutGameEvent* ev = new psAdviceRequestTimeoutGameEvent(this, ADVICE_QUESTION_TIMEOUT, advisee->GetActor(), activeSession);
         activeSession->requestEvent = ev;
         psserver->GetEventManager()->Push(ev);
     }
@@ -576,18 +576,18 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
         WordArray words(message);
 
         // Check to make sure the request is 'good'
-        if ( words.GetCount() < 2 )
+        if(words.GetCount() < 2)
         {
             psserver->SendSystemInfo(advisee->GetClientNum(), "An Advisor will need more information than this to help you, please include as much as you can in your request.");
             activeSession->answered = true;
             return;
         }
 
-        if ( activeSession->timeoutEvent )
+        if(activeSession->timeoutEvent)
         {
             activeSession->timeoutEvent->valid = false;
         }
-        psAdviceSessionTimeoutGameEvent *ev = new psAdviceSessionTimeoutGameEvent( this, activeSession->answered?ADVICE_SESSION_TIMEOUT:ADVICE_SESSION_TIMEOUT/2, advisee->GetActor(), activeSession );
+        psAdviceSessionTimeoutGameEvent* ev = new psAdviceSessionTimeoutGameEvent(this, activeSession->answered?ADVICE_SESSION_TIMEOUT:ADVICE_SESSION_TIMEOUT/2, advisee->GetActor(), activeSession);
         activeSession->timeoutEvent = ev;
         psserver->GetEventManager()->Push(ev);
     }
@@ -598,45 +598,45 @@ void AdviceManager::HandleAdviceRequest( Client *advisee, csString message )
 
     csString buf;
 
-    if ( activeSession->AdvisorClientNum != (uint32_t)-1 )
+    if(activeSession->AdvisorClientNum != (uint32_t)-1)
     {
         // Source Client Name, Target Client Name, Message
-        buf.Format("%s, %s, \"%s\"", advisee->GetName(), activeSession->GetAdvisor()->GetActor()->GetName(), message.GetData() );
+        buf.Format("%s, %s, \"%s\"", advisee->GetName(), activeSession->GetAdvisor()->GetActor()->GetName(), message.GetData());
         psserver->GetLogCSV()->Write(CSV_ADVICE, buf);
 
-        psChatMessage msgAdvisor( activeSession->AdvisorClientNum, 0, advisee->GetName(), 0, message , CHAT_ADVICE, false );
+        psChatMessage msgAdvisor(activeSession->AdvisorClientNum, 0, advisee->GetName(), 0, message , CHAT_ADVICE, false);
         msgAdvisor.SendMessage();
 
         // Send message to GM chars as well
-        for (size_t i = 0; i < advisors.GetSize(); i++)
+        for(size_t i = 0; i < advisors.GetSize(); i++)
         {
-            if (!advisors[i].GM || advisors[i].id == activeSession->AdvisorClientNum)
+            if(!advisors[i].GM || advisors[i].id == activeSession->AdvisorClientNum)
                 continue;
-            psChatMessage msgAdvisor( advisors[i].id, 0, advisee->GetName(), 0, message, CHAT_ADVICE, false);
+            psChatMessage msgAdvisor(advisors[i].id, 0, advisee->GetName(), 0, message, CHAT_ADVICE, false);
             msgAdvisor.SendMessage();
         }
     }
     else
     {
         // Source Client Name, Target Client Name, Message
-        buf.Format("%s, %s, \"%s\"", advisee->GetName(), "All Advisors", message.GetData() );
+        buf.Format("%s, %s, \"%s\"", advisee->GetName(), "All Advisors", message.GetData());
         psserver->GetLogCSV()->Write(CSV_ADVICE, buf);
 
-        for (size_t i = 0; i < advisors.GetSize(); i++)
+        for(size_t i = 0; i < advisors.GetSize(); i++)
         {
-            psChatMessage msgAdvisor( advisors[i].id, 0, advisee->GetName(), 0, message, CHAT_ADVICE, false);
+            psChatMessage msgAdvisor(advisors[i].id, 0, advisee->GetName(), 0, message, CHAT_ADVICE, false);
             msgAdvisor.SendMessage();
         }
     }
-    psChatMessage msgChat( advisee->GetClientNum() , 0, advisee->GetName(), 0, message, CHAT_ADVICE, false);
+    psChatMessage msgChat(advisee->GetClientNum() , 0, advisee->GetName(), 0, message, CHAT_ADVICE, false);
     msgChat.SendMessage();
 
 
 }
 
-void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, csString message)
+void AdviceManager::HandleAdviceResponse(Client* advisor, csString sAdvisee, csString message)
 {
-    if ( !advisor->GetAdvisor() )
+    if(!advisor->GetAdvisor())
     {
         psserver->SendSystemInfo(advisor->GetClientNum(),"You need to be an advisor to use this command.");
         return;
@@ -648,12 +648,12 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
     psserver->GetLogCSV()->Write(CSV_ADVICE, buf);
 
     // Find Advisee Client by name
-    if (sAdvisee.Length())
+    if(sAdvisee.Length())
     {
         sAdvisee = NormalizeCharacterName(sAdvisee);
     }
-    Client *advisee = psserver->GetConnections()->Find(sAdvisee);
-    if (!advisee)
+    Client* advisee = psserver->GetConnections()->Find(sAdvisee);
+    if(!advisee)
     {
         // Create a new message to report TELL error and send
         // back to original person.
@@ -665,7 +665,7 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
     }
 
     // Can't allow you to advise yourself
-    if ( advisee == advisor )
+    if(advisee == advisor)
     {
         psserver->SendSystemError(advisor->GetClientNum(), "You are not allowed to advise yourself. Please wait for another advisor.");
         return;
@@ -674,58 +674,58 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
     // find existing Advicee in the List
     AdviceSession key;
     key.AdviseeClientNum = advisee->GetClientNum();
-    AdviceSession *activeSession = AdviseeList.Get(advisee->GetClientNum(), NULL);
+    AdviceSession* activeSession = AdviseeList.Get(advisee->GetClientNum(), NULL);
 
-    if (!activeSession || (activeSession  && ( !activeSession->requestEvent ) && ( activeSession->GetAdvisor() == NULL ) ) )
+    if(!activeSession || (activeSession  && (!activeSession->requestEvent) && (activeSession->GetAdvisor() == NULL)))
     {
         psserver->SendSystemError(advisor->GetClientNum(), "%s has not requested help.", advisee->GetName());
         return;
     }
 
-    if (activeSession  && ( activeSession->AdviseeClientNum != advisee->GetClientNum() ) )
+    if(activeSession  && (activeSession->AdviseeClientNum != advisee->GetClientNum()))
     {
-        Debug2( LOG_ANY, advisee->GetClientNum(), "Grabbed wrong advisor session: %d", activeSession->AdviseeClientNum );
+        Debug2(LOG_ANY, advisee->GetClientNum(), "Grabbed wrong advisor session: %d", activeSession->AdviseeClientNum);
     }
 
-    if ( ( activeSession->GetAdvisor() != NULL ) && ( activeSession->AdvisorClientNum != advisor->GetClientNum() ) )
+    if((activeSession->GetAdvisor() != NULL) && (activeSession->AdvisorClientNum != advisor->GetClientNum()))
     {
         psserver->SendSystemError(advisor->GetClientNum(), "%s is being advised already, thank you.",  advisee->GetName());
         return;
     }
 
-    if ( message.Length() == 0  && activeSession->status == SESSION_STATUS_UNKNOWN ) // advisor is claiming a session
+    if(message.Length() == 0  && activeSession->status == SESSION_STATUS_UNKNOWN)    // advisor is claiming a session
     {
         // check to make sure advisor has only one claimed session.
-        AdviceSession *loopSession;
+        AdviceSession* loopSession;
 
-        csHash< AdviceSession* >::GlobalIterator loop( AdviseeList.GetIterator() );
+        csHash< AdviceSession* >::GlobalIterator loop(AdviseeList.GetIterator());
 
         while(loop.HasNext())
         {
-        	loopSession = loop.Next();
-            if (activeSession->status == SESSION_STATUS_CLAIMED && loopSession->GetAdvisor() == advisor )
+            loopSession = loop.Next();
+            if(activeSession->status == SESSION_STATUS_CLAIMED && loopSession->GetAdvisor() == advisor)
             {
-                psserver->SendSystemInfo(advisor->GetClientNum(), "You cannot have two messengers waiting for you at the same time, please answer %s's request first." , loopSession->adviseeName.GetData() );
+                psserver->SendSystemInfo(advisor->GetClientNum(), "You cannot have two messengers waiting for you at the same time, please answer %s's request first." , loopSession->adviseeName.GetData());
                 return;
             }
         }
 
-        activeSession->SetAdvisor( advisor );
+        activeSession->SetAdvisor(advisor);
         psserver->SendSystemInfo(advisee->GetClientNum(), "An advisor is preparing an answer to your question, please be patient.");
-        psserver->SendSystemInfo(advisor->GetClientNum(), "You have claimed the session with %s. Please provide an answer." , advisee->GetName() );
+        psserver->SendSystemInfo(advisor->GetClientNum(), "You have claimed the session with %s. Please provide an answer." , advisee->GetName());
 
-        for (size_t i = 0; i < advisors.GetSize(); i++)
+        for(size_t i = 0; i < advisors.GetSize(); i++)
         {
-            if ( advisors[i].id != activeSession->AdvisorClientNum )
+            if(advisors[i].id != activeSession->AdvisorClientNum)
             {
-                psserver->SendSystemInfo(advisors[i].id, "%s has proclaimed they know the answer to %s's question.", advisor->GetName(), advisee->GetName() );
+                psserver->SendSystemInfo(advisors[i].id, "%s has proclaimed they know the answer to %s's question.", advisor->GetName(), advisee->GetName());
             }
         }
         activeSession->status = SESSION_STATUS_CLAIMED;
     }
     else
     {
-        if (message.IsEmpty())
+        if(message.IsEmpty())
         {
             psserver->SendSystemInfo(advisor->GetClientNum(), "Please enter the advice you wish to give.");
             return;
@@ -733,30 +733,30 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
 
         psChatMessage msgChat(activeSession->AdviseeClientNum, 0, advisor->GetName(), advisee->GetName(), message ,CHAT_ADVISOR,false);
 
-        if ( activeSession->GetAdvisor() == NULL || activeSession->status != SESSION_STATUS_OWNED )
+        if(activeSession->GetAdvisor() == NULL || activeSession->status != SESSION_STATUS_OWNED)
         {
             // Check to make sure the advice is 'good'
             // if ( message.Length() < 20 )
             // {
-                // psserver->SendSystemInfo(advisor->GetClientNum(), "Please be more specific when answering questions. Your advice has been ignored.");
-                // return;
+            // psserver->SendSystemInfo(advisor->GetClientNum(), "Please be more specific when answering questions. Your advice has been ignored.");
+            // return;
             // }
 
             //activeSession->AdvisorClientNum = me->clientnum;
-            activeSession->SetAdvisor( advisor );
+            activeSession->SetAdvisor(advisor);
             advisor->IncrementAdvisorPoints(activeSession->advisorPoints);
-            psserver->CharacterLoader.SaveCharacterData( advisor->GetCharacterData(), advisor->GetActor(), true );
+            psserver->CharacterLoader.SaveCharacterData(advisor->GetCharacterData(), advisor->GetActor(), true);
 
             // Send Confirmation to advisor
-            psserver->SendSystemInfo( advisor->GetClientNum(), "You are now advising %s.",advisee->GetName());
+            psserver->SendSystemInfo(advisor->GetClientNum(), "You are now advising %s.",advisee->GetName());
 
             // Send Confirmation to all other advisors so they know they lost this one.
-            for (size_t i = 0; i < advisors.GetSize(); i++)
+            for(size_t i = 0; i < advisors.GetSize(); i++)
             {
-                if ( advisors[i].id != activeSession->AdvisorClientNum )
+                if(advisors[i].id != activeSession->AdvisorClientNum)
                 {
-                    psserver->SendSystemInfo( advisors[i].id, "%s has been assigned to %s.",  advisee->GetName(), advisor->GetName() );
-                    if ( advisors[i].GM )
+                    psserver->SendSystemInfo(advisors[i].id, "%s has been assigned to %s.",  advisee->GetName(), advisor->GetName());
+                    if(advisors[i].GM)
                         continue;
                     msgChat.msg->clientnum = advisors[i].id;
                     msgChat.SendMessage();
@@ -765,7 +765,7 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
             activeSession->status = SESSION_STATUS_OWNED;
         }
 
-        if ( activeSession->requestEvent )
+        if(activeSession->requestEvent)
             activeSession->requestEvent->valid = false;  // This keeps the cancellation timeout from firing.
 
         activeSession->answered = true;
@@ -779,9 +779,9 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
         msgChat.SendMessage();
 
         // Send message to GM chars as well
-        for (size_t i = 0; i < advisors.GetSize(); i++)
+        for(size_t i = 0; i < advisors.GetSize(); i++)
         {
-            if (!advisors[i].GM || advisors[i].id == activeSession->AdvisorClientNum)
+            if(!advisors[i].GM || advisors[i].id == activeSession->AdvisorClientNum)
                 continue;
             msgChat.msg->clientnum = advisors[i].id;
             msgChat.SendMessage();
@@ -791,36 +791,36 @@ void AdviceManager::HandleAdviceResponse( Client *advisor, csString sAdvisee, cs
     // Add timeout for Advisor-Advisee relationship
     // this will allow later questions by the same client to go to a different advisor
     // spreading the wealth and burden amongst all ;)
-    if ( activeSession->timeoutEvent )
+    if(activeSession->timeoutEvent)
     {
         activeSession->timeoutEvent->valid = false;
     }
-    psAdviceSessionTimeoutGameEvent *ev = new psAdviceSessionTimeoutGameEvent( this, activeSession->answered?ADVICE_SESSION_TIMEOUT:ADVICE_SESSION_TIMEOUT/2, advisee->GetActor(), activeSession );
+    psAdviceSessionTimeoutGameEvent* ev = new psAdviceSessionTimeoutGameEvent(this, activeSession->answered?ADVICE_SESSION_TIMEOUT:ADVICE_SESSION_TIMEOUT/2, advisee->GetActor(), activeSession);
     activeSession->timeoutEvent = ev;
     psserver->GetEventManager()->Push(ev);
 
 }
 
-void AdviceManager::AddAdvisor(Client *client)
+void AdviceManager::AddAdvisor(Client* client)
 {
-    if (!client)
+    if(!client)
         return;
 
     uint32_t id = client->GetClientNum();
 
     // make sure we didn't do an "/advisor on" twice...
-    for (size_t i = 0; i < advisors.GetSize(); i++)
+    for(size_t i = 0; i < advisors.GetSize(); i++)
     {
-        if ( id == advisors[i].id)
+        if(id == advisors[i].id)
             return;
     }
 
     //check to see if there is an advice session from this user, and close it
-    AdviceSession *adviceSession = AdviseeList.Get(id, NULL);
-    if (adviceSession)
+    AdviceSession* adviceSession = AdviseeList.Get(id, NULL);
+    if(adviceSession)
     {
-        CancelAdvisorSession( NULL, adviceSession, "been canceled" );
-        RemoveSession( adviceSession );
+        CancelAdvisorSession(NULL, adviceSession, "been canceled");
+        RemoveSession(adviceSession);
     }
 
     // Create new Advisor structure
@@ -831,7 +831,7 @@ void AdviceManager::AddAdvisor(Client *client)
 
     advisors.Push(advisor);
 
-    client->SetAdvisor( true );
+    client->SetAdvisor(true);
     //Send message to advisor that he/she is an advisor
     psserver->SendSystemInfo(id,"Your request to become an advisor has been granted.");
     //psserver->SendSystemInfo(id, "You currently have %d advisor points.",  client->GetAdvisorPoints() );
@@ -840,26 +840,26 @@ void AdviceManager::AddAdvisor(Client *client)
 void AdviceManager::RemoveAdvisor(uint32_t id, int connectionId)
 {
     //Remove an advisor
-    for (size_t i = 0; i < advisors.GetSize(); i++)
+    for(size_t i = 0; i < advisors.GetSize(); i++)
     {
-        if (advisors[i].id == id)
+        if(advisors[i].id == id)
         {
-            Client * client = psserver->GetConnections()->Find(advisors[i].id);
-            if (client)
-                client->SetAdvisor( false );
+            Client* client = psserver->GetConnections()->Find(advisors[i].id);
+            if(client)
+                client->SetAdvisor(false);
 
             advisors.DeleteIndex(i);
             break;
         }
     }
 
-    AdviceSession *activeSession = AdviseeList.Get(id, NULL);
+    AdviceSession* activeSession = AdviseeList.Get(id, NULL);
 
-    while ( activeSession )
+    while(activeSession)
     {
         // Notify advisee his/her advisor is no longer available.
-        CancelAdvisorSession( NULL, activeSession, "been canceled");
-        RemoveSession( activeSession );
+        CancelAdvisorSession(NULL, activeSession, "been canceled");
+        RemoveSession(activeSession);
         activeSession = AdviseeList.Get(id, NULL);
     }
 
@@ -867,13 +867,13 @@ void AdviceManager::RemoveAdvisor(uint32_t id, int connectionId)
     psserver->SendSystemInfo(connectionId,"You have just laid down your advisor role.");
 }
 
-void AdviceManager::AdviceRequestTimeout(AdviceSession *adviceSession)
+void AdviceManager::AdviceRequestTimeout(AdviceSession* adviceSession)
 {
-    Client * adviseeClient = adviceSession->GetAdvisee();
-    if (!adviseeClient)  // Questioner has himself gone offline now
+    Client* adviseeClient = adviceSession->GetAdvisee();
+    if(!adviseeClient)   // Questioner has himself gone offline now
         return;
 
-    if ( adviceSession->AdvisorClientNum != (uint32_t)-1 )
+    if(adviceSession->AdvisorClientNum != (uint32_t)-1)
     {
         //adviceSession->advisorPoints = 0;
         psserver->SendSystemInfo(adviceSession->AdviseeClientNum,"Your advisor appears to be busy at the moment, the messenger is still waiting for an answer.");
@@ -883,7 +883,7 @@ void AdviceManager::AdviceRequestTimeout(AdviceSession *adviceSession)
     }
     else
     {
-        for (size_t i = 0; i < advisors.GetSize(); i++)
+        for(size_t i = 0; i < advisors.GetSize(); i++)
         {
             psserver->SendSystemInfo(advisors[i].id,"%s's messenger taps his foot impatiently.",adviseeClient->GetName());
             //psChatMessage msgAdvisor(advisors[i].client_id, 0, adviseeClient->GetName(), "RESEND:" + adviceSession->lastRequest,CHAT_ADVICE,false);
@@ -893,9 +893,9 @@ void AdviceManager::AdviceRequestTimeout(AdviceSession *adviceSession)
     }
 
     adviceSession->requestRetries += 1;
-    if ( adviceSession->requestRetries < ADVICE_QUESTION_RETRIES )
+    if(adviceSession->requestRetries < ADVICE_QUESTION_RETRIES)
     {
-        psAdviceRequestTimeoutGameEvent *ev = new psAdviceRequestTimeoutGameEvent( this, ADVICE_QUESTION_TIMEOUT, adviseeClient->GetActor(), adviceSession);
+        psAdviceRequestTimeoutGameEvent* ev = new psAdviceRequestTimeoutGameEvent(this, ADVICE_QUESTION_TIMEOUT, adviseeClient->GetActor(), adviceSession);
         adviceSession->requestEvent = ev;
         psserver->GetEventManager()->Push(ev);
     }
@@ -909,65 +909,65 @@ void AdviceManager::AdviceRequestTimeout(AdviceSession *adviceSession)
 
 }
 
-void AdviceManager::CancelAdvisorSession(gemActor *who, AdviceSession *adviceSession, const char * msg)
+void AdviceManager::CancelAdvisorSession(gemActor* who, AdviceSession* adviceSession, const char* msg)
 {
-    Debug1( LOG_ANY, adviceSession->AdviseeClientNum,"Advice session cancelling now.\n");
+    Debug1(LOG_ANY, adviceSession->AdviseeClientNum,"Advice session cancelling now.\n");
 
-    if ( adviceSession->GetAdvisee() )
+    if(adviceSession->GetAdvisee())
     {
-        if ( ( who == NULL ) || (adviceSession->GetAdvisor() &&
-                                 who == adviceSession->GetAdvisor()->GetActor()  ) )
+        if((who == NULL) || (adviceSession->GetAdvisor() &&
+                             who == adviceSession->GetAdvisor()->GetActor()))
         {
-            if ( adviceSession->AdviseeClientNum != (uint32_t)-1 )
+            if(adviceSession->AdviseeClientNum != (uint32_t)-1)
             {
                 psserver->SendSystemInfo(adviceSession->AdviseeClientNum,"Your advice session has %s.", msg);
-                switch ( adviceSession->status )
+                switch(adviceSession->status)
                 {
-                case SESSION_STATUS_OWNED:
-                    psserver->SendSystemInfo(adviceSession->AdviseeClientNum,"Your next request may be handled by a different advisor.");
-                    if (  adviceSession->requestEvent)
-                    {
-                        adviceSession->requestEvent->valid = false;
-                        adviceSession->requestEvent = NULL;
-                    }
-                    adviceSession->answered = true;
-                    break;
-                case SESSION_STATUS_CLAIMED:
-                    psserver->SendSystemInfo(adviceSession->AdviseeClientNum,"Your request will be sent to all advisors.");
-                    break;
-                case SESSION_STATUS_UNKNOWN:
-                    break;
+                    case SESSION_STATUS_OWNED:
+                        psserver->SendSystemInfo(adviceSession->AdviseeClientNum,"Your next request may be handled by a different advisor.");
+                        if(adviceSession->requestEvent)
+                        {
+                            adviceSession->requestEvent->valid = false;
+                            adviceSession->requestEvent = NULL;
+                        }
+                        adviceSession->answered = true;
+                        break;
+                    case SESSION_STATUS_CLAIMED:
+                        psserver->SendSystemInfo(adviceSession->AdviseeClientNum,"Your request will be sent to all advisors.");
+                        break;
+                    case SESSION_STATUS_UNKNOWN:
+                        break;
                 }
             }
         }
     }
 
-    if ( adviceSession->GetAdvisor() )
+    if(adviceSession->GetAdvisor())
     {
-        if ( ( who == NULL ) || ( ( adviceSession->GetAdvisee() && who == adviceSession->GetAdvisee()->GetActor() ) ) )
+        if((who == NULL) || ((adviceSession->GetAdvisee() && who == adviceSession->GetAdvisee()->GetActor())))
         {
-            if ( adviceSession->AdvisorClientNum != (uint32_t)-1 )
+            if(adviceSession->AdvisorClientNum != (uint32_t)-1)
             {
-                if ( who == adviceSession->GetAdvisor()->GetActor() || who == NULL )
+                if(who == adviceSession->GetAdvisor()->GetActor() || who == NULL)
                 {
-                    switch ( adviceSession->status )
+                    switch(adviceSession->status)
                     {
-                    case SESSION_STATUS_OWNED:
-                        psserver->SendSystemInfo(adviceSession->AdvisorClientNum,"Your advice session with %s has %s.",adviceSession->adviseeName.GetData(), msg);
-                        break;
-                    case SESSION_STATUS_CLAIMED:
-                        psserver->SendSystemInfo(adviceSession->AdvisorClientNum,"You have forfieted your session with %s.",adviceSession->adviseeName.GetData());
-                        // Notify all other advisors
-                        for ( size_t i = 0; i < advisors.GetSize(); i++ )
-                        {
-                            if ( advisors[i].id != adviceSession->AdvisorClientNum )
-                                psserver->SendSystemInfo(advisors[i].id,"%s has relinquished their claim as %s's advisor.",adviceSession->GetAdvisor()->GetName(), adviceSession->adviseeName.GetData() );
-                        }
-                        adviceSession->SetAdvisor( NULL );
+                        case SESSION_STATUS_OWNED:
+                            psserver->SendSystemInfo(adviceSession->AdvisorClientNum,"Your advice session with %s has %s.",adviceSession->adviseeName.GetData(), msg);
+                            break;
+                        case SESSION_STATUS_CLAIMED:
+                            psserver->SendSystemInfo(adviceSession->AdvisorClientNum,"You have forfieted your session with %s.",adviceSession->adviseeName.GetData());
+                            // Notify all other advisors
+                            for(size_t i = 0; i < advisors.GetSize(); i++)
+                            {
+                                if(advisors[i].id != adviceSession->AdvisorClientNum)
+                                    psserver->SendSystemInfo(advisors[i].id,"%s has relinquished their claim as %s's advisor.",adviceSession->GetAdvisor()->GetName(), adviceSession->adviseeName.GetData());
+                            }
+                            adviceSession->SetAdvisor(NULL);
 
-                        break;
-                    case SESSION_STATUS_UNKNOWN:
-                        break;
+                            break;
+                        case SESSION_STATUS_UNKNOWN:
+                            break;
                     }
                 }
                 else
@@ -981,27 +981,27 @@ void AdviceManager::CancelAdvisorSession(gemActor *who, AdviceSession *adviceSes
     adviceSession->status = SESSION_STATUS_UNKNOWN;
 }
 
-void AdviceManager::RemoveSession( AdviceSession * adviceSession)
+void AdviceManager::RemoveSession(AdviceSession* adviceSession)
 {
-    Debug2( LOG_ANY, adviceSession->AdviseeClientNum, "Removing AdviceSession: %d", adviceSession->AdviseeClientNum );
+    Debug2(LOG_ANY, adviceSession->AdviseeClientNum, "Removing AdviceSession: %d", adviceSession->AdviseeClientNum);
 
-    if (adviceSession->requestEvent)
+    if(adviceSession->requestEvent)
     {
         adviceSession->requestEvent->valid = false;
         adviceSession->requestEvent = NULL;
     }
 
-    AdviseeList.DeleteAll( adviceSession->AdviseeClientNum );
+    AdviseeList.DeleteAll(adviceSession->AdviseeClientNum);
     delete adviceSession;
 }
 
 #if 0
-bool AdviceManager::GetAdvisorMode( int id, int connectionId )
+bool AdviceManager::GetAdvisorMode(int id, int connectionId)
 {
     //Search loop that will found the right advisor nr in the advisors array and use it as an id
-    for (size_t i = 0; i < advisors.GetSize(); i++)
+    for(size_t i = 0; i < advisors.GetSize(); i++)
     {
-        if ( ( advisors[i].id == id ) )
+        if((advisors[i].id == id))
             return true;
     }
     return false;

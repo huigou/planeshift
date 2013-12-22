@@ -42,19 +42,19 @@
 // QuestAssignment accessor functions to accommodate removal of csWeakRef better
 //////////////////////////////////////////////////////////////////////////
 
-csWeakRef<psQuest>& QuestAssignment::GetQuest()
+csWeakRef<psQuest> &QuestAssignment::GetQuest()
 {
-    if (!quest.IsValid())
+    if(!quest.IsValid())
     {
-        psQuest *q = psserver->GetCacheManager()->GetQuestByID(quest_id);
+        psQuest* q = psserver->GetCacheManager()->GetQuestByID(quest_id);
         SetQuest(q);
     }
     return quest;
 }
 
-void QuestAssignment::SetQuest(psQuest *q)
+void QuestAssignment::SetQuest(psQuest* q)
 {
-    if (q)
+    if(q)
     {
         quest = q;
         quest_id = q->GetID();
@@ -76,7 +76,7 @@ void psCharacterQuestManager::Initialize(psCharacter* cOwner)
 
 psCharacterQuestManager::~psCharacterQuestManager()
 {
-    while (assignedQuests.GetSize())
+    while(assignedQuests.GetSize())
     {
         delete assignedQuests.Pop();
     }
@@ -84,12 +84,12 @@ psCharacterQuestManager::~psCharacterQuestManager()
 }
 
 
-QuestAssignment *psCharacterQuestManager::IsQuestAssigned(int id)
+QuestAssignment* psCharacterQuestManager::IsQuestAssigned(int id)
 {
-    for (size_t i=0; i<assignedQuests.GetSize(); i++)
+    for(size_t i=0; i<assignedQuests.GetSize(); i++)
     {
-        if (assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->GetQuest()->GetID() == id &&
-            assignedQuests[i]->status != PSQUEST_DELETE)
+        if(assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->GetQuest()->GetID() == id &&
+                assignedQuests[i]->status != PSQUEST_DELETE)
             return assignedQuests[i];
     }
 
@@ -99,7 +99,7 @@ QuestAssignment *psCharacterQuestManager::IsQuestAssigned(int id)
 
 int psCharacterQuestManager::GetAssignedQuestLastResponse(size_t i)
 {
-    if (i<assignedQuests.GetSize())
+    if(i<assignedQuests.GetSize())
     {
         return assignedQuests[i]->last_response;
     }
@@ -112,13 +112,13 @@ int psCharacterQuestManager::GetAssignedQuestLastResponse(size_t i)
 
 
 //if (parent of) quest id is an assigned quest, set its last response
-bool psCharacterQuestManager::SetAssignedQuestLastResponse(psQuest *quest, int response, gemObject *npc)
+bool psCharacterQuestManager::SetAssignedQuestLastResponse(psQuest* quest, int response, gemObject* npc)
 {
     int id = 0;
 
-    if (quest)
+    if(quest)
     {
-        while (quest->GetParentQuest()) //get highest parent
+        while(quest->GetParentQuest())  //get highest parent
         {
             quest= quest->GetParentQuest();
         }
@@ -128,10 +128,10 @@ bool psCharacterQuestManager::SetAssignedQuestLastResponse(psQuest *quest, int r
         return false;
 
 
-    for (size_t i=0; i<assignedQuests.GetSize(); i++)
+    for(size_t i=0; i<assignedQuests.GetSize(); i++)
     {
-        if (assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->GetQuest()->GetID() == id &&
-            assignedQuests[i]->status == PSQUEST_ASSIGNED && !assignedQuests[i]->GetQuest()->GetParentQuest())
+        if(assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->GetQuest()->GetID() == id &&
+                assignedQuests[i]->status == PSQUEST_ASSIGNED && !assignedQuests[i]->GetQuest()->GetParentQuest())
         {
             assignedQuests[i]->last_response = response;
             assignedQuests[i]->last_response_from_npc_pid = npc->GetPID();
@@ -144,9 +144,9 @@ bool psCharacterQuestManager::SetAssignedQuestLastResponse(psQuest *quest, int r
 }
 
 
-size_t  psCharacterQuestManager::GetAssignedQuests(psQuestListMessage& questmsg,int cnum)
+size_t  psCharacterQuestManager::GetAssignedQuests(psQuestListMessage &questmsg,int cnum)
 {
-    if (assignedQuests.GetSize() )
+    if(assignedQuests.GetSize())
     {
         csString quests;
         quests.Append("<quests>");
@@ -156,10 +156,10 @@ size_t  psCharacterQuestManager::GetAssignedQuests(psQuestListMessage& questmsg,
         {
             QuestAssignment* assigned_quest = iter.Next();
             // exclude deleted
-            if (assigned_quest->status == PSQUEST_DELETE || !assigned_quest->GetQuest().IsValid())
+            if(assigned_quest->status == PSQUEST_DELETE || !assigned_quest->GetQuest().IsValid())
                 continue;
             // exclude substeps
-            if (assigned_quest->GetQuest()->GetParentQuest())
+            if(assigned_quest->GetQuest()->GetParentQuest())
                 continue;
 
             csString item;
@@ -169,7 +169,7 @@ size_t  psCharacterQuestManager::GetAssignedQuests(psQuestListMessage& questmsg,
                         escpxml_image.GetData(),
                         escpxml_name.GetData(),
                         assigned_quest->GetQuest()->GetID(),
-                        assigned_quest->status );
+                        assigned_quest->status);
             quests.Append(item);
         }
         quests.Append("</quests>");
@@ -180,12 +180,12 @@ size_t  psCharacterQuestManager::GetAssignedQuests(psQuestListMessage& questmsg,
 }
 
 
-QuestAssignment *psCharacterQuestManager::AssignQuest(psQuest *quest, PID assigner_id)
+QuestAssignment* psCharacterQuestManager::AssignQuest(psQuest* quest, PID assigner_id)
 {
-    CS_ASSERT( quest );  // Must not be NULL
+    CS_ASSERT(quest);    // Must not be NULL
 
-    QuestAssignment *q = IsQuestAssigned(quest->GetID() );
-    if (!q)  // make new entry if needed, reuse if old
+    QuestAssignment* q = IsQuestAssigned(quest->GetID());
+    if(!q)   // make new entry if needed, reuse if old
     {
         q = new QuestAssignment;
         q->SetQuest(quest);
@@ -194,7 +194,7 @@ QuestAssignment *psCharacterQuestManager::AssignQuest(psQuest *quest, PID assign
         assignedQuests.Push(q);
     }
 
-    if (q->status != PSQUEST_ASSIGNED)
+    if(q->status != PSQUEST_ASSIGNED)
     {
         q->dirty  = true;
         q->status = PSQUEST_ASSIGNED;
@@ -205,22 +205,22 @@ QuestAssignment *psCharacterQuestManager::AssignQuest(psQuest *quest, PID assign
         q->completionOrder = 0;  //this rappresents the default.
 
         // assign any skipped parent quests
-        if (quest->GetParentQuest() && !IsQuestAssigned(quest->GetParentQuest()->GetID()))
-                AssignQuest(quest->GetParentQuest(),assigner_id );
+        if(quest->GetParentQuest() && !IsQuestAssigned(quest->GetParentQuest()->GetID()))
+            AssignQuest(quest->GetParentQuest(),assigner_id);
 
         // assign any skipped sub quests
         csHash<psQuest*>::GlobalIterator it = psserver->GetCacheManager()->GetQuestIterator();
-        while (it.HasNext())
+        while(it.HasNext())
         {
-            psQuest * q = it.Next();
-            if (q->GetParentQuest())
+            psQuest* q = it.Next();
+            if(q->GetParentQuest())
             {
-                if (q->GetParentQuest()->GetID() == quest->GetID())
+                if(q->GetParentQuest()->GetID() == quest->GetID())
                     AssignQuest(q,assigner_id);
             }
         }
 
-        q->GetQuest()->SetQuestLastActivatedTime( csGetTicks() / 1000 );
+        q->GetQuest()->SetQuestLastActivatedTime(csGetTicks() / 1000);
 
         Debug3(LOG_QUESTS, owner->GetPID().Unbox(), "Assigned quest '%s' to player '%s'\n", quest->GetName(), owner->GetCharName());
         UpdateQuestAssignments();
@@ -234,27 +234,29 @@ QuestAssignment *psCharacterQuestManager::AssignQuest(psQuest *quest, PID assign
 }
 
 
-bool psCharacterQuestManager::CompleteQuest(psQuest *quest)
+bool psCharacterQuestManager::CompleteQuest(psQuest* quest)
 {
-    CS_ASSERT( quest );  // Must not be NULL
+    CS_ASSERT(quest);    // Must not be NULL
 
-    QuestAssignment *q = IsQuestAssigned( quest->GetID() );
-    QuestAssignment *parent = NULL;
+    QuestAssignment* q = IsQuestAssigned(quest->GetID());
+    QuestAssignment* parent = NULL;
 
     // substeps are not assigned, so the above check fails for substeps.
     // in this case we check if the parent quest is assigned
-    if (!q && quest->GetParentQuest()) {
-      parent = IsQuestAssigned(quest->GetParentQuest()->GetID() );
+    if(!q && quest->GetParentQuest())
+    {
+        parent = IsQuestAssigned(quest->GetParentQuest()->GetID());
     }
 
     // create an assignment for the substep if parent is valid
-    if (parent) {
-      q = AssignQuest(quest,parent->assigner_id);
+    if(parent)
+    {
+        q = AssignQuest(quest,parent->assigner_id);
     }
 
-    if (q)
+    if(q)
     {
-        if (q->status == PSQUEST_DELETE || q->status == PSQUEST_COMPLETE)
+        if(q->status == PSQUEST_DELETE || q->status == PSQUEST_COMPLETE)
         {
             Debug3(LOG_QUESTS, owner->GetPID().Unbox(), "Player '%s' has already completed quest '%s'.  No credit.\n", owner->GetCharName(), quest->GetName());
             return false;  // already completed, so no credit here
@@ -267,19 +269,19 @@ bool psCharacterQuestManager::CompleteQuest(psQuest *quest)
         q->last_response = -1; //reset last response for this quest in case it is restarted
 
         // Complete all substeps if this is the parent quest
-        if (!q->GetQuest()->GetParentQuest())
+        if(!q->GetQuest()->GetParentQuest())
         {
             // assign any skipped sub quests
             csHash<psQuest*>::GlobalIterator it = psserver->GetCacheManager()->GetQuestIterator();
-            while (it.HasNext())
+            while(it.HasNext())
             {
-                psQuest * currQuest = it.Next();
-                if (currQuest->GetParentQuest())
+                psQuest* currQuest = it.Next();
+                if(currQuest->GetParentQuest())
                 {
-                    if (currQuest->GetParentQuest()->GetID() == quest->GetID())
+                    if(currQuest->GetParentQuest()->GetID() == quest->GetID())
                     {
                         QuestAssignment* currAssignment = IsQuestAssigned(currQuest->GetID());
-                        if (currAssignment && currAssignment->status == PSQUEST_ASSIGNED)
+                        if(currAssignment && currAssignment->status == PSQUEST_ASSIGNED)
                             DiscardQuest(currAssignment, true);
                     }
                 }
@@ -295,14 +297,14 @@ bool psCharacterQuestManager::CompleteQuest(psQuest *quest)
             //must trigger it.
             csArray<int> &steps = q->GetQuest()->GetParentQuest()->GetSubQuests();
             unsigned int maxCompletionOrder = 0;
-            
+
             for(size_t i = 0; i < steps.GetSize(); ++i)
             {
-                
+
                 //Check if the quest is assigned and completed in order to check its completion numbering
-                QuestAssignment *stepAssignment = IsQuestAssigned(steps.Get(i));
+                QuestAssignment* stepAssignment = IsQuestAssigned(steps.Get(i));
                 if(stepAssignment && stepAssignment->IsCompleted() &&
-                   stepAssignment->completionOrder > maxCompletionOrder)
+                        stepAssignment->completionOrder > maxCompletionOrder)
                 {
                     maxCompletionOrder = stepAssignment->completionOrder;
                 }
@@ -319,33 +321,33 @@ bool psCharacterQuestManager::CompleteQuest(psQuest *quest)
 }
 
 
-bool psCharacterQuestManager::DiscardQuest(psQuest *quest, bool force)
+bool psCharacterQuestManager::DiscardQuest(psQuest* quest, bool force)
 {
-    QuestAssignment *questassignment = IsQuestAssigned(quest->GetID());
-    if (!questassignment)
+    QuestAssignment* questassignment = IsQuestAssigned(quest->GetID());
+    if(!questassignment)
         return false;
     DiscardQuest(questassignment, force);
     return true;
 }
 
 
-void psCharacterQuestManager::DiscardQuest(QuestAssignment *q, bool force)
+void psCharacterQuestManager::DiscardQuest(QuestAssignment* q, bool force)
 {
-    CS_ASSERT( q );  // Must not be NULL
+    CS_ASSERT(q);    // Must not be NULL
 
-    if (force || (q->status != PSQUEST_DELETE && !q->GetQuest()->HasInfinitePlayerLockout()) )
+    if(force || (q->status != PSQUEST_DELETE && !q->GetQuest()->HasInfinitePlayerLockout()))
     {
         q->dirty = true;
         q->status = PSQUEST_DELETE;  // discarded
-        if (q->GetQuest()->HasInfinitePlayerLockout())
+        if(q->GetQuest()->HasInfinitePlayerLockout())
             q->lockout_end = 0;
         else
             q->lockout_end = owner->GetTotalOnlineTime() +
                              q->GetQuest()->GetPlayerLockoutTime();
-            // assignment entry will be deleted after expiration
+        // assignment entry will be deleted after expiration
 
         Debug3(LOG_QUESTS, owner->GetPID().Unbox(), "Player '%s' just discarded quest '%s'.\n",
-               owner->GetCharName(),q->GetQuest()->GetName() );
+               owner->GetCharName(),q->GetQuest()->GetName());
 
         UpdateQuestAssignments();
     }
@@ -353,32 +355,32 @@ void psCharacterQuestManager::DiscardQuest(QuestAssignment *q, bool force)
     {
         Debug3(LOG_QUESTS, owner->GetPID().Unbox(),
                "Did not discard %s quest for player %s because it was already discarded or was a one-time quest.\n",
-               q->GetQuest()->GetName(),owner->GetCharName() );
+               q->GetQuest()->GetName(),owner->GetCharName());
         // Notify the player that he can't discard one-time quests
         psserver->SendSystemError(owner->GetActor()->GetClient()->GetClientNum(),
-            "You can't discard this quest, since it can be done just once!");
+                                  "You can't discard this quest, since it can be done just once!");
     }
 }
 
 
-bool psCharacterQuestManager::CheckQuestAssigned(psQuest *quest)
+bool psCharacterQuestManager::CheckQuestAssigned(psQuest* quest)
 {
-    CS_ASSERT( quest );  // Must not be NULL
-    QuestAssignment* questAssignment = IsQuestAssigned( quest->GetID() );
-    if ( questAssignment )
+    CS_ASSERT(quest);    // Must not be NULL
+    QuestAssignment* questAssignment = IsQuestAssigned(quest->GetID());
+    if(questAssignment)
     {
-        if ( questAssignment->status == PSQUEST_ASSIGNED)
+        if(questAssignment->status == PSQUEST_ASSIGNED)
             return true;
     }
     return false;
 }
 
 
-bool psCharacterQuestManager::CheckQuestCompleted(psQuest *quest)
+bool psCharacterQuestManager::CheckQuestCompleted(psQuest* quest)
 {
-    CS_ASSERT( quest );  // Must not be NULL
-    QuestAssignment* questAssignment = IsQuestAssigned( quest->GetID());
-    if (questAssignment)
+    CS_ASSERT(quest);    // Must not be NULL
+    QuestAssignment* questAssignment = IsQuestAssigned(quest->GetID());
+    if(questAssignment)
     {
         return questAssignment->IsCompleted();
     }
@@ -388,26 +390,26 @@ bool psCharacterQuestManager::CheckQuestCompleted(psQuest *quest)
 
 //This incorrectly named function checks if the npc (assigner_id) is supposed to answer
 // in the (parent)quest at this moment.
-bool psCharacterQuestManager::CheckQuestAvailable(psQuest *quest, PID assigner_id)
+bool psCharacterQuestManager::CheckQuestAvailable(psQuest* quest, PID assigner_id)
 {
-    CS_ASSERT( quest );  // Must not be NULL
+    CS_ASSERT(quest);    // Must not be NULL
 
     unsigned int now = csGetTicks() / 1000;
 
-    if (quest->GetParentQuest())
+    if(quest->GetParentQuest())
     {
         quest = quest->GetParentQuest();
     }
 
     bool notify = false;
-    if (owner->GetActor()->GetClient())
+    if(owner->GetActor()->GetClient())
     {
         notify = psserver->GetCacheManager()->GetCommandManager()->Validate(owner->GetActor()->GetClient()->GetSecurityLevel(), "quest notify");
     }
 
     //NPC should always answer, if the quest is assigned, no matter who started the quest.
-    QuestAssignment *q = IsQuestAssigned(quest->GetID());
-    if (q && q->status == PSQUEST_ASSIGNED)
+    QuestAssignment* q = IsQuestAssigned(quest->GetID());
+    if(q && q->status == PSQUEST_ASSIGNED)
     {
         return true;
     }
@@ -433,34 +435,34 @@ bool psCharacterQuestManager::CheckQuestAvailable(psQuest *quest, PID assigner_i
     }
     ********/
 
-    if (q) //then quest in assigned list, but not PSQUEST_ASSIGNED
+    if(q)  //then quest in assigned list, but not PSQUEST_ASSIGNED
     {
         // Character has this quest in completed list. Check if still in lockout
-        if ( q->GetQuest()->HasInfinitePlayerLockout() ||
-             q->lockout_end > owner->GetTotalOnlineTime() )
+        if(q->GetQuest()->HasInfinitePlayerLockout() ||
+                q->lockout_end > owner->GetTotalOnlineTime())
         {
-            if (notify)
+            if(notify)
             {
-                if (owner->GetActor()->questtester) // GM flag
+                if(owner->GetActor()->questtester)  // GM flag
                 {
                     psserver->SendSystemInfo(owner->GetActor()->GetClientID(),
-                        "GM NOTICE: Quest (%s) found and player lockout time has been overridden.",
-                        quest->GetName());
+                                             "GM NOTICE: Quest (%s) found and player lockout time has been overridden.",
+                                             quest->GetName());
                     return true; // Quest is available for GM
                 }
                 else
                 {
-                    if (q->GetQuest()->HasInfinitePlayerLockout())
+                    if(q->GetQuest()->HasInfinitePlayerLockout())
                     {
                         psserver->SendSystemInfo(owner->GetActor()->GetClientID(),
-                            "GM NOTICE: Quest (%s) found but quest has infinite player lockout.",
-                            quest->GetName());
+                                                 "GM NOTICE: Quest (%s) found but quest has infinite player lockout.",
+                                                 quest->GetName());
                     }
                     else
                     {
                         psserver->SendSystemInfo(owner->GetActor()->GetClientID(),
-                            "GM NOTICE: Quest (%s) found but player lockout time hasn't elapsed yet. %d seconds remaining.",
-                            quest->GetName(), q->lockout_end - (owner->GetTotalOnlineTime()) );
+                                                 "GM NOTICE: Quest (%s) found but player lockout time hasn't elapsed yet. %d seconds remaining.",
+                                                 quest->GetName(), q->lockout_end - (owner->GetTotalOnlineTime()));
                     }
 
                 }
@@ -473,12 +475,12 @@ bool psCharacterQuestManager::CheckQuestAvailable(psQuest *quest, PID assigner_i
 
     // If here, quest is not in assignedQuests, or it is completed and not in player lockout time
     // Player is allowed to start this quest, now check if quest has a lockout
-    if (quest->GetQuestLastActivatedTime() &&
-        (quest->GetQuestLastActivatedTime() + quest->GetQuestLockoutTime() > now))
+    if(quest->GetQuestLastActivatedTime() &&
+            (quest->GetQuestLastActivatedTime() + quest->GetQuestLockoutTime() > now))
     {
-        if (notify)
+        if(notify)
         {
-            if (owner->GetActor()->questtester) // GM flag
+            if(owner->GetActor()->questtester)  // GM flag
             {
                 psserver->SendSystemInfo(owner->GetActor()->GetClientID(),
                                          "GM NOTICE: Quest(%s) found; quest lockout time has been overrided",
@@ -501,12 +503,12 @@ bool psCharacterQuestManager::CheckQuestAvailable(psQuest *quest, PID assigner_i
 int psCharacterQuestManager::NumberOfQuestsCompleted(csString category)
 {
     int count=0;
-    for (size_t i=0; i<assignedQuests.GetSize(); i++)
+    for(size_t i=0; i<assignedQuests.GetSize(); i++)
     {
         // Character have this quest
-        if (assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->GetQuest()->GetParentQuest() == NULL &&
-            assignedQuests[i]->status == PSQUEST_COMPLETE &&
-            assignedQuests[i]->GetQuest()->GetCategory() == category)
+        if(assignedQuests[i]->GetQuest().IsValid() && assignedQuests[i]->GetQuest()->GetParentQuest() == NULL &&
+                assignedQuests[i]->status == PSQUEST_COMPLETE &&
+                assignedQuests[i]->GetQuest()->GetCategory() == category)
         {
             count++;
         }
@@ -517,18 +519,18 @@ int psCharacterQuestManager::NumberOfQuestsCompleted(csString category)
 
 bool psCharacterQuestManager::UpdateQuestAssignments(bool force_update)
 {
-    for (size_t i=0; i<assignedQuests.GetSize(); i++)
+    for(size_t i=0; i<assignedQuests.GetSize(); i++)
     {
-        QuestAssignment *q = assignedQuests[i];
-        if (q->GetQuest().IsValid() && (q->dirty || force_update))
+        QuestAssignment* q = assignedQuests[i];
+        if(q->GetQuest().IsValid() && (q->dirty || force_update))
         {
             // will delete the quest only after the expiration time, so the player cannot get it again immediately
             // If it's a step, We can delete it even though it has inf lockout
-            if (q->status == PSQUEST_DELETE &&
-                ((!q->GetQuest()->HasInfinitePlayerLockout() &&
-                (!q->GetQuest()->GetPlayerLockoutTime() || !q->lockout_end ||
-                 (q->lockout_end < owner->GetTotalOnlineTime()))) ||
-                 q->GetQuest()->GetParentQuest()))   // delete
+            if(q->status == PSQUEST_DELETE &&
+                    ((!q->GetQuest()->HasInfinitePlayerLockout() &&
+                      (!q->GetQuest()->GetPlayerLockoutTime() || !q->lockout_end ||
+                       (q->lockout_end < owner->GetTotalOnlineTime()))) ||
+                     q->GetQuest()->GetParentQuest()))   // delete
             {
                 db->CommandPump("DELETE FROM character_quests WHERE player_id=%d AND quest_id=%d",
                                 owner->GetPID().Unbox(), q->GetQuest()->GetID());
@@ -577,7 +579,7 @@ bool psCharacterQuestManager::LoadQuestAssignments()
     PID pid = owner->GetPID();
 
     Result result(db->Select("SELECT * FROM character_quests WHERE player_id=%u", pid.Unbox()));
-    if (!result.IsValid())
+    if(!result.IsValid())
     {
         Error3("Could not load quest assignments for character %u. Error was: %s", pid.Unbox(), db->GetLastError());
         return false;
@@ -585,11 +587,11 @@ bool psCharacterQuestManager::LoadQuestAssignments()
 
     unsigned int age = owner->GetTotalOnlineTime();
 
-    for (unsigned int i=0; i<result.Count(); i++)
+    for(unsigned int i=0; i<result.Count(); i++)
     {
-        QuestAssignment *q = new QuestAssignment;
+        QuestAssignment* q = new QuestAssignment;
         q->dirty = false;
-        q->SetQuest(psserver->GetCacheManager()->GetQuestByID( result[i].GetInt("quest_id") ) );
+        q->SetQuest(psserver->GetCacheManager()->GetQuestByID(result[i].GetInt("quest_id")));
         q->status        = result[i]["status"][0];
         q->lockout_end   = result[i].GetInt("remaininglockout");
         q->assigner_id   = PID(result[i].GetInt("assigner_id"));
@@ -597,7 +599,7 @@ bool psCharacterQuestManager::LoadQuestAssignments()
         q->last_response_from_npc_pid = PID(result[i].GetInt("last_response_npc_id"));
         q->completionOrder = result[i].GetInt("completionOrder");
 
-        if (!q->GetQuest())
+        if(!q->GetQuest())
         {
             Error3("Quest %d for player %d not found!", result[i].GetInt("quest_id"), pid.Unbox());
             delete q;
@@ -606,12 +608,12 @@ bool psCharacterQuestManager::LoadQuestAssignments()
 
         // Sanity check to see if time for completion is withing
         // lockout time.
-        if (q->lockout_end > age + q->GetQuest()->GetPlayerLockoutTime())
+        if(q->lockout_end > age + q->GetQuest()->GetPlayerLockoutTime())
             q->lockout_end = age + q->GetQuest()->GetPlayerLockoutTime();
 
         Debug6(LOG_QUESTS, owner->GetPID().Unbox(), "Loaded quest %-40.40s, status %c, lockout %lu, last_response %d, for player %s.\n",
                q->GetQuest()->GetName(),q->status,
-               ( q->lockout_end > age ? q->lockout_end-age:0),q->last_response, owner->GetCharFullName());
+               (q->lockout_end > age ? q->lockout_end-age:0),q->last_response, owner->GetCharFullName());
         assignedQuests.Push(q);
     }
     return true;

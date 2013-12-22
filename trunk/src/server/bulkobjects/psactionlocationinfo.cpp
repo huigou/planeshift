@@ -62,19 +62,19 @@ PoolAllocator<psActionLocation> psActionLocation::actionpool;
 
 const char* psActionLocation::TriggerTypeStr[] = {"NONE","SELECT","PROXIMITY"};
 
-void *psActionLocation::operator new(size_t allocSize)
+void* psActionLocation::operator new(size_t allocSize)
 {
-    CS_ASSERT( allocSize <= sizeof( psActionLocation ) );
-    return (void *)actionpool.CallFromNew();
+    CS_ASSERT(allocSize <= sizeof(psActionLocation));
+    return (void*)actionpool.CallFromNew();
 }
 
-void psActionLocation::operator delete(void *releasePtr)
+void psActionLocation::operator delete(void* releasePtr)
 {
-    actionpool.CallFromDelete( (psActionLocation *)releasePtr );
+    actionpool.CallFromDelete((psActionLocation*)releasePtr);
 }
 
 
-psActionLocation::psActionLocation() : gemAction( NULL )
+psActionLocation::psActionLocation() : gemAction(NULL)
 {
     id = 0;
     master_id = 0;
@@ -115,7 +115,7 @@ psActionLocation::psActionLocation() : gemAction( NULL )
 
 psActionLocation::~psActionLocation()
 {
-    if (enterScript)
+    if(enterScript)
     {
         delete enterScript;
         enterScript = NULL;
@@ -123,30 +123,30 @@ psActionLocation::~psActionLocation()
 }
 
 
-bool psActionLocation::Load(iResultRow& row)
+bool psActionLocation::Load(iResultRow &row)
 {
-    id = row.GetInt( "id" );
-    master_id = row.GetInt( "master_id" );
+    id = row.GetInt("id");
+    master_id = row.GetInt("master_id");
     name = row[ "name" ];
     sectorname = row[ "sectorname" ];
     meshname = row[ "meshname" ];
-    polygon.Format("%d",row.GetInt( "polygon" ));
-    radius = row.GetFloat( "radius" );
-    float x = row.GetFloat( "pos_x" );
-    float y = row.GetFloat( "pos_y" );
-    float z = row.GetFloat( "pos_z" );
-    position = csVector3( x, y, z );
-	
+    polygon.Format("%d",row.GetInt("polygon"));
+    radius = row.GetFloat("radius");
+    float x = row.GetFloat("pos_x");
+    float y = row.GetFloat("pos_y");
+    float z = row.GetFloat("pos_z");
+    position = csVector3(x, y, z);
+
     pos_instance = row.GetUInt32("pos_instance");
-	
-    if ( !master_id )
+
+    if(!master_id)
     {
         csString trigger = row[ "triggertype" ];
-        if (trigger.CompareNoCase("SELECT"))
+        if(trigger.CompareNoCase("SELECT"))
         {
             triggertype = TRIGGERTYPE_SELECT;
         }
-        else if (trigger.CompareNoCase("PROXIMITY"))
+        else if(trigger.CompareNoCase("PROXIMITY"))
         {
             triggertype = TRIGGERTYPE_PROXIMITY;
         }
@@ -156,11 +156,11 @@ bool psActionLocation::Load(iResultRow& row)
     else
     {
         csString trigger = row[ "master_triggertype" ];
-        if (trigger.CompareNoCase("SELECT"))
+        if(trigger.CompareNoCase("SELECT"))
         {
             triggertype = TRIGGERTYPE_SELECT;
         }
-        else if (trigger.CompareNoCase("PROXIMITY"))
+        else if(trigger.CompareNoCase("PROXIMITY"))
         {
             triggertype = TRIGGERTYPE_PROXIMITY;
         }
@@ -173,75 +173,76 @@ bool psActionLocation::Load(iResultRow& row)
     return true;
 }
 
-bool psActionLocation::Load( csRef<iDocumentNode> root )
+bool psActionLocation::Load(csRef<iDocumentNode> root)
 {
     csRef<iDocumentNode> topNode;
     csRef<iDocumentNode> node;
 
-    node = root->GetNode( "id" );
-    if ( node ) id = node->GetContentsValueAsInt();
+    node = root->GetNode("id");
+    if(node) id = node->GetContentsValueAsInt();
 
-    node = root->GetNode( "masterid" );
-    if ( node ) master_id = node->GetContentsValueAsInt();
+    node = root->GetNode("masterid");
+    if(node) master_id = node->GetContentsValueAsInt();
 
-    node = root->GetNode( "name" );
-    if ( node ) name = node->GetContentsValue();
+    node = root->GetNode("name");
+    if(node) name = node->GetContentsValue();
 
-    node = root->GetNode( "sector" );
-    if ( node ) sectorname = node->GetContentsValue();
+    node = root->GetNode("sector");
+    if(node) sectorname = node->GetContentsValue();
 
-    node = root->GetNode( "mesh" );
-    if ( node ) meshname = node->GetContentsValue();
+    node = root->GetNode("mesh");
+    if(node) meshname = node->GetContentsValue();
 
-    node = root->GetNode( "polygon" );
-    if ( node ) polygon = node->GetContentsValue();
+    node = root->GetNode("polygon");
+    if(node) polygon = node->GetContentsValue();
 
-    topNode = root->GetNode( "position" );
-    if ( topNode )
+    topNode = root->GetNode("position");
+    if(topNode)
     {
         float posx=0.0f, posy=0.0f, posz=0.0f;
 
-        node = topNode->GetNode( "x" );
-        if ( node ) posx = node->GetContentsValueAsFloat();
+        node = topNode->GetNode("x");
+        if(node) posx = node->GetContentsValueAsFloat();
 
-        node = topNode->GetNode( "y" );
-        if ( node ) posy = node->GetContentsValueAsFloat();
+        node = topNode->GetNode("y");
+        if(node) posy = node->GetContentsValueAsFloat();
 
-        node = topNode->GetNode( "z" );
-        if ( node ) posz = node->GetContentsValueAsFloat();
+        node = topNode->GetNode("z");
+        if(node) posz = node->GetContentsValueAsFloat();
 
-        position = csVector3( posx, posy, posz );
+        position = csVector3(posx, posy, posz);
     }
-    
-    node = root->GetNode( "pos_instance" );
-    if ( node ) pos_instance = node->GetContentsValueAsInt();
 
-    node = root->GetNode( "radius" );
-    if ( node ) radius = node->GetContentsValueAsFloat();
+    node = root->GetNode("pos_instance");
+    if(node) pos_instance = node->GetContentsValueAsInt();
 
-    node = root->GetNode( "triggertype" );
-    if ( node ){
+    node = root->GetNode("radius");
+    if(node) radius = node->GetContentsValueAsFloat();
+
+    node = root->GetNode("triggertype");
+    if(node)
+    {
         csString trigger = node->GetContentsValue();
-        if (trigger.CompareNoCase("SELECT"))
+        if(trigger.CompareNoCase("SELECT"))
         {
             triggertype = TRIGGERTYPE_SELECT;
         }
-        else if (trigger.CompareNoCase("PROXIMITY"))
+        else if(trigger.CompareNoCase("PROXIMITY"))
         {
             triggertype = TRIGGERTYPE_PROXIMITY;
         }
     }
 
-    node = root->GetNode( "responsetype" );
-    if ( node ) responsetype = node->GetContentsValue();
+    node = root->GetNode("responsetype");
+    if(node) responsetype = node->GetContentsValue();
 
-    node = root->GetNode( "response" );
-    if ( node ) response = node->GetContentsValue();
+    node = root->GetNode("response");
+    if(node) response = node->GetContentsValue();
 
-    node = root->GetNode( "active" );
-    if (node)
+    node = root->GetNode("active");
+    if(node)
     {
-        const char *active = node->GetContentsValue();
+        const char* active = node->GetContentsValue();
         isActive = (active[0] == 'Y');
     }
 
@@ -251,7 +252,8 @@ bool psActionLocation::Load( csRef<iDocumentNode> root )
 bool psActionLocation::Save()
 {
     psStringArray fields;
-    const char *fieldnames[]= {
+    const char* fieldnames[]=
+    {
         "master_id",
         "name",
         "sectorname",
@@ -268,23 +270,23 @@ bool psActionLocation::Save()
         "active_ind"
     };
 
-    fields.FormatPush( "%u", master_id );
-    fields.Push( name );
-    fields.Push( sectorname );
-    fields.Push( meshname );
-    fields.FormatPush( "%s", polygon.GetData() );
-    fields.FormatPush( "%f", position.x );
-    fields.FormatPush( "%f", position.y );
-    fields.FormatPush( "%f", position.z );
-    fields.FormatPush( "%u", pos_instance );
-    fields.FormatPush( "%f", radius );
+    fields.FormatPush("%u", master_id);
+    fields.Push(name);
+    fields.Push(sectorname);
+    fields.Push(meshname);
+    fields.FormatPush("%s", polygon.GetData());
+    fields.FormatPush("%f", position.x);
+    fields.FormatPush("%f", position.y);
+    fields.FormatPush("%f", position.z);
+    fields.FormatPush("%u", pos_instance);
+    fields.FormatPush("%f", radius);
     //csString escpxml_response = EscpXML(response);
 
-    if ( !master_id )
+    if(!master_id)
     {
-        fields.FormatPush( "%s", TriggerTypeStr[triggertype] );
-        fields.FormatPush( "%s", responsetype.GetData() );
-        fields.FormatPush( "%s", response.GetData() );
+        fields.FormatPush("%s", TriggerTypeStr[triggertype]);
+        fields.FormatPush("%s", responsetype.GetData());
+        fields.FormatPush("%s", response.GetData());
     }
     else
     {
@@ -294,12 +296,12 @@ bool psActionLocation::Save()
     }
     fields.FormatPush("%c",(isActive) ? 'Y' : 'N');
 
-    if ( id == 0 ) // Insert New
+    if(id == 0)    // Insert New
     {
-        uint32 newid = Insert( "action_locations" , fieldnames, fields );
-        if (newid == 0)
+        uint32 newid = Insert("action_locations" , fieldnames, fields);
+        if(newid == 0)
         {
-            Error2("Failed to create new action location. Error %s", db->GetLastError() );
+            Error2("Failed to create new action location. Error %s", db->GetLastError());
             return false;
         }
         id = newid;
@@ -307,10 +309,10 @@ bool psActionLocation::Save()
     else
     {
         csString idStr;
-        idStr.Format( "%d", id );
-        if ( !UpdateByKey( "action_locations", "id", idStr, fieldnames, fields ) )
+        idStr.Format("%d", id);
+        if(!UpdateByKey("action_locations", "id", idStr, fieldnames, fields))
         {
-            Error3("Failed to update action location %u. Error %s", id, db->GetLastError() );
+            Error3("Failed to update action location %u. Error %s", id, db->GetLastError());
             return false;
         }
     }
@@ -322,25 +324,25 @@ bool psActionLocation::Delete()
     csString idStr;
     idStr.Format("%u", id);
 
-    if (!DeleteByKey("action_locations", "id", idStr.GetData()))
+    if(!DeleteByKey("action_locations", "id", idStr.GetData()))
     {
-        Error3("Failed to delete action location %u. Error %s", id, db->GetLastError() );
+        Error3("Failed to delete action location %u. Error %s", id, db->GetLastError());
         return false;
     }
     return true;
 }
 
-int psActionLocation::IsMatch( psActionLocation *compare )
+int psActionLocation::IsMatch(psActionLocation* compare)
 {
     int result = 0;
 
     // match on sectorName and Mesh
-    if ( ( compare->sectorname == sectorname ) && ( compare->meshname == meshname ) )
+    if((compare->sectorname == sectorname) && (compare->meshname == meshname))
     {
         result++;
-        if ( polygon != "0" )
+        if(polygon != "0")
         {
-            if ( compare->polygon == polygon )
+            if(compare->polygon == polygon)
             {
                 result++;
             }
@@ -349,9 +351,9 @@ int psActionLocation::IsMatch( psActionLocation *compare )
                 return 0;
             }
         }
-        if ( !position.IsZero() )
+        if(!position.IsZero())
         {
-            if ( csSquaredDist::PointPoint( compare->position, position ) < (radius * radius) )
+            if(csSquaredDist::PointPoint(compare->position, position) < (radius * radius))
             {
                 result++;
             }
@@ -360,53 +362,53 @@ int psActionLocation::IsMatch( psActionLocation *compare )
                 return 0;
             }
         }
-        if (pos_instance != INSTANCE_ALL)
+        if(pos_instance != INSTANCE_ALL)
         {
-			if(compare->pos_instance == pos_instance)
-			{
-				result++;
-			}
-			else
-			{
-				return 0;
-			}
+            if(compare->pos_instance == pos_instance)
+            {
+                result++;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 
     return result;
 }
 
-void psActionLocation::SetGemObject( gemActionLocation *gemAction )
+void psActionLocation::SetGemObject(gemActionLocation* gemAction)
 {
     this->gemAction = gemAction;
 }
 
-gemActionLocation *psActionLocation::GetGemObject( void )
+gemActionLocation* psActionLocation::GetGemObject(void)
 {
-   return this->gemAction;
+    return this->gemAction;
 }
 
-gemItem *psActionLocation::GetRealItem()
+gemItem* psActionLocation::GetRealItem()
 {
     // Check if the actionlocation is linked to real item
     InstanceID InstanceID = GetInstanceID();
-    if (InstanceID==INSTANCE_ALL) 
+    if(InstanceID==INSTANCE_ALL)
     {
-        if (GetGemObject()->GetItem())
+        if(GetGemObject()->GetItem())
         {
             InstanceID = (int)GetGemObject()->GetItem()->GetUID();
         }
     }
     // id 0 is not valid
-    if (InstanceID == 0)
+    if(InstanceID == 0)
         return NULL;
 
-    return psserver->entitymanager->GetGEM()->FindItemEntity( InstanceID );
+    return psserver->entitymanager->GetGEM()->FindItemEntity(InstanceID);
 }
 
-void psActionLocation::Send( int clientnum)
+void psActionLocation::Send(int clientnum)
 {
-    this->gemAction->Send( clientnum, false, false );
+    this->gemAction->Send(clientnum, false, false);
 }
 
 csString psActionLocation::ToXML() const
@@ -420,28 +422,28 @@ csString psActionLocation::ToXML() const
     csString escpxml_triggertype = EscpXML(TriggerTypeStr[triggertype]);
     csString escpxml_responsetype = EscpXML(responsetype);
     csString escpxml_response = EscpXML(response);
-    xml.Format( formatXML,
-                id,
-                master_id,
-                escpxml_name.GetData(),
-                escpxml_sectorname.GetData(),
-                escpxml_meshname.GetData(),
-                escpxml_polygon.GetData(),
-                position.x,
-                position.y,
-                position.z,
-                pos_instance,
-                radius,
-                escpxml_triggertype.GetData(),
-                escpxml_responsetype.GetData(),
-                escpxml_response.GetData(),
-                (isActive) ? "Y" : "N");
+    xml.Format(formatXML,
+               id,
+               master_id,
+               escpxml_name.GetData(),
+               escpxml_sectorname.GetData(),
+               escpxml_meshname.GetData(),
+               escpxml_polygon.GetData(),
+               position.x,
+               position.y,
+               position.z,
+               pos_instance,
+               radius,
+               escpxml_triggertype.GetData(),
+               escpxml_responsetype.GetData(),
+               escpxml_response.GetData(),
+               (isActive) ? "Y" : "N");
 
     return xml;
 }
 
 // DB Helper Operations
-unsigned int psActionLocation::Insert( const char *table, const char **fieldnames, psStringArray& fieldvalues )
+unsigned int psActionLocation::Insert(const char* table, const char** fieldnames, psStringArray &fieldvalues)
 {
     csString command;
     size_t count = fieldvalues.GetSize();
@@ -449,23 +451,23 @@ unsigned int psActionLocation::Insert( const char *table, const char **fieldname
     command = "INSERT INTO ";
     command.Append(table);
     command.Append(" (");
-    for (i=0;i<count;i++)
+    for(i=0; i<count; i++)
     {
-        if (i>0)
+        if(i>0)
             command.Append(",");
         command.Append(fieldnames[i]);
     }
 
     command.Append(") VALUES (");
-    for (i=0;i<count;i++)
+    for(i=0; i<count; i++)
     {
-        if (i>0)
+        if(i>0)
             command.Append(",");
-        if (fieldvalues[i]!=NULL)
+        if(fieldvalues[i]!=NULL)
         {
             command.Append("'");
             csString escape;
-            db->Escape( escape, fieldvalues[i] );
+            db->Escape(escape, fieldvalues[i]);
             command.Append(escape);
             command.Append("'");
         }
@@ -474,15 +476,15 @@ unsigned int psActionLocation::Insert( const char *table, const char **fieldname
             command.Append("NULL");
         }
     }
-    command.Append(")");	
+    command.Append(")");
 
-    if (db->Command("%s", command.GetDataSafe())!=1)
+    if(db->Command("%s", command.GetDataSafe())!=1)
         return 0;
 
     return db->GetLastInsertID();
 }
 
-bool psActionLocation::UpdateByKey( const char *table, const char *idname, const char *idvalue, const char **fieldnames, psStringArray& fieldvalues )
+bool psActionLocation::UpdateByKey(const char* table, const char* idname, const char* idvalue, const char** fieldnames, psStringArray &fieldvalues)
 {
     size_t i;
     size_t count = fieldvalues.GetSize();
@@ -492,12 +494,12 @@ bool psActionLocation::UpdateByKey( const char *table, const char *idname, const
     command.Append(table);
     command.Append(" SET ");
 
-    for (i=0;i<count;i++)
+    for(i=0; i<count; i++)
     {
-        if (i>0)
+        if(i>0)
             command.Append(",");
         command.Append(fieldnames[i]);
-        if (fieldvalues[i]!=NULL)
+        if(fieldvalues[i]!=NULL)
         {
             command.Append("='");
             csString escape;
@@ -516,11 +518,11 @@ bool psActionLocation::UpdateByKey( const char *table, const char *idname, const
     command.Append(idname);
     command.Append("='");
     csString escape;
-    db->Escape( escape, idvalue );
+    db->Escape(escape, idvalue);
     command.Append(escape);
     command.Append("'");
 
-    if (db->Command("%s", command.GetDataSafe())==QUERY_FAILED)
+    if(db->Command("%s", command.GetDataSafe())==QUERY_FAILED)
     {
         return false;
     }
@@ -529,7 +531,7 @@ bool psActionLocation::UpdateByKey( const char *table, const char *idname, const
 }
 
 
-bool psActionLocation::DeleteByKey( const char *table, const char *idname, const char *idvalue )
+bool psActionLocation::DeleteByKey(const char* table, const char* idname, const char* idvalue)
 {
     csString command;
 
@@ -539,11 +541,11 @@ bool psActionLocation::DeleteByKey( const char *table, const char *idname, const
     command.Append(idname);
     command.Append("='");
     csString escape;
-    db->Escape( escape, idvalue );
+    db->Escape(escape, idvalue);
     command.Append(escape);
     command.Append("'");
 
-    if (db->Command("%s", command.GetDataSafe())==QUERY_FAILED)
+    if(db->Command("%s", command.GetDataSafe())==QUERY_FAILED)
     {
         return false;
     }
@@ -554,10 +556,10 @@ bool psActionLocation::DeleteByKey( const char *table, const char *idname, const
 bool psActionLocation::ParseResponse()
 {
     // Only check XML if response starts with examine
-    if ( response.StartsWith( "<Examine>", false ) )
+    if(response.StartsWith("<Examine>", false))
     {
         // load response into XML doc
-        csRef<iDocument> doc = ParseString( response );
+        csRef<iDocument> doc = ParseString(response);
         if(!doc)
         {
             Error1("Parse error in action response");
@@ -571,52 +573,52 @@ bool psActionLocation::ParseResponse()
             return false;
 
         }
-        
-        csRef<iDocumentNode> topNode = root->GetNode( "Examine" );
+
+        csRef<iDocumentNode> topNode = root->GetNode("Examine");
         if(!topNode)
         {
             Error1("No <Examine> tag in action response");
             return false;
         }
-        
+
         // Do Entrances
-        csRef<iDocumentNode> entranceNode = topNode->GetNode( "Entrance" );
-        if ( entranceNode ) 
+        csRef<iDocumentNode> entranceNode = topNode->GetNode("Entrance");
+        if(entranceNode)
         {
             SetupEntrance(entranceNode);
         }
 
         // Do Entrance Returns
-        csRef<iDocumentNode> returnNode = topNode->GetNode( "Return" );
-        if ( returnNode ) 
+        csRef<iDocumentNode> returnNode = topNode->GetNode("Return");
+        if(returnNode)
         {
             SetupReturn(returnNode);
         }
 
         // Do Containers
-        csRef<iDocumentNode> containerNode = topNode->GetNode( "Container" );
-        if ( containerNode ) 
+        csRef<iDocumentNode> containerNode = topNode->GetNode("Container");
+        if(containerNode)
         {
             SetupContainer(containerNode);
         }
 
         // Do Gameboards
         csRef<iDocumentNode> boardNode = topNode->GetNode("GameBoard");
-        if ( boardNode ) 
+        if(boardNode)
         {
             SetupGameboard(boardNode);
         }
 
         // Do Scripts
         csRef<iDocumentNode> scriptNode = topNode->GetNode("Script");
-        if ( scriptNode ) 
+        if(scriptNode)
         {
             SetupScript(scriptNode);
         }
 
         // Do Descriptions
-        csRef<iDocumentNode> descriptionNode = topNode->GetNode( "Description" );
-        if ( descriptionNode ) 
+        csRef<iDocumentNode> descriptionNode = topNode->GetNode("Description");
+        if(descriptionNode)
         {
             SetupDescription(descriptionNode);
         }
@@ -644,46 +646,47 @@ void psActionLocation::SetupEntrance(csRef<iDocumentNode> entranceNode)
     isEntrance = true;
 
     // All entrances have types
-    SetEntranceType(entranceNode->GetAttributeValue( "Type" ));
+    SetEntranceType(entranceNode->GetAttributeValue("Type"));
 
-    // Set lock instance ID if any 
+    // Set lock instance ID if any
     // cannot use GetAttributeValueAsInt since it uses atoi, which will barf on values > 0x7fffffff
     InstanceID InstanceID = 0;
-    const char * lockid_str = entranceNode->GetAttributeValue( "LockID" );
-    if( lockid_str ) {
+    const char* lockid_str = entranceNode->GetAttributeValue("LockID");
+    if(lockid_str)
+    {
         InstanceID = strtoul(lockid_str,NULL,10);
     }
     SetInstanceID(InstanceID);
-    if ( InstanceID  != 0 )
+    if(InstanceID  != 0)
     {
         isLockable = true;
     }
 
     // Set entrance script if any
-    if (enterScript)
+    if(enterScript)
     {
         delete enterScript;
         enterScript = NULL;
     }
 
-    if (entranceNode->GetAttributeValue("Script"))
+    if(entranceNode->GetAttributeValue("Script"))
     {
         enterScript = MathExpression::Create(entranceNode->GetAttributeValue("Script"));
-        if (!enterScript)
+        if(!enterScript)
         {
             Error2("Failed to create enter script for action location %d.", id);
         }
     }
-    
+
     // Set entrance coordinates
     csVector3 entrancePos;
-    entrancePos.x = entranceNode->GetAttributeValueAsFloat( "X" );
-    entrancePos.y = entranceNode->GetAttributeValueAsFloat( "Y" );
-    entrancePos.z = entranceNode->GetAttributeValueAsFloat( "Z" );
+    entrancePos.x = entranceNode->GetAttributeValueAsFloat("X");
+    entrancePos.y = entranceNode->GetAttributeValueAsFloat("Y");
+    entrancePos.z = entranceNode->GetAttributeValueAsFloat("Z");
     SetEntrancePosition(entrancePos);
-    SetEntranceInstance(entranceNode->GetAttributeValueAsInt( "Instance" ));
-    SetEntranceRotation(entranceNode->GetAttributeValueAsFloat( "Rot" ));
-    SetEntranceSector(entranceNode->GetAttributeValue( "Sector" ));
+    SetEntranceInstance(entranceNode->GetAttributeValueAsInt("Instance"));
+    SetEntranceRotation(entranceNode->GetAttributeValueAsFloat("Rot"));
+    SetEntranceSector(entranceNode->GetAttributeValue("Sector"));
 }
 
 // Setup Return tag
@@ -702,13 +705,13 @@ void psActionLocation::SetupReturn(csRef<iDocumentNode> returnNode)
 
     // Set return coordinates
     csVector3 returnPos;
-    returnPos.x = returnNode->GetAttributeValueAsFloat( "X" );
-    returnPos.y = returnNode->GetAttributeValueAsFloat( "Y" );
-    returnPos.z = returnNode->GetAttributeValueAsFloat( "Z" );
+    returnPos.x = returnNode->GetAttributeValueAsFloat("X");
+    returnPos.y = returnNode->GetAttributeValueAsFloat("Y");
+    returnPos.z = returnNode->GetAttributeValueAsFloat("Z");
     SetReturnPosition(returnPos);
-    SetReturnInstance(returnNode->GetAttributeValueAsInt( "Instance" ));
-    SetReturnRotation(returnNode->GetAttributeValueAsFloat( "Rot" ));
-    SetReturnSector(returnNode->GetAttributeValue( "Sector" ));
+    SetReturnInstance(returnNode->GetAttributeValueAsInt("Instance"));
+    SetReturnRotation(returnNode->GetAttributeValueAsFloat("Rot"));
+    SetReturnSector(returnNode->GetAttributeValue("Sector"));
 }
 
 // Setup Container tag
@@ -722,8 +725,8 @@ void psActionLocation::SetupContainer(csRef<iDocumentNode> containerNode)
 {
     isContainer = true;
 
-    // Set container instance ID if any 
-    SetInstanceID(containerNode->GetAttributeValueAsInt( "ID" ));
+    // Set container instance ID if any
+    SetInstanceID(containerNode->GetAttributeValueAsInt("ID"));
 }
 
 // Setup game tag

@@ -20,16 +20,16 @@
 #ifndef __CACHEDOBJECT_H__
 #define __CACHEDOBJECT_H__
 
-struct iCachedObject 
+struct iCachedObject
 {
-    /** This function is called by the generic cache 
-    *  if the specified ticks go by and the cache 
+    /** This function is called by the generic cache
+    *  if the specified ticks go by and the cache
     *  object is not already removed.  After this
     *  function is called, the object is removed
     *  from the generic cache and deleted.
     */
     virtual void ProcessCacheTimeout() = 0;
-    virtual void *RecoverObject() = 0;
+    virtual void* RecoverObject() = 0;
     virtual void DeleteSelf() = 0;
     virtual ~iCachedObject() {}
 };
