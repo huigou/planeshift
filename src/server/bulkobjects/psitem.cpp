@@ -206,16 +206,16 @@ psItem::~psItem()
     Debug4(LOG_ITEM, 0, "Item at %p %s:%u dtor called", this, GetName(), GetUID());
     // printf("In item %s:%u dtor...\n", GetName(), uid);
 
+    if(item_in_use)
+    {
+        Error2("Item %s is being deleted while in use!", GetName());
+    }
+
     //remove the itemModifiers class as it's no more needed
     delete itemModifiers;
 
     if(!current_stats)
         return;
-
-    if(item_in_use)
-    {
-        Error2("Item %s is being deleted while in use!", GetName());
-    }
 
     if(schedule)
     {
