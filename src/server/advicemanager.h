@@ -78,17 +78,17 @@ class AdviceManager : public MessageManager<AdviceManager>
 {
 public:
 
-    AdviceManager(psDatabase *db);
+    AdviceManager(psDatabase* db);
     virtual ~AdviceManager();
 
-    void HandleAdviceMessage(MsgEntry *pMsg,Client *client);
+    void HandleAdviceMessage(MsgEntry* pMsg,Client* client);
 
     /**
      * Adds a new advisor available to answer questions.
      *
      * @param client The player client.
      */
-    void AddAdvisor(Client *client);
+    void AddAdvisor(Client* client);
 
     /**
      * Remove advisor available to answer questions.
@@ -103,7 +103,7 @@ public:
      *
      * @param adviceSession The session that has expired
      */
-    void AdviceRequestTimeout(AdviceSession *adviceSession);
+    void AdviceRequestTimeout(AdviceSession* adviceSession);
 
     /**
      * Remove advise session due to timeout.
@@ -112,9 +112,9 @@ public:
      * @param adviceSession The session that has expired.
      * @param msg A message for the player.
      */
-    void CancelAdvisorSession(gemActor *who, AdviceSession *adviceSession, const char * msg );
+    void CancelAdvisorSession(gemActor* who, AdviceSession* adviceSession, const char* msg);
 
-    void RemoveSession( AdviceSession *adviceSession);
+    void RemoveSession(AdviceSession* adviceSession);
 
     /**
      * Retrieve the clients advisor mode.
@@ -122,42 +122,42 @@ public:
      * @param id The id of the advisor to remove ( same as player ID )
      * @param connectionId The client id that client dropping advisor role.
      */
-    bool GetAdvisorMode( int id, int connectionId );
+    bool GetAdvisorMode(int id, int connectionId);
 
 protected:
 
-    void HandleAdviceRequest( Client *advisee, csString message );
-    void HandleAdviceResponse( Client *advisee, csString sAdvisee, csString message );
-    void HandleAdviceList( Client *advisor );
-    void HandleAdviseeList( Client *advisor );
-    void HandleListAdvisors( Client *advisor );
+    void HandleAdviceRequest(Client* advisee, csString message);
+    void HandleAdviceResponse(Client* advisee, csString sAdvisee, csString message);
+    void HandleAdviceList(Client* advisor);
+    void HandleAdviseeList(Client* advisor);
+    void HandleListAdvisors(Client* advisor);
 
-    bool FloodControl(csString& newmessage, Client *client);
+    bool FloodControl(csString &newmessage, Client* client);
 
     csHash<AdviceSession*> AdviseeList;
     csArray<AdvisorStruct>    advisors;
     size_t advisorPos;
-    psDatabase              *database;
+    psDatabase*              database;
 };
 
 class psAdviceSessionTimeoutGameEvent : public psGEMEvent
 {
 protected:
-    AdviceManager *advicemanager;
-    gemActor *adviseeActor;
-    gemActor *advisorActor;
+    AdviceManager* advicemanager;
+    gemActor* adviseeActor;
+    gemActor* advisorActor;
 
 public:
-    AdviceSession *adviceSession;
+    AdviceSession* adviceSession;
 
-    psAdviceSessionTimeoutGameEvent( AdviceManager *mgr,
-                                     int delayticks,
-                                     gemActor *advisee,
-                                     AdviceSession *adviceRequest);
+    psAdviceSessionTimeoutGameEvent(AdviceManager* mgr,
+                                    int delayticks,
+                                    gemActor* advisee,
+                                    AdviceSession* adviceRequest);
 
     virtual ~psAdviceSessionTimeoutGameEvent();
 
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 
     virtual void Trigger();
 };
@@ -165,21 +165,21 @@ public:
 class psAdviceRequestTimeoutGameEvent : public psGEMEvent
 {
 protected:
-    AdviceManager *advicemanager;
-    gemActor *adviseeActor;
-    gemActor *advisorActor;
+    AdviceManager* advicemanager;
+    gemActor* adviseeActor;
+    gemActor* advisorActor;
 
 public:
-    AdviceSession *adviceSession;
+    AdviceSession* adviceSession;
 
-    psAdviceRequestTimeoutGameEvent( AdviceManager *mgr,
-                                     int delayticks,
-                                     gemActor *advisee,
-                                     AdviceSession *adviceRequest );
+    psAdviceRequestTimeoutGameEvent(AdviceManager* mgr,
+                                    int delayticks,
+                                    gemActor* advisee,
+                                    AdviceSession* adviceRequest);
 
     virtual ~psAdviceRequestTimeoutGameEvent();
 
-    virtual void DeleteObjectCallback(iDeleteNotificationObject * object);
+    virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 
     virtual void Trigger();
 };

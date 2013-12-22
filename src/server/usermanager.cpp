@@ -1696,7 +1696,7 @@ void UserManager::Ready()
     UserStatRegeneration();
 }
 
-/* 
+/*
 * Check target dead
 * Check target lootable by this client
 */
@@ -1734,7 +1734,7 @@ bool UserManager::CheckTargetLootable(gemActor* actor, Client* client)
                     psserver->SendSystemError(client->GetClientNum(), "You can't loot yourself.");
                     return false;
                 }
-    
+
                 if(targetActor->IsAlive())
                 {
                     psserver->SendSystemError(client->GetClientNum(), "You can't loot a person that is alive.");
@@ -1768,7 +1768,7 @@ bool UserManager::CheckTargetLootable(gemActor* actor, Client* client)
         }
         else
             Debug2(LOG_SUPERCLIENT, actor->GetEID().Unbox(), "Not allowed to loot %s.", target->GetName());
-            
+
         return false;
     }
 
@@ -1788,11 +1788,11 @@ bool UserManager::CheckTargetLootable(gemActor* actor, Client* client)
 void UserManager::HandleLoot(psUserCmdMessage &msg,Client* client)
 {
     gemActor* actor = client->GetActor();
-    
+
     // check whether target is dead and lootable
     if(!CheckTargetLootable(actor, client))
-            return;
-        
+        return;
+
     if(msg.action.CompareNoCase("money"))
     {
         LootMoney(actor, client);
@@ -1827,7 +1827,7 @@ void UserManager::LootMoney(gemActor* actor, Client* client)
     if(chr)
     {
         int money = chr->GetLootMoney();
-        
+
         if(!money)
         {
             if(client)
@@ -1839,7 +1839,7 @@ void UserManager::LootMoney(gemActor* actor, Client* client)
                 Debug2(LOG_SUPERCLIENT, actor->GetEID().Unbox(), "%s has no money to be looted.", target->GetName());
             return;
         }
-        
+
         csRef<PlayerGroup> group = actor->GetGroup();
         int remainder,each;
         // Split up money among LootablePlayers in group.
@@ -1930,7 +1930,7 @@ void UserManager::LootMoney(gemActor* actor, Client* client)
         {
             psMoney m = psMoney(money).Normalized();
             csString mstr = m.ToUserString();
-            
+
             if(client)
             {
                 //Debug2(LOG_LOOT, client->GetClientNum(),"Looting %d money.\n", money); // Needed?
@@ -1941,11 +1941,11 @@ void UserManager::LootMoney(gemActor* actor, Client* client)
                 Debug2(LOG_SUPERCLIENT, actor->GetEID().Unbox(), "You have looted %s.", mstr.GetData());
 
             actor->GetCharacterData()->AdjustMoney(m, false);
-            
+
             if(client)
             {
                 psserver->GetCharManager()->SendPlayerMoney(client);
-                
+
                 psLootEvent evt(chr->GetPID(),
                                 chr->GetCharName(),
                                 client->GetCharacterData()->GetPID(),
@@ -1964,18 +1964,18 @@ void UserManager::LootItems(gemActor* actor, Client* client, csString userInput,
 {
     gemObject* target = actor->GetTargetObject();
     psCharacter* chr = target->GetCharacterData();
-    
+
     if(chr)
     {
         csArray<csString> categories;
-        
+
         if(!userInput.CompareNoCase("") && !userInput.CompareNoCase("all"))
         {
             // Slice user inputted categories into an array
             userInput    = userInput.Append(','); // add addiontal coma for loop
             size_t start = 0;
             size_t end   = userInput.Find(",", start);
-            
+
             while(end != csArrayItemNotFound)
             {
                 categories.Push(userInput.Slice(start, (end - start)).Collapse().Downcase());
@@ -1983,9 +1983,9 @@ void UserManager::LootItems(gemActor* actor, Client* client, csString userInput,
                 end   = userInput.Find(",", start);
             }
         }
-        
+
         csArray<psItem*> items = chr->RemoveLootItems(categories);
-        
+
         if(!items.IsEmpty())
         {
             for(size_t x = 0; x < items.GetSize(); x++)
@@ -2000,7 +2000,7 @@ void UserManager::LootItems(gemActor* actor, Client* client, csString userInput,
                     // Attempt to give to looting npc
                     actor->GetCharacterData()->Inventory().AddOrDrop(items[x]);
                     items[x]->Save(false);
-                }    
+                }
             }
         }
         else
@@ -2010,7 +2010,7 @@ void UserManager::LootItems(gemActor* actor, Client* client, csString userInput,
             else
                 Debug2(LOG_SUPERCLIENT, actor->GetEID().Unbox(), "%s has no items to be looted.", target->GetName());
         }
-        
+
     }
 }
 

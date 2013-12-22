@@ -1,7 +1,7 @@
 /*
 * tutorialmanager.cpp
 *
-* Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@
 #include "netmanager.h"
 #include "globals.h"
 
-TutorialManager::TutorialManager(ClientConnectionSet *pCCS)
+TutorialManager::TutorialManager(ClientConnectionSet* pCCS)
 {
     clients = pCCS;
     Subscribe(&TutorialManager::HandleConnect, MSGTYPE_CONNECT_EVENT, REQUIRE_ANY_CLIENT);
@@ -65,14 +65,14 @@ TutorialManager::~TutorialManager()
 bool TutorialManager::LoadTutorialStrings()
 {
     Result result(db->Select("select * from tips where id>1000"));
-    if (!result.IsValid() )
+    if(!result.IsValid())
     {
         Error2("Could not load tutorial strings due to database error: %s\n",
                db->GetLastError());
         return false;
     }
 
-    for ( unsigned long i=0; i < result.Count(); i++ )
+    for(unsigned long i=0; i < result.Count(); i++)
     {
         int id = result[i].GetInt("id") - 1001;
         csString tip = result[i]["tip"];
@@ -81,14 +81,14 @@ bool TutorialManager::LoadTutorialStrings()
     return true;
 }
 
-void TutorialManager::SendTutorialMessage(int which, Client *client, const char *instrs)
+void TutorialManager::SendTutorialMessage(int which, Client* client, const char* instrs)
 {
     SendTutorialMessage(which, client->GetClientNum(), instrs);
 }
 
-void TutorialManager::SendTutorialMessage(int which, uint32_t clientnum, const char *instrs)
+void TutorialManager::SendTutorialMessage(int which, uint32_t clientnum, const char* instrs)
 {
-    if (!instrs)
+    if(!instrs)
     {
         csString error;
         error.Format("TutorialEventMessage %d is missing instructions.  Please file a bug.", which);
@@ -98,14 +98,14 @@ void TutorialManager::SendTutorialMessage(int which, uint32_t clientnum, const c
     msg.SendMessage();
 }
 
-void TutorialManager::HandleConnect(MsgEntry *me,Client *client)
+void TutorialManager::HandleConnect(MsgEntry* me,Client* client)
 {
 //    printf("Got psConnectEvent\n");
     psConnectEvent evt(me);
-    if (client)
+    if(client)
     {
-        psCharacter *ch = client->GetCharacterData();
-        if (ch->NeedsHelpEvent(CONNECT))
+        psCharacter* ch = client->GetCharacterData();
+        if(ch->NeedsHelpEvent(CONNECT))
         {
             SendTutorialMessage(CONNECT,client,tutorialMsg[CONNECT]);
             ch->CompleteHelpEvent(CONNECT);
@@ -113,14 +113,14 @@ void TutorialManager::HandleConnect(MsgEntry *me,Client *client)
     }
 }
 
-void TutorialManager::HandleMovement(MsgEntry *me,Client *client)
+void TutorialManager::HandleMovement(MsgEntry* me,Client* client)
 {
     // printf("Got psMovementEvent\n");
     psMovementEvent evt(me);
-    if (client)
+    if(client)
     {
-        psCharacter *ch = client->GetCharacterData();
-        if (ch->NeedsHelpEvent(MOVEMENT))
+        psCharacter* ch = client->GetCharacterData();
+        if(ch->NeedsHelpEvent(MOVEMENT))
         {
             SendTutorialMessage(MOVEMENT,client,tutorialMsg[MOVEMENT]);
             ch->CompleteHelpEvent(MOVEMENT);
@@ -129,21 +129,21 @@ void TutorialManager::HandleMovement(MsgEntry *me,Client *client)
 }
 
 // psTargetEvent already published so intercepting this takes zero code
-void TutorialManager::HandleTarget(MsgEntry *me,Client *client)
+void TutorialManager::HandleTarget(MsgEntry* me,Client* client)
 {
     // printf("Got psTargetEvent\n");
     psTargetChangeEvent evt(me);
-    if (evt.character)
+    if(evt.character)
     {
         client = evt.character->GetClient();
-        psCharacter *ch = evt.character->GetCharacterData();
-        if (ch->NeedsHelpEvent(NPC_SELECT))
+        psCharacter* ch = evt.character->GetCharacterData();
+        if(ch->NeedsHelpEvent(NPC_SELECT))
         {
             SendTutorialMessage(NPC_SELECT,client,tutorialMsg[NPC_SELECT]);
             ch->CompleteHelpEvent(NPC_SELECT);
         }
 
-        if (ch->NeedsHelpEvent(NPC_TALK))
+        if(ch->NeedsHelpEvent(NPC_TALK))
         {
             SendTutorialMessage(NPC_TALK,client,tutorialMsg[NPC_TALK]);
             ch->CompleteHelpEvent(NPC_TALK);
@@ -152,30 +152,30 @@ void TutorialManager::HandleTarget(MsgEntry *me,Client *client)
 }
 
 /// Specifically handle the Damage event in the tutorial
-void TutorialManager::HandleDamage(MsgEntry *me,Client *client)
+void TutorialManager::HandleDamage(MsgEntry* me,Client* client)
 {
     //printf("Got psDamageEvent\n");
     psDamageEvent evt(me);
-    if (evt.target && evt.attacker)  // someone hurt us
+    if(evt.target && evt.attacker)   // someone hurt us
     {
         client = evt.target->GetClient();
-        if (client)
+        if(client)
         {
-            psCharacter *ch = evt.target->GetCharacterData();
-            if (ch->NeedsHelpEvent(DAMAGE_SELF))
+            psCharacter* ch = evt.target->GetCharacterData();
+            if(ch->NeedsHelpEvent(DAMAGE_SELF))
             {
                 SendTutorialMessage(DAMAGE_SELF,client,tutorialMsg[DAMAGE_SELF]);
                 ch->CompleteHelpEvent(DAMAGE_SELF);
             }
         }
     }
-    else if (evt.target && !evt.attacker) // no one hurt us, so fall damage
+    else if(evt.target && !evt.attacker)  // no one hurt us, so fall damage
     {
         client = evt.target->GetClient();
-        if (client)
+        if(client)
         {
-            psCharacter *ch = evt.target->GetCharacterData();
-            if (ch->NeedsHelpEvent(DAMAGE_FALL))
+            psCharacter* ch = evt.target->GetCharacterData();
+            if(ch->NeedsHelpEvent(DAMAGE_FALL))
             {
                 SendTutorialMessage(DAMAGE_FALL,client,tutorialMsg[DAMAGE_FALL]);
                 ch->CompleteHelpEvent(DAMAGE_FALL);
@@ -190,23 +190,25 @@ void TutorialManager::HandleScriptMessage(uint32_t client, unsigned int which)
     if(which < tutorialMsg.GetSize())
     {
         SendTutorialMessage(which, client, tutorialMsg[which]);
-    } else {
+    }
+    else
+    {
         Error2("Tip %d doesn't exist in the database.",which+1001);
     }
 }
 
 /// Specifically handle the Damage event in the tutorial
-void TutorialManager::HandleDeath(MsgEntry *me,Client *client)
+void TutorialManager::HandleDeath(MsgEntry* me,Client* client)
 {
     //printf("Got psDeathEvent\n");
     psDeathEvent evt(me);
-    if (evt.deadActor)  // We're dead
+    if(evt.deadActor)   // We're dead
     {
         client = evt.deadActor->GetClient();
-        if (client)
+        if(client)
         {
-            psCharacter *ch = evt.deadActor->GetCharacterData();
-            if (ch->NeedsHelpEvent(DEATH_SELF))
+            psCharacter* ch = evt.deadActor->GetCharacterData();
+            if(ch->NeedsHelpEvent(DEATH_SELF))
             {
                 SendTutorialMessage(DEATH_SELF,client,tutorialMsg[DEATH_SELF]);
                 ch->CompleteHelpEvent(DEATH_SELF);
@@ -215,30 +217,30 @@ void TutorialManager::HandleDeath(MsgEntry *me,Client *client)
     }
 }
 
-void TutorialManager::HandleGeneric(MsgEntry *me,Client *client)
+void TutorialManager::HandleGeneric(MsgEntry* me,Client* client)
 {
     // printf("Got psGenericEvent\n");
     psGenericEvent evt(me);
-    if (evt.client_id)
+    if(evt.client_id)
     {
-        switch (evt.eventType)
+        switch(evt.eventType)
         {
-			/* Quest assignments are now explained in the tutorial, this is redundant
-            case psGenericEvent::QUEST_ASSIGN:
-            {
-                psCharacter *ch = client->GetCharacterData();
-                if (ch->NeedsHelpEvent(QUEST_ASSIGN))
+                /* Quest assignments are now explained in the tutorial, this is redundant
+                case psGenericEvent::QUEST_ASSIGN:
                 {
-                    SendTutorialMessage(QUEST_ASSIGN,client,tutorialMsg[QUEST_ASSIGN]);
-                    ch->CompleteHelpEvent(QUEST_ASSIGN);
+                    psCharacter *ch = client->GetCharacterData();
+                    if (ch->NeedsHelpEvent(QUEST_ASSIGN))
+                    {
+                        SendTutorialMessage(QUEST_ASSIGN,client,tutorialMsg[QUEST_ASSIGN]);
+                        ch->CompleteHelpEvent(QUEST_ASSIGN);
+                    }
+                    break;
                 }
-                break;
-            }
-			*/
+                */
             case psGenericEvent::SPAWN_MOVE:
             {
-                psCharacter *ch = client->GetCharacterData();
-                if (ch->NeedsHelpEvent(SPAWN_MOVE))
+                psCharacter* ch = client->GetCharacterData();
+                if(ch->NeedsHelpEvent(SPAWN_MOVE))
                 {
                     SendTutorialMessage(SPAWN_MOVE,client,tutorialMsg[SPAWN_MOVE]);
                     ch->CompleteHelpEvent(SPAWN_MOVE);

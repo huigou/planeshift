@@ -3,7 +3,7 @@
 *
 * Copyright (C) 2005 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
-* Credits : 
+* Credits :
 *            Michael Cummings <cummings.michael@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -60,7 +60,7 @@ class MathExpression;
 class psActionLocation
 {
 public:
-    typedef enum 
+    typedef enum
     {
         TRIGGERTYPE_NONE,   /// Default initial value, should not exist after loaded.
         TRIGGERTYPE_SELECT,
@@ -69,26 +69,32 @@ public:
 
     static const char* TriggerTypeStr[];
 
-    psActionLocation ();
-    ~psActionLocation ();
+    psActionLocation();
+    ~psActionLocation();
 
-    bool Load( iResultRow& row );
-    bool Load( csRef<iDocumentNode> root );
-    bool Save( );
-    bool Delete( );
+    bool Load(iResultRow &row);
+    bool Load(csRef<iDocumentNode> root);
+    bool Save();
+    bool Delete();
     csString ToXML() const;
 
-    int IsMatch( psActionLocation *compare );
+    int IsMatch(psActionLocation* compare);
 
-    void SetGemObject( gemActionLocation *gemAction );
-    gemActionLocation *GetGemObject( void );
+    void SetGemObject(gemActionLocation* gemAction);
+    gemActionLocation* GetGemObject(void);
 
-    gemItem * GetRealItem();
+    gemItem* GetRealItem();
 
-    const csVector3 & GetPosition() { return position; }
-    const csString & GetSectorName() { return sectorname; }
+    const csVector3 &GetPosition()
+    {
+        return position;
+    }
+    const csString &GetSectorName()
+    {
+        return sectorname;
+    }
     //void SetLocationInWorld(psSectorInfo *sectorinfo,float loc_x,float loc_y,float loc_z,float loc_yrot);
-    void Send( int clientnum);
+    void Send(int clientnum);
 
     // Returns the result of the XML parsing of the action lcoation reponse string and
     //  the setting of the action location member variables
@@ -96,94 +102,235 @@ public:
 
     /// Returns instance ID of referenced in action location response string
     ///  This is either a container ID or a lock ID
-    InstanceID GetInstanceID() const { return instanceID; }
-    void SetInstanceID(InstanceID newID) { instanceID = newID; }
+    InstanceID GetInstanceID() const
+    {
+        return instanceID;
+    }
+    void SetInstanceID(InstanceID newID)
+    {
+        instanceID = newID;
+    }
 
     /// Returns the enter script in entrance action location response string
-    MathExpression *GetEnterScript() const { return enterScript; }
+    MathExpression* GetEnterScript() const
+    {
+        return enterScript;
+    }
 
     /// Returns the entrance type in entrance action location response string
-    const csString & GetEntranceType() const { return entranceType; }
-    void SetEntranceType(const csString & newType) { entranceType = newType; }
+    const csString &GetEntranceType() const
+    {
+        return entranceType;
+    }
+    void SetEntranceType(const csString &newType)
+    {
+        entranceType = newType;
+    }
 
     /// Returns true if this action location is a minigame board
-    bool IsGameBoard() const { return isGameBoard; }
+    bool IsGameBoard() const
+    {
+        return isGameBoard;
+    }
 
     /// Returns true if this action location will run a script and can be examined
-    bool IsExamineScript() const { return isExamineScript; }
+    bool IsExamineScript() const
+    {
+        return isExamineScript;
+    }
 
     /// Returns true if this action location is an entrance
-    bool IsEntrance() const { return isEntrance; }
-    void SetIsEntrance(bool flag) { isEntrance = flag; }
+    bool IsEntrance() const
+    {
+        return isEntrance;
+    }
+    void SetIsEntrance(bool flag)
+    {
+        isEntrance = flag;
+    }
 
     /// Returns true if this action location is an lockable entrance
-    bool IsLockable() const { return isLockable; }
-    void SetIsLockable(bool flag) { isLockable = flag; }
+    bool IsLockable() const
+    {
+        return isLockable;
+    }
+    void SetIsLockable(bool flag)
+    {
+        isLockable = flag;
+    }
 
     /// Returns true if this action location is a container
-    bool IsContainer() const { return isContainer; }
+    bool IsContainer() const
+    {
+        return isContainer;
+    }
 
     /// Returns true if this action location has return tag
-    bool IsReturn() const { return isReturn; }
+    bool IsReturn() const
+    {
+        return isReturn;
+    }
 
     /// Returns true if this action location is actaive
-    bool IsActive() const { return isActive; }
-    void SetActive(bool flag) { isActive = flag; }
+    bool IsActive() const
+    {
+        return isActive;
+    }
+    void SetActive(bool flag)
+    {
+        isActive = flag;
+    }
 
-    /// Returns action location description 
-    const csString & GetDescription() const { return description; }
-    void SetDescription(const csString & newDescription) { description = newDescription; }
+    /// Returns action location description
+    const csString &GetDescription() const
+    {
+        return description;
+    }
+    void SetDescription(const csString &newDescription)
+    {
+        description = newDescription;
+    }
 
     /// Returns or sets entrance location memebers
-    csVector3 GetEntrancePosition() const { return entrancePosition; }
-    void SetEntrancePosition(csVector3 newPosition) { entrancePosition = newPosition; }
-    float GetEntranceRotation() const { return entranceRot; }
-    void SetEntranceRotation(float newRot) { entranceRot = newRot; }
-    const csString & GetEntranceSector() const { return entranceSector; }
-    void SetEntranceSector(const csString & newSector) { entranceSector = newSector; }
+    csVector3 GetEntrancePosition() const
+    {
+        return entrancePosition;
+    }
+    void SetEntrancePosition(csVector3 newPosition)
+    {
+        entrancePosition = newPosition;
+    }
+    float GetEntranceRotation() const
+    {
+        return entranceRot;
+    }
+    void SetEntranceRotation(float newRot)
+    {
+        entranceRot = newRot;
+    }
+    const csString &GetEntranceSector() const
+    {
+        return entranceSector;
+    }
+    void SetEntranceSector(const csString &newSector)
+    {
+        entranceSector = newSector;
+    }
     ///< Get entrace Instance in the world if not defined number of the action location
-    const InstanceID GetEntranceInstance() const { return entranceInstance; }
+    const InstanceID GetEntranceInstance() const
+    {
+        return entranceInstance;
+    }
     ///< Set entrace Instance in the world if not defined number of the action location
-    void SetEntranceInstance(const InstanceID newInstance) { entranceInstance = newInstance; }
+    void SetEntranceInstance(const InstanceID newInstance)
+    {
+        entranceInstance = newInstance;
+    }
 
     /// Returns or sets return location memebers
-    csVector3 GetReturnPosition() const { return returnPosition; }
-    void SetReturnPosition(csVector3 newPosition) { returnPosition = newPosition; }
-    float GetReturnRotation() const { return returnRot; }
-    void SetReturnRotation(float newRot) { returnRot = newRot; }
-    const csString & GetReturnSector() const { return returnSector; }
-    void SetReturnSector(const csString & newSector) { returnSector = newSector; }
+    csVector3 GetReturnPosition() const
+    {
+        return returnPosition;
+    }
+    void SetReturnPosition(csVector3 newPosition)
+    {
+        returnPosition = newPosition;
+    }
+    float GetReturnRotation() const
+    {
+        return returnRot;
+    }
+    void SetReturnRotation(float newRot)
+    {
+        returnRot = newRot;
+    }
+    const csString &GetReturnSector() const
+    {
+        return returnSector;
+    }
+    void SetReturnSector(const csString &newSector)
+    {
+        returnSector = newSector;
+    }
     ///< Get return Instance in the world if not defined 0
-    const InstanceID GetReturnInstance() const { return returnInstance; }
+    const InstanceID GetReturnInstance() const
+    {
+        return returnInstance;
+    }
     ///< Set return Instance in the world if not defined 0
-    void SetReturnInstance(const InstanceID newInstance) { returnInstance = newInstance; }
+    void SetReturnInstance(const InstanceID newInstance)
+    {
+        returnInstance = newInstance;
+    }
 
     /// Sets
-    void SetName(const csString & newname) { name = newname; }
-    void SetSectorName(const csString & newsector) { sectorname = newsector; }
-    void SetMeshName(const csString & newmeshname) { meshname = newmeshname; }
-    void SetTriggerType(const TriggerType & newtrigger) { triggertype = newtrigger; }
-    TriggerType GetTriggerType() const { return triggertype; }
-    const char* GetTriggerTypeAsString() const { return TriggerTypeStr[triggertype]; } 
-    void SetResponseType(const csString & newresponsetype) { responsetype = newresponsetype; }
-    void SetResponse(const csString & newresponse) { response = newresponse; }
-    void SetPosition(csVector3 newposition) { position = newposition; }
-    
+    void SetName(const csString &newname)
+    {
+        name = newname;
+    }
+    void SetSectorName(const csString &newsector)
+    {
+        sectorname = newsector;
+    }
+    void SetMeshName(const csString &newmeshname)
+    {
+        meshname = newmeshname;
+    }
+    void SetTriggerType(const TriggerType &newtrigger)
+    {
+        triggertype = newtrigger;
+    }
+    TriggerType GetTriggerType() const
+    {
+        return triggertype;
+    }
+    const char* GetTriggerTypeAsString() const
+    {
+        return TriggerTypeStr[triggertype];
+    }
+    void SetResponseType(const csString &newresponsetype)
+    {
+        responsetype = newresponsetype;
+    }
+    void SetResponse(const csString &newresponse)
+    {
+        response = newresponse;
+    }
+    void SetPosition(csVector3 newposition)
+    {
+        position = newposition;
+    }
+
     /** Sets the instance in the world of this action location, default INSTANCE_ALL
      *  @param instance The instance where this action location will be located
-     */    
-    void SetInstance(const InstanceID instance) { pos_instance = instance;}
-    InstanceID GetInstance() { return pos_instance; }
-    void SetRadius(float newradius) { radius = newradius; }
+     */
+    void SetInstance(const InstanceID instance)
+    {
+        pos_instance = instance;
+    }
+    InstanceID GetInstance()
+    {
+        return pos_instance;
+    }
+    void SetRadius(float newradius)
+    {
+        radius = newradius;
+    }
 
     ///  The new operator is overriden to call PoolAllocator template functions
-    void *operator new(size_t);
+    void* operator new(size_t);
     ///  The delete operator is overriden to call PoolAllocator template functions
-    void operator delete(void *);
+    void operator delete(void*);
 
     /// Get script to run
-    csString GetScriptToRun() { return scriptToRun; }
-    csString GetScriptParameters() { return scriptParameters; }
+    csString GetScriptToRun()
+    {
+        return scriptToRun;
+    }
+    csString GetScriptParameters()
+    {
+        return scriptParameters;
+    }
 
     uint32 id;
     size_t master_id;
@@ -199,7 +346,7 @@ public:
     csString responsetype;
     csString response;
 
-    gemActionLocation *gemAction;
+    gemActionLocation* gemAction;
 
 private:
     /// Static reference to the pool for all psItem objects
@@ -254,7 +401,7 @@ private:
 
     /// String containing the entrance script
     ///   Script return value of 0 indicates no entry
-    MathExpression *enterScript;
+    MathExpression* enterScript;
 
     // Possition stuff for returns
     csVector3 returnPosition;
@@ -268,9 +415,9 @@ private:
 
 
     //DB Helper Functions
-    unsigned int Insert      ( const char *table, const char **fieldnames, psStringArray& fieldvalues );
-    bool         UpdateByKey ( const char *table, const char *idname, const char *idvalue, const char **fieldnames, psStringArray& fieldvalues );
-    bool         DeleteByKey ( const char *table, const char *idname, const char *idvalue );
+    unsigned int Insert(const char* table, const char** fieldnames, psStringArray &fieldvalues);
+    bool         UpdateByKey(const char* table, const char* idname, const char* idvalue, const char** fieldnames, psStringArray &fieldvalues);
+    bool         DeleteByKey(const char* table, const char* idname, const char* idvalue);
 };
 
 /** @} */

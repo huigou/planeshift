@@ -1,7 +1,7 @@
 /*
  * progressionmanager.h
  *
- * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -32,7 +32,7 @@
 //=============================================================================
 #include "util/gameevent.h"
 
-#include "bulkobjects/psskills.h"       
+#include "bulkobjects/psskills.h"
 
 //=============================================================================
 // Application Includes
@@ -50,7 +50,7 @@ class ProgressionManager : public MessageManager<ProgressionManager>
 {
 public:
 
-    ProgressionManager(ClientConnectionSet *ccs, CacheManager *cachemanager);
+    ProgressionManager(ClientConnectionSet* ccs, CacheManager* cachemanager);
 
     virtual ~ProgressionManager();
 
@@ -62,36 +62,39 @@ public:
      * @param focus The skill in focus.
      * @param isTraining Is training.
      */
-    void SendSkillList(Client * client, bool forceOpen, PSSKILL focus = PSSKILL_NONE, bool isTraining = false);
+    void SendSkillList(Client* client, bool forceOpen, PSSKILL focus = PSSKILL_NONE, bool isTraining = false);
 
-    void StartTraining(Client * client, psCharacter * trainer);
-    
-    csHash< csString, csString> &GetAffinityCategories() { return affinitycategories; }
+    void StartTraining(Client* client, psCharacter* trainer);
+
+    csHash< csString, csString> &GetAffinityCategories()
+    {
+        return affinitycategories;
+    }
 
     // Internal utility functions for the progression system
-    void QueueEvent(psGameEvent *event);
-    void SendMessage(MsgEntry *me);
-    void Broadcast(MsgEntry *me);
+    void QueueEvent(psGameEvent* event);
+    void SendMessage(MsgEntry* me);
+    void Broadcast(MsgEntry* me);
 
-    ProgressionScript *FindScript(char const *name);
-    
+    ProgressionScript* FindScript(char const* name);
+
     /**
      * Load progression script from db
      */
     bool Initialize();
-    
-protected:
-    
-    void HandleSkill(MsgEntry *me, Client * client);
-    void HandleDeathEvent(MsgEntry *me, Client *notused);
-    void HandleZPointEvent(MsgEntry *me, Client *client);
 
-    void AllocateKillDamage(gemActor *deadActor, int exp);
+protected:
+
+    void HandleSkill(MsgEntry* me, Client* client);
+    void HandleDeathEvent(MsgEntry* me, Client* notused);
+    void HandleZPointEvent(MsgEntry* me, Client* client);
+
+    void AllocateKillDamage(gemActor* deadActor, int exp);
 
     csHash<csString, csString> affinitycategories;
-    ClientConnectionSet    *clients;
+    ClientConnectionSet*    clients;
     csWeakRef<MathScript> calc_dynamic_experience; ///< Math script used to calculate the dynamic experience
-    CacheManager *cacheManager;
+    CacheManager* cacheManager;
 };
 
 /** @} */

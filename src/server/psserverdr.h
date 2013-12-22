@@ -1,7 +1,7 @@
 /*
  * psclientdr.h by Matze Braun <MatzeBraun@gmx.de>
  *
- * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ class EntityManager;
 
 class psServerDR : public MessageManager<psServerDR>
 {
-public:    
+public:
     psServerDR(CacheManager* cachemanager, EntityManager* entitymanager);
     virtual ~psServerDR();
 
@@ -51,15 +51,15 @@ public:
 
 protected:
 
-    void HandleDeadReckoning(MsgEntry* me,Client *client);
+    void HandleDeadReckoning(MsgEntry* me,Client* client);
 
     /// If the entity was falling and stops falling, this is called.
-    void HandleFallDamage(gemActor *actor,int clientnum, const csVector3& pos, iSector* sector);
+    void HandleFallDamage(gemActor* actor,int clientnum, const csVector3 &pos, iSector* sector);
     void ResetPos(gemActor* actor);
 
     csWeakRef<MathScript> calc_damage;
-    PaladinJr *paladin;
-    
+    PaladinJr* paladin;
+
     CacheManager* cacheManager;
     EntityManager* entityManager;
 };

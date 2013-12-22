@@ -1,7 +1,7 @@
 /*
  * pscharacterlist.h
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -42,10 +42,10 @@ public:
     psCharacterList();
     ~psCharacterList();
 
-    const char *GetCharacterName(int index);
-    const char *GetCharacterFullName(int index);
-    void SetCharacterName(int index,const char *v);
-    void SetCharacterFullName(int index,const char *v,const char *w);
+    const char* GetCharacterName(int index);
+    const char* GetCharacterFullName(int index);
+    void SetCharacterName(int index,const char* v);
+    void SetCharacterFullName(int index,const char* v,const char* w);
 
     unsigned int GetCharacterID(int index);
     void SetCharacterID(int index,unsigned int v);
@@ -56,16 +56,28 @@ public:
     int GetListLength();
     /** Get the number of valid characters in list.
      */
-    int GetValidCount() { return validSize; }
-    
+    int GetValidCount()
+    {
+        return validSize;
+    }
+
     /** Set the number of valid characters in this list.
       */
-    void SetValidCount( int size ) { validSize = size; }
+    void SetValidCount(int size)
+    {
+        validSize = size;
+    }
 
     // iCachedObject Functions below
     virtual void ProcessCacheTimeout() {};  /// required for iCachedObject but not used here
-    virtual void *RecoverObject() { return this; }  /// Turn iCachedObject ptr into psCharacterList
-    virtual void DeleteSelf() { delete this; }  /// Delete must come from inside object to handle operator::delete overrides.
+    virtual void* RecoverObject()
+    {
+        return this;    /// Turn iCachedObject ptr into psCharacterList
+    }
+    virtual void DeleteSelf()
+    {
+        delete this;    /// Delete must come from inside object to handle operator::delete overrides.
+    }
 
 private:
 

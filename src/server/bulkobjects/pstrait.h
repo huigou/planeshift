@@ -1,7 +1,7 @@
 /*
  * pstrait.h
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@
 // Local Includes
 //=============================================================================
 
-struct psTrait 
+struct psTrait
 {
     psTrait();
     ~psTrait();
@@ -43,7 +43,7 @@ struct psTrait
     csString ToXML(bool compact = false) const;
     unsigned int uid;
     unsigned int next_trait_uid;
-    psTrait *next_trait;
+    psTrait* next_trait;
     unsigned int raceID; // The DB uid for the race_info table
     unsigned int race;   // The internal race ID
     PSCHARACTER_GENDER gender;
@@ -53,7 +53,7 @@ struct psTrait
     unsigned int cstr_id_material;
     unsigned int cstr_id_texture;
     bool onlyNPC;
-    csString shaderVar;      ///< The variable for the shader for this trait. 
+    csString shaderVar;      ///< The variable for the shader for this trait.
 };
 
 

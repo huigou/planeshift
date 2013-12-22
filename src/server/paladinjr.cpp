@@ -2,7 +2,7 @@
  * PaladinJr.cpp - Author: Andrew Dai
  * CoAuthor: Matthieu Kraus
  *
- * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -69,19 +69,19 @@ void PaladinJr::Initialize(EntityManager* celbase, CacheManager* cachemanager)
     // if we have a check enabled - enable paladin
     enabled = (checks != NOVIOLATION);
 
-    const csPDelArray<psCharMode>& modes = cachemanager->GetCharModes();
-    const csPDelArray<psMovement>& moves = cachemanager->GetMovements();
-    
+    const csPDelArray<psCharMode> &modes = cachemanager->GetCharModes();
+    const csPDelArray<psMovement> &moves = cachemanager->GetMovements();
+
     maxVelocity.Set(0.0f);
     csVector3 maxMod(1);
-    
-    for(size_t i = 0;i < moves.GetSize(); i++)
+
+    for(size_t i = 0; i < moves.GetSize(); i++)
     {
         maxVelocity.x = csMax(maxVelocity.x, moves[i]->base_move.x);
         maxVelocity.y = csMax(maxVelocity.y, moves[i]->base_move.y);
         maxVelocity.z = csMax(maxVelocity.z, moves[i]->base_move.z);
     }
-    for(size_t i = 0;i < modes.GetSize(); i++)
+    for(size_t i = 0; i < modes.GetSize(); i++)
     {
         maxMod.x *= csMax(1.0f, modes[i]->move_mod.x);
         maxMod.y *= csMax(1.0f, modes[i]->move_mod.y);
@@ -96,14 +96,14 @@ void PaladinJr::Initialize(EntityManager* celbase, CacheManager* cachemanager)
     //maxSpeed = 1;
 
     watchTime = configmanager->GetInt("PlaneShift.Paladin.WatchTime", 30000);
-   
+
     target = NULL;
     entitymanager = celbase;
 }
 
-bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage& currUpdate)
+bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage &currUpdate)
 {
-    if (!enabled)
+    if(!enabled)
         return true;
 
     // Don't check GMs/Devs
@@ -111,21 +111,21 @@ bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage& c
     //    return;
 
     // Speed check always enabled
-    if (!SpeedCheck(client, actor, currUpdate))
+    if(!SpeedCheck(client, actor, currUpdate))
         return false;  // DON'T USE THIS CLIENT POINTER AGAIN
 
     checkClient = false;
 
-    if (target && (csGetTicks() - started > watchTime))
+    if(target && (csGetTicks() - started > watchTime))
     {
         checked.Add(target->GetClientNum());
         target = NULL;
         started = csGetTicks();
     }
 
-    if (checked.In(client->GetClientNum()))
+    if(checked.In(client->GetClientNum()))
     {
-        if (!target && csGetTicks() - started > PALADIN_MAX_SWITCH_TIME)
+        if(!target && csGetTicks() - started > PALADIN_MAX_SWITCH_TIME)
         {
             // We have checked every client online
             started = csGetTicks();
@@ -139,7 +139,7 @@ bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage& c
         return true;
     }
 
-    if (!target)
+    if(!target)
     {
         started = csGetTicks();
         target = client;
@@ -149,7 +149,7 @@ bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage& c
 #endif
         return true;
     }
-    else if (target != client)
+    else if(target != client)
         return true;
 
     float yrot;
@@ -198,7 +198,7 @@ bool PaladinJr::ValidateMovement(Client* client, gemActor* actor, psDRMessage& c
 
 bool PaladinJr::CheckCollDetection(Client* client, gemActor* actor)
 {
-    if (!enabled || !checkClient || !(checks & CDVIOLATION) || client->GetSecurityLevel())
+    if(!enabled || !checkClient || !(checks & CDVIOLATION) || client->GetSecurityLevel())
         return true;
 
     csVector3 pos;
@@ -218,7 +218,7 @@ bool PaladinJr::CheckCollDetection(Client* client, gemActor* actor)
 
     // TODO:
     // Height checking disabled for now because jump data is not sent.
-    if (fabs(posChange.x) > fabs(maxmove.x) || fabs(posChange.z) > fabs(maxmove.z))
+    if(fabs(posChange.x) > fabs(maxmove.x) || fabs(posChange.z) > fabs(maxmove.z))
     {
 #ifdef PALADIN_DEBUG
         CPrintf(CON_DEBUG, "CD violation registered for client %s.\n", client->GetName());
@@ -230,9 +230,9 @@ bool PaladinJr::CheckCollDetection(Client* client, gemActor* actor)
 #endif
 
         csString buf;
-        buf.Format("%s, %s, %s, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %s\n", 
-                   client->GetName(), "CD violation", sector->QueryObject()->GetName(),origPos.x, origPos.y, origPos.z, 
-                   maxmove.x, maxmove.y, maxmove.z, posChange.x, posChange.y, posChange.z, vel.x, vel.y, vel.z, 
+        buf.Format("%s, %s, %s, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %s\n",
+                   client->GetName(), "CD violation", sector->QueryObject()->GetName(),origPos.x, origPos.y, origPos.z,
+                   maxmove.x, maxmove.y, maxmove.z, posChange.x, posChange.y, posChange.z, vel.x, vel.y, vel.z,
                    angVel.x, angVel.y, angVel.z, PALADIN_VERSION);
         psserver->GetLogCSV()->Write(CSV_PALADIN, buf);
     }
@@ -240,19 +240,19 @@ bool PaladinJr::CheckCollDetection(Client* client, gemActor* actor)
     return true;
 }
 
-bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpdate)
+bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage &currUpdate)
 {
     csVector3 oldpos;
     // Dummy variables
     float yrot;
     iSector* sector;
-    psWorld * world = entitymanager->GetWorld();
+    psWorld* world = entitymanager->GetWorld();
     int violation = NOVIOLATION;
 
-    actor->pcmove->GetLastClientPosition (oldpos, yrot, sector);
-    
+    actor->pcmove->GetLastClientPosition(oldpos, yrot, sector);
+
     // If no previous observations then we have nothing to check against.
-    if (!sector)
+    if(!sector)
         return true;
 
     // define cheating variables
@@ -264,9 +264,9 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
     csVector3 vel;
 
     // check for warpviolation
-    if (sector != currUpdate.sector && !world->WarpSpace(sector, currUpdate.sector, oldpos))
+    if(sector != currUpdate.sector && !world->WarpSpace(sector, currUpdate.sector, oldpos))
     {
-        if (checks & WARPVIOLATION)
+        if(checks & WARPVIOLATION)
         {
             violation = WARPVIOLATION;
         }
@@ -278,20 +278,20 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
         }
     }
 
-    if (checks & SPEEDVIOLATION)
+    if(checks & SPEEDVIOLATION)
     {
         // we don't use the absolute value of the vertical
         // speed in order to let falls go through
-        if (fabs(currUpdate.vel.x) <= maxVelocity.x &&
-                 currUpdate.vel.y  <= maxVelocity.y &&
-            fabs(currUpdate.vel.z) <= maxVelocity.z)
+        if(fabs(currUpdate.vel.x) <= maxVelocity.x &&
+                currUpdate.vel.y  <= maxVelocity.y &&
+                fabs(currUpdate.vel.z) <= maxVelocity.z)
         {
             violation |= SPEEDVIOLATION;
         }
     }
 
     // distance check is skipped on warp violation as it would be wrong
-    if (checks & DISTVIOLATION && !(violation & WARPVIOLATION))
+    if(checks & DISTVIOLATION && !(violation & WARPVIOLATION))
     {
         dist = (currUpdate.pos-oldpos).Norm();
         timedelta = actor->pcmove->ClientTimeDiff();
@@ -306,12 +306,12 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
         max_noncheat_distance = maxSpeed*timedelta/1000;
         lag_distance          = maxSpeed*client->accumulatedLag/1000;
 
-        if (dist < max_noncheat_distance + lag_distance)
+        if(dist < max_noncheat_distance + lag_distance)
         {
             if(dist == 0)
             {
                 // player is stationary - reset accumulated lag
-                NetBase::Connection * connection = client->GetConnection();
+                NetBase::Connection* connection = client->GetConnection();
                 client->accumulatedLag = connection->estRTT + connection->devRTT;
             }
             else if(fabs(dist-reported_distance) < dist/20)
@@ -338,9 +338,9 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
         }
     }
 
-    if (violation != NOVIOLATION)
+    if(violation != NOVIOLATION)
     {
-        if (client->GetCheatMask(MOVE_CHEAT))
+        if(client->GetCheatMask(MOVE_CHEAT))
         {
             //printf("Server has pre-authorized this apparent speed violation.\n");
             client->SetCheatMask(MOVE_CHEAT, false);  // now clear the Get Out of Jail Free card
@@ -358,51 +358,51 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpd
         csString sectorName(sector->QueryObject()->GetName());
 
         // Player has probably been warped
-        if (violation & WARPVIOLATION)
+        if(violation & WARPVIOLATION)
         {
             sectorName.Append(" to ");
             sectorName.Append(currUpdate.sectorName);
             type = "Warp Violation";
         }
 
-        if (violation & SPEEDVIOLATION)
+        if(violation & SPEEDVIOLATION)
         {
             if(!type.IsEmpty())
                 type += "|";
             type += "Speed Violation (Hack confirmed)";
         }
 
-        if (violation & DISTVIOLATION)
+        if(violation & DISTVIOLATION)
         {
             if(!type.IsEmpty())
                 type += "|";
             type += "Distance Violation";
         }
 
-        if (enforcing)
+        if(enforcing)
         {
             actor->ForcePositionUpdate();
         }
-        
+
         actor->pcmove->GetAngularVelocity(angVel);
         buf.Format("%s, %s, %s, %.3f %.3f %.3f, %.3f 0 %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %.3f %.3f %.3f, %s\n",
                    client->GetName(), type.GetData(), sectorName.GetData(),oldpos.x, oldpos.y, oldpos.z,
-                   max_noncheat_distance, max_noncheat_distance, 
+                   max_noncheat_distance, max_noncheat_distance,
                    currUpdate.pos.x - oldpos.x, currUpdate.pos.y - oldpos.y, currUpdate.pos.z - oldpos.z,
                    vel.x, vel.y, vel.z, angVel.x, angVel.y, angVel.z, PALADIN_VERSION);
 
         psserver->GetLogCSV()->Write(CSV_PALADIN, buf);
 
         Debug5(LOG_CHEAT, client->GetClientNum(),"Player %s traversed %1.2fm in %u msec with an accumulated lag allowance of %u ms. Cheat detected!\n",
-            client->GetName (),dist,timedelta,client->accumulatedLag);
+               client->GetName(),dist,timedelta,client->accumulatedLag);
 
         client->CountDetectedCheat();
         //printf("Client has %d detected cheats now.\n", client->GetDetectedCheatCount());
-        if (client->GetDetectedCheatCount() % warnCount == 0)
+        if(client->GetDetectedCheatCount() % warnCount == 0)
         {
             psserver->SendSystemError(client->GetClientNum(),"You have been flagged as using speed hacks.  You will be disconnected if you continue.");
         }
-        if (client->GetDetectedCheatCount() >= maxCount)
+        if(client->GetDetectedCheatCount() >= maxCount)
         {
             //printf("Disconnecting a cheating client.\n");
             psserver->RemovePlayer(client->GetClientNum(),"Paladin has kicked you from the server for cheating.");

@@ -26,23 +26,23 @@ class iDeathCallback;
 class iDeathNotificationObject
 {
 public:
-    virtual void RegisterCallback(iDeathCallback * receiver) = 0;
-    virtual void UnregisterCallback(iDeathCallback * receiver) = 0;
+    virtual void RegisterCallback(iDeathCallback* receiver) = 0;
+    virtual void UnregisterCallback(iDeathCallback* receiver) = 0;
     virtual ~iDeathNotificationObject() {}
 };
 
 
 /**
 * This class generically allows objects to be notified
-* when a gemActor dies.  psGEMEvent uses this heavily 
-* to make sure that timed events for an actor are not 
-* run when obsolete, but other classes may use this 
+* when a gemActor dies.  psGEMEvent uses this heavily
+* to make sure that timed events for an actor are not
+* run when obsolete, but other classes may use this
 * too as appropriate.
 */
 class iDeathCallback
 {
 public:
-    virtual void DeathCallback(iDeathNotificationObject * object)=0;
+    virtual void DeathCallback(iDeathNotificationObject* object)=0;
     virtual ~iDeathCallback() {}
 };
 

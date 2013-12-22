@@ -63,32 +63,32 @@
 
 //----------------------------------------------------------------------------
 
-ProximityList::ProximityList( iObjectRegistry* object_reg, gemObject *parent, EntityManager *entitymanager)
+ProximityList::ProximityList(iObjectRegistry* object_reg, gemObject* parent, EntityManager* entitymanager)
 {
-    pslog::Initialize (object_reg);
+    pslog::Initialize(object_reg);
     entityManager = entitymanager;
-    
-    #ifdef PSPROXDEBUG
-        CPrintf(CON_DEBUG, "Construction of cel Proximity List (%p)!\n", this);
-    #endif
+
+#ifdef PSPROXDEBUG
+    CPrintf(CON_DEBUG, "Construction of cel Proximity List (%p)!\n", this);
+#endif
 
     self = parent;
 
     clientnum = 0;
     float rot;
-    iSector *sector;
+    iSector* sector;
     firstFrame = true;
-    self->GetPosition (oldPos, rot, sector);
+    self->GetPosition(oldPos, rot, sector);
     oldInstance = DEFAULT_INSTANCE;
 }
 
 ProximityList::~ProximityList()
 {
-    #ifdef PSPROXDEBUG
-        CPrintf(CON_DEBUG, "Destruction of cel Proximity List (%p)!\n", this );
-    #endif
+#ifdef PSPROXDEBUG
+    CPrintf(CON_DEBUG, "Destruction of cel Proximity List (%p)!\n", this);
+#endif
 
-    while (objectsThatIWatch.GetSize())
+    while(objectsThatIWatch.GetSize())
     {
 #ifdef PSPROXDEBUG
         CPrintf(CON_DEBUG, "Unsubscribing from %s (%p).\n", objectsThatIWatch[0]->GetName(), this);
@@ -99,12 +99,12 @@ ProximityList::~ProximityList()
         objectsThatIWatch_touched.DeleteIndex(0);
     }
 
-    while ( objectsThatWatchMe.GetSize() )
+    while(objectsThatWatchMe.GetSize())
     {
-        gemObject *obj = (gemObject *)objectsThatWatchMe.Get(0).object;
-        #ifdef PSPROXDEBUG
-            CPrintf(CON_DEBUG, "Unsubscribing from %s (%p).\n",obj->GetName(), this );
-        #endif
+        gemObject* obj = (gemObject*)objectsThatWatchMe.Get(0).object;
+#ifdef PSPROXDEBUG
+        CPrintf(CON_DEBUG, "Unsubscribing from %s (%p).\n",obj->GetName(), this);
+#endif
         obj->GetProxList()->EndWatching(self);
     }
 
@@ -114,7 +114,7 @@ ProximityList::~ProximityList()
 
 //----------------------------------------------------------------------------
 
-bool ProximityList::Initialize(int cnum,gemObject *parent)
+bool ProximityList::Initialize(int cnum,gemObject* parent)
 {
     clientnum = cnum;
     return true;
@@ -122,31 +122,31 @@ bool ProximityList::Initialize(int cnum,gemObject *parent)
 
 #define PSABS(x)    ((x) < 0 ? -(x) : (x))
 
-bool ProximityList::IsNear(iSector *sector,csVector3& pos,gemObject *object2,float radius)
+bool ProximityList::IsNear(iSector* sector,csVector3 &pos,gemObject* object2,float radius)
 {
     // Find the current position of the specified entity
     csVector3 pos2;
     float yrot;
-    iSector *sector2;
+    iSector* sector2;
 
     object2->GetPosition(pos2,yrot,sector2);
 
-    if (sector != sector2)  // ptr comparison here is dangerous but valid.  Might convert to strcmp later.
+    if(sector != sector2)   // ptr comparison here is dangerous but valid.  Might convert to strcmp later.
         return false;       // if not same sector, then by definition not Near.
 
     /**
      * Note below defines a cube, not a sphere, but for updating
      * purposes should be fine and is faster.
      */
-    if ( (PSABS(pos.x - pos2.x) < radius) &&
-         (PSABS(pos.y - pos2.y) < radius) &&
-         (PSABS(pos.z - pos2.z) < radius) )
+    if((PSABS(pos.x - pos2.x) < radius) &&
+            (PSABS(pos.y - pos2.y) < radius) &&
+            (PSABS(pos.z - pos2.z) < radius))
         return true;
     else
         return false;
 }
 
-bool ProximityList::StartMutualWatching(int othercnum, gemObject *otherobject, float range)
+bool ProximityList::StartMutualWatching(int othercnum, gemObject* otherobject, float range)
 {
     bool ret1,ret2;
 
@@ -155,13 +155,13 @@ bool ProximityList::StartMutualWatching(int othercnum, gemObject *otherobject, f
     return (ret1 || ret2);
 }
 
-void ProximityList::AddWatcher(gemObject *interestedObject, float range)
+void ProximityList::AddWatcher(gemObject* interestedObject, float range)
 {
-    PublishDestination *pd;
+    PublishDestination* pd;
 
     uint index;
     pd = FindObjectThatWatchesMe(interestedObject, index);
-    if (pd != NULL)
+    if(pd != NULL)
     {
         UpdatePublishDestRange(pd, self, interestedObject, index, range);
         return;
@@ -174,19 +174,19 @@ void ProximityList::AddWatcher(gemObject *interestedObject, float range)
     objectsThatWatchMe_touched.Push(true);
 }
 
-bool ProximityList::EndMutualWatching(gemObject *fromobject)
+bool ProximityList::EndMutualWatching(gemObject* fromobject)
 {
     EndWatching(fromobject);
     fromobject->GetProxList()->EndWatching(self);
     return true;
 }
 
-bool ProximityList::StartWatching(gemObject * object, float range)
+bool ProximityList::StartWatching(gemObject* object, float range)
 {
-    if (self->GetClientID() == 0 && !self->AlwaysWatching() && !object->AlwaysWatching())
+    if(self->GetClientID() == 0 && !self->AlwaysWatching() && !object->AlwaysWatching())
         return false;
 
-    if (FindObjectThatIWatch(object))
+    if(FindObjectThatIWatch(object))
     {
         object->GetProxList()->TouchObjectThatWatchesMe(self,range);
         return false;
@@ -198,11 +198,11 @@ bool ProximityList::StartWatching(gemObject * object, float range)
     return true;
 }
 
-void ProximityList::EndWatching(gemObject * object)
+void ProximityList::EndWatching(gemObject* object)
 {
-    for (size_t x = 0; x < objectsThatIWatch.GetSize(); x++ )
+    for(size_t x = 0; x < objectsThatIWatch.GetSize(); x++)
     {
-        if (objectsThatIWatch[x] == object)
+        if(objectsThatIWatch[x] == object)
         {
             objectsThatIWatch[x]->GetProxList()->RemoveWatcher(self);
             objectsThatIWatch.DeleteIndex(x);
@@ -212,12 +212,12 @@ void ProximityList::EndWatching(gemObject * object)
     }
 }
 
-void ProximityList::RemoveWatcher(gemObject *object)
+void ProximityList::RemoveWatcher(gemObject* object)
 {
     // Remove the target's entity/client from our list
-    for (size_t x = 0; x < objectsThatWatchMe.GetSize(); x++ )
+    for(size_t x = 0; x < objectsThatWatchMe.GetSize(); x++)
     {
-        if ( objectsThatWatchMe[x].object == object)
+        if(objectsThatWatchMe[x].object == object)
         {
             objectsThatWatchMe.DeleteIndex(x);
             objectsThatWatchMe_touched.DeleteIndex(x);
@@ -229,9 +229,9 @@ void ProximityList::RemoveWatcher(gemObject *object)
 
 bool ProximityList::FindClient(uint32_t cnum)
 {
-    for (size_t x = 0; x < objectsThatWatchMe.GetSize(); x++ )
+    for(size_t x = 0; x < objectsThatWatchMe.GetSize(); x++)
     {
-        if ( objectsThatWatchMe[x].client == cnum)
+        if(objectsThatWatchMe[x].client == cnum)
         {
             return true;
         }
@@ -239,11 +239,11 @@ bool ProximityList::FindClient(uint32_t cnum)
     return false;
 }
 
-bool ProximityList::FindObject(gemObject *object)
+bool ProximityList::FindObject(gemObject* object)
 {
-    for (size_t x = 0; x < objectsThatWatchMe.GetSize(); x++ )
+    for(size_t x = 0; x < objectsThatWatchMe.GetSize(); x++)
     {
-        if ( objectsThatWatchMe[x].object == object)
+        if(objectsThatWatchMe[x].object == object)
         {
             return true;
         }
@@ -251,11 +251,11 @@ bool ProximityList::FindObject(gemObject *object)
     return false;
 }
 
-PublishDestination *ProximityList::FindObjectThatWatchesMe(gemObject *object, uint& x)
+PublishDestination* ProximityList::FindObjectThatWatchesMe(gemObject* object, uint &x)
 {
-    for (x = 0; x < objectsThatWatchMe.GetSize(); x++ )
+    for(x = 0; x < objectsThatWatchMe.GetSize(); x++)
     {
-        if ( objectsThatWatchMe[x].object == object)
+        if(objectsThatWatchMe[x].object == object)
         {
             objectsThatWatchMe_touched[x] = true;
             return &objectsThatWatchMe[x];
@@ -264,11 +264,11 @@ PublishDestination *ProximityList::FindObjectThatWatchesMe(gemObject *object, ui
     return NULL;
 }
 
-bool ProximityList::FindObjectThatIWatch(gemObject *object)
+bool ProximityList::FindObjectThatIWatch(gemObject* object)
 {
-    for (size_t x = 0; x < objectsThatIWatch.GetSize(); x++ )
+    for(size_t x = 0; x < objectsThatIWatch.GetSize(); x++)
     {
-        if ( objectsThatIWatch[x] == object)
+        if(objectsThatIWatch[x] == object)
         {
             objectsThatIWatch_touched[x] = true;
             return true;
@@ -277,11 +277,11 @@ bool ProximityList::FindObjectThatIWatch(gemObject *object)
     return false;
 }
 
-gemObject *ProximityList::FindObjectName(const char *name)
+gemObject* ProximityList::FindObjectName(const char* name)
 {
-    for (size_t x = 0; x < objectsThatIWatch.GetSize(); x++ )
+    for(size_t x = 0; x < objectsThatIWatch.GetSize(); x++)
     {
-        if ( !strcasecmp(objectsThatIWatch[x]->GetName(),name) )
+        if(!strcasecmp(objectsThatIWatch[x]->GetName(),name))
         {
             return objectsThatIWatch[x];
         }
@@ -289,35 +289,35 @@ gemObject *ProximityList::FindObjectName(const char *name)
     return NULL;
 }
 
-void ProximityList::UpdatePublishDestRange(PublishDestination *pd, gemObject *myself, gemObject *object,
-                                           uint objIdx, float newrange)
+void ProximityList::UpdatePublishDestRange(PublishDestination* pd, gemObject* myself, gemObject* object,
+        uint objIdx, float newrange)
 {
     csArray<psNPCCommandsMessage::PerceptionType> pcpts;
 
     pd->dist = newrange;
     // Check if there is a crossing of a perception range boarder
     // Only check if moving towards each other
-    if (newrange < pd->min_dist)
+    if(newrange < pd->min_dist)
     {
-        if (newrange < PERSONAL_RANGE_PERCEPTION &&
-            pd->min_dist > PERSONAL_RANGE_PERCEPTION)  // 4m threshold crossed
+        if(newrange < PERSONAL_RANGE_PERCEPTION &&
+                pd->min_dist > PERSONAL_RANGE_PERCEPTION)  // 4m threshold crossed
         {
             pcpts.Push(psNPCCommandsMessage::PCPT_VERYSHORTRANGEPLAYER);
         }
-        else if (newrange < SHORT_RANGE_PERCEPTION &&
-            pd->min_dist > SHORT_RANGE_PERCEPTION)  // 10m threshold crossed
+        else if(newrange < SHORT_RANGE_PERCEPTION &&
+                pd->min_dist > SHORT_RANGE_PERCEPTION)  // 10m threshold crossed
         {
             pcpts.Push(psNPCCommandsMessage::PCPT_SHORTRANGEPLAYER);
         }
-        else if (newrange < LONG_RANGE_PERCEPTION &&
-            pd->min_dist > LONG_RANGE_PERCEPTION) // 30m threshold crossed
+        else if(newrange < LONG_RANGE_PERCEPTION &&
+                pd->min_dist > LONG_RANGE_PERCEPTION) // 30m threshold crossed
         {
             pcpts.Push(psNPCCommandsMessage::PCPT_LONGRANGEPLAYER);
         }
     }
     // Need to update this so that next time we know if moving towards or away from each other
     pd->min_dist = newrange;
-    
+
     // Anyone that is watching each other should get a perception once in a while.
     // Check per-entity any distance.
     csTicks now = csGetTicks();
@@ -330,45 +330,46 @@ void ProximityList::UpdatePublishDestRange(PublishDestination *pd, gemObject *my
 
     for(size_t i=0; i<pcpts.GetSize(); ++i)
     {
-        gemActor *actorself   = dynamic_cast<gemActor *>(myself);
-        gemActor *actorobject = dynamic_cast<gemActor *>(object);
+        gemActor* actorself   = dynamic_cast<gemActor*>(myself);
+        gemActor* actorobject = dynamic_cast<gemActor*>(object);
 
-        if (actorself && actorobject)
+        if(actorself && actorobject)
         {
-            if ((!myself->GetClientID() && object->GetClientID() && actorself->IsAlive()) // I'm an NPC and He is a player watching me
-                || (!myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive())) // I'm an npc and he is an npc
+            if((!myself->GetClientID() && object->GetClientID() && actorself->IsAlive())  // I'm an NPC and He is a player watching me
+                    || (!myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive())) // I'm an npc and he is an npc
             {
                 float faction = actorself->GetRelativeFaction(actorobject);
                 psserver->GetNPCManager()->QueueEnemyPerception(pcpts[i],
-                                                                actorself,
-                                                                actorobject,
-                                                                faction);
+                        actorself,
+                        actorobject,
+                        faction);
             }
-            else if (myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive()) // I'm a player and he is an npc
+            else if(myself->GetClientID() && !object->GetClientID() && actorobject->IsAlive())  // I'm a player and he is an npc
             {
                 float faction = actorobject->GetRelativeFaction(actorself);
                 psserver->GetNPCManager()->QueueEnemyPerception(pcpts[i],
-                                                                actorobject,
-                                                                actorself,
-                                                                faction);
+                        actorobject,
+                        actorself,
+                        faction);
             }
-        } else
+        }
+        else
         {
             gemActionLocation* actionLocationObject = dynamic_cast<gemActionLocation*>(myself);
-            if (actorobject && actionLocationObject)
+            if(actorobject && actionLocationObject)
             {
                 psserver->GetActionManager()->NotifyProximity(actorobject, actionLocationObject, newrange);
             }
         }
-        
+
     }
 }
 
-void ProximityList::TouchObjectThatWatchesMe(gemObject *object,float newrange)
+void ProximityList::TouchObjectThatWatchesMe(gemObject* object,float newrange)
 {
-    for (size_t x = 0; x < objectsThatWatchMe.GetSize(); x++ )
+    for(size_t x = 0; x < objectsThatWatchMe.GetSize(); x++)
     {
-        if ( objectsThatWatchMe[x].object == object)
+        if(objectsThatWatchMe[x].object == object)
         {
             objectsThatWatchMe_touched[x] = true;
             UpdatePublishDestRange(&objectsThatWatchMe[x], self, object, x, newrange);
@@ -381,12 +382,12 @@ bool ProximityList::CheckUpdateRequired()
 {
     csVector3 pos;
     float rot;
-    iSector *sector;
+    iSector* sector;
 
-    self->GetPosition (pos, rot, sector);
+    self->GetPosition(pos, rot, sector);
     InstanceID instance = self->GetInstance();
 
-    if (self->IsUpdateReq (pos, oldPos) || instance != oldInstance || firstFrame)
+    if(self->IsUpdateReq(pos, oldPos) || instance != oldInstance || firstFrame)
     {
         firstFrame = false;
         oldPos = pos;
@@ -401,17 +402,17 @@ void ProximityList::ClearTouched()
 {
     size_t objNum;
 
-    for (objNum = 0; objNum < objectsThatWatchMe_touched.GetSize(); objNum++ )
+    for(objNum = 0; objNum < objectsThatWatchMe_touched.GetSize(); objNum++)
         objectsThatWatchMe_touched[objNum] = false;
-    for (objNum = 0; objNum < objectsThatIWatch_touched.GetSize(); objNum++ )
+    for(objNum = 0; objNum < objectsThatIWatch_touched.GetSize(); objNum++)
         objectsThatIWatch_touched[objNum]  = false;
 }
 
 bool ProximityList::GetUntouched_ObjectThatWatchesMe(gemObject* &object)
 {
-    for (size_t x = 0; x < objectsThatWatchMe_touched.GetSize(); x++ )
+    for(size_t x = 0; x < objectsThatWatchMe_touched.GetSize(); x++)
     {
-        if (!objectsThatWatchMe_touched[x])
+        if(!objectsThatWatchMe_touched[x])
         {
             object = (gemObject*)objectsThatWatchMe[x].object;
             objectsThatWatchMe_touched[x] = true;
@@ -423,9 +424,9 @@ bool ProximityList::GetUntouched_ObjectThatWatchesMe(gemObject* &object)
 
 bool ProximityList::GetUntouched_ObjectThatIWatch(gemObject* &object)
 {
-    for (size_t x = 0; x < objectsThatIWatch_touched.GetSize(); x++ )
+    for(size_t x = 0; x < objectsThatIWatch_touched.GetSize(); x++)
     {
-        if (!objectsThatIWatch_touched[x])
+        if(!objectsThatIWatch_touched[x])
         {
             object = objectsThatIWatch[x];
             objectsThatIWatch_touched[x] = true;
@@ -436,15 +437,15 @@ bool ProximityList::GetUntouched_ObjectThatIWatch(gemObject* &object)
 }
 
 
-float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstance)
+float ProximityList::RangeTo(gemObject* object, bool ignoreY, bool ignoreInstance)
 {
 #ifdef PSPROXDEBUG
     CPrintf(CON_DEBUG, "[float ProximityList::RangeTo(gemObject* object, bool ignoreY, bool ignoreInstance)]\n");
 #endif
 
     // If in different instances, except for the common 'all' instance, return a very big value.
-    if (!ignoreInstance && object->GetInstance() != INSTANCE_ALL && self->GetInstance() != INSTANCE_ALL &&
-        object->GetInstance() != self->GetInstance())
+    if(!ignoreInstance && object->GetInstance() != INSTANCE_ALL && self->GetInstance() != INSTANCE_ALL &&
+            object->GetInstance() != self->GetInstance())
     {
         return INFINITY_DISTANCE;
     }
@@ -452,7 +453,7 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
     // Find the current position of the specified entity
     csVector3 pos1;
     csVector3 pos2;
-    iSector *sector1,*sector2;
+    iSector* sector1,*sector2;
 
     object->GetPosition(pos1,sector1);
 
@@ -466,12 +467,12 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
     CPrintf(CON_DEBUG, "Self Entity %s is at (%f,%f,%f)\n", self->GetName(), pos2.x, pos2.y, pos2.z);
 #endif
 
-    if ( ignoreY )
+    if(ignoreY)
     {
         if(entityManager->GetWorld()->WarpSpace(sector2, sector1, pos2))
         {
-            return ( sqrt(  (pos1.x - pos2.x)*(pos1.x - pos2.x)+
-                            (pos1.z - pos2.z)*(pos1.z - pos2.z)));
+            return (sqrt((pos1.x - pos2.x)*(pos1.x - pos2.x)+
+                         (pos1.z - pos2.z)*(pos1.z - pos2.z)));
         }
         else
         {
@@ -485,30 +486,30 @@ float ProximityList::RangeTo( gemObject* object, bool ignoreY, bool ignoreInstan
 }
 
 
-void ProximityList::DebugDumpContents(csString& out)
+void ProximityList::DebugDumpContents(csString &out)
 {
     size_t x;
     csString temp;
 
     temp.AppendFmt("I represent client %d\n",clientnum);
     temp.AppendFmt("I am publishing updates to:\n");
-    
-    for (x = 0; x < objectsThatWatchMe.GetSize(); x++ )
+
+    for(x = 0; x < objectsThatWatchMe.GetSize(); x++)
     {
-        temp.AppendFmt( "\tClient %d (%s), range %1.2f min_range %.2f\n",
-                objectsThatWatchMe[x].client,
-                ((gemObject*)(objectsThatWatchMe[x].object))->GetName(),
-                        objectsThatWatchMe[x].dist,
-                        objectsThatWatchMe[x].min_dist);
+        temp.AppendFmt("\tClient %d (%s), range %1.2f min_range %.2f\n",
+                       objectsThatWatchMe[x].client,
+                       ((gemObject*)(objectsThatWatchMe[x].object))->GetName(),
+                       objectsThatWatchMe[x].dist,
+                       objectsThatWatchMe[x].min_dist);
     }
 
-    if (clientnum)
+    if(clientnum)
     {
-        temp.Append( "I am listening to:\n");
-        for (x = 0; x < objectsThatIWatch.GetSize(); x++ )
+        temp.Append("I am listening to:\n");
+        for(x = 0; x < objectsThatIWatch.GetSize(); x++)
         {
-            gemObject * obj = objectsThatIWatch[x];
-            
+            gemObject* obj = objectsThatIWatch[x];
+
             temp.AppendFmt("\t%-3d %s\n", obj->GetEID().Unbox(), obj->GetName());
         }
     }

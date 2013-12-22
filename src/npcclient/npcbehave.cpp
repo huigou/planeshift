@@ -462,11 +462,11 @@ void NPCType::DumpReactionList(csString &output, NPC* npc)
     for(size_t i=0; i<reactions.GetSize(); i++)
     {
         output.AppendFmt("%-25s %-25s %5.1f %-10s %-20s %s\n",
-                reactions[i]->GetEventType().GetDataSafe(),reactions[i]->GetType(npc).GetDataSafe(),
-                reactions[i]->GetRange(),
-                reactions[i]->GetValue().GetDataSafe(),
-                reactions[i]->GetLastTriggerd().GetDataSafe(),
-                reactions[i]->GetAffectedBehaviors().GetDataSafe());
+                         reactions[i]->GetEventType().GetDataSafe(),reactions[i]->GetType(npc).GetDataSafe(),
+                         reactions[i]->GetRange(),
+                         reactions[i]->GetValue().GetDataSafe(),
+                         reactions[i]->GetLastTriggerd().GetDataSafe(),
+                         reactions[i]->GetAffectedBehaviors().GetDataSafe());
     }
 }
 
@@ -855,12 +855,12 @@ void BehaviorSet::DumpBehaviorList(csString &output, NPC* npc)
         }
 
         output.AppendFmt("%c     %s%s %-30s %6.1f %6.1f %2zu/%-2zu\n",applicable,
-                (behaviors[i]->IsInterrupted()?"!":" "),
-                (behaviors[i]->IsActive()?"*":" "),
-                behaviors[i]->GetName(),behaviors[i]->CurrentNeed(),
-                behaviors[i]->NewNeed(),
-                behaviors[i]->GetCurrentStep(),
-                behaviors[i]->GetLastStep());
+                         (behaviors[i]->IsInterrupted()?"!":" "),
+                         (behaviors[i]->IsActive()?"*":" "),
+                         behaviors[i]->GetName(),behaviors[i]->CurrentNeed(),
+                         behaviors[i]->NewNeed(),
+                         behaviors[i]->GetCurrentStep(),
+                         behaviors[i]->GetLastStep());
     }
 }
 

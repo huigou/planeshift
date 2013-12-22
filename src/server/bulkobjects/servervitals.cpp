@@ -36,7 +36,7 @@
 #include "servervitals.h"
 #include "pscharacter.h"
 
-psServerVitals::psServerVitals(psCharacter * character)
+psServerVitals::psServerVitals(psCharacter* character)
 {
     this->character = character;
     statsDirty = 0;
@@ -51,7 +51,7 @@ psServerVitals::psServerVitals(psCharacter * character)
     vitals[VITAL_PYSSTAMINA].max.Initialize(&statsDirty,    DIRTY_VITAL_PYSSTAMINA_MAX);
     vitals[VITAL_MENSTAMINA].drRate.Initialize(&statsDirty, DIRTY_VITAL_MENSTAMINA_RATE);
     vitals[VITAL_MENSTAMINA].max.Initialize(&statsDirty,    DIRTY_VITAL_MENSTAMINA_MAX);
-    
+
     //initialize values to a safe value:
     vitals[VITAL_HITPOINTS].value = 0;
     vitals[VITAL_MANA].value = 0;
@@ -69,56 +69,56 @@ psServerVitals::psServerVitals(psCharacter * character)
 bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, unsigned int flags, csRef<PlayerGroup> group)
 {
     bool backup=0;
-    if (flags)
+    if(flags)
     {
         backup = statsDirty ? true : false;
         statsDirty = flags;
     }
-    else if (version % 10 == 0)  // every 10th msg to this person, send everything
+    else if(version % 10 == 0)   // every 10th msg to this person, send everything
     {
         statsDirty = DIRTY_VITAL_ALL;
     }
 
-    if (!statsDirty)
+    if(!statsDirty)
         return false;
 
     csArray<float> fVitals;
     csArray<uint32_t> uiVitals;
 
-    if (statsDirty & DIRTY_VITAL_HP)
+    if(statsDirty & DIRTY_VITAL_HP)
         fVitals.Push(PERCENT_VALUE(VITAL_HITPOINTS));
 
-    if (statsDirty & DIRTY_VITAL_HP_RATE)
+    if(statsDirty & DIRTY_VITAL_HP_RATE)
         fVitals.Push(PERCENT_RATE(VITAL_HITPOINTS));
 
-    if (statsDirty & DIRTY_VITAL_MANA)
+    if(statsDirty & DIRTY_VITAL_MANA)
         fVitals.Push(PERCENT_VALUE(VITAL_MANA));
 
-    if (statsDirty & DIRTY_VITAL_MANA_RATE)
+    if(statsDirty & DIRTY_VITAL_MANA_RATE)
         fVitals.Push(PERCENT_RATE(VITAL_MANA));
 
     // Physical Stamina
-    if (statsDirty & DIRTY_VITAL_PYSSTAMINA)
+    if(statsDirty & DIRTY_VITAL_PYSSTAMINA)
         fVitals.Push(PERCENT_VALUE(VITAL_PYSSTAMINA));
 
-    if (statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
+    if(statsDirty & DIRTY_VITAL_PYSSTAMINA_RATE)
         fVitals.Push(PERCENT_RATE(VITAL_PYSSTAMINA));
 
     // Mental Stamina
-    if (statsDirty & DIRTY_VITAL_MENSTAMINA)
+    if(statsDirty & DIRTY_VITAL_MENSTAMINA)
         fVitals.Push(PERCENT_VALUE(VITAL_MENSTAMINA));
 
-    if (statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
+    if(statsDirty & DIRTY_VITAL_MENSTAMINA_RATE)
         fVitals.Push(PERCENT_RATE(VITAL_MENSTAMINA));
 
-    if (statsDirty & DIRTY_VITAL_EXPERIENCE)
+    if(statsDirty & DIRTY_VITAL_EXPERIENCE)
         uiVitals.Push(GetExp());
 
-    if (statsDirty & DIRTY_VITAL_PROGRESSION)
+    if(statsDirty & DIRTY_VITAL_PROGRESSION)
         uiVitals.Push(GetPP());
 
     psStatDRMessage msg(clientnum, eid, fVitals, uiVitals, ++version, statsDirty);
-    if (group == NULL)
+    if(group == NULL)
         msg.SendMessage();
     else
         group->Broadcast(msg.msg);
@@ -127,7 +127,7 @@ bool psServerVitals::SendStatDRMessage(uint32_t clientnum, EID eid, unsigned int
     return true;
 }
 
-bool psServerVitals::Update( csTicks now )
+bool psServerVitals::Update(csTicks now)
 {
     float delta;
     /* It is necessary to check when lastDRUpdate is 0 because, if not when a character login his stats
@@ -141,18 +141,18 @@ bool psServerVitals::Update( csTicks now )
     }
     else
     {
-       delta = (now-lastDRUpdate)/1000.0;
+        delta = (now-lastDRUpdate)/1000.0;
     }
     lastDRUpdate = now;
 
     // iterate over all fields and predict their values based on their recharge rate
-    for (int i = 0; i < VITAL_COUNT; i++)
+    for(int i = 0; i < VITAL_COUNT; i++)
     {
         vitals[i].value += vitals[i].drRate.Current() * delta;
         ClampVital(i);
     }
 
-    if (vitals[VITAL_HITPOINTS].value == 0 && vitals[VITAL_HITPOINTS].drRate.Current() < 0)
+    if(vitals[VITAL_HITPOINTS].value == 0 && vitals[VITAL_HITPOINTS].drRate.Current() < 0)
     {
         character->GetActor()->Kill(NULL);
     }
@@ -162,19 +162,19 @@ bool psServerVitals::Update( csTicks now )
 }
 
 
-void psServerVitals::SetExp( unsigned int W )
+void psServerVitals::SetExp(unsigned int W)
 {
     experiencePoints = W;
     statsDirty |= DIRTY_VITAL_EXPERIENCE;
 }
 
-void psServerVitals::SetPP( unsigned int pp )
+void psServerVitals::SetPP(unsigned int pp)
 {
     progressionPoints = pp;
     statsDirty |= DIRTY_VITAL_PROGRESSION;
 }
 
-Vital & psServerVitals::DirtyVital(int vital, int dirtyFlag)
+Vital &psServerVitals::DirtyVital(int vital, int dirtyFlag)
 {
     statsDirty |= dirtyFlag;
     return GetVital(vital);
@@ -203,17 +203,17 @@ void psServerVitals::SetAllStatsDirty()
 }
 
 
-void psServerVitals::ClearStatsDirtyFlags( unsigned int dirtyFlags )
+void psServerVitals::ClearStatsDirtyFlags(unsigned int dirtyFlags)
 {
     statsDirty &= ~dirtyFlags;
 }
 
 void psServerVitals::ClampVital(int v)
 {
-    if (vitals[v].value < 0)
+    if(vitals[v].value < 0)
         vitals[v].value = 0;
 
-    if (vitals[v].value > vitals[v].max.Current())
+    if(vitals[v].value > vitals[v].max.Current())
         vitals[v].value = vitals[v].max.Current();
 }
 

@@ -41,10 +41,10 @@ public:
 
     void Cancel()
     {
-        if (!linked.IsValid())
+        if(!linked.IsValid())
             return;
 
-        if (linked->Cancel())
+        if(linked->Cancel())
             delete linked;
     }
 protected:
@@ -53,10 +53,10 @@ protected:
 
 //----------------------------------------------------------------------------
 
-ActiveSpell::ActiveSpell(const csString& name, SPELL_TYPE type, csTicks duration) : name(name), type(type), duration(duration), cancelOnDeath(true), damagesHP(false), target(NULL), registrationTime(0)
+ActiveSpell::ActiveSpell(const csString &name, SPELL_TYPE type, csTicks duration) : name(name), type(type), duration(duration), cancelOnDeath(true), damagesHP(false), target(NULL), registrationTime(0)
 { }
 
-void ActiveSpell::Add(iSpellModifier& mod, const char* fmt, ...)
+void ActiveSpell::Add(iSpellModifier &mod, const char* fmt, ...)
 {
     CS_ASSERT(registrationTime == 0);
 
@@ -96,7 +96,7 @@ void ActiveSpell::Link(ActiveSpell* other)
 {
     actions.Push(new LinkedSpellCancel(other));
 
-    if (type == DEBUFF)
+    if(type == DEBUFF)
     {
         // prevent target from logging out while this is active.
     }
@@ -110,17 +110,17 @@ bool ActiveSpell::HasExpired() const
 bool ActiveSpell::Cancel()
 {
     // Mark it as already canceled to prevent linked spells from canceling each other repeatedly
-    if (registrationTime == 0)
+    if(registrationTime == 0)
         return false;
     registrationTime = 0;
 
     target->RemoveActiveSpell(this);
 
-    for (size_t i = 0; i < modifiers.GetSize(); i++)
+    for(size_t i = 0; i < modifiers.GetSize(); i++)
     {
         modifiers[i]->Cancel(this);
     }
-    for (size_t i = 0; i < actions.GetSize(); i++)
+    for(size_t i = 0; i < actions.GetSize(); i++)
     {
         actions[i]->Cancel();
     }
@@ -129,7 +129,7 @@ bool ActiveSpell::Cancel()
 
 csString ActiveSpell::Persist() const
 {
-    if (HasExpired())
+    if(HasExpired())
         return csString();
     CS_ASSERT(type == BUFF || type == DEBUFF);
     CS_ASSERT(!script.IsEmpty());
@@ -142,7 +142,7 @@ csString ActiveSpell::Persist() const
                  script.GetData());
     return apply;
 }
-void ActiveSpell::SetImage( csString imageName )
+void ActiveSpell::SetImage(csString imageName)
 {
     image = imageName;
 }

@@ -1,7 +1,7 @@
 /*
 * gemmesh.h by Andrew Craig <andrew@hydlaa.com>
 *
-* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -65,7 +65,7 @@ public:
      * @param owner  The gemObject that is using this mesh.
      * @param super  The GEM supervisor object.
      */
-    gemMesh( iObjectRegistry* objreg, gemObject* owner, GEMSupervisor* super);
+    gemMesh(iObjectRegistry* objreg, gemObject* owner, GEMSupervisor* super);
 
     ~gemMesh();
 
@@ -81,21 +81,21 @@ public:
      *          be loaded.
      */
     iMeshFactoryWrapper* LoadMeshFactory(const char* fileName, const char* factoryName);
-    
+
     /**
      * Set a mesh.
      *
      * @param factoryName The factory name of the mesh we want to set.
      * @param fileName The file to load if the factory is not found.
-     * 
+     *
      * @return true If it was successful in setting the mesh.
      */
-    bool SetMesh( const char* factoryName, const char* fileName );
+    bool SetMesh(const char* factoryName, const char* fileName);
 
     /**
      * Get the Crystal Space iMeshWrapper from this.
      *
-     * @return an iMeshWrapper that is being used. 
+     * @return an iMeshWrapper that is being used.
      */
     iMeshWrapper* GetMesh();
 
@@ -104,7 +104,7 @@ public:
      *
      * @param newMesh  The Crystal Space mesh wrapper to set in.
      */
-    void SetMesh( iMeshWrapper* newMesh);
+    void SetMesh(iMeshWrapper* newMesh);
 
     /**
      * Removes the mesh from the engine.
@@ -118,7 +118,7 @@ public:
      * @param yrot The Y-axis rotation of the object.
      * @param position The position to place the mesh.
      */
-    void MoveMesh( iSector* sector, const float yrot, const csVector3& position );
+    void MoveMesh(iSector* sector, const float yrot, const csVector3 &position);
 
 private:
     csRef<iMeshWrapper> mesh;               ///< This is the mesh we are using.

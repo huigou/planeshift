@@ -41,24 +41,24 @@ class SlotManager : public MessageManager<SlotManager>
 {
 public:
     virtual ~SlotManager();
-    SlotManager(GEMSupervisor *gemsupervisor, CacheManager *cachemanager)
+    SlotManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager)
     {
-    	gemSupervisor = gemsupervisor;
-    	cacheManager = cachemanager;
+        gemSupervisor = gemsupervisor;
+        cacheManager = cachemanager;
     }
 
     bool Initialize();
 
     psItem* FindItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
 
-    gemContainer *worldContainer;   ///< Working world GEM container we are using.
+    gemContainer* worldContainer;   ///< Working world GEM container we are using.
     int  containerEntityID;         ///< Working ID of the container ID
 
 private:
 
     ///drop a stack of the item type requested by searching into the different slots
-    void HandleDropCommand(MsgEntry *me, Client *client);
-    void HandleSlotMovement(MsgEntry *me, Client *client);
+    void HandleDropCommand(MsgEntry* me, Client* client);
+    void HandleSlotMovement(MsgEntry* me, Client* client);
 
     /** Create a money item.
      *
@@ -69,25 +69,25 @@ private:
     psItem* MakeMoneyItem(INVENTORY_SLOT_NUMBER slot, int stackCount);
 
     /// Handle psSlotMovementMsg from Inventory to somewhere.
-    void MoveFromInventory(psSlotMovementMsg& msg, Client *fromClient);
+    void MoveFromInventory(psSlotMovementMsg &msg, Client* fromClient);
 
     /// Handle psSlotMovementMsg from Exchange Offering slots to somewhere else.
-    void MoveFromOffering(psSlotMovementMsg& msg, Client *fromClient);
+    void MoveFromOffering(psSlotMovementMsg &msg, Client* fromClient);
 
     /// Handle moving money back from offering to own inventory.
-    void MoveFromOfferedMoney(psSlotMovementMsg& msg, Client *fromClient);
+    void MoveFromOfferedMoney(psSlotMovementMsg &msg, Client* fromClient);
 
     /// Handle psSlotMovementMsg from Money slots in inv to somewhere else.
-    void MoveFromMoney(psSlotMovementMsg& msg, Client *fromClient);
+    void MoveFromMoney(psSlotMovementMsg &msg, Client* fromClient);
 
     /// Handle moving items from containers back to inventory.
-    void MoveFromWorldContainer(psSlotMovementMsg& msg, Client *fromClient, uint32 containerEntityID);
+    void MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromClient, uint32 containerEntityID);
 
     /// Consume an item and fire off any progression events it has.
-    static void Consume(psItem* item, psCharacter *charData, int count);
-    
-    GEMSupervisor *gemSupervisor;
-    CacheManager *cacheManager;
+    static void Consume(psItem* item, psCharacter* charData, int count);
+
+    GEMSupervisor* gemSupervisor;
+    CacheManager* cacheManager;
 };
 
 #endif

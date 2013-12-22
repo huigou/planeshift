@@ -31,20 +31,20 @@
 #include "pscharacter.h"
 #include "psinventorycachesvr.h"
 
-psInventoryCacheServer::psInventoryCacheServer ()
+psInventoryCacheServer::psInventoryCacheServer()
 {
 }
 
-psInventoryCacheServer::~psInventoryCacheServer ()
+psInventoryCacheServer::~psInventoryCacheServer()
 {
 }
 
-bool psInventoryCacheServer::SetSlotModified (INVENTORY_SLOT_NUMBER slot)
+bool psInventoryCacheServer::SetSlotModified(INVENTORY_SLOT_NUMBER slot)
 {
-    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK_END)
+    if(slot<0 || slot>=PSCHARACTER_SLOT_BULK_END)
     {
         SetCacheStatus(INVALID);    // somethings gone wrong; force entire
-                                    // inventory update next time
+        // inventory update next time
         return false;
     }
 
@@ -53,9 +53,9 @@ bool psInventoryCacheServer::SetSlotModified (INVENTORY_SLOT_NUMBER slot)
     return true;
 }
 
-bool psInventoryCacheServer::HasSlotModified (INVENTORY_SLOT_NUMBER slot)
+bool psInventoryCacheServer::HasSlotModified(INVENTORY_SLOT_NUMBER slot)
 {
-    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK_END)
+    if(slot<0 || slot>=PSCHARACTER_SLOT_BULK_END)
     {
         return false;
     }
@@ -66,10 +66,10 @@ bool psInventoryCacheServer::HasSlotModified (INVENTORY_SLOT_NUMBER slot)
 
 bool psInventoryCacheServer::ClearSlot(INVENTORY_SLOT_NUMBER slot)
 {
-    if (slot<0 || slot>=PSCHARACTER_SLOT_BULK_END)
+    if(slot<0 || slot>=PSCHARACTER_SLOT_BULK_END)
     {
         SetCacheStatus(INVALID);    // something has gone wrong; force entire
-                                    // inventory update next time
+        // inventory update next time
         return false;
     }
 
@@ -82,8 +82,8 @@ bool psInventoryCacheServer::ClearSlot(INVENTORY_SLOT_NUMBER slot)
 bool psInventoryCacheServer::ClearAllSlots(void)
 {
     bool slotOK = true;
-    
-    for (int slot = 0; slot < PSCHARACTER_SLOT_BULK_END && slotOK; slot++)
+
+    for(int slot = 0; slot < PSCHARACTER_SLOT_BULK_END && slotOK; slot++)
     {
         slotOK = ClearSlot((INVENTORY_SLOT_NUMBER)slot);
     }

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- *  
+ *
  */
 #ifndef __PSTRAINERINFO_H__
 #define __PSTRAINERINFO_H__
@@ -38,7 +38,7 @@ class psSkillInfo;
 
 struct psTrainerSkill
 {
-    psSkillInfo * skill;
+    psSkillInfo* skill;
     int min_rank;
     int max_rank;
     float min_faction;
@@ -53,9 +53,9 @@ public:
 
 private:
     csPDelArray<psTrainerSkill> skills;
-    
-    psSkillInfo * FindSkill(int id);
-    psSkillInfo * FindSkill(const csString & name);
+
+    psSkillInfo* FindSkill(int id);
+    psSkillInfo* FindSkill(const csString &name);
 };
 
 #endif

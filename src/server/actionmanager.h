@@ -3,7 +3,7 @@
 *
 * Copyright (C) 2005 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
-* Credits : 
+* Credits :
 *                  Michael Cummings <cummings.michael@gmail.com>
 *
 * This program is free software; you can redistribute it and/or
@@ -63,7 +63,7 @@ class gemActor;
  */
 class psActionTimeoutGameEvent : public psGameEvent
 {
-public:    
+public:
     /**
      * Constructor.
      *
@@ -77,19 +77,22 @@ public:
      * Destructor.
      */
     ~psActionTimeoutGameEvent();
-    
+
     /**
      * Abstract event processing function.
      */
-    virtual void Trigger();  
-    virtual bool IsValid() { return valid; }
-    
+    virtual void Trigger();
+    virtual bool IsValid()
+    {
+        return valid;
+    }
+
 protected:
     ActionManager*           actionManager;  ///< Reference to the action manager
     bool                     valid;          ///< Is this trigger still valid
-    
+
     EID                      actorEID;       ///< Reference to the actor
-    const  psActionLocation* actionLocation; ///< The action location         
+    const  psActionLocation* actionLocation; ///< The action location
 };
 
 
@@ -108,7 +111,7 @@ public:
     /**
      * Constructor.
      */
-    ActionManager( psDatabase* db );
+    ActionManager(psDatabase* db);
 
     /**
      * Destructor.
@@ -120,7 +123,7 @@ public:
      *
      * @param sectorinfo The sector to repopulate. Null means all sectors.
      */
-    bool RepopulateActionLocations(psSectorInfo *sectorinfo = 0);
+    bool RepopulateActionLocations(psSectorInfo* sectorinfo = 0);
 
     /**
      * Loads cache with given action location.
@@ -135,7 +138,7 @@ public:
      * @param msg         The message to process
      * @param client      The client that sent the message.
      */
-    void HandleMapAction( MsgEntry *msg, Client *client );
+    void HandleMapAction(MsgEntry* msg, Client* client);
 
     /**
      * Handles the /use command on an AL or the click on use button.
@@ -166,27 +169,27 @@ public:
      * @param actionLocation The location that is triggered for the given actor.
      */
     void AddActiveTrigger(EID actorEID, const psActionLocation* actionLocation);
-    
+
     /**
      * Finds an ActionLocation from it's CEL Entity ID.
      *
      * @param id The id of the cel entity to find.
      */
-    psActionLocation *FindAction(EID id);
+    psActionLocation* FindAction(EID id);
 
     /**
      * Finds an ActionLocation from the action ID.
      *
      * @param id The id of the action location.
      */
-    psActionLocation *FindActionByID( uint32 id );
+    psActionLocation* FindActionByID(uint32 id);
 
     /**
      * Finds an inactive entrance action location in the specified target sector map.
      *
      * @param entranceSector The entrance teleport target sector string to qualify the search.
      */
-    psActionLocation* FindAvailableEntrances( csString entranceSector );
+    psActionLocation* FindAvailableEntrances(csString entranceSector);
 
     /**
      * Handle notification from the proxy system about players nearby action locations.
@@ -203,11 +206,11 @@ protected:
      * @param xml xml containing query parameters.
      * @param client      The client that sent the message.
      */
-    void HandleQueryMessage( csString xml, Client *client );
-    
-    void LoadXML( iDocumentNode* topNode );
-    bool HandleSelectQuery( iDocumentNode* topNode, Client *client );
-    bool ProcessMatches( csArray<psActionLocation *> matches, Client *client );
+    void HandleQueryMessage(csString xml, Client* client);
+
+    void LoadXML(iDocumentNode* topNode);
+    bool HandleSelectQuery(iDocumentNode* topNode, Client* client);
+    bool ProcessMatches(csArray<psActionLocation*> matches, Client* client);
 
     /**
      * Handles Save messages from client.
@@ -215,7 +218,7 @@ protected:
      * @param xml         xml containing query parameters.
      * @param client      The client that sent the message.
      */
-    void HandleSaveMessage( csString xml, Client *client );
+    void HandleSaveMessage(csString xml, Client* client);
 
     /**
      * Handles List messages from client.
@@ -223,7 +226,7 @@ protected:
      * @param xml         xml containing query parameters.
      * @param client      The client that sent the message.
      */
-    void HandleListMessage( csString xml, Client *client );
+    void HandleListMessage(csString xml, Client* client);
 
     /**
      * Handles Delete messages from client.
@@ -231,14 +234,14 @@ protected:
      * @param xml         xml containing query parameters.
      * @param client      The client that sent the message.
      */
-    void HandleDeleteMessage( csString xml, Client *client );
+    void HandleDeleteMessage(csString xml, Client* client);
 
     /**
      * Handles Reload messages from client.
      *
      * @param client      The client that sent the message.
      */
-    void HandleReloadMessage( Client *client);
+    void HandleReloadMessage(Client* client);
 
     // Operation Handlers
 
@@ -248,7 +251,7 @@ protected:
      * @param action      The action that is to be performed.
      * @param client      The client that sent the message.
      */
-    void HandleExamineOperation( psActionLocation* action, Client *client );
+    void HandleExamineOperation(psActionLocation* action, Client* client);
 
     /**
      * Handles Script Operation for a action location.
@@ -256,20 +259,20 @@ protected:
      * @param action      The action that is to be performed.
      * @param actor       The actor triggered the script.
      */
-    void HandleScriptOperation ( psActionLocation* action, gemActor* actor );
+    void HandleScriptOperation(psActionLocation* action, gemActor* actor);
 
     // Current action location data
     csString triggerType;
     csString sectorName;
     csString meshName;
     csVector3 position;
-    
+
 
     psDatabase*              database;
-    csHash<psActionLocation *> actionLocationList;
-    csHash<psActionLocation *> actionLocation_by_name;
-    csHash<psActionLocation *> actionLocation_by_sector;
-    csHash<psActionLocation *, uint32> actionLocation_by_id;
+    csHash<psActionLocation*> actionLocationList;
+    csHash<psActionLocation*> actionLocation_by_name;
+    csHash<psActionLocation*> actionLocation_by_sector;
+    csHash<psActionLocation*, uint32> actionLocation_by_id;
     csHash<const psActionLocation*> activeTriggers;
 
 };

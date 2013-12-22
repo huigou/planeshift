@@ -1,7 +1,7 @@
 /*
  * combatmanager.cpp
  *
- * Copyright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -57,7 +57,7 @@
  *
  * When a combat event fires, the first task is to check whether the action can actually
  * occur at this time.  If it cannot, the event should not create another event since
- * the action that caused the "delay" or "acceleration" change should have created its 
+ * the action that caused the "delay" or "acceleration" change should have created its
  * own event.
  *
  * TODO: psGEMEvent makes this depend only on the attacker when in fact
@@ -70,8 +70,8 @@ public:
 
     csWeakRef<gemObject>  attacker;  ///< Entity who instigated this attack
     csWeakRef<gemObject>  target;    ///< Entity who is target of this attack
-    psCharacter *attackerdata;
-    psCharacter *targetdata;
+    psCharacter* attackerdata;
+    psCharacter* targetdata;
     int TargetCID;                   ///< ClientID of target
     int AttackerCID;                 ///< ClientID of attacker
     INVENTORY_SLOT_NUMBER WeaponSlot; ///< Identifier of the slot for which this attack event should process
@@ -93,17 +93,17 @@ public:
     int   AttackResult;              ///< Code indicating the result of the attack attempt
     int   PreviousAttackResult;      ///< The code of the previous result of the attack attempt
 
-    psCombatGameEvent(CombatManager *mgr,
+    psCombatGameEvent(CombatManager* mgr,
                       int delayticks,
                       int action,
-                      gemObject *attacker,
+                      gemObject* attacker,
                       INVENTORY_SLOT_NUMBER weaponslot,
                       uint32 weaponID,
-                      gemObject *target,
+                      gemObject* target,
                       int attackerCID,
                       int targetCID,
                       int previousResult);
-    ~psCombatGameEvent();                      
+    ~psCombatGameEvent();
 
     virtual bool CheckTrigger();
     virtual void Trigger();  // Abstract event processing function
@@ -116,11 +116,11 @@ public:
     {
         return attacker;
     };
-    psCharacter *GetTargetData()
+    psCharacter* GetTargetData()
     {
         return targetdata;
     };
-    psCharacter *GetAttackerData()
+    psCharacter* GetAttackerData()
     {
         return attackerdata;
     };
@@ -128,15 +128,24 @@ public:
     {
         return WeaponSlot;
     };
-    
+
 //    virtual void Disconnecting(void * object);
-    
-    int GetTargetID()               { return TargetCID; };
-    int GetAttackerID()             { return AttackerCID; };
-    int GetAttackResult()           { return AttackResult; };
+
+    int GetTargetID()
+    {
+        return TargetCID;
+    };
+    int GetAttackerID()
+    {
+        return AttackerCID;
+    };
+    int GetAttackResult()
+    {
+        return AttackResult;
+    };
 
 protected:
-    CombatManager *combatmanager;
+    CombatManager* combatmanager;
 };
 
 CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entitymanager) : pvp_region(NULL)
@@ -148,13 +157,13 @@ CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entityma
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_damage, "Calculate Damage");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_decay, "Calculate Decay");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminacombat, "StaminaCombat");
-  
 
-    if ( !calc_damage )
+
+    if(!calc_damage)
     {
         Error1("Calculate Damage Script could not be found.  Check the math_scripts DB table.");
     }
-    else if ( !calc_decay )
+    else if(!calc_decay)
     {
         Error1("Calculate Decay Script could not be found.  Check the math_scripts DB table.");
     }
@@ -173,7 +182,7 @@ CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entityma
 
 CombatManager::~CombatManager()
 {
-    if (pvp_region) 
+    if(pvp_region)
     {
         delete pvp_region;
         pvp_region = NULL;
@@ -184,49 +193,49 @@ bool CombatManager::InitializePVP()
 {
     Result rs(db->Select("select * from sc_location_type where name = 'pvp_region'"));
 
-    if (!rs.IsValid())
+    if(!rs.IsValid())
     {
-        Error2("Could not load locations from db: %s",db->GetLastError() );
+        Error2("Could not load locations from db: %s",db->GetLastError());
         return false;
     }
 
     // no PVP defined
-    if (rs.Count() == 0)
+    if(rs.Count() == 0)
     {
-      return true;
+        return true;
     }
 
-    if (rs.Count() > 1)
+    if(rs.Count() > 1)
     {
         Error1("More than one pvp_region defined!");
         // return false; // not really fatal
     }
 
-    LocationType *loctype = new LocationType();
-    
-    if (loctype->Load(rs[0],NULL,db))
+    LocationType* loctype = new LocationType();
+
+    if(loctype->Load(rs[0],NULL,db))
     {
         pvp_region = loctype;
     }
     else
     {
-        Error2("Could not load location: %s",db->GetLastError() );            
+        Error2("Could not load location: %s",db->GetLastError());
         delete loctype;
         // return false; // not fatal
     }
     return true;
 }
 
-bool CombatManager::InPVPRegion(csVector3& pos,iSector * sector)
+bool CombatManager::InPVPRegion(csVector3 &pos,iSector* sector)
 {
-    if (pvp_region && pvp_region->CheckWithinBounds(entityManager->GetEngine(), pos, sector))
+    if(pvp_region && pvp_region->CheckWithinBounds(entityManager->GetEngine(), pos, sector))
         return true;
 
     return false;
 }
 
 
-const Stance & CombatManager::GetStance(CacheManager* cachemanager, csString name)
+const Stance &CombatManager::GetStance(CacheManager* cachemanager, csString name)
 {
     name.Downcase();
     size_t id = cachemanager->stanceID.Find(name);
@@ -239,13 +248,13 @@ const Stance & CombatManager::GetStance(CacheManager* cachemanager, csString nam
         {
             id = cachemanager->stanceID.Find("normal");
         }
-        
+
     }
     return cachemanager->stances.Get(id);
 }
 
 
-const Stance & CombatManager::GetLoweredActorStance(CacheManager* cachemanager, gemActor* attacker)
+const Stance &CombatManager::GetLoweredActorStance(CacheManager* cachemanager, gemActor* attacker)
 {
     Stance currentStance = attacker->GetCombatStance();
 
@@ -259,7 +268,7 @@ const Stance & CombatManager::GetLoweredActorStance(CacheManager* cachemanager, 
 }
 
 
-const Stance & CombatManager::GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker)
+const Stance &CombatManager::GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker)
 {
     Stance currentStance = attacker->GetCombatStance();
 
@@ -272,23 +281,23 @@ const Stance & CombatManager::GetRaisedActorStance(CacheManager* cachemanager, g
     return cachemanager->stances.Get(currentStance.stance_id-1);
 }
 
-bool CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance stance)
+bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,Stance stance)
 {
-    psCharacter *attacker_character = attacker->GetCharacterData();
+    psCharacter* attacker_character = attacker->GetCharacterData();
 
     //we don't allow an overweight or defeated char to fight
-    if (attacker->GetMode() == PSCHARACTER_MODE_DEFEATED || 
-        attacker->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
+    if(attacker->GetMode() == PSCHARACTER_MODE_DEFEATED ||
+            attacker->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
         return false;
 
-    if (attacker->GetMode() == PSCHARACTER_MODE_COMBAT)  // Already fighting
+    if(attacker->GetMode() == PSCHARACTER_MODE_COMBAT)   // Already fighting
     {
         SetCombat(attacker,stance);  // switch stance from Bloody to Defensive, etc.
         return true;
     }
     else
     {
-        if (attacker->GetMode() == PSCHARACTER_MODE_SIT) //we are sitting force the char to stand
+        if(attacker->GetMode() == PSCHARACTER_MODE_SIT)  //we are sitting force the char to stand
             attacker->Stand();
         attacker_character->ResetSwings(csGetTicks());
     }
@@ -298,17 +307,17 @@ bool CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance st
     bool haveWeapon=false;
 
     // Step through each current slot and queue events for all that can attack
-    for (int slot=0; slot<PSCHARACTER_SLOT_BULK1; slot++)
+    for(int slot=0; slot<PSCHARACTER_SLOT_BULK1; slot++)
     {
         // See if this slot is able to attack
-        if (attacker_character->Inventory().CanItemAttack((INVENTORY_SLOT_NUMBER) slot))
+        if(attacker_character->Inventory().CanItemAttack((INVENTORY_SLOT_NUMBER) slot))
         {
             INVENTORY_SLOT_NUMBER weaponSlot = (INVENTORY_SLOT_NUMBER) slot;
             // Get the data for the "weapon" that is used in this slot
-            psItem *weapon=attacker_character->Inventory().GetEffectiveWeaponInSlot(weaponSlot);
+            psItem* weapon=attacker_character->Inventory().GetEffectiveWeaponInSlot(weaponSlot);
 
             csString response;
-            if (weapon!=NULL && weapon->CheckRequirements(attacker_character,response) )
+            if(weapon!=NULL && weapon->CheckRequirements(attacker_character,response))
             {
                 haveWeapon = true;
                 Debug5(LOG_COMBAT,attacker->GetClientID(),"%s tries to attack with %s weapon %s at %.2f range",
@@ -316,22 +325,22 @@ bool CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance st
                        attacker->RangeTo(target,false));
                 Debug3(LOG_COMBAT,attacker->GetClientID(),"%s started attacking with %s",attacker->GetName(),
                        weapon->GetName());
-                
+
                 // start the ball rolling
-                QueueNextEvent(attacker,weaponSlot,target,attacker->GetClientID(),target->GetClientID());  
-                
+                QueueNextEvent(attacker,weaponSlot,target,attacker->GetClientID(),target->GetClientID());
+
                 startedAttacking=true;
             }
             else
             {
-                if( weapon  && attacker_character->GetActor())
+                if(weapon  && attacker_character->GetActor())
                 {
                     Debug3(LOG_COMBAT,attacker->GetClientID(),"%s tried attacking with %s but can't use it.",
                            attacker->GetName(),weapon->GetName());
 #ifdef COMBAT_DEBUG
                     psserver->SendSystemError(attacker_character->GetActor()->GetClientID(), response);
 #endif
-                } 
+                }
             }
         }
     }
@@ -339,12 +348,12 @@ bool CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance st
     /* Only notify the target if any attacks were able to start.  Otherwise there are
      * no available weapons with which to attack.
      */
-    if (haveWeapon)
+    if(haveWeapon)
     {
-        if (startedAttacking)
+        if(startedAttacking)
         {
             // The attacker should now enter combat mode
-            if (attacker->GetMode() != PSCHARACTER_MODE_COMBAT)
+            if(attacker->GetMode() != PSCHARACTER_MODE_COMBAT)
             {
                 SetCombat(attacker,stance);
             }
@@ -364,16 +373,16 @@ bool CombatManager::AttackSomeone(gemActor *attacker,gemObject *target,Stance st
     return true;
 }
 
-void CombatManager::SetCombat(gemActor *combatant, Stance stance)
+void CombatManager::SetCombat(gemActor* combatant, Stance stance)
 {
     // Sanity check
-    if (!combatant || !combatant->GetCharacterData() || !combatant->IsAlive())
+    if(!combatant || !combatant->GetCharacterData() || !combatant->IsAlive())
         return;
 
     // Change stance if new and for a player (NPCs don't have different stances)
-    if (combatant->GetClientID() && combatant->GetCombatStance().stance_id != stance.stance_id)
+    if(combatant->GetClientID() && combatant->GetCombatStance().stance_id != stance.stance_id)
     {
-        psSystemMessage msg(combatant->GetClientID(), MSG_COMBAT_STANCE, "%s changes to a %s stance", combatant->GetName(), stance.stance_name.GetData() );
+        psSystemMessage msg(combatant->GetClientID(), MSG_COMBAT_STANCE, "%s changes to a %s stance", combatant->GetName(), stance.stance_name.GetData());
         msg.Multicast(combatant->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
 
         combatant->SetCombatStance(stance);
@@ -383,13 +392,13 @@ void CombatManager::SetCombat(gemActor *combatant, Stance stance)
     Debug3(LOG_COMBAT,combatant->GetClientID(), "%s starts attacking with stance %s", combatant->GetName(), stance.stance_name.GetData());
 }
 
-void CombatManager::StopAttack(gemActor *attacker)
+void CombatManager::StopAttack(gemActor* attacker)
 {
-    if (!attacker)
+    if(!attacker)
         return;
 
     // TODO: I'm not sure this is a wise idea after all...spells may not be offensive...
-    switch (attacker->GetMode())
+    switch(attacker->GetMode())
     {
         case PSCHARACTER_MODE_SPELL_CASTING:
             attacker->InterruptSpellCasting();
@@ -404,11 +413,11 @@ void CombatManager::StopAttack(gemActor *attacker)
     Debug2(LOG_COMBAT, attacker->GetClientID(), "%s stops attacking", attacker->GetName());
 }
 
-void CombatManager::NotifyTarget(gemActor *attacker,gemObject *target)
+void CombatManager::NotifyTarget(gemActor* attacker,gemObject* target)
 {
     // Queue Attack percetion to npc clients
-    gemNPC *targetnpc = dynamic_cast<gemNPC *>(target);
-    if (targetnpc)
+    gemNPC* targetnpc = dynamic_cast<gemNPC*>(target);
+    if(targetnpc)
         psserver->npcmanager->QueueAttackPerception(attacker,targetnpc);
 
     // Interrupt spell casting
@@ -417,7 +426,7 @@ void CombatManager::NotifyTarget(gemActor *attacker,gemObject *target)
     //    targetactor->GetCharacterData()->InterruptSpellCasting();
 }
 
-void CombatManager::QueueNextEvent(psCombatGameEvent *event)
+void CombatManager::QueueNextEvent(psCombatGameEvent* event)
 {
     QueueNextEvent(event->GetAttacker(),
                    event->GetWeaponSlot(),
@@ -427,14 +436,14 @@ void CombatManager::QueueNextEvent(psCombatGameEvent *event)
                    event->GetAttackResult());
 }
 
-void CombatManager::QueueNextEvent(gemObject *attacker,INVENTORY_SLOT_NUMBER weaponslot,
-                                     gemObject *target,
-                                     int attackerCID,
-                                     int targetCID, int previousResult)
+void CombatManager::QueueNextEvent(gemObject* attacker,INVENTORY_SLOT_NUMBER weaponslot,
+                                   gemObject* target,
+                                   int attackerCID,
+                                   int targetCID, int previousResult)
 {
 
     /* We should check the combat queue here if a viable combat queue method is
-     *  ever presented.  As things stand the combat queue is not workable with 
+     *  ever presented.  As things stand the combat queue is not workable with
      *  multiple weapons being used.
      */
 // Get next action from QueueOfAttacks
@@ -448,16 +457,16 @@ void CombatManager::QueueNextEvent(gemObject *attacker,INVENTORY_SLOT_NUMBER wea
 
     int action=0;
 
-    psCharacter *Character=attacker->GetCharacterData();
-    psItem *Weapon=Character->Inventory().GetEffectiveWeaponInSlot(weaponslot);
+    psCharacter* Character=attacker->GetCharacterData();
+    psItem* Weapon=Character->Inventory().GetEffectiveWeaponInSlot(weaponslot);
     uint32 weaponID = Weapon->GetUID();
 
     float latency = Weapon->GetLatency();
     int delay = (int)(latency*1000);
 
     // Create first Combat Event and queue it.
-    psCombatGameEvent *event;
-    
+    psCombatGameEvent* event;
+
     event = new psCombatGameEvent(this,
                                   delay,
                                   action,
@@ -496,27 +505,27 @@ int CombatManager::GetDefaultModeAction(gemActor *attacker)
 /**
  * This is the meat and potatoes of the combat engine here.
  */
-int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
+int CombatManager::CalculateAttack(psCombatGameEvent* event, psItem* subWeapon)
 {
     INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_LEFTHAND ? PSCHARACTER_SLOT_RIGHTHAND : PSCHARACTER_SLOT_LEFTHAND;
     event->AttackLocation = (INVENTORY_SLOT_NUMBER) targetLocations[randomgen->Get((int) targetLocations.GetSize())];
 
-    gemObject *attacker = event->GetAttacker();
-    gemObject *target = event->GetTarget();
+    gemObject* attacker = event->GetAttacker();
+    gemObject* target = event->GetTarget();
 
     // calculate difference between target and attacker location - to be used for angle validation
     csVector3 diff(0); // initialize to some big value that shows an error
-    
+
     {
         csVector3 attackPos, targetPos;
-        iSector *attackSector, *targetSector;
+        iSector* attackSector, *targetSector;
 
         attacker->GetPosition(attackPos, attackSector);
         target->GetPosition(targetPos, targetSector);
 
         if((attacker->GetInstance() != target->GetInstance() &&
-            attacker->GetInstance() != INSTANCE_ALL && target->GetInstance() != INSTANCE_ALL) ||
-            !(entityManager->GetWorld()->WarpSpace(targetSector, attackSector, targetPos)))
+                attacker->GetInstance() != INSTANCE_ALL && target->GetInstance() != INSTANCE_ALL) ||
+                !(entityManager->GetWorld()->WarpSpace(targetSector, attackSector, targetPos)))
         {
             return ATTACK_OUTOFRANGE;
         }
@@ -546,29 +555,29 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
     //this is going to crash if the script cannot be found.
     calc_damage->Evaluate(&env);
 
-    if (DoLogDebug2(LOG_COMBAT, event->GetAttackerData()->GetPID().Unbox()))
+    if(DoLogDebug2(LOG_COMBAT, event->GetAttackerData()->GetPID().Unbox()))
     {
         CPrintf(CON_DEBUG, "Variables for Calculate Damage:\n");
         env.DumpAllVars();
     }
 
-    MathVar *badrange = env.Lookup("BadRange");    // BadRange = Target is too far away
-    MathVar *badangle = env.Lookup("BadAngle");    // BadAngle = Attacker doesn't aim at enemy
-    MathVar *missed   = env.Lookup("Missed");      // Missed   = Attack missed the enemy
-    MathVar *dodged   = env.Lookup("Dodged");      // Dodged   = Attack dodged  by enemy
-    MathVar *blocked  = env.Lookup("Blocked");     // Blocked  = Attack blocked by enemy
-    MathVar *damage   = env.Lookup("FinalDamage"); // Actual damage done, if any
+    MathVar* badrange = env.Lookup("BadRange");    // BadRange = Target is too far away
+    MathVar* badangle = env.Lookup("BadAngle");    // BadAngle = Attacker doesn't aim at enemy
+    MathVar* missed   = env.Lookup("Missed");      // Missed   = Attack missed the enemy
+    MathVar* dodged   = env.Lookup("Dodged");      // Dodged   = Attack dodged  by enemy
+    MathVar* blocked  = env.Lookup("Blocked");     // Blocked  = Attack blocked by enemy
+    MathVar* damage   = env.Lookup("FinalDamage"); // Actual damage done, if any
 
-    if (badrange && badrange->GetValue() < 0.0)
+    if(badrange && badrange->GetValue() < 0.0)
         return ATTACK_OUTOFRANGE;
-    else if (badangle && badangle->GetValue() < 0.0)
+    else if(badangle && badangle->GetValue() < 0.0)
         return ATTACK_BADANGLE;
-    else if (missed && missed->GetValue() < 0.0)
+    else if(missed && missed->GetValue() < 0.0)
         return ATTACK_MISSED;
-    else if (dodged && dodged->GetValue() < 0.0)
+    else if(dodged && dodged->GetValue() < 0.0)
         return ATTACK_DODGED;
-    else if (blocked && blocked->GetValue() < 0.0)
-       return ATTACK_BLOCKED;
+    else if(blocked && blocked->GetValue() < 0.0)
+        return ATTACK_BLOCKED;
 
     event->FinalDamage = damage->GetValue();
 
@@ -577,19 +586,19 @@ int CombatManager::CalculateAttack(psCombatGameEvent *event, psItem* subWeapon)
     return ATTACK_DAMAGE;
 }
 
-void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result)
+void CombatManager::ApplyCombatEvent(psCombatGameEvent* event, int attack_result)
 {
-    psCharacter *attacker_data = event->GetAttackerData();
-    psCharacter *target_data=event->GetTargetData();
+    psCharacter* attacker_data = event->GetAttackerData();
+    psCharacter* target_data=event->GetTargetData();
 
-    MathVar *weaponDecay = NULL;
-    MathVar *blockDecay = NULL;
-    MathVar *armorDecay = NULL;
+    MathVar* weaponDecay = NULL;
+    MathVar* blockDecay = NULL;
+    MathVar* armorDecay = NULL;
     MathEnvironment env;
 
-    psItem *weapon         = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
-    psItem *blockingWeapon = target_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot(),true);
-    psItem *struckArmor    = target_data->Inventory().GetEffectiveArmorInSlot(event->AttackLocation);
+    psItem* weapon         = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
+    psItem* blockingWeapon = target_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot(),true);
+    psItem* struckArmor    = target_data->Inventory().GetEffectiveArmorInSlot(event->AttackLocation);
 
     // there may only be a decay if you actually hit your target by some means
     if(attack_result == ATTACK_DAMAGE || attack_result == ATTACK_BLOCKED)
@@ -623,42 +632,42 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         armorDecay  = env.Lookup("ArmorDecay");
     }
 
-    gemActor *gemAttacker = dynamic_cast<gemActor*> ((gemObject *) event->attacker);
-    gemActor *gemTarget   = dynamic_cast<gemActor*> ((gemObject *) event->target);
+    gemActor* gemAttacker = dynamic_cast<gemActor*>((gemObject*) event->attacker);
+    gemActor* gemTarget   = dynamic_cast<gemActor*>((gemObject*) event->target);
 
-    switch (attack_result)
+    switch(attack_result)
     {
         case ATTACK_DAMAGE:
         {
             bool isNearlyDead = false;
-            if (target_data->GetMaxHP().Current() > 0.0 && target_data->GetHP()/target_data->GetMaxHP().Current() > 0.2)
+            if(target_data->GetMaxHP().Current() > 0.0 && target_data->GetHP()/target_data->GetMaxHP().Current() > 0.2)
             {
-                if ((target_data->GetHP() - event->FinalDamage) / target_data->GetMaxHP().Current() <= 0.2)
+                if((target_data->GetHP() - event->FinalDamage) / target_data->GetMaxHP().Current() <= 0.2)
                     isNearlyDead = true;
             }
 
             psCombatEventMessage ev(event->AttackerCID,
-                isNearlyDead ? psCombatEventMessage::COMBAT_DAMAGE_NEARLY_DEAD : psCombatEventMessage::COMBAT_DAMAGE,
-                gemAttacker->GetEID(),
-                gemTarget->GetEID(),
-                event->AttackLocation,
-                event->FinalDamage,
-                weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
-                gemTarget->FindAnimIndex("hit"));
+                                    isNearlyDead ? psCombatEventMessage::COMBAT_DAMAGE_NEARLY_DEAD : psCombatEventMessage::COMBAT_DAMAGE,
+                                    gemAttacker->GetEID(),
+                                    gemTarget->GetEID(),
+                                    event->AttackLocation,
+                                    event->FinalDamage,
+                                    weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
+                                    gemTarget->FindAnimIndex("hit"));
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
 
             // Apply final damage
-            if (target_data!=NULL)
+            if(target_data!=NULL)
             {
                 gemTarget->DoDamage(gemAttacker,event->FinalDamage);
-                
-                if (gemAttacker)
+
+                if(gemAttacker)
                 {
                     gemAttacker->InvokeAttackScripts(gemTarget, weapon);
                 }
 
-                if (gemTarget)
+                if(gemTarget)
                 {
                     gemTarget->InvokeDefenseScripts(gemAttacker, weapon);
                     if(isNearlyDead)
@@ -670,9 +679,9 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
 
             // If the target wasn't in combat, it is now...
             // Note that other modes shouldn't be interrupted automatically
-            if (gemTarget->GetMode() == PSCHARACTER_MODE_PEACE || gemTarget->GetMode() == PSCHARACTER_MODE_WORK)
+            if(gemTarget->GetMode() == PSCHARACTER_MODE_PEACE || gemTarget->GetMode() == PSCHARACTER_MODE_WORK)
             {
-                if (gemTarget->GetClient())  // Set reciprocal target
+                if(gemTarget->GetClient())   // Set reciprocal target
                     gemTarget->GetClient()->SetTargetObject(gemAttacker,true);
 
                 // The default stance is 'Fully Defensive'.
@@ -680,11 +689,11 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
                 AttackSomeone(gemTarget,gemAttacker,initialStance);
             }
 
-            if (weapon)
+            if(weapon)
             {
                 weapon->AddDecay(weaponDecay->GetValue());
             }
-            if (struckArmor)
+            if(struckArmor)
             {
                 struckArmor->AddDecay(armorDecay->GetValue());
             }
@@ -696,13 +705,13 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         case ATTACK_DODGED:
         {
             psCombatEventMessage ev(event->AttackerCID,
-                psCombatEventMessage::COMBAT_DODGE,
-                gemAttacker->GetEID(),
-                gemTarget->GetEID(),
-                event->AttackLocation,
-                0, // no dmg on a dodge
-                weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
-                (unsigned int)-1); // no defense anims yet
+                                    psCombatEventMessage::COMBAT_DODGE,
+                                    gemAttacker->GetEID(),
+                                    gemTarget->GetEID(),
+                                    event->AttackLocation,
+                                    0, // no dmg on a dodge
+                                    weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
+                                    (unsigned int)-1); // no defense anims yet
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
             NotifyTarget(gemAttacker,gemTarget);
@@ -711,22 +720,22 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         case ATTACK_BLOCKED:
         {
             psCombatEventMessage ev(event->AttackerCID,
-                psCombatEventMessage::COMBAT_BLOCK,
-                gemAttacker->GetEID(),
-                gemTarget->GetEID(),
-                event->AttackLocation,
-                0, // no dmg on a block
-                weapon->GetAttackAnimID( gemAttacker->GetCharacterData() ),
-                (unsigned int)-1); // no defense anims yet
+                                    psCombatEventMessage::COMBAT_BLOCK,
+                                    gemAttacker->GetEID(),
+                                    gemTarget->GetEID(),
+                                    event->AttackLocation,
+                                    0, // no dmg on a block
+                                    weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
+                                    (unsigned int)-1); // no defense anims yet
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
 
-            if (weapon)
+            if(weapon)
             {
                 weapon->AddDecay(weaponDecay->GetValue());
             }
             //TODO: for now we disable decaying for bows (see PS#5181)
-            if (blockingWeapon && !blockingWeapon->GetIsRangeWeapon())
+            if(blockingWeapon && !blockingWeapon->GetIsRangeWeapon())
             {
                 blockingWeapon->AddDecay(blockDecay->GetValue());
             }
@@ -738,13 +747,13 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         case ATTACK_MISSED:
         {
             psCombatEventMessage ev(event->AttackerCID,
-                psCombatEventMessage::COMBAT_MISS,
-                gemAttacker->GetEID(),
-                gemTarget->GetEID(),
-                event->AttackLocation,
-                0, // no dmg on a miss
-                weapon->GetAttackAnimID( gemAttacker->GetCharacterData() ),
-                (unsigned int)-1); // no defense anims yet
+                                    psCombatEventMessage::COMBAT_MISS,
+                                    gemAttacker->GetEID(),
+                                    gemTarget->GetEID(),
+                                    event->AttackLocation,
+                                    0, // no dmg on a miss
+                                    weapon->GetAttackAnimID(gemAttacker->GetCharacterData()),
+                                    (unsigned int)-1); // no defense anims yet
 
             ev.Multicast(gemTarget->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
             NotifyTarget(gemAttacker,gemTarget);
@@ -752,7 +761,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         }
         case ATTACK_OUTOFRANGE:
         {
-            if (event->AttackerCID)
+            if(event->AttackerCID)
             {
                 psserver->SendSystemError(event->AttackerCID,"You are too far away to attack!");
 
@@ -764,7 +773,7 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         }
         case ATTACK_BADANGLE:
         {
-            if (event->AttackerCID)  // if human player
+            if(event->AttackerCID)   // if human player
             {
                 psserver->SendSystemError(event->AttackerCID,"You must face the enemy to attack!");
 
@@ -778,20 +787,20 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent *event, int attack_result
         {
             psserver->SendSystemError(event->AttackerCID, "You are out of ammo!");
 
-            if (event->attacker && event->attacker.IsValid())
-                StopAttack(dynamic_cast<gemActor*>((gemObject *) event->attacker));  // if you run out of ammo, you exit attack mode
+            if(event->attacker && event->attacker.IsValid())
+                StopAttack(dynamic_cast<gemActor*>((gemObject*) event->attacker));   // if you run out of ammo, you exit attack mode
             break;
         }
     }
 }
 
-void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
+void CombatManager::HandleCombatEvent(psCombatGameEvent* event)
 {
-    psCharacter *attacker_data;
+    psCharacter* attacker_data;
     int attack_result;
     bool skipThisRound = false;
 
-    if (!event->GetAttacker() || !event->GetTarget()) // disconnected and deleted
+    if(!event->GetAttacker() || !event->GetTarget())  // disconnected and deleted
     {
 #ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID, "Combat stopped as one participant logged of.");
@@ -799,23 +808,23 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
         return;
     }
 
-    gemActor *gemAttacker = dynamic_cast<gemActor*> ((gemObject *) event->attacker);
-    gemActor *gemTarget   = dynamic_cast<gemActor*> ((gemObject *) event->target);
+    gemActor* gemAttacker = dynamic_cast<gemActor*>((gemObject*) event->attacker);
+    gemActor* gemTarget   = dynamic_cast<gemActor*>((gemObject*) event->target);
 
     attacker_data=event->GetAttackerData();
 
     // If the attacker is no longer in attack mode abort.
-    if (gemAttacker->GetMode() != PSCHARACTER_MODE_COMBAT)
+    if(gemAttacker->GetMode() != PSCHARACTER_MODE_COMBAT)
     {
 #ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID,
-                "Combat stopped as you left combat mode.");
+                                  "Combat stopped as you left combat mode.");
 #endif
         return;
     }
 
     // If target is dead, abort.
-    if (!gemTarget->IsAlive() )
+    if(!gemTarget->IsAlive())
     {
 #ifdef COMBAT_DEBUG
         psserver->SendSystemResult(event->AttackerCID, "Combat stopped as one participant logged of.");
@@ -824,45 +833,45 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     }
 
     // If the slot is no longer attackable, abort
-    if (!attacker_data->Inventory().CanItemAttack(event->GetWeaponSlot()))
+    if(!attacker_data->Inventory().CanItemAttack(event->GetWeaponSlot()))
     {
 #ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID, "Combat stopped as you have no longer an attackable item equipped.");
 #endif
         return;
     }
-    
-    if (attacker_data->Inventory().GetEquipmentObject(event->GetWeaponSlot()).eventId != event->id)
+
+    if(attacker_data->Inventory().GetEquipmentObject(event->GetWeaponSlot()).eventId != event->id)
     {
 #ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID, "Ignored combat event as newer is in.");
 #endif
         return;
     }
-   
+
     psItem* weapon = attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
 
     // weapon became unwieldable
     csString response;
     if(weapon!=NULL && !weapon->CheckRequirements(attacker_data,response))
     {
-        Debug2(LOG_COMBAT, gemAttacker->GetClientID(),"%s has lost use of weapon", gemAttacker->GetName() );
-        psserver->SendSystemError(event->AttackerCID, "You can't use your %s any more.", weapon->GetName() );
+        Debug2(LOG_COMBAT, gemAttacker->GetClientID(),"%s has lost use of weapon", gemAttacker->GetName());
+        psserver->SendSystemError(event->AttackerCID, "You can't use your %s any more.", weapon->GetName());
         return;
     }
 
     // If the weapon in the slot has been changed, skip a turn (latency for this slot may also have changed)
-    if (event->WeaponID != weapon->GetUID())
+    if(event->WeaponID != weapon->GetUID())
     {
-        Debug2(LOG_COMBAT, gemAttacker->GetClientID(),"%s has changed weapons mid battle", gemAttacker->GetName() );
+        Debug2(LOG_COMBAT, gemAttacker->GetClientID(),"%s has changed weapons mid battle", gemAttacker->GetName());
 #ifdef COMBAT_DEBUG
         psserver->SendSystemError(event->AttackerCID, "Weapon changed. Skipping");
 #endif
         skipThisRound = true;
     }
 
-    Client * attacker_client = psserver->GetNetManager()->GetClient(event->AttackerCID);
-    if (attacker_client)
+    Client* attacker_client = psserver->GetNetManager()->GetClient(event->AttackerCID);
+    if(attacker_client)
     {
         // Input the stamina data
         MathEnvironment env;
@@ -877,28 +886,28 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
         }
         //this is going to crash if the script was not found in the db.
         staminacombat->Evaluate(&env);
-        MathVar *PhyDrain = env.Lookup("PhyDrain");
-        MathVar *MntDrain = env.Lookup("MntDrain");
+        MathVar* PhyDrain = env.Lookup("PhyDrain");
+        MathVar* MntDrain = env.Lookup("MntDrain");
 
-        if ( (attacker_client->GetCharacterData()->GetStamina(true) < PhyDrain->GetValue())
-            || (attacker_client->GetCharacterData()->GetStamina(false) < MntDrain->GetValue()) )
+        if((attacker_client->GetCharacterData()->GetStamina(true) < PhyDrain->GetValue())
+                || (attacker_client->GetCharacterData()->GetStamina(false) < MntDrain->GetValue()))
         {
-           StopAttack(attacker_data->GetActor());
-           psserver->SendSystemError(event->AttackerCID, "You are too tired to attack.");
-           return;
+            StopAttack(attacker_data->GetActor());
+            psserver->SendSystemError(event->AttackerCID, "You are too tired to attack.");
+            return;
         }
 
         csString msg;
         // If the target has become impervious, abort and give up attacking
-        if (!gemAttacker->IsAllowedToAttack(gemTarget,msg))
+        if(!gemAttacker->IsAllowedToAttack(gemTarget,msg))
         {
-           psserver->SendSystemError(attacker_client->GetClientNum(), msg );
-           StopAttack(attacker_data->GetActor());
-           return;
+            psserver->SendSystemError(attacker_client->GetClientNum(), msg);
+            StopAttack(attacker_data->GetActor());
+            return;
         }
 
         // If the target has changed, abort (assume another combat event has started since we are still in attack mode)
-        if (gemTarget != attacker_client->GetTargetObject())
+        if(gemTarget != attacker_client->GetTargetObject())
         {
 #ifdef COMBAT_DEBUG
             psserver->SendSystemError(event->AttackerCID, "Target changed.");
@@ -910,7 +919,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     {
         // Check if the npc's target has changed (if it has, then assume another combat event has started.)
         gemNPC* npcAttacker = dynamic_cast<gemNPC*>(gemAttacker);
-        if (npcAttacker && npcAttacker->GetTarget() != gemTarget)
+        if(npcAttacker && npcAttacker->GetTarget() != gemTarget)
         {
 #ifdef COMBAT_DEBUG
             psserver->SendSystemError(event->AttackerCID, "NPC's target changed.");
@@ -919,55 +928,55 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
         }
     }
 
-    if (gemAttacker->IsSpellCasting())
+    if(gemAttacker->IsSpellCasting())
     {
         psserver->SendSystemInfo(event->AttackerCID, "You can't attack while casting spells.");
         skipThisRound = true;
     }
 
-    if (!skipThisRound)
+    if(!skipThisRound)
     {
-        if (weapon->GetIsRangeWeapon() && weapon->GetUsesAmmo())
+        if(weapon->GetIsRangeWeapon() && weapon->GetUsesAmmo())
         {
             INVENTORY_SLOT_NUMBER otherHand = event->GetWeaponSlot() == PSCHARACTER_SLOT_RIGHTHAND ?
-                                                                        PSCHARACTER_SLOT_LEFTHAND:
-                                                                        PSCHARACTER_SLOT_RIGHTHAND;
+                                              PSCHARACTER_SLOT_LEFTHAND:
+                                              PSCHARACTER_SLOT_RIGHTHAND;
 
             attack_result = ATTACK_NOTCALCULATED;
 
             psItem* otherItem = attacker_data->Inventory().GetInventoryItem(otherHand);
-            if (otherItem == NULL)
+            if(otherItem == NULL)
             {
                 attack_result = ATTACK_OUTOFAMMO;
             }
-            else if (otherItem->GetIsContainer()) // Is it a quiver?
+            else if(otherItem->GetIsContainer())  // Is it a quiver?
             {
                 // Pick the first ammo we can shoot from the container
                 // And set it as the active ammo
                 bool bFound = false;
-                for (size_t i=1; i<attacker_data->Inventory().GetInventoryIndexCount() && !bFound; i++)
+                for(size_t i=1; i<attacker_data->Inventory().GetInventoryIndexCount() && !bFound; i++)
                 {
                     psItem* currItem = attacker_data->Inventory().GetInventoryIndexItem(i);
-                    if (currItem && 
-                        currItem->GetContainerID() == otherItem->GetUID() &&
-                        weapon->GetAmmoTypeID().In(currItem->GetBaseStats()->GetUID()))
+                    if(currItem &&
+                            currItem->GetContainerID() == otherItem->GetUID() &&
+                            weapon->GetAmmoTypeID().In(currItem->GetBaseStats()->GetUID()))
                     {
                         otherItem = currItem;
                         bFound = true;
                     }
                 }
-                if (!bFound)
+                if(!bFound)
                     attack_result = ATTACK_OUTOFAMMO;
             }
-            else if (!weapon->GetAmmoTypeID().In(otherItem->GetBaseStats()->GetUID()))
+            else if(!weapon->GetAmmoTypeID().In(otherItem->GetBaseStats()->GetUID()))
             {
                 attack_result = ATTACK_OUTOFAMMO;
             }
 
-            if (attack_result != ATTACK_OUTOFAMMO)
+            if(attack_result != ATTACK_OUTOFAMMO)
             {
                 psItem* usedAmmo = attacker_data->Inventory().RemoveItemID(otherItem->GetUID(), 1);
-                if (usedAmmo)
+                if(usedAmmo)
                 {
                     attack_result=CalculateAttack(event, usedAmmo);
                     usedAmmo->Destroy();
@@ -988,7 +997,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
     }
 
     // Queue next event to continue combat if this is an auto attack slot
-    if (attacker_data->Inventory().IsItemAutoAttack(event->GetWeaponSlot()))
+    if(attacker_data->Inventory().IsItemAutoAttack(event->GetWeaponSlot()))
     {
 //      CPrintf(CON_DEBUG, "Queueing Slot %d for %s's next combat event.\n",event->GetWeaponSlot(), event->attacker->GetName() );
         QueueNextEvent(event);
@@ -1003,33 +1012,33 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent *event)
 //        CPrintf(CON_DEBUG, "Slot %d for %s not an auto-attack slot.\n",event->GetWeaponSlot(), event->attacker->GetName() );
 }
 
-void CombatManager::DebugOutput(psCombatGameEvent *event, const MathEnvironment & env)
+void CombatManager::DebugOutput(psCombatGameEvent* event, const MathEnvironment &env)
 {
-    MathVar *missed   = env.Lookup("Missed");      // Missed  = Attack missed the enemy
-    MathVar *dodged   = env.Lookup("Dodged");      // Dodged  = Attack dodged  by enemy
-    MathVar *blocked  = env.Lookup("Blocked");     // Blocked = Attack blocked by enemy
-    MathVar *damage   = env.Lookup("FinalDamage"); // Actual damage done, if any
+    MathVar* missed   = env.Lookup("Missed");      // Missed  = Attack missed the enemy
+    MathVar* dodged   = env.Lookup("Dodged");      // Dodged  = Attack dodged  by enemy
+    MathVar* blocked  = env.Lookup("Blocked");     // Blocked = Attack blocked by enemy
+    MathVar* damage   = env.Lookup("FinalDamage"); // Actual damage done, if any
 
-    psItem* item = event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot() );
+    psItem* item = event->GetAttackerData()->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot());
 
     csString debug;
-    debug.Append( "-----Debug Combat Summary--------\n");
-    debug.AppendFmt( "%s attacks %s with slot %d , weapon %s, quality %1.2f, basedmg %1.2f/%1.2f/%1.2f\n",
-      event->attacker->GetName(),event->target->GetName(), event->GetWeaponSlot(),item->GetName(),item->GetItemQuality(),
-      item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
-    debug.AppendFmt( "Missed: %1.6f Dodged: %1.6f Blocked: %1.6f", missed->GetValue(), dodged->GetValue(), blocked->GetValue());
-    debug.AppendFmt( "Damage: %1.1f\n", damage->GetValue());
+    debug.Append("-----Debug Combat Summary--------\n");
+    debug.AppendFmt("%s attacks %s with slot %d , weapon %s, quality %1.2f, basedmg %1.2f/%1.2f/%1.2f\n",
+                    event->attacker->GetName(),event->target->GetName(), event->GetWeaponSlot(),item->GetName(),item->GetItemQuality(),
+                    item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
+    debug.AppendFmt("Missed: %1.6f Dodged: %1.6f Blocked: %1.6f", missed->GetValue(), dodged->GetValue(), blocked->GetValue());
+    debug.AppendFmt("Damage: %1.1f\n", damage->GetValue());
     Debug2(LOG_COMBAT, event->attacker->GetClientID(), "%s", debug.GetData());
 }
 
-void CombatManager::HandleDeathEvent(MsgEntry *me,Client *client)
+void CombatManager::HandleDeathEvent(MsgEntry* me,Client* client)
 {
     psDeathEvent death(me);
 
     Debug1(LOG_COMBAT,death.deadActor->GetClientID(),"Combat Manager handling Death Event\n");
 
     // Stop any duels.
-    if (death.deadActor->GetClient())
+    if(death.deadActor->GetClient())
     {
         death.deadActor->GetClient()->ClearAllDuelClients();
     }
@@ -1039,13 +1048,13 @@ void CombatManager::HandleDeathEvent(MsgEntry *me,Client *client)
 
     // Send out the notification of death, which plays the anim, etc.
     psCombatEventMessage die(death.deadActor->GetClientID(),
-                                psCombatEventMessage::COMBAT_DEATH,
-                                death.killer ? death.killer->GetEID() : 0,
-                                death.deadActor->GetEID(),
-                                -1, // no target location
-                                0,  // no dmg on a death
-                                (unsigned int)-1,  // TODO: "killing blow" matrix of mob-types vs. weapon types
-                                (unsigned int)-1 ); // Death anim on client side is handled by the death mode message
+                             psCombatEventMessage::COMBAT_DEATH,
+                             death.killer ? death.killer->GetEID() : 0,
+                             death.deadActor->GetEID(),
+                             -1, // no target location
+                             0,  // no dmg on a death
+                             (unsigned int)-1,  // TODO: "killing blow" matrix of mob-types vs. weapon types
+                             (unsigned int)-1);  // Death anim on client side is handled by the death mode message
 
     die.Multicast(death.deadActor->GetMulticastClients(),0,MAX_COMBAT_EVENT_RANGE);
 }
@@ -1053,7 +1062,7 @@ void CombatManager::HandleDeathEvent(MsgEntry *me,Client *client)
 
 /*-------------------------------------------------------------*/
 
-psSpareDefeatedEvent::psSpareDefeatedEvent(gemActor *losr) : psGameEvent(0, SECONDS_BEFORE_SPARING_DEFEATED * 1000, "psSpareDefeatedEvent")
+psSpareDefeatedEvent::psSpareDefeatedEvent(gemActor* losr) : psGameEvent(0, SECONDS_BEFORE_SPARING_DEFEATED * 1000, "psSpareDefeatedEvent")
 {
     loser = losr->GetClient();
 }
@@ -1061,7 +1070,7 @@ psSpareDefeatedEvent::psSpareDefeatedEvent(gemActor *losr) : psGameEvent(0, SECO
 void psSpareDefeatedEvent::Trigger()
 {
     // Ignore stale events: perhaps the character was already killed and resurrected...
-    if (!loser.IsValid() || !loser->GetActor() || loser->GetActor()->GetMode() != PSCHARACTER_MODE_DEFEATED)
+    if(!loser.IsValid() || !loser->GetActor() || loser->GetActor()->GetMode() != PSCHARACTER_MODE_DEFEATED)
         return;
 
     psserver->SendSystemInfo(loser->GetClientNum(), "Your opponent has spared your life.");
@@ -1071,17 +1080,17 @@ void psSpareDefeatedEvent::Trigger()
 
 /*-------------------------------------------------------------*/
 
-psCombatGameEvent::psCombatGameEvent(CombatManager *mgr,
+psCombatGameEvent::psCombatGameEvent(CombatManager* mgr,
                                      int delayticks,
                                      int act,
-                                     gemObject *attacker,
+                                     gemObject* attacker,
                                      INVENTORY_SLOT_NUMBER weaponslot,
                                      uint32 weapon,
-                                     gemObject *target,
+                                     gemObject* target,
                                      int attackerCID,
                                      int targetCID,
                                      int previousResult)
-  : psGameEvent(0,delayticks,"psCombatGameEvent")
+    : psGameEvent(0,delayticks,"psCombatGameEvent")
 {
     combatmanager  = mgr;
     this->attacker = attacker;
@@ -1093,15 +1102,15 @@ psCombatGameEvent::psCombatGameEvent(CombatManager *mgr,
 
     // Also register the target as a disconnector
 //    target->Register(this);
-//    attacker->Register( this ); 
-    
+//    attacker->Register( this );
+
     attackerdata = attacker->GetCharacterData();
     targetdata   = target->GetCharacterData();
 
-    if (!attackerdata || !targetdata)
+    if(!attackerdata || !targetdata)
         return;
 
-    AttackLocation=PSCHARACTER_SLOT_NONE;   
+    AttackLocation=PSCHARACTER_SLOT_NONE;
     FinalDamage=-1;
     AttackResult=ATTACK_NOTCALCULATED;
     PreviousAttackResult=previousResult;
@@ -1114,26 +1123,26 @@ psCombatGameEvent::~psCombatGameEvent()
 
 bool psCombatGameEvent::CheckTrigger()
 {
-    if ( attacker.IsValid() && target.IsValid())
+    if(attacker.IsValid() && target.IsValid())
     {
-        if ( attacker->IsAlive() && target->IsAlive() )
+        if(attacker->IsAlive() && target->IsAlive())
         {
             return true;
         }
         else
         {
             return false;
-        }                    
-    }        
+        }
+    }
     else
     {
         return false;
-    }        
+    }
 }
 
 void psCombatGameEvent::Trigger()
 {
-    if (!attacker.IsValid() || !target.IsValid())
+    if(!attacker.IsValid() || !target.IsValid())
         return;
 
     combatmanager->HandleCombatEvent(this);

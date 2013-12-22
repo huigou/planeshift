@@ -34,18 +34,18 @@
 //=============================================================================
 
 
-/** Defines a command group. 
-  */  
+/** Defines a command group.
+  */
 struct CommandGroup
 {
     csString name; ///< The name of the group from the database.
-    unsigned int id;        ///< Unique ID code from database. 
+    unsigned int id;        ///< Unique ID code from database.
     csArray<csString> commands;  ///< List of all the commands in this group.
 };
 
 
 /** Defines a command listing
-  */  
+  */
 struct CommandList
 {
     csString command;        ///< The command string
@@ -53,33 +53,33 @@ struct CommandList
 };
 
 
-/** This class handles the permission system such as Game Masters and 
-    Role play masters.  
-    
-    This system uses 2 database tables.  One that defines the groups 
+/** This class handles the permission system such as Game Masters and
+    Role play masters.
+
+    This system uses 2 database tables.  One that defines the groups
     and their names ( and their parent group for inherriting commands ).
-    
-    The second is a table that assigns commands to different groups.  On 
+
+    The second is a table that assigns commands to different groups.  On
     load it will create two lists.  One based on group number and one based on
-    command.  
-    
+    command.
+
     That way when a player logs in we can get a list of commands based on their
     group and send them a subscribe message.  We can also then do level checking
-    when we receive a command from a client. 
-*/    
+    when we receive a command from a client.
+*/
 class psCommandManager
 {
 public:
     virtual ~psCommandManager();
-    
+
     bool LoadFromDatabase();
-    bool GroupExists( int securityLevel );
-    bool Validate( int securityLevel, const char* command );
-    bool Validate( int securityLevel, const char* command, csString& error );
-    void BuildXML( int securityLevel, csString& dest, bool subscribe = true);
+    bool GroupExists(int securityLevel);
+    bool Validate(int securityLevel, const char* command);
+    bool Validate(int securityLevel, const char* command, csString &error);
+    void BuildXML(int securityLevel, csString &dest, bool subscribe = true);
 
 private:
-    
+
     csHash<CommandGroup*, int>     commandGroups;
     csHash<CommandList*, csString> commandLists;
 };

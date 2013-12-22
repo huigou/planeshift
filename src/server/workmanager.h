@@ -115,7 +115,7 @@ struct NaturalResource
     int          reward;                ///< Item ID of the reward
     csString     reward_nickname;       ///< Item name of the reward
     size_t       action;                ///< The action you need to take to get this resource.
-                                        ///< Id Corresponding to resourcesActions index.
+    ///< Id Corresponding to resourcesActions index.
 };
 
 
@@ -272,7 +272,7 @@ public:
      */
     void HandleRepairEvent(psWorkGameEvent* workEvent);
     void LockpickComplete(psWorkGameEvent* workEvent);
-    
+
     /** @} */
 
 
@@ -571,7 +571,7 @@ protected:
      * @param trans             The transformation which was applied in order to generate this item, if any, else NULL.
      */
     psItem* TransformTargetItem(psItem* oldItem, uint32 newId, int newQty, float itemQuality, psTradeProcesses* process, psTradeTransformations* trans);
-    
+
     void TransformTargetItemToNpc(psItem* workItem, Client* client);
 
     /**

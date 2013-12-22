@@ -108,7 +108,7 @@ public:
      * Just sets all the pointers to NULL.
      */
     psServer();
-    
+
     /**
      * Destructor.
      *
@@ -116,7 +116,7 @@ public:
      * world.
      */
     ~psServer();
-    
+
     /**
      * Initialize the server.
      *
@@ -146,7 +146,7 @@ public:
      * @return Returns success or failure.
      */
     bool Initialize(iObjectRegistry* objreg);
-    
+
     /**
      * Runs a script file to set up server and goes to the consoles main loop.
      *
@@ -185,7 +185,7 @@ public:
      * @see EntityManager::IsReady()
      */
     bool IsReady();
-    
+
     /**
      * Checks to see if a world has loaded in the past.
      *
@@ -193,7 +193,7 @@ public:
      * @see EntityManager::HasBeenReady()
      */
     bool HasBeenReady();
-    
+
     /**
      * Checks if the server is full
      *
@@ -201,7 +201,7 @@ public:
      * @param client Will say no if client is GM
      */
     bool IsFull(size_t numclients, Client* client);
-    
+
     /**
      * Removes a player from the world.
      *
@@ -225,7 +225,7 @@ public:
      *                  player from the world.
      */
     void MutePlayer(uint32_t clientnum,const char* reason);
-    
+
     /**
      * Unmutes player
      */
@@ -238,7 +238,7 @@ public:
     {
         return (const char*)motd.GetData();
     }
-    
+
     /**
      * Sets the MOTD string.
      */
@@ -256,7 +256,7 @@ public:
     {
         return netmanager;
     }
-    
+
     /**
      * Returns the Chat manager.
      *
@@ -266,7 +266,7 @@ public:
     {
         return chatmanager;
     }
-    
+
     /**
      * Returns the Advice manager.
      *
@@ -276,7 +276,7 @@ public:
     {
         return advicemanager;
     }
-    
+
     /**
      * Returns the Advice manager.
      *
@@ -286,7 +286,7 @@ public:
     {
         return actionmanager;
     }
-    
+
     /**
      * Returns the NPC Superclient manager.
      *
@@ -296,7 +296,7 @@ public:
     {
         return npcmanager;
     }
-    
+
     /**
      * Returns the database manager.
      *
@@ -306,7 +306,7 @@ public:
     {
         return database;
     }
-    
+
     /**
      * Returns the configuration manager.
      *
@@ -316,7 +316,7 @@ public:
     {
         return configmanager;
     }
-    
+
     /**
      * Returns the object registry.
      *
@@ -326,7 +326,7 @@ public:
     {
         return objreg;
     }
-    
+
     /**
      * Returns the spawn manager.
      *
@@ -336,7 +336,7 @@ public:
     {
         return spawnmanager;
     }
-    
+
     /**
      * Returns the event manager.
      *
@@ -376,7 +376,7 @@ public:
     {
         return adminmanager;
     }
-    
+
     /**
      * Returns the character manager.
      *

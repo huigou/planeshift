@@ -78,22 +78,22 @@
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psraceinfo.h"
 
-int com_lock (const char*)
+int com_lock(const char*)
 {
     EntityManager::GetSingleton().SetReady(false);
     return 0;
 }
 
-int com_ready (const char*)
+int com_ready(const char*)
 {
-    if (psserver->IsMapLoaded())
+    if(psserver->IsMapLoaded())
     {
         EntityManager::GetSingleton().SetReady(true);
-        CPrintf (CON_CMDOUTPUT, "Server is now ready\n");
+        CPrintf(CON_CMDOUTPUT, "Server is now ready\n");
     }
     else
     {
-        CPrintf (CON_CMDOUTPUT, "Failed to switch server to ready! No map loaded\n");
+        CPrintf(CON_CMDOUTPUT, "Failed to switch server to ready! No map loaded\n");
     }
 
     return 0;
@@ -115,42 +115,42 @@ int com_quit(const char*  arg)
 
 /* Print out help for ARG, or for all of the commands if ARG is
 not present. */
-int com_help (const char* arg)
+int com_help(const char* arg)
 {
     register int i;
     int printed = 0;
 
     CPrintf(CON_CMDOUTPUT ,"\n");
-    for (i = 0; commands[i].name; i++)
+    for(i = 0; commands[i].name; i++)
     {
-        if (!*arg || (strcmp (arg, commands[i].name) == 0))
+        if(!*arg || (strcmp(arg, commands[i].name) == 0))
         {
             if(strlen(commands[i].name) < 8)
-                CPrintf (CON_CMDOUTPUT ,"%s\t\t%s.\n", commands[i].name, commands[i].doc);
+                CPrintf(CON_CMDOUTPUT ,"%s\t\t%s.\n", commands[i].name, commands[i].doc);
             else
-                CPrintf (CON_CMDOUTPUT ,"%s\t%s.\n", commands[i].name, commands[i].doc);
+                CPrintf(CON_CMDOUTPUT ,"%s\t%s.\n", commands[i].name, commands[i].doc);
             printed++;
         }
     }
 
-    if (!printed)
+    if(!printed)
     {
-        CPrintf (CON_CMDOUTPUT ,"No commands match `%s'.  Possibilities are:\n", arg);
+        CPrintf(CON_CMDOUTPUT ,"No commands match `%s'.  Possibilities are:\n", arg);
 
-        for (i = 0; commands[i].name; i++)
+        for(i = 0; commands[i].name; i++)
         {
             /* Print in six columns. */
-            if (printed == 6)
+            if(printed == 6)
             {
                 printed = 0;
-                CPrintf (CON_CMDOUTPUT ,"\n");
+                CPrintf(CON_CMDOUTPUT ,"\n");
             }
 
-            CPrintf (CON_CMDOUTPUT ,"%s\t", commands[i].name);
+            CPrintf(CON_CMDOUTPUT ,"%s\t", commands[i].name);
             printed++;
         }
 
-        if (printed)
+        if(printed)
             CPrintf(CON_CMDOUTPUT ,"\n");
     }
 
@@ -162,21 +162,21 @@ int com_help (const char* arg)
 static inline csString PS_GetClientStatus(Client* client)
 {
     csString status;
-    if (client->IsReady())
+    if(client->IsReady())
     {
-        if (client->GetConnection()->heartbeat == 0)
+        if(client->GetConnection()->heartbeat == 0)
         {
             status = "ok";
         }
         else
         {
-            status.Format ("connection problem(%d)",
-                client->GetConnection()->heartbeat);
+            status.Format("connection problem(%d)",
+                          client->GetConnection()->heartbeat);
         }
     }
     else
     {
-        if (client->GetActor())
+        if(client->GetActor())
         {
             status = "loading";
         }
@@ -189,25 +189,25 @@ static inline csString PS_GetClientStatus(Client* client)
     return status;
 }
 
-int com_settime( const char* arg )
+int com_settime(const char* arg)
 {
-    if (!arg || strlen (arg) == 0)
+    if(!arg || strlen(arg) == 0)
     {
         CPrintf(CON_CMDOUTPUT,"Please provide a time to use\n");
         return 0;
     }
 
-    int hour = atoi( arg );
+    int hour = atoi(arg);
     int minute = 0;
 
-    if ( hour > 23 || hour < 0 )
+    if(hour > 23 || hour < 0)
     {
-        CPrintf( CON_CMDOUTPUT, "Select a time between 0-23\n");
+        CPrintf(CON_CMDOUTPUT, "Select a time between 0-23\n");
         return 0;
     }
 
     psserver->GetWeatherManager()->SetGameTime(hour,minute);
-    CPrintf (CON_CMDOUTPUT, "Current Game Hour set to: %d:%02d\n", hour,minute);
+    CPrintf(CON_CMDOUTPUT, "Current Game Hour set to: %d:%02d\n", hour,minute);
 
     return 0;
 }
@@ -226,51 +226,51 @@ int com_showtime(const char*)
 
 int com_setmaxout(const char* arg)
 {
-    if (!arg || strlen (arg) == 0)
+    if(!arg || strlen(arg) == 0)
     {
-        CPrintf (CON_CMDOUTPUT, "Use one of the following values to control output on standard output:\n");
-        CPrintf (CON_CMDOUTPUT, "  0: no output at all\n");
-        CPrintf (CON_CMDOUTPUT, "  1: only output of server commands\n");
-        CPrintf (CON_CMDOUTPUT, "  2: 1 + errors\n");
-        CPrintf (CON_CMDOUTPUT, "  3: 2 + warnings\n");
-        CPrintf (CON_CMDOUTPUT, "  4: 3 + notifications\n");
-        CPrintf (CON_CMDOUTPUT, "  5: 4 + debug messages\n");
-        CPrintf (CON_CMDOUTPUT, "  6: 5 + spam\n");
+        CPrintf(CON_CMDOUTPUT, "Use one of the following values to control output on standard output:\n");
+        CPrintf(CON_CMDOUTPUT, "  0: no output at all\n");
+        CPrintf(CON_CMDOUTPUT, "  1: only output of server commands\n");
+        CPrintf(CON_CMDOUTPUT, "  2: 1 + errors\n");
+        CPrintf(CON_CMDOUTPUT, "  3: 2 + warnings\n");
+        CPrintf(CON_CMDOUTPUT, "  4: 3 + notifications\n");
+        CPrintf(CON_CMDOUTPUT, "  5: 4 + debug messages\n");
+        CPrintf(CON_CMDOUTPUT, "  6: 5 + spam\n");
         return 0;
     }
     int msg = CON_SPAM;;
-    sscanf (arg, "%d", &msg);
-    ConsoleOut::SetMaximumOutputClassStdout ((ConsoleOutMsgClass)msg);
+    sscanf(arg, "%d", &msg);
+    ConsoleOut::SetMaximumOutputClassStdout((ConsoleOutMsgClass)msg);
     return 0;
 }
 
 int com_setmaxfile(const char* arg)
 {
-    if (!arg || strlen (arg) == 0)
+    if(!arg || strlen(arg) == 0)
     {
-        CPrintf (CON_CMDOUTPUT, "Use one of the following values to control output on output file:\n");
-        CPrintf (CON_CMDOUTPUT, "  0: no output at all\n");
-        CPrintf (CON_CMDOUTPUT, "  1: only output of server commands\n");
-        CPrintf (CON_CMDOUTPUT, "  2: 1 + errors\n");
-        CPrintf (CON_CMDOUTPUT, "  3: 2 + warnings\n");
-        CPrintf (CON_CMDOUTPUT, "  4: 3 + notifications\n");
-        CPrintf (CON_CMDOUTPUT, "  5: 4 + debug messages\n");
-        CPrintf (CON_CMDOUTPUT, "  6: 5 + spam\n");
+        CPrintf(CON_CMDOUTPUT, "Use one of the following values to control output on output file:\n");
+        CPrintf(CON_CMDOUTPUT, "  0: no output at all\n");
+        CPrintf(CON_CMDOUTPUT, "  1: only output of server commands\n");
+        CPrintf(CON_CMDOUTPUT, "  2: 1 + errors\n");
+        CPrintf(CON_CMDOUTPUT, "  3: 2 + warnings\n");
+        CPrintf(CON_CMDOUTPUT, "  4: 3 + notifications\n");
+        CPrintf(CON_CMDOUTPUT, "  5: 4 + debug messages\n");
+        CPrintf(CON_CMDOUTPUT, "  6: 5 + spam\n");
         return 0;
     }
     int msg = CON_SPAM;;
-    sscanf (arg, "%d", &msg);
-    ConsoleOut::SetMaximumOutputClassFile ((ConsoleOutMsgClass)msg);
+    sscanf(arg, "%d", &msg);
+    ConsoleOut::SetMaximumOutputClassFile((ConsoleOutMsgClass)msg);
     return 0;
 }
 
 int com_netprofile(const char*)
 {
-    psNetMsgProfiles * profs = psserver->GetNetManager()->GetProfs();
-    csString dumpstr = profs->Dump ();
+    psNetMsgProfiles* profs = psserver->GetNetManager()->GetProfs();
+    csString dumpstr = profs->Dump();
     csRef<iFile> file = psserver->vfs->Open("/this/netprofile.txt",VFS_FILE_WRITE);
     file->Write(dumpstr, dumpstr.Length());
-    CPrintf (CON_CMDOUTPUT, "Net profile dumped to netprofile.txt\n");
+    CPrintf(CON_CMDOUTPUT, "Net profile dumped to netprofile.txt\n");
     profs->Reset();
     return 0;
 }
@@ -280,7 +280,7 @@ int com_dbprofile(const char*)
     csString dumpstr = db->DumpProfile();
     csRef<iFile> file = psserver->vfs->Open("/this/dbprofile.txt",VFS_FILE_WRITE);
     file->Write(dumpstr, dumpstr.Length());
-    CPrintf (CON_CMDOUTPUT, "DB profile dumped to dbprofile.txt\n");
+    CPrintf(CON_CMDOUTPUT, "DB profile dumped to dbprofile.txt\n");
     db->ResetProfile();
     return 0;
 }
@@ -288,24 +288,24 @@ int com_dbprofile(const char*)
 int com_queue(const char* player)
 {
     int playernum = atoi(player);
-    if (playernum<=0)
+    if(playernum<=0)
     {
-        CPrintf (CON_CMDOUTPUT ,"Please Specify the number of the client!\n");
-        CPrintf (CON_CMDOUTPUT ,"  (you can use 'status' to see a list of clients and their"
-            "numbers.)\n");
+        CPrintf(CON_CMDOUTPUT ,"Please Specify the number of the client!\n");
+        CPrintf(CON_CMDOUTPUT ,"  (you can use 'status' to see a list of clients and their"
+                "numbers.)\n");
         return 0;
     }
 
     uint32_t cnum = (uint32_t) playernum;
     Client* client = psserver->GetNetManager()->GetConnections()->Find(cnum);
-    if (!client)
+    if(!client)
     {
-        CPrintf (CON_CMDOUTPUT ,COL_RED "Client with number %u not found!\n" COL_NORMAL,
-            cnum);
+        CPrintf(CON_CMDOUTPUT ,COL_RED "Client with number %u not found!\n" COL_NORMAL,
+                cnum);
         return 0;
     }
 
-    CPrintf (CON_CMDOUTPUT, "OutQueue size for client %d is %d\n", playernum, client->outqueue->Count());
+    CPrintf(CON_CMDOUTPUT, "OutQueue size for client %d is %d\n", playernum, client->outqueue->Count());
     return 0;
 
 }
@@ -316,34 +316,34 @@ int com_status(const char*)
     bool ready = psserver->IsReady();
     bool hasBeenReady = psserver->HasBeenReady();
 
-    CPrintf (CON_CMDOUTPUT ,"Server           : " COL_CYAN "%s\n" COL_NORMAL,
-        (ready ^ hasBeenReady) ? "is shutting down" : "is running.");
-    CPrintf (CON_CMDOUTPUT ,"World            : " COL_CYAN "%s\n" COL_NORMAL,
-        hasBeenReady ? "loaded and running." : "not loaded.");
-    CPrintf (CON_CMDOUTPUT ,"Connection Count : " COL_CYAN "%d\n" COL_NORMAL,
-        psserver->GetNetManager()->GetConnections()->Count());
-    CPrintf (CON_CMDOUTPUT ,COL_GREEN "%-5s %-7s %-25s %14s %10s %9s %s %s %s %s\n" COL_NORMAL,"EID","PID","Name","CNum","Ready","Time con.", "RTT", "Window filled", "Est. packet loss", "Packets sent");
+    CPrintf(CON_CMDOUTPUT ,"Server           : " COL_CYAN "%s\n" COL_NORMAL,
+            (ready ^ hasBeenReady) ? "is shutting down" : "is running.");
+    CPrintf(CON_CMDOUTPUT ,"World            : " COL_CYAN "%s\n" COL_NORMAL,
+            hasBeenReady ? "loaded and running." : "not loaded.");
+    CPrintf(CON_CMDOUTPUT ,"Connection Count : " COL_CYAN "%d\n" COL_NORMAL,
+            psserver->GetNetManager()->GetConnections()->Count());
+    CPrintf(CON_CMDOUTPUT ,COL_GREEN "%-5s %-7s %-25s %14s %10s %9s %s %s %s %s\n" COL_NORMAL,"EID","PID","Name","CNum","Ready","Time con.", "RTT", "Window filled", "Est. packet loss", "Packets sent");
 
     ClientConnectionSet* clients = psserver->GetNetManager()->GetConnections();
-    if (psserver->GetNetManager()->GetConnections()->Count() == 0)
+    if(psserver->GetNetManager()->GetConnections()->Count() == 0)
     {
-        CPrintf (CON_CMDOUTPUT ,"  *** List Empty ***\n");
+        CPrintf(CON_CMDOUTPUT ,"  *** List Empty ***\n");
         return 0;
     }
 
     ClientIterator i(*clients);
     while(i.HasNext())
     {
-        Client *client = i.Next();
+        Client* client = i.Next();
         csString clientStatus;
         clientStatus.Format("%5d %7d %-25s %14d %10s",
-                client->GetActor() ? client->GetActor()->GetEID().Unbox() : 0,
-                client->GetPID().Unbox(),
-                client->GetName(),
-                client->GetClientNum(),
-                (const char*) PS_GetClientStatus(client));
+                            client->GetActor() ? client->GetActor()->GetEID().Unbox() : 0,
+                            client->GetPID().Unbox(),
+                            client->GetName(),
+                            client->GetClientNum(),
+                            (const char*) PS_GetClientStatus(client));
 
-        psCharacter * character = client->GetCharacterData();
+        psCharacter* character = client->GetCharacterData();
         //if the client lacks a character (eg: npcclient) show for now 0:0:0 as time
         //so the table doesn't get screwed up
         unsigned int time = character? character->GetOnlineTimeThisSession() : 0;
@@ -356,11 +356,11 @@ int com_status(const char*)
 
         if(client->GetConnection())
         {
-        	clientStatus.AppendFmt(" %4u %4u %4.2f %4u", client->GetConnection()->RTO,
-                    client->GetConnection()->window, client->GetConnection()->sends > 0 ?  100.0 * client->GetConnection()->resends/client->GetConnection()->sends : 0.0, client->GetConnection()->sends);
+            clientStatus.AppendFmt(" %4u %4u %4.2f %4u", client->GetConnection()->RTO,
+                                   client->GetConnection()->window, client->GetConnection()->sends > 0 ?  100.0 * client->GetConnection()->resends/client->GetConnection()->sends : 0.0, client->GetConnection()->sends);
         }
         clientStatus.Append('\n');
-        CPrintf (CON_CMDOUTPUT ,clientStatus.GetData());
+        CPrintf(CON_CMDOUTPUT ,clientStatus.GetData());
     }
 
     return 0;
@@ -391,30 +391,30 @@ int com_sayGossip(const char* text)
 int com_kick(const char* player)
 {
     int playernum = atoi(player);
-    if (playernum<=0)
+    if(playernum<=0)
     {
-        CPrintf (CON_CMDOUTPUT ,"Please Specify the number of the client!\n");
-        CPrintf (CON_CMDOUTPUT ,"  (you can use 'status' to see a list of clients and their"
-            "numbers.)\n");
+        CPrintf(CON_CMDOUTPUT ,"Please Specify the number of the client!\n");
+        CPrintf(CON_CMDOUTPUT ,"  (you can use 'status' to see a list of clients and their"
+                "numbers.)\n");
         return 0;
     }
 
     uint32_t cnum = (uint32_t) playernum;
     Client* client = psserver->GetNetManager()->GetConnections()->Find(cnum);
-    if (!client)
+    if(!client)
     {
-        CPrintf (CON_CMDOUTPUT ,COL_RED "Client with number %u not found!\n" COL_NORMAL,
-            cnum);
+        CPrintf(CON_CMDOUTPUT ,COL_RED "Client with number %u not found!\n" COL_NORMAL,
+                cnum);
         return 0;
     }
 
-    psserver->RemovePlayer (cnum,"You were kicked from the server by a GM.");
+    psserver->RemovePlayer(cnum,"You were kicked from the server by a GM.");
     return 0;
 }
 
-int com_delete( const char* name )
+int com_delete(const char* name)
 {
-    if ( strlen(name) == 0 )
+    if(strlen(name) == 0)
     {
         CPrintf(CON_CMDOUTPUT ,"Usuage:\nPS Server: delete charactername\n");
         return 0;
@@ -422,20 +422,20 @@ int com_delete( const char* name )
 
     //Check to see if this player needs to be kicked first
     Client* client = psserver->GetNetManager()->GetConnections()->Find(name);
-    if (client)
+    if(client)
     {
-        psserver->RemovePlayer (client->GetClientNum(),"Your character is being deleted so you are being kicked.");
+        psserver->RemovePlayer(client->GetClientNum(),"Your character is being deleted so you are being kicked.");
     }
 
     PID characteruid=psserver->CharacterLoader.FindCharacterID(name);
-    if (!characteruid.IsValid())
+    if(!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character <%s> was not found in the database.\n", name);
         return 0;
     }
 
     csString error;
-    if (!psserver->CharacterLoader.DeleteCharacterData(characteruid,error))
+    if(!psserver->CharacterLoader.DeleteCharacterData(characteruid,error))
     {
         if(!error.Length())
             CPrintf(CON_CMDOUTPUT ,"Character <%s> was not found in the database.\n", name);
@@ -455,29 +455,29 @@ int com_set(const char* args)
 {
     iConfigManager* cfgmgr = psserver->GetConfig();
 
-    if (!strcmp(args, ""))
+    if(!strcmp(args, ""))
     {
-        CPrintf (CON_CMDOUTPUT ,"Please give the name of the var you want to change:\n");
+        CPrintf(CON_CMDOUTPUT ,"Please give the name of the var you want to change:\n");
 
         csRef<iConfigIterator> ci = cfgmgr->Enumerate("PlaneShift.Server.User.");
-        if (!ci)
+        if(!ci)
         {
             return 0;
         }
 
-        while (ci->HasNext())
+        while(ci->HasNext())
         {
             ci->Next();
 
-            if (ci->GetKey(true))
+            if(ci->GetKey(true))
             {
-                if (ci->GetComment())
+                if(ci->GetComment())
                 {
-                    CPrintf (CON_CMDOUTPUT ,"%s",ci->GetComment());
+                    CPrintf(CON_CMDOUTPUT ,"%s",ci->GetComment());
                 }
 
-                CPrintf (CON_CMDOUTPUT ,COL_GREEN "%s = '%s'\n" COL_NORMAL,
-                         ci->GetKey(true), ci->GetStr());
+                CPrintf(CON_CMDOUTPUT ,COL_GREEN "%s = '%s'\n" COL_NORMAL,
+                        ci->GetKey(true), ci->GetStr());
             }
         }
     }
@@ -487,16 +487,16 @@ int com_set(const char* args)
         csString a1 = "PlaneShift.Server.User.";
         a1 += words[0];
         csString a2 = words[1];
-        if (a2.IsEmpty())
+        if(a2.IsEmpty())
         {
-            CPrintf (CON_CMDOUTPUT ,COL_GREEN " %s = '%s'\n" COL_NORMAL,
-                     (const char*) a1, cfgmgr->GetStr(a1, ""));
+            CPrintf(CON_CMDOUTPUT ,COL_GREEN " %s = '%s'\n" COL_NORMAL,
+                    (const char*) a1, cfgmgr->GetStr(a1, ""));
         }
         else
         {
             cfgmgr->SetStr(a1, a2);
-            CPrintf (CON_CMDOUTPUT ,COL_GREEN " SET %s = '%s'\n" COL_NORMAL,
-                     (const char*) a1, cfgmgr->GetStr(a1, ""));
+            CPrintf(CON_CMDOUTPUT ,COL_GREEN " SET %s = '%s'\n" COL_NORMAL,
+                    (const char*) a1, cfgmgr->GetStr(a1, ""));
         }
     }
 
@@ -506,21 +506,21 @@ int com_set(const char* args)
 int com_maplist(const char*)
 {
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psserver->GetObjectReg());
-    if (!vfs)
+    if(!vfs)
         return 0;
 
     csRef<iDataBuffer> xpath = vfs->ExpandPath("/planeshift/world/");
     const char* dir = **xpath;
     csRef<iStringArray> files = vfs->FindFiles(dir);
 
-    if (!files)
+    if(!files)
         return 0;
-    for (size_t i=0; i < files->GetSize(); i++)
+    for(size_t i=0; i < files->GetSize(); i++)
     {
-        char * name = csStrNew(files->Get(i));
-        char * onlyname = name + strlen("/planeshift/world/");
+        char* name = csStrNew(files->Get(i));
+        char* onlyname = name + strlen("/planeshift/world/");
         onlyname[strlen(onlyname)] = '\0';
-        CPrintf (CON_CMDOUTPUT ,"%s\n",onlyname);
+        CPrintf(CON_CMDOUTPUT ,"%s\n",onlyname);
         delete [] name;
     }
     return 0;
@@ -535,17 +535,17 @@ int com_dumpwarpspace(const char*)
 
 int com_loadmap(const char* mapname)
 {
-    if (!strcmp(mapname, ""))
+    if(!strcmp(mapname, ""))
     {
-        CPrintf (CON_CMDOUTPUT ,COL_RED "Please specify any zip file in your /art/world"
-            " directory:\n" COL_NORMAL);
-                com_maplist(NULL);
+        CPrintf(CON_CMDOUTPUT ,COL_RED "Please specify any zip file in your /art/world"
+                " directory:\n" COL_NORMAL);
+        com_maplist(NULL);
         return 0;
     }
 
-    if (!psserver->LoadMap(mapname))
+    if(!psserver->LoadMap(mapname))
     {
-        CPrintf (CON_CMDOUTPUT ,"Couldn't load map %s!\n", mapname);
+        CPrintf(CON_CMDOUTPUT ,"Couldn't load map %s!\n", mapname);
         return 0;
     }
 
@@ -556,11 +556,11 @@ int com_spawn(const char* sector = 0)
 {
     // After world is loaded, repop NPCs--only the first time.
     static bool already_spawned = false;
-    psSectorInfo *sectorinfo = NULL;
-    if ( sector )
+    psSectorInfo* sectorinfo = NULL;
+    if(sector)
         sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(sector);
 
-    if (!already_spawned)
+    if(!already_spawned)
     {
         psserver->GetSpawnManager()->RepopulateLive(sectorinfo);
         psserver->GetSpawnManager()->RepopulateItems(sectorinfo);
@@ -578,7 +578,7 @@ int com_spawn(const char* sector = 0)
 int com_rain(const char* arg)
 {
     const char*  syntax = "rain <sector> <drops> <fade> <duration>";
-    if (strlen(arg) == 0)
+    if(strlen(arg) == 0)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify sector and number of drops (minimum 2000 drops for lightning, 0 drops to stop rain) and duration (0 for default duration).\nSyntax: %s\n",syntax);
         return 0;
@@ -588,18 +588,18 @@ int com_rain(const char* arg)
     int drops = atoi(words[1]);
     int fade = atoi(words[2]);
     int length = atoi(words[3]);
-    psSectorInfo *sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(sector.GetData());
-    if (!sectorinfo)
+    psSectorInfo* sectorinfo = psserver->GetCacheManager()->GetSectorInfoByName(sector.GetData());
+    if(!sectorinfo)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not find that sector.\nSyntax: %s\n",syntax);
         return 0;
     }
-    if (drops < 0 || (length <= 0 && drops > 0))
+    if(drops < 0 || (length <= 0 && drops > 0))
     {
         CPrintf(CON_CMDOUTPUT ,"Drops must be >= 0. Length must be > 0 if drops > 0.\nSyntax: %s\n",syntax);
         return 0;
     }
-    if (drops == 0)
+    if(drops == 0)
     {
         CPrintf(CON_CMDOUTPUT ,"Stopping rain in sector %s.\n", sector.GetData());
     }
@@ -610,14 +610,14 @@ int com_rain(const char* arg)
     }
 
     psserver->GetWeatherManager()->QueueNextEvent(0, psWeatherMessage::RAIN, drops, length, fade,
-                                                  sector.GetData(), sectorinfo);
+            sector.GetData(), sectorinfo);
     return 0;
 }
 
 int com_dict(const char* arg)
 {
     WordArray words(arg);
-    if (words.GetCount()>1)
+    if(words.GetCount()>1)
     {
         csString fullname = words[0]+" "+words[1];
         dict->Print(fullname.GetDataSafe());
@@ -695,7 +695,7 @@ int com_importnpc(const char* filename)
             currentFile = filenames->Pop();
 
             // skip non xml files
-            if (currentFile.Find(".xml") == (size_t)-1)
+            if(currentFile.Find(".xml") == (size_t)-1)
                 continue;
 
             if(npcloader.LoadFromFile(currentFile))
@@ -711,7 +711,7 @@ int com_importnpc(const char* filename)
     };
 
 
-    if (npcloader.LoadFromFile(file))
+    if(npcloader.LoadFromFile(file))
     {
         CPrintf(CON_CMDOUTPUT ,"Succesfully imported NPC.\n");
     }
@@ -733,7 +733,7 @@ int com_exportnpc(const char* args)
     if(words.GetCount() == 1 && !strcasecmp(words.Get(0),"all"))
         all = true;
 
-    if (words.GetCount()!=2 && !all)
+    if(words.GetCount()!=2 && !all)
     {
         CPrintf(CON_CMDOUTPUT ,"Usage: /exportnpc <id> <filename>\n");
         CPrintf(CON_CMDOUTPUT ,"       /exportnpc all\n");
@@ -745,7 +745,7 @@ int com_exportnpc(const char* args)
     if(all)
     {
         Result result(db->Select("SELECT id from characters where npc_master_id !=0"));
-        if (!result.IsValid())
+        if(!result.IsValid())
         {
             CPrintf(CON_ERROR, "Cannot load character ids from database.\n");
             CPrintf(CON_ERROR, db->GetLastError());
@@ -761,7 +761,7 @@ int com_exportnpc(const char* args)
         int npcid;
         unsigned long failed = 0;
 
-        for (unsigned long i=0; i<result.Count(); i++)
+        for(unsigned long i=0; i<result.Count(); i++)
         {
             npcid = result[i].GetInt(0);
             filename.Format("npc-id%i.xml", npcid);
@@ -778,7 +778,7 @@ int com_exportnpc(const char* args)
     int id = atoi(words.Get(0));
     csString fileName = words.Get(1);
 
-    if (npcloader.SaveToFile(id, fileName))
+    if(npcloader.SaveToFile(id, fileName))
     {
         CPrintf(CON_CMDOUTPUT ,"Succesfully exported NPC.\n");
     }
@@ -795,18 +795,18 @@ int com_importdialogs(const char* filename)
 {
     csString file;
 
-    if (filename==NULL || filename[0] == '\0')
+    if(filename==NULL || filename[0] == '\0')
     {
-      CPrintf(CON_WARNING ,"Please speficy a filename, pattern or 'all' (for all files in /this/).\n\n");
-      return 0;
+        CPrintf(CON_WARNING ,"Please speficy a filename, pattern or 'all' (for all files in /this/).\n\n");
+        return 0;
     }
 
-    printf ("-%s-",filename);
+    printf("-%s-",filename);
 
-    if (!strcmp(filename,"all"))
-      file="/this/";
+    if(!strcmp(filename,"all"))
+        file="/this/";
     else
-      file.Format("/this/%s", filename);
+        file.Format("/this/%s", filename);
 
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psserver->GetObjectReg());
 
@@ -826,7 +826,7 @@ int com_importdialogs(const char* filename)
             currentFile = filenames->Pop();
 
             // skip non xml files
-            if (currentFile.Find(".xml") == (size_t)-1)
+            if(currentFile.Find(".xml") == (size_t)-1)
                 continue;
 
             if(npcloader.LoadDialogsFromFile(currentFile))
@@ -842,7 +842,7 @@ int com_importdialogs(const char* filename)
     };
 
     psNPCLoader npcloader;
-    if (npcloader.LoadDialogsFromFile(file))
+    if(npcloader.LoadDialogsFromFile(file))
     {
         CPrintf(CON_CMDOUTPUT ,"Succesfully imported NPC dialogs.\n");
     }
@@ -860,10 +860,10 @@ int com_exportdialogs(const char* args)
     bool allquests = false;
     WordArray words(args);
 
-    if (words.GetCount() == 1 && !strcasecmp(words.Get(0),"allquests"))
+    if(words.GetCount() == 1 && !strcasecmp(words.Get(0),"allquests"))
         allquests = true;
 
-    if (words.GetCount()!=3 && !allquests)
+    if(words.GetCount()!=3 && !allquests)
     {
         CPrintf(CON_CMDOUTPUT ,"Usage: /exportdialogs area <areaname> <filename>\n");
         //CPrintf(CON_CMDOUTPUT ,"       /exportdialogs queststep <questid> <filename>\n");
@@ -887,11 +887,11 @@ int com_exportdialogs(const char* args)
         int questid;
         unsigned long failed = 0;
 
-        for(unsigned long i=0;i<questids.Count();i++)
+        for(unsigned long i=0; i<questids.Count(); i++)
         {
             questid = questids[i].GetInt(0);
             filename.Format("quest-id%i.xml",questid);
-            if (!npcloader.SaveDialogsToFile(areaname, filename, questid, true))
+            if(!npcloader.SaveDialogsToFile(areaname, filename, questid, true))
             {
                 failed++;
                 CPrintf(CON_WARNING, "Failed to export quest %i\n\n", questid);
@@ -908,23 +908,23 @@ int com_exportdialogs(const char* args)
 
     int questid = -1;
 
-    if (quest)
+    if(quest)
     {
         questid = atoi(areaname.GetData());
         areaname.Clear();
         Result masterQuest(db->Select("SELECT master_quest_id FROM quests WHERE id = '%i'", questid));
-        if (masterQuest.Count() < 1)
+        if(masterQuest.Count() < 1)
         {
             CPrintf(CON_CMDOUTPUT, "No quest with that id found in the quests table.\n");
             return -1;
         }
-        if (masterQuest[0].GetInt(0) != 0)
+        if(masterQuest[0].GetInt(0) != 0)
         {
             CPrintf(CON_CMDOUTPUT, "This quest is not a complete quest.\n");
             return -1;
         }
     }
-    else if (!type.CompareNoCase("area"))
+    else if(!type.CompareNoCase("area"))
     {
         CPrintf(CON_CMDOUTPUT ,"Usage: /exportdialogs area <areaname> <filename>\n");
         //CPrintf(CON_CMDOUTPUT ,"       /exportdialogs queststep <questid> <filename>\n");
@@ -935,7 +935,7 @@ int com_exportdialogs(const char* args)
     psNPCLoader npcloader;
     // trick to allow export of areas with spaces, just use $ instead, example Pet$Groffel$1
     areaname.ReplaceAll("$"," ");
-    if (npcloader.SaveDialogsToFile(areaname, filename, questid, quest))
+    if(npcloader.SaveDialogsToFile(areaname, filename, questid, quest))
     {
         CPrintf(CON_CMDOUTPUT ,"Succesfully exported NPC dialogs\n");
     }
@@ -951,12 +951,12 @@ int com_exportdialogs(const char* args)
 int com_newacct(const char* arg)
 {
     csStringArray words(arg,"/");
-    if (words.GetSize() < 2)
+    if(words.GetSize() < 2)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify username/password[/securitylevel].\n");
         return 0;
     }
-    
+
     csString username = words[0];
     csString password = words[1];
     csString levelStr = words[2];
@@ -969,7 +969,7 @@ int com_newacct(const char* arg)
     accountinfo.password = csMD5::Encode(password).HexString();
     accountinfo.securitylevel = level;
 
-    if (psserver->GetCacheManager()->NewAccountInfo(&accountinfo)==0)
+    if(psserver->GetCacheManager()->NewAccountInfo(&accountinfo)==0)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not create account.\n");
         return 0;
@@ -1100,7 +1100,7 @@ int com_addinv(const char* line)
 {
     bool temploaded=false;
 
-    if (!line)
+    if(!line)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify Character Name and Basic Item Template Name and optionally a stack count.\n");
         return 0;
@@ -1112,7 +1112,7 @@ int com_addinv(const char* line)
     csString item   = words[1];
     //int stack_count = words.GetInt(2);
 
-    if (!charactername.Length() || !item.Length())
+    if(!charactername.Length() || !item.Length())
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify Character Name and Basic Item Template ID and optionally a stack count.\n");
         return 0;
@@ -1120,15 +1120,15 @@ int com_addinv(const char* line)
 
     // Get the UID of this character based on the provided name.  This ensures the name is accurate.
     PID characteruid = psserver->CharacterLoader.FindCharacterID(charactername.GetData());
-    if (!characteruid.IsValid())
+    if(!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character name not found.\n");
         return 0;
     }
 
     // Get the ItemStats based on the name provided.
-    psItemStats *itemstats=psserver->GetCacheManager()->GetBasicItemStatsByID(atoi(item.GetData()) );
-    if (itemstats==NULL)
+    psItemStats* itemstats=psserver->GetCacheManager()->GetBasicItemStatsByID(atoi(item.GetData()));
+    if(itemstats==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"No Basic Item Template with that id was found.\n");
         return 0;
@@ -1136,9 +1136,9 @@ int com_addinv(const char* line)
 
     // If the character is online, update the stats live.  Otherwise we need to load the character data to add this item to
     //  an appropriate inventory slot.
-    psCharacter *chardata=NULL;
+    psCharacter* chardata=NULL;
     Client* client = psserver->GetNetManager()->GetConnections()->Find(charactername.GetData());
-    if (!client)
+    if(!client)
     {
         // Character is not online
         chardata=psserver->CharacterLoader.LoadCharacterData(characteruid,false);
@@ -1147,22 +1147,22 @@ int com_addinv(const char* line)
     else
         chardata=client->GetCharacterData();
 
-    if (chardata==NULL)
+    if(chardata==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not get character data for specified character.\n");
         return 0;
     }
 
 
-    psItem *iteminstance = itemstats->InstantiateBasicItem();
-    if (iteminstance==NULL)
+    psItem* iteminstance = itemstats->InstantiateBasicItem();
+    if(iteminstance==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not instantiate item based on basic properties.\n");
         return 0;
     }
 
     iteminstance->SetLoaded();  // Item is fully created
-    if (!chardata->Inventory().Add(iteminstance, false, false))
+    if(!chardata->Inventory().Add(iteminstance, false, false))
     {
         CPrintf(CON_CMDOUTPUT ,"The item did not fit into the character's inventory.\n");
         psserver->GetCacheManager()->RemoveInstance(iteminstance);
@@ -1170,7 +1170,7 @@ int com_addinv(const char* line)
     }
 
     // If we temporarily loaded the character for this add, unload them now
-    if (temploaded)
+    if(temploaded)
         delete chardata;
 
 
@@ -1179,234 +1179,257 @@ int com_addinv(const char* line)
     return 0;
 }
 
-csString get_item_modifiers(psItem *item)
+csString get_item_modifiers(psItem* item)
 {
     csString modifiers;
     modifiers = "(Modifiers:";
     bool use_comma = false;
     int i;
-    for (i = 0 ; i < PSITEM_MAX_MODIFIERS ; i++)
+    for(i = 0 ; i < PSITEM_MAX_MODIFIERS ; i++)
     {
         psItemStats* stats = item->GetModifier(i);
-        if (stats)
+        if(stats)
         {
-            if (use_comma) modifiers += ", ";
+            if(use_comma) modifiers += ", ";
             use_comma = true;
-            modifiers += stats->GetName ();
+            modifiers += stats->GetName();
         }
     }
-    if (!use_comma) modifiers += "none)";
+    if(!use_comma) modifiers += "none)";
     else modifiers += ")";
     return modifiers;
 }
 
-csString get_item_stats(psItem *item)
+csString get_item_stats(psItem* item)
 {
     csString stats;
-    stats.Format ("Qual:%g Guild:%u Crafter:%u DecayResist:%g SumWeight:%g Uni:%c",
-        item->GetItemQuality(),
-    item->GetGuildID(),
-    item->GetCrafterID().Unbox(),
-    item->GetDecayResistance(),
-    0.0, ////// TODO: Hardcoded zero weight
-    //////////////////////////item->GetSumWeight(),
-    item->GetIsUnique() ? 'Y' : 'N');
+    stats.Format("Qual:%g Guild:%u Crafter:%u DecayResist:%g SumWeight:%g Uni:%c",
+                 item->GetItemQuality(),
+                 item->GetGuildID(),
+                 item->GetCrafterID().Unbox(),
+                 item->GetDecayResistance(),
+                 0.0, ////// TODO: Hardcoded zero weight
+                 //////////////////////////item->GetSumWeight(),
+                 item->GetIsUnique() ? 'Y' : 'N');
     return stats;
 }
 
 static void indent(int depth)
 {
-    for (int i=0;i<depth;i++) CPrintf(CON_CMDOUTPUT ,"    ");
+    for(int i=0; i<depth; i++) CPrintf(CON_CMDOUTPUT ,"    ");
 }
 
-void show_itemstat_stats(const char* prefix,psItemStats *itemstats,int depth)
+void show_itemstat_stats(const char* prefix,psItemStats* itemstats,int depth)
 {
     indent(depth);
     PSITEM_FLAGS flags = itemstats->GetFlags();
     csString flags_string;
-    if (flags & PSITEMSTATS_FLAG_IS_A_MELEE_WEAPON) flags_string += "MELEE ";
-    if (flags & PSITEMSTATS_FLAG_IS_A_RANGED_WEAPON) flags_string += "RANGED ";
-    if (flags & PSITEMSTATS_FLAG_IS_A_SHIELD) flags_string += "SHIELD ";
-    if (flags & PSITEMSTATS_FLAG_IS_AMMO) flags_string += "AMMO ";
-    if (flags & PSITEMSTATS_FLAG_IS_A_CONTAINER) flags_string += "CONTAINER ";
-    if (flags & PSITEMSTATS_FLAG_IS_A_TRAP) flags_string += "TRAP ";
-    if (flags & PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE) flags_string += "CONSTRUCTIBLE ";
-    if (flags & PSITEMSTATS_FLAG_USES_AMMO) flags_string += "USESAMMO ";
-    if (flags & PSITEMSTATS_FLAG_IS_STACKABLE) flags_string += "STACKABLE ";
-    if (flags & PSITEMSTATS_FLAG_IS_GLYPH) flags_string += "GLYPH ";
-    if (flags & PSITEMSTATS_FLAG_CAN_TRANSFORM) flags_string += "TRANSFORM ";
-    if (flags & PSITEMSTATS_FLAG_NOPICKUP) flags_string += "NOPICKUP ";
-    if (flags & PSITEMSTATS_FLAG_TRIA) flags_string += "TRIA ";
-    if (flags & PSITEMSTATS_FLAG_HEXA) flags_string += "HEXA ";
-    if (flags & PSITEMSTATS_FLAG_OCTA) flags_string += "OCTA ";
-    if (flags & PSITEMSTATS_FLAG_CIRCLE) flags_string += "CIRCLE ";
-    if (flags & PSITEMSTATS_FLAG_CONSUMABLE) flags_string += "CONSUMABLE ";
+    if(flags & PSITEMSTATS_FLAG_IS_A_MELEE_WEAPON) flags_string += "MELEE ";
+    if(flags & PSITEMSTATS_FLAG_IS_A_RANGED_WEAPON) flags_string += "RANGED ";
+    if(flags & PSITEMSTATS_FLAG_IS_A_SHIELD) flags_string += "SHIELD ";
+    if(flags & PSITEMSTATS_FLAG_IS_AMMO) flags_string += "AMMO ";
+    if(flags & PSITEMSTATS_FLAG_IS_A_CONTAINER) flags_string += "CONTAINER ";
+    if(flags & PSITEMSTATS_FLAG_IS_A_TRAP) flags_string += "TRAP ";
+    if(flags & PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE) flags_string += "CONSTRUCTIBLE ";
+    if(flags & PSITEMSTATS_FLAG_USES_AMMO) flags_string += "USESAMMO ";
+    if(flags & PSITEMSTATS_FLAG_IS_STACKABLE) flags_string += "STACKABLE ";
+    if(flags & PSITEMSTATS_FLAG_IS_GLYPH) flags_string += "GLYPH ";
+    if(flags & PSITEMSTATS_FLAG_CAN_TRANSFORM) flags_string += "TRANSFORM ";
+    if(flags & PSITEMSTATS_FLAG_NOPICKUP) flags_string += "NOPICKUP ";
+    if(flags & PSITEMSTATS_FLAG_TRIA) flags_string += "TRIA ";
+    if(flags & PSITEMSTATS_FLAG_HEXA) flags_string += "HEXA ";
+    if(flags & PSITEMSTATS_FLAG_OCTA) flags_string += "OCTA ";
+    if(flags & PSITEMSTATS_FLAG_CIRCLE) flags_string += "CIRCLE ";
+    if(flags & PSITEMSTATS_FLAG_CONSUMABLE) flags_string += "CONSUMABLE ";
     {
         indent(depth);
         CPrintf(CON_CMDOUTPUT ,"%s Flags: %s\n", prefix, flags_string.GetData());
     }
 }
 
-void show_item_stats(psItem *item,int depth)
+void show_item_stats(psItem* item,int depth)
 {
     depth++;
-    if (item->GetDescription())
+    if(item->GetDescription())
     {
-    indent(depth);
+        indent(depth);
         CPrintf(CON_CMDOUTPUT ,"Desc:%s\n", item->GetDescription());
     }
 
     indent(depth);
     CPrintf(CON_CMDOUTPUT ,"Weight:%g Size:%g ContainerMaxSize:%d VisDistance:%g DecayResist:%g\n",
-                            item->GetWeight(),
-                            item->GetItemSize(),
-                            item->GetContainerMaxSize(),
-                            item->GetVisibleDistance(),
-                            item->GetDecayResistance());
+            item->GetWeight(),
+            item->GetItemSize(),
+            item->GetContainerMaxSize(),
+            item->GetVisibleDistance(),
+            item->GetDecayResistance());
 
-    if (item->GetMeshName())
+    if(item->GetMeshName())
     {
         indent(depth);
         CPrintf(CON_CMDOUTPUT ,"MeshName:%s\n", item->GetMeshName());
     }
-    if (item->GetTextureName())
+    if(item->GetTextureName())
     {
         indent(depth);
         CPrintf(CON_CMDOUTPUT ,"TextureName:%s\n", item->GetTextureName());
     }
-    if (item->GetPartName())
+    if(item->GetPartName())
     {
         indent(depth);
         CPrintf(CON_CMDOUTPUT ,"PartName:%s\n", item->GetPartName());
     }
-    if (item->GetImageName())
+    if(item->GetImageName())
     {
         indent(depth);
         CPrintf(CON_CMDOUTPUT ,"ImageName:%s\n", item->GetImageName());
     }
 
     psMoney price = item->GetPrice();
-    if (price.GetTotal() > 0)
+    if(price.GetTotal() > 0)
     {
-    indent(depth);
-        CPrintf (CON_CMDOUTPUT ,"Price Circles:%d Octas:%d Hexas:%d Trias:%d Total:%d\n",
-        price.GetCircles(), price.GetOctas(), price.GetHexas(), price.GetTrias(),
-        price.GetTotal());
+        indent(depth);
+        CPrintf(CON_CMDOUTPUT ,"Price Circles:%d Octas:%d Hexas:%d Trias:%d Total:%d\n",
+                price.GetCircles(), price.GetOctas(), price.GetHexas(), price.GetTrias(),
+                price.GetTotal());
     }
 
     PSITEM_FLAGS flags = item->GetFlags();
     csString flags_string;
-    if (flags & PSITEM_FLAG_UNIQUE_ITEM) flags_string += "UNIQUE ";
-    if (flags & PSITEM_FLAG_PURIFIED) flags_string += "PURIFIED ";
-    if (flags & PSITEM_FLAG_PURIFYING) flags_string += "PURIFYING ";
-    if (flags & PSITEM_FLAG_LOCKED) flags_string += "LOCKED ";
-    if (flags & PSITEM_FLAG_LOCKABLE) flags_string += "LOCKABLE ";
-    if (flags & PSITEM_FLAG_SECURITYLOCK) flags_string += "SECURITYLOCK ";
-    if (flags & PSITEM_FLAG_UNPICKABLE) flags_string += "UNPICKABLE ";
-    if (flags & PSITEM_FLAG_KEY) flags_string += "KEY ";
-    if (flags & PSITEM_FLAG_MASTERKEY) flags_string += "MASTERKEY ";
-    if (flags & PSITEM_FLAG_SETTINGITEM) flags_string += "SETTINGITEM ";
-    if (flags_string.Length () > 0)
+    if(flags & PSITEM_FLAG_UNIQUE_ITEM) flags_string += "UNIQUE ";
+    if(flags & PSITEM_FLAG_PURIFIED) flags_string += "PURIFIED ";
+    if(flags & PSITEM_FLAG_PURIFYING) flags_string += "PURIFYING ";
+    if(flags & PSITEM_FLAG_LOCKED) flags_string += "LOCKED ";
+    if(flags & PSITEM_FLAG_LOCKABLE) flags_string += "LOCKABLE ";
+    if(flags & PSITEM_FLAG_SECURITYLOCK) flags_string += "SECURITYLOCK ";
+    if(flags & PSITEM_FLAG_UNPICKABLE) flags_string += "UNPICKABLE ";
+    if(flags & PSITEM_FLAG_KEY) flags_string += "KEY ";
+    if(flags & PSITEM_FLAG_MASTERKEY) flags_string += "MASTERKEY ";
+    if(flags & PSITEM_FLAG_SETTINGITEM) flags_string += "SETTINGITEM ";
+    if(flags_string.Length() > 0)
     {
-    indent(depth);
-        CPrintf (CON_CMDOUTPUT ,"Flags: %s\n", flags_string.GetData());
+        indent(depth);
+        CPrintf(CON_CMDOUTPUT ,"Flags: %s\n", flags_string.GetData());
     }
 
     //psItemStats* basestats = item->GetBaseStats();
     //if (basestats)
     //show_itemstat_stats("Base",basestats,depth);
     psItemStats* curstats = item->GetCurrentStats();
-    if (curstats)
-    show_itemstat_stats("Current",curstats,depth);
+    if(curstats)
+        show_itemstat_stats("Current",curstats,depth);
 
     PSITEMSTATS_ARMORTYPE armortype = item->GetArmorType();
-    if (armortype != PSITEMSTATS_ARMORTYPE_NONE)
+    if(armortype != PSITEMSTATS_ARMORTYPE_NONE)
     {
         indent(depth);
-    switch (armortype)
-    {
-        case PSITEMSTATS_ARMORTYPE_LIGHT: CPrintf(CON_CMDOUTPUT ,"Armor:Light"); break;
-        case PSITEMSTATS_ARMORTYPE_MEDIUM: CPrintf(CON_CMDOUTPUT ,"Armor:Medium"); break;
-        case PSITEMSTATS_ARMORTYPE_HEAVY: CPrintf(CON_CMDOUTPUT ,"Armor:Heavy"); break;
-        default:;
-    }
-    CPrintf(CON_CMDOUTPUT ," Hardness:%g\n",
-        item->GetHardness());
+        switch(armortype)
+        {
+            case PSITEMSTATS_ARMORTYPE_LIGHT:
+                CPrintf(CON_CMDOUTPUT ,"Armor:Light");
+                break;
+            case PSITEMSTATS_ARMORTYPE_MEDIUM:
+                CPrintf(CON_CMDOUTPUT ,"Armor:Medium");
+                break;
+            case PSITEMSTATS_ARMORTYPE_HEAVY:
+                CPrintf(CON_CMDOUTPUT ,"Armor:Heavy");
+                break;
+            default:
+                ;
+        }
+        CPrintf(CON_CMDOUTPUT ," Hardness:%g\n",
+                item->GetHardness());
     }
     PSITEMSTATS_WEAPONTYPE weapontype = item->GetWeaponType();
-    if (weapontype != PSITEMSTATS_WEAPONTYPE_NONE)
+    if(weapontype != PSITEMSTATS_WEAPONTYPE_NONE)
     {
         indent(depth);
-        switch (weapontype)
+        switch(weapontype)
         {
-            case PSITEMSTATS_WEAPONTYPE_SWORD: CPrintf(CON_CMDOUTPUT ,"WType:Sword"); break;
-            case PSITEMSTATS_WEAPONTYPE_AXE: CPrintf(CON_CMDOUTPUT ,"WType:Axe"); break;
-            case PSITEMSTATS_WEAPONTYPE_DAGGER: CPrintf(CON_CMDOUTPUT ,"WType:Dagger"); break;
-            case PSITEMSTATS_WEAPONTYPE_HAMMER: CPrintf(CON_CMDOUTPUT ,"WType:Hammer"); break;
-        default:;
+            case PSITEMSTATS_WEAPONTYPE_SWORD:
+                CPrintf(CON_CMDOUTPUT ,"WType:Sword");
+                break;
+            case PSITEMSTATS_WEAPONTYPE_AXE:
+                CPrintf(CON_CMDOUTPUT ,"WType:Axe");
+                break;
+            case PSITEMSTATS_WEAPONTYPE_DAGGER:
+                CPrintf(CON_CMDOUTPUT ,"WType:Dagger");
+                break;
+            case PSITEMSTATS_WEAPONTYPE_HAMMER:
+                CPrintf(CON_CMDOUTPUT ,"WType:Hammer");
+                break;
+            default:
+                ;
         }
-    CPrintf(CON_CMDOUTPUT ," Latency:%g Penetration:%g untgtblock:%g tgtblock=%g cntblock=%g\n",
-        item->GetLatency(),
-        item->GetPenetration(),
-        item->GetUntargetedBlockValue(),
-        item->GetTargetedBlockValue(),
-        item->GetCounterBlockValue());
+        CPrintf(CON_CMDOUTPUT ," Latency:%g Penetration:%g untgtblock:%g tgtblock=%g cntblock=%g\n",
+                item->GetLatency(),
+                item->GetPenetration(),
+                item->GetUntargetedBlockValue(),
+                item->GetTargetedBlockValue(),
+                item->GetCounterBlockValue());
     }
     PSITEMSTATS_AMMOTYPE ammotype = item->GetAmmoType();
-    if (ammotype != PSITEMSTATS_AMMOTYPE_NONE)
+    if(ammotype != PSITEMSTATS_AMMOTYPE_NONE)
     {
         indent(depth);
-    switch (ammotype)
-    {
-        case PSITEMSTATS_AMMOTYPE_ARROWS: CPrintf(CON_CMDOUTPUT ,"Ammo:Arrows\n"); break;
-        case PSITEMSTATS_AMMOTYPE_BOLTS: CPrintf(CON_CMDOUTPUT ,"Ammo:Bolts\n"); break;
-        case PSITEMSTATS_AMMOTYPE_ROCKS: CPrintf(CON_CMDOUTPUT ,"Ammo:Rocks\n"); break;
-        default:;
-    }
+        switch(ammotype)
+        {
+            case PSITEMSTATS_AMMOTYPE_ARROWS:
+                CPrintf(CON_CMDOUTPUT ,"Ammo:Arrows\n");
+                break;
+            case PSITEMSTATS_AMMOTYPE_BOLTS:
+                CPrintf(CON_CMDOUTPUT ,"Ammo:Bolts\n");
+                break;
+            case PSITEMSTATS_AMMOTYPE_ROCKS:
+                CPrintf(CON_CMDOUTPUT ,"Ammo:Rocks\n");
+                break;
+            default:
+                ;
+        }
     }
 }
 
-csString com_showinv_itemextra(bool moreiteminfo, psItem *currentitem)
+csString com_showinv_itemextra(bool moreiteminfo, psItem* currentitem)
 {
-    if (moreiteminfo)
+    if(moreiteminfo)
         return get_item_modifiers(currentitem) + " " + get_item_stats(currentitem);
     else
         return csString("");
 }
 
-void com_showinv_item(bool moreiteminfo, psItem *currentitem, const char* slotname, unsigned int slotnumber)
+void com_showinv_item(bool moreiteminfo, psItem* currentitem, const char* slotname, unsigned int slotnumber)
 {
 //    psItem *workingset[5];
 //    unsigned int positionset[5];
     csString output;
 
-    if (currentitem!=NULL)
+    if(currentitem!=NULL)
     {
         if(moreiteminfo)
         {
             output.AppendFmt("%s\tCount: %d\tID:%u Instance ID:%u \n",currentitem->GetName(),
-                currentitem->GetStackCount(),currentitem->GetBaseStats()->GetUID(), currentitem->GetUID());
+                             currentitem->GetStackCount(),currentitem->GetBaseStats()->GetUID(), currentitem->GetUID());
         }
         else
         {
-            output.AppendFmt("%s\tCount: %d\t", currentitem->GetName(),currentitem->GetStackCount() );
+            output.AppendFmt("%s\tCount: %d\t", currentitem->GetName(),currentitem->GetStackCount());
         }
         csString siextra = com_showinv_itemextra(moreiteminfo,currentitem);
-        if (slotnumber != (unsigned int)-1)
+        if(slotnumber != (unsigned int)-1)
         {
             output.AppendFmt("(%s%u) Count:%u %s\n",slotname,slotnumber,currentitem->GetStackCount(), siextra.GetData());
-         //   CPrintf(CON_CMDOUTPUT ,"%s (%s%u) %s\n",currentitem->GetName(),slotname,slotnumber,
-         //   siextra.GetData());
+            //   CPrintf(CON_CMDOUTPUT ,"%s (%s%u) %s\n",currentitem->GetName(),slotname,slotnumber,
+            //   siextra.GetData());
         }
         else
         {
             output.AppendFmt("(%s) Extra: %s\n",slotname, siextra.GetData());
-         //   CPrintf(CON_CMDOUTPUT ,"%s (%s) %s\n",currentitem->GetName(),slotname,
-         //   siextra.GetData());
+            //   CPrintf(CON_CMDOUTPUT ,"%s (%s) %s\n",currentitem->GetName(),slotname,
+            //   siextra.GetData());
         }
         CPrintf(CON_CMDOUTPUT, output);
-        if (moreiteminfo)
-                show_item_stats(currentitem,0);
+        if(moreiteminfo)
+            show_item_stats(currentitem,0);
 
         /*******************************************************************************************
         if (currentitem->GetIsContainer())
@@ -1459,32 +1482,32 @@ void com_showinv_item(bool moreiteminfo, psItem *currentitem, const char* slotna
     }
 }
 
-int com_showinv(const char *line, bool moreiteminfo)
+int com_showinv(const char* line, bool moreiteminfo)
 {
     bool temploaded=false;
 
-    if (!line)
+    if(!line)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify a character name.\n");
         return 0;
     }
 
     // If the character is online use the active stats.  Otherwise we need to load the character data.
-    psCharacter *chardata=NULL;
+    psCharacter* chardata=NULL;
     PID characteruid = psserver->CharacterLoader.FindCharacterID(line,false);
-    if (!characteruid.IsValid())
+    if(!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character name is not found.\n");
         return 0;
     }
 
-    gemObject *obj = psserver->entitymanager->GetGEM()->FindPlayerEntity(characteruid);
-    if (!obj)
+    gemObject* obj = psserver->entitymanager->GetGEM()->FindPlayerEntity(characteruid);
+    if(!obj)
     {
         obj = psserver->entitymanager->GetGEM()->FindNPCEntity(characteruid);
     }
     // If the character is online use the active stats.  Otherwise we need to load the character data.
-    if (obj)
+    if(obj)
     {
         chardata = obj->GetCharacterData();
     }
@@ -1496,7 +1519,7 @@ int com_showinv(const char *line, bool moreiteminfo)
         temploaded=true;
     }
 
-    if (chardata==NULL)
+    if(chardata==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not get character data for specified character.\n");
         return 0;
@@ -1505,36 +1528,36 @@ int com_showinv(const char *line, bool moreiteminfo)
     /*  Iterating through a character's items is not standard enough to have an iterator yet.
      *   So we implement the logic here.
      */
-    psItem *currentitem;
+    psItem* currentitem;
     unsigned int charslot;
 
 ///KWF    CPrintf(CON_CMDOUTPUT ,"Weight: %.2f MaxWeight: %.2f Capacity: %.2f MaxCapacity: %.2f\n",
 ///            chardata->Inventory().Weight(),chardata->Inventory().MaxWeight(),
 ///            chardata->Inventory().Capacity(), chardata->Inventory().MaxCapacity());
 
-    if (moreiteminfo)
+    if(moreiteminfo)
         CPrintf(CON_CMDOUTPUT ,"%d trias, %d hexas, %d octas, %d circles\n",
                 chardata->Money().GetTrias(),
                 chardata->Money().GetHexas(),
                 chardata->Money().GetOctas(),
-                chardata->Money().GetCircles() );
+                chardata->Money().GetCircles());
 
-    CPrintf(CON_CMDOUTPUT ,"Total money: %d\n", chardata->Money().GetTotal() );
+    CPrintf(CON_CMDOUTPUT ,"Total money: %d\n", chardata->Money().GetTotal());
 
     // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
-    for (charslot=1;charslot<chardata->Inventory().GetInventoryIndexCount(); charslot++)
+    for(charslot=1; charslot<chardata->Inventory().GetInventoryIndexCount(); charslot++)
     {
         currentitem=chardata->Inventory().GetInventoryIndexItem(charslot);
-        const char* name = psserver->GetCacheManager()->slotNameHash.GetName( currentitem->GetLocInParent() );
+        const char* name = psserver->GetCacheManager()->slotNameHash.GetName(currentitem->GetLocInParent());
         char buff[20];
-        if (!name)
+        if(!name)
         {
-            cs_snprintf(buff,19,"Bulk %d",currentitem->GetLocInParent(true) );
+            cs_snprintf(buff,19,"Bulk %d",currentitem->GetLocInParent(true));
         }
         com_showinv_item(moreiteminfo,currentitem, name ? name : buff,(unsigned int)-1);
     }
 
-    if (temploaded)
+    if(temploaded)
         delete chardata;
 
     return 0;
@@ -1552,19 +1575,19 @@ int com_showinvf(const char* line)
 
 int com_bulkdelete(const char* line)
 {
-    if (!line)
+    if(!line)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify a source file.\n");
         return 0;
     }
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psserver->GetObjectReg());
 
-    if (!vfs->Exists(line))
+    if(!vfs->Exists(line))
     {
         CPrintf(CON_CMDOUTPUT ,"The specified file doesn't exist.\n");
         return 0;
     }
-    if (line[strlen(line)-1] == '/')
+    if(line[strlen(line)-1] == '/')
     {
         CPrintf(CON_CMDOUTPUT ,"The specified file doesn't exist.\n");
         return 0;
@@ -1572,12 +1595,12 @@ int com_bulkdelete(const char* line)
 
     csRef<iDataBuffer> filedataBuf = vfs->ReadFile(line);
     const char* filedata = *(*filedataBuf);
-    
+
     int totalCount = 0, failCount = 0;
 
-    while (*filedata != 0)
+    while(*filedata != 0)
     {
-        while (*filedata == '\n')
+        while(*filedata == '\n')
             ++filedata;
 
         //Extract a line
@@ -1588,7 +1611,7 @@ int com_bulkdelete(const char* line)
         filedata += len;
 
         int characteruid_int = atoi(fline);
-        if (characteruid_int < 1)
+        if(characteruid_int < 1)
             continue;
 
         ++totalCount;
@@ -1596,7 +1619,7 @@ int com_bulkdelete(const char* line)
         PID characteruid(characteruid_int);
 
         csString error;
-        if (!psserver->CharacterLoader.DeleteCharacterData(characteruid,error))
+        if(!psserver->CharacterLoader.DeleteCharacterData(characteruid,error))
         {
             if(!error.Length())
                 CPrintf(CON_CMDOUTPUT ,"Character <%u> was not found in the database.\n", characteruid.Unbox());
@@ -1605,7 +1628,7 @@ int com_bulkdelete(const char* line)
             ++failCount;
         }
     }
- 
+
     CPrintf(CON_CMDOUTPUT, "Found %u characters, deleted %u successfully, while %u failed.\n", totalCount, (totalCount - failCount), failCount);
 
     return 0;
@@ -1613,19 +1636,19 @@ int com_bulkdelete(const char* line)
 
 int com_exec(const char* line)
 {
-    if (!line)
+    if(!line)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify a script file.\n");
         return 0;
     }
     csRef<iVFS> vfs =  csQueryRegistry<iVFS> (psserver->GetObjectReg());
 
-    if (!vfs->Exists(line))
+    if(!vfs->Exists(line))
     {
         CPrintf(CON_CMDOUTPUT ,"The specified file doesn't exist.\n");
         return 0;
     }
-    if (line[strlen(line)-1] == '/')
+    if(line[strlen(line)-1] == '/')
     {
         CPrintf(CON_CMDOUTPUT ,"The specified file doesn't exist.\n");
         return 0;
@@ -1639,7 +1662,7 @@ int com_exec(const char* line)
 
 int com_print(const char* line)
 {
-    if (!line || !atoi(line) )
+    if(!line || !atoi(line))
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify an entity #.\n");
         return 0;
@@ -1649,17 +1672,17 @@ int com_print(const char* line)
 
     obj = psserver->entitymanager->GetGEM()->FindObject(eid);
 
-    if (obj)
+    if(obj)
     {
         obj->Dump();
 
-        gemNPC * npc = obj->GetNPCPtr();
-        if (npc)
+        gemNPC* npc = obj->GetNPCPtr();
+        if(npc)
         {
             CPrintf(CON_CMDOUTPUT ,"--------- NPC Information -------\n");
-            psNPCDialog *npcdlg = npc->GetNPCDialogPtr();
+            psNPCDialog* npcdlg = npc->GetNPCDialogPtr();
 
-            if (npcdlg)
+            if(npcdlg)
             {
                 npcdlg->DumpDialog();
             }
@@ -1678,24 +1701,24 @@ int com_print(const char* line)
 
 int com_entlist(const char* pattern)
 {
-    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
+    csHash<gemObject*, EID> &gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
 
     CPrintf(CON_CMDOUTPUT ,"%-5s %-7s %-15s %-20s Position\n","EID","PID","Type","Name");
-    while ( i.HasNext() )
+    while(i.HasNext())
     {
         obj = i.Next();
-        if (!obj)
+        if(!obj)
         {
             continue;
         }
 
-        if (!pattern || strstr(obj->GetName(),pattern) || atoi(pattern) == (int)obj->GetEID().Unbox())
-	{
+        if(!pattern || strstr(obj->GetName(),pattern) || atoi(pattern) == (int)obj->GetEID().Unbox())
+        {
             csVector3 pos;
             float     rot;
-            iSector  *sector;
+            iSector*  sector;
             obj->GetPosition(pos,rot,sector);
             const char* sector_name =
                 (sector) ? sector->QueryObject()->GetName():"(null)";
@@ -1705,7 +1728,7 @@ int com_entlist(const char* pattern)
                     obj->GetPID().Unbox(),
                     obj->GetObjectType(),
                     obj->GetName(),
-                    pos.x,pos.y,pos.z,sector_name );
+                    pos.x,pos.y,pos.z,sector_name);
         }
     }
 
@@ -1714,16 +1737,16 @@ int com_entlist(const char* pattern)
 
 int com_charlist(const char*)
 {
-    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
+    csHash<gemObject*, EID> &gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
 
     CPrintf(CON_CMDOUTPUT ,"%-9s %-5s %-9s  %-9s %-10s %-20s\n","PID","EID","CNUM","SCNUM","Type","Name");
-    while ( i.HasNext() )
+    while(i.HasNext())
     {
         obj = i.Next();
         gemActor* actor = dynamic_cast<gemActor*>(obj);
-        if (actor)
+        if(actor)
         {
             CPrintf(CON_CMDOUTPUT ,"%9u %5u %9u %9u %-10s %-20s\n",
                     actor->GetCharacterData()->GetPID().Unbox(),
@@ -1757,21 +1780,21 @@ int com_racelist(const char* pattern)
 int com_factions(const char*)
 {
 
-    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
+    csHash<gemObject*, EID> &gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator itr(gems.GetIterator());
     gemObject* obj;
 
     csArray<gemActor*> actors;
     size_t i;
     size_t j;
-    while ( itr.HasNext() )
+    while(itr.HasNext())
     {
         obj = itr.Next();
 
-        if (obj && obj->GetActorPtr())
+        if(obj && obj->GetActorPtr())
         {
-            gemActor * actor = obj->GetActorPtr();
-            if (actor)
+            gemActor* actor = obj->GetActorPtr();
+            if(actor)
                 actors.Push(actor);
         }
     }
@@ -1780,19 +1803,19 @@ int com_factions(const char*)
     {
         csString output;
         output.AppendFmt("                     ");
-        for (i = 0; i < num; i++)
+        for(i = 0; i < num; i++)
         {
             output.AppendFmt("%*s ", (int)csMax((size_t)7, strlen(actors[i]->GetName())), actors[i]->GetName());
         }
         CPrintf(CON_CMDOUTPUT ,"%s\n",output.GetDataSafe());
     }
-    
-    for (i = 0; i < num; i++)
+
+    for(i = 0; i < num; i++)
     {
         csString output;
-        
+
         output.AppendFmt("%20s ",actors[i]->GetName());
-        for (j = 0; j < num; j++)
+        for(j = 0; j < num; j++)
         {
             output.AppendFmt("%*.2f ", (int)csMax((size_t)7, strlen(actors[j]->GetName())), actors[i]->GetRelativeFaction(actors[j]));
         }
@@ -1804,23 +1827,23 @@ int com_factions(const char*)
     {
         csString output;
         output.AppendFmt("                     ");
-        while (iter.HasNext())
+        while(iter.HasNext())
         {
-            Faction * faction = iter.Next();
+            Faction* faction = iter.Next();
             output.AppendFmt("%15s ",faction->name.GetData());
         }
         CPrintf(CON_CMDOUTPUT ,"%s\n",output.GetDataSafe());
     }
-    
-    for (j = 0; j < num; j++)
+
+    for(j = 0; j < num; j++)
     {
         csString output;
         output.AppendFmt("%20s",actors[j]->GetName());
         csHash<Faction*, int>::GlobalIterator iter = factions_by_id.GetIterator();
-        while (iter.HasNext())
+        while(iter.HasNext())
         {
-            Faction * faction = iter.Next();
-            FactionSet * factionSet = actors[j]->GetCharacterData()->GetFactions();
+            Faction* faction = iter.Next();
+            FactionSet* factionSet = actors[j]->GetCharacterData()->GetFactions();
             int standing = 0;
             float weight = 0.0;
             factionSet->GetFactionStanding(faction->id,standing,weight);
@@ -1839,17 +1862,18 @@ int com_sectors(const char*)
     csRef<iEngine> engine = csQueryRegistry<iEngine> (psserver->GetObjectReg());
     csRef<iSectorList> sectorList = engine->GetSectors();
     csRef<iCollectionArray> collections = engine->GetCollections();
-    for (int i = 0; i < sectorList->GetCount(); i++){
-        iSector * sector = sectorList->Get(i);
+    for(int i = 0; i < sectorList->GetCount(); i++)
+    {
+        iSector* sector = sectorList->Get(i);
         csString sectorName = sector->QueryObject()->GetName();
-        psSectorInfo * si = psserver->GetCacheManager()->GetSectorInfoByName(sectorName);
+        psSectorInfo* si = psserver->GetCacheManager()->GetSectorInfoByName(sectorName);
 
 
         CPrintf(CON_CMDOUTPUT ,"%4i %4u %s",i,si?si->uid:0,sectorName.GetDataSafe());
 
-        for (size_t r = 0; r < collections->GetSize(); r++)
+        for(size_t r = 0; r < collections->GetSize(); r++)
         {
-            if (collections->Get(r)->FindSector(sector->QueryObject()->GetName()))
+            if(collections->Get(r)->FindSector(sector->QueryObject()->GetName()))
             {
 
                 CPrintf(CON_CMDOUTPUT ," %s", collections->Get(r)->QueryObject()->GetName());
@@ -1870,7 +1894,7 @@ int com_showlogs(const char* line)
 
 int com_setlog(const char* line)
 {
-    if (!*line)
+    if(!*line)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify: <log> <true/false> <filter_id>\n");
         CPrintf(CON_CMDOUTPUT, "            or: all <true/false> \n");
@@ -1882,8 +1906,8 @@ int com_setlog(const char* line)
     csString filter(words[2]);
 
     bool flag;
-    if (flagword.IsEmpty() || tolower(flagword.GetAt(0)) == 't' ||
-        tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
+    if(flagword.IsEmpty() || tolower(flagword.GetAt(0)) == 't' ||
+            tolower(flagword.GetAt(0)) == 'y' || flagword.GetAt(0) == '1')
     {
         flag=true;
     }
@@ -1907,14 +1931,14 @@ int com_adjuststat(const char* line)
 {
     CPrintf(CON_CMDOUTPUT, "No longer implemented, sorry.");
 #if 0
-    if (!line || !strcmp(line,"") || !strcmp((const char*)line,"help"))
+    if(!line || !strcmp(line,"") || !strcmp((const char*)line,"help"))
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify: PlayerName StatValue AdjustMent.\n"
-            "Where StatValue can be one of following:\n"
-            "HP: HP HP_max HP_rate\n"
-            "Mana: Mana: Mana_max Mana_rate\n"
-            "Physical Stamina: Pstamina(Psta) Pstamina(Psta)_max Pstamina(Psta)_rate\n"
-            "Mental Stamina: Mstamina(Msta) Mstamina(Msta)_max Mstamina(Msta)_rate");
+                "Where StatValue can be one of following:\n"
+                "HP: HP HP_max HP_rate\n"
+                "Mana: Mana: Mana_max Mana_rate\n"
+                "Physical Stamina: Pstamina(Psta) Pstamina(Psta)_max Pstamina(Psta)_rate\n"
+                "Mental Stamina: Mstamina(Msta) Mstamina(Msta)_max Mstamina(Msta)_rate");
         return 0;
     }
 
@@ -1924,21 +1948,21 @@ int com_adjuststat(const char* line)
     float adjust = atof(words[2]);
     int clientnum = atoi(words[0]);
 
-    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
+    csHash<gemObject*, EID> &gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
-    gemActor * actor = NULL;
+    gemActor* actor = NULL;
     bool found = false;
 
-    if (clientnum != 0)
+    if(clientnum != 0)
     {
         Client* client = psserver->GetNetManager()->GetClient(clientnum);
-        if (!client)
+        if(!client)
         {
             CPrintf(CON_CMDOUTPUT ,"Couldn't find client %d!\n",clientnum);
             return 0;
         }
         actor = client->GetActor();
-        if (!actor)
+        if(!actor)
         {
             CPrintf(CON_CMDOUTPUT ,"Found client, but not an actor!\n");
             return 0;
@@ -1949,16 +1973,16 @@ int com_adjuststat(const char* line)
     }
     else
     {
-        while ( i.HasNext() )
+        while(i.HasNext())
         {
             gemObject* obj = i.Next();
 
             actor = dynamic_cast<gemActor*>(obj);
-            if (
+            if(
                 actor &&
                 actor->GetCharacterData() &&
-                !strcmp( actor->GetCharacterData()->GetCharName(),charname.GetData() )
-                )
+                !strcmp(actor->GetCharacterData()->GetCharName(),charname.GetData())
+            )
             {
                 found = true;
                 break;
@@ -1967,59 +1991,59 @@ int com_adjuststat(const char* line)
     }
 
     // Fail safe
-    if (!actor)
+    if(!actor)
         return 0;
 
-    psCharacter *charData = actor->GetCharacterData();
-    if (charData)
+    psCharacter* charData = actor->GetCharacterData();
+    if(charData)
     {
         statValue.Downcase();
         float newValue = 0.0;
-        if (statValue == "hp" || statValue=="hitpoints")
+        if(statValue == "hp" || statValue=="hitpoints")
         {
             newValue = charData->AdjustHitPoints(adjust);
         }
-        else if (statValue == "hp_max" || statValue=="hitpoints_max")
+        else if(statValue == "hp_max" || statValue=="hitpoints_max")
         {
             newValue = charData->AdjustHitPointsMax(adjust);
         }
-        else if (statValue == "hp_rate" || statValue=="hitpoints_rate")
+        else if(statValue == "hp_rate" || statValue=="hitpoints_rate")
         {
             newValue = charData->AdjustHitPointsRate(adjust);
         }
-        else if (statValue == "mana")
+        else if(statValue == "mana")
         {
             newValue = charData->AdjustMana(adjust);
         }
-        else if (statValue == "mana_max")
+        else if(statValue == "mana_max")
         {
             newValue = charData->AdjustManaMax(adjust);
         }
-        else if (statValue == "mana_rate")
+        else if(statValue == "mana_rate")
         {
             newValue = charData->AdjustManaRate(adjust);
         }
-        else if (statValue == "pstamina" || statValue == "psta")
+        else if(statValue == "pstamina" || statValue == "psta")
         {
             newValue = charData->AdjustStamina(adjust,true);
         }
-        else if (statValue == "pstamina_max" || statValue == "psta_max")
+        else if(statValue == "pstamina_max" || statValue == "psta_max")
         {
             newValue = charData->AdjustStaminaMax(adjust,true);
         }
-        else if (statValue == "pstamina_rate" || statValue == "psta_rate")
+        else if(statValue == "pstamina_rate" || statValue == "psta_rate")
         {
             newValue = charData->AdjustStaminaRate(adjust,true);
         }
-        else if (statValue == "mstamina" || statValue == "msta")
+        else if(statValue == "mstamina" || statValue == "msta")
         {
             newValue = charData->AdjustStamina(adjust,false);
         }
-        else if (statValue == "mstamina_max" || statValue == "msta_max")
+        else if(statValue == "mstamina_max" || statValue == "msta_max")
         {
             newValue = charData->AdjustStaminaMax(adjust,false);
         }
-        else if (statValue == "mstamina_rate" || statValue == "msta_rate")
+        else if(statValue == "mstamina_rate" || statValue == "msta_rate")
         {
             newValue = charData->AdjustStaminaRate(adjust,false);
         }
@@ -2029,7 +2053,7 @@ int com_adjuststat(const char* line)
             return 0;
         }
         CPrintf(CON_CMDOUTPUT ,"Adjusted %s: %s with %.2f to %.2f\n",
-            charname.GetData(),statValue.GetData(),adjust,newValue);
+                charname.GetData(),statValue.GetData(),adjust,newValue);
         return 0;
     }
 #endif
@@ -2038,13 +2062,13 @@ int com_adjuststat(const char* line)
 
 int com_liststats(const char* line)
 {
-    if (!line)
+    if(!line)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify: PlayerName");
         return 0;
     }
     PID characteruid = psserver->CharacterLoader.FindCharacterID(line, false);
-    if (!characteruid.IsValid())
+    if(!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character name is not found.\n");
         return 0;
@@ -2058,13 +2082,13 @@ int com_liststats(const char* line)
     struct AutoRemove
     {
         bool temploaded;
-        psCharacter *chardata;
+        psCharacter* chardata;
         AutoRemove() : temploaded(false), chardata(NULL)
         {
         }
         ~AutoRemove()
         {
-            if (temploaded)
+            if(temploaded)
             {
                 delete chardata;
             }
@@ -2072,7 +2096,7 @@ int com_liststats(const char* line)
     };
     AutoRemove chardata_keeper;
 
-    if (!client)
+    if(!client)
     {
         // Character is not online
         chardata_keeper.chardata=psserver->CharacterLoader.LoadCharacterData(characteruid,true);
@@ -2081,7 +2105,7 @@ int com_liststats(const char* line)
     else
         chardata_keeper.chardata=client->GetCharacterData();
 
-    if (chardata_keeper.chardata==NULL)
+    if(chardata_keeper.chardata==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not get character data for specified character.\n");
         return 0;
@@ -2093,13 +2117,13 @@ int com_liststats(const char* line)
     {
         // Only show these stats if character is really loaded.
         CPrintf(CON_CMDOUTPUT ,"HP              %7.1f %7.1f(%7.1f) %7.1f(%7.1f)\n", charData->GetHP(),
-        charData->GetMaxHP().Base(), charData->GetMaxHP().Current(), charData->GetHPRate().Base(), charData->GetHPRate().Current());
+                charData->GetMaxHP().Base(), charData->GetMaxHP().Current(), charData->GetHPRate().Base(), charData->GetHPRate().Current());
         CPrintf(CON_CMDOUTPUT ,"Mana            %7.1f %7.1f(%7.1f) %7.1f(%7.1f)\n", charData->GetMana(),
-        charData->GetMaxMana().Base(), charData->GetMaxMana().Current(), charData->GetManaRate().Base(), charData->GetManaRate().Current());
+                charData->GetMaxMana().Base(), charData->GetMaxMana().Current(), charData->GetManaRate().Base(), charData->GetManaRate().Current());
         CPrintf(CON_CMDOUTPUT ,"Physical Stamina%7.1f %7.1f(%7.1f) %7.1f(%7.1f)\n", charData->GetStamina(true),
-        charData->GetMaxPStamina().Base(), charData->GetMaxPStamina().Current(), charData->GetPStaminaRate().Base(), charData->GetPStaminaRate().Current());
+                charData->GetMaxPStamina().Base(), charData->GetMaxPStamina().Current(), charData->GetPStaminaRate().Base(), charData->GetPStaminaRate().Current());
         CPrintf(CON_CMDOUTPUT ,"Mental Stamina  %7.1f %7.1f(%7.1f) %7.1f(%7.1f)\n",charData->GetStamina(false),
-        charData->GetMaxMStamina().Base(), charData->GetMaxMStamina().Current(), charData->GetMStaminaRate().Base(), charData->GetMStaminaRate().Current());
+                charData->GetMaxMStamina().Base(), charData->GetMaxMStamina().Current(), charData->GetMStaminaRate().Base(), charData->GetMStaminaRate().Current());
     }
 
     MathEnvironment skillVal;
@@ -2120,10 +2144,10 @@ int com_liststats(const char* line)
     CPrintf(CON_CMDOUTPUT ,"Experience points(W)  %7u\n",charData->GetExperiencePoints());
     CPrintf(CON_CMDOUTPUT ,"Progression points(X) %7u\n",charData->GetProgressionPoints());
     CPrintf(CON_CMDOUTPUT ,"%-20s %12s %12s %12s\n","Skill","Practice(Z)","Knowledge(Y)","Rank(R)");
-    for (unsigned int skillID = 0; skillID < psserver->GetCacheManager()->GetSkillAmount(); skillID++)
+    for(unsigned int skillID = 0; skillID < psserver->GetCacheManager()->GetSkillAmount(); skillID++)
     {
-        psSkillInfo * info = psserver->GetCacheManager()->GetSkillByID(skillID);
-        if (!info)
+        psSkillInfo* info = psserver->GetCacheManager()->GetSkillByID(skillID);
+        if(!info)
         {
             Error2("Can't find skill %d",skillID);
             continue;
@@ -2134,11 +2158,11 @@ int com_liststats(const char* line)
         unsigned int rank = charData->Skills().GetSkillRank(info->id).Current();
 
 
-        if ( z == 0 && y == 0 && rank == 0 )
+        if(z == 0 && y == 0 && rank == 0)
             continue;
 
         CPrintf(CON_CMDOUTPUT ,"%-20s %12u %12u %12u \n",info->name.GetData(),
-            z, y, rank );
+                z, y, rank);
     }
     return 0;
 }
@@ -2147,38 +2171,38 @@ int com_liststats(const char* line)
 int com_progress(const char* line)
 {
     csStringArray words(line,",");
-    
-    if (words.GetSize() < 2)
+
+    if(words.GetSize() < 2)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify: <player>, <event>\n");
 
         return 0;
     }
 
-    const char * event = words[1];
-    if (!event)
+    const char* event = words[1];
+    if(!event)
     {
         CPrintf(CON_CMDOUTPUT ,"Please specify: <player>, <event>\n");
         return 0;
     }
-    const char * charname = words[0];
+    const char* charname = words[0];
 
     // Convert to int, if possible
     int clientnum = atoi(charname);
 
-    csHash<gemObject*, EID> & gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
+    csHash<gemObject*, EID> &gems = psserver->entitymanager->GetGEM()->GetAllGEMS();
     csHash<gemObject*, EID>::GlobalIterator i(gems.GetIterator());
     gemObject* obj;
     gemActor* actor = NULL;
     bool found = false;
 
-    if (clientnum == 0)
+    if(clientnum == 0)
     {
-        while ( i.HasNext() )
+        while(i.HasNext())
         {
             obj = i.Next();
 
-            if (!strcasecmp(obj->GetName(),charname))
+            if(!strcasecmp(obj->GetName(),charname))
             {
                 actor = dynamic_cast<gemActor*>(obj);
                 found = true;
@@ -2189,14 +2213,14 @@ int com_progress(const char* line)
     else
     {
         Client* client = psserver->GetNetManager()->GetClient(clientnum);
-        if (!client)
+        if(!client)
         {
             CPrintf(CON_CMDOUTPUT ,"Player %d not found!\n",clientnum);
             return 0;
         }
 
         actor = client->GetActor();
-        if (!actor)
+        if(!actor)
         {
             CPrintf(CON_CMDOUTPUT ,"Player %s found, but without actor object!\n",client->GetName());
             return 0;
@@ -2206,18 +2230,18 @@ int com_progress(const char* line)
     }
 
     // Did we find the player?
-    if (!found)
+    if(!found)
     {
         CPrintf(CON_CMDOUTPUT ,"Player %s not found!\n",charname);
         return 0;
     }
 
 
-    if (actor!=NULL)
+    if(actor!=NULL)
     {
         // Find script
-        ProgressionScript *script = psserver->GetProgressionManager()->FindScript(event);
-        if (!script)
+        ProgressionScript* script = psserver->GetProgressionManager()->FindScript(event);
+        if(!script)
         {
             CPrintf(CON_CMDOUTPUT, "Progression script \"%s\" not found.", event);
             return 0;
@@ -2244,7 +2268,7 @@ int com_kill(const char* player)
 {
     int clientNum = atoi(player);
     Client* client = psserver->GetNetManager()->GetConnections()->Find(clientNum);
-    if (!client)
+    if(!client)
     {
         CPrintf(CON_CMDOUTPUT ,"Client %d not found!\n",clientNum);
         return 0;
@@ -2261,7 +2285,7 @@ int com_killnpc(const char* input)
 {
     EID eid = atoi(input);
     gemActor* object = dynamic_cast<gemActor*>(psserver->entitymanager->GetGEM()->FindObject(eid));
-    if (!object) 
+    if(!object)
     {
         CPrintf(CON_CMDOUTPUT, "NPC with %s not found!\n", ShowID(eid));
         return 0;
@@ -2272,7 +2296,7 @@ int com_killnpc(const char* input)
 
 int com_motd(const char* str)
 {
-    if (!strcmp(str,""))
+    if(!strcmp(str,""))
     {
         CPrintf(CON_CMDOUTPUT ,"MOTD: %s\n",psserver->GetMOTD());
     }
@@ -2283,7 +2307,7 @@ int com_motd(const char* str)
     return 0;
 }
 
-int com_questreward( const char* str )
+int com_questreward(const char* str)
 {
     csString cmd(str);
     WordArray words(cmd);
@@ -2291,22 +2315,22 @@ int com_questreward( const char* str )
     csString charactername = words[0];
     csString item   = words[1];
 
-    if (charactername.IsEmpty() || item.IsEmpty())
+    if(charactername.IsEmpty() || item.IsEmpty())
     {
         CPrintf(CON_CMDOUTPUT ,"Both char name and item number should be specified.\n");
         return 0;
     }
 
     PID characteruid = psserver->CharacterLoader.FindCharacterID(charactername.GetData());
-    if (!characteruid.IsValid())
+    if(!characteruid.IsValid())
     {
         CPrintf(CON_CMDOUTPUT ,"Character name not found.\n");
         return 0;
     }
 
     // Get the ItemStats based on the name provided.
-    psItemStats *itemstats=psserver->GetCacheManager()->GetBasicItemStatsByID(atoi(item.GetData()) );
-    if (itemstats==NULL)
+    psItemStats* itemstats=psserver->GetCacheManager()->GetBasicItemStatsByID(atoi(item.GetData()));
+    if(itemstats==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"No Basic Item Template with that id was found.\n");
         return 0;
@@ -2314,12 +2338,12 @@ int com_questreward( const char* str )
 
     // If the character is online, update the stats live.  Otherwise we need to load the character data to add this item to
     //  an appropriate inventory slot.
-    psCharacter *chardata=NULL;
+    psCharacter* chardata=NULL;
     Client* client = psserver->GetNetManager()->GetConnections()->Find(charactername.GetData());
     csArray<psItemStats*> items;
-    items.Push( itemstats );
+    items.Push(itemstats);
 
-    if (!client)
+    if(!client)
     {
         // Character is not online
         chardata=psserver->CharacterLoader.LoadCharacterData(characteruid,true);
@@ -2328,7 +2352,7 @@ int com_questreward( const char* str )
     else
         chardata=client->GetCharacterData();
 
-    if (chardata==NULL)
+    if(chardata==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not get character data for specified character.\n");
         return 0;
@@ -2358,7 +2382,7 @@ int com_transactions(const char* str)
 
     if(words[0] == "DUMP")
     {
-        for(unsigned int i = 0; i< economy->GetTotalTransactions();i++)
+        for(unsigned int i = 0; i< economy->GetTotalTransactions(); i++)
         {
             TransactionEntity* trans = economy->GetTransaction(i);
             if(trans)
@@ -2404,9 +2428,9 @@ int com_lschannel(const char*)
     return 0;
 }
 
-int com_randomloot( const char* loot )
+int com_randomloot(const char* loot)
 {
-    if (strlen(loot) == 0)
+    if(strlen(loot) == 0)
     {
         CPrintf(CON_CMDOUTPUT, "Error. Syntax = randomloot \"<item name>\" <#modifiers: 0-3>\n");
         return 0;
@@ -2416,7 +2440,7 @@ int com_randomloot( const char* loot )
     csString baseItemName = words[0];
     int numModifiers = atoi(words[1]);
 
-    if (numModifiers < 0 || numModifiers > 3)
+    if(numModifiers < 0 || numModifiers > 3)
     {
         numModifiers = 0;
         CPrintf(CON_CMDOUTPUT, "Number of modifiers out of range 0-3. Default = 0\n");
@@ -2424,11 +2448,11 @@ int com_randomloot( const char* loot )
 
     LootEntrySet* testLootEntrySet = new LootEntrySet(1);
     LootEntry* testEntry = new LootEntry;
-    if (testLootEntrySet && testEntry)
+    if(testLootEntrySet && testEntry)
     {
         // get the base item stats
         testEntry->item = psserver->GetCacheManager()->GetBasicItemStatsByName(baseItemName);
-        if (testEntry->item)
+        if(testEntry->item)
         {
             testEntry->probability = 1.0;   // want a dead cert for testing!
             testEntry->min_money = 0;       // ignore money
@@ -2461,38 +2485,38 @@ int com_list(const char* arg)
 {
     WordArray words(arg,false);
 
-    if (words.GetCount() == 0)
+    if(words.GetCount() == 0)
     {
         CPrintf(CON_CMDOUTPUT,"Syntax: list [char|ent|path|race|warpspace|waypoint] <pattern|EID>\n");
         return 0;
     }
 
     // Compare all strings up to the point that is needed to uniq identify them.
-    if (strncasecmp(words[0],"char",1) == 0)
+    if(strncasecmp(words[0],"char",1) == 0)
     {
         com_charlist(words[1]);
     }
-    else if (strncasecmp(words[0],"ent",1) == 0)
+    else if(strncasecmp(words[0],"ent",1) == 0)
     {
         com_entlist(words[1]);
     }
-    else if (strncasecmp(words[0],"path",1) == 0)
+    else if(strncasecmp(words[0],"path",1) == 0)
     {
         psserver->GetAdminManager()->GetPathNetwork()->ListPaths(words[1]);
     }
-    else if (strncasecmp(words[0],"race",1) == 0)
+    else if(strncasecmp(words[0],"race",1) == 0)
     {
         com_racelist(words[1]);
     }
-    else if (strncasecmp(words[0],"warpspace",3) == 0)
+    else if(strncasecmp(words[0],"warpspace",3) == 0)
     {
         EntityManager::GetSingleton().GetWorld()->DumpWarpCache();
     }
-    else if ((strncasecmp(words[0],"waypoint",3) == 0) || strncasecmp(words[0],"wp",2) == 0)
+    else if((strncasecmp(words[0],"waypoint",3) == 0) || strncasecmp(words[0],"wp",2) == 0)
     {
         psserver->GetAdminManager()->GetPathNetwork()->ListWaypoints(words[1]);
-    }    
-    
+    }
+
     return 0;
 }
 
@@ -2509,9 +2533,10 @@ int com_list(const char* arg)
  *
  * Make sure the last entry contain 0 for all entries to terminate the list.
  */
-const COMMAND commands[] = {
+const COMMAND commands[] =
+{
 
-  // Server commands
+    // Server commands
     { "-- Server commands",  true, NULL, "------------------------------------------------" },
     { "dbprofile",  true, com_dbprofile, "shows database profile info" },
     { "exec",      true, com_exec,      "Executes a script file" },

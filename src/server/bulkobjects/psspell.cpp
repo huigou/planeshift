@@ -59,29 +59,29 @@ psSpell::psSpell()
 
 psSpell::~psSpell()
 {
-    if (castDuration)
+    if(castDuration)
     {
         delete castDuration;
         castDuration = NULL;
     }
-    if (range)
+    if(range)
     {
         delete range;
         range = NULL;
     }
-    if (aoeRadius)
+    if(aoeRadius)
     {
         delete aoeRadius;
         aoeRadius = NULL;
     }
-    if (aoeAngle)
+    if(aoeAngle)
     {
         delete aoeAngle;
         aoeAngle = NULL;
     }
 }
 
-bool psSpell::Load(iResultRow& row)
+bool psSpell::Load(iResultRow &row)
 {
     id = row.GetInt("id");
 
@@ -101,14 +101,14 @@ bool psSpell::Load(iResultRow& row)
 
     // if spell is defensive then you must be able to cast it on friends, otherwise the entry is wrong.
     csString errorMsg;
-    if (!offensive)
+    if(!offensive)
     {
-        errorMsg.Format("Non-offensive spell '%s' cannot be cast on friends/self/item!", (const char *) name);
+        errorMsg.Format("Non-offensive spell '%s' cannot be cast on friends/self/item!", (const char*) name);
         CS_ASSERT_MSG(errorMsg, targetTypes & TARGET_FRIEND || targetTypes & TARGET_SELF || targetTypes & TARGET_ITEM);
     }
     else
     {
-        errorMsg.Format("Offensive spell '%s' cannot be cast on enemies!", (const char *) name);
+        errorMsg.Format("Offensive spell '%s' cannot be cast on enemies!", (const char*) name);
         CS_ASSERT_MSG(errorMsg, targetTypes & TARGET_FOE);
     }
 
@@ -132,13 +132,13 @@ bool psSpell::Load(iResultRow& row)
 
     // Load glyph sequence/assembler info
     Result glyphs(db->Select("SELECT * from spell_glyphs WHERE spell_id=%d ORDER BY position ASC",id));
-    if (glyphs.IsValid())
+    if(glyphs.IsValid())
     {
         unsigned int i;
-        for (i=0;i<glyphs.Count();i++)
+        for(i=0; i<glyphs.Count(); i++)
         {
-            psItemStats * stats = psserver->GetCacheManager()->GetBasicItemStatsByID(glyphs[i].GetInt("item_id"));
-            if (stats)
+            psItemStats* stats = psserver->GetCacheManager()->GetBasicItemStatsByID(glyphs[i].GetInt("item_id"));
+            if(stats)
             {
                 glyphList.Push(stats);
             }
@@ -153,10 +153,10 @@ bool psSpell::Load(iResultRow& row)
     return true;
 }
 
-float psSpell::PowerLevel(psCharacter *caster, float kFactor) const
+float psSpell::PowerLevel(psCharacter* caster, float kFactor) const
 {
     static csWeakRef<MathScript> script = NULL;
-    if (!script.IsValid())
+    if(!script.IsValid())
     {
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePowerLevel");
         CS_ASSERT(script.IsValid());
@@ -168,15 +168,15 @@ float psSpell::PowerLevel(psCharacter *caster, float kFactor) const
     env.Define("WaySkill", caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
 
-    MathVar *power = env.Lookup("PowerLevel");
+    MathVar* power = env.Lookup("PowerLevel");
     CS_ASSERT(power);
     return power->GetValue();
 }
 
-psSpellCost psSpell::ManaCost(psCharacter *caster, float kFactor) const
+psSpellCost psSpell::ManaCost(psCharacter* caster, float kFactor) const
 {
     static csWeakRef<MathScript> script = NULL;
-    if (!script.IsValid())
+    if(!script.IsValid())
     {
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateManaCost");
         CS_ASSERT(script.IsValid());
@@ -184,7 +184,7 @@ psSpellCost psSpell::ManaCost(psCharacter *caster, float kFactor) const
 
     psSpellCost cost;
 
-    if (caster->GetActor()->infinitemana)
+    if(caster->GetActor()->infinitemana)
     {
         cost.mana = 0;
         cost.stamina = 0;
@@ -199,8 +199,8 @@ psSpellCost psSpell::ManaCost(psCharacter *caster, float kFactor) const
     env.Define("Caster", caster);
     script->Evaluate(&env);
 
-    MathVar *manaCost = env.Lookup("ManaCost");
-    MathVar *staminaCost = env.Lookup("StaminaCost");
+    MathVar* manaCost = env.Lookup("ManaCost");
+    MathVar* staminaCost = env.Lookup("StaminaCost");
     CS_ASSERT(manaCost);
     CS_ASSERT(staminaCost);
     cost.mana = manaCost->GetValue();
@@ -208,10 +208,10 @@ psSpellCost psSpell::ManaCost(psCharacter *caster, float kFactor) const
     return cost;
 }
 
-float psSpell::ChanceOfCastSuccess(psCharacter *caster, float kFactor) const
+float psSpell::ChanceOfCastSuccess(psCharacter* caster, float kFactor) const
 {
     static csWeakRef<MathScript> script = NULL;
-    if (!script.IsValid())
+    if(!script.IsValid())
     {
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateChanceOfCastSuccess");
         CS_ASSERT(script.IsValid());
@@ -224,18 +224,18 @@ float psSpell::ChanceOfCastSuccess(psCharacter *caster, float kFactor) const
     env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
     script->Evaluate(&env);
 
-    MathVar *chance = env.Lookup("ChanceOfSuccess");
+    MathVar* chance = env.Lookup("ChanceOfSuccess");
     CS_ASSERT(chance);
     return chance->GetValue();
 }
 
-float psSpell::ChanceOfResearchSuccess(psCharacter *researcher)
+float psSpell::ChanceOfResearchSuccess(psCharacter* researcher)
 {
-    if (realm > researcher->GetMaxAllowedRealm(way->skill))
+    if(realm > researcher->GetMaxAllowedRealm(way->skill))
         return 0.0;
 
     static csWeakRef<MathScript> script = NULL;
-    if (!script.IsValid())
+    if(!script.IsValid())
     {
         psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateChanceOfResearchSuccess");
         CS_ASSERT(script.IsValid());
@@ -246,19 +246,19 @@ float psSpell::ChanceOfResearchSuccess(psCharacter *researcher)
     env.Define("WaySkill", way->skill);
     script->Evaluate(&env);
 
-    MathVar *chance = env.Lookup("ChanceOfSuccess");
+    MathVar* chance = env.Lookup("ChanceOfSuccess");
     CS_ASSERT(chance);
     return chance->GetValue();
 }
 
-bool psSpell::MatchGlyphs(const csArray<psItemStats*> & assembler)
+bool psSpell::MatchGlyphs(const csArray<psItemStats*> &assembler)
 {
-    if (assembler.GetSize() != glyphList.GetSize() || glyphList.IsEmpty())
+    if(assembler.GetSize() != glyphList.GetSize() || glyphList.IsEmpty())
         return false;
 
-    for (size_t i = 0; i < glyphList.GetSize(); i++)
+    for(size_t i = 0; i < glyphList.GetSize(); i++)
     {
-        if (assembler[i] != glyphList[i])
+        if(assembler[i] != glyphList[i])
         {
             return false;
         }
@@ -266,18 +266,18 @@ bool psSpell::MatchGlyphs(const csArray<psItemStats*> & assembler)
     return true;
 }
 
-bool psSpell::CanCast(gemActor* caster, float kFactor, csString & reason, bool canCastAllSpells)
+bool psSpell::CanCast(gemActor* caster, float kFactor, csString &reason, bool canCastAllSpells)
 {
-    psCharacter *casterChar = caster->GetCharacterData();
+    psCharacter* casterChar = caster->GetCharacterData();
 
     const int mode = caster->GetMode();
-    if (mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_COMBAT)
+    if(mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_COMBAT)
     {
         reason.Format("You can't cast spells while %s.", caster->GetModeStr());
         return false;
     }
 
-    if (caster->IsSpellCasting())
+    if(caster->IsSpellCasting())
     {
         reason = "You are already casting a spell.";
         return false;
@@ -285,28 +285,28 @@ bool psSpell::CanCast(gemActor* caster, float kFactor, csString & reason, bool c
 
     // Check for sufficient Mana
     psSpellCost cost = ManaCost(casterChar, kFactor);
-    if (casterChar->GetMana() < cost.mana)
+    if(casterChar->GetMana() < cost.mana)
     {
         reason.Format("You don't have the mana to cast %s.", name.GetData());
         return false;
     }
 
-    if (casterChar->GetStamina(false) < cost.stamina)
+    if(casterChar->GetStamina(false) < cost.stamina)
     {
         reason.Format("You are too tired to cast %s.", name.GetData());
         return false;
     }
 
     // Skip testing some conditions for developers and game masters
-    if (!canCastAllSpells)
+    if(!canCastAllSpells)
     {
-        if (realm > casterChar->GetMaxAllowedRealm(way->skill))
+        if(realm > casterChar->GetMaxAllowedRealm(way->skill))
         {
             reason = "You have insufficient knowledge of this magic way to cast this spell.";
             return false;
         }
 
-        if (!casterChar->Inventory().HasPurifiedGlyphs(glyphList))
+        if(!casterChar->Inventory().HasPurifiedGlyphs(glyphList))
         {
             reason.Format("You don't have the purified glyphs to cast %s.", name.GetData());
             return false;
@@ -316,18 +316,18 @@ bool psSpell::CanCast(gemActor* caster, float kFactor, csString & reason, bool c
     return true;
 }
 
-void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
+void psSpell::Cast(gemActor* caster, float kFactor, Client* client) const
 {
-    gemObject *target = caster->GetTargetObject();
+    gemObject* target = caster->GetTargetObject();
 
-    if (client)
+    if(client)
     {
-        if (offensive)
+        if(offensive)
         {
             csString msg;
-            if (!caster->IsAllowedToAttack(target,msg))  // this function sends sys error msg
+            if(!caster->IsAllowedToAttack(target,msg))   // this function sends sys error msg
             {
-                psserver->SendSystemError(client->GetClientNum(), msg );
+                psserver->SendSystemError(client->GetClientNum(), msg);
                 return;
             }
         }
@@ -336,12 +336,12 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
     {
         // Superclients are allowed to attack everything. (TODO: Fix this?)
     }
-    
+
 
     float power = csMin(maxPower, PowerLevel(caster->GetCharacterData(), kFactor));
     float skill = caster->GetCharacterData()->GetSkillRank(way->skill).Current();
     float stat = caster->GetCharacterData()->GetSkillRank(way->related_stat_skill).Current();
-    
+
     MathEnvironment env;
     env.Define("Power",       power);
     env.Define("WaySkill",    skill);
@@ -351,18 +351,18 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
     float castDurationFloat = castDuration->Evaluate(&env);
     csTicks castingDuration = (csTicks) csMax(castDurationFloat, 0.0f);
 
-    if (max_range <= 0)
+    if(max_range <= 0)
         target = caster;
 
-    if (!target)
+    if(!target)
     {
-        if (targetTypes & TARGET_SELF)
+        if(targetTypes & TARGET_SELF)
         {
             target = caster;
         }
         else
         {
-            if (client)
+            if(client)
             {
                 psserver->SendSystemInfo(client->GetClientNum(), "You must select a target for %s", name.GetData());
             }
@@ -370,37 +370,37 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
             {
                 Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s must select a target for %s.",caster->GetName(),name.GetData());
             }
-            
+
             return;
         }
     }
 
     // Check for the right kind of target
     const int targetType = caster->GetTargetType(target);
-    if (!(targetTypes & targetType))
+    if(!(targetTypes & targetType))
     {
         csString allowedTypes;
         Client::GetTargetTypeName(targetTypes, allowedTypes);
-        if (client)
+        if(client)
         {
-            psserver->SendSystemInfo(client->GetClientNum(), "You cannot cast %s on %s. You can only cast it on %s.", 
+            psserver->SendSystemInfo(client->GetClientNum(), "You cannot cast %s on %s. You can only cast it on %s.",
                                      name.GetData(), target ? target->GetName() : "that", allowedTypes.GetData());
         }
         else
         {
             csString targetTypeName;
-            Client::GetTargetTypeName(targetType, targetTypeName );
-            
-            Debug6(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s  cannot cast %s on %s. You can only cast it on %s. Target is; %s", 
+            Client::GetTargetTypeName(targetType, targetTypeName);
+
+            Debug6(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s  cannot cast %s on %s. You can only cast it on %s. Target is; %s",
                    caster->GetName(),name.GetData(), target ? target->GetName() : "that", allowedTypes.GetData(),targetTypeName.GetDataSafe());
         }
-        
+
         return;
     }
 
-    if (max_range > 0 && caster->RangeTo(target) > max_range)
+    if(max_range > 0 && caster->RangeTo(target) > max_range)
     {
-        if (client)
+        if(client)
         {
             psserver->SendSystemInfo(client->GetClientNum(), "%s is too far away to cast %s.", target->GetName(), name.GetData());
         }
@@ -408,13 +408,13 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
         {
             Debug4(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s: %s is too far away to cast %s.",caster->GetName(),target->GetName(), name.GetData());
         }
-        
+
         return;
     }
 
     // All conditions for casting this spell are met!
     caster->SetMode(PSCHARACTER_MODE_SPELL_CASTING, castingDuration);
-    if (client)
+    if(client)
     {
         psserver->SendSystemInfo(client->GetClientNum(), "You start casting the spell %s", name.GetData());
     }
@@ -422,25 +422,25 @@ void psSpell::Cast(gemActor *caster, float kFactor, Client *client) const
     {
         Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s start casting the spell %s.",caster->GetName(), name.GetData());
     }
-    
+
 
     // Allow developers and game masters to cast a spell immediately
-    if (caster->instantcast)
+    if(caster->instantcast)
     {
         castingDuration = 0;
     }
 
-    if (!castingEffect.IsEmpty() && (castingDuration > 0 || caster->instantcast))
+    if(!castingEffect.IsEmpty() && (castingDuration > 0 || caster->instantcast))
     {
         psEffectMessage fx(0, castingEffect, csVector3(0,0,0), caster->GetEID(), target->GetEID(), castingDuration, 0, 0.0f, 0.0f, 0.0f, 0.0f);
         fx.Multicast(caster->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
     }
 
-    psSpellCastGameEvent *evt = new psSpellCastGameEvent(this, caster, target, castingDuration, max_range, kFactor, power, client);
+    psSpellCastGameEvent* evt = new psSpellCastGameEvent(this, caster, target, castingDuration, max_range, kFactor, power, client);
     evt->QueueEvent();
 }
 
-void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFactor, float power, Client* client, csTicks castingDuration) const
+void psSpell::Affect(gemActor* caster, gemObject* target, float range, float kFactor, float power, Client* client, csTicks castingDuration) const
 {
     const float chanceOfSuccess = ChanceOfCastSuccess(caster->GetCharacterData(), kFactor);
     float roll = psserver->GetRandom() * 100.f;
@@ -448,10 +448,10 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
 
     psSpellCost cost = ManaCost(caster->GetCharacterData(), kFactor);
 
-    if (chanceOfSuccess < 100.f && roll > chanceOfSuccess)
+    if(chanceOfSuccess < 100.f && roll > chanceOfSuccess)
     {
         // Spell casting failed
-        if (client)
+        if(client)
         {
             psserver->SendSystemInfo(caster->GetClientID(), "You failed to cast the spell %s." , name.GetData());
         }
@@ -459,7 +459,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         {
             Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s faild to cast the spell %s.", caster->GetName(), name.GetData());
         }
-        
+
 
         ProgressionScript* failure = psserver->GetProgressionManager()->FindScript("SpellFailure");
         MathEnvironment env;
@@ -488,18 +488,18 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
     float angle  = aoeAngle->Evaluate(&env);
 
     int affectedCount = 0;
-    if (radius < 0.01f) // single target
+    if(radius < 0.01f)  // single target
     {
-        if (target && caster->RangeTo(target) <= range)
+        if(target && caster->RangeTo(target) <= range)
         {
-            if (AffectTarget(caster, target, target, power, client))
+            if(AffectTarget(caster, target, target, power, client))
             {
                 affectedCount = 1;
             }
         }
         else
         {
-            if (client)
+            if(client)
             {
                 psserver->SendSystemInfo(caster->GetClientID(), "%s is too far away for your spell to reach.", target ? target->GetName() : "Your target");
             }
@@ -507,7 +507,7 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
             {
                 Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(), "%s is too far away for %s to reach.",target ? target->GetName() : "Your target",caster->GetName());
             }
-            
+
 
         }
     }
@@ -516,16 +516,16 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         csVector3 attackerPos;
         csVector3 targetPos;
         float yrot; // in radians
-        iSector *sector;
+        iSector* sector;
 
         target->GetPosition(targetPos, yrot, sector);
         caster->GetPosition(attackerPos, yrot, sector);
-        
+
         // directional vector for a line from attacker to original target
         csVector3 attackerToTarget;
         attackerToTarget = targetPos - attackerPos;
 
-        if (angle <= SMALL_EPSILON || angle > 360)
+        if(angle <= SMALL_EPSILON || angle > 360)
             angle = 360;
 
         angle = (angle/2)*(PI/180); // convert degrees to radians
@@ -533,12 +533,12 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
         //CPrintf(CON_DEBUG, "Spell has an effect arc of %1.2f radians to either side of LOS.\n", angle);
 
         csArray<gemObject*> nearby = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, targetPos, radius);
-        for (size_t i = 0; i < nearby.GetSize(); i++)
+        for(size_t i = 0; i < nearby.GetSize(); i++)
         {
-            if (!(targetTypes & caster->GetTargetType(nearby[i])))
+            if(!(targetTypes & caster->GetTargetType(nearby[i])))
                 continue;
 
-            if (angle < PI)
+            if(angle < PI)
             {
                 csVector3 attackerToAffected;
                 nearby[i]->GetPosition(attackerToAffected, sector);
@@ -550,26 +550,26 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
 
                 // Angle between the line original target->attacker and original target->affected target
                 float cosATAngle = attackerToAffected*attackerToTarget
-                                  /(attackerToAffected.Norm()*attackerToTarget.Norm());
+                                   /(attackerToAffected.Norm()*attackerToTarget.Norm());
 
                 // cap the value to meaningful ones to account for rounding issues
-                if (cosATAngle > 1.0f || CS::IsNaN(cosATAngle))
+                if(cosATAngle > 1.0f || CS::IsNaN(cosATAngle))
                     cosATAngle = 1.0f;
-                if (cosATAngle < -1.0f)
+                if(cosATAngle < -1.0f)
                     cosATAngle = -1.0f;
 
                 // use the absolute value of the angle here to account for both sides equally - see above
-                if (fabs(acosf(cosATAngle)) >= angle)
+                if(fabs(acosf(cosATAngle)) >= angle)
                     continue;
             }
 
-            if (AffectTarget(caster, target, nearby[i], power, client))
+            if(AffectTarget(caster, target, nearby[i], power, client))
                 affectedCount++;
         }
 
-        if (affectedCount > 0)
+        if(affectedCount > 0)
         {
-            if (client)
+            if(client)
             {
                 psserver->SendSystemInfo(caster->GetClientID(), "%s affected %d %s.", name.GetData(), affectedCount, (affectedCount == 1) ? "target" : "targets");
             }
@@ -577,26 +577,26 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
             {
                 Debug4(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s affected %d %s.",name.GetData(), affectedCount, (affectedCount == 1) ? "target" : "targets");
             }
-            
+
         }
         else
         {
-            if (client)
+            if(client)
             {
                 psserver->SendSystemInfo(caster->GetClientID(), "%s has no effect.", name.GetData());
             }
             else
             {
-                 Debug2(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s has no effect.", name.GetData());
+                Debug2(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s has no effect.", name.GetData());
             }
         }
     }
 
-    if (affectedCount > 0)
+    if(affectedCount > 0)
     {
         int practicePoints = 1;
         static csWeakRef<MathScript> script;
-        if (!script.IsValid())
+        if(!script.IsValid())
         {
             psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "SpellPractice");
             CS_ASSERT(script.IsValid());
@@ -621,28 +621,28 @@ void psSpell::Affect(gemActor *caster, gemObject *target, float range, float kFa
 
 bool psSpell::AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* target, float power, Client* client) const
 {
-    if (offensive)
+    if(offensive)
     {
         csString msg;
-        if (!caster->IsAllowedToAttack(target,msg))
+        if(!caster->IsAllowedToAttack(target,msg))
         {
-            if (client)
+            if(client)
             {
-                psserver->SendSystemError(client->GetClientNum(), msg );
+                psserver->SendSystemError(client->GetClientNum(), msg);
             }
             else
             {
-                Debug2(LOG_SUPERCLIENT,caster->GetEID().Unbox(), "%s", msg.GetDataSafe()); 
+                Debug2(LOG_SUPERCLIENT,caster->GetEID().Unbox(), "%s", msg.GetDataSafe());
             }
-            
+
             return false;
         }
-        
-        gemActor *attackee = dynamic_cast<gemActor*>(target);
-        if (attackee)
+
+        gemActor* attackee = dynamic_cast<gemActor*>(target);
+        if(attackee)
         {
-            gemNPC *targetNPC = dynamic_cast<gemNPC*>(target);
-            if (targetNPC)
+            gemNPC* targetNPC = dynamic_cast<gemNPC*>(target);
+            if(targetNPC)
             {
                 psserver->GetNPCManager()->QueueAttackPerception(caster, targetNPC);
             }
@@ -670,11 +670,11 @@ bool psSpell::AffectTarget(gemActor* caster, gemObject* origTarget, gemObject* t
 double psSpell::GetProperty(MathEnvironment* env, const char* ptr)
 {
     csString property(ptr);
-    if (property == "Realm")
+    if(property == "Realm")
     {
         return realm;
     }
-    else if (property == "Way")
+    else if(property == "Way")
     {
         return way->id;
     }
@@ -710,13 +710,13 @@ double psSpell::CalcFunction(MathEnvironment* env, const char* functionName, con
 //-----------------------------------------------------------------------------
 
 psSpellCastGameEvent::psSpellCastGameEvent(const psSpell* spell,
-                                           gemActor* caster,
-                                           gemObject* target,
-                                           csTicks castingDuration,
-                                           float max_range,
-                                           float kFactor,
-                                           float powerLevel,
-                                           Client* client)
+        gemActor* caster,
+        gemObject* target,
+        csTicks castingDuration,
+        float max_range,
+        float kFactor,
+        float powerLevel,
+        Client* client)
     : psGameEvent(0, castingDuration, "psSpellCastGameEvent")
 {
     this->spell      = spell;
@@ -736,23 +736,23 @@ psSpellCastGameEvent::psSpellCastGameEvent(const psSpell* spell,
 
 psSpellCastGameEvent::~psSpellCastGameEvent()
 {
-    if (target)
+    if(target)
     {
         target->UnregisterCallback(this);
     }
-    if (caster)
+    if(caster)
     {
         caster->UnregisterCallback(this);
     }
 }
 
-void psSpellCastGameEvent::DeleteObjectCallback(iDeleteNotificationObject * object)
+void psSpellCastGameEvent::DeleteObjectCallback(iDeleteNotificationObject* object)
 {
-    if (target)
+    if(target)
     {
         target->UnregisterCallback(this);
     }
-    if (caster)
+    if(caster)
     {
         caster->UnregisterCallback(this);
     }
@@ -765,12 +765,12 @@ void psSpellCastGameEvent::DeleteObjectCallback(iDeleteNotificationObject * obje
 
 void psSpellCastGameEvent::Interrupt()
 {
-    if (!IsValid())
+    if(!IsValid())
         return;
 
-    if (target && !target->IsAlive())
+    if(target && !target->IsAlive())
     {
-        if (client)
+        if(client)
         {
             psserver->SendSystemError(client->GetClientNum(), "%s is already dead.", (const char*) target->GetName());
         }
@@ -781,7 +781,7 @@ void psSpellCastGameEvent::Interrupt()
     }
     else
     {
-        if (client)
+        if(client)
         {
             psserver->SendSystemInfo(client->GetClientNum(), "Your spell (%s) has been interrupted!", spell->GetName().GetData());
         }
@@ -801,7 +801,7 @@ void psSpellCastGameEvent::Interrupt()
 void psSpellCastGameEvent::Trigger()
 {
     // Make sure caster is alive...there might be UDP jitter problems (PS#2728).
-    if (caster->IsAlive())
+    if(caster->IsAlive())
     {
         spell->Affect(caster, target, max_range, kFactor, powerLevel, client, duration);
     }

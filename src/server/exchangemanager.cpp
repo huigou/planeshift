@@ -55,30 +55,30 @@
 class PendingTradeInvite : public PendingInvite
 {
 public:
-    PendingTradeInvite( Client *inviter, Client *invitee,
-        const char *question ) : PendingInvite( inviter, invitee, true,
-        question, "Accept", "Reject",
-        "You ask %s to trade with you.",
-        "%s asks to trade with you.",
-        "%s agrees to trade with you.",
-        "You agree to trade.",
-        "%s does not want to trade.",
-        "You refuse to trade with %s.",
-        psQuestionMessage::generalConfirm )
+    PendingTradeInvite(Client* inviter, Client* invitee,
+                       const char* question) : PendingInvite(inviter, invitee, true,
+                                   question, "Accept", "Reject",
+                                   "You ask %s to trade with you.",
+                                   "%s asks to trade with you.",
+                                   "%s agrees to trade with you.",
+                                   "You agree to trade.",
+                                   "%s does not want to trade.",
+                                   "You refuse to trade with %s.",
+                                   psQuestionMessage::generalConfirm)
     {
 
     }
 
-    void HandleAnswer(const csString & answer)
+    void HandleAnswer(const csString &answer)
     {
-        Client * invitedClient = psserver->GetConnections()->Find(clientnum);
-        if ( !invitedClient )
+        Client* invitedClient = psserver->GetConnections()->Find(clientnum);
+        if(!invitedClient)
             return;
 
         PendingInvite::HandleAnswer(answer);
 
-        Client * inviterClient = psserver->GetConnections()->Find(inviterClientNum);
-        if ( !inviterClient )
+        Client* inviterClient = psserver->GetConnections()->Find(inviterClientNum);
+        if(!inviterClient)
             return;
 
         psCharacter* invitedCharData = invitedClient->GetCharacterData();
@@ -86,19 +86,19 @@ public:
         const char* invitedCharFirstName = invitedCharData->GetCharName();
         const char* inviterCharFirstName = inviterCharData->GetCharName();
 
-        if ( answer == "no" )
+        if(answer == "no")
         {
             // Inform proposer that the trade has been rejected
             csString message;
-            message.Format( "%s has rejected your trade offer.", invitedCharFirstName );
-            psserver->SendSystemError( inviterClient->GetClientNum(),
-                message.GetData() );
+            message.Format("%s has rejected your trade offer.", invitedCharFirstName);
+            psserver->SendSystemError(inviterClient->GetClientNum(),
+                                      message.GetData());
 
             return;
         }
 
         // Ignore the answer if the invited client is busy with something else
-        if (invitedClient->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE && invitedClient->GetActor()->GetMode() != PSCHARACTER_MODE_SIT && invitedClient->GetActor()->GetMode() != PSCHARACTER_MODE_OVERWEIGHT)
+        if(invitedClient->GetActor()->GetMode() != PSCHARACTER_MODE_PEACE && invitedClient->GetActor()->GetMode() != PSCHARACTER_MODE_SIT && invitedClient->GetActor()->GetMode() != PSCHARACTER_MODE_OVERWEIGHT)
         {
             csString err;
             err.Format("You can't trade while %s.", invitedClient->GetActor()->GetModeStr());
@@ -110,58 +110,58 @@ public:
         }
 
         // Ignore the answer if the invited client is already in trade
-        if (invitedClient->GetExchangeID())
+        if(invitedClient->GetExchangeID())
         {
             psserver->SendSystemError(invitedClient->GetClientNum(), "You are already busy with another trade");
             psserver->SendSystemError(inviterClient->GetClientNum(), "%s is already busy with another trade", invitedCharFirstName);
             return;
         }
         // Ignore the answer if the inviter client is already in trade
-        if (inviterClient->GetExchangeID())
+        if(inviterClient->GetExchangeID())
         {
             psserver->SendSystemError(inviterClient->GetClientNum(), "You are already busy with another trade");
             psserver->SendSystemError(invitedClient->GetClientNum(), "%s is already busy with another trade", inviterCharFirstName);
             return;
         }
 
-        Exchange* exchange = new PlayerToPlayerExchange( inviterClient, invitedClient,
-                                                         psserver->GetExchangeManager() );
+        Exchange* exchange = new PlayerToPlayerExchange(inviterClient, invitedClient,
+                psserver->GetExchangeManager());
 
         // Check range
-        if ( !exchange->CheckRange(inviterClient->GetClientNum(),
-            inviterClient->GetActor(), invitedClient->GetActor()) )
+        if(!exchange->CheckRange(inviterClient->GetClientNum(),
+                                 inviterClient->GetActor(), invitedClient->GetActor()))
         {
             psserver->SendSystemError(inviterClient->GetClientNum(),
-                "%s is too far away to trade.", invitedCharFirstName );
+                                      "%s is too far away to trade.", invitedCharFirstName);
             delete exchange;
             return;
         }
 
         // Overwrite client trading state
         bool oldTradingStopped = inviterCharData->SetTradingStopped(false);
-        if ( !inviterCharData->ReadyToExchange() )
+        if(!inviterCharData->ReadyToExchange())
         {
-            psserver->SendSystemInfo( inviterClient->GetClientNum(),
-                "You are not ready to trade." );
-            inviterCharData->SetTradingStopped( oldTradingStopped );
+            psserver->SendSystemInfo(inviterClient->GetClientNum(),
+                                     "You are not ready to trade.");
+            inviterCharData->SetTradingStopped(oldTradingStopped);
             delete exchange;
             return;
         }
 
-        inviterCharData->SetTradingStopped( oldTradingStopped );
+        inviterCharData->SetTradingStopped(oldTradingStopped);
 
-        if ( !invitedCharData->ReadyToExchange() )
+        if(!invitedCharData->ReadyToExchange())
         {
-            psserver->SendSystemInfo( inviterClient->GetClientNum(),
-                "Target is not ready to trade." );
+            psserver->SendSystemInfo(inviterClient->GetClientNum(),
+                                     "Target is not ready to trade.");
             delete exchange;
             return;
         }
 
-        inviterClient->SetExchangeID( exchange->GetID() );
-        invitedClient->SetExchangeID( exchange->GetID() );
+        inviterClient->SetExchangeID(exchange->GetID());
+        invitedClient->SetExchangeID(exchange->GetID());
 
-        psserver->GetExchangeManager()->AddExchange( exchange );
+        psserver->GetExchangeManager()->AddExchange(exchange);
     }
 };
 
@@ -231,9 +231,9 @@ void SendTextDescriptionOfMoney(int clientNum, const csString & otherName, psMon
 
 
 
-bool Exchange::CheckRange(int clientNum, gemObject * ourActor, gemObject * otherActor)
+bool Exchange::CheckRange(int clientNum, gemObject* ourActor, gemObject* otherActor)
 {
-    if (ourActor->RangeTo(otherActor) > RANGE_TO_SELECT)
+    if(ourActor->RangeTo(otherActor) > RANGE_TO_SELECT)
     {
         psserver->SendSystemInfo(clientNum, "You are not in range to trade with %s.", otherActor->GetName());
         return false;
@@ -248,7 +248,7 @@ bool Exchange::CheckRange(int clientNum, gemObject * ourActor, gemObject * other
 ***********************************************************************************/
 
 
-ExchangingCharacter::ExchangingCharacter(int clientNum,psCharacterInventory& inv)
+ExchangingCharacter::ExchangingCharacter(int clientNum,psCharacterInventory &inv)
 {
     client = clientNum;
     chrinv = &inv;
@@ -256,13 +256,13 @@ ExchangingCharacter::ExchangingCharacter(int clientNum,psCharacterInventory& inv
 
 bool ExchangingCharacter::OfferItem(int exchSlotNum, INVENTORY_SLOT_NUMBER invSlot, int stackcount, bool test)
 {
-    if (exchSlotNum>=EXCHANGE_SLOT_COUNT )
+    if(exchSlotNum>=EXCHANGE_SLOT_COUNT)
         return false;
 
-    psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(exchSlotNum);
-    if (itemInSlot == NULL) // slot is open
+    psCharacterInventory::psCharacterInventoryItem* itemInSlot = chrinv->FindExchangeSlotOffered(exchSlotNum);
+    if(itemInSlot == NULL)  // slot is open
     {
-        if (!test)
+        if(!test)
         {
             chrinv->SetExchangeOfferSlot(NULL,invSlot,exchSlotNum,stackcount);
         }
@@ -275,19 +275,19 @@ bool ExchangingCharacter::OfferItem(int exchSlotNum, INVENTORY_SLOT_NUMBER invSl
 }
 
 
-bool ExchangingCharacter::RemoveItemFromOffer(int exchSlotNum, int count, int& remain)
+bool ExchangingCharacter::RemoveItemFromOffer(int exchSlotNum, int count, int &remain)
 {
-    if (exchSlotNum >= EXCHANGE_SLOT_COUNT )
-       return false;
-
-    psCharacterInventory::psCharacterInventoryItem *item = chrinv->FindExchangeSlotOffered(exchSlotNum);
-    if (item == NULL)
+    if(exchSlotNum >= EXCHANGE_SLOT_COUNT)
         return false;
 
-    if (count == -1)
+    psCharacterInventory::psCharacterInventoryItem* item = chrinv->FindExchangeSlotOffered(exchSlotNum);
+    if(item == NULL)
+        return false;
+
+    if(count == -1)
         count = item->exchangeStackCount;  // stack count of offer, not of item
 
-    if (item->exchangeStackCount <= count)
+    if(item->exchangeStackCount <= count)
     {
         item->exchangeStackCount = 0; // take out of offering array
         item->exchangeOfferSlot = -1;
@@ -302,14 +302,14 @@ bool ExchangingCharacter::RemoveItemFromOffer(int exchSlotNum, int count, int& r
 
 bool ExchangingCharacter::MoveOfferedItem(int fromSlot,int stackcount,int toSlot)
 {
-    psCharacterInventory::psCharacterInventoryItem *item = chrinv->FindExchangeSlotOffered(fromSlot);
-    if (item == NULL)
+    psCharacterInventory::psCharacterInventoryItem* item = chrinv->FindExchangeSlotOffered(fromSlot);
+    if(item == NULL)
         return false;
 
-    psCharacterInventory::psCharacterInventoryItem *item2 = chrinv->FindExchangeSlotOffered(toSlot);
+    psCharacterInventory::psCharacterInventoryItem* item2 = chrinv->FindExchangeSlotOffered(toSlot);
 
     item->exchangeOfferSlot = toSlot;
-    if (item2)
+    if(item2)
     {
         item2->exchangeOfferSlot = fromSlot;  // swap if dest slot is occupied
         return true; // true if swapped
@@ -318,10 +318,10 @@ bool ExchangingCharacter::MoveOfferedItem(int fromSlot,int stackcount,int toSlot
 }
 
 
-psCharacter *ExchangingCharacter::GetClientCharacter(int clientNum)
+psCharacter* ExchangingCharacter::GetClientCharacter(int clientNum)
 {
-    Client * client = psserver->GetConnections()->Find(clientNum);
-    if (client == NULL)
+    Client* client = psserver->GetConnections()->Find(clientNum);
+    if(client == NULL)
         return NULL;
 
     return client->GetCharacterData();
@@ -329,31 +329,31 @@ psCharacter *ExchangingCharacter::GetClientCharacter(int clientNum)
 
 
 
-void ExchangingCharacter::TransferMoney( int targetClientNum )
+void ExchangingCharacter::TransferMoney(int targetClientNum)
 {
-    psCharacter *target; //,*cclient;
+    psCharacter* target; //,*cclient;
 
-    if ( targetClientNum == 0 )
+    if(targetClientNum == 0)
         return;
 
     target =  GetClientCharacter(targetClientNum);
 
-    if (target == NULL)
+    if(target == NULL)
         return;
 
     TransferMoney(target);
 }
 
-void ExchangingCharacter::TransferMoney( psCharacter *target )
+void ExchangingCharacter::TransferMoney(psCharacter* target)
 {
     psMoney money;
-    money.Set( offeringMoney.Get(MONEY_CIRCLES),offeringMoney.Get(MONEY_OCTAS),offeringMoney.Get(MONEY_HEXAS), offeringMoney.Get(MONEY_TRIAS) );
+    money.Set(offeringMoney.Get(MONEY_CIRCLES),offeringMoney.Get(MONEY_OCTAS),offeringMoney.Get(MONEY_HEXAS), offeringMoney.Get(MONEY_TRIAS));
 
-    target->AdjustMoney( money, false );
+    target->AdjustMoney(money, false);
 
     // Now negate and take away from offerer
-    money.Set( -offeringMoney.Get(MONEY_CIRCLES),-offeringMoney.Get(MONEY_OCTAS),-offeringMoney.Get(MONEY_HEXAS), -offeringMoney.Get(MONEY_TRIAS) );
-    chrinv->owner->AdjustMoney( money, false );
+    money.Set(-offeringMoney.Get(MONEY_CIRCLES),-offeringMoney.Get(MONEY_OCTAS),-offeringMoney.Get(MONEY_HEXAS), -offeringMoney.Get(MONEY_TRIAS));
+    chrinv->owner->AdjustMoney(money, false);
 
     offeringMoney.Set(0, 0, 0, 0);
 }
@@ -361,30 +361,30 @@ void ExchangingCharacter::TransferMoney( psCharacter *target )
 bool ExchangingCharacter::IsOfferingSane()
 {
     // Make sure offered items have valid stack counts.
-    for (int i=0; i < EXCHANGE_SLOT_COUNT; i++)
+    for(int i=0; i < EXCHANGE_SLOT_COUNT; i++)
     {
-        psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(i);
-        const psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
+        psCharacterInventory::psCharacterInventoryItem* itemInSlot = chrinv->FindExchangeSlotOffered(i);
+        const psItem* item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
 
-        if (item && itemInSlot->exchangeStackCount > item->GetStackCount())
+        if(item && itemInSlot->exchangeStackCount > item->GetStackCount())
             return false;
     }
 
     //make sure offered money isn't an invalid amount (eg < 0)
     if(offeringMoney.Get(MONEY_CIRCLES) < 0 ||
-        offeringMoney.Get(MONEY_OCTAS)  < 0 ||
-        offeringMoney.Get(MONEY_HEXAS)  < 0 ||
-        offeringMoney.Get(MONEY_TRIAS)  < 0)
+            offeringMoney.Get(MONEY_OCTAS)  < 0 ||
+            offeringMoney.Get(MONEY_HEXAS)  < 0 ||
+            offeringMoney.Get(MONEY_TRIAS)  < 0)
     {
         return false;
     }
 
     //Make sure offered money is really available
     psMoney characterMoney = chrinv->owner->Money();
-    if( characterMoney.Get(MONEY_CIRCLES) < offeringMoney.Get(MONEY_CIRCLES) ||
-        characterMoney.Get(MONEY_OCTAS)   < offeringMoney.Get(MONEY_OCTAS)   ||
-        characterMoney.Get(MONEY_HEXAS)   < offeringMoney.Get(MONEY_HEXAS)   ||
-        characterMoney.Get(MONEY_TRIAS)   < offeringMoney.Get(MONEY_TRIAS))
+    if(characterMoney.Get(MONEY_CIRCLES) < offeringMoney.Get(MONEY_CIRCLES) ||
+            characterMoney.Get(MONEY_OCTAS)   < offeringMoney.Get(MONEY_OCTAS)   ||
+            characterMoney.Get(MONEY_HEXAS)   < offeringMoney.Get(MONEY_HEXAS)   ||
+            characterMoney.Get(MONEY_TRIAS)   < offeringMoney.Get(MONEY_TRIAS))
     {
         return false;
     }
@@ -394,37 +394,37 @@ bool ExchangingCharacter::IsOfferingSane()
 
 void ExchangingCharacter::TransferOffer(int targetClientNum)
 {
-    psCharacter *target = NULL;
+    psCharacter* target = NULL;
 
-    if (targetClientNum != 0)
+    if(targetClientNum != 0)
     {
         target = GetClientCharacter(targetClientNum);
-        if (!target)
+        if(!target)
             return;
     }
 
-    if (target)
+    if(target)
     {
-        for (int i=0; i < EXCHANGE_SLOT_COUNT; i++)
+        for(int i=0; i < EXCHANGE_SLOT_COUNT; i++)
         {
-            psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(i);
-            psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
+            psCharacterInventory::psCharacterInventoryItem* itemInSlot = chrinv->FindExchangeSlotOffered(i);
+            psItem* item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
 
-            if (item)
+            if(item)
             {
                 CS_ASSERT(itemInSlot->exchangeStackCount <= item->GetStackCount());
 
-                psItem *newItem = item->CreateNew();
+                psItem* newItem = item->CreateNew();
                 item->Copy(newItem);
                 newItem->SetStackCount(itemInSlot->exchangeStackCount);
 
-                if (!target->Inventory().Add(newItem))
+                if(!target->Inventory().Add(newItem))
                 {
                     // TODO: Probably rollback here if anything failed
                     printf("    Could not add item to inv, so dropping on ground.\n");
 
                     // Drop item on ground!!
-                    target->DropItem( newItem );
+                    target->DropItem(newItem);
                 }
             }
         }
@@ -434,87 +434,87 @@ void ExchangingCharacter::TransferOffer(int targetClientNum)
 }
 
 
-void ExchangingCharacter::TransferOffer(psCharacter *npc)
+void ExchangingCharacter::TransferOffer(psCharacter* npc)
 {
     chrinv->PurgeOffered();  // npc's just destroy stuff
 }
 
 void ExchangingCharacter::AdjustMoney(int type, int delta)
 {
-    offeringMoney.Adjust( type, delta );
+    offeringMoney.Adjust(type, delta);
 }
 
-void ExchangingCharacter::AdjustMoney(const psMoney& amount)
+void ExchangingCharacter::AdjustMoney(const psMoney &amount)
 {
     offeringMoney += amount;
 }
 
-void ExchangingCharacter::UpdateReceivingMoney( psMoney& money )
+void ExchangingCharacter::UpdateReceivingMoney(psMoney &money)
 {
-    psExchangeMoneyMsg message( client, CONTAINER_RECEIVING_MONEY,
-                             money.Get(MONEY_TRIAS),
-                             money.Get(MONEY_HEXAS),
-                             money.Get(MONEY_CIRCLES),
-                             money.Get(MONEY_OCTAS) );
+    psExchangeMoneyMsg message(client, CONTAINER_RECEIVING_MONEY,
+                               money.Get(MONEY_TRIAS),
+                               money.Get(MONEY_HEXAS),
+                               money.Get(MONEY_CIRCLES),
+                               money.Get(MONEY_OCTAS));
     message.SendMessage();
 }
 
 void ExchangingCharacter::UpdateOfferingMoney()
 {
-    psExchangeMoneyMsg message( client, CONTAINER_OFFERING_MONEY,
-                             offeringMoney.Get(MONEY_TRIAS),
-                             offeringMoney.Get(MONEY_HEXAS),
-                             offeringMoney.Get(MONEY_CIRCLES),
-                             offeringMoney.Get(MONEY_OCTAS) );
+    psExchangeMoneyMsg message(client, CONTAINER_OFFERING_MONEY,
+                               offeringMoney.Get(MONEY_TRIAS),
+                               offeringMoney.Get(MONEY_HEXAS),
+                               offeringMoney.Get(MONEY_CIRCLES),
+                               offeringMoney.Get(MONEY_OCTAS));
     message.SendMessage();
 }
 
-psItem *ExchangingCharacter::GetOfferedItem(int slot)
+psItem* ExchangingCharacter::GetOfferedItem(int slot)
 {
-    psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(slot);
-    psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
+    psCharacterInventory::psCharacterInventoryItem* itemInSlot = chrinv->FindExchangeSlotOffered(slot);
+    psItem* item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
     return item;
 }
 
 
-void ExchangingCharacter::GetOffering(csString& buff)
+void ExchangingCharacter::GetOffering(csString &buff)
 {
     csString moneystr = offeringMoney.ToString();
-    buff.Format("<L MONEY=\"%s\">", moneystr.GetData() );
+    buff.Format("<L MONEY=\"%s\">", moneystr.GetData());
     unsigned int z;
 
-    for ( z = 0; z < EXCHANGE_SLOT_COUNT; z++ )
+    for(z = 0; z < EXCHANGE_SLOT_COUNT; z++)
     {
-        psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(z);
-        psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
-        if (item)
+        psCharacterInventory::psCharacterInventoryItem* itemInSlot = chrinv->FindExchangeSlotOffered(z);
+        psItem* item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
+        if(item)
         {
             csString itemStr;
             itemStr.Format(
-                        "<ITEM N=\"%s\" "
-                        "SLT_POS=\"%d\" "
-                        "C=\"%d\" "
-                        "WT=\"%.2f\" "
-                        "IMG=\"%s\"/>",
-                        item->GetName(),
-                        z,
-                        itemInSlot->exchangeStackCount,
-                        0.0, //////////item->GetSumWeight(),
-                        item->GetImageName());
+                "<ITEM N=\"%s\" "
+                "SLT_POS=\"%d\" "
+                "C=\"%d\" "
+                "WT=\"%.2f\" "
+                "IMG=\"%s\"/>",
+                item->GetName(),
+                z,
+                itemInSlot->exchangeStackCount,
+                0.0, //////////item->GetSumWeight(),
+                item->GetImageName());
 
-                buff.Append(itemStr);
+            buff.Append(itemStr);
         }
     }
 
     buff.Append("</L>");
 }
 
-void ExchangingCharacter::GetSimpleOffering(csString& buff, psCharacter *chr, bool exact)
+void ExchangingCharacter::GetSimpleOffering(csString &buff, psCharacter* chr, bool exact)
 {
     csString moneystr = offeringMoney.ToString();
-    if (exact)
+    if(exact)
     {
-        buff.Format("<l money=\"%s\">", moneystr.GetData() );
+        buff.Format("<l money=\"%s\">", moneystr.GetData());
     }
     else
     {
@@ -524,13 +524,13 @@ void ExchangingCharacter::GetSimpleOffering(csString& buff, psCharacter *chr, bo
 
     psStringArray xmlItems;
 
-    for (unsigned int i = 0; i < EXCHANGE_SLOT_COUNT; i++)
+    for(unsigned int i = 0; i < EXCHANGE_SLOT_COUNT; i++)
     {
-        psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(i);
-        psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
-        if (item)
+        psCharacterInventory::psCharacterInventoryItem* itemInSlot = chrinv->FindExchangeSlotOffered(i);
+        psItem* item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
+        if(item)
         {
-            xmlItems.FormatPush("<item n=\"%s\" c=\"%d\"/>", 
+            xmlItems.FormatPush("<item n=\"%s\" c=\"%d\"/>",
                                 item->GetBaseStats()->GetName(),
                                 itemInSlot->exchangeStackCount);
         }
@@ -540,7 +540,7 @@ void ExchangingCharacter::GetSimpleOffering(csString& buff, psCharacter *chr, bo
     // QuestManager::ParseItemList also does this.
     xmlItems.Sort();
 
-    for (size_t i = 0; i < xmlItems.GetSize(); i++)
+    for(size_t i = 0; i < xmlItems.GetSize(); i++)
     {
         buff.Append(xmlItems[i]);
     }
@@ -586,37 +586,37 @@ float ExchangingCharacter::GetSumWeight()
 }
 */
 
-void ExchangingCharacter::GetOfferingCSV(csString& buff)
+void ExchangingCharacter::GetOfferingCSV(csString &buff)
 {
     buff.Empty();
     bool first = true;
-    for (int i=0; i<EXCHANGE_SLOT_COUNT; i++)
+    for(int i=0; i<EXCHANGE_SLOT_COUNT; i++)
     {
-        psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(i);
-        psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
-        if (item)
+        psCharacterInventory::psCharacterInventoryItem* itemInSlot = chrinv->FindExchangeSlotOffered(i);
+        psItem* item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
+        if(item)
         {
             if(!first)
                 buff.AppendFmt(", ");
-            buff.AppendFmt("%d %s",item->GetStackCount(), item->GetName() );
+            buff.AppendFmt("%d %s",item->GetStackCount(), item->GetName());
             if(first)
                 first = false;
         }
     }
 }
 
-bool ExchangingCharacter::GetExchangedItems(csString& text)
+bool ExchangingCharacter::GetExchangedItems(csString &text)
 {
     text.Clear();
     int count = 0;
     size_t last_len = 0;
 
     // RMS: Loop through all items offered
-    for (int i=0; i < EXCHANGE_SLOT_COUNT; i++)
+    for(int i=0; i < EXCHANGE_SLOT_COUNT; i++)
     {
-        psCharacterInventory::psCharacterInventoryItem *itemInSlot = chrinv->FindExchangeSlotOffered(i);
-        psItem *item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
-        if (item != NULL)
+        psCharacterInventory::psCharacterInventoryItem* itemInSlot = chrinv->FindExchangeSlotOffered(i);
+        psItem* item = (itemInSlot) ? itemInSlot->GetItem() : NULL;
+        if(item != NULL)
         {
             last_len = text.Length();
             count++;
@@ -627,19 +627,19 @@ bool ExchangingCharacter::GetExchangedItems(csString& text)
     }
 
     // RMS: Add the money count
-    if (offeringMoney.GetTotal() > 0)
+    if(offeringMoney.GetTotal() > 0)
     {
         last_len = text.Length();
         count++;
         text.AppendFmt("%i Tria, ", offeringMoney.GetTotal());
     }
-    if (count)
+    if(count)
     {
         text.Truncate(text.Length() - 2);
-        if (count > 1)
+        if(count > 1)
         {
             csString tempText = text.Slice(0, last_len - (count == 2 ? 2 : 1))
-                + " and" + text.Slice(last_len - 1);
+                                + " and" + text.Slice(last_len - 1);
             text = tempText;
         }
         return true;
@@ -666,7 +666,7 @@ bool ExchangingCharacter::GetExchangedItems(csString& text)
  */
 
 Exchange::Exchange(Client* starter, bool automaticExchange, ExchangeManager* manager)
-        : starterChar( starter->GetClientNum(), starter->GetCharacterData()->Inventory() )
+    : starterChar(starter->GetClientNum(), starter->GetCharacterData()->Inventory())
 {
     id = next_id++;
     exchangeEnded = false;
@@ -676,7 +676,7 @@ Exchange::Exchange(Client* starter, bool automaticExchange, ExchangeManager* man
     this->player = starter->GetClientNum();
     this->automaticExchange = automaticExchange;
 
-    starter->GetActor()->RegisterCallback( this );
+    starter->GetActor()->RegisterCallback(this);
     starter->GetCharacterData()->Inventory().BeginExchange();
 }
 
@@ -686,19 +686,19 @@ Exchange::~Exchange()
 
     // Must first get rid of exchange references because vtable is now deleted
     starterClient->SetExchangeID(0);
-    if ( !exchangeSuccess )
+    if(!exchangeSuccess)
     {
         starterClient->GetCharacterData()->Inventory().RollbackExchange();
         psserver->GetCharManager()->SendInventory(player);
     }
 
-    SendEnd( player );
+    SendEnd(player);
 }
 
 bool Exchange::AddItem(Client* fromClient, INVENTORY_SLOT_NUMBER fromSlot, int stackCount, int toSlot)
 {
-    psCharacterInventory::psCharacterInventoryItem *invItem = fromClient->GetCharacterData()->Inventory().GetCharInventoryItem(fromSlot);
-    if (!invItem)
+    psCharacterInventory::psCharacterInventoryItem* invItem = fromClient->GetCharacterData()->Inventory().GetCharInventoryItem(fromSlot);
+    if(!invItem)
         return false;
 
     SendAddItemMessage(fromClient, toSlot, invItem);
@@ -713,8 +713,8 @@ void Exchange::SendAddItemMessage(Client* fromClient, int slot, psCharacterInven
     psItem* item = invItem->GetItem();
 
     psExchangeAddItemMsg msg(fromClient->GetClientNum(), item->GetName(),
-      item->GetMeshName(), item->GetTextureName(), CONTAINER_EXCHANGE_OFFERING, slot, invItem->exchangeStackCount,
-      item->GetImageName(), psserver->GetCacheManager()->GetMsgStrings());
+                             item->GetMeshName(), item->GetTextureName(), CONTAINER_EXCHANGE_OFFERING, slot, invItem->exchangeStackCount,
+                             item->GetImageName(), psserver->GetCacheManager()->GetMsgStrings());
 
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
@@ -730,16 +730,16 @@ void Exchange::SendRemoveItemMessage(Client* fromClient, int slot)
 void Exchange::MoveItem(Client* fromClient, int fromSlot, int stackCount, int toSlot)
 {
     psCharacterInventory &inv = fromClient->GetCharacterData()->Inventory();
-    psCharacterInventory::psCharacterInventoryItem *srcItem  = inv.FindExchangeSlotOffered(fromSlot);
-    psCharacterInventory::psCharacterInventoryItem *destItem = inv.FindExchangeSlotOffered(toSlot);
+    psCharacterInventory::psCharacterInventoryItem* srcItem  = inv.FindExchangeSlotOffered(fromSlot);
+    psCharacterInventory::psCharacterInventoryItem* destItem = inv.FindExchangeSlotOffered(toSlot);
 
     srcItem->exchangeOfferSlot = toSlot;
 
-    if (destItem)
+    if(destItem)
         destItem->exchangeOfferSlot = fromSlot; // swap if destination slot is occupied
 
     SendRemoveItemMessage(fromClient, fromSlot);
-    if (destItem)
+    if(destItem)
     {
         SendRemoveItemMessage(fromClient, toSlot);
         SendAddItemMessage(fromClient, fromSlot, destItem);
@@ -747,29 +747,29 @@ void Exchange::MoveItem(Client* fromClient, int fromSlot, int stackCount, int to
     SendAddItemMessage(fromClient, toSlot, srcItem);
 }
 
-psMoney Exchange::GetOfferedMoney(Client *client)
+psMoney Exchange::GetOfferedMoney(Client* client)
 {
     CS_ASSERT(client == starterClient);
     return starterChar.GetOfferedMoney();
 }
 
 
-bool Exchange::AdjustMoney( Client* client, int moneyType, int newMoney )
+bool Exchange::AdjustMoney(Client* client, int moneyType, int newMoney)
 {
-    if ( client == starterClient )
+    if(client == starterClient)
     {
-        starterChar.AdjustMoney( moneyType, newMoney);
+        starterChar.AdjustMoney(moneyType, newMoney);
         starterChar.UpdateOfferingMoney();
         return true;
     }
     return false;
 }
 
-bool Exchange::AdjustMoney( Client* client, const psMoney& amount )
+bool Exchange::AdjustMoney(Client* client, const psMoney &amount)
 {
-    if ( client == starterClient )
+    if(client == starterClient)
     {
-        starterChar.AdjustMoney( amount);
+        starterChar.AdjustMoney(amount);
         starterChar.UpdateOfferingMoney();
         return true;
     }
@@ -778,14 +778,14 @@ bool Exchange::AdjustMoney( Client* client, const psMoney& amount )
 
 bool Exchange::RemoveItem(Client* fromClient, int fromSlot, int count)
 {
-    psCharacterInventory::psCharacterInventoryItem *invItem = fromClient->GetCharacterData()->Inventory().FindExchangeSlotOffered(fromSlot);
-    if (!invItem)
+    psCharacterInventory::psCharacterInventoryItem* invItem = fromClient->GetCharacterData()->Inventory().FindExchangeSlotOffered(fromSlot);
+    if(!invItem)
         return false;
 
-    if (count == -1)
+    if(count == -1)
         count = invItem->exchangeStackCount;  // stack count of offer, not of item
 
-    if (invItem->exchangeStackCount <= count)
+    if(invItem->exchangeStackCount <= count)
     {
         invItem->exchangeStackCount = 0; // take out of offering array
         invItem->exchangeOfferSlot = -1;
@@ -811,7 +811,7 @@ void Exchange::SendEnd(int clientNum)
 
 psItem* Exchange::GetStarterOffer(int slot)
 {
-    if (slot < 0 || slot >= EXCHANGE_SLOT_COUNT)
+    if(slot < 0 || slot >= EXCHANGE_SLOT_COUNT)
         return NULL;
 
     return starterChar.GetOfferedItem(slot);
@@ -822,7 +822,7 @@ int Exchange::next_id = 1;
 //------------------------------------------------------------------------------
 
 PlayerToPlayerExchange::PlayerToPlayerExchange(Client* player, Client* target, ExchangeManager* manager)
-                       :Exchange(player, false, manager), targetChar(target->GetClientNum(),target->GetCharacterData()->Inventory() )
+    :Exchange(player, false, manager), targetChar(target->GetClientNum(),target->GetCharacterData()->Inventory())
 {
     targetClient = target;
     this->target = target->GetClientNum();
@@ -831,7 +831,7 @@ PlayerToPlayerExchange::PlayerToPlayerExchange(Client* player, Client* target, E
 
     SendRequestToBoth();
 
-    targetClient->GetActor()->RegisterCallback( this );
+    targetClient->GetActor()->RegisterCallback(this);
 
     target->GetCharacterData()->Inventory().BeginExchange();
 }
@@ -847,41 +847,41 @@ PlayerToPlayerExchange::~PlayerToPlayerExchange()
     targetAccepted = false;
     starterAccepted = false;
 
-    if  ( !exchangeSuccess )
+    if(!exchangeSuccess)
     {
         targetClient->GetCharacterData()->Inventory().RollbackExchange();
         psserver->GetCharManager()->SendInventory(target);
     }
 
-    SendEnd( target );
+    SendEnd(target);
 
-    starterClient->GetActor()->UnregisterCallback( this );
-    targetClient->GetActor()->UnregisterCallback( this );
+    starterClient->GetActor()->UnregisterCallback(this);
+    targetClient->GetActor()->UnregisterCallback(this);
 }
 
-void PlayerToPlayerExchange::DeleteObjectCallback(iDeleteNotificationObject * object)
+void PlayerToPlayerExchange::DeleteObjectCallback(iDeleteNotificationObject* object)
 {
     // printf("PlayerToPlayerExchange::DeleteObjectCallback(). Actor in exchange is being deleted, so exchange is ending.\n");
 
     // Make sure both actors are disconnected.
-    starterClient->GetActor()->UnregisterCallback( this );
-    targetClient->GetActor()->UnregisterCallback( this );
+    starterClient->GetActor()->UnregisterCallback(this);
+    targetClient->GetActor()->UnregisterCallback(this);
 
-    HandleEnd( starterClient );
-    exchangeMgr->DeleteExchange( this );
+    HandleEnd(starterClient);
+    exchangeMgr->DeleteExchange(this);
 }
 
 
 
 void PlayerToPlayerExchange::SendRequestToBoth()
 {
-    csString targetName( targetClient->GetName() );
-    psExchangeRequestMsg one( starterClient->GetClientNum(), targetName, true );
-    psserver->GetEventManager()->SendMessage( one.msg );
+    csString targetName(targetClient->GetName());
+    psExchangeRequestMsg one(starterClient->GetClientNum(), targetName, true);
+    psserver->GetEventManager()->SendMessage(one.msg);
 
-    csString clientName( starterClient->GetName() );
-    psExchangeRequestMsg two( targetClient->GetClientNum(), clientName, true );
-    psserver->GetEventManager()->SendMessage( two.msg );
+    csString clientName(starterClient->GetName());
+    psExchangeRequestMsg two(targetClient->GetClientNum(), clientName, true);
+    psserver->GetEventManager()->SendMessage(two.msg);
 }
 
 Client* PlayerToPlayerExchange::GetOtherClient(Client* client) const
@@ -891,7 +891,7 @@ Client* PlayerToPlayerExchange::GetOtherClient(Client* client) const
 
 bool PlayerToPlayerExchange::AddItem(Client* fromClient, INVENTORY_SLOT_NUMBER fromSlot, int stackCount, int toSlot)
 {
-    if (!Exchange::AddItem(fromClient, fromSlot, stackCount, toSlot))
+    if(!Exchange::AddItem(fromClient, fromSlot, stackCount, toSlot))
         return false;
 
     starterAccepted = false;
@@ -905,11 +905,11 @@ void PlayerToPlayerExchange::SendAddItemMessage(Client* fromClient, int slot, ps
     Exchange::SendAddItemMessage(fromClient, slot, invItem);
     psItem* item = invItem->GetItem();
 
-    Client *toClient = GetOtherClient(fromClient);
+    Client* toClient = GetOtherClient(fromClient);
 
     psExchangeAddItemMsg msg(toClient->GetClientNum(), item->GetName(),
-      item->GetMeshName(), item->GetTextureName(), CONTAINER_EXCHANGE_RECEIVING, slot, invItem->exchangeStackCount,
-      item->GetImageName(), psserver->GetCacheManager()->GetMsgStrings());
+                             item->GetMeshName(), item->GetTextureName(), CONTAINER_EXCHANGE_RECEIVING, slot, invItem->exchangeStackCount,
+                             item->GetImageName(), psserver->GetCacheManager()->GetMsgStrings());
 
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
@@ -918,33 +918,33 @@ void PlayerToPlayerExchange::SendRemoveItemMessage(Client* fromClient, int slot)
 {
     Exchange::SendRemoveItemMessage(fromClient, slot);
 
-    Client *toClient = GetOtherClient(fromClient);
+    Client* toClient = GetOtherClient(fromClient);
 
     psExchangeRemoveItemMsg msg(toClient->GetClientNum(), CONTAINER_EXCHANGE_RECEIVING, slot, 0);
     psserver->GetEventManager()->SendMessage(msg.msg);
 }
 
 
-psMoney PlayerToPlayerExchange::GetOfferedMoney(Client *client)
+psMoney PlayerToPlayerExchange::GetOfferedMoney(Client* client)
 {
     CS_ASSERT(client == starterClient || client == targetClient);
-    if (client == starterClient)
+    if(client == starterClient)
         return starterChar.GetOfferedMoney();
     else
         return targetChar.GetOfferedMoney();
 }
 
-bool PlayerToPlayerExchange::AdjustMoney( Client* client, int moneyType, int newMoney )
+bool PlayerToPlayerExchange::AdjustMoney(Client* client, int moneyType, int newMoney)
 {
-    if ( Exchange::AdjustMoney( client, moneyType, newMoney ) )
+    if(Exchange::AdjustMoney(client, moneyType, newMoney))
     {
-        targetChar.UpdateReceivingMoney( starterChar.offeringMoney );
+        targetChar.UpdateReceivingMoney(starterChar.offeringMoney);
     }
-    else if (client == targetClient )
+    else if(client == targetClient)
     {
-        targetChar.AdjustMoney( moneyType, newMoney);
+        targetChar.AdjustMoney(moneyType, newMoney);
         targetChar.UpdateOfferingMoney();
-        starterChar.UpdateReceivingMoney( targetChar.offeringMoney );
+        starterChar.UpdateReceivingMoney(targetChar.offeringMoney);
     }
 
     //Remove accepted state
@@ -955,17 +955,17 @@ bool PlayerToPlayerExchange::AdjustMoney( Client* client, int moneyType, int new
     return true;
 }
 
-bool PlayerToPlayerExchange::AdjustMoney( Client* client, const psMoney& money )
+bool PlayerToPlayerExchange::AdjustMoney(Client* client, const psMoney &money)
 {
-    if ( Exchange::AdjustMoney( client, money ) )
+    if(Exchange::AdjustMoney(client, money))
     {
-        targetChar.UpdateReceivingMoney( starterChar.offeringMoney );
+        targetChar.UpdateReceivingMoney(starterChar.offeringMoney);
     }
-    else if (client == targetClient )
+    else if(client == targetClient)
     {
-        targetChar.AdjustMoney( money);
+        targetChar.AdjustMoney(money);
         targetChar.UpdateOfferingMoney();
-        starterChar.UpdateReceivingMoney( targetChar.offeringMoney );
+        starterChar.UpdateReceivingMoney(targetChar.offeringMoney);
     }
 
     //Remove accepted state
@@ -979,7 +979,7 @@ bool PlayerToPlayerExchange::AdjustMoney( Client* client, const psMoney& money )
 
 bool PlayerToPlayerExchange::RemoveItem(Client* fromClient, int fromSlot, int count)
 {
-    if (!Exchange::RemoveItem(fromClient, fromSlot, count))
+    if(!Exchange::RemoveItem(fromClient, fromSlot, count))
         return false;
 
     starterAccepted = false;
@@ -991,33 +991,33 @@ bool PlayerToPlayerExchange::RemoveItem(Client* fromClient, int fromSlot, int co
 
 bool PlayerToPlayerExchange::CheckExchange(uint32_t clientNum, bool checkRange)
 {
-    ClientConnectionSet * clients = psserver->GetConnections();
+    ClientConnectionSet* clients = psserver->GetConnections();
 
-    Client * playerClient = clients->Find(player);
-    if (playerClient == NULL)
+    Client* playerClient = clients->Find(player);
+    if(playerClient == NULL)
     {
         exchangeEnded = true;
         return false;
     }
 
-    Client * targetClient = clients->Find(target);
-    if (targetClient == NULL)
+    Client* targetClient = clients->Find(target);
+    if(targetClient == NULL)
     {
         exchangeEnded = true;
         return false;
     }
 
-    if (!starterChar.IsOfferingSane() || !targetChar.IsOfferingSane())
+    if(!starterChar.IsOfferingSane() || !targetChar.IsOfferingSane())
     {
         exchangeEnded = true;
         return false;
     }
 
-    if (checkRange)
+    if(checkRange)
     {
-        if (clientNum == player)
+        if(clientNum == player)
         {
-            if ( ! CheckRange(player, playerClient->GetActor(), targetClient->GetActor()) )
+            if(! CheckRange(player, playerClient->GetActor(), targetClient->GetActor()))
             {
                 psserver->GetCharManager()->SendInventory(clientNum);
                 return false;
@@ -1025,7 +1025,7 @@ bool PlayerToPlayerExchange::CheckExchange(uint32_t clientNum, bool checkRange)
         }
         else
         {
-            if ( ! CheckRange(target, targetClient->GetActor(), playerClient->GetActor()) )
+            if(! CheckRange(target, targetClient->GetActor(), playerClient->GetActor()))
             {
                 psserver->GetCharManager()->SendInventory(clientNum);
                 return false;
@@ -1037,30 +1037,30 @@ bool PlayerToPlayerExchange::CheckExchange(uint32_t clientNum, bool checkRange)
 }
 
 
-bool PlayerToPlayerExchange::HandleAccept(Client * client)
+bool PlayerToPlayerExchange::HandleAccept(Client* client)
 {
-    if ( ! CheckExchange(client->GetClientNum(), true))
+    if(! CheckExchange(client->GetClientNum(), true))
         return exchangeEnded;
 
-    if (client->GetClientNum() == player)
+    if(client->GetClientNum() == player)
         starterAccepted = true;
     else
         targetAccepted = true;
 
-    if (starterAccepted && targetAccepted)
+    if(starterAccepted && targetAccepted)
     {
         Debug1(LOG_EXCHANGES,client->GetClientNum(),"Both Exchanged\n");
         Debug2(LOG_EXCHANGES,client->GetClientNum(),"Exchange %d have been accepted by both clients\n",id);
 
-        ClientConnectionSet * clients = psserver->GetConnections();
+        ClientConnectionSet* clients = psserver->GetConnections();
 
         const char* playerName;
         const char* targetName;
-        if (player !=0)
+        if(player !=0)
             playerName = clients->Find(player)->GetName();
         else
             playerName = "None";
-        if (target !=0)
+        if(target !=0)
             targetName = clients->Find(target)->GetName();
         else
             targetName = "None";
@@ -1074,34 +1074,34 @@ bool PlayerToPlayerExchange::HandleAccept(Client * client)
         csString buf;
         starterChar.GetOfferingCSV(items);
 
-	if(!items.IsEmpty() || starterChar.GetOfferedMoney().GetTotal() > 0)
-	{
-		buf.Format("%s, %s, %s, \"%s\", %d, %u", playerName, targetName, "P2P Exchange", items.GetDataSafe(), 0, starterChar.GetOfferedMoney().GetTotal());
-		psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
-	}
+        if(!items.IsEmpty() || starterChar.GetOfferedMoney().GetTotal() > 0)
+        {
+            buf.Format("%s, %s, %s, \"%s\", %d, %u", playerName, targetName, "P2P Exchange", items.GetDataSafe(), 0, starterChar.GetOfferedMoney().GetTotal());
+            psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+        }
 
         targetChar.GetOfferingCSV(items);
 
-	if(!items.IsEmpty() || targetChar.GetOfferedMoney().GetTotal() > 0)
-	{
-		buf.Format("%s, %s, %s, \"%s\", %d, %u", targetName, playerName, "P2P Exchange", items.GetDataSafe(), 0, targetChar.GetOfferedMoney().GetTotal());
-		psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
-	}
+        if(!items.IsEmpty() || targetChar.GetOfferedMoney().GetTotal() > 0)
+        {
+            buf.Format("%s, %s, %s, \"%s\", %d, %u", targetName, playerName, "P2P Exchange", items.GetDataSafe(), 0, targetChar.GetOfferedMoney().GetTotal());
+            psserver->GetLogCSV()->Write(CSV_EXCHANGES, buf);
+        }
 
         csString itemsOffered;
 
         // RMS: Output items start client gave target client
-        if (starterChar.GetExchangedItems(itemsOffered))
+        if(starterChar.GetExchangedItems(itemsOffered))
         {
-            psserver->SendSystemBaseInfo( targetClient->GetClientNum(), "%s gave %s %s.", starterClient->GetName(), targetClient->GetName(), itemsOffered.GetData());                             // RMS: Trade cancelled without items being offered
-            psserver->SendSystemBaseInfo( starterClient->GetClientNum(), "%s gave %s %s.", starterClient->GetName(), targetClient->GetName(), itemsOffered.GetData());                            // RMS: Trade cancelled without items being offered
+            psserver->SendSystemBaseInfo(targetClient->GetClientNum(), "%s gave %s %s.", starterClient->GetName(), targetClient->GetName(), itemsOffered.GetData());                              // RMS: Trade cancelled without items being offered
+            psserver->SendSystemBaseInfo(starterClient->GetClientNum(), "%s gave %s %s.", starterClient->GetName(), targetClient->GetName(), itemsOffered.GetData());                             // RMS: Trade cancelled without items being offered
         }
 
         // RMS: Output items target client gave start client
-        if (targetChar.GetExchangedItems(itemsOffered))
+        if(targetChar.GetExchangedItems(itemsOffered))
         {
-            psserver->SendSystemBaseInfo( targetClient->GetClientNum(), "%s gave %s %s.", targetClient->GetName(), starterClient->GetName(), itemsOffered.GetData());                             // RMS: Trade cancelled without items being offered
-            psserver->SendSystemBaseInfo( starterClient->GetClientNum(), "%s gave %s %s.", targetClient->GetName(), starterClient->GetName(), itemsOffered.GetData());                            // RMS: Trade cancelled without items being offered
+            psserver->SendSystemBaseInfo(targetClient->GetClientNum(), "%s gave %s %s.", targetClient->GetName(), starterClient->GetName(), itemsOffered.GetData());                              // RMS: Trade cancelled without items being offered
+            psserver->SendSystemBaseInfo(starterClient->GetClientNum(), "%s gave %s %s.", targetClient->GetName(), starterClient->GetName(), itemsOffered.GetData());                             // RMS: Trade cancelled without items being offered
         }
 
         starterChar.TransferOffer(target);
@@ -1129,27 +1129,27 @@ bool PlayerToPlayerExchange::HandleAccept(Client * client)
 
 
 
-void PlayerToPlayerExchange::HandleEnd(Client * client)
+void PlayerToPlayerExchange::HandleEnd(Client* client)
 {
     printf("In P2PExch::HandleEnd\n");
 
     csString itemsOffered;
 
     // RMS: Target client
-    if (starterChar.GetExchangedItems(itemsOffered))
-        psserver->SendSystemResult( targetClient->GetClientNum(), "Trade declined" );  // RMS: Trade cancelled without items being offered
+    if(starterChar.GetExchangedItems(itemsOffered))
+        psserver->SendSystemResult(targetClient->GetClientNum(), "Trade declined");    // RMS: Trade cancelled without items being offered
     else
-        psserver->SendSystemResult( targetClient->GetClientNum(), "Trade cancelled");  // RMS: Starter client
+        psserver->SendSystemResult(targetClient->GetClientNum(), "Trade cancelled");   // RMS: Starter client
 
-    if (targetChar.GetExchangedItems(itemsOffered))
-        psserver->SendSystemResult( starterClient->GetClientNum(), "Trade declined" ); // RMS: Trade cancelled without items being offered
+    if(targetChar.GetExchangedItems(itemsOffered))
+        psserver->SendSystemResult(starterClient->GetClientNum(), "Trade declined");   // RMS: Trade cancelled without items being offered
     else
-        psserver->SendSystemResult( starterClient->GetClientNum(), "Trade cancelled");
+        psserver->SendSystemResult(starterClient->GetClientNum(), "Trade cancelled");
 
     targetClient->GetCharacterData()->Inventory().RollbackExchange();
     starterClient->GetCharacterData()->Inventory().RollbackExchange();
 
-    if (client->GetClientNum() == player)
+    if(client->GetClientNum() == player)
         SendEnd(target);
     else
         SendEnd(player);
@@ -1166,7 +1166,7 @@ void PlayerToPlayerExchange::SendExchangeStatusToBoth()
 
 psItem* PlayerToPlayerExchange::GetTargetOffer(int slot)
 {
-    if (slot < 0 || slot >= EXCHANGE_SLOT_COUNT)
+    if(slot < 0 || slot >= EXCHANGE_SLOT_COUNT)
         return NULL;
 
     return targetChar.GetOfferedItem(slot);
@@ -1179,18 +1179,18 @@ psItem* PlayerToPlayerExchange::GetTargetOffer(int slot)
 ***********************************************************************************/
 
 PlayerToNPCExchange::PlayerToNPCExchange(Client* player, gemObject* target, bool automaticExchange, int questID, ExchangeManager* manager)
-                    : Exchange(player, automaticExchange, manager)
+    : Exchange(player, automaticExchange, manager)
 {
     this->target = target;
 
-    csString targetName( target->GetName() );
+    csString targetName(target->GetName());
     if(!automaticExchange)
     {
-        psExchangeRequestMsg one( starterClient->GetClientNum(), targetName, false );
-        psserver->GetEventManager()->SendMessage( one.msg );
+        psExchangeRequestMsg one(starterClient->GetClientNum(), targetName, false);
+        psserver->GetEventManager()->SendMessage(one.msg);
     }
 
-    target->RegisterCallback( this );
+    target->RegisterCallback(this);
 
     this->questID = questID;
 
@@ -1201,42 +1201,42 @@ PlayerToNPCExchange::~PlayerToNPCExchange()
 {
     starterClient->GetCharacterData()->Inventory().RollbackExchange();
 
-    starterClient->GetActor()->UnregisterCallback( this );
-    target->UnregisterCallback( this );
+    starterClient->GetActor()->UnregisterCallback(this);
+    target->UnregisterCallback(this);
 }
 
-gemObject * PlayerToNPCExchange::GetTargetGEM()
+gemObject* PlayerToNPCExchange::GetTargetGEM()
 {
     return target;
 }
 
 bool PlayerToNPCExchange::CheckExchange(uint32_t clientNum, bool checkRange)
 {
-    ClientConnectionSet * clients = psserver->GetConnections();
+    ClientConnectionSet* clients = psserver->GetConnections();
 
-    Client * playerClient = clients->Find(player);
-    if (playerClient == NULL)
+    Client* playerClient = clients->Find(player);
+    if(playerClient == NULL)
     {
         exchangeEnded = true;
         return false;
     }
 
-    gemObject * targetGEM = GetTargetGEM();
-    if (targetGEM == NULL)
+    gemObject* targetGEM = GetTargetGEM();
+    if(targetGEM == NULL)
     {
         exchangeEnded = true;
         return false;
     }
 
-    if (!starterChar.IsOfferingSane())
+    if(!starterChar.IsOfferingSane())
     {
         exchangeEnded = true;
         return false;
     }
 
-    if (checkRange)
+    if(checkRange)
     {
-        if ( ! CheckRange(clientNum, playerClient->GetActor(), targetGEM) )
+        if(! CheckRange(clientNum, playerClient->GetActor(), targetGEM))
         {
             psserver->GetCharManager()->SendInventory(clientNum);
             return false;
@@ -1247,18 +1247,18 @@ bool PlayerToNPCExchange::CheckExchange(uint32_t clientNum, bool checkRange)
 
 
 
-void PlayerToNPCExchange::HandleEnd(Client * client)
+void PlayerToNPCExchange::HandleEnd(Client* client)
 {
     client->GetCharacterData()->Inventory().RollbackExchange();
     return;
 }
 
-bool PlayerToNPCExchange::CheckXMLResponse(Client * client, psNPCDialog *dlg, csString trigger)
+bool PlayerToNPCExchange::CheckXMLResponse(Client* client, psNPCDialog* dlg, csString trigger)
 {
-    NpcResponse *resp = dlg->FindXMLResponse(client, trigger, questID);
-    if (resp && resp->type != NpcResponse::ERROR_RESPONSE)
+    NpcResponse* resp = dlg->FindXMLResponse(client, trigger, questID);
+    if(resp && resp->type != NpcResponse::ERROR_RESPONSE)
     {
-        csTicks delay = resp->ExecuteScript(client->GetActor(), (gemNPC *)target);
+        csTicks delay = resp->ExecuteScript(client->GetActor(), (gemNPC*)target);
         if(delay != (csTicks)SIZET_NOT_FOUND)
         {
             // Give offered items to npc
@@ -1268,7 +1268,7 @@ bool PlayerToNPCExchange::CheckXMLResponse(Client * client, psNPCDialog *dlg, cs
             client->GetCharacterData()->SetLastResponse(resp->id);
             client->GetCharacterData()->GetQuestMgr().SetAssignedQuestLastResponse(resp->quest,resp->id, target);
             if(resp->menu)
-                resp->menu->ShowMenu(client, delay, (gemNPC *)target);
+                resp->menu->ShowMenu(client, delay, (gemNPC*)target);
             return true;
         }
     }
@@ -1276,9 +1276,9 @@ bool PlayerToNPCExchange::CheckXMLResponse(Client * client, psNPCDialog *dlg, cs
 }
 
 
-bool PlayerToNPCExchange::HandleAccept(Client * client)
+bool PlayerToNPCExchange::HandleAccept(Client* client)
 {
-    if ( ! CheckExchange(client->GetClientNum(), true))
+    if(! CheckExchange(client->GetClientNum(), true))
         return exchangeEnded;
 
 
@@ -1288,18 +1288,18 @@ bool PlayerToNPCExchange::HandleAccept(Client * client)
     bool exchange_accepted = true;
 
     // Send to the npc as an event trigger
-    psNPCDialog *dlg = target->GetNPCDialogPtr();
-    if (dlg)
+    psNPCDialog* dlg = target->GetNPCDialogPtr();
+    if(dlg)
     {
         csString trigger;
 
         // Check if NPC require the exact among of money
         starterChar.GetSimpleOffering(trigger,client->GetCharacterData(),true);
-        if (!CheckXMLResponse(client,dlg,trigger))
+        if(!CheckXMLResponse(client,dlg,trigger))
         {
             // Check if NPC is OK with all the money total in circles
             starterChar.GetSimpleOffering(trigger,client->GetCharacterData(),false);
-            if (!CheckXMLResponse(client,dlg,trigger))
+            if(!CheckXMLResponse(client,dlg,trigger))
             {
                 psserver->SendSystemError(client->GetClientNum(), "%s does not need that.", target->GetName());
                 psserver->SendSystemOK(client->GetClientNum(),"Trade Declined");
@@ -1315,7 +1315,7 @@ bool PlayerToNPCExchange::HandleAccept(Client * client)
         exchange_accepted = false;
     }
 
-    if (exchange_accepted)
+    if(exchange_accepted)
     {
         // This is redundant but harmless.  CheckXMLResponse also does this but it's easy to miss so
         // leaving here incase someone removes it.
@@ -1342,13 +1342,13 @@ bool PlayerToNPCExchange::HandleAccept(Client * client)
     }
 }
 
-void PlayerToNPCExchange::DeleteObjectCallback(iDeleteNotificationObject * object)
+void PlayerToNPCExchange::DeleteObjectCallback(iDeleteNotificationObject* object)
 {
-    starterClient->GetActor()->UnregisterCallback( this );
-    target->UnregisterCallback( this );
+    starterClient->GetActor()->UnregisterCallback(this);
+    target->UnregisterCallback(this);
 
-    HandleEnd( starterClient );
-    exchangeMgr->DeleteExchange( this );
+    HandleEnd(starterClient);
+    exchangeMgr->DeleteExchange(this);
 }
 
 /***********************************************************************************
@@ -1357,7 +1357,7 @@ void PlayerToNPCExchange::DeleteObjectCallback(iDeleteNotificationObject * objec
 *
 ***********************************************************************************/
 
-ExchangeManager::ExchangeManager(ClientConnectionSet *pClnts)
+ExchangeManager::ExchangeManager(ClientConnectionSet* pClnts)
 {
     clients      = pClnts;
 
@@ -1372,13 +1372,13 @@ ExchangeManager::~ExchangeManager()
     //do nothing
 }
 
-bool ExchangeManager::ExchangeCheck(Client * client, gemObject * target, csString * errorMessage)
+bool ExchangeManager::ExchangeCheck(Client* client, gemObject* target, csString* errorMessage)
 {
     PSCHARACTER_MODE mode = client->GetActor()->GetMode();
 
-    if ( mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_SIT && mode != PSCHARACTER_MODE_OVERWEIGHT )
+    if(mode != PSCHARACTER_MODE_PEACE && mode != PSCHARACTER_MODE_SIT && mode != PSCHARACTER_MODE_OVERWEIGHT)
     {
-        if (errorMessage)
+        if(errorMessage)
         {
             errorMessage->Format("You can't trade while %s.", client->GetActor()->GetModeStr());
         }
@@ -1388,25 +1388,25 @@ bool ExchangeManager::ExchangeCheck(Client * client, gemObject * target, csStrin
     //don't allow frozen clients to drain all their possessions to an alt before punishment
     if(client->GetActor()->IsFrozen())
     {
-        if (errorMessage)
+        if(errorMessage)
         {
             *errorMessage = "You can't trade while being frozen.";
         }
         return false;
     }
 
-    if ( client->GetExchangeID() )
+    if(client->GetExchangeID())
     {
-        if (errorMessage)
+        if(errorMessage)
         {
             *errorMessage = "You are already busy with another trade." ;
         }
         return false;
     }
 
-    if (!target->IsAlive())
+    if(!target->IsAlive())
     {
-        if (errorMessage)
+        if(errorMessage)
         {
             *errorMessage = "Cannot give items to dead things!";
         }
@@ -1414,17 +1414,17 @@ bool ExchangeManager::ExchangeCheck(Client * client, gemObject * target, csStrin
     }
 
     // Check to make sure that the client or target are not busy with a merchant first.
-    if ( target->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING )
+    if(target->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING)
     {
-        if (errorMessage)
+        if(errorMessage)
         {
             errorMessage->Format("%s is busy at the moment", target->GetName());
         }
         return false;
     }
-    if ( client->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING )
+    if(client->GetCharacterData()->GetTradingStatus() != psCharacter::NOT_TRADING)
     {
-        if (errorMessage)
+        if(errorMessage)
         {
             errorMessage->Format("You are busy with a merchant");
         }
@@ -1436,7 +1436,7 @@ bool ExchangeManager::ExchangeCheck(Client * client, gemObject * target, csStrin
 }
 
 
-void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool automaticExchange, int questID)
+void ExchangeManager::StartExchange(Client* client, bool withPlayer, bool automaticExchange, int questID)
 {
     gemObject* target = client->GetTargetObject();
 
@@ -1445,7 +1445,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
     // Range check is outside TradingCheck to prevent dublicate range checks in gemNPC::SendBehaviorMessage
 
     // Check within select range
-    if( client->GetActor()->RangeTo(target) > RANGE_TO_SELECT )
+    if(client->GetActor()->RangeTo(target) > RANGE_TO_SELECT)
     {
         psserver->SendSystemInfo(client->GetClientNum(), "You are not in range to %s with %s.", withPlayer?"exchange":"give", target->GetName());
         return;
@@ -1453,7 +1453,7 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
 
     // Check all other preconditions
     csString errorMessage;
-    if (!ExchangeCheck(client, client->GetTargetObject(),&errorMessage))
+    if(!ExchangeCheck(client, client->GetTargetObject(),&errorMessage))
     {
         psserver->SendSystemInfo(client->GetClientNum(), errorMessage);
         return;
@@ -1462,12 +1462,12 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
 
     // End of preconditons
     ///////////
-        
+
 
     // if the command was "/give":
-    if (!withPlayer)
+    if(!withPlayer)
     {
-        if ( !target->GetNPCPtr() )
+        if(!target->GetNPCPtr())
         {
             psserver->SendSystemError(client->GetClientNum(), "You can give items to NPCs only");
             return;
@@ -1475,27 +1475,27 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
 
 
         Exchange* exchange = new PlayerToNPCExchange(client, target, automaticExchange, questID, this);
-        client->SetExchangeID( exchange->GetID() );
-        exchanges.Push (exchange);
+        client->SetExchangeID(exchange->GetID());
+        exchanges.Push(exchange);
     }
 
     // if the command was "/trade":
     else
     {
-        if ( target->GetNPCPtr() )
+        if(target->GetNPCPtr())
         {
             psserver->SendSystemError(client->GetClientNum(), "You can trade with other players only.");
             return;
         }
 
-        Client * targetClient = target->GetClient();
-        if (targetClient == NULL)
+        Client* targetClient = target->GetClient();
+        if(targetClient == NULL)
         {
             psserver->SendSystemError(client->GetClientNum(), "Cannot find your target!");
             return;
         }
 
-        if ( client == targetClient )
+        if(client == targetClient)
         {
             psserver->SendSystemError(client->GetClientNum(),"You can not trade with yourself.");
             return;
@@ -1507,59 +1507,59 @@ void ExchangeManager::StartExchange( Client* client, bool withPlayer, bool autom
             return;
         }
 
-        if ( targetClient->GetExchangeID() )
+        if(targetClient->GetExchangeID())
         {
-            psserver->SendSystemError(client->GetClientNum(), "%s is busy with another trade.", targetClient->GetName() );
+            psserver->SendSystemError(client->GetClientNum(), "%s is busy with another trade.", targetClient->GetName());
             return;
         }
 
         // Must ask the other player before starting the trade
         csString question;
-        question.Format( "Do you want to trade with %s ?", client->GetCharacterData()->GetCharName() );
-        PendingQuestion *invite = new PendingTradeInvite(
-                    client, targetClient, question.GetData() );
+        question.Format("Do you want to trade with %s ?", client->GetCharacterData()->GetCharName());
+        PendingQuestion* invite = new PendingTradeInvite(
+            client, targetClient, question.GetData());
         psserver->questionmanager->SendQuestion(invite);
     }
 }
 
-void ExchangeManager::HandleExchangeRequest(MsgEntry *me,Client *client)
+void ExchangeManager::HandleExchangeRequest(MsgEntry* me,Client* client)
 {
-    Notify2( LOG_TRADE, "Trade Requested from %u", client->GetClientNum() );
+    Notify2(LOG_TRADE, "Trade Requested from %u", client->GetClientNum());
     psExchangeRequestMsg msg(me);
-    StartExchange( client, msg.withPlayer );
+    StartExchange(client, msg.withPlayer);
 }
 
-void ExchangeManager::HandleExchangeAccept(MsgEntry *me,Client *client)
+void ExchangeManager::HandleExchangeAccept(MsgEntry* me,Client* client)
 {
-    Notify3( LOG_TRADE, "Exchange %d Accept from %d", client->GetExchangeID(), client->GetClientNum() );
+    Notify3(LOG_TRADE, "Exchange %d Accept from %d", client->GetExchangeID(), client->GetClientNum());
 
-    Exchange* exchange = GetExchange( client->GetExchangeID() );
-    if ( exchange )
+    Exchange* exchange = GetExchange(client->GetExchangeID());
+    if(exchange)
     {
-        if (exchange->HandleAccept(client))
+        if(exchange->HandleAccept(client))
         {
             DeleteExchange(exchange);
         }
     }
 }
 
-void ExchangeManager::HandleExchangeEnd(MsgEntry *me,Client *client)
+void ExchangeManager::HandleExchangeEnd(MsgEntry* me,Client* client)
 {
-    Notify2( LOG_TRADE, "Trade %d Rejected", client->GetExchangeID() );
+    Notify2(LOG_TRADE, "Trade %d Rejected", client->GetExchangeID());
 
-    Exchange* exchange = GetExchange( client->GetExchangeID() );
-    if ( exchange )
+    Exchange* exchange = GetExchange(client->GetExchangeID());
+    if(exchange)
     {
         exchange->HandleEnd(client);
         DeleteExchange(exchange);
     }
     else
     {
-        Warning2( LOG_TRADE, "Trade %d Not located", client->GetExchangeID() );
+        Warning2(LOG_TRADE, "Trade %d Not located", client->GetExchangeID());
     }
 }
 
-void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
+void ExchangeManager::HandleAutoGive(MsgEntry* me,Client* client)
 {
     psSimpleStringMessage give(me);
 
@@ -1568,9 +1568,9 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
     // Expecting xml string like: <l money="0,0,0,0"><item n="Steel Falchion" c="1"/><questid id="1234"/></l>
 
     csRef<iDocument> doc = ParseString(give.str);
-    if (doc == NULL)
+    if(doc == NULL)
     {
-        Error2("Failed to parse script %s", give.str.GetData() );
+        Error2("Failed to parse script %s", give.str.GetData());
         return;
     }
     csRef<iDocumentNode> root    = doc->GetRoot();
@@ -1580,7 +1580,7 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
         return;
     }
     csRef<iDocumentNode> topNode = root->GetNode("l");
-    if (!topNode)
+    if(!topNode)
     {
         Error1("Could not find <evt> tag in progression script!");
         return;
@@ -1595,15 +1595,15 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
         if(questIDHint < -1)
         {
             questIDHint = -1;
-        }        
+        }
     }
 
     // Create a temporary exchange to actually do all the gift giving
     StartExchange(client, false, true, questIDHint);
 
     // Check to make sure it worked
-    Exchange* exchange = GetExchange( client->GetExchangeID() );
-    if (!exchange)
+    Exchange* exchange = GetExchange(client->GetExchangeID());
+    if(!exchange)
     {
         psserver->SendSystemError(client->GetClientNum(),"Could not give requested items.");
         return;
@@ -1612,7 +1612,7 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
     // Now validate that the person has all the required items here
     int exchangeSlot = 0, itemCount = 0;
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes("item");
-    while ( iter->HasNext() )
+    while(iter->HasNext())
     {
         itemCount++;
 
@@ -1621,19 +1621,19 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
         int      itemCount = node->GetAttributeValueAsInt("c");
 
         // Get the definition of the item from the name
-        psItemStats *itemstat = psserver->GetCacheManager()->GetBasicItemStatsByName(itemName);
-        if (itemstat)
+        psItemStats* itemstat = psserver->GetCacheManager()->GetBasicItemStatsByName(itemName);
+        if(itemstat)
         {
             // Now find that item in the player's inv from the definition
             size_t foundIndex = client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat);
-            if (foundIndex != SIZET_NOT_FOUND)
+            if(foundIndex != SIZET_NOT_FOUND)
             {
                 // Now verify that the player has exactly the right count of these items, and not more of them in another slot
-                psItem *invItem = client->GetCharacterData()->Inventory().GetInventoryIndexItem(foundIndex);
-                if (invItem->GetStackCount() < itemCount || invItem->GetStackCount() > itemCount || client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat,foundIndex+1) != SIZET_NOT_FOUND || strcmp(invItem->GetName(), itemstat->GetName()) != 0)
+                psItem* invItem = client->GetCharacterData()->Inventory().GetInventoryIndexItem(foundIndex);
+                if(invItem->GetStackCount() < itemCount || invItem->GetStackCount() > itemCount || client->GetCharacterData()->Inventory().FindItemStatIndex(itemstat,foundIndex+1) != SIZET_NOT_FOUND || strcmp(invItem->GetName(), itemstat->GetName()) != 0)
                 {
                     // Distinguish the cases from each other in order to send out the correct error message
-                    if (invItem->GetStackCount() < itemCount)
+                    if(invItem->GetStackCount() < itemCount)
                     {
                         psserver->SendSystemError(client->GetClientNum(), "You have too few %s.  Come back when you have the correct amount.", itemName.GetData());
                     }
@@ -1655,58 +1655,58 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
             }
             else
             {
-                psserver->SendSystemError(client->GetClientNum(), "You do not have required item: %s",itemName.GetData() );
+                psserver->SendSystemError(client->GetClientNum(), "You do not have required item: %s",itemName.GetData());
                 HandleExchangeEnd(NULL,client);
                 break;
             }
         }
         else
         {
-            Error2("Could not find item stat for autogive, item name '%s'.",itemName.GetData() );
+            Error2("Could not find item stat for autogive, item name '%s'.",itemName.GetData());
             HandleExchangeEnd(NULL,client);
             break;
         }
     }
     // Now execute the exchange if all items were found
-    if (exchangeSlot == itemCount) // successfully added everything to the exchange
+    if(exchangeSlot == itemCount)  // successfully added everything to the exchange
     {
         // Now parse the money attribute here and add any money found to the exchange
         psMoney money(topNode->GetAttributeValue("money"));
-        if (money.GetTotal() > 0 && client->GetCharacterData()->Money().GetTotal() > money.GetTotal() )
+        if(money.GetTotal() > 0 && client->GetCharacterData()->Money().GetTotal() > money.GetTotal())
         {
-            if (money.GetTrias())
+            if(money.GetTrias())
             {
                 psMoney newmoney = client->GetCharacterData()->Money();
                 newmoney.EnsureTrias(money.GetTrias());
                 client->GetCharacterData()->SetMoney(newmoney);
-                psSlotMovementMsg trias(CONTAINER_INVENTORY_MONEY,MONEY_TRIAS,CONTAINER_EXCHANGE_OFFERING,MONEY_TRIAS,money.GetTrias() );
+                psSlotMovementMsg trias(CONTAINER_INVENTORY_MONEY,MONEY_TRIAS,CONTAINER_EXCHANGE_OFFERING,MONEY_TRIAS,money.GetTrias());
                 trias.msg->clientnum = client->GetClientNum();  // must set this before publishing
                 trias.FireEvent();
             }
-            if (money.GetHexas())
+            if(money.GetHexas())
             {
                 psMoney newmoney = client->GetCharacterData()->Money();
                 newmoney.EnsureHexas(money.GetHexas());
                 client->GetCharacterData()->SetMoney(newmoney);
-                psSlotMovementMsg hexas(CONTAINER_INVENTORY_MONEY,MONEY_HEXAS,CONTAINER_EXCHANGE_OFFERING,MONEY_HEXAS,money.GetHexas() );
+                psSlotMovementMsg hexas(CONTAINER_INVENTORY_MONEY,MONEY_HEXAS,CONTAINER_EXCHANGE_OFFERING,MONEY_HEXAS,money.GetHexas());
                 hexas.msg->clientnum = client->GetClientNum();  // must set this before publishing
                 hexas.FireEvent();
             }
-            if (money.GetOctas())
+            if(money.GetOctas())
             {
                 psMoney newmoney = client->GetCharacterData()->Money();
                 newmoney.EnsureOctas(money.GetOctas());
                 client->GetCharacterData()->SetMoney(newmoney);
-                psSlotMovementMsg octas(CONTAINER_INVENTORY_MONEY,MONEY_OCTAS,CONTAINER_EXCHANGE_OFFERING,MONEY_OCTAS,money.GetOctas() );
+                psSlotMovementMsg octas(CONTAINER_INVENTORY_MONEY,MONEY_OCTAS,CONTAINER_EXCHANGE_OFFERING,MONEY_OCTAS,money.GetOctas());
                 octas.msg->clientnum = client->GetClientNum();  // must set this before publishing
                 octas.FireEvent();
             }
-            if (money.GetCircles())
+            if(money.GetCircles())
             {
                 psMoney newmoney = client->GetCharacterData()->Money();
                 newmoney.EnsureCircles(money.GetCircles());
                 client->GetCharacterData()->SetMoney(newmoney);
-                psSlotMovementMsg circles(CONTAINER_INVENTORY_MONEY,MONEY_CIRCLES,CONTAINER_EXCHANGE_OFFERING,MONEY_CIRCLES,money.GetCircles() );
+                psSlotMovementMsg circles(CONTAINER_INVENTORY_MONEY,MONEY_CIRCLES,CONTAINER_EXCHANGE_OFFERING,MONEY_CIRCLES,money.GetCircles());
                 circles.msg->clientnum = client->GetClientNum();  // must set this before publishing
                 circles.FireEvent();
             }
@@ -1715,17 +1715,18 @@ void ExchangeManager::HandleAutoGive(MsgEntry *me,Client *client)
     }
 }
 
-Exchange * ExchangeManager::GetExchange(int id)
+Exchange* ExchangeManager::GetExchange(int id)
 {
     // TODO:  Make this a hashmap
-    for (size_t n = 0; n < exchanges.GetSize(); n++){
-        if (exchanges[n]->GetID() == id) return exchanges[n];
+    for(size_t n = 0; n < exchanges.GetSize(); n++)
+    {
+        if(exchanges[n]->GetID() == id) return exchanges[n];
     }
     Error2("Can't find exchange: %d !!!",id);
     return NULL;
 }
 
-void ExchangeManager::DeleteExchange(Exchange * exchange)
+void ExchangeManager::DeleteExchange(Exchange* exchange)
 {
     exchanges.Delete(exchange); // deletes the exchange object
 }

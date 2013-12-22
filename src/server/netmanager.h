@@ -2,7 +2,7 @@
  * netmanager.h by Matze Braun <matze@braunis.de> and
  *                 Keith Fulton <keith@paqrat.com>
  *
- * Copyright (C) 2001-3 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-3 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -57,10 +57,10 @@ public:
      *
      * Initializes firstmsg and timeout is the timout in ms for a
      * connection. If no packets are sent or received in this time then the
-     * connection is made linkdead. 
+     * connection is made linkdead.
      *
      * @param cachemanager Pointer to the cachemanager
-     * @param client_firstmsg: Is the message type that must be first received from a client 
+     * @param client_firstmsg: Is the message type that must be first received from a client
      *     to determine if it is a valid client.
      * @param npcclient_firstmsg: Is the message type that must be first received from a npc client
      *     to determine if it is a valid npc client.
@@ -69,7 +69,7 @@ public:
      * @return Returns success or faliure for initializing.
      */
     bool Initialize(CacheManager* cachemanager, int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
-    
+
     static NetManager* Create(CacheManager* cacheManager, int client_firstmsg, int npcclient_firstmsg, int timeout=15000);
 
     static void Destroy();
@@ -95,7 +95,7 @@ public:
      *     is unused.
      * @see MsgEntry
      */
-    virtual void Broadcast(MsgEntry *me, int scope,int guild=-1);
+    virtual void Broadcast(MsgEntry* me, int scope,int guild=-1);
 
     /**
      * Sends the given message me to all the clients in the list.
@@ -113,7 +113,7 @@ public:
      * @param range  Is the maximum distance the client must be away to be out
      *     of "message reception range".
      */
-    virtual void Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, uint32_t except, float range);
+    virtual void Multicast(MsgEntry* me, const csArray<PublishDestination> &multi, uint32_t except, float range);
 
     /**
      * Checks for and deletes link dead clients.
@@ -128,7 +128,10 @@ public:
      *
      * @return Returns a pointer to the list of all the clients.
      */
-    ClientConnectionSet* GetConnections() { return &clients; }
+    ClientConnectionSet* GetConnections()
+    {
+        return &clients;
+    }
 
     /**
      * Gets a client with the specified id.
@@ -136,7 +139,7 @@ public:
      * @param cnum The id of the client to retrive.
      * @return Returns a pointer to the specified client or NULL if not found or client not ready.
      */
-    Client *GetClient(int cnum);
+    Client* GetClient(int cnum);
 
     /**
      * Gets a client with the specified id.
@@ -144,7 +147,7 @@ public:
      * @param cnum The id of the client to retrive.
      * @return Returns a pointer to the specified client or NULL if not found.
      */
-    Client *GetAnyClient(int cnum);
+    Client* GetAnyClient(int cnum);
 
     /**
      * Sends the given message to the client listed in the message.
@@ -155,13 +158,13 @@ public:
      *     client number to send the message to.
      * @return Returns success or faliure.
      */
-    virtual bool SendMessage (MsgEntry* me);
-    
+    virtual bool SendMessage(MsgEntry* me);
+
     /**
-     * Queues the message for sending later, so the calling classes don't have 
+     * Queues the message for sending later, so the calling classes don't have
      * to all manage this themselves.
      */
-    bool SendMessageDelayed(MsgEntry *me, csTicks delay);
+    bool SendMessageDelayed(MsgEntry* me, csTicks delay);
 
     /**
      * This is the main thread function.
@@ -171,38 +174,38 @@ public:
      * NetBase::ProcessNetwork() and also checks all the dead links. This
      * method also calculates the data transfer rate.
      */
-    void Run ();
+    void Run();
 
 protected:
 
     /**
      * Returns a NetManager::Connection from the given IP address.
-     * 
+     *
      * @param addr Is the IP address of client we want to find the connection
      *     for.
      * @return Returns a Connection object that contains the connection for
      *     the given IP address.
      */
-    virtual Connection *GetConnByIP (LPSOCKADDR_IN addr);
-    
+    virtual Connection* GetConnByIP(LPSOCKADDR_IN addr);
+
     /**
      * Returns a NetManager::Connection from the given client number.
-     * 
+     *
      * @param clientnum Is the client number we wish to get the connection
      *     for.
      * @return Returns a Connection object that contains the connection for
      *     the given client number.
      */
-    virtual Connection *GetConnByNum (uint32_t clientnum);
-    
+    virtual Connection* GetConnByNum(uint32_t clientnum);
+
     /**
      * Handles/connects a new client from an unknown IP address.
      *
      * This is called when we have recieved a message from a client that we
      * don't know yet. This happens when a new client connects to us. First
      * thing it does is check to make sure the msgtype is equal to firstmsg.
-     * If not then we have recieved some random packet. If firstmsg is accepted 
-     * then it adds this new client to our client list and then changed the 
+     * If not then we have recieved some random packet. If firstmsg is accepted
+     * then it adds this new client to our client list and then changed the
      * client number on the message so an acknowledge can be sent back later.
      *
      * @param addr Is the IP address of the client we have not seen before.
@@ -210,7 +213,7 @@ protected:
      * @return Returns true if the client has been verified and connected or
      *     false if it is a bad client or failed to connect properly.
      */
-    virtual bool HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* msg);
+    virtual bool HandleUnknownClient(LPSOCKADDR_IN addr, MsgEntry* msg);
 
 private:
     /**
@@ -229,7 +232,7 @@ private:
 
     /// Type of first msg from client must be this. (e.g. MSGTYPE_AUTHENTICATE)
     uint32_t client_firstmsg;
-    /// Type of first msg from npc client must be this. (e.g. MSGTYPE_NPCAUTHENT)    
+    /// Type of first msg from npc client must be this. (e.g. MSGTYPE_NPCAUTHENT)
     uint32_t npcclient_firstmsg;
 
     /// Network will stop when set to true

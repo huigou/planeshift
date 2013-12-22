@@ -63,19 +63,19 @@ protected:
     csRef<MsgEntry> myMsg;
 
 public:
-    DelayedMessageSendEvent(int delayticks,MsgEntry *msg)
+    DelayedMessageSendEvent(int delayticks,MsgEntry* msg)
         : psGameEvent(0, delayticks, "DelayedMessageSendEvent")
     {
         valid = true;
         myMsg = msg;
     }
     void CancelEvent()
-    { 
+    {
         valid = false;
     }
     virtual void Trigger()
     {
-        if (valid)
+        if(valid)
         {
             psserver->GetNetManager()->SendMessage(myMsg);
         }
@@ -84,7 +84,7 @@ public:
 
 
 NetManager::NetManager()
-    : NetBase (1000),stop_network(false)
+    : NetBase(1000),stop_network(false)
 {
     port=0;
 }
@@ -95,7 +95,7 @@ NetManager::~NetManager()
 
 bool NetManager::Initialize(CacheManager* cachemanager, int client_firstmsg, int npcclient_firstmsg, int timeout)
 {
-    if (!NetBase::Init(false))
+    if(!NetBase::Init(false))
         return false;
 
     NetManager::port = port;
@@ -103,7 +103,7 @@ bool NetManager::Initialize(CacheManager* cachemanager, int client_firstmsg, int
     NetManager::npcclient_firstmsg = npcclient_firstmsg;
     NetManager::timeout = timeout;
 
-    if (!clients.Initialize())
+    if(!clients.Initialize())
         return false;
 
     SetMsgStrings(cachemanager->GetMsgStrings(), 0);
@@ -113,7 +113,7 @@ bool NetManager::Initialize(CacheManager* cachemanager, int client_firstmsg, int
 
 class NetManagerStarter : public CS::Threading::Runnable, public Singleton<NetManagerStarter>
 {
-    CacheManager *cacheManager;
+    CacheManager* cacheManager;
 public:
     NetManager* netManager;
     CS::Threading::Thread* thread;
@@ -124,11 +124,11 @@ public:
     int timeout;
 
 
-    NetManagerStarter(CacheManager *cachemanager, int _client_firstmsg, int _npcclient_firstmsg, int _timeout)
+    NetManagerStarter(CacheManager* cachemanager, int _client_firstmsg, int _npcclient_firstmsg, int _timeout)
     {
         netManager = NULL;
         thread = NULL;
-    	cacheManager = cachemanager;
+        cacheManager = cachemanager;
         client_firstmsg = _client_firstmsg;
         npcclient_firstmsg = _npcclient_firstmsg;
         timeout = _timeout;
@@ -137,13 +137,13 @@ public:
     void Run()
     {
         {
-            CS::Threading::MutexScopedLock lock (doneMutex);
+            CS::Threading::MutexScopedLock lock(doneMutex);
             // construct the netManager is its own thread to avoid wrong warnings of dynamic thread checking via valgrind
             netManager = new NetManager();
-            if (!netManager->Initialize(cacheManager, client_firstmsg, npcclient_firstmsg,
-                    timeout))
+            if(!netManager->Initialize(cacheManager, client_firstmsg, npcclient_firstmsg,
+                                       timeout))
             {
-                Error1 ("Network thread initialization failed!\nIs there already a server running?");
+                Error1("Network thread initialization failed!\nIs there already a server running?");
                 delete netManager;
                 netManager = NULL;
                 initDone.NotifyAll();
@@ -161,16 +161,16 @@ NetManager* NetManager::Create(CacheManager* cacheManager, int client_firstmsg, 
 {
     NetManagerStarter* netManagerStarter =
         new NetManagerStarter(cacheManager, client_firstmsg, npcclient_firstmsg, timeout);
-    netManagerStarter->thread = new CS::Threading::Thread (netManagerStarter);
+    netManagerStarter->thread = new CS::Threading::Thread(netManagerStarter);
 
     // wait for initialization to be finished
     {
-        CS::Threading::MutexScopedLock lock (netManagerStarter->doneMutex);
+        CS::Threading::MutexScopedLock lock(netManagerStarter->doneMutex);
         netManagerStarter->thread->Start();
-        
-        if (!netManagerStarter->thread->IsRunning())
+
+        if(!netManagerStarter->thread->IsRunning())
         {
-            return NULL;        
+            return NULL;
         }
 
         netManagerStarter->initDone.Wait(netManagerStarter->doneMutex);
@@ -190,25 +190,25 @@ void NetManager::Destroy()
     delete netManagerStarter;
 }
 
-bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
+bool NetManager::HandleUnknownClient(LPSOCKADDR_IN addr, MsgEntry* me)
 {
     psMessageBytes* msg = me->bytes;
 
     // The first msg from client must be "firstmsg", "alt_first_msg" or "PING"
-    if (msg->type!=client_firstmsg && msg->type!=npcclient_firstmsg && msg->type!=MSGTYPE_PING)
+    if(msg->type!=client_firstmsg && msg->type!=npcclient_firstmsg && msg->type!=MSGTYPE_PING)
         return false;
 
-    if ( msg->type == MSGTYPE_PING )
+    if(msg->type == MSGTYPE_PING)
     {
         psPingMsg ping(me);
 
-        if (!(ping.flags & PINGFLAG_REQUESTFLAGS) && !psserver->IsReady())
+        if(!(ping.flags & PINGFLAG_REQUESTFLAGS) && !psserver->IsReady())
             return false;
 
         int flags = 0;
-        if (psserver->IsReady()) flags |= PINGFLAG_READY;
-        if (psserver->HasBeenReady()) flags |= PINGFLAG_HASBEENREADY;
-        if (psserver->IsFull(clients.Count(),NULL)) flags |= PINGFLAG_SERVERFULL;
+        if(psserver->IsReady()) flags |= PINGFLAG_READY;
+        if(psserver->HasBeenReady()) flags |= PINGFLAG_HASBEENREADY;
+        if(psserver->IsFull(clients.Count(),NULL)) flags |= PINGFLAG_SERVERFULL;
 
         // Create the reply to the ping
         psPingMsg pong(0,ping.id,flags);
@@ -216,9 +216,9 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
 
         csRef<psNetPacketEntry> pkt;
         pkt.AttachNew(new
-            psNetPacketEntry(pong.msg->priority, 0,
-            0, 0, (uint32_t) pong.msg->bytes->GetTotalSize(),
-            (uint16_t) pong.msg->bytes->GetTotalSize(), pong.msg->bytes));
+                      psNetPacketEntry(pong.msg->priority, 0,
+                                       0, 0, (uint32_t) pong.msg->bytes->GetTotalSize(),
+                                       (uint16_t) pong.msg->bytes->GetTotalSize(), pong.msg->bytes));
 
         SendFinalPacket(pkt, addr);
         return false;
@@ -230,7 +230,7 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
 
     // Create and add the client object to client list
     Client* client = clients.Add(addr);
-    if (!client)
+    if(!client)
         return false;
 
     Debug3(LOG_CONNECTIONS, client->GetClientNum(), "New client %d connected from %s", client->GetClientNum(), client->GetIPAddress().GetDataSafe())
@@ -242,13 +242,13 @@ bool NetManager::HandleUnknownClient (LPSOCKADDR_IN addr, MsgEntry* me)
 }
 
 void NetManager::CheckResendPkts()
-{	
-	// NOTE: Globaliterators on csHash do not retrieve keys contiguously.
-    csHash<csRef<psNetPacketEntry>, PacketKey>::GlobalIterator it (awaitingack.GetIterator());
+{
+    // NOTE: Globaliterators on csHash do not retrieve keys contiguously.
+    csHash<csRef<psNetPacketEntry>, PacketKey>::GlobalIterator it(awaitingack.GetIterator());
     csRef<psNetPacketEntry> pkt;
     csArray<csRef<psNetPacketEntry> > pkts;
     csArray<Connection*> resentConnections;
-    
+
     // Connections that should be avoided because we know they are full
     csArray<Connection*> fullConnections;
 
@@ -259,45 +259,45 @@ void NetManager::CheckResendPkts()
     {
         pkt = it.Next();
         // Check the connection packet timeout
-        if (pkt->timestamp + csMin((csTicks)PKTMAXRTO, pkt->RTO) < currenttime)
+        if(pkt->timestamp + csMin((csTicks)PKTMAXRTO, pkt->RTO) < currenttime)
             pkts.Push(pkt);
     }
-    for (size_t i = 0; i < pkts.GetSize(); i++)
+    for(size_t i = 0; i < pkts.GetSize(); i++)
     {
 #ifdef PACKETDEBUG
         Debug2(LOG_NET,"Resending nonacked HIGH packet (ID %d).\n", pkt->packet->pktid);
 #endif
         pkt = pkts.Get(i);
-        
+
         // re-add to send queue
         csRef<NetPacketQueueRefCount> outqueue = clients.FindQueueAny(pkt->clientnum);
-        if (!outqueue)
+        if(!outqueue)
         {
             awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt);
             continue;
         }
-        
+
         Connection* connection = GetConnByNum(pkt->clientnum);
-        if (connection)
+        if(connection)
         {
-        	if (resentConnections.Find(connection) == csArrayItemNotFound)
-        		resentConnections.Push(connection);
-        	if (fullConnections.Find(connection) != csArrayItemNotFound)
-        		continue;
-        	// This indicates a bug in the netcode.
-        	if (pkt->RTO == 0)
-        	{
-        		Error1("Unexpected 0 packet RTO.");
-				abort();
-        	}
-        	pkt->RTO *= 2;
-        	connection->resends++;
+            if(resentConnections.Find(connection) == csArrayItemNotFound)
+                resentConnections.Push(connection);
+            if(fullConnections.Find(connection) != csArrayItemNotFound)
+                continue;
+            // This indicates a bug in the netcode.
+            if(pkt->RTO == 0)
+            {
+                Error1("Unexpected 0 packet RTO.");
+                abort();
+            }
+            pkt->RTO *= 2;
+            connection->resends++;
         }
         resentCount++;
-        
+
         pkt->timestamp = currenttime;   // update stamp on packet
         pkt->retransmitted = true;
-        
+
         /*  The proper way to send a message is to add it to the queue, and then add the queue to the senders.
         *  If you do it the other way around the net thread may remove the queue from the senders before you add the packet.
         *   Yes - this has actually happened!
@@ -307,17 +307,17 @@ void NetManager::CheckResendPkts()
         *  In actuality a false response does not actually mean no data was added to the queue, just that
         *  not all of the data could be added.
         */
-        if (!outqueue->Add(pkt))
+        if(!outqueue->Add(pkt))
         {
             psNetPacket* packet = pkt->packet;
             int type = 0;
 
-            if (packet->offset == 0) 
+            if(packet->offset == 0)
             {
                 psMessageBytes* msg = (psMessageBytes*) packet->data;
                 type = msg->type;
             }
-            Error4("Queue full. Could not add packet with clientnum %d type %s ID %d.\n", pkt->clientnum, type == 0 ? "Fragment" : (const char *)  GetMsgTypeName(type), pkt->packet->pktid);
+            Error4("Queue full. Could not add packet with clientnum %d type %s ID %d.\n", pkt->clientnum, type == 0 ? "Fragment" : (const char*)  GetMsgTypeName(type), pkt->packet->pktid);
             fullConnections.Push(connection);
             continue;
         }
@@ -328,13 +328,13 @@ void NetManager::CheckResendPkts()
         * to check every single connection each time through.
         */
 
-        if (!senders.Add (outqueue))
+        if(!senders.Add(outqueue))
             Error1("Senderlist Full!");
 
         //printf("pkt=%p, pkt->packet=%p\n",pkt,pkt->packet);
         // take out of awaiting ack pool.
         // This does NOT delete the pkt mem block itself.
-        if (!awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt))
+        if(!awaitingack.Delete(PacketKey(pkt->clientnum, pkt->packet->pktid), pkt))
         {
 #ifdef PACKETDEBUG
             Debug2(LOG_NET,"No packet in ack queue :%d\n", pkt->packet->pktid);
@@ -364,7 +364,7 @@ void NetManager::CheckResendPkts()
             if(timeTaken > 50 || pkts.GetSize() > 300)
             {
                 status.Format("Resending high priority packets has taken %u time to process, for %u packets on %zu unique connections %zu full connections (Sample clientnum %u/RTO %u. ", timeTaken, resentCount, resentConnections.GetSize(),fullConnections.GetSize(), resentConnections[0]->clientnum, resentConnections[0]->RTO);
-                CPrintf(CON_WARNING, "%s\n", (const char *) status.GetData());
+                CPrintf(CON_WARNING, "%s\n", (const char*) status.GetData());
             }
             status.AppendFmt("Resending non-acked packet statistics: %g average resends, peak of %zu resent packets", resendAvg, peakResend);
 
@@ -376,31 +376,31 @@ void NetManager::CheckResendPkts()
 
 }
 
-NetManager::Connection *NetManager::GetConnByIP (LPSOCKADDR_IN addr)
+NetManager::Connection* NetManager::GetConnByIP(LPSOCKADDR_IN addr)
 {
     Client* client = clients.Find(addr);
 
-    if (!client)
+    if(!client)
         return NULL;
 
     return client->GetConnection();
 }
 
-NetManager::Connection *NetManager::GetConnByNum (uint32_t clientnum)
+NetManager::Connection* NetManager::GetConnByNum(uint32_t clientnum)
 {
     Client* client = clients.FindAny(clientnum);
 
-    if (!client)
+    if(!client)
         return NULL;
 
     return client->GetConnection();
 }
 
-bool NetManager::SendMessageDelayed(MsgEntry *me, csTicks delay)
+bool NetManager::SendMessageDelayed(MsgEntry* me, csTicks delay)
 {
-    if (delay)
+    if(delay)
     {
-        DelayedMessageSendEvent *event = new DelayedMessageSendEvent(delay,me);
+        DelayedMessageSendEvent* event = new DelayedMessageSendEvent(delay,me);
         psserver->GetEventManager()->Push(event);
         return true;
     }
@@ -414,7 +414,7 @@ bool NetManager::SendMessage(MsgEntry* me)
 {
     bool sendresult;
     csRef<NetPacketQueueRefCount> outqueue = clients.FindQueueAny(me->clientnum);
-    if (!outqueue)
+    if(!outqueue)
         return false;
 
     /*  The proper way to send a message is to add it to the queue, and then add the queue to the senders.
@@ -437,7 +437,7 @@ bool NetManager::SendMessage(MsgEntry* me)
     /*  The senders queue does not hold a reference itself, so we have to manually add one before pushing
      *  this queue on.  The queue is decref'd in the network thread when it's taken out of the senders queue.
      */
-    if (!senders.Add(outqueue))
+    if(!senders.Add(outqueue))
     {
         Error1("Senderlist Full!");
     }
@@ -447,7 +447,7 @@ bool NetManager::SendMessage(MsgEntry* me)
 
 // This function is the network thread
 // Thread: Network
-void NetManager::Run ()
+void NetManager::Run()
 {
     csTicks currentticks    = csGetTicks();
     csTicks lastlinkcheck   = currentticks;
@@ -474,28 +474,28 @@ void NetManager::Run ()
 
     printf("Network thread started!\n");
 
-    while ( !stop_network )
+    while(!stop_network)
     {
-        if (!IsReady())
+        if(!IsReady())
         {
             csSleep(100);
             continue;
         }
 
         timeout = csGetTicks() + maxTime;
-        ProcessNetwork (timeout);
+        ProcessNetwork(timeout);
 
         currentticks = csGetTicks();
 
         // Check for link dead clients.
-        if (currentticks - lastlinkcheck > LINKCHECK)
+        if(currentticks - lastlinkcheck > LINKCHECK)
         {
             CheckLinkDead();
             lastlinkcheck = csGetTicks();
         }
 
         // Check to resend packages that have not been ACK'd yet
-        if (currentticks - lastresendcheck > RESENDCHECK)
+        if(currentticks - lastresendcheck > RESENDCHECK)
         {
             CheckResendPkts();
             CheckFragmentTimeouts();
@@ -503,17 +503,17 @@ void NetManager::Run ()
         }
 
         // Display Network statistics
-        if (currentticks - laststatdisplay > STATDISPLAYCHECK)
+        if(currentticks - laststatdisplay > STATDISPLAYCHECK)
         {
             kbpsin = (float)(totaltransferin - lasttotaltransferin) / (float)STATDISPLAYCHECK;
-            if ( kbpsin > kbpsInMax )
+            if(kbpsin > kbpsInMax)
             {
                 kbpsInMax = kbpsin;
             }
             lasttotaltransferin = totaltransferin;
 
             kbpsout = (float)(totaltransferout - lasttotaltransferout) / (float)STATDISPLAYCHECK;
-            if ( kbpsout > kbpsOutMax )
+            if(kbpsout > kbpsOutMax)
             {
                 kbpsOutMax = kbpsout;
             }
@@ -522,17 +522,17 @@ void NetManager::Run ()
 
             laststatdisplay = currentticks;
 
-            if ( clients.Count() > clientCountMax )
+            if(clients.Count() > clientCountMax)
             {
                 clientCountMax = clients.Count();
             }
             csString status;
             status.Format("Currently using %1.2fKbps out, %1.2fkbps in. Packets: %ld out, %ld in", kbpsout, kbpsin, totalcountout-lasttotalcountout,totalcountin-lasttotalcountin);
- 
+
             if(LogCSV::GetSingletonPtr())
                 LogCSV::GetSingleton().Write(CSV_STATUS, status);
-            
-            if (pslog::disp_flag[LOG_LOAD])
+
+            if(pslog::disp_flag[LOG_LOAD])
             {
                 CPrintf(CON_DEBUG, "Currently %d (Max: %d) clients using %1.2fKbps (Max: %1.2fKbps) outbound, "
                         "%1.2fkbps (Max: %1.2fKbps) inbound...\n",
@@ -549,9 +549,9 @@ void NetManager::Run ()
     printf("Network thread stopped!\n");
 }
 
-void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
+void NetManager::Broadcast(MsgEntry* me, int scope, int guildID)
 {
-    switch (scope)
+    switch(scope)
     {
         case NetBase::BC_EVERYONE:
         case NetBase::BC_EVERYONEBUTSELF:
@@ -569,26 +569,26 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
 
             while(i.HasNext())
             {
-                Client *p = i.Next();
-                if (scope==NetBase::BC_EVERYONEBUTSELF
-                    && p->GetClientNum() == originalclient)
+                Client* p = i.Next();
+                if(scope==NetBase::BC_EVERYONEBUTSELF
+                        && p->GetClientNum() == originalclient)
                     continue;
 
                 // send to superclient only the messages he needs
-                if (p->IsSuperClient())
+                if(p->IsSuperClient())
                 {
                     // time of the day is needed
-                    if (me->GetType()!=MSGTYPE_WEATHER)
+                    if(me->GetType()!=MSGTYPE_WEATHER)
                         continue;
                 }
 
                 // Only clients that finished connecting get broadcastet
                 // stuff
-                if (!p->IsReady())
+                if(!p->IsReady())
                     continue;
 
                 newmsg->clientnum = p->GetClientNum();
-                SendMessage (newmsg);
+                SendMessage(newmsg);
             }
 
             CHECK_FINAL_DECREF(newmsg, "BroadcastMsg");
@@ -597,7 +597,7 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
         // TODO: NetBase::BC_GROUP
         case NetBase::BC_GUILD:
         {
-            CS_ASSERT_MSG("NetBase::BC_GUILD broadcast must specify guild ID", guildID != -1 );
+            CS_ASSERT_MSG("NetBase::BC_GUILD broadcast must specify guild ID", guildID != -1);
 
             /**
              * Send the message to each client with the same guildID
@@ -613,66 +613,66 @@ void NetManager::Broadcast(MsgEntry *me, int scope, int guildID)
 
             while(i.HasNext())
             {
-                Client *p = i.Next();
-                if (p->GetGuildID() == guildID)
+                Client* p = i.Next();
+                if(p->GetGuildID() == guildID)
                 {
                     newmsg->clientnum = p->GetClientNum();
-                    SendMessage (newmsg);
+                    SendMessage(newmsg);
                 }
             }
 
             CHECK_FINAL_DECREF(newmsg, "GuildMsg");
             break;
         }
-    case NetBase::BC_FINALPACKET:
-    {
-        csRef<MsgEntry> newmsg;
-        newmsg.AttachNew(new MsgEntry(me));
-        newmsg->msgid = GetRandomID();
+        case NetBase::BC_FINALPACKET:
+        {
+            csRef<MsgEntry> newmsg;
+            newmsg.AttachNew(new MsgEntry(me));
+            newmsg->msgid = GetRandomID();
 
-        LogMessages('F',newmsg);
+            LogMessages('F',newmsg);
 
-        // XXX: This is hacky, but we need to send the message to the client
-        // here and now! Because in the next moment he'll be deleted
-        
-        csRef<psNetPacketEntry> pkt;
-        pkt.AttachNew( new psNetPacketEntry(me->priority, newmsg->clientnum,
-            0, 0, (uint32_t) newmsg->bytes->GetTotalSize(),
-            (uint16_t) newmsg->bytes->GetTotalSize(), newmsg->bytes));
-        // this will also delete the pkt
-        SendFinalPacket(pkt);
+            // XXX: This is hacky, but we need to send the message to the client
+            // here and now! Because in the next moment he'll be deleted
 
-        CHECK_FINAL_DECREF(newmsg, "FinalPacket");
-        break;
-    }
-    default:
-        psprintf("\nIllegal Broadcast scope %d!\n",scope);
-        return;
+            csRef<psNetPacketEntry> pkt;
+            pkt.AttachNew(new psNetPacketEntry(me->priority, newmsg->clientnum,
+                                               0, 0, (uint32_t) newmsg->bytes->GetTotalSize(),
+                                               (uint16_t) newmsg->bytes->GetTotalSize(), newmsg->bytes));
+            // this will also delete the pkt
+            SendFinalPacket(pkt);
+
+            CHECK_FINAL_DECREF(newmsg, "FinalPacket");
+            break;
+        }
+        default:
+            psprintf("\nIllegal Broadcast scope %d!\n",scope);
+            return;
     }
 }
 
-Client *NetManager::GetClient(int cnum)
+Client* NetManager::GetClient(int cnum)
 {
     return clients.Find(cnum);
 }
 
-Client *NetManager::GetAnyClient(int cnum)
+Client* NetManager::GetAnyClient(int cnum)
 {
     return clients.FindAny(cnum);
 }
 
 
-void NetManager::Multicast (MsgEntry* me, const csArray<PublishDestination>& multi, uint32_t except, float range)
+void NetManager::Multicast(MsgEntry* me, const csArray<PublishDestination> &multi, uint32_t except, float range)
 {
-    for (size_t i=0; i<multi.GetSize(); i++)
+    for(size_t i=0; i<multi.GetSize(); i++)
     {
-         if (multi[i].client==except)  // skip the exception client to avoid circularity
+        if(multi[i].client==except)   // skip the exception client to avoid circularity
             continue;
 
-        Client *c = clients.Find(multi[i].client);
-        if (c && c->IsReady() )
+        Client* c = clients.Find(multi[i].client);
+        if(c && c->IsReady())
         {
-            if (range == 0 || multi[i].dist < range)
+            if(range == 0 || multi[i].dist < range)
             {
                 me->clientnum = multi[i].client;
                 SendMessage(me);      // This copies the mem block, so we can reuse.
@@ -688,7 +688,7 @@ void NetManager::CheckLinkDead()
     csTicks currenttime = csGetTicks();
 
     csArray<uint32_t> checkedClients;
-    Client *pClient = NULL;
+    Client* pClient = NULL;
 
     // Delete all clients marked for deletion already
     clients.SweepDelete();
@@ -703,7 +703,7 @@ void NetManager::CheckLinkDead()
 
             while(i.HasNext())
             {
-                Client *candidate = i.Next();
+                Client* candidate = i.Next();
 
                 // Skip if already seen
                 if(checkedClients.FindSortedKey(csArrayCmp<uint32_t, uint32_t> (candidate->GetClientNum())) != csArrayItemNotFound)
@@ -727,7 +727,7 @@ void NetManager::CheckLinkDead()
              ** is all in one place.
              */
             psDisconnectMessage discon(pClient->GetClientNum(), 0, "You should not see this.");
-            if (discon.valid)
+            if(discon.valid)
             {
                 Connection* connection = pClient->GetConnection();
                 HandleCompletedMessage(discon.msg, connection, NULL,NULL);
@@ -737,9 +737,9 @@ void NetManager::CheckLinkDead()
                 Bug2("Failed to create valid psDisconnectMessage for client id %u.\n", pClient->GetClientNum());
             }
         }
-        else if (pClient->GetConnection()->lastRecvPacketTime+timeout < currenttime)
+        else if(pClient->GetConnection()->lastRecvPacketTime+timeout < currenttime)
         {
-            if (pClient->GetConnection()->heartbeat < 10 && pClient->GetConnection()->lastRecvPacketTime+timeout * 10 > currenttime)
+            if(pClient->GetConnection()->heartbeat < 10 && pClient->GetConnection()->lastRecvPacketTime+timeout * 10 > currenttime)
             {
                 psHeartBeatMsg ping(pClient->GetClientNum());
                 Broadcast(ping.msg, NetBase::BC_FINALPACKET);
@@ -767,7 +767,7 @@ void NetManager::CheckLinkDead()
                  ** is all in one place.
                  */
                 psDisconnectMessage discon(pClient->GetClientNum(), 0, "You are linkdead.");
-                if (discon.valid)
+                if(discon.valid)
                 {
                     Connection* connection = pClient->GetConnection();
                     HandleCompletedMessage(discon.msg, connection, NULL,NULL);

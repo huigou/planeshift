@@ -37,7 +37,10 @@ class BankManager : public MessageManager<BankManager>
 public:
     BankManager();
     ~BankManager();
-    inline void StartBanking(Client* client, bool guild) { SendBankWindow(client, guild, true); }
+    inline void StartBanking(Client* client, bool guild)
+    {
+        SendBankWindow(client, guild, true);
+    }
     void ProcessTax();
 
 protected:
@@ -61,14 +64,14 @@ protected:
 
     template<class T>
     void TaxAccount(T guildOrChar, MoneyEvent &monEvt, int index);
-    
+
 private:
     void SendBankWindow(Client* client, bool guild, bool forceOpen);
     void WithdrawFunds(Client* client, bool guild, int circles, int octas, int hexas, int trias);
     void DepositFunds(Client* client, bool guild, int circles, int octas, int hexas, int trias);
     void ExchangeFunds(Client* client, bool guild, int coins, int coin);
     psMoney* GetTotalFunds(psCharacter* pschar, bool guild);
-    void HandleBanking(MsgEntry *me, Client *client);
+    void HandleBanking(MsgEntry* me, Client* client);
     int CoinsForExchange(psCharacter* pschar, bool guild, int type, float fee);
     int CalculateAccountLevel(psCharacter* pschar, bool guild);
     inline float CalculateFee(psCharacter* pschar, bool guild);
@@ -77,20 +80,23 @@ private:
 
     csWeakRef<MathScript> accountCharLvlScript;
     csWeakRef<MathScript> accountGuildLvlScript;
-    csWeakRef<MathScript> CalcBankFeeScript;    
+    csWeakRef<MathScript> CalcBankFeeScript;
 };
 
 
 class psMoneyGameEvent : public psGameEvent
 {
 public:
-    
-    psMoneyGameEvent(int delayTicks, BankManager *bankMan);
 
-    virtual void Trigger() { bankManager->ProcessTax(); } // Abstract event processing function
-    
+    psMoneyGameEvent(int delayTicks, BankManager* bankMan);
+
+    virtual void Trigger()
+    {
+        bankManager->ProcessTax();    // Abstract event processing function
+    }
+
 private:
-    BankManager *bankManager;
+    BankManager* bankManager;
 };
 
 #endif // __BANKMANAGER_H__

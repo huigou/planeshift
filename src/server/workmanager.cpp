@@ -227,7 +227,7 @@ void WorkManager::HandleWorkCommand(MsgEntry* me, Client* client)
             examineScript = psserver->GetActionManager()->HandleUse(gemAction, client);
 
         // otherwise let it handle to WorkManager
-        if (!examineScript)
+        if(!examineScript)
             HandleUse(client);
     }
     else if(msg.command == "combine")
@@ -302,12 +302,12 @@ void WorkManager::HandleRepair(gemActor* actor, Client* client, const csString &
         }
         else
         {
-            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s cannot repair anything because you are %s.", actor->GetName(), actor->GetModeStr()); 
+            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s cannot repair anything because you are %s.", actor->GetName(), actor->GetModeStr());
         }
         return;
     }
 
-    // Need to have work stamina and generaly not beeing exhausted. 
+    // Need to have work stamina and generaly not beeing exhausted.
     if(!CheckStamina(actor->GetCharacterData()))
     {
         if(client)

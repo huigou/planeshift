@@ -1507,11 +1507,11 @@ void gemItem::SendBehaviorMessage(const csString &msg_id, gemObject* actor)
             // We passed the item to the character's inventory so don't
             // dereference the pointer or delete it.
             itemdata = NULL;
-            if (container)
+            if(container)
             {
                 container->CleareWithoutDelete();
             }
-            
+
 
             Client* client = actor->GetClient();
             if(!client)
@@ -1731,7 +1731,7 @@ gemContainer::gemContainer(GEMSupervisor* gemsupervisor, CacheManager* cachemana
 
 gemContainer::~gemContainer()
 {
-    while (itemlist.GetSize())
+    while(itemlist.GetSize())
     {
         delete itemlist.Pop();
     }
@@ -4451,9 +4451,9 @@ void gemActor::AddActiveSpell(ActiveSpell* asp)
     {
         image = lspell->GetImage();
     }
-    asp->SetImage( image );
+    asp->SetImage(image);
 
-    psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence() ); // <---add message index tracking!
+    psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
     outgoing.SendMessage();
 }
 
@@ -4461,7 +4461,7 @@ bool gemActor::RemoveActiveSpell(ActiveSpell* asp)
 {
     if(activeSpells.Delete(asp))
     {
-        psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence() ); // <---add message index tracking!
+        psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
         outgoing.SendMessage();
         return true;
     }
@@ -4899,7 +4899,7 @@ void gemNPC::SendBehaviorMessage(const csString &msg_id, gemObject* obj)
                     {
                         options |= psGUIInteractMessage::NPCTALK;
                         if(psChar->IsMount() &&
-                           psChar->GetOwnerID() == actor->GetCharacterData()->GetPID())
+                                psChar->GetOwnerID() == actor->GetCharacterData()->GetPID())
                         {
                             if(actor->GetMount())
                                 options |= psGUIInteractMessage::UNMOUNT;

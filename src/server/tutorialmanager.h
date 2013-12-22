@@ -1,7 +1,7 @@
 /*
  * tutorialmanager.h
  *
- * Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2006 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -59,7 +59,7 @@ public:
         TUTOREVENTTYPE_COUNT
     };
 
-    TutorialManager(ClientConnectionSet *pCCS);
+    TutorialManager(ClientConnectionSet* pCCS);
     virtual ~TutorialManager();
 
     /**
@@ -72,29 +72,29 @@ public:
 
 protected:
     /// Specifically handle the Connect event in the tutorial
-    void HandleConnect(MsgEntry *pMsg, Client *client);
-    
+    void HandleConnect(MsgEntry* pMsg, Client* client);
+
     /// Specifically handle the Movement event in the tutorial
-    void HandleMovement(MsgEntry *pMsg, Client *client);
+    void HandleMovement(MsgEntry* pMsg, Client* client);
 
     /// Specifically handle the Target event in the tutorial
-    void HandleTarget(MsgEntry *pMsg, Client *client);
+    void HandleTarget(MsgEntry* pMsg, Client* client);
 
     /// Specifically handle the Damage event in the tutorial
-    void HandleDamage(MsgEntry *pMsg, Client *client);
+    void HandleDamage(MsgEntry* pMsg, Client* client);
 
     /// Specifically handle the Death event in the tutorial
-    void HandleDeath(MsgEntry *pMsg, Client *client);
+    void HandleDeath(MsgEntry* pMsg, Client* client);
 
     /// Handle tutorial events which come from events which do not have specific msgtypes.
-    void HandleGeneric(MsgEntry *pMsg, Client *client);
+    void HandleGeneric(MsgEntry* pMsg, Client* client);
 
     /// Preload all tutorial strings from the Tips db table.
     bool LoadTutorialStrings();
 
     /// Package up the current event string for the client receiving the tutorial.
-    void SendTutorialMessage(int which, Client *client, const char *instrs);
-    void SendTutorialMessage(int which, uint32_t clientnum, const char *instrs);
+    void SendTutorialMessage(int which, Client* client, const char* instrs);
+    void SendTutorialMessage(int which, uint32_t clientnum, const char* instrs);
 
     ClientConnectionSet* clients;
 

@@ -45,7 +45,7 @@ class GEMSupervisor;
  * \addtogroup server
  * @{ */
 
-/// These flags define the tests that are centrally done 
+/// These flags define the tests that are centrally done
 /// before subclasses get the message.
 #define NO_VALIDATION                0x00
 #define REQUIRE_ANY_CLIENT           0x01
@@ -67,30 +67,30 @@ class GEMSupervisor;
 class MessageManagerBase : public iNetSubscriber
 {
 public:
-    
-    virtual bool Verify(MsgEntry *pMsg, unsigned int flags, Client* &client);
+
+    virtual bool Verify(MsgEntry* pMsg, unsigned int flags, Client* &client);
 
     /** Finds Client* of character with given name. */
-    Client * FindPlayerClient(const char *name);
-    
+    Client* FindPlayerClient(const char* name);
+
     /**
      * Decodes an area: expression.
      *
      *  @param client The client of the caller
      *  @param target The area: expression
      */
-    csArray<csString> DecodeCommandArea(Client *client, csString target);
-    
+    csArray<csString> DecodeCommandArea(Client* client, csString target);
+
     /**
      * Find the object we are referring to in str.
-     * 
+     *
      * This str can have different formats, depending on the object
      * we are trying to get.
-     * 
+     *
      * @param str the field containing the reference to the object
      * @param me the client's actor who is sending the command
      */
-    gemObject* FindObjectByString(const csString& str, gemActor * me) const;
+    gemObject* FindObjectByString(const csString &str, gemActor* me) const;
 };
 
 /**
@@ -103,137 +103,137 @@ public:
 template <class SubClass>
 class MessageManager : public MessageManagerBase
 {
-    public:
-        typedef void(SubClass::*FunctionPointer)(MsgEntry*, Client*);
+public:
+    typedef void(SubClass::*FunctionPointer)(MsgEntry*, Client*);
 
-        /** @brief Unsubscribes all messages then destroys this object */
-        virtual ~MessageManager()
+    /** @brief Unsubscribes all messages then destroys this object */
+    virtual ~MessageManager()
+    {
+        UnsubscribeAll();
+    }
+
+    /**
+     * Subscribes this manager to a specific message type with a custom callback.
+     *
+     * Any time a message with the specified type (and flags are met) is
+     * received the specified function is called
+     * @param fpt The function to call
+     * @param type The type of message to be notified of
+     * @param flags to check <i>Default: 0x01</i>
+     */
+    inline void Subscribe(FunctionPointer fpt, msgtype type, uint32_t flags = 0x01)
+    {
+        CS::Threading::RecursiveMutexScopedLock lock(mutex);
+        if(!handlers.Contains(type))
         {
-            UnsubscribeAll();
+            GetEventManager()->Subscribe(this, type, flags);
         }
+        handlers.Put(type, fpt);
+    }
 
-        /**
-         * Subscribes this manager to a specific message type with a custom callback.
-         *
-         * Any time a message with the specified type (and flags are met) is
-         * received the specified function is called
-         * @param fpt The function to call
-         * @param type The type of message to be notified of
-         * @param flags to check <i>Default: 0x01</i>
-         */
-        inline void Subscribe(FunctionPointer fpt, msgtype type, uint32_t flags = 0x01)
+    /**
+     * Unsubscribes this manager from a specific message type.
+     *
+     * @param type The type of message to unsubscribe from
+     * @return True if a subscription was removed, false if this was not subscribed
+     */
+    inline bool Unsubscribe(msgtype type)
+    {
+        CS::Threading::RecursiveMutexScopedLock lock(mutex);
+        if(handlers.Contains(type))
         {
-            CS::Threading::RecursiveMutexScopedLock lock(mutex);
+            handlers.DeleteAll(type);
+            return GetEventManager()->Unsubscribe(this, type);
+        }
+        return false;
+    }
+
+    /**
+     * Unsubscribes a specific handler from a specific message type.
+     *
+     * @param handler The handler to unsubscribe
+     * @param type The type of message to unsubscribe from
+     * @return True if a subscription was removed, false if this was not subscribed
+     */
+    inline bool Unsubscribe(FunctionPointer handler, msgtype type)
+    {
+        CS::Threading::RecursiveMutexScopedLock lock(mutex);
+        if(handlers.Contains(type))
+        {
+            handlers.Delete(type, handler);
             if(!handlers.Contains(type))
             {
-                GetEventManager()->Subscribe(this, type, flags);
-            }
-            handlers.Put(type, fpt);
-        }
-
-        /**
-         * Unsubscribes this manager from a specific message type.
-         *
-         * @param type The type of message to unsubscribe from
-         * @return True if a subscription was removed, false if this was not subscribed
-         */
-        inline bool Unsubscribe(msgtype type)
-        {
-            CS::Threading::RecursiveMutexScopedLock lock(mutex);
-            if(handlers.Contains(type))
-            {
-                handlers.DeleteAll(type);
                 return GetEventManager()->Unsubscribe(this, type);
-            }
-            return false;
-        }
-
-        /**
-         * Unsubscribes a specific handler from a specific message type.
-         *
-         * @param handler The handler to unsubscribe
-         * @param type The type of message to unsubscribe from
-         * @return True if a subscription was removed, false if this was not subscribed
-         */
-        inline bool Unsubscribe(FunctionPointer handler, msgtype type)
-        {
-            CS::Threading::RecursiveMutexScopedLock lock(mutex);
-            if(handlers.Contains(type))
-            {
-                handlers.Delete(type, handler);
-                if(!handlers.Contains(type))
-                {
-                    return GetEventManager()->Unsubscribe(this, type);
-                }
-                else
-                {
-                    return true;
-                }
             }
             else
             {
-                return false;
+                return true;
             }
         }
-
-        /**
-         * Unsubscribes this manager from all message types.
-         *
-         * @return True if a subscription was removed, false if this was not subscribed
-         */
-        inline bool UnsubscribeAll()
+        else
         {
-            CS::Threading::RecursiveMutexScopedLock lock(mutex);
-            handlers.Empty();
-            if(psserver->GetEventManager())
-                return GetEventManager()->UnsubscribeAll(this);
             return false;
         }
-        
-        /**
-         * Transfers the message to the manager specific function.
-         *
-         * @note DO NOT OVERRIDE
-         * @param msg Message that is forwarded to the manager's function
-         * @param client Client that is forwarded to the manager's function
-         */
-        void HandleMessage(MsgEntry* msg, Client* client)
-        {
-            csArray<FunctionPointer> msgHandlers;
-            {
-                CS::Threading::RecursiveMutexScopedLock lock(mutex);
-                msgHandlers = handlers.GetAll(msg->GetType());
-            }
-            SubClass* self = dynamic_cast<SubClass*>(this);
-            if(!self)
-            {
-                // fatal error, we aren't a base of our subclass!
-                return;
-            }
+    }
 
-            for(size_t i = 0; i < msgHandlers.GetSize(); ++i)
-            {
-                (self->*msgHandlers[i])(msg, client);
-            }
+    /**
+     * Unsubscribes this manager from all message types.
+     *
+     * @return True if a subscription was removed, false if this was not subscribed
+     */
+    inline bool UnsubscribeAll()
+    {
+        CS::Threading::RecursiveMutexScopedLock lock(mutex);
+        handlers.Empty();
+        if(psserver->GetEventManager())
+            return GetEventManager()->UnsubscribeAll(this);
+        return false;
+    }
+
+    /**
+     * Transfers the message to the manager specific function.
+     *
+     * @note DO NOT OVERRIDE
+     * @param msg Message that is forwarded to the manager's function
+     * @param client Client that is forwarded to the manager's function
+     */
+    void HandleMessage(MsgEntry* msg, Client* client)
+    {
+        csArray<FunctionPointer> msgHandlers;
+        {
+            CS::Threading::RecursiveMutexScopedLock lock(mutex);
+            msgHandlers = handlers.GetAll(msg->GetType());
+        }
+        SubClass* self = dynamic_cast<SubClass*>(this);
+        if(!self)
+        {
+            // fatal error, we aren't a base of our subclass!
+            return;
         }
 
-    private:
-        CS::Threading::RecursiveMutex mutex;
-        csHash<FunctionPointer, msgtype> handlers;
-        
-        /**
-         * Gets the event manager from the server.
-         *
-         * Asserts if the retrieved manager is valid
-         *
-         * @return The event manager
-         */
-        inline EventManager* GetEventManager() const
+        for(size_t i = 0; i < msgHandlers.GetSize(); ++i)
         {
-            EventManager* eventManager = psserver->GetEventManager();
-            CS_ASSERT(eventManager);
-            return eventManager;
+            (self->*msgHandlers[i])(msg, client);
         }
+    }
+
+private:
+    CS::Threading::RecursiveMutex mutex;
+    csHash<FunctionPointer, msgtype> handlers;
+
+    /**
+     * Gets the event manager from the server.
+     *
+     * Asserts if the retrieved manager is valid
+     *
+     * @return The event manager
+     */
+    inline EventManager* GetEventManager() const
+    {
+        EventManager* eventManager = psserver->GetEventManager();
+        CS_ASSERT(eventManager);
+        return eventManager;
+    }
 };
 
 /** @} */

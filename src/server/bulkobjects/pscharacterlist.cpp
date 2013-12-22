@@ -1,7 +1,7 @@
 /*
  * pscharacterlist.cpp
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -43,43 +43,43 @@ psCharacterList::~psCharacterList()
 {
 }
 
-const char *psCharacterList::GetCharacterName(int index)
+const char* psCharacterList::GetCharacterName(int index)
 {
-    if (index<0 || index>=MAX_CHARACTERS_IN_LIST)
+    if(index<0 || index>=MAX_CHARACTERS_IN_LIST)
         return NULL;
 
-    if (!characterentry[index].valid)
+    if(!characterentry[index].valid)
         return NULL;
     return characterentry[index].character_name;
 }
 
-const char *psCharacterList::GetCharacterFullName(int index)
+const char* psCharacterList::GetCharacterFullName(int index)
 {
-    if (index<0 || index>=MAX_CHARACTERS_IN_LIST)
+    if(index<0 || index>=MAX_CHARACTERS_IN_LIST)
         return NULL;
 
-    if (!characterentry[index].valid)
+    if(!characterentry[index].valid)
         return NULL;
     return characterentry[index].character_fullname;
 }
 
-void psCharacterList::SetCharacterName(int index,const char *v)
+void psCharacterList::SetCharacterName(int index,const char* v)
 {
-    if (index<0 || index>=MAX_CHARACTERS_IN_LIST)
+    if(index<0 || index>=MAX_CHARACTERS_IN_LIST)
         return;
 
-    if (!characterentry[index].valid)
+    if(!characterentry[index].valid)
         return;
     strncpy(characterentry[index].character_name,v,28);
     characterentry[index].character_name[27]=0x00;
 }
 
-void psCharacterList::SetCharacterFullName(int index,const char *v,const char *w)
+void psCharacterList::SetCharacterFullName(int index,const char* v,const char* w)
 {
-    if (index<0 || index>=MAX_CHARACTERS_IN_LIST)
+    if(index<0 || index>=MAX_CHARACTERS_IN_LIST)
         return;
 
-    if (!characterentry[index].valid)
+    if(!characterentry[index].valid)
         return;
     // Set first name
     SetCharacterName(index, v);
@@ -92,20 +92,20 @@ void psCharacterList::SetCharacterFullName(int index,const char *v,const char *w
 
 unsigned int psCharacterList::GetCharacterID(int index)
 {
-    if (index<0 || index>=MAX_CHARACTERS_IN_LIST)
+    if(index<0 || index>=MAX_CHARACTERS_IN_LIST)
         return 0;
 
-    if (!characterentry[index].valid)
+    if(!characterentry[index].valid)
         return 0;
     return characterentry[index].character_id;
 }
 
 void psCharacterList::SetCharacterID(int index,unsigned int v)
 {
-    if (index<0 || index>=MAX_CHARACTERS_IN_LIST)
+    if(index<0 || index>=MAX_CHARACTERS_IN_LIST)
         return;
 
-    if (!characterentry[index].valid)
+    if(!characterentry[index].valid)
         return;
     characterentry[index].character_id=v;
 }
@@ -113,14 +113,14 @@ void psCharacterList::SetCharacterID(int index,unsigned int v)
 
 bool psCharacterList::GetEntryValid(int index)
 {
-    if (index<0 || index>=MAX_CHARACTERS_IN_LIST)
+    if(index<0 || index>=MAX_CHARACTERS_IN_LIST)
         return false;
     return (characterentry[index].valid);
 }
 
 void psCharacterList::SetEntryValid(int index,bool v)
 {
-    if (index<0 || index>=MAX_CHARACTERS_IN_LIST)
+    if(index<0 || index>=MAX_CHARACTERS_IN_LIST)
         return;
     characterentry[index].valid=v;
 }

@@ -1,7 +1,7 @@
 /*
  * entitymanager.h
  *
- * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -82,34 +82,34 @@ public:
 
     bool Initialize(iObjectRegistry* object_reg,
                     ClientConnectionSet* clients,
-                    UserManager *usermanager,
-                    GEMSupervisor *gemsupervisor,
+                    UserManager* usermanager,
+                    GEMSupervisor* gemsupervisor,
                     psServerDR* psserverdr,
                     CacheManager* cachemanager);
 
-    void HandleUserAction(MsgEntry* me, Client *client);    
-    void HandleWorld(MsgEntry* me, Client *client);
-    void HandleActor(MsgEntry* me, Client *client);
-    void HandleAllRequest(MsgEntry* me, Client *client);
-    void SendMovementInfo(MsgEntry* me, Client *client);
+    void HandleUserAction(MsgEntry* me, Client* client);
+    void HandleWorld(MsgEntry* me, Client* client);
+    void HandleActor(MsgEntry* me, Client* client);
+    void HandleAllRequest(MsgEntry* me, Client* client);
+    void SendMovementInfo(MsgEntry* me, Client* client);
 
-    bool LoadMap (const char* mapname);    
+    bool LoadMap(const char* mapname);
 
-    iSector* FindSector(const char *name);
-    
+    iSector* FindSector(const char* name);
+
     bool CreatePlayer(Client* client);
     bool DeletePlayer(Client* client);
 
-    PID CopyNPCFromDatabase(PID master_id, float x, float y, float z, float angle, const csString & sector, InstanceID instance, const char *firstName = NULL, const char *lastName = NULL);
+    PID CopyNPCFromDatabase(PID master_id, float x, float y, float z, float angle, const csString &sector, InstanceID instance, const char* firstName = NULL, const char* lastName = NULL);
     EID CreateNPC(PID npcID, bool updateProxList = true, bool alwaysWatching = false);
-    EID CreateNPC(psCharacter *chardata, bool updateProxList = true, bool alwaysWatching = false);
-    EID CreateNPC(psCharacter *chardata, InstanceID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true, bool alwaysWatching = false);
+    EID CreateNPC(psCharacter* chardata, bool updateProxList = true, bool alwaysWatching = false);
+    EID CreateNPC(psCharacter* chardata, InstanceID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true, bool alwaysWatching = false);
 
-    gemNPC *CreateFamiliar(gemActor *owner, PID masterPID);
-    gemNPC *CreatePet( Client* client, int familiarid );
-    gemNPC *CloneNPC( psCharacter *chardata );
+    gemNPC* CreateFamiliar(gemActor* owner, PID masterPID);
+    gemNPC* CreatePet(Client* client, int familiarid);
+    gemNPC* CloneNPC(psCharacter* chardata);
 
-    bool CreateActionLocation(psActionLocation *instance, bool transient);
+    bool CreateActionLocation(psActionLocation* instance, bool transient);
 
     gemItem* CreateItem(psItem* iteminstance, bool transient, int tribeID = 0);
     gemItem* MoveItemToWorld(psItem*       keyItem,
@@ -124,32 +124,50 @@ public:
                              psCharacter*  owner,
                              bool          transient);
 
-    bool RemoveActor(gemObject *actor);
+    bool RemoveActor(gemObject* actor);
 
-    bool AddRideRelation(gemActor *rider, gemActor *mount);
-    void RemoveRideRelation(gemActor *rider);
-    
+    bool AddRideRelation(gemActor* rider, gemActor* mount);
+    void RemoveRideRelation(gemActor* rider);
+
     void SetReady(bool flag);
-    bool IsReady() { return ready; }
-    bool HasBeenReady() { return hasBeenReady; }
-    GEMSupervisor *GetGEM() { return gem; }
-    iEngine *GetEngine() { return engine; }
+    bool IsReady()
+    {
+        return ready;
+    }
+    bool HasBeenReady()
+    {
+        return hasBeenReady;
+    }
+    GEMSupervisor* GetGEM()
+    {
+        return gem;
+    }
+    iEngine* GetEngine()
+    {
+        return engine;
+    }
 
-    ClientConnectionSet *GetClients() { return clients; };
-    psWorld* GetWorld() { return gameWorld; }
+    ClientConnectionSet* GetClients()
+    {
+        return clients;
+    };
+    psWorld* GetWorld()
+    {
+        return gameWorld;
+    }
 
 protected:
-    csHash<psAffinityAttribute *> affinityAttributeList;
+    csHash<psAffinityAttribute*> affinityAttributeList;
     csHash<psFamiliarType*, PID> familiarTypeList;
-    
-    bool SendActorList(Client *client);
+
+    bool SendActorList(Client* client);
 
 
     void CreateMovementInfoMsg();
     void LoadFamiliarTypes();
     void LoadFamiliarAffinityAttributes();
-    PID GetMasterFamiliarID(psCharacter *charData);
-    int CalculateFamiliarAffinity(  psCharacter * chardata, size_t type, size_t lifecycle, size_t attacktool, size_t attacktype  );
+    PID GetMasterFamiliarID(psCharacter* charData);
+    int CalculateFamiliarAffinity(psCharacter* chardata, size_t type, size_t lifecycle, size_t attacktool, size_t attacktype);
 
 
     bool ready;
@@ -160,9 +178,9 @@ protected:
     UserManager* usermanager;
     CacheManager* cacheManager;
     GEMSupervisor* gem;
-    iEngine *engine;    
+    iEngine* engine;
     psWorld* gameWorld;
-    
+
     psMovementInfoMessage* moveinfomsg;
 };
 
@@ -175,16 +193,16 @@ public:
     };
 
     psEntityEvent(EntityManager* entitymanager, EventType type, gemObject* object) :
-      psGameEvent(0, 0, "psEntityEvent"), type(type), object(object)
+        psGameEvent(0, 0, "psEntityEvent"), type(type), object(object)
     {
-    	this->entitymanager = entitymanager;
+        this->entitymanager = entitymanager;
     }
 
     virtual void Trigger()
     {
         switch(type)
         {
-        case DESTROY:
+            case DESTROY:
             {
                 entitymanager->RemoveActor(object);
                 break;

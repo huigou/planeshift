@@ -148,7 +148,7 @@ psRewardData::psRewardData(Reward_Type prewardType)
 
 psRewardData::~psRewardData()
 {
-    
+
 }
 
 bool psRewardData::IsZero()
@@ -1625,10 +1625,10 @@ AdminCmdDataInfo::AdminCmdDataInfo(AdminManager* msgManager, MsgEntry* me, psAdm
     }
     else if(words.GetCount() == (index + 1))
     {
-        if (words[index] == "all" ||
-            words[index] == "old" ||  // For now keep old output format with this option.
-            words[index] == "pet" ||
-            words[index] == "summary")
+        if(words[index] == "all" ||
+                words[index] == "old" ||  // For now keep old output format with this option.
+                words[index] == "pet" ||
+                words[index] == "summary")
         {
             subCmd = words[index];
         }
@@ -3747,9 +3747,9 @@ AdminCmdDataQuest::AdminCmdDataQuest(AdminManager* msgManager, MsgEntry* me, psA
             if(words.GetCount() == index + 1)
             {
                 questName = words[index++];
-                
+
                 // Check if this is a request to list variables.
-                if (subCmd == "list" && questName.CompareNoCase("variables"))
+                if(subCmd == "list" && questName.CompareNoCase("variables"))
                 {
                     subCmd = "list variables";
                 }
@@ -5223,10 +5223,10 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cm
 
             if(client->GetSecurityLevel() >= GM_LEVEL_0)
             {
-                if (npcChar->IsPet() && (data->subCmd == "all" || data->subCmd == "pet"))
+                if(npcChar->IsPet() && (data->subCmd == "all" || data->subCmd == "pet"))
                 {
                     psserver->GetNPCManager()->PetInfo(client, npcChar);
-                }                
+                }
 
                 // Queue info request perception (Perception as command to superclient)
                 psserver->GetNPCManager()->QueueInfoRequestPerception(npc, client, data->subCmd);
@@ -8693,19 +8693,19 @@ void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
 {
     AdminCmdDataKillNPC* data = dynamic_cast<AdminCmdDataKillNPC*>(cmddata);
 
-    if (data->targetObject && data->targetObject->GetClientID())
+    if(data->targetObject && data->targetObject->GetClientID())
     {
         psserver->SendSystemError(me->clientnum, "You can not kill a Player with this command!");
         return;
     }
-    
+
 
     gemNPC* target = dynamic_cast<gemNPC*>(data->targetObject);
     if(target && target->GetClientID() == 0)
     {
         if(!data->reload)
         {
-            if (data->damage > 0.0)
+            if(data->damage > 0.0)
             {
                 target->DoDamage(client->GetActor(),data->damage);
             }
@@ -8713,7 +8713,7 @@ void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
             {
                 target->Kill(client->GetActor());
             }
-            
+
         }
         else
         {
@@ -10364,9 +10364,9 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem &msg, Client* client
     item->SetLoaded();  // Item is fully created
     if(charData->Inventory().Add(item))
     {
-        if (msg.count > 1)
+        if(msg.count > 1)
         {
-            text.Format("You spawned %d %s to your inventory.", msg.count, psString(msg.item).Plural().GetData());            
+            text.Format("You spawned %d %s to your inventory.", msg.count, psString(msg.item).Plural().GetData());
         }
         else
         {
@@ -11711,7 +11711,7 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
         }
 
         // set scale if specified
-        if (data->scale)
+        if(data->scale)
             target->GetCharacterData()->SetVariable("scale",data->scale);
 
         // override the race using a fake spell
@@ -11744,7 +11744,7 @@ void AdminManager::Scale(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
     }
     else
     {
-        if (data->scale)
+        if(data->scale)
         {
             target->GetCharacterData()->SetVariable("scale",data->scale);
             target->Broadcast(me->clientnum, false);
@@ -12135,25 +12135,25 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
     }
     else if(data->subCmd == "list variables")  //this command will list the quest variables for the player
     {
-        if(!listVariables && !modifyVariables) 
+        if(!listVariables && !modifyVariables)
         {
             psserver->SendSystemError(client->GetClientNum(), "You don't have permission to list variables.");
             return;
         }
-        
+
         if(data->IsOnline())  //check if the player is online
         {
             psCharacter* chardata = target->GetActor()->GetCharacterData();
-            if (chardata)
+            if(chardata)
             {
                 csHash<charVariable, csString>::ConstGlobalIterator iter = chardata->GetVariables();
                 csString result;
-                while (iter.HasNext())
+                while(iter.HasNext())
                 {
                     charVariable var = iter.Next();
                     result.AppendFmt("%s%10s %10s",result.Length()?"\n":"",var.name.GetDataSafe(),var.value.GetDataSafe());
                 }
-                if (!result.Length())
+                if(!result.Length())
                 {
                     result = "No variables defined.";
                 }
@@ -12164,20 +12164,20 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
         {
             psserver->SendSystemError(me->clientnum,"Target is not online!");
         }
-        
+
     }
     else if(data->subCmd == "setvariable")  //this command will set a variable for the player
     {
-        if(!modifyVariables) 
+        if(!modifyVariables)
         {
             psserver->SendSystemError(client->GetClientNum(), "You don't have permission to modify variables.");
             return;
         }
-        
+
         if(data->IsOnline())  //check if the player is online
         {
             psCharacter* chardata = target->GetActor()->GetCharacterData();
-            if (chardata)
+            if(chardata)
             {
                 chardata->SetVariable(data->questName);
                 psserver->SendSystemInfo(me->clientnum, "Variable set: %s",data->questName.GetDataSafe());
@@ -12190,16 +12190,16 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
     }
     else if(data->subCmd == "unsetvariable")  //this command will unset a variable for the player
     {
-        if(!modifyVariables) 
+        if(!modifyVariables)
         {
             psserver->SendSystemError(client->GetClientNum(), "You don't have permission to modify variables.");
             return;
         }
-        
+
         if(data->IsOnline())  //check if the player is online
         {
             psCharacter* chardata = target->GetActor()->GetCharacterData();
-            if (chardata)
+            if(chardata)
             {
                 chardata->UnSetVariable(data->questName);
                 psserver->SendSystemInfo(me->clientnum, "Variable unset: %s",data->questName.GetDataSafe());

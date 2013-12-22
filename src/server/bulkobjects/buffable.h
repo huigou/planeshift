@@ -44,7 +44,7 @@ public:
 //-----------------------------------------------------------------------------
 
 /** Overridables
- * 
+ *
  * Overridables provide a straightforward way for the scripting system to
  * temporarily override some opaque value (like a string or position), yet
  * be able to undo the change at some later time.
@@ -93,40 +93,40 @@ public:
     {
         CS_ASSERT(values.Last().first == NULL);
 
-        const T & old = Current();
+        const T &old = Current();
 
         values.PopBack();
         values.PushBack(csTuple2<const ActiveSpell*,T>(NULL, x));
 
-        if (Current() != old)
+        if(Current() != old)
             OnChange();
     }
 
     void Override(const ActiveSpell* owner, T x)
     {
-        const T & old = Current();
+        const T &old = Current();
 
         values.PushFront(csTuple2<const ActiveSpell*,T>(owner, x));
 
-        if (x != old)
+        if(x != old)
             OnChange();
     }
 
     virtual void Cancel(const ActiveSpell* owner)
     {
-        const T & old = Current();
+        const T &old = Current();
 
         typename csList< csTuple2<const ActiveSpell*, T> >::Iterator it(values);
-        while (it.HasNext())
+        while(it.HasNext())
         {
-            csTuple2<const ActiveSpell*, T> & curr = it.Next();
-            if (curr.first == owner)
+            csTuple2<const ActiveSpell*, T> &curr = it.Next();
+            if(curr.first == owner)
             {
                 values.Delete(it);
             }
         }
 
-        if (Current() != old)
+        if(Current() != old)
             OnChange();
     }
 
@@ -142,7 +142,7 @@ protected:
 //-----------------------------------------------------------------------------
 
 /** Buffables
- * 
+ *
  * Buffables provide a consistent interface for numerical stats that can be
  * temporarily buffed by magic.  These are additive in nature.
  */
@@ -150,16 +150,28 @@ template <typename T>
 class Buffable : public iSpellModifier
 {
 public:
-    Buffable() { base = cached = 0; }
-    Buffable(T x) { base = cached = x; }
+    Buffable()
+    {
+        base = cached = 0;
+    }
+    Buffable(T x)
+    {
+        base = cached = x;
+    }
     virtual ~Buffable() { }
 
-    T Current() const { return cached; }
-    T Base() const { return base; }
+    T Current() const
+    {
+        return cached;
+    }
+    T Base() const
+    {
+        return base;
+    }
 
     void SetBase(T x)
     {
-        if (x == base)
+        if(x == base)
             return;
 
         cached += x - base;
@@ -181,9 +193,9 @@ public:
         bool changed = false;
 
         // Count backwards since we're deleting and things may shift on the right
-        for (size_t i = buffs.GetSize() - 1; i != (size_t) -1; i--)
+        for(size_t i = buffs.GetSize() - 1; i != (size_t) -1; i--)
         {
-            if (buffs[i].first == owner)
+            if(buffs[i].first == owner)
             {
                 cached -= buffs[i].second;
                 buffs.DeleteIndexFast(i);
@@ -191,7 +203,7 @@ public:
             }
         }
 
-        if (changed)
+        if(changed)
             OnChange();
     }
 
@@ -209,7 +221,7 @@ protected:
 //-----------------------------------------------------------------------------
 
 /** Multipliers
- * 
+ *
  * While most things are additive, some are purely multiplier values - for
  * example, attack and defense modifiers.  This is fully analogous to
  * buffables, multiplicative.
@@ -217,10 +229,16 @@ protected:
 class Multiplier : public iSpellModifier
 {
 public:
-    Multiplier() { cached = 1; }
+    Multiplier()
+    {
+        cached = 1;
+    }
     virtual ~Multiplier() { }
 
-    float Value() { return cached; }
+    float Value()
+    {
+        return cached;
+    }
 
     void Buff(const ActiveSpell* owner, float x)
     {
@@ -234,10 +252,10 @@ public:
         cached = 1;
 
         csList< csTuple2<const ActiveSpell*, float> >::Iterator it(buffs);
-        while (it.HasNext())
+        while(it.HasNext())
         {
-            csTuple2<const ActiveSpell*, float> & curr = it.Next();
-            if (curr.first == owner)
+            csTuple2<const ActiveSpell*, float> &curr = it.Next();
+            if(curr.first == owner)
             {
                 buffs.Delete(it);
             }

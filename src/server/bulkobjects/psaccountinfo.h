@@ -1,7 +1,7 @@
 /*
  * psaccountinfo.h
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -47,13 +47,19 @@ public:
     psAccountInfo();
     ~psAccountInfo();
 
-    bool Load(iResultRow& row);
+    bool Load(iResultRow &row);
 
     // iCachedObject Functions below
     virtual void ProcessCacheTimeout() {};  /// required for iCachedObject but not used here
-    virtual void *RecoverObject() { return this; }  /// Turn iCachedObject ptr into psAccountInfo
-    virtual void DeleteSelf() { delete this; }  /// Delete must come from inside object to handle operator::delete overrides.
-    
+    virtual void* RecoverObject()
+    {
+        return this;    /// Turn iCachedObject ptr into psAccountInfo
+    }
+    virtual void DeleteSelf()
+    {
+        delete this;    /// Delete must come from inside object to handle operator::delete overrides.
+    }
+
     /// Each account has a unique id number associated with it
     unsigned int accountid;
     /// Each account has a unique username associated with it, chosen by the user

@@ -1,7 +1,7 @@
 /*
  * clientstatuslogger.cpp - Author: Dewitt Colclough <dewitt@twcny.rr.com>
  *
- * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@
 /**
 *
 */
-void ClientStatusLogger::AddBasicNode(iDocumentNode* parent, const char* fieldName, 
+void ClientStatusLogger::AddBasicNode(iDocumentNode* parent, const char* fieldName,
                                       const char* text)
 {
     csRef<iDocumentNode> infoNode;
@@ -48,7 +48,7 @@ void ClientStatusLogger::AddBasicNode(iDocumentNode* parent, const char* fieldNa
 /**
 *
 */
-void ClientStatusLogger::AddBasicNode(iDocumentNode* parent, const char* fieldName, 
+void ClientStatusLogger::AddBasicNode(iDocumentNode* parent, const char* fieldName,
                                       int data)
 {
     csRef<iDocumentNode> infoNode;
@@ -62,8 +62,8 @@ void ClientStatusLogger::AddBasicNode(iDocumentNode* parent, const char* fieldNa
 /**
 *
 */
-csPtr<iDocumentNode> ClientStatusLogger::AddContainerNode(iDocumentNode* parent, 
-                                                          const char* fieldName)
+csPtr<iDocumentNode> ClientStatusLogger::AddContainerNode(iDocumentNode* parent,
+        const char* fieldName)
 {
     csRef<iDocumentNode> containerNode;
     containerNode = parent->CreateNodeBefore(CS_NODE_ELEMENT);
@@ -91,9 +91,9 @@ void ClientStatusLogger::LogClientInfo(Client* client)
     CS_ASSERT(client);
     CS_ASSERT(client->GetActor());
 
-    if (client == NULL) return; // errors, don't know how to log these yet so just return
-    if (client->GetActor() == NULL) return;
-    
+    if(client == NULL) return;  // errors, don't know how to log these yet so just return
+    if(client->GetActor() == NULL) return;
+
     csRef<iDocumentNode> node = AddContainerNode(statusRootNode, "Client");
 
     LogBasicInfo(client, node);
@@ -121,7 +121,7 @@ void ClientStatusLogger::LogConnectionInfo(Client* client, iDocumentNode* node)
     AddBasicNode(connNode, "IPAddress", ipAddr);
 
     NetBase::Connection* conn = client->GetConnection();
-    
+
     // ticks since last packet
     csTicks lastPacket = startTime - conn->lastRecvPacketTime;
     AddBasicNode(connNode, "LastPacket", lastPacket);
@@ -138,15 +138,15 @@ void ClientStatusLogger::LogGuildInfo(Client* client, iDocumentNode* node)
 
     gemActor* actor = client->GetActor();
     psGuildInfo* guild = actor->GetGuild();
-    if (guild == NULL) return; // is this an error or indicates no guild?
-    if (guild->GetID() == 0) return;
-    
+    if(guild == NULL) return;  // is this an error or indicates no guild?
+    if(guild->GetID() == 0) return;
+
 
     csRef<iDocumentNode> guildNode = AddContainerNode(node, "GuildData");
 
     AddBasicNode(guildNode, "GuildName", guild->GetName().GetData());
 
-    if (psGuildLevel* guildLevel = actor->GetGuildLevel())
+    if(psGuildLevel* guildLevel = actor->GetGuildLevel())
     {
         AddBasicNode(guildNode, "GuildTitle", guildLevel->title.GetData());
         AddBasicNode(guildNode, "IsGuildSecret", guild->IsSecret());
@@ -161,7 +161,7 @@ void ClientStatusLogger::LogGuildInfo(Client* client, iDocumentNode* node)
 *  This constructor must always be used.
 */
 ClientStatusLogger::ClientStatusLogger(iDocumentNode* statusNode)
-: statusRootNode(statusNode)
+    : statusRootNode(statusNode)
 {
     startTime = csGetTicks();
 }

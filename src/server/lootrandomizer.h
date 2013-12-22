@@ -147,7 +147,7 @@ protected:
 
 private:
     void AddModifier(LootModifier* oper1, LootModifier* oper2);
-    
+
     /**
      * Sets an attribute to the item overlay. utility function used when parsing the loot modifiers xml.
      *

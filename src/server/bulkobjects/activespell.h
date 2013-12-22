@@ -68,28 +68,55 @@ public:
 class ActiveSpell : public CS::Utility::WeakReferenced
 {
 public:
-    ActiveSpell(const csString& name, SPELL_TYPE type, csTicks duration);
+    ActiveSpell(const csString &name, SPELL_TYPE type, csTicks duration);
     ~ActiveSpell() { }
 
     // These are only used by progression scripts, for loading/initializing it.
-    void Add(iSpellModifier& mod, const char* fmt, ...);
+    void Add(iSpellModifier &mod, const char* fmt, ...);
     void Add(iCancelAction* action, const char* fmt, ...);
 
     void Register(gemActor* target);
     void Link(ActiveSpell* other);
 
-    void SetCancelOnDeath(bool x) { cancelOnDeath = x; }
-    bool CancelOnDeath() { return cancelOnDeath; }
+    void SetCancelOnDeath(bool x)
+    {
+        cancelOnDeath = x;
+    }
+    bool CancelOnDeath()
+    {
+        return cancelOnDeath;
+    }
 
-    void MarkAsDamagingHP() { damagesHP = true; }
-    bool DamagesHP() { return damagesHP; }
+    void MarkAsDamagingHP()
+    {
+        damagesHP = true;
+    }
+    bool DamagesHP()
+    {
+        return damagesHP;
+    }
 
-    const csString& Name() const { return name; }
-    const csString& Image() const { return image; }
-    SPELL_TYPE      Type() const { return type; }
-    csTicks Duration() const { return duration; }
-    csTicks RegistrationTime() const { return registrationTime; }
-    void SetImage( csString imageName );
+    const csString &Name() const
+    {
+        return name;
+    }
+    const csString &Image() const
+    {
+        return image;
+    }
+    SPELL_TYPE      Type() const
+    {
+        return type;
+    }
+    csTicks Duration() const
+    {
+        return duration;
+    }
+    csTicks RegistrationTime() const
+    {
+        return registrationTime;
+    }
+    void SetImage(csString imageName);
 
     /**
      * If Cancel() returns true, you're responsible for freeing the ActiveSpell's memory.
@@ -97,7 +124,7 @@ public:
      * If it returns false, it ignored the (second) attempt to cancel it (due to links).
      */
     bool Cancel();
-    
+
     bool HasExpired() const;
 
     /**

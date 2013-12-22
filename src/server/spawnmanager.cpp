@@ -91,16 +91,16 @@ public:
     csString rollername;
     csString looteename;
 
-    PendingLootPrompt( Client *looter,
-                       Client *roller,
-                       psItem *loot,
-                       psCharacter *dropper,
-                       const char *question,
-                       CacheManager *cachemanager,
-                       GEMSupervisor *gemsupervisor)
-    : PendingQuestion( roller->GetClientNum(),
-                       question,
-                       psQuestionMessage::generalConfirm)
+    PendingLootPrompt(Client* looter,
+                      Client* roller,
+                      psItem* loot,
+                      psCharacter* dropper,
+                      const char* question,
+                      CacheManager* cachemanager,
+                      GEMSupervisor* gemsupervisor)
+        : PendingQuestion(roller->GetClientNum(),
+                          question,
+                          psQuestionMessage::generalConfirm)
     {
         cacheManager = cachemanager;
         gemSupervisor = gemsupervisor;
@@ -119,11 +119,11 @@ public:
 
     virtual ~PendingLootPrompt() { }
 
-    void HandleAnswer(const csString & answer)
+    void HandleAnswer(const csString &answer)
     {
         PendingQuestion::HandleAnswer(answer);
 
-        if ( dynamic_cast<psItem*>(item) == NULL )
+        if(dynamic_cast<psItem*>(item) == NULL)
         {
             Error2("Item held in PendingLootPrompt with id %u has been lost", id);
             return;
@@ -135,12 +135,12 @@ public:
         gemActor* getter = (answer == "yes") ? looter : roller ;
 
         // If the getter left the world, default to the other player
-        if (!getter /*|| !getter->InGroup()*/ )
+        if(!getter /*|| !getter->InGroup()*/)
         {
             getter = (answer == "yes") ? roller : looter ;
 
             // If the other player also vanished, get rid of the item and be done with it...
-            if (!getter /*|| !getter->InGroup()*/ )
+            if(!getter /*|| !getter->InGroup()*/)
             {
                 cacheManager->RemoveInstance(item);
                 return;
@@ -153,39 +153,42 @@ public:
                        lootername.GetData(),
                        (getter == looter) ? "allowed to loot" : "stopped from looting",
                        item->GetName(),
-                       rollername.GetData() );
+                       rollername.GetData());
 
         // Attempt to give to getter
         bool dropped = getter->GetCharacterData()->Inventory().AddOrDrop(item);
 
-        if (!dropped)
+        if(!dropped)
             lootmsg.Append(", but can't hold anymore");
 
         // Send out the loot message
-        psSystemMessage loot(getter->GetClientID(), MSG_LOOT, lootmsg.GetData() );
+        psSystemMessage loot(getter->GetClientID(), MSG_LOOT, lootmsg.GetData());
         getter->SendGroupMessage(loot.msg);
 
         psLootEvent evt(
-                       looteeID,
-                       looteename,
-                       getter->GetCharacterData()->GetPID(),
-                       lootername,
-                       item->GetUID(),
-                       item->GetName(),
-                       item->GetStackCount(),
-                       (int)item->GetCurrentStats()->GetQuality(),
-                       0
-                       );
+            looteeID,
+            looteename,
+            getter->GetCharacterData()->GetPID(),
+            lootername,
+            item->GetUID(),
+            item->GetName(),
+            item->GetStackCount(),
+            (int)item->GetCurrentStats()->GetQuality(),
+            0
+        );
         evt.FireEvent();
     }
 
-    void HandleTimeout() { HandleAnswer("yes"); }
+    void HandleTimeout()
+    {
+        HandleAnswer("yes");
+    }
 private:
-    CacheManager *cacheManager;
-    GEMSupervisor *gemSupervisor;
+    CacheManager* cacheManager;
+    GEMSupervisor* gemSupervisor;
 };
 
-SpawnManager::SpawnManager(psDatabase *db, CacheManager *cachemanager, EntityManager *entitymanager, GEMSupervisor *gemsupervisor)
+SpawnManager::SpawnManager(psDatabase* db, CacheManager* cachemanager, EntityManager* entitymanager, GEMSupervisor* gemsupervisor)
 {
     database  = db;
     cacheManager = cachemanager;
@@ -204,10 +207,10 @@ SpawnManager::SpawnManager(psDatabase *db, CacheManager *cachemanager, EntityMan
 SpawnManager::~SpawnManager()
 {
 
-    csHash<LootEntrySet *>::GlobalIterator it(looting.GetIterator ());
-    while (it.HasNext ())
+    csHash<LootEntrySet*>::GlobalIterator it(looting.GetIterator());
+    while(it.HasNext())
     {
-        LootEntrySet* loot = it.Next ();
+        LootEntrySet* loot = it.Next();
         delete loot;
     }
 
@@ -220,28 +223,28 @@ void SpawnManager::PreloadLootRules()
 {
     // loot_rule_id=0 is not valid and not loaded
     Result result(db->Select("select * from loot_rule_details where loot_rule_id>0"));
-    if (!result.IsValid() )
+    if(!result.IsValid())
     {
         Error2("Could not load loot rule details due to database error: %s",
                db->GetLastError());
         return;
     }
 
-    for (unsigned int i=0; i<result.Count(); i++)
+    for(unsigned int i=0; i<result.Count(); i++)
     {
         int id = result[i].GetInt("loot_rule_id");
-        LootEntrySet *currset = looting.Get(id,NULL);
-        if (!currset)
+        LootEntrySet* currset = looting.Get(id,NULL);
+        if(!currset)
         {
             currset = new LootEntrySet(id);
-            currset->SetRandomizer( this->lootRandomizer );
+            currset->SetRandomizer(this->lootRandomizer);
             looting.Put(id,currset);
         }
 
-        LootEntry *entry = new LootEntry;
+        LootEntry* entry = new LootEntry;
         int item_id = result[i].GetInt("item_stat_id");
 
-        entry->item = cacheManager->GetBasicItemStatsByID( item_id );
+        entry->item = cacheManager->GetBasicItemStatsByID(item_id);
         entry->min_item = result[i].GetInt("min_item");
         entry->max_item = result[i].GetInt("max_item");
         entry->probability = result[i].GetFloat("probability");
@@ -250,9 +253,9 @@ void SpawnManager::PreloadLootRules()
         entry->randomize = (result[i].GetInt("randomize") ? true : false);
         entry->randomizeProbability = result[i].GetFloat("randomize_probability");
 
-        if (!entry->item && item_id != 0)
+        if(!entry->item && item_id != 0)
         {
-            Error2("Could not find specified loot item stat: %d", item_id );
+            Error2("Could not find specified loot item stat: %d", item_id);
             delete entry;
             continue;
         }
@@ -266,44 +269,44 @@ bool SpawnManager::LoadWaypointsAsSpawnRanges()
 {
     csRef<iDocumentSystem> xml;
     xml.AttachNew(new csTinyDocumentSystem);
-    const char *xmlfile = "/planeshift/data/npcdefs.xml";
+    const char* xmlfile = "/planeshift/data/npcdefs.xml";
 
     csRef<iDataBuffer> buff = vfs->ReadFile(xmlfile);
 
-    if ( !buff || !buff->GetSize() )
+    if(!buff || !buff->GetSize())
     {
         return false;
     }
 
     csRef<iDocument> doc = xml->CreateDocument();
-    const char* error    = doc->Parse( buff );
-    if ( error )
+    const char* error    = doc->Parse(buff);
+    if(error)
     {
         Error3("Error %s in %s", error, xmlfile);
         return false;
     }
 
-    iDocumentNode *topNode = root->GetNode("waypoints");
+    iDocumentNode* topNode = root->GetNode("waypoints");
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
-    while ( iter->HasNext() )
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> node = iter->Next();
-        if ( node->GetType() != CS_NODE_ELEMENT )
+        if(node->GetType() != CS_NODE_ELEMENT)
             continue;
 
-        if (!strcmp( node->GetValue(), "waypointlist" ))
+        if(!strcmp(node->GetValue(), "waypointlist"))
         {
             csRef<iDocumentNodeIterator> iter = node->GetNodes();
-            while (iter->HasNext())
+            while(iter->HasNext())
             {
                 csRef<iDocumentNode> node = iter->Next();
-                if ( node->GetType() != CS_NODE_ELEMENT )
+                if(node->GetType() != CS_NODE_ELEMENT)
                     continue;
-                if (!strcmp(node->GetValue(),"waypoint"))
+                if(!strcmp(node->GetValue(),"waypoint"))
                 {
-                    Waypoint *wp = new Waypoint;
-                    if (wp->Load(node))
+                    Waypoint* wp = new Waypoint;
+                    if(wp->Load(node))
                     {
                         waypoints.Insert(wp,true);
                     }
@@ -316,47 +319,47 @@ bool SpawnManager::LoadWaypointsAsSpawnRanges()
                 }
             }
         }
-        else if (!strcmp(node->GetValue(), "waylinks" ))
+        else if(!strcmp(node->GetValue(), "waylinks"))
         {
             csRef<iDocumentNodeIterator> iter = node->GetNodes();
-            while (iter->HasNext())
+            while(iter->HasNext())
             {
                 csRef<iDocumentNode> node = iter->Next();
-                if ( node->GetType() != CS_NODE_ELEMENT )
+                if(node->GetType() != CS_NODE_ELEMENT)
                     continue;
-                if (!strcmp(node->GetValue(),"point"))
+                if(!strcmp(node->GetValue(),"point"))
                 {
                     Waypoint key;
                     key.name = node->GetAttributeValue("name");
-                    Waypoint *wp = waypoints.Find(&key);
-                    if (!wp)
+                    Waypoint* wp = waypoints.Find(&key);
+                    if(!wp)
                     {
-                        CPrintf(CON_ERROR, "Waypoint called '%s' not defined.\n",key.name.GetData() );
+                        CPrintf(CON_ERROR, "Waypoint called '%s' not defined.\n",key.name.GetData());
                         return false;
                     }
                     else
                     {
                         csRef<iDocumentNodeIterator> iter = node->GetNodes();
-                        while (iter->HasNext())
+                        while(iter->HasNext())
                         {
                             csRef<iDocumentNode> node = iter->Next();
-                            if ( node->GetType() != CS_NODE_ELEMENT )
+                            if(node->GetType() != CS_NODE_ELEMENT)
                                 continue;
-                            if (!strcmp(node->GetValue(),"link"))
+                            if(!strcmp(node->GetValue(),"link"))
                             {
                                 Waypoint key;
                                 key.name = node->GetAttributeValue("name");
-                                Waypoint *wlink = waypoints.Find(&key);
-                                if (!wlink)
+                                Waypoint* wlink = waypoints.Find(&key);
+                                if(!wlink)
                                 {
-                                    CPrintf(CON_ERROR, "Waypoint called '%s' not defined.\n",key.name.GetData() );
+                                    CPrintf(CON_ERROR, "Waypoint called '%s' not defined.\n",key.name.GetData());
                                     return false;
                                 }
                                 else
                                 {
                                     bool one_way = node->GetAttributeValueAsBool("oneway");
                                     wp->links.Push(wlink);
-                                    if (!one_way)
+                                    if(!one_way)
                                         wlink->links.Push(wp);  // bi-directional link is implied
                                 }
                             }
@@ -370,7 +373,7 @@ bool SpawnManager::LoadWaypointsAsSpawnRanges()
 }
 #endif
 
-void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
+void SpawnManager::LoadHuntLocations(psSectorInfo* sectorinfo)
 {
     csString query;
     csString query_natres;
@@ -380,8 +383,8 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
             'interval', max_random, n.id, amount, radius 'range', i.name \
             FROM sectors s, natural_resources n JOIN item_stats i ON i.id = n.item_id_reward \
             WHERE s.id=n.loc_sector_id and amount is not NULL";
-    
-    if ( sectorinfo )
+
+    if(sectorinfo)
     {
         query.AppendFmt(" and sector='%s'",sectorinfo->name.GetData());
         query_natres.AppendFmt(" and n.loc_sector_id='%s'",sectorinfo->name.GetData());
@@ -389,7 +392,7 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
 
     Result result(db->Select(query));
 
-    if (!result.IsValid() )
+    if(!result.IsValid())
     {
         Error2("Could not load hunt_locations due to database error: %s", db->GetLastError());
         return;
@@ -399,7 +402,7 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
     SpawnHuntLocations(result, sectorinfo);
 
     Result result_natres(db->Select(query_natres));
-    if (!result_natres.IsValid() )
+    if(!result_natres.IsValid())
     {
         Error2("Could not load hunt_locations from natural_resources table due to database error: %s\n", db->GetLastError());
         return;
@@ -410,9 +413,9 @@ void SpawnManager::LoadHuntLocations(psSectorInfo *sectorinfo)
 
 }
 
-void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo *sectorinfo)
+void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo* sectorinfo)
 {
-    for (unsigned int i=0; i<result.Count(); i++)
+    for(unsigned int i=0; i<result.Count(); i++)
     {
         // Get some vars to work with
         csString sector = result[i]["sectorname"];
@@ -425,18 +428,18 @@ void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo *sectorinfo)
         float range = result[i].GetFloat("range");
         csString name = result[i]["name"];
 
-        Debug4(LOG_SPAWN,0,"Adding hunt location in sector %s %s %s.\n",sector.GetData(),toString(pos).GetData(),name.GetData() );
+        Debug4(LOG_SPAWN,0,"Adding hunt location in sector %s %s %s.\n",sector.GetData(),toString(pos).GetData(),name.GetData());
 
         // Schedule the item spawn
-        psSectorInfo *spawnsector=cacheManager->GetSectorInfoByName(sector);
+        psSectorInfo* spawnsector=cacheManager->GetSectorInfoByName(sector);
 
-        if (spawnsector==NULL)
+        if(spawnsector==NULL)
         {
-            Error2("hunt_location failed to load, wrong sector: %s", sector.GetData() );
+            Error2("hunt_location failed to load, wrong sector: %s", sector.GetData());
             continue;
         }
 
-        iSector *iSec = entityManager->FindSector(sector.GetData());
+        iSector* iSec = entityManager->FindSector(sector.GetData());
         if(!iSec)
         {
             Error2("Sector '%s' failed to be found when loading hunt location.", sector.GetData());
@@ -450,12 +453,12 @@ void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo *sectorinfo)
         nearlist = gem->FindNearbyEntities(iSec, pos, range);
         size_t nearbyItemsCount = nearlist.GetSize();
 
-        for (size_t i = 0; i < nearbyItemsCount; ++i)
+        for(size_t i = 0; i < nearbyItemsCount; ++i)
         {
-            psItem *item = nearlist[i]->GetItem();
-            if (item)
+            psItem* item = nearlist[i]->GetItem();
+            if(item)
             {
-                if (name == item->GetName()) // Correct item?
+                if(name == item->GetName())  // Correct item?
                 {
                     psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
                     item->SetScheduledItem(schedule);
@@ -463,51 +466,51 @@ void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo *sectorinfo)
                 }
             }
 
-            if ((int) handledSpawnsCount == amount) // All schedules accounted for
+            if((int) handledSpawnsCount == amount)  // All schedules accounted for
                 break;
         }
 
-        for (int i = 0; i < (amount - (int) handledSpawnsCount); ++i) //Make desired amount of items that are not already existing
+        for(int i = 0; i < (amount - (int) handledSpawnsCount); ++i)  //Make desired amount of items that are not already existing
         {
             // This object won't get destroyed in a while (until something stops it or psItem is destroyed without moving)
             psScheduledItem* item = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
 
             // Queue it
-            psItemSpawnEvent *newevent = new psItemSpawnEvent(item);
+            psItemSpawnEvent* newevent = new psItemSpawnEvent(item);
             psserver->GetEventManager()->Push(newevent);
         }
     }
 }
 
-void SpawnManager::LoadSpawnRanges(SpawnRule *rule)
+void SpawnManager::LoadSpawnRanges(SpawnRule* rule)
 {
     Result result(db->Select("select npc_spawn_ranges.id,x1,y1,z1,x2,y2,z2,radius,name,range_type_code"
                              "  from npc_spawn_ranges, sectors "
                              "  where npc_spawn_ranges.sector_id = sectors.id"
-                             "  and npc_spawn_rule_id=%d", rule->GetID() ));
+                             "  and npc_spawn_rule_id=%d", rule->GetID()));
 
-    if (!result.IsValid() )
+    if(!result.IsValid())
     {
         Error2("Could not load NPC spawn ranges due to database error: %s",
                db->GetLastError());
         return;
     }
 
-    for (unsigned int i=0; i<result.Count(); i++)
+    for(unsigned int i=0; i<result.Count(); i++)
     {
-        SpawnRange *r = new SpawnRange;
+        SpawnRange* r = new SpawnRange;
 
-        r->Initialize( result[i].GetInt("id"),
-                       rule->GetID(),
-                       result[i]["range_type_code"],
-                       result[i].GetFloat("x1"),
-                       result[i].GetFloat("y1"),
-                       result[i].GetFloat("z1"),
-                       result[i].GetFloat("x2"),
-                       result[i].GetFloat("y2"),
-                       result[i].GetFloat("z2"),
-                       result[i].GetFloat("radius"),
-                       result[i]["name"]);
+        r->Initialize(result[i].GetInt("id"),
+                      rule->GetID(),
+                      result[i]["range_type_code"],
+                      result[i].GetFloat("x1"),
+                      result[i].GetFloat("y1"),
+                      result[i].GetFloat("z1"),
+                      result[i].GetFloat("x2"),
+                      result[i].GetFloat("y2"),
+                      result[i].GetFloat("z2"),
+                      result[i].GetFloat("radius"),
+                      result[i]["name"]);
 
 
         rule->AddRange(r);
@@ -519,23 +522,23 @@ void SpawnManager::PreloadDatabase()
     PreloadLootRules();
 
     Result result(db->Select("select id,min_spawn_time,max_spawn_time,"
-                 "       substitute_spawn_odds,substitute_player,"
-                 "       fixed_spawn_x,fixed_spawn_y,fixed_spawn_z,"
-                 "       fixed_spawn_rot,fixed_spawn_sector,loot_category_id,"
-                 "       dead_remain_time,fixed_spawn_instance,min_spawn_spacing_dist"
-                 "  from npc_spawn_rules"));
-    if (!result.IsValid() )
+                             "       substitute_spawn_odds,substitute_player,"
+                             "       fixed_spawn_x,fixed_spawn_y,fixed_spawn_z,"
+                             "       fixed_spawn_rot,fixed_spawn_sector,loot_category_id,"
+                             "       dead_remain_time,fixed_spawn_instance,min_spawn_spacing_dist"
+                             "  from npc_spawn_rules"));
+    if(!result.IsValid())
     {
         Error2("Could not load NPC spawn rules due to database error: %s",
                db->GetLastError());
         return;
     }
 
-    for (unsigned int i=0; i<result.Count(); i++)
+    for(unsigned int i=0; i<result.Count(); i++)
     {
-        LootEntrySet *loot_set = looting.Get( result[i].GetInt("loot_category_id"), NULL );
+        LootEntrySet* loot_set = looting.Get(result[i].GetInt("loot_category_id"), NULL);
 
-        SpawnRule *newrule = new SpawnRule;
+        SpawnRule* newrule = new SpawnRule;
 
         newrule->Initialize(result[i].GetInt("id"),
                             result[i].GetInt("min_spawn_time"),
@@ -558,21 +561,21 @@ void SpawnManager::PreloadDatabase()
     }
 }
 
-void SpawnManager::RepopulateLive(psSectorInfo *sectorinfo)
+void SpawnManager::RepopulateLive(psSectorInfo* sectorinfo)
 {
-    psCharacter **chardatalist = NULL;
+    psCharacter** chardatalist = NULL;
     int count;
 
     chardatalist = psServer::CharacterLoader.LoadAllNPCCharacterData(sectorinfo,count);
-    if (chardatalist==NULL)
+    if(chardatalist==NULL)
     {
         Error1("No NPCs found to repopulate.");
         return;
     }
 
-    for (int i=0; i<count; i++)
+    for(int i=0; i<count; i++)
     {
-        if (chardatalist[i] != NULL)
+        if(chardatalist[i] != NULL)
             entityManager->CreateNPC(chardatalist[i]);
         else
             Error1("Failed to repopulate NPC!");
@@ -581,12 +584,12 @@ void SpawnManager::RepopulateLive(psSectorInfo *sectorinfo)
     delete[] chardatalist;
 }
 
-void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
+void SpawnManager::RepopulateItems(psSectorInfo* sectorinfo)
 {
     csArray<psItem*> items;
 
     // Load list from database
-    if (!cacheManager->LoadWorldItems(sectorinfo, items))
+    if(!cacheManager->LoadWorldItems(sectorinfo, items))
     {
         Error1("Failed to load world items.");
         return;
@@ -594,15 +597,15 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
 
     // Now create entities and meshes, etc. for each one
     int spawned = 0;
-    for (size_t i = 0; i < items.GetSize(); i++)
+    for(size_t i = 0; i < items.GetSize(); i++)
     {
-        psItem *item = items[i];
+        psItem* item = items[i];
         CS_ASSERT(item);
         // load items not in containers
-        if (item->GetContainerID() == 0)
+        if(item->GetContainerID() == 0)
         {
             //if create item returns false, then no spawn occurs
-            if (entityManager->CreateItem( item, (item->GetFlags() & PSITEM_FLAG_TRANSIENT) ? true : false))
+            if(entityManager->CreateItem(item, (item->GetFlags() & PSITEM_FLAG_TRANSIENT) ? true : false))
             {
                 // printf("Created item %d: %s\n", item->GetUID(), item->GetName() );
                 // item->Save(false);
@@ -616,13 +619,13 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
             }
         }
         // load items in containers
-        else if (item->GetContainerID())
+        else if(item->GetContainerID())
         {
-            gemItem *citem = entityManager->GetGEM()->FindItemEntity(item->GetContainerID());
-            gemContainer *container = dynamic_cast<gemContainer*> (citem);
-            if (container)
+            gemItem* citem = entityManager->GetGEM()->FindItemEntity(item->GetContainerID());
+            gemContainer* container = dynamic_cast<gemContainer*>(citem);
+            if(container)
             {
-                if (!container->AddToContainer(item,NULL,item->GetLocInParent()))
+                if(!container->AddToContainer(item,NULL,item->GetLocInParent()))
                 {
                     Error2("Cannot add item into container slot %i.\n", item->GetLocInParent());
                     delete item;
@@ -633,7 +636,7 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
             {
                 Error3("Container with id %d not found, specified in item %d.",
                        item->GetContainerID(),
-                       item->GetUID() );
+                       item->GetUID());
                 delete item;
             }
         }
@@ -642,70 +645,70 @@ void SpawnManager::RepopulateItems(psSectorInfo *sectorinfo)
     Debug2(LOG_SPAWN,0,"Spawned %d items.\n",spawned);
 }
 
-void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
+void SpawnManager::KillNPC(gemActor* obj, gemActor* killer)
 {
     int killer_cnum = 0;
 
-    if (killer)
+    if(killer)
     {
         killer_cnum = killer->GetClientID();
-        Debug3(LOG_SPAWN, 0, "Killer '%s' killed '%s'", killer->GetName(), obj->GetName() );
+        Debug3(LOG_SPAWN, 0, "Killer '%s' killed '%s'", killer->GetName(), obj->GetName());
     }
     else
     {
-        Debug2(LOG_SPAWN, 0, "Killed NPC:%s", obj->GetName() );
+        Debug2(LOG_SPAWN, 0, "Killed NPC:%s", obj->GetName());
     }
 
 
-    if (!obj->IsAlive())
+    if(!obj->IsAlive())
         return;
 
     obj->SetAlive(false);
 
     // Create his loot
-    SpawnRule *respawn = NULL;
+    SpawnRule* respawn = NULL;
     int spawnruleid = obj->GetCharacterData()->NPC_GetSpawnRuleID();
-    if (spawnruleid)
+    if(spawnruleid)
     {
         respawn = rules.Get(spawnruleid, NULL);
     }
 
-    if (respawn)
+    if(respawn)
     {
-        if (respawn->GetLootRules())
+        if(respawn->GetLootRules())
         {
-            respawn->GetLootRules()->CreateLoot( obj->GetCharacterData() );
+            respawn->GetLootRules()->CreateLoot(obj->GetCharacterData());
         }
     }
 
     int loot_id = obj->GetCharacterData()->GetLootCategory();
-    if (loot_id) // custom loot for this mob also
+    if(loot_id)  // custom loot for this mob also
     {
-        LootEntrySet *loot = looting.Get(loot_id,0);
-        if (loot)
+        LootEntrySet* loot = looting.Get(loot_id,0);
+        if(loot)
         {
             Debug2(LOG_LOOT, 0, "Creating loot %d.", loot_id);
-            loot->CreateLoot( obj->GetCharacterData() );
+            loot->CreateLoot(obj->GetCharacterData());
         }
         else
         {
-            Error3("Missing specified loot rule %d in character %s.",loot_id,obj->GetName() );
+            Error3("Missing specified loot rule %d in character %s.",loot_id,obj->GetName());
         }
     }
 
-    if (killer)
+    if(killer)
     {
         csRef<PlayerGroup> grp = killer->GetGroup();
-        if (!grp)
+        if(!grp)
         {
             // Check if the killer is owned (pet/familiar)
-            gemActor * owner = dynamic_cast<gemActor*>(killer->GetOwner());
-            if (owner)
+            gemActor* owner = dynamic_cast<gemActor*>(killer->GetOwner());
+            if(owner)
             {
                 // Is the owner part of a group? The group code below will add the
                 // group and the owner.
                 grp = owner->GetGroup();
-                if (!grp)
+                if(!grp)
                 {
                     // Not part of group so add the owner
                     Debug3(LOG_LOOT, killer_cnum, "Adding owner with pid: %u as able to loot %s.",
@@ -719,11 +722,11 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
             }
         }
 
-        if (grp)
+        if(grp)
         {
-            for (size_t i=0; i<grp->GetMemberCount(); i++)
+            for(size_t i=0; i<grp->GetMemberCount(); i++)
             {
-                if (grp->GetMember(i)->RangeTo(obj) < RANGE_TO_RECV_LOOT)
+                if(grp->GetMember(i)->RangeTo(obj) < RANGE_TO_RECV_LOOT)
                 {
                     Debug3(LOG_LOOT, 0, "Adding %s as able to loot %s.", grp->GetMember(i)->GetName(), obj->GetName());
                     obj->AddLootablePlayer(grp->GetMember(i)->GetPID());
@@ -743,7 +746,7 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
     }
 
     // Notify the OwnerSession
-    if (obj->GetCharacterData()->IsPet())
+    if(obj->GetCharacterData()->IsPet())
     {
         psserver->GetNPCManager()->PetHasBeenKilled(obj->GetNPCPtr());
     }
@@ -751,15 +754,15 @@ void SpawnManager::KillNPC(gemActor *obj, gemActor* killer)
 
     // Set timer for when NPC will disappear
     csTicks delay = (respawn)?respawn->GetDeadRemainTime():5000;
-    psDespawnGameEvent *newevent = new psDespawnGameEvent(this, gem, delay,obj);
+    psDespawnGameEvent* newevent = new psDespawnGameEvent(this, gem, delay,obj);
     psserver->GetEventManager()->Push(newevent);
 
     Notify3(LOG_SPAWN,"Scheduled NPC %s to be removed in %1.1f seconds.",obj->GetName(),(float)delay/1000.0);
 }
 
-void SpawnManager::RemoveNPC(gemObject *obj)
+void SpawnManager::RemoveNPC(gemObject* obj)
 {
-    Debug2(LOG_SPAWN,0,"RemoveNPC:%s\n",obj->GetName() );
+    Debug2(LOG_SPAWN,0,"RemoveNPC:%s\n",obj->GetName());
 
     ServerStatus::mob_deathcount++;
 
@@ -767,24 +770,24 @@ void SpawnManager::RemoveNPC(gemObject *obj)
 
     Notify3(LOG_SPAWN, "Sending NPC %s disconnect msg to %zu clients.\n", ShowID(obj->GetEID()), obj->GetMulticastClients().GetSize());
 
-    if (obj->GetCharacterData()==NULL)
+    if(obj->GetCharacterData()==NULL)
     {
         Error2("Character data for npc character %s was not found! Entity stays dead.", ShowID(pid));
         return;
     }
 
-    SpawnRule *respawn = NULL;
+    SpawnRule* respawn = NULL;
     int spawnruleid = obj->GetCharacterData()->NPC_GetSpawnRuleID();
 
-    if (spawnruleid)
+    if(spawnruleid)
     {
         // Queue for respawn according to rules
         respawn = rules.Get(spawnruleid, NULL);
     }
 
-    if (!respawn)
+    if(!respawn)
     {
-        if (spawnruleid == 0) // spawnruleid 0 is for non-respawning NPCs
+        if(spawnruleid == 0)  // spawnruleid 0 is for non-respawning NPCs
         {
             Notify2(LOG_SPAWN,"Temporary NPC based on player ID %s has died. Entity stays dead.", ShowID(pid));
         }
@@ -804,7 +807,7 @@ void SpawnManager::RemoveNPC(gemObject *obj)
     int delay = respawn->GetRespawnDelay();
     PID newplayer = respawn->CheckSubstitution(pid);
 
-    psRespawnGameEvent *newevent = new psRespawnGameEvent(this, delay, newplayer, respawn);
+    psRespawnGameEvent* newevent = new psRespawnGameEvent(this, delay, newplayer, respawn);
     psserver->GetEventManager()->Push(newevent);
 
     Notify3(LOG_SPAWN, "Scheduled NPC %s to be respawned in %.1f seconds", ShowID(newplayer), (float)delay/1000.0);
@@ -816,8 +819,8 @@ void SpawnManager::RemoveNPC(gemObject *obj)
 
 void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
 {
-    psCharacter *chardata=psServer::CharacterLoader.LoadCharacterData(playerID,false);
-    if (chardata==NULL)
+    psCharacter* chardata=psServer::CharacterLoader.LoadCharacterData(playerID,false);
+    if(chardata==NULL)
     {
         Error2("Character %s to be respawned does not have character data to be loaded!", ShowID(playerID));
         return;
@@ -833,14 +836,14 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
 
     // DetermineSpawnLoc will return true if it is a random picked position so for fixed we will fall true
     // on the first try.
-    while (spawnRule->DetermineSpawnLoc(chardata, pos, angle, sectorName, instance) && spawnRule->GetMinSpawnSpacingDistance() > 0.0 && count-- > 0)
+    while(spawnRule->DetermineSpawnLoc(chardata, pos, angle, sectorName, instance) && spawnRule->GetMinSpawnSpacingDistance() > 0.0 && count-- > 0)
     {
         sector = psserver->entitymanager->GetEngine()->GetSectors()->FindByName(sectorName);
 
         CS_ASSERT(sector);
 
         csArray<gemObject*> nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos, spawnRule->GetMinSpawnSpacingDistance(), false);
-        if (nearlist.IsEmpty())
+        if(nearlist.IsEmpty())
         {
             break; // Nothing in the neare list so spawn position is ok.
         }
@@ -855,10 +858,10 @@ void SpawnManager::Respawn(PID playerID, SpawnRule* spawnRule)
 }
 
 
-void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3& where, float rot, const char* sector)
+void SpawnManager::Respawn(psCharacter* chardata, InstanceID instance, csVector3 &where, float rot, const char* sector)
 {
     psSectorInfo* spawnsector = cacheManager->GetSectorInfoByName(sector);
-    if (spawnsector==NULL)
+    if(spawnsector==NULL)
     {
         Error2("Spawn message indicated unresolvable sector '%s'", sector);
         return;
@@ -896,9 +899,9 @@ void handleGroupLootItem(psItem* item, gemActor* target, Client* client, CacheMa
     if(group.IsValid())
     {
         randfriendclient = target->GetRandomLootClient(RANGE_TO_LOOT * 10);
-        if (!randfriendclient)
+        if(!randfriendclient)
         {
-            Error3("GetRandomLootClient failed for loot msg from %s, object %s.", client->GetName(), item->GetName() );
+            Error3("GetRandomLootClient failed for loot msg from %s, object %s.", client->GetName(), item->GetName());
             return;
         }
     }
@@ -917,12 +920,12 @@ void handleGroupLootItem(psItem* item, gemActor* target, Client* client, CacheMa
     }
 
     // Ask group member before take
-    if ((lootAction == psLootItemMessage::LOOT_SELF) && group.IsValid() &&
-        (client != randfriendclient))
+    if((lootAction == psLootItemMessage::LOOT_SELF) && group.IsValid() &&
+            (client != randfriendclient))
     {
         psserver->SendSystemInfo(client->GetClientNum(),
                                  "Asking roll winner %s if you may take the %s...",
-                                  randfriendclient->GetName(), item->GetName() );
+                                 randfriendclient->GetName(), item->GetName());
         csString request;
         request.Format("You have won the roll for a %s, but %s wants to take it."
                        "  Will you allow this action?",
@@ -956,7 +959,7 @@ void handleGroupLootItem(psItem* item, gemActor* target, Client* client, CacheMa
         }
 
         // Send out the loot message
-        psSystemMessage loot(client->GetClientNum(), MSG_LOOT, lootmsg.GetData() );
+        psSystemMessage loot(client->GetClientNum(), MSG_LOOT, lootmsg.GetData());
         looterclient->GetActor()->SendGroupMessage(loot.msg);
 
         item->Save(false);
@@ -982,23 +985,23 @@ void handleGroupLootItem(psItem* item, gemActor* target, Client* client, CacheMa
     }
 
     psLootEvent evt(
-                   target->GetCharacterData()->GetPID(),
-                   target->GetCharacterData()->GetCharName(),
-                   looterclient->GetCharacterData()->GetPID(),
-                   looterclient->GetCharacterData()->GetCharName(),
-                   item->GetUID(),
-                   item->GetName(),
-                   item->GetStackCount(),
-                   (int)item->GetCurrentStats()->GetQuality(),
-                   0
-                   );
+        target->GetCharacterData()->GetPID(),
+        target->GetCharacterData()->GetCharName(),
+        looterclient->GetCharacterData()->GetPID(),
+        looterclient->GetCharacterData()->GetCharName(),
+        item->GetUID(),
+        item->GetName(),
+        item->GetStackCount(),
+        (int)item->GetCurrentStats()->GetQuality(),
+        0
+    );
     evt.FireEvent();
 }
 
-void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
+void SpawnManager::HandleLootItem(MsgEntry* me,Client* client)
 {
     psLootItemMessage msg(me);
-    
+
     gemActor* target = dynamic_cast<gemActor*>(gem->FindObject(msg.entity));
     if(!target)
     {
@@ -1015,16 +1018,16 @@ void SpawnManager::HandleLootItem(MsgEntry *me,Client *client)
     // Check the range to the lootable object.
     if(client->GetActor()->RangeTo(target) > RANGE_TO_LOOT)
     {
-        psserver->SendSystemError(client->GetClientNum(), "Too far away to loot %s.", target->GetName() );
+        psserver->SendSystemError(client->GetClientNum(), "Too far away to loot %s.", target->GetName());
         return;
     }
-    
-    psItem *item = targetCharacter->RemoveLootItem(msg.lootitem);
-    
+
+    psItem* item = targetCharacter->RemoveLootItem(msg.lootitem);
+
     handleGroupLootItem(item, target, client, cacheManager, gem, msg.lootaction);
 }
 
-void SpawnManager::HandleDeathEvent(MsgEntry *me,Client *notused)
+void SpawnManager::HandleDeathEvent(MsgEntry* me,Client* notused)
 {
     Debug1(LOG_SPAWN,0, "Spawn Manager handling Death Event\n");
     psDeathEvent death(me);
@@ -1036,10 +1039,10 @@ void SpawnManager::HandleDeathEvent(MsgEntry *me,Client *notused)
     }
 
     // Respawning is handled with ResurrectEvents for players and by SpawnManager for NPCs
-    if ( death.deadActor->GetClientID() )   // Handle Human Player dying
+    if(death.deadActor->GetClientID())      // Handle Human Player dying
     {
         ServerStatus::player_deathcount++;
-        psResurrectEvent *event = new psResurrectEvent(0,20000,death.deadActor);
+        psResurrectEvent* event = new psResurrectEvent(0,20000,death.deadActor);
         psserver->GetEventManager()->Push(event);
         Debug2(LOG_COMBAT, death.deadActor->GetClientID(), "Queued resurrect event for %s.\n",death.deadActor->GetName());
     }
@@ -1077,8 +1080,8 @@ void SpawnRule::Initialize(int idval,
                            float substodds,
                            int substplayer,
                            float x,float y,float z,float angle,
-                           const char *sector,
-                           LootEntrySet *loot_id,
+                           const char* sector,
+                           LootEntrySet* loot_id,
                            int dead_time,
                            float minSpacing,
                            InstanceID instance)
@@ -1112,19 +1115,19 @@ PID SpawnRule::CheckSubstitution(PID originalplayer)
 {
     int score = randomgen->Get(10000);
 
-    if (score < 10000.0*substitutespawnodds)
+    if(score < 10000.0*substitutespawnodds)
         return substituteplayer;
     else
         return originalplayer;
 }
 
-bool SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle, csString& sectorname, InstanceID& instance)
+bool SpawnRule::DetermineSpawnLoc(psCharacter* ch, csVector3 &pos, float &angle, csString &sectorname, InstanceID &instance)
 {
     // ignore fixed point if there are ranges in this rule
 
     size_t rcount = ranges.GetSize();
 
-    if (rcount > 0)
+    if(rcount > 0)
     {
         // Got ranges
         // Pick a location using uniform probability:
@@ -1151,12 +1154,12 @@ bool SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
         {
             range = rangeit2.Next();
             cumul += range->GetArea();
-            if (cumul >= aimed)
+            if(cumul >= aimed)
             {
                 // got it!
                 pos = range->PickPos();
                 sectorname = range->GetSector();
-                if (ch && sectorname == "startlocation")
+                if(ch && sectorname == "startlocation")
                 {
                     sectorname = ch->GetSpawnLocation().loc_sector->name;
                 }
@@ -1164,7 +1167,7 @@ bool SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
                 break;
             }
         }
-        if (!found)
+        if(!found)
         {
             Error1("Failed to find spawn position");
         }
@@ -1176,7 +1179,7 @@ bool SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
 
         return true; // This is a random position pick
     }
-    else if (ch && fixedspawnsector == "startlocation")
+    else if(ch && fixedspawnsector == "startlocation")
     {
         pos = ch->GetSpawnLocation().loc;
         angle = ch->GetSpawnLocation().loc_yrot;
@@ -1197,7 +1200,7 @@ bool SpawnRule::DetermineSpawnLoc(psCharacter *ch, csVector3& pos, float& angle,
     }
 }
 
-void SpawnRule::AddRange(SpawnRange *range)
+void SpawnRule::AddRange(SpawnRange* range)
 {
     ranges.Put(range->GetID(), range);
 }
@@ -1215,31 +1218,34 @@ SpawnRange::SpawnRange()
 
 void SpawnRange::Initialize(int idval,
                             int spawnruleid,
-                            const char *type_code,
+                            const char* type_code,
                             float rx1, float ry1, float rz1,
                             float rx2, float ry2, float rz2,
                             float radiusval,
-                            const char *sectorname)
+                            const char* sectorname)
 {
     id = idval;
     npcspawnruleid = spawnruleid;
     type = *type_code;
 
-    x1 = rx1; x2 = rx2;
-    y1 = ry1; y2 = ry2;
-    z1 = rz1; z2 = rz2;
+    x1 = rx1;
+    x2 = rx2;
+    y1 = ry1;
+    y2 = ry2;
+    z1 = rz1;
+    z2 = rz2;
 
     spawnsector = sectorname;
     float dx = x1 == x2 ? RANGE_FICTITIOUS_WIDTH : x2 - x1;
     float dz = z1 == z2 ? RANGE_FICTITIOUS_WIDTH : z2 - z1;
     radius = radiusval;
 
-    if (type == 'A')
+    if(type == 'A')
     {
         // Just ignore if one of the deltas are negative. PickPos works anyway.
         area = fabs(dx * dz);
     }
-    else if (type=='L')
+    else if(type=='L')
     {
         float length = sqrt((rx2-rx1)*(rx2-rx1) + (ry2-ry1)*(ry2-ry1) + (rz2-rz1)*(rz2-rz1));
         if(radius > 0.5)
@@ -1247,7 +1253,7 @@ void SpawnRange::Initialize(int idval,
         else
             area = length;
     }
-    else if (type == 'C')
+    else if(type == 'C')
     {
         area = radius * radius * PI;
     }
@@ -1266,37 +1272,39 @@ csVector3 SpawnRange::PickWithRadius(csVector3 pos, float radius)
     float xDist;
     float zDist;
 
-    do {
+    do
+    {
         // Pick random point in circumscribed rectangle.
         x = randomgen->Get() * (radius*2.0);
         z = randomgen->Get() * (radius*2.0);
         xDist = radius - x;
         zDist = radius - z;
         // Keep looping until the point is inside a circle.
-    } while(xDist * xDist + zDist * zDist > radius * radius);
+    }
+    while(xDist * xDist + zDist * zDist > radius * radius);
 
     return csVector3(pos.x - radius + x, pos.y, pos.z - radius + z);
 }
 
 const csVector3 SpawnRange::PickPos()
 {
-    if (type == 'A')
+    if(type == 'A')
     {
         return csVector3(x1 + randomgen->Get() * (x2 - x1),
                          y1 + randomgen->Get() * (y2 - y1),
                          z1 + randomgen->Get() * (z2 - z1));
     }
-    else if (type == 'L')// type 'L' means spawn along line segment with an offset determined by radius (Line swept circle)
+    else if(type == 'L') // type 'L' means spawn along line segment with an offset determined by radius (Line swept circle)
     {
         float d = randomgen->Get();
 
         csVector3 pos = csVector3(x1 + d * (x2 - x1),
-                         y1 + d * (y2 - y1),
-                         z1 + d * (z2 - z1));
+                                  y1 + d * (y2 - y1),
+                                  z1 + d * (z2 - z1));
 
         return PickWithRadius(pos, radius);
     }
-    else if (type == 'C') // type 'C' means spawn within a circle centered at the first set of co-ordinates
+    else if(type == 'C')  // type 'C' means spawn within a circle centered at the first set of co-ordinates
     {
         return PickWithRadius(csVector3(x1, y1, z1), radius);
     }
@@ -1327,10 +1335,10 @@ void psRespawnGameEvent::Trigger()
 }
 
 
-psDespawnGameEvent::psDespawnGameEvent(SpawnManager *mgr,
-                                       GEMSupervisor *gemsupervisor,
+psDespawnGameEvent::psDespawnGameEvent(SpawnManager* mgr,
+                                       GEMSupervisor* gemsupervisor,
                                        int delayticks,
-                                       gemObject *obj)
+                                       gemObject* obj)
     : psGameEvent(0,delayticks,"psDespawnGameEvent")
 {
     spawnmanager = mgr;
@@ -1356,8 +1364,8 @@ void psDespawnGameEvent::Trigger()
 
 LootEntrySet::~LootEntrySet()
 {
-    LootEntry *e;
-    while (entries.GetSize())
+    LootEntry* e;
+    while(entries.GetSize())
     {
         e = entries.Pop();
         delete e;
@@ -1365,13 +1373,13 @@ LootEntrySet::~LootEntrySet()
     lootRandomizer = NULL;
 }
 
-void LootEntrySet::AddLootEntry(LootEntry *entry)
+void LootEntrySet::AddLootEntry(LootEntry* entry)
 {
     entries.Push(entry);
     total_prob += entry->probability;
 }
 
-void LootEntrySet::CreateLoot( psCharacter *chr, size_t numModifiers )
+void LootEntrySet::CreateLoot(psCharacter* chr, size_t numModifiers)
 {
     // the idea behind this code is that if you have a total probability that's <1
     // then the items listed are mutually exclusive. If you have a total >1 then the
@@ -1382,24 +1390,24 @@ void LootEntrySet::CreateLoot( psCharacter *chr, size_t numModifiers )
     //if (total_prob < 1+EPSILON)
     //    CreateSingleLoot( chr );
     //else
-          CreateMultipleLoot( chr, numModifiers );
+    CreateMultipleLoot(chr, numModifiers);
 }
 
-void LootEntrySet::CreateSingleLoot(psCharacter *chr)
+void LootEntrySet::CreateSingleLoot(psCharacter* chr)
 {
     float roll = psserver->rng->Get();
     float prob_so_far = 0;
     float maxcost = lootRandomizer->CalcModifierCostCap(chr);
 
-    for (size_t i=0; i<entries.GetSize(); i++)
+    for(size_t i=0; i<entries.GetSize(); i++)
     {
-        if (prob_so_far < roll && roll < prob_so_far + entries[i]->probability)
+        if(prob_so_far < roll && roll < prob_so_far + entries[i]->probability)
         {
             if(entries[i]->item) // We don't always have a item.
             {
                 psItem* loot_item = entries[i]->item->InstantiateBasicItem();
-                Debug2(LOG_LOOT, 0,"Adding %s to the dead mob's loot.\n",loot_item->GetName() );
-                if ( entries[i]->randomize ) loot_item = lootRandomizer->RandomizeItem( loot_item, maxcost );
+                Debug2(LOG_LOOT, 0,"Adding %s to the dead mob's loot.\n",loot_item->GetName());
+                if(entries[i]->randomize) loot_item = lootRandomizer->RandomizeItem(loot_item, maxcost);
                 chr->AddLootItem(loot_item);
             }
 
@@ -1412,96 +1420,96 @@ void LootEntrySet::CreateSingleLoot(psCharacter *chr)
     }
 }
 
-void LootEntrySet::CreateMultipleLoot(psCharacter *chr, size_t numModifiers)
+void LootEntrySet::CreateMultipleLoot(psCharacter* chr, size_t numModifiers)
 {
     float maxcost = 0.0;
     // if chr == NULL then its a randomized loot test; i.e. no character will receive it
     bool lootTesting = chr ? false : true;
-    if (!lootTesting)
+    if(!lootTesting)
         maxcost = lootRandomizer->CalcModifierCostCap(chr);
 
     // cycle on all entries of our loot rule
-    for (size_t i=0; i<entries.GetSize(); i++)
+    for(size_t i=0; i<entries.GetSize(); i++)
     {
-      // check we roll successfully on the probability
-      float roll = psserver->rng->Get();
-      if (roll <= entries[i]->probability)
-      {
-        // If we have an item in the loot entry (We don't always have a item)
-        if(entries[i]->item)
+        // check we roll successfully on the probability
+        float roll = psserver->rng->Get();
+        if(roll <= entries[i]->probability)
         {
-            int itemAmount = entries[i]->min_item + (int)(psserver->rng->Get() *
-                             (float)(entries[i]->max_item - entries[i]->min_item));
-            for(int y = 0; y < itemAmount; y++)
+            // If we have an item in the loot entry (We don't always have a item)
+            if(entries[i]->item)
             {
-                // create the base item
-                psItem* loot_item = entries[i]->item->InstantiateBasicItem();
-
-                // if required, generate random modifiers on the item
-                if (entries[i]->randomize && psserver->rng->Get() <= entries[i]->randomizeProbability)
-                    loot_item = lootRandomizer->RandomizeItem( loot_item,
-                                                               maxcost,
-                                                               lootTesting,
-                                                               numModifiers );
-
-                // add the item as loot
-                if (!lootTesting)
-                    chr->AddLootItem(loot_item);
-
-                // if we are in testing mode, then just print out the result of the randomization
-                else
+                int itemAmount = entries[i]->min_item + (int)(psserver->rng->Get() *
+                                 (float)(entries[i]->max_item - entries[i]->min_item));
+                for(int y = 0; y < itemAmount; y++)
                 {
-                    // print out the stats
-                    CPrintf(CON_CMDOUTPUT,
-                            "Randomized item (%d modifiers) : \'%s\', %s\n"
-                            "  Quality : %.2f  Weight : %.2f  Size : %f  Price : %d\n",
-                            numModifiers,
-                            loot_item->GetName(),
-                            loot_item->GetDescription(),
-                            loot_item->GetItemQuality(),
-                            loot_item->GetWeight(),
-                            loot_item->GetItemSize(),
-                            loot_item->GetPrice().GetTrias());
-                    if (loot_item->GetIsArmor())
+                    // create the base item
+                    psItem* loot_item = entries[i]->item->InstantiateBasicItem();
+
+                    // if required, generate random modifiers on the item
+                    if(entries[i]->randomize && psserver->rng->Get() <= entries[i]->randomizeProbability)
+                        loot_item = lootRandomizer->RandomizeItem(loot_item,
+                                    maxcost,
+                                    lootTesting,
+                                    numModifiers);
+
+                    // add the item as loot
+                    if(!lootTesting)
+                        chr->AddLootItem(loot_item);
+
+                    // if we are in testing mode, then just print out the result of the randomization
+                    else
                     {
+                        // print out the stats
                         CPrintf(CON_CMDOUTPUT,
-                                "Armour stats:\n"
-                                "  Class : %c  Hardness : %.2f\n"
-                                "  Protection Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n",
-                                loot_item->GetBaseStats()->Armor().Class(),
-                                loot_item->GetHardness(),
-                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
-                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
-                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
+                                "Randomized item (%d modifiers) : \'%s\', %s\n"
+                                "  Quality : %.2f  Weight : %.2f  Size : %f  Price : %d\n",
+                                numModifiers,
+                                loot_item->GetName(),
+                                loot_item->GetDescription(),
+                                loot_item->GetItemQuality(),
+                                loot_item->GetWeight(),
+                                loot_item->GetItemSize(),
+                                loot_item->GetPrice().GetTrias());
+                        if(loot_item->GetIsArmor())
+                        {
+                            CPrintf(CON_CMDOUTPUT,
+                                    "Armour stats:\n"
+                                    "  Class : %c  Hardness : %.2f\n"
+                                    "  Protection Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n",
+                                    loot_item->GetBaseStats()->Armor().Class(),
+                                    loot_item->GetHardness(),
+                                    loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
+                                    loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
+                                    loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE));
+                        }
+                        else if(loot_item->GetIsMeleeWeapon() || loot_item->GetIsRangeWeapon())
+                        {
+                            CPrintf(CON_CMDOUTPUT,
+                                    "Weapon stats:\n"
+                                    "  Latency : %.2f  Penetration : %.2f\n"
+                                    "  Damage Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n"
+                                    "  BlockValue Untargeted : %.2f  Targeted : %.2f  Counter : %.2f\n",
+                                    loot_item->GetLatency(),
+                                    loot_item->GetPenetration(),
+                                    loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
+                                    loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
+                                    loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE),
+                                    loot_item->GetUntargetedBlockValue(),
+                                    loot_item->GetTargetedBlockValue(),
+                                    loot_item->GetCounterBlockValue());
+                        }
+                        /*CPrintf(CON_CMDOUTPUT,
+                            "Equip script: %s\n Un-equip script: %s\n",loot_item->GetProgressionEventEquip().GetData(),
+                            loot_item->GetProgressionEventUnEquip().GetData());*/
                     }
-                    else if (loot_item->GetIsMeleeWeapon() || loot_item->GetIsRangeWeapon())
-                    {
-                        CPrintf(CON_CMDOUTPUT,
-                                "Weapon stats:\n"
-                                "  Latency : %.2f  Penetration : %.2f\n"
-                                "  Damage Slash : %.2f  Blunt : %.2f  Pierce : %.2f\n"
-                                "  BlockValue Untargeted : %.2f  Targeted : %.2f  Counter : %.2f\n",
-                                loot_item->GetLatency(),
-                                loot_item->GetPenetration(),
-                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_SLASH),
-                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_BLUNT),
-                                loot_item->GetDamage(PSITEMSTATS_DAMAGETYPE_PIERCE),
-                                loot_item->GetUntargetedBlockValue(),
-                                loot_item->GetTargetedBlockValue(),
-                                loot_item->GetCounterBlockValue());
-                    }
-                    /*CPrintf(CON_CMDOUTPUT,
-                        "Equip script: %s\n Un-equip script: %s\n",loot_item->GetProgressionEventEquip().GetData(),
-                        loot_item->GetProgressionEventUnEquip().GetData());*/
                 }
             }
-        }
 
-        // add money to the loot result if specified by the loot rule
-        float pct = psserver->rng->Get();
-        int money = entries[i]->min_money + (int)(pct * (float)(entries[i]->max_money - entries[i]->min_money));
-        if (!lootTesting) chr->AddLootMoney(money);
-      }
+            // add money to the loot result if specified by the loot rule
+            float pct = psserver->rng->Get();
+            int money = entries[i]->min_money + (int)(pct * (float)(entries[i]->max_money - entries[i]->min_money));
+            if(!lootTesting) chr->AddLootMoney(money);
+        }
     }
 }
 
@@ -1514,7 +1522,7 @@ psItemSpawnEvent::psItemSpawnEvent(psScheduledItem* item)
     schedule = item;
     Notify4(LOG_SPAWN,"Spawning item (%u) in %d , sector: %s",item->GetItemID(),triggerticks -csGetTicks(), item->GetSector()->ToString());
 }
-    
+
 psItemSpawnEvent::~psItemSpawnEvent()
 {
     delete schedule;

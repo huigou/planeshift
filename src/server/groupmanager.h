@@ -1,7 +1,7 @@
 /*
  * groupmanager.h by Anders Reggestad <andersr@pvv.org>
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -50,67 +50,67 @@ class PendingGroupInvite;
 class PendingGroupChallenge;
 
 /** Main PlayerGroup Manager that holds all the groups.
- * This maintains all the groups on the servers and is responsible for all 
+ * This maintains all the groups on the servers and is responsible for all
  * the group functions.
  */
 class GroupManager : public MessageManager<GroupManager>
 {
 public:
 
-    GroupManager(ClientConnectionSet *pCCS, ChatManager *chat);
+    GroupManager(ClientConnectionSet* pCCS, ChatManager* chat);
     virtual ~GroupManager();
 
-    void HandleJoinGroup(PendingGroupInvite *invite);
-    
+    void HandleJoinGroup(PendingGroupInvite* invite);
+
     /** Handles the answer to the request of challenge.
-     * 
-     *  @param invite The class which handled the question to the 
+     *
+     *  @param invite The class which handled the question to the
      *                challenged client.
      */
-    void HandleChallengeGroup(PendingGroupChallenge *invite);
-    
+    void HandleChallengeGroup(PendingGroupChallenge* invite);
+
 protected:
     friend class PlayerGroup;
-        
-    void HandleGroupCommand(MsgEntry *pMsg,Client *client);
 
-    void Invite(psGroupCmdMessage& msg,Client *client);
-    void Disband(psGroupCmdMessage& msg,gemActor *client);
-    void Leave(psGroupCmdMessage& msg,gemActor *client);
-    void ListMembers(psGroupCmdMessage& msg,gemActor *client);
-    void RemovePlayerFromGroup(psGroupCmdMessage& msg,gemActor *client);
+    void HandleGroupCommand(MsgEntry* pMsg,Client* client);
+
+    void Invite(psGroupCmdMessage &msg,Client* client);
+    void Disband(psGroupCmdMessage &msg,gemActor* client);
+    void Leave(psGroupCmdMessage &msg,gemActor* client);
+    void ListMembers(psGroupCmdMessage &msg,gemActor* client);
+    void RemovePlayerFromGroup(psGroupCmdMessage &msg,gemActor* client);
 
     /** Handles /groupchallenge and challenges another group after checking all requirements
      *  are in order.
-     * 
+     *
      *  @param msg the prepared message from the network.
      *  @param Challenger A pointer to the client which issued this command.
      */
-    void Challenge(psGroupCmdMessage& msg,Client *Challenger);
+    void Challenge(psGroupCmdMessage &msg,Client* Challenger);
     /** Handles /groupyield and yields to all the group in duel with the
      *  one requesting it after checking all requirements are in order.
-     * 
+     *
      *  @param msg the prepared message from the network.
      *  @param Yielder A pointer to the client which issued this command.
      */
-    void Yield(psGroupCmdMessage& msg,Client *Yielder);
+    void Yield(psGroupCmdMessage &msg,Client* Yielder);
 
     /** Makes two group be in challenge each other.
-     * 
+     *
      *  @param ChallengerGroup the group which is starting the challenge.
      *  @param ChallengedGroup the group which is being challenged.
      */
-    bool AddGroupChallenge(PlayerGroup *ChallengerGroup, PlayerGroup *ChallengedGroup);
+    bool AddGroupChallenge(PlayerGroup* ChallengerGroup, PlayerGroup* ChallengedGroup);
 
-    void SendGroup(gemActor * client);
-    void SendLeave(gemActor * client);
-    csPtr<PlayerGroup> NewGroup(gemActor * leader);
-    bool AddPlayerToGroup(PlayerGroup * group, gemActor * client);
-    void Remove(PlayerGroup * group);
-    void GroupChat(gemActor * client, const char *fmt, ...);
-    PlayerGroup * FindGroup(int id);
+    void SendGroup(gemActor* client);
+    void SendLeave(gemActor* client);
+    csPtr<PlayerGroup> NewGroup(gemActor* leader);
+    bool AddPlayerToGroup(PlayerGroup* group, gemActor* client);
+    void Remove(PlayerGroup* group);
+    void GroupChat(gemActor* client, const char* fmt, ...);
+    PlayerGroup* FindGroup(int id);
 
-    
+
     ChatManager* chatserver;
     ClientConnectionSet* clients;
     csRef<EventManager> eventmanager;

@@ -1,7 +1,7 @@
 /*
  * pssectorinfo.cpp
  *
- * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -64,48 +64,48 @@ psSectorInfo::~psSectorInfo()
 
 void psSectorInfo::SetWeatherEnabled(unsigned int id, bool newStatus)
 {
-    weatherTypeData *data = weatherData.GetElementPointer(id);
+    weatherTypeData* data = weatherData.GetElementPointer(id);
     data->enabled = newStatus;
 }
 
 bool psSectorInfo::GetWeatherEnabled(unsigned int id)
 {
-    weatherTypeData *data = weatherData.GetElementPointer(id);
+    weatherTypeData* data = weatherData.GetElementPointer(id);
     return (data->enabled && data->min_density > 0 && data->min_gap > 0);
 }
 
 unsigned int psSectorInfo::GetRandomWeatherGap(unsigned int id)
 {
     //it can't be null at least for now
-    weatherTypeData *data = weatherData.GetElementPointer(id);
+    weatherTypeData* data = weatherData.GetElementPointer(id);
     return psserver->GetRandom(data->max_gap-data->min_gap) + data->min_gap;
 }
 
 unsigned int psSectorInfo::GetRandomWeatherDuration(unsigned int id)
 {
     //it can't be null at least for now
-    weatherTypeData *data = weatherData.GetElementPointer(id);
+    weatherTypeData* data = weatherData.GetElementPointer(id);
     return psserver->GetRandom(data->max_duration-data->min_duration) + data->min_duration;
 }
 
 unsigned int psSectorInfo::GetRandomWeatherDensity(unsigned int id)
 {
     //it can't be null at least for now
-    weatherTypeData *data = weatherData.GetElementPointer(id);
+    weatherTypeData* data = weatherData.GetElementPointer(id);
     return psserver->GetRandom(data->max_density-data->min_density) + data->min_density;
 }
 
 unsigned int psSectorInfo::GetRandomWeatherFadeIn(unsigned int id)
 {
     //it can't be null at least for now
-    weatherTypeData *data = weatherData.GetElementPointer(id);
+    weatherTypeData* data = weatherData.GetElementPointer(id);
     return psserver->GetRandom(data->max_fade_in-data->min_fade_in) + data->min_fade_in;
 }
 
 unsigned int psSectorInfo::GetRandomWeatherFadeOut(unsigned int id)
 {
     //it can't be null at least for now
-    weatherTypeData *data = weatherData.GetElementPointer(id);
+    weatherTypeData* data = weatherData.GetElementPointer(id);
     return psserver->GetRandom(data->max_fade_out-data->min_fade_out) + data->min_fade_out;
 }
 
@@ -121,7 +121,8 @@ double psSectorInfo::GetProperty(MathEnvironment* env, const char* ptr)
     {
         return (double)!rain_enabled;
     }
-    else */if(prop == "uid")
+    else */
+    if(prop == "uid")
     {
         return (double)uid;
     }
@@ -134,7 +135,7 @@ double psSectorInfo::CalcFunction(MathEnvironment* env, const char* functionName
     csString function(functionName);
     if(function == "IsSector")
     {
-        const char *sector = env->GetString(params[0]);
+        const char* sector = env->GetString(params[0]);
         return (double)(name == sector);
     }
     return 0;

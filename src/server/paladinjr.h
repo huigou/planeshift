@@ -1,7 +1,7 @@
 /*
  * paladinjr.h - Author: Andrew Dai
  *
- * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -36,7 +36,7 @@ class PaladinJr
 public:
 
     /// Extrapolate the current position from last DR packet
-    bool ValidateMovement(Client* client, gemActor* actor, psDRMessage& drmsg);
+    bool ValidateMovement(Client* client, gemActor* actor, psDRMessage &drmsg);
 
     /** Compare extrapolated displacement with new displacement from new DR packet
      * Should be called after actor has been updated with newest recieved DR packet
@@ -71,10 +71,10 @@ private:
     unsigned int warnCount; ///< warn each x detects
     unsigned int maxCount; ///< kick after x detects
 
-    bool SpeedCheck(Client* client, gemActor* actor, psDRMessage& currUpdate);
+    bool SpeedCheck(Client* client, gemActor* actor, psDRMessage &currUpdate);
 
 
-    EntityManager         *entitymanager;
+    EntityManager*         entitymanager;
 
     /// Already checked list of clientnums
     csSet<uint32_t> checked;

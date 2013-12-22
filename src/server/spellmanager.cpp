@@ -1,7 +1,7 @@
 /*
  * spellmanager.cpp by Anders Reggestad <andersr@pvv.org>
  *
- * Copyright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -54,13 +54,13 @@
 class psPurifyEvent : public psGameEvent
 {
 public:
-    psPurifyEvent(csTicks duration, gemActor *actor, uint32 glyphItemID) : psGameEvent(0, duration, "psPurifyEvent"), actor(actor), glyphItemID(glyphItemID)
+    psPurifyEvent(csTicks duration, gemActor* actor, uint32 glyphItemID) : psGameEvent(0, duration, "psPurifyEvent"), actor(actor), glyphItemID(glyphItemID)
     {
     }
 
     void Trigger()
     {
-        if (!actor.IsValid())
+        if(!actor.IsValid())
             return;
 
         psserver->GetSpellManager()->EndPurifying(actor->GetCharacterData(), glyphItemID);
@@ -73,20 +73,20 @@ protected:
 
 //----------------------------------------------------------------------------
 
-SpellManager::SpellManager(ClientConnectionSet *ccs,
-                               iObjectRegistry * object_reg,
-                               CacheManager *cachemanager)
+SpellManager::SpellManager(ClientConnectionSet* ccs,
+                           iObjectRegistry* object_reg,
+                           CacheManager* cachemanager)
 {
     clients      = ccs;
     this->object_reg = object_reg;
     cacheManager = cachemanager;
 
-    Subscribe(&SpellManager::HandleGlyphRequest, MSGTYPE_GLYPH_REQUEST, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
-    Subscribe(&SpellManager::HandleAssembler, MSGTYPE_GLYPH_ASSEMBLE, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
-    Subscribe(&SpellManager::Cast, MSGTYPE_SPELL_CAST, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
-    Subscribe(&SpellManager::StartPurifying, MSGTYPE_PURIFY_GLYPH, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
-    Subscribe(&SpellManager::SendSpellBook, MSGTYPE_SPELL_BOOK, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);  
-    Subscribe(&SpellManager::HandleCancelSpell, MSGTYPE_SPELL_CANCEL, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);      
+    Subscribe(&SpellManager::HandleGlyphRequest, MSGTYPE_GLYPH_REQUEST, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&SpellManager::HandleAssembler, MSGTYPE_GLYPH_ASSEMBLE, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&SpellManager::Cast, MSGTYPE_SPELL_CAST, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&SpellManager::StartPurifying, MSGTYPE_PURIFY_GLYPH, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&SpellManager::SendSpellBook, MSGTYPE_SPELL_BOOK, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&SpellManager::HandleCancelSpell, MSGTYPE_SPELL_CANCEL, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
 }
 
 SpellManager::~SpellManager()
@@ -104,25 +104,25 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
 {
     psGlyphAssembleMessage mesg;
     mesg.FromClient(me);
-    
+
     csArray<psItemStats*> assembler;
-    for (size_t i = 0; i < GLYPH_ASSEMBLER_SLOTS; i++)
-    {        
-        if (mesg.glyphs[i] != 0)
+    for(size_t i = 0; i < GLYPH_ASSEMBLER_SLOTS; i++)
+    {
+        if(mesg.glyphs[i] != 0)
         {
             psItemStats* stats = cacheManager->GetBasicItemStatsByID(mesg.glyphs[i]);
-            if (stats)
+            if(stats)
                 assembler.Push(stats);
         }
     }
-    
-    if (assembler.GetSize() == 0)
+
+    if(assembler.GetSize() == 0)
     {
         psserver->SendSystemError(client->GetClientNum(), "There are no glyphs in the research slots.");
         return;
     }
 
-    if (!client->GetCharacterData()->Inventory().HasPurifiedGlyphs(assembler))
+    if(!client->GetCharacterData()->Inventory().HasPurifiedGlyphs(assembler))
     {
         Error2("Client %i tried to research spell with glyphs he actually doesn't have", client->GetClientNum());
         SendGlyphs(NULL,client);
@@ -130,15 +130,15 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
     }
 
     // Is the Glyph Sequence a Valid one?
-    psSpell *spell = FindSpell(client, assembler);
+    psSpell* spell = FindSpell(client, assembler);
 
-    if (spell)
+    if(spell)
     {
         // Is this spell already in our spellbook?
-        psSpell *knownSpell = client->GetCharacterData()->GetSpellByName(spell->GetName());
-        if (knownSpell)
+        psSpell* knownSpell = client->GetCharacterData()->GetSpellByName(spell->GetName());
+        if(knownSpell)
         {
-            if (mesg.info)
+            if(mesg.info)
             {
                 psGlyphAssembleMessage newmsginfo(client->GetClientNum(), knownSpell->GetName(), knownSpell->GetImage(), knownSpell->GetDescription());
                 newmsginfo.SendMessage();
@@ -150,7 +150,7 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
             return;
         }
     }
-    if (mesg.info)
+    if(mesg.info)
         return;
 
     csString name("You failed to discover a spell.");
@@ -158,15 +158,15 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
     csString description(" ");
 
     const bool success = spell && psserver->GetRandom() * 100.0 < spell->ChanceOfResearchSuccess(client->GetCharacterData());
-    ProgressionScript *outcome = psserver->GetProgressionManager()->FindScript(success ? "ResearchSpellSuccess" : "ResearchSpellFailure");
-    if (outcome)
+    ProgressionScript* outcome = psserver->GetProgressionManager()->FindScript(success ? "ResearchSpellSuccess" : "ResearchSpellFailure");
+    if(outcome)
     {
         MathEnvironment env;
         env.Define("Actor", client->GetActor());
         outcome->Run(&env);
     }
 
-    if (success)
+    if(success)
     {
         description = spell->GetDescription();
         name = spell->GetName();
@@ -180,10 +180,10 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
 }
 
 
-void SpellManager::SaveSpell(Client * client, csString spellName)
+void SpellManager::SaveSpell(Client* client, csString spellName)
 {
-    psSpell * spell = client->GetCharacterData()->GetSpellByName(spellName);
-    if (spell)
+    psSpell* spell = client->GetCharacterData()->GetSpellByName(spellName);
+    if(spell)
     {
         psserver->SendSystemInfo(client->GetClientNum(),
                                  "You know the %s spell already!",spellName.GetData());
@@ -191,7 +191,7 @@ void SpellManager::SaveSpell(Client * client, csString spellName)
     }
 
     spell = cacheManager->GetSpellByName(spellName);
-    if (!spell)
+    if(!spell)
     {
         psserver->SendSystemInfo(client->GetClientNum(),
                                  "%s isn't a defined spell!",spellName.GetData());
@@ -205,10 +205,10 @@ void SpellManager::SaveSpell(Client * client, csString spellName)
 
     SendSpellBook(NULL,client);
     psserver->SendSystemInfo(client->GetClientNum(),
-                           "%s added to your spell book!",spellName.GetData());
+                             "%s added to your spell book!",spellName.GetData());
 }
 
-void SpellManager::Cast(MsgEntry *me, Client *client)
+void SpellManager::Cast(MsgEntry* me, Client* client)
 {
     psSpellCastMessage msg(me);
 
@@ -218,13 +218,13 @@ void SpellManager::Cast(MsgEntry *me, Client *client)
     Cast(client->GetActor(), spellName, kFactor, client);
 }
 
-void SpellManager::Cast(gemActor* caster, const csString& spellName, float kFactor, Client *client)
+void SpellManager::Cast(gemActor* caster, const csString &spellName, float kFactor, Client* client)
 {
-    psSpell *spell = NULL;
+    psSpell* spell = NULL;
 
     // Allow developers to cast any spell
     bool canCastAllSpells;
-    if (client)
+    if(client)
     {
         canCastAllSpells = cacheManager->GetCommandManager()->Validate(client->GetSecurityLevel(), "cast all spells");
     }
@@ -234,19 +234,19 @@ void SpellManager::Cast(gemActor* caster, const csString& spellName, float kFact
     }
 
     // Allow developers to cast any spell, even if unknown to the character.
-    if (canCastAllSpells)
+    if(canCastAllSpells)
     {
         spell = cacheManager->GetSpellByName(spellName);
-    }        
+    }
     else
     {
-        spell = client->GetCharacterData()->GetSpellByName(spellName); 
+        spell = client->GetCharacterData()->GetSpellByName(spellName);
     }
 
     //spells with empty glyphlists are not enabled
-    if (!spell || spell->GetGlyphList().IsEmpty())
+    if(!spell || spell->GetGlyphList().IsEmpty())
     {
-        if (client)
+        if(client)
         {
             psserver->SendSystemInfo(client->GetClientNum(), "You don't know a spell called %s.",spellName.GetData());
         }
@@ -258,19 +258,19 @@ void SpellManager::Cast(gemActor* caster, const csString& spellName, float kFact
     }
 
     // Clamp kFactor to sane values.
-    if (kFactor < 0.0)
+    if(kFactor < 0.0)
     {
         kFactor = 0.0;
     }
-    if (kFactor > 100.0)
+    if(kFactor > 100.0)
     {
         kFactor = 100.0;
     }
 
     csString reason;
-    if (!spell->CanCast(caster, kFactor, reason, canCastAllSpells))
+    if(!spell->CanCast(caster, kFactor, reason, canCastAllSpells))
     {
-        if (client)
+        if(client)
         {
             psserver->SendSystemInfo(client->GetClientNum(), reason.GetData());
         }
@@ -278,30 +278,30 @@ void SpellManager::Cast(gemActor* caster, const csString& spellName, float kFact
         {
             Debug3(LOG_SUPERCLIENT,caster->GetEID().Unbox(),"%s: %s.",caster->GetName(),reason.GetDataSafe());
         }
-        
+
         return;
     }
 
     spell->Cast(caster, kFactor, client);
 }
 
-void SpellManager::SendSpellBook(MsgEntry *notused, Client * client)
+void SpellManager::SendSpellBook(MsgEntry* notused, Client* client)
 {
     psSpellBookMessage mesg(client->GetClientNum());
     csArray<psSpell*> spells = client->GetCharacterData()->GetSpellList();
-    
-    for (size_t i = 0; i < spells.GetSize(); i++)
+
+    for(size_t i = 0; i < spells.GetSize(); i++)
     {
         csArray<psItemStats*> glyphs = spells[i]->GetGlyphList();
 
         csString glyphImages[4];
         CS_ASSERT(glyphs.GetSize() <= 4);
 
-        for (size_t j = 0; j < glyphs.GetSize(); j++)
+        for(size_t j = 0; j < glyphs.GetSize(); j++)
         {
             glyphImages[j] = glyphs[j]->GetImageName();
         }
-            
+
         mesg.AddSpell(spells[i]->GetName(), spells[i]->GetDescription(),
                       spells[i]->GetWay()->name, spells[i]->GetRealm(),
                       glyphImages[0], glyphImages[1],
@@ -312,7 +312,7 @@ void SpellManager::SendSpellBook(MsgEntry *notused, Client * client)
     mesg.SendMessage();
 }
 
-void SpellManager::HandleGlyphRequest(MsgEntry *notused, Client * client)
+void SpellManager::HandleGlyphRequest(MsgEntry* notused, Client* client)
 {
     // FIXME: Ugly hack here as a temporary workaround for client-side issue that causes the server
     // to be flooded with glyph requests. Remove after all clients have been updated
@@ -320,30 +320,30 @@ void SpellManager::HandleGlyphRequest(MsgEntry *notused, Client * client)
     csTicks currentTime = csGetTicks();
     // Send a glyph message maximum once per 250 ticks (0.25 seconds).
     if(!client->lastGlyphSend || client->lastGlyphSend + 250 < currentTime)
-    {    
-    	client->lastGlyphSend = currentTime;
-    	SendGlyphs(notused, client);
+    {
+        client->lastGlyphSend = currentTime;
+        SendGlyphs(notused, client);
     }
     else
     {
-    	csString status;
-    	status.Format("Ignored glyph request message from %u.", client->GetClientNum());
+        csString status;
+        status.Format("Ignored glyph request message from %u.", client->GetClientNum());
         if(LogCSV::GetSingletonPtr())
             LogCSV::GetSingleton().Write(CSV_STATUS, status);
     }
 }
 
-void SpellManager::SendGlyphs(MsgEntry *notused, Client * client)
+void SpellManager::SendGlyphs(MsgEntry* notused, Client* client)
 {
-    psCharacter * character = client->GetCharacterData();
+    psCharacter* character = client->GetCharacterData();
     csArray <glyphSlotInfo> slots;
     size_t slotNum;
     int wayNum = 0;
-    
+
     character->Inventory().CreateGlyphList(slots);
-    
-    psRequestGlyphsMessage outMessage( client->GetClientNum() );     
-    for (slotNum=0; slotNum < slots.GetSize(); slotNum++)
+
+    psRequestGlyphsMessage outMessage(client->GetClientNum());
+    for(slotNum=0; slotNum < slots.GetSize(); slotNum++)
     {
         csString way;
         PSITEMSTATS_SLOTLIST validSlots;
@@ -352,54 +352,54 @@ void SpellManager::SendGlyphs(MsgEntry *notused, Client * client)
         validSlots = slots[slotNum].glyphType->GetValidSlots();
         statID = slots[slotNum].glyphType->GetUID();
 
-        if (validSlots & PSITEMSTATS_SLOT_CRYSTAL)
+        if(validSlots & PSITEMSTATS_SLOT_CRYSTAL)
         {
             wayNum = 0;
         }
-        else if (validSlots & PSITEMSTATS_SLOT_BLUE) 
+        else if(validSlots & PSITEMSTATS_SLOT_BLUE)
         {
             wayNum = 1;
         }
-        else if (validSlots & PSITEMSTATS_SLOT_AZURE) 
+        else if(validSlots & PSITEMSTATS_SLOT_AZURE)
         {
             wayNum = 2;
         }
-        else if (validSlots & PSITEMSTATS_SLOT_BROWN)
+        else if(validSlots & PSITEMSTATS_SLOT_BROWN)
         {
             wayNum = 3;
         }
-        else if (validSlots & PSITEMSTATS_SLOT_RED)
+        else if(validSlots & PSITEMSTATS_SLOT_RED)
         {
             wayNum = 4;
         }
-        else if (validSlots & PSITEMSTATS_SLOT_DARK)
+        else if(validSlots & PSITEMSTATS_SLOT_DARK)
         {
             wayNum = 5;
         }
 
-        outMessage.AddGlyph( slots[slotNum].glyphType->GetName(),
-                             slots[slotNum].glyphType->GetImageName(),
-                             slots[slotNum].purifyStatus,
-                             wayNum, 
-                             statID );
-                             
+        outMessage.AddGlyph(slots[slotNum].glyphType->GetName(),
+                            slots[slotNum].glyphType->GetImageName(),
+                            slots[slotNum].purifyStatus,
+                            wayNum,
+                            statID);
+
     }
-    
+
     outMessage.Construct();
-    outMessage.SendMessage();    
+    outMessage.SendMessage();
 }
 
-psGlyph * FindUnpurifiedGlyph(psCharacter * character, unsigned int statID)
+psGlyph* FindUnpurifiedGlyph(psCharacter* character, unsigned int statID)
 {
     size_t index;
-    for (index=0; index < character->Inventory().GetInventoryIndexCount(); index++)
+    for(index=0; index < character->Inventory().GetInventoryIndexCount(); index++)
     {
-        psItem *item = character->Inventory().GetInventoryIndexItem(index);
+        psItem* item = character->Inventory().GetInventoryIndexItem(index);
 
-        psGlyph *glyph = dynamic_cast <psGlyph*> (item);
-        if (glyph != NULL)
+        psGlyph* glyph = dynamic_cast <psGlyph*>(item);
+        if(glyph != NULL)
         {
-            if (glyph->GetBaseStats()->GetUID()==statID   &&   glyph->GetPurifyStatus()==0)
+            if(glyph->GetBaseStats()->GetUID()==statID   &&   glyph->GetPurifyStatus()==0)
             {
                 return glyph;
             }
@@ -408,7 +408,7 @@ psGlyph * FindUnpurifiedGlyph(psCharacter * character, unsigned int statID)
     return NULL;
 }
 
-void SpellManager::StartPurifying(MsgEntry *me, Client * client)
+void SpellManager::StartPurifying(MsgEntry* me, Client* client)
 {
     psPurifyGlyphMessage mesg(me);
     int statID = mesg.glyph;
@@ -417,27 +417,27 @@ void SpellManager::StartPurifying(MsgEntry *me, Client * client)
 
     psGlyph* glyph = FindUnpurifiedGlyph(character, statID);
 
-    if (glyph == NULL)
+    if(glyph == NULL)
     {
         return;
-    }        
+    }
 
-    if (glyph->GetStackCount() > 1)
+    if(glyph->GetStackCount() > 1)
     {
         psGlyph* stackOfGlyphs = glyph;
 
-        glyph = dynamic_cast <psGlyph*> (stackOfGlyphs->SplitStack(1));
-        if (glyph == NULL)
+        glyph = dynamic_cast <psGlyph*>(stackOfGlyphs->SplitStack(1));
+        if(glyph == NULL)
         {
             return;
-        }            
-        
-        psItem *glyphItem = glyph; // Needed for reference in next function
-        if (!character->Inventory().Add(glyphItem,false,false))
+        }
+
+        psItem* glyphItem = glyph; // Needed for reference in next function
+        if(!character->Inventory().Add(glyphItem,false,false))
         {
             // Notify the player that and why purification failed
             psserver->SendSystemError(client->GetClientNum(), "You can't purify %s because your inventory is full!", glyph->GetName());
-            
+
             cacheManager->RemoveInstance(glyphItem);
 
             // Reset the stack count to account for the one that was destroyed.
@@ -450,33 +450,33 @@ void SpellManager::StartPurifying(MsgEntry *me, Client * client)
     }
 
     glyph->PurifyingStarted();
-    
+
     // If the glyph has no ID, we must save it now because we need to have an ID for the purification script
     glyph->ForceSaveIfNew();
 
     // Should probably just assume PURIFYING glyphs actually finished when we load them next.
     psserver->SendSystemInfo(client->GetClientNum(), "You start to purify %s", glyph->GetName());
-    psPurifyEvent *evt = new psPurifyEvent(20000, client->GetActor(), glyph->GetUID());
+    psPurifyEvent* evt = new psPurifyEvent(20000, client->GetActor(), glyph->GetUID());
     psserver->GetEventManager()->Push(evt);
 
     SendGlyphs(NULL,client);
     psserver->GetCharManager()->SendInventory(client->GetClientNum());
 }
 
-void SpellManager::EndPurifying(psCharacter * character, uint32 glyphUID)
+void SpellManager::EndPurifying(psCharacter* character, uint32 glyphUID)
 {
-    Client *client = clients->FindPlayer(character->GetPID());
-    if (!client)
+    Client* client = clients->FindPlayer(character->GetPID());
+    if(!client)
     {
         Error1("No purifyer!");
         return;
     }
 
-    psItem *item = character->Inventory().FindItemID(glyphUID);
-    if (item)
+    psItem* item = character->Inventory().FindItemID(glyphUID);
+    if(item)
     {
-        psGlyph * glyph = dynamic_cast <psGlyph*> (item);
-        if (glyph)
+        psGlyph* glyph = dynamic_cast <psGlyph*>(item);
+        if(glyph)
         {
             glyph->PurifyingFinished();
             glyph->Save(false);
@@ -488,17 +488,17 @@ void SpellManager::EndPurifying(psCharacter * character, uint32 glyphUID)
     }
 }
 
-psSpell* SpellManager::FindSpell(Client *client, const csArray<psItemStats*> & assembler)
+psSpell* SpellManager::FindSpell(Client* client, const csArray<psItemStats*> &assembler)
 {
     CacheManager::SpellIterator loop = cacheManager->GetSpellIterator();
-    
-    psSpell *p;
-    
-    while (loop.HasNext())
+
+    psSpell* p;
+
+    while(loop.HasNext())
     {
         p = loop.Next();
 
-        if (p->MatchGlyphs(assembler))
+        if(p->MatchGlyphs(assembler))
         {
             // Combination of glyphs correct
             return p;

@@ -87,7 +87,7 @@ bool psServerDR::Initialize()
 
     paladin = new PaladinJr;
     paladin->Initialize(entityManager, cacheManager);
-    
+
     return true;
 }
 
@@ -98,7 +98,7 @@ void psServerDR::SendPersist()
     return;
 }
 
-void psServerDR::HandleFallDamage(gemActor *actor,int clientnum, const csVector3& pos, iSector* sector)
+void psServerDR::HandleFallDamage(gemActor* actor,int clientnum, const csVector3 &pos, iSector* sector)
 {
     float fallHeight = actor->FallEnded(pos,sector);
 
@@ -113,16 +113,16 @@ void psServerDR::HandleFallDamage(gemActor *actor,int clientnum, const csVector3
     }
 
     calc_damage->Evaluate(&env);
-    MathVar *var_fall_dmg = env.Lookup("Damage");
+    MathVar* var_fall_dmg = env.Lookup("Damage");
     Debug4(LOG_LINMOVE,actor->GetClientID(), "%s fell %.2fm for damage %.2f",
-           actor->GetName(),fallHeight,var_fall_dmg->GetValue() );
+           actor->GetName(),fallHeight,var_fall_dmg->GetValue());
 
-    if (var_fall_dmg->GetValue() > 0)
+    if(var_fall_dmg->GetValue() > 0)
     {
         bool died = (var_fall_dmg->GetValue() > actor->GetCharacterData()->GetHP());
 
-        actor->DoDamage(NULL, var_fall_dmg->GetValue() );
-        if (died)
+        actor->DoDamage(NULL, var_fall_dmg->GetValue());
+        if(died)
         {
             //Client died
             psserver->SendSystemInfo(clientnum, "You fell down and died.");
@@ -140,38 +140,38 @@ void psServerDR::ResetPos(gemActor* actor)
     float yRot = 0;
     actor->GetPosition(targetPoint, yRot, targetSector);
     targetSectorName = targetSector->QueryObject()->GetObjectParent()->GetName();
-    
+
     csString status;
-    status.Format("Received out of bounds position for %s. Resetting to sector %s.", actor->GetName(), (const char *) targetSectorName);
+    status.Format("Received out of bounds position for %s. Resetting to sector %s.", actor->GetName(), (const char*) targetSectorName);
     if(LogCSV::GetSingletonPtr())
         LogCSV::GetSingleton().Write(CSV_STATUS, status);
-    
+
     psserver->GetAdminManager()->GetStartOfMap(actor->GetClient()->GetClientNum(), targetSectorName, targetSector, targetPoint);
     actor->pcmove->SetOnGround(true);
     actor->Teleport(targetSector, targetPoint, 0);
     actor->FallEnded(targetPoint, targetSector);
 }
 
-void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
+void psServerDR::HandleDeadReckoning(MsgEntry* me,Client* client)
 {
-    psDRMessage drmsg(me,psserver->GetNetManager()->GetAccessPointers() );
-    if (!drmsg.valid)
+    psDRMessage drmsg(me,psserver->GetNetManager()->GetAccessPointers());
+    if(!drmsg.valid)
     {
         Error2("Received unparsable psDRMessage from client %u.\n",me->clientnum);
         return;
     }
 
-    gemActor *actor = client->GetActor();
-    
-    if (actor == NULL)
+    gemActor* actor = client->GetActor();
+
+    if(actor == NULL)
     {
         Error1("Received DR data for NULL actor.");
         return;
     }
 
-    if ( actor->IsFrozen() || !actor->IsAllowedToMove())  // Is this movement allowed?
+    if(actor->IsFrozen() || !actor->IsAllowedToMove())    // Is this movement allowed?
     {
-        if (drmsg.worldVel.y > 0)
+        if(drmsg.worldVel.y > 0)
         {
             client->CountDetectedCheat();  // This DR data may be an exploit but may also be valid from lag.
             actor->pcmove->AddVelocity(csVector3(0,-1,0));
@@ -181,12 +181,12 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
         }
     }
 
-    if (drmsg.sector == NULL)
+    if(drmsg.sector == NULL)
     {
         Error2("Client sent the server DR message with unknown sector \"%s\" !", drmsg.sectorName.GetData());
         psserver->SendSystemInfo(me->clientnum,
                                  "Received unknown sector \"%s\" - moving you to a valid position.",
-                                 drmsg.sectorName.GetData() );
+                                 drmsg.sectorName.GetData());
         /* FIXME: Strangely, when logging on, the client ends up putting the
          * actor in SectorWhereWeKeepEntitiesResidingInUnloadedMaps, and send
          * a DR packet with (null) sector.  It then relies on the server to
@@ -199,48 +199,48 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
     // These values must be sane or the proxlist will die.
     // The != test tests for NaN because if it is, the proxlist will mysteriously die (found out the hard way)
     if(drmsg.pos.x != drmsg.pos.x || drmsg.pos.y != drmsg.pos.y || drmsg.pos.z != drmsg.pos.z ||
-        fabs(drmsg.pos.x) > 100000 || fabs(drmsg.pos.y) > 1000 || fabs(drmsg.pos.z) > 100000)
+            fabs(drmsg.pos.x) > 100000 || fabs(drmsg.pos.y) > 1000 || fabs(drmsg.pos.z) > 100000)
     {
         ResetPos(actor);
         return;
     }
     else if(drmsg.vel.x != drmsg.vel.x || drmsg.vel.y != drmsg.vel.y || drmsg.vel.z != drmsg.vel.z ||
-        fabs(drmsg.vel.x) > 1000 || fabs(drmsg.vel.y) > 1000 || fabs(drmsg.vel.z) > 1000)
+            fabs(drmsg.vel.x) > 1000 || fabs(drmsg.vel.y) > 1000 || fabs(drmsg.vel.z) > 1000)
     {
         ResetPos(actor);
         return;
     }
     else if(drmsg.worldVel.x != drmsg.worldVel.x || drmsg.worldVel.y != drmsg.worldVel.y || drmsg.worldVel.z != drmsg.worldVel.z ||
-        fabs(drmsg.worldVel.x) > 1000 || fabs(drmsg.worldVel.y) > 1000 || fabs(drmsg.worldVel.z) > 1000)
+            fabs(drmsg.worldVel.x) > 1000 || fabs(drmsg.worldVel.y) > 1000 || fabs(drmsg.worldVel.z) > 1000)
     {
         ResetPos(actor);
         return;
     }
 
-    if (!paladin->ValidateMovement(client, actor, drmsg))
+    if(!paladin->ValidateMovement(client, actor, drmsg))
         // client has been disconnected or message was rejected
         return;
 
     // Go ahead and update the server version
-    if (!actor->SetDRData(drmsg)) // out of date message if returns false
+    if(!actor->SetDRData(drmsg))  // out of date message if returns false
         return;
 
     // Check for Movement Tutorial Required.
     // Usually we don't want to check but DR msgs are so frequent,
     // perf hit is unacceptable otherwise.
-    if (actor->GetCharacterData()->NeedsHelpEvent(TutorialManager::MOVEMENT))
+    if(actor->GetCharacterData()->NeedsHelpEvent(TutorialManager::MOVEMENT))
     {
-        if (!drmsg.vel.IsZero() || drmsg.ang_vel)
+        if(!drmsg.vel.IsZero() || drmsg.ang_vel)
         {
-            psMovementEvent evt(client->GetClientNum() );
+            psMovementEvent evt(client->GetClientNum());
             evt.FireEvent();
         }
     }
 
     // Update falling status
-    if (actor->pcmove->IsOnGround())
+    if(actor->pcmove->IsOnGround())
     {
-        if (actor->IsFalling())
+        if(actor->IsFalling())
         {
             iSector* sector = actor->GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);
 
@@ -255,7 +255,7 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
             }
         }
     }
-    else if (!actor->IsFalling())
+    else if(!actor->IsFalling())
     {
         iSector* sector = actor->GetMeshWrapper()->GetMovable()->GetSectors()->Get(0);
         actor->FallBegan(drmsg.pos, sector);
@@ -265,7 +265,7 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
     actor->UpdateProxList();
     /*
     if (csGetTicks() - time > 500)
-    {   
+    {
         csString status;
         status.Format("Warning: Spent %u time updating proxlist for %s!", csGetTicks() - time, actor->GetName());
         psString out;
@@ -279,8 +279,8 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
 
     // Now multicast to other clients
     psserver->GetEventManager()->Multicast(me,
-                          actor->GetMulticastClients(),
-                          me->clientnum,PROX_LIST_ANY_RANGE);
+                                           actor->GetMulticastClients(),
+                                           me->clientnum,PROX_LIST_ANY_RANGE);
 
     paladin->CheckCollDetection(client, actor);
 
@@ -292,13 +292,13 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
         sectorInfo = cacheManager->GetSectorInfoByName(drmsg.sector->QueryObject()->GetName());
 
     //is this a sector which teleports on entrance? (used for portals)
-    if (sectorInfo && sectorInfo->GetIsTeleporting())
+    if(sectorInfo && sectorInfo->GetIsTeleporting())
     {
         actor->pcmove->SetOnGround(false);
-        
+
         //get the sector defined for teleport for later usage
         csString newSectorName = sectorInfo->GetTeleportingSector();
-        
+
         //if the sector for teleport has data teleport to it
         if(newSectorName.Length())
             actor->Teleport(newSectorName, sectorInfo->GetTeleportingCord(), sectorInfo->GetTeleportingRot(), DEFAULT_INSTANCE);
@@ -306,16 +306,16 @@ void psServerDR::HandleDeadReckoning(MsgEntry* me,Client *client)
             actor->MoveToSpawnPos();
 
         actor->StopMoving(true);
-        
+
         //check if this sector triggered teleport has to warrant a death penalty
         if(sectorInfo->GetHasPenalty())
         {
             // should probably load this on startup.
-            static ProgressionScript *death_penalty = NULL;
-            if (!death_penalty)
+            static ProgressionScript* death_penalty = NULL;
+            if(!death_penalty)
                 death_penalty = psserver->GetProgressionManager()->FindScript("death_penalty");
 
-            if (death_penalty)
+            if(death_penalty)
             {
                 MathEnvironment env;
                 env.Define("Actor", actor);

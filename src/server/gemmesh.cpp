@@ -1,7 +1,7 @@
 /*
 * gemmesh.h by Andrew Craig <andrew@hydlaa.com>
 *
-* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+* Copyright (C) 2008 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@
 #include "gemmesh.h"
 #include "gem.h"
 
-gemMesh::gemMesh( iObjectRegistry* objreg, gemObject* owner, GEMSupervisor* super)
+gemMesh::gemMesh(iObjectRegistry* objreg, gemObject* owner, GEMSupervisor* super)
 {
     objectReg = objreg;
     gemOwner = owner;
@@ -59,41 +59,41 @@ iMeshFactoryWrapper* gemMesh::LoadMeshFactory(const char* fileName, const char* 
 
     csRef<iMeshFactoryWrapper> imesh_fact = 0;
 
-    if ( ret->WasSuccessful() )
+    if(ret->WasSuccessful())
     {
-        if ( !ret->GetResultRefPtr().IsValid() )
+        if(!ret->GetResultRefPtr().IsValid())
         {
             imesh_fact = engine->FindMeshFactory(factoryName);
         }
         else
         {
             imesh_fact = scfQueryInterface<iMeshFactoryWrapper>(ret->GetResultRefPtr());
-        }     
+        }
     }
 
     return imesh_fact;
 }
 
 
-bool gemMesh::SetMesh( const char* factoryName, const char* fileName )
+bool gemMesh::SetMesh(const char* factoryName, const char* fileName)
 {
     bool result = false;
     RemoveMesh();
 
     csRef<iMeshFactoryWrapper> mesh_fact = engine->GetMeshFactories()->FindByName(factoryName);
 
-    if ( !mesh_fact )
+    if(!mesh_fact)
     {
-        mesh_fact = LoadMeshFactory(fileName, factoryName); 
+        mesh_fact = LoadMeshFactory(fileName, factoryName);
     }
 
-    if ( mesh_fact )
+    if(mesh_fact)
     {
-        mesh = engine->CreateMeshWrapper( mesh_fact ,factoryName );
+        mesh = engine->CreateMeshWrapper(mesh_fact ,factoryName);
         gem->AttachObject(mesh->QueryObject(), gemOwner);
         result = true;
     }
-    
+
     return result;
 }
 
@@ -102,12 +102,12 @@ iMeshWrapper* gemMesh::GetMesh()
     return mesh;
 }
 
-void gemMesh::SetMesh( iMeshWrapper* newMesh )
+void gemMesh::SetMesh(iMeshWrapper* newMesh)
 {
     RemoveMesh();
     mesh = newMesh;
 
-    if ( newMesh )
+    if(newMesh)
     {
         gem->AttachObject(newMesh->QueryObject(), gemOwner);
     }
@@ -115,7 +115,7 @@ void gemMesh::SetMesh( iMeshWrapper* newMesh )
 
 void gemMesh::RemoveMesh()
 {
-    if (mesh)
+    if(mesh)
     {
         gem->UnattachObject(mesh->QueryObject(), gemOwner);
         engine->RemoveObject(mesh);
@@ -123,21 +123,21 @@ void gemMesh::RemoveMesh()
     }
 }
 
-void gemMesh::MoveMesh( iSector* sector, const float yrot, const csVector3& position )
+void gemMesh::MoveMesh(iSector* sector, const float yrot, const csVector3 &position)
 {
-    if (mesh)
+    if(mesh)
     {
-        if (sector)
+        if(sector)
         {
-            mesh->GetMovable()->SetSector( sector );
+            mesh->GetMovable()->SetSector(sector);
         }
 
-        mesh->GetMovable()->SetPosition( position );
+        mesh->GetMovable()->SetPosition(position);
     }
 
-    csMatrix3 matrix = (csMatrix3) csYRotMatrix3 (yrot);
-    mesh->GetMovable ()->GetTransform ().SetO2T (matrix);
+    csMatrix3 matrix = (csMatrix3) csYRotMatrix3(yrot);
+    mesh->GetMovable()->GetTransform().SetO2T(matrix);
 
-    mesh->GetMovable ()->UpdateMove ();
+    mesh->GetMovable()->UpdateMove();
 }
 

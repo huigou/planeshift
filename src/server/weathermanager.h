@@ -1,7 +1,7 @@
 /*
  * weathermanager.h
  *
- * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2002 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -58,8 +58,8 @@ public:
                         int eventvalue,
                         int duration,
                         int fade,
-                        const char *sector,
-                        psSectorInfo *si,
+                        const char* sector,
+                        psSectorInfo* si,
                         uint clientnum = 0,
                         int r = 0,
                         int g = 0,
@@ -71,7 +71,7 @@ public:
      * @param si The sector in which we start the automatic weather
      * @param type The weather type we will start. The default 0 does it for all.
      */
-    void StartWeather(psSectorInfo *si, unsigned int type = 0);
+    void StartWeather(psSectorInfo* si, unsigned int type = 0);
 
     /** @brief Stops automatic weather in a sector
      *  Puts all events from the automatic weather (rain and snow for now)
@@ -80,26 +80,41 @@ public:
      * @param si The sector in which we stop the automatic weather
      * @param type The weather type we will stop. The default 0 does it for all.
      */
-    void StopWeather(psSectorInfo *si, unsigned int type = 0);
-    void HandleWeatherEvent(psWeatherGameEvent *event);
+    void StopWeather(psSectorInfo* si, unsigned int type = 0);
+    void HandleWeatherEvent(psWeatherGameEvent* event);
     void SendClientGameTime(int cnum);
     void BroadcastGameTime();
     void BroadcastGameTimeSuperclients();
     void UpdateClient(uint32_t cnum);
-    int GetGameTODMinute() {return gameTimeMinute;}
-    int GetGameTODHour() {return gameTimeHour;}
-    int GetGameTODDay() { return gameTimeDay;}
-    int GetGameTODMonth() { return gameTimeMonth;} 
-    int GetGameTODYear(){ return gameTimeYear;} 
-    
+    int GetGameTODMinute()
+    {
+        return gameTimeMinute;
+    }
+    int GetGameTODHour()
+    {
+        return gameTimeHour;
+    }
+    int GetGameTODDay()
+    {
+        return gameTimeDay;
+    }
+    int GetGameTODMonth()
+    {
+        return gameTimeMonth;
+    }
+    int GetGameTODYear()
+    {
+        return gameTimeYear;
+    }
+
     /** Look into the database for the saved time.
       * This starts the event pushing for the time.
       */
     void StartGameTime();
     void SaveGameTime();
     void SetGameTime(int hour,int minute);
-    
-    
+
+
 protected:
     csRandomGen* randomgen;
     int gameTimeMinute;
@@ -109,10 +124,10 @@ protected:
     int gameTimeYear;
 
     csArray<psWeatherGameEvent*> ignored; ///< Used for overriding commands like /rain
-    
+
     CS::Threading::Mutex eventsMutex;
     csArray<psWeatherGameEvent*> events; // Ugly, but we need a copy of our events
-    
+
     CacheManager* cacheManager;
 };
 
@@ -122,14 +137,14 @@ protected:
 class psWeatherGameEvent : public psGameEvent
 {
 public:
-    psWeatherGameEvent(WeatherManager *mgr,
+    psWeatherGameEvent(WeatherManager* mgr,
                        int delayticks,
                        int eventtype,
                        int eventvalue,
                        int duration,
                        int fade,
-                       const char *sector,
-                       psSectorInfo *si,
+                       const char* sector,
+                       psSectorInfo* si,
                        uint client,
                        int r = 0,
                        int g = 0,
@@ -137,19 +152,19 @@ public:
 
     virtual void Trigger();  ///< Abstract event processing function
 
-    const char *GetType();
+    const char* GetType();
 
     int cr,cg,cb;
     int type, value, duration,fade;
     csString sector;
-    psSectorInfo *si;
+    psSectorInfo* si;
     uint clientnum;
 
-        
+
 protected:
-    WeatherManager *weathermanager;
-    
-    
+    WeatherManager* weathermanager;
+
+
 };
 
 #endif
