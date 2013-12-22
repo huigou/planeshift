@@ -35,8 +35,8 @@ class pawsComboBox;
 class iOnFileSelectedAction
 {
 public:
-    virtual void Execute(const csString & string) = 0;
-        // can be -1
+    virtual void Execute(const csString &string) = 0;
+    // can be -1
     virtual ~iOnFileSelectedAction() {};
 };
 
@@ -45,25 +45,25 @@ class pawsFileNavigation : public pawsWidget
 public:
     pawsFileNavigation();
     virtual ~pawsFileNavigation();
-    pawsFileNavigation(const pawsFileNavigation& origin);
+    pawsFileNavigation(const pawsFileNavigation &origin);
 
     // implemented virtual functions from pawsWidgets
     virtual bool PostSetup();
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
-    virtual bool OnChange(pawsWidget * widget);
-    virtual void OnListAction( pawsListBox* selected, int status );
-    virtual bool OnKeyDown( utf32_char keyCode, utf32_char key, int modifiers );
+    virtual bool OnChange(pawsWidget* widget);
+    virtual void OnListAction(pawsListBox* selected, int status);
+    virtual bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers);
 
     /// Overridden to reset the selection state on Show()
     virtual void Show();
 
 
-    /// Called to retrieve the full path of the current browsing concatenated with the text in the 
+    /// Called to retrieve the full path of the current browsing concatenated with the text in the
     // filename edit box.
-    virtual const char *GetFullPathFilename();
+    virtual const char* GetFullPathFilename();
 
     /// Called to retrieve just the full path of current browsing
-    virtual const char *GetCurrentPath();
+    virtual const char* GetCurrentPath();
 
     /** Called to retrieve the current selection state of the file navigation box.
      * States can be:
@@ -75,59 +75,59 @@ public:
     virtual int GetSelectionState();
 
     /// Called to set the text of the action/perorm button
-    virtual void SetActionButtonText(const char *actiontext);
+    virtual void SetActionButtonText(const char* actiontext);
 
     /// Called to set the selected filename field.
-    virtual bool SetSelectedFilename(const char *filename);
+    virtual bool SetSelectedFilename(const char* filename);
 
-    virtual bool SetFileFilters(const char *filename);
+    virtual bool SetFileFilters(const char* filename);
 
     /// Refreshes the current listing of files based on the current directory
     virtual bool FillFileList();
 
-    void Initialize(const csString & filename, const csString & filter, iOnFileSelectedAction * action);
-    
-    static pawsFileNavigation * Create(
-                const csString & label, const csString & filter, iOnFileSelectedAction * action, const char * xmlWidget = "filenavigation.xml");
+    void Initialize(const csString &filename, const csString &filter, iOnFileSelectedAction* action);
+
+    static pawsFileNavigation* Create(
+        const csString &label, const csString &filter, iOnFileSelectedAction* action, const char* xmlWidget = "filenavigation.xml");
 
 protected:
     /// Called to set the filterfunction.
-    virtual bool SetFilterForSelection(const char *filename);
-    virtual const char *GetFilterForSelection();
+    virtual bool SetFilterForSelection(const char* filename);
+    virtual const char* GetFilterForSelection();
     /// Appends a section of a path to the current path.  Interprets . and .. appropriately
-    virtual bool SmartAppendPath(const char *append);
+    virtual bool SmartAppendPath(const char* append);
     /// Similar to SmartAppendPath, but a leading / or \ is interpretted from the root
-    virtual bool SmartSetPath(const char *path);
+    virtual bool SmartSetPath(const char* path);
     virtual bool UpOnePath();
-    virtual bool DownOnePath(const char *pathstring,int pathlen);
-    virtual bool RelativeIsFile(const char *filename);
-    
+    virtual bool DownOnePath(const char* pathstring,int pathlen);
+    virtual bool RelativeIsFile(const char* filename);
+
 protected:
     /// A reference to the iVFS for the file system, used for navigation
     csRef<iVFS> vfs;
 
     /// The current virtual path
     csString current_path;
-    
+
     csArray<csString> zip_mounts;
 
     /// The directory display listbox child of this widget
-    pawsListBox *dirlistbox;
+    pawsListBox* dirlistbox;
 
     /// The file display listbox child of this widget
-    pawsListBox *filelistbox;
+    pawsListBox* filelistbox;
 
     /// A buffer used to construct the full path and file of a selected file.  Not always valid.
     // reconstructed on each call to GetFullPathFilename()
-    char *fullpathandfilename;
+    char* fullpathandfilename;
 
     /// Stores the current selection state (none selected, canceled, or perform)
     int selection_state;
 
-    iOnFileSelectedAction * action;
+    iOnFileSelectedAction* action;
 };
 
-CREATE_PAWS_FACTORY( pawsFileNavigation );
+CREATE_PAWS_FACTORY(pawsFileNavigation);
 
 /** @} */
 

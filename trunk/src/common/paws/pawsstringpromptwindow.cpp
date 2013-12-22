@@ -38,24 +38,24 @@ pawsStringPromptWindow::pawsStringPromptWindow()
     factory = "pawsStringPromptWindow";
 }
 
-pawsStringPromptWindow::pawsStringPromptWindow(const pawsStringPromptWindow& origin)
-                        :pawsPromptWindow(origin),
-                        multiLine(origin.multiLine),
-                        action(0),
-                        name(origin.name),
-                        param(origin.param)
+pawsStringPromptWindow::pawsStringPromptWindow(const pawsStringPromptWindow &origin)
+    :pawsPromptWindow(origin),
+     multiLine(origin.multiLine),
+     action(0),
+     name(origin.name),
+     param(origin.param)
 {
 
 }
 
-void pawsStringPromptWindow::Initialize(const csString & label, const csString & string, bool multiline, int width, int height,
-                                        iOnStringEnteredAction *action, const char *name, int param, int maxlen)
+void pawsStringPromptWindow::Initialize(const csString &label, const csString &string, bool multiline, int width, int height,
+                                        iOnStringEnteredAction* action, const char* name, int param, int maxlen)
 {
     multiLine = multiline;
     if(multiLine)
     {
         inputWidget = new pawsMultilineEditTextBox();
-        pawsMultilineEditTextBox *editBox = dynamic_cast<pawsMultilineEditTextBox*> (inputWidget);
+        pawsMultilineEditTextBox* editBox = dynamic_cast<pawsMultilineEditTextBox*>(inputWidget);
         editBox->SetRelativeFrameSize(width, height);
         editBox->SetText(PawsManager::GetSingleton().Translate(string));
         if(maxlen)
@@ -64,7 +64,7 @@ void pawsStringPromptWindow::Initialize(const csString & label, const csString &
     else
     {
         inputWidget = new pawsEditTextBox();
-        pawsEditTextBox *editBox = dynamic_cast<pawsEditTextBox*> (inputWidget);
+        pawsEditTextBox* editBox = dynamic_cast<pawsEditTextBox*>(inputWidget);
         editBox->SetRelativeFrameSize(width, height);
         editBox->SetText(string);
         if(maxlen)
@@ -88,7 +88,7 @@ void pawsStringPromptWindow::Initialize(const csString & label, const csString &
     //inputWidget->SetBackground("Entry Field Background");
     //inputWidget->SetBackgroundAlpha(0);
     inputWidget->UseBorder("line");
- 
+
     this->action = action;
     this->name   = name;
     this->param  = param;
@@ -117,17 +117,17 @@ void pawsStringPromptWindow::CloseWindow()
     if(inputWidget != NULL)
     {
         if(multiLine)
-            CloseWindow(dynamic_cast<pawsMultilineEditTextBox*> (inputWidget)->GetText());
+            CloseWindow(dynamic_cast<pawsMultilineEditTextBox*>(inputWidget)->GetText());
         else
-            CloseWindow(dynamic_cast<pawsEditTextBox*> (inputWidget)->GetText());
+            CloseWindow(dynamic_cast<pawsEditTextBox*>(inputWidget)->GetText());
     }
 }
 
-void pawsStringPromptWindow::CloseWindow(const csString & text)
+void pawsStringPromptWindow::CloseWindow(const csString &text)
 {
     action->OnStringEntered(name, param, text);
     action = NULL;
-    parent->DeleteChild(this);       // destructs itself 
+    parent->DeleteChild(this);       // destructs itself
 }
 
 bool pawsStringPromptWindow::OnKeyDown(utf32_char /*code*/, utf32_char key, int /*modifiers*/)
@@ -140,25 +140,25 @@ bool pawsStringPromptWindow::OnKeyDown(utf32_char /*code*/, utf32_char key, int 
     return false;
 }
 
-bool pawsStringPromptWindow::OnChange( pawsWidget * widget )
+bool pawsStringPromptWindow::OnChange(pawsWidget* widget)
 {
     if(inputWidget == widget && inputWidget != NULL && helperWidget != NULL)
     {
         const unsigned int rChar = multiLine ?
-            dynamic_cast<pawsMultilineEditTextBox*> (inputWidget)->GetRemainingChars() :
-            dynamic_cast<pawsEditTextBox*> (inputWidget)->GetRemainingChars();
-        dynamic_cast<pawsTextBox*> (helperWidget)->SetText(csString().Format("%u characters remaining", rChar));
+                                   dynamic_cast<pawsMultilineEditTextBox*>(inputWidget)->GetRemainingChars() :
+                                   dynamic_cast<pawsEditTextBox*>(inputWidget)->GetRemainingChars();
+        dynamic_cast<pawsTextBox*>(helperWidget)->SetText(csString().Format("%u characters remaining", rChar));
     }
     return false;
 }
 
-pawsStringPromptWindow * pawsStringPromptWindow::Create(
-            const csString & label, const csString & string,
-            bool multiline, int width, int height,
-            iOnStringEnteredAction * action, const char *name, int param,
-            bool modal, int maxlen)
+pawsStringPromptWindow* pawsStringPromptWindow::Create(
+    const csString &label, const csString &string,
+    bool multiline, int width, int height,
+    iOnStringEnteredAction* action, const char* name, int param,
+    bool modal, int maxlen)
 {
-    pawsStringPromptWindow * w = new pawsStringPromptWindow();
+    pawsStringPromptWindow* w = new pawsStringPromptWindow();
     PawsManager::GetSingleton().GetMainWidget()->AddChild(w);
     w->PostSetup();
 
@@ -171,8 +171,8 @@ pawsStringPromptWindow * pawsStringPromptWindow::Create(
     }
 
     w->Initialize(label, string, multiline, width, height, action, name, param, maxlen);
-    w->MoveTo((PawsManager::GetSingleton().GetGraphics2D()->GetWidth() - w->GetActualWidth(width) ) / 2,
-                       (PawsManager::GetSingleton().GetGraphics2D()->GetHeight() - w->GetActualHeight(height)) / 2 );
+    w->MoveTo((PawsManager::GetSingleton().GetGraphics2D()->GetWidth() - w->GetActualWidth(width)) / 2,
+              (PawsManager::GetSingleton().GetGraphics2D()->GetHeight() - w->GetActualHeight(height)) / 2);
     w->SetMovable(true);
 
     return w;

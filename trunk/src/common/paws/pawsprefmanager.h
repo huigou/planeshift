@@ -32,7 +32,7 @@ struct iVFS;
 struct iGraphics2D;
 struct iFont;
 struct BorderDefinition;
-class PawsManager; 
+class PawsManager;
 
 /**
  * \addtogroup common_paws
@@ -41,28 +41,40 @@ class PawsManager;
 #define BORDER_COLOURS 5
 
 
-/** Holds/Loads the prefs from a pref file. 
+/** Holds/Loads the prefs from a pref file.
  */
-class pawsPrefManager  
+class pawsPrefManager
 {
 public:
     pawsPrefManager();
     virtual ~pawsPrefManager();
 
-    bool LoadPrefFile( const char* file );
-    bool LoadBorderFile( const char* file );
+    bool LoadPrefFile(const char* file);
+    bool LoadBorderFile(const char* file);
 
-    iFont* GetDefaultFont( bool scaled = true ) { return scaled?defaultScaledFont:defaultFont; }
-    const char* GetDefaultFontName() { return defaultFontName; }
-    int    GetDefaultFontColour() { return defaultFontColour; }
-    int    GetBorderColour( int index ) { return borderColours[index]; }
-    
-    BorderDefinition* GetBorderDefinition( const char* name );
+    iFont* GetDefaultFont(bool scaled = true)
+    {
+        return scaled?defaultScaledFont:defaultFont;
+    }
+    const char* GetDefaultFontName()
+    {
+        return defaultFontName;
+    }
+    int    GetDefaultFontColour()
+    {
+        return defaultFontColour;
+    }
+    int    GetBorderColour(int index)
+    {
+        return borderColours[index];
+    }
+
+    BorderDefinition* GetBorderDefinition(const char* name);
 private:
 
     iObjectRegistry*        objectReg;
     csRef<iVFS>             vfs;
-    csRef<iDocumentSystem>  xml; 
+    csRef<iDocumentSystem>  xml;
     csRef<iGraphics2D>      graphics2D;
 
     csRef<iFont> defaultFont, defaultScaledFont;
@@ -70,13 +82,13 @@ private:
     csString defaultFontName;
 
     int borderColours[BORDER_COLOURS];
-    
+
     void LoadBorderColours(iDocumentNode* node);
-    
+
     csPDelArray<BorderDefinition> borders;
 };
 
 /** @} */
 
-#endif 
+#endif
 

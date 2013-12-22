@@ -34,9 +34,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 //  Function Declarations
 ////////////////////////////////////////////////////////////////////////////////
-void DrawBumpFrame(iGraphics2D * graphics2D, 
-                    pawsWidget * widget, 
-                    csRect frame, int flags );
+void DrawBumpFrame(iGraphics2D* graphics2D,
+                   pawsWidget* widget,
+                   csRect frame, int flags);
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -54,76 +54,97 @@ enum BorderPositions
     PAWS_BORDER_BOTTOMMIDDLE,
     PAWS_BORDER_MAX
 };
-    
-    
-/** Defines the images that make the border up. 
-  * These are stored by the PAWS preference manager and can be 
+
+
+/** Defines the images that make the border up.
+  * These are stored by the PAWS preference manager and can be
   * retrived in order to create a border for a widget.
   */
 struct BorderDefinition
 {
     /// The name of this border style.
     csString name;
-    
-    /// The image resources for each of the border areas. 
-    csString descriptions[PAWS_BORDER_MAX];    
+
+    /// The image resources for each of the border areas.
+    csString descriptions[PAWS_BORDER_MAX];
 };
 
 /** This is a class that draws the border around a widget.
   * A grapical border consists of 8 images ( as seen in the enum ) that
   * can create a border.
-  * The corner images are drawn easily and the images along the sides are 
+  * The corner images are drawn easily and the images along the sides are
   * tiled to fill in the space.
   */
 class pawsBorder
 {
-public:    
-    pawsBorder( const char* styleName );
-    pawsBorder(const pawsBorder& origin);
+public:
+    pawsBorder(const char* styleName);
+    pawsBorder(const pawsBorder &origin);
     ~pawsBorder();
-    
-    void SetParent( pawsWidget* parent );
-    void Draw();   
+
+    void SetParent(pawsWidget* parent);
+    void Draw();
     /** Use a particular style for this border.
       * @param style The style name to use for the border. lines is the default one
                      that will draw basic lines around the widget. If style is NULL it
-                     will default to lines. 
+                     will default to lines.
       */
-    void UseBorder( const char* style );
-    
+    void UseBorder(const char* style);
+
     /// Draws just the title bar.
-    void JustTitle() { justTitle = true; }
-    
-    void Hide() { draw = false; }
-    void Show() { draw = true; }
+    void JustTitle()
+    {
+        justTitle = true;
+    }
+
+    void Hide()
+    {
+        draw = false;
+    }
+    void Show()
+    {
+        draw = true;
+    }
     csRect GetRect();
 
-    void SetTitle(const char *t, bool shadow = true);
-    void SetTitleImage(iPawsImage* drawable) { titleImage = drawable; } // This will take delete responsibility
-    void SetTitleAlign(int al)        { align = al; }
+    void SetTitle(const char* t, bool shadow = true);
+    void SetTitleImage(iPawsImage* drawable)
+    {
+        titleImage = drawable;    // This will take delete responsibility
+    }
+    void SetTitleAlign(int al)
+    {
+        align = al;
+    }
 
-    iPawsImage* GetTitleImage() { return titleImage; }
-    const char* GetTitle() { return title; }
+    iPawsImage* GetTitleImage()
+    {
+        return titleImage;
+    }
+    const char* GetTitle()
+    {
+        return title;
+    }
 
 protected:
 
-    void DrawTitle(csRect& frame);
+    void DrawTitle(csRect &frame);
     void DrawFrame(csRect frame);
 
     csRect frame;
     pawsWidget* parent;
-       
+
     csRef<iPawsImage> borderImages[PAWS_BORDER_MAX];
-     
-    /// Title bar text 
+
+    /// Title bar text
     csString title;
     /// Title bar image
     csRef<iPawsImage> titleImage;
     /// Alignment of title text
     int align;
-    
+
     bool usingGraphics;
-    bool draw;       
+    bool draw;
     bool justTitle;
     int style;
     bool shadowFont;
@@ -131,6 +152,6 @@ protected:
 
 /** @} */
 
-#endif 
+#endif
 
 

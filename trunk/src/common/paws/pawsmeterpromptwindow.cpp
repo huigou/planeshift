@@ -1,7 +1,7 @@
 /*
  * pawsmeterpromptwindow.cpp, Author: Andrea Rizzi <88whacko@gmail.com>
  *
- * Copyright (C) 2001-2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -180,7 +180,7 @@ bool pawsMeterPromptWindow::OnButtonPressed(int /* mouseButton */, int /* keyMod
 }
 
 pawsMeterPromptWindow* pawsMeterPromptWindow::Create(const char* actionName, const char* initialBeats, const char* initialBeatType,
-                                                     size_t beatsMaxLength, iOnMeterEnteredListener* listener)
+        size_t beatsMaxLength, iOnMeterEnteredListener* listener)
 {
     pawsMeterPromptWindow* meterPrompt = new pawsMeterPromptWindow();
     PawsManager::GetSingleton().GetMainWidget()->AddChild(meterPrompt);

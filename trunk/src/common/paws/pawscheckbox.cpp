@@ -26,7 +26,7 @@
 
 //---------------------------------------------------------------------------------
 pawsCheckBox::pawsCheckBox()
-            : textOffsetX(0), textOffsetY(0)
+    : textOffsetX(0), textOffsetY(0)
 {
     checkBoxOff = "Checkbox Off";
     checkBoxOn  = "Checkbox On";
@@ -35,23 +35,23 @@ pawsCheckBox::pawsCheckBox()
     factory = "pawsCheckBox";
 }
 
-pawsCheckBox::pawsCheckBox(const pawsCheckBox& origin)
-            : pawsWidget(origin),
-            textOffsetX(origin.textOffsetX),
-            textOffsetY(origin.textOffsetY),
-            checkBoxOff(origin.checkBoxOff),
-            checkBoxOn(origin.checkBoxOn),
-            checkBoxGrey(origin.checkBoxGrey),
-            checkBoxSize(origin.checkBoxSize)
+pawsCheckBox::pawsCheckBox(const pawsCheckBox &origin)
+    : pawsWidget(origin),
+      textOffsetX(origin.textOffsetX),
+      textOffsetY(origin.textOffsetY),
+      checkBoxOff(origin.checkBoxOff),
+      checkBoxOn(origin.checkBoxOn),
+      checkBoxGrey(origin.checkBoxGrey),
+      checkBoxSize(origin.checkBoxSize)
 {
     text = 0;
     checkBox = 0;
-    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.children[i] == origin.checkBox)
-            checkBox = dynamic_cast<pawsButton *>(children[i]);
+            checkBox = dynamic_cast<pawsButton*>(children[i]);
         else if(origin.children[i] == origin.text)
-            text = dynamic_cast<pawsTextBox *>(children[i]);
+            text = dynamic_cast<pawsTextBox*>(children[i]);
 
         if(text != 0 && checkBox != 0) break;
     }
@@ -61,123 +61,123 @@ pawsCheckBox::~pawsCheckBox()
 {
 }
 
-void pawsCheckBox::SetState( bool state )
-{    
-    checkBox->SetState( state );
+void pawsCheckBox::SetState(bool state)
+{
+    checkBox->SetState(state);
 }
 
-void pawsCheckBox::SetText( const char* string )
+void pawsCheckBox::SetText(const char* string)
 {
     text->SetText(string);
 }
 
-bool pawsCheckBox::Setup( iDocumentNode* node )
+bool pawsCheckBox::Setup(iDocumentNode* node)
 {
-    csRef<iDocumentNode> textNode = node->GetNode( "text" );        
-    
-    if ( !textNode )
+    csRef<iDocumentNode> textNode = node->GetNode("text");
+
+    if(!textNode)
     {
         Error2("%s XML is defined incorrectly. No <text> tag found", name.GetData());
         return false;
     }
-    
-    csString pos(textNode->GetAttributeValue("position"));
-	textOffsetX = textNode->GetAttributeValueAsInt("offsetx");
-	textOffsetY = textNode->GetAttributeValueAsInt("offsety");
 
-    
+    csString pos(textNode->GetAttributeValue("position"));
+    textOffsetX = textNode->GetAttributeValueAsInt("offsetx");
+    textOffsetY = textNode->GetAttributeValueAsInt("offsety");
+
+
     ///////////////////////////////////////////////////////////////////////
     // Create the check box
     ///////////////////////////////////////////////////////////////////////
     checkBox = new pawsButton;
-    AddChild( checkBox );
+    AddChild(checkBox);
     checkBox->SetNotify(this);
 
     csRect boxRect;
     csRect textRect;
-    
-    csRef<iDocumentNode> checkBoxNode = node->GetNode( "checkbox" );
-                
-    if ( checkBoxNode )
+
+    csRef<iDocumentNode> checkBoxNode = node->GetNode("checkbox");
+
+    if(checkBoxNode)
     {
         csRef<iDocumentAttribute> attr;
 
         attr = checkBoxNode->GetAttribute("off");
-        if (attr)
+        if(attr)
             checkBoxOff = attr->GetValue();
 
         attr = checkBoxNode->GetAttribute("on");
-        if (attr)
+        if(attr)
             checkBoxOn  = attr->GetValue();
 
-		attr = checkBoxNode->GetAttribute("greyoff");
-		if (attr)
-			checkBox->SetGreyUpImage(attr->GetValue());
+        attr = checkBoxNode->GetAttribute("greyoff");
+        if(attr)
+            checkBox->SetGreyUpImage(attr->GetValue());
 
-		attr = checkBoxNode->GetAttribute("greyon");
-		if (attr)
-			checkBox->SetGreyDownImage(attr->GetValue());
+        attr = checkBoxNode->GetAttribute("greyon");
+        if(attr)
+            checkBox->SetGreyDownImage(attr->GetValue());
 
         attr = checkBoxNode->GetAttribute("size");
-        if (attr)
+        if(attr)
             checkBoxSize     = attr->GetValueAsInt();
     }
-        
-	if ( pos == "left" )    
-	{
-		boxRect = csRect(  defaultFrame.Width() - GetActualWidth(checkBoxSize), 4,
-			defaultFrame.Width(), GetActualHeight(checkBoxSize) + 4 );
 
-		textRect   = csRect(  0 + textOffsetX, 4 + textOffsetY, defaultFrame.Width() - GetActualWidth(checkBoxSize), defaultFrame.Height() );
-	}
-	else
-	{
-		boxRect = csRect(  4, 4, 
-			GetActualWidth(checkBoxSize) + 4, GetActualHeight(checkBoxSize) + 4 );
+    if(pos == "left")
+    {
+        boxRect = csRect(defaultFrame.Width() - GetActualWidth(checkBoxSize), 4,
+                         defaultFrame.Width(), GetActualHeight(checkBoxSize) + 4);
 
-		textRect   = csRect(  4 + GetActualWidth(checkBoxSize) + 2 + textOffsetX, 4 + textOffsetY, defaultFrame.Width(), defaultFrame.Height() );
-	}
+        textRect   = csRect(0 + textOffsetX, 4 + textOffsetY, defaultFrame.Width() - GetActualWidth(checkBoxSize), defaultFrame.Height());
+    }
+    else
+    {
+        boxRect = csRect(4, 4,
+                         GetActualWidth(checkBoxSize) + 4, GetActualHeight(checkBoxSize) + 4);
 
-    checkBox->SetRelativeFrame( boxRect.xmin, boxRect.ymin, 
-                                checkBoxSize, checkBoxSize );
-    checkBox->SetUpImage( checkBoxOff );
-    checkBox->SetDownImage( checkBoxOn );
-    checkBox->SetState( false );
-    checkBox->SetToggle( true );
+        textRect   = csRect(4 + GetActualWidth(checkBoxSize) + 2 + textOffsetX, 4 + textOffsetY, defaultFrame.Width(), defaultFrame.Height());
+    }
+
+    checkBox->SetRelativeFrame(boxRect.xmin, boxRect.ymin,
+                               checkBoxSize, checkBoxSize);
+    checkBox->SetUpImage(checkBoxOff);
+    checkBox->SetDownImage(checkBoxOn);
+    checkBox->SetState(false);
+    checkBox->SetToggle(true);
     checkBox->PostSetup();
-    checkBox->SetID( id );
+    checkBox->SetID(id);
 
     // copy publish list over to checkbox
     checkBox->publishList = publishList;
-     
-    
+
+
     ///////////////////////////////////////////////////////////////////////
     // Create the textbox that has the current selected choice
-    ///////////////////////////////////////////////////////////////////////    
+    ///////////////////////////////////////////////////////////////////////
     csString str(PawsManager::GetSingleton().Translate(textNode->GetAttributeValue("string")));
-    
+
     text = new pawsTextBox;
-    AddChild( text );
+    AddChild(text);
 
     // Puts the box at the edge of the text box widget
-    text->SetRelativeFrame( textRect.xmin, textRect.ymin,
-                            textRect.Width(), textRect.Height() );
+    text->SetRelativeFrame(textRect.xmin, textRect.ymin,
+                           textRect.Width(), textRect.Height());
     text->PostSetup();
-    
-    text->SetText(str);
-    text->SetID( id );
 
-    return true;               
+    text->SetText(str);
+    text->SetID(id);
+
+    return true;
 }
 
-bool pawsCheckBox::SelfPopulate( iDocumentNode *node)
+bool pawsCheckBox::SelfPopulate(iDocumentNode* node)
 {
-    if (node->GetAttributeValue("text"))
+    if(node->GetAttributeValue("text"))
     {
-        checkBox->SetText (node->GetAttributeValue("text"));
+        checkBox->SetText(node->GetAttributeValue("text"));
     }
 
-    if (node->GetAttributeValue("down"))
+    if(node->GetAttributeValue("down"))
     {
         checkBox->SetState(strcmp(node->GetAttributeValue("down"),"true")==0);
     }
@@ -195,7 +195,7 @@ bool pawsCheckBox::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget*
 
 bool pawsCheckBox::GetState()
 {
-    if (checkBox != NULL)
+    if(checkBox != NULL)
         return checkBox->GetState();
     else
         return false;
@@ -203,7 +203,7 @@ bool pawsCheckBox::GetState()
 
 const char* pawsCheckBox::GetText()
 {
-    if (text != NULL)
+    if(text != NULL)
         return text->GetText();
     else
         return NULL;
@@ -211,11 +211,11 @@ const char* pawsCheckBox::GetText()
 
 void pawsCheckBox::SetImages(const char* up, const char* down)
 {
-    checkBox->SetUpImage( up );
-    checkBox->SetDownImage( down );
+    checkBox->SetUpImage(up);
+    checkBox->SetDownImage(down);
 }
 
-void pawsCheckBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
+void pawsCheckBox::OnUpdateData(const char* /*dataname*/, PAWSData &value)
 {
     // This is called automatically whenever subscribed data is published.
     if(checkBox)
@@ -224,20 +224,20 @@ void pawsCheckBox::OnUpdateData(const char* /*dataname*/, PAWSData& value)
     }
 }
 
-double pawsCheckBox::GetProperty(MathEnvironment* env, const char * ptr)
+double pawsCheckBox::GetProperty(MathEnvironment* env, const char* ptr)
 {
-	if (!strcasecmp(ptr, "checked"))
-		return checkBox->GetState() ? 1.0 : 0.0;
-	else if (!strcasecmp(ptr, "greyed"))
-		return checkBox->IsEnabled() ? 1.0 : 0.0;
-	return pawsWidget::GetProperty(env, ptr);
+    if(!strcasecmp(ptr, "checked"))
+        return checkBox->GetState() ? 1.0 : 0.0;
+    else if(!strcasecmp(ptr, "greyed"))
+        return checkBox->IsEnabled() ? 1.0 : 0.0;
+    return pawsWidget::GetProperty(env, ptr);
 }
 
-void pawsCheckBox::SetProperty(const char * ptr, double value)
+void pawsCheckBox::SetProperty(const char* ptr, double value)
 {
-    if (!strcasecmp(ptr, "checked"))
+    if(!strcasecmp(ptr, "checked"))
         SetState(fabs(value) > 0.5);
-    else if (!strcasecmp(ptr, "greyed"))
+    else if(!strcasecmp(ptr, "greyed"))
         checkBox->SetEnabled(fabs(value) <= 0.5);
     else
         pawsWidget::SetProperty(ptr, value);

@@ -43,7 +43,7 @@ bool pawsListBox::sort_ascOrder;
 class pawsListBoxTitle : public pawsWidget
 {
 public:
-    pawsListBoxTitle(pawsListBox * listBox, int colNum, pawsWidget * innerWidget, bool sortable = true)
+    pawsListBoxTitle(pawsListBox* listBox, int colNum, pawsWidget* innerWidget, bool sortable = true)
     {
         this->listBox = listBox;
         this->colNum  = colNum;
@@ -52,17 +52,17 @@ public:
         AddChild(innerWidget);
     }
 
-    pawsListBoxTitle(const pawsListBoxTitle& origin):pawsWidget(origin),colNum(origin.colNum),sortable(origin.sortable)
+    pawsListBoxTitle(const pawsListBoxTitle &origin):pawsWidget(origin),colNum(origin.colNum),sortable(origin.sortable)
     {
         this->listBox = origin.listBox;
     }
 
-    bool OnMouseDown( int button, int modifiers, int x, int y )
+    bool OnMouseDown(int button, int modifiers, int x, int y)
     {
         if(button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight)
-            return listBox->OnMouseDown( button, modifiers, x, y );
+            return listBox->OnMouseDown(button, modifiers, x, y);
         else if(listBox->GetSortedColumn() == colNum)
-            listBox->SetSortOrder( ! listBox->GetSortOrder() );
+            listBox->SetSortOrder(! listBox->GetSortOrder());
         else if(sortable)
             listBox->SetSortedColumn(colNum);
 
@@ -71,7 +71,7 @@ public:
 
 protected:
 
-    pawsListBox * listBox;    ///< Our mother listbox
+    pawsListBox* listBox;     ///< Our mother listbox
     int colNum;               ///< The number of the column this widget is used in
     bool sortable;            ///< Should this this column be sortable
 };
@@ -114,38 +114,38 @@ pawsListBox::pawsListBox()
     selectable      = true;
 }
 
-pawsListBox::pawsListBox(const pawsListBox& origin)
-                :pawsWidget(origin),
-                usingTitleRow(origin.usingTitleRow),
-                totalColumns(origin.totalColumns),
-                totalRows(origin.totalRows),
-                columnHeight(origin.columnHeight),
-                rowWidth(origin.rowWidth),
-                topRow(origin.topRow),
-                selected(origin.selected),
-                xMod(origin.xMod),
-                autoID(origin.autoID),
-                autoResize(origin.autoResize),
-                autoUpdateScroll(origin.autoUpdateScroll),
-                notifyTarget(0),
-                xmlbinding_row(origin.xmlbinding_row),
-                sortColNum(origin.sortColNum),
-                ascOrder(origin.ascOrder),
-                //sort_ascOrder(origin.sort_ascOrder),
-                //sort_sortColNum(origin.sort_sortColNum),
-                //sort_sortFunc(origin.sort_sortFunc),
-                highlightImage(origin.highlightImage),
-                highlightAlpha(origin.highlightAlpha),
-                arrowSize(origin.arrowSize),
-                scrollbarWidth(origin.scrollbarWidth),
-                scrollbarHeightMod(origin.scrollbarHeightMod),
-                useBorder(origin.useBorder),
-                selectable(origin.selectable),
-                arrowUp(origin.arrowUp),
-                arrowDown(origin.arrowDown)
+pawsListBox::pawsListBox(const pawsListBox &origin)
+    :pawsWidget(origin),
+     usingTitleRow(origin.usingTitleRow),
+     totalColumns(origin.totalColumns),
+     totalRows(origin.totalRows),
+     columnHeight(origin.columnHeight),
+     rowWidth(origin.rowWidth),
+     topRow(origin.topRow),
+     selected(origin.selected),
+     xMod(origin.xMod),
+     autoID(origin.autoID),
+     autoResize(origin.autoResize),
+     autoUpdateScroll(origin.autoUpdateScroll),
+     notifyTarget(0),
+     xmlbinding_row(origin.xmlbinding_row),
+     sortColNum(origin.sortColNum),
+     ascOrder(origin.ascOrder),
+     //sort_ascOrder(origin.sort_ascOrder),
+     //sort_sortColNum(origin.sort_sortColNum),
+     //sort_sortFunc(origin.sort_sortFunc),
+     highlightImage(origin.highlightImage),
+     highlightAlpha(origin.highlightAlpha),
+     arrowSize(origin.arrowSize),
+     scrollbarWidth(origin.scrollbarWidth),
+     scrollbarHeightMod(origin.scrollbarHeightMod),
+     useBorder(origin.useBorder),
+     selectable(origin.selectable),
+     arrowUp(origin.arrowUp),
+     arrowDown(origin.arrowDown)
 {
     columnDef = new ColumnDef[origin.totalColumns];
-    for (int i = 0 ; i < origin.totalColumns; i++)
+    for(int i = 0 ; i < origin.totalColumns; i++)
     {
         columnDef[i].height = origin.columnDef[i].height;
         columnDef[i].width = origin.columnDef[i].height;
@@ -154,14 +154,14 @@ pawsListBox::pawsListBox(const pawsListBox& origin)
         columnDef[i].xmlbinding = origin.columnDef[i].xmlbinding;
         columnDef[i].sortable = origin.columnDef[i].sortable;
     }
-    
+
     horzscrollBar = 0;
     scrollBar = 0;
     titleRow = 0;
 
-    for (unsigned int i = 0 ; i < origin.rows.GetSize() ; i++)
+    for(unsigned int i = 0 ; i < origin.rows.GetSize() ; i++)
     {
-        for (unsigned int j = 0 ; j < origin.children.GetSize(); j++)
+        for(unsigned int j = 0 ; j < origin.children.GetSize(); j++)
         {
             if(origin.rows[i] == origin.children[j])
             {
@@ -170,7 +170,7 @@ pawsListBox::pawsListBox(const pawsListBox& origin)
             }
         }
     }
-    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.horzscrollBar == origin.children[i])
             horzscrollBar = dynamic_cast<pawsScrollBar*>(children[i]);
@@ -192,43 +192,43 @@ pawsListBox::~pawsListBox()
 void pawsListBox::Clear()
 {
     selected = -1;
-    for ( size_t x = 0; x < rows.GetSize(); x++ )
+    for(size_t x = 0; x < rows.GetSize(); x++)
     {
         DeleteChild(rows[x]);
     }
 
     rows.DeleteAll();
     totalRows = 0;
-    if (scrollBar)
+    if(scrollBar)
         scrollBar->Hide();
-    if (horzscrollBar)
+    if(horzscrollBar)
         horzscrollBar->Hide();
 }
 
 
-bool pawsListBox::Setup( iDocumentNode* node )
+bool pawsListBox::Setup(iDocumentNode* node)
 {
     csString sortOrder;
 
-    csRef<iDocumentNode> columnsNode = node->GetNode( "columns" );
+    csRef<iDocumentNode> columnsNode = node->GetNode("columns");
 
-    columnHeight = columnsNode->GetAttributeValueAsInt( "height" );
+    columnHeight = columnsNode->GetAttributeValueAsInt("height");
     xmlbinding_row = columnsNode->GetAttributeValue("xmlbinding");
 
-    const char *headings = columnsNode->GetAttributeValue("headings");
-    if (!headings || !strcmp(headings,"no"))
+    const char* headings = columnsNode->GetAttributeValue("headings");
+    if(!headings || !strcmp(headings,"no"))
         this->UseTitleRow(false);
 
-    const char *aid = node->GetAttributeValue("autoid");
+    const char* aid = node->GetAttributeValue("autoid");
     autoID = (aid && !strcmp(aid,"yes"));
 
     // Get the definition of all the column types
-    csRef<iDocumentNodeIterator> colIter = columnsNode->GetNodes( "column" );
+    csRef<iDocumentNodeIterator> colIter = columnsNode->GetNodes("column");
 
     csArray<ColumnDef> colInfo;
 
     rowWidth = 0;
-    while ( colIter->HasNext() )
+    while(colIter->HasNext())
     {
         csRef<iDocumentNode> colNode = colIter->Next();
 
@@ -240,13 +240,13 @@ bool pawsListBox::Setup( iDocumentNode* node )
         cInfo.sortable   = colNode->GetAttributeValueAsBool("sortable", true);
 
         cInfo.widgetNode = colNode->GetNode("widget");
-        if (!cInfo.widgetNode)
+        if(!cInfo.widgetNode)
         {
             csRef<iDocumentNodeIterator> it = colNode->GetNodes();
-            while (it->HasNext())
+            while(it->HasNext())
             {
                 csRef<iDocumentNode> n = it->Next();
-                if (strncmp(n->GetValue(),"paws",4)==0) // must start with "paws"
+                if(strncmp(n->GetValue(),"paws",4)==0)  // must start with "paws"
                 {
                     cInfo.widgetNode = n;
                     break;
@@ -262,17 +262,17 @@ bool pawsListBox::Setup( iDocumentNode* node )
 
     // Copy from dynamic array into static size array.
     totalColumns = (int)colInfo.GetSize();
-    if (columnDef)
+    if(columnDef)
     {
         delete [] columnDef;
     }
     columnDef = new ColumnDef[totalColumns];
-    for (int i = 0; i < totalColumns; i++)
+    for(int i = 0; i < totalColumns; i++)
     {
         columnDef[i] = colInfo[i];
     }
 
-    if (usingTitleRow)
+    if(usingTitleRow)
         CreateTitleRow();
 
     SetSortedColumn(node->GetAttributeValueAsInt("sortBy"));
@@ -280,61 +280,61 @@ bool pawsListBox::Setup( iDocumentNode* node )
     selectable = selectableAttr != "0";
 
     sortOrder = node->GetAttributeValue("sortOrder");
-    if (sortOrder.GetData() != NULL)
+    if(sortOrder.GetData() != NULL)
     {
-        if (sortOrder == "desc")
+        if(sortOrder == "desc")
             SetSortOrder(false);
         else
             SetSortOrder(true);
     }
 
-    csRef<iDocumentNode> highlightImageNode = node->GetNode( "highlight" );
-    if ( highlightImageNode )
+    csRef<iDocumentNode> highlightImageNode = node->GetNode("highlight");
+    if(highlightImageNode)
     {
         csRef<iDocumentAttribute> attr;
 
         attr = highlightImageNode->GetAttribute("resource");
 
-        if (attr)
+        if(attr)
             highlightImage = attr->GetValue();
 
         attr = highlightImageNode->GetAttribute("alpha");
 
-        if ( attr )
+        if(attr)
             highlightAlpha = attr->GetValueAsInt();
     }
 
-    csRef<iDocumentNode> scrollbarNode = node->GetNode( "scrollbar" );
-    if ( scrollbarNode )
+    csRef<iDocumentNode> scrollbarNode = node->GetNode("scrollbar");
+    if(scrollbarNode)
     {
         csRef<iDocumentAttribute> attr;
 
         attr = scrollbarNode->GetAttribute("arrowup");
-        if (attr)
+        if(attr)
             arrowUp = attr->GetValue();
 
         attr = scrollbarNode->GetAttribute("arrowdown");
-        if (attr)
+        if(attr)
             arrowDown = attr->GetValue();
 
         attr = scrollbarNode->GetAttribute("arrowsize");
-        if (attr)
+        if(attr)
             arrowSize = attr->GetValueAsInt();
 
         attr = scrollbarNode->GetAttribute("width");
-        if (attr)
+        if(attr)
             scrollbarWidth = attr->GetValueAsInt();
 
         attr = scrollbarNode->GetAttribute("heightmod");
-        if (attr)
+        if(attr)
             scrollbarHeightMod = attr->GetValueAsInt();
 
         attr = scrollbarNode->GetAttribute("border");
-        if (attr)
+        if(attr)
             useBorder = attr->GetValueAsBool();
 
         attr = scrollbarNode->GetAttribute("autoresize");
-        if (attr)
+        if(attr)
             autoResize = attr->GetValueAsBool();
         else
             autoResize = true;
@@ -348,25 +348,25 @@ bool pawsListBox::PostSetup()
 {
 
     scrollBar = new pawsScrollBar();
-    scrollBar->SetParent( this );
-    scrollBar->SetRelativeFrame( defaultFrame.Width() - GetActualWidth(scrollbarWidth),
-                                 titleRow ? titleRow->GetDefaultFrame().ymax : 6,
-                                 GetActualWidth(scrollbarWidth),
-                                 defaultFrame.Height() - 6 - (titleRow ? titleRow->GetDefaultFrame().Height() : 6) -GetActualHeight(scrollbarHeightMod) );
+    scrollBar->SetParent(this);
+    scrollBar->SetRelativeFrame(defaultFrame.Width() - GetActualWidth(scrollbarWidth),
+                                titleRow ? titleRow->GetDefaultFrame().ymax : 6,
+                                GetActualWidth(scrollbarWidth),
+                                defaultFrame.Height() - 6 - (titleRow ? titleRow->GetDefaultFrame().Height() : 6) -GetActualHeight(scrollbarHeightMod));
 
     int attach = ATTACH_TOP | ATTACH_BOTTOM | ATTACH_RIGHT;
-    scrollBar->SetAttachFlags( attach );
-    if (useBorder)
+    scrollBar->SetAttachFlags(attach);
+    if(useBorder)
         scrollBar->UseBorder();
     scrollBar->PostSetup();
-    scrollBar->SetTickValue( 1.0 );
+    scrollBar->SetTickValue(1.0);
     scrollBar->SetAlwaysOnTop(true);
     scrollBar->Hide();
-    AddChild( scrollBar );
+    AddChild(scrollBar);
 
     // Add horizontal scollie
     horzscrollBar = new pawsScrollBar();
-    horzscrollBar->SetParent( this );
+    horzscrollBar->SetParent(this);
     horzscrollBar->SetHorizontal(true);
 
     horzscrollBar->SetRelativeFrame(
@@ -374,18 +374,18 @@ bool pawsListBox::PostSetup()
         defaultFrame.Height() - GetActualWidth(scrollbarWidth), // Height to stand on |
         defaultFrame.Width() - 12, // Width
         GetActualWidth(scrollbarWidth) // Height
-        );
+    );
 
     attach = ATTACH_BOTTOM | ATTACH_LEFT | ATTACH_RIGHT;
-    horzscrollBar->SetAttachFlags( attach );
-    if (useBorder)
+    horzscrollBar->SetAttachFlags(attach);
+    if(useBorder)
         horzscrollBar->UseBorder();
 
     horzscrollBar->PostSetup();
-    horzscrollBar->SetTickValue( 1.0 );
+    horzscrollBar->SetTickValue(1.0);
     horzscrollBar->SetAlwaysOnTop(true);
     horzscrollBar->Hide();
-    AddChild( horzscrollBar );
+    AddChild(horzscrollBar);
 
     return true;
 }
@@ -394,23 +394,23 @@ bool pawsListBox::PostSetup()
 void pawsListBox::CreateTitleRow()
 {
     titleRow = new pawsListBoxRow();
-    titleRow->SetParent( this );
+    titleRow->SetParent(this);
 
-    titleRow->SetRelativeFrame( 0, 0,
-                                GetScreenFrame().Width() ,  GetActualHeight(columnHeight) );
+    titleRow->SetRelativeFrame(0, 0,
+                               GetScreenFrame().Width() ,  GetActualHeight(columnHeight));
 
-    for ( int x = 0; x < totalColumns; x++ )
+    for(int x = 0; x < totalColumns; x++)
     {
-        titleRow->AddTitleColumn( x, columnDef );
+        titleRow->AddTitleColumn(x, columnDef);
     }
 
-    AddChild( titleRow );
+    AddChild(titleRow);
 }
 
 
 pawsListBoxRow* pawsListBox::GetSelectedRow()
 {
-    if ( selected == -1 )
+    if(selected == -1)
         return NULL;
     else
         return rows[selected];
@@ -423,7 +423,7 @@ int pawsListBox::GetSelectedRowNum()
 
 pawsListBoxRow* pawsListBox::RemoveSelected()
 {
-    if ( selected == -1 )
+    if(selected == -1)
         return NULL;
     else
     {
@@ -434,11 +434,11 @@ pawsListBoxRow* pawsListBox::RemoveSelected()
 }
 
 
-void pawsListBox::Remove( int id )
+void pawsListBox::Remove(int id)
 {
-    for ( size_t x = 0; x < rows.GetSize(); x++ )
+    for(size_t x = 0; x < rows.GetSize(); x++)
     {
-        if ( rows[x]->GetID() == id )
+        if(rows[x]->GetID() == id)
         {
             pawsListBoxRow* zombie = rows[x];
             Remove(zombie);
@@ -449,15 +449,15 @@ void pawsListBox::Remove( int id )
 }
 
 
-void pawsListBox::Remove (pawsListBoxRow* rowToRemove)
+void pawsListBox::Remove(pawsListBoxRow* rowToRemove)
 {
-    if (rowToRemove)
+    if(rowToRemove)
     {
         pawsListBoxRow* selectedRow = NULL;
-        if (selected != -1)
+        if(selected != -1)
             selectedRow = rows[selected];
 
-        rows.Delete( rowToRemove );
+        rows.Delete(rowToRemove);
         RemoveChild(rowToRemove);
         totalRows--;
         Select(selectedRow);
@@ -466,28 +466,28 @@ void pawsListBox::Remove (pawsListBoxRow* rowToRemove)
 }
 
 
-void pawsListBox::AddRow( pawsListBoxRow* row )
+void pawsListBox::AddRow(pawsListBoxRow* row)
 {
     // Can only add a valid row.
-    if ( !row )
+    if(!row)
         return;
 
 
-    row->SetParent( this );
-    AddChild( row );
+    row->SetParent(this);
+    AddChild(row);
 
-    row->SetRelativeFrame( 0 ,(totalRows+1)*GetActualHeight(columnHeight), rowWidth, GetActualHeight(columnHeight) );
+    row->SetRelativeFrame(0 ,(totalRows+1)*GetActualHeight(columnHeight), rowWidth, GetActualHeight(columnHeight));
 
     totalRows++;
 
-    rows.Push( row );
+    rows.Push(row);
 
-    if ( scrollBar )
+    if(scrollBar)
     {
         if(autoUpdateScroll)
             SetScrollBarMaxValue();
 
-        scrollBar->SetCurrentValue( (float)topRow );
+        scrollBar->SetCurrentValue((float)topRow);
     }
 
     CalculateDrawPositions();
@@ -497,61 +497,61 @@ void pawsListBox::AddRow( pawsListBoxRow* row )
 void pawsListBox::Resize()
 {
     pawsWidget::Resize();
-    if ( scrollBar )
+    if(scrollBar)
     {
         scrollBar->Resize(); //TODO: why i need to call this manually?
         if(autoUpdateScroll)
             SetScrollBarMaxValue();
 
-        scrollBar->SetCurrentValue( (float)topRow );
+        scrollBar->SetCurrentValue((float)topRow);
     }
     CalculateDrawPositions();
 }
 
-pawsListBoxRow* pawsListBox::NewRow(size_t position )
+pawsListBoxRow* pawsListBox::NewRow(size_t position)
 {
     pawsListBoxRow* newRow = new pawsListBoxRow();
 
-    newRow->SetParent( this );
+    newRow->SetParent(this);
     // Here we automatically resize the row to be the width of the parent listbox, so the row can reference that when adding columns
-    newRow->SetRelativeFrame( 0 ,(totalRows+1)*GetActualHeight(columnHeight), parent->GetActualWidth(), GetActualHeight(columnHeight));//GetActualHeight(columnHeight) );
+    newRow->SetRelativeFrame(0 ,(totalRows+1)*GetActualHeight(columnHeight), parent->GetActualWidth(), GetActualHeight(columnHeight)); //GetActualHeight(columnHeight) );
 
-    for ( int x = 0; x < totalColumns; x++ )
+    for(int x = 0; x < totalColumns; x++)
     {
-        newRow->AddColumn( x, columnDef );
+        newRow->AddColumn(x, columnDef);
     }
 
     newRow->SetLastIndex(rows.GetSize()); // the last row inserted has the highest index by default, even if inserted in the middle of the list
-    if ( position != (size_t)-1 )
+    if(position != (size_t)-1)
     {
         AddChild(newRow);
-        rows.Insert( position, newRow );
+        rows.Insert(position, newRow);
     }
     else
     {
-        AddChild( newRow );
-        rows.Push( newRow );
+        AddChild(newRow);
+        rows.Push(newRow);
     }
 
     totalRows++;
 
-    if (autoID)
+    if(autoID)
     {
-        for ( int x = 0; x < totalColumns; x++ )
+        for(int x = 0; x < totalColumns; x++)
         {
-            pawsWidget * widget = newRow->GetColumn( x );
+            pawsWidget* widget = newRow->GetColumn(x);
             widget->SetID(id+totalRows*totalColumns+x);
         }
     }
 
 
 
-    if ( scrollBar )
+    if(scrollBar)
     {
         if(autoUpdateScroll)
             SetScrollBarMaxValue();
 
-        scrollBar->SetCurrentValue( (float)topRow );
+        scrollBar->SetCurrentValue((float)topRow);
     }
 
     CalculateDrawPositions();
@@ -560,52 +560,52 @@ pawsListBoxRow* pawsListBox::NewRow(size_t position )
 
     return newRow;
 }
-pawsListBoxRow* pawsListBox::NewTextBoxRow( csList<csString> &rowEntry,size_t position )
+pawsListBoxRow* pawsListBox::NewTextBoxRow(csList<csString> &rowEntry,size_t position)
 {
     pawsListBoxRow* newRow = new pawsListBoxRow();
 
-    newRow->SetParent( this );
+    newRow->SetParent(this);
     // Here we automatically resize the row to be the width of the parent listbox, so the row can reference that when adding columns
-    newRow->SetRelativeFrame( 0 ,(totalRows+1)*GetActualHeight(columnHeight), parent->GetActualWidth(), GetActualHeight(columnHeight));//GetActualHeight(columnHeight) );
+    newRow->SetRelativeFrame(0 ,(totalRows+1)*GetActualHeight(columnHeight), parent->GetActualWidth(), GetActualHeight(columnHeight)); //GetActualHeight(columnHeight) );
 
-    for ( int x = 0; x < totalColumns; x++ )
+    for(int x = 0; x < totalColumns; x++)
     {
-        newRow->AddColumn( x, columnDef );
+        newRow->AddColumn(x, columnDef);
         ((pawsTextBox*)newRow->GetColumn(x))->SetText(rowEntry.Front());
         rowEntry.PopFront();
     }
 
     newRow->SetLastIndex(rows.GetSize()); // the last row inserted has the highest index by default, even if inserted in the middle of the list
-    if ( position != (size_t)-1 )
+    if(position != (size_t)-1)
     {
         AddChild(newRow);
-        rows.Insert( position, newRow );
+        rows.Insert(position, newRow);
     }
     else
     {
-        AddChild( newRow );
-        rows.Push( newRow );
+        AddChild(newRow);
+        rows.Push(newRow);
     }
 
     totalRows++;
 
-    if (autoID)
+    if(autoID)
     {
-        for ( int x = 0; x < totalColumns; x++ )
+        for(int x = 0; x < totalColumns; x++)
         {
-            pawsWidget * widget = newRow->GetColumn( x );
+            pawsWidget* widget = newRow->GetColumn(x);
             widget->SetID(id+totalRows*totalColumns+x);
         }
     }
 
 
 
-    if ( scrollBar )
+    if(scrollBar)
     {
         if(autoUpdateScroll)
             SetScrollBarMaxValue();
 
-        scrollBar->SetCurrentValue( (float)topRow );
+        scrollBar->SetCurrentValue((float)topRow);
     }
 
     CalculateDrawPositions();
@@ -618,23 +618,23 @@ pawsListBoxRow* pawsListBox::NewTextBoxRow( csList<csString> &rowEntry,size_t po
 
 void pawsListBox::SendOnListAction(int status)
 {
-    if (notifyTarget!=NULL)
+    if(notifyTarget!=NULL)
         notifyTarget->OnListAction(this,status);
     else
         parent->OnListAction(this,status);
 }
 
 
-bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
+bool pawsListBox::Select(pawsListBoxRow* row, bool notify)
 {
-    if (!selectable)
+    if(!selectable)
         return false;
 
     selected = -1;
     // If no row assume no selection is wanted.
-    if ( row == NULL )
+    if(row == NULL)
     {
-        for ( size_t x = 0; x < rows.GetSize(); x++ )
+        for(size_t x = 0; x < rows.GetSize(); x++)
         {
             rows[x]->SetBackground("Standard Background");
             rows[x]->SetBackgroundAlpha(255);
@@ -642,9 +642,9 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
         return true;
     }
 
-    for ( int x = 0; x < (int)rows.GetSize(); x++ )
+    for(int x = 0; x < (int)rows.GetSize(); x++)
     {
-        if ( rows[x] == row )
+        if(rows[x] == row)
         {
             selected = x;
             rows[x]->SetBackground(highlightImage);
@@ -657,34 +657,34 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
         }
     }
 
-    if ( selected == -1 )
+    if(selected == -1)
         return false;
 
 
     // Adjust the topRow of drawing if the selected row is not visible
     // -1 because of title row.
     int offset = 0;
-    if ( usingTitleRow )
+    if(usingTitleRow)
         offset = 1;
     int numberOfRows = (GetUnborderedHeight() / columnDef[0].height) - offset;
 
-    if (selected<topRow)
+    if(selected<topRow)
     {
         topRow=selected;
     }
-    else if (selected>=topRow+numberOfRows)
+    else if(selected>=topRow+numberOfRows)
     {
         topRow=(selected-numberOfRows)+1;
     }
 
     CalculateDrawPositions();
 
-    if ( scrollBar )
+    if(scrollBar)
     {
-       scrollBar->SetCurrentValue( (float)topRow );
+        scrollBar->SetCurrentValue((float)topRow);
     }
 
-    if (notify)
+    if(notify)
     {
         SendOnListAction(LISTBOX_HIGHLIGHTED);
     }
@@ -694,16 +694,16 @@ bool pawsListBox::Select( pawsListBoxRow* row, bool notify)
 
 bool pawsListBox::SelectByIndex(int index, bool notify)
 {
-    if (!selectable)
+    if(!selectable)
         return false;
 
     selected = -1;
-    if (rows.GetSize() <= size_t(index))
+    if(rows.GetSize() <= size_t(index))
         return false;
     // If no row assume no selection is wanted.
-    if ( index == -1 )
+    if(index == -1)
     {
-        for ( size_t x = 0; x < rows.GetSize(); x++ )
+        for(size_t x = 0; x < rows.GetSize(); x++)
         {
             rows[x]->SetBackground("Standard Background");
             rows[x]->SetBackgroundAlpha(255);
@@ -711,9 +711,9 @@ bool pawsListBox::SelectByIndex(int index, bool notify)
         return true;
     }
 
-    for ( int x = 0; x < (int)rows.GetSize(); x++ )
+    for(int x = 0; x < (int)rows.GetSize(); x++)
     {
-        if ( x == index )
+        if(x == index)
         {
             selected = x;
             rows[x]->SetBackground(highlightImage);
@@ -726,30 +726,30 @@ bool pawsListBox::SelectByIndex(int index, bool notify)
         }
     }
 
-    if ( selected == -1 )
+    if(selected == -1)
         return false;
 
 
     // Adjust the topRow of drawing if the selected row is not visible
     // -1 because of title row.
     int offset = 0;
-    if ( usingTitleRow )
+    if(usingTitleRow)
         offset = 1;
     int numberOfRows = GetUnborderedHeight() / columnDef[0].height - offset;
 
-    if (selected<topRow)
+    if(selected<topRow)
         topRow=selected;
-    else if (selected>=topRow+numberOfRows)
+    else if(selected>=topRow+numberOfRows)
         topRow=(selected-numberOfRows)+1;
 
     CalculateDrawPositions();
 
-    if ( scrollBar )
+    if(scrollBar)
     {
-       scrollBar->SetCurrentValue( (float)topRow );
+        scrollBar->SetCurrentValue((float)topRow);
     }
 
-    if (notify)
+    if(notify)
         SendOnListAction(LISTBOX_HIGHLIGHTED);
 
     return true;
@@ -759,22 +759,22 @@ void pawsListBox::SetScrollBarMaxValue()
     int horiz = 0;
 
     // If horz scroll bar is visible add an extra vertical scroll
-    if ( horzscrollBar->IsVisible() )
+    if(horzscrollBar->IsVisible())
     {
         horiz = 1;
     }
     scrollBar->SetMaxValue(
-                            int(rows.GetSize()) + (usingTitleRow?1:0) + horiz +
-                                -
-                            GetUnborderedHeight() / columnDef[0].height
-                          );
+        int(rows.GetSize()) + (usingTitleRow?1:0) + horiz +
+        -
+        GetUnborderedHeight() / columnDef[0].height
+    );
 
     // Find the longest row
     int longest = 0;
     for(size_t i = 0; i < rows.GetSize(); i++)
     {
         int rowWidth=0;
-        for(size_t z = 0; z < rows[i]->GetTotalColumns();z++)
+        for(size_t z = 0; z < rows[i]->GetTotalColumns(); z++)
         {
             pawsTextBox* wdg = dynamic_cast <pawsTextBox*>(rows[i]->GetColumn(z));
             if(!wdg)
@@ -791,12 +791,12 @@ void pawsListBox::SetScrollBarMaxValue()
             int height = 0; // Can be used for anything?
 
             wdg->GetFont()->GetDimensions(text,width,height);
-            if (rowWidth+width > rows[i]->GetScreenFrame().Width())
+            if(rowWidth+width > rows[i]->GetScreenFrame().Width())
                 width = rows[i]->GetScreenFrame().Width() - rowWidth;
 
             rowWidth += width;
 
-            if( autoResize && width > wdg->GetScreenFrame().Width() )
+            if(autoResize && width > wdg->GetScreenFrame().Width())
             {
                 wdg->SetRelativeFrameSize(width,wdg->GetScreenFrame().Height());
             }
@@ -808,7 +808,7 @@ void pawsListBox::SetScrollBarMaxValue()
         }
 
         // Compare
-        if( rowWidth > longest )
+        if(rowWidth > longest)
             longest = rowWidth ;
     }
 
@@ -826,61 +826,61 @@ void pawsListBox::SetScrollBarMaxValue()
 
 int pawsListBox::GetUnborderedHeight()
 {
-    return screenFrame.Height() - ( GetBorder() ? 2* BORDER_SIZE : 0 );
+    return screenFrame.Height() - (GetBorder() ? 2* BORDER_SIZE : 0);
 }
 
 void pawsListBox::CalculateDrawPositions()
 {
     // -1 because of title row.
     int offset = 0;
-    if ( usingTitleRow )
+    if(usingTitleRow)
         offset = 1;
 
     // Clamp toprow to existing rows
-    if (topRow<0)
+    if(topRow<0)
         topRow=0;
-    if (topRow>totalRows)
+    if(topRow>totalRows)
         topRow=totalRows;
-    
+
     size_t numberOfRows = (GetUnborderedHeight() / columnDef[0].height) - offset;
-    
+
     size_t row = topRow;
-    
+
     //Hide all rows till the one which will be drawn
-    for ( size_t x = 0; x < row; x++ )
+    for(size_t x = 0; x < row; x++)
         rows[x]->Hide();
-    
+
     //figure out which ones to draw and position them
-    for ( size_t z = 0; z < numberOfRows; z++ )
+    for(size_t z = 0; z < numberOfRows; z++)
     {
-        if ( row < rows.GetSize() )
+        if(row < rows.GetSize())
         {
             // +1 because of title row.
             int positionY = ((int)z+offset) * columnDef[0].height;
             int positionX = 0 + xMod;
-            if (GetBorder())
+            if(GetBorder())
             {
                 positionY+=BORDER_SIZE;
                 positionX+=BORDER_SIZE;
             }
             positionY+=margin;
             positionX+=margin;
-            
+
             rows[row]->ShowBehind();
-            rows[row]->SetRelativeFramePos( positionX, positionY );
+            rows[row]->SetRelativeFramePos(positionX, positionY);
             row++;
         }
         else
             break;
     }
-    
+
     //hide the last rows we don't see
-    for (size_t x = row; x < rows.GetSize(); x++ )
+    for(size_t x = row; x < rows.GetSize(); x++)
         rows[x]->Hide();
-    
-    if (scrollBar)
+
+    if(scrollBar)
     {
-        if (rows.GetSize() > numberOfRows)
+        if(rows.GetSize() > numberOfRows)
             scrollBar->ShowBehind();
         else
             scrollBar->Hide();
@@ -906,31 +906,31 @@ bool pawsListBox::OnScroll(int /*direction*/, pawsScrollBar* widget)
 
 bool pawsListBox::OnMouseDown(int button, int modifiers, int x, int y)
 {
-    if (button == csmbWheelUp)
+    if(button == csmbWheelUp)
     {
-        if (scrollBar)
+        if(scrollBar)
             scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() - LISTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    else if (button == csmbWheelDown)
+    else if(button == csmbWheelDown)
     {
-        if (scrollBar)
+        if(scrollBar)
             scrollBar->SetCurrentValue(scrollBar->GetCurrentValue() + LISTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    else if (button == csmbHWheelLeft)
+    else if(button == csmbHWheelLeft)
     {
-        if (horzscrollBar)
+        if(horzscrollBar)
             horzscrollBar->SetCurrentValue(horzscrollBar->GetCurrentValue() - LISTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    else if (button == csmbHWheelRight)
+    else if(button == csmbHWheelRight)
     {
-        if (horzscrollBar)
+        if(horzscrollBar)
             horzscrollBar->SetCurrentValue(horzscrollBar->GetCurrentValue() + LISTBOX_MOUSE_SCROLL_AMOUNT);
         return true;
     }
-    else if (!selectable)
+    else if(!selectable)
     {
         return pawsWidget::OnMouseDown(button, modifiers, x, y);
     }
@@ -939,24 +939,24 @@ bool pawsListBox::OnMouseDown(int button, int modifiers, int x, int y)
 }
 
 
-pawsListBoxRow* pawsListBox::GetRow( size_t x )
+pawsListBoxRow* pawsListBox::GetRow(size_t x)
 {
-    if ( x != (size_t)-1 && x < rows.GetSize() )
+    if(x != (size_t)-1 && x < rows.GetSize())
         return rows[x];
     else
         return 0;
 }
 
 
-void pawsListBox::UseTitleRow( bool yes )
+void pawsListBox::UseTitleRow(bool yes)
 {
     usingTitleRow = yes;
 }
 
 
-void pawsListBox::SetTotalColumns( int numCols )
+void pawsListBox::SetTotalColumns(int numCols)
 {
-    if ( columnDef )
+    if(columnDef)
         delete [] columnDef;
 
     columnDef = new ColumnDef[ numCols ];
@@ -967,13 +967,13 @@ void pawsListBox::SetTotalColumns( int numCols )
 }
 
 
-void pawsListBox::SetColumnDef( int col, int width, int height, const char* widgetDesc )
+void pawsListBox::SetColumnDef(int col, int width, int height, const char* widgetDesc)
 {
     csRef<iDocumentSystem> xml;
     xml.AttachNew(new csTinyDocumentSystem);
 
     csRef<iDocument> doc= xml->CreateDocument();
-    doc->Parse( widgetDesc );
+    doc->Parse(widgetDesc);
 
     columnDef[col].width = width;
     columnDef[col].height = GetActualHeight(height);
@@ -988,38 +988,38 @@ void pawsListBox::SetColumnDef( int col, int width, int height, const char* widg
 }
 
 
-bool pawsListBox::SelfPopulate( iDocumentNode *topNode )
+bool pawsListBox::SelfPopulate(iDocumentNode* topNode)
 {
     float oldScroll = scrollBar->GetCurrentValue();
 
     csRef<iDocumentNodeIterator> iter = topNode->GetNodes();
 
     int count = 0;
-    while ( iter->HasNext() )
+    while(iter->HasNext())
     {
         csRef<iDocumentNode> node = iter->Next();
 
-        if ( node->GetType() != CS_NODE_ELEMENT )
+        if(node->GetType() != CS_NODE_ELEMENT)
             continue;
 
-        if ( strcmp( node->GetValue(), xmlbinding_row ) == 0 )
+        if(strcmp(node->GetValue(), xmlbinding_row) == 0)
         {
-            pawsListBoxRow *row = NewRow(count++);
-            if (node->GetAttributeValueAsBool("heading") == true)
+            pawsListBoxRow* row = NewRow(count++);
+            if(node->GetAttributeValueAsBool("heading") == true)
             {
                 row->SetHeading(true);
             }
             int x;
-            for (x=0; x<totalColumns; x++)
+            for(x=0; x<totalColumns; x++)
             {
-                if (columnDef[x].xmlbinding.Length() > 0)
+                if(columnDef[x].xmlbinding.Length() > 0)
                 {
-                    pawsWidget *columnwidget = row->GetColumn(x);
+                    pawsWidget* columnwidget = row->GetColumn(x);
                     csRef<iDocumentNode> column = node->GetNode(columnDef[x].xmlbinding);
-                    if (!column)
+                    if(!column)
                     {
                         Error3("Could not find xmlbinding '%s' in xml supplied to listbox '%s'.",
-                               columnDef[x].xmlbinding.GetData(), name.GetData() );
+                               columnDef[x].xmlbinding.GetData(), name.GetData());
                         return false;
                     }
 
@@ -1027,7 +1027,7 @@ bool pawsListBox::SelfPopulate( iDocumentNode *topNode )
                     // widget about how it was set if using SelfPopulate.
                     columnwidget->SetXMLBinding(columnDef[x].xmlbinding);
 
-                    if (!columnwidget->SelfPopulate(column))
+                    if(!columnwidget->SelfPopulate(column))
                     {
                         Error3("Widget %s in row %d could not self populate from xml node.\n",columnwidget->GetName(),count);
                         return false;
@@ -1044,7 +1044,7 @@ bool pawsListBox::SelfPopulate( iDocumentNode *topNode )
 
 bool pawsListBox::ConvertFromAutoID(int id, int &row, int &col)
 {
-    if (id >= this->id && id < this->id+totalColumns*(totalRows+1))
+    if(id >= this->id && id < this->id+totalColumns*(totalRows+1))
     {
         col = (id-this->id)%totalColumns;
         row = (id-this->id-col)/totalColumns - 1; // -1 is for the title row
@@ -1057,14 +1057,14 @@ bool pawsListBox::ConvertFromAutoID(int id, int &row, int &col)
 void pawsListBox::MoveSelectBar(bool direction)
 {
     // move selectbar up or down
-    if (direction)
+    if(direction)
     {
-        if (selected>0)
+        if(selected>0)
         {
             selected--;
-            if (GetSelectedRow()->IsHeading())
+            if(GetSelectedRow()->IsHeading())
             {
-                if (selected > 0)
+                if(selected > 0)
                     selected--;
                 else
                     selected++; // go back where we were if nothing is above the heading
@@ -1075,12 +1075,12 @@ void pawsListBox::MoveSelectBar(bool direction)
     }
     else
     {
-        if (selected<totalRows-1)
+        if(selected<totalRows-1)
         {
             selected++;
-            if (GetSelectedRow()->IsHeading())
+            if(GetSelectedRow()->IsHeading())
             {
-                if (selected < totalRows-1)
+                if(selected < totalRows-1)
                     selected++;
                 else
                     selected--; // go back where we were if nothing is above the heading
@@ -1091,38 +1091,38 @@ void pawsListBox::MoveSelectBar(bool direction)
 
     // -1 because of title row.
     int offset = 0;
-    if ( usingTitleRow )
+    if(usingTitleRow)
         offset = 1;
 
     int numberOfRows = GetUnborderedHeight() / columnDef[0].height - offset;
 
-     // Adjust the topRow of drawing if the selected row is not visible
-     if (selected<topRow)
-         topRow=selected;
-     else if (selected>=topRow+numberOfRows)
-         topRow=(selected-numberOfRows)+1;
+    // Adjust the topRow of drawing if the selected row is not visible
+    if(selected<topRow)
+        topRow=selected;
+    else if(selected>=topRow+numberOfRows)
+        topRow=(selected-numberOfRows)+1;
 
-     CalculateDrawPositions();
+    CalculateDrawPositions();
 
 }
 
 
 bool pawsListBox::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers)
 {
-    switch (keyChar)
+    switch(keyChar)
     {
         case CSKEY_UP:
             MoveSelectBar(true);
             return true;
-        break;
+            break;
         case CSKEY_DOWN:
             MoveSelectBar(false);
             return true;
-        break;
+            break;
         case CSKEY_ENTER:
             SendOnListAction(LISTBOX_SELECTED);
             return true;
-        break;
+            break;
     }
 
     return pawsWidget::OnKeyDown(keyCode,keyChar,modifiers);
@@ -1135,13 +1135,13 @@ int pawsListBox::GetSortedColumn()
 
 void pawsListBox::SetSortedColumn(int colNum)
 {
-    if (colNum < -1  ||  colNum >= totalColumns)
+    if(colNum < -1  ||  colNum >= totalColumns)
         return;
 
-    if (colNum != -1 && columnDef[colNum].sortFunc == NULL)
+    if(colNum != -1 && columnDef[colNum].sortFunc == NULL)
         columnDef[colNum].sortFunc = textBoxSortFunc;
 
-    if (sortColNum != -1)
+    if(sortColNum != -1)
         DeleteSortingArrow(sortColNum);
 
     sortColNum = colNum;
@@ -1159,7 +1159,7 @@ bool pawsListBox::GetSortOrder()
 
 void pawsListBox::SetSortOrder(bool ascOrder)
 {
-    if (sortColNum == -1)
+    if(sortColNum == -1)
         return;
 
     this->ascOrder = ascOrder;
@@ -1169,7 +1169,7 @@ void pawsListBox::SetSortOrder(bool ascOrder)
 
 void pawsListBox::SetSortingFunc(int colNum, listBoxSortingFunc sortFunc)
 {
-    if (colNum < 0  ||  colNum >= totalColumns)
+    if(colNum < 0  ||  colNum >= totalColumns)
         return;
 
     columnDef[colNum].sortFunc = sortFunc;
@@ -1178,10 +1178,10 @@ void pawsListBox::SetSortingFunc(int colNum, listBoxSortingFunc sortFunc)
 
 void pawsListBox::CreateSortingArrow(int colNum)
 {
-    pawsWidget * title = GetColumnTitle(colNum);
-    if (title == NULL)
+    pawsWidget* title = GetColumnTitle(colNum);
+    if(title == NULL)
         return;
-    pawsWidget * arrow = new pawsWidget();
+    pawsWidget* arrow = new pawsWidget();
     title->AddChild(arrow);
     arrow->SetRelativeFrame(title->GetScreenFrame().Width()-arrowSize, 4, arrowSize, arrowSize);
     arrow->SetName("SortingArrow");
@@ -1189,14 +1189,14 @@ void pawsListBox::CreateSortingArrow(int colNum)
 
 void pawsListBox::SetSortingArrow(int colNum, bool ascOrder)
 {
-    pawsWidget * title = GetColumnTitle(colNum);
-    if (title == NULL)
+    pawsWidget* title = GetColumnTitle(colNum);
+    if(title == NULL)
         return;
 
-    pawsWidget * arrow = title->FindWidget("SortingArrow");
-    if (arrow != NULL)
+    pawsWidget* arrow = title->FindWidget("SortingArrow");
+    if(arrow != NULL)
     {
-        if (ascOrder)
+        if(ascOrder)
             arrow->SetBackground(arrowDown);
         else
             arrow->SetBackground(arrowUp);
@@ -1205,11 +1205,11 @@ void pawsListBox::SetSortingArrow(int colNum, bool ascOrder)
 
 void pawsListBox::CheckSortingArrow(int colNum, bool ascOrder)
 {
-    pawsWidget * title = GetColumnTitle(colNum);
-    if (title == NULL)
+    pawsWidget* title = GetColumnTitle(colNum);
+    if(title == NULL)
         return;
 
-    pawsWidget * arrow = title->FindWidget("SortingArrow");
+    pawsWidget* arrow = title->FindWidget("SortingArrow");
     if(arrow == NULL)
     {
         CreateSortingArrow(colNum);
@@ -1219,27 +1219,27 @@ void pawsListBox::CheckSortingArrow(int colNum, bool ascOrder)
 
 void pawsListBox::DeleteSortingArrow(int colNum)
 {
-    pawsWidget * title = GetColumnTitle(colNum);
-    if (title == NULL)
+    pawsWidget* title = GetColumnTitle(colNum);
+    if(title == NULL)
         return;
 
-    pawsWidget * arrow = title->FindWidget("SortingArrow");
-    if (arrow != NULL)
+    pawsWidget* arrow = title->FindWidget("SortingArrow");
+    if(arrow != NULL)
         title->DeleteChild(arrow);
 }
 
-pawsWidget * pawsListBox::GetColumnTitle(int colNum)
+pawsWidget* pawsListBox::GetColumnTitle(int colNum)
 {
-    if (colNum < 0 || colNum > totalColumns || titleRow == NULL)
+    if(colNum < 0 || colNum > totalColumns || titleRow == NULL)
         return NULL;
 
     return titleRow->FindWidget(colNum);
 }
 
-int pawsListBox::sort_cmp(const void * void_rowA, const void * void_rowB)
+int pawsListBox::sort_cmp(const void* void_rowA, const void* void_rowB)
 {
-    pawsListBoxRow * rowA, * rowB;
-    pawsWidget * cellA, * cellB;
+    pawsListBoxRow* rowA, * rowB;
+    pawsWidget* cellA, * cellB;
 
     rowA  = *((pawsListBoxRow**) void_rowA);
     rowB  = *((pawsListBoxRow**) void_rowB);
@@ -1251,20 +1251,20 @@ int pawsListBox::sort_cmp(const void * void_rowA, const void * void_rowB)
 
 void pawsListBox::SortRows()
 {
-    pawsListBoxRow ** sortedRows;
-    pawsListBoxRow * selectedrow = NULL; //stores the currently selected row before sorting
-                                         //in order to be able to retrieve the correct position
+    pawsListBoxRow** sortedRows;
+    pawsListBoxRow* selectedrow = NULL;  //stores the currently selected row before sorting
+    //in order to be able to retrieve the correct position
     size_t i;
 
-    if (sortColNum == -1)
+    if(sortColNum == -1)
         return;
-    if (columnDef[sortColNum].sortFunc == NULL)
+    if(columnDef[sortColNum].sortFunc == NULL)
         return;
-    if (GetRowCount() == 0)
+    if(GetRowCount() == 0)
         return;
 
     sortedRows = new pawsListBoxRow*[rows.GetSize()];
-    for ( i=0; i < rows.GetSize(); i++)
+    for(i=0; i < rows.GetSize(); i++)
         sortedRows[i] = rows[i];
 
     if(selected != -1)
@@ -1273,13 +1273,13 @@ void pawsListBox::SortRows()
     sort_sortFunc    = columnDef[sortColNum].sortFunc;
     sort_sortColNum  = sortColNum;
     sort_ascOrder    = ascOrder;
-    qsort(sortedRows, rows.GetSize(), sizeof (void*), sort_cmp);
+    qsort(sortedRows, rows.GetSize(), sizeof(void*), sort_cmp);
 
     // find rows that match with sortedRows to set their LastIndex correctly
     // that can be use to point data that is stored outside of the listBox
     for(i=0; i<rows.GetSize(); i++)
     {
-        for (size_t j=0; j<rows.GetSize(); j++)
+        for(size_t j=0; j<rows.GetSize(); j++)
         {
             if(sortedRows[j] == rows[i])
             {
@@ -1290,8 +1290,8 @@ void pawsListBox::SortRows()
             }
         }
     }
-    
-    for ( i=0; i < rows.GetSize(); i++)
+
+    for(i=0; i < rows.GetSize(); i++)
         rows[i] = sortedRows[i]; // save the sorting
 
     delete [] sortedRows;
@@ -1333,17 +1333,17 @@ void pawsListBox::SortRows()
 */
 void pawsListBox::MoveRow(int rownr,int dest)
 {
-    pawsListBoxRow ** sortedRows;
+    pawsListBoxRow** sortedRows;
     int i;
 
-    if ((size_t)rownr >= rows.GetSize() || rownr < 0 || dest < 0 || (size_t)dest >= rows.GetSize() || dest == rownr )
+    if((size_t)rownr >= rows.GetSize() || rownr < 0 || dest < 0 || (size_t)dest >= rows.GetSize() || dest == rownr)
         return;
 
     sortedRows = new pawsListBoxRow*[rows.GetSize()];
 
 
     bool reorder = false;
-    for ( i=0;(uint)i < rows.GetSize(); i++)
+    for(i=0; (uint)i < rows.GetSize(); i++)
     {
         if((i == dest && dest < rownr) || (i == rownr && dest > rownr))
             reorder = true;
@@ -1376,20 +1376,20 @@ void pawsListBox::MoveRow(int rownr,int dest)
         }
     }
 
-    for ( i=0; (uint)i < rows.GetSize(); i++)
+    for(i=0; (uint)i < rows.GetSize(); i++)
         rows[i] = sortedRows[i];
     delete [] sortedRows;
     CalculateDrawPositions();
 }
 
-const char *pawsListBox::GetSelectedText(size_t columnId)
+const char* pawsListBox::GetSelectedText(size_t columnId)
 {
-    pawsListBoxRow *row = GetSelectedRow();
-    if (!row)
+    pawsListBoxRow* row = GetSelectedRow();
+    if(!row)
         return NULL;
 
-    pawsTextBox *box = (pawsTextBox *)GetSelectedRow()->GetColumn(columnId);
-    if (!box)
+    pawsTextBox* box = (pawsTextBox*)GetSelectedRow()->GetColumn(columnId);
+    if(!box)
         return NULL;
 
     return box->GetText();
@@ -1400,32 +1400,32 @@ size_t pawsListBox::GetRowCount()
     return rows.GetSize();
 }
 
-pawsTextBox * pawsListBox::GetTextCell(int rowNum, int colNum)
+pawsTextBox* pawsListBox::GetTextCell(int rowNum, int colNum)
 {
-    pawsListBoxRow * row = GetRow(rowNum);
-    if (row == NULL)
+    pawsListBoxRow* row = GetRow(rowNum);
+    if(row == NULL)
         return NULL;
 
-    pawsWidget * cell = row->GetColumn(colNum);
-    if (cell == NULL)
+    pawsWidget* cell = row->GetColumn(colNum);
+    if(cell == NULL)
         return NULL;
 
-    return dynamic_cast <pawsTextBox*> (cell);
+    return dynamic_cast <pawsTextBox*>(cell);
 }
 
 csString pawsListBox::GetTextCellValue(int rowNum, int colNum)
 {
-    pawsTextBox * cell = GetTextCell(rowNum, colNum);
-    if (cell != NULL)
+    pawsTextBox* cell = GetTextCell(rowNum, colNum);
+    if(cell != NULL)
         return cell->GetText();
     else
         return (const char*)NULL;
 }
 
-void pawsListBox::SetTextCellValue(int rowNum, int colNum, const csString & value)
+void pawsListBox::SetTextCellValue(int rowNum, int colNum, const csString &value)
 {
-    pawsTextBox * cell = GetTextCell(rowNum, colNum);
-    if (cell != NULL)
+    pawsTextBox* cell = GetTextCell(rowNum, colNum);
+    if(cell != NULL)
         cell->SetText(value);
 }
 
@@ -1440,12 +1440,12 @@ pawsListBoxRow::pawsListBoxRow()
     lastIndex = -1;
 }
 
-pawsListBoxRow::pawsListBoxRow(const pawsListBoxRow& origin)
-                :pawsWidget(origin),
-                isHeading(origin.isHeading),
-                lastIndex(origin.lastIndex)
+pawsListBoxRow::pawsListBoxRow(const pawsListBoxRow &origin)
+    :pawsWidget(origin),
+     isHeading(origin.isHeading),
+     lastIndex(origin.lastIndex)
 {
-    for (unsigned int i = 0 ; i < origin.columns.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.columns.GetSize(); i++)
     {
         for(unsigned int j = 0 ; j < origin.children.GetSize(); j++)
         {
@@ -1467,54 +1467,54 @@ bool pawsListBoxRow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modif
 bool pawsListBoxRow::OnMouseDown(int button, int modifiers, int x, int y)
 {
     // Heading rows are not clickable or selectable
-    if (isHeading)
+    if(isHeading)
         return true;
 
     pawsListBox* parentBox = (pawsListBox*)parent;
 
     // mouse wheel
-    if (button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight || !parentBox->IsSelectable())
+    if(button == csmbWheelUp || button == csmbWheelDown || button == csmbHWheelLeft || button == csmbHWheelRight || !parentBox->IsSelectable())
     {
         return parentBox->OnMouseDown(button, modifiers, x, y);
     }
-    return parentBox->Select( this );
+    return parentBox->Select(this);
 }
 
 bool pawsListBoxRow::OnDoubleClick(int button, int /*modifiers*/, int /*x*/, int /*y*/)
 {
     // Heading rows are not clickable or selectable
-    if (isHeading)
+    if(isHeading)
         return false;
 
-    pawsListBox * parentBox = (pawsListBox *)parent;
+    pawsListBox* parentBox = (pawsListBox*)parent;
 
-    if (button != csmbWheelUp && button != csmbWheelDown && button != csmbHWheelLeft && button != csmbHWheelRight)
+    if(button != csmbWheelUp && button != csmbWheelDown && button != csmbHWheelLeft && button != csmbHWheelRight)
     {
         parentBox->SendOnListAction(LISTBOX_SELECTED);
     }
     return true;
 }
 
-pawsWidget* pawsListBoxRow::GetColumn( size_t column )
+pawsWidget* pawsListBoxRow::GetColumn(size_t column)
 {
     return columns[column];
 }
 
 
-void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
+void pawsListBoxRow::AddColumn(int column, ColumnDef* def)
 {
     csString factory = def[column].widgetNode->GetAttributeValue("factory");
-    if (factory.Length() == 0)
+    if(factory.Length() == 0)
         factory = def[column].widgetNode->GetValue();
 
-    pawsWidget* widget = PawsManager::GetSingleton().CreateWidget( factory );
-    if (!widget)
+    pawsWidget* widget = PawsManager::GetSingleton().CreateWidget(factory);
+    if(!widget)
     {
-        Error3("Could not create column %d of listbox.  Factory specified was <%s>.\n",column,(const char *)factory);
+        Error3("Could not create column %d of listbox.  Factory specified was <%s>.\n",column,(const char*)factory);
         return;
     }
 
-    widget->SetParent( this );
+    widget->SetParent(this);
     //widget->Load( def[column].widgetNode );
     csRef<iDocumentSystem> xml;
     xml.AttachNew(new csTinyDocumentSystem);
@@ -1526,58 +1526,58 @@ void pawsListBoxRow::AddColumn( int column, ColumnDef* def )
 
     int borderW = 0;
     int borderH = 0;
-    if (parent->GetBorder())
+    if(parent->GetBorder())
     {
         borderW = 4;
         borderH = 4;
     }
 
     int offset = 0;
-    for ( int x = 0; x < column; x++ )
+    for(int x = 0; x < column; x++)
         offset += children[x]->GetActualWidth();
 
     // Adjust this column width by the percentage growth of this column on the screen compared to original spec in file
     float w = this->screenFrame.Width();
     w /= GetLogicalWidth(screenFrame.Width());
     int myWidth = int(def[column].width * w);
-    widget->SetRelativeFrame( offset+borderW+widget->GetDefaultFrame().xmin, borderH+widget->GetDefaultFrame().ymin,
-                              GetActualWidth(myWidth), GetActualHeight(def[column].height) );
+    widget->SetRelativeFrame(offset+borderW+widget->GetDefaultFrame().xmin, borderH+widget->GetDefaultFrame().ymin,
+                             GetActualWidth(myWidth), GetActualHeight(def[column].height));
 
-    columns.Push( widget );
-    AddChild( widget );
+    columns.Push(widget);
+    AddChild(widget);
 }
 
-void pawsListBoxRow::AddTitleColumn( int column, ColumnDef* def )
+void pawsListBoxRow::AddTitleColumn(int column, ColumnDef* def)
 {
     // create the real title widget
-    pawsTextBox *innerWidget = new pawsTextBox;
+    pawsTextBox* innerWidget = new pawsTextBox;
 
     csString name = def[column].widgetNode->GetAttributeValue("name");
     name = PawsManager::GetSingleton().Translate(name);
-    innerWidget->SetName( name );
-    innerWidget->SetText( name );
+    innerWidget->SetName(name);
+    innerWidget->SetText(name);
 
     csRef<iDocumentAttribute> atr = def[column].widgetNode->GetAttribute("visible");
-    if (atr)
+    if(atr)
     {
-        csString choice = csString( atr->GetValue() );
-        if ( choice == "no"  )
+        csString choice = csString(atr->GetValue());
+        if(choice == "no")
         {
             innerWidget->Hide();
         }
     }
 
     // create the wrapper widget
-    pawsListBoxTitle * title = new pawsListBoxTitle(dynamic_cast<pawsListBox*> (parent),
-                                                    column, innerWidget, def[column].sortable);
+    pawsListBoxTitle* title = new pawsListBoxTitle(dynamic_cast<pawsListBox*>(parent),
+            column, innerWidget, def[column].sortable);
     AddChild(title);
 
     int offset = 0;
-    for ( int x = 0; x < column; x++ )
+    for(int x = 0; x < column; x++)
         offset+=GetActualWidth(def[x].width);
 
-    title->SetRelativeFrame( offset-4, -4, GetActualWidth(def[column].width), GetActualHeight(def[column].height) );
-    innerWidget->SetRelativeFrame(4, 4, GetActualWidth(def[column].width), GetActualHeight(def[column].height) );
+    title->SetRelativeFrame(offset-4, -4, GetActualWidth(def[column].width), GetActualHeight(def[column].height));
+    innerWidget->SetRelativeFrame(4, 4, GetActualWidth(def[column].width), GetActualHeight(def[column].height));
     title->SetID(column);
 }
 
@@ -1585,7 +1585,7 @@ void pawsListBoxRow::SetHeading(bool flag)
 {
     isHeading = flag;
 
-    for (size_t i=0; i<columns.GetSize(); i++)
+    for(size_t i=0; i<columns.GetSize(); i++)
     {
         columns[i]->SetFontStyle(flag ? FONT_STYLE_BOLD : DEFAULT_FONT_STYLE);
     }
@@ -1603,13 +1603,13 @@ void pawsListBoxRow::Hide()
 
 
 
-int textBoxSortFunc(pawsWidget * widgetA, pawsWidget * widgetB)
+int textBoxSortFunc(pawsWidget* widgetA, pawsWidget* widgetB)
 {
-    pawsTextBox * textBoxA, * textBoxB;
-    const char  * textA = NULL;
-    const char  * textB = NULL;
-    textBoxA = dynamic_cast <pawsTextBox*> (widgetA);
-    textBoxB = dynamic_cast <pawsTextBox*> (widgetB);
+    pawsTextBox* textBoxA, * textBoxB;
+    const char*   textA = NULL;
+    const char*   textB = NULL;
+    textBoxA = dynamic_cast <pawsTextBox*>(widgetA);
+    textBoxB = dynamic_cast <pawsTextBox*>(widgetB);
 
     //if this happens you should consider using your own sorting function
     //or disabling sorting for this column as the column you are trying to
@@ -1620,13 +1620,13 @@ int textBoxSortFunc(pawsWidget * widgetA, pawsWidget * widgetB)
     if(textBoxA)
         textA = textBoxA->GetText();
 
-    if (textA == NULL)
+    if(textA == NULL)
         textA = "";
 
     if(textBoxB)
         textB = textBoxB->GetText();
 
-    if (textB == NULL)
+    if(textB == NULL)
         textB = "";
 
     return strcmp(textA, textB);

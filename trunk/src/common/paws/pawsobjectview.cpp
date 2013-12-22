@@ -56,7 +56,7 @@ pawsObjectView::pawsObjectView()
     mouseDownRotate = false;
 
     needsDraw = true;
-}   
+}
 
 pawsObjectView::~pawsObjectView()
 {
@@ -99,7 +99,7 @@ pawsObjectView::~pawsObjectView()
     Clear();
 }
 
-bool pawsObjectView::Setup(iDocumentNode* node )
+bool pawsObjectView::Setup(iDocumentNode* node)
 {
     rmTargets = scfQueryInterface<iRenderManagerTargets>(engine->GetRenderManager());
     if(!rmTargets.IsValid())
@@ -110,36 +110,36 @@ bool pawsObjectView::Setup(iDocumentNode* node )
 
     PawsManager::GetSingleton().AddObjectView(this);
 
-    csRef<iDocumentNode> distanceNode = node->GetNode( "distance" );
-    if ( distanceNode )
+    csRef<iDocumentNode> distanceNode = node->GetNode("distance");
+    if(distanceNode)
         distance = distanceNode->GetAttributeValueAsFloat("value");
     else
         distance = 4;
 
     origDistance = distance;
 
-    csRef<iDocumentNode> cameraModNode = node->GetNode( "cameramod" );
-    if ( cameraModNode )
+    csRef<iDocumentNode> cameraModNode = node->GetNode("cameramod");
+    if(cameraModNode)
     {
         cameraMod = csVector3(cameraModNode->GetAttributeValueAsFloat("x"),
                               cameraModNode->GetAttributeValueAsFloat("y"),
                               cameraModNode->GetAttributeValueAsFloat("z"));
     }
 
-    csRef<iDocumentNode> mapNode = node->GetNode( "map" );
-    if ( mapNode )
+    csRef<iDocumentNode> mapNode = node->GetNode("map");
+    if(mapNode)
     {
         csString mapFile = mapNode->GetAttributeValue("file");
         csString sector  = mapNode->GetAttributeValue("sector");
 
-        return LoadMap( mapFile, sector );
+        return LoadMap(mapFile, sector);
     }
     else
     {
         Error1("pawsObjectView map failed to load because the mapNode doesn't exist!");
         return false;
     }
-    
+
 }
 
 void pawsObjectView::OnResize()
@@ -154,14 +154,14 @@ void pawsObjectView::OnResize()
     pawsWidget::OnResize();
     csRef<iTextureManager> texman = PawsManager::GetSingleton().GetGraphics3D()->GetTextureManager();
     meshTarget  = texman->CreateTexture(screenFrame.Width(), screenFrame.Height(), csimg2D, "rgba8",
-                    CS_TEXTURE_2D | CS_TEXTURE_NOMIPMAPS | CS_TEXTURE_SCALE_UP);
+                                        CS_TEXTURE_2D | CS_TEXTURE_NOMIPMAPS | CS_TEXTURE_SCALE_UP);
     stageTarget = texman->CreateTexture(screenFrame.Width(), screenFrame.Height(), csimg2D, "rgba8",
-                    CS_TEXTURE_2D | CS_TEXTURE_NOMIPMAPS | CS_TEXTURE_SCALE_UP);
+                                        CS_TEXTURE_2D | CS_TEXTURE_NOMIPMAPS | CS_TEXTURE_SCALE_UP);
 
     if(meshTarget.IsValid() && stageTarget.IsValid())
     {
-        meshTarget->SetAlphaType (csAlphaMode::alphaBinary);
-        stageTarget->SetAlphaType (csAlphaMode::alphaBinary);
+        meshTarget->SetAlphaType(csAlphaMode::alphaBinary);
+        stageTarget->SetAlphaType(csAlphaMode::alphaBinary);
     }
     else
     {
@@ -201,7 +201,7 @@ void pawsObjectView::OnResize()
     needsDraw = true;
 }
 
-bool pawsObjectView::LoadMap( const char* map, const char* sector )
+bool pawsObjectView::LoadMap(const char* map, const char* sector)
 {
     csRef<iStringArray> zone;
     zone.AttachNew(new scfStringArray());
@@ -211,8 +211,8 @@ bool pawsObjectView::LoadMap( const char* map, const char* sector )
         Error2("Failed to load priority zone '%s'", map);
     }
 
-    stage = engine->FindSector( sector );
-    if (!stage)
+    stage = engine->FindSector(sector);
+    if(!stage)
     {
         Error2("couldn't find stage sector '%s'", sector);
         return false;
@@ -274,7 +274,7 @@ bool pawsObjectView::ContinueLoad(bool onlyMesh)
     }
 }
 
-bool pawsObjectView::View( const char* factName)
+bool pawsObjectView::View(const char* factName)
 {
     csRef<iThreadReturn> factory = loader->LoadFactory(factName, true);
 
@@ -295,18 +295,18 @@ bool pawsObjectView::View( const char* factName)
     return true;
 }
 
-void pawsObjectView::View( iMeshFactoryWrapper* wrapper )
+void pawsObjectView::View(iMeshFactoryWrapper* wrapper)
 {
     Clear();
 
     CS_ASSERT(wrapper);
     if(wrapper)
     {
-        mesh = engine->CreateMeshWrapper (wrapper, "PaperDoll", meshSector, csVector3(0,0,0) );
+        mesh = engine->CreateMeshWrapper(wrapper, "PaperDoll", meshSector, csVector3(0,0,0));
     }
 }
 
-void pawsObjectView::View( iMeshWrapper* wrapper )
+void pawsObjectView::View(iMeshWrapper* wrapper)
 {
     CS_ASSERT(wrapper);
     if(wrapper)
@@ -377,7 +377,7 @@ void pawsObjectView::Draw3D(iGraphics3D* /*graphics3D*/)
 
 void pawsObjectView::Draw()
 {
-    graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
+    graphics2D->SetClipRect(0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
     iGraphics3D* graphics3D = PawsManager::GetSingleton().GetGraphics3D();
     int w = screenFrame.Width();
     int h = screenFrame.Height();
@@ -385,25 +385,25 @@ void pawsObjectView::Draw()
     if(stageTarget.IsValid())
     {
         graphics3D->DrawPixmap(stageTarget,
-            screenFrame.xmin, screenFrame.ymin, w, h, 0, 0, w, h);
+                               screenFrame.xmin, screenFrame.ymin, w, h, 0, 0, w, h);
     }
 
     if(meshTarget.IsValid())
     {
         graphics3D->DrawPixmap(meshTarget,
-            screenFrame.xmin, screenFrame.ymin, w, h, 0, 0, w, h);
+                               screenFrame.xmin, screenFrame.ymin, w, h, 0, 0, w, h);
     }
     pawsWidget::Draw();
 }
 
-void pawsObjectView::LockCamera( csVector3 where, csVector3 at, bool mouseBreak, bool mouseRotate )
+void pawsObjectView::LockCamera(csVector3 where, csVector3 at, bool mouseBreak, bool mouseRotate)
 {
     cameraLocked = true;
     oldPosition = cameraPosition;
-    oldLookAt = lookingAt; 
+    oldLookAt = lookingAt;
     mouseDownUnlock = mouseBreak;
     mouseDownRotate = mouseRotate;
-    
+
     doRotate = false;
     cameraPosition = where;
     lookingAt = at;
@@ -521,7 +521,7 @@ bool pawsObjectView::OnMouseDown(int button, int /*mod*/, int x, int y)
 
     if(mouseDownRotate)
         doRotate = true;
-        
+
     spinMouse = true;
     downPos.Set(x,y);
     downTime = csGetTicks();
@@ -534,7 +534,7 @@ bool pawsObjectView::OnMouseUp(int /*button*/, int /*mod*/, int x, int y)
         return false;
 
     // 1 sec and about the same pos
-    if(csGetTicks() - downTime < 1000 && int(downPos.x / 10) == int(x/10) && int(downPos.y / 10) == int(y/10) )
+    if(csGetTicks() - downTime < 1000 && int(downPos.x / 10) == int(x/10) && int(downPos.y / 10) == int(y/10))
     {
         downTime = 0;
         // Click == stop or begin
@@ -569,7 +569,7 @@ bool pawsObjectView::OnMouseExit()
 void pawsObjectView::Clear()
 {
     // remove the mesh
-    if (mesh.IsValid())
+    if(mesh.IsValid())
     {
         engine->RemoveObject(mesh);
         mesh.Invalidate();

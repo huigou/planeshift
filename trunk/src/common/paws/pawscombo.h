@@ -33,84 +33,105 @@ class pawsListBoxRow;
  * @{ */
 
 /** A basic combo box widget.
-    This widget consists of a textbox and a drop down list box. When an 
+    This widget consists of a textbox and a drop down list box. When an
     item from the list box is selected the textbox is updated.
-    
+
     This is the format of how it is defined in a widget file:
-    
+
     \<widget name="comboBox" factory="pawsComboBox"\>
             \<!-- Size of text box with the current choice --\>
-            \<frame x="100" y="100" width="100" height="30" border="no" /\>            
-            
+            \<frame x="100" y="100" width="100" height="30" border="no" /\>
+
             \<!-- Number of list box choices with height of a choice row --\>
-            \<listbox rows="5" height="30" text="InitialText" /\>            
+            \<listbox rows="5" height="30" text="InitialText" /\>
     \</widget\>
-    
-    This class sets the listbox with the id of the combo widget so if you want 
-    to track messages from this you override the Selected( pawsListBox* widget ) 
-    funtion in your controlling widget and have a case for this widget's ID number. 
-*/    
+
+    This class sets the listbox with the id of the combo widget so if you want
+    to track messages from this you override the Selected( pawsListBox* widget )
+    funtion in your controlling widget and have a case for this widget's ID number.
+*/
 class pawsComboBox : public pawsWidget
 {
 public:
     pawsComboBox();
     ~pawsComboBox();
-    pawsComboBox(const pawsComboBox& origin);
-    
-    bool Setup( iDocumentNode* node );
+    pawsComboBox(const pawsComboBox &origin);
+
+    bool Setup(iDocumentNode* node);
     bool PostSetup();
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
-    void OnListAction( pawsListBox* widget, int status );
-    
-    void SetNumRows(int numRows)  { rows      = numRows; }
-    void SetRowHeight(int height) { rowHeight = height;  }
-    void SetUpButtonImage(const char* name) { upButton = name; }
-    void SetUpDownButtonImage(const char* name) { downButton = name; }
-    void SetUpButtonPressedImage(const char* name) { upButtonPressed = name; }
-    void SetUpDownButtonPressedImage(const char* name) { downButtonPressed = name; }
-    
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+    void OnListAction(pawsListBox* widget, int status);
+
+    void SetNumRows(int numRows)
+    {
+        rows      = numRows;
+    }
+    void SetRowHeight(int height)
+    {
+        rowHeight = height;
+    }
+    void SetUpButtonImage(const char* name)
+    {
+        upButton = name;
+    }
+    void SetUpDownButtonImage(const char* name)
+    {
+        downButton = name;
+    }
+    void SetUpButtonPressedImage(const char* name)
+    {
+        upButtonPressed = name;
+    }
+    void SetUpDownButtonPressedImage(const char* name)
+    {
+        downButtonPressed = name;
+    }
+
     ///sets if the list has to be sorted. NOTE: call before adding entries.
     void SetSorted(bool sorting);
     pawsListBoxRow* NewOption();
-    pawsListBoxRow* NewOption(const csString & text);
+    pawsListBoxRow* NewOption(const csString &text);
 
     /** @@@ Hack: please someone tell me how to do this better? */
-    pawsListBox* GetChoiceList() { return listChoice; }
-    
+    pawsListBox* GetChoiceList()
+    {
+        return listChoice;
+    }
+
     /** Returns index of selected option (-1 if none is selected */
     int GetSelectedRowNum();
-    
+
     /** Returns string of selected option */
     csString GetSelectedRowString();
-    
+
     /** Selects given option in combo */
     pawsListBoxRow* Select(int optionNum);
-    pawsListBoxRow* Select(const char * text);
-    
+    pawsListBoxRow* Select(const char* text);
+
     int GetRowCount();
     bool Clear();
-    
+
 private:
     pawsTextBox* itemChoice;
-    pawsListBox* listChoice;         
+    pawsListBox* listChoice;
     pawsButton* arrow;
     csString initalText;
-    
+
     int oldHeight;
     int oldWidth;
     bool closed;
     bool fliptotop;
     bool useScrollBar;
-    
+
     int rows;
     int rowHeight;
     int listalpha;
     bool sorted;
-    
+
     csString text, upButton, upButtonPressed, downButton, downButtonPressed;
 };
 
-CREATE_PAWS_FACTORY ( pawsComboBox );
+CREATE_PAWS_FACTORY(pawsComboBox);
 
 /** @} */
 

@@ -40,44 +40,44 @@ struct SpinBoxTimerEvent;
 
 /**
  * A combination widget that has up and down arrows and a text label.
- *   
+ *
  * This widget is defined in an XML as:
- *        
+ *
  *   \<widget name="nameHere" factory="pawsSpinBox" id="intIDNumber"\>
  *       \<!-- The size of the entire widget including text and button. --\>
- *       \<frame x="75" y="5" width="70" height="30" /\>        
- *       
+ *       \<frame x="75" y="5" width="70" height="30" /\>
+ *
  *       \<!-- The text label to use and it's position relative to the button --\>
  *       \<number default="5" min="0" max="100" inc="1" position="right"/\>
  *   \</widget\>
- *   
+ *
  * Current supported positions are left/right.
  */
-class pawsSpinBox : public pawsWidget 
+class pawsSpinBox : public pawsWidget
 {
 public:
     pawsSpinBox();
     virtual ~pawsSpinBox();
-    pawsSpinBox(const pawsSpinBox& origin);
-    
-    virtual bool Setup( iDocumentNode* node );
-    virtual bool ManualSetup( csString& value, float Min, float Max, float Inc, csString& pos );
-    virtual void SetRange (float Min, float Max, float Inc);
+    pawsSpinBox(const pawsSpinBox &origin);
+
+    virtual bool Setup(iDocumentNode* node);
+    virtual bool ManualSetup(csString &value, float Min, float Max, float Inc, csString &pos);
+    virtual void SetRange(float Min, float Max, float Inc);
 
     virtual void SetValue(float value);
     virtual float GetValue();
 
-    virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
-    virtual bool OnButtonReleased( int button, int keyModifier, pawsWidget* widget);
+    virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+    virtual bool OnButtonReleased(int button, int keyModifier, pawsWidget* widget);
 
-    virtual void OnLostFocus(); 
+    virtual void OnLostFocus();
 
-    virtual bool Perform(iTimerEvent * ev );
+    virtual bool Perform(iTimerEvent* ev);
     virtual void Spin();
-        
+
 private:
     csRef<iEventTimer>    globalTimer;
-    SpinBoxTimerEvent    *timerEvent;
+    SpinBoxTimerEvent*    timerEvent;
 
     int spinCounter;
     int spinState;
@@ -90,7 +90,7 @@ private:
     float min;
     float inc;
 };
-CREATE_PAWS_FACTORY( pawsSpinBox );
+CREATE_PAWS_FACTORY(pawsSpinBox);
 
 /** @} */
 

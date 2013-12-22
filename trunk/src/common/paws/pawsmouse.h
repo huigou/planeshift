@@ -38,7 +38,7 @@ struct iGraphics3D;
 
 /** The mouse pointer.
  */
-class pawsMouse  
+class pawsMouse
 {
 
 public:
@@ -46,26 +46,35 @@ public:
     virtual ~pawsMouse();
 
     /// Set the absolute screen position for mouse.
-    void SetPosition( int x, int y );
+    void SetPosition(int x, int y);
 
     /// Updates the position of the dragged widget if any.
     void UpdateDragPosition();
-   
-    /// Get the absolute position. 
-    psPoint GetPosition() { return currentPosition; }
+
+    /// Get the absolute position.
+    psPoint GetPosition()
+    {
+        return currentPosition;
+    }
 
     /// Get the deltas from the last call to SetPosition
-    psPoint GetDeltas()   { return deltas; }
-    
-    /** Change mouse pointer to new image. 
+    psPoint GetDeltas()
+    {
+        return deltas;
+    }
+
+    /** Change mouse pointer to new image.
      * @param imageName A resource name to use as the image.
      */
-    void ChangeImage( const char* imageName );
+    void ChangeImage(const char* imageName);
     void ChangeImage(iPawsImage* drawable);
 
     void Draw();
     void Hide(bool h = true);
-    void WantCrosshair(bool h = true) { crosshair = h; }
+    void WantCrosshair(bool h = true)
+    {
+        crosshair = h;
+    }
 
     struct ImgSize
     {
@@ -78,10 +87,10 @@ public:
         ImgSize size;
         size.width = 0;
         size.height = 0;
-        if (cursorImage)
+        if(cursorImage)
         {
-        size.height = cursorImage->GetHeight();
-        size.width = cursorImage->GetWidth();
+            size.height = cursorImage->GetHeight();
+            size.width = cursorImage->GetWidth();
         }
         return size;
     }
@@ -92,7 +101,7 @@ protected:
     csRef<iImageIO>    imageLoader;
 
     psPoint currentPosition;
-    psPoint deltas;    
+    psPoint deltas;
 
     csRef<iPawsImage> cursorImage;
     csRef<iPawsImage> crosshairImage;
@@ -112,5 +121,5 @@ protected:
 
 /** @} */
 
-#endif 
+#endif
 

@@ -40,7 +40,7 @@
 WidgetConfigWindow::WidgetConfigWindow()
 {
     SetAlwaysOnTop(true);
-    PawsManager::GetSingleton().SetCurrentFocusedWidget(this);  
+    PawsManager::GetSingleton().SetCurrentFocusedWidget(this);
     configWidget = NULL;
 }
 
@@ -50,17 +50,17 @@ WidgetConfigWindow::WidgetConfigWindow()
  */
 bool WidgetConfigWindow::OnScroll(int /*direction*/, pawsScrollBar* widget)
 {
-    if (!configWidget)
+    if(!configWidget)
         return true;
 
     psString pct;
-    if (widget == scrollBarMinAlpha)
+    if(widget == scrollBarMinAlpha)
     {
         // get current minimum alpha value from scrollbar
         float value = scrollBarMinAlpha->GetCurrentValue();
 
-        // this minimum value must be less or equal to the maximum alpha value 
-        if (value<=scrollBarMaxAlpha->GetCurrentValue())
+        // this minimum value must be less or equal to the maximum alpha value
+        if(value<=scrollBarMaxAlpha->GetCurrentValue())
         {
             // update the progress bar
             progressBarMinAlpha->SetCurrentValue(value);
@@ -72,7 +72,7 @@ bool WidgetConfigWindow::OnScroll(int /*direction*/, pawsScrollBar* widget)
             // show alpha in %
             pct.Format("%.0f%%",value/2.55f);
             textMinAlphaPct->SetText(pct);
-    
+
             currentMinAlpha = value;
         }
         else
@@ -81,30 +81,30 @@ bool WidgetConfigWindow::OnScroll(int /*direction*/, pawsScrollBar* widget)
             scrollBarMinAlpha->SetCurrentValue(scrollBarMaxAlpha->GetCurrentValue());
         }
     }
-    else if (widget == scrollBarMaxAlpha)
+    else if(widget == scrollBarMaxAlpha)
     {
         // update the scroll and progress bar for max alpha
         float value = scrollBarMaxAlpha->GetCurrentValue();
 
         // max alpha must not be less than min alpha
-        if (value>=scrollBarMinAlpha->GetCurrentValue())
+        if(value>=scrollBarMinAlpha->GetCurrentValue())
         {
             progressBarMaxAlpha->SetCurrentValue(value);
             // If we are fading, then show possible max alpha.
-            if( checkboxFade->GetState() )
+            if(checkboxFade->GetState())
                 configWidget->SetBackgroundAlpha((int)value);
 
             pct.Format("%.0f%%",value/2.55f);
             textMaxAlphaPct->SetText(pct);
 
             currentMaxAlpha = value;
-        } 
-        else    
+        }
+        else
         {
             scrollBarMaxAlpha->SetCurrentValue(scrollBarMinAlpha->GetCurrentValue());
         }
     }
-    else if (widget == scrollBarFadeSpeed)
+    else if(widget == scrollBarFadeSpeed)
     {
         // update the scroll and progress bar
         float value = scrollBarFadeSpeed->GetCurrentValue();
@@ -135,9 +135,9 @@ void WidgetConfigWindow::restoreSettings()
  */
 bool WidgetConfigWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
-    if (widget == buttonOK)
+    if(widget == buttonOK)
     {
-        // store 
+        // store
         configWidget->SetMinAlpha((int)currentMinAlpha);
         configWidget->SetMaxAlpha((int)currentMaxAlpha);
 
@@ -145,33 +145,33 @@ bool WidgetConfigWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
         //PawsManager::GetSingleton().GetMainWidget()->DeleteChild(this);
         Hide();
         return true;
-    } 
-    else if (widget == buttonCancel)
+    }
+    else if(widget == buttonCancel)
     {
         //just act like if the user closed the window.
         //it will restore the previous settings and hide the widget.
         Close();
         return true;
     }
-    else if (widget == checkboxFade)
+    else if(widget == checkboxFade)
     {
         // enables/disables fading
         configWidget->SetFade(!configWidget->isFadeEnabled());
         currentFadeStatus = configWidget->isFadeEnabled();
         checkboxFade->SetState(currentFadeStatus);
 
-        checkboxFade->SetText( currentFadeStatus ? "Enabled" : "Disabled" );
+        checkboxFade->SetText(currentFadeStatus ? "Enabled" : "Disabled");
 
         return true;
     }
-    else if (widget == checkboxFont)
+    else if(widget == checkboxFont)
     {
         // enables/disables font scaling
         configWidget->SetFontScaling(!configWidget->isScalingFont());
         currentFontStatus = configWidget->isScalingFont();
         checkboxFont->SetState(currentFontStatus);
 
-        checkboxFont->SetText( currentFontStatus ? "Enabled" : "Disabled" );
+        checkboxFont->SetText(currentFontStatus ? "Enabled" : "Disabled");
 
         return true;
     }
@@ -193,7 +193,7 @@ bool WidgetConfigWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
 /**
  *  @brief Set all initial values for the given widget.
  */
-void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
+void WidgetConfigWindow::SetConfigurableWidget(pawsWidget* configWidget)
 {
     //if it's the same widget we ignore the input we are already open with this.
     if(this->configWidget == configWidget)
@@ -218,12 +218,12 @@ void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
     title += configWidget->GetName();
     title += ")";
     this->SetTitle(title);
-    
+
     csString closeButtonName(configWidget->GetName());
     closeButtonName.Append("settings_close");
-    if ( close_widget )
-        close_widget->SetName( closeButtonName );
-    
+    if(close_widget)
+        close_widget->SetName(closeButtonName);
+
     // store old values
     oldMinAlpha = currentMinAlpha;
     oldMaxAlpha = currentMaxAlpha;
@@ -251,10 +251,10 @@ void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
     textFadeSpeedPct->SetText(pct);
 
     checkboxFade->SetState(configWidget->isFadeEnabled());
-    checkboxFade->SetText( checkboxFade->GetState() ? "Enabled" : "Disabled" );
+    checkboxFade->SetText(checkboxFade->GetState() ? "Enabled" : "Disabled");
 
     checkboxFont->SetState(configWidget->isScalingFont());
-    checkboxFont->SetText( checkboxFont->GetState() ? "Enabled" : "Disabled" );
+    checkboxFont->SetText(checkboxFont->GetState() ? "Enabled" : "Disabled");
 }
 
 
@@ -263,37 +263,37 @@ void WidgetConfigWindow::SetConfigurableWidget(pawsWidget *configWidget)
  */
 bool WidgetConfigWindow::PostSetup()
 {
-    if ((scrollBarMinAlpha   =(pawsScrollBar*  )this->FindWidget("MinAlphaScroll")) == NULL) return false;
-    if ((progressBarMinAlpha =(pawsProgressBar*)this->FindWidget("MinAlphaProgressBar")) == NULL) return false;
+    if((scrollBarMinAlpha   =(pawsScrollBar*)this->FindWidget("MinAlphaScroll")) == NULL) return false;
+    if((progressBarMinAlpha =(pawsProgressBar*)this->FindWidget("MinAlphaProgressBar")) == NULL) return false;
     scrollBarMinAlpha->SetMaxValue(255);
     scrollBarMinAlpha->SetTickValue(5);
     scrollBarMinAlpha->EnableValueLimit(true);
     progressBarMinAlpha->SetTotalValue(255);
 
-    if ((scrollBarMaxAlpha   =(pawsScrollBar*  )this->FindWidget("MaxAlphaScroll")) == NULL) return false;
-    if ((progressBarMaxAlpha =(pawsProgressBar*)this->FindWidget("MaxAlphaProgressBar")) == NULL) return false;
+    if((scrollBarMaxAlpha   =(pawsScrollBar*)this->FindWidget("MaxAlphaScroll")) == NULL) return false;
+    if((progressBarMaxAlpha =(pawsProgressBar*)this->FindWidget("MaxAlphaProgressBar")) == NULL) return false;
     scrollBarMaxAlpha->SetMaxValue(255);
     scrollBarMaxAlpha->SetTickValue(5);
     scrollBarMaxAlpha->EnableValueLimit(true);
     progressBarMaxAlpha->SetTotalValue(255);
 
-    if ((scrollBarFadeSpeed      =(pawsScrollBar*  )this->FindWidget("FadeSpeedScroll")) == NULL) return false;
-    if ((progressBarFadeSpeed =(pawsProgressBar*)this->FindWidget("FadeSpeedProgressBar")) == NULL) return false;
+    if((scrollBarFadeSpeed      =(pawsScrollBar*)this->FindWidget("FadeSpeedScroll")) == NULL) return false;
+    if((progressBarFadeSpeed =(pawsProgressBar*)this->FindWidget("FadeSpeedProgressBar")) == NULL) return false;
     scrollBarFadeSpeed->SetMaxValue(10);
     scrollBarFadeSpeed->SetTickValue(1);
     scrollBarFadeSpeed->EnableValueLimit(true);
     progressBarFadeSpeed->SetTotalValue(10);
 
-    if ((buttonOK     =(pawsButton*)this->FindWidget("OKButton")) == NULL) return false;
-    if ((buttonCancel =(pawsButton*)this->FindWidget("CancelButton")) == NULL) return false;
-    if ((buttonApply  =(pawsButton*)this->FindWidget("ApplyAllButton")) == NULL) return false;
-    if ((checkboxFade   =(pawsCheckBox*)this->FindWidget("FadeButton")) == NULL) return false;
-    if ((checkboxFont   =(pawsCheckBox*)this->FindWidget("FontButton")) == NULL) return false;
-    
-    if ((textMinAlphaPct   =(pawsTextBox*)this->FindWidget("MinAlphaCurrentPct")) == NULL) return false;
-    if ((textMaxAlphaPct   =(pawsTextBox*)this->FindWidget("MaxAlphaCurrentPct")) == NULL) return false;
-    if ((textFadeSpeedPct  =(pawsTextBox*)this->FindWidget("FadeSpeedCurrentPct")) == NULL) return false;
- 
+    if((buttonOK     =(pawsButton*)this->FindWidget("OKButton")) == NULL) return false;
+    if((buttonCancel =(pawsButton*)this->FindWidget("CancelButton")) == NULL) return false;
+    if((buttonApply  =(pawsButton*)this->FindWidget("ApplyAllButton")) == NULL) return false;
+    if((checkboxFade   =(pawsCheckBox*)this->FindWidget("FadeButton")) == NULL) return false;
+    if((checkboxFont   =(pawsCheckBox*)this->FindWidget("FontButton")) == NULL) return false;
+
+    if((textMinAlphaPct   =(pawsTextBox*)this->FindWidget("MinAlphaCurrentPct")) == NULL) return false;
+    if((textMaxAlphaPct   =(pawsTextBox*)this->FindWidget("MaxAlphaCurrentPct")) == NULL) return false;
+    if((textFadeSpeedPct  =(pawsTextBox*)this->FindWidget("FadeSpeedCurrentPct")) == NULL) return false;
+
     // place window on current mouse position
     MoveTo((int)PawsManager::GetSingleton().GetMouse()->GetPosition().x,
            (int)PawsManager::GetSingleton().GetMouse()->GetPosition().y);

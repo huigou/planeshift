@@ -47,26 +47,26 @@ pawsColorPromptWindow::pawsColorPromptWindow()
     factory = "pawsColorPromptWindow";
 }
 
-pawsColorPromptWindow::pawsColorPromptWindow(const pawsColorPromptWindow& origin)
-                        :pawsPromptWindow(origin),
-                        maxColor(origin.maxColor),
-                        minColor(origin.minColor),
-                        lastValidText(origin.lastValidText),
-                        action(0),
-                        name(origin.name),
-                        param(origin.param)
+pawsColorPromptWindow::pawsColorPromptWindow(const pawsColorPromptWindow &origin)
+    :pawsPromptWindow(origin),
+     maxColor(origin.maxColor),
+     minColor(origin.minColor),
+     lastValidText(origin.lastValidText),
+     action(0),
+     name(origin.name),
+     param(origin.param)
 {
     inputWidget = 0;
     scrollBarB = 0;
     scrollBarG = 0;
     scrollBarR = 0;
     buttonPreview = 0;
-    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.inputWidget == origin.children[i])
         {
             inputWidget = children[i];
-            pawsColorInput * ci = dynamic_cast<pawsColorInput*>(inputWidget);
+            pawsColorInput* ci = dynamic_cast<pawsColorInput*>(inputWidget);
             scrollBarB = ci->scrollBarB;
             scrollBarG = ci->scrollBarG;
             scrollBarR = ci->scrollBarR;
@@ -79,7 +79,7 @@ bool pawsColorPromptWindow::PostSetup()
 {
     pawsPromptWindow::PostSetup();
 
-    pawsColorInput * colorInput = new pawsColorInput();
+    pawsColorInput* colorInput = new pawsColorInput();
     AddChild(colorInput);
     inputWidget = colorInput;
 
@@ -92,10 +92,10 @@ bool pawsColorPromptWindow::PostSetup()
 
 bool pawsColorPromptWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
-    if (action == NULL)
+    if(action == NULL)
         return false;
 
-    if (widget == okButton)
+    if(widget == okButton)
     {
         int r, g, b, color;
         r = (int)scrollBarR->GetCurrentValue();
@@ -107,9 +107,9 @@ bool pawsColorPromptWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
         ColorWasEntered(color);
         return true;
     }
-    else if (widget == cancelButton)
+    else if(widget == cancelButton)
     {
-        if (action != NULL)
+        if(action != NULL)
         {
             action->OnColorEntered("Cancel",0,-1);
             action = NULL;
@@ -122,7 +122,7 @@ bool pawsColorPromptWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
 
 bool pawsColorPromptWindow::OnKeyDown(utf32_char /*code*/, utf32_char key, int /*modifiers*/)
 {
-    if ( key==CSKEY_ENTER )
+    if(key==CSKEY_ENTER)
     {
         int r, g, b, color;
         r = (int)scrollBarR->GetCurrentValue();
@@ -145,25 +145,25 @@ void pawsColorPromptWindow::SetBoundaries(int minColor, int maxColor)
     this->minColor = minColor;
     this->maxColor = maxColor;
 
-    if (scrollBarR != NULL)
+    if(scrollBarR != NULL)
     {
         scrollBarR->SetMinValue(minColor);
         scrollBarR->SetMaxValue(maxColor);
     }
-    if (scrollBarG != NULL)
+    if(scrollBarG != NULL)
     {
         scrollBarG->SetMinValue(minColor);
         scrollBarG->SetMaxValue(maxColor);
     }
-    if (scrollBarB != NULL)
+    if(scrollBarB != NULL)
     {
         scrollBarB->SetMinValue(minColor);
         scrollBarB->SetMaxValue(maxColor);
     }
 
-    if (label != NULL)
+    if(label != NULL)
     {
-        if (!strcmp(label->GetText(),""))
+        if(!strcmp(label->GetText(),""))
         {
             colorStr.Format("%d",maxColor);
             label->SetText("Max "+colorStr);
@@ -184,7 +184,7 @@ bool pawsColorPromptWindow::OnScroll(int /*scrollDirection*/, pawsScrollBar* /*w
 
 void pawsColorPromptWindow::ColorWasEntered(int color)
 {
-    if (action != NULL)
+    if(action != NULL)
     {
         action->OnColorEntered(name,param,color);
         action = NULL;
@@ -192,12 +192,12 @@ void pawsColorPromptWindow::ColorWasEntered(int color)
     parent->DeleteChild(this);
 }
 
-void pawsColorPromptWindow::Initialize(const csString & labelStr, int color, int minColor, int maxColor,
-                                        iOnColorEnteredAction * action,const char *name, int param)
+void pawsColorPromptWindow::Initialize(const csString &labelStr, int color, int minColor, int maxColor,
+                                       iOnColorEnteredAction* action,const char* name, int param)
 {
     SetLabel(labelStr);
 
-    if (label != NULL)
+    if(label != NULL)
         label->SetText(labelStr);
 
     SetBoundaries(minColor, maxColor);
@@ -206,7 +206,7 @@ void pawsColorPromptWindow::Initialize(const csString & labelStr, int color, int
     this->param  = param;
 
     csRef<iGraphics2D> g2d = PawsManager::GetSingleton().GetGraphics2D();
-    if (color != -1)
+    if(color != -1)
     {
         // the colorStr was used for an input text box which doesn't exist anymore.
         //csString colorStr;
@@ -227,11 +227,11 @@ void pawsColorPromptWindow::Initialize(const csString & labelStr, int color, int
 }
 
 
-pawsColorPromptWindow * pawsColorPromptWindow::Create(const csString & label,
-                                                        int color, int minColor, int maxColor,
-                                                        iOnColorEnteredAction * action,const char *name, int param)
+pawsColorPromptWindow* pawsColorPromptWindow::Create(const csString &label,
+        int color, int minColor, int maxColor,
+        iOnColorEnteredAction* action,const char* name, int param)
 {
-    pawsColorPromptWindow * w = new pawsColorPromptWindow();
+    pawsColorPromptWindow* w = new pawsColorPromptWindow();
     PawsManager::GetSingleton().GetMainWidget()->AddChild(w);
     w->PostSetup();
     w->UseBorder();
@@ -239,7 +239,7 @@ pawsColorPromptWindow * pawsColorPromptWindow::Create(const csString & label,
 
     w->SetBackground("Scaling Window Background");
     PawsManager::GetSingleton().SetCurrentFocusedWidget(w);
-        w->BringToTop(w);
+    w->BringToTop(w);
 
     w->Initialize(label, color, minColor, maxColor, action,name,param);
 

@@ -68,7 +68,7 @@ private:
     /// The resource name ( or identifier ) for this description.
     csString resourceName;
 
-    /// The default alpha value that should be used. 
+    /// The default alpha value that should be used.
     int      defaultAlphaValue;
 
     /// The default transparent colour.
@@ -85,7 +85,7 @@ public:
 
     virtual ~pawsFrameDrawable();
 
-    const char * GetName() const;
+    const char* GetName() const;
 
     void Draw(int x, int y, int alpha=-1);
     void Draw(csRect rect, int alpha=-1);
@@ -94,7 +94,10 @@ public:
     int GetWidth() const;
     int GetHeight() const;
 
-    bool IsLoaded() const { return true; }
+    bool IsLoaded() const
+    {
+        return true;
+    }
 
     void ExpandClipRect(csRect &clipRect);
 

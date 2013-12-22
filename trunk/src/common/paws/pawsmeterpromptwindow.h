@@ -1,7 +1,7 @@
 /*
  * pawsmeterpromptwindow.h, Author: Andrea Rizzi <88whacko@gmail.com>
  *
- * Copyright (C) 2001-2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2001-2011 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -129,7 +129,7 @@ public:
      * @param listener the iOnMeterEnteredListener that waits for the user's input.
      */
     void Initialize(const char* actionName, const char* title, const char* initialBeats,
-        const char* initialBeatType, size_t beatsMaxLength, iOnMeterEnteredListener* listener);
+                    const char* initialBeatType, size_t beatsMaxLength, iOnMeterEnteredListener* listener);
 
     // From pawsWidget
     //-----------------
@@ -146,7 +146,7 @@ public:
      * @return the new pawsMeterPromptWindow.
      */
     static pawsMeterPromptWindow* Create(const char* actionName, const char* initialBeats,
-        const char* initialBeatType, size_t beatsMaxLength, iOnMeterEnteredListener* listener);
+                                         const char* initialBeatType, size_t beatsMaxLength, iOnMeterEnteredListener* listener);
 
 private:
     csString actionName;                        ///< The name of the action that will be passed to the listener.

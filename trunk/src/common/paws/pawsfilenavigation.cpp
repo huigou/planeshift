@@ -23,7 +23,7 @@
  This widget provides file navigation controls similar to the file->open dialog on many applications.
 
  The widget uses an iVFS interface to navigate through the file system.
- 
+
  |-----------------------------------------------------|
  |[..] [New Directory]     | [New File]                |
  |-----------------------------------------------------|
@@ -76,8 +76,8 @@
 
 pawsFileNavigation::pawsFileNavigation()
 {
-    iObjectRegistry *object_reg = PawsManager::GetSingleton().GetObjectRegistry();
-    if (object_reg)
+    iObjectRegistry* object_reg = PawsManager::GetSingleton().GetObjectRegistry();
+    if(object_reg)
         vfs =  csQueryRegistry<iVFS> (object_reg);
 
     current_path="/";
@@ -89,27 +89,27 @@ pawsFileNavigation::pawsFileNavigation()
     factory = "pawsFileNavigation";
 }
 
-pawsFileNavigation::pawsFileNavigation(const pawsFileNavigation& origin)
-                    :pawsWidget(origin),
-                    vfs(origin.vfs),
-                    current_path(origin.current_path),
-                    fullpathandfilename(0),
-                    selection_state(origin.selection_state),
-                    action(origin.action)
+pawsFileNavigation::pawsFileNavigation(const pawsFileNavigation &origin)
+    :pawsWidget(origin),
+     vfs(origin.vfs),
+     current_path(origin.current_path),
+     fullpathandfilename(0),
+     selection_state(origin.selection_state),
+     action(origin.action)
 {
-    for (unsigned int i = 0 ; i < origin.zip_mounts.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.zip_mounts.GetSize(); i++)
         zip_mounts.Push(origin.zip_mounts[i]);
 
     dirlistbox = 0;
     filelistbox = 0;
 
-    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.children[i] == origin.dirlistbox)
-            dirlistbox = dynamic_cast<pawsListBox *>(children[i]);
+            dirlistbox = dynamic_cast<pawsListBox*>(children[i]);
         else if(origin.children[i] == origin.filelistbox)
-            filelistbox = dynamic_cast<pawsListBox *>(children[i]);
-       
+            filelistbox = dynamic_cast<pawsListBox*>(children[i]);
+
         if(filelistbox != 0 && dirlistbox != 0) break;
     }
 }
@@ -121,22 +121,22 @@ pawsFileNavigation::~pawsFileNavigation()
 
 bool pawsFileNavigation::PostSetup()
 {
-    pawsListBox *dirlistbox=(pawsListBox *)FindWidget("dirlist");
-    if (dirlistbox)
+    pawsListBox* dirlistbox=(pawsListBox*)FindWidget("dirlist");
+    if(dirlistbox)
     {
         dirlistbox->SetSortingFunc(0,textBoxSortFunc);
         dirlistbox->SetSortedColumn(0);
     }
 
-    pawsListBox *filelistbox=(pawsListBox *)FindWidget("filelist");
-    if (filelistbox)
+    pawsListBox* filelistbox=(pawsListBox*)FindWidget("filelist");
+    if(filelistbox)
     {
         filelistbox->SetSortingFunc(0,textBoxSortFunc);
         filelistbox->SetSortedColumn(0);
     }
 
-    pawsComboBox *filetypetb=(pawsComboBox *)FindWidget("filetype");
-    if (filetypetb)
+    pawsComboBox* filetypetb=(pawsComboBox*)FindWidget("filetype");
+    if(filetypetb)
     {
         filetypetb->SetFilename("test");
     }
@@ -146,34 +146,34 @@ bool pawsFileNavigation::PostSetup()
 
 bool pawsFileNavigation::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
-    if (!widget)
+    if(!widget)
         return false;
 
-    if (widget == FindWidget("uppath"))
+    if(widget == FindWidget("uppath"))
     {
-        if (UpOnePath())
+        if(UpOnePath())
             FillFileList();
     }
-    if (widget == FindWidget("windowclose") || widget == FindWidget("cancel"))
+    if(widget == FindWidget("windowclose") || widget == FindWidget("cancel"))
     {
-        if (action)
+        if(action)
         {
             delete action;
             action = NULL;
         }
-        parent->DeleteChild(this);       // destructs itself 
+        parent->DeleteChild(this);       // destructs itself
         return true;
     }
 
-    if (widget == FindWidget("perform"))
+    if(widget == FindWidget("perform"))
     {
-        if (action)
+        if(action)
         {
             action->Execute(GetFullPathFilename());
             delete action;
             action = NULL;
         }
-        parent->DeleteChild(this);       // destructs itself 
+        parent->DeleteChild(this);       // destructs itself
         return true;
     }
     return true;
@@ -190,65 +190,66 @@ bool pawsFileNavigation::FillFileList()
     csString currpathname = GetCurrentPath();
     csString filetype;
     size_t i;
-    
-    pawsComboBox *filetypetb=(pawsComboBox *)FindWidget("filetype");
-    if (filetypetb)
+
+    pawsComboBox* filetypetb=(pawsComboBox*)FindWidget("filetype");
+    if(filetypetb)
         filetype=filetypetb->GetSelectedRowString();
-    
-    if (!dirlistbox)
-        dirlistbox=(pawsListBox *)FindWidget("dirlist");
-    if (!dirlistbox)
+
+    if(!dirlistbox)
+        dirlistbox=(pawsListBox*)FindWidget("dirlist");
+    if(!dirlistbox)
         return false;
 
-    if (!filelistbox)
-        filelistbox=(pawsListBox *)FindWidget("filelist");
-    if (!filelistbox)
+    if(!filelistbox)
+        filelistbox=(pawsListBox*)FindWidget("filelist");
+    if(!filelistbox)
         return false;
 
-    if (!vfs)
+    if(!vfs)
         return false;
 
     csString ZipTestPath = currpathname;
-    while (ZipTestPath.Length()>1)
+    while(ZipTestPath.Length()>1)
     {
         csString ZipTestValue = ZipTestPath;
         csString ZipFileType;
         ZipTestPath.Truncate(ZipTestPath.FindLast('/'));
         ZipTestPath.SubString(ZipTestValue,ZipTestPath.FindLast('/')+1,ZipTestPath.Length()-ZipTestPath.FindLast('/'));
         ZipTestValue.SubString(ZipFileType,ZipTestValue.FindLast('.'),ZipTestValue.Length()-ZipTestValue.FindLast('/'));
-        if (ZipFileType.Downcase()==".zip")
+        if(ZipFileType.Downcase()==".zip")
         {
             vfs->Unmount(ZipTestPath+"/",NULL);
             csRef<iDataBuffer> xrpath = vfs->GetRealPath(ZipTestPath);
-            char * xpath=xrpath->GetData();
+            char* xpath=xrpath->GetData();
             vfs->Mount(ZipTestPath+"/",xpath);
         }
         ZipTestPath.Truncate(ZipTestPath.FindLast('/')+1);
     }
 
     size_t j=zip_mounts.GetSize();
-    for (i=0;i<j;i++)
+    for(i=0; i<j; i++)
     {
         csString checkpath = zip_mounts.Get(i);
         csString zipfile = checkpath;
         checkpath.Truncate(checkpath.FindLast('/')+1);
-        if (!currpathname.StartsWith(checkpath,false))
+        if(!currpathname.StartsWith(checkpath,false))
         {
             vfs->Unmount(zipfile,NULL);
             zip_mounts.DeleteIndex(i);
-            i--;j--;
+            i--;
+            j--;
         }
     }
 
     // Fill in the path text
-    pawsComboBox *pathcombobox=(pawsComboBox *)FindWidget("pathtext");
-    if (pathcombobox)
+    pawsComboBox* pathcombobox=(pawsComboBox*)FindWidget("pathtext");
+    if(pathcombobox)
     {
         if(pathcombobox->GetRowCount()>10)
         {
         }
-        
-        if (current_path.Length() > 60)
+
+        if(current_path.Length() > 60)
         {
             csString pathtext;
             pathtext="...";
@@ -265,108 +266,109 @@ bool pawsFileNavigation::FillFileList()
 
     csString current_path_filter = current_path;
 
-    for (int z=0;z<2;z++)
+    for(int z=0; z<2; z++)
     {
-    if (z) current_path_filter += "/" + filetype;
+        if(z) current_path_filter += "/" + filetype;
 
-    filelist=vfs->FindFiles(current_path_filter);
+        filelist=vfs->FindFiles(current_path_filter);
 
-    if (!z && current_path!="/" && current_path!="\\" && current_path.Length()>0)
-    {
-        if (strcmp(current_path.GetData(),"\\")>0)
-        {    
-            pawsListBoxRow *lbrow=dirlistbox->NewRow();
-            if (lbrow)
-            {
-                pawsTextBox *filetb=(pawsTextBox *)lbrow->GetColumn(0);
-                if (filetb)
-                    filetb->SetText("\\..");
-            }
-        }
-        if (strcmp(current_path.GetData(),"/")>0)
-        {    
-            pawsListBoxRow *lbrow=dirlistbox->NewRow();
-            if (lbrow)
-            {
-                pawsTextBox *filetb=(pawsTextBox *)lbrow->GetColumn(0);
-                if (filetb)
-                    filetb->SetText("/..");
-            }
-        }
-    }
-
-
-    for (size_t i=0; i<filelist->GetSize(); i++)
-    {
-        const char *filename=filelist->Get(i);
-        if (filename)
+        if(!z && current_path!="/" && current_path!="\\" && current_path.Length()>0)
         {
-            // Remove leading path from the filename, as VFS will add
-            if (strlen(filename) >= current_path.Length())
+            if(strcmp(current_path.GetData(),"\\")>0)
             {
-                if (!strncmp(filename,current_path.GetData(),current_path.Length()))
+                pawsListBoxRow* lbrow=dirlistbox->NewRow();
+                if(lbrow)
                 {
-                    filename+=current_path.Length();
-                    if (filename[0]==0x00)
-                        continue;
+                    pawsTextBox* filetb=(pawsTextBox*)lbrow->GetColumn(0);
+                    if(filetb)
+                        filetb->SetText("\\..");
                 }
             }
-
-            if (RelativeIsFile(filename))
+            if(strcmp(current_path.GetData(),"/")>0)
             {
-                if ((strrchr(filename,'.')>filename)&&
-                    !strcmp((char *)strrchr(filename,'.'),".zip"))
-                {    // ZIP File
-                    csString fullfilename = filelist->Get(i);
-                    csString fulldirname = fullfilename + "/";
+                pawsListBoxRow* lbrow=dirlistbox->NewRow();
+                if(lbrow)
+                {
+                    pawsTextBox* filetb=(pawsTextBox*)lbrow->GetColumn(0);
+                    if(filetb)
+                        filetb->SetText("/..");
+                }
+            }
+        }
 
-                    if (!strstr(currpathname,".zip"))
-                    if (!vfs->Exists(fulldirname))
+
+        for(size_t i=0; i<filelist->GetSize(); i++)
+        {
+            const char* filename=filelist->Get(i);
+            if(filename)
+            {
+                // Remove leading path from the filename, as VFS will add
+                if(strlen(filename) >= current_path.Length())
+                {
+                    if(!strncmp(filename,current_path.GetData(),current_path.Length()))
                     {
-                        pawsListBoxRow *lbrow=dirlistbox->NewRow();
-                        if (lbrow)
+                        filename+=current_path.Length();
+                        if(filename[0]==0x00)
+                            continue;
+                    }
+                }
+
+                if(RelativeIsFile(filename))
+                {
+                    if((strrchr(filename,'.')>filename)&&
+                            !strcmp((char*)strrchr(filename,'.'),".zip"))
+                    {
+                        // ZIP File
+                        csString fullfilename = filelist->Get(i);
+                        csString fulldirname = fullfilename + "/";
+
+                        if(!strstr(currpathname,".zip"))
+                            if(!vfs->Exists(fulldirname))
+                            {
+                                pawsListBoxRow* lbrow=dirlistbox->NewRow();
+                                if(lbrow)
+                                {
+                                    csString corrdirname = filename;
+                                    corrdirname+="/";
+                                    pawsTextBox* filetb=(pawsTextBox*)lbrow->GetColumn(0);
+                                    if(filetb)
+                                        filetb->SetText(corrdirname);
+                                    csRef<iDataBuffer> xrpath = vfs->GetRealPath(fullfilename);
+                                    char* xpath=xrpath->GetData();
+                                    vfs->Unmount(fulldirname,NULL);
+                                    vfs->Mount(fulldirname,xpath);
+                                    zip_mounts.Insert(0,fullfilename);
+                                }
+                            }
+                    }
+
+                    // FILE
+                    if(z)
+                    {
+                        pawsListBoxRow* lbrow=filelistbox->NewRow();
+                        if(lbrow)
                         {
-                            csString corrdirname = filename;
-                            corrdirname+="/";
-                            pawsTextBox *filetb=(pawsTextBox *)lbrow->GetColumn(0);
-                            if (filetb)
-                                filetb->SetText(corrdirname);
-                            csRef<iDataBuffer> xrpath = vfs->GetRealPath(fullfilename);
-                            char * xpath=xrpath->GetData();
-                            vfs->Unmount(fulldirname,NULL);
-                            vfs->Mount(fulldirname,xpath);
-                            zip_mounts.Insert(0,fullfilename);
+                            pawsTextBox* filetb=(pawsTextBox*)lbrow->GetColumn(0);
+                            if(filetb)
+                                filetb->SetText(filename);
                         }
                     }
                 }
-
-                // FILE
-                if (z)
+                else   // DIR
                 {
-                    pawsListBoxRow *lbrow=filelistbox->NewRow();
-                    if (lbrow)
+                    if(!z)
                     {
-                        pawsTextBox *filetb=(pawsTextBox *)lbrow->GetColumn(0);
-                        if (filetb)
-                            filetb->SetText(filename);
-                    }
-                }
-            }
-            else   // DIR
-            {
-                if (!z) 
-                {
-                    pawsListBoxRow *lbrow=dirlistbox->NewRow();
-                    if (lbrow)
-                    {
-                        pawsTextBox *filetb=(pawsTextBox *)lbrow->GetColumn(0);
-                        if (filetb)
-                            filetb->SetText(filename);
+                        pawsListBoxRow* lbrow=dirlistbox->NewRow();
+                        if(lbrow)
+                        {
+                            pawsTextBox* filetb=(pawsTextBox*)lbrow->GetColumn(0);
+                            if(filetb)
+                                filetb->SetText(filename);
+                        }
                     }
                 }
             }
         }
-    }
     }
 
     filelistbox->SortRows();
@@ -380,31 +382,31 @@ bool pawsFileNavigation::UpOnePath()
     int position;
     position=(int)current_path.Length()-1;
 
-    if (position<0)
+    if(position<0)
         return false;
-    if (current_path.GetAt(position) == '/' || current_path.GetAt(position) == '\\')
+    if(current_path.GetAt(position) == '/' || current_path.GetAt(position) == '\\')
         position--;
 
-    if (position<=0)
+    if(position<=0)
         return false;
 
-    while (position>0 && current_path.GetAt(position) != '/' &&  current_path.GetAt(position) != '\\')
+    while(position>0 && current_path.GetAt(position) != '/' &&  current_path.GetAt(position) != '\\')
         position--;
     // Don't trim off the trailing slash
     current_path.Truncate(position+1);
     return true;
 }
 
-bool pawsFileNavigation::DownOnePath(const char *pathstring,int pathlen)
+bool pawsFileNavigation::DownOnePath(const char* pathstring,int pathlen)
 {
-    if (pathlen<=0)
+    if(pathlen<=0)
         return false;
     size_t current_len;
 
     // Append a delimiter if needed
     current_len=current_path.Length();
-    if (current_len==0 || (current_path.GetAt(current_len-1) != '/' &&
-        current_path.GetAt(current_len-1) != '\\'))
+    if(current_len==0 || (current_path.GetAt(current_len-1) != '/' &&
+                          current_path.GetAt(current_len-1) != '\\'))
         current_path.Append("/");
 
     current_path.Append(pathstring,pathlen);
@@ -412,28 +414,28 @@ bool pawsFileNavigation::DownOnePath(const char *pathstring,int pathlen)
 }
 
 
-bool pawsFileNavigation::SmartAppendPath(const char *append)
+bool pawsFileNavigation::SmartAppendPath(const char* append)
 {
     csString previous_path=current_path;
 
-    while (append[0] != 0x00)
+    while(append[0] != 0x00)
     {
 
         // Remove preceding slashes
-        while (append[0] == '/' || append[0] == '\\')
+        while(append[0] == '/' || append[0] == '\\')
             append++;
 
         // Handle ../ in path
-        if (!strncmp(append,"..",2))
+        if(!strncmp(append,"..",2))
         {
-            if (append[2] == 0x00 || append[2] == '/' || append[2] == '\\')
+            if(append[2] == 0x00 || append[2] == '/' || append[2] == '\\')
             {
-                if (!UpOnePath())
+                if(!UpOnePath())
                 {
                     current_path=previous_path;
                     return false;
                 }
-                if (append[2] == 0x00)
+                if(append[2] == 0x00)
                     break;
                 append+=3;
                 continue;
@@ -441,7 +443,7 @@ bool pawsFileNavigation::SmartAppendPath(const char *append)
         }
 
         // Handle ./ in path
-        if (append[0] == '.' && (append[1] == '/' || append[1] == '\\'))
+        if(append[0] == '.' && (append[1] == '/' || append[1] == '\\'))
         {
             append+=2;
             continue;
@@ -449,27 +451,27 @@ bool pawsFileNavigation::SmartAppendPath(const char *append)
 
         // Find the next segment
         int segment_length=0;
-        while (append[segment_length] != 0x00 && append[segment_length] != '/' && append[segment_length] != '\\')
+        while(append[segment_length] != 0x00 && append[segment_length] != '/' && append[segment_length] != '\\')
             segment_length++;
-        if (!DownOnePath(append,segment_length))
+        if(!DownOnePath(append,segment_length))
         {
             current_path=previous_path;
             return false;
         }
         append+=segment_length;
-        if (append[0] != 0x00)
+        if(append[0] != 0x00)
             append++;
     }
 
     // Add a trailing slash if necessary
-    if (current_path.Length() == 0 || (
-        current_path.GetAt(current_path.Length()-1) != '/' &&
-        current_path.GetAt(current_path.Length()-1) != '\\'))
+    if(current_path.Length() == 0 || (
+                current_path.GetAt(current_path.Length()-1) != '/' &&
+                current_path.GetAt(current_path.Length()-1) != '\\'))
     {
         current_path.Append("/");
     }
 
-    if (!vfs->Exists(current_path))
+    if(!vfs->Exists(current_path))
     {
         current_path=previous_path;
         return false;
@@ -478,9 +480,9 @@ bool pawsFileNavigation::SmartAppendPath(const char *append)
     return true;
 }
 
-bool pawsFileNavigation::SmartSetPath(const char *path)
+bool pawsFileNavigation::SmartSetPath(const char* path)
 {
-    if (path[0] == '/' || path[0] == '\\')
+    if(path[0] == '/' || path[0] == '\\')
     {
         if(!strcmp(path,"/")||!strcmp(path,"\\"))
         {
@@ -490,7 +492,7 @@ bool pawsFileNavigation::SmartSetPath(const char *path)
 
         csString previous_path=current_path;
         current_path="";
-        if (!SmartAppendPath(path+1))
+        if(!SmartAppendPath(path+1))
         {
             current_path=previous_path;
             return false;
@@ -501,72 +503,72 @@ bool pawsFileNavigation::SmartSetPath(const char *path)
 }
 
 
-bool pawsFileNavigation::RelativeIsFile(const char *filename)
+bool pawsFileNavigation::RelativeIsFile(const char* filename)
 {
     size_t filename_len;
-    if (!filename)
+    if(!filename)
         return false;
 
     filename_len=strlen(filename);
-    if (filename[filename_len-1] == '/' ||
-        filename[filename_len-1] == '\\')
+    if(filename[filename_len-1] == '/' ||
+            filename[filename_len-1] == '\\')
         return false;
     return true;
 }
 
 
-void pawsFileNavigation::OnListAction( pawsListBox* selected, int status )
+void pawsFileNavigation::OnListAction(pawsListBox* selected, int status)
 {
-    if (!filelistbox)
-        filelistbox=(pawsListBox *)FindWidget("filelist");
+    if(!filelistbox)
+        filelistbox=(pawsListBox*)FindWidget("filelist");
 
-    if (!dirlistbox)
-        dirlistbox=(pawsListBox *)FindWidget("dirlist");
+    if(!dirlistbox)
+        dirlistbox=(pawsListBox*)FindWidget("dirlist");
 
-    if (selected==FindWidget("filetype")->FindWidget("ComboListBox"))
+    if(selected==FindWidget("filetype")->FindWidget("ComboListBox"))
     {
         FillFileList();
         return;
     }
 
-    if (selected==FindWidget("pathtext")->FindWidget("ComboListBox"))
+    if(selected==FindWidget("pathtext")->FindWidget("ComboListBox"))
     {
-        pawsComboBox * boxtb=(pawsComboBox *)FindWidget("pathtext");
+        pawsComboBox* boxtb=(pawsComboBox*)FindWidget("pathtext");
         csString pathtext = boxtb->GetSelectedRowString();
         current_path=pathtext;
         FillFileList();
         return;
     }
 
-    if (!dirlistbox || !filelistbox || (selected != dirlistbox && selected != filelistbox) )
+    if(!dirlistbox || !filelistbox || (selected != dirlistbox && selected != filelistbox))
         return;
 
-    if (status == LISTBOX_SELECTED)
+    if(status == LISTBOX_SELECTED)
     {
-        pawsListBoxRow *lbrow=selected->GetSelectedRow();
-        if (lbrow)
+        pawsListBoxRow* lbrow=selected->GetSelectedRow();
+        if(lbrow)
         {
-            pawsTextBox *filetb=(pawsTextBox *)lbrow->GetColumn(0);
-            if (filetb)
+            pawsTextBox* filetb=(pawsTextBox*)lbrow->GetColumn(0);
+            if(filetb)
             {
-                const char *filename=filetb->GetText();
-                if (filename)
+                const char* filename=filetb->GetText();
+                if(filename)
                 {
-                    if (!strcmp(filename,"\\..") || !strcmp(filename,"/.."))
+                    if(!strcmp(filename,"\\..") || !strcmp(filename,"/.."))
                     {
                         UpOnePath();
-                        FillFileList();    
+                        FillFileList();
                         return;
                     }
-                    
-                    if (RelativeIsFile(filename))
+
+                    if(RelativeIsFile(filename))
                     {
                         // Handle selected a file
                         SetSelectedFilename(filename);
                     }
                     else
                     {
-                        if (SmartAppendPath(filename))
+                        if(SmartAppendPath(filename))
                             FillFileList();
                     }
                 }
@@ -575,11 +577,11 @@ void pawsFileNavigation::OnListAction( pawsListBox* selected, int status )
     }
 }
 
-bool pawsFileNavigation::SetSelectedFilename(const char *filename)
+bool pawsFileNavigation::SetSelectedFilename(const char* filename)
 {
-    pawsEditTextBox *filenametb=(pawsEditTextBox *)FindWidget("fileedit");
+    pawsEditTextBox* filenametb=(pawsEditTextBox*)FindWidget("fileedit");
 
-    if (!filenametb)
+    if(!filenametb)
         return false;
 
     filenametb->SetText(filename);
@@ -587,11 +589,11 @@ bool pawsFileNavigation::SetSelectedFilename(const char *filename)
     return true;
 }
 
-bool pawsFileNavigation::SetFileFilters(const char *filetype)
+bool pawsFileNavigation::SetFileFilters(const char* filetype)
 {
-    pawsComboBox *filetypetb=(pawsComboBox *)FindWidget("filetype");
+    pawsComboBox* filetypetb=(pawsComboBox*)FindWidget("filetype");
 
-    if (!filetypetb)
+    if(!filetypetb)
         return false;
 
     filetypetb->Clear();
@@ -599,15 +601,15 @@ bool pawsFileNavigation::SetFileFilters(const char *filetype)
     csString Filter = filetype;
     csString FilterValue;
 
-    if (Filter.FindFirst('|') == (size_t)-1)
+    if(Filter.FindFirst('|') == (size_t)-1)
     {
         SetFilterForSelection(Filter);
-        pawsComboBox *filetypetb=(pawsComboBox *)FindWidget("filetype");
+        pawsComboBox* filetypetb=(pawsComboBox*)FindWidget("filetype");
         filetypetb->Select(Filter);
     }
     else
     {
-        while (Filter.Length() > 0)
+        while(Filter.Length() > 0)
         {
             Filter.SubString(FilterValue,Filter.FindLast('|')+1,Filter.Length()-Filter.FindLast('|'));
             SetFilterForSelection(FilterValue.Downcase());
@@ -618,11 +620,11 @@ bool pawsFileNavigation::SetFileFilters(const char *filetype)
     return true;
 }
 
-bool pawsFileNavigation::SetFilterForSelection(const char *filetype)
+bool pawsFileNavigation::SetFilterForSelection(const char* filetype)
 {
-    pawsComboBox *filetypetb=(pawsComboBox *)FindWidget("filetype");
+    pawsComboBox* filetypetb=(pawsComboBox*)FindWidget("filetype");
 
-    if (!filetypetb)
+    if(!filetypetb)
         return false;
 
     filetypetb->NewOption(filetype);
@@ -630,53 +632,53 @@ bool pawsFileNavigation::SetFilterForSelection(const char *filetype)
     return true;
 }
 
-const char *pawsFileNavigation::GetFilterForSelection()
+const char* pawsFileNavigation::GetFilterForSelection()
 {
-    const char *filetype = NULL;
-    pawsComboBox *filetypetb=(pawsComboBox *)FindWidget("filetype");
+    const char* filetype = NULL;
+    pawsComboBox* filetypetb=(pawsComboBox*)FindWidget("filetype");
 
-    if (!filetypetb)
+    if(!filetypetb)
         return NULL;
     filetype=filetypetb->GetSelectedRowString();
 
-    if (!filetype)
+    if(!filetype)
         return NULL;
 
     return filetype;
 }
 
-const char *pawsFileNavigation::GetFullPathFilename()
+const char* pawsFileNavigation::GetFullPathFilename()
 {
     size_t length;
-    const char *filename;
-    pawsEditTextBox *filenametb=(pawsEditTextBox *)FindWidget("fileedit");
+    const char* filename;
+    pawsEditTextBox* filenametb=(pawsEditTextBox*)FindWidget("fileedit");
 
-    if (!filenametb)
+    if(!filenametb)
         return NULL;
     filename=filenametb->GetText();
 
-    if (!filename)
+    if(!filename)
         return NULL;
 
     length=current_path.Length() + strlen(filename);
     delete[] fullpathandfilename;
     fullpathandfilename = new char[length+1];
 
-    if (fullpathandfilename)
+    if(fullpathandfilename)
         sprintf(fullpathandfilename,"%s%s",current_path.GetData(),filename);
     return fullpathandfilename;
 }
 
-const char *pawsFileNavigation::GetCurrentPath()
+const char* pawsFileNavigation::GetCurrentPath()
 {
     return current_path.GetData();
 }
 
-void pawsFileNavigation::SetActionButtonText(const char *actiontext)
+void pawsFileNavigation::SetActionButtonText(const char* actiontext)
 {
-    pawsButton *actionbutton=(pawsButton *)FindWidget("perform");
+    pawsButton* actionbutton=(pawsButton*)FindWidget("perform");
 
-    if (!actionbutton || !actiontext)
+    if(!actionbutton || !actiontext)
         return;
 
     actionbutton->SetText(actiontext);
@@ -699,49 +701,49 @@ void pawsFileNavigation::Show()
 
 bool pawsFileNavigation::OnKeyDown(utf32_char /*keyCode*/, utf32_char key, int /*modifiers*/)
 {
-    if (key==CSKEY_ENTER)
+    if(key==CSKEY_ENTER)
     {
-        const char *filetext;
-        pawsEditTextBox *filenametb=(pawsEditTextBox *)FindWidget("fileedit");
-        if (!filenametb)
+        const char* filetext;
+        pawsEditTextBox* filenametb=(pawsEditTextBox*)FindWidget("fileedit");
+        if(!filenametb)
             return false;
 
         filetext=filenametb->GetText();
 
-        if (!filetext || filetext[0] == 0x00)
+        if(!filetext || filetext[0] == 0x00)
             return false;
 
         // Handle the case where the text field is a path specificiation
-        if (SmartSetPath(filetext))
+        if(SmartSetPath(filetext))
         {
             FillFileList();
             filenametb->SetText("");
             return true;
         }
-        
+
         // Otherwise interpret this as an action request
-        if (action)
+        if(action)
         {
             action->Execute(GetFullPathFilename());
             delete action;
         }
         action = NULL;
-        parent->DeleteChild(this);       // destructs itself 
+        parent->DeleteChild(this);       // destructs itself
     }
     return false;
 }
 
-pawsFileNavigation * pawsFileNavigation::Create(
-            const csString & filename, const csString & filter, iOnFileSelectedAction * action, const char * xmlWidget)
+pawsFileNavigation* pawsFileNavigation::Create(
+    const csString &filename, const csString &filter, iOnFileSelectedAction* action, const char* xmlWidget)
 {
-    pawsFileNavigation * window_filenav = NULL;
-    if (PawsManager::GetSingleton().LoadWidget(xmlWidget))
+    pawsFileNavigation* window_filenav = NULL;
+    if(PawsManager::GetSingleton().LoadWidget(xmlWidget))
     {
-        window_filenav=(pawsFileNavigation *)PawsManager::GetSingleton().FindWidget("filenavigation");
-        if (window_filenav)
+        window_filenav=(pawsFileNavigation*)PawsManager::GetSingleton().FindWidget("filenavigation");
+        if(window_filenav)
         {
             window_filenav->Hide();
-            
+
             PawsManager::GetSingleton().GetMainWidget()->AddChild(window_filenav);
 
             window_filenav->SetActionButtonText("Load");
@@ -764,11 +766,11 @@ pawsFileNavigation * pawsFileNavigation::Create(
     return window_filenav;
 }
 
-void pawsFileNavigation::Initialize(const csString & filename,const csString & filter, iOnFileSelectedAction * action)
+void pawsFileNavigation::Initialize(const csString &filename,const csString &filter, iOnFileSelectedAction* action)
 {
     SetSelectedFilename(filename);
     SetFileFilters(filter);
-    
+
     this->action = action;
 
     Show();

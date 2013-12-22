@@ -29,25 +29,40 @@ class pawsProgressBar : public pawsWidget
 {
 public:
     pawsProgressBar();
-    pawsProgressBar(const pawsProgressBar& origin);
+    pawsProgressBar(const pawsProgressBar &origin);
     ~pawsProgressBar();
-    
-    float GetTotalValue() const { return totalValue; }
-    void SetTotalValue( float newValue ) { totalValue = newValue; }
-    void Completed() { complete = true; }
-    void SetCurrentValue( float newValue );
-    float GetCurrentValue( ) { return currentValue; }
+
+    float GetTotalValue() const
+    {
+        return totalValue;
+    }
+    void SetTotalValue(float newValue)
+    {
+        totalValue = newValue;
+    }
+    void Completed()
+    {
+        complete = true;
+    }
+    void SetCurrentValue(float newValue);
+    float GetCurrentValue()
+    {
+        return currentValue;
+    }
     virtual void Draw();
-    
-    static void DrawProgressBar(const csRect & rect, iGraphics3D *graphics3D, float percent,
-                                int start_r, int start_g, int start_b, 
+
+    static void DrawProgressBar(const csRect &rect, iGraphics3D* graphics3D, float percent,
+                                int start_r, int start_g, int start_b,
                                 int diff_r,  int diff_g,  int diff_b,
                                 int alpha = 255);
-    
-    bool IsDone() { return complete; }
+
+    bool IsDone()
+    {
+        return complete;
+    }
     bool Setup(iDocumentNode* node);
 
-    void OnUpdateData(const char *dataname,PAWSData& value);
+    void OnUpdateData(const char* dataname,PAWSData &value);
 
 private:
     float totalValue;
@@ -59,7 +74,7 @@ private:
     int   diff_r,diff_g,diff_b;
 };
 
-CREATE_PAWS_FACTORY( pawsProgressBar );
+CREATE_PAWS_FACTORY(pawsProgressBar);
 
 /** @} */
 

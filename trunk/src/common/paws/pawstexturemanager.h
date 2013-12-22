@@ -44,7 +44,7 @@ class pawsTextureManager;
 struct iPawsImage : public virtual iBase
 {
     SCF_INTERFACE(iPawsImage, 1, 0, 0);
-    virtual const char * GetName() const = 0;
+    virtual const char* GetName() const = 0;
 
     virtual void Draw(int x, int y, int alpha=-1) = 0;
     virtual void Draw(csRect rect, int alpha=-1) = 0;
@@ -58,10 +58,10 @@ struct iPawsImage : public virtual iBase
     virtual bool IsLoaded() const = 0;
 };
 
-class pawsTextureManager  
+class pawsTextureManager
 {
 public:
-    pawsTextureManager( iObjectRegistry* objectReg );
+    pawsTextureManager(iObjectRegistry* objectReg);
     virtual ~pawsTextureManager();
 
     /**
@@ -70,15 +70,15 @@ public:
      * The format for an image is:
      * \<image file="/this/path/to/image.png" resource="commonName"\>
      *       \<texturerect x="0" y="0" width="32" height="32" />
-     *       \<alpha level="128" /\>   
+     *       \<alpha level="128" /\>
      *       \<trans r="255" g="0" b="255" /\>
      * \</image\>
      *
      * @param listName The VFS path to the list file.
-     * 
+     *
      * @return true if the list was loaded properly.
-     */ 
-    bool LoadImageList( const char* listName );
+     */
+    bool LoadImageList(const char* listName);
 
     /**
      * Remove a description from the list.
@@ -88,18 +88,18 @@ public:
      *
      * @param name The description to remove from the list.
      */
-    void Remove( const char* name );
-    
-   csPtr<iPawsImage> GetPawsImage(const char *name);
-   csPtr<iPawsImage> GetOrAddPawsImage(const char * name);
-   bool AddImage(const char* resource);
-   void AddPawsImage(csRef<iPawsImage>& element);
-    
+    void Remove(const char* name);
+
+    csPtr<iPawsImage> GetPawsImage(const char* name);
+    csPtr<iPawsImage> GetOrAddPawsImage(const char* name);
+    bool AddImage(const char* resource);
+    void AddPawsImage(csRef<iPawsImage> &element);
+
 public:
     iObjectRegistry* objectReg;
 
     csRef<iVFS> vfs;
-    csRef<iDocumentSystem>  xml; 
+    csRef<iDocumentSystem>  xml;
 
     csHash<csRef<iPawsImage>, csString> elementList;
 };

@@ -17,7 +17,7 @@
 *
 */
 #ifndef PAWS_TAB_WINDOW
-#define PAWS_TAB_WINDOW 
+#define PAWS_TAB_WINDOW
 
 #include "pawswidget.h"
 #include "pawsbutton.h"
@@ -26,33 +26,39 @@
  * \addtogroup common_paws
  * @{ */
 
-/** 
+/**
  * This window is supposed to be a generic widget for using tabs to show and hide subwindows
  * automatically.
  */
 class pawsTabWindow : public pawsWidget
 {
 public:
-    pawsTabWindow(){factory = "pawsTabWindow";}
-    pawsTabWindow(const pawsTabWindow& origin);
+    pawsTabWindow()
+    {
+        factory = "pawsTabWindow";
+    }
+    pawsTabWindow(const pawsTabWindow &origin);
     virtual bool PostSetup();
-     
-    virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
+
+    virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
 
     void SetTab(int id);
-    void SetTab(const csString & name);
+    void SetTab(const csString &name);
 
-    pawsWidget* GetActiveTab() { return activeTab; }
-    
-    bool FlashButtonFor(pawsWidget * widget)
+    pawsWidget* GetActiveTab()
+    {
+        return activeTab;
+    }
+
+    bool FlashButtonFor(pawsWidget* widget)
     {
         if(!widget->IsVisible())
         {
-        	pawsButton* button = dynamic_cast<pawsButton*>(FindWidget(widget->GetID() - 100));
-        	if(!button)
-        		return false;
-        	button->Flash(true, FLASH_HIGHLIGHT);
-        	return true;
+            pawsButton* button = dynamic_cast<pawsButton*>(FindWidget(widget->GetID() - 100));
+            if(!button)
+                return false;
+            button->Flash(true, FLASH_HIGHLIGHT);
+            return true;
         }
         return false;
     }
@@ -63,7 +69,7 @@ protected:
 
 };
 
-CREATE_PAWS_FACTORY( pawsTabWindow );
+CREATE_PAWS_FACTORY(pawsTabWindow);
 
 /** @} */
 

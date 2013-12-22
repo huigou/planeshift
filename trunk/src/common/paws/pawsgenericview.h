@@ -51,11 +51,11 @@ class pawsGenericView : public pawsWidget
 public:
     pawsGenericView();
     ~pawsGenericView();
-    pawsGenericView(const pawsGenericView& origin);
+    pawsGenericView(const pawsGenericView &origin);
     /** Creates the room ( world ) for the mesh to be placed.
      */
-    bool Setup(iDocumentNode* node);    
-    
+    bool Setup(iDocumentNode* node);
+
     /**
      * Loads a map to use as the backdrop.
      *
@@ -63,13 +63,19 @@ public:
      * @param sector The sector to load the map into.
      * @return True if the map was loaded correctly. False otherwise.
      */
-    bool LoadMap ( const char* map, const char* sector = 0);
-    
+    bool LoadMap(const char* map, const char* sector = 0);
+
     void Draw();
 
-    iView *GetView() { return view; }
+    iView* GetView()
+    {
+        return view;
+    }
 
-    const char * GetMapName() const { return mapName; }
+    const char* GetMapName() const
+    {
+        return mapName;
+    }
 
 private:
     bool CreateArea();
@@ -85,7 +91,7 @@ private:
     csString mapName;
     bool loadedMap;
 };
-CREATE_PAWS_FACTORY( pawsGenericView );
+CREATE_PAWS_FACTORY(pawsGenericView);
 
 
 /** @} */

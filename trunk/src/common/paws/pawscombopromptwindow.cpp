@@ -40,19 +40,19 @@ pawsComboPromptWindow::pawsComboPromptWindow()
     factory = "pawsComboPromptWindow";
 }
 
-pawsComboPromptWindow::pawsComboPromptWindow(const pawsComboPromptWindow& origin)
-                        :pawsPromptWindow(origin),
-                        action(0),
-                        name(origin.name),
-                        param(origin.param)
-                        
+pawsComboPromptWindow::pawsComboPromptWindow(const pawsComboPromptWindow &origin)
+    :pawsPromptWindow(origin),
+     action(0),
+     name(origin.name),
+     param(origin.param)
+
 
 {
-    for (unsigned int i = 0 ; i< origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i< origin.children.GetSize(); i++)
     {
         if(origin.wrapper == origin.children[i])
         {
-            wrapper = dynamic_cast<ComboWrapper *>(children[i]);
+            wrapper = dynamic_cast<ComboWrapper*>(children[i]);
             if(wrapper != 0) break;
         }
     }
@@ -61,7 +61,7 @@ pawsComboPromptWindow::pawsComboPromptWindow(const pawsComboPromptWindow& origin
 bool pawsComboPromptWindow::PostSetup()
 {
     pawsPromptWindow::PostSetup();
-    
+
     wrapper = new ComboWrapper(200, 270);
     AddChild(wrapper);
     wrapper->PostSetup();
@@ -74,7 +74,7 @@ bool pawsComboPromptWindow::PostSetup()
 void pawsComboPromptWindow::Close()
 {
     Hide();
-    if (action != NULL)
+    if(action != NULL)
     {
         action->OnItemChosen(name, param, -1, "");
         action = NULL;
@@ -83,7 +83,7 @@ void pawsComboPromptWindow::Close()
     parent->DeleteChild(this);
 }
 
-void pawsComboPromptWindow::NewOption(const csString & text)
+void pawsComboPromptWindow::NewOption(const csString &text)
 {
     wrapper->combo->NewOption(text);
 }
@@ -95,20 +95,20 @@ void pawsComboPromptWindow::Select(int optionNum)
 
 bool pawsComboPromptWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
-    if (action == NULL)
+    if(action == NULL)
         return false;
 
-    if (widget == okButton)
+    if(widget == okButton)
     {
         action->OnItemChosen(name,
                              param,
-                             wrapper->combo->GetSelectedRowNum(), 
+                             wrapper->combo->GetSelectedRowNum(),
                              wrapper->combo->GetSelectedRowString());
         action = NULL;
         parent->DeleteChild(this);
         return true;
     }
-    else if (widget == cancelButton)
+    else if(widget == cancelButton)
     {
         action->OnItemChosen(name,param,-1, "");
         action = NULL;
@@ -118,10 +118,10 @@ bool pawsComboPromptWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
     return false;
 }
 
-pawsComboPromptWindow * pawsComboPromptWindow::Create(const csString & label, 
-                                                      iOnItemChosenAction * action,const char *name, int param)
+pawsComboPromptWindow* pawsComboPromptWindow::Create(const csString &label,
+        iOnItemChosenAction* action,const char* name, int param)
 {
-    pawsComboPromptWindow * c = new pawsComboPromptWindow();
+    pawsComboPromptWindow* c = new pawsComboPromptWindow();
     PawsManager::GetSingleton().GetMainWidget()->AddChild(c);
     c->PostSetup();
     c->SetAction(action,name,param);

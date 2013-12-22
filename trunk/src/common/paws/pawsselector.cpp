@@ -29,14 +29,14 @@ pawsSelectorBox::pawsSelectorBox()
     factory = "pawsSelectorBox";
 }
 
-pawsSelectorBox::pawsSelectorBox(const pawsSelectorBox& origin)
-                :pawsWidget(origin)
+pawsSelectorBox::pawsSelectorBox(const pawsSelectorBox &origin)
+    :pawsWidget(origin)
 {
     add = remove = NULL;
     available = selected = 0;
     moved = 0;
 
-    for (unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize() ; i++)
     {
         if(origin.add == origin.children[i])
             add = dynamic_cast<pawsButton*>(children[i]);
@@ -53,74 +53,74 @@ pawsSelectorBox::pawsSelectorBox(const pawsSelectorBox& origin)
 }
 
 pawsSelectorBox::~pawsSelectorBox()
-{                
+{
 
 }
 
 
 
-bool pawsSelectorBox::Setup( iDocumentNode* node )
+bool pawsSelectorBox::Setup(iDocumentNode* node)
 {
     ///////////////////////////////////////////////////////////////////////
     // Create the available list box
-    ///////////////////////////////////////////////////////////////////////          
-    csRef<iDocumentNode> availableNode = node->GetNode( "available" ); 
+    ///////////////////////////////////////////////////////////////////////
+    csRef<iDocumentNode> availableNode = node->GetNode("available");
     int width = availableNode->GetAttributeValueAsInt("width");
     int rowHeight = availableNode->GetAttributeValueAsInt("rowheight");
-    
+
     available = new pawsListBox;
-    AddChild( available );
-    
-    available->SetRelativeFrame( 0 , 0, GetActualWidth(width), defaultFrame.Height() );    
+    AddChild(available);
+
+    available->SetRelativeFrame(0 , 0, GetActualWidth(width), defaultFrame.Height());
     available->PostSetup();
-    available->Show();   
-    available->UseTitleRow( false ); 
-    available->SetID( AVAILABLE_BOX );
+    available->Show();
+    available->UseTitleRow(false);
+    available->SetID(AVAILABLE_BOX);
     //available->UseBorder();
-    
+
     csString widgetDef("<widget name=\"Text\" factory=\"pawsTextBox\" ></widget>");
-    available->SetTotalColumns( 1 );
-    available->SetColumnDef( 0, 
-                              width-20 , rowHeight,
-                              widgetDef );
-       
+    available->SetTotalColumns(1);
+    available->SetColumnDef(0,
+                            width-20 , rowHeight,
+                            widgetDef);
+
     ///////////////////////////////////////////////////////////////////////
     // Create the selected list box
-    ///////////////////////////////////////////////////////////////////////          
-    csRef<iDocumentNode> selectedNode = node->GetNode( "selected" ); 
+    ///////////////////////////////////////////////////////////////////////
+    csRef<iDocumentNode> selectedNode = node->GetNode("selected");
     width = selectedNode->GetAttributeValueAsInt("width");
     rowHeight = selectedNode->GetAttributeValueAsInt("rowheight");
-    
+
     selected = new pawsListBox;
-    AddChild( selected );
-    
-    selected->SetRelativeFrame( defaultFrame.Width()-width , 0, width, defaultFrame.Height() );    
+    AddChild(selected);
+
+    selected->SetRelativeFrame(defaultFrame.Width()-width , 0, width, defaultFrame.Height());
     selected->PostSetup();
-    selected->Show();   
-    selected->SetName( "Selected" );
-    selected->UseTitleRow( false ); 
-    selected->SetID( SELECTED_BOX );
+    selected->Show();
+    selected->SetName("Selected");
+    selected->UseTitleRow(false);
+    selected->SetID(SELECTED_BOX);
     //selected->UseBorder();
 
     csString selectedDef("<widget name=\"Text\" factory=\"pawsTextBox\" ></widget>");
-    
-    selected->SetTotalColumns( 1 );
-    selected->SetColumnDef( 0, 
-                            width-20 , rowHeight,
-                            selectedDef );
-    
+
+    selected->SetTotalColumns(1);
+    selected->SetColumnDef(0,
+                           width-20 , rowHeight,
+                           selectedDef);
+
     ///////////////////////////////////////////////////////////////////////
-    // Create the addbutton 
-    ///////////////////////////////////////////////////////////////////////          
-    csRef<iDocumentNode> addNode = node->GetNode( "addbutton" ); 
+    // Create the addbutton
+    ///////////////////////////////////////////////////////////////////////
+    csRef<iDocumentNode> addNode = node->GetNode("addbutton");
     if(addNode.IsValid())
     {
         add = new pawsButton;
-        AddChild( add );
+        AddChild(add);
 
         // Puts the button at the edge of the text box widget
-        add->SetRelativeFrame( GetActualWidth(addNode->GetAttributeValueAsInt("x")),  GetActualHeight(addNode->GetAttributeValueAsInt("y")), 16,16 );
-        
+        add->SetRelativeFrame(GetActualWidth(addNode->GetAttributeValueAsInt("x")),  GetActualHeight(addNode->GetAttributeValueAsInt("y")), 16,16);
+
         //get some replacement resources for the addbutton up/down
         csString upAddImageName = addNode->GetAttributeValue("buttonup");
         csString downAddImageName = addNode->GetAttributeValue("buttondown");
@@ -132,23 +132,23 @@ bool pawsSelectorBox::Setup( iDocumentNode* node )
         add->SetUpImage(upAddImageName);
         add->SetDownImage(downAddImageName);
 
-        add->SetID( SELECTOR_ADD_BUTTON );
-        
+        add->SetID(SELECTOR_ADD_BUTTON);
+
         add->PostSetup();
     }
-    
-     ///////////////////////////////////////////////////////////////////////
-    // Create the removebutton 
-    ///////////////////////////////////////////////////////////////////////          
-    csRef<iDocumentNode> removeNode = node->GetNode( "removebutton" ); 
+
+    ///////////////////////////////////////////////////////////////////////
+    // Create the removebutton
+    ///////////////////////////////////////////////////////////////////////
+    csRef<iDocumentNode> removeNode = node->GetNode("removebutton");
     if(removeNode.IsValid())
     {
         remove = new pawsButton;
-        AddChild( remove );
+        AddChild(remove);
 
         // Puts the button at the edge of the text box widget
-        remove->SetRelativeFrame( GetActualWidth(removeNode->GetAttributeValueAsInt("x")),  GetActualHeight(removeNode->GetAttributeValueAsInt("y")), 16,16 );
-        
+        remove->SetRelativeFrame(GetActualWidth(removeNode->GetAttributeValueAsInt("x")),  GetActualHeight(removeNode->GetAttributeValueAsInt("y")), 16,16);
+
         //get some replacement resources for the removebutton up/down
         csString upRemoveImageName = removeNode->GetAttributeValue("buttonup");
         csString downRemoveImageName = removeNode->GetAttributeValue("buttondown");
@@ -160,82 +160,82 @@ bool pawsSelectorBox::Setup( iDocumentNode* node )
         remove->SetUpImage(upRemoveImageName);
         remove->SetDownImage(downRemoveImageName);
 
-        remove->SetID( SELECTOR_REMOVE_BUTTON );
-        
+        remove->SetID(SELECTOR_REMOVE_BUTTON);
+
         remove->PostSetup();
     }
-                    
+
     return true;
 }
 
-bool pawsSelectorBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsSelectorBox::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
 {
-    switch ( widget->GetID() )
+    switch(widget->GetID())
     {
         case SELECTOR_ADD_BUTTON:
         {
             // Remove from the available list and add to the selected list
             moved = available->RemoveSelected();
-            
-            selected->AddRow( moved );
-            if ( moved != NULL )
-                return parent->OnButtonPressed( mouseButton, keyModifier, widget );
-                
+
+            selected->AddRow(moved);
+            if(moved != NULL)
+                return parent->OnButtonPressed(mouseButton, keyModifier, widget);
+
             return true;
         }
-        
+
         case SELECTOR_REMOVE_BUTTON:
         {
             // Remove from the selected list and add to the available list
-            moved = selected->RemoveSelected();            
-            available->AddRow( moved );
-            if ( moved != NULL )
-                return parent->OnButtonPressed( mouseButton, keyModifier, widget );
-                        
+            moved = selected->RemoveSelected();
+            available->AddRow(moved);
+            if(moved != NULL)
+                return parent->OnButtonPressed(mouseButton, keyModifier, widget);
+
             return true;
         }
     }
-    
+
     return false;
 }
 
 
-void pawsSelectorBox::OnListAction( pawsListBox* widget, int status )
+void pawsSelectorBox::OnListAction(pawsListBox* widget, int status)
 {
-    if (status==LISTBOX_HIGHLIGHTED)
+    if(status==LISTBOX_HIGHLIGHTED)
     {
-        switch ( widget->GetID() )
+        switch(widget->GetID())
         {
             case AVAILABLE_BOX:
             {
                 // Make sure only the Available box has an item selected.
-                selected->Select( NULL );
+                selected->Select(NULL);
                 break;
             }
-            
+
             case SELECTED_BOX:
             {
-                // Make sure only the selected box has an item selected. 
-                available->Select( NULL );
+                // Make sure only the selected box has an item selected.
+                available->Select(NULL);
                 break;
-            }        
+            }
         }
     }
-    
-    if ( parent )
-        parent->OnListAction( widget, status );    
-    
+
+    if(parent)
+        parent->OnListAction(widget, status);
+
     return;
 }
 
-void pawsSelectorBox::RemoveFromAvailable( int id )
+void pawsSelectorBox::RemoveFromAvailable(int id)
 {
-    available->Remove( id );
+    available->Remove(id);
 }
 
-void pawsSelectorBox::RemoveFromSelected( int id )
+void pawsSelectorBox::RemoveFromSelected(int id)
 {
-    selected->Remove( id );
+    selected->Remove(id);
 }
 
 int pawsSelectorBox::GetAvailableCount(void)
@@ -253,12 +253,12 @@ bool pawsSelectorBox::SelectAndMoveRow(int rowNo, bool toSelected)
     pawsListBox* sourceList = toSelected ? available : selected;
     pawsListBox* destList = toSelected ? selected : available;
 
-    if (rowNo < 0 || rowNo >= (int)sourceList->GetRowCount())
+    if(rowNo < 0 || rowNo >= (int)sourceList->GetRowCount())
         return false;
 
     // get row from row-number
     pawsListBoxRow* row = sourceList->GetRow(rowNo);
-    if (!row)
+    if(!row)
         return false;
 
     sourceList->Remove(row);

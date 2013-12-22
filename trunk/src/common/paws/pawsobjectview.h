@@ -54,53 +54,56 @@ public:
 
     /** Make a copy of this mesh to view.
      * @param wrapper  Will use the factory of this mesh to create a copy of it.
-     */    
-    void View( iMeshWrapper* wrapper );
+     */
+    void View(iMeshWrapper* wrapper);
 
     /** Use the specified mesh factory to create the mesh
      * @param wrapper  Will use this factory to create the mesh.
-     */    
-    void View( iMeshFactoryWrapper* wrapper );
-    
-    /** View a mesh. 
+     */
+    void View(iMeshFactoryWrapper* wrapper);
+
+    /** View a mesh.
      * @param factName The name of the factory to use.
      */
-    bool View( const char* factName);
-    
+    bool View(const char* factName);
+
     /** Creates the room ( world ) for the mesh to be placed.
      */
-    bool Setup(iDocumentNode* node);    
-    
+    bool Setup(iDocumentNode* node);
+
     /**
      * Loads a map to use as the backdrop.
      *
      * @param map The full path name of the map to load
      * @param sector The sector to use.
-     * 
+     *
      * @return True if the map was loaded correctly. False otherwise.
      */
-    bool LoadMap ( const char* map, const char* sector );
+    bool LoadMap(const char* map, const char* sector);
 
     /**
      * Continues an existing map load.
      */
     bool ContinueLoad(bool onlyMesh = false);
-    
+
     /** Creates a default map. Creates a simple room to place object.
-      * 
+      *
       * @return True if the simple map is created.
       */
     bool CreateMap();
-    
+
     void Clear();
-    
+
     void Draw();
     void Draw3D(iGraphics3D*);
 
     void OnResize();
 
-    iMeshWrapper* GetObject() { return mesh; }
-                                                
+    iMeshWrapper* GetObject()
+    {
+        return mesh;
+    }
+
     bool OnMouseDown(int button,int mod, int x, int y);
     bool OnMouseUp(int button,int mod, int x, int y);
     bool OnMouseExit();
@@ -108,20 +111,41 @@ public:
     void Rotate(int speed,float radians); // Starts a rotate each {SPEED} ms, taking {RADIANS} radians steps
     void Rotate(float radians); // Rotate the object "staticly"
 
-    void EnableMouseControl(bool v) { mouseControlled = v; }
+    void EnableMouseControl(bool v)
+    {
+        mouseControlled = v;
+    }
 
-    void SetCameraPosModifier(csVector3& mod) { cameraMod = mod; }
-    csVector3& GetCameraPosModifier() { return cameraMod; }
+    void SetCameraPosModifier(csVector3 &mod)
+    {
+        cameraMod = mod;
+    }
+    csVector3 &GetCameraPosModifier()
+    {
+        return cameraMod;
+    }
 
-    void LockCamera(csVector3 where, csVector3 at, bool mouseDownUnlock = false, bool mouseDownRotate = false );
+    void LockCamera(csVector3 where, csVector3 at, bool mouseDownUnlock = false, bool mouseDownRotate = false);
     void UnlockCamera();
 
     /// Assign this view an ID
-    void SetID(unsigned int id) { ID = id; }
-    unsigned int GetID() { return ID; }
+    void SetID(unsigned int id)
+    {
+        ID = id;
+    }
+    unsigned int GetID()
+    {
+        return ID;
+    }
 
-    void SetCharApp(psCharAppearance* cApp) { charApp = cApp; }
-    psCharAppearance* GetCharApp() { return charApp; }
+    void SetCharApp(psCharAppearance* cApp)
+    {
+        charApp = cApp;
+    }
+    psCharAppearance* GetCharApp()
+    {
+        return charApp;
+    }
 
 private:
     void DrawRotate();
@@ -134,10 +158,10 @@ private:
     bool mouseDownRotate;   ///< Checks to see if a left mouse will make the model rotate
     csVector3 cameraPosition;
     csVector3 lookingAt;
-    
+
     csVector3 oldPosition;  ///< The old camera position before a lock.
     csVector3 oldLookAt;     ///< The old look at position before a lock.
-        
+
     bool CreateArea();
 
     bool spinMouse;
@@ -161,7 +185,7 @@ private:
 
     csVector3 objectPos;
     csVector3 cameraMod;
-    
+
     void RotateDef(); // Used to reset to the values given by the controlling widget
     void RotateTemp(int speed,float radians); // Used to for example stop the rotate but not write the def values
 
@@ -173,10 +197,10 @@ private:
     float camRotate;
 
     unsigned int ID;
-    
+
     csRef<iThreadReturn> meshFactory;
 };
-CREATE_PAWS_FACTORY( pawsObjectView );
+CREATE_PAWS_FACTORY(pawsObjectView);
 
 
 /** @} */

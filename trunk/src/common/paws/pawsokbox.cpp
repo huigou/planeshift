@@ -40,13 +40,13 @@ pawsOkBox::pawsOkBox()
     notify = 0;
     factory = "pawsOkBox";
 }
-pawsOkBox::pawsOkBox(const pawsOkBox& origin)
-                :pawsWidget(origin),
-                text(origin.text)
+pawsOkBox::pawsOkBox(const pawsOkBox &origin)
+    :pawsWidget(origin),
+     text(origin.text)
 {
     notify = 0;
     okButton = 0;
-    for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+    for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.okButton == origin.children[i])
             okButton = origin.children[i];
@@ -58,7 +58,7 @@ pawsOkBox::~pawsOkBox()
 {
 }
 
-void pawsOkBox::SetNotify( pawsWidget* widget )
+void pawsOkBox::SetNotify(pawsWidget* widget)
 {
     notify = widget;
 }
@@ -66,27 +66,27 @@ void pawsOkBox::SetNotify( pawsWidget* widget )
 bool pawsOkBox::PostSetup()
 {
     text = (pawsMultiLineTextBox*)FindWidget("Message Box");
-    if ( !text ) 
+    if(!text)
         return false;
 
-    okButton = FindWidget("OkButton");    
+    okButton = FindWidget("OkButton");
     return true;
 }
 
 
-void pawsOkBox::SetText( const char* newtext )
-{    
-    text->SetText( newtext );
+void pawsOkBox::SetText(const char* newtext)
+{
+    text->SetText(newtext);
 }
 
 
-bool pawsOkBox::OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget )
+bool pawsOkBox::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget)
 {
-    if ( notify )
+    if(notify)
     {
-        bool result = notify->OnButtonPressed( mouseButton, keyModifier, widget );
-        SetNotify( NULL );
-        PawsManager::GetSingleton().SetModalWidget( NULL );
+        bool result = notify->OnButtonPressed(mouseButton, keyModifier, widget);
+        SetNotify(NULL);
+        PawsManager::GetSingleton().SetModalWidget(NULL);
         Hide();
         return result;
     }

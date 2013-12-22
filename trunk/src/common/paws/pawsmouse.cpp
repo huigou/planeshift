@@ -42,24 +42,24 @@
 pawsMouse::pawsMouse()
 {
     graphics3D = PawsManager::GetSingleton().GetGraphics3D();
-    vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
-    imageLoader =  csQueryRegistry<iImageIO > ( PawsManager::GetSingleton().GetObjectRegistry());
+    vfs =  csQueryRegistry<iVFS > (PawsManager::GetSingleton().GetObjectRegistry());
+    imageLoader =  csQueryRegistry<iImageIO > (PawsManager::GetSingleton().GetObjectRegistry());
 
-    currentPosition = psPoint( 0,0 );
-    deltas = psPoint( 0, 0 );
+    currentPosition = psPoint(0,0);
+    deltas = psPoint(0, 0);
     hidden = false;
     crosshair = false;
     crosshairImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage("Crosshair Mouse Pointer");
     useOS = false;
     csRef<iConfigManager> cfg =  csQueryRegistry<iConfigManager> (PawsManager::GetSingleton().GetObjectRegistry());
-    basicCursor = cfg->GetBool("PlaneShift.GUI.BasicCursor");    
+    basicCursor = cfg->GetBool("PlaneShift.GUI.BasicCursor");
 }
 
 pawsMouse::~pawsMouse()
 {
 }
 
-void pawsMouse::SetPosition( int x, int y )
+void pawsMouse::SetPosition(int x, int y)
 {
     deltas.x = x - currentPosition.x;
     deltas.y = y - currentPosition.y;
@@ -73,7 +73,7 @@ void pawsMouse::SetPosition( int x, int y )
 void pawsMouse::UpdateDragPosition()
 {
     //update the drag and drop widget if any
-    pawsWidget *widget = PawsManager::GetSingleton().GetDragDropWidget();
+    pawsWidget* widget = PawsManager::GetSingleton().GetDragDropWidget();
     if(widget)
     {
         csRect frame = widget->GetScreenFrame();
@@ -81,7 +81,7 @@ void pawsMouse::UpdateDragPosition()
     }
 }
 
-void pawsMouse::ChangeImage( const char* imageName )
+void pawsMouse::ChangeImage(const char* imageName)
 {
     if(basicCursor)
     {
@@ -90,7 +90,7 @@ void pawsMouse::ChangeImage( const char* imageName )
         return;
     }
     cursorImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(imageName);
-    if (!cursorImage.IsValid())
+    if(!cursorImage.IsValid())
     {
         Error2("Fatal error: Can't find cursor '%s'!", imageName);
         exit(1);
@@ -112,15 +112,15 @@ void pawsMouse::ChangeImage(iPawsImage* drawable)
 
 void pawsMouse::SetOSMouse(iPawsImage* drawable)
 {
-    pawsImageDrawable * pwDraw = dynamic_cast<pawsImageDrawable *>((iPawsImage *)drawable);
-    if (!pwDraw)
-      return;
+    pawsImageDrawable* pwDraw = dynamic_cast<pawsImageDrawable*>((iPawsImage*)drawable);
+    if(!pwDraw)
+        return;
 
     image = pwDraw->GetImage();
-    if (!image)
-      return;
+    if(!image)
+        return;
 
-    iGraphics2D *g2d = graphics3D->GetDriver2D();
+    iGraphics2D* g2d = graphics3D->GetDriver2D();
 
     transparentR = pwDraw->GetTransparentRed();
     transparentG = pwDraw->GetTransparentGreen();
@@ -128,25 +128,25 @@ void pawsMouse::SetOSMouse(iPawsImage* drawable)
 
     // Attempt to use image to enable OS level cursor
     csRGBcolor color(transparentR, transparentG, transparentB);
-    if (g2d->SetMouseCursor (image, &color))
+    if(g2d->SetMouseCursor(image, &color))
     {
-      if (!useOS)
-          Debug1(LOG_PAWS,0,"Using OS Cursor\n");
-      useOS = true;
-      return;
+        if(!useOS)
+            Debug1(LOG_PAWS,0,"Using OS Cursor\n");
+        useOS = true;
+        return;
     }
-    else g2d->SetMouseCursor (csmcNone);
+    else g2d->SetMouseCursor(csmcNone);
 }
 
 void pawsMouse::Draw()
 {
-    pawsWidget *widget = PawsManager::GetSingleton().GetDragDropWidget();
+    pawsWidget* widget = PawsManager::GetSingleton().GetDragDropWidget();
     if(widget)
         widget->Draw();
-    else if (!useOS && !hidden && cursorImage)
-        cursorImage->Draw(currentPosition.x , currentPosition.y );
-    if (crosshair && crosshairImage)
-        crosshairImage->Draw( graphics3D->GetDriver2D()->GetWidth() / 2, graphics3D->GetDriver2D()->GetHeight() / 2 );
+    else if(!useOS && !hidden && cursorImage)
+        cursorImage->Draw(currentPosition.x , currentPosition.y);
+    if(crosshair && crosshairImage)
+        crosshairImage->Draw(graphics3D->GetDriver2D()->GetWidth() / 2, graphics3D->GetDriver2D()->GetHeight() / 2);
 }
 
 void pawsMouse::Hide(bool h)
@@ -154,8 +154,8 @@ void pawsMouse::Hide(bool h)
     hidden = h;
     if(useOS)
     {
-        if (h)
-            graphics3D->GetDriver2D()->SetMouseCursor (csmcNone);
+        if(h)
+            graphics3D->GetDriver2D()->SetMouseCursor(csmcNone);
         else
         {
             if(basicCursor)
@@ -163,7 +163,7 @@ void pawsMouse::Hide(bool h)
             else
             {
                 csRGBcolor color(transparentR, transparentG, transparentB);
-                graphics3D->GetDriver2D()->SetMouseCursor (image, &color);
+                graphics3D->GetDriver2D()->SetMouseCursor(image, &color);
             }
         }
     }

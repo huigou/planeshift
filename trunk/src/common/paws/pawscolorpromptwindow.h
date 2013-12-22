@@ -37,8 +37,8 @@ class pawsScrollbar;
 class iOnColorEnteredAction
 {
 public:
-    virtual void OnColorEntered(const char *name,int param,int color) = 0;
-        // can be -1
+    virtual void OnColorEntered(const char* name,int param,int color) = 0;
+    // can be -1
     virtual ~iOnColorEnteredAction() {};
 };
 
@@ -79,31 +79,31 @@ public:
         AddChild(buttonPreview);
     }
 
-    pawsColorInput(const pawsColorInput & origin):pawsWidget(origin)
+    pawsColorInput(const pawsColorInput &origin):pawsWidget(origin)
     {
         buttonPreview = 0;
         scrollBarB = 0;
         scrollBarG = 0;
         scrollBarR = 0;
-        for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
+        for(unsigned int i = 0 ; i < origin.children.GetSize(); i++)
         {
             if(origin.children[i] == origin.buttonPreview)
-                buttonPreview = dynamic_cast<pawsButton *>(children[i]);
+                buttonPreview = dynamic_cast<pawsButton*>(children[i]);
             else if(origin.children[i] == origin.scrollBarB)
-                scrollBarB = dynamic_cast<pawsScrollBar *>(children[i]);
+                scrollBarB = dynamic_cast<pawsScrollBar*>(children[i]);
             else if(origin.children[i] == origin.scrollBarG)
-                scrollBarG = dynamic_cast<pawsScrollBar *>(children[i]);
+                scrollBarG = dynamic_cast<pawsScrollBar*>(children[i]);
             else if(origin.children[i] == origin.scrollBarR)
-                scrollBarR = dynamic_cast<pawsScrollBar *>(children[i]);
+                scrollBarR = dynamic_cast<pawsScrollBar*>(children[i]);
 
             if(buttonPreview != 0 && scrollBarB != 0 && scrollBarG != 0 && scrollBarR != 0) break;
         }
     }
 
-    pawsScrollBar * scrollBarR;
-    pawsScrollBar * scrollBarG;
-    pawsScrollBar * scrollBarB;
-    pawsButton * buttonPreview;
+    pawsScrollBar* scrollBarR;
+    pawsScrollBar* scrollBarG;
+    pawsScrollBar* scrollBarB;
+    pawsButton* buttonPreview;
 };
 
 CREATE_PAWS_FACTORY(pawsColorInput);
@@ -114,19 +114,19 @@ class pawsColorPromptWindow : public pawsPromptWindow
 {
 public:
     pawsColorPromptWindow();
-    pawsColorPromptWindow(const pawsColorPromptWindow& origin);
+    pawsColorPromptWindow(const pawsColorPromptWindow &origin);
     //from pawsWidget:
     virtual bool PostSetup();
-    bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
-    virtual bool OnKeyDown( utf32_char keyCode, utf32_char keyChar, int modifiers );
-    virtual bool OnScroll( int scrollDirection, pawsScrollBar* widget );
+    bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
+    virtual bool OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modifiers);
+    virtual bool OnScroll(int scrollDirection, pawsScrollBar* widget);
 
-    void Initialize(const csString & label, int color, int minColor, int maxColor,
-                    iOnColorEnteredAction * action,const char *name, int param=0);
+    void Initialize(const csString &label, int color, int minColor, int maxColor,
+                    iOnColorEnteredAction* action,const char* name, int param=0);
 
-    static pawsColorPromptWindow * Create(const csString & label,
-                                           int color, int minColor, int maxColor,
-                                           iOnColorEnteredAction * action,const char *name, int param=0);
+    static pawsColorPromptWindow* Create(const csString &label,
+                                         int color, int minColor, int maxColor,
+                                         iOnColorEnteredAction* action,const char* name, int param=0);
 
 
 protected:
@@ -142,13 +142,13 @@ protected:
     /** This is last valid input from user - we use it to fall back from invalid input */
     csString lastValidText;
 
-    pawsScrollBar * scrollBarR;
-    pawsScrollBar * scrollBarG;
-    pawsScrollBar * scrollBarB;
+    pawsScrollBar* scrollBarR;
+    pawsScrollBar* scrollBarG;
+    pawsScrollBar* scrollBarB;
 
-    pawsButton * buttonPreview;
+    pawsButton* buttonPreview;
 
-    iOnColorEnteredAction * action;
+    iOnColorEnteredAction* action;
     csString name;
     int param;
 };
