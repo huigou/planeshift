@@ -1222,6 +1222,7 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
         {
             // complain (shouldn't happen - script should've been validated against the schema)
             Error2("Unknown operation >%s< - validate against the schema!", elem.GetData());
+            delete script;
             return NULL;
         }
 
@@ -3239,6 +3240,7 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         {
             Error3("Operation >%s< failed loading in script >%s<", elem.GetData(), name);
             delete op;
+            delete script;
             return NULL;
         }
     }

@@ -3561,7 +3561,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     sourceItem->Copy(sourceItemCopy);
 
     // Handle all the different transformation types
-    psItem* newItem;
+    psItem* newItem = NULL;
     switch(transType)
     {
         case TRANSFORMTYPE_SLOT:
