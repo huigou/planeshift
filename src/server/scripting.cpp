@@ -681,7 +681,7 @@ public:
             return;
         }
         gemActor* caster = dynamic_cast<gemActor*>(var->GetObject());
-        if(!var)
+        if(!caster)
         {
             return;
         }
