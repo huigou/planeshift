@@ -450,6 +450,7 @@ psChatMessage::psChatMessage(uint32_t cnum, EID actorid, const char* person, con
     sOther    = other;
     sText     = chatMessage;
     this->translate = translate;
+    this->channelID = channelID;
 
     bool includeOther = iChatType == CHAT_ADVISOR;
     size_t sz = strlen(person) + 1 + strlen(chatMessage) + 1 + sizeof(uint8_t)*2 + sizeof(uint32_t);
