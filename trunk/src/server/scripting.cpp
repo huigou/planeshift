@@ -138,7 +138,8 @@ public:
     virtual ~AppliedOp() { }
     virtual bool Load(iDocumentNode* node) = 0;
     virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp) = 0;
-    virtual const csString GetDescription() {
+    virtual const csString GetDescription()
+    {
         return "";
     }
 };
@@ -155,7 +156,6 @@ public:
 
     bool Load(iDocumentNode* node)
     {
-        printf("DEBUG: value: %s",node->GetAttributeValue("value"));
         value = MathExpression::Create(node->GetAttributeValue("value"));
         return value != NULL;
     }
@@ -198,7 +198,22 @@ public:
 
     const csString GetDescription()
     {
-        csString descr = vital;
+        csString descr;
+        if(vital == "mana-rate")
+            descr = "Mana Rate";
+        else if(vital == "pstamina-rate")
+            descr = "Physical Stamina Rate";
+        else if(vital == "mstamina-rate")
+            descr = "Mental Stamina Rate";
+        else if(vital == "hp-max")
+            descr = "Bonus Max HP";
+        else if(vital == "mana-max")
+            descr = "Bonus Max Mana";
+        else if(vital == "pstamina-max")
+            descr = "Bonus Max Physical Stamina";
+        else if(vital == "mstamina-max")
+            descr = "Bonus Max Mental Stamina";
+
         MathEnvironment env;
         float val = value->Evaluate(&env);
         descr.AppendFmt(": %0.1f\n",val);
@@ -311,7 +326,20 @@ public:
 
     const csString GetDescription()
     {
-        csString descr = statname;
+        csString descr;
+        if(statname == "agi")
+            descr = "Agility";
+        else if(statname == "end")
+            descr = "Endurance";
+        else if(statname == "str")
+            descr = "Strength";
+        else if(statname == "cha")
+            descr = "Charisma";
+        else if(statname == "int")
+            descr = "Intelligence";
+        else if(statname == "wil")
+            descr = "Will";
+
         MathEnvironment env;
         int val = (int)value->Evaluate(&env);
         descr.AppendFmt(": %d\n",val);
@@ -423,7 +451,9 @@ public:
 
     const csString GetDescription()
     {
-        csString descr = type;
+        csString descr;
+        if(type == "atk") descr = "Attack modifier";
+        else if(type == "def") descr = "Defence modifier";
         MathEnvironment env;
         float val = value->Evaluate(&env);
         descr.AppendFmt(": %0.2f\n",val);
@@ -645,7 +675,7 @@ public:
 
     virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        MathVar *var = env->Lookup(owner);
+        MathVar* var = env->Lookup(owner);
         if(!var || var->Type() != VARTYPE_OBJ)
         {
             return;
@@ -1236,10 +1266,10 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
     return asp;
 }
 
-const csString& ApplicativeScript::GetDescription()
+const csString &ApplicativeScript::GetDescription()
 {
-    if (!description.IsEmpty())
-       return description;
+    if(!description.IsEmpty())
+        return description;
 
     csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
     while(it.HasNext())
@@ -1247,7 +1277,6 @@ const csString& ApplicativeScript::GetDescription()
         AppliedOp* op = it.Next();
         description += op->GetDescription();
     }
-    printf("ApplicativeScript::GetDescription() : %s\n",description.GetData());
 
     return description;
 }
@@ -1689,7 +1718,10 @@ class FxOp : public ImperativeOp
 {
 public:
     FxOp() : ImperativeOp(), effectScale(NULL) { }
-    virtual ~FxOp() { delete effectScale; }
+    virtual ~FxOp()
+    {
+        delete effectScale;
+    }
 
     bool Load(iDocumentNode* top)
     {
@@ -2915,7 +2947,10 @@ class TutorialMsgOp : public Imperative1
 {
 public:
     TutorialMsgOp() : Imperative1(), expr(0) { }
-    virtual ~TutorialMsgOp() { delete expr; }
+    virtual ~TutorialMsgOp()
+    {
+        delete expr;
+    }
 
     bool Load(iDocumentNode* top)
     {
