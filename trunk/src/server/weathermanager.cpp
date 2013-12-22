@@ -181,7 +181,7 @@ void WeatherManager::UpdateClient(uint32_t cnum)
         info.has_fog       = false;
         info.sector = sector->name;
 
-        if(sector->is_raining)
+        if(sector->is_raining) // If it is raining
         {
             info.has_downfall = true;
             info.downfall_is_snow = false;
@@ -189,7 +189,7 @@ void WeatherManager::UpdateClient(uint32_t cnum)
             info.downfall_drops = sector->current_rain_drops;
             info.downfall_fade = 0; // Don't fade in
         }
-        else if(sector->is_snowing)  //If it is snowing
+        else if(sector->is_snowing)  // If it is snowing
         {
             info.has_downfall = true;
             info.downfall_is_snow = true;
@@ -197,6 +197,14 @@ void WeatherManager::UpdateClient(uint32_t cnum)
             info.downfall_drops = sector->current_rain_drops;
             info.downfall_fade = 0; // Don't fade in
         }
+        else
+        {
+            // Some default vaules in case neither snowing or raining
+            info.downfall_is_snow = false;
+            info.downfall_drops = 0;
+            info.downfall_fade = 0;
+        }
+        
 
         if(sector->fog_density > 0)
         {
@@ -559,6 +567,7 @@ void WeatherManager::HandleWeatherEvent(psWeatherGameEvent* event)
 
                 psWeatherMessage::NetWeatherInfo info;
                 info.has_downfall  = false;
+                info.downfall_is_snow = false;
                 info.has_fog       = false;
                 info.has_lightning = true;
                 info.sector = event->sector;

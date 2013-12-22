@@ -1576,7 +1576,6 @@ public:
         csString sector;
         int downfall_drops; // 0 = no downfall
         int downfall_fade;
-        int downfall_density;
         int fog_density;    // 0 = no fog
         int fog_fade;
         int r,g,b;          // For fog
