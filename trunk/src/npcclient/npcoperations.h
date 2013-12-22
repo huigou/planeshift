@@ -924,7 +924,7 @@ protected:
     float        deltaHate;       ///< Added to hate if DELTA_HATE is set
 public:
 
-    HateListOperation(): ScriptOperation("HateList"), flags(0) {};
+    HateListOperation(): ScriptOperation("HateList"), flags(0),maxHate(0.0),minHate(0.0),absoluteHate(0.0),deltaHate(0.0) {};
     virtual ~HateListOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1115,7 +1115,7 @@ protected:
 
 public:
 
-    MovePathOperation(): ScriptOperation("MovePath"), path(0), anchor(0) { }
+    MovePathOperation(): ScriptOperation("MovePath"), direction(psPath::FORWARD), path(0), anchor(0) { }
     virtual ~MovePathOperation()
     {
         delete anchor;
@@ -1251,7 +1251,7 @@ protected:
     csWeakRef<MathScript> calcCondition; ///< This is the particular calculation for condition.
 public:
 
-    PerceptOperation(): ScriptOperation("Percept") {};
+    PerceptOperation(): ScriptOperation("Percept"), target(SELF), maxRange(0.0) {};
     virtual ~PerceptOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1337,7 +1337,7 @@ protected:
 
 public:
 
-    RewardOperation(): ScriptOperation("Reward") {};
+    RewardOperation(): ScriptOperation("Reward"), count(0) {};
     virtual ~RewardOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1469,7 +1469,7 @@ protected:
 
 public:
 
-    SequenceOperation(): ScriptOperation("Sequence") {};
+    SequenceOperation(): ScriptOperation("Sequence"),cmd(UNKNOWN),count(0) {};
     virtual ~SequenceOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);

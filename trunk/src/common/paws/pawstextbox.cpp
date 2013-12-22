@@ -1623,6 +1623,7 @@ pawsMultiLineTextBox::pawsMultiLineTextBox()
     scrollBar = 0;
     startLine = 0;
     canDrawLines = 0;
+    usingScrollBar = true;
     maxHeight = 0;
     maxWidth = 0;
     factory = "pawsMultiLineTextBox";
@@ -2304,9 +2305,12 @@ pawsFadingTextBox::pawsFadingTextBox()
 {
     start = 0;
     color = scolor = 0;
-    ymod = 0;
     firstFont = NULL;
     font = NULL;
+    org_color = 0;
+    ymod = 0;
+    time = 0;
+    fadetime = 0;
     factory = "pawsFadingTextBox";
 }
 pawsFadingTextBox::pawsFadingTextBox(const pawsFadingTextBox &origin):
