@@ -250,7 +250,11 @@ Exp = PracticePoints*Modifier;
 
 INSERT INTO math_scripts VALUES( "CalculateFamiliarAffinity", "Affinity = Type + Lifecycle + AttackTool + AttackType;");
 
-INSERT INTO math_scripts VALUES( "CalculateMaxPetTime", "MaxTime = 5 * 60 * 1000 * if(Skill,Skill,1);");
+INSERT INTO math_scripts VALUES( "CalculatePetDepletedLockoutTime", "DepletedLockoutTime = 10.0 * if(Skill,Skill,1);");
+INSERT INTO math_scripts VALUES( "CalculatePetDismissLockoutTime", "DismissLockoutTime = 10.0 * if(Skill,Skill,1);");
+INSERT INTO math_scripts VALUES( "CalculateMaxPetTime", "MaxTime = 5 * 60 * if(Skill,Skill,1);");
+INSERT INTO math_scripts VALUES( "CalculatePetDeathLockoutTime", "DeathLockoutTime = 10.0 * if(Skill,Skill,1);");
+INSERT INTO math_scripts VALUES( "CalculatePetTrainingLockoutTime", "TrainingLockoutTime = 10.0 * if(Skill,Skill,1);");
 INSERT INTO math_scripts VALUES( "CalculateMaxPetRange", "MaxRange = 10 + Skill*10;" );
 INSERT INTO math_scripts VALUES( "CalculatePetReact"," React = if(1+Skill>=Level,1,0);");
 

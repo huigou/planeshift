@@ -95,90 +95,77 @@ const size_t MAX_NPC_COMMANS_MESSAGE_SIZE = 15000; // bytes
  */
 class PetOwnerSession : public iDeleteObjectCallback
 {
-    EntityManager* entityManager;
 public:
     PID ownerID; ///< Character ID of the owner
     PID petID; ///< Character ID of the pet
-    bool isActive;
+
     gemActor* owner;
+    bool isActive;
+
     double elapsedTime; ///< create time
-    csString curDate;
-    csString curTime;
+    double deathLockoutTime;
+    double trainingLockoutTime;
+    double dismissLockoutTime;
+    double depletedLockoutTime;
 
-    float deathLockOutTime;
-    float trainingLockOutTime;
+    // Cached values
+    double maxTime; // Result of GetMaxPetTime updated by CheckSession
 
-
-    PetOwnerSession(EntityManager* entitymanager)
+    /**
+     * Constructor.
+     */
+    PetOwnerSession()
     {
         owner = NULL;
-        elapsedTime = 0.0f;
         isActive = false;
-        entityManager = entitymanager;
-        deathLockOutTime = 0.0f;
-        trainingLockOutTime = 0.0f;
+
+        elapsedTime = 0.0;
+        deathLockoutTime = 0.0;
+        trainingLockoutTime = 0.0;
+        dismissLockoutTime = 0.0;
+        depletedLockoutTime = 0.0;
+
+        maxTime = 0.0; // Updated by CheckSession
     };
 
+    /**
+     * Constructor.
+     */
     PetOwnerSession(gemActor* owner, psCharacter* pet)
     {
-        if(owner)
-        {
-            this->ownerID = owner->GetCharacterData()->GetPID();
-            this->owner = owner;
-            this->owner->RegisterCallback(this);
-        }
+        this->ownerID = owner->GetCharacterData()->GetPID();
+        this->petID = pet->GetPID();
 
-        if(pet)
-        {
-            this->petID = pet->GetPID();
-        }
+        this->owner = owner;
+        this->owner->RegisterCallback(this);
 
-        if(owner && pet)
-        {
-            CPrintf(CON_DEBUG, "Created PetSession (%s, %s)\n", owner->GetName(), ShowID(pet->GetPID()));
-        }
+        CPrintf(CON_DEBUG, "Created PetSession (%s, %s)\n", owner->GetName(), ShowID(pet->GetPID()));
 
-        elapsedTime = 0.0f;
         isActive = true;
 
-        deathLockOutTime = 0.0f;
-        trainingLockOutTime = 0.0f;
+        elapsedTime = pet->GetPetElapsedTime();
+        deathLockoutTime = 0.0;
+        trainingLockoutTime = 0.0;
+        dismissLockoutTime = 0.0;
+        depletedLockoutTime = 0.0;
 
-        // Get pet characterdata
-        if(pet)
-        {
-            csString last_login = pet->GetLastLoginTime();
-            if(last_login.Length() > 0)
-            {
-                curDate = last_login.Truncate(10);   // YYYY-MM-DD
-                CPrintf(CON_DEBUG,"Last Logged Date : %s\n", curDate.GetData());
-
-                pet->GetLastLoginTime().SubString(curTime, 11);
-                CPrintf(CON_DEBUG,"Last Logged time : %s\n", curTime.GetData());
-
-                int hours = 0, mins = 0, secs = 0;
-
-                hours = atoi(curTime.Slice(0, 2));     //hours
-                mins = atoi(curTime.Slice(3, 2));
-                secs = atoi(curTime.Slice(6, 2));
-
-                elapsedTime = ((((hours * 60) + mins) * 60) + secs) * 1000;
-            }
-            else
-            {
-                curDate.Clear();
-            }
-        }
-
+        maxTime = 0.0; // Updated by CheckSession
     };
 
     virtual ~PetOwnerSession()
     {
         if(owner)
+        {
             owner->UnregisterCallback(this);
+        }
     };
 
-    /// Renable Time tracking for returning players
+    /**
+     * Renable Time tracking for returning players.
+     *
+     * Reconnect happen upon summon if the client has
+     * been offline.
+     */
     void Reconnect(gemActor* owner)
     {
         if(owner)
@@ -193,7 +180,9 @@ public:
         }
     };
 
-    /// Disable time tracking for disconnected clients
+    /**
+     * Disable time tracking for disconnected clients.
+     */
     virtual void DeleteObjectCallback(iDeleteNotificationObject* object)
     {
         gemActor* sender = (gemActor*)object;
@@ -202,24 +191,48 @@ public:
         {
             if(owner)
             {
+                // Treat disconnection clients as Dismiss. This is important so that
+                // dismiss lockout time is started. That will guide if elapsed time
+                // should restart or continue when reconnecting.
+                if (isActive)
+                {
+                    Dismiss();
+                }
+
                 owner->UnregisterCallback(this);
                 owner = NULL;
             }
         }
     };
 
-    /// Update time in game for this session
+    /**
+     * Update time in game for this session.
+     *
+     * @param elapsed Number of secounds elapsed since last update.
+     */
     void UpdateElapsedTime(float elapsed)
     {
         gemActor* pet = NULL;
 
         if(owner && isActive)
         {
-            this->elapsedTime += elapsed;
+            elapsedTime += elapsed;
 
-            //Update Session status using new elpasedTime values
+            //Update Session status using new elapsedTime values
             CheckSession();
 
+            // Check if this player is riding the pet.
+            if (owner->IsMounted() && owner->GetMount()->GetPID() == petID)
+            {
+                Notify3( LOG_PETS, "Updating pet elapsed time for %s's mount to %f",owner->GetName(),elapsedTime);
+
+                // Has the mounted pet been deactivated
+                if (!isActive)
+                {
+                    EntityManager::GetSingleton().RemoveRideRelation(owner);
+                }
+            }
+            
             size_t numPets = owner->GetClient()->GetNumPets();
             // Check to make sure this pet is still summoned
             for(size_t i = 0; i < numPets; i++)
@@ -237,18 +250,9 @@ public:
 
             if(pet)
             {
-                int hour = 0, min = 0, sec = 0;
+                Notify3( LOG_PETS, "Updating pet elapsed time for %s to %f",pet->GetName(),elapsedTime);
 
-                sec = (long)(elapsedTime / 1000) % (60) ;
-                min = (long)(elapsedTime / (1000 * 60))  % (60);
-                hour = (long)(elapsedTime / (1000 * 60 * 60))  % (24);
-
-                csString strLastLogin;
-                strLastLogin.Format("%s %02d:%02d:%02d",
-                                    this->curDate.GetData(),
-                                    hour, min, sec);
-
-                pet->GetCharacterData()->SetLastLoginTime(strLastLogin, false);
+                pet->GetCharacterData()->SetPetElapsedTime(elapsedTime);
 
                 if(!isActive)    // past Session time
                 {
@@ -256,86 +260,229 @@ public:
 
                     CPrintf(CON_NOTIFY,"NPCManager Removing familiar %s from owner %s.\n",pet->GetName(),pet->GetName());
                     owner->GetClient()->SetFamiliar(NULL);
-                    entityManager->RemoveActor(pet);
+                    EntityManager::GetSingleton().RemoveActor(pet);
                     psserver->SendSystemInfo(owner->GetClientID(), "You feel your power to maintain your pet wane.");
                 }
             }
-
-            deathLockOutTime -= elapsed;
-            if(deathLockOutTime < 0.0f)
-            {
-                deathLockOutTime = 0.0f;
-            }
-
-            trainingLockOutTime -= elapsed;
-            if(trainingLockOutTime < 0.0f)
-            {
-                trainingLockOutTime = 0.0f;
-            }
-
-
+            
         }
 
+        // Decrease all lockout times
+        deathLockoutTime -= elapsed;
+        if(deathLockoutTime < 0.0f)
+        {
+            deathLockoutTime = 0.0f;
+        }
+        
+        trainingLockoutTime -= elapsed;
+        if(trainingLockoutTime < 0.0f)
+        {
+            trainingLockoutTime = 0.0f;
+        }
+        
+        if (dismissLockoutTime > 0)
+        {
+            dismissLockoutTime -= elapsed;
+            if(dismissLockoutTime < 0.0f)
+            {
+                dismissLockoutTime = 0.0f;
+                DismissLockoutCompleted();
+            }
+        }
+        
+        depletedLockoutTime -= elapsed;
+        if(depletedLockoutTime < 0.0f)
+        {
+            depletedLockoutTime = 0.0f;
+        }
     };
 
-    /// used to verify the session should still be valid
+    /**
+     * Used to verify the session should still be valid.
+     */
     bool CheckSession()
     {
-        //TODO: this needs some checking and improvement (or rewriting),
-        //      all those string scanfs doesn't seem very safe
-        double maxTime = GetMaxPetTime();
+        // Recalculate max time since that may depend on player skills.
+        maxTime = GetMaxPetTime();
 
-        time_t old;
-        time(&old);
-        tm* tm_old = localtime(&old);
-
-        int year;
-        //if the data is invalid ignore checking it and start from scratch
-        bool ignoreOldDate = (curDate.IsEmpty() || curTime.IsEmpty());
-
-        if(!ignoreOldDate)
+        if(elapsedTime >= maxTime)
         {
-            int result =  sscanf(curDate, "%d-%d-%d", &year, &tm_old->tm_mon, &tm_old->tm_mday);
-            int result2 = sscanf(curTime, "%d:%d:%d", &tm_old->tm_hour, &tm_old->tm_min, &tm_old->tm_sec);
-            if(result != 3 || result2 != 3)
+            if (owner->GetClient()->GetSecurityLevel() < GM_LEVEL_9)
             {
-                ignoreOldDate = true;
+                Notify3(LOG_PETS, "PetSession marked invalid (%s, %s)\n", owner->GetName(), ShowID(petID));
+                
+                Depleted();
+
+                return false;
             }
             else
             {
-                year = year - 1900;
-                tm_old->tm_year = year;
-                old = mktime(tm_old);
+                return true;
             }
-        }
-        time_t curr;
-        time(&curr);
-        tm* tm_curr = localtime(&curr);
-
-        if(ignoreOldDate || difftime(curr, old) >= 240*60)
-        {
-            year = tm_curr->tm_year+1900;
-            curDate.Format("%d-%d-%d", year, tm_curr->tm_mon, tm_curr->tm_mday);
-            curTime.Format("%d:%d:%d", tm_curr->tm_hour, tm_curr->tm_min, tm_curr->tm_sec);
-            elapsedTime = 0;
-        }
-
-        if(elapsedTime >= maxTime && owner->GetClient()->GetSecurityLevel() < GM_LEVEL_9)
-        {
-            CPrintf(CON_NOTIFY,"PetSession marked invalid (%s, %s)\n", owner->GetName(), ShowID(petID));
-
-            this->isActive = false;
-            return false;
         }
 
         return true;
     }
 
-    /// Uses a MathScript to calculate the maximum amount of time a Pet can remain in world.
+    /**
+     * Called when a pet has been killed.
+     *
+     * Setting death lockout time for this killed pet.
+     */
+    void HasBeenKilled()
+    {
+        deathLockoutTime = GetDeathLockoutTime();
+    }
+
+    /**
+     * The pet is in killed lockout a time periode after it has been killed.
+     */
+    bool IsInKilledLockout() const
+    {
+        return deathLockoutTime > 0.0f;
+    }
+
+    /**
+     * Called each time the pet receive some training.
+     *
+     * Start a new training lockout periode. The training lockout
+     * periode is to prevent overtraining by repeating the same
+     * operation with no delay. The pet will not be any better
+     * by that.
+     */
+    void ReceivedTraining()
+    {
+        trainingLockoutTime = GetTrainingLockoutTime();
+    }
+
+    /**
+     * The pet is in training lockout a time periode after it has received some training.
+     *
+     * The training lockout periode is to prevent overtraining by repeating the same
+     * operation with no delay. The pet will not be any better by that.
+     */
+    bool IsInTrainingLockout() const
+    {
+        return trainingLockoutTime > 0.0f;
+    }
+
+    /**
+     * Called when the pet is depleted.
+     */
+    void Depleted()
+    {
+        isActive = false;
+
+        depletedLockoutTime = GetDepletedLockoutTime();
+    }
+
+    /**
+     * The pet is in a depleted lockout for a peridode after max time has been reached.
+     */
+    bool IsInDepletedLockout() const
+    {
+        return depletedLockoutTime > 0.0f;
+    }
+
+    /**
+     * Called when the pet is dismissed.
+     */
+    void Dismiss()
+    {
+        isActive = false;
+
+        dismissLockoutTime = GetDismissLockoutTime();
+    }
+
+    bool IsInDismissLockoutTime()
+    {
+        return dismissLockoutTime > 0.0f;
+    }
+
+    void DismissLockoutCompleted()
+    {
+        Debug2(LOG_PETS, petID.Unbox(), "Dismiss lockout completed for %s", ShowID(petID));
+    }
+    
+
+    /**
+     * Called when a pet has been summoned.
+     */
+    void Summon()
+    {
+        isActive = true;
+
+        if (!IsInDismissLockoutTime())
+        {
+            elapsedTime = 0.0;
+        }
+    }
+    
+
+    /**
+     * Uses a MathScript to calculate the time/periode an depleted pet can't be summoned again.
+     */
+    double GetDepletedLockoutTime()
+    {
+        static csWeakRef<MathScript> script = NULL;
+        double lockoutTime = 10.0; // Default to 10 sec.
+
+        if(!script)
+        {
+            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePetDepletedLockoutTime");
+        }
+
+        if(script && owner)
+        {
+            MathEnvironment env;
+            env.Define("Actor", owner->GetCharacterData());
+            env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(psserver->GetNPCManager()->GetPetSkill()).Current());
+            script->Evaluate(&env);
+            MathVar* timeValue = env.Lookup("DepletedLockoutTime");
+            lockoutTime = timeValue->GetValue();
+        }
+
+        Debug3( LOG_PETS, 0, "Calculated depleted lockout time for %s to %f",owner->GetName(), lockoutTime);
+
+        return lockoutTime;
+    }
+
+
+    /**
+     * Uses a MathScript to calculate the time/periode an dismissed pet can't be summoned again.
+     */
+    double GetDismissLockoutTime()
+    {
+        static csWeakRef<MathScript> script = NULL;
+        double lockoutTime = 10.0; // Default to 10 sec.
+
+        if(!script)
+        {
+            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePetDismissLockoutTime");
+        }
+
+        if(script && owner)
+        {
+            MathEnvironment env;
+            env.Define("Actor", owner->GetCharacterData());
+            env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(psserver->GetNPCManager()->GetPetSkill()).Current());
+            script->Evaluate(&env);
+            MathVar* timeValue = env.Lookup("DismissLockoutTime");
+            lockoutTime = timeValue->GetValue();
+        }
+
+        Debug3( LOG_PETS, 0, "Calculated dismiss lockout time for %s to %f",owner->GetName(), lockoutTime);
+
+        return lockoutTime;
+    }
+
+    /**
+     * Uses a MathScript to calculate the maximum amount of time a Pet can remain in world.
+     */
     double GetMaxPetTime()
     {
         static csWeakRef<MathScript> maxPetTime = NULL;
-        double maxTime = 60 * 5 * 1000;
+        double maxTime = 5 * 60.0; // Default to 5 min in ticks.
 
         if(!maxPetTime)
         {
@@ -355,17 +502,18 @@ public:
         return maxTime;
     }
 
-    /// Uses a MathScript to calculate the time/periode an killed pet can't be summoned again.
+    /**
+     * Uses a MathScript to calculate the time/periode an killed pet can't be summoned again.
+     */
     double GetDeathLockoutTime()
     {
         static csWeakRef<MathScript> script = NULL;
-        double time = 10 * 1000.0;
+        double lockoutTime = 10.0;  // Default to 10 sec.
 
         if(!script)
         {
             psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePetDeathLockoutTime");
         }
-
 
         if(script && owner)
         {
@@ -374,23 +522,26 @@ public:
             env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(psserver->GetNPCManager()->GetPetSkill()).Current());
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("DeathLockoutTime");
-            time = timeValue->GetValue();
+            lockoutTime = timeValue->GetValue();
         }
 
-        return time;
+        Debug3( LOG_PETS, 0, "Calculated death lockout time for %s to %f",owner->GetName(), lockoutTime);
+
+        return lockoutTime;
     }
 
-    /// Uses a MathScript to calculate the time/periode an npc can't be trained after receving training.
+    /**
+     * Uses a MathScript to calculate the time/periode an npc can't be trained after receving training.
+     */
     double GetTrainingLockoutTime()
     {
         static csWeakRef<MathScript> script = NULL;
-        double time = 10 * 1000.0;
+        double lockoutTime = 10.0;  // Default to 10 sec.
 
         if(!script)
         {
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateTrainingLockoutTime");
+            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePetTrainingLockoutTime");
         }
-
 
         if(script && owner)
         {
@@ -399,33 +550,12 @@ public:
             env.Define("Skill", owner->GetCharacterData()->Skills().GetSkillRank(psserver->GetNPCManager()->GetPetSkill()).Current());
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("TrainingLockoutTime");
-            time = timeValue->GetValue();
+            lockoutTime = timeValue->GetValue();
         }
 
-        return time;
+        Debug3( LOG_PETS, 0, "Calculated training lockout time for %s to %f",owner->GetName(), lockoutTime);
+        return lockoutTime;
     }
-
-
-    void HasBeenKilled()
-    {
-        deathLockOutTime += GetDeathLockoutTime();
-    }
-
-    bool IsKilled() const
-    {
-        return deathLockOutTime > 0.0f;
-    }
-
-    void ReceivedTraining()
-    {
-        trainingLockOutTime += GetTrainingLockoutTime();
-    }
-
-    bool CanTrain() const
-    {
-        return true; //trainingLockOutTime > 0.0f;
-    }
-
 
 };
 
@@ -2108,7 +2238,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
                    WillPetReact(me->clientnum, owner, pet, typeStr, 1))
                 {
-                    // If no target, target owner
+                    // If no target than target owner
                     if(!pet->GetTarget())
                     {
                         pet->SetTarget(owner->GetActor());
@@ -2214,9 +2344,9 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
             // Instead of saying there is no familiar to command, return a more
             // useful message.
             psserver->SendSystemInfo(me->clientnum,
-                owner->GetActor()->GetMount() ?
-                    "You can't command your familiar while mounted." :
-                    "You have no summoned familiar to command.");
+                                     owner->GetActor()->GetMount() ?
+                                     "You can't command your familiar while mounted." :
+                                     "You have no summoned familiar to command.");
             return;
         }
     }
@@ -2234,13 +2364,13 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
 
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
                 {
-                    // If no target, target owner
+                    // If no target than target owner
                     if(!pet->GetTarget())
                     {
                         pet->SetTarget(owner->GetActor());
                     }
                     QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW);
-                    if(session->CanTrain())
+                    if(!session->IsInTrainingLockout())
                     {
                         owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
                         session->ReceivedTraining();
@@ -2260,7 +2390,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
                 {
                     QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_STAY);
-                    if(session->CanTrain())
+                    if(!session->IsInTrainingLockout())
                     {
                         owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
                         session->ReceivedTraining();
@@ -2307,13 +2437,13 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 }
 
                 // Check time in game for pet
-                if(session->CheckSession() == false)
+                if(session->IsInDepletedLockout())
                 {
                     psserver->SendSystemInfo(me->clientnum,"The power of the ring of familiar is currently depleted, it will take more time to summon a pet again.");
                     return;
                 }
 
-                if(session->IsKilled())
+                if(session->IsInKilledLockout())
                 {
                     if(familiarID.IsValid())
                     {
@@ -2327,8 +2457,16 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 }
 
 
+                // Check if there has been suffisient time since last summon.
+                // Will continue on the last elapsed time since dismiss lockout
+                // wasn't completed. Give a warning to the user.
+                if(session->IsInDismissLockoutTime())
                 {
-                    session->isActive = true; // re-enable time tracking on pet.
+                    psserver->SendSystemInfo(me->clientnum,"Your pet was just dismissed, but manage with an effort to return.");
+                }
+
+                {
+                    session->Summon();
 
                     iSector* targetSector;
                     csVector3 targetPoint;
@@ -2357,13 +2495,13 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     owner->SetFamiliar(pet);
                     // Send OwnerActionLogon Perception
                     pet->SetOwner(owner->GetActor());
-                    if(session->CanTrain())
+                    if(!session->IsInTrainingLockout())
                     {
                         owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
                         session->ReceivedTraining();
                     }
                     // Have the pet auto follow when summoned
-                    // If no target, target owner
+                    // If no target than target owner
                     if(!pet->GetTarget())
                     {
                         pet->SetTarget(owner->GetActor());
@@ -2422,7 +2560,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                                 stance.stance_id = words.GetInt(0);
                             }
                             QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK);
-                            if(session->CanTrain())
+                            if(!session->IsInTrainingLockout())
                             {
                                 owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
                                 session->ReceivedTraining();
@@ -2448,7 +2586,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
                 {
                     QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK);
-                    if(session->CanTrain())
+                    if(!session->IsInTrainingLockout())
                     {
                         owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
                         session->ReceivedTraining();
@@ -2625,7 +2763,7 @@ void NPCManager::DismissPet( gemNPC* pet, Client *owner )
     }
     else
     {
-        session->isActive = false;
+        session->Dismiss();
     }
 
     psserver->CharacterLoader.SaveCharacterData(pet->GetCharacterData(), pet, true);
@@ -3324,17 +3462,14 @@ void NPCManager::RemovePetOwnerSession(PetOwnerSession* session)
 
 void NPCManager::UpdatePetTime()
 {
-    PetOwnerSession* po;
+    PetOwnerSession* session;
 
     // Loop through all Sessions
     csHash< PetOwnerSession*, PID >::GlobalIterator loop(OwnerPetList.GetIterator());
     while(loop.HasNext())      // Increase Pet Time in Game by NPC_TICK_INTERVAL
     {
-        po = loop.Next();
-        if(po->isActive)
-        {
-            po->UpdateElapsedTime(NPC_TICK_INTERVAL);
-        }
+        session = loop.Next();
+        session->UpdateElapsedTime(NPC_TICK_INTERVAL/1000.0); // Convert from ticks to seconds
     }
 }
 
@@ -3554,7 +3689,7 @@ void psNPCManagerTick::Trigger()
     if(!(counter%3))
         npcmgr->UpdateWorldPositions();
 
-    npcmgr->SendAllCommands();
+    npcmgr->SendAllCommands(true); // Flag to create new tick event
     npcmgr->UpdatePetTime();
     counter++;
 
@@ -3757,3 +3892,22 @@ void NPCManager::PetHasBeenKilled(gemNPC*  pet)
 
 }
 
+void NPCManager::PetInfo(Client* client, psCharacter* pet)
+{
+    PetOwnerSession* session = OwnerPetList.Get(pet->GetPID(), NULL);
+    if(!session)
+    {
+        CPrintf(CON_NOTIFY, "Cannot locate PetSession for %s.\n", ShowID(pet->GetPID()));
+        return;
+    }
+
+    psserver->SendSystemInfo(client->GetClientNum(),
+                             "PET: active: %s elapsed: %.2f max time: %.2f Lockout's: death: %.2f training: %.2f dismiss: %.2f depleted: %.2f",
+                             session->isActive?"yes":"no",
+                             session->elapsedTime,
+                             session->maxTime,
+                             session->deathLockoutTime,
+                             session->trainingLockoutTime,
+                             session->dismissLockoutTime,
+                             session->depletedLockoutTime);
+}

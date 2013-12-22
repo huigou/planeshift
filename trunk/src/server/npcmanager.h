@@ -178,7 +178,7 @@ public:
     void DebugTribe(gemNPC* npc, Client* client, uint8_t debugLevel);
 
     /// Send all queued commands and perceptions to active superclients and reset the queues.
-    void SendAllCommands(bool createNewTick = true);
+    void SendAllCommands(bool createNewTick);
 
     /// Get the vector of active superclients, used in Multicast().
     csArray<PublishDestination>& GetSuperClients() { return superclients; }
@@ -369,6 +369,11 @@ protected:
     /// Upon notification of a killed pet this function will start a timer that prevent
     /// resummon of dead PETs.
     void PetHasBeenKilled( gemNPC*  pet );
+
+    /**
+     * Provide response for the /info commands for GMs for pets.
+     */
+    void PetInfo(Client* client, psCharacter* pet);
     
  protected:
     /// Handle network message with console commands from npcclient

@@ -129,6 +129,10 @@ psCharacter::psCharacter() : inventory(this),
     pid = 0;
     ownerId = 0;
 
+    petElapsedTime = 0.0;
+    lastSavedPetElapsedTime = 0.0;
+
+    joinNotifications = 0;
     overrideMaxHp = 0.0f;
     overrideMaxMana = 0.0f;
 
@@ -460,7 +464,9 @@ bool psCharacter::Load(iResultRow &row)
 
     vitals->SetOrigVitals(); // This saves them as loaded state for restoring later without hitting db, npc death resurrect.
 
-    lastlogintime = row["last_login"];
+    lastLoginTime = row["last_login"];
+    petElapsedTime = row.GetFloat("pet_elapsed_time");
+    lastSavedPetElapsedTime = petElapsedTime;
     progressionScriptText = row["progression_script"];
 
     // Set on-hand money.
@@ -923,39 +929,57 @@ bool psCharacter::LoadGMEvents(void)
     return true;  // cant see how this can fail, but keep convention for now.
 }
 
-void psCharacter::SetLastLoginTime(const char* last_login, bool save)
+void psCharacter::SetLastLoginTime()
 {
     csString timeStr;
 
-    if(!last_login)
-    {
-        time_t curr=time(0);
-        //TOFIX: gmtime is not thread safe, but windows uses gmtime_s() and linux gmtime_r()
-        //       so we need a wrapper function or similar
-        tm* gmtm = gmtime(&curr);
+    time_t curr=time(0);
+    tm  result;
+#ifdef WIN32        
+    tm* gmtm = &result;
+    errno_t err = gmtime_s(&result, &curr);
+#else
+    tm* gmtm = gmtime_r(&curr, &result);
+#endif
 
-        timeStr.Format("%d-%02d-%02d %02d:%02d:%02d",
-                       gmtm->tm_year+1900,
-                       gmtm->tm_mon+1,
-                       gmtm->tm_mday,
-                       gmtm->tm_hour,
-                       gmtm->tm_min,
-                       gmtm->tm_sec);
-    }
-    else
-    {
-        timeStr = last_login;
-    }
-
-    this->lastlogintime = timeStr;
+    lastLoginTime.Format("%d-%02d-%02d %02d:%02d:%02d",
+                         gmtm->tm_year+1900,
+                         gmtm->tm_mon+1,
+                         gmtm->tm_mday,
+                         gmtm->tm_hour,
+                         gmtm->tm_min,
+                         gmtm->tm_sec);
 
     if(guildinfo)
-        guildinfo->UpdateLastLogin(this);
-
-    if(save)
     {
+        guildinfo->UpdateLastLogin(this);
+    }
+
+    //Store in database
+    if(!db->CommandPump("UPDATE characters SET last_login='%s' WHERE id='%d'", lastLoginTime.GetData(), pid.Unbox()))
+    {
+        Error2("Last login storage: DB Error: %s\n", db->GetLastError());
+        return;
+    }
+}
+
+csString psCharacter::GetLastLoginTime() const
+{
+    return lastLoginTime;
+}
+
+void psCharacter::SetPetElapsedTime(double elapsedTime)
+{
+    static double saveInterval = 10.0; // Default to 10sec.
+    petElapsedTime = elapsedTime;
+
+    // If new and last saved value differ for more than saveInterval store the
+    // current value to db.
+    if (fabs(petElapsedTime - lastSavedPetElapsedTime) > saveInterval)
+    {
+        lastSavedPetElapsedTime = petElapsedTime;
         //Store in database
-        if(!db->CommandPump("UPDATE characters SET last_login='%s' WHERE id='%d'", timeStr.GetData(), pid.Unbox()))
+        if(!db->CommandPump("UPDATE characters SET pet_elapsed_time='%.2f' WHERE id='%d'", petElapsedTime, pid.Unbox()))
         {
             Error2("Last login storage: DB Error: %s\n", db->GetLastError());
             return;
@@ -963,9 +987,9 @@ void psCharacter::SetLastLoginTime(const char* last_login, bool save)
     }
 }
 
-csString psCharacter::GetLastLoginTime() const
+double psCharacter::GetPetElapsedTime() const
 {
-    return lastlogintime;
+    return petElapsedTime;
 }
 
 bool psCharacter::LoadSpells(PID use_id)

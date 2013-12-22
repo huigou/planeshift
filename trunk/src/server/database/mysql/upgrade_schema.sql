@@ -1769,6 +1769,27 @@ INSERT INTO command_group_assignment VALUES( "variables list", 30);
 INSERT INTO command_group_assignment VALUES( "variables modify", 30);
 UPDATE `server_options` SET `option_value`='1271' WHERE `option_name`='db_version';
 
+#
+# Added pet elapsed time as separate value in db.
+#
+ALTER TABLE characters
+  ADD COLUMN `pet_elapsed_time` float(10,2) NOT NULL default '0.00' AFTER `last_login`;
+UPDATE `server_options` SET `option_value`='1272' WHERE `option_name`='db_version';
+
+INSERT INTO math_scripts VALUES( "CalculatePetDepletedLockoutTime", "DepletedLockoutTime = 10.0 * if(Skill,Skill,1);");
+INSERT INTO math_scripts VALUES( "CalculatePetDismissLockoutTime", "DismissLockoutTime = 10.0 * if(Skill,Skill,1);");
+INSERT INTO math_scripts VALUES( "CalculatePetDeathLockoutTime", "DeathLockoutTime = 10.0 * if(Skill,Skill,1);");
+INSERT INTO math_scripts VALUES( "CalculatePetTrainingLockoutTime", "TrainingLockoutTime = 10.0 * if(Skill,Skill,1);");
+
+#Changed from ticks to seconds. E.g. 1000.0 1000.0 has to be removed from formula.
+INSERT INTO math_scripts VALUES( "CalculateMaxPetTime", "MaxTime = 5 * 60 * if(Skill,Skill,1);");
+
+# Commands might give dublicate entries if allready inserted manually.
+INSERT INTO command_group_assignment VALUES( "/scale", 30 );
+INSERT INTO command_group_assignment VALUES( "/scale", 25 );
+INSERT INTO command_group_assignment VALUES( "/scale", 24 );
+INSERT INTO command_group_assignment VALUES( "/scale", 23 );
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
