@@ -303,20 +303,20 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
         return;
 
     // get the template for the chat type
+    BubbleChatType mixType;
     const BubbleChatType* type = 0;
     type = GetTemplate(chatMsg.iChatType);
 
     if (!type)
         return;
 		
-	if (!(type->enabled))
-		return;
+    if (!(type->enabled))
+        return;
 
     //We don't want /me or /my messages in the chat box, change them to something nice
     if (chatMsg.sText.StartsWith("/me") || chatMsg.sText.StartsWith("/my"))
     {
         const BubbleChatType* subType = 0;
-        BubbleChatType mixType;
         if(chatMsg.sText.StartsWith("/my")) //we have to add an 's
         {
             size_t len = firstName.Length() - 1;
@@ -357,7 +357,9 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
             type = &mixType; //put our mixed type in place of the type for use later
         }
         else //if we don't mix colours just get the settings for me/my directly
+        {
             type = subType;
+        }
     }
 
     // build the text rows
