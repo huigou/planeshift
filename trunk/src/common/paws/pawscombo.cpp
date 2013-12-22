@@ -28,17 +28,12 @@
 
 #define SHOW_LIST 100
 
-pawsComboBox::pawsComboBox()
+pawsComboBox::pawsComboBox():
+    itemChoice(NULL),listChoice(NULL),arrow(NULL),
+    oldHeight(0),oldWidth(0),closed(true),fliptotop(false),
+    useScrollBar(true),rows(0),rowHeight(0),listalpha(0),sorted(true)
 {
-    oldHeight = 0;
-    oldWidth = 0;
-    closed = true;  
-    fliptotop = false;
-    listChoice = NULL;
     factory = "pawsComboBox";
-    
-    rows = 0;
-    rowHeight = 0;
     
     upButton = "Up Arrow";
     downButton = "Down Arrow";
@@ -48,6 +43,9 @@ pawsComboBox::pawsComboBox()
 
 pawsComboBox::pawsComboBox(const pawsComboBox& origin)
                 :pawsWidget(origin),
+                itemChoice(NULL),
+                listChoice(NULL),
+                arrow(NULL),
                 initalText(origin.initalText),
                 oldHeight(origin.oldHeight),
                 oldWidth(origin.oldWidth),
@@ -64,9 +62,6 @@ pawsComboBox::pawsComboBox(const pawsComboBox& origin)
                 downButton(origin.downButton),
                 downButtonPressed(origin.downButtonPressed)
 {
-    arrow = 0;
-    itemChoice = 0;
-    listChoice = 0;
     for (unsigned int i = 0 ; i < origin.children.GetSize(); i++)
     {
         if(origin.children[i] == origin.arrow)
