@@ -1790,6 +1790,15 @@ INSERT INTO command_group_assignment VALUES( "/scale", 25 );
 INSERT INTO command_group_assignment VALUES( "/scale", 24 );
 INSERT INTO command_group_assignment VALUES( "/scale", 23 );
 
+#Lockpicking scripts
+INSERT INTO math_scripts VALUES( "Calculate Lockpicking Experience",
+"
+ResultPractice = 1;
+ResultModifier = 1;
+");
+
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
