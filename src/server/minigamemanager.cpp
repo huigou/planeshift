@@ -286,14 +286,7 @@ void MiniGameManager::RemovePlayerFromSessions(psMiniGameSession* session, Clien
         // if session is personal, delete it.
         if(!session->IsSessionPublic())
         {
-            if(session->GameSessionActive())
-            {
-                Error1("Cannot remove personal minigame session as there are still participants."); // should never happen
-            }
-            else
-            {
-                sessions.Delete(session);
-            }
+            sessions.Delete(session);
         }
     }
 }
@@ -680,6 +673,7 @@ void psMiniGameSession::AddPlayer(Client* client)
 
             playerCount++;
             playerIsAPlayer = true;
+            delete newmsg;
             break;
         }
         colour++;
@@ -738,6 +732,7 @@ void psMiniGameSession::RemovePlayer(Client* client)
             p->playerName = NULL;
             playerCount--;
             playerRemoved = true;
+            delete newmsg;
 
             break;
         }
@@ -941,11 +936,18 @@ void psMiniGameSession::Update(Client* client, psMGUpdateMessage &msg)
 
         if(winningPiece == WHITE_PIECE || winningPiece == BLACK_PIECE)
         {
+            // cycle on all players
             pIter.Reset();
             while(pIter.HasNext())
             {
                 MinigamePlayer* p = pIter.Next();
-                if(p && ((p->blackOrWhite == WHITE_PLAYER && winningPiece == WHITE_PIECE) ||
+                // if it's a one player puzzle
+                if(minigameStyle == MG_PUZZLE) {
+                    winningPlayer = p;
+                    break;
+                }
+                // if it's a multiplayer game
+                else if(p && ((p->blackOrWhite == WHITE_PLAYER && winningPiece == WHITE_PIECE) ||
                          (p->blackOrWhite == BLACK_PLAYER && winningPiece == BLACK_PIECE)))
                 {
                     winningPlayer = p;
@@ -967,7 +969,7 @@ void psMiniGameSession::Update(Client* client, psMGUpdateMessage &msg)
                 }
             }
 
-            // announce winner, unless script to run for winner
+            // announce winner, unless there is a script, in this case the script will notify the winner
             if(!progScript)
             {
                 if(minigameStyle == MG_GAME)
