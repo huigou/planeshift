@@ -2410,6 +2410,10 @@ public:
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
+        if (!c) {
+            Error1("Error while executing ExpOp script, invalid target character");
+            return;
+        }
         float exp = value->Evaluate(env);
         if(notify)
         {
@@ -2803,6 +2807,10 @@ public:
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
+        if (!c) {
+            Error2("Error while executing ItemOp script giving item %s, invalid target character",name.GetData());
+            return;
+        }
         int stackCount = count->Evaluate(env);
         if(stackCount <= 0)
         {
