@@ -521,38 +521,56 @@ const char* psChatMessage::GetTypeText()
 {
     switch(iChatType)
     {
+        case CHAT_SYSTEM:
+            return "System";
+        case CHAT_COMBAT:
+            return "Combat";
         case CHAT_SAY:
             return "Say";
         case CHAT_TELL:
             return "Tell";
-        case CHAT_AWAY:
-            return "Tell";
-        case CHAT_NPC:
-            return "TellNPC";
-        case CHAT_TELLSELF:
-            return "TellSelf";
         case CHAT_GROUP:
             return "GroupMsg";
-        case CHAT_SHOUT:
-            return "Shout";
-        case CHAT_GM:
-            return "GM";
         case CHAT_GUILD:
             return "GuildChat";
         case CHAT_ALLIANCE:
             return "AllianceChat";
         case CHAT_AUCTION:
             return "Auction";
-        case CHAT_PET_ACTION:
-            return "Action";
+        case CHAT_SHOUT:
+            return "Shout";
+        case CHAT_CHANNEL:
+            return "Channel";
+        case CHAT_TELLSELF:
+            return "TellSelf";
         case CHAT_REPORT:
             return "Report";
         case CHAT_ADVISOR:
             return "Advisor";
         case CHAT_ADVICE:
             return "Advice";
-        case CHAT_CHANNEL:
-            return "Channel";
+        case CHAT_ADVICE_LIST:
+            return "Advice List";
+        case CHAT_SERVER_TELL:
+            return "Server Tell";
+        case CHAT_GM:
+            return "GM";
+        case CHAT_NPC:
+            return "TellNPC";
+        case CHAT_NPCINTERNAL:
+            return "NPCInternal";
+        case CHAT_SYSTEM_BASE:
+            return "SystemBase";
+        case CHAT_PET_ACTION:
+            return "Action";
+        case CHAT_NPC_ME:
+            return "NPC Me";
+        case CHAT_NPC_MY:
+            return "NPC My";
+        case CHAT_NPC_NARRATE:
+            return "NPC Narrate";
+        case CHAT_AWAY:
+            return "Away";
         default:
             return "Unknown";
     }
@@ -8204,14 +8222,11 @@ void psDialogMenuMessage::BuildMsg(int clientnum)
 
 csString psDialogMenuMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
-    csString text;
-    for(size_t i = 0; i < responses.GetSize(); i++)
-    {
-        text.AppendFmt("Menu: (%d) %s -> %s\n",responses[ i ].id,
-                       responses[i].menuText.GetDataSafe(), responses[ i ].triggerText.GetDataSafe());
-    }
+    csString msgtext;
+    
+    msgtext.AppendFmt("XML: %s",xml.GetDataSafe());
 
-    return text;
+    return msgtext;
 }
 
 PSF_IMPLEMENT_MSG_FACTORY(psSimpleStringMessage,MSGTYPE_SIMPLE_STRING);
