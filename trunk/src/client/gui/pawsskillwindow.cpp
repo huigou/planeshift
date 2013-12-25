@@ -70,7 +70,6 @@ pawsSkillWindow::pawsSkillWindow()
     menStaminaMax = 0;
 
     factRequest = false;
-    charApp = new psCharAppearance(PawsManager::GetSingleton().GetObjectRegistry());
 }
 pawsSkillWindow::pawsSkillWindow(const pawsSkillWindow& origin)
 {
@@ -85,17 +84,10 @@ pawsSkillWindow::~pawsSkillWindow()
         delete i.Next();
     }
     skillDescriptions.DeleteAll();
-    delete charApp;
 }
 
 bool pawsSkillWindow::PostSetup()
 {
-    // Setup the Doll
-    if ( !SetupDoll() )
-    {
-        return false;
-    }
-
     xml =  csQueryRegistry<iDocumentSystem > ( PawsManager::GetSingleton().GetObjectRegistry());
 
     statsSkillList        = (pawsListBox*)FindWidget("StatsSkillList");
@@ -146,47 +138,6 @@ bool pawsSkillWindow::PostSetup()
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUISKILL);
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_FACTION_INFO);
 
-    return true;
-}
-
-bool pawsSkillWindow::SetupDoll()
-{
-    pawsObjectView* widget = dynamic_cast<pawsObjectView*>(FindWidget("Doll"));
-    GEMClientActor* actor = psengine->GetCelClient()->GetMainPlayer();
-    if (!widget || !actor)
-    {
-        return true; // doll not wanted, not an error
-    }
-
-    // Set the doll view
-    while(!widget->View(actor->GetFactName()))
-    {
-        continue;
-    }
-
-    CS_ASSERT(widget->GetObject()->GetMeshObject());
-
-    // Set the charApp.
-    widget->SetCharApp(charApp);
-
-    // Register this doll for updates
-    widget->SetID(actor->GetEID().Unbox());
-
-    csRef<iSpriteCal3DState> spstate = scfQueryInterface<iSpriteCal3DState> (widget->GetObject()->GetMeshObject());
-    if (spstate)
-    {
-        // Setup cal3d to select random 0 velocity anims
-        spstate->SetVelocity(0.0,&psengine->GetRandomGen());
-    }
-
-    charApp->SetMesh(widget->GetObject());
-
-    charApp->ApplyTraits(actor->traits);
-    charApp->ApplyEquipment(actor->equipment);
-
-    widget->EnableMouseControl(true);
-
-    //return (a && e);
     return true;
 }
 
