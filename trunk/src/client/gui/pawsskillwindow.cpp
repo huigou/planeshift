@@ -49,7 +49,6 @@
 #define BTN_JOBS     1003 ///< Jobs button for the tab panel
 #define BTN_VARIOUS  1004 ///< Various button for the tab panel
 #define BTN_FACTION  1005
-#define MAX_CAT         4
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -57,12 +56,8 @@
 
 pawsSkillWindow::pawsSkillWindow()
 {
-    selectedSkill.Clear();
-    skillString.Clear();
-    skillDescriptions.DeleteAll();
     filter = false;
     train = false;
-    foundSelected = false;
 
     hitpointsMax = 0;
     manaMax = 0;
@@ -71,10 +66,11 @@ pawsSkillWindow::pawsSkillWindow()
 
     factRequest = false;
 }
+
 pawsSkillWindow::pawsSkillWindow(const pawsSkillWindow& origin)
 {
-
 }
+
 pawsSkillWindow::~pawsSkillWindow()
 {
     // Delete cached skill description strings
@@ -90,23 +86,43 @@ bool pawsSkillWindow::PostSetup()
 {
     xml =  csQueryRegistry<iDocumentSystem > ( PawsManager::GetSingleton().GetObjectRegistry());
 
-    statsSkillList        = (pawsListBox*)FindWidget("StatsSkillList");
-    statsSkillDescription = (pawsMultiLineTextBox*)FindWidget("StatsDescription");
+    skills[CAT_STATS].list =
+        static_cast<pawsListBox*>(FindWidget("StatsSkillList"));
+    skills[CAT_STATS].description =
+        static_cast<pawsMultiLineTextBox*>(FindWidget("StatsDescription"));
+    skills[CAT_STATS].indWidget = "StatsIndicator";
+    skills[CAT_STATS].tabName = "Stats Button";
 
-    combatSkillList        = (pawsListBox*)FindWidget("CombatSkillList");
-    combatSkillDescription = (pawsMultiLineTextBox*)FindWidget("CombatDescription");
+    skills[CAT_COMBAT].list =
+        static_cast<pawsListBox*>(FindWidget("CombatSkillList"));
+    skills[CAT_COMBAT].description =
+        static_cast<pawsMultiLineTextBox*>(FindWidget("CombatDescription"));
+    skills[CAT_COMBAT].indWidget = "CombatIndicator";
+    skills[CAT_COMBAT].tabName = "Combat Button";
 
-    magicSkillList        = (pawsListBox*)FindWidget("MagicSkillList");
-    magicSkillDescription = (pawsMultiLineTextBox*)FindWidget("MagicDescription");
+    skills[CAT_MAGIC].list =
+        static_cast<pawsListBox*>(FindWidget("MagicSkillList"));
+    skills[CAT_MAGIC].description =
+        static_cast<pawsMultiLineTextBox*>(FindWidget("MagicDescription"));
+    skills[CAT_MAGIC].indWidget = "MagicIndicator";
+    skills[CAT_MAGIC].tabName = "Magic Button";
 
-    jobsSkillList        = (pawsListBox*)FindWidget("JobsSkillList");
-    jobsSkillDescription = (pawsMultiLineTextBox*)FindWidget("JobsDescription");
+    skills[CAT_JOBS].list =
+        static_cast<pawsListBox*>(FindWidget("JobsSkillList"));
+    skills[CAT_JOBS].description =
+        static_cast<pawsMultiLineTextBox*>(FindWidget("JobsDescription"));
+    skills[CAT_JOBS].indWidget = "JobsIndicator";
+    skills[CAT_JOBS].tabName = "Jobs Button";
 
-    variousSkillList        = (pawsListBox*)FindWidget("VariousSkillList");
-    variousSkillDescription = (pawsMultiLineTextBox*)FindWidget("VariousDescription");
+    skills[CAT_VARIOUS].list =
+        static_cast<pawsListBox*>(FindWidget("VariousSkillList"));
+    skills[CAT_VARIOUS].description =
+        static_cast<pawsMultiLineTextBox*>(FindWidget("VariousDescription"));
+    skills[CAT_VARIOUS].indWidget = "VariousIndicator";
+    skills[CAT_VARIOUS].tabName = "Various Button";
 
-    factionList        = (pawsListBox*)FindWidget("FactionList");
-    factionsDescription = (pawsMultiLineTextBox*)FindWidget("FactionDescription");
+    factionList = static_cast<pawsListBox*>(FindWidget("FactionList"));
+    factionsDescription = static_cast<pawsMultiLineTextBox*>(FindWidget("FactionDescription"));
 
     hpBar = dynamic_cast <pawsProgressBar*> (FindWidget("HPBar"));
     manaBar = dynamic_cast <pawsProgressBar*> (FindWidget("ManaBar"));
@@ -242,7 +258,7 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                 case psGUISkillMessage::SKILL_LIST:
                 {
                     bool flush = (train != incoming.trainingWindow) || incoming.openWindow;
-                    train=incoming.trainingWindow;
+                    train = incoming.trainingWindow;
                     if (train)
                     {
                         factRequest = false;
@@ -258,13 +274,7 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                     skillString = incoming.commandData;
                     skillCache.apply(&incoming.skillCache);
 
-                    int selectedRowIdx = -1;
-                    HandleSkillList(&skillCache, incoming.focusSkill, &selectedRowIdx, flush);
-
-                    if (selectedRowIdx > 0)
-                    {
-                        SelectSkill(selectedRowIdx, incoming.skillCat);
-                    }
+                    HandleSkillList(incoming.focusSkill, flush);
 
                     hitpointsMax = incoming.hitpointsMax;
                     manaMax = incoming.manaMax;
@@ -288,14 +298,20 @@ void pawsSkillWindow::Close()
 {
     Hide();
 
-    combatSkillList->Clear();
-    statsSkillList->Clear();
-    magicSkillList->Clear();
-    jobsSkillList->Clear();
-    variousSkillList->Clear();
+    skills[CAT_STATS].list->Clear();
+    skills[CAT_COMBAT].list->Clear();
+    skills[CAT_MAGIC].list->Clear();
+    skills[CAT_JOBS].list->Clear();
+    skills[CAT_VARIOUS].list->Clear();
+
+    skills[CAT_STATS].unsortedSkills.DeleteAll();
+    skills[CAT_COMBAT].unsortedSkills.DeleteAll();
+    skills[CAT_MAGIC].unsortedSkills.DeleteAll();
+    skills[CAT_JOBS].unsortedSkills.DeleteAll();
+    skills[CAT_VARIOUS].unsortedSkills.DeleteAll();
+
     skillString.Clear();
     selectedSkill.Clear();
-    unsortedSkills.DeleteAll();
 }
 
 bool pawsSkillWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
@@ -305,7 +321,7 @@ bool pawsSkillWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, 
         case BTN_FILTER:
         {
             filter = !filter;
-            HandleSkillList(&skillCache);
+            HandleSkillList(-1, true);
             return true;
         }
 
@@ -341,135 +357,81 @@ bool pawsSkillWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, 
     return false;
 }
 
-void pawsSkillWindow::SelectSkill(int skill, int cat)
+void pawsSkillWindow::HandleSkillList(int selectedNameId, bool flush)
 {
-    if(skill < 0 || skill >= (int)unsortedSkills.GetSize() || cat < 0 || cat > MAX_CAT)
-    {
-        return;
-    }
-
-    //Let's see which category the skill belongs to
-    switch(cat)
-    {
-    case 0: //Stats
-        {
-            statsSkillList->Select(unsortedSkills[skill]);
-            break;
-        }
-    case 1: //Combat skills
-        {
-            combatSkillList->Select(unsortedSkills[skill]);
-            break;
-        }
-    case 2: //Magic Skills
-        {
-            magicSkillList->Select(unsortedSkills[skill]);
-            break;
-        }
-    case 3://Jobs Skills
-        {
-            jobsSkillList->Select(unsortedSkills[skill]);
-            break;
-        }
-    case 4://Various Skills
-        {
-            variousSkillList->Select(unsortedSkills[skill]);
-            break;
-        }
-    }
-}
-
-void pawsSkillWindow::HandleSkillList(psSkillCache *skills, int selectedNameId, int *rowIdx, bool flush)
-{
-    if (!flush && !skills->isModified())
+    if (!flush && !skillCache.isModified())
         return;
 
-    if (skills->hasRemoved() || unsortedSkills.IsEmpty())
+    if (skillCache.hasRemoved())
     {
         flush = true;
+    }
+    else if (!flush && filter)
+    {
+        // Flush if a row is changing from being displayed to
+        // not being displayed.
+        psSkillCacheIter p = skillCache.iterBegin();
+        while (p.HasNext())
+        {
+            psSkillCacheItem *item = p.Next();
+            if (item->isModified() &&
+                item->getRank() == 0 &&
+                item->getKnowledge() == 0 &&
+                item->getPractice() == 0)
+            {
+                flush = true;
+            }
+        }
     }
 
     if (flush)
     {
         // Clear descriptions
-        statsSkillDescription->SetText("");
-        combatSkillDescription->SetText("");
-        magicSkillDescription->SetText("");
-        jobsSkillDescription->SetText("");
-        variousSkillDescription->SetText("");
+        skills[CAT_STATS].description->SetText("");
+        skills[CAT_COMBAT].description->SetText("");
+        skills[CAT_MAGIC].description->SetText("");
+        skills[CAT_JOBS].description->SetText("");
+        skills[CAT_VARIOUS].description->SetText("");
 
         // Clear everything on a flush
-        combatSkillList->Clear();
-        statsSkillList->Clear();
-        magicSkillList->Clear();
-        jobsSkillList->Clear();
-        variousSkillList->Clear();
-        unsortedSkills.DeleteAll();
+        skills[CAT_STATS].list->Clear();
+        skills[CAT_COMBAT].list->Clear();
+        skills[CAT_MAGIC].list->Clear();
+        skills[CAT_JOBS].list->Clear();
+        skills[CAT_VARIOUS].list->Clear();
+
+        skills[CAT_STATS].unsortedSkills.DeleteAll();
+        skills[CAT_COMBAT].unsortedSkills.DeleteAll();
+        skills[CAT_MAGIC].unsortedSkills.DeleteAll();
+        skills[CAT_JOBS].unsortedSkills.DeleteAll();
+        skills[CAT_VARIOUS].unsortedSkills.DeleteAll();
     }
 
-    x = skills->getProgressionPoints();
-    foundSelected = false;
+    x = skillCache.getProgressionPoints();
 
-    int idx = 0; // Row index counter
-    psSkillCacheIter p = skills->iterBegin();
+    // Row index counters into unsortedSkills
+    unsigned idx[5] = { 0, 0, 0, 0, 0 };
+    psSkillCacheIter p = skillCache.iterBegin();
     while (p.HasNext())
     {
         psSkillCacheItem *skill = p.Next();
 
-        if (rowIdx && (int)skill->getNameId() == selectedNameId)
-        {
-            *rowIdx = idx; // Row index of the selected skill
-        }
+        if (skill->getCategory() >= 5)
+            continue;
 
-        if (flush || skills->isModified())
-        {
-            switch (skill->getCategory())
-            {
-                case 0://Stats
-                {
-                    HandleSkillCategory(statsSkillList, "StatsIndicator", "Stats Button", skill, idx, flush);
-                    break;
-                }
-                case 1://Combat skills
-                {
-                    HandleSkillCategory(combatSkillList, "CombatIndicator", "Combat Button", skill, idx, flush);
-                    break;
-                }
-                case 2://Magic skills
-                {
-                    HandleSkillCategory(magicSkillList, "MagicIndicator", "Magic Button", skill, idx, flush);
-                    break;
-                }
-                case 3://Jobs skills
-                {
-                    HandleSkillCategory(jobsSkillList, "JobsIndicator", "Jobs Button", skill, idx, flush);
-                    break;
-                }
-                case 4://Various skills
-                {
-                    HandleSkillCategory(variousSkillList, "VariousIndicator", "Various Button", skill, idx, flush);
-                    break;
-                }
-            }
-        }
+        HandleSkillCategory(skill, idx[skill->getCategory()], flush);
     }
-    
+    skillCache.setRemoved(false);
+    skillCache.setModified(false);
+
     if (flush)
     {
-        statsSkillList->SetSortedColumn(0);
-        combatSkillList->SetSortedColumn(0);
-        magicSkillList->SetSortedColumn(0);
-        jobsSkillList->SetSortedColumn(0);
-        variousSkillList->SetSortedColumn(0);
+        skills[CAT_STATS].list->SetSortedColumn(0);
+        skills[CAT_COMBAT].list->SetSortedColumn(0);
+        skills[CAT_MAGIC].list->SetSortedColumn(0);
+        skills[CAT_JOBS].list->SetSortedColumn(0);
+        skills[CAT_VARIOUS].list->SetSortedColumn(0);
     }
-
-    if (flush && !foundSelected)
-    {
-        selectedSkill.Clear();
-    }
-    
-    skills->setRemoved(false);
-    skills->setModified(false);
 }
 
 void pawsSkillWindow::HandleSkillDescription( csString& description )
@@ -532,38 +494,13 @@ void pawsSkillWindow::HandleSkillDescription( csString& description )
         }
     }
 
-    switch (skillCategory)
+    if (skillCategory == CAT_FACTION)
     {
-        case 0://Stats
-        {
-             statsSkillDescription->SetText(descStr);
-             break;
-        }
-        case 1://Combat skills
-        {
-            combatSkillDescription->SetText( descStr );
-            break;
-        }
-        case 2://Magic skills
-        {
-            magicSkillDescription->SetText(descStr);
-            break;
-        }
-        case 3://Jobs skills
-        {
-            jobsSkillDescription->SetText(descStr);
-            break;
-        }
-        case 4://Various skills
-        {
-            variousSkillDescription->SetText(descStr);
-            break;
-        }
-        case 5://Factions
-        {
-            factionsDescription->SetText(descStr);
-            break;
-        }
+        factionsDescription->SetText(descStr);
+    }
+    else if ((unsigned)skillCategory < (unsigned)CAT_FACTION)
+    {
+        skills[skillCategory].description->SetText(descStr);
     }
 }
 
@@ -694,7 +631,7 @@ void pawsSkillWindow::Hide()
 
 void pawsSkillWindow::OnListAction( pawsListBox* widget, int status )
 {
-    if (status==LISTBOX_HIGHLIGHTED)
+    if (status == LISTBOX_HIGHLIGHTED)
     {
         pawsListBoxRow* row = widget->GetSelectedRow();
         pawsTextBox* skillName = (pawsTextBox*)(row->GetColumn(0));
@@ -721,38 +658,13 @@ void pawsSkillWindow::OnListAction( pawsListBox* widget, int status )
         else
         {
             // Use the cached version
-            switch (desc->GetCategory())
+            if (desc->GetCategory() == CAT_FACTION)
             {
-                case 0://Stats
-                {
-                    statsSkillDescription->SetText(desc->GetDescription());
-                    break;
-                }
-                case 1://Combat skills
-                {
-                    combatSkillDescription->SetText(desc->GetDescription());
-                    break;
-                }
-                case 2://Magic skills
-                {
-                    magicSkillDescription->SetText(desc->GetDescription());
-                    break;
-                }
-                case 3://Jobs skills
-                {
-                    jobsSkillDescription->SetText(desc->GetDescription());
-                    break;
-                }
-                case 4://Various skills
-                {
-                    variousSkillDescription->SetText(desc->GetDescription());
-                    break;
-                }
-                case 5://Factions
-                {
-                    factionsDescription->SetText(desc->GetDescription());
-                    break;
-                }
+                factionsDescription->SetText(desc->GetDescription());
+            }
+            else
+            {
+                skills[desc->GetCategory()].description->SetText(desc->GetDescription());
             }
         }
     }
@@ -790,20 +702,23 @@ void pawsSkillWindow::FlashTabButton(const char* buttonName, bool flash)
     }
 }
 
-void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
-                                          const char* indWidget,
-                                          const char* tabName,
-                                          psSkillCacheItem *skillInfo,
-                                          int &idx, bool flush)
+void pawsSkillWindow::HandleSkillCategory(psSkillCacheItem *skillInfo,
+                                          unsigned &idx, bool flush)
 {
-
     int R = skillInfo->getRank();
     int Y = skillInfo->getKnowledge();
     int Z = skillInfo->getPractice();
 
-     // filter out untrained skills
-    if (filter  &&  R==0  &&  Y==0  &&  Z==0)
+    // filter out untrained skills
+    if (filter && R == 0 && Y == 0 && Z == 0)
     {
+        return;
+    }
+
+    if (!flush && !skillInfo->isModified())
+    {
+        // Skip update since there are no changes
+        ++idx;
         return;
     }
 
@@ -815,14 +730,22 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
         return;
     }
 
+    unsigned cat = skillInfo->getCategory();
+    pawsSkill& skill = skills[cat];
+
     pawsListBoxRow* row = NULL;
     if (flush)
     {
-        row = tabNameSkillList->NewRow();
+        row = skill.list->NewRow();
     }
     else
     {
-        row = unsortedSkills[idx];
+        if (idx >= skill.unsortedSkills.GetSize())
+        {
+            Error3("Invalid skill index %d (cat %d)", idx, cat);
+            return;
+        }
+        row = skill.unsortedSkills[idx];
     }
 
     pawsTextBox* name = dynamic_cast <pawsTextBox*> (row->GetColumn(0));
@@ -853,7 +776,8 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
         return;
     }
 
-    pawsSkillIndicator * indicator = dynamic_cast <pawsSkillIndicator*> (indCol->FindWidget(indWidget));
+    pawsSkillIndicator* indicator =
+        dynamic_cast <pawsSkillIndicator*> (indCol->FindWidget(skill.indWidget));
     if (indicator == NULL)
     {
         return;
@@ -863,21 +787,16 @@ void pawsSkillWindow::HandleSkillCategory(pawsListBox* tabNameSkillList,
 
     if (flush)
     {
-        unsortedSkills.Push(row);
+        skill.unsortedSkills.Push(row);
     }
-    else
-    {
-        unsortedSkills[idx] = row;
-    }
-    
+
     if (skillName == selectedSkill)
     {
-        tabNameSkillList->Select(row);
-        foundSelected = true;
+        skill.list->Select(row);
     }
 
     //If we are training, flash the tab button
-    FlashTabButton(tabName, train);
+    FlashTabButton(skill.tabName, train);
 
     ++idx; // Update the row index
 }
