@@ -2893,20 +2893,30 @@ Usage:
 /pet follow
 (Your pet will follow you wherever you go)
 
-/pet name [new-name]
-(Renames your pet to [new-name].)
-
 /pet guard
 (Your pet guards its current position.)
 
+/pet name [new-name]
+(Renames your pet to [new-name].)
+
+/pet run
+(Commands your pet to run instead of walking.)
+
 /pet stay
 (Your pet will stay at its current position and not follow you anymore.)
+
+/pet stopattack
+(Stop attacking)
 
 /pet summon [pet-name]
 (Summons your pet. You need to have the necessary item equipped for this to work.)
 
 /pet target [target]
 (Sets the target of your pet. If no target is given, the target of your character will be used. If [target] is "me", your pet will target your character. Otherwise, [target] is interpreted as the name of the target you want to set.
+
+/pet walk
+(Commands your pet to walk instead of running.)
+
           </content>
          </Contents>
         </topic>
