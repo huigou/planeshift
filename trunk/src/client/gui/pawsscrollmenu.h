@@ -119,6 +119,9 @@ public:
     bool SetScrollWidget( pawsScrollBar* sb);
     void SetOrientation(int Orientation);
     int  AutoResize();
+   /**
+    * set edit lock to allow rt-click edit and prevent DND, or to disallow all editing
+    */
     void SetEditMode(int val)
     {
         EditMode = val;
@@ -137,6 +140,7 @@ public:
     void SetButtonFont( const char* Font, int size );
     char const * GetButtonFontName();
     float GetButtonFontSize();
+
    /**
     * return the name of the font
     */
@@ -146,6 +150,10 @@ public:
     }
 
     void SetTextSpacing( int v );
+
+    void EnableButtonBackground( bool mode );
+    bool IsButtonBackgroundEnabled();
+
 
 
 

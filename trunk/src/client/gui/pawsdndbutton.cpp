@@ -56,6 +56,7 @@ pawsDnDButton::pawsDnDButton() :
     ImageNameCallback(NULL),
     NameCallback(NULL),
     ActionCallback(NULL),
+    backgroundBackup(""),
     DnDLock(false)
 {
     factory = "pawsDnDButton";
@@ -161,6 +162,8 @@ bool pawsDnDButton::Setup(iDocumentNode* node)
     {
         buttonLabel = PawsManager::GetSingleton().Translate(buttonLabelNode->GetAttributeValue("text"));
     }
+ 
+    backgroundBackup=GetBackground();
 
     originalFontColour = GetFontColour();
 
@@ -426,3 +429,18 @@ void pawsDnDButton::DrawMask()
     }
 }
 
+void pawsDnDButton::EnableBackground( bool mode )
+{
+    if( GetBackground()!="" && GetBackground()!=NULL )
+    {
+        backgroundBackup=GetBackground();
+    }
+    if( mode==true )
+    {
+        SetBackground(backgroundBackup);
+    }
+    else //mode == false
+    {
+        SetBackground("");
+    }
+}

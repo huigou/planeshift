@@ -998,13 +998,6 @@ bool pawsShortcutWindow::LoadUserPrefs()
     csRef<iDocument> doc;
     csRef<iDocumentNode> root, mainNode, optionNode;
 
-    pawsScrollMenu* MenuBar = (pawsScrollMenu*)(FindWidget( "MenuBar",true ));
-    if( MenuBar==NULL )
-    {
-        Error1( "pawsShortcutWindow::LoadUserPrefs unable to get MenuBar\n");
-        return false;
-    }
-
     csString fileName;
     fileName = "/planeshift/userdata/options/configshortcut.xml";
 
@@ -1094,6 +1087,20 @@ bool pawsShortcutWindow::LoadUserPrefs()
         Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve rightScroll node");
     }
 
+    optionNode = mainNode->GetNode("editLockMode");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "editLockDND",  optionNode->GetAttributeValue("active") )==0 )
+        {
+            MenuBar->SetEditMode( 1 ); //allow rt-click editing but prevent dnd
+        }
+        else //default to lock all
+        {
+            MenuBar->SetEditMode( 0 );//prevent all editing
+        }
+    }
+
+
     optionNode = mainNode->GetNode("healthAndMana");
     if(optionNode != NULL)
     {
@@ -1107,22 +1114,16 @@ bool pawsShortcutWindow::LoadUserPrefs()
         Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve healthAndMana node");
     }
 
-    optionNode = mainNode->GetNode("buttonBackgroundName");
-    if(optionNode != NULL)
-    {
-        MenuBar->SetButtonBackground(  optionNode->GetAttributeValue("value"));
-    }
-    else
-    {
-        Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve buttonBackgroundName node");
-    }
-
     optionNode = mainNode->GetNode("buttonBackground");
     if(optionNode != NULL)
     {
         if( strcasecmp( "no", optionNode->GetAttributeValue("on") )==0 )
         {
-            MenuBar->SetButtonBackground("");
+            MenuBar->EnableButtonBackground(false);
+        }
+        else  //default to button background showing
+        {
+            MenuBar->EnableButtonBackground(true);
         }
     }
     else
