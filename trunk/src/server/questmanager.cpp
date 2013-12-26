@@ -99,6 +99,7 @@ bool QuestManager::LoadQuestScripts()
     {
         int i,count=quests.Count();
 
+        // First load the corresponding quest for all quest scripts.
         for(i=0; i<count; i++)
         {
             int quest_id = quests[i].GetInt("quest_id");
@@ -118,6 +119,7 @@ bool QuestManager::LoadQuestScripts()
                 return false;
             }
         }
+        // Second pars the scripts, both quests and KAs.
         for(i=0; i<count; i++)
         {
             int line = ParseQuestScript(quests[i].GetInt("quest_id"),quests[i]["script"]);
@@ -877,9 +879,9 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
             pending_triggers.Empty();
             if(!BuildTriggerList(block,pending_triggers))
             {
-                Error3("Could not determine triggers in script '%s', in line <%s>",
-                       mainQuest->GetName(),block.GetData());
-                lastError.Format("Could not determine triggers in script '%s', in line <%s>", mainQuest->GetName(),block.GetData());
+                lastError.Format("Could not determine triggers in script '%s', in line <%s>", 
+                                 mainQuest?mainQuest->GetName():"KA",block.GetData());
+                Error2("%s",lastError.GetDataSafe());
 
                 return line_number;
             }
@@ -897,9 +899,9 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
 
             if(!BuildMenu(block, pending_triggers, mainQuest, menu))
             {
-                Error3("Could not determine menu triggers in script '%s', in line <%s>",
-                       mainQuest->GetName(),block.GetData());
-                lastError.Format("Could not determine triggers in script '%s', in line <%s>", mainQuest->GetName(),block.GetData());
+                lastError.Format("Could not determine triggers in script '%s', in line <%s>", 
+                                 mainQuest?mainQuest->GetName():"KA",block.GetData());
+                Error2("%s",lastError.GetDataSafe());
 
                 delete menu;
                 return line_number;
@@ -1013,9 +1015,9 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
         {
             if(block.Length() > 3 && block.GetAt(3) != ' ')
             {
-                Error4("No space after ... for quest '%s' at line %d: %s",
-                       mainQuest->GetName(), line_number, block.GetDataSafe());
-                lastError.Format("No space after ... for quest '%s' at line %d: %s", mainQuest->GetName(), line_number, block.GetDataSafe());
+                lastError.Format("No space after ... for quest '%s' at line %d: %s", 
+                                 mainQuest?mainQuest->GetName():"KA", line_number, block.GetDataSafe());
+                Error2("%s",lastError.GetDataSafe());
                 return line_number;
             }
 
