@@ -96,13 +96,28 @@ public:
     virtual void OnNumberEntered(const char *name,int param,int number);
 protected:
 
+    enum {
+        CAT_STATS,
+        CAT_COMBAT,
+        CAT_MAGIC,
+        CAT_JOBS,
+        CAT_VARIOUS,
+        CAT_FACTION
+    };
+
+    struct pawsSkill {
+        pawsListBox *list;
+        pawsMultiLineTextBox* description;
+        const char* indWidget;
+        const char* tabName;
+        csArray<pawsListBoxRow*> unsortedSkills;
+    };
+
     void BuySkill();
     void BuyMaxSkill();
 
-    void HandleSkillList(psSkillCache *skills, int selectedNameId = -1, int *rowIdx = NULL, bool flush = true);
+    void HandleSkillList(int selectedNameId, bool flush);
     void HandleSkillDescription( csString& description );
-
-    void SelectSkill(int skill, int cat);
 
     /** @brief This method is used for making the tab button blinking.
      *
@@ -113,20 +128,15 @@ protected:
     void FlashTabButton(const char* buttonName, bool flash);
 
     /** This handles the skill list for each category */
-    void HandleSkillCategory(pawsListBox* tabNameSkillList, const char* indWidget,
-                             const char* tabName, psSkillCacheItem* skillInfo, int &idx, bool flush);
+    void HandleSkillCategory(psSkillCacheItem* skillInfo, unsigned &idx, bool flush);
 
-    pawsListBox *statsSkillList, *combatSkillList, *magicSkillList, *jobsSkillList, *variousSkillList;
+    pawsSkill skills[5];
     pawsListBox *factionList;
-
-    pawsMultiLineTextBox *combatSkillDescription, *magicSkillDescription, *jobsSkillDescription;
-    pawsMultiLineTextBox *variousSkillDescription, *statsSkillDescription, *factionsDescription;
+    pawsMultiLineTextBox *factionsDescription;
     pawsProgressBar *hpBar, *manaBar, *pysStaminaBar, *menStaminaBar, *experienceBar;
     pawsTextBox *hpFrac, *manaFrac, *pysStaminaFrac, *menStaminaFrac, *experiencePerc;
 
-    csArray<pawsListBoxRow*> unsortedSkills; ///< Array keeping the server order of the skills
-
-    bool filter, train, foundSelected;
+    bool filter, train;
     unsigned int x; ///< Stores topnode "X" information (progression points)
 
     csString skillString;
