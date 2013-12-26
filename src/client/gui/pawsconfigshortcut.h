@@ -74,9 +74,9 @@ protected:
     pawsRadioButtonGroup*  leftScroll;
     pawsRadioButtonGroup*  rightScroll;
     pawsRadioButtonGroup*  enableScrollBar;
-    pawsCheckBox*          healthAndMana;
+
     pawsCheckBox*          buttonBackground;
-    csString               buttonBackgroundName;
+    pawsCheckBox*          healthAndMana;
 
     pawsComboBox*          textFont;
     pawsScrollBar*         textSize;

@@ -954,6 +954,19 @@ csString pawsScrollMenu::GetButtonBackground( )
     return ((pawsDnDButton*)Buttons[0])->GetBackground();
 }
 
+void pawsScrollMenu::EnableButtonBackground( bool mode )
+{
+    for(size_t i=0; i<Buttons.GetSize(); i++)
+    {
+        ((pawsDnDButton*)Buttons[i])->EnableBackground(mode);
+    }
+}
+
+bool pawsScrollMenu::IsButtonBackgroundEnabled( )
+{
+    return ((pawsDnDButton*)Buttons[0])->GetBackground()==""?0:1;
+}
+
 void pawsScrollMenu::SetButtonFont( const char* Font, int size )
 {
     for(size_t i=0; i<Buttons.GetSize(); i++)

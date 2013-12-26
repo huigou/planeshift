@@ -56,17 +56,14 @@ pawsConfigShortcut::pawsConfigShortcut() :
     ShortcutMenu(NULL),
     MenuBar(NULL)
 {
-    buttonBackgroundName = csString("");
     loaded= false;
 }
 
 bool pawsConfigShortcut::Initialize()
 {
-fprintf( stderr, "pawsConfigShortcut::Initialize starts\n" );
     if ( ! LoadFromFile("configshortcut.xml"))
         return false;
 
-fprintf( stderr, "pawsConfigShortcut::Initialize ends\n" );
     return true;
 }
 
@@ -144,14 +141,14 @@ fprintf( stderr, "pawsConfigShortcut::PostSetup starts\n" );
         return false;
     }
 
-    healthAndMana = (pawsCheckBox*)FindWidget("healthAndMana");
-    if(!healthAndMana)
+    buttonBackground = (pawsCheckBox*)FindWidget("buttonBackground");
+    if(!buttonBackground)
     {
         return false;
     }
 
-    buttonBackground = (pawsCheckBox*)FindWidget("buttonBackground");
-    if(!buttonBackground)
+    healthAndMana = (pawsCheckBox*)FindWidget("healthAndMana");
+    if(!healthAndMana)
     {
         return false;
     }
@@ -261,17 +258,17 @@ fprintf( stderr, "pawsConfigShortcut::LoadConfig starts\n" );
 
         }
 
-        healthAndMana->SetState(  ((pawsShortcutWindow*)ShortcutMenu)->GetMonitorState() );
-
-        buttonBackgroundName =  MenuBar->GetButtonBackground();
-        if( buttonBackgroundName == "" )
+        if( MenuBar->IsButtonBackgroundEnabled() )
         {
-            buttonBackground->SetState( 0 );
+            buttonBackground->SetState(1);
         }
         else
         {
-            buttonBackground->SetState( 1 );
+            buttonBackground->SetState(0);
         }
+
+        healthAndMana->SetState(  ((pawsShortcutWindow*)ShortcutMenu)->GetMonitorState() );
+
 
         enableScrollBar->TurnAllOff();
 
@@ -310,9 +307,6 @@ fprintf( stderr, "pawsConfigShortcut::LoadConfig found font %s\n", buttonFontNam
             textFont->Select(6);
         }
     }
-/*
-        textSpacing;
-*/
 
     loaded= true;
     dirty = false;
@@ -336,14 +330,14 @@ fprintf(stderr, "pawsConfigShortcut::SaveConfig starts\n" );
                      leftScroll->GetActive().GetData());
     xml.AppendFmt("<rightScroll active=\"%s\" />\n",
                      rightScroll->GetActive().GetData());
+    xml.AppendFmt("<editLockMode active=\"%s\" />\n",
+                     editLockMode->GetActive().GetData());
     xml.AppendFmt("<enableScrollBar active=\"%s\" />\n",
                      enableScrollBar->GetActive().GetData());
     xml.AppendFmt("<healthAndMana on=\"%s\" />\n",
                      healthAndMana->GetState() ? "yes" : "no");
     xml.AppendFmt("<buttonBackground on=\"%s\" />\n",
                      buttonBackground->GetState() ? "yes" : "no");
-    xml.AppendFmt("<buttonBackgroundName value=\"%s\" />\n",
-                     buttonBackgroundName.GetData());
     xml.AppendFmt("<textFont value=\"%d\" />\n",
                      int(textFont->GetSelectedRowNum()));
     xml.AppendFmt("<textSize value=\"%d\" />\n",
@@ -526,21 +520,15 @@ fprintf( stderr, "pawsConfigShortcut::OnButtonPressed starts\n" );
         {
             if( ((pawsCheckBox*)wdg)->GetState()==true )
             {
-                MenuBar->SetButtonBackground( buttonBackgroundName.GetData() );
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
+                MenuBar->EnableButtonBackground( true );
                 
             }
             else
             {
-                if( buttonBackgroundName = "" )
-                {
-                    buttonBackgroundName =  MenuBar->GetButtonBackground();
-fprintf( stderr, "pawsConfigShortcut::OnButtonPressed buttonBackgroundName = %s\n", buttonBackgroundName.GetData() );
-                }
-                MenuBar->SetButtonBackground("");
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
+                MenuBar->EnableButtonBackground(false);
             }
         }
+        break;
 
         default :
         {

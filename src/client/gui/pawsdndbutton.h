@@ -193,6 +193,8 @@ public:
     {
         return fontName;
     }
+
+    void EnableBackground( bool mode );
  
 
 protected:
@@ -207,6 +209,7 @@ protected:
     csArray<csString>*   ImageNameCallback;
     csArray<csString>*   NameCallback;
     csArray<csString>*   ActionCallback;
+    csString              backgroundBackup;
 
     virtual bool CheckKeyHandled(int keyCode);
 
