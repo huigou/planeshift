@@ -2193,7 +2193,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
         }
         switch(msg.command)
         {
-                // Level 0 commands, will allways react
+            // Level 0 commands, will allways react
             case psPETCommandMessage::CMD_TARGET :
             {
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr))
@@ -2270,15 +2270,6 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
             }
             break;
             // Level 4 commands
-            case psPETCommandMessage::CMD_STOPATTACK :
-            {
-                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
-                        WillPetReact(me->clientnum, owner, pet, typeStr, 4))
-                {
-                    QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
-                }
-            }
-            break;
             case psPETCommandMessage::CMD_ATTACK :
             {
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
@@ -2332,6 +2323,15 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 }
             }
             break;
+            case psPETCommandMessage::CMD_STOPATTACK :
+            {
+                if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                        WillPetReact(me->clientnum, owner, pet, typeStr, 4))
+                {
+                    QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
+                }
+            }
+            break;
         }
         return;
     }
@@ -2353,53 +2353,9 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
 
     switch(msg.command)
     {
-        case psPETCommandMessage::CMD_FOLLOW :
-        {
-            PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
-            if(!session)
-            {
-                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName());
-                return;
-            }
-
-            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
-            {
-                // If no target than target owner
-                if(!pet->GetTarget())
-                {
-                    pet->SetTarget(owner->GetActor());
-                }
-                QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW);
-                if(!session->IsInTrainingLockout())
-                {
-                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
-                    session->ReceivedTraining();
-                }
-            }
-        }
-        break;
-        case psPETCommandMessage::CMD_STAY :
-        {
-            PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
-            if(!session)
-            {
-                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName());
-                return;
-            }
-
-            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 1))
-            {
-                QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_STAY);
-                if(!session->IsInTrainingLockout())
-                {
-                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
-                    session->ReceivedTraining();
-                }
-
-            }
-        }
-        break;
+        // Level 0 commands, will allways react
         case psPETCommandMessage::CMD_DISMISS :
+        {
             if(pet->IsValid())
             {
                 DismissPet(pet, owner);
@@ -2408,207 +2364,6 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
             {
                 psserver->SendSystemInfo(me->clientnum, "Your pet has already returned to the netherworld.");
                 return;
-            }
-            break;
-        case psPETCommandMessage::CMD_SUMMON :
-            // Attach to Familiar
-        {
-            PetOwnerSession* session = NULL;
-
-            session = OwnerPetList.Get(familiarID, NULL);
-
-            psCharacter* petdata = psserver->CharacterLoader.LoadCharacterData(familiarID, false);
-            // Check for an existing session
-            if(!session)
-            {
-                // Create session if one doesn't exist
-                session = CreatePetOwnerSession(owner->GetActor(), petdata);
-            }
-
-            if(!session)
-            {
-                Error2("Error while creating pet session for Character '%s'\n", owner->GetCharacterData()->GetCharName());
-                return;
-            }
-
-            if(session->owner != owner->GetActor())
-            {
-                session->Reconnect(owner->GetActor());
-            }
-
-            // Check time in game for pet
-            if(session->IsInDepletedLockout())
-            {
-                psserver->SendSystemInfo(me->clientnum,"The power of the ring of familiar is currently depleted, it will take more time to summon a pet again.");
-                return;
-            }
-
-            if(session->IsInKilledLockout())
-            {
-                if(familiarID.IsValid())
-                {
-                    psserver->SendSystemInfo(me->clientnum, "Your pet is hiding in the netherworld.");
-                }
-                else
-                {
-                    psserver->SendSystemInfo(me->clientnum, "Your familiar is avoiding you.");
-                }
-                return;
-            }
-
-
-            // Check if there has been suffisient time since last summon.
-            // Will continue on the last elapsed time since dismiss lockout
-            // wasn't completed. Give a warning to the user.
-            if(session->IsInDismissLockoutTime())
-            {
-                psserver->SendSystemInfo(me->clientnum,"Your pet was just dismissed, but manage with an effort to return.");
-            }
-
-            {
-                session->Summon();
-
-                iSector* targetSector;
-                csVector3 targetPoint;
-                float yRot = 0.0;
-                InstanceID instance;
-                owner->GetActor()->GetPosition(targetPoint,yRot,targetSector);
-                instance = owner->GetActor()->GetInstance();
-                psSectorInfo* sectorInfo = cacheManager->GetSectorInfoByName(targetSector->QueryObject()->GetName());
-                petdata->SetLocationInWorld(instance,sectorInfo,targetPoint.x,targetPoint.y,targetPoint.z,yRot);
-
-                entityManager->CreateNPC(petdata);
-                pet = gemSupervisor->FindNPCEntity(familiarID);
-                if(pet == NULL)
-                {
-                    Error2("Error while creating Familiar NPC for Character '%s'\n", owner->GetCharacterData()->GetCharName());
-                    psserver->SendSystemError(owner->GetClientNum(), "Could not find Familiar GEM and set its location.");
-                    return; // If all we didn't do was load the familiar
-                }
-                if(!pet->IsValid())
-                {
-                    Error2("No valid Familiar NPC for Character '%s'\n", owner->GetCharacterData()->GetCharName());
-                    psserver->SendSystemError(owner->GetClientNum(), "Could not find valid Familiar");
-                    return; // If all we didn't do was load the familiar
-                }
-
-                owner->SetFamiliar(pet);
-                // Send OwnerActionLogon Perception
-                pet->SetOwner(owner->GetActor());
-                if(!session->IsInTrainingLockout())
-                {
-                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
-                    session->ReceivedTraining();
-                }
-                // Have the pet auto follow when summoned
-                // If no target than target owner
-                if(!pet->GetTarget())
-                {
-                    pet->SetTarget(owner->GetActor());
-                }
-                QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW);
-            }
-        }
-        break;
-        case psPETCommandMessage::CMD_ATTACK :
-        {
-            PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
-            if(!session)
-            {
-                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName());
-                return;
-            }
-
-            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
-            {
-                gemActor* lastAttacker = NULL;
-                gemObject* trg = pet->GetTarget();
-                if(trg != NULL)
-                {
-                    gemActor* targetActor = trg->GetActorPtr();
-                    /* We check if the owner can attack the other entity in order to not allow players
-                     * to override permissions and at the same time allowing pet<->player, pet<->pet
-                     * when in pvp. We allow gm to do anything they want (can attack everything including
-                     * their own pet just like how it happens with players
-                     */
-                    csString msg; // Not used
-                    if(targetActor == NULL || !owner->GetActor()->IsAllowedToAttack(trg, msg) ||
-                            (trg == pet && !owner->IsGM()))
-
-                    {
-                        psserver->SendSystemInfo(me->clientnum,"Your familiar refuses.");
-                    }
-                    else if(targetActor && !targetActor->CanBeAttackedBy(pet,lastAttacker))
-                    {
-                        csString tmp;
-                        if(lastAttacker)
-                        {
-                            tmp.Format("You must be grouped with %s for your pet to attack %s.",
-                                       lastAttacker->GetName(), trg->GetName());
-                        }
-                        else
-                        {
-                            tmp.Format("Your pet is not allowed to attack right now.");
-                        }
-                        psserver->SendSystemInfo(me->clientnum,tmp.GetDataSafe());
-                    }
-                    else
-                    {
-                        Stance stance = CombatManager::GetStance(cacheManager, "Aggressive");
-                        if(words.GetCount() != 0)
-                        {
-                            stance.stance_id = words.GetInt(0);
-                        }
-                        QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK);
-                        if(!session->IsInTrainingLockout())
-                        {
-                            owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
-                            session->ReceivedTraining();
-                        }
-                    }
-                }
-                else
-                {
-                    psserver->SendSystemInfo(me->clientnum, "Your %s needs a target to attack.", typeStr);
-                }
-            }
-        }
-        break;
-        case psPETCommandMessage::CMD_STOPATTACK :
-        {
-            PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
-            if(!session)
-            {
-                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName());
-                return;
-            }
-
-            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
-            {
-                QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK);
-                if(!session->IsInTrainingLockout())
-                {
-                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
-                    session->ReceivedTraining();
-                }
-            }
-        }
-        break;
-        case psPETCommandMessage::CMD_ASSIST :
-        {
-            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 3))
-            {
-                QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ASSIST);
-            }
-        }
-        break;
-        case psPETCommandMessage::CMD_RUN :
-        case psPETCommandMessage::CMD_WALK :
-        case psPETCommandMessage::CMD_GUARD :
-        {
-            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 2))
-            {
-                QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
             }
         }
         break;
@@ -2712,6 +2467,106 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                                      fullName.GetData());
         }
         break;
+        case psPETCommandMessage::CMD_SUMMON :
+        {
+            // Attach to Familiar
+            PetOwnerSession* session = NULL;
+
+            session = OwnerPetList.Get(familiarID, NULL);
+
+            psCharacter* petdata = psserver->CharacterLoader.LoadCharacterData(familiarID, false);
+            // Check for an existing session
+            if(!session)
+            {
+                // Create session if one doesn't exist
+                session = CreatePetOwnerSession(owner->GetActor(), petdata);
+            }
+
+            if(!session)
+            {
+                Error2("Error while creating pet session for Character '%s'\n", owner->GetCharacterData()->GetCharName());
+                return;
+            }
+
+            if(session->owner != owner->GetActor())
+            {
+                session->Reconnect(owner->GetActor());
+            }
+
+            // Check time in game for pet
+            if(session->IsInDepletedLockout())
+            {
+                psserver->SendSystemInfo(me->clientnum,"The power of the ring of familiar is currently depleted, it will take more time to summon a pet again.");
+                return;
+            }
+
+            if(session->IsInKilledLockout())
+            {
+                if(familiarID.IsValid())
+                {
+                    psserver->SendSystemInfo(me->clientnum, "Your pet is hiding in the netherworld.");
+                }
+                else
+                {
+                    psserver->SendSystemInfo(me->clientnum, "Your familiar is avoiding you.");
+                }
+                return;
+            }
+
+
+            // Check if there has been suffisient time since last summon.
+            // Will continue on the last elapsed time since dismiss lockout
+            // wasn't completed. Give a warning to the user.
+            if(session->IsInDismissLockoutTime())
+            {
+                psserver->SendSystemInfo(me->clientnum,"Your pet was just dismissed, but manage with an effort to return.");
+            }
+
+            {
+                session->Summon();
+
+                iSector* targetSector;
+                csVector3 targetPoint;
+                float yRot = 0.0;
+                InstanceID instance;
+                owner->GetActor()->GetPosition(targetPoint,yRot,targetSector);
+                instance = owner->GetActor()->GetInstance();
+                psSectorInfo* sectorInfo = cacheManager->GetSectorInfoByName(targetSector->QueryObject()->GetName());
+                petdata->SetLocationInWorld(instance,sectorInfo,targetPoint.x,targetPoint.y,targetPoint.z,yRot);
+
+                entityManager->CreateNPC(petdata);
+                pet = gemSupervisor->FindNPCEntity(familiarID);
+                if(pet == NULL)
+                {
+                    Error2("Error while creating Familiar NPC for Character '%s'\n", owner->GetCharacterData()->GetCharName());
+                    psserver->SendSystemError(owner->GetClientNum(), "Could not find Familiar GEM and set its location.");
+                    return; // If all we didn't do was load the familiar
+                }
+                if(!pet->IsValid())
+                {
+                    Error2("No valid Familiar NPC for Character '%s'\n", owner->GetCharacterData()->GetCharName());
+                    psserver->SendSystemError(owner->GetClientNum(), "Could not find valid Familiar");
+                    return; // If all we didn't do was load the familiar
+                }
+
+                owner->SetFamiliar(pet);
+                // Send OwnerActionLogon Perception
+                pet->SetOwner(owner->GetActor());
+                if(!session->IsInTrainingLockout())
+                {
+                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                    session->ReceivedTraining();
+                }
+                // Have the pet auto follow when summoned
+                // If no target than target owner
+                if(!pet->GetTarget())
+                {
+                    pet->SetTarget(owner->GetActor());
+                }
+                QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_FOLLOW);
+            }
+        }
+        break;
         case psPETCommandMessage::CMD_TARGET :
         {
             if(CanPetHearYou(me->clientnum, owner, pet, typeStr))
@@ -2745,6 +2600,141 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 else
                 {
                     psserver->SendSystemInfo(me->clientnum, "Cannot find '%s' to target.", firstName.GetData());
+                }
+            }
+        }
+        break;
+        // Level 1 commands
+        case psPETCommandMessage::CMD_FOLLOW :
+        case psPETCommandMessage::CMD_STAY :
+        {
+            PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
+            if(!session)
+            {
+                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName());
+                return;
+            }
+
+            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                    WillPetReact(me->clientnum, owner, pet, typeStr, 1))
+            {
+                // If no target than target owner
+                if(!pet->GetTarget())
+                {
+                    pet->SetTarget(owner->GetActor());
+                }
+                QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
+                if(!session->IsInTrainingLockout())
+                {
+                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                    session->ReceivedTraining();
+                }
+            }
+        }
+        break;
+        // Level 2 commands
+        case psPETCommandMessage::CMD_GUARD :
+        case psPETCommandMessage::CMD_RUN :
+        case psPETCommandMessage::CMD_WALK :
+        {
+            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                    WillPetReact(me->clientnum, owner, pet, typeStr, 2))
+            {
+                QueueOwnerCmdPerception(owner->GetActor(), pet, (psPETCommandMessage::PetCommand_t)msg.command);
+            }
+        }
+        break;
+        // Level 3 commands
+        case psPETCommandMessage::CMD_ASSIST :
+        {
+            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
+                    WillPetReact(me->clientnum, owner, pet, typeStr, 3))
+            {
+                QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ASSIST);
+            }
+        }
+        break;
+        // Level 4 commands
+        case psPETCommandMessage::CMD_ATTACK :
+        {
+            PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
+            if(!session)
+            {
+                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName());
+                return;
+            }
+
+            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
+            {
+                gemActor* lastAttacker = NULL;
+                gemObject* trg = pet->GetTarget();
+                if(trg != NULL)
+                {
+                    gemActor* targetActor = trg->GetActorPtr();
+                    /* We check if the owner can attack the other entity in order to not allow players
+                     * to override permissions and at the same time allowing pet<->player, pet<->pet
+                     * when in pvp. We allow gm to do anything they want (can attack everything including
+                     * their own pet just like how it happens with players
+                     */
+                    csString msg; // Not used
+                    if(targetActor == NULL || !owner->GetActor()->IsAllowedToAttack(trg, msg) ||
+                            (trg == pet && !owner->IsGM()))
+
+                    {
+                        psserver->SendSystemInfo(me->clientnum,"Your familiar refuses.");
+                    }
+                    else if(targetActor && !targetActor->CanBeAttackedBy(pet,lastAttacker))
+                    {
+                        csString tmp;
+                        if(lastAttacker)
+                        {
+                            tmp.Format("You must be grouped with %s for your pet to attack %s.",
+                                       lastAttacker->GetName(), trg->GetName());
+                        }
+                        else
+                        {
+                            tmp.Format("Your pet is not allowed to attack right now.");
+                        }
+                        psserver->SendSystemInfo(me->clientnum,tmp.GetDataSafe());
+                    }
+                    else
+                    {
+                        Stance stance = CombatManager::GetStance(cacheManager, "Aggressive");
+                        if(words.GetCount() != 0)
+                        {
+                            stance.stance_id = words.GetInt(0);
+                        }
+                        QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK);
+                        if(!session->IsInTrainingLockout())
+                        {
+                            owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                            session->ReceivedTraining();
+                        }
+                    }
+                }
+                else
+                {
+                    psserver->SendSystemInfo(me->clientnum, "Your %s needs a target to attack.", typeStr);
+                }
+            }
+        }
+        break;
+        case psPETCommandMessage::CMD_STOPATTACK :
+        {
+            PetOwnerSession* session = OwnerPetList.Get(pet->GetCharacterData()->GetPID(), NULL);
+            if(!session)
+            {
+                CPrintf(CON_NOTIFY, "Cannot locate PetSession for owner %s.\n", pet->GetName(), owner->GetName());
+                return;
+            }
+
+            if(CanPetHearYou(me->clientnum, owner, pet, typeStr) && WillPetReact(me->clientnum, owner, pet, typeStr, 4))
+            {
+                QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_STOPATTACK);
+                if(!session->IsInTrainingLockout())
+                {
+                    owner->GetCharacterData()->Skills().AddSkillPractice(GetPetSkill(), 1);
+                    session->ReceivedTraining();
                 }
             }
         }
