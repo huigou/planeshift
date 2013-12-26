@@ -274,7 +274,8 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                     skillString = incoming.commandData;
                     skillCache.apply(&incoming.skillCache);
 
-                    HandleSkillList(incoming.focusSkill, flush);
+                    if (IsVisible())
+                        HandleSkillList(incoming.focusSkill, flush);
 
                     hitpointsMax = incoming.hitpointsMax;
                     manaMax = incoming.manaMax;
