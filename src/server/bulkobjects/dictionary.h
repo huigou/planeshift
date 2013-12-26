@@ -433,11 +433,11 @@ public:
     /// Optional specific string to say, used by quest_scripts
     csString* sayWhat;
 
-    SayResponseOp(bool is_public)
+    SayResponseOp(const char* name, bool is_public)
     {
         sayWhat=NULL;
         saypublic = is_public;
-        name = "respond";
+        this->name = name;
     }
     virtual ~SayResponseOp()
     {
@@ -465,12 +465,13 @@ protected:
     csString anim;
     csString* actWhat;
 public:
-    ActionResponseOp(bool my,bool narrate, bool is_public)
+    ActionResponseOp(const char* actionName, bool my,bool narrate, bool is_public)
     {
         actionMy = my;
         actionNarrate=narrate;
-        name = "action";
+        name = actionName;
         actionpublic = is_public;
+        actWhat = NULL;
     }
     virtual ~ActionResponseOp()
     {

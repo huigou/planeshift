@@ -1289,7 +1289,7 @@ bool NpcResponse::ParseResponseScript(const char* xmlstr,bool insertBeginning)
 {
     if(!xmlstr || strcmp(xmlstr,"")==0)
     {
-        SayResponseOp* op = new SayResponseOp(false);
+        SayResponseOp* op = new SayResponseOp("respond", false);
         if(insertBeginning)
             script.Insert(0,op);
         else
@@ -1340,7 +1340,8 @@ bool NpcResponse::ParseResponseScript(const char* xmlstr,bool insertBeginning)
                 strcmp(node->GetValue(), "respondpublic") == 0 ||
                 strcmp(node->GetValue(), "say") == 0)
         {
-            op = new SayResponseOp(strcmp(node->GetValue(), "respondpublic") == 0);    // true for public, false for private
+            op = new SayResponseOp(node->GetValue(),
+                                   strcmp(node->GetValue(), "respondpublic") == 0);    // true for public, false for private
         }
         else if(strcmp(node->GetValue(), "action") == 0 ||
                 strcmp(node->GetValue(), "actionmy") == 0 ||
@@ -1349,7 +1350,8 @@ bool NpcResponse::ParseResponseScript(const char* xmlstr,bool insertBeginning)
                 strcmp(node->GetValue(), "actionmypublic") == 0 ||
                 strcmp(node->GetValue(), "narratepublic") == 0)
         {
-            op = new ActionResponseOp(strncmp(node->GetValue(), "actionmy", 8) == 0 ,   // true for actionmy, false for action
+            op = new ActionResponseOp(node->GetValue(),
+                                      strncmp(node->GetValue(), "actionmy", 8) == 0 ,   // true for actionmy, false for action
                                       strncmp(node->GetValue(), "narrate", 7)  == 0,
                                       strcmp(node->GetValue(), "actionpublic") == 0 ||  //true in case it's public
                                       strcmp(node->GetValue(), "actionmypublic") == 0 ||
@@ -1740,7 +1742,11 @@ csString ActionResponseOp::GetResponseScript()
 {
     psString resp;
     resp = GetName();
-    resp.AppendFmt(" anim=\"%s\"",anim.GetData());
+    resp.AppendFmt(" anim=\"%s\"",anim.GetDataSafe());
+    if (actWhat)
+    {
+        resp.AppendFmt(" anim=\"%s\"",actWhat->GetDataSafe());
+    }
     return resp;
 }
 
