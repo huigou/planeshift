@@ -1092,11 +1092,11 @@ bool pawsShortcutWindow::LoadUserPrefs()
     {
         if( strcasecmp( "editLockDND",  optionNode->GetAttributeValue("active") )==0 )
         {
-            MenuBar->SetEditMode( 1 ); //allow rt-click editing but prevent dnd
+            MenuBar->SetEditMode( 0 ); //allow rt-click editing but prevent dnd
         }
         else //default to lock all
         {
-            MenuBar->SetEditMode( 0 );//prevent all editing
+            MenuBar->SetEditMode( 1 );//prevent all editing
         }
     }
 
