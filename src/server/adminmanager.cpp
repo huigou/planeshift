@@ -4547,21 +4547,65 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
         return;
     }
 
-    if(data->command == "/npc")
+    if(data->command == "/action")
     {
-        CreateNPC(me,msg,data,client);
+        HandleActionLocation(me, msg, data, client);
     }
-    else if(data->command == "/killnpc")
+    else if(data->command == "/assignfaction")
     {
-        KillNPC(me, msg, data, client);
+        AssignFaction(me, msg, data, client);
     }
-    else if(data->command == "/percept")
+    else if(data->command == "/award")
     {
-        Percept(me, msg, data, client);
+        Award(data, client);
+    }
+    else if(data->command == "/badtext")
+    {
+        HandleBadText(msg, data, client);
+    }
+    else if(data->command == "/ban")
+    {
+        BanClient(me, msg, data, client);
+    }
+    else if(data->command == "/banadvisor")
+    {
+        BanAdvisor(me, msg, data, client);
+    }
+    else if(data->command == "/banname")
+    {
+        BanName(me, msg, data, client);
+    }
+    else if(data->command == "/changeguildleader")
+    {
+        ChangeGuildLeader(me, msg, data, client);
+    }
+    else if(data->command == "/changeguildname")
+    {
+        RenameGuild(me, msg, data, client);
+    }
+    else if(data->command == "/changename")
+    {
+        ChangeName(me, msg, data, client);
     }
     else if(data->command == "/changenpctype")
     {
         ChangeNPCType(me, msg, data, client);
+    }
+    else if(data->command == "/charlist")
+    {
+        GetSiblingChars(me,msg,data, client);
+    }
+    else if(data->command == "/checkitem")
+    {
+        CheckItem(me, msg, data);
+    }
+    else if(data->command == "/crystal")
+    {
+        CreateHuntLocation(me,msg,data,client);
+    }
+    else if(data->command == "/death")
+    {
+        Death(me, msg, data, client);
     }
     else if(data->command == "/debugnpc")
     {
@@ -4571,9 +4615,49 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     {
         DebugTribe(me, msg, data, client);
     }
-    else if(data->command == "/rndmsgtest")
+    else if(data->command == "/deletechar")
     {
-        RandomMessageTest(data, client);
+        DeleteCharacter(me, msg, data, client);
+    }
+    else if(data->command == "/deputize")
+    {
+        TempSecurityLevel(me, msg, data, client);
+    }
+    else if(data->command == "/disablequest")
+    {
+        DisableQuest(me, msg, data, client);
+    }
+    else if(data->command == "/divorce")
+    {
+        Divorce(me, data);
+    }
+    else if(data->command == "/event")
+    {
+        HandleGMEvent(me, msg, data, client);
+    }
+    else if(data->command == "/fog")
+    {
+        Fog(me,msg,data,client);
+    }
+    else if(data->command == "/freeze")
+    {
+        FreezeClient(me, msg, data, client);
+    }
+    else if(data->command == "/giveitem")
+    {
+        TransferItem(me, msg, data, client);
+    }
+    else if(data->command == "/impersonate")
+    {
+        Impersonate(me, msg, data, client);
+    }
+    else if(data->command == "/info")
+    {
+        GetInfo(me,msg,data,client);
+    }
+    else if(data->command == "/inspect")
+    {
+        Inspect(me, msg, data, client);
     }
     else if(data->command == "/item")
     {
@@ -4583,153 +4667,33 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     {
         ModifyKey(me,msg,data,client);
     }
-    else if(data->command == "/runscript")
-    {
-        RunScript(me,msg,data,client);
-    }
-    else if(data->command == "/weather")
-    {
-        Weather(me,msg,data,client);
-    }
-    else if(data->command == "/rain")
-    {
-        Rain(me,msg,data,client);
-    }
-    else if(data->command == "/snow")
-    {
-        Snow(me,msg,data,client);
-    }
-    else if(data->command == "/thunder")
-    {
-        Thunder(me,msg,data,client);
-    }
-    else if(data->command == "/fog")
-    {
-        Fog(me,msg,data,client);
-    }
-    else if(data->command == "/info")
-    {
-        GetInfo(me,msg,data,client);
-    }
-    else if(data->command == "/charlist")
-    {
-        GetSiblingChars(me,msg,data, client);
-    }
-    else if(data->command == "/crystal")
-    {
-        CreateHuntLocation(me,msg,data,client);
-    }
-    else if(data->command == "/mute")
-    {
-        MutePlayer(me,msg,data,client);
-    }
-    else if(data->command == "/unmute")
-    {
-        UnmutePlayer(me,msg,data,client);
-    }
-    else if(data->command == "/teleport")
-    {
-        Teleport(me,msg,data,client);
-    }
-    else if(data->command == "/slide")
-    {
-        Slide(me,msg,data,client);
-    }
-    else if(data->command == "/petition")
-    {
-        HandleAddPetition(me, msg, data, client);
-    }
-    else if(data->command == "/warn")
-    {
-        WarnMessage(me, msg, data, client);
-    }
     else if(data->command == "/kick")
     {
         KickPlayer(me, msg, data, client);
     }
-    else if(data->command == "/death")
+    else if(data->command == "/killnpc")
     {
-        Death(me, msg, data, client);
+        KillNPC(me, msg, data, client);
     }
-    else if(data->command == "/impersonate")
+    else if(data->command == "/list")
     {
-        Impersonate(me, msg, data, client);
+        HandleList(me, msg, data, client);
     }
-    else if(data->command == "/deputize")
+    else if(data->command == "/listwarnings")
     {
-        TempSecurityLevel(me, msg, data, client);
+        HandleListWarnings(msg, data, client);
     }
-    else if(data->command == "/deletechar")
+    else if(data->command == "/loadquest")
     {
-        DeleteCharacter(me, msg, data, client);
+        HandleLoadQuest(msg, data, client);
     }
-    else if(data->command == "/changename")
+    else if(data->command == "/location")
     {
-        ChangeName(me, msg, data, client);
+        HandleLocation(me, msg, data, client);
     }
-    else if(data->command == "/changeguildname")
+    else if(data->command == "/marriageinfo")
     {
-        RenameGuild(me, msg, data, client);
-    }
-    else if(data->command == "/changeguildleader")
-    {
-        ChangeGuildLeader(me, msg, data, client);
-    }
-    else if(data->command == "/banname")
-    {
-        BanName(me, msg, data, client);
-    }
-    else if(data->command == "/unbanname")
-    {
-        UnBanName(me, msg, data, client);
-    }
-    else if(data->command == "/ban")
-    {
-        BanClient(me, msg, data, client);
-    }
-    else if(data->command == "/unban")
-    {
-        UnbanClient(me, msg, data, client);
-    }
-    else if(data->command == "/banadvisor")
-    {
-        BanAdvisor(me, msg, data, client);
-    }
-    else if(data->command == "/unbanadvisor")
-    {
-        UnbanAdvisor(me, msg, data, client);
-    }
-    else if(data->command == "/award")
-    {
-        Award(data, client);
-    }
-    else if(data->command == "/giveitem")
-    {
-        TransferItem(me, msg, data, client);
-    }
-    else if(data->command == "/takeitem")
-    {
-        TransferItem(me, msg, data, client);
-    }
-    else if(data->command == "/checkitem")
-    {
-        CheckItem(me, msg, data);
-    }
-    else if(data->command == "/freeze")
-    {
-        FreezeClient(me, msg, data, client);
-    }
-    else if(data->command == "/thaw")
-    {
-        ThawClient(me, msg, data, client);
-    }
-    else if(data->command == "/inspect")
-    {
-        Inspect(me, msg, data, client);
-    }
-    else if(data->command == "/updaterespawn")
-    {
-        UpdateRespawn(data, client);
+        ViewMarriage(me, data);
     }
     else if(data->command == "/modify")
     {
@@ -4739,61 +4703,81 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     {
         Morph(me, msg, data, client);
     }
-    else if(data->command == "/scale")
+    else if(data->command == "/mute")
     {
-        Scale(me, msg, data, client);
+        MutePlayer(me,msg,data,client);
     }
-    else if(data->command == "/setskill")
+    else if(data->command == "/npc")
     {
-        SetSkill(me, msg, data, client);
+        CreateNPC(me,msg,data,client);
     }
-    else if(data->command == "/set")
+    else if(data->command == "/npcclientquit")
     {
-        SetAttrib(me, msg, data, client);
-    }
-    else if(data->command == "/setlabelcolor")
-    {
-        SetLabelColor(me, msg, data, client);
-    }
-    else if(data->command == "/divorce")
-    {
-        Divorce(me, data);
-    }
-    else if(data->command == "/marriageinfo")
-    {
-        ViewMarriage(me, data);
+        HandleNPCClientQuit(me, msg, data, client);
     }
     else if(data->command == "/path")
     {
         HandlePath(me, msg, data, client);
     }
-    else if(data->command == "/location")
+    else if(data->command == "/percept")
     {
-        HandleLocation(me, msg, data, client);
+        Percept(me, msg, data, client);
     }
-    else if(data->command == "/action")
+    else if(data->command == "/petition")
     {
-        HandleActionLocation(me, msg, data, client);
-    }
-    else if(data->command == "/event")
-    {
-        HandleGMEvent(me, msg, data, client);
-    }
-    else if(data->command == "/badtext")
-    {
-        HandleBadText(msg, data, client);
-    }
-    else if(data->command == "/loadquest")
-    {
-        HandleLoadQuest(msg, data, client);
+        HandleAddPetition(me, msg, data, client);
     }
     else if(data->command == "/quest")
     {
         HandleQuest(me, msg, data, client);
     }
+    else if(data->command == "/rain")
+    {
+        Rain(me,msg,data,client);
+    }
+    else if(data->command == "/reload")
+    {
+        HandleReload(msg, data, client);
+    }
+    else if(data->command == "/rndmsgtest")
+    {
+        RandomMessageTest(data, client);
+    }
+    else if(data->command == "/runscript")
+    {
+        RunScript(me,msg,data,client);
+    }
+    else if(data->command == "/scale")
+    {
+        Scale(me, msg, data, client);
+    }
+    else if(data->command == "/serverquit")
+    {
+        HandleServerQuit(me, msg, data, client);
+    }
+    else if(data->command == "/set")
+    {
+        SetAttrib(me, msg, data, client);
+    }
+    else if(data->command == "/setkillexp")
+    {
+        SetKillExp(me, msg, data, client);
+    }
+    else if(data->command == "/setitemname")
+    {
+        HandleSetItemName(msg, data, client);
+    }
+    else if(data->command == "/setlabelcolor")
+    {
+        SetLabelColor(me, msg, data, client);
+    }
     else if(data->command == "/setquality")
     {
         HandleSetQuality(msg, data, client);
+    }
+    else if(data->command == "/setskill")
+    {
+        SetSkill(me, msg, data, client);
     }
     else if(data->command == "/setstackable")
     {
@@ -4803,53 +4787,69 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     {
         HandleSetTrait(msg, data, client);
     }
-    else if(data->command == "/setitemname")
+    else if(data->command == "/slide")
     {
-        HandleSetItemName(msg, data, client);
+        Slide(me,msg,data,client);
     }
-    else if(data->command == "/reload")
+    else if(data->command == "/snow")
     {
-        HandleReload(msg, data, client);
+        Snow(me,msg,data,client);
     }
-    else if(data->command == "/listwarnings")
+    else if(data->command == "/takeitem")
     {
-        HandleListWarnings(msg, data, client);
+        TransferItem(me, msg, data, client);
     }
     else if(data->command == "/targetname")
     {
         CheckTarget(msg, data, client);
     }
-    else if(data->command == "/disablequest")
+    else if(data->command == "/teleport")
     {
-        DisableQuest(me, msg, data, client);
+        Teleport(me,msg,data,client);
     }
-    else if(data->command == "/setkillexp")
+    else if(data->command == "/thaw")
     {
-        SetKillExp(me, msg, data, client);
+        ThawClient(me, msg, data, client);
     }
-    else if(data->command == "/assignfaction")
+    else if(data->command == "/thunder")
     {
-        AssignFaction(me, msg, data, client);
+        Thunder(me,msg,data,client);
     }
-    else if(data->command == "/serverquit")
+    else if(data->command == "/time")
     {
-        HandleServerQuit(me, msg, data, client);
+        HandleTime(me, msg, data, client);
     }
-    else if(data->command == "/npcclientquit")
+    else if(data->command == "/unban")
     {
-        HandleNPCClientQuit(me, msg, data, client);
+        UnbanClient(me, msg, data, client);
+    }
+    else if(data->command == "/unbanadvisor")
+    {
+        UnbanAdvisor(me, msg, data, client);
+    }
+    else if(data->command == "/unbanname")
+    {
+        UnBanName(me, msg, data, client);
+    }
+    else if(data->command == "/unmute")
+    {
+        UnmutePlayer(me,msg,data,client);
+    }
+    else if(data->command == "/updaterespawn")
+    {
+        UpdateRespawn(data, client);
     }
     else if(data->command == "/version")
     {
         HandleVersion(me, msg, data, client);
     }
-    else if(data->command == "/list")
+    else if(data->command == "/warn")
     {
-        HandleList(me, msg, data, client);
+        WarnMessage(me, msg, data, client);
     }
-    else if(data->command == "/time")
+    else if(data->command == "/weather")
     {
-        HandleTime(me, msg, data, client);
+        Weather(me,msg,data,client);
     }
     if(data)
         delete data;
