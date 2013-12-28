@@ -90,7 +90,7 @@ INSERT INTO `race_info` VALUES (29,'Trepor','stonebm','M',0.8,1.4,0.6,'',100,50,
 INSERT INTO `race_info` VALUES (30,'Ulbernaut','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',19,0.92,1);
 INSERT INTO `race_info` VALUES (31,'Tefusang','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,2,1.5,10,10,0,0,'','','','','',20,0.92,1);
 INSERT INTO `race_info` VALUES (32,'Drifter','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',21,0.92,2);
-INSERT INTO `race_info` VALUES (9999,'Special','nullmesh','N',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',9999,0,1);
+INSERT INTO `race_info` VALUES (9999,'Special','nullmesh','N',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',9999,1,1);
 /*!40000 ALTER TABLE `race_info` ENABLE KEYS */;
 
 
