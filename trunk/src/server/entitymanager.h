@@ -105,8 +105,17 @@ public:
     EID CreateNPC(psCharacter* chardata, bool updateProxList = true, bool alwaysWatching = false);
     EID CreateNPC(psCharacter* chardata, InstanceID instance, csVector3 pos, iSector* sector, float yrot, bool updateProxList = true, bool alwaysWatching = false);
 
+    /** Create a new familiar NPC.
+     */
     gemNPC* CreateFamiliar(gemActor* owner, PID masterPID);
-    gemNPC* CreatePet(Client* client, int familiarid);
+    
+    /** Create a new hired NPC.
+     */
+    gemNPC* CreateHiredNPC(gemActor* owner, PID masterPID, const csString& name);
+    
+    /** Clone a NPC.
+     *  Used by the tribe system to generate new mebers.
+     */
     gemNPC* CloneNPC(psCharacter* chardata);
 
     bool CreateActionLocation(psActionLocation* instance, bool transient);
