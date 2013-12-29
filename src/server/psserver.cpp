@@ -71,6 +71,7 @@
 #include "gmeventmanager.h"
 #include "groupmanager.h"
 #include "guildmanager.h"
+#include "hiremanager.h"
 #include "introductionmanager.h"
 #include "serversongmngr.h"
 #include "marriagemanager.h"
@@ -448,6 +449,14 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     // Init Bank Manager.
     bankmanager = new BankManager();
+
+    // Init Hire Manager
+    hiremanager = new HireManager();
+    if (!hiremanager->Initialize())
+    {
+        Error1("Failed to start hire manager!");
+        return false;
+    }
 
     usermanager = new UserManager(GetConnections(), cachemanager, bankmanager, entitymanager);
     Debug1(LOG_STARTUP,0,"Started User Manager");

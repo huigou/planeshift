@@ -360,6 +360,23 @@ INSERT INTO sc_npctypes VALUES("15","Nocturnal","Sleep,InRegion",0,"$walk","",""
 <react event="time" value="18,0,,," random=",5,,,"  behavior="GoToRegion" /> 
 ');
 
+INSERT INTO sc_npctypes VALUES("16","Follow","",0,"","","","","","1",
+'<!-- Follow basic operation -->
+<behavior name="follow" completion_decay="100" decay="0" growth="0" initial="0" loop="yes">
+   <watch type="owner" range="3.0" />
+</behavior>
+<behavior name="follow_chase" completion_decay="100" growth="0" initial="0">
+   <chase type="owner" anim="walk" collision="follow_collided" offset="1.0+$race_size" />
+</behavior>
+<behavior name="follow_turn" completion_decay="100" growth="0" initial="0">
+   <rotate type="random" min="90" max="270" anim="walk" ang_vel="30" />
+   <move vel="2" anim="walk" duration="1.0"/>
+</behavior>
+
+<react event="follow_collided"      behavior="follow_turn"  delta=  "100" />
+<react event="owner out of range"   behavior="follow_chase"  />
+');
+
 INSERT INTO sc_npctypes VALUES("100","Smith","GoHomeOnTeleport,DoNothing",0,"","","","","","0",
 '<behavior name="go_climbing1" initial="0" completion_decay="20" loop="no"> 
    <moveto x="-53.6003" y="0.0" z="-155.041" anim="walk" />
@@ -1433,3 +1450,23 @@ INSERT INTO sc_npctypes VALUES("144","ChaseTest3","DoNothing",0,"","","","","","
    <wait anim="stand" duration="1" />  <!-- Could be a watch operation!! -->
 </behavior>');
 
+INSERT INTO sc_npctypes VALUES("150","HiredNPC","Follow",0,"$walk","","","","","0",
+'<!-- Default movement operation for non scripted hired NPC -->
+
+<behavior name="InitHiredNPC" initial="1000" completion_decay="-1" >
+   <!--debug level="0" /-->
+   <percept event="follow"/>
+</behavior>
+
+<react event="follow"               behavior="follow"       delta=  "100"  inactive_only="true" />
+');
+
+INSERT INTO sc_npctypes VALUES("151","HiredGuard","MoveTest2",0,"$walk","","","","","0",
+'<!-- Behavior for scripted hired NPCs working as guards. -->
+<empty/><!-- TODO Create script -->
+');
+
+INSERT INTO sc_npctypes VALUES("152","HiredMerchant","MoveTest2",0,"$walk","","","","","0",
+'<!-- Behavior for scripted hired NPCs working as merchant. -->
+<empty/><!-- TODO Create script -->
+');

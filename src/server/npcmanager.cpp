@@ -1953,7 +1953,8 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 Client* client = psserver->GetConnections()->Find(clientnum);
                 if(!client)
                 {
-                    Debug1(LOG_SUPERCLIENT, clientnum, "Couldn't find client.\n");
+                    Debug3(LOG_SUPERCLIENT, clientnum, "Couldn't find client %d for info reply: %s.",
+                           clientnum,reply.GetDataSafe());
                     break;
                 }
                 if(reply.Length() < MAXSYSTEMMSGSIZE)
@@ -3314,7 +3315,15 @@ void NPCManager::ChangeNPCBrain(gemNPC* npc, Client* client, const char* brainNa
     CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2+(strlen(brainName)+1));
     outbound->msg->Add((int8_t) psNPCCommandsMessage::PCPT_CHANGE_BRAIN);
     outbound->msg->Add(npc->GetEID().Unbox());
-    outbound->msg->Add(client->GetClientNum());
+    if (client)
+    {
+        outbound->msg->Add((uint32_t)client->GetClientNum());
+    }
+    else
+    {
+        outbound->msg->Add((uint32_t)0);
+    }
+    
     outbound->msg->Add(brainName);
 
     cmd_count++;

@@ -86,6 +86,7 @@ class  csVector3;
 struct iVFS;
 class  GMEventManager;
 class  BankManager;
+class  HireManager;
 class  ServerConsole;
 class  psQuitEvent;
 
@@ -501,6 +502,16 @@ public:
     }
 
     /**
+     * Returns the Hire Manager
+     *
+     * @return returns a reference to the Hire manager for the server.
+     */
+    HireManager* GetHireManager()
+    {
+        return hiremanager;
+    }
+
+    /**
      * Returns the User Manager
      *
      * @return returns a reference to the User manager for the server.
@@ -817,6 +828,7 @@ protected:
     csString                        motd;
     GMEventManager*                 gmeventManager;
     BankManager*                    bankmanager;
+    HireManager*                    hiremanager;
 
     psQuitEvent* server_quit_event; ///< Used to keep track of the shut down event
 
