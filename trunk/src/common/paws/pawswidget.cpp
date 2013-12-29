@@ -2897,7 +2897,8 @@ void pawsWidget::SetMaskingImage(const char* image)
         maskImage = 0;
         return;
     }
-    maskImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(image);
+    maskImage = PawsManager::GetSingleton().GetTextureManager()->GetOrAddPawsImage(image);
+
     if(!maskImage)
     {
         Warning3(LOG_PAWS, "Could not locate masking image %s for widget %s",image,GetName());
