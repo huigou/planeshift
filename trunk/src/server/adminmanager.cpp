@@ -77,6 +77,7 @@
 #include "globals.h"
 #include "gmeventmanager.h"
 #include "guildmanager.h"
+#include "hiremanager.h"
 #include "marriagemanager.h"
 #include "netmanager.h"
 #include "npcmanager.h"
@@ -3656,6 +3657,130 @@ csString AdminCmdDataGameMasterEvent::GetHelpMessage()
     return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
 }
 
+AdminCmdDataHire::AdminCmdDataHire(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
+    : AdminCmdData("/hire"), subCommandList("help list"), subCmd(), owner(NULL), hiredNPC(NULL)
+{
+    // register subcommands along with their help message
+    subCommandList.Push("start","");
+    subCommandList.Push("type","<Name> <NPC Type>");
+    subCommandList.Push("master","<master NPC ID>");
+    subCommandList.Push("confirm","");
+    subCommandList.Push("release","<Hired NPC>");
+
+    // when help is requested, return immediate
+    if(IsHelp(words[1]))
+    {
+        subCmd = words[2]; // Next word might be a sub Cmd.
+        return;
+    }
+
+    owner = client->GetActor();
+
+    size_t index = 1;
+
+    if(words.GetCount() <= index)
+    {
+        ParseError(me, "No subcommand.");
+    }
+    else if(subCommandList.IsSubCommand(words[index]))
+    {
+        subCmd = words[index++];
+
+        if(subCmd == "start")
+        {
+            if(words.GetCount() > index)
+            {
+                ParseError(me, "To many parameters.");
+            }
+        }
+        else if(subCmd == "type")
+        {
+            if (words.GetCount() <= index)
+            {
+                ParseError(me, "Parameter not specified.");
+            }
+            else
+            {
+                typeName = words[index++];
+            }
+
+            if (words.GetCount() <= index)
+            {
+                ParseError(me, "Parameter not specified.");
+            }
+            else
+            {
+                typeNPCType = words[index++];
+            }
+            
+            if(words.GetCount() > index)
+            {
+                ParseError(me, "To many parameters.");
+            }
+        }
+        else if(subCmd == "master")
+        {
+            if (words.GetCount() <= index)
+            {
+                ParseError(me, "Parameter not specified.");
+            }
+            else
+            {
+                masterPID = words.GetInt(index++);
+                if (!masterPID.IsValid())
+                {
+                    ParseError(me, "Master PID must be none zero");
+                }
+            }
+            
+            if(words.GetCount() > index)
+            {
+                ParseError(me, "To many parameters.");
+            }
+        }
+        else if(subCmd == "confirm")
+        {
+            if(words.GetCount() > index)
+            {
+                ParseError(me, "To many parameters.");
+            }
+        }
+        else if(subCmd == "release")
+        {
+            hiredNPC = dynamic_cast<gemNPC*>(client->GetTargetObject());
+            if (!hiredNPC)
+            {
+                ParseError(me, "No hired NPC targeted.");
+            }
+            
+            if(words.GetCount() > index)
+            {
+                ParseError(me, "To many parameters.");
+            }
+        }
+        else
+        {
+            ParseError(me, "Unhandled subcommand.");
+        }
+        
+    }
+    else
+    {
+        ParseError(me, "Unknown subcommand.");
+    }
+}
+
+ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataHire)
+
+csString AdminCmdDataHire::GetHelpMessage()
+{
+    if(!subCmd.IsEmpty() || subCmd == "help")
+    {
+        return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage(subCmd) + "\"";
+    }
+    return "Syntax: \"" + command + " " + subCommandList.GetHelpMessage() + " [options]\"";
+}
+
 AdminCmdDataBadText::AdminCmdDataBadText(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
     : AdminCmdDataTarget("/badtext", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_AREA | ADMINCMD_TARGET_NPC | ADMINCMD_TARGET_EID |ADMINCMD_TARGET_CLIENTTARGET)
 {
@@ -4372,6 +4497,7 @@ AdminCmdDataFactory::AdminCmdDataFactory()
     RegisterMsgFactoryFunction(new AdminCmdDataPath());
     RegisterMsgFactoryFunction(new AdminCmdDataLocation());
     RegisterMsgFactoryFunction(new AdminCmdDataGameMasterEvent());
+    RegisterMsgFactoryFunction(new AdminCmdDataHire());
     RegisterMsgFactoryFunction(new AdminCmdDataBadText());
     RegisterMsgFactoryFunction(new AdminCmdDataQuest());
     RegisterMsgFactoryFunction(new AdminCmdDataSetQuality());
@@ -4646,6 +4772,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     else if(data->command == "/giveitem")
     {
         TransferItem(me, msg, data, client);
+    }
+    else if(data->command == "/hire")
+    {
+        HandleHire(data, client);
     }
     else if(data->command == "/impersonate")
     {
@@ -11958,6 +12088,77 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
         return;
     }
 }
+
+void AdminManager::HandleHire(AdminCmdData* cmddata, Client* client)
+{
+    AdminCmdDataHire* data = dynamic_cast<AdminCmdDataHire*>(cmddata);
+    HireManager* hireManager = psserver->GetHireManager();
+
+    // add new event
+    if(data->subCmd == "start")
+    {
+        if(hireManager->StartHire(data->owner))
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Hire ready to be configured.");
+        }
+        else
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Hire can not be started.");
+        }
+    }
+    else if(data->subCmd == "type")
+    {
+        if(hireManager->SetHireType(data->owner, data->typeName, data->typeNPCType))
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Hire type set.");
+        }
+        else
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Hire setting of hire type failed.");
+        }
+        
+    }
+    else if(data->subCmd == "master")
+    {
+        if(hireManager->SetHireMasterPID(data->owner, data->masterPID))
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Hire master NPC set.");
+        }
+        else
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Hire setting of hire master NPC failed.");
+        }
+    }
+    else if(data->subCmd == "confirm")
+    {
+        if(hireManager->ConfirmHire(data->owner) != NULL)
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Hire confirmed.");
+        }
+        else
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Hire not confirmed.");
+        }
+        
+    }
+    else if(data->subCmd == "release")
+    {
+        if(hireManager->ReleaseHire(data->owner, data->hiredNPC))
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Hire released.");
+        }
+        else
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Failed to release hire.");
+        }
+        
+    }
+    else
+    {
+        Error2("Unknown hire subcommand: %s",data->subCmd.GetDataSafe());
+    }
+}
+
 
 void AdminManager::HandleBadText(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {

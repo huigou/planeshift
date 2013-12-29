@@ -41,6 +41,9 @@
 ///to do a certain operation
 #define PETITION_GM 0xFFFFFFFF
 
+//------------------------------------------------------------------------------------
+// Forward Declarations
+//------------------------------------------------------------------------------------
 class psDatabase;
 class psSpawnManager;
 class psServer;
@@ -61,6 +64,7 @@ class LocationManager;
 class psPath;
 class Waypoint;
 class WordArray;
+class gemNPC;
 
 /// List of GM levels and their security level.
 enum GM_LEVEL
@@ -2568,6 +2572,54 @@ public:
     virtual csString GetHelpMessage();
 };
 
+/** @brief Class for game event command
+ */
+class AdminCmdDataHire : public AdminCmdData
+{
+public:
+    AdminCmdSubCommandParser subCommandList; ///< list of subcommands
+    csString  subCmd;      ///< subcommand storage
+    csString  typeName;    ///< type name storage
+    csString  typeNPCType; ///< type NPC type storage
+    PID       masterPID;   ///< master PID storage
+
+    gemActor* owner;
+    gemNPC*   hiredNPC;
+
+    /** @brief Creates obj for specified command that concern hire.
+     */
+    AdminCmdDataHire()
+        : AdminCmdData("/hire"), subCommandList("help list"), subCmd(), owner(NULL), hiredNPC(NULL)
+    {};
+
+    /** @brief Parses the given message and stores its data.
+     * @param msgManager message manager that handles this command
+     * @param me The incoming message from the GM
+     * @param msg psAdminCmdMessage containing the message
+     * @param client client of the network communication
+     * @param words command message to parse
+     */
+    AdminCmdDataHire(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
+
+    virtual ~AdminCmdDataHire()
+    {};
+
+    /** @brief Creates an object containing the parsed data for hire.
+    * @param msgManager message manager that handles this command
+    * @param me The incoming message from the GM
+    * @param msg psAdminCmdMessage containing the message
+    * @param client client of the network communication
+    * @param words command message to parse
+    * @return AdminCmdData* pointer to object containing parsed data. When parsing failed the valid flag is set to false.
+    */
+    virtual AdminCmdData* CreateCmdData(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
+
+    /** @brief Returns a helpmessage that fits to the parser of the class.
+     * @return csString: a help message to send back to the client
+     */
+    virtual csString GetHelpMessage();
+};
+
 /** @brief Class for searching for bad npc text.
  */
 class AdminCmdDataBadText : public AdminCmdDataTarget
@@ -4394,6 +4446,14 @@ protected:
      * @param client The GM client the command came from.
      */
     void HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* data, Client* client);
+
+    /**
+     * Handle Hire command.
+     *
+     * @param data A pointer to the command parser object with target data
+     * @param client The GM client the command came from.
+     */
+    void HandleHire(AdminCmdData* data, Client* client);
 
     /**
      * Handle request to view bad text from the targeted NPC.

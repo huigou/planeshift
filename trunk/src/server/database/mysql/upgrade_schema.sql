@@ -1797,6 +1797,15 @@ ResultPractice = 1;
 ResultModifier = 1;
 ");
 
+#
+# Added hire command.
+#
+UPDATE `server_options` SET `option_value`='1273' WHERE `option_name`='db_version';
+
+INSERT INTO command_group_assignment VALUES( "/hire", 30 );
+INSERT INTO command_group_assignment VALUES( "/hire", 25 );
+INSERT INTO command_group_assignment VALUES( "/hire", 24 );
+INSERT INTO command_group_assignment VALUES( "/hire", 23 );
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version

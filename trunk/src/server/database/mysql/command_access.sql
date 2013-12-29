@@ -166,6 +166,10 @@ INSERT INTO command_group_assignment VALUES( "/setkillexp", 30 );
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 25 );
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 24 );
 INSERT INTO command_group_assignment VALUES( "/setkillexp", 23 );
+INSERT INTO command_group_assignment VALUES( "/hire", 30 );
+INSERT INTO command_group_assignment VALUES( "/hire", 25 );
+INSERT INTO command_group_assignment VALUES( "/hire", 24 );
+INSERT INTO command_group_assignment VALUES( "/hire", 23 );
 
 # GM2 and above
 INSERT INTO command_group_assignment VALUES( "/ban", 30 );
