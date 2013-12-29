@@ -140,6 +140,9 @@ enum LOG_TYPES
     // Log item related transactions
     LOG_ITEM,
 
+    // Log Hire related transaction
+    LOG_HIRE,
+
 // NOTE: Remember to update the flagnames and flagsettings tables in log.cpp when adding new entries
     MAX_FLAGS
 };
