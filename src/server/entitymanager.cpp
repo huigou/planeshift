@@ -240,7 +240,11 @@ gemNPC* EntityManager::CreateFamiliar(gemActor* owner, PID masterPID)
     owner->GetPosition(pos, yrot, sector);
     InstanceID instance = owner->GetInstance();
 
-    familiarID = this->CopyNPCFromDatabase(masterFamiliarID, pos.x + 1.5, pos.y, pos.z + 1.5, yrot, sector->QueryObject()->GetName(), instance, familiarname, "Familiar");
+    // Put the new NPC in an area [-1.5,-1.5] to [+1.5,+1.5] around the owner
+    float deltax = psserver->GetRandom()*3.0 - 1.5;
+    float deltaz = psserver->GetRandom()*3.0 - 1.5;
+
+    familiarID = this->CopyNPCFromDatabase(masterFamiliarID, pos.x + deltax, pos.y, pos.z + deltaz, yrot, sector->QueryObject()->GetName(), instance, familiarname, "Familiar");
     if(familiarID == 0)
     {
         CPrintf(CON_ERROR, "CreateFamiliar failed for %s: Could not copy the master NPC %s\n", ShowID(owner->GetPID()), ShowID(masterFamiliarID));
@@ -249,7 +253,7 @@ gemNPC* EntityManager::CreateFamiliar(gemActor* owner, PID masterPID)
     }
 
     // Create Familiar using new ID
-    this->CreateNPC(familiarID , false);  //Do not update proxList, we will do that later.
+    CreateNPC(familiarID , false);  //Do not update proxList, we will do that later.
 
     gemNPC* npc = gem->FindNPCEntity(familiarID);
     if(npc == NULL)
@@ -276,21 +280,109 @@ gemNPC* EntityManager::CreateFamiliar(gemActor* owner, PID masterPID)
     owner->GetClient()->SetFamiliar(npc);
     owner->GetCharacterData()->SetFamiliarID(familiarID);
 
-    psServer::CharacterLoader.SaveCharacterData(npc->GetCharacterData(), npc, false);
-
-    // Add NPC to all Super Clients
-    psserver->npcmanager->AddEntity(npc);
-
-    // Check if this NPC is controlled
-    psserver->npcmanager->ControlNPC(npc);
-    psserver->npcmanager->CreatePetOwnerSession(owner, npc->GetCharacterData());
-
     // For now familiars cannot be attacked as they are defenseless
     npc->GetCharacterData()->SetImperviousToAttack(ALWAYS_IMPERVIOUS);
 
-    // Add npc to all nearby clients
-    npc->UpdateProxList(true);
+    psServer::CharacterLoader.SaveCharacterData(npc->GetCharacterData(), npc, false);
 
+    // Create a new owner session for this NPC
+    psserver->npcmanager->CreatePetOwnerSession(owner, npc->GetCharacterData());
+
+    // Update the world with this new PET. This is the stuff not done by CreateNPC
+    // when not updating the proxy list there.
+    {
+        // Add NPC to all Super Clients
+        psserver->npcmanager->AddEntity(npc);
+
+        // Check if this NPC is controlled
+        psserver->npcmanager->ControlNPC(npc);
+
+        // Add npc to all nearby clients
+        npc->UpdateProxList(true);
+    }
+    
+    return npc;
+}
+
+gemNPC* EntityManager::CreateHiredNPC(gemActor* owner, PID masterPID, const csString& name)
+{
+    psCharacter* chardata = owner->GetCharacterData();
+    if (!chardata)
+    {
+        return NULL; // Should not happen.
+    }
+    
+    csString npcname;
+    csVector3 pos;
+    float yrot = 0.0F;
+    iSector* sector;
+
+    // Change NPC's Name
+    const char* charname = chardata->GetCharName();
+    if(charname[strlen(charname)-1] == 's')
+    {
+        npcname.Format("%s'", charname);
+    }
+    else
+    {
+        npcname.Format("%s's", charname);
+    }
+
+    // Adjust Position of NPC from owners pos
+    owner->GetPosition(pos, yrot, sector);
+    InstanceID instance = owner->GetInstance();
+
+    // Put the new NPC in an area [-1.5,-1.5] to [+1.5,+1.5] around the owner
+    float deltax = psserver->GetRandom()*3.0 - 1.5;
+    float deltaz = psserver->GetRandom()*3.0 - 1.5;
+
+    PID npcPID = this->CopyNPCFromDatabase(masterPID,
+                                           pos.x + deltax, pos.y, pos.z + deltaz,
+                                           yrot, sector->QueryObject()->GetName(),
+                                           instance, npcname, name );
+    if(!npcPID.IsValid())
+    {
+        Error3("CreateHiredNPC failed for %s: Could not copy the master NPC %s",
+               ShowID(owner->GetPID()), ShowID(masterPID));
+        return NULL;
+    }
+
+    // Prepare NPC client to the new npc
+    psserver->npcmanager->NewNPCNotify(npcPID, masterPID, owner->GetPID());
+
+    // Create Hired NPC using new PID
+    CreateNPC(npcPID , false);  //Do not update proxList, we will do that later.
+
+    gemNPC* npc = gem->FindNPCEntity(npcPID);
+    if(npc == NULL)
+    {
+        Error3("CreateHiredNPC failed for %s: Could not find entity for %s",
+               ShowID(owner->GetPID()), ShowID(npcPID));
+        return NULL;
+    }
+
+    // Set owner of this NPC
+    npc->SetOwner(owner);
+
+    // For now hired NPCs cannot be attacked, no mercenary to hire.
+    npc->GetCharacterData()->SetImperviousToAttack(ALWAYS_IMPERVIOUS);
+
+    // Save the new hired NPC
+    psServer::CharacterLoader.SaveCharacterData(npc->GetCharacterData(), npc, false);
+
+    // Update the world with this new hired NPC. This is the stuff not done by CreateNPC
+    // when not updating the proxy list there.
+    {
+        // Add NPC to all Super Clients
+        psserver->npcmanager->AddEntity(npc);
+
+        // Check if this NPC is controlled
+        psserver->npcmanager->ControlNPC(npc);
+
+        // Add npc to all nearby clients
+        npc->UpdateProxList(true);
+    }
+    
     return npc;
 }
 
@@ -315,9 +407,9 @@ gemNPC* EntityManager::CloneNPC(psCharacter* chardata)
     }
 
 
-    float deltax = psserver->GetRandom(6)/4 - 1.5;
-    float deltaz = psserver->GetRandom(6)/4 - 1.5;
-
+    // Put the new NPC in an area [-1.5,-1.5] to [+1.5,+1.5] around the cloned character
+    float deltax = psserver->GetRandom()*3.0 - 1.5;
+    float deltaz = psserver->GetRandom()*3.0 - 1.5;
 
     PID npcPID(this->CopyNPCFromDatabase(pid,
                                          pos.x + deltax, pos.y, pos.z + deltaz,  // Set position some distance from parent
@@ -330,10 +422,10 @@ gemNPC* EntityManager::CloneNPC(psCharacter* chardata)
     }
 
     // Prepare NPC client to the new npc
-    psserver->npcmanager->NewNPCNotify(npcPID, chardata->GetPID(), 0);
+    psserver->npcmanager->NewNPCNotify(npcPID, pid, 0);
 
-    // Create npc using new ID
-    this->CreateNPC(npcPID , false);  //Do not update proxList, we will do that later.
+    // Create cloned npc using new ID
+    CreateNPC(npcPID , false);  //Do not update proxList, we will do that later.
 
     gemNPC* npc = gem->FindNPCEntity(npcPID);
     if(npc == NULL)
@@ -347,14 +439,18 @@ gemNPC* EntityManager::CloneNPC(psCharacter* chardata)
 
     psServer::CharacterLoader.SaveCharacterData(npc->GetCharacterData(), npc, /*charRecordOnly*/ false);
 
-    // Add NPC to all Super Clients
-    psserver->npcmanager->AddEntity(npc);
+    // Update the world with this new cloned NPC. This is the stuff not done by CreateNPC
+    // when not updating the proxy list there.
+    {
+        // Add NPC to all Super Clients
+        psserver->npcmanager->AddEntity(npc);
 
-    // Check if this NPC is controlled
-    psserver->npcmanager->ControlNPC(npc);
+        // Check if this NPC is controlled
+        psserver->npcmanager->ControlNPC(npc);
 
-    // Add npc to all nearby clients
-    npc->UpdateProxList(true);
+        // Add npc to all nearby clients
+        npc->UpdateProxList(true);
+    }
 
     return npc;
 }
@@ -499,70 +595,6 @@ int EntityManager::CalculateFamiliarAffinity(psCharacter* chardata, size_t type,
 
     return affinityValue;
 
-}
-
-gemNPC* EntityManager::CreatePet(Client* client, int masterFamiliarID)
-{
-    // FIXME: Currently, the code below has an EID/PID mismatch which would
-    //        cause it to fail.  I don't think that pets are currently used
-    //        anyway - only familiars.  It would be wise to look into sharing
-    //        code between these two very similar concepts.
-    return NULL;
-#if 0
-    psCharacter* charData = client->GetCharacterData();
-
-    csString familiarname;
-
-    // Change Character's Name
-    const char* charname = charData->GetCharName();
-    if(charname[strlen(charname)-1] == 's')
-    {
-        familiarname.Format("%s'", charname);
-    }
-    else
-    {
-        familiarname.Format("%s's", charname);
-    }
-
-    psCharacter* petData = psServer::CharacterLoader.LoadCharacterData(masterFamiliarID,true);
-    petData->SetFullName(familiarname, "Pet");
-
-    // Prepare NPC client to the new npc
-    psserver->npcmanager->NewNPCNotify(petData->GetPID(), masterFamiliarID, client->GetPID());
-
-    EID familiarID = this->CreateNPC(petData, false); // Do not update proxList, we will do that later.
-
-    gemNPC* npc = gem->FindNPCEntity(familiarID);
-    if(npc == NULL)
-    {
-        psserver->SendSystemError(client->GetClientNum(), "Could not find GEM and set its location.");
-        return NULL;
-    }
-
-    this->Teleport(npc, client->GetActor());
-
-    npc->GetCharacterData()->NPC_SetSpawnRuleID(0);
-    npc->SetOwner(client->GetActor());
-
-    client->SetFamiliar(npc);
-    client->GetCharacterData()->SetFamiliarID(familiarID);
-
-    db->Command("INSERT INTO npc_knowledge_areas(player_id, area, priority) VALUES (%d, 'Pet %s 1', '1')", familiarID, npc->GetCharacterData()->GetRaceInfo()->name.GetData());
-
-    // Add NPC to all Super Clients
-    psserver->npcmanager->AddEntity(npc);
-
-    // Check if this NPC is controlled
-    psserver->npcmanager->ControlNPC(npc);
-    psserver->npcmanager->CreatePetOwnerSession(client->GetActor(), npc->GetCharacterData());
-
-    // For now familiars cannot be attacked as they are defenseless
-    npc->GetCharacterData()->SetImperviousToAttack(ALWAYS_IMPERVIOUS);
-
-    npc->UpdateProxList(true);
-
-    return npc;
-#endif
 }
 
 bool EntityManager::CreatePlayer(Client* client)
@@ -786,14 +818,15 @@ EID EntityManager::CreateNPC(psCharacter* chardata, InstanceID instance, csVecto
     // Setup prox list and send to anyone who needs him
     if(updateProxList)
     {
+        // Add NPC to all Super Clients
+        psserver->npcmanager->AddEntity(actor);
+
+        // Check if this NPC is controlled
+        psserver->npcmanager->ControlNPC(actor);
+
         actor->UpdateProxList(true);
     }
 
-    // Add NPC to all Super Clients
-    psserver->npcmanager->AddEntity(actor);
-
-    // Check if this NPC is controlled
-    psserver->npcmanager->ControlNPC(actor);
 
     Debug3(LOG_NPC, actor->GetEID().Unbox(), "Created NPC actor: <%s>[%s] in world", actor->GetName(), ShowID(actor->GetEID()));
 
