@@ -291,12 +291,12 @@ class SpawnManager : public MessageManager<SpawnManager>
 {
 protected:
     psDatabase*             database;
-    csHash<SpawnRule*> rules;
+    csHash<SpawnRule*>      rules;
     csHash<LootEntrySet*>   looting;
     LootRandomizer*         lootRandomizer;
-    CacheManager* cacheManager;
-    EntityManager* entityManager;
-    GEMSupervisor* gem;
+    CacheManager*           cacheManager;
+    EntityManager*          entityManager;
+    GEMSupervisor*          gem;
 
     void HandleLootItem(MsgEntry* me,Client* client);
     void HandleDeathEvent(MsgEntry* me,Client* notused);
