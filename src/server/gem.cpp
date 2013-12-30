@@ -4659,7 +4659,7 @@ gemNPC::gemNPC(GEMSupervisor* gemsupervisor, CacheManager* cachemanager,
 
     if(chardata->GetOwnerID().IsValid())
     {
-        this->SetOwner(cel->FindPlayerEntity(chardata->GetOwnerID()));
+        SetOwner(cel->FindPlayerEntity(chardata->GetOwnerID()));
     }
     Debug3(LOG_NPC,GetEID().Unbox(), "Created npc firstname:%s, lastname:%s\n",chardata->GetCharName(), chardata->GetCharLastName());
 }
@@ -4817,23 +4817,31 @@ void gemNPC::ShowPopupMenu(Client* client)
     // Also offer default choices in case a new quest should be started
     NpcDialogMenu* npcmenu = dict->FindMenu(name);
     if(npcmenu)
+    {
         menu.Add(npcmenu);
+    }
 
     if(menu.triggers.GetSize())
+    {
         menu.ShowMenu(client,0, this);
+    }
     else
+    {
         psserver->SendSystemError(client->GetClientNum(), "This NPC has no quest for you, but might have other things to say.");
+    }
 }
 
 void gemNPC::SetOwner(gemObject* newOwner)
 {
     if(newOwner)
     {
-        this->owner = newOwner;
-        this->GetCharacterData()->SetOwnerID(newOwner->GetCharacterData()->GetPID());
+        owner = newOwner;
+        GetCharacterData()->SetOwnerID(newOwner->GetCharacterData()->GetPID());
     }
     else
-        this->owner = NULL;
+    {
+        owner = NULL;
+    }
 }
 
 csString gemNPC::GetDefaultBehavior(const csString &dfltBehaviors)

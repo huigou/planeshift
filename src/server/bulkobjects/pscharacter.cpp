@@ -181,6 +181,7 @@ psCharacter::psCharacter() : inventory(this),
     songExecutionTime = 0;
 
     banker = false;
+    hired = false;
     isStatue = false;
 
     // Load the math scripts
@@ -662,7 +663,9 @@ bool psCharacter::Load(iResultRow &row)
 
     // Load if the character/npc is a banker
     if(row.GetInt("banker") == 1)
+    {
         banker = true;
+    }
 
     // Load if the character is a statue
     if(row.GetInt("statue") == 1)

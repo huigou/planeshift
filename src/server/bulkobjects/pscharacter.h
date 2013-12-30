@@ -1370,6 +1370,14 @@ public:
     {
         ownerId = v;
     }
+    bool IsHired()
+    {
+        return hired;
+    }
+    void SetHired(bool hired)
+    {
+        this->hired = hired;
+    }
 
     bool UpdateStatDRData(csTicks now);
     bool SendStatDRMessage(uint32_t clientnum, EID eid, int flags, csRef<PlayerGroup> group = NULL);
@@ -1858,6 +1866,8 @@ private:
     csString CloakGroup;
 
     bool banker;    ///< Whether or not the character is a banker
+
+    bool hired;     ///< Whether or not this character is hired.
 
     /// Static reference to the pool for all psItem objects
     static PoolAllocator<psCharacter> characterpool;

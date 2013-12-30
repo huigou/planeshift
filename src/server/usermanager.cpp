@@ -510,7 +510,9 @@ void UserManager::SendCharacterDescription(Client* client, gemActor* actor, bool
     csArray<psCharacterDetailsMessage::NetworkDetailSkill> skills;
 
     if(!simple && psserver->CheckAccess(client, "view stats", false))
+    {
         full = true;  // GMs can view the stats list
+    }
 
     //send creation info only if the player is requesting  his info
     if(isSelf || full)
@@ -639,8 +641,25 @@ void UserManager::SendCharacterDescription(Client* client, gemActor* actor, bool
         {
             gemActor* owner = gem->FindPlayerEntity(charData->GetOwnerID());
             if(owner)
-                desc.AppendFmt("\n\nA pet owned by: %s", owner->GetName());
-        }
+            {
+                desc.AppendFmt("\n\nA pet owned by %s.", owner->GetName());
+            }
+        } else if(charData->IsHired() && charData->GetOwnerID().IsValid())
+        {
+            gemActor* owner = gem->FindPlayerEntity(charData->GetOwnerID());
+            if(owner)
+            {
+                desc.AppendFmt("\n\nHired by %s.", owner->GetName());
+            }
+            else
+            {
+                // Owner is offline.
+                // TODO: Look up the name. Might be good to create a name cache in the cache manager for
+                // offline players??
+                desc.AppendFmt("\n\nHired by offline player.");
+            }
+            
+        } 
     }
 
     if(!(charData->IsNPC() || charData->IsPet()) && client->GetSecurityLevel() < GM_LEVEL_0 &&
