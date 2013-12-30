@@ -1970,6 +1970,12 @@
 				RelativePath="..\..\src\server\guildmanager.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\server\hiremanager.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\server\hiresession.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\server\introductionmanager.cpp">
 			</File>
 			<File
@@ -2128,6 +2134,12 @@
 			</File>
 			<File
 				RelativePath="..\..\src\server\guildmanager.h">
+			</File>
+			<File
+				RelativePath="..\..\src\server\hiremanager.h">
+			</File>
+			<File
+				RelativePath="..\..\src\server\hiresession.h">
 			</File>
 			<File
 				RelativePath="..\..\src\server\icachedobject.h">
