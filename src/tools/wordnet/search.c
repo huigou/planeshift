@@ -1652,6 +1652,7 @@ SynsetPtr findtheinfo_ds(char *searchstr, int dbase, int ptrtyp, int whichsense)
 	    lastsyn = synlist->ptrlist;
 	    synlist->ptrlist = lastsyn->ptrlist;
 	    free_synset(lastsyn);
+            lastsyn = NULL;
 	}
     }
     wnresults.searchds = synlist;
