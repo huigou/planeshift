@@ -94,7 +94,7 @@
 #include "workmanager.h"
 
 // Remember to bump this in server_options.sql and add to upgrade_schema.sql!
-#define DATABASE_VERSION_STR "1272"
+#define DATABASE_VERSION_STR "1274"
 
 
 psCharacterLoader psServer::CharacterLoader;
@@ -450,14 +450,6 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
     // Init Bank Manager.
     bankmanager = new BankManager();
 
-    // Init Hire Manager
-    hiremanager = new HireManager();
-    if (!hiremanager->Initialize())
-    {
-        Error1("Failed to start hire manager!");
-        return false;
-    }
-
     usermanager = new UserManager(GetConnections(), cachemanager, bankmanager, entitymanager);
     Debug1(LOG_STARTUP,0,"Started User Manager");
 
@@ -597,6 +589,14 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
         return false;
     }
     Debug1(LOG_STARTUP,0, "Started Song Manager");
+
+    // Init Hire Manager
+    hiremanager = new HireManager();
+    if (!hiremanager->Initialize())
+    {
+        Error1("Failed to start hire manager!");
+        return false;
+    }
 
     if(!ServerStatus::Initialize(object_reg))
     {

@@ -197,6 +197,11 @@ NPC::~NPC()
     LocateHash::GlobalIterator iter = storedLocates.GetIterator();
     while(iter.HasNext())
         delete iter.Next();
+
+    if (tick)
+    {
+        tick->Remove();
+    }
 }
 
 void NPC::Tick()
@@ -542,6 +547,13 @@ bool NPC::InsertCopy(PID use_char_id, PID ownerPID)
     }
     return (r==1);
 }
+
+bool NPC::Delete()
+{
+    int r = db->Command("DELETE FROM sc_npc_definitions where char_id='%u'",pid);
+    return (r == 1);
+}
+
 
 void NPC::SetActor(gemNPCActor* actor)
 {

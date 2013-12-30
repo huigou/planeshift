@@ -277,7 +277,13 @@ public:
      */
     void Load(const char* name, PID pid, NPCType* type, const char* region_name, int debugging, bool disabled, EventManager* eventmanager);
 
+    /** Insert a new copy of NPC into npc_definitions.
+     */
     bool InsertCopy(PID use_char_id, PID ownerPID);
+    
+    /** Remove this NPC from npc_definitions.
+     */
+    bool Delete();
 
     void SetActor(gemNPCActor* actor);
     gemNPCActor* GetActor()
@@ -905,9 +911,18 @@ public:
 
     virtual void Trigger()
     {
-        npc->tick = NULL;
-        npc->Tick();
+        if (npc)
+        {
+            npc->tick = NULL;
+            npc->Tick();
+        }
     }
+
+    void Remove()
+    {
+        npc = NULL;
+    }
+    
 
     virtual csString ToString() const
     {

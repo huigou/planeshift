@@ -1316,6 +1316,38 @@ csString psNewNPCCreatedMessage::ToString(NetBase::AccessPointers * /*accessPoin
 
 //---------------------------------------------------------------------------
 
+PSF_IMPLEMENT_MSG_FACTORY(psNPCDeletedMessage,MSGTYPE_NPC_DELETED);
+
+psNPCDeletedMessage::psNPCDeletedMessage(uint32_t clientToken, PID npc_id):
+    npc_id(npc_id)
+{
+    msg.AttachNew(new MsgEntry( sizeof(uint32_t) ));
+
+    msg->SetType(MSGTYPE_NPC_DELETED);
+    msg->clientnum = clientToken;
+
+    msg->Add(npc_id.Unbox());
+}
+
+psNPCDeletedMessage::psNPCDeletedMessage(MsgEntry *message)
+{
+    if (!message)
+        return;
+
+    npc_id = PID(message->GetUInt32());    
+}
+
+csString psNPCDeletedMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+{
+    csString msgtext;
+    
+    msgtext.AppendFmt("NPC ID: %d", npc_id.Unbox());
+
+    return msgtext;
+}
+
+//---------------------------------------------------------------------------
+
 PSF_IMPLEMENT_MSG_FACTORY(psPETCommandMessage,MSGTYPE_PET_COMMAND);
 
 const char * psPETCommandMessage::petCommandString[]=

@@ -68,6 +68,7 @@
 #include "clients.h"
 #include "psproxlist.h"
 #include "gem.h"
+#include "hiremanager.h"
 #include "entitymanager.h"
 #include "usermanager.h"
 #include "psserverdr.h"
@@ -363,6 +364,8 @@ gemNPC* EntityManager::CreateHiredNPC(gemActor* owner, PID masterPID, const csSt
 
     // Set owner of this NPC
     npc->SetOwner(owner);
+    npc->GetCharacterData()->NPC_SetSpawnRuleID(1); // Set start location as spawn rule
+    db->Command("UPDATE characters c SET c.npc_spawn_rule=1 WHERE c.id=%u;", npc->GetPID().Unbox());
 
     // For now hired NPCs cannot be attacked, no mercenary to hire.
     npc->GetCharacterData()->SetImperviousToAttack(ALWAYS_IMPERVIOUS);
@@ -660,6 +663,9 @@ bool EntityManager::CreatePlayer(Client* client)
     // Set default state
     actor->SetMode(PSCHARACTER_MODE_PEACE);
 
+    // Check if this player is the owner of any hired NPCs
+    psserver->GetHireManager()->AddOwner(actor);
+
     // Add Player to all Super Clients
     psserver->npcmanager->AddEntity(actor);
 
@@ -676,7 +682,9 @@ bool EntityManager::DeletePlayer(Client* client)
     {
         // take the actor off his mount if he got one
         if(actor->GetMount())
+        {
             RemoveRideRelation(actor);
+        }
 
         //As we show the logged in status only when the client gets ready we check if it
         //was ready before doing this
@@ -783,7 +791,8 @@ EID EntityManager::CreateNPC(psCharacter* chardata, bool updateProxList, bool al
     return CreateNPC(chardata, instance, pos, sector, yrot, updateProxList, alwaysWatching);
 }
 
-EID EntityManager::CreateNPC(psCharacter* chardata, InstanceID instance, csVector3 pos, iSector* sector, float yrot,
+EID EntityManager::CreateNPC(psCharacter* chardata, InstanceID instance,
+                             csVector3 pos, iSector* sector, float yrot,
                              bool updateProxList, bool alwaysWatching)
 {
     if(chardata==NULL)
@@ -818,6 +827,9 @@ EID EntityManager::CreateNPC(psCharacter* chardata, InstanceID instance, csVecto
     // Setup prox list and send to anyone who needs him
     if(updateProxList)
     {
+        // If this NPC is hired, register it with the hire manager.
+        psserver->GetHireManager()->AddHiredNPC(actor);
+
         // Add NPC to all Super Clients
         psserver->npcmanager->AddEntity(actor);
 
@@ -1197,6 +1209,33 @@ bool EntityManager::RemoveActor(gemObject* actor)
 
     return true;
 }
+
+bool EntityManager::DeleteActor(gemObject* actor)
+{
+    PID pid = actor->GetPID();
+
+    bool isNPC = (actor->GetNPCPtr() != NULL);
+
+    // First remove from world
+    EntityManager::GetSingleton().RemoveActor(actor);
+
+    // Second remove from DB.
+    csString error;
+    if (!psserver->CharacterLoader.DeleteCharacterData(pid, error))
+    {
+        Error2("Failed to delete actor %s!!!",ShowID(pid));
+        return false;
+    }
+
+    if (isNPC)
+    {
+        psserver->npcmanager->DeletedNPCNotify(pid);
+    }
+    
+    return true;
+}
+
+
 
 bool EntityManager::AddRideRelation(gemActor* rider, gemActor* mount)
 {

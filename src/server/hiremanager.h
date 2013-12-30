@@ -105,9 +105,21 @@ public:
      *  @return True if the NPC was released.
      */
     bool ReleaseHire(gemActor* owner, gemNPC* hiredNPC);
+
+    /** Register a hired NPC with the hire manager.
+     */
+    bool AddHiredNPC(gemNPC* hiredNPC);
+
+    /** Register an owner with the hire manager.
+     */
+    bool AddOwner(gemActor* owner);
     
 protected:
 private:
+    /** Load all hire sessions from db.
+     */
+    bool Load();
+
     /** Check if requirments to hire is ok.
      *
      *  @param owner An actor that would like to start hire.
@@ -126,6 +138,18 @@ private:
      *  @param owner An actor that has a pending hire.
      */
     HireSession* GetPendingHire(gemActor* owner);
+
+    /** Get a session by the hire npc PID.
+     */
+    HireSession* GetSessionByHirePID(PID hiredPID);
+
+    /** Get a session by the owner PID.
+     */
+    HireSession* GetSessionByOwnerPID(PID ownerPID);
+
+    /** Get a session by the owner and hired NPC PID.
+     */
+    HireSession* GetSessionByPIDs(PID ownerPID, PID hiredPID);
 
     /** Remove all pending hire sessions for actor.
      */

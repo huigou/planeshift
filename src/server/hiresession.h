@@ -46,6 +46,10 @@ class HireSession
 {
 public:
     /** Constructor.
+     */
+    HireSession();
+
+    /** Constructor.
      *
      * @param owner The player that start to hire a NPCs.
      */
@@ -54,6 +58,20 @@ public:
     /** Destructor.
      */
     virtual ~HireSession();
+
+    /** Load from db.
+     */
+    bool Load(iResultRow &row);
+
+    /** Save to db.
+     *
+     *  @param newSession Set to true if this is a new session.
+     */
+    bool Save(bool newSession = false);
+
+    /** Delete from db.
+     */
+    bool Delete();
 
     /** Set pending hire type.
      *
@@ -86,11 +104,25 @@ public:
      */
     PID GetMasterPID() const;
 
+    /** Set owner.
+     *
+     *  @param owner The hired NPC owner.
+     */
+    void SetOwner(gemActor* owner);
+
+    /** Get owner.
+     */
+    gemActor* GetOwner() const;
+
     /** Set hired NPC.
      *
      *  @param hiredNPC The hired NPC.
      */
     void SetHiredNPC(gemNPC* hiredNPC);
+
+    /** Get hired NPC.
+     */
+    gemNPC* GetHiredNPC() const;
 
     /** Verify if all requirments for hire is ok.
      *
@@ -98,18 +130,31 @@ public:
      */
     bool VerifyPendingHireConfigured();
 
+    /** Return the PID of the owner.
+     *
+     *  @return PID of the owner.
+     */
+    PID GetOwnerPID();
+
+    /** Return the PID of the hired NPC.
+     *
+     *  @return PID of the hired NPC.
+     */
+    PID GetHiredPID();
+
 protected:
 private:
-    PID                 ownerPID;    ///< The PID of the player that hire a NPC.
-    PID                 hiredPID;    ///< The PID of the NPC that is hired.
+    PID                 ownerPID;        ///< The PID of the player that hire a NPC.
+    PID                 hiredPID;        ///< The PID of the NPC that is hired.
+    bool                guild;           ///< True if this is a guild hire.
 
     // Data for pending hires.
     csString            hireTypeName;    ///< The name of the type of hire.
     csString            hireTypeNPCType; ///< The NPC brain of the type of hire.
     PID                 masterPID;       ///< The master NPC PID.
 
-    csWeakRef<gemActor> owner;       ///< Cached pointer to player actor when online.
-    csWeakRef<gemNPC>   hiredNPC;    ///< Cached pointer to NPC actor when loaded.
+    csWeakRef<gemActor> owner;           ///< Cached pointer to player actor when online.
+    csWeakRef<gemNPC>   hiredNPC;        ///< Cached pointer to NPC actor when loaded.
 };
 
 #endif

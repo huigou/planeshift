@@ -482,6 +482,10 @@ public:
     void Remove(gemNPCObject* object);
     void RemoveAll();
 
+    /** Remove NPC from NPC Client.
+     */
+    void Remove(NPC* npc);
+
     gemNPCObject* FindCharacterID(PID pid);
     gemNPCObject* FindEntityID(EID eid);
 

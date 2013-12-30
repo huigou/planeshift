@@ -661,6 +661,7 @@ gemObject::~gemObject()
     delete proxlist;
     proxlist = NULL;
     delete pcmesh;
+    pcmesh = NULL;
 }
 
 
