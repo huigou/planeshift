@@ -264,7 +264,8 @@ public:
         PCPT_TALK,   
         PCPT_TELEPORT,
         PCPT_TRANSFER,
-        PCPT_VERYSHORTRANGEPLAYER
+        PCPT_VERYSHORTRANGEPLAYER,
+        PCPT_CHANGE_OWNER,      // Command to superclient, not a perception
     };
 
     enum PerceptionTalkType

@@ -1742,6 +1742,20 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
 
             }
 
+            case psNPCCommandsMessage::PCPT_CHANGE_OWNER:
+            {
+                EID npc_eid = EID(msg->GetUInt32());
+                EID owner_eid = EID(msg->GetUInt32());
+
+                NPC* npc = npcclient->FindNPC(npc_eid);
+                if(!npc)
+                    break;
+
+                NPCDebug(npc, 5, "Got change owner request (%u).", owner_eid.Unbox());
+                npc->SetOwner(owner_eid);
+                break;
+            }
+
             case psNPCCommandsMessage::PCPT_CHANGE_BRAIN:
             {
                 EID npc_eid = EID(msg->GetUInt32());

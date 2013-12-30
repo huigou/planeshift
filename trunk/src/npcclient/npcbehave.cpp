@@ -569,7 +569,7 @@ void BehaviorSet::ClearState(NPC* npc)
 
 bool BehaviorSet::Add(Behavior* behavior)
 {
-    // Search for dublicates
+    // Search for duplicates
     for(size_t i=0; i<behaviors.GetSize(); i++)
     {
         if(!strcmp(behaviors[i]->GetName(),behavior->GetName()))
@@ -800,7 +800,7 @@ void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
             }
             else if(result == Behavior::BEHAVIOR_WILL_COMPLETE_LATER)
             {
-                break; // Breake the loop
+                break; // Break the loop
             }
             else // Behavior::BEHAVIOR_NOT_COMPLETED
             {

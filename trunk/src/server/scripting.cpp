@@ -640,7 +640,10 @@ protected:
 class PetCancel : public iCancelAction
 {
 public:
-    PetCancel(uint32_t clientnum, size_t inx) : clientnum(clientnum), inx(inx) { }
+    PetCancel(uint32_t clientnum, size_t inx, EID old_owner)
+        : clientnum(clientnum), inx(inx), owner(old_owner)
+    {
+    }
     virtual ~PetCancel() { }
 
     void Cancel()
@@ -648,6 +651,12 @@ public:
         Client* client = psserver->GetConnections()->FindAny(clientnum);
         if(client)
         {
+            gemNPC* pet = dynamic_cast <gemNPC*>(client->GetPet(inx));
+            if(pet)
+            {
+                pet->SetOwner(NULL);
+                psserver->GetNPCManager()->QueueChangeOwnerPerception(pet, owner);
+            }
             client->RemovePet(inx);
         }
     }
@@ -655,6 +664,7 @@ public:
 protected:
     uint32_t clientnum;
     size_t inx;
+    EID owner;
 };
 
 /**
@@ -686,12 +696,18 @@ public:
             return;
         }
         Client* client = caster->GetClient();
-        if(client)
+        gemNPC* pet = dynamic_cast <gemNPC*>(target);
+        if(client && pet)
         {
             size_t inx = client->GetNumPets();
-            client->AddPet(target);
+            client->AddPet(pet);
+            EID old_owner;
+            if(pet->GetOwner())
+                old_owner = pet->GetOwner()->GetEID();
+            pet->SetOwner(caster);
+            psserver->GetNPCManager()->QueueChangeOwnerPerception(pet, caster->GetEID());
 
-            PetCancel* cancel = new PetCancel(client->GetClientNum(), inx);
+            PetCancel* cancel = new PetCancel(client->GetClientNum(), inx, old_owner);
             asp->Add(cancel, "<add_pet owner=\"%s\"/>", owner.GetData());
         }
     }

@@ -141,7 +141,7 @@ public:
     /// Let the superclient know that the npc was teleported
     void QueueTeleportPerception(gemNPC* npc, csVector3 &pos, float yrot, iSector* sector, InstanceID instance);
 
-    /// Let the superclient know that info where requested for a npc
+    /// Let the superclient know that info is requested for a npc
     void QueueInfoRequestPerception(gemNPC* npc, Client* client, const char* infoRequestSubCmd);
 
     /// Let the superclient know that an attempt to attack failed
@@ -152,6 +152,9 @@ public:
 
     /// Send a spoken to perception to the super client for the npc
     void QueueSpokenToPerception(gemNPC* npc, bool spokenTo);
+
+    /// Send a change owner perception.
+    void QueueChangeOwnerPerception(gemNPC* npc, EID owner);
 
     /**
      * Requests the npcclient to change the brain of this npc (the type) to another one.

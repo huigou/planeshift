@@ -1448,8 +1448,7 @@ const char* NPC::GetOwnerName()
 
 void NPC::SetOwner(EID owner_EID)
 {
-    if(owner_EID.IsValid())
-        owner_id = owner_EID;
+    owner_id = owner_EID;
 }
 
 void NPC::SetTribe(Tribe* new_tribe)
