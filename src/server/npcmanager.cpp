@@ -2235,7 +2235,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
                         WillPetReact(me->clientnum, owner, pet, typeStr, 1))
                 {
-                    // If no target than target owner
+                    // If no target, then target owner
                     if(!pet->GetTarget())
                     {
                         pet->SetTarget(owner->GetActor());
@@ -2555,7 +2555,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     session->ReceivedTraining();
                 }
                 // Have the pet auto follow when summoned
-                // If no target than target owner
+                // If no target, then target owner
                 if(!pet->GetTarget())
                 {
                     pet->SetTarget(owner->GetActor());
@@ -2615,7 +2615,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
             if(CanPetHearYou(me->clientnum, owner, pet, typeStr) &&
                     WillPetReact(me->clientnum, owner, pet, typeStr, 1))
             {
-                // If no target than target owner
+                // If no target, then target owner
                 if(!pet->GetTarget())
                 {
                     pet->SetTarget(owner->GetActor());
@@ -3246,6 +3246,24 @@ void NPCManager::QueueInfoRequestPerception(gemNPC* npc, Client* client, const c
     }
 
     Debug2(LOG_NPC, npc->GetEID().Unbox(), "Added Info Request perception for %s.\n", ShowID(npc->GetEID()));
+}
+
+void NPCManager::QueueChangeOwnerPerception(gemNPC* npc, EID owner)
+{
+    CheckSendPerceptionQueue(sizeof(int8_t)+sizeof(uint32_t)*2);
+    outbound->msg->Add((int8_t) psNPCCommandsMessage::PCPT_CHANGE_OWNER);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add(owner.Unbox());
+
+    cmd_count++;
+
+    if(outbound->msg->overrun)
+    {
+        CS_ASSERT(!"NPCManager::QueueChangeOwnerPerception put message in overrun state!\n");
+        Error1("NPCManager::QueueChangeOwnerPerception put message in overrun state!\n");
+    }
+
+    Debug3(LOG_NPC, npc->GetEID().Unbox(), "Change owner of %s to %s.\n", ShowID(npc->GetEID()), ShowID(owner));
 }
 
 void NPCManager::QueueFailedToAttackPerception(gemNPC* attacker, gemObject* target)

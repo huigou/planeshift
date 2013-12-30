@@ -428,7 +428,7 @@ bool ScriptOperation::CheckEndPointOk(NPC* npc, const csVector3 &myPos, iSector*
                       endPos, endSector);
     if(deviation > 1.0)
     {
-        NPCDebug(npc, 5, "Movement endet at %s failed to reach destination %s by %.2fm",
+        NPCDebug(npc, 5, "Movement ended at %s failed to reach destination %s by %.2fm",
                  toString(myPos, mySector).GetData(),
                  toString(endPos, endSector).GetData(),deviation);
 
@@ -656,7 +656,7 @@ bool PathReachedEndPoint(NPC* npc, iCelHPath* path, const csVector3 &endPos, iSe
                       finalDest->GetPosition(), finalDest->GetSector());
     if(deviation > 1.0)
     {
-        NPCDebug(npc, 5, "Path endet at % failed to reach destination %s by %.2fm",
+        NPCDebug(npc, 5, "Path ended at % failed to reach destination %s by %.2fm",
                  toString(finalDest->GetPosition(), finalDest->GetSector()).GetData(),
                  toString(endPos, endSector).GetData(),deviation);
         return false;
