@@ -18,6 +18,8 @@ Do you really wish to leave Yliakum?" trans="" />
   <item orig="%s shouts: %s" trans="" />
   <item orig="%s tells group: %s" trans="" />
   <item orig="%s tells you: %s" trans="" />
+  <item orig="+" trans="" />
+  <item orig="-" trans="" />
   <item orig="/ 100" trans="" />
   <item orig="0" trans="" />
   <item orig="0 Trias" trans="" />
@@ -121,6 +123,7 @@ If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Brightness" trans="" />
   <item orig="Buddy List Hide" trans="" />
   <item orig="Buddy list" trans="" />
+  <item orig="Buff" trans="" />
   <item orig="Buffs" trans="" />
   <item orig="Buy" trans="" />
   <item orig="Buy Skill" trans="" />
@@ -706,6 +709,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Shadows" trans="" />
   <item orig="Sharp" trans="" />
   <item orig="Short Phrase Char Count" trans="" />
+  <item orig="Shortcut Bar" trans="" />
   <item orig="Shortcut key:" trans="" />
   <item orig="Shortcuts" trans="" />
   <item orig="Shout Alignment" trans="" />
