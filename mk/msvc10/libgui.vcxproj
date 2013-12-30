@@ -1385,6 +1385,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\client\gui\pawsconfigpopup.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigpvp.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigshadows.cpp" />
+    <ClCompile Include="..\..\src\client\gui\pawsconfigshortcut.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigsound.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigspellchecker.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigtextpage.cpp" />
@@ -1474,6 +1475,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\client\gui\pawsconfigpopup.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigpvp.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigshadows.h" />
+    <ClInclude Include="..\..\src\client\gui\pawsconfigshortcut.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigsound.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigspellchecker.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigtextpage.h" />

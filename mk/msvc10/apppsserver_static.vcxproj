@@ -1513,6 +1513,8 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\server\gmeventmanager.cpp" />
     <ClCompile Include="..\..\src\server\groupmanager.cpp" />
     <ClCompile Include="..\..\src\server\guildmanager.cpp" />
+    <ClCompile Include="..\..\src\server\hiremanager.cpp" />
+    <ClCompile Include="..\..\src\server\hiresession.cpp" />
     <ClCompile Include="..\..\src\server\introductionmanager.cpp" />
     <ClCompile Include="..\..\src\server\invitemanager.cpp" />
     <ClCompile Include="..\..\src\server\lootrandomizer.cpp" />
@@ -1567,6 +1569,8 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\server\gmeventmanager.h" />
     <ClInclude Include="..\..\src\server\groupmanager.h" />
     <ClInclude Include="..\..\src\server\guildmanager.h" />
+    <ClInclude Include="..\..\src\server\hiremanager.h" />
+    <ClInclude Include="..\..\src\server\hiresession.h" />
     <ClInclude Include="..\..\src\server\icachedobject.h" />
     <ClInclude Include="..\..\src\server\introductionmanager.h" />
     <ClInclude Include="..\..\src\server\invitemanager.h" />
