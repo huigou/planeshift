@@ -132,6 +132,13 @@ protected:
     void HandleNewNpc(MsgEntry* msg);
 
     /**
+     * Handle information from server about deleted NPC.
+     *
+     * @param msg        The undecoded message to handle.
+     */
+    void HandleNpcDeleted(MsgEntry* msg);
+
+    /**
      *
      *
      * @param me         The undecoded message to handle.

@@ -25,14 +25,15 @@
 //====================================================================================
 // Project Includes
 //====================================================================================
- 
+#include <util/psdatabase.h>
+
 //====================================================================================
 // Local Includes
 //====================================================================================
 #include "hiremanager.h"
 #include "hiresession.h"
 #include "entitymanager.h"
-
+#include "bulkobjects/pscharacterloader.h"
 
 HireManager::HireManager()
 {
@@ -53,8 +54,38 @@ HireManager::~HireManager()
 
 bool HireManager::Initialize()
 {
+    if (!Load())
+    {
+        Error1("Failed to load hire sessions");
+        return false;
+    }
 
     return true; // Server OK to continue to load.
+}
+
+bool HireManager::Load()
+{
+   Result result(db->Select("SELECT * FROM npc_hired_npcs"));
+   if (!result.IsValid())
+   {
+       return false;
+   }
+
+   for (size_t i = 0; i < result.Count(); i++)
+   {
+       HireSession* session = new HireSession();
+       if (!session->Load(result[i]))
+       {
+           delete session;
+           return false;
+       }
+       
+       hires.PushBack(session);
+
+       Debug3(LOG_HIRE, session->GetOwnerPID().Unbox(), "Loaded hire session between owner %s and npc %s",
+              ShowID(session->GetOwnerPID()),ShowID(session->GetHiredPID()));
+   }
+   return true;
 }
 
 bool HireManager::StartHire(gemActor* owner)
@@ -132,20 +163,45 @@ gemActor* HireManager::ConfirmHire(gemActor* owner)
                                                                     session->GetHireTypeName());
     if (!hiredNPC)
     {
+        Error3("Failed to create npc for hire session for owner %s and hired_npc %s",
+               ShowID(session->GetOwnerPID()), ShowID(session->GetHiredPID()))
         // TODO: What to do here!!
         // Delete session??
     }
 
     session->SetHiredNPC(hiredNPC);
     RemovePendingHire(owner);
+
+    if (!session->Save(true)) // This is a new session.
+    {
+        Error3("Failed to save hire session for owner %s and hired_npc %s",
+               ShowID(session->GetOwnerPID()), ShowID(session->GetHiredPID()))
+    }
     
     return hiredNPC;
 }
 
 bool HireManager::ReleaseHire(gemActor* owner, gemNPC* hiredNPC)
 {
-    
-    return false;
+    HireSession* session = GetSessionByPIDs(owner->GetPID(),hiredNPC->GetPID());
+    if (!session || !owner || !hiredNPC)
+    {
+        return false;
+    }
+
+    if (!EntityManager::GetSingleton().DeleteActor(hiredNPC))
+    {
+        Error1("Failed to delete hired NPC!!!");
+    }
+
+    // Remove hire record from DB.
+    session->Delete();
+
+    hires.Delete(session);
+
+    delete session;
+
+    return true;
 }
 
 bool HireManager::AllowedToHire(gemActor* owner)
@@ -154,6 +210,47 @@ bool HireManager::AllowedToHire(gemActor* owner)
     //       hire a NPC. This should be a math script.
     return true;
 }
+
+bool HireManager::AddHiredNPC(gemNPC* hiredNPC)
+{
+    Debug2(LOG_HIRE, hiredNPC->GetPID().Unbox(), "Checking hired for %s", ShowID(hiredNPC->GetPID()));
+
+    HireSession* session = GetSessionByHirePID(hiredNPC->GetPID());
+    if (!session)
+    {
+        return false; // This NPC was not among the hired NPCs.
+    }
+    Debug2(LOG_HIRE, hiredNPC->GetPID().Unbox(), "Found hired NPC %s", ShowID(hiredNPC->GetPID()));
+    
+    session->SetHiredNPC(hiredNPC);
+
+    // Connect the owner of the hire to this NPC.
+    hiredNPC->SetOwner(session->GetOwner());
+
+    return true;
+}
+
+bool HireManager::AddOwner(gemActor* owner)
+{
+    Debug2(LOG_HIRE, owner->GetPID().Unbox(), "Checking owner for %s", ShowID(owner->GetPID()));
+
+    HireSession* session = GetSessionByOwnerPID(owner->GetPID());
+    if (!session)
+    {
+        return false; // This actor was not among the owners.
+    }
+    Debug2(LOG_HIRE, owner->GetPID().Unbox(), "Found owner %s", ShowID(owner->GetPID()));
+    
+    session->SetOwner(owner);
+    
+    if (session->GetHiredNPC())
+    {
+        session->GetHiredNPC()->SetOwner(owner);
+    }
+
+    return true;    
+}
+
 
 HireSession* HireManager::CreateHireSession(gemActor* owner)
 {
@@ -167,6 +264,8 @@ HireSession* HireManager::CreateHireSession(gemActor* owner)
         // Store the session in the manager
         hires.PushBack(session);
         pendingHires.PutUnique(owner->GetPID(),session);
+
+        Debug2(LOG_HIRE, owner->GetPID().Unbox(), "New hire session created for %s", ShowID(owner->GetPID()));
     }
     
     return session;
@@ -175,6 +274,51 @@ HireSession* HireManager::CreateHireSession(gemActor* owner)
 HireSession* HireManager::GetPendingHire(gemActor* owner)
 {
     return pendingHires.Get(owner->GetPID(),NULL);
+}
+
+HireSession* HireManager::GetSessionByHirePID(PID hiredPID)
+{
+    csList<HireSession*>::Iterator iter(hires);
+
+    while (iter.HasNext())
+    {
+        HireSession* session = iter.Next();
+        if (session->GetHiredPID() == hiredPID)
+        {
+            return session;
+        }
+    }
+    return NULL;
+}
+
+HireSession* HireManager::GetSessionByOwnerPID(PID ownerPID)
+{
+    csList<HireSession*>::Iterator iter(hires);
+
+    while (iter.HasNext())
+    {
+        HireSession* session = iter.Next();
+        if (session->GetOwnerPID() == ownerPID)
+        {
+            return session;
+        }
+    }
+    return NULL;
+}
+
+HireSession* HireManager::GetSessionByPIDs(PID ownerPID, PID hiredPID)
+{
+    csList<HireSession*>::Iterator iter(hires);
+
+    while (iter.HasNext())
+    {
+        HireSession* session = iter.Next();
+        if (session->GetOwnerPID() == ownerPID && session->GetHiredPID() == hiredPID)
+        {
+            return session;
+        }
+    }
+    return NULL;
 }
 
 void HireManager::RemovePendingHire(gemActor* owner)

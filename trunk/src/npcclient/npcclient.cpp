@@ -735,6 +735,12 @@ void psNPCClient::RemoveAll()
     all_gem_objects_by_pid.DeleteAll();
 }
 
+void psNPCClient::Remove(NPC* npc)
+{
+    npcs.Delete(npc);
+}
+
+
 gemNPCObject* psNPCClient::FindEntityID(EID EID)
 {
     return all_gem_objects_by_eid.Get(EID, 0);
@@ -1134,6 +1140,8 @@ NPC* psNPCClient::FindNPCByPID(PID character_id)
             NPC* npc = ReadSingleNPC(character_id);
             if(npc)
             {
+                // Read single npc added the new npc to the npcs list. Now remove
+                // from the deferred list.
                 npcsDeferred.DeleteIndexFast(j);
                 return npc;
             }

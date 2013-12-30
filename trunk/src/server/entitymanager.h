@@ -135,6 +135,14 @@ public:
 
     bool RemoveActor(gemObject* actor);
 
+    /** Delete an actor from the world.
+     *
+     *  Entity is removed from world and deleted from DB. If the actor
+     *  is a NPC a command is sent to NPC Clients to delte any records
+     *  there as well.
+     */
+    bool DeleteActor(gemObject* actor);
+
     bool AddRideRelation(gemActor* rider, gemActor* mount);
     void RemoveRideRelation(gemActor* rider);
 

@@ -1183,12 +1183,8 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                     break;
                 }
 
-                // First remove from gemSupervisor
-                gemSupervisor->RemoveEntity(npc);
-
-                // Than remove from DB
-                csString error;
-                if(!psserver->CharacterLoader.DeleteCharacterData(npcPID, error))
+                // Delete npc from world and DB.
+                if (!EntityManager::GetSingleton().DeleteActor(npc))
                 {
                     Error2("Failed to remove NPC %s!!!",ShowID(npcPID));
                 }
@@ -3414,6 +3410,15 @@ void NPCManager::NewNPCNotify(PID player_id, PID master_id, PID owner_id)
     psNewNPCCreatedMessage msg(0, player_id, master_id, owner_id);
     msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
 }
+
+void NPCManager::DeletedNPCNotify(PID player_id)
+{
+    Debug2(LOG_NPC, 0, "Deleted NPC(%s) sent to superclients.", ShowID(player_id));
+
+    psNPCDeletedMessage msg(0, player_id);
+    msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
+}
+
 
 void NPCManager::WorkDoneNotify(EID npcEID, csString reward, csString nick)
 {

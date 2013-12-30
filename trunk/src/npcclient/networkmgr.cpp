@@ -81,6 +81,7 @@ NetworkManager::NetworkManager(MsgHandler* mh,psNetConnection* conn, iEngine* en
     msghandler->Subscribe(this,MSGTYPE_WEATHER);
     msghandler->Subscribe(this,MSGTYPE_MSGSTRINGS);
     msghandler->Subscribe(this,MSGTYPE_NEW_NPC);
+    msghandler->Subscribe(this,MSGTYPE_NPC_DELETED);
     msghandler->Subscribe(this,MSGTYPE_NPC_COMMAND);
     msghandler->Subscribe(this,MSGTYPE_NPCRACELIST);
     msghandler->Subscribe(this,MSGTYPE_NPC_WORKDONE);
@@ -242,6 +243,11 @@ void NetworkManager::HandleMessage(MsgEntry* message)
         case MSGTYPE_NEW_NPC:
         {
             HandleNewNpc(message);
+            break;
+        }
+        case MSGTYPE_NPC_DELETED:
+        {
+            HandleNpcDeleted(message);
             break;
         }
         case MSGTYPE_NPC_COMMAND:
@@ -1860,6 +1866,25 @@ void NetworkManager::HandleNewNpc(MsgEntry* me)
         // Ignore it here.  We don't manage the master.
     }
 }
+
+void NetworkManager::HandleNpcDeleted(MsgEntry* me)
+{
+    psNPCDeletedMessage msg(me);
+
+    NPC* npc = npcclient->FindNPCByPID(msg.npc_id);
+    if(npc)
+    {
+        // We are managing this NPC. Delete the NPC.
+
+        // Delete from NPC Client DB.
+        npc->Delete();
+
+        // Remove the NPC from the client.
+        npcclient->Remove(npc);
+        delete npc;
+    }
+}
+
 
 void NetworkManager::PrepareCommandMessage()
 {

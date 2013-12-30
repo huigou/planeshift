@@ -192,6 +192,9 @@ public:
     /// Send a newly spawned npc to a superclient to manage it.
     void NewNPCNotify(PID player_id, PID master_id, PID owner_id);
 
+    /// Send a deleted npc to a superclient to un-manage it.
+    void DeletedNPCNotify(PID player_id);
+
     /// Tell a superclient to control an existing npc.
     void ControlNPC(gemNPC* npc);
 

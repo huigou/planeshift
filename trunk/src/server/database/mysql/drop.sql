@@ -46,6 +46,7 @@ DROP TABLE movement_types;
 DROP TABLE natural_resources;
 DROP TABLE npc_bad_text;
 DROP TABLE npc_disallowed_words;
+DROP TABLE npc_hired_npcs;
 DROP TABLE npc_knowledge_areas;
 DROP TABLE npc_responses;
 DROP TABLE npc_spawn_ranges;

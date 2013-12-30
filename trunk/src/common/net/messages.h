@@ -56,7 +56,7 @@ class csStringHashReversible;
 // NPC Networking version is separate so we don't have to break compatibility
 // with clients to enhance the superclients.  Made it a large number to ensure
 // no inadvertent overlaps.
-#define PS_NPCNETVERSION 0x1033
+#define PS_NPCNETVERSION 0x1034
 
 enum Slot_Containers
 {
@@ -282,7 +282,9 @@ enum MSG_TYPES
     MSGTYPE_LOCATION,
 
     // mechanisms
-    MSGTYPE_MECS_ACTIVATE
+    MSGTYPE_MECS_ACTIVATE,
+    
+    MSGTYPE_NPC_DELETED
 };
 
 class psMessageCracker;

@@ -31,15 +31,66 @@
 #include "hiresession.h"
 #include "gem.h"
 
-HireSession::HireSession(gemActor* owner)
+HireSession::HireSession():
+    guild(false)
 {
-    ownerPID = owner->GetCharacterData()->GetPID();
-    this->owner = owner;
+}
+
+HireSession::HireSession(gemActor* owner):
+    guild(false)
+{
+    SetOwner(owner);
 }
 
 HireSession::~HireSession()
 {
 }
+
+bool HireSession::Load(iResultRow &row)
+{
+    ownerPID = PID(row.GetInt("owner_id"));
+    hiredPID = PID(row.GetInt("hired_npc_id"));
+    guild = row["guild"][0] == 'Y';
+ 
+    return true;
+}
+
+bool HireSession::Save(bool newSession)
+{
+    unsigned long result = 0;
+    
+    if (newSession)
+    {
+        result = db->CommandPump("INSERT INTO npc_hired_npcs (owner_id,hired_npc_id,guild) "
+                                 "VALUES ('%u','%u','%s')",
+                                 ownerPID.Unbox(), hiredPID.Unbox(), guild?"Y":"N");
+    }
+    else
+    {
+        result = db->CommandPump("UPDATE npc_hired_npcs SET guild='%s'"
+                                 " WHERE owner_id=%u AND hired_npc_id=%u",
+                                 guild?"Y":"N", ownerPID.Unbox(), hiredPID.Unbox());
+    }
+    
+    if(result==QUERY_FAILED)
+        return false;
+
+    return true;
+}
+
+bool HireSession::Delete()
+{
+    unsigned long result = 0;
+   
+    result = db->CommandPump("DELETE FROM npc_hired_npcs WHERE owner_id=%u AND hired_npc_id=%u",
+                             ownerPID.Unbox(), hiredPID.Unbox());
+
+    if(result==QUERY_FAILED)
+        return false;
+
+    return true;
+}
+
 
 void HireSession::SetHireType(const csString& name, const csString& npcType)
 {
@@ -73,9 +124,35 @@ void HireSession::SetHiredNPC(gemNPC* hiredNPC)
     this->hiredNPC = hiredNPC;
 }
 
+gemNPC* HireSession::GetHiredNPC() const
+{
+    return hiredNPC;
+}
+
+void HireSession::SetOwner(gemActor* owner)
+{
+    ownerPID = owner->GetCharacterData()->GetPID();
+    this->owner = owner;
+}
+
+gemActor* HireSession::GetOwner() const
+{
+    return owner;
+}
 
 bool HireSession::VerifyPendingHireConfigured()
 {
     return (masterPID.IsValid() && !hireTypeName.IsEmpty() && !hireTypeNPCType.IsEmpty());
 }
+
+PID HireSession::GetOwnerPID()
+{
+    return ownerPID;
+}
+
+PID HireSession::GetHiredPID()
+{
+    return hiredPID;
+}
+
 

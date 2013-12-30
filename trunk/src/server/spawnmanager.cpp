@@ -576,9 +576,13 @@ void SpawnManager::RepopulateLive(psSectorInfo* sectorinfo)
     for(int i=0; i<count; i++)
     {
         if(chardatalist[i] != NULL)
+        {
             entityManager->CreateNPC(chardatalist[i]);
+        }
         else
+        {
             Error1("Failed to repopulate NPC!");
+        }
     }
 
     delete[] chardatalist;

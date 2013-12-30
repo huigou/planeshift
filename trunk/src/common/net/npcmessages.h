@@ -381,6 +381,32 @@ public:
 };
 
 /**
+* The message sent from server to superclient when a NPC
+* is deleted from the server.
+*/
+class psNPCDeletedMessage : public psMessageCracker
+{
+public:
+    PID npc_id;
+
+    /// Create psMessageBytes struct for outbound use
+    psNPCDeletedMessage(uint32_t clientToken, PID npc_id);
+
+    /// Crack incoming psMessageBytes struct for inbound use
+    psNPCDeletedMessage(MsgEntry *message);
+    
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * Convert the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(NetBase::AccessPointers * accessPointers);
+};
+
+/**
 * The message sent from client to server to control
 * the players pet.
 */

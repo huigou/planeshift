@@ -37,6 +37,7 @@ source movement.sql;
 source natural_resources.sql;
 source npc_bad_text.sql;
 source npc_disallowed_words.sql;
+source npc_hired_npcs.sql;
 source npc_kas.sql;
 source npc_responses.sql;
 source npc_spawn_ranges.sql;
