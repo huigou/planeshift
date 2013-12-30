@@ -226,6 +226,7 @@ bool HireManager::AddHiredNPC(gemNPC* hiredNPC)
 
     // Connect the owner of the hire to this NPC.
     hiredNPC->SetOwner(session->GetOwner());
+    hiredNPC->GetCharacterData()->SetHired(true);
 
     return true;
 }
