@@ -1813,6 +1813,16 @@ INSERT INTO command_group_assignment VALUES( "/hire", 23 );
 UPDATE `server_options` SET `option_value`='1274' WHERE `option_name`='db_version';
 source npc_hired_npcs.sql;
 
+#
+# Added npc hired npcs table.
+#
+UPDATE `server_options` SET `option_value`='1275' WHERE `option_name`='db_version';
+ALTER TABLE npc_hired_npcs
+  ADD COLUMN `work_location_id` int(8) unsigned NOT NULL default '0' AFTER `guild`;
+ALTER TABLE npc_hired_npcs
+  ADD COLUMN `script` TEXT COMMENT 'The script for the hired npc dialog.' AFTER `work_location_id`;
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

@@ -8,6 +8,8 @@ CREATE TABLE `npc_hired_npcs` (
   `owner_id` int(8) unsigned NOT NULL default '0',
   `hired_npc_id` int(8) unsigned NOT NULL default '0',
   `guild` char(1) DEFAULT 'N',
+  `work_location_id` int(8) unsigned NOT NULL default '-1',
+  `script` TEXT COMMENT 'The script for the hired npc dialog.',
   PRIMARY KEY (`owner_id`,`hired_npc_id`)
 );
 

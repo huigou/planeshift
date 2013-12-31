@@ -105,7 +105,7 @@ public:
      *  @param hiredNPC  The NPC that is to be released from hire.
      *  @return True if scripting is allowed.
      */
-    bool ScriptHire(uint32_t clientnum, gemActor* owner, gemNPC* hiredNPC);
+    bool HandleScriptMessageRequest(uint32_t clientnum, gemActor* owner, gemNPC* hiredNPC);
 
     /** Release the hire.
      *
@@ -179,6 +179,10 @@ private:
      */
     bool ValidateScript(PID ownerPID, PID hiredPID, const csString& script);
     
+    /** Commit a verified script.
+     */
+    bool HandleScriptMessageCommit(PID ownerPID, PID hiredPID);
+
     /** Cancel a received script.
      */
     bool CancelScript(PID ownerPID, PID hiredPID);
@@ -186,6 +190,11 @@ private:
     /** Create a working location.
      */
     bool WorkLocation(gemActor* owner, gemNPC* hiredNPC);
+
+    /** Create or update a location.
+     */
+    Location* CreateUpdateLocation(const char* type, const char* name,
+                                   iSector* sector, const csVector3& position, float angle);
 
     // Private data
     

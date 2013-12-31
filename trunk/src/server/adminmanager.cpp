@@ -12159,7 +12159,7 @@ void AdminManager::HandleHire(AdminCmdData* cmddata, Client* client)
     }
     else if(data->subCmd == "script")
     {
-        if(hireManager->ScriptHire(client->GetClientNum(), data->owner, data->hiredNPC))
+        if(hireManager->HandleScriptMessageRequest(client->GetClientNum(), data->owner, data->hiredNPC))
         {
             psserver->SendSystemError(client->GetClientNum(), "Started scripting.");
         }

@@ -36,16 +36,20 @@
 HireSession::HireSession():
     guild(false),
     workLocationID(0),
+    verified(false),
     tempWorkLocation(NULL),
-    tempWorkLocationValid(false)
+    tempWorkLocationValid(false),
+    workLocation(NULL)
 {
 }
 
 HireSession::HireSession(gemActor* owner):
     guild(false),
     workLocationID(0),
+    verified(false),
     tempWorkLocation(NULL),
-    tempWorkLocationValid(false)
+    tempWorkLocationValid(false),
+    workLocation(NULL)
 {
     SetOwner(owner);
 }
@@ -59,6 +63,8 @@ bool HireSession::Load(iResultRow &row)
     ownerPID = PID(row.GetInt("owner_id"));
     hiredPID = PID(row.GetInt("hired_npc_id"));
     guild = row["guild"][0] == 'Y';
+    workLocationID = row.GetInt("work_location_id");
+    script = row["script"];
  
     return true;
 }
@@ -69,15 +75,18 @@ bool HireSession::Save(bool newSession)
     
     if (newSession)
     {
-        result = db->CommandPump("INSERT INTO npc_hired_npcs (owner_id,hired_npc_id,guild) "
-                                 "VALUES ('%u','%u','%s')",
-                                 ownerPID.Unbox(), hiredPID.Unbox(), guild?"Y":"N");
+        result = db->CommandPump("INSERT INTO npc_hired_npcs"
+                                 " (owner_id,hired_npc_id,guild,work_location_id,script)"
+                                 " VALUES ('%u','%u','%s','%u')",
+                                 ownerPID.Unbox(), hiredPID.Unbox(), guild?"Y":"N", workLocationID,
+                                 script.GetDataSafe());
     }
     else
     {
-        result = db->CommandPump("UPDATE npc_hired_npcs SET guild='%s'"
+        result = db->CommandPump("UPDATE npc_hired_npcs SET guild='%s', work_location_id='%u', script='%s'"
                                  " WHERE owner_id=%u AND hired_npc_id=%u",
-                                 guild?"Y":"N", ownerPID.Unbox(), hiredPID.Unbox());
+                                 guild?"Y":"N", workLocationID,script.GetDataSafe(),
+                                 ownerPID.Unbox(), hiredPID.Unbox());
     }
     
     if(result==QUERY_FAILED)
@@ -168,9 +177,61 @@ const csString& HireSession::GetScript() const
     return script;
 }
 
+void HireSession::SetScript(const csString& newScript)
+{
+    script = newScript;
+}
+
+int HireSession::GetWorkLocationId()
+{
+    return workLocationID;
+}
+
+Location* HireSession::GetWorkLocation()
+{
+    return workLocation;
+}
+
+void HireSession::SetWorkLocation(Location* location)
+{
+    workLocationID = location->GetID();
+    workLocation = location;
+}
+
+bool HireSession::IsVerified()
+{
+    return verified;
+}
+
+void HireSession::SetVerified(bool state)
+{
+    verified = state;
+}
+
+const csString& HireSession::GetVerifiedScript() const
+{
+    return verifiedScript;
+}
+
 void HireSession::SetVerifiedScript(const csString& newVerifiedScript)
 {
     verifiedScript = newVerifiedScript;
+}
+
+csString HireSession::GetWorkLocationString()
+{
+    csString workLocationString;
+
+    if (!workLocation)
+    {
+        workLocationString = "(Undefined)";
+    }
+    else
+    {
+        workLocationString = workLocation->ToString();
+    }
+
+    return workLocationString;
 }
 
 csString HireSession::GetTempWorkLocationString()
@@ -194,7 +255,6 @@ Location* HireSession::GetTempWorkLocation()
     return tempWorkLocation;
 }
 
-
 void HireSession::SetTempWorkLocation(Location* location)
 {
     tempWorkLocation = location;
@@ -210,5 +270,7 @@ bool HireSession::GetTempWorkLocationValid()
 {
     return tempWorkLocationValid;
 }
+
+
 
 
