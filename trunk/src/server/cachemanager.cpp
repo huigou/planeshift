@@ -601,7 +601,6 @@ bool optionEntry::getValueAsVector(csVector3 &vector)
 bool CacheManager::PreloadSkills()
 {
     unsigned int currentrow;
-    psSkillInfo* newskill;
     Result result(db->Select("SELECT * from skills"));
 
     if(!result.IsValid())
@@ -614,7 +613,7 @@ bool CacheManager::PreloadSkills()
     {
         if(result[currentrow]["skill_id"]!=NULL)
         {
-            newskill = new psSkillInfo;
+            psSkillInfo* newskill = new psSkillInfo;
 
             newskill->id = (PSSKILL) result[currentrow].GetInt("skill_id");
             newskill->name = result[currentrow]["name"];
