@@ -460,9 +460,10 @@ bool psEffectObjLabel::SetText(int rows, ...)
             cp += 4;
             x += width[c];
         }
-        csVector3 color((float)((newElem.colour>>16) & 255)/255.0F,
-                        (float)((newElem.colour>> 8) & 255)/255.0F,
-                        (float)((newElem.colour) & 255)/255.0F);
+        int colour = elemBuffer[i].colour;
+        csVector3 color((float)((colour>>16) & 255)/255.0F,
+                        (float)((colour>> 8) & 255)/255.0F,
+                        (float)((colour) & 255)/255.0F);
         CS::ShaderVarStringID varName = stringSet->Request("color modulation");
         csShaderVariable* var = mesh->GetSVContext()->GetVariableAdd(varName);
         if(var)
