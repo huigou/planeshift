@@ -31,7 +31,8 @@
 #include "npcgui.h"
 
 NpcGui::NpcGui(iObjectRegistry* object_reg, psNPCClient* npcclient)
-    : object_reg(object_reg), npcclient(npcclient)
+    : object_reg(object_reg), npcclient(npcclient),paws(NULL),mainWidget(NULL),
+      drawScreen(false),elapsed(0),guiWidget(NULL)
 {
 }
 

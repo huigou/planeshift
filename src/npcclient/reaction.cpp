@@ -47,13 +47,17 @@
 
 /*----------------------------------------------------------------------------*/
 
-Reaction::Reaction()
+Reaction::Reaction():
+    range(0.0f),
+    factionDiff(0),
+    activeOnly(false),
+    inactiveOnly(false),
+    reactWhenInvisible(false),
+    reactWhenInvincible(false),
+    desireType(DESIRE_GUARANTEED),
+    desireValue(0.0f),
+    weight(0.0f)
 {
-    desireValue   = 0.0f;
-    desireType    = DESIRE_GUARANTEED;
-    range         = 0;
-    activeOnly    = false;
-    inactiveOnly  = false;
 }
 
 bool Reaction::Load(iDocumentNode* node,BehaviorSet &behaviors)

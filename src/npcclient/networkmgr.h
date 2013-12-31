@@ -110,13 +110,13 @@ protected:
      */
     void HandleDisconnect(MsgEntry* msg);
 
-     /**
-     * Handle Hired npc script from server.
-     *
-     * @param msg        The undecoded message to handle.
-     */
+    /**
+    * Handle Hired npc script from server.
+    *
+    * @param msg        The undecoded message to handle.
+    */
     void HandleHiredNPCScript(MsgEntry* me);
-    
+
     /**
      * Handle time updates from server.
      *

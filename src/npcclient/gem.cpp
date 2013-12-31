@@ -155,9 +155,9 @@ bool gemNPCObject::InitMesh(const char* factname,
 
 
     csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
-    if (sprite)
+    if(sprite)
     {
-        baseScale = sprite->GetScaleFactor();  
+        baseScale = sprite->GetScaleFactor();
 
         // Normalize the mesh scale to the base scale of the mesh.
         Debug4(LOG_CELPERSIST,0,"DEBUG: Normalize scale: %f / %f = %f\n",

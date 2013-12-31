@@ -34,7 +34,8 @@
 const char* RecipeTreeNode::RequirementParseTypeString[] = {"REQ_CONCENTRATED","REQ_DISTRIBUTED"};
 
 
-RecipeTreeNode::RecipeTreeNode(Recipe* newRecipe, int newCost, RecipeTreeNode* parent)
+RecipeTreeNode::RecipeTreeNode(Recipe* newRecipe, int newCost, RecipeTreeNode* parent):
+    parent(NULL)
 {
     // General inits
     recipe     = newRecipe;

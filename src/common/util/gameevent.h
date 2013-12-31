@@ -119,7 +119,7 @@ public:
      * TODO: Make this function abstract. But for now return "".
      */
     //TODO:    virtual csString ToString() const = 0;
-    virtual csString ToString()
+    virtual csString ToString() const
     {
         return "Not implemented";
     }

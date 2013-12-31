@@ -124,6 +124,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
       lastDrYRot(0.0),
       lastDrVel(0),
       lastDrAngVel(0),
+      spawnSector(NULL),
       checked(false),
       hatelist(npcclient, engine, world),
       tick(NULL)
@@ -166,6 +167,7 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
     this->world = world;
     this->cdsys = cdsys;
     this->bufferMemory = NULL;
+    this->buildingSpot = NULL;
 }
 
 NPC::~NPC()
@@ -198,7 +200,7 @@ NPC::~NPC()
     while(iter.HasNext())
         delete iter.Next();
 
-    if (tick)
+    if(tick)
     {
         tick->Remove();
     }

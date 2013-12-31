@@ -610,13 +610,14 @@ void ScriptOperation::SetParent(Behavior* behavior)
 //---------------------------------------------------------------------------
 
 MovementOperation::MovementOperation(const char* name)
-    :ScriptOperation(name),currentDistance(0.0f)
+    :ScriptOperation(name),endSector(NULL),currentDistance(0.0f)
 {
 }
 
 MovementOperation::MovementOperation(const MovementOperation* other)
     :ScriptOperation(other),
      // Instance variables
+     endSector(NULL),
      currentDistance(0.0f),
      // Operation parameters
      action(other->action)
@@ -2241,8 +2242,13 @@ ScriptOperation::OperationResult InvisibleOperation::Run(NPC* npc, bool interrup
 LocateOperation::LocateOperation()
     : ScriptOperation("Locate"),
       // Instance variables
-      staticLocated(false)
+      staticLocated(false),
       // Operation parameters
+      range(0.0f),
+      static_loc(false),
+      random(false),
+      locateInvisible(false),
+      locateInvincible(false)
       // Initialized in the load function
 {
 }
@@ -2485,14 +2491,14 @@ Waypoint* LocateOperation::CalculateWaypoint(NPC* npc, csVector3 located_pos, iS
     Waypoint* end;
     float end_range = 0.0;
 
-    end   = npcclient->FindNearestWaypoint(located_pos,located_sector,-1,&end_range);
+    end = npcclient->FindNearestWaypoint(located_pos,located_sector,-1,&end_range);
 
     if(end && (located_range == -1 || end_range >= located_range))
     {
         NPCDebug(npc, 5, "Located WP  : %30s at %s",end->GetName(),toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
         return end;
     }
-    NPCDebug(npc, 5, "Cannot Locate WP at %s",toString(end->loc.pos,end->loc.GetSector(npcclient->GetEngine())).GetDataSafe());
+    NPCDebug(npc, 5, "Cannot Locate WP at %s",toString(located_pos,located_sector).GetDataSafe());
 
     return NULL;
 }
@@ -2969,8 +2975,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC* npc, bool interrupted
             located.pos = pos;
             located.angle = 0;
             located.radius = radius;
-
-            located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
+            // located.wp calculated at end of tribe scope
         }
         else if(split_obj[1] == "memory")
         {
@@ -2997,10 +3002,9 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC* npc, bool interrupted
             located.pos = memory->pos;
             located.sector = memory->sector;
             located.radius = memory->radius;
+            // located.wp calculated at end of tribe scope
 
             AddRandomRange(located.pos, memory->radius, 0.5);
-
-            located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
         }
         else if(split_obj[1] == "resource")
         {
@@ -3008,7 +3012,7 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC* npc, bool interrupted
 
             npc->GetTribe()->GetResource(npc,start_pos,start_sector,located.pos,located.sector,range,random);
             located.angle = 0.0;
-            located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
+            // located.wp calculated at end of tribe scope
         }
         else if(split_obj[0] == "target")
         {
@@ -3042,8 +3046,10 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC* npc, bool interrupted
             located.pos = pos;
             located.angle = 0;
             located.sector = sector;
+            // located.wp calculated at end of tribe scope
         }
 
+        // Now calculate the wp for all tribe related locates.
         located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
     }
     else if(split_obj[0] == "waypoint")
@@ -3655,6 +3661,11 @@ ScriptOperation::OperationResult MovePathOperation::Advance(float timedelta, NPC
 {
     npc->GetLinMove()->ExtrapolatePosition(timedelta);
 
+    if(!anchor)
+    {
+        return OPERATION_COMPLETED;
+    }
+
     if(!anchor->Extrapolate(npcclient->GetWorld(),npcclient->GetEngine(),
                             timedelta*GetVelocity(npc),
                             direction, npc->GetMovable()))
@@ -3666,11 +3677,8 @@ ScriptOperation::OperationResult MovePathOperation::Advance(float timedelta, NPC
         npc->GetLinMove()->SetPosition(path->GetEndPos(direction),path->GetEndRot(direction),
                                        path->GetEndSector(npcclient->GetEngine(),direction));
 
-        if(anchor)
-        {
-            delete anchor;
-            anchor = NULL;
-        }
+        delete anchor;
+        anchor = NULL;
 
         StopMovement(npc);
 
@@ -3864,6 +3872,7 @@ NavigateOperation::NavigateOperation()
       // Operation parameters
       forceEndPosition(false),
       // Instance variables
+      endAngle(0.0f),
       endSector(NULL)
 {
 }
@@ -3874,6 +3883,7 @@ NavigateOperation::NavigateOperation(const NavigateOperation* other)
       action(other->action),
       forceEndPosition(other->forceEndPosition),
       // Instance variables
+      endAngle(0.0f),
       endSector(NULL)
 {
 }
@@ -5317,13 +5327,31 @@ ScriptOperation::OperationResult WaitOperation::Advance(float timedelta,NPC* npc
 WanderOperation::WanderOperation()
     : ScriptOperation("Wander"),
       // Instance states
-      // Instance states
       wanderRouteFilter(this),
       currentEdge(NULL),
       currentPathPointIterator(NULL),
-      currentDistance(0.0f)
+      currentPathPoint(NULL),
+      currentDistance(0.0f),
       // Operation parameters
-      // Initialized in the load function
+      random(false),
+      undergroundValid(false),
+      underground(false),
+      underwaterValid(false),
+      underwater(false),
+      privValid(false),
+      priv(false),
+      pubValid(false),
+      pub(false),
+      cityValid(false),
+      city(false),
+      indoorValid(false),
+      indoor(false),
+      pathValid(false),
+      path(false),
+      roadValid(false),
+      road(false),
+      groundValid(false),
+      ground(false)
 {
 }
 
@@ -5333,6 +5361,7 @@ WanderOperation::WanderOperation(const WanderOperation* other)
       wanderRouteFilter(this),
       currentEdge(NULL),
       currentPathPointIterator(NULL),
+      currentPathPoint(NULL),
       currentDistance(0.0f),
       // Operation parameters
       action(other->action),
@@ -5505,7 +5534,11 @@ ScriptOperation::OperationResult WanderOperation::CalculateEdgeList(NPC* npc)
                 NPCDebug(npc, 5, "Running from %s to %s",currentEdge->GetStartWaypoint()->GetName(),
                          currentEdge->GetEndWaypoint()->GetName());
             }
-
+            else
+            {
+                NPCDebug(npc, 5, "Can't edge...");
+                return OPERATION_FAILED;
+            }
         }
     }
 

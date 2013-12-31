@@ -54,9 +54,16 @@ const char* Tribe::AssetTypeStr[] = {"ASSET_TYPE_ITEM","ASSET_TYPE_BUILDING","AS
 const char* Tribe::AssetStatusStr[] = {"ASSET_STATUS_NOT_APPLICABLE","ASSET_STATUS_NOT_USED","ASSET_STATUS_INCONSTRUCTION","ASSET_STATUS_CONSTRUCTED"};
 
 Tribe::Tribe(EventManager* eventmngr, RecipeManager* rm)
-    : tribalRecipe(0),
+    : id(0),
+      tribalRecipe(0),
+      homeRadius(0),
       homeSector(0),
+      maxSize(0),
+      wealthResourceGrowth(0.0),
+      wealthResourceGrowthActive(0.0),
+      wealthResourceGrowthActiveLimit(0),
       accWealthGrowth(0.0),
+      reproductionCost(0),
       deathRate(0.0),
       resourceRate(0.0)
 {
