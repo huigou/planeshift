@@ -99,6 +99,8 @@ psCelClient* GEMClientObject::cel = NULL;
 
 psCelClient::psCelClient()
 {
+    instantiateItems = false;
+
     requeststatus = 0;
 
     clientdr        = NULL;
@@ -913,12 +915,13 @@ void psCelClient::OnRegionsDeleted(csArray<iCollection*> &regions)
                 }
             }
 
-            if(unresolved)
+            if(unresolved && sectorToBeDeleted)
             {
                 // All the sectors the mesh is in are going to be unloaded
                 Warning1(LOG_ANY,"Moving entity to temporary sector");
                 // put the mesh to the sector that server uses for keeping meshes located in unload maps
-                HandleUnresolvedPos(entities[entNum], entities[entNum]->GetPosition(), csVector3(0), sectorToBeDeleted->QueryObject()->GetName());
+                HandleUnresolvedPos(entities[entNum], entities[entNum]->GetPosition(), csVector3(0),
+                                    sectorToBeDeleted->QueryObject()->GetName());
             }
         }
     }
@@ -1136,6 +1139,7 @@ GEMClientObject::GEMClientObject()
     shadow = 0;
     hasLabel = false;
     hasShadow = false;
+    type = 0;
     flags = 0;
 }
 
@@ -1149,6 +1153,8 @@ GEMClientObject::GEMClientObject(psCelClient* cel, EID id) : eid(id)
     shadow = 0;
     hasLabel = false;
     hasShadow = false;
+    type = 0;
+    flags = 0;
 }
 
 GEMClientObject::~GEMClientObject()
@@ -1411,6 +1417,7 @@ GEMClientActor::GEMClientActor(psCelClient* cel, psPersistActor &mesg)
     ownerEID = mesg.ownerEID;
     lastSentVelocity = lastSentRotation = 0.0f;
     stationary = true;
+    path_sent = false;
     movementMode = mesg.mode;
     serverMode = mesg.serverMode;
     alive = true;
