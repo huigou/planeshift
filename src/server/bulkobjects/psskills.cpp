@@ -51,9 +51,13 @@ void psSkillInfo::operator delete(void *releasePtr)
 ********/
 
 psSkillInfo::psSkillInfo()
-    :price(42)
+    :id(PSSKILL_NONE),
+     practice_factor(0),
+     mental_factor(0),
+     price(42),
+     category(PSSKILLS_CATEGORY_STATS),
+     baseCost(0)
 {
-    id=PSSKILL_NONE;
 }
 
 psSkillInfo::~psSkillInfo()
