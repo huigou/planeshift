@@ -83,6 +83,21 @@ bool HireManager::Load()
            delete session;
            return false;
        }
+
+       // Resolve the work location.
+       LocationManager* locations = psserver->GetAdminManager()->GetLocationManager();
+       if(!locations)
+       {
+           delete session;
+           return NULL;
+       }
+       Location* location = locations->FindLocation(session->GetWorkLocationId());
+       if (!location)
+       {
+           delete session;
+           return NULL;
+       }
+       session->SetWorkLocation(location);
        
        hires.PushBack(session);
 
@@ -185,7 +200,7 @@ gemActor* HireManager::ConfirmHire(gemActor* owner)
     return hiredNPC;
 }
 
-bool HireManager::ScriptHire(uint32_t clientnum, gemActor* owner, gemNPC* hiredNPC)
+bool HireManager::HandleScriptMessageRequest(uint32_t clientnum, gemActor* owner, gemNPC* hiredNPC)
 {
     HireSession* session = GetSessionByPIDs(owner->GetPID(), hiredNPC->GetPID());
     if (!session || !owner || !hiredNPC)
@@ -195,8 +210,8 @@ bool HireManager::ScriptHire(uint32_t clientnum, gemActor* owner, gemNPC* hiredN
 
     // Display Script Dialoge.
     psHiredNPCScriptMessage msg(clientnum, psHiredNPCScriptMessage::REQUEST_REPLY, hiredNPC->GetEID(),
-                                session->GetTempWorkLocationString().GetDataSafe(),
-                                session->GetTempWorkLocationValid(),
+                                session->GetWorkLocationString().GetDataSafe(),
+                                true,
                                 session->GetScript().GetDataSafe());
     msg.SendMessage();
 
@@ -369,7 +384,7 @@ void HireManager::HandleScriptMessage(MsgEntry* me, Client* client)
     {
         case psHiredNPCScriptMessage::REQUEST:
         {
-            ScriptHire(client->GetClientNum(), client->GetActor(), hiredNPC);
+            HandleScriptMessageRequest(client->GetClientNum(), client->GetActor(), hiredNPC);
         }
         break;
         case psHiredNPCScriptMessage::VERIFY:
@@ -388,6 +403,7 @@ void HireManager::HandleScriptMessage(MsgEntry* me, Client* client)
         break;
         case psHiredNPCScriptMessage::COMMIT:
         {
+            HandleScriptMessageCommit(client->GetPID(), hiredNPC->GetPID());
         }
         break;
         case psHiredNPCScriptMessage::CANCEL:
@@ -420,16 +436,19 @@ bool HireManager::ValidateScript(PID ownerPID, PID hiredPID, const csString& scr
     // Check work location
     if(session->GetTempWorkLocation() == NULL)
     {
+        session->SetVerified(false);
         return false; // No work location defined.
     }
 
     if (!session->GetTempWorkLocationValid())
     {
+        session->SetVerified(false);
         return false; // Not a valid work postion.
     }
     
     if(script.IsEmpty())
     {
+        session->SetVerified(false);
         return false; // Empty script not valid.
     }
 
@@ -438,8 +457,47 @@ bool HireManager::ValidateScript(PID ownerPID, PID hiredPID, const csString& scr
     // Store the verified script. Client need to confirm to activate it.
     session->SetVerifiedScript(script);
 
+    session->SetVerified(true);
+        
     return true;
 }
+
+bool HireManager::HandleScriptMessageCommit(PID ownerPID, PID hiredPID)
+{
+    HireSession* session = GetSessionByPIDs(ownerPID, hiredPID);
+    if (!session)
+    {
+        return false;
+    }
+
+    if (session->IsVerified())
+    {
+        // Move the verified script over to be the current script.
+        session->SetScript(session->GetVerifiedScript());
+        Location* tempLocation = session->GetTempWorkLocation();
+
+        // Create and set the new work location
+        Location* location = CreateUpdateLocation("work",
+                                                  tempLocation->GetName(),
+                                                  tempLocation->GetSector(EntityManager::GetSingleton().GetEngine()),
+                                                  tempLocation->GetPosition(),
+                                                  tempLocation->GetRotationAngle());
+        session->SetWorkLocation(location);
+
+        // Save the updated hire record.
+        session->Save();
+
+        // TODO: Apply the new script to the server
+
+    }
+    else
+    {
+        return false;
+    }
+
+    return true;
+}
+
 
 bool HireManager::CancelScript(PID ownerPID, PID hiredPID)
 {
@@ -462,25 +520,6 @@ bool HireManager::WorkLocation(gemActor* owner, gemNPC* hiredNPC)
     {
         return false;
     }
-
-    LocationManager* locations = psserver->GetAdminManager()->GetLocationManager();
-    if(!locations)
-    {
-        return false;
-    }
-    
-    // Create or update an temporary location that isn't saved to db.
-
-    LocationType* locationType = locations->FindLocation("temp_work"); // Todo configured this through session?
-    if(!locationType)
-    {
-        locationType = locations->CreateLocationType("temp_work");
-        if (!locations)
-        {
-            return false;
-        }
-        psserver->npcmanager->LocationTypeAdd(locationType);
-    }
     
     csVector3 myPos;
     float myRot = 0.0;
@@ -488,13 +527,59 @@ bool HireManager::WorkLocation(gemActor* owner, gemNPC* hiredNPC)
     csString mySectorName;
 
     owner->GetPosition(myPos, myRot, mySector);
-    mySectorName = mySector->QueryObject()->GetName();
 
-    Location* location = locations->FindLocation(locationType, hiredNPC->GetName());
+    Location* location = CreateUpdateLocation("temp_work", hiredNPC->GetName(), mySector, myPos, myRot);
+    if (location)
+    {
+        // Update session with this temporary location.
+        session->SetTempWorkLocation(location);
+        
+        // Verify that it is possible to navigate to the location.
+        psserver->npcmanager->CheckWorkLocation(hiredNPC, location);
+
+        psHiredNPCScriptMessage msg(owner->GetClient()->GetClientNum(),
+                                    psHiredNPCScriptMessage::WORK_LOCATION_UPDATE,
+                                    hiredNPC->GetEID(), location->ToString());
+        msg.SendMessage();
+    }
+    else
+    {
+        psHiredNPCScriptMessage msg(owner->GetClient()->GetClientNum(),
+                                    psHiredNPCScriptMessage::WORK_LOCATION_UPDATE,
+                                    hiredNPC->GetEID(), "(Failed)");
+        msg.SendMessage();
+    }
+    
+
+    return true;
+}
+
+Location* HireManager::CreateUpdateLocation(const char* type, const char* name,
+                                            iSector* sector, const csVector3& position, float angle)
+{
+    // Create or update an temporary location that isn't saved to db.
+    LocationManager* locations = psserver->GetAdminManager()->GetLocationManager();
+    if(!locations)
+    {
+        return NULL;
+    }
+    
+    LocationType* locationType = locations->FindLocation(type);
+    if(!locationType)
+    {
+        locationType = locations->CreateLocationType(db, type);
+        if (!locationType)
+        {
+            return NULL;
+        }
+        psserver->npcmanager->LocationTypeAdd(locationType);
+    }
+    
+    Location* location = locations->FindLocation(locationType, name);
     if(!location)
     {
-        location = locations->CreateLocation(locationType, hiredNPC->GetName(),
-                                             myPos, mySector, 1.0, myRot, "");
+        location = locations->CreateLocation(db, locationType, name,
+                                             position, sector, 1.0f, angle, "");
         if (location)
         {
             psserver->npcmanager->LocationCreated(location);
@@ -502,25 +587,15 @@ bool HireManager::WorkLocation(gemActor* owner, gemNPC* hiredNPC)
     }
     else
     {
-        if (location->Adjust(myPos, mySector, myRot))
+        if (location->Adjust(db, position, sector, angle))
         {
             psserver->npcmanager->LocationAdjusted(location);
         }
     }
- 
-    // Update session with this temporary location.
-    session->SetTempWorkLocation(location);
-
-    psHiredNPCScriptMessage msg(owner->GetClient()->GetClientNum(),
-                                psHiredNPCScriptMessage::WORK_LOCATION_UPDATE,
-                                hiredNPC->GetEID(), location->ToString());
-    msg.SendMessage();
-
-    // Verify that it is possible to navigate to the location.
-    psserver->npcmanager->CheckWorkLocation(hiredNPC, location);
-
-    return true;
+    
+    return location;
 }
+
 
 bool HireManager::CheckWorkLocationResult(gemNPC* hiredNPC, bool valid)
 {

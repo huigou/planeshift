@@ -43,7 +43,7 @@ Location::Location()
 
 }
 
-Location::Location(LocationType* locationType, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags)
+Location::Location(LocationType* locationType, const char* locationName, const csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags)
     :id(-1),name(locationName),pos(pos),rot_angle(rot_angle),radius(radius),
      id_prev_loc_in_region(-1),sector(sector),
      type(locationType),effectID(0),region(NULL)
@@ -156,7 +156,7 @@ uint32_t Location::GetEffectID(iEffectIDAllocator* allocator)
     return effectID;
 }
 
-bool Location::Adjust(iDataConnection* db, csVector3 &pos, iSector* sector)
+bool Location::Adjust(iDataConnection* db, const csVector3 &pos, iSector* sector)
 {
     if(!Adjust(pos,sector))
     {
@@ -169,7 +169,20 @@ bool Location::Adjust(iDataConnection* db, csVector3 &pos, iSector* sector)
     return true;
 }
 
-bool Location::Adjust(csVector3 &pos, iSector* sector)
+bool Location::Adjust(iDataConnection* db, const csVector3 &pos, iSector* sector, float rot_angle)
+{
+    if(!Adjust(pos,sector,rot_angle))
+    {
+        return false;
+    }
+
+    db->CommandPump("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f,angle=%.2f WHERE id=%d",
+                    pos.x,pos.y,pos.z,rot_angle,id);
+
+    return true;
+}
+
+bool Location::Adjust(const csVector3 &pos, iSector* sector)
 {
     this->pos = pos;
     this->sector = sector;
@@ -177,20 +190,7 @@ bool Location::Adjust(csVector3 &pos, iSector* sector)
     return true;
 }
 
-bool Location::Adjust(iDataConnection* db, csVector3 &pos, iSector* sector, float rot_angle)
-{
-    if(!Adjust(pos,sector,rot_angle))
-    {
-        return false;
-    }
-
-    db->CommandPump("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
-                    pos.x,pos.y,pos.z,id);
-
-    return true;
-}
-
-bool Location::Adjust(csVector3 &pos, iSector* sector, float rot_angle)
+bool Location::Adjust(const csVector3 &pos, iSector* sector, float rot_angle)
 {
     this->pos = pos;
     this->sector = sector;
@@ -965,7 +965,7 @@ csHash<LocationType*, csString>::GlobalIterator LocationManager::GetIterator()
     return loctypes.GetIterator();
 }
 
-Location* LocationManager::CreateLocation(iDataConnection* db, LocationType* locationType, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags)
+Location* LocationManager::CreateLocation(iDataConnection* db, LocationType* locationType, const char* locationName, const csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags)
 {
     Location* location = CreateLocation(locationType, locationName, pos, sector, radius, rot_angle, flags);
 
@@ -978,7 +978,7 @@ Location* LocationManager::CreateLocation(iDataConnection* db, LocationType* loc
     return location;
 }
 
-Location* LocationManager::CreateLocation(const char* locationTypeName, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags)
+Location* LocationManager::CreateLocation(const char* locationTypeName, const char* locationName, const csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags)
 {
     LocationType* locationType = FindLocation(locationTypeName);
     if(!locationType)
@@ -989,7 +989,7 @@ Location* LocationManager::CreateLocation(const char* locationTypeName, const ch
     return CreateLocation(locationType, locationName, pos, sector, radius, rot_angle, flags);
 }
 
-Location* LocationManager::CreateLocation(LocationType* locationType, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags)
+Location* LocationManager::CreateLocation(LocationType* locationType, const char* locationName, const csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags)
 {
     Location* location = new Location(locationType, locationName, pos, sector, radius, rot_angle, flags);
 

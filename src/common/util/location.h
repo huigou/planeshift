@@ -69,7 +69,7 @@ public:
 
     /** Constructor
      */
-    Location(LocationType* locationType, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags);
+    Location(LocationType* locationType, const char* locationName, const csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags);
 
     /** Destructor
      */
@@ -239,19 +239,19 @@ public:
 
     /** Adjust the postion of this location.
      */
-    bool Adjust(iDataConnection* db, csVector3 &pos, iSector* sector);
+    bool Adjust(iDataConnection* db, const csVector3 &pos, iSector* sector);
 
     /** Adjust the postion of this location.
      */
-    bool Adjust(iDataConnection* db, csVector3 &pos, iSector* sector, float rot_angle);
+    bool Adjust(iDataConnection* db, const csVector3 &pos, iSector* sector, float rot_angle);
 
     /** Adjust the postion of this location.
      */
-    bool Adjust(csVector3 &pos, iSector* sector);
+    bool Adjust(const csVector3 &pos, iSector* sector);
 
     /** Adjust the postion of this location.
      */
-    bool Adjust(csVector3 &pos, iSector* sector, float rot_angle);
+    bool Adjust(const csVector3 &pos, iSector* sector, float rot_angle);
     
     /** Insert a new point in a region after this location.
      */
@@ -414,15 +414,21 @@ public:
 
     /** Create a new location. And add it to the DB.
      */
-    Location* CreateLocation(iDataConnection* db, LocationType* locationType, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags);
+    Location* CreateLocation(iDataConnection* db, LocationType* locationType, const char* locationName,
+                             const csVector3 &pos, iSector* sector, float radius, float rot_angle,
+                             const csString &flags);
 
     /** Create a new location
      */
-    Location* CreateLocation(const char* locationTypeName, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags);
+    Location* CreateLocation(const char* locationTypeName, const char* locationName,
+                             const csVector3 &pos, iSector* sector, float radius, float rot_angle,
+                             const csString &flags);
 
     /** Create a new location
      */
-    Location* CreateLocation(LocationType* locationType, const char* locationName, csVector3 &pos, iSector* sector, float radius, float rot_angle, const csString &flags);
+    Location* CreateLocation(LocationType* locationType, const char* locationName,
+                             const csVector3 &pos, iSector* sector, float radius, float rot_angle,
+                             const csString &flags);
 
     /** Create a new location type
      */

@@ -297,7 +297,9 @@ void NetworkManager::HandleConsoleCommand(MsgEntry* me)
     {
         int ret = execute_line(msg.command, &buffer);
         if(ret == -1)
+        {
             buffer = "Error executing command on the server.";
+        }
     }
     else
     {
