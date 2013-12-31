@@ -25,6 +25,8 @@
 //====================================================================================
 // Project Includes
 //====================================================================================
+#include <util/location.h>
+
 //====================================================================================
 // Local Includes
 //====================================================================================
@@ -32,12 +34,18 @@
 #include "gem.h"
 
 HireSession::HireSession():
-    guild(false)
+    guild(false),
+    workLocationID(0),
+    tempWorkLocation(NULL),
+    tempWorkLocationValid(false)
 {
 }
 
 HireSession::HireSession(gemActor* owner):
-    guild(false)
+    guild(false),
+    workLocationID(0),
+    tempWorkLocation(NULL),
+    tempWorkLocationValid(false)
 {
     SetOwner(owner);
 }
@@ -153,6 +161,54 @@ PID HireSession::GetOwnerPID()
 PID HireSession::GetHiredPID()
 {
     return hiredPID;
+}
+
+const csString& HireSession::GetScript() const
+{
+    return script;
+}
+
+void HireSession::SetVerifiedScript(const csString& newVerifiedScript)
+{
+    verifiedScript = newVerifiedScript;
+}
+
+csString HireSession::GetTempWorkLocationString()
+{
+    csString workLocationString;
+
+    if (!tempWorkLocation)
+    {
+        workLocationString = "(Undefined)";
+    }
+    else
+    {
+        workLocationString = tempWorkLocation->ToString();
+    }
+
+    return workLocationString;
+}
+
+Location* HireSession::GetTempWorkLocation()
+{
+    return tempWorkLocation;
+}
+
+
+void HireSession::SetTempWorkLocation(Location* location)
+{
+    tempWorkLocation = location;
+    tempWorkLocationValid = false;
+}
+
+void HireSession::SetTempWorkLocationValid(bool valid)
+{
+    tempWorkLocationValid = valid;
+}
+
+bool HireSession::GetTempWorkLocationValid()
+{
+    return tempWorkLocationValid;
 }
 
 

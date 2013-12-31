@@ -284,7 +284,8 @@ enum MSG_TYPES
     // mechanisms
     MSGTYPE_MECS_ACTIVATE,
     
-    MSGTYPE_NPC_DELETED
+    MSGTYPE_NPC_DELETED,
+    MSGTYPE_HIRED_NPC_SCRIPT
 };
 
 class psMessageCracker;
@@ -5953,6 +5954,85 @@ public:
     virtual csString ToString(NetBase::AccessPointers* accessPointers);
 
 };
+
+/** Handle scripting of hired NPCs.
+*/
+class psHiredNPCScriptMessage : public psMessageCracker
+{
+
+public:
+    // Hired NPC Script Commands
+    enum 
+    {
+        CANCEL,
+        CHECK_WORK_LOCATION,
+        CHECK_WORK_LOCATION_RESULT,
+        COMMIT,
+        REQUEST,
+        REQUEST_REPLY,
+        VERIFY,
+        VERIFY_REPLY,
+        WORK_LOCATION,
+        WORK_LOCATION_RESULT,
+        WORK_LOCATION_UPDATE
+    };
+
+    uint8_t  command;
+    EID      hiredEID;
+    bool     choice;
+    csString workLocation;
+    bool     workLocationValid;
+    csString script;
+    csString locationType;
+    csString locationName;
+
+    /** Constructor.
+     *  For commands CANCEL, WORK_LOCATION, REQUEST and COMMIT.
+     */
+    psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID);
+
+    /** Constructor.
+     *  For commands VERIFY_REPLY, WORK_LOCATION_RESULT.
+     */
+    psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, bool choice);
+
+    /** Constructor.
+     *  For commands VERIFY, WORK_LOCATION_UPDATE.
+     *  @param script The script or work location for WORK_LOCATION_UPDATE.
+     */
+    psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID,
+                            const char* script);
+
+    /** Constructor.
+     *  For commands CHECK_WORK_LOCATION.
+     */
+    psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID,
+                            const char* locationType, const char* locationName);
+
+    /** Constructor.
+     *  For commands REQUEST_REPLY.
+     */
+    psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID,
+                            const char* workLocation, bool workLocationValid,
+                            const char* script);
+
+    /** Constuctor.
+     *  Construct for message entry.
+     */
+    psHiredNPCScriptMessage(MsgEntry* me);
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+    *  Converts the message into human readable string.
+    *
+    * @param accessPointers A struct to a number of access pointers.
+    * @return Return a human readable string for the message.
+    */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
+
+};
+
 
 /** @} */
 

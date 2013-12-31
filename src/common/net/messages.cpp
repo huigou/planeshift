@@ -8359,6 +8359,8 @@ csString psSimpleRenderMeshMessage::ToString(NetBase::AccessPointers* accessPoin
     return msgtext;
 }
 
+//--------------------------------------------------------------------------
+
 PSF_IMPLEMENT_MSG_FACTORY(psMechanismActivateMessage, MSGTYPE_MECS_ACTIVATE);
 
 psMechanismActivateMessage::psMechanismActivateMessage(uint32_t client, const char* meshName,
@@ -8380,6 +8382,8 @@ psMechanismActivateMessage::psMechanismActivateMessage(MsgEntry* msg)
     move = msg->GetStr();
     rot = msg->GetStr();
 }
+
+//--------------------------------------------------------------------------
 
 PSF_IMPLEMENT_MSG_FACTORY(psOrderedMessage,MSGTYPE_ORDEREDTEST);
 
@@ -8403,4 +8407,169 @@ psOrderedMessage::psOrderedMessage(MsgEntry* me)
 csString psOrderedMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     return csString("not implemented");
+}
+
+//--------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psHiredNPCScriptMessage,MSGTYPE_HIRED_NPC_SCRIPT);
+
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID)
+{
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)));
+    msg->SetType(MSGTYPE_HIRED_NPC_SCRIPT);
+    msg->clientnum = client;
+
+    msg->Add(command);
+    msg->Add((uint32_t)hiredEID.Unbox());
+
+    valid=!(msg->overrun);
+}
+
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, bool choice)
+{
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+sizeof(bool)));
+    msg->SetType(MSGTYPE_HIRED_NPC_SCRIPT);
+    msg->clientnum = client;
+
+    msg->Add(command);
+    msg->Add((uint32_t)hiredEID.Unbox());
+    msg->Add(choice);
+
+    valid=!(msg->overrun);
+}
+
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, const char* script)
+{
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+(strlen(script)+1)));
+    msg->SetType(MSGTYPE_HIRED_NPC_SCRIPT);
+    msg->clientnum = client;
+
+    msg->Add(command);
+    msg->Add((uint32_t)hiredEID.Unbox());
+    msg->Add(script);
+
+    valid=!(msg->overrun);
+}
+
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID,
+                                                 const char* locationType, const char* locationName)
+{
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+
+                               (strlen(locationName)+1)+
+                               (strlen(locationType)+1)));
+    msg->SetType(MSGTYPE_HIRED_NPC_SCRIPT);
+    msg->clientnum = client;
+
+    msg->Add(command);
+    msg->Add((uint32_t)hiredEID.Unbox());
+    msg->Add(locationType);
+    msg->Add(locationName);
+
+    valid=!(msg->overrun);
+}
+
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID,
+                                                 const char* workLocation, bool workLocationValid,
+                                                 const char* script)
+{
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+
+                               (strlen(workLocation)+1)+sizeof(bool)+
+                               (strlen(script)+1)));
+    msg->SetType(MSGTYPE_HIRED_NPC_SCRIPT);
+    msg->clientnum = client;
+
+    msg->Add(command);
+    msg->Add((uint32_t)hiredEID.Unbox());
+    msg->Add(workLocation);
+    msg->Add(workLocationValid);
+    msg->Add(script);
+
+    valid=!(msg->overrun);
+}
+
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(MsgEntry* me)
+{
+    command  = me->GetUInt8();
+    hiredEID = me->GetUInt32();
+    
+    switch (command)
+    {
+    case REQUEST_REPLY:
+        workLocation      = me->GetStr();
+        workLocationValid = me->GetBool();
+        script            = me->GetStr();
+        break;
+    case VERIFY:
+        script = me->GetStr();
+        break;
+    case VERIFY_REPLY:
+    case WORK_LOCATION_RESULT:
+    case CHECK_WORK_LOCATION_RESULT:
+        choice = me->GetBool();
+        break;
+    case WORK_LOCATION_UPDATE:
+        workLocation = me->GetStr();
+        break;
+    case CHECK_WORK_LOCATION:
+        locationType = me->GetStr();
+        locationName = me->GetStr();
+        break;
+    }
+
+    valid = !(me->overrun);
+}
+
+csString psHiredNPCScriptMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
+{
+    csString msgtext;
+
+    switch (command)
+    {
+    case CHECK_WORK_LOCATION:
+        msgtext.AppendFmt("Cmd: CHECK_WORK_LOCATION Hired: %s LocationType: %s LocationName: %s",
+                          ShowID(hiredEID), locationType.GetDataSafe(),locationName.GetDataSafe());
+        break;
+    case CHECK_WORK_LOCATION_RESULT:
+        msgtext.AppendFmt("Cmd: CHECK_WORK_LOCATION_RESULT Hired: %s Choice: %s",
+                          ShowID(hiredEID), choice?"True":"False");
+        break;
+    case REQUEST:
+        msgtext.AppendFmt("Cmd: REQUEST Hired: %s",
+                          ShowID(hiredEID));
+        break;
+    case REQUEST_REPLY:
+        msgtext.AppendFmt("Cmd: REQUEST_REPLY Hired: %s WorkLocation: %s WorkLocationValid: %s Script: %s",
+                          ShowID(hiredEID), workLocation.GetDataSafe(), workLocationValid?"True":"False",
+                          script.GetDataSafe());
+        break;
+    case VERIFY:
+        msgtext.AppendFmt("Cmd: VERIFY Hired: %s Script: %s",
+                          ShowID(hiredEID), script.GetDataSafe());
+        break;
+    case VERIFY_REPLY:
+        msgtext.AppendFmt("Cmd: VERIFY_REPLY Hired: %s Choice: %s",
+                          ShowID(hiredEID), choice?"True":"False");
+        break;
+    case COMMIT:
+        msgtext.AppendFmt("Cmd: COMMIT Hired: %s",
+                          ShowID(hiredEID));
+        break;
+    case WORK_LOCATION:
+        msgtext.AppendFmt("Cmd: WORK_LOCATION Hired: %s",
+                          ShowID(hiredEID));
+        break;
+    case WORK_LOCATION_RESULT:
+        msgtext.AppendFmt("Cmd: WORK_LOCATION_RESULT Hired: %s Choice: %s",
+                          ShowID(hiredEID), choice?"True":"False");
+        break;
+    case WORK_LOCATION_UPDATE:
+        msgtext.AppendFmt("Cmd: WORK_LOCATION_UPDATE Hired: %s WorkLocation: %s",
+                          ShowID(hiredEID), workLocation.GetDataSafe());
+    case CANCEL:
+        msgtext.AppendFmt("Cmd: CANCEL Hired: %s",
+                          ShowID(hiredEID));
+        break;
+    }
+    
+    return msgtext;
 }

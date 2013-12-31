@@ -97,7 +97,7 @@ public:
      * Return the first waypoint where the position
      * is within the radius of the waypoint.
      */
-    Waypoint *FindWaypoint(csVector3& v, iSector *sector);
+    Waypoint *FindWaypoint(const csVector3& v, iSector *sector);
 
     /**
      * Find waypoint nearest to a point in the world
@@ -108,7 +108,7 @@ public:
      * @param[out] found_range The range the waypoint was found at.
      * @return The found waypoint or NULL if no wapoint was found.
      */
-    Waypoint *FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range = NULL);
+    Waypoint *FindNearestWaypoint(const csVector3& v,iSector *sector, float range, float * found_range = NULL);
 
     /**
      * Find random waypoint within a given range to a point in the world.
@@ -119,7 +119,7 @@ public:
      * @param[out] found_range The range the waypoint was found at.
      * @return The found waypoint or NULL if no wapoint was found.
      */
-    Waypoint *FindRandomWaypoint(csVector3& v, iSector *sector, float range, float * found_range = NULL);
+    Waypoint *FindRandomWaypoint(const csVector3& v, iSector *sector, float range, float * found_range = NULL);
 
     /**
      * Find waypoint nearest to a point in the world in the given group.
@@ -131,7 +131,7 @@ public:
      * @param[out] found_range The range the waypoint was found at.
      * @return The found waypoint or NULL if no wapoint was found.
      */
-    Waypoint *FindNearestWaypoint(int group, csVector3& v,iSector *sector, float range, float * found_range = NULL);
+    Waypoint *FindNearestWaypoint(int group, const csVector3& v,iSector *sector, float range, float * found_range = NULL);
 
     /**
      * Find random waypoint within a given range to a point in the world.
@@ -143,7 +143,7 @@ public:
      * @param[out] found_range The range the waypoint was found at.
      * @return The found waypoint or NULL if no wapoint was found.
      */
-    Waypoint *FindRandomWaypoint(int group, csVector3& v, iSector *sector, float range, float * found_range = NULL);
+    Waypoint *FindRandomWaypoint(int group, const csVector3& v, iSector *sector, float range, float * found_range = NULL);
 
     /**
      * Find the index for the given group name, return -1 if no group is found.
@@ -187,7 +187,7 @@ public:
      * @param[out] fraction    Return the fraction of the path where the positions is closesed.
      * @return The found path or NULL if no path was found.
      */
-    psPath *FindNearestPath(csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL, float * fraction = NULL);
+    psPath *FindNearestPath(const csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL, float * fraction = NULL);
     
     /**
      * Find the point nearest to a point in the world.
@@ -199,7 +199,7 @@ public:
      * @param[out] index       Return the index of the point found.
      * @return The found path or NULL if no path was found.
      */
-    psPath *FindNearestPoint(csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL);
+    psPath *FindNearestPoint(const csVector3& v, iSector *sector, float range, float * found_range = NULL, int * index = NULL);
     
     /**
      * Find the shortest route between waypoint start and stop.

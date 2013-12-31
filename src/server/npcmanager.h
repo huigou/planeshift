@@ -201,6 +201,12 @@ public:
     /// Tell a superclient to control an existing npc.
     void ControlNPC(gemNPC* npc);
 
+    /** Check work location.
+     *  @param npc Use the superclient of this npc to verify the location.
+     *  @param location The location to verify.
+     */
+    void CheckWorkLocation(gemNPC* npc, Location* location);
+
     /// Add Session for pets
     PetOwnerSession* CreatePetOwnerSession(gemActor*, psCharacter*);
 

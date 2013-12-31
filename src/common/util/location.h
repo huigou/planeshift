@@ -243,8 +243,16 @@ public:
 
     /** Adjust the postion of this location.
      */
+    bool Adjust(iDataConnection* db, csVector3 &pos, iSector* sector, float rot_angle);
+
+    /** Adjust the postion of this location.
+     */
     bool Adjust(csVector3 &pos, iSector* sector);
 
+    /** Adjust the postion of this location.
+     */
+    bool Adjust(csVector3 &pos, iSector* sector, float rot_angle);
+    
     /** Insert a new point in a region after this location.
      */
     Location* Insert(iDataConnection* db, csVector3 &pos, iSector* sector);
@@ -253,6 +261,9 @@ public:
      */
     Location* Insert(int id, csVector3 &pos, iSector* sector);
 
+    /** Create text representation.
+     */
+    csString ToString() const;
 };
 
 /**
@@ -375,6 +386,10 @@ public:
 
     /** Find a location of a specfic location type by nam.
      */
+    Location* FindLocation(LocationType* type, const char* name);
+
+    /** Find a location of a specfic location type by nam.
+     */
     Location* FindLocation(int id);
 
     /** Find all location in given sector.
@@ -412,6 +427,10 @@ public:
     /** Create a new location type
      */
     LocationType* CreateLocationType(iDataConnection* db, const csString &locationName);
+
+    /** Create a new location type
+     */
+    LocationType* CreateLocationType(const csString &locationName);
 
     /** Create a new location type
      */

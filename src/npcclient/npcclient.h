@@ -211,13 +211,13 @@ public:
      * This iterates over all waypoints and finds the nearest one.
      * There is probably a more efficient structure to accomplish this.
      */
-    Waypoint* FindNearestWaypoint(csVector3 &v, iSector* sector, float range = -1, float*  found_range = NULL);
+    Waypoint* FindNearestWaypoint(const csVector3 &v, iSector* sector, float range = -1, float*  found_range = NULL);
 
     /**
      * This iterates over all waypoints and finds the nearest one.
      * There is probably a more efficient structure to accomplish this.
      */
-    Waypoint* FindRandomWaypoint(csVector3 &v, iSector* sector, float range = -1, float*  found_range = NULL);
+    Waypoint* FindRandomWaypoint(const csVector3 &v, iSector* sector, float range = -1, float*  found_range = NULL);
 
     /**
      * This iterates over all waypoints and finds the nearest one with the given group.
