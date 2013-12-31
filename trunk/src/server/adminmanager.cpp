@@ -1969,7 +1969,7 @@ AdminCmdDataChangeName::AdminCmdDataChangeName(AdminManager* msgManager, MsgEntr
     : AdminCmdDataTarget("/changename", ADMINCMD_TARGET_TARGET | ADMINCMD_TARGET_ME | ADMINCMD_TARGET_PLAYER | ADMINCMD_TARGET_PID | ADMINCMD_TARGET_EID | ADMINCMD_TARGET_CLIENTTARGET | ADMINCMD_TARGET_DATABASE), uniqueName(true), uniqueFirstName(true)
 {
     size_t index = 1;
-    bool found;
+    bool found = false;
 
     // when help is requested, return immediate
     if(IsHelp(words[1]))
