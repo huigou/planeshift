@@ -111,14 +111,24 @@ bool pawsConfigEntityLabels::OnButtonPressed(int /*mouseButton*/, int /*keyModif
 {
     int widID = widget->GetID(); //widget identificator
     
-    if ((widID >= ENTITY_TYPES_AMOUNT)&&(widID <= 100))
+    // IDs above ENTITY_TYPES_AMOUNT indicate reset to default color.
+    if ((widID >= ENTITY_TYPES_AMOUNT))
     {
-        labelColors[widID-ENTITY_TYPES_AMOUNT] = defLabelColors[widID-ENTITY_TYPES_AMOUNT];
-        dirty = true;
+        widID -= ENTITY_TYPES_AMOUNT;
+        if((widID >= 0) && (widID < ENTITY_TYPES_AMOUNT))
+        {
+            labelColors[widID] = defLabelColors[widID];
+            dirty = true;
+        }
     }
     else
-        if ((widID < ENTITY_TYPES_AMOUNT))
+    {
+        if ((widID >= 0) && (widID < ENTITY_TYPES_AMOUNT))
+        {
             colorPicker = colorPicker->Create("Choose color",labelColors[widID],0,0xff,this,"colorPick",widID);
+        }
+    }
+    
     return true;
 }
 void pawsConfigEntityLabels::OnColorEntered(const char* /*name*/, int param, int color)
