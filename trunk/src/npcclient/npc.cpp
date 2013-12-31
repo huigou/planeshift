@@ -800,24 +800,6 @@ bool NPC::CopyLocate(csString source, csString destination, unsigned int flags)
     return true;
 }
 
-void NPC::SetScale(float scale)
-{
-    this->scale = scale;
-}
-
-float NPC::GetScaleValue()
-{
-    psNPCRaceListMessage::NPCRaceInfo_t* raceInfo = GetRaceInfo();
-
-    if(raceInfo)
-    {
-        return scale/GetRaceInfo()->scale;
-    }
-
-    return scale;
-}
-
-
 float NPC::GetAngularVelocity()
 {
     if(ang_vel == 999)
@@ -842,7 +824,7 @@ float NPC::GetWalkVelocity()
         walkVelocity = npcclient->GetWalkVelocity(npcActor->GetRace());
     }
 
-    return walkVelocity*GetScaleValue();
+    return walkVelocity;
 }
 
 float NPC::GetRunVelocity()
@@ -853,7 +835,7 @@ float NPC::GetRunVelocity()
         runVelocity = npcclient->GetRunVelocity(npcActor->GetRace());
     }
 
-    return runVelocity*GetScaleValue();
+    return runVelocity;
 }
 
 LocationType* NPC::GetRegion()
@@ -934,7 +916,6 @@ void NPC::DumpState(csString &output)
     output.AppendFmt("Vel:                  %.2f\n",vel);
     output.AppendFmt("Walk velocity:        %.2f\n",GetWalkVelocity());
     output.AppendFmt("Run velocity:         %.2f\n",GetRunVelocity());
-    output.AppendFmt("Scale value:          %.2f\n",GetScaleValue());
     output.AppendFmt("HP(Value/Max/Rate):   %.1f/%.1f/%.1f\n",GetHP(),GetMaxHP(),GetHPRate());
     output.AppendFmt("Mana(V/M/R):          %.1f/%.1f/%.1f\n",GetMana(),GetMaxMana(),GetManaRate());
     output.AppendFmt("PStamina(V/M/R):      %.1f/%.1f/%.1f\n",GetPysStamina(),GetMaxPysStamina(),GetPysStaminaRate());

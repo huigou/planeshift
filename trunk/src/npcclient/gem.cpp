@@ -26,6 +26,7 @@
 #include <imap/loader.h>
 #include <imesh/nullmesh.h>
 #include <imesh/object.h>
+#include <imesh/spritecal3d.h>
 
 //=============================================================================
 // Project Library Includes
@@ -59,7 +60,7 @@ psNpcMeshAttach::psNpcMeshAttach(gemNPCObject* objectToAttach) : scfImplementati
 
 gemNPCObject::gemNPCObject(psNPCClient* npcclient, EID id)
     :pcmesh(NULL), eid(id), type(0), visible(true), invincible(false),
-     isAlive(true), instance(DEFAULT_INSTANCE)
+     isAlive(true), scale(1.0), baseScale(1.0), instance(DEFAULT_INSTANCE)
 {
 }
 
@@ -152,6 +153,18 @@ bool gemNPCObject::InitMesh(const char* factname,
         pcmesh->SetMesh(mesh);
     }
 
+
+    csRef<iSpriteCal3DFactoryState> sprite = scfQueryInterface<iSpriteCal3DFactoryState> (mesh->GetFactory()->GetMeshObjectFactory());
+    if (sprite)
+    {
+        baseScale = sprite->GetScaleFactor();  
+
+        // Normalize the mesh scale to the base scale of the mesh.
+        Debug4(LOG_CELPERSIST,0,"DEBUG: Normalize scale: %f / %f = %f\n",
+               scale, baseScale, scale / baseScale);
+    }
+
+
     Move(pos,rotangle,room);
 
     return true;
@@ -189,6 +202,7 @@ gemNPCActor::gemNPCActor(psNPCClient* npcclient, psPersistActor &mesg)
     playerID = mesg.playerID;
     ownerEID = mesg.ownerEID;
     race = mesg.race;
+    scale = mesg.scale;
 
     SetInvisible((mesg.flags & psPersistActor::INVISIBLE)?  true : false);
     SetInvincible((mesg.flags & psPersistActor::INVINCIBLE) ?  true : false);
@@ -309,6 +323,8 @@ bool gemNPCActor::InitLinMove(const csVector3 &pos, float angle, const char* sec
 
     pcmove->InitCD(top, bottom, offset, GetMeshWrapper());
     pcmove->SetPosition(pos,angle,engine->FindSector(sector));
+
+    pcmove->SetScale(scale/baseScale);
 
     return true;  // right now this func never fail, but might later.
 }

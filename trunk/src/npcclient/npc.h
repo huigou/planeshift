@@ -514,16 +514,6 @@ public:
     void ReplaceLocations(csString &result);
 
     /**
-     * Set total scale for model.
-     */
-    void SetScale(float scale);
-
-    /**
-     * Return the scale value used to scale speed/walk etc.
-     */
-    float GetScaleValue();
-
-    /**
      * Return the angular velocity of this NPC.
      */
     float GetAngularVelocity();

@@ -374,8 +374,6 @@ void NetworkManager::HandleActor(MsgEntry* msg)
         if(npc)
         {
             npc->SetAlive(obj->IsAlive());
-            npc->SetScale(mesg.scale);
-            //            npc->SetScaleValue(mesg.scaleValue);
         }
 
         return;
@@ -409,13 +407,6 @@ void NetworkManager::HandleActor(MsgEntry* msg)
 
     npcclient->Add(actor);
 
-    // Values that is retrived through the perist but is stored on the NPC object needs to be updated
-    NPC* npc = actor->GetNPC();
-    if(npc)
-    {
-        npc->SetScale(mesg.scale);
-        //       npc->SetScaleValue(mesg.scaleValue);
-    }
 }
 
 void NetworkManager::HandleItem(MsgEntry* me)

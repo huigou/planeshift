@@ -178,6 +178,8 @@ protected:
     bool visible;
     bool invincible;
     bool isAlive;
+    float scale;
+    float baseScale;
 
     InstanceID  instance;
 

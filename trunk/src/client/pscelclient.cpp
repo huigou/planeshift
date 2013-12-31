@@ -1411,7 +1411,9 @@ GEMClientActor::GEMClientActor(psCelClient* cel, psPersistActor &mesg)
     matName = mesg.matname;
     scale = mesg.scale;
     if(scale == 0.0)
+    {
         scale = 1.0;
+    }
     baseScale = 1.0;
     mountScale = mesg.mountScale;
     ownerEID = mesg.ownerEID;
