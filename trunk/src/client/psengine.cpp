@@ -208,7 +208,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigtooltips.h"
 #include "gui/pawsmusicwindow.h"
 #include "gui/pawssheetline.h"
-
+#include "gui/pawsscripthirednpcwindow.h"
 
 // Needed for debugging
 csString psEngine::hwRenderer = "";
@@ -870,6 +870,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory(pawsConfigTooltipsFactory);
     RegisterFactory(pawsMusicWindowFactory);
     RegisterFactory(pawsSheetLineFactory);
+    RegisterFactory(pawsScriptHiredNPCWindowFactory);
 }
 
 //-----------------------------------------------------------------------------
@@ -1460,6 +1461,7 @@ void psEngine::LoadGame()
             LoadPawsWidget("NPC dialog window",       "dialog.xml");
             LoadPawsWidget("Craft status window",     "craftcancelwindow.xml");
             LoadPawsWidget("Music window",            "musicwindow.xml");
+            LoadPawsWidget("Script Hired NPC window", "scripthirednpcwindow.xml");
 
             LoadCustomPawsWidgets("/data/gui/customwidgetslist.xml");
 
@@ -1486,6 +1488,7 @@ void psEngine::LoadGame()
             HideWindow("PetStatWindow");
             HideWindow("WritingWindow");
             HideWindow("CraftCancelWindow");
+            HideWindow("ScriptHiredNPCWindow");
 
 
             paws->GetMouse()->ChangeImage("Skins Normal Mouse Pointer");

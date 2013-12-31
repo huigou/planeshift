@@ -654,7 +654,7 @@ public:
 
     /// Add a processed buffer of some kind; should only be used by files and the like.
     // NOTE THIS IS NOT ENDIAN-CONVERTED:  YOUR DATA MUST ALREADY BE ENDIAN SAFE.
-    void Add(const void *datastream,const uint32_t length)
+    void Add(const void *datastream, const uint32_t length)
     {
         if (bytes == NULL)
         {
@@ -711,10 +711,14 @@ public:
          */
         size_t position=current;
         while (current < bytes->GetSize() && bytes->payload[current]!=0x00)
+        {
             current++;
+        }
+        
         if (current>=bytes->GetSize())
         {
-            Debug2(LOG_NET,0,"Message id %u would have read beyond end of buffer.\n",msgid);
+            Debug3(LOG_NET,0,"Message id %u would have read beyond end of buffer %zu.\n",
+                   msgid,current);
             overrun=true;
             return NULL;
         }

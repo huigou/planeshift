@@ -18,6 +18,7 @@
  */
 #ifndef HIRE_MANAGER_HEADER
 #define HIRE_MANAGER_HEADER
+
 //====================================================================================
 // Crystal Space Includes
 //====================================================================================
@@ -95,6 +96,17 @@ public:
      */
     gemActor* ConfirmHire(gemActor* owner);
 
+    /** Start Scripting the hire.
+     *
+     *  Start scripting of a NPC. This will open the scripting dialog for the NPC.
+     *
+     *  @param clientnum The client ID that request scripting.
+     *  @param owner     The actor that has hired the NPC.
+     *  @param hiredNPC  The NPC that is to be released from hire.
+     *  @return True if scripting is allowed.
+     */
+    bool ScriptHire(uint32_t clientnum, gemActor* owner, gemNPC* hiredNPC);
+
     /** Release the hire.
      *
      *  Release a NPC from hire if the hiredNPC is hired by the owner.
@@ -113,6 +125,10 @@ public:
     /** Register an owner with the hire manager.
      */
     bool AddOwner(gemActor* owner);
+    
+    /** Result from work location check.
+     */
+    bool CheckWorkLocationResult(gemNPC* hiredNPC, bool valid);
     
 protected:
 private:
@@ -154,6 +170,22 @@ private:
     /** Remove all pending hire sessions for actor.
      */
     void RemovePendingHire(gemActor* owner);
+
+    /** Handle the psHiredNPCScriptMessage.
+     */
+    void HandleScriptMessage(MsgEntry* me, Client* client);
+
+    /** Validate a received script.
+     */
+    bool ValidateScript(PID ownerPID, PID hiredPID, const csString& script);
+    
+    /** Cancel a received script.
+     */
+    bool CancelScript(PID ownerPID, PID hiredPID);
+
+    /** Create a working location.
+     */
+    bool WorkLocation(gemActor* owner, gemNPC* hiredNPC);
 
     // Private data
     

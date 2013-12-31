@@ -142,19 +142,54 @@ public:
      */
     PID GetHiredPID();
 
+    /** Return the hired NPC script.
+     */
+    const csString& GetScript() const;
+
+    /** Save a verified script.
+     */
+    void SetVerifiedScript(const csString& newVerifiedScript);
+
+    /** Get work postion string.
+     */
+    csString GetTempWorkLocationString();
+
+    /** Get work postion.
+     */
+    Location* GetTempWorkLocation();
+    
+    /** Set a new working location.
+     */
+    void SetTempWorkLocation(Location* location);
+
+    /** Set validity of temp work postion.
+     */
+    void SetTempWorkLocationValid(bool valid);
+
+    /** Get validity of temp work postion.
+     */
+    bool GetTempWorkLocationValid();
+    
 protected:
 private:
-    PID                 ownerPID;        ///< The PID of the player that hire a NPC.
-    PID                 hiredPID;        ///< The PID of the NPC that is hired.
-    bool                guild;           ///< True if this is a guild hire.
+    PID                 ownerPID;           ///< The PID of the player that hire a NPC.
+    PID                 hiredPID;           ///< The PID of the NPC that is hired.
+    bool                guild;              ///< True if this is a guild hire.
+    csString            script;             ///< Text version of the hired npc script.
+    int                 workLocationID;     ///< The work location.
 
     // Data for pending hires.
-    csString            hireTypeName;    ///< The name of the type of hire.
-    csString            hireTypeNPCType; ///< The NPC brain of the type of hire.
-    PID                 masterPID;       ///< The master NPC PID.
+    csString            hireTypeName;       ///< The name of the type of hire.
+    csString            hireTypeNPCType;    ///< The NPC brain of the type of hire.
+    PID                 masterPID;          ///< The master NPC PID.
 
-    csWeakRef<gemActor> owner;           ///< Cached pointer to player actor when online.
-    csWeakRef<gemNPC>   hiredNPC;        ///< Cached pointer to NPC actor when loaded.
+    // Data for pending confirmation of verified scripts.
+    csString            verifiedScript;     ///< Script verified ok. Ready to be confirmed.
+    Location*           tempWorkLocation;   ///< Temp work location.
+    bool                tempWorkLocationValid; ///< Indicate if temp work location is valid or not.
+
+    csWeakRef<gemActor> owner;              ///< Cached pointer to player actor when online.
+    csWeakRef<gemNPC>   hiredNPC;           ///< Cached pointer to NPC actor when loaded.
 };
 
 #endif

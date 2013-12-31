@@ -1356,12 +1356,12 @@ Location* psNPCClient::FindRandomLocation(const char* loctype, csVector3 &pos, i
     return locationManager->FindRandomLocation(world, loctype, pos, sector, range, found_range);
 }
 
-Waypoint* psNPCClient::FindNearestWaypoint(csVector3 &v,iSector* sector, float range, float* found_range)
+Waypoint* psNPCClient::FindNearestWaypoint(const csVector3 &v,iSector* sector, float range, float* found_range)
 {
     return pathNetwork->FindNearestWaypoint(v, sector, range, found_range);
 }
 
-Waypoint* psNPCClient::FindRandomWaypoint(csVector3 &v,iSector* sector, float range, float* found_range)
+Waypoint* psNPCClient::FindRandomWaypoint(const csVector3 &v,iSector* sector, float range, float* found_range)
 {
     return pathNetwork->FindRandomWaypoint(v, sector, range, found_range);
 }

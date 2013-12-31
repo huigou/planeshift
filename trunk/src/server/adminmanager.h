@@ -3429,6 +3429,11 @@ public:
         return pathNetwork;
     }
 
+    LocationManager* GetLocationManager()
+    {
+        return locations;
+    }
+
 protected:
     /** Data object factory for parsing command data
      */

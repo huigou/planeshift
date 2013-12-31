@@ -44,6 +44,7 @@
 #include "engine/linmove.h"
 #include "util/strutil.h"
 #include "util/waypoint.h"
+#include "engine/psworld.h"
 #include "rpgrules/vitals.h"
 
 //=============================================================================
@@ -87,6 +88,7 @@ NetworkManager::NetworkManager(MsgHandler* mh,psNetConnection* conn, iEngine* en
     msghandler->Subscribe(this,MSGTYPE_NPC_WORKDONE);
     msghandler->Subscribe(this,MSGTYPE_PATH_NETWORK);
     msghandler->Subscribe(this,MSGTYPE_LOCATION);
+    msghandler->Subscribe(this,MSGTYPE_HIRED_NPC_SCRIPT);
 
     connection= conn;
     connection->SetEngine(engine);
@@ -114,6 +116,7 @@ NetworkManager::~NetworkManager()
         msghandler->Unsubscribe(this,MSGTYPE_NPC_WORKDONE);
         msghandler->Unsubscribe(this,MSGTYPE_PATH_NETWORK);
         msghandler->Unsubscribe(this,MSGTYPE_LOCATION);
+        msghandler->Unsubscribe(this,MSGTYPE_HIRED_NPC_SCRIPT);
     }
 
     delete outbound;
@@ -268,6 +271,11 @@ void NetworkManager::HandleMessage(MsgEntry* message)
         case MSGTYPE_LOCATION:
         {
             HandleLocation(message);
+            break;
+        }
+        case MSGTYPE_HIRED_NPC_SCRIPT:
+        {
+            HandleHiredNPCScript(message);
             break;
         }
     }
@@ -890,6 +898,85 @@ void NetworkManager::HandleLocation(MsgEntry* me)
         }
     }
 }
+
+void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
+{
+    psHiredNPCScriptMessage msg(me);
+
+    LocationManager* locations = npcclient->GetLocationManager();
+
+    if (msg.command == psHiredNPCScriptMessage::CHECK_WORK_LOCATION)
+    {
+        Location* location = locations->FindLocation(msg.locationType,msg.locationName);
+        if (!location)
+        {
+            psHiredNPCScriptMessage reply(0,
+                                          psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
+                                          msg.hiredEID, false);
+            reply.SendMessage();
+            return;
+        }
+        
+        csVector3 myPos = location->GetPosition();
+        iSector* mySector = location->GetSector(npcclient->GetEngine());
+
+        Waypoint* waypoint = npcclient->FindNearestWaypoint(myPos, mySector, 25.0f);
+        if (!waypoint)
+        {
+            psHiredNPCScriptMessage reply(0,
+                                          psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
+                                          msg.hiredEID, false);
+            reply.SendMessage();
+            return;
+        }
+
+        gemNPCActor* npcActor =  dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(msg.hiredEID));
+        if (!npcActor)
+        {
+            psHiredNPCScriptMessage reply(0,
+                                          psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
+                                          msg.hiredEID, false);
+            reply.SendMessage();
+            return;
+        }
+
+        NPC* npc = npcActor->GetNPC();
+        if(!npc)
+        {
+            psHiredNPCScriptMessage reply(0,
+                                          psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
+                                          msg.hiredEID, false);
+            reply.SendMessage();
+            return;
+        }
+        
+        csVector3 endPos = waypoint->GetPosition();
+        iSector* endSector = waypoint->GetSector(npcclient->GetEngine());
+        
+
+        float distance = npcclient->GetWorld()->Distance2(myPos, mySector, endPos, endSector);
+        if(distance > 0.5)
+        {
+            csRef<iCelHPath> path = npcclient->ShortestPath(npc, myPos,mySector,endPos,endSector);
+            if(!path || !path->HasNext())
+            {
+                psHiredNPCScriptMessage reply(0,
+                                              psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
+                                              msg.hiredEID, false);
+                reply.SendMessage();
+                return;
+            }
+        }
+        // All checks passed. There is a path from location to the waypoint network.
+        psHiredNPCScriptMessage reply(0,
+                                      psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
+                                      msg.hiredEID, true);
+        reply.SendMessage();
+        return;
+    }
+}
+
+
 
 
 void NetworkManager::HandleTimeUpdate(MsgEntry* me)

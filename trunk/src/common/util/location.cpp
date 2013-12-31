@@ -1,7 +1,7 @@
 /*
 * location.cpp - author: Keith Fulton <keith@paqrat.com>
 *
-* Copyright (C) 2004 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+* Copyright (C) 2004,2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -33,7 +33,7 @@
 #include "util/psutil.h"
 #include "util/pspath.h"
 #include "engine/psworld.h"
-
+#include "util/strutil.h"
 
 /*------------------------------------------------------------------*/
 
@@ -163,8 +163,8 @@ bool Location::Adjust(iDataConnection* db, csVector3 &pos, iSector* sector)
         return false;
     }
 
-    db->CommandPump("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
-                    pos.x,pos.y,pos.z,id);
+    db->CommandPump("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f,angle=%.2f WHERE id=%d",
+                    pos.x,pos.y,pos.z,rot_angle,id);
 
     return true;
 }
@@ -176,6 +176,29 @@ bool Location::Adjust(csVector3 &pos, iSector* sector)
 
     return true;
 }
+
+bool Location::Adjust(iDataConnection* db, csVector3 &pos, iSector* sector, float rot_angle)
+{
+    if(!Adjust(pos,sector,rot_angle))
+    {
+        return false;
+    }
+
+    db->CommandPump("UPDATE sc_locations SET x=%.2f,y=%.2f,z=%.2f WHERE id=%d",
+                    pos.x,pos.y,pos.z,id);
+
+    return true;
+}
+
+bool Location::Adjust(csVector3 &pos, iSector* sector, float rot_angle)
+{
+    this->pos = pos;
+    this->sector = sector;
+    this->rot_angle = rot_angle;
+    
+    return true;
+}
+
 
 Location* Location::Insert(iDataConnection* db, csVector3 &pos, iSector* sector)
 {
@@ -422,6 +445,15 @@ bool Location::GetRandomPosition(iEngine* engine,csVector3 &pos,iSector* &sector
     sector = randomSector;
 
     return true;
+}
+
+csString Location::ToString() const
+{
+    csString result;
+    
+    result.AppendFmt("%s - %.2f",toString(pos,sector).GetData(),rot_angle);
+
+    return result;
 }
 
 /*------------------------------------------------------------------*/
@@ -781,12 +813,18 @@ Location* LocationManager::FindLocation(const char* loctype, const char* name)
     LocationType* found = loctypes.Get(loctype, NULL);
     if(found)
     {
-        for(size_t i=0; i<found->locs.GetSize(); i++)
+        return FindLocation(found, name);
+    }
+    return NULL;
+}
+
+Location* LocationManager::FindLocation(LocationType* type, const char* name)
+{
+    for(size_t i=0; i<type->locs.GetSize(); i++)
+    {
+        if(strcasecmp(type->locs[i]->name,name) == 0)
         {
-            if(strcasecmp(found->locs[i]->name,name) == 0)
-            {
-                return found->locs[i];
-            }
+            return type->locs[i];
         }
     }
     return NULL;
@@ -974,6 +1012,13 @@ LocationType* LocationManager::CreateLocationType(iDataConnection* db, const csS
     return NULL;
 }
 
+LocationType* LocationManager::CreateLocationType(const csString &locationName)
+{
+    LocationType* locationType = new LocationType(-1,locationName);
+
+    loctypes.Put(locationName, locationType);
+    return locationType;
+}
 
 LocationType* LocationManager::CreateLocationType(int id, const csString &locationName)
 {

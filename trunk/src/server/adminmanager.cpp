@@ -3665,6 +3665,7 @@ AdminCmdDataHire::AdminCmdDataHire(AdminManager* msgManager, MsgEntry* me, psAdm
     subCommandList.Push("type","<Name> <NPC Type>");
     subCommandList.Push("master","<master NPC ID>");
     subCommandList.Push("confirm","");
+    subCommandList.Push("script","");
     subCommandList.Push("release","<Hired NPC>");
 
     // when help is requested, return immediate
@@ -3740,6 +3741,19 @@ AdminCmdDataHire::AdminCmdDataHire(AdminManager* msgManager, MsgEntry* me, psAdm
         }
         else if(subCmd == "confirm")
         {
+            if(words.GetCount() > index)
+            {
+                ParseError(me, "To many parameters.");
+            }
+        }
+        else if(subCmd == "script")
+        {
+            hiredNPC = dynamic_cast<gemNPC*>(client->GetTargetObject());
+            if (!hiredNPC)
+            {
+                ParseError(me, "No hired NPC targeted.");
+            }
+            
             if(words.GetCount() > index)
             {
                 ParseError(me, "To many parameters.");
@@ -12110,7 +12124,8 @@ void AdminManager::HandleHire(AdminCmdData* cmddata, Client* client)
     {
         if(hireManager->SetHireType(data->owner, data->typeName, data->typeNPCType))
         {
-            psserver->SendSystemError(client->GetClientNum(), "Hire type set.");
+            psserver->SendSystemError(client->GetClientNum(), "Hire npc name set to %s and type to %s.",
+                                      data->typeName.GetDataSafe(), data->typeNPCType.GetDataSafe());
         }
         else
         {
@@ -12122,7 +12137,8 @@ void AdminManager::HandleHire(AdminCmdData* cmddata, Client* client)
     {
         if(hireManager->SetHireMasterPID(data->owner, data->masterPID))
         {
-            psserver->SendSystemError(client->GetClientNum(), "Hire master NPC set.");
+            psserver->SendSystemError(client->GetClientNum(), "Hire master NPC set to %s.",
+                                      ShowID(data->masterPID));
         }
         else
         {
@@ -12138,6 +12154,18 @@ void AdminManager::HandleHire(AdminCmdData* cmddata, Client* client)
         else
         {
             psserver->SendSystemError(client->GetClientNum(), "Hire not confirmed.");
+        }
+        
+    }
+    else if(data->subCmd == "script")
+    {
+        if(hireManager->ScriptHire(client->GetClientNum(), data->owner, data->hiredNPC))
+        {
+            psserver->SendSystemError(client->GetClientNum(), "Started scripting.");
+        }
+        else
+        {
+            psserver->SendSystemError(client->GetClientNum(), "No hire to script for this NPC.");
         }
         
     }

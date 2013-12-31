@@ -1263,7 +1263,9 @@ void pawsWidget::DrawForeground()
 void pawsWidget::Draw()
 {
     if(DrawWindow())
+    {
         DrawForeground();
+    }
 }
 
 void pawsWidget::DrawWidgetText(const char* text, int x, int y, int style)

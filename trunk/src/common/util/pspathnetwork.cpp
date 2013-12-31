@@ -217,7 +217,7 @@ Waypoint *psPathNetwork::FindWaypoint(const char * name, WaypointAlias** alias)
 }
 
 
-Waypoint *psPathNetwork::FindWaypoint(csVector3& v, iSector *sector)
+Waypoint *psPathNetwork::FindWaypoint(const csVector3& v, iSector *sector)
 {
     csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
 
@@ -236,7 +236,7 @@ Waypoint *psPathNetwork::FindWaypoint(csVector3& v, iSector *sector)
     return NULL;
 }
 
-Waypoint *psPathNetwork::FindNearestWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
+Waypoint *psPathNetwork::FindNearestWaypoint(const csVector3& v,iSector *sector, float range, float * found_range)
 {
     csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
@@ -262,7 +262,7 @@ Waypoint *psPathNetwork::FindNearestWaypoint(csVector3& v,iSector *sector, float
     return min_wp;
 }
 
-Waypoint *psPathNetwork::FindRandomWaypoint(csVector3& v,iSector *sector, float range, float * found_range)
+Waypoint *psPathNetwork::FindRandomWaypoint(const csVector3& v,iSector *sector, float range, float * found_range)
 {
     csPDelArray<Waypoint>::Iterator iter(waypoints.GetIterator());
     Waypoint *wp;
@@ -296,7 +296,7 @@ Waypoint *psPathNetwork::FindRandomWaypoint(csVector3& v,iSector *sector, float 
     return NULL;
 }
 
-Waypoint *psPathNetwork::FindNearestWaypoint(int group, csVector3& v,iSector *sector, float range, float * found_range)
+Waypoint *psPathNetwork::FindNearestWaypoint(int group, const csVector3& v,iSector *sector, float range, float * found_range)
 {
     csList<Waypoint*>::Iterator iter(waypointGroups[group]);
     Waypoint *wp;
@@ -322,7 +322,7 @@ Waypoint *psPathNetwork::FindNearestWaypoint(int group, csVector3& v,iSector *se
     return min_wp;
 }
 
-Waypoint *psPathNetwork::FindRandomWaypoint(int group, csVector3& v,iSector *sector, float range, float * found_range)
+Waypoint *psPathNetwork::FindRandomWaypoint(int group, const csVector3& v,iSector *sector, float range, float * found_range)
 {
     csList<Waypoint*>::Iterator iter(waypointGroups[group]);
     Waypoint *wp;
@@ -393,7 +393,7 @@ psPathPoint* psPathNetwork::FindPoint(const psPath* path, const csVector3& pos, 
 }
 
 
-psPath *psPathNetwork::FindNearestPath(csVector3& v,iSector *sector, float range, float * found_range, int * index, float * fraction)
+psPath *psPathNetwork::FindNearestPath(const csVector3& v,iSector *sector, float range, float * found_range, int * index, float * fraction)
 {
     psPath * found = NULL;
     int idx = -1;
@@ -446,7 +446,7 @@ psPathPoint* psPathNetwork::FindNearestPoint(const psPath* path, const csVector3
 }
 
 
-psPath *psPathNetwork::FindNearestPoint(csVector3& v,iSector *sector, float range, float * found_range, int * index)
+psPath *psPathNetwork::FindNearestPoint(const csVector3& v,iSector *sector, float range, float * found_range, int * index)
 {
     psPath * found = NULL;
     int idx = -1;

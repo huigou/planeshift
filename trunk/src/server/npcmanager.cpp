@@ -76,6 +76,7 @@
 #include "spellmanager.h"
 #include "progressionmanager.h"
 #include "scripting.h"
+#include "hiremanager.h"
 
 class psNPCManagerTick : public psGameEvent
 {
@@ -3457,6 +3458,25 @@ void NPCManager::ControlNPC(gemNPC* npc)
         npc->GetCharacterData()->SetImperviousToAttack(npc->GetCharacterData()->GetImperviousToAttack() | TEMPORARILY_IMPERVIOUS);  // may switch this to 'hide' later
     }
 }
+
+void NPCManager::CheckWorkLocation(gemNPC* npc, Location* location)
+{
+    Client* superclient = clients->FindAccount(npc->GetSuperclientID());
+    if(superclient)
+    {
+        // Send message to super client
+        psHiredNPCScriptMessage msg(0, psHiredNPCScriptMessage::CHECK_WORK_LOCATION, npc->GetEID(),
+                                    location->GetTypeName(), location->GetName());
+        // TODO: Send only to one superclient.. Since we run with only one we can multicast to that for now.
+        msg.Multicast(superclients,-1,PROX_LIST_ANY_RANGE);
+    }
+    else
+    {
+        // No superclient found online, deam the location invalid.
+        psserver->GetHireManager()->CheckWorkLocationResult(npc, false);
+    }
+}
+
 
 PetOwnerSession* NPCManager::CreatePetOwnerSession(gemActor* owner, psCharacter* petData)
 {

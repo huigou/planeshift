@@ -161,10 +161,9 @@ void pawsWritingWindow::OnStringEntered(const char* /*name*/, int /*param*/, con
         return;
 
     fileName.Format("/planeshift/userdata/books/%s", value);
-	Error2("%s", fileName.GetData());
     if (!vfs->Exists(fileName))
     {
-        psSystemMessage msg(0, MSG_ERROR, "File not found!" );
+        psSystemMessage msg(0, MSG_ERROR, "File %s not found!", fileName.GetDataSafe());
         msg.FireEvent();
         return;
     }    
@@ -175,7 +174,7 @@ void pawsWritingWindow::OnStringEntered(const char* /*name*/, int /*param*/, con
         msg.FireEvent();
     }        
     csString book(data->GetData(), csMin(data->GetSize(), (size_t)MAX_BOOK_FILE_SIZE));
-	book.ReplaceAll("\r\n", "\n");
+    book.ReplaceAll("\r\n", "\n");
     lefttext->SetText(book, true);
     
     psSystemMessage msg(0, MSG_ACK, "Book Loaded Successfully!" );

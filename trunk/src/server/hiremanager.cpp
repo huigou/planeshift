@@ -26,6 +26,7 @@
 // Project Includes
 //====================================================================================
 #include <util/psdatabase.h>
+#include <util/location.h>
 
 //====================================================================================
 // Local Includes
@@ -34,10 +35,13 @@
 #include "hiresession.h"
 #include "entitymanager.h"
 #include "bulkobjects/pscharacterloader.h"
+#include "client.h"
+#include "adminmanager.h"
+#include "npcmanager.h"
 
 HireManager::HireManager()
 {
-    
+    Subscribe(&HireManager::HandleScriptMessage, MSGTYPE_HIRED_NPC_SCRIPT, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);    
 }
 
 
@@ -181,9 +185,27 @@ gemActor* HireManager::ConfirmHire(gemActor* owner)
     return hiredNPC;
 }
 
+bool HireManager::ScriptHire(uint32_t clientnum, gemActor* owner, gemNPC* hiredNPC)
+{
+    HireSession* session = GetSessionByPIDs(owner->GetPID(), hiredNPC->GetPID());
+    if (!session || !owner || !hiredNPC)
+    {
+        return false;
+    }
+
+    // Display Script Dialoge.
+    psHiredNPCScriptMessage msg(clientnum, psHiredNPCScriptMessage::REQUEST_REPLY, hiredNPC->GetEID(),
+                                session->GetTempWorkLocationString().GetDataSafe(),
+                                session->GetTempWorkLocationValid(),
+                                session->GetScript().GetDataSafe());
+    msg.SendMessage();
+
+    return true;
+}
+
 bool HireManager::ReleaseHire(gemActor* owner, gemNPC* hiredNPC)
 {
-    HireSession* session = GetSessionByPIDs(owner->GetPID(),hiredNPC->GetPID());
+    HireSession* session = GetSessionByPIDs(owner->GetPID(), hiredNPC->GetPID());
     if (!session || !owner || !hiredNPC)
     {
         return false;
@@ -325,4 +347,200 @@ HireSession* HireManager::GetSessionByPIDs(PID ownerPID, PID hiredPID)
 void HireManager::RemovePendingHire(gemActor* owner)
 {
     pendingHires.DeleteAll(owner->GetPID());
+}
+
+void HireManager::HandleScriptMessage(MsgEntry* me, Client* client)
+{
+    psHiredNPCScriptMessage msg(me);
+    if (!msg.valid)
+    {
+        Error1("Received not valid psHiredNPCScriptMessage.");
+        return;
+    }
+
+    // Resolv the hired NPC from the script message.
+    gemNPC* hiredNPC = EntityManager::GetSingleton().GetGEM()->FindNPCEntity(msg.hiredEID);
+    if (!hiredNPC)
+    {
+        return;
+    }
+
+    switch (msg.command)
+    {
+        case psHiredNPCScriptMessage::REQUEST:
+        {
+            ScriptHire(client->GetClientNum(), client->GetActor(), hiredNPC);
+        }
+        break;
+        case psHiredNPCScriptMessage::VERIFY:
+        {
+            bool valid = ValidateScript(client->GetPID(), hiredNPC->GetPID(), msg.script);
+            if (!valid)
+            {
+                psserver->SendSystemError(client->GetClientNum(), "Script not valid.");
+            }
+
+            psHiredNPCScriptMessage reply(client->GetClientNum(), psHiredNPCScriptMessage::VERIFY_REPLY,
+                                          msg.hiredEID, valid);
+            reply.SendMessage();
+            
+        }
+        break;
+        case psHiredNPCScriptMessage::COMMIT:
+        {
+        }
+        break;
+        case psHiredNPCScriptMessage::CANCEL:
+        {
+            CancelScript(client->GetPID(), hiredNPC->GetPID());
+        }
+        break;
+        case psHiredNPCScriptMessage::WORK_LOCATION:
+        {
+            WorkLocation(client->GetActor(), hiredNPC);
+        }
+        break;
+        case psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT:
+        {
+            CheckWorkLocationResult(hiredNPC, msg.choice);
+        }
+        break;
+    }
+}
+
+
+bool HireManager::ValidateScript(PID ownerPID, PID hiredPID, const csString& script)
+{
+    HireSession* session = GetSessionByPIDs(ownerPID, hiredPID);
+    if(!session)
+    {
+        return false;
+    }
+
+    // Check work location
+    if(session->GetTempWorkLocation() == NULL)
+    {
+        return false; // No work location defined.
+    }
+
+    if (!session->GetTempWorkLocationValid())
+    {
+        return false; // Not a valid work postion.
+    }
+    
+    if(script.IsEmpty())
+    {
+        return false; // Empty script not valid.
+    }
+
+    //TODO: Add validation of script. For now accept.
+    
+    // Store the verified script. Client need to confirm to activate it.
+    session->SetVerifiedScript(script);
+
+    return true;
+}
+
+bool HireManager::CancelScript(PID ownerPID, PID hiredPID)
+{
+    HireSession* session = GetSessionByPIDs(ownerPID, hiredPID);
+    if (!session)
+    {
+        return false;
+    }
+
+    // Cleare the verified script store.
+    session->SetVerifiedScript("");
+
+    return true;
+}
+
+bool HireManager::WorkLocation(gemActor* owner, gemNPC* hiredNPC)
+{
+    HireSession* session = GetSessionByPIDs(owner->GetPID(), hiredNPC->GetPID());
+    if(!session)
+    {
+        return false;
+    }
+
+    LocationManager* locations = psserver->GetAdminManager()->GetLocationManager();
+    if(!locations)
+    {
+        return false;
+    }
+    
+    // Create or update an temporary location that isn't saved to db.
+
+    LocationType* locationType = locations->FindLocation("temp_work"); // Todo configured this through session?
+    if(!locationType)
+    {
+        locationType = locations->CreateLocationType("temp_work");
+        if (!locations)
+        {
+            return false;
+        }
+        psserver->npcmanager->LocationTypeAdd(locationType);
+    }
+    
+    csVector3 myPos;
+    float myRot = 0.0;
+    iSector* mySector = 0;
+    csString mySectorName;
+
+    owner->GetPosition(myPos, myRot, mySector);
+    mySectorName = mySector->QueryObject()->GetName();
+
+    Location* location = locations->FindLocation(locationType, hiredNPC->GetName());
+    if(!location)
+    {
+        location = locations->CreateLocation(locationType, hiredNPC->GetName(),
+                                             myPos, mySector, 1.0, myRot, "");
+        if (location)
+        {
+            psserver->npcmanager->LocationCreated(location);
+        }
+    }
+    else
+    {
+        if (location->Adjust(myPos, mySector, myRot))
+        {
+            psserver->npcmanager->LocationAdjusted(location);
+        }
+    }
+ 
+    // Update session with this temporary location.
+    session->SetTempWorkLocation(location);
+
+    psHiredNPCScriptMessage msg(owner->GetClient()->GetClientNum(),
+                                psHiredNPCScriptMessage::WORK_LOCATION_UPDATE,
+                                hiredNPC->GetEID(), location->ToString());
+    msg.SendMessage();
+
+    // Verify that it is possible to navigate to the location.
+    psserver->npcmanager->CheckWorkLocation(hiredNPC, location);
+
+    return true;
+}
+
+bool HireManager::CheckWorkLocationResult(gemNPC* hiredNPC, bool valid)
+{
+    HireSession* session = GetSessionByHirePID(hiredNPC->GetPID());
+    if(!session)
+    {
+        return false;
+    }
+   
+    session->SetTempWorkLocationValid(valid);
+
+    gemActor* owner = session->GetOwner();
+    if (owner && owner->GetClient())
+    {
+        psHiredNPCScriptMessage msg(owner->GetClient()->GetClientNum(),
+                                    psHiredNPCScriptMessage::WORK_LOCATION_RESULT,
+                                    hiredNPC->GetEID(), valid);
+        msg.SendMessage();
+    }
+    
+
+    return true;
 }
