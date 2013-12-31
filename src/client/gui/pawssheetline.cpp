@@ -93,7 +93,7 @@ Note::Note(short int position, short int alter)
 csString Note::ToXML()
 {
     csString pitch;
-    int alterXML;
+    int alterXML = 0;
     int octave;
     int iStep;
     char step;
@@ -261,7 +261,7 @@ void Chord::AddNote(int position, int alter, bool rest)
 
 void Chord::AddNote(csRef<iDocumentNode> pitchNode)
 {
-    int alter;
+    int alter = pawsMusicWindow::UNALTERED;
     int position = 0;
     csRef<iDocumentNode> stepNode;
     csRef<iDocumentNode> octaveNode;
