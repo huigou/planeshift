@@ -521,7 +521,7 @@ bool psMiniGameBoard::DetermineEndgame(Endgame_TileType &winningPiece)
     while(egIterator.HasNext())
     {
         size_t patternsMatched;
-        uint8_t tileAtPos;
+        uint8_t tileAtPos = EMPTY_TILE;
         Endgame_Spec* endgame = egIterator.Next();
         if(endgame->positionsAbsolute)
         {
