@@ -131,6 +131,10 @@ public:
         execute_line(command,NULL);
         CPrintf (CON_CMDOUTPUT, COL_BLUE "%s: " COL_NORMAL, ServerConsole::prompt);
     };
+    virtual csString ToString() const
+    {
+        return command;
+    }
 };
 
 /** @} */

@@ -92,6 +92,9 @@ psNPCClient::psNPCClient() : serverconsole(NULL)
 {
     npcclient     = this;  // Static pointer to self
     connection    = NULL;
+    objreg        = NULL;
+    locationManager = NULL;
+    mathScriptEngine = NULL;
     world         = NULL;
     //    PFMaps       = NULL;
     pathNetwork   = NULL;
@@ -104,6 +107,8 @@ psNPCClient::psNPCClient() : serverconsole(NULL)
     current_long_range_perception_index = 0;
     current_long_range_perception_loc_index = 0;
     current_tribe_home_perception_index = 0;
+    gameMinute = gameHour = gameDay = gameMonth = gameYear = 0;
+    gameTimeUpdated = 0;
 }
 
 psNPCClient::~psNPCClient()
@@ -1435,7 +1440,10 @@ void psNPCClient::EnableDisableNPCs(const char* pattern, bool enable)
     if(eid != 0)
     {
         NPC* npc = FindNPC(eid);
-        npc->Disable(!enable);
+        if(npc)
+        {
+            npc->Disable(!enable);
+        }
     }
     else
     {
@@ -1456,7 +1464,7 @@ void psNPCClient::EnableDisableNPCs(const char* pattern, bool enable)
 
 void psNPCClient::ListAllNPCs(const char* pattern)
 {
-    if(strcasecmp(pattern, "summary")==0)
+    if(pattern && strcasecmp(pattern, "summary")==0)
     {
         int disabled = 0;
         int alive = 0;
@@ -1580,7 +1588,7 @@ void psNPCClient::ListAllEntities(const char* pattern, bool onlyCharacters)
     if(onlyCharacters)
     {
 
-        if(strcasecmp(pattern, "summary")==0)
+        if(pattern && (strcasecmp(pattern, "summary")==0))
         {
             int numChars = 0;
             int alive = 0;
@@ -2018,12 +2026,12 @@ void psNPCClient::PerceptProximityItems()
 
         gemNPCItem* item = all_gem_items[current_long_range_perception_index];
 
-        iSector* item_sector;
-        csVector3 item_pos;
-        psGameObject::GetPosition(item,item_pos,item_sector);
-
         if(item && item->IsPickable())
         {
+            iSector* item_sector;
+            csVector3 item_pos;
+            psGameObject::GetPosition(item,item_pos,item_sector);
+
             // Use bounding boxes to check within perception range. This
             // is faster than using the distance.
             csBox3 bboxLong;

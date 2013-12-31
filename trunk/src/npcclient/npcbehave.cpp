@@ -927,6 +927,7 @@ Behavior::Behavior()
     minLimit                = 0.0;
     maxLimitValid           = false;
     maxLimit                = 0.0;
+    stepCount               = 0;
 }
 
 Behavior::Behavior(const char* n)
@@ -948,6 +949,7 @@ Behavior::Behavior(const char* n)
     minLimit                = 0.0;
     maxLimitValid           = false;
     maxLimit                = 0.0;
+    stepCount               = 0;
 }
 
 Behavior::Behavior(Behavior &other)
@@ -1313,6 +1315,12 @@ bool Behavior::LoadScript(iDocumentNode* node,bool top_level)
         if(postLoadBeginLoop)
         {
             LoopBeginOperation* blop = dynamic_cast<LoopBeginOperation*>(op);
+            if(!blop)
+            {
+                Error1("Loop begin operation not a loop operation!");
+                return false;
+            }
+
             if(!LoadScript(node,false))  // recursively load within loop
             {
                 Error1("Could not load within Loop Operation. Error in XML");

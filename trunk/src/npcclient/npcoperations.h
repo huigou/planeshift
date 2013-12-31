@@ -366,7 +366,7 @@ protected:
     bool pickupable;
 public:
 
-    BuildOperation(): ScriptOperation("Build") {};
+    BuildOperation(): ScriptOperation("Build"),pickupable(false) {};
     virtual ~BuildOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -656,7 +656,7 @@ protected:
     // Instance temp variables. These dosn't need to be copied.
     float remaining;
 
-    MoveOperation(const char*  n): ScriptOperation(n)
+    MoveOperation(const char*  n): ScriptOperation(n),remaining(0.0f)
     {
         duration = 0;
         ang_vel = 0;
@@ -664,7 +664,7 @@ protected:
     }
 public:
 
-    MoveOperation(): ScriptOperation("Move")
+    MoveOperation(): ScriptOperation("Move"),remaining(0.0f)
     {
         duration = 0;
         ang_vel = 0;
@@ -754,7 +754,7 @@ protected:
 
 public:
 
-    DebugOperation(): ScriptOperation("Debug") {};
+    DebugOperation(): ScriptOperation("Debug"),level(0) {};
     virtual ~DebugOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -890,7 +890,7 @@ protected:
 
 public:
 
-    EquipOperation(): ScriptOperation("Equip") {};
+    EquipOperation(): ScriptOperation("Equip"),count(0) {};
     virtual ~EquipOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1057,7 +1057,8 @@ protected:
     ///< members when deciding target.
 public:
 
-    MeleeOperation(): ScriptOperation("Melee")
+    MeleeOperation(): ScriptOperation("Melee"),
+        attackInvisible(false),attackInvincible(false)
     {
         attacked_ent=NULL;
         seek_range=0;
@@ -1275,7 +1276,7 @@ protected:
 
 public:
 
-    PickupOperation(): ScriptOperation("Pickup") {};
+    PickupOperation(): ScriptOperation("Pickup"),count(0) {};
     virtual ~PickupOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1496,7 +1497,7 @@ protected:
 
 public:
 
-    SetBufferOperation(): ScriptOperation("SetBuffer") {};
+    SetBufferOperation(): ScriptOperation("SetBuffer"), type(NPC_BUFFER) {};
     virtual ~SetBufferOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1542,7 +1543,7 @@ protected:
 
 public:
 
-    SitOperation(bool sit): ScriptOperation("Sit"), sit(sit) {};
+    SitOperation(bool sit): ScriptOperation("Sit"), sit(sit), remaining(0.0) {};
     virtual ~SitOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1569,7 +1570,7 @@ protected:
 
 public:
 
-    TalkOperation(): ScriptOperation("Talk") {};
+    TalkOperation(): ScriptOperation("Talk"),talkType(psNPCCommandsMessage::TALK_SAY),talkPublic(false),target(false) {};
     virtual ~TalkOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1609,7 +1610,7 @@ protected:
 
 public:
 
-    TransferOperation(): ScriptOperation("Transfer") {};
+    TransferOperation(): ScriptOperation("Transfer"), count(0) {};
     virtual ~TransferOperation() {};
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
@@ -1687,7 +1688,7 @@ protected:
 
 public:
 
-    WaitOperation(): ScriptOperation("Wait")
+    WaitOperation(): ScriptOperation("Wait"),remaining(0.0f)
     {
         duration=0;
     }
@@ -1852,10 +1853,10 @@ protected:
 
 public:
 
-    WatchOperation(): ScriptOperation("Watch")
+    WatchOperation():ScriptOperation("Watch"),watchRange(0.0f),
+        type(TARGET),searchRange(0.0f),watchInvisible(false),watchInvincible(false)
     {
         watchedEnt=NULL;
-        watchRange=0;
     }
     virtual ~WatchOperation() {}
 

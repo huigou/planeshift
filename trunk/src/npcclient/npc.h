@@ -280,7 +280,7 @@ public:
     /** Insert a new copy of NPC into npc_definitions.
      */
     bool InsertCopy(PID use_char_id, PID ownerPID);
-    
+
     /** Remove this NPC from npc_definitions.
      */
     bool Delete();
@@ -901,7 +901,7 @@ public:
 
     virtual void Trigger()
     {
-        if (npc)
+        if(npc)
         {
             npc->tick = NULL;
             npc->Tick();
@@ -912,7 +912,7 @@ public:
     {
         npc = NULL;
     }
-    
+
 
     virtual csString ToString() const
     {

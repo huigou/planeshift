@@ -46,6 +46,10 @@ class psNPCStatusRunEvent : public psGameEvent
 public:
     psNPCStatusRunEvent(csTicks interval);
     void Trigger();
+    virtual csString ToString() const
+    {
+        return "Not implemented";
+    }
 };
 
 psNPCStatusRunEvent::psNPCStatusRunEvent(csTicks interval)

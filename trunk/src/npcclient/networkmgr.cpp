@@ -62,7 +62,7 @@
 extern bool running;
 
 NetworkManager::NetworkManager(MsgHandler* mh,psNetConnection* conn, iEngine* engine)
-    : reconnect(false)
+    : port(0),reconnect(false)
 {
     msghandler = mh;
     this->engine = engine;
@@ -657,10 +657,10 @@ void NetworkManager::HandlePathNetwork(MsgEntry* me)
         {
             csString sectorName = msg.sector->QueryObject()->GetName();
             Waypoint* wp = pathNetwork->CreateWaypoint(msg.string, msg.position, sectorName, msg.radius, msg.flags);
-            wp->SetID(msg.id);
-
             if(wp)
             {
+                wp->SetID(msg.id);
+
                 Debug3(LOG_NET, 0, "Created waypoint %d at %s.\n",
                        msg.id, toString(msg.position, msg.sector).GetDataSafe());
             }
@@ -771,10 +771,10 @@ void NetworkManager::HandleLocation(MsgEntry* me)
         case psLocationMessage::LOCATION_CREATED:
         {
             Location* location = locations->CreateLocation(msg.typeName, msg.name, msg.position, msg.sector, msg.radius, msg.rotationAngle, msg.flags);
-            location->SetID(msg.id);
-
             if(location)
             {
+                location->SetID(msg.id);
+
                 Debug3(LOG_NET, 0, "Created location %d at %s.\n",
                        msg.id, toString(msg.position, msg.sector).GetDataSafe());
             }
@@ -898,10 +898,10 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
 
     LocationManager* locations = npcclient->GetLocationManager();
 
-    if (msg.command == psHiredNPCScriptMessage::CHECK_WORK_LOCATION)
+    if(msg.command == psHiredNPCScriptMessage::CHECK_WORK_LOCATION)
     {
         Location* location = locations->FindLocation(msg.locationType,msg.locationName);
-        if (!location)
+        if(!location)
         {
             psHiredNPCScriptMessage reply(0,
                                           psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
@@ -909,12 +909,12 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
             reply.SendMessage();
             return;
         }
-        
+
         csVector3 myPos = location->GetPosition();
         iSector* mySector = location->GetSector(npcclient->GetEngine());
 
         Waypoint* waypoint = npcclient->FindNearestWaypoint(myPos, mySector, 25.0f);
-        if (!waypoint)
+        if(!waypoint)
         {
             psHiredNPCScriptMessage reply(0,
                                           psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
@@ -924,7 +924,7 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
         }
 
         gemNPCActor* npcActor =  dynamic_cast<gemNPCActor*>(npcclient->FindEntityID(msg.hiredEID));
-        if (!npcActor)
+        if(!npcActor)
         {
             psHiredNPCScriptMessage reply(0,
                                           psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
@@ -942,10 +942,10 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
             reply.SendMessage();
             return;
         }
-        
+
         csVector3 endPos = waypoint->GetPosition();
         iSector* endSector = waypoint->GetSector(npcclient->GetEngine());
-        
+
 
         float distance = npcclient->GetWorld()->Distance2(myPos, mySector, endPos, endSector);
         if(distance > 0.5)
@@ -1531,7 +1531,7 @@ void NetworkManager::HandlePerceptions(MsgEntry* msg)
                 NPCDebug(npc, 5, "Range perception: NPC: %s, player: %s, faction: %.0f",
                          ShowID(npcEID), ShowID(playerEID), faction);
 
-                gemNPCObject* npc_ent = (npc) ? npc->GetActor() : npcclient->FindEntityID(npcEID);
+                gemNPCObject* npc_ent = npc->GetActor();
                 gemNPCObject* player = npcclient->FindEntityID(playerEID);
 
                 if(!player || !npc_ent)

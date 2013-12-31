@@ -40,7 +40,7 @@
 
 
 RemoteDebug::RemoteDebug()
-    :localDebugLevel(0)
+    :localDebugLevel(0),highestActiveDebugLevel(0)
 {
     for(int i = 0; i < 10; i++)
     {
@@ -131,12 +131,25 @@ void RemoteDebug::Printf(int debugLevel, const char* msg,...)
 
 void RemoteDebug::VPrintf(int debugLevel, const char* msg, va_list args)
 {
-    char str[1024];
+    CS_ASSERT(msg != NULL);
+
+    const int REMOTE_DEBUG_BUFFER = 1024;
+    
+    char str[REMOTE_DEBUG_BUFFER];
 
     if(!IsDebugging())
         return;
 
-    vsprintf(str, msg, args);
+    int ret = vsnprintf(str, REMOTE_DEBUG_BUFFER, msg, args);
+    if (ret >= REMOTE_DEBUG_BUFFER)
+    {
+        // Buffer truncated. Terminate buffer and insert ... at end.
+        str[REMOTE_DEBUG_BUFFER] = '\0';
+        str[REMOTE_DEBUG_BUFFER-1] = '.';
+        str[REMOTE_DEBUG_BUFFER-2] = '.';
+        str[REMOTE_DEBUG_BUFFER-3] = '.';
+    }
+    
 
     // Add string to the internal log buffer
     debugLog[nextDebugLogEntry] = str;
