@@ -692,6 +692,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Say shadow colour" trans="" />
   <item orig="Say text colour" trans="" />
   <item orig="Scale Font:" trans="" />
+  <item orig="Script" trans="" />
   <item orig="Secret guild" trans="" />
   <item orig="Sector" trans="" />
   <item orig="Sector:" trans="" />
@@ -704,6 +705,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Server:" trans="" />
   <item orig="Servers:" trans="" />
   <item orig="Set" trans="" />
+  <item orig="Set position" trans="" />
   <item orig="Setting Item" trans="" />
   <item orig="Settings" trans="" />
   <item orig="Shadows" trans="" />
@@ -849,6 +851,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Various Skills" trans="" />
   <item orig="Various Skills List:" trans="" />
   <item orig="Verification complete" trans="" />
+  <item orig="Verify" trans="" />
   <item orig="View" trans="" />
   <item orig="View Item" trans="" />
   <item orig="View Stats" trans="" />
@@ -873,6 +876,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="Window Settings" trans="" />
   <item orig="Withdraw" trans="" />
   <item orig="Withdraw and Deposit" trans="" />
+  <item orig="Work:" trans="" />
   <item orig="Write in this book" trans="" />
   <item orig="X:" trans="" />
   <item orig="Y:" trans="" />
