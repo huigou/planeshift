@@ -256,11 +256,11 @@ bool PaladinJr::SpeedCheck(Client* client, gemActor* actor, psDRMessage &currUpd
         return true;
 
     // define cheating variables
-    float dist;
-    float reported_distance;
-    float max_noncheat_distance;
-    float lag_distance;
-    csTicks timedelta;
+    float dist = 0.0;
+    float reported_distance = 0.0;
+    float max_noncheat_distance = 0.0;
+    float lag_distance = 0.0;
+    csTicks timedelta = 0;
     csVector3 vel;
 
     // check for warpviolation
