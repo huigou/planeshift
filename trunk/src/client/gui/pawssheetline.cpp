@@ -101,6 +101,7 @@ csString Note::ToXML()
     // computing alter
     switch(alter)
     {
+    default:
     case pawsMusicWindow::UNALTERED:
     case pawsMusicWindow::NATURAL:
         alterXML = 0;
@@ -319,6 +320,7 @@ void Chord::AddNote(csRef<iDocumentNode> pitchNode)
     // converting alter
     switch(alterXML)
     {
+    default:
     case 0:
         alter = pawsMusicWindow::UNALTERED;
         break;
