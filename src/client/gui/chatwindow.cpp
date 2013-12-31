@@ -1437,6 +1437,7 @@ void pawsChatWindow::HandleSystemMessage(MsgEntry *me)
                 if ((local && !(settings.meFilters & COMBAT_STANCE))
                     || (!local && !(settings.vicinityFilters & COMBAT_STANCE)))
                 {
+                    delete[] currentLine;
                     return;
                 }
             }
