@@ -422,6 +422,7 @@ void pawsControlWindow::Register( pawsControlledWindow* window )
     if( icon->theirButton==NULL )
     {
         Error2("pawsControlWindow::Register couldn't find window %s!", window->GetName() );
+        delete icon;
         return;
     }
     icon->orgRes = icon->theirButton->GetBackground();
