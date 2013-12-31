@@ -315,6 +315,9 @@ void psMouseBinds::Bind(const csString &action, int button, int modifier)
     csMouseEventData mouse;
     mouse.Button = button;
     mouse.Modifiers = modifier;
+    mouse.x = 0;
+    mouse.y = 0;
+    mouse.numAxes = 0;
 
     Bind(action, mouse);
 }
@@ -326,6 +329,9 @@ void psMouseBinds::Bind(const csString &action, csString &button, csString &modi
 
     mouse.Button = atoi(button.GetData());
     mouse.Modifiers = atoi(modifier.GetData());
+    mouse.x = 0;
+    mouse.y = 0;
+    mouse.numAxes = 0;
 
     Bind(action, mouse);
 }
