@@ -234,15 +234,23 @@ bool pawsConfigTooltips::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
 {
     int widID = widget->GetID(); //widget identificator
 
-    if ((widID >= 3) && (widID <= 100))
+    if ((widID >= 3))
     {
-        PawsManager::GetSingleton().setTooltipsColors(widID-3, defTooltipsColors[widID-3]);
-        RefreshColorFrames();
-        dirty = true;
+        widID -= 3;
+        if ((widID >= 0) && (widID < 3))
+        {
+            PawsManager::GetSingleton().setTooltipsColors(widID, defTooltipsColors[widID]);
+            RefreshColorFrames();
+            dirty = true;
+        }
     }
     else
-        if ((widID < 3))
+    {
+        if ((widID >= 0) && (widID < 3))
+        {
             colorPicker = colorPicker->Create("Choose color",PawsManager::GetSingleton().getTooltipsColors(widID),0,255,this,"colorPick",widID);
+        }
+    }
 
     return true;
 }
