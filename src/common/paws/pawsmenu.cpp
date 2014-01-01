@@ -166,9 +166,9 @@ bool pawsMenuItem::Setup(iDocumentNode* node)
         else
             on = "Up Arrow";
 
-        onImg = node->GetAttribute("CheckboxOff");
+        offImg = node->GetAttribute("CheckboxOff");
         if(offImg != NULL)
-            off = onImg->GetValue();
+            off = offImg->GetValue();
         else
             off = "Down Arrow";
         SetCheckboxImages(on, off);

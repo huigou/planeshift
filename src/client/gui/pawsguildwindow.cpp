@@ -455,7 +455,7 @@ void pawsGuildWindow::HandleMemberData( csString& openString )
         char_id = playerNode->GetAttributeValueAsInt("char_id");
         if(guildNotifications)
             guildNotifications->SetState(playerNode->GetAttributeValueAsBool("guildnotifications"));
-        if(guildNotifications)
+        if(allianceNotifications)
             allianceNotifications->SetState(playerNode->GetAttributeValueAsBool("alliancenotifications"));
     }
     else
