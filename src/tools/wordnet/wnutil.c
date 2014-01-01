@@ -689,7 +689,7 @@ unsigned int GetKeyForOffset(char *loc)
 
 char *SetSearchdir()
 {
-    static char searchdir[256];
+    static char searchdir[1024];
     char *env;
 
     /* Find base directory for database.  If set, use WNSEARCHDIR.
@@ -698,7 +698,7 @@ char *SetSearchdir()
     if ((env = getenv("WNSEARCHDIR")) != NULL)
 	strcpy(searchdir, env);
     else if ((env = getenv("WNHOME")) != NULL)
-	sprintf(searchdir, "%s%s", env, DICTDIR);
+	snprintf(searchdir, sizeof(searchdir), "%s%s", env, DICTDIR);
     else
 	strcpy(searchdir, DEFAULTPATH);
 
