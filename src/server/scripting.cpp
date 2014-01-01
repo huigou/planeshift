@@ -703,7 +703,9 @@ public:
             client->AddPet(pet);
             EID old_owner;
             if(pet->GetOwner())
+            {
                 old_owner = pet->GetOwner()->GetEID();
+            }
             pet->SetOwner(caster);
             psserver->GetNPCManager()->QueueChangeOwnerPerception(pet, caster->GetEID());
 

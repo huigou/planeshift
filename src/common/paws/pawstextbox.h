@@ -155,7 +155,7 @@ public:
      * Normal text boxes should not be focused.  Does nothing
      * @return false
      */
-    virtual bool OnGainFocus(bool) const
+    virtual bool OnGainFocus(bool)
     {
         return false;
     }
@@ -164,7 +164,7 @@ public:
      * Gets the border style for the text box
      * @return Always \ref BORDER_SUNKEN
      */
-    inline int GetBorderStyle() const
+    virtual int GetBorderStyle()
     {
         return BORDER_SUNKEN;
     }
@@ -347,7 +347,7 @@ public:
 
     void Clear();
 
-    int GetBorderStyle()
+    virtual int GetBorderStyle()
     {
         return BORDER_SUNKEN;
     }
@@ -453,7 +453,7 @@ public:
      */
     virtual bool OnClipboard(const csString &content);
 
-    int GetBorderStyle()
+    virtual int GetBorderStyle()
     {
         return BORDER_SUNKEN;
     }
@@ -786,7 +786,7 @@ public:
 
     void PushLineInfo(size_t lineLength, size_t lineBreak, int lineExtra);
 
-    int GetBorderStyle()
+    virtual int GetBorderStyle()
     {
         return BORDER_SUNKEN;
     }
