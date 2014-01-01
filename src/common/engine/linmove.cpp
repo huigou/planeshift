@@ -491,11 +491,21 @@ int psLinearMovement::MoveV(float delta)
         }
         else
         {
+            // @@@ Magodra 20140101 Seams that we get a lot of false
+            // partials due to slopes that count for more than 1/10 of the
+            // distance. Add a new 2d test to verify partial horizontal movement
+            // before returning partial.
+
             // check if we collided, did move less than 9/10 of the distance
-            if((newpos - bufpos).Norm() > dist/10.0)
+            //            if((newpos - bufpos).Norm() > dist/10.0)
+            //{
+            csVector3 newpos2d(newpos.x,0,newpos.z);
+            csVector3 bufpos2d(bufpos.x,0,bufpos.z);
+            if ((newpos2d - bufpos2d).Norm() > dist/10.0)
             {
                 ret = PS_MOVE_PARTIAL;
             }
+            //}
         }
     }
 
