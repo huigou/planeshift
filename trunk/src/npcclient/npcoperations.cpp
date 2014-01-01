@@ -2366,6 +2366,10 @@ bool LocateOperation::Load(iDocumentNode* node)
     {
         return true;
     }
+    else if(split_obj[0] == "local_region")
+    {
+        return true;
+    }
     else if(split_obj[0] == "ownbuffer")
     {
         return true;
@@ -2837,9 +2841,11 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC* npc, bool interrupted
         // Find closest waypoint to the random location in the region
         located.wp = CalculateWaypoint(npc,located.pos,located.sector,-1);
     }
-    else if(split_obj[0] == "region")
+    else if((split_obj[0] == "region") || (split_obj[0] == "local_region"))
     {
-        NPCDebug(npc, 5, "LocateOp - Region %s",locateArgs.GetDataSafe());
+        bool local = (split_obj[0] == "local_region");
+
+        NPCDebug(npc, 5, "LocateOp - %s %s",local?"Local region":"Region",locateArgs.GetDataSafe());
 
         LocationType* region = npc->GetRegion();
         if(!region)
@@ -2850,8 +2856,17 @@ ScriptOperation::OperationResult LocateOperation::Run(NPC* npc, bool interrupted
 
         iSector* sector = NULL;
         csVector3 pos = csVector3(0.0f,0.0f,0.0f);
+        iSector* localSector = NULL;
+        
+        // If local search, set localSector to start sector. If localSector is NULL,
+        // all regions will be search in the GetRandomPosition. With this set
+        // only regions in the local sector will be searched.
+        if (local)
+        {
+            localSector = start_sector;
+        }
 
-        if(region->GetRandomPosition(npcclient->GetEngine(),pos,sector))
+        if(region->GetRandomPosition(npcclient->GetEngine(),pos,sector,localSector))
         {
             located.pos = pos;
             located.angle = 0;
