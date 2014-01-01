@@ -196,7 +196,10 @@ bool CharCreationManager::LoadLifeEvents()
 
         Result adds(db->Select("SELECT adds_choice from char_create_life_relations WHERE adds_choice IS NOT NULL AND choice=%d", choice->id));
         if(!adds.IsValid())
+        {
+            delete choice;
             return false;
+        }
 
         for(unsigned int addIndex = 0; addIndex < adds.Count(); addIndex++)
         {
@@ -205,7 +208,10 @@ bool CharCreationManager::LoadLifeEvents()
 
         Result removes(db->Select("SELECT removes_choice from char_create_life_relations WHERE removes_choice IS NOT NULL AND choice=%d", choice->id));
         if(!removes.IsValid())
+        {
+            delete choice;
             return false;
+        }
 
         for(unsigned int removesIndex = 0; removesIndex < removes.Count(); removesIndex++)
         {
