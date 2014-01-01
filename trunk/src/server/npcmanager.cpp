@@ -2113,7 +2113,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
         return;
     }
 
-    WordArray words(msg.options);
+    WordArray optionWords(msg.options);
 
     // All pet commands operate on the currently summoned pet except
     // for the SUMMON command.
@@ -2136,11 +2136,11 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
         }
 
         char* end = NULL;
-        size_t targetID = strtoul(words[0].IsEmpty() ?
-                                  msg.target.GetDataSafe() : words[0].GetDataSafe(), &end, 0);
+        size_t targetID = strtoul(optionWords[0].IsEmpty() ?
+                                  msg.target.GetDataSafe() : optionWords[0].GetDataSafe(), &end, 0);
 
         // Operator did give a name, let's see if we find the named pet.
-        if(words[0].Length() != 0 && (end == NULL || *end))
+        if(optionWords[0].Length() != 0 && (end == NULL || *end))
         {
             chardata = owner->GetCharacterData();
             size_t numPets = chardata->GetNumFamiliars();
@@ -2151,7 +2151,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 Result result(db->Select("SELECT name FROM characters WHERE id = %u", pid.Unbox()));
                 if(result.IsValid() && result.Count())
                 {
-                    if(words[0].CompareNoCase(result[0]["name"]))
+                    if(optionWords[0].CompareNoCase(result[0]["name"]))
                     {
                         familiarID = pid;
                         break;
@@ -2160,7 +2160,7 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
             }
             if(!familiarID.IsValid())
             {
-                psserver->SendSystemInfo(me->clientnum, "You do not have a pet named '%s'.", words[0].GetData());
+                psserver->SendSystemInfo(me->clientnum, "You do not have a pet named '%s'.", optionWords[0].GetData());
                 return;
             }
         }
@@ -2195,16 +2195,16 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
             {
                 if(CanPetHearYou(me->clientnum, owner, pet, typeStr))
                 {
-                    if(words.GetCount() == 0)
+                    if(optionWords.GetCount() == 0)
                     {
                         psserver->SendSystemInfo(me->clientnum, "You must specify a name for your pet to target.");
                         return;
                     }
 
-                    firstName = words.Get(0);
-                    if(words.GetCount() > 1)
+                    firstName = optionWords.Get(0);
+                    if(optionWords.GetCount() > 1)
                     {
-                        lastName = words.GetTail(1);
+                        lastName = optionWords.GetTail(1);
                     }
                     gemObject* target = psserver->GetAdminManager()->FindObjectByString(firstName,owner->GetActor());
 
@@ -2306,9 +2306,9 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                         else
                         {
                             Stance stance = CombatManager::GetStance(cacheManager, "Aggressive");
-                            if(words.GetCount() != 0)
+                            if(optionWords.GetCount() != 0)
                             {
-                                stance.stance_id = words.GetInt(0);
+                                stance.stance_id = optionWords.GetInt(0);
                             }
                             QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK);
                         }
@@ -2371,13 +2371,13 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 return;
             }
 
-            if(words.GetCount() == 0)
+            if(optionWords.GetCount() == 0)
             {
                 psserver->SendSystemInfo(me->clientnum, "You must specify a new name for your pet.");
                 return;
             }
 
-            firstName = words.Get(0);
+            firstName = optionWords.Get(0);
             if(firstName.Length() > MAX_PLAYER_NAME_LENGTH)
             {
                 psserver->SendSystemError(me->clientnum, "First name is too long!");
@@ -2389,9 +2389,9 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                 psserver->SendSystemError(me->clientnum, "The name %s is invalid!", firstName.GetData());
                 return;
             }
-            if(words.GetCount() > 1)
+            if(optionWords.GetCount() > 1)
             {
-                lastName = words.GetTail(1);
+                lastName = optionWords.GetTail(1);
                 if(lastName.Length() > MAX_PLAYER_NAME_LENGTH)
                 {
                     psserver->SendSystemError(me->clientnum, "Last name is too long!");
@@ -2568,16 +2568,16 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
         {
             if(CanPetHearYou(me->clientnum, owner, pet, typeStr))
             {
-                if(words.GetCount() == 0)
+                if(optionWords.GetCount() == 0)
                 {
                     psserver->SendSystemInfo(me->clientnum, "You must specify a name for your pet to target.");
                     return;
                 }
 
-                firstName = words.Get(0);
-                if(words.GetCount() > 1)
+                firstName = optionWords.Get(0);
+                if(optionWords.GetCount() > 1)
                 {
-                    lastName = words.GetTail(1);
+                    lastName = optionWords.GetTail(1);
                 }
                 gemObject* target = psserver->GetAdminManager()->FindObjectByString(firstName,owner->GetActor());
 
@@ -2697,9 +2697,9 @@ void NPCManager::HandlePetCommand(MsgEntry* me,Client* client)
                     else
                     {
                         Stance stance = CombatManager::GetStance(cacheManager, "Aggressive");
-                        if(words.GetCount() != 0)
+                        if(optionWords.GetCount() != 0)
                         {
-                            stance.stance_id = words.GetInt(0);
+                            stance.stance_id = optionWords.GetInt(0);
                         }
                         QueueOwnerCmdPerception(owner->GetActor(), pet, psPETCommandMessage::CMD_ATTACK);
                         if(!session->IsInTrainingLockout())

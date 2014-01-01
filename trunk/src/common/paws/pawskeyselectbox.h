@@ -69,7 +69,7 @@ public:
      */
     void SetText(const char* keyText);
 
-    int GetBorderStyle();
+    virtual int GetBorderStyle();
 
     virtual bool GetFocusOverridesControls() const
     {

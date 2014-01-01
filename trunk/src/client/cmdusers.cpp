@@ -824,8 +824,10 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             {
                 // If we're dismissing the pet, we should close the stat window
                 pawsPetStatWindow* petwindow = (pawsPetStatWindow*)PawsManager::GetSingleton().FindWidget("PetStatWindow");
-                if ( !petwindow )
+                if(!petwindow)
+                {
                     return "Pet stat window not found!";
+                }
                 petwindow->Hide();
             }
             break;
