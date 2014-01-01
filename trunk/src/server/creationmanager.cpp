@@ -255,7 +255,6 @@ bool CharCreationManager::LoadCreationChoices()
                 break;
             }
 
-
             case BIRTH_EVENT:
             case CHILD_ACTIVITY:
             case CHILD_HOUSE:
@@ -265,6 +264,10 @@ bool CharCreationManager::LoadCreationChoices()
                 childhoodData.Push(choice);
                 break;
             }
+
+            default:
+                delete choice;
+                break;
         }
     }
 
