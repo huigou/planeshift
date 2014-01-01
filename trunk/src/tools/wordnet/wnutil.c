@@ -598,7 +598,7 @@ SnsIndexPtr GetSenseIndex(char *sensekey)
 	       loc,
 	       &snsidx->wnsense,
 	       &snsidx->tag_cnt);
-	snsidx->sensekey = malloc(strlen(buf + 1));
+	snsidx->sensekey = malloc(strlen(buf) + 1);
 	assert(snsidx->sensekey);
 	strcpy(snsidx->sensekey, buf);
 	snsidx->loc = atol(loc);
