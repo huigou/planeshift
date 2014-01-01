@@ -1058,6 +1058,11 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
                 return line_number;
         }
     }
+    if(pending_menu)
+    {
+        delete pending_menu;
+        pending_menu = NULL;
+    }
 
     if(quest_assigned_already && last_response)
     {
