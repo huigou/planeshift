@@ -1,7 +1,7 @@
 /*
  * hiresession.h  creator <andersr@pvv.org>
  *
- * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@
 //====================================================================================
 // Project Includes
 //====================================================================================
- 
+
 //====================================================================================
 // Local Includes
 //====================================================================================
@@ -78,19 +78,19 @@ public:
      *  @param name The name of the NPC type to hire.
      *  @param npcType The NPC Type of the NPC type to hire type.
      */
-    void SetHireType(const csString& name, const csString& npcType);
+    void SetHireType(const csString &name, const csString &npcType);
 
     /** Get hire type.
      *
      *  @return The NPC Type of the NPC type to hire type.
      */
-    const csString& GetHireTypeName() const;
+    const csString &GetHireTypeName() const;
 
     /** Get hire type.
      *
      *  @return The NPC Type of the NPC type to hire type.
      */
-    const csString& GetHireTypeNPCType() const;
+    const csString &GetHireTypeNPCType() const;
 
     /** Set pending hire master NPC PID.
      *
@@ -144,11 +144,11 @@ public:
 
     /** Return the hired NPC script.
      */
-    const csString& GetScript() const;
+    const csString &GetScript() const;
 
     /** Set the hired NPC script.
      */
-    void SetScript(const csString& newScript);
+    void SetScript(const csString &newScript);
 
     /** Get work postion.
      */
@@ -157,11 +157,11 @@ public:
     /** Get work postion.
      */
     Location* GetWorkLocation();
-    
+
     /** Set a new working location.
      */
     void SetWorkLocation(Location* location);
-    
+
     /** Check if the script is verified.
      */
     bool IsVerified();
@@ -169,15 +169,15 @@ public:
     /** Set verified.
      */
     void SetVerified(bool state);
-    
+
 
     /** Return the verified hired NPC script.
      */
-    const csString& GetVerifiedScript() const;
-    
+    const csString &GetVerifiedScript() const;
+
     /** Save a verified script.
      */
-    void SetVerifiedScript(const csString& newVerifiedScript);
+    void SetVerifiedScript(const csString &newVerifiedScript);
 
     /** Get work locaiton string.
      */
@@ -190,7 +190,7 @@ public:
     /** Get work postion.
      */
     Location* GetTempWorkLocation();
-    
+
     /** Set a new working location.
      */
     void SetTempWorkLocation(Location* location);

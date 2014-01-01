@@ -8413,7 +8413,8 @@ csString psOrderedMessage::ToString(NetBase::AccessPointers* /*accessPointers*/)
 
 PSF_IMPLEMENT_MSG_FACTORY(psHiredNPCScriptMessage,MSGTYPE_HIRED_NPC_SCRIPT);
 
-psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID)
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID):
+    command(command),hiredEID(hiredEID),choice(false),workLocationValid(false)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)));
     msg->SetType(MSGTYPE_HIRED_NPC_SCRIPT);
@@ -8425,7 +8426,8 @@ psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t comman
     valid=!(msg->overrun);
 }
 
-psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, bool choice)
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, bool choice):
+    command(command),hiredEID(hiredEID),choice(choice),workLocationValid(false)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+sizeof(bool)));
     msg->SetType(MSGTYPE_HIRED_NPC_SCRIPT);
@@ -8438,7 +8440,8 @@ psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t comman
     valid=!(msg->overrun);
 }
 
-psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, const char* script)
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, const char* script):
+    command(command),hiredEID(hiredEID),choice(false),workLocationValid(false),script(script)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+(strlen(script)+1)));
     msg->SetType(MSGTYPE_HIRED_NPC_SCRIPT);
@@ -8452,7 +8455,8 @@ psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t comman
 }
 
 psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID,
-                                                 const char* locationType, const char* locationName)
+                                                 const char* locationType, const char* locationName):
+    command(command),hiredEID(hiredEID),choice(false),workLocationValid(false)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+
                                (strlen(locationName)+1)+
@@ -8470,7 +8474,9 @@ psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t comman
 
 psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID,
                                                  const char* workLocation, bool workLocationValid,
-                                                 const char* script)
+                                                 const char* script):
+    command(command),hiredEID(hiredEID),choice(false),workLocation(workLocation),
+    workLocationValid(workLocationValid),script(script)
 {
     msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+
                                (strlen(workLocation)+1)+sizeof(bool)+
@@ -8487,7 +8493,8 @@ psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t comman
     valid=!(msg->overrun);
 }
 
-psHiredNPCScriptMessage::psHiredNPCScriptMessage(MsgEntry* me)
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(MsgEntry* me):
+    choice(false),workLocationValid(false)
 {
     command  = me->GetUInt8();
     hiredEID = me->GetUInt32();
@@ -8565,6 +8572,7 @@ csString psHiredNPCScriptMessage::ToString(NetBase::AccessPointers* /*accessPoin
     case WORK_LOCATION_UPDATE:
         msgtext.AppendFmt("Cmd: WORK_LOCATION_UPDATE Hired: %s WorkLocation: %s",
                           ShowID(hiredEID), workLocation.GetDataSafe());
+        break;
     case CANCEL:
         msgtext.AppendFmt("Cmd: CANCEL Hired: %s",
                           ShowID(hiredEID));

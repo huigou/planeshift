@@ -45,6 +45,7 @@ pawsConfigShortcut::pawsConfigShortcut() :
     buttonHeight(NULL),
     buttonWidthMode(NULL),
     buttonWidth(NULL),
+    editLockMode(NULL),
     leftScroll(NULL),
     rightScroll(NULL),
     enableScrollBar(NULL),
