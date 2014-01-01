@@ -426,13 +426,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry* me, Client* notused)
 
     // Get the struct to refresh
     // Update last login ip and time
-#ifdef INCLUDE_IPV6_SUPPORT
-    char ipAddr[INET6_ADDRSTRLEN];
-    client->GetIPAddress(ipAddr, INET6_ADDRSTRLEN);
-#else
-    char ipAddr[INET_ADDRSTRLEN];
-    client->GetIPAddress(ipAddr, INET_ADDRSTRLEN);
-#endif
+    csString ipAddr = client->GetIPAddress();
     acctinfo->lastloginip = ipAddr;
 
     tm* gmtm = gmtime(&now);
@@ -530,7 +524,7 @@ void AuthenticationServer::HandleAuthent(MsgEntry* me, Client* notused)
         psserver->GetLogCSV()->Write(CSV_STATUS, status);
     }
 
-    status.Format("%s - %s, %u, Logged in", ipAddr, (const char*) msg.sUser, me->clientnum);
+    status.Format("%s - %s, %u, Logged in", ipAddr.GetDataSafe(), (const char*) msg.sUser, me->clientnum);
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 }
 
@@ -641,13 +635,26 @@ BanManager::BanManager()
         newentry->reason = result[i]["reason"];
         newentry->banIP = result[i].GetUInt32("ban_ip") != 0;
 
+        bool added = false;
+
         // If account ban, add to list
         if(newentry->account.IsValid())
+        {
             banList_IDHash.Put(newentry->account,newentry);
+            added = true;
+        }
 
         // If IP range ban, add to list
         if(newentry->ipRange.Length() && newentry->banIP /*(!end || now < newentry->start + IP_RANGE_BAN_TIME)*/)
+        {
             banList_IPRList.Push(newentry);
+            added = true;
+        }
+        if (!added)
+        {
+            delete newentry;
+            Error1("Ban entry not added to any lists.");
+        }
     }
 }
 
@@ -706,11 +713,26 @@ bool BanManager::AddBan(AccountID account, csString ipRange, time_t duration, cs
         return false;
     }
 
+    bool added = false;
+
     if(newentry->account.IsValid())
+    {
         banList_IDHash.Put(newentry->account,newentry);
+        added = true;
+    }
+    
 
     if(newentry->ipRange.Length() && newentry->banIP)
+    {
         banList_IPRList.Push(newentry);
+        added = true;
+    }
+    
+    if(!added)
+    {
+        delete newentry;
+        return false;
+    }
 
     return true;
 }

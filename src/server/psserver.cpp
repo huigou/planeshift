@@ -638,16 +638,10 @@ void psServer::RemovePlayer(uint32_t clientnum,const char* reason)
         return;
     }
 
-#ifdef INCLUDE_IPV6_SUPPORT
-    char ipAddr[INET6_ADDRSTRLEN];
-    client->GetIPAddress(ipAddr, INET6_ADDRSTRLEN);
-#else
-    char ipAddr[INET_ADDRSTRLEN];
-    client->GetIPAddress(ipAddr, INET_ADDRSTRLEN);
-#endif
+    csString ipAddr = client->GetIPAddress();
 
     csString status;
-    status.Format("%s, %u, Client (%s) removed", ipAddr, client->GetClientNum(), client->GetName());
+    status.Format("%s, %u, Client (%s) removed", ipAddr.GetDataSafe(), client->GetClientNum(), client->GetName());
 
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 

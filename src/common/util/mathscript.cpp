@@ -547,6 +547,7 @@ MathScript* MathScript::Create(const char *name, const csString & script)
             {
                 Error2("Failed to create MathScript >%s<. Could not find matching close tag for code block", name);
                 delete s;
+                delete st;
                 return NULL;
             }
 
@@ -564,6 +565,7 @@ MathScript* MathScript::Create(const char *name, const csString & script)
                 {
                     Error2("Failed to create MathScript >%s<. Could not find matching close tag for code block.", name);
                     delete s;
+                    delete st;
                     return NULL;
                 }
 
