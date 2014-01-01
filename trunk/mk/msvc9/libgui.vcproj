@@ -1951,6 +1951,9 @@
 				RelativePath="..\..\src\client\gui\pawsquitinfobox.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsscripthirednpcwindow.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsscrollmenu.cpp">
 			</File>
 			<File
@@ -2217,6 +2220,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsquitinfobox.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsscripthirednpcwindow.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsscrollmenu.h">

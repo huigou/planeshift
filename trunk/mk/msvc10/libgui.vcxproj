@@ -1428,6 +1428,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\client\gui\pawsquestrewardwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsquestwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsquitinfobox.cpp" />
+    <ClCompile Include="..\..\src\client\gui\pawsscripthirednpcwindow.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsscrollmenu.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawssheetline.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsskillwindow.cpp" />
@@ -1518,6 +1519,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\client\gui\pawsquestrewardwindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsquestwindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsquitinfobox.h" />
+    <ClInclude Include="..\..\src\client\gui\pawsscripthirednpcwindow.h" />
     <ClInclude Include="..\..\src\client\gui\pawsscrollmenu.h" />
     <ClInclude Include="..\..\src\client\gui\pawssheetline.h" />
     <ClInclude Include="..\..\src\client\gui\pawsskillwindow.h" />
