@@ -446,7 +446,7 @@ void UserManager::CalculateComparativeDifference(psCharacter* myCharData, psChar
         {
             theirBestCombat = theirBestCombat<theirSkill.rank.Current()?theirSkill.rank.Current():theirBestCombat;
         }
-        else if(mySkill.info->category == PSSKILLS_CATEGORY_MAGIC)
+        else if(theirSkill.info->category == PSSKILLS_CATEGORY_MAGIC)
         {
             theirBestMagical = theirBestMagical<theirSkill.rank.Current()?theirSkill.rank.Current():theirBestMagical;
         }

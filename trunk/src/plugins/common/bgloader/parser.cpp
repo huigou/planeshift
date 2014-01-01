@@ -1188,7 +1188,7 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                                 else
                                 {
                                     csString msg;
-                                    msg.Format("Texture %s failed to parse!", node->GetAttributeValue("name"));
+                                    msg.Format("Texture %s failed to parse!", textureNode->GetAttributeValue("name"));
                                     CS_ASSERT_MSG(msg.GetData(), false);
                                 }
                             }

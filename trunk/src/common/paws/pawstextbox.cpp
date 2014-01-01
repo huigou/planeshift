@@ -413,13 +413,19 @@ pawsMessageTextBox::pawsMessageTextBox(const pawsMessageTextBox &origin)
     for(unsigned int x = 0 ; x < origin.children.GetSize(); x++)
     {
         if(origin.scrollBar == origin.children[x] && x < children.GetSize())
+        {
             scrollBar = dynamic_cast<pawsScrollBar*>(children[x]);
+        }
     }
 
     for(unsigned int i = 0 ; i < origin.adjusted.GetSize(); i++)
+    {
         adjusted.Push(new MessageLine(*origin.adjusted[i]));
+    }
     for(unsigned int i = 0 ; i < origin.messages.GetSize(); i++)
-        adjusted.Push(new MessageLine(*origin.messages[i]));
+    {
+        messages.Push(new MessageLine(*origin.messages[i]));
+    }
 
 }
 pawsMessageTextBox::~pawsMessageTextBox()
