@@ -831,13 +831,7 @@ void NPCManager::HandleAuthentRequest(MsgEntry* me,Client* notused)
     client->SetAccountID(acctinfo->accountid);
     client->SetSuperClient(true);
 
-#ifdef INCLUDE_IPV6_SUPPORT
-    char ipAddr[INET6_ADDRSTRLEN];
-    client->GetIPAddress(ipAddr, INET6_ADDRSTRLEN);
-#else
-    char ipAddr[INET_ADDRSTRLEN];
-    client->GetIPAddress(ipAddr, INET_ADDRSTRLEN);
-#endif
+    csString ipAddr = client->GetIPAddress();
     //TODO:    database->UpdateLoginDate(cid,addr);
 
     psserver->GetAuthServer()->SendMsgStrings(me->clientnum, false);
@@ -849,7 +843,7 @@ void NPCManager::HandleAuthentRequest(MsgEntry* me,Client* notused)
 
     delete acctinfo;
 
-    status.Format("%s, %u, %s, Superclient logged in", (const char*) msg.sUser, me->clientnum, ipAddr);
+    status.Format("%s, %u, %s, Superclient logged in", (const char*) msg.sUser, me->clientnum, ipAddr.GetDataSafe());
     psserver->GetLogCSV()->Write(CSV_AUTHENT, status);
 }
 
