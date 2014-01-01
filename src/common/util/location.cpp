@@ -706,10 +706,13 @@ bool LocationType::CheckWithinBounds(iEngine* engine, const csVector3 &p,const i
     return false;
 }
 
-bool LocationType::GetRandomPosition(iEngine* engine,csVector3 &pos,iSector* &sector)
+bool LocationType::GetRandomPosition(iEngine* engine,csVector3 &pos,iSector* &sector, const iSector* inSector)
 {
     for(size_t i = 0; i < locs.GetSize(); i++)
     {
+        // If search is limited to inSector than procede until secor is found.
+        if (inSector && (locs[i]->GetSector(engine) != inSector)) continue;
+
         if(locs[i]->GetRandomPosition(engine,pos,sector)) return true;
     }
 

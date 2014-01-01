@@ -323,13 +323,14 @@ public:
      * Will return the position found. Do not relay on the
      * state of the parameters if operation failes.
      *
-     * @param engine Used to find the sector
-     * @param pos    The found position is returned here.
-     * @param sector The found sector is returned here.
+     * @param engine   Used to find the sector
+     * @param pos      The found position is returned here.
+     * @param sector   The found sector is returned here.
+     * @param inSector If set, only search for random pos in this sector.
      *
      * @return True if position is found.
      */
-    bool GetRandomPosition(iEngine* engine,csVector3 &pos,iSector* &sector);
+    bool GetRandomPosition(iEngine* engine,csVector3 &pos,iSector* &sector, const iSector* inSector);
 
     /** retrive the ID of this location type.
      */
