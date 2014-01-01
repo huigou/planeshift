@@ -2368,17 +2368,32 @@ void UserManager::HandleMount(psUserCmdMessage &msg, Client* client)
 void PendingMountInvite::HandleAnswer(const csString &answer)
 {
     Client* client = psserver->GetConnections()->Find(clientnum);
-    gemActor* mount = client->GetActor();
-    Client* inviterClient = psserver->GetConnections()->Find(inviterClientNum);
-    gemActor* rider = inviterClient->GetActor();
-
-    if(!mount || !rider)
+    if(!client)
+    {
         return;
+    }
+    gemActor* mount = client->GetActor();
+    if(!mount)
+    {
+        return;
+    }
+    Client* inviterClient = psserver->GetConnections()->Find(inviterClientNum);
+    if(!inviterClient)
+    {
+        return;
+    }
+    gemActor* rider = inviterClient->GetActor();
+    if(!rider)
+    {
+        return;
+    }
 
     PendingInvite::HandleAnswer(answer);
 
     if(answer == "yes")
+    {
         psserver->usermanager->Mount(rider, mount);
+    }
 }
 
 void UserManager::Mount(gemActor* rider, gemActor* mount)

@@ -886,7 +886,10 @@ bool AdminCmdRewardParser::ParseWords(size_t index, const WordArray &words)
         {
             // 3rd parameter means, when there is an argument 'random', then
             // randomize
-            rewards.Push(new psRewardDataMoney(words[index++],words.GetInt(index++), words[index++] == "random"));
+            csString pmoneyType = words[index++];
+            int pmoneyCount = words.GetInt(index++);
+            bool prandom = (words[index++] == "random");
+            rewards.Push(new psRewardDataMoney(pmoneyType,pmoneyCount,prandom));
         }
         else if(subCmd == "faction" && remaining >= 2)
         {

@@ -2975,7 +2975,7 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
             return 0.0;
 
         Client* owner = EntityManager::GetSingleton().GetClients()->FindPlayer((PID)params[0]);
-        if(owner->GetActor()->GetTargetType(GetActor()) & TARGET_FOE)
+        if(owner && (owner->GetActor()->GetTargetType(GetActor()) & TARGET_FOE))
         {
             return 1.0;
         }

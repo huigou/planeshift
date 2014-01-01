@@ -1315,6 +1315,11 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 // Now issue the spawn building command
                 // Create the logic of the item
                 psItemStats* itemstats = cacheManager->GetBasicItemStatsByName(buildingName);
+                if(!itemstats)
+                {
+                    Debug2(LOG_SUPERCLIENT,me->clientnum,"Can not find itemstats for building %s.", buildingName.GetDataSafe());
+                    break;
+                }
                 psItem* requiredItem = new psItem();
                 requiredItem->SetBaseStats(itemstats);
                 requiredItem->SetLocationInWorld(instance, sector, where[0], where[1], where[2], 0);
