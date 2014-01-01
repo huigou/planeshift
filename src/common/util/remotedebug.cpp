@@ -144,10 +144,10 @@ void RemoteDebug::VPrintf(int debugLevel, const char* msg, va_list args)
     if (ret >= REMOTE_DEBUG_BUFFER)
     {
         // Buffer truncated. Terminate buffer and insert ... at end.
-        str[REMOTE_DEBUG_BUFFER] = '\0';
-        str[REMOTE_DEBUG_BUFFER-1] = '.';
+        str[REMOTE_DEBUG_BUFFER-1] = '\0';
         str[REMOTE_DEBUG_BUFFER-2] = '.';
         str[REMOTE_DEBUG_BUFFER-3] = '.';
+        str[REMOTE_DEBUG_BUFFER-4] = '.';
     }
     
 

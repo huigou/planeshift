@@ -160,9 +160,18 @@ void psCharacterInventory::SetBasicWeapon(psRaceInfo* race)
     psItemStats* fistStats;
     // Load basic fists. Default item equipped in hands slots.
     if(race && race->GetNaturalWeaponID() != 0)
+    {
         fistStats = psserver->GetCacheManager()->GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalWeaponID());
+    }
     else
+    {
         fistStats = psserver->GetCacheManager()->GetBasicItemStatsByName("Fist");
+    }
+
+    if(!fistStats)
+    {
+        return;
+    }
 
     //delete the fist if it was already loaded. (we expect this in the first position of the inventory array.
     //if this changes this must be changed too.
@@ -702,6 +711,10 @@ psItem* psCharacterInventory::AddStacked(psItem* &item, int &added)
         if(tocheck->GetContainerID())
         {
             psItem* container = FindItemID(tocheck->GetContainerID());
+            if (!container)
+            {
+                return NULL;
+            }
             float size = container->GetContainerMaxSize() - GetContainedSize(container);
             if(size/item->GetItemSize() < fits)
                 fits = (size_t)(size/item->GetItemSize());
