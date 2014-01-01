@@ -1,7 +1,7 @@
 /*
  * hiremanager.h  creator <andersr@pvv.org>
  *
- * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -27,7 +27,7 @@
 //====================================================================================
 // Project Includes
 //====================================================================================
- 
+
 //====================================================================================
 // Local Includes
 //====================================================================================
@@ -56,7 +56,7 @@ public:
     /** Destructor.
      */
     virtual ~HireManager();
-    
+
     /** Initialize the Hire Manager.
      *
      *  Handle all initialization that can go wrong.
@@ -81,7 +81,7 @@ public:
      *  @param npcType The NPC Type of the type of NPC to hire.
      *  @return True if the type was set for a pending hire.
      */
-    bool SetHireType(gemActor* owner, const csString& name, const csString& npcType);
+    bool SetHireType(gemActor* owner, const csString &name, const csString &npcType);
 
     /** Set the PID of the master NPC to use when hiring for a pending hire.
      *
@@ -110,7 +110,7 @@ public:
     /** Release the hire.
      *
      *  Release a NPC from hire if the hiredNPC is hired by the owner.
-     *  The hired NPC will be deleted. 
+     *  The hired NPC will be deleted.
      *
      *  @param owner    The actor that has hired the NPC.
      *  @param hiredNPC The NPC that is to be released from hire.
@@ -125,11 +125,11 @@ public:
     /** Register an owner with the hire manager.
      */
     bool AddOwner(gemActor* owner);
-    
+
     /** Result from work location check.
      */
     bool CheckWorkLocationResult(gemNPC* hiredNPC, bool valid);
-    
+
 protected:
 private:
     /** Load all hire sessions from db.
@@ -177,8 +177,8 @@ private:
 
     /** Validate a received script.
      */
-    bool ValidateScript(PID ownerPID, PID hiredPID, const csString& script);
-    
+    bool ValidateScript(PID ownerPID, PID hiredPID, const csString &script);
+
     /** Commit a verified script.
      */
     bool HandleScriptMessageCommit(PID ownerPID, PID hiredPID);
@@ -194,14 +194,14 @@ private:
     /** Create or update a location.
      */
     Location* CreateUpdateLocation(const char* type, const char* name,
-                                   iSector* sector, const csVector3& position, float angle);
+                                   iSector* sector, const csVector3 &position, float angle);
 
     // Private data
-    
+
     csList<HireSession*> hires; // List of all hire sessions in the manager.
 
     csHash<HireSession*,PID> pendingHires; // List of all pending hires by owner PID.
-    
+
 };
 
 #endif

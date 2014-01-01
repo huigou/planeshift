@@ -1,7 +1,7 @@
 /*
  * hiresession.cpp  creator <andersr@pvv.org>
  *
- * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -65,15 +65,15 @@ bool HireSession::Load(iResultRow &row)
     guild = row["guild"][0] == 'Y';
     workLocationID = row.GetInt("work_location_id");
     script = row["script"];
- 
+
     return true;
 }
 
 bool HireSession::Save(bool newSession)
 {
     unsigned long result = 0;
-    
-    if (newSession)
+
+    if(newSession)
     {
         result = db->CommandPump("INSERT INTO npc_hired_npcs"
                                  " (owner_id,hired_npc_id,guild,work_location_id,script)"
@@ -88,7 +88,7 @@ bool HireSession::Save(bool newSession)
                                  guild?"Y":"N", workLocationID,script.GetDataSafe(),
                                  ownerPID.Unbox(), hiredPID.Unbox());
     }
-    
+
     if(result==QUERY_FAILED)
         return false;
 
@@ -98,7 +98,7 @@ bool HireSession::Save(bool newSession)
 bool HireSession::Delete()
 {
     unsigned long result = 0;
-   
+
     result = db->CommandPump("DELETE FROM npc_hired_npcs WHERE owner_id=%u AND hired_npc_id=%u",
                              ownerPID.Unbox(), hiredPID.Unbox());
 
@@ -109,18 +109,18 @@ bool HireSession::Delete()
 }
 
 
-void HireSession::SetHireType(const csString& name, const csString& npcType)
+void HireSession::SetHireType(const csString &name, const csString &npcType)
 {
     hireTypeName = name;
     hireTypeNPCType = npcType;
 }
 
-const csString& HireSession::GetHireTypeName() const
+const csString &HireSession::GetHireTypeName() const
 {
     return hireTypeName;
 }
 
-const csString& HireSession::GetHireTypeNPCType() const
+const csString &HireSession::GetHireTypeNPCType() const
 {
     return hireTypeNPCType;
 }
@@ -172,12 +172,12 @@ PID HireSession::GetHiredPID()
     return hiredPID;
 }
 
-const csString& HireSession::GetScript() const
+const csString &HireSession::GetScript() const
 {
     return script;
 }
 
-void HireSession::SetScript(const csString& newScript)
+void HireSession::SetScript(const csString &newScript)
 {
     script = newScript;
 }
@@ -208,12 +208,12 @@ void HireSession::SetVerified(bool state)
     verified = state;
 }
 
-const csString& HireSession::GetVerifiedScript() const
+const csString &HireSession::GetVerifiedScript() const
 {
     return verifiedScript;
 }
 
-void HireSession::SetVerifiedScript(const csString& newVerifiedScript)
+void HireSession::SetVerifiedScript(const csString &newVerifiedScript)
 {
     verifiedScript = newVerifiedScript;
 }
@@ -222,7 +222,7 @@ csString HireSession::GetWorkLocationString()
 {
     csString workLocationString;
 
-    if (!workLocation)
+    if(!workLocation)
     {
         workLocationString = "(Undefined)";
     }
@@ -238,7 +238,7 @@ csString HireSession::GetTempWorkLocationString()
 {
     csString workLocationString;
 
-    if (!tempWorkLocation)
+    if(!tempWorkLocation)
     {
         workLocationString = "(Undefined)";
     }

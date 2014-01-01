@@ -441,9 +441,9 @@ public:
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("DepletedLockoutTime");
             lockoutTime = timeValue->GetValue();
+            
+            Debug3(LOG_PETS, 0, "Calculated depleted lockout time for %s to %f",owner->GetName(), lockoutTime);
         }
-
-        Debug3(LOG_PETS, 0, "Calculated depleted lockout time for %s to %f",owner->GetName(), lockoutTime);
 
         return lockoutTime;
     }
@@ -470,9 +470,9 @@ public:
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("DismissLockoutTime");
             lockoutTime = timeValue->GetValue();
-        }
 
-        Debug3(LOG_PETS, 0, "Calculated dismiss lockout time for %s to %f",owner->GetName(), lockoutTime);
+            Debug3(LOG_PETS, 0, "Calculated dismiss lockout time for %s to %f",owner->GetName(), lockoutTime);
+        }
 
         return lockoutTime;
     }
@@ -524,9 +524,9 @@ public:
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("DeathLockoutTime");
             lockoutTime = timeValue->GetValue();
-        }
 
-        Debug3(LOG_PETS, 0, "Calculated death lockout time for %s to %f",owner->GetName(), lockoutTime);
+            Debug3(LOG_PETS, 0, "Calculated death lockout time for %s to %f",owner->GetName(), lockoutTime);
+        }
 
         return lockoutTime;
     }
@@ -552,9 +552,10 @@ public:
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("TrainingLockoutTime");
             lockoutTime = timeValue->GetValue();
+
+            Debug3(LOG_PETS, 0, "Calculated training lockout time for %s to %f",owner->GetName(), lockoutTime);
         }
 
-        Debug3(LOG_PETS, 0, "Calculated training lockout time for %s to %f",owner->GetName(), lockoutTime);
         return lockoutTime;
     }
 

@@ -11860,6 +11860,10 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
 void AdminManager::Scale(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataScale* data = dynamic_cast<AdminCmdDataScale*>(cmddata);
+    if (!data)
+    {
+        return;
+    }
 
     // check if the target is valid
     if(!data->targetClient || !data->targetClient->GetActor())

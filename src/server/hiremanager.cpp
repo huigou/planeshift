@@ -1,7 +1,7 @@
 /*
  * hiremanager.h  creator <andersr@pvv.org>
  *
- * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -41,14 +41,14 @@
 
 HireManager::HireManager()
 {
-    Subscribe(&HireManager::HandleScriptMessage, MSGTYPE_HIRED_NPC_SCRIPT, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);    
+    Subscribe(&HireManager::HandleScriptMessage, MSGTYPE_HIRED_NPC_SCRIPT, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
 }
 
 
 HireManager::~HireManager()
 {
     // Free all allocated sessions
-    while (!hires.IsEmpty())
+    while(!hires.IsEmpty())
     {
         HireSession* session = hires.Last();
         delete session;
@@ -58,7 +58,7 @@ HireManager::~HireManager()
 
 bool HireManager::Initialize()
 {
-    if (!Load())
+    if(!Load())
     {
         Error1("Failed to load hire sessions");
         return false;
@@ -69,42 +69,42 @@ bool HireManager::Initialize()
 
 bool HireManager::Load()
 {
-   Result result(db->Select("SELECT * FROM npc_hired_npcs"));
-   if (!result.IsValid())
-   {
-       return false;
-   }
+    Result result(db->Select("SELECT * FROM npc_hired_npcs"));
+    if(!result.IsValid())
+    {
+        return false;
+    }
 
-   for (size_t i = 0; i < result.Count(); i++)
-   {
-       HireSession* session = new HireSession();
-       if (!session->Load(result[i]))
-       {
-           delete session;
-           return false;
-       }
+    for(size_t i = 0; i < result.Count(); i++)
+    {
+        HireSession* session = new HireSession();
+        if(!session->Load(result[i]))
+        {
+            delete session;
+            return false;
+        }
 
-       // Resolve the work location.
-       LocationManager* locations = psserver->GetAdminManager()->GetLocationManager();
-       if(!locations)
-       {
-           delete session;
-           return NULL;
-       }
-       Location* location = locations->FindLocation(session->GetWorkLocationId());
-       if (!location)
-       {
-           delete session;
-           return NULL;
-       }
-       session->SetWorkLocation(location);
-       
-       hires.PushBack(session);
+        // Resolve the work location.
+        LocationManager* locations = psserver->GetAdminManager()->GetLocationManager();
+        if(!locations)
+        {
+            delete session;
+            return NULL;
+        }
+        Location* location = locations->FindLocation(session->GetWorkLocationId());
+        if(!location)
+        {
+            delete session;
+            return NULL;
+        }
+        session->SetWorkLocation(location);
 
-       Debug3(LOG_HIRE, session->GetOwnerPID().Unbox(), "Loaded hire session between owner %s and npc %s",
-              ShowID(session->GetOwnerPID()),ShowID(session->GetHiredPID()));
-   }
-   return true;
+        hires.PushBack(session);
+
+        Debug3(LOG_HIRE, session->GetOwnerPID().Unbox(), "Loaded hire session between owner %s and npc %s",
+               ShowID(session->GetOwnerPID()),ShowID(session->GetHiredPID()));
+    }
+    return true;
 }
 
 bool HireManager::StartHire(gemActor* owner)
@@ -113,25 +113,25 @@ bool HireManager::StartHire(gemActor* owner)
 
     // Check if a pending hire exists allready for this owner.
     session = GetPendingHire(owner);
-    if (session)
+    if(session)
     {
         return false; // Can only handle one pending hire at a time
     }
-    
+
     // Create a new session
     session = CreateHireSession(owner);
 
     return (session != NULL); // True if a session was created
 }
 
-bool HireManager::SetHireType(gemActor* owner, const csString& name, const csString& npcType)
+bool HireManager::SetHireType(gemActor* owner, const csString &name, const csString &npcType)
 {
     HireSession* session = GetPendingHire(owner);
-    if (!session)
+    if(!session)
     {
         // Indirect create a new session if no session is found.
         session = CreateHireSession(owner);
-        if (!session)
+        if(!session)
         {
             return false; // Actor was not allowed to create a new session.
         }
@@ -146,11 +146,11 @@ bool HireManager::SetHireType(gemActor* owner, const csString& name, const csStr
 bool HireManager::SetHireMasterPID(gemActor* owner, PID masterPID)
 {
     HireSession* session = GetPendingHire(owner);
-    if (!session)
+    if(!session)
     {
         // Indirect create a new session if no session is found.
         session = CreateHireSession(owner);
-        if (!session)
+        if(!session)
         {
             return false; // Actor was not allowed to create a new session.
         }
@@ -165,45 +165,46 @@ bool HireManager::SetHireMasterPID(gemActor* owner, PID masterPID)
 gemActor* HireManager::ConfirmHire(gemActor* owner)
 {
     HireSession* session = GetPendingHire(owner);
-    if (!session)
+    if(!session)
     {
         return NULL; // No session to confirm found.
     }
 
     // Are all the prerequesites configured?
-    if (!session->VerifyPendingHireConfigured())
+    if(!session->VerifyPendingHireConfigured())
     {
         return NULL;
     }
 
     //Spawn hired NPC
     gemNPC* hiredNPC = EntityManager::GetSingleton().CreateHiredNPC(owner,
-                                                                    session->GetMasterPID(),
-                                                                    session->GetHireTypeName());
-    if (!hiredNPC)
+                       session->GetMasterPID(),
+                       session->GetHireTypeName());
+    if(!hiredNPC)
     {
         Error3("Failed to create npc for hire session for owner %s and hired_npc %s",
-               ShowID(session->GetOwnerPID()), ShowID(session->GetHiredPID()))
+               ShowID(session->GetOwnerPID()), ShowID(session->GetHiredPID()));
         // TODO: What to do here!!
         // Delete session??
+        return NULL;
     }
 
     session->SetHiredNPC(hiredNPC);
     RemovePendingHire(owner);
 
-    if (!session->Save(true)) // This is a new session.
+    if(!session->Save(true))  // This is a new session.
     {
         Error3("Failed to save hire session for owner %s and hired_npc %s",
                ShowID(session->GetOwnerPID()), ShowID(session->GetHiredPID()))
     }
-    
+
     return hiredNPC;
 }
 
 bool HireManager::HandleScriptMessageRequest(uint32_t clientnum, gemActor* owner, gemNPC* hiredNPC)
 {
     HireSession* session = GetSessionByPIDs(owner->GetPID(), hiredNPC->GetPID());
-    if (!session || !owner || !hiredNPC)
+    if(!session)
     {
         return false;
     }
@@ -221,12 +222,12 @@ bool HireManager::HandleScriptMessageRequest(uint32_t clientnum, gemActor* owner
 bool HireManager::ReleaseHire(gemActor* owner, gemNPC* hiredNPC)
 {
     HireSession* session = GetSessionByPIDs(owner->GetPID(), hiredNPC->GetPID());
-    if (!session || !owner || !hiredNPC)
+    if(!session)
     {
         return false;
     }
 
-    if (!EntityManager::GetSingleton().DeleteActor(hiredNPC))
+    if(!EntityManager::GetSingleton().DeleteActor(hiredNPC))
     {
         Error1("Failed to delete hired NPC!!!");
     }
@@ -253,12 +254,12 @@ bool HireManager::AddHiredNPC(gemNPC* hiredNPC)
     Debug2(LOG_HIRE, hiredNPC->GetPID().Unbox(), "Checking hired for %s", ShowID(hiredNPC->GetPID()));
 
     HireSession* session = GetSessionByHirePID(hiredNPC->GetPID());
-    if (!session)
+    if(!session)
     {
         return false; // This NPC was not among the hired NPCs.
     }
     Debug2(LOG_HIRE, hiredNPC->GetPID().Unbox(), "Found hired NPC %s", ShowID(hiredNPC->GetPID()));
-    
+
     session->SetHiredNPC(hiredNPC);
 
     // Connect the owner of the hire to this NPC.
@@ -273,39 +274,39 @@ bool HireManager::AddOwner(gemActor* owner)
     Debug2(LOG_HIRE, owner->GetPID().Unbox(), "Checking owner for %s", ShowID(owner->GetPID()));
 
     HireSession* session = GetSessionByOwnerPID(owner->GetPID());
-    if (!session)
+    if(!session)
     {
         return false; // This actor was not among the owners.
     }
     Debug2(LOG_HIRE, owner->GetPID().Unbox(), "Found owner %s", ShowID(owner->GetPID()));
-    
+
     session->SetOwner(owner);
-    
-    if (session->GetHiredNPC())
+
+    if(session->GetHiredNPC())
     {
         session->GetHiredNPC()->SetOwner(owner);
     }
 
-    return true;    
+    return true;
 }
 
 
 HireSession* HireManager::CreateHireSession(gemActor* owner)
 {
     HireSession* session = NULL;
-    
-    if (AllowedToHire(owner))
+
+    if(AllowedToHire(owner))
     {
         // Create a new session
         session = new HireSession(owner);
-    
+
         // Store the session in the manager
         hires.PushBack(session);
         pendingHires.PutUnique(owner->GetPID(),session);
 
         Debug2(LOG_HIRE, owner->GetPID().Unbox(), "New hire session created for %s", ShowID(owner->GetPID()));
     }
-    
+
     return session;
 }
 
@@ -318,10 +319,10 @@ HireSession* HireManager::GetSessionByHirePID(PID hiredPID)
 {
     csList<HireSession*>::Iterator iter(hires);
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         HireSession* session = iter.Next();
-        if (session->GetHiredPID() == hiredPID)
+        if(session->GetHiredPID() == hiredPID)
         {
             return session;
         }
@@ -333,10 +334,10 @@ HireSession* HireManager::GetSessionByOwnerPID(PID ownerPID)
 {
     csList<HireSession*>::Iterator iter(hires);
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         HireSession* session = iter.Next();
-        if (session->GetOwnerPID() == ownerPID)
+        if(session->GetOwnerPID() == ownerPID)
         {
             return session;
         }
@@ -348,10 +349,10 @@ HireSession* HireManager::GetSessionByPIDs(PID ownerPID, PID hiredPID)
 {
     csList<HireSession*>::Iterator iter(hires);
 
-    while (iter.HasNext())
+    while(iter.HasNext())
     {
         HireSession* session = iter.Next();
-        if (session->GetOwnerPID() == ownerPID && session->GetHiredPID() == hiredPID)
+        if(session->GetOwnerPID() == ownerPID && session->GetHiredPID() == hiredPID)
         {
             return session;
         }
@@ -367,7 +368,7 @@ void HireManager::RemovePendingHire(gemActor* owner)
 void HireManager::HandleScriptMessage(MsgEntry* me, Client* client)
 {
     psHiredNPCScriptMessage msg(me);
-    if (!msg.valid)
+    if(!msg.valid)
     {
         Error1("Received not valid psHiredNPCScriptMessage.");
         return;
@@ -375,12 +376,12 @@ void HireManager::HandleScriptMessage(MsgEntry* me, Client* client)
 
     // Resolv the hired NPC from the script message.
     gemNPC* hiredNPC = EntityManager::GetSingleton().GetGEM()->FindNPCEntity(msg.hiredEID);
-    if (!hiredNPC)
+    if(!hiredNPC)
     {
         return;
     }
 
-    switch (msg.command)
+    switch(msg.command)
     {
         case psHiredNPCScriptMessage::REQUEST:
         {
@@ -390,7 +391,7 @@ void HireManager::HandleScriptMessage(MsgEntry* me, Client* client)
         case psHiredNPCScriptMessage::VERIFY:
         {
             bool valid = ValidateScript(client->GetPID(), hiredNPC->GetPID(), msg.script);
-            if (!valid)
+            if(!valid)
             {
                 psserver->SendSystemError(client->GetClientNum(), "Script not valid.");
             }
@@ -398,7 +399,7 @@ void HireManager::HandleScriptMessage(MsgEntry* me, Client* client)
             psHiredNPCScriptMessage reply(client->GetClientNum(), psHiredNPCScriptMessage::VERIFY_REPLY,
                                           msg.hiredEID, valid);
             reply.SendMessage();
-            
+
         }
         break;
         case psHiredNPCScriptMessage::COMMIT:
@@ -425,7 +426,7 @@ void HireManager::HandleScriptMessage(MsgEntry* me, Client* client)
 }
 
 
-bool HireManager::ValidateScript(PID ownerPID, PID hiredPID, const csString& script)
+bool HireManager::ValidateScript(PID ownerPID, PID hiredPID, const csString &script)
 {
     HireSession* session = GetSessionByPIDs(ownerPID, hiredPID);
     if(!session)
@@ -440,12 +441,12 @@ bool HireManager::ValidateScript(PID ownerPID, PID hiredPID, const csString& scr
         return false; // No work location defined.
     }
 
-    if (!session->GetTempWorkLocationValid())
+    if(!session->GetTempWorkLocationValid())
     {
         session->SetVerified(false);
         return false; // Not a valid work postion.
     }
-    
+
     if(script.IsEmpty())
     {
         session->SetVerified(false);
@@ -453,24 +454,24 @@ bool HireManager::ValidateScript(PID ownerPID, PID hiredPID, const csString& scr
     }
 
     //TODO: Add validation of script. For now accept.
-    
+
     // Store the verified script. Client need to confirm to activate it.
     session->SetVerifiedScript(script);
 
     session->SetVerified(true);
-        
+
     return true;
 }
 
 bool HireManager::HandleScriptMessageCommit(PID ownerPID, PID hiredPID)
 {
     HireSession* session = GetSessionByPIDs(ownerPID, hiredPID);
-    if (!session)
+    if(!session)
     {
         return false;
     }
 
-    if (session->IsVerified())
+    if(session->IsVerified())
     {
         // Move the verified script over to be the current script.
         session->SetScript(session->GetVerifiedScript());
@@ -478,10 +479,10 @@ bool HireManager::HandleScriptMessageCommit(PID ownerPID, PID hiredPID)
 
         // Create and set the new work location
         Location* location = CreateUpdateLocation("work",
-                                                  tempLocation->GetName(),
-                                                  tempLocation->GetSector(EntityManager::GetSingleton().GetEngine()),
-                                                  tempLocation->GetPosition(),
-                                                  tempLocation->GetRotationAngle());
+                             tempLocation->GetName(),
+                             tempLocation->GetSector(EntityManager::GetSingleton().GetEngine()),
+                             tempLocation->GetPosition(),
+                             tempLocation->GetRotationAngle());
         session->SetWorkLocation(location);
 
         // Save the updated hire record.
@@ -502,7 +503,7 @@ bool HireManager::HandleScriptMessageCommit(PID ownerPID, PID hiredPID)
 bool HireManager::CancelScript(PID ownerPID, PID hiredPID)
 {
     HireSession* session = GetSessionByPIDs(ownerPID, hiredPID);
-    if (!session)
+    if(!session)
     {
         return false;
     }
@@ -520,7 +521,7 @@ bool HireManager::WorkLocation(gemActor* owner, gemNPC* hiredNPC)
     {
         return false;
     }
-    
+
     csVector3 myPos;
     float myRot = 0.0;
     iSector* mySector = 0;
@@ -529,11 +530,11 @@ bool HireManager::WorkLocation(gemActor* owner, gemNPC* hiredNPC)
     owner->GetPosition(myPos, myRot, mySector);
 
     Location* location = CreateUpdateLocation("temp_work", hiredNPC->GetName(), mySector, myPos, myRot);
-    if (location)
+    if(location)
     {
         // Update session with this temporary location.
         session->SetTempWorkLocation(location);
-        
+
         // Verify that it is possible to navigate to the location.
         psserver->npcmanager->CheckWorkLocation(hiredNPC, location);
 
@@ -549,13 +550,13 @@ bool HireManager::WorkLocation(gemActor* owner, gemNPC* hiredNPC)
                                     hiredNPC->GetEID(), "(Failed)");
         msg.SendMessage();
     }
-    
+
 
     return true;
 }
 
 Location* HireManager::CreateUpdateLocation(const char* type, const char* name,
-                                            iSector* sector, const csVector3& position, float angle)
+        iSector* sector, const csVector3 &position, float angle)
 {
     // Create or update an temporary location that isn't saved to db.
     LocationManager* locations = psserver->GetAdminManager()->GetLocationManager();
@@ -563,36 +564,36 @@ Location* HireManager::CreateUpdateLocation(const char* type, const char* name,
     {
         return NULL;
     }
-    
+
     LocationType* locationType = locations->FindLocation(type);
     if(!locationType)
     {
         locationType = locations->CreateLocationType(db, type);
-        if (!locationType)
+        if(!locationType)
         {
             return NULL;
         }
         psserver->npcmanager->LocationTypeAdd(locationType);
     }
-    
+
     Location* location = locations->FindLocation(locationType, name);
     if(!location)
     {
         location = locations->CreateLocation(db, locationType, name,
                                              position, sector, 1.0f, angle, "");
-        if (location)
+        if(location)
         {
             psserver->npcmanager->LocationCreated(location);
         }
     }
     else
     {
-        if (location->Adjust(db, position, sector, angle))
+        if(location->Adjust(db, position, sector, angle))
         {
             psserver->npcmanager->LocationAdjusted(location);
         }
     }
-    
+
     return location;
 }
 
@@ -604,18 +605,18 @@ bool HireManager::CheckWorkLocationResult(gemNPC* hiredNPC, bool valid)
     {
         return false;
     }
-   
+
     session->SetTempWorkLocationValid(valid);
 
     gemActor* owner = session->GetOwner();
-    if (owner && owner->GetClient())
+    if(owner && owner->GetClient())
     {
         psHiredNPCScriptMessage msg(owner->GetClient()->GetClientNum(),
                                     psHiredNPCScriptMessage::WORK_LOCATION_RESULT,
                                     hiredNPC->GetEID(), valid);
         msg.SendMessage();
     }
-    
+
 
     return true;
 }

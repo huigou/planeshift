@@ -1489,7 +1489,7 @@ void psNPCClient::ListAllNPCs(const char* pattern)
 
         return; // No point continue since no npc should be named summary :)
     }
-    else if(strcasecmp(pattern,"stats") == 0)
+    else if(pattern && strcasecmp(pattern,"stats") == 0)
     {
         CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-17s %-17s %-17s %-17s\n",
                 "NPC ID", "EID", "Name",
@@ -1609,7 +1609,7 @@ void psNPCClient::ListAllEntities(const char* pattern, bool onlyCharacters)
 
             return; // No point continue since no actor should be named summary :)
         }
-        else if(strcasecmp(pattern,"stats") == 0)
+        else if(pattern && strcasecmp(pattern,"stats") == 0)
         {
             CPrintf(CON_CMDOUTPUT, "%-7s %-5s %-30s %-17s %-17s %-17s %-17s\n",
                     "PID", "EID", "Name",
@@ -1699,7 +1699,7 @@ void psNPCClient::ListTribes(const char* pattern)
     iSector*  sector;
     float     radius;
     // Write basic details about tribes
-    if(strlen(pattern) == 0)
+    if(!pattern || strlen(pattern) == 0)
     {
         CPrintf(CON_CMDOUTPUT, "\n%9s %-30s %-7s %-35s %5s\n",
                 "Tribe id", "Name", "MCount", "Location","Radius");

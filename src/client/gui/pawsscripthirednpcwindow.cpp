@@ -42,7 +42,7 @@
 #define WORK_LOCATION_BUTTON 105
 
 pawsScriptHiredNPCWindow::pawsScriptHiredNPCWindow():
-    verified(false)
+    verified(false),script(NULL),verifyButton(NULL),okButton(NULL)
 {
     // Subscribe to messages.
     psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_HIRED_NPC_SCRIPT );
