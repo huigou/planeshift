@@ -1029,6 +1029,7 @@ void EntityManager::HandleAllRequest(MsgEntry* me, Client* client)
         Debug3(LOG_NET, client->GetClientNum(), "Final send is %d entities in %zu bytes.", count, allEntMsg->msg->GetSize());
 
         allEntMsg->SendMessage(); // This handles the final message with whatever entities are left.
+        delete allEntMsg;
 
         // Tell superclient which entities he is managing this time
         psserver->npcmanager->SendNPCList(client);
