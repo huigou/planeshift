@@ -471,6 +471,7 @@ bool CacheManager::PreloadLootModifiers()
         if(!restrainResult.IsValid())
         {
             Error2("Could not load loot modifiers restrains due to database error: %s\n", db->GetLastError());
+            delete entry;
             return false;
         }
 
@@ -896,6 +897,7 @@ bool CacheManager::PreloadMovement()
             Error3("ID %u for movement '%s' is to large.\n"
                    "Clients only support up to 128 different movement types, with IDs from 0-127",
                    newmode->id, newmode->name.GetData());
+            delete newmode;
             return false;
         }
 
@@ -933,6 +935,7 @@ bool CacheManager::PreloadMovement()
             Error3("ID %u for movement '%s' is to large.\n"
                    "Clients only support up to 32 different movement types, with IDs from 0-31",
                    newmove->id, newmove->name.GetData());
+            delete newmove;
             return false;
         }
 
@@ -2666,7 +2669,6 @@ PSCHARACTER_GENDER CacheManager::ConvertGenderString(const char* genderstring)
 bool CacheManager::PreloadRaceInfo()
 {
     unsigned int currentrow;
-    psRaceInfo* newraceinfo;
     Result result(db->Select("SELECT * from race_info"));
 
     if(!result.IsValid())
@@ -2678,7 +2680,7 @@ bool CacheManager::PreloadRaceInfo()
 
     for(currentrow=0; currentrow<result.Count(); currentrow++)
     {
-        newraceinfo=new psRaceInfo;
+        psRaceInfo* newraceinfo = new psRaceInfo;
 
         if(newraceinfo->Load(result[currentrow]))
         {
@@ -2689,6 +2691,7 @@ bool CacheManager::PreloadRaceInfo()
                 if(!newraceinfo->LoadBaseSpeeds(psserver->GetObjectReg()))
                 {
                     Error2("Could not load base speeds for raceinfo %s.",newraceinfo->GetName());
+                    delete newraceinfo;
                     return false;
                 }
             }

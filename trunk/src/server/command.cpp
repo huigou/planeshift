@@ -2470,13 +2470,21 @@ int com_randomloot(const char* loot)
             testLootEntrySet->CreateLoot(NULL, numModifiers);
         }
         else
+        {
             CPrintf(CON_CMDOUTPUT, "\'%s\' not found.\n",
                     baseItemName.GetDataSafe());
+            delete testEntry;
+        }
 
         delete testLootEntrySet;
     }
     else
+    {
         CPrintf(CON_CMDOUTPUT, "Could not create LootEntrySet/LootEntry instance.\n");
+
+        delete testLootEntrySet;
+        delete testEntry;
+    }
 
     return 0;
 }
