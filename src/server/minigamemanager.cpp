@@ -575,6 +575,7 @@ bool psMiniGameSession::Load(csString &responseString)
 
     // Setup the game board
     gameBoard.Setup(gameBoardDef, layout);
+    delete [] layout;
 
     // if session is personal, check its a 1-player game
     if((options & PERSONAL_GAME) && gameBoard.GetNumPlayers() > 1)
