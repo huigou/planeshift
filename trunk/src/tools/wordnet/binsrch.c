@@ -138,8 +138,10 @@ char *replace_line(char *new_line, char *searchkey, FILE *fp)
     fseek(fp, last_bin_search_offset, 0);
     fgets(line, LINE_LEN, fp);	/* read original */
     copyfile(fp, tfp);
-    if (fseek(fp, last_bin_search_offset, 0) == -1)
+    if (fseek(fp, last_bin_search_offset, 0) == -1) {
+        fclose(tfp);
 	return(NULL);		/* could not seek to offset */
+    }
     fprintf(fp, "%s", new_line);	/* write line */
     rewind(tfp);
     copyfile(tfp, fp);
