@@ -699,10 +699,12 @@ char *SetSearchdir()
        If not set, check for WNHOME/dict, otherwise use DEFAULTPATH. */
 
     if ((env = getenv("WNSEARCHDIR")) != NULL)
-	strcpy(searchdir, env);
-    else if ((env = getenv("WNHOME")) != NULL)
-	snprintf(searchdir, sizeof(searchdir), "%s%s", env, DICTDIR);
-    else
+        strncpy(searchdir, env, sizeof(searchdir) - 1);
+    else if ((env = getenv("WNHOME")) != NULL) {
+        strncpy(searchdir, env, sizeof(searchdir) - sizeof(DICTDIR) - 1);
+        searchdir[sizeof(searchdir) - sizeof(DICTDIR) - 2] = '\0';
+        strcat(searchdir, DICTDIR);
+    } else
 	strcpy(searchdir, DEFAULTPATH);
 
     return(searchdir);
