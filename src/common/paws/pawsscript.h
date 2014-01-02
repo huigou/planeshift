@@ -46,6 +46,8 @@ private:
     static void ChangedResultsVarCallback(void* arg);
 public:
     pawsScriptStatement(const char* script);
+    virtual ~pawsScriptStatement();
+    
     void AddLHSResult(pawsWidget* widget, const char* property, const char* name);
     void AddRHSVar(iScriptableVar* v, const char* name);
 

@@ -461,6 +461,8 @@ protected:
 
 public:
     static MathScript* Create(const char *name, const csString & script);
+    static void Destroy(MathScript* &mathScript);
+    
     ~MathScript();
 
     const csString & Name() const

@@ -615,10 +615,19 @@ MathScript* MathScript::Create(const char *name, const csString & script)
     return s;
 }
 
+void MathScript::Destroy(MathScript* &mathScript)
+{
+    delete mathScript;
+    mathScript = NULL;
+}
+
+
 MathScript::~MathScript()
 {
     while (scriptLines.GetSize())
+    {
         delete scriptLines.Pop();
+    }
 }
 
 double MathScript::Evaluate(MathEnvironment *env) const
