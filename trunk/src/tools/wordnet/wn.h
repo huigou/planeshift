@@ -409,6 +409,7 @@ extern IndexPtr GetValidIndexPointer(char *, int);
 int GetWNSense(char *, char *);
 
 SnsIndexPtr GetSenseIndex(char *);
+void FreeSenseIndex(SnsIndexPtr);
 
 char *GetOffsetForKey(unsigned int);
 unsigned int GetKeyForOffset(char *);
