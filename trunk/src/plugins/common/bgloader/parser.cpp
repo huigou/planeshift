@@ -187,16 +187,27 @@ CS_PLUGIN_NAMESPACE_BEGIN(bgLoader)
                 switch(data.config.enabledGfxFeatures)
                 {
                     case useLowestShaders:
+                        // Fall through to check that no tex with higher value is defined.
                     case useLowShaders:
                         if(name == "tex normal" || name == "tex normal compressed")
+                        {
                             return false;
+                        }
+                        // Fall through to check that no tex with higher value is defined.
                     case useMediumShaders:
                         if(name == "tex height" || name == "tex ambient occlusion")
+                        {
                             return false;
+                        }
+                        // Fall through to check that no tex with higher value is defined.
                     case useHighShaders:
                         if(name == "tex specular")
+                        {
                             return false;
+                        }
+                        // Fall through to check that no tex with higher value is defined.
                     case useHighestShaders:
+                        // This is the highest so name is ok.
                         break;
                 }
 
