@@ -1979,6 +1979,8 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
         craftInfo->craftStepDescription.Append(".\n");
         newArray->Push(craftInfo);
     }
+    else
+        delete craftInfo;
 
     return true;
 }
