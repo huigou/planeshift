@@ -576,9 +576,12 @@ int GetWNSense(char *word, char *lexsn)
     char buf[256];
 
     sprintf(buf, "%s%%%s", word, lexsn); /* create sensekey */
-    if ((snsidx = GetSenseIndex(buf)) != NULL)
-	return(snsidx->wnsense);
-    else
+    if ((snsidx = GetSenseIndex(buf)) != NULL) {
+        int wnsense = snsidx->wnsense;
+
+        FreeSenseIndex(snsidx);
+	return(wnsense);
+    } else
 	return(0);
 }
 
@@ -633,6 +636,7 @@ int GetTagcnt(IndexPtr idx, int sense)
 void FreeSenseIndex(SnsIndexPtr snsidx)
 {
     if (snsidx) {
+        free(snsidx->sensekey);
 	free(snsidx->word);
 	free(snsidx);
     }
