@@ -34,6 +34,12 @@ pawsScriptStatement::pawsScriptStatement(const char* scriptText) : env(&PawsMana
     }
 }
 
+pawsScriptStatement::~pawsScriptStatement()
+{
+    MathScript::Destroy(script);
+}
+
+
 void pawsScriptStatement::ChangedResultsVarCallback(void* arg)
 {
     pawsScriptResult* res = (pawsScriptResult*)arg;
