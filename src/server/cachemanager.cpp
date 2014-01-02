@@ -1749,7 +1749,6 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
     //    uint32	resultID = t->GetResultId();
 
     csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(processID);
-    CraftTransInfo* craftInfo;
 
     if(procArray)
     {
@@ -1758,7 +1757,7 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
             psTradeProcesses* proc = procArray->Get(k);
             if(proc->GetSubprocessId()==0)
             {
-                craftInfo = new CraftTransInfo;
+                CraftTransInfo* craftInfo = new CraftTransInfo;
 
                 craftInfo->priSkillId = proc->GetPrimarySkillId();
                 craftInfo->minPriSkill = proc->GetMinPrimarySkill();
@@ -1771,6 +1770,8 @@ bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<Cra
                     craftInfo->craftStepDescription.Insert(0, "   ");
                     newArray->Push(craftInfo);
                 }
+                else
+                    delete craftInfo;
             }
         }
     }
