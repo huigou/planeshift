@@ -127,7 +127,8 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
             {
                 lootList->Select(lootList->GetRow(0),false); // Select first as default
                 Show();
-            }
+            } 
+            break;
         }
         case MSGTYPE_LOOTREMOVE:
         {
@@ -160,6 +161,7 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
                     return;
                 }
             }
+            break;
         }
     }
 }

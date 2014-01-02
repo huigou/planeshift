@@ -1019,7 +1019,6 @@ void psItemStats::GetArmorVsWeaponType(csString &buff)
     if(GetIsMeleeWeapon() || GetIsRangeWeapon())
     {
         buff = weapon_type;
-        return;
     }
     else
     {
@@ -1048,13 +1047,7 @@ void psItemStats::GetArmorVsWeaponType(csString &buff)
 
         formated += armorStats.Class();
         buff = formated;
-        return;
     }
-
-    //buff = NULL;
-    // @@@ Jorrit: I think the below is the intention rather then the above?
-    // Fixes a warning.
-    buff.Clear();
 }
 
 int psItemStats::GetAttackAnimID(unsigned int skill_level)

@@ -638,12 +638,14 @@ void pawsGmGUIWindow::SetSecurity()
         level = 29;
 
     // show the stuff that is visible under the selected tab
+    // Falling through to lower security levels
     switch(level)
     {
     case 29:
         ShowWidget("Action Button");
         ShowWidget("KillWarn");
         ShowWidget("Kill");
+        // Falling through to lower security levels
     case 28:
     case 27:
     case 26:
@@ -661,6 +663,7 @@ void pawsGmGUIWindow::SetSecurity()
         ShowWidget("Kick");
         ShowWidget("ChangeName");
         ShowWidget("ChangeNameRnd");
+        // Falling through to lower security levels
     case 21:
         ShowWidget("Players Button");
         ShowWidget("PlayerList");

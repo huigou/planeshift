@@ -904,7 +904,7 @@ float ModeHandler::GetDensity(WeatherInfo* wi)
                 case WEATHER_FOG:
                     return FogWeatherObject::GetDensity(wi->fog_params.value);
                 default:
-                    return 0.0f;
+                    break;
             }
         }
     }

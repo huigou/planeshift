@@ -124,11 +124,13 @@ bool pawsConfigWindow::OnButtonReleased(int /*mouseButton*/, int keyModifier, pa
             {
                 // Reset the selected options category
                 currSectWnd->SetDefault();
+                break;
             }
             case CONFIRM_NO:
             {
                 PawsManager::GetSingleton().SetModalWidget(0);
                 widget->GetParent()->Hide();
+                break;
             }
         }
     }
