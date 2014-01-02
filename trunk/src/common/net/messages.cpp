@@ -8426,16 +8426,17 @@ psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t comman
     valid=!(msg->overrun);
 }
 
-psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, bool choice):
-    command(command),hiredEID(hiredEID),choice(choice),workLocationValid(false)
+psHiredNPCScriptMessage::psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, bool choice, const char* errorMsg):
+    command(command),hiredEID(hiredEID),choice(choice),workLocationValid(false),errorMessage(errorMsg)
 {
-    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+sizeof(bool)));
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t)+sizeof(uint32_t)+sizeof(bool)+(strlen(errorMsg)+1)));
     msg->SetType(MSGTYPE_HIRED_NPC_SCRIPT);
     msg->clientnum = client;
 
     msg->Add(command);
     msg->Add((uint32_t)hiredEID.Unbox());
     msg->Add(choice);
+    msg->Add(errorMsg);
 
     valid=!(msg->overrun);
 }
@@ -8512,7 +8513,9 @@ psHiredNPCScriptMessage::psHiredNPCScriptMessage(MsgEntry* me):
     case VERIFY_REPLY:
     case WORK_LOCATION_RESULT:
     case CHECK_WORK_LOCATION_RESULT:
+    case COMMIT_REPLY:
         choice = me->GetBool();
+        errorMessage = me->GetStr();
         break;
     case WORK_LOCATION_UPDATE:
         workLocation = me->GetStr();
@@ -8537,8 +8540,12 @@ csString psHiredNPCScriptMessage::ToString(NetBase::AccessPointers* /*accessPoin
                           ShowID(hiredEID), locationType.GetDataSafe(),locationName.GetDataSafe());
         break;
     case CHECK_WORK_LOCATION_RESULT:
-        msgtext.AppendFmt("Cmd: CHECK_WORK_LOCATION_RESULT Hired: %s Choice: %s",
-                          ShowID(hiredEID), choice?"True":"False");
+        msgtext.AppendFmt("Cmd: CHECK_WORK_LOCATION_RESULT Hired: %s Choice: %s ErrorMessage: %s",
+                          ShowID(hiredEID), choice?"True":"False", errorMessage.GetDataSafe());
+        break;
+    case COMMIT_REPLY:
+        msgtext.AppendFmt("Cmd: COMMIT_REPLY Hired: %s Choice: %s ErrorMessage: %s",
+                          ShowID(hiredEID), choice?"True":"False", errorMessage.GetDataSafe());
         break;
     case REQUEST:
         msgtext.AppendFmt("Cmd: REQUEST Hired: %s",
@@ -8554,8 +8561,8 @@ csString psHiredNPCScriptMessage::ToString(NetBase::AccessPointers* /*accessPoin
                           ShowID(hiredEID), script.GetDataSafe());
         break;
     case VERIFY_REPLY:
-        msgtext.AppendFmt("Cmd: VERIFY_REPLY Hired: %s Choice: %s",
-                          ShowID(hiredEID), choice?"True":"False");
+        msgtext.AppendFmt("Cmd: VERIFY_REPLY Hired: %s Choice: %s ErrorMessage: %s",
+                          ShowID(hiredEID), choice?"True":"False", errorMessage.GetDataSafe());
         break;
     case COMMIT:
         msgtext.AppendFmt("Cmd: COMMIT Hired: %s",

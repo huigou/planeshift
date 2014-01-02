@@ -1,7 +1,7 @@
 /*
  * pawsscripthirednpcwindow.h  creator <andersr@pvv.org>
  *
- * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -45,72 +45,87 @@ pawsScriptHiredNPCWindow::pawsScriptHiredNPCWindow():
     verified(false),script(NULL),verifyButton(NULL),okButton(NULL)
 {
     // Subscribe to messages.
-    psengine->GetMsgHandler()->Subscribe( this, MSGTYPE_HIRED_NPC_SCRIPT );
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_HIRED_NPC_SCRIPT);
 }
 
 pawsScriptHiredNPCWindow::~pawsScriptHiredNPCWindow()
 {
     // Unsubscribe from messages.
-    psengine->GetMsgHandler()->Unsubscribe( this, MSGTYPE_HIRED_NPC_SCRIPT );
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_HIRED_NPC_SCRIPT);
 }
 
 bool pawsScriptHiredNPCWindow::PostSetup()
 {
-    script = dynamic_cast<pawsMultilineEditTextBox*>(FindWidget( "script" ));
-    if (!script) return false;
+    script = dynamic_cast<pawsMultilineEditTextBox*>(FindWidget("script"));
+    if(!script) return false;
 
-    verifyButton = dynamic_cast<pawsButton*>(FindWidget( "verify" ));
-    if (!verifyButton) return false;
-    
-    okButton = dynamic_cast<pawsButton*>(FindWidget( "save" ));
-    if (!okButton) return false;    
+    verifyButton = dynamic_cast<pawsButton*>(FindWidget("verify"));
+    if(!verifyButton) return false;
+
+    okButton = dynamic_cast<pawsButton*>(FindWidget("save"));
+    if(!okButton) return false;
 
     okButton->SetEnabled(verified);
     verifyButton->SetEnabled(!verified);
 
-    PawsManager::GetSingleton().Publish( "sigHiredScriptStatus", "Not verified.");
-    PawsManager::GetSingleton().Publish( "sigHiredWorkPosition", "");
-    PawsManager::GetSingleton().Publish( "sigHiredWorkPositionValid", "");
+    PawsManager::GetSingleton().Publish("sigHiredScriptStatus", "Not verified.");
+    PawsManager::GetSingleton().Publish("sigHiredScriptError",  "");
+    PawsManager::GetSingleton().Publish("sigHiredWorkPosition", "");
+    PawsManager::GetSingleton().Publish("sigHiredWorkPositionValid", "");
 
     return true;
 }
 
-void pawsScriptHiredNPCWindow::HandleMessage( MsgEntry* me )
+void pawsScriptHiredNPCWindow::HandleMessage(MsgEntry* me)
 {
 
-    if (me->GetType() == MSGTYPE_HIRED_NPC_SCRIPT)
+    if(me->GetType() == MSGTYPE_HIRED_NPC_SCRIPT)
     {
         psHiredNPCScriptMessage msg(me);
         HandleHiredNPCScript(msg);
     }
 }
 
-void pawsScriptHiredNPCWindow::HandleHiredNPCScript( const psHiredNPCScriptMessage &msg)
+void pawsScriptHiredNPCWindow::HandleHiredNPCScript(const psHiredNPCScriptMessage &msg)
 {
-    switch (msg.command)
+    switch(msg.command)
     {
-    case psHiredNPCScriptMessage::REQUEST_REPLY:
-        hiredEID = msg.hiredEID;
-        script->SetText(msg.script);
-        PawsManager::GetSingleton().Publish( "sigHiredWorkPosition", msg.workLocation);
-        PawsManager::GetSingleton().Publish( "sigHiredWorkPositionValid",msg.workLocationValid?"OK":"Failed");
-        Show(); // Show window upon reception of a script from server
-        break;
-    case psHiredNPCScriptMessage::VERIFY_REPLY:
-        hiredEID = msg.hiredEID;
-        verified = msg.choice;
+        case psHiredNPCScriptMessage::COMMIT_REPLY:
+            hiredEID = msg.hiredEID;
 
-        okButton->SetEnabled(verified);
-        verifyButton->SetEnabled(!verified);
+            SetVerified(msg.choice);
 
-        PawsManager::GetSingleton().Publish( "sigHiredScriptStatus", verified?"OK":"Not OK");
-        break;
-    case psHiredNPCScriptMessage::WORK_LOCATION_UPDATE:
-        PawsManager::GetSingleton().Publish( "sigHiredWorkPosition",msg.workLocation);
-        break;
-    case psHiredNPCScriptMessage::WORK_LOCATION_RESULT:
-        PawsManager::GetSingleton().Publish( "sigHiredWorkPositionValid",msg.choice?"OK":"Failed");
-        break;
+            PawsManager::GetSingleton().Publish("sigHiredScriptStatus", verified?"OK":"Not OK");
+            PawsManager::GetSingleton().Publish("sigHiredScriptError", msg.errorMessage);
+
+            if(verified)
+            {
+                // Close the window
+                Hide();
+                PawsManager::GetSingleton().SetCurrentFocusedWidget(NULL);
+            }
+            break;
+        case psHiredNPCScriptMessage::REQUEST_REPLY:
+            hiredEID = msg.hiredEID;
+            script->SetText(msg.script);
+            PawsManager::GetSingleton().Publish("sigHiredWorkPosition", msg.workLocation);
+            PawsManager::GetSingleton().Publish("sigHiredWorkPositionValid",msg.workLocationValid?"OK":"Failed");
+            Show(); // Show window upon reception of a script from server
+            break;
+        case psHiredNPCScriptMessage::VERIFY_REPLY:
+            hiredEID = msg.hiredEID;
+
+            SetVerified(msg.choice);
+
+            PawsManager::GetSingleton().Publish("sigHiredScriptStatus", verified?"OK":"Not OK");
+            PawsManager::GetSingleton().Publish("sigHiredScriptError", msg.errorMessage);
+            break;
+        case psHiredNPCScriptMessage::WORK_LOCATION_UPDATE:
+            PawsManager::GetSingleton().Publish("sigHiredWorkPosition",msg.workLocation);
+            break;
+        case psHiredNPCScriptMessage::WORK_LOCATION_RESULT:
+            PawsManager::GetSingleton().Publish("sigHiredWorkPositionValid",msg.choice?"OK":"Failed");
+            break;
     }
 }
 
@@ -120,7 +135,7 @@ bool pawsScriptHiredNPCWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMod
     {
         case VERIFY_BUTTON:
         {
-            psHiredNPCScriptMessage msg(0, psHiredNPCScriptMessage::VERIFY, hiredEID, 
+            psHiredNPCScriptMessage msg(0, psHiredNPCScriptMessage::VERIFY, hiredEID,
                                         script->GetText()?script->GetText():"");
             msg.SendMessage();
             return true;
@@ -131,9 +146,7 @@ bool pawsScriptHiredNPCWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMod
             psHiredNPCScriptMessage msg(0, psHiredNPCScriptMessage::COMMIT, hiredEID);
             msg.SendMessage();
 
-            // Close the window
-            Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );            
+            // COMMIT_REPLY will close the dialoge if commited ok.
             return true;
         }
         case CANCEL_BUTTON:
@@ -143,7 +156,7 @@ bool pawsScriptHiredNPCWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMod
 
             // close the window
             Hide();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget( NULL );            
+            PawsManager::GetSingleton().SetCurrentFocusedWidget(NULL);
             return true;
         }
         case LOAD_BUTTON:
@@ -157,8 +170,8 @@ bool pawsScriptHiredNPCWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMod
             psHiredNPCScriptMessage msg(0, psHiredNPCScriptMessage::WORK_LOCATION, hiredEID);
             msg.SendMessage();
 
-            PawsManager::GetSingleton().Publish( "sigHiredWorkPositionValid","");
-            
+            PawsManager::GetSingleton().Publish("sigHiredWorkPositionValid","");
+
             return true;
         }
     }
@@ -172,43 +185,54 @@ void pawsScriptHiredNPCWindow::OnStringEntered(const char* /*name*/, int /*param
 
     csString fileName;
     iVFS* vfs = psengine->GetVFS();
-    if (!value)
+    if(!value)
         return;
 
     fileName.Format("/planeshift/userdata/scripts/%s", value);
-    if (!vfs->Exists(fileName))
+    if(!vfs->Exists(fileName))
     {
         psSystemMessage msg(0, MSG_ERROR, "File %s not found!", fileName.GetDataSafe());
         msg.FireEvent();
         return;
-    }    
+    }
     csRef<iDataBuffer> data = vfs->ReadFile(fileName);
-    if (data->GetSize() > MAX_SCRIPT_FILE_SIZE)
+    if(data->GetSize() > MAX_SCRIPT_FILE_SIZE)
     {
-        psSystemMessage msg(0, MSG_ERROR, "File too big, data trimmed to %d chars.", MAX_SCRIPT_FILE_SIZE );
+        psSystemMessage msg(0, MSG_ERROR, "File too big, data trimmed to %d chars.", MAX_SCRIPT_FILE_SIZE);
         msg.FireEvent();
-    }        
+    }
     csString newScript(data->GetData(), csMin(data->GetSize(), (size_t)MAX_SCRIPT_FILE_SIZE));
 
     newScript.ReplaceAll("\r\n", "\n");
     script->SetText(newScript);
-    
-    psSystemMessage msg(0, MSG_ACK, "Script Loaded Successfully!" );
+
+    SetVerified(false);
+
+    PawsManager::GetSingleton().Publish("sigHiredScriptStatus", "Not verified.");
+    PawsManager::GetSingleton().Publish("sigHiredScriptError", "");
+
+    psSystemMessage msg(0, MSG_ACK, "Script Loaded Successfully!");
     msg.FireEvent();
 }
 
 bool pawsScriptHiredNPCWindow::OnChange(pawsWidget* widget)
 {
-    if (widget == script)
+    if(widget == script)
     {
         // Script changes so now it is not verified anymore.
-        verified = false;
+        SetVerified(false);
 
-        okButton->SetEnabled(verified);
-        verifyButton->SetEnabled(!verified);
-
-        PawsManager::GetSingleton().Publish( "sigHiredScriptStatus", "Not verified.");
+        PawsManager::GetSingleton().Publish("sigHiredScriptStatus", "Not verified.");
+        PawsManager::GetSingleton().Publish("sigHiredScriptError", "");
     }
 
     return true;
+}
+
+void pawsScriptHiredNPCWindow::SetVerified(bool status)
+{
+    verified = status;
+
+    okButton->SetEnabled(verified);
+    verifyButton->SetEnabled(!verified);
 }

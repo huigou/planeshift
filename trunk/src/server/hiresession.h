@@ -203,6 +203,14 @@ public:
      */
     bool GetTempWorkLocationValid();
 
+    /** Apply the script to the server.
+     */
+    int ApplyScript();
+
+    /** Indicate if script should be loaded upon hired npc attach after first load.
+     */
+    bool ShouldLoad();
+
 protected:
 private:
     PID                 ownerPID;           ///< The PID of the player that hire a NPC.
@@ -225,6 +233,7 @@ private:
     csWeakRef<gemActor> owner;              ///< Cached pointer to player actor when online.
     csWeakRef<gemNPC>   hiredNPC;           ///< Cached pointer to NPC actor when loaded.
     Location*           workLocation;       ///< Cached work postion.
+    bool                shouldLoad;         ///< True until script is loaded upon start.
 };
 
 #endif

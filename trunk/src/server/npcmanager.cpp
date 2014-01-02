@@ -3473,7 +3473,7 @@ void NPCManager::CheckWorkLocation(gemNPC* npc, Location* location)
     else
     {
         // No superclient found online, deam the location invalid.
-        psserver->GetHireManager()->CheckWorkLocationResult(npc, false);
+        psserver->GetHireManager()->CheckWorkLocationResult(npc, false, "Error: No superclient online.");
     }
 }
 

@@ -32,6 +32,7 @@
 //====================================================================================
 #include "hiresession.h"
 #include "gem.h"
+#include "questmanager.h"
 
 HireSession::HireSession():
     guild(false),
@@ -39,7 +40,8 @@ HireSession::HireSession():
     verified(false),
     tempWorkLocation(NULL),
     tempWorkLocationValid(false),
-    workLocation(NULL)
+    workLocation(NULL),
+    shouldLoad(true)
 {
 }
 
@@ -49,7 +51,8 @@ HireSession::HireSession(gemActor* owner):
     verified(false),
     tempWorkLocation(NULL),
     tempWorkLocationValid(false),
-    workLocation(NULL)
+    workLocation(NULL),
+    shouldLoad(false) // Should not be loaded when created from new owner
 {
     SetOwner(owner);
 }
@@ -77,7 +80,7 @@ bool HireSession::Save(bool newSession)
     {
         result = db->CommandPump("INSERT INTO npc_hired_npcs"
                                  " (owner_id,hired_npc_id,guild,work_location_id,script)"
-                                 " VALUES ('%u','%u','%s','%u')",
+                                 " VALUES ('%u','%u','%s','%u','%s')",
                                  ownerPID.Unbox(), hiredPID.Unbox(), guild?"Y":"N", workLocationID,
                                  script.GetDataSafe());
     }
@@ -273,4 +276,23 @@ bool HireSession::GetTempWorkLocationValid()
 
 
 
+int HireSession::ApplyScript()
+{
+    csString parsed(script);
 
+    csString npcReplacement(hiredNPC->GetName());
+    npcReplacement += ":";
+
+    parsed.ReplaceAll("NPC:",npcReplacement);
+
+    return psserver->GetQuestManager()->ParseQuestScript(-1,parsed);
+}
+
+
+bool HireSession::ShouldLoad()
+{
+    bool result = shouldLoad;
+    shouldLoad = false;
+    return result;
+
+}

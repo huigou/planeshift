@@ -780,6 +780,13 @@ public:
         return --unused_pid;
     }
 
+    /** Return the quest manager.
+     */
+    QuestManager* GetQuestManager()
+    {
+        return questmanager;
+    }
+
 
     static psCharacterLoader        CharacterLoader;
 

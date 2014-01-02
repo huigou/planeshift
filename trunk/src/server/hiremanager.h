@@ -128,7 +128,7 @@ public:
 
     /** Result from work location check.
      */
-    bool CheckWorkLocationResult(gemNPC* hiredNPC, bool valid);
+    bool CheckWorkLocationResult(gemNPC* hiredNPC, bool valid, const char* errorMessage);
 
 protected:
 private:
@@ -159,10 +159,6 @@ private:
      */
     HireSession* GetSessionByHirePID(PID hiredPID);
 
-    /** Get a session by the owner PID.
-     */
-    HireSession* GetSessionByOwnerPID(PID ownerPID);
-
     /** Get a session by the owner and hired NPC PID.
      */
     HireSession* GetSessionByPIDs(PID ownerPID, PID hiredPID);
@@ -177,11 +173,11 @@ private:
 
     /** Validate a received script.
      */
-    bool ValidateScript(PID ownerPID, PID hiredPID, const csString &script);
+    bool ValidateScript(PID ownerPID, PID hiredPID, const csString &script, csString &errorMessage);
 
     /** Commit a verified script.
      */
-    bool HandleScriptMessageCommit(PID ownerPID, PID hiredPID);
+    bool HandleScriptMessageCommit(uint32_t clientnum, PID ownerPID, PID hiredPID);
 
     /** Cancel a received script.
      */

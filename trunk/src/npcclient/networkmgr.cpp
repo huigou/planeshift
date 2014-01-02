@@ -905,7 +905,7 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
         {
             psHiredNPCScriptMessage reply(0,
                                           psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
-                                          msg.hiredEID, false);
+                                          msg.hiredEID, false, "Error: NPC Client failed to find work location.");
             reply.SendMessage();
             return;
         }
@@ -918,7 +918,7 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
         {
             psHiredNPCScriptMessage reply(0,
                                           psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
-                                          msg.hiredEID, false);
+                                          msg.hiredEID, false, "Found no Waypoint near location.");
             reply.SendMessage();
             return;
         }
@@ -928,7 +928,7 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
         {
             psHiredNPCScriptMessage reply(0,
                                           psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
-                                          msg.hiredEID, false);
+                                          msg.hiredEID, false, "Error: NPC Client failed to find hired NPC actor.");
             reply.SendMessage();
             return;
         }
@@ -938,7 +938,7 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
         {
             psHiredNPCScriptMessage reply(0,
                                           psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
-                                          msg.hiredEID, false);
+                                          msg.hiredEID, false, "Error: NPC Client failed to find hired NPC.");
             reply.SendMessage();
             return;
         }
@@ -955,7 +955,7 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
             {
                 psHiredNPCScriptMessage reply(0,
                                               psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
-                                              msg.hiredEID, false);
+                                              msg.hiredEID, false, "No path to any nearby waypoints.");
                 reply.SendMessage();
                 return;
             }
@@ -963,7 +963,7 @@ void NetworkManager::HandleHiredNPCScript(MsgEntry* me)
         // All checks passed. There is a path from location to the waypoint network.
         psHiredNPCScriptMessage reply(0,
                                       psHiredNPCScriptMessage::CHECK_WORK_LOCATION_RESULT,
-                                      msg.hiredEID, true);
+                                      msg.hiredEID, true, "Success.");
         reply.SendMessage();
         return;
     }
