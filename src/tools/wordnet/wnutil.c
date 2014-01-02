@@ -34,9 +34,6 @@ static char *strstr_word;
 static char *strstr_stringstart;
 static char *strstr_stringcurrent;
 
-void FreeSenseIndex(SnsIndexPtr snsidx);
-
-
 /* Initialization functions */
 
 static void closefps();
