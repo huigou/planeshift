@@ -1,7 +1,7 @@
 /*
  * pawsscripthirednpcwindow.h  creator <andersr@pvv.org>
  *
- * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org) 
+ * Copyright (C) 2013 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
  *
  *
  * This program is free software; you can redistribute it and/or
@@ -64,11 +64,11 @@ public:
 
     /** Handle reception of subscribed messages.
      */
-    void HandleMessage( MsgEntry* me );
+    void HandleMessage(MsgEntry* me);
 
     /** Handle the script message.
      */
-    void HandleHiredNPCScript( const psHiredNPCScriptMessage &msg);
+    void HandleHiredNPCScript(const psHiredNPCScriptMessage &msg);
 
     /** Handle button pressed.
      */
@@ -76,11 +76,17 @@ public:
 
     /** Handle enter string dialog result.
      */
-    virtual void OnStringEntered(const char *name, int param,const char *value);
+    virtual void OnStringEntered(const char* name, int param,const char* value);
 
     /** Called when some of the chiled parents change.
      */
     virtual bool OnChange(pawsWidget* widget);
+
+    /** Set Verified status on dialog.
+     *
+     *  Update the verified status, ok button and verify button avalability.
+     */
+    void SetVerified(bool status);
 
 protected:
 private:
@@ -91,6 +97,6 @@ private:
     EID                          hiredEID;
 };
 
-CREATE_PAWS_FACTORY( pawsScriptHiredNPCWindow );
+CREATE_PAWS_FACTORY(pawsScriptHiredNPCWindow);
 
 #endif

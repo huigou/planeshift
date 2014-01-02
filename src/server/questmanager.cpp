@@ -122,10 +122,16 @@ bool QuestManager::LoadQuestScripts()
         // Second pars the scripts, both quests and KAs.
         for(i=0; i<count; i++)
         {
-            int line = ParseQuestScript(quests[i].GetInt("quest_id"),quests[i]["script"]);
-            if(line)
+            int id = quests[i].GetInt("quest_id");
+            int line = ParseQuestScript(id,quests[i]["script"]);
+            if(line > 0)
             {
-                Error3("ERROR Parsing quest script %s, line %d!  ",quests[i]["quest_id"], line);
+                Error3("ERROR Parsing quest script %d, line %d!  ", id, line);
+                return false;
+            }
+            else if(line < 0)
+            {
+                Error2("ERROR Parsing quest script %d!  ",id);
                 return false;
             }
         }
@@ -146,9 +152,14 @@ bool QuestManager::LoadQuestScript(int id)
         for(i=0; i<count; i++)
         {
             int line = ParseQuestScript(id,quests[i]["script"]);
-            if(line)
+            if(line > 0)
             {
-                Error3("ERROR Parsing quest script %d, line %d!  ",id, line);
+                Error3("ERROR Parsing quest script %d, line %d!  ", id, line);
+                return false;
+            }
+            else if(line < 0)
+            {
+                Error2("ERROR Parsing quest script %d!  ",id);
                 return false;
             }
         }
@@ -999,15 +1010,20 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
         else if(!strncasecmp(block,"Player ",7))  // player does something
         {
             if(!HandlePlayerAction(block,which_trigger,current_npc,pending_triggers))
+            {
                 return line_number;
+            }
         }
-        else if(!strncasecmp(block,"QuestNote ", 10))  //This is a quest note for this step.
+        else if(quest && !strncasecmp(block,"QuestNote ", 10))  //This is a quest note for this step.
         {
             csString note = block.Slice(10).Trim();
             //If the note contains some text assign it, else report an error.
             if(note.IsEmpty())
             {
-                return false;
+                lastError.Format("Empty quest note ... for quest '%s' at line %d: %s", 
+                                 mainQuest?mainQuest->GetName():"KA", line_number, block.GetDataSafe());
+                Error2("%s",lastError.GetDataSafe());
+                return line_number;
             }
             quest->SetTask(note);
         }
@@ -1055,7 +1071,9 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
                                     response_requireop,substep_requireop,
                                     last_response,
                                     mainQuest,quest_assigned_already,quest))
+            {
                 return line_number;
+            }
         }
     }
     if(pending_menu)
@@ -1082,9 +1100,11 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
     }
     else if(quest_id>0)  // negative numbers mean generic KA dialog
     {
-        Error2("Quest script <%s> never assigned a quest or had any responses.",mainQuest->GetName());
+        lastError.Format("Quest script <%s> never assigned a quest or had any responses.",mainQuest->GetName());
+        Error2("%s",lastError.GetDataSafe());
         return 0;
     }
+    lastError.Format("Success");
     return 0;  // 0 is success!
 }
 

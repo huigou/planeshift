@@ -5968,6 +5968,7 @@ public:
         CHECK_WORK_LOCATION,
         CHECK_WORK_LOCATION_RESULT,
         COMMIT,
+        COMMIT_REPLY,
         REQUEST,
         REQUEST_REPLY,
         VERIFY,
@@ -5985,6 +5986,7 @@ public:
     csString script;
     csString locationType;
     csString locationName;
+    csString errorMessage;
 
     /** Constructor.
      *  For commands CANCEL, WORK_LOCATION, REQUEST and COMMIT.
@@ -5992,9 +5994,10 @@ public:
     psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID);
 
     /** Constructor.
-     *  For commands VERIFY_REPLY, WORK_LOCATION_RESULT.
+     *  For commands VERIFY_REPLY, WORK_LOCATION_RESULT, COMMIT_REPLY.
      */
-    psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID, bool choice);
+    psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID,
+                            bool choice, const char* errorMsg);
 
     /** Constructor.
      *  For commands VERIFY, WORK_LOCATION_UPDATE.

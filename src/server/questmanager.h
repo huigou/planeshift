@@ -66,7 +66,6 @@ protected:
      * Load all scripts from db
      */
     bool LoadQuestScripts();
-    int  ParseQuestScript(int id,const char* script);
     /** Does a first parsing of the script.
      *  @note curretly it just find substeps and creates the related quest in advance, so they can be used
      *        anywhere in prerequisites.
@@ -188,11 +187,19 @@ public:
 
     bool Initialize();
 
-    void Assign(psQuest* quest, Client* who, gemNPC* assigner,csTicks timeDelay=0);
-    bool Complete(psQuest* quest, Client* who, csTicks timeDelay = 0);
+    /** Parase a new quest script.
+     */
+    int  ParseQuestScript(int id,const char* script);
 
     /**
-     * Discards the requested step this is used by dictionary.
+     */
+    void Assign(psQuest* quest, Client* who, gemNPC* assigner,csTicks timeDelay=0);
+
+    /**
+     */
+    bool Complete(psQuest* quest, Client* who, csTicks timeDelay = 0);
+
+    /** Discards the requested step this is used by dictionary.
      *
      * @todo evaluate if this should be moved somewhere else togheter with the two above.
      *
