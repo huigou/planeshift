@@ -538,6 +538,10 @@ MathScript* MathScript::Create(const char *name, const csString & script)
                 st->SetOpcode(opcode);
                 s->scriptLines.Push(st);
             }
+            else
+            {
+                delete st;
+            }
 
             blockStart++; // skip opening { from now on
 
