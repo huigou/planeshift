@@ -34,7 +34,7 @@
 
 CS_IMPLEMENT_APPLICATION
 
-CCheck::CCheck(iObjectRegistry* object_reg) : object_reg(object_reg), duplicateNum(0)
+CCheck::CCheck(iObjectRegistry* object_reg) : object_reg(object_reg), strip(false) , duplicateNum(0)
 {
     docsys = csQueryRegistry<iDocumentSystem>(object_reg);
     vfs = csQueryRegistry<iVFS>(object_reg);
