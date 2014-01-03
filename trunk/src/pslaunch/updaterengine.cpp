@@ -1423,7 +1423,7 @@ void UpdaterEngine::CheckAndUpdate(iDocumentNode* md5sums, csString baseurl, boo
             {
                 while(c != 'y' && c != 'n')
                 {
-                    c = getchar();
+                    c = (char)getchar();
                 }
             }
             else
