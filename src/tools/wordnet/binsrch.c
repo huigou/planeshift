@@ -93,7 +93,7 @@ char *bin_search(char *searchkey, FILE *fp)
 	    key[length] = '\0';
 	    cmp = strcmp(key, searchkey);
 	    if(cmp < 0) {	/* further in file */
-		top = offset2;
+		top = offset2 - 1;
 		last_bin_search_offset = offset2;
 	    } else if(cmp > 0) {	/* earlier in file */
 		bot = mid;
