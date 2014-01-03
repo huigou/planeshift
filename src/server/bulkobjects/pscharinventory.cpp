@@ -785,14 +785,25 @@ bool psCharacterInventory::Add(psItem* &item, bool test, bool stack, INVENTORY_S
         for(i=0; i<itemIndices.GetSize(); i++)
         {
             float size=0;
-            if(inventory[itemIndices[i]].item->GetContainerID())
+
+            uint32 containerID = inventory[itemIndices[i]].item->GetContainerID();
+            psItem* container = FindItemID(containerID);
+            if(containerID && !containerID)
             {
-                size = GetContainedSize(FindItemID(inventory[itemIndices[i]].item->GetContainerID()));
+                Error2("%s","Failed to find container");
+                return false;
             }
-            if(!inventory[itemIndices[i]].item->GetContainerID() || size + item->GetTotalStackSize() <= FindItemID(inventory[itemIndices[i]].item->GetContainerID())->GetContainerMaxSize())  // adequate space in container
+
+            if(containerID)
+            {
+                size = GetContainedSize(container);
+            }
+            if(!containerID || ((size + item->GetTotalStackSize()) <= container->GetContainerMaxSize()) )  // adequate space in container
             {
                 if(test)
+                {
                     return true; // not really doing it here
+                }
 
                 inventory[itemIndices[i]].item->CombineStack(item);
 
@@ -802,7 +813,9 @@ bool psCharacterInventory::Add(psItem* &item, bool test, bool stack, INVENTORY_S
                 UpdateEncumbrance();
 
                 if(owner->IsNPC() || owner->IsPet())
+                {
                     psserver->GetNPCManager()->QueueInventoryPerception(owner->GetActor(), item, true);
+                }
                 return true;
             }
         }

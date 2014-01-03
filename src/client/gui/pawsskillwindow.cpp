@@ -540,18 +540,28 @@ void pawsSkillWindow::BuyMaxSkill()
     }
 
     psSkillCacheItem* currSkill = skillCache.getItemBySkillId(skillId);
+    if(!currSkill)
+    {
+        return;
+    }
     unsigned short possibleTraining = currSkill->getKnowledgeCost() - currSkill->getKnowledge();
 
     if (skillCache.getProgressionPoints() < possibleTraining)
+    {
         possibleTraining = skillCache.getProgressionPoints();
+    }
         
     //check for 0 pp
     if(!possibleTraining)
     {
         if(!skillCache.getProgressionPoints())
+        {
             PawsManager::GetSingleton().CreateWarningBox("You don't have PP to train.");
+        }
         else
+        {
             PawsManager::GetSingleton().CreateWarningBox("You can't train this skill anymore.");
+        }
         return;
     }
 

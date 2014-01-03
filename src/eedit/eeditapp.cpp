@@ -211,6 +211,11 @@ bool EEditApp::Init()
 
     // loads materials, meshes and maps
     csRef<iBgLoader> loader = csQueryRegistry<iBgLoader>(object_reg);
+    if (!loader)
+    {
+        SevereError("Could not load iBgLoader!");
+        return false;
+    }
 
     loader->PrecacheDataWait("/planeshift/materials/materials.cslib");
 
@@ -265,6 +270,11 @@ bool EEditApp::Init()
     paws->GetMouse()->ChangeImage("Standard Mouse Pointer");
 
     editWindow =     (pawsEEdit *)          paws->FindWidget("eedit");
+    if (!editWindow)
+    {
+        SevereError("Could not load edit window!");
+        return false;
+    }
 
     // Register our event handler
     event_handler.AttachNew(new EventHandler (this));

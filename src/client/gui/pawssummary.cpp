@@ -139,7 +139,16 @@ void pawsSummaryWindow::Update()
 
     while(lifeIter.HasNext())
     {
-        tempString.Format("%s\n", createManager->FindLifeEvent(lifeIter.Next())->name.GetData());
+        LifeEventChoice* lifeEvent = createManager->FindLifeEvent(lifeIter.Next());
+        if (lifeEvent)
+        {
+            tempString.Format("%s\n", lifeEvent->name.GetData());
+        }
+        else
+        {
+            tempString.Format("%s\n", "Error");
+        }
+        
         lifeString.Append(tempString);
     }
     lifeText->SetText(lifeString);    

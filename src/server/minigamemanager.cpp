@@ -1032,7 +1032,10 @@ void psMiniGameSession::Update(Client* client, psMGUpdateMessage &msg)
                                 if(p && p->playerID != winningPlayer->playerID)
                                 {
                                     loserClient = clients->Find(p->playerID);
-                                    env.Define("Loser", loserClient->GetActor());
+                                    if(loserClient)
+                                    {
+                                        env.Define("Loser", loserClient->GetActor());
+                                    }
                                     progScript->Run(&env);
                                 }
                             }

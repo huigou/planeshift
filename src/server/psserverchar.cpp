@@ -508,6 +508,10 @@ bool ServerCharManager::SendInventory(uint32_t clientNum, bool sendUpdatesOnly)
 bool ServerCharManager::UpdateItemViews(uint32_t clientNum)
 {
     Client* client = psserver->GetNetManager()->GetClient(clientNum);
+    if(!client)
+    {
+        return false;
+    }
 
     // If inventory window is up, update it
     SendInventory(clientNum);

@@ -1473,6 +1473,10 @@ bool CacheManager::UniqueInsertIntoItemArray(csArray<uint32>* finalItems, uint32
             return false;
         }
         CurrStats = GetBasicItemStatsByID(finalItems->Get(i));
+        if(!CurrStats)
+        {
+            return false;
+        }
         if(strcmp(NewStats->GetName(),CurrStats->GetName())<1)
         {
             finalItems->Insert(i, itemID);      //insert before current item
