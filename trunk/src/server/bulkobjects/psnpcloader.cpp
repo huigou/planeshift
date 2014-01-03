@@ -743,7 +743,10 @@ void psNPCLoader::SetupEquipment()
         if(!guild.IsEmpty())
         {
             psGuildInfo* newguild=psserver->GetCacheManager()->FindGuild(guild.GetData());
-            newItem->SetGuildID(newguild->GetID());
+            if(newguild)
+            {
+                newItem->SetGuildID(newguild->GetID());
+            }
         }
         if(location == "equipped")
         {

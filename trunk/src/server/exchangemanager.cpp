@@ -1043,9 +1043,13 @@ bool PlayerToPlayerExchange::HandleAccept(Client* client)
         return exchangeEnded;
 
     if(client->GetClientNum() == player)
+    {
         starterAccepted = true;
+    }
     else
+    {
         targetAccepted = true;
+    }
 
     if(starterAccepted && targetAccepted)
     {
@@ -1053,17 +1057,29 @@ bool PlayerToPlayerExchange::HandleAccept(Client* client)
         Debug2(LOG_EXCHANGES,client->GetClientNum(),"Exchange %d have been accepted by both clients\n",id);
 
         ClientConnectionSet* clients = psserver->GetConnections();
+        if(!clients)
+        {
+            return false;
+        }
 
         const char* playerName;
         const char* targetName;
         if(player !=0)
+        {
             playerName = clients->Find(player)->GetName();
+        }
         else
+        {
             playerName = "None";
+        }
         if(target !=0)
+        {
             targetName = clients->Find(target)->GetName();
+        }
         else
+        {
             targetName = "None";
+        }
 
         // We must set the exchange ID to 0 so that the items will now save
         targetClient->SetExchangeID(0);
@@ -1123,7 +1139,9 @@ bool PlayerToPlayerExchange::HandleAccept(Client* client)
         return true;
     }
     else
+    {
         SendExchangeStatusToBoth();
+    }
     return false;
 }
 

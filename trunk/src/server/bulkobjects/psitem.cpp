@@ -2139,7 +2139,13 @@ double psItem::GetProperty(MathEnvironment* env, const char* ptr)
     {
         // For natural armour quality
         if(useNat)
-            return psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->GetRaceInfo()->natural_armor_id)->GetQuality();
+        {
+            psItemStats* naturalArmour = psserver->GetCacheManager()->GetBasicItemStatsByID(owning_character->GetRaceInfo()->natural_armor_id);
+            if (naturalArmour)
+            {
+                return naturalArmour->GetQuality();
+            }
+        }
         return GetItemQuality();
     }
     else if(property == "MaxQuality")
