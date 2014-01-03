@@ -35,7 +35,8 @@
 #include <shlobj.h>
 #endif
 
-UpdaterEngine::UpdaterEngine(csStringArray& args, iObjectRegistry* object_reg, const char* appName)
+UpdaterEngine::UpdaterEngine(csStringArray& args, iObjectRegistry* object_reg, const char* appName):
+    downloader(NULL)
 {
     InfoShare *is = new InfoShare();
     hasGUI = false;
@@ -43,7 +44,8 @@ UpdaterEngine::UpdaterEngine(csStringArray& args, iObjectRegistry* object_reg, c
 }
 
 UpdaterEngine::UpdaterEngine(csStringArray& args, iObjectRegistry* object_reg, const char* appName,
-        InfoShare *infoshare)
+        InfoShare *infoshare):
+    downloader(NULL)
 {
     hasGUI = true;
     Init(args, object_reg, appName, infoshare);

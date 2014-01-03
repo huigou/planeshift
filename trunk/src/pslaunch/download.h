@@ -52,8 +52,6 @@ private:
     /* The ID of the mirror we randomly selected. */
     uint32 startingMirrorID;
     
-    uint32 startingRepairMirrorID;
-
     /* The current active mirror. */
     uint32 activeMirrorID;
 

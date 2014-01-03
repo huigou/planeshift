@@ -159,7 +159,8 @@ Downloader::Downloader(iVFS* _vfs, UpdaterConfig* _config)
     activeMirrorID = startingMirrorID;    
 }
 
-Downloader::Downloader(iVFS* _vfs)
+Downloader::Downloader(iVFS* _vfs):
+    startingMirrorID(0),activeMirrorID(0),config(NULL)
 {
     this->Init(_vfs);
 }
@@ -227,6 +228,12 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         }
         else
         {
+            if(URL)
+            {
+                delete mirror;
+                mirror = NULL;
+            }
+
             printf("No VFS in object registry!?\n");
             return false;
         }
@@ -269,6 +276,12 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             if (!file)
             {
                 UpdaterEngine::GetSingletonPtr()->PrintOutput("Couldn't write to file! (%s)\n", realFilePath.GetData());
+
+                if(URL)
+                {
+                    delete mirror;
+                    mirror = NULL;
+                }
                 return false;
             }
 
@@ -368,6 +381,11 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
             fileUtil->RemoveFile(fileName, true);
         }
 
+        if(URL)
+        {
+            delete mirror;
+            mirror = NULL;
+        }
         return true;
     }
 
@@ -377,7 +395,9 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
         mirror = NULL;
     }
     else
+    {
     	UpdaterEngine::GetSingletonPtr()->PrintOutput("\nThere are no active mirrors! Please check the forums for more info and help!\n");
+    }
 
     return false;
 }

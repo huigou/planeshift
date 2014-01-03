@@ -40,6 +40,8 @@ using namespace CS::Threading;
 using namespace std;
 
 pawsLauncherWindow::pawsLauncherWindow()
+    :launcherMain(NULL),launcherUpdater(NULL),launcherSettings(NULL),
+     resolution(NULL),updateAvailable(NULL),notify(NULL)
 {
 }
 

@@ -52,7 +52,8 @@ void UploadDump( const char * file, const char *uploadargs );
 
 using namespace CS::Threading;
 
-psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient)
+psLauncherGUI::psLauncherGUI(iObjectRegistry* _object_reg, InfoShare *_infoShare, bool *_execPSClient):
+    mainWidget(NULL),launcherWidget(NULL)
 {
     object_reg = _object_reg;
     infoShare = _infoShare;

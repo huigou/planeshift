@@ -41,7 +41,10 @@
 class Mirror : public csRefCount
 {
 public:
-    Mirror() {}
+    Mirror():
+    id(0),  repair(false)
+    {}
+    
     ~Mirror() {}
 
     /* Return mirror ID */
