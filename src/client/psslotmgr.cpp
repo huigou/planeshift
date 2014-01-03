@@ -354,11 +354,15 @@ void psSlotManager::Handle( pawsSlot* slot, bool grabOne, bool grabAll )
 
                 if ( stackCount == 1 || grabOne )
                 {
+                    int old_count = last_count;
                     OnNumberEntered("StackCount",tmpID, 1);
+                    last_count = old_count;
                 }
                 else if ( grabAll )
                 {
+                    int old_count = last_count;
                     OnNumberEntered("StackCount",tmpID, stackCount);
+                    last_count = old_count;
                 }
                 else // Ask for the number of items to grab
                 {
