@@ -142,6 +142,11 @@ bool rcMeshLoaderObj::load(const char* filename)
         return false;
     fseek(fp, 0, SEEK_END);
     int bufSize = ftell(fp);
+    if (bufSize < 0)
+    {
+        fclose(fp);
+        return false;
+    }
     fseek(fp, 0, SEEK_SET);
     buf = new char[bufSize];
     if (!buf)
