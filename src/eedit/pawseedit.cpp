@@ -76,14 +76,18 @@ bool pawsEEdit::OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* wi
         return true;
     }
     
-    if (widget->GetID() > 100 && widget->GetID() < 150)
+    int toolboxID = widget->GetID()-101;
+    if (toolboxID >= 0 && toolboxID < EEditToolbox::T_COUNT)
     {
         csString label;
-        int toolboxID = widget->GetID()-101;
         if (editApp->ToggleToolbox(toolboxID))
+        {
             label += "Hide ";
+        }
         else
+        {
             label += "Show ";
+        }
         label += editApp->GetToolboxManager()->GetToolbox(toolboxID)->GetName();
         ((pawsButton *)widget)->SetText(label);
         return true;
