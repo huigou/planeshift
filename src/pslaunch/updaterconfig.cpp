@@ -118,7 +118,8 @@ const char* Config::GetPlatform() const
 
 }
 
-Config::Config()
+Config::Config():
+    active(false)
 {
     updaterVersionLatest = 0.0f;
     updaterVersionLatestMajor = 0;
