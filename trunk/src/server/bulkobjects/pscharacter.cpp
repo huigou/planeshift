@@ -1677,9 +1677,11 @@ void psCharacter::CalculateEquipmentModifiers()
             // Check for attr bonuses
             for(int i = 0; i < PSITEMSTATS_STAT_BONUS_COUNT; i++)
             {
-                int attributeNum = currentitem->GetWeaponAttributeBonusType(i);
-                if(attributeNum != -1)
-                    modifiers[currentitem->GetWeaponAttributeBonusType(i)].Buff(MODIFIER_FAKE_ACTIVESPELL, (int) currentitem->GetWeaponAttributeBonusMax(i));
+                PSITEMSTATS_STAT attributeNum = currentitem->GetWeaponAttributeBonusType(i);
+                if(attributeNum != PSITEMSTATS_STAT_NONE)
+                {
+                    modifiers[attributeNum].Buff(MODIFIER_FAKE_ACTIVESPELL, (int) currentitem->GetWeaponAttributeBonusMax(i));
+                }
             }
             hasChanged = true;
             itemlist.Delete(it);
@@ -2878,7 +2880,11 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     {
         PSITEMSTATS_STAT stat = (PSITEMSTATS_STAT)(int)params[0];
 
-        return (double) GetSkillRank(statToSkill(stat)).Current();
+        PSSKILL skill = statToSkill(stat);
+        if (skill != PSSKILL_NONE)
+        {
+            return (double) GetSkillRank(statToSkill(stat)).Current();
+        }
     }
     else if(function == "GetAverageSkillValue")
     {
@@ -2909,9 +2915,11 @@ double psCharacter::CalcFunction(MathEnvironment* env, const char* functionName,
     {
         const char* skillName = env->GetString(params[0]);
         PSSKILL skill = psserver->GetCacheManager()->ConvertSkillString(skillName);
-        double value = skills.GetSkillRank(skill).Current();
-
-        return value;
+        if (skill != PSSKILL_NONE)
+        {
+            double value = skills.GetSkillRank(skill).Current();
+            return value;
+        }
     }
     else if(function == "GetSkillValue")
     {

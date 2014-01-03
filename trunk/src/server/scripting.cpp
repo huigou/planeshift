@@ -349,11 +349,15 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         int val = (int) value->Evaluate(env);
-        SkillRank &buffable = target->GetCharacterData()->GetSkillRank(statToSkill(stat));
-        buffable.Buff(asp, val);
+        PSSKILL skill = statToSkill(stat);
+        if (skill != PSSKILL_NONE)
+        {
+            SkillRank &buffable = target->GetCharacterData()->GetSkillRank(statToSkill(stat));
+            buffable.Buff(asp, val);
 
-        const char* strs[] = {"str", "agi", "end", "int", "wil", "cha"};
-        asp->Add(buffable, "<%s value=\"%d\"/>", strs[stat], val);
+            const char* strs[] = {"str", "agi", "end", "int", "wil", "cha"};
+            asp->Add(buffable, "<%s value=\"%d\"/>", strs[stat], val);
+        }
     }
 
 protected:
@@ -2184,8 +2188,12 @@ public:
     {
         psCharacter* c = GetCharacter(env, aim);
         int val = (int) value->Evaluate(env);
-        SkillRank &buffable = c->GetSkillRank(statToSkill(stat));
-        buffable.SetBase(buffable.Base() + val);
+        PSSKILL skill = statToSkill(stat);
+        if (skill != PSSKILL_NONE)
+        {
+            SkillRank &buffable = c->GetSkillRank(skill);
+            buffable.SetBase(buffable.Base() + val);
+        }
     }
 
 protected:

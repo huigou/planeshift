@@ -1691,8 +1691,11 @@ int psItem::GetAttackAnimID(psCharacter* pschar)
 {
     PSSKILL skill = current_stats->Weapon().Skill(PSITEMSTATS_WEAPONSKILL_INDEX_0);
     int curr_level = pschar->Skills().GetSkillRank(skill).Current();
-
-    return current_stats->GetAttackAnimID(curr_level);
+    if (curr_level != PSSKILL_NONE)
+    {
+        return current_stats->GetAttackAnimID(curr_level);
+    }
+    return 0;
 }
 
 

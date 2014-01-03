@@ -868,6 +868,12 @@ bool NetBase::Init(bool autobind)
 #else
     mysocket = socket (AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 #endif
+    if (mysocket < 0)
+    {
+        Error1("Failed to create socket");
+        return false;
+    }
+    
     /* set to non blocking operation */
     unsigned long arg=1;
     err = SOCK_IOCTL (mysocket, FIONBIO, &arg);
