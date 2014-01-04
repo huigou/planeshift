@@ -1,6 +1,4 @@
 <serverlist>
     <server name="localhost" description="New User? Register at http://laanx.fragnetics.com/register" ip="localhost" port="13331" />
-    <server name="weltall.no-ip.org" description="Weltall" ip="weltall.no-ip.org" port="13331" />
-    <server name="Laanx server (Main)" description="Laanx server is our main server." ip="planeshift.teamix.org" port="7777" /> 
 </serverlist>    
 
