@@ -24,9 +24,9 @@
 #include "dummysndctrl.h"
 
 
-DummySoundControl::DummySoundControl(int ID)
+DummySoundControl::DummySoundControl(int ID):
+    id(ID),volume(0.0f),isEnabled(false),dampening(false)
 {
-    id = ID;
 }
 
 DummySoundControl::~DummySoundControl()
