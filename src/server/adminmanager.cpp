@@ -12218,12 +12218,18 @@ void AdminManager::HandleBadText(psAdminCmdMessage &msg, AdminCmdData* cmddata, 
 void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
     AdminCmdDataQuest* data = dynamic_cast<AdminCmdDataQuest*>(cmddata);
+    if(!data)
+    {
+        Error1("Failed to find AdminCmdDataQuest");
+        return;
+    }
+    
     Client* subject = data->targetClient;
 
     Client* target = NULL; //holds the target of our query
-    PID pid; //used to keep player pid used *only* in offline queries
-    csString name; //stores the char name
-    if(!data->IsOnline())    //the target was empty check if it was because it's a command targetting the issuer or an offline player
+    PID pid;               //used to keep player pid used *only* in offline queries
+    csString name;         //stores the char name
+    if(!data->IsOnline())  //the target was empty check if it was because it's a command targetting the issuer or an offline player
     {
         pid = data->targetID;
         name = data->target;
@@ -12236,6 +12242,11 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
     }
     else
     {
+        if(!subject)
+        {
+            psserver->SendSystemError(me->clientnum,"No target client found.");
+            return;
+        }
         target = subject; //all's normal just get the target
         name = target->GetName(); //get the name of the target for use later
     }
