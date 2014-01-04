@@ -94,15 +94,18 @@ bool HireManager::Load()
         }
 
         // Resolve the work location.
-        Location* location = locations->FindLocation(session->GetWorkLocationId());
-        if(!location)
+        if (session->GetWorkLocationId() != 0)
         {
-            Error2("Failed to resolve location %d",session->GetWorkLocationId());
-            delete session;
-            return false;
+            Location* location = locations->FindLocation(session->GetWorkLocationId());
+            if(!location)
+            {
+                Error2("Failed to resolve location %d",session->GetWorkLocationId());
+                delete session;
+                return false;
+            }
+            session->SetWorkLocation(location);
         }
-        session->SetWorkLocation(location);
-
+        
         hires.PushBack(session);
 
         Debug3(LOG_HIRE, session->GetOwnerPID().Unbox(), "Loaded hire session between owner %s and npc %s",
