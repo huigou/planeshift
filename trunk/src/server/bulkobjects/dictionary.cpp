@@ -52,6 +52,7 @@
 #include "../adminmanager.h"
 #include "../netmanager.h"
 #include "../chatmanager.h"
+#include "../hiremanager.h"
 #include "psraceinfo.h"
 
 #include <idal.h>
@@ -1414,6 +1415,10 @@ bool NpcResponse::ParseResponseScript(const char* xmlstr,bool insertBeginning)
         {
             op = new GuildAwardResponseOp;
         }
+        else if(strcmp(node->GetValue(), "hire") == 0)
+        {
+            op = new HireResponseOp;
+        }
         else if(strcmp(node->GetValue(), "offer") == 0)
         {
             op = new OfferRewardResponseOp;
@@ -2452,6 +2457,116 @@ bool GuildAwardResponseOp::Run(gemNPC* who, gemActor* target,NpcResponse* owner,
     return true;
 }
 
+bool HireResponseOp::Load(iDocumentNode* node)
+{
+    csString command = node->GetAttributeValue("cmd");
+    if (command == "start")
+    {
+        hireCommand = HIRE_COMMAND_START;
+    } else if (command == "type")
+    {
+        hireCommand = HIRE_COMMAND_TYPE;
+        typeName = node->GetAttributeValue("name");
+        typeNPCType = node->GetAttributeValue("type");
+        if (typeName.IsEmpty() || typeNPCType.IsEmpty())
+        {
+            return false;
+        }
+    } else if (command == "master")
+    {
+        hireCommand = HIRE_COMMAND_MASTER;
+        masterNPCId = node->GetAttributeValueAsInt("master");
+        if (!masterNPCId.IsValid())
+        {
+            return false;
+        }
+    } else if (command == "confirm")
+    {
+        hireCommand = HIRE_COMMAND_CONFIRM;
+    } else if (command == "script")
+    {
+        hireCommand = HIRE_COMMAND_SCRIPT;
+    } else if (command == "release")
+    {
+        hireCommand = HIRE_COMMAND_RELEASE;
+    } else
+    {
+        return false;
+    }
+    
+    return true;
+}
+
+csString HireResponseOp::GetResponseScript()
+{
+    psString resp = GetName();
+    switch (hireCommand)
+    {
+    case HIRE_COMMAND_START:
+        resp.AppendFmt(" cmd=\"%s\"","start");
+        break;
+    case HIRE_COMMAND_TYPE:
+        resp.AppendFmt(" cmd=\"%s\"","type");
+        resp.AppendFmt(" name=\"%s\"",typeName.GetDataSafe());
+        resp.AppendFmt(" type=\"%s\"",typeNPCType.GetDataSafe());
+        break;
+    case HIRE_COMMAND_MASTER:
+        resp.AppendFmt(" cmd=\"%s\"","master");
+        resp.AppendFmt(" master=\"%d\"",masterNPCId.Unbox());
+        break;
+    case HIRE_COMMAND_CONFIRM:
+        resp.AppendFmt(" cmd=\"%s\"","confirm");
+        break;
+    case HIRE_COMMAND_SCRIPT:
+        resp.AppendFmt(" cmd=\"%s\"","script");
+        break;
+    case HIRE_COMMAND_RELEASE:
+        resp.AppendFmt(" cmd=\"%s\"","release");
+        break;
+    }
+    return resp;
+}
+
+bool HireResponseOp::Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber)
+{
+    HireManager* hireManager = psserver->GetHireManager();
+    if (!hireManager)
+    {
+        Error1("Could not find HireManager");
+        return false;
+    }
+
+    switch (hireCommand)
+    {
+    case HIRE_COMMAND_START:
+        hireManager->StartHire(target);
+        break;
+    case HIRE_COMMAND_TYPE:
+        hireManager->SetHireType(target, typeName, typeNPCType);
+        break;
+    case HIRE_COMMAND_MASTER:
+        hireManager->SetHireMasterPID(target, masterNPCId);
+        break;
+    case HIRE_COMMAND_CONFIRM:
+        hireManager->ConfirmHire(target);
+        break;
+    case HIRE_COMMAND_SCRIPT:
+        {
+            Client * client = who->GetClient();
+            if (client)
+            {
+                hireManager->HandleScriptMessageRequest(client->GetClientNum(), target, who);
+            }
+            break;
+        }
+    case HIRE_COMMAND_RELEASE:
+        hireManager->ReleaseHire(target, who);
+        break;
+    }
+
+    return true;
+}
+
 bool OfferRewardResponseOp::Load(iDocumentNode* node)
 {
     // <offer>
@@ -2659,7 +2774,9 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
             continue;
 
         if(triggers[i].prerequisite)
+        {
             prereq = triggers[i].prerequisite->GetScript();
+        }
 
         //if (!prereq.IsEmpty())
         //{
@@ -2729,11 +2846,11 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
         {
             if(menuText.Find("?=") != SIZET_NOT_FOUND)
             {
-                trigger = triggers[i].trigger;
+                trigger = "(question)";
             }
             else
             {
-                trigger = "(question)";
+                trigger = triggers[i].trigger;
             }
         }
 

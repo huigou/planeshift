@@ -930,6 +930,39 @@ public:
     virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
+/**
+ * This script operation makes an npc manage hires
+ * as part of his response to a player event.
+ */
+class HireResponseOp : public ResponseOperation
+{
+protected:
+    typedef enum 
+    {
+        HIRE_COMMAND_START,
+        HIRE_COMMAND_TYPE,
+        HIRE_COMMAND_MASTER,
+        HIRE_COMMAND_CONFIRM,
+        HIRE_COMMAND_SCRIPT,
+        HIRE_COMMAND_RELEASE
+    } HireCommand;
+    
+    HireCommand hireCommand;
+    csString typeName;
+    csString typeNPCType;
+    PID masterNPCId;
+public:
+    HireResponseOp():
+        hireCommand(HIRE_COMMAND_START)
+    {
+        name = "hire";
+    }
+    virtual ~HireResponseOp() {};
+    virtual bool Load(iDocumentNode* node);
+    virtual csString GetResponseScript();
+    virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
+};
+
 
 /**
  * This script operation makes an npc offer a list of possible

@@ -349,35 +349,29 @@ bool QuestManager::HandleScriptCommand(csString &block,
             op.Format("<assign q1=\"%s\"/>",mainQuest->GetName());
             quest_assigned_already = true;
         }
-
-        else if(!strncasecmp(block, "FireEvent", 9))
-        {
-            csString eventname = block.Slice(9,block.Length()-1).Trim();
-            op.Format("<fire_event name='%s'/>", eventname.GetData());
-        }
-
         else if(!strncasecmp(block,"Complete",8))
         {
             csString questname = block.Slice(8,block.Length()-1).Trim();
             AutocompleteQuestName(questname, mainQuest);
             op.Format("<complete quest_id=\"%s\"/>",questname.GetData());
         }
-        else if(!strncasecmp(block,"Uncomplete", 10))
+        else if(!strncasecmp(block,"DoAdminCmd",10))
         {
-            csString questname = block.Slice(10, block.Length()-1).Trim();
-            AutocompleteQuestName(questname, mainQuest);
-            op.Format("<uncomplete quest_id=\"%s\"/>",questname.GetData());
+            csString command = block.Slice(11).Trim();
+            op.Format("<doadmincmd command=\"%s\"/>", command.GetData());
         }
-        else if(!strncasecmp(block,"setvariable", 11))
+        else if(!strncasecmp(block, "FireEvent", 9))
         {
-            csString variableData = block.Slice(11, block.Length()).Trim();
-            csArray<csString> variableinfo = psSplit(variableData, ' ');
-            op.Format("<setvariable name=\"%s\" value=\"%s\" />", variableinfo[0].GetData(),variableinfo[1].GetData());
+            csString eventname = block.Slice(9,block.Length()-1).Trim();
+            op.Format("<fire_event name='%s'/>", eventname.GetData());
         }
-        else if(!strncasecmp(block,"unsetvariable", 13))
+        else if(!strncasecmp(block,"Introduce",9))
         {
-            csString variableName = block.Slice(13, block.Length()).Trim();
-            op.Format("<unsetvariable name=\"%s\" />", variableName.GetData());
+            csString charname = block.Slice(10).Trim();
+            if(!charname.IsEmpty())
+                op.Format("<introduce name=\"%s\"/>", charname.GetData());
+            else
+                op.Format("<introduce/>");
         }
         else if(!strncasecmp(block,"Give",4))
         {
@@ -444,6 +438,53 @@ bool QuestManager::HandleScriptCommand(csString &block,
             }
 
         }
+        else if(!strncasecmp(block,"Hire",4))
+        {
+            WordArray words(block);
+            int index = 1;
+            if(words[index].CompareNoCase("Confirm"))
+            {
+                op.Format("<hire cmd=\"confirm\"/>");
+            } 
+            else if(words[index].CompareNoCase("Master"))
+            {
+                int masterNPCId = words.GetInt(++index);
+                if (masterNPCId > 0)
+                {
+                    op.Format("<hire cmd=\"master\" master=\"%d\"/>",masterNPCId);
+                }
+                else
+                {
+                    Error1("Master NPC Id not > 0 for hire master.");
+                    return false;
+                }
+            }
+            else if(words[index].CompareNoCase("Script"))
+            {
+                op.Format("<hire cmd=\"script\"/>");
+            }
+            else if(words[index].CompareNoCase("Start"))
+            {
+                op.Format("<hire cmd=\"start\"/>");
+            }
+            else if(words[index].CompareNoCase("Type"))
+            {
+                csString name = words[++index];
+                csString type = words[index++];
+                if (name.IsEmpty() || type.IsEmpty())
+                {
+                    Error1("Hire type without name or type");
+                    return false;
+                }
+                op.Format("<hire cmd=\"type\" name=\"%s\" type=\"%s\"/>",
+                          name.GetDataSafe(),type.GetDataSafe());
+            }
+            else
+            {
+                Error2("Unknown hire command '%s' !",block.GetData());
+                return false;
+            }
+        }
         else if(!strncasecmp(block,"NoRepeat",8))
         {
             substep_requireop.AppendFmt("<not><completed quest=\"%s\"/></not>", quest->GetName());
@@ -498,18 +539,22 @@ bool QuestManager::HandleScriptCommand(csString &block,
             }
             op.Append("\"/>");
         }
-        else if(!strncasecmp(block,"DoAdminCmd",10))
+        else if(!strncasecmp(block,"SetVariable", 11))
         {
-            csString command = block.Slice(11).Trim();
-            op.Format("<doadmincmd command=\"%s\"/>", command.GetData());
+            csString variableData = block.Slice(11, block.Length()).Trim();
+            csArray<csString> variableinfo = psSplit(variableData, ' ');
+            op.Format("<setvariable name=\"%s\" value=\"%s\" />", variableinfo[0].GetData(),variableinfo[1].GetData());
         }
-        else if(!strncasecmp(block,"Introduce",9))
+        else if(!strncasecmp(block,"Uncomplete", 10))
         {
-            csString charname = block.Slice(10).Trim();
-            if(!charname.IsEmpty())
-                op.Format("<introduce name=\"%s\"/>", charname.GetData());
-            else
-                op.Format("<introduce/>");
+            csString questname = block.Slice(10, block.Length()-1).Trim();
+            AutocompleteQuestName(questname, mainQuest);
+            op.Format("<uncomplete quest_id=\"%s\"/>",questname.GetData());
+        }
+        else if(!strncasecmp(block,"UnsetVariable", 13))
+        {
+            csString variableName = block.Slice(13, block.Length()).Trim();
+            op.Format("<unsetvariable name=\"%s\" />", variableName.GetData());
         }
         else // unknown block
         {
@@ -857,6 +902,9 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
     int line_number = 0;
     NpcDialogMenu* pending_menu = NULL;
     NpcDialogMenu* last_menu    = NULL;
+
+    Debug2(LOG_QUESTS, 0, "******** Parsing quest script quest id %d ********",quest_id);
+    
 
     if(!mainQuest && quest_id > 0)
     {
@@ -1300,7 +1348,12 @@ bool QuestManager::BuildMenu(const csString &block,const csStringArray &list, ps
         size_t cutDotPos = trigger.FindFirst(".");
         //we check if it was found to avoid creating too many csString
         if(cutDotPos != (size_t) -1)
+        {
             trigger.Truncate(cutDotPos); //cut the string at the dot, excluding it.
+        }
+
+        Debug4(LOG_QUESTS, 0, "Adding menu item: '%s' - '%s' for '%s'",
+               response.GetDataSafe(), trigger.GetDataSafe(), quest?quest->GetName():"KA");
 
         menu->AddTrigger(response, trigger, quest);
 
