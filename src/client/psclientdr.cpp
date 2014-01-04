@@ -60,8 +60,6 @@
 psClientDR::psClientDR()
 {
     celclient = NULL;
-    lastupdate = 0;
-    lastquery = 0;
     msgstrings = NULL;
     gotStrings = false;
     groupWindow = 0;
@@ -114,8 +112,6 @@ void psClientDR::CheckDeadReckoningUpdate()
     {
         return;
     }            
-
-    lastupdate = csGetTicks();
 
     if(celclient->IsUnresSector(celclient->GetMainPlayer()->GetSector()))
         return;                 // Main actor still in unresolved sector
@@ -214,12 +210,6 @@ void psClientDR::HandleDeadReckon( MsgEntry* me )
      
     if (!gemActor)
     {
-        csTicks currenttime = csGetTicks();
-        if (currenttime - lastquery > 750)
-        {
-            lastquery = currenttime;
-        }
-
         Error2("Got DR message for unknown entity %s.", ShowID(drmsg.entityid));
         return;
     }

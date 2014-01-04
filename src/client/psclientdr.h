@@ -71,8 +71,6 @@ protected:
     psCelClient* celclient;
     csRef<MsgHandler> msghandler;
     
-    csTicks lastupdate;
-    csTicks lastquery;
     csString last_sector;
     iObjectRegistry* object_reg;
 
