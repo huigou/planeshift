@@ -33,7 +33,7 @@
 SCF_IMPLEMENT_FACTORY(DummySoundManager)
 
 
-DummySoundManager::DummySoundManager(iBase* parent): scfImplementationType(this, parent)
+DummySoundManager::DummySoundManager(iBase* parent): scfImplementationType(this, parent),combat(0),loopToggle(false),combatToggle(false),listenerToggle(false),chatToggle(false)
 {
     defaultSndCtrl = new DummySoundControl(0);
     return;

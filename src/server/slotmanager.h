@@ -41,7 +41,8 @@ class SlotManager : public MessageManager<SlotManager>
 {
 public:
     virtual ~SlotManager();
-    SlotManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager)
+    SlotManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager):
+        worldContainer(NULL),containerEntityID(0)
     {
         gemSupervisor = gemsupervisor;
         cacheManager = cachemanager;

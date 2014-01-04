@@ -53,9 +53,11 @@
 #include "adminmanager.h"
 
 Client::Client()
-    : accumulatedLag(0), zombie(false), allowedToDisconnect(true), ready(false),
+    : accumulatedLag(0), zombie(false), zombietimeout(0), 
+      allowedToDisconnect(true), ready(false),
       accountID(0), playerID(0), securityLevel(0), superclient(false),
-      name(""), pathPath(NULL), cheatMask(NO_CHEAT)
+      name(""), waypointPathIndex(0), pathPath(NULL), selectedLocationID(0),
+      cheatMask(NO_CHEAT)
 {
     actor           = 0;
     exchangeID      = 0;
