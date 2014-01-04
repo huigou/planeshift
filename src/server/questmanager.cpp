@@ -333,7 +333,9 @@ bool QuestManager::HandleScriptCommand(csString &block,
     // If there are more last command didn't have a dot
     // make sure we include that command to.
     if(block.Length())
+    {
         commands.Push(block.Trim());
+    }
 
     for(size_t i = 0 ; i < commands.GetSize() ; i++)
     {
@@ -936,6 +938,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
         if(!strncasecmp(block,"P:",2))   // P: is Player:, which means this is a trigger
         {
             pending_triggers.Empty();
+            // Parse block and return a list of pending triggers
             if(!BuildTriggerList(block,pending_triggers))
             {
                 lastError.Format("Could not determine triggers in script '%s', in line <%s>", 
@@ -956,6 +959,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
         {
             NpcDialogMenu* menu = new NpcDialogMenu();
 
+            // Parse block and return a configured menu.
             if(!BuildMenu(block, pending_triggers, mainQuest, menu))
             {
                 lastError.Format("Could not determine triggers in script '%s', in line <%s>", 
@@ -1276,7 +1280,7 @@ bool QuestManager::ParseItem(const char* text, psStringArray &xmlItems, psMoney 
     return true;
 }
 
-bool QuestManager::BuildTriggerList(csString &block,csStringArray &list)
+bool QuestManager::BuildTriggerList(csString &block,csStringArray &list) const
 {
     size_t start=0,end;
     csString response;
@@ -1285,13 +1289,17 @@ bool QuestManager::BuildTriggerList(csString &block,csStringArray &list)
     {
         start = block.Find("P:",start);
         if(start == SIZET_NOT_FOUND)
+        {
             return true;
+        }
         start += 2;  // skip the actual P:
 
         // Now find next P:, if any
         end = block.Find("P:",start);
         if(end == SIZET_NOT_FOUND)
+        {
             end = block.Length();
+        }
 
         block.SubString(response,start,end-start);
         response.Trim();
@@ -1302,7 +1310,9 @@ bool QuestManager::BuildTriggerList(csString &block,csStringArray &list)
 
         // This isn't truly a "any trigger" but will work
         if(response == "*")
+        {
             response = "error";
+        }
 
         list.Push(response);
 
@@ -1311,7 +1321,7 @@ bool QuestManager::BuildTriggerList(csString &block,csStringArray &list)
     return true;
 }
 
-bool QuestManager::BuildMenu(const csString &block,const csStringArray &list, psQuest* quest, NpcDialogMenu* menu)
+bool QuestManager::BuildMenu(const csString &block,const csStringArray &list, psQuest* quest, NpcDialogMenu* menu) const
 {
     size_t start=0, end, counter = 0;
     csString response;
