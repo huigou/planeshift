@@ -250,8 +250,8 @@ public:
         // Not enough space left!  Don't overwrite the buffer.
         if (current + strlen(str)+1 > bytes->GetSize())
         {
-            Bug5("MsgEntry::Add(const char *) call for msgid=%u len=%u would overflow buffer! str = %s type = %u\n",
-                (unsigned int)msgid,(unsigned int)strlen(str),str, bytes->type);
+            Bug6("MsgEntry::Add(const char *) call for msgid=%u len=%u would overflow buffer! str = %s type = %u size %zu\n",
+                (unsigned int)msgid,(unsigned int)strlen(str),str, bytes->type, bytes->GetSize());
             overrun=true;
             return;
         }

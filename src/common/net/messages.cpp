@@ -4625,7 +4625,7 @@ void psDRMessage::CreateMsgEntry(uint32_t client, NetBase::AccessPointers* acces
 
     int sectorNameLen = (sectorNameStrId == csInvalidStringID) ? sectorName.Length() : 0;
 
-    msg.AttachNew(new MsgEntry(sizeof(uint32)*12 + sizeof(uint8)*4 + (sectorNameLen?sectorNameLen+1:0)));
+    msg.AttachNew(new MsgEntry(sizeof(uint32)*13 + sizeof(uint8)*4 + sectorNameLen+1));
 
     msg->SetType(MSGTYPE_DEAD_RECKONING);
     msg->clientnum = client;
