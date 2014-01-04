@@ -1397,7 +1397,10 @@ bool WorkManager::CombineWork()
         {
             //restore the valid current quality
             currentQuality = resultQuality;
-            ValidateMind(); //unfortunately the bad loadlocalvariables is damaging this data so we restore it
+            if (!ValidateMind()) //unfortunately the bad loadlocalvariables is damaging this data so we restore it
+            {
+                return false;
+            }
             // Find out if we can do a combination transformation
             unsigned int transMatch = AnyTransform(patterns, patternKFactor, combinationId, combinationQty);
             if((transMatch == TRANSFORM_MATCH) || (transMatch == TRANSFORM_GARBAGE))
@@ -2591,7 +2594,15 @@ bool WorkManager::ValidateConstraints(psTradeTransformations* transCandidate, ps
 
     // Get a work copy of the constraint string to token up
     const char* constraintStr = processCandidate->GetConstraintString();
-    strcpy(constraintPtr,constraintStr);
+    if(strlen(constraintStr) < 256)
+    {
+        strcpy(constraintPtr,constraintStr);
+    }
+    else
+    {
+        return false;
+    }
+    
 
     // Loop through all the constraint strings
     char* funct = strtok(constraintPtr, constraintSeperators);
@@ -4179,7 +4190,11 @@ psWorkGameEvent::psWorkGameEvent(WorkManager* mgr,
                                  Client* c,
                                  psItem* object,
                                  float repairAmt)
-    : psGameEvent(0,delayticks,"psWorkGameEvent"), effectID(0)
+    : psGameEvent(0,delayticks,"psWorkGameEvent"), gemTarget(NULL),
+      transformation(NULL),process(NULL),effectID(0),resultQuantity(0),
+      resultQuality(0.0f),KFactor(0.0f),transSlot(PSCHARACTER_SLOT_NONE),item(NULL),workItem(NULL),
+      transType(0)
+      
 {
     workmanager = mgr;
     if(natres)
