@@ -379,11 +379,11 @@ public:
 
     /** Find a location type by name
      */
-    LocationType* FindLocation(const char* locname);
+    LocationType* FindLocation(const char* typeName);
 
     /** Find a location of a specfic location type by nam.
      */
-    Location* FindLocation(const char* loctype, const char* name);
+    Location* FindLocation(const char* typeName, const char* name);
 
     /** Find a location of a specfic location type by nam.
      */
@@ -403,11 +403,11 @@ public:
 
     /** Find the neares location to a point of a given location type.
      */
-    Location* FindNearestLocation(psWorld* world, const char* loctype, csVector3 &pos, iSector* sector, float range, float* found_range);
+    Location* FindNearestLocation(psWorld* world, const char* typeName, csVector3 &pos, iSector* sector, float range, float* found_range);
 
     /** Find a random location within a given max range.
      */
-    Location* FindRandomLocation(psWorld* world, const char* loctype, csVector3 &pos, iSector* sector, float range, float* found_range);
+    Location* FindRandomLocation(psWorld* world, const char* typeName, csVector3 &pos, iSector* sector, float range, float* found_range);
 
     /** Get a iterator to all Location Types stored in the Location Manager.
      */

@@ -86,10 +86,10 @@ protected:
     bool ParseItemList(const csString &input, csString &parsedItemList);
     bool ParseItem(const char* text, psStringArray &xmlItems, psMoney &money);
 
-    NpcResponse* AddResponse(csString &current_npc,const char* response_text,
+    NpcResponse* AddResponse(const csString &current_npc,const char* response_text,
                              int &last_response_id, psQuest* quest,
                              csString &him, csString &her, csString &it, csString &them, csString &file_path);
-    bool         AddTrigger(csString &current_npc,const char* trigger,
+    bool         AddTrigger(const csString &current_npc,const char* trigger,
                             int prior_response_id,int trig_response, psQuest* quest, const psString &postfix);
     void         MergeTriggerMenus(NpcDialogMenu* pending_menu, const csString &current_npc);
 
@@ -190,6 +190,13 @@ public:
     /** Parase a new quest script.
      */
     int  ParseQuestScript(int id,const char* script);
+
+    /** Parase a new custom script.
+     *
+     *  This is the same as ParseQuestScript, but with all the limitaiton
+     *  that is needed to allow players to script this.
+     */
+    int  ParseCustomScript(int id, const csString& current_npc, const char* script);
 
     /**
      */

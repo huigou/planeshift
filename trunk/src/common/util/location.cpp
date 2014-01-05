@@ -802,18 +802,18 @@ LocationType* LocationManager::FindRegion(const char* regname)
     return NULL;
 }
 
-LocationType* LocationManager::FindLocation(const char* locname)
+LocationType* LocationManager::FindLocation(const char* typeName)
 {
-    if(!locname)
+    if(!typeName)
         return NULL;
 
-    LocationType* found = loctypes.Get(locname, NULL);
+    LocationType* found = loctypes.Get(typeName, NULL);
     return found;
 }
 
-Location* LocationManager::FindLocation(const char* loctype, const char* name)
+Location* LocationManager::FindLocation(const char* typeName, const char* name)
 {
-    LocationType* found = loctypes.Get(loctype, NULL);
+    LocationType* found = loctypes.Get(typeName, NULL);
     if(found)
     {
         return FindLocation(found, name);
@@ -903,9 +903,9 @@ size_t LocationManager::FindLocationsInSector(iEngine* engine, iSector* sector, 
     return count;
 }
 
-Location* LocationManager::FindNearestLocation(psWorld* world, const char* loctype, csVector3 &pos, iSector* sector, float range, float* found_range)
+Location* LocationManager::FindNearestLocation(psWorld* world, const char* typeName, csVector3 &pos, iSector* sector, float range, float* found_range)
 {
-    LocationType* found = loctypes.Get(loctype, NULL);
+    LocationType* found = loctypes.Get(typeName, NULL);
     if(found)
     {
         float min_range = range;
@@ -932,12 +932,12 @@ Location* LocationManager::FindNearestLocation(psWorld* world, const char* locty
     return NULL;
 }
 
-Location* LocationManager::FindRandomLocation(psWorld* world, const char* loctype, csVector3 &pos, iSector* sector, float range, float* found_range)
+Location* LocationManager::FindRandomLocation(psWorld* world, const char* typeName, csVector3 &pos, iSector* sector, float range, float* found_range)
 {
     csArray<Location*> nearby;
     csArray<float> dist;
 
-    LocationType* found = loctypes.Get(loctype, NULL);
+    LocationType* found = loctypes.Get(typeName, NULL);
     if(found)
     {
         for(size_t i=0; i<found->locs.GetSize(); i++)

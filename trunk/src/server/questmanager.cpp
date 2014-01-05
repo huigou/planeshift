@@ -1160,6 +1160,149 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
     return 0;  // 0 is success!
 }
 
+int QuestManager::ParseCustomScript(int id, const csString& current_npc, const char* script)
+{
+    psString scr(script);
+    size_t start = 0;
+    csString line;
+    csString block;
+    csStringArray pending_triggers;
+    int last_response_id=-1,next_to_last_response_id=-1;
+    size_t which_trigger=0;
+    csString response_text,file_path;
+    NpcResponse* last_response=NULL;
+    int line_number = 0;
+    NpcDialogMenu* pending_menu = NULL;
+
+    Debug2(LOG_QUESTS, 0, "******** Parsing custom script %d ********", id);
+    
+
+    while(start < scr.Length())
+    {
+        GetNextScriptLine(scr,block,start,line_number);
+
+        Debug3(LOG_QUESTS, 0, "Parsing line %d:%s", line_number, block.GetData());
+
+        // now we have the block to do something with
+        if(!strncasecmp(block,"#",1))  // comment, skip it
+            continue;
+
+        if(!strncasecmp(block,"P:",2))   // P: is Player:, which means this is a trigger
+        {
+            pending_triggers.Empty();
+            // Parse block and return a list of pending triggers
+            if(!BuildTriggerList(block, pending_triggers))
+            {
+                lastError.Format("Could not determine triggers in line <%s>", 
+                                 block.GetData());
+                Error2("%s",lastError.GetDataSafe());
+
+                return line_number;
+            }
+            // When parsing responses, this tracks which one goes with which
+            which_trigger = 0;
+
+            for(size_t i=0; i<pending_triggers.GetSize(); i++)
+            {
+                Debug2(LOG_QUESTS, 0,"Player says '%s'", pending_triggers[i]);
+            }
+        }
+        else if(!strncasecmp(block,"Menu:",5))   // Menu: is an nice way of represention the various P: triggers
+        {
+            NpcDialogMenu* menu = new NpcDialogMenu();
+
+            // Parse block and return a configured menu.
+            if(!BuildMenu(block, pending_triggers, NULL, menu))
+            {
+                lastError.Format("Could not determine triggers in line <%s>", 
+                                 block.GetData());
+                Error2("%s",lastError.GetDataSafe());
+
+                delete menu;
+                return line_number;
+            }
+
+            if(last_response)   // popup is part of a dialog chain
+            {
+                last_response->menu = menu;  // attach the menu to the prior response for easy access in chains
+            }
+            else
+            {
+                pending_menu = menu;  // save for when we know the npc.  cannot attach to anything yet.
+            }
+        }
+        else if(!strncasecmp(block,"NPC:",4))  // text response
+        {
+            csString him,her,it,them;
+
+            if(!GetResponseText(block,response_text,file_path,him,her,it,them))
+            {
+                Error2("Could not get response text out of <%s>!  Failing.",block.GetData());
+                lastError.Format("Could not get response text out of <%s>!  Failing.",block.GetData());
+                return line_number;
+            }
+            if(pending_triggers.GetSize() == 0 || which_trigger >= pending_triggers.GetSize())
+            {
+                Error2("Found response <%s> without a preceding trigger to match it.",response_text.GetData());
+                lastError.Format("Found response <%s> without a preceding trigger to match it.",response_text.GetData());
+                return line_number;
+            }
+
+            Debug6(LOG_QUESTS, 0,"NPC %s responds with '%s'%s%s%s", current_npc.GetData(),
+                   response_text.GetData(), file_path.IsEmpty()? "" : ", with the voice file '",
+                   file_path.GetDataSafe(), file_path.IsEmpty()? "" : "'");
+
+            // Now add this response to the npc dialog dict
+            if(which_trigger == 0)  // new sequence
+            {
+                next_to_last_response_id = last_response_id;
+            }
+
+            last_response = AddResponse(current_npc,response_text,last_response_id,NULL,him,her,it,them,file_path);
+            if(last_response)
+            {
+                bool ret = AddTrigger(current_npc,pending_triggers[which_trigger++],next_to_last_response_id,last_response_id, NULL, "");
+                if(!ret)
+                {
+                    lastError.Format("Trigger could not be added.");
+                    return line_number;
+                }
+
+                if(pending_menu)
+                {
+                    // Now go back to the previous menu
+                    dict->AddMenu(current_npc, pending_menu);
+                    pending_menu = NULL;
+                }
+            }
+            else
+            {
+                return line_number;
+            }
+        }
+        else if(!strncmp(block,"...",3))  // New substep. Syntax: "..."
+        {
+            // This clears out prior responses whether there is a quest or a KA script here
+            next_to_last_response_id = last_response_id = -1;
+            last_response = NULL;  // This is used for popup menus
+        }
+        else // Unknown line
+        {
+            Debug2(LOG_QUESTS, 0,"Got unknown line '%s'", block.GetData());
+            lastError.Format("Got unknown line '%s'", block.GetData());
+            return line_number;
+        }
+    }
+    if(pending_menu)
+    {
+        delete pending_menu;
+        pending_menu = NULL;
+    }
+
+    lastError.Format("Success");
+    return 0;  // 0 is success!
+}
+
 int QuestManager::GetNPCFromBlock(WordArray words,csString &current_npc)
 {
     csString select;
@@ -1440,7 +1583,7 @@ bool QuestManager::GetResponseText(csString &block,csString &response,csString &
     return true;
 }
 
-NpcResponse* QuestManager::AddResponse(csString &current_npc,const char* response_text,int &last_response_id, psQuest* quest,
+NpcResponse* QuestManager::AddResponse(const csString &current_npc,const char* response_text,int &last_response_id, psQuest* quest,
                                        csString &him, csString &her, csString &it, csString &them, csString &file_path)
 {
     last_response_id = 0;  // let AddResponse autoset this if set to 0
@@ -1448,7 +1591,7 @@ NpcResponse* QuestManager::AddResponse(csString &current_npc,const char* respons
     return dict->AddResponse(response_text,him,her,it,them,current_npc,last_response_id,quest,file_path);
 }
 
-bool QuestManager::AddTrigger(csString &current_npc,const char* trigger,int prior_response_id,int trig_response, psQuest* quest, const psString &postfix)
+bool QuestManager::AddTrigger(const csString &current_npc,const char* trigger,int prior_response_id,int trig_response, psQuest* quest, const psString &postfix)
 {
     // Now that this npc has a trigger associated, we need to make sure it has a KA for itself.
     // These have been added manually in the past, but we will do it here automatically now.
