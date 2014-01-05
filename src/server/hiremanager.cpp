@@ -573,6 +573,7 @@ bool HireManager::WorkLocation(gemActor* owner, gemNPC* hiredNPC)
         // Verify that it is possible to navigate to the location.
         psserver->npcmanager->CheckWorkLocation(hiredNPC, location);
 
+        // Update client with new position text.
         psHiredNPCScriptMessage msg(owner->GetClient()->GetClientNum(),
                                     psHiredNPCScriptMessage::WORK_LOCATION_UPDATE,
                                     hiredNPC->GetEID(), location->ToString());

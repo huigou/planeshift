@@ -36,10 +36,11 @@
 
 // Define a button ID values
 #define VERIFY_BUTTON        101
-#define SAVE_BUTTON          102
+#define COMMIT_BUTTON        102
 #define LOAD_BUTTON          103
 #define CANCEL_BUTTON        104
 #define WORK_LOCATION_BUTTON 105
+#define SAVE_BUTTON          106
 
 pawsScriptHiredNPCWindow::pawsScriptHiredNPCWindow():
     verified(false),script(NULL),verifyButton(NULL),okButton(NULL)
@@ -62,7 +63,7 @@ bool pawsScriptHiredNPCWindow::PostSetup()
     verifyButton = dynamic_cast<pawsButton*>(FindWidget("verify"));
     if(!verifyButton) return false;
 
-    okButton = dynamic_cast<pawsButton*>(FindWidget("save"));
+    okButton = dynamic_cast<pawsButton*>(FindWidget("commit"));
     if(!okButton) return false;
 
     okButton->SetEnabled(verified);
@@ -140,7 +141,7 @@ bool pawsScriptHiredNPCWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMod
             msg.SendMessage();
             return true;
         }
-        case SAVE_BUTTON:
+        case COMMIT_BUTTON:
         {
             // Send message to server that the hire script was confirmed.
             psHiredNPCScriptMessage msg(0, psHiredNPCScriptMessage::COMMIT, hiredEID);
@@ -162,7 +163,13 @@ bool pawsScriptHiredNPCWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMod
         case LOAD_BUTTON:
         {
             pawsStringPromptWindow::Create("Enter local filename", "", false, 220, 20, this,
-                                           "FileNameBox", 0, true);
+                                           "LoadFileNameBox", 0, true);
+            return true;
+        }
+        case SAVE_BUTTON:
+        {
+            pawsStringPromptWindow::Create("Enter local filename", "", false, 220, 20, this,
+                                           "SaveFileNameBox", 0, true);
             return true;
         }
         case WORK_LOCATION_BUTTON:
@@ -179,7 +186,7 @@ bool pawsScriptHiredNPCWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMod
     return false;
 }
 
-void pawsScriptHiredNPCWindow::OnStringEntered(const char* /*name*/, int /*param*/, const char* value)
+void pawsScriptHiredNPCWindow::OnStringEntered(const char* name, int /*param*/, const char* value)
 {
     const unsigned int MAX_SCRIPT_FILE_SIZE = 6000;
 
@@ -189,30 +196,52 @@ void pawsScriptHiredNPCWindow::OnStringEntered(const char* /*name*/, int /*param
         return;
 
     fileName.Format("/planeshift/userdata/scripts/%s", value);
-    if(!vfs->Exists(fileName))
+
+    if (strcmp(name,"LoadFileNameBox") == 0)
     {
-        psSystemMessage msg(0, MSG_ERROR, "File %s not found!", fileName.GetDataSafe());
+        if(!vfs->Exists(fileName))
+        {
+            psSystemMessage msg(0, MSG_ERROR, "File %s not found!", fileName.GetDataSafe());
+            msg.FireEvent();
+            return;
+        }
+        csRef<iDataBuffer> data = vfs->ReadFile(fileName);
+        if(data->GetSize() > MAX_SCRIPT_FILE_SIZE)
+        {
+            psSystemMessage msg(0, MSG_ERROR, "File too big, data trimmed to %d chars.", MAX_SCRIPT_FILE_SIZE);
+            msg.FireEvent();
+        }
+        csString newScript(data->GetData(), csMin(data->GetSize(), (size_t)MAX_SCRIPT_FILE_SIZE));
+        
+        newScript.ReplaceAll("\r\n", "\n");
+        script->SetText(newScript);
+        
+        SetVerified(false);
+        
+        PawsManager::GetSingleton().Publish("sigHiredScriptStatus", "Not verified.");
+        PawsManager::GetSingleton().Publish("sigHiredScriptError", "");
+        
+        psSystemMessage msg(0, MSG_ACK, "Script Loaded Successfully!");
         msg.FireEvent();
-        return;
     }
-    csRef<iDataBuffer> data = vfs->ReadFile(fileName);
-    if(data->GetSize() > MAX_SCRIPT_FILE_SIZE)
+    else if (strcmp(name,"SaveFileNameBox") == 0)
     {
-        psSystemMessage msg(0, MSG_ERROR, "File too big, data trimmed to %d chars.", MAX_SCRIPT_FILE_SIZE);
+        csString newScript = script->GetText();
+        newScript.ReplaceAll("\n", "\r\n");
+
+        if (!vfs->WriteFile(fileName,newScript.GetDataSafe(),
+                            strlen(newScript.GetDataSafe())))
+        {
+            psSystemMessage msg(0, MSG_ERROR, "Failed to write file.");
+            msg.FireEvent();
+        }
+        else
+        {
+        psSystemMessage msg(0, MSG_ACK, "Script Saved Successfully!");
         msg.FireEvent();
+            
+        }
     }
-    csString newScript(data->GetData(), csMin(data->GetSize(), (size_t)MAX_SCRIPT_FILE_SIZE));
-
-    newScript.ReplaceAll("\r\n", "\n");
-    script->SetText(newScript);
-
-    SetVerified(false);
-
-    PawsManager::GetSingleton().Publish("sigHiredScriptStatus", "Not verified.");
-    PawsManager::GetSingleton().Publish("sigHiredScriptError", "");
-
-    psSystemMessage msg(0, MSG_ACK, "Script Loaded Successfully!");
-    msg.FireEvent();
 }
 
 bool pawsScriptHiredNPCWindow::OnChange(pawsWidget* widget)

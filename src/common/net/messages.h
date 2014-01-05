@@ -6007,7 +6007,7 @@ public:
                             const char* script);
 
     /** Constructor.
-     *  For commands CHECK_WORK_LOCATION.
+     *  For commands CHECK_WORK_LOCATION (From Server to NPC Client).
      */
     psHiredNPCScriptMessage(uint32_t client, uint8_t command, EID hiredEID,
                             const char* locationType, const char* locationName);

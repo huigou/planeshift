@@ -278,14 +278,16 @@ bool HireSession::GetTempWorkLocationValid()
 
 int HireSession::ApplyScript()
 {
+    /*
     csString parsed(script);
 
     csString npcReplacement(hiredNPC->GetName());
     npcReplacement += ":";
 
     parsed.ReplaceAll("NPC:",npcReplacement);
-
-    return psserver->GetQuestManager()->ParseQuestScript(-1,parsed);
+    return psserver->GetQuestManager()->ParseQuestScript(-1, parsed);
+    */
+    return psserver->GetQuestManager()->ParseCustomScript(-1, hiredNPC->GetName(), script);
 }
 
 
