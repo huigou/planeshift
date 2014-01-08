@@ -820,7 +820,7 @@ NpcTrigger* NPCDialogDict::AddTrigger(const char* k_area,const char* mytrigger,i
         NpcTrigger* newtrig = new NpcTrigger;
 
         newtrig->id              = 0;
-        newtrig->area            = temp_k_area.Downcase();
+        newtrig->area            = temp_k_area;
         newtrig->trigger         = mytrigger;
         newtrig->priorresponseID = prior_response;
         CS_ASSERT(trigger_response != -1);
@@ -1623,7 +1623,8 @@ bool CheckTraining(gemNPC* who, Client* target, psSkillInfo* skill)
     if(character->GetProgressionPoints() <= 0)
     {
         csString str;
-        csString downcase = skill->name.Downcase();
+        csString downcase = skill->name;
+        downcase.Downcase();
         str.Format("You don't have any progression points to be trained in %s, Sorry",downcase.GetData());
         who->Say(str,target,false,timeDelay);
         return false;
@@ -1633,7 +1634,8 @@ bool CheckTraining(gemNPC* who, Client* target, psSkillInfo* skill)
     if(skill->price > character->Money())
     {
         csString str;
-        csString downcase = skill->name.Downcase();
+        csString downcase = skill->name;
+        downcase.Downcase();
         str.Format("Sorry, but I see that you don't have enough money to be trained in %s",downcase.GetData());
         who->Say(str,target,false,timeDelay);
         return false;
@@ -1642,7 +1644,8 @@ bool CheckTraining(gemNPC* who, Client* target, psSkillInfo* skill)
     if(!character->CanTrain(skill->id))
     {
         csString str;
-        csString downcase = skill->name.Downcase();
+        csString downcase = skill->name;
+        downcase.Downcase();
         str.Format("You can't train %s higher yet",downcase.GetData());
         who->Say(str,target,false,timeDelay);
         return false;
@@ -1679,7 +1682,8 @@ public:
         character->SetMoney(character->Money()-skill->price);
         character->Train(skill->id,1);
 
-        csString downcase = skill->name.Downcase();
+        csString downcase = skill->name;
+        downcase.Downcase();
         psserver->SendSystemInfo(target->GetClientNum(), "You've received some %s training", downcase.GetData());
     }
 
