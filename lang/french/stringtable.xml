@@ -535,7 +535,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="New" trans="Nouveau" />
   <item orig="New Account" trans="Nouveau Compte" />
   <item orig="New Character" trans="Nouveau Personnage" />
-  <item orig="New User? Register at http://planeshift.teamix.org/register" trans="Nouvel Utilisateur? Enregistrez vous sur: http://planeshift.teamix.org/register" />
+  <item orig="New User? Register at http://www.planeshift.it/account/create" trans="Nouvel Utilisateur? Enregistrez vous sur: http://www.planeshift.it/account/create" />
   <item orig="New petition from " trans="Nouvelle pétition de " />
   <item orig="Next" trans="Suivant." />
   <item orig="Next Icon (PgDn)" trans="Icône suivant" />
