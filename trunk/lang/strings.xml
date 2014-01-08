@@ -852,7 +852,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <string name="Join default channel">Join default channel</string>
   <string name="Don&apos;t show this window again">Don&apos;t show this window again</string>
   <string name="Loading world">Loading world</string>
-  <string name="New User? Register at http://planeshift.teamix.org/register">New User? Register at http://planeshift.teamix.org/register</string>
+  <string name="New User? Register at http://www.planeshift.it/account/create">New User? Register at http://www.planeshift.it/account/create</string>
   <string name="Quests">Quests</string>
   <string name="Please wait for verification from server">Please wait for verification from server</string>
   <string name="Scale Font:">Scale Font:</string>
