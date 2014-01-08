@@ -39,11 +39,8 @@ of you named " trans=" Devant vous se trouve un dénommé
   <item orig="&gt;" trans="" />
   <item orig="?" trans="?" />
   <item orig="? Weight" trans="? Poids" />
-  <item orig="A full name is required, the first &amp; last name separated with a space. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters.
-The name should follow the rules here:
-http://www.planeshift.it/naming.html 
-If your name is inappropriate, a Game Master (GM) will change it." trans="Un Nom complet est nécessaire, le prénom et le nom sont séparés par un espace. Vous pouvez utiliser les lettres (A-Z) mais pas les chiffres. Le nom doit faire entre  3 and 27 lettres de long. Pour plus de précision sur les règles applicables aux noms des personnages voir :
-http://www.planeshift.it/naming.html.
+  <item orig="A full name is required, the first &amp; last name separated with a space. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters. 
+If your name is inappropriate, a Game Master (GM) will change it." trans="Un Nom complet est nécessaire, le prénom et le nom sont séparés par un espace. Vous pouvez utiliser les lettres (A-Z) mais pas les chiffres. Le nom doit faire entre  3 and 27 lettres de long.
 Si votre nom s&apos;avère inapproprié, un Maître du Jeu le changera." />
   <item orig="ALL" trans="TOUT" />
   <item orig="Accept trade" trans="Accepter la transaction" />
@@ -538,7 +535,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <item orig="New" trans="Nouveau" />
   <item orig="New Account" trans="Nouveau Compte" />
   <item orig="New Character" trans="Nouveau Personnage" />
-  <item orig="New User? Register at http://laanx.fragnetics.com/register" trans="Nouvel Utilisateur? Enregistrez vous sur: http://laanx.fragnetics.com/register" />
+  <item orig="New User? Register at http://planeshift.teamix.org/register" trans="Nouvel Utilisateur? Enregistrez vous sur: http://planeshift.teamix.org/register" />
   <item orig="New petition from " trans="Nouvelle pétition de " />
   <item orig="Next" trans="Suivant." />
   <item orig="Next Icon (PgDn)" trans="Icône suivant" />
