@@ -573,7 +573,6 @@ of you named ]]></string>
   <string name="NPC Owned">NPC Owned</string>
   <string name="View item">View item</string>
   <string name="Confirmations">Confirmations</string>
-  <string name='at &quot;http://wiki.services.openoffice.org/wiki/Dictionaries&quot; and'>at &quot;http://wiki.services.openoffice.org/wiki/Dictionaries&quot; and</string>
   <string name="Flat">Flat</string>
   <string name="Unmute Player">Unmute Player</string>
   <string name="Online only">Online only</string>
@@ -659,10 +658,8 @@ of you named ]]></string>
   <string name="Receive:">Receive:</string>
   <string name="Read Book">Read Book</string>
   <string name="Administrative banking">Administrative banking</string>
-  <string name="Before clicking next again, please make sure that your character name is not offensive and would be appropriate for a medieval setting. It must be unique and not similar to that of any real person or thing. Names in violation of this policy (www.planeshift.it/naming.html) will be changed by authorized people in-game.  The game forums can be found at:  http://www.hydlaa.com/smf/">Before clicking next again, please make sure that your character name is not offensive and would be appropriate for a medieval setting. It must be unique and not similar to that of any real person or thing. Names in violation of this policy (www.planeshift.it/naming.html) will be changed by authorized people in-game.  The game forums can be found at:  http://www.hydlaa.com/smf/</string>
-  <string name="A full name is required, the first &amp; last name separated with a space. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters.&#x0A;The name should follow the rules here:&#x0A;http://www.planeshift.it/naming.html &#x0A;If your name is inappropriate, a Game Master (GM) will change it."><![CDATA[A full name is required, the first & last name separated with a space. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters.
-The name should follow the rules here:
-http://www.planeshift.it/naming.html 
+  <string name="Before clicking next again, please make sure that your character name is not offensive and would be appropriate for a medieval setting. It must be unique and not similar to that of any real person or thing. The game forums can be found at:  http://www.hydlaa.com/smf/">Before clicking next again, please make sure that your character name is not offensive and would be appropriate for a medieval setting. It must be unique and not similar to that of any real person or thing. The game forums can be found at:  http://www.hydlaa.com/smf/</string>
+  <string name="A full name is required, the first &amp; last name separated with a space. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters.&#x0A; If your name is inappropriate, a Game Master (GM) will change it."><![CDATA[A full name is required, the first & last name separated with a space. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters.
 If your name is inappropriate, a Game Master (GM) will change it.]]></string>
   <string name="Please enter valid names for both parents">Please enter valid names for both parents</string>
   <string name="Enable execution of start-up scripts">Enable execution of start-up scripts</string>
@@ -855,7 +852,7 @@ To disable this feature delete everything in the window by using the Modify Desc
   <string name="Join default channel">Join default channel</string>
   <string name="Don&apos;t show this window again">Don&apos;t show this window again</string>
   <string name="Loading world">Loading world</string>
-  <string name="New User? Register at http://laanx.fragnetics.com/register">New User? Register at http://laanx.fragnetics.com/register</string>
+  <string name="New User? Register at http://planeshift.teamix.org/register">New User? Register at http://planeshift.teamix.org/register</string>
   <string name="Quests">Quests</string>
   <string name="Please wait for verification from server">Please wait for verification from server</string>
   <string name="Scale Font:">Scale Font:</string>

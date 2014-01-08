@@ -134,8 +134,6 @@
   <item orig="Please enter a first name" trans="" />
   <item orig="You currently have no petitions." trans="Al momento non hai petizioni." />
   <item orig="A first and last name are required. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters.
-The name should follow the rules here:
-http://www.planeshift.it/naming.html 
 If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Edit Mode (F2)" trans="" />
   <item orig="Lock/Unlock" trans="" />
@@ -616,7 +614,6 @@ Changing the language can be done ONLY in the PlaneShift Launcher. To do this yo
   <item orig="NPC Owned" trans="" />
   <item orig="View item" trans="" />
   <item orig="Confirmations" trans="" />
-  <item orig="at &quot;http://wiki.services.openoffice.org/wiki/Dictionaries&quot; and" trans="" />
   <item orig="Flat" trans="" />
   <item orig="Please enter a last name" trans="" />
   <item orig="Unmute Player" trans="" />
@@ -705,10 +702,8 @@ Changing the language can be done ONLY in the PlaneShift Launcher. To do this yo
   <item orig="Receive:" trans="Ricevi:" />
   <item orig="Read Book" trans="Leggi Libro" />
   <item orig="Administrative banking" trans="" />
-  <item orig="Before clicking next again, please make sure that your character name is not offensive and would be appropriate for a medieval setting. It must be unique and not similar to that of any real person or thing. Names in violation of this policy (www.planeshift.it/naming.html) will be changed by authorized people in-game.  The game forums can be found at:  http://www.hydlaa.com/smf/" trans="" />
+  <item orig="Before clicking next again, please make sure that your character name is not offensive and would be appropriate for a medieval setting. It must be unique and not similar to that of any real person or thing. The game forums can be found at:  http://www.hydlaa.com/smf/" trans="" />
   <item orig="A full name is required, the first &amp; last name separated with a space. You can use any alphabetic (A-Z) in your name, but no numbers. Each name must be between 3 and 27 letters.
-The name should follow the rules here:
-http://www.planeshift.it/naming.html 
 If your name is inappropriate, a Game Master (GM) will change it." trans="" />
   <item orig="Please enter valid names for both parents" trans="" />
   <item orig="Enable execution of start-up scripts" trans="" />
@@ -916,7 +911,7 @@ If you want to check this, you need to close this client, and relaunch PlaneShif
   <item orig="Join default channel" trans="" />
   <item orig="Don&apos;t show this window again" trans="" />
   <item orig="Loading world" trans="Caricamento mondo" />
-  <item orig="New User? Register at http://laanx.fragnetics.com/register" trans="Nuovo utente? Vai su: http://laanx.fragnetics.com/register" />
+  <item orig="New User? Register at http://planeshift.teamix.org/register" trans="Nuovo utente? Vai su: http://planeshift.teamix.org/register" />
   <item orig="Quests" trans="" />
   <item orig="Please wait for verification from server" trans="Prego attendere la verifica dal server" />
   <item orig="Scale Font:" trans="" />

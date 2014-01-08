@@ -25,11 +25,11 @@
             <!-- <bgcolour r="255" g="127" b="40" /> -->
         </widget>
 
-         <!-- Message: intended for new players "New User? Register at http://www.planeshift.it/register.html" -->
+         <!-- Message: intended for new players "New User? Register at http://www.planeshift.it/account/create" -->
         <widget name="message" factory="pawsMultiLineTextBox" visible="yes">
             <frame x="200" y="115" width="600" height="25" border="no" />
             <font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" size="10" resizetoscreen="yes" />
-            <text string="New User? Register at http://www.planeshift.it/register.html" horizAdjust="CENTRE" />
+            <text string="New User? Register at http://www.planeshift.it/account/create" horizAdjust="CENTRE" />
             <!-- <bgcolour r="255" g="127" b="40" /> -->
         </widget>
 
