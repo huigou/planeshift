@@ -33,10 +33,11 @@
 
 const char* psTrait::locationString[] = {"NONE","FACE","HAIR_STYLE","BEARD_STYLE","HAIR_COLOR","SKIN_TONE","ITEM", "EYE_COLOR"};
 
-psTrait::psTrait()
+psTrait::psTrait():
+    uid(0),next_trait_uid(0),next_trait(NULL),raceID(0),race(0),gender(PSCHARACTER_GENDER_NONE),
+    location(PSTRAIT_LOCATION_NONE),cstr_id_mesh(0),cstr_id_material(0),cstr_id_texture(0),
+    onlyNPC(false)
 {
-    uid=0;
-    location=PSTRAIT_LOCATION_NONE;
 }
 
 psTrait::~psTrait()

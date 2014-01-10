@@ -6,7 +6,8 @@
 #include "psres.h"
 #include "psresmngr.h"
 
-psTemplateRes::psTemplateRes()
+psTemplateRes::psTemplateRes():
+    mngr(NULL)
 {
 }
 

@@ -34,7 +34,8 @@
  * volumes, fading parameters
  */
 
-SoundHandle::SoundHandle (SoundSystemManager* manager)
+SoundHandle::SoundHandle (SoundSystemManager* manager):
+    sndCtrl(NULL), preset_volume(false), fade_volume(0.0f), callbackobject(NULL)
 {
     fade = 0;
     fade_stop = false;
@@ -43,6 +44,7 @@ SoundHandle::SoundHandle (SoundSystemManager* manager)
     sndstream = NULL;
     hasCallback = false;
     this->manager = manager;
+    callbackfunction = NULL;
 }
 
 SoundHandle::~SoundHandle ()

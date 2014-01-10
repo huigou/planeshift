@@ -42,7 +42,8 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsSpellBookWindow::pawsSpellBookWindow()
+pawsSpellBookWindow::pawsSpellBookWindow():
+    spellList(NULL),spellDescription(NULL),spellImage(NULL)
 {
     selectedSpell.Clear();
 }

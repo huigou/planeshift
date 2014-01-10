@@ -37,7 +37,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-pawsCharBirth::pawsCharBirth()
+pawsCharBirth::pawsCharBirth():
+    cpBox(NULL),months(NULL),days(NULL)
 {
     createManager = psengine->GetCharManager()->GetCreation();
     lastSiblingsChoice = -1;
