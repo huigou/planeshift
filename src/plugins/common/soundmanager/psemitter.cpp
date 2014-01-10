@@ -46,16 +46,22 @@ psEmitter::psEmitter()
 psEmitter::psEmitter(psEmitter* const &emitter)
 {
     // FIXME, this copy constructor is incomplete
-    resource = csString(emitter->resource);
-    maxvol = emitter->maxvol;
+    resource = emitter->resource;
     minvol = emitter->minvol;
+    maxvol = emitter->maxvol;
+    fadedelay = emitter->fadedelay;
     minrange = emitter->minrange;
     maxrange = emitter->maxrange;
     probability = emitter->probability;
+    factory_prob = emitter->factory_prob;
+    loop = emitter->loop;
+    position = emitter->position;
+    direction = emitter->direction;
+    active = false; // Do not set the emitter as active
     dopplerEffect = emitter->dopplerEffect;
     timeofday = emitter->timeofday;
     timeofdayrange = emitter->timeofdayrange;
-    loop = emitter->loop;
+    handle = NULL; // Handle created when activated
 }
 
 psEmitter::~psEmitter()

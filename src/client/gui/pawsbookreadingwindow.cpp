@@ -45,6 +45,21 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
+pawsBookReadingWindow::pawsBookReadingWindow():
+    name(NULL),description(NULL),descriptionRight(NULL),descriptionCraft(NULL),
+    descriptionCraftRight(NULL),writeButton(NULL),saveButton(NULL),nextButton(NULL),
+    prevButton(NULL),shouldWrite(false),slotID(0),containerID(0),usingCraft(false),
+    numPages(0)
+{
+
+}
+
+pawsBookReadingWindow::~pawsBookReadingWindow()
+{
+    
+}
+
+
 bool pawsBookReadingWindow::PostSetup()
 {
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_READ_BOOK);

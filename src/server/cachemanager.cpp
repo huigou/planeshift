@@ -1871,6 +1871,10 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
 //}
 //printf( "----------\n" );
 
+    if(!sortedArray)
+    {
+        return false;
+    }
 
 
     psTradeTransformations*    t = sortedArray->Get(0);
@@ -1984,7 +1988,9 @@ bool CacheManager::DescribeMultiTransformation(csPDelArray<psTradeTransformation
         newArray->Push(craftInfo);
     }
     else
+    {
         delete craftInfo;
+    }
 
     return true;
 }

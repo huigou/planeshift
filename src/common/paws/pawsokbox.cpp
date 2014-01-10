@@ -34,7 +34,8 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-pawsOkBox::pawsOkBox()
+pawsOkBox::pawsOkBox():
+    text(NULL)
 {
     okButton  = 0;
     notify = 0;

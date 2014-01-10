@@ -30,8 +30,8 @@ class pawsMultiLineTextBox;
 class pawsBookReadingWindow : public pawsWidget, public psClientNetSubscriber
 {
 public:
-    pawsBookReadingWindow(){};
-    virtual ~pawsBookReadingWindow() {};
+    pawsBookReadingWindow();
+    virtual ~pawsBookReadingWindow();
 
     bool PostSetup();
 

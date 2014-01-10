@@ -92,7 +92,9 @@ void SetColumnText(pawsListBoxRow* row, int colNum, const csString & text)
 *                        class pawsMerchantWindow
 *
 ******************************************************************************/
-pawsMerchantWindow::pawsMerchantWindow()
+pawsMerchantWindow::pawsMerchantWindow():
+    merchantID(0),tradeCommand(0),selectedItem(0),
+    categoryBox(NULL),itemsBox(NULL),trias(NULL)
 {
 }
 
