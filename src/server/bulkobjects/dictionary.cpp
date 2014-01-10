@@ -663,7 +663,9 @@ NpcResponse* NPCDialogDict::AddResponse(const char* response_text,
     while(end != resp.Length())
     {
         while(start < resp.Length() && (resp.GetAt(start) == ']' || resp.GetAt(start) == ' '))
+        {
             start++;
+        }
         if(start == resp.Length())
             break;
 
@@ -673,9 +675,13 @@ NpcResponse* NPCDialogDict::AddResponse(const char* response_text,
             end = resp.FindFirst("[.!?",end+1); //checks if we have a space after (to avoid problems with !!! ... ???)
         }
         if(end == SIZET_NOT_FOUND)
+        {
             end = resp.Length();
+        }
         if(end < resp.Length() && (resp.GetAt(end)=='.' || resp.GetAt(end) == '!' || resp.GetAt(end) == '?'))  // include the period in this substring
+        {
             end++;
+        }
 
         if(end-start > 0)
         {
@@ -742,9 +748,13 @@ NpcResponse* NPCDialogDict::AddResponse(const char* response_text,
 
     newresp->quest = quest;
     if(quest && quest->GetPrerequisite())
+    {
         newresp->prerequisite = quest->GetPrerequisite()->Copy();
+    }
     else
+    {
         newresp->prerequisite = NULL;
+    }
 
     if(opStr.Length() > 8)
     {
@@ -752,7 +762,9 @@ NpcResponse* NPCDialogDict::AddResponse(const char* response_text,
         opStr.Append("</response>");
     }
     else
+    {
         opStr.Clear();
+    }
     newresp->ParseResponseScript(opStr.GetDataSafe());
 
     responses.Put(newresp->id, newresp);

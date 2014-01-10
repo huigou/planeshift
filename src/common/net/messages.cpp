@@ -6238,7 +6238,8 @@ psWriteBookMessage::psWriteBookMessage(uint32_t clientNum, csString &title, bool
     msg->Add(success);
 }
 
-psWriteBookMessage::psWriteBookMessage(MsgEntry* me)
+psWriteBookMessage::psWriteBookMessage(MsgEntry* me):
+    slotID(0), containerID(0), success(false)
 {
     messagetype = me->GetUInt8();
     switch(messagetype)

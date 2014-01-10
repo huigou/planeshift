@@ -498,13 +498,25 @@ bool pawsLoginWindow::LoadServerList()
         int port;
         csRef<iDocumentAttribute> portAttr = node->GetAttribute("port");
         if (portAttr != NULL)
+        {
             port = portAttr->GetValueAsInt();
+        }
         else
+        {
             port = 13331;
-        psServerPinger * server = new psServerPinger(node->GetAttributeValue( "name" ),
-                                                     node->GetAttributeValue( "description"),
-                                                     node->GetAttributeValue( "ip" ),
-                                                     port,
+        }
+
+        csString name = node->GetAttributeValue( "name" );
+        csString description = node->GetAttributeValue( "description");
+        csString ip = node->GetAttributeValue( "ip" );
+
+        if (name.IsEmpty() || ip.IsEmpty())
+        {
+            Error1("Failed to read entry from server file. Skipping bad entry...");
+            continue;
+        }
+
+        psServerPinger * server = new psServerPinger(name, description, ip, port,
                                                      PawsManager::GetSingleton().GetObjectRegistry());
         servers.Push( server );
     }
