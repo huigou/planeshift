@@ -74,10 +74,10 @@ protected:
      *  @return the line number of the parse error if any.
      */
     int  PreParseQuestScript(psQuest* mainQuest,const char* script);
-    void CutOutParenthesis(csString &response, csString &within,char start_char,char end_char);
+    void CutOutParenthesis(csString &response, csString &within,char start_char,char end_char) const;
 
     bool GetResponseText(csString &block,csString &response,csString &file_path,
-                         csString &him, csString &her, csString &it, csString &them);
+                         csString &him, csString &her, csString &it, csString &them) const;
     bool BuildTriggerList(csString &block,csStringArray &list) const;
 
     bool BuildMenu(const csString &block,const csStringArray &list, psQuest* quest, NpcDialogMenu* menu) const;

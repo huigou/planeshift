@@ -4351,9 +4351,6 @@ public:
     /// indicates if the slot should be cleared
     bool clearSlot;
 
-    /// The destination client for this message.
-    int to;
-
     /// The EID for the container we're updating.
     EID containerID;
 

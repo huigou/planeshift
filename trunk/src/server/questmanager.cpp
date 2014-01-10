@@ -1517,7 +1517,7 @@ bool QuestManager::BuildMenu(const csString &block,const csStringArray &list, ps
 
 
 
-void QuestManager::CutOutParenthesis(csString &response, csString &within,char start_char,char end_char)
+void QuestManager::CutOutParenthesis(csString &response, csString &within,char start_char,char end_char) const
 {
     // now look for error msg in parenthesis
     size_t start = response.FindLast(start_char);
@@ -1539,7 +1539,7 @@ void QuestManager::CutOutParenthesis(csString &response, csString &within,char s
 
 
 bool QuestManager::GetResponseText(csString &block,csString &response,csString &file_path,
-                                   csString &him, csString &her, csString &it, csString &them)
+                                   csString &him, csString &her, csString &it, csString &them) const
 {
     size_t start;
     csString pron;
