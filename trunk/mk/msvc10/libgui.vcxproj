@@ -1368,6 +1368,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\client\gui\pawscharparents.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawscharpick.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawschild.cpp" />
+    <ClCompile Include="..\..\src\client\gui\pawsconfigactivemagic.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigautoexec.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigcamera.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigchat.cpp" />
@@ -1459,6 +1460,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\client\gui\pawscharparents.h" />
     <ClInclude Include="..\..\src\client\gui\pawscharpick.h" />
     <ClInclude Include="..\..\src\client\gui\pawschild.h" />
+    <ClInclude Include="..\..\src\client\gui\pawsconfigactivemagic.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigautoexec.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigcamera.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigchat.h" />

@@ -1771,6 +1771,9 @@
 				RelativePath="..\..\src\client\gui\pawschild.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigactivemagic.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigautoexec.cpp">
 			</File>
 			<File
@@ -2040,6 +2043,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawschild.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigactivemagic.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigautoexec.h">
