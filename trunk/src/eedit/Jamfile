@@ -52,6 +52,7 @@ STATIC.PLUGINLIST =
   nullmesh
   particles
   particlesldr
+  posteffect
   ptanimimg
   ptpdlight
   reporter

@@ -80,6 +80,7 @@ STATIC.PLUGINLIST =
   nullmeshldr
   particles
   particlesldr
+  posteffect
   ptanimimg
   ptpdlight
   reporter
