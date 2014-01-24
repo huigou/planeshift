@@ -1139,7 +1139,7 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
     script->aim = top->GetAttributeValue("aim");
     script->name = name;
     script->type = type;
-
+    script->image = top->GetAttributeValue("image");
     if(duration)
         script->duration = MathExpression::Create(duration);
 
@@ -1269,7 +1269,7 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
     CS_ASSERT(target);
 
     csTicks dticks = duration ? (csTicks) duration->Evaluate(env) : 0;
-    ActiveSpell* asp = new ActiveSpell(name, type, dticks);
+    ActiveSpell* asp = new ActiveSpell(name, type, dticks, image);
 
     csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
     while(it.HasNext())

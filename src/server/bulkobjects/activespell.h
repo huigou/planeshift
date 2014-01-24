@@ -69,6 +69,7 @@ class ActiveSpell : public CS::Utility::WeakReferenced
 {
 public:
     ActiveSpell(const csString &name, SPELL_TYPE type, csTicks duration);
+    ActiveSpell(const csString &name, SPELL_TYPE type, csTicks duration, const csString &image);
     ~ActiveSpell() { }
 
     // These are only used by progression scripts, for loading/initializing it.
@@ -117,6 +118,7 @@ public:
         return registrationTime;
     }
     void SetImage(csString imageName);
+    csString GetImage();
 
     /**
      * If Cancel() returns true, you're responsible for freeing the ActiveSpell's memory.
