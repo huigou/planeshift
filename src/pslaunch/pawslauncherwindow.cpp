@@ -344,6 +344,7 @@ void pawsLauncherWindow::HandleAspectRatio(csString ratio)
     }
     else if(ratio == "16:9")
     {
+        resolution->NewOption("2560x1440");
         resolution->NewOption("1920x1080");
         resolution->NewOption("1366x768");
         resolution->NewOption("1280x720");
