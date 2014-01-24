@@ -4446,13 +4446,16 @@ void gemActor::AddActiveSpell(ActiveSpell* asp)
     }
     activeSpells.Push(asp);
 
-    psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(asp->Name());
-    csString   image;
-    if(lspell)
+    if( asp->GetImage().IsEmpty() )
     {
-        image = lspell->GetImage();
+        psSpell*   lspell = psserver->GetCacheManager()->GetSpellByName(asp->Name());
+        csString   image;
+        if(lspell)
+        {
+            image = lspell->GetImage();
+        }
+        asp->SetImage(image);
     }
-    asp->SetImage(image);
 
     psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
     outgoing.SendMessage();

@@ -105,6 +105,7 @@ protected:
     csString aim;               ///< name of the MathScript var to aim at
     csString name;              ///< the name of the spell
     csString description;       ///< textual representation of the effect
+    csString image;             ///< graphical representation of the effect
     MathExpression* duration;   ///< an embedded MathExpression
     csPDelArray<AppliedOp> ops; ///< all the sub-operations
 };
