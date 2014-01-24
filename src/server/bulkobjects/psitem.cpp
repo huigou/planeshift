@@ -3190,7 +3190,7 @@ bool psItem::SendContainerContents(Client* client, int containerID)
 {
     csString itemCategory, itemInfo;
 
-    // If item is looked send standard item description unless GM
+    // If item is locked, send standard item description unless GM
     if(GetIsLocked())
     {
         if(client->GetSecurityLevel() < GM_LEVEL_2)
@@ -3531,6 +3531,12 @@ bool psItem::SendActionContents(Client* client, psActionLocation* action)
     if(action == NULL)
         return false;
 
+    if(GetIsContainer())
+    {
+        SendContainerContents(client, gItem->GetEID().Unbox());
+        return true;
+    }
+
     //if(GetIsLocked())
     //    return SendItemDescription(client);
 
@@ -3544,33 +3550,9 @@ bool psItem::SendActionContents(Client* client, psActionLocation* action)
         desc = description.GetData();
     }
 
-    if(GetIsContainer())
-    {
-        psViewContainerDescription outgoing(client->GetClientNum(),
-                                            name,
-                                            desc,
-                                            icon,
-                                            0);
+    psViewItemDescription outgoing(client->GetClientNum(), name, desc, icon, 0);
+    outgoing.SendMessage();
 
-        outgoing.containerID = gItem->GetEID().Unbox();
-
-        outgoing.maxContainerSlots = GetContainerMaxSlots();
-
-        FillContainerMsg(client, outgoing);
-        outgoing.ConstructMsg(psserver->GetCacheManager()->GetMsgStrings());
-
-        outgoing.SendMessage();
-    }
-    else
-    {
-        psViewItemDescription outgoing(client->GetClientNum(),
-                                       name,
-                                       desc,
-                                       icon,
-                                       0);
-
-        outgoing.SendMessage();
-    }
     return true;
 }
 
