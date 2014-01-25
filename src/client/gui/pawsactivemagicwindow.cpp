@@ -29,6 +29,7 @@
 
 // PAWS INCLUDES
 #include "pawsactivemagicwindow.h"
+#include "pawsconfigactivemagic.h"
 #include "paws/pawslistbox.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawscheckbox.h"
@@ -101,10 +102,12 @@ bool pawsActiveMagicWindow::PostSetup()
     // If no active magic, hide the window.
     if(buffList->GetSize() < 1 && showWindow->GetState() == false)
     {
+        show=false;
         showWindow->Hide();
     }
     else
     {
+        show=true;
         showWindow->Show();
     }
 
@@ -116,7 +119,6 @@ bool pawsActiveMagicWindow::PostSetup()
 
 bool pawsActiveMagicWindow::Setup(iDocumentNode* node)
 {
-    useImages  = true;
 
     if(node->GetAttributeValue("name") && strcmp("ActiveMagicWindow", node->GetAttributeValue("name"))==0)
     {
@@ -241,6 +243,14 @@ void pawsActiveMagicWindow::AutoResize()
         return;
     }
 
+// if width>screenwidth, width=screenwidth
+// if height>screenheight, height=screenheight
+// if left edge < 0, left edge = 0
+// if top edge < 0, top edge = 0
+// if left edge + width > screenwidth,
+//        left edge = screenwidth - width
+// if top edge + height > screenheight, top edge  = screenheight - height
+
     if(Orientation == ScrollMenuOptionHORIZONTAL)
     {
         buffSize = buffList->AutoResize();
@@ -285,6 +295,30 @@ void pawsActiveMagicWindow::AutoResize()
 void pawsActiveMagicWindow::Close()
 {
     Hide();
+}
+
+void pawsActiveMagicWindow::Show()
+{
+    pawsConfigActiveMagic* configWindow;
+
+    configWindow = (pawsConfigActiveMagic*)PawsManager::GetSingleton().FindWidget("ConfigActiveMagic");
+    if( configWindow ) {
+        configWindow->SetMainWindowVisible( true );
+    }
+
+    pawsControlledWindow::Show();
+}
+
+void pawsActiveMagicWindow::Hide()
+{
+    pawsConfigActiveMagic* configWindow;
+
+    configWindow = (pawsConfigActiveMagic*)PawsManager::GetSingleton().FindWidget("ConfigActiveMagic");
+    if( configWindow ) {
+        configWindow->SetMainWindowVisible( false );
+    }
+
+    pawsControlledWindow::Hide();
 }
 
 bool pawsActiveMagicWindow::LoadSetting()

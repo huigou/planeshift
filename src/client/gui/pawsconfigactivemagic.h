@@ -29,7 +29,7 @@
 #include "paws/pawscombo.h"
 #include "pawsconfigwindow.h"
 #include "util/psxmlparser.h"
-#include "shortcutwindow.h"
+#include "pawsactivemagicwindow.h"
 #include "paws/pawscrollbar.h"
 
 
@@ -61,31 +61,20 @@ public:
     virtual void SetDefault();
 
     void PickText( int index, int size );
+    void SetMainWindowVisible( bool status );
 
 
 protected:
 
-    pawsScrollBar*         buttonHeight;
-    pawsRadioButtonGroup*  buttonWidthMode;
-    pawsScrollBar*         buttonWidth;
+    pawsActiveMagicWindow* ActiveMagicWindow;
 
-    pawsRadioButtonGroup*  editLockMode;
+    pawsRadioButtonGroup*  showEffects;
 
-    pawsRadioButtonGroup*  leftScroll;
-    pawsRadioButtonGroup*  rightScroll;
-    pawsRadioButtonGroup*  enableScrollBar;
+    pawsCheckBox*          autoResize;
+    pawsCheckBox*          useImages;
+    pawsCheckBox*          showWindow;
 
-    pawsCheckBox*          buttonBackground;
-    pawsCheckBox*          healthAndMana;
-
-    pawsComboBox*          textFont;
-    pawsScrollBar*         textSize;
-    pawsScrollBar*         textSpacing;
-
-    pawsWidget*            ShortcutMenu;
-    pawsScrollMenu*        MenuBar;
-
-    bool loaded;
+    bool                   loaded;
 
 };
 
