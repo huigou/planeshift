@@ -77,8 +77,8 @@
 		    <subscribe data="fVitalValue3:Self" />
 		</subscriptions>
 	    </widget>
-
 	</widget>
+
 <!-- -->
 
 <!-- custom defined controls
@@ -115,6 +115,7 @@
                 <attach point="ATTACH_TOP" />
             </attachpoints>
         </widget>
+
 -->
 
 
@@ -151,7 +152,7 @@
 
 
 <!-- The button editing subwidget. nothing configurable here. -->
-    <widget name="ShortcutEdit" factory="pawsWidget" visible="no" savepositions="no" movable="yes"
+    <widget name="ShortcutEdit" factory="pawsWidget" visible="no" savepositions="yes" movable="yes"
             resizable="yes" configurable="no" keepaspect="no" style="New Standard GUI">
 
         <frame x="30" y="30" width="330" height="280" border="yes" visible="yes" />
