@@ -158,7 +158,7 @@
         <frame x="30" y="30" width="330" height="280" border="yes" visible="yes" />
 
         <title resource="Scaling Title Bar" text="Edit Shortcut..." align="left" close_button="yes" />
-        <minframe width="300" height="200" />
+        <minframe width="330" height="280" />
 
         <widget name="Infobox1" factory="pawsTextBox" style="Header Font">
             <frame x="20" y="7" width="60" height="20" />
