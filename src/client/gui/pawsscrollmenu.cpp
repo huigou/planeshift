@@ -723,11 +723,11 @@ bool pawsScrollMenu::RemoveByName(csString name)
 
 bool pawsScrollMenu::Clear()
 {
-    for(size_t i=0; i<ButtonHolder->GetChildrenCount(); i++)
+    for(size_t i=ButtonHolder->GetChildrenCount(); i>0; i--)
     {
         pawsWidget*    match = NULL;
 
-        match=ButtonHolder->GetChild(i);
+        match=ButtonHolder->GetChild(i-1);
         ButtonHolder->RemoveChild(match);
         Buttons.DeleteIndex(i);
     }
