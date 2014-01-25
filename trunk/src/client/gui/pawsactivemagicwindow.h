@@ -52,6 +52,8 @@ public:
     void OnResize();
 
     virtual void Close();
+    virtual void Hide();
+    virtual void Show();
 
     /** Loads the configuration file
     *   @return true if no errors and false if errors
@@ -69,6 +71,11 @@ public:
       */
     pawsCheckBox*    showWindow;
 
+    bool useImages,
+         autoResize,
+         showEffects,
+         show;   ///<true==show spell & item effects; false==show spell effects but not item effects
+
 private:
 
     pawsScrollMenu*  buffList;
@@ -76,13 +83,6 @@ private:
 
     pawsConfigPopup* configPopup;  ///<This is used to point to a instance of ConfigPopup
 
-    /** If true, show active magic window
-     *  if false, don't show this window
-     */
-    bool show,
-         useImages,
-         autoResize,
-         showEffects;   ///<true==show spell & item effects; false==show spell effects but not item effects
     int  Orientation;
 
 
