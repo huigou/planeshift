@@ -655,8 +655,13 @@ int main(int argc, char* argv[])
                 updaterThread->Start();
 
                 // Request needed plugins for GUI.
-                csInitializer::RequestPlugins(object_reg, CS_REQUEST_FONTSERVER, CS_REQUEST_IMAGELOADER,
-                        CS_REQUEST_OPENGL3D, CS_REQUEST_END);
+                csInitializer::RequestPlugins(object_reg,
+                        CS_REQUEST_FONTSERVER,
+                        CS_REQUEST_IMAGELOADER,
+                        CS_REQUEST_OPENGL3D,
+                        CS_REQUEST_ENGINE,
+                        CS_REQUEST_LEVELLOADER,
+                        CS_REQUEST_END);
 
                 infoShare->SetCurrentClientVersion(engine->GetCurrentClientVersion());
 
