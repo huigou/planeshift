@@ -43,13 +43,13 @@
 //////////////////////////////////////////////////////////////////////
 
 pawsActiveMagicWindow::pawsActiveMagicWindow() :
-    buffList(NULL),
-    lastIndex(0),
-    configPopup(NULL),
-    show(true),
     useImages(true),
     autoResize(true),
-    showEffects(false)
+    showEffects(false),
+    show(true),
+    buffList(NULL),
+    lastIndex(0),
+    configPopup(NULL)
 {
     OnResize(); //get orientation set correctly
 }
