@@ -1257,7 +1257,8 @@ void psEngine::QuitClient()
 
 void psEngine::Disconnect()
 {
-    netmanager->Disconnect();
+    if (netmanager)
+        netmanager->Disconnect();
 }
 
 //----------------------------------------------------------------------------
