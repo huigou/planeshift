@@ -144,17 +144,14 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromCli
 
     psCharacter* chr = fromClient->GetCharacterData();
 
-    psItem* parentItem=NULL;
-    gemContainer* worldContainer=NULL;
-
     gemObject* obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
-    worldContainer = dynamic_cast<gemContainer*>(obj);
+    gemContainer* worldContainer = dynamic_cast<gemContainer*>(obj);
     if(!worldContainer)
     {
         Error2("Couldn't find any CEL entity id %d.", containerEntityID);
         return;
     }
-    parentItem = worldContainer->GetItem();
+    psItem* parentItem = worldContainer->GetItem();
     if(!parentItem)
     {
         Error2("No parent container item found for worldContainer %d.", containerEntityID);
@@ -191,9 +188,10 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromCli
 
     psserver->GetWorkManager()->StopWork(fromClient, itemProposed);
 
+    uint32 to_containerEntityID;
     if(msg.toContainer > 100)
     {
-        containerEntityID = msg.toContainer;
+        to_containerEntityID = msg.toContainer;
         msg.toContainer   = CONTAINER_GEM_OBJECT;
     }
 
@@ -211,27 +209,24 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromCli
                 psserver->SendSystemError(fromClient->GetClientNum(), "You may not put a container in a container.");
                 return;
             }
-            psItem* parentItem = NULL;
-            worldContainer = NULL;
 
-            gemObject* obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
-            worldContainer = dynamic_cast<gemContainer*>(obj);
-            if(!worldContainer)
+            gemObject* obj = gemSupervisor->FindObject(EID(to_containerEntityID)); // CEL id assigned
+            gemContainer* to_worldContainer = dynamic_cast<gemContainer*>(obj);
+            if(!to_worldContainer)
             {
-                Error2("Couldn't find any CEL entity id %d.", containerEntityID);
+                Error2("Couldn't find any CEL entity id %d.", to_containerEntityID);
                 return;
             }
 
-            parentItem = worldContainer->GetItem();
-
-            if(!parentItem)
+            psItem* to_parentItem = to_worldContainer->GetItem();
+            if(!to_parentItem)
             {
-                Error2("No parent container item found for worldContainer %d.", containerEntityID);
+                Error2("No parent container item found for worldContainer %d.", to_containerEntityID);
                 return;
             }
-            if(!parentItem->GetIsContainer())
+            if(!to_parentItem->GetIsContainer())
             {
-                Error2("Cannot put item into another item %s.\n", parentItem->GetName());
+                Error2("Cannot put item into another item %s.\n", to_parentItem->GetName());
                 return;
             }
 
@@ -241,18 +236,16 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromCli
             psItem* newItem = NULL;
 
             csString reason;
-            if(worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot, reason))
+            if(to_worldContainer->CanAdd(msg.stackCount, itemProposed, msg.toSlot, reason))
             {
                 newItem = worldContainer->RemoveFromContainer(itemProposed, msg.fromSlot,fromClient, msg.stackCount);
-
-                //if (!worldContainer->RemoveFromContainer(itemProposed,fromClient) )
                 if(!newItem)
                 {
                     Error1("Can not delete item from container");
                     return;
                 }
 
-                if(!worldContainer->AddToContainer(newItem, fromClient, msg.toSlot))
+                if(!to_worldContainer->AddToContainer(newItem, fromClient, msg.toSlot))
                 {
                     Error2("Bad container slot %i when trying to add items to container", msg.toSlot);
                     return;
@@ -261,7 +254,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromCli
             else
             {
                 psserver->SendSystemError(fromClient->GetClientNum(), "Item cannot be added to that container"+reason+".");
-                parentItem->SendContainerContents(fromClient, containerEntityID);
+                parentItem->SendContainerContents(fromClient, to_containerEntityID);
                 return;
             }
 
@@ -276,10 +269,10 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromCli
 
             if(newItem)
             {
-                psserver->GetWorkManager()->StartAutoWork(fromClient, worldContainer, newItem, newItem->GetStackCount());
+                psserver->GetWorkManager()->StartAutoWork(fromClient, to_worldContainer, newItem, newItem->GetStackCount());
             }
 
-            parentItem->SendContainerContents(fromClient, containerEntityID);
+            parentItem->SendContainerContents(fromClient, to_containerEntityID);
 
             break;
         }
