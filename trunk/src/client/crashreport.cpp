@@ -117,8 +117,6 @@ class BreakPadWrapper
 {
 public:
 		BreakPadWrapper() {
-fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
-
 
 #ifdef WIN32
 		int pathLen = GetTempPathW(0, NULL);
@@ -140,8 +138,6 @@ fprintf( stderr, "**** BreakPadWrapper initializing ****\n" );
 
     static const PS_CHAR* tempPath = "/tmp";
 	descriptor = MinidumpDescriptor(tempPath);
-
-	//fprintf( stderr, "****BreakpadWrapper descriptor location = %x  \n", &descriptor);
 
 	wrapperCrash_handler = new ExceptionHandler(descriptor,
 					NULL,
