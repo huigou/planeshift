@@ -71,12 +71,27 @@ public:
       */
     pawsCheckBox*    showWindow;
 
+    void SetUseImages( bool setting );
+    bool GetUseImages();
+
+    void SetAutoResize( bool setting );
+    bool GetAutoResize();
+
+    void SetShowEffects( bool setting );
+    bool GetShowEffects();
+
+    void SetShowWindow( bool setting );
+    bool GetShowWindow();
+
+private:
+
+    csRef<iVFS> vfs;
+
     bool useImages,
          autoResize,
          showEffects,
          show;   ///<true==show spell & item effects; false==show spell effects but not item effects
 
-private:
 
     pawsScrollMenu*  buffList;
     uint32_t         lastIndex;    ///<Version number of the last list received

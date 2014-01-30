@@ -104,10 +104,10 @@ bool pawsConfigActiveMagic::PostSetup()
 
 bool pawsConfigActiveMagic::LoadConfig()
 {
-    useImages->SetState( ActiveMagicWindow->useImages ); 
-    autoResize->SetState( ActiveMagicWindow->autoResize ); 
-    showEffects->SetActive( ActiveMagicWindow->showEffects?"itemAndSpell":"spellOnly" ); 
-    autoResize->SetState( ActiveMagicWindow->showWindow ); 
+    useImages->SetState( ActiveMagicWindow->GetUseImages() ); 
+    autoResize->SetState( ActiveMagicWindow->GetAutoResize() ); 
+    showEffects->SetActive( ActiveMagicWindow->GetShowEffects()?"itemAndSpell":"spellOnly" ); 
+    showWindow->SetState( ActiveMagicWindow->IsVisible() ); 
 
     loaded= true;
     dirty = false;
@@ -158,8 +158,8 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
     {
         case 1000 : //spell effects only
         {
-            ActiveMagicWindow->showEffects=0;
-            if( ActiveMagicWindow->autoResize )
+            ActiveMagicWindow->SetShowEffects(false);
+            if( ActiveMagicWindow->GetAutoResize() )
             {
                 ActiveMagicWindow->AutoResize();
             }
@@ -168,8 +168,8 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
 
         case 1001 : //Item and spell effects
         {
-            ActiveMagicWindow->showEffects=1;
-            if( ActiveMagicWindow->autoResize )
+            ActiveMagicWindow->SetShowEffects(true);
+            if( ActiveMagicWindow->GetAutoResize() )
             {
                 ActiveMagicWindow->AutoResize();
             }
@@ -178,8 +178,8 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
 
         case 1002 : // use icons (true) or text (false)?
         {
-            ActiveMagicWindow->useImages=useImages->GetState();
-            if( ActiveMagicWindow->autoResize )
+            ActiveMagicWindow->SetUseImages(useImages->GetState());
+            if( ActiveMagicWindow->GetAutoResize() )
             {
                 ActiveMagicWindow->AutoResize();
             }
@@ -188,8 +188,8 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
 
         case 1003 : // auto- or manual sizing
         {
-            ActiveMagicWindow->autoResize=autoResize->GetState();
-            if( ActiveMagicWindow->autoResize )
+            ActiveMagicWindow->SetAutoResize(autoResize->GetState());
+            if( ActiveMagicWindow->GetAutoResize() )
             {
                 ActiveMagicWindow->AutoResize();
             }
@@ -198,9 +198,9 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
 
         case 1004 : // enable or disable the window
         {
-            ActiveMagicWindow->show=showWindow->GetState();
+            ActiveMagicWindow->SetShowWindow(showWindow->GetState());
             pawsWidget* widget = PawsManager::GetSingleton().FindWidget( "ActiveMagicWindow" );
-            if( ActiveMagicWindow->show )
+            if( ActiveMagicWindow->GetShowWindow() )
             {
                 widget->Show();
             }

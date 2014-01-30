@@ -51,6 +51,8 @@ pawsActiveMagicWindow::pawsActiveMagicWindow() :
     lastIndex(0),
     configPopup(NULL)
 {
+    vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+
     OnResize(); //get orientation set correctly
 }
 
@@ -194,6 +196,12 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
             }
     	    rowEntry.PushBack(incoming.name[i]);
     
+	    if( incoming.image[i] == "none" )
+	    {
+	        //do not show any icon or text in activemagic window - this suppresses display of things like potions or etc.
+	        continue;
+	    }
+	    
             if(useImages)
             {
                 csRef<iPawsImage> image;
@@ -324,47 +332,83 @@ void pawsActiveMagicWindow::Hide()
 bool pawsActiveMagicWindow::LoadSetting()
 {
     csRef<iDocument> doc;
-    csRef<iDocumentNode> root,activeMagicNode, activeMagicOptionsNode;
-    csString option;
+    csRef<iDocumentNode> root,mainNode, optionNode;
+    csString fileName;
+    fileName = "/planeshift/userdata/options/configactivemagic.xml";
 
-    doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_ACTIVEMAGIC_FILE_NAME);
-    if(doc == NULL)
+    if(!vfs->Exists(fileName))
     {
-        //load the default configuration file in case the user one fails (missing or damaged)
-        doc = ParseFile(psengine->GetObjectRegistry(), CONFIG_ACTIVEMAGIC_FILE_NAME_DEF);
-        if(doc == NULL)
-        {
-            Error2("Failed to parse file %s", CONFIG_ACTIVEMAGIC_FILE_NAME_DEF);
-            return false;
-        }
+       return false; //no saved config to load.
     }
 
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(), fileName);
+    if(doc == NULL)
+    {
+        Error2("pawsActiveMagicWindow::LoadUserPrefs Failed to parse file %s", fileName.GetData());
+        return false;
+    }
     root = doc->GetRoot();
     if(root == NULL)
     {
-        Error1("activemagic_def.xml or activemagic.xml has no XML root");
+        Error2("pawsActiveMagicWindow::LoadUserPrefs : %s has no XML root",fileName.GetData());
+        return false;
+    }
+    mainNode = root->GetNode("activemagic");
+    if(mainNode == NULL)
+    {
+        Error2("pawsActiveMagicWindow::LoadUserPrefs %s has no <activemagic> tag",fileName.GetData());
         return false;
     }
 
-    activeMagicNode = root->GetNode("activemagic");
-    if(activeMagicNode == NULL)
+    optionNode = mainNode->GetNode("useImages");
+    if(optionNode != NULL)
     {
-        Error1("activemagic_def.xml or activemagic.xml has no <activemagic> tag");
-        return false;
-    }
-
-    // Load options for Active Magic Window
-    activeMagicOptionsNode = activeMagicNode->GetNode("activemagicoptions");
-    if(activeMagicOptionsNode != NULL)
-    {
-        csRef<iDocumentNodeIterator> oNodes = activeMagicOptionsNode->GetNodes();
-        while(oNodes->HasNext())
+        if( strcasecmp( "yes",  optionNode->GetAttributeValue("on") )==0 )
         {
-            csRef<iDocumentNode> option = oNodes->Next();
-            csString nodeName(option->GetValue());
+            SetUseImages( true );
+        }
+        else
+        {
+            SetUseImages( false );
+        }
+    }
 
-            if(nodeName == "showWindow")
-                showWindow->SetState(!option->GetAttributeValueAsBool("value"));
+    optionNode = mainNode->GetNode("autoResize");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "yes",  optionNode->GetAttributeValue("on") )==0 )
+        {
+            SetAutoResize( true );
+        }
+        else
+        {
+            SetAutoResize( false );
+        }
+    }
+
+    optionNode = mainNode->GetNode("showEffects");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "itemAndSpell",  optionNode->GetAttributeValue("active") )==0 )
+        {
+            SetShowEffects( true );
+        }
+        else
+        {
+            SetShowEffects( false );
+        }
+    }
+
+    optionNode = mainNode->GetNode("showWindow");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "yes",  optionNode->GetAttributeValue("on") )==0 )
+        {
+            SetShowWindow( true );
+        }
+        else
+        {
+            SetShowWindow( false );
         }
     }
 
@@ -373,22 +417,42 @@ bool pawsActiveMagicWindow::LoadSetting()
 
 void pawsActiveMagicWindow::SaveSetting()
 {
-    csRef<iFile> file;
-    file = psengine->GetVFS()->Open(CONFIG_ACTIVEMAGIC_FILE_NAME,VFS_FILE_WRITE);
+}
 
-    csRef<iDocumentSystem> docsys;
-    docsys.AttachNew(new csTinyDocumentSystem());
+void pawsActiveMagicWindow::SetShowEffects( bool setting ) 
+{
+    showEffects=setting;
+}
+bool pawsActiveMagicWindow::GetShowEffects()
+{
+    return showEffects;
+}
 
-    csRef<iDocument> doc = docsys->CreateDocument();
-    csRef<iDocumentNode> root,defaultRoot, activeMagicNode, activeMagicOptionsNode, showWindowNode;
+void pawsActiveMagicWindow::SetUseImages( bool setting ) 
+{
+    useImages=setting;
+}
+bool pawsActiveMagicWindow::GetUseImages()
+{
+    return useImages;
+}
 
-    root = doc->CreateRoot();
 
-    activeMagicNode = root->CreateNodeBefore(CS_NODE_ELEMENT, 0);
-    activeMagicNode->SetValue("activemagic");
+void pawsActiveMagicWindow::SetAutoResize( bool setting ) 
+{
+    autoResize=setting;
+}
+bool pawsActiveMagicWindow::GetAutoResize()
+{
+    return autoResize;
+}
 
-    activeMagicOptionsNode = activeMagicNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
-    activeMagicOptionsNode->SetValue("activemagicoptions");
-
-    doc->Write(file);
+void pawsActiveMagicWindow::SetShowWindow( bool setting ) 
+{
+    show=setting;
+    showWindow->SetState(setting);
+}
+bool pawsActiveMagicWindow::GetShowWindow()
+{
+    return show;
 }

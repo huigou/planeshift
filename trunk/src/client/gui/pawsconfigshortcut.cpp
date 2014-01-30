@@ -70,7 +70,6 @@ bool pawsConfigShortcut::Initialize()
 
 bool pawsConfigShortcut::PostSetup()
 {
-fprintf( stderr, "pawsConfigShortcut::PostSetup starts\n" );
 //get pointers to Shortcut Menu and its Menu Bar
     psMainWidget*   Main    = psengine->GetMainWidget();
     if( Main==NULL )
@@ -184,13 +183,11 @@ fprintf( stderr, "pawsConfigShortcut::PostSetup starts\n" );
     textSpacing->SetMaxValue(20);
 
 
-fprintf( stderr, "pawsConfigShortcut::PostSetup ends\n" );
     return true;
 }
 
 bool pawsConfigShortcut::LoadConfig()
 {
-fprintf( stderr, "pawsConfigShortcut::LoadConfig starts\n" );
 
         buttonHeight->SetCurrentValue( MenuBar->GetButtonHeight() );
         if( MenuBar->GetButtonWidth()==0 )
@@ -278,7 +275,6 @@ fprintf( stderr, "pawsConfigShortcut::LoadConfig starts\n" );
     {
         //const char * buttonFontName = MenuBar->GetButtonFontName();
 const char * buttonFontName = ((pawsShortcutWindow*)ShortcutMenu)->GetFontName();
-fprintf( stderr, "pawsConfigShortcut::LoadConfig found font %s\n", buttonFontName);
         if( strcmp( buttonFontName, "/planeshift/data/ttf/LiberationSans-Regular.ttf")==0 || strcmp( buttonFontName, "/this/data/ttf/LiberationSans-Regular.ttf")==0 )
         {
             textFont->Select(0);
@@ -311,14 +307,12 @@ fprintf( stderr, "pawsConfigShortcut::LoadConfig found font %s\n", buttonFontNam
 
     loaded= true;
     dirty = false;
-fprintf( stderr, "pawsConfigShortcut::LoadConfig ends\n" );
     return true;
 }
 
 bool pawsConfigShortcut::SaveConfig()
 {
 
-fprintf(stderr, "pawsConfigShortcut::SaveConfig starts\n" );
     csString xml;
     xml = "<shortcut>\n";
     xml.AppendFmt("<buttonHeight value=\"%d\" />\n",
@@ -349,21 +343,17 @@ fprintf(stderr, "pawsConfigShortcut::SaveConfig starts\n" );
 
     dirty = false;
 
-fprintf(stderr, "pawsConfigShortcut::SaveConfig ends\n" );
     return psengine->GetVFS()->WriteFile("/planeshift/userdata/options/configshortcut.xml",
                                          xml,xml.Length());
 }
 
 void pawsConfigShortcut::SetDefault()
 {
-fprintf( stderr, "pawsConfigShortcut::SetDefault starts\n" );
     LoadConfig();
-fprintf( stderr, "pawsConfigShortcut::SetDefault ends\n" );
 }
 
 bool pawsConfigShortcut::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
 {
-fprintf( stderr, "pawsConfigShortcut::OnScroll starts\n" );
     //dirty = true;
 
     if(wdg == buttonWidth && loaded)
@@ -404,13 +394,11 @@ fprintf( stderr, "pawsConfigShortcut::OnScroll starts\n" );
     MenuBar->LayoutButtons();
     MenuBar->OnResize();
     ((pawsShortcutWindow*)ShortcutMenu)->Draw();
-fprintf( stderr, "pawsConfigShortcut::OnScroll ends\n" );
     return true;
 }
 
 bool pawsConfigShortcut::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget* wdg)
 {
-fprintf( stderr, "pawsConfigShortcut::OnButtonPressed starts\n" );
 
     dirty = true;
 
@@ -546,7 +534,6 @@ fprintf( stderr, "pawsConfigShortcut::OnButtonPressed starts\n" );
         SaveConfig();    
     }
 
-fprintf( stderr, "pawsConfigShortcut::OnButtonPressed ends\n" );
     return true;
 }
 
@@ -612,19 +599,15 @@ void pawsConfigShortcut::OnListAction(pawsListBox* selected, int status)
 
 void pawsConfigShortcut::Show()
 {
-fprintf( stderr,"pawsConfigShortcut::Show starts\n" );
     pawsWidget::Show();
-fprintf( stderr,"pawsConfigShortcut::Show ends\n" );
 }
 
 void pawsConfigShortcut::Hide()
 {
-fprintf( stderr,"pawsConfigShortcut::Hide starts\n" );
     if(dirty)
     {
     }
 
     pawsWidget::Hide();
-fprintf( stderr,"pawsConfigShortcut::Hide end\n" );
 }
 
