@@ -60,7 +60,6 @@ public:
     */
     bool LoadSetting();
 
-    ///Saves the configuration file
     void SaveSetting();
 
     void AutoResize();

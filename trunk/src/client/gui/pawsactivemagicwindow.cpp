@@ -113,8 +113,7 @@ bool pawsActiveMagicWindow::PostSetup()
         showWindow->Show();
     }
 
-    if(!LoadSetting())
-        return false;
+    LoadSetting();
 
     return true;
 }
