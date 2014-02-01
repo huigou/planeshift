@@ -51,9 +51,8 @@ pawsConfigActiveMagic::pawsConfigActiveMagic() :
 
 bool pawsConfigActiveMagic::Initialize()
 {
-    if ( ! LoadFromFile("configactivemagic.xml"))
-        return false;
-
+    LoadFromFile("configactivemagic.xml");
+    //note : if the config files doesn't exist yet it's not an error
     return true;
 }
 

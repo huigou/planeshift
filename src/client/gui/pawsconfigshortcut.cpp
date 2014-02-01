@@ -62,9 +62,7 @@ pawsConfigShortcut::pawsConfigShortcut() :
 
 bool pawsConfigShortcut::Initialize()
 {
-    if ( ! LoadFromFile("configshortcut.xml"))
-        return false;
-
+    LoadFromFile("configshortcut.xml");
     return true;
 }
 
