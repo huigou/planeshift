@@ -272,7 +272,7 @@ void SlotManager::MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromCli
                 psserver->GetWorkManager()->StartAutoWork(fromClient, to_worldContainer, newItem, newItem->GetStackCount());
             }
 
-            parentItem->SendContainerContents(fromClient, to_containerEntityID);
+            to_parentItem->SendContainerContents(fromClient, to_containerEntityID);
 
             break;
         }
