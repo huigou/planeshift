@@ -746,7 +746,7 @@ void psActionLocation::SetupGameboard(csRef<iDocumentNode> boardNode)
 //
 // Script example:
 // <Examine>
-//   <Script="mechanisms" Param0="lavacave_mvrock01" Param1="0,10,0" Param2="" />
+//   <Script name="mechanisms" Param0="lavacave_mvrock01" Param1="0,20,0" Param2="" />
 //   <Description> This mechanism seems made by dwarven hands</Description>
 // </Examine>
 void psActionLocation::SetupScript(csRef<iDocumentNode> scriptNode)
