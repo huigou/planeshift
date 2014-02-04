@@ -499,9 +499,9 @@ bool psItem::Load(iResultRow &row)
     }
 
     //load the modifiers of this item
-    AddLootModifier(row.GetUInt32("prefix"),0);
-    AddLootModifier(row.GetUInt32("suffix"),1);
-    AddLootModifier(row.GetUInt32("adjective"),2);
+    AddLootModifier(row.GetUInt32("prefix"), psGMSpawnMods::ITEM_PREFIX);
+    AddLootModifier(row.GetUInt32("suffix"), psGMSpawnMods::ITEM_SUFFIX);
+    AddLootModifier(row.GetUInt32("adjective"), psGMSpawnMods::ITEM_ADJECTIVE);
 
     //then apply them.
     psserver->GetCacheManager()->ApplyItemModifiers(current_stats, itemModifiers, modifierIds);
@@ -852,9 +852,9 @@ void psItem::Commit(bool children)
 
 
     //saves the modifiers applied to this item. for now 3 due to how the schema is done.
-    targetQuery->AddField("prefix",modifierIds.Get(0));
-    targetQuery->AddField("suffix",modifierIds.Get(1));
-    targetQuery->AddField("adjective",modifierIds.Get(2));
+    targetQuery->AddField("prefix",modifierIds.Get(psGMSpawnMods::ITEM_PREFIX));
+    targetQuery->AddField("suffix",modifierIds.Get(psGMSpawnMods::ITEM_SUFFIX));
+    targetQuery->AddField("adjective",modifierIds.Get(psGMSpawnMods::ITEM_ADJECTIVE));
 
     if(GetUID()==0)
     {

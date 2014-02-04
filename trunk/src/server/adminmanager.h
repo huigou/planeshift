@@ -4292,6 +4292,14 @@ protected:
     void SendSpawnItems(MsgEntry* me, Client* client);
 
     /**
+     * Sends item modifiers of the specified type to the GMs client.
+     *
+     * @param me The incoming message from the GM
+     * @param client The GM client the command came from.
+     */
+    void SendSpawnMods(MsgEntry* me, Client* client);
+
+    /**
      * Changes the name of a guild.
      *
      * @param me The incoming message from the GM

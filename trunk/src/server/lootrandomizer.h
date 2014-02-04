@@ -32,6 +32,7 @@ class RandomizedOverlay;
 struct LootModifier
 {
     uint32_t id;                       ///< The id assigned to this modifier in the db. It's referenced by psitem.
+    uint32_t mod_id;                   ///< The modifier position ID
     csString modifier_type;            ///< The type of modifier (suffix, prefix, adjective)
     csString name;                     ///< The part of name which this modifier will add when used. The position is determined by modifier_type
     csString effect;                   ///< Declares modifiers to some stats like weight, weapon speed, resistance/attack types.
@@ -43,7 +44,10 @@ struct LootModifier
     csString mesh;                     ///< The mesh this modifier will use for the random item generated.
     csString icon;                     ///< The icon this modifier will use for the random item generated.
     csString not_usable_with;          ///< Defines which modifiers this isn't usable with.
-    csHash<bool, uint32> itemRestrain; ///< Contains if the itemid is allowed or not. item id 0 means all items, false means disallowed.
+    csHash<bool, uint32_t> itemRestrain; ///< Contains if the itemid is allowed or not. item id 0 means all items, false means disallowed.
+
+    // Return true if this modifier is allowed with the given item stats ID.
+    bool IsAllowed(uint32_t itemID);
 };
 
 /**
@@ -99,6 +103,24 @@ public:
      * @return A pointer to the loot modifier which is referenced by the id we were searching for.
      */
     LootModifier* GetModifier(uint32_t id);
+ 
+    /**
+     * Gets a loot modifier from it's id.
+     *
+     * @param id The id of the basic item stats we are searching for.
+     * @param mods The list of modifiers returned
+     * @return True if the array was filled in.
+     */
+    bool GetModifiers(uint32_t itemID, csArray<psGMSpawnMods::ItemModifier>& mods);
+
+    /**
+     * Validates and sets the loot modifiers with the given ids.
+     *
+     * @param item The item instance being modified.
+     * @param mods The ids of the item modifiers to set.
+     * @return A pointer to the modified item.
+     */
+    psItem* SetModifiers(psItem* item, csArray<uint32_t>& mods);
 
     /**
      * This randomizes the current loot item and returns the item with the modifiers applied.

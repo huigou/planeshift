@@ -1,6 +1,6 @@
 <widget_description>
     <widget name="GMSpawnWindow" factory="pawsGMSpawnWindow" visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI">
-        <frame x="150" y="100" width="700" height="500" border="yes" />
+        <frame x="150" y="100" width="700" height="560" border="yes" />
         <title resource="Scaling Title Bar" text="GM Spawn interface" align="left" close_button="yes"/>
 
 
@@ -129,6 +129,21 @@
 
         <widget name="imagename" factory="pawsTextBox" visible="no" tooltip="Name of the pic">
             <frame x="310" y="470" width="380" height="20" border="no" />
+            <text string="none"/>
+        </widget>
+
+        <widget name="adjective" factory="pawsTextBox" visible="no" tooltip="Adjective item modifier">
+            <frame x="310" y="490" width="380" height="20" border="no" />
+            <text string="none"/>
+        </widget>
+
+        <widget name="prefix" factory="pawsTextBox" visible="no" tooltip="Prefix item modifier">
+            <frame x="310" y="510" width="380" height="20" border="no" />
+            <text string="none"/>
+        </widget>
+
+        <widget name="suffix" factory="pawsTextBox" visible="no" tooltip="Suffix item modifier">
+            <frame x="310" y="530" width="380" height="20" border="no" />
             <text string="none"/>
         </widget>
     </widget>

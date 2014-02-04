@@ -6960,6 +6960,85 @@ csString psGMSpawnTypes::ToString(NetBase::AccessPointers* /*accessPointers*/)
 
 //---------------------------------------------------------------------------
 
+PSF_IMPLEMENT_MSG_FACTORY(psGMSpawnGetMods, MSGTYPE_GMSPAWNGETMODS);
+
+psGMSpawnGetMods::psGMSpawnGetMods(const char *itemname)
+{
+    msg.AttachNew(new MsgEntry(strlen(itemname) + 1));
+
+    msg->SetType(MSGTYPE_GMSPAWNGETMODS);
+    msg->Add(itemname);
+}
+
+psGMSpawnGetMods::psGMSpawnGetMods(MsgEntry* me)
+{
+    item = me->GetStr();
+}
+
+csString psGMSpawnGetMods::ToString(NetBase::AccessPointers* /*accessPointers*/)
+{
+    csString msgtext;
+
+    msgtext.AppendFmt("Get Item Modifiers: %s", item.GetDataSafe());
+    return msgtext;
+}
+
+//---------------------------------------------------------------------------
+
+PSF_IMPLEMENT_MSG_FACTORY(psGMSpawnMods, MSGTYPE_GMSPAWNMODS);
+
+psGMSpawnMods::psGMSpawnMods(uint32_t client, csArray<ItemModifier>& imods)
+{
+    size_t size = sizeof(uint32_t); // For array size count
+    for(size_t i = 0; i < imods.GetSize(); i++)
+    {
+        size += strlen(imods[i].name) + 1;
+        size += sizeof(uint32_t) * 2;
+    }
+
+    msg.AttachNew(new MsgEntry(size));
+
+    msg->SetType(MSGTYPE_GMSPAWNMODS);
+    msg->clientnum = client;
+    msg->Add((uint32_t)imods.GetSize());
+    for(size_t i = 0; i < imods.GetSize(); i++)
+    {
+        msg->Add(imods[i].name);
+        msg->Add(imods[i].id);
+        msg->Add(imods[i].type);
+    }
+}
+
+psGMSpawnMods::psGMSpawnMods(MsgEntry* me)
+{
+    unsigned int length = me->GetUInt32();
+    for(unsigned int i = 0; i < length; i++)
+    {
+        struct ItemModifier mod;
+        mod.name = me->GetStr();
+        mod.id = me->GetUInt32();
+        mod.type = me->GetUInt32();
+        mods.Push(mod);
+    }
+}
+
+csString psGMSpawnMods::ToString(NetBase::AccessPointers* /*accessPointers*/)
+{
+    csString msgtext;
+
+    msgtext.AppendFmt("Item Modifiers: ");
+
+    for(size_t i = 0; i < mods.GetSize(); i++)
+    {
+        msgtext.AppendFmt("'%s' %u %u, ",
+                mods[i].name.GetDataSafe(), mods[i].id, mods[i].type);
+    }
+
+    return msgtext;
+}
+
+//---------------------------------------------------------------------------
+
 PSF_IMPLEMENT_MSG_FACTORY(psGMSpawnItem,MSGTYPE_GMSPAWNITEM);
 
 psGMSpawnItem::psGMSpawnItem(const char* item,
@@ -6976,9 +7055,15 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                              bool NPCOwned,
                              bool pickupableWeak,
                              bool random,
-                             float quality
+                             float quality,
+                             csArray<uint32_t>* mods
                             )
 {
+    size_t modsize = 1;
+    if (mods)
+    {
+        modsize += mods->GetSize() * sizeof(uint32_t);
+    }
     msg.AttachNew(new MsgEntry(
                       strlen(item) +1    // item
                       + sizeof(uint32_t) // count
@@ -6995,6 +7080,7 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
                       + sizeof(bool)     // random
                       + sizeof(float)    // quality
                       + sizeof(bool)     // pickupableWeak
+                      + modsize          // item modifiers
                   ));
 
     msg->SetType(MSGTYPE_GMSPAWNITEM);
@@ -7014,6 +7100,16 @@ psGMSpawnItem::psGMSpawnItem(const char* item,
     msg->Add(random);
     msg->Add(quality);
     msg->Add(pickupableWeak);
+    if (mods)
+    {
+        msg->Add((uint8_t)mods->GetSize());
+        for (size_t i = 0; i < mods->GetSize(); i++)
+            msg->Add(mods->Get(i));
+    }
+    else
+    {
+        msg->Add((uint8_t)0);
+    }
 }
 
 psGMSpawnItem::psGMSpawnItem(MsgEntry* me)
@@ -7040,13 +7136,21 @@ psGMSpawnItem::psGMSpawnItem(MsgEntry* me)
     {
         pickupableWeak = true;
     }
+    if(!me->IsEmpty())
+    {
+        mods.SetSize(me->GetUInt8());
+        for (size_t i = 0; i < mods.GetSize(); i++)
+        {
+            mods[i] = me->GetUInt32();
+        }
+    }
 }
 
 csString psGMSpawnItem::ToString(NetBase::AccessPointers* /*accessPointers*/)
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s Random: %s Unpickable: %s SettingItem: %s NPC Owned: %s Transient: %s Quality %f pickupable Weak %s",
+    msgtext.AppendFmt("Item: '%s' Count: %d Lockable: %s, Is %s, Skill: '%s' Str: %d Pickupable: %s Collidable: %s Random: %s Unpickable: %s SettingItem: %s NPC Owned: %s Transient: %s Quality %f pickupable Weak %s prefix %d suffix %d adjective %d",
                       item.GetDataSafe(),
                       count,
                       (lockable ? "True" : "False"),
@@ -7061,7 +7165,10 @@ csString psGMSpawnItem::ToString(NetBase::AccessPointers* /*accessPointers*/)
                       (NPCOwned ? "True" : "False"),
                       (Transient ? "True" : "False"),
                       quality,
-                      (pickupableWeak ? "True" : "False"));
+                      (pickupableWeak ? "True" : "False"),
+                      mods.GetSize() > 0 ? mods[0] : 0,
+                      mods.GetSize() > 1 ? mods[1] : 0,
+                      mods.GetSize() > 2 ? mods[2] : 0);
 
     return msgtext;
 }
