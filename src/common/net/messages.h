@@ -285,7 +285,10 @@ enum MSG_TYPES
     MSGTYPE_MECS_ACTIVATE,
     
     MSGTYPE_NPC_DELETED,
-    MSGTYPE_HIRED_NPC_SCRIPT
+    MSGTYPE_HIRED_NPC_SCRIPT,
+
+    MSGTYPE_GMSPAWNGETMODS,
+    MSGTYPE_GMSPAWNMODS
 };
 
 class psMessageCracker;
@@ -4888,6 +4891,64 @@ public:
     csArray<csString> types;
 };
 
+/*
+ * Request item modifiers for a given item.
+ */
+class psGMSpawnGetMods : public psMessageCracker
+{
+public:
+    psGMSpawnGetMods(const char *itemname);
+    psGMSpawnGetMods(MsgEntry* me);
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     *  Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
+
+    csString item;
+};
+
+/*
+ * Returns the list of item modifiers for the last request.
+ */
+class psGMSpawnMods : public psMessageCracker
+{
+public:
+    enum ItemModType {
+        ITEM_PREFIX,
+        ITEM_SUFFIX,
+        ITEM_ADJECTIVE,
+        ITEM_NUM_TYPES
+    };
+
+    struct ItemModifier
+    {
+        csString name;
+        uint32_t id;
+        uint32_t type;
+    };
+
+    psGMSpawnMods(uint32_t client, csArray<ItemModifier>& imods);
+    psGMSpawnMods(MsgEntry* me);
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     *  Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
+
+    csArray<ItemModifier> mods;
+};
+
 class psGMSpawnItem : public psMessageCracker
 {
 public:
@@ -4906,7 +4967,9 @@ public:
         bool NPCOwned,
         bool pickupableWeak,
         bool random = false,
-        float quality = 0.0f);
+        float quality = 0.0f,
+        csArray<uint32_t>* mods = 0
+        );
 
     psGMSpawnItem(MsgEntry* me);
 
@@ -4928,6 +4991,7 @@ public:
     int lstr;
     bool random;
     float quality;
+    csArray<uint32_t> mods;
 };
 
 class psLootRemoveMessage : public psMessageCracker

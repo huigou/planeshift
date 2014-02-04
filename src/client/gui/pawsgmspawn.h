@@ -19,14 +19,20 @@
 #ifndef PAWS_GMSPAWN_HEADER
 #define PAWS_GMSPAWN_HEADER
 
-#include "paws/pawswidget.h"
+#include "paws/pawstree.h"
 #include "psengine.h"
 
-class pawsSimpleTree;
 class pawsObjectView;
 class pawsTextBox;
 class pawsEditTextBox;
 class pawsCheckBox;
+class pawsModsWindow;
+
+class pawsItemTree : public pawsSimpleTree
+{
+public:
+    bool OnDoubleClick(int button, int modifiers, int x, int y);
+};
 
 class pawsGMSpawnWindow : public pawsWidget, public psClientNetSubscriber, public DelayedLoader
 {
@@ -36,6 +42,7 @@ public:
 
     bool PostSetup();
     void Show();
+    void Close();
     void HandleMessage(MsgEntry* me);
     bool OnSelected(pawsWidget* widget);
 
@@ -43,8 +50,10 @@ public:
 
     bool CheckLoadStatus();
 
+    void SetItemModifier(const char* name, uint32_t id, uint32_t type);
+
 private:
-    pawsSimpleTree*                 itemTree;
+    pawsItemTree*                   itemTree;
     pawsObjectView*                 objView;
     pawsWidget*                     itemImage;
     pawsTextBox*                    itemName;
@@ -65,6 +74,7 @@ private:
     pawsTextBox*                    factname;
     pawsTextBox*                    meshname;
     pawsTextBox*                    imagename;
+    pawsTextBox*                    modname[psGMSpawnMods::ITEM_NUM_TYPES];
 
     struct Item
     {
@@ -79,6 +89,8 @@ private:
     csString currentItem;
     bool loaded;
     csString factName;
+    csArray<uint32_t> mods;
+    pawsModsWindow* modwindow;
 };
 
 

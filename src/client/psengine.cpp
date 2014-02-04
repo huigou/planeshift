@@ -177,6 +177,7 @@ if (!myref)                                                  \
 #include "gui/pawspath.h"
 #include "gui/pawssummary.h"
 #include "gui/pawsgmgui.h"
+#include "gui/pawsmodswindow.h"
 #include "gui/pawsmoney.h"
 #include "gui/pawshelp.h"
 #include "gui/pawsbuddy.h"
@@ -845,6 +846,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory(pawsCreditsWindowFactory);
     RegisterFactory(pawsQuitInfoBoxFactory);
     RegisterFactory(pawsGMSpawnWindowFactory);
+    RegisterFactory(pawsModsWindowFactory);
     RegisterFactory(pawsSkillIndicatorFactory);
     RegisterFactory(pawsBookReadingWindowFactory);
     RegisterFactory(pawsWritingWindowFactory);
@@ -1453,6 +1455,7 @@ void psEngine::LoadGame()
             LoadPawsWidget("Character description window","chardescwindow.xml");
             LoadPawsWidget("Quest reward window",     "questrewardwindow.xml");
             LoadPawsWidget("GM Spawn interface",      "gmspawn.xml");
+            LoadPawsWidget("GM Spawn modifier",       "modswindow.xml");
             LoadPawsWidget("Active Magic window",     "activemagicwindow.xml");
             LoadPawsWidget("Small Inventory Window",  "smallinventory.xml");
             LoadPawsWidget("GM Action Location Edit", "gmaddeditaction.xml");
@@ -1486,6 +1489,7 @@ void psEngine::LoadGame()
             HideWindow("QuestRewardWindow");
             HideWindow("SpellCancelWindow");
             HideWindow("GMSpawnWindow");
+            HideWindow("ModsWindow");
             HideWindow("AddEditActionWindow");
             HideWindow("GmGUI");
             HideWindow("PetStatWindow");

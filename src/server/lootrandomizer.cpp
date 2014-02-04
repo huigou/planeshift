@@ -46,6 +46,36 @@
 #include "lootrandomizer.h"
 #include "scripting.h"
 
+bool LootModifier::IsAllowed(uint32_t itemID)
+{
+    // First check if the item is among the restraints.
+    if(itemRestrain.Contains(itemID))
+    {
+        // If it was found, we get it's result.
+        if(!itemRestrain.Get(itemID, false))
+        {
+            // If it was false, it means the item was disallowed.
+            return false;
+        }
+    }
+
+    // The second check is for the generic restraint (issued as itemID = 0)
+    // which says what is the default for this modifier when an itemID specific
+    // restraint is not found. If this isn't found either, the default will be
+    // to allow the modifier for the current item. Maintaining the previous
+    // behaviour.
+    else if(itemRestrain.Contains(0))
+    {
+        // If it was found, we get it's result.
+        if(!itemRestrain.Get(0, false))
+        {
+            // If it was false, it means unspecified items were disallowed.
+            return false;
+        }
+    }
+    return true;
+}
+
 LootRandomizer::LootRandomizer(CacheManager* cachemanager)
 {
     prefix_max = 0;
@@ -81,6 +111,7 @@ void LootRandomizer::AddLootModifier(LootModifier* entry)
 {
     if(entry->modifier_type.CompareNoCase("prefix"))
     {
+        entry->mod_id = psGMSpawnMods::ITEM_PREFIX;
         prefixes.Push(entry);
         if(entry->probability > prefix_max)
         {
@@ -89,6 +120,7 @@ void LootRandomizer::AddLootModifier(LootModifier* entry)
     }
     else if(entry->modifier_type.CompareNoCase("suffix"))
     {
+        entry->mod_id = psGMSpawnMods::ITEM_SUFFIX;
         suffixes.Push(entry);
         if(entry->probability > suffix_max)
         {
@@ -97,6 +129,7 @@ void LootRandomizer::AddLootModifier(LootModifier* entry)
     }
     else if(entry->modifier_type.CompareNoCase("adjective"))
     {
+        entry->mod_id = psGMSpawnMods::ITEM_ADJECTIVE;
         adjectives.Push(entry);
         if(entry->probability > adjective_max)
         {
@@ -116,18 +149,17 @@ void LootRandomizer::AddLootModifier(LootModifier* entry)
 psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTesting, size_t numModifiers)
 {
     uint32_t rand;
-    csString modifierType;
-    int modifierTypePos;
-    csArray< csString > selectedModifierTypes;
+    uint32_t modifierType;
+    csArray<uint32_t> selectedModifierTypes;
     float totalCost = item->GetBaseStats()->GetPrice().GetTrias();
     uint32 itemID = item->GetBaseStats()->GetUID();
 
     // Set up ModifierTypes
     // The Order of the modifiers is significant. It determines the priority of the modifiers, currently this is
     // Suffixes, Prefixes, Adjectives : So we add them in reverse order so the highest priority is applied last
-    selectedModifierTypes.Push("suffix");
-    selectedModifierTypes.Push("prefix");
-    selectedModifierTypes.Push("adjective");
+    selectedModifierTypes.Push(psGMSpawnMods::ITEM_SUFFIX);
+    selectedModifierTypes.Push(psGMSpawnMods::ITEM_PREFIX);
+    selectedModifierTypes.Push(psGMSpawnMods::ITEM_ADJECTIVE);
 
     // Determine Probability of number of modifiers ( 0-3 )
     if(!lootTesting)
@@ -153,11 +185,11 @@ psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTest
         {
             rand = psserver->rng->Get(99);   // Range of 0 - 98
             if(rand < 60)
-                selectedModifierTypes.Delete("suffix");   // higher chance to be removed. 60% chance
+                selectedModifierTypes.Delete(psGMSpawnMods::ITEM_SUFFIX);   // higher chance to be removed. 60% chance
             else if(rand < 85)
-                selectedModifierTypes.Delete("prefix");   // 25% chance
+                selectedModifierTypes.Delete(psGMSpawnMods::ITEM_PREFIX);   // 25% chance
             else
-                selectedModifierTypes.Delete("adjective");   // lower chance to be removed. 14% chance
+                selectedModifierTypes.Delete(psGMSpawnMods::ITEM_ADJECTIVE);   // lower chance to be removed. 14% chance
         }
     }
 
@@ -170,23 +202,20 @@ psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTest
         LootModifier* lootModifier = NULL;
         csArray<LootModifier*>* modifierList = NULL;
 
-        if(modifierType.CompareNoCase("prefix"))
+        if(modifierType == psGMSpawnMods::ITEM_PREFIX)
         {
             modifierList = &prefixes;
             max_probability=(int)prefix_max;
-            modifierTypePos = 0;
         }
-        else if(modifierType.CompareNoCase("suffix"))
+        else if(modifierType == psGMSpawnMods::ITEM_SUFFIX)
         {
             modifierList = &suffixes;
             max_probability=(int)suffix_max;
-            modifierTypePos = 1;
         }
-        else if(modifierType.CompareNoCase("adjective"))
+        else if(modifierType == psGMSpawnMods::ITEM_ADJECTIVE)
         {
             modifierList = &adjectives;
             max_probability=(int)adjective_max;
-            modifierTypePos = 2;
         }
         else
         {
@@ -203,32 +232,9 @@ psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTest
         probability = psserver->rng->Get(max_probability) + 1.0f;
         for(newModifier = (int)modifierList->GetSize() - 1; newModifier >= 0 ; newModifier--)
         {
-            //first of all check if the item is allowed to get this modifier
-            //first check if the item is among the restrains
-            if((*modifierList)[newModifier]->itemRestrain.Contains(itemID))
+            if(!(*modifierList)[newModifier]->IsAllowed(itemID))
             {
-                //if it was found we get it's result.
-                if(!(*modifierList)[newModifier]->itemRestrain.Get(itemID, false))
-                {
-                    //if it was false it means the item was disallowed so we just skip over
-                    //to the next modifier
-                    continue;
-                }
-            }
-            //the second check is for the generic restrain (issued as itemID = 0)
-            //which says what is the default for this modifier when an itemID specific
-            //restrain is not found. If this isn't found either the default will be
-            //to allow the modifier for the current item. Mantaining, so, the previous
-            //behaviour.
-            else if((*modifierList)[newModifier]->itemRestrain.Contains(0))
-            {
-                //if it was found we get it's result.
-                if(!(*modifierList)[newModifier]->itemRestrain.Get(0, false))
-                {
-                    //if it was false it means unspecified items were disallowed so we just skip over
-                    //to the next modifier
-                    continue;
-                }
+                continue;
             }
 
             float item_prob = ((*modifierList)[newModifier]->probability);
@@ -254,7 +260,7 @@ psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTest
         //}
 
         //add this modifier to the item
-        if(lootModifier) item->AddLootModifier(lootModifier->id, modifierTypePos);
+        if(lootModifier) item->AddLootModifier(lootModifier->id, modifierType);
     }
     //regenerate the modifiers cache of the item
     item->UpdateModifiers();
@@ -265,23 +271,83 @@ psItem* LootRandomizer::RandomizeItem(psItem* item, float maxcost, bool lootTest
     return item;
 }
 
+bool LootRandomizer::GetModifiers(uint32_t itemID,
+                                  csArray<psGMSpawnMods::ItemModifier>& mods)
+{
+    csHash<LootModifier*, uint32_t>::GlobalIterator it =
+        LootModifiersById.GetIterator();
+    while(it.HasNext())
+    {
+        LootModifier* lootModifier = it.Next();
+        if(!lootModifier->IsAllowed(itemID))
+        {
+            continue;
+        }
+
+        psGMSpawnMods::ItemModifier mod;
+        mod.name = lootModifier->name;
+        mod.id = lootModifier->id;
+        mod.type = lootModifier->mod_id;
+        mods.Push(mod);
+    }
+
+    return mods.GetSize() != 0;
+}
+
+psItem* LootRandomizer::SetModifiers(psItem* item, csArray<uint32_t>& mods)
+{
+    if (mods.GetSize() == 0)
+        return item;
+
+    bool found = false;
+    uint32_t itemID = item->GetBaseStats()->GetUID();
+
+    for(size_t i = 0; i < mods.GetSize(); i++)
+    {
+        LootModifier* lootModifier = GetModifier(mods[i]);
+
+        if(!lootModifier || mods[i] == 0)
+            continue;
+
+        if(!lootModifier->IsAllowed(itemID))
+        {
+            continue;
+        }
+
+        printf("found\n");
+        item->AddLootModifier(lootModifier->id, lootModifier->mod_id);
+        found = true;
+    }
+
+    if (found)
+    {
+        // Regenerate the modifiers cache of the item
+        item->UpdateModifiers();
+
+        // At least one modifier as been added, so we make the item "identifiable"
+        item->SetIsIdentifiable(true);
+    }
+
+    return item;
+}
+
 void LootRandomizer::AddModifier(LootModifier* oper1, LootModifier* oper2)
 {
     csString newName;
     // Change Name
-    if(oper2->modifier_type.CompareNoCase("prefix"))
+    if(oper2->mod_id == psGMSpawnMods::ITEM_PREFIX)
     {
         newName.Append(oper2->name);
         newName.Append(" ");
         newName.Append(oper1->name);
     }
-    else if(oper2->modifier_type.CompareNoCase("suffix"))
+    else if(oper2->mod_id == psGMSpawnMods::ITEM_SUFFIX)
     {
         newName.Append(oper1->name);
         newName.Append(" ");
         newName.Append(oper2->name);
     }
-    else if(oper2->modifier_type.CompareNoCase("adjective"))
+    else if(oper2->mod_id == psGMSpawnMods::ITEM_ADJECTIVE)
     {
         newName.Append(oper2->name);
         newName.Append(" ");
@@ -615,14 +681,13 @@ float LootRandomizer::GetModifierPercentProbability(int modifierID, int modifier
     if(!modifier)
         return 0;
 
-    // 0=prefix
-    if(modifierType==0)
+    if(modifierType == psGMSpawnMods::ITEM_PREFIX)
         return modifier->probabilityRange/prefix_max;
     // 1=suffix
-    else if(modifierType==1)
+    else if(modifierType == psGMSpawnMods::ITEM_SUFFIX)
         return modifier->probabilityRange/suffix_max;
     // 2=adjective
-    else if(modifierType==2)
+    else if(modifierType == psGMSpawnMods::ITEM_ADJECTIVE)
         return modifier->probabilityRange/adjective_max;
     else
         Error2("Unknown modifierID: %d",modifierID);

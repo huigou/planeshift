@@ -33,6 +33,7 @@
 #include "paws/pawstree.h"
 #include "paws/pawscheckbox.h"
 #include "pawsgmspawn.h"
+#include "pawsmodswindow.h"
 #include "pscelclient.h"
 
 pawsGMSpawnWindow::pawsGMSpawnWindow()
@@ -54,11 +55,17 @@ pawsGMSpawnWindow::pawsGMSpawnWindow()
     cbNPCOwned = NULL;
     lockSkill = NULL;
     lockStr = NULL;
+    mods.Push(0);
+    mods.Push(0);
+    mods.Push(0);
+    modwindow = NULL;
 }
 
 pawsGMSpawnWindow::~pawsGMSpawnWindow()
 {
     psengine->UnregisterDelayedLoader(this);
+    psengine->GetMsgHandler()->Unsubscribe( this, MSGTYPE_GMSPAWNITEMS );
+    psengine->GetMsgHandler()->Unsubscribe( this, MSGTYPE_GMSPAWNTYPES );
 }
 
 bool pawsGMSpawnWindow::PostSetup()
@@ -94,18 +101,21 @@ bool pawsGMSpawnWindow::PostSetup()
     factname = (pawsTextBox*)FindWidget("meshfactname");
     meshname = (pawsTextBox*)FindWidget("meshname");
     imagename = (pawsTextBox*)FindWidget("imagename");
+    modname[psGMSpawnMods::ITEM_PREFIX] = (pawsTextBox*)FindWidget("prefix");
+    modname[psGMSpawnMods::ITEM_SUFFIX] = (pawsTextBox*)FindWidget("suffix");
+    modname[psGMSpawnMods::ITEM_ADJECTIVE] = (pawsTextBox*)FindWidget("adjective");
 
     // creates tree:
-    itemTree = new pawsSimpleTree;
+    itemTree = new pawsItemTree;
     if (itemTree == NULL)
     {
-        Error1("Could not create widget pawsSimpleTree");
+        Error1("Could not create widget pawsItemTree");
         return false;
     }
 
     AddChild(itemTree);
     itemTree->SetDefaultColor( graphics2D->FindRGB( 0,255,0 ) );
-    itemTree->SetRelativeFrame(0,0,GetActualWidth(250),GetActualHeight(500));
+    itemTree->SetRelativeFrame(0,0,GetActualWidth(250),GetActualHeight(560));
     itemTree->SetNotify(this);
     itemTree->SetAttachFlags(ATTACH_TOP | ATTACH_BOTTOM | ATTACH_LEFT);
     itemTree->SetScrollBars(false, true);
@@ -161,8 +171,18 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
     if(node->GetFirstChild() != NULL)
         return true;
 
+    if(!modwindow)
+    {
+        modwindow = (pawsModsWindow*)PawsManager::GetSingleton().FindWidget("ModsWindow");
+        if(!modwindow)
+            return true;
+    }
     if(strcmp(node->GetParent()->GetName(),"TypesRoot"))
     {
+        // If already selected, nothing to do.
+        if(currentItem == node->GetName())
+            return true;
+
         Item item;
         for(size_t i = 0;i < items.GetSize();i++)
         {
@@ -212,6 +232,12 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         imagename->SetText(item.icon);
         factname->SetText(item.mesh);
         meshname->SetText(item.name);
+        modname[psGMSpawnMods::ITEM_PREFIX]->SetText("");
+        modname[psGMSpawnMods::ITEM_SUFFIX]->SetText("");
+        modname[psGMSpawnMods::ITEM_ADJECTIVE]->SetText("");
+        mods[psGMSpawnMods::ITEM_PREFIX] = 0;
+        mods[psGMSpawnMods::ITEM_SUFFIX] = 0;
+        mods[psGMSpawnMods::ITEM_ADJECTIVE] = 0;
 
         cbLockable->Show();
         cbLocked->Show();
@@ -227,6 +253,9 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
         imagename->Show();
         meshname->Show();
         factname->Show();
+        modname[psGMSpawnMods::ITEM_PREFIX]->Show();
+        modname[psGMSpawnMods::ITEM_SUFFIX]->Show();
+        modname[psGMSpawnMods::ITEM_ADJECTIVE]->Show();
 
         //No devs can't use those flags. It's pointless hacking here as the server double checks
         if(psengine->GetCelClient()->GetMainPlayer()->GetType() < 30)
@@ -235,14 +264,47 @@ bool pawsGMSpawnWindow::OnSelected(pawsWidget* widget)
             cbNPCOwned->Hide();
         }
 
+        modwindow->Hide();
         currentItem = item.name;
         return true;
     }
+
+    modwindow->Hide();
+    currentItem.Clear();
 
     psGMSpawnItems msg(widget->GetName());
     msg.SendMessage();
 
     return true;
+}
+
+bool pawsItemTree::OnDoubleClick(int button, int modifiers, int x, int y)
+{
+    if(root != NULL)
+    {
+        pawsTreeNode* node = FindNodeAt(root, x, y);
+        if(node != NULL)
+        {
+            // If the parent is not the root,
+            // then it is an item instead of a type category.
+            if(strcmp(node->GetParent()->GetName(), "TypesRoot"))
+            {
+                psGMSpawnGetMods msg(node->GetName());
+                msg.SendMessage();
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void pawsGMSpawnWindow::SetItemModifier(const char* name, uint32_t id, uint32_t type)
+{
+    if(type < sizeof(modname) / sizeof(modname[0]))
+    {
+        modname[type]->SetText(name);
+        mods[type] = id;
+    }
 }
 
 bool pawsGMSpawnWindow::CheckLoadStatus()
@@ -286,6 +348,9 @@ bool pawsGMSpawnWindow::OnButtonPressed(int /*button*/, int /*keyModifier*/, paw
         if(currentItem.IsEmpty())
             return true;
 
+        if(modwindow)
+            modwindow->Hide();
+
         psGMSpawnItem msg(
             currentItem,
             atol(itemCount->GetText()),
@@ -301,7 +366,8 @@ bool pawsGMSpawnWindow::OnButtonPressed(int /*button*/, int /*keyModifier*/, paw
             cbNPCOwned->GetState(),
             cbPickupableWeak->GetState(),
             false,
-            atof(itemQuality->GetText()));
+            atof(itemQuality->GetText()),
+            &mods);
 
         // Send spawn message
         psengine->GetMsgHandler()->SendMessage(msg.msg);
@@ -341,4 +407,11 @@ void pawsGMSpawnWindow::Show()
 {
     itemTree->Clear();
     pawsWidget::Show();
+}
+
+void pawsGMSpawnWindow::Close()
+{
+    if(modwindow)
+        modwindow->Close();
+    pawsWidget::Close();
 }

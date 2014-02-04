@@ -4594,6 +4594,7 @@ AdminManager::AdminManager()
     Subscribe(&AdminManager::HandleGMGuiMessage, MSGTYPE_GMGUI, REQUIRE_READY_CLIENT);
     Subscribe(&AdminManager::SendSpawnItems, MSGTYPE_GMSPAWNITEMS, REQUIRE_READY_CLIENT);
     Subscribe(&AdminManager::SpawnItemInv, MSGTYPE_GMSPAWNITEM, REQUIRE_READY_CLIENT);
+    Subscribe(&AdminManager::SendSpawnMods, MSGTYPE_GMSPAWNGETMODS, REQUIRE_READY_CLIENT);
 
     // this makes sure that the player dictionary exists on start up.
     npcdlg = new psNPCDialog(NULL);
@@ -10289,7 +10290,7 @@ void AdminManager::SendSpawnTypes(MsgEntry* me, psAdminCmdMessage &msg, AdminCmd
     csArray<csString> itemCat;
     unsigned int size = 0;
 
-    for(int i = 1;; i++)
+    for(unsigned int i = 1;; i++)
     {
         psItemCategory* cat = psserver->GetCacheManager()->GetItemCategoryByID(i);
         if(!cat)
@@ -10375,6 +10376,37 @@ void AdminManager::SendSpawnItems(MsgEntry* me, Client* client)
     msg2.SendMessage();
 }
 
+void AdminManager::SendSpawnMods(MsgEntry* me, Client* client)
+{
+    if(!psserver->CheckAccess(client, "/item"))
+    {
+        return;
+    }
+
+    psGMSpawnGetMods msg(me);
+
+    // Get the basic stats
+    psItemStats* stats = psserver->GetCacheManager()->GetBasicItemStatsByName(msg.item);
+    if(!stats)
+    {
+        psserver->SendSystemError(me->clientnum, "Couldn't find basic stats for %s!", msg.item.GetDataSafe());
+        return;
+    }
+
+    LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
+    csArray<psGMSpawnMods::ItemModifier> mods;
+
+    if(lootRandomizer->GetModifiers(stats->GetUID(), mods))
+    {
+        psGMSpawnMods msg2(me->clientnum, mods);
+        msg2.SendMessage();
+    }
+    else
+    {
+        psserver->SendSystemError(me->clientnum, "Couldn't find item modifiers for %s!", msg.item.GetDataSafe());
+    }
+}
+
 void AdminManager::SpawnItemInv(MsgEntry* me, Client* client)
 {
     psGMSpawnItem msg(me);
@@ -10456,13 +10488,17 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem &msg, Client* client
     }
     else
     {
+        LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
         // Spawn normal item.
 
         // randomize if requested
         if(msg.random)
         {
-            LootRandomizer* lootRandomizer = psserver->GetSpawnManager()->GetLootRandomizer();
             item = lootRandomizer->RandomizeItem(item, msg.quality);
+        }
+        else
+        {
+            item = lootRandomizer->SetModifiers(item, msg.mods);
         }
 
         item->SetStackCount(msg.count);

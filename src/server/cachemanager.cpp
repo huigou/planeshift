@@ -477,6 +477,8 @@ bool CacheManager::PreloadLootModifiers()
 
         for(size_t j = 0; j < restrainResult.Count(); j++)
         {
+            printf("restrain %d %c\n", restrainResult[j].GetUInt32("item_id"),
+                                       *restrainResult[j]["allowed"]); // XXX
             entry->itemRestrain.PutUnique(restrainResult[j].GetUInt32("item_id"),
                                           *restrainResult[j]["allowed"] == 'Y');
         }
