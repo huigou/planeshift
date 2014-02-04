@@ -292,7 +292,7 @@ bool AdminCmdData::LogGMCommand(Client* gmClient, PID playerID, const char* cmd)
     int result = db->Command("INSERT INTO gm_command_log "
                              "(account_id,gm,command,player,ex_time) "
                              "VALUES (%u,%u,\"%s\",%u,Now())", gmClient->GetAccountID().Unbox(), gmClient->GetPID().Unbox(), escape.GetData(), playerID.Unbox());
-    return (result != -1);
+    return (result <= 0);
 }
 
 csString AdminCmdTargetParser::GetHelpMessagePartForTarget()
@@ -8806,7 +8806,7 @@ void AdminManager::ChangeLock(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
                     // write back to database
                     int result = db->CommandPump("UPDATE item_instances SET openable_locks='%s' WHERE id=%d",
                                                  lstr.GetData(), keyID);
-                    if(result == -1)
+                    if(result == QUERY_FAILED)
                     {
                         Error4("Couldn't update item instance lockchange with lockID=%d keyID=%d openable_locks <%s>.",lockID, keyID, lstr.GetData());
                         return;
@@ -9453,12 +9453,12 @@ bool AdminManager::EscalatePetition(PID gmID, int gmLevel, int petitionID)
                                  "WHERE id=%d AND escalation_level<=%d AND escalation_level<%d "
                                  "AND (assigned_gm=%d OR status='Open')", petitionID, gmLevel, GM_DEVELOPER-20, gmID.Unbox());
     // If this failed if means that there is a serious error
-    if(!result || result <= -1)
+    if(result <= 0)
     {
         lasterror.Format("Couldn't escalate petition #%d.", petitionID);
         return false;
     }
-    return (result != -1);
+    return true;
 }
 
 bool AdminManager::DescalatePetition(PID gmID, int gmLevel, int petitionID)
@@ -9468,12 +9468,12 @@ bool AdminManager::DescalatePetition(PID gmID, int gmLevel, int petitionID)
                                  "escalation_level=(escalation_level-1)"
                                  "WHERE id=%d AND escalation_level<=%d AND (assigned_gm=%u OR status='Open' AND escalation_level != 0)", petitionID, gmLevel, gmID.Unbox());
     // If this failed if means that there is a serious error
-    if(!result || result <= -1)
+    if(result <= 0)
     {
         lasterror.Format("Couldn't descalate petition #%d.", petitionID);
         return false;
     }
-    return (result != -1);
+    return true;
 }
 
 bool AdminManager::AddPetition(PID playerID, const char* petition)
@@ -9488,7 +9488,7 @@ bool AdminManager::AddPetition(PID playerID, const char* petition)
                              "(player,petition,created_date,status,resolution) "
                              "VALUES (%u,\"%s\",Now(),\"Open\",\"Not Resolved\")", playerID.Unbox(), escape.GetData());
 
-    return (result != -1);
+    return (result > 0);
 }
 
 iResultSet* AdminManager::GetPetitions(PID playerID, PID gmID)
@@ -9532,7 +9532,7 @@ bool AdminManager::CancelPetition(PID playerID, int petitionID, bool isGMrequest
 
     // Attempt to select this petition; two things can go wrong: it doesn't exist or the player didn't create it
     int result = db->SelectSingleNumber("SELECT id FROM petitions WHERE id=%d AND player=%u", petitionID, playerID.Unbox());
-    if(!result || result <= -1)
+    if(result <= 0)
     {
         // Failure was due to nonexistant petition or ownership rights:
         lasterror.Format("Couldn't cancel the petition. Either it does not exist, or you did not "
@@ -9543,7 +9543,7 @@ bool AdminManager::CancelPetition(PID playerID, int petitionID, bool isGMrequest
     // Update the petition status
     result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND player=%u", petitionID, playerID.Unbox());
 
-    return (result != -1);
+    return (result != QUERY_FAILED);
 }
 
 bool AdminManager::ChangePetition(PID playerID, int petitionID, const char* petition)
@@ -9554,8 +9554,8 @@ bool AdminManager::ChangePetition(PID playerID, int petitionID, const char* peti
     // If player ID is -1, just change the petition (a GM is requesting the change)
     if(playerID == PETITION_GM)
     {
-        int result = db->Command("UPDATE petitions SET petition=\"%s\" WHERE id=%u", escape.GetData(), playerID.Unbox());
-        return (result != -1);
+        unsigned long result = db->Command("UPDATE petitions SET petition=\"%s\" WHERE id=%u", escape.GetData(), playerID.Unbox());
+        return (result != QUERY_FAILED);
     }
 
     // Attempt to select this petition;
@@ -9564,7 +9564,7 @@ bool AdminManager::ChangePetition(PID playerID, int petitionID, const char* peti
     // - the player didn't create it
     // - it has not the right status
     int result = db->SelectSingleNumber("SELECT id FROM petitions WHERE id=%d AND player=%u AND status='Open'", petitionID, playerID.Unbox());
-    if(!result || result <= -1)
+    if(result <= 0)
     {
         lasterror.Format("Couldn't change the petition. Either it does not exist, or you did not "
                          "create the petition, or it has not correct status.");
@@ -9574,7 +9574,7 @@ bool AdminManager::ChangePetition(PID playerID, int petitionID, const char* peti
     // Update the petition status
     result = db->CommandPump("UPDATE petitions SET petition=\"%s\" WHERE id=%d AND player=%u", escape.GetData(), petitionID, playerID.Unbox());
 
-    return (result != -1);
+    return (result != QUERY_FAILED);
 }
 
 bool AdminManager::ClosePetition(PID gmID, int petitionID, const char* desc)
@@ -9585,7 +9585,7 @@ bool AdminManager::ClosePetition(PID gmID, int petitionID, const char* desc)
                                  "WHERE id=%d AND assigned_gm=%u", escape.GetData(), petitionID, gmID.Unbox());
 
     // If this failed if means that there is a serious error, or the GM was not assigned
-    if(!result || result <= -1)
+    if(result <= 0)
     {
         lasterror.Format("Couldn't close petition #%d.  You must be assigned to the petition before you close it.",
                          petitionID);
@@ -9608,7 +9608,7 @@ bool AdminManager::DeassignPetition(PID gmID, int gmLevel, int petitionID)
     }
 
     // If this failed if means that there is a serious error, or another GM was already assigned
-    if(!result || result <= -1)
+    if(result <= 0)
     {
         lasterror.Format("Couldn't deassign you to petition #%d.  Another GM is assigned to that petition.",
                          petitionID);
@@ -9623,7 +9623,7 @@ bool AdminManager::AssignPetition(PID gmID, int petitionID)
     int result = db->CommandPump("UPDATE petitions SET assigned_gm=%d,status='In Progress' WHERE id=%d AND assigned_gm=-1", gmID.Unbox(), petitionID);
 
     // If this failed if means that there is a serious error, or another GM was already assigned
-    if(!result || result <= -1)
+    if(result <= 0)
     {
         lasterror.Format("Couldn't assign you to petition #%d.  Another GM is already assigned to that petition.",
                          petitionID);
@@ -9643,7 +9643,7 @@ bool AdminManager::LogGMCommand(AccountID accountID, PID gmID, PID playerID, con
     int result = db->Command("INSERT INTO gm_command_log "
                              "(account_id,gm,command,player,ex_time) "
                              "VALUES (%u,%u,\"%s\",%u,Now())", accountID.Unbox(), gmID.Unbox(), escape.GetData(), playerID.Unbox());
-    return (result != -1);
+    return (result <= 0);
 }
 
 const char* AdminManager::GetLastSQLError()
@@ -12323,13 +12323,14 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
         {
             if(!quest->GetParentQuest())  //only allow to complete main quest entries (no steps)
             {
-                if(db->CommandPump("insert into character_quests "
+                int result = db->CommandPump("insert into character_quests "
                                    "(player_id, assigner_id, quest_id, "
                                    "status, remaininglockout, last_response, last_response_npc_id) "
                                    "values (%d, %d, %d, '%c', %d, %d, %d) "
                                    "ON DUPLICATE KEY UPDATE "
                                    "status='%c',remaininglockout=%ld,last_response=%ld,last_response_npc_id=%ld;",
-                                   pid.Unbox(), 0, quest->GetID(), 'C', 0, -1, 0, 'C', 0, -1, 0))
+                                   pid.Unbox(), 0, quest->GetID(), 'C', 0, -1, 0, 'C', 0, -1, 0);
+                if(result > 0)
                 {
                     psserver->SendSystemInfo(me->clientnum, "Quest %s completed for %s!", data->questName.GetData(), name.GetData());
                 }
@@ -12337,7 +12338,6 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
                 {
                     psserver->SendSystemError(me->clientnum,"Unable to complete quest of offline player %s!", name.GetData());
                 }
-
             }
             else
             {
@@ -12374,8 +12374,8 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
         }
         else //the player is offline so we have to hit the database
         {
-
-            if(db->CommandPump("DELETE FROM character_quests WHERE player_id=%u AND quest_id=%u",pid.Unbox(), quest->GetID()))
+            int result = db->CommandPump("DELETE FROM character_quests WHERE player_id=%u AND quest_id=%u",pid.Unbox(), quest->GetID());
+            if(result > 0)
             {
                 psserver->SendSystemInfo(me->clientnum, "Quest %s discarded for %s!", data->questName.GetData(), name.GetData());
             }

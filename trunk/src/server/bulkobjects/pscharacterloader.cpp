@@ -82,7 +82,7 @@ bool psCharacterLoader::AccountOwner(const char* characterName, AccountID accoun
 {
     csString escape;
     db->Escape(escape,characterName);
-    unsigned int count = db->SelectSingleNumber("SELECT count(*) FROM characters where name='%s' AND account_id=%d",escape.GetData(), accountID.Unbox());
+    int count = db->SelectSingleNumber("SELECT count(*) FROM characters where name='%s' AND account_id=%d",escape.GetData(), accountID.Unbox());
     return (count > 0);
 }
 
@@ -800,7 +800,7 @@ PID psCharacterLoader::FindCharacterID(const char* character_name, bool excludeN
         return 0;
     db->Escape(escape,character_name);
 
-    unsigned long result;
+    int result;
 
     if(!excludeNPCs)
     {
@@ -826,7 +826,7 @@ PID psCharacterLoader::FindCharacterID(AccountID accountID, const char* characte
         return 0;
     db->Escape(escape,character_name);
 
-    unsigned long result = db->SelectSingleNumber("SELECT id FROM characters WHERE name='%s' AND account_id=%u", escape.GetData(), accountID.Unbox());
+    int result = db->SelectSingleNumber("SELECT id FROM characters WHERE name='%s' AND account_id=%u", escape.GetData(), accountID.Unbox());
 
     return PID(result == QUERY_FAILED ? 0 : result);
 }
