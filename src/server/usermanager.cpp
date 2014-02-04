@@ -1107,6 +1107,18 @@ void UserManager::Buddy(psUserCmdMessage &msg,Client* client)
     //If the player used add or didn't provide arguments and the buddy is missing from the list add it
     if((onoff && !toggle)|| (toggle && !chardata->GetBuddyMgr().IsBuddy(buddyid)))
     {
+        if(selfid == buddyid)
+        {
+            psserver->SendSystemError(client->GetClientNum(),"Cannot add yourself to buddy list.");
+            return;
+        }
+
+        if(!psserver->AddBuddy(selfid,buddyid))
+        {
+            psserver->SendSystemError(client->GetClientNum(),"%s is already on your buddy list.",(const char*)msg.player);
+            return;
+        }
+
         if(!chardata->GetBuddyMgr().AddBuddy(buddyid, msg.player))
         {
             psserver->SendSystemError(client->GetClientNum(),"%s could not be added to buddy list.",(const char*)msg.player);
@@ -1117,12 +1129,6 @@ void UserManager::Buddy(psUserCmdMessage &msg,Client* client)
         if(buddyClient && buddyClient->IsReady())
         {
             buddyClient->GetCharacterData()->GetBuddyMgr().AddBuddyOf(selfid);
-        }
-
-        if(!psserver->AddBuddy(selfid,buddyid))
-        {
-            psserver->SendSystemError(client->GetClientNum(),"%s is already on your buddy list.",(const char*)msg.player);
-            return;
         }
 
         psserver->SendSystemInfo(client->GetClientNum(),"%s has been added to your buddy list.",(const char*)msg.player);
@@ -1171,7 +1177,7 @@ void UserManager::BuddyList(Client* client,int clientnum,bool filter)
             mesg.AddBuddy(i, chardata->GetBuddyMgr().GetBuddyList()[i].name, (clients->Find(chardata->GetBuddyMgr().GetBuddyList()[i].name)? true : false));
         }
     }
-    else // Others only see none hiding GM+
+    else // Others only see non-hiding GM+
     {
         for(int i = 0; i < totalBuddies; i++)
         {
