@@ -698,8 +698,6 @@ bool pawsListBox::SelectByIndex(int index, bool notify)
         return false;
 
     selected = -1;
-    if(rows.GetSize() <= size_t(index))
-        return false;
     // If no row assume no selection is wanted.
     if(index == -1)
     {
@@ -710,6 +708,8 @@ bool pawsListBox::SelectByIndex(int index, bool notify)
         }
         return true;
     }
+    if(rows.GetSize() <= size_t(index))
+        return false;
 
     for(int x = 0; x < (int)rows.GetSize(); x++)
     {
