@@ -1241,14 +1241,15 @@ public:
 class AdminCmdDataItem : public AdminCmdDataTarget
 {
 public:
-    bool random; ///< random quantity
+    bool random; ///< random item modifiers are added
     int quality; ///< quality in numbers for the item
+    int quantity; ///< quantity of the item
 
     /** @brief Creates obj for specified command that needs a reason.
      */
     AdminCmdDataItem()
-        : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50)
-    {};
+        : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50), quantity(1)
+    {}
 
     /** @brief Parses the given message and stores its data.
      * @param msgManager message manager that handles this command
@@ -1260,7 +1261,7 @@ public:
     AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words);
 
     virtual ~AdminCmdDataItem()
-    {};
+    {}
 
     /** @brief Creates an object of the current class containing parsed data.
     * @param msgManager message manager that handles this command

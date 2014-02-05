@@ -1656,7 +1656,7 @@ csString AdminCmdDataInfo::GetHelpMessage()
 }
 
 AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
-    : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50)
+    : AdminCmdDataTarget("/item", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING), random(false), quality(50), quantity(1)
 {
     size_t index = 1;
 
@@ -1669,8 +1669,8 @@ AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdm
     {
         // no action required
     }
-    // /item <item> [random] <quality>
-    else if(words.GetCount() >=2)
+    // /item <item> [random] [<quality>] [<quantity>]
+    else if(words.GetCount() >= 2)
     {
         // try first parameter as a target string (item name string)
         if(ParseTarget(msgManager, me, msg, client, words[index]))
@@ -1684,9 +1684,13 @@ AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdm
                 index++;
                 random = true;
             }
-            if(words.GetCount() == index + 1)
+            if(words.GetCount() > index)
             {
                 quality = words.GetInt(index++);
+            }
+            if(words.GetCount() > index)
+            {
+                quantity = words.GetInt(index++);
             }
             if(words.GetCount() > index)
             {
@@ -1695,7 +1699,7 @@ AdminCmdDataItem::AdminCmdDataItem(AdminManager* msgManager, MsgEntry* me, psAdm
         }
         else
         {
-            ParseError(me, "No target given");
+            ParseError(me, "No item name given");
         }
     }
     else
@@ -1708,7 +1712,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataItem)
 
 csString AdminCmdDataItem::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " <name>|help [random] <quality>\"";
+    return "Syntax: \"" + command + " <name>|help [random] [<quality>] [<quantity>]\"";
 }
 
 AdminCmdDataKey::AdminCmdDataKey(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
@@ -8325,11 +8329,9 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 
     Debug4(LOG_ADMIN,me->clientnum,  "Created item %s %s with quality %d\n",data->target.GetDataSafe(),data->random?"random":"",data->quality)
 
-    // TODO: Get number of items to create from client
-    int stackCount = 1;
     psGMSpawnItem spawnMsg(
         data->target,
-        stackCount,
+        data->quantity,
         false,
         false,
         "",
@@ -8341,20 +8343,22 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
         false,
         false,
         true,
-        data->random != 0,
+        data->random,
         data->quality
     );
 
-    // Copy these items into the correct fields. TODO: Why these?
+    // Copy these items into the correct fields because
+    // that is what psGMSpawnItem::psGMSpawnItem(MsgEntry* me)
+    // would have done.
     spawnMsg.item = data->target;
-    spawnMsg.count = stackCount;
+    spawnMsg.count = data->quantity;
     spawnMsg.lockable = spawnMsg.locked = spawnMsg.collidable = false;
     spawnMsg.pickupable = true;
     spawnMsg.pickupableWeak = true;
     spawnMsg.Transient = true;
     spawnMsg.lskill = "";
     spawnMsg.lstr = 0;
-    spawnMsg.random = data->random != 0;
+    spawnMsg.random = data->random;
     spawnMsg.quality = data->quality;
 
     // Spawn using this message
