@@ -811,7 +811,7 @@ PID psCharacterLoader::FindCharacterID(const char* character_name, bool excludeN
         result = db->SelectSingleNumber("SELECT id from characters where name='%s' AND npc_master_id=0",escape.GetData());
     }
 
-    return PID(result == QUERY_FAILED ? 0 : result);
+    return PID(result <= 0 ? 0 : result);
 }
 
 PID psCharacterLoader::FindCharacterID(AccountID accountID, const char* character_name)
@@ -828,7 +828,7 @@ PID psCharacterLoader::FindCharacterID(AccountID accountID, const char* characte
 
     int result = db->SelectSingleNumber("SELECT id FROM characters WHERE name='%s' AND account_id=%u", escape.GetData(), accountID.Unbox());
 
-    return PID(result == QUERY_FAILED ? 0 : result);
+    return PID(result <= 0 ? 0 : result);
 }
 
 
