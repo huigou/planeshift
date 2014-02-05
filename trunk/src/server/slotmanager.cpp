@@ -59,7 +59,6 @@ SlotManager::~SlotManager()
 
 bool SlotManager::Initialize()
 {
-    worldContainer = NULL;
     Subscribe(&SlotManager::HandleSlotMovement, MSGTYPE_SLOT_MOVEMENT, REQUIRE_READY_CLIENT);
     Subscribe(&SlotManager::HandleDropCommand, MSGTYPE_CMDDROP, REQUIRE_READY_CLIENT);
     return true;
@@ -433,7 +432,7 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg &msg, Client* fromClient)
         return;
     }
 
-    containerEntityID = 0;
+    int containerEntityID = 0;
     if(msg.toContainer > 100)
     {
         containerEntityID = msg.toContainer;
@@ -452,17 +451,14 @@ void SlotManager::MoveFromInventory(psSlotMovementMsg &msg, Client* fromClient)
                 psserver->SendSystemError(fromClient->GetClientNum(), "You may not put a container in a container.");
                 return;
             }
-            psItem* parentItem=NULL;
-            worldContainer=NULL;
-
             gemObject* obj = gemSupervisor->FindObject(EID(containerEntityID)); // CEL id assigned
-            worldContainer = dynamic_cast<gemContainer*>(obj);
+            gemContainer* worldContainer = dynamic_cast<gemContainer*>(obj);
             if(!worldContainer)
             {
                 Error2("Couldn't find any CEL entity id %d.", containerEntityID);
                 return;
             }
-            parentItem = worldContainer->GetItem();
+            psItem* parentItem = worldContainer->GetItem();
             if(!parentItem)
             {
                 Error2("No parent container item found for worldContainer %d.", containerEntityID);
