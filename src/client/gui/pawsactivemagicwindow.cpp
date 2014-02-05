@@ -331,7 +331,10 @@ void pawsActiveMagicWindow::Hide()
 bool pawsActiveMagicWindow::LoadSetting()
 {
     csRef<iDocument> doc;
-    csRef<iDocumentNode> root,mainNode, optionNode;
+    csRef<iDocumentNode> root,
+                         mainNode,
+                         optionNode,
+                         optionNode2;
     csString fileName;
     fileName = "/planeshift/userdata/options/configactivemagic.xml";
 
@@ -411,6 +414,101 @@ bool pawsActiveMagicWindow::LoadSetting()
         }
     }
 
+    optionNode = mainNode->GetNode("buttonHeight");
+    if(optionNode != NULL)
+        buffList->SetButtonHeight( optionNode->GetAttributeValueAsInt("value", true));
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve buttonHeight node");
+    }
+
+    optionNode = mainNode->GetNode("buttonWidthMode");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "buttonWidthAutomatic", optionNode->GetAttributeValue("active") )==0 )
+        {
+            buffList->SetButtonWidth( 0 );
+        }
+        else
+        {
+            optionNode = mainNode->GetNode("buttonWidth");
+            if(optionNode != NULL)
+                buffList->SetButtonWidth( optionNode->GetAttributeValueAsInt("value", true));
+            else
+            {
+                Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve buttonWidth");
+                return false;
+            }
+        }
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve buttonWidthMode");
+    }
+
+    optionNode = mainNode->GetNode("leftScroll");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
+            buffList->SetLeftScroll( ScrollMenuOptionENABLED );
+        else if( strcasecmp( "buttonScrollAuto",  optionNode->GetAttributeValue("active") )==0 )
+            buffList->SetLeftScroll( ScrollMenuOptionDYNAMIC );
+        else if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
+            buffList->SetLeftScroll( ScrollMenuOptionDISABLED );
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve leftScroll node");
+    }
+
+    optionNode = mainNode->GetNode("rightScroll");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
+            buffList->SetRightScroll( ScrollMenuOptionENABLED );
+        else if( strcasecmp( "buttonScrollAuto",  optionNode->GetAttributeValue("active") )==0 )
+            buffList->SetRightScroll( ScrollMenuOptionDYNAMIC );
+        else if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
+            buffList->SetRightScroll( ScrollMenuOptionDISABLED );
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve rightScroll node");
+    }
+
+    optionNode = mainNode->GetNode("textSize");
+    if(optionNode == NULL)
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve textSize node");
+    }
+
+    optionNode2 = mainNode->GetNode("textFont");
+    if(optionNode2 == NULL)
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve textFont node");
+    }
+
+    if( optionNode != NULL && optionNode2 != NULL )
+    {
+        fontName = csString( optionNode2->GetAttributeValue("value") );
+
+        csString    fontPath( "/planeshift/data/ttf/");
+        fontPath += fontName.GetData();
+        fontPath += ".ttf"; 
+        SetFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
+        buffList->SetFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
+    }
+    //else use default.
+
+    optionNode = mainNode->GetNode("textSpacing");
+    if(optionNode != NULL)
+        buffList->SetButtonPaddingWidth( optionNode->GetAttributeValueAsInt("value", true));
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve textSpacing node");
+    }
+
+
     return true;
 }
 
@@ -455,3 +553,4 @@ bool pawsActiveMagicWindow::GetShowWindow()
 {
     return show;
 }
+

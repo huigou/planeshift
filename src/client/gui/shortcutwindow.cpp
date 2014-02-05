@@ -995,8 +995,11 @@ void pawsShortcutWindow::Show()
 
 bool pawsShortcutWindow::LoadUserPrefs()
 {
-    csRef<iDocument> doc;
-    csRef<iDocumentNode> root, mainNode, optionNode;
+    csRef<iDocument>     doc;
+    csRef<iDocumentNode> root,
+                         mainNode,
+                         optionNode,
+                         optionNode2;
 
     csString fileName;
     fileName = "/planeshift/userdata/options/configshortcut.xml";
@@ -1132,22 +1135,27 @@ bool pawsShortcutWindow::LoadUserPrefs()
     }
 
     optionNode = mainNode->GetNode("textSize");
-    if(optionNode != NULL)
-        MenuBar->SetButtonFont( MenuBar->GetButtonFontName(), optionNode->GetAttributeValueAsInt("value", true));
-    else
+    if(optionNode == NULL)
     {
         Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve textSize node");
     }
 
-    optionNode = mainNode->GetNode("textFont");
-    if(optionNode != NULL)
-    {
-        MenuBar->SetButtonFont(optionNode->GetAttributeValue("value"), MenuBar->GetFontSize());
-    }
-    else
+    optionNode2 = mainNode->GetNode("textFont");
+    if(optionNode2 == NULL)
     {
         Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve textFont node");
     }
+
+    if( optionNode != NULL && optionNode2 != NULL )
+    {
+        csString    fontPath( "/planeshift/data/ttf/");
+        fontPath += optionNode2->GetAttributeValue("value");
+        fontPath += ".ttf";
+        SetFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
+        MenuBar->SetFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
+    }
+    //else use default.
+
 
     optionNode = mainNode->GetNode("textSpacing");
     if(optionNode != NULL)

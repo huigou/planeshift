@@ -24,6 +24,11 @@
 #include <csutil/array.h>
 #include <iutil/document.h>
 
+#include <csutil/csstring.h>
+#include <csutil/stringarray.h>
+#include <csutil/array.h>
+
+
 // PAWS INCLUDES
 #include "paws/pawswidget.h"
 #include "paws/pawscombo.h"
@@ -60,7 +65,7 @@ public:
     virtual bool SaveConfig();
     virtual void SetDefault();
 
-    void PickText( int index, int size );
+    void PickText( const char * fontName, int size );
 
 
 protected:

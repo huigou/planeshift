@@ -82,6 +82,15 @@ public:
     void SetShowWindow( bool setting );
     bool GetShowWindow();
 
+   /**
+    * return the name of the font
+    */
+    char const * GetFontName()
+    {
+        return fontName.GetData();
+    }
+
+
 private:
 
     csRef<iVFS> vfs;

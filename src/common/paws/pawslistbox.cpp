@@ -112,6 +112,8 @@ pawsListBox::pawsListBox()
     autoResize      = true;
     autoUpdateScroll= true;
     selectable      = true;
+
+    columnHeight    = 0;
 }
 
 pawsListBox::pawsListBox(const pawsListBox &origin)

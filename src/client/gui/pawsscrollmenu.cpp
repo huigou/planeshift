@@ -681,6 +681,7 @@ bool pawsScrollMenu::LoadSingle(csString name, csString icon, csString toolTip, 
     button->SetID(Index);
     button->SetName(name);
     button->SetEnabled(IsEnabled);
+    button->SetFont( fontName,fontSize );
 
     if(!icon.IsEmpty())
     {
@@ -973,18 +974,27 @@ void pawsScrollMenu::SetButtonFont( const char* Font, int size )
     {
         ((pawsDnDButton*)Buttons[i])->SetFont(Font, size);
     }
+    
 }
 
 char const * pawsScrollMenu::GetButtonFontName( )
 {
-    if( ((pawsDnDButton*)Buttons[0])->GetFontName()==NULL )
+    if( Buttons[0]!=NULL )
     {
-        return PawsManager::GetSingleton().GetPrefs()->GetDefaultFontName();
+        if( ((pawsDnDButton*)Buttons[0])->GetFontName()==NULL )
+        {
+            return PawsManager::GetSingleton().GetPrefs()->GetDefaultFontName();
+        }
+        return ((pawsDnDButton*)Buttons[0])->GetFontName();
     }
-    return ((pawsDnDButton*)Buttons[0])->GetFontName();
+    return NULL;
 }
 
 float pawsScrollMenu::GetButtonFontSize( )
 {
-    return ((pawsDnDButton*)Buttons[0])->GetFontSize();
+    if( Buttons[0]!=NULL )
+    {
+        return ((pawsDnDButton*)Buttons[0])->GetFontSize();
+    }
+    return 10; //if something DOES end up using the font and there's no size defined, there should be a useful default
 }

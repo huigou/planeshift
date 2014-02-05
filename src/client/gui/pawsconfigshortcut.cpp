@@ -21,6 +21,7 @@
 #include <psconfig.h>
 #include <csutil/xmltiny.h>
 #include <csutil/objreg.h>
+#include <iutil/stringarray.h>
 #include <iutil/vfs.h>
 
 
@@ -156,13 +157,24 @@ bool pawsConfigShortcut::PostSetup()
     {
         return false;
     }
-    textFont->NewOption( "Liberation Sans" );
-    textFont->NewOption( "Liberation Serif" );
-    textFont->NewOption( "Liberation Mono" );
-    textFont->NewOption( "Sonora" );
-    textFont->NewOption( "Cup and Talon" );
-    textFont->NewOption( "Scurlock" );
-    textFont->NewOption( "Becker-m" );
+    csRef<iVFS>           vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    if( vfs )
+    {
+        csRef<iStringArray>   fileList( vfs->FindFiles( "/planeshift/data/ttf/*.ttf" ));
+        for (size_t i = 0; i < fileList->GetSize(); i++)
+        {
+            csString fileName ( fileList->Get (i));
+            fileName.DeleteAt( 0, 21 ); // remove the leading path.
+            fileName.ReplaceAll( ".ttf", "" );
+
+            textFont->NewOption( fileName.GetData() );
+        }
+    }
+    else
+    {
+        Error1( "pawsConfigShortcutWindow::PostSetup unable to find vfs for font list" );
+    }
+
 
     textSize = (pawsScrollBar*)FindWidget("textSize");
     if(!textSize)
@@ -270,38 +282,11 @@ bool pawsConfigShortcut::LoadConfig()
 
         textSize->SetCurrentValue(MenuBar->GetFontSize());
 
-    {
-        //const char * buttonFontName = MenuBar->GetButtonFontName();
-const char * buttonFontName = ((pawsShortcutWindow*)ShortcutMenu)->GetFontName();
-        if( strcmp( buttonFontName, "/planeshift/data/ttf/LiberationSans-Regular.ttf")==0 || strcmp( buttonFontName, "/this/data/ttf/LiberationSans-Regular.ttf")==0 )
-        {
-            textFont->Select(0);
-        }
-        else if( strcmp( buttonFontName, "/planeshift/data/ttf/LiberationSerif-Regular.ttf")==0 || strcmp( buttonFontName, "/this/data/ttf/LiberationSerif-Regular.ttf")==0 )
-        {
-            textFont->Select(1);
-        }
-        else if( strcmp( buttonFontName, "/planeshift/data/ttf/LiberationMono-Regular.ttf")==0 || strcmp( buttonFontName, "/this/data/ttf/LiberationMono-Regular.ttf")==0 )
-        {
-            textFont->Select(2);
-        }
-        else if( strcmp( buttonFontName, "/planeshift/data/ttf/sonora.ttf")==0 || strcmp( buttonFontName, "/this/data/ttf/sonora.ttf")==0 )
-        {
-            textFont->Select(3);
-        }
-        else if( strcmp( buttonFontName, "/planeshift/data/ttf/cupandtalon.ttf")==0 || strcmp( buttonFontName, "/this/data/ttf/cupandtalon.ttf")==0 )
-        {
-            textFont->Select(4);
-        }
-        else if( strcmp( buttonFontName, "/planeshift/data/ttf/scurlock.ttf")==0 || strcmp( buttonFontName, "/this/data/ttf/scurlock.ttf")==0 )
-        {
-            textFont->Select(5);
-        }
-        else if( strcmp( buttonFontName, "/planeshift/data/ttf/becker-m.ttf")==0 || strcmp( buttonFontName, "/this/data/ttf/becker-m.ttf")==0 )
-        {
-            textFont->Select(6);
-        }
-    }
+    csString tFontName=csString(((pawsShortcutWindow*)ShortcutMenu)->GetFontName());
+    tFontName.DeleteAt(0,21);
+    tFontName.ReplaceAll(".ttf","" );
+    textFont->Select( tFontName.GetData() );
+
 
     loaded= true;
     dirty = false;
@@ -331,10 +316,10 @@ bool pawsConfigShortcut::SaveConfig()
                      healthAndMana->GetState() ? "yes" : "no");
     xml.AppendFmt("<buttonBackground on=\"%s\" />\n",
                      buttonBackground->GetState() ? "yes" : "no");
-    xml.AppendFmt("<textFont value=\"%d\" />\n",
-                     int(textFont->GetSelectedRowNum()));
     xml.AppendFmt("<textSize value=\"%d\" />\n",
                      int(textSize->GetCurrentValue()));
+    xml.AppendFmt("<textFont value=\"%s\" />\n",
+                     textFont->GetSelectedRowString().GetData());
     xml.AppendFmt("<textSpacing value=\"%d\" />\n",
                      int(textSpacing->GetCurrentValue()));
     xml += "</shortcut>\n";
@@ -376,7 +361,7 @@ bool pawsConfigShortcut::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
     {
         if(textSize->GetCurrentValue() < 1)
             textSize->SetCurrentValue(1,false);
-        PickText( textFont->GetSelectedRowNum(),  textSize->GetCurrentValue() );
+        PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
         MenuBar->LayoutButtons();
     }
     else if(wdg == textSpacing && loaded)
@@ -535,46 +520,14 @@ bool pawsConfigShortcut::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget
     return true;
 }
 
-void pawsConfigShortcut::PickText( int index, int size )
+void pawsConfigShortcut::PickText( const char * fontName, int size )
 {
-    switch( index )
-    {
-        case 0 :
-        {
-            MenuBar->SetButtonFont( "/planeshift/data/ttf/LiberationSans-Regular.ttf", size );
-        }
-        break;
-        case 1 :
-        {
-            MenuBar->SetButtonFont( "/planeshift/data/ttf/LiberationSerif-Regular.ttf", size );
-        }
-        break;
-        case 2 :
-        {
-            MenuBar->SetButtonFont( "/planeshift/data/ttf/LiberationMono-Regular.ttf", size );
-        }
-        break;
-        case 3 :
-        {
-            MenuBar->SetButtonFont( "/planeshift/data/ttf/sonora.ttf", size );
-        }
-        break;
-        case 4 :
-        {
-            MenuBar->SetButtonFont( "/planeshift/data/ttf/cupandtalon.ttf", size );
-        }
-        break;
-        case 5 :
-        {
-            MenuBar->SetButtonFont( "/planeshift/data/ttf/scurlock.ttf", size );
-        }
-        break;
-        case 6 :
-        {
-            MenuBar->SetButtonFont( "/planeshift/data/ttf/becker-m.ttf", size );
-        }
-        break;
-    }
+    csString    fontPath( "/planeshift/data/ttf/");
+    fontPath += fontName;
+    fontPath += ".ttf";
+    SetFont( fontPath, size );
+    MenuBar->SetFont( fontPath, size );
+    MenuBar->SetButtonFont( fontPath, size );
 
     if( loaded )
     {
@@ -588,7 +541,7 @@ void pawsConfigShortcut::PickText( int index, int size )
 void pawsConfigShortcut::OnListAction(pawsListBox* selected, int status)
 
 {
-    PickText( textFont->GetSelectedRowNum(),  textSize->GetCurrentValue() );
+    PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
     MenuBar->LayoutButtons();
     MenuBar->OnResize();
     ((pawsShortcutWindow*)ShortcutMenu)->Draw();
