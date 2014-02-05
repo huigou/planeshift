@@ -519,13 +519,6 @@ bool ServerCharManager::UpdateItemViews(uint32_t clientNum)
     // If glyph window is up, update it
     psserver->GetSpellManager()->SendGlyphs(NULL,client);
 
-    if(slotManager->worldContainer)
-    {
-        psItem* item = slotManager->worldContainer->GetItem();
-        if(item) item->SendContainerContents(client, slotManager->containerEntityID);
-        slotManager->worldContainer = NULL;
-        slotManager->containerEntityID = 0;
-    }
     return true;
 }
 

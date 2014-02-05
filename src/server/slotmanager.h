@@ -41,8 +41,7 @@ class SlotManager : public MessageManager<SlotManager>
 {
 public:
     virtual ~SlotManager();
-    SlotManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager):
-        worldContainer(NULL),containerEntityID(0)
+    SlotManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager)
     {
         gemSupervisor = gemsupervisor;
         cacheManager = cachemanager;
@@ -51,9 +50,6 @@ public:
     bool Initialize();
 
     psItem* FindItem(Client* client, int containerID, INVENTORY_SLOT_NUMBER slotID);
-
-    gemContainer* worldContainer;   ///< Working world GEM container we are using.
-    int  containerEntityID;         ///< Working ID of the container ID
 
 private:
 
