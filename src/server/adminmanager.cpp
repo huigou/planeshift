@@ -5902,15 +5902,15 @@ void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
     }
     else if(data->labelType == "tester")
     {
-        mask = 10;
+        mask = GM_TESTER;
     }
     else if(data->labelType == "gm1")
     {
-        mask = 21;
+        mask = GM_LEVEL_1;
     }
     else if(data->labelType == "gm")
     {
-        mask = 22;
+        mask = GM_LEVEL_2;
     }
     else
     {
@@ -8960,7 +8960,8 @@ void AdminManager::Admin(int clientnum, Client* client, int requestedLevel)
     int type = client->GetSecurityLevel();
 
     // for now consider all levels > 30 as level 30.
-    if(type>30) type=30;
+    if(type > GM_DEVELOPER)
+        type = GM_DEVELOPER;
 
     if(type > 0 && requestedLevel >= 0)
         type = requestedLevel;
