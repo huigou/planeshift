@@ -4457,16 +4457,25 @@ void gemActor::AddActiveSpell(ActiveSpell* asp)
         asp->SetImage(image);
     }
 
+    //psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
+    //outgoing.SendMessage();
+    SendActiveSpells();
+}
+
+void gemActor::SendActiveSpells()
+{
     psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
     outgoing.SendMessage();
 }
+
 
 bool gemActor::RemoveActiveSpell(ActiveSpell* asp)
 {
     if(activeSpells.Delete(asp))
     {
-        psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
-        outgoing.SendMessage();
+        //psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
+        //outgoing.SendMessage();
+        SendActiveSpells();
         return true;
     }
     return false;

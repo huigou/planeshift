@@ -1784,6 +1784,7 @@ public:
     void InvokeMovementScripts();
 
     void AddActiveSpell(ActiveSpell* asp);
+    void SendActiveSpells();
     bool RemoveActiveSpell(ActiveSpell* asp);
     ActiveSpell* FindActiveSpell(const csString &name, SPELL_TYPE type);
     int ActiveSpellCount(const csString &name);

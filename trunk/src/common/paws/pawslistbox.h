@@ -55,6 +55,8 @@ struct ColumnDef
         widgetNode  =  NULL;
         sortFunc    =  NULL;
         sortable = true;
+        width = 0;
+        height = 0;
     }
 
     int width;

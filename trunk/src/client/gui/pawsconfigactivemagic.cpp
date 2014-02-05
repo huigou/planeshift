@@ -21,6 +21,7 @@
 #include <psconfig.h>
 #include <csutil/xmltiny.h>
 #include <csutil/objreg.h>
+#include <iutil/stringarray.h>
 #include <iutil/vfs.h>
 
 
@@ -37,14 +38,26 @@
 #include "pawsconfigactivemagic.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawscheckbox.h"
-#include "shortcutwindow.h"
+#include "pawsactivemagicwindow.h"
 #include "pawsscrollmenu.h"
 #include "paws/pawsradio.h"
+
 
 pawsConfigActiveMagic::pawsConfigActiveMagic() :
     showEffects(NULL),
     autoResize(NULL),
-    useImages(NULL)
+    useImages(NULL),
+    buttonHeight(NULL),
+    buttonWidthMode(NULL),
+    buttonWidth(NULL),
+    leftScroll(NULL),
+    rightScroll(NULL),
+    textFont(NULL),
+    textSize(NULL),
+    textSpacing(NULL),
+    ActiveMagic(NULL),
+    MenuBar(NULL)
+
 {
     loaded= false;
 }
@@ -52,12 +65,12 @@ pawsConfigActiveMagic::pawsConfigActiveMagic() :
 bool pawsConfigActiveMagic::Initialize()
 {
     LoadFromFile("configactivemagic.xml");
-    //note : if the config files doesn't exist yet it's not an error
     return true;
 }
 
 bool pawsConfigActiveMagic::PostSetup()
 {
+
 //get pointer to ActiveMagic window
     psMainWidget*   Main    = psengine->GetMainWidget();
     if( Main==NULL )
@@ -72,6 +85,14 @@ bool pawsConfigActiveMagic::PostSetup()
         Error1( "pawsConfigActiveMagic::PostSetup unable to get ActiveMagic window\n");
         return false;
     }
+
+    MenuBar = (pawsScrollMenu*)(ActiveMagicWindow->FindWidget( "BuffBar",true ));
+    if( MenuBar==NULL )
+    {
+        Error1( "pawsConfigShortcut::PostSetup unable to get MenuBar\n");
+        return false;
+    }
+
 
 //get form widgets
     showEffects = (pawsRadioButtonGroup*)FindWidget("showEffects");
@@ -98,6 +119,79 @@ bool pawsConfigActiveMagic::PostSetup()
         return false;
     }
 
+   buttonHeight = (pawsScrollBar*)FindWidget("buttonHeight");
+    if(!buttonHeight)
+    {
+        return false;
+    }
+    buttonHeight->SetMaxValue(64);
+    buttonHeight->SetCurrentValue(48,false);
+
+    buttonWidthMode = (pawsRadioButtonGroup*)FindWidget("buttonWidthMode");
+    if(!buttonWidthMode)
+    {
+        return false;
+    }
+
+    buttonWidth = (pawsScrollBar*)FindWidget("buttonWidth");
+    if(!buttonWidth)
+    {
+        return false;
+    }
+    buttonWidth->SetMaxValue(512);
+    buttonWidth->SetCurrentValue(48,false);
+
+    leftScroll = (pawsRadioButtonGroup*)FindWidget("leftScroll");
+    if(!leftScroll)
+    {
+        return false;
+    }
+
+    rightScroll = (pawsRadioButtonGroup*)FindWidget("rightScroll");
+    if(!rightScroll)
+    {
+        return false;
+    }
+
+    textFont = (pawsComboBox*)FindWidget("textFont");
+    if(!textFont)
+    {
+        return false;
+    }
+    csRef<iVFS>           vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    if( vfs )
+    {
+        csRef<iStringArray>   fileList( vfs->FindFiles( "/planeshift/data/ttf/*.ttf" )); 
+        for (size_t i = 0; i < fileList->GetSize(); i++)
+        {
+            csString fileName ( fileList->Get (i));
+            fileName.DeleteAt( 0, 21 ); // remove the leading path.
+            fileName.ReplaceAll( ".ttf", "" );
+                
+            textFont->NewOption( fileName.GetData() );
+        }
+    }
+    else
+    {
+        Error1( "pawsConfigActiveMagic::PostSetup unable to find vfs for font list" );
+    }
+    
+    textSize = (pawsScrollBar*)FindWidget("textSize");
+    if(!textSize)
+    {
+        return false;
+    }
+    textSize->SetCurrentValue(10,false);
+    textSize->SetMaxValue(40);
+
+    textSpacing = (pawsScrollBar*)FindWidget("textSpacing");
+    if(!textSpacing)
+    {
+        return false;
+    }
+    textSpacing->SetCurrentValue(4,false);
+    textSpacing->SetMaxValue(20);
+
     return true;
 }
 
@@ -107,6 +201,71 @@ bool pawsConfigActiveMagic::LoadConfig()
     autoResize->SetState( ActiveMagicWindow->GetAutoResize() ); 
     showEffects->SetActive( ActiveMagicWindow->GetShowEffects()?"itemAndSpell":"spellOnly" ); 
     showWindow->SetState( ActiveMagicWindow->IsVisible() ); 
+
+    buttonHeight->SetCurrentValue( MenuBar->GetButtonHeight() );
+    if( MenuBar->GetButtonWidth()==0 )
+    {
+        buttonWidthMode->SetActive( "buttonWidthAutomatic" );
+        buttonWidth->SetCurrentValue( 0 );
+    }
+    else
+    {
+        buttonWidthMode->SetActive( "buttonWidthManual" );
+        buttonWidth->SetCurrentValue( MenuBar->GetButtonWidth() );
+    }
+
+    textSpacing->SetCurrentValue( MenuBar->GetButtonPaddingWidth() );
+
+    switch(  MenuBar->GetLeftScroll() )
+    {
+        case ScrollMenuOptionENABLED :
+        {
+            leftScroll->SetActive( "buttonScrollOn" );
+        }
+        break;
+
+        case ScrollMenuOptionDYNAMIC :
+        {
+            leftScroll->SetActive( "buttonScrollAuto" );
+        }
+        break;
+
+        case ScrollMenuOptionDISABLED :
+        {
+            leftScroll->SetActive( "buttonScrollOff" );
+        }
+        break;
+
+    }
+
+    switch(  MenuBar->GetRightScroll() )
+    {
+        case ScrollMenuOptionENABLED :
+        {
+            rightScroll->SetActive( "buttonScrollOn" );
+        }
+        break;
+
+        case ScrollMenuOptionDYNAMIC :
+        {
+            rightScroll->SetActive( "buttonScrollAuto" );
+        }
+        break;
+
+        case ScrollMenuOptionDISABLED :
+        {
+            rightScroll->SetActive( "buttonScrollOff" );
+        }
+        break;
+
+    }
+
+    textSize->SetCurrentValue(MenuBar->GetFontSize());
+
+    csString tFontName=csString(((pawsActiveMagicWindow*)ActiveMagicWindow)->GetFontName());
+    tFontName.DeleteAt(0,21);
+    tFontName.ReplaceAll(".ttf","" );
+    textFont->Select( tFontName.GetData() );
 
     loaded= true;
     dirty = false;
@@ -126,6 +285,23 @@ bool pawsConfigActiveMagic::SaveConfig()
                      showEffects->GetActive().GetData());
     xml.AppendFmt("<showWindow on=\"%s\" />\n",
                      showWindow->GetState() ? "yes" : "no");
+   xml.AppendFmt("<buttonHeight value=\"%d\" />\n",
+                     int(buttonHeight->GetCurrentValue()));
+    xml.AppendFmt("<buttonWidthMode active=\"%s\" />\n",
+                     buttonWidthMode->GetActive().GetData());
+    xml.AppendFmt("<buttonWidth value=\"%d\" />\n",
+                     int(buttonWidth->GetCurrentValue()));
+    xml.AppendFmt("<leftScroll active=\"%s\" />\n",
+                     leftScroll->GetActive().GetData());
+    xml.AppendFmt("<rightScroll active=\"%s\" />\n",
+                     rightScroll->GetActive().GetData());
+    xml.AppendFmt("<textSize value=\"%d\" />\n",
+                     int(textSize->GetCurrentValue()));
+    xml.AppendFmt("<textFont value=\"%s\" />\n",
+                     textFont->GetSelectedRowString().GetData());
+    xml.AppendFmt("<textSpacing value=\"%d\" />\n",
+                     int(textSpacing->GetCurrentValue()));
+
 
     xml += "</activemagic>\n";
 
@@ -142,9 +318,44 @@ void pawsConfigActiveMagic::SetDefault()
 
 bool pawsConfigActiveMagic::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
 {
-    
+    if(wdg == buttonWidth && loaded)
+    {
+        if(buttonWidth->GetCurrentValue() < buttonHeight->GetCurrentValue())
+            buttonWidth->SetCurrentValue(buttonHeight->GetCurrentValue());
+        else if( buttonWidth->GetCurrentValue() > buttonWidth->GetMaxValue() )
+            buttonWidth->SetCurrentValue(buttonWidth->GetMaxValue());
+
+        MenuBar->SetButtonWidth( buttonWidth->GetCurrentValue() );
+        MenuBar->LayoutButtons();
+
+    }
+    else if(wdg == buttonHeight && loaded)
+    {
+        if(buttonHeight->GetCurrentValue() < 1)
+            buttonHeight->SetCurrentValue(1,false);
+        MenuBar->SetButtonHeight( buttonHeight->GetCurrentValue() );
+        MenuBar->LayoutButtons();
+    }
+    else if(wdg == textSize && loaded)
+    {
+        if(textSize->GetCurrentValue() < 1)
+            textSize->SetCurrentValue(1,false);
+        PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
+        MenuBar->LayoutButtons();
+    }
+    else if(wdg == textSpacing && loaded)
+    {
+        if( textSpacing->GetCurrentValue() < 1 )
+            textSpacing->SetCurrentValue(1,false);
+        MenuBar->SetButtonPaddingWidth(  textSpacing->GetCurrentValue() );
+        MenuBar->LayoutButtons();
+    }
+
     if( loaded )
         SaveConfig();
+    MenuBar->LayoutButtons();
+    MenuBar->OnResize();
+    ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
 
     return true;
 }
@@ -155,7 +366,7 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
 
     switch( wdg->GetID() )
     {
-        case 1000 : //spell effects only
+        case 1020 : //spell effects only
         {
             ActiveMagicWindow->SetShowEffects(false);
             if( ActiveMagicWindow->GetAutoResize() )
@@ -165,7 +376,7 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         }
         break;
 
-        case 1001 : //Item and spell effects
+        case 1021 : //Item and spell effects
         {
             ActiveMagicWindow->SetShowEffects(true);
             if( ActiveMagicWindow->GetAutoResize() )
@@ -175,7 +386,7 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         }
         break;
 
-        case 1002 : // use icons (true) or text (false)?
+        case 1022 : // use icons (true) or text (false)?
         {
             ActiveMagicWindow->SetUseImages(useImages->GetState());
             if( ActiveMagicWindow->GetAutoResize() )
@@ -185,7 +396,7 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         }
         break;
 
-        case 1003 : // auto- or manual sizing
+        case 1023 : // auto- or manual sizing
         {
             ActiveMagicWindow->SetAutoResize(autoResize->GetState());
             if( ActiveMagicWindow->GetAutoResize() )
@@ -195,7 +406,7 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         }
         break;
 
-        case 1004 : // enable or disable the window
+        case 1024 : // enable or disable the window
         {
             ActiveMagicWindow->SetShowWindow(showWindow->GetState());
             pawsWidget* widget = PawsManager::GetSingleton().FindWidget( "ActiveMagicWindow" );
@@ -210,6 +421,73 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         }
         break;
 
+        case 1000 : //buttonWidthMode == automtic
+        {
+            MenuBar->SetButtonWidth( 0 );
+        }
+        break;
+
+        case 1001 : //buttonWidthMode == manual
+        {
+            MenuBar->SetButtonWidth( buttonWidth->GetCurrentValue() );
+        }
+        break;
+
+        case 1004 :
+        {
+            MenuBar->SetLeftScroll(ScrollMenuOptionENABLED );
+                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+        }
+        break;
+
+        case 1005 :
+        {
+            MenuBar->SetLeftScroll(ScrollMenuOptionDYNAMIC );
+                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+        }
+        break;
+
+        case 1006 :
+        {
+            MenuBar->SetLeftScroll(ScrollMenuOptionDISABLED );
+                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+        }
+        break;
+
+        case 1007 :
+        {
+            MenuBar->SetRightScroll(ScrollMenuOptionENABLED );
+                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+        }
+        break;
+
+        case 1008 :
+        {
+            MenuBar->SetRightScroll(ScrollMenuOptionDYNAMIC );
+                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+        }
+        break;
+        case 1009 :
+        {
+            MenuBar->SetRightScroll(ScrollMenuOptionDISABLED );
+                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+        }
+        break;
+
+        case 1014 :
+        {
+            if( ((pawsCheckBox*)wdg)->GetState()==true )
+            {
+                MenuBar->EnableButtonBackground( true );
+
+            }
+            else
+            {
+                MenuBar->EnableButtonBackground(false);
+            }
+        }
+        break;
+
         default :
         {
             Error2( "pawsConfigActiveMagic::OnButtonPressed got unrecognized widget with ID = %i\n", wdg->GetID() );
@@ -217,18 +495,42 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         }
     }
 
-    SaveConfig();    
+    if( loaded )
+    {
+        MenuBar->LayoutButtons();
+        MenuBar->OnResize();
+        ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+        SaveConfig();
+    }
 
     return true;
 }
 
-void pawsConfigActiveMagic::PickText( int index, int size )
+void pawsConfigActiveMagic::PickText( const char * fontName, int size )
 {
-    SaveConfig();    
+    csString    fontPath( "/planeshift/data/ttf/");
+    fontPath += fontName;
+    fontPath += ".ttf";
+    SetFont( fontPath, size );
+    MenuBar->SetFont( fontPath, size );
+    MenuBar->SetButtonFont( fontPath, size );
+
+    if( loaded )
+    {
+        MenuBar->LayoutButtons();
+        MenuBar->OnResize();
+        ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+        SaveConfig();
+    }
+
 }
 
 void pawsConfigActiveMagic::OnListAction(pawsListBox* selected, int status)
 {
+    PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
+    MenuBar->LayoutButtons();
+    MenuBar->OnResize();
+    ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
     SaveConfig();
 }
 

@@ -24,6 +24,11 @@
 #include <csutil/array.h>
 #include <iutil/document.h>
 
+#include <csutil/csstring.h>
+#include <csutil/stringarray.h>
+#include <csutil/array.h>
+
+
 // PAWS INCLUDES
 #include "paws/pawswidget.h"
 #include "paws/pawscombo.h"
@@ -39,7 +44,7 @@ class pawsScrollBar;
 class pawsRadioButtonGroup;
 
 /*
- * class pawsConfigActiveMagic is options screen for configuration of Shortcut Bar
+ * class pawsConfigActiveMagic is options screen for configuration of Active Magic Bar
  */
 class pawsConfigActiveMagic : public pawsConfigSectionWindow
 {
@@ -60,7 +65,7 @@ public:
     virtual bool SaveConfig();
     virtual void SetDefault();
 
-    void PickText( int index, int size );
+    void PickText( const char * fontName, int size );
     void SetMainWindowVisible( bool status );
 
 
@@ -73,6 +78,20 @@ protected:
     pawsCheckBox*          autoResize;
     pawsCheckBox*          useImages;
     pawsCheckBox*          showWindow;
+
+    pawsScrollBar*         buttonHeight;
+    pawsRadioButtonGroup*  buttonWidthMode;
+    pawsScrollBar*         buttonWidth;
+
+    pawsRadioButtonGroup*  leftScroll;
+    pawsRadioButtonGroup*  rightScroll;
+
+    pawsComboBox*          textFont;
+    pawsScrollBar*         textSize;
+    pawsScrollBar*         textSpacing;
+
+    pawsWidget*            ActiveMagic;
+    pawsScrollMenu*        MenuBar;
 
     bool                   loaded;
 
