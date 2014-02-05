@@ -2481,7 +2481,7 @@ void UserManager::Guard(Client* client, gemObject* object, csString action)
         if(onoff || (toggle && guardItem->GetGuardingCharacterID() == 0))
         {
             // TODO : Add that check in the security table
-            if(client->GetSecurityLevel() > 22) //GM2
+            if(client->GetSecurityLevel() > GM_LEVEL_2)
             {
                 guardItem->SetGuardingCharacterID(client->GetPID());
                 psserver->SendSystemError(client->GetClientNum(), "You have guarded %s", object->GetName());
@@ -2491,7 +2491,8 @@ void UserManager::Guard(Client* client, gemObject* object, csString action)
         }
         else
         {
-            if(guardItem->GetGuardingCharacterID() == client->GetPID() || client->GetSecurityLevel() > 22)
+            if(guardItem->GetGuardingCharacterID() == client->GetPID() ||
+               client->GetSecurityLevel() > GM_LEVEL_2)
             {
                 guardItem->SetGuardingCharacterID(0);
                 psserver->SendSystemError(client->GetClientNum(), "You have unguarded %s", object->GetName());
