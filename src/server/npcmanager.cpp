@@ -1329,9 +1329,7 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 requiredItem->Save(false);
 
                 // Create the gem entity
-                gemItem* newItem     = entityManager->CreateItem(requiredItem, false, tribeID);
-
-                newItem->UpdateProxList(true);
+                (void) entityManager->CreateItem(requiredItem, false, tribeID);
                 break;
             }
             case psNPCCommandsMessage::CMD_UNBUILD:
