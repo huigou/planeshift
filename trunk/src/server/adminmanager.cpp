@@ -8964,8 +8964,8 @@ void AdminManager::Admin(int clientnum, Client* client, int requestedLevel)
     int type = client->GetSecurityLevel();
 
     // for now consider all levels > 30 as level 30.
-    if(type > GM_DEVELOPER)
-        type = GM_DEVELOPER;
+    if(requestedLevel > GM_DEVELOPER)
+        requestedLevel = GM_DEVELOPER;
 
     if(type > 0 && requestedLevel >= 0)
         type = requestedLevel;
