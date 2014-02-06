@@ -8810,7 +8810,7 @@ void AdminManager::ChangeLock(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
                     // write back to database
                     int result = db->CommandPump("UPDATE item_instances SET openable_locks='%s' WHERE id=%d",
                                                  lstr.GetData(), keyID);
-                    if(result == QUERY_FAILED)
+                    if(result < 0)
                     {
                         Error4("Couldn't update item instance lockchange with lockID=%d keyID=%d openable_locks <%s>.",lockID, keyID, lstr.GetData());
                         return;
@@ -8964,8 +8964,8 @@ void AdminManager::Admin(int clientnum, Client* client, int requestedLevel)
     int type = client->GetSecurityLevel();
 
     // for now consider all levels > 30 as level 30.
-    if(requestedLevel > GM_DEVELOPER)
-        requestedLevel = GM_DEVELOPER;
+    if(type > GM_DEVELOPER)
+        type = GM_DEVELOPER;
 
     if(type > 0 && requestedLevel >= 0)
         type = requestedLevel;
@@ -9548,7 +9548,7 @@ bool AdminManager::CancelPetition(PID playerID, int petitionID, bool isGMrequest
     // Update the petition status
     result = db->CommandPump("UPDATE petitions SET status='Cancelled' WHERE id=%d AND player=%u", petitionID, playerID.Unbox());
 
-    return (result != QUERY_FAILED);
+    return (result > 0);
 }
 
 bool AdminManager::ChangePetition(PID playerID, int petitionID, const char* petition)
@@ -9579,7 +9579,7 @@ bool AdminManager::ChangePetition(PID playerID, int petitionID, const char* peti
     // Update the petition status
     result = db->CommandPump("UPDATE petitions SET petition=\"%s\" WHERE id=%d AND player=%u", escape.GetData(), petitionID, playerID.Unbox());
 
-    return (result != QUERY_FAILED);
+    return (result > 0);
 }
 
 bool AdminManager::ClosePetition(PID gmID, int petitionID, const char* desc)
@@ -9648,7 +9648,7 @@ bool AdminManager::LogGMCommand(AccountID accountID, PID gmID, PID playerID, con
     int result = db->Command("INSERT INTO gm_command_log "
                              "(account_id,gm,command,player,ex_time) "
                              "VALUES (%u,%u,\"%s\",%u,Now())", accountID.Unbox(), gmID.Unbox(), escape.GetData(), playerID.Unbox());
-    return (result <= 0);
+    return (result > 0);
 }
 
 const char* AdminManager::GetLastSQLError()
