@@ -1642,7 +1642,7 @@ void gemItem::SendBehaviorMessageTakeAll(const csString &msg_id, gemObject* obj,
 
     worldContainer = dynamic_cast<gemContainer*>(targetObject);
 
-    // Check the casting was succesful, suggesting the target of client might just be a container.
+    // Check the casting was successful, suggesting the target of client might just be a container.
     if(!worldContainer)
     {
         psserver->SendSystemError(fromClient->GetClientNum(),
@@ -1673,7 +1673,6 @@ void gemItem::SendBehaviorMessageTakeAll(const csString &msg_id, gemObject* obj,
     while(i.HasNext())
     {
         currentItem = i.Next();
-        //printf("Item name in selection: %s\n", currentItem->GetName());
 
         // Check the client can remove the current item
         if(!worldContainer->CanTake(fromClient, currentItem))
@@ -1684,10 +1683,10 @@ void gemItem::SendBehaviorMessageTakeAll(const csString &msg_id, gemObject* obj,
         {
             newItem = i.RemoveCurrent(fromClient);
 
-            //Check the removing was succesful
+            // Check if removing was successful
             if(!newItem)
             {
-                printf("/takeall: Removing %s by %d unsuccesful", currentItem->GetName(), fromClient->GetClientNum());
+                printf("/takeall: Removing %s by %d unsuccessful", currentItem->GetName(), fromClient->GetClientNum());
                 continue;
             }
 
@@ -1700,12 +1699,6 @@ void gemItem::SendBehaviorMessageTakeAll(const csString &msg_id, gemObject* obj,
                 chr->Inventory().Add(newItem, false, true, PSCHARACTER_SLOT_NONE, 0, false);    // call Add with precise == false
             }
         }
-        // UNIMPLEMENTED, as it's hard to know if next item in iteration could be stacked on top of another.
-        // Assume inventory might be full.
-        // else
-        //   psserver->SendSystemInfo(clientnum, "You can't carry anymore %s",GetName());
-
-        //currentItem->Save(false);
     }
 
     // Update character's inventory view

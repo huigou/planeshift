@@ -286,7 +286,7 @@ bool EEditApp::Init()
     };
     queue->RegisterListener(event_handler, esub);
 
-    // Inform debug that everything initialized succesfully
+    // Inform debug that everything initialized successfully
     csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, APP_NAME,
         "Application initialized successfully.");
 
