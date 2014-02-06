@@ -41,6 +41,8 @@ public:
 
     void OnListAction(pawsListBox* widget, int status);
 
+    void Show();
+
 private:
     pawsListBox* list[psGMSpawnMods::ITEM_NUM_TYPES];
     int selectedRow[psGMSpawnMods::ITEM_NUM_TYPES];
