@@ -217,7 +217,7 @@ bool PawsEditorApp::Init()
     if(skin != "")  //should not happen but who knows what an user might do :P
         LoadSkin( skin );
 
-    // Inform debug that everything initialized succesfully
+    // Inform debug that everything initialized successfully
     csReport (object_reg, CS_REPORTER_SEVERITY_NOTIFY, APP_NAME,
         "Application initialized successfully.");
 

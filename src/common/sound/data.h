@@ -43,7 +43,7 @@
  *
  * Now Someone calls LoadSoundFile to load a named resource or file
  * the one that calls expects a pointer to the SoundFile he requested
- * depending on how succesfull this is LoadSoundFile will fill it in and return
+ * depending on how successfull this is LoadSoundFile will fill it in and return
  * true or false.
  *
  * GetSound is called and GetSound will search if theres a cached

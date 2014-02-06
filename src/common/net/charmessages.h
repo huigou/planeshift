@@ -40,7 +40,7 @@ enum PSTRAIT_LOCATION {
 
 ///Used to confirm that a character has been uploaded.
 /**This message is used to convey the success to the client
- * that the character they created was done succesfully.
+ * that the character they created was done successfully.
  */
 class psCharApprovedMessage : public psMessageCracker
 {

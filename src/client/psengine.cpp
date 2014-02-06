@@ -524,7 +524,7 @@ bool psEngine::Initialize(int level)
         queue->RegisterListener(eventHandler3D, event_frame);
         queue->RegisterListener(eventHandlerFrame, event_frame);
 
-        // Inform debug that everything initialized succesfully
+        // Inform debug that everything initialized successfully
         csReport(object_reg, CS_REPORTER_SEVERITY_NOTIFY, PSAPP,
                  "psEngine initialized.");
 
