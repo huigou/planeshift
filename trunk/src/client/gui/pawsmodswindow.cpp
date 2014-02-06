@@ -84,6 +84,10 @@ void pawsModsWindow::HandleMessage(MsgEntry* me)
         tb->SetName(name);
     }
 
+    list[psGMSpawnMods::ITEM_PREFIX]->SortRows();
+    list[psGMSpawnMods::ITEM_SUFFIX]->SortRows();
+    list[psGMSpawnMods::ITEM_ADJECTIVE]->SortRows();
+
     Show();
 }
 
@@ -138,4 +142,12 @@ void pawsModsWindow::OnListAction(pawsListBox* widget, int status)
         spawnw->SetItemModifier(list[mods[i].type]
     }
 #endif
+}
+
+void pawsModsWindow::Show()
+{
+    selectedRow[psGMSpawnMods::ITEM_PREFIX] = -1;
+    selectedRow[psGMSpawnMods::ITEM_SUFFIX] = -1;
+    selectedRow[psGMSpawnMods::ITEM_ADJECTIVE] = -1;
+    pawsWidget::Show();
 }

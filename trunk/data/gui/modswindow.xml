@@ -10,7 +10,7 @@
     <widget name="adjectiveList" factory="pawsListBox"  >
         <frame x="8" y="5" width="100" height="250" border="no" />
 
-        <columns height="16">
+        <columns height="16" sortBy="0" sortOrder="asc">
             <column width="250" >
                 <widget name="Adjective" factory="pawsTextBox">
                 <text align="CENTRE" />
@@ -23,7 +23,7 @@
     <widget name="prefixList" factory="pawsListBox"  >
         <frame x="124" y="5" width="100" height="250" border="no" />
 
-        <columns height="16">
+        <columns height="16" sortBy="0" sortOrder="asc">
             <column width="250" >
                 <widget name="Prefix" factory="pawsTextBox">
                 <text align="CENTRE" />
@@ -36,7 +36,7 @@
     <widget name="suffixList" factory="pawsListBox"  >
         <frame x="240" y="5" width="100" height="250" border="no" />
 
-        <columns height="16">
+        <columns height="16" sortBy="0" sortOrder="asc">
             <column width="250" >
                 <widget name="Suffix" factory="pawsTextBox">
                 <text align="CENTRE" />
