@@ -669,11 +669,11 @@ void ActionManager::HandleExamineOperation(psActionLocation* action, Client* cli
     // Create Entity on Client
     action->Send(client->GetClientNum());
 
+    // Set as the target
+    client->SetTargetObject(action->GetGemObject(), true);
+
     // Find the real item if it exists
     gemItem* realItem = action->GetRealItem();
-
-    // Set the target
-    client->SetTargetObject(realItem ? (gemObject*)realItem : action->GetGemObject(), true);
 
     // If no enter check is specified, do nothing
     if(action->GetEnterScript())
