@@ -1059,6 +1059,8 @@ public:
      */
     virtual bool Send(int clientnum, bool control, bool to_superclients, psPersistAllEntities* allEntities=NULL);
 
+    virtual void SendBehaviorMessage(const csString &str, gemObject* obj);
+
     virtual bool GetVisibility()
     {
         return visible;

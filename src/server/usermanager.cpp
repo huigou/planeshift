@@ -2213,7 +2213,7 @@ void UserManager::HandleTakeAll(psUserCmdMessage &msg, Client* client)
 {
     // Check the client has targeted a container.
     gemObject* object = client->GetTargetObject();
-    if(object->GetItem())
+    if(object && (object->GetALPtr() || object->GetItem()))
     {
         object->SendBehaviorMessage("takeall", client->GetActor());
     }
@@ -2226,7 +2226,7 @@ void UserManager::HandleTakeStackAll(psUserCmdMessage &msg, Client* client)
 {
     // Check the client has targeted a container.
     gemObject* object = client->GetTargetObject();
-    if(object->GetItem())
+    if(object && (object->GetALPtr() || object->GetItem()))
     {
         object->SendBehaviorMessage("takestackall", client->GetActor());
     }
