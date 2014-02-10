@@ -2135,6 +2135,19 @@ bool gemActionLocation::Send(int clientnum, bool , bool to_superclients, psPersi
     return true;
 }
 
+void gemActionLocation::SendBehaviorMessage(const csString &str, gemObject* actor)
+{
+    gemObject* item = action->GetRealItem();
+    if (item)
+    {
+        gemActor* myactor = (gemActor*)actor;
+        myactor->SetTargetObject(item);
+        item->SendBehaviorMessage(str, actor);
+        myactor->SetTargetObject(this);
+    }
+    else
+        gemActiveObject::SendBehaviorMessage(str, actor);
+}
 
 //--------------------------------------------------------------------------------------
 // FrozenBuffable
