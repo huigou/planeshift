@@ -4463,8 +4463,6 @@ void gemActor::AddActiveSpell(ActiveSpell* asp)
         asp->SetImage(image);
     }
 
-    //psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
-    //outgoing.SendMessage();
     SendActiveSpells();
 }
 
@@ -4479,8 +4477,6 @@ bool gemActor::RemoveActiveSpell(ActiveSpell* asp)
 {
     if(activeSpells.Delete(asp))
     {
-        //psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
-        //outgoing.SendMessage();
         SendActiveSpells();
         return true;
     }
