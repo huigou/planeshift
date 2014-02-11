@@ -103,7 +103,7 @@ public:
 };
 
 
-/** Event when a player gains some Z points.
+/** Event when a player gains some Z (Practice) points.
  */
 class psZPointsGainedEvent : public psMessageCracker
 {

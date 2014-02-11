@@ -81,7 +81,9 @@ public:
     /**
      * Load progression script from db
      */
-    bool Initialize();
+    bool Initialize(iObjectRegistry* object_reg);
+
+    bool progressionWithoutTraining;
 
 protected:
 

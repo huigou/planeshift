@@ -29,6 +29,7 @@
 #include <iutil/object.h>
 #include <csutil/scfstr.h>
 #include <iengine/engine.h>
+#include <iutil/cfgmgr.h>
 
 //=============================================================================
 // Library Includes
@@ -95,7 +96,7 @@ ProgressionManager::~ProgressionManager()
     //do nothing
 }
 
-bool ProgressionManager::Initialize()
+bool ProgressionManager::Initialize(iObjectRegistry* object_reg)
 {
     Subscribe(&ProgressionManager::HandleSkill, MSGTYPE_GUISKILL, REQUIRE_READY_CLIENT);
     Subscribe(&ProgressionManager::HandleDeathEvent, MSGTYPE_DEATH_EVENT, NO_VALIDATION);
@@ -110,6 +111,13 @@ bool ProgressionManager::Initialize()
             affinitycategories.Put(csString(result_affinitycategories[(unsigned long)x]["category"]).Downcase() , csString(result_affinitycategories[(unsigned long)x]["attribute"]).Downcase());
         }
     }
+
+    // Read config: allow practice without training
+    csRef<iConfigManager> configmanager =  csQueryRegistry<iConfigManager> (object_reg);
+    if(!configmanager)
+        return false;
+
+    progressionWithoutTraining = configmanager->GetBool("PlaneShift.Server.ProgressionWithoutTraining", 0) ? true : false;
 
     return true;
 }
@@ -458,7 +466,7 @@ void ProgressionManager::HandleSkill(MsgEntry* me, Client* client)
 
             unsigned int current = character->Skills().GetSkillRank((PSSKILL) info->id).Base();
             float faction = actorTrainer->GetRelativeFaction(character->GetActor());
-            if(!character->GetTrainer()->GetTrainerInfo()->TrainingInSkill((PSSKILL)info->id, current, faction))
+            if(!character->GetTrainer()->GetTrainerInfo()->CanTrainSkill((PSSKILL)info->id, current, faction))
             {
                 psserver->SendSystemInfo(client->GetClientNum(),
                                          "You cannot train this skill currently.");
@@ -508,7 +516,7 @@ void ProgressionManager::SendSkillList(Client* client, bool forceOpen, PSSKILL f
         faction = trainer->GetActor()->GetRelativeFaction(character->GetActor());
     }
 
-
+    // for each skill
     for(unsigned int skillID = 0; skillID < cacheManager->GetSkillAmount(); skillID++)
     {
         psSkillInfo* info = cacheManager->GetSkillByID(skillID);
@@ -520,11 +528,11 @@ void ProgressionManager::SendSkillList(Client* client, bool forceOpen, PSSKILL f
 
         Skill &charSkill = character->Skills().Get((PSSKILL) skillID);
 
-        // If we are training, send skills that the trainer is providing education in only
+        // If we are not in training, or skill can be trained
         if(
             !trainerInfo
             ||
-            trainerInfo->TrainingInSkill((PSSKILL) skillID, character->Skills().GetSkillRank((PSSKILL) skillID).Base(), faction)
+            trainerInfo->CanTrainSkill((PSSKILL) skillID, character->Skills().GetSkillRank((PSSKILL) skillID).Base(), faction)
         )
         {
 
@@ -550,12 +558,14 @@ void ProgressionManager::SendSkillList(Client* client, bool forceOpen, PSSKILL f
 
             unsigned int actualStat = character->Skills().GetSkillRank((PSSKILL) skillID).Current();
 
+            // this skill is already present in the cache
             if(item)
             {
                 item->update(charSkill.rank.Base(), actualStat,
                              charSkill.y, charSkill.yCost,
                              charSkill.z, charSkill.zCost);
             }
+            // this skill is not present yet in the cache
             else
             {
                 item = new psSkillCacheItem(skillID, skillNameId,
@@ -566,9 +576,10 @@ void ProgressionManager::SendSkillList(Client* client, bool forceOpen, PSSKILL f
                 skills->addItem(skillID, item);
             }
         }
+        // We are training, but this skill is not available for training
+        // so remove it from the list and send only the skills the trainer is providing education for
         else if(trainerInfo)
         {
-            // We are training, but this skill is not available for training
             psSkillCacheItem* item = skills->getItemBySkillId(skillID);
             if(item)
             {
@@ -577,19 +588,21 @@ void ProgressionManager::SendSkillList(Client* client, bool forceOpen, PSSKILL f
         }
     }
 
-    MathEnvironment skillVal;
-    character->GetSkillValues(&skillVal);
+    // get stats values (str, end, agi, ...)
+    MathEnvironment statsVal;
+    character->GetSkillValues(&statsVal);
 
+    // send stats and skills to the client
     psGUISkillMessage newmsg(client->GetClientNum(),
                              psGUISkillMessage::SKILL_LIST,
                              "",
                              skills,
-                             (unsigned int)skillVal.Lookup("STR")->GetRoundValue(),
-                             (unsigned int)skillVal.Lookup("END")->GetRoundValue(),
-                             (unsigned int)skillVal.Lookup("AGI")->GetRoundValue(),
-                             (unsigned int)skillVal.Lookup("INT")->GetRoundValue(),
-                             (unsigned int)skillVal.Lookup("WIL")->GetRoundValue(),
-                             (unsigned int)skillVal.Lookup("CHA")->GetRoundValue(),
+                             (unsigned int)statsVal.Lookup("STR")->GetRoundValue(),
+                             (unsigned int)statsVal.Lookup("END")->GetRoundValue(),
+                             (unsigned int)statsVal.Lookup("AGI")->GetRoundValue(),
+                             (unsigned int)statsVal.Lookup("INT")->GetRoundValue(),
+                             (unsigned int)statsVal.Lookup("WIL")->GetRoundValue(),
+                             (unsigned int)statsVal.Lookup("CHA")->GetRoundValue(),
                              (unsigned int)character->GetHP(),
                              (unsigned int)character->GetMana(),
                              (unsigned int)character->GetStamina(true),

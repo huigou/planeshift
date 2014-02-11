@@ -439,7 +439,7 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     Debug1(LOG_STARTUP,0,"Started Event Manager Thread");
 
-    if(!progression->Initialize())
+    if(!progression->Initialize(object_reg))
     {
         Error1("Failed to start progression manager!");
         return false;

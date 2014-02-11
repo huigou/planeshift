@@ -73,7 +73,7 @@ bool psTrainerInfo::Load(PID pid)
     return isTrainer;
 }
 
-bool psTrainerInfo::TrainingInSkill(PSSKILL skill, unsigned int rank, float faction)
+bool psTrainerInfo::CanTrainSkill(PSSKILL skill, unsigned int rank, float faction)
 {
     csArray<psTrainerSkill*, csPDelArrayElementHandler<psTrainerSkill*> >::Iterator iter = skills.GetIterator();
 

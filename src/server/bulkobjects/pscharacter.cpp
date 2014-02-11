@@ -3219,8 +3219,10 @@ bool Skill::Practice(unsigned int amount, unsigned int &actuallyAdded, psCharact
 {
     bool rankup = false;
 
-    // Practice can take place
-    if(y >= yCost)
+    // if the server is setup to have Progression without training OR
+    // If the current knowledge level (Y) is at max level
+    // then practice can take place
+    if(y >= yCost || psserver->GetProgressionManager()->progressionWithoutTraining)
     {
         z+=amount;
         rankup = CheckDoRank(user);
@@ -3853,7 +3855,13 @@ unsigned int SkillSet::GetSkillKnowledge(PSSKILL skill)
 
     if(skill<0 || skill>=(PSSKILL)psserver->GetCacheManager()->GetSkillAmount())
         return 0;
-    return skills[skill].y;
+
+    // if Allow Practice Without Training is enabled, always return the actual Knowledge to 
+    // be equal as the cost
+    if(psserver->GetProgressionManager()->progressionWithoutTraining && (skill <= 45 || skill >= 52))
+        return skills[skill].yCost;
+    else
+        return skills[skill].y;
 }
 
 SkillRank &SkillSet::GetSkillRank(PSSKILL skill)
@@ -3865,6 +3873,12 @@ SkillRank &SkillSet::GetSkillRank(PSSKILL skill)
 Skill &SkillSet::Get(PSSKILL skill)
 {
     CS_ASSERT(skill >= 0 && skill < (PSSKILL)psserver->GetCacheManager()->GetSkillAmount());
+
+    // if Allow Practice Without Training is enabled, always return the actual Knowledge to 
+    // be equal as the cost (excluding stats: int, end, agi, ...)
+    if(psserver->GetProgressionManager()->progressionWithoutTraining && (skill <= 45 || skill >= 52))
+        skills[skill].y = skills[skill].yCost;
+
     return skills[skill];
 }
 
