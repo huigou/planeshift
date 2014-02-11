@@ -115,6 +115,11 @@ bool pawsActiveMagicWindow::PostSetup()
 
     LoadSetting();
 
+        csString blankSpell;
+        blankSpell="";
+        psSpellCastMessage msg(blankSpell, psengine->GetKFactor()); //request the current Active Mgic list
+        msg.SendMessage();
+
     return true;
 }
 

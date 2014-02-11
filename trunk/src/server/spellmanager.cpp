@@ -222,6 +222,13 @@ void SpellManager::Cast(gemActor* caster, const csString &spellName, float kFact
 {
     psSpell* spell = NULL;
 
+    if( spellName=="" )
+    {
+        //this is a request to send the current active magic list
+        caster->SendActiveSpells();
+        return;
+    }
+
     // Allow developers to cast any spell
     bool canCastAllSpells;
     if(client)
