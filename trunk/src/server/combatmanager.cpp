@@ -43,8 +43,6 @@
 /// This #define determines how far away people will get detailed combat events.
 #define MAX_COMBAT_EVENT_RANGE 30
 
-// #define COMBAT_DEBUG
-
 /**
  * When a player or NPC attacks someone, the first combat is queued.  When
  * that event is processed, if appropriate at the end, the next combat event
@@ -337,9 +335,6 @@ bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,Stance st
                 {
                     Debug3(LOG_COMBAT,attacker->GetClientID(),"%s tried attacking with %s but can't use it.",
                            attacker->GetName(),weapon->GetName());
-#ifdef COMBAT_DEBUG
-                    psserver->SendSystemError(attacker_character->GetActor()->GetClientID(), response);
-#endif
                 }
             }
         }
@@ -800,14 +795,14 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent* event)
     int attack_result;
     bool skipThisRound = false;
 
-    if(!event->GetAttacker() || !event->GetTarget())  // disconnected and deleted
+    // Skip if the attacker or the target are disconnected/deleted
+    if(!event->GetAttacker() || !event->GetTarget())
     {
-#ifdef COMBAT_DEBUG
-        psserver->SendSystemError(event->AttackerCID, "Combat stopped as one participant logged of.");
-#endif
+        Debug2(LOG_COMBAT,0,"Attacker ID: %d. Combat stopped as one participant logged off.",event->AttackerCID);
         return;
     }
 
+    // get attacker and target objects
     gemActor* gemAttacker = dynamic_cast<gemActor*>((gemObject*) event->attacker);
     gemActor* gemTarget   = dynamic_cast<gemActor*>((gemObject*) event->target);
 
@@ -816,36 +811,27 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent* event)
     // If the attacker is no longer in attack mode abort.
     if(gemAttacker->GetMode() != PSCHARACTER_MODE_COMBAT)
     {
-#ifdef COMBAT_DEBUG
-        psserver->SendSystemError(event->AttackerCID,
-                                  "Combat stopped as you left combat mode.");
-#endif
+        Debug2(LOG_COMBAT,0,"Combat stopped as attacker %d left combat mode.",event->AttackerCID);
         return;
     }
 
     // If target is dead, abort.
     if(!gemTarget->IsAlive())
     {
-#ifdef COMBAT_DEBUG
-        psserver->SendSystemResult(event->AttackerCID, "Combat stopped as one participant logged of.");
-#endif
+        Debug2(LOG_COMBAT,0,"Combat stopped as one participant logged off. Attacker ID: %d",event->AttackerCID);
         return;
     }
 
     // If the slot is no longer attackable, abort
     if(!attacker_data->Inventory().CanItemAttack(event->GetWeaponSlot()))
     {
-#ifdef COMBAT_DEBUG
-        psserver->SendSystemError(event->AttackerCID, "Combat stopped as you have no longer an attackable item equipped.");
-#endif
+        Debug2(LOG_COMBAT,0,"Combat stopped as attacker has no longer an attacking item equipped. Attacker ID: %d",event->AttackerCID);
         return;
     }
 
     if(attacker_data->Inventory().GetEquipmentObject(event->GetWeaponSlot()).eventId != event->id)
     {
-#ifdef COMBAT_DEBUG
-        psserver->SendSystemError(event->AttackerCID, "Ignored combat event as newer is in.");
-#endif
+        Debug1(LOG_COMBAT,0,"Ignored combat event as newer is in.");
         return;
     }
 
@@ -863,10 +849,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent* event)
     // If the weapon in the slot has been changed, skip a turn (latency for this slot may also have changed)
     if(event->WeaponID != weapon->GetUID())
     {
-        Debug2(LOG_COMBAT, gemAttacker->GetClientID(),"%s has changed weapons mid battle", gemAttacker->GetName());
-#ifdef COMBAT_DEBUG
-        psserver->SendSystemError(event->AttackerCID, "Weapon changed. Skipping");
-#endif
+        Debug2(LOG_COMBAT, gemAttacker->GetClientID(),"Skipping attack because %s has changed weapons mid battle", gemAttacker->GetName());
         skipThisRound = true;
     }
 
@@ -889,6 +872,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent* event)
         MathVar* PhyDrain = env.Lookup("PhyDrain");
         MathVar* MntDrain = env.Lookup("MntDrain");
 
+        // stop the attack if the attacker has no stamina left
         if((attacker_client->GetCharacterData()->GetStamina(true) < PhyDrain->GetValue())
                 || (attacker_client->GetCharacterData()->GetStamina(false) < MntDrain->GetValue()))
         {
@@ -909,9 +893,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent* event)
         // If the target has changed, abort (assume another combat event has started since we are still in attack mode)
         if(gemTarget != attacker_client->GetTargetObject())
         {
-#ifdef COMBAT_DEBUG
-            psserver->SendSystemError(event->AttackerCID, "Target changed.");
-#endif
+            Debug2(LOG_COMBAT,0,"Skipping attack, Target changed for attacker ID: %d.",event->AttackerCID);
             return;
         }
     }
@@ -921,9 +903,7 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent* event)
         gemNPC* npcAttacker = dynamic_cast<gemNPC*>(gemAttacker);
         if(npcAttacker && npcAttacker->GetTarget() != gemTarget)
         {
-#ifdef COMBAT_DEBUG
-            psserver->SendSystemError(event->AttackerCID, "NPC's target changed.");
-#endif
+            Debug2(LOG_COMBAT,0,"Skipping attack, Target changed for attacker ID: %d.",event->AttackerCID);
             return;
         }
     }
@@ -1001,12 +981,6 @@ void CombatManager::HandleCombatEvent(psCombatGameEvent* event)
     {
 //      CPrintf(CON_DEBUG, "Queueing Slot %d for %s's next combat event.\n",event->GetWeaponSlot(), event->attacker->GetName() );
         QueueNextEvent(event);
-    }
-    else
-    {
-#ifdef COMBAT_DEBUG
-        psserver->SendSystemError(event->AttackerCID, "Item %s is not a auto attack item.",attacker_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot())->GetName());
-#endif
     }
 //    else
 //        CPrintf(CON_DEBUG, "Slot %d for %s not an auto-attack slot.\n",event->GetWeaponSlot(), event->attacker->GetName() );

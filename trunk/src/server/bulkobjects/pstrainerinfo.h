@@ -49,7 +49,8 @@ class psTrainerInfo : public csRefCount
 {
 public:
     bool Load(PID pid);
-    bool TrainingInSkill(PSSKILL skill, unsigned int rank, float faction);
+    /// determines if the player can train this skill
+    bool CanTrainSkill(PSSKILL skill, unsigned int rank, float faction);
 
 private:
     csPDelArray<psTrainerSkill> skills;
