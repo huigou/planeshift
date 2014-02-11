@@ -308,16 +308,24 @@ void psSlotManager::UpdateItem()
 
 void psSlotManager::DropItem(bool guard)
 {
+    bool inplace = true;
+
     // get final position and rotation
     psPoint p = PawsManager::GetSingleton().GetMouse()->GetPosition();
     csVector3 pos;
     csVector3 rot;
     psengine->GetSceneManipulator()->GetPosition(pos, rot, csVector2(p.x, p.y));
 
+    // Don't drop money inplace
+    if(draggingSlot.containerID == CONTAINER_INVENTORY_MONEY)
+    {
+        inplace = false;
+    }
+    
     // Send drop message.
     psSlotMovementMsg msg( draggingSlot.containerID, draggingSlot.slotID,
       CONTAINER_WORLD, 0, draggingSlot.stackCount, &pos,
-      &rot, guard);
+      &rot, guard, inplace);
     msg.SendMessage();
 
     // Remove outline mesh.
