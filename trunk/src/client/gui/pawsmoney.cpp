@@ -117,42 +117,38 @@ void pawsMoney::SetContainer(int container)
 
 bool pawsMoney::PostSetup()
 {
-    circles  =  dynamic_cast <pawsSlot*> (FindWidget("Circles"));
+    circles = dynamic_cast <pawsSlot*>(FindWidget("Circles"));
     if (circles == NULL)
         return false;
-
     circles->SetEmptyOnZeroCount(false);
-    circles->PlaceItem("MoneyCircles", "");
-    circles->SetSlotID( MONEY_CIRCLES );
+    circles->PlaceItem("MoneyCircles", "money#circle01a_pile_01");
+    circles->SetSlotID(MONEY_CIRCLES);
     //if (border) 
     //    circles->SetBackground("Bulk Item Slot");
             
-    octas = dynamic_cast <pawsSlot*> (FindWidget("Octas"));
+    octas = dynamic_cast <pawsSlot*>(FindWidget("Octas"));
     if (octas == NULL)
         return false;
     octas->SetEmptyOnZeroCount(false);                
-    octas->PlaceItem("MoneyOctas", "");
-    octas->SetSlotID( MONEY_OCTAS );    
-    //octas->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), 0);
+    octas->PlaceItem("MoneyOctas", "money#octa_01a_pile_01_01");
+    octas->SetSlotID(MONEY_OCTAS);
     //if (border) 
     //    octas->SetBackground("Bulk Item Slot");
     
-    hexas =  dynamic_cast <pawsSlot*> (FindWidget("Hexas"));
+    hexas = dynamic_cast <pawsSlot*>(FindWidget("Hexas"));
     if (hexas == NULL)
         return false;
     hexas->SetEmptyOnZeroCount(false);        
-    hexas->PlaceItem("MoneyHexas", "");
-    hexas->SetSlotID( MONEY_HEXAS );   
-    //hexas->SetRelativeFramePos(0, GetActualHeight(SLOT_SIZE+spacing));
+    hexas->PlaceItem("MoneyHexas", "money#hexa_01a_pile_01_01");
+    hexas->SetSlotID(MONEY_HEXAS);   
     //if (border) hexas->SetBackground("Bulk Item Slot");
     
-    trias    =  dynamic_cast <pawsSlot*> (FindWidget("Trias"));
+    trias = dynamic_cast <pawsSlot*>(FindWidget("Trias"));
     if (trias == NULL)
         return false;
     trias->SetEmptyOnZeroCount(false);        
-    trias->PlaceItem("MoneyTrias", "");
-    trias->SetSlotID( MONEY_TRIAS );     
-    //trias->SetRelativeFramePos(GetActualWidth(SLOT_SIZE+spacing), GetActualHeight(SLOT_SIZE+spacing));
+    trias->PlaceItem("MoneyTrias", "money#tria_01a_pile_01_01");
+    trias->SetSlotID(MONEY_TRIAS);     
     //if (border) trias->SetBackground("Bulk Item Slot");
     
     return true;
