@@ -1315,7 +1315,7 @@ bool celNavMesh::LoadNavMesh (iFile* file)
     {
       break;
     }
-    unsigned char* data = new unsigned char[tileHeader.dataSize];
+    unsigned char* data = (unsigned char*)dtAlloc(tileHeader.dataSize, DT_ALLOC_PERM);
     if (!data)
     {
       break;
