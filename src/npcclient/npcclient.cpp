@@ -134,6 +134,8 @@ psNPCClient::~psNPCClient()
 
     // Delete Recipe Manager
     delete recipemanager;
+
+    gemNPCObject::FiniMesh();
 }
 
 bool psNPCClient::Initialize(iObjectRegistry* object_reg,const char* _host, const char* _user, const char* _pass, int _port)

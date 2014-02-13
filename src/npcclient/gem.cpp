@@ -170,6 +170,12 @@ bool gemNPCObject::InitMesh(const char* factname,
     return true;
 }
 
+void gemNPCObject::FiniMesh()
+{
+    // Don't wait for static destructor to be called.
+    nullfact.Invalidate();
+}
+
 void gemNPCObject::SetAlive(bool alive)
 {
     isAlive = alive;
