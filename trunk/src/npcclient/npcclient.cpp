@@ -113,9 +113,6 @@ psNPCClient::psNPCClient() : serverconsole(NULL)
 
 psNPCClient::~psNPCClient()
 {
-    tribes.Empty();
-    npcs.Empty();
-
     csHash<NPCType*, const char*>::GlobalIterator npcTypeIter(npctypes.GetIterator());
     while(npcTypeIter.HasNext())
         delete npcTypeIter.Next();
@@ -712,8 +709,6 @@ void psNPCClient::Remove(gemNPCObject* object)
         all_gem_objects.DeleteIndexFast(n);
     }
 
-    delete object;
-
     Notify2(LOG_CELPERSIST,"removed gemNPCObject(%s)\n", ShowID(EID));
 }
 
@@ -725,11 +720,11 @@ void psNPCClient::RemoveAll()
 //        UnattachNPC(all_gem_objects[i]->GetEntity(),FindAttachedNPC(all_gem_objects[i]->GetEntity()));
 //    }
 
-    all_gem_objects.DeleteAll();
     all_gem_items.DeleteAll();
     all_gem_actors.DeleteAll();
     all_gem_objects_by_eid.DeleteAll();
     all_gem_objects_by_pid.DeleteAll();
+    all_gem_objects.DeleteAll();
 }
 
 void psNPCClient::Remove(NPC* npc)

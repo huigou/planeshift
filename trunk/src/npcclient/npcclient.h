@@ -787,7 +787,7 @@ protected:
     csPDelArray<Tribe>              tribes;
     csHash<gemNPCObject*, EID>      all_gem_objects_by_eid;
     csHash<gemNPCObject*, PID>      all_gem_objects_by_pid;
-    csArray<gemNPCObject*>          all_gem_objects;
+    csPDelArray<gemNPCObject>       all_gem_objects;
     csArray<gemNPCItem*>            all_gem_items;
     csArray<gemNPCActor*>           all_gem_actors;
 
