@@ -782,9 +782,9 @@ protected:
     MathScriptEngine*               mathScriptEngine;
     psPathNetwork*                  pathNetwork;
     csRef<iCelHNavStruct>           navStruct;
-    csArray<NPC*>                   npcs;
+    csPDelArray<NPC>                npcs;
     csArray<DeferredNPC>            npcsDeferred;
-    csArray<Tribe*>                 tribes;
+    csPDelArray<Tribe>              tribes;
     csHash<gemNPCObject*, EID>      all_gem_objects_by_eid;
     csHash<gemNPCObject*, PID>      all_gem_objects_by_pid;
     csArray<gemNPCObject*>          all_gem_objects;

@@ -172,29 +172,16 @@ NPC::NPC(psNPCClient* npcclient, NetworkManager* networkmanager, psWorld* world,
 
 NPC::~NPC()
 {
-    if(brain)
-    {
-        delete brain;
-        brain = NULL;
-    }
-
-    if(last_perception)
-    {
-        delete last_perception;
-        last_perception = NULL;
-    }
+    delete brain;
+    delete oldbrain;
+    delete last_perception;
+    delete bufferMemory;
 
     // Cleare some cached values
     region = NULL;
     activeLocate->sector = NULL;
     activeLocate->wp = NULL;
     raceInfo = NULL;
-
-    if(bufferMemory)
-    {
-        delete bufferMemory;
-        bufferMemory = NULL;
-    }
 
     LocateHash::GlobalIterator iter = storedLocates.GetIterator();
     while(iter.HasNext())
@@ -457,6 +444,7 @@ NPCType* NPC::GetBrain()
 
 void NPC::SetBrain(NPCType* type)
 {
+    delete oldbrain;
     oldbrain = brain;
     this->type = type->GetName();
     this->brain = new NPCType(*type, this);
