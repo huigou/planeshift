@@ -83,6 +83,7 @@ public:
 
     bool InitMesh(const char* factname,const char* filename,
                   const csVector3 &pos,const float rotangle, const char* sector);
+    static void FiniMesh();
 
     iMeshWrapper* GetMeshWrapper();
     void Move(const csVector3 &pos, float rotangle, const char* room);
