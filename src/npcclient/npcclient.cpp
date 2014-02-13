@@ -113,16 +113,8 @@ psNPCClient::psNPCClient() : serverconsole(NULL)
 
 psNPCClient::~psNPCClient()
 {
-    csArray<Tribe*>::Iterator tribeIter(tribes.GetIterator());
-    while(tribeIter.HasNext())
-        delete tribeIter.Next();
     tribes.Empty();
-
-    csArray<NPC*>::Iterator npcIter(npcs.GetIterator());
-    while(npcIter.HasNext())
-        delete npcIter.Next();
     npcs.Empty();
-
 
     csHash<NPCType*, const char*>::GlobalIterator npcTypeIter(npctypes.GetIterator());
     while(npcTypeIter.HasNext())
@@ -1821,7 +1813,7 @@ void psNPCClient::ListTribeRecipes(const char* tribeID)
 
 void psNPCClient::ListReactions(const char* pattern)
 {
-    csArray<NPC*> npcs;
+    csArray<NPC*> lnpcs;
     csArray<csString> reactions;
 
     // Extract uniq lists of NPCs and reactions
@@ -1830,13 +1822,13 @@ void psNPCClient::ListReactions(const char* pattern)
         while(iter.HasNext())
         {
             csTuple2<NPC*,csString> item = iter.NextTuple();
-            npcs.PushSmart(item.first);
+            lnpcs.PushSmart(item.first);
             reactions.PushSmart(item.second);
         }
     }
 
     CPrintf(CON_CMDOUTPUT, "Registered reactions (Per NPC):\n");
-    csArray<NPC*>::Iterator npcIter = npcs.GetIterator();
+    csArray<NPC*>::Iterator npcIter = lnpcs.GetIterator();
     while(npcIter.HasNext())
     {
         NPC* npc = npcIter.Next();
