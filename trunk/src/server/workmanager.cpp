@@ -221,7 +221,7 @@ void WorkManager::HandleWorkCommand(MsgEntry* me, Client* client)
     {
         // Check if it's an action location with a script, then pass the job to ActionManager
         gemObject* target = client->GetTargetObject();
-        gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+        gemActionLocation* gemAction = target->GetALPtr();
         bool examineScript = false;
         if(gemAction)
             examineScript = psserver->GetActionManager()->HandleUse(gemAction, client);
@@ -262,7 +262,7 @@ void WorkManager::HandleLockPick(MsgEntry* me,Client* client)
     gemObject* target = client->GetTargetObject();
 
     // Check if target is action item
-    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    gemActionLocation* gemAction = target->GetALPtr();
     if(gemAction)
     {
         target = gemAction->GetAction()->GetRealItem();
@@ -2376,7 +2376,7 @@ bool WorkManager::ValidateTarget(Client* client)
     // Check if player has something targeted
     gemObject* target = client->GetTargetObject();
 
-    gemActionLocation* gemAction = dynamic_cast<gemActionLocation*>(target);
+    gemActionLocation* gemAction = target->GetALPtr();
     if(gemAction) target = gemAction->GetAction()->GetRealItem();
 
     if(target)
