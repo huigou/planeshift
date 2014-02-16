@@ -677,7 +677,10 @@ void CombatManager::ApplyCombatEvent(psCombatGameEvent* event, int attack_result
             if(gemTarget->GetMode() == PSCHARACTER_MODE_PEACE || gemTarget->GetMode() == PSCHARACTER_MODE_WORK)
             {
                 if(gemTarget->GetClient())   // Set reciprocal target
+                {
                     gemTarget->GetClient()->SetTargetObject(gemAttacker,true);
+                    gemTarget->SendTargetStatDR(gemTarget->GetClient());
+                }
 
                 // The default stance is 'Fully Defensive'.
                 Stance initialStance = GetStance(cacheManager, "FullyDefensive");
