@@ -649,3 +649,17 @@ INSERT INTO math_scripts VALUES( "TestAdaptivVel",
 {
    AdaptivVelScale=AdaptivVelScale - 0.1;
 }" );
+
+INSERT INTO math_scripts VALUES( "CombineQuality",
+"
+//MaxQuality -> highest quality item (defined by the code)
+//MinQuality -> lowest quality item (defined by the code)
+//ItemNumber -> Total number of items
+//TotalQuality -> the sum of all qualities (defined by the code)
+//average quality of all items 
+AverageQuality = TotalQuality/ItemNumber;
+//average quality of the 
+AvgExtQuality = (MaxQuality + MinQuality)/2;
+Result = AverageQuality * log(1+(AvgExtQuality/AverageQuality));
+Result =  min(Result, 300);
+" );
