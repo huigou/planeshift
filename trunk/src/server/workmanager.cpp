@@ -144,6 +144,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpick_time, "Lockpicking Time");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_apply_skill, "Calculate Transformation Apply Skill");
     psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_time, "Calculate Transformation Time");
+    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_combine_quality, "CombineQuality");
 
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Rank'", calc_repair_rank.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Time'", calc_repair_time.IsValid());
@@ -156,6 +157,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Experience'", calc_transform_exp.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Practice'", calc_transform_practice.IsValid());
     CS_ASSERT_MSG("Could not load mathscript 'Lockpicking Time'", calc_lockpick_time);
+    CS_ASSERT_MSG("Could not load mathscript 'CombineQuality'", calc_combine_quality);
     //optional for now
     //CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Apply Skill'", calc_transform_apply_skill);
     //CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Time'", calc_transform_time);
@@ -1687,6 +1689,9 @@ bool WorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
     csArray<psItem*> itemArray;
     gemContainer::psContainerIterator it(container);
     currentQuality = 1.00;
+    float minQuality = 300.0;
+    float maxQuality = 0.0;
+    float totalQuality = 0.0;
     while(it.HasNext())
     {
         // Only check the stuff that player owns or is public
@@ -1698,11 +1703,31 @@ bool WorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
 
             // While we are here find the item with the least quality
             float quality = item->GetItemQuality();
-            if(currentQuality < quality)
+            if(minQuality > quality)
             {
-                currentQuality = quality;
+                minQuality = quality;
             }
+            if(maxQuality < quality)
+            {
+                maxQuality = quality;
+            }
+            totalQuality += quality;
         }
+    }
+
+    {
+        MathEnvironment env;
+        env.Define("MinQuality", minQuality);
+        env.Define("MaxQuality", maxQuality);
+        env.Define("TotalQuality", totalQuality);
+        env.Define("ItemNumber",
+                (double)(itemArray.GetSize() > 0 ? itemArray.GetSize() : 1.0));
+
+        //update the script if needed. Here we don't protect against bad scripts as before for now.
+        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_combine_quality, "CombineQuality");
+
+        calc_combine_quality->Evaluate(&env);
+        currentQuality = env.Lookup("Result")->GetRoundValue();
     }
 
     // Check if specific combination is possible

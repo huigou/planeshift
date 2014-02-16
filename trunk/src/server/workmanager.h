@@ -337,6 +337,7 @@ protected:
     csWeakRef<MathScript> calc_lockpick_time;               ///< This is the calculation for how long it takes to pick a lock.
     csWeakRef<MathScript> calc_transform_apply_skill;       ///< This is the calculation for the quality resulting from the item.
     csWeakRef<MathScript> calc_transform_time;              ///< This is the calculation for the time needed to accomplish a transformation.
+    csWeakRef<MathScript> calc_combine_quality;             ///< This is the calculation for the quality of combined work items.
 
 
     void HandleLockPick(MsgEntry* me,Client* client);
