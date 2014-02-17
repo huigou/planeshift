@@ -1729,6 +1729,9 @@
 			Name="Source Files"
 			Filter="">
 			<File
+				RelativePath="..\..\src\client\gui\attacklist.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\bartender.cpp">
 			</File>
 			<File
@@ -1924,6 +1927,9 @@
 				RelativePath="..\..\src\client\gui\pawsmerchantwindow.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsmodswindow.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsmoney.cpp">
 			</File>
 			<File
@@ -2002,6 +2008,9 @@
 		<Filter
 			Name="Header Files"
 			Filter="">
+			<File
+				RelativePath="..\..\src\client\gui\attacklist.h">
+			</File>
 			<File
 				RelativePath="..\..\src\client\gui\bartender.h">
 			</File>
@@ -2196,6 +2205,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsmerchantwindow.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsmodswindow.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsmoney.h">
