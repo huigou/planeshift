@@ -35,12 +35,14 @@
 //=============================================================================
 #include "psquestprereqops.h"
 #include "pscharacter.h"
+#include "psattack.h"
 #include "psquest.h"
 #include "weathermanager.h"
 #include "cachemanager.h"
 #include "psraceinfo.h"
 #include "pstrait.h"
 #include "client.h"
+#include "psitemstats.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -805,5 +807,102 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpSkill::Copy()
 {
     csRef<psQuestPrereqOpSkill> copy;
     copy.AttachNew(new psQuestPrereqOpSkill(skill, min, max, allowBuffed));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+bool psPrereqOpAttackType::Check(psCharacter * character)
+{
+
+    for (int slot=0; slot<PSCHARACTER_SLOT_BULK1; slot++)
+    {
+        if (character->Inventory().CanItemAttack((INVENTORY_SLOT_NUMBER) slot))
+        {
+            return checkWeapon(character,slot);
+        }
+    }
+
+    return false;
+}
+bool psPrereqOpAttackType::checkWeapon(psCharacter *character, int slot)
+{
+
+    psItem *weapon=character->Inventory().GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER) slot);
+    if(!attackType->weapon.IsEmpty())
+    {
+        if(!(attackType->weapon.CompareNoCase(weapon->GetName())))
+        {
+            return false;
+        }
+    }
+    if(!checkWType(character,weapon))
+        return false;
+
+     return true;
+}
+bool psPrereqOpAttackType::checkWType(psCharacter* character, psItem* weapon)
+{
+    if(!attackType->weaponTypes.IsEmpty())
+    {
+        bool checkFlag = false;
+        for(size_t i = 0; i < attackType->weaponTypes.GetSize(); i++)
+        {
+            if(attackType->weaponTypes[i] == weapon->GetWeaponType())
+            {
+                checkFlag = true;
+            }
+        }
+        if(checkFlag != true)
+            return false;
+    }
+
+    return true;
+}
+csString psPrereqOpAttackType::GetScriptOp()
+{
+    csString script = "<>";
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psPrereqOpAttackType::Copy()
+{
+    csRef<psPrereqOpAttackType> copy;
+    copy.AttachNew(new psPrereqOpAttackType(attackType));
+    return csPtr<psQuestPrereqOp>(copy);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+bool psPrereqOpStance::Check(psCharacter * character)
+{
+
+    csString charstance = character->GetActor()->GetCombatStance().stance_name;
+
+    //if the required stance matches the current stance return true.
+
+    if(stance == charstance)
+        return true;
+
+    return false;
+}
+
+csString psPrereqOpStance::GetScriptOp()
+{
+    csString script;
+
+    script.AppendFmt("<stance name=\"%s\" />", stance.GetData());
+   
+    return script;
+}
+
+csPtr<psQuestPrereqOp> psPrereqOpStance::Copy()
+{
+    csRef<psPrereqOpStance> copy;
+    copy.AttachNew(new psPrereqOpStance(stance));
     return csPtr<psQuestPrereqOp>(copy);
 }

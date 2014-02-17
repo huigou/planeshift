@@ -35,6 +35,7 @@
 //=============================================================================
 // Local Includes
 //=============================================================================
+#include "psattack.h"
 
 class psCharacter;
 class psQuest;
@@ -1348,6 +1349,133 @@ public:
     virtual csPtr<psQuestPrereqOp> Copy();
 };
 
-/** @} */
+/**
+ * Weapon requirement operator.
+ *
+ * Checks for various attack type specs
+ * atm this is really only useable in the combat system.
+ */
+class psPrereqOpAttackType: public psQuestPrereqOp
+{
+ protected:
+     psAttackType* attackType; ///< The required attack Type
+
+ public:
+
+    /**
+     * Construct an attack type
+     *
+     */
+     psPrereqOpAttackType(psAttackType* attackType) : attackType(attackType){};
+
+    /**
+     * Destructor
+     */
+    virtual ~psPrereqOpAttackType() {}
+
+    /**
+     * Check if the attack typespecification is correct
+     *
+     * @param  character The character that are checking for a requirement
+     * @return True if specs are correct.
+     */
+    virtual bool Check(psCharacter * character);
+
+    /**
+     * Convert the requirement operator to a xml string
+     *
+     * Convert the operator into the xml string:
+     * <attacktype name = "[attack type name]" />
+     *
+     * @return XML string for the requirement operator.
+     */
+    virtual csString GetScriptOp();
+
+
+    /**
+     * Copy the requirement operator
+     *
+     * Override this function to return a copy of the requirement
+     * operator.
+     *
+     * @return Copy of the requirement operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+
+private:
+    /**
+     * Checks weapon's name, if specified
+     *
+     */
+    bool checkWeapon(psCharacter* character, int slot);
+
+    
+    /**
+     * Checks weapon's type, if specified
+     *
+     */
+    bool checkWType(psCharacter* character, psItem* weapon);
+};
+
+
+/**
+ * Stance requirement operator.
+ *
+ * Checks for various stances
+ */
+class psPrereqOpStance: public psQuestPrereqOp
+{
+ protected:
+     csString stance;
+
+ public:
+
+    /**
+     * Construct a stance operator
+     *
+     * @param stance The stance which should be checked for.
+     */
+    psPrereqOpStance(csString stance):stance(stance){};
+
+    /**
+     * Destructor
+     */
+    virtual ~psPrereqOpStance() {}
+
+
+    /**
+     * Check if the player stance is correct
+     *
+     * @param  character The character that are checking for a requirement
+     * @return True if specs are correct.
+     */
+    virtual bool Check(psCharacter * character);
+
+
+    /**
+     * Convert the requirement operator to a xml string
+     *
+     * Convert the operator into the xml string:
+     * <stance name = "stance name"/>
+     *
+     * @return XML string for the requirement operator.
+     */
+    virtual csString GetScriptOp();
+
+
+
+    /**
+     * Copy the requirement operator
+     *
+     * Override this function to return a copy of the requirement
+     * operator.
+     *
+     * @return Copy of the requirement operator.
+     */
+    virtual csPtr<psQuestPrereqOp> Copy();
+
+};
+
+
 
 #endif

@@ -168,6 +168,7 @@ UserManager::UserManager(ClientConnectionSet* cs, CacheManager* cachemanager, Ba
     userCommandHash.Put("/admin",        &UserManager::HandleAdminCommand);
     userCommandHash.Put("/assist",       &UserManager::Assist);
     userCommandHash.Put("/attack",       &UserManager::HandleAttack);
+    userCommandHash.Put("/queue",        &UserManager::HandleQueueAttack);
     userCommandHash.Put("/bank",         &UserManager::HandleBanking);
     userCommandHash.Put("/buddy",        &UserManager::Buddy);
     userCommandHash.Put("/challenge",    &UserManager::ChallengeToDuel);
@@ -1596,7 +1597,29 @@ void UserManager::HandleAttack(psUserCmdMessage &msg,Client* client)
 
     Attack(stance, client);
 }
-
+void UserManager::HandleQueueAttack(psUserCmdMessage& msg, Client *client)
+{
+   psCharacter* character = client->GetCharacterData();
+   psAttack* attack = cacheManager->GetAttackByName(msg.attack);
+   if(attack)
+   {
+       if(attack->CanAttack(client))
+       {
+            if(character->GetAttackQueue()->Push(cacheManager->GetAttackByName(msg.attack), client->GetCharacterData()))
+                return;
+            else
+            {
+                psserver->SendSystemError(client->GetClientNum(),"The attack queue is currently full");
+            }
+       }
+       else
+       {
+           psserver->SendSystemError(client->GetClientNum(),"You do not meet the requirements of that attack.");
+       }
+   }
+   else
+       psserver->SendSystemError(client->GetClientNum(),"That attack does not exist");
+}
 void UserManager::HandleStopAttack(psUserCmdMessage &msg,Client* client)
 {
     psserver->combatmanager->StopAttack(client->GetActor());

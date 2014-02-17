@@ -191,6 +191,7 @@ protected:
     void HandleWeatherMessage(MsgEntry* me);
     void HandleNewSectorMessage(MsgEntry* me);
     void HandleCombatEvent(MsgEntry* me);
+    void HandleSpecialCombatEvent(MsgEntry* me);
 	void HandleCachedFile(MsgEntry* me);
 
     bool ProcessLighting(LightingSetting *color, float pct);

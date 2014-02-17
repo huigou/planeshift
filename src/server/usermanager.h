@@ -336,13 +336,21 @@ protected:
      */
     void HandleAttack(psUserCmdMessage &msg, Client* client);
 
-    /**
-     * Command to stop attacking your target.
+
+    /** @brief command to add an attack to the attackQueue
+     *  
      *
      * @param msg The incoming user command message.
      * @param client The client that request the command.
      */
-    void HandleStopAttack(psUserCmdMessage &msg, Client* client);
+    void HandleQueueAttack(psUserCmdMessage& msg, Client *client);
+
+    /** @brief Command to stop attacking your target
+      *
+      * @param msg The incoming user command message.
+      * @param client The client that request the command.
+      */
+    void HandleStopAttack(psUserCmdMessage& msg,Client *client);
 
 
     /**

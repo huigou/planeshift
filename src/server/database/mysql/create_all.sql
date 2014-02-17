@@ -2,6 +2,8 @@ source accounts.sql;
 source action_locations.sql;
 source alliances.sql;
 source armorvsweapon.sql;
+source attacks.sql;
+source attack_types.sql
 source bad_names.sql;
 source bans.sql;
 source character_relationships.sql;
@@ -93,7 +95,7 @@ source guild_wars.sql;
 source wc_accessrules.sql;
 source wc_cmdlog.sql;
 source wc_statistics.sql;
-
+source weapon_types.sql;
 
 
 source create_indexes.sql;

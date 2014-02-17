@@ -88,6 +88,7 @@ bool pawsControlWindow::PostSetup()
     AddWindow( "InventoryWindow" ,   "InventoryButton" );
     AddWindow( "ConfigWindow" ,      "OptionsButton" );
     AddWindow( "SpellBookWindow" ,   "SpellBookButton" );
+    AddWindow("AttackBookWindow" , "SpellBookButton" );
     AddWindow( "InfoWindow" ,        "InfoButton" );
     AddWindow( "HelpWindow" ,        "HelpButton" );
     AddWindow( "ShortcutMenu" ,    "ShortcutButton" );
@@ -305,6 +306,8 @@ bool pawsControlWindow::HandleWindowName(csString widgetStr)
         widget = "SpellBookWindow";
     else if(widgetStr == "inventory" || widgetStr == "inv")
         widget = "InventoryWindow";
+    else if(widgetStr == "attackwindow")
+        widget = "AttackBookWindow";
     else if(widgetStr == "help")
         widget = "HelpWindow";
     else if(widgetStr == "buddy")

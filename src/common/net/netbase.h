@@ -118,12 +118,15 @@ class NetBase
 public:
 
     /**
-     * Struct used by MessageCracher and ToString to distribute a number of access pointers.
+     * Struct used by MessageCracker and ToString to distribute a number of access pointers.
      * Collect all in one struct instead of creating multiple arguments that
      * would be hard to maintain.
      */
     struct AccessPointers
     {
+        // msgstrings are loaded by CacheManager and mantained in CacheManager.msg_strings
+        // then sent from server to client at login with psMsgStringsMessage
+        // and stored in <appdata>/cache/commonstrings client side
         csStringSet* msgstrings;
         csStringHashReversible* msgstringshash;
         iEngine *engine;
@@ -333,7 +336,7 @@ public:
 
 protected:
     /**
-     * Check if the given message type should be loged or not.
+     * Check if the given message type should be logged or not.
      * @param type The message type to check for filtering
      * @param dir  The direction 'R' or 'S'
      *

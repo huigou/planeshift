@@ -49,6 +49,8 @@ class psGuildAlliance;
 class psSkillInfo;
 class psAccountInfo;
 class psQuest;
+class psAttack;
+class psAttackDefault;
 class psTradePatterns;
 class psTradeProcesses;
 class psTradeCombinations;
@@ -333,12 +335,28 @@ public:
     psQuest* GetQuestByName(const char* name);
     psQuest* AddDynamicQuest(const char* name, psQuest* parentQuest, int step);
 
+
     /// Unloads a quest and its scripts
     bool UnloadQuest(int id);
 
     /// Loads a quest and its scripts
     bool LoadQuest(int id);
     csHash<psQuest*>::GlobalIterator GetQuestIterator();
+    //@}
+
+        
+    /**@name Attacks
+    */
+    //@{
+    psAttack *GetAttackByID(unsigned int id);
+    psAttack *GetAttackByName(const char *name);
+    csArray<psAttack*>GetAllAttacks();
+    /// unload an attack and its scripts
+    bool UnloadAttack(int id);
+
+    /// Loads an attack and its scripts
+    bool LoadAttack(int id);
+    csHash<psAttack *>::GlobalIterator GetAttackIterator();
     //@}
 
     /** @name Accounts
@@ -414,6 +432,14 @@ public:
     // Ways
     psWay* GetWayByID(unsigned int id);
     psWay* GetWayByName(const csString &name);
+
+    // attack types
+    psAttackType *GetAttackTypeByID(unsigned int id);
+    psAttackType *GetAttackTypeByName(csString name);
+
+    // weapon types
+    psWeaponType*GetWeaponTypeByID(unsigned int id);
+    psWeaponType *GetWeaponTypeByName(csString name);
 
     // Factions
     Faction* GetFaction(const char* name);
@@ -620,6 +646,7 @@ protected:
     bool PreloadSectors();
     bool PreloadRaceInfo();
     bool PreloadSkills();
+    bool PreloadAttacks();
     /** Preloads the server_options and stores them in an easily accessible structure.
      *  @return FALSE if the load failed
      */
@@ -628,6 +655,8 @@ protected:
     bool PreloadTraits();
     bool PreloadItemCategories();
     bool PreloadWays();
+    bool PreloadAttackTypes();
+    bool PreloadWeaponTypes();
     ///preloads the character events script for a faction
     void PreloadFactionCharacterEvents(const char* script, Faction* faction);
     bool PreloadFactions();
@@ -844,6 +873,8 @@ protected:
 
     csPDelArray<psItemCategory > itemCategoryList;
     csPDelArray<psWay > wayList;
+    csPDelArray<psAttackType > attackTypeList;
+    csPDelArray<psWeaponType > weaponTypeList;
     csHash<Faction*, int> factions_by_id;
     csHash<Faction*, csString> factions;
     csHash<ProgressionScript*,csString> scripts;
@@ -854,9 +885,10 @@ protected:
     csPDelArray<csPDelArray<psItemAnimation > > item_anim_list;
     csHash<psGuildInfo*> guildinfo_by_id;
     csHash<psGuildAlliance*> alliance_by_id;
-    csHash<psQuest*> quests_by_id;
-    csHash<psTradePatterns*,uint32> tradePatterns_IDHash;
-    csHash<psTradePatterns*,csString> tradePatterns_NameHash;
+    csHash<psAttack  *> attacks_by_id;
+    csHash<psQuest *> quests_by_id;
+    csHash<psTradePatterns *,uint32> tradePatterns_IDHash;
+    csHash<psTradePatterns *,csString> tradePatterns_NameHash;
     csHash<csArray<psTradeProcesses*> *,uint32> tradeProcesses_IDHash;
     csHash<csPDelArray<CombinationConstruction> *,uint32> tradeCombinations_IDHash;
     csHash<csHash<csPDelArray<psTradeTransformations> *,uint32> *,uint32> tradeTransformations_IDHash;

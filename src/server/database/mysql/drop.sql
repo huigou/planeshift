@@ -2,6 +2,8 @@ DROP TABLE accounts;
 DROP TABLE action_locations;
 DROP TABLE alliances;
 DROP TABLE armor_vs_weapon;
+DROP TABLE attacks;
+DROP TABLE attack_types;
 DROP TABLE bad_names;
 DROP TABLE bans;
 DROP TABLE char_create_affinity;
@@ -97,3 +99,5 @@ DROP TABLE ways;
 DROP TABLE wc_accessrules;
 DROP TABLE wc_cmdlog;
 DROP TABLE wc_statistics;
+
+DROP TABLE weapon_types;

@@ -75,6 +75,7 @@
 #include "bulkobjects/psaccountinfo.h"
 #include "bulkobjects/pstrainerinfo.h"
 #include "bulkobjects/psitem.h"
+#include "bulkobjects/psattack.h"
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psraceinfo.h"
 
@@ -1168,7 +1169,7 @@ int com_addinv(const char* line)
         psserver->GetCacheManager()->RemoveInstance(iteminstance);
         return 0;
     }
-
+   
     // If we temporarily loaded the character for this add, unload them now
     if(temploaded)
         delete chardata;
@@ -1340,27 +1341,13 @@ void show_item_stats(psItem* item,int depth)
         CPrintf(CON_CMDOUTPUT ," Hardness:%g\n",
                 item->GetHardness());
     }
-    PSITEMSTATS_WEAPONTYPE weapontype = item->GetWeaponType();
-    if(weapontype != PSITEMSTATS_WEAPONTYPE_NONE)
+    csString weapontype = item->GetWeaponType()->name;
+    if (!weapontype.IsEmpty())
     {
+
         indent(depth);
-        switch(weapontype)
-        {
-            case PSITEMSTATS_WEAPONTYPE_SWORD:
-                CPrintf(CON_CMDOUTPUT ,"WType:Sword");
-                break;
-            case PSITEMSTATS_WEAPONTYPE_AXE:
-                CPrintf(CON_CMDOUTPUT ,"WType:Axe");
-                break;
-            case PSITEMSTATS_WEAPONTYPE_DAGGER:
-                CPrintf(CON_CMDOUTPUT ,"WType:Dagger");
-                break;
-            case PSITEMSTATS_WEAPONTYPE_HAMMER:
-                CPrintf(CON_CMDOUTPUT ,"WType:Hammer");
-                break;
-            default:
-                ;
-        }
+        CPrintf(CON_CMDOUTPUT ,"WType:%s", weapontype.GetData()); 
+
         CPrintf(CON_CMDOUTPUT ," Latency:%g Penetration:%g untgtblock:%g tgtblock=%g cntblock=%g\n",
                 item->GetLatency(),
                 item->GetPenetration(),

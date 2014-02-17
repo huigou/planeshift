@@ -1421,8 +1421,7 @@ public:
 
     /**
      * Checks if our actor can attack given target.
-     *
-     * If not, the msg is filled out.
+     * If not, send him some informative text message
      */
     bool IsAllowedToAttack(gemObject* target, csString &msg);
 

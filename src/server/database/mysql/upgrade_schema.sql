@@ -1774,7 +1774,6 @@ UPDATE `server_options` SET `option_value`='1271' WHERE `option_name`='db_versio
 #
 ALTER TABLE characters
   ADD COLUMN `pet_elapsed_time` float(10,2) NOT NULL default '0.00' AFTER `last_login`;
-UPDATE `server_options` SET `option_value`='1272' WHERE `option_name`='db_version';
 
 INSERT INTO math_scripts VALUES( "CalculatePetDepletedLockoutTime", "DepletedLockoutTime = 10.0 * if(Skill,Skill,1);");
 INSERT INTO math_scripts VALUES( "CalculatePetDismissLockoutTime", "DismissLockoutTime = 10.0 * if(Skill,Skill,1);");
@@ -1796,32 +1795,44 @@ INSERT INTO math_scripts VALUES( "Calculate Lockpicking Experience",
 ResultPractice = 1;
 ResultModifier = 1;
 ");
+UPDATE `server_options` SET `option_value`='1272' WHERE `option_name`='db_version';
 
 #
 # Added hire command.
 #
-UPDATE `server_options` SET `option_value`='1273' WHERE `option_name`='db_version';
 
 INSERT INTO command_group_assignment VALUES( "/hire", 30 );
 INSERT INTO command_group_assignment VALUES( "/hire", 25 );
 INSERT INTO command_group_assignment VALUES( "/hire", 24 );
 INSERT INTO command_group_assignment VALUES( "/hire", 23 );
 
-#
-# Added npc hired npcs table.
-#
-UPDATE `server_options` SET `option_value`='1274' WHERE `option_name`='db_version';
-source npc_hired_npcs.sql;
+UPDATE `server_options` SET `option_value`='1273' WHERE `option_name`='db_version';
 
 #
 # Added npc hired npcs table.
 #
-UPDATE `server_options` SET `option_value`='1275' WHERE `option_name`='db_version';
+source npc_hired_npcs.sql;
+UPDATE `server_options` SET `option_value`='1274' WHERE `option_name`='db_version';
+
+#
+# Added npc hired npcs table.
+#
 ALTER TABLE npc_hired_npcs
   ADD COLUMN `work_location_id` int(8) unsigned NOT NULL default '0' AFTER `guild`;
 ALTER TABLE npc_hired_npcs
   ADD COLUMN `script` TEXT COMMENT 'The script for the hired npc dialog.' AFTER `work_location_id`;
+UPDATE `server_options` SET `option_value`='1275' WHERE `option_name`='db_version';
 
+#
+# Added tables for new combat system.
+#
+
+source attack_types.sql;
+source attacks.sql;
+source weapon_types.sql;
+INSERT INTO math_scripts VALUES( "CalculateAttackPowerLevel","PowerLevel=50");
+#Copy/paste from progressions.sql "cast Hyper Shot", "cast LB Shot", "cast Hammer Smash"
+UPDATE `server_options` SET `option_value`='1276' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

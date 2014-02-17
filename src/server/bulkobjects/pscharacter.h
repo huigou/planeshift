@@ -51,6 +51,7 @@
 #include "psitemstats.h"
 #include "servervitals.h"
 #include "psguildinfo.h"
+#include "psattackqueue.h"
 #include "pscharquestmgr.h"
 
 class psServerVitals;
@@ -1677,6 +1678,10 @@ public:
         return location;
     }
 
+     /** @brief Get the attack queue
+    *   @return attack queue member
+    */    
+    psAttackQueue* GetAttackQueue() { return attackQueue; } 
     friend class psCharacterLoader;
 
 protected:
@@ -1832,7 +1837,8 @@ protected:
     /// Says if this npc is a statue
     bool isStatue;
 
-
+    //The attack queue
+    csRef<psAttackQueue> attackQueue;
 private:
     void CalculateArmorForSlot(INVENTORY_SLOT_NUMBER slot, float &heavy_p, float &med_p, float &light_p);
     bool ArmorUsesSkill(INVENTORY_SLOT_NUMBER slot, PSITEMSTATS_ARMORTYPE skill);
