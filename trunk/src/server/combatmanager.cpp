@@ -68,7 +68,7 @@ CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entityma
     randomgen = psserver->rng;
     cacheManager = cachemanager;
     entityManager = entitymanager;
-  
+
 
     targetLocations.Push(PSCHARACTER_SLOT_HELM);
     targetLocations.Push(PSCHARACTER_SLOT_TORSO);
@@ -77,7 +77,7 @@ CombatManager::CombatManager(CacheManager* cachemanager, EntityManager* entityma
     targetLocations.Push(PSCHARACTER_SLOT_LEGS);
     targetLocations.Push(PSCHARACTER_SLOT_BOOTS);
 
-   
+
     Subscribe(&CombatManager::HandleDeathEvent, MSGTYPE_DEATH_EVENT, NO_VALIDATION);
     Subscribe(&CombatManager::sendAttackList, MSGTYPE_ATTACK_BOOK, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
     Subscribe(&CombatManager::sendAttackQueue, MSGTYPE_ATTACK_QUEUE, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
@@ -185,15 +185,15 @@ const Stance &CombatManager::GetRaisedActorStance(CacheManager* cachemanager, ge
 
 bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,Stance stance)
 {
-   
-    psCharacter *attackerChar = attacker->GetCharacterData();
+
+    psCharacter* attackerChar = attacker->GetCharacterData();
     //we don't allow an overweight or defeated char to fight
     if(attacker->GetMode() == PSCHARACTER_MODE_DEFEATED ||
             attacker->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
         return false;
 
 
-    if (attacker->GetMode() == PSCHARACTER_MODE_COMBAT)  // Already fighting
+    if(attacker->GetMode() == PSCHARACTER_MODE_COMBAT)   // Already fighting
     {
         SetCombat(attacker,stance);  // switch stance from Bloody to Defensive, etc.
         return true;
@@ -204,7 +204,7 @@ bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,Stance st
             attacker->Stand();
         attackerChar->ResetSwings(csGetTicks());
     }
-    
+
 
     bool startedAttacking=false;
     bool haveWeapon=false;
@@ -212,20 +212,20 @@ bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,Stance st
     for(int slot=0; slot<PSCHARACTER_SLOT_BULK1; slot++)
     {
         // See if this slot is able to attack
-        if (attacker->GetCharacterData()->Inventory().CanItemAttack((INVENTORY_SLOT_NUMBER) slot))
+        if(attacker->GetCharacterData()->Inventory().CanItemAttack((INVENTORY_SLOT_NUMBER) slot))
         {
             INVENTORY_SLOT_NUMBER weaponSlot = (INVENTORY_SLOT_NUMBER) slot;
-            psItem *weapon=attacker->GetCharacterData()->Inventory().GetEffectiveWeaponInSlot(weaponSlot);
+            psItem* weapon=attacker->GetCharacterData()->Inventory().GetEffectiveWeaponInSlot(weaponSlot);
             haveWeapon = true;
             csString response;
             psAttack* attack = attackerChar->GetAttackQueue()->Pop();
             sendAttackQueue(attackerChar);
             if(!attack || !attack->CanAttack(attacker->GetClient()))
             {
-                 attack = new psAttackDefault();
+                attack = new psAttackDefault();
 
             }
-            if (weapon!=NULL && weapon->CheckRequirements(attacker->GetCharacterData(),response) )
+            if(weapon!=NULL && weapon->CheckRequirements(attacker->GetCharacterData(),response))
             {
                 Debug5(LOG_COMBAT,attacker->GetClientID(),"%s tries to attack with %s weapon %s at %.2f range", attacker->GetName(),(weapon->GetIsRangeWeapon()?"range":"melee"),weapon->GetName(), attacker->RangeTo(target,false));
                 Debug3(LOG_COMBAT,attacker->GetClientID(),"%s started attacking with %s",attacker->GetName(), weapon->GetName());
@@ -235,18 +235,18 @@ bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,Stance st
             }
             else
             {
-                if( weapon  && attacker)
+                if(weapon  && attacker)
                 {
                     Debug3(LOG_COMBAT,attacker->GetClientID(),"%s tried attacking with %s but can't use it.",
                            attacker->GetName(),weapon->GetName());
-                } 
+                }
             }
         }
     }
 
-     /* Only notify the target if any attacks were able to start.  Otherwise there are
-     * no available weapons with which to attack.
-     */
+    /* Only notify the target if any attacks were able to start.  Otherwise there are
+    * no available weapons with which to attack.
+    */
     if(haveWeapon)
     {
         if(startedAttacking)
@@ -268,9 +268,9 @@ bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,Stance st
         psserver->SendSystemError(attacker->GetClientID(),"You have no weapons equipped!");
         return false;
     }
-    
+
     return true;
-} 
+}
 
 void CombatManager::SetCombat(gemActor* combatant, Stance stance)
 {
@@ -322,13 +322,13 @@ void CombatManager::NotifyTarget(gemActor* attacker,gemObject* target)
 }
 
 
-void CombatManager::HandleCombatEvent(psCombatAttackGameEvent *event)
+void CombatManager::HandleCombatEvent(psCombatAttackGameEvent* event)
 {
     // deals the damage to the target
     event->attack->Affect(event);
 
     // if it was a special attack, remove it from the queue
-    if (event->attack->IsQueuedInClient())
+    if(event->attack->IsQueuedInClient())
         event->GetAttackerData()->GetAttackQueue()->PopDelete();
 
     // get the next special attack to execute
@@ -349,7 +349,7 @@ void CombatManager::HandleCombatEvent(psCombatAttackGameEvent *event)
 void CombatManager::HandleDeathEvent(MsgEntry* me,Client* client)
 {
     psDeathEvent death(me);
-    
+
 
     Debug1(LOG_COMBAT,death.deadActor->GetClientID(),"Combat Manager handling Death Event\n");
 
@@ -381,41 +381,41 @@ void CombatManager::sendAttackQueue(MsgEntry* me, Client* client)
 
 void CombatManager::sendAttackQueue(psCharacter* character)
 {
-   if(!character->IsNPC())
-   {
-       Client* client = character->GetActor()->GetClient();
+    if(!character->IsNPC())
+    {
+        Client* client = character->GetActor()->GetClient();
         psAttackQueueMessage mesg(client->GetClientNum());
         psAttackQueue* attackqueue = client->GetCharacterData()->GetAttackQueue();
         csList<csRef< psAttack> > attackList = attackqueue->getAttackList();
 
         csList<csRef<psAttack>>::Iterator it(attackList);
-        while (it.HasNext())
+        while(it.HasNext())
         {
             psAttack* attack = it.Next();
             mesg.AddAttack(attack->GetName(),attack->GetImage());
         }
 
-         mesg.Construct(cacheManager->GetMsgStrings());
-         mesg.SendMessage();
-   }
+        mesg.Construct(cacheManager->GetMsgStrings());
+        mesg.SendMessage();
+    }
 
 }
 
-void CombatManager::sendAttackList(MsgEntry* me, Client *client)
+void CombatManager::sendAttackList(MsgEntry* me, Client* client)
 {
     psAttackBookMessage mesg(client->GetClientNum());
     csArray<psAttack*> attacks = psserver->GetCacheManager()->GetAllAttacks();
 
     for(size_t i = 0; i < attacks.GetSize(); i++)
     {
-       if(attacks[i]->CanAttack(client))
-       {
-           csString aName = attacks[i]->GetName();
-           csString aDesc = attacks[i]->GetDescription();
-           csString aType = attacks[i]->GetType()->name;
-           csString aimage = attacks[i]->GetImage();
-           mesg.AddAttack(aName,aDesc,aType,aimage);
-       }
+        if(attacks[i]->CanAttack(client))
+        {
+            csString aName = attacks[i]->GetName();
+            csString aDesc = attacks[i]->GetDescription();
+            csString aType = attacks[i]->GetType()->name;
+            csString aimage = attacks[i]->GetImage();
+            mesg.AddAttack(aName,aDesc,aType,aimage);
+        }
     }
     mesg.Construct(cacheManager->GetMsgStrings());
     mesg.SendMessage();
@@ -423,7 +423,7 @@ void CombatManager::sendAttackList(MsgEntry* me, Client *client)
 }
 /*-------------------------------------------------------------*/
 
-psSpareDefeatedEvent::psSpareDefeatedEvent(gemActor *losr) : psGameEvent(0, SECONDS_BEFORE_SPARING_DEFEATED * 1000, "psSpareDefeatedEvent")
+psSpareDefeatedEvent::psSpareDefeatedEvent(gemActor* losr) : psGameEvent(0, SECONDS_BEFORE_SPARING_DEFEATED * 1000, "psSpareDefeatedEvent")
 {
     loser = losr->GetClient();
 }
@@ -431,7 +431,7 @@ psSpareDefeatedEvent::psSpareDefeatedEvent(gemActor *losr) : psGameEvent(0, SECO
 void psSpareDefeatedEvent::Trigger()
 {
     // Ignore stale events: perhaps the character was already killed and resurrected...
-    if (!loser.IsValid() || !loser->GetActor() || loser->GetActor()->GetMode() != PSCHARACTER_MODE_DEFEATED)
+    if(!loser.IsValid() || !loser->GetActor() || loser->GetActor()->GetMode() != PSCHARACTER_MODE_DEFEATED)
         return;
 
     psserver->SendSystemInfo(loser->GetClientNum(), "Your opponent has spared your life.");
