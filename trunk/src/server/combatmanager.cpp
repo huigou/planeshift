@@ -388,7 +388,7 @@ void CombatManager::sendAttackQueue(psCharacter* character)
         psAttackQueue* attackqueue = client->GetCharacterData()->GetAttackQueue();
         csList<csRef< psAttack> > attackList = attackqueue->getAttackList();
 
-        csList<csRef<psAttack>>::Iterator it(attackList);
+        csList<csRef<psAttack> >::Iterator it(attackList);
         while(it.HasNext())
         {
             psAttack* attack = it.Next();
