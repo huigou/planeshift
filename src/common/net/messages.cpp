@@ -5842,7 +5842,7 @@ csString psGUIActiveMagicMessage::ToString(NetBase::AccessPointers* /*accessPoin
     else if(type == DEBUFF)
         msgtext.Append("debuff ");
 
-    if (name!=NULL)
+    if (name.GetSize())
         msgtext.Append(name[0]);
     else
         msgtext.Append("NULL");
