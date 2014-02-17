@@ -63,7 +63,7 @@ csList< csRef<psAttack> > psAttackQueue::getAttackList()
 int psAttackQueue::getAttackListCount()
 {
     int i=0;
-    csList<csRef<psAttack>>::Iterator it(attackList);
+    csList<csRef<psAttack> >::Iterator it(attackList);
     while(it.HasNext())
     {
         it.Next();
@@ -89,7 +89,7 @@ psAttack* psAttackQueue::Pop()
         return attackList.Front();
     }
     else
-        return false;
+        return 0;
 }
 
 void psAttackQueue::Purge()
@@ -102,7 +102,7 @@ float psAttackQueue::GetTotalQueueTime()
 {
     int x = getAttackListCount();
     float totalTime = 0;
-    csList<csRef<psAttack>>::Iterator it(attackList);
+    csList<csRef<psAttack> >::Iterator it(attackList);
     while(it.HasNext())
     {
         psAttack* attack = it.Next();
