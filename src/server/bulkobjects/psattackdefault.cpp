@@ -19,7 +19,7 @@
 
 
 #include <psconfig.h>
-#include "psAttackDefault.h"
+#include "psattackdefault.h"
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
