@@ -36,6 +36,14 @@
 
 #define SOCKET_CLOSE_FORCED  true
 
+
+#define DEFAULT_ATTACKQUEUE_SIZE 5 ///< this is the default attack queue size of players, currently it is static among all players
+
+
+/// This #define determines how far away people will get detailed combat events.(moved from combatmanager)
+#define MAX_COMBAT_EVENT_RANGE 30
+
+#define DEFAULT_ATTACK_NAME "default" ///< temporary constant
 #define DEF_PROX_DIST   100        ///< 100m is trial distance here
 #define DEF_UPDATE_DIST   5        ///<  30m is trial (default) delta to update
 #define PROX_LIST_ANY_RANGE 0.0      ///< range of 0 means all members of proxlist in multicast.
@@ -49,7 +57,8 @@
 #define PROX_LIST_SHRINK_THRESHOLD  50   ///< 50 players in range - start radius shrink
 #define PROX_LIST_REGROW_THRESHOLD  30   ///< 30 players in range - start radius grow
 #define PROX_LIST_STEP_SIZE         10   ///< grow by this much each attempt
-//@}
+//@
+
 
 #define DEFAULT_INSTANCE             0   ///< Instance 0 is where 99% of things happen
 typedef uint32 InstanceID;

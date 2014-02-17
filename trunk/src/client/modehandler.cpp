@@ -161,6 +161,7 @@ ModeHandler::~ModeHandler()
         msghandler->Unsubscribe(this,MSGTYPE_WEATHER);
         msghandler->Unsubscribe(this,MSGTYPE_NEWSECTOR);
         msghandler->Unsubscribe(this,MSGTYPE_COMBATEVENT);
+        msghandler->Unsubscribe(this,MSGTYPE_SPECCOMBATEVENT);
         msghandler->Unsubscribe(this,MSGTYPE_CACHEFILE);
     }
     if(randomgen)
@@ -175,6 +176,7 @@ bool ModeHandler::Initialize()
     msghandler->Subscribe(this,MSGTYPE_MODE);
     msghandler->Subscribe(this,MSGTYPE_WEATHER);
     msghandler->Subscribe(this,MSGTYPE_NEWSECTOR);
+    msghandler->Subscribe(this,MSGTYPE_SPECCOMBATEVENT);
     msghandler->Subscribe(this,MSGTYPE_COMBATEVENT);
     msghandler->Subscribe(this,MSGTYPE_CACHEFILE);
 
@@ -331,6 +333,9 @@ void ModeHandler::HandleMessage(MsgEntry* me)
 
         case MSGTYPE_COMBATEVENT:
             HandleCombatEvent(me);
+            return;
+        case MSGTYPE_SPECCOMBATEVENT:
+            HandleSpecialCombatEvent(me);
             return;
 
         case MSGTYPE_CACHEFILE:
@@ -1713,7 +1718,32 @@ WeatherObject* ModeHandler::CreateStaticWeatherObject(WeatherInfo* ri)
     return object;
 
 }
+void ModeHandler::HandleSpecialCombatEvent(MsgEntry* me)
+{
+    psSpecialCombatEventMessage event(me);
 
+    if(!psengine->IsGameLoaded())
+        return; // Drop if we haven't loaded
+
+    // Get the relevant entities
+    GEMClientActor* atObject =  (GEMClientActor*)celclient->FindObject(event.attacker_id);
+    GEMClientActor* tarObject = (GEMClientActor*)celclient->FindObject(event.target_id);
+
+    if (!atObject || !tarObject )
+    {
+        Bug1("NULL Attacker or Target combat event sent to client!");
+        return;
+    }
+
+    SetCombatAnim( atObject, event.attack_anim );
+    
+    SetCombatAnim( tarObject, event.defense_anim );
+
+
+
+
+
+}
 void ModeHandler::HandleCombatEvent(MsgEntry* me)
 {
     psCombatEventMessage event(me);
@@ -1770,6 +1800,7 @@ void ModeHandler::HandleCombatEvent(MsgEntry* me)
         Other(event.event_type, event.damage, atObject, tarObject, location);
     }
 }
+
 
 csString ModeHandler::MungeName(GEMClientActor* obj, bool startOfPhrase)
 {

@@ -831,7 +831,7 @@ public:
         return current_stats->GetAmmoTypeID();
     }
 
-    PSITEMSTATS_WEAPONTYPE GetWeaponType();
+    psWeaponType *GetWeaponType();
     PSSKILL GetWeaponSkill(PSITEMSTATS_WEAPONSKILL_INDEX index);
     float GetLatency();
     float GetDamage(PSITEMSTATS_DAMAGETYPE dmgtype);

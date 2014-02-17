@@ -2,14 +2,14 @@
 
 <widget name="InfoWindow" factory="pawsInfoWindow"
     visible="no" savepositions="yes" movable="yes" resizable="no" configurable="yes" style="New Standard GUI" >
-    <frame x="600" y="50" width="180" height="160" border="no" />
+    <frame x="600" y="50" width="180" height="200" border="no" />
     <minframe width="180" height="160" />
     <bgimage resource="Scaling Widget Background" />
 
 
 <!-- Personal Info (HP, Mana, Fatigue) -->
 <widget name="Bars" factory="pawsWidget">
-<frame x="5" y="110" width="170" height="48" />
+<frame x="5" y="145" width="170" height="48" />
     <attachpoints>
         <attach point="PROPORTIONAL_RIGHT" />
         <attach point="PROPORTIONAL_BOTTOM" />
@@ -92,10 +92,42 @@
 
 
 
+<!-- Attack Queue Display -->
+
+<widget name="AttackQueueDisp" factory="pawsWidget">
+<frame x="0" y="50" width="180" height="30" />
+    <attachpoints>
+        <attach point="PROPORTIONAL_RIGHT" />
+        <attach point="PROPORTIONAL_BOTTOM" />
+        <attach point="PROPORTIONAL_TOP" />
+        <attach point="PROPORTIONAL_LEFT" />
+    </attachpoints>
+	<widget name="Queue5" id="1000" factory="pawsSlot" >
+        <frame x="120" y="0" width="30" height="30" border="no" />
+        <show_stack_amount>0</show_stack_amount>
+    </widget>
+	
+	<widget name="Queue4" factory="pawsSlot" >
+        <frame x="90" y="0" width="30" height="30" border="no" />
+        <show_stack_amount>0</show_stack_amount>
+    </widget>
+	<widget name="Queue3" factory="pawsSlot" >
+        <frame x="60" y="0" width="30" height="30" border="no" />
+        <show_stack_amount>0</show_stack_amount>
+    </widget>
+	<widget name="Queue2" factory="pawsSlot" >
+        <frame x="30" y="0" width="30" height="30" border="no" />
+        <show_stack_amount>0</show_stack_amount>
+    </widget>
+	<widget name="Queue1" factory="pawsSlot" >
+        <frame x="0" y="0" width="30" height="30" border="no" />
+        <show_stack_amount>0</show_stack_amount>
+    </widget>
+</widget>
 
 <!-- Attack Stances -->
 <widget name="AttackButtons" factory="pawsWidget">
-<frame x="0" y="50" width="180" height="30" />
+<frame x="0" y="85" width="180" height="30" />
     <attachpoints>
         <attach point="PROPORTIONAL_RIGHT" />
         <attach point="PROPORTIONAL_BOTTOM" />
@@ -105,7 +137,7 @@
 
 
     <widget name="BtnStance1" id="100" tooltip="Bloody" factory="pawsButton" visible="yes" sound="gui.toolbar" style="Simple Button">
-        <frame x="150" y="" width="30" height="30" border="no" />
+        <frame x="150" y="0" width="30" height="30" border="no" />
         <bgimage resource="ButtonAttackBloody" />
 
     </widget>
@@ -144,7 +176,7 @@
 <!-- Spell Power -->
 
 <widget name="SpellPower" factory="pawsWidget">
-<frame x="10" y="85" width="160" height="20" />
+<frame x="10" y="120" width="160" height="20" />
     <attachpoints>
         <attach point="PROPORTIONAL_RIGHT" />
         <attach point="PROPORTIONAL_BOTTOM" />

@@ -71,6 +71,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/advisor",       this);
     cmdsource->Subscribe("/assist",        this);
     cmdsource->Subscribe("/attack",        this);
+    cmdsource->Subscribe("/queue",         this);
     cmdsource->Subscribe("/away",          this);
     cmdsource->Subscribe("/bank",          this);
     cmdsource->Subscribe("/brightness",    this);
@@ -135,6 +136,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/yield",         this);
     cmdsource->Subscribe("/takeall",       this); // Take all items from a container
     cmdsource->Subscribe("/takestackall",  this); // Take all items from a container and stack not precisely
+    cmdsource->Subscribe("/attacklist", this); //temp
     cmdsource->Subscribe("/setdesc",       this); // set the description of a char
     cmdsource->Subscribe("/setoocdesc",    this); // set the ooc description of a char
     cmdsource->Subscribe("/loaddesc",      this); // load a description for this char from a file
@@ -215,12 +217,12 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/yield",                 this);
     cmdsource->Unsubscribe("/takeall",               this);
     cmdsource->Unsubscribe("/takestackall",          this);
+    cmdsource->Unsubscribe("/attacklist", this); //temp
     cmdsource->Unsubscribe("/setdesc",               this);
     cmdsource->Unsubscribe("/setoocdesc",            this);
     cmdsource->Unsubscribe("/loaddesc",              this);
     cmdsource->Unsubscribe("/loadoocdesc",           this);
     cmdsource->Unsubscribe("/togglerun",             this);
-
 
 
     // Unsubscribe emotes.
@@ -439,6 +441,14 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         }
         psGUIMerchantMessage exchange(psGUIMerchantMessage::REQUEST,buff);
         exchange.SendMessage();
+    }
+    else if( words[0] == "/attacklist" )
+    {
+        pawsWidget* window = PawsManager::GetSingleton().FindWidget("AttackBookWindow");
+        if( !window )
+            return "Attack List Not Found";
+        else
+            window->Show();
     }
     else if ( words[0] == "/brightness" )
     {

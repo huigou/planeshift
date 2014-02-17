@@ -57,9 +57,9 @@ public:
 
     CombatManager(CacheManager* cachemanager, EntityManager* entitymanager);
     bool InitializePVP();
-
+    
     virtual ~CombatManager();
-
+    
     /// This is how you start an attack sequence
     bool AttackSomeone(gemActor* attacker, gemObject* target, Stance stance);
 
@@ -68,7 +68,7 @@ public:
 
     bool InPVPRegion(csVector3 &pos, iSector* sector);
 
-    void HandleCombatEvent(psCombatGameEvent* event);
+    void HandleCombatEvent(psCombatAttackGameEvent* event);
 
     /** @brief Gets combat stance by name
      *
@@ -88,8 +88,8 @@ public:
      *  @param attacker: gemActor that requests to raise his stance
      *  @return Returns combat stance.
      */
-    static const Stance &GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker);
-
+    static const Stance & GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker);
+    
     /** @brief Gets increased combat stance of particular attacker
      *
      *  If current combat stance is the lowest returns current combat stance
@@ -100,43 +100,23 @@ public:
      */
     static const Stance &GetLoweredActorStance(CacheManager* cachemanager, gemActor* attacker);
 
-    /***********************
-     * Not implemented yet *
-     ***********************
-     int  GetQueuedAction(gemActor *attacker);
-     int  GetDefaultModeAction(gemActor *attacker);
-     int  GetAttackDelay(gemActor *attacker, int action);*/
+    EntityManager* GetEntityManager(){return entityManager;};
 
     csArray<INVENTORY_SLOT_NUMBER> targetLocations;
-
+    void SetCombat(gemActor *combatant, Stance stance);
+    void NotifyTarget(gemActor *attacker, gemObject *target);
+    void sendAttackList(MsgEntry* me, Client * client);
+    void sendAttackQueue(MsgEntry* me, Client* client);
+    void sendAttackQueue(psCharacter* character);
 private:
-    //    psSpawnManager *spawnmanager;
     csRandomGen* randomgen;
     LocationType* pvp_region;
     CacheManager* cacheManager;
     EntityManager* entityManager;
 
-    csWeakRef<MathScript> calc_damage; ///< This is the particular calculation for damage.
-    csWeakRef<MathScript> calc_decay; ///< This is the particular calculation for decay.
-    /// if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.
-    csWeakRef<MathScript> staminacombat;
-
+    
     void HandleDeathEvent(MsgEntry* me,Client* client);
 
-    bool ValidDistance(gemObject* attacker, gemObject* target, psItem* Weapon);
-    void SetCombat(gemActor* combatant, Stance stance);
-
-    bool ValidCombatAngle(gemObject* attacker, gemObject* target,
-                          psItem* Weapon);
-    void NotifyTarget(gemActor* attacker, gemObject* target);
-    void QueueNextEvent(psCombatGameEvent* event);
-    void QueueNextEvent(gemObject* attacker, INVENTORY_SLOT_NUMBER weaponslot,
-                        gemObject* target, int attackerCID, int targetCID,
-                        int previousResult = ATTACK_NOTCALCULATED);
-
-    void ApplyCombatEvent(psCombatGameEvent* event, int attack_result);
-    void DebugOutput(psCombatGameEvent* event, const MathEnvironment &env);
-    int CalculateAttack(psCombatGameEvent* event, psItem* subWeapon = NULL);
 };
 
 class psSpareDefeatedEvent: public psGameEvent

@@ -663,3 +663,7 @@ AvgExtQuality = (MaxQuality + MinQuality)/2;
 Result = AverageQuality * log(1+(AvgExtQuality/AverageQuality));
 Result =  min(Result, 300);
 " );
+
+#This script is for future use, I have not worked one out yet, I can do it later or the rules team can do it.
+INSERT INTO math_scripts VALUES( "CalculateAttackPowerLevel",
+"PowerLevel=50");

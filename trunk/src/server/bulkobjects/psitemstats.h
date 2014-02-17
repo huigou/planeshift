@@ -49,23 +49,6 @@ class psCharacter;
 class psItem;
 struct psItemCategory;
 
-/**
- * \addtogroup bulkobjects
- * @{ */
-
-enum PSITEMSTATS_WEAPONTYPE
-{
-    PSITEMSTATS_WEAPONTYPE_NONE = -1,
-    PSITEMSTATS_WEAPONTYPE_SWORD,
-    PSITEMSTATS_WEAPONTYPE_AXE,
-    PSITEMSTATS_WEAPONTYPE_DAGGER,
-    PSITEMSTATS_WEAPONTYPE_HAMMER,
-    PSITEMSTATS_WEAPONTYPE_BOW,
-    PSITEMSTATS_WEAPONTYPE_CROSSBOW,
-    PSITEMSTATS_WEAPONTYPE_SLING,
-    PSITEMSTATS_WEAPONTYPE_COUNT
-};
-
 enum PSITEMSTATS_WEAPONSKILL_INDEX
 {
     PSITEMSTATS_WEAPONSKILL_INDEX_0 = 0,
@@ -224,6 +207,13 @@ struct ItemRequirement
     float    min_value;
 };
 
+struct psWeaponType
+{
+    unsigned int id;
+    csString name;
+    PSSKILL  skill;    // a skill that it may be effected by
+};
+
 /**
  * Each weapon specifies what anims can be used with it.  This is for
  * cosmetic purposes only on the client and is not used in calculations.
@@ -289,10 +279,7 @@ public:
      */
     void ReadStats(iResultRow &row);
 
-    PSITEMSTATS_WEAPONTYPE Type()
-    {
-        return weapon_type;
-    }
+    psWeaponType *Type() { return weapon_type; }
 
     PSSKILL Skill(PSITEMSTATS_WEAPONSKILL_INDEX index);
 
@@ -324,7 +311,7 @@ public:
     float AttributeBonusMax(int index);
 
 private:
-    PSITEMSTATS_WEAPONTYPE weapon_type;
+    psWeaponType *weapon_type;
     PSSKILL weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_COUNT];
     st_attribute_bonus attribute_bonuses[PSITEMSTATS_STAT_BONUS_COUNT];
     float latency;

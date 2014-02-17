@@ -27,6 +27,7 @@
 #include "net/cmdbase.h"
 #include "gui/pawscontrolwindow.h"
 #include "net/message.h"
+#include "gui/pawsslot.h"
 
 class pawsTextBox;
 class pawsProgressBar;
@@ -53,6 +54,7 @@ public:
     virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* reporter );
 
     void SetStanceHighlight(uint stance);
+    void UpdateAttkQueue(MsgEntry* me);
 
 private:
     pawsTextBox     *targetName;
@@ -69,9 +71,16 @@ private:
     pawsButton      *stanceButton4;
     pawsButton      *stanceButton5;
 
+    pawsSlot*           attackImage1;
+    pawsSlot*           attackImage2;
+    pawsSlot*           attackImage3;
+    pawsSlot*           attackImage4;
+    pawsSlot*           attackImage5;
+
+
     pawsTextBox* timeOfDay;
     csString stanceConvert(const uint ID);
-
+    
     uint selectedstance;
 
     enum baseStances {

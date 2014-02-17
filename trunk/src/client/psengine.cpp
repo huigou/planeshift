@@ -68,7 +68,7 @@ if (!myref)                                                  \
 #include <iutil/virtclk.h>
 #include <iutil/vfs.h>
 #include <iutil/stringarray.h>
-
+#include <ivideo/natwin.h>
 #include <csver.h>
 #include <cstool/collider.h>
 #include <cstool/initapp.h>
@@ -156,6 +156,7 @@ if (!myref)                                                  \
 #include "gui/pawspetitionwindow.h"
 #include "gui/pawspetitiongmwindow.h"
 #include "gui/pawsspellbookwindow.h"
+#include "gui/attacklist.h"
 #include "gui/pawssplashwindow.h"
 #include "gui/shortcutwindow.h"
 #include "gui/pawsscrollmenu.h"
@@ -795,6 +796,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory(pawsGroupWindowFactory);
     RegisterFactory(pawsExchangeWindowFactory);
     RegisterFactory(pawsSpellBookWindowFactory);
+    RegisterFactory(pawsAttackBookWindowFactory);
     RegisterFactory(pawsGlyphWindowFactory);
     RegisterFactory(pawsMerchantWindowFactory);
     RegisterFactory(pawsStorageWindowFactory);
@@ -874,8 +876,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory(pawsConfigTooltipsFactory);
     RegisterFactory(pawsMusicWindowFactory);
     RegisterFactory(pawsSheetLineFactory);
-    RegisterFactory(pawsScriptHiredNPCWindowFactory);
-}
+    RegisterFactory(pawsScriptHiredNPCWindowFactory);}
 
 //-----------------------------------------------------------------------------
 
@@ -1422,6 +1423,9 @@ void psEngine::LoadGame()
                 return;
             }
 
+
+
+            LoadPawsWidget( "Attack Window",           "attackwindow.xml" );
             LoadPawsWidget("Status window",           "infowindow.xml");
             LoadPawsWidget("Ignore window",           "ignorewindow.xml");
             LoadPawsWidget("Communications window",   "chat.xml");

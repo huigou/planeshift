@@ -1431,7 +1431,17 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry* message)
         stance = words.Get(1);
         return;
     }
-    if(command == "/roll")
+    if(command == "/queue")
+    {
+        attack = words.Get(1);
+        for(int i = 2; i < words.GetCount();i++)
+        {
+            attack.Append(" ");
+            attack.Append(words.Get(i));
+        }
+        return;
+    }
+    if (command == "/roll")
     {
         if(words.GetCount() == 1)
         {
@@ -1999,7 +2009,72 @@ csString psMapActionMessage::ToString(NetBase::AccessPointers* /*accessPointers*
 }
 
 //---------------------------------------------------------------------------
+PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psAttackQueueMessage, MSGTYPE_ATTACK_QUEUE);
 
+psAttackQueueMessage::psAttackQueueMessage()
+{
+    msg.AttachNew(new MsgEntry());
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_ATTACK_QUEUE);
+    size = 0;
+}
+psAttackQueueMessage::psAttackQueueMessage(uint32_t client)
+{
+    this->client = client;
+    size = 0;
+}
+psAttackQueueMessage::psAttackQueueMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers )
+{
+    size_t length = me->GetUInt32();
+
+    for ( size_t x = 0; x < length; x++ )
+    {
+        psAttackQueueMessage::AAttack na;
+
+        na.Name = me->GetStr();
+        na.Image =accessPointers->Request(csStringID(me->GetUInt32()));
+        attacks.Push(na);
+    }
+}
+void psAttackQueueMessage::AddAttack(const csString& name,  const csString& image)
+{
+    size += (uint32_t)(name.Length() + image.Length() +sizeof(uint32_t) +sizeof(uint32_t));
+            
+    psAttackQueueMessage::AAttack na;
+
+    na.Name = name;
+    na.Image = image;
+    attacks.Push(na);
+}
+void psAttackQueueMessage::Construct(csStringSet* msgstrings)
+{
+    msg.AttachNew(new MsgEntry( size + sizeof(int) ));
+    msg->SetType(MSGTYPE_ATTACK_QUEUE);
+    msg->clientnum = client;
+
+    msg->Add( (uint32_t)attacks.GetSize() );
+    for ( size_t x = 0; x < attacks.GetSize(); x++ )
+    {
+        msg->Add( attacks[x].Name );
+        msg->Add(msgstrings->Request(attacks[x].Image).GetHash());
+    }
+}
+
+csString psAttackQueueMessage::ToString(NetBase::AccessPointers* accessPointers)
+{
+    csString msgtext;
+
+    for ( size_t x = 0; x < attacks.GetSize(); x++ )
+    {
+        msgtext.AppendFmt("Attack: '%s' image: %s ",
+            attacks[x].Name.GetDataSafe(),
+            attacks[x].Image.GetDataSafe());
+
+    }
+
+    return msgtext;
+}
+//---------------------------------------------------------------------------
 PSF_IMPLEMENT_MSG_FACTORY(psModeMessage,MSGTYPE_MODE);
 
 psModeMessage::psModeMessage(uint32_t client, EID actorID, uint8_t mode, uint32_t value)
@@ -3024,7 +3099,96 @@ csString psSpellCancelMessage::ToString(NetBase::AccessPointers* /*accessPointer
 }
 
 //--------------------------------------------------------------------------
+PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psAttackBookMessage,MSGTYPE_ATTACK_BOOK);
 
+psAttackBookMessage::psAttackBookMessage()
+{
+    msg.AttachNew(new MsgEntry());
+    msg->clientnum = 0;
+    msg->SetType(MSGTYPE_ATTACK_BOOK);
+    size = 0;
+}
+
+psAttackBookMessage::psAttackBookMessage( uint32_t client )
+{
+    this->client = client;
+    size = 0;
+}
+
+psAttackBookMessage::psAttackBookMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers )
+{
+    size_t length = me->GetUInt32();
+
+    for ( size_t x = 0; x < length; x++ )
+    {
+        psAttackBookMessage::NetworkAttack na;
+
+        na.name = me->GetStr();
+        na.description = me->GetStr();
+        na.type = me->GetStr();
+        na.image = accessPointers->Request(csStringID(me->GetUInt32()));
+        printf ("DEBUG: psAttackBookMessage::psAttackBookMessage name: %s image: %s\n",na.name.GetData(),na.image.GetData());
+        attacks.Push(na);
+    }
+}
+
+void psAttackBookMessage::AddAttack(const csString& name, const csString& description, const csString& type, const csString& image)
+{
+    size +=(uint32_t)(name.Length() + description.Length() + type.Length() + 3 + /*+ image.Length()*/ + sizeof(uint32_t));
+            
+    psAttackBookMessage::NetworkAttack na;
+
+    na.name = name;
+    na.description = description;
+    na.type = type;
+    na.image = image;
+    attacks.Push(na);
+
+
+}
+
+
+void psAttackBookMessage::Construct(csStringSet* msgstrings)
+{
+    msg.AttachNew(new MsgEntry( size + sizeof(int) ));
+    msg->SetType(MSGTYPE_ATTACK_BOOK);
+    msg->clientnum = client;
+
+    msg->Add( (uint32_t)attacks.GetSize() );
+    for ( size_t x = 0; x < attacks.GetSize(); x++ )
+    {
+        msg->Add( attacks[x].name );
+        msg->Add( attacks[x].description );
+        msg->Add( attacks[x].type );
+
+        msg->Add(msgstrings->Request(attacks[x].image).GetHash());
+        printf ("DEBUG: psAttackBookMessage::Construct %s %u %s\n",attacks[x].name.GetData(),msgstrings->Request(attacks[x].image).GetHash(),attacks[x].image.GetData());
+    }
+}
+
+
+
+csString psAttackBookMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+{
+    csString msgtext;
+
+    for ( size_t x = 0; x < attacks.GetSize(); x++ )
+    {
+        msgtext.AppendFmt("AttackList Attack: '%s' Type: '%s' image: %s",
+            attacks[x].name.GetDataSafe(),
+            attacks[x].type.GetDataSafe(),
+            attacks[x].image.GetDataSafe());
+
+#ifdef FULL_DEBUG_DUMP
+        msgtext.AppendFmt("Description: '%s'",
+            attacks[x].description.GetDataSafe());
+#endif
+    }
+
+    return msgtext;
+}
+
+//--------------------------------------------------------------------------
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psSpellBookMessage,MSGTYPE_SPELL_BOOK);
 
 psSpellBookMessage::psSpellBookMessage()
@@ -3765,6 +3929,44 @@ csString psCharacterDataMessage::ToString(NetBase::AccessPointers* /*accessPoint
 #endif
 
 //---------------------------------------------------------------------------
+PSF_IMPLEMENT_MSG_FACTORY(psSpecialCombatEventMessage,MSGTYPE_SPECCOMBATEVENT);
+
+psSpecialCombatEventMessage::psSpecialCombatEventMessage(uint32_t clientnum,  EID attacker, EID target, int attack_anim,int defense_anim)
+{
+    msg.AttachNew(new MsgEntry(sizeof(uint8_t) + 4 * sizeof(uint32_t) + sizeof(int8_t) ));
+    msg->SetType(MSGTYPE_SPECCOMBATEVENT);
+    msg->clientnum      = clientnum;
+
+    msg->Add( (uint32_t) attack_anim );
+    msg->Add( (uint32_t) defense_anim );
+    msg->Add(attacker.Unbox());
+    msg->Add(target.Unbox());
+    valid=!(msg->overrun);
+}
+void psSpecialCombatEventMessage::SetClientNum(int cnum)
+{
+    msg->clientnum = cnum;
+}
+
+psSpecialCombatEventMessage::psSpecialCombatEventMessage(MsgEntry *message)
+{
+    attack_anim = message->GetUInt32();
+    defense_anim = message->GetUInt32();
+    attacker_id = EID(message->GetUInt32());
+    target_id = EID(message->GetUInt32());
+
+    // Sets valid flag based on message overrun state
+    valid=!(message->overrun);
+}
+csString psSpecialCombatEventMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
+{
+    csString msgtext;
+
+    msgtext.AppendFmt("Attack Anim: %d Defense Anim: %d Attacker: %d Target: %d",
+            attack_anim, defense_anim, attacker_id.Unbox(), target_id.Unbox());
+
+    return msgtext;
+}
 
 PSF_IMPLEMENT_MSG_FACTORY(psCombatEventMessage,MSGTYPE_COMBATEVENT);
 
@@ -5640,7 +5842,10 @@ csString psGUIActiveMagicMessage::ToString(NetBase::AccessPointers* /*accessPoin
     else if(type == DEBUFF)
         msgtext.Append("debuff ");
 
-    msgtext.Append(name[0]);
+    if (name!=NULL)
+        msgtext.Append(name[0]);
+    else
+        msgtext.Append("NULL");
     return msgtext;
 }
 

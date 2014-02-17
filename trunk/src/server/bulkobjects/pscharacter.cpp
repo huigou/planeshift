@@ -183,7 +183,8 @@ psCharacter::psCharacter() : inventory(this),
     banker = false;
     hired = false;
     isStatue = false;
-
+     
+    attackQueue = new psAttackQueue();
     // Load the math scripts
     if(!staminaCalc.IsValid())
     {
@@ -1161,7 +1162,7 @@ void OverridableRace::OnChange()
                 psMoveModMsg modMsg(character->GetActor()->GetClientID(), psMoveModMsg::NONE,
                                     csVector3(0), 0);
                 modMsg.SendMessage();
-            }
+}
             else
             {
                 psMoveModMsg modMsg(character->GetActor()->GetClientID(), psMoveModMsg::MULTIPLIER,

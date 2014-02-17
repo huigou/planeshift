@@ -1821,7 +1821,7 @@ const char* psItem::GetStandardDescription()
     return current_stats->GetDescription();
 }
 
-PSITEMSTATS_WEAPONTYPE psItem::GetWeaponType()
+psWeaponType *psItem::GetWeaponType()
 {
     return current_stats->Weapon().Type();
 }

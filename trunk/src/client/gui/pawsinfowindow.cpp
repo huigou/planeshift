@@ -30,6 +30,8 @@
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
 #include "net/cmdhandler.h"
+#include "util/strutil.h"
+#include "net/connection.h"
 
 // CLIENT INCLUDES
 #include "pscelclient.h"
@@ -49,6 +51,7 @@
 pawsInfoWindow::~pawsInfoWindow()
 {
     psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_MODE);
+    psengine->GetMsgHandler()->Unsubscribe(this, MSGTYPE_ATTACK_QUEUE);
 }
 
 
@@ -56,6 +59,8 @@ void pawsInfoWindow::Show()
 {
     psStatDRMessage msg;
     msg.SendMessage();
+    psAttackQueueMessage mesg;
+    mesg.SendMessage();
     pawsControlledWindow::Show();
 }
 
@@ -70,6 +75,7 @@ bool pawsInfoWindow::PostSetup()
     pawsControlledWindow::PostSetup();
 
     psengine->GetMsgHandler()->Subscribe(this,MSGTYPE_MODE);
+    psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_ATTACK_QUEUE);
 
     targetName = (pawsTextBox*)FindWidget( "Targeted" );
     if ( !targetName )
@@ -107,6 +113,12 @@ bool pawsInfoWindow::PostSetup()
     csString bg = wdg->GetBackground();
     wdg->SetBackground(bg);
 
+
+    attackImage1  = (pawsSlot*)FindWidget("Queue1");
+    attackImage2  = (pawsSlot*)FindWidget("Queue2");
+    attackImage3  = (pawsSlot*)FindWidget("Queue3");
+    attackImage4  = (pawsSlot*)FindWidget("Queue4");
+    attackImage5  = (pawsSlot*)FindWidget("Queue5");
     return true;
 }
 
@@ -125,6 +137,11 @@ void pawsInfoWindow::HandleMessage( MsgEntry* me )
                 else if (msg.mode == psModeMessage::COMBAT && msg.value != selectedstance)
                     SetStanceHighlight(msg.value);
             }
+            break;
+        }
+        case MSGTYPE_ATTACK_QUEUE:
+        {
+            UpdateAttkQueue(me);
             break;
         }
     }
@@ -157,12 +174,14 @@ bool pawsInfoWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, p
         cmd = "/stopattack";
         SetStanceHighlight(0);
     }
-    else
+    else if(reporter->GetID() < 600)
     {
         csString stance = stanceConvert(reporter->GetID());
         cmd.Format("/attack %s", stance.GetData() );
         //SetStanceHighlight(value);
     }
+    else
+        return true;
 
     psengine->GetCmdHandler()->Execute(cmd);
     return true;
@@ -189,6 +208,44 @@ csString pawsInfoWindow::stanceConvert(const uint ID)
         return "Normal";
         break;
     }
+}
+
+void pawsInfoWindow::UpdateAttkQueue(MsgEntry* me)
+{
+    psAttackQueueMessage msg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
+   
+    attackImage1->PlaceItem("","","",0);
+    attackImage2->PlaceItem("","","",0);
+    attackImage3->PlaceItem("","","",0);
+    attackImage4->PlaceItem("","","",0);
+    attackImage5->PlaceItem("","","",0);
+
+    for ( size_t x = 0; x < msg.attacks.GetSize(); x++ )
+    {
+        switch(x)
+        {
+        case 0:
+             attackImage1->PlaceItem(msg.attacks[x].Image,"","",1);
+             attackImage1->SetToolTip(msg.attacks[x].Name);
+             break;
+        case 1:
+            attackImage2->PlaceItem(msg.attacks[x].Image,"","",1);
+            attackImage3->SetToolTip(msg.attacks[x].Name);
+            break;
+         case 2:
+            attackImage3->PlaceItem(msg.attacks[x].Image,"","",1);
+            attackImage3->SetToolTip(msg.attacks[x].Name);
+            break;
+         case 3:
+            attackImage4->PlaceItem(msg.attacks[x].Image,"","",1);
+            attackImage4->SetToolTip(msg.attacks[x].Name);
+            break;
+         case 4:
+            attackImage5->PlaceItem(msg.attacks[x].Image,"","",1);
+            attackImage5->SetToolTip(msg.attacks[x].Name);
+            break;
+         }
+     }
 }
 
 

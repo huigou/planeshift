@@ -108,7 +108,7 @@ void psItemArmorStats::ReadStats(iResultRow &row)
 
 psItemWeaponStats::psItemWeaponStats()
 {
-    weapon_type=PSITEMSTATS_WEAPONTYPE_NONE;
+    weapon_type = NULL;
 
     memset(weapon_skill,0,sizeof(weapon_skill));
     memset(attribute_bonuses,0,sizeof(attribute_bonuses));
@@ -124,22 +124,9 @@ psItemWeaponStats::psItemWeaponStats()
 
 void psItemWeaponStats::ReadStats(iResultRow &row)
 {
-    csString type(row["item_type"]);
-    if(type == "SWORD")
-        weapon_type = PSITEMSTATS_WEAPONTYPE_SWORD;
-    else if(type == "AXE")
-        weapon_type = PSITEMSTATS_WEAPONTYPE_AXE;
-    else if(type == "DAGGER")
-        weapon_type = PSITEMSTATS_WEAPONTYPE_DAGGER;
-    else if(type == "HAMMER")
-        weapon_type = PSITEMSTATS_WEAPONTYPE_HAMMER;
-    else if(type == "BOW")
-        weapon_type = PSITEMSTATS_WEAPONTYPE_BOW;
-    else if(type == "CROSSBOW")
-        weapon_type = PSITEMSTATS_WEAPONTYPE_CROSSBOW;
-    else if(type == "SLING")
-        weapon_type = PSITEMSTATS_WEAPONTYPE_SLING;
-
+    
+    weapon_type = psserver->GetCacheManager()->GetWeaponTypeByName(row["item_type"]);
+    
     weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_0] = psserver->GetCacheManager()->ConvertSkill(row.GetInt("item_skill_id_1"));
     weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_1] = psserver->GetCacheManager()->ConvertSkill(row.GetInt("item_skill_id_2"));
     weapon_skill[PSITEMSTATS_WEAPONSKILL_INDEX_2] = psserver->GetCacheManager()->ConvertSkill(row.GetInt("item_skill_id_3"));

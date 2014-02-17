@@ -109,6 +109,7 @@ enum MSG_TYPES
     MSGTYPE_WRITE_BOOK,
     MSGTYPE_UPDATE_ITEM,
     MSGTYPE_MODE,
+    MSGTYPE_ATTACK_QUEUE,
     MSGTYPE_WEATHER,
     MSGTYPE_NEWSECTOR,
     MSGTYPE_GUIGUILD,
@@ -128,6 +129,7 @@ enum MSG_TYPES
     MSGTYPE_GUIGROUP,
     MSGTYPE_STATDRUPDATE,
     MSGTYPE_SPELL_BOOK,
+    MSGTYPE_ATTACK_BOOK,
     MSGTYPE_GLYPH_REQUEST,
     MSGTYPE_GLYPH_ASSEMBLE,
     MSGTYPE_PURIFY_GLYPH,
@@ -151,6 +153,7 @@ enum MSG_TYPES
     MSGTYPE_AUTHCHARACTERAPPROVED,
     MSGTYPE_CHAR_CREATE_CP,
     MSGTYPE_COMBATEVENT,
+    MSGTYPE_SPECCOMBATEVENT,
     MSGTYPE_LOOT,
     MSGTYPE_LOOTITEM,
     MSGTYPE_LOOTREMOVE,
@@ -1239,7 +1242,7 @@ public:
 class psUserCmdMessage : public psMessageCracker
 {
 public:
-    csString command,player,filter,action,text,target;
+    csString command,player,filter,action,text,target,attack;
     int dice,sides,dtarget;
     int level;
     csString stance;
@@ -1487,7 +1490,33 @@ public:
 };
 
 //---------------------------------------------------------------------------
+///sends a message tot he client with the attack queue list
+class psAttackQueueMessage : public psMessageCracker
+{
+public:
+    struct AAttack
+    {
+        csString Name;
+        csString Image;
+    };
+    psAttackQueueMessage();
+    psAttackQueueMessage(uint32_t clientnum);
+    psAttackQueueMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers );
 
+    PSF_DECLARE_MSG_FACTORY();
+
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
+
+    void AddAttack(const csString& name, const csString& image);
+    void Construct(csStringSet* msgstrings);
+
+    csArray<AAttack> attacks;
+private:
+    uint32_t client;
+    uint32_t size;
+
+};
+//---------------------------------------------------------------------------
 /// Sends messages to the client indicating player combat stance
 class psModeMessage : public psMessageCracker
 {
@@ -2201,6 +2230,43 @@ public:
 };
 
 //--------------------------------------------------------------------------
+
+class psAttackBookMessage : public psMessageCracker
+{
+public:
+    struct NetworkAttack
+    {
+        csString name;
+        csString description;
+        csString type;
+        csString image;
+    };
+
+    psAttackBookMessage();
+    psAttackBookMessage( uint32_t client );
+    psAttackBookMessage( MsgEntry* me, NetBase::AccessPointers* accessPointers );
+
+    PSF_DECLARE_MSG_FACTORY();
+
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
+
+    void AddAttack(const csString& name, const csString& description, const csString& type, const csString& image);
+    void Construct(csStringSet* msgstrings);
+
+    csArray<NetworkAttack> attacks;
+
+private:
+    uint32_t size;
+    uint32_t client;
+};
+//--------------------------------------------------------------------------
 class psSpellBookMessage : public psMessageCracker
 {
 public:
@@ -2583,6 +2649,40 @@ public:
 };
 #endif
 
+/**
+ * Messages from the server to the client, similar to combat events below, but for special attacks
+ *
+ */
+class psSpecialCombatEventMessage : public psMessageCracker
+{
+public:
+    EID        attacker_id;
+    EID        target_id;
+    int        attack_anim;
+    int        defense_anim;
+
+        /** Create psMessageBytes struct for outbound use */
+    psSpecialCombatEventMessage(uint32_t clientnum,
+                         EID attacker,
+                         EID target,
+                         int attack_anim,
+                         int defense_anim);
+
+    void SetClientNum(int cnum);
+
+    /** Crack incoming psMessageBytes struct for inbound use */
+    psSpecialCombatEventMessage(MsgEntry *message);
+
+    PSF_DECLARE_MSG_FACTORY();
+
+    /**
+     * @brief Converts the message into human readable string.
+     *
+     * @param accessPointers A struct to a number of access pointers.
+     * @return Return a human readable string for the message.
+     */
+    virtual csString ToString(NetBase::AccessPointers* accessPointers);
+};
 /**
  * Messages sent from server to client containing each detailed
  * combat event.

@@ -32,6 +32,7 @@
 #include "util/serverconsole.h"
 #include "util/eventmanager.h"
 #include "util/psdatabase.h"
+#include "util/strutil.h"
 
 #include "net/message.h"
 
@@ -41,6 +42,10 @@
 #include "bulkobjects/psaccountinfo.h"
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psquest.h"
+#include "bulkobjects/psattack.h"
+#include "bulkobjects/psattackdefault.h"
+#include "bulkobjects/psattackmelee.h"
+#include "bulkobjects/psattackrange.h"
 #include "bulkobjects/psmerchantinfo.h"
 #include "bulkobjects/psspell.h"
 #include "bulkobjects/psglyph.h"
@@ -55,6 +60,7 @@
 #include "cachemanager.h"
 #include "commandmanager.h"
 #include "questmanager.h"
+#include "combatmanager.h"
 #include "client.h"
 #include "globals.h"
 #include "scripting.h"
@@ -166,7 +172,9 @@ bool CacheManager::PreloadAll(EntityManager* entitymanager)
         return false;
     if(!PreloadTraits())
         return false; // Need RaceInfo
-    if(!PreloadItemCategories())
+    if(!PreloadWeaponTypes())
+        return false;
+    if (!PreloadItemCategories())
         return false;
     if(!PreloadItemAnimList())
         return false;
@@ -182,7 +190,11 @@ bool CacheManager::PreloadAll(EntityManager* entitymanager)
         return false;
     if(!PreloadQuests())
         return false;
-    if(!PreloadTradeCombinations())
+    if(!PreloadAttackTypes())
+        return false;
+    if (!PreloadAttacks())
+        return false;
+    if (!PreloadTradeCombinations())
         return false;
     if(!PreloadTradeTransformations())
         return false;
@@ -234,9 +246,17 @@ void CacheManager::UnloadAll()
         }
         quests_by_id.Empty();
     }
-
     {
-        csHash<csPDelArray<CombinationConstruction>*,uint32>::GlobalIterator it(tradeCombinations_IDHash.GetIterator());
+        csHash<psAttack *>::GlobalIterator it(attacks_by_id.GetIterator ());
+        while (it.HasNext ())
+        {
+            psAttack* newAttack = it.Next ();
+            delete newAttack;
+        }
+        attacks_by_id.Empty();
+    }
+    {
+        csHash<csPDelArray<CombinationConstruction>*,uint32>::GlobalIterator it(tradeCombinations_IDHash.GetIterator ());
 
         while(it.HasNext())
         {
@@ -1044,6 +1064,117 @@ bool CacheManager::PreloadStances()
     }
     Notify2(LOG_STARTUP, "%lu Stances Loaded", result.Count());
     return true;
+}
+
+bool CacheManager::PreloadAttacks()
+{
+
+    unsigned int currentrow;
+    psAttack *attack;
+    csArray<psAttack *> failed;
+
+    Result result(db->Select("select * from attacks order by id"));
+
+    if (!result.IsValid())
+    {
+        Error1("Could not cache database table. Check >attacks<");
+        return false;
+    }
+
+    for (currentrow=0; currentrow<result.Count(); currentrow++)
+    {
+        csString attackForm = result[currentrow]["form"];
+
+        if(attackForm.CompareNoCase("melee"))
+        {
+
+            attack = new psAttackMelee();
+
+            if (attack->Load(result[currentrow]))
+            {
+                attacks_by_id.Put(attack->GetID(),attack);
+                // add the icon to the string cache
+                msg_strings.Request(result[currentrow]["image_name"]);
+            }
+            else
+                delete attack;
+        }
+        else if(attackForm.CompareNoCase("range"))
+        {
+            attack = new psAttackRange();
+
+            if (attack->Load(result[currentrow]))
+            {
+                attacks_by_id.Put(attack->GetID(),attack);
+                // add the icon to the string cache
+                msg_strings.Request(result[currentrow]["image_name"]);
+            }
+            else
+                delete attack;
+        }
+    }
+
+
+    Notify2( LOG_STARTUP, "%lu Attacks Loaded", result.Count() );
+    return true;
+}
+
+csHash<psAttack *>::GlobalIterator CacheManager::GetAttackIterator()
+{
+    return attacks_by_id.GetIterator();
+}
+
+bool CacheManager::UnloadAttack(int id)
+{
+    bool ret = false;
+
+    psAttack* attack = attacks_by_id.Get(id, NULL);
+    if(attack)
+    {
+        delete attack;
+        attacks_by_id.DeleteAll(id);
+        ret = true;
+    }
+    else
+    {
+        CPrintf(CON_ERROR, "Cannot find attacks %d to remove.\n", id);
+    }
+
+    return ret;
+}
+bool CacheManager::LoadAttack(int id)
+{
+    if(attacks_by_id.Get(id, NULL))
+    {
+        CPrintf(CON_ERROR, "Attack already exists.\n", id);
+        return false;
+    }
+
+    psAttack *attack;
+
+    Result result(db->Select("select * from attacks where id=%d", id));
+
+    if (!result.IsValid() || result.Count() == 0)
+    {
+        CPrintf(CON_ERROR, "Cannot find attack %d in database.\n", id);
+        return false;
+    }
+
+    if(csString(result[id].GetString("form")).CompareNoCase("melee"))
+    {
+        attack = new psAttackMelee();
+        attack->Load(result[id]);
+        attacks_by_id.Put(attack->GetID(),attack);
+        return true;
+    }
+    else if(csString(result[id].GetString("form")).CompareNoCase("range"))
+    {
+        attack = new psAttackRange();
+        attack->Load(result[id]);
+        attacks_by_id.Put(attack->GetID(),attack);
+        return true;
+    }
+    return false;
 }
 
 bool CacheManager::PreloadQuests()
@@ -2450,7 +2581,36 @@ void CacheManager::GetCompressedMessageStrings(char* &data, unsigned long &size,
     digest = compressed_msg_strings_digest;
 }
 
-psQuest* CacheManager::GetQuestByID(unsigned int id)
+psAttack *CacheManager::GetAttackByID(unsigned int id)
+{
+    psAttack *attack = attacks_by_id.Get(id,NULL);
+    return attack;
+}
+csArray<psAttack* > CacheManager::GetAllAttacks()
+{
+    csHash<psAttack *>::GlobalIterator it (attacks_by_id.GetIterator ());
+    csArray<psAttack*> attacks;
+    while(it.HasNext())
+    {
+        attacks.Push(it.Next());
+    }
+    return attacks;
+}
+psAttack *CacheManager::GetAttackByName(const char *name)
+{
+    if (name==NULL)
+        return NULL;
+
+    csHash<psAttack *>::GlobalIterator it (attacks_by_id.GetIterator ());
+    while (it.HasNext())
+    {
+        psAttack* attack = it.Next();
+        if(!strcasecmp(attack->GetName(), name))
+            return attack;
+    }
+    return NULL;
+}
+psQuest *CacheManager::GetQuestByID(unsigned int id)
 {
     psQuest* quest = quests_by_id.Get(id, NULL);
     return quest;
@@ -2844,6 +3004,68 @@ psItemCategory* CacheManager::GetItemCategoryByName(const csString &name)
 
 }
 
+psAttackType *CacheManager::GetAttackTypeByID(unsigned int id)
+{
+    size_t i;
+    for (i=0;i<wayList.GetSize();i++)
+    {
+        psAttackType *currentType;
+        currentType=attackTypeList.Get(i);
+        if (currentType && id==currentType->id)
+        {
+            return currentType;
+        }
+    }
+    return NULL;
+}
+
+psAttackType *CacheManager::GetAttackTypeByName(csString name)
+{
+    size_t i;
+    for (i=0;i<attackTypeList.GetSize();i++)
+    {
+        psAttackType *currentType;
+        currentType=attackTypeList.Get(i);
+        if (currentType && name.Upcase()==currentType->name.Upcase())
+        {
+            return currentType;
+        }
+    }
+    return NULL;
+}
+
+
+psWeaponType *CacheManager::GetWeaponTypeByID(unsigned int id)
+{
+    size_t i;
+    for (i=0;i<weaponTypeList.GetSize();i++)
+    {
+        psWeaponType *currentType;
+        currentType=weaponTypeList.Get(i);
+        if (currentType && id==currentType->id)
+        {
+            return currentType;
+        }
+    }
+    return NULL;
+}
+
+psWeaponType *CacheManager::GetWeaponTypeByName(csString name)
+{
+    size_t i;
+    for (i=0;i<weaponTypeList.GetSize();i++)
+    {
+        psWeaponType *currentType;
+        currentType=weaponTypeList.Get(i);
+        if (currentType && name.CompareNoCase(currentType->name))
+        {
+            return currentType;
+        }
+    }
+    return NULL;
+}
+
+
 // TODO:  This function needs to be implemented in a fast fashion
 psWay* CacheManager::GetWayByID(unsigned int id)
 {
@@ -3172,7 +3394,63 @@ bool CacheManager::PreloadItemCategories()
     Notify2(LOG_STARTUP, "%lu Item Categories Loaded", categories.Count());
     return true;
 }
+bool CacheManager::PreloadWeaponTypes()
+{
+    Result types(db->Select("SELECT * from weapon_types"));
 
+    if(types.IsValid())
+    {
+        int i, count = types.Count();
+        for(i=0; i< count; i++)
+        {
+            psWeaponType * type = new psWeaponType;
+            type->id            = atoi(types[i]["id"]);
+            type->name          = types[i]["name"];
+            type->skill         = (PSSKILL)atoi(types[i]["skill"]);
+            weaponTypeList.Push(type);
+        } 
+    }
+
+    Notify2( LOG_STARTUP, "%lu Weapon Types Loaded", types.Count());
+    return true;
+}
+bool CacheManager::PreloadAttackTypes()
+{
+    Result types(db->Select("SELECT * from attack_types"));
+
+    if( types.IsValid())
+    {
+        int i, count=types.Count();
+
+        for(i=0; i < count; i++)
+        {
+            psAttackType * type = new psAttackType;
+            type->id            = types[i].GetInt("id");
+            type->name          = types[i]["name"];
+            type->OneHand    = (bool)types[i]["onehand"];
+            type->related_stat  = (PSSKILL)atoi(types[i]["stat"]);
+            type->weapon        = types[i]["weaponName"];
+            csString tempWTypes = types[i]["weaponType"]; 
+
+            WordArray ids(tempWTypes);
+            for(unsigned int i = 0; i < ids.GetCount(); i++)
+            {
+                psWeaponType* weapontype = GetWeaponTypeByID(atoi(ids[i]));
+                if(!weapontype)
+                {
+                    weapontype = GetWeaponTypeByName(ids[i]);
+                }
+                if(weapontype)
+                    type->weaponTypes.Push(weapontype);
+            }
+
+            attackTypeList.Push(type);
+        }
+    }
+
+    Notify2( LOG_STARTUP, "%lu Attack Types Loaded", types.Count());
+    return true;
+}
 bool CacheManager::PreloadWays()
 {
     Result ways(db->Select("SELECT * from ways"));
@@ -3187,7 +3465,7 @@ bool CacheManager::PreloadWays()
             way->name = ways[i]["name"];
             way->skill = (PSSKILL)atoi(ways[i]["skill"]);
             way->related_stat_skill = (PSSKILL)atoi(ways[i]["related_stat"]);
-            wayList.Push(way);
+            wayList.Push(way); 
         }
     }
 
