@@ -1358,6 +1358,11 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\server\bulkobjects\dictionary.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\psaccountinfo.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\psactionlocationinfo.cpp" />
+    <ClCompile Include="..\..\src\server\bulkobjects\psattack.cpp" />
+    <ClCompile Include="..\..\src\server\bulkobjects\psattackdefault.cpp" />
+    <ClCompile Include="..\..\src\server\bulkobjects\psattackmelee.cpp" />
+    <ClCompile Include="..\..\src\server\bulkobjects\psattackqueue.cpp" />
+    <ClCompile Include="..\..\src\server\bulkobjects\psattackrange.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\pscharacter.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\pscharacterlist.cpp" />
     <ClCompile Include="..\..\src\server\bulkobjects\pscharacterloader.cpp" />
@@ -1389,6 +1394,11 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\server\bulkobjects\dictionary.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\psaccountinfo.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\psactionlocationinfo.h" />
+    <ClInclude Include="..\..\src\server\bulkobjects\psattack.h" />
+    <ClInclude Include="..\..\src\server\bulkobjects\psattackdefault.h" />
+    <ClInclude Include="..\..\src\server\bulkobjects\psattackmelee.h" />
+    <ClInclude Include="..\..\src\server\bulkobjects\psattackqueue.h" />
+    <ClInclude Include="..\..\src\server\bulkobjects\psattackrange.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\pscharacter.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\pscharacterlist.h" />
     <ClInclude Include="..\..\src\server\bulkobjects\pscharacterloader.h" />
