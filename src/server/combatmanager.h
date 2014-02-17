@@ -57,9 +57,9 @@ public:
 
     CombatManager(CacheManager* cachemanager, EntityManager* entitymanager);
     bool InitializePVP();
-    
+
     virtual ~CombatManager();
-    
+
     /// This is how you start an attack sequence
     bool AttackSomeone(gemActor* attacker, gemObject* target, Stance stance);
 
@@ -88,8 +88,8 @@ public:
      *  @param attacker: gemActor that requests to raise his stance
      *  @return Returns combat stance.
      */
-    static const Stance & GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker);
-    
+    static const Stance &GetRaisedActorStance(CacheManager* cachemanager, gemActor* attacker);
+
     /** @brief Gets increased combat stance of particular attacker
      *
      *  If current combat stance is the lowest returns current combat stance
@@ -100,12 +100,15 @@ public:
      */
     static const Stance &GetLoweredActorStance(CacheManager* cachemanager, gemActor* attacker);
 
-    EntityManager* GetEntityManager(){return entityManager;};
+    EntityManager* GetEntityManager()
+    {
+        return entityManager;
+    };
 
     csArray<INVENTORY_SLOT_NUMBER> targetLocations;
-    void SetCombat(gemActor *combatant, Stance stance);
-    void NotifyTarget(gemActor *attacker, gemObject *target);
-    void sendAttackList(MsgEntry* me, Client * client);
+    void SetCombat(gemActor* combatant, Stance stance);
+    void NotifyTarget(gemActor* attacker, gemObject* target);
+    void sendAttackList(MsgEntry* me, Client* client);
     void sendAttackQueue(MsgEntry* me, Client* client);
     void sendAttackQueue(psCharacter* character);
 private:
@@ -114,7 +117,7 @@ private:
     CacheManager* cacheManager;
     EntityManager* entityManager;
 
-    
+
     void HandleDeathEvent(MsgEntry* me,Client* client);
 
 };
