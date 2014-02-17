@@ -746,7 +746,11 @@ void ActionManager::HandleExamineOperation(psActionLocation* action, Client* cli
 // Handle /use command
 bool ActionManager::HandleUse(gemActionLocation* actionlocation, Client* client)
 {
-
+    if(client->GetActor()->RangeTo(actionlocation, true, true) > RANGE_TO_USE)
+    {
+        psserver->SendSystemError(client->GetClientNum(),"You are not in range to use %s.",actionlocation->GetName());
+        return false;
+    }
     // find the script
     ProgressionScript* progScript = psserver->GetProgressionManager()->FindScript(actionlocation->GetAction()->GetScriptToRun().GetData());
     if(progScript)
