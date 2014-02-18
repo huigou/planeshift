@@ -83,6 +83,7 @@ bool pawsAttackBookWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifie
         Queue(); //queue the selected attack
         return true;
     }
+    return false;
 }
 
 void pawsAttackBookWindow::HandleAttacks(MsgEntry* me)
