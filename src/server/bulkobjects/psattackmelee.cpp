@@ -128,7 +128,6 @@ bool psAttackMelee::Attack(gemObject* attacker, gemObject* target, INVENTORY_SLO
 {
     psCharacter* Character=attacker->GetCharacterData();
     psItem* Weapon=Character->Inventory().GetEffectiveWeaponInSlot(slot);
-    uint32 weaponID = Weapon->GetUID();
     float latency = Weapon->GetLatency();
     int delay = 0;
     if(speed>0)
@@ -173,7 +172,6 @@ void psAttackMelee::Affect(psCombatAttackGameEvent* event)
     gemObject* target = event->target;
     gemActor* attker = dynamic_cast<gemActor*>(attacker);
 
-    float range = event->weapon->GetRange();
     // Look for targets
     float power = PowerLevel(attacker->GetCharacterData(), event->weapon);
 

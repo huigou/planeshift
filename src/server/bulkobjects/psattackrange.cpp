@@ -186,7 +186,6 @@ bool psAttackRange::Attack(gemObject* attacker, gemObject* target, INVENTORY_SLO
 {
     psCharacter* Character=attacker->GetCharacterData();
     psItem* Weapon=Character->Inventory().GetEffectiveWeaponInSlot(slot);
-    uint32 weaponID = Weapon->GetUID();
     float latency = Weapon->GetLatency();
     int delay = 0;
     if(speed>0)
