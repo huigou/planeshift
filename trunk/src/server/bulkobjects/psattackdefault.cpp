@@ -115,7 +115,6 @@ void psAttackDefault::QueueAttack(gemObject* attacker,INVENTORY_SLOT_NUMBER weap
 {
     psCharacter* Character=attacker->GetCharacterData();
     psItem* Weapon=Character->Inventory().GetEffectiveWeaponInSlot(weaponslot);
-    uint32 weaponID = Weapon->GetUID();
     float latency = Weapon->GetLatency();
     int delay = (int)(latency*1000);
 
