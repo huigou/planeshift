@@ -1434,7 +1434,7 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry* message)
     if(command == "/queue")
     {
         attack = words.Get(1);
-        for(int i = 2; i < words.GetCount();i++)
+        for(size_t i = 2; i < words.GetCount();i++)
         {
             attack.Append(" ");
             attack.Append(words.Get(i));

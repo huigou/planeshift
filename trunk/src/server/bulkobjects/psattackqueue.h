@@ -81,12 +81,12 @@ public:
     /*
      * Returns the number of special attacks in the queue.
      */
-    int getAttackListCount();
+    size_t getAttackListCount();
 
     /*
      * returns the maximum number of elements in the queue
      */
-    int getMax()
+    size_t getMax()
     {
         return DEFAULT_ATTACKQUEUE_SIZE;
     }

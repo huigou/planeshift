@@ -60,9 +60,9 @@ csList< csRef<psAttack> > psAttackQueue::getAttackList()
 
 }
 
-int psAttackQueue::getAttackListCount()
+size_t psAttackQueue::getAttackListCount()
 {
-    int i=0;
+    size_t i = 0;
     csList<csRef<psAttack> >::Iterator it(attackList);
     while(it.HasNext())
     {
@@ -100,7 +100,6 @@ void psAttackQueue::Purge()
 
 float psAttackQueue::GetTotalQueueTime()
 {
-    int x = getAttackListCount();
     float totalTime = 0;
     csList<csRef<psAttack> >::Iterator it(attackList);
     while(it.HasNext())
