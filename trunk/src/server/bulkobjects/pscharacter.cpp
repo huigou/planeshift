@@ -1199,7 +1199,7 @@ float psCharacter::GetScaleValue()
         scaleVar = atof(GetVariableValue("scale").GetData());
     }
 
-    // TODO: add any other "user" modificaitons to scale (Buffs).
+    // TODO: add any other "user" modifications to scale (Buffs).
 
     return scaleVar;
 }
