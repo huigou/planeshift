@@ -26,7 +26,7 @@ void psNetMsgProfiles::AddEnoughRecords(csArray<psOperProfile*> & arr, int neede
 {
     while (neededIndex >= (int)arr.GetSize())
     {
-        csStringFast<100> fullDesc = GetMsgTypeName((int)arr.GetSize()) + "-" + csStringFast<100>(desc);
+        csStringFast<100> fullDesc = GetMsgTypeName((int)arr.GetSize()) + "-" + desc;
         psOperProfile * newProf = new psOperProfile(fullDesc);
         arr.Push(newProf);
         profs.Push(newProf);
