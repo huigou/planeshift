@@ -11928,6 +11928,12 @@ void AdminManager::Scale(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
     {
         if(data->scale)
         {
+            float scale = atof(data->scale);
+            if(scale < 0.01 || scale > 100.0)
+            {
+                psserver->SendSystemError(me->clientnum,"Scale can only be set between 0.01 and 100.0");
+                return;
+            }
             target->GetCharacterData()->SetVariable("scale",data->scale);
             target->Broadcast(me->clientnum, false);
             target->Send(me->clientnum, false, false);
