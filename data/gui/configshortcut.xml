@@ -58,7 +58,7 @@
             <text string="Left/Up scroll button"/>
         </widget>
         <widget name="leftScroll" factory="pawsRadioButtonGroup" >
-            <frame x="15" y="110" width="190" height="20" border="no" />
+            <frame x="15" y="105" width="190" height="20" border="no" />
                <radionode name="buttonScrollOn" id="1004" >
                     <frame x="0" y="0" width="60" height="20" />
                     <text string="On" position="right" />
@@ -78,7 +78,7 @@
             <text string="Right/Down scroll button"/>
         </widget>
         <widget name="rightScroll" factory="pawsRadioButtonGroup" >
-            <frame x="250" y="110" width="190" height="20" border="no" />
+            <frame x="250" y="105" width="190" height="20" border="no" />
                <radionode name="buttonScrollOn" id="1007" >
                     <frame x="0" y="0" width="60" height="20" />
                     <text string="On" position="right" />
@@ -98,7 +98,7 @@
             <text string="Scroll Bar"/>
         </widget>
         <widget name="enableScrollBar" factory="pawsRadioButtonGroup" >
-            <frame x="15" y="160" width="190" height="20" border="no" />
+            <frame x="15" y="155" width="190" height="20" border="no" />
                <radionode name="scrollBarOn" id="1010" >
                     <frame x="0" y="0" width="60" height="20" />
                     <text string="On" position="right" />
@@ -112,8 +112,6 @@
                     <text string="Off" position="right" />
                 </radionode>
         </widget>
-
-
 
 
 
