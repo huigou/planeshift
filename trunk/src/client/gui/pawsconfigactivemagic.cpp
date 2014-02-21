@@ -373,6 +373,10 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
             {
                 ActiveMagicWindow->AutoResize();
             }
+            csString blankSpell;
+            blankSpell="";
+            psSpellCastMessage msg(blankSpell, psengine->GetKFactor()); //request the current Active Mgic list
+            msg.SendMessage();
         }
         break;
 
@@ -383,6 +387,10 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
             {
                 ActiveMagicWindow->AutoResize();
             }
+            csString blankSpell;
+            blankSpell="";
+            psSpellCastMessage msg(blankSpell, psengine->GetKFactor()); //request the current Active Mgic list
+            msg.SendMessage();
         }
         break;
 
@@ -393,6 +401,10 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
             {
                 ActiveMagicWindow->AutoResize();
             }
+            csString blankSpell;
+            blankSpell="";
+            psSpellCastMessage msg(blankSpell, psengine->GetKFactor()); //request the current Active Mgic list
+            msg.SendMessage();
         }
         break;
 
