@@ -79,6 +79,17 @@ public:
     bool Clear();
     int  GetSize();
     int  GetButtonWidth();
+
+
+    /**
+     * Find the width of the widest button
+     *
+     * @return     zero if there are no buttons,
+     *             or the size in pixels based on the text font settings
+     *             or the size in pixels of the fixed button width.
+     */
+    int GetWidestWidth();
+
     int  GetButtonHeight();
     int  GetButtonHolderWidth();
     int  GetButtonHolderHeight();

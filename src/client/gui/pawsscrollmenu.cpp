@@ -724,13 +724,18 @@ bool pawsScrollMenu::RemoveByName(csString name)
 
 bool pawsScrollMenu::Clear()
 {
+    if( !ButtonHolder )
+    {
+        return false;
+    }
+
     for(size_t i=ButtonHolder->GetChildrenCount(); i>0; i--)
     {
         pawsWidget*    match = NULL;
 
         match=ButtonHolder->GetChild(i-1);
         ButtonHolder->RemoveChild(match);
-        Buttons.DeleteIndex(i);
+        Buttons.DeleteIndex(i-1);
     }
     return true;
 }
@@ -745,6 +750,27 @@ int pawsScrollMenu::GetButtonWidth()
     if( buttonWidthDynamic==true )
         return 0;
     return buttonWidth;
+}
+
+int pawsScrollMenu::GetWidestWidth()
+{
+    int widest = 0,
+        buttonSize = 0;
+    
+    for(size_t i=0; i<Buttons.GetSize(); i++)
+    {
+        if(!Buttons[i])
+        {
+            continue;
+        }
+            
+        buttonSize = CalcButtonSize((pawsDnDButton*)Buttons[i]);
+        if( buttonSize>widest )
+        {
+            widest=buttonSize;
+        }
+    }
+    return widest;
 }
 
 int pawsScrollMenu::GetButtonHeight()
