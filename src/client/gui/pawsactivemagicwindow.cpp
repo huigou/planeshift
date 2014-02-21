@@ -69,9 +69,7 @@ void pawsActiveMagicWindow::OnResize()
     if(buffList!=NULL)
     {
         buffList->SetOrientation(Orientation);
-        buffList->OnResize();
     }
-
 }
 
 bool pawsActiveMagicWindow::PostSetup()
@@ -86,8 +84,6 @@ bool pawsActiveMagicWindow::PostSetup()
     {
         buffList->SetLeftScroll(ScrollMenuOptionDISABLED);
         buffList->SetRightScroll(ScrollMenuOptionDISABLED);
-        buffList->AutoResize();
-        AutoResize();
     }
     else
     {
@@ -115,10 +111,10 @@ bool pawsActiveMagicWindow::PostSetup()
 
     LoadSetting();
 
-        csString blankSpell;
-        blankSpell="";
-        psSpellCastMessage msg(blankSpell, psengine->GetKFactor()); //request the current Active Mgic list
-        msg.SendMessage();
+    csString blankSpell;
+    blankSpell="";
+    psSpellCastMessage msg(blankSpell, psengine->GetKFactor()); //request the current Active Mgic list
+    msg.SendMessage();
 
     return true;
 }
@@ -186,12 +182,6 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 
     buffList->Clear();
 
-    if( numSpells==0 )
-    {
-        Hide();
-    }
-    else
-    {
         for( size_t i=0; i<numSpells; i++ )
         {
             if(incoming.duration[i]==0 && showEffects==false)
@@ -242,7 +232,6 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
         {
             buffList->Resize();
         }
-    }
 }
 
 void pawsActiveMagicWindow::AutoResize()
@@ -255,53 +244,157 @@ void pawsActiveMagicWindow::AutoResize()
         return;
     }
 
-// if width>screenwidth, width=screenwidth
-// if height>screenheight, height=screenheight
-// if left edge < 0, left edge = 0
-// if top edge < 0, top edge = 0
-// if left edge + width > screenwidth,
-//        left edge = screenwidth - width
-// if top edge + height > screenheight, top edge  = screenheight - height
+    //what is the starting position ?
+    int leftEdge   = GetScreenFrame().xmin,
+        rightEdge  = GetScreenFrame().xmax,
+        topEdge    = GetScreenFrame().ymin,
+        bottomEdge = GetScreenFrame().ymax;
+
+    int newLeftEdge   = 0,
+        newRightEdge  = 0,
+        newTopEdge    = 0,
+        newBottomEdge = 0,
+        tOrientation  = Orientation;
+
 
     if(Orientation == ScrollMenuOptionHORIZONTAL)
     {
-        buffSize = buffList->AutoResize();
-        if(buffSize == 0)
+        int rows = int( buffList->GetTotalButtonWidth()/(psengine->GetG2D()->GetWidth()-16) )+1; //how many rows will we need to show all the entries
+	
+        if( leftEdge<=0 ) //left anchored, takes precedence over right anchored.
         {
-            buffSize = buffList->GetButtonWidth();
+            newLeftEdge=0;
+            if( rows==1 )
+            {
+                newRightEdge=(newLeftEdge+buffList->GetTotalButtonWidth()+16);
+            }
+            else //rows>1
+            {
+                newRightEdge=psengine->GetG2D()->GetWidth();
+            }
+        }
+        else if( rightEdge>=psengine->GetG2D()->GetWidth() ) //right anchored
+        {
+            newRightEdge=psengine->GetG2D()->GetWidth();
+            if( rows==1 )
+            {
+                newLeftEdge=rightEdge-buffList->GetTotalButtonWidth()-16;
+            }
+            else //rows>1
+            {
+                newLeftEdge=0;
+            }
+        }
+        else //not anchored at all, expand and contract on right
+        {
+            if( leftEdge+buffList->GetTotalButtonWidth()+16 < psengine->GetG2D()->GetWidth() )
+            {
+                newLeftEdge  =leftEdge;
+                newRightEdge =leftEdge+buffList->GetTotalButtonWidth()+16;
+                if( newRightEdge>psengine->GetG2D()->GetWidth() )
+                {
+                    newRightEdge==psengine->GetG2D()->GetWidth();
+                }
+            }
+            else //this will push it over the right edge of the screen, adjust
+            {
+                newRightEdge=psengine->GetG2D()->GetWidth();
+                newLeftEdge=newRightEdge-buffList->GetTotalButtonWidth()-16;
+                if( newLeftEdge<0 )
+                {
+                    newLeftEdge=0;
+                }
+            }
         }
 
-        SetSize(buffSize+buffList->GetButtonWidth(), GetScreenFrame().Height());
-        if(GetScreenFrame().xmax > psengine->GetG2D()->GetWidth())   //sticking off the edge of the screen
+        if( topEdge<=0 ) //anchored at top, takes precendence over bottom anchor
         {
-            //t = GetScreenFrame().xmax - psengine->GetG2D()->GetWidth();
-            t = buffList->GetTotalButtonWidth();
-            if(GetScreenFrame().xmin - t < 0)
-            {
-                t = -GetScreenFrame().xmin; //should put the window at the left ede of the screen
-            }
-            else
-            {
-                t = -(GetScreenFrame().xmax - psengine->GetG2D()->GetWidth());
-            }
-            MoveDelta(t, 0);
+            newTopEdge=0;
+            newBottomEdge=(rows*buffList->GetButtonHeight())+16;
+        }
+        else if( bottomEdge>=psengine->GetG2D()->GetHeight() )  //anchored to bottom
+        {
+            newTopEdge=psengine->GetG2D()->GetHeight()-(rows*buffList->GetButtonHeight());
+            newBottomEdge=bottomEdge;
+        }
+        else //not anchored
+        {
+            newTopEdge    =topEdge;
+            newBottomEdge =topEdge+(rows*buffList->GetButtonHeight())+16;
         }
     }
     else
     {
-        buffSize = buffList->AutoResize();
-        if(buffSize == 0)
+        int cols = int( (buffList->GetSize()*buffList->GetButtonHeight())/(psengine->GetG2D()->GetHeight()-16) )+1; //how many columns will we need to sho all the entries
+
+        if( topEdge<=0 )  //top anchored, takes precedence over bottom anchor
         {
-            buffSize = buffList->GetButtonHeight();
+            newTopEdge = 0;
+            if( cols==1 )
+            {
+                newBottomEdge = (buffList->GetSize()*buffList->GetButtonHeight())+16;
+            }
+            else 
+            {
+                newBottomEdge=psengine->GetG2D()->GetHeight();
+            }
+        }
+        else if( bottomEdge>=psengine->GetG2D()->GetHeight() )
+        {
+            newBottomEdge=psengine->GetG2D()->GetHeight();
+            if( cols==1 )
+            {
+                newTopEdge=newBottomEdge-(buffList->GetSize()*buffList->GetButtonHeight())-16;
+            }
+            else
+            {
+                newTopEdge=0;
+            }
+        }
+        else //no anchor, expand and contract on bottom
+        {
+           if( topEdge+(buffList->GetSize()*buffList->GetButtonHeight())+16 < psengine->GetG2D()->GetHeight() )
+           {
+               newTopEdge=topEdge;
+               newBottomEdge=topEdge+(buffList->GetSize()*buffList->GetButtonHeight())+16;
+           }
+           else
+           {
+               newBottomEdge=psengine->GetG2D()->GetHeight();
+               newTopEdge=newBottomEdge-(buffList->GetSize()*buffList->GetButtonHeight())-16;
+           }
         }
 
-        SetSize(GetScreenFrame().Width(), buffSize+buffList->GetButtonHeight());
-
-        if(GetScreenFrame().ymax > psengine->GetG2D()->GetHeight())   //sticking off the bottom of the screen
+        if( leftEdge<=0 ) //anchored at left, takes precendence over right anchor
         {
-            MoveDelta(0, -(GetScreenFrame().ymax - psengine->GetG2D()->GetHeight()));
+            newLeftEdge=0;
+            //newRightEdge=(cols*buffList->GetButtonWidth())+16;
+            newRightEdge=(cols*buffList->GetWidestWidth())+16;
+        }
+        else if( rightEdge>=psengine->GetG2D()->GetWidth() )  //anchored to right
+        {
+            //newLeftEdge=psengine->GetG2D()->GetWidth()-(cols*buffList->GetButtonWidth())-16;
+            newLeftEdge=psengine->GetG2D()->GetWidth()-(cols*buffList->GetWidestWidth())-16;
+            newRightEdge=psengine->GetG2D()->GetWidth();
+        }
+        else //not anchored
+        {
+            newLeftEdge    =leftEdge;
+            //newRightEdge =leftEdge+(cols*buffList->GetButtonWidth() );
+            newRightEdge =leftEdge+(cols*buffList->GetWidestWidth() );
         }
     }
+
+    SetRelativeFrame( newLeftEdge, newTopEdge, (newRightEdge-newLeftEdge), (newBottomEdge-newTopEdge) ); 
+
+    //SetRelativeFrame calls OnResize which will recalculate Orientation, but we don't want
+    //autoResize to change orientation. Restore it here.
+    Orientation=tOrientation; 
+    buffList->SetOrientation(Orientation);
+
+    buffList->SetRelativeFrame( 0, 0, newRightEdge-newLeftEdge-16, newBottomEdge-newTopEdge-16 ); 
+    buffList->LayoutButtons();
+
 }
 
 void pawsActiveMagicWindow::Close()
