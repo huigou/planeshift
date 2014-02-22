@@ -766,7 +766,7 @@ void pawsShortcutWindow::LoadCommands(const char * FN)
 
     csArray<csString>  n;
     n =  names;
-    for( int i=0; i<names.GetSize(); i++ )
+    for( size_t i=0; i<names.GetSize(); i++ )
     {
         csString t = GetTriggerText( i );
         if( t.Length()>0 )
