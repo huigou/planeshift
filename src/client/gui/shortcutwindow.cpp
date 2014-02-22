@@ -1,7 +1,7 @@
 /*
-* shortcutwindow.cpp - Author: Andrew Dai
+* shortcutwindow.cpp - Author: Andrew Dai, Joe Lyon
 *
-* Copyright (C) 2003 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
+* Copyright (C) 2003, 2014 Atomic Blue (info@planeshift.it, http://www.atomicblue.org)
 *
 *
 * This program is free software; you can redistribute it and/or
@@ -26,7 +26,8 @@
 #include "chatwindow.h"
 
 
-//=============================================================================// Defines
+//=============================================================================
+// Defines
 //=============================================================================
 #define COMMAND_FILE            "/planeshift/userdata/options/shortcutcommands.xml"
 #define DEFAULT_COMMAND_FILE    "/planeshift/data/options/shortcutcommands_def.xml"
@@ -782,7 +783,12 @@ void pawsShortcutWindow::LoadCommands(const char * FN)
     }
 }
 
-void pawsShortcutWindow::SaveCommands(void)
+void pawsShortcutWindow::SaveCommands(const char *FN)
+{
+    fileName = FN;
+    SaveCommands();
+}
+void pawsShortcutWindow::SaveCommands()
 {
     bool found = false;
     size_t i;

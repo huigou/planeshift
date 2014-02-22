@@ -284,6 +284,9 @@ bool pawsChatWindow::PostSetup()
         JoinChannel("gossip");
         isInChannel = true;
     }
+
+    LoadSetting();
+
     PawsManager::GetSingleton().Publish(CHAT_TYPES[CHAT_ADVISOR], "This channel is the HELP channel. "
         "Please type in your question and other fellow players or GMs may answer. "
         "If you don't get an answer, you can check also the HELP button in the top toolbar, "
@@ -2711,3 +2714,65 @@ csString *pawsChatHistory::GetPrev()
 {
     return GetCommand(getLoc + 1);
 }
+
+bool pawsChatWindow::LoadSetting()
+{
+    csRef<iDocument> doc;
+    csRef<iDocumentNode> root,
+                         mainNode,
+                         optionNode,
+                         optionNode2;
+    csString fileName;
+    fileName = "/planeshift/userdata/options/configchatfont.xml";
+
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+
+    if(!vfs->Exists(fileName))
+    {
+       return false; //no saved config to load.
+    }
+
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(), fileName);
+    if(doc == NULL)
+    {
+        Error2("pawsActiveMagicWindow::LoadUserPrefs Failed to parse file %s", fileName.GetData());
+        return false;
+    }
+    root = doc->GetRoot();
+    if(root == NULL)
+    {
+        Error2("pawsActiveMagicWindow::LoadUserPrefs : %s has no XML root",fileName.GetData());
+        return false;
+    }
+    mainNode = root->GetNode("chat");
+    if(mainNode == NULL)
+    {
+        Error2("pawsActiveMagicWindow::LoadUserPrefs %s has no <chat> tag",fileName.GetData());
+        return false;
+    }
+     optionNode = mainNode->GetNode("textSize");
+    if(optionNode == NULL)
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve textSize node");
+    }
+
+    optionNode2 = mainNode->GetNode("textFont");
+    if(optionNode2 == NULL)
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve textFont node");
+    }
+
+    if( optionNode != NULL && optionNode2 != NULL )
+    {
+        fontName = csString( optionNode2->GetAttributeValue("value") );
+
+        csString    fontPath( "/planeshift/data/ttf/");
+        fontPath += fontName.GetData();
+        fontPath += ".ttf";
+        SetFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
+    }
+    //else use default.
+
+    return true;
+}
+

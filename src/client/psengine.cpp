@@ -138,6 +138,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigsound.h"
 #include "gui/pawsconfigshortcut.h"
 #include "gui/pawsconfigactivemagic.h"
+#include "gui/pawsconfigchatfont.h"
 #include "gui/pawsconfigentitylabels.h"
 #include "gui/pawsconfigentityinter.h"
 #include "gui/pawsconfigautoexec.h"
@@ -813,6 +814,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory(pawsConfigSoundFactory);
     RegisterFactory(pawsConfigShortcutFactory);
     RegisterFactory(pawsConfigActiveMagicFactory);
+    RegisterFactory(pawsConfigChatFontFactory);
     RegisterFactory(pawsConfigEntityLabelsFactory);
     RegisterFactory(pawsConfigEntityInteractionFactory);
     RegisterFactory(pawsConfigAutoexecFactory);

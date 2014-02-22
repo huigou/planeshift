@@ -91,6 +91,10 @@ Changing the language can be done ONLY in the PlaneShift Launcher. To do this yo
                     <attr name="SectionName" value="chattabs" />
                     <attr name="factory" value="pawsConfigChatTabs" />
                 </widget>
+                <widget factory="pawsSimpleTreeNode" label="Chat - font">
+                    <attr name="SectionName" value="chatfonts" />
+                    <attr name="factory" value="pawsConfigChatFont" />
+                </widget>
                  <widget factory="pawsSimpleTreeNode" label="Pop-ups">
                     <attr name="SectionName" value="popup"/>
                     <attr name="factory" value="pawsConfigPopup"/>

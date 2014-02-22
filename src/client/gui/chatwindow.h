@@ -224,6 +224,19 @@ public:
     /// Reload Chat Window
     void ReloadChatWindow();
 
+   /**
+    * return the name of the font
+    */
+    char const * GetFontName()
+    {
+        return fontName.GetData();
+    }
+
+   /**
+    * load the settings stored by pawsConfigChatFont
+    */
+    bool LoadSetting();
+
 
 protected:
 
