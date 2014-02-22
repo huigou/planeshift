@@ -2615,6 +2615,11 @@ void pawsWidget::SetFont(const char* Name , int Size)
 
         fontName = Name;
         myFont = graphics2D->GetFontServer()->LoadFont(Name, fontSize);
+
+        for(uint i=0; i < children.GetSize(); i++)
+        {
+            children.Get(i)->SetFont(Name, Size);
+        }
     }
     else
     {

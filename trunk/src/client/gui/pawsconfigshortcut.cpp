@@ -525,14 +525,12 @@ void pawsConfigShortcut::PickText( const char * fontName, int size )
     csString    fontPath( "/planeshift/data/ttf/");
     fontPath += fontName;
     fontPath += ".ttf";
-    SetFont( fontPath, size );
-    MenuBar->SetFont( fontPath, size );
-    MenuBar->SetButtonFont( fontPath, size );
 
     if( loaded )
     {
         MenuBar->LayoutButtons();
         MenuBar->OnResize();
+        ((pawsShortcutWindow*)ShortcutMenu)->SetFont( fontPath, size );
         ((pawsShortcutWindow*)ShortcutMenu)->Draw();
         SaveConfig();    
     }

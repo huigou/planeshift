@@ -89,7 +89,7 @@ bool pawsConfigActiveMagic::PostSetup()
     MenuBar = (pawsScrollMenu*)(ActiveMagicWindow->FindWidget( "BuffBar",true ));
     if( MenuBar==NULL )
     {
-        Error1( "pawsConfigShortcut::PostSetup unable to get MenuBar\n");
+        Error1( "pawsConfigActiveMagic::PostSetup unable to get MenuBar\n");
         return false;
     }
 
@@ -523,14 +523,12 @@ void pawsConfigActiveMagic::PickText( const char * fontName, int size )
     csString    fontPath( "/planeshift/data/ttf/");
     fontPath += fontName;
     fontPath += ".ttf";
-    SetFont( fontPath, size );
-    MenuBar->SetFont( fontPath, size );
-    MenuBar->SetButtonFont( fontPath, size );
 
     if( loaded )
     {
         MenuBar->LayoutButtons();
         MenuBar->OnResize();
+        ((pawsActiveMagicWindow*)ActiveMagicWindow)->SetFont( fontPath, size);
         ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
         SaveConfig();
     }
