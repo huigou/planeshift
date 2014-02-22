@@ -120,7 +120,7 @@ void pawsShortcutWindow::LoadCommandsFile()
         {
             LoadCommands( "/planeshift/data/options/shortcutcommands_def.xml" );
         }
-
+        fileName = CommandFileName; //save the new name to write to.
         SaveCommands();
     }
 }
@@ -187,6 +187,7 @@ int pawsShortcutWindow::GetMonitorState()
     //if ANY of them exists, then show/hide should be avail
     return int(GetProperty( NULL, "visible" ));
 }
+
 void pawsShortcutWindow::StartMonitors()
 {
     if( main_hp != NULL )
@@ -299,7 +300,7 @@ bool pawsShortcutWindow::PostSetup()
     
     MenuBar->SetButtonPaddingWidth( textSpacing );
 
-    //set to a default minimum size...expands as needed
+
     n =  names;
     for( i=0; i<names.GetSize(); i++ )
     {
@@ -311,6 +312,7 @@ bool pawsShortcutWindow::PostSetup()
         }
     }
     MenuBar->LoadArrays( names, icon, n, cmds, 2000, this);
+
     position = 0;
 
     LoadUserPrefs();
@@ -697,13 +699,13 @@ void pawsShortcutWindow::LoadDefaultCommands()
 }
 
 
-void pawsShortcutWindow::LoadCommands(const char * fileName)
+void pawsShortcutWindow::LoadCommands(const char * FN)
 {
     int number;
     // Read button commands
     csRef<iDocument> doc = psengine->GetXMLParser()->CreateDocument();
-    
-    csRef<iDataBuffer> buf (vfs->ReadFile (fileName));
+
+    csRef<iDataBuffer> buf (vfs->ReadFile (FN));
     if (!buf || !buf->GetSize ())
     {
         return ;
@@ -711,10 +713,17 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
     const char* error = doc->Parse( buf );
     if ( error )
     {
-        printf("Error loading shortcut window commands: %s\n", error);
+        Error2("Error loading shortcut window commands: %s\n", error);
         return ;
     }
 
+    fileName=FN;
+
+    icon.Empty();
+    names.Empty();
+    cmds.Empty();
+    if( MenuBar )
+        MenuBar->Clear();
 
     bool zerobased = false;
 
@@ -754,25 +763,27 @@ void pawsShortcutWindow::LoadCommands(const char * fileName)
     {
         cmds.SetSize( NUM_SHORTCUTS, csString("") );
     }
+
+    csArray<csString>  n;
+    n =  names;
+    for( int i=0; i<names.GetSize(); i++ )
+    {
+        csString t = GetTriggerText( i );
+        if( t.Length()>0 )
+        {
+            n[i].Insert( 0, " - " );
+            n[i].Insert( 0, t );
+        }
+    }
+    if( MenuBar )
+    {
+        MenuBar->LoadArrays( names, icon, n, cmds, 2000, this);
+        MenuBar->Resize();
+    }
 }
 
 void pawsShortcutWindow::SaveCommands(void)
 {
-    csString CommandFileName,
-             CharName( psengine->GetMainPlayerName() );
-    size_t   spPos = CharName.FindFirst( ' ' );
-
-    if( spPos != (size_t) -1 )
-    { //there is a space in the name
-        CommandFileName = CharName.Slice(0,spPos );
-    }
-    else
-    {
-        CommandFileName = CharName;
-    }
-
-    CommandFileName.Insert( 0, "/planeshift/userdata/options/shortcutcommands_" );
-    CommandFileName.Append( ".xml" );
     bool found = false;
     size_t i;
     for (i = 0;i < cmds.GetSize();i++)
@@ -822,7 +833,7 @@ void pawsShortcutWindow::SaveCommands(void)
         text = parent->CreateNodeBefore(CS_NODE_TEXT);
         text->SetValue(cmds[i].GetData());
     }
-    doc->Write(vfs, CommandFileName.GetData() );
+    doc->Write(vfs, fileName.GetData() );
 }
 
         
