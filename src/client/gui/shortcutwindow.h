@@ -103,8 +103,9 @@ public:
     **/
     void LoadDefaultCommands();
     void LoadCommandsFile();
-    void LoadCommands(const char * fileName);
-    void LoadQuickbarFile();
+    void LoadCommands(const char *FN);
+    void SaveCommands();
+    void SaveCommands(const char *FN);
     
     void ResetEditWindow();
 
@@ -129,7 +130,6 @@ public:
 protected:
     /// chat window for easy access
     pawsChatWindow* chatWindow;
-    void SaveCommands(void);
     CmdHandler *cmdsource;
 
     csArray<csString> cmds;
