@@ -103,6 +103,7 @@ public:
     **/
     void LoadDefaultCommands();
     void LoadCommandsFile();
+    void LoadCommands(const char * fileName);
     void LoadQuickbarFile();
     
     void ResetEditWindow();
@@ -128,7 +129,6 @@ public:
 protected:
     /// chat window for easy access
     pawsChatWindow* chatWindow;
-    void LoadCommands(const char * fileName);
     void SaveCommands(void);
     CmdHandler *cmdsource;
 
@@ -181,6 +181,8 @@ private:
     csArray<csString>    allIcons;
     csArray<csString>    allNames; //not populated at this time...
     csArray<csString>    stubArray;
+
+    csString          fileName;
 
     size_t            position;
     size_t            buttonWidth;

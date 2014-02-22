@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- Credits for this help file: acraig, aiwendil, magodra, talad, weltall, Venalan, and Taya. -->
+<!-- Credits for this help file: acraig, aiwendil, magodra, talad, weltall, Venalan, Taya and Eredin. -->
 <help>
  <branch name="START HERE">
   <Contents>
@@ -2623,6 +2623,17 @@ Usage:
 (Loads the description from the file [filename] and sets it as your current OOC description.)
           </content>
          </Contents>
+        </topic>
+        <topic name="/loadShortcuts">
+            <Contents>
+                <content type="text">With this command you can load a new set of shortcuts into your shortcut bar from a specified file. Subsequent changes to shortcut buttons will be written to the specified file as well so be careful. The specified file must be in the [config-directory]/options folder and can be named anything as long as the contents are in the correct format. Errors in the format of the file contents can have unexpected results including crashing your client.
+
+The next time your client is started it will point to the default shortcuts file [config-directory]/options/shortcutcommands_[CharFirstname].xml
+
+Usage:
+/loadShortcuts [filename]
+                </content>
+            </Contents>
         </topic>
         <topic name="/motd">
          <Contents>

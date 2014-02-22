@@ -46,7 +46,7 @@
 #include "gui/psmainwidget.h"
 #include "gui/pawsgameboard.h"
 #include "gui/pawsslot.h"
-
+#include "gui/shortcutwindow.h"
 #include "paws/pawsmanager.h"
 #include "paws/pawsyesnobox.h"
 
@@ -141,6 +141,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/setoocdesc",    this); // set the ooc description of a char
     cmdsource->Subscribe("/loaddesc",      this); // load a description for this char from a file
     cmdsource->Subscribe("/loadoocdesc",   this); // load a ooc description for this char from a file
+    cmdsource->Subscribe("/loadshortcuts", this); // load shortcuts bar from a named file
     cmdsource->Subscribe("/togglerun",     this); // Change the run/walk status of the character
 }
 
@@ -222,6 +223,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/setoocdesc",            this);
     cmdsource->Unsubscribe("/loaddesc",              this);
     cmdsource->Unsubscribe("/loadoocdesc",           this);
+    cmdsource->Unsubscribe("/loadshortcuts",         this);
     cmdsource->Unsubscribe("/togglerun",             this);
 
 
@@ -1233,6 +1235,42 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
             return "Character OOC description loaded.";
 
+        }
+    }
+    else if (words[0] == "/loadshortcuts")
+    {
+        if (words.GetCount() < 2)
+        {
+            return "Please specify the filename of the shortcuts to load.";
+        }
+        else
+        {
+            iVFS* vfs = psengine->GetVFS();
+            // lets construct the filename from the first argument
+            csString FileName("/planeshift/userdata/options/");
+            FileName.Append(words[1]);
+
+            // check if the file can be found
+            if (!vfs->Exists(FileName))
+            {
+                return "File not found!";
+            }
+
+            psMainWidget*   Main    = psengine->GetMainWidget();
+            if( Main==NULL )
+            {
+                Error1( "psUserCommands::HandleCommand unable to get psMainWidget\n");
+                return "unable to find main widget";
+            }
+        
+            pawsWidget* ShortcutMenu = Main->FindWidget( "ShortcutMenu",true );
+            if( ShortcutMenu==NULL )
+            {
+                Error1( "psUserCommands::HandleCommand unable to get ShortcutMenu\n");
+                return "unable to find shortcut menu";
+            }
+            ((pawsShortcutWindow*)ShortcutMenu)->LoadCommands( FileName.GetData() );
+            return "shortcuts loaded";
         }
     }
     else if (words[0] == "/togglerun")
