@@ -2626,12 +2626,26 @@ Usage:
         </topic>
         <topic name="/loadShortcuts">
             <Contents>
-                <content type="text">With this command you can load a new set of shortcuts into your shortcut bar from a specified file. Subsequent changes to shortcut buttons will be written to the specified file as well so be careful. The specified file must be in the [config-directory]/options folder and can be named anything as long as the contents are in the correct format. Errors in the format of the file contents can have unexpected results including crashing your client.
+                <content type="text">With this command you can load a new set of shortcuts into your shortcut bar from a specified file. Subsequent changes to shortcut buttons will be written to the specified file as well so be careful. The specified file must be in the [config-directory]/options folder and can be named anything as long as the contents are in the correct format. 
+
+- Errors in the format of the file contents can have unexpected results including crashing your client.
+- If you use the command in a Shortcut, it must be the last command.
 
 The next time your client is started it will point to the default shortcuts file [config-directory]/options/shortcutcommands_[CharFirstname].xml
 
 Usage:
 /loadShortcuts [filename]
+                </content>
+            </Contents>
+        </topic>
+        <topic name="/saveShortcuts">
+            <Contents>
+                <content type="text">This command you will save the current shortcuts from your shortcut bar to a specified file. Subsequent changes to shortcut buttons will be written to the specified file as well so be careful. The specified file will be created in the [config-directory]/options folder and can be named anything as long as the contents are in the correct format. This command will not overwrite existing files.
+
+The next time your client is started it will point to the default shortcuts file [config-directory]/options/shortcutcommands_[CharFirstname].xml
+
+Usage:
+/saveShortcuts [filename]
                 </content>
             </Contents>
         </topic>
