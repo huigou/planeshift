@@ -6,7 +6,7 @@
         <bgimage resource="Scaling Widget Background" />
 
         <widget name="" factory="pawsTextBox">
-            <frame x="15" y="210" width="50" height="20" />
+            <frame x="15" y="10" width="50" height="20" />
             <text string="Font"/>
         </widget>
 
