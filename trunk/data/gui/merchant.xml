@@ -102,11 +102,16 @@
             <column width="40" >
                 <widget name="Item" factory="pawsWidget"></widget>
             </column>
-         <column width="60" >
+            <column width="60" >
                 <widget name="Price" factory="pawsTextBox"></widget>
             </column>
             <column width="195" >
-                <widget name="Name" factory="pawsTextBox"></widget> <!-- This is for formated output -->
+                <widget name="Name" factory="pawsTextBox"> <!-- This is for formated output -->
+                    <attachpoints>
+                        <attach point="ATTACH_LEFT" />
+                        <attach point="ATTACH_RIGHT" />
+                    </attachpoints>
+                </widget>
             </column>
 
 
