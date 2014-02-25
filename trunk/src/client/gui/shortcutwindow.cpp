@@ -412,16 +412,37 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
         iconPalette = dynamic_cast <pawsScrollMenu*> (subWidget->FindWidget("iconPalette"));
         if (iconPalette)
         {
-            //get a ptr to the txture manager so we can look at the elementList, which stores the icon names.
+            //get a ptr to the texture manager so we can look at the elementList, which stores the icon names.
             pawsTextureManager *tm = PawsManager::GetSingleton().GetTextureManager();
         
             //build an array of the icon names
             csHash<csRef<iPawsImage>, csString>::GlobalIterator Iter(tm->elementList.GetIterator());
             Iter.Reset();
-            //build a lits of all PS icons
+            //build a sorted list of all PS icons
             while(Iter.HasNext())
             {
-                allIcons.Push(  Iter.Next()->GetName() );
+                csString curr = csString(Iter.Next()->GetName());
+//fprintf(stderr, "pawsShortcutWindow::OnButtonReleased building icon palette, item %s\n", curr.GetData() );
+                int i;
+                if( allIcons.IsEmpty() )
+                {
+                    allIcons.Push( curr.GetData() );
+                    continue;
+                }
+                for( i=0; i<allIcons.GetSize(); i++) //insertion sort
+                {
+//fprintf(stderr, "......comparing to item %i - %s\n", i, allIcons[i].GetData() );
+                    if( allIcons[i] > curr )
+                    {
+//fprintf(stderr, "......inserting\n" );
+                       allIcons.Insert(i, curr.GetData()); 
+                       break;
+                    }
+                }
+                if( i>=allIcons.GetSize() )
+                {
+                    allIcons.Push( curr.GetData() );
+                }
             }
 
             //pass the array of icon names to LoadArrays as both the icon and the tooltip, so we can see then names when we hover over one
