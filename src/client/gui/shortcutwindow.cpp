@@ -75,10 +75,10 @@ pawsShortcutWindow::pawsShortcutWindow() :
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
 
-    LoadCommandsFile();
-    psengine->GetCharControl()->LoadKeyFile();
+    //LoadCommandsFile();
+    //psengine->GetCharControl()->LoadKeyFile();
 
-    cmdsource = psengine->GetCmdHandler();
+    //cmdsource = psengine->GetCmdHandler();
     chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
 }
 
@@ -238,6 +238,10 @@ bool pawsShortcutWindow::PostSetup()
 
     pawsControlledWindow::PostSetup();
 
+    LoadCommandsFile();
+    psengine->GetCharControl()->LoadKeyFile();
+    cmdsource = psengine->GetCmdHandler();
+
     main_hp      = (pawsProgressBar*)FindWidget( "My HP" );
     main_mana    = (pawsProgressBar*)FindWidget( "My Mana" );
     phys_stamina = (pawsProgressBar*)FindWidget( "My PysStamina" );
@@ -318,6 +322,7 @@ bool pawsShortcutWindow::PostSetup()
     position = 0;
 
     LoadUserPrefs();
+
 
     return true;
 }
