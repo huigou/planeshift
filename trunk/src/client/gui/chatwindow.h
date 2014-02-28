@@ -237,6 +237,11 @@ public:
     */
     bool LoadSetting();
 
+  /**
+   * change the font on only the windows that display the chat text
+   */
+   void  SetChatWindowFont(const char *FontName, int FontSize);
+
 
 protected:
 

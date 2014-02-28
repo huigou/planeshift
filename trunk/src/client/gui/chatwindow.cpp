@@ -2769,10 +2769,25 @@ bool pawsChatWindow::LoadSetting()
         csString    fontPath( "/planeshift/data/ttf/");
         fontPath += fontName.GetData();
         fontPath += ".ttf";
-        SetFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
+        SetChatWindowFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
     }
     //else use default.
 
     return true;
 }
 
+void  pawsChatWindow::SetChatWindowFont(const char *FontName, int FontSize)
+{
+    FindWidget( "InputText" )->SetFont( FontName, FontSize );
+    FindWidget( "MainText" )->SetFont( FontName, FontSize );
+    FindWidget( "SystemText" )->SetFont( FontName, FontSize );
+    FindWidget( "NpcText" )->SetFont( FontName, FontSize );
+    FindWidget( "TellText" )->SetFont( FontName, FontSize );
+    FindWidget( "GuildText" )->SetFont( FontName, FontSize );
+    FindWidget( "AllianceText" )->SetFont( FontName, FontSize );
+    FindWidget( "GroupText" )->SetFont( FontName, FontSize );
+    FindWidget( "AuctionText" )->SetFont( FontName, FontSize );
+    FindWidget( "ChannelsText" )->SetFont( FontName, FontSize );
+    FindWidget( "HelpText" )->SetFont( FontName, FontSize );
+    SetSize( GetScreenFrame().Width(), GetScreenFrame().Height());
+}
