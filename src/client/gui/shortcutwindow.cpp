@@ -55,6 +55,7 @@
 //=============================================================================
 
 pawsShortcutWindow::pawsShortcutWindow() :
+    MenuBar(NULL),
     textBox(NULL),
     labelBox(NULL),
     shortcutText(NULL),
@@ -809,6 +810,7 @@ void pawsShortcutWindow::SaveCommands(const char *FN)
     fileName = FN;
     SaveCommands();
 }
+
 void pawsShortcutWindow::SaveCommands()
 {
     bool found = false;
@@ -863,7 +865,6 @@ void pawsShortcutWindow::SaveCommands()
     doc->Write(vfs, fileName.GetData() );
 }
 
-        
 void pawsShortcutWindow::ExecuteCommand(int shortcutNum )
 {
 
@@ -956,7 +957,6 @@ void pawsShortcutWindow::ExecuteCommand(int shortcutNum )
     }
 }
 
-
 const csString& pawsShortcutWindow::GetCommandName(int shortcutNum )
 {
     if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
@@ -974,7 +974,6 @@ const csString& pawsShortcutWindow::GetCommandName(int shortcutNum )
     
     return names[shortcutNum];
 }
-
 
 bool pawsShortcutWindow::OnFingering(csString string, psControl::Device device, uint button, uint32 mods)
 {
@@ -1022,7 +1021,6 @@ bool pawsShortcutWindow::OnFingering(csString string, psControl::Device device, 
         return false;
     }
 }
-
 
 void pawsShortcutWindow::Show()
 {
