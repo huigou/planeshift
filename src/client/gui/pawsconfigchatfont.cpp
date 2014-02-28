@@ -89,7 +89,7 @@ bool pawsConfigChatFont::PostSetup()
         {
             csString fileName ( fileList->Get (i));
             fileName.DeleteAt( 0, 21 ); // remove the leading path.
-            fileName.ReplaceAll( ".ttf", "" );
+            fileName.DeleteAt( fileName.Length()-4, 4); //delete the ending ".ttf"
                 
             textFont->NewOption( fileName.GetData() );
         }
@@ -122,9 +122,10 @@ bool pawsConfigChatFont::LoadConfig()
 {
     csString tFontName=csString(((pawsChatWindow*)ChatWindow)->GetFontName());
     tFontName.DeleteAt(0,21);
-    tFontName.ReplaceAll(".ttf","" );
+    tFontName.DeleteAt( tFontName.Length()-4, 4); //delete the ending ".ttf"
     textFont->Select( tFontName.GetData() );
 
+    textSize->SetCurrentValue(((pawsChatWindow*)ChatWindow)->GetFontSize(),false);
     loaded= true;
     dirty = false;
 
@@ -172,7 +173,7 @@ bool pawsConfigChatFont::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
 
     if( loaded )
         SaveConfig();
-    ((pawsActiveMagicWindow*)ChatWindow)->Draw();
+    ((pawsChatWindow*)ChatWindow)->Draw();
 
     return true;
 }
@@ -192,7 +193,7 @@ bool pawsConfigChatFont::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget
 
     if( loaded )
     {
-        ((pawsActiveMagicWindow*)ChatWindow)->Draw();
+        ((pawsChatWindow*)ChatWindow)->Draw();
         SaveConfig();
     }
 
@@ -207,8 +208,7 @@ void pawsConfigChatFont::PickText( const char * fontName, int size )
 
     if( loaded )
     {
-        ((pawsActiveMagicWindow*)ChatWindow)->SetFont( fontPath, size );
-        ((pawsActiveMagicWindow*)ChatWindow)->Draw();
+        ((pawsChatWindow*)ChatWindow)->SetChatWindowFont( fontPath, size );
         SaveConfig();
     }
 
@@ -217,7 +217,7 @@ void pawsConfigChatFont::PickText( const char * fontName, int size )
 void pawsConfigChatFont::OnListAction(pawsListBox* selected, int status)
 {
     PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
-    ((pawsActiveMagicWindow*)ChatWindow)->Draw();
+    ((pawsChatWindow*)ChatWindow)->Draw();
     SaveConfig();
 }
 
