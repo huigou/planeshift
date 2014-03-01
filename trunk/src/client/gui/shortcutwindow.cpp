@@ -429,7 +429,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
             {
                 csString curr = csString(Iter.Next()->GetName());
 //fprintf(stderr, "pawsShortcutWindow::OnButtonReleased building icon palette, item %s\n", curr.GetData() );
-                int i;
+                size_t i;
                 if( allIcons.IsEmpty() )
                 {
                     allIcons.Push( curr.GetData() );
@@ -518,7 +518,6 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                     ((pawsDnDButton *)editedButton)->SetText( names[edit] );
                 }
                 iconDisplayID = -1;
-                iconDisplay->SetMaskingImage( "" );
                 csString t = GetTriggerText( edit );
                 if( t.Length()>0 && edit < names.GetSize() )
                 {
