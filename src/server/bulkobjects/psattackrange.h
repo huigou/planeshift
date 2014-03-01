@@ -53,7 +53,7 @@ public:
     ~psAttackRange();
 
     /**
-     * Loads data from the database, btu since this is a default attack, nothing is loaded at teh moment.
+     * Loads data from the database, but since this is a default attack, nothing is loaded at teh moment.
      */
     bool Load(iResultRow &row);
 
