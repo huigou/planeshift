@@ -55,20 +55,27 @@
 //=============================================================================
 #include "psquestprereqops.h"
 
-psAttackRange::psAttackRange()
+psAttackRange::psAttackRange() :
+    aoeRadius(0),
+    aoeAngle(0),
+    successChance(0),
+    attackRange(0)
 {
-
     calc_decay   = psserver->GetMathScriptEngine()->FindScript("Calculate Decay");
     if(!calc_decay)
     {
         Error1("Calculate Decay Script could not be found.  Check the math_scripts DB table.");
     }
-
 }
+
 psAttackRange::~psAttackRange()
 {
-
+    delete attackRange;
+    delete aoeRadius;
+    delete aoeAngle;
+    delete successChance;
 }
+
 bool psAttackRange::Load(iResultRow &row)
 {
     id = row.GetInt("id");
@@ -81,8 +88,8 @@ bool psAttackRange::Load(iResultRow &row)
     type = psserver->GetCacheManager()->GetAttackTypeByName(row["attackType"]);
 
     attackRange = MathExpression::Create(row["range"]);
-    aoeRadius    = MathExpression::Create(row["aoe_radius"]);
-    aoeAngle     = MathExpression::Create(row["aoe_angle"]);
+    aoeRadius   = MathExpression::Create(row["aoe_radius"]);
+    aoeAngle    = MathExpression::Create(row["aoe_angle"]);
     outcome = psserver->GetProgressionManager()->FindScript(row["outcome"]);
     CS_ASSERT(aoeRadius && aoeAngle && outcome);
 
@@ -90,7 +97,7 @@ bool psAttackRange::Load(iResultRow &row)
 
     LoadPrerequisiteXML(requirements,NULL,row["requirements"]);
 
-    TypeRequirements = new psPrereqOpAttackType(type);
+    TypeRequirements.AttachNew(new psPrereqOpAttackType(type));
 
     return true;
 }

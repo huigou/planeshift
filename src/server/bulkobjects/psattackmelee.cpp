@@ -55,7 +55,11 @@
 //=============================================================================
 #include "psquestprereqops.h"
 
-psAttackMelee::psAttackMelee()
+psAttackMelee::psAttackMelee() :
+    aoeRadius(0),
+    aoeAngle(0),
+    successChance(0),
+    outcome(0)
 {
     calc_decay   = psserver->GetMathScriptEngine()->FindScript("Calculate Decay");
     if(!calc_decay)
@@ -63,11 +67,14 @@ psAttackMelee::psAttackMelee()
         Error1("Calculate Decay Script could not be found.  Check the math_scripts DB table.");
     }
 }
+
 psAttackMelee::~psAttackMelee()
 {
-    ///TODO: Clean up Pointers
-
+    delete aoeRadius;
+    delete aoeAngle;
+    delete successChance;
 }
+
 bool psAttackMelee::Load(iResultRow &row)
 {
     id = row.GetInt("id");
@@ -88,7 +95,7 @@ bool psAttackMelee::Load(iResultRow &row)
 
     LoadPrerequisiteXML(requirements,NULL,row["requirements"]);
 
-    TypeRequirements = new psPrereqOpAttackType(type);
+    TypeRequirements.AttachNew(new psPrereqOpAttackType(type));
 
     return true;
 }

@@ -184,7 +184,7 @@ psCharacter::psCharacter() : inventory(this),
     hired = false;
     isStatue = false;
      
-    attackQueue = new psAttackQueue();
+    attackQueue.AttachNew(new psAttackQueue());
     // Load the math scripts
     if(!staminaCalc.IsValid())
     {
