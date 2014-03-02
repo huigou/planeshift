@@ -305,7 +305,7 @@ void psEntityLabels::SetObjectText(GEMClientObject* object)
     psEffect* entityLabel = object->GetEntityLabel();
     if(!entityLabel)
     {
-        // Wierd case
+        // Weird case
         Error2("Lost entity label of object %s!",object->GetName());
         return;
     }
