@@ -900,13 +900,18 @@ void gemObject::UpdateProxList(bool force)
 #endif
         }
 
-        if((!nearobj->GetClient() || (nearobj->GetClient() && nearobj->GetClient()->IsReady())) && nearobj->SeesObject(this, range))
+        if((!nearobj->GetClient() || nearobj->GetClient()->IsReady()) &&
+           nearobj->SeesObject(this, range))
         {
 #ifdef PSPROXDEBUG
             log.AppendFmt("-%s can see %s\n",nearobj->GetName(),GetName());
 #endif
             // true means new addition, false means already on list
-            if(nearobj->GetProxList()->StartWatching(this, range) || force)
+            if(nearobj->GetProxList()->StartWatching(this, range) ||
+               (force &&
+                // Don't send info a second time, loop above handles
+                // the case when object sees itself and 'force' is true.
+                nearobj != this))
             {
 #ifdef PSPROXDEBUG
                 log.AppendFmt("-%s started watching %s\n",nearobj->GetName(),GetName());
@@ -3902,7 +3907,7 @@ void gemActor::ApplyStaminaCalculations(const csVector3 &v, float times)
                   ^
              v  / |
               /   | y
-            /a}   |
+            /a    |
            o------>
               xz
         */
