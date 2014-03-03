@@ -826,7 +826,18 @@ void psCelClient::HandleMessage(MsgEntry* me)
 
         case MSGTYPE_PERSIST_ACTOR:
         {
-            newActorQueue.Push(me);
+            // Delaying the processing for the main actor causes
+            // problems with replaying or skipping animation and
+            // velocity changes so handle it now rather than queueing.
+            if(!local_player ||
+               local_player->GetEID() == psPersistActor::PeekEID(me))
+            {
+                HandleActor(me);
+            }
+            else
+            {
+                newActorQueue.Push(me);
+            }
             break;
         }
 
@@ -1644,12 +1655,16 @@ iSector* GEMClientActor::GetSector() const
 
 bool GEMClientActor::NeedDRUpdate(unsigned char &priority)
 {
-    csVector3 vel = linmove->GetVelocity();
-    csVector3 angularVelocity = linmove->GetAngularVelocity();
-
     // Never send DR messages until client is "ready"
     if(!cel->GetMainPlayer())
         return false;
+
+    // We don't need to update our position if we are dead.
+    if (serverMode == psModeMessage::DEAD)
+        return false;
+
+    csVector3 vel = linmove->GetVelocity();
+    csVector3 angularVelocity = linmove->GetAngularVelocity();
 
     if(linmove->IsPath() && !path_sent)
     {
@@ -2011,8 +2026,13 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
     // TODO: Hacky fix for now when model has not finished loaded.
     if(!cal3dstate) return;
 
-    if((serverMode == psModeMessage::OVERWEIGHT || serverMode == psModeMessage::DEFEATED) && serverMode != mode)
+    if((serverMode == psModeMessage::OVERWEIGHT ||
+        serverMode == psModeMessage::DEFEATED) &&
+       mode != psModeMessage::OVERWEIGHT &&
+       mode != psModeMessage::DEFEATED)
+    {
         cal3dstate->SetAnimAction("stand up", 0.0f, 1.0f);
+    }
 
     SetAlive(mode != psModeMessage::DEAD, newactor);
 

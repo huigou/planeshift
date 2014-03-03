@@ -3400,6 +3400,11 @@ public:
      */
     void SetInstance(InstanceID instance);
 
+    /**
+     * Used to extract just the entity EID from the message.
+     */
+    static uint32_t PeekEID(MsgEntry* me);
+
     csString name;
     csString guild;
     csString factname;
