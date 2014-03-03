@@ -384,6 +384,8 @@ void CombatManager::sendAttackQueue(psCharacter* character)
     if(!character->IsNPC())
     {
         Client* client = character->GetActor()->GetClient();
+        if(!client)
+            return;
         psAttackQueueMessage mesg(client->GetClientNum());
         psAttackQueue* attackqueue = client->GetCharacterData()->GetAttackQueue();
         csList<csRef< psAttack> > attackList = attackqueue->getAttackList();
