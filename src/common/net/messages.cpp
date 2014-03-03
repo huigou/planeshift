@@ -5502,6 +5502,13 @@ void psPersistActor::SetInstance(InstanceID instance)
     msg->Add(instance);
 }
 
+uint32_t psPersistActor::PeekEID(MsgEntry* me)
+{
+    uint32_t eid = me->GetUInt32();
+    me->Reset();
+    return eid;
+}
+
 //------------------------------------------------------------------------------
 
 PSF_IMPLEMENT_MSG_FACTORY_ACCESS_POINTER(psPersistItem,MSGTYPE_PERSIST_ITEM);
