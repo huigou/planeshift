@@ -1502,6 +1502,7 @@ void psEngine::LoadGame()
             HideWindow("WritingWindow");
             HideWindow("CraftCancelWindow");
             HideWindow("ScriptHiredNPCWindow");
+            HideWindow("NPCDialogWindow");
 
 
             paws->GetMouse()->ChangeImage("Skins Normal Mouse Pointer");
