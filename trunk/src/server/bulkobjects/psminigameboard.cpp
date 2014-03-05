@@ -166,15 +166,16 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
                         // or 'StrictOrdered' (as Ordered, and all players must be present)
                         // or 'Relaxed' (default - free for all).
                         csString playerTurnsVal(rulesNode->GetAttributeValue("PlayerTurns"));
-                        if(playerTurnsVal.Downcase() == "ordered")
+                        playerTurnsVal.Downcase();
+                        if(playerTurnsVal == "ordered")
                         {
                             playerTurnRule = ORDERED;
                         }
-                        else if(playerTurnsVal.Downcase() == "strictordered")
+                        else if(playerTurnsVal == "strictordered")
                         {
                             playerTurnRule = STRICT_ORDERED;
                         }
-                        else if(!playerTurnsVal.IsEmpty() && playerTurnsVal.Downcase() != "relaxed")
+                        else if(!playerTurnsVal.IsEmpty() && playerTurnsVal != "relaxed")
                         {
                             Error3("\"%s\" Rule PlayerTurns \"%s\" not recognised. Defaulting to \'Relaxed\'.",
                                    name.GetDataSafe(), playerTurnsVal.GetDataSafe());
@@ -184,15 +185,16 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
                         // 'PlaceOnly' (player can only place new pieces on the board; cant move others),
                         // or 'PlaceOrMovePiece' (default - either move existing or place new pieces).
                         csString moveTypeVal(rulesNode->GetAttributeValue("MoveType"));
-                        if(moveTypeVal.Downcase() == "moveonly")
+                        moveTypeVal.Downcase();
+                        if(moveTypeVal == "moveonly")
                         {
                             movePieceTypeRule = MOVE_ONLY;
                         }
-                        else if(moveTypeVal.Downcase() == "placeonly")
+                        else if(moveTypeVal == "placeonly")
                         {
                             movePieceTypeRule = PLACE_ONLY;
                         }
-                        else if(!moveTypeVal.IsEmpty() && moveTypeVal.Downcase() != "placeormovepiece")
+                        else if(!moveTypeVal.IsEmpty() && moveTypeVal != "placeormovepiece")
                         {
                             Error3("\"%s\" Rule MoveType \"%s\" not recognised. Defaulting to \'PlaceOrMovePiece\'.",
                                    name.GetDataSafe(), moveTypeVal.GetDataSafe());
@@ -201,11 +203,12 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
                         // MoveablePieces can be 'Own' (player can only move their own pieces) or
                         // 'Any' (default - player can move any piece in play).
                         csString moveablePiecesVal(rulesNode->GetAttributeValue("MoveablePieces"));
-                        if(moveablePiecesVal.Downcase() == "own")
+                        moveablePiecesVal.Downcase();
+                        if(moveablePiecesVal == "own")
                         {
                             moveablePiecesRule = OWN_PIECES_ONLY;
                         }
-                        else if(!moveablePiecesVal.IsEmpty() && moveablePiecesVal.Downcase() != "any")
+                        else if(!moveablePiecesVal.IsEmpty() && moveablePiecesVal != "any")
                         {
                             Error3("\"%s\" Rule MoveablePieces \"%s\" not recognised. Defaulting to \'Any\'.",
                                    name.GetDataSafe(), moveablePiecesVal.GetDataSafe());
@@ -214,11 +217,12 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
                         // MoveTo can be 'Vacancy' (player can move pieces to vacant squares only) or
                         // 'Anywhere' (default - can move to any square, vacant or occupied).
                         csString moveToVal(rulesNode->GetAttributeValue("MoveTo"));
-                        if(moveToVal.Downcase() == "vacancy")
+                        moveToVal.Downcase();
+                        if(moveToVal == "vacancy")
                         {
                             movePiecesToRule = VACANCY_ONLY;
                         }
-                        else if(!moveToVal.IsEmpty() && moveToVal.Downcase() != "anywhere")
+                        else if(!moveToVal.IsEmpty() && moveToVal != "anywhere")
                         {
                             Error3("\"%s\" Rule MoveTo \"%s\" not recognised. Defaulting to \'Anywhere\'.",
                                    name.GetDataSafe(), moveToVal.GetDataSafe());
@@ -226,23 +230,24 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
 
                         // MoveDirection can be 'Vertical', 'Horizontal', 'Cross', 'Diagonal' or 'Any' (default)
                         csString moveDirection(rulesNode->GetAttributeValue("MoveDirection"));
-                        if(moveDirection.Downcase() == "vertical")
+                        moveDirection.Downcase();
+                        if(moveDirection == "vertical")
                         {
                             moveDirectionRule = VERTICAL;
                         }
-                        else if(moveDirection.Downcase() == "horizontal")
+                        else if(moveDirection == "horizontal")
                         {
                             moveDirectionRule = HORIZONTAL;
                         }
-                        else if(moveDirection.Downcase() == "cross")
+                        else if(moveDirection == "cross")
                         {
                             moveDirectionRule = CROSS;
                         }
-                        else if(moveDirection.Downcase() == "diagonal")
+                        else if(moveDirection == "diagonal")
                         {
                             moveDirectionRule = DIAGONAL;
                         }
-                        else if(!moveToVal.IsEmpty() && moveToVal.Downcase() != "any")
+                        else if(!moveDirection.IsEmpty() && moveDirection != "any")
                         {
                             Error3("\"%s\" Rule MoveDirection \"%s\" not recognised. Defaulting to \'Any\'.",
                                    name.GetDataSafe(), moveDirection.GetDataSafe());
@@ -298,11 +303,12 @@ bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString 
                                 // Coords="relative"/"absolute"
                                 Endgame_Spec* endgame = new Endgame_Spec;
                                 csString posAbsVal(egNode->GetAttributeValue("Coords"));
-                                if(posAbsVal.Downcase() == "relative")
+                                posAbsVal.Downcase();
+                                if(posAbsVal == "relative")
                                 {
                                     endgame->positionsAbsolute = false;
                                 }
-                                else if(posAbsVal.Downcase() == "absolute")
+                                else if(posAbsVal == "absolute")
                                 {
                                     endgame->positionsAbsolute = true;
                                 }
