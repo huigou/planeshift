@@ -95,7 +95,11 @@ bool psAttackRange::Load(iResultRow &row)
 
     successChance = MathExpression::Create(row["successchance"]);
 
-    LoadPrerequisiteXML(requirements,NULL,row["requirements"]);
+    const char* req = row["requirements"];
+    if(req && req[0] && !LoadPrerequisiteXML(requirements, NULL, req))
+    {
+        return false;
+    }
 
     TypeRequirements.AttachNew(new psPrereqOpAttackType(type));
 
