@@ -33,8 +33,6 @@
 using namespace psMiniGame;
 
 
-//#define DEBUG_MINIGAMES
-
 //-----------------------------------------------------------------------------
 
 pawsGameBoard::pawsGameBoard()
@@ -90,9 +88,7 @@ void pawsGameBoard::HandleMessage(MsgEntry *message)
             Error1("Failed to parse psMGBoardMessage from server.");
             return;
         }
-#ifdef DEBUG_MINIGAMES
-        Debug2(LOG_ANY, 0, "psMGBoardMessage: %s\n", msg.ToString(0).GetData());
-#endif
+        Debug2(LOG_MINIGAMES, 0, "psMGBoardMessage: %s\n", msg.ToString(0).GetData());
 
         // Verify the message counter
         if (counterSet && !msg.IsNewerThan(currentCounter))
@@ -127,9 +123,8 @@ void pawsGameBoard::HandleMessage(MsgEntry *message)
                 Error1("Failed to parse psMGStartStopMessage from server.");
                 return;
             }
-#ifdef DEBUG_MINIGAMES
-        Debug2(LOG_ANY, 0, "psMGStartStopMessage: %s\n", msg.ToString(0).GetData());
-#endif
+        Debug2(LOG_MINIGAMES, 0, "psMGStartStopMessage: %s\n", msg.ToString(0).GetData());
+
         }
 
         if (!msg.msgStart && visible)
@@ -209,9 +204,7 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
     x = (frame.xmax - frame.xmin - w*msg.msgCols)/2;
     y = (frame.ymax - frame.ymin - h*msg.msgRows)/2;
 
-#ifdef DEBUG_MINIGAMES
-    Debug5(LOG_ANY, 0, "Using x = %d, y = %d, w = %d and h = %d", x, y, w, h);
-#endif
+    Debug5(LOG_MINIGAMES, 0, "Using x = %d, y = %d, w = %d and h = %d", x, y, w, h);
 
     if (w <= 10 || h <= 10)
     {
@@ -313,6 +306,7 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
                 whitePieces.Push(piece);
             else if (piece >= BLACK_1 && piece <= BLACK_7)
                 blackPieces.Push(piece);
+            Debug2(LOG_MINIGAMES, 0, "Available Piece: %u", piece);
         }
     }
     else
@@ -320,6 +314,7 @@ void pawsGameBoard::SetupBoard(psMGBoardMessage &msg)
         // By default we will have only one white and one black variant of pieces
         whitePieces.Push(WHITE_1);
         blackPieces.Push(BLACK_1);
+        Debug1(LOG_MINIGAMES, 0, "Available Pieces: Only one black and one white");
     }
 
     // Show the window
@@ -371,6 +366,7 @@ void pawsGameBoard::UpdateBoard(psMGBoardMessage &msg)
     // List of available pieces may change if it depends on the current board status
     if (msg.msgNumOfPieces > 0 && msg.msgPieces)
     {
+        Debug1(LOG_MINIGAMES, 0, "Received update of available Pieces");
         whitePieces.Empty();
         blackPieces.Empty();
         for (size_t i = 0; i < msg.msgNumOfPieces; i++)
@@ -385,6 +381,7 @@ void pawsGameBoard::UpdateBoard(psMGBoardMessage &msg)
                 whitePieces.Push(piece);
             else if (piece >= BLACK_1 && piece <= BLACK_7)
                 blackPieces.Push(piece);
+            Debug2(LOG_MINIGAMES, 0, "Available Piece: %u", piece);
         }
     }
 }
