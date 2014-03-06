@@ -66,7 +66,7 @@ INSERT INTO command_group_assignment VALUES( "/debugnpc", 30 );
 INSERT INTO command_group_assignment VALUES( "/debugtribe", 30 );
 INSERT INTO command_group_assignment VALUES( "move unpickupables/spawns", 30 );
 INSERT INTO command_group_assignment VALUES( "/death", 30 );
-INSERT INTO command_group_assignment VALUES( "/crystal", 30 );
+INSERT INTO command_group_assignment VALUES( "/hunt_location", 30 );
 INSERT INTO command_group_assignment VALUES( "/key", 30 );
 INSERT INTO command_group_assignment VALUES( "full modify", 30 );
 INSERT INTO command_group_assignment VALUES( "spawn all", 30 );
