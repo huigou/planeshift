@@ -20,8 +20,6 @@
 #ifndef PS_VITAL_HEADER
 #define PS_VITAL_HEADER
 
-#include <csutil/array.h>
-
 #define HP_REGEN_RATE  0.2F
 #define MANA_REGEN_RATE  0.2F
 
