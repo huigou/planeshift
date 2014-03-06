@@ -1814,7 +1814,7 @@ csString AdminCmdDataRunScript::GetHelpMessage()
 }
 
 AdminCmdDataCrystal::AdminCmdDataCrystal(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
-    : AdminCmdDataTarget("/crystal", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING)
+    : AdminCmdDataTarget("/hunt_location", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING)
 {
     // when help is requested, return immediate
     if(IsHelp(words[1]))
@@ -4747,10 +4747,6 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     {
         CheckItem(me, msg, data);
     }
-    else if(data->command == "/crystal")
-    {
-        CreateHuntLocation(me,msg,data,client);
-    }
     else if(data->command == "/death")
     {
         Death(me, msg, data, client);
@@ -4798,6 +4794,10 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     else if(data->command == "/hire")
     {
         HandleHire(data, client);
+    }
+    else if(data->command == "/hunt_location")
+    {
+        CreateHuntLocation(me,msg,data,client);
     }
     else if(data->command == "/impersonate")
     {
@@ -5628,8 +5628,8 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage &msg, Admin
     db->Command(
         "INSERT INTO hunt_locations"
         "(`x`,`y`,`z`,`itemid`,`sector`,`interval`,`max_random`,`amount`,`range`)"
-        "VALUES ('%f','%f','%f','%u','%s','%d','%d','%d','%f')",
-        pos.x,pos.y,pos.z, rawitem->GetUID(),sector->QueryObject()->GetName(),interval,random,data->amount,data->range);
+        "VALUES ('%f','%f','%f','%u','%u','%d','%d','%d','%f')",
+        pos.x,pos.y,pos.z, rawitem->GetUID(),spawnsector->uid,interval,random,data->amount,data->range);
 
     for(int i = 0; i < data->amount; ++i)  //Make desired amount of items
     {

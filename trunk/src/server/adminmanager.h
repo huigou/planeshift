@@ -1382,7 +1382,7 @@ public:
     /** @brief Creates obj for specified command that define a treasure hunt.
      */
     AdminCmdDataCrystal()
-        : AdminCmdDataTarget("/crystal", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING)
+        : AdminCmdDataTarget("/hunt_location", ADMINCMD_TARGET_ITEM | ADMINCMD_TARGET_STRING)
     {};
 
     /** @brief Parses the given message and stores its data.
