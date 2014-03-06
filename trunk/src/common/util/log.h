@@ -128,8 +128,8 @@ enum LOG_TYPES
     // Random treasure generation
     LOG_LOOT,
 
-    // Never used!!
-    LOG_DUELS,
+    // Minigames, boards
+    LOG_MINIGAMES,
 
     // Dead reckoning positional/navigation data (very verbose)
     LOG_DRDATA,
