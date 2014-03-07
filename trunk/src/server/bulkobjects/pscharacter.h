@@ -622,7 +622,7 @@ public:
     virtual ~OverridableRace() { }
 
     /**
-     * Sets a which character owns this overridableRace.
+     * Sets which character owns this overridableRace.
      *
      * @param psChar A pointer to a pscharacter.
      */

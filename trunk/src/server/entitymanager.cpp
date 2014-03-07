@@ -680,7 +680,7 @@ bool EntityManager::DeletePlayer(Client* client)
     gemActor* actor = client->GetActor();
     if(actor && actor->GetCharacterData()!=NULL)
     {
-        // take the actor off his mount if he got one
+        // take the actor off his mount if he has one
         if(actor->GetMount())
         {
             RemoveRideRelation(actor);
