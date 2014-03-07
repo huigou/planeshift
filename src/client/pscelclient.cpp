@@ -262,7 +262,7 @@ void psCelClient::HandleActor(MsgEntry* me)
 
     // Extra steps for a controlled actor/the main player:
     if((!local_player && player_name == msg.name) ||
-       local_player && local_player->GetEID() == msg.entityid)
+       (local_player && local_player->GetEID() == msg.entityid))
     {
         SetMainActor(actor);
 

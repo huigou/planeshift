@@ -236,9 +236,6 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 
 void pawsActiveMagicWindow::AutoResize()
 {
-    int buffSize = 0,
-        t = 0;
-
     if(!buffList)
     {
         return;
@@ -293,7 +290,7 @@ void pawsActiveMagicWindow::AutoResize()
                 newRightEdge =leftEdge+buffList->GetTotalButtonWidth()+16;
                 if( newRightEdge>psengine->GetG2D()->GetWidth() )
                 {
-                    newRightEdge==psengine->GetG2D()->GetWidth();
+                    newRightEdge=psengine->GetG2D()->GetWidth();
                 }
             }
             else //this will push it over the right edge of the screen, adjust
