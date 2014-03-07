@@ -55,7 +55,6 @@
 //=============================================================================
 
 pawsShortcutWindow::pawsShortcutWindow() :
-    MenuBar(NULL),
     textBox(NULL),
     labelBox(NULL),
     shortcutText(NULL),
@@ -65,6 +64,7 @@ pawsShortcutWindow::pawsShortcutWindow() :
     iconDisplay(NULL),
     iconDisplayID(0),
     editedButton(NULL),
+    MenuBar(NULL),
     UpButton(NULL),
     DownButton(NULL),
     position(0),

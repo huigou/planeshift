@@ -54,9 +54,12 @@ protected:
 //----------------------------------------------------------------------------
 
 ActiveSpell::ActiveSpell(const csString &name, SPELL_TYPE type, csTicks duration) : name(name), type(type), duration(duration), cancelOnDeath(true), damagesHP(false), target(NULL), registrationTime(0)
-{ }
-ActiveSpell::ActiveSpell(const csString &name, SPELL_TYPE type, csTicks duration, const csString &image) : name(name), type(type), duration(duration), cancelOnDeath(true), damagesHP(false), target(NULL), registrationTime(0), image(image)
-{ }
+{
+}
+
+ActiveSpell::ActiveSpell(const csString &name, SPELL_TYPE type, csTicks duration, const csString &image) : name(name), image(image), type(type), duration(duration), cancelOnDeath(true), damagesHP(false), target(NULL), registrationTime(0)
+{
+}
 
 void ActiveSpell::Add(iSpellModifier &mod, const char* fmt, ...)
 {
