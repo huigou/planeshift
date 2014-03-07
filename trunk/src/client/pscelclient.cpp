@@ -108,7 +108,6 @@ psCelClient::psCelClient()
     entityLabels    = NULL;
     shadowManager   = NULL;
     local_player    = NULL;
-    unresSector     = NULL;
 }
 
 psCelClient::~psCelClient()
@@ -262,7 +261,8 @@ void psCelClient::HandleActor(MsgEntry* me)
     GEMClientActor* actor = new GEMClientActor(this, msg);
 
     // Extra steps for a controlled actor/the main player:
-    if(!local_player || local_player->GetEID() == msg.entityid)
+    if((!local_player && player_name == msg.name) ||
+       local_player && local_player->GetEID() == msg.entityid)
     {
         SetMainActor(actor);
 

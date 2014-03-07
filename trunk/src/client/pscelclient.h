@@ -190,6 +190,16 @@ public:
         return shadowManager;
     }
 
+    void SetMainPlayerName(const char* name)
+    {
+        player_name = name;
+    }
+
+    const char* GetMainPlayerName()
+    {
+        return player_name;
+    }
+
     GEMClientActor* GetMainPlayer()
     {
         return local_player;
@@ -340,6 +350,7 @@ protected:
     void HandleStats(MsgEntry* me);
 
     GEMClientActor* local_player;
+    csString player_name;              ///< name of player character
 
     csList<UnresolvedPos*> unresPos;   ///< list of entities with unresolved location
     csRef<iSector> unresSector;        ///< sector where we keep these entities
