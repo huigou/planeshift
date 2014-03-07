@@ -79,10 +79,6 @@ private:
      * Queues up the next attack, specific to the default attack at the moment
      */
     void QueueAttack(gemObject* attacker,INVENTORY_SLOT_NUMBER weaponslot,gemObject* target,int attackerCID, int targetCID);
-    csWeakRef<MathScript> calc_damage; ///< This is the particular calculation for damage.
-    csWeakRef<MathScript> calc_decay; ///< This is the particular calculation for decay.
-
-    csWeakRef<MathScript> staminacombat;///< if the player is too tired, stop fighting. We stop if we don't have enough stamina to make an attack with the current stance.
 
     bool IsQueuedInClient()
     {

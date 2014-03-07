@@ -51,6 +51,12 @@
 #include "scripting.h"
 
 
+SlotManager::SlotManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager)
+{
+    gemSupervisor = gemsupervisor;
+    cacheManager = cachemanager;
+    qualityScript = psserver->GetMathScriptEngine()->FindScript("CalculateConsumeQuality");
+}
 
 SlotManager::~SlotManager()
 {
@@ -61,9 +67,13 @@ bool SlotManager::Initialize()
 {
     Subscribe(&SlotManager::HandleSlotMovement, MSGTYPE_SLOT_MOVEMENT, REQUIRE_READY_CLIENT);
     Subscribe(&SlotManager::HandleDropCommand, MSGTYPE_CMDDROP, REQUIRE_READY_CLIENT);
+    if(!qualityScript)
+    {
+        Error1("Failed to find MathScript CalculateConsumeQuality!");
+        return false;
+    }
     return true;
 }
-
 
 void SlotManager::HandleSlotMovement(MsgEntry* me, Client* fromClient)
 {
@@ -893,13 +903,6 @@ void SlotManager::Consume(psItem* item, psCharacter* charData, int count)
     if(!item)
         return;
 
-    // Use math function to determine effect of quality
-    static csWeakRef<MathScript> qualityScript = NULL;
-    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(qualityScript, "CalculateConsumeQuality"))
-    {
-        return;
-    }
-
     csString scriptName = item->GetBaseStats()->GetConsumeScriptName();
     if(scriptName.IsEmpty())
     {
@@ -914,9 +917,10 @@ void SlotManager::Consume(psItem* item, psCharacter* charData, int count)
         return;
     }
 
+    // Use math function to determine effect of quality
     MathEnvironment env;
     env.Define("Quality", item->GetMaxItemQuality());
-    qualityScript->Evaluate(&env);
+    (void) qualityScript->Evaluate(&env);
 
     gemActor* actor = charData->GetActor();
     env.Define("Actor", actor);

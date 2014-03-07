@@ -23,7 +23,6 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
-#include <csutil/weakref.h>
 #include <csutil/csstring.h>
 #include <csutil/array.h>
 #include <iutil/document.h>
@@ -60,7 +59,7 @@ protected:
     int       factionDiff;
     csString  oper;
     csString  condition;
-    csWeakRef<MathScript> calcCondition; ///< This is the particular calculation for condition.
+    MathScript* calcCondition; ///< This is the particular calculation for condition.
     bool      activeOnly;
     bool      inactiveOnly;
     bool      reactWhenDead;

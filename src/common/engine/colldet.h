@@ -33,7 +33,6 @@
 #include <csutil/scf.h>
 #include <csutil/stringarray.h>
 #include <csutil/sysfunc.h>
-#include <csutil/weakref.h>
 #include <cstool/collider.h>
 #include <ivaria/collider.h>
 

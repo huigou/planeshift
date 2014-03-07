@@ -186,6 +186,8 @@ bool CacheManager::PreloadAll(EntityManager* entitymanager)
         return false;
     if(!PreloadScripts(entitymanager))
         return false;
+    if(!PreloadMathScripts())
+        return false;
     if(!PreloadSpells())
         return false;
     if(!PreloadQuests())
@@ -3557,6 +3559,51 @@ bool CacheManager::PreloadScripts(EntityManager* entitymanager)
             scripts.Put(s->Name(), s);
         }
     }
+    return true;
+}
+
+#define LOOKUP(var, name) \
+    var = eng->FindScript(name); \
+    if(!var) \
+    { \
+        Error1("Failed to find MathScript >" name "<!"); \
+        return false; \
+    }
+
+bool CacheManager::PreloadMathScripts()
+{
+    MathScriptEngine* eng = psserver->GetMathScriptEngine();
+    LOOKUP(maxCarryWeight, "CalculateMaxCarryWeight");
+    LOOKUP(maxCarryAmount, "CalculateMaxCarryAmount");
+    LOOKUP(maxRealmScript, "MaxRealm");
+    LOOKUP(maxManaScript, "CalculateMaxMana");
+    LOOKUP(maxHPScript, "CalculateMaxHP");
+    LOOKUP(staminaCalc, "StaminaBase");
+    LOOKUP(expSkillCalc, "Calculate Skill Experience");
+    LOOKUP(staminaRatioWalk, "StaminaRatioWalk");
+    LOOKUP(staminaRatioStill, "StaminaRatioStill");
+    LOOKUP(staminaRatioSit, "StaminaRatioSit");
+    LOOKUP(staminaRatioWork, "StaminaRatioWork");
+    LOOKUP(staminaCombat, "StaminaCombat");
+    LOOKUP(dodgeValueCalc, "CalculateDodgeValue");
+    LOOKUP(armorSkillsPractice, "PracticeArmorSkills");
+    LOOKUP(charLevelGet, "GetCharLevel");
+    LOOKUP(skillValuesGet, "GetSkillValues");
+    LOOKUP(baseSkillValuesGet, "GetSkillBaseValues");
+    LOOKUP(setBaseSkillsScript, "SetBaseSkills");
+    LOOKUP(calc_damage, "Calculate Damage");
+    LOOKUP(calc_decay, "Calculate Decay");
+    LOOKUP(calcItemPrice, "Calc Item Price");
+    LOOKUP(calcItemSellPrice, "Calc Item Sell Price");
+    LOOKUP(playerSketchLimits, "Calc Player Sketch Limits");
+    LOOKUP(spellPowerLevel, "CalculatePowerLevel");
+    LOOKUP(manaCost, "CalculateManaCost");
+    LOOKUP(castSuccess, "CalculateChanceOfCastSuccess");
+    LOOKUP(researchSuccess, "CalculateChanceOfResearchSuccess");
+    LOOKUP(spellPractice, "SpellPractice");
+    LOOKUP(doDamage, "DoDamageScript");
+    LOOKUP(staminaMove, "StaminaMove");
+    LOOKUP(msAffinity, "CalculateFamiliarAffinity");
     return true;
 }
 

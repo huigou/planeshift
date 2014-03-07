@@ -757,11 +757,12 @@ bool ActionManager::HandleUse(gemActionLocation* actionlocation, Client* client)
     {
         csString parameters = actionlocation->GetAction()->GetScriptParameters();
         // passes the parameters to the script to run
-        csWeakRef<MathScript> bindings = MathScript::Create("RunScript bindings", parameters);
+        MathScript* bindings = MathScript::Create("RunScript bindings", parameters);
 
         MathEnvironment env;
         env.Define("Target", client->GetActor()); // needed if called by an action location
         bindings->Evaluate(&env);
+        MathScript::Destroy(bindings);
         progScript->Run(&env);
         return true;
     }

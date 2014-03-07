@@ -2883,8 +2883,6 @@ void gemActor::InvokeMovementScripts()
 
 void gemActor::DoDamage(gemActor* attacker, float damage)
 {
-    static csWeakRef<MathScript> doDamageScript = NULL;
-
     // Handle trivial "already dead" case
     if(!IsAlive())
     {
@@ -2893,26 +2891,10 @@ void gemActor::DoDamage(gemActor* attacker, float damage)
         return;
     }
 
-    if(!doDamageScript)
-    {
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(doDamageScript, "DoDamageScript");
-    }
-
-    if(doDamageScript)
-    {
-        MathEnvironment env;
-        env.Define("Actor", this);
-        env.Define("Damage", damage);
-        doDamageScript->Evaluate(&env);
-    }
-    else
-    {
-        // Successful attack, if >30% max hp then interrupt spell
-        if(damage > psChar->GetMaxHP().Current() * 0.3F)
-        {
-            InterruptSpellCasting();
-        }
-    }
+    MathEnvironment env;
+    env.Define("Actor", this);
+    env.Define("Damage", damage);
+    (void) psserver->GetCacheManager()->GetDoDamage()->Evaluate(&env);
 
     if(GetCharacterData()->GetHP() - damage < 0)
     {
@@ -3870,14 +3852,6 @@ void gemActor::ApplyStaminaCalculations(const csVector3 &v, float times)
     csVector3 thisV = lastV;
     lastV=v;
 
-    // Script
-    static csWeakRef<MathScript> script;
-    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "StaminaMove"))
-    {
-        Error1("Missing script \"StaminaMove\"");
-        return;
-    }
-
     if(atRest)
     {
 #ifdef STAMINA_PROCESS_DEBUG
@@ -3947,7 +3921,7 @@ void gemActor::ApplyStaminaCalculations(const csVector3 &v, float times)
         env.Define("MaxStamina",  psChar->GetMaxPStamina().Current());          // Max stamina of the character
 
         // Do stuff with stuff
-        script->Evaluate(&env);
+        (void) psserver->GetCacheManager()->GetStaminaMove()->Evaluate(&env);
 
         // Stuff comes out
         MathVar* drain = env.Lookup("Drain");

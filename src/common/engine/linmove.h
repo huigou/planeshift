@@ -31,7 +31,6 @@
 #include "iutil/comp.h"
 #include "iutil/eventh.h"
 #include "csutil/scf.h"
-#include "csutil/weakref.h"
 #include "csutil/stringarray.h"
 #include "cstool/collider.h"
 #include "ivaria/collider.h"

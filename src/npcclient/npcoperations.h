@@ -478,7 +478,7 @@ protected:
     float            offsetAngle;            ///< The actual offset angle in radians
     csVector3        offsetDelta;            ///< The actual delta relative to target
     float            adaptivVelScale;               ///< Scale of velocity for adaptive vel.
-    csWeakRef<MathScript> calcAdaptivVelocity; ///< This is the particular calculation for adaptiv velocity.
+    MathScript* calcAdaptivVelocity; ///< This is the particular calculation for adaptiv velocity.
     //@}
 
     /** @name Operation Parameters
@@ -525,7 +525,7 @@ public:
 
     /** Destructor for this operation
      */
-    virtual ~ChaseOperation() {};
+    virtual ~ChaseOperation() {}
 
     /** Calculate any offset from target to stop chase.
      *
@@ -1249,11 +1249,17 @@ protected:
     csString   failedPerception; ///< A perception to fire if the condition fails
     csString   delayed;          ///< If set this perception should be delayed.
 
-    csWeakRef<MathScript> calcCondition; ///< This is the particular calculation for condition.
+    MathScript* calcCondition; ///< This is the particular calculation for condition.
 public:
 
-    PerceptOperation(): ScriptOperation("Percept"), target(SELF), maxRange(0.0) {};
-    virtual ~PerceptOperation() {};
+    PerceptOperation() :
+        ScriptOperation("Percept"),
+        target(SELF),
+        maxRange(0.0),
+        calcCondition(0)
+    {
+    }
+    virtual ~PerceptOperation() {}
     virtual OperationResult Run(NPC* npc,bool interrupted);
     virtual bool Load(iDocumentNode* node);
     virtual ScriptOperation* MakeCopy();

@@ -82,9 +82,10 @@ BankManager::BankManager()
     }
 
     //load the mathscripts
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(accountGuildLvlScript, "Calc Guild Account Level");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(accountCharLvlScript, "Calc Char Account Level");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(CalcBankFeeScript, "Calc Bank Fee");
+    MathScriptEngine* eng = psserver->GetMathScriptEngine();
+    accountGuildLvlScript = eng->FindScript("Calc Guild Account Level");
+    accountCharLvlScript = eng->FindScript("Calc Char Account Level");
+    CalcBankFeeScript = eng->FindScript("Calc Bank Fee");
 
     ProcessTax();
 }
@@ -799,7 +800,7 @@ int BankManager::CalculateAccountLevel(psCharacter* pschar, bool guild)
             return 0;
         }
 
-        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(accountGuildLvlScript, "Calc Guild Account Level"))
+        if(!accountGuildLvlScript)
         {
             return 0;
         }
@@ -808,7 +809,7 @@ int BankManager::CalculateAccountLevel(psCharacter* pschar, bool guild)
     }
     else
     {
-        if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(accountCharLvlScript, "Calc Char Account Level"))
+        if(!accountCharLvlScript)
         {
             return 0;
         }
@@ -824,14 +825,13 @@ int BankManager::CalculateAccountLevel(psCharacter* pschar, bool guild)
 
 float BankManager::CalculateFee(psCharacter* pschar, bool guild)
 {
-    MathEnvironment env;
-    env.Define("AccountLevel", CalculateAccountLevel(pschar, guild));
-
-    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(CalcBankFeeScript, "Calc Bank Fee"))
+    if(!CalcBankFeeScript)
     {
         return 0;
     }
 
+    MathEnvironment env;
+    env.Define("AccountLevel", CalculateAccountLevel(pschar, guild));
     CalcBankFeeScript->Evaluate(&env);
     MathVar* bankFee = env.Lookup("BankFee");
     return bankFee->GetValue();

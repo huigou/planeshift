@@ -22,7 +22,6 @@
 
 #include <csgeom/matrix3.h>
 #include <csutil/cscolor.h>
-#include <csutil/weakref.h>
 #include <csutil/scf_implementation.h>
 #include <iengine/movable.h>
 #include <iengine/sector.h>

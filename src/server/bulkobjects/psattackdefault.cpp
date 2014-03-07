@@ -57,22 +57,10 @@
 
 psAttackDefault::psAttackDefault()
 {
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_damage, "Calculate Damage");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_decay, "Calculate Decay");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminacombat, "StaminaCombat");
-    if(!calc_damage)
-    {
-        Error1("Calculate Damage Script could not be found.  Check the math_scripts DB table.");
-    }
-    else if(!calc_decay)
-    {
-        Error1("Calculate Decay Script could not be found.  Check the math_scripts DB table.");
-    }
 }
 
 psAttackDefault::~psAttackDefault()
 {
-
 }
 
 bool psAttackDefault::IsDualWield(psCharacter* attacker)
@@ -94,11 +82,13 @@ bool psAttackDefault::IsDualWield(psCharacter* attacker)
     else
         return false;
 }
+
 bool psAttackDefault::Load(iResultRow &row)
 {
     //no need to load anything for this particular attack
     return true;
 }
+
 bool psAttackDefault::CanAttack(Client* client)
 {
     //default attack can always attack
@@ -111,6 +101,7 @@ bool psAttackDefault::Attack(gemObject* attacker, gemObject* target,INVENTORY_SL
     QueueAttack(attacker,slot,target,attacker->GetClientID(),target->GetClientID());
     return true;
 }
+
 void psAttackDefault::QueueAttack(gemObject* attacker,INVENTORY_SLOT_NUMBER weaponslot,gemObject* target,int attackerCID, int targetCID)
 {
     psCharacter* Character=attacker->GetCharacterData();
@@ -123,8 +114,8 @@ void psAttackDefault::QueueAttack(gemObject* attacker,INVENTORY_SLOT_NUMBER weap
     event = new psCombatAttackGameEvent(delay,this,attacker,target,weaponslot,attackerCID,targetCID);
     event->GetAttackerData()->TagEquipmentObject(weaponslot,event->id);
     psserver->GetEventManager()->Push(event);
-
 }
+
 void psAttackDefault::Affect(psCombatAttackGameEvent* event)
 {
 
@@ -192,14 +183,7 @@ void psAttackDefault::Affect(psCombatAttackGameEvent* event)
         env.Define("Actor",  event->GetAttacker());
         env.Define("Weapon", weapon);
 
-        //as this is called frequently we precheck before doing a function
-        //call if we need to reload the script
-        if(!staminacombat.IsValid())
-        {
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(staminacombat, "StaminaCombat");
-        }
-        //this is going to crash if the script was not found in the db.
-        staminacombat->Evaluate(&env);
+        (void) psserver->GetCacheManager()->GetStaminaCombat()->Evaluate(&env);
 
         MathVar* PhyDrain = env.Lookup("PhyDrain");
         MathVar* MntDrain = env.Lookup("MntDrain");
@@ -239,7 +223,6 @@ void psAttackDefault::Affect(psCombatAttackGameEvent* event)
             return;
         }
     }
-
 
     if(gemAttacker->IsSpellCasting())
     {
@@ -308,7 +291,6 @@ void psAttackDefault::Affect(psCombatAttackGameEvent* event)
         event->AttackResult=attack_result;
         AffectTarget(event,attack_result);
     }
-
 }
 
 int psAttackDefault::CalculateAttack(psCombatAttackGameEvent* event, psItem* subWeapon)
@@ -350,15 +332,7 @@ int psAttackDefault::CalculateAttack(psCombatAttackGameEvent* event, psItem* sub
     env.Define("DiffY",                 diff.y ? diff.y : 0.00001F); // force minimal value
     env.Define("DiffZ",                 diff.z ? diff.z : 0.00001F); // force minimal value
 
-    //as this is called frequently we precheck before doing a function
-    //call if we need to reload the script
-    if(!calc_damage.IsValid())
-    {
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_damage, "Calculate Damage");
-    }
-
-    //this is going to crash if the script cannot be found.
-    calc_damage->Evaluate(&env);
+    (void) psserver->GetCacheManager()->GetCalcDamage()->Evaluate(&env);
 
     if(DoLogDebug2(LOG_COMBAT, event->GetAttackerData()->GetPID().Unbox()))
     {
@@ -388,6 +362,7 @@ int psAttackDefault::CalculateAttack(psCombatAttackGameEvent* event, psItem* sub
 
     return ATTACK_DAMAGE;
 }
+
 void psAttackDefault::AffectTarget(psCombatAttackGameEvent* event, int attack_result)
 {
     psCharacter* attacker_data = event->GetAttackerData();
@@ -419,15 +394,7 @@ void psAttackDefault::AffectTarget(psCombatAttackGameEvent* event, int attack_re
         env.Define("Damage", event->FinalDamage);                 // actual damage dealt
         env.Define("Blocked", (attack_result == ATTACK_BLOCKED)); // identifies whether this attack was blocked
 
-        //as this is called frequently we precheck before doing a function
-        //call if we need to reload the script
-        if(!calc_decay.IsValid())
-        {
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_decay, "Calculate Decay");
-        }
-
-        //this is going to crash if the script cannot be found.
-        calc_decay->Evaluate(&env);
+        (void) psserver->GetCacheManager()->GetCalcDecay()->Evaluate(&env);
 
         weaponDecay = env.Lookup("WeaponDecay");
         blockDecay  = env.Lookup("BlockingDecay");

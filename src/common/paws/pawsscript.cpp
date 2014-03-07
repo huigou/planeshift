@@ -39,7 +39,6 @@ pawsScriptStatement::~pawsScriptStatement()
     MathScript::Destroy(script);
 }
 
-
 void pawsScriptStatement::ChangedResultsVarCallback(void* arg)
 {
     pawsScriptResult* res = (pawsScriptResult*)arg;

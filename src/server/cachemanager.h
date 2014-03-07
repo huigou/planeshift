@@ -74,6 +74,7 @@ struct Faction;
 struct psTrait;
 struct psRaceInfo;
 struct Stance;
+struct MathScript;
 
 struct ArmorVsWeapon
 {
@@ -453,6 +454,39 @@ public:
     // Progression Scripts
     ProgressionScript* GetProgressionScript(const char* name);
 
+    // Math scripts
+    MathScript* GetMaxCarryWeight() { return maxCarryWeight; }
+    MathScript* GetMaxCarryAmount() { return maxCarryAmount; }
+    MathScript* GetMaxRealmScript() { return maxRealmScript; }
+    MathScript* GetMaxManaScript() { return maxManaScript; }
+    MathScript* GetMaxHPScript() { return maxHPScript; }
+    MathScript* GetStaminaCalc() { return staminaCalc; }
+    MathScript* GetExpSkillCalc() { return expSkillCalc; }
+    MathScript* GetStaminaRatioWalk() { return staminaRatioWalk; }
+    MathScript* GetStaminaRatioStill() { return staminaRatioStill; }
+    MathScript* GetStaminaRatioSit() { return staminaRatioSit; }
+    MathScript* GetStaminaRatioWork() { return staminaRatioWork; }
+    MathScript* GetStaminaCombat() { return staminaCombat; }
+    MathScript* GetDodgeValueCalc() { return dodgeValueCalc; }
+    MathScript* GetArmorSkillsPractice() { return armorSkillsPractice; }
+    MathScript* GetCharLevelGet() { return charLevelGet; }
+    MathScript* GetSkillValuesGet() { return skillValuesGet; }
+    MathScript* GetBaseSkillValuesGet() { return baseSkillValuesGet; }
+    MathScript* GetSetBaseSkillsScript() { return setBaseSkillsScript; }
+    MathScript* GetCalcDamage() { return calc_damage; }
+    MathScript* GetCalcDecay() { return calc_decay; }
+    MathScript* GetCalcItemPrice() { return calcItemPrice; }
+    MathScript* GetCalcItemSellPrice() { return calcItemSellPrice; }
+    MathScript* GetPlayerSketchLimits() { return playerSketchLimits; }
+    MathScript* GetSpellPowerLevel() { return spellPowerLevel; }
+    MathScript* GetManaCost() { return manaCost; }
+    MathScript* GetCastSuccess() { return castSuccess; }
+    MathScript* GetResearchSuccess() { return researchSuccess; }
+    MathScript* GetSpellPractice() { return spellPractice; }
+    MathScript* GetDoDamage() { return doDamage; }
+    MathScript* GetStaminaMove() { return staminaMove; }
+    MathScript* GetFamiliarAffinity() { return msAffinity; }
+
     // Spells
     typedef csPDelArray<psSpell>::Iterator SpellIterator;
     psSpell* GetSpellByID(unsigned int id);
@@ -661,6 +695,7 @@ protected:
     void PreloadFactionCharacterEvents(const char* script, Faction* faction);
     bool PreloadFactions();
     bool PreloadScripts(EntityManager* entitymanager);
+    bool PreloadMathScripts();
     bool PreloadSpells();
     bool PreloadItemStatsDatabase();
     bool PreloadItemAnimList();
@@ -905,7 +940,37 @@ protected:
     optionEntry rootOptionEntry;
 
     LootRandomizer* lootRandomizer; ///< A pointer to the lootrandomizer mantained by the cachemanager.
-
+    MathScript* maxCarryWeight;     ///< A pointer maintained by MathScriptEngine
+    MathScript* maxCarryAmount;     ///< A pointer maintained by MathScriptEngine
+    MathScript* maxRealmScript;
+    MathScript* maxManaScript;
+    MathScript* maxHPScript;
+    MathScript* staminaCalc;  ///< The stamina calc script
+    MathScript* expSkillCalc; ///< The exp calc script to assign experience on skill ranking
+    MathScript* staminaRatioWalk; ///< The stamina regen ration while walking script
+    MathScript* staminaRatioStill;///< The stamina regen ration while standing script
+    MathScript* staminaRatioSit;  ///< The stamina regen ration while sitting script
+    MathScript* staminaRatioWork; ///< The stamina regen ration while working script
+    MathScript* staminaCombat;
+    MathScript* dodgeValueCalc; ///< Script for calculating dodge value.
+    MathScript* armorSkillsPractice; ///< Script to set the practice points for armor skills.
+    MathScript* charLevelGet; ///< Script to get the current char level
+    MathScript* skillValuesGet; ///< Script to get the current skill values
+    MathScript* baseSkillValuesGet; ///< Script to get the base skill values
+    MathScript* setBaseSkillsScript;
+    MathScript* calc_damage; ///< This is the particular calculation for damage.
+    MathScript* calc_decay; ///< This is the particular calculation for decay.
+    MathScript* calcItemPrice;
+    MathScript* calcItemSellPrice;
+    MathScript* playerSketchLimits;
+    MathScript* spellPowerLevel;
+    MathScript* manaCost;
+    MathScript* castSuccess;
+    MathScript* researchSuccess;
+    MathScript* spellPractice;
+    MathScript* doDamage;
+    MathScript* staminaMove;
+    MathScript* msAffinity;
 };
 
 

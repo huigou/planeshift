@@ -23,7 +23,6 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/array.h>
-#include <csutil/weakref.h>
 #include <csutil/hash.h>
 #include <iutil/document.h>
 
@@ -95,7 +94,7 @@ protected:
 
     csHash<csString, csString> affinitycategories;
     ClientConnectionSet*    clients;
-    csWeakRef<MathScript> calc_dynamic_experience; ///< Math script used to calculate the dynamic experience
+    MathScript* calc_dynamic_experience; ///< Math script used to calculate the dynamic experience
     CacheManager* cacheManager;
 };
 

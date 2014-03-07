@@ -155,18 +155,12 @@ bool psSpell::Load(iResultRow &row)
 
 float psSpell::PowerLevel(psCharacter* caster, float kFactor) const
 {
-    static csWeakRef<MathScript> script = NULL;
-    if(!script.IsValid())
-    {
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePowerLevel");
-        CS_ASSERT(script.IsValid());
-    }
-
     MathEnvironment env;
     env.Define("RelatedStat", caster->GetSkillRank(way->related_stat_skill).Current());
     env.Define("KFactor", kFactor);
     env.Define("WaySkill", caster->GetSkillRank(way->skill).Current());
-    script->Evaluate(&env);
+
+    (void) psserver->GetCacheManager()->GetSpellPowerLevel()->Evaluate(&env);
 
     MathVar* power = env.Lookup("PowerLevel");
     CS_ASSERT(power);
@@ -175,13 +169,6 @@ float psSpell::PowerLevel(psCharacter* caster, float kFactor) const
 
 psSpellCost psSpell::ManaCost(psCharacter* caster, float kFactor) const
 {
-    static csWeakRef<MathScript> script = NULL;
-    if(!script.IsValid())
-    {
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateManaCost");
-        CS_ASSERT(script.IsValid());
-    }
-
     psSpellCost cost;
 
     if(caster->GetActor()->infinitemana)
@@ -197,7 +184,8 @@ psSpellCost psSpell::ManaCost(psCharacter* caster, float kFactor) const
     env.Define("RelatedStat", caster->GetSkillRank(way->related_stat_skill).Current());
     env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
     env.Define("Caster", caster);
-    script->Evaluate(&env);
+
+    (void) psserver->GetCacheManager()->GetManaCost()->Evaluate(&env);
 
     MathVar* manaCost = env.Lookup("ManaCost");
     MathVar* staminaCost = env.Lookup("StaminaCost");
@@ -210,19 +198,13 @@ psSpellCost psSpell::ManaCost(psCharacter* caster, float kFactor) const
 
 float psSpell::ChanceOfCastSuccess(psCharacter* caster, float kFactor) const
 {
-    static csWeakRef<MathScript> script = NULL;
-    if(!script.IsValid())
-    {
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateChanceOfCastSuccess");
-        CS_ASSERT(script.IsValid());
-    }
-
     MathEnvironment env;
     env.Define("KFactor",     kFactor);
     env.Define("Realm",       realm);
     env.Define("RelatedStat", caster->GetSkillRank(way->related_stat_skill).Current());
     env.Define("WaySkill",    caster->GetSkillRank(way->skill).Current());
-    script->Evaluate(&env);
+
+    (void) psserver->GetCacheManager()->GetCastSuccess()->Evaluate(&env);
 
     MathVar* chance = env.Lookup("ChanceOfSuccess");
     CS_ASSERT(chance);
@@ -234,17 +216,11 @@ float psSpell::ChanceOfResearchSuccess(psCharacter* researcher)
     if(realm > researcher->GetMaxAllowedRealm(way->skill))
         return 0.0;
 
-    static csWeakRef<MathScript> script = NULL;
-    if(!script.IsValid())
-    {
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculateChanceOfResearchSuccess");
-        CS_ASSERT(script.IsValid());
-    }
-
     MathEnvironment env;
     env.Define("Spell", this);
     env.Define("WaySkill", way->skill);
-    script->Evaluate(&env);
+
+    (void) psserver->GetCacheManager()->GetResearchSuccess()->Evaluate(&env);
 
     MathVar* chance = env.Lookup("ChanceOfSuccess");
     CS_ASSERT(chance);
@@ -594,28 +570,17 @@ void psSpell::Affect(gemActor* caster, gemObject* target, float range, float kFa
 
     if(affectedCount > 0)
     {
-        int practicePoints = 1;
-        static csWeakRef<MathScript> script;
-        if(!script.IsValid())
-        {
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "SpellPractice");
-            CS_ASSERT(script.IsValid());
-        }
+        MathEnvironment env;
+        env.Define("Realm", realm);
+        env.Define("Spell", const_cast<psSpell*>(this));
+        env.Define("CastDuration", (float)castingDuration);
+        env.Define("MaxRealm", caster->GetCharacterData()->GetMaxAllowedRealm(way->skill));
 
-        if(script.IsValid())
-        {
-            MathEnvironment env;
-            env.Define("Realm", realm);
-            env.Define("Spell", const_cast<psSpell*>(this));
-            env.Define("CastDuration", (float)castingDuration);
-            env.Define("MaxRealm", caster->GetCharacterData()->GetMaxAllowedRealm(way->skill));
-            script->Evaluate(&env);
+        (void) psserver->GetCacheManager()->GetSpellPractice()->Evaluate(&env);
 
-            MathVar* var = env.Lookup("PracticePoints");
-            CS_ASSERT(var);
-            practicePoints = var->GetRoundValue();
-        }
-        caster->GetCharacterData()->Skills().AddSkillPractice(way->skill, practicePoints);
+        MathVar* var = env.Lookup("PracticePoints");
+        CS_ASSERT(var);
+        caster->GetCharacterData()->Skills().AddSkillPractice(way->skill, var->GetRoundValue());
     }
 }
 

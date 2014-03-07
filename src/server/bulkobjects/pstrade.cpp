@@ -188,6 +188,7 @@ psTradeProcesses::psTradeProcesses()
     secQualFactor   = 0;
     renderEffect   .Clear();
     scriptName     .Clear();
+    script          = 0;
 }
 
 psTradeProcesses::~psTradeProcesses()
@@ -285,7 +286,8 @@ bool psTradeProcesses::Load(iResultRow &row)
     secQualFactor   = row.GetInt("secondary_quality_factor");
     renderEffect    = row["render_effect"];
     scriptName      = row["script"];
-    return true;
+    script = psserver->GetMathScriptEngine()->FindScript(scriptName);
+    return script != NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////

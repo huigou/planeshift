@@ -442,17 +442,16 @@ MathScript* MathScript::Create(const char *name, const csString & script)
 
     while (start < script.Length())
     {
-        csString trimmedScript = script.Slice(start).Trim();
+        csString trimmedScript = script.Slice(start).LTrim();
 
-        // skip empty lines and full line comments
-        if(trimmedScript.StartsWith("\r") || trimmedScript.StartsWith("\n")
-                                          || trimmedScript.StartsWith("//"))
+        // skip line comments
+        if(trimmedScript.StartsWith("//"))
         {
             semicolonAt = script.FindFirst("\r\n", start);
             if(semicolonAt == SIZET_NOT_FOUND)
-                semicolonAt = script.Length();
-
-            start = semicolonAt+1;
+                start = script.Length();
+            else
+                start = semicolonAt+1;
             continue;
         }
 
@@ -479,6 +478,8 @@ MathScript* MathScript::Create(const char *name, const csString & script)
                 if (lineCount < 2 || s->scriptLines.Get(lineCount - 2)->GetOpcode() != MATH_IF)
                 {
                     Error2("Failed to create MathScript >%s<. Found else without prior if.", name);
+                    delete s;
+                    return NULL;
                 }
                 opcode = MATH_ELSE;
             }
@@ -514,11 +515,11 @@ MathScript* MathScript::Create(const char *name, const csString & script)
                     if (0/*exp.FindFirst("=") != SIZET_NOT_FOUND*/)
                     {
                         opcode |= MATH_ASSIGN;
-                        st = MathStatement::Create(exp, s->name);
+                        st = MathStatement::Create(exp, name);
                     }
                     else
                     {
-                        st = MathExpression::Create(exp, s->name);
+                        st = MathExpression::Create(exp, name);
                     }
                 }
             }
@@ -593,14 +594,14 @@ MathScript* MathScript::Create(const char *name, const csString & script)
             line.Collapse();
             if (!line.IsEmpty())
             {
-                MathExpression *st = NULL;
+                MathExpression *st;
                 if(line.FindFirst("=") != SIZET_NOT_FOUND)
                 {
-                    st = MathStatement::Create(line, s->name);
+                    st = MathStatement::Create(line, name);
                 }
                 else
                 {
-                    st = MathExpression::Create(line, s->name);
+                    st = MathExpression::Create(line, name);
                 }
 
                 if (!st)
@@ -623,13 +624,18 @@ void MathScript::Destroy(MathScript* &mathScript)
     mathScript = NULL;
 }
 
-
 MathScript::~MathScript()
 {
     while (scriptLines.GetSize())
     {
         delete scriptLines.Pop();
     }
+}
+
+void MathScript::CopyAndDestroy(MathScript* other)
+{
+    other->scriptLines.TransferTo(scriptLines);
+    delete other;
 }
 
 double MathScript::Evaluate(MathEnvironment *env) const
@@ -741,67 +747,71 @@ MathScriptEngine::~MathScriptEngine()
     UnloadScripts();
 }
 
-bool MathScriptEngine::LoadScripts(iDataConnection* db)
+bool MathScriptEngine::LoadScripts(iDataConnection* db, bool reload)
 {
     Result result(db->Select("SELECT * from math_scripts"));
     if (!result.IsValid())
         return false;
 
+    size_t old_count = scripts.GetSize();
+    bool ok = true;
     for (unsigned long i = 0; i < result.Count(); i++ )
     {
-        csRef<MathScript> script;
-        MathScript *scr = MathScript::Create(result[i]["name"], result[i][mathScriptTable]);
+        const char* name = result[i]["name"];
+        MathScript *scr = MathScript::Create(name, result[i][mathScriptTable]);
         if (!scr)
         {
-            Error2("Failed to load MathScript >%s<.", result[i]["name"]);
+            Error2("Failed to load MathScript >%s<.", name);
+            ok = false;
             continue;
         }
-        script.AttachNew(scr);
-        scripts.Put(scr->Name(), script);
+
+        if (reload)
+        {
+            MathScript* old = scripts.Get(name, NULL);
+            if (old)
+            {
+                old->CopyAndDestroy(scr);
+                old_count--;
+            }
+            else
+            {
+                scripts.Put(name, scr);
+            }
+        }
+        else
+        {
+            scripts.Put(name, scr);
+        }
     }
-    return true;
+    if (reload && old_count != 0)
+    {
+        Error2("WARNING: %zu MathScripts were not reloaded.", old_count);
+    }
+    return ok;
 }
 
 void MathScriptEngine::UnloadScripts()
 {
-    //refcounting should handle this.
-    /*csHash<csRef<MathScript>, csString>::GlobalIterator it(scripts.GetIterator());
+    csHash<MathScript*, csString>::GlobalIterator it(scripts.GetIterator());
     while (it.HasNext())
     {
         delete it.Next();
-    }*/
+    }
     scripts.DeleteAll();
 
     MathScriptEngine::customCompoundFunctions.Empty();
     MathScriptEngine::stringLiterals.Empty();
 }
 
-
-
-csWeakRef<MathScript> MathScriptEngine::FindScript(const csString & name)
+MathScript* MathScriptEngine::FindScript(const csString & name)
 {
     return scripts.Get(name, NULL);
 }
 
-bool MathScriptEngine::CheckAndUpdateScript(csWeakRef<MathScript> &script, const csString &name)
-{
-    //check if we need to reload the script
-    if(!script.IsValid())
-    {
-        script = FindScript(name);
-        if(!script.IsValid()) //check if loading succeded else act accordly
-        {
-            CPrintf(CON_ERROR,"Couldn't load %s script!", name.GetData());
-            return false;
-        }
-    }
-    return true;
-}
-
 void MathScriptEngine::ReloadScripts(iDataConnection* db)
 {
-    UnloadScripts();
-    LoadScripts(db);
+    LoadScripts(db, true);
 }
 
 csRandomGen MathScriptEngine::rng;

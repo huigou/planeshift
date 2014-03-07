@@ -876,7 +876,7 @@ class RunScriptResponseOp : public ResponseOperation
 protected:
     csString scriptname;
     csString bindingsText;
-    csWeakRef<MathScript> bindings;
+    MathScript* bindings;
 
 public:
     RunScriptResponseOp()
