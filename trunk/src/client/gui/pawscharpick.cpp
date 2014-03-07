@@ -157,6 +157,7 @@ void pawsCharacterPickerWindow::HandleMessage( MsgEntry* me )
                                     name == requestedAutoPickName))
                 {
                     connecting = true;
+                    psengine->GetCelClient()->SetMainPlayerName(name);
                     psCharacterPickerMessage msg(name);
                     msg.SendMessage();
                 }
