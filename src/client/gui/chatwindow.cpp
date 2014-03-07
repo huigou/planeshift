@@ -922,7 +922,9 @@ const char* pawsChatWindow::HandleCommand( const char* cmd )
 
     // If a character says his/her own name, presume it's an introduction
     csString name(psengine->GetMainPlayerName());
-    name.Truncate(name.FindFirst(' '));
+    size_t n = name.FindFirst(' ');
+    if (n != (size_t)-1)
+        name.Truncate(n);
     name.Downcase();
 
     csString downtext(text);
