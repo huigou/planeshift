@@ -31,7 +31,7 @@ class ActiveSpell;
 /** iSpellModifiers
  *
  * An abstract base class for Buffables, Overridables, and Multipliers.
- * ActiveSpells need to keep a heterogeneous list of these (with possibly
+ * ActiveSpells needs to keep a heterogeneous list of these (with possibly
  * different template parameters, even), but they only need to call Cancel().
  */
 class iSpellModifier
