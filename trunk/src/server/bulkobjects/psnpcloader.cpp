@@ -436,9 +436,6 @@ void psNPCLoader::ReadStats()
         return;
     }
 
-    csWeakRef<MathScript> setBaseSkillsScript;
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(setBaseSkillsScript, "SetBaseSkills");
-
     MathEnvironment env;
     env.Define("Actor", npc);
     env.Define("STR", xmlnode->GetAttributeValueAsFloat("agi"));
@@ -448,7 +445,7 @@ void psNPCLoader::ReadStats()
     env.Define("WILL", xmlnode->GetAttributeValueAsFloat("str"));
     env.Define("CHA", xmlnode->GetAttributeValueAsFloat("wil"));
 
-    setBaseSkillsScript->Evaluate(&env);
+    psserver->GetCacheManager()->GetSetBaseSkillsScript()->Evaluate(&env);
 }
 
 

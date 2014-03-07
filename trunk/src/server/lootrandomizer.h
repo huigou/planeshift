@@ -164,7 +164,7 @@ public:
     float GetModifierPercentProbability(int modifierID, int modifierType);
 
 protected:
-    csWeakRef<MathScript> modifierCostCalc; ///<A cached reference to the LootModifierCap math script.
+    MathScript* modifierCostCalc; ///<A cached reference to the LootModifierCap math script.
     CacheManager* cacheManager; ///<A reference to the cachemanager.
 
 private:

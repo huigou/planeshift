@@ -1054,8 +1054,7 @@ public:
     LetAOp() : AppliedOp(), bindings(NULL) { }
     virtual ~LetAOp()
     {
-        if(bindings)
-            delete bindings;
+        MathScript::Destroy(bindings);
     }
 
     bool Load(iDocumentNode* node)
@@ -1430,10 +1429,8 @@ public:
     }
     virtual ~LetOp()
     {
-        if(bindings)
-            delete bindings;
-        if(body)
-            delete body;
+        MathScript::Destroy(bindings);
+        delete body;
     }
 
     bool Load(iDocumentNode* node)

@@ -344,6 +344,12 @@ public:
      */
     void RemovePoint(const psPath* path, int pointId);
 
+    MathScript* GetPetDepletedLockoutTime() { return petDepletedLockoutTime; }
+    MathScript* GetPetDismissLockoutTime() { return petDismissLockoutTime; }
+    MathScript* GetMaxPetTime() { return maxPetTime; }
+    MathScript* GetPetDeathLockoutTime() { return petDeathLockoutTime; }
+    MathScript* GetPetTrainingLockoutTime() { return petTrainingLockoutTime; }
+
 protected:
 
     /// Handle a login message from a superclient.
@@ -425,10 +431,16 @@ protected:
     csHash<PetOwnerSession*, PID> OwnerPetList;
 
     /// Math script setup for pet range check
-    csWeakRef<MathScript> petRangeScript;
+    MathScript* petRangeScript;
 
     /// Math script setup for pet should react check
-    csWeakRef<MathScript> petReactScript;
+    MathScript* petReactScript;
+
+    MathScript* petDepletedLockoutTime;
+    MathScript* petDismissLockoutTime;
+    MathScript* maxPetTime;
+    MathScript* petDeathLockoutTime;
+    MathScript* petTrainingLockoutTime;
 };
 
 #endif

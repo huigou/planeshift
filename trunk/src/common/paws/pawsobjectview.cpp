@@ -21,7 +21,6 @@
 
 #include <csutil/documenthelper.h>
 #include <csutil/scfstringarray.h>
-#include <csutil/weakref.h>
 
 #include <iutil/object.h>
 #include <iutil/objreg.h>

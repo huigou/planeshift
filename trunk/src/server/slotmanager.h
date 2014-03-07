@@ -40,12 +40,8 @@
 class SlotManager : public MessageManager<SlotManager>
 {
 public:
+    SlotManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager);
     virtual ~SlotManager();
-    SlotManager(GEMSupervisor* gemsupervisor, CacheManager* cachemanager)
-    {
-        gemSupervisor = gemsupervisor;
-        cacheManager = cachemanager;
-    }
 
     bool Initialize();
 
@@ -81,10 +77,11 @@ private:
     void MoveFromWorldContainer(psSlotMovementMsg &msg, Client* fromClient, uint32 containerEntityID);
 
     /// Consume an item and fire off any progression events it has.
-    static void Consume(psItem* item, psCharacter* charData, int count);
+    void Consume(psItem* item, psCharacter* charData, int count);
 
     GEMSupervisor* gemSupervisor;
     CacheManager* cacheManager;
+    MathScript* qualityScript;
 };
 
 #endif

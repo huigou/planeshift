@@ -91,11 +91,10 @@ ServerSongManager::ServerSongManager()
     Subscribe(&ServerSongManager::HandlePlaySongMessage, MSGTYPE_MUSICAL_SHEET, REQUIRE_READY_CLIENT);
     Subscribe(&ServerSongManager::HandleStopSongMessage, MSGTYPE_STOP_SONG, REQUIRE_READY_CLIENT);
 
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongPar, "Calculate Song Parameters");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongExp, "Calculate Song Experience");
+    MathScriptEngine* eng = psserver->GetMathScriptEngine();
+    calcSongPar = eng->FindScript("Calculate Song Parameters");
+    calcSongExp = eng->FindScript("Calculate Song Experience");
 
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Song Parameters'", calcSongPar.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Song Experience'", calcSongExp.IsValid());
 }
 
 ServerSongManager::~ServerSongManager()
@@ -112,15 +111,20 @@ bool ServerSongManager::Initialize()
 {
     csString instrCatStr;
 
-    if(psserver->GetServerOption("instruments_category", instrCatStr))
+    if(!psserver->GetServerOption("instruments_category", instrCatStr))
+        return false;
+    instrumentsCategory = atoi(instrCatStr.GetData());
+    if(!calcSongPar)
     {
-        instrumentsCategory = atoi(instrCatStr.GetData());
-        return true;
-    }
-    else
-    {
+        Error1("Could not load mathscript 'Calculate Song Parameters'");
         return false;
     }
+    if(!calcSongExp)
+    {
+        Error1("Could not load mathscript 'Calculate Song Experience'");
+        return false;
+    }
+    return true;
 }
 
 void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
@@ -180,33 +184,26 @@ void ServerSongManager::HandlePlaySongMessage(MsgEntry* me, Client* client)
 
             // calculating song parameters
 
-            if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongPar, "Calculate Song Parameters"))
-            {
-                canPlay = 0; // the song won't be played
-            }
-            else
-            {
-                // input variables
-                mathEnv.Define("Character", client->GetActor());
-                mathEnv.Define("Instrument", instrItem);
-                mathEnv.Define("Tempo", scoreStats.tempo);
-                mathEnv.Define("BeatType", scoreStats.beatType);
-                mathEnv.Define("NNotes", scoreStats.nNotes);
-                mathEnv.Define("NAb", scoreStats.nAb);
-                mathEnv.Define("NBb", scoreStats.nBb);
-                mathEnv.Define("NDb", scoreStats.nDb);
-                mathEnv.Define("NEb", scoreStats.nEb);
-                mathEnv.Define("NGb", scoreStats.nGb);
-                mathEnv.Define("AverageDuration", scoreStats.averageDuration);
-                mathEnv.Define("MinimumDuration", scoreStats.minimumDuration);
+            // input variables
+            mathEnv.Define("Character", client->GetActor());
+            mathEnv.Define("Instrument", instrItem);
+            mathEnv.Define("Tempo", scoreStats.tempo);
+            mathEnv.Define("BeatType", scoreStats.beatType);
+            mathEnv.Define("NNotes", scoreStats.nNotes);
+            mathEnv.Define("NAb", scoreStats.nAb);
+            mathEnv.Define("NBb", scoreStats.nBb);
+            mathEnv.Define("NDb", scoreStats.nDb);
+            mathEnv.Define("NEb", scoreStats.nEb);
+            mathEnv.Define("NGb", scoreStats.nGb);
+            mathEnv.Define("AverageDuration", scoreStats.averageDuration);
+            mathEnv.Define("MinimumDuration", scoreStats.minimumDuration);
 
-                // script evaluation
-                calcSongPar->Evaluate(&mathEnv);
+            // script evaluation
+            (void) calcSongPar->Evaluate(&mathEnv);
 
-                // output variables
-                canPlay = mathEnv.Lookup("CanPlay")->GetValue();
-                scoreRank = mathEnv.Lookup("ScoreRank")->GetValue();
-            }
+            // output variables
+            canPlay = mathEnv.Lookup("CanPlay")->GetValue();
+            scoreRank = mathEnv.Lookup("ScoreRank")->GetValue();
 
             if(canPlay)
             {
@@ -326,10 +323,7 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
         // unlocking instrument
         instrItem->SetInUse(false);
 
-        //check and update scripts
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calcSongExp, "Calculate Song Experience");
-
-        if(skillRanking && calcSongExp.IsValid())
+        if(skillRanking)
         {
             MathEnvironment mathEnv;
             int practicePoints;
@@ -343,7 +337,7 @@ void ServerSongManager::StopSong(gemActor* charActor, bool skillRanking)
             mathEnv.Define("ScoreRank", scoreRank);
 
             // scripts evaluation
-            calcSongExp->Evaluate(&mathEnv);
+            (void) calcSongExp->Evaluate(&mathEnv);
 
             // output variables
             // practicePoints is always truncated (not rounded) since the remaining

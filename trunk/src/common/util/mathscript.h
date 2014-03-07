@@ -51,7 +51,7 @@ struct iDataConnection;
 class MathScriptEngine
 {
 protected:
-    csHash<csRef<MathScript>, csString> scripts;
+    csHash<MathScript*, csString> scripts;
     static csRandomGen rng;
 
     static csStringSet stringLiterals;
@@ -83,31 +83,18 @@ public:
     ~MathScriptEngine();
 
     /// retrieve a MathScript given it's name.
-    csWeakRef<MathScript> FindScript(const csString & name);
-
-    /**
-     * Checks if the reference to the script is still valid, if it's not
-     * updates it. This is an helper function to simplify use of the scripts.
-     *
-     * @param script Reference to a script, which will then be used locally
-     *               by the caller.
-     * @param name The name of the script to check for.
-     * @return TRUE if the loading succeded or wasn't needed, false if the script
-     *          wasn't found at all
-     */
-    bool CheckAndUpdateScript(csWeakRef<MathScript> &script, const csString &name);
+    MathScript* FindScript(const csString& name);
 
     /**
      * Triggers a cleanup and reload of all the scripts.
      */
     void ReloadScripts(iDataConnection* db);
 
-
     /**
      * Loads all the scripts from the database.
      * @return TRUE if it was possible to retrieve successfully the data.
      */
-    bool LoadScripts(iDataConnection* db);
+    bool LoadScripts(iDataConnection* db, bool reload = false);
 
     /**
      * Cleans up all the script and data loaded.
@@ -452,7 +439,7 @@ public:
  *  it parses, it makes a hashmap of all the variables
  *  for quick access.
  */
-class MathScript : private MathExpression, public csRefCount, public CS::Utility::WeakReferenced
+class MathScript : private MathExpression
 {
 protected:
     MathScript(const char *name) : name(name) { } // may only be constructed using MathScript::Create
@@ -469,6 +456,8 @@ public:
     {
         return name;
     }
+
+    void CopyAndDestroy(MathScript* other);
 
     double Evaluate(MathEnvironment *env) const;
 };

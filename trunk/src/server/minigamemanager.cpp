@@ -1012,12 +1012,12 @@ void psMiniGameSession::Update(Client* client, psMGUpdateMessage &msg)
                     {
                         // passes a parameter to the script to run
                         csString parameters = "Param0='"+paramZero+"';"+"Param1='"+paramOne+"';"+"Param2='"+paramTwo+"'";
-                        csWeakRef<MathScript> bindings = MathScript::Create("RunScript bindings", parameters);
+                        MathScript* bindings = MathScript::Create("RunScript bindings", parameters);
 
                         MathEnvironment env;
                         env.Define("Winner", winnerClient->GetActor());
                         env.Define("Target", winnerClient->GetActor()); // needed if called by an action location
-                        bindings->Evaluate(&env);
+                        (void) bindings->Evaluate(&env);
                         if(gameBoard.GetNumPlayers() == 1)
                         {
                             progScript->Run(&env);
@@ -1040,6 +1040,7 @@ void psMiniGameSession::Update(Client* client, psMGUpdateMessage &msg)
                                 }
                             }
                         }
+                        MathScript::Destroy(bindings);
                     }
                 }
             }

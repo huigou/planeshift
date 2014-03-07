@@ -69,6 +69,7 @@ TEST(MathScriptTest, BasicScript)
     EXPECT_EQ(100.0,  C->GetValue());
     EXPECT_EQ(373.15, K->GetValue());
     EXPECT_STREQ("373.15", K->ToString());
+    MathScript::Destroy(script);
 }
 
 class Foo : public iScriptableVar
@@ -197,6 +198,7 @@ TEST(MathScriptTest, StringTest2)
     script->Evaluate(&env);
     MathVar *rank = env.Lookup("Rank");
     EXPECT_EQ(77, rank->GetValue());
+    MathScript::Destroy(script);
 };
 
 TEST(MathScriptTest, StringAssignment)
@@ -209,6 +211,7 @@ TEST(MathScriptTest, StringAssignment)
     script->Evaluate(&env);
     MathVar *rank = env.Lookup("Rank");
     EXPECT_EQ(33, rank->GetValue());
+    MathScript::Destroy(script);
 };
 
 TEST(MathScriptTest, StringAssignment2)
@@ -222,6 +225,7 @@ TEST(MathScriptTest, StringAssignment2)
     MathVar *rank = env.Lookup("Skill");
     ASSERT_NE(rank, NULL);
     EXPECT_STREQ("Sword", rank->ToString());
+    MathScript::Destroy(script);
 };
 
 
@@ -356,7 +360,7 @@ void randomgentest(int limit)
     {
        EXPECT_TRUE(abovehalflimit) << scriptstr << "never exceeds half of limit"; 
     }
-    delete script;
+    MathScript::Destroy(script);
 }
 TEST(MathScriptTest, RandomGenTest)
 {

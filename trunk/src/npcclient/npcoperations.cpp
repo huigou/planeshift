@@ -1140,6 +1140,7 @@ ChaseOperation::ChaseOperation()
       targetEID(EID(0)),
       offsetAngle(0.0),
       adaptivVelScale(1.0),
+      calcAdaptivVelocity(0),
       // Operation parameters
       // Initialized in the load function
       type(NEAREST_PLAYER),
@@ -1157,6 +1158,7 @@ ChaseOperation::ChaseOperation(const ChaseOperation* other)
       // Instance variables
       targetEID(other->targetEID),
       adaptivVelScale(1.0),
+      calcAdaptivVelocity(other->calcAdaptivVelocity),
       // Operation parameters
       type(other->type),
       searchRange(other->searchRange),
@@ -1253,6 +1255,12 @@ bool ChaseOperation::Load(iDocumentNode* node)
     if(node->GetAttributeValue("adaptiv_vel_script"))
     {
         adaptivVelocityScript = node->GetAttributeValue("adaptiv_vel_script");
+        calcAdaptivVelocity = npcclient->GetMathScriptEngine()->FindScript(adaptivVelocityScript);
+        if(!calcAdaptivVelocity)
+        {
+            Error2("Failed to load math script for AdaptivVelocity '%s'", adaptivVelocityScript.GetDataSafe());
+            return false;
+        }
     }
 
     return true;
@@ -1549,15 +1557,6 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
 
 float ChaseOperation::AdaptivVelocity(NPC* npc, float distance)
 {
-    if(!calcAdaptivVelocity.IsValid())
-    {
-        if(!npcclient->GetMathScriptEngine()->CheckAndUpdateScript(calcAdaptivVelocity, adaptivVelocityScript))
-        {
-            Error2("Failed to load math script for AdaptivVelocity '%s'",adaptivVelocityScript.GetDataSafe());
-            return 0.0;
-        }
-    }
-
     MathEnvironment env;
 
     env.Define("NPCClient",                npcclient);
@@ -4051,9 +4050,10 @@ ScriptOperation* PerceptOperation::MakeCopy()
 
 bool PerceptOperation::CheckCondition(NPC* npc)
 {
-    if(!calcCondition.IsValid())
+    if(!calcCondition)
     {
-        if(!npcclient->GetMathScriptEngine()->CheckAndUpdateScript(calcCondition, condition))
+        calcCondition = npcclient->GetMathScriptEngine()->FindScript(condition);
+        if(!calcCondition)
         {
             Error2("Failed to load math script for PerceptionOperation condition '%s'",condition.GetDataSafe());
             return false;
@@ -4072,7 +4072,6 @@ bool PerceptOperation::CheckCondition(NPC* npc)
         env.Define("Target",                 target);
     }
 
-    //this is going to crash if the script cannot be found.
     calcCondition->Evaluate(&env);
 
     MathVar* result   = env.Lookup("Result");

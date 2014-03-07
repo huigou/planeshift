@@ -425,14 +425,9 @@ public:
      */
     double GetDepletedLockoutTime()
     {
-        static csWeakRef<MathScript> script = NULL;
         double lockoutTime = 10.0; // Default to 10 sec.
 
-        if(!script)
-        {
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePetDepletedLockoutTime");
-        }
-
+        MathScript* script = psserver->GetNPCManager()->GetPetDepletedLockoutTime();
         if(script && owner)
         {
             MathEnvironment env;
@@ -441,7 +436,7 @@ public:
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("DepletedLockoutTime");
             lockoutTime = timeValue->GetValue();
-            
+
             Debug3(LOG_PETS, 0, "Calculated depleted lockout time for %s to %f",owner->GetName(), lockoutTime);
         }
 
@@ -454,14 +449,10 @@ public:
      */
     double GetDismissLockoutTime()
     {
-        static csWeakRef<MathScript> script = NULL;
         double lockoutTime = 10.0; // Default to 10 sec.
 
-        if(!script)
-        {
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePetDismissLockoutTime");
-        }
-
+        MathScript* script =
+            psserver->GetNPCManager()->GetPetDismissLockoutTime();
         if(script && owner)
         {
             MathEnvironment env;
@@ -470,7 +461,6 @@ public:
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("DismissLockoutTime");
             lockoutTime = timeValue->GetValue();
-
             Debug3(LOG_PETS, 0, "Calculated dismiss lockout time for %s to %f",owner->GetName(), lockoutTime);
         }
 
@@ -482,14 +472,9 @@ public:
      */
     double GetMaxPetTime()
     {
-        static csWeakRef<MathScript> maxPetTime = NULL;
         double maxTime = 5 * 60.0; // Default to 5 min in ticks.
 
-        if(!maxPetTime)
-        {
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxPetTime, "CalculateMaxPetTime");
-        }
-
+        MathScript* maxPetTime = psserver->GetNPCManager()->GetMaxPetTime();
         if(maxPetTime && owner)
         {
             MathEnvironment env;
@@ -508,14 +493,9 @@ public:
      */
     double GetDeathLockoutTime()
     {
-        static csWeakRef<MathScript> script = NULL;
         double lockoutTime = 10.0;  // Default to 10 sec.
 
-        if(!script)
-        {
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePetDeathLockoutTime");
-        }
-
+        MathScript* script = psserver->GetNPCManager()->GetPetDeathLockoutTime();
         if(script && owner)
         {
             MathEnvironment env;
@@ -524,7 +504,6 @@ public:
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("DeathLockoutTime");
             lockoutTime = timeValue->GetValue();
-
             Debug3(LOG_PETS, 0, "Calculated death lockout time for %s to %f",owner->GetName(), lockoutTime);
         }
 
@@ -536,14 +515,9 @@ public:
      */
     double GetTrainingLockoutTime()
     {
-        static csWeakRef<MathScript> script = NULL;
         double lockoutTime = 10.0;  // Default to 10 sec.
 
-        if(!script)
-        {
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "CalculatePetTrainingLockoutTime");
-        }
-
+        MathScript* script = psserver->GetNPCManager()->GetPetTrainingLockoutTime();
         if(script && owner)
         {
             MathEnvironment env;
@@ -552,7 +526,6 @@ public:
             script->Evaluate(&env);
             MathVar* timeValue = env.Lookup("TrainingLockoutTime");
             lockoutTime = timeValue->GetValue();
-
             Debug3(LOG_PETS, 0, "Calculated training lockout time for %s to %f",owner->GetName(), lockoutTime);
         }
 
@@ -591,8 +564,14 @@ NPCManager::NPCManager(ClientConnectionSet* pCCS,
     psNPCManagerTick* tick = new psNPCManagerTick(NPC_TICK_INTERVAL,this);
     eventmanager->Push(tick);
 
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(petRangeScript, "CalculateMaxPetRange");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(petReactScript, "CalculatePetReact");
+    MathScriptEngine* eng = psserver->GetMathScriptEngine();
+    petRangeScript = eng->FindScript("CalculateMaxPetRange");
+    petReactScript = eng->FindScript("CalculatePetReact");
+    petDepletedLockoutTime = eng->FindScript("CalculatePetDepletedLockoutTime");
+    petDismissLockoutTime = eng->FindScript("CalculatePetDismissLockoutTime");
+    maxPetTime = eng->FindScript("CalculateMaxPetTime");
+    petDeathLockoutTime = eng->FindScript("CalculatePetDeathLockoutTime");
+    petTrainingLockoutTime = eng->FindScript("CalculatePetTrainingLockoutTime");
 
     //for now keep default the first skill
     petSkill = psserver->GetCacheManager()->getOptionSafe("npcmanager:petskill","0");
@@ -2027,15 +2006,6 @@ bool NPCManager::CanPetHearYou(int clientnum, Client* owner, gemNPC* pet, const 
     MathEnvironment env;
     env.Define("Skill", owner->GetCharacterData()->GetSkillRank(GetPetSkill()).Current());
 
-    //check if the script is up to date
-    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(petRangeScript, "CalculateMaxPetRange"))
-    {
-        //default if the script cannot be found.
-        //the server won't init without the script but in this case we lost it
-        //at runtime (eg:bad syntax or deleted)
-        return false;
-    }
-
     petRangeScript->Evaluate(&env);
     MathVar* varMaxRange = env.Lookup("MaxRange");
     float max_range = varMaxRange->GetValue();
@@ -2061,14 +2031,6 @@ bool NPCManager::WillPetReact(int clientnum, Client* owner, gemNPC* pet, const c
     MathEnvironment env;
     env.Define("Skill", owner->GetCharacterData()->GetSkillRank(GetPetSkill()).Current());
     env.Define("Level", level);
-    //check if the script is up to date
-    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(petReactScript, "CalculatePetReact"))
-    {
-        //default if the script cannot be found.
-        //the server won't init without the script but in this case we lost it
-        //at runtime (eg:bad syntax or deleted)
-        return false;
-    }
     petReactScript->Evaluate(&env);
     MathVar* varReact = env.Lookup("React");
     float react = varReact->GetValue();

@@ -78,9 +78,9 @@ private:
 
     csArray<MoneyEvent> monEvts;
 
-    csWeakRef<MathScript> accountCharLvlScript;
-    csWeakRef<MathScript> accountGuildLvlScript;
-    csWeakRef<MathScript> CalcBankFeeScript;
+    MathScript* accountCharLvlScript;
+    MathScript* accountGuildLvlScript;
+    MathScript* CalcBankFeeScript;
 };
 
 

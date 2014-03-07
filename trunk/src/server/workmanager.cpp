@@ -122,7 +122,6 @@ const constraint constraints[] =
 
 WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanager)
 {
-
     cacheManager = cachemanager;
     entityManager = entitymanager;
     currentQuality = 1.00;
@@ -131,31 +130,32 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
     Subscribe(&WorkManager::HandleLockPick, MSGTYPE_LOCKPICK, REQUIRE_READY_CLIENT | REQUIRE_ALIVE | REQUIRE_TARGET);
     Subscribe(&WorkManager::StopUseWork, MSGTYPE_CRAFT_CANCEL, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
 
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_rank, "Calculate Repair Rank");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_time, "Calculate Repair Time");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_result, "Calculate Repair Result");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_quality, "Calculate Repair Quality");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_exp, "Calculate Repair Experience");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpicking_exp, "Calculate Lockpicking Experience");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_chance, "Calculate Mining Odds");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_exp, "Calculate Mining Experience");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_exp, "Calculate Transformation Experience");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_practice, "Calculate Transformation Practice");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpick_time, "Lockpicking Time");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_apply_skill, "Calculate Transformation Apply Skill");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_time, "Calculate Transformation Time");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_combine_quality, "CombineQuality");
+    MathScriptEngine* eng = psserver->GetMathScriptEngine();
+    calc_repair_rank = eng->FindScript("Calculate Repair Rank");
+    calc_repair_time = eng->FindScript("Calculate Repair Time");
+    calc_repair_result = eng->FindScript("Calculate Repair Result");
+    calc_repair_quality = eng->FindScript("Calculate Repair Quality");
+    calc_repair_exp = eng->FindScript("Calculate Repair Experience");
+    calc_lockpicking_exp = eng->FindScript("Calculate Lockpicking Experience");
+    calc_mining_chance = eng->FindScript("Calculate Mining Odds");
+    calc_mining_exp = eng->FindScript("Calculate Mining Experience");
+    calc_transform_exp = eng->FindScript("Calculate Transformation Experience");
+    calc_transform_practice = eng->FindScript("Calculate Transformation Practice");
+    calc_lockpick_time = eng->FindScript("Lockpicking Time");
+    calc_transform_apply_skill = eng->FindScript("Calculate Transformation Apply Skill");
+    calc_transform_time = eng->FindScript("Calculate Transformation Time");
+    calc_combine_quality = eng->FindScript("CombineQuality");
 
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Rank'", calc_repair_rank.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Time'", calc_repair_time.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Result'", calc_repair_result.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Quality'", calc_repair_quality.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Experience'", calc_repair_exp.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Lockpicking Experience'", calc_lockpicking_exp.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Odds'", calc_mining_chance.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Experience'", calc_mining_exp.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Experience'", calc_transform_exp.IsValid());
-    CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Practice'", calc_transform_practice.IsValid());
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Rank'", calc_repair_rank);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Time'", calc_repair_time);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Result'", calc_repair_result);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Quality'", calc_repair_quality);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Repair Experience'", calc_repair_exp);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Lockpicking Experience'", calc_lockpicking_exp);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Odds'", calc_mining_chance);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Mining Experience'", calc_mining_exp);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Experience'", calc_transform_exp);
+    CS_ASSERT_MSG("Could not load mathscript 'Calculate Transformation Practice'", calc_transform_practice);
     CS_ASSERT_MSG("Could not load mathscript 'Lockpicking Time'", calc_lockpick_time);
     CS_ASSERT_MSG("Could not load mathscript 'CombineQuality'", calc_combine_quality);
     //optional for now
@@ -383,8 +383,6 @@ void WorkManager::HandleRepair(gemActor* actor, Client* client, const csString &
     {
         MathEnvironment env;
         env.Define("Object", repairTarget);
-        //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_rank, "Calculate Repair Rank");
         calc_repair_rank->Evaluate(&env);
         rankneeded = env.Lookup("Result")->GetRoundValue();
     }
@@ -411,7 +409,6 @@ void WorkManager::HandleRepair(gemActor* actor, Client* client, const csString &
         env.Define("Object", repairTarget);
         env.Define("Worker", client->GetCharacterData());
         //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_time, "Calculate Repair Time");
         calc_repair_time->Evaluate(&env);
         repairDuration = (csTicks)(env.Lookup("Result")->GetValue() * 1000); // convert secs to msec
     }
@@ -422,8 +419,6 @@ void WorkManager::HandleRepair(gemActor* actor, Client* client, const csString &
         MathEnvironment env;
         env.Define("Object", repairTarget);
         env.Define("Worker", client->GetCharacterData());
-        //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_result, "Calculate Repair Result");
         calc_repair_result->Evaluate(&env);
         repairResult = env.Lookup("Result")->GetValue();
     }
@@ -498,8 +493,6 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
         env.Define("Object", repairTarget);
         env.Define("Worker", workEvent->client->GetCharacterData());
         env.Define("RepairAmount", workEvent->repairAmount);
-        //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_quality, "Calculate Repair Quality");
         calc_repair_quality->Evaluate(&env);
         resultMaxQuality = env.Lookup("ResultMaxQ")->GetValue();
         resultQuality = env.Lookup("ResultQ")->GetValue();
@@ -523,8 +516,6 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
         env.Define("Object", repairTarget);
         env.Define("Worker", workEvent->client->GetCharacterData());
         env.Define("RepairAmount", workEvent->repairAmount);
-        //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_repair_exp, "Calculate Repair Experience");
         calc_repair_exp->Evaluate(&env);
         practicePoints   = env.Lookup("ResultPractice")->GetRoundValue();
         modifier = env.Lookup("ResultModifier")->GetValue();
@@ -837,8 +828,6 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         env.Define("PlayerSkill",        cur_skill);                                         // Player skill
         env.Define("RequiredSkill",      workEvent->nrr.Get(resNum).resource->skill_level);  // Required skill
 
-        //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_chance, "Calculate Mining Odds");
         calc_mining_chance->Evaluate(&env);
         MathVar* varTotal = env.Lookup("Total");
         MathVar* varResultQuality = env.Lookup("ResultQuality");
@@ -982,9 +971,6 @@ void WorkManager::HandleProductionEvent(psWorkGameEvent* workEvent)
         env.Define("ActionTime", workEvent->nrr.Get(resNum).resource->anim_duration_seconds); // Duration of the mining work.
         env.Define("PlayerSkill", cur_skill);                                         // Player skill
         env.Define("RequiredSkill", workEvent->nrr.Get(resNum).resource->skill_level);  // Required skill
-
-        //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_mining_exp, "Calculate Mining Experience");
 
         calc_mining_exp->Evaluate(&env);
         practicePoints   = env.Lookup("ResultPractice")->GetRoundValue();
@@ -1722,9 +1708,6 @@ bool WorkManager::IsContainerCombinable(uint32 &resultId, int &resultQty)
         env.Define("TotalQuality", totalQuality);
         env.Define("ItemNumber",
                 (double)(itemArray.GetSize() > 0 ? itemArray.GetSize() : 1.0));
-
-        //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_combine_quality, "CombineQuality");
 
         calc_combine_quality->Evaluate(&env);
         currentQuality = env.Lookup("Result")->GetRoundValue();
@@ -2669,13 +2652,7 @@ int WorkManager::CalculateEventDuration(psTradeTransformations* trans, psTradePr
     // Calculate the seconds needed in order to complete this event
     int time = 0;
 
-    if(!calc_transform_time.IsValid())
-    {
-        //update the script if needed.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_time, "Calculate Transformation Time");
-    }
-
-    if(calc_transform_time.IsValid())
+    if(calc_transform_time)
     {
         MathEnvironment env;
         env.Define("Object", transItem);
@@ -2703,21 +2680,15 @@ void WorkManager::ApplyProcessScript(psItem* oldItem, psItem* newItem, gemActor*
 {
     //Check if the process is valid (not null) and that the scriptname contains something and
     //it's not an empty string. Default in the db is "Apply Post Trade Process"
-    if(process && process->GetScriptName().Length())
+    if(process && process->GetScript())
     {
-        //Checks if there is need to load the script
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(process->GetScript(), process->GetScriptName());
-        //If it could be loaded run it.
-        if(process->GetScript().IsValid())
-        {
-            MathEnvironment env;
-            env.Define("OldItem", oldItem);
-            env.Define("NewItem", newItem);
-            env.Define("Worker",  worker);
-            env.Define("Process", process);
-            env.Define("Transform", trans);
-            process->GetScript()->Evaluate(&env);
-        }
+        MathEnvironment env;
+        env.Define("OldItem", oldItem);
+        env.Define("NewItem", newItem);
+        env.Define("Worker",  worker);
+        env.Define("Process", process);
+        env.Define("Transform", trans);
+        process->GetScript()->Evaluate(&env);
     }
 }
 
@@ -3729,9 +3700,6 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
             env.Define("QtyMultiplier", QtyMultiplier);
             env.Define("Character", owner);
 
-            //update the script if needed. Here we don't protect against bad scripts as before for now.
-            psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_exp, "Calculate Transformation Experience");
-
             calc_transform_exp->Evaluate(&env);
             experiencePoints = env.Lookup("Exp")->GetRoundValue();
         }
@@ -3757,9 +3725,6 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         env.Define("Character", owner);
         env.Define("Process", workEvent->GetProcess());
         env.Define("CalculatedTime", workEvent->delayticks/1000);
-
-        //update the script if needed. Here we don't protect against bad scripts as before for now.
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_practice, "Calculate Transformation Practice");
 
         calc_transform_practice->Evaluate(&env);
         primaryPracticePoints = env.Lookup("PriPoints")->GetRoundValue();
@@ -3876,7 +3841,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 // Apply skills if any to determine quality
 bool WorkManager::CalculateQuality(float factor, psItem* transItem, gemActor* worker, bool amountModifier, float &currentQuality, psTradeProcesses* process, psTradeTransformations* trans, csTicks time)
 {
-    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_transform_apply_skill, "Calculate Transformation Apply Skill"))
+    if(calc_transform_apply_skill)
     {
         MathEnvironment env;
         env.Define("Quality", currentQuality);
@@ -4118,9 +4083,6 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
     env.Define("LockQuality", item->GetItemQuality());
     env.Define("Object", item);
 
-    //check if there is need to reload the script. We don't check if the script is valid as before.
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpick_time, "Lockpicking Time");
-
     calc_lockpick_time->Evaluate(&env);
     MathVar* time = env.Lookup("Time");
 
@@ -4180,10 +4142,8 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
                 env.Define("PlayerSkill", rank);
                 env.Define("LockStrength", workEvent->object->GetLockStrength());
 
-                // Update the script if needed. Here we don't protect against bad scripts.
-                psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_lockpicking_exp, "Calculate Lockpicking Experience");
                 calc_lockpicking_exp->Evaluate(&env);
-                practicePoints   = env.Lookup("ResultPractice")->GetRoundValue();
+                practicePoints = env.Lookup("ResultPractice")->GetRoundValue();
                 modifier = env.Lookup("ResultModifier")->GetValue();
             }
 

@@ -1965,21 +1965,13 @@ float psItem::GetDecayResistance()
 
 psMoney psItem::GetPrice()
 {
-    static csWeakRef<MathScript> script;
-    if(!script.IsValid())
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "Calc Item Price");
-    if(!script)
-    {
-        Error1("Cannot find mathscript: Calc Item Price");
-        return current_stats->GetPrice();
-    }
 
     MathEnvironment env;
     env.Define("Price", itemModifiers->active ? itemModifiers->price.GetTotal() : current_stats->GetPrice().GetTotal());
     env.Define("Quality", GetItemQuality());
     env.Define("MaxQuality", GetMaxItemQuality());
     env.Define("BaseQuality", current_stats->GetQuality());
-    script->Evaluate(&env);
+    (void) psserver->GetCacheManager()->GetCalcItemPrice()->Evaluate(&env);
 
     MathVar* finalPrice = env.Lookup("FinalPrice");
     if(!finalPrice)
@@ -1992,26 +1984,12 @@ psMoney psItem::GetPrice()
 
 psMoney psItem::GetSellPrice()
 {
-    static csWeakRef<MathScript> script;
-    if(!script.IsValid())
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "Calc Item Sell Price");
-    if(!script)
-    {
-        Error1("Cannot find mathscript: Calc Item Sell Price");
-        int sellPrice = (int)(GetPrice().GetTotal() * 0.8);
-        if(sellPrice == 0)
-        {
-            sellPrice = 1;
-        }
-        return sellPrice;
-    }
-
     MathEnvironment env;
     env.Define("Price", GetPrice().GetTotal());
     env.Define("Quality", GetItemQuality());
     env.Define("MaxQuality", GetMaxItemQuality());
     env.Define("BaseQuality", current_stats->GetQuality());
-    script->Evaluate(&env);
+    (void) psserver->GetCacheManager()->GetCalcItemSellPrice()->Evaluate(&env);
 
     MathVar* finalPrice = env.Lookup("FinalPrice");
     if(!finalPrice)
@@ -3421,19 +3399,10 @@ bool psItem::SendBookText(Client* client, int containerID, int slotID)
 
 void psItem::SendSketchDefinition(Client* client)
 {
-    // Get character capabilities
-    static csWeakRef<MathScript> script;
-    if(!script.IsValid())
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(script, "Calc Player Sketch Limits");
-    if(!script)
-    {
-        Error1("Cannot find mathscript: Calc Player Sketch Limits");
-        return;
-    }
-
     MathEnvironment env;
     env.Define("Actor", client->GetCharacterData());
-    script->Evaluate(&env);
+
+    (void) psserver->GetCacheManager()->GetPlayerSketchLimits()->Evaluate(&env);
 
     MathVar* score = env.Lookup("IconScore");
     MathVar* count = env.Lookup("PrimCount");

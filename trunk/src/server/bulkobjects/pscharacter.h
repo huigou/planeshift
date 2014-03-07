@@ -23,7 +23,6 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/sysfunc.h>
-#include <csutil/weakref.h>
 
 //=============================================================================
 // Project Includes
@@ -1748,20 +1747,6 @@ protected:
 
     Multiplier attackModifier;  ///< Attack  value is multiplied by this
     Multiplier defenseModifier; ///< Defense value is multiplied by this
-
-
-    static csWeakRef<MathScript> maxRealmScript;
-    static csWeakRef<MathScript> staminaCalc;  ///< The stamina calc script
-    static csWeakRef<MathScript> expSkillCalc; ///< The exp calc script to assign experience on skill ranking
-    static csWeakRef<MathScript> staminaRatioWalk; ///< The stamina regen ration while walking script
-    static csWeakRef<MathScript> staminaRatioStill;///< The stamina regen ration while standing script
-    static csWeakRef<MathScript> staminaRatioSit;  ///< The stamina regen ration while sitting script
-    static csWeakRef<MathScript> staminaRatioWork; ///< The stamina regen ration while working script
-    static csWeakRef<MathScript> dodgeValueCalc; ///< Script for calculating dodge value.
-    static csWeakRef<MathScript> armorSkillsPractice; ///< Script to set the practice points for armor skills.
-    static csWeakRef<MathScript> charLevelGet; ///< Script to get the current char level
-    static csWeakRef<MathScript> skillValuesGet; ///< Script to get the current skill values
-    static csWeakRef<MathScript> baseSkillValuesGet; ///< Script to get the base skill values
 
     st_location spawnLoc;
 

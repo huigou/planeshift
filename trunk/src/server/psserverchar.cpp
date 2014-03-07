@@ -94,8 +94,9 @@ ServerCharManager::ServerCharManager(CacheManager* cachemanager, GEMSupervisor* 
     gemSupervisor = gemsupervisor;
     slotManager = NULL;
 
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_item_merchant_price_buy, "Calc Item Merchant Price Buy");
-    psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_item_merchant_price_sell, "Calc Item Merchant Price Sell");
+    MathScriptEngine* eng = psserver->GetMathScriptEngine();
+    calc_item_merchant_price_buy = eng->FindScript("Calc Item Merchant Price Buy");
+    calc_item_merchant_price_sell = eng->FindScript("Calc Item Merchant Price Sell");
 }
 
 ServerCharManager::~ServerCharManager()
@@ -121,6 +122,16 @@ bool ServerCharManager::Initialize()
     if(!(slotManager && slotManager->Initialize()))
         return false;
 
+    if(!calc_item_merchant_price_buy)
+    {
+        Error1("Failed to find MathScript >Calc Item Merchant Price Buy<!");
+        return false;
+    }
+    if(!calc_item_merchant_price_sell)
+    {
+        Error1("Failed to find MathScript >Calc Item Merchant Price Sell<!");
+        return false;
+    }
     return true;
 }
 
@@ -1339,13 +1350,6 @@ bool ServerCharManager::SendMerchantItems(Client* client, psCharacter* merchant,
 int ServerCharManager::CalculateMerchantPrice(psItem* item, Client* client, bool sellPrice)
 {
     int basePrice = sellPrice?item->GetSellPrice().GetTotal():item->GetPrice().GetTotal();
-
-    //As this is called many times in a limited amount of time check before doing the function call
-    //if we really need to do it
-    if(!calc_item_merchant_price_buy.IsValid())
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_item_merchant_price_buy, "Calc Item Merchant Price Buy");
-    if(!calc_item_merchant_price_sell.IsValid())
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_item_merchant_price_sell, "Calc Item Merchant Price Sell");
 
     if((sellPrice && !calc_item_merchant_price_sell) || (!sellPrice && !calc_item_merchant_price_buy))
         return basePrice;

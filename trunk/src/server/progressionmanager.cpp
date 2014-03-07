@@ -84,10 +84,7 @@ ProgressionManager::ProgressionManager(ClientConnectionSet* ccs, CacheManager* c
     clients      = ccs;
     cacheManager = cachemanager;
 
-    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_dynamic_experience, "Calculate Dynamic Experience"))
-    {
-        Error1("Could not find mathscript 'Calculate Dynamic Experience'");
-    }
+    calc_dynamic_experience = psserver->GetMathScriptEngine()->FindScript("Calculate Dynamic Experience");
 }
 
 
@@ -119,6 +116,10 @@ bool ProgressionManager::Initialize(iObjectRegistry* object_reg)
 
     progressionWithoutTraining = configmanager->GetBool("PlaneShift.Server.ProgressionWithoutTraining", 0) ? true : false;
 
+    if(!calc_dynamic_experience)
+    {
+        Error1("Could not find mathscript 'Calculate Dynamic Experience'");
+    }
     return true;
 }
 
@@ -232,12 +233,8 @@ void ProgressionManager::AllocateKillDamage(gemActor* deadActor, int exp)
             MathEnvironment env;
             env.Define("Killer",    attacker);
             env.Define("DeadActor", deadActor);
-            //check if the script is valid
-            if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_dynamic_experience, "Calculate Dynamic Experience"))
-            {
-                calc_dynamic_experience->Evaluate(&env);
-                final = env.Lookup("Exp")->GetValue();
-            }
+            calc_dynamic_experience->Evaluate(&env);
+            final = env.Lookup("Exp")->GetValue();
         }
         else
         {

@@ -120,8 +120,8 @@ public:
 
 private:
     bool isProcessedSongEnded;                         ///< Flag used to keep track of the last song request. Remember to reset to false each time.
-    csWeakRef<MathScript> calcSongPar;                 ///< Keeps the script that computes the song parameters.
-    csWeakRef<MathScript> calcSongExp;                 ///< Keeps the script that computes the experience gained.
+    MathScript* calcSongPar;                 ///< Keeps the script that computes the song parameters.
+    MathScript* calcSongExp;                 ///< Keeps the script that computes the experience gained.
     unsigned int instrumentsCategory;                  ///< Keeps the instruments' category from server_options table.
     csHash<int, unsigned int> scoreRanks;              ///< Keeps the scores' ranks that are being played.
 

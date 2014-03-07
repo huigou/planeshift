@@ -22,7 +22,6 @@
 //=============================================================================
 // Crystal Space Includes
 //=============================================================================
-#include <csutil/weakref.h>
 #include <csutil/csstring.h>
 #include <csutil/array.h>
 #include <iutil/document.h>
@@ -126,7 +125,8 @@ bool Reaction::Load(iDocumentNode* node,BehaviorSet &behaviors)
     condition              = node->GetAttributeValue("condition");
     if(!condition.IsEmpty())
     {
-        if(!npcclient->GetMathScriptEngine()->CheckAndUpdateScript(calcCondition, condition))
+        calcCondition = npcclient->GetMathScriptEngine()->FindScript(condition);
+        if(!calcCondition)
         {
             Error2("Failed to load math script for Reaction condition '%s'",condition.GetDataSafe());
             return false;
@@ -278,7 +278,6 @@ void Reaction::React(NPC* who, Perception* pcpt)
         env.Define("NPC",                      who);
         env.Define("Result",                   0.0);
 
-        //this is going to crash if the script cannot be found.
         calcCondition->Evaluate(&env);
 
         MathVar* result   = env.Lookup("Result");

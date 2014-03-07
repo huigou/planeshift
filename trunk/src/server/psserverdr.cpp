@@ -68,6 +68,7 @@ psServerDR::psServerDR(CacheManager* cachemanager, EntityManager* entitymanager)
     cacheManager = cachemanager;
     entityManager = entitymanager;
     paladin = NULL;
+    calc_damage = psserver->GetMathScriptEngine()->FindScript("Calculate Fall Damage");
 }
 
 psServerDR::~psServerDR()
@@ -80,8 +81,9 @@ bool psServerDR::Initialize()
     Subscribe(&psServerDR::HandleDeadReckoning, MSGTYPE_DEAD_RECKONING, REQUIRE_READY_CLIENT);
 
     //load the script
-    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_damage, "Calculate Fall Damage"))
+    if(!calc_damage)
     {
+        Error1("Failed to find MathScript >Calculate Fall Damage<!");
         return false;
     }
 
@@ -106,22 +108,17 @@ void psServerDR::HandleFallDamage(gemActor* actor,int clientnum, const csVector3
     env.Define("FallHeight", fallHeight);
     env.Define("Damage", 0.0); // Make sure damage is defined.
 
-    //check if the script is still valid before use.
-    if(!psserver->GetMathScriptEngine()->CheckAndUpdateScript(calc_damage, "Calculate Fall Damage"))
-    {
-        return;
-    }
-
     calc_damage->Evaluate(&env);
     MathVar* var_fall_dmg = env.Lookup("Damage");
+    float damage = var_fall_dmg->GetValue();
     Debug4(LOG_LINMOVE,actor->GetClientID(), "%s fell %.2fm for damage %.2f",
-           actor->GetName(),fallHeight,var_fall_dmg->GetValue());
+           actor->GetName(), fallHeight, damage);
 
-    if(var_fall_dmg->GetValue() > 0)
+    if(damage > 0)
     {
-        bool died = (var_fall_dmg->GetValue() > actor->GetCharacterData()->GetHP());
+        bool died = (damage > actor->GetCharacterData()->GetHP());
 
-        actor->DoDamage(NULL, var_fall_dmg->GetValue());
+        actor->DoDamage(NULL, damage);
         if(died)
         {
             //Client died

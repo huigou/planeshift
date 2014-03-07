@@ -2303,11 +2303,7 @@ bool FactionResponseOp::Run(gemNPC* who, gemActor* target,NpcResponse* owner,csT
 
 RunScriptResponseOp::~RunScriptResponseOp()
 {
-    if(bindings)
-    {
-        delete bindings;
-        bindings = NULL;
-    }
+    MathScript::Destroy(bindings);
 }
 
 bool RunScriptResponseOp::Load(iDocumentNode* node)

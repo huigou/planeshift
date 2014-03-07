@@ -209,8 +209,8 @@ protected:
     CacheManager* cacheManager;
     GEMSupervisor* gemSupervisor;
 
-    csWeakRef<MathScript> calc_item_merchant_price_buy;
-    csWeakRef<MathScript> calc_item_merchant_price_sell;
+    MathScript* calc_item_merchant_price_buy;
+    MathScript* calc_item_merchant_price_sell;
 };
 
 #endif

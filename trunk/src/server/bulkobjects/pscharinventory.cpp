@@ -194,39 +194,32 @@ void psCharacterInventory::SetBasicWeapon(psRaceInfo* race)
 
 void psCharacterInventory::CalculateLimits()
 {
+    CacheManager* cachemgr = psserver->GetCacheManager();
     MathEnvironment env; // safe enough to reuse it for both...faster...
     env.Define("Actor", owner);
 
     // The max total weight that a player can carry
-    static csWeakRef<MathScript> maxCarryWeight = NULL;
-    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxCarryWeight, "CalculateMaxCarryWeight"))
+    (void) cachemgr->GetMaxCarryWeight()->Evaluate(&env);
+    MathVar* carry = env.Lookup("MaxCarry");
+    if(carry)
     {
-        maxCarryWeight->Evaluate(&env);
-        MathVar* carry = env.Lookup("MaxCarry");
-        if(carry)
-        {
-            maxWeight = carry->GetValue();
-        }
-        else
-        {
-            Error1("Failed to evaluate MathScript >CalculateMaxCarryWeight<.");
-        }
+        maxWeight = carry->GetValue();
+    }
+    else
+    {
+        Error1("Failed to evaluate MathScript >CalculateMaxCarryWeight<.");
     }
 
     // The max total size that a player can carry
-    static csWeakRef<MathScript> maxCarryAmount = NULL;
-    if(psserver->GetMathScriptEngine()->CheckAndUpdateScript(maxCarryAmount, "CalculateMaxCarryAmount"))
+    (void) cachemgr->GetMaxCarryAmount()->Evaluate(&env);
+    carry = env.Lookup("MaxAmount");
+    if(carry)
     {
-        maxCarryAmount->Evaluate(&env);
-        MathVar* carry = env.Lookup("MaxAmount");
-        if(carry)
-        {
-            maxSize = carry->GetValue();
-        }
-        else
-        {
-            Error1("Failed to evaluate MathScript >CalculateMaxCarryAmount<.");
-        }
+        maxSize = carry->GetValue();
+    }
+    else
+    {
+        Error1("Failed to evaluate MathScript >CalculateMaxCarryAmount<.");
     }
 
     UpdateEncumbrance();

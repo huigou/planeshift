@@ -320,9 +320,9 @@ public:
      *
      * This can be set from the users of the class and it's a cache for the mathscript.
      *
-     * @return A weak reference to the associated mathscript, if any.
+     * @return A pointer to the associated mathscript, if any.
      */
-    csWeakRef<MathScript> &GetScript()
+    MathScript* GetScript()
     {
         return script;
     }
@@ -393,7 +393,7 @@ protected:
     int secQualFactor;
     csString renderEffect;
     csString scriptName;
-    csWeakRef<MathScript> script;
+    MathScript* script;
 };
 
 /**

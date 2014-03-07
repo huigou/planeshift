@@ -573,31 +573,16 @@ PID EntityManager::GetMasterFamiliarID(psCharacter* charData)
 
 int EntityManager::CalculateFamiliarAffinity(psCharacter* chardata, size_t type, size_t lifecycle, size_t attacktool, size_t attacktype)
 {
-    static csWeakRef<MathScript> msAffinity;
-    int affinityValue = 0;
-
-    if(!msAffinity)
-    {
-        psserver->GetMathScriptEngine()->CheckAndUpdateScript(msAffinity, "CalculateFamiliarAffinity");
-        CS_ASSERT(msAffinity.IsValid());
-    }
-
     // Determine Familiar Type using Affinity Values
-    if(msAffinity)
-    {
-        MathEnvironment env;
-        env.Define("Actor",      chardata);
-        env.Define("Type",       type);
-        env.Define("Lifecycle",  lifecycle);
-        env.Define("AttackTool", attacktool);
-        env.Define("AttackType", attacktype);
-        msAffinity->Evaluate(&env);
-        MathVar* affinity = env.Lookup("Affinity");
-        affinityValue = affinity->GetRoundValue();
-    }
-
-    return affinityValue;
-
+    MathEnvironment env;
+    env.Define("Actor",      chardata);
+    env.Define("Type",       type);
+    env.Define("Lifecycle",  lifecycle);
+    env.Define("AttackTool", attacktool);
+    env.Define("AttackType", attacktype);
+    (void) psserver->GetCacheManager()->GetFamiliarAffinity()->Evaluate(&env);
+    MathVar* affinity = env.Lookup("Affinity");
+    return affinity->GetRoundValue();
 }
 
 bool EntityManager::CreatePlayer(Client* client)
