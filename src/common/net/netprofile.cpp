@@ -24,11 +24,15 @@
 
 void psNetMsgProfiles::AddEnoughRecords(csArray<psOperProfile*> & arr, int neededIndex, const char * desc)
 {
-    while (neededIndex >= (int)arr.GetSize())
+    size_t i = arr.GetSize();
+    if ((size_t)neededIndex < i)
+        return;
+    arr.SetSize(neededIndex + 1);
+    for (; i < arr.GetSize(); i++)
     {
         csStringFast<100> fullDesc = GetMsgTypeName((int)arr.GetSize()) + "-" + desc;
         psOperProfile * newProf = new psOperProfile(fullDesc);
-        arr.Push(newProf);
+        arr[i] = newProf;
         profs.Push(newProf);
     }
 }
