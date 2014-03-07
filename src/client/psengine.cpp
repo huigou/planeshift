@@ -1270,7 +1270,7 @@ void psEngine::Disconnect()
 
 const char* psEngine::GetMainPlayerName()
 {
-    return GetCelClient()->GetMainPlayer()->GetName();
+    return GetCelClient()->GetMainPlayerName();
 }
 
 // ----------------------------------------------------------------------------

@@ -347,7 +347,7 @@ bool pawsCharacterPickerWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMo
             // if we have a character then we play as that one.
             if ( selectedCharacter != -1 && !connecting )
             {
-                // Disable the button so that we don't send 2 picker message
+                // Disable the button so that we don't send 2 picker messages
                 connecting = true;
 
                 csString name;
@@ -355,7 +355,8 @@ bool pawsCharacterPickerWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMo
                 
                 // Send the name of the character to the server. 
                 csString charname( ((pawsButton*)FindWidget(name))->GetText() );
-                                
+
+                psengine->GetCelClient()->SetMainPlayerName(charname);
                 psCharacterPickerMessage msg(charname);
                 msg.SendMessage();
 
