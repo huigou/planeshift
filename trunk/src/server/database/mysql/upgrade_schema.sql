@@ -1837,6 +1837,11 @@ UPDATE `server_options` SET `option_value`='1276' WHERE `option_name`='db_versio
 INSERT INTO command_group_assignment VALUES( "/hunt_location", 30 );
 DELETE FROM command_group_assignment where command_name='/crystal';
 
+INSERT INTO `server_options` VALUES('progression:requiretraining', '0');
+INSERT INTO `server_options` VALUES('progression:maxskillvalue', '200');
+INSERT INTO `server_options` VALUES('progression:maxstatvalue', '400');
+
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to

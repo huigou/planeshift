@@ -2958,10 +2958,18 @@ bool Skill::Practice(unsigned int amount, unsigned int &actuallyAdded, psCharact
 {
     bool rankup = false;
 
+    // never allow practice above max skill level
+    if ((info->id <= 45 || info->id >= 52) && rank.Base() >= psserver->GetProgressionManager()->progressionMaxSkillValue)
+        return false;
+
+    // never allow practice above max stat level
+    if ((info->id > 45 || info->id < 52) && rank.Base() >= psserver->GetProgressionManager()->progressionMaxStatValue)
+        return false;
+
     // if the server is setup to have Progression without training OR
     // If the current knowledge level (Y) is at max level
     // then practice can take place
-    if(y >= yCost || psserver->GetProgressionManager()->progressionWithoutTraining)
+    if(y >= yCost || !psserver->GetProgressionManager()->progressionRequiresTraining)
     {
         z+=amount;
         rankup = CheckDoRank(user);
@@ -3566,7 +3574,7 @@ unsigned int SkillSet::GetSkillKnowledge(PSSKILL skill)
 
     // if Allow Practice Without Training is enabled, always return the actual Knowledge to 
     // be equal as the cost
-    if(psserver->GetProgressionManager()->progressionWithoutTraining && (skill <= 45 || skill >= 52))
+    if(!psserver->GetProgressionManager()->progressionRequiresTraining && (skill <= 45 || skill >= 52))
         return skills[skill].yCost;
     else
         return skills[skill].y;
@@ -3584,7 +3592,7 @@ Skill &SkillSet::Get(PSSKILL skill)
 
     // if Allow Practice Without Training is enabled, always return the actual Knowledge to 
     // be equal as the cost (excluding stats: int, end, agi, ...)
-    if(psserver->GetProgressionManager()->progressionWithoutTraining && (skill <= 45 || skill >= 52))
+    if(!psserver->GetProgressionManager()->progressionRequiresTraining && (skill <= 45 || skill >= 52))
         skills[skill].y = skills[skill].yCost;
 
     return skills[skill];

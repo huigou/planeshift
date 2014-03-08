@@ -82,7 +82,9 @@ public:
      */
     bool Initialize(iObjectRegistry* object_reg);
 
-    bool progressionWithoutTraining;
+    bool progressionRequiresTraining;
+    int progressionMaxSkillValue;
+    int progressionMaxStatValue;
 
 protected:
 
