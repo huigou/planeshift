@@ -114,7 +114,13 @@ bool ProgressionManager::Initialize(iObjectRegistry* object_reg)
     if(!configmanager)
         return false;
 
-    progressionWithoutTraining = configmanager->GetBool("PlaneShift.Server.ProgressionWithoutTraining", 0) ? true : false;
+    progressionRequiresTraining = psserver->GetCacheManager()->getOption("progression:requiretraining")->getValueAsInt()==1 ? true : false;
+    progressionMaxSkillValue = psserver->GetCacheManager()->getOption("progression:maxskillvalue")->getValueAsInt();
+    if (!progressionMaxSkillValue)
+        progressionMaxSkillValue = 200;
+    progressionMaxStatValue = psserver->GetCacheManager()->getOption("progression:maxstatvalue")->getValueAsInt();
+    if (!progressionMaxStatValue)
+        progressionMaxStatValue = 400;
 
     if(!calc_dynamic_experience)
     {

@@ -48,6 +48,9 @@ INSERT INTO `server_options` VALUES('death:avoidtext', '');
 INSERT INTO `server_options` VALUES('death:avoidtime', '0');
 INSERT INTO `server_options` VALUES('npcmanager:petskill', '31');
 INSERT INTO `server_options` VALUES('combat:default_stance', 'normal');
+INSERT INTO `server_options` VALUES('progression:requiretraining', '0');
+INSERT INTO `server_options` VALUES('progression:maxskillvalue', '200');
+INSERT INTO `server_options` VALUES('progression:maxstatvalue', '400');
 
 
 
