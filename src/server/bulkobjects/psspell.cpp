@@ -571,6 +571,7 @@ void psSpell::Affect(gemActor* caster, gemObject* target, float range, float kFa
     if(affectedCount > 0)
     {
         MathEnvironment env;
+        env.Define("Caster",caster);
         env.Define("Realm", realm);
         env.Define("Spell", const_cast<psSpell*>(this));
         env.Define("CastDuration", (float)castingDuration);
