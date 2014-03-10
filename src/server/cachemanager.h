@@ -486,6 +486,7 @@ public:
     MathScript* GetDoDamage() { return doDamage; }
     MathScript* GetStaminaMove() { return staminaMove; }
     MathScript* GetFamiliarAffinity() { return msAffinity; }
+    MathScript* GetAttackPowerLevel() { return attackPowerLevel; }
 
     // Spells
     typedef csPDelArray<psSpell>::Iterator SpellIterator;
@@ -971,6 +972,7 @@ protected:
     MathScript* doDamage;
     MathScript* staminaMove;
     MathScript* msAffinity;
+    MathScript* attackPowerLevel;
 };
 
 

@@ -159,12 +159,7 @@ bool psAttackMelee::Attack(gemObject* attacker, gemObject* target, INVENTORY_SLO
 }
 float psAttackMelee::PowerLevel(psCharacter* attacker, psItem* weapon) const
 {
-    static MathScript* script = NULL;
-    if(!script)
-    {
-        script = psserver->GetMathScriptEngine()->FindScript("CalculateAttackPowerLevel");
-        CS_ASSERT(script);
-    }
+    MathScript* script = psserver->GetCacheManager()->GetAttackPowerLevel();
 
     MathEnvironment env;
     env.Define("RelatedStat", attacker->GetSkillRank(type->related_stat).Current());

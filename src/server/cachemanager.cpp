@@ -3604,6 +3604,7 @@ bool CacheManager::PreloadMathScripts()
     LOOKUP(doDamage, "DoDamageScript");
     LOOKUP(staminaMove, "StaminaMove");
     LOOKUP(msAffinity, "CalculateFamiliarAffinity");
+    LOOKUP(attackPowerLevel, "CalculateAttackPowerLevel");
     return true;
 }
 
