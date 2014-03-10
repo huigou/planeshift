@@ -381,12 +381,7 @@ bool psAttackRange::CalculateSuccess(psCombatAttackGameEvent* event, float range
 }
 float psAttackRange::PowerLevel(psCharacter* attacker, psItem* weapon, float range) const
 {
-    static MathScript* script = NULL;
-    if(!script)
-    {
-        script = psserver->GetMathScriptEngine()->FindScript("CalculateAttackPowerLevel");
-        CS_ASSERT(script);
-    }
+    MathScript* script = psserver->GetCacheManager()->GetAttackPowerLevel();
 
     MathEnvironment env;
     env.Define("RelatedStat", attacker->GetSkillRank(type->related_stat).Current());
