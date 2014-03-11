@@ -143,7 +143,7 @@ const Stance &CombatManager::GetStance(CacheManager* cachemanager, csString name
     size_t id = cachemanager->stanceID.Find(name);
     if(id == csArrayItemNotFound)
     {
-        //getting gloabal default combat stance
+        //getting global default combat stance
         id = cachemanager->stanceID.Find(cachemanager->getOption("combat:default_stance")->getValue());
 
         if(id == csArrayItemNotFound)
@@ -183,15 +183,13 @@ const Stance &CombatManager::GetRaisedActorStance(CacheManager* cachemanager, ge
     return cachemanager->stances.Get(currentStance.stance_id-1);
 }
 
-bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,Stance stance)
+bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,const Stance& stance)
 {
-
     psCharacter* attackerChar = attacker->GetCharacterData();
     //we don't allow an overweight or defeated char to fight
     if(attacker->GetMode() == PSCHARACTER_MODE_DEFEATED ||
             attacker->GetMode() == PSCHARACTER_MODE_OVERWEIGHT)
         return false;
-
 
     if(attacker->GetMode() == PSCHARACTER_MODE_COMBAT)   // Already fighting
     {
@@ -272,7 +270,7 @@ bool CombatManager::AttackSomeone(gemActor* attacker,gemObject* target,Stance st
     return true;
 }
 
-void CombatManager::SetCombat(gemActor* combatant, Stance stance)
+void CombatManager::SetCombat(gemActor* combatant, const Stance& stance)
 {
     // Sanity check
     if(!combatant || !combatant->GetCharacterData() || !combatant->IsAlive())
