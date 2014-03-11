@@ -71,12 +71,7 @@ private:
     pawsButton      *stanceButton4;
     pawsButton      *stanceButton5;
 
-    pawsSlot*           attackImage1;
-    pawsSlot*           attackImage2;
-    pawsSlot*           attackImage3;
-    pawsSlot*           attackImage4;
-    pawsSlot*           attackImage5;
-
+    pawsSlot*        attackImage[5];
 
     pawsTextBox* timeOfDay;
     csString stanceConvert(const uint ID);
