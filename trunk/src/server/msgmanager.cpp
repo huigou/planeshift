@@ -234,7 +234,7 @@ csArray<csString> MessageManagerBase::DecodeCommandArea(Client* client, csString
         csVector3 pos;
         self->GetPosition(pos, sector);
 
-        nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos, range);
+        nearlist = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, pos, self->GetInstance(), range);
     }
     size_t count = nearlist.GetSize();
     csArray<csString*> results;

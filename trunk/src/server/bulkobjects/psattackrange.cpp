@@ -296,6 +296,7 @@ void psAttackRange::Affect(psCombatAttackGameEvent* event)
             csVector3 targetPos;
             float yrot; // in radians
             iSector* sector;
+            InstanceID targetInstance = target->GetInstance();
 
             target->GetPosition(targetPos, yrot, sector);
             attacker->GetPosition(attackerPos, yrot, sector);
@@ -309,7 +310,7 @@ void psAttackRange::Affect(psCombatAttackGameEvent* event)
 
             angle = (angle/2)*(PI/180); // convert degrees to radians
 
-            csArray<gemObject*> nearby = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, targetPos, radius);
+            csArray<gemObject*> nearby = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, targetPos, targetInstance, radius);
             for(size_t i = 0; i < nearby.GetSize(); i++)
             {
                 csString msg;

@@ -491,11 +491,11 @@ void psSpell::Affect(gemActor* caster, gemObject* target, float range, float kFa
     {
         csVector3 attackerPos;
         csVector3 targetPos;
-        float yrot; // in radians
-        iSector* sector;
+        iSector* targetSector;
+        InstanceID targetInstance = target->GetInstance();
 
-        target->GetPosition(targetPos, yrot, sector);
-        caster->GetPosition(attackerPos, yrot, sector);
+        attackerPos = caster->GetPosition();
+        target->GetPosition(targetPos, targetSector);
 
         // directional vector for a line from attacker to original target
         csVector3 attackerToTarget;
@@ -508,7 +508,7 @@ void psSpell::Affect(gemActor* caster, gemObject* target, float range, float kFa
         // divided by two so it's equally on both sides
         //CPrintf(CON_DEBUG, "Spell has an effect arc of %1.2f radians to either side of LOS.\n", angle);
 
-        csArray<gemObject*> nearby = psserver->entitymanager->GetGEM()->FindNearbyEntities(sector, targetPos, radius);
+        csArray<gemObject*> nearby = psserver->entitymanager->GetGEM()->FindNearbyEntities(targetSector, targetPos, targetInstance, radius);
         for(size_t i = 0; i < nearby.GetSize(); i++)
         {
             if(!(targetTypes & caster->GetTargetType(nearby[i])))
@@ -516,8 +516,7 @@ void psSpell::Affect(gemActor* caster, gemObject* target, float range, float kFa
 
             if(angle < PI)
             {
-                csVector3 attackerToAffected;
-                nearby[i]->GetPosition(attackerToAffected, sector);
+                csVector3 attackerToAffected = nearby[i]->GetPosition();
 
                 // obtain a directional line for the vector from attacker to affacted target
                 // note that this line does not originate at the original target because the
