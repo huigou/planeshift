@@ -29,6 +29,7 @@
 #define SECONDS_BEFORE_SPARING_DEFEATED 30
 
 class psCombatGameEvent;
+struct Stance;
 
 enum COMBATMANAGER_ATTACKTYPE
 {
@@ -61,7 +62,7 @@ public:
     virtual ~CombatManager();
 
     /// This is how you start an attack sequence
-    bool AttackSomeone(gemActor* attacker, gemObject* target, Stance stance);
+    bool AttackSomeone(gemActor* attacker, gemObject* target, const Stance& stance);
 
     /// This is how you break an attack sequence off, through death or user command.
     void StopAttack(gemActor* attacker);
@@ -106,7 +107,7 @@ public:
     };
 
     csArray<INVENTORY_SLOT_NUMBER> targetLocations;
-    void SetCombat(gemActor* combatant, Stance stance);
+    void SetCombat(gemActor* combatant, const Stance& stance);
     void NotifyTarget(gemActor* attacker, gemObject* target);
     void sendAttackList(MsgEntry* me, Client* client);
     void sendAttackQueue(MsgEntry* me, Client* client);
