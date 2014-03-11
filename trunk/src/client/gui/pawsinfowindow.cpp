@@ -114,11 +114,11 @@ bool pawsInfoWindow::PostSetup()
     wdg->SetBackground(bg);
 
 
-    attackImage1  = (pawsSlot*)FindWidget("Queue1");
-    attackImage2  = (pawsSlot*)FindWidget("Queue2");
-    attackImage3  = (pawsSlot*)FindWidget("Queue3");
-    attackImage4  = (pawsSlot*)FindWidget("Queue4");
-    attackImage5  = (pawsSlot*)FindWidget("Queue5");
+    attackImage[0] = (pawsSlot*)FindWidget("Queue1");
+    attackImage[1] = (pawsSlot*)FindWidget("Queue2");
+    attackImage[2] = (pawsSlot*)FindWidget("Queue3");
+    attackImage[3] = (pawsSlot*)FindWidget("Queue4");
+    attackImage[4] = (pawsSlot*)FindWidget("Queue5");
     return true;
 }
 
@@ -212,42 +212,21 @@ csString pawsInfoWindow::stanceConvert(const uint ID)
 
 void pawsInfoWindow::UpdateAttkQueue(MsgEntry* me)
 {
-    psAttackQueueMessage msg(me, ((psNetManager*)psengine->GetNetManager())->GetConnection()->GetAccessPointers());
+    psAttackQueueMessage msg(me, psengine->GetNetManager()->GetConnection()->GetAccessPointers());
    
-    attackImage1->PlaceItem("","","",0);
-    attackImage2->PlaceItem("","","",0);
-    attackImage3->PlaceItem("","","",0);
-    attackImage4->PlaceItem("","","",0);
-    attackImage5->PlaceItem("","","",0);
-
-    for ( size_t x = 0; x < msg.attacks.GetSize(); x++ )
+    for (size_t x = 0; x < 5; x++)
     {
-        switch(x)
+        if (x < msg.attacks.GetSize())
         {
-        case 0:
-             attackImage1->PlaceItem(msg.attacks[x].Image,"","",1);
-             attackImage1->SetToolTip(msg.attacks[x].Name);
-             break;
-        case 1:
-            attackImage2->PlaceItem(msg.attacks[x].Image,"","",1);
-            attackImage3->SetToolTip(msg.attacks[x].Name);
-            break;
-         case 2:
-            attackImage3->PlaceItem(msg.attacks[x].Image,"","",1);
-            attackImage3->SetToolTip(msg.attacks[x].Name);
-            break;
-         case 3:
-            attackImage4->PlaceItem(msg.attacks[x].Image,"","",1);
-            attackImage4->SetToolTip(msg.attacks[x].Name);
-            break;
-         case 4:
-            attackImage5->PlaceItem(msg.attacks[x].Image,"","",1);
-            attackImage5->SetToolTip(msg.attacks[x].Name);
-            break;
-         }
-     }
+            attackImage[x]->PlaceItem(msg.attacks[x].Image, "", "", 1);
+            attackImage[x]->SetToolTip(msg.attacks[x].Name);
+        }
+        else
+        {
+            attackImage[x]->Clear();
+        }
+    }
 }
-
 
 void pawsInfoWindow::SetStanceHighlight(uint stance)
 {
