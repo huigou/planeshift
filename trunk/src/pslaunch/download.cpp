@@ -168,7 +168,8 @@ Downloader::Downloader(iVFS* _vfs):
 Downloader::~Downloader()
 {
     delete[] curlerror;
-    curl_easy_cleanup(curl);
+    if(curl)
+        curl_easy_cleanup(curl);
 
     fileUtil->RemoveFile(UPDATE_CACHE_DIR, true);
     delete fileUtil;
@@ -177,6 +178,11 @@ Downloader::~Downloader()
 void Downloader::Init(iVFS* _vfs)
 {
     curl = curl_easy_init();
+    if(!curl)
+    {
+    	UpdaterEngine::GetSingletonPtr()->PrintOutput("CURL failed to initialize!\n");
+        return;
+    }
     curlerror = new char[CURL_ERROR_SIZE];
     curl_easy_setopt (curl, CURLOPT_ERRORBUFFER, curlerror);
     curl_easy_setopt(curl, CURLOPT_HEADER, 0);
@@ -186,7 +192,6 @@ void Downloader::Init(iVFS* _vfs)
     fileUtil = new FileUtil(vfs);
     fileUtil->MakeDirectory(UPDATE_CACHE_DIR);
 }
-
 
 void Downloader::SetProxy(const char* /*host*/, int /*port*/)
 {
