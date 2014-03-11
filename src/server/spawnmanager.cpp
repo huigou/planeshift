@@ -450,7 +450,8 @@ void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo* sectorinfo)
         size_t handledSpawnsCount = 0;
 
         // Look for nearby items to prevent rescheduling of existing items
-        nearlist = gem->FindNearbyEntities(iSec, pos, range);
+        // XXX what about spawning in different instances of map?
+        nearlist = gem->FindNearbyEntities(iSec, pos, 0, range);
         size_t nearbyItemsCount = nearlist.GetSize();
 
         for(size_t i = 0; i < nearbyItemsCount; ++i)

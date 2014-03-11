@@ -547,7 +547,7 @@ gemObject* GEMSupervisor::FindAttachedObject(iObject* object)
     return found;
 }
 
-csArray<gemObject*> GEMSupervisor::FindNearbyEntities(iSector* sector, const csVector3 &pos, float radius, bool doInvisible)
+csArray<gemObject*> GEMSupervisor::FindNearbyEntities(iSector* sector, const csVector3 &pos, InstanceID instance, float radius, bool doInvisible)
 {
     csArray<gemObject*> list;
 
@@ -564,7 +564,7 @@ csArray<gemObject*> GEMSupervisor::FindNearbyEntities(iSector* sector, const csV
 
         gemObject* object = FindAttachedObject(m->QueryObject());
 
-        if(object)
+        if(object && object->GetInstance() == instance)
         {
             list.Push(object);
         }
@@ -848,7 +848,7 @@ void gemObject::UpdateProxList(bool force)
 
     csTicks time = csGetTicks();
 
-    csArray<gemObject*> nearlist = cel->FindNearbyEntities(sector,pos,prox_distance_current, true);
+    csArray<gemObject*> nearlist = cel->FindNearbyEntities(sector,pos,GetInstance(),prox_distance_current, true);
 
     //CPrintf(CON_SPAM, "\nUpdating proxlist for %s\n--------------------------\n",GetName());
 
@@ -1039,7 +1039,7 @@ csArray< gemObject* >* gemObject::GetObjectsInRange(float range)
     csVector3 pos;
     iSector* sector;
     GetPosition(pos,sector);
-    csArray<gemObject*> nearlist = cel->FindNearbyEntities(sector, pos, range);
+    csArray<gemObject*> nearlist = cel->FindNearbyEntities(sector, pos, GetInstance(), range);
 
     size_t count = nearlist.GetSize();
 

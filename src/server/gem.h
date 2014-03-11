@@ -265,12 +265,13 @@ public:
      *
      * @param sector The sector to check in.
      * @param pos The starting position
+     * @param instance The instance ID for the starting point
      * @param radius The distance around the starting point to check.
      * @param doInvisible If true check invisible meshes otherwise ignore them.
      *
      * @return A csArray<> of all the objects in the given radius.
      */
-    csArray<gemObject*> FindNearbyEntities(iSector* sector, const csVector3 &pos, float radius, bool doInvisible = false);
+    csArray<gemObject*> FindNearbyEntities(iSector* sector, const csVector3 &pos, InstanceID instance, float radius, bool doInvisible = false);
 
     /**
      * Create a list of all gem objects in a sector.
