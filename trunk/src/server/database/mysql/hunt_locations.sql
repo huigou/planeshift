@@ -19,6 +19,9 @@ CREATE TABLE `hunt_locations` (
   `sector` int(10) unsigned NOT NULL default '0',
   `amount` int(10) unsigned NOT NULL default '1',
   `range` double(10,2) unsigned NOT NULL default '0.00',
+  `lock_str` int(5) NOT NULL DEFAULT '0' COMMENT 'The lock strength of the generated item.',
+  `lock_skill` int(2) NOT NULL DEFAULT '-1' COMMENT 'The lock skill used to open the item.',
+  `flags` VARCHAR( 200 ) NOT NULL DEFAULT '' COMMENT 'The flags to apply to the item.',
   PRIMARY KEY  (`id`)
 )
 COMMENT = 'Areas to spawn items, like apples or mushrooms';
@@ -26,7 +29,7 @@ COMMENT = 'Areas to spawn items, like apples or mushrooms';
 #
 # Dumping data for table 'hunt_locations'
 #
-INSERT INTO `hunt_locations` VALUES (1, '27.60', '-0.01', '-190', 91, 4000, 0, 3, 2, '5.00');
+INSERT INTO `hunt_locations` VALUES (1, '27.60', '-0.01', '-190', 91, 4000, 0, 3, 2, '5.00', 0, -1, '');
 
 
 
