@@ -548,6 +548,9 @@ public:
     /// Returns a description of the quality level of item.
     const char* GetQualityString();
 
+    /// Parses an item flags list and returns the flags.
+    PSITEM_FLAGS ParseItemFlags(csString flagstr);
+
     /// Returns item_stats id of repair tool required to fix this item, or 0.
     int GetRequiredRepairTool();
     /// Returns the is_consumed flag of repair tool required to fix this item.
@@ -1264,7 +1267,7 @@ class psScheduledItem
 {
 public:
     psScheduledItem(int spawnID,uint32 itemID,csVector3 &position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd,
-                    float range);
+                    float range, int lock_str = 0, int lock_skill = -1, csString flags = "");
 
     psItem* CreateItem();
     uint32 GetItemID()
@@ -1294,6 +1297,25 @@ public:
     {
         return lastSpawn;
     }
+
+    /// Gets the lock strength which will be associated to this item.
+    int GetLockStrength()
+    {
+        return lock_str;
+    }
+
+    /// Gets the lock skill which will be associated to this item.
+    int GetLockSkill()
+    {
+        return lock_skill;
+    }
+
+    /// Gets the flags which will be associated to this item.
+    csString GetFlags()
+    {
+        return flags;
+    }
+
     void UpdatePosition(csVector3 &positon, const char* sector);
     void ChangeIntervals(int newint, int newrand);
     void ChangeRange(float newRange);
@@ -1316,6 +1338,9 @@ private:
     int maxrnd;            ///< Maximum random interval modifier in msecs
     float range;           ///< Range in which to spawn item
     csTicks lastSpawn;     ///< When we last spawned it, good for something perhaps? :)
+    int lock_str;          ///< The lock strength, if any, else 0.
+    int lock_skill;        ///< The lock skill, if any, else 0.
+    csString flags;        ///< The flags to apply to this item.
 };
 
 /** @} */

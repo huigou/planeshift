@@ -1789,6 +1789,7 @@ INSERT INTO command_group_assignment VALUES( "/scale", 25 );
 INSERT INTO command_group_assignment VALUES( "/scale", 24 );
 INSERT INTO command_group_assignment VALUES( "/scale", 23 );
 
+
 #Lockpicking scripts
 INSERT INTO math_scripts VALUES( "Calculate Lockpicking Experience",
 "
@@ -1840,6 +1841,13 @@ DELETE FROM command_group_assignment where command_name='/crystal';
 INSERT INTO `server_options` VALUES('progression:requiretraining', '0');
 INSERT INTO `server_options` VALUES('progression:maxskillvalue', '200');
 INSERT INTO `server_options` VALUES('progression:maxstatvalue', '400');
+
+# add lock support on hunt_locations
+ALTER TABLE `hunt_locations` ADD `lock_str` INT( 5 ) NOT NULL DEFAULT '0' COMMENT 'The lock strength of the generated item.' AFTER `range` ,
+ADD `lock_skill` INT( 2 ) NOT NULL DEFAULT '-1' COMMENT 'The lock skill used to open the item.' AFTER `lock_str`,
+ADD `flags` varchar(200) NOT NULL DEFAULT '' COMMENT 'The flags to apply to the item.' AFTER `lock_skill`;
+UPDATE `server_options` SET `option_value`='1277' WHERE `option_name`='db_version';
+
 
 
 # Insert your upgrade before this line. Remember when you set a new db_version

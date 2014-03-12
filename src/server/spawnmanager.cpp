@@ -380,7 +380,7 @@ void SpawnManager::LoadHuntLocations(psSectorInfo* sectorinfo)
 
     query = "SELECT h.*,i.name, s.name sectorname FROM sectors s, hunt_locations h JOIN item_stats i ON i.id = h.itemid WHERE s.id=h.sector";
     query_natres = "SELECT s.name sectorname,loc_x x, loc_y y, loc_z z, item_id_reward itemid, \
-            'interval', max_random, n.id, amount, radius 'range', i.name \
+            'interval', max_random, n.id, amount, radius 'range', i.name, 0  lock_str, -1 lock_skill, '' flags \
             FROM sectors s, natural_resources n JOIN item_stats i ON i.id = n.item_id_reward \
             WHERE s.id=n.loc_sector_id and amount is not NULL";
 
@@ -427,6 +427,9 @@ void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo* sectorinfo)
         int amount = result[i].GetInt("amount");
         float range = result[i].GetFloat("range");
         csString name = result[i]["name"];
+        int lock_str = result[i].GetInt("lock_str");
+        int lock_skill = result[i].GetInt("lock_skill");
+        csString flags = result[i]["flags"];
 
         Debug4(LOG_SPAWN,0,"Adding hunt location in sector %s %s %s.\n",sector.GetData(),toString(pos).GetData(),name.GetData());
 
@@ -461,7 +464,7 @@ void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo* sectorinfo)
             {
                 if(name == item->GetName())  // Correct item?
                 {
-                    psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
+                    psScheduledItem* schedule = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range, lock_str, lock_skill, flags);
                     item->SetScheduledItem(schedule);
                     ++handledSpawnsCount;
                 }
@@ -474,7 +477,7 @@ void SpawnManager::SpawnHuntLocations(Result &result, psSectorInfo* sectorinfo)
         for(int i = 0; i < (amount - (int) handledSpawnsCount); ++i)  //Make desired amount of items that are not already existing
         {
             // This object won't get destroyed in a while (until something stops it or psItem is destroyed without moving)
-            psScheduledItem* item = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range);
+            psScheduledItem* item = new psScheduledItem(id,itemid,pos,spawnsector,0,interval,max_rnd,range, lock_str, lock_skill, flags);
 
             // Queue it
             psItemSpawnEvent* newevent = new psItemSpawnEvent(item);

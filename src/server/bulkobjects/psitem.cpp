@@ -272,6 +272,83 @@ const char* psItem::GetQualityString()
     return "Inferior";
 }
 
+PSITEM_FLAGS psItem::ParseItemFlags(csString flagstr)
+{
+    PSITEM_FLAGS flag;
+    if(flagstr.Find("LOCKED",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_LOCKED;
+    }
+    if(flagstr.Find("LOCKABLE",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_LOCKABLE;
+    }
+    if(flagstr.Find("SECURITYLOCK",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_SECURITYLOCK;
+    }
+    if(flagstr.Find("UNPICKABLE",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_UNPICKABLE;
+    }
+    if(flagstr.Find("KEY",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_KEY;
+    }
+    if(flagstr.Find("MASTERKEY",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_MASTERKEY;
+    }
+    if(flagstr.Find("PURIFIED",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_PURIFIED;
+    }
+    if(flagstr.Find("PURIFYING",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_PURIFIED;
+    }
+    if(flagstr.Find("NOPICKUP",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_NOPICKUP;
+    }
+    if(flagstr.Find("NOWEAKPICKUP",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_NOPICKUPWEAK;
+    }
+    if(flagstr.Find("TRANSIENT",0,true) != -1)
+    {
+        flag |= PSITEM_FLAG_TRANSIENT;
+    }
+    if(flagstr.Find("NPCOWNED", 0, true) != -1)
+    {
+        flag |= PSITEM_FLAG_NPCOWNED;
+    }
+    if(flagstr.Find("USECD", 0, true) != -1)
+    {
+        flag |= PSITEM_FLAG_USE_CD;
+    }
+    if(flagstr.Find("UNSTACKABLE", 0, true) != -1)
+    {
+        flag |= PSITEM_FLAG_UNSTACKABLE;
+        flag &= ~PSITEM_FLAG_STACKABLE;
+    }
+    if(flagstr.Find("STACKABLE", 0, true) != -1)
+    {
+        flag |= PSITEM_FLAG_STACKABLE;
+        flag &= ~PSITEM_FLAG_UNSTACKABLE;
+    }
+    if(flagstr.Find("SETTINGITEM", 0, true) != -1)
+    {
+        flag |= PSITEM_FLAG_SETTINGITEM;
+    }
+    if(flagstr.Find("IDENTIFIABLE", 0, true) != -1)
+    {
+        flag |= PSITEM_FLAG_IDENTIFIABLE;
+    }
+
+    return flag;
+}
+
 // Functions that manipulate psItem Data
 
 bool psItem::Load(iResultRow &row)
@@ -308,77 +385,7 @@ bool psItem::Load(iResultRow &row)
     }
 
     // Flags
-    psString flagstr(row["flags"]);
-    if(flagstr.FindSubString("LOCKED",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_LOCKED;
-    }
-    if(flagstr.FindSubString("LOCKABLE",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_LOCKABLE;
-    }
-    if(flagstr.FindSubString("SECURITYLOCK",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_SECURITYLOCK;
-    }
-    if(flagstr.FindSubString("UNPICKABLE",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_UNPICKABLE;
-    }
-    if(flagstr.FindSubString("KEY",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_KEY;
-    }
-    if(flagstr.FindSubString("MASTERKEY",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_MASTERKEY;
-    }
-    if(flagstr.FindSubString("PURIFIED",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_PURIFIED;
-    }
-    if(flagstr.FindSubString("PURIFYING",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_PURIFIED;
-    }
-    if(flagstr.FindSubString("NOPICKUP",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_NOPICKUP;
-    }
-    if(flagstr.FindSubString("NOWEAKPICKUP",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_NOPICKUPWEAK;
-    }
-    if(flagstr.FindSubString("TRANSIENT",0,true)!=-1)
-    {
-        flags |= PSITEM_FLAG_TRANSIENT;
-    }
-    if(flagstr.FindSubString("NPCOWNED", 0, true) != -1)
-    {
-        flags |= PSITEM_FLAG_NPCOWNED;
-    }
-    if(flagstr.FindSubString("USECD", 0, true) != -1)
-    {
-        flags |= PSITEM_FLAG_USE_CD;
-    }
-    if(flagstr.FindSubString("UNSTACKABLE", 0, true) != -1)
-    {
-        flags |= PSITEM_FLAG_UNSTACKABLE;
-        flags &= ~PSITEM_FLAG_STACKABLE;
-    }
-    if(flagstr.FindSubString("STACKABLE", 0, true) != -1)
-    {
-        flags |= PSITEM_FLAG_STACKABLE;
-        flags &= ~PSITEM_FLAG_UNSTACKABLE;
-    }
-    if(flagstr.FindSubString("SETTINGITEM", 0, true) != -1)
-    {
-        flags |= PSITEM_FLAG_SETTINGITEM;
-    }
-    if(flagstr.FindSubString("IDENTIFIABLE", 0, true) != -1)
-    {
-        flags |= PSITEM_FLAG_IDENTIFIABLE;
-    }
+    flags = ParseItemFlags(row["flags"]);
 
     // Lockpick stuff
     SetLockStrength(row.GetInt("lock_str"));
@@ -2363,6 +2370,10 @@ double psItem::CalcFunction(MathEnvironment* env, const char* functionName, cons
         {
             return (double) GetIsIdentifiable()?1.0f:0.0f;
         }
+        else if(flagName == "Locked")
+        {
+            return (double) GetIsLocked()? 1.0f : 0.0f;
+        }
         else
             CPrintf(CON_ERROR, "psItem::CalcFunction(%s) GetFlag flag %s not supported\n", functionName, flagName.GetData());
     }
@@ -2703,7 +2714,7 @@ void psItem::ScheduleRespawn()
 }
 
 psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3 &position, psSectorInfo* sector,InstanceID instance, int interval,int maxrnd,
-                                 float range)
+                                 float range, int lock_str, int lock_skill, csString flags)
 {
     spawnID = id;
     this->itemID = itemID;
@@ -2713,6 +2724,9 @@ psScheduledItem::psScheduledItem(int id,uint32 itemID,csVector3 &position, psSec
     this->maxrnd = maxrnd;
     this->worldInstance = instance;
     this->range = range;
+    this->lock_str = lock_str;
+    this->lock_skill = lock_skill;
+    this->flags = flags;
     wantToDie= false;
 }
 
@@ -2737,6 +2751,10 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
             float xpos = psserver->GetRandomRange(GetPosition().x, range); // Random position within range
             float zpos = psserver->GetRandomRange(GetPosition().z, range);
             item->SetLocationInWorld(worldInstance,GetSector(),xpos, GetPosition().y, zpos, 0);
+            item->SetLockStrength(lock_str);
+            item->SetLockpickSkill((PSSKILL)lock_skill);
+            item->SetFlags(item->ParseItemFlags(flags));
+
             if(!EntityManager::GetSingleton().CreateItem(item,false))
             {
                 delete item;
