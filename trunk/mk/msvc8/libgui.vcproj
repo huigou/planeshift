@@ -1792,6 +1792,9 @@
 				RelativePath="..\..\src\client\gui\pawsconfigchatfilter.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigchatfont.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchatlogs.cpp">
 			</File>
 			<File
@@ -2070,6 +2073,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchatfilter.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigchatfont.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigchatlogs.h">

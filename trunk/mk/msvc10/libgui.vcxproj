@@ -1375,6 +1375,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClCompile Include="..\..\src\client\gui\pawsconfigchat.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigchatbubbles.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigchatfilter.cpp" />
+    <ClCompile Include="..\..\src\client\gui\pawsconfigchatfont.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigchatlogs.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigchattabcompletion.cpp" />
     <ClCompile Include="..\..\src\client\gui\pawsconfigchattabs.cpp" />
@@ -1469,6 +1470,7 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     <ClInclude Include="..\..\src\client\gui\pawsconfigchat.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigchatbubbles.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigchatfilter.h" />
+    <ClInclude Include="..\..\src\client\gui\pawsconfigchatfont.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigchatlogs.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigchattabcompletion.h" />
     <ClInclude Include="..\..\src\client\gui\pawsconfigchattabs.h" />
