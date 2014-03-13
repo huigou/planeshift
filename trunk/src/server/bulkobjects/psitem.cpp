@@ -274,74 +274,74 @@ const char* psItem::GetQualityString()
 
 PSITEM_FLAGS psItem::ParseItemFlags(csString flagstr)
 {
-    PSITEM_FLAGS flag;
-    if(flagstr.Find("LOCKED",0,true) != -1)
+    PSITEM_FLAGS flag = 0;
+    if(flagstr.Find("LOCKED",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_LOCKED;
     }
-    if(flagstr.Find("LOCKABLE",0,true) != -1)
+    if(flagstr.Find("LOCKABLE",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_LOCKABLE;
     }
-    if(flagstr.Find("SECURITYLOCK",0,true) != -1)
+    if(flagstr.Find("SECURITYLOCK",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_SECURITYLOCK;
     }
-    if(flagstr.Find("UNPICKABLE",0,true) != -1)
+    if(flagstr.Find("UNPICKABLE",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_UNPICKABLE;
     }
-    if(flagstr.Find("KEY",0,true) != -1)
+    if(flagstr.Find("KEY",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_KEY;
     }
-    if(flagstr.Find("MASTERKEY",0,true) != -1)
+    if(flagstr.Find("MASTERKEY",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_MASTERKEY;
     }
-    if(flagstr.Find("PURIFIED",0,true) != -1)
+    if(flagstr.Find("PURIFIED",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_PURIFIED;
     }
-    if(flagstr.Find("PURIFYING",0,true) != -1)
+    if(flagstr.Find("PURIFYING",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_PURIFIED;
     }
-    if(flagstr.Find("NOPICKUP",0,true) != -1)
+    if(flagstr.Find("NOPICKUP",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_NOPICKUP;
     }
-    if(flagstr.Find("NOWEAKPICKUP",0,true) != -1)
+    if(flagstr.Find("NOWEAKPICKUP",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_NOPICKUPWEAK;
     }
-    if(flagstr.Find("TRANSIENT",0,true) != -1)
+    if(flagstr.Find("TRANSIENT",0,true) != -1U)
     {
         flag |= PSITEM_FLAG_TRANSIENT;
     }
-    if(flagstr.Find("NPCOWNED", 0, true) != -1)
+    if(flagstr.Find("NPCOWNED", 0, true) != -1U)
     {
         flag |= PSITEM_FLAG_NPCOWNED;
     }
-    if(flagstr.Find("USECD", 0, true) != -1)
+    if(flagstr.Find("USECD", 0, true) != -1U)
     {
         flag |= PSITEM_FLAG_USE_CD;
     }
-    if(flagstr.Find("UNSTACKABLE", 0, true) != -1)
+    if(flagstr.Find("UNSTACKABLE", 0, true) != -1U)
     {
         flag |= PSITEM_FLAG_UNSTACKABLE;
         flag &= ~PSITEM_FLAG_STACKABLE;
     }
-    if(flagstr.Find("STACKABLE", 0, true) != -1)
+    if(flagstr.Find("STACKABLE", 0, true) != -1U)
     {
         flag |= PSITEM_FLAG_STACKABLE;
         flag &= ~PSITEM_FLAG_UNSTACKABLE;
     }
-    if(flagstr.Find("SETTINGITEM", 0, true) != -1)
+    if(flagstr.Find("SETTINGITEM", 0, true) != -1U)
     {
         flag |= PSITEM_FLAG_SETTINGITEM;
     }
-    if(flagstr.Find("IDENTIFIABLE", 0, true) != -1)
+    if(flagstr.Find("IDENTIFIABLE", 0, true) != -1U)
     {
         flag |= PSITEM_FLAG_IDENTIFIABLE;
     }
