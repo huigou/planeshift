@@ -3,7 +3,7 @@ source action_locations.sql;
 source alliances.sql;
 source armorvsweapon.sql;
 source attacks.sql;
-source attack_types.sql
+source attack_types.sql;
 source bad_names.sql;
 source bans.sql;
 source character_relationships.sql;
@@ -28,7 +28,7 @@ source item_instances.sql;
 source item_stats.sql;
 source item_animations.sql;
 source loot_modifiers.sql;
-source loot_modifiers_restrains.sql
+source loot_modifiers_restrains.sql;
 source loot_rules.sql;
 source loot_rule_details.sql;
 source math_scripts.sql;
