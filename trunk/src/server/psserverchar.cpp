@@ -654,7 +654,7 @@ void ServerCharManager::BeginTrading(Client* client, gemObject* target, const cs
     // End of preconditons
     ///////////
 
-    psserver->SendSystemInfo(clientnum, "You started trading with %s.",merchant->GetCharName());
+    psserver->SendSystemInfo(clientnum, "You start trading with %s.",merchant->GetCharName());
 
     if(type == "SELL")
     {
@@ -1646,7 +1646,7 @@ void ServerCharManager::BeginStoring(Client* client, gemObject* target, const cs
         return;
     }
 
-    psserver->SendSystemInfo(client->GetClientNum(), "You started checking your storage with %s.",storage->GetCharName());
+    psserver->SendSystemInfo(client->GetClientNum(), "You start checking your storage with %s.",storage->GetCharName());
 
     if(type == "STORE")
     {
