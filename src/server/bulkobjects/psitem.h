@@ -93,9 +93,10 @@ class gemActor;
 #define PSITEM_FLAG_PURIFIED            0x00000010
 #define PSITEM_FLAG_PURIFYING           0x00000020
 
-/// Flags for locked status (as in a locked container)
+/// Flags for locked status (as in a locked container). If locked it can be opened only with lockpick or key
 #define PSITEM_FLAG_LOCKED              0x00000040
 
+/// Flag to allow locking/unlocking of the item. It will add the "lock/unlock" icon in the context menu of the item
 #define PSITEM_FLAG_LOCKABLE            0x00000080
 
 /// Flag for an un-pickupable item (remains fixed)

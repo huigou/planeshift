@@ -1412,7 +1412,7 @@ bool WorkManager::CombineWork()
             else
             {
                 // The transform could not be created so send "wrong" message and the reason back to the user.
-                psserver->SendSystemError(clientNum, "You started to combine items, but could not go any further.");
+                psserver->SendSystemError(clientNum, "You start to combine items, but could not go any further.");
                 SendTransformError(clientNum, transMatch, combinationId, combinationQty);
                 return true;
             }
@@ -4075,7 +4075,7 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
 
     client->GetCharacterData()->SetStaminaRegenerationWork(item->GetLockpickSkill());
 
-    psserver->SendSystemInfo(client->GetClientNum(),"You started lockpicking %s",item->GetName());
+    psserver->SendSystemInfo(client->GetClientNum(),"You start lockpicking %s",item->GetName());
     client->GetActor()->SetMode(PSCHARACTER_MODE_WORK);
 
     // Execute mathscript to get lockpicking time

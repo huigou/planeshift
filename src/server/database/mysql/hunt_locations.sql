@@ -29,8 +29,5 @@ COMMENT = 'Areas to spawn items, like apples or mushrooms';
 #
 # Dumping data for table 'hunt_locations'
 #
-INSERT INTO `hunt_locations` VALUES (1, '27.60', '-0.01', '-190', 91, 4000, 0, 3, 2, '5.00', 0, -1, '');
-
-
-
-
+INSERT INTO `hunt_locations` VALUES (1, '27.60', '0.01', '-190', 91, 4000, 0, 3, 2, '5.00', 0, -1, '');
+INSERT INTO `hunt_locations` VALUES (2, '-75', '0.01', '-186', 59, 4000, 0, 3, 1, '3.00', 100, 22, 'LOCKABLE LOCKED');
