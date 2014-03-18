@@ -790,7 +790,12 @@ int  pawsScrollMenu::GetButtonHolderHeight()
 
 int pawsScrollMenu::GetTotalButtonWidth()
 {
-    int total=0;
+    if( Buttons.GetSize()==0 )
+    {
+        return buttonWidth+BUTTON_PADDING*2;
+    }
+
+    int total=BUTTON_PADDING*2;
 
     for(size_t i=0; i< Buttons.GetSize(); i++)
     {
