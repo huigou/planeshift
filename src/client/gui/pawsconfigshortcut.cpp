@@ -531,6 +531,9 @@ void pawsConfigShortcut::PickText( const char * fontName, int size )
         MenuBar->LayoutButtons();
         MenuBar->OnResize();
         ((pawsShortcutWindow*)ShortcutMenu)->SetFont( fontPath, size );
+        MenuBar->SetFont( fontPath, size );
+        MenuBar->SetButtonFont( fontPath, size );
+
         ((pawsShortcutWindow*)ShortcutMenu)->Draw();
         SaveConfig();    
     }
