@@ -251,6 +251,8 @@ void pawsActiveMagicWindow::AutoResize()
         newRightEdge  = 0,
         newTopEdge    = 0,
         newBottomEdge = 0,
+        newHeight     = 0,
+        newWidth      = 0,
         tOrientation  = Orientation;
 
 
@@ -322,14 +324,17 @@ void pawsActiveMagicWindow::AutoResize()
     }
     else
     {
-        int cols = int( (buffList->GetSize()*buffList->GetButtonHeight())/(psengine->GetG2D()->GetHeight()-16) )+1; //how many columns will we need to sho all the entries
+        int cols  = int( (buffList->GetSize()*buffList->GetButtonHeight())/(psengine->GetG2D()->GetHeight()-16) )+1, //how many columns will we need to sho all the entries
+            tSize = 0;
+
+        tSize = buffList->GetSize()<1?1:buffList->GetSize();
 
         if( topEdge<=0 )  //top anchored, takes precedence over bottom anchor
         {
             newTopEdge = 0;
             if( cols==1 )
             {
-                newBottomEdge = (buffList->GetSize()*buffList->GetButtonHeight())+16;
+                newBottomEdge = (tSize*buffList->GetButtonHeight())+16;
             }
             else 
             {
@@ -341,7 +346,7 @@ void pawsActiveMagicWindow::AutoResize()
             newBottomEdge=psengine->GetG2D()->GetHeight();
             if( cols==1 )
             {
-                newTopEdge=newBottomEdge-(buffList->GetSize()*buffList->GetButtonHeight())-16;
+                newTopEdge=newBottomEdge-(tSize*buffList->GetButtonHeight())-16;
             }
             else
             {
@@ -350,39 +355,52 @@ void pawsActiveMagicWindow::AutoResize()
         }
         else //no anchor, expand and contract on bottom
         {
-           if( topEdge+(buffList->GetSize()*buffList->GetButtonHeight())+16 < psengine->GetG2D()->GetHeight() )
+           if( topEdge+(tSize*buffList->GetButtonHeight())+16 < psengine->GetG2D()->GetHeight() )
            {
                newTopEdge=topEdge;
-               newBottomEdge=topEdge+(buffList->GetSize()*buffList->GetButtonHeight())+16;
+               newBottomEdge=topEdge+(tSize*buffList->GetButtonHeight())+16;
            }
            else
            {
                newBottomEdge=psengine->GetG2D()->GetHeight();
-               newTopEdge=newBottomEdge-(buffList->GetSize()*buffList->GetButtonHeight())-16;
+               newTopEdge=newBottomEdge-(tSize*buffList->GetButtonHeight())-16;
            }
         }
 
         if( leftEdge<=0 ) //anchored at left, takes precendence over right anchor
         {
             newLeftEdge=0;
-            //newRightEdge=(cols*buffList->GetButtonWidth())+16;
-            newRightEdge=(cols*buffList->GetWidestWidth())+16;
+            newRightEdge=((cols*buffList->GetWidestWidth())<buffList->GetButtonHeight()?buffList->GetButtonHeight():cols*buffList->GetWidestWidth())+16;
         }
         else if( rightEdge>=psengine->GetG2D()->GetWidth() )  //anchored to right
         {
-            //newLeftEdge=psengine->GetG2D()->GetWidth()-(cols*buffList->GetButtonWidth())-16;
-            newLeftEdge=psengine->GetG2D()->GetWidth()-(cols*buffList->GetWidestWidth())-16;
+            newLeftEdge=psengine->GetG2D()->GetWidth()-((cols*buffList->GetWidestWidth())<buffList->GetButtonHeight()?buffList->GetButtonHeight():cols*buffList->GetWidestWidth())-16;
             newRightEdge=psengine->GetG2D()->GetWidth();
         }
         else //not anchored
         {
             newLeftEdge    =leftEdge;
-            //newRightEdge =leftEdge+(cols*buffList->GetButtonWidth() );
-            newRightEdge =leftEdge+(cols*buffList->GetWidestWidth() );
+            newRightEdge =leftEdge+((cols*buffList->GetWidestWidth())<buffList->GetButtonHeight()?buffList->GetButtonHeight():cols*buffList->GetWidestWidth() )+16;
         }
     }
 
-    SetRelativeFrame( newLeftEdge, newTopEdge, (newRightEdge-newLeftEdge), (newBottomEdge-newTopEdge) ); 
+    if( newRightEdge-newLeftEdge < buffList->GetButtonWidth() )
+    {
+        newWidth=buffList->GetButtonWidth()+BUTTON_PADDING;
+    }
+    else
+    {
+        newWidth=newRightEdge-newLeftEdge;
+    }
+    if( newBottomEdge-newTopEdge < buffList->GetButtonWidth() )
+    {
+        newHeight = buffList->GetButtonWidth()+BUTTON_PADDING;
+    }
+    else
+    {
+        newHeight = newBottomEdge-newTopEdge;
+    }
+    SetRelativeFrame( newLeftEdge, newTopEdge, newWidth, newHeight ); 
 
     //SetRelativeFrame calls OnResize which will recalculate Orientation, but we don't want
     //autoResize to change orientation. Restore it here.
@@ -390,7 +408,6 @@ void pawsActiveMagicWindow::AutoResize()
     buffList->SetOrientation(Orientation);
 
     buffList->SetRelativeFrame( 0, 0, newRightEdge-newLeftEdge-16, newBottomEdge-newTopEdge-16 ); 
-    buffList->LayoutButtons();
 
 }
 

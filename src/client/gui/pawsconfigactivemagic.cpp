@@ -318,7 +318,11 @@ void pawsConfigActiveMagic::SetDefault()
 
 bool pawsConfigActiveMagic::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
 {
-    if(wdg == buttonWidth && loaded)
+
+    if(!loaded )
+        return true;
+
+    if(wdg == buttonWidth )
     {
         if(buttonWidth->GetCurrentValue() < buttonHeight->GetCurrentValue())
             buttonWidth->SetCurrentValue(buttonHeight->GetCurrentValue());
@@ -326,33 +330,28 @@ bool pawsConfigActiveMagic::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
             buttonWidth->SetCurrentValue(buttonWidth->GetMaxValue());
 
         MenuBar->SetButtonWidth( buttonWidth->GetCurrentValue() );
-        MenuBar->LayoutButtons();
 
     }
-    else if(wdg == buttonHeight && loaded)
+    else if(wdg == buttonHeight )
     {
         if(buttonHeight->GetCurrentValue() < 1)
             buttonHeight->SetCurrentValue(1,false);
         MenuBar->SetButtonHeight( buttonHeight->GetCurrentValue() );
-        MenuBar->LayoutButtons();
     }
-    else if(wdg == textSize && loaded)
+    else if(wdg == textSize)
     {
         if(textSize->GetCurrentValue() < 1)
             textSize->SetCurrentValue(1,false);
         PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
-        MenuBar->LayoutButtons();
     }
-    else if(wdg == textSpacing && loaded)
+    else if(wdg == textSpacing )
     {
         if( textSpacing->GetCurrentValue() < 1 )
             textSpacing->SetCurrentValue(1,false);
         MenuBar->SetButtonPaddingWidth(  textSpacing->GetCurrentValue() );
-        MenuBar->LayoutButtons();
     }
 
-    if( loaded )
-        SaveConfig();
+    SaveConfig();
     MenuBar->LayoutButtons();
     MenuBar->OnResize();
     ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
@@ -526,11 +525,14 @@ void pawsConfigActiveMagic::PickText( const char * fontName, int size )
 
     if( loaded )
     {
-        MenuBar->LayoutButtons();
-        MenuBar->OnResize();
         ((pawsActiveMagicWindow*)ActiveMagicWindow)->SetFont( fontPath, size);
+        MenuBar->SetFont( fontPath, size );
+        MenuBar->SetButtonFont( fontPath, size );
+
         ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
         SaveConfig();
+        MenuBar->LayoutButtons();
+        MenuBar->OnResize();
     }
 
 }
