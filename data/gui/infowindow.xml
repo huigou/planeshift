@@ -95,7 +95,7 @@
 <!-- Attack Queue Display -->
 
 <widget name="AttackQueueDisp" factory="pawsWidget">
-<frame x="0" y="50" width="180" height="30" />
+<frame x="15" y="50" width="150" height="30" />
     <attachpoints>
         <attach point="PROPORTIONAL_RIGHT" />
         <attach point="PROPORTIONAL_BOTTOM" />
