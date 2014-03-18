@@ -3270,15 +3270,6 @@ Commands used to check the presence of an item in another character.  Example: "
     </content>
    </Contents>
   </topic>
-  <topic name="/crystal">
-   <Contents>
-    <content type="text">/crystal [interval] [max random interval modifier] [amount] [range] [item]
-
-Create a new hunt location which spawns an item in interval + random secs up to a max of amount within the range.
-Notice: The intervals are in seconds, not milliseconds.
-    </content>
-   </Contents>
-  </topic>
   <topic name="/death">
    <Contents>
     <content type="text">/death name
@@ -3398,6 +3389,15 @@ Commands used to transfer an item from you to another character.  Example: "/giv
 
 This command allows you to guard or unguard any item in the world. You just have to provide a target (which can be an area, an eid of the currently selected target. If no other parameter is provided it will toggle guard status on the item.
 NOTE: If you make an item guarded you will be the one guarding it.
+    </content>
+   </Contents>
+  </topic>
+  <topic name="/hunt_location">
+   <Contents>
+    <content type="text">/hunt_location [interval] [max random interval modifier] [amount] [range] [item]
+
+Create a new hunt location which spawns an item in interval + random secs up to a max of amount within the range.
+Notice: The intervals are in seconds, not milliseconds.
     </content>
    </Contents>
   </topic>
