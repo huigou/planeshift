@@ -139,7 +139,7 @@ INSERT INTO sc_npctypes VALUES("7","Wanderer","Fighter",0,"","","","","","0",
 
 
 INSERT INTO sc_npctypes VALUES("8","On Sight Fighter","TurnToSensedPlayer,Fighter",0,"","","","","","1",
-'<behavior name="FightDefencive"   initial="0" growth="0" decay="0" completion_decay="-1" >
+'<behavior name="FightDefensive"   initial="0" growth="0" decay="0" completion_decay="-1" >
    <locate obj="target"  range="20" />
    <talk text="$race attacked by $target" target="false" /> 
    <rotate type="locatedest" anim="walk" ang_vel="120" />
@@ -166,18 +166,18 @@ INSERT INTO sc_npctypes VALUES("8","On Sight Fighter","TurnToSensedPlayer,Fighte
 </behavior>
 <behavior name="AssessStronger" >
    <talk text="$target is a stronger target" target="false" />
-   <percept event="fight defencive" />
+   <percept event="fight defensive" />
 </behavior>
 <behavior name="AssessPowerfull" >
    <talk text="$target is a powerfull target" target="false" />
-   <percept event="fight defencive" />
+   <percept event="fight defensive" />
 </behavior>
 
 <!-- Reacting to players nearby(<10) and adjacent -->
 <react event="player nearby"       behavior="AssessFighter" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
 <react event="player adjacent"     behavior="AssessFighter" delta="100" inactive_only="yes" faction_diff="-200" oper=">"  />
 
-<react event="fight defencive"     behavior="FightDefencive" />
+<react event="fight defensive"     behavior="FightDefensive" />
 
 <!-- Reaction to results of assessments -->
 <react event="assess extremely weaker"    type="$target" behavior="AssessLame" />
