@@ -34,13 +34,13 @@
 #include "util/singleton.h"
 
 /* To be incremented every time we want to make an update. */
-#define UPDATER_VERSION 3.05
+#define UPDATER_VERSION 3.06
 
 struct iConfigManager;
 struct iVFS;
 
 #define UPDATER_VERSION_MAJOR 3
-#define UPDATER_VERSION_MINOR 05
+#define UPDATER_VERSION_MINOR 06
 
 #ifdef CS_PLATFORM_WIN32
 	#define SELFUPDATER_TEMPFILE_POSTFIX ".tmp.exe"
