@@ -3373,6 +3373,9 @@ int SkillSet::AddSkillPractice(psSkillInfo* skillInfo, unsigned int val)
     bool rankUp;
     csString name;
 
+    if(self->GetActor()->GetClientID() == 0)
+        return 0;
+
     PSSKILL skill = skillInfo->id;
 
     rankUp = AddToSkillPractice(skill, val, added);
@@ -3380,7 +3383,7 @@ int SkillSet::AddSkillPractice(psSkillInfo* skillInfo, unsigned int val)
     // Save skill and practice only when the level reached a new rank
     // this is done to avoid saving to db each time a player hits
     // an opponent
-    if(rankUp && self->GetActor()->GetClientID() != 0)
+    if(rankUp)
     {
         psServer::CharacterLoader.UpdateCharacterSkill(self->GetPID(),
                 skill,
@@ -3389,7 +3392,6 @@ int SkillSet::AddSkillPractice(psSkillInfo* skillInfo, unsigned int val)
                 GetSkillRank((PSSKILL)skill).Base()
                                                       );
     }
-
 
     name = skillInfo->name;
     Debug5(LOG_SKILLXP,self->GetActor()->GetClientID(),"Adding %d points to skill %s to character %s (%d)\n",val,skillInfo->name.GetData(),
