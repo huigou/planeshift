@@ -362,6 +362,13 @@ void CombatManager::HandleDeathEvent(MsgEntry* me,Client* client)
         death.deadActor->GetClient()->ClearAllDuelClients();
     }
 
+    // Clear the queue of attacks
+    psAttackQueue* attackqueue = client->GetCharacterData()->GetAttackQueue();
+    attackqueue->Purge();
+    
+    // set out of combat mode for char 
+    death.deadActor->SetMode(PSCHARACTER_MODE_PEACE);
+
     // Stop actor moving.
     death.deadActor->StopMoving();
 
