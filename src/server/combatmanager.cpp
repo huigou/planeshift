@@ -363,7 +363,7 @@ void CombatManager::HandleDeathEvent(MsgEntry* me,Client* client)
     }
 
     // Clear the queue of attacks
-    psAttackQueue* attackqueue = client->GetCharacterData()->GetAttackQueue();
+    psAttackQueue* attackqueue = death.deadActor->GetCharacterData()->GetAttackQueue();
     attackqueue->Purge();
     
     // set out of combat mode for char 
