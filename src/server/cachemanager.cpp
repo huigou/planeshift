@@ -1523,7 +1523,7 @@ bool CacheManager::PreloadTradeProcesses()
             newProcess = new psTradeProcesses;
             if(!newProcess->Load(result[currentrow]))
             {
-                Error1("Failure to load processes");
+                Error2("Failure to load process %u",pid);
                 delete newProcess;
                 continue;
             }
