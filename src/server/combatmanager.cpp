@@ -325,6 +325,11 @@ void CombatManager::HandleCombatEvent(psCombatAttackGameEvent* event)
     // deals the damage to the target
     event->attack->Affect(event);
 
+    // If the attacker is no longer in attack mode, don't start another attack.
+    gemActor* attacker = event->GetAttacker()->GetActorPtr();
+    if(attacker && attacker->GetMode() != PSCHARACTER_MODE_COMBAT)
+        return;
+
     // if it was a special attack, remove it from the queue
     if(event->attack->IsQueuedInClient())
         event->GetAttackerData()->GetAttackQueue()->PopDelete();
