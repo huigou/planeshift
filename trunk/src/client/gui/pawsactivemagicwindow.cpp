@@ -452,7 +452,7 @@ bool pawsActiveMagicWindow::LoadSetting()
 
     if(!vfs->Exists(fileName))
     {
-       return false; //no saved config to load.
+       return true; //no saved config to load. Use default values.
     }
 
     doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(), fileName);
