@@ -160,8 +160,8 @@ bool gemNPCObject::InitMesh(const char* factname,
         baseScale = sprite->GetScaleFactor();
 
         // Normalize the mesh scale to the base scale of the mesh.
-        Debug4(LOG_CELPERSIST,0,"DEBUG: Normalize scale: %f / %f = %f\n",
-               scale, baseScale, scale / baseScale);
+        Debug5(LOG_CELPERSIST,0,"DEBUG: %s Normalize scale: %f / %f = %f\n",
+               factname, scale, baseScale, scale / baseScale);
     }
 
 
