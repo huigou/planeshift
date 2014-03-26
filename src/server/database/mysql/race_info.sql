@@ -85,7 +85,7 @@ INSERT INTO `race_info` VALUES (24,'Clacker','stonebm','M',0.8,1.4,0.6,'',100,50
 INSERT INTO `race_info` VALUES (25,'Rat','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',14,0.92,1);
 INSERT INTO `race_info` VALUES (26,'Grendol','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',15,0.92,1);
 INSERT INTO `race_info` VALUES (27,'Gobble','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',16,0.92,1);
-INSERT INTO `race_info` VALUES (28,'Consumer','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',17,0.92,1);
+INSERT INTO `race_info` VALUES (28,'Consumer','consumer','N',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',17,0.1,1);
 INSERT INTO `race_info` VALUES (29,'Trepor','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',18,0.92,1);
 INSERT INTO `race_info` VALUES (30,'Ulbernaut','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,1.5,1,10,10,0,0,'','','','','',19,0.92,1);
 INSERT INTO `race_info` VALUES (31,'Tefusang','stonebm','M',0.8,1.4,0.6,'',100,50,50,50,50,50,50,2,1.5,10,10,0,0,'','','','','',20,0.92,1);
