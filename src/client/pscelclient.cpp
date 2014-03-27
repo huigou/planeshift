@@ -1778,8 +1778,8 @@ void GEMClientActor::SetDRData(psDRMessage &drmsg)
 
             if(DoLogDebug(LOG_DRDATA))
             {
-                Debug(LOG_DRDATA, GetEID().Unbox(), "DRDATA: %s, %s, %s, %s, pos(%f,%f,%f), rot(%f), %s, %f, %f, %f, %f, %f, %f, %f",
-                      "PSCLIENT", "OLD", ShowID(GetEID()),"?", cur_pos.x, cur_pos.y, cur_pos.z, cur_yrot,
+                Debug(LOG_DRDATA, GetEID().Unbox(), "DRDATA: %s, %s, %s, %s, pos(%f, %f, %f), rot(%f), %s, %f, %f, %f, %f, %f, %f, %f",
+                      "PSCLIENT", "OLD", ShowID(GetEID()),GetName(), cur_pos.x, cur_pos.y, cur_pos.z, cur_yrot,
                       cur_sector->QueryObject()->GetName(), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
                 Debug(LOG_DRDATA, GetEID().Unbox(), "DRDATA: %s, %s, %s, %s, pos(%f, %f, %f), rot(%f), %s, %f, %f, %f, %f, %f, %f, %f",
@@ -1795,21 +1795,16 @@ void GEMClientActor::SetDRData(psDRMessage &drmsg)
             }
             else
             {
-                float scaleValue = scale / baseScale;
-            
-                csVector3 vel = drmsg.vel/scaleValue;
-                csVector3 worldVel = drmsg.worldVel/scaleValue;
-
                 // Force hard DR update on sector change, low speed, or large delta pos
                 if(drmsg.sector != cur_sector || (drmsg.vel < 0.1f) || (csSquaredDist::PointPoint(cur_pos,drmsg.pos) > 25.0f))
                 {
                     // Do hard DR when it would make you slide
-                    linmove->SetDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,vel,worldVel,drmsg.ang_vel);
+                    linmove->SetDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
                 }
                 else
                 {
                     // Do soft DR when moving
-                    linmove->SetSoftDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,vel,worldVel,drmsg.ang_vel);
+                    linmove->SetSoftDRData(drmsg.on_ground,drmsg.pos,drmsg.yrot,drmsg.sector,drmsg.vel,drmsg.worldVel,drmsg.ang_vel);
                 }
 
                 DRcounter = drmsg.counter;
