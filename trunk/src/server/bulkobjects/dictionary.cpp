@@ -75,6 +75,7 @@ extern "C" {
 #include "adminmanager.h"
 #include "scripting.h"
 
+// Global variable exposed from globals.h
 csRef<NPCDialogDict> dict;
 
 NPCDialogDict::NPCDialogDict()
@@ -648,7 +649,9 @@ NpcResponse* NPCDialogDict::AddResponse(const char* response_text,
     }
 
     if(!new_id)
+    {
         new_id = dynamic_id++;
+    }
 
     newresp->id = new_id;
 

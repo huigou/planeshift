@@ -1632,7 +1632,9 @@ bool QuestManager::AddTrigger(const csString &current_npc,const char* trigger,in
         else
         {
             if(quest)
+            {
                 quest->AddTriggerResponse(npcTrigger, trig_response);
+            }
             result = true;
         }
     }
