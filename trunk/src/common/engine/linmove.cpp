@@ -934,14 +934,14 @@ void psLinearMovement::SetYRotation(float yrot)
 const csVector3 psLinearMovement::GetPosition() const
 {
     // user will get a warning and a nothing if theres no mesh
-    if(!mesh)  return csVector3();
+    if(!mesh)  return csVector3(0);
     return mesh->GetMovable()->GetPosition();
 }
 
 const csVector3 psLinearMovement::GetFullPosition() const
 {
     // user will get a warning and a nothing if theres no mesh
-    if(!mesh)  return csVector3();
+    if(!mesh)  return csVector3(0);
     return mesh->GetMovable()->GetFullPosition();
 }
 
