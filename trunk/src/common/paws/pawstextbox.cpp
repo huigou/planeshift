@@ -3176,5 +3176,7 @@ void pawsMultiPageDocumentView::SetText(const char* newtext)
     }
     startLine = 0;
     text.Replace(str.GetData());
+    if(canDrawLines)
+        numPages = lines.GetSize() / canDrawLines;
 }
 
