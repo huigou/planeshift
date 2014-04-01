@@ -2782,7 +2782,7 @@ AdminCmdDataMorph::AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psA
             }
             else
             {
-                scale = "";
+                scale = "1";
             }
 
         }
