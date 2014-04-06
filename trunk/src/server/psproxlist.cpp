@@ -439,6 +439,11 @@ bool ProximityList::GetUntouched_ObjectThatIWatch(gemObject* &object)
 
 float ProximityList::RangeTo(gemObject* object, bool ignoreY, bool ignoreInstance)
 {
+    if( object==NULL )
+    {
+        return INFINITY_DISTANCE;
+    }
+     
 #ifdef PSPROXDEBUG
     CPrintf(CON_DEBUG, "[float ProximityList::RangeTo(gemObject* object, bool ignoreY, bool ignoreInstance)]\n");
 #endif
