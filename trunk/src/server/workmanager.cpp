@@ -4106,67 +4106,69 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     if( workEvent->object==NULL  )
     {
         psserver->SendSystemInfo(workEvent->client->GetClientNum(),"Lockpick target is no longer valid." );
+        workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
+        return;
+    }
+
+    if( workEvent->object->GetGemObject()==NULL )
+    {
+        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"Lockpick target is no longer valid." );
+        workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
+        return;
+    }
+
+    psCharacter* character = workEvent->client->GetCharacterData();
+    PSSKILL skill = workEvent->object->GetLockpickSkill();
+
+        // Check if not moved too far away from lock
+        // First check if lock (object such as box) is in not inventory
+        // For now, that is never the case, but I can imagine that changing
+    if((PSCHARACTER_SLOT_NONE == workEvent->object->GetLocInParent()) &&
+        (workEvent->client->GetActor()->RangeTo(workEvent->object->GetGemObject()) > RANGE_TO_USE))
+    {
+        // Send denied message
+        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt, because you moved away.");
     }
     else
     {
-        psCharacter* character = workEvent->client->GetCharacterData();
-        PSSKILL skill = workEvent->object->GetLockpickSkill();
-
-        if( workEvent->object->GetGemObject()==NULL )
+        // Check if the user has the right skills
+        int rank = 0;
+        if(skill >= 0 && skill < (PSSKILL)cacheManager->GetSkillAmount())
         {
-            psserver->SendSystemInfo(workEvent->client->GetClientNum(),"Lockpick target is no longer valid." );
+            rank = character->Skills().GetSkillRank(skill).Current();
         }
-        else 
-            // Check if not moved too far away from lock
-            // First check if lock (object such as box) is in not inventory
-            // For now, that is never the case, but I can imagine that changing
-        if((PSCHARACTER_SLOT_NONE == workEvent->object->GetLocInParent()) &&
-            (workEvent->client->GetActor()->RangeTo(workEvent->object->GetGemObject()) > RANGE_TO_USE))
+
+        if(rank >= (int) workEvent->object->GetLockStrength())
         {
-            // Send denied message
-            psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt, because you moved away.");
+            bool locked = workEvent->object->GetIsLocked();
+            psserver->SendSystemOK(workEvent->client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());
+            workEvent->object->SetIsLocked(!locked);
+            workEvent->object->Save(false);
+
+            // Calculate practice points.
+
+            int practicePoints;
+            float modifier;
+            {
+                MathEnvironment env;
+                env.Define("Object", workEvent->object);
+                env.Define("Worker", workEvent->client->GetCharacterData());
+                env.Define("RequiredSkill", skill);
+                env.Define("PlayerSkill", rank);
+                env.Define("LockStrength", workEvent->object->GetLockStrength());
+
+                calc_lockpicking_exp->Evaluate(&env);
+                practicePoints = env.Lookup("ResultPractice")->GetRoundValue();
+                modifier = env.Lookup("ResultModifier")->GetValue();
+            }
+
+            // Assign points and exp.
+            workEvent->client->GetCharacterData()->CalculateAddExperience(skill, practicePoints, modifier);
         }
         else
         {
-            // Check if the user has the right skills
-            int rank = 0;
-            if(skill >= 0 && skill < (PSSKILL)cacheManager->GetSkillAmount())
-            {
-                rank = character->Skills().GetSkillRank(skill).Current();
-            }
-
-            if(rank >= (int) workEvent->object->GetLockStrength())
-            {
-                bool locked = workEvent->object->GetIsLocked();
-                psserver->SendSystemOK(workEvent->client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());
-                workEvent->object->SetIsLocked(!locked);
-                workEvent->object->Save(false);
-
-                // Calculate practice points.
-
-                int practicePoints;
-                float modifier;
-                {
-                    MathEnvironment env;
-                    env.Define("Object", workEvent->object);
-                    env.Define("Worker", workEvent->client->GetCharacterData());
-                    env.Define("RequiredSkill", skill);
-                    env.Define("PlayerSkill", rank);
-                    env.Define("LockStrength", workEvent->object->GetLockStrength());
-
-                    calc_lockpicking_exp->Evaluate(&env);
-                    practicePoints = env.Lookup("ResultPractice")->GetRoundValue();
-                    modifier = env.Lookup("ResultModifier")->GetValue();
-                }
-
-                // Assign points and exp.
-                workEvent->client->GetCharacterData()->CalculateAddExperience(skill, practicePoints, modifier);
-            }
-            else
-            {
-                // Send denied message
-                psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt.");
-            }
+            // Send denied message
+            psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt.");
         }
     }
     workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
