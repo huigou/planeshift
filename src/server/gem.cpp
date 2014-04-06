@@ -564,7 +564,8 @@ csArray<gemObject*> GEMSupervisor::FindNearbyEntities(iSector* sector, const csV
 
         gemObject* object = FindAttachedObject(m->QueryObject());
 
-        if(object && object->GetInstance() == instance)
+        if(object && (object->GetInstance() == instance ||
+           object->GetInstance() == INSTANCE_ALL || instance == INSTANCE_ALL))
         {
             list.Push(object);
         }
