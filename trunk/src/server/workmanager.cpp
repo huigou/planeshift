@@ -4067,6 +4067,14 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
         return;
     }
 
+    // Make sure client isn't already busy digging, etc.
+    gemActor* actor = client->GetActor();
+    if(actor->GetMode() != PSCHARACTER_MODE_PEACE)
+    {
+        psserver->SendSystemInfo(client->GetClientNum(),"You cannot lockpick anything because you are %s.", actor->GetModeStr());
+        return;
+    }
+
     if(!CheckStamina(client->GetCharacterData()))
     {
         psserver->SendSystemInfo(client->GetClientNum(),"You are too tired to lockpick");
@@ -4076,7 +4084,7 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
     client->GetCharacterData()->SetStaminaRegenerationWork(item->GetLockpickSkill());
 
     psserver->SendSystemInfo(client->GetClientNum(),"You start lockpicking %s",item->GetName());
-    client->GetActor()->SetMode(PSCHARACTER_MODE_WORK);
+    actor->SetMode(PSCHARACTER_MODE_WORK);
 
     // Execute mathscript to get lockpicking time
     MathEnvironment env;
@@ -4090,7 +4098,7 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
     csVector3 emptyV = csVector3(0,0,0);
     psWorkGameEvent* ev = new psWorkGameEvent(
         this,
-        client->GetActor(),
+        actor,
         time->GetRoundValue(),
         LOCKPICKING,
         emptyV,
