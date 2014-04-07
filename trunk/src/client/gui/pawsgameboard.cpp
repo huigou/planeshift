@@ -561,8 +561,9 @@ bool pawsGameTile::OnMouseDown(int button, int modifiers, int x, int y)
     // Use the EntitySelect mouse bind to select pieces/create player's pieces
     if (psengine->GetMouseBinds()->CheckBind("EntitySelect", button, modifiers))
     {
-        if (pawsGameTile *tile = dynamic_cast<pawsGameTile *>
-            (PawsManager::GetSingleton().GetDragDropWidget()))
+        pawsGameTile *tile = dynamic_cast<pawsGameTile *>
+            (PawsManager::GetSingleton().GetDragDropWidget());
+        if (tile)
         {
             SetState(tile->GetState());
             board->DropPiece(this);
@@ -573,7 +574,7 @@ bool pawsGameTile::OnMouseDown(int button, int modifiers, int x, int y)
                     board->BlackPiecesList(0) : board->WhitePiecesList(0));
             board->UpdatePiece(this);
         }
-        else
+        else if (!(board->GetGameOptions() & OPTION_PLACE_ONLY))
         {
             board->StartDragging(this);
             SetState(EMPTY_TILE);

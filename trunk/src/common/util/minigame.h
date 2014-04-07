@@ -46,7 +46,8 @@ namespace psMiniGame
         BLACK_SQUARE         = 0x10, ///< Top left/all squares Black. Else white.
         PLAIN_SQUARES        = 0x20, ///< Board squares all plain. Else checked.
         DISALLOWED_MOVE      = 0x40, ///< Last move disallowed
-        OBSERVE_ENDGAME      = 0x80  ///< observe endgame play
+        OBSERVE_ENDGAME      = 0x80, ///< observe endgame play
+        OPTION_PLACE_ONLY    = 0x8000 ///< don't pick up pieces
     };
 
     /// Minigame tile state values

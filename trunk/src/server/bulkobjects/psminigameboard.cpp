@@ -60,13 +60,11 @@ psMiniGameBoardDef::psMiniGameBoardDef(const uint8_t noCols, const uint8_t noRow
 
     // Get the list of available pieces
     pieces = NULL;
-    uint8_t numPieces = 0;
+    numPieces = 0;
 
     // Pack the list of pieces
     numPieces = (uint8_t)strlen(piecesStr);
-    size_t piecesSize = numPieces / 2;
-    if(numPieces % 2)
-        piecesSize++;
+    piecesSize = (numPieces + 1) / 2;
 
     pieces = new uint8_t[piecesSize];
 
