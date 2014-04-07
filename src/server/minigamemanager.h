@@ -239,7 +239,7 @@ protected:
     uint16_t options;
 
     /// Minigame players
-    csArray<MinigamePlayer*>players;
+    csPDelArray<MinigamePlayer> players;
 
     /// Watchers.
     csArray<uint32_t> watchers;
