@@ -183,6 +183,9 @@ private:
     /// The number of available pieces.
     uint8_t numPieces;
 
+    /// The number of available pieces.
+    uint8_t piecesSize;
+
     /// The package list of available game pieces.
     uint8_t* pieces;
 
@@ -245,6 +248,12 @@ public:
     uint8_t GetNumPieces() const
     {
         return gameBoardDef->numPieces;
+    }
+
+    /// Returns the number of available pieces.
+    uint8_t GetPiecesSize() const
+    {
+        return gameBoardDef->piecesSize;
     }
 
     /// Returns the package list of available pieces.

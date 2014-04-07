@@ -5605,7 +5605,7 @@ class psMGBoardMessage : public psMessageCracker
 public:
     psMGBoardMessage(uint32_t client, uint8_t counter,
                      uint32_t gameID, uint16_t options, int8_t cols, int8_t rows, uint8_t* layout,
-                     uint8_t numOfPieces, uint8_t* pieces);
+                     uint8_t numOfPieces, uint8_t piecesSize, uint8_t* pieces);
 
     psMGBoardMessage(MsgEntry* me);
 

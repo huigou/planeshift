@@ -7773,17 +7773,14 @@ PSF_IMPLEMENT_MSG_FACTORY(psMGBoardMessage, MSGTYPE_MINIGAME_BOARD);
 
 psMGBoardMessage::psMGBoardMessage(uint32_t client, uint8_t counter,
                                    uint32_t gameID, uint16_t options, int8_t cols, int8_t rows, uint8_t* layout,
-                                   uint8_t numOfPieces, uint8_t* pieces)
+                                   uint8_t numOfPieces, uint8_t piecesSize,
+                                   uint8_t* pieces)
     : msgLayout(0)
 {
     // We need tiles/2 number of bytes and one extra byte for odd number of tiles
     int layoutSize = cols * rows / 2;
     if(cols * rows % 2 != 0)
         layoutSize++;
-
-    int piecesSize = numOfPieces / 2;
-    if(numOfPieces % 2 != 0)
-        piecesSize++;
 
     msg.AttachNew(new MsgEntry(
                       sizeof(uint8_t) +       // counter
