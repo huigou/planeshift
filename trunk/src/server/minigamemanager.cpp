@@ -225,8 +225,7 @@ void MiniGameManager::HandleStartGameRequest(Client* client)
     // Find an existing session or create a new one.
     // If personal minigame, force new one for player.
     psMiniGameSession* session = GetSessionByID((uint32_t)actionLocation->id);
-    if(!session ||
-            (session && !session->IsSessionPublic()))
+    if(!session || (session && !session->IsSessionPublic()))
     {
         // Create a new minigame session.
         session = new psMiniGameSession(this, action, actionLocation->name);
@@ -418,7 +417,6 @@ psMiniGameSession::psMiniGameSession(MiniGameManager* mng, gemActionLocation* ob
     endgameReached = false;
     playerCount = 0;
     winnerScript.Clear();
-    players.DeleteAll();
 }
 
 psMiniGameSession::~psMiniGameSession()
@@ -429,7 +427,7 @@ psMiniGameSession::~psMiniGameSession()
     ClientConnectionSet* clients = psserver->GetConnections();
     if(clients)
     {
-        csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+        csPDelArray<MinigamePlayer>::Iterator pIter = players.GetIterator();
         while(pIter.HasNext())
         {
             MinigamePlayer* p = pIter.Next();
@@ -528,11 +526,12 @@ bool psMiniGameSession::Load(csString &responseString)
     // for personal minigames is in-game puzzles, including quest steps maybe.
     // "Public" is the more traditional, two player leisure games, such as Groffels Toe.
     csString sessionStr(boardNode->GetAttributeValue("Session"));
-    if(sessionStr.Downcase() == "personal")
+    sessionStr.Downcase();
+    if(sessionStr == "personal")
     {
         options |= PERSONAL_GAME;
     }
-    else if(sessionStr.Length() > 0 && sessionStr.Downcase() != "public")
+    else if(sessionStr.Length() > 0 && sessionStr != "public")
     {
         Error2("Session setting for minigame %s invalid. Defaulting to \'Public\'", gameName);
     }
@@ -540,11 +539,12 @@ bool psMiniGameSession::Load(csString &responseString)
     // whether to observe the end game settings. If so, the server observes the moves made and
     // can identify the end game pattern(s). Default = No.
     csString endgameStr(boardNode->GetAttributeValue("EndGame"));
-    if(endgameStr.Downcase() == "yes")
+    endgameStr.Downcase();
+    if(endgameStr == "yes")
     {
         options |= OBSERVE_ENDGAME;
     }
-    else if(endgameStr.Length() > 0 && endgameStr.Downcase() != "no")
+    else if(endgameStr.Length() > 0 && endgameStr != "no")
     {
         Error2("ObserveEndGame setting for %s invalid. Defaulting to \'No\'", gameName);
     }
@@ -641,7 +641,7 @@ void psMiniGameSession::AddPlayer(Client* client)
     // look for free player position
     bool playerIsAPlayer = false;
     int colour=WHITE_PLAYER; // TODO temp to maintain White/Black: destined to done proper
-    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    csPDelArray<MinigamePlayer>::Iterator pIter = players.GetIterator();
     while(pIter.HasNext())
     {
         MinigamePlayer* p = pIter.Next();
@@ -708,7 +708,7 @@ void psMiniGameSession::RemovePlayer(Client* client)
     uint32_t clientID = client->GetClientNum();
 
     bool playerRemoved = false;
-    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    csPDelArray<MinigamePlayer>::Iterator pIter = players.GetIterator();
     while(pIter.HasNext())
     {
         MinigamePlayer* p = pIter.Next();
@@ -756,15 +756,18 @@ void psMiniGameSession::RemovePlayer(Client* client)
 
 void psMiniGameSession::Send(uint32_t clientID, uint32_t modOptions)
 {
-    psMGBoardMessage msg(clientID, currentCounter, id, options | modOptions,
+    modOptions |= options;
+    if(gameBoard.GetMovePieceTypeRule() == PLACE_ONLY)
+        modOptions |= OPTION_PLACE_ONLY;
+    psMGBoardMessage msg(clientID, currentCounter, id, modOptions,
                          gameBoard.GetCols(), gameBoard.GetRows(), gameBoard.GetLayout(),
-                         gameBoard.GetNumPieces(), gameBoard.GetPieces());
+                         gameBoard.GetNumPieces(), gameBoard.GetPiecesSize(), gameBoard.GetPieces());
     msg.SendMessage();
 }
 
 void psMiniGameSession::Broadcast()
 {
-    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    csPDelArray<MinigamePlayer>::Iterator pIter = players.GetIterator();
     while(pIter.HasNext())
     {
         MinigamePlayer* p = pIter.Next();
@@ -804,7 +807,7 @@ bool psMiniGameSession::IsValidToUpdate(Client* client) const
 
     // TODO: Implement more complex verification for managed games
 
-    csArray<MinigamePlayer*>::ConstIterator pIter = players.GetIterator();
+    csPDelArray<MinigamePlayer>::ConstIterator pIter = players.GetIterator();
     while(pIter.HasNext())
     {
         MinigamePlayer* p = pIter.Next();
@@ -822,7 +825,7 @@ void psMiniGameSession::Update(Client* client, psMGUpdateMessage &msg)
 {
     uint32_t clientnum = client->GetClientNum();
     MinigamePlayer* movingPlayer = NULL;
-    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    csPDelArray<MinigamePlayer>::Iterator pIter = players.GetIterator();
     while(pIter.HasNext())
     {
         MinigamePlayer* p = pIter.Next();
@@ -1056,6 +1059,7 @@ void psMiniGameSession::Update(Client* client, psMGUpdateMessage &msg)
                 wonText = "Puzzle solved.";
             }
             psserver->SendSystemInfo(movingPlayer->playerID, wonText);
+            winningPlayer = movingPlayer;
         }
 
         pIter.Reset();
@@ -1144,7 +1148,7 @@ void psMiniGameSession::DeleteObjectCallback(iDeleteNotificationObject* object)
 void psMiniGameSession::Idle()
 {
     // Idle counters
-    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    csPDelArray<MinigamePlayer>::Iterator pIter = players.GetIterator();
     while(pIter.HasNext())
     {
         MinigamePlayer* p = pIter.Next();
@@ -1187,7 +1191,7 @@ void psMiniGameSession::Idle()
 
 bool psMiniGameSession::GameSessionActive(void)
 {
-    csArray<MinigamePlayer*>::Iterator pIter = players.GetIterator();
+    csPDelArray<MinigamePlayer>::Iterator pIter = players.GetIterator();
     while(pIter.HasNext())
     {
         MinigamePlayer* p = pIter.Next();
