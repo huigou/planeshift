@@ -57,7 +57,11 @@
 //uses the experimental optimized preparser
 #define OPTIMIZEPREPARSER 1
 
-
+struct QuestRewardOffer
+{
+    uint32_t clientID;
+    csArray<QuestRewardItem> items;
+};
 
 QuestManager::QuestManager(CacheManager* cachemanager)
 {
@@ -413,8 +417,22 @@ bool QuestManager::HandleScriptCommand(csString &block,
                         end = words.FindStr("or",(int)start);
                         if(end == SIZET_NOT_FOUND)
                             end = words.GetCount();
+
+                        csString modifiers = "";
+                        if(words.GetInt(start) != 0)
+                        {
+                            modifiers.Append(csString().Format("count=\"%d\" ", words.GetInt(start)));
+                            start++;
+                        }
+
+                        if(words.GetInt(start) != 0)
+                        {
+                            modifiers.Append(csString().Format(" quality=\"%d\" ", words.GetInt(start)));
+                            start++;
+                        }
+
                         csString item = words.GetWords(start,end);
-                        op.AppendFmt("<item name=\"%s\"/>",item.GetData());
+                        op.AppendFmt("<item name=\"%s\" %s/>",item.GetData(),modifiers.GetDataSafe());
                         start = end+1;
                     }
                     op.Append("</offer>");
@@ -1720,6 +1738,7 @@ void QuestManager::HandleQuestReward(MsgEntry* me,Client* who)
     {
         // verify that this item was really offered to the client as a
         // possible reward
+        uint32 itemID = (uint32)atoi(msg.newValue.GetData());
         for(size_t z=0; z<offers.GetSize(); z++)
         {
             QuestRewardOffer* offer = offers[z];
@@ -1727,9 +1746,7 @@ void QuestManager::HandleQuestReward(MsgEntry* me,Client* who)
             {
                 for(size_t x=0; x<offer->items.GetSize(); x++)
                 {
-                    uint32 itemID = (uint32)atoi(msg.newValue.GetData());
-
-                    if(offer->items[x]->GetUID()==itemID)
+                    if(offer->items[x].itemstat->GetUID()==itemID)
                     {
                         // this item has indeed been offered to the client
                         // so the item can now be given to client (player)
@@ -1747,7 +1764,7 @@ void QuestManager::HandleQuestReward(MsgEntry* me,Client* who)
 
 
 
-void QuestManager::OfferRewardsToPlayer(Client* who, csArray<psItemStats*> &offer,csTicks &timeDelay)
+void QuestManager::OfferRewardsToPlayer(Client* who, csArray<QuestRewardItem>& offer, csTicks& timeDelay)
 {
     csString rewardList;
 
@@ -1756,10 +1773,13 @@ void QuestManager::OfferRewardsToPlayer(Client* who, csArray<psItemStats*> &offe
     rewardList="<rewards>";
     for(size_t x=0; x<offer.GetSize(); x++)
     {
-        csString image = offer[x]->GetImageName();
-        csString name  = offer[x]->GetName();
-        csString desc  = offer[x]->GetDescription();
-        int      id    = offer[x]->GetUID();
+        psItemStats* itemstat = offer[x].itemstat;
+        csString image = itemstat->GetImageName();
+        csString name  = itemstat->GetName();
+        csString desc  = itemstat->GetDescription();
+        int      id    = itemstat->GetUID();
+        if(offer[x].count > 1)
+            name.AppendFmt(" (%d)", offer[x].count);
 
         psString temp;
         csString escpxml_image = EscpXML(image);
@@ -1787,23 +1807,26 @@ void QuestManager::OfferRewardsToPlayer(Client* who, csArray<psItemStats*> &offe
     psserver->GetEventManager()->SendMessageDelayed(message.msg,timeDelay);
 }
 
-
-bool QuestManager::GiveRewardToPlayer(Client* who, psItemStats* itemstat)
+bool QuestManager::GiveRewardToPlayer(Client* who, QuestRewardItem& reward)
 {
-    // check for valid item
-    if(itemstat==NULL)
-        return false;
-
     psCharacter* chardata = who->GetActor()->GetCharacterData();
     if(chardata==NULL)
         return false;
 
     // create the item
-    psItem* item = itemstat->InstantiateBasicItem(false); // Not a transient item
+    psItem* item = reward.itemstat->InstantiateBasicItem(false); // Not a transient item
     if(!item)
     {
-        Error3("Couldn't give item %u to player %s!\n",itemstat->GetUID(), who->GetName());
+        Error3("Couldn't give item %u to player %s!\n",reward.itemstat->GetUID(), who->GetName());
         return false;
+    }
+
+    item->SetStackCount(reward.count);
+
+    if(reward.quality >= 1)
+    {
+        item->SetItemQuality(reward.quality);
+        item->SetMaxItemQuality(reward.quality);
     }
 
     item->SetLoaded();  // Item is fully created

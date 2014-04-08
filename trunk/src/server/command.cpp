@@ -2315,20 +2315,33 @@ int com_questreward(const char* str)
         return 0;
     }
 
+    struct QuestRewardItem reward;
+
     // Get the ItemStats based on the name provided.
-    psItemStats* itemstats=psserver->GetCacheManager()->GetBasicItemStatsByID(atoi(item.GetData()));
-    if(itemstats==NULL)
+    reward.itemstat = psserver->GetCacheManager()->GetBasicItemStatsByID(atoi(item.GetData()));
+    if(reward.itemstat==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"No Basic Item Template with that id was found.\n");
         return 0;
+    }
+
+    reward.count = 1;
+    reward.quality = 0.0;
+    if(words.GetCount() > 2)
+    {
+        reward.count = atoi(words[2]);
+    }
+    if(words.GetCount() > 3)
+    {
+        reward.quality = atof(words[3]);
     }
 
     // If the character is online, update the stats live.  Otherwise we need to load the character data to add this item to
     //  an appropriate inventory slot.
     psCharacter* chardata=NULL;
     Client* client = psserver->GetNetManager()->GetConnections()->Find(charactername.GetData());
-    csArray<psItemStats*> items;
-    items.Push(itemstats);
+    csArray<QuestRewardItem> items;
+    items.Push(reward);
 
     if(!client)
     {

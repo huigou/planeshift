@@ -963,6 +963,12 @@ public:
     virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber);
 };
 
+struct QuestRewardItem
+{
+    psItemStats* itemstat;
+    int count;
+    float quality;
+};
 
 /**
  * This script operation makes an npc offer a list of possible
@@ -971,7 +977,7 @@ public:
 class OfferRewardResponseOp : public ResponseOperation
 {
 protected:
-    csArray<psItemStats*>  offer;
+    csArray<QuestRewardItem>  offer;
 public:
     OfferRewardResponseOp()
     {
