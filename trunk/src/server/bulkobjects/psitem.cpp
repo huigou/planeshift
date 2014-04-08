@@ -1617,6 +1617,10 @@ void psItem::Copy(psItem* target)
     //copy the modifier ids to the new item
     target->modifierIds = modifierIds;
 
+    // lock skill and lock strength are the same
+    target->SetLockpickSkill(lockpickSkill);
+    target->SetLockStrength(lockStrength);
+
     target->SetGuardingCharacterID(GetGuardingCharacterID());
 
     // Current stats are rebuilt;
