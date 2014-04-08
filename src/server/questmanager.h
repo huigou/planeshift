@@ -37,12 +37,8 @@
 class Client;
 class psItemStats;
 
-struct QuestRewardOffer
-{
-    uint32_t clientID;
-    csArray<psItemStats*> items;
-};
-
+struct QuestRewardOffer;
+struct QuestRewardItem;
 class gemNPC;
 class NpcDialogMenu;
 class NpcResponse;
@@ -56,7 +52,7 @@ class psString;
 class QuestManager : public MessageManager<QuestManager>
 {
 protected:
-    csArray<QuestRewardOffer*>  offers;
+    csPDelArray<QuestRewardOffer>  offers;
 
     csString lastError;     ///< Last error message to send to client on loadquest.
 
@@ -217,8 +213,8 @@ public:
     bool Uncomplete(psQuest* quest, Client* who, csTicks timeDelay = 0);
 
 
-    void OfferRewardsToPlayer(Client* who, csArray<psItemStats*> &offer,csTicks &timeDelay);
-    bool GiveRewardToPlayer(Client* who, psItemStats* item);
+    void OfferRewardsToPlayer(Client* who, csArray<QuestRewardItem>& offer, csTicks& timeDelay);
+    bool GiveRewardToPlayer(Client* who, QuestRewardItem& reward);
     bool LoadQuestScript(int id);
     const char* LastError()
     {

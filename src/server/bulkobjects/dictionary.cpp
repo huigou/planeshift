@@ -2611,8 +2611,37 @@ bool OfferRewardResponseOp::Load(iDocumentNode* node)
             return false;
         }
 
+        // Check for count attribute
+        int count = 1;
+        if(node->GetAttribute("count"))
+        {
+            count = node->GetAttributeValueAsInt("count");
+            if(count < 1)
+            {
+                Error1("Tried to give negative or zero count in OfferReward script op!");
+                count = 1;
+            }
+
+            if(count > 1 && !itemStat->GetIsStackable())
+            {
+                Error3("ItemStat #%u/%s isn't stackable in OfferReward script op!", itemID, node->GetAttributeValue("name"));
+                return false;
+            }
+        }
+
+        // Check for quality attribute
+        float quality = 0.0;
+        if(node->GetAttribute("quality"))
+        {
+            quality = node->GetAttributeValueAsFloat("quality");
+        }
+
         // add this item to the list
-        offer.Push(itemStat);
+        struct QuestRewardItem item;
+        item.itemstat = itemStat;
+        item.count = count;
+        item.quality = quality;
+        offer.Push(item);
     }
     return true;
 }
@@ -2622,7 +2651,15 @@ csString OfferRewardResponseOp::GetResponseScript()
     psString resp = GetName();
     for(size_t n = 0; n < offer.GetSize(); n++)
     {
-        resp.AppendFmt("><item id=\"%s\"/", offer[n]->GetName());
+        resp.AppendFmt("><item id=\"%s\"/", offer[n].itemstat->GetName());
+        if(offer[n].count > 1)
+        {
+            resp.AppendFmt(" count=\"%d\"", offer[n].count);
+        }
+        if(offer[n].quality >= 1)
+        {
+            resp.AppendFmt(" quality=\"%f\"", offer[n].quality);
+        }
     }
     resp.AppendFmt("></offer");
     return resp;
