@@ -358,7 +358,7 @@ public:
      */
     void SetAlive(bool flag, bool queue = true);
 
-    uint32 GetClientID();
+    uint32_t GetClientID();
 
     virtual const char* GetObjectType()
     {

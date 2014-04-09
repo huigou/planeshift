@@ -87,17 +87,9 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
         DV = Attacker:GetSkillValue(46);
         TargetDV = 0;
 
-        AVStance = if(AttackerStance=1, (AttackValue*2)+(DV*0.8),
-               if(AttackerStance=2, (AttackValue*1.5)+(DV*0.5),
-               if(AttackerStance=3, AttackValue,
-               if(AttackerStance=4, (AttackValue*0.3),
-               0))));
+        AVStance = (AttackValue*Attacker:attack_damage_mod)+(DV*Attacker:defense_absorb_mod);
 
-        TargetAVStance = if(TargetStance=1, (TargetAttackValue*2)+(TargetDV*0.8),
-               if(TargetStance=2, (TargetAttackValue*1.5)+(TargetDV*0.5),
-               if(TargetStance=3, TargetAttackValue,
-               if(TargetStance=4, (TargetAttackValue*0.3),
-               0))));
+        TargetAVStance = (TargetAttackValue*Target:attack_damage_mod)+(TargetDV*Target:defense_absorb_mod);
 
         FinalDamage = 10*(AVStance-TargetDV);
         if(Target:IsNPC)
@@ -664,6 +656,5 @@ Result = AverageQuality * log(1+(AvgExtQuality/AverageQuality));
 Result =  min(Result, 300);
 " );
 
-#This script is for future use, I have not worked one out yet, I can do it later or the rules team can do it.
-INSERT INTO math_scripts VALUES( "CalculateAttackPowerLevel",
-"PowerLevel=50");
+INSERT INTO math_scripts VALUES( "AttackDefaultDelay", "Result = Latency * 1000;" );
+INSERT INTO math_scripts VALUES( "AttackRangeDelay", "Result = Latency * 1000 + Distance * 100;" );

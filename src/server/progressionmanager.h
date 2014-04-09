@@ -65,7 +65,7 @@ public:
 
     void StartTraining(Client* client, psCharacter* trainer);
 
-    csHash< csString, csString> &GetAffinityCategories()
+    csHash<csString, csString> &GetAffinityCategories()
     {
         return affinitycategories;
     }

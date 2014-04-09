@@ -38,6 +38,7 @@
 #include "psitemstats.h"
 #include "psitem.h"
 #include "deleteobjcallback.h"
+#include "combatmanager.h"
 
 using namespace CS;
 
@@ -45,7 +46,6 @@ class psQuestPrereqOp;
 class psCharacter;
 class psAttack;
 class Client;
-class gemObject;
 class gemActor;
 class ProgressionScript;
 class MathExpression;
@@ -68,40 +68,43 @@ struct psAttackType
 
 };
 
-
 struct psAttackCost// may be expanded later if more balance is needed
 {
     float physStamina;
 };
 
-
 /**
- * Represents an Attack.  This is mostly data that is cached in from the
- * database to represent what a attack is. It contains details such as the
- * required glyphs as well as the effect of the spell.
+ * Represents an Attack.  This is mostly data that is cached from the
+ * database to represent what an attack is.
  *
- * This is going to be very close to how a spell works but more in touch with melee adn range style.
+ * This is going to be very close to how a spell works but more in touch with melee and range style.
  */
-class psAttack :  public csRefCount
+class psAttack : public csRefCount
 {
 public:
-
-    virtual bool Load(iResultRow &row) = 0;
-
+    psAttack();
+    ~psAttack();
 
     /**
-     * Calls an attack.
+     * Initialize the attack from the database entry.
      */
-    virtual bool Attack(gemObject* attacker,gemObject* target,INVENTORY_SLOT_NUMBER slot)  = 0;
-    /**
-     * Once the combat event is called, this meathod runs preattack checks and runs all calculations needed before the combat event is applied
-     */
-    virtual void Affect(psCombatAttackGameEvent* event)  = 0;
-    /**
-     * this is just a check to see if the attack can be used by the character
-     */
-    virtual bool CanAttack(Client* client) = 0;
+    bool Load(iResultRow& row);
 
+    /**
+     * This is a check to see if the attack can be used by the character.
+     */
+    bool CanAttack(Client* client);
+
+    /**
+     * Schedules an attack.
+     */
+    bool Attack(gemActor* attacker, gemActor* target, INVENTORY_SLOT_NUMBER slot);
+
+    /**
+     * Once the combat event is called, this meathod runs preattack checks
+     * and runs all calculations needed before the combat event is applied.
+     */
+    virtual void Affect(psCombatAttackGameEvent* event);
 
     /** gets the id
      * @return the attack id
@@ -110,6 +113,7 @@ public:
     {
         return id;
     }
+
     /** Gets the Name
      * @return returns the name of attack
      */
@@ -117,6 +121,7 @@ public:
     {
         return name;
     }
+
     /** Gets the attack icon string
      *@return attack icon image string
      */
@@ -124,6 +129,7 @@ public:
     {
         return image;
     }
+
     /** Gets the attack description
      *  @return attack description
      */
@@ -132,33 +138,36 @@ public:
         return description;
     }
 
-    const float GetSpeed() const
-    {
-        return speed;
-    }
-
     psAttackType* GetType() const
     {
         return type;
     }
-    virtual bool IsDualWield(psCharacter* attacker) = 0;
-
-    /**
-     * says if the attack has been queued from the UI as special attack
-     */
-    virtual bool IsQueuedInClient() = 0;
 
 protected:
+    int CalculateAttack(psCombatAttackGameEvent* event, psItem* subWeapon = NULL);
+    void AffectTarget(gemActor* target, psCombatAttackGameEvent* event, int attack_result);
 
-    int id; ///< The stored ID of the attack
-    csString name; ///< The stored name of the attack
-    csString image; ///< the address/id of the icon for the attack
-    csString description;///<the attack description
-    psAttackType* type; ///< the attack type
-    float speed;  ///< the speed of the attack
-    //I am trying to figure out which members/variables should be given to "psattack" and which ones to only the children. so this will
-    // likely change a lot more
+    int id;                     ///< The stored ID of the attack
+    csString name;              ///< The stored name of the attack
+    csString image;             ///< the address/id of the icon for the attack
+    csString animation;         ///< possible attack animation
+    csString description;       ///<the attack description
+    psAttackType* type;         ///< the attack type
+    csRef<psQuestPrereqOp> requirements; ///< all non weapon based attack requirements.
+    csRef<psQuestPrereqOp> TypeRequirements; ///< all Attack Type based requirements(not handled as a script)
 
+    /// Delay in milliseconds before attack "hits" or has an effect.
+    MathScript* attackDelay;
+    /// The Max Range of the attack (Meters)
+    MathExpression* attackRange;
+    /// AOE Radius: (Power, WaySkill, RelatedStat) -> Meters
+    MathExpression* aoeRadius;
+    /// AOE Angle: (Power, WaySkill, RelatedStat) -> Degrees
+    MathExpression* aoeAngle;
+    /// Chance of Success
+    MathScript* damage_script;
+    /// The progression script: (Power, Caster, Target) -> (side effects)
+    ProgressionScript* outcome;
 };
 
 //-----------------------------------------------------------------------------
@@ -169,79 +178,70 @@ protected:
 class psCombatAttackGameEvent : public psGameEvent, public iDeleteObjectCallback
 {
 public:
-    csWeakRef<gemObject>  attacker;  ///< Entity who instigated this attack
-    csWeakRef<gemObject>  target;    ///< Entity who is target of this attack
-    psCharacter* attackerdata;       ///< the attackers data
-    psCharacter* targetdata;         ///< the targets data
-    int TargetCID;                   ///< ClientID of target
-    int AttackerCID;                 ///< ClientID of attacker
-
-    float MaxRange; ///the maximum range the attack can reach
-
-    psAttack* attack;  ///< The attack
-
-    INVENTORY_SLOT_NUMBER WeaponSlot; ///< Identifier of the slot for which this attack event should process
-    psItem* weapon;                   ///< the attacking weapon
-
-    INVENTORY_SLOT_NUMBER AttackLocation;  ///< Which slot should we check the armor of?
-
-    float FinalDamage;               ///< Final damage applied to target
-
-    int   AttackResult;              ///< Code indicating the result of the attack attempt
-    int   PreviousAttackResult;      ///< The code of the previous result of the attack attempt
-
-    float max_range;                 ///< the maximum range of the attack
-    float powerLevel;                ///< the pwoer of the attack to be used in the final damage formula
-
-    int attackAnim;                  ///< the attackers animation
-    int TargetAnim;                  ///< the targets animation, likely always going to be "hit" but could be something else...
-
-    psCombatAttackGameEvent(int delayticks,
+    psCombatAttackGameEvent(csTicks delayticks,
                             psAttack* attack,
-                            gemObject* attacker,
-                            gemObject* target,
+                            gemActor* attacker,
+                            gemActor* target,
                             INVENTORY_SLOT_NUMBER weaponslot,
-                            int attackerCID,
-                            int targetCID);
-    ~psCombatAttackGameEvent();
+                            psItem* weapon);
+
+    virtual ~psCombatAttackGameEvent();
 
     virtual void Trigger();  // Abstract event processing function
+
     virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 
-    gemObject* GetTarget()
+    psAttack* GetAttack()
     {
-        return target;
-    };
-    gemObject* GetAttacker()
+        return attack;
+    }
+
+    gemActor* GetAttacker()
     {
         return attacker;
-    };
-    psCharacter* GetTargetData()
+    }
+
+    gemActor* GetTarget()
     {
-        return targetdata;
-    };
-    psCharacter* GetAttackerData()
-    {
-        return attackerdata;
-    };
+        return target;
+    }
+
     INVENTORY_SLOT_NUMBER GetWeaponSlot()
     {
-        return WeaponSlot;
-    };
+        return weaponSlot;
+    }
 
+    psItem* GetWeapon()
+    {
+        return weapon;
+    }
 
-    int GetTargetID()
+    uint32_t GetTargetID()
     {
         return TargetCID;
-    };
-    int GetAttackerID()
+    }
+
+    uint32_t GetAttackerID()
     {
         return AttackerCID;
-    };
-    int GetAttackResult()
-    {
-        return AttackResult;
-    };
+    }
 
+    // These are just here to make it easy to pass data from Affect().
+    MathEnvironment env;
+    INVENTORY_SLOT_NUMBER AttackLocation;  ///< Which slot should we check the armor of?
+    float FinalDamage;               ///< Final damage applied to target
+
+protected:
+    psAttack* attack;                ///< The attack
+    csWeakRef<gemActor> attacker;    ///< Entity who instigated this attack
+    csWeakRef<gemActor> target;      ///< Entity who is target of this attack
+    uint32_t AttackerCID;            ///< ClientID of attacker
+    uint32_t TargetCID;              ///< ClientID of target
+
+    INVENTORY_SLOT_NUMBER weaponSlot; ///< Identifier of the slot for which this attack event should process
+    // XXX There is some risk this pointer could point to trash
+    // if the item is deleted/stored.
+    psItem* weapon;                   ///< the attacking weapon
 };
+
 #endif

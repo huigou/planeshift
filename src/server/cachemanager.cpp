@@ -43,9 +43,6 @@
 #include "bulkobjects/pssectorinfo.h"
 #include "bulkobjects/psquest.h"
 #include "bulkobjects/psattack.h"
-#include "bulkobjects/psattackdefault.h"
-#include "bulkobjects/psattackmelee.h"
-#include "bulkobjects/psattackrange.h"
 #include "bulkobjects/psmerchantinfo.h"
 #include "bulkobjects/psspell.h"
 #include "bulkobjects/psglyph.h"
@@ -249,7 +246,7 @@ void CacheManager::UnloadAll()
         quests_by_id.Empty();
     }
     {
-        csHash<psAttack *>::GlobalIterator it(attacks_by_id.GetIterator ());
+        csHash<psAttack*>::GlobalIterator it(attacks_by_id.GetIterator ());
         while (it.HasNext ())
         {
             psAttack* newAttack = it.Next ();
@@ -1070,11 +1067,6 @@ bool CacheManager::PreloadStances()
 
 bool CacheManager::PreloadAttacks()
 {
-
-    unsigned int currentrow;
-    psAttack *attack;
-    csArray<psAttack *> failed;
-
     Result result(db->Select("select * from attacks order by id"));
 
     if (!result.IsValid())
@@ -1083,45 +1075,25 @@ bool CacheManager::PreloadAttacks()
         return false;
     }
 
-    for (currentrow=0; currentrow<result.Count(); currentrow++)
+    for (unsigned long currentrow=0; currentrow<result.Count(); currentrow++)
     {
-        csString attackForm = result[currentrow]["form"];
+        psAttack* attack = new psAttack();
 
-        if(attackForm.CompareNoCase("melee"))
+        if (attack->Load(result[currentrow]))
         {
-
-            attack = new psAttackMelee();
-
-            if (attack->Load(result[currentrow]))
-            {
-                attacks_by_id.Put(attack->GetID(),attack);
-                // add the icon to the string cache
-                msg_strings.Request(result[currentrow]["image_name"]);
-            }
-            else
-                delete attack;
+            attacks_by_id.Put(attack->GetID(), attack);
+            // add the icon to the string cache
+            msg_strings.Request(result[currentrow]["image_name"]);
         }
-        else if(attackForm.CompareNoCase("range"))
-        {
-            attack = new psAttackRange();
-
-            if (attack->Load(result[currentrow]))
-            {
-                attacks_by_id.Put(attack->GetID(),attack);
-                // add the icon to the string cache
-                msg_strings.Request(result[currentrow]["image_name"]);
-            }
-            else
-                delete attack;
-        }
+        else
+            delete attack;
     }
-
 
     Notify2( LOG_STARTUP, "%lu Attacks Loaded", result.Count() );
     return true;
 }
 
-csHash<psAttack *>::GlobalIterator CacheManager::GetAttackIterator()
+csHash<psAttack*>::GlobalIterator CacheManager::GetAttackIterator()
 {
     return attacks_by_id.GetIterator();
 }
@@ -1144,6 +1116,7 @@ bool CacheManager::UnloadAttack(int id)
 
     return ret;
 }
+
 bool CacheManager::LoadAttack(int id)
 {
     if(attacks_by_id.Get(id, NULL))
@@ -1162,20 +1135,13 @@ bool CacheManager::LoadAttack(int id)
         return false;
     }
 
-    if(csString(result[id].GetString("form")).CompareNoCase("melee"))
+    attack = new psAttack();
+    if(attack->Load(result[id]))
     {
-        attack = new psAttackMelee();
-        attack->Load(result[id]);
         attacks_by_id.Put(attack->GetID(),attack);
         return true;
     }
-    else if(csString(result[id].GetString("form")).CompareNoCase("range"))
-    {
-        attack = new psAttackRange();
-        attack->Load(result[id]);
-        attacks_by_id.Put(attack->GetID(),attack);
-        return true;
-    }
+    delete attack;
     return false;
 }
 
@@ -1183,7 +1149,6 @@ bool CacheManager::PreloadQuests()
 {
     unsigned int currentrow;
     psQuest* quest;
-    csArray<psQuest*> failed;
 
     Result result(db->Select("select * from quests order by id"));
 
@@ -1270,7 +1235,6 @@ bool CacheManager::LoadQuest(int id)
             CPrintf(CON_ERROR, "Could not load quest prerequisites for quest id %d", quest->GetID());
         }
     }
-
 
     if(success)
     {
@@ -2583,14 +2547,15 @@ void CacheManager::GetCompressedMessageStrings(char* &data, unsigned long &size,
     digest = compressed_msg_strings_digest;
 }
 
-psAttack *CacheManager::GetAttackByID(unsigned int id)
+psAttack* CacheManager::GetAttackByID(unsigned int id)
 {
-    psAttack *attack = attacks_by_id.Get(id,NULL);
+    psAttack *attack = attacks_by_id.Get(id, NULL);
     return attack;
 }
-csArray<psAttack* > CacheManager::GetAllAttacks()
+
+csArray<psAttack*> CacheManager::GetAllAttacks()
 {
-    csHash<psAttack *>::GlobalIterator it (attacks_by_id.GetIterator ());
+    csHash<psAttack*>::GlobalIterator it (attacks_by_id.GetIterator ());
     csArray<psAttack*> attacks;
     while(it.HasNext())
     {
@@ -2598,12 +2563,13 @@ csArray<psAttack* > CacheManager::GetAllAttacks()
     }
     return attacks;
 }
-psAttack *CacheManager::GetAttackByName(const char *name)
+
+psAttack* CacheManager::GetAttackByName(const char *name)
 {
     if (name==NULL)
         return NULL;
 
-    csHash<psAttack *>::GlobalIterator it (attacks_by_id.GetIterator ());
+    csHash<psAttack*>::GlobalIterator it (attacks_by_id.GetIterator ());
     while (it.HasNext())
     {
         psAttack* attack = it.Next();
@@ -2612,7 +2578,8 @@ psAttack *CacheManager::GetAttackByName(const char *name)
     }
     return NULL;
 }
-psQuest *CacheManager::GetQuestByID(unsigned int id)
+
+psQuest* CacheManager::GetQuestByID(unsigned int id)
 {
     psQuest* quest = quests_by_id.Get(id, NULL);
     return quest;
@@ -2653,9 +2620,6 @@ psQuest* CacheManager::AddDynamicQuest(const char* name, psQuest* parentQuest, i
     return ptr;
 }
 
-
-
-
 psSkillInfo* CacheManager::GetSkillByID(unsigned int id)
 {
     return skillinfo_IDHash.Get((int)id, NULL);
@@ -2677,7 +2641,6 @@ void CacheManager::GetSkillsListbyCategory(csArray <psSkillInfo*> &listskill, in
     return;
 }
 
-
 csHash<psSectorInfo*>::GlobalIterator CacheManager::GetSectorIterator()
 {
     return sectorinfo_by_name.GetIterator();
@@ -2697,7 +2660,6 @@ psSectorInfo* CacheManager::GetSectorInfoByName(const char* name)
 
     return sectorinfo_by_name.Get(csHashCompute(name), NULL);
 }
-
 
 PSTRAIT_LOCATION CacheManager::ConvertTraitLocationString(const char* locationstring)
 {
@@ -2818,7 +2780,6 @@ CacheManager::TraitIterator CacheManager::GetTraitIterator()
     return traitlist.GetIterator();
 }
 
-
 PSCHARACTER_GENDER CacheManager::ConvertGenderString(const char* genderstring)
 {
     if(genderstring==NULL)
@@ -2839,7 +2800,6 @@ PSCHARACTER_GENDER CacheManager::ConvertGenderString(const char* genderstring)
 
     return PSCHARACTER_GENDER_NONE;
 }
-
 
 bool CacheManager::PreloadRaceInfo()
 {
@@ -2900,7 +2860,6 @@ psRaceInfo* CacheManager::GetRaceInfoByIndex(int idx)
     return raceinfolist.Get(idx);
 }
 
-
 // TODO: This should be done faster, probably not with an array
 psRaceInfo* CacheManager::GetRaceInfoByID(unsigned int id)
 {
@@ -2956,7 +2915,6 @@ psRaceInfo* CacheManager::GetRaceInfoByNameGender(unsigned int id, PSCHARACTER_G
     }
     return NULL;
 }
-
 
 psRaceInfo* CacheManager::GetRaceInfoByMeshName(const csString &meshname)
 {
@@ -3036,7 +2994,6 @@ psAttackType *CacheManager::GetAttackTypeByName(csString name)
     return NULL;
 }
 
-
 psWeaponType *CacheManager::GetWeaponTypeByID(unsigned int id)
 {
     size_t i;
@@ -3066,7 +3023,6 @@ psWeaponType *CacheManager::GetWeaponTypeByName(csString name)
     }
     return NULL;
 }
-
 
 // TODO:  This function needs to be implemented in a fast fashion
 psWay* CacheManager::GetWayByID(unsigned int id)
@@ -3345,7 +3301,6 @@ PSITEMSTATS_STAT CacheManager::ConvertAttributeString(const char* attributestrin
     return PSITEMSTATS_STAT_NONE;
 }
 
-
 PSSKILL CacheManager::ConvertSkillString(const char* skillstring)
 {
     if(skillstring==NULL)
@@ -3453,6 +3408,7 @@ bool CacheManager::PreloadAttackTypes()
     Notify2( LOG_STARTUP, "%lu Attack Types Loaded", types.Count());
     return true;
 }
+
 bool CacheManager::PreloadWays()
 {
     Result ways(db->Select("SELECT * from ways"));
@@ -3591,7 +3547,6 @@ bool CacheManager::PreloadMathScripts()
     LOOKUP(skillValuesGet, "GetSkillValues");
     LOOKUP(baseSkillValuesGet, "GetSkillBaseValues");
     LOOKUP(setBaseSkillsScript, "SetBaseSkills");
-    LOOKUP(calc_damage, "Calculate Damage");
     LOOKUP(calc_decay, "Calculate Decay");
     LOOKUP(calcItemPrice, "Calc Item Price");
     LOOKUP(calcItemSellPrice, "Calc Item Sell Price");
@@ -3604,7 +3559,6 @@ bool CacheManager::PreloadMathScripts()
     LOOKUP(doDamage, "DoDamageScript");
     LOOKUP(staminaMove, "StaminaMove");
     LOOKUP(msAffinity, "CalculateFamiliarAffinity");
-    LOOKUP(attackPowerLevel, "CalculateAttackPowerLevel");
     return true;
 }
 
@@ -3916,7 +3870,6 @@ psAccountInfo* CacheManager::GetAccountInfoByID(AccountID accountid)
     }
 }
 
-
 psAccountInfo* CacheManager::GetAccountInfoByCharID(PID charid)
 {
     unsigned int accountid = db->SelectSingleNumber("SELECT account_id from characters where id=%u", charid.Unbox());
@@ -3951,7 +3904,6 @@ psAccountInfo* CacheManager::GetAccountInfoByUsername(const char* username)
         return NULL;
     }
 }
-
 
 bool CacheManager::UpdateAccountInfo(psAccountInfo* ainfo)
 {
@@ -4122,7 +4074,6 @@ bool CacheManager::RemoveAlliance(psGuildAlliance* which)
     delete which;
     return true;
 }
-
 
 float CacheManager::GetArmorVSWeaponResistance(const char* armor_type, const char* weapon_type)
 {

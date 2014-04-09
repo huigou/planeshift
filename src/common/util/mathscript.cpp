@@ -903,7 +903,7 @@ MathExpression* MathExpression::Create(const char *expression, const char *name)
     MathExpression* exp = new MathExpression;
     exp->name = name;
 
-    if (!exp->Parse(expression))
+    if (!expression || expression[0] == '\0' || !exp->Parse(expression))
     {
         delete exp;
         return NULL;

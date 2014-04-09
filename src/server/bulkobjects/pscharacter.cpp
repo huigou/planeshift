@@ -171,7 +171,7 @@ psCharacter::psCharacter() : inventory(this),
     hired = false;
     isStatue = false;
      
-    attackQueue.AttachNew(new psAttackQueue());
+    attackQueue.AttachNew(new psAttackQueue(this));
 }
 
 psCharacter::~psCharacter()
