@@ -1027,7 +1027,7 @@ csArray<PublishDestination> &gemObject::GetMulticastClients()
     return proxlist->GetClients();
 }
 
-uint32  gemObject::GetClientID()
+uint32_t  gemObject::GetClientID()
 {
     return proxlist->GetClientID();
 }
@@ -2265,18 +2265,28 @@ gemActor::~gemActor()
 
 double gemActor::GetProperty(MathEnvironment* env, const char* prop)
 {
-    csString property(prop);
-
-    if(property == "CombatStance")
+    if(!strcasecmp(prop, "stamina_drain_p"))
+        return combat_stance.stamina_drain_P;
+    if(!strcasecmp(prop, "stamina_drain_m"))
+        return combat_stance.stamina_drain_M;
+    if(!strcasecmp(prop, "attack_speed_mod"))
+        return combat_stance.attack_speed_mod;
+    if(!strcasecmp(prop, "attack_damage_mod"))
+        return combat_stance.attack_damage_mod;
+    if(!strcasecmp(prop, "defense_avoid_mod"))
+        return combat_stance.defense_avoid_mod;
+    if(!strcasecmp(prop, "defense_absorb_mod"))
+        return combat_stance.defense_absorb_mod;
+    if(!strcasecmp(prop, "combatstance"))
     {
         // Backwards compatibility.
-        return GetCombatStance().stance_id;
+        return combat_stance.stance_id;
     }
-    else if(property == "IsAdvisorBanned")
+    if(!strcasecmp(prop, "isadvisorbanned"))
     {
         return (double)(GetClient() ? GetClient()->IsAdvisorBanned() : true);
     }
-    else if(property == "AdvisorPoints")
+    if(!strcasecmp(prop, "advisorpoints"))
     {
         return (double)(GetClient() ? GetClient()->GetAdvisorPoints() : 0);
     }

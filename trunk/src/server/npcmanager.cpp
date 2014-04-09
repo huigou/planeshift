@@ -1053,7 +1053,7 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 gemNPC* attacker = dynamic_cast<gemNPC*>(gemSupervisor->FindObject(attacker_id));
                 if(attacker && attacker->IsAlive())
                 {
-                    gemObject* target   = (gemObject*)gemSupervisor->FindObject(target_id);
+                    gemActor* target = dynamic_cast<gemActor*>(gemSupervisor->FindObject(target_id));
                     if(!target)
                     {
                         attacker->SetTarget(target);

@@ -37,14 +37,14 @@
 #include "psattackqueue.h"
 
 
-psAttackQueue::psAttackQueue()
+psAttackQueue::psAttackQueue(psCharacter* pschar) :
+    character(pschar)
 {
-    max = DEFAULT_ATTACKQUEUE_SIZE;
 }
 
-bool psAttackQueue::Push(psAttack* attack, psCharacter* character)
+bool psAttackQueue::Push(psAttack* attack)
 {
-    if(getAttackListCount() < max)
+    if(getAttackListCount() < DEFAULT_ATTACKQUEUE_SIZE)
     {
         attackList.PushBack(attack);
         psserver->GetCombatManager()->sendAttackQueue(character);
@@ -54,10 +54,9 @@ bool psAttackQueue::Push(psAttack* attack, psCharacter* character)
     return false;
 }
 
-csList< csRef<psAttack> > psAttackQueue::getAttackList()
+csList< csRef<psAttack> >& psAttackQueue::getAttackList()
 {
     return attackList;
-
 }
 
 size_t psAttackQueue::getAttackListCount()
@@ -72,41 +71,24 @@ size_t psAttackQueue::getAttackListCount()
     return i;
 }
 
-bool psAttackQueue::PopDelete()
+bool psAttackQueue::Pop()
 {
-    if(getAttackListCount() > 0)
-    {
-        return attackList.PopBack();
-    }
-    else
-        return false;
+    bool val = attackList.PopFront();
+    psserver->GetCombatManager()->sendAttackQueue(character);
+    return val;
 }
 
-psAttack* psAttackQueue::Pop()
+psAttack* psAttackQueue::First()
 {
-    if(getAttackListCount() > 0)
+    if(!attackList.IsEmpty())
     {
         return attackList.Front();
     }
-    else
-        return 0;
+    return 0;
 }
 
 void psAttackQueue::Purge()
 {
     attackList.DeleteAll();
-}
-
-
-float psAttackQueue::GetTotalQueueTime()
-{
-    float totalTime = 0;
-    csList<csRef<psAttack> >::Iterator it(attackList);
-    while(it.HasNext())
-    {
-        psAttack* attack = it.Next();
-        totalTime += attack->GetSpeed();
-    }
-
-    return totalTime;
+    psserver->GetCombatManager()->sendAttackQueue(character);
 }

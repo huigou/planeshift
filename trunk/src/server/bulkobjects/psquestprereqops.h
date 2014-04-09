@@ -1366,7 +1366,7 @@ class psPrereqOpAttackType: public psQuestPrereqOp
      * Construct an attack type
      *
      */
-     psPrereqOpAttackType(psAttackType* attackType) : attackType(attackType){};
+    psPrereqOpAttackType(psAttackType* attackType) : attackType(attackType) {}
 
     /**
      * Destructor
@@ -1379,7 +1379,7 @@ class psPrereqOpAttackType: public psQuestPrereqOp
      * @param  character The character that are checking for a requirement
      * @return True if specs are correct.
      */
-    virtual bool Check(psCharacter * character);
+    virtual bool Check(psCharacter* character);
 
     /**
      * Convert the requirement operator to a xml string

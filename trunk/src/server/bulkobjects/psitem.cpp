@@ -1850,7 +1850,6 @@ float psItem::GetLatency()
     return current_stats->Weapon().Latency();
 }
 
-
 float psItem::GetDamage(PSITEMSTATS_DAMAGETYPE dmgtype)
 {
     //we have a modification overlay?

@@ -62,14 +62,12 @@ public:
     virtual ~CombatManager();
 
     /// This is how you start an attack sequence
-    bool AttackSomeone(gemActor* attacker, gemObject* target, const Stance& stance);
+    bool AttackSomeone(gemActor* attacker, gemActor* target, const Stance& stance);
 
     /// This is how you break an attack sequence off, through death or user command.
     void StopAttack(gemActor* attacker);
 
     bool InPVPRegion(csVector3 &pos, iSector* sector);
-
-    void HandleCombatEvent(psCombatAttackGameEvent* event);
 
     /** @brief Gets combat stance by name
      *

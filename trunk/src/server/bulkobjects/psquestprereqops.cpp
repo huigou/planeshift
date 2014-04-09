@@ -815,9 +815,8 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpSkill::Copy()
 
 
 
-bool psPrereqOpAttackType::Check(psCharacter * character)
+bool psPrereqOpAttackType::Check(psCharacter* character)
 {
-
     for (int slot=0; slot<PSCHARACTER_SLOT_BULK1; slot++)
     {
         if (character->Inventory().CanItemAttack((INVENTORY_SLOT_NUMBER) slot))
@@ -828,6 +827,7 @@ bool psPrereqOpAttackType::Check(psCharacter * character)
 
     return false;
 }
+
 bool psPrereqOpAttackType::checkWeapon(psCharacter *character, int slot)
 {
 
@@ -870,8 +870,7 @@ csString psPrereqOpAttackType::GetScriptOp()
 
 csPtr<psQuestPrereqOp> psPrereqOpAttackType::Copy()
 {
-    csRef<psPrereqOpAttackType> copy;
-    copy.AttachNew(new psPrereqOpAttackType(attackType));
+    psPrereqOpAttackType* copy = new psPrereqOpAttackType(attackType);
     return csPtr<psQuestPrereqOp>(copy);
 }
 

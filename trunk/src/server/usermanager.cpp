@@ -764,7 +764,7 @@ void UserManager::HandleTargetEvent(MsgEntry* me, Client* notused)
     if(targetevent.target)
         targeted = clients->Find(targetevent.target->GetClientID());
 
-    psserver->combatmanager->StopAttack(targeter->GetActor());
+    psserver->GetCombatManager()->StopAttack(targeter->GetActor());
 
     if(!targeted
             && dynamic_cast<gemNPC*>(targetevent.target)
@@ -1580,7 +1580,7 @@ void UserManager::StopAllCombat(Client* client)
     if(client->GetDuelClientCount() > 0)
         YieldDuel(client);
     else
-        psserver->combatmanager->StopAttack(client->GetActor());
+        psserver->GetCombatManager()->StopAttack(client->GetActor());
 }
 
 void UserManager::HandleAttack(psUserCmdMessage &msg,Client* client)
@@ -1597,32 +1597,42 @@ void UserManager::HandleAttack(psUserCmdMessage &msg,Client* client)
 
     Attack(stance, client);
 }
+
 void UserManager::HandleQueueAttack(psUserCmdMessage& msg, Client *client)
 {
-   psCharacter* character = client->GetCharacterData();
-   psAttack* attack = cacheManager->GetAttackByName(msg.attack);
-   if(attack)
-   {
-       if(attack->CanAttack(client))
-       {
-            if(character->GetAttackQueue()->Push(cacheManager->GetAttackByName(msg.attack), client->GetCharacterData()))
-                return;
-            else
+    psAttack* attack = cacheManager->GetAttackByName(msg.attack);
+    if(attack)
+    {
+        if(attack->CanAttack(client))
+        {
+            gemActor* attacker = client->GetActor();
+            if(attacker->GetMode() != PSCHARACTER_MODE_COMBAT)
+            {
+                const Stance& stance(psserver->GetCombatManager()->GetStance(psserver->GetCacheManager(), "Normal"));
+                Attack(stance, client);
+                if(attacker->GetMode() != PSCHARACTER_MODE_COMBAT)
+                    return;
+            }
+
+            psCharacter* character = client->GetCharacterData();
+            if(!character->GetAttackQueue()->Push(attack))
             {
                 psserver->SendSystemError(client->GetClientNum(),"The attack queue is currently full");
+                return;
             }
-       }
-       else
-       {
-           psserver->SendSystemError(client->GetClientNum(),"You do not meet the requirements of that attack.");
-       }
-   }
-   else
-       psserver->SendSystemError(client->GetClientNum(),"That attack does not exist");
+        }
+        else
+        {
+            psserver->SendSystemError(client->GetClientNum(),"You do not meet the requirements of that attack.");
+        }
+    }
+    else
+        psserver->SendSystemError(client->GetClientNum(),"That attack does not exist");
 }
+
 void UserManager::HandleStopAttack(psUserCmdMessage &msg,Client* client)
 {
-    psserver->combatmanager->StopAttack(client->GetActor());
+    psserver->GetCombatManager()->StopAttack(client->GetActor());
 }
 
 void UserManager::Attack(Stance stance, Client* client)
@@ -1635,10 +1645,10 @@ void UserManager::Attack(Stance stance, Client* client)
 
     csString msg;
 
-    gemObject* target = client->GetTargetObject();
+    gemActor* target = dynamic_cast<gemActor*>(client->GetTargetObject());
     if(client->GetActor()->IsAllowedToAttack(target, msg))
     {
-        psserver->combatmanager->AttackSomeone(client->GetActor(), target, stance);
+        psserver->GetCombatManager()->AttackSomeone(client->GetActor(), target, stance);
     }
     else
     {
@@ -2796,7 +2806,7 @@ void UserManager::YieldDuel(Client* client)
         {
             canYield = true;
             if(duelClient->GetTargetObject() == client->GetActor())
-                psserver->combatmanager->StopAttack(duelClient->GetActor());
+                psserver->GetCombatManager()->StopAttack(duelClient->GetActor());
             psserver->SendSystemOK(client->GetClientNum(), "You've yielded to %s!", duelClient->GetName());
             psserver->SendSystemOK(duelClient->GetClientNum(), "%s has yielded!", client->GetName());
         }
@@ -2818,7 +2828,7 @@ void UserManager::SwitchAttackTarget(Client* targeter, Client* targeted)
     if(targeted)
         Attack(targeter->GetActor()->GetCombatStance(), targeter);
     else
-        psserver->combatmanager->StopAttack(targeter->GetActor());
+        psserver->GetCombatManager()->StopAttack(targeter->GetActor());
 }
 
 /*---------------------------------------------------------------------*/

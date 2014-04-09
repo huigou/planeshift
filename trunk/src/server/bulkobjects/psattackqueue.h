@@ -42,59 +42,44 @@ class psAttackQueue : public csRefCount
 {
 public:
 
-    /* Constructor
-     *
+    /*
+     * Constructor
      */
-    psAttackQueue();
+    psAttackQueue(psCharacter* pschar);
 
     /*
-     *pushes attack into the last slot of the queue
-     *@param attack the attack to push into the last slot of the queue
+     * Pushes attack into the last slot of the queue.
+     * @param attack the attack to push into the last slot of the queue
      */
-    bool Push(psAttack* attack, psCharacter* character);
+    bool Push(psAttack* attack);
 
     /*
-     * deletes the first slot in the queue
+     * Removes the first slot in the queue.
      */
-    bool PopDelete();
+    bool Pop();
 
     /*
-     * Returns the first slot in the queue
+     * Returns the first slot in the queue without removing it.
      */
-    psAttack* Pop();
+    psAttack* First();
 
     /*
-     *Dumps all items in the queue
+     * Discards all items in the queue.
      */
     void Purge();
 
     /*
-     * Calculate current total time of the queued elements
+     * Returns the list of special attacks in the queue.
      */
-    float GetTotalQueueTime();
-
-    /*
-     * Returns th list of special attacks in the queue
-     */
-    csList< csRef<psAttack> > getAttackList();
+    csList< csRef<psAttack> >& getAttackList();
 
     /*
      * Returns the number of special attacks in the queue.
      */
     size_t getAttackListCount();
 
-    /*
-     * returns the maximum number of elements in the queue
-     */
-    size_t getMax()
-    {
-        return DEFAULT_ATTACKQUEUE_SIZE;
-    }
-
-
 private:
     csList< csRef<psAttack> > attackList; ///< the list of attacks in the queue
-    size_t max; ///later max number of elements will be influenced based whether the player is in combat or not.
-
+    psCharacter* character;
 };
 #endif

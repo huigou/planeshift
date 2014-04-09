@@ -473,7 +473,6 @@ public:
     MathScript* GetSkillValuesGet() { return skillValuesGet; }
     MathScript* GetBaseSkillValuesGet() { return baseSkillValuesGet; }
     MathScript* GetSetBaseSkillsScript() { return setBaseSkillsScript; }
-    MathScript* GetCalcDamage() { return calc_damage; }
     MathScript* GetCalcDecay() { return calc_decay; }
     MathScript* GetCalcItemPrice() { return calcItemPrice; }
     MathScript* GetCalcItemSellPrice() { return calcItemSellPrice; }
@@ -486,7 +485,6 @@ public:
     MathScript* GetDoDamage() { return doDamage; }
     MathScript* GetStaminaMove() { return staminaMove; }
     MathScript* GetFamiliarAffinity() { return msAffinity; }
-    MathScript* GetAttackPowerLevel() { return attackPowerLevel; }
 
     // Spells
     typedef csPDelArray<psSpell>::Iterator SpellIterator;
@@ -959,7 +957,6 @@ protected:
     MathScript* skillValuesGet; ///< Script to get the current skill values
     MathScript* baseSkillValuesGet; ///< Script to get the base skill values
     MathScript* setBaseSkillsScript;
-    MathScript* calc_damage; ///< This is the particular calculation for damage.
     MathScript* calc_decay; ///< This is the particular calculation for decay.
     MathScript* calcItemPrice;
     MathScript* calcItemSellPrice;
@@ -972,7 +969,6 @@ protected:
     MathScript* doDamage;
     MathScript* staminaMove;
     MathScript* msAffinity;
-    MathScript* attackPowerLevel;
 };
 
 
