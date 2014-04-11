@@ -32,7 +32,8 @@
 #define ADD     3000
 #define EDIT    4000
 
-pawsModsWindow::pawsModsWindow()
+pawsModsWindow::pawsModsWindow() :
+    spawnw(NULL)
 {
     for (unsigned i = 0; i < psGMSpawnMods::ITEM_NUM_TYPES; i++)
     {
