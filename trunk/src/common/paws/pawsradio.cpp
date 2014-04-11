@@ -424,12 +424,12 @@ bool pawsRadioButtonGroup::Setup(iDocumentNode* node)
         if(factory != "pawsRadioButton")        //ignore other widgets
             continue;
         widgetNodeWidget = PawsManager::GetSingleton().CreateWidget("pawsRadioButton");
-        AddChild(widgetNodeWidget);
-        if(!widgetNodeWidget->Load(widgetNode))
+        if(!widgetNodeWidget || !widgetNodeWidget->Load(widgetNode))
         {
             delete widgetNode;
             return false;
         }
+        AddChild(widgetNodeWidget);
     }
 
     return true;
