@@ -1306,6 +1306,7 @@ int QuestManager::ParseCustomScript(int id, const csString& current_npc, const c
         }
         else // Unknown line
         {
+            delete pending_menu;
             Debug2(LOG_QUESTS, 0,"Got unknown line '%s'", block.GetData());
             lastError.Format("Got unknown line '%s'", block.GetData());
             return line_number;
