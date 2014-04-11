@@ -44,9 +44,11 @@
 
 
 pawsConfigActiveMagic::pawsConfigActiveMagic() :
+    ActiveMagicWindow(NULL),
     showEffects(NULL),
     autoResize(NULL),
     useImages(NULL),
+    showWindow(NULL),
     buttonHeight(NULL),
     buttonWidthMode(NULL),
     buttonWidth(NULL),
