@@ -50,7 +50,6 @@ private:
     csArray<PlayerGroup*> DuelGroups;
 
 public:
-    PlayerGroup();
     PlayerGroup(GroupManager* mgr, gemActor* leader);
     ~PlayerGroup();
 

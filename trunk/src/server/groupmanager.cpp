@@ -103,11 +103,6 @@ public:
     void HandleAnswer(const csString &answer);
 };
 
-PlayerGroup::PlayerGroup()
-    :id(next_id++)
-{
-}
-
 PlayerGroup::PlayerGroup(GroupManager* mgr, gemActor* leader)
     :manager(mgr), leader(leader),id(next_id++)
 {
