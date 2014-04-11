@@ -2338,7 +2338,6 @@ int com_questreward(const char* str)
 
     // If the character is online, update the stats live.  Otherwise we need to load the character data to add this item to
     //  an appropriate inventory slot.
-    psCharacter* chardata=NULL;
     Client* client = psserver->GetNetManager()->GetConnections()->Find(charactername.GetData());
     csArray<QuestRewardItem> items;
     items.Push(reward);
@@ -2346,12 +2345,10 @@ int com_questreward(const char* str)
     if(!client)
     {
         // Character is not online
-        chardata=psserver->CharacterLoader.LoadCharacterData(characteruid,true);
         return 0;
     }
-    else
-        chardata=client->GetCharacterData();
 
+    psCharacter* chardata=client->GetCharacterData();
     if(chardata==NULL)
     {
         CPrintf(CON_CMDOUTPUT ,"Could not get character data for specified character.\n");
