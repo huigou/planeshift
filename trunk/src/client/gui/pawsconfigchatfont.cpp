@@ -44,6 +44,7 @@
 
 
 pawsConfigChatFont::pawsConfigChatFont() :
+    ChatWindow(NULL),
     textFont(NULL),
     textSize(NULL),
     textSpacing(NULL)
