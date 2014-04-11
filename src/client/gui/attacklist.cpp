@@ -38,14 +38,15 @@
 #include "gui/pawscontrolwindow.h"
 
 
-pawsAttackBookWindow::pawsAttackBookWindow()
+pawsAttackBookWindow::pawsAttackBookWindow() :
+    attackList(NULL),
+    attackDescription(NULL),
+    attackImage(NULL)
 {
-    selectedAttack.Clear();
 }
 
 pawsAttackBookWindow::~pawsAttackBookWindow()
 {
-
 }
 
 bool pawsAttackBookWindow::PostSetup()
