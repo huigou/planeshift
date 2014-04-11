@@ -171,8 +171,11 @@ Downloader::~Downloader()
     if(curl)
         curl_easy_cleanup(curl);
 
-    fileUtil->RemoveFile(UPDATE_CACHE_DIR, true);
-    delete fileUtil;
+    if(fileUtil)
+    {
+        fileUtil->RemoveFile(UPDATE_CACHE_DIR, true);
+        delete fileUtil;
+    }
 }
 
 void Downloader::Init(iVFS* _vfs)
@@ -181,6 +184,8 @@ void Downloader::Init(iVFS* _vfs)
     if(!curl)
     {
     	UpdaterEngine::GetSingletonPtr()->PrintOutput("CURL failed to initialize!\n");
+        curlerror = NULL;
+        fileUtil = NULL;
         return;
     }
     curlerror = new char[CURL_ERROR_SIZE];
