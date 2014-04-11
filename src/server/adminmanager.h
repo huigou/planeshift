@@ -376,7 +376,10 @@ public:
      * @param targetTypes the allowed target types
      */
     AdminCmdTargetParser(int targetTypes)
-        : targetObject(NULL), targetActor(NULL), targetClient(NULL), duplicateActor(false), target(), targetID(), allowedTargetTypes(targetTypes), targetTypes(ADMINCMD_TARGET_UNKNOWN), targetAccountID()
+        : targetObject(NULL), targetActor(NULL), targetClient(NULL),
+        area(false), duplicateActor(false), target(), targetID(),
+        allowedTargetTypes(targetTypes), targetTypes(ADMINCMD_TARGET_UNKNOWN),
+        targetAccountID()
     {}
 
     /** @brief the default destructor.
