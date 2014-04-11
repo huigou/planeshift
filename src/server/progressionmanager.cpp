@@ -85,6 +85,8 @@ ProgressionManager::ProgressionManager(ClientConnectionSet* ccs, CacheManager* c
     cacheManager = cachemanager;
 
     calc_dynamic_experience = psserver->GetMathScriptEngine()->FindScript("Calculate Dynamic Experience");
+    progressionRequiresTraining = false;
+    progressionMaxStatValue = 0;
 }
 
 
