@@ -7031,9 +7031,8 @@ void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
         }
 
         int index;
-        psPathPoint* point = NULL;
 
-        if((point = pathNetwork->FindPoint(path, myPos, mySector, data->radius, index)) == NULL)
+        if(!pathNetwork->FindPoint(path, myPos, mySector, data->radius, index))
         {
             psserver->SendSystemError(me->clientnum, "Found no path point near you at selected path %s.",path->GetName());
             return;
