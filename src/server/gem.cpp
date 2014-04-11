@@ -3650,7 +3650,7 @@ void gemActor::SetMode(PSCHARACTER_MODE newmode, uint32_t extraData)
 
 void gemActor::SetCombatStance(const Stance &stance)
 {
-    CS_ASSERT(stance.stance_id >= 0 && stance.stance_id <= cacheManager->stances.GetSize());
+    CS_ASSERT(stance.stance_id < cacheManager->stances.GetSize());
 
     if(combat_stance.stance_id == stance.stance_id)
         return;
