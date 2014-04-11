@@ -466,7 +466,7 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
     }
 
     // These should not be NULL
-    CS_ASSERT(subWidget); CS_ASSERT(labelBox); CS_ASSERT(textBox); CS_ASSERT(shortcutText); CS_ASSERT(iconDisplay); CS_ASSERT(iconPalette);
+    CS_ASSERT(subWidget); CS_ASSERT(labelBox); CS_ASSERT(textBox); CS_ASSERT(shortcutText); CS_ASSERT(iconDisplay);
 
     switch ( widget->GetID() )
     {
