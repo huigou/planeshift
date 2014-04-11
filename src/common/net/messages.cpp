@@ -3106,6 +3106,7 @@ psAttackBookMessage::psAttackBookMessage()
     msg.AttachNew(new MsgEntry());
     msg->clientnum = 0;
     msg->SetType(MSGTYPE_ATTACK_BOOK);
+    client = 0;
     size = 0;
 }
 
