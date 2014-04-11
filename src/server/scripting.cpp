@@ -371,7 +371,7 @@ protected:
 class SkillAOp : public Applied2
 {
 public:
-    SkillAOp(CacheManager* cachemanager) : Applied2()
+    SkillAOp(CacheManager* cachemanager) : Applied2(), skill(PSSKILL_NONE)
     {
         this->cachemanager = cachemanager;
     }
