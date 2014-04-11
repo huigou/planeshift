@@ -4254,6 +4254,7 @@ AdminCmdDataAssignFaction::AdminCmdDataAssignFaction(AdminManager* msgManager, M
 {
     size_t index = 1;
     bool found;
+    factionPoints = 0;
 
     // when help is requested, return immediate
     if(IsHelp(words[1]))
