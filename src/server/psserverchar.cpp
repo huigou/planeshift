@@ -1843,7 +1843,7 @@ void ServerCharManager::HandleStorageWithdraw(psGUIStorageMessage &msg, Client* 
 
         if(stackable)  // if it's stackable, try to add in on existing stacks, first
         {
-            for(psItem * newstack; (newstack = character->Inventory().AddStacked(currentitem, partcount));)
+            while(character->Inventory().AddStacked(currentitem, partcount))
             {
                 newcount += partcount;
             }
