@@ -305,7 +305,12 @@ int main(int argc, char** argv)
 	CS_REQUEST_END);
 
     NavGen* navgen = new NavGen(object_reg);
-    csInitializer::OpenApplication(object_reg);
+    if(!csInitializer::OpenApplication(object_reg))
+    {
+        csPrintf("csInitializer::OpenApplication failed!\n"
+                 "Is your CRYSTAL environment var set?");
+        return -2;
+    }
     navgen->Run();
 
     delete navgen;
