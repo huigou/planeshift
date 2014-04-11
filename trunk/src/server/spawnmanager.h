@@ -433,7 +433,6 @@ class psDespawnGameEvent : public psGameEvent
 protected:
     SpawnManager* spawnmanager;
     GEMSupervisor* gem;
-    int ticks;
     EID entity;
 
 public:
