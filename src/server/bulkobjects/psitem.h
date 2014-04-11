@@ -1294,11 +1294,6 @@ public:
         return maxrnd;
     }
 
-    csTicks GetLastSpawn()
-    {
-        return lastSpawn;
-    }
-
     /// Gets the lock strength which will be associated to this item.
     int GetLockStrength()
     {
@@ -1338,7 +1333,6 @@ private:
     int interval;          ///< Interval in msecs
     int maxrnd;            ///< Maximum random interval modifier in msecs
     float range;           ///< Range in which to spawn item
-    csTicks lastSpawn;     ///< When we last spawned it, good for something perhaps? :)
     int lock_str;          ///< The lock strength, if any, else 0.
     int lock_skill;        ///< The lock skill, if any, else 0.
     csString flags;        ///< The flags to apply to this item.

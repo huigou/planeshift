@@ -2769,8 +2769,6 @@ psItem* psScheduledItem::CreateItem() // Spawns the item
             delete item->GetScheduledItem();
             item->SetScheduledItem(newsch);
 
-            lastSpawn = csGetTicks();
-
             item->SetLoaded();  // Item is fully created
             item->Save(false);    // First save
             return item;
