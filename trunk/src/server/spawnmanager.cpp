@@ -1525,7 +1525,10 @@ psItemSpawnEvent::psItemSpawnEvent(psScheduledItem* item)
     : psGameEvent(0,item->MakeInterval(),"psItemSpawnEvent")
 {
     if(item->WantToDie())
+    {
+        schedule = NULL;
         return;
+    }
 
     schedule = item;
     Notify4(LOG_SPAWN,"Spawning item (%u) in %d , sector: %s",item->GetItemID(),triggerticks -csGetTicks(), item->GetSector()->ToString());
