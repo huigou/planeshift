@@ -127,18 +127,21 @@ psServer::psServer()
     progression         = NULL;
     npcmanager          = NULL;
     spellmanager        = NULL;
+    rng                 = NULL;
     questmanager        = NULL;
     gmeventManager      = NULL;
     bankmanager         = NULL;
+    hiremanager         = NULL;
     intromanager        = NULL;
     songManager         = NULL;
     mathscriptengine    = NULL;
+    objreg              = NULL;
     cachemanager        = NULL;
     logcsv              = NULL;
     vfs                 = NULL;
     server_quit_event   = NULL;
     unused_pid          = 0;
-
+    MapLoaded           = false;
 }
 
 #define PS_CHECK_REF_COUNT(c) printf("%3d %s\n",c->GetRefCount(),#c)
