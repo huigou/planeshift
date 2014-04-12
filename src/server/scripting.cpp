@@ -3063,8 +3063,8 @@ public:
             Error1("MechanismMsgOp Run needs at least one between move and rot parameters");
             return;
         }
-        move = moveVar->GetString();
-        rot = rotVar->GetString();
+        move = moveVar ? moveVar->GetString() : "";
+        rot = rotVar ? rotVar->GetString() : "";
         Debug3(LOG_ACTIONLOCATION,0,"MechanismMsgOp Run with move variable: %s and rot variable: %s", move.GetData(), rot.GetData());
 
         gemActor* actor = GetActor(env, aim);
