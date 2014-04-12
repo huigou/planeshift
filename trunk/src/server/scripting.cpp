@@ -2999,7 +2999,7 @@ public:
         gemActor* actor = GetActor(env, aim);
         if(!actor || !actor->GetClientID())
         {
-            Error2("Error: <tutorialmsg/> needs a valid client for actor '%s'.\n", actor? "null" : actor->GetName());
+            Error2("Error: <tutorialmsg/> needs a valid client for actor '%s'.\n", !actor ? "null" : actor->GetName());
             return;
         }
         //removing 1 to have correspondance with numbering 5 -> 1005
