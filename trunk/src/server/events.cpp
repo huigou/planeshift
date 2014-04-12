@@ -545,7 +545,11 @@ psGenericEvent::psGenericEvent(int clientID, psGenericEvent::Type type)
 psGenericEvent::psGenericEvent(MsgEntry* event)
 {
     if(!event)
+    {
+        eventType = UNKNOWN;
+        client_id = 0;
         return;
+    }
 
     eventType = (psGenericEvent::Type) event->GetInt32();
     client_id = event->GetInt32();
