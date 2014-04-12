@@ -98,7 +98,6 @@ bool NetManager::Initialize(CacheManager* cachemanager, int client_firstmsg, int
     if(!NetBase::Init(false))
         return false;
 
-    NetManager::port = port;
     NetManager::client_firstmsg = client_firstmsg;
     NetManager::npcclient_firstmsg = npcclient_firstmsg;
     NetManager::timeout = timeout;
