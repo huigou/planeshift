@@ -4668,16 +4668,21 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     {
         // natoka: when meaningfull error messages are sent, this is obsolete
         psserver->SendSystemInfo(me->clientnum,data->GetHelpMessage());
+        delete data;
         return;
     }
 
     // Security check
     if(me->clientnum != 0 && !IsReseting(msg.cmd) && !psserver->CheckAccess(client, data->command))
+    {
+        delete data;
         return;
+    }
 
     if(data->help || !data->valid)
     {
         psserver->SendSystemInfo(me->clientnum, data->GetHelpMessage());
+        delete data;
         return;
     }
 
@@ -4694,6 +4699,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
 
     if(data->IsQuietInvalid())
     {
+        delete data;
         return;
     }
 
@@ -5005,8 +5011,7 @@ void AdminManager::HandleAdminCmdMessage(MsgEntry* me, Client* client)
     {
         Weather(me,msg,data,client);
     }
-    if(data)
-        delete data;
+    delete data;
 }
 
 void AdminManager::HandleList(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
