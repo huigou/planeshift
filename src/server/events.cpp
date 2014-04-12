@@ -64,7 +64,12 @@ psDamageEvent::psDamageEvent(gemActor* attack,gemActor* victim,float dmg)
 psDamageEvent::psDamageEvent(MsgEntry* event)
 {
     if(!event)
+    {
+        attacker = NULL;
+        target   = NULL;
+        damage   = 0.0;
         return;
+    }
 
     attacker = (gemActor*)event->GetPointer();
     target   = (gemActor*)event->GetPointer();
