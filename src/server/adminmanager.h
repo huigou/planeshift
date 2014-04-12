@@ -1434,7 +1434,6 @@ public:
     float x; ///< point to teleport to x coordinate
     float y; ///< point to teleport to y coordinate
     float z; ///< point to teleport to z coordinate
-    bool restore; ///< set when restoring to the point where the teleport started ??
 
     /** @brief Creates obj for teleport command data
      */
@@ -3282,8 +3281,8 @@ public:
     /** Creates obj for specified command that needs a reason
      */
     AdminCmdDataTime()
-        : AdminCmdData("/time"), subCommandList("show set")
-    {};
+        : AdminCmdData("/time"), subCommandList("show set"), hour(0), minute(0)
+    {}
 
     /**
      * Parses the given message and stores its data.
