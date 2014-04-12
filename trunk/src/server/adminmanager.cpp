@@ -4211,6 +4211,7 @@ AdminCmdDataSetKillExp::AdminCmdDataSetKillExp(AdminManager* msgManager, MsgEntr
 {
     size_t index = 1;
     bool found;
+    expValue = 0;
 
     // when help is requested, return immediate
     if(IsHelp(words[1]))
@@ -12897,7 +12898,7 @@ void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
     AdminCmdDataSetKillExp* data = dynamic_cast<AdminCmdDataSetKillExp*>(cmddata);
     gemActor* target = data->targetActor;
 
-    if(data->expValue < 0)
+    if(data->expValue <= 0)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"Only positive exp values are allowed.");
         return;
