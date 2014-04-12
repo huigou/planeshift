@@ -143,7 +143,11 @@ psTargetChangeEvent::psTargetChangeEvent(gemActor* targeter, gemObject* targeted
 psTargetChangeEvent::psTargetChangeEvent(MsgEntry* event)
 {
     if(!event)
+    {
+        character = NULL;
+        target    = NULL;
         return;
+    }
 
     character = (gemActor*)event->GetPointer();
     target    = (gemObject*)event->GetPointer();
