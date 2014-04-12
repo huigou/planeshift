@@ -466,12 +466,13 @@ public:
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        Multiplier* mod = NULL;
+        Multiplier* mod;
         if(type == "atk")
             mod = &target->GetCharacterData()->AttackModifier();
         else if(type == "def")
             mod = &target->GetCharacterData()->DefenseModifier();
-        CS_ASSERT(mod);
+        else
+            return;
 
         float val = value->Evaluate(env);
         mod->Buff(asp, val);
