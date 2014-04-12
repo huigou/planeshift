@@ -3021,7 +3021,7 @@ psItem* WorkManager::TransformTargetSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 
     }
 
     // Check for valid target
-    if(!gemTarget || !gemTarget->GetCharacterData())
+    if(!gemTarget->GetCharacterData())
     {
         Error1("No good target to locate new item");
         return NULL;
