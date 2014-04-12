@@ -4190,9 +4190,9 @@ AdminCmdDataDisableQuest::AdminCmdDataDisableQuest(AdminManager* msgManager, Msg
     {
         questName = words[index++];  //name of the quest
         if(words[index] == "save")  //save = save to db
-        {
             saveToDb = true;
-        }
+        else
+            saveToDb = false;
     }
     else
     {
