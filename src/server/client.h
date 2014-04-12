@@ -48,7 +48,7 @@ class FloodBuffRow
 {
 public:
     FloodBuffRow(uint8_t chtType, csString txt, csString rcpt, unsigned int newticks);
-    FloodBuffRow() : ticks(0) {}
+    FloodBuffRow() : chatType(0), ticks(0) {}
     uint8_t chatType;
     csString text;
     csString recipient;
