@@ -76,6 +76,7 @@ public:
 
     AdviceSession()
     {
+        manager = NULL;
         advisorPoints = 0;
         AdviseeClientNum = (uint32_t)-1;
         AdvisorClientNum = (uint32_t)-1;
