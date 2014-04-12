@@ -2876,7 +2876,7 @@ psItem* WorkManager::TransformContainedItem(psItem* oldItem, uint32 newId, int n
         Error6("Problem on item: item UID=%i crafterID=%s guildID=%i name=%s owner=%p",
                newItem->GetBaseStats()->GetUID(), ShowID(worker->GetPID()),
                worker->GetGuildID(), owner->GetFirstName(), owner);
-        if(workItem && workItem->GetBaseStats())
+        if(workItem->GetBaseStats())
         {
             Error2("workitem=%i",workItem->GetBaseStats()->GetUID());
         }
