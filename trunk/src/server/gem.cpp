@@ -4990,7 +4990,7 @@ void gemNPC::SendBehaviorMessage(const csString &msg_id, gemObject* obj)
 
                 // Can we attack this NPC?
                 csString msg; // Not used
-                if(IsAlive() && actor && actor->IsAllowedToAttack(this,msg))
+                if(IsAlive() && actor->IsAllowedToAttack(this,msg))
                 {
                     options |= psGUIInteractMessage::ATTACK;
                 }
