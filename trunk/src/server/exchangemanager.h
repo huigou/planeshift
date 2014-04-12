@@ -443,8 +443,6 @@ protected:
 
     ClientConnectionSet* clients;
 
-    psDatabase* database;
-
     csPDelArray<Exchange> exchanges;
 };
 
