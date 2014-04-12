@@ -1911,8 +1911,6 @@ protected:
 
     bool busy; ///< Indicator from the NPC client to state the if the NPC is busy
 
-    NpcDialogMenu* initial_triggers;
-
 public:
     gemNPC(GEMSupervisor* gemSupervisor,
            CacheManager* cachemanager,
