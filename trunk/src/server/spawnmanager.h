@@ -250,10 +250,11 @@ protected:
     void CreateMultipleLoot(psCharacter* chr, size_t numModifiers = 0);
 
 public:
-    LootEntrySet(int idx)
+    LootEntrySet(int idx, LootRandomizer* lr)
     {
         id=idx;
         total_prob=0;
+        lootRandomizer=lr;
     }
     ~LootEntrySet();
 
@@ -269,14 +270,6 @@ public:
      * @param numModifiers max number of modifiers to use
      */
     void CreateLoot(psCharacter* character, size_t numModifiers = 0);
-
-    /**
-     * Set the randomizer to use for random loot
-     */
-    void SetRandomizer(LootRandomizer* rnd)
-    {
-        lootRandomizer = rnd;
-    }
 };
 
 /** A structure to hold the clients that are pending a group loot question.
