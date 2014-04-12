@@ -184,7 +184,12 @@ psZPointsGainedEvent::psZPointsGainedEvent(gemActor* actor, const char* name, in
 psZPointsGainedEvent::psZPointsGainedEvent(MsgEntry* event)
 {
     if(!event)
+    {
+        actor = NULL;
+        amountGained = 0;
+        rankUp = false;
         return;
+    }
 
     skillName = event->GetStr();
     actor = (gemActor*)event->GetPointer();
