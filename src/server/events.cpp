@@ -100,7 +100,11 @@ psDeathEvent::psDeathEvent(gemActor* dead,gemActor* killer)
 psDeathEvent::psDeathEvent(MsgEntry* event)
 {
     if(!event)
+    {
+        deadActor = NULL;
+        killer    = NULL;
         return;
+    }
 
     deadActor = (gemActor*)event->GetPointer();
     killer    = (gemActor*)event->GetPointer();
