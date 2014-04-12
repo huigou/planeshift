@@ -61,7 +61,10 @@ struct TransactionEntity : public csRefCount
     bool moneyIn;
     int stamp;
 
-    TransactionEntity(): from(0), to(0), fromName("NA"), toName("NA"), itemName("NA"), item(0) { };
+    TransactionEntity() :
+        from(0), to(0), fromName("NA"), toName("NA"), itemName("NA"), item(0),
+        count(0), quality(0), price(0), moneyIn(false), stamp(0)
+    { }
 };
 
 struct ItemSupplyDemandInfo : public csRefCount
