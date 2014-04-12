@@ -1333,6 +1333,7 @@ public:
     {
         this->entitymanager = entitymanager;
         this->cachemanager = cachemanager;
+        aps = NULL;
     }
     virtual ~ApplyOp()
     {
