@@ -5102,7 +5102,7 @@ void AdminManager::HandleLoadQuest(psAdminCmdMessage &msg, AdminCmdData* cmddata
 
 void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     if((!data->target || !data->target.Length()) && !data->targetObject)
     {
@@ -5155,7 +5155,7 @@ void AdminManager::GetSiblingChars(MsgEntry* me,psAdminCmdMessage &msg, AdminCmd
 
 void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataInfo* data = dynamic_cast<AdminCmdDataInfo*>(cmddata);
+    AdminCmdDataInfo* data = static_cast<AdminCmdDataInfo*>(cmddata);
 
     EID entityId;
     csString sectorName, regionName;
@@ -5573,7 +5573,7 @@ void AdminManager::SendGMAttribs(Client* client)
 
 void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataCrystal* data = dynamic_cast<AdminCmdDataCrystal*>(cmddata);
+    AdminCmdDataCrystal* data = static_cast<AdminCmdDataCrystal*>(cmddata);
 
     if(data->interval < 1 || data->random < 1)
     {
@@ -5652,7 +5652,7 @@ void AdminManager::CreateHuntLocation(MsgEntry* me,psAdminCmdMessage &msg, Admin
 
 void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSet* data = dynamic_cast<AdminCmdDataSet*>(cmddata);
+    AdminCmdDataSet* data = static_cast<AdminCmdDataSet*>(cmddata);
     gemActor* actor;
 
     if(data->targetActor)
@@ -5886,7 +5886,7 @@ void AdminManager::SetAttrib(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData*
 
 void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSetLabelColor* data = dynamic_cast<AdminCmdDataSetLabelColor*>(cmddata);
+    AdminCmdDataSetLabelColor* data = static_cast<AdminCmdDataSetLabelColor*>(cmddata);
     int mask = 0;
 
     if(!data->targetActor)
@@ -5935,7 +5935,7 @@ void AdminManager::SetLabelColor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
 
 void AdminManager::Divorce(MsgEntry* me, AdminCmdData* cmddata)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     Client* divorcer = clients->Find(data->target);
 
@@ -5974,7 +5974,7 @@ void AdminManager::Divorce(MsgEntry* me, AdminCmdData* cmddata)
 
 void AdminManager::ViewMarriage(MsgEntry* me, AdminCmdData* cmddata)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     bool married;
     csString spouse;
@@ -6078,7 +6078,7 @@ void AdminManager::TeleportOfflineCharacter(Client* client, AdminCmdDataTeleport
 
 void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client) //, gemObject* subject)
 {
-    AdminCmdDataTeleport* data = dynamic_cast<AdminCmdDataTeleport*>(cmddata);
+    AdminCmdDataTeleport* data = static_cast<AdminCmdDataTeleport*>(cmddata);
 
     if(data->target.IsEmpty())
     {
@@ -6203,7 +6203,7 @@ void AdminManager::Teleport(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* 
 
 void AdminManager::HandleActionLocation(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataAction* data = dynamic_cast<AdminCmdDataAction*>(cmddata);
+    AdminCmdDataAction* data = static_cast<AdminCmdDataAction*>(cmddata);
 
     if(data->subCommand == "create_entrance")
     {
@@ -6713,7 +6713,7 @@ void AdminManager::UpdateDisplayWaypoint(Waypoint* wp)
 
 void AdminManager::HandlePath(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataPath* data = dynamic_cast<AdminCmdDataPath*>(cmddata);
+    AdminCmdDataPath* data = static_cast<AdminCmdDataPath*>(cmddata);
 
     // Some variables needed by most functions
     csVector3 myPos;
@@ -7733,7 +7733,7 @@ void AdminManager::UpdateDisplayLocation(Location* location)
 
 void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataLocation* data = dynamic_cast<AdminCmdDataLocation*>(cmddata);
+    AdminCmdDataLocation* data = static_cast<AdminCmdDataLocation*>(cmddata);
 
     // Some variables needed by most functions
     csVector3 myPos;
@@ -7958,7 +7958,7 @@ void AdminManager::HandleLocation(MsgEntry* me, psAdminCmdMessage &msg, AdminCmd
 
 bool AdminManager::GetTargetOfTeleport(Client* client, psAdminCmdMessage &msg, AdminCmdData* cmddata, iSector* &targetSector,  csVector3 &targetPoint, float &yRot, gemObject* subject, InstanceID &instance)
 {
-    AdminCmdDataTeleport* data = dynamic_cast<AdminCmdDataTeleport*>(cmddata);
+    AdminCmdDataTeleport* data = static_cast<AdminCmdDataTeleport*>(cmddata);
 
     instance = DEFAULT_INSTANCE;
 
@@ -8090,7 +8090,7 @@ bool AdminManager::GetStartOfMap(int clientnum, const csString &map, iSector* &t
 
 void AdminManager::Slide(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSlide* data = dynamic_cast<AdminCmdDataSlide*>(cmddata);
+    AdminCmdDataSlide* data = static_cast<AdminCmdDataSlide*>(cmddata);
 
     if(!data->targetObject)
     {
@@ -8236,7 +8236,7 @@ bool AdminManager::MoveObject(Client* client, gemObject* target, csVector3 &pos,
 
 void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
     gemActor* basis = data->targetActor;
 
     if(!basis || !basis->GetCharacterData())
@@ -8324,7 +8324,7 @@ void AdminManager::CreateNPC(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* 
 
 void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataItem* data = dynamic_cast<AdminCmdDataItem*>(cmddata);
+    AdminCmdDataItem* data = static_cast<AdminCmdDataItem*>(cmddata);
 
     if(!data->target.Length())
         // If no arg, load up the spawn item GUI
@@ -8373,7 +8373,7 @@ void AdminManager::CreateItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 
 void AdminManager::RunScript(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataRunScript* data = dynamic_cast<AdminCmdDataRunScript*>(cmddata);
+    AdminCmdDataRunScript* data = static_cast<AdminCmdDataRunScript*>(cmddata);
 
     // Find script
     ProgressionScript* script = psserver->GetProgressionManager()->FindScript(data->scriptName);
@@ -8397,7 +8397,7 @@ void AdminManager::RunScript(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData*
 
 void AdminManager::ModifyKey(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataKey* data = dynamic_cast<AdminCmdDataKey*>(cmddata);
+    AdminCmdDataKey* data = static_cast<AdminCmdDataKey*>(cmddata);
 
     // Exchange lock on targeted item
     //  this actually removes the ability to unlock this lock from all the keys
@@ -8685,7 +8685,7 @@ void AdminManager::MakeKey(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* d
 
 void AdminManager::AddRemoveLock(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client, psItem* key)
 {
-    AdminCmdDataKey* data = dynamic_cast<AdminCmdDataKey*>(cmddata);
+    AdminCmdDataKey* data = static_cast<AdminCmdDataKey*>(cmddata);
     // check if player has something targeted
     gemObject* target = client->GetTargetObject();
     if(!target)
@@ -8839,7 +8839,7 @@ void AdminManager::ChangeLock(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 
 void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataKillNPC* data = dynamic_cast<AdminCmdDataKillNPC*>(cmddata);
+    AdminCmdDataKillNPC* data = static_cast<AdminCmdDataKillNPC*>(cmddata);
 
     if(data->targetObject && data->targetObject->GetClientID())
     {
@@ -8900,7 +8900,7 @@ void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
 
 void AdminManager::Percept(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataPercept* data = dynamic_cast<AdminCmdDataPercept*>(cmddata);
+    AdminCmdDataPercept* data = static_cast<AdminCmdDataPercept*>(cmddata);
 
     gemNPC* target = dynamic_cast<gemNPC*>(data->targetObject);
     if(target && target->GetClientID() == 0)
@@ -8918,7 +8918,7 @@ void AdminManager::Percept(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
 
 void AdminManager::ChangeNPCType(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataChangeNPCType* data = dynamic_cast<AdminCmdDataChangeNPCType*>(cmddata);
+    AdminCmdDataChangeNPCType* data = static_cast<AdminCmdDataChangeNPCType*>(cmddata);
 
     gemNPC* target = dynamic_cast<gemNPC*>(data->targetObject);
     if(target && target->GetClientID() == 0)
@@ -8935,7 +8935,7 @@ void AdminManager::ChangeNPCType(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
 
 void AdminManager::DebugNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataDebugNPC* data = dynamic_cast<AdminCmdDataDebugNPC*>(cmddata);
+    AdminCmdDataDebugNPC* data = static_cast<AdminCmdDataDebugNPC*>(cmddata);
 
     gemNPC* target = dynamic_cast<gemNPC*>(data->targetObject);
     if(target && target->GetClientID() == 0)
@@ -8949,7 +8949,7 @@ void AdminManager::DebugNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* 
 
 void AdminManager::DebugTribe(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataDebugTribe* data = dynamic_cast<AdminCmdDataDebugTribe*>(cmddata);
+    AdminCmdDataDebugTribe* data = static_cast<AdminCmdDataDebugTribe*>(cmddata);
 
     gemNPC* target = dynamic_cast<gemNPC*>(data->targetObject);
     if(target && target->GetClientID() == 0)
@@ -8987,7 +8987,7 @@ void AdminManager::Admin(int clientnum, Client* client, int requestedLevel)
 
 void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataTargetReason* data = dynamic_cast<AdminCmdDataTargetReason*>(cmddata);
+    AdminCmdDataTargetReason* data = static_cast<AdminCmdDataTargetReason*>(cmddata);
     if(!data->targetClient)
     {
         psserver->SendSystemError(me->clientnum, "Invalid target to warn");
@@ -9019,7 +9019,7 @@ void AdminManager::WarnMessage(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdDat
 
 void AdminManager::KickPlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataTargetReason* data = dynamic_cast<AdminCmdDataTargetReason*>(cmddata);
+    AdminCmdDataTargetReason* data = static_cast<AdminCmdDataTargetReason*>(cmddata);
 
     if(!data->targetClient)
     {
@@ -9041,7 +9041,7 @@ void AdminManager::KickPlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 
 void AdminManager::Death(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataDeath* data = dynamic_cast<AdminCmdDataDeath*>(cmddata);
+    AdminCmdDataDeath* data = static_cast<AdminCmdDataDeath*>(cmddata);
 
     if(!data->targetActor)
     {
@@ -9078,7 +9078,7 @@ void AdminManager::Death(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
 
 void AdminManager::Impersonate(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataImpersonate* data = dynamic_cast<AdminCmdDataImpersonate*>(cmddata);
+    AdminCmdDataImpersonate* data = static_cast<AdminCmdDataImpersonate*>(cmddata);
     if(data->text.IsEmpty())
     {
         psserver->SendSystemError(me->clientnum, "Missing text or anim name");
@@ -9137,7 +9137,7 @@ void AdminManager::Impersonate(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdDat
 
 void AdminManager::MutePlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     if(!data->targetClient)
     {
@@ -9154,7 +9154,7 @@ void AdminManager::MutePlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 
 void AdminManager::UnmutePlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     if(!data->targetClient)
     {
@@ -9171,7 +9171,7 @@ void AdminManager::UnmutePlayer(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdDa
 
 void AdminManager::HandleAddPetition(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataPetition* data = dynamic_cast<AdminCmdDataPetition*>(cmddata);
+    AdminCmdDataPetition* data = static_cast<AdminCmdDataPetition*>(cmddata);
 
     // Try and add the petition to the database:
     if(!AddPetition(client->GetPID(), (const char*)data->petition))
@@ -9667,7 +9667,7 @@ const char* AdminManager::GetLastSQLError()
 
 void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataDeleteChar* data = dynamic_cast<AdminCmdDataDeleteChar*>(cmddata);
+    AdminCmdDataDeleteChar* data = static_cast<AdminCmdDataDeleteChar*>(cmddata);
     if(data->IsTargetType(ADMINCMD_TARGET_PLAYER))
         // Deleting by name; verify the petitioner gave us one of their characters
     {
@@ -9732,7 +9732,7 @@ void AdminManager::DeleteCharacter(MsgEntry* me, psAdminCmdMessage &msg, AdminCm
 
 void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataChangeName* data = dynamic_cast<AdminCmdDataChangeName*>(cmddata);
+    AdminCmdDataChangeName* data = static_cast<AdminCmdDataChangeName*>(cmddata);
     Client* target = NULL;
 
     if((!data->target.Length() || !data->newName.Length()) && !data->targetObject)
@@ -10011,7 +10011,7 @@ void AdminManager::ChangeName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 
 void AdminManager::BanName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
     if(!data->target.Length())
     {
         psserver->SendSystemError(me->clientnum, "You have to specify a name to ban");
@@ -10036,7 +10036,7 @@ void AdminManager::BanName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
 
 void AdminManager::UnBanName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     if(!psserver->GetCharManager()->IsBanned(data->target))
     {
@@ -10050,7 +10050,7 @@ void AdminManager::UnBanName(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData*
 
 void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* client)
 {
-    AdminCmdDataBan* data = dynamic_cast<AdminCmdDataBan*>(cmddata);
+    AdminCmdDataBan* data = static_cast<AdminCmdDataBan*>(cmddata);
     const time_t year = 31536000UL; //one year should be enough
     const time_t twodays = (2 * 24 * 60 * 60);
 
@@ -10158,7 +10158,7 @@ void AdminManager::BanClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData*
 
 void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* gm)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
     if(data->IsTargetTypeUnknown())
     {
         psserver->SendSystemError(me->clientnum, "You must specify a player name or an account name or number.");
@@ -10218,7 +10218,7 @@ void AdminManager::UnbanClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdDat
 
 void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* gm)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     if(data->IsTargetTypeUnknown())
     {
@@ -10258,7 +10258,7 @@ void AdminManager::BanAdvisor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 
 void AdminManager::UnbanAdvisor(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata,Client* gm)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     if(data->IsTargetTypeUnknown())
     {
@@ -10571,7 +10571,7 @@ void AdminManager::SpawnItemInv(MsgEntry* me, psGMSpawnItem &msg, Client* client
 
 void AdminManager::Award(AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataAward* data = dynamic_cast<AdminCmdDataAward*>(cmddata);
+    AdminCmdDataAward* data = static_cast<AdminCmdDataAward*>(cmddata);
 
     // check that there is at least one reward
     if(data->rewardList.rewards.GetSize() == 0)
@@ -10618,13 +10618,13 @@ void AdminManager::AwardToTarget(unsigned int gmClientNum, Client* target, psRew
 
     if(data->rewardType == psRewardData::REWARD_EXPERIENCE)
     {
-        psRewardDataExperience* rewardDataExperience = dynamic_cast<psRewardDataExperience*>(data);
+        psRewardDataExperience* rewardDataExperience = static_cast<psRewardDataExperience*>(data);
         AwardExperienceToTarget(gmClientNum, target, rewardDataExperience->expDelta);
     }
 
     if(data->rewardType == psRewardData::REWARD_ITEM)  // award item
     {
-        psRewardDataItem* rewardDataItem = dynamic_cast<psRewardDataItem*>(data);
+        psRewardDataItem* rewardDataItem = static_cast<psRewardDataItem*>(data);
 
         csString text;
         psItemStats* stats = psserver->GetCacheManager()->GetBasicItemStatsByName(rewardDataItem->itemName);
@@ -10665,13 +10665,13 @@ void AdminManager::AwardToTarget(unsigned int gmClientNum, Client* target, psRew
     if(data->rewardType == psRewardData::REWARD_FACTION)
         // award faction
     {
-        psRewardDataFaction* rewardDataFaction = dynamic_cast<psRewardDataFaction*>(data);
+        psRewardDataFaction* rewardDataFaction = static_cast<psRewardDataFaction*>(data);
         AdjustFactionStandingOfTarget(gmClientNum, target, rewardDataFaction->factionName, rewardDataFaction->factionDelta);
     }
 
     if(data->rewardType == psRewardData::REWARD_SKILL)  // award skill
     {
-        psRewardDataSkill* rewardDataSkill = dynamic_cast<psRewardDataSkill*>(data);
+        psRewardDataSkill* rewardDataSkill = static_cast<psRewardDataSkill*>(data);
 
         bool modified = false;
         if(rewardDataSkill->skillName == "all")  // update all skills
@@ -10697,7 +10697,7 @@ void AdminManager::AwardToTarget(unsigned int gmClientNum, Client* target, psRew
 
     if(data->rewardType == psRewardData::REWARD_PRACTICE)  // award skill practice
     {
-        psRewardDataPractice* rewardDataPractice = dynamic_cast<psRewardDataPractice*>(data);
+        psRewardDataPractice* rewardDataPractice = static_cast<psRewardDataPractice*>(data);
 
         bool modified = false;
         if(rewardDataPractice->skillName == "all")  // update all skills
@@ -10723,7 +10723,7 @@ void AdminManager::AwardToTarget(unsigned int gmClientNum, Client* target, psRew
 
     if(data->rewardType == psRewardData::REWARD_MONEY)  // award money
     {
-        psRewardDataMoney* rewardDataMoney = dynamic_cast<psRewardDataMoney*>(data);
+        psRewardDataMoney* rewardDataMoney = static_cast<psRewardDataMoney*>(data);
         bool valid = true;
 
         // determine money type
@@ -10841,7 +10841,7 @@ void AdminManager::AdjustFactionStandingOfTarget(int gmClientnum, Client* target
 void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage &msg,
                                 AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataItemTarget* data = dynamic_cast<AdminCmdDataItemTarget*>(cmddata);
+    AdminCmdDataItemTarget* data = static_cast<AdminCmdDataItemTarget*>(cmddata);
 
     Client* source = client;
     Client* dest = data->targetClient;
@@ -11015,7 +11015,7 @@ void AdminManager::TransferItem(MsgEntry* me, psAdminCmdMessage &msg,
 
 void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata)
 {
-    AdminCmdDataCheckItem* data = dynamic_cast<AdminCmdDataCheckItem*>(cmddata);
+    AdminCmdDataCheckItem* data = static_cast<AdminCmdDataCheckItem*>(cmddata);
     Client* targetClient = data->targetClient;
 
     if(!targetClient || !targetClient->GetCharacterData())
@@ -11084,7 +11084,7 @@ void AdminManager::CheckItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData*
 
 void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     if(!data->targetClient)
     {
@@ -11107,7 +11107,7 @@ void AdminManager::FreezeClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdDa
 
 void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
     if(!data->targetClient)
     {
         psserver->SendSystemError(me->clientnum,"Invalid target for thaw");
@@ -11129,7 +11129,7 @@ void AdminManager::ThawClient(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 
 void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSetSkill* data = dynamic_cast<AdminCmdDataSetSkill*>(cmddata);
+    AdminCmdDataSetSkill* data = static_cast<AdminCmdDataSetSkill*>(cmddata);
 
     if(!data->targetActor || (data->targetActor->GetClient() != client && !psserver->CheckAccess(client, "setskill others")))
     {
@@ -11268,7 +11268,7 @@ bool AdminManager::ApplySkill(int client, Client* target, psSkillInfo* skill, in
 
 void AdminManager::UpdateRespawn(AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataUpdateRespawn* data = dynamic_cast<AdminCmdDataUpdateRespawn*>(cmddata);
+    AdminCmdDataUpdateRespawn* data = static_cast<AdminCmdDataUpdateRespawn*>(cmddata);
     if(!data->targetActor)
     {
         psserver->SendSystemError(client->GetClientNum(),"You need to specify or target a player or NPC");
@@ -11318,7 +11318,7 @@ void AdminManager::UpdateRespawn(AdminCmdData* cmddata, Client* client)
 
 void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
     if(!data->targetActor)
     {
         psserver->SendSystemError(me->clientnum,"You need to specify or target a player or NPC");
@@ -11373,7 +11373,7 @@ void AdminManager::Inspect(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
 
 void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataChangeGuildName* data = dynamic_cast<AdminCmdDataChangeGuildName*>(cmddata);
+    AdminCmdDataChangeGuildName* data = static_cast<AdminCmdDataChangeGuildName*>(cmddata);
     psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(data->guildName);
     if(!guild)
     {
@@ -11429,7 +11429,7 @@ void AdminManager::RenameGuild(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdDat
 
 void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataChangeGuildLeader* data = dynamic_cast<AdminCmdDataChangeGuildLeader*>(cmddata);
+    AdminCmdDataChangeGuildLeader* data = static_cast<AdminCmdDataChangeGuildLeader*>(cmddata);
     psGuildInfo* guild = psserver->GetCacheManager()->FindGuild(data->guildName);
     if(!guild)
     {
@@ -11479,7 +11479,7 @@ void AdminManager::ChangeGuildLeader(MsgEntry* me, psAdminCmdMessage &msg, Admin
 
 void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSectorTarget* data = dynamic_cast<AdminCmdDataSectorTarget*>(cmddata);
+    AdminCmdDataSectorTarget* data = static_cast<AdminCmdDataSectorTarget*>(cmddata);
 
     if(!data->sectorInfo->is_raining)
     {
@@ -11498,7 +11498,7 @@ void AdminManager::Thunder(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
 
 void AdminManager::Fog(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataFog* data = dynamic_cast<AdminCmdDataFog*>(cmddata);
+    AdminCmdDataFog* data = static_cast<AdminCmdDataFog*>(cmddata);
 
     // Queue fog
 
@@ -11529,7 +11529,7 @@ void AdminManager::Fog(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmdda
 
 void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataWeather* data = dynamic_cast<AdminCmdDataWeather*>(cmddata);
+    AdminCmdDataWeather* data = static_cast<AdminCmdDataWeather*>(cmddata);
 
     //check if the requested status is already set for this weather type
     //the same code enables and disables weather
@@ -11564,7 +11564,7 @@ void AdminManager::Weather(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
 
 void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataWeatherEffect* data = dynamic_cast<AdminCmdDataWeatherEffect*>(cmddata);
+    AdminCmdDataWeatherEffect* data = static_cast<AdminCmdDataWeatherEffect*>(cmddata);
 
     if(data->particleCount < 0 || data->particleCount > WEATHER_MAX_RAIN_DROPS)
     {
@@ -11602,7 +11602,7 @@ void AdminManager::Rain(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmdd
 
 void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataWeatherEffect* data = dynamic_cast<AdminCmdDataWeatherEffect*>(cmddata);
+    AdminCmdDataWeatherEffect* data = static_cast<AdminCmdDataWeatherEffect*>(cmddata);
 
     if(data->particleCount < 0 || data->particleCount > WEATHER_MAX_SNOW_FALKES)
     {
@@ -11640,7 +11640,7 @@ void AdminManager::Snow(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmdd
 
 void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataModify* data = dynamic_cast<AdminCmdDataModify*>(cmddata);
+    AdminCmdDataModify* data = static_cast<AdminCmdDataModify*>(cmddata);
 
     if(!data->targetObject)
     {
@@ -11831,7 +11831,7 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 #define MORPH_FAKE_ACTIVESPELL ((ActiveSpell*) 0x447)
 void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataMorph* data = dynamic_cast<AdminCmdDataMorph*>(cmddata);
+    AdminCmdDataMorph* data = static_cast<AdminCmdDataMorph*>(cmddata);
 
     // lists all races you can morph into
     if(data->subCommand == "list")
@@ -11906,11 +11906,7 @@ void AdminManager::Morph(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
 
 void AdminManager::Scale(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataScale* data = dynamic_cast<AdminCmdDataScale*>(cmddata);
-    if (!data)
-    {
-        return;
-    }
+    AdminCmdDataScale* data = static_cast<AdminCmdDataScale*>(cmddata);
 
     // check if the target is valid
     if(!data->targetClient || !data->targetClient->GetActor())
@@ -11952,7 +11948,7 @@ void AdminManager::Scale(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmd
 
 void AdminManager::TempSecurityLevel(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataDeputize* data = dynamic_cast<AdminCmdDataDeputize*>(cmddata);
+    AdminCmdDataDeputize* data = static_cast<AdminCmdDataDeputize*>(cmddata);
 
     if(!data->targetClient || !data->targetClient->GetActor())
     {
@@ -12072,7 +12068,7 @@ int AdminManager::GetTrueSecurityLevel(AccountID accountID)
 
 void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataGameMasterEvent* data = dynamic_cast<AdminCmdDataGameMasterEvent*>(cmddata);
+    AdminCmdDataGameMasterEvent* data = static_cast<AdminCmdDataGameMasterEvent*>(cmddata);
     GMEventManager* gmeventManager = psserver->GetGMEventManager();
 
     // add new event
@@ -12155,7 +12151,7 @@ void AdminManager::HandleGMEvent(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
 
 void AdminManager::HandleHire(AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataHire* data = dynamic_cast<AdminCmdDataHire*>(cmddata);
+    AdminCmdDataHire* data = static_cast<AdminCmdDataHire*>(cmddata);
     HireManager* hireManager = psserver->GetHireManager();
 
     // add new event
@@ -12240,7 +12236,7 @@ void AdminManager::HandleHire(AdminCmdData* cmddata, Client* client)
 
 void AdminManager::HandleBadText(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataBadText* data = dynamic_cast<AdminCmdDataBadText*>(cmddata);
+    AdminCmdDataBadText* data = static_cast<AdminCmdDataBadText*>(cmddata);
 
     if(!data->targetObject)
     {
@@ -12270,7 +12266,7 @@ void AdminManager::HandleBadText(psAdminCmdMessage &msg, AdminCmdData* cmddata, 
 
 void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataQuest* data = dynamic_cast<AdminCmdDataQuest*>(cmddata);
+    AdminCmdDataQuest* data = static_cast<AdminCmdDataQuest*>(cmddata);
     if(!data)
     {
         Error1("Failed to find AdminCmdDataQuest");
@@ -12545,7 +12541,7 @@ void AdminManager::HandleQuest(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData
 
 void AdminManager::ItemStackable(MsgEntry* me, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSetStackable* data = dynamic_cast<AdminCmdDataSetStackable*>(cmddata);
+    AdminCmdDataSetStackable* data = static_cast<AdminCmdDataSetStackable*>(cmddata);
 
     if(!data->targetObject)
     {
@@ -12594,7 +12590,7 @@ void AdminManager::ItemStackable(MsgEntry* me, AdminCmdData* cmddata, Client* cl
 
 void AdminManager::HandleSetQuality(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSetQuality* data = dynamic_cast<AdminCmdDataSetQuality*>(cmddata);
+    AdminCmdDataSetQuality* data = static_cast<AdminCmdDataSetQuality*>(cmddata);
     if(!data->targetObject)
     {
         psserver->SendSystemError(client->GetClientNum(), "No target selected");
@@ -12621,7 +12617,7 @@ void AdminManager::HandleSetQuality(psAdminCmdMessage &msg, AdminCmdData* cmddat
 
 void AdminManager::HandleSetTrait(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSetTrait* data = dynamic_cast<AdminCmdDataSetTrait*>(cmddata);
+    AdminCmdDataSetTrait* data = static_cast<AdminCmdDataSetTrait*>(cmddata);
 
     if(data->subCmd == "list")
     {
@@ -12713,7 +12709,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage &msg, AdminCmdData* cmddata,
 
 void AdminManager::HandleSetItemName(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSetItem* data = dynamic_cast<AdminCmdDataSetItem*>(cmddata);
+    AdminCmdDataSetItem* data = static_cast<AdminCmdDataSetItem*>(cmddata);
 
     if(!data->targetObject)
     {
@@ -12739,7 +12735,7 @@ void AdminManager::HandleSetItemName(psAdminCmdMessage &msg, AdminCmdData* cmdda
 
 void AdminManager::HandleReload(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataReload* data = dynamic_cast<AdminCmdDataReload*>(cmddata);
+    AdminCmdDataReload* data = static_cast<AdminCmdDataReload*>(cmddata);
 
     if(data->subCmd == "item")
     {
@@ -12816,7 +12812,7 @@ void AdminManager::HandleReload(psAdminCmdMessage &msg, AdminCmdData* cmddata, C
 
 void AdminManager::HandleListWarnings(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataListWarnings* data = dynamic_cast<AdminCmdDataListWarnings*>(cmddata);
+    AdminCmdDataListWarnings* data = static_cast<AdminCmdDataListWarnings*>(cmddata);
     AccountID accountID;
     PID pid; //used when offline to allow the use of pids
 
@@ -12844,7 +12840,7 @@ void AdminManager::HandleListWarnings(psAdminCmdMessage &msg, AdminCmdData* cmdd
 
 void AdminManager::CheckTarget(psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataTarget* data = dynamic_cast<AdminCmdDataTarget*>(cmddata);
+    AdminCmdDataTarget* data = static_cast<AdminCmdDataTarget*>(cmddata);
 
     if(!data->target.Length())
     {
@@ -12858,7 +12854,7 @@ void AdminManager::CheckTarget(psAdminCmdMessage &msg, AdminCmdData* cmddata, Cl
 
 void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataDisableQuest* data = dynamic_cast<AdminCmdDataDisableQuest*>(cmddata);
+    AdminCmdDataDisableQuest* data = static_cast<AdminCmdDataDisableQuest*>(cmddata);
     psQuest* quest = psserver->GetCacheManager()->GetQuestByName(data->questName);  //get the quest associated by name
 
     if(!quest)  //the quest was not found
@@ -12900,7 +12896,7 @@ void AdminManager::DisableQuest(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdDa
 
 void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataSetKillExp* data = dynamic_cast<AdminCmdDataSetKillExp*>(cmddata);
+    AdminCmdDataSetKillExp* data = static_cast<AdminCmdDataSetKillExp*>(cmddata);
     gemActor* target = data->targetActor;
 
     if(data->expValue <= 0)
@@ -12939,7 +12935,7 @@ void AdminManager::SetKillExp(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
 //This is used as a wrapper for the command version of adjustfactionstanding.
 void AdminManager::AssignFaction(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataAssignFaction* data = dynamic_cast<AdminCmdDataAssignFaction*>(cmddata);
+    AdminCmdDataAssignFaction* data = static_cast<AdminCmdDataAssignFaction*>(cmddata);
     psRewardDataFaction rewardData(data->factionName, data->factionPoints);
 
     AwardToTarget(me->clientnum, data->targetClient, &rewardData);
@@ -12947,7 +12943,7 @@ void AdminManager::AssignFaction(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
 
 void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataServerQuit* data = dynamic_cast<AdminCmdDataServerQuit*>(cmddata);
+    AdminCmdDataServerQuit* data = static_cast<AdminCmdDataServerQuit*>(cmddata);
     if(data->time < -1)
     {
         psserver->SendSystemInfo(client->GetClientNum(),"Syntax: \"/serverquit [-1/time] <Reason>\"");
@@ -12965,7 +12961,7 @@ void AdminManager::HandleServerQuit(MsgEntry* me, psAdminCmdMessage &msg, AdminC
 
 void AdminManager::HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    //AdminCmdDataNPCClientQuit* data = dynamic_cast<AdminCmdDataNPCClientQuit*>(cmddata);
+    //AdminCmdDataNPCClientQuit* data = static_cast<AdminCmdDataNPCClientQuit*>(cmddata);
 
     psServerCommandMessage message(0, "quit");
     message.Multicast(psserver->GetNPCManager()->GetSuperClients(), -1, PROX_LIST_ANY_RANGE);
@@ -12976,7 +12972,7 @@ void AdminManager::HandleNPCClientQuit(MsgEntry* me, psAdminCmdMessage &msg, Adm
 
 void AdminManager::HandleVersion(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* cmddata, Client* client)
 {
-    //    AdminCmdDataSimple* data = dynamic_cast<AdminCmdDataSimple*>(cmddata);
+    //    AdminCmdDataSimple* data = static_cast<AdminCmdDataSimple*>(cmddata);
 
     psserver->SendSystemInfo(client->GetClientNum(),"Server svn version at last commit was $Rev$");
 }
@@ -12984,7 +12980,7 @@ void AdminManager::HandleVersion(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdD
 
 void AdminManager::RandomMessageTest(AdminCmdData* cmddata, Client* client)
 {
-    AdminCmdDataRndMsgTest* data = dynamic_cast<AdminCmdDataRndMsgTest*>(cmddata);
+    AdminCmdDataRndMsgTest* data = static_cast<AdminCmdDataRndMsgTest*>(cmddata);
     csArray<int> values;
     for(int i=0; i<10; i++)
     {
