@@ -3068,9 +3068,10 @@ public:
         Debug3(LOG_ACTIONLOCATION,0,"MechanismMsgOp Run with move variable: %s and rot variable: %s", move.GetData(), rot.GetData());
 
         gemActor* actor = GetActor(env, aim);
+        if(!actor || !actor->GetClientID())
+            return;
 
         // send message to client about mechanism activated
-        if(actor && actor->GetClientID())
         {
             psMechanismActivateMessage msg(actor->GetClientID(), mesh.GetData(), move.GetData(), rot.GetData());
             msg.SendMessage();
