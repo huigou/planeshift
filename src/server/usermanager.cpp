@@ -758,9 +758,10 @@ void UserManager::HandleTargetEvent(MsgEntry* me, Client* notused)
     {
         Debug2(LOG_USER, targetevent.character->GetClientID(),"UserManager handling target event for %s\n", targetevent.character->GetName());
         targeter = clients->Find(targetevent.character->GetClientID());
-        if(!targeter)
-            return;
     }
+    if(!targeter)
+        return;
+
     if(targetevent.target)
         targeted = clients->Find(targetevent.target->GetClientID());
 
