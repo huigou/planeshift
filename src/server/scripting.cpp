@@ -1076,7 +1076,7 @@ protected:
 // Applicative script implementation (progression script applied mode)
 //============================================================================
 
-ApplicativeScript::ApplicativeScript() : duration(NULL)
+ApplicativeScript::ApplicativeScript() : type(BUFF), duration(NULL)
 {
 }
 
