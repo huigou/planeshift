@@ -3948,6 +3948,7 @@ AdminCmdDataSetQuality::AdminCmdDataSetQuality(AdminManager* msgManager, MsgEntr
         if(words.GetCount() >= index +1)
         {
             quality = words.GetFloat(index++);
+            qualityMax = 0.0;
             // optional argument maximum quality
             if(words.GetCount() == index + 1)
             {
