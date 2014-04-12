@@ -479,7 +479,10 @@ psConnectEvent::psConnectEvent(int clientID)
 psConnectEvent::psConnectEvent(MsgEntry* event)
 {
     if(!event)
+    {
+        client_id = 0;
         return;
+    }
 
     client_id = event->GetInt32();
 }
