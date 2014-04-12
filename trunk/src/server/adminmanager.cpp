@@ -4370,10 +4370,9 @@ AdminCmdDataRndMsgTest::AdminCmdDataRndMsgTest(AdminManager* msgManager, MsgEntr
     if(words.GetCount() == index + 1)
     {
         if(words[index] == "ordered")
-        {
             sequential = true;
-        }
-        //text = words.GetTail(index);
+        else
+            sequential = false;
     }
     else
     {
