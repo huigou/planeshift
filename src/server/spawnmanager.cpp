@@ -236,8 +236,7 @@ void SpawnManager::PreloadLootRules()
         LootEntrySet* currset = looting.Get(id,NULL);
         if(!currset)
         {
-            currset = new LootEntrySet(id);
-            currset->SetRandomizer(this->lootRandomizer);
+            currset = new LootEntrySet(id, lootRandomizer);
             looting.Put(id,currset);
         }
 

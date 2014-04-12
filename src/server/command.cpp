@@ -2443,7 +2443,8 @@ int com_randomloot(const char* loot)
         CPrintf(CON_CMDOUTPUT, "Number of modifiers out of range 0-3. Default = 0\n");
     }
 
-    LootEntrySet* testLootEntrySet = new LootEntrySet(1);
+    LootEntrySet* testLootEntrySet =
+        new LootEntrySet(1, psserver->GetSpawnManager()->GetLootRandomizer());
     LootEntry* testEntry = new LootEntry;
     if(testLootEntrySet && testEntry)
     {
@@ -2463,7 +2464,6 @@ int com_randomloot(const char* loot)
             testLootEntrySet->AddLootEntry(testEntry);
 
             // generate loot from base item
-            testLootEntrySet->SetRandomizer(psserver->GetSpawnManager()->GetLootRandomizer());
             testLootEntrySet->CreateLoot(NULL, numModifiers);
         }
         else
