@@ -317,7 +317,7 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
         }
 
         int affectedCount = 0;
-        float radius = aoeRadius->Evaluate(&event->env);
+        float radius = aoeRadius ? aoeRadius->Evaluate(&event->env) : 0.0;
         if(radius < 0.01f)  // single target
         {
             AffectTarget(target, event, attack_result);
@@ -337,7 +337,7 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
             csVector3 attackerToTarget;
             attackerToTarget = targetPos - attackerPos;
 
-            float angle = aoeAngle->Evaluate(&event->env);
+            float angle = aoeAngle ? aoeAngle->Evaluate(&event->env) : 0.0;
             if(angle <= SMALL_EPSILON || angle > 360)
                 angle = 360;
             angle = (angle/2)*(PI/180); // convert degrees to radians
