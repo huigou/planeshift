@@ -2967,7 +2967,7 @@ psItemCategory* CacheManager::GetItemCategoryByName(const csString &name)
 psAttackType *CacheManager::GetAttackTypeByID(unsigned int id)
 {
     size_t i;
-    for (i=0;i<wayList.GetSize();i++)
+    for (i=0;i<attackTypeList.GetSize();i++)
     {
         psAttackType *currentType;
         currentType=attackTypeList.Get(i);
