@@ -161,7 +161,7 @@ void psCharacterInventory::SetBasicWeapon(psRaceInfo* race)
     // Load basic fists. Default item equipped in hands slots.
     if(race && race->GetNaturalWeaponID() != 0)
     {
-        fistStats = psserver->GetCacheManager()->GetBasicItemStatsByID(owner->GetRaceInfo()->GetNaturalWeaponID());
+        fistStats = psserver->GetCacheManager()->GetBasicItemStatsByID(race->GetNaturalWeaponID());
     }
     else
     {
