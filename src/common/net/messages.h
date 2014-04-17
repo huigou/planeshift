@@ -3811,7 +3811,7 @@ public:
     
     enum commandType { Add, Remove, List };
 
-    psGUIActiveMagicMessage(uint32_t clientNum, csArray<ActiveSpell*>& spells, uint32_t index )
+    psGUIActiveMagicMessage(uint32_t clientNum, csArray<ActiveSpell*>& spells, uint32_t index, csTicks serverTime )
     {
         //                  MSGTYPE_ACTIVEMAGIC + clientNum        + command         + valid        + index            + spellCount;
         size_t    msgSize = sizeof(uint8_t)     + sizeof(uint32_t) + sizeof(uint8_t) + sizeof(bool) + sizeof(uint32_t) + sizeof(uint32_t); 
@@ -3822,6 +3822,8 @@ public:
         {
             msgSize += sizeof(uint8_t);     //SPELL_TYPE 
             msgSize += sizeof(uint32_t);    //duration
+            msgSize += sizeof(uint32_t);    //registrationTime
+            msgSize += sizeof(uint32_t);    //serverTime
             msgSize += spells[i]->Name().Length() + 1;
             msgSize += spells[i]->Image().Length() + 1;
         }
@@ -3836,6 +3838,8 @@ public:
         {
             msg->Add((uint8_t)spells[i]->Type());
             msg->Add((uint32_t)spells[i]->Duration());
+            msg->Add((uint32_t)spells[i]->RegistrationTime());
+            msg->Add((uint32_t)serverTime);
             msg->Add(spells[i]->Name().GetData());
             msg->Add(spells[i]->Image().GetData());
         }
@@ -3864,6 +3868,8 @@ public:
 	{
 	    type.Push( (SPELL_TYPE) message->GetUInt8() );
 	    duration.Push( message->GetUInt32());
+	    registrationTime.Push( message->GetUInt32());
+	    serverTime=message->GetUInt32();
 	    name.Push( message->GetStr());          //if there was no name when the message was sent, this should read a null string
 	    image.Push( message->GetStr());         //if there was no name when the message was sent, this should read a null string
 	}
@@ -3884,6 +3890,8 @@ public:
     commandType command;
     csArray<SPELL_TYPE>  type;
     csArray<uint32>      duration;
+    csArray<uint32>      registrationTime;
+    uint32               serverTime;
     csArray<csString>    name;
     csArray<csString>    image;
 };

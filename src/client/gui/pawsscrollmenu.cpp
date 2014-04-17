@@ -658,7 +658,7 @@ bool pawsScrollMenu::LoadArrays(csArray<csString> &name, csArray<csString> &icon
     return true;
 }
 
-bool pawsScrollMenu::LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget, bool IsEnabled)
+pawsDnDButton* pawsScrollMenu::LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget, bool IsEnabled)
 {
     pawsDnDButton* button;
     button = new pawsDnDButton;
@@ -697,7 +697,7 @@ bool pawsScrollMenu::LoadSingle(csString name, csString icon, csString toolTip, 
     {
         button->SetToolTip(toolTip);
     }
-    return true;
+    return button;
 }
 
 bool pawsScrollMenu::RemoveByName(csString name)

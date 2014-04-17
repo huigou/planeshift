@@ -96,6 +96,7 @@ private:
     csRef<iVFS> vfs;
 
     bool useImages,
+         useTimers,
          autoResize,
          showEffects,
          show;   ///<true==show spell & item effects; false==show spell effects but not item effects

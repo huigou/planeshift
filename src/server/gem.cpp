@@ -4458,7 +4458,7 @@ void gemActor::AddActiveSpell(ActiveSpell* asp)
 
 void gemActor::SendActiveSpells()
 {
-    psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence());  // <---add message index tracking!
+    psGUIActiveMagicMessage outgoing(GetClientID(), activeSpells, GetActiveMagicSequence(), csGetTicks());  // <---add message index tracking!
     outgoing.SendMessage();
 }
 

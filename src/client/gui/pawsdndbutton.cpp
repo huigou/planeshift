@@ -56,6 +56,7 @@ pawsDnDButton::pawsDnDButton() :
     ImageNameCallback(NULL),
     NameCallback(NULL),
     ActionCallback(NULL),
+    spellProgress(NULL),
     backgroundBackup(""),
     DnDLock(false)
 {
@@ -169,6 +170,71 @@ bool pawsDnDButton::Setup(iDocumentNode* node)
 
     return true;
 }
+
+void pawsDnDButton::Draw()
+{
+
+    if(spellProgress!=NULL )
+    {
+        csTicks currentTime = csGetTicks();
+        float   currentProgress = ((float)currentTime-(float)startTime)/(float)castingTime;
+
+        fprintf( stderr, "pawsDnDButton::Draw %i, %i, %i, %i; startTime = %d, currentTime = %d, currentProgress= %f \n", GetScreenFrame().xmin, GetScreenFrame().ymin, GetScreenFrame().xmax-1, GetScreenFrame().ymax-1, startTime, currentTime, currentProgress);
+
+        if (currentProgress >= 1.0)
+        {
+            //pawsButton::Draw();
+            castingTime = 0;
+            spellProgress->Hide(); //this shouldn't be necessary as the server should be pushing out an updated spell list about this time.
+    pawsButton::Draw();
+
+            return;
+        }
+        spellProgress->SetCurrentValue(currentProgress);
+        spellProgress->DrawProgressBar( csRect(this->GetScreenFrame().xmin+3, this->GetScreenFrame().ymin+3, this->GetScreenFrame().xmax-3, this->GetScreenFrame().ymax-3), PawsManager::GetSingleton().GetGraphics3D(), currentProgress, 
+            currentProgress>0.75?255:50, //red
+            currentProgress>0.75 && currentProgress<0.90?255:50, //green & yellow
+            currentProgress<0.75?255:50, //blue
+            100, 100, 100 );
+
+    }
+
+    pawsButton::Draw();
+}
+
+/**
+ * Start the timer on a button. primarily used for active magic bar.
+ *
+ * startTicks is the time the server recognized the spell cast begin
+ * currentTicks is the server's current time
+ * duration is how long the spell lasts
+ **/
+void pawsDnDButton::Start(csTicks startTicks, csTicks currentTicks, csTicks duration)
+{
+    Show();
+    if( spellProgress!=NULL || duration==0 ) //if one already exists don't create a new one; if duration is 0 don't create one at all.
+    {
+        return;
+    }
+
+    spellProgress=new pawsProgressBar();
+    AddChild(spellProgress);
+    //BringToTop(spellProgress);
+
+    spellProgress->SetTotalValue(1.0);
+    float currentProgress = (currentTicks-startTicks)/duration;
+    spellProgress->SetCurrentValue(currentProgress);
+    spellProgress->DrawProgressBar( csRect(this->GetScreenFrame().xmin+3, this->GetScreenFrame().ymin+3, this->GetScreenFrame().xmax-3, this->GetScreenFrame().ymax-3), PawsManager::GetSingleton().GetGraphics3D(), currentProgress, 
+            currentProgress>0.75?255:50, //red
+            currentProgress>0.75 && currentProgress<0.90?255:50, //green & yellow
+            currentProgress<0.75?255:50, //blue
+        100, 100, 100 );
+    startTime = csGetTicks()-(currentTicks-startTicks);//note: this must be in terms of the client's ticks, not the server's
+    this->castingTime = duration;
+
+fprintf( stderr, "pawsDnDButton::Start( %d(client=%d), %d, %d )\n", startTicks, startTime, currentTicks, duration );
+}
+
 
 bool pawsDnDButton::SelfPopulate(iDocumentNode* node)
 {
@@ -443,4 +509,9 @@ void pawsDnDButton::EnableBackground( bool mode )
     {
         SetBackground("");
     }
+}
+
+void pawsDnDButton::OnUpdateData(const char* /*dataname*/, PAWSData &value)
+{
+    spellProgress->SetCurrentValue(value.GetFloat());
 }

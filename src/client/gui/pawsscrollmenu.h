@@ -73,7 +73,7 @@ public:
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* reporter);
 
     bool LoadArrays(csArray<csString> &name, csArray<csString> &icon, csArray<csString> &toolTip, csArray<csString> &actions, int baseIndex, pawsWidget* widget);
-    bool LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget, bool IsEnabled);
+    pawsDnDButton* LoadSingle(csString name, csString icon, csString toolTip, csString action, int Index, pawsWidget* widget, bool IsEnabled);
 
     bool RemoveByName(csString name);
     bool Clear();
