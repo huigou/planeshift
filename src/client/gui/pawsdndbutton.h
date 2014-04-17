@@ -202,6 +202,7 @@ public:
 
     virtual void OnUpdateData(const char* /*dataname*/, PAWSData &value);
  
+    void SetToolTip( const char * tooltip );
 
 protected:
     psSlotManager*       mgr;
@@ -215,7 +216,8 @@ protected:
     csArray<csString>*   ImageNameCallback;
     csArray<csString>*   NameCallback;
     csArray<csString>*   ActionCallback;
-    csString              backgroundBackup;
+    csString             backgroundBackup;
+    csString             baseToolTip;
 
     virtual bool CheckKeyHandled(int keyCode);
 

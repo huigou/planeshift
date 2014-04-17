@@ -49,6 +49,7 @@ pawsDnDButton::pawsDnDButton() :
     dragDrop(1),
     dragDropInProgress(0),
     action(""),
+    baseToolTip(""),
     containerID(0),
     indexBase(0),
     editMode(0),
@@ -176,17 +177,17 @@ void pawsDnDButton::Draw()
 
     if(spellProgress!=NULL )
     {
-        csTicks currentTime = csGetTicks();
-        float   currentProgress = ((float)currentTime-(float)startTime)/(float)castingTime;
-
-        fprintf( stderr, "pawsDnDButton::Draw %i, %i, %i, %i; startTime = %d, currentTime = %d, currentProgress= %f \n", GetScreenFrame().xmin, GetScreenFrame().ymin, GetScreenFrame().xmax-1, GetScreenFrame().ymax-1, startTime, currentTime, currentProgress);
+        csTicks currentTime     = csGetTicks();
+        float   elapsedTime     = (float)currentTime-(float)startTime;
+        float   currentProgress = elapsedTime/(float)castingTime;
+        int     remainingTime   = (castingTime-elapsedTime)/1000;
 
         if (currentProgress >= 1.0)
         {
             //pawsButton::Draw();
             castingTime = 0;
             spellProgress->Hide(); //this shouldn't be necessary as the server should be pushing out an updated spell list about this time.
-    pawsButton::Draw();
+            pawsButton::Draw();
 
             return;
         }
@@ -197,6 +198,11 @@ void pawsDnDButton::Draw()
             currentProgress<0.75?255:50, //blue
             100, 100, 100 );
 
+        csString TipWithTiming = baseToolTip;
+        TipWithTiming.Append( ", " );
+        TipWithTiming.Append( remainingTime );
+        TipWithTiming.Append( " seconds" );
+        pawsButton::SetToolTip( TipWithTiming );
     }
 
     pawsButton::Draw();
@@ -219,7 +225,6 @@ void pawsDnDButton::Start(csTicks startTicks, csTicks currentTicks, csTicks dura
 
     spellProgress=new pawsProgressBar();
     AddChild(spellProgress);
-    //BringToTop(spellProgress);
 
     spellProgress->SetTotalValue(1.0);
     float currentProgress = (currentTicks-startTicks)/duration;
@@ -231,8 +236,6 @@ void pawsDnDButton::Start(csTicks startTicks, csTicks currentTicks, csTicks dura
         100, 100, 100 );
     startTime = csGetTicks()-(currentTicks-startTicks);//note: this must be in terms of the client's ticks, not the server's
     this->castingTime = duration;
-
-fprintf( stderr, "pawsDnDButton::Start( %d(client=%d), %d, %d )\n", startTicks, startTime, currentTicks, duration );
 }
 
 
@@ -443,6 +446,7 @@ void pawsDnDButton::Clear()
         ClearMaskingImage();
     }
     SetToolTip("");
+    baseToolTip.Empty();
     SetText("");
 
     if(ImageNameCallback)
@@ -514,4 +518,10 @@ void pawsDnDButton::EnableBackground( bool mode )
 void pawsDnDButton::OnUpdateData(const char* /*dataname*/, PAWSData &value)
 {
     spellProgress->SetCurrentValue(value.GetFloat());
+}
+
+void pawsDnDButton::SetToolTip( const char* toolTip )
+{
+    baseToolTip = toolTip;
+    pawsButton::SetToolTip( toolTip );
 }
