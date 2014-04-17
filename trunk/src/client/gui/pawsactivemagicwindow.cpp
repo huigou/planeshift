@@ -44,6 +44,7 @@
 
 pawsActiveMagicWindow::pawsActiveMagicWindow() :
     useImages(true),
+    useTimers(true),
     autoResize(true),
     showEffects(false),
     show(true),
@@ -173,6 +174,8 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
     {
         return;
     }
+
+
     csList<csString> rowEntry;
     show = showWindow->GetState() ? false : true;
     if(!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
@@ -184,8 +187,11 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 
         for( size_t i=0; i<numSpells; i++ )
         {
+
+            pawsDnDButton* newButton = NULL;
+
             if(incoming.duration[i]==0 && showEffects==false)
-            {
+            {  //if showEffects is false, don't show anything with a constant effect.
     	        continue;
             }
     	    rowEntry.PushBack(incoming.name[i]);
@@ -195,7 +201,7 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 	        //do not show any icon or text in activemagic window - this suppresses display of things like potions or etc.
 	        continue;
 	    }
-	    
+
             if(useImages)
             {
                 csRef<iPawsImage> image;
@@ -205,23 +211,34 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
                 }
                 if(image)
                 {
-                    buffList->LoadSingle(incoming.name[i], incoming.image[i], incoming.name[i], csString(""), 0, this, false);
+                    newButton = buffList->LoadSingle(incoming.name[i], incoming.image[i], incoming.name[i], csString(""), 0, this, false);
                 }
                 else
                 {
                     if( incoming.type[i]==BUFF )
                     {
-                        buffList->LoadSingle(incoming.name[i], csString("/planeshift/materials/crystal_ball_icon.dds"), incoming.name[i], csString(""), 0, this, false);
+                        newButton = buffList->LoadSingle(incoming.name[i], csString("/planeshift/materials/crystal_ball_icon.dds"), incoming.name[i], csString(""), 0, this, false);
                     }
                     else
                     {
-                        buffList->LoadSingle(incoming.name[i], csString("danger_01"), incoming.name[i], csString(""), -1, this, false);
+                        newButton = buffList->LoadSingle(incoming.name[i], csString("danger_01"), incoming.name[i], csString(""), -1, this, false);
                     }
                 }
             }
             else
             {
-                buffList->LoadSingle(incoming.name[i], csString(""), incoming.name[i], csString(""), 0, this, false);
+                newButton = buffList->LoadSingle(incoming.name[i], csString(""), incoming.name[i], csString(""), 0, this, false);
+            }
+
+            if( newButton && useTimers )
+            {
+                //received 3 times from the server:
+                //    registeredTime = when the client thinks the spell was cast.
+                //    serverTime     = when the client sent the active magic update
+                //    duration       = how many ticks the spell will last.
+                //
+                //plus we get the current client time.
+                newButton->Start( incoming.registrationTime[i], incoming.serverTime, incoming.duration[i] );
             }
         }
         if(autoResize)
