@@ -25,6 +25,7 @@
 
 #include "paws/pawswidget.h"
 #include "paws/pawsbutton.h"
+#include "paws/pawsprogressbar.h"
 #include "psslotmgr.h"
 
 //#include "globals.h"
@@ -39,7 +40,7 @@
  * \addtogroup common_paws
  * @{ */
 
-/** A Drag-and-Drop capable button widget.
+/** A Drag-and-Drop capable button widget with timer.
  */
 class pawsDnDButton : public pawsButton
 {
@@ -53,6 +54,9 @@ public:
     virtual bool OnMouseDown(int button, int modifiers, int x, int y);
     virtual bool OnMouseUp(int button, int modifiers, int x, int y);
     virtual void MouseOver(bool value);
+
+    virtual void Draw();
+    void Start(csTicks startTicks, csTicks currentTicks, csTicks duration);
 
     iPawsImage* GetMaskingImage();
 
@@ -195,6 +199,8 @@ public:
     }
 
     void EnableBackground( bool mode );
+
+    virtual void OnUpdateData(const char* /*dataname*/, PAWSData &value);
  
 
 protected:
@@ -214,6 +220,8 @@ protected:
     virtual bool CheckKeyHandled(int keyCode);
 
     bool             DnDLock; // true = locked, false = enabled.
+    pawsProgressBar*    spellProgress;
+    csTicks             startTime,castingTime;
 };
 
 //----------------------------------------------------------------------

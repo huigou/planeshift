@@ -57,7 +57,7 @@ class pawsChatWindow;
 //=============================================================================
 
 /**
- * 
+ * The shortcut window itself
  */
 class pawsShortcutWindow : public pawsControlledWindow, public pawsFingeringReceiver, public psClientNetSubscriber
 {
@@ -177,6 +177,7 @@ private:
     pawsButton      *UpButton;
     pawsButton      *DownButton;
     pawsScrollBar   *iconScrollBar;
+    pawsScrollBar   *paletteScrollBar;
 
     csArray<csString>    allIcons;
     csArray<csString>    allNames; //not populated at this time...
