@@ -1617,6 +1617,7 @@ void gemItem::SendBehaviorMessageTakeAll(const csString &msg_id, gemObject* obj,
     if(!fromClient)
     {
         printf("Command /%s can't find valid Client - something's wrong", msg_id.GetData());
+        return;
     }
 
     //printf("Attempting to do MoveAllFromContainer requested by client number %d\n", fromClient->GetClientNum());
