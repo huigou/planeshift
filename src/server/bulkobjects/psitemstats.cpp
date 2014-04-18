@@ -817,8 +817,10 @@ void psItemStats::LoadSlots(iResultRow &row)
         }
         else if(currentSlot == "BOTHHANDS")
         {
-            valid_slots|=PSITEMSTATS_SLOT_BOTHHANDS;
-            valid_slots_array.Push(PSCHARACTER_SLOT_BOTHHANDS);
+            valid_slots_array.Push(PSCHARACTER_SLOT_RIGHTHAND);
+            valid_slots_array.Push(PSCHARACTER_SLOT_LEFTHAND);
+            valid_slots |= PSITEMSTATS_SLOT_RIGHTHAND |
+                PSITEMSTATS_SLOT_LEFTHAND | PSITEMSTATS_SLOT_BOTHHANDS;
         }
         else if(currentSlot == "HELM")
         {

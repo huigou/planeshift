@@ -1848,7 +1848,15 @@ ADD `lock_skill` INT( 2 ) NOT NULL DEFAULT '-1' COMMENT 'The lock skill used to 
 ADD `flags` varchar(200) NOT NULL DEFAULT '' COMMENT 'The flags to apply to the item.' AFTER `lock_skill`;
 UPDATE `server_options` SET `option_value`='1277' WHERE `option_name`='db_version';
 
+#
+# Changed attacks table.
+#
 
+DROP table attacks;
+DROP table attack_types;
+SOURCE attacks.sql;
+SOURCE attack_types.sql;
+UPDATE `server_options` SET `option_value`='1278' WHERE `option_name`='db_version';
 
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.

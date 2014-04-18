@@ -157,7 +157,7 @@ protected:
     csRef<psQuestPrereqOp> TypeRequirements; ///< all Attack Type based requirements(not handled as a script)
 
     /// Delay in milliseconds before attack "hits" or has an effect.
-    MathScript* attackDelay;
+    MathExpression* attackDelay;
     /// The Max Range of the attack (Meters)
     MathExpression* attackRange;
     /// AOE Radius: (Power, WaySkill, RelatedStat) -> Meters

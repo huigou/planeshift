@@ -91,7 +91,7 @@ INSERT INTO math_scripts VALUES( "Calculate Damage",
 
         TargetAVStance = (TargetAttackValue*Target:attack_damage_mod)+(TargetDV*Target:defense_absorb_mod);
 
-        FinalDamage = 10*(AVStance-TargetDV);
+        FinalDamage = AVStance-TargetDV;
         if(Target:IsNPC)
         {
           Attacker:PracticeSkillID(AttackWeapon:Skill1,1);
@@ -655,6 +655,3 @@ AvgExtQuality = (MaxQuality + MinQuality)/2;
 Result = AverageQuality * log(1+(AvgExtQuality/AverageQuality));
 Result =  min(Result, 300);
 " );
-
-INSERT INTO math_scripts VALUES( "AttackDefaultDelay", "Result = Latency * 1000;" );
-INSERT INTO math_scripts VALUES( "AttackRangeDelay", "Result = Latency * 1000 + Distance * 100;" );
