@@ -661,9 +661,9 @@ public:
     bool GetBuyPersonalise();
     float GetRange() const;
     PID GetCreator(PSITEMSTATS_CREATORSTATUS &creatorStatus);
-    csSet<unsigned int> GetAmmoTypeID() const
+    bool UsesAmmoType(uint32_t id) const
     {
-        return ammo_types;
+        return ammo_types.In(id);
     }
 
     float weaponRange;
@@ -805,7 +805,7 @@ public:
     psMoney &GetPrice();
     void SetCategory(psItemCategory* category);
     psItemCategory* GetCategory();
-    csArray<INVENTORY_SLOT_NUMBER> GetSlots()
+    const csArray<INVENTORY_SLOT_NUMBER>& GetSlots() const
     {
         return valid_slots_array;
     }

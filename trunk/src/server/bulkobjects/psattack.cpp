@@ -57,6 +57,7 @@
 /**********************************************************************************************************/
 
 psAttack::psAttack() :
+    attackDelay(0),
     attackRange(0),
     aoeRadius(0),
     aoeAngle(0)
@@ -65,6 +66,7 @@ psAttack::psAttack() :
 
 psAttack::~psAttack()
 {
+    delete attackDelay;
     delete attackRange;
     delete aoeRadius;
     delete aoeAngle;
@@ -80,12 +82,13 @@ bool psAttack::Load(iResultRow& row)
 
     MathScriptEngine* mse = psserver->GetMathScriptEngine();
     damage_script = mse->FindScript(row["damage"]);
-    attackDelay = mse->FindScript(row["delay"]);
-    if(!damage_script || !attackDelay)
+    if(!damage_script)
         return false;
 
-    type = psserver->GetCacheManager()->GetAttackTypeByName(row["attackType"]);
+    unsigned id = atoi(row["attackType"]);
+    type = psserver->GetCacheManager()->GetAttackTypeByID(id);
 
+    attackDelay = MathExpression::Create(row["delay"], "attackDelay");
     attackRange = MathExpression::Create(row["range"], "attackRange");
     aoeRadius = MathExpression::Create(row["aoe_radius"], "aoeRadius");
     aoeAngle = MathExpression::Create(row["aoe_angle"], "aoeAngle");
@@ -120,7 +123,6 @@ bool psAttack::Attack(gemActor* attacker, gemActor* target, INVENTORY_SLOT_NUMBE
 {
     psCharacter* character = attacker->GetCharacterData();
     psItem* weapon = character->Inventory().GetEffectiveWeaponInSlot(slot);
-    float latency = weapon->GetLatency();
 
     float dist;
     {
@@ -140,15 +142,21 @@ bool psAttack::Attack(gemActor* attacker, gemActor* target, INVENTORY_SLOT_NUMBE
         dist = sqrtf(csSquaredDist::PointPoint(targetPos, attackerPos));
     }
 
-    MathEnvironment env;
-    env.Define("Latency", latency);
-    env.Define("Distance", dist);
-    attackDelay->Evaluate(&env);
-    MathVar* result = env.Lookup("Result");
-    csTicks delay = (csTicks)result->GetRoundValue();
-
     psCombatAttackGameEvent* event =
-        new psCombatAttackGameEvent(delay, this, attacker, target, slot, weapon);
+        new psCombatAttackGameEvent(0, this, attacker, target, slot, weapon);
+    MathEnvironment& env(event->env);
+    env.Define("AttackID",      id);
+    env.Define("AttackTypeID",  type ? type->id : 0);
+    env.Define("Attacker",      attacker);
+    env.Define("Target",        target);
+    env.Define("OrigTarget",    target);
+    env.Define("AttackSlot",    slot);
+    env.Define("AttackWeapon",  weapon);
+    env.Define("RelatedStatID", type ? type->related_stat : 0);
+    env.Define("Distance",      dist);
+    csTicks delay = attackDelay ? (csTicks)round(attackDelay->Evaluate(&env)) : 0;
+    event->triggerticks = csGetTicks() + delay;
+
     character->TagEquipmentObject(slot, event->id);
     psserver->GetEventManager()->Push(event);
 
@@ -242,7 +250,8 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
     }
     else
     {
-        // Check if the npc's target has changed (if it has, then assume another combat event has started.)
+        // Check if the npc's target has changed.
+        // If it has, then assume another combat event has started.
         gemNPC* npcAttacker = attacker->GetNPCPtr();
         if(npcAttacker && npcAttacker->GetTarget() != target)
         {
@@ -271,7 +280,14 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
                 event->GetWeaponSlot() == PSCHARACTER_SLOT_RIGHTHAND ?
                     PSCHARACTER_SLOT_LEFTHAND: PSCHARACTER_SLOT_RIGHTHAND;
             psItem* otherItem = attacker_data->Inventory().GetInventoryItem(otherHand);
-            if(otherItem == NULL)
+            uint32_t item_id = 0;
+            if(weapon->GetAmmoType() == PSITEMSTATS_AMMOTYPE_ROCKS)
+            {
+                // Rocks are their own ammo.
+                attack_result = ATTACK_NOTCALCULATED;
+                item_id = weapon->GetUID();
+            }
+            else if(otherItem == NULL)
             {
                 attack_result = ATTACK_OUTOFAMMO;
             }
@@ -284,23 +300,29 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
                 {
                     psItem* currItem = attacker_data->Inventory().GetInventoryIndexItem(i);
                     if(currItem &&
-                       currItem->GetContainerID() == otherItem->GetUID() &&
-                       weapon->GetAmmoTypeID().In(currItem->GetBaseStats()->GetUID()))
+                       currItem->GetContainerID() == item_id &&
+                       weapon->UsesAmmoType(currItem->GetBaseStats()->GetUID()))
                     {
                         otherItem = currItem;
                         attack_result = ATTACK_NOTCALCULATED;
+                        item_id = otherItem->GetUID();
                         break;
                     }
                 }
             }
-            else if(!weapon->GetAmmoTypeID().In(otherItem->GetBaseStats()->GetUID()))
+            else if(!weapon->UsesAmmoType(otherItem->GetBaseStats()->GetUID()))
             {
                 attack_result = ATTACK_OUTOFAMMO;
+            }
+            else
+            {
+                attack_result = ATTACK_NOTCALCULATED;
+                item_id = otherItem->GetUID();
             }
 
             if(attack_result != ATTACK_OUTOFAMMO)
             {
-                psItem* usedAmmo = attacker_data->Inventory().RemoveItemID(otherItem->GetUID(), 1);
+                psItem* usedAmmo = attacker_data->Inventory().RemoveItemID(item_id, 1);
                 if(usedAmmo)
                 {
                     attack_result = CalculateAttack(event, usedAmmo);
@@ -316,14 +338,10 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
             attack_result = CalculateAttack(event);
         }
 
-        int affectedCount = 0;
+        int affectedCount = 1;
+        AffectTarget(target, event, attack_result);
         float radius = aoeRadius ? aoeRadius->Evaluate(&event->env) : 0.0;
-        if(radius < 0.01f)  // single target
-        {
-            AffectTarget(target, event, attack_result);
-            affectedCount++;
-        }
-        else // AOE (Area of Effect)
+        if(radius >= 0.01f) // AOE (Area of Effect)
         {
             csVector3 attackerPos;
             csVector3 targetPos;
@@ -346,6 +364,9 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
             for(size_t i = 0; i < nearby.GetSize(); i++)
             {
                 gemActor* nearby_target = nearby[i]->GetActorPtr();
+                if(nearby_target == attacker || nearby_target == target)
+                    continue;
+
                 csString msg;
                 if(!attacker->IsAllowedToAttack(nearby_target, msg))
                     continue;
@@ -379,18 +400,10 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
                 AffectTarget(nearby_target, event, attack_result);
                 affectedCount++;
             }
-
-            if(affectedCount > 0)
-            {
-                psserver->SendSystemInfo(attacker->GetClientID(),
-                        "%s affected %d %s.",
-                        name.GetData(), affectedCount,
-                        (affectedCount == 1) ? "target" : "targets");
-            }
-            else
-            {
-                psserver->SendSystemInfo(attacker->GetClientID(), "%s has no effect.", name.GetData());
-            }
+            psserver->SendSystemInfo(attacker->GetClientID(),
+                    "%s affected %d %s.",
+                    name.GetData(), affectedCount,
+                    (affectedCount == 1) ? "target" : "targets");
         }
 
         // Get the next special attack to execute.
@@ -415,7 +428,6 @@ int psAttack::CalculateAttack(psCombatAttackGameEvent* event, psItem* subWeapon)
 
     gemActor* attacker = event->GetAttacker();
     gemActor* target = event->GetTarget();
-    psCharacter* attacker_data = attacker->GetCharacterData();
     psCharacter* target_data = target->GetCharacterData();
 
     // calculate difference between target and attacker location - to be used for angle validation
@@ -438,10 +450,6 @@ int psAttack::CalculateAttack(psCombatAttackGameEvent* event, psItem* subWeapon)
     }
 
     MathEnvironment& env(event->env);
-    env.Define("Attacker",              attacker);
-    env.Define("Target",                target);
-    env.Define("OrigTarget",            target);
-    env.Define("AttackWeapon",          event->GetWeapon());
     env.Define("AttackWeaponSecondary", subWeapon);
     env.Define("TargetWeapon",          target_data->Inventory().GetEffectiveWeaponInSlot(event->GetWeaponSlot(), true));
     env.Define("TargetWeaponSecondary", target_data->Inventory().GetEffectiveWeaponInSlot(otherHand, true));
@@ -449,8 +457,6 @@ int psAttack::CalculateAttack(psCombatAttackGameEvent* event, psItem* subWeapon)
     env.Define("DiffX",                 diff.x ? diff.x : 0.00001F); // force minimal value
     env.Define("DiffY",                 diff.y ? diff.y : 0.00001F); // force minimal value
     env.Define("DiffZ",                 diff.z ? diff.z : 0.00001F); // force minimal value
-    env.Define("RelatedStat", type ?
-               attacker_data->GetSkillRank(type->related_stat).Current() : 0);
 
     float range = attackRange ? attackRange->Evaluate(&env) : 0.0;
     env.Define("Range", range);
@@ -646,20 +652,12 @@ void psAttack::AffectTarget(gemActor* target, psCombatAttackGameEvent* event, in
         }
         case ATTACK_OUTOFRANGE:
         {
-            if(event->GetAttackerID())
-            {
-                psserver->SendSystemError(event->GetAttackerID(),"You are too far away to attack!");
-
-            }
+            psserver->SendSystemError(event->GetAttackerID(),"You are too far away to attack!");
             break;
         }
         case ATTACK_BADANGLE:
         {
-            if(event->GetAttackerID())   // if human player
-            {
-                psserver->SendSystemError(event->GetAttackerID(),"You must face the enemy to attack!");
-
-            }
+            psserver->SendSystemError(event->GetAttackerID(),"You must face the enemy to attack!");
             break;
         }
         case ATTACK_OUTOFAMMO:

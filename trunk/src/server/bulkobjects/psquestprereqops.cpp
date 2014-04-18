@@ -821,7 +821,7 @@ bool psPrereqOpAttackType::Check(psCharacter* character)
     {
         if (character->Inventory().CanItemAttack((INVENTORY_SLOT_NUMBER) slot))
         {
-            return checkWeapon(character,slot);
+            return checkWeapon(character, slot);
         }
     }
 
@@ -839,29 +839,25 @@ bool psPrereqOpAttackType::checkWeapon(psCharacter *character, int slot)
             return false;
         }
     }
-    if(!checkWType(character,weapon))
-        return false;
-
-     return true;
+    return checkWType(character, weapon);
 }
+
 bool psPrereqOpAttackType::checkWType(psCharacter* character, psItem* weapon)
 {
     if(!attackType->weaponTypes.IsEmpty())
     {
-        bool checkFlag = false;
         for(size_t i = 0; i < attackType->weaponTypes.GetSize(); i++)
         {
             if(attackType->weaponTypes[i] == weapon->GetWeaponType())
             {
-                checkFlag = true;
+                return true;
             }
         }
-        if(checkFlag != true)
-            return false;
+        return false;
     }
-
     return true;
 }
+
 csString psPrereqOpAttackType::GetScriptOp()
 {
     csString script = "<>";

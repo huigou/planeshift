@@ -830,9 +830,9 @@ public:
     {
         return current_stats->GetRange();
     }
-    csSet<unsigned int> GetAmmoTypeID() const
+    bool UsesAmmoType(uint32_t id) const
     {
-        return current_stats->GetAmmoTypeID();
+        return current_stats->UsesAmmoType(id);
     }
 
     psWeaponType *GetWeaponType();

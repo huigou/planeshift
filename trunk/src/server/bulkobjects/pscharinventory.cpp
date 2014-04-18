@@ -540,6 +540,22 @@ bool psCharacterInventory::CheckSlotRequirements(psItem* item, INVENTORY_SLOT_NU
         // It needs to fit in that slot
         if(!item->FitsInSlot(proposedSlot))
             return false;
+        // If item requires both hands, make sure other hand is empty.
+        // Otherwise, make sure other hand doesn't require both hands.
+        INVENTORY_SLOT_NUMBER otherSlot =
+            proposedSlot == PSCHARACTER_SLOT_RIGHTHAND ?
+                PSCHARACTER_SLOT_LEFTHAND : PSCHARACTER_SLOT_RIGHTHAND;
+        if(item->FitsInSlot(PSCHARACTER_SLOT_BOTHHANDS))
+        {
+            if(GetInventoryItem(otherSlot))
+                return false;
+        }
+        else
+        {
+            psItem *other = GetInventoryItem(otherSlot);
+            if(other && other->FitsInSlot(PSCHARACTER_SLOT_BOTHHANDS))
+                return false;
+        }
         // It better not be a stack (unless explicitly allowed)
         if(stackCount > 1 && !item->GetIsEquipStackable())
             return false;
@@ -623,16 +639,25 @@ csArray<size_t> psCharacterInventory::FindCompatibleStackedItems(psItem* item, b
 
 INVENTORY_SLOT_NUMBER psCharacterInventory::FindFreeEquipSlot(psItem* itemToPlace)
 {
-    csArray<INVENTORY_SLOT_NUMBER> fitsIn;
-
-    fitsIn = itemToPlace->GetBaseStats()->GetSlots();
+    const csArray<INVENTORY_SLOT_NUMBER>& fitsIn(itemToPlace->GetBaseStats()->GetSlots());
+    bool bothhands = itemToPlace->FitsInSlot(PSCHARACTER_SLOT_BOTHHANDS);
 
     for(size_t i = 0; i < fitsIn.GetSize(); i++)
     {
         INVENTORY_SLOT_NUMBER proposedSlot = fitsIn[i];
         psItem* existingItem = GetInventoryItem(proposedSlot);
         // If there is an item already here then this is not allowed for equipment.
-        if(!existingItem && itemToPlace->FitsInSlots(psserver->GetCacheManager()->slotMap[proposedSlot]))
+        if(existingItem)
+            continue;
+        if(bothhands)
+        {
+            INVENTORY_SLOT_NUMBER otherSlot =
+                proposedSlot == PSCHARACTER_SLOT_RIGHTHAND ?
+                    PSCHARACTER_SLOT_LEFTHAND : PSCHARACTER_SLOT_RIGHTHAND;
+            if(!GetInventoryItem(otherSlot))
+                return proposedSlot;
+        }
+        else if(itemToPlace->FitsInSlots(psserver->GetCacheManager()->slotMap[proposedSlot]))
             return proposedSlot;
     }
     return PSCHARACTER_SLOT_NONE;
@@ -997,7 +1022,10 @@ psItem* psCharacterInventory::GetItemHeld()
     if(!item)
     {
         item = GetInventoryItem(PSCHARACTER_SLOT_LEFTHAND);
-
+        if(!item)
+        {
+            item = GetInventoryItem(PSCHARACTER_SLOT_BOTHHANDS);
+        }
     }
 
     return item;
@@ -1233,13 +1261,13 @@ bool psCharacterInventory::CanItemAttack(INVENTORY_SLOT_NUMBER slot)
     if(slot<0 || slot>=PSCHARACTER_SLOT_BULK1)
         return false;
 
-
     // The autoattack or singleattack flags must be set
     if((equipment[slot].EquipmentFlags & PSCHARACTER_EQUIPMENTFLAG_AUTOATTACK) ||
-            (equipment[slot].EquipmentFlags & PSCHARACTER_EQUIPMENTFLAG_SINGLEATTACK))
+       (equipment[slot].EquipmentFlags & PSCHARACTER_EQUIPMENTFLAG_SINGLEATTACK))
     {
         // Check if the slot is empty and can attack when empty
-        if(equipment[slot].itemIndexEquipped==0 && (equipment[slot].EquipmentFlags & PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY))
+        if(equipment[slot].itemIndexEquipped==0 &&
+           (equipment[slot].EquipmentFlags & PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY))
         {
             return true;
         }
@@ -1248,14 +1276,10 @@ bool psCharacterInventory::CanItemAttack(INVENTORY_SLOT_NUMBER slot)
         if(equipment[slot].itemIndexEquipped==0)
             return false;
 
-        // If the item is a melee weapon, it's OK
-        if(inventory[equipment[slot].itemIndexEquipped].item->GetIsMeleeWeapon())
+        // If the item is a melee or ranged weapon, it's OK.
+        psItem* item = inventory[equipment[slot].itemIndexEquipped].item;
+        if(item->GetIsMeleeWeapon() || item->GetIsRangeWeapon())
             return true;
-
-        if(inventory[equipment[slot].itemIndexEquipped].item->GetIsRangeWeapon())
-        {
-            return true;
-        }
     }
 
     return false;

@@ -71,7 +71,7 @@ INSERT INTO progression_events VALUES("cast Swiftness",
 INSERT INTO progression_events VALUES("cast Hyper Shot",
 '
 <script>
-             <hp attacker="Caster" aim="Target" value="-6*Power"/>
+             <hp attacker="Caster" aim="Target" value="-FinalDamage"/>
              <msg aim="Caster" text="You hit ${Target} with your Hyper arrow."/>
              <fx source="Caster" target="Target" type="unattached" name="arrow success"/>
 
@@ -83,12 +83,12 @@ INSERT INTO progression_events VALUES("cast LB Shot",
        <if t="Target = OrigTarget">
          <then>
            <fx source="Caster" target="Target" name="summon_missile" type="unattached"/>
-           <hp aim="Target" value="-10*Power"/>
+           <hp aim="Target" value="-FinalDamage"/>
            <msg aim="Target" text="${Actor} hits you with a divine arrow!"/>
          </then>
          <else>
            <fx source="OrigTarget" target="Target" name="flame_burst" type="unattached"/>
-           <hp aim="Target" value="-2*Power"/>
+           <hp aim="Target" value="-FinalDamage/2"/>
            <msg aim="Target" text="${Actor}s Divine Arrow Sends waves of energy to damage you"/>
          </else>
        </if>
@@ -101,12 +101,12 @@ INSERT INTO progression_events VALUES("cast Hammer Smash",
        <if t="Target = OrigTarget">
          <then>
            <fx source="Caster" target="Target" name="flame_burst" type="unattached"/>
-           <hp aim="Target" value="-Power/2"/>
+           <hp aim="Target" value="-FinalDamage/2"/>
            <msg aim="Target" text="${Actor} Pounds you with hammer smash!"/>
          </then>
          <else>
            <fx source="Caster" target="Target" name="flame_burst" type="unattached"/>
-           <hp aim="Target" value="-Power/3"/>
+           <hp aim="Target" value="-FinalDamage/3"/>
            <msg aim="Target" text="${Actor} hammer smash hits you, flames sprout from your body!"/>
          </else>
        </if>
