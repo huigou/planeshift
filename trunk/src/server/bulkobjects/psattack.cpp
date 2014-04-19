@@ -343,8 +343,10 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
 
         int affectedCount = 1;
         AffectTarget(target, event, attack_result);
+
+        // Handle AOE (Area of Effect) if attack caused some damage.
         float radius = aoeRadius ? aoeRadius->Evaluate(&event->env) : 0.0;
-        if(radius >= 0.01f) // AOE (Area of Effect)
+        if(radius >= 0.01f && attack_result == ATTACK_DAMAGE)
         {
             csVector3 attackerPos;
             csVector3 targetPos;
