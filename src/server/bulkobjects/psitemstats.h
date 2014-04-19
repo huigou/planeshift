@@ -634,6 +634,7 @@ public:
     }
     // Interface
     bool GetIsMeleeWeapon();
+    bool GetIsBothHandsWeapon();
     bool GetIsArmor();
     bool GetIsRangeWeapon();
     bool GetIsAmmo();

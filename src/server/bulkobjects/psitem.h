@@ -777,6 +777,7 @@ public:
      */
 
     bool GetIsMeleeWeapon();
+    bool GetIsBothHandsWeapon();
     bool GetIsRangeWeapon();
     bool GetIsAmmo();
     bool GetIsArmor();

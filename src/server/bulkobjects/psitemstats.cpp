@@ -1075,6 +1075,11 @@ bool psItemStats::GetIsMeleeWeapon()
     return (flags & PSITEMSTATS_FLAG_IS_A_MELEE_WEAPON);
 }
 
+bool psItemStats::GetIsBothHandsWeapon()
+{
+    return (valid_slots & PSITEMSTATS_SLOT_BOTHHANDS);
+}
+
 bool psItemStats::GetIsArmor()
 {
     return (flags & PSITEMSTATS_FLAG_IS_ARMOR) ? true : false;
