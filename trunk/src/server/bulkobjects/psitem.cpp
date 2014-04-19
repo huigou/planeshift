@@ -1709,10 +1709,14 @@ int psItem::GetAttackAnimID(psCharacter* pschar)
     return 0;
 }
 
-
 bool psItem::GetIsMeleeWeapon()
 {
     return current_stats->GetIsMeleeWeapon();
+}
+
+bool psItem::GetIsBothHandsWeapon()
+{
+    return current_stats->GetIsBothHandsWeapon();
 }
 
 bool psItem::GetIsRangeWeapon()
@@ -2259,6 +2263,10 @@ double psItem::GetProperty(MathEnvironment* env, const char* ptr)
     else if(property == "IsMeleeWeapon")
     {
         return (double)GetIsMeleeWeapon();
+    }
+    else if(property == "IsBothHandsWeapon")
+    {
+        return (double)GetIsBothHandsWeapon();
     }
     else if(property == "IsRangeWeapon")
     {
