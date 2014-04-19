@@ -157,6 +157,9 @@ bool psAttack::Attack(gemActor* attacker, gemActor* target, INVENTORY_SLOT_NUMBE
     csTicks delay = attackDelay ? (csTicks)round(attackDelay->Evaluate(&env)) : 0;
     event->triggerticks = csGetTicks() + delay;
 
+    // Save the delay in the environment for other scripts to use.
+    env.Define("Delay", delay);
+
     character->TagEquipmentObject(slot, event->id);
     psserver->GetEventManager()->Push(event);
 
