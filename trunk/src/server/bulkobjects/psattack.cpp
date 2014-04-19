@@ -365,6 +365,10 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
                 angle = 360;
             angle = (angle/2)*(PI/180); // convert degrees to radians
 
+            MathEnvironment& env(event->env);
+            env.Define("AOE_Radius", radius);
+            env.Define("AOE_Angle", angle);
+
             csArray<gemObject*> nearby = psserver->entitymanager->GetGEM()->FindNearbyEntities(targetSector, targetPos, targetInstance, radius);
             for(size_t i = 0; i < nearby.GetSize(); i++)
             {
