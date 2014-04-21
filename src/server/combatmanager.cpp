@@ -381,11 +381,15 @@ void CombatManager::sendAttackList(MsgEntry* me, Client* client)
 
     for(size_t i = 0; i < attacks.GetSize(); i++)
     {
+        if(attacks[i]->GetID() == 1)
+            continue;
         if(attacks[i]->CanAttack(client))
         {
             csString aName = attacks[i]->GetName();
             csString aDesc = attacks[i]->GetDescription();
-            csString aType = attacks[i]->GetType()->name;
+            csString aType;
+            if(attacks[i]->GetType())
+                aType = attacks[i]->GetType()->name;
             csString aimage = attacks[i]->GetImage();
             mesg.AddAttack(aName,aDesc,aType,aimage);
         }
