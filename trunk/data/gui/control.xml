@@ -191,6 +191,17 @@
             </attachpoints>
         </widget>
 
+        <widget name="AttackButton" factory="pawsButton" id="1600" tooltip="Attack book" sound="gui.toolbar">
+            <frame x="1024" y="1" width="64" height="64" />
+            <bgimage resource="AttackButton" />
+            <attachpoints>
+                <attach point="PROPORTIONAL_RIGHT" />
+                <attach point="PROPORTIONAL_LEFT" />
+                <attach point="PROPORTIONAL_BOTTOM" />
+                <attach point="PROPORTIONAL_TOP" />
+            </attachpoints>
+        </widget>
+
 </widget>
 
 
