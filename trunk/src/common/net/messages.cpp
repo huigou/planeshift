@@ -3128,7 +3128,6 @@ psAttackBookMessage::psAttackBookMessage( MsgEntry* me, NetBase::AccessPointers*
         na.description = me->GetStr();
         na.type = me->GetStr();
         na.image = accessPointers->Request(csStringID(me->GetUInt32()));
-        printf ("DEBUG: psAttackBookMessage::psAttackBookMessage name: %s image: %s\n",na.name.GetData(),na.image.GetData());
         attacks.Push(na);
     }
 }
@@ -3144,10 +3143,7 @@ void psAttackBookMessage::AddAttack(const csString& name, const csString& descri
     na.type = type;
     na.image = image;
     attacks.Push(na);
-
-
 }
-
 
 void psAttackBookMessage::Construct(csStringSet* msgstrings)
 {
@@ -3163,11 +3159,8 @@ void psAttackBookMessage::Construct(csStringSet* msgstrings)
         msg->Add( attacks[x].type );
 
         msg->Add(msgstrings->Request(attacks[x].image).GetHash());
-        printf ("DEBUG: psAttackBookMessage::Construct %s %u %s\n",attacks[x].name.GetData(),msgstrings->Request(attacks[x].image).GetHash(),attacks[x].image.GetData());
     }
 }
-
-
 
 csString psAttackBookMessage::ToString(NetBase::AccessPointers * /*accessPointers*/)
 {
