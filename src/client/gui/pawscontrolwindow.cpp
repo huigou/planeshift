@@ -88,7 +88,7 @@ bool pawsControlWindow::PostSetup()
     AddWindow( "InventoryWindow" ,   "InventoryButton" );
     AddWindow( "ConfigWindow" ,      "OptionsButton" );
     AddWindow( "SpellBookWindow" ,   "SpellBookButton" );
-    AddWindow("AttackBookWindow" , "SpellBookButton" );
+    AddWindow( "AttackBookWindow" ,  "AttackButton" );
     AddWindow( "InfoWindow" ,        "InfoButton" );
     AddWindow( "HelpWindow" ,        "HelpButton" );
     AddWindow( "ShortcutMenu" ,    "ShortcutButton" );
