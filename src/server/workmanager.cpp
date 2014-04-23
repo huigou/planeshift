@@ -4174,7 +4174,6 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
             float modifier = env.Lookup("ResultModifier")->GetValue();
 
             // Assign points and exp.
-            printf("Practice %d\n", practicePoints); // XXX
             character->CalculateAddExperience(skill, practicePoints, modifier);
         }
     }
