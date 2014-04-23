@@ -2177,7 +2177,7 @@ gemActor::gemActor(GEMSupervisor* gemsupervisor, CacheManager* cachemanager, Ent
                    float rotangle,
                    int clientnum) :
     gemObject(gemsupervisor,entitymanager,cachemanager,chardata->GetCharFullName(),factname,myInstance,room,pos,rotangle,clientnum),
-    psChar(chardata), mount(NULL), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
+    psChar(chardata), mount(NULL), attack_cnt(0), DRcounter(0), forceDRcounter(0), lastDR(0), lastV(0), lastSentSuperclientPos(0, 0, 0),
     lastSentSuperclientInstance(-1), activeReports(0), isFalling(false), invincible(false), visible(true), viewAllObjects(false),
     movementMode(0), isAllowedToMove(true), atRest(true), player_mode(PSCHARACTER_MODE_PEACE), spellCasting(NULL), workEvent(NULL),
     activeMagic_seq(0), pcmove(NULL), nevertired(false), infinitemana(false), instantcast(false), safefall(false), givekillexp(false),
