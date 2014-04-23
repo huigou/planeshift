@@ -1274,7 +1274,7 @@ unsigned int psCharacter::AddExperiencePointsNotify(unsigned int experiencePoint
 
 unsigned int psCharacter::CalculateAddExperience(PSSKILL skill, unsigned int practicePoints, float modifier)
 {
-    if(practicePoints > 0)
+    if(skill != PSSKILL_NONE && practicePoints > 0)
     {
         MathEnvironment env;
         env.Define("ZCost", skills.Get(skill).zCost);

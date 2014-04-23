@@ -172,9 +172,9 @@ INSERT INTO `item_instances` VALUES (115,0,0,0,0,1,0,0,0,3,-52.77,-4,-157.63,0,9
 INSERT INTO `item_instances` VALUES (116,0,0,0,0,1,0,0,0,3,-55.34,-4,-157.58,0,4.15,0,0,50,50,4811,0,'NOPICKUP',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (117,0,0,0,0,34,0,0,0,3,-16.6,-0.01,-171.9,0,0,0,0,50,50,91,0,'',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (118,0,0,0,0,1,0,0,0,3,-38.51,0,-160.54,0,8.03,0,0,50,99,419,0,'',0,-1,'','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (119,0,0,0,0,1,0,0,0,3,-16,0.12,-138.5,0,0,0,0,50,50,412,0,'LOCKED,LOCKABLE',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (119,0,0,0,0,1,0,0,0,3,-16,0.12,-138.5,0,0,0,0,50,50,412,0,'LOCKED,LOCKABLE',0,22,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (120,0,0,0,0,1,0,0,0,3,-15,0.12,-138.5,0,0,0,0,50,50,413,0,'KEY',0,-1,'119','','',NULL,'0',0,0,0);
-INSERT INTO `item_instances` VALUES (121,0,0,0,0,1,0,0,0,3,-16,0.12,-136.5,0,0,0,0,50,50,412,0,'LOCKED,LOCKABLE',0,-1,'','','',NULL,'0',0,0,0);
+INSERT INTO `item_instances` VALUES (121,0,0,0,0,1,0,0,0,3,-16,0.12,-136.5,0,0,0,0,50,50,412,0,'LOCKED,LOCKABLE',0,22,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (128,0,0,0,0,1,0,0,0,3,-3.72,0.37,-183.03,0,90,0,0,50,50,138,0,'NOPICKUP',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (166,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,50,50,3,0,'',0,-1,'','','',NULL,'0',0,0,0);
 INSERT INTO `item_instances` VALUES (171,0,0,0,0,17,0,0,0,3,-16.6,-0.01,-171.9,0,0,0,0,50,50,91,0,'',0,-1,'','','',NULL,'0',0,0,0);

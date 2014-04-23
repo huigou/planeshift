@@ -4153,30 +4153,29 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
             workEvent->object->SetIsLocked(!locked);
             workEvent->object->Save(false);
 
-            // Calculate practice points.
-
-            int practicePoints;
-            float modifier;
-            {
-                MathEnvironment env;
-                env.Define("Object", workEvent->object);
-                env.Define("Worker", workEvent->client->GetCharacterData());
-                env.Define("RequiredSkill", skill);
-                env.Define("PlayerSkill", rank);
-                env.Define("LockStrength", workEvent->object->GetLockStrength());
-
-                calc_lockpicking_exp->Evaluate(&env);
-                practicePoints = env.Lookup("ResultPractice")->GetRoundValue();
-                modifier = env.Lookup("ResultModifier")->GetValue();
-            }
-
-            // Assign points and exp.
-            workEvent->client->GetCharacterData()->CalculateAddExperience(skill, practicePoints, modifier);
         }
         else
         {
             // Send denied message
             psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt.");
+        }
+
+        // Calculate practice points.
+        if(skill != PSSKILL_NONE) {
+            MathEnvironment env;
+            env.Define("Object", workEvent->object);
+            env.Define("Worker", character);
+            env.Define("RequiredSkill", skill);
+            env.Define("PlayerSkill", rank);
+            env.Define("LockStrength", workEvent->object->GetLockStrength());
+
+            calc_lockpicking_exp->Evaluate(&env);
+            int practicePoints = env.Lookup("ResultPractice")->GetRoundValue();
+            float modifier = env.Lookup("ResultModifier")->GetValue();
+
+            // Assign points and exp.
+            printf("Practice %d\n", practicePoints); // XXX
+            character->CalculateAddExperience(skill, practicePoints, modifier);
         }
     }
     workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
