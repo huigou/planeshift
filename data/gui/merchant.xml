@@ -57,17 +57,17 @@
     </widget>
 
     <widget name="BuySell" factory="pawsRadioButtonGroup" >
-        <frame x="10" y="10" width="190" height="35" border="no" />
+        <frame x="10" y="10" width="190" height="30" border="no" />
 
-            <widget name="Buy" factory="pawsRadioButton" id="1000">
-                <frame x="0" y="2" width="75" height="30" />
+            <radionode name="Buy" id="1000">
+                <frame x="0" y="0" width="75" height="30" />
                 <text string="Buy" position="right"/>
-            </widget>
+            </radionode>
 
-            <widget name="Sell" factory="pawsRadioButton" id="2000">
-                <frame x="115" y="2" width="75" height="30" />
+            <radionode name="Sell" id="2000">
+                <frame x="115" y="0" width="75" height="30" />
                 <text string="Sell" position="right"/>
-            </widget>
+            </radionode>
     </widget>
 
 
