@@ -124,6 +124,9 @@ bool psAttack::Attack(gemActor* attacker, gemActor* target, INVENTORY_SLOT_NUMBE
     psCharacter* character = attacker->GetCharacterData();
     psItem* weapon = character->Inventory().GetEffectiveWeaponInSlot(slot);
 
+    if(!attacker->StartAttack())
+        return false;
+
     float dist;
     {
         csVector3 attackerPos, targetPos;
@@ -175,6 +178,8 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
         Debug2(LOG_COMBAT,event->GetAttackerID(),"Attacker ID: %d. Combat stopped as one participant logged off.",event->GetAttackerID());
         return;
     }
+
+    attacker->EndAttack();
 
     // If the attacker is no longer in attack mode, abort.
     if(attacker->GetMode() != PSCHARACTER_MODE_COMBAT)

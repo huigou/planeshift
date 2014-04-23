@@ -1177,6 +1177,8 @@ protected:
 
     csWeakRef<Client> clientRef;
 
+    uint8_t attack_cnt; ///< Count of attack events in CS event queue
+
     uint8_t DRcounter;  ///< increments in loop to prevent out of order packet overwrites of better data
     uint8_t forceDRcounter; ///< sequence number for forced position updates
     csTicks lastDR;
@@ -1365,6 +1367,20 @@ public:
         return combat_stance;
     }
     virtual void SetCombatStance(const Stance &stance);
+    bool StartAttack()
+    {
+        if(attack_cnt < 2)
+        {
+            attack_cnt++;
+            return true;
+        }
+        return false;
+    }
+    void EndAttack()
+    {
+        CS_ASSERT(attack_cnt);
+        attack_cnt--;
+    }
 
     void SetSpellCasting(psSpellCastGameEvent* event)
     {
