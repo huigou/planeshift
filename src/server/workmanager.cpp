@@ -128,7 +128,7 @@ WorkManager::WorkManager(CacheManager* cachemanager, EntityManager* entitymanage
 
     Subscribe(&WorkManager::HandleWorkCommand, MSGTYPE_WORKCMD, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
     Subscribe(&WorkManager::HandleLockPick, MSGTYPE_LOCKPICK, REQUIRE_READY_CLIENT | REQUIRE_ALIVE | REQUIRE_TARGET);
-    Subscribe(&WorkManager::StopUseWork, MSGTYPE_CRAFT_CANCEL, REQUIRE_READY_CLIENT | REQUIRE_ALIVE);
+    Subscribe(&WorkManager::StopUseWork, MSGTYPE_CRAFT_CANCEL, REQUIRE_READY_CLIENT | REQUIRE_ACTOR | REQUIRE_ALIVE);
 
     MathScriptEngine* eng = psserver->GetMathScriptEngine();
     calc_repair_rank = eng->FindScript("Calculate Repair Rank");
@@ -1300,12 +1300,6 @@ void WorkManager::StartUseWork(Client* client)
 // Stop doing use work
 void WorkManager::StopUseWork(MsgEntry* me,Client* client)
 {
-    // Check for any targeted item or container in hand
-    if(!ValidateTarget(client))
-    {
-        return;
-    }
-
     // Kill the work event if it exists
     if(client->GetActor()->GetMode() == PSCHARACTER_MODE_WORK)
     {
@@ -2384,11 +2378,12 @@ bool WorkManager::ValidateTarget(Client* client)
     // Check if player has something targeted
     gemObject* target = client->GetTargetObject();
 
-    gemActionLocation* gemAction = target->GetALPtr();
-    if(gemAction) target = gemAction->GetAction()->GetRealItem();
-
     if(target)
     {
+        gemActionLocation* gemAction = target->GetALPtr();
+        if(gemAction)
+            target = gemAction->GetAction()->GetRealItem();
+
         // Make sure it's not character
         if(target->GetActorPtr())
         {
@@ -4092,24 +4087,32 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
     env.Define("Object", item);
 
     calc_lockpick_time->Evaluate(&env);
-    MathVar* time = env.Lookup("Time");
+    int time = env.Lookup("Time")->GetRoundValue();
 
     // Add new event
     csVector3 emptyV = csVector3(0,0,0);
     psWorkGameEvent* ev = new psWorkGameEvent(
         this,
         actor,
-        time->GetRoundValue(),
+        time,
         LOCKPICKING,
         emptyV,
         0,
         client,
         item);
     psserver->GetEventManager()->Push(ev);
+
+    // Crafting time is in seconds, event time is in milliseconds.
+    psCraftCancelMessage msg;
+    msg.SetCraftTime(time / 1000, client->GetClientNum());
+    msg.SendMessage();
 }
 
 void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
 {
+    // Ignore event if it was canceled.
+    if(workEvent->client->GetActor()->GetMode() != PSCHARACTER_MODE_WORK)
+        return;
 
     if( workEvent->object==NULL  )
     {
@@ -4128,9 +4131,9 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
     psCharacter* character = workEvent->client->GetCharacterData();
     PSSKILL skill = workEvent->object->GetLockpickSkill();
 
-        // Check if not moved too far away from lock
-        // First check if lock (object such as box) is in not inventory
-        // For now, that is never the case, but I can imagine that changing
+    // Check if player moved too far away from lock.
+    // First check if lock (object such as box) is not in inventory.
+    // For now, that is never the case, but I can imagine that changing.
     if((PSCHARACTER_SLOT_NONE == workEvent->object->GetLocInParent()) &&
         (workEvent->client->GetActor()->RangeTo(workEvent->object->GetGemObject()) > RANGE_TO_USE))
     {
