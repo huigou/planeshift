@@ -426,7 +426,6 @@ void pawsSkillWindow::HandleSkillList(int selectedNameId, bool flush)
             psSkillCacheItem *item = p.Next();
             if (item->isModified() &&
                 item->getRank() == 0 &&
-                item->getKnowledge() == 0 &&
                 item->getPractice() == 0)
             {
                 flush = true;
@@ -770,7 +769,7 @@ void pawsSkillWindow::HandleSkillCategory(psSkillCacheItem *skillInfo,
     int Z = skillInfo->getPractice();
 
     // filter out untrained skills
-    if (filter && R == 0 && Y == 0 && Z == 0)
+    if (filter && R == 0 && Z == 0)
     {
         return;
     }
