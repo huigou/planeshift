@@ -1424,12 +1424,6 @@ bool WorkManager::CombineWork()
 // Stop doing combine work
 void WorkManager::StopCombineWork(Client* client)
 {
-    // Check for any targeted item or container in hand
-    if(!ValidateTarget(client))
-    {
-        return;
-    }
-
     // Kill the work event if it exists
     if(worker->GetMode() == PSCHARACTER_MODE_WORK)
     {
@@ -1525,12 +1519,6 @@ void WorkManager::StartConstructWork(Client* client)
 // Stop doing combine work
 void WorkManager::StopConstructWork(Client* client)
 {
-    // Check for any targeted item or container in hand
-    if(!ValidateTarget(client))
-    {
-        return;
-    }
-
     // Kill the work event if it exists
     if(worker->GetMode() == PSCHARACTER_MODE_WORK)
     {
