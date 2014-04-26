@@ -2718,14 +2718,16 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataModify)
 csString AdminCmdDataModify::GetHelpMessage()
 {
     return "Syntax: \"" + command + " " + GetHelpMessagePartForTarget() + " <SUBCOMMAND>\"\n"
-           "SUBCOMMAND: intervals <interval> <intervalcap>\n"
-           "            amount <amount>\n"
-           "            picklevel <level>\n"
-           "            range <range>\n"
-           "            move <x> <y> <z> [<y>]\n"
-           "            pickskill <skillname>\n"
-           "            ATTRIBUTE true|false\n"
-           "ATTRIBUTE: " + attributeList.GetHelpMessage();
+           "SUBCOMMAND:\n"
+           " intervals <interval> <intervalcap>\n"
+           " amount <amount>\n"
+           " picklevel <level>\n"
+           " range <range>\n"
+           " move <x> <y> <z> [<y>]\n"
+           " pickskill <skillname>\n"
+           " remove\n"
+           " ATTRIBUTE true|false\n"
+           "ATTRIBUTE:\n " + attributeList.GetHelpMessage();
 }
 
 AdminCmdDataMorph::AdminCmdDataMorph(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
@@ -8869,7 +8871,7 @@ void AdminManager::KillNPC(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* c
             PID npcid = target->GetCharacterData()->GetPID();
 
             // Remove the NPC
-            EntityManager::GetSingleton().RemoveActor(data->targetObject);
+            EntityManager::GetSingleton().RemoveActor(target);
 
             // Create the new NPC
             psCharacter* npcdata = psServer::CharacterLoader.LoadCharacterData(npcid,true);
@@ -11667,11 +11669,9 @@ void AdminManager::ModifyItem(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData
             psserver->SendSystemInfo(me->clientnum,"Spawn point deleted for %s",item->GetName());
         }
 
-        EntityManager::GetSingleton().RemoveActor(data->targetObject); // Remove from world
         psserver->SendSystemInfo(me->clientnum,"%s was removed from the world",item->GetName());
         item->Destroy(); // Remove from db
-        delete item;
-        item = NULL;
+        EntityManager::GetSingleton().RemoveActor(data->targetObject); // Remove from world
     }
     else if(data->subCommand == "intervals" && fullModify)
     {
