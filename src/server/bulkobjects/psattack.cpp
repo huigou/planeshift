@@ -176,6 +176,11 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
     if(!attacker || !target)
     {
         Debug2(LOG_COMBAT,event->GetAttackerID(),"Attacker ID: %d. Combat stopped as one participant logged off.",event->GetAttackerID());
+        if(attacker)
+        {
+            attacker->EndAttack();
+            psserver->GetCombatManager()->StopAttack(attacker);
+        }
         return;
     }
 
@@ -703,39 +708,17 @@ psCombatAttackGameEvent::psCombatAttackGameEvent(csTicks delayticks,
 
     AttackLocation = PSCHARACTER_SLOT_NONE;
     FinalDamage = -1;
-
-    target->RegisterCallback(this);
-    attacker->RegisterCallback(this);
 }
 
 psCombatAttackGameEvent::~psCombatAttackGameEvent()
 {
-    if(target)
-    {
-        target->UnregisterCallback(this);
-    }
     if(attacker)
     {
-        attacker->UnregisterCallback(this);
         if(attack && attack->GetID() != 1)
         {
             psCharacter* attacker_data = attacker->GetCharacterData();
             attacker_data->GetAttackQueue()->Pop();
         }
-    }
-}
-
-void psCombatAttackGameEvent::DeleteObjectCallback(iDeleteNotificationObject* object)
-{
-    if(target)
-    {
-        target->UnregisterCallback(this);
-        target = NULL;
-    }
-    if(attacker)
-    {
-        attacker->UnregisterCallback(this);
-        attacker = NULL;
     }
 }
 

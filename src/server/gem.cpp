@@ -3042,7 +3042,7 @@ bool gemActor::CanBeAttackedBy(gemActor* attacker, gemActor* &lastAttacker) cons
         }
         lasttime = lasthit->TimeOfAttack();
 
-        if(lasthit->Attacker().IsValid())
+        if(lasthit->Attacker())
         {
             lastAttacker = lasthit->Attacker();
         }
