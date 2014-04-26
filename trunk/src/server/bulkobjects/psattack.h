@@ -175,7 +175,7 @@ protected:
 /**
  * This event actually triggers an attack
  */
-class psCombatAttackGameEvent : public psGameEvent, public iDeleteObjectCallback
+class psCombatAttackGameEvent : public psGameEvent
 {
 public:
     psCombatAttackGameEvent(csTicks delayticks,
@@ -188,8 +188,6 @@ public:
     virtual ~psCombatAttackGameEvent();
 
     virtual void Trigger();  // Abstract event processing function
-
-    virtual void DeleteObjectCallback(iDeleteNotificationObject* object);
 
     psAttack* GetAttack()
     {

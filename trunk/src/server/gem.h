@@ -1085,7 +1085,7 @@ class AttackerHistory
 public:
     virtual ~AttackerHistory() {}
 
-    csWeakRef<gemActor> Attacker() const
+    gemActor* Attacker() const
     {
         return attacker_ref;
     }

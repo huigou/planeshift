@@ -1191,7 +1191,6 @@ bool EntityManager::RemoveActor(gemObject* actor)
     psserver->GetNPCManager()->RemoveEntity(msg.msg);
 
     delete actor;
-    actor = NULL;
 
     return true;
 }

@@ -223,7 +223,6 @@ bool CombatManager::AttackSomeone(gemActor* attacker,gemActor* target,const Stan
             if(weapon && weapon->CheckRequirements(attackerChar, response))
             {
                 Debug5(LOG_COMBAT,attacker->GetClientID(),"%s tries to attack with %s weapon %s at %.2f range", attacker->GetName(),(weapon->GetIsRangeWeapon()?"range":"melee"),weapon->GetName(), attacker->RangeTo(target,false));
-                Debug3(LOG_COMBAT,attacker->GetClientID(),"%s started attacking with %s",attacker->GetName(), weapon->GetName());
                 //start the first attack
                 attack->Attack(attacker, target, weaponSlot);
                 startedAttacking = true;
