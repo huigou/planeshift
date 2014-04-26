@@ -832,9 +832,9 @@ bool psPrereqOpAttackType::checkWeapon(psCharacter *character, int slot)
 {
 
     psItem *weapon=character->Inventory().GetEffectiveWeaponInSlot((INVENTORY_SLOT_NUMBER) slot);
-    if(!attackType->weapon.IsEmpty())
+    if(attackType->weaponID)
     {
-        if(!(attackType->weapon.CompareNoCase(weapon->GetName())))
+        if(attackType->weaponID != weapon->GetBaseStats()->GetUID())
         {
             return false;
         }

@@ -61,8 +61,8 @@ struct psAttackType
 {
     unsigned int           id;/// the id number, corresponding to its id in the database
     csString               name;/// the name of the attack type
-    csString               weapon;/// if it requires 1 specific weapon, maybe its an attack that is special adn specific to 1 particular weapon.
-    csArray<psWeaponType*> weaponTypes;/// if it requires multiple types of weapons they would be listed here.
+    unsigned int           weaponID;/// non-zero if it requires 1 specific weapon.
+    csArray<psWeaponType*> weaponTypes;/// if list is not empty, weapon must be one of the types in the list.
     bool                   OneHand;/// if it is a dual weilding based attack it willb e flagged here, that means it requires 2 weapons and each will perform part of the attack, if it is false then only one hand will execute the attack.
     PSSKILL                related_stat; /// each attack will have a stat related to it that will be part of the power computation
 
