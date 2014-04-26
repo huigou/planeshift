@@ -3384,9 +3384,9 @@ bool CacheManager::PreloadAttackTypes()
             psAttackType * type = new psAttackType;
             type->id            = types[i].GetInt("id");
             type->name          = types[i]["name"];
-            type->OneHand    = (bool)types[i]["onehand"];
+            type->OneHand       = (bool)types[i]["onehand"];
             type->related_stat  = (PSSKILL)atoi(types[i]["stat"]);
-            type->weapon        = types[i]["weaponName"];
+            type->weaponID      = types[i].GetInt("weaponID");
             csString tempWTypes = types[i]["weaponType"]; 
 
             WordArray ids(tempWTypes);
