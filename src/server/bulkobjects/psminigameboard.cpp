@@ -277,7 +277,7 @@ bool psMiniGameBoardDef::DetermineGameRules(csString rulesXMLstr, csString name)
 // </MGEndGame>
 bool psMiniGameBoardDef::DetermineEndgameSpecs(csString endgameXMLstr, csString name)
 {
-    if(endgameXMLstr.StartsWith("<MGEndGame>", false))
+    if(endgameXMLstr.Find("<MGEndGame>") != (size_t)-1)
     {
         csRef<iDocument> doc = ParseString(endgameXMLstr);
         if(doc)
