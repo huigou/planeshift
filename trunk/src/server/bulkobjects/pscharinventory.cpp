@@ -90,7 +90,6 @@ psCharacterInventory::psCharacterInventory(psCharacter* ownr)
 psCharacterInventory::~psCharacterInventory()
 {
     //delete main inventory
-    printf("~psCharacterInventory '%s' %zu\n", owner->GetCharName(), inventory.GetSize()); // XXX
     for(size_t t = 0 ; t < inventory.GetSize() ; t++)
     {
         psItem* curritem = inventory.Get(t).GetItem();
