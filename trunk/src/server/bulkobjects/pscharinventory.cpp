@@ -90,6 +90,7 @@ psCharacterInventory::psCharacterInventory(psCharacter* ownr)
 psCharacterInventory::~psCharacterInventory()
 {
     //delete main inventory
+    printf("~psCharacterInventory '%s' %zu\n", owner->GetCharName(), inventory.GetSize()); // XXX
     for(size_t t = 0 ; t < inventory.GetSize() ; t++)
     {
         psItem* curritem = inventory.Get(t).GetItem();
@@ -773,7 +774,7 @@ psItem* psCharacterInventory::AddStacked(psItem* &item, int &added)
 // If 'test' is true, the caller retains ownership.
 // If 'test' is false, the caller transfers ownership to the character's inventory.
 //
-bool psCharacterInventory::Add(psItem* &item, bool test, bool stack, INVENTORY_SLOT_NUMBER slot, gemContainer* container, bool precise)
+bool psCharacterInventory::Add(psItem* &item, bool test, bool stack, INVENTORY_SLOT_NUMBER slot, gemContainer* container, bool precise, bool skip_requirements)
 {
     Debug4(LOG_ITEM, 0, "%s item %s to slot %d",test?"Test add":"Add", item->GetName(), slot);
 
@@ -922,7 +923,7 @@ bool psCharacterInventory::Add(psItem* &item, bool test, bool stack, INVENTORY_S
     }
 
     // Check to see if the proposed slot is usable.
-    if(!CheckSlotRequirements(item, slot))
+    if(!skip_requirements && !CheckSlotRequirements(item, slot))
         return false; // -1 means add failed
 
     uint32 parentID = 0;

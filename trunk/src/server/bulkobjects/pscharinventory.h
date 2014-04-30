@@ -246,13 +246,14 @@ public:
      * @param slot The slot in which we want to place an item.
      *             (may be a slot number, or PSCHARACTER_SLOT_NONE)
      * @param container Pointer to container.
-     * @param precise Says whathever if the stacking should be precise and not ignore
+     * @param precise Says whatever if the stacking should be precise and not ignore
      *                properties like quality.
+     * @param skip_requirements If set, don't check the slot requirements in order to place the item in the slot.
      * @return true  if the item could be placed fully in the slot.
      *         false if the item could not be placed.
      */
     bool Add(psItem* &item, bool test = false, bool stack = true,
-             INVENTORY_SLOT_NUMBER slot = PSCHARACTER_SLOT_NONE, gemContainer* container = NULL, bool precise = true);
+             INVENTORY_SLOT_NUMBER slot = PSCHARACTER_SLOT_NONE, gemContainer* container = NULL, bool precise = true, bool skip_requirements = false);
 
     /**
      * Attempt to stack an item on an existing one if Add failed.
