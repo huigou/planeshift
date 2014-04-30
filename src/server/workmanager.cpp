@@ -2921,17 +2921,17 @@ psItem* WorkManager::TransformSlotItem(INVENTORY_SLOT_NUMBER slot, uint32 newId,
         return NULL;
     }
 
-    // Locate item in owner's slot
+    // Add new item to owner's slot.
+    // Note that we allow items that can't be equipped to be held.
     newItem->SetOwningCharacter(owner->GetCharacterData());
-    owner->GetCharacterData()->Inventory().Add(newItem,false,false,slot);
-    if(!owner->GetCharacterData()->Inventory().EquipItem(newItem,slot))
+    newItem->SetLoaded();  // Item is fully created
+    if(!owner->GetCharacterData()->Inventory().Add(newItem,false,false,slot,NULL,true,true))
     {
-        // If can't equip then drop
+        // If can't add then drop
         owner->GetCharacterData()->DropItem(newItem);
         psserver->SendSystemError(clientNum,
                                   "Item %s was dropped because it could not be equiped.",newItem->GetName());
     }
-    newItem->SetLoaded();  // Item is fully created
 
     // Check for conditions that would cause assert on newItem->Save(true)
     if(newItem->GetLocInParent(false) == -1 && newItem->GetOwningCharacter() && newItem->GetContainerID()==0)
