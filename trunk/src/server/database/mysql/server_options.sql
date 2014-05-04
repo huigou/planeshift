@@ -29,7 +29,7 @@ CREATE TABLE `server_options` (
 # Dumping data for table server_options
 #
 
-INSERT INTO `server_options` VALUES ('db_version','1278');
+INSERT INTO `server_options` VALUES ('db_version','1279');
 INSERT INTO `server_options` VALUES ('game_time','15:00');
 INSERT INTO `server_options` VALUES ('game_date','100-1-1');
 INSERT INTO `server_options` VALUES ('instruments_category','27');
