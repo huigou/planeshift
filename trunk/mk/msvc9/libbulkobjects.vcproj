@@ -1744,16 +1744,7 @@
 				RelativePath="..\..\src\server\bulkobjects\psattack.cpp">
 			</File>
 			<File
-				RelativePath="..\..\src\server\bulkobjects\psattackdefault.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\bulkobjects\psattackmelee.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\server\bulkobjects\psattackqueue.cpp">
-			</File>
-			<File
-				RelativePath="..\..\src\server\bulkobjects\psattackrange.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\server\bulkobjects\pscharacter.cpp">
@@ -1850,16 +1841,7 @@
 				RelativePath="..\..\src\server\bulkobjects\psattack.h">
 			</File>
 			<File
-				RelativePath="..\..\src\server\bulkobjects\psattackdefault.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\bulkobjects\psattackmelee.h">
-			</File>
-			<File
 				RelativePath="..\..\src\server\bulkobjects\psattackqueue.h">
-			</File>
-			<File
-				RelativePath="..\..\src\server\bulkobjects\psattackrange.h">
 			</File>
 			<File
 				RelativePath="..\..\src\server\bulkobjects\pscharacter.h">
