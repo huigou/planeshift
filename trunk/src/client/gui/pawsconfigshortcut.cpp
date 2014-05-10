@@ -204,11 +204,13 @@ bool pawsConfigShortcut::LoadConfig()
         {
             buttonWidthMode->SetActive( "buttonWidthAutomatic" );
             buttonWidth->SetCurrentValue( 0 );
+            buttonWidth->Hide();
         }
         else
         {
             buttonWidthMode->SetActive( "buttonWidthManual" );
             buttonWidth->SetCurrentValue( MenuBar->GetButtonWidth() );
+            buttonWidth->Show();
         }
 
         if(  MenuBar->GetEditMode()>0 )
@@ -390,12 +392,14 @@ bool pawsConfigShortcut::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget
         case 1000 : //buttonWidthMode == automtic
         {
             MenuBar->SetButtonWidth( 0 );
+            buttonWidth->Hide();
         }
         break;
 
         case 1001 : //buttonWidthMode == manual
         {
             MenuBar->SetButtonWidth( buttonWidth->GetCurrentValue() );
+            buttonWidth->Show();
         }
         break;
 

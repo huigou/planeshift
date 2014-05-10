@@ -200,6 +200,19 @@ bool pawsConfigActiveMagic::PostSetup()
 bool pawsConfigActiveMagic::LoadConfig()
 {
     useImages->SetState( ActiveMagicWindow->GetUseImages() ); 
+    if( useImages->GetState()==true )
+    {
+        textFont->Hide();
+        textSize->Hide();
+        textSpacing->Hide();
+    }
+    else
+    {
+        textFont->Show();
+        textSize->Show();
+        textSpacing->Show();
+    }
+
     autoResize->SetState( ActiveMagicWindow->GetAutoResize() ); 
     showEffects->SetActive( ActiveMagicWindow->GetShowEffects()?"itemAndSpell":"spellOnly" ); 
     showWindow->SetState( ActiveMagicWindow->IsVisible() ); 
@@ -209,11 +222,13 @@ bool pawsConfigActiveMagic::LoadConfig()
     {
         buttonWidthMode->SetActive( "buttonWidthAutomatic" );
         buttonWidth->SetCurrentValue( 0 );
+        buttonWidth->Hide();
     }
     else
     {
         buttonWidthMode->SetActive( "buttonWidthManual" );
         buttonWidth->SetCurrentValue( MenuBar->GetButtonWidth() );
+        buttonWidth->Show();
     }
 
     textSpacing->SetCurrentValue( MenuBar->GetButtonPaddingWidth() );
@@ -365,6 +380,12 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
 {
     dirty = true;
 
+    if( !wdg )
+        return false;
+
+    if( !loaded )
+        return false;
+
     switch( wdg->GetID() )
     {
         case 1020 : //spell effects only
@@ -398,6 +419,18 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         case 1022 : // use icons (true) or text (false)?
         {
             ActiveMagicWindow->SetUseImages(useImages->GetState());
+            if( useImages->GetState()==true )
+            {
+                textFont->Hide();
+                textSize->Hide();
+                textSpacing->Hide();
+            }
+            else
+            {
+                textFont->Show();
+                textSize->Show();
+                textSpacing->Show();
+            }
             if( ActiveMagicWindow->GetAutoResize() )
             {
                 ActiveMagicWindow->AutoResize();
@@ -437,67 +470,55 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         case 1000 : //buttonWidthMode == automtic
         {
             MenuBar->SetButtonWidth( 0 );
+            buttonWidth->Hide();
         }
         break;
 
         case 1001 : //buttonWidthMode == manual
         {
             MenuBar->SetButtonWidth( buttonWidth->GetCurrentValue() );
+            buttonWidth->Show();
         }
         break;
 
         case 1004 :
         {
             MenuBar->SetLeftScroll(ScrollMenuOptionENABLED );
-                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
         }
         break;
 
         case 1005 :
         {
             MenuBar->SetLeftScroll(ScrollMenuOptionDYNAMIC );
-                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
         }
         break;
 
         case 1006 :
         {
             MenuBar->SetLeftScroll(ScrollMenuOptionDISABLED );
-                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
         }
         break;
 
         case 1007 :
         {
             MenuBar->SetRightScroll(ScrollMenuOptionENABLED );
-                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
         }
         break;
 
         case 1008 :
         {
             MenuBar->SetRightScroll(ScrollMenuOptionDYNAMIC );
-                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
         }
         break;
         case 1009 :
         {
             MenuBar->SetRightScroll(ScrollMenuOptionDISABLED );
-                ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
         }
         break;
 
         case 1014 :
         {
-            if( ((pawsCheckBox*)wdg)->GetState()==true )
-            {
-                MenuBar->EnableButtonBackground( true );
-
-            }
-            else
-            {
-                MenuBar->EnableButtonBackground(false);
-            }
+            MenuBar->EnableButtonBackground( ((pawsCheckBox*)wdg)->GetState() );
         }
         break;
 
@@ -508,13 +529,10 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         }
     }
 
-    if( loaded )
-    {
-        MenuBar->LayoutButtons();
-        MenuBar->OnResize();
-        ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
-        SaveConfig();
-    }
+    MenuBar->LayoutButtons();
+    MenuBar->OnResize();
+    ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+    SaveConfig();
 
     return true;
 }
