@@ -330,7 +330,7 @@ void pawsScrollMenu::LayoutButtons()
             }
             else if(Buttons[i]->GetScreenFrame().xmax <= ButtonHolder->GetScreenFrame().xmin ||  Buttons[i]->GetScreenFrame().xmax > ButtonHolder->GetScreenFrame().xmax || Buttons[i]->GetScreenFrame().ymax >= ButtonHolder->GetScreenFrame().ymax)
             {
-                Buttons[i]->Hide();
+                //Buttons[i]->Hide();
             }
             else
             {

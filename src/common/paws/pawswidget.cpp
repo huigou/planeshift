@@ -1232,8 +1232,8 @@ void pawsWidget::DrawMask()
     }
     if(maskImage)
     {
-        graphics2D->SetClipRect(0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
-        maskImage->Draw(screenFrame.xmin, screenFrame.ymin, screenFrame.Width(), screenFrame.Height(), drawAlpha);
+        ClipToParent(true);
+        maskImage->Draw(screenFrame, drawAlpha);
     }
 }
 

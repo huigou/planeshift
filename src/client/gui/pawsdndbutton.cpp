@@ -474,6 +474,7 @@ void pawsDnDButton::MouseOver(bool value)
 {
 }
 
+
 void pawsDnDButton::DrawMask()
 {
     // Draw the masking image
@@ -491,7 +492,7 @@ void pawsDnDButton::DrawMask()
 
         imageX = screenFrame.xmin+(screenFrame.Width()/2)-(screenFrame.Height()/2);
 
-        graphics2D->SetClipRect( 0,0, graphics2D->GetWidth(), graphics2D->GetHeight());
+        ClipToParent(true);
         maskImage->Draw(imageX, screenFrame.ymin, screenFrame.Height(), screenFrame.Height(), drawAlpha);
     }
 }
