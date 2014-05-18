@@ -39,14 +39,15 @@
 //------------------------------------------------------------------------------------
 
 /**
- * Implements a musical score. Central object of this class is the cursor which is part
- * of BaseMusicalScore's interface to all intent and purposes. The score can be in edit
- * or in play mode. When in play mode, it is read-only.
+ * Implements a musical score. Central object of this class is the cursor which is part of
+ * BaseMusicalScore's interface to all intent and purposes. The score can be in edit or in
+ * play mode. When in play mode, it is read-only.
  *
- * Though the content of the score can be read with BaseMusicalScore::GetMeasure(size_t),
- * using the cursor is the only way to modify it. After you set the score mode through
- * BaseMusicalScore::Set*Mode(), a reference of the score can be retrieved by using the
- * methods BaseMusicalScore::Get*Cursor().
+ * Though the content of the score can be read with BaseMusicalScore::GetMeasure(), using
+ * the cursor is the only way to modify it. After you set the score mode through
+ * BaseMusicalScore::SetEditMode() and BaseMusicalScore::SetPlayMode(), a reference of the
+ * score can be retrieved by using the methods BaseMusicalScore::GetEditCursor() and
+ * BaseMusicalScore::GetPlayCursor().
  *
  * The read-only property of the score in play mode is enforced by exploiting the Cursor
  * class const-correctness. The drawback of this design is that you will not be able to
@@ -54,6 +55,7 @@
  * methods are provided in BaseMusicalScore. You can use BaseMusicalScore::AdvanceCursor()
  * instead of BaseMusicalScore::Cursor::Advance() for example.
  */
+template<template<typename> class MeasureType = Measure, typename MeasureElementType = MeasureElement>
 class BaseMusicalScore
 {
 
@@ -78,7 +80,7 @@ public:
     /**
      * Return the cursor if the score is in edit mode.
      *
-     * @retrn The cursor if the score is in edit mode, 0 otherwise.
+     * @return The cursor if the score is in edit mode, 0 otherwise.
      */
     Cursor* GetEditCursor();
 
@@ -88,7 +90,7 @@ public:
      * @param n The index of the measure to retrieve. Must be valid.
      * @return The n-th measure in the score.
      */
-    const Measure* GetMeasure(size_t n) const;
+    const MeasureType<MeasureElementType>* GetMeasure(size_t n) const;
 
     /**
      * Return the number of measures in the score.
@@ -134,7 +136,7 @@ private:
      * All the measures of this musical score. End-of-measure and end-of-score variables
      * are not actually represented. They are just a nice abstraction for the user.
      */
-    csArray<Measure> measures;
+    csArray<MeasureType<MeasureElementType>> measures;
 };
 
 //------------------------------------------------------------------------------------
@@ -152,13 +154,14 @@ private:
  * an empty score contains only the end-of-score element.
  *
  * Though the user is free to add and remove elements to an existing measure by using the
- * methods provided by the Measure class, it must be noticed that by doing so the cursor
- * is not updated in any way. This may cause undesired effects (e.g. the cursor may point
- * to a non-existent measure). For this reason it is safer to use the methods of this
- * class which clearly state their effect on the cursor. If you still want to use the
- * methods in Measure, be sure to call Cursor::Validate() after.
+ * methods provided by the MeasureType class, it must be noticed that by doing so the
+ * cursor is not updated in any way. This may cause undesired effects (e.g. the cursor may
+ * point to a non-existent measure). For this reason it is safer to use the methods of
+ * this class which clearly state their effect on the cursor. If you still want to use the
+ * methods in MeasureType, be sure to call Cursor::Validate() after.
  */
-class BaseMusicalScore::Cursor
+template<template<typename> class MeasureType, typename MeasureElementType>
+class BaseMusicalScore<MeasureType, MeasureElementType>::Cursor
 {
 public:
     /**
@@ -185,12 +188,12 @@ public:
      * @return The current measure element or a null pointer in case the cursor is on a
      * end-of-measure or the end-of-score element.
      */
-    MeasureElement* GetCurrentElement();
+    MeasureElementType* GetCurrentElement();
 
     /**
      * @copydoc BaseMusicalScore::Cursor::GetCurrentElement()
      */
-    const MeasureElement* GetCurrentElement() const;
+    const MeasureElementType* GetCurrentElement() const;
 
     /**
      * Get the measure currently pointed by the cursor.
@@ -198,12 +201,12 @@ public:
      * @return The current measure or a null pointer if the cursor is on a end-of-measure
      * or the end-of-score element.
      */
-    Measure* GetCurrentMeasure();
+    MeasureType<MeasureElementType>* GetCurrentMeasure();
 
     /**
      * @copydoc BaseMusicalScore::Cursor::GetCurrentMeasure()
      */
-    const Measure* GetCurrentMeasure() const;
+    const MeasureType<MeasureElementType>* GetCurrentMeasure() const;
 
     /**
      * Check if the element after the current one is the end-of-score element. This takes
@@ -226,7 +229,7 @@ public:
      *
      * @param element The element to insert.
      */
-    void InsertElementAfter(const MeasureElement &element);
+    void InsertElementAfter(const MeasureElementType &element);
 
     /**
      * Insert a copy of the given element before the current one. The cursor does not
@@ -236,7 +239,7 @@ public:
      *
      * @param element The element to insert.
      */
-    void InsertElementBefore(const MeasureElement &element);
+    void InsertElementBefore(const MeasureElementType &element);
 
     /**
      * Insert a copy of the given measure after the current one. The cursor does not
@@ -246,7 +249,7 @@ public:
      *
      * @param measure The measure to insert.
      */
-    void InsertMeasureAfter(const Measure &measure);
+    void InsertMeasureAfter(const MeasureType<MeasureElementType> &measure);
 
     /**
      * Insert a copy of the given measure before the current one. The cursor does not
@@ -255,7 +258,7 @@ public:
      *
      * @param measure The measure to insert.
      */
-    void InsertMeasureBefore(const Measure &measure);
+    void InsertMeasureBefore(const MeasureType<MeasureElementType> &measure);
 
     /**
      * Check that the cursor is on an end-of-measure element.
@@ -307,20 +310,20 @@ public:
     /**
      * If the cursor is pointing to a non-existent element, this moves it to the
      * end-of-measure character in the same measure. You have no reason to use this method
-     * unless you modify add/remove elements in a Measure by using its methods.
+     * unless you modify add/remove elements in a MeasureType by using its methods.
      */
     void Validate();
 
 private:
     // In this way only BaseMusicalScore can access the private constructor
-    friend BaseMusicalScore::BaseMusicalScore();
-    friend Cursor* BaseMusicalScore::SetEditMode();
-    friend const Cursor* BaseMusicalScore::SetPlayMode();
+    friend BaseMusicalScore<MeasureType, MeasureElementType>::BaseMusicalScore();
+    friend Cursor* BaseMusicalScore<MeasureType, MeasureElementType>::SetEditMode();
+    friend const Cursor* BaseMusicalScore<MeasureType, MeasureElementType>::SetPlayMode();
 
     size_t currElementIdx; ///< Index of the current element.
     size_t currMeasureIdx; ///< Index of the current measure.
     ScoreContext* context; ///< The context is valid only if it is in play mode.
-    BaseMusicalScore* score; ///< The musical score this cursor refers to.
+    BaseMusicalScore<MeasureType, MeasureElementType>* score; ///< The musical score this cursor refers to.
 
     /**
      * Create a cursor pointing to the first element of the score. Only the score can
@@ -329,7 +332,8 @@ private:
      * @param score The musical score this cursor refers to.
      * @param mode If the mode is play, a context is created and mantained.
      */
-    Cursor(BaseMusicalScore* score, BaseMusicalScore::ScoreMode mode);
+    Cursor(BaseMusicalScore<MeasureType, MeasureElementType>* score,
+		   typename BaseMusicalScore<MeasureType, MeasureElementType>::ScoreMode mode);
 
     /**
      * Check if an eventual repeat section must be repeated after this measure. The
@@ -355,5 +359,7 @@ private:
      */
     void Reset();
 };
+
+#include "basemusicscore.hpp"
 
 #endif // BASE_MUSIC_SCORE_H
