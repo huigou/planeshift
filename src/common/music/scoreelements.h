@@ -290,6 +290,7 @@ private:
 /**
  * A measure containing measure elements.
  */
+template<typename MeasureElementType>
 class Measure
 {
 public:
@@ -441,12 +442,12 @@ public:
      * @param n The index of the element.
      * @return The element.
      */
-    MeasureElement &GetElement(size_t n) { return elements[n]; }
+    MeasureElementType &GetElement(size_t n) { return elements[n]; }
 
     /**
      * @copydoc Measure::GetElement(size_t)
      */
-    const MeasureElement &GetElement(size_t n) const { return elements[n]; }
+    const MeasureElementType &GetElement(size_t n) const { return elements[n]; }
 
     /**
      * Get the number of elements in this measure.
@@ -470,7 +471,7 @@ public:
      * @param n The number of the element after which the given element must be inserted.
      * @param element The element to insert in the measure.
      */
-    void InsertElement(size_t n, const MeasureElement &element);
+    void InsertElement(size_t n, const MeasureElementType &element);
 
     /**
      * Check if the measure has at least one element.
@@ -506,7 +507,10 @@ public:
      * @param element The element to push in the measure.
      * @return The index of the pushed element.
      */
-    size_t PushElement(const MeasureElement &element) { return elements.Push(element); }
+    size_t PushElement(const MeasureElementType &element)
+	{
+		return elements.Push(element);
+	}
 
     /**
      * Set the beat information. Both beats and beatType must be defined. If only one of
@@ -553,7 +557,7 @@ private:
     bool isEnding; ///< True if this is an ending measure.
     bool isStartRepeat; ///< True if this measure starts a repeat section.
     int nEndRepeat; ///< Number of times the repeat must be performed.
-    csArray<MeasureElement> elements; ///< Elements of this measure.
+    csArray<MeasureElementType> elements; ///< Elements of this measure.
 
     /**
      * Attributes of this measure. We keep this allocated object only if the measure
@@ -562,12 +566,12 @@ private:
     MeasureAttributes* attributes;
 
     /**
-     * Create a new MeasureAttributes object if it does not exists already.
+     * Create a new MeasureAttributes object if it does not exist already.
      */
     void CreateAttributes();
 
     /**
-     * Delete the attributes (if it exists) and free the memory.
+     * Delete the attributes (if the object exists) and free the memory.
      */
     void DeleteAttributes();
 
@@ -595,7 +599,7 @@ public:
     /**
      * Attributes specified in the score up to now. Must be updated at every measure.
      */
-    Measure::MeasureAttributes measureAttributes;
+    Measure<MeasureElement>::MeasureAttributes measureAttributes;
 
     /**
      * Constructor.
@@ -627,7 +631,7 @@ public:
      * @param measureID The ID of the updated measure.
      * @param measure The new measure reached by the cursor.
      */
-    void Update(int measureID, const Measure &measure);
+    void Update(int measureID, const Measure<MeasureElement> &measure);
 
     /**
      * Keep the list of previous accidentals updated.
@@ -643,7 +647,7 @@ private:
      * Cache element used to store attributes in the last measure containins a start
      * repeat.
      */
-    Measure::MeasureAttributes lastStartRepeatAttributes;
+    Measure<MeasureElement>::MeasureAttributes lastStartRepeatAttributes;
 
     /**
      * Keeps track of the repeat sections already performed. It is indexed by measure index and

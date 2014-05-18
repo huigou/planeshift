@@ -260,13 +260,15 @@ bool MeasureElement::RemoveNote(char name, int octave)
 
 //--------------------------------------------------
 
-Measure::MeasureAttributes::MeasureAttributes()
+template<typename MeasureElementType>
+Measure<MeasureElementType>::MeasureAttributes::MeasureAttributes()
 : tempo(UNDEFINED_MEASURE_ATTRIBUTE), beats(UNDEFINED_MEASURE_ATTRIBUTE),
 beatType(UNDEFINED_MEASURE_ATTRIBUTE), fifths(UNDEFINED_MEASURE_ATTRIBUTE)
 {
 }
 
-bool Measure::MeasureAttributes::IsUndefined() const
+template<typename MeasureElementType>
+bool Measure<MeasureElementType>::MeasureAttributes::IsUndefined() const
 {
     return tempo == UNDEFINED_MEASURE_ATTRIBUTE &&
         beats == UNDEFINED_MEASURE_ATTRIBUTE &&
@@ -274,8 +276,9 @@ bool Measure::MeasureAttributes::IsUndefined() const
         fifths == UNDEFINED_MEASURE_ATTRIBUTE;
 }
 
-void Measure::MeasureAttributes::UpdateAttributes(
-    const Measure::MeasureAttributes &attributes)
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::MeasureAttributes::UpdateAttributes(
+    const typename Measure<MeasureElementType>::MeasureAttributes &attributes)
 {
     if(attributes.beats != UNDEFINED_MEASURE_ATTRIBUTE)
     {
@@ -295,17 +298,20 @@ void Measure::MeasureAttributes::UpdateAttributes(
     }
 }
 
-Measure::Measure()
+template<typename MeasureElementType>
+Measure<MeasureElementType>::Measure()
   : isEnding(false), isStartRepeat(false), nEndRepeat(0), attributes(0)
 {
 }
 
-Measure::~Measure()
+template<typename MeasureElementType>
+Measure<MeasureElementType>::~Measure()
 {
     DeleteAttributes();
 }
 
-void Measure::Fit(const MeasureAttributes* attributes_)
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::Fit(const MeasureAttributes* attributes_)
 {
     int measDuration = 0; // the duration that the measure is supposed to be
     int currDuration = 0; // the sum of the duration of the elements
@@ -365,13 +371,15 @@ void Measure::Fit(const MeasureAttributes* attributes_)
         while(currDuration < measDuration)
         {
             tempDuration = GetBiggestDuration(measDuration - currDuration);
-            PushElement(MeasureElement(tempDuration));
+            PushElement(MeasureElementType(tempDuration));
             currDuration += tempDuration;
         }
     }
 }
 
-Measure::MeasureAttributes Measure::GetAttributes() const
+template<typename MeasureElementType>
+typename Measure<MeasureElementType>::MeasureAttributes
+	Measure<MeasureElementType>::GetAttributes() const
 {
     if(attributes == 0)
     {
@@ -380,7 +388,8 @@ Measure::MeasureAttributes Measure::GetAttributes() const
     return *attributes;
 }
 
-void Measure::InsertElement(size_t n, const MeasureElement &element)
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::InsertElement(size_t n, const MeasureElementType &element)
 {
     if(!elements.Insert(n, element))
     {
@@ -388,7 +397,8 @@ void Measure::InsertElement(size_t n, const MeasureElement &element)
     }
 }
 
-void Measure::SetBeat(int beats, int beatType)
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::SetBeat(int beats, int beatType)
 {
     if(beats != UNDEFINED_MEASURE_ATTRIBUTE && beatType != UNDEFINED_MEASURE_ATTRIBUTE)
     {
@@ -413,12 +423,14 @@ void Measure::SetBeat(int beats, int beatType)
     }
 }
 
-void Measure::SetEnding(bool isEnding_)
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::SetEnding(bool isEnding_)
 {
     isEnding = isEnding_;
 }
 
-void Measure::SetFifths(int fifths)
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::SetFifths(int fifths)
 {
     if(fifths != UNDEFINED_MEASURE_ATTRIBUTE)
     {
@@ -432,18 +444,21 @@ void Measure::SetFifths(int fifths)
     }
 }
 
-void Measure::SetNEndRepeat(int nEndRepeat_)
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::SetNEndRepeat(int nEndRepeat_)
 {
     CS_ASSERT(nEndRepeat_ >= 0);
     nEndRepeat = nEndRepeat_;
 }
 
-void Measure::SetStartRepeat(bool isStartRepeat_)
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::SetStartRepeat(bool isStartRepeat_)
 {
     isStartRepeat = isStartRepeat_;
 }
 
-void Measure::SetTempo(int tempo)
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::SetTempo(int tempo)
 {
     if(tempo != UNDEFINED_MEASURE_ATTRIBUTE)
     {
@@ -457,7 +472,8 @@ void Measure::SetTempo(int tempo)
     }
 }
 
-void Measure::CreateAttributes()
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::CreateAttributes()
 {
     if(attributes == 0)
     {
@@ -465,7 +481,8 @@ void Measure::CreateAttributes()
     }
 }
 
-void Measure::DeleteAttributes()
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::DeleteAttributes()
 {
     if(attributes != 0)
     {
@@ -474,7 +491,8 @@ void Measure::DeleteAttributes()
     }
 }
 
-void Measure::UpdateAttributes()
+template<typename MeasureElementType>
+void Measure<MeasureElementType>::UpdateAttributes()
 {
     if(attributes != 0)
     {
@@ -508,7 +526,7 @@ void ScoreContext::Update(const MeasureElement &element)
     noteContext.UpdateContext(element);
 }
 
-void ScoreContext::Update(int measureID, const Measure &measure)
+void ScoreContext::Update(int measureID, const Measure<MeasureElement> &measure)
 {
     noteContext.ResetContext();
     measureAttributes.UpdateAttributes(measure.GetAttributes());
