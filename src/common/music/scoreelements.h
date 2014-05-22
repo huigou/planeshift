@@ -108,6 +108,11 @@ public:
     };
 
     /**
+     * Default constructor. Create a natural middle C.
+     */
+    Note();
+
+    /**
      * Constructor.
      *
      * @param name Name of the note (C, D, E, F, G, A or B). Must be uppercase.
@@ -508,9 +513,9 @@ public:
      * @return The index of the pushed element.
      */
     size_t PushElement(const MeasureElementType &element)
-	{
-		return elements.Push(element);
-	}
+    {
+        return elements.Push(element);
+    }
 
     /**
      * Set the beat information. Both beats and beatType must be defined. If only one of
