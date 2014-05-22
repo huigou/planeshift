@@ -104,6 +104,10 @@ void Note::NoteContext::UpdateContext(const MeasureElement &element)
     }
 }
 
+Note::Note(): name('C'), octave(4), writtenAccidental(NO_ACCIDENTAL)
+{
+}
+
 Note::Note(char name_, int octave_, Accidental writtenAccidental_)
 : octave(octave_), writtenAccidental(writtenAccidental_)
 {
