@@ -154,7 +154,7 @@ void Measure<MeasureElementType>::Fit(const MeasureAttributes* attributes_)
 
 template<typename MeasureElementType>
 typename Measure<MeasureElementType>::MeasureAttributes
-	Measure<MeasureElementType>::GetAttributes() const
+    Measure<MeasureElementType>::GetAttributes() const
 {
     if(attributes == 0)
     {

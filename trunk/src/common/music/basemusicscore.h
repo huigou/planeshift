@@ -333,7 +333,7 @@ private:
      * @param mode If the mode is play, a context is created and mantained.
      */
     Cursor(BaseMusicalScore<MeasureType, MeasureElementType>* score,
-		   typename BaseMusicalScore<MeasureType, MeasureElementType>::ScoreMode mode);
+           typename BaseMusicalScore<MeasureType, MeasureElementType>::ScoreMode mode);
 
     /**
      * Check if an eventual repeat section must be repeated after this measure. The

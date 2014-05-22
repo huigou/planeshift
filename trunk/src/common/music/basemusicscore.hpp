@@ -48,14 +48,14 @@ BaseMusicalScore<MeasureType, MeasureElementType>::~BaseMusicalScore()
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 bool BaseMusicalScore<MeasureType, MeasureElementType>::AdvanceCursor(
-	bool ignoreEndOfMeasure)
+    bool ignoreEndOfMeasure)
 {
     return cursor->Advance(ignoreEndOfMeasure);
 }
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 typename BaseMusicalScore<MeasureType, MeasureElementType>::Cursor*
-	BaseMusicalScore<MeasureType, MeasureElementType>::GetEditCursor()
+    BaseMusicalScore<MeasureType, MeasureElementType>::GetEditCursor()
 {
     if(mode != EDIT)
     {
@@ -66,7 +66,7 @@ typename BaseMusicalScore<MeasureType, MeasureElementType>::Cursor*
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 const MeasureType<MeasureElementType>*
-	BaseMusicalScore<MeasureType, MeasureElementType>::GetMeasure(size_t n) const
+    BaseMusicalScore<MeasureType, MeasureElementType>::GetMeasure(size_t n) const
 {
     CS_ASSERT(n < measures.GetSize());
     return &measures[n];
@@ -74,7 +74,7 @@ const MeasureType<MeasureElementType>*
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 const typename BaseMusicalScore<MeasureType, MeasureElementType>::Cursor*
-	BaseMusicalScore<MeasureType, MeasureElementType>::GetPlayCursor() const
+    BaseMusicalScore<MeasureType, MeasureElementType>::GetPlayCursor() const
 {
     if(mode != PLAY)
     {
@@ -85,7 +85,7 @@ const typename BaseMusicalScore<MeasureType, MeasureElementType>::Cursor*
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 typename BaseMusicalScore<MeasureType, MeasureElementType>::Cursor*
-	BaseMusicalScore<MeasureType, MeasureElementType>::SetEditMode()
+    BaseMusicalScore<MeasureType, MeasureElementType>::SetEditMode()
 {
     if(mode == PLAY)
     {
@@ -97,7 +97,7 @@ typename BaseMusicalScore<MeasureType, MeasureElementType>::Cursor*
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 const typename BaseMusicalScore<MeasureType, MeasureElementType>::Cursor*
-	BaseMusicalScore<MeasureType, MeasureElementType>::SetPlayMode()
+    BaseMusicalScore<MeasureType, MeasureElementType>::SetPlayMode()
 {
     if(mode == EDIT)
     {
@@ -120,7 +120,7 @@ BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::~Cursor()
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 bool BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::Advance(
-	bool ignoreEndOfMeasure)
+    bool ignoreEndOfMeasure)
 {
     bool isLastElem;
 
@@ -188,16 +188,16 @@ bool BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::Advance(
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 MeasureElementType*
-	BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::GetCurrentElement()
+    BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::GetCurrentElement()
 {
     return const_cast<MeasureElementType*>(
         static_cast<const BaseMusicalScore<MeasureType, MeasureElementType>::Cursor &>
-		(*this).GetCurrentElement());
+        (*this).GetCurrentElement());
 }
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 const MeasureElementType*
-	BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::GetCurrentElement() const
+    BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::GetCurrentElement() const
 {
     if(IsValid())
     {
@@ -208,16 +208,16 @@ const MeasureElementType*
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 MeasureType<MeasureElementType>*
-	BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::GetCurrentMeasure()
+    BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::GetCurrentMeasure()
 {
     return const_cast<MeasureType<MeasureElementType>*>(
         static_cast<const BaseMusicalScore<MeasureType, MeasureElementType>::Cursor &>
-		(*this).GetCurrentMeasure());
+        (*this).GetCurrentMeasure());
 }
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 const MeasureType<MeasureElementType>* 
-	BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::GetCurrentMeasure() const
+    BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::GetCurrentMeasure() const
 {
     if(IsEndOfScore())
     {
@@ -228,7 +228,7 @@ const MeasureType<MeasureElementType>*
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 bool BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::HasNext(
-	bool ignoreEndOfMeasure) const
+    bool ignoreEndOfMeasure) const
 {
     if(IsEndOfScore())
     {
@@ -246,7 +246,7 @@ bool BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::HasNext(
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 void BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::InsertElementAfter(
-	const MeasureElementType &element)
+    const MeasureElementType &element)
 {
     MeasureType<MeasureElementType>* currMeasure; // convenience variable
 
@@ -276,7 +276,7 @@ void BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::InsertElementAft
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 void BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::InsertElementBefore(
-	const MeasureElementType &element)
+    const MeasureElementType &element)
 {
     if(IsEndOfScore())
     {
@@ -300,7 +300,7 @@ void BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::InsertElementBef
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 void BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::InsertMeasureAfter(
-	const MeasureType<MeasureElementType> &measure)
+    const MeasureType<MeasureElementType> &measure)
 {
     if(IsEndOfScore())
     {
@@ -324,7 +324,7 @@ void BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::InsertMeasureAft
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 void BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::InsertMeasureBefore(
-	const MeasureType<MeasureElementType> &measure)
+    const MeasureType<MeasureElementType> &measure)
 {
     if(IsEndOfScore())
     {
@@ -425,8 +425,8 @@ void BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::Validate()
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::Cursor(
-	BaseMusicalScore<MeasureType, MeasureElementType>* score_,
-	typename BaseMusicalScore<MeasureType, MeasureElementType>::ScoreMode mode)
+    BaseMusicalScore<MeasureType, MeasureElementType>* score_,
+    typename BaseMusicalScore<MeasureType, MeasureElementType>::ScoreMode mode)
 : context(0), score(score_)
 {
     if(mode == PLAY)
@@ -445,7 +445,7 @@ bool BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::CheckRepeat() co
 
 template<template<typename> class MeasureType, typename MeasureElementType>
 bool BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::HasNextWritten(
-	bool ignoreEndOfMeasure) const
+    bool ignoreEndOfMeasure) const
 {
     bool isLastMeasure = (currMeasureIdx == score->measures.GetSize() - 1);
 
