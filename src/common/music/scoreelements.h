@@ -656,6 +656,8 @@ private:
     csHash<int, int> repeatsDone;
 };
 
+#include "scoreelements.hpp"
+
 /** @} */
 
 #endif // SCORE_ELEMENTS_H
