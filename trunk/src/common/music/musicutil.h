@@ -225,11 +225,13 @@ enum Accidental
     DOUBLE_SHARP
 };
 
+
+// Unit of measure is a sixteenth. If you change this constant you must change the values
+// in the enum Duration and the method CheckDuration() too.
 /**
- * Unit measure for duration in in terms of divisions per quarter. If you change this
- * constants you must change the values in the enum Duration too.
+ * Unit measure for duration in in terms of divisions per quarter.
  */
-#define DURATION_QUARTER_DIVISIONS 16 // unit measure is a sixteenth
+#define DURATION_QUARTER_DIVISIONS 16
 
 /**
  * The number associated to each duration is the number of quarter divisions as specified
@@ -248,6 +250,16 @@ enum Duration
     DOTTED_WHOLE_DURATION   = 24
 };
 
+
+/**
+ * Check wheather the given number of DURATION_QUARTER_DIVISIONS correspond to a specific
+ * duration taken into account by the enum Duration.
+ *
+ * @param duration the duration expressed as the number of DURATION_QUARTER_DIVISIONS.
+ * @return true if the given duration can be expressed by the type Duration, false
+ * otherwise.
+ */
+bool CheckDuration(int duration);
 
 /**
  * Returns the biggest duration that can be represented on the score which is less

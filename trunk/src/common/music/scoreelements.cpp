@@ -109,9 +109,10 @@ Note::Note(): name('C'), octave(4), writtenAccidental(NO_ACCIDENTAL)
 }
 
 Note::Note(char name_, int octave_, Accidental writtenAccidental_)
-: octave(octave_), writtenAccidental(writtenAccidental_)
+: writtenAccidental(writtenAccidental_)
 {
     SetName(name_);
+    SetOctave(octave_);
 }
 
 Accidental Note::GetPlayedAccidental(const ScoreContext &context) const
@@ -225,6 +226,7 @@ void Note::SetName(char newName)
 
 void Note::SetOctave(int newOctave)
 {
+    CS_ASSERT(newOctave >= 0 && newOctave <= 9);
     octave = newOctave;
 }
 
