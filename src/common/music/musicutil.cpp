@@ -32,6 +32,33 @@
 #define SCORE_COMPRESSION_FACTOR 3
 
 
+bool psMusic::CheckDuration(int duration)
+{
+    switch(duration)
+    {
+    case SIXTEENTH_DURATION:
+        return true;
+    case EIGHTH_DURATION:
+        return true;
+    case DOTTED_EIGHTH_DURATION:
+        return true;
+    case QUARTER_DURATION:
+        return true;
+    case DOTTED_QUARTER_DURATION:
+        return true;
+    case HALF_DURATION:
+        return true;
+    case DOTTED_HALF_DURATION:
+        return true;
+    case WHOLE_DURATION:
+        return true;
+    case DOTTED_WHOLE_DURATION:
+        return true;
+    default:
+        return false;
+    }
+}
+
 psMusic::Duration psMusic::GetBiggestDuration(int duration)
 {
     if(DOTTED_WHOLE_DURATION <= duration)

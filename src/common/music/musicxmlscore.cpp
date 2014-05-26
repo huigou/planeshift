@@ -35,78 +35,161 @@
 // Forward Declarations
 //------------------------------------------------------------------------------------
 
-bool MusicXMLNote::LoadXML(csRef<iDocumentNode> &pitchNode)
-{
-    csRef<iDocumentNode> stepNode = pitchNode->GetNode("step");
-    csRef<iDocumentNode> alterNode = pitchNode->GetNode("alter");
-    csRef<iDocumentNode> octaveNode = pitchNode->GetNode("octave");
 
+bool MusicXMLElement::LoadXMLNote(const csRef<iDocumentNode> &noteNode, int divisions)
+{
+    char step;
+    int octave;
+    int duration;
+    Accidental accidental = NO_ACCIDENTAL;
+    csRef<iDocumentNode> durationNode;
+    csRef<iDocumentNode> pitchNode;
+    csRef<iDocumentNode> stepNode;
+    csRef<iDocumentNode> octaveNode;
+    csRef<iDocumentNode> accidentalNode;
+
+    if(!noteNode.IsValid())
+    {
+        return false;
+    }
+
+    // Check that this note belongs to this element
+    if(this->GetNNotes() > 0 && !noteNode->GetNode("chord").IsValid())
+    {
+        return false;
+    }
+
+    // Loading duration
+    durationNode = noteNode->GetNode("duration");
+    if(!durationNode.IsValid())
+    {
+        return false;
+    }
+    duration = durationNode->GetContentsValueAsInt();
+    if(duration <= 0)
+    {
+        return false;
+    }
+    duration = duration * QUARTER_DURATION / divisions; // convert duration from quarters to sixteenths
+    if(!CheckDuration(duration))
+    {
+        return false;
+    }
+    this->SetDuration(static_cast<Duration>(duration));
+
+    // If this is a rest, we don't need to do anything else
+    if(noteNode->GetNode("rest").IsValid())
+    {
+        return true;
+    }
+
+    // Loading name and octave
+    pitchNode = noteNode->GetNode("pitch");
+    if(!pitchNode.IsValid())
+    {
+        return false;
+    }
+
+    stepNode = pitchNode->GetNode("step");
+    octaveNode = pitchNode->GetNode("octave");
     if(!stepNode.IsValid() || !octaveNode.IsValid())
     {
         return false;
     }
 
-    char step = stepNode->GetContentsValue()[0];
+    step = stepNode->GetContentsValue()[0];
     if(step < 'A' || step > 'G')
     {
         return false;
     }
-    this->SetName(step);
 
-    if(!alterNode.IsValid())
-    {
-        this->SetWrittenAccidental(NO_ACCIDENTAL);
-    }
-    else // the alter node is optional
-    {
-        int alter = alterNode->GetContentsValueAsInt();
-        switch(alter)
-        {
-        case 0:
-            this->SetWrittenAccidental(NO_ACCIDENTAL);
-            break;
-        case 1:
-            this->SetWrittenAccidental(SHARP);
-            break;
-        case -1:
-            this->SetWrittenAccidental(FLAT);
-            break;
-        default:
-            return false;
-        }
-    }
-
-    int octave = octaveNode->GetContentsValueAsInt();
+    octave = octaveNode->GetContentsValueAsInt();
     if(octave < 0 || octave > 9) // octave limits according to xsd specification
     {
         return true;
     }
-    this->SetOctave(octave);
+
+    // Loading accidental. Right now it considers both <alter> and <accidental> as the
+    // written accidental of the note (with priority to <accidental>). This is wrong but
+    // it's needed for backwards compatibility. In the future, only <accidental> should
+    // be parsed.
+    accidentalNode = noteNode->GetNode("accidental");
+    if(accidentalNode.IsValid())
+    {
+        csString accidentalStr = accidentalNode->GetContentsValue();
+        if(accidentalStr == "flat")
+        {
+            accidental = FLAT;
+        }
+        else if(accidentalStr == "sharp")
+        {
+            accidental = SHARP;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        csRef<iDocumentNode> alterNode = pitchNode->GetNode("alter");
+        if(alterNode.IsValid())
+        {
+            int alter = alterNode->GetContentsValueAsInt();
+            switch(alter)
+            {
+            case 0:
+                accidental = NO_ACCIDENTAL;
+                break;
+            case 1:
+                accidental = SHARP;
+                break;
+            case -1:
+                accidental = FLAT;
+                break;
+            default:
+                return false;
+            }
+        }
+    }
+
+    this->AddNote(step, octave, accidental);
 
     return true;
 }
 
-csString MusicXMLNote::ToXML()
+csString MusicXMLElement::ToXML()
 {
-    int alterXML = 0;
-    Accidental alter = this->GetWrittenAccidental();
-    switch(alter)
+    csString element("<note>");
+
+    if(this->IsRest())
     {
-    case SHARP:
-        alterXML = 1;
-        break;
-    case FLAT:
-        alterXML = -1;
-        break;
+        element.AppendFmt("<rest/><duration>%d</duration></note>", this->GetDuration());
+        return element;
     }
 
-    csString pitch("<pitch>");
-    pitch.AppendFmt("<step>%c</step>", this->GetName());
-    if(alterXML != 0)
+    for(size_t i = 0; i < this->GetNNotes(); i++)
     {
-        pitch.AppendFmt("<alter>%d</alter>", alterXML);
+        Note note = this->GetNote(i);
+
+        if(i > 0)
+        {
+            element += "<note><chord/>";
+        }
+
+        element.AppendFmt("<pitch><step>%c</step><octave>%d</octave></pitch><duration>%d</duration>",
+                          note.GetName(), note.GetOctave(), this->GetDuration());
+        switch(note.GetWrittenAccidental())
+        {
+        case SHARP:
+            element += "<accidental>sharp</accidental>";
+            break;
+        case FLAT:
+            element += "<accidental>flat</accidental>";
+            break;
+        }
+        element += "</note>";
     }
-    pitch.AppendFmt("<octave>%d</octave></pitch>", this->GetOctave());
-    return pitch;
+    return element;
 }
 
