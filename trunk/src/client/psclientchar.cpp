@@ -695,6 +695,7 @@ void psCreationManager::HandleMessage( MsgEntry* me )
             if (wdg)
                 wdg->Hide();
 
+            psengine->GetCelClient()->SetMainPlayerName(GetName());
             psengine->StartLoad();
             break;
         }
@@ -1164,7 +1165,7 @@ void psCreationManager::SetName( const char* newName )
     selectedName.Replace( newName );
 }
 
-csString psCreationManager::GetName()
+const char* psCreationManager::GetName()
 {
     return selectedName;
 }

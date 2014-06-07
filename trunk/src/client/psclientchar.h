@@ -343,7 +343,7 @@ public:
     
     void UploadChar( bool doVerify = false );
     void SetName( const char* newName );
-    csString GetName();
+    const char* GetName();
     
     LifeEventChoice* FindLifeEvent( int idNumber );
 
