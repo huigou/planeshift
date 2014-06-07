@@ -853,6 +853,7 @@ bool pawsCreationMain::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/,
         {
             Hide();
             pawsCharacterPickerWindow* charPicker = (pawsCharacterPickerWindow*)PawsManager::GetSingleton().FindWidget( "CharPickerWindow" );
+            charPicker->SelectCharacter(0);
             charPicker->Show();
             return true;
         }
