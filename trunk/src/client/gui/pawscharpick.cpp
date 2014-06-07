@@ -65,7 +65,7 @@
 pawsCharacterPickerWindow::pawsCharacterPickerWindow()
 {
     charactersFound = 0;
-    selectedCharacter = -1;
+    selectedCharacter = 0;
     characterCreationScreens = false;
     view = 0;
     connecting = false;
@@ -304,16 +304,16 @@ bool pawsCharacterPickerWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMo
     {
         case CHARACTER_DELETE_BUTTON:
         {
-            csString name;
-            name.Format("SelectCharacter%i", selectedCharacter);
             csString confirm;
             // Catch empty selection.
-            if(selectedCharacter < 0)
+            if(selectedCharacter >= charactersFound)
             {
                 confirm.Format( "You must select a character to delete!" );
                 PawsManager::GetSingleton().CreateWarningBox( confirm, this );
                 return false;
             }
+            csString name;
+            name.Format("SelectCharacter%i", selectedCharacter);
             csString charName(((pawsButton*)FindWidget(name))->GetText());
             // Catch invalid selection.
             if(charName == "New Character")
@@ -346,7 +346,7 @@ bool pawsCharacterPickerWindow::OnButtonPressed(int /*mouseButton*/, int /*keyMo
         case CHARACTER_ACTION_BUTTON:
         {
             // if we have a character then we play as that one.
-            if ( selectedCharacter != -1 && !connecting )
+            if ( charactersFound > 0 && selectedCharacter < charactersFound && !connecting )
             {
                 // Disable the button so that we don't send 2 picker messages
                 connecting = true;
@@ -497,7 +497,7 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
     view->Show();
     if ( charactersFound == 0 )
         return;
-        
+
     pawsButton* loginWidget = (pawsButton*)FindWidget("login");
     csString name;
     name.Format("SelectCharacter%i", character);
@@ -506,10 +506,10 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
         selectedCharacter = box->GetID();
     else 
         selectedCharacter = 0;        
-    
+
     if(gotStrings)
         loginWidget->SetText( PawsManager::GetSingleton().Translate("Join") );
-            
+
     // If the button selected has an empty character then button will
     // be for creating a new character
     if ( selectedCharacter >= charactersFound  )
@@ -520,7 +520,6 @@ void pawsCharacterPickerWindow::SelectCharacter(int character)
     {
         // Show the model for the selected character.
         loaded = false;
-        view->Show();
         charApp->SetMesh(0);
         CheckLoadStatus();
     }
@@ -552,11 +551,11 @@ void pawsCharacterPickerWindow::SelectCharacter(int character, pawsWidget* widge
 
     selectedCharacter = widget->GetID();                                    
     loginWidget->SetText( PawsManager::GetSingleton().Translate("Join") );
-                
+
     // If the button selected has an empty character then button will
     // be for creating a new character
-    if ( widget->GetID() >= charactersFound  )
-    {            
+    if ( selectedCharacter >= charactersFound  )
+    {
         SetupCharacterCreationScreens();
     }
     else
@@ -625,9 +624,6 @@ void pawsCharacterPickerWindow::ReceivedStrings()
 
     if(charactersFound > 0 && charactersFound == psengine->GetNumChars())
     {
-        if(selectedCharacter != -1)
-            SelectCharacter(selectedCharacter);
-        else
-            SelectCharacter(0);
+        SelectCharacter(selectedCharacter);
     }
 }
