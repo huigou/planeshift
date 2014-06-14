@@ -89,7 +89,7 @@ public:
     void SetText(const char* text);
     const char* GetText()
     {
-        return buttonLabel;
+        return buttonLabel.GetData();
     }
 
     /* Button flashing used mainly in chatwindow */
