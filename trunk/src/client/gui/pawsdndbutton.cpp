@@ -177,7 +177,7 @@ void pawsDnDButton::Draw()
         csTicks currentTime     = csGetTicks();
         float   elapsedTime     = (float)currentTime-(float)startTime;
         float   currentProgress = elapsedTime/(float)castingTime;
-        int     remainingTime   = (castingTime-elapsedTime)/1000;
+        csTicks remainingTime   = (castingTime-(currentTime-startTime))/1000;
 
         if (currentProgress >= 1.0)
         {
