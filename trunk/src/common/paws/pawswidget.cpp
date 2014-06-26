@@ -1274,6 +1274,15 @@ void pawsWidget::DrawWidgetText(const char* text, int x, int y, int style)
     if(style==-1)
         style = GetFontStyle();
 
+    if( parent && x>parent->GetScreenFrame().xmax )
+    {
+        return;
+    }
+    if( parent && y>parent->GetScreenFrame().ymax )
+    {
+        return;
+    }
+
     if(parent && !parent->GetBackground().IsEmpty() && parent->isFadeEnabled() && parent->GetMaxAlpha() != parent->GetMinAlpha())
     {
         int a = (int)(255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
