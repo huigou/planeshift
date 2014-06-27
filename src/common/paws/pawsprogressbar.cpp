@@ -24,11 +24,19 @@
 
 pawsProgressBar::pawsProgressBar()
 {
-    totalValue = 0.0f;
-    complete  = false;
+    totalValue   = 0.0f;
+    complete     = false;
     currentValue = 0.0f;
     percent      = 0.0f;
     factory      = "pawsProgressBar";
+    warnLevel    = -1;
+    dangerLevel  = -1;
+    flashLevel   = -1;
+    flashLastTime = -1;
+    flashLow     = true;
+    flashRate    = 0;
+    On           = true;
+    reversed     = false; 
 }
 pawsProgressBar::pawsProgressBar(const pawsProgressBar &origin)
     :pawsWidget(origin),
@@ -74,6 +82,20 @@ bool pawsProgressBar::Setup(iDocumentNode* node)
         diff_g = 0;
         diff_b = 0;
     }
+
+    csRef<iDocumentNode> ColourNode3 = node->GetNode("flashcolor");
+    if(ColourNode3)
+    {
+        flash_r = ColourNode3->GetAttributeValueAsInt("r");
+        flash_g = ColourNode3->GetAttributeValueAsInt("g");
+        flash_b = ColourNode3->GetAttributeValueAsInt("b");
+    }
+    else
+    {
+        flash_r = 0;
+        flash_g = 0;
+        flash_b = 0;
+    }
     return true;
 }
 
@@ -89,16 +111,65 @@ void pawsProgressBar::Draw()
     ClipToParent(false);
 
     int alpha = 255;
-    if(parent
-            && !parent->GetBackground().IsEmpty()
-            && parent->isFadeEnabled()
-            && parent->GetMaxAlpha() != parent->GetMinAlpha())
-        alpha = (int)
-                (255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
+    int Time  = csGetTicks();
+    int primary_r;
+    int primary_g;
+    int primary_b;
+
+    if(parent && !parent->GetBackground().IsEmpty() && parent->isFadeEnabled() && parent->GetMaxAlpha() != parent->GetMinAlpha())
+    {
+        alpha = (int) (255 - (parent->GetMinAlpha() + (parent->GetMaxAlpha()-parent->GetMinAlpha()) * parent->GetFadeVal() * 0.010));
+    }
     DrawBackground();
-    DrawProgressBar(screenFrame, PawsManager::GetSingleton().GetGraphics3D(), percent,
-                    start_r, start_g, start_b,
-                    diff_r,  diff_g,  diff_b, alpha);
+    if( flashLevel > 0 )
+    {
+        if( ( (flashLow && percent<flashLevel) || (!flashLow && percent>flashLevel) ) )
+        {
+            if( flashLastTime+flashRate <= Time )
+            {
+                On=!On;
+                flashLastTime = Time;
+            }
+        }
+        else
+        {
+            On=true;
+        }
+    }
+    if( warnLevel > 0 && percent < warnLevel )
+    {
+        if( dangerLevel > 0 && percent < dangerLevel )
+        {
+            primary_r = danger_r;
+            primary_g = danger_g;
+            primary_b = danger_b;
+        }
+        else
+        {
+            primary_r = warn_r;
+            primary_g = warn_g;
+            primary_b = warn_b;
+        }
+    }
+    else
+    {
+        primary_r = start_r;
+        primary_g = start_g;
+        primary_b = start_b;
+    }
+
+    if( On )
+    {
+        DrawProgressBar(screenFrame, PawsManager::GetSingleton().GetGraphics3D(), percent,
+                primary_r, primary_g, primary_b,
+                diff_r,  diff_g,  diff_b, alpha);
+    }
+    else
+    {
+        DrawProgressBar(screenFrame, PawsManager::GetSingleton().GetGraphics3D(), percent,
+                flash_r, flash_g, flash_b,
+                diff_r,  diff_g,  diff_b, alpha);
+    }
     DrawChildren();
     DrawMask();
 }
@@ -149,4 +220,33 @@ void pawsProgressBar::OnUpdateData(const char* /*dataname*/, PAWSData &value)
 {
     SetCurrentValue(value.GetFloat());
 }
+
+void pawsProgressBar::SetFlash(float level, bool low, int rate )
+{
+    flashLevel = level;
+    flashLow   = low;
+    flashRate  = rate;
+}
+
+void pawsProgressBar::SetReversed( bool val )
+{
+    reversed = val;
+}
+
+void pawsProgressBar::SetWarning( float level, int red, int green, int blue )
+{
+    warnLevel = level;
+    warn_r    = red;
+    warn_g    = green;
+    warn_b    = blue;
+}
+
+void pawsProgressBar::SetDanger( float level, int red, int green, int blue )
+{
+    dangerLevel = level;
+    danger_r    = red;
+    danger_g    = green;
+    danger_b    = blue;
+}
+
 
