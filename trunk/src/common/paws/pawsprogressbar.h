@@ -40,6 +40,32 @@ public:
     {
         totalValue = newValue;
     }
+
+    /** flash a different color if value is below/above threshold.
+     **  numbers outside of min & max = no flash.
+     **  default = no flash.
+     * @param value  within this threshold, flash; outside it, no flash.
+     * @param low    if TRUE then flash below this level; if FALSE flash above.
+     * @param rate   switch colors every 'rate' ticks
+     */
+    virtual void SetFlash(float level, bool low, int rate );
+
+    /** use a different primary color if above a certain threshold
+     *  @param level   threshold
+     *  @param red     red saturation value 
+     *  @param green     green saturation value 
+     *  @param blue     blue saturation value 
+     */
+    virtual void SetWarning( float level, int red, int green, int blue );
+
+    /** use a different primary color if above a certain threshold
+     *  @param level   threshold
+     *  @param red     red saturation value
+     *  @param green     green saturation value
+     *  @param blue     blue saturation value
+     */
+    virtual void SetDanger( float level, int red, int green, int blue );
+
     void Completed()
     {
         complete = true;
@@ -64,13 +90,29 @@ public:
 
     void OnUpdateData(const char* dataname,PAWSData &value);
 
+    /** increse values from left-to-right, or right-to-left ?
+     * @param left  FALSE = left-to-right (default); TRUE = right-to-left (reversed)
+     */
+    void SetReversed( bool val );
+
 private:
     float totalValue;
+    float flashLevel;
+    float warnLevel;
+    float dangerLevel;
     float currentValue;
     float percent;
+    int   flashRate;
+    int   flashLastTime;
     bool  complete;
+    bool  flashLow;	//Low = TRUE; High = FALSE
+    bool  On;		//Primary color showing = TRUE; flash color = FALSE;
+    bool  reversed;     //FALSE = left-to-right (default); TRUE = right-to-left (reversed)
 
     int   start_r,start_g,start_b;
+    int   flash_r,flash_g,flash_b;
+    int   warn_r,warn_g,warn_b;
+    int   danger_r,danger_g,danger_b;
     int   diff_r,diff_g,diff_b;
 };
 
