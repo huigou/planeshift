@@ -103,13 +103,13 @@ public:
     }
     const char* GetName()
     {
-        if(NameCallback)
-        {
-            if(NameCallback->Get(id-indexBase).Length()>0)
-            {
-                return NameCallback->Get(id-indexBase).GetData();
-            }
-        }
+        //if(NameCallback)
+        //{
+        //    if(NameCallback->Get(id-indexBase).Length()>0)
+        //    {
+        //        return NameCallback->Get(id-indexBase).GetData();
+        //    }
+        //}
         if(GetText())
             return GetText();
         return NULL;
@@ -141,9 +141,18 @@ public:
     }
     void SetAction(const char* act)
     {
-        SetAction(csString(act));
+        if( act!=NULL )
+        {
+            action=new csString( act );
+fprintf( stderr, "PawsDnDButton::SetAction sees action as '%s'\n", action->GetData() );
+        }
+        else
+        {
+            action=NULL;
+        }
+        //SetAction(new csString(act));
     }
-    void SetAction(csString act)
+    void SetAction(csString* act)
     {
         if(ActionCallback)
         {
@@ -153,11 +162,26 @@ public:
     }
     const char* GetAction()
     {
-        if(action)
+fprintf( stderr, "PawsDnDButton::GetAction begins\n" );
+        if(action!=NULL)
         {
-            if(!action.IsEmpty())
+fprintf( stderr, "PawsDnDButton::GetAction sees action as non NULL\n" );
+            if(!action->IsEmpty())
             {
-                return action.GetData();
+fprintf( stderr, "PawsDnDButton::GetAction sees action as '%s'\n", action->GetData() );
+                return action->GetData();
+            }
+        }
+fprintf( stderr, "PawsDnDButton::GetAction sees action as NULL\n" );
+        return NULL;
+    }
+    const char* GetTooltip()
+    {
+        if(baseToolTip)
+        {
+            if(!baseToolTip.IsEmpty())
+            {
+                return baseToolTip.GetData();
             }
         }
         return NULL;
@@ -204,11 +228,13 @@ public:
  
     void SetToolTip( const char * tooltip );
 
+    virtual void SetRelativeFrame(int x, int y, int width, int height);
+
 protected:
     psSlotManager*       mgr;
     int                  dragDrop;
     int                  dragDropInProgress;
-    csString             action;
+    csString*            action;
     int                  containerID;
     int                  indexBase;
     int                  editMode;
