@@ -35,6 +35,7 @@
 #include "paws/pawsmanager.h"
 #include "paws/pawsbutton.h"
 #include "gui/pawsdndbutton.h"
+#include "gui/pawsscrollmenu.h"
 #include "paws/pawstexturemanager.h"
 #include "paws/pawsprefmanager.h"
 
@@ -56,7 +57,8 @@ pawsDnDButton::pawsDnDButton() :
     NameCallback(NULL),
     ActionCallback(NULL),
     DnDLock(false),
-    spellProgress(NULL)
+    spellProgress(NULL),
+    action(NULL)
 {
     factory = "pawsDnDButton";
 }
@@ -171,7 +173,6 @@ bool pawsDnDButton::Setup(iDocumentNode* node)
 
 void pawsDnDButton::Draw()
 {
-
     if(spellProgress!=NULL )
     {
         csTicks currentTime     = csGetTicks();
@@ -183,17 +184,13 @@ void pawsDnDButton::Draw()
         {
             //pawsButton::Draw();
             castingTime = 0;
-            spellProgress->Hide(); //this shouldn't be necessary as the server should be pushing out an updated spell list about this time.
+            spellProgress->Hide(); //this *shouldn't* be necessary as the server should be pushing out an updated spell list about this time, but we include this in case of missed packets.
             pawsButton::Draw();
 
             return;
         }
         spellProgress->SetCurrentValue(currentProgress);
-        spellProgress->DrawProgressBar( csRect(this->GetScreenFrame().xmin+3, this->GetScreenFrame().ymin+3, this->GetScreenFrame().xmax-3, this->GetScreenFrame().ymax-3), PawsManager::GetSingleton().GetGraphics3D(), currentProgress, 
-            currentProgress>0.75?255:50, //red
-            currentProgress>0.75 && currentProgress<0.90?255:50, //green & yellow
-            currentProgress<0.75?255:50, //blue
-            100, 100, 100 );
+        spellProgress->SetRelativeFrame( 3, 3, screenFrame.Width()-6, screenFrame.Height()-6 );
 
         csString TipWithTiming = baseToolTip;
         TipWithTiming.Append( ", " );
@@ -214,7 +211,6 @@ void pawsDnDButton::Draw()
  **/
 void pawsDnDButton::Start(csTicks startTicks, csTicks currentTicks, csTicks duration)
 {
-    Show();
     if( spellProgress!=NULL || duration==0 ) //if one already exists don't create a new one; if duration is 0 don't create one at all.
     {
         return;
@@ -224,13 +220,13 @@ void pawsDnDButton::Start(csTicks startTicks, csTicks currentTicks, csTicks dura
     AddChild(spellProgress);
 
     spellProgress->SetTotalValue(1.0);
+    spellProgress->SetColor( 0, 0, 200 );
+    spellProgress->SetWarning(0.5, false, 200, 200, 0 );
+    spellProgress->SetDanger(0.8, false, 200, 0, 0 );
+    spellProgress->SetFlash(0.75, false, 250, 0, 0, 0 );
+
     float currentProgress = (currentTicks-startTicks)/duration;
     spellProgress->SetCurrentValue(currentProgress);
-    spellProgress->DrawProgressBar( csRect(this->GetScreenFrame().xmin+3, this->GetScreenFrame().ymin+3, this->GetScreenFrame().xmax-3, this->GetScreenFrame().ymax-3), PawsManager::GetSingleton().GetGraphics3D(), currentProgress, 
-            currentProgress>0.75?255:50, //red
-            currentProgress>0.75 && currentProgress<0.90?255:50, //green & yellow
-            currentProgress<0.75?255:50, //blue
-        100, 100, 100 );
     startTime = csGetTicks()-(currentTicks-startTicks);//note: this must be in terms of the client's ticks, not the server's
     this->castingTime = duration;
 }
@@ -522,4 +518,13 @@ void pawsDnDButton::SetToolTip( const char* toolTip )
 {
     baseToolTip = toolTip;
     pawsButton::SetToolTip( toolTip );
+}
+
+void pawsDnDButton::SetRelativeFrame(int x, int y, int width, int height)
+{
+    if( spellProgress )
+    {
+        spellProgress->SetRelativeFrame(x, y, width, height);
+    }
+    pawsWidget::SetRelativeFrame(x, y, width, height);
 }

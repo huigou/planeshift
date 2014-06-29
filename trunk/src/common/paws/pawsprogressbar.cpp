@@ -30,13 +30,24 @@ pawsProgressBar::pawsProgressBar()
     percent      = 0.0f;
     factory      = "pawsProgressBar";
     warnLevel    = -1;
+    warnLow      = true;
     dangerLevel  = -1;
+    dangerLow    = true;
     flashLevel   = -1;
-    flashLastTime = -1;
+    flashLastTime= -1;
     flashLow     = true;
     flashRate    = 0;
     On           = true;
     reversed     = false; 
+
+    start_r=start_g=start_b=255;
+    flash_r=flash_g=flash_b=0;
+    warn_r=warn_g=200;
+    warn_b=0;
+    danger_r=200;
+    danger_g=danger_b=0;
+    diff_r=diff_g=diff_b=100;
+
 }
 pawsProgressBar::pawsProgressBar(const pawsProgressBar &origin)
     :pawsWidget(origin),
@@ -76,12 +87,6 @@ bool pawsProgressBar::Setup(iDocumentNode* node)
         diff_g = ColourNode2->GetAttributeValueAsInt("g") - start_g;
         diff_b = ColourNode2->GetAttributeValueAsInt("b") - start_b;
     }
-    else
-    {
-        diff_r = 0;
-        diff_g = 0;
-        diff_b = 0;
-    }
 
     csRef<iDocumentNode> ColourNode3 = node->GetNode("flashcolor");
     if(ColourNode3)
@@ -95,6 +100,34 @@ bool pawsProgressBar::Setup(iDocumentNode* node)
         flash_r = 0;
         flash_g = 0;
         flash_b = 0;
+    }
+
+    csRef<iDocumentNode> ColourNode4 = node->GetNode("warncolor");
+    if(ColourNode4)
+    {
+        warn_r = ColourNode4->GetAttributeValueAsInt("r");
+        warn_g = ColourNode4->GetAttributeValueAsInt("g");
+        warn_b = ColourNode4->GetAttributeValueAsInt("b");
+    }
+    else
+    {
+        warn_r = 200;
+        warn_g = 200;
+        warn_b = 0;
+    }
+
+    csRef<iDocumentNode> ColourNode5 = node->GetNode("dangercolor");
+    if(ColourNode5)
+    {
+        danger_r = ColourNode5->GetAttributeValueAsInt("r");
+        danger_g = ColourNode5->GetAttributeValueAsInt("g");
+        danger_b = ColourNode5->GetAttributeValueAsInt("b");
+    }
+    else
+    {
+        danger_r = 200;
+        danger_g = 0;
+        danger_b = 0;
     }
     return true;
 }
@@ -136,9 +169,9 @@ void pawsProgressBar::Draw()
             On=true;
         }
     }
-    if( warnLevel > 0 && percent < warnLevel )
+    if( warnLevel > 0 && ( (warnLow && percent < warnLevel) || (!warnLow && percent >warnLevel) ) )
     {
-        if( dangerLevel > 0 && percent < dangerLevel )
+        if( dangerLevel > 0 && ( (dangerLow && percent < dangerLevel) || (!dangerLow && percent >dangerLevel) ) )
         {
             primary_r = danger_r;
             primary_g = danger_g;
@@ -157,18 +190,17 @@ void pawsProgressBar::Draw()
         primary_g = start_g;
         primary_b = start_b;
     }
-
     if( On )
     {
         DrawProgressBar(screenFrame, PawsManager::GetSingleton().GetGraphics3D(), percent,
-                primary_r, primary_g, primary_b,
-                diff_r,  diff_g,  diff_b, alpha);
+            primary_r, primary_g, primary_b,
+            diff_r,  diff_g,  diff_b, alpha);
     }
     else
     {
         DrawProgressBar(screenFrame, PawsManager::GetSingleton().GetGraphics3D(), percent,
-                flash_r, flash_g, flash_b,
-                diff_r,  diff_g,  diff_b, alpha);
+            flash_r, flash_g, flash_b,
+            flash_r, flash_g, flash_b, alpha);
     }
     DrawChildren();
     DrawMask();
@@ -221,11 +253,21 @@ void pawsProgressBar::OnUpdateData(const char* /*dataname*/, PAWSData &value)
     SetCurrentValue(value.GetFloat());
 }
 
-void pawsProgressBar::SetFlash(float level, bool low, int rate )
+void pawsProgressBar::SetColor( int red, int green, int blue )
+{
+    start_r    = red;
+    start_g    = green;
+    start_b    = blue;
+}
+
+void pawsProgressBar::SetFlash(float level, bool low, int rate, int red, int green, int blue )
 {
     flashLevel = level;
     flashLow   = low;
     flashRate  = rate;
+    flash_r    = red;
+    flash_g    = green;
+    flash_b    = blue;
 }
 
 void pawsProgressBar::SetReversed( bool val )
@@ -233,17 +275,19 @@ void pawsProgressBar::SetReversed( bool val )
     reversed = val;
 }
 
-void pawsProgressBar::SetWarning( float level, int red, int green, int blue )
+void pawsProgressBar::SetWarning( float level, bool low, int red, int green, int blue )
 {
     warnLevel = level;
+    warnLow   = low;
     warn_r    = red;
     warn_g    = green;
     warn_b    = blue;
 }
 
-void pawsProgressBar::SetDanger( float level, int red, int green, int blue )
+void pawsProgressBar::SetDanger( float level, bool low, int red, int green, int blue )
 {
     dangerLevel = level;
+    dangerLow   = low;
     danger_r    = red;
     danger_g    = green;
     danger_b    = blue;

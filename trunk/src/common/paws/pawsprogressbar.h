@@ -41,30 +41,42 @@ public:
         totalValue = newValue;
     }
 
+    /** set the base color
+     *  @param red     red saturation value 
+     *  @param green   green saturation value 
+     *  @param blue    blue saturation value 
+     */
+    virtual void SetColor( int red, int green, int blue );
+
     /** flash a different color if value is below/above threshold.
      **  numbers outside of min & max = no flash.
      **  default = no flash.
-     * @param value  within this threshold, flash; outside it, no flash.
-     * @param low    if TRUE then flash below this level; if FALSE flash above.
-     * @param rate   switch colors every 'rate' ticks
-     */
-    virtual void SetFlash(float level, bool low, int rate );
-
-    /** use a different primary color if above a certain threshold
-     *  @param level   threshold
+     *  @param value  within this threshold, flash; outside it, no flash.
+     *  @param low    if TRUE then flash below this level; if FALSE flash above.
+     *  @param rate   switch colors every 'rate' ticks
      *  @param red     red saturation value 
-     *  @param green     green saturation value 
-     *  @param blue     blue saturation value 
+     *  @param green   green saturation value 
+     *  @param blue    blue saturation value 
      */
-    virtual void SetWarning( float level, int red, int green, int blue );
+    virtual void SetFlash(float level, bool low, int rate, int red, int green, int blue );
 
     /** use a different primary color if above a certain threshold
      *  @param level   threshold
-     *  @param red     red saturation value
-     *  @param green     green saturation value
-     *  @param blue     blue saturation value
+     *  @param low     if TRUE then active below this level; if FALSE active above.
+     *  @param red     red saturation value 
+     *  @param green   green saturation value 
+     *  @param blue    blue saturation value 
      */
-    virtual void SetDanger( float level, int red, int green, int blue );
+    virtual void SetWarning( float level, bool low, int red, int green, int blue );
+
+    /** use a different primary color if above a certain threshold
+     *  @param level   threshold
+     *  @param low     if TRUE then active below this level; if FALSE active above.
+     *  @param red     red saturation value
+     *  @param green   green saturation value
+     *  @param blue    blue saturation value
+     */
+    virtual void SetDanger( float level, bool low, int red, int green, int blue );
 
     void Completed()
     {
@@ -106,6 +118,8 @@ private:
     int   flashLastTime;
     bool  complete;
     bool  flashLow;	//Low = TRUE; High = FALSE
+    bool  warnLow;	//Low = TRUE; High = FALSE
+    bool  dangerLow;	//Low = TRUE; High = FALSE
     bool  On;		//Primary color showing = TRUE; flash color = FALSE;
     bool  reversed;     //FALSE = left-to-right (default); TRUE = right-to-left (reversed)
 
