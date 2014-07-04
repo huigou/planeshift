@@ -3822,10 +3822,10 @@ public:
         {
             msgSize += sizeof(uint8_t);     //SPELL_TYPE 
             msgSize += sizeof(uint32_t);    //duration
-            msgSize += sizeof(uint32_t);    //registrationTime
-            msgSize += sizeof(uint32_t);    //serverTime
             msgSize += spells[i]->Name().Length() + 1;
             msgSize += spells[i]->Image().Length() + 1;
+            msgSize += sizeof(uint32_t);    //registrationTime
+            msgSize += sizeof(uint32_t);    //serverTime
         }
 
         msg.AttachNew(new MsgEntry(msgSize));
@@ -3838,10 +3838,10 @@ public:
         {
             msg->Add((uint8_t)spells[i]->Type());
             msg->Add((uint32_t)spells[i]->Duration());
-            msg->Add((uint32_t)spells[i]->RegistrationTime());
-            msg->Add((uint32_t)serverTime);
             msg->Add(spells[i]->Name().GetData());
             msg->Add(spells[i]->Image().GetData());
+            msg->Add((uint32_t)spells[i]->RegistrationTime());
+            msg->Add((uint32_t)serverTime);
         }
         valid = !(msg->overrun);
     }
@@ -3868,10 +3868,10 @@ public:
 	{
 	    type.Push( (SPELL_TYPE) message->GetUInt8() );
 	    duration.Push( message->GetUInt32());
-	    registrationTime.Push( message->GetUInt32());
-	    serverTime=message->GetUInt32();
 	    name.Push( message->GetStr());          //if there was no name when the message was sent, this should read a null string
 	    image.Push( message->GetStr());         //if there was no name when the message was sent, this should read a null string
+	    registrationTime.Push( message->GetUInt32());
+	    serverTime=message->GetUInt32();
 	}
         valid = true;
     }
