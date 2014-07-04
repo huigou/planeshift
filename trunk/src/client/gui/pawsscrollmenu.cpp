@@ -216,13 +216,11 @@ void pawsScrollMenu::OnResize()
         //resize the button holder to fit the new parent window size
         int edgeSpace = 0,
             topSpace = 0,
-            leftEdge = 0;
+            leftEdge = 0,
+            bottomEdge = 0;
 
         if(screenFrame.Width() > screenFrame.Height())   //horizontal case
         {
-            //leftEdge =  (LeftScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2 + BUTTON_PADDING:0)
-            //            + (EditLockMode>0?buttonHeight/2:0) +BUTTON_PADDING;
-            //edgeSpace = leftEdge + (RightScrollMode>ScrollMenuOptionDISABLED?buttonHeight/2 + BUTTON_PADDING:0);
             leftEdge = (LeftScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0) \
                        + (EditLockMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0);
             edgeSpace = leftEdge + (RightScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0);
@@ -234,7 +232,18 @@ void pawsScrollMenu::OnResize()
             topSpace  = (LeftScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0)+(RightScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0);
         }
 
-        ButtonHolder->SetRelativeFrame(leftEdge, topSpace, GetScreenFrame().Width()-edgeSpace,  GetScreenFrame().Height()-2*topSpace);
+        if( GetScreenFrame().xmax > parent->GetScreenFrame().xmax ) 
+        {
+        //this compensates for an issue that arises due to the scrollmenu extending outside of the shortcutwindow in >=0.6.2 gui/shortcut.xml
+            bottomEdge=(parent->GetScreenFrame().xmax-GetScreenFrame().xmin);
+        }
+        else
+        {
+            bottomEdge=GetScreenFrame().Height()-(3*topSpace);
+        }
+
+
+        ButtonHolder->SetRelativeFrame(leftEdge, topSpace, GetScreenFrame().Width()-edgeSpace,  bottomEdge );
 
         //if we have buttons then size them properly, show those within the buttonHolder visible area and hide the rest
         if(Buttons.GetSize() >0)
@@ -337,9 +346,22 @@ void pawsScrollMenu::LayoutButtons()
                 Buttons[i]->Show();
             }
         }
+        ShowScrollButtons();
+    }
+    else
+    {
+        LeftScrollVisible=false;
+        LeftScrollButton->Hide();
+        RightScrollVisible=false;
+        RightScrollButton->Hide();
+    }
+}
+
+void pawsScrollMenu::ShowScrollButtons()
+{
         if(LeftScrollMode==ScrollMenuOptionDYNAMIC)
         {
-            if(Buttons[0]->GetScreenFrame().xmax < ButtonHolder->GetScreenFrame().xmin)
+            if(Buttons[0]->GetScreenFrame().ymin < ButtonHolder->GetScreenFrame().ymin)
             {
                 LeftScrollVisible=true;
                 LeftScrollButton->Show();
@@ -362,7 +384,7 @@ void pawsScrollMenu::LayoutButtons()
         }
         if(RightScrollMode==ScrollMenuOptionDYNAMIC)
         {
-            if((Buttons[Buttons.GetSize()-1]->GetScreenFrame().xmax > ButtonHolder->GetScreenFrame().xmax || Buttons[Buttons.GetSize()-1]->GetScreenFrame().ymax > ButtonHolder->GetScreenFrame().ymax))
+            if(Buttons[Buttons.GetSize()-1]->GetScreenFrame().ymin > ButtonHolder->GetScreenFrame().ymax )
             {
                 RightScrollVisible=true;
                 RightScrollButton->Show();
@@ -383,14 +405,6 @@ void pawsScrollMenu::LayoutButtons()
             RightScrollVisible=false;
             RightScrollButton->Hide();
         }
-    }
-    else
-    {
-        LeftScrollVisible=false;
-        LeftScrollButton->Hide();
-        RightScrollVisible=false;
-        RightScrollButton->Hide();
-    }
 }
 
 void pawsScrollMenu::OnResizeStop()
@@ -407,148 +421,60 @@ void pawsScrollMenu::OnResizeStop()
 
 bool pawsScrollMenu::ScrollUp()
 {
-    float sprop;
-    float menuPixels;
-    int   tButton;
-
-    if(Buttons.GetSize()>0)
+    if(Buttons.GetSize()<=0)
     {
-        if(scrollIncrement == 0 && scrollProportion == 0.0f)
-        {
-            scrollProportion = 0.5f;
-        }
-        if(scrollProportion > 0)
-        {
-
-            if(screenFrame.Width() > screenFrame.Height())
-            {
-                sprop = (float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth;
-            }
-            else
-            {
-                sprop = ((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)*((float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth);
-            }
-            sprop = sprop*scrollProportion;
-            scrollIncrement = (int)sprop;
-            if(scrollIncrement<0)
-            {
-                scrollIncrement = 0;
-            }
-        }
-
-//only scroll as far as the first undisplayed button otherwise buttons are skipped entirely. this is a side effect of allowing varying button sizes.
-        float currentPixelPos = GetTotalButtonWidth( currentButton );
-        if(screenFrame.Width() > screenFrame.Height())
-        {
-            menuPixels = (float)ButtonHolder->GetScreenFrame().Width(); 
-        }
-        else
-        {
-            menuPixels = (((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)-1)*((float)ButtonHolder->GetScreenFrame().Width());
-        }
-        for( tButton = currentButton-1; tButton>currentButton-scrollIncrement; tButton-- )
-        {
-                long visiblePixels = currentPixelPos- GetTotalButtonWidth( tButton ) ;
-                if( visiblePixels > menuPixels )
-                {
-                    break;
-                }
-        }
-        currentButton=tButton+1;
-
-        if( currentButton<0 )
-        {
-            currentButton=0;
-        }
-
-        ScrollToPosition( currentButton );
-
-        return true;
+        return false;
     }
-    return false;
+    int i;
+    for(i=currentButton; i>0 && Buttons[i]->GetScreenFrame().ymin==Buttons[currentButton]->GetScreenFrame().ymin; i-- );
+    currentButton=i;
+    if( scrollBarWidget )
+    {
+        scrollBarWidget->SetCurrentValue( currentButton );
+    }
+    ScrollToPosition(currentButton);
+    return true;
 }
 
 bool pawsScrollMenu::ScrollDown()
 {
-    float sprop;
-    float menuPixels;
-    int   tButton;
-
-    if(Buttons.GetSize()>0)   //if there's a least one button
+    if(Buttons.GetSize()<=0)   //if there's a least one button
     {
-        if(scrollIncrement == 0 && scrollProportion == 0.0f)
-        {
-            scrollProportion = 0.5f;
-        }
-        if(scrollProportion > 0)
-        {
-            //convert proportion to buttonwidths
-
-            //get display width as a num of buttonwidths
-            if(screenFrame.Width() > screenFrame.Height())
-            {
-                sprop = (float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth; 
-            }
-            else
-            {
-                sprop = (((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)-1)*((float)ButtonHolder->GetScreenFrame().Width()/(float)buttonWidth);
-            }
-            sprop = sprop*scrollProportion;
-            scrollIncrement = (int)sprop;
-            if(scrollIncrement<0)
-            {
-                scrollIncrement = 0;
-            }
-        }
-
-//only scroll as far as the first undisplayed button otherwise buttons are skipped entirely. this is a side effect of allowing varying button sizes.
-        float currentPixelPos = GetTotalButtonWidth( currentButton );
-        if(screenFrame.Width() > screenFrame.Height())
-        {
-            menuPixels = (float)ButtonHolder->GetScreenFrame().Width(); 
-        }
-        else
-        {
-            menuPixels = (((float)ButtonHolder->GetScreenFrame().Height()/(float)buttonHeight)-1)*((float)ButtonHolder->GetScreenFrame().Width());
-        }
-        for( tButton = currentButton + 1; tButton<=currentButton+scrollIncrement; tButton++ )
-        {
-                long visiblePixels = GetTotalButtonWidth( tButton ) - currentPixelPos;
-                if( visiblePixels >= menuPixels )
-                {
-                    break;
-                }
-        }
-        currentButton=tButton-1;
-
-        if( currentButton >= (int)Buttons.GetSize() )
-        {
-            currentButton = Buttons.GetSize()-1;
-        }
-        ScrollToPosition( currentButton );
-
-        return true;
+        return false;
     }
-    return false;
+    int i;
+    for(i=currentButton; i<Buttons.GetSize() && Buttons[i]->GetScreenFrame().ymin==Buttons[currentButton]->GetScreenFrame().ymin; i++ );
+    currentButton=i;
+    if( scrollBarWidget )
+    {
+        scrollBarWidget->SetCurrentValue( currentButton );
+    }
+    ScrollToPosition(currentButton);
+    return true;
 }
 
 bool pawsScrollMenu::ScrollToPosition( float pos )
 {
-    int total=0;
-
-    currentButton = (int) pos;
-    for(size_t i=0; i< pos; i++)  //calculate the width of all the buttons to the left of the indicated one
+    if( Buttons.GetSize()<=0 || !ButtonHolder )
     {
-        if(Buttons[i])
-            total+= CalcButtonSize((pawsDnDButton*)Buttons[i]);
+        return false;
     }
-
-    if( scrollBarWidget!=NULL )
+    currentButton = (int)pos;
+    if( currentButton<0 )
     {
-        scrollBarWidget->SetCurrentValue( pos, false, false );
+        currentButton=0;
     }
-    buttonLocation=-total+BUTTON_PADDING;
-    OnResize();
+    else if( currentButton>Buttons.GetSize()-1)
+    {
+        currentButton=Buttons.GetSize()-1;
+    }
+    int diff = Buttons[ currentButton ]->GetScreenFrame().ymin - ButtonHolder->GetScreenFrame().ymin;
+    for(size_t i=0; i<Buttons.GetSize(); i++ )
+    {
+        Buttons[ i ]->MoveTo( Buttons[ i ]->GetScreenFrame().xmin, (Buttons[ i ]->GetScreenFrame().ymin-diff)+4 );
+    }
+    ShowScrollButtons();
+
     return true;
 }
 
@@ -632,6 +558,7 @@ bool pawsScrollMenu::LoadArrays(csArray<csString> &name, csArray<csString> &icon
         button->ClipToParent(true);
         button->SetIndexBase(baseIndex);
         button->SetID(baseIndex + i);
+
         button->SetImageNameCallback(&icon);
         button->SetNameCallback(&name);
         button->SetActionCallback(&action);

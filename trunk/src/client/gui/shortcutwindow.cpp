@@ -681,13 +681,12 @@ bool pawsShortcutWindow::OnScroll(int direction, pawsScrollBar* widget)
         if( pos>NUM_SHORTCUTS-1 )
         {
             pos=NUM_SHORTCUTS-1;
-            widget->SetCurrentValue( NUM_SHORTCUTS-1 );
         }
         else if( pos<0 )
         {
             pos=0.0;
-            widget->SetCurrentValue( 0.0 );
         }
+        widget->SetCurrentValue( pos );
         MenuBar->ScrollToPosition( pos );
     }
  return true;

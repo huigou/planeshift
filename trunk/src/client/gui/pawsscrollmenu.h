@@ -165,7 +165,7 @@ public:
     void EnableButtonBackground( bool mode );
     bool IsButtonBackgroundEnabled();
 
-
+    void ShowScrollButtons();
 
 
 
