@@ -136,8 +136,8 @@
         <widget name="MenuBar" factory="pawsScrollMenu" buttonWidth="128" scrollSize="0.75" textSpacing="4" >
 -->
         <widget name="MenuBar" factory="pawsScrollMenu">
-            <frame x="0" y="60" height="48" width="520" border="no" />
-            <minframe width="150" height="48" />
+            <frame x="0" y="60" height="40" width="520" border="no" />
+            <minframe width="150" height="40" />
             <attachpoints>
                 <attach point="ATTACH_TOP" /> 
                 <attach point="ATTACH_LEFT" /> 
@@ -155,10 +155,10 @@
     <widget name="ShortcutEdit" factory="pawsWidget" visible="no" savepositions="yes" movable="yes"
             resizable="yes" configurable="no" keepaspect="no" style="New Standard GUI">
 
-        <frame x="30" y="30" width="330" height="280" border="yes" visible="yes" />
+        <frame x="30" y="30" width="330" height="300" border="yes" visible="yes" />
 
         <title resource="Scaling Title Bar" text="Edit Shortcut..." align="left" close_button="yes" />
-        <minframe width="330" height="280" />
+        <minframe width="330" height="300" />
 
         <widget name="Infobox1" factory="pawsTextBox" style="Header Font">
             <frame x="20" y="7" width="60" height="20" />
@@ -221,13 +221,12 @@
             </attachpoints>
         </widget>
         <widget name="CommandBox" factory="pawsMultilineEditTextBox">
-            <frame x="20" y="90" width="300" height="70" border="no" />
+            <frame x="20" y="90" width="300" height="140" border="no" />
             <bgimage resource="Scaling Field Background"/>
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
                 <attach point="ATTACH_RIGHT" />
                 <attach point="ATTACH_TOP" />
-                <attach point="PROPORTIONAL_BOTTOM" />
             </attachpoints>
         </widget>
 <!--
@@ -241,17 +240,17 @@
         </widget>
 -->
         <widget name="iconPalette" factory="pawsScrollMenu" >
-            <frame x="20" y="195" height="32" width="290" border="no" />
+            <frame x="20" y="235" height="32" width="290" border="no" />
             <attachpoints>
-                <attach point="PROPORTIONAL_TOP" />
                 <attach point="ATTACH_LEFT" />
+                <attach point="ATTACH_TOP" />
                 <attach point="ATTACH_RIGHT" /> 
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
         </widget>
 
         <widget name="DoneButton" factory="pawsButton" toggle="no" id="1100" notify="ShortcutMenu" style="Standard Button">
-            <frame x="20" y="250" width="50" height="24" />
+            <frame x="20" y="270" width="60" height="24" />
             <notify name="ShortcutMenu" />
             <label text="Done" />
             <attachpoints>
@@ -260,7 +259,7 @@
             </attachpoints>
         </widget>
         <widget name="ClearButton" factory="pawsButton" toggle="no" id="1103" notify="ShortcutMenu" style="Standard Button">
-            <frame x="80" y="250" width="50" height="24" />
+            <frame x="85" y="270" width="60" height="24" />
             <label text="Clear" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
@@ -268,7 +267,7 @@
             </attachpoints>
         </widget>
         <widget name="ClearIconButton" factory="pawsButton" toggle="no" id="1104" notify="ShortcutMenu" style="Standard Button">
-            <frame x="140" y="250" width="70" height="24" />
+            <frame x="150" y="270" width="70" height="24" />
             <label text="Clear Icon" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
@@ -276,7 +275,7 @@
             </attachpoints>
         </widget>
         <widget name="CancelButton" factory="pawsButton" toggle="no" id="1101" notify="ShortcutMenu" style="Standard Button">
-            <frame x="220" y="250" width="50" height="24" />
+            <frame x="225" y="270" width="60" height="24" />
             <label text="Cancel" />
             <attachpoints>
                 <attach point="ATTACH_LEFT" />
