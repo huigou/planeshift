@@ -4574,7 +4574,11 @@ float gemActor::GetVelocity()
 bool gemActor::InsideGuardedArea(gemObject* object)
 {
     // Is inside own guard range?
-    if(RangeTo(object) <= RANGE_TO_GUARD)
+    // We ignore the instance so for action locations that map to containers,
+    // the container and guarding player don't have to be in the same instance.
+    // This is safe since it only allows the owner to guard the item from
+    // more locations, not less.
+    if(RangeTo(object, false, true) <= RANGE_TO_GUARD)
     {
         return true;
     }
