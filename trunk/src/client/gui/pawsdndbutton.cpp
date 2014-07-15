@@ -49,6 +49,7 @@ pawsDnDButton::pawsDnDButton() :
     mgr(NULL),
     dragDrop(1),
     dragDropInProgress(0),
+    action(NULL),
     containerID(0),
     indexBase(0),
     editMode(0),
@@ -57,8 +58,7 @@ pawsDnDButton::pawsDnDButton() :
     NameCallback(NULL),
     ActionCallback(NULL),
     DnDLock(false),
-    spellProgress(NULL),
-    action(NULL)
+    spellProgress(NULL)
 {
     factory = "pawsDnDButton";
 }
