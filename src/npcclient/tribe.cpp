@@ -257,7 +257,7 @@ bool Tribe::CheckAttach(NPC* npc)
 
 bool Tribe::AttachMember(NPC* npc, const char* tribeMemberType)
 {
-    // Some checks to see if this NPC is fitt for this Tribe
+    // Some checks to see if this NPC is fit for this Tribe
     Behavior* idleBehavior = npc->GetBrain()->Find(npcIdleBehavior.GetDataSafe());
     if(!idleBehavior)
     {
