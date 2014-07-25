@@ -45,7 +45,10 @@ pawsScrollMenu::pawsScrollMenu() :
     scrollIncrement(0.0),
     currentButton(0),
     paddingWidth(0),
-    scrollProportion(0.5),
+//    scrollProportion(0.5),
+    warnLevel(0.0),
+    dangerLevel(0.0),
+    flashLevel(0.0),
     buttonWidthDynamic(true),
     ButtonHolder(NULL),
     buttonLocation(BUTTON_PADDING),
@@ -185,17 +188,17 @@ void pawsScrollMenu::SetButtonHeight(int height)
     }
 }
 
-void pawsScrollMenu::SetScrollIncrement(int incr)
-{
-    scrollIncrement = incr;
-    scrollProportion = 0.0f;
-}
-
-void pawsScrollMenu::SetScrollProportion(float prop)
-{
-    scrollProportion = prop;
-    scrollIncrement  = 0;
-}
+//void pawsScrollMenu::SetScrollIncrement(int incr)
+//{
+//    scrollIncrement = incr;
+//    scrollProportion = 0.0f;
+//}
+//
+//void pawsScrollMenu::SetScrollProportion(float prop)
+//{
+//    scrollProportion = prop;
+//    scrollIncrement  = 0;
+//}
 
 void pawsScrollMenu::OnResize()
 {
@@ -955,4 +958,47 @@ float pawsScrollMenu::GetButtonFontSize( )
         return ((pawsDnDButton*)Buttons[0])->GetFontSize();
     }
     return 10; //if something DOES end up using the font and there's no size defined, there should be a useful default
+}
+
+
+
+void pawsScrollMenu::SetWarnLevel( float val, bool low)
+{
+    warnLevel=val;
+}
+void pawsScrollMenu::SetDangerLevel( float val, bool low)
+{
+    dangerLevel=val;
+}
+void pawsScrollMenu::SetFlashLevel( float val, bool low)
+{
+    flashLevel=val;
+}
+
+
+
+float pawsScrollMenu::GetWarnLevel()
+{
+    return warnLevel;
+}
+float pawsScrollMenu::GetDangerLevel()
+{
+    return dangerLevel;
+}
+float pawsScrollMenu::GetFlashLevel()
+{
+    return flashLevel;
+}
+
+void pawsScrollMenu::SetWarnMode(int i)
+{
+    warnMode = i;
+}
+void pawsScrollMenu::SetDangerMode(int i)
+{
+    dangerMode = i;
+}
+void pawsScrollMenu::SetFlashMode(int i)
+{
+    flashMode = i;
 }

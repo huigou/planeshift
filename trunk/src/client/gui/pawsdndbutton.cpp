@@ -58,7 +58,17 @@ pawsDnDButton::pawsDnDButton() :
     NameCallback(NULL),
     ActionCallback(NULL),
     DnDLock(false),
-    spellProgress(NULL)
+    spellProgress(NULL),
+    action(NULL),
+    warnLevel(0.0),
+    warnLow(false),
+    warnMode(0),
+    dangerLevel(0.0),
+    dangerLow(false),
+    dangerMode(0),
+    flashLevel(0.0),
+    flashLow(false),
+    flashMode(0)
 {
     factory = "pawsDnDButton";
 }
@@ -221,9 +231,9 @@ void pawsDnDButton::Start(csTicks startTicks, csTicks currentTicks, csTicks dura
 
     spellProgress->SetTotalValue(1.0);
     spellProgress->SetColor( 0, 0, 200 );
-    spellProgress->SetWarning(0.5, false, 200, 200, 0 );
-    spellProgress->SetDanger(0.8, false, 200, 0, 0 );
-    spellProgress->SetFlash(0.75, false, 250, 0, 0, 0 );
+    spellProgress->SetWarning(warnLevel, warnLow, 200, 200, 0 );
+    spellProgress->SetDanger(dangerLevel, warnLow, 200, 0, 0 );
+    spellProgress->SetFlash(flashLevel, warnLow, 250, 0, 0, 0 );
 
     float currentProgress = (currentTicks-startTicks)/duration;
     spellProgress->SetCurrentValue(currentProgress);
@@ -501,7 +511,10 @@ void pawsDnDButton::EnableBackground( bool mode )
     }
     if( mode==true )
     {
-        SetBackground(backgroundBackup);
+        if(backgroundBackup)
+        {
+            SetBackground(backgroundBackup);
+        }
     }
     else //mode == false
     {
@@ -527,4 +540,32 @@ void pawsDnDButton::SetRelativeFrame(int x, int y, int width, int height)
         spellProgress->SetRelativeFrame(x, y, width, height);
     }
     pawsWidget::SetRelativeFrame(x, y, width, height);
+}
+
+void pawsDnDButton::SetWarnLevel( float val, bool low )
+{
+    warnLevel = val;
+    warnLow   = low;
+}
+void pawsDnDButton::SetDangerLevel( float val, bool low )
+{
+    dangerLevel = val;    
+    dangerLow   = low;
+}
+void pawsDnDButton::SetFlashLevel( float val, bool low )
+{
+    flashLevel = val;    
+    flashLow   = low;
+}
+void pawsDnDButton::SetWarnMode( int i )
+{
+    warnMode   = i;
+}
+void pawsDnDButton::SetDangerMode( int i )
+{
+    dangerMode   = i;
+}
+void pawsDnDButton::SetFlashMode( int i )
+{
+    flashMode   = i;
 }

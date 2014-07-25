@@ -125,8 +125,8 @@ public:
     int GetRightScroll();
     void SetButtonWidth(int width);
     void SetButtonHeight(int height);
-    void SetScrollIncrement(int incr);
-    void SetScrollProportion(float prop);
+//    void SetScrollIncrement(int incr);
+//    void SetScrollProportion(float prop);
     bool SetScrollWidget( pawsScrollBar* sb);
     void SetOrientation(int Orientation);
     int  AutoResize();
@@ -167,7 +167,17 @@ public:
 
     void ShowScrollButtons();
 
+    void SetWarnLevel(float, bool);
+    void SetDangerLevel(float, bool);
+    void SetFlashLevel(float, bool);
 
+    float GetWarnLevel();
+    float GetDangerLevel();
+    float GetFlashLevel();
+
+    void SetWarnMode(int);
+    void SetDangerMode(int);
+    void SetFlashMode(int);
 
 protected:
 
@@ -202,6 +212,16 @@ protected:
 
     int                    Orientation;
     int                    EditMode;
+
+    float                  warnLevel;
+    bool                   warnLow;
+    int                    warnMode;
+    float                  dangerLevel;
+    bool                   dangerLow;
+    int                    dangerMode;
+    float                  flashLevel;
+    bool                   flashLow;
+    int                    flashMode;
 
 };
 

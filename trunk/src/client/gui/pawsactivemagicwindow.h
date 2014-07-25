@@ -90,6 +90,21 @@ public:
         return fontName.GetData();
     }
 
+    int GetWarnMode();
+    void SetWarnMode(int i);
+    float GetWarnLevel();
+    void  SetWarnLevel(float val, bool low);
+
+    int GetDangerMode();
+    void SetDangerMode(int i);
+    float GetDangerLevel();
+    void  SetDangerLevel(float val, bool low);
+
+    int GetFlashMode();
+    void SetFlashMode(int i);
+    float GetFlashLevel();
+    void  SetFlashLevel(float val, bool low);
+
 
 private:
 
@@ -101,6 +116,18 @@ private:
          showEffects,
          show;   ///<true==show spell & item effects; false==show spell effects but not item effects
 
+
+    bool warnLow,
+         dangerLow,
+         flashLow;
+
+    float warnLevel,
+          dangerLevel,
+          flashLevel;
+
+    int warnMode,
+        dangerMode,
+        flashMode;
 
     pawsScrollMenu*  buffList;
     uint32_t         lastIndex;    ///<Version number of the last list received

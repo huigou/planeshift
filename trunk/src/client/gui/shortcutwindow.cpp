@@ -70,7 +70,7 @@ pawsShortcutWindow::pawsShortcutWindow() :
     position(0),
     buttonWidth(0),                     //added 20130726 - ticket 6087
     textSpacing(0),
-    scrollSize(0),                      //added 20130726 - ticket 6087
+//    scrollSize(0),                      //added 20130726 - ticket 6087
     EditMode(0)                     // 0 = edit lock prevents drag, 1 = edit lock prevent all editing
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
@@ -157,10 +157,10 @@ bool pawsShortcutWindow::Setup(iDocumentNode *node)
                         buttonWidth=subnode->GetValueAsInt();
                     }
                 }
-                else if( strcasecmp( "scrollSize", subnode->GetName() )==0 )
-                {
-                    scrollSize=subnode->GetValueAsFloat();
-                }
+//                else if( strcasecmp( "scrollSize", subnode->GetName() )==0 )
+//                {
+//                    scrollSize=subnode->GetValueAsFloat();
+//                }
                 else if( strcasecmp( "editMode", subnode->GetName() )==0 )
                 {
                     if( strcasecmp( "all", subnode->GetValue() )==0 )
@@ -288,6 +288,7 @@ bool pawsShortcutWindow::PostSetup()
     iconScrollBar     = (pawsScrollBar*)FindWidget( "iconScroll" );
     if( iconScrollBar!=NULL )
     {
+        iconScrollBar->EnableValueLimit(true);
         iconScrollBar->SetMaxValue( NUM_SHORTCUTS-1 );
         iconScrollBar->SetMinValue( 0 );
         MenuBar->SetScrollWidget( iconScrollBar );
@@ -295,14 +296,14 @@ bool pawsShortcutWindow::PostSetup()
 
     MenuBar->SetButtonWidth( buttonWidth );
     MenuBar->SetEditMode( EditMode );
-    if( scrollSize>1 )
-    {
-        MenuBar->SetScrollIncrement( (int)scrollSize );
-    }
-    else
-    {
-        MenuBar->SetScrollProportion( scrollSize );
-    }
+    //if( scrollSize>1 )
+    //{
+    //    MenuBar->SetScrollIncrement( (int)scrollSize );
+    //}
+    //else
+    //{
+    //    MenuBar->SetScrollProportion( scrollSize );
+    //}
     
     MenuBar->SetButtonPaddingWidth( textSpacing );
 
@@ -322,7 +323,6 @@ bool pawsShortcutWindow::PostSetup()
     position = 0;
 
     LoadUserPrefs();
-
 
     return true;
 }
@@ -677,10 +677,25 @@ bool pawsShortcutWindow::OnScroll(int direction, pawsScrollBar* widget)
 {
     if( widget )
     {
-        float pos = widget->GetCurrentValue();
-        if( pos>NUM_SHORTCUTS-1 )
+//        float pos = widget->GetCurrentValue();
+//        if( pos>NUM_SHORTCUTS-1 )
+//        {
+//            pos=NUM_SHORTCUTS-1;
+//        }
+//        else if( pos<0 )
+//        {
+//            pos=0.0;
+//        }
+        switch( direction )
         {
-            pos=NUM_SHORTCUTS-1;
+            case SCROLL_DOWN :
+                MenuBar->ScrollDown();
+            break;
+            case SCROLL_UP :
+                MenuBar->ScrollUp();
+            break;
+            default :
+                MenuBar->ScrollToPosition( widget->GetCurrentValue() );
             widget->SetCurrentValue( pos );
             MenuBar->ScrollToPosition( pos );
         }

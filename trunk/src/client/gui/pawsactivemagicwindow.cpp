@@ -81,6 +81,7 @@ bool pawsActiveMagicWindow::PostSetup()
     if(!buffList)
         return false;
     buffList->SetEditLock(ScrollMenuOptionDISABLED);
+
     if(autoResize)
     {
         buffList->SetLeftScroll(ScrollMenuOptionDISABLED);
@@ -233,12 +234,61 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
             if( newButton && useTimers )
             {
                 //received 3 times from the server:
-                //    registeredTime = when the client thinks the spell was cast.
-                //    serverTime     = when the client sent the active magic update
+                //    registeredTime = when the server thinks the spell was cast.
+                //    serverTime     = when the server sent the active magic update
                 //    duration       = how many ticks the spell will last.
                 //
                 //plus we get the current client time.
+                if( warnMode==0 )
+                    newButton->SetWarnLevel(warnLevel/100, warnLow );
+                else
+                {
+                    float ratio = warnLevel*100;
+                    if( ratio > incoming.duration[i])
+                    {
+                        ratio = 1.0;
+                    }
+                    else
+                    {
+                        ratio = 1-(ratio/(float)incoming.duration[i]);
+                    }
+                    newButton->SetWarnLevel( ratio, warnLow );
+                }
+                if( dangerMode==0 )
+                    newButton->SetDangerLevel(dangerLevel/100, dangerLow );
+                else
+                {
+                    float ratio = dangerLevel*100;
+                    if( ratio > incoming.duration[i])
+                    {
+                        ratio = 1.0;
+                    }
+                    else
+                    {
+                        ratio = 1-(ratio/(float)incoming.duration[i]);
+                    }
+                    newButton->SetDangerLevel( ratio, dangerLow );
+                }
+                if( flashMode==0 )
+                    newButton->SetFlashLevel(flashLevel/100, flashLow );
+                else
+                {
+                    float ratio = flashLevel*100;
+                    if( ratio > incoming.duration[i])
+                    {
+                        ratio = 1.0;
+                    }
+                    else
+                    {
+                        ratio = 1-(ratio/(float)incoming.duration[i]);
+                    }
+                    newButton->SetFlashLevel( ratio, flashLow );
+                }
                 newButton->Start( incoming.registrationTime[i], incoming.serverTime, incoming.duration[i] );
+            }
+            else
+            {
+
             }
         }
         if(autoResize)
@@ -575,36 +625,6 @@ bool pawsActiveMagicWindow::LoadSetting()
         Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve buttonWidthMode");
     }
 
-    optionNode = mainNode->GetNode("leftScroll");
-    if(optionNode != NULL)
-    {
-        if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
-            buffList->SetLeftScroll( ScrollMenuOptionENABLED );
-        else if( strcasecmp( "buttonScrollAuto",  optionNode->GetAttributeValue("active") )==0 )
-            buffList->SetLeftScroll( ScrollMenuOptionDYNAMIC );
-        else if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
-            buffList->SetLeftScroll( ScrollMenuOptionDISABLED );
-    }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve leftScroll node");
-    }
-
-    optionNode = mainNode->GetNode("rightScroll");
-    if(optionNode != NULL)
-    {
-        if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
-            buffList->SetRightScroll( ScrollMenuOptionENABLED );
-        else if( strcasecmp( "buttonScrollAuto",  optionNode->GetAttributeValue("active") )==0 )
-            buffList->SetRightScroll( ScrollMenuOptionDYNAMIC );
-        else if( strcasecmp( "buttonScrollOn",  optionNode->GetAttributeValue("active") )==0 )
-            buffList->SetRightScroll( ScrollMenuOptionDISABLED );
-    }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve rightScroll node");
-    }
-
     optionNode = mainNode->GetNode("textSize");
     if(optionNode == NULL)
     {
@@ -635,6 +655,86 @@ bool pawsActiveMagicWindow::LoadSetting()
     else
     {
         Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve textSpacing node");
+    }
+
+    optionNode = mainNode->GetNode("warnLevel");
+    if(optionNode != NULL)
+    {
+        warnLevel=optionNode->GetAttributeValueAsFloat("value", true);
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
+        warnLevel = 100;
+    }
+    optionNode = mainNode->GetNode("warnMode");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "warnModeSeconds",  optionNode->GetAttributeValue("active") )==0 )
+        {
+            warnMode=1;
+        }
+        else
+        {
+            warnMode=0;
+        }
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnMode node");
+        warnMode=0;
+    }
+
+    optionNode = mainNode->GetNode("dangerLevel");
+    if(optionNode != NULL)
+        dangerLevel = optionNode->GetAttributeValueAsFloat("value", true);
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve dangerLevel node");
+        dangerLevel = 100;
+    }
+    optionNode = mainNode->GetNode("dangerMode");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "dangerModeSeconds",  optionNode->GetAttributeValue("active") )==0 )
+        {
+            dangerMode=1;
+        }
+        else
+        {
+            dangerMode=0;
+        }
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve dangerMode node");
+        dangerMode=0;
+    }
+
+    optionNode = mainNode->GetNode("flashLevel");
+    if(optionNode != NULL)
+        flashLevel = optionNode->GetAttributeValueAsFloat("value", true);
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve flashLevel node");
+        flashLevel=100;
+    }
+    optionNode = mainNode->GetNode("flashMode");
+    if(optionNode != NULL)
+    {
+        if( strcasecmp( "flashModeSeconds",  optionNode->GetAttributeValue("active") )==0 )
+        {
+            flashMode=1;
+        }
+        else
+        {
+            flashMode=0;
+        }
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve FlashMode node");
+        flashMode=0;
     }
 
 
@@ -681,5 +781,59 @@ void pawsActiveMagicWindow::SetShowWindow( bool setting )
 bool pawsActiveMagicWindow::GetShowWindow()
 {
     return show;
+}
+
+int pawsActiveMagicWindow::GetWarnMode()
+{
+    return warnMode;
+}
+void pawsActiveMagicWindow::SetWarnMode(int i)
+{
+    warnMode=i;
+}
+float pawsActiveMagicWindow::GetWarnLevel()
+{
+    return warnLevel;
+}
+void pawsActiveMagicWindow::SetWarnLevel( float val, bool low )
+{
+    warnLevel = val;
+    warnLow   = low;
+}
+
+int pawsActiveMagicWindow::GetDangerMode()
+{
+    return dangerMode;
+}
+void pawsActiveMagicWindow::SetDangerMode(int i)
+{
+    dangerMode=i;
+}
+float pawsActiveMagicWindow::GetDangerLevel()
+{
+    return dangerLevel;
+}
+void pawsActiveMagicWindow::SetDangerLevel( float val, bool low )
+{
+    dangerLevel =val;
+    dangerLow   =low;
+}
+
+int pawsActiveMagicWindow::GetFlashMode()
+{
+    return flashMode;
+}
+void pawsActiveMagicWindow::SetFlashMode(int i)
+{
+    flashMode=i;
+}
+float pawsActiveMagicWindow::GetFlashLevel()
+{
+    return flashLevel;
+}
+void pawsActiveMagicWindow::SetFlashLevel( float val, bool low )
+{
+    flashLevel = val;
+    flashLow   = low;
 }
 
