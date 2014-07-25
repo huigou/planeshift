@@ -52,8 +52,11 @@ pawsConfigActiveMagic::pawsConfigActiveMagic() :
     buttonHeight(NULL),
     buttonWidthMode(NULL),
     buttonWidth(NULL),
-    leftScroll(NULL),
-    rightScroll(NULL),
+//    leftScroll(NULL),
+//    rightScroll(NULL),
+    warnLevel(NULL),
+    dangerLevel(NULL),
+    flashLevel(NULL),
     textFont(NULL),
     textSize(NULL),
     textSpacing(NULL),
@@ -126,6 +129,8 @@ bool pawsConfigActiveMagic::PostSetup()
     {
         return false;
     }
+    buttonHeight->EnableValueLimit(true);
+    buttonHeight->SetMinValue(8);
     buttonHeight->SetMaxValue(64);
     buttonHeight->SetCurrentValue(48,false);
 
@@ -143,17 +148,75 @@ bool pawsConfigActiveMagic::PostSetup()
     buttonWidth->SetMaxValue(512);
     buttonWidth->SetCurrentValue(48,false);
 
-    leftScroll = (pawsRadioButtonGroup*)FindWidget("leftScroll");
-    if(!leftScroll)
+    warnLevel = (pawsScrollBar*)FindWidget("warnLevel");
+    if(!warnLevel)
+    {
+        return false;
+    }
+    warnLevel->EnableValueLimit(true);
+    warnLevel->SetMinValue(0);
+    warnLevel->SetMaxValue(100);
+    warnLevel->SetCurrentValue(100,false);
+
+    warnSetting = (pawsTextBox*)FindWidget("warnSetting");
+    if(!warnSetting)
     {
         return false;
     }
 
-    rightScroll = (pawsRadioButtonGroup*)FindWidget("rightScroll");
-    if(!rightScroll)
+    warnMode = (pawsRadioButtonGroup*)FindWidget("warnMode");
+    if(!warnMode)
     {
         return false;
     }
+    warnMode->SetActive("warnModePercent");
+    
+
+    dangerLevel = (pawsScrollBar*)FindWidget("dangerLevel");
+    if(!dangerLevel)
+    {
+        return false;
+    }
+    dangerLevel->EnableValueLimit(true);
+    dangerLevel->SetMinValue(0);
+    dangerLevel->SetMaxValue(100);
+    dangerLevel->SetCurrentValue(100,false);
+
+    dangerSetting = (pawsTextBox*)FindWidget("dangerSetting");
+    if(!dangerSetting)
+    {
+        return false;
+    }
+
+    dangerMode = (pawsRadioButtonGroup*)FindWidget("dangerMode");
+    if(!dangerMode)
+    {
+        return false;
+    }
+    dangerMode->SetActive("dangerModePercent");
+
+    flashLevel = (pawsScrollBar*)FindWidget("flashLevel");
+    if(!flashLevel)
+    {
+        return false;
+    }
+    flashLevel->EnableValueLimit(true);
+    flashLevel->SetMinValue(0);
+    flashLevel->SetMaxValue(100);
+    flashLevel->SetCurrentValue(100,false);
+
+    flashSetting = (pawsTextBox*)FindWidget("flashSetting");
+    if(!flashSetting)
+    {
+        return false;
+    }
+
+    flashMode = (pawsRadioButtonGroup*)FindWidget("flashMode");
+    if(!flashMode)
+    {
+        return false;
+    }
+    flashMode->SetActive("flashModePercent");
 
     textFont = (pawsComboBox*)FindWidget("textFont");
     if(!textFont)
@@ -233,48 +296,81 @@ bool pawsConfigActiveMagic::LoadConfig()
 
     textSpacing->SetCurrentValue( MenuBar->GetButtonPaddingWidth() );
 
-    switch(  MenuBar->GetLeftScroll() )
+//    switch(  MenuBar->GetLeftScroll() )
+//    {
+//        case ScrollMenuOptionENABLED :
+//        {
+//            leftScroll->SetActive( "buttonScrollOn" );
+//        }
+//        break;
+//
+//        case ScrollMenuOptionDYNAMIC :
+//        {
+//            leftScroll->SetActive( "buttonScrollAuto" );
+//        }
+//        break;
+//
+//        case ScrollMenuOptionDISABLED :
+//        {
+//            leftScroll->SetActive( "buttonScrollOff" );
+//        }
+//        break;
+//
+//    }
+//
+//    switch(  MenuBar->GetRightScroll() )
+//    {
+//        case ScrollMenuOptionENABLED :
+//        {
+//            rightScroll->SetActive( "buttonScrollOn" );
+//        }
+//        break;
+//
+//        case ScrollMenuOptionDYNAMIC :
+//        {
+//            rightScroll->SetActive( "buttonScrollAuto" );
+//        }
+//        break;
+//
+//        case ScrollMenuOptionDISABLED :
+//        {
+//            rightScroll->SetActive( "buttonScrollOff" );
+//        }
+//        break;
+//
+//    }
+
+    warnLevel->SetCurrentValue(ActiveMagicWindow->GetWarnLevel() );
+    if( ActiveMagicWindow->GetWarnMode()==1 )
     {
-        case ScrollMenuOptionENABLED :
-        {
-            leftScroll->SetActive( "buttonScrollOn" );
-        }
-        break;
+        warnMode->SetActive( "warnModeSeconds" );
+    }
+    else 
+    {
+        warnMode->SetActive( "warnModePercent" );
+    }
+    UpdateWarnLevel();
 
-        case ScrollMenuOptionDYNAMIC :
-        {
-            leftScroll->SetActive( "buttonScrollAuto" );
-        }
-        break;
-
-        case ScrollMenuOptionDISABLED :
-        {
-            leftScroll->SetActive( "buttonScrollOff" );
-        }
-        break;
-
+    dangerLevel->SetCurrentValue(ActiveMagicWindow->GetDangerLevel() );
+    UpdateDangerLevel();
+    if( ActiveMagicWindow->GetDangerMode()==1 )
+    {
+        dangerMode->SetActive( "dangerModeSeconds" );
+    }
+    else 
+    {
+        dangerMode->SetActive( "dangerModePercent" );
     }
 
-    switch(  MenuBar->GetRightScroll() )
+    flashLevel->SetCurrentValue(ActiveMagicWindow->GetFlashLevel() );
+    UpdateFlashLevel();
+    if( ActiveMagicWindow->GetFlashMode()==1 )
     {
-        case ScrollMenuOptionENABLED :
-        {
-            rightScroll->SetActive( "buttonScrollOn" );
-        }
-        break;
-
-        case ScrollMenuOptionDYNAMIC :
-        {
-            rightScroll->SetActive( "buttonScrollAuto" );
-        }
-        break;
-
-        case ScrollMenuOptionDISABLED :
-        {
-            rightScroll->SetActive( "buttonScrollOff" );
-        }
-        break;
-
+        flashMode->SetActive( "flashModeSeconds" );
+    }
+    else 
+    {
+        flashMode->SetActive( "flashModePercent" );
     }
 
     textSize->SetCurrentValue(MenuBar->GetFontSize());
@@ -294,38 +390,30 @@ bool pawsConfigActiveMagic::SaveConfig()
 {
     csString xml;
     xml = "<activemagic>\n";
-    xml.AppendFmt("<useImages on=\"%s\" />\n",
-                     useImages->GetState() ? "yes" : "no");
-    xml.AppendFmt("<autoResize on=\"%s\" />\n",
-                     autoResize->GetState() ? "yes" : "no");
-    xml.AppendFmt("<showEffects active=\"%s\" />\n",
-                     showEffects->GetActive().GetData());
-    xml.AppendFmt("<showWindow on=\"%s\" />\n",
-                     showWindow->GetState() ? "yes" : "no");
-   xml.AppendFmt("<buttonHeight value=\"%d\" />\n",
-                     int(buttonHeight->GetCurrentValue()));
-    xml.AppendFmt("<buttonWidthMode active=\"%s\" />\n",
-                     buttonWidthMode->GetActive().GetData());
-    xml.AppendFmt("<buttonWidth value=\"%d\" />\n",
-                     int(buttonWidth->GetCurrentValue()));
-    xml.AppendFmt("<leftScroll active=\"%s\" />\n",
-                     leftScroll->GetActive().GetData());
-    xml.AppendFmt("<rightScroll active=\"%s\" />\n",
-                     rightScroll->GetActive().GetData());
-    xml.AppendFmt("<textSize value=\"%d\" />\n",
-                     int(textSize->GetCurrentValue()));
-    xml.AppendFmt("<textFont value=\"%s\" />\n",
-                     textFont->GetSelectedRowString().GetData());
-    xml.AppendFmt("<textSpacing value=\"%d\" />\n",
-                     int(textSpacing->GetCurrentValue()));
-
+    xml.AppendFmt("<useImages on=\"%s\" />\n", useImages->GetState() ? "yes" : "no");
+    xml.AppendFmt("<autoResize on=\"%s\" />\n", autoResize->GetState() ? "yes" : "no");
+    xml.AppendFmt("<showEffects active=\"%s\" />\n", showEffects->GetActive().GetData());
+    xml.AppendFmt("<showWindow on=\"%s\" />\n", showWindow->GetState() ? "yes" : "no");
+    xml.AppendFmt("<buttonHeight value=\"%d\" />\n", int(buttonHeight->GetCurrentValue()));
+    xml.AppendFmt("<buttonWidthMode active=\"%s\" />\n", buttonWidthMode->GetActive().GetData());
+    xml.AppendFmt("<buttonWidth value=\"%d\" />\n", int(buttonWidth->GetCurrentValue()));
+    xml.AppendFmt("<warnLevel value=\"%d\" />\n", int(warnLevel->GetCurrentValue()));
+    xml.AppendFmt("<warnMode active=\"%s\" />\n", warnMode->GetActive().GetData());
+    xml.AppendFmt("<dangerLevel value=\"%d\" />\n", int(dangerLevel->GetCurrentValue()));
+    xml.AppendFmt("<dangerMode active=\"%s\" />\n", dangerMode->GetActive().GetData());
+    xml.AppendFmt("<flashLevel value=\"%d\" />\n", int(flashLevel->GetCurrentValue()));
+    xml.AppendFmt("<flashMode active=\"%s\" />\n", flashMode->GetActive().GetData());
+//    xml.AppendFmt("<leftScroll active=\"%s\" />\n", leftScroll->GetActive().GetData());
+//    xml.AppendFmt("<rightScroll active=\"%s\" />\n", rightScroll->GetActive().GetData());
+    xml.AppendFmt("<textSize value=\"%d\" />\n", int(textSize->GetCurrentValue()));
+    xml.AppendFmt("<textFont value=\"%s\" />\n", textFont->GetSelectedRowString().GetData());
+    xml.AppendFmt("<textSpacing value=\"%d\" />\n", int(textSpacing->GetCurrentValue()));
 
     xml += "</activemagic>\n";
 
     dirty = false;
 
-    return psengine->GetVFS()->WriteFile("/planeshift/userdata/options/configactivemagic.xml",
-                                         xml,xml.Length());
+    return psengine->GetVFS()->WriteFile("/planeshift/userdata/options/configactivemagic.xml", xml,xml.Length());
 }
 
 void pawsConfigActiveMagic::SetDefault()
@@ -366,6 +454,18 @@ bool pawsConfigActiveMagic::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
         if( textSpacing->GetCurrentValue() < 1 )
             textSpacing->SetCurrentValue(1,false);
         MenuBar->SetButtonPaddingWidth(  textSpacing->GetCurrentValue() );
+    }
+    else if(wdg == warnLevel )
+    {
+        UpdateWarnLevel();
+    }
+    else if(wdg == dangerLevel )
+    {
+        UpdateDangerLevel();
+    }
+    else if(wdg == flashLevel )
+    {
+        UpdateFlashLevel();
     }
 
     SaveConfig();
@@ -481,40 +581,80 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
         }
         break;
 
-        case 1004 :
+        case 1002 : //warnMode == percent
         {
-            MenuBar->SetLeftScroll(ScrollMenuOptionENABLED );
+            //ActiveMagicWindow->SetWarnMode( 0 ); 
+            UpdateWarnLevel();
         }
         break;
 
-        case 1005 :
+        case 1003 : //warnMode == seconds
         {
-            MenuBar->SetLeftScroll(ScrollMenuOptionDYNAMIC );
+            //ActiveMagicWindow->SetWarnMode( 1 ); 
+            UpdateWarnLevel();
         }
         break;
 
-        case 1006 :
+        case 1004 : //dangerMode == percent
         {
-            MenuBar->SetLeftScroll(ScrollMenuOptionDISABLED );
+            //ActiveMagicWindow->SetDangerMode( 0 ); 
+            UpdateDangerLevel();
         }
         break;
 
-        case 1007 :
+        case 1005 : //dangerMode == seconds
         {
-            MenuBar->SetRightScroll(ScrollMenuOptionENABLED );
+            //ActiveMagicWindow->SetDangerMode( 1 ); 
+            UpdateDangerLevel();
         }
         break;
 
-        case 1008 :
+        case 1006 : //flashMode == percent
         {
-            MenuBar->SetRightScroll(ScrollMenuOptionDYNAMIC );
+            UpdateFlashLevel();
         }
         break;
-        case 1009 :
+
+        case 1007 : //flashMode == seconds
         {
-            MenuBar->SetRightScroll(ScrollMenuOptionDISABLED );
+            UpdateFlashLevel();
         }
         break;
+
+//        case 1004 :
+//        {
+//            MenuBar->SetLeftScroll(ScrollMenuOptionENABLED );
+//        }
+//        break;
+//
+//        case 1005 :
+//        {
+//            MenuBar->SetLeftScroll(ScrollMenuOptionDYNAMIC );
+//        }
+//        break;
+//
+//        case 1006 :
+//        {
+//            MenuBar->SetLeftScroll(ScrollMenuOptionDISABLED );
+//        }
+//        break;
+//
+//        case 1007 :
+//        {
+//            MenuBar->SetRightScroll(ScrollMenuOptionENABLED );
+//        }
+//        break;
+//
+//        case 1008 :
+//        {
+//            MenuBar->SetRightScroll(ScrollMenuOptionDYNAMIC );
+//        }
+//        break;
+//        case 1009 :
+//        {
+//            MenuBar->SetRightScroll(ScrollMenuOptionDISABLED );
+//        }
+//        break;
 
         case 1014 :
         {
@@ -584,3 +724,133 @@ void pawsConfigActiveMagic::SetMainWindowVisible( bool status )
     }
 }
 
+void pawsConfigActiveMagic::UpdateWarnLevel( )
+{
+        csString temp;
+        if( strcmp(warnMode->GetActive(),"warnModePercent")==0 )
+        {
+            ActiveMagicWindow->SetWarnMode( 0 ); 
+            if( warnLevel->GetCurrentValue()<100 )
+            {
+                temp.Format("> %2.0f", warnLevel->GetCurrentValue() );
+                warnSetting->SetText( temp );
+
+                //if warnlevel is > danger level in % mode, then increase danger level to match.
+                if( warnLevel->GetCurrentValue()>dangerLevel->GetCurrentValue() )
+                {
+                    dangerLevel->SetCurrentValue( warnLevel->GetCurrentValue() );
+                }
+                ActiveMagicWindow->SetWarnLevel(  warnLevel->GetCurrentValue(), false ); //convert 0-100 int to float for pawsProgressMeter
+            }
+            else
+            {
+                warnSetting->SetText( "Disabled" );
+                ActiveMagicWindow->SetWarnLevel( 0, false );
+            }
+        }
+        else
+        {
+            ActiveMagicWindow->SetWarnMode( 1 ); 
+            if( warnLevel->GetCurrentValue()>0 )
+            {
+                temp.Format("< %2.1f", warnLevel->GetCurrentValue()/10 );
+                warnSetting->SetText( temp );
+
+                //if warn level is < danger level in seconds then decrease danger level to match
+                if( warnLevel->GetCurrentValue()<dangerLevel->GetCurrentValue() )
+                {
+                    dangerLevel->SetCurrentValue( warnLevel->GetCurrentValue() );
+                }
+                ActiveMagicWindow->SetWarnLevel(  warnLevel->GetCurrentValue(), false ); //convert 0-100 int to float for pawsProgressMeter
+            }
+            else
+            {
+                warnSetting->SetText( "Disabled" );
+                ActiveMagicWindow->SetWarnLevel( 0, false );
+            }
+
+        }
+}
+
+void pawsConfigActiveMagic::UpdateDangerLevel()
+{
+    csString temp;
+    if( strcmp(dangerMode->GetActive(),"dangerModePercent")==0 )
+    {
+        ActiveMagicWindow->SetDangerMode( 0 ); 
+        //if warn level > danger level in percent mode then increase danger level
+        if( warnLevel->GetCurrentValue()>dangerLevel->GetCurrentValue() )
+        {
+            dangerLevel->SetCurrentValue( warnLevel->GetCurrentValue() );
+        }
+
+        if( dangerLevel->GetCurrentValue()<100 )
+        {
+            temp.Format("> %2.0f", dangerLevel->GetCurrentValue() );
+            dangerSetting->SetText( temp );
+            ActiveMagicWindow->SetDangerLevel(  dangerLevel->GetCurrentValue(), false );
+        }
+        else
+        {
+            dangerSetting->SetText( "Disabled" );
+            ActiveMagicWindow->SetDangerLevel(  0, false ); //convert 0-100 int to float for pawsProgressMeter
+        }
+
+    }
+    else
+    {
+        ActiveMagicWindow->SetDangerMode( 1 ); 
+        //if warn level is < danger level in seconds then decrease danger level to match
+        if( warnLevel->GetCurrentValue()<dangerLevel->GetCurrentValue() )
+        {
+            dangerLevel->SetCurrentValue( warnLevel->GetCurrentValue() );
+        }
+
+        if( dangerLevel->GetCurrentValue()>0 )
+        {
+            temp.Format("< %2.1f", dangerLevel->GetCurrentValue()/10 );
+            dangerSetting->SetText( temp );
+            ActiveMagicWindow->SetDangerLevel(  dangerLevel->GetCurrentValue(), false );
+        }
+        else
+        {
+            dangerSetting->SetText( "Disabled" );
+            ActiveMagicWindow->SetDangerLevel(  0, false ); //convert 0-100 int to float for pawsProgressMeter
+        }
+    }
+}
+
+void pawsConfigActiveMagic::UpdateFlashLevel()
+{
+    csString temp;
+    if( strcmp(flashMode->GetActive(),"flashModePercent")==0 )
+    {
+        ActiveMagicWindow->SetFlashMode( 0 ); 
+        if( flashLevel->GetCurrentValue()<100 )
+        {
+            temp.Format("> %2.0f", flashLevel->GetCurrentValue() );
+            flashSetting->SetText( temp );
+            ActiveMagicWindow->SetFlashLevel(  flashLevel->GetCurrentValue(), false );
+        }
+        else
+        {
+            flashSetting->SetText( "Disabled" );
+            ActiveMagicWindow->SetFlashLevel(  0, false ); //convert 0-100 int to float for pawsProgressMeter
+        }
+    }
+    else
+    {
+        ActiveMagicWindow->SetFlashMode( 1 ); 
+        if( flashLevel->GetCurrentValue()>0 )
+        {
+            temp.Format("< %2.1f", flashLevel->GetCurrentValue()/10 );
+            flashSetting->SetText( temp );
+            ActiveMagicWindow->SetFlashLevel(  flashLevel->GetCurrentValue(), false );
+        }
+        else
+        {
+            flashSetting->SetText( "Disabled" );
+            ActiveMagicWindow->SetFlashLevel(  0, false ); //convert 0-100 int to float for pawsProgressMeter
+        }
+    }
+}

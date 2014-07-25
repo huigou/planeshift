@@ -68,6 +68,9 @@ public:
     void PickText( const char * fontName, int size );
     void SetMainWindowVisible( bool status );
 
+    void UpdateWarnLevel( );
+    void UpdateDangerLevel( );
+    void UpdateFlashLevel( );
 
 protected:
 
@@ -83,8 +86,20 @@ protected:
     pawsRadioButtonGroup*  buttonWidthMode;
     pawsScrollBar*         buttonWidth;
 
-    pawsRadioButtonGroup*  leftScroll;
-    pawsRadioButtonGroup*  rightScroll;
+//    pawsRadioButtonGroup*  leftScroll;
+//    pawsRadioButtonGroup*  rightScroll;
+
+    pawsScrollBar*         warnLevel;
+    pawsTextBox*           warnSetting;
+    pawsRadioButtonGroup*  warnMode;
+
+    pawsScrollBar*         dangerLevel;
+    pawsTextBox*           dangerSetting;
+    pawsRadioButtonGroup*  dangerMode;
+
+    pawsScrollBar*         flashLevel;
+    pawsTextBox*           flashSetting;
+    pawsRadioButtonGroup*  flashMode;
 
     pawsComboBox*          textFont;
     pawsScrollBar*         textSize;

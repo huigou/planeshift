@@ -103,13 +103,6 @@ public:
     }
     const char* GetName()
     {
-        //if(NameCallback)
-        //{
-        //    if(NameCallback->Get(id-indexBase).Length()>0)
-        //    {
-        //        return NameCallback->Get(id-indexBase).GetData();
-        //    }
-        //}
         if(GetText())
             return GetText();
         return NULL;
@@ -139,19 +132,19 @@ public:
     {
         return containerID;
     }
+
     void SetAction(const char* act)
     {
         if( act!=NULL )
         {
             action=new csString( act );
-fprintf( stderr, "PawsDnDButton::SetAction sees action as '%s'\n", action->GetData() );
         }
         else
         {
             action=NULL;
         }
-        //SetAction(new csString(act));
     }
+
     void SetAction(csString* act)
     {
         if(ActionCallback)
@@ -160,21 +153,19 @@ fprintf( stderr, "PawsDnDButton::SetAction sees action as '%s'\n", action->GetDa
         }
         action = act;
     }
+
     const char* GetAction()
     {
-fprintf( stderr, "PawsDnDButton::GetAction begins\n" );
         if(action!=NULL)
         {
-fprintf( stderr, "PawsDnDButton::GetAction sees action as non NULL\n" );
             if(!action->IsEmpty())
             {
-fprintf( stderr, "PawsDnDButton::GetAction sees action as '%s'\n", action->GetData() );
                 return action->GetData();
             }
         }
-fprintf( stderr, "PawsDnDButton::GetAction sees action as NULL\n" );
         return NULL;
     }
+
     const char* GetTooltip()
     {
         if(baseToolTip)
@@ -187,10 +178,15 @@ fprintf( stderr, "PawsDnDButton::GetAction sees action as NULL\n" );
         return NULL;
     }
 
+    void SetIcon( const char* icon );
+    const char* GetIcon();
+    void ClearIcon();
+
     void SetDnDLock(bool locked)
     {
         DnDLock = locked;
     }
+
     bool GetDnDLock()
     {
         return DnDLock;
@@ -230,6 +226,13 @@ fprintf( stderr, "PawsDnDButton::GetAction sees action as NULL\n" );
 
     virtual void SetRelativeFrame(int x, int y, int width, int height);
 
+    void SetWarnLevel( float val, bool low );
+    void SetDangerLevel( float val, bool low );
+    void SetFlashLevel( float val, bool low );
+    void SetWarnMode( int );
+    void SetDangerMode( int );
+    void SetFlashMode( int );
+
 protected:
     psSlotManager*       mgr;
     int                  dragDrop;
@@ -244,6 +247,18 @@ protected:
     csArray<csString>*   ActionCallback;
     csString             backgroundBackup;
     csString             baseToolTip;
+
+    float                warnLevel;
+    bool                 warnLow;
+    int                  warnMode;
+
+    float                dangerLevel;
+    bool                 dangerLow;
+    int                  dangerMode;
+
+    float                flashLevel;
+    bool                 flashLow;
+    int                  flashMode;
 
     virtual bool CheckKeyHandled(int keyCode);
 
