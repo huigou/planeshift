@@ -677,15 +677,6 @@ bool pawsShortcutWindow::OnScroll(int direction, pawsScrollBar* widget)
 {
     if( widget )
     {
-//        float pos = widget->GetCurrentValue();
-//        if( pos>NUM_SHORTCUTS-1 )
-//        {
-//            pos=NUM_SHORTCUTS-1;
-//        }
-//        else if( pos<0 )
-//        {
-//            pos=0.0;
-//        }
         switch( direction )
         {
             case SCROLL_DOWN :
@@ -696,14 +687,6 @@ bool pawsShortcutWindow::OnScroll(int direction, pawsScrollBar* widget)
             break;
             default :
                 MenuBar->ScrollToPosition( widget->GetCurrentValue() );
-            widget->SetCurrentValue( pos );
-            MenuBar->ScrollToPosition( pos );
-        }
-        else if( pos<0 )
-        {
-            pos=0.0;
-            widget->SetCurrentValue( pos );
-            MenuBar->ScrollToPosition( pos );
         }
     }
     return true;
