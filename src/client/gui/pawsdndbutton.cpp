@@ -59,7 +59,6 @@ pawsDnDButton::pawsDnDButton() :
     ActionCallback(NULL),
     DnDLock(false),
     spellProgress(NULL),
-    action(NULL),
     warnLevel(0.0),
     warnLow(false),
     warnMode(0),
