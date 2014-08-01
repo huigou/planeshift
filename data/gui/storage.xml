@@ -8,7 +8,7 @@
 	
     <widget name="Transact" factory="pawsButton" id="100" tooltip="Store/Withdraw items">
         <frame x="560" y="10" width="48" height="48" border="no" />
-        <bgimage resource="ButtonBanking" alpha="0" />
+        <bgimage resource="ButtonStorage" alpha="0" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
         </attachpoints>
@@ -16,7 +16,7 @@
 
      <widget name="TransactAll" factory="pawsButton" id="110" tooltip="Store/Withdraw all selected items">
        <frame x="560" y="62" width="48" height="48" border="no" />
-       <bgimage resource="ButtonBanking" alpha="0" />
+       <bgimage resource="ButtonStorage" alpha="0" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
         </attachpoints>
@@ -33,7 +33,7 @@
 
      <widget name="TransactSingle" factory="pawsButton" id="120" tooltip="Store/Withdraw one item">
        <frame x="560" y="114" width="48" height="48" border="no" />
-       <bgimage resource="ButtonBanking" alpha="0" />
+       <bgimage resource="ButtonStorage" alpha="0" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
         </attachpoints>
