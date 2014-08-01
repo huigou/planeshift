@@ -126,7 +126,7 @@
         </widget>
 
         <widget name="ButtonBank" factory="pawsButton" id="2500" tooltip="Start Personal Banking">
-             <frame x="0" y="128" width="64" height="64" />
+             <frame x="128" y="128" width="64" height="64" />
              <bgimage resource="ButtonBanking" />
         </widget>
 
