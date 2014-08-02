@@ -269,6 +269,11 @@ void pawsProgressBar::SetFlash(float level, bool low, int rate, int red, int gre
     flash_g    = green;
     flash_b    = blue;
 }
+float pawsProgressBar::GetFlashLevel()
+{
+    return flashLevel;
+}
+
 
 void pawsProgressBar::SetReversed( bool val )
 {
@@ -283,6 +288,10 @@ void pawsProgressBar::SetWarning( float level, bool low, int red, int green, int
     warn_g    = green;
     warn_b    = blue;
 }
+float pawsProgressBar::GetWarningLevel()
+{
+    return warnLevel;
+}
 
 void pawsProgressBar::SetDanger( float level, bool low, int red, int green, int blue )
 {
@@ -291,6 +300,10 @@ void pawsProgressBar::SetDanger( float level, bool low, int red, int green, int 
     danger_r    = red;
     danger_g    = green;
     danger_b    = blue;
+}
+float pawsProgressBar::GetDangerLevel()
+{
+    return dangerLevel;
 }
 
 

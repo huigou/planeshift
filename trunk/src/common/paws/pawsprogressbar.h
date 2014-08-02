@@ -60,6 +60,10 @@ public:
      */
     virtual void SetFlash(float level, bool low, int rate, int red, int green, int blue );
 
+    /** return the current "flash" level
+     */
+    float GetFlashLevel();
+
     /** use a different primary color if above a certain threshold
      *  @param level   threshold
      *  @param low     if TRUE then active below this level; if FALSE active above.
@@ -69,6 +73,10 @@ public:
      */
     virtual void SetWarning( float level, bool low, int red, int green, int blue );
 
+    /** return the current "Warn" level
+     */
+    float GetWarningLevel();
+
     /** use a different primary color if above a certain threshold
      *  @param level   threshold
      *  @param low     if TRUE then active below this level; if FALSE active above.
@@ -77,6 +85,10 @@ public:
      *  @param blue    blue saturation value
      */
     virtual void SetDanger( float level, bool low, int red, int green, int blue );
+
+    /** return the current "Danger" level
+     */
+    float GetDangerLevel();
 
     void Completed()
     {

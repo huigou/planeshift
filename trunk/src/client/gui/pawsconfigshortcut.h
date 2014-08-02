@@ -90,6 +90,13 @@ protected:
     pawsWidget*            ShortcutMenu;
     pawsScrollMenu*        MenuBar;
 
+    pawsScrollBar*         HPWarnLevel;
+    pawsScrollBar*         HPDangerLevel;
+    pawsScrollBar*         HPFlashLevel;
+    pawsScrollBar*         ManaWarnLevel;
+    pawsScrollBar*         ManaDangerLevel;
+    pawsScrollBar*         ManaFlashLevel;
+
     bool loaded;
 
 };
