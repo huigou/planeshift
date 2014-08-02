@@ -127,6 +127,25 @@ public:
     */
     bool LoadUserPrefs();
 
+    void SetHPWarnLevel( float val );
+    float GetHPWarnLevel();
+
+    void SetHPDangerLevel( float val );
+    float GetHPDangerLevel();
+
+    void SetHPFlashLevel( float val );
+    float GetHPFlashLevel();
+
+    void SetManaWarnLevel( float val );
+    float GetManaWarnLevel();
+
+    void SetManaDangerLevel( float val );
+    float GetManaDangerLevel();
+
+    void SetManaFlashLevel( float val );
+    float GetManaFlashLevel();
+
+
 protected:
     /// chat window for easy access
     pawsChatWindow* chatWindow;
@@ -163,6 +182,7 @@ protected:
     pawsWidget *editedButton;
 
     virtual void HandleMessage(MsgEntry *msg);
+
 
 
 private:

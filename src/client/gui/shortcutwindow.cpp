@@ -296,17 +296,7 @@ bool pawsShortcutWindow::PostSetup()
 
     MenuBar->SetButtonWidth( buttonWidth );
     MenuBar->SetEditMode( EditMode );
-    //if( scrollSize>1 )
-    //{
-    //    MenuBar->SetScrollIncrement( (int)scrollSize );
-    //}
-    //else
-    //{
-    //    MenuBar->SetScrollProportion( scrollSize );
-    //}
-    
     MenuBar->SetButtonPaddingWidth( textSpacing );
-
 
     n =  names;
     for( i=0; i<names.GetSize(); i++ )
@@ -428,7 +418,6 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
             while(Iter.HasNext())
             {
                 csString curr = csString(Iter.Next()->GetName());
-//fprintf(stderr, "pawsShortcutWindow::OnButtonReleased building icon palette, item %s\n", curr.GetData() );
                 size_t i;
                 if( allIcons.IsEmpty() )
                 {
@@ -437,10 +426,8 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
                 }
                 for( i=0; i<allIcons.GetSize(); i++) //insertion sort
                 {
-//fprintf(stderr, "......comparing to item %i - %s\n", i, allIcons[i].GetData() );
                     if( allIcons[i] > curr )
                     {
-//fprintf(stderr, "......inserting\n" );
                        allIcons.Insert(i, curr.GetData()); 
                        break;
                     }
@@ -1155,6 +1142,68 @@ bool pawsShortcutWindow::LoadUserPrefs()
     {
         Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve healthAndMana node");
     }
+    optionNode = mainNode->GetNode("HPWarnLevel");
+    if(optionNode != NULL)
+    {
+        SetHPWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
+        SetHPWarnLevel(0);
+    }
+    optionNode = mainNode->GetNode("HPDangerLevel");
+    if(optionNode != NULL)
+    {
+        SetHPDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
+        SetHPDangerLevel(0);
+    }
+    optionNode = mainNode->GetNode("HPFlashLevel");
+    if(optionNode != NULL)
+    {
+        SetHPFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
+        SetHPFlashLevel(0);
+    }
+
+    optionNode = mainNode->GetNode("ManaWarnLevel");
+    if(optionNode != NULL)
+    {
+        SetManaWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
+        SetManaWarnLevel(0);
+    }
+    optionNode = mainNode->GetNode("ManaDangerLevel");
+    if(optionNode != NULL)
+    {
+        SetManaDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
+        SetManaDangerLevel(0);
+    }
+    optionNode = mainNode->GetNode("ManaFlashLevel");
+    if(optionNode != NULL)
+    {
+        SetManaFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    else
+    {
+        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
+        SetManaFlashLevel(0);
+    }
+
 
     optionNode = mainNode->GetNode("buttonBackground");
     if(optionNode != NULL)
@@ -1205,4 +1254,100 @@ bool pawsShortcutWindow::LoadUserPrefs()
     }
 
     return true;
+}
+
+void pawsShortcutWindow::SetHPWarnLevel( float val )
+{
+    if( main_hp )
+    {
+        main_hp->SetWarning(val,true,200,200,0);
+    }
+}
+float pawsShortcutWindow::GetHPWarnLevel()
+{
+     if( main_hp )
+    {
+        return main_hp->GetWarningLevel();
+    }
+    return 0;
+}
+
+void pawsShortcutWindow::SetHPDangerLevel( float val )
+{
+    if( main_hp )
+    {
+        main_hp->SetDanger(val,true,250,0,0);
+    }
+}
+float pawsShortcutWindow::GetHPDangerLevel()
+{
+     if( main_hp )
+    {
+        return main_hp->GetDangerLevel();
+    }
+    return 0;
+}
+
+void pawsShortcutWindow::SetHPFlashLevel( float val )
+{
+    if( main_hp )
+    {
+        main_hp->SetFlash(val,true,200,0,0,0);
+    }
+}
+float pawsShortcutWindow::GetHPFlashLevel()
+{
+     if( main_hp )
+    {
+        return main_hp->GetFlashLevel();
+    }
+    return 0;
+}
+
+void pawsShortcutWindow::SetManaWarnLevel( float val )
+{
+    if( main_mana )
+    {
+        main_mana->SetWarning(val,true,200,200,200);
+    }
+}
+float pawsShortcutWindow::GetManaWarnLevel()
+{
+     if( main_mana )
+    {
+        return main_mana->GetWarningLevel();
+    }
+    return 0;
+}
+
+void pawsShortcutWindow::SetManaDangerLevel( float val )
+{
+    if( main_mana )
+    {
+        main_mana->SetDanger(val,true,250,0,0);
+    }
+}
+float pawsShortcutWindow::GetManaDangerLevel()
+{
+     if( main_mana )
+    {
+        return main_mana->GetDangerLevel();
+    }
+    return 0;
+}
+
+void pawsShortcutWindow::SetManaFlashLevel( float val )
+{
+    if( main_mana )
+    {
+        main_mana->SetFlash(val,true,200,0,0,0);
+    }
+}
+float pawsShortcutWindow::GetManaFlashLevel()
+{
+     if( main_mana )
+    {
+        return main_mana->GetFlashLevel();
+    }
+    return 0;
 }
