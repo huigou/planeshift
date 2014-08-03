@@ -430,7 +430,7 @@ void psAttack::Affect(psCombatAttackGameEvent* event)
         if(!attack || !attack->CanAttack(attacker_client))
         {
             // Use the default attack type.
-            attack = psserver->GetCacheManager()->GetAttackByID(1);
+            attack = psserver->GetCacheManager()->GetAttackByID(attacker->GetDefaultAttackID());
         }
 
         // Schedule the next attack.
@@ -484,7 +484,8 @@ int psAttack::CalculateAttack(psCombatAttackGameEvent* event, psItem* subWeapon)
 
     if(DoLogDebug2(LOG_COMBAT, event->GetAttackerID()))
     {
-        CPrintf(CON_DEBUG, "Variables for Calculate Damage:\n");
+        CPrintf(CON_DEBUG, "Variables for Calculate Damage (%s vs. %s):\n",
+                attacker->GetName(), target->GetName());
         env.DumpAllVars();
     }
 
