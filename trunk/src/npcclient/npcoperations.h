@@ -1051,6 +1051,7 @@ protected:
     csString     attackOutsideRegion;  ///< Attack even outside region if a region is defined.
     bool         attackInvisible;
     bool         attackInvincible;
+    csString     attack_type;
     csString     stance;
     csString     attackMostHatedTribeTarget; ///< Melee operation "tribe" attribute. When set to true the
     ///< melee operation will use the most hated of all the tribe

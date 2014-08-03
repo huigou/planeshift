@@ -1300,7 +1300,6 @@ protected:
      */
     uint32_t activeMagic_seq;
 
-
 public:
     psLinearMovement* pcmove;
 
@@ -1380,6 +1379,13 @@ public:
     {
         CS_ASSERT(attack_cnt);
         attack_cnt--;
+    }
+    virtual void SetDefaultAttackID(unsigned)
+    {
+    }
+    virtual unsigned GetDefaultAttackID()
+    {
+        return 1;
     }
 
     void SetSpellCasting(psSpellCastGameEvent* event)
@@ -1923,6 +1929,8 @@ protected:
 
     csPDelArray<DialogCounter> badText;
 
+    unsigned default_attackid;          ///< Default attack type ID
+
     int speakers;
 
     bool busy; ///< Indicator from the NPC client to state the if the NPC is busy
@@ -1937,6 +1945,14 @@ public:
     virtual ~gemNPC();
 
     virtual void SetCombatStance(const Stance &stance);
+    virtual void SetDefaultAttackID(unsigned id)
+    {
+        default_attackid = id;
+    }
+    virtual unsigned GetDefaultAttackID()
+    {
+        return default_attackid;
+    }
 
     virtual const char* GetObjectType()
     {

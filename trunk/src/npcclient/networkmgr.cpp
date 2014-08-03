@@ -2056,7 +2056,7 @@ void NetworkManager::QueueDRDataCommand(NPC* npc)
     cmd_count++;
 }
 
-void NetworkManager::QueueAttackCommand(gemNPCActor* attacker, gemNPCActor* target, const char* stance)
+void NetworkManager::QueueAttackCommand(gemNPCActor* attacker, gemNPCActor* target, const char* stance, const char* attack_type)
 {
 
     CheckCommandsOverrun(100);
@@ -2074,6 +2074,11 @@ void NetworkManager::QueueAttackCommand(gemNPCActor* attacker, gemNPCActor* targ
     }
 
     outbound->msg->Add(GetCommonStringID(stance));
+
+    if(attack_type && attack_type[0])
+    {
+        outbound->msg->Add(attack_type);
+    }
 
     if(outbound->msg->overrun)
     {

@@ -296,7 +296,7 @@ public:
      * @param target   The target for the NPC or NULL to stop attack
      * @param stance   The stance to be used
      */
-    void QueueAttackCommand(gemNPCActor* attacker, gemNPCActor* target, const char* stance);
+    void QueueAttackCommand(gemNPCActor* attacker, gemNPCActor* target, const char* stance, const char* attack_type);
 
     /**
      * Send a script command to server

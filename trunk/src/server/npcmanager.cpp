@@ -1040,6 +1040,14 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
                 EID target_id = EID(list.msg->GetUInt32());
                 uint32_t stanceCSID = list.msg->GetUInt32(); // Common String ID
                 csString stance = cacheManager->FindCommonString(stanceCSID);
+                unsigned attackid = 1;
+                if(list.msg->HasMore())
+                {
+                    const char* attack_type = list.msg->GetStr();
+                    psAttack* attack = cacheManager->GetAttackByName(attack_type);
+                    if(attack)
+                        attackid = attack->GetID();
+                }
 
                 Debug4(LOG_SUPERCLIENT, attacker_id.Unbox(), "-->Got %s attack cmd for entity %s to %s\n", stance.GetDataSafe(), ShowID(attacker_id), ShowID(target_id));
 
@@ -1081,6 +1089,7 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
 
                         if(!target->GetClient() || !target->GetActorPtr()->GetInvincibility())
                         {
+                            attacker->SetDefaultAttackID(attackid);
                             if(psserver->combatmanager->AttackSomeone(attacker,target,
                                     CombatManager::GetStance(cacheManager, stance)))
                             {

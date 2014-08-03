@@ -3261,8 +3261,8 @@ bool MeleeOperation::Load(iDocumentNode* node)
     }
     else
     {
-        // Using the maximum allwed melee range of the server
-        // if none has been given by this operatoin.
+        // Using the maximum allowed melee range of the server
+        // if none has been given by this operation.
         melee_range  = 3.0f;
     }
 
@@ -3273,6 +3273,7 @@ bool MeleeOperation::Load(iDocumentNode* node)
     }
     attackInvisible = node->GetAttributeValueAsBool("invisible",false);
     attackInvincible= node->GetAttributeValueAsBool("invincible",false);
+    attack_type = node->GetAttributeValue("attack_type");
 
     stance = node->GetAttributeValue("stance");
     // Default to normal stance
@@ -3300,6 +3301,7 @@ ScriptOperation* MeleeOperation::MakeCopy()
     op->attackInvisible = attackInvisible;
     op->attackInvincible = attackInvincible;
     op->stance = stance;
+    op->attack_type = attack_type;
     op->attackMostHatedTribeTarget = attackMostHatedTribeTarget;
     attacked_ent = NULL;
     return op;
@@ -3307,7 +3309,8 @@ ScriptOperation* MeleeOperation::MakeCopy()
 
 ScriptOperation::OperationResult MeleeOperation::Run(NPC* npc, bool interrupted)
 {
-    NPCDebug(npc, 5, "MeleeOperation starting with meele range %.2f seek range %.2f will attack:%s%s.",
+    csString type = psGameObject::ReplaceNPCVariables(npc, attack_type);
+    NPCDebug(npc, 5, "MeleeOperation starting with melee range %.2f seek range %.2f will attack:%s%s.",
              melee_range, seek_range,(attackInvisible?" Invisible":" Visible"),
              (attackInvincible?" Invincible":""));
 
@@ -3326,7 +3329,7 @@ ScriptOperation::OperationResult MeleeOperation::Run(NPC* npc, bool interrupted)
     {
         NPCDebug(npc, 5, "Melee starting to attack %s(%s)", attacked_ent->GetName(), ShowID(attacked_ent->GetEID()));
 
-        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), attacked_ent, stance);
+        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), attacked_ent, stance, type);
     }
     else
     {
@@ -3408,7 +3411,8 @@ ScriptOperation::OperationResult MeleeOperation::Advance(float timedelta, NPC* n
         {
             NPCDebug(npc, 5, "Melee stop attack");
         }
-        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent, stance);
+        csString type = psGameObject::ReplaceNPCVariables(npc, attack_type);
+        npcclient->GetNetworkMgr()->QueueAttackCommand(npc->GetActor(), ent, stance, type);
     }
 
     // Make sure our rotation is still correct

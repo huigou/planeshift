@@ -218,7 +218,7 @@ bool CombatManager::AttackSomeone(gemActor* attacker,gemActor* target,const Stan
             if(!attack || !attack->CanAttack(attacker->GetClient()))
             {
                 // Use the default attack type.
-                attack = psserver->GetCacheManager()->GetAttackByID(1);
+                attack = psserver->GetCacheManager()->GetAttackByID(attacker->GetDefaultAttackID());
             }
             if(weapon && weapon->CheckRequirements(attackerChar, response))
             {

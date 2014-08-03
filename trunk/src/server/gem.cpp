@@ -4653,6 +4653,7 @@ gemNPC::gemNPC(GEMSupervisor* gemsupervisor, CacheManager* cachemanager,
     nextVeryShortRangeAvail = 0; /// When can npc respond to very short range prox trigger again
     nextShortRangeAvail = 0;     /// When can npc respond to short range prox trigger again
     nextLongRangeAvail = 0;      /// When can npc respond to long range prox trigger again
+    default_attackid = 1;
     speakers = 0;
     busy = false;
 
