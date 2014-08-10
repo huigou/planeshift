@@ -1354,7 +1354,6 @@ copy /y "$(TargetPath)" ..\..\out\debug10-x64\bin\
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\common\music\basemusicscore.cpp" />
     <ClCompile Include="..\..\src\common\music\musicutil.cpp" />
     <ClCompile Include="..\..\src\common\music\musicxmlscore.cpp" />
     <ClCompile Include="..\..\src\common\music\scoreelements.cpp" />

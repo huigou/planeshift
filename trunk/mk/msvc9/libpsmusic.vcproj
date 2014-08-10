@@ -1729,9 +1729,6 @@
 			Name="Source Files"
 			Filter="">
 			<File
-				RelativePath="..\..\src\common\music\basemusicscore.cpp">
-			</File>
-			<File
 				RelativePath="..\..\src\common\music\musicutil.cpp">
 			</File>
 			<File
