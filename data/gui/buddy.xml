@@ -12,10 +12,10 @@
             <frame x="7" y="5" width="156" height="250" border="no" />
 
             <attachpoints>
-               <attach point="PROPORTIONAL_RIGHT" />
+               <attach point="ATTACH_RIGHT" />
                <attach point="ATTACH_TOP" />
                <attach point="ATTACH_LEFT" />
-               <attach point="PROPORTIONAL_BOTTOM" />
+               <attach point="ATTACH_BOTTOM" />
             </attachpoints>
 
             <columns height="16">
@@ -31,6 +31,11 @@
     <widget name="BuddyButtons" factory="pawsWidget" selectable="0">
     <frame x="0" y="265" width="170" height="30" border="yes" />
 
+        <attachpoints>
+                <attach point="ATTACH_RIGHT" />
+                <attach point="ATTACH_LEFT" />
+                <attach point="ATTACH_BOTTOM" />
+        </attachpoints>
 
         <widget name="edit" factory="pawsButton" toggle="no" id="4000" style="Scaling Button">
             <frame x="5" y="5" width="40" height="20" border="yes" />
@@ -38,7 +43,6 @@
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="ATTACH_LEFT" />
-                <attach point="PROPORTIONAL_TOP" />
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
         </widget>
@@ -49,7 +53,6 @@
             <attachpoints>
                 <attach point="PROPORTIONAL_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
-                <attach point="PROPORTIONAL_TOP" />
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
         </widget>
@@ -61,17 +64,10 @@
             <attachpoints>
                 <attach point="ATTACH_RIGHT" />
                 <attach point="PROPORTIONAL_LEFT" />
-                <attach point="PROPORTIONAL_TOP" />
                 <attach point="ATTACH_BOTTOM" />
             </attachpoints>
         </widget>
 
-            <attachpoints>
-                <attach point="ATTACH_RIGHT" />
-                <attach point="ATTACH_LEFT" />
-               <attach point="PROPORTIONAL_TOP" />
-                <attach point="ATTACH_BOTTOM" />
-            </attachpoints>
 
     </widget>
 

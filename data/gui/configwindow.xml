@@ -135,6 +135,9 @@ If you change the PvP setting, you may be attacked at any time."/>
             </widget>
 
             <widget factory="pawsSimpleTreeNode" label="Interface - Advanced">
+                    <attr name="SectionName" value="Interface&#x20;-&#x20;AdvancedGeneral"/>
+                    <attr name="factory" value="pawsConfigTextPage"/>
+                    <attr name="TextName" value="In this section you can configure various advanced options for the User Interface."/>
                 <widget factory="pawsSimpleTreeNode" label="Chat">
                     <attr name="SectionName" value="chat"/>
                     <attr name="factory" value="pawsConfigChat"/>
@@ -151,7 +154,7 @@ If you change the PvP setting, you may be attacked at any time."/>
                     <attr name="SectionName" value="tabcompletion"/>
                     <attr name="factory" value="pawsConfigChatTabCompletion"/>
                 </widget>
-		    <widget factory="pawsSimpleTreeNode" label="Chat - Spellchecker">
+            <widget factory="pawsSimpleTreeNode" label="Chat - Spellchecker">
                         <attr name="SectionName" value="spellchecker"/>
                         <attr name="factory" value="pawsConfigSpellChecker"/>
                     </widget>
