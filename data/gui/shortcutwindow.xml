@@ -7,7 +7,7 @@
 <font name="cupandtalon.ttf" r="255" g="228" b="181" size="12"/>
             
 
-        <frame x="5" y="50" width="528" height="100" border="yes" />
+        <frame x="5" y="50" width="528" height="120" border="yes" />
             <minframe width="150" height="100" />
 
 <!-- This resource definition makes the background frame invisible. comment it out if you want to see the frame  -->
