@@ -175,6 +175,15 @@
       <!-- Controls Widget -->
       <widget name="SettingsControls" factory="pawsWidget" id="138" visible="no" alwaysontop="true">
         <frame x="90" y="200" width="670" height="290" />
+		<!-- The text widgets below are a place holder until someone codes support for key editing in PSLaunch-->
+		<widget name="keychange" factory="pawsTextBox">
+          <frame x="0" y="20" width="400" height="20"/>
+          <text string="Currently all key controls can only be changed from inside the game."/>
+        </widget>
+		<widget name="keychangea" factory="pawsTextBox">
+          <frame x="0" y="40" width="600" height="20"/>
+          <text string="Once you have loaded the game open the options window, then look under 'controls' and 'keys' to edit all the controls."/>
+        </widget>
       </widget>
 
       <!-- General Widget -->
