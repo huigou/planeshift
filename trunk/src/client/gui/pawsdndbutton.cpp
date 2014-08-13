@@ -230,9 +230,10 @@ void pawsDnDButton::Start(csTicks startTicks, csTicks currentTicks, csTicks dura
 
     spellProgress->SetTotalValue(1.0);
     spellProgress->SetColor( 0, 0, 200 );
-    spellProgress->SetWarning(warnLevel, warnLow, 200, 200, 0 );
-    spellProgress->SetDanger(dangerLevel, warnLow, 200, 0, 0 );
-    spellProgress->SetFlash(flashLevel, warnLow, 250, 0, 0, 0 );
+    spellProgress->SetWarningLevel(warnLevel, warnLow);
+    spellProgress->SetDangerLevel(dangerLevel, warnLow);
+    spellProgress->SetFlashLevel(flashLevel, warnLow);
+    spellProgress->SetFlashRate( 250);
 
     float currentProgress = (currentTicks-startTicks)/duration;
     spellProgress->SetCurrentValue(currentProgress);

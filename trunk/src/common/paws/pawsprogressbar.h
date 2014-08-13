@@ -48,43 +48,59 @@ public:
      */
     virtual void SetColor( int red, int green, int blue );
 
-    /** flash a different color if value is below/above threshold.
+    /** Set threshold for flashing
      **  numbers outside of min & max = no flash.
      **  default = no flash.
      *  @param value  within this threshold, flash; outside it, no flash.
      *  @param low    if TRUE then flash below this level; if FALSE flash above.
-     *  @param rate   switch colors every 'rate' ticks
+     */
+    virtual void SetFlashLevel(float level, bool low);
+
+    /** Set flash color 
      *  @param red     red saturation value 
      *  @param green   green saturation value 
      *  @param blue    blue saturation value 
      */
-    virtual void SetFlash(float level, bool low, int rate, int red, int green, int blue );
+    virtual void SetFlashColor( int red, int green, int blue );
+
+    /** Set rate of flash
+     *  @param rate   switch colors every 'rate' ticks
+     */
+    virtual void SetFlashRate( int rate);
 
     /** return the current "flash" level
      */
     float GetFlashLevel();
 
-    /** use a different primary color if above a certain threshold
+    /** Set threshold for warn color
      *  @param level   threshold
      *  @param low     if TRUE then active below this level; if FALSE active above.
+     */
+    virtual void SetWarningLevel( float level, bool low);
+
+    /** Set warn color
      *  @param red     red saturation value 
      *  @param green   green saturation value 
      *  @param blue    blue saturation value 
      */
-    virtual void SetWarning( float level, bool low, int red, int green, int blue );
+    virtual void SetWarningColor(  int red, int green, int blue );
 
     /** return the current "Warn" level
      */
     float GetWarningLevel();
 
-    /** use a different primary color if above a certain threshold
+    /** set threshold for danger color
      *  @param level   threshold
      *  @param low     if TRUE then active below this level; if FALSE active above.
+     */
+    virtual void SetDangerLevel( float level, bool low);
+
+    /** Set Danger Color
      *  @param red     red saturation value
      *  @param green   green saturation value
      *  @param blue    blue saturation value
      */
-    virtual void SetDanger( float level, bool low, int red, int green, int blue );
+    virtual void SetDangerColor(  int red, int green, int blue );
 
     /** return the current "Danger" level
      */
