@@ -88,43 +88,56 @@ bool pawsProgressBar::Setup(iDocumentNode* node)
         diff_b = ColourNode2->GetAttributeValueAsInt("b") - start_b;
     }
 
-    csRef<iDocumentNode> ColourNode3 = node->GetNode("flashcolor");
-    if(ColourNode3)
+    csRef<iDocumentNode> OpNode = node->GetNode("flash");
+    if(OpNode)
     {
-        flash_r = ColourNode3->GetAttributeValueAsInt("r");
-        flash_g = ColourNode3->GetAttributeValueAsInt("g");
-        flash_b = ColourNode3->GetAttributeValueAsInt("b");
+        flashLevel = OpNode->GetAttributeValueAsFloat("level");
+        flashLow = OpNode->GetAttributeValueAsBool("low");
+        flash_r = OpNode->GetAttributeValueAsInt("r");
+        flash_g = OpNode->GetAttributeValueAsInt("g");
+        flash_b = OpNode->GetAttributeValueAsInt("b");
+        flashRate = OpNode->GetAttributeValueAsInt("rate");
     }
     else
     {
+        flashLevel = 0;
+        flashLow = false;
         flash_r = 0;
         flash_g = 0;
         flash_b = 0;
     }
 
-    csRef<iDocumentNode> ColourNode4 = node->GetNode("warncolor");
-    if(ColourNode4)
+    OpNode = node->GetNode("warn");
+    if(OpNode)
     {
-        warn_r = ColourNode4->GetAttributeValueAsInt("r");
-        warn_g = ColourNode4->GetAttributeValueAsInt("g");
-        warn_b = ColourNode4->GetAttributeValueAsInt("b");
+        warnLevel = OpNode->GetAttributeValueAsFloat("level");
+        warnLow = OpNode->GetAttributeValueAsBool("low");
+        warn_r = OpNode->GetAttributeValueAsInt("r");
+        warn_g = OpNode->GetAttributeValueAsInt("g");
+        warn_b = OpNode->GetAttributeValueAsInt("b");
     }
     else
     {
+        warnLevel = 0;
+        warnLow = false;
         warn_r = 200;
         warn_g = 200;
         warn_b = 0;
     }
 
-    csRef<iDocumentNode> ColourNode5 = node->GetNode("dangercolor");
-    if(ColourNode5)
+    OpNode = node->GetNode("danger");
+    if(OpNode)
     {
-        danger_r = ColourNode5->GetAttributeValueAsInt("r");
-        danger_g = ColourNode5->GetAttributeValueAsInt("g");
-        danger_b = ColourNode5->GetAttributeValueAsInt("b");
+        dangerLevel = OpNode->GetAttributeValueAsFloat("level");
+        dangerLow = OpNode->GetAttributeValueAsBool("low");
+        danger_r = OpNode->GetAttributeValueAsInt("r");
+        danger_g = OpNode->GetAttributeValueAsInt("g");
+        danger_b = OpNode->GetAttributeValueAsInt("b");
     }
     else
     {
+        dangerLevel = 0;
+        dangerLow = false;
         danger_r = 200;
         danger_g = 0;
         danger_b = 0;
@@ -260,30 +273,39 @@ void pawsProgressBar::SetColor( int red, int green, int blue )
     start_b    = blue;
 }
 
-void pawsProgressBar::SetFlash(float level, bool low, int rate, int red, int green, int blue )
+void pawsProgressBar::SetReversed( bool val )
+{
+    reversed = val;
+}
+
+
+void pawsProgressBar::SetFlashLevel(float level, bool low )
 {
     flashLevel = level;
     flashLow   = low;
-    flashRate  = rate;
+}
+void pawsProgressBar::SetFlashColor( int red, int green, int blue )
+{
     flash_r    = red;
     flash_g    = green;
     flash_b    = blue;
+}
+void pawsProgressBar::SetFlashRate( int rate)
+{
+    flashRate  = rate;
 }
 float pawsProgressBar::GetFlashLevel()
 {
     return flashLevel;
 }
 
-
-void pawsProgressBar::SetReversed( bool val )
-{
-    reversed = val;
-}
-
-void pawsProgressBar::SetWarning( float level, bool low, int red, int green, int blue )
+void pawsProgressBar::SetWarningLevel( float level, bool low)
 {
     warnLevel = level;
     warnLow   = low;
+}
+void pawsProgressBar::SetWarningColor( int red, int green, int blue )
+{
     warn_r    = red;
     warn_g    = green;
     warn_b    = blue;
@@ -293,10 +315,13 @@ float pawsProgressBar::GetWarningLevel()
     return warnLevel;
 }
 
-void pawsProgressBar::SetDanger( float level, bool low, int red, int green, int blue )
+void pawsProgressBar::SetDangerLevel( float level, bool low)
 {
     dangerLevel = level;
     dangerLow   = low;
+}
+void pawsProgressBar::SetDangerColor(  int red, int green, int blue )
+{
     danger_r    = red;
     danger_g    = green;
     danger_b    = blue;

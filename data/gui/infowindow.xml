@@ -18,9 +18,14 @@
     </attachpoints>
 
     <widget name="My HP" factory="pawsProgressBar" tooltip="Health">
+<!-- 
+        <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
+        <warn level="0.30" low="true" r="200" g="200" b="0" />
+        <danger level="0.10" low="true" r="200" g="0" b="0" />
+-->
         <frame x="0" y="5" width="170" height="10" border="no" />
-            <color r="150" g="20" b="20" />
-            <fadecolor r="200" g="50" b="50" />
+        <color r="20" g="150" b="20" />
+        <fadecolor r="200" g="50" b="50" />
         <subscriptions>
             <subscribe data="fVitalValue0:Self" />
         </subscriptions>
@@ -54,9 +59,14 @@
     </widget>
 
     <widget name="My Mana" factory="pawsProgressBar" tooltip="Mana">
+<!--
+        <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
+        <warn level="0.30" low="true" r="200" g="200" b="0" />
+        <danger level="0.10" low="true" r="200" g="0" b="0" />
+-->
         <frame x="0" y="27" width="170" height="10" border="no" />
-            <color r="20" g="20" b="160" />
-            <fadecolor r="50" g="50" b="200" />
+        <color r="20" g="20" b="160" />
+        <fadecolor r="50" g="50" b="200" />
         <subscriptions>
             <subscribe data="fVitalValue1:Self" />
         </subscriptions>

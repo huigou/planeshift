@@ -1260,7 +1260,7 @@ void pawsShortcutWindow::SetHPWarnLevel( float val )
 {
     if( main_hp )
     {
-        main_hp->SetWarning(val,true,200,200,0);
+        main_hp->SetWarningLevel(val,true);
     }
 }
 float pawsShortcutWindow::GetHPWarnLevel()
@@ -1276,7 +1276,7 @@ void pawsShortcutWindow::SetHPDangerLevel( float val )
 {
     if( main_hp )
     {
-        main_hp->SetDanger(val,true,250,0,0);
+        main_hp->SetDangerLevel(val,true);
     }
 }
 float pawsShortcutWindow::GetHPDangerLevel()
@@ -1292,7 +1292,8 @@ void pawsShortcutWindow::SetHPFlashLevel( float val )
 {
     if( main_hp )
     {
-        main_hp->SetFlash(val,true,200,0,0,0);
+        main_hp->SetFlashLevel(val,true);
+        main_hp->SetFlashRate(200);
     }
 }
 float pawsShortcutWindow::GetHPFlashLevel()
@@ -1308,7 +1309,7 @@ void pawsShortcutWindow::SetManaWarnLevel( float val )
 {
     if( main_mana )
     {
-        main_mana->SetWarning(val,true,200,200,200);
+        main_mana->SetWarningLevel(val,true);
     }
 }
 float pawsShortcutWindow::GetManaWarnLevel()
@@ -1324,7 +1325,7 @@ void pawsShortcutWindow::SetManaDangerLevel( float val )
 {
     if( main_mana )
     {
-        main_mana->SetDanger(val,true,250,0,0);
+        main_mana->SetDangerLevel(val,true);
     }
 }
 float pawsShortcutWindow::GetManaDangerLevel()
@@ -1340,7 +1341,8 @@ void pawsShortcutWindow::SetManaFlashLevel( float val )
 {
     if( main_mana )
     {
-        main_mana->SetFlash(val,true,200,0,0,0);
+        main_mana->SetFlashLevel(val,true);
+        main_mana->SetFlashRate(200);
     }
 }
 float pawsShortcutWindow::GetManaFlashLevel()
