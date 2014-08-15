@@ -9,7 +9,7 @@
 
 <!-- Personal Info (HP, Mana, Fatigue) -->
 <widget name="Bars" factory="pawsWidget">
-<frame x="5" y="145" width="170" height="48" />
+<frame x="0" y="145" width="180" height="48" />
     <attachpoints>
         <attach point="PROPORTIONAL_RIGHT" />
         <attach point="PROPORTIONAL_BOTTOM" />
@@ -23,7 +23,7 @@
         <warn level="0.30" low="true" r="200" g="200" b="0" />
         <danger level="0.10" low="true" r="200" g="0" b="0" />
 -->
-        <frame x="0" y="5" width="170" height="10" border="no" />
+        <frame x="5" y="5" width="170" height="10" border="no" />
         <color r="20" g="150" b="20" />
         <fadecolor r="200" g="50" b="50" />
         <subscriptions>
@@ -41,7 +41,7 @@
     -->
     </widget>
     <widget name="My PysStamina" factory="pawsProgressBar" tooltip="Physical Stamina">
-        <frame x="0" y="15" width="165" height="6" border="no" />
+        <frame x="5" y="15" width="165" height="6" border="no" />
             <color r="100" g="50" b="50" />
             <fadecolor r="150" g="75" b="75" />
         <subscriptions>
@@ -64,7 +64,7 @@
         <warn level="0.30" low="true" r="200" g="200" b="0" />
         <danger level="0.10" low="true" r="200" g="0" b="0" />
 -->
-        <frame x="0" y="27" width="170" height="10" border="no" />
+        <frame x="5" y="27" width="170" height="10" border="no" />
         <color r="20" g="20" b="160" />
         <fadecolor r="50" g="50" b="200" />
         <subscriptions>
@@ -81,7 +81,7 @@
     </widget>
 
     <widget name="My MenStamina" factory="pawsProgressBar" tooltip="Mental Stamina">
-        <frame x="0" y="37" width="165" height="6" border="no" />
+        <frame x="5" y="37" width="165" height="6" border="no" />
             <color r="50" g="50"  b="150" />
             <fadecolor r="75" g="75" b="200" />
         <subscriptions>
