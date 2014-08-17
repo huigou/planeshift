@@ -56,13 +56,13 @@ pawsConfigShortcut::pawsConfigShortcut() :
     textSize(NULL),
     textSpacing(NULL),
     ShortcutMenu(NULL),
+    MenuBar(NULL),
     HPWarnLevel(NULL),
     HPDangerLevel(NULL),
     HPFlashLevel(NULL),
     ManaWarnLevel(NULL),
     ManaDangerLevel(NULL),
-    ManaFlashLevel(NULL),
-    MenuBar(NULL)
+    ManaFlashLevel(NULL)
 {
     loaded= false;
 }
