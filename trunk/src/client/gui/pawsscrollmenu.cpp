@@ -46,9 +46,6 @@ pawsScrollMenu::pawsScrollMenu() :
     currentButton(0),
     paddingWidth(0),
 //    scrollProportion(0.5),
-    warnLevel(0.0),
-    dangerLevel(0.0),
-    flashLevel(0.0),
     buttonWidthDynamic(true),
     ButtonHolder(NULL),
     buttonLocation(BUTTON_PADDING),
@@ -62,7 +59,10 @@ pawsScrollMenu::pawsScrollMenu() :
     EditLockMode(ScrollMenuOptionDISABLED), //enabled, disabled, (dynamic==>enabled)
     callbackWidget(NULL),
     scrollBarWidget(NULL),
-    Orientation(ScrollMenuOptionHORIZONTAL)
+    Orientation(ScrollMenuOptionHORIZONTAL),
+    warnLevel(0.0),
+    dangerLevel(0.0),
+    flashLevel(0.0)
 {
 }
 
@@ -445,7 +445,7 @@ bool pawsScrollMenu::ScrollDown()
     {
         return false;
     }
-    int i;
+    size_t i;
     for(i=currentButton; i<Buttons.GetSize() && Buttons[i]->GetScreenFrame().ymin==Buttons[currentButton]->GetScreenFrame().ymin; i++ );
     currentButton=i;
     if( scrollBarWidget )
@@ -467,7 +467,7 @@ bool pawsScrollMenu::ScrollToPosition( float pos )
     {
         currentButton=0;
     }
-    else if( currentButton>Buttons.GetSize()-1)
+    else if( currentButton>(int)Buttons.GetSize()-1)
     {
         currentButton=Buttons.GetSize()-1;
     }

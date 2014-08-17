@@ -57,8 +57,6 @@ pawsDnDButton::pawsDnDButton() :
     ImageNameCallback(NULL),
     NameCallback(NULL),
     ActionCallback(NULL),
-    DnDLock(false),
-    spellProgress(NULL),
     warnLevel(0.0),
     warnLow(false),
     warnMode(0),
@@ -67,7 +65,9 @@ pawsDnDButton::pawsDnDButton() :
     dangerMode(0),
     flashLevel(0.0),
     flashLow(false),
-    flashMode(0)
+    flashMode(0),
+    DnDLock(false),
+    spellProgress(NULL)
 {
     factory = "pawsDnDButton";
 }

@@ -187,6 +187,8 @@ csString MusicXMLElement::ToXML()
         case FLAT:
             element += "<accidental>flat</accidental>";
             break;
+        default:
+            break;
         }
         element += "</note>";
     }

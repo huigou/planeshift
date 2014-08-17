@@ -214,7 +214,6 @@ protected:
     int                    EditMode;
 
     float                  warnLevel;
-    bool                   warnLow;
     int                    warnMode;
     float                  dangerLevel;
     bool                   dangerLow;
