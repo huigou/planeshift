@@ -107,6 +107,7 @@ bool pawsConfigChatFont::PostSetup()
     }
     textSize->SetCurrentValue(10,false);
     textSize->SetMaxValue(40);
+    textSize->SetMinValue(6);
 
     textSpacing = (pawsScrollBar*)FindWidget("textSpacing");
     if(!textSpacing)
@@ -127,6 +128,7 @@ bool pawsConfigChatFont::LoadConfig()
     textFont->Select( tFontName.GetData() );
 
     textSize->SetCurrentValue(((pawsChatWindow*)ChatWindow)->GetFontSize(),false);
+        
     loaded= true;
     dirty = false;
 
@@ -162,8 +164,8 @@ bool pawsConfigChatFont::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
 {
     if(wdg == textSize && loaded)
     {
-        if(textSize->GetCurrentValue() < 1)
-            textSize->SetCurrentValue(1,false);
+        if(textSize->GetCurrentValue() < 6)
+            textSize->SetCurrentValue(6,false);
         PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
     }
     else if(wdg == textSpacing && loaded)

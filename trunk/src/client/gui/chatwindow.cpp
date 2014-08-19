@@ -2771,7 +2771,20 @@ bool pawsChatWindow::LoadSetting()
         csString    fontPath( "/planeshift/data/ttf/");
         fontPath += fontName.GetData();
         fontPath += ".ttf";
-        SetChatWindowFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
+
+        csRef<iStringArray>   fileList( vfs->FindFiles( fontPath ));
+        if( fileList->GetSize()==1 )
+        {
+            int tFontSize=optionNode->GetAttributeValueAsInt("value", true);
+            if( tFontSize<6 )
+            {
+                SetChatWindowFont( fontPath, 6 );
+            }
+            else
+            {
+                SetChatWindowFont( fontPath, tFontSize );
+            }
+        }
     }
     //else use default.
 
