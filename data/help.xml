@@ -1711,7 +1711,9 @@ Alters the settings for an item.  Allowed actions:
 
 'picklevel' followed by the level required of the currently set skill in order to be able to pick the lock of the item
 
-'pickupable' followed by 'true' or 'false' sets the pickupable flag
+'pickupable' followed by 'true' or 'false' sets the pickupable flag [This is only usable by developers]
+
+'pickupableweak' followed by 'true' or 'false' sets the pickupableweak flag [This is the GM version of the flag]
 
 'unpickable' followed by 'true' or 'false' sets the unpickable flag
 

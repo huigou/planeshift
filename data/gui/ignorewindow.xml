@@ -1,9 +1,10 @@
 <widget_description>
 
-  <widget name="IgnoreWindow" factory="pawsIgnoreWindow" visible="no" savepositions="yes" movable="yes" resizable="yes" style="New Standard GUI">
+  <widget name="IgnoreWindow" factory="pawsIgnoreWindow" visible="no" savepositions="yes" movable="yes" resizable="yes" style="New Standard GUI" keepaspect="no">
 
     <frame x="0" y="100" width="200" height="240" border="yes" />
-    <minframe width="200" height="160" />
+    <minframe width="150" height="160" />
+    <maxframe width="200" height="800" />
     <title resource="Scaling Title Bar" text="Ignore List" align="left" close_button="yes"/>
 
 
@@ -25,7 +26,7 @@
     </widget>
 
     <widget name="remove" factory="pawsButton" toggle="no" id="2000" shadows="yes" style="Standard Button">
-        <frame x="70" y="210" width="60" height="20" border="yes" />
+        <frame x="10" y="210" width="60" height="20" border="yes" />
         <label text="Remove" />
         <attachpoints>
             <attach point="ATTACH_LEFT" />
@@ -34,7 +35,7 @@
     </widget>
 
     <widget name="add" factory="pawsButton" toggle="no" id="3000" shadows="yes" style="Standard Button">
-        <frame x="140" y="210" width="50" height="20" border="yes" />
+        <frame x="80" y="210" width="50" height="20" border="yes" />
         <label text="Add" />
         <attachpoints>
             <attach point="ATTACH_LEFT" />
