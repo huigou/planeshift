@@ -83,12 +83,12 @@
         </widget>
 
         <widget name="LeftArrow" factory="pawsButton" visible="yes">
-            <frame x="40" y="300" width="25" height="105" border="no" />
+            <frame x="340" y="300" width="25" height="105" border="no" />
             <bgimage resource="NPCLeftArrow" />
         </widget>
 
         <widget name="RightArrow" factory="pawsButton" visible="yes">
-            <frame x="915" y="300" width="25" height="105" border="no" />
+            <frame x="615" y="300" width="25" height="105" border="no" />
             <bgimage resource="NPCRightArrow" />
         </widget>
 
