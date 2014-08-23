@@ -218,6 +218,7 @@ bool pawsConfigActiveMagic::PostSetup()
     }
     flashMode->SetActive("flashModePercent");
 
+    textFontLabel = (pawsTextBox*)FindWidget("textFontLabel");
     textFont = (pawsComboBox*)FindWidget("textFont");
     if(!textFont)
     {
@@ -241,6 +242,7 @@ bool pawsConfigActiveMagic::PostSetup()
         Error1( "pawsConfigActiveMagic::PostSetup unable to find vfs for font list" );
     }
     
+    textSizeLabel = (pawsTextBox*)FindWidget("textSizeLabel");
     textSize = (pawsScrollBar*)FindWidget("textSize");
     if(!textSize)
     {
@@ -249,6 +251,7 @@ bool pawsConfigActiveMagic::PostSetup()
     textSize->SetCurrentValue(10,false);
     textSize->SetMaxValue(40);
 
+    textSpacingLabel = (pawsTextBox*)FindWidget("textSpacingLabel");
     textSpacing = (pawsScrollBar*)FindWidget("textSpacing");
     if(!textSpacing)
     {
@@ -265,14 +268,20 @@ bool pawsConfigActiveMagic::LoadConfig()
     useImages->SetState( ActiveMagicWindow->GetUseImages() ); 
     if( useImages->GetState()==true )
     {
+        textFontLabel->Hide();
         textFont->Hide();
+        textSizeLabel->Hide();
         textSize->Hide();
+        textSpacingLabel->Hide();
         textSpacing->Hide();
     }
     else
     {
+        textFontLabel->Show();
         textFont->Show();
+        textSizeLabel->Show();
         textSize->Show();
+        textSpacingLabel->Show();
         textSpacing->Show();
     }
 
@@ -403,8 +412,6 @@ bool pawsConfigActiveMagic::SaveConfig()
     xml.AppendFmt("<dangerMode active=\"%s\" />\n", dangerMode->GetActive().GetData());
     xml.AppendFmt("<flashLevel value=\"%d\" />\n", int(flashLevel->GetCurrentValue()));
     xml.AppendFmt("<flashMode active=\"%s\" />\n", flashMode->GetActive().GetData());
-//    xml.AppendFmt("<leftScroll active=\"%s\" />\n", leftScroll->GetActive().GetData());
-//    xml.AppendFmt("<rightScroll active=\"%s\" />\n", rightScroll->GetActive().GetData());
     xml.AppendFmt("<textSize value=\"%d\" />\n", int(textSize->GetCurrentValue()));
     xml.AppendFmt("<textFont value=\"%s\" />\n", textFont->GetSelectedRowString().GetData());
     xml.AppendFmt("<textSpacing value=\"%d\" />\n", int(textSpacing->GetCurrentValue()));
@@ -521,14 +528,20 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
             ActiveMagicWindow->SetUseImages(useImages->GetState());
             if( useImages->GetState()==true )
             {
+                textFontLabel->Hide();
                 textFont->Hide();
+                textSizeLabel->Hide();
                 textSize->Hide();
+                textSpacingLabel->Hide();
                 textSpacing->Hide();
             }
             else
             {
+                textFontLabel->Show();
                 textFont->Show();
+                textSizeLabel->Show();
                 textSize->Show();
+                textSpacingLabel->Show();
                 textSpacing->Show();
             }
             if( ActiveMagicWindow->GetAutoResize() )
@@ -729,18 +742,20 @@ void pawsConfigActiveMagic::UpdateWarnLevel( )
         csString temp;
         if( strcmp(warnMode->GetActive(),"warnModePercent")==0 )
         {
+            float tLevel = warnLevel->GetCurrentValue();
+
             ActiveMagicWindow->SetWarnMode( 0 ); 
-            if( warnLevel->GetCurrentValue()<100 )
+            if( tLevel<100 && tLevel>0  )
             {
-                temp.Format("> %2.0f", warnLevel->GetCurrentValue() );
+                temp.Format("> %2.0f",tLevel );
                 warnSetting->SetText( temp );
 
                 //if warnlevel is > danger level in % mode, then increase danger level to match.
-                if( warnLevel->GetCurrentValue()>dangerLevel->GetCurrentValue() )
+                if( tLevel>dangerLevel->GetCurrentValue() )
                 {
-                    dangerLevel->SetCurrentValue( warnLevel->GetCurrentValue() );
+                    dangerLevel->SetCurrentValue( tLevel );
                 }
-                ActiveMagicWindow->SetWarnLevel(  warnLevel->GetCurrentValue(), false ); //convert 0-100 int to float for pawsProgressMeter
+                ActiveMagicWindow->SetWarnLevel(  tLevel, false ); //convert 0-100 int to float for pawsProgressMeter
             }
             else
             {
@@ -777,18 +792,20 @@ void pawsConfigActiveMagic::UpdateDangerLevel()
     csString temp;
     if( strcmp(dangerMode->GetActive(),"dangerModePercent")==0 )
     {
+        float tLevel = dangerLevel->GetCurrentValue();
+
         ActiveMagicWindow->SetDangerMode( 0 ); 
         //if warn level > danger level in percent mode then increase danger level
-        if( warnLevel->GetCurrentValue()>dangerLevel->GetCurrentValue() )
+        if( warnLevel->GetCurrentValue()>tLevel )
         {
             dangerLevel->SetCurrentValue( warnLevel->GetCurrentValue() );
         }
 
-        if( dangerLevel->GetCurrentValue()<100 )
+        if( tLevel<100 && tLevel>0 )
         {
-            temp.Format("> %2.0f", dangerLevel->GetCurrentValue() );
+            temp.Format("> %2.0f", tLevel );
             dangerSetting->SetText( temp );
-            ActiveMagicWindow->SetDangerLevel(  dangerLevel->GetCurrentValue(), false );
+            ActiveMagicWindow->SetDangerLevel(  tLevel, false );
         }
         else
         {
@@ -825,12 +842,14 @@ void pawsConfigActiveMagic::UpdateFlashLevel()
     csString temp;
     if( strcmp(flashMode->GetActive(),"flashModePercent")==0 )
     {
+        float tLevel = flashLevel->GetCurrentValue();
+
         ActiveMagicWindow->SetFlashMode( 0 ); 
-        if( flashLevel->GetCurrentValue()<100 )
+        if( tLevel<100 && tLevel>0 )
         {
-            temp.Format("> %2.0f", flashLevel->GetCurrentValue() );
+            temp.Format("> %2.0f", tLevel );
             flashSetting->SetText( temp );
-            ActiveMagicWindow->SetFlashLevel(  flashLevel->GetCurrentValue(), false );
+            ActiveMagicWindow->SetFlashLevel(  tLevel, false );
         }
         else
         {
