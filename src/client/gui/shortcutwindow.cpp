@@ -70,7 +70,6 @@ pawsShortcutWindow::pawsShortcutWindow() :
     position(0),
     buttonWidth(0),                     //added 20130726 - ticket 6087
     textSpacing(0),
-//    scrollSize(0),                      //added 20130726 - ticket 6087
     EditMode(0)                     // 0 = edit lock prevents drag, 1 = edit lock prevent all editing
 {
     vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
@@ -157,10 +156,6 @@ bool pawsShortcutWindow::Setup(iDocumentNode *node)
                         buttonWidth=subnode->GetValueAsInt();
                     }
                 }
-//                else if( strcasecmp( "scrollSize", subnode->GetName() )==0 )
-//                {
-//                    scrollSize=subnode->GetValueAsFloat();
-//                }
                 else if( strcasecmp( "editMode", subnode->GetName() )==0 )
                 {
                     if( strcasecmp( "all", subnode->GetValue() )==0 )
@@ -950,7 +945,6 @@ void pawsShortcutWindow::ExecuteCommand(int shortcutNum )
 const csString& pawsShortcutWindow::GetCommandName(int shortcutNum )
 {
     if (shortcutNum < 0 || shortcutNum >= NUM_SHORTCUTS)
-    //if (shortcutNum < 0 )
     {
         static csString error("Out of range");
         return error;
@@ -1147,30 +1141,15 @@ bool pawsShortcutWindow::LoadUserPrefs()
     {
         SetHPWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
     }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
-        SetHPWarnLevel(0);
-    }
     optionNode = mainNode->GetNode("HPDangerLevel");
     if(optionNode != NULL)
     {
         SetHPDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
     }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
-        SetHPDangerLevel(0);
-    }
     optionNode = mainNode->GetNode("HPFlashLevel");
     if(optionNode != NULL)
     {
         SetHPFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
-    }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
-        SetHPFlashLevel(0);
     }
 
     optionNode = mainNode->GetNode("ManaWarnLevel");
@@ -1178,30 +1157,15 @@ bool pawsShortcutWindow::LoadUserPrefs()
     {
         SetManaWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
     }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
-        SetManaWarnLevel(0);
-    }
     optionNode = mainNode->GetNode("ManaDangerLevel");
     if(optionNode != NULL)
     {
         SetManaDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
     }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
-        SetManaDangerLevel(0);
-    }
     optionNode = mainNode->GetNode("ManaFlashLevel");
     if(optionNode != NULL)
     {
         SetManaFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
-    }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
-        SetManaFlashLevel(0);
     }
 
 
@@ -1242,8 +1206,6 @@ bool pawsShortcutWindow::LoadUserPrefs()
         SetFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
         MenuBar->SetFont( fontPath, optionNode->GetAttributeValueAsInt("value", true) );
     }
-    //else use default.
-
 
     optionNode = mainNode->GetNode("textSpacing");
     if(optionNode != NULL)

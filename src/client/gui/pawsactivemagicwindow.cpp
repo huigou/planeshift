@@ -48,6 +48,15 @@ pawsActiveMagicWindow::pawsActiveMagicWindow() :
     autoResize(true),
     showEffects(false),
     show(true),
+    warnLow(false),
+    dangerLow(false),
+    flashLow(false),
+    warnLevel(0.80),
+    dangerLevel(0.90),
+    flashLevel(0.95),
+    warnMode(0),
+    dangerMode(0),
+    flashMode(0),
     buffList(NULL),
     lastIndex(0),
     configPopup(NULL)
@@ -662,11 +671,11 @@ bool pawsActiveMagicWindow::LoadSetting()
     {
         warnLevel=optionNode->GetAttributeValueAsFloat("value", true);
     }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
-        warnLevel = 100;
-    }
+//    else
+//    {
+//        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnLevel node");
+//        warnLevel = 100;
+//    }
     optionNode = mainNode->GetNode("warnMode");
     if(optionNode != NULL)
     {
@@ -679,20 +688,20 @@ bool pawsActiveMagicWindow::LoadSetting()
             warnMode=0;
         }
     }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnMode node");
-        warnMode=0;
-    }
+//    else
+//    {
+//        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve warnMode node");
+//        warnMode=0;
+//    }
 
     optionNode = mainNode->GetNode("dangerLevel");
     if(optionNode != NULL)
         dangerLevel = optionNode->GetAttributeValueAsFloat("value", true);
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve dangerLevel node");
-        dangerLevel = 100;
-    }
+//    else
+//    {
+//        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve dangerLevel node");
+//        dangerLevel = 100;
+//    }
     optionNode = mainNode->GetNode("dangerMode");
     if(optionNode != NULL)
     {
@@ -705,20 +714,20 @@ bool pawsActiveMagicWindow::LoadSetting()
             dangerMode=0;
         }
     }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve dangerMode node");
-        dangerMode=0;
-    }
+//    else
+//    {
+//        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve dangerMode node");
+//        dangerMode=0;
+//    }
 
     optionNode = mainNode->GetNode("flashLevel");
     if(optionNode != NULL)
         flashLevel = optionNode->GetAttributeValueAsFloat("value", true);
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve flashLevel node");
-        flashLevel=100;
-    }
+//    else
+//    {
+//        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve flashLevel node");
+//        flashLevel=100;
+//    }
     optionNode = mainNode->GetNode("flashMode");
     if(optionNode != NULL)
     {
@@ -731,11 +740,11 @@ bool pawsActiveMagicWindow::LoadSetting()
             flashMode=0;
         }
     }
-    else
-    {
-        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve FlashMode node");
-        flashMode=0;
-    }
+//    else
+//    {
+//        Error1("pawsActiveMagicWindow::LoadUserPrefs unable to retrieve FlashMode node");
+//        flashMode=0;
+//    }
 
 
     return true;

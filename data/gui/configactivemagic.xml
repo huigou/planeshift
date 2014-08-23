@@ -126,46 +126,46 @@
 
 
 
-        <widget name="" factory="pawsTextBox">
-            <frame x="15" y="210" width="50" height="20" />
+        <widget name="textFontLabel" factory="pawsTextBox">
+            <frame x="215" y="210" width="50" height="20" />
             <text string="Font"/>
         </widget>
 
         <widget name="textFont" factory="pawsComboBox" id="1015" alwaysontop="true" >
-            <frame x="60" y="210" width="150" height="20" border="no" />
+            <frame x="260" y="210" width="150" height="20" border="no" />
             <listbox rows="3" height="20" useScrollBar="true" />
         </widget>
 
-        <widget name="" factory="pawsTextBox">
-            <frame x="15" y="235" width="100" height="20" />
+        <widget name="textSizeLabel" factory="pawsTextBox">
+            <frame x="215" y="235" width="100" height="20" />
             <text string="Text Size"/>
         </widget>
 
         <widget name="textSize" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-            <frame x="100" y="235" width="110" height="20" border="no" />
+            <frame x="290" y="235" width="135" height="20" border="no" />
         </widget>
 
-        <widget name="" factory="pawsTextBox">
-            <frame x="15" y="260" width="100" height="20" />
+        <widget name="textSpacingLabel" factory="pawsTextBox">
+            <frame x="215" y="260" width="100" height="20" />
             <text string="Text Spacing"/>
         </widget>
 
         <widget name="textSpacing" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-            <frame x="100" y="260" width="110" height="20" border="no" />
+            <frame x="290" y="260" width="135" height="20" border="no" />
         </widget>
 
         <widget name="useImages" factory="pawsCheckBox" id="1022">
-            <frame x="250" y="215" width="190" height="20" />
+            <frame x="15" y="215" width="190" height="20" />
             <text string="Use Images"/>
         </widget>
 
         <widget name="autoResize" factory="pawsCheckBox" id="1023" >
-            <frame x="250" y="235" width="190" height="20" />
+            <frame x="15" y="235" width="190" height="20" />
             <text string="Auto-Resize"/>
         </widget>
 
         <widget name="showWindow" factory="pawsCheckBox" id="1024" >
-            <frame x="250" y="255" width="190" height="20" />
+            <frame x="15" y="255" width="190" height="20" />
             <text string="show Active Magic Window"/>
         </widget>
 

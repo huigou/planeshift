@@ -29,6 +29,9 @@
 
 	    <widget name="My HP" factory="pawsProgressBar" tooltip="Health">
 		<frame x="5" y="0" width="250" height="15" border="no" />
+                <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
+                <warn level="0.30" low="true" r="200" g="200" b="0" />
+                <danger level="0.10" low="true" r="200" g="0" b="0" />
                 <attachpoints>
                      <attach point="PROPORTIONAL_RIGHT" />
                      <attach point="ATTACH_LEFT" />
@@ -54,6 +57,9 @@
 	    </widget>
 	    <widget name="My Mana" factory="pawsProgressBar" tooltip="Mana">
 		<frame x="265" y="0" width="255" height="15" border="no" />
+                <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
+                <warn level="0.30" low="true" r="200" g="200" b="0" />
+                <danger level="0.10" low="true" r="200" g="0" b="0" />
                 <attachpoints>
                      <attach point="ATTACH_RIGHT" />
                      <attach point="PROPORTIONAL_LEFT" />

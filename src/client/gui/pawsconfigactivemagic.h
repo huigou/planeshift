@@ -101,8 +101,11 @@ protected:
     pawsTextBox*           flashSetting;
     pawsRadioButtonGroup*  flashMode;
 
+    pawsTextBox*           textFontLabel;
     pawsComboBox*          textFont;
+    pawsTextBox*           textSizeLabel;
     pawsScrollBar*         textSize;
+    pawsTextBox*           textSpacingLabel;
     pawsScrollBar*         textSpacing;
 
     pawsWidget*            ActiveMagic;
