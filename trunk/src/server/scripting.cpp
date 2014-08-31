@@ -138,7 +138,7 @@ public:
     virtual ~AppliedOp() { }
     virtual bool Load(iDocumentNode* node) = 0;
     virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp) = 0;
-    virtual const csString GetDescription()
+    virtual const csString GetDescription(MathEnvironment* env)
     {
         return "";
     }
@@ -196,7 +196,7 @@ public:
         return Applied1::Load(node);
     }
 
-    const csString GetDescription()
+    virtual const csString GetDescription(MathEnvironment* env)
     {
         csString descr;
         if(vital == "mana-rate")
@@ -214,8 +214,7 @@ public:
         else if(vital == "mstamina-max")
             descr = "Bonus Max Mental Stamina";
 
-        MathEnvironment env;
-        float val = value->Evaluate(&env);
+        float val = value->Evaluate(env);
         descr.AppendFmt(": %0.1f\n",val);
         return descr;
     }
@@ -324,7 +323,7 @@ public:
         return Applied1::Load(node);
     }
 
-    const csString GetDescription()
+    virtual const csString GetDescription(MathEnvironment* env)
     {
         csString descr;
         if(statname == "agi")
@@ -340,8 +339,7 @@ public:
         else if(statname == "wil")
             descr = "Will";
 
-        MathEnvironment env;
-        int val = (int)value->Evaluate(&env);
+        int val = (int)value->Evaluate(env);
         descr.AppendFmt(": %d\n",val);
         return descr;
     }
@@ -390,11 +388,11 @@ public:
         return Applied1::Load(node);
     }
 
-    const csString GetDescription()
+    virtual const csString GetDescription(MathEnvironment* env)
     {
         csString descr = skillname;
-        MathEnvironment env;
-        int val = (int)value->Evaluate(&env);
+        
+        int val = (int)value->Evaluate(env);
         descr.AppendFmt(": %d\n",val);
         return descr;
     }
@@ -427,6 +425,12 @@ public:
     {
         return Applied2::Load(node);
     }
+    
+    virtual const csString GetDescription(MathEnvironment* env)
+    {
+	value->Evaluate(env);
+	return "";
+    }
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
@@ -453,13 +457,13 @@ public:
         return Applied1::Load(node);
     }
 
-    const csString GetDescription()
+    virtual const csString GetDescription(MathEnvironment* env)
     {
         csString descr;
         if(type == "atk") descr = "Attack modifier";
         else if(type == "def") descr = "Defence modifier";
-        MathEnvironment env;
-        float val = value->Evaluate(&env);
+        
+        float val = value->Evaluate(env);
         descr.AppendFmt(": %0.2f\n",val);
         return descr;
     }
@@ -1068,6 +1072,10 @@ public:
     {
         bindings->Evaluate(env);
     }
+    virtual const csString GetDescription(MathEnvironment* env) {
+	bindings->Evaluate(env);
+	return "";
+    }
 
 protected:
     MathScript* bindings; /// an embedded MathScript containing new bindings
@@ -1293,12 +1301,14 @@ const csString &ApplicativeScript::GetDescription()
 {
     if(!description.IsEmpty())
         return description;
+    
+    MathEnvironment env;
 
     csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
     while(it.HasNext())
     {
         AppliedOp* op = it.Next();
-        description += op->GetDescription();
+        description += op->GetDescription(&env);
     }
 
     return description;
@@ -1315,6 +1325,10 @@ public:
 
     virtual bool Load(iDocumentNode* node) = 0;
     virtual void Run(MathEnvironment* env) = 0;
+    virtual const csString GetDescription(MathEnvironment* env)
+    {
+	return "";
+    }
 };
 
 //----------------------------------------------------------------------------
@@ -1435,6 +1449,14 @@ public:
         delete body;
     }
 
+    virtual const csString GetDescription(MathEnvironment* inner)
+    {
+	//MathEnvironment inner(outer);
+	bindings->Evaluate(inner);
+	//return body->GetDescription( inner);
+	return "";
+    }
+    
     bool Load(iDocumentNode* node)
     {
         bindings = MathScript::Create("<let> bindings", node->GetAttributeValue("vars"));
@@ -3290,5 +3312,6 @@ void ProgressionScript::Run(MathEnvironment* env)
         op->Run(env);
     }
 }
+
 
 
