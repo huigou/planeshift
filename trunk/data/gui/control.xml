@@ -180,7 +180,7 @@
             </attachpoints>
         </widget>
 
-        <widget name="ActiveMagicButton" factory="pawsButton" id="1500" tooltip="Active Magic Bar" sound="gui.toolbar">
+        <widget name="ActiveMagicButton" factory="pawsButton" id="1500" tooltip="Active Effect Bar" sound="gui.toolbar">
             <frame x="960" y="1" width="64" height="64" />
             <bgimage resource="HotBarButton" />
             <attachpoints>

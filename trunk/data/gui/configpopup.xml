@@ -6,7 +6,7 @@
 
         <widget name="ShowActiveMagicWindowConfig" factory="pawsCheckBox" >
             <frame x="10" y="20" width="300" height="20" border="no" />
-            <text string="Show Active Magic window" />
+            <text string="Show Active Effect window" />
         </widget>
 
         <widget name="ShowErrorMessages"  id="0" factory="pawsCheckBox" >
