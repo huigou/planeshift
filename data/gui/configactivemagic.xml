@@ -166,7 +166,7 @@
 
         <widget name="showWindow" factory="pawsCheckBox" id="1024" >
             <frame x="15" y="255" width="190" height="20" />
-            <text string="show Active Magic Window"/>
+            <text string="show Active Effect Window"/>
         </widget>
 
     </widget>
