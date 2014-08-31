@@ -3114,6 +3114,21 @@ bool psItem::SendItemDescription(Client* client)
 
         itemInfo+= speed + damage;
     }
+    
+    // Item is a shield
+    if(GetIsShield() && !identifiable)
+    {
+	csString shield;
+	float targeted_block_value, untargeted_block_value, counter_block_value;
+	targeted_block_value = GetTargetedBlockValue();
+	untargeted_block_value = GetUntargetedBlockValue();
+	counter_block_value = GetCounterBlockValue();
+	
+	shield.Format("\n\nTargeted Block: %.2f\nUntargeted Block: %.2f\nCounter Block: %.2f",
+		      targeted_block_value, untargeted_block_value, counter_block_value);
+		
+	itemInfo+= shield;
+    }
 
     // Item is armor
     if(GetIsArmor() && !identifiable)
