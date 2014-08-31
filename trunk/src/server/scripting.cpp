@@ -1451,10 +1451,8 @@ public:
 
     virtual const csString GetDescription(MathEnvironment* inner)
     {
-	//MathEnvironment inner(outer);
-	bindings->Evaluate(inner);
-	//return body->GetDescription( inner);
-	return "";
+        bindings->Evaluate(inner);
+        return "";
     }
     
     bool Load(iDocumentNode* node)
