@@ -1264,7 +1264,7 @@ csString psItemStats::FlagsToText()
     if(flags & PSITEMSTATS_FLAG_IS_RECHARGEABLE)
         TempString.Append("RECHARGEABLE ");
     if(flags & PSITEMSTATS_FLAG_IS_RENAMEABLE)
-        TempString.Append("RENAMEABLE ")
+        TempString.Append("RENAMEABLE ");
     
     return(TempString);
 }
