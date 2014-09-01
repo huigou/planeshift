@@ -1188,6 +1188,10 @@ bool psItemStats::GetIsGlyph()
 {
     return (flags & PSITEMSTATS_FLAG_IS_GLYPH) ? true : false;
 }
+bool psItemStats::GetIsRenameable()
+{
+    return (flags & PSITEMSTATS_FLAG_IS_RENAMEABLE) ? true : false;
+}
 
 uint32 psItemStats::GetUID()
 {
@@ -1259,6 +1263,9 @@ csString psItemStats::FlagsToText()
         TempString.Append("BUY_PERSONALISE ");
     if(flags & PSITEMSTATS_FLAG_IS_RECHARGEABLE)
         TempString.Append("RECHARGEABLE ");
+    if(flags & PSITEMSTATS_FLAG_IS_RENAMEABLE)
+        TempString.Append("RENAMEABLE ")
+    
     return(TempString);
 }
 

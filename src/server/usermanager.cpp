@@ -198,6 +198,7 @@ UserManager::UserManager(ClientConnectionSet* cs, CacheManager* cachemanager, Ba
     userCommandHash.Put("/yield",        &UserManager::HandleYield);
     userCommandHash.Put("/takeall",      &UserManager::HandleTakeAll); // Handle trying to take all items from container
     userCommandHash.Put("/takestackall", &UserManager::HandleTakeStackAll); // Take all items from container and stack them not precisely
+    userCommandHash.Put("/rename"      , &UserManager::HandleRename);
 }
 
 UserManager::~UserManager()
@@ -2831,6 +2832,72 @@ void UserManager::SwitchAttackTarget(Client* targeter, Client* targeted)
     else
         psserver->GetCombatManager()->StopAttack(targeter->GetActor());
 }
+
+// this function is in charge of preparsing the message and sending it to
+// the Rename function
+void UserManager::HandleRename(psUserCmdMessage &msg, Client *client){
+
+    // we hold a reference to the item to rename,.
+    psItem *item;
+    INVENTORY_SLOT_NUMBER number;
+
+    // this is usually the case in which the user renames through the 
+    // container description window, in such case, we have to point to the 
+    // inventory and get the psItem out of it (using the containerID);
+    if (msg.target.StartsWith("cid:"))
+    {
+        number = (INVENTORY_SLOT_NUMBER)atoi(msg.target.Slice(4).GetData());
+        item = client->GetActor()->GetCharacterData()->Inventory().GetItem(NULL,number);
+  
+        Debug3(LOG_NET,0,"renaming...%s->%s",item->ToString(),msg.action.GetData());
+        Rename(client,&msg.action,item);
+    }
+
+    // We could also get the psItem using the EID, the method supports it.
+    // TODO: consider this
+}
+
+
+// This function is in charge of doing the actual renaming, it does check
+// the flags, the bad words, etc.
+void UserManager::Rename(Client *client, csString *target, psItem *item){
+
+  // if the string length exceeds 50, send an error message
+  // TODO: we need a macro for this guys
+  if(target->Length() > 50){
+    psserver->SendSystemError(client->GetClientNum(), "New name is too long");
+  }
+
+  // Should check if it we are pointing somewhere safe...
+  if(!item)
+  {
+    psserver->SendSystemError(client->GetClientNum(), 
+            "The item does not exist");
+    return;
+  }
+  
+  // check if it is renameable
+  if(!item->GetBaseStats()->GetIsRenameable())
+  {
+    psserver->SendSystemError(client->GetClientNum(), 
+            " You cannot rename this item");
+    return;
+  }
+
+  // TODO: check if the name is a valid name for the item, I do not have a valid
+  // database to test this...
+
+  // set the name
+  item->SetName(target->GetData());
+
+  // save the item
+  item->Save(false);
+
+  // notify the user that everything went fine
+  psserver->SendSystemOK(client->GetClientNum(), 
+          " The item was successfully renamed");
+}
+
 
 /*---------------------------------------------------------------------*/
 

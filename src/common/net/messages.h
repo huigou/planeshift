@@ -4396,6 +4396,9 @@ public:
     /// True if this item is a container and has contents.
     bool hasContents;
 
+    /// indicates whether the container is renameable or not 
+    bool renameable;
+
     /// The destination client for this message.
     int to;
 

@@ -183,6 +183,7 @@ typedef unsigned int PSITEMSTATS_SLOTLIST;
 #define PSITEMSTATS_FLAG_IS_RECHARGEABLE     0x00400000
 #define PSITEMSTATS_FLAG_IS_A_TRAP           0x00800000
 #define PSITEMSTATS_FLAG_IS_CONSTRUCTIBLE    0x01000000
+#define PSITEMSTATS_FLAG_IS_RENAMEABLE       0x02000000
 
 #define CREATIVEDEF_MAX  65535  // Max length for 'text' field in MySQL db.
 
@@ -648,6 +649,7 @@ public:
     bool GetIsStackable();
     bool GetIsEquipStackable();
     bool GetIsGlyph();
+    bool GetIsRenameable();
     bool GetIsConsumable();
     bool GetIsReadable();
     bool GetIsWriteable();

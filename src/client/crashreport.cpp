@@ -28,9 +28,6 @@
 #undef USE_BREAKPAD
 #endif
 
-// Force breakpad usage
-#define USE_BREAKPAD
-
 
 #ifdef USE_BREAKPAD
 #ifdef WIN32

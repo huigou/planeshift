@@ -127,6 +127,10 @@ CacheManager::CacheManager()
     ItemStatFlagArray.Push(statflag);
     statflag.Set("BUY_PERSONALISE",PSITEMSTATS_FLAG_BUY_PERSONALISE);
     ItemStatFlagArray.Push(statflag);
+    //Added itemStatFlagEntry to the ItemStatFlagArray
+
+    statflag.Set("RENAMEABLE", PSITEMSTATS_FLAG_IS_RENAMEABLE);
+    ItemStatFlagArray.Push(statflag);
 
     // Flag that allows an item to be stacked if qualities are different
     // and the resulting stack will have the new average.
