@@ -988,6 +988,7 @@ void Behavior::DeepCopy(Behavior &other)
 
     // Instance local variables. No need to copy.
     current_step = 0;
+    stepCount = 0;
 }
 
 bool Behavior::Load(iDocumentNode* node)
