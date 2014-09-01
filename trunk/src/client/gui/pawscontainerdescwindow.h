@@ -53,6 +53,7 @@ private:
     void HandleUpdateItem( MsgEntry* me );
     void HandleViewContainer( MsgEntry* me );
 
+    pawsEditTextBox*      editName;
     pawsTextBox*          name;
     pawsMultiLineTextBox* description;
     pawsWidget*           pic;

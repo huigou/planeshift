@@ -110,6 +110,7 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/pickup",        this);
     cmdsource->Subscribe("/pos",           this);
     //cmdsource->Subscribe("/quests",      this);
+    cmdsource->Subscribe("/rename",        this);
     cmdsource->Subscribe("/repair",        this);
     cmdsource->Subscribe("/roll",          this);
     cmdsource->Subscribe("/rotate",        this);
@@ -144,6 +145,8 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/loadshortcuts", this); // load shortcuts bar from a named file
     cmdsource->Subscribe("/saveshortcuts", this); // load shortcuts bar from a named file
     cmdsource->Subscribe("/togglerun",     this); // Change the run/walk status of the character
+    
+    cmdsource->Subscribe("/rename",        this); // Rename an item
 }
 
 psUserCommands::~psUserCommands()
@@ -193,6 +196,8 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/pickup",                this);
     cmdsource->Unsubscribe("/pos",                   this);
     //cmdsource->Unsubscribe("/quests",              this);
+    cmdsource->Unsubscribe("/rename", 
+    this);
     cmdsource->Unsubscribe("/repair",                this);
     cmdsource->Unsubscribe("/roll",                  this);
     cmdsource->Unsubscribe("/rotate",                this);
@@ -228,6 +233,7 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/saveshortcuts",         this);
     cmdsource->Unsubscribe("/togglerun",             this);
 
+    cmdsource->Unsubscribe("/rename",        this); // Rename an item
 
     // Unsubscribe emotes.
     for(unsigned int i=0; i < emoteList.GetSize(); i++)
@@ -1342,6 +1348,41 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             }
         }
         return "Usage: /togglerun [run|walk]";
+    }
+    else if (words[0] == "/rename")
+    {
+        csString targetString;
+        if (words[1].IsEmpty())
+        {
+            targetString = FormatTarget();
+        }
+        else
+        {    
+            if(words[1].StartsWith("cid:")){
+              targetString.Append(words[1]);
+            }else{
+              targetString = FormatTarget(words[1]);
+            }
+        }
+        if(!words[2].IsEmpty()){
+            // hard coded check of the length of the new string
+            if(words[2].Length()>50){
+                return "New name is too long" ;
+            }
+            targetString.Append(" ");
+            targetString.Append(words[2]);
+        }
+        if (!targetString.IsEmpty())
+        {
+            csString newCmd;
+            newCmd.Append("/rename ");
+            newCmd.Append(targetString);
+            Debug3(LOG_NET, 0, "rename string: %s %s", newCmd.GetDataSafe(),words[1].GetDataSafe());
+            psUserCmdMessage cmdmsg(newCmd);
+            cmdmsg.SendMessage();
+        }else{
+            return "Usage /rename [item] [name] ";
+        }
     }
     else
     {

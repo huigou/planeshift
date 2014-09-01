@@ -1535,6 +1535,13 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry* message)
         }
         return;
     }
+    if(command == "/rename")
+    {
+        target = words.Get(1);
+        action = words.Get(2);
+        text = words.Get(3);
+        return;
+    }
 
     valid = false;
 }
@@ -6160,7 +6167,18 @@ psViewContainerDescription::psViewContainerDescription(uint32_t to, const char* 
     this->itemDescription = description;
     this->itemIcon = icon;
     this->to = to;
-    msgSize = (int)(sizeof(uint8_t) + sizeof(bool) + name.Length() + desc.Length() + iconName.Length() + 3 + sizeof(int32_t) + sizeof(int32_t) + sizeof(uint32_t));
+
+    msgSize = (int)  //cast to int, prettu straight forward, be sure to be following me
+      (sizeof(uint8_t)   +   // add the destination client id
+       sizeof(bool)      +   // bool for hasContents
+       name.Length()     +   // size of the name string
+       desc.Length()     +   // size of the description
+       iconName.Length() +   // the name of the icon to load
+       3                 +   // Magic numbers, you gotta love 'em
+       sizeof(int32_t)   +   // container ID
+       sizeof(int32_t)   +   // slot id 
+       sizeof(uint32_t)  +   // stack count
+       sizeof(bool));        // is renameable
 }
 
 void psViewContainerDescription::AddContents(const char* name, const char* meshName, const char* materialName, const char* icon, int purifyStatus, int slot, int stack)
@@ -6204,6 +6222,7 @@ void psViewContainerDescription::ConstructMsg(csStringSet* msgstrings)
         msg->Add((uint32_t)contents[n].slotID);
         msg->Add((uint32_t)contents[n].stackCount);
     }
+    msg->Add(renameable);
 }
 
 psViewContainerDescription::psViewContainerDescription(MsgEntry* me, NetBase::AccessPointers* accessPointers)
@@ -6250,6 +6269,7 @@ psViewContainerDescription::psViewContainerDescription(MsgEntry* me, NetBase::Ac
                 contents.Push(item);
             }
         }
+        renameable = me->GetBool();
     }
 }
 

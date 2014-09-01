@@ -74,7 +74,9 @@ bool pawsContainerDescWindow::PostSetup()
     name = (pawsTextBox*)FindWidget("ItemName");
     if (!name)
         return false;
-
+    editName = (pawsEditTextBox*)FindWidget("EditItemName");
+    if (!editName)
+        return false;
     description = dynamic_cast<pawsMultiLineTextBox*> (FindWidget("ItemDescription"));
     if (!description)
         return false;
@@ -122,8 +124,24 @@ void pawsContainerDescWindow::HandleViewContainer( MsgEntry* me )
     Show();
     psViewContainerDescription mesg(me, psengine->GetNetManager()->GetConnection()->GetAccessPointers());
 
+    // check whether the renameable flag is set, if so, show the rename button
+    if(mesg.renameable==true){ 
+        FindWidget("EnableEditName")->Show();
+    }else{
+        FindWidget("EnableEditName")->Hide();
+        FindWidget("SendEditName")->Hide();
+    }
+    
+    // default display configuration for container
+    editName->Hide();
+    name->Show();
+    
     description->SetText( mesg.itemDescription );
     name->SetText( mesg.itemName );
+    
+    editName->SetText( mesg.itemName );
+    editName->SetMaxLength( 50 );
+
     pic->Show();
     pic->SetBackground(mesg.itemIcon);
     if (pic->GetBackground() != mesg.itemIcon) // if setting the background failed...hide it
@@ -228,7 +246,30 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
 {
     csString widgetName(widget->GetName());
 
-    if ( widgetName == "SmallInvButton" )
+    if ( widgetName == "SendEditName" )
+    {   
+        csString command;
+        command.Format("/rename cid:%u %s",containerID, editName->GetText());
+        psengine->GetCmdHandler()->Execute(command.GetData());
+        
+        // Update the labels, hide the editable one and swap buttons
+        widget->Hide();
+        FindWidget("EnableEditName")->Show();
+        name->SetText(editName->GetText());
+        editName->Hide();
+        name->Show();
+    }
+
+    // this toggles the rename edit button
+    else if ( widgetName == "EnableEditName" )
+    {
+        widget->Hide();
+        FindWidget("SendEditName")->Show();
+        name->Hide();
+        editName->Show();
+    }
+
+    else if ( widgetName == "SmallInvButton" )
     {
         pawsWidget* widget = PawsManager::GetSingleton().FindWidget("SmallInventoryWindow");
         if ( widget )

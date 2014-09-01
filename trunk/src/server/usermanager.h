@@ -622,7 +622,9 @@ protected:
      *
      */
     void SwitchAttackTarget(Client* targeter, Client* targeted);
-
+    void HandleRename(psUserCmdMessage &msg, Client* client);
+ 
+    void Rename(Client *client, csString *target, psItem *item);
 
     /// Struct to hold our emote data.
     struct EMOTE
