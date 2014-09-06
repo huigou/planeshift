@@ -103,6 +103,8 @@ bool pawsConfigShortcut::PostSetup()
     {
         return false;
     }
+    buttonHeight->EnableValueLimit(true);
+    buttonHeight->SetMinValue(8);
     buttonHeight->SetMaxValue(64);
     buttonHeight->SetCurrentValue(48,false);
 
@@ -117,9 +119,10 @@ bool pawsConfigShortcut::PostSetup()
     {
         return false;
     }
+    buttonWidth->EnableValueLimit(true);
+    buttonWidth->SetMinValue(8);
     buttonWidth->SetMaxValue(512);
     buttonWidth->SetCurrentValue(48,false);
-
 
     editLockMode = (pawsRadioButtonGroup*)FindWidget("editLockMode" );
     if(!editLockMode)
@@ -187,6 +190,8 @@ bool pawsConfigShortcut::PostSetup()
     {
         return false;
     }
+    testSize->EnableValueLimit(true);
+    testSize->SetMinValue(6);
     textSize->SetCurrentValue(10,false);
     textSize->SetMaxValue(40);
 
@@ -195,6 +200,8 @@ bool pawsConfigShortcut::PostSetup()
     {
         return false;
     }
+    textSpacing->EnableValueLimit(true);
+    textSpacing->SetMinValue(0);
     textSpacing->SetCurrentValue(4,false);
     textSpacing->SetMaxValue(20);
 
