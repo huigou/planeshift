@@ -145,6 +145,8 @@ bool pawsConfigActiveMagic::PostSetup()
     {
         return false;
     }
+    buttonWidth->EnableValueLimit(true);
+    buttonWidth->SetMinValue(8);
     buttonWidth->SetMaxValue(512);
     buttonWidth->SetCurrentValue(48,false);
 
@@ -248,6 +250,8 @@ bool pawsConfigActiveMagic::PostSetup()
     {
         return false;
     }
+    textSize->EnableValueLimit(true);
+    textSize->SetMinValue(6);
     textSize->SetCurrentValue(10,false);
     textSize->SetMaxValue(40);
 
@@ -257,8 +261,11 @@ bool pawsConfigActiveMagic::PostSetup()
     {
         return false;
     }
+    textSpacing->EnableValueLimit(true);
+    textSpacing->SetMinValue(0);
     textSpacing->SetCurrentValue(4,false);
     textSpacing->SetMaxValue(20);
+
 
     return true;
 }
