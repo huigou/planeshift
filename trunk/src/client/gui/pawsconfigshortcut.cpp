@@ -190,8 +190,8 @@ bool pawsConfigShortcut::PostSetup()
     {
         return false;
     }
-    testSize->EnableValueLimit(true);
-    testSize->SetMinValue(6);
+    textSize->EnableValueLimit(true);
+    textSize->SetMinValue(6);
     textSize->SetCurrentValue(10,false);
     textSize->SetMaxValue(40);
 
