@@ -1784,7 +1784,7 @@ bool gemContainer::CanAdd(unsigned short amountToAdd, psItem* item, int slot, cs
     }
     if(item->GetItemSize()*amountToAdd + currentSize > itemdata->GetContainerMaxSize())
     {
-        reason = " because the item is to large to fitt";
+        reason = " because the item is to large to fit";
         return false;
     }
 
