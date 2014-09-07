@@ -538,6 +538,17 @@ bool LoadPrerequisiteXML(iDocumentNode* topNode, psQuest* self, csRef<psQuestPre
 
         prerequisite.AttachNew(new psQuestPrereqOpSkill(skill,min,max, allowBuffed));
     }
+    else if(strcmp(topNode->GetValue(), "stance") == 0)
+    {
+        csString name = topNode->GetAttributeValue("name");
+        if(name.IsEmpty())
+        {
+            Error1("No name given for stance prerequisite operation");
+            return false;
+        }
+
+        prerequisite.AttachNew(new psPrereqOpStance(name));
+    }
     else
     {
         Error2("Node \"%s\" isn't supported in  prerequisite scripts",topNode->GetValue());
