@@ -114,15 +114,22 @@
         </widget>
 
         <widget name="FreeBubble" factory="pawsWidget" visible="yes">
-            <frame x="630" y="160" width="294" height="95" border="no" />
+            <frame x="630" y="155" width="294" height="100" border="no" />
             <bgimage resource="InputBubble" />
-
+            <widget name="SingleLabel" factory="pawsTextBox" style="textinput">
+                <frame x="28" y="13" width="250" height="25" border="no" />
+                <text string="Write responses to quest questions here."/>
+            </widget>
+            <widget name="SingleLabel" factory="pawsTextBox" style="textinput">
+                <frame x="28" y="33" width="250" height="25" border="no" />
+                <text string="Or ask questions to NPCs at any time."/>
+            </widget>
             <widget name="StartSign" factory="pawsTextBox" style="textinput">
-                <frame x="20" y="40" width="8" height="25" border="no"/>
+                <frame x="20" y="55" width="8" height="25" border="no"/>
                 <text string=">" />
             </widget>
             <widget name="InputText" factory="pawsEditTextBox">
-                <frame x="28" y="40" width="250" height="25" border="no" />
+                <frame x="28" y="55" width="250" height="25" border="no" />
                 <text string="" />
             </widget>
         </widget>
