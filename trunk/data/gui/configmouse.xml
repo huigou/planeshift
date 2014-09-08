@@ -5,7 +5,7 @@
     <bgimage resource="Scaling Widget Background" />
 
     <widget factory="pawsTree">
-      <layout rowSpacing="20" levelSpacing="20" />
+      <layout rowSpacing="10" levelSpacing="10" />
 
     <widget factory="pawsSeqTreeNode">
 

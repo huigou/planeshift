@@ -110,7 +110,7 @@
 
 
 
-    <!-- Buttons --->
+    <!-- Buttons -->
     <style name="Simple Button" inherit="Button Font" toggle="no" >
     </style>
 
@@ -141,7 +141,7 @@
 
 
 
-    <!-- Tabs --->
+    <!-- Tabs -->
     <style name="Standard Tab" inherit="Button Font" toggle="yes" >
         <frame border="yes" />
         <buttonup resource="Standard Tab" />
@@ -164,7 +164,7 @@
     </style>
 
 
-    <!-- Slots (inventory, glyph) --->
+    <!-- Slots (inventory, glyph) -->
     <style name="Standard Slot" inherit="Standard Font">
         <bgimage resource="Standard Slot" />
     </style>
@@ -174,7 +174,7 @@
     </style>
 
 
-    <!-- Progressbars --->
+    <!-- Progressbars -->
     <style name="Standard Progressbar" inherit="Input Font" >
         <bgimage resource="Progressbar Background" />
         <mask resource="Progressbar Mask" />
@@ -187,7 +187,7 @@
     </style>
 
 
-    <!-- Scrollbars --->
+    <!-- Scrollbars -->
     <style name="Standard Scrollbar" inherit="Input Font" >
         <bgimage resource="Scrollbar Background Vertical" />
       <up   grey="Up Arrow Disabled" unpressed="Up Arrow" pressed="Up Arrow Highlight"       width="20" height="20" />
@@ -231,7 +231,7 @@
     </style>
 
 
-    <!-- Textfields and lists --->
+    <!-- Textfields and lists -->
     <style name="Standard Field" inherit="Standard Font">
     </style>
     <style name="Standard EditTextBox" inherit="Input Font">
