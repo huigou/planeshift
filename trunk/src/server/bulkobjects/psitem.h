@@ -808,6 +808,10 @@ public:
     bool IsThisTheCreator(PID pid);
     bool GetBuyPersonalise();
     const char* GetName() const;
+    /**
+     * Fetch the psitem description if it's not null, otherwise the current_stats description.
+     * @return the psitem description if it's not null, otherwise the current_stats description.
+     */
     const char* GetDescription() const;
     void SetName(const char* newName);
     void SetDescription(const char* newDescription);
@@ -983,6 +987,10 @@ public:
     void RunEquipScript(gemActor* actor);
     void CancelEquipScript();
 
+    /**
+     * If an overlay is set return it's script description, otherwise return the 
+     * @return the description of the overlay's script (only if present) or the desc. of the base_stats's (base item) script
+     */
     const char* GetModifiersDescription();
 
     /**
