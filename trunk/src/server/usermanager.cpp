@@ -2888,6 +2888,7 @@ void UserManager::Rename(Client *client, csString *target, psItem *item){
   // database to test this...
 
   // set the name
+fprintf(stderr, "*******UserManager::Rename '%s'\n", target->GetData() );
   item->SetName(target->GetData());
 
   // save the item

@@ -1069,8 +1069,9 @@ psItem* psCharacterInventory::GetItem(psItem* container,INVENTORY_SLOT_NUMBER sl
         return NULL;
 }
 
-bool psCharacterInventory::hasItemName(csString &itemname, bool includeEquipment, bool includeBulk, float qualityMin, float qualityMax)
+bool psCharacterInventory::hasItemsWithName(csString &itemname, bool includeEquipment, bool includeBulk, int amountMin, int amountMax, float qualityMin, float qualityMax)
 {
+    int itemCount = 0;
     for(size_t i=1; i < inventory.GetSize(); i++)
     {
         if(inventory[i].item && (csString)inventory[i].item->GetName() == itemname &&
@@ -1078,8 +1079,23 @@ bool psCharacterInventory::hasItemName(csString &itemname, bool includeEquipment
                 (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1) &&
                 (qualityMin < 1.0f || inventory[i].item->GetItemQuality() >= qualityMin) &&
                 (qualityMax < 1.0f || inventory[i].item->GetItemQuality() <= qualityMax))
-            return true;
+        {
+            // either add the full stack amount or just 1
+            if (inventory[i].item->GetIsStackable())
+            {
+                itemCount += inventory[i].item->GetStackCount();
+            }
+            else
+            {
+                itemCount++;
+            }
+        }
     }
+    if ((itemCount >= amountMin) && ((amountMax == -1) || itemCount <= amountMax))
+    {
+        return true;
+    }
+    
     return false;
 }
 
@@ -1526,8 +1542,10 @@ bool psCharacterInventory::hasItemCategory(psItemCategory* category, bool includ
     return false;
 }
 
-bool psCharacterInventory::hasItemCategory(csString &categoryname, bool includeEquipment, bool includeBulk, bool includeStorage, float qualityMin, float qualityMax)
+bool psCharacterInventory::hasItemCategory(csString &categoryname, bool includeEquipment, bool includeBulk, bool includeStorage, int amountMin, int amountMax, float qualityMin, float qualityMax)
 {
+    int itemCount = 0;
+    
     if(includeEquipment || includeBulk)
     {
         // Inventory indexes start at 1.  0 is reserved for the "NULL" item.
@@ -1538,7 +1556,17 @@ bool psCharacterInventory::hasItemCategory(csString &categoryname, bool includeE
                     (includeBulk || inventory[i].item->GetLocInParent(true) < PSCHARACTER_SLOT_BULK1) &&
                     (qualityMin < 1.0f || inventory[i].item->GetItemQuality() >= qualityMin) &&
                     (qualityMax < 1.0f || inventory[i].item->GetItemQuality() <= qualityMax))
-                return true;
+            {
+                // either add the full stack amount or just 1
+                if (inventory[i].item->GetIsStackable())
+                {
+                    itemCount += inventory[i].item->GetStackCount();
+                }
+                else
+                {
+                    itemCount++;
+                }
+            }
         }
     }
     else if(includeStorage)
@@ -1548,8 +1576,13 @@ bool psCharacterInventory::hasItemCategory(csString &categoryname, bool includeE
             if((storageInventory[i]->GetCategory()->name == categoryname) &&
                     (qualityMin < 1.0f || inventory[i].item->GetItemQuality() >= qualityMin) &&
                     (qualityMax < 1.0f || inventory[i].item->GetItemQuality() <= qualityMax))
-                return true;
+                itemCount++;
         }
+    }
+    // minimum amount must always be fulfilled; maximum is ignored if it's below 0
+    if ((itemCount >= amountMin) && ((amountMax < 0) || itemCount <= amountMax))
+    {
+        return true;
     }
 
     return false;
