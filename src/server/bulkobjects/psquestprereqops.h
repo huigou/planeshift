@@ -256,9 +256,9 @@ public:
     /**
      * Construct a require operator.
      *
-     * @param min_required   The minimum of childs needed. There are no lower
+     * @param min_required   The minimum of childs needed. There is no lower
      *                       limit if this is set to -1.
-     * @param max_required   The maximum of childs needed. There are no upper
+     * @param max_required   The maximum of childs needed. There is no upper
      *                       limit if this is set to -1.
      */
     psQuestPrereqOpRequire(int min_required,int max_required);
@@ -270,13 +270,13 @@ public:
 
     /**
      * Check if a number of prerequisites are true. Limited by
-     * a min and a max number. If any of thise are -1 the limit
+     * a min and a max number. If any of these are -1 the limit
      * will be ignored.
      *
      * number = number of childs true
      * prerequisite = number >= min and number <= max
      *
-     * @param  character The character that are checking for a prerequisite
+     * @param  character The character being checked for a prerequisite
      * @return True if more than min and less than max of the child prerequisites are true
      */
     virtual bool Check(psCharacter* character);
@@ -620,12 +620,14 @@ public:
 class psQuestPrereqOpItem : public psQuestPrereqOp
 {
 protected:
-    csString itemName;
-    csString categoryName;
-    bool includeInventory;
-    float qualityMin;
-    float qualityMax;
-
+    csString itemName;          /// itemname of the item (if empty, category must be set)
+    csString categoryName;      /// category of the item (if empty, itemname must be set)
+    bool includeInventory;      /// whether equiped or inventory is included in searches
+    int amountMin;              /// minimum amount of this sort of item
+    int amountMax;              /// maximum amount of this sort of item
+    float qualityMin;           /// minimum quality of the required item
+    float qualityMax;           /// maximum quality of the required item
+    
 public:
 
     /**
@@ -638,9 +640,9 @@ public:
      * @param qualityMin A minimum quality.
      * @param qualityMax A maximum quality
      */
-    psQuestPrereqOpItem(const char* itemName, const char* categoryName, bool includeInventory, float qualityMin, float qualityMax):
+    psQuestPrereqOpItem(const char* itemName, const char* categoryName, bool includeInventory, int amountMin, int amountMax, float qualityMin, float qualityMax):
         itemName(itemName), categoryName(categoryName), includeInventory(includeInventory),
-        qualityMin(qualityMin), qualityMax(qualityMax) {};
+        amountMin(amountMin), amountMax(amountMax), qualityMin(qualityMin), qualityMax(qualityMax) {};
 
     /**
      * Destructor.

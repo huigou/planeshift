@@ -156,7 +156,7 @@ psQuestPrereqOpRequire::psQuestPrereqOpRequire(int min_required,int max_required
 
 bool psQuestPrereqOpRequire::Check(psCharacter* character)
 {
-    // Count the number of prereqs that is valid.
+    // Count the number of prereqs that are valid.
     int count=0;
     for(size_t i = 0; i < prereqlist.GetSize(); i++)
     {
@@ -165,7 +165,7 @@ bool psQuestPrereqOpRequire::Check(psCharacter* character)
             count++;
         }
     }
-    // Verify that the appropiate numbers of prereqs was counted.
+    // Verify that the appropiate number of prereqs were counted.
     return ((min == -1 || count >= min) && (max == -1 || count <= max));
 }
 
@@ -360,9 +360,9 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpFaction::Copy()
 bool psQuestPrereqOpItem::Check(psCharacter* character)  //TODO: extend this
 {
     if(!categoryName.IsEmpty())
-        return character->Inventory().hasItemCategory(categoryName, true, includeInventory, qualityMin, qualityMax);
+        return character->Inventory().hasItemCategory(categoryName, true, includeInventory, amountMin, amountMax, qualityMin, qualityMax);
     if(!itemName.IsEmpty())
-        return character->Inventory().hasItemName(itemName, true, includeInventory, qualityMin, qualityMax);
+        return character->Inventory().hasItemsWithName(itemName, true, includeInventory, amountMin, amountMax, qualityMin, qualityMax);
     return false;
 }
 
@@ -386,7 +386,7 @@ csString psQuestPrereqOpItem::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpItem::Copy()
 {
     csRef<psQuestPrereqOpItem> copy;
-    copy.AttachNew(new psQuestPrereqOpItem(itemName, categoryName, includeInventory, qualityMin, qualityMax));
+    copy.AttachNew(new psQuestPrereqOpItem(itemName, categoryName, includeInventory, amountMin, amountMax, qualityMin, qualityMax));
     return csPtr<psQuestPrereqOp>(copy);
 }
 

@@ -284,11 +284,13 @@ public:
      * @param itemname The name of the item to search for.
      * @param includeEquipment include equipment in the search.
      * @param includeBulk include bulk in the search.
+     * @param amountMin The minimum amount of items that must be in the inventory
+     * @param amountMax The maximum amount of items that can be in the inventory, -1 to ignore
      * @param qualityMin The minimum quality the item must have, 0 to ignore.
      * @param qualityMax The maximum quality the item must have, 0 to ignore.
      * @return The item in the given slot. NULL if no item was found.
      */
-    bool hasItemName(csString &itemname, bool includeEquipment, bool includeBulk, float qualityMin = 0, float qualityMax = 0);
+    bool hasItemsWithName(csString &itemname, bool includeEquipment, bool includeBulk, int amountMin = 1, int amountMax = -1, float qualityMin = 0, float qualityMax = 0);
 
     /**
      * Get an item that is in the equipment inventory.
@@ -447,11 +449,13 @@ public:
      * @param includeEquipment include equipment in the search.
      * @param includeBulk searches for the item only in the equipment if true.
      * @param includeStorage include storage in the search.
+     * @param amountMin The minimum amount of this item that the inventory must have, 1 is default.
+     * @param amountMax The maximum amount of this item that the inventory can have, -1 to ignore.
      * @param qualityMin The minimum quality the item must have, 0 to ignore.
      * @param qualityMax The maximum quality the item must have, 0 to ignore.
      * @return true if the item was found, false if it wasn't.
      */
-    bool hasItemCategory(csString &categoryname, bool includeEquipment, bool includeBulk, bool includeStorage = false, float qualityMin = 0, float qualityMax = 0);
+    bool hasItemCategory(csString &categoryname, bool includeEquipment, bool includeBulk, bool includeStorage = false, int amountMin = 1, int amountMax = -1 , float qualityMin = 0, float qualityMax = 0);
 
     /**
      * Iterates over the entire inventory to get a list of all the items from a particular category.
