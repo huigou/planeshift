@@ -1379,7 +1379,8 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry* message)
 {
     valid = true;
 
-    WordArray words(message->GetStr());
+    csString cmdstring( message->GetStr() );
+    WordArray words(cmdstring.GetData());
 
     command = words[0];
 
@@ -1538,8 +1539,8 @@ psUserCmdMessage::psUserCmdMessage(MsgEntry* message)
     if(command == "/rename")
     {
         target = words.Get(1);
-        action = words.Get(2);
-        text = words.Get(3);
+        action =  cmdstring.Slice( words[0].Length()+1+words[1].Length()+1, 50 );
+        text = "";
         return;
     }
 

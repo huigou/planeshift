@@ -1364,13 +1364,12 @@ const char *psUserCommands::HandleCommand(const char *cmd)
               targetString = FormatTarget(words[1]);
             }
         }
-        if(!words[2].IsEmpty()){
-            // hard coded check of the length of the new string
-            if(words[2].Length()>50){
-                return "New name is too long" ;
-            }
+        if(!words[2].IsEmpty())
+        {
+            csString cmdstring( cmd );
+
             targetString.Append(" ");
-            targetString.Append(words[2]);
+            targetString.Append( cmdstring.Slice( words[0].Length()+1+words[1].Length()+1, 50 ) );
         }
         if (!targetString.IsEmpty())
         {
@@ -1381,7 +1380,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
             psUserCmdMessage cmdmsg(newCmd);
             cmdmsg.SendMessage();
         }else{
-            return "Usage /rename [item] [name] ";
+            return "Usage /rename [item] [name]";
         }
     }
     else
