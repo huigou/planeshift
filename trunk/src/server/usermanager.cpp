@@ -2866,6 +2866,7 @@ void UserManager::Rename(Client *client, csString *target, psItem *item){
   // TODO: we need a macro for this guys
   if(target->Length() > 50){
     psserver->SendSystemError(client->GetClientNum(), "New name is too long");
+    return;
   }
 
   // Should check if it we are pointing somewhere safe...
@@ -2888,7 +2889,6 @@ void UserManager::Rename(Client *client, csString *target, psItem *item){
   // database to test this...
 
   // set the name
-fprintf(stderr, "*******UserManager::Rename '%s'\n", target->GetData() );
   item->SetName(target->GetData());
 
   // save the item
