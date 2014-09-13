@@ -680,7 +680,8 @@ csString QuestManager::ParseRequireCommand(csString &block, bool &result, psQues
     }
     else if(!strncasecmp(block,"possessed", 9) || !strncasecmp(block,"equipped", 8))
     {
-        csStringArray qualityLevels;
+        csStringArray amountLevels; // min and max quality requested
+        csStringArray qualityLevels; // min and max quality requested
 
         // Check in which case we are of the two, in order to reduce code duplication.
         bool inventory = !strncasecmp(block,"possessed", 9);
@@ -708,16 +709,37 @@ csString QuestManager::ParseRequireCommand(csString &block, bool &result, psQues
         }
 
         // If the cut position is bigger than 0 it means there might be something
-        // before the item name (eg: quality)
+        // before the item name (eg: quality or amount)
         if(cutPos != 0)
-        {
+        {       
             // Search for the quality identifiers and cut the strings.
-            csString quality = subcommand.Slice(0, cutPos).Trim();
+            csString itemPrefix = subcommand.Slice(0, cutPos).Trim();
             subcommand.DeleteAt(0, cutPos).Trim();
+            itemPrefix.Downcase();
+            
+            if(!strncasecmp(itemPrefix,"amount", 6))
+            {
+                itemPrefix.DeleteAt(0,6).Trim();
+                csString amount = itemPrefix;
+                
+                size_t qualityPos = itemPrefix.Find(" ");
+                if (qualityPos != (size_t) -1)
+                {
+                    // the quality is prefixed by an amount
+                    amount = itemPrefix.Slice(0, qualityPos).Trim();
+                    itemPrefix.DeleteAt(0, qualityPos).Trim();
+                }
+                else
+                {
+                    // no quality after the amount
+                    itemPrefix="";
+                }
+                amountLevels.SplitString(amount, "-", csStringArray::delimSplitEach);
+            }
 
             // Now only the quality is left in the new string, if it's not the
             // parse might fail but it's an allowed fail.
-            qualityLevels.SplitString(quality, "-", csStringArray::delimSplitEach);
+            qualityLevels.SplitString(itemPrefix, "-", csStringArray::delimSplitEach);
         }
 
         //this manages the category argument Require equipped/possessed category xxxx
@@ -732,6 +754,17 @@ csString QuestManager::ParseRequireCommand(csString &block, bool &result, psQues
             command.Format("<item inventory=\"%d\" name=\"%s\" ", inventory, itemName.GetData());
         }
 
+        // possibly append an amount for the items
+        // if no amount is specified an amount of one item will be sufficent
+        if(amountLevels.GetSize() > 0)
+        {
+            command.AppendFmt("amountmin=\"%s\" ", amountLevels[0]);
+            if(amountLevels.GetSize() > 1)
+            {
+                command.AppendFmt("amountmax=\"%s\" ", amountLevels[1]);
+            }
+        }
+        
         // Finally append the min and max quality in case these values have been found
         // a single number will be interpreted as min quality, -value as max quality
         // value-value as min-max quality. In reality the left part of the - is also

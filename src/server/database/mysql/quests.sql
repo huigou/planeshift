@@ -71,6 +71,11 @@ INSERT INTO `quests` VALUES (209,'Puzzle Quest','Answer the merchant\'s question
 INSERT INTO `quests` VALUES (210,'Fortune Quest','Give the merchant 5 tria and he will tell your fortune.','',0,0,0,0,0,'Newbie','');
 INSERT INTO `quests` VALUES (211,'Familiar Quest','Ask for a familiar and he will give you.','',0,0,0,0,0,'Newbie','');
 INSERT INTO `quests` VALUES (212,'Mechanisms Quest','Testing of mechanisms.','',0,0,0,0,0,'Newbie','');
+INSERT INTO `quests` VALUES (213, 'Protection from the sky', 'Testing of require.', '', 0, 0, 0, 0, 0, 'Newbie', '');
+INSERT INTO `quests` VALUES (215, 'Blahu of Boo', 'Test Require Minimum Amount.', '', 0, 0, 0, 0, 0, 'Newbie', '');
+INSERT INTO `quests` VALUES (219, 'MinMax', 'Test Require Minimum Amount.', '', 0, 0, 0, 0, 0, 'Newbie', '');
+
+
 /*!40000 ALTER TABLE `quests` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
