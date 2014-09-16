@@ -17,7 +17,7 @@
         <bgimage resource="Cast Magic" />
     </widget>
 
-    <widget name="ActiveMagic" factory="pawsButton" id="102" tooltip="Active Spells">
+    <widget name="ActiveMagic" factory="pawsButton" id="102" tooltip="Active Effects">
         <frame x="395" y="280" width="48" height="48" />
         <bgimage resource="Defensive Magic" />
     </widget>
