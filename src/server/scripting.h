@@ -102,6 +102,8 @@ public:
      */
     const csString &GetDescription();
 
+    void SetImage( csString tImage ) { image=tImage; }
+
 protected:
     ApplicativeScript();
 
