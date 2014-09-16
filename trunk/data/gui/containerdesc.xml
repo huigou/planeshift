@@ -6,10 +6,10 @@
         <!-- Name and name edit widgets -->
         <frame x="70" y="10" width="390" height="40" r="40" g="30" b="0" border="yes"/>
         <widget name="EditItemName" factory="pawsEditTextBox" >
-            <frame x="76" y="10" width="150" height="30" border="yes"/>
+            <frame x="76" y="10" width="150" height="25" border="yes"/>
         </widget>
         <widget name="ItemName" factory="pawsTextBox">
-            <frame x="76" y="10" width="150" height="30" border="yes"/>
+            <frame x="76" y="10" width="150" height="25" border="yes"/>
         </widget>
         
         <pawsButton name="EnableEditName" id="100" style="Standard Button" visible="yes">
