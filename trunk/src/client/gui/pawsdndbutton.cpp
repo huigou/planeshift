@@ -67,7 +67,8 @@ pawsDnDButton::pawsDnDButton() :
     flashLow(false),
     flashMode(0),
     DnDLock(false),
-    spellProgress(NULL)
+    spellProgress(NULL),
+    lastToolTipTime(9999)
 {
     factory = "pawsDnDButton";
 }
@@ -182,12 +183,12 @@ bool pawsDnDButton::Setup(iDocumentNode* node)
 
 void pawsDnDButton::Draw()
 {
+
     if(spellProgress!=NULL )
     {
         csTicks currentTime     = csGetTicks();
         float   elapsedTime     = (float)currentTime-(float)startTime;
         float   currentProgress = elapsedTime/(float)castingTime;
-        csTicks remainingTime   = (castingTime-(currentTime-startTime))/1000;
 
         if (currentProgress >= 1.0)
         {
@@ -198,14 +199,18 @@ void pawsDnDButton::Draw()
 
             return;
         }
+
+        //update the progress meter
         spellProgress->SetCurrentValue(currentProgress);
         spellProgress->SetRelativeFrame( 3, 3, screenFrame.Width()-6, screenFrame.Height()-6 );
 
-        csString TipWithTiming = baseToolTip;
-        TipWithTiming.Append( ", " );
-        TipWithTiming.Append( remainingTime );
-        TipWithTiming.Append( " seconds" );
-        pawsButton::SetToolTip( TipWithTiming );
+        csTicks remainingTime   = (castingTime-(currentTime-startTime))/1000;
+        if( lastToolTipTime > remainingTime ) //only update once per second
+        {
+            pawsWidget::FormatToolTip( "%s, %i seconds", baseToolTip.GetData(), remainingTime );
+            spellProgress->FormatToolTip( "%s, %i seconds", baseToolTip.GetData(), remainingTime );
+            lastToolTipTime = remainingTime;
+        }
     }
 
     pawsButton::Draw();

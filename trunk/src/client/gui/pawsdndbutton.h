@@ -262,9 +262,11 @@ protected:
 
     virtual bool CheckKeyHandled(int keyCode);
 
-    bool             DnDLock; // true = locked, false = enabled.
+    bool                DnDLock; // true = locked, false = enabled.
     pawsProgressBar*    spellProgress;
-    csTicks             startTime,castingTime;
+    csTicks             startTime,
+                        castingTime,
+                        lastToolTipTime;
 };
 
 //----------------------------------------------------------------------
