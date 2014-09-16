@@ -24,7 +24,7 @@
         <danger level="0.10" low="true" r="200" g="0" b="0" />
 -->
         <frame x="5" y="5" width="170" height="10" border="no" />
-        <color r="20" g="150" b="20" />
+        <color r="150" g="50" b="20" />
         <fadecolor r="200" g="50" b="50" />
         <subscriptions>
             <subscribe data="fVitalValue0:Self" />
