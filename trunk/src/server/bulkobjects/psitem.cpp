@@ -1408,11 +1408,8 @@ void psItem::RunEquipScript(gemActor* actor)
     MathEnvironment env;
     env.Define("Actor", actor);
     env.Define("Item", this);
+    script->SetImage(csString(GetImageName()));
     equipActiveSpell = script->Apply(&env);
-    if( equipActiveSpell->Image().IsEmpty() )
-    {
-        equipActiveSpell->SetImage( csString(GetImageName()) );
-    }
     equipActiveSpell->SetCancelOnDeath(false);
 
     SetActive(true);

@@ -1147,7 +1147,11 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
     script->aim = top->GetAttributeValue("aim");
     script->name = name;
     script->type = type;
-    script->image = top->GetAttributeValue("image");
+    if( top->GetAttributeValue("image")!=NULL )
+    {
+        script->image = top->GetAttributeValue("image");
+    }
+    
     if(duration)
         script->duration = MathExpression::Create(duration);
 
