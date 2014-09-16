@@ -49,10 +49,10 @@ class MusicXMLElement: public MeasureElement
 {
 public:
     /**
-     * Load a note from the given <note> node. If this element contain already one or
-     * more note, only notes that present the <chord/> tag are accepted.
+     * Load a note from the given \<note\> node. If this element contain already one or
+     * more note, only notes that present the \<chord/\> tag are accepted.
      *
-     * @param noteNode a reference to the <note> node containing the definition of the
+     * @param noteNode a reference to the \<note\> node containing the definition of the
      * note in MusicXML syntax.
      * @param divisions divisions per quarter used by the score to indicate duration.
      * @return false if the given node syntax is wrong or if this note is not part of
@@ -68,5 +68,8 @@ public:
 };
 
 #include "musicxmlscore.hpp"
+
+/**
+ * @} */
 
 #endif // MUSIC_XML_SCORE_H

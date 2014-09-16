@@ -97,15 +97,15 @@ struct MinigamePlayer
  *     MoveTo can be 'Vacancy' (player can move pieces to vacant squares only)
  *            or 'Anywhere' (default - can move to any square, vacant or occupied).
  * - endgames:
- *  <MGEndGame>
- *   <EndGame Coords="relative"/"absolute" [SourceTile="T"] [Winner="T"]>
- *    <Coord Col="0-15" Row="0-15" Tile="T" [Piece="X"] />
- *   </EndGame>
- *  </MGEndGame>
+ *  \<MGEndGame\>
+ *   \<EndGame Coords="relative"/"absolute" [SourceTile="T"] [Winner="T"]\>
+ *    \<Coord Col="0-15" Row="0-15" Tile="T" [Piece="X"] /\>
+ *   \</EndGame\>
+ *  \</MGEndGame\>
  *  where T : A = any valid piece / W = any white piece / B = any black piece
  *            E = empty tile / F = follows source piece / S = specific pieces
- *  Each <EndGame> has 1 or more <Coord> spec.
- *  Each <MGEndGame> has 1 or more <EndGame>.
+ *  Each \<EndGame\> has 1 or more \<Coord\> spec.
+ *  Each \<MGEndGame\> has 1 or more \<EndGame\>.
  *  Endgames can be left blank.
  *
  * The response string specifies the name to the record in gameboards

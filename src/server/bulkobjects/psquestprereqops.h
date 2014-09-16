@@ -637,6 +637,8 @@ public:
      * @param categoryName The name of the category.
      * @param includeInventory if true it will search either equipment and inventory
      *                         else only inventory.
+     * @param amountMin A minimum amount.
+     * @param amountMax A maximum amount.
      * @param qualityMin A minimum quality.
      * @param qualityMax A maximum quality
      */
@@ -1478,6 +1480,7 @@ class psPrereqOpStance: public psQuestPrereqOp
 
 };
 
-
+/**
+ * @} */
 
 #endif
