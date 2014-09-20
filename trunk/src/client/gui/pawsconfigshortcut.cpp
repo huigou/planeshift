@@ -56,13 +56,7 @@ pawsConfigShortcut::pawsConfigShortcut() :
     textSize(NULL),
     textSpacing(NULL),
     ShortcutMenu(NULL),
-    MenuBar(NULL),
-    HPWarnLevel(NULL),
-    HPDangerLevel(NULL),
-    HPFlashLevel(NULL),
-    ManaWarnLevel(NULL),
-    ManaDangerLevel(NULL),
-    ManaFlashLevel(NULL)
+    MenuBar(NULL)
 {
     loaded= false;
 }
@@ -205,67 +199,6 @@ bool pawsConfigShortcut::PostSetup()
     textSpacing->SetCurrentValue(4,false);
     textSpacing->SetMaxValue(20);
 
-
-    HPWarnLevel = (pawsScrollBar*)FindWidget("HPWarnLevel");
-    if(!HPWarnLevel)
-    {
-        return false;
-    }
-    HPWarnLevel->EnableValueLimit(true);
-    HPWarnLevel->SetMinValue(0);
-    HPWarnLevel->SetMaxValue(100);
-    HPWarnLevel->SetCurrentValue(0,false);
-
-    HPDangerLevel = (pawsScrollBar*)FindWidget("HPDangerLevel");
-    if(!HPDangerLevel)
-    {
-        return false;
-    }
-    HPDangerLevel->EnableValueLimit(true);
-    HPDangerLevel->SetMinValue(0);
-    HPDangerLevel->SetMaxValue(100);
-    HPDangerLevel->SetCurrentValue(0,false);
-
-    HPFlashLevel = (pawsScrollBar*)FindWidget("HPFlashLevel");
-    if(!HPFlashLevel)
-    {
-        return false;
-    }
-    HPFlashLevel->EnableValueLimit(true);
-    HPFlashLevel->SetMinValue(0);
-    HPFlashLevel->SetMaxValue(100);
-    HPFlashLevel->SetCurrentValue(0,false);
-
-    ManaWarnLevel = (pawsScrollBar*)FindWidget("ManaWarnLevel");
-    if(!ManaWarnLevel)
-    {
-        return false;
-    }
-    ManaWarnLevel->EnableValueLimit(true);
-    ManaWarnLevel->SetMinValue(0);
-    ManaWarnLevel->SetMaxValue(100);
-    ManaWarnLevel->SetCurrentValue(0,false);
-
-    ManaDangerLevel = (pawsScrollBar*)FindWidget("ManaDangerLevel");
-    if(!ManaDangerLevel)
-    {
-        return false;
-    }
-    ManaDangerLevel->EnableValueLimit(true);
-    ManaDangerLevel->SetMinValue(0);
-    ManaDangerLevel->SetMaxValue(100);
-    ManaDangerLevel->SetCurrentValue(0,false);
-
-    ManaFlashLevel = (pawsScrollBar*)FindWidget("ManaFlashLevel");
-    if(!ManaFlashLevel)
-    {
-        return false;
-    }
-    ManaFlashLevel->EnableValueLimit(true);
-    ManaFlashLevel->SetMinValue(0);
-    ManaFlashLevel->SetMaxValue(100);
-    ManaFlashLevel->SetCurrentValue(0,false);
-
     return true;
 }
 
@@ -351,13 +284,6 @@ bool pawsConfigShortcut::LoadConfig()
         }
 
         healthAndMana->SetState(  ((pawsShortcutWindow*)ShortcutMenu)->GetMonitorState() );
-        HPWarnLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetHPWarnLevel() );
-        HPDangerLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetHPDangerLevel() );
-        HPFlashLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetHPFlashLevel() );
-        ManaWarnLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetManaWarnLevel() );
-        ManaDangerLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetManaDangerLevel() );
-        ManaFlashLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetManaFlashLevel() );
-
 
         enableScrollBar->TurnAllOff();
 
@@ -396,19 +322,6 @@ bool pawsConfigShortcut::SaveConfig()
 
     xml.AppendFmt("<healthAndMana on=\"%s\" />\n",
                      healthAndMana->GetState() ? "yes" : "no");
-    xml.AppendFmt("<HPWarnLevel value=\"%d\" />\n",
-                     int(HPWarnLevel->GetCurrentValue()));
-    xml.AppendFmt("<HPDangerLevel value=\"%d\" />\n",
-                     int(HPDangerLevel->GetCurrentValue()));
-    xml.AppendFmt("<HPFlashLevel value=\"%d\" />\n",
-                     int(HPFlashLevel->GetCurrentValue()));
-    xml.AppendFmt("<ManaWarnLevel value=\"%d\" />\n",
-                     int(ManaWarnLevel->GetCurrentValue()));
-    xml.AppendFmt("<ManaDangerLevel value=\"%d\" />\n",
-                     int(ManaDangerLevel->GetCurrentValue()));
-    xml.AppendFmt("<ManaFlashLevel value=\"%d\" />\n",
-                     int(ManaFlashLevel->GetCurrentValue()));
-
     xml.AppendFmt("<buttonBackground on=\"%s\" />\n",
                      buttonBackground->GetState() ? "yes" : "no");
     xml.AppendFmt("<textSize value=\"%d\" />\n",
@@ -465,64 +378,6 @@ bool pawsConfigShortcut::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
             textSpacing->SetCurrentValue(1,false);
         MenuBar->SetButtonPaddingWidth(  textSpacing->GetCurrentValue() );
         MenuBar->LayoutButtons();
-    }
-    else if(wdg == HPWarnLevel )
-    {
-        if( HPWarnLevel->GetCurrentValue()>0 )
-        {
-            if( HPWarnLevel->GetCurrentValue()<HPDangerLevel->GetCurrentValue() )
-            {
-                HPDangerLevel->SetCurrentValue( HPWarnLevel->GetCurrentValue() );
-            }
-            ((pawsShortcutWindow*)(ShortcutMenu))->SetHPWarnLevel(  HPWarnLevel->GetCurrentValue()/100 );
-        }
-    }
-    else if(wdg == HPDangerLevel )
-    {
-        if( HPDangerLevel->GetCurrentValue()>0 )
-        {
-            if( HPDangerLevel->GetCurrentValue()>HPWarnLevel->GetCurrentValue() )
-            {
-                HPDangerLevel->SetCurrentValue( HPWarnLevel->GetCurrentValue() );
-            }
-            ((pawsShortcutWindow*)(ShortcutMenu))->SetHPDangerLevel(  HPDangerLevel->GetCurrentValue()/100 );
-        }
-    }
-    else if(wdg == HPFlashLevel )
-    {
-        if( HPFlashLevel->GetCurrentValue()>0 )
-        {
-            ((pawsShortcutWindow*)(ShortcutMenu))->SetHPFlashLevel(  HPFlashLevel->GetCurrentValue()/100 );
-        }
-    }
-    else if(wdg == ManaWarnLevel )
-    {
-        if( ManaWarnLevel->GetCurrentValue()>0 )
-        {
-            if( ManaWarnLevel->GetCurrentValue()<ManaDangerLevel->GetCurrentValue() )
-            {
-                ManaDangerLevel->SetCurrentValue( ManaWarnLevel->GetCurrentValue() );
-            }
-            ((pawsShortcutWindow*)(ShortcutMenu))->SetManaWarnLevel(  ManaWarnLevel->GetCurrentValue()/100 );
-        }
-    }
-    else if(wdg == ManaDangerLevel )
-    {
-        if( ManaDangerLevel->GetCurrentValue()>0 )
-        {
-            if( ManaDangerLevel->GetCurrentValue()>ManaWarnLevel->GetCurrentValue() )
-            {
-                ManaDangerLevel->SetCurrentValue( ManaWarnLevel->GetCurrentValue() );
-            }
-            ((pawsShortcutWindow*)(ShortcutMenu))->SetManaDangerLevel(  ManaDangerLevel->GetCurrentValue()/100 );
-        }
-    }
-    else if(wdg == ManaFlashLevel )
-    {
-        if( ManaFlashLevel->GetCurrentValue()>0 )
-        {
-            ((pawsShortcutWindow*)(ShortcutMenu))->SetManaFlashLevel(  ManaFlashLevel->GetCurrentValue()/100 );
-        }
     }
     
     if( loaded )

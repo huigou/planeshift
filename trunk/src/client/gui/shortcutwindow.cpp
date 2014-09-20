@@ -308,6 +308,7 @@ bool pawsShortcutWindow::PostSetup()
     position = 0;
 
     LoadUserPrefs();
+    LoadUserSharedPrefs();
 
     return true;
 }
@@ -1136,38 +1137,6 @@ bool pawsShortcutWindow::LoadUserPrefs()
     {
         Error1("pawsShortcutWindow::LoadUserPrefs unable to retrieve healthAndMana node");
     }
-    optionNode = mainNode->GetNode("HPWarnLevel");
-    if(optionNode != NULL)
-    {
-        SetHPWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
-    }
-    optionNode = mainNode->GetNode("HPDangerLevel");
-    if(optionNode != NULL)
-    {
-        SetHPDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
-    }
-    optionNode = mainNode->GetNode("HPFlashLevel");
-    if(optionNode != NULL)
-    {
-        SetHPFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
-    }
-
-    optionNode = mainNode->GetNode("ManaWarnLevel");
-    if(optionNode != NULL)
-    {
-        SetManaWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
-    }
-    optionNode = mainNode->GetNode("ManaDangerLevel");
-    if(optionNode != NULL)
-    {
-        SetManaDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
-    }
-    optionNode = mainNode->GetNode("ManaFlashLevel");
-    if(optionNode != NULL)
-    {
-        SetManaFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
-    }
-
 
     optionNode = mainNode->GetNode("buttonBackground");
     if(optionNode != NULL)
@@ -1218,6 +1187,79 @@ bool pawsShortcutWindow::LoadUserPrefs()
     return true;
 }
 
+
+
+bool pawsShortcutWindow::LoadUserSharedPrefs()
+{
+    csRef<iDocument>     doc;
+    csRef<iDocumentNode> root,
+                         mainNode,
+                         optionNode,
+                         optionNode2;
+
+    csString fileName;
+    fileName = "/planeshift/userdata/options/confighpandmana.xml";
+
+    if(!vfs->Exists(fileName))
+    {
+       return true; //no saved config to load.
+    }
+
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(), fileName);
+    if(doc == NULL)
+    {
+        Error2("pawsShortcutWindow::LoadUserPrefs Failed to parse file %s", fileName.GetData());
+        return false;
+    }
+    root = doc->GetRoot();
+    if(root == NULL)
+    {
+        Error2("pawsShortcutWindow::LoadUserPrefs : %s has no XML root",fileName.GetData());
+        return false;
+    }
+    mainNode = root->GetNode("hpandmana");
+    if(mainNode == NULL)
+    {
+        Error2("pawsShortcutWindow::LoadUserPrefs %s has no <hpandmana> tag",fileName.GetData());
+        return false;
+    }
+
+    optionNode = mainNode->GetNode("HPWarnLevel");
+    if(optionNode != NULL)
+    {
+        SetHPWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("HPDangerLevel");
+    if(optionNode != NULL)
+    {
+        SetHPDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("HPFlashLevel");
+    if(optionNode != NULL)
+    {
+        SetHPFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+
+    optionNode = mainNode->GetNode("ManaWarnLevel");
+    if(optionNode != NULL)
+    {
+        SetManaWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("ManaDangerLevel");
+    if(optionNode != NULL)
+    {
+        SetManaDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("ManaFlashLevel");
+    if(optionNode != NULL)
+    {
+        SetManaFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+
+
+    return true;
+}
+
 void pawsShortcutWindow::SetHPWarnLevel( float val )
 {
     if( main_hp )
@@ -1254,6 +1296,7 @@ void pawsShortcutWindow::SetHPFlashLevel( float val )
 {
     if( main_hp )
     {
+fprintf( stderr, "pawsShortcutWindow::SetHPFlashLevel( %f )\n", val );
         main_hp->SetFlashLevel(val,true);
         main_hp->SetFlashRate(200);
     }
@@ -1314,4 +1357,22 @@ float pawsShortcutWindow::GetManaFlashLevel()
         return main_mana->GetFlashLevel();
     }
     return 0;
+}
+
+void pawsShortcutWindow::SetHPOn( bool val )
+{
+     if( main_hp )
+    {
+        return main_hp->SetOn( val );
+    }
+    return;
+}
+
+void pawsShortcutWindow::SetManaOn( bool val )
+{
+     if( main_mana )
+    {
+        return main_mana->SetOn( val );
+    }
+    return;
 }

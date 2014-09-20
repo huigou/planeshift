@@ -126,6 +126,7 @@ public:
     * Load the preferences set by the Shortcut Configuration interface
     */
     bool LoadUserPrefs();
+    bool LoadUserSharedPrefs();
 
     void SetHPWarnLevel( float val );
     float GetHPWarnLevel();
@@ -145,6 +146,8 @@ public:
     void SetManaFlashLevel( float val );
     float GetManaFlashLevel();
 
+    void SetHPOn( bool val );
+    void SetManaOn( bool val );
 
 protected:
     /// chat window for easy access
@@ -182,8 +185,6 @@ protected:
     pawsWidget *editedButton;
 
     virtual void HandleMessage(MsgEntry *msg);
-
-
 
 private:
     //status bars, optional;configured in XML

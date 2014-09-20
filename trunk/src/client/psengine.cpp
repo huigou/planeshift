@@ -137,6 +137,7 @@ if (!myref)                                                  \
 #include "gui/pawsconfigchatlogs.h"
 #include "gui/pawsconfigsound.h"
 #include "gui/pawsconfigshortcut.h"
+#include "gui/pawsconfigHPandMana.h"
 #include "gui/pawsconfigactivemagic.h"
 #include "gui/pawsconfigchatfont.h"
 #include "gui/pawsconfigentitylabels.h"
@@ -812,6 +813,7 @@ void psEngine::DeclareExtraFactories()
     RegisterFactory(pawsConfigCameraFactory);
     RegisterFactory(pawsConfigChatFactory);
     RegisterFactory(pawsConfigSoundFactory);
+    RegisterFactory(pawsConfigHPandManaFactory);
     RegisterFactory(pawsConfigShortcutFactory);
     RegisterFactory(pawsConfigActiveMagicFactory);
     RegisterFactory(pawsConfigChatFontFactory);

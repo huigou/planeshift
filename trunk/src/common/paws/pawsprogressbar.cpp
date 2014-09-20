@@ -331,4 +331,9 @@ float pawsProgressBar::GetDangerLevel()
     return dangerLevel;
 }
 
-
+void pawsProgressBar::SetOn( bool val)
+{
+    On=val;
+    flashLastTime = csGetTicks();
+    flashLevel = 0;
+}
