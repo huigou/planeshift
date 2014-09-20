@@ -56,6 +56,24 @@ public:
     void SetStanceHighlight(uint stance);
     void UpdateAttkQueue(MsgEntry* me);
 
+    void SetHPWarnLevel( float val );
+    float GetHPWarnLevel();
+
+    void SetHPDangerLevel( float val );
+    float GetHPDangerLevel();
+
+    void SetHPFlashLevel( float val );
+    float GetHPFlashLevel();
+
+    void SetManaWarnLevel( float val );
+    float GetManaWarnLevel();
+
+    void SetManaDangerLevel( float val );
+    float GetManaDangerLevel();
+
+    void SetManaFlashLevel( float val );
+    float GetManaFlashLevel();
+
 private:
     pawsTextBox     *targetName;
     pawsProgressBar *main_hp;

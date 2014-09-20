@@ -135,6 +135,8 @@ public:
      */
     void SetReversed( bool val );
 
+    void SetOn( bool val );
+
 private:
     float totalValue;
     float flashLevel;

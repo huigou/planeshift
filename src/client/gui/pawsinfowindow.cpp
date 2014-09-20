@@ -257,3 +257,102 @@ void pawsInfoWindow::SetStanceHighlight(uint stance)
         wdg->SetBackground(bg);
     }
 }
+
+void pawsInfoWindow::SetHPWarnLevel( float val )
+{
+    if( main_hp )
+    {
+        main_hp->SetWarningLevel(val,true);
+    }
+}
+float pawsInfoWindow::GetHPWarnLevel()
+{
+     if( main_hp )
+    {
+        return main_hp->GetWarningLevel();
+    }
+    return 0;
+}
+
+void pawsInfoWindow::SetHPDangerLevel( float val )
+{
+    if( main_hp )
+    {
+        main_hp->SetDangerLevel(val,true);
+    }
+}
+float pawsInfoWindow::GetHPDangerLevel()
+{
+     if( main_hp )
+    {
+        return main_hp->GetDangerLevel();
+    }
+    return 0;
+}
+
+void pawsInfoWindow::SetHPFlashLevel( float val )
+{
+    if( main_hp )
+    {
+        main_hp->SetFlashLevel(val,true);
+        main_hp->SetFlashRate(200);
+    }
+}
+float pawsInfoWindow::GetHPFlashLevel()
+{
+     if( main_hp )
+    {
+        return main_hp->GetFlashLevel();
+    }
+    return 0;
+}
+
+void pawsInfoWindow::SetManaWarnLevel( float val )
+{
+    if( main_mana )
+    {
+        main_mana->SetWarningLevel(val,true);
+    }
+}
+float pawsInfoWindow::GetManaWarnLevel()
+{
+     if( main_mana )
+    {
+        return main_mana->GetWarningLevel();
+    }
+    return 0;
+}
+
+void pawsInfoWindow::SetManaDangerLevel( float val )
+{
+    if( main_mana )
+    {
+        main_mana->SetDangerLevel(val,true);
+    }
+}
+float pawsInfoWindow::GetManaDangerLevel()
+{
+     if( main_mana )
+    {
+        return main_mana->GetDangerLevel();
+    }
+    return 0;
+}
+
+void pawsInfoWindow::SetManaFlashLevel( float val )
+{
+    if( main_mana )
+    {
+        main_mana->SetFlashLevel(val,true);
+        main_mana->SetFlashRate(200);
+    }
+}
+float pawsInfoWindow::GetManaFlashLevel()
+{
+     if( main_mana )
+    {
+        return main_mana->GetFlashLevel();
+    }
+    return 0;
+}
+
