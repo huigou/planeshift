@@ -24,6 +24,8 @@
 
 class pawsSimpleTree;
 class pawsMultiLineTextBox;
+class pawsEditTextBox;
+
 
 /** Window Widget that displays information about the mind item to 
  *  be used in crafting.
@@ -39,24 +41,23 @@ public:
     virtual void Show();
     void HandleMessage( MsgEntry* me );
     bool OnSelected(pawsWidget* widget);
-/*    
-    struct TreeNode
-    {
-        csString name;
-        csString equipment;
-        csString workItem;
-        int count;
-    };
-*/    
+    csString craftText;  // contains the complete set of available carfting recipes
+    csString filter;  // contains the currently used filter for the crafting recipes
+    /** Draw
+     *
+     * overwriting this to be able to do some reformating of the text is necessary
+     */
+    virtual void Draw();
+    /** Format method for the output text
+     *
+     * This method sets the actual on-screen text by filtering all unwanted lines
+     */
+    void Format();
     
 protected:
-//    csPDelArray< TreeNode > nodes;
     pawsMultiLineTextBox* textBox;
-        
-//    pawsSimpleTree* itemTree;
-    
-//    void Add( const char* parent, const char* realParent, psMsgCraftingInfo::CraftingItem* item );
-    
+    pawsEditTextBox* filterEditTextBox;
+
 };
 
 CREATE_PAWS_FACTORY( pawsCraftWindow );
