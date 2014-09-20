@@ -1,34 +1,30 @@
 <widget_description>
-    <widget name="CraftWindow" factory="pawsCraftWindow" visible="no"  movable="yes" resizable="no" configurable="yes" style="New Standard GUI" savepositions="yes">
+    <widget name="CraftWindow" factory="pawsCraftWindow" visible="no"  movable="yes" resizable="yes" keepaspect="no" configurable="yes" style="New Standard GUI" savepositions="yes">
 
-        <frame x="70" y="70" width="670" height="285" border="yes"/>
+        <frame x="70" y="70" width="670" height="280" border="yes"/>
+    <minframe width="670" height="280" />
+    <maxframe width="800" height="900" />
         <title resource="Scaling Title Bar" text="Study notes:" align="left" close_button="yes"/>
 
        <widget name="HelpText" factory="pawsMultiLineTextBox">
-           <frame x="10" y="10" width="655" height="230" border="no"/>
-           <attachpoints>
-               <attach point="PROPORTIONAL_RIGHT" />
-               <attach point="ATTACH_LEFT" />
-               <attach point="ATTACH_TOP" />
-               <attach point="PROPORTIONAL_BOTTOM" />
-            </attachpoints>
-       </widget>
-       <widget name="FilterLabel" factory="pawsTextBox">
-           <frame x="10" y="255" width="60" height="20" border="no"/>
-           <text string="Filter:" />
+           <frame x="10" y="10" width="652" height="230" border="no"/>
            <attachpoints>
                <attach point="ATTACH_RIGHT" />
                <attach point="ATTACH_LEFT" />
-               <attach point="PROPORTIONAL_TOP" />
+               <attach point="ATTACH_TOP" />
+               <attach point="ATTACH_BOTTOM" />
+            </attachpoints>
+       </widget>
+       <widget name="FilterLabel" factory="pawsTextBox">
+           <frame x="10" y="250" width="60" height="20" border="no"/>
+           <text string="Filter:" />
+           <attachpoints>
                <attach point="ATTACH_BOTTOM" />
            </attachpoints>
        </widget>
        <widget name="Filter" factory="pawsEditTextBox" resizable="no">
-           <frame x="65" y="255" width="200" height="20"/>
+           <frame x="65" y="250" width="200" height="20"/>
            <attachpoints>
-               <attach point="ATTACH_RIGHT" />
-               <attach point="ATTACH_LEFT" />
-               <attach point="PROPORTIONAL_TOP" />
                <attach point="ATTACH_BOTTOM" />
              </attachpoints>
        </widget>
