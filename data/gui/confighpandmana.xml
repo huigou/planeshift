@@ -1,0 +1,97 @@
+<widget_description>
+    <widget name="ConfigHPandMana" factory="pawsConfigHPandMana"
+            visible="no" savepositions="no" movable="no" resizable="no" style="New Standard GUI">
+
+        <frame x="10" y="0" width="400" height="300" border="no" />
+        <bgimage resource="Scaling Widget Background" />
+
+
+        <widget name="" factory="pawsTextBox">
+            <frame x="65" y="10" width="100" height="20" />
+            <text string="Health Meter"/>
+        </widget>
+
+        <widget name="" factory="pawsTextBox">
+            <frame x="00" y="35" width="100" height="20" />
+            <text string="Warn"/>
+        </widget>
+        <widget name="HPWarnSetting" factory="pawsTextBox">
+            <frame x="50" y="35" width="100" height="20" />
+            <text string=""/>
+        </widget>
+        <widget name="HPWarnLevel" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
+            <frame x="120" y="35" width="300" height="20" border="no" />
+        </widget>
+
+        <widget name="" factory="pawsTextBox">
+            <frame x="00" y="60" width="100" height="20" />
+            <text string="Danger"/>
+        </widget>
+        <widget name="HPDangerSetting" factory="pawsTextBox">
+            <frame x="50" y="60" width="100" height="20" />
+            <text string=""/>
+        </widget>
+        <widget name="HPDangerLevel" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
+            <frame x="120" y="60" width="300" height="20" border="no" />
+        </widget>
+
+        <widget name="" factory="pawsTextBox">
+            <frame x="00" y="85" width="100" height="20" />
+            <text string="Flash"/>
+        </widget>
+        <widget name="HPFlashSetting" factory="pawsTextBox">
+            <frame x="50" y="85" width="100" height="20" />
+            <text string=""/>
+        </widget>
+        <widget name="HPFlashLevel" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
+            <frame x="120" y="85" width="300" height="20" border="no" />
+        </widget>
+
+
+
+
+        <widget name="" factory="pawsTextBox">
+            <frame x="65" y="110" width="100" height="20" />
+            <text string="Mana Meter"/>
+        </widget>
+
+        <widget name="" factory="pawsTextBox">
+            <frame x="00" y="135" width="100" height="20" />
+            <text string="Warn"/>
+        </widget>
+        <widget name="ManaWarnSetting" factory="pawsTextBox">
+            <frame x="50" y="135" width="100" height="20" />
+            <text string="Warn"/>
+        </widget>
+        <widget name="ManaWarnLevel" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
+            <frame x="120" y="135" width="300" height="20" border="no" />
+        </widget>
+
+        <widget name="" factory="pawsTextBox">
+            <frame x="00" y="160" width="100" height="20" />
+            <text string="Danger"/>
+        </widget>
+        <widget name="ManaDangerSetting" factory="pawsTextBox">
+            <frame x="50" y="160" width="100" height="20" />
+            <text string=""/>
+        </widget>
+        <widget name="ManaDangerLevel" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
+            <frame x="120" y="160" width="300" height="20" border="no" />
+        </widget>
+
+        <widget name="" factory="pawsTextBox">
+            <frame x="00" y="185" width="100" height="20" />
+            <text string="Flash"/>
+        </widget>
+        <widget name="ManaFlashSetting" factory="pawsTextBox">
+            <frame x="50" y="185" width="100" height="20" />
+            <text string=""/>
+        </widget>
+        <widget name="ManaFlashLevel" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
+            <frame x="120" y="185" width="300" height="20" border="no" />
+        </widget>
+
+
+    </widget>
+
+</widget_description>
