@@ -175,14 +175,10 @@
       <!-- Controls Widget -->
       <widget name="SettingsControls" factory="pawsWidget" id="138" visible="no" alwaysontop="true">
         <frame x="90" y="200" width="670" height="290" />
-		<!-- The text widgets below are a place holder until someone codes support for key editing in PSLaunch-->
-		<widget name="keychange" factory="pawsTextBox">
-          <frame x="0" y="20" width="400" height="20"/>
-          <text string="Currently all key controls can only be changed from inside the game."/>
-        </widget>
-		<widget name="keychangea" factory="pawsTextBox">
-          <frame x="0" y="40" width="600" height="20"/>
-          <text string="Once you have loaded the game open the options window, then look under 'controls' and 'keys' to edit all the controls."/>
+        <!-- The text widgets below are a place holder until someone codes support for key editing in PSLaunch-->
+        <widget name="keysettings" factory="pawsMultiLineTextBox">
+          <frame x="0" y="20" width="600" height="40"/>
+          <text string="Currently all key controls can only be changed from inside the game. Once you have loaded the game open the options window, then look under 'controls' and 'keys' to edit all the controls."/>
         </widget>
       </widget>
 
@@ -243,7 +239,7 @@
 
         <widget name="Skins" factory="pawsComboBox" id="1399" alwaysontop="true">
           <frame x="100" y="140" width="90" height="20" border="no"/>
-          <listbox rows="3" height="25" useScrollBar="true" />
+          <listbox rows="6" height="25" useScrollBar="true" />
         </widget>
 
         <widget name="SkinDescription" factory="pawsMultiLineTextBox" id="13991">

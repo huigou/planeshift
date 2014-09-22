@@ -5,17 +5,10 @@
         <frame x="225" y="10" width="400" height="300" border="no" />
         <bgimage resource="Scaling Widget Background" />
         <!-- Labels -->
-        <widget name="lblMainIncludes" factory="pawsTextBox">
-            <frame x="20" y="10" width="200" height="20" />
-            <text string="Select dialogue from" />
-        </widget>
-        <widget name="lblTabs" factory="pawsTextBox">
-            <frame x="20" y="25" width="200" height="20" />
-            <text string="other tabs to also " />
-        </widget>
-        <widget name="lblTabs" factory="pawsTextBox">
-            <frame x="20" y="40" width="200" height="20" />
-            <text string="show in main tab." />
+        <widget name="mainincludes" factory="pawsMultiLineTextBox">
+		    <bgimage resource="" />
+            <frame x="20" y="10" width="130" height="60" />
+            <text string="Select dialogue from other tabs to also show in main tab." />
         </widget>
             <!-- Other chat channels included on the Main tab -->
         <widget name="isysbase" factory="pawsCheckBox">
@@ -60,13 +53,10 @@
         </widget>
 
         <!-- tabs to show in the chat window -->
-        <widget name="lblTabs" factory="pawsTextBox">
-            <frame x="160" y="10" width="200" height="20" />
-            <text string="Select tabs to show in" />
-        </widget>
-        <widget name="lblTabs" factory="pawsTextBox">
-            <frame x="160" y="25" width="200" height="20" />
-            <text string="main chat window." />
+        <widget name="tabsinmain" factory="pawsMultiLineTextBox" style="Standard Font">
+		    <bgimage resource="" />
+            <frame x="160" y="10" width="100" height="60" />
+            <text string="Select tabs to show in main chat window." />
         </widget>
         <widget name="issysbase" factory="pawsCheckBox">
             <frame x="150" y="60" width="120" height="20" />
