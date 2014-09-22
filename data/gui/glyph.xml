@@ -27,9 +27,6 @@
         <frame x="10" y="10" width="60" height="60" border="yes" />
     </widget>
 
-
-
-
     <widget name="CrystalIcon" factory="pawsWidget">
         <frame x="424" y="160" width="48" height="48" />
         <bgimage resource="Crystal Magic School" />
@@ -54,7 +51,6 @@
         <frame x="367" y="180" width="48" height="48" />
         <bgimage resource="Blue Magic School" />
     </widget>
-
 
     <widget name="crystal" factory="pawsListBox" selectable="0">
         <frame x="375" y="10" width="144" height="144" border="no"/>
@@ -188,7 +184,6 @@
         </columns>
     </widget>
 
-
     <widget name="assembler0" factory="pawsGlyphSlot" tooltip="Assemble Slot">
         <frame x="10" y="400" width="48" height="48" />
     </widget>
@@ -205,7 +200,6 @@
         <frame x="157" y="400" width="48" height="48" />
     </widget>
 
-
     <widget name="SpellName" factory="pawsTextBox" >
         <frame x="10" y="75" width="190" height="20" border="no"/>
     </widget>
@@ -214,7 +208,25 @@
         <frame x="10" y="95" width="190" height="200" border="no"/>
     </widget>
 
+    <widget name="ignore" factory="pawsTextBox" tooltip="Click for help">
+        <frame x="130" y="355" width="30" height="30" />
+        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="121" g="147" b="42" size="20" bold="yes"  />
+        <text string="?" />
+		<eventMouseDown>Ret=magichelp:Show()</eventMouseDown>
+    </widget>	
+	
+	<widget name="magichelp" factory="pawsWidget" visible="no" savepositions="no" movable="no" resizable="no" configurable="no" style="New Standard GUI" alwaysontop="yes">
+        <frame x="30" y="30" width="330" height="240" border="yes" visible="yes" />
+        <title resource="Scaling Title Bar" text="Magic Help" align="left" close_button="yes" />
+        <widget name="Infobox1" factory="pawsMultiLineTextBox" style="Standard Font">
+            <frame x="5" y="0" width="320" height="260" />
+            <text string="Purifying Glyphs:
+To purify a glyph you must pick one up and then drop it onto the 'purify' icon. You then have to wait for the purification to finish, you will see the background change and you will get a system message saying it has finished.
 
+Researching Spells:
+To research a spell you must first purify every glyph you want to use. Then, taking between 1 and 4 purified glyphs place them in any order you want to try in the 4 spell research slots. Once you have placed 1, 2, 3, or 4 purified glyphs there you then click the research spell button. You may not always succeed when researching spells so you may have to click many times. You also need to have the necessary skill level required to find specific spells. The order of glyphs is also important." />
+        </widget>
+    </widget>
+	
 </widget>
-
 </widget_description>
