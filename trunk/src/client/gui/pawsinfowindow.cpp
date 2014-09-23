@@ -119,6 +119,9 @@ bool pawsInfoWindow::PostSetup()
     attackImage[2] = (pawsSlot*)FindWidget("Queue3");
     attackImage[3] = (pawsSlot*)FindWidget("Queue4");
     attackImage[4] = (pawsSlot*)FindWidget("Queue5");
+
+    LoadUserSharedPrefs();
+
     return true;
 }
 
@@ -257,6 +260,80 @@ void pawsInfoWindow::SetStanceHighlight(uint stance)
         wdg->SetBackground(bg);
     }
 }
+
+bool pawsInfoWindow::LoadUserSharedPrefs()
+{
+    csRef<iVFS>          vfs;
+    csRef<iDocument>     doc;
+    csRef<iDocumentNode> root,
+                         mainNode,
+                         optionNode,
+                         optionNode2;
+
+    csString fileName;
+    fileName = "/planeshift/userdata/options/confighpandmana.xml";
+
+    vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    if(!vfs->Exists(fileName))
+    {
+       return true; //no saved config to load.
+    }
+
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(), fileName);
+    if(doc == NULL)
+    {
+        Error2("pawsInfoWindow::LoadUserPrefs Failed to parse file %s", fileName.GetData());
+        return false;
+    }
+    root = doc->GetRoot();
+    if(root == NULL)
+    {
+        Error2("pawsInfoWindow::LoadUserPrefs : %s has no XML root",fileName.GetData());
+        return false;
+    }
+    mainNode = root->GetNode("hpandmana");
+    if(mainNode == NULL)
+    {
+        Error2("pawsInfoWindow::LoadUserPrefs %s has no <hpandmana> tag",fileName.GetData());
+        return false;
+    }
+
+    optionNode = mainNode->GetNode("HPWarnLevel");
+    if(optionNode != NULL)
+    {
+        SetHPWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("HPDangerLevel");
+    if(optionNode != NULL)
+    {
+        SetHPDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("HPFlashLevel");
+    if(optionNode != NULL)
+    {
+        SetHPFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+
+    optionNode = mainNode->GetNode("ManaWarnLevel");
+    if(optionNode != NULL)
+    {
+        SetManaWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("ManaDangerLevel");
+    if(optionNode != NULL)
+    {
+        SetManaDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("ManaFlashLevel");
+    if(optionNode != NULL)
+    {
+        SetManaFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+
+
+    return true;
+}
+
 
 void pawsInfoWindow::SetHPWarnLevel( float val )
 {

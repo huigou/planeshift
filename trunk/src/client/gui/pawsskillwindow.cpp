@@ -162,6 +162,8 @@ bool pawsSkillWindow::PostSetup()
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_GUISKILL);
     psengine->GetMsgHandler()->Subscribe(this, MSGTYPE_FACTION_INFO);
 
+    LoadUserSharedPrefs();
+
     return true;
 }
 
@@ -953,3 +955,193 @@ void pawsSkillIndicator::Set(unsigned int x, int rank, int y, int yCost, int z, 
     this->z = z;
     this->zCost = zCost;
 }
+
+bool pawsSkillWindow::LoadUserSharedPrefs()
+{
+
+    csRef<iVFS>          vfs;
+    csRef<iDocument>     doc;
+    csRef<iDocumentNode> root,
+                         mainNode,
+                         optionNode,
+                         optionNode2;
+
+    csString fileName;
+    fileName = "/planeshift/userdata/options/confighpandmana.xml";
+
+    vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    if(!vfs->Exists(fileName))
+    {
+       return true; //no saved config to load.
+    }
+
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(), fileName);
+    if(doc == NULL)
+    {
+        Error2("pawsSkillWindow::LoadUserPrefs Failed to parse file %s", fileName.GetData());
+        return false;
+    }
+    root = doc->GetRoot();
+    if(root == NULL)
+    {
+        Error2("pawsSkillWindow::LoadUserPrefs : %s has no XML root",fileName.GetData());
+        return false;
+    }
+    mainNode = root->GetNode("hpandmana");
+    if(mainNode == NULL)
+    {
+        Error2("pawsSkillWindow::LoadUserPrefs %s has no <hpandmana> tag",fileName.GetData());
+        return false;
+    }
+
+    optionNode = mainNode->GetNode("HPWarnLevel");
+    if(optionNode != NULL)
+    {
+        SetHPWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("HPDangerLevel");
+    if(optionNode != NULL)
+    {
+        SetHPDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("HPFlashLevel");
+    if(optionNode != NULL)
+    {
+        SetHPFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+
+    optionNode = mainNode->GetNode("ManaWarnLevel");
+    if(optionNode != NULL)
+    {
+        SetManaWarnLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("ManaDangerLevel");
+    if(optionNode != NULL)
+    {
+        SetManaDangerLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+    optionNode = mainNode->GetNode("ManaFlashLevel");
+    if(optionNode != NULL)
+    {
+        SetManaFlashLevel(optionNode->GetAttributeValueAsFloat("value", true)/100);
+    }
+
+    return true;
+}
+
+void pawsSkillWindow::SetHPWarnLevel( float val )
+{
+    if( hpBar )
+    {
+        hpBar->SetWarningLevel(val,true);
+    }
+}
+float pawsSkillWindow::GetHPWarnLevel()
+{
+     if( hpBar )
+    {
+        return hpBar->GetWarningLevel();
+    }
+    return 0;
+}
+
+void pawsSkillWindow::SetHPDangerLevel( float val )
+{
+    if( hpBar )
+    {
+        hpBar->SetDangerLevel(val,true);
+    }
+}
+float pawsSkillWindow::GetHPDangerLevel()
+{
+     if( hpBar )
+    {
+        return hpBar->GetDangerLevel();
+    }
+    return 0;
+}
+
+void pawsSkillWindow::SetHPFlashLevel( float val )
+{
+    if( hpBar )
+    {
+        hpBar->SetFlashLevel(val,true);
+        hpBar->SetFlashRate(200);
+    }
+}
+float pawsSkillWindow::GetHPFlashLevel()
+{
+     if( hpBar )
+    {
+        return hpBar->GetFlashLevel();
+    }
+    return 0;
+}
+
+void pawsSkillWindow::SetManaWarnLevel( float val )
+{
+    if( manaBar )
+    {
+        manaBar->SetWarningLevel(val,true);
+    }
+}
+float pawsSkillWindow::GetManaWarnLevel()
+{
+     if( manaBar )
+    {
+        return manaBar->GetWarningLevel();
+    }
+    return 0;
+}
+
+void pawsSkillWindow::SetManaDangerLevel( float val )
+{
+    if( manaBar )
+    {
+        manaBar->SetDangerLevel(val,true);
+    }
+}
+float pawsSkillWindow::GetManaDangerLevel()
+{
+     if( manaBar )
+    {
+        return manaBar->GetDangerLevel();
+    }
+    return 0;
+}
+
+void pawsSkillWindow::SetManaFlashLevel( float val )
+{
+    if( manaBar )
+    {
+        manaBar->SetFlashLevel(val,true);
+        manaBar->SetFlashRate(200);
+    }
+}
+float pawsSkillWindow::GetManaFlashLevel()
+{
+     if( manaBar )
+    {
+        return manaBar->GetFlashLevel();
+    }
+    return 0;
+}
+
+void pawsSkillWindow::SetHPOn( bool val )
+{
+     if( hpBar )
+    {
+        return hpBar->SetOn( val );
+    }
+    return;
+}
+
+void pawsSkillWindow::SetManaOn( bool val )
+{
+     if( manaBar )
+    {
+        return manaBar->SetOn( val );
+    }
+    return;
+}
+

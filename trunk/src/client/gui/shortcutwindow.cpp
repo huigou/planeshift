@@ -1200,6 +1200,7 @@ bool pawsShortcutWindow::LoadUserSharedPrefs()
     csString fileName;
     fileName = "/planeshift/userdata/options/confighpandmana.xml";
 
+    vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
     if(!vfs->Exists(fileName))
     {
        return true; //no saved config to load.
@@ -1296,7 +1297,6 @@ void pawsShortcutWindow::SetHPFlashLevel( float val )
 {
     if( main_hp )
     {
-fprintf( stderr, "pawsShortcutWindow::SetHPFlashLevel( %f )\n", val );
         main_hp->SetFlashLevel(val,true);
         main_hp->SetFlashRate(200);
     }

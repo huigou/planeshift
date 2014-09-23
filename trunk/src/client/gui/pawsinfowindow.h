@@ -56,6 +56,8 @@ public:
     void SetStanceHighlight(uint stance);
     void UpdateAttkQueue(MsgEntry* me);
 
+    bool LoadUserSharedPrefs();
+
     void SetHPWarnLevel( float val );
     float GetHPWarnLevel();
 
