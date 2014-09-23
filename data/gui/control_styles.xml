@@ -14,9 +14,10 @@
     <button name="SpellBookButton"  x="320" y="1" />
     <button name="AttackButton"     x="384" y="1" />
     <button name="InfoButton"       x="448" y="1" />
-    <button name="OptionsButton"    x="512" y="1" />
-    <button name="HelpButton"       x="576" y="1" />
-    <button name="QuitButton"       x="640" y="1" />
+    <button name="ActiveMagicButton" x="512" y="1" />
+    <button name="OptionsButton"    x="576" y="1" />
+    <button name="HelpButton"       x="640" y="1" />
+    <button name="QuitButton"       x="705" y="1" />
 
     <button name="GuildButton"      x="-500" y="-500" />
     <button name="PetitionButton"   x="-500" y="-500" />
