@@ -66,11 +66,13 @@ pawsConfigHPandMana::pawsConfigHPandMana() :
 bool pawsConfigHPandMana::Initialize()
 {
     LoadFromFile("confighpandmana.xml");
+
     return true;
 }
 
 bool pawsConfigHPandMana::PostSetup()
 {
+
 //get pointers to Shortcut Menu and its Menu Bar
     psMainWidget*   Main    = psengine->GetMainWidget();
     if( Main==NULL )
@@ -101,6 +103,13 @@ bool pawsConfigHPandMana::PostSetup()
         return false;
     }
 
+//get pointer to stats and skills window
+   SkillWindow = (pawsSkillWindow *)Main->FindWidget( "SkillWindow", true );
+    if( SkillWindow==NULL )
+    {
+        Error1( "pawsConfigHPandMana::PostSetup unable to get SkillWindow\n");
+        return false;
+    }
 
 //get form widgets
 
@@ -205,39 +214,21 @@ bool pawsConfigHPandMana::PostSetup()
         return false;
     }
 
-    loaded=true;
     return true;
 }
 
 bool pawsConfigHPandMana::LoadConfig()
 {
-
-    HPWarnLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetHPWarnLevel() );
-    UpdateHPWarnLevel();
-
-    HPDangerLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetHPDangerLevel() );
-    UpdateHPDangerLevel();
-
-    HPFlashLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetHPFlashLevel() );
-    UpdateHPFlashLevel();
-
-    ManaWarnLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetManaWarnLevel() );
-    UpdateManaWarnLevel();
-
-    ManaDangerLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetManaDangerLevel() );
-    UpdateManaDangerLevel();
-
-    ManaFlashLevel->SetCurrentValue( ((pawsShortcutWindow*)ShortcutMenu)->GetManaFlashLevel() );
-    UpdateManaFlashLevel();
-
-
+    LoadUserSharedPrefs();
     loaded= true;
     dirty = false;
+
     return true;
 }
 
 bool pawsConfigHPandMana::SaveConfig()
 {
+    if( !loaded ) return false;
 
     csString xml;
     xml = "<hpandmana>\n";
@@ -279,12 +270,14 @@ void pawsConfigHPandMana::UpdateHPWarnLevel( )
         }
         ((pawsShortcutWindow*)(ShortcutMenu))->SetHPWarnLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
         InfoWindow->SetHPWarnLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
+        SkillWindow->SetHPWarnLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
     }
     else
     {
         HPWarnSetting->SetText( "Disabled" );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetHPWarnLevel( 0 );
         InfoWindow->SetHPWarnLevel( 0 );
+        SkillWindow->SetHPWarnLevel( 0 );
     }
 }
 
@@ -306,12 +299,14 @@ void pawsConfigHPandMana::UpdateHPDangerLevel( )
         }
         ((pawsShortcutWindow*)(ShortcutMenu))->SetHPDangerLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
         InfoWindow->SetHPDangerLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
+        SkillWindow->SetHPDangerLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
     }
     else
     {
         HPDangerSetting->SetText( "Disabled" );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetHPDangerLevel( 0 );
         InfoWindow->SetHPDangerLevel( 0 );
+        SkillWindow->SetHPDangerLevel( 0 );
     }
 }
 
@@ -327,6 +322,7 @@ void pawsConfigHPandMana::UpdateHPFlashLevel( )
         HPFlashSetting->SetText( temp );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetHPFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
         InfoWindow->SetHPFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
+        SkillWindow->SetHPFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
     }
     else
     {
@@ -334,6 +330,7 @@ void pawsConfigHPandMana::UpdateHPFlashLevel( )
         ((pawsShortcutWindow*)(ShortcutMenu))->SetHPFlashLevel( 0 );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetHPOn( true );
         InfoWindow->SetHPFlashLevel( 0 );
+        SkillWindow->SetHPFlashLevel( 0 );
     }
 }
 
@@ -355,18 +352,21 @@ void pawsConfigHPandMana::UpdateManaWarnLevel( )
         }
         ((pawsShortcutWindow*)(ShortcutMenu))->SetManaWarnLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
         InfoWindow->SetManaWarnLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
+        SkillWindow->SetManaWarnLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
     }
     else
     {
         ManaWarnSetting->SetText( "Disabled" );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetManaWarnLevel( 0 );
         InfoWindow->SetManaWarnLevel( 0 );
+        SkillWindow->SetManaWarnLevel( 0 );
     }
 }
 
 void pawsConfigHPandMana::UpdateManaDangerLevel( )
 {
     if( !loaded ) return;
+
     csString temp;
     float tLevel = ManaDangerLevel->GetCurrentValue();
 
@@ -382,12 +382,14 @@ void pawsConfigHPandMana::UpdateManaDangerLevel( )
         }
         ((pawsShortcutWindow*)(ShortcutMenu))->SetManaDangerLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
         InfoWindow->SetManaDangerLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
+        SkillWindow->SetManaDangerLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
     }
     else
     {
         ManaDangerSetting->SetText( "Disabled" );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetManaDangerLevel( 0 );
         InfoWindow->SetManaDangerLevel( 0 );
+        SkillWindow->SetManaDangerLevel( 0 );
     }
 }
 
@@ -403,6 +405,7 @@ void pawsConfigHPandMana::UpdateManaFlashLevel( )
         ManaFlashSetting->SetText( temp );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetManaFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
         InfoWindow->SetManaFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
+        SkillWindow->SetManaFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
     }
     else
     {
@@ -410,6 +413,7 @@ void pawsConfigHPandMana::UpdateManaFlashLevel( )
         ((pawsShortcutWindow*)(ShortcutMenu))->SetManaFlashLevel( 0 );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetManaOn( true );
         InfoWindow->SetManaFlashLevel( 0 );
+        SkillWindow->SetManaFlashLevel( 0 );
     }
 }
 
@@ -503,7 +507,6 @@ bool pawsConfigHPandMana::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
 
 bool pawsConfigHPandMana::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget* wdg)
 {
-
     return true;
 }
 
@@ -514,11 +517,85 @@ void pawsConfigHPandMana::Show()
 
 void pawsConfigHPandMana::Hide()
 {
-    if(dirty)
-    {
-    }
-
     pawsWidget::Hide();
 }
 
+bool pawsConfigHPandMana::LoadUserSharedPrefs()
+{
+
+    csRef<iVFS>          vfs;
+    csRef<iDocument>     doc;
+    csRef<iDocumentNode> root,
+                         mainNode,
+                         optionNode,
+                         optionNode2;
+
+    csString fileName;
+    fileName = "/planeshift/userdata/options/confighpandmana.xml";
+
+    vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    if(!vfs->Exists(fileName))
+    {
+       return true; //no saved config to load.
+    }
+
+    doc = ParseFile(PawsManager::GetSingleton().GetObjectRegistry(), fileName);
+    if(doc == NULL)
+    {
+        Error2("pawsSkillWindow::LoadUserSharedPrefs Failed to parse file %s", fileName.GetData());
+        return false;
+    }
+    root = doc->GetRoot();
+    if(root == NULL)
+    {
+        Error2("pawsSkillWindow::LoadUserSharedPrefs : %s has no XML root",fileName.GetData());
+        return false;
+    }
+    mainNode = root->GetNode("hpandmana");
+    if(mainNode == NULL)
+    {
+        Error2("pawsSkillWindow::LoadUserSharedPrefs %s has no <hpandmana> tag",fileName.GetData());
+        return false;
+    }
+
+    optionNode = mainNode->GetNode("HPWarnLevel");
+    if(optionNode != NULL)
+    {
+        HPWarnLevel->SetCurrentValue(optionNode->GetAttributeValueAsFloat("value", true));
+        UpdateHPWarnLevel();
+    }
+    optionNode = mainNode->GetNode("HPDangerLevel");
+    if(optionNode != NULL)
+    {
+        HPDangerLevel->SetCurrentValue(optionNode->GetAttributeValueAsFloat("value", true));
+        UpdateHPDangerLevel();
+    }
+    optionNode = mainNode->GetNode("HPFlashLevel");
+    if(optionNode != NULL)
+    {
+        HPFlashLevel->SetCurrentValue(optionNode->GetAttributeValueAsFloat("value", true));
+        UpdateHPFlashLevel();
+    }
+
+    optionNode = mainNode->GetNode("ManaWarnLevel");
+    if(optionNode != NULL)
+    {
+        ManaWarnLevel->SetCurrentValue(optionNode->GetAttributeValueAsFloat("value", true));
+        UpdateManaWarnLevel();
+    }
+    optionNode = mainNode->GetNode("ManaDangerLevel");
+    if(optionNode != NULL)
+    {
+        ManaDangerLevel->SetCurrentValue(optionNode->GetAttributeValueAsFloat("value", true));
+        UpdateManaDangerLevel();
+    }
+    optionNode = mainNode->GetNode("ManaFlashLevel");
+    if(optionNode != NULL)
+    {
+        ManaFlashLevel->SetCurrentValue(optionNode->GetAttributeValueAsFloat("value", true));
+        UpdateManaFlashLevel();
+    }
+
+    return true;
+}
 

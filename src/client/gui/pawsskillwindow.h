@@ -94,6 +94,32 @@ public:
     virtual void Close();
 
     virtual void OnNumberEntered(const char *name,int param,int number);
+
+    /**
+    * Load the preferences set by the Shortcut Configuration interface
+    */
+    bool LoadUserSharedPrefs();
+
+    void SetHPWarnLevel( float val );
+    float GetHPWarnLevel();
+
+    void SetHPDangerLevel( float val );
+    float GetHPDangerLevel();
+
+    void SetHPFlashLevel( float val );
+    float GetHPFlashLevel();
+
+    void SetManaWarnLevel( float val );
+    float GetManaWarnLevel();
+
+    void SetManaDangerLevel( float val );
+    float GetManaDangerLevel();
+
+    void SetManaFlashLevel( float val );
+    float GetManaFlashLevel();
+
+    void SetHPOn( bool val );
+    void SetManaOn( bool val );
 protected:
 
     enum {
@@ -168,6 +194,7 @@ protected:
     /// once and everything else is an update.
     bool factRequest;
     psCharAppearance* charApp;
+
 };
 
 CREATE_PAWS_FACTORY( pawsSkillWindow );

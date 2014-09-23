@@ -37,6 +37,7 @@
 #include "shortcutwindow.h"
 #include "pawsinfowindow.h"
 #include "paws/pawscrollbar.h"
+#include "pawsskillwindow.h"
 
 
 class pawsCheckBox;
@@ -74,13 +75,14 @@ public:
     void UpdateManaDangerLevel( );
     void UpdateManaFlashLevel( );
 
-
+    bool LoadUserSharedPrefs();
 
 protected:
 
     pawsWidget*            ShortcutMenu;
     pawsScrollMenu*        MenuBar;
     pawsInfoWindow*        InfoWindow;
+    pawsSkillWindow*       SkillWindow;
 
     pawsScrollBar*         HPWarnLevel;
     pawsTextBox*           HPWarnSetting;
