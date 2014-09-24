@@ -2887,9 +2887,9 @@ AdminCmdDataSetSkill::AdminCmdDataSetSkill(AdminManager* msgManager, MsgEntry* m
         if(words[index] == "copy")
         {
             subCommand = words[index++];
-            // if parsing the word fails
             if(!sourcePlayer.ParseTarget(msgManager,me,msg,client,words[index]))
             {
+                // if parsing the word fails
                 // no source specified or
                 // target is already the clients target
                 if((IsTargetType(ADMINCMD_TARGET_CLIENTTARGET) && sourcePlayer.IsTargetType(ADMINCMD_TARGET_CLIENTTARGET)))
@@ -11163,7 +11163,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* 
     gemActor* source = NULL;
     psCharacter* schar = NULL;
 
-    if(data->sourcePlayer.targetClient)
+    if(data->sourcePlayer.targetActor)
     {
         source = data->sourcePlayer.targetActor;
     }
