@@ -46,10 +46,11 @@
 #include "paws/pawslistbox.h"
 
 
-#define PURIFY_BUTTON 1000
-#define SAVE_BUTTON   1001
-#define CAST_BUTTON   1002
-#define RESEARCH_BUTTON   1003
+#define PURIFY_BUTTON      1000
+#define SAVE_BUTTON        1001
+#define CAST_BUTTON        1002
+#define RESEARCH_BUTTON    1003
+#define HELP_BUTTON        1005
 
 
 
@@ -59,8 +60,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-pawsGlyphWindow::pawsGlyphWindow()
-
+pawsGlyphWindow::pawsGlyphWindow() :
+    description(NULL),
+    spellName(NULL),
+    spellImage(NULL),
+    helpButton(NULL),
+    helpWindow(NULL)
 {
     for (int i = 0; i < GLYPH_ASSEMBLER_SLOTS; i++)
         assembler[i] = NULL;
@@ -105,6 +110,12 @@ bool pawsGlyphWindow::PostSetup()
     
     spellImage = FindWidget("SpellImage");
     if ( !spellImage ) return false;
+
+    helpButton = (pawsTextBox *)FindWidget("HelpIcon");
+    if ( !helpButton ) return false;
+
+    helpWindow = FindWidget("magichelp");
+    if ( !helpWindow ) return false;
 
     ways.SetSize(GLYPH_WAYS);
 
@@ -261,7 +272,8 @@ pawsGlyphSlot * pawsGlyphWindow::FindFreeSlot(int wayNum)
 
 bool pawsGlyphWindow::OnMouseDown(int button, int modifiers, int x, int y)
 {
-    pawsGlyphSlot* widget = dynamic_cast<pawsGlyphSlot*>(WidgetAt(x, y));
+    pawsWidget    *widget = WidgetAt(x,y);
+
     if(widget)
     {
         return OnButtonPressed(button, modifiers, widget);
@@ -272,44 +284,52 @@ bool pawsGlyphWindow::OnMouseDown(int button, int modifiers, int x, int y)
 
 bool pawsGlyphWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pawsWidget* widget)
 {
-    pawsWidget *dndWidget = PawsManager::GetSingleton().GetDragDropWidget();
+    pawsWidget    *dndWidget    = PawsManager::GetSingleton().GetDragDropWidget();
     pawsGlyphSlot *floatingSlot = dynamic_cast <pawsGlyphSlot*> (dndWidget);
-    pawsGlyphSlot *clickedSlot = dynamic_cast <pawsGlyphSlot*> (widget);
-    csString slotName = widget->GetName();
+    pawsGlyphSlot *clickedSlot  = dynamic_cast <pawsGlyphSlot*> (widget);
+    csString      slotName      = widget->GetName();
 
-    // Check to see if this was the purify button.
-    if ( widget->GetID() == PURIFY_BUTTON )
+
+    switch( widget->GetID() )
     {
-        if (floatingSlot!=NULL  && floatingSlot->GetPurifyStatus()==0)
+        case PURIFY_BUTTON :
         {
-            psPurifyGlyphMessage mesg( floatingSlot->GetStatID() );
-            mesg.SendMessage();
+            if (floatingSlot!=NULL  && floatingSlot->GetPurifyStatus()==0)
+            {
+                psPurifyGlyphMessage mesg( floatingSlot->GetStatID() );
+                mesg.SendMessage();
 
-            PawsManager::GetSingleton().SetDragDropWidget(NULL);
-        }
-        return true;
-    }
-
-    // Check to see if this was the cast button.
-    if ( widget->GetID() == CAST_BUTTON )
-    {
-        if (!spellName->GetText())
+                PawsManager::GetSingleton().SetDragDropWidget(NULL);
+            }
             return true;
-
-        if (strcmp(spellName->GetText(),"")!=0)
-        {
-            csString name(spellName->GetText());
-            psSpellCastMessage mesg( name, psengine->GetKFactor() );
-            mesg.SendMessage();
         }
-        return true;
-    }
 
-    // Check to see if this was the research button.
-    if ( widget->GetID() == RESEARCH_BUTTON )
-    {
-        SendAssembler();
-        return true;
+        case CAST_BUTTON :
+        {
+            if (!spellName->GetText())
+                return true;
+
+            if (strcmp(spellName->GetText(),"")!=0)
+            {
+                csString name(spellName->GetText());
+                psSpellCastMessage mesg( name, psengine->GetKFactor() );
+                mesg.SendMessage();
+            }
+            return true;
+        }
+
+        case RESEARCH_BUTTON :
+        {
+            SendAssembler();
+            return true;
+        }
+
+        case HELP_BUTTON :
+        {
+            helpWindow->Show();
+            PawsManager::GetSingleton().SetCurrentFocusedWidget(helpWindow);
+            return true;
+        }
     }
 
     if (clickedSlot == NULL)
