@@ -123,9 +123,13 @@ bool pawsConfigChatFont::PostSetup()
 bool pawsConfigChatFont::LoadConfig()
 {
     csString tFontName=csString(((pawsChatWindow*)ChatWindow)->GetFontName());
-    tFontName.DeleteAt(0,21);
-    tFontName.DeleteAt( tFontName.Length()-4, 4); //delete the ending ".ttf"
-    textFont->Select( tFontName.GetData() );
+    if( !tFontName.IsEmpty() )
+    {
+        tFontName.DeleteAt(0,21);                     //remove the virtual path
+        tFontName.DeleteAt( tFontName.Length()-4, 4); //delete the ending ".ttf"
+        textFont->Select( tFontName.GetData() );
+    }
+    //else use the default blank setting
 
     textSize->SetCurrentValue(((pawsChatWindow*)ChatWindow)->GetFontSize(),false);
         
