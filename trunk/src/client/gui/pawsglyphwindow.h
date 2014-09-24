@@ -114,9 +114,11 @@ protected:
     /*** Clears the Spell name and Description fields. ***/
     void ClearSpell();
 
-    pawsMessageTextBox * description;
-    pawsTextBox * spellName;
-    pawsWidget *spellImage;
+    pawsMessageTextBox     *description;
+    pawsTextBox            *spellName;
+    pawsWidget             *spellImage;
+    pawsTextBox            *helpButton;
+    pawsWidget             *helpWindow;
     csArray <pawsListBox*> ways;
 
     pawsGlyphSlot * assembler[GLYPH_ASSEMBLER_SLOTS];
