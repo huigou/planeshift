@@ -45,6 +45,8 @@ pawsNpcDialogWindow::pawsNpcDialogWindow() : targetEID(0)
 {
     responseList = NULL;
     speechBubble = NULL;
+    closeBubble = NULL;
+    giveBubble = NULL;
     useBubbles = false;
     ticks = 0;
     cameraMode = 0;
@@ -66,8 +68,9 @@ bool pawsNpcDialogWindow::PostSetup()
     speechBubble = FindWidget("SpeechBubble");
     textBox = dynamic_cast<pawsEditTextBox*>(FindWidget("InputText"));
     closeBubble = dynamic_cast<pawsButton*>(FindWidget("CloseBubble"));
+    giveBubble = dynamic_cast<pawsButton*>(FindWidget("GiveBubble"));
 
-    if(!responseList || !FindWidget("Lists") || !speechBubble || !FindWidget("Bubbles") || !closeBubble)
+    if(!responseList || !FindWidget("Lists") || !speechBubble || !FindWidget("Bubbles") || !closeBubble || !giveBubble)
     {
         return false;
     }
@@ -159,8 +162,8 @@ bool pawsNpcDialogWindow::OnKeyDown(utf32_char keyCode, utf32_char key, int modi
                             unsigned long value = strtoul(answer.GetData() + pos + 1, NULL, 0);
                             questID = value;
                             // check for overflows
-	                		if(questID < -1) 
-                			{
+                            if(questID < -1) 
+                            {
                                 questID = -1;
                             }
 
@@ -230,8 +233,8 @@ bool pawsNpcDialogWindow::OnButtonPressed(int button, int keyModifier, pawsWidge
                         unsigned long value = strtoul(trigger.GetData() + pos + 1, NULL, 0);
                         questID = value;
                         // check for overflows
-                		if(questID < -1) 
-            			{
+                        if(questID < -1) 
+                        {
                             questID = -1;
                         }
                     }
@@ -267,6 +270,12 @@ bool pawsNpcDialogWindow::OnButtonPressed(int button, int keyModifier, pawsWidge
             else if(name == "SpeechBubble")
             {
                 clickedOnResponseBubble = true;
+            }
+            else if(name == "GiveBubble")
+            {
+                // give button was pressed              
+                csString cmd = "/give";
+                psengine->GetCmdHandler()->Publish(cmd);
             }
             // process the left/right arrow clicking event
             else
@@ -438,8 +447,8 @@ void pawsNpcDialogWindow::OnListAction(pawsListBox* widget, int status)
                 unsigned long value = strtoul(trigger.GetData() + pos + 1, NULL, 0);
                 questID = value;
                 // check for overflows
-	    		if(questID < -1) 
-    			{
+                if(questID < -1) 
+                {
                     questID = -1;
                 }
 
@@ -505,6 +514,7 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
             AdjustForPromptWindow(); // should be done before DisplayQuestBubbles
             DisplayQuestBubbles(displayIndex);
             gotNewMenu = true;
+            giveBubble->Show();
         }
         else
         {
@@ -588,6 +598,7 @@ void pawsNpcDialogWindow::NpcSays(csString &inText,GEMClientActor* actor)
         FindWidget("LeftArrow")->Hide();
         FindWidget("RightArrow")->Hide();
         FindWidget("FreeBubble")->Hide();
+        FindWidget("GiveBubble")->Hide();
 
         ticks = csGetTicks();
         timeDelay = (csTicks)(2000 + 50*strlen(inText.GetData()) + 2000); // add 2 seconds for network delay
@@ -706,6 +717,7 @@ void pawsNpcDialogWindow::SetupWindowWidgets()
         SetSize(defaultFrame.Width(), defaultFrame.Height());
         CenterTo(graphics2D->GetWidth() / 2, graphics2D->GetHeight() / 2);
         FindWidget("FreeBubble")->Show();
+        giveBubble->Show();
         textBox->Clear();
     }
     else
@@ -715,6 +727,7 @@ void pawsNpcDialogWindow::SetupWindowWidgets()
         lists->Show();
         responseList->Show();
         bubbles->Hide();
+        giveBubble->Hide();
         SetMovable(true);
         psengine->GetPSCamera()->LockCameraMode(false);
         psengine->GetCharManager()->LockTarget(false);
@@ -731,6 +744,7 @@ void pawsNpcDialogWindow::CleanBubbles()
     FindWidget("RightArrow")->Hide();
     dynamic_cast<pawsMultiLineTextBox*>(speechBubble->FindWidget("BubbleText"))->SetText("");
     FindWidget("SpeechBubble")->Hide();
+    giveBubble->Hide();
     displayIndex = 0;
     questInfo.DeleteAll();
     DisplayQuestBubbles(0);

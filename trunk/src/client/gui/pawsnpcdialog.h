@@ -46,7 +46,11 @@ public:
     };
     pawsNpcDialogWindow();
 
+    /**
+     * Aquire pointers to widgets and load settings for the npc dialog.
+     */
     bool PostSetup();
+    
     void HandleMessage(MsgEntry* me);
 
     void OnListAction(pawsListBox* widget, int status);
@@ -84,6 +88,9 @@ public:
     virtual void Hide();
     bool OnKeyDown(utf32_char keyCode, utf32_char key, int modifiers);
     bool OnMouseDown(int button, int modifiers, int x , int y);
+    /**
+     * callback function called when a pawsButton (bubble) is clicked
+     */
     bool OnButtonPressed(int button, int keyModifier, pawsWidget* widget);
 
     // This window should always stay on the background
@@ -173,13 +180,15 @@ private:
     bool enabledChatBubbles;       ///< Stores the state of chat bubbles.
     bool clickedOnResponseBubble;  ///< flag when player clicks on the response bubble
     bool gotNewMenu;               ///< keeps track of the incoming new menu message
-    csTicks timeDelay;                 ///< calculates the time needed to read the last npc say
+    csTicks timeDelay;             ///< calculates the time needed to read the last npc say
     int questIDFree;               ///< Keeps the value of the quest if the free text question was triggered.
 
     pawsListBox* responseList;
     pawsWidget* speechBubble;
     pawsEditTextBox* textBox;
     pawsButton* closeBubble;
+    pawsButton* giveBubble;
+    
     csTicks         ticks;
     EID targetEID; ///< The eid of the current target used to hide the dialog if the actor is removed.
 };
