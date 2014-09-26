@@ -22,6 +22,10 @@
 #include <psconfig.h>
 #include "globals.h"
 
+// CLIENT INCLUDES
+#include "pscelclient.h"
+
+
 // COMMON/NET INCLUDES
 #include "net/messages.h"
 #include "net/clientmsghandler.h"
@@ -36,6 +40,9 @@
 
 #define ROLL_BUTTON  100
 #define TAKE_BUTTON  200
+#define ROLLALL_BUTTON  300
+#define TAKEALL_BUTTON  400
+
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -67,8 +74,12 @@ bool pawsLootWindow::PostSetup()
     msgqueue->Subscribe(this, MSGTYPE_LOOT);
     msgqueue->Subscribe(this, MSGTYPE_LOOTREMOVE);
 
-    // Grab the pointer to the petition listbox:
+    // Grab the pointer to the loot listbox:
     lootList  = (pawsListBox*)FindWidget("LootList");
+
+    // grab the pointer to the roll buttons
+    Roll_btn = (pawsButton*)FindWidget(ROLL_BUTTON);
+    RollAll_btn = (pawsButton*)FindWidget(ROLLALL_BUTTON);
 
     return true;
 }
@@ -83,7 +94,7 @@ const char* pawsLootWindow::HandleCommand(const char* /*cmd*/)
     char* buff = csStrNew(cmd);
 
     // Check which command was invoked:
-    if ( !strncmp(buff+1, "petition_list", 13))
+    if ( !strncmp(buff+1, "loot_list", 13))
     {
     // First, display this window to the user
     Show();
@@ -101,12 +112,12 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
     {
         case MSGTYPE_LOOT:
         {
-            // Get the petition message data from the server
+            // Get the loot message data from the server
             psLootMessage message(me);
 
             lootEntity = message.entity_id;
 
-            // Clear the list box and add the user's petitions
+            // Clear the list box and add the user's loots
             lootList->Clear();
 
             lootList->SelfPopulateXML(message.lootxml);
@@ -126,6 +137,20 @@ void pawsLootWindow::HandleMessage ( MsgEntry* me )
             if (lootList->GetRowCount() > 0)
             {
                 lootList->Select(lootList->GetRow(0),false); // Select first as default
+                GEMClientActor* player = psengine->GetCelClient()->GetMainPlayer();  // get the player
+                if (player->GetGroupID() == 0)  // if player is not grouped, hide the roll buttons
+                {
+                    grouped = false;
+                    Roll_btn->Hide();
+                    RollAll_btn->Hide();
+                }
+                else
+                {
+                    grouped = true;
+                    Roll_btn->Show();
+                    RollAll_btn->Show();
+                }
+
                 Show();
             } 
             break;
@@ -197,6 +222,18 @@ bool pawsLootWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, p
                 psLootItemMessage take(0,lootEntity,id,psLootItemMessage::LOOT_ROLL);
                 msgqueue->SendMessage(take.msg);
             }
+            break;
+        }
+
+        case TAKEALL_BUTTON:
+        {
+                       psengine->GetCmdHandler()->Execute("/loot all");
+            break;
+        }
+
+        case ROLLALL_BUTTON:
+        {
+                       psengine->GetCmdHandler()->Execute("/loot roll all");
             break;
         }
     }

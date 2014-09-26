@@ -15,6 +15,16 @@
         <bgimage resource="ButtonPickup" />
     </widget>
 
+    <widget name="TakeAll" factory="pawsButton" id="300" tooltip="Take all items">
+        <frame x="10" y="5" width="48" height="48" />
+        <bgimage resource="ButtonPickup" />
+    </widget>
+
+    <widget name="RollAll" factory="pawsButton" id="400" tooltip="Roll for all items">
+        <frame x="60" y="5" width="48" height="48" />
+        <bgimage resource="ButtonPickup" />
+    </widget>
+
     <widget name="LootList" factory="pawsListBox" xmlbinding="loot" >
         <frame x="10" y="60" width="270" height="330" border="no"/>
 

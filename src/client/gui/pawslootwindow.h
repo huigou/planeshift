@@ -71,11 +71,18 @@ protected:
     /// Quicker way to set text for each column in the listbox:
     void SetText(int rowNum, int colNum, const char* fmt, ...);
 
-    /// Function to add the petitions to the listbox given a csArray;
+    /// Function to add the loot to the listbox given a csArray;
     void AddLootItem();
 
-    /// List widget of petitions for easy access
+    /// List widget of loot for easy access
     pawsListBox* lootList;
+
+    /// group roll buttons
+    pawsButton* Roll_btn;
+    pawsButton* RollAll_btn;
+
+    bool grouped;
+
 
     EID lootEntity;
 };
