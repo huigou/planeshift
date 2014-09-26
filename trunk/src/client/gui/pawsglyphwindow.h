@@ -117,7 +117,7 @@ protected:
     pawsMessageTextBox     *description;
     pawsTextBox            *spellName;
     pawsWidget             *spellImage;
-    pawsTextBox            *helpButton;
+    pawsButton             *helpButton;
     pawsWidget             *helpWindow;
     csArray <pawsListBox*> ways;
 

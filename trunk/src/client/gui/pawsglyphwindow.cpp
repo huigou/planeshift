@@ -111,11 +111,8 @@ bool pawsGlyphWindow::PostSetup()
     spellImage = FindWidget("SpellImage");
     if ( !spellImage ) return false;
 
-    helpButton = (pawsTextBox *)FindWidget("HelpIcon");
+    helpButton = dynamic_cast <pawsButton*> (FindWidget("HelpIcon"));
     if ( !helpButton ) return false;
-
-    helpWindow = FindWidget("magichelp");
-    if ( !helpWindow ) return false;
 
     ways.SetSize(GLYPH_WAYS);
 
@@ -272,8 +269,8 @@ pawsGlyphSlot * pawsGlyphWindow::FindFreeSlot(int wayNum)
 
 bool pawsGlyphWindow::OnMouseDown(int button, int modifiers, int x, int y)
 {
-    pawsWidget    *widget = WidgetAt(x,y);
-
+    //pawsWidget    *widget = WidgetAt(x,y);
+pawsGlyphSlot* widget = dynamic_cast<pawsGlyphSlot*>(WidgetAt(x, y));
     if(widget)
     {
         return OnButtonPressed(button, modifiers, widget);
@@ -326,8 +323,18 @@ bool pawsGlyphWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, 
 
         case HELP_BUTTON :
         {
-            helpWindow->Show();
-            PawsManager::GetSingleton().SetCurrentFocusedWidget(helpWindow);
+            if( !helpWindow )
+                helpWindow = PawsManager::GetSingleton().FindWidget("magichelp");
+            if (!helpWindow )
+            {
+                Error1( "pawsGlyphWindow::OnButtonPressed unable to read helpWindow widget!!\n");
+                return false;
+            }
+
+            if( !helpWindow->IsVisible() )
+                helpWindow->Show();
+            else
+                helpWindow->Hide();
             return true;
         }
     }
