@@ -5,24 +5,24 @@
     <title resource="Scaling Title Bar" text="Loot" align="left" close_button="yes" />
 
 
-    <widget name="Roll" factory="pawsButton" id="100" tooltip="Group loot">
-        <frame x="170" y="5" width="48" height="48" />
+    <widget name="Roll" factory="pawsButton" id="100" tooltip="Group loot one item">
+        <frame x="60" y="5" width="48" height="48" />
         <bgimage resource="ButtonLoot" />
     </widget>
 
-    <widget name="Take" factory="pawsButton" id="200" tooltip="Take item">
+    <widget name="Take" factory="pawsButton" id="200" tooltip="Take one item">
         <frame x="230" y="5" width="48" height="48" />
         <bgimage resource="ButtonPickup" />
     </widget>
 
     <widget name="TakeAll" factory="pawsButton" id="300" tooltip="Take all items">
-        <frame x="10" y="5" width="48" height="48" />
-        <bgimage resource="ButtonPickup" />
+        <frame x="170" y="5" width="48" height="48" />
+        <bgimage resource="TakeAll" />
     </widget>
 
-    <widget name="RollAll" factory="pawsButton" id="400" tooltip="Roll for all items">
-        <frame x="60" y="5" width="48" height="48" />
-        <bgimage resource="ButtonPickup" />
+    <widget name="RollAll" factory="pawsButton" id="400" tooltip="Group loot all items">
+        <frame x="10" y="5" width="48" height="48" />
+        <bgimage resource="GroupRandomAll" />
     </widget>
 
     <widget name="LootList" factory="pawsListBox" xmlbinding="loot" >

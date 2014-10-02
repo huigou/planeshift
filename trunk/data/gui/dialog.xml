@@ -118,22 +118,19 @@
             <bgimage resource="InputBubble" />
 
             <widget name="GiveTrigger" factory="pawsTextBox" style="textinput">
-                <frame x="40" y="10" width="35" height="40" border="no" />
+                <frame x="10" y="10" width="130" height="40" border="no" />
                 <font r="168" g="183" b="206" size="12" bold="yes" />
-                <text string="Give" />
+                <text string="Give items to NPCs." />
             </widget>
         </widget>
 
         <widget name="FreeBubble" factory="pawsWidget" visible="yes">
             <frame x="630" y="155" width="294" height="100" border="no" />
             <bgimage resource="InputBubble" />
-            <widget name="SingleLabel" factory="pawsTextBox" style="textinput">
-                <frame x="28" y="13" width="250" height="25" border="no" />
-                <text string="Write responses to quest questions here."/>
-            </widget>
-            <widget name="SingleLabel" factory="pawsTextBox" style="textinput">
-                <frame x="28" y="33" width="250" height="25" border="no" />
-                <text string="Or ask questions to NPCs at any time."/>
+            <widget name="SingleLabel" factory="pawsMultiLineTextBox" style="textinput">
+                <frame x="28" y="13" width="250" height="50" border="no" />
+                <text string="Write responses to quest questions here. 
+Or ask questions to NPCs at any time."/>
             </widget>
             <widget name="StartSign" factory="pawsTextBox" style="textinput">
                 <frame x="20" y="55" width="8" height="25" border="no"/>
