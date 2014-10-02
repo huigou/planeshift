@@ -542,9 +542,32 @@ void pawsChatWindow::LoadChatSettings()
             csRef<iDocumentNode> option = oNodes->Next();
             if (option->GetType() == CS_NODE_ELEMENT && csString(option->GetValue()) == "completionitem")
             {
+                //load the completion items into an array, sorted using a very inefficient insertion sort. I don't expect there will be more than a few dozen completion words but if anyone has enough that this inefficiency is noticeable then open a bug report. -Eredin
                 csString completionItem = option->GetAttributeValue("value");
                 if (settings.completionItems.Find(completionItem) == csArrayItemNotFound)
-                    settings.completionItems.Push(completionItem);
+                {
+                    int listSize = settings.completionItems.GetSize(),
+                        index;
+
+                    if( listSize== 0 )
+                    {
+                        settings.completionItems.Push(completionItem);
+                    }
+                    else {
+                        for(index=0; index<listSize; index ++ )
+                        {
+                            if( settings.completionItems[index]>completionItem )
+                            {
+                                settings.completionItems.Insert(index,completionItem);
+                                break;
+                            }
+                            else if( index+1==listSize || listSize==0 )
+                            {
+                                settings.completionItems.Push(completionItem);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
