@@ -209,8 +209,8 @@
     </widget>
 
     <widget name="HelpIcon" factory="pawsButton" tooltip="Click for help" id="1005" >
-        <frame x="130" y="355" width="30" height="30" />
-        <font name="/planeshift/data/ttf/cupandtalon.ttf" r="121" g="147" b="42" size="20" bold="yes"  />
+        <frame x="130" y="350" width="30" height="30" />
+        <font name="/planeshift/data/ttf/LiberationSerif-Regular.ttf" r="121" g="147" b="42" size="20" bold="yes"  />
         <label text="?" />
     </widget>
 </widget>
