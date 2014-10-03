@@ -202,7 +202,7 @@ void pawsDnDButton::Draw()
 
         //update the progress meter
         spellProgress->SetCurrentValue(currentProgress);
-        spellProgress->SetRelativeFrame( 3, 3, screenFrame.Width()-6, screenFrame.Height()-6 );
+        spellProgress->SetRelativeFrame( 1, 1, screenFrame.Width()-2, screenFrame.Height()-2 );
 
         csTicks remainingTime   = (castingTime-(currentTime-startTime))/1000;
         if( lastToolTipTime > remainingTime ) //only update once per second
