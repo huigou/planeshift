@@ -76,17 +76,50 @@ protected:
                          csString &him, csString &her, csString &it, csString &them) const;
     bool BuildTriggerList(csString &block,csStringArray &list) const;
 
-    bool BuildMenu(const csString &block,const csStringArray &list, psQuest* quest, NpcDialogMenu* menu) const;
+    /**
+     * @short Parse QuestScript entries from a string.
+     * 
+     * Parse all Menu: entries from a string
+     *  
+     * @param block is the string to parse.
+     * @param triggers is a list of trigger strings, for each menu entry one
+     * @param quest that this menu is attached to
+     * @param menu to add the triggers to
+     */
+    bool ParseQuestScriptMenu(const csString &block,const csStringArray &triggers, psQuest* quest, NpcDialogMenu* menu) const;
 
     int GetNPCFromBlock(WordArray words,csString &current_npc);
     bool ParseItemList(const csString &input, csString &parsedItemList);
     bool ParseItem(const char* text, psStringArray &xmlItems, psMoney &money);
 
+    /** @short Adds a NpcResponse to the dict (global var)
+     * 
+     * Creates a new NpcResponse object for the given npc with the given trigger and data.
+     * @param current_npc the npc that the response is for.
+     * @param response_text is the text.
+     * @param last_response_id is just an output variable, and will contain the id of the new response
+     * @param quest is the quest generating the response
+     * @param him
+     * @param her
+     * @param it
+     * @param them
+     * @param file_path to the voice file (if any)
+     */
     NpcResponse* AddResponse(const csString &current_npc,const char* response_text,
                              int &last_response_id, psQuest* quest,
                              csString &him, csString &her, csString &it, csString &them, csString &file_path);
+    /** @short Adds a Trigger for a NpcResponse to the dict (global var)
+     * 
+     * Creates and registeres a trigger with the dict.
+     * @param current_npc the npc that the response is for.
+     * @param trigger contains the text that evokes the trigger
+     * @param prior_response_id is the preceeding response id
+     * @param trig_response is the response that was already created and registered with dict.
+     * @param quest is the quest generating the trigger
+     * @param postfix
+     */
     bool         AddTrigger(const csString &current_npc,const char* trigger,
-                            int prior_response_id,int trig_response, psQuest* quest, const psString &postfix);
+                            int prior_response_id,NpcResponse* trig_response, psQuest* quest, const psString &postfix);
     void         MergeTriggerMenus(NpcDialogMenu* pending_menu, const csString &current_npc);
 
     void GetNextScriptLine(psString &scr, csString &block, size_t &start, int &line_number);

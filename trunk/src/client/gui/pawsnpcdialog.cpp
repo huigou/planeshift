@@ -48,11 +48,12 @@ pawsNpcDialogWindow::pawsNpcDialogWindow() : targetEID(0)
     closeBubble = NULL;
     giveBubble = NULL;
     useBubbles = false;
+    npcMsgTimeoutScale = 1.0f;
+    npcMsgTimeoutScaleMax = 5.0f;
     ticks = 0;
     cameraMode = 0;
     loadOnce = 0;
     questIDFree = -1;
-    enabledChatBubbles = true;
     clickedOnResponseBubble = false;
     gotNewMenu = false;
     timeDelay = 3000; // initial minimum time of 3 seconds
@@ -89,14 +90,54 @@ void pawsNpcDialogWindow::Draw()
 {
     //let this dialog invisible for the time calculated to read the NPC say text
     //if we got a new psDialogMenuMessage we don't need to ask for a new menu (gotNewMenu)
-    if(useBubbles && ticks != 0 && csGetTicks()-ticks > timeDelay && !gotNewMenu)
+    if(useBubbles && npcMsgQueue.GetSize() > 0 && ((ticks != 0 && csGetTicks()-ticks > timeDelay) || clickedOnResponseBubble))
     {
-        Debug1(LOG_PAWS,0,"Hiding NPC speech and asking for another set of possible questions.");
-        speechBubble->Hide();
-        FindWidget("FreeBubble")->Show();
-        psengine->GetCmdHandler()->Execute("/npcmenu");
-        ticks = 0;
+        // delete first entry (deleting an non existant index is not a problem)
+        npcMsgQueue.DeleteIndex(0);
+        
+        // if there is still something left, just display the next message
+        if (npcMsgQueue.GetSize() > 0)
+        {
+            clickedOnResponseBubble = false;
+            NpcSays();
+        }
+        // if no new menu was sent by the server, request the default npc menu
+        // this only works properly after the last message was given by the npc
+        else if (!gotNewMenu)
+        {
+            // if no new menu was sent by the server, request the default npc menu
+            Debug1(LOG_PAWS,0,"Hiding NPC speech and asking for another set of possible questions.");
+                speechBubble->Hide();
+            FindWidget("FreeBubble")->Show();
+            psengine->GetCmdHandler()->Execute("/npcmenu");
+            ticks = 0;
+            displaysNewMenu = false;
+        }
+    } 
+    else if (npcMsgQueue.GetSize() == 0 && (csGetTicks()-ticks > timeDelay || clickedOnResponseBubble))
+    {
+        if (gotNewMenu && ! displaysNewMenu)
+        {
+            if (useBubbles)
+            {
+                speechBubble->Hide(); // hide previous npc say response
+                AdjustForPromptWindow(); // should be done before DisplayQuestBubbles
+                DisplayQuestBubbles(displayIndex);          
+                giveBubble->Show();
+            }
+            else
+            {
+                AdjustForPromptWindow();
+            }
+
+            Show();
+            displaysNewMenu = true;
+        }
+        
     }
+    
+    SendToBottom(this);
+    
     //printf("gotNewMenu: %d, ticks: %d timeDelay: %d\n",gotNewMenu?1:0, (csGetTicks()-ticks), timeDelay);
     pawsWidget::Draw();
 }
@@ -506,22 +547,15 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
         responseList->Clear();
 
         SelfPopulateXML(mesg.xml);
+        
+        gotNewMenu = true;
+        displaysNewMenu = false;
 
         if(useBubbles)
         {
-            speechBubble->Hide(); // hide previous npc say response
-            LoadQuest(mesg.xml);
-            AdjustForPromptWindow(); // should be done before DisplayQuestBubbles
-            DisplayQuestBubbles(displayIndex);
-            gotNewMenu = true;
+            LoadQuest(mesg.xml);       
             giveBubble->Show();
         }
-        else
-        {
-            AdjustForPromptWindow();
-        }
-
-        Show();
     }
     else if(me->GetType() == MSGTYPE_CHAT)
     {
@@ -556,11 +590,22 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
             default:
                 inText = chatMsg.sText;
         }
-        NpcSays(inText, actor);
+        
+        // text queue empty 
+        bool textQueueEmpty = npcMsgQueue.IsEmpty();
+        
+        if(IsVisible() && actor && psengine->GetCharManager()->GetTarget() == actor)
+        {
+            npcMsgQueue.Push(inText);
 
-        //checks if the NPC Dialogue is displayed, in this case don't show the normal overhead bubble
-        if(IsVisible())
-            return;
+            // queue was previously empty, so start talking
+            if (textQueueEmpty)
+            {               
+                NpcSays();
+            }
+            
+            ShowSpeechBubble();
+        }
     }
     else if(me->GetType() == MSGTYPE_REMOVE_OBJECT)
     {
@@ -577,37 +622,52 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
     }
 }
 
-void pawsNpcDialogWindow::NpcSays(csString &inText,GEMClientActor* actor)
+void pawsNpcDialogWindow::ShowSpeechBubble()
 {
-    //this is used only when using the chat bubbles interface
+    // this is used solely when the chat bubbles interface is active
     if(!useBubbles)
     {
         return;
     }
+    
+    // show speech bubble and hide the rest of the bubbles    
+    speechBubble->Show();
+    FindWidget("Bubble1")->Hide();
+    FindWidget("Bubble2")->Hide();
+    FindWidget("Bubble3")->Hide();
+    FindWidget("LeftArrow")->Hide();
+    FindWidget("RightArrow")->Hide();
+    FindWidget("FreeBubble")->Hide();
+    FindWidget("GiveBubble")->Hide();
+    Show(); //show the npc dialog
+}
 
+void pawsNpcDialogWindow::NpcSays() //csString &inText,GEMClientActor* actor)
+{
+    // this is used solely when the chat bubbles interface is active
+    if(!useBubbles)
+    {
+        return;
+    }
+    if(npcMsgQueue.GetSize() <= 0)
+    {
+        return;
+    }
+    // load next text
+    csString text = npcMsgQueue[0];
+    // response bubble has not been clicked yet
     clickedOnResponseBubble = false;
 
     //display npc response
-    if(IsVisible() && actor && psengine->GetCharManager()->GetTarget() == actor)
-    {
-        dynamic_cast<pawsMultiLineTextBox*>(speechBubble->FindWidget("BubbleText"))->SetText(inText.GetData());
-        speechBubble->Show();
-        FindWidget("Bubble1")->Hide();
-        FindWidget("Bubble2")->Hide();
-        FindWidget("Bubble3")->Hide();
-        FindWidget("LeftArrow")->Hide();
-        FindWidget("RightArrow")->Hide();
-        FindWidget("FreeBubble")->Hide();
-        FindWidget("GiveBubble")->Hide();
-
-        ticks = csGetTicks();
-        timeDelay = (csTicks)(2000 + 50*strlen(inText.GetData()) + 2000); // add 2 seconds for network delay
-        timeDelay =  timeDelay>14000?14000:timeDelay; // clamp to 14000 max
-
-        Show(); //show the npc dialog
-    }
+    dynamic_cast<pawsMultiLineTextBox*>(speechBubble->FindWidget("BubbleText"))->SetText(text.GetData());
+    
+    // set amount of time the message is displayed
+    ticks = csGetTicks();
+    int itime = 1000 + 50*text.Length() + 1000;
+    float time = (float)(itime);
+    time = time * npcMsgTimeoutScale; // 0.5 = round up
+    timeDelay = (csTicks)(time);
 }
-
 
 void pawsNpcDialogWindow::AdjustForPromptWindow()
 {
@@ -814,7 +874,7 @@ void pawsNpcDialogWindow::Show()
                 psengine->GetPSCamera()->SetCameraMode(0); //set the camera to the first person mode
                 targetEID = cobj->GetEID();
             }
-            enabledChatBubbles = psengine->GetChatBubbles()->isEnabled();
+            //enabledChatBubbles = psengine->GetChatBubbles()->isEnabled();
             //psengine->GetChatBubbles()->setEnabled(false);
         }
 
@@ -891,6 +951,14 @@ bool pawsNpcDialogWindow::LoadSetting()
                 //showWindow->SetState(!option->GetAttributeValueAsBool("value"));
                 useBubbles = option->GetAttributeValueAsBool("value");
             }
+            if(nodeName == "npcmessagetimeoutscale")
+            {
+                npcMsgTimeoutScale = option->GetAttributeValueAsFloat("value");
+            }
+            if(nodeName == "npcmessagetimeoutscalemax")
+            {
+                npcMsgTimeoutScaleMax = option->GetAttributeValueAsFloat("value");
+            }
         }
     }
 
@@ -907,6 +975,7 @@ void pawsNpcDialogWindow::SaveSetting()
 
     csRef<iDocument> doc = docsys->CreateDocument();
     csRef<iDocumentNode> root,defaultRoot, npcDialogNode, npcDialogOptionsNode, useNpcDialogNode;
+    csRef<iDocumentNode> npcMsgTimeoutNode, npcMsgTimeoutMaxNode;
 
     root = doc->CreateRoot();
 
@@ -919,6 +988,14 @@ void pawsNpcDialogWindow::SaveSetting()
     useNpcDialogNode = npcDialogOptionsNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
     useNpcDialogNode->SetValue("usenpcdialog");
     useNpcDialogNode->SetAttributeAsInt("value", useBubbles? 1 : 0);
+    
+    npcMsgTimeoutNode = npcDialogOptionsNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+    npcMsgTimeoutNode->SetValue("npcmessagetimeoutscale");
+    npcMsgTimeoutNode->SetAttributeAsFloat("value", npcMsgTimeoutScale);
+    
+    npcMsgTimeoutMaxNode = npcDialogOptionsNode->CreateNodeBefore(CS_NODE_ELEMENT, 0);
+    npcMsgTimeoutMaxNode->SetValue("npcmessagetimeoutscalemax");
+    npcMsgTimeoutMaxNode->SetAttributeAsInt("value", npcMsgTimeoutScaleMax);
 
     doc->Write(file);
 }

@@ -359,7 +359,7 @@ protected:
     /**
      * The quest that need to be completed.
      */
-    psQuest* quest;
+    csWeakRef<psQuest> quest;
     csString name;
 
 public:
@@ -369,7 +369,7 @@ public:
      *
      * @param quest The quest that need to be completed
      */
-    psQuestPrereqOpQuestCompleted(psQuest* quest):quest(quest) {};
+    psQuestPrereqOpQuestCompleted(psQuest* quest):quest(quest) { GetQuestName(); };
 
     /**
       * Construct a quest completed operator
@@ -412,6 +412,22 @@ public:
      * @return Copy of the prerequisite operator.
      */
     virtual csPtr<psQuestPrereqOp> Copy();
+    
+    /**
+     * retrieve the quest.
+     * 
+     * check the weak pointer reference, and if it's invalid try to
+     * retrieve the quest again.
+     */
+    virtual psQuest* GetQuest();
+    
+    /**
+     * retrieve the quest name.
+     * 
+     * check weak pointer reference and try to optain a new ref, if
+     * it's invalid. Otherwise name is used
+     */
+    virtual csString GetQuestName();
 };
 
 /**
@@ -426,7 +442,8 @@ protected:
     /**
      * The quest that need to be assigned.
      */
-    psQuest* quest;
+    csWeakRef<psQuest> quest;
+    csString questName; /// name of the quest (for weakref if invalid)
 public:
 
     /**
@@ -434,7 +451,7 @@ public:
      *
      * @param quest The quest that need to be assigned.
      */
-    psQuestPrereqOpQuestAssigned(psQuest* quest):quest(quest) {};
+    psQuestPrereqOpQuestAssigned(psQuest* quest):quest(quest) { GetQuestName(); };
 
     /**
      */
@@ -469,6 +486,22 @@ public:
      * @return Copy of the prerequisite operator.
      */
     virtual csPtr<psQuestPrereqOp> Copy();
+    
+    /**
+     * retrieve the quest.
+     * 
+     * check the weak pointer reference, and if it's invalid try to
+     * retrieve the quest again.
+     */
+    virtual psQuest* GetQuest();
+    
+    /**
+     * retrieve the quest name.
+     * 
+     * check weak pointer reference and try to optain a new ref, if
+     * it's invalid. Otherwise name is used
+     */
+    virtual csString GetQuestName();
 };
 
 /**

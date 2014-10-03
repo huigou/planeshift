@@ -1,3 +1,6 @@
+/** @file scripting.cpp
+ */
+
 /*
  * scripting.cpp - by Kenneth Graunke <kenneth@whitecape.org>
  *
@@ -16,6 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  */
+
 
 #include <psconfig.h>
 #include "scripting.h"
@@ -53,6 +57,10 @@
 #include "gem.h"
 #include "psserver.h"
 #include "psproxlist.h"
+
+/**
+ * \addtogroup xmlscripting
+ * @{ */
 
 //============================================================================
 // Convenience Functions
@@ -132,6 +140,8 @@ protected:
 // Applied mode operations
 //============================================================================
 
+/** @short base class for applied script operations.
+ */
 class AppliedOp
 {
 public:
@@ -196,6 +206,10 @@ public:
         return Applied1::Load(node);
     }
 
+    /**
+     * retrieve a description and value of the vital value
+     * @return a description prefix 
+     */
     virtual const csString GetDescription(MathEnvironment* env)
     {
         csString descr;
@@ -253,11 +267,11 @@ protected:
 /**
  * HPRateAOp - alter HP regeneration rate over time
  *
- * Unlike other vitals, <hp-rate> can specify an optional attacker who will
+ * Unlike other vitals, \<hp-rate\> can specify an optional attacker who will
  * be recorded in the target's damage history.
  *
- * <hp-rate attacker="Caster" value="-0.3"/>
- * <hp-rate value="0.5"/>
+ * \<hp-rate attacker="Caster" value="-0.3"/>
+ * \<hp-rate value="0.5"/>
  */
 
 class HPRateAOp : public Applied1
@@ -292,7 +306,9 @@ protected:
 
 //----------------------------------------------------------------------------
 
-// Applied mode stats.
+/**
+ * Applied mode stats.
+ */
 class StatsAOp : public Applied1
 {
 public:
@@ -582,7 +598,7 @@ public:
 
 //----------------------------------------------------------------------------
 
-/// A cancel action that sends the "undo" part of <npccmd text="..." undo="..."/>.
+/// A cancel action that sends the "undo" part of \<npccmd text="..." undo="..."/\>.
 class NPCCancel : public iCancelAction
 {
 public:
@@ -606,7 +622,7 @@ protected:
 /**
  * NPCAOp - over time npc command sending:
  *
- * <npccmd aim="Caster" cmd="spam spam spam spam...!"/>
+ * \<npccmd aim="Caster" cmd="spam spam spam spam...!"/\>
  */
 class NPCAOp : public AppliedOp
 {
@@ -679,7 +695,7 @@ protected:
 /**
  * PetAOp - Add target to caster's list of pets:
  *
- * <add_pet aim="Target" owner="Caster"/>
+ * \<add_pet aim="Target" owner="Caster"/\>
  */
 class PetAOp : public AppliedOp
 {
@@ -729,7 +745,7 @@ protected:
 
 //----------------------------------------------------------------------------
 
-/// A cancel action that sends the "undo" part of <msg text="..." undo="..."/>.
+/// A cancel action that sends the "undo" part of \<msg text="..." undo="..."/\>.
 class MsgCancel : public iCancelAction
 {
 public:
@@ -825,14 +841,14 @@ private:
  * Effects have both a source (i.e. caster) and target.  For applied effects,
  * the target is always the character the ActiveSpell applies to.
  *
- * The basic form is: <fx name="Freezing Mist"/>.  Here, the source and target
+ * The basic form is: \<fx name="Freezing Mist"/\>.  Here, the source and target
  * are both the same entity.
  *
  * For effects coming from a different source, there are two forms:
  * 1. Coming from a gem entity:
- *    <fx name="Freezing Mist" source="Caster"/>
+ *    \<fx name="Freezing Mist" source="Caster"/\>
  * 2. Coming from a fixed offset from the target:
- *    <fx name="Freezing Mist" x="-4.2" y="0.3" z="-12.7"/>
+ *    \<fx name="Freezing Mist" x="-4.2" y="0.3" z="-12.7"/\>
  *
  * We cannot persist the first form, since the entity may not exist when we
  * later reload the script.  But the second serves as a good approximation:
@@ -1048,7 +1064,7 @@ protected:
 /**
  * LetAOp - a way to evaluate MathScript stuff and create new bindings:
  *
- * <let vars="Roll = 300;" />
+ * \<let vars="Roll = 300;" /\>
  *   (Roll will be defined here, till the end of the apply block.)
  *
  * @note this works by modifying the environment of the applicative script.
@@ -1321,14 +1337,32 @@ const csString &ApplicativeScript::GetDescription()
 //============================================================================
 // Imperative mode operations
 //============================================================================
+
+/** @short Imperative base class
+ * Imperative Operations are "one-shot".
+ */
 class ImperativeOp
 {
 public:
+    /// default contructor
     ImperativeOp() { }
+    /// default destructor
     virtual ~ImperativeOp() { }
 
+    /** abstract function for loading and storing info from a xml script.
+     * @param node is the node of the xml script to load from
+     */
     virtual bool Load(iDocumentNode* node) = 0;
+    /** abstract function for executing the xml script.
+     * @param env is the MathEnvironment to use for execution
+     */
     virtual void Run(MathEnvironment* env) = 0;
+    /** @short default description is an empty string.
+     * 
+     * The full description string is created by executing the description
+     * gathering for all commands in the xml script order.
+     * @param env is the MathEnvironment to use for creating the description
+     */
     virtual const csString GetDescription(MathEnvironment* env)
     {
 	return "";
@@ -1338,51 +1372,74 @@ public:
 //----------------------------------------------------------------------------
 
 /**
- * ApplyOp
+ * ApplyOp - creates an applicative script and applies it to the aimed entity.
  *
  * Creates a new ActiveSpell containing the effects described within, and
- * applies it to the entity aimed at.
+ * applies it to the entity aimed at.\n
  *
- * This is the primary way to enter applied mode.
+ * This is the primary way to enter the applied mode.
  */
 class ApplyOp : public ImperativeOp
 {
 public:
+    /**
+     * constructor storing the entitymanger and cachemanager
+     * @param entitymanager pointer to store
+     * @param cachemanager pointer to store
+     */
     ApplyOp(EntityManager* entitymanager, CacheManager* cachemanager)
     {
         this->entitymanager = entitymanager;
         this->cachemanager = cachemanager;
         aps = NULL;
     }
+    /// TODO: fix deallocation
     virtual ~ApplyOp()
     {
         if(aps)
             delete aps;
         aps = NULL;
     }
-
+    /**
+     * loads the applicative script from the supplied xml node
+     * @param top is containing the applicative script
+     * @return true if successful, otherwise false
+     */
     bool Load(iDocumentNode* top)
     {
         aps = ApplicativeScript::Create(entitymanager, cachemanager, top);
         return aps != NULL;
     }
-
+    /**
+     * executes the stored applicative script
+     * @param env is the MathEnvironment to utilize for execution
+     */
     virtual void Run(MathEnvironment* env)
     {
         aps->Apply(env, true);
     }
 
 protected:
-    ApplicativeScript* aps;
-    CacheManager* cachemanager;
-    EntityManager* entitymanager;
+    ApplicativeScript* aps;             ///< the applicative script to store and execute
+    CacheManager* cachemanager;         ///< the global cachemanager
+    EntityManager* entitymanager;       ///< the global entitymanager
 };
 
 //----------------------------------------------------------------------------
 
+/** ApplyLinkedOp - creates a buff and debuff applicative script.
+ */
 class ApplyLinkedOp : public ImperativeOp
 {
 public:
+    /**
+     * constructor storing the entitymanger and cachemanager.
+     * 
+     * stores entitymanger and cachemanager pointers and 
+     * initializes internal variables.
+     * @param entitymanager pointer to store
+     * @param cachemanager pointer to store
+     */
     ApplyLinkedOp(EntityManager* entitymanager, CacheManager* cachemanager)
     {
         this->entitymanager = entitymanager;
@@ -1390,13 +1447,17 @@ public:
         buff = NULL;
         debuff = NULL;
     }
-
+    /// default destructor
     virtual ~ApplyLinkedOp()
     {
         delete buff;
         delete debuff;
     }
-
+    /**
+     * loads the applicative buff and debuff script from the supplied xml node
+     * @param top is containing the applicative buff and debuff scripts
+     * @return true if successful, otherwise false
+     */ 
     bool Load(iDocumentNode* top)
     {
         csString name(top->GetAttributeValue("name"));
@@ -1413,7 +1474,11 @@ public:
         debuff = ApplicativeScript::Create(entitymanager, cachemanager, debuffNode, DEBUFF, name, top->GetAttributeValue("duration"));
         return buff && debuff;
     }
-
+    /**
+     * executes the stored applicative buff and debuff scripts.
+     * The buff and the debuff are applied and linked to each other.
+     * @param env is the MathEnvironment to utilize for execution
+     */
     virtual void Run(MathEnvironment* env)
     {
         ActiveSpell* buffAsp   =   buff->Apply(env, true);  // only bother with one cancel event;
@@ -1433,11 +1498,17 @@ protected:
 //----------------------------------------------------------------------------
 
 /**
- * LetOp - a way to evaluate MathScript stuff and create new bindings:
+ * LetOp - a way to evaluate MathScript stuff and create new bindings.
+ * 
+ * A new binding is created by the content of the vars attribute. In this
+ * example the newly created variable is "Roll" and it's scope is limited
+ * to the let block:
  *
+ * @code
  * <let vars="Roll = rnd(100)">
  *   (Roll will be defined here, within the let block.)
  * </let>
+ * @endcode
  */
 class LetOp : public ImperativeOp
 {
@@ -1447,6 +1518,7 @@ public:
         this->entitymanager = entitymanager;
         this->cachemanager = cachemanager;
     }
+    /// default destructor deallocates the MathScript bindings and the sub xml script object.
     virtual ~LetOp()
     {
         MathScript::Destroy(bindings);
@@ -1458,14 +1530,20 @@ public:
         bindings->Evaluate(inner);
         return "";
     }
-    
+    /**
+     * loads new bindingd from the let head and from the body a sub xml script
+     * @param node that is a let block
+     */
     bool Load(iDocumentNode* node)
     {
         bindings = MathScript::Create("<let> bindings", node->GetAttributeValue("vars"));
         body = ProgressionScript::Create(entitymanager, cachemanager, "<let> body", node);
         return (bindings && body);
     }
-
+    /**
+     * adds the stored bindings to the supplied MathEnvironment and executes the sub xml script.
+     * @param outer a supplied MathEnvironment
+     */
     virtual void Run(MathEnvironment* outer)
     {
         MathEnvironment inner(outer);
@@ -1474,8 +1552,8 @@ public:
     }
 
 protected:
-    MathScript* bindings; /// an embedded MathScript containing new bindings
-    ProgressionScript* body;
+    MathScript* bindings;       ///< an embedded MathScript containing new bindings
+    ProgressionScript* body;    ///< the script contained in the body of the let block
     EntityManager* entitymanager;
     CacheManager* cachemanager;
 };
@@ -1483,12 +1561,19 @@ protected:
 //----------------------------------------------------------------------------
 
 /**
- * IfOp - conditional control flow, based on MathScript:
+ * IfOp - conditional control flow, based on MathScript.
+ * 
+ * The attribute t is evaluated as a boolean expression and it's
+ * result is used to decide which branch (then / else) is to be
+ * executed.
  *
+ * - Example:
+ * @code
  * <if t="Roll &lt; 40">
  *   <then>...</then>
  *   <else>...</else>
  * </if>
+ * @endcode
  *
  * The "then" branch is required, but an "else" branch is optional.
  */
@@ -1500,6 +1585,7 @@ public:
         this->entitymanager = entitymanager;
         this->cachemanager = cachemanager;
     }
+    /// deletes the branches and the condition object
     virtual ~IfOp()
     {
         if(thenBranch)
@@ -1551,7 +1637,12 @@ protected:
 /**
  * MsgOp - one-time message sending:
  *
- * <msg aim="Caster" text="spam spam spam spam...!"/>
+ * @code
+ * <msg aim="Caster" text="Put some text here"/>
+ * @endcode
+ * 
+ * aim is the receiver of the message.\n
+ * text is the message to send.
  */
 class MsgOp : public ImperativeOp
 {
@@ -1605,7 +1696,7 @@ protected:
 /**
  * NPCCmdOp - one-time npc command sending:
  *
- * <npccmd aim="Caster" cmd="spam spam spam spam...!"/>
+ * \<npccmd aim="Caster" cmd="spam spam spam spam...!"/\>
  */
 class NPCCmdOp : public ImperativeOp
 {
@@ -1642,10 +1733,10 @@ protected:
 /**
  * CancelOp - a way to cancel active spells.
  *
- * <cancel type="all">
- *   <spell type="buff" name="Defensive Wind"/>
- *   <spell type="buff" name="Flame Spire"/>
- * </cancel>
+ * \<cancel type="all"\>
+ *   \<spell type="buff" name="Defensive Wind"/\>
+ *   \<spell type="buff" name="Flame Spire"/\>
+ * \</cancel>
  *
  * There are three types:
  * - "all"     ... cancels all listed spells.
@@ -1760,6 +1851,21 @@ protected:
 
 //----------------------------------------------------------------------------
 
+/**
+ * @short creates an effect.
+ * 
+ * The effect is either created at the target or in front of it.
+ * 
+ * If the effect is not attached:
+ * 
+ * \<fx type="unattached" name="SomeName" source="SomeSource" target=""/\>
+ * 
+ * or if the effect is attached:
+ * 
+ * \<fx name="SomeName" source="SomeSource" target=""/\>
+ * 
+ * scale="value" is optional and gives the scaling factor for the effect.
+ */
 class FxOp : public ImperativeOp
 {
 public:
@@ -1840,11 +1946,19 @@ protected:
 
 //----------------------------------------------------------------------------
 
-class Imperative1 : public ImperativeOp
+/**
+ * A imperative base class supporting an aim.
+ * 
+ */
+class ImperativeAim : public ImperativeOp
 {
 public:
-    virtual ~Imperative1() { }
+    virtual ~ImperativeAim() { }
 
+    /**
+     * retrieves the "aim" attribute and stores it.
+     * @param node the xml node to load from
+     */
     bool Load(iDocumentNode* node)
     {
         aim = node->GetAttributeValue("aim");
@@ -1855,37 +1969,55 @@ protected:
     csString aim;   ///< name of the MathScript var to aim at
 };
 
-/// A base class supporting aim and a MathExpression value.
-class Imperative2 : public Imperative1
+/**
+ * A base class supporting aim and a MathExpression value.
+ * 
+ * This clas stores the aim and value of the supplied xml node.
+ */
+class ImperativeAimValue : public ImperativeAim
 {
 public:
-    Imperative2() : Imperative1(), value(NULL) { }
-    virtual ~Imperative2()
+    ImperativeAimValue() : ImperativeAim(), value(NULL) { }
+    virtual ~ImperativeAimValue()
     {
         delete value;
     }
-
+    /**
+     * retrieves the "aim" and "value" attributes and stores them.\n
+     * Aim must be a string and value must be a MathExpression.
+     * @param node the xml node to load from
+     * @return true when loading attributes from xml node was successful.
+     */
     bool Load(iDocumentNode* node)
     {
         value = MathExpression::Create(node->GetAttributeValue("value"));
-        return value && Imperative1::Load(node);
+        return value && ImperativeAim::Load(node);
     }
 
 protected:
     MathExpression* value; ///< an embedded MathExpression
 };
 
-/// A base class supporting aim, value, and name.
-class Imperative3 : public Imperative2
+/**
+ * A base class supporting aim, value, and name.
+ * 
+ * This clas stores the aim, value and name of the supplied xml node.\n
+ * Aim and name are stored as strings, name is stored as a MathExpression.
+ */
+class ImperativeAimValueName : public ImperativeAimValue
 {
 public:
-    Imperative3() : Imperative2() { }
-    virtual ~Imperative3() { }
-
+    ImperativeAimValueName() : ImperativeAimValue() { }
+    virtual ~ImperativeAimValueName() { }
+    /**
+     * retrieves the "aim","value" and "name" attributes and stores them.\n
+     * Aim and name must be a strings and value must be a MathExpression.
+     * @param node the xml node to load from
+     */
     bool Load(iDocumentNode* node)
     {
         name = node->GetAttributeValue("name");
-        return Imperative2::Load(node);
+        return ImperativeAimValue::Load(node);
     }
 
 protected:
@@ -1894,15 +2026,31 @@ protected:
 
 //----------------------------------------------------------------------------
 
-class DestroyOp : public Imperative1
+/**
+ * operator for destroying a specified object.
+ * 
+ * The object that is going to be destroyed must be defined in the supplied
+ * MathEnvironment.
+ * @code
+ * <destroy aim="SomeObjectName"/>
+ * @endcode
+ * SomeObjectName needs to be replaced by the object name that is used to 
+ * register the object in the MathEnvironment. So the name identifies the 
+ * object to be destroyed.
+ */
+class DestroyOp : public ImperativeAim
 {
 public:
-    DestroyOp(EntityManager* entitymanager) : Imperative1()
+    DestroyOp(EntityManager* entitymanager) : ImperativeAim()
     {
         this->entitymanager = entitymanager;
     }
     virtual ~DestroyOp() { }
-
+    /**
+     * destroys the object from the supplied MathEnvironment.
+     * Destruction is initiated as an Event to the Eventmanager.
+     * @param env MathEnvironment containing the object to be destroyed.
+     */
     void Run(MathEnvironment* env)
     {
         gemObject* obj = GetObject(env, aim);
@@ -1914,10 +2062,25 @@ protected:
 
 //----------------------------------------------------------------------------
 
-class TeleportOp : public Imperative1
+/**
+ * TeleportOp is a teleport operation.
+ * 
+ * 
+ * 
+ * optional attributes:
+ *  - delay
+ *  - background
+ *  - widget
+ *  - x1, x2, y1, y2
+ *  - location
+ *  - sector
+ *    + x, y, z
+ *    + instance
+ */
+class TeleportOp : public ImperativeAim
 {
 public:
-    TeleportOp(EntityManager* entitymanager) : Imperative1()
+    TeleportOp(EntityManager* entitymanager) : ImperativeAim()
     {
         entityManager = entitymanager;
         loadDelay = NULL;
@@ -1953,7 +2116,7 @@ public:
 
     bool Load(iDocumentNode* node)
     {
-        if(!Imperative1::Load(node))
+        if(!ImperativeAim::Load(node))
             return false;
 
         if(node->GetAttribute("delay"))
@@ -2098,18 +2261,18 @@ protected:
 /**
  * VitalOp - imperative mana & stamina, but not HP
  *
- * <mana aim="Caster" value="-5"/>
+ * \<mana aim="Caster" value="-5"/\>
  */
-class VitalOp : public Imperative2
+class VitalOp : public ImperativeAimValue
 {
 public:
-    VitalOp() : Imperative2() { }
+    VitalOp() : ImperativeAimValue() { }
     virtual ~VitalOp() { }
 
     bool Load(iDocumentNode* node)
     {
         vital = node->GetValue();
-        return Imperative2::Load(node);
+        return ImperativeAimValue::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2131,24 +2294,27 @@ protected:
 };
 
 /**
- * HPOp - direct HP damage
+ * HPOp - direct HP damage.
  *
- * Unlike other vitals, <hp> can specify an optional attacker who will be
- * recorded in the target's damage history.
+ * Unlike other vitals, \<hp\> can specify an optional attacker who will be
+ * recorded in the target's damage history.\n
  *
+ * - Examples:
+ * @code
  * <hp attacker="Caster" aim="Target" value="-5*Power"/>
  * <hp aim="Target" value="15"/>
+ * @endcode
  */
-class HPOp : public Imperative2
+class HPOp : public ImperativeAimValue
 {
 public:
-    HPOp() : Imperative2() { }
+    HPOp() : ImperativeAimValue() { }
     virtual ~HPOp() { }
 
     bool Load(iDocumentNode* node)
     {
         attacker = node->GetAttributeValue("attacker");
-        return Imperative2::Load(node);
+        return ImperativeAimValue::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2170,17 +2336,22 @@ protected:
 //----------------------------------------------------------------------------
 
 /**
- * StatsOp - imperative stats (strength, agility, etc.)
- *
- * <str aim="Actor" value="55"/> (adds 55 to the actor's strength)
+ * StatsOp - imperative stats (strength, agility, etc.).
  *
  * This is primarily used for character creation, as these effects are
- * permanent.  See StatsAOp for the buffed kind.
+ * permanent.  See StatsAOp for the buffed kind.\n
+ * 
+ * - Example:
+ * @code
+ * <str aim="Actor" value="55"/> 
+ * @endcode
+ * This adds 55 to the actor's strength.
+ *
  */
-class StatsOp : public Imperative2
+class StatsOp : public ImperativeAimValue
 {
 public:
-    StatsOp() : Imperative2() { }
+    StatsOp() : ImperativeAimValue() { }
     virtual ~StatsOp() { }
 
     bool Load(iDocumentNode* node)
@@ -2204,7 +2375,7 @@ public:
             return false;
         }
 
-        return Imperative2::Load(node);
+        return ImperativeAimValue::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2228,14 +2399,19 @@ protected:
 /**
  * FactionOp - imperative factions.
  *
- * <faction aim="Actor" name="Klyros" value="5"/> (adds 5 to actor's Klyros faction.)
- *
- * This is permanent; see FactionAOp for the temporary buffed kind. (not implemented)
+ * This is permanent;\n
+ * see FactionAOp for the temporary buffed kind. (not implemented)
+ * 
+ * - Example:
+ * @code
+ * <faction aim="Actor" name="Klyros" value="5"/>
+ * @endcode
+ * This adds 5 to actor's Klyros faction.
  */
-class FactionOp : public Imperative3
+class FactionOp : public ImperativeAimValueName
 {
 public:
-    FactionOp(CacheManager* cachemanager) : Imperative3()
+    FactionOp(CacheManager* cachemanager) : ImperativeAimValueName()
     {
         this->cachemanager = cachemanager;
     }
@@ -2248,7 +2424,7 @@ public:
         {
             variableName = node->GetAttributeValue("name");
         }
-        return Imperative3::Load(node);
+        return ImperativeAimValueName::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2293,23 +2469,26 @@ protected:
 /**
  * VariableSetOp - imperative factions.
  *
- * <variable aim="Actor" name="LOVEDBYKLYROS" value="true"/> (sets the variable LOVEDBYKLYROS and sets it's value to "true")
+ * This is permanent.\n 
+ * Note that if the variable is set already it will be overwritten.\n
  *
- * Note that if the variable is set already it will be overwritten
- *
- * This is permanent.
+ * - Example:
+ * @code
+ * \<variable aim="Actor" name="LOVEDBYKLYROS" value="true"/\>
+ * @endcode
+ * This sets the variable LOVEDBYKLYROS and sets it's value to "true".
  */
-class VariableSetOp : public Imperative1
+class VariableSetOp : public ImperativeAim
 {
 public:
-    VariableSetOp() : Imperative1() { }
+    VariableSetOp() : ImperativeAim() { }
     virtual ~VariableSetOp() { }
 
     bool Load(iDocumentNode* node)
     {
         variableName = node->GetAttributeValue("name");
         variableValue = node->GetAttributeValue("value","");
-        return Imperative1::Load(node);
+        return ImperativeAim::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2346,20 +2525,20 @@ protected:
 /**
  * VariableUnSetOp - imperative factions.
  *
- * <variable aim="Actor" name="LOVEDBYKLYROS" /> (unset the variable LOVEDBYKLYROS)
+ * \<variable aim="Actor" name="LOVEDBYKLYROS" /\> (unset the variable LOVEDBYKLYROS)
  *
  * This is permanent.
  */
-class VariableUnSetOp : public Imperative1
+class VariableUnSetOp : public ImperativeAim
 {
 public:
-    VariableUnSetOp() : Imperative1() { }
+    VariableUnSetOp() : ImperativeAim() { }
     virtual ~VariableUnSetOp() { }
 
     bool Load(iDocumentNode* node)
     {
         variableName = node->GetAttributeValue("name");
-        return Imperative1::Load(node);
+        return ImperativeAim::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2386,14 +2565,14 @@ protected:
 /**
  * SkillOp - imperative skills.
  *
- * <skill aim="Actor" name="Sword" value="5"/> (adds 5 to actor's sword skill.)
+ * \<skill aim="Actor" name="Sword" value="5"/\> (adds 5 to actor's sword skill.)
  *
  * This is permanent; see SkillAOp for the temporary buffed kind.
  */
-class SkillOp : public Imperative3
+class SkillOp : public ImperativeAimValueName
 {
 public:
-    SkillOp(CacheManager* cachemanager) : Imperative3()
+    SkillOp(CacheManager* cachemanager) : ImperativeAimValueName()
     {
         this->cachemanager = cachemanager;
     }
@@ -2402,7 +2581,7 @@ public:
     bool Load(iDocumentNode* node)
     {
         skillName = node->GetAttributeValue("name");
-        return Imperative3::Load(node);
+        return ImperativeAimValueName::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2441,18 +2620,18 @@ protected:
 /**
  * ExpOp - grant experience points.
  *
- * <exp aim="Actor" value="200" notify="false" />
+ * \<exp aim="Actor" value="200" notify="false" /\>
  */
-class ExpOp : public Imperative2
+class ExpOp : public ImperativeAimValue
 {
 public:
-    ExpOp() : Imperative2(), notify(false) { }
+    ExpOp() : ImperativeAimValue(), notify(false) { }
     virtual ~ExpOp() { }
 
     bool Load(iDocumentNode* node)
     {
         notify = node->GetAttributeValueAsBool("notify", false);
-        return Imperative2::Load(node);
+        return ImperativeAimValue::Load(node);
     }
 
     // AllocateKillDamage blah.
@@ -2482,20 +2661,20 @@ protected:
 /**
  * AnimalAffinityOp
  *
- * <animal-affinity aim="Actor" name="reptile" value="2"/>
+ * \<animal-affinity aim="Actor" name="reptile" value="2"/\>
  *
  * This is primarily used for character creation, as these effects are
  * permanent.  There is no way to buff this currently.
  */
-class AnimalAffinityOp : public Imperative3
+class AnimalAffinityOp : public ImperativeAimValueName
 {
 public:
-    AnimalAffinityOp() : Imperative3() { }
+    AnimalAffinityOp() : ImperativeAimValueName() { }
     virtual ~AnimalAffinityOp() { }
 
     bool Load(iDocumentNode* node)
     {
-        if(!Imperative3::Load(node))
+        if(!ImperativeAimValueName::Load(node))
             return false;
 
         name.Downcase();
@@ -2572,20 +2751,29 @@ public:
 //----------------------------------------------------------------------------
 
 /**
- * ActionOp
+ * ActionOp activate any inactive entrance and create a key for it.
+ * 
  * Activates any inactive entrance action location of the specified entrance
  * type and places into players inventory a key for the lock instance ID defined
  * in that action location entrance.
  *
- * Syntax:
+ * - Syntax:
+ * @code
+ *
  *     <action sector="%s" stat="%s"/>
- *         sector = "%s" sector string to qualify search for inactive entrances
- *         stat = "%s" name of item type for new key for lock
- * Examples:
- *     This quest script activates the any inactive action location for sector guildlaw and give a "Small Key" item.
- *         <action sector="guildlaw" stat="Small Key"/>
+ *
+ * @endcode
+ * sector = "%s" sector string to qualify search for inactive entrances\n
+ * stat = "%s" name of item type for new key to the lock of the entrance\n
+ * - Examples:
+ * @code
+ * 
+ *    <action sector="guildlaw" stat="Small Key"/>
+ *
+ * @endcode
+ * This quest script activates any inactive action location for sector guildlaw and gives a "Small Key" item.
  */
-class ActionOp : public Imperative1
+class ActionOp : public ImperativeAim
 {
 public:
     ActionOp(CacheManager* cachemanager)
@@ -2594,11 +2782,12 @@ public:
     }
     virtual ~ActionOp() { }
 
+    
     bool Load(iDocumentNode* node)
     {
         sector = node->GetAttributeValue("sector");
         keyStat = node->GetAttributeValue("stat");
-        return Imperative1::Load(node);
+        return ImperativeAim::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2677,27 +2866,27 @@ protected:
  * KeyOp
  * There are two functions of this script.  The make function
  *  will create a new master key for the specified lock.  The modify
- *  fucntion will change existing key to work with lock.
+ *  function will change existing key to work with lock.
  *
  * Syntax:
- *    <key funct="make" lockID="#" stat="%s" location="inventory"|"ground"  />
+ *    \<key funct="make" lockID="#" stat="%s" location="inventory"|"ground"  /\>
  *        funct = "make" makes a key for specific lock
  *        lockID = "#" instance ID of lock to associate with key
  *        stat = "%s" name of item type to make a key for lock
  *        location = "inventory" put new key in actiors inventory
  *        location = "ground" put new key on groud
- *    <key funct="modify" lockID="#" keyID="#" />
+ *    \<key funct="modify" lockID="#" keyID="#" /\>
  *        funct = "modify" changes the key to work with specific lock
  *        lockID = "#" instance ID of lock to associate with key
  *        keyID = "#" instance ID of key to change to work with lock
  * Example:
  *    Crate a new Small Key and change lock instance 75 to open with new key and put key into actors inventory:
- *        <key funct="make" lockID="75" stat="Small Key" location="inventory" />
+ *        \<key funct="make" lockID="75" stat="Small Key" location="inventory" /\>
  */
-class KeyOp : public Imperative1
+class KeyOp : public ImperativeAim
 {
 public:
-    KeyOp(CacheManager* cachemanager) : Imperative1()
+    KeyOp(CacheManager* cachemanager) : ImperativeAim()
     {
         cacheManager = cachemanager;
     }
@@ -2729,7 +2918,7 @@ public:
             Error2("Error: <key funct=\"%s\"/> is invalid.\n", funct.GetData());
             return false;
         }
-        return Imperative1::Load(node);
+        return ImperativeAim::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2808,18 +2997,24 @@ protected:
 
 /**
  * ItemOp - create items or money and give them to a player
- *
+ * @code
  * <item aim="target" name="..." location="inventory|ground" count="..."/>
+ * @endcode
+ * 
  * Examples:
  * - Drop a stack of 5 longswords on the groud at the foot of the targeted player:
+ * @code
  *   <item aim="Target" name="Longsword" location="ground" count="5" />
+ * @endcode
  * - Add 5 circles to the player's wallet:
+ * @code
  *   <item aim="Target" name="Tria" location="inventory" count="5" />
+ * @endcode
  */
-class ItemOp : public Imperative1
+class ItemOp : public ImperativeAim
 {
 public:
-    ItemOp(CacheManager* cachemanager) : Imperative1(), count(NULL)
+    ItemOp(CacheManager* cachemanager) : ImperativeAim(), count(NULL)
     {
         cacheManager = cachemanager;
     }
@@ -2850,7 +3045,7 @@ public:
         randomCost = node->GetAttributeValueAsInt("randomcost", 1000);
         randomLevel = node->GetAttributeValueAsInt("randomlevel", 3);
 
-        return !name.IsEmpty() && count && Imperative1::Load(node);
+        return !name.IsEmpty() && count && ImperativeAim::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2901,13 +3096,19 @@ public:
             c->Inventory().AddOrDrop(iteminstance, false);
         }
     }
-
+    
+protected:
+    /**
+     * helper function that creates an item according to the specs
+     * @param transient true to remove from world if not picked up within some time
+     * @param stackCount amount of items (if stackable)
+     */
     psItem* CreateItem(bool transient, int stackCount)
     {
         // Get the ItemStats based on the name provided.
         psItemStats* itemstats = cacheManager->GetBasicItemStatsByName(name.GetData());
         if(!itemstats)
-        {
+        { 
             Error2("Error: <item name=\"%s\"/> specified, but no corresponding psItemStats exists.\n", name.GetData());
             return NULL;
         }
@@ -2952,12 +3153,12 @@ protected:
  * Create familiar for actor.
  *
  * Syntax:
- *    <createfamiliar aim="Actor" masterId="masterId" />
+ *    \<createfamiliar aim="Actor" masterId="masterId" /\>
  * Examples:
  *    Create a familiar near actor and send message:
- *        <createfamiliar aim="Actor" masterId="1001"/><msg text="Your new familiar appears nearby."/>
+ *        \<createfamiliar aim="Actor" masterId="1001"/\>\<msg text="Your new familiar appears nearby."/\>
  */
-class CreateFamiliarOp : public Imperative1
+class CreateFamiliarOp : public ImperativeAim
 {
 public:
     CreateFamiliarOp(EntityManager* entitymanager)
@@ -2969,7 +3170,7 @@ public:
     bool Load(iDocumentNode* node)
     {
         masterPID = node->GetAttributeValueAsInt("masterID");
-        return Imperative1::Load(node);
+        return ImperativeAim::Load(node);
     }
 
     void Run(MathEnvironment* env)
@@ -2994,17 +3195,18 @@ private:
 };
 
 /**
- * TutorialMsgOp
- * Activates a tutorial window on the client with the specified message
+ * TutorialMsgOp activates a tutorial window on the client with the specified message.
  * The message is taken from tips table in the database.
  *
  * Syntax:
+ * @code
  *    <tutorialmsg aim="Target" num="TutorialTipID"/>
+ * @endcode
  */
-class TutorialMsgOp : public Imperative1
+class TutorialMsgOp : public ImperativeAim
 {
 public:
-    TutorialMsgOp() : Imperative1(), expr(0) { }
+    TutorialMsgOp() : ImperativeAim(), expr(0) { }
     virtual ~TutorialMsgOp()
     {
         delete expr;
@@ -3013,7 +3215,7 @@ public:
     bool Load(iDocumentNode* top)
     {
         expr = MathExpression::Create(top->GetAttributeValue("num"));
-        return Imperative1::Load(top) && expr!=NULL;
+        return ImperativeAim::Load(top) && expr!=NULL;
     }
 
     virtual void Run(MathEnvironment* env)
@@ -3038,12 +3240,12 @@ protected:
 /**
  * MechanismMsgOp - activate a mechanism:
  *
- * <mechanism aim="Target" mesh="Mesh" move="Move" rot="Rot" />
+ * \<mechanism aim="Target" mesh="Mesh" move="Move" rot="Rot" /\>
  */
-class MechanismMsgOp : public Imperative1
+class MechanismMsgOp : public ImperativeAim
 {
 public:
-    MechanismMsgOp() : Imperative1(), expr1(NULL), expr2(NULL), expr3(NULL)
+    MechanismMsgOp() : ImperativeAim(), expr1(NULL), expr2(NULL), expr3(NULL)
     {
     }
 
@@ -3063,7 +3265,7 @@ public:
         expr2 = MathExpression::Create(node->GetAttributeValue("move"));
         expr3 = MathExpression::Create(node->GetAttributeValue("rot"));
 
-        return Imperative1::Load(node) && expr1 && expr2 && expr3;
+        return ImperativeAim::Load(node) && expr1 && expr2 && expr3;
     }
 
     virtual void Run(MathEnvironment* env)
@@ -3315,5 +3517,6 @@ void ProgressionScript::Run(MathEnvironment* env)
     }
 }
 
-
+/**
+ * @} */
 

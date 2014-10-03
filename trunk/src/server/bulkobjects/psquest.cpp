@@ -43,9 +43,8 @@
 #include "dictionary.h"
 
 
-psQuest::psQuest() : task("")
-{
-    id = 0;
+psQuest::psQuest(int id, const char* name) : id(id), name(name)
+{   
     parent_quest = NULL;
     image.Clear();
     step_id = 0;
@@ -61,17 +60,13 @@ psQuest::~psQuest()
 {
     prerequisite = NULL;
 
+    // release all *registered* triggers
     for(size_t i = 0; i < triggerPairs.GetSize(); i++)
     {
         TriggerResponse triggerResponse = triggerPairs.Get(i);
         dict->DeleteTriggerResponse(triggerResponse.trigger, triggerResponse.responseID);
     }
-}
-
-void psQuest::Init(int new_id, const char* new_name)
-{
-    id   = new_id;
-    name = new_name;
+    dict->DeleteMenusForQuest(this);
 }
 
 bool psQuest::Load(iResultRow &row)
@@ -666,11 +661,11 @@ bool psQuest::AddPrerequisite(csRef<psQuestPrereqOp> op)
     return true;
 }
 
-void psQuest::AddTriggerResponse(NpcTrigger* trigger, int responseID)
+void psQuest::AddTriggerResponse(NpcTrigger* trigger, NpcResponse* response)
 {
     TriggerResponse triggerPair;
-    triggerPair.responseID = responseID;
-    triggerPair.trigger    = trigger;
+    triggerPair.responseID = response->id;
+    triggerPair.trigger  = trigger;
     triggerPairs.Push(triggerPair);
 }
 

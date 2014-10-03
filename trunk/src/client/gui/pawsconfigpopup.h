@@ -34,6 +34,7 @@
 #include "util/psxmlparser.h"
 
 class pawsCheckBox;
+class pawsScrollBar;
 class pawsActiveMagicWindow;
 class pawsNpcDialogWindow;
 
@@ -49,6 +50,7 @@ public:
     virtual bool SaveConfig(); ///< @see pawsWidget
     virtual void SetDefault(); ///< @see pawsWidget
 
+protected:
     /** Check-box which gives the user a opportunity to show or
      *  not to show the Active Magic Window
      */
@@ -57,6 +59,9 @@ public:
      *  not the bubble based npcdialog interface
      */
     pawsCheckBox* useNpcDialogBubbles;
+    /** Scale slider for setting up the npc delay factor
+     */
+    pawsScrollBar* npcMsgTimeoutScale;
 
 protected:
     pawsActiveMagicWindow* magicWindow; ///< This is used to point to a instance of magic window

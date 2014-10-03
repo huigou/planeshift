@@ -91,6 +91,17 @@ bool pawsConfigPopup::PostSetup()
     useNpcDialogBubbles = (pawsCheckBox*)FindWidget("UseNpcDialogBubbles");
     if (!useNpcDialogBubbles)
         return false;
+    
+    npcMsgTimeoutScale = (pawsScrollBar*)FindWidget("NpcMsgTimeoutScale");
+    if (!npcMsgTimeoutScale)
+        return false;
+    
+    pawsTextBox* scaleFactorMax = (pawsTextBox*)FindWidget("NPC Message Timeout Label 3");
+    if (!scaleFactorMax)
+        return false;
+    csString maxFactor;
+    maxFactor.Format("%.0fx", npcDialog->GetNpcMsgTimeoutScaleMax());
+    scaleFactorMax->SetText(maxFactor);
 
     //we set all checkboxes as true by default
     for(size_t i = 0; i < children.GetSize(); i++)
@@ -118,6 +129,11 @@ bool pawsConfigPopup::LoadConfig()
 
     showActiveMagicConfig->SetState(!magicWindow->showWindow->GetState());
     useNpcDialogBubbles->SetState(npcDialog->GetUseBubbles());
+    npcMsgTimeoutScale->SetMaxValue(npcDialog->GetNpcMsgTimeoutScaleMax());
+    npcMsgTimeoutScale->SetMinValue(0.0f);
+    npcMsgTimeoutScale->SetCurrentValue(npcDialog->GetNpcMsgTimeoutScale());
+    npcMsgTimeoutScale->EnableValueLimit(true);
+    npcMsgTimeoutScale->SetTickValue(npcDialog->GetNpcMsgTimeoutScaleMax()/100.0f);
 
     //we take for granted ids of the widgets correspond to message types id
     csHash<psMainWidget::mesgOption, int>::GlobalIterator iter = mainWidget->GetMesgOptionsIterator();
@@ -138,7 +154,6 @@ bool pawsConfigPopup::LoadConfig()
         }
     }
 
-
     dirty = true;
 
     return true;
@@ -148,6 +163,7 @@ bool pawsConfigPopup::SaveConfig()
 {
     magicWindow->showWindow->SetState(!showActiveMagicConfig->GetState());
     npcDialog->SetUseBubbles(useNpcDialogBubbles->GetState());
+    npcDialog->SetNpcMsgTimeoutScale(npcMsgTimeoutScale->GetCurrentValue());
 
     //we take for granted ids of the widgets correspond to message types id
     csHash<psMainWidget::mesgOption, int>::GlobalIterator iter = mainWidget->GetMesgOptionsIterator();

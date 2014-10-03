@@ -1192,6 +1192,13 @@ bool CacheManager::UnloadQuest(int id)
     psQuest* quest = quests_by_id.Get(id, NULL);
     if(quest)
     {
+        csArray<int> subquestids = quest->GetSubQuests();
+        // (potentially) release all subquests
+        for(size_t i = 0; i < subquestids.GetSize(); i++)
+        {
+            UnloadQuest(subquestids[i]);
+        }
+        
         delete quest;
         quests_by_id.DeleteAll(id);
         ret = true;
@@ -2615,8 +2622,7 @@ psQuest* CacheManager::AddDynamicQuest(const char* name, psQuest* parentQuest, i
     //  subquests need a fixed id to be loaded at next restart
     // quest_id*10000+sub_id
     int id = 10000+(parentQuest->GetID()*100)+step;
-    ptr = new psQuest;
-    ptr->Init(id,name);
+    ptr = new psQuest(id,name);
     ptr->SetParentQuest(parentQuest);
     parentQuest->AddSubQuest(id);
     quests_by_id.Put(id, ptr);
@@ -3516,7 +3522,7 @@ bool CacheManager::PreloadScripts(EntityManager* entitymanager)
                 Error2("Script Data was:\n%s\n", result[i]["event_script"]);
                 return false;
             }
-            scripts.Put(s->Name(), s);
+            scripts.Put(s->GetName(), s);
         }
     }
     return true;

@@ -45,7 +45,9 @@ using namespace CS;
 
 class psQuestPrereqOp;
 class psCharacter;
+class NpcResponse;
 class NpcTrigger;
+class NpcDialogMenu;
 class psQuest;
 
 /**
@@ -64,17 +66,38 @@ bool LoadPrerequisiteXML(csRef<psQuestPrereqOp> &prerequisite, psQuest* self, cs
 class psQuest : public CS::Utility::WeakReferenced
 {
 public:
-    psQuest();
+    /**
+     * default constructor
+     * 
+     * @param id questID - either from the database, or dynamically created
+     * @param name is a unique string
+     */
+    psQuest(int id = 0, const char* name = "");
     virtual ~psQuest();
 
+    /**
+     * loads the quest information from a supplied result set
+     * @param row result set to store in this object
+     */
     bool Load(iResultRow &row);
+    /**
+     * parses the prerequisite string and caches the result
+     */
     bool PostLoad();
-    void Init(int id, const char* name);
-
+    
+    /**
+     * The id can be defined by the database or dynamically created.
+     * 
+     * Dynamic creation takes place in CacheManager::AddDynamicQuest
+     * @return the quest's id
+     */
     int GetID() const
     {
         return id;
     }
+    /**
+     * @return the quest's name
+     */
     const char* GetName() const
     {
         return name;
@@ -136,7 +159,31 @@ public:
     // csString QuestToXML() const;
     bool AddPrerequisite(csString prerequisitescript);
     bool AddPrerequisite(csRef<psQuestPrereqOp> op);
-    void AddTriggerResponse(NpcTrigger* trigger, int responseID);
+    
+    /**
+     * Adds a set of pointers to a trigger and a response.
+     * 
+     * This is needed for deallocation at desctruction time.
+     * @param trigger created by the quests questscript
+     * @param response created by the quests questscript
+     */
+    void AddTriggerResponse(NpcTrigger* trigger, NpcResponse* response);
+    /**
+     * Adds a pointer to a menu.
+     * 
+     * This is needed for deallocation at desctruction time.
+     * @param menu created by the quests questscript
+     */
+    //void AddMenu(NpcDialogMenu* menu);
+    
+    //csArray<NpcDialogMenu*> &GetMenuList();
+    
+    /**
+     * Register a quest as a subquest of this quest.
+     * 
+     * Subquests are normally generated when parsing quest_scripts.
+     * @param id of the subquest to register.
+     */
     void AddSubQuest(int id)
     {
         subquests.Push(id);
@@ -145,7 +192,7 @@ public:
     /**
      * Returns an ordered list of the subquests of this quest (so it's steps).
      *
-     * @return A reference to an array containing the id of the subquests.
+     * @return A reference to an array containing the id of each subquests.
      */
     csArray<int> &GetSubQuests()
     {
@@ -157,7 +204,7 @@ public:
      *
      * @return The prerequisite for this quest.
      */
-    psQuestPrereqOp* GetPrerequisite()
+    csRef<psQuestPrereqOp>& GetPrerequisite()
     {
         return prerequisite;
     }
@@ -189,13 +236,13 @@ public:
     }
 
 protected:
-    int id;
-    csString name;
-    csString task;
+    int id;             ///< quest id - either as stored in the database or as assigned by CacheManager::AddDynamicQuest
+    csString name;      ///< unique quest name
+    csString task;      
     csString image;
     int flags;
-    psQuest* parent_quest;
-    int step_id;
+    psQuest* parent_quest;      ///< parent quest of this quest (or NULL if there is none)
+    int step_id;                ///< natoka: never used, though i suppose it was ment for the substep number
     csRef<psQuestPrereqOp> prerequisite;
     csString category;
     csString prerequisiteStr;
@@ -211,8 +258,9 @@ protected:
         int responseID;
     };
 
-    csArray<TriggerResponse> triggerPairs;
-    csArray<int> subquests;
+    // this stuff is needed for cleanup when destroying the object
+    csArray<TriggerResponse> triggerPairs; ///< list of trigger-response pairs added for the quest
+    csArray<int> subquests;             ///< list of IDs of the subquests of this quest
 
     bool active;
 };

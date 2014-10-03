@@ -113,12 +113,17 @@ public:
     void DisplayQuestBubbles(unsigned int index);
 
     /**
+     * @brief Shows the npc chat window and hides the menu bubbles.
+     */
+    void ShowSpeechBubble();
+    
+    /**
      * @brief Display NPC's chat text
      *
      * @param inText Content that the NPC's chat text
      * @param actor The target NPC name
      */
-    void NpcSays(csString& inText, GEMClientActor *actor);
+    void NpcSays();//csString& inText, GEMClientActor *actor);
 
     /**
      * Handles timing to make bubbles disappear in the bubbles npc dialog mode.
@@ -150,7 +155,46 @@ public:
     {
         useBubbles = useBubblesNew;
     }
-
+    /**
+     * Getter for npc messsage timeout.
+     * The timeout determines how long a npc message is displayed.
+     * Apparently this is just a scaling factor for shortening or
+     * prolonging the display.
+     */
+    float GetNpcMsgTimeoutScale()
+    {
+        return npcMsgTimeoutScale;
+    }
+    /**
+     * Setter for npc messsage timeout.
+     * The timeout determines how long a npc message is displayed.
+     * Apparently this is just a scaling factor for shortening or
+     * prolonging the display.
+     * @param timeoutScale is multiplied with the real factor.
+     */
+    void SetNpcMsgTimeoutScale(float timeoutScale)
+    {
+        if (timeoutScale < 0)
+        {
+            npcMsgTimeoutScale = 0.0;
+        } else if (timeoutScale > npcMsgTimeoutScaleMax)
+        {
+            npcMsgTimeoutScale = npcMsgTimeoutScaleMax;
+        } else
+        {
+            npcMsgTimeoutScale = timeoutScale;
+        }
+    }
+    /**
+     * Getter for npc messsage timeout.
+     * The maximum timeout determines how long a npc message is
+     * displayed at maximum.
+     * @returns maximum scaling factor
+     */
+    float GetNpcMsgTimeoutScaleMax()
+    {
+        return npcMsgTimeoutScaleMax;
+    }
 
     /**
      * Saves the setting of the menu used for later use
@@ -170,18 +214,23 @@ private:
      * Handles the display of player text in chat
      */
     void DisplayTextInChat(const char *sayWhat);
+    
+    // values are loaded from configuration files
+    bool useBubbles;                    ///< Stores which modality should be used for the npcdialog (bubbles/menus)
+    float npcMsgTimeoutScale;           ///< stores how long an npc message is displayed (scaling factor only!)
+    float npcMsgTimeoutScaleMax;        ///< stores the maximum time for how long an npc message is displayed  (scaling factor only!)
 
-    bool useBubbles; ///< Stores which modality should be used for the npcdialog (bubbles/menus)
-
-    csArray<QuestInfo> questInfo;  ///< Stores all the quest info and triggers parsed from xml binding.
-    unsigned int    displayIndex;  ///< Index to display which quests
-    int             cameraMode;    ///< Stores the camera mode
-    int             loadOnce;      ///< Stores if bubbles has been loaded
-    bool enabledChatBubbles;       ///< Stores the state of chat bubbles.
-    bool clickedOnResponseBubble;  ///< flag when player clicks on the response bubble
-    bool gotNewMenu;               ///< keeps track of the incoming new menu message
-    csTicks timeDelay;             ///< calculates the time needed to read the last npc say
-    int questIDFree;               ///< Keeps the value of the quest if the free text question was triggered.
+    // variables used to display npc dialogs
+    csArray<QuestInfo> questInfo;       ///< Stores all the quest info and triggers parsed from xml binding.
+    unsigned int    displayIndex;       ///< Index to display which quests
+    int             cameraMode;         ///< Stores the camera mode
+    int             loadOnce;           ///< Stores if bubbles has been loaded
+    bool clickedOnResponseBubble;       ///< flag when player clicks on the response bubble 
+    int questIDFree;                    ///< Keeps the value of the quest if the free text question was triggered.
+    bool gotNewMenu;                    ///< keeps track of the incoming new menu message
+    bool displaysNewMenu;               ///< set to true when displaying a new menu
+    csTicks timeDelay;                  ///< stores the calculated time needed to read the last npc say (in ticks).
+    csTicks ticks;                      ///< point in time when displaying a message started
 
     pawsListBox* responseList;
     pawsWidget* speechBubble;
@@ -189,8 +238,9 @@ private:
     pawsButton* closeBubble;
     pawsButton* giveBubble;
     
-    csTicks         ticks;
-    EID targetEID; ///< The eid of the current target used to hide the dialog if the actor is removed.
+    EID targetEID;                      ///< The eid of the current target used to hide the dialog if the actor is removed.
+    
+    csArray<csString> npcMsgQueue;        ///< list of text messages from a npc (sort of queue).
 };
 
 

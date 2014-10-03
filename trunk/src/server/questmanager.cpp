@@ -937,16 +937,25 @@ int QuestManager::PreParseQuestScript(psQuest* mainQuest, const char* script)
 
 int QuestManager::ParseQuestScript(int quest_id, const char* script)
 {
+    // content that is related - struct is defined here to make their relation obvious
+    struct responseset { 
+        int response_id;
+        NpcResponse* response;
+        NpcDialogMenu *menu;
+        
+        responseset(int id, NpcResponse* resp, NpcDialogMenu* menu) : response_id(id), response(resp), menu(menu) {}
+    };
+    responseset latest(-1, NULL, NULL);         // the latest (current) response_id, response, menu
+    
     psString scr(script);
     size_t start = 0;
     csString line,block;
     csStringArray pending_triggers;
-    int last_response_id=-1,next_to_last_response_id=-1;
+    int prior_response_id=-1;              // predeceeding response id
     size_t which_trigger=0;
     int step_count=1; // Main quest is step 1
     csString current_npc;
     csString response_text,file_path;
-    NpcResponse* last_response=NULL;
     bool quest_assigned_already = false;
     csString response_requireop; // Accumulate prerequisites for next response
     csString substep_requireop;  // Accumulate prerequisites for current substep
@@ -954,7 +963,6 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
     psQuest* quest = mainQuest; // Substep is main step until substep is defined.
     int line_number = 0;
     NpcDialogMenu* pending_menu = NULL;
-    NpcDialogMenu* last_menu    = NULL;
 
     Debug2(LOG_QUESTS, 0, "******** Parsing quest script quest id %d ********",quest_id);
     
@@ -1009,9 +1017,14 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
         else if(!strncasecmp(block,"Menu:",5))   // Menu: is an nice way of represention the various P: triggers
         {
             NpcDialogMenu* menu = new NpcDialogMenu();
+            if (quest && quest->GetParentQuest()) {
+                Debug3(LOG_QUESTS, 0, "Dialog Menu created for questid: %d, parentid: %d", quest_id, quest->GetParentQuest()->GetID());
+            } else {
+                Debug2(LOG_QUESTS, 0, "Dialog Menu created for questid: %d, no quest obj!", quest_id);
+            }
 
             // Parse block and return a configured menu.
-            if(!BuildMenu(block, pending_triggers, mainQuest, menu))
+            if(!ParseQuestScriptMenu(block, pending_triggers, mainQuest, menu))
             {
                 lastError.Format("Could not determine triggers in script '%s', in line <%s>", 
                                  mainQuest?mainQuest->GetName():"KA",block.GetData());
@@ -1021,10 +1034,10 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
                 return line_number;
             }
 
-            if(last_response)   // popup is part of a dialog chain
+            if(latest.response)   // popup is part of a dialog chain
             {
-                last_response->menu = menu;  // attach the menu to the prior response for easy access in chains
-                last_menu = menu;           // save so we can add prerequisites later
+                latest.response->menu = menu;  // attach the menu to the prior response for easy access in chains
+                latest.menu = menu;           // save so we can add prerequisites later
             }
             else
             {
@@ -1048,7 +1061,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
             else // switch NPCs here
             {
                 current_npc = npc_name;
-                next_to_last_response_id = last_response_id = -1;  // When you switch NPCs, the prior responses must be reset also.
+                prior_response_id = latest.response_id = -1;  // When you switch NPCs, the prior responses must be reset also.
 //                  if (pending_menu)
 //              {
 //                  dict->AddMenu(current_npc, pending_menu);
@@ -1074,35 +1087,37 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
 
             // Now add this response to the npc dialog dict
             if(which_trigger == 0)  // new sequence
-                next_to_last_response_id = last_response_id;
+                prior_response_id = latest.response_id;
 
-            last_response = AddResponse(current_npc,response_text,last_response_id,quest,him,her,it,them,file_path);
-            if(last_response)
+            latest.response = AddResponse(current_npc,response_text,latest.response_id,quest,him,her,it,them,file_path);
+            if(latest.response)
             {
-                bool ret = AddTrigger(current_npc,pending_triggers[which_trigger++],next_to_last_response_id,last_response_id, quest, "");
+                bool ret = AddTrigger(current_npc,pending_triggers[which_trigger++],prior_response_id,latest.response, quest, "");
                 if(!ret)
                 {
                     lastError.Format("Trigger could not be added on line %d", line_number);
                     return line_number;
                 }
 
-                if(!PrependPrerequisites(substep_requireop, response_requireop, quest_assigned_already && step_count > 1,last_response, mainQuest))
+                if(!PrependPrerequisites(substep_requireop, response_requireop, quest_assigned_already && step_count > 1,latest.response, mainQuest))
                 {
                     lastError.Format("PrependPrerequistes failed on line %d", line_number);
                     return line_number;
                 }
 
+                // TODO: research why the prerequisites get copied around here although they have been assigned above
                 if(pending_menu)
                 {
                     // Now go back to the previous menu
-                    pending_menu->SetPrerequisiteScript(last_response->GetPrerequisiteScript());
+                    pending_menu->SetPrerequisiteScript(latest.response->GetPrerequisiteScript());
                     dict->AddMenu(current_npc, pending_menu);
                     pending_menu = NULL;
                 }
-                else if(last_menu)
+                else if(latest.menu)
                 {
-                    last_menu->SetPrerequisiteScript(last_response->GetPrerequisiteScript());
-                    last_menu = NULL;
+                    latest.menu->SetPrerequisiteScript(latest.response->GetPrerequisiteScript());
+                    dict->AddMenu(latest.menu);
+                    latest.menu = NULL;
                 }
             }
             else
@@ -1141,8 +1156,8 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
             }
 
             // This clears out prior responses whether there is a quest or a KA script here
-            next_to_last_response_id = last_response_id = -1;
-            last_response = NULL;  // This is used for popup menus
+            prior_response_id = latest.response_id = -1;
+            latest.response = NULL;  // This is used for popup menus
             substep_requireop.Free();
 
             if(mainQuest)
@@ -1172,7 +1187,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
 
             if(!HandleScriptCommand(block,
                                     response_requireop,substep_requireop,
-                                    last_response,
+                                    latest.response,
                                     mainQuest,quest_assigned_already,quest))
             {
                 return line_number;
@@ -1185,12 +1200,12 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
         pending_menu = NULL;
     }
 
-    if(quest_assigned_already && last_response)
+    if(quest_assigned_already && latest.response)
     {
         // Make sure the quest is 'completed' at the end of the script.
         csString op;
         op.Format("<response><complete quest_id=\"%s\" /></response>",mainQuest->GetName());
-        if(!last_response->ParseResponseScript(op))
+        if(!latest.response->ParseResponseScript(op))
         {
             Error2("Could not append '%s' to response script!",op.GetData());
             lastError.Format("Could not append '%s' to response script! ( line %d )",op.GetData(), line_number);
@@ -1263,7 +1278,7 @@ int QuestManager::ParseCustomScript(int id, const csString& current_npc, const c
             NpcDialogMenu* menu = new NpcDialogMenu();
 
             // Parse block and return a configured menu.
-            if(!BuildMenu(block, pending_triggers, NULL, menu))
+            if(!ParseQuestScriptMenu(block, pending_triggers, NULL, menu))
             {
                 lastError.Format("Could not determine triggers in line <%s>", 
                                  block.GetData());
@@ -1312,7 +1327,7 @@ int QuestManager::ParseCustomScript(int id, const csString& current_npc, const c
             last_response = AddResponse(current_npc,response_text,last_response_id,NULL,him,her,it,them,file_path);
             if(last_response)
             {
-                bool ret = AddTrigger(current_npc,pending_triggers[which_trigger++],next_to_last_response_id,last_response_id, NULL, "");
+                bool ret = AddTrigger(current_npc,pending_triggers[which_trigger++],next_to_last_response_id,last_response, NULL, "");
                 if(!ret)
                 {
                     lastError.Format("Trigger could not be added.");
@@ -1324,6 +1339,10 @@ int QuestManager::ParseCustomScript(int id, const csString& current_npc, const c
                     // Now go back to the previous menu
                     dict->AddMenu(current_npc, pending_menu);
                     pending_menu = NULL;
+                }
+                else if (last_response->menu)
+                {
+                    dict->AddMenu(last_response->menu);
                 }
             }
             else
@@ -1516,7 +1535,7 @@ bool QuestManager::BuildTriggerList(csString &block,csStringArray &list) const
     return true;
 }
 
-bool QuestManager::BuildMenu(const csString &block,const csStringArray &list, psQuest* quest, NpcDialogMenu* menu) const
+bool QuestManager::ParseQuestScriptMenu(const csString &block,const csStringArray &triggers, psQuest* quest, NpcDialogMenu* menu) const
 {
     size_t start=0, end, counter = 0;
     csString response;
@@ -1540,15 +1559,15 @@ bool QuestManager::BuildMenu(const csString &block,const csStringArray &list, ps
         // counter starts from 0 so if the number of item is equal or minor to counter
         // it means the next access would be out of bounds, so we lack enough trigger
         // and it's a quest script error.
-        if(list.GetSize() <= counter)
+        if(triggers.GetSize() <= counter)
         {
-            Error2("Not enough triggers to build the menu. Found %zu, expected more.", list.GetSize())
+            Error2("Not enough triggers to build the menu. Found %zu, expected more.", triggers.GetSize())
             return false;
         }
 
         //We have to cut out all the triggers outside the first one so
         //the menu doesn't get "other versions" of text triggers
-        csString trigger = list[ counter++ ];
+        csString trigger = triggers[ counter++ ];
         //search the first dot
         size_t cutDotPos = trigger.FindFirst(".");
         //we check if it was found to avoid creating too many csString
@@ -1564,6 +1583,7 @@ bool QuestManager::BuildMenu(const csString &block,const csStringArray &list, ps
 
         start = end; // Start at next Menu: or exit loop
     }
+    menu->InitializeQuestTitles();
     return true;
 }
 
@@ -1638,12 +1658,12 @@ bool QuestManager::GetResponseText(csString &block,csString &response,csString &
 NpcResponse* QuestManager::AddResponse(const csString &current_npc,const char* response_text,int &last_response_id, psQuest* quest,
                                        csString &him, csString &her, csString &it, csString &them, csString &file_path)
 {
-    last_response_id = 0;  // let AddResponse autoset this if set to 0
+    last_response_id = 0;  // let AddResponse (of dict) autoset the id (this happens if id is set to 0)
     Debug2(LOG_QUESTS, 0,"Adding response %s to dictionary...", response_text);
     return dict->AddResponse(response_text,him,her,it,them,current_npc,last_response_id,quest,file_path);
 }
 
-bool QuestManager::AddTrigger(const csString &current_npc,const char* trigger,int prior_response_id,int trig_response, psQuest* quest, const psString &postfix)
+bool QuestManager::AddTrigger(const csString &current_npc,const char* trigger,int prior_response_id,NpcResponse* trig_response, psQuest* quest, const psString &postfix)
 {
     // Now that this npc has a trigger associated, we need to make sure it has a KA for itself.
     // These have been added manually in the past, but we will do it here automatically now.
@@ -1673,9 +1693,9 @@ bool QuestManager::AddTrigger(const csString &current_npc,const char* trigger,in
         Debug5(LOG_QUESTS, 0,"Adding trigger '%s' to dictionary for npc '%s', "
                "with prior response %d and trigger response %d...",
                new_trigger.GetData(), current_npc.GetData(),
-               prior_response_id, trig_response);
+               prior_response_id, trig_response->id);
 
-        NpcTrigger* npcTrigger = dict->AddTrigger(current_npc,new_trigger,prior_response_id,trig_response);
+        NpcTrigger* npcTrigger = dict->AddTrigger(current_npc,new_trigger,prior_response_id,trig_response->id);
 
         if(!npcTrigger)
         {
@@ -1686,6 +1706,11 @@ bool QuestManager::AddTrigger(const csString &current_npc,const char* trigger,in
             if(quest)
             {
                 quest->AddTriggerResponse(npcTrigger, trig_response);
+                Debug2(LOG_QUESTS, 0, "Adding trigger and response to questid: %d", quest->GetID());
+            }
+            else
+            {
+                Debug1(LOG_QUESTS, 0, "TRIGGER AND RESPONSE NOT REGISTERED");
             }
             result = true;
         }
@@ -1708,8 +1733,6 @@ void QuestManager::HandleQuestInfo(MsgEntry* me,Client* who)
         }
         else
         {
-
-
             //First of all take the main quest task string (equivalent to quest description)
             csString tasks = q->GetQuest()->GetTask();
 
