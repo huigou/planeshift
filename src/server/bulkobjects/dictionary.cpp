@@ -98,8 +98,18 @@ NPCDialogDict::~NPCDialogDict()
     while(responsesIter.HasNext())
         delete responsesIter.Next();
     csHash<NpcDialogMenu*, csString>::GlobalIterator menuIter(initial_popup_menus.GetIterator());
-    while(menuIter.HasNext())
+    while(menuIter.HasNext())                
         delete menuIter.Next();
+    Debug2(LOG_QUESTS, 0, "remaning popupmenus by questid: %u", (unsigned int) initial_popup_menus_by_quest_id.GetSize());
+    initial_popup_menus_by_quest_id.DeleteAll(-1);
+    Debug2(LOG_QUESTS, 0, "remaning popupmenus by questid: %u", (unsigned int) initial_popup_menus_by_quest_id.GetSize());
+    csHash<NpcDialogMenu*>::GlobalIterator debugIt = initial_popup_menus_by_quest_id.GetIterator();
+    while (debugIt.HasNext())
+    {
+        csTuple2<NpcDialogMenu*, int> tup = debugIt.NextTuple();
+        Debug2(LOG_QUESTS, 0, "remaning popupmenu with questid %d", tup.second);
+    }
+        
     wnclose();
     dict = NULL;
 }
@@ -750,7 +760,7 @@ NpcResponse* NPCDialogDict::AddResponse(const char* response_text,
     newresp->type = NpcResponse::VALID_RESPONSE;
 
     newresp->quest = quest;
-    if(quest && quest->GetPrerequisite())
+    if(quest && quest->GetPrerequisite().IsValid())
     {
         newresp->prerequisite = quest->GetPrerequisite()->Copy();
     }
@@ -788,19 +798,35 @@ NpcResponse* NPCDialogDict::AddResponse(const char* script)
     return newresp;
 }
 
-void NPCDialogDict::DeleteTriggerResponse(NpcTrigger* trigger, int responseId)
-{
-    csHash<NpcResponse*>::Iterator iter(responses.GetIterator(responseId));
-    while(iter.HasNext())
-        delete iter.Next();
-    responses.DeleteAll(responseId);
+void NPCDialogDict::DeleteTriggerResponse(NpcTrigger* trigger, int responseID)
+{   
+    if (responses.IsEmpty())
+        return;
+    
+    csHash<NpcResponse*>::Iterator iter(responses.GetIterator(responseID));
+    
+    while (iter.HasNext())
+    {
+        NpcResponse* response = iter.Next();
+            
+        if (! responses.Delete(responseID, response))
+        {
+            Error2("given trigger was not found with response id: %d\n", response->id);
+        }
+        else 
+        {
+            delete response;
+        }
+    }
 
+    // remove the response from the trigger and if the trigger is empty the trigger
     if(trigger)
     {
-        trigger->responseIDlist.Delete(responseId);
+        trigger->responseIDlist.Delete(responseID);
         if(trigger->responseIDlist.GetSize() == 0)
         {
             triggers.Delete(trigger);
+            trigger_by_id.Delete(trigger->id,trigger);
             delete trigger;
         }
     }
@@ -876,7 +902,16 @@ NpcDialogMenu* NPCDialogDict::FindMenu(const char* name)
 
 void NPCDialogDict::AddMenu(const char* name, NpcDialogMenu* menu)
 {
+    psQuest* quest = NULL;
     NpcDialogMenu* found = FindMenu(name);
+    NpcDialogMenu* found_by_quest = NULL;
+    bool menu_was_found = false;
+    
+    if (menu->triggers.GetSize() > 0)
+    {
+        quest = menu->triggers[0].quest;
+    }
+    
     if(found)   // merge with existing
     {
         found->Add(menu);
@@ -885,9 +920,52 @@ void NPCDialogDict::AddMenu(const char* name, NpcDialogMenu* menu)
     else // add a new menu
     {
         initial_popup_menus.PutUnique(csString(name),menu);
+        found = menu;
+    }
+    
+    // no questid to be found (should only happen on initial menu creation)
+    // TODO: fix *remove* the initial menu creation - it's useless
+    if (! quest)
+        return;
+    
+    csHash<NpcDialogMenu*>::Iterator it = initial_popup_menus_by_quest_id.GetIterator(quest->GetID());
+    while(it.HasNext())
+    {
+        found_by_quest = it.Next();
+        if (found_by_quest == found)
+        {
+            menu_was_found = true;
+            break;
+        }
+    }
+    if (!menu_was_found)
+    {
+        initial_popup_menus_by_quest_id.Put(quest->GetID(), found);
     }
 }
 
+void NPCDialogDict::AddMenu(NpcDialogMenu* menu)
+{
+    int questID = -1;
+    if (menu->triggers.GetSize() > 0 && menu->triggers[0].quest)
+    {
+        questID = menu->triggers[0].quest->GetID();
+    }
+    initial_popup_menus_by_quest_id.Put(questID, menu);
+}
+
+void NPCDialogDict::DeleteMenusForQuest(psQuest* quest)
+{
+    // get the menus of the supplied quest
+    csHash<NpcDialogMenu*>::Iterator it = initial_popup_menus_by_quest_id.GetIterator(quest->GetID());
+    NpcDialogMenu* help;
+    
+    while(it.HasNext())
+    {
+        help = it.Next();
+        help->DeleteAllMenusOfQuest(quest);
+    }
+}
 
 void PrintTrigger(NpcTrigger* trig)
 {
@@ -1219,7 +1297,9 @@ NpcResponse::NpcResponse()
 
 NpcResponse::~NpcResponse()
 {
-    delete menu;
+    // remove all traces of this response
+    if (menu && quest)
+        menu->DeleteAllMenusOfQuest(quest);
 }
 
 bool NpcResponse::Load(iResultRow &row)
@@ -1575,7 +1655,7 @@ bool NpcResponse::AddPrerequisite(csRef<psQuestPrereqOp> op, bool insertBeginnin
 {
     // Make sure that the first op is an AND list if there are an
     // prerequisite from before.
-    if(prerequisite)
+    if(prerequisite.IsValid())
     {
         // Check if first op is an and list.
         psQuestPrereqOp* cast = prerequisite;
@@ -1585,7 +1665,8 @@ bool NpcResponse::AddPrerequisite(csRef<psQuestPrereqOp> op, bool insertBeginnin
             // If not insert an and list.
             list.AttachNew(new psQuestPrereqOpAnd());
             list->Push(prerequisite);
-            prerequisite = list;
+            // correct way, otherwise ref counter is invalid
+            prerequisite.AttachNew(list);
         }
 
         if(insertBeginning)
@@ -1731,6 +1812,7 @@ csString SayResponseOp::GetResponseScript()
 
 bool SayResponseOp::Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber)
 {
+    csTicks zeroTicks = 1;
     psString response;
 
     if(sayWhat)
@@ -1747,7 +1829,7 @@ bool SayResponseOp::Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks
     if(target->GetSecurityLevel() >= GM_DEVELOPER)
         response.AppendFmt(" (%s)",owner->triggerText.GetDataSafe());
 
-    who->Say(response,target->GetClient(), saypublic && target->GetVisibility(),timeDelay);
+    who->Say(response,target->GetClient(), saypublic && target->GetVisibility(),zeroTicks);
 
     return true;
 }
@@ -1776,6 +1858,8 @@ csString ActionResponseOp::GetResponseScript()
 
 bool ActionResponseOp::Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber)
 {
+    csTicks zeroTicks = 1;
+    
     if(!anim.IsEmpty())
         who->SetAction(anim,timeDelay);
 
@@ -1783,7 +1867,7 @@ bool ActionResponseOp::Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTi
     {
         csString response(*actWhat);
         who->GetNPCDialogPtr()->SubstituteKeywords(target->GetClient(),response);
-        who->ActionCommand(actionMy, actionNarrate, response.GetDataSafe(), target->GetClient(), IsPublic() && target->GetVisibility(), timeDelay);
+        who->ActionCommand(actionMy, actionNarrate, response.GetDataSafe(), target->GetClient(), IsPublic() && target->GetVisibility(), zeroTicks);
     }
 
     return true;
@@ -2776,7 +2860,6 @@ bool DoAdminCommandResponseOp::Run(gemNPC* who, gemActor* target,NpcResponse* ow
 
 NpcDialogMenu::NpcDialogMenu()
 {
-    counter = 0;
 }
 
 void NpcDialogMenu::AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, psQuestPrereqOp* script)
@@ -2787,8 +2870,8 @@ void NpcDialogMenu::AddTrigger(const csString &menuText, const csString &trigger
     new_trigger.trigger      = trigger;
     new_trigger.quest        = quest;
     new_trigger.prerequisite = script;
-    new_trigger.triggerID    = counter++;
-
+    new_trigger.triggerID    = triggers.GetSize() + 1;
+    
     this->triggers.Push(new_trigger);
 }
 
@@ -2805,6 +2888,19 @@ void NpcDialogMenu::Add(NpcDialogMenu* add)
     //printf("Added %lu triggers to menu.\n", (unsigned long) add->triggers.GetSize());
 }
 
+void NpcDialogMenu::DeleteAllMenusOfQuest(psQuest* quest)
+{
+    for (size_t i=0; i<triggers.GetSize(); i++)
+    {
+        if (triggers[i].quest == quest) 
+        {
+            triggers.DeleteIndex(i);
+            //i=0; // start over at the very start of the array
+            i--;
+        }
+    }
+}
+
 void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
 {
     if(client == NULL)
@@ -2813,57 +2909,48 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
     psDialogMenuMessage menu;
 
     csString currentQuest;
-    int count = 0;
+    size_t count = 0;
 
     bool IsTesting = client->GetCharacterData()->GetActor()->questtester;
     bool IsGm = client->IsGM();
 
-    for(size_t i=0; i < counter; i++)
+    for(count=0; count < triggers.GetSize(); count++)
     {
         csString prereq;
 
-        if(triggers[i].quest && !triggers[i].quest->Active() && !IsTesting)
+        // fetch the prerequisites
+        if(triggers[count].quest && !triggers[count].quest->Active() && !IsTesting)
             continue;
 
-        if(triggers[i].prerequisite)
+        if(triggers[count].prerequisite)
         {
-            prereq = triggers[i].prerequisite->GetScript();
+            prereq = triggers[count].prerequisite->GetScript();
         }
 
-        //if (!prereq.IsEmpty())
-        //{
-        //    printf("Item %lu Prereq : %s\n", (unsigned long) i, prereq.GetDataSafe());
-        //}
-        //else
-        //{
-        //    printf("Item %lu has no prereqs.\n", (unsigned long) i);
-        //}
-
-        if(triggers[i].prerequisite && !IsTesting)
+        if(triggers[count].prerequisite && !IsTesting)
         {
-            if(!triggers[i].prerequisite->Check(client->GetCharacterData()))
+            if(!triggers[count].prerequisite->Check(client->GetCharacterData()))
             {
-                //printf("Prereq check failed. Skipping.\n");
                 continue;
             }
         }
 
         //check availability (as per lockout). Note as gm we show quest even if in lockout as > gm get
         //an error message in system even if they can't get it because testermode is off
-        if(triggers[i].quest && !IsGm && !IsTesting && !client->GetCharacterData()->GetQuestMgr().CheckQuestAvailable(triggers[i].quest, npc->GetPID()))
+        if(triggers[count].quest && !IsGm && !IsTesting && !client->GetCharacterData()->GetQuestMgr().CheckQuestAvailable(triggers[count].quest, npc->GetPID()))
             continue;
 
         // Check to see about inserting a quest heading
-        if(!(currentQuest == (triggers[i].quest ? triggers[i].quest->GetName() : "(Unknown)")))
+        if(!(currentQuest == (triggers[count].GetQuestTitle())))
         {
-            currentQuest = triggers[i].quest ? triggers[i].quest->GetName() : "(Unknown)";
+            currentQuest = triggers[count].GetQuestTitle();
             csString temp = "h:", temptrig = "heading";
             temp += currentQuest;
-            menu.AddResponse((uint32_t) i, temp, temptrig);
+            menu.AddResponse((uint32_t) count, temp, temptrig);
         }
 
 
-        csString menuText = triggers[i].menuText;
+        csString menuText = triggers[count].menuText;
         npc->GetNPCDialogPtr()->SubstituteKeywords(client,menuText);
 
         // Only add the trigger if it isn't a question, also add the
@@ -2871,18 +2958,18 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
         csString trigger;
 
         // It's a quest
-        if(triggers[i].quest)
+        if(triggers[count].quest)
         {
             // As the trigger is unused client side, being a question,
             // use it to store the questID.
             if(menuText.Find("?=") != SIZET_NOT_FOUND)
             {
-                trigger.Format("{%d}", triggers[i].quest->GetID());
+                trigger.Format("{%d}", triggers[count].quest->GetID());
             }
-            else if(triggers[i].trigger.GetAt(0) != '<')
+            else if(triggers[count].trigger.GetAt(0) != '<')
             {
                 // This is a normal trigger add {d} in front of it with the questID
-                trigger.Format("{%d} %s", triggers[i].quest->GetID(), triggers[i].trigger.GetData());
+                trigger.Format("{%d} %s", triggers[count].quest->GetID(), triggers[count].trigger.GetData());
             }
             else
             {
@@ -2890,8 +2977,8 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
                 // Simple replacement to add the needed tag: reasoning, there can be only one </l>
                 // in the xml so this <l money="0,0,0,0"><item n="Steel Falchion" c="1"/></l>
                 // is made this: <l money="0,0,0,0"><item n="Steel Falchion" c="1"/><questid id="1234"/></l>
-                trigger = triggers[i].trigger;
-                trigger.FindReplace("</l>", csString().Format("<questid id=\"%d\"/></l>", triggers[i].quest->GetID()));
+                trigger = triggers[count].trigger;
+                trigger.FindReplace("</l>", csString().Format("<questid id=\"%d\"/></l>", triggers[count].quest->GetID()));
             }
         }
         else //not part of a quest
@@ -2902,14 +2989,13 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
             }
             else
             {
-                trigger = triggers[i].trigger;
+                trigger = triggers[count].trigger;
             }
         }
 
-        menu.AddResponse((uint32_t) i,
+        menu.AddResponse((uint32_t) count,
                          menuText,
                          trigger);
-        count++;
     }
 
     if(count)
@@ -2923,7 +3009,7 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
     }
 }
 
-void NpcDialogMenu::SetPrerequisiteScript(psQuestPrereqOp* script)
+void NpcDialogMenu::SetPrerequisiteScript(csRef<psQuestPrereqOp> script)
 {
     csString prereq;
 
@@ -2937,8 +3023,32 @@ void NpcDialogMenu::SetPrerequisiteScript(psQuestPrereqOp* script)
 
     // Each item must have its own prequisite script so they can be different when menus are merged
     // even though they appear to all be set the same here.
-    for(size_t i=0; i < counter; i++)
+    for(size_t i=0; i < triggers.GetSize(); i++)
     {
         triggers[i].prerequisite = script;
     }
+}
+
+void NpcDialogMenu::InitializeQuestTitles()
+{
+    csString questTitle;
+    csString questof;
+    for (size_t i=0; i < triggers.GetSize(); i++)
+    {
+        // only if questname is available, create <questname (1/x)> titles
+        if (triggers[i].quest && triggers[i].quest->GetName())
+        {
+            questof.Format(" (%u of %u)", (int) i+1, (int) triggers.GetSize());
+            triggers[i].questTitle = triggers[i].quest->GetName() + questof;
+        }
+    }
+}
+
+csString NpcDialogMenu::DialogTrigger::GetQuestTitle()
+{
+    if (questTitle.IsEmpty())
+    {
+        return quest ? quest->GetName() : "(Unknown)";
+    }
+    return questTitle;
 }

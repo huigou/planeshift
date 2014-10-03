@@ -32,27 +32,11 @@
 //=============================================================================
 #include "util/psconst.h"
 
-class MathEnvironment;
-class MathExpression;
-class ActiveSpell;
-class EntityManager;
-class CacheManager;
-
 /**
- * Events that can trigger scripts, i.e. \<on type="attack"\>
- */
-enum SCRIPT_TRIGGER
-{
-    ATTACK,
-    DEFENSE,
-    MOVE,
-    NEARLYDEAD
-};
+ * \addtogroup xmlscripting
+ * @{ */
 
-class ImperativeOp; ///< private script internals
-
-/** ProgressionScripts
- *
+/** @file scripting.h
  * This is PlaneShift's XML based scripting system.
  * A RelaxNG schema is in data/ProgressionSchema.rng, both defining the
  * language and allowing one to check the validity of scripts.
@@ -66,46 +50,155 @@ class ImperativeOp; ///< private script internals
  *
  * See scripting.cpp for the implementation of all the various operations.
  */
+
+// forward declarations
+class MathEnvironment;
+class MathExpression;
+class ActiveSpell;
+class EntityManager;
+class CacheManager;
+
+/**
+ * Events that can trigger scripts, i.e. \<on type="attack"\>
+ */
+enum SCRIPT_TRIGGER
+{
+    ATTACK,     ///< triggered \<on type="attack"\>
+    DEFENSE,    ///< triggered \<on type="defense"\>
+    MOVE,       ///< triggered \<on type="move"\>
+    NEARLYDEAD  ///< triggered \<on type="nearlydead"\>
+};
+
+class ImperativeOp; // forward declaration of private script operation
+
+/** @short ProgressionScript is the imperative script container.
+ *
+ * An imperative script is a one-shot script.
+ */
 class ProgressionScript
 {
 public:
+    /** @short default destructor
+     * deletes all internally stored script operation object
+     */
     ~ProgressionScript();
+    /** @short create a progressionscript from a string containing a xml script
+     * 
+     * Basically this function creates a xml script from the given string and then
+     * passes it on to the other Create function.
+     * 
+     * @param entitymanager of the psserver
+     * @param cachemanager of the psserver
+     * @param name of the progressionscript ?
+     * @param script const char* string containing the script to parse and store
+     */
     static ProgressionScript* Create(EntityManager* entitymanager,CacheManager* cachemanager, const char* name, const char* script);
+    /** @short create a progressionscript from a xml script
+     * 
+     * Parses the supplied xml script and creates and stores an object representation of the script.
+     * 
+     * @param entitymanager of the psserver
+     * @param cachemanager of the psserver
+     * @param name of the progressionscript ?
+     * @param top xml iDocumentNode containing the script to parse and store
+     */
     static ProgressionScript* Create(EntityManager* entitymanager,CacheManager* cachemanager, const char* name, iDocumentNode* top);
 
-    const csString &Name()
+    /** @short fetch the name of this progressionscript object
+     * @return the name of the ProgressionScript
+     */
+    const csString &GetName()
     {
         return name;
     }
+    /** Run is executing the internally stored script.
+     * 
+     * @param env is a container for passing variables to the script
+     */
     void Run(MathEnvironment* env);
 
 protected:
+    /** @short internal constructor for Create().
+     * Is constructor only available inside the class.
+     * 
+     * @param name of the script object (identifier ?)
+     */
     ProgressionScript(const char* name) : name(name) { }
-    csString name;
-    csArray<ImperativeOp*> ops;
+    
+    csString name;                      ///< name of the script object (identifier?)
+    csArray<ImperativeOp*> ops;         ///< script operation objects, warning: may have objects that contain further arrays of operations
 };
 
-class AppliedOp; ///< private script internals
+class AppliedOp; // forward declaration of private script operation
 
+/** @short ApplicativeScript is the applied script container.
+ *
+ * An applied script is a reversible script which is applied 
+ * and after some time the applied effect is removed.
+ * Therefore the operations of the script are computed and 
+ * then stored in an ActiveSpell object. 
+ * So every operation within the ApplicativeScript must be
+ * reversible.
+ */
 class ApplicativeScript
 {
 public:
+    /**
+     * @short default destructore
+     */
     ~ApplicativeScript();
+    /** create a ApplicativeScript from a string containing a xml script
+     * 
+     * Basically this function creates a xml script from the given string and then
+     * passes it on to the other Create function.
+     * 
+     * @param entitymanager of the psserver
+     * @param cachemanager of the psserver
+     * @param script const char* string containing the script to parse and store
+     */
     static ApplicativeScript* Create(EntityManager* entitymanager, CacheManager* cachemanager, const char* script);
+     /** \short create a progressionscript from a xml script
+     * 
+     * Parses the supplied xml script and creates and stores an object representation of the script.
+     * 
+     * @param entitymanager of the psserver
+     * @param cachemanager of the psserver
+     * @param top xml iDocumentNode containing the script to parse and store
+     */
     static ApplicativeScript* Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top);
+     /** \short create a progressionscript from a xml script
+     * 
+     * Parses the supplied xml script and creates and stores an object representation of the script.
+     * 
+     * @param entitymanager of the psserver
+     * @param cachemanager of the psserver
+     * @param top xml iDocumentNode containing the script to parse and store
+     * @param type of the spell (currently only buff or debuff)
+     * @param name of the spell that is created
+     * @param duration of the spell, may be a formula
+     */
     static ApplicativeScript* Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration);
 
+    /** @short execute the script
+     * Executes the script in the context of the supplied MathEnvironment.
+     * A cancel event can be registered as well.
+     * @param env is a MathEnvironment containing variables and objects necessary for the script to run
+     * @param registerCancelEvent if true a cancel event is registered, otherwise not
+     */
     ActiveSpell* Apply(MathEnvironment* env, bool registerCancelEvent = true);
     /***
      * retrieve the description of the Applicativescripts commands
-     * 
+     * @return csString containing a description of the scripts effect
      */
     const csString &GetDescription();
 
     void SetImage( csString tImage ) { image=tImage; }
 
 protected:
-    ApplicativeScript();
+    /**
+     * @short internally used constructor
+     */
+    ApplicativeScript();        
 
     SPELL_TYPE type;            ///< spell type...buff, debuff, etc.
     csString aim;               ///< name of the MathScript var to aim at
@@ -143,5 +236,8 @@ protected:
     };
 };
 #endif
+
+/**
+ * @} */
 
 #endif

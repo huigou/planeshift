@@ -5115,6 +5115,12 @@ void gemNPC::Say(const char* sayText, Client* who, bool sayPublic, csTicks &time
         // subsequent ones add to the current time delay, and send delayed
         if(timeDelay==0)
             timeDelay = (csTicks)(1000);
+        else if (timeDelay == (csTicks)1)
+        {
+            // TODO: this is hacky
+            psserver->GetNetManager()->SendMessage(newMsg.msg);
+            return;
+        }
         psserver->GetEventManager()->SendMessageDelayed(newMsg.msg,timeDelay);
 
         timeDelay += (csTicks)(2000 + 50*strlen(sayText));
@@ -5158,6 +5164,12 @@ void gemNPC::ActionCommand(bool actionMy, bool actionNarrate, const char* actTex
         // subsequent ones add to the current time delay, and send delayed
         if(timeDelay==0)
             timeDelay = (csTicks)(1000);
+        else if (timeDelay == (csTicks)1)
+        {
+            // TODO: this is hacky
+            psserver->GetNetManager()->SendMessage(msg.msg);
+            return;
+        }
         psserver->GetEventManager()->SendMessageDelayed(msg.msg,timeDelay);
 
         timeDelay += (csTicks)(1000 + 30*strlen(actText));

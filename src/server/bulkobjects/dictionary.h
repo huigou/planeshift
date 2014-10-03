@@ -23,6 +23,7 @@
 // Crystal Space Includes
 //=============================================================================
 #include <csutil/csstring.h>
+//#include <csutil/ref.h>
 #include <csutil/refcount.h>
 #include <csutil/parray.h>
 #include <csutil/hash.h>
@@ -85,6 +86,7 @@ protected:
 
     /// This is a storage area for popup menus parsed during quest loading, which is done before NPCs are spawned.
     csHash<NpcDialogMenu*,csString>    initial_popup_menus;
+    csHash<NpcDialogMenu*>             initial_popup_menus_by_quest_id;
 
     int dynamic_id;
 
@@ -161,13 +163,31 @@ public:
                            int prior_response,
                            int trigger_response);
 
-    void DeleteTriggerResponse(NpcTrigger* trigger, int responseId);
+    void DeleteTriggerResponse(NpcTrigger* trigger, int responseID);
 
     /// Find a stored initial trigger menu with the specified NPC name
     NpcDialogMenu* FindMenu(const char* name);
 
     /// Store an initial trigger menu with the specified NPC name
     void AddMenu(const char* name, NpcDialogMenu* menu);
+    
+    /** Store a menu with the dictionary
+     * NOTE: this is hacky - natoka
+     * @param menu to register - it will get cleaned up on dict destruction
+     */
+    void AddMenu(NpcDialogMenu* menu);
+    
+    /**
+     * Remove the quest related NpcDialogMenu entries.
+     * 
+     * Will remove the DialogTrigger entries (as storde in triggers)
+     * of all NpcDialogMenu objects that have been registered in 
+     * this dictionary.
+     * @param quest pointer to delete the menus for.
+     */
+    void DeleteMenusForQuest(psQuest* quest);
+    
+    void RemoveEmptyMenu(NpcDialogMenu* menu);
 
     /**
      * Dump the entire dictionary
@@ -259,7 +279,7 @@ public:
     /// Load the trigger from a database
     bool Load(iResultRow &row);
 
-    /// Return true if there are one available response for this trigger
+    /// Return true if there is one response available for this trigger
     bool HaveAvailableResponses(Client* client, gemNPC* npc, NPCDialogDict* dict, csArray<int>* availableResponseList = NULL, int questID = -1);
 
     /// Return one of the members of responseIDlist array randomly
@@ -286,6 +306,9 @@ public:
     virtual bool Load(iDocumentNode* node) = 0;
     virtual csString GetResponseScript() = 0;
     virtual bool Run(gemNPC* who, gemActor* target,NpcResponse* owner,csTicks &timeDelay, int &voiceNumber) = 0;
+    /**
+     * only used for output in error messages while parsing the script in NpcResponse
+     */
     const char* GetName()
     {
         return name;
@@ -304,25 +327,72 @@ class NpcDialogMenu
 protected:
     struct DialogTrigger
     {
-        unsigned int triggerID;
-        csString menuText;
-        csString trigger;
-        psQuest* quest;
-        csRef<psQuestPrereqOp> prerequisite;
+        unsigned int triggerID;         ///< internal trigger identifier
+        csString questTitle;            ///< title - with numbers (1 of ...)
+        csString menuText;              ///< text of the menu entry
+        csString trigger;               ///< actual trigger text
+        psQuest* quest;                 ///< quest that the trigger refers to
+        csRef<psQuestPrereqOp> prerequisite; 
+        
+        /**
+        * retrive the title of the specified trigger.
+        * A set questTitle takes preceedence over fetching
+        * the questtitle automatically from the given quest
+        */
+        csString GetQuestTitle();
+        DialogTrigger() : quest(NULL) {}
     };
-
-    unsigned int counter; // ID counter
 
 public:
 
-    csArray<DialogTrigger> triggers;
+    csArray<DialogTrigger> triggers;    ///< list of menu items
 
+    /**
+     * Default construtor
+     */
     NpcDialogMenu();
 
+    /**
+     * Adds a trigger to the menu.
+     * 
+     * @param menuText is the text to display in the menu
+     * @param trigger is the text that the player needs to enter to trigger the menu entry
+     * @param quest that the trigger refers to
+     * @param script are the quest prerequisites for ???
+     */
     void AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, psQuestPrereqOp* script=NULL);
+    /**
+     * Adds a the triggers of the NpcDialogMenu to the array of triggers.
+     * 
+     * @param add contains the triggers to add.
+     */
     void Add(NpcDialogMenu* add);
+    /**
+     * Remove the specified quest's menus
+     * 
+     * @param quest pointer to the quest to remove
+     */
+    void DeleteAllMenusOfQuest(psQuest* quest);
+    /**
+     * display the menu on the client.
+     * @param client to display the menu on
+     * @param npc is the npc the dialog is conducted with
+     */
     void ShowMenu(Client* client,csTicks delay, gemNPC* npc);
-    void SetPrerequisiteScript(psQuestPrereqOp* script);
+    /**
+     * sets the prerequisite script for all DialogTriggers.
+     * The complete triggers array is iterated through and all
+     * structs have the prerequisite set to the script.
+     * @param script the prerequisites that are to be set.
+     */
+    void SetPrerequisiteScript(csRef<psQuestPrereqOp> script);
+    
+    /**
+     * Initializes the Questtitles of the array.
+     * Should only be used when storing triggers for one quest,
+     * otherwise counting the triggers will 
+     */
+    void InitializeQuestTitles();
 };
 
 /**
@@ -390,7 +460,7 @@ public:
     csString GetResponseScript();
 
     // This is used so that the popup menu and the subsequent response can share the same filtering criteria
-    psQuestPrereqOp* GetPrerequisiteScript()
+    csRef<psQuestPrereqOp> GetPrerequisiteScript()
     {
         return prerequisite;
     }

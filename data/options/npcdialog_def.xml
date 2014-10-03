@@ -1,6 +1,8 @@
 <npcdialog>
     <npcdialogoptions>
         <usenpcdialog value="1"/>
+        <npcmessagetimeoutscale value="1.0"/>
+        <npcmessagetimeoutscalemax value="5.0"/>
     </npcdialogoptions>
 </npcdialog>
 

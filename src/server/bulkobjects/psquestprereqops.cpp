@@ -234,34 +234,58 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpNot::Copy()
 
 psQuestPrereqOpQuestCompleted::psQuestPrereqOpQuestCompleted(csString questName)
 {
-    quest = NULL;
+    quest = psserver->GetCacheManager()->GetQuestByName(name);
     name = questName;
 }
 
 bool psQuestPrereqOpQuestCompleted::Check(psCharacter* character)
 {
-    if(quest == NULL)
-        quest = psserver->GetCacheManager()->GetQuestByName(name);
+    if (! GetQuest())
+    {
+        return false;
+    }
     return character->GetQuestMgr().CheckQuestCompleted(quest);
 }
 
 csString psQuestPrereqOpQuestCompleted::GetScriptOp()
 {
     csString script;
-
-    script.AppendFmt("<completed quest=\"%s\"/>",quest->GetName());
+       
+    script.AppendFmt("<completed quest=\"%s\"/>",GetQuestName().GetData());
 
     return script;
+}
+
+psQuest* psQuestPrereqOpQuestCompleted::GetQuest()
+{
+    if (! quest.IsValid())
+    {
+        quest = psserver->GetCacheManager()->GetQuestByName(name.GetData());
+    }
+    return quest;
+}
+
+csString psQuestPrereqOpQuestCompleted::GetQuestName()
+{
+    GetQuest();
+    if (! quest.IsValid())
+    {
+        return "";
+    }
+    name = quest->GetName();
+    
+    return name;
 }
 
 csPtr<psQuestPrereqOp> psQuestPrereqOpQuestCompleted::Copy()
 {
     csRef<psQuestPrereqOpQuestCompleted> copy;
 
-    if(quest==NULL)
-        copy.AttachNew(new psQuestPrereqOpQuestCompleted(name));
-    else
-        copy.AttachNew(new psQuestPrereqOpQuestCompleted(quest));
+    if(GetQuest())
+    {     
+        copy.AttachNew(new psQuestPrereqOpQuestCompleted(GetQuest()));
+    }
+    
     return csPtr<psQuestPrereqOp>(copy);
 }
 
@@ -269,6 +293,10 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpQuestCompleted::Copy()
 
 bool psQuestPrereqOpQuestAssigned::Check(psCharacter* character)
 {
+    if (! GetQuest())
+    {
+        return false;
+    }
     return character->GetQuestMgr().CheckQuestAssigned(quest);
 }
 
@@ -276,7 +304,7 @@ csString psQuestPrereqOpQuestAssigned::GetScriptOp()
 {
     csString script;
 
-    script.AppendFmt("<assigned quest=\"%s\"/>",quest->GetName());
+    script.AppendFmt("<assigned quest=\"%s\"/>",GetQuestName().GetData());
 
     return script;
 }
@@ -284,8 +312,33 @@ csString psQuestPrereqOpQuestAssigned::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpQuestAssigned::Copy()
 {
     csRef<psQuestPrereqOpQuestAssigned> copy;
-    copy.AttachNew(new psQuestPrereqOpQuestAssigned(quest));
+    
+    if (GetQuest())
+    {
+        copy.AttachNew(new psQuestPrereqOpQuestAssigned(GetQuest()));
+    }
     return csPtr<psQuestPrereqOp>(copy);
+}
+
+psQuest* psQuestPrereqOpQuestAssigned::GetQuest()
+{
+    if (! quest.IsValid())
+    {
+        quest = psserver->GetCacheManager()->GetQuestByName(questName.GetData());
+    }
+    return quest;
+}
+
+csString psQuestPrereqOpQuestAssigned::GetQuestName()
+{
+    GetQuest();
+    if (! quest.IsValid())
+    {
+        return "";
+    }
+    questName = quest->GetName();
+    
+    return questName;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
