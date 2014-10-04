@@ -59,6 +59,9 @@
                 <frame x="165" y="10" width="180" height="15" border="no" />
                     <color r="150" g="20" b="20" />
                     <fadecolor r="200" g="50" b="50" />
+                    <warn level="0.25" low="true" r="254" g="113" b="0" />
+                    <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
+                    <danger level="0.15" low="true" r="255" g="0" b="0" />
                 <subscriptions>
                     <subscribe data="fVitalValue0:Self" />
                 </subscriptions>
@@ -75,6 +78,9 @@
                 <frame x="165" y="26" width="170" height="9" border="no" />
                     <color r="100" g="50" b="50" />
                     <fadecolor r="150" g="75" b="75" />
+                    <warn level="0.25" low="true" r="254" g="113" b="0" />
+                    <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
+                    <danger level="0.15" low="true" r="255" g="0" b="0" />
                 <subscriptions>
                     <subscribe data="fVitalValue2:Self" />
                 </subscriptions>

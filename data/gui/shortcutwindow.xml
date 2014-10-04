@@ -17,73 +17,73 @@
 
 
 <!-- Bars for the health, stamina, mana, and mental stamina. comment them out if you don't want them -->
-	<widget name="Bars" factory="pawsWidget" >
-	    <frame x="0" y="0" width="528" height="30" />
-        	<minframe width="150" height="30" />
-        	<maxframe width="2000" height="30" />
-	    <attachpoints>
-		<attach point="ATTACH_RIGHT" />
-		<attach point="ATTACH_TOP" />
-		<attach point="ATTACH_LEFT" />
-	    </attachpoints>
+    <widget name="Bars" factory="pawsWidget" >
+        <frame x="0" y="0" width="528" height="30" />
+            <minframe width="150" height="30" />
+            <maxframe width="2000" height="30" />
+        <attachpoints>
+        <attach point="ATTACH_RIGHT" />
+        <attach point="ATTACH_TOP" />
+        <attach point="ATTACH_LEFT" />
+        </attachpoints>
 
-	    <widget name="My HP" factory="pawsProgressBar" tooltip="Health">
-		<frame x="5" y="0" width="250" height="15" border="no" />
-                <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
-                <warn level="0.30" low="true" r="200" g="200" b="0" />
-                <danger level="0.10" low="true" r="200" g="0" b="0" />
+        <widget name="My HP" factory="pawsProgressBar" tooltip="Health">
+        <frame x="5" y="0" width="250" height="15" border="no" />
+            <warn level="0.25" low="true" r="254" g="113" b="0" />
+            <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
+            <danger level="0.15" low="true" r="255" g="0" b="0" />
                 <attachpoints>
                      <attach point="PROPORTIONAL_RIGHT" />
                      <attach point="ATTACH_LEFT" />
                  </attachpoints>
-		    <color r="150" g="20" b="20" />
-		    <fadecolor r="200" g="50" b="50" />
-		<subscriptions>
-		    <subscribe data="fVitalValue0:Self" />
-		</subscriptions>
-	    </widget>
-	    <widget name="My PysStamina" factory="pawsProgressBar" tooltip="Physical Stamina">
-		<frame x="20" y="15" width="235" height="10" border="no" />
+            <color r="150" g="20" b="20" />
+            <fadecolor r="200" g="50" b="50" />
+        <subscriptions>
+            <subscribe data="fVitalValue0:Self" />
+        </subscriptions>
+        </widget>
+        <widget name="My PysStamina" factory="pawsProgressBar" tooltip="Physical Stamina">
+        <frame x="20" y="15" width="235" height="10" border="no" />
                 <attachpoints>
                      <attach point="PROPORTIONAL_RIGHT" />
                      <attach point="ATTACH_LEFT" />
                  </attachpoints>
-		    <color r="100" g="50" b="50" />
-		    <fadecolor r="150" g="75" b="75" />
-		<subscriptions>
-		    <subscribe data="fVitalValue2:Self" />
-		</subscriptions>
+            <color r="100" g="50" b="50" />
+            <fadecolor r="150" g="75" b="75" />
+        <subscriptions>
+            <subscribe data="fVitalValue2:Self" />
+        </subscriptions>
 
-	    </widget>
-	    <widget name="My Mana" factory="pawsProgressBar" tooltip="Mana">
-		<frame x="265" y="0" width="255" height="15" border="no" />
-                <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
-                <warn level="0.30" low="true" r="200" g="200" b="0" />
-                <danger level="0.10" low="true" r="200" g="0" b="0" />
+        </widget>
+        <widget name="My Mana" factory="pawsProgressBar" tooltip="Mana">
+        <frame x="265" y="0" width="255" height="15" border="no" />
+            <warn level="0.25" low="true" r="254" g="113" b="0" />
+            <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
+            <danger level="0.15" low="true" r="255" g="0" b="0" />
                 <attachpoints>
                      <attach point="ATTACH_RIGHT" />
                      <attach point="PROPORTIONAL_LEFT" />
                  </attachpoints>
-		    <color r="20" g="20" b="160" />
-		    <fadecolor r="50" g="50" b="200" />
-		<subscriptions>
-		    <subscribe data="fVitalValue1:Self" />
-		</subscriptions>
-	    </widget>
+            <color r="20" g="20" b="160" />
+            <fadecolor r="50" g="50" b="200" />
+        <subscriptions>
+            <subscribe data="fVitalValue1:Self" />
+        </subscriptions>
+        </widget>
 
-	    <widget name="My MenStamina" factory="pawsProgressBar" tooltip="Mental Stamina">
-		<frame x="265" y="15" width="240" height="10" border="no" />
+        <widget name="My MenStamina" factory="pawsProgressBar" tooltip="Mental Stamina">
+        <frame x="265" y="15" width="240" height="10" border="no" />
                 <attachpoints>
                      <attach point="ATTACH_RIGHT" />
                      <attach point="PROPORTIONAL_LEFT" />
                  </attachpoints>
-		    <color r="50" g="50"  b="150" />
-		    <fadecolor r="75" g="75" b="200" />
-		<subscriptions>
-		    <subscribe data="fVitalValue3:Self" />
-		</subscriptions>
-	    </widget>
-	</widget>
+            <color r="50" g="50"  b="150" />
+            <fadecolor r="75" g="75" b="200" />
+        <subscriptions>
+            <subscribe data="fVitalValue3:Self" />
+        </subscriptions>
+        </widget>
+    </widget>
 
 <!-- -->
 
