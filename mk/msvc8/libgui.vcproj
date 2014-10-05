@@ -1813,6 +1813,9 @@
 				RelativePath="..\..\src\client\gui\pawsconfigentitylabels.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\client\gui\pawsconfigHPandMana.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\client\gui\pawsconfigkeys.cpp">
 			</File>
 			<File
@@ -2094,6 +2097,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigentitylabels.h">
+			</File>
+			<File
+				RelativePath="..\..\src\client\gui\pawsconfigHPandMana.h">
 			</File>
 			<File
 				RelativePath="..\..\src\client\gui\pawsconfigkeys.h">
