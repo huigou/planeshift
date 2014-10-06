@@ -4,7 +4,7 @@
         visible="no" savepositions="no" movable="yes"
         resizable="no" configurable="yes" style="New Standard GUI">
 
-    <frame x="50" y="50" width="690" height="480" border="yes" />
+    <frame x="250" y="250" width="690" height="480" border="yes" />
     <title resource="Scaling Title Bar" text="Glyphs" align="left" close_button="yes" />
 
 
@@ -219,7 +219,7 @@
     visible="no" savepositions="no" movable="yes"
     resizable="no" configurable="no" 
     style="New Standard GUI" alwaysontop="yes">
-    <frame x="30" y="30" width="330" height="240" border="yes" visible="yes" />
+    <frame x="300" y="300" width="330" height="240" border="yes" visible="yes" />
     <title resource="Scaling Title Bar" text="Magic Help" align="left" close_button="yes" />
     <widget name="Infobox1" factory="pawsMultiLineTextBox" style="Standard Font">
         <frame x="5" y="0" width="320" height="260" />

@@ -8,7 +8,7 @@
             
 
         <frame x="5" y="50" width="528" height="120" border="yes" />
-            <minframe width="300" height="100" />
+            <minframe width="150" height="100" />
 
 <!-- This resource definition makes the background frame invisible. comment it out if you want to see the frame  -->
         <bgimage resource="Back" alpha="255" />
@@ -28,7 +28,7 @@
         </attachpoints>
 
         <widget name="My HP" factory="pawsProgressBar" tooltip="Health">
-        <frame x="5" y="0" width="250" height="15" border="no" />
+        <frame x="5" y="0" width="240" height="15" border="no" />
             <warn level="0.25" low="true" r="254" g="113" b="0" />
             <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
             <danger level="0.15" low="true" r="255" g="0" b="0" />
@@ -43,7 +43,7 @@
         </subscriptions>
         </widget>
         <widget name="My PysStamina" factory="pawsProgressBar" tooltip="Physical Stamina">
-        <frame x="20" y="15" width="235" height="10" border="no" />
+        <frame x="20" y="15" width="225" height="10" border="no" />
                 <attachpoints>
                      <attach point="PROPORTIONAL_RIGHT" />
                      <attach point="ATTACH_LEFT" />
@@ -56,7 +56,7 @@
 
         </widget>
         <widget name="My Mana" factory="pawsProgressBar" tooltip="Mana">
-        <frame x="265" y="0" width="255" height="15" border="no" />
+        <frame x="275" y="0" width="245" height="15" border="no" />
             <warn level="0.25" low="true" r="254" g="113" b="0" />
             <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
             <danger level="0.15" low="true" r="255" g="0" b="0" />
@@ -72,7 +72,7 @@
         </widget>
 
         <widget name="My MenStamina" factory="pawsProgressBar" tooltip="Mental Stamina">
-        <frame x="265" y="15" width="240" height="10" border="no" />
+        <frame x="275" y="15" width="230" height="10" border="no" />
                 <attachpoints>
                      <attach point="ATTACH_RIGHT" />
                      <attach point="PROPORTIONAL_LEFT" />
