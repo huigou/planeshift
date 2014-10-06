@@ -15,12 +15,12 @@
         <bgimage resource="ButtonPickup" />
     </widget>
 
-    <widget name="TakeAll" factory="pawsButton" id="300" tooltip="Take all items">
+    <widget name="TakeAll" factory="pawsButton" id="400" tooltip="Take all items">
         <frame x="170" y="5" width="48" height="48" />
         <bgimage resource="TakeAll" />
     </widget>
 
-    <widget name="RollAll" factory="pawsButton" id="400" tooltip="Group loot all items">
+    <widget name="RollAll" factory="pawsButton" id="300" tooltip="Group loot all items">
         <frame x="10" y="5" width="48" height="48" />
         <bgimage resource="GroupRandomAll" />
     </widget>
