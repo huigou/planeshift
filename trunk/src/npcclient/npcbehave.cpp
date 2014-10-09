@@ -961,6 +961,7 @@ Behavior::Behavior(Behavior &other)
 void Behavior::DeepCopy(Behavior &other)
 {
     name                    = other.name;
+    stepCount               = other.stepCount;
     loop                    = other.loop;
     isActive                = other.isActive;
     is_applicable_when_dead = other.is_applicable_when_dead;
@@ -988,7 +989,6 @@ void Behavior::DeepCopy(Behavior &other)
 
     // Instance local variables. No need to copy.
     current_step = 0;
-    stepCount = 0;
 }
 
 bool Behavior::Load(iDocumentNode* node)
