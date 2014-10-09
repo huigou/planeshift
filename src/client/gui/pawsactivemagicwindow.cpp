@@ -316,7 +316,10 @@ void pawsActiveMagicWindow::AutoResize()
     {
         return;
     }
-
+    if (buffList->GetSize()<=0)
+    {
+    	return;
+    }
     //what is the starting position ?
     int leftEdge   = GetScreenFrame().xmin,
         rightEdge  = GetScreenFrame().xmax,
@@ -330,152 +333,94 @@ void pawsActiveMagicWindow::AutoResize()
         newHeight     = 0,
         newWidth      = 0,
         tOrientation  = Orientation;
+    // Screen boundaries
+    int rightScreenEdge = psengine->GetG2D()->GetWidth(),
+        bottomScreenEdge = psengine->GetG2D()->GetHeight();
 
+    // Let's keep these values for now
+    int verticalScrollWidth    = 10,
+    	horizontalScrollHeight = 0;
 
-    if(Orientation == ScrollMenuOptionHORIZONTAL)
-    {
-        int rows = int( buffList->GetTotalButtonWidth()/(psengine->GetG2D()->GetWidth()-16) )+1; //how many rows will we need to show all the entries
-	
-        if( leftEdge<=0 ) //left anchored, takes precedence over right anchored.
-        {
-            newLeftEdge=0;
-            if( rows==1 )
-            {
-                newRightEdge=(newLeftEdge+buffList->GetTotalButtonWidth()+16);
-            }
-            else //rows>1
-            {
-                newRightEdge=psengine->GetG2D()->GetWidth();
-            }
-        }
-        else if( rightEdge>=psengine->GetG2D()->GetWidth() ) //right anchored
-        {
-            newRightEdge=psengine->GetG2D()->GetWidth();
-            if( rows==1 )
-            {
-                newLeftEdge=rightEdge-buffList->GetTotalButtonWidth()-16;
-            }
-            else //rows>1
-            {
-                newLeftEdge=0;
-            }
-        }
-        else //not anchored at all, expand and contract on right
-        {
-            if( leftEdge+buffList->GetTotalButtonWidth()+16 < psengine->GetG2D()->GetWidth() )
-            {
-                newLeftEdge  =leftEdge;
-                newRightEdge =leftEdge+buffList->GetTotalButtonWidth()+16;
-                if( newRightEdge>psengine->GetG2D()->GetWidth() )
-                {
-                    newRightEdge=psengine->GetG2D()->GetWidth();
-                }
-            }
-            else //this will push it over the right edge of the screen, adjust
-            {
-                newRightEdge=psengine->GetG2D()->GetWidth();
-                newLeftEdge=newRightEdge-buffList->GetTotalButtonWidth()-16;
-                if( newLeftEdge<0 )
-                {
-                    newLeftEdge=0;
-                }
-            }
-        }
+    int buttonWidth  = buffList->GetButtonWidth(),
+    	buttonHeight = buffList->GetButtonHeight(),
+        buttonWidestWidth = buffList->GetWidestWidth();
 
-        if( topEdge<=0 ) //anchored at top, takes precendence over bottom anchor
-        {
-            newTopEdge=0;
-            newBottomEdge=(rows*buffList->GetButtonHeight())+16;
-        }
-        else if( bottomEdge>=psengine->GetG2D()->GetHeight() )  //anchored to bottom
-        {
-            newTopEdge=psengine->GetG2D()->GetHeight()-(rows*buffList->GetButtonHeight());
-            newBottomEdge=bottomEdge;
-        }
-        else //not anchored
-        {
-            newTopEdge    =topEdge;
-            newBottomEdge =topEdge+(rows*buffList->GetButtonHeight())+16;
-        }
-    }
-    else
-    {
-        int cols  = int( (buffList->GetSize()*buffList->GetButtonHeight())/(psengine->GetG2D()->GetHeight()-16) )+1, //how many columns will we need to sho all the entries
-            tSize = 0;
+    // Calculate icons surface area. Forget it, only width can vary.
+    int totalButtonWidth = buffList->GetTotalButtonWidth();
+    // Current amount of buttons
+    int buttonsCount = buffList->GetSize();
+	// Calculate total amount of rows which would fit the current window size
+	int maxTotalRows = int( (bottomScreenEdge - 0 - horizontalScrollHeight) / buttonHeight);
+	// Calculate total amount of columns would fit the current window size
+	int maxTotalColumns = int(
+			(rightScreenEdge - 0 - verticalScrollWidth) / buttonWidestWidth);
+	int currentRows = int(
+					(bottomEdge - topEdge - horizontalScrollHeight) / buttonHeight);
+	int currentColumns = int(
+			(rightEdge - leftEdge - verticalScrollWidth) / buttonWidestWidth);
+	// Division by zero protection
+	currentRows    = (currentRows<=0    ? 1 : currentRows);
+	currentColumns = (currentColumns<=0 ? 1 : currentColumns);
+	if (Orientation == ScrollMenuOptionHORIZONTAL)
+	{
+		// Horizontal orientation: try to keep the height value the same and increase the width
+		// Calculate required columns amount
+		currentColumns = int((buttonsCount - 1) / currentRows) + 1;
 
-        tSize = buffList->GetSize()<1?1:buffList->GetSize();
+		// Trying to fit horizontally
+		if (maxTotalColumns < currentColumns)
+		{
+			currentColumns = maxTotalColumns;
+			currentRows = int (buttonsCount / currentColumns);
+		}
+		// Trying to fit vertically
+		if (maxTotalRows < currentRows)
+		{
+			currentRows = maxTotalRows;
+		}
+	}
+	else
+	{
+		// Vertical orientation: try to keep the width value the same and increase the height
+		// Calculate required rows amount
+		currentRows = int ((buttonsCount - 1) / currentColumns) +1;
+		// Trying to fit vertically
+		if (maxTotalRows < currentRows)
+		{
+			currentRows = maxTotalRows;
+			currentColumns = int (buttonsCount / currentRows);
+		}
+		// Trying to fit horizontally
+		if (maxTotalColumns < currentColumns)
+		{
+			currentColumns = maxTotalColumns;
+		}
+	}
+	// Calculate new height
+	newHeight = currentRows * buttonHeight + BUTTON_PADDING;
+	newHeight += horizontalScrollHeight;
+	// Calculate new width to fit all available buttons. Widest button width * columns amount
+	newWidth = (buttonWidestWidth * currentColumns) + BUTTON_PADDING;
+	newWidth += verticalScrollWidth;
 
-        if( topEdge<=0 )  //top anchored, takes precedence over bottom anchor
-        {
-            newTopEdge = 0;
-            if( cols==1 )
-            {
-                newBottomEdge = (tSize*buffList->GetButtonHeight())+16;
-            }
-            else 
-            {
-                newBottomEdge=psengine->GetG2D()->GetHeight();
-            }
-        }
-        else if( bottomEdge>=psengine->GetG2D()->GetHeight() )
-        {
-            newBottomEdge=psengine->GetG2D()->GetHeight();
-            if( cols==1 )
-            {
-                newTopEdge=newBottomEdge-(tSize*buffList->GetButtonHeight())-16;
-            }
-            else
-            {
-                newTopEdge=0;
-            }
-        }
-        else //no anchor, expand and contract on bottom
-        {
-           if( topEdge+(tSize*buffList->GetButtonHeight())+16 < psengine->GetG2D()->GetHeight() )
-           {
-               newTopEdge=topEdge;
-               newBottomEdge=topEdge+(tSize*buffList->GetButtonHeight())+16;
-           }
-           else
-           {
-               newBottomEdge=psengine->GetG2D()->GetHeight();
-               newTopEdge=newBottomEdge-(tSize*buffList->GetButtonHeight())-16;
-           }
-        }
+	// Calculate top left corner coordinates
+	// Align by bottom right corner
+	newLeftEdge = rightScreenEdge - newWidth;
+	newTopEdge = bottomScreenEdge - newHeight;
+	// Return to previous position if it still fits individually for each coordinate
+	if (newLeftEdge > leftEdge)
+	{
+		newLeftEdge = (leftEdge <= 0 ? 0 : leftEdge);
+	}
+	if (newTopEdge > topEdge)
+	{
+		newTopEdge = (topEdge <= 0 ? 0 : topEdge);
+	}
 
-        if( leftEdge<=0 ) //anchored at left, takes precendence over right anchor
-        {
-            newLeftEdge=0;
-            newRightEdge=((cols*buffList->GetWidestWidth())<buffList->GetButtonHeight()?buffList->GetButtonHeight():cols*buffList->GetWidestWidth())+16;
-        }
-        else if( rightEdge>=psengine->GetG2D()->GetWidth() )  //anchored to right
-        {
-            newLeftEdge=psengine->GetG2D()->GetWidth()-((cols*buffList->GetWidestWidth())<buffList->GetButtonHeight()?buffList->GetButtonHeight():cols*buffList->GetWidestWidth())-16;
-            newRightEdge=psengine->GetG2D()->GetWidth();
-        }
-        else //not anchored
-        {
-            newLeftEdge    =leftEdge;
-            newRightEdge =leftEdge+((cols*buffList->GetWidestWidth())<buffList->GetButtonHeight()?buffList->GetButtonHeight():cols*buffList->GetWidestWidth() )+16;
-        }
-    }
+	// Calculate bottom right corner coordinates
+	newRightEdge = newLeftEdge + newWidth;
+	newBottomEdge = newTopEdge + newHeight;
 
-    if( newRightEdge-newLeftEdge < buffList->GetButtonWidth() )
-    {
-        newWidth=buffList->GetButtonWidth()+BUTTON_PADDING;
-    }
-    else
-    {
-        newWidth=newRightEdge-newLeftEdge;
-    }
-    if( newBottomEdge-newTopEdge < buffList->GetButtonWidth() )
-    {
-        newHeight = buffList->GetButtonWidth()+BUTTON_PADDING;
-    }
-    else
-    {
-        newHeight = newBottomEdge-newTopEdge;
-    }
     SetRelativeFrame( newLeftEdge, newTopEdge, newWidth, newHeight ); 
 
     //SetRelativeFrame calls OnResize which will recalculate Orientation, but we don't want
@@ -483,7 +428,7 @@ void pawsActiveMagicWindow::AutoResize()
     Orientation=tOrientation; 
     buffList->SetOrientation(Orientation);
 
-    buffList->SetRelativeFrame( 0, 0, newRightEdge-newLeftEdge-16, newBottomEdge-newTopEdge-16 ); 
+    buffList->SetRelativeFrame( 0, 0, newWidth-verticalScrollWidth, newHeight-horizontalScrollHeight );
 
 }
 
