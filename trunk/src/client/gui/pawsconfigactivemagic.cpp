@@ -752,16 +752,16 @@ void pawsConfigActiveMagic::UpdateWarnLevel( )
             float tLevel = warnLevel->GetCurrentValue();
 
             ActiveMagicWindow->SetWarnMode( 0 ); 
-            if( tLevel<100 && tLevel>0  )
+            if( tLevel<100 && tLevel>=1.0  )
             {
                 temp.Format("> %2.0f",tLevel );
-                warnSetting->SetText( temp );
-
                 //if warnlevel is > danger level in % mode, then increase danger level to match.
                 if( tLevel>dangerLevel->GetCurrentValue() )
                 {
                     dangerLevel->SetCurrentValue( tLevel );
+                    dangerSetting->SetText( temp );
                 }
+                warnSetting->SetText( temp );
                 ActiveMagicWindow->SetWarnLevel(  tLevel, false ); //convert 0-100 int to float for pawsProgressMeter
             }
             else
@@ -773,17 +773,18 @@ void pawsConfigActiveMagic::UpdateWarnLevel( )
         else
         {
             ActiveMagicWindow->SetWarnMode( 1 ); 
-            if( warnLevel->GetCurrentValue()>0 )
+            if( warnLevel->GetCurrentValue()>=1.0 )
             {
                 temp.Format("< %2.1f", warnLevel->GetCurrentValue()/10 );
-                warnSetting->SetText( temp );
-
                 //if warn level is < danger level in seconds then decrease danger level to match
                 if( warnLevel->GetCurrentValue()<dangerLevel->GetCurrentValue() )
                 {
                     dangerLevel->SetCurrentValue( warnLevel->GetCurrentValue() );
+                    dangerSetting->SetText( temp );
                 }
                 ActiveMagicWindow->SetWarnLevel(  warnLevel->GetCurrentValue(), false ); //convert 0-100 int to float for pawsProgressMeter
+                warnSetting->SetText( temp );
+
             }
             else
             {
@@ -805,10 +806,11 @@ void pawsConfigActiveMagic::UpdateDangerLevel()
         //if warn level > danger level in percent mode then increase danger level
         if( warnLevel->GetCurrentValue()>tLevel )
         {
-            dangerLevel->SetCurrentValue( warnLevel->GetCurrentValue() );
+            tLevel=warnLevel->GetCurrentValue();
+            dangerLevel->SetCurrentValue( tLevel );
         }
 
-        if( tLevel<100 && tLevel>0 )
+        if( tLevel<100 && tLevel>=1.0 )
         {
             temp.Format("> %2.0f", tLevel );
             dangerSetting->SetText( temp );
@@ -830,7 +832,7 @@ void pawsConfigActiveMagic::UpdateDangerLevel()
             dangerLevel->SetCurrentValue( warnLevel->GetCurrentValue() );
         }
 
-        if( dangerLevel->GetCurrentValue()>0 )
+        if( dangerLevel->GetCurrentValue()>=1.0 )
         {
             temp.Format("< %2.1f", dangerLevel->GetCurrentValue()/10 );
             dangerSetting->SetText( temp );
@@ -852,7 +854,7 @@ void pawsConfigActiveMagic::UpdateFlashLevel()
         float tLevel = flashLevel->GetCurrentValue();
 
         ActiveMagicWindow->SetFlashMode( 0 ); 
-        if( tLevel<100 && tLevel>0 )
+        if( tLevel<100 && tLevel>=1.0 )
         {
             temp.Format("> %2.0f", tLevel );
             flashSetting->SetText( temp );
@@ -867,7 +869,7 @@ void pawsConfigActiveMagic::UpdateFlashLevel()
     else
     {
         ActiveMagicWindow->SetFlashMode( 1 ); 
-        if( flashLevel->GetCurrentValue()>0 )
+        if( flashLevel->GetCurrentValue()>=1.0 )
         {
             temp.Format("< %2.1f", flashLevel->GetCurrentValue()/10 );
             flashSetting->SetText( temp );
