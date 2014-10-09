@@ -121,14 +121,12 @@ bool pawsConfigHPandMana::PostSetup()
     HPWarnLevel->EnableValueLimit(true);
     HPWarnLevel->SetMinValue(0);
     HPWarnLevel->SetMaxValue(100);
-    HPWarnLevel->SetCurrentValue(0,false);
 
     HPWarnSetting = (pawsTextBox*)FindWidget("HPWarnSetting");
     if(!HPWarnSetting)
     {
         return false;
     }
-
 
     HPDangerLevel = (pawsScrollBar*)FindWidget("HPDangerLevel");
     if(!HPDangerLevel)
@@ -138,7 +136,6 @@ bool pawsConfigHPandMana::PostSetup()
     HPDangerLevel->EnableValueLimit(true);
     HPDangerLevel->SetMinValue(0);
     HPDangerLevel->SetMaxValue(100);
-    HPDangerLevel->SetCurrentValue(0,false);
 
     HPDangerSetting = (pawsTextBox*)FindWidget("HPDangerSetting");
     if(!HPDangerSetting)
@@ -155,7 +152,6 @@ bool pawsConfigHPandMana::PostSetup()
     HPFlashLevel->EnableValueLimit(true);
     HPFlashLevel->SetMinValue(0);
     HPFlashLevel->SetMaxValue(100);
-    HPFlashLevel->SetCurrentValue(0,false);
 
     HPFlashSetting = (pawsTextBox*)FindWidget("HPFlashSetting");
     if(!HPFlashSetting)
@@ -172,7 +168,6 @@ bool pawsConfigHPandMana::PostSetup()
     ManaWarnLevel->EnableValueLimit(true);
     ManaWarnLevel->SetMinValue(0);
     ManaWarnLevel->SetMaxValue(100);
-    ManaWarnLevel->SetCurrentValue(0,false);
 
     ManaWarnSetting = (pawsTextBox*)FindWidget("ManaWarnSetting");
     if(!ManaWarnSetting)
@@ -189,14 +184,12 @@ bool pawsConfigHPandMana::PostSetup()
     ManaDangerLevel->EnableValueLimit(true);
     ManaDangerLevel->SetMinValue(0);
     ManaDangerLevel->SetMaxValue(100);
-    ManaDangerLevel->SetCurrentValue(0,false);
 
     ManaDangerSetting = (pawsTextBox*)FindWidget("ManaDangerSetting");
     if(!ManaDangerSetting)
     {
         return false;
     }
-
 
     ManaFlashLevel = (pawsScrollBar*)FindWidget("ManaFlashLevel");
     if(!ManaFlashLevel)
@@ -206,7 +199,6 @@ bool pawsConfigHPandMana::PostSetup()
     ManaFlashLevel->EnableValueLimit(true);
     ManaFlashLevel->SetMinValue(0);
     ManaFlashLevel->SetMaxValue(100);
-    ManaFlashLevel->SetCurrentValue(0,false);
 
     ManaFlashSetting = (pawsTextBox*)FindWidget("ManaFlashSetting");
     if(!ManaFlashSetting)
@@ -214,14 +206,15 @@ bool pawsConfigHPandMana::PostSetup()
         return false;
     }
 
+    loaded = true;
+    dirty = false;
+
     return true;
 }
 
 bool pawsConfigHPandMana::LoadConfig()
 {
     LoadUserSharedPrefs();
-    loaded= true;
-    dirty = false;
 
     return true;
 }
@@ -260,7 +253,7 @@ void pawsConfigHPandMana::UpdateHPWarnLevel( )
 
     if( tLevel<100 && tLevel>=1.0  )
     {
-        temp.Format("> %2.0f%%",tLevel );
+        temp.Format("< %2.0f%%",tLevel );
         HPWarnSetting->SetText( temp );
 
         //if warnlevel is > danger level in % mode, then increase danger level to match.
@@ -289,10 +282,9 @@ void pawsConfigHPandMana::UpdateHPDangerLevel( )
 
     if( tLevel<100 && tLevel>=1.0  )
     {
-        temp.Format("> %2.0f%%",tLevel );
+        temp.Format("< %2.0f%%",tLevel );
         HPDangerSetting->SetText( temp );
 
-        //if warnlevel is > danger level in % mode, then increase danger level to match.
         if( HPWarnLevel->GetCurrentValue()>tLevel )
         {
             tLevel=HPWarnLevel->GetCurrentValue();
@@ -318,7 +310,7 @@ void pawsConfigHPandMana::UpdateHPFlashLevel( )
 
     if( tLevel<100 && tLevel>=1.0  )
     {
-        temp.Format("> %2.0f%%",tLevel );
+        temp.Format("< %2.0f%%",tLevel );
         HPFlashSetting->SetText( temp );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetHPFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
         InfoWindow->SetHPFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
@@ -342,10 +334,9 @@ void pawsConfigHPandMana::UpdateManaWarnLevel( )
 
     if( tLevel<100 && tLevel>=1.0  )
     {
-        temp.Format("> %2.0f%%",tLevel );
+        temp.Format("< %2.0f%%",tLevel );
         ManaWarnSetting->SetText( temp );
 
-        //if warnlevel is > danger level in % mode, then increase danger level to match.
         if( tLevel>ManaDangerLevel->GetCurrentValue() )
         {
             ((pawsShortcutWindow*)(ShortcutMenu))->SetManaDangerLevel(  ManaDangerLevel->GetCurrentValue()/100 );
@@ -372,10 +363,9 @@ void pawsConfigHPandMana::UpdateManaDangerLevel( )
 
     if( tLevel<100 && tLevel>=1.0  )
     {
-        temp.Format("> %2.0f%%",tLevel );
+        temp.Format("< %2.0f%%",tLevel );
         ManaDangerSetting->SetText( temp );
 
-        //if warnlevel is > danger level in % mode, then increase danger level to match.
         if( ManaWarnLevel->GetCurrentValue()>tLevel )
         {
             tLevel=ManaWarnLevel->GetCurrentValue();
@@ -401,7 +391,7 @@ void pawsConfigHPandMana::UpdateManaFlashLevel( )
 
     if( tLevel<100 && tLevel>=1.0  )
     {
-        temp.Format("> %2.0f%%",tLevel );
+        temp.Format("< %2.0f%%",tLevel );
         ManaFlashSetting->SetText( temp );
         ((pawsShortcutWindow*)(ShortcutMenu))->SetManaFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
         InfoWindow->SetManaFlashLevel(  tLevel/100 ); //convert 0-100 int to float for pawsProgressMeter
@@ -429,7 +419,7 @@ bool pawsConfigHPandMana::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
 
     if(wdg == HPWarnLevel )
     {
-        if( HPWarnLevel->GetCurrentValue()>0 )
+        if( HPWarnLevel->GetCurrentValue()>=1.0 )
         {
             if( HPWarnLevel->GetCurrentValue()<HPDangerLevel->GetCurrentValue() )
             {
@@ -437,12 +427,12 @@ bool pawsConfigHPandMana::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
             }
             ((pawsShortcutWindow*)(ShortcutMenu))->SetHPWarnLevel(  HPWarnLevel->GetCurrentValue()/100 );
             InfoWindow->SetHPWarnLevel(  HPWarnLevel->GetCurrentValue()/100 );
-            UpdateHPWarnLevel();
         }
+        UpdateHPWarnLevel();
     }
     else if(wdg == HPDangerLevel )
     {
-        if( HPDangerLevel->GetCurrentValue()>0 )
+        if( HPDangerLevel->GetCurrentValue()>=1.0 )
         {
             if( HPDangerLevel->GetCurrentValue()>HPWarnLevel->GetCurrentValue() )
             {
@@ -450,12 +440,12 @@ bool pawsConfigHPandMana::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
             }
             ((pawsShortcutWindow*)(ShortcutMenu))->SetHPDangerLevel(  HPDangerLevel->GetCurrentValue()/100 );
             InfoWindow->SetHPDangerLevel(  HPDangerLevel->GetCurrentValue()/100 );
-            UpdateHPDangerLevel();
         }
+        UpdateHPDangerLevel();
     }
     else if(wdg == HPFlashLevel )
     {
-        if( HPFlashLevel->GetCurrentValue()>0 )
+        if( HPFlashLevel->GetCurrentValue()>=1.0 )
         {
             ((pawsShortcutWindow*)(ShortcutMenu))->SetHPFlashLevel(  HPFlashLevel->GetCurrentValue()/100 );
             InfoWindow->SetHPFlashLevel(  HPFlashLevel->GetCurrentValue()/100 );
@@ -464,7 +454,7 @@ bool pawsConfigHPandMana::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
     }
     else if(wdg == ManaWarnLevel )
     {
-        if( ManaWarnLevel->GetCurrentValue()>0 )
+        if( ManaWarnLevel->GetCurrentValue()>=1.0 )
         {
             if( ManaWarnLevel->GetCurrentValue()<ManaDangerLevel->GetCurrentValue() )
             {
@@ -472,12 +462,12 @@ bool pawsConfigHPandMana::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
             }
             ((pawsShortcutWindow*)(ShortcutMenu))->SetManaWarnLevel(  ManaWarnLevel->GetCurrentValue()/100 );
             InfoWindow->SetManaWarnLevel(  ManaWarnLevel->GetCurrentValue()/100 );
-            UpdateManaWarnLevel();
         }
+        UpdateManaWarnLevel();
     }
     else if(wdg == ManaDangerLevel )
     {
-        if( ManaDangerLevel->GetCurrentValue()>0 )
+        if( ManaDangerLevel->GetCurrentValue()>=1.0 )
         {
             if( ManaDangerLevel->GetCurrentValue()>ManaWarnLevel->GetCurrentValue() )
             {
@@ -485,8 +475,8 @@ bool pawsConfigHPandMana::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
             }
             ((pawsShortcutWindow*)(ShortcutMenu))->SetManaDangerLevel(  ManaDangerLevel->GetCurrentValue()/100 );
             InfoWindow->SetManaDangerLevel(  ManaDangerLevel->GetCurrentValue()/100 );
-            UpdateManaDangerLevel();
         }
+        UpdateManaDangerLevel();
     }
     else if(wdg == ManaFlashLevel )
     {
