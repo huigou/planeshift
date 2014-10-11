@@ -11163,7 +11163,7 @@ void AdminManager::SetSkill(MsgEntry* me, psAdminCmdMessage &msg, AdminCmdData* 
     gemActor* source = NULL;
     psCharacter* schar = NULL;
 
-    if(data->sourcePlayer.targetActor)
+    if(data->sourcePlayer.targetClient)
     {
         source = data->sourcePlayer.targetActor;
     }
