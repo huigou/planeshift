@@ -437,6 +437,8 @@ bool pawsShortcutWindow::OnButtonReleased( int mouseButton, int keyModifier, paw
             //pass the array of icon names to LoadArrays as both the icon and the tooltip, so we can see then names when we hover over one
             iconPalette->LoadArrays( stubArray, allIcons, allIcons, stubArray, PALETTE_BUTTON_OFFSET, this );
             iconPalette->SetEditLock( ScrollMenuOptionDISABLED );
+            iconPalette->SetLeftScroll( ScrollMenuOptionENABLED );
+            iconPalette->SetRightScroll( ScrollMenuOptionENABLED );
             iconPalette->OnResize();
     
             iconDisplayID=-1;
