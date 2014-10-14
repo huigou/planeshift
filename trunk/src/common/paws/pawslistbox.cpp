@@ -1604,7 +1604,6 @@ void pawsListBoxRow::Hide()
 }
 
 
-
 int textBoxSortFunc(pawsWidget* widgetA, pawsWidget* widgetB)
 {
     pawsTextBox* textBoxA, * textBoxB;
@@ -1632,4 +1631,32 @@ int textBoxSortFunc(pawsWidget* widgetA, pawsWidget* widgetB)
         textB = "";
 
     return strcmp(textA, textB);
+}
+
+/** Function that compares listbox rows which contain pawsTextBoxWidget with numbers inside */
+int textBoxSortFunc_number(pawsWidget * widgetA, pawsWidget * widgetB)
+{
+    pawsTextBox * textBoxA, * textBoxB;
+    const char  * textA,    * textB;
+    int numA, numB;
+
+    textBoxA = dynamic_cast <pawsTextBox*> (widgetA);
+    textBoxB = dynamic_cast <pawsTextBox*> (widgetB);
+    assert(textBoxA && textBoxB);
+    textA = textBoxA->GetText();
+    if (textA == NULL)
+        textA = "";
+    textB = textBoxB->GetText();
+    if (textB == NULL)
+        textB = "";
+
+    numA = atoi(textA);
+    numB = atoi(textB);
+
+    if (numA < numB)
+        return -1;
+    else if (numA == numB)
+        return 0;
+    else
+        return 1;
 }

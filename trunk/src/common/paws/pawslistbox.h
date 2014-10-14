@@ -37,6 +37,8 @@ typedef int (*listBoxSortingFunc)(pawsWidget* a, pawsWidget* b);
 /** Compare function that works with listbox columns that are pawsTextBox widgets: */
 int textBoxSortFunc(pawsWidget* widgetA, pawsWidget* widgetB);
 
+/** Function that compares listbox rows which contain pawsTextBoxWidget with numbers inside */
+int textBoxSortFunc_number(pawsWidget * widgetA, pawsWidget * widgetB);
 
 //-----------------------------------------------------------------------------
 //                            struct ColumnInfo
