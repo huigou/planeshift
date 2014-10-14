@@ -1583,7 +1583,7 @@ bool QuestManager::ParseQuestScriptMenu(const csString &block,const csStringArra
 
         start = end; // Start at next Menu: or exit loop
     }
-    menu->InitializeQuestTitles();
+    
     return true;
 }
 

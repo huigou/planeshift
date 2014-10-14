@@ -2910,6 +2910,8 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
 
     csString currentQuest;
     size_t count = 0;
+    
+    //this->InitializeQuestTitles();
 
     bool IsTesting = client->GetCharacterData()->GetActor()->questtester;
     bool IsGm = client->IsGM();
@@ -3029,26 +3031,7 @@ void NpcDialogMenu::SetPrerequisiteScript(csRef<psQuestPrereqOp> script)
     }
 }
 
-void NpcDialogMenu::InitializeQuestTitles()
-{
-    csString questTitle;
-    csString questof;
-    for (size_t i=0; i < triggers.GetSize(); i++)
-    {
-        // only if questname is available, create <questname (1/x)> titles
-        if (triggers[i].quest && triggers[i].quest->GetName())
-        {
-            questof.Format(" (%u of %u)", (int) i+1, (int) triggers.GetSize());
-            triggers[i].questTitle = triggers[i].quest->GetName() + questof;
-        }
-    }
-}
-
 csString NpcDialogMenu::DialogTrigger::GetQuestTitle()
 {
-    if (questTitle.IsEmpty())
-    {
-        return quest ? quest->GetName() : "(Unknown)";
-    }
-    return questTitle;
+    return quest ? quest->GetName() : "(Unknown)";
 }

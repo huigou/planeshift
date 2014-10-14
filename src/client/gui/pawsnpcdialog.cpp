@@ -100,6 +100,7 @@ void pawsNpcDialogWindow::Draw()
         {
             clickedOnResponseBubble = false;
             NpcSays();
+            gotNewMenu = false;
         }
         // if no new menu was sent by the server, request the default npc menu
         // this only works properly after the last message was given by the npc
@@ -110,10 +111,12 @@ void pawsNpcDialogWindow::Draw()
                 speechBubble->Hide();
             FindWidget("FreeBubble")->Show();
             psengine->GetCmdHandler()->Execute("/npcmenu");
-            ticks = 0;
+            ticks = csGetTicks();
+            timeDelay = 500;
             displaysNewMenu = false;
         }
-    } 
+    }
+    
     else if (npcMsgQueue.GetSize() == 0 && (csGetTicks()-ticks > timeDelay || clickedOnResponseBubble))
     {
         if (gotNewMenu && ! displaysNewMenu)
@@ -133,9 +136,20 @@ void pawsNpcDialogWindow::Draw()
             Show();
             displaysNewMenu = true;
         }
-        
+        else if (!gotNewMenu && csGetTicks()-ticks > timeDelay)
+        {
+            // if no new menu was sent by the server, request the default npc menu
+            Debug1(LOG_PAWS,0,"Hiding NPC speech and asking for another set of possible questions.");
+                speechBubble->Hide();
+            FindWidget("FreeBubble")->Show();
+            psengine->GetCmdHandler()->Execute("/npcmenu");
+            ticks = csGetTicks();
+            timeDelay = 500;
+            displaysNewMenu = false;
+        }
     }
     
+
     SendToBottom(this);
     
     //printf("gotNewMenu: %d, ticks: %d timeDelay: %d\n",gotNewMenu?1:0, (csGetTicks()-ticks), timeDelay);
@@ -301,11 +315,15 @@ bool pawsNpcDialogWindow::OnButtonPressed(int button, int keyModifier, pawsWidge
                 CleanBubbles();
                 PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
                 ticks = csGetTicks(); // reset time, so we can wait for the next server response
+                timeDelay = 3000; // wait 3 seconds for new menu, otherwise request default npc menu
                 gotNewMenu = false;
             }
             else if(name == "CloseBubble")
             {
                 gotNewMenu = false;
+                npcMsgQueue.DeleteAll(); // drop all messages from server
+                ticks = csGetTicks();    
+                timeDelay = 0;          // and reset the timer
                 Hide();
             }
             else if(name == "SpeechBubble")
@@ -372,6 +390,7 @@ void pawsNpcDialogWindow::DisplayQuestBubbles(unsigned int index)
 {
     unsigned int c = 1;
     csString bname = "";
+    csString stepOf;
 
     //set text and visible bubbles
     for(unsigned int i = index; i < questInfo.GetSize() && c <= 3; i++, c++)
@@ -382,7 +401,9 @@ void pawsNpcDialogWindow::DisplayQuestBubbles(unsigned int index)
         pawsTextBox* qn = dynamic_cast<pawsTextBox*>(pb->FindWidget("QuestName"));
         pawsMultiLineTextBox* qt = dynamic_cast<pawsMultiLineTextBox*>(pb->FindWidget("QuestText"));
 
-        qn->SetText(questInfo[i].title);
+        stepOf.Format(" (%u/%u)", i+1, (unsigned int)questInfo.GetSize());
+        
+        qn->SetText(questInfo[i].title + stepOf);
         qt->SetText(questInfo[i].text);
         pb->Show();
     }
