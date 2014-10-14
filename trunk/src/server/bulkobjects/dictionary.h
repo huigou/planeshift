@@ -328,18 +328,16 @@ protected:
     struct DialogTrigger
     {
         unsigned int triggerID;         ///< internal trigger identifier
-        csString questTitle;            ///< title - with numbers (1 of ...)
         csString menuText;              ///< text of the menu entry
         csString trigger;               ///< actual trigger text
         psQuest* quest;                 ///< quest that the trigger refers to
         csRef<psQuestPrereqOp> prerequisite; 
         
-        /**
-        * retrive the title of the specified trigger.
-        * A set questTitle takes preceedence over fetching
-        * the questtitle automatically from the given quest
-        */
+        /* returns the quest title 
+         * @return the quest title if quest is set, otherwise "unknown"
+         */
         csString GetQuestTitle();
+        
         DialogTrigger() : quest(NULL) {}
     };
 
@@ -386,13 +384,6 @@ public:
      * @param script the prerequisites that are to be set.
      */
     void SetPrerequisiteScript(csRef<psQuestPrereqOp> script);
-    
-    /**
-     * Initializes the Questtitles of the array.
-     * Should only be used when storing triggers for one quest,
-     * otherwise counting the triggers will 
-     */
-    void InitializeQuestTitles();
 };
 
 /**
