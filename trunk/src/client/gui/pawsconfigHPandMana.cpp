@@ -20,7 +20,6 @@
 // CS INCLUDES
 #include <psconfig.h>
 #include <csutil/xmltiny.h>
-#include <csutil/objreg.h>
 #include <iutil/stringarray.h>
 #include <iutil/vfs.h>
 
@@ -490,25 +489,10 @@ bool pawsConfigHPandMana::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
     
     if( loaded )
         SaveConfig();
-    ((pawsShortcutWindow*)ShortcutMenu)->Draw();
-    InfoWindow->Draw();
+
     return true;
 }
 
-bool pawsConfigHPandMana::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget* wdg)
-{
-    return true;
-}
-
-void pawsConfigHPandMana::Show()
-{
-    pawsWidget::Show();
-}
-
-void pawsConfigHPandMana::Hide()
-{
-    pawsWidget::Hide();
-}
 
 bool pawsConfigHPandMana::LoadUserSharedPrefs()
 {

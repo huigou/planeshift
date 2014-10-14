@@ -20,7 +20,6 @@
 // CS INCLUDES
 #include <psconfig.h>
 #include <csutil/xmltiny.h>
-#include <csutil/objreg.h>
 #include <iutil/stringarray.h>
 #include <iutil/vfs.h>
 
@@ -485,7 +484,6 @@ bool pawsConfigActiveMagic::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
     SaveConfig();
     MenuBar->LayoutButtons();
     MenuBar->OnResize();
-    ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
 
     return true;
 }
@@ -691,7 +689,7 @@ bool pawsConfigActiveMagic::OnButtonPressed(int /*button*/, int /*mod*/, pawsWid
 
     MenuBar->LayoutButtons();
     MenuBar->OnResize();
-    ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+
     SaveConfig();
 
     return true;
@@ -709,7 +707,6 @@ void pawsConfigActiveMagic::PickText( const char * fontName, int size )
         MenuBar->SetFont( fontPath, size );
         MenuBar->SetButtonFont( fontPath, size );
 
-        ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
         SaveConfig();
         MenuBar->LayoutButtons();
         MenuBar->OnResize();
@@ -722,18 +719,8 @@ void pawsConfigActiveMagic::OnListAction(pawsListBox* selected, int status)
     PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
     MenuBar->LayoutButtons();
     MenuBar->OnResize();
-    ((pawsActiveMagicWindow*)ActiveMagicWindow)->Draw();
+
     SaveConfig();
-}
-
-void pawsConfigActiveMagic::Show()
-{
-    pawsWidget::Show();
-}
-
-void pawsConfigActiveMagic::Hide()
-{
-    pawsWidget::Hide();
 }
 
 void pawsConfigActiveMagic::SetMainWindowVisible( bool status )

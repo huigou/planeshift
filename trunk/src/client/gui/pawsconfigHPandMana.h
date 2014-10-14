@@ -20,14 +20,6 @@
 #ifndef PAWS_CONFIG_HPANDMANA_HEADER
 #define PAWS_CONFIG_HPANDMANA_HEADER
 
-// CS INCLUDES
-#include <csutil/array.h>
-#include <iutil/document.h>
-
-#include <csutil/csstring.h>
-#include <csutil/stringarray.h>
-#include <csutil/array.h>
-
 
 // PAWS INCLUDES
 #include "paws/pawswidget.h"
@@ -36,14 +28,12 @@
 #include "util/psxmlparser.h"
 #include "shortcutwindow.h"
 #include "pawsinfowindow.h"
-#include "paws/pawscrollbar.h"
 #include "pawsskillwindow.h"
 
 
 class pawsCheckBox;
-class pawsScrollBar;
-
 class pawsRadioButtonGroup;
+
 
 /*
  * class pawsConfigHPandMana is options screen for configuration of HPandMana Bar
@@ -55,10 +45,7 @@ public:
 
     //from pawsWidget:
     virtual bool PostSetup();
-    virtual bool OnScroll(int,pawsScrollBar*);
-    virtual bool OnButtonPressed(int, int, pawsWidget*);
-    virtual void Show();
-    virtual void Hide();
+    virtual bool OnScroll(int, pawsScrollBar*);
 
     // from pawsConfigSectionWindow:
     virtual bool Initialize();

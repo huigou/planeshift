@@ -20,14 +20,6 @@
 #ifndef PAWS_CONFIG_SHORTCUT_HEADER
 #define PAWS_CONFIG_SHORTCUT_HEADER
 
-// CS INCLUDES
-#include <csutil/array.h>
-#include <iutil/document.h>
-
-#include <csutil/csstring.h>
-#include <csutil/stringarray.h>
-#include <csutil/array.h>
-
 
 // PAWS INCLUDES
 #include "paws/pawswidget.h"
@@ -35,13 +27,11 @@
 #include "pawsconfigwindow.h"
 #include "util/psxmlparser.h"
 #include "shortcutwindow.h"
-#include "paws/pawscrollbar.h"
 
 
 class pawsCheckBox;
-class pawsScrollBar;
-
 class pawsRadioButtonGroup;
+
 
 /*
  * class pawsConfigShortcut is options screen for configuration of Shortcut Bar
@@ -53,11 +43,10 @@ public:
 
     //from pawsWidget:
     virtual bool PostSetup();
-    virtual bool OnScroll(int,pawsScrollBar*);
+    virtual bool OnScroll(int, pawsScrollBar*);
     virtual bool OnButtonPressed(int, int, pawsWidget*);
     virtual void OnListAction(pawsListBox* selected, int status);
-    virtual void Show();
-    virtual void Hide();
+
 
     // from pawsConfigSectionWindow:
     virtual bool Initialize();
