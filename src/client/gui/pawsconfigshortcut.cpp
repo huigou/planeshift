@@ -20,7 +20,6 @@
 // CS INCLUDES
 #include <psconfig.h>
 #include <csutil/xmltiny.h>
-#include <csutil/objreg.h>
 #include <iutil/stringarray.h>
 #include <iutil/vfs.h>
 
@@ -283,7 +282,7 @@ bool pawsConfigShortcut::LoadConfig()
             buttonBackground->SetState(0);
         }
 
-        healthAndMana->SetState(  ((pawsShortcutWindow*)ShortcutMenu)->GetMonitorState() );
+        healthAndMana->SetState(!(((pawsShortcutWindow*)ShortcutMenu)->GetMonitorState() == 0));
 
         enableScrollBar->TurnAllOff();
 
@@ -384,7 +383,7 @@ bool pawsConfigShortcut::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
         SaveConfig();
     MenuBar->LayoutButtons();
     MenuBar->OnResize();
-    ((pawsShortcutWindow*)ShortcutMenu)->Draw();
+
     return true;
 }
 
@@ -424,42 +423,36 @@ bool pawsConfigShortcut::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget
         case 1004 : 
         {
             MenuBar->SetLeftScroll(ScrollMenuOptionENABLED );
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
         }
         break;
 
         case 1005 : 
         {
             MenuBar->SetLeftScroll(ScrollMenuOptionDYNAMIC );
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
         }
         break;
 
         case 1006 : 
         {
             MenuBar->SetLeftScroll(ScrollMenuOptionDISABLED );
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
         }
         break;
 
         case 1007 : 
         {
             MenuBar->SetRightScroll(ScrollMenuOptionENABLED );
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
         }
         break;
 
         case 1008 : 
         {
             MenuBar->SetRightScroll(ScrollMenuOptionDYNAMIC );
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
         }
         break;
 
         case 1009 : 
         {
             MenuBar->SetRightScroll(ScrollMenuOptionDISABLED );
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
         }
         break;
 
@@ -487,13 +480,11 @@ bool pawsConfigShortcut::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget
             {
                 //enable Health and mana bars
                 ((pawsShortcutWindow*)ShortcutMenu)->StartMonitors();
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
             }
             else
             {
                 //disable health and mana bars
                 ((pawsShortcutWindow*)ShortcutMenu)->StopMonitors();
-                ((pawsShortcutWindow*)ShortcutMenu)->Draw();
             }
         }
         break;
@@ -523,7 +514,7 @@ bool pawsConfigShortcut::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget
     {
         MenuBar->LayoutButtons();
         MenuBar->OnResize();
-        ((pawsShortcutWindow*)ShortcutMenu)->Draw();
+
         SaveConfig();    
     }
 
@@ -544,7 +535,6 @@ void pawsConfigShortcut::PickText( const char * fontName, int size )
         MenuBar->SetFont( fontPath, size );
         MenuBar->SetButtonFont( fontPath, size );
 
-        ((pawsShortcutWindow*)ShortcutMenu)->Draw();
         SaveConfig();    
     }
 }
@@ -555,21 +545,7 @@ void pawsConfigShortcut::OnListAction(pawsListBox* selected, int status)
     PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
     MenuBar->LayoutButtons();
     MenuBar->OnResize();
-    ((pawsShortcutWindow*)ShortcutMenu)->Draw();
+
     SaveConfig();
-}
-
-void pawsConfigShortcut::Show()
-{
-    pawsWidget::Show();
-}
-
-void pawsConfigShortcut::Hide()
-{
-    if(dirty)
-    {
-    }
-
-    pawsWidget::Hide();
 }
 

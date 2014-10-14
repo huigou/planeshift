@@ -20,7 +20,6 @@
 // CS INCLUDES
 #include <psconfig.h>
 #include <csutil/xmltiny.h>
-#include <csutil/objreg.h>
 #include <iutil/stringarray.h>
 #include <iutil/vfs.h>
 
@@ -37,10 +36,7 @@
 // PAWS INCLUDES
 #include "pawsconfigchatfont.h"
 #include "paws/pawsmanager.h"
-#include "paws/pawscheckbox.h"
 #include "chatwindow.h"
-#include "pawsscrollmenu.h"
-#include "paws/pawsradio.h"
 
 
 pawsConfigChatFont::pawsConfigChatFont() :
@@ -180,7 +176,6 @@ bool pawsConfigChatFont::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
 
     if( loaded )
         SaveConfig();
-    ((pawsChatWindow*)ChatWindow)->Draw();
 
     return true;
 }
@@ -200,7 +195,6 @@ bool pawsConfigChatFont::OnButtonPressed(int /*button*/, int /*mod*/, pawsWidget
 
     if( loaded )
     {
-        ((pawsChatWindow*)ChatWindow)->Draw();
         SaveConfig();
     }
 
@@ -224,16 +218,6 @@ void pawsConfigChatFont::PickText( const char * fontName, int size )
 void pawsConfigChatFont::OnListAction(pawsListBox* selected, int status)
 {
     PickText( textFont->GetSelectedRowString(),  textSize->GetCurrentValue() );
-    ((pawsChatWindow*)ChatWindow)->Draw();
     SaveConfig();
 }
 
-void pawsConfigChatFont::Show()
-{
-    pawsWidget::Show();
-}
-
-void pawsConfigChatFont::Hide()
-{
-    pawsWidget::Hide();
-}

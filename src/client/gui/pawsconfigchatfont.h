@@ -20,27 +20,13 @@
 #ifndef PAWS_CONFIG_CHATFONTHEADER
 #define PAWS_CONFIG_CHATFONTHEADER
 
-// CS INCLUDES
-#include <csutil/array.h>
-#include <iutil/document.h>
-
-#include <csutil/csstring.h>
-#include <csutil/stringarray.h>
-#include <csutil/array.h>
-
 
 // PAWS INCLUDES
 #include "paws/pawswidget.h"
 #include "paws/pawscombo.h"
 #include "pawsconfigwindow.h"
 #include "util/psxmlparser.h"
-#include "pawsactivemagicwindow.h"
-#include "paws/pawscrollbar.h"
 
-
-class pawsCheckBox;
-class pawsScrollBar;
-class pawsRadioButtonGroup;
 
 /*
  * class pawsConfigChatFont is options screen for configuration of Chat window font
@@ -55,8 +41,6 @@ public:
     virtual bool OnScroll(int,pawsScrollBar*);
     virtual bool OnButtonPressed(int, int, pawsWidget*);
     virtual void OnListAction(pawsListBox* selected, int status);
-    virtual void Show();
-    virtual void Hide();
 
     // from pawsConfigSectionWindow:
     virtual bool Initialize();
