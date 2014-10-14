@@ -108,8 +108,18 @@ bool pawsStorageWindow::PostSetup()
     itemsBox    = (pawsListBox*)FindWidget("Items");
     trias       = (pawsTextBox*)FindWidget("TotalTrias");
 
+    if(!categoryBox || !itemsBox || !trias)
+    {
+        return false;
+    }
+
+    itemsBox->SetSortingFunc(0, textBoxSortFunc_number);
+    itemsBox->SetSortingFunc(2, textBoxSortFunc_number);
+    itemsBox->SetSortingFunc(3, textBoxSortFunc);
+
     return true;
 }
+
 
 void pawsStorageWindow::HandleMessage( MsgEntry* me )
 {
