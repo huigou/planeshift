@@ -1,7 +1,7 @@
 <widget_description>
 
 <widget name="GlyphWindow" factory="pawsGlyphWindow"
-        visible="no" savepositions="no" movable="yes"
+        visible="no" savepositions="yes" movable="yes"
         resizable="no" configurable="yes" style="New Standard GUI">
 
     <frame x="250" y="250" width="690" height="480" border="yes" />
@@ -216,7 +216,7 @@
 </widget>
 
 <widget name="magichelp" factory="pawsWidget"
-    visible="no" savepositions="no" movable="yes"
+    visible="no" movable="yes"
     resizable="no" configurable="no" 
     style="New Standard GUI" alwaysontop="yes">
     <frame x="300" y="300" width="330" height="240" border="yes" visible="yes" />
