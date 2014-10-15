@@ -95,11 +95,11 @@
             <attach point="ATTACH_TOP" />
             <attach point="ATTACH_BOTTOM" />
         </attachpoints>
-        <columns height="32">
+        <columns height="32" headings="yes" >
             <column width="30" >
                 <widget name="#" factory="pawsTextBox"></widget>
             </column>
-            <column width="40" >
+            <column width="40" sortable="false">
                 <widget name="Item" factory="pawsWidget"></widget>
             </column>
             <column width="60" >
