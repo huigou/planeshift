@@ -782,6 +782,7 @@ int pawsScrollMenu::CalcButtonSize(pawsDnDButton* target)
 
         target->GetFont()->GetDimensions(target->GetText(), textWidth, height);
         finalWidth = ((int)(((paddingWidth*2)+textWidth)/buttonWidth)+1)*buttonWidth; //calc number of buttonwidths
+        finalWidth+=5;  //to prevent text being displayed under edge artwork.
 
         return finalWidth;
     }
