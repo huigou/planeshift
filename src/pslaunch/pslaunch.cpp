@@ -306,6 +306,12 @@ bool psLauncherGUI::HandleEvent (iEvent &ev)
             updateTold = true;
         }
     }
+    if(infoShare->GetUpdateChecked())
+    {
+        pawsLauncherWindow* launcher =
+            (pawsLauncherWindow*)paws->FindWidget("Launcher");
+        launcher->EnablePlay();
+    }
 
     if (paws->HandleEvent(ev))
         return true;
@@ -630,8 +636,6 @@ int main(int argc, char* argv[])
 
             // Init thread communication structure.
             InfoShare *infoShare = new InfoShare();
-            infoShare->SetPerformUpdate(false);
-            infoShare->SetUpdateNeeded(false);
 
             // Initialize updater engine.
             csRef<UpdaterEngine> engine;

@@ -34,6 +34,8 @@ public:
     pawsLauncherWindow();
     bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget );
     bool PostSetup();
+    void EnablePlay();
+
 private:
     pawsWidget* launcherMain;
     pawsWidget* launcherUpdater;
