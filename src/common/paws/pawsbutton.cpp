@@ -336,7 +336,7 @@ void pawsButton::Draw()
 
 bool pawsButton::OnMouseEnter()
 {
-    if(changeOnMouseOver)
+    if(enabled && changeOnMouseOver)
     {
         SetState(true, false);
     }
@@ -346,7 +346,7 @@ bool pawsButton::OnMouseEnter()
 
 bool pawsButton::OnMouseExit()
 {
-    if(changeOnMouseOver)
+    if(enabled && changeOnMouseOver)
     {
         SetState(false, false);
     }
