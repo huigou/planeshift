@@ -81,7 +81,19 @@ bool pawsLauncherWindow::PostSetup()
         FindWidget("RepairButton")->Hide();
     }
 
+    // Disable 'Play' button until ready.
+    pawsButton* play = (pawsButton*)FindWidget("PlayButton");
+    if(play)
+        play->SetEnabled(false);
+
     return true;
+}
+
+void pawsLauncherWindow::EnablePlay()
+{
+    pawsButton* play = (pawsButton*)FindWidget("PlayButton");
+    if(play)
+        play->SetEnabled(true);
 }
 
 void pawsLauncherWindow::UpdateNews()
@@ -131,13 +143,6 @@ bool pawsLauncherWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
     }
     else if(ID == PLAY_BUTTON)
     {
-        // TODO: Grey out the Play button instead of doing nothing.
-        if(!psLaunchGUI->UpdateChecked())
-        {
-            pawsMessageTextBox* serverNews = (pawsMessageTextBox*)FindWidget("ServerNews");
-	    if(serverNews)
-                serverNews->AddMessage("Warning: Did not finish checking for updates.");
-	}
         psLaunchGUI->ExecClient(true);
         psLaunchGUI->Quit();
     }
