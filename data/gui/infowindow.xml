@@ -24,7 +24,7 @@
         <danger level="0.10" low="true" r="200" g="0" b="0" />
 -->
         <frame x="5" y="5" width="170" height="10" border="no" />
-        <color r="150" g="50" b="20" />
+        <color r="150" g="20" b="20" />
         <fadecolor r="200" g="50" b="50" />
         <warn level="0.25" low="true" r="254" g="113" b="0" />
         <flash level="0.20" low="true" r="0" g="0" b="0" rate="250" />
