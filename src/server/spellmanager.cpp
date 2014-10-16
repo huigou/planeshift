@@ -132,6 +132,7 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
     // Is the Glyph Sequence a Valid one?
     psSpell* spell = FindSpell(client, assembler);
 
+    csString name("Your research didn't result in a valid spell.");
     if(spell)
     {
         // Is this spell already in our spellbook?
@@ -149,11 +150,11 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
             }
             return;
         }
+        name = "A spell materializes for a second, but you then lose focus. Try again.";
     }
     if(mesg.info)
         return;
 
-    csString name("You failed to discover a spell.");
     csString image(" ");
     csString description(" ");
 
