@@ -132,7 +132,7 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
     // Is the Glyph Sequence a Valid one?
     psSpell* spell = FindSpell(client, assembler);
 
-    csString name("Your research didn't result in a valid spell.");
+    csString description("Your research didn't result in a valid spell.");
     if(spell)
     {
         // Is this spell already in our spellbook?
@@ -150,13 +150,13 @@ void SpellManager::HandleAssembler(MsgEntry* me, Client* client)
             }
             return;
         }
-        name = "A spell materializes for a second, but you then lose focus. Try again.";
+        description = "A spell materializes for a second, but you then lose focus. Try again or increase your magic knowledge.";
     }
     if(mesg.info)
         return;
 
+    csString name(" ");
     csString image(" ");
-    csString description(" ");
 
     const bool success = spell && psserver->GetRandom() * 100.0 < spell->ChanceOfResearchSuccess(client->GetCharacterData());
     ProgressionScript* outcome = psserver->GetProgressionManager()->FindScript(success ? "ResearchSpellSuccess" : "ResearchSpellFailure");
