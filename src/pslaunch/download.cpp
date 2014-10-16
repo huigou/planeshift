@@ -213,7 +213,10 @@ bool Downloader::DownloadFile(const char *file, const char *dest, bool URL, bool
     }
     else
     {
-        mirror = config->GetCurrentConfig()->GetMirrors().Get(activeMirrorID);
+        if(activeMirrorID < config->GetCurrentConfig()->GetMirrors().GetSize())
+            mirror = config->GetCurrentConfig()->GetMirrors().Get(activeMirrorID);
+        else
+            mirror = NULL;
     }
     
     while(mirror)

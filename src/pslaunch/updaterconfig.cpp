@@ -152,7 +152,6 @@ bool Config::LoadMirrors(iDocumentNode* node)
     }
     else
     {
-        printf("Unable to load mirrors!\n");
         return false;
     }
     return (mirrors.GetSize() > 0);
@@ -187,7 +186,11 @@ bool Config::Initialize(iDocumentNode* node)
         return false;
     }
 
-    LoadMirrors(node);
+    if(!LoadMirrors(node))
+    {
+        printf("Unable to load mirrors!\n");
+        return false;
+    }
 
     // Get client versions.
     csRef<iDocumentNode> clientNode = node->GetNode("client");
