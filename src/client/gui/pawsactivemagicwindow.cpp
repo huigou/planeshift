@@ -316,7 +316,7 @@ void pawsActiveMagicWindow::AutoResize()
     {
         return;
     }
-    if (buffList->GetSize()<=0)
+    if (buffList->GetSize() <= 0)
     {
     	return;
     }
@@ -339,87 +339,85 @@ void pawsActiveMagicWindow::AutoResize()
 
     // Let's keep these values for now
     int verticalScrollWidth    = 10,
-    	horizontalScrollHeight = 0;
+        horizontalScrollHeight = 0;
 
-    int buttonWidth  = buffList->GetButtonWidth(),
-    	buttonHeight = buffList->GetButtonHeight(),
-        buttonWidestWidth = buffList->GetWidestWidth();
+    int buttonWidth       = buffList->GetButtonWidth(),
+        buttonHeight      = buffList->GetButtonHeight(),
+        buttonWidestWidth = buffList->GetWidestWidth(),
+        buttonsCount      = buffList->GetSize();
 
-    // Calculate icons surface area. Forget it, only width can vary.
-    int totalButtonWidth = buffList->GetTotalButtonWidth();
-    // Current amount of buttons
-    int buttonsCount = buffList->GetSize();
-	// Calculate total amount of rows which would fit the current window size
-	int maxTotalRows = int( (bottomScreenEdge - 0 - horizontalScrollHeight) / buttonHeight);
-	// Calculate total amount of columns would fit the current window size
-	int maxTotalColumns = int(
-			(rightScreenEdge - 0 - verticalScrollWidth) / buttonWidestWidth);
-	int currentRows = int(
-					(bottomEdge - topEdge - horizontalScrollHeight) / buttonHeight);
-	int currentColumns = int(
-			(rightEdge - leftEdge - verticalScrollWidth) / buttonWidestWidth);
-	// Division by zero protection
-	currentRows    = (currentRows<=0    ? 1 : currentRows);
-	currentColumns = (currentColumns<=0 ? 1 : currentColumns);
-	if (Orientation == ScrollMenuOptionHORIZONTAL)
-	{
-		// Horizontal orientation: try to keep the height value the same and increase the width
-		// Calculate required columns amount
-		currentColumns = int((buttonsCount - 1) / currentRows) + 1;
+    // Calculate total amount of rows and columns which would fit the current window size
+    int maxTotalRows    = int((bottomScreenEdge - horizontalScrollHeight) / buttonHeight);
+    int maxTotalColumns = int((rightScreenEdge - verticalScrollWidth) / buttonWidestWidth);
 
-		// Trying to fit horizontally
-		if (maxTotalColumns < currentColumns)
-		{
-			currentColumns = maxTotalColumns;
-			currentRows = int (buttonsCount / currentColumns);
-		}
-		// Trying to fit vertically
-		if (maxTotalRows < currentRows)
-		{
-			currentRows = maxTotalRows;
-		}
-	}
-	else
-	{
-		// Vertical orientation: try to keep the width value the same and increase the height
-		// Calculate required rows amount
-		currentRows = int ((buttonsCount - 1) / currentColumns) +1;
-		// Trying to fit vertically
-		if (maxTotalRows < currentRows)
-		{
-			currentRows = maxTotalRows;
-			currentColumns = int (buttonsCount / currentRows);
-		}
-		// Trying to fit horizontally
-		if (maxTotalColumns < currentColumns)
-		{
-			currentColumns = maxTotalColumns;
-		}
-	}
-	// Calculate new height
-	newHeight = currentRows * buttonHeight + BUTTON_PADDING;
-	newHeight += horizontalScrollHeight;
-	// Calculate new width to fit all available buttons. Widest button width * columns amount
-	newWidth = (buttonWidestWidth * currentColumns) + BUTTON_PADDING;
-	newWidth += verticalScrollWidth;
+    // Calculate amount of rows and columns which can fit the current window
+    int currentRows     = int((bottomEdge - topEdge  - horizontalScrollHeight) / buttonHeight);
+    int currentColumns  = int((rightEdge  - leftEdge - verticalScrollWidth)    / buttonWidestWidth);
 
-	// Calculate top left corner coordinates
-	// Align by bottom right corner
-	newLeftEdge = rightScreenEdge - newWidth;
-	newTopEdge = bottomScreenEdge - newHeight;
-	// Return to previous position if it still fits individually for each coordinate
-	if (newLeftEdge > leftEdge)
-	{
-		newLeftEdge = (leftEdge <= 0 ? 0 : leftEdge);
-	}
-	if (newTopEdge > topEdge)
-	{
-		newTopEdge = (topEdge <= 0 ? 0 : topEdge);
-	}
+    // Division by zero protection (At least one column/row should present)
+    currentRows    = ((currentRows <= 0)    ? 1 : currentRows);
+    currentColumns = ((currentColumns <= 0) ? 1 : currentColumns);
 
-	// Calculate bottom right corner coordinates
-	newRightEdge = newLeftEdge + newWidth;
-	newBottomEdge = newTopEdge + newHeight;
+    // Choose scaling strategy
+    if (Orientation == ScrollMenuOptionHORIZONTAL)
+    {
+        // Horizontal orientation: try to keep the height value the same and increase the width
+        // Calculate required columns amount
+        currentColumns = int((buttonsCount - 1) / currentRows) + 1;
+
+        // Trying to fit horizontally
+        if (maxTotalColumns < currentColumns)
+        {
+            currentColumns = maxTotalColumns;
+            currentRows = int((buttonsCount - 1) / currentColumns) + 1;
+        }
+        // Trying to fit vertically
+        if (maxTotalRows < currentRows)
+        {
+            currentRows = maxTotalRows;
+        }
+    }
+    else
+    {
+        // Vertical orientation: try to keep the width value the same and increase the height
+        // Calculate required rows amount
+        currentRows = int((buttonsCount - 1) / currentColumns) + 1;
+        // Trying to fit vertically
+        if (maxTotalRows < currentRows)
+        {
+            currentRows = maxTotalRows;
+            currentColumns = int((buttonsCount - 1) / currentRows) + 1;
+        }
+        // Trying to fit horizontally
+        if (maxTotalColumns < currentColumns)
+        {
+            currentColumns = maxTotalColumns;
+        }
+    }
+    // Calculate new height
+    newHeight = currentRows * buttonHeight + BUTTON_PADDING;
+    newHeight += horizontalScrollHeight;
+    // Calculate new width to fit all available buttons. Widest button width * columns amount
+    newWidth = (buttonWidestWidth * currentColumns) + BUTTON_PADDING;
+    newWidth += verticalScrollWidth;
+
+    // Calculate top left corner coordinates
+    // Align by bottom right corner
+    newLeftEdge = rightScreenEdge - newWidth;
+    newTopEdge = bottomScreenEdge - newHeight;
+    // Return to previous position if it still fits, individually for each coordinate
+    if (newLeftEdge > leftEdge)
+    {
+        newLeftEdge = ((leftEdge <= 0) ? 0 : leftEdge);
+    }
+    if (newTopEdge > topEdge)
+    {
+        newTopEdge  = ((topEdge <= 0)  ? 0 : topEdge);
+    }
+
+    // Calculate bottom right corner coordinates
+    newRightEdge = newLeftEdge + newWidth;
+    newBottomEdge = newTopEdge + newHeight;
 
     SetRelativeFrame( newLeftEdge, newTopEdge, newWidth, newHeight ); 
 
@@ -429,7 +427,6 @@ void pawsActiveMagicWindow::AutoResize()
     buffList->SetOrientation(Orientation);
 
     buffList->SetRelativeFrame( 0, 0, newWidth-verticalScrollWidth, newHeight-horizontalScrollHeight );
-
 }
 
 void pawsActiveMagicWindow::Close()
