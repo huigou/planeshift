@@ -690,6 +690,10 @@ const char *psUserCommands::HandleCommand(const char *cmd)
                 UpdateTarget(dir, PSENTITYTYPE_NON_PLAYER_CHARACTER, NULL);
             else if (tail == "player" || tail == "pc")
                 UpdateTarget(dir, PSENTITYTYPE_PLAYER_CHARACTER, NULL);
+            else if (tail == "alive")
+                UpdateTarget(dir, PSENTITYTYPE_ALIVE_CHARACTER, NULL);
+            else if (tail == "dead")
+                UpdateTarget(dir, PSENTITYTYPE_DEAD_CHARACTER, NULL);
             else if (tail == "any")
                 UpdateTarget(dir, PSENTITYTYPE_NO_TARGET, NULL);
             else if (tail == "clear")
@@ -1464,6 +1468,8 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
 
         if ((entityType == PSENTITYTYPE_PLAYER_CHARACTER && eType < 0)
             || (entityType == PSENTITYTYPE_NON_PLAYER_CHARACTER && (eType >= 0 || eType == -2))
+            || (entityType == PSENTITYTYPE_ALIVE_CHARACTER && !object->IsAlive())
+            || (entityType == PSENTITYTYPE_DEAD_CHARACTER && object->IsAlive())
             || (entityType == PSENTITYTYPE_ITEM && eType != -2)
             || (entityType == PSENTITYTYPE_NAME &&
                 !csString(object->GetName()).StartsWith(name, true)))
