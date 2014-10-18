@@ -883,13 +883,13 @@ Targets the player with the name [Player-name]. Also works if just the first thr
 Targets the item with the name [Item-name]. Also works if just the first three letters of [Item-name] are typed after /target.]
 
 /target next [category]
-Makes the next target of type [category] your current target. Possible values for [category] are: npc, pc (Player Character), player, item, any.
+Makes the next target of type [category] your current target. Possible values for [category] are: npc, pc (Player Character), player, alive, dead, item, any.
 
 /target prev [category]
-Makes the previous target of type [category] your current target. Possible values for [category] are: npc, pc (Player Character), player, item, any.
+Makes the previous target of type [category] your current target. Possible values for [category] are: npc, pc (Player Character), player, alive, dead, item, any.
 
 /target nearest [category]
-Makes the nearest target of type [category] your current target. Possible values for [category] are: npc, pc (Player Character), player, item, any.
+Makes the nearest target of type [category] your current target. Possible values for [category] are: npc, pc (Player Character), player, alive, dead, item, any.
 
 /target clear
 Clears your current target and leaves you with nothing targeted at all.
