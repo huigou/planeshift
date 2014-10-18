@@ -1469,7 +1469,8 @@ void psUserCommands::UpdateTarget(SearchDirection searchDirection,
         if ((entityType == PSENTITYTYPE_PLAYER_CHARACTER && eType < 0)
             || (entityType == PSENTITYTYPE_NON_PLAYER_CHARACTER && (eType >= 0 || eType == -2))
             || (entityType == PSENTITYTYPE_ALIVE_CHARACTER && !object->IsAlive())
-            || (entityType == PSENTITYTYPE_DEAD_CHARACTER && object->IsAlive())
+            || (entityType == PSENTITYTYPE_DEAD_CHARACTER &&
+                (object->IsAlive() || eType == -2))
             || (entityType == PSENTITYTYPE_ITEM && eType != -2)
             || (entityType == PSENTITYTYPE_NAME &&
                 !csString(object->GetName()).StartsWith(name, true)))
