@@ -1366,17 +1366,17 @@ INSERT INTO sc_npctypes VALUES("140","SpellMaster1","DoNothing",0,"$run","","","
 
 <behavior name="SpellUnknown" completion_decay="-1">
    <locate obj="perception" />
-   <talk text="$target casted a spell" target="false" />
+   <talk text="$target cast a spell" target="false" />
 </behavior>
 
 <behavior name="SpellSelf" completion_decay="-1">
    <locate obj="perception" />
-   <talk text="$target casted a spell on me" target="false" />
+   <talk text="$target cast a spell on me" target="false" />
 </behavior>
 
 <behavior name="SpellTarget" completion_decay="-1">
    <locate obj="perception" />
-   <talk text="$target casted a spell on a target" target="false" />
+   <talk text="$target cast a spell on a target" target="false" />
 </behavior>
 
 <react event="spell:unknown" behavior="SpellUnknown" />
@@ -1397,17 +1397,17 @@ INSERT INTO sc_npctypes VALUES("141","SpellMaster2","DoNothing",0,"$run","","","
 
 <behavior name="SpellUnknown" completion_decay="-1">
    <locate obj="perception" />
-   <talk text="$target casted a spell" target="false" />
+   <talk text="$target cast a spell" target="false" />
 </behavior>
 
 <behavior name="SpellSelf" completion_decay="-1">
    <locate obj="perception" />
-   <talk text="$target casted a spell on me" target="false" />
+   <talk text="$target cast a spell on me" target="false" />
 </behavior>
 
 <behavior name="SpellTarget" completion_decay="-1">
    <locate obj="perception" />
-   <talk text="$target casted a spell on a target" target="false" />
+   <talk text="$target cast a spell on a target" target="false" />
 </behavior>
 
 <react event="spell:unknown" behavior="SpellUnknown" />
