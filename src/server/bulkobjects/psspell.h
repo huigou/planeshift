@@ -204,8 +204,8 @@ class psSpellCastGameEvent : public psGameEvent, public iDeleteObjectCallback
 public:
     gemActor*      caster; ///< Entity who casting this spell
     gemObject*     target; ///< Entity who is target of this spell
-    Client*        client; ///< The client that casted the spell, NULL if superclient
-    const psSpell* spell;  ///< The spell that is casted
+    Client*        client; ///< The client that cast the spell, NULL if superclient
+    const psSpell* spell;  ///< The spell that is cast
 
     float max_range;
     float kFactor;
