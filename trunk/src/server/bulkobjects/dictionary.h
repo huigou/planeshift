@@ -358,7 +358,7 @@ public:
      * @param quest that the trigger refers to
      * @param script are the quest prerequisites for ???
      */
-    void AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, psQuestPrereqOp* script=NULL);
+    void AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, csRef<psQuestPrereqOp> script=NULL);
     /**
      * Adds a the triggers of the NpcDialogMenu to the array of triggers.
      * 

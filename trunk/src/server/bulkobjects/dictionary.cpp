@@ -2862,7 +2862,7 @@ NpcDialogMenu::NpcDialogMenu()
 {
 }
 
-void NpcDialogMenu::AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, psQuestPrereqOp* script)
+void NpcDialogMenu::AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, csRef<psQuestPrereqOp> script)
 {
     NpcDialogMenu::DialogTrigger new_trigger;
 
