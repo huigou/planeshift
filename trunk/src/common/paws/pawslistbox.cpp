@@ -217,9 +217,11 @@ bool pawsListBox::Setup(iDocumentNode* node)
     columnHeight = columnsNode->GetAttributeValueAsInt("height");
     xmlbinding_row = columnsNode->GetAttributeValue("xmlbinding");
 
-    const char* headings = columnsNode->GetAttributeValue("headings");
-    if(!headings || !strcmp(headings,"no"))
+    bool headings = columnsNode->GetAttributeValueAsBool("headings");
+    if(!headings)
+    {
         this->UseTitleRow(false);
+    }
 
     const char* aid = node->GetAttributeValue("autoid");
     autoID = (aid && !strcmp(aid,"yes"));
@@ -407,6 +409,7 @@ void pawsListBox::CreateTitleRow()
     }
 
     AddChild(titleRow);
+    titleRow->SetHeading(true);
 }
 
 
@@ -1587,10 +1590,12 @@ void pawsListBoxRow::SetHeading(bool flag)
 {
     isHeading = flag;
 
+/* let xml handle the style
     for(size_t i=0; i<columns.GetSize(); i++)
     {
         columns[i]->SetFontStyle(flag ? FONT_STYLE_BOLD : DEFAULT_FONT_STYLE);
     }
+*/
 }
 
 void pawsListBoxRow::Hide()
