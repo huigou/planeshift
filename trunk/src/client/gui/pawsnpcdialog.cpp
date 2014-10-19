@@ -577,6 +577,11 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
             LoadQuest(mesg.xml);       
             giveBubble->Show();
         }
+        else
+        {
+            AdjustForPromptWindow();
+            Show();
+        }
     }
     else if(me->GetType() == MSGTYPE_CHAT)
     {
