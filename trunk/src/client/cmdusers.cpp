@@ -656,7 +656,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/target")
     {
         if (words[1].IsEmpty()) {
-            return "You can use /target [self|clear] or /target [prev|next|nearest] [item|npc|player|any].";
+            return "You can use /target [self|clear] or /target [prev|next|nearest] [item|npc|player|alive|dead|any].";
         } else if (words[1] == "self")
             psengine->GetCharManager()->SetTarget(psengine->GetCelClient()->GetMainPlayer(),"select");
         else
