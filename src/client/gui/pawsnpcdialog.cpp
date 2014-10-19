@@ -133,7 +133,6 @@ void pawsNpcDialogWindow::Draw()
                 AdjustForPromptWindow();
             }
 
-            Show();
             displaysNewMenu = true;
         }
         else if (!gotNewMenu && csGetTicks()-ticks > timeDelay)
@@ -580,8 +579,9 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
         else
         {
             AdjustForPromptWindow();
-            Show();
         }
+
+        Show();
     }
     else if(me->GetType() == MSGTYPE_CHAT)
     {
