@@ -229,6 +229,7 @@ private:
     int questIDFree;                    ///< Keeps the value of the quest if the free text question was triggered.
     bool gotNewMenu;                    ///< keeps track of the incoming new menu message
     bool displaysNewMenu;               ///< set to true when displaying a new menu
+    int triesNewMenu;                   ///< tries to fetch a new menu
     csTicks timeDelay;                  ///< stores the calculated time needed to read the last npc say (in ticks).
     csTicks ticks;                      ///< point in time when displaying a message started
 
