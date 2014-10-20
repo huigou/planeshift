@@ -100,7 +100,7 @@ void pawsNpcDialogWindow::Draw()
         {
             clickedOnResponseBubble = false;
             NpcSays();
-            gotNewMenu = false;
+            triesNewMenu = 0;
         }
         // if no new menu was sent by the server, request the default npc menu
         // this only works properly after the last message was given by the npc
@@ -114,7 +114,9 @@ void pawsNpcDialogWindow::Draw()
             ticks = csGetTicks();
             timeDelay = 500;
             displaysNewMenu = false;
+            triesNewMenu++;
         }
+        
     }
     
     else if (npcMsgQueue.GetSize() == 0 && (csGetTicks()-ticks > timeDelay || clickedOnResponseBubble))
@@ -134,8 +136,9 @@ void pawsNpcDialogWindow::Draw()
             }
 
             displaysNewMenu = true;
+            triesNewMenu = 0;
         }
-        else if (!gotNewMenu && csGetTicks()-ticks > timeDelay)
+        else if (!gotNewMenu && triesNewMenu < 1 && csGetTicks()-ticks > timeDelay)
         {
             // if no new menu was sent by the server, request the default npc menu
             Debug1(LOG_PAWS,0,"Hiding NPC speech and asking for another set of possible questions.");
@@ -145,7 +148,9 @@ void pawsNpcDialogWindow::Draw()
             ticks = csGetTicks();
             timeDelay = 500;
             displaysNewMenu = false;
+            triesNewMenu++;
         }
+        
     }
     
 
@@ -312,6 +317,7 @@ bool pawsNpcDialogWindow::OnButtonPressed(int button, int keyModifier, pawsWidge
                 }
                 DisplayTextInChat(text.GetData());
                 CleanBubbles();
+                
                 PawsManager::GetSingleton().SetCurrentFocusedWidget(textBox);
                 ticks = csGetTicks(); // reset time, so we can wait for the next server response
                 timeDelay = 3000; // wait 3 seconds for new menu, otherwise request default npc menu
@@ -628,6 +634,7 @@ void pawsNpcDialogWindow::HandleMessage(MsgEntry* me)
             if (textQueueEmpty)
             {               
                 NpcSays();
+                gotNewMenu = false; // reset new menu, because npc is talking now
             }
             
             ShowSpeechBubble();
