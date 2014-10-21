@@ -277,7 +277,9 @@ bool pawsListBox::Setup(iDocumentNode* node)
     }
 
     if(usingTitleRow)
+    {
         CreateTitleRow();
+    }
 
     SetSortedColumn(node->GetAttributeValueAsInt("sortBy"));
     csString selectableAttr = node->GetAttributeValue("selectable");
@@ -400,16 +402,15 @@ void pawsListBox::CreateTitleRow()
     titleRow = new pawsListBoxRow();
     titleRow->SetParent(this);
 
-    titleRow->SetRelativeFrame(0, 0,
-                               GetScreenFrame().Width() ,  GetActualHeight(columnHeight));
+    titleRow->SetRelativeFrame(0, 0, GetScreenFrame().Width() ,  GetActualHeight(columnHeight));
 
-    for(int x = 0; x < totalColumns; x++)
+    for(size_t x = 0; x < totalColumns; x++)
     {
         titleRow->AddTitleColumn(x, columnDef);
     }
 
     AddChild(titleRow);
-    titleRow->SetHeading(true);
+    titleRow->SetTitleRow(true);
 }
 
 
@@ -1005,17 +1006,19 @@ bool pawsListBox::SelfPopulate(iDocumentNode* topNode)
         csRef<iDocumentNode> node = iter->Next();
 
         if(node->GetType() != CS_NODE_ELEMENT)
+        {
             continue;
+        }
 
         if(strcmp(node->GetValue(), xmlbinding_row) == 0)
         {
             pawsListBoxRow* row = NewRow(count++);
-            if(node->GetAttributeValueAsBool("heading") == true)
+            if(node->GetAttributeValueAsBool("heading"))
             {
                 row->SetHeading(true);
             }
-            int x;
-            for(x=0; x<totalColumns; x++)
+
+            for(size_t x = 0; x < totalColumns; x++)
             {
                 if(columnDef[x].xmlbinding.Length() > 0)
                 {
@@ -1023,8 +1026,7 @@ bool pawsListBox::SelfPopulate(iDocumentNode* topNode)
                     csRef<iDocumentNode> column = node->GetNode(columnDef[x].xmlbinding);
                     if(!column)
                     {
-                        Error3("Could not find xmlbinding '%s' in xml supplied to listbox '%s'.",
-                               columnDef[x].xmlbinding.GetData(), name.GetData());
+                        Error3("Could not find xmlbinding '%s' in xml supplied to listbox '%s'.", columnDef[x].xmlbinding.GetData(), name.GetData());
                         return false;
                     }
 
@@ -1442,12 +1444,14 @@ void pawsListBox::SetTextCellValue(int rowNum, int colNum, const csString &value
 pawsListBoxRow::pawsListBoxRow()
 {
     isHeading = false;
+    isTitleRow = false;
     lastIndex = -1;
 }
 
 pawsListBoxRow::pawsListBoxRow(const pawsListBoxRow &origin)
     :pawsWidget(origin),
      isHeading(origin.isHeading),
+     isTitleRow(origin.isTitleRow),
      lastIndex(origin.lastIndex)
 {
     for(unsigned int i = 0 ; i < origin.columns.GetSize(); i++)
@@ -1472,8 +1476,10 @@ bool pawsListBoxRow::OnKeyDown(utf32_char keyCode, utf32_char keyChar, int modif
 bool pawsListBoxRow::OnMouseDown(int button, int modifiers, int x, int y)
 {
     // Heading rows are not clickable or selectable
-    if(isHeading)
+    if(isHeading || isTitleRow)
+    {
         return true;
+    }
 
     pawsListBox* parentBox = (pawsListBox*)parent;
 
@@ -1488,8 +1494,10 @@ bool pawsListBoxRow::OnMouseDown(int button, int modifiers, int x, int y)
 bool pawsListBoxRow::OnDoubleClick(int button, int /*modifiers*/, int /*x*/, int /*y*/)
 {
     // Heading rows are not clickable or selectable
-    if(isHeading)
+    if(isHeading || isTitleRow)
+    {
         return false;
+    }
 
     pawsListBox* parentBox = (pawsListBox*)parent;
 
@@ -1590,12 +1598,15 @@ void pawsListBoxRow::SetHeading(bool flag)
 {
     isHeading = flag;
 
-/* let xml handle the style
-    for(size_t i=0; i<columns.GetSize(); i++)
+    for(size_t i = 0; i<columns.GetSize(); i++)
     {
         columns[i]->SetFontStyle(flag ? FONT_STYLE_BOLD : DEFAULT_FONT_STYLE);
     }
-*/
+}
+
+void pawsListBoxRow::SetTitleRow(bool flag)
+{
+    isTitleRow = flag;
 }
 
 void pawsListBoxRow::Hide()
