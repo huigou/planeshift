@@ -31,6 +31,11 @@
 #include "net/clientmsghandler.h"
 #include "pscharcontrol.h"
 
+pawsLoadWindow::pawsLoadWindow()
+{
+    renderAnim = false;
+}
+
 pawsLoadWindow::~pawsLoadWindow()
 {
     psengine->GetMsgHandler()->Unsubscribe(this,MSGTYPE_MOTD);
@@ -123,7 +128,9 @@ void pawsLoadWindow::Draw()
     if(DrawWindow())
     {
         if(renderAnim)
+        {
             DrawAnim();
+        }
 
         DrawForeground();
     }
