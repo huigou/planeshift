@@ -52,15 +52,15 @@
 
 
         <widget name="" factory="pawsTextBox">
-            <frame x="15" y="110" width="140" height="20" />
+            <frame x="15" y="130" width="140" height="20" />
             <text string="Warn Level"/>
         </widget>
         <widget name="warnSetting" factory="pawsTextBox">
-            <frame x="100" y="110" width="140" height="20" />
+            <frame x="100" y="130" width="140" height="20" />
             <text string="Disabled"/>
         </widget>
         <widget name="warnMode" factory="pawsRadioButtonGroup"  >
-            <frame x="170" y="107" width="130" height="20" border="no" />
+            <frame x="170" y="127" width="130" height="20" border="no" />
                <radionode name="warnModePercent" id="1002">
                     <frame x="0" y="0" width="35" height="20" />
                     <text string="%" position="right" />
@@ -71,21 +71,21 @@
                 </radionode>
         </widget>
         <widget name="warnLevel" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-            <frame x="290" y="110" width="135" height="20" border="no" />
+            <frame x="290" y="130" width="135" height="20" border="no" />
         </widget>
 
 
 
         <widget name="" factory="pawsTextBox">
-            <frame x="15" y="130" width="140" height="20" />
+            <frame x="15" y="150" width="140" height="20" />
             <text string="Danger Level"/>
         </widget>
         <widget name="dangerSetting" factory="pawsTextBox">
-            <frame x="100" y="130" width="140" height="20" />
+            <frame x="100" y="150" width="140" height="20" />
             <text string="Disabled"/>
         </widget>
         <widget name="dangerMode" factory="pawsRadioButtonGroup"  >
-            <frame x="170" y="127" width="130" height="20" border="no" />
+            <frame x="170" y="147" width="130" height="20" border="no" />
                <radionode name="dangerModePercent" id="1004">
                     <frame x="0" y="0" width="35" height="20" />
                     <text string="%" position="right" />
@@ -96,21 +96,21 @@
                 </radionode>
         </widget>
         <widget name="dangerLevel" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-            <frame x="290" y="130" width="135" height="20" border="no" />
+            <frame x="290" y="150" width="135" height="20" border="no" />
         </widget>
 
 
 
         <widget name="" factory="pawsTextBox">
-            <frame x="15" y="150" width="140" height="20" />
+            <frame x="15" y="170" width="140" height="20" />
             <text string="Flash Level"/>
         </widget>
         <widget name="flashSetting" factory="pawsTextBox">
-            <frame x="100" y="150" width="140" height="20" />
+            <frame x="100" y="170" width="140" height="20" />
             <text string="Disabled"/>
         </widget>
         <widget name="flashMode" factory="pawsRadioButtonGroup"  >
-            <frame x="170" y="147" width="130" height="20" border="no" />
+            <frame x="170" y="167" width="130" height="20" border="no" />
                <radionode name="flashModePercent" id="1006">
                     <frame x="0" y="0" width="35" height="20" />
                     <text string="%" position="right" />
@@ -121,7 +121,7 @@
                 </radionode>
         </widget>
         <widget name="flashLevel" factory="pawsScrollBar" direction="horizontal" style="Standard Scrollbar Horizontal">
-            <frame x="290" y="150" width="135" height="20" border="no" />
+            <frame x="290" y="170" width="135" height="20" border="no" />
         </widget>
 
 

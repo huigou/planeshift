@@ -16,7 +16,7 @@
     </style>
 
     <!-- old default button -->
-    <style name="button" inherit="Button Font">
+    <style name="button" inherit="Button Font" >
         <frame border="yes" />
         <buttonup resource="Standard Button" />
         <buttondown resource="Standard Button Down" />
@@ -114,7 +114,7 @@
     <style name="Simple Button" inherit="Button Font" toggle="no" >
     </style>
 
-    <style name="Standard Button" inherit="Button Font" toggle="no" >
+    <style name="Standard Button" inherit="Button Font" toggle="no" changeonmouseover="yes">
         <frame border="yes" />
         <bgimage resource="Standard Button" />
         <buttonup resource="Standard Button" />
@@ -126,7 +126,7 @@
     </attachpoints>
     </style>
 
-    <style name="Scaling Button" inherit="Button Font" toggle="no" >
+    <style name="Scaling Button" inherit="Button Font" toggle="no" changeonmouseover="yes">
         <frame border="yes" />
         <bgimage resource="Scaling Button" />
         <buttonup resource="Scaling Button" />
