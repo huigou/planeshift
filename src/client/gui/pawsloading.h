@@ -45,6 +45,7 @@ class pawsMessageTextBox;
 class pawsLoadWindow : public pawsWidget, public psClientNetSubscriber
 {
 public:
+    pawsLoadWindow();
     virtual ~pawsLoadWindow();
     
     bool PostSetup();
