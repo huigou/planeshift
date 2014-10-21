@@ -1,30 +1,29 @@
-<style3>
+<style1>
     <!-- The whole toolbar, add border="yes" in the control.xml if you want to see a border -->
-
     <!-- Default for new players, used in tutorial -->
-    <bar width="770" height="70" min_w="360" min_h="30"  always_resize="yes"  />
+    <bar width="1094" height="70" min_w="360" min_h="30"  always_resize="yes"  />
     <buttons width="64" height="64" hide_width="16" hide_height="16" />
     <!-- Standard values -->
     <button name="ShowButtonUp"     x="0" y="0" />
     <button name="ShowButtonDown"   x="0" y="0" />
     <button name="ChatButton"       x="64" y="1" />
-    <button name="SkillsButton"     x="128" y="1" />
-    <button name="InventoryButton"  x="192" y="1" />
-    <button name="QuestButton"      x="256" y="1" />
-    <button name="SpellBookButton"  x="320" y="1" />
-    <button name="AttackButton"     x="384" y="1" />
-    <button name="InfoButton"       x="448" y="1" />
-    <button name="ActiveMagicButton" x="512" y="1" />
-    <button name="OptionsButton"    x="576" y="1" />
-    <button name="HelpButton"       x="640" y="1" />
-    <button name="QuitButton"       x="705" y="1" />
+    <button name="BuddyButton"      x="128" y="1" />
+    <button name="GroupButton"      x="192" y="1" />
+    <button name="GuildButton"      x="256" y="1" />
+    <button name="SkillsButton"     x="320" y="1" />
+    <button name="InventoryButton"  x="384" y="1" />
+    <button name="QuestButton"      x="448" y="1" />
+    <button name="SpellBookButton"  x="512" y="1" />
+    <button name="AttackButton"     x="576" y="1" />
+    <button name="ShortcutButton"   x="640" y="1" />
+    <button name="InfoButton"       x="704" y="1" />
+    <button name="ActiveMagicButton" x="768" y="1" />
+    <button name="OptionsButton"    x="832" y="1" />
+    <button name="PetitionButton"   x="896" y="1" />
+    <button name="HelpButton"       x="960" y="1" />
+    <button name="QuitButton"       x="1024" y="1" />
 
-    <button name="GuildButton"      x="-500" y="-500" />
-    <button name="PetitionButton"   x="-500" y="-500" />
-    <button name="BuddyButton"      x="-500" y="-500" />
-    <button name="GroupButton"      x="-500" y="-500" />
-    <button name="ShortcutButton"   x="-500" y="-500" />
-</style3>
+</style1>
 
 <style2>
     <bar width="520" height="654" min_w="210" min_h="185"  always_resize="no" />
@@ -53,7 +52,7 @@
     <button name="QuitButton"        x="5" y="582" />
 </style2>
 
-<style1>
+<style3>
     <bar width="1094" height="70" min_w="360" min_h="30"  always_resize="yes"  />
     <buttons width="64" height="64" hide_width="16" hide_height="16" />
     <!-- Standard values -->
@@ -75,7 +74,7 @@
     <button name="OptionsButton"     x="896" y="1" />
     <button name="HelpButton"        x="960" y="1" />
     <button name="QuitButton"        x="1024" y="1" />
-</style1>
+</style3>
 
 <style4>
     <bar width="1094" height="70" min_w="360" min_h="20"   always_resize="yes" />
@@ -130,5 +129,32 @@
     <button name="ActiveMagicButton" y="340" x="65" />
     <button name="OptionsButton"     y="404" x="65" />
     <button name="HelpButton"        y="468" x="65" />
-
 </style5>
+
+<style6>
+    <!-- The whole toolbar, add border="yes" in the control.xml if you want to see a border -->
+
+    <!-- Default for new players, used in tutorial -->
+    <bar width="770" height="70" min_w="360" min_h="30"  always_resize="yes"  />
+    <buttons width="64" height="64" hide_width="16" hide_height="16" />
+    <!-- Mini values -->
+    <button name="ShowButtonUp"     x="0" y="0" />
+    <button name="ShowButtonDown"   x="0" y="0" />
+    <button name="ChatButton"       x="64" y="1" />
+    <button name="SkillsButton"     x="128" y="1" />
+    <button name="InventoryButton"  x="192" y="1" />
+    <button name="QuestButton"      x="256" y="1" />
+    <button name="SpellBookButton"  x="320" y="1" />
+    <button name="AttackButton"     x="384" y="1" />
+    <button name="InfoButton"       x="448" y="1" />
+    <button name="ActiveMagicButton" x="512" y="1" />
+    <button name="OptionsButton"    x="576" y="1" />
+    <button name="HelpButton"       x="640" y="1" />
+    <button name="QuitButton"       x="705" y="1" />
+
+    <button name="GuildButton"      x="-500" y="-500" />
+    <button name="PetitionButton"   x="-500" y="-500" />
+    <button name="BuddyButton"      x="-500" y="-500" />
+    <button name="GroupButton"      x="-500" y="-500" />
+    <button name="ShortcutButton"   x="-500" y="-500" />
+</style6>
