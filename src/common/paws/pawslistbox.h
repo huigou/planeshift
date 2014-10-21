@@ -113,6 +113,9 @@ public:
     /// Heading rows exist within the list but are not clickable
     void SetHeading(bool flag);
 
+    /// Mark a row as title
+    void SetTitleRow(bool flag);
+
     /// Returns the last index of the row
     int GetLastIndex()const
     {
@@ -135,9 +138,11 @@ public:
     {
         return isHeading;
     }
+
 private:
-    /// Store whether this row should be a heading or not
-    bool isHeading;
+
+    bool isHeading;  ///< Store whether this row should be a heading or not
+    bool isTitleRow; ///< Store whether this row should be a title or not
 
     int lastIndex; ///< index of the related row
 
