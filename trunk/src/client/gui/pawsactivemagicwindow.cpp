@@ -187,11 +187,11 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 
 
     csList<csString> rowEntry;
-    show = showWindow->GetState() ? false : true;
+    size_t    numSpells=incoming.name.GetSize();
+    show = !showWindow->GetState() && (buffList->GetSize() < numSpells);
     if(!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
         ShowBehind();
 
-    size_t    numSpells=incoming.name.GetSize();
 
     buffList->Clear();
 
