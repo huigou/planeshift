@@ -60,6 +60,7 @@ public:
      */
     bool PostSetup();
     void Show();
+    void Refresh();
     virtual bool OnButtonPressed( int mouseButton, int keyModifier, pawsWidget* widget );
     virtual bool OnMouseDown( int button, int keyModifier, int x, int y );    
     virtual void Close();
