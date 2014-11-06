@@ -93,6 +93,11 @@ void pawsInventoryWindow::Show()
     pawsControlledWindow::Show();
 }
 
+void pawsInventoryWindow::Refresh()
+{
+    inventoryCache->GetInventory();
+}
+
 bool pawsInventoryWindow::SetupSlot( const char* slotName )
 {
     pawsSlot* slot = dynamic_cast <pawsSlot*> (FindWidget(slotName));

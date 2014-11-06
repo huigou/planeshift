@@ -18,6 +18,8 @@
  */
 
 #include <psconfig.h>
+#include "psmainwidget.h"
+
 
 // CS INCLUDES
 #include <csgeom/vector3.h>
@@ -258,6 +260,16 @@ bool pawsContainerDescWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModi
         name->SetText(editName->GetText());
         editName->Hide();
         name->Show();
+
+        psMainWidget*   Main    = psengine->GetMainWidget();
+        if( Main!=NULL )
+        {
+            pawsInventoryWindow *InventoryWindow = (pawsInventoryWindow *)Main->FindWidget( "InventoryWindow",true );
+            if( InventoryWindow!=NULL )
+            {
+                InventoryWindow->Refresh();
+            }
+        }
     }
 
     // this toggles the rename edit button
