@@ -4799,17 +4799,13 @@ void gemNPC::ShowPopupMenu(Client* client)
     // Merge current spot in active quests first
     for(size_t i=0; i < quests.GetSize(); i++)
     {
-        quests[i]->GetQuest();
         // If the quest is completed or the last response was not from this NPC, then skip
         if(quests[i]->last_response_from_npc_pid != pid || quests[i]->status == 'C')
         {
-            // printf("Skipping completed or irrelevant quest: %s\n", q->GetName() );
             continue;
         }
-        // printf("Checking quest %lu: %s.  ", (unsigned long) i, q->GetName() );
-        int last_response = quests[i]->last_response;
-        // printf("Got last response %d\n", last_response);
 
+        int last_response = quests[i]->last_response;
         if(last_response != -1)  // within a quest step
         {
             resp = dict->FindResponse(last_response);
@@ -4817,10 +4813,6 @@ void gemNPC::ShowPopupMenu(Client* client)
                 menu.Add(resp->menu);
             else
                 Error4("BUG: resp was null! last_response %d in %s (%c)", last_response, quests[i]->GetQuest()->GetName(), quests[i]->status);
-        }
-        else
-        {
-            // printf("Got last_response==-1 for quest %lu.\n", (unsigned long) i);
         }
     }
 
