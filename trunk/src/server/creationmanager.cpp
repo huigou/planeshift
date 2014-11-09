@@ -226,7 +226,7 @@ bool CharCreationManager::LoadLifeEvents()
 
 bool CharCreationManager::LoadCreationChoices()
 {
-    Result result(db->Select("SELECT * from character_creation"));
+    Result result(db->Select("SELECT * from character_creation order by id"));
 
     if(!result.IsValid() || result.Count() == 0)
         return false;

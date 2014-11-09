@@ -34,8 +34,11 @@
 #define MONTH_COMBOBOX      5
 #define NEXT_BUTTON 5000
 #define BACK_BUTTON 6000
+#define RANDOMIZE_BUTTON 7000
 ////////////////////////////////////////////////////////////////////////////////
 
+// This should match the number of radio buttons in data/gui/birth.xml
+#define MAXSIBLINGS 4
 
 pawsCharBirth::pawsCharBirth():
     cpBox(NULL),months(NULL),days(NULL)
@@ -134,15 +137,14 @@ bool pawsCharBirth::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*/, pa
         return true;        
     } 
 
-    if ( strcmp(widget->GetName(),"randomize") == 0 )
-    {
-        Randomize();
-        return true;
-    }
-
     int id = widget->GetID();
     switch ( id )
     {   
+    case RANDOMIZE_BUTTON:
+        {
+            Randomize();
+            return true;
+        }
     case BACK_BUTTON:
         {
             Hide();
@@ -221,6 +223,8 @@ void pawsCharBirth::PopulateFields()
             char widgetName[100];                
             sprintf( widgetName, "sibling%d", sibCount );                
             pawsRadioButton* button = (pawsRadioButton*)FindWidget( widgetName );
+            if (!button)
+                continue;
             button->SetID( createManager->childhoodData[x].id );
             button->Show();
             pawsTextBox* name = button->GetTextBox();
@@ -241,11 +245,19 @@ void pawsCharBirth::PopulateFields()
             }                
         }                                   
     }    
+    // Hide unused sibling radio buttons.
+    for (int i = sibCount; i < MAXSIBLINGS; i++)
+    {
+        char widgetName[100];
+        sprintf( widgetName, "sibling%d", i );
+        pawsRadioButton* button = (pawsRadioButton*)FindWidget( widgetName );
+        if (button)
+            button->Hide();
+    }
 }
 
 void pawsCharBirth::Draw()
 {
-    pawsWidget::Draw();
     // Check to see if we are waiting for data from the server. Should have a waiting
     // cursor if this fails.     
     if (!dataLoaded && createManager->HasChildhoodData())
@@ -258,6 +270,7 @@ void pawsCharBirth::Draw()
 
         dataLoaded = true;
     }
+    pawsWidget::Draw();
 }
 
 void pawsCharBirth::OnListAction( pawsListBox* widget, int status )
