@@ -404,7 +404,7 @@ void pawsListBox::CreateTitleRow()
 
     titleRow->SetRelativeFrame(0, 0, GetScreenFrame().Width() ,  GetActualHeight(columnHeight));
 
-    for(size_t x = 0; x < totalColumns; x++)
+    for(int x = 0; x < totalColumns; x++)
     {
         titleRow->AddTitleColumn(x, columnDef);
     }
@@ -1018,7 +1018,7 @@ bool pawsListBox::SelfPopulate(iDocumentNode* topNode)
                 row->SetHeading(true);
             }
 
-            for(size_t x = 0; x < totalColumns; x++)
+            for(int x = 0; x < totalColumns; x++)
             {
                 if(columnDef[x].xmlbinding.Length() > 0)
                 {
