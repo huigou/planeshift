@@ -195,12 +195,13 @@ void ZoneHandler::HandleMessage(MsgEntry* me)
     Notify3(LOG_LOAD, "Crossed from sector %s to sector %s.", msg.oldSector.GetData(), msg.newSector.GetData());
 
     csVector3 velocity = csVector3(0.0f);
-    float yrot = 0.0f;
+    float yrot = msg.yrot;
     // load current speed on sector crossing if the player is valid (not during game loading)
     if(celclient->GetMainPlayer())
     {
         velocity = celclient->GetMainPlayer()->GetVelocity();
-        yrot = celclient->GetMainPlayer()->GetYRotation();
+        if(!msg.use_yrot)
+            yrot = celclient->GetMainPlayer()->GetYRotation();
     }
 
     LoadZone(msg.pos, yrot, msg.newSector, velocity);
