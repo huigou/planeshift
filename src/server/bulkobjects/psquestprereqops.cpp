@@ -413,7 +413,7 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpFaction::Copy()
 bool psQuestPrereqOpItem::Check(psCharacter* character)  //TODO: extend this
 {
     if(!categoryName.IsEmpty())
-        return character->Inventory().hasItemCategory(categoryName, true, includeInventory, amountMin, amountMax, qualityMin, qualityMax);
+        return character->Inventory().hasItemCategory(categoryName, true, includeInventory, includeInventory, amountMin, amountMax, qualityMin, qualityMax);
     if(!itemName.IsEmpty())
         return character->Inventory().hasItemsWithName(itemName, true, includeInventory, amountMin, amountMax, qualityMin, qualityMax);
     return false;
