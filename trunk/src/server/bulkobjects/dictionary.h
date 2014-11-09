@@ -358,7 +358,7 @@ public:
      * @param quest that the trigger refers to
      * @param script are the quest prerequisites for ???
      */
-    void AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, csRef<psQuestPrereqOp> script=NULL);
+    void AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, psQuestPrereqOp* script=NULL);
     /**
      * Adds a the triggers of the NpcDialogMenu to the array of triggers.
      * 
@@ -383,7 +383,7 @@ public:
      * structs have the prerequisite set to the script.
      * @param script the prerequisites that are to be set.
      */
-    void SetPrerequisiteScript(csRef<psQuestPrereqOp> script);
+    void SetPrerequisiteScript(psQuestPrereqOp* script);
 };
 
 /**
@@ -451,7 +451,7 @@ public:
     csString GetResponseScript();
 
     // This is used so that the popup menu and the subsequent response can share the same filtering criteria
-    csRef<psQuestPrereqOp> GetPrerequisiteScript()
+    psQuestPrereqOp* GetPrerequisiteScript()
     {
         return prerequisite;
     }
@@ -470,7 +470,7 @@ public:
      * @param insertBeginning Insert at beginning or at end (Default at end).
      * @return True if successfully added.
      */
-    bool AddPrerequisite(csRef<psQuestPrereqOp> op, bool insertBeginning = false);
+    bool AddPrerequisite(psQuestPrereqOp* op, bool insertBeginning = false);
 
     /**
      * Check if the prerequisite for this response is valid
