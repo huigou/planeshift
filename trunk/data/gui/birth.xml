@@ -92,24 +92,25 @@
             <frame x ="110" y="380" width="130" height="120" />
             <radio on="radioon2" off="radiooff2" size="30"/>
 
-            <widget name="sibling0" factory="pawsRadioButton" id="0" visible="no">
+            <!-- Radio button ID, text, and visibility are set by server data. -->
+            <widget name="sibling0" factory="pawsRadioButton">
                 <frame x="2" y="5" width="100" height="30" />
-                <text string="1 Sibling" position="right"/>
+                <text position="right"/>
             </widget>
 
-            <widget name="sibling1" factory="pawsRadioButton" id="0" visible="no">
+            <widget name="sibling1" factory="pawsRadioButton">
                 <frame x="2" y="35" width="100" height="30" />
-                <text string="1 Sibling" position="right"/>
+                <text position="right"/>
             </widget>
 
-            <widget name="sibling2" factory="pawsRadioButton" id="0" visible="no">
+            <widget name="sibling2" factory="pawsRadioButton">
                 <frame x="2" y="65" width="100" height="30" />
-                <text string="1 Sibling" position="right"/>
+                <text position="right"/>
             </widget>
 
-            <widget name="sibling3" factory="pawsRadioButton" id="0" visible="no">
+            <widget name="sibling3" factory="pawsRadioButton">
                 <frame x="2" y="95" width="100" height="30" />
-                <text string="1 Sibling" position="right"/>
+                <text position="right"/>
             </widget>
 
         </widget>
@@ -132,7 +133,7 @@
             </widget>
 
             <!-- Randomize button -->
-            <widget name="randomize" factory="pawsButton">
+            <widget name="randomize" factory="pawsButton" id="7000">
                 <frame x="306" y="0" width="130" height="40" />
                 <label text="Randomize"/>
                 <bgimage resource="buttonBrown" />
