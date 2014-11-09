@@ -76,32 +76,33 @@ INSERT INTO character_creation VALUES("7",
                                  "charcreate_3",                                 
                                  "CHILD_HOUSE"
                                 );       
-                                
-                                                        
+
+# The database ID value determines the order of the radio buttons
+
 INSERT INTO character_creation VALUES("8",
-                                 "One",
-                                 "Just the one other child in your family",
-                                 6,
-                                 "charcreate_3",                                 
-                                 "CHILD_SIBLINGS"
-                                );       
-                               
-INSERT INTO character_creation VALUES("9",
-                                 "Two",
-                                 "Two childs and you in your family",
-                                 6,
-                                 "charcreate_2",                                 
-                                 "CHILD_SIBLINGS"
-                                ); 
-                                 
-INSERT INTO character_creation VALUES("10",
                                  "None",
-                                 "All alone",
+                                 "You are the only child",
                                  6,
                                  "charcreate_3",                                 
                                  "CHILD_SIBLINGS"
                                 );  
 
+INSERT INTO character_creation VALUES("9",
+                                 "One",
+                                 "One other child in your family",
+                                 6,
+                                 "charcreate_3",                                 
+                                 "CHILD_SIBLINGS"
+                                );       
+                               
+INSERT INTO character_creation VALUES("10",
+                                 "Two",
+                                 "Two children besides you in your family",
+                                 6,
+                                 "charcreate_2",                                 
+                                 "CHILD_SIBLINGS"
+                                ); 
+                                 
 INSERT INTO character_creation VALUES (215,'Unodin','','-1','charcreate_215','ZODIAC');
 INSERT INTO character_creation VALUES (216,'Byari','','-2','charcreate_216','ZODIAC');
 INSERT INTO character_creation VALUES (217,'Treman','','-3','charcreate_217','ZODIAC');
