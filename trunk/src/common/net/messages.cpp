@@ -2550,9 +2550,12 @@ csString psGUIInventoryMessage::ToString(NetBase::AccessPointers* /*accessPointe
 
 PSF_IMPLEMENT_MSG_FACTORY(psNewSectorMessage,MSGTYPE_NEWSECTOR);
 
-// Leaving this one marshalled the old way.  This message is NEVER sent on
-// the network.
-psNewSectorMessage::psNewSectorMessage(const csString &oldSector, const csString &newSector, csVector3 pos)
+// This message is NEVER sent on the network but it is sent within the client.
+psNewSectorMessage::psNewSectorMessage(const csString &oldSector,
+                                       const csString &newSector,
+                                       csVector3 pos,
+                                       bool use_yrot,
+                                       float yrot)
 {
     msg.AttachNew(new MsgEntry(1024));
 
@@ -2564,6 +2567,8 @@ psNewSectorMessage::psNewSectorMessage(const csString &oldSector, const csString
     msg->Add(pos.x);
     msg->Add(pos.y);
     msg->Add(pos.z);
+    msg->Add(use_yrot);
+    msg->Add(yrot);
 
     // Since this message is never sent, we don't adjust the valid flag
 }
@@ -2579,6 +2584,8 @@ psNewSectorMessage::psNewSectorMessage(MsgEntry* message)
     pos.x = message->GetFloat();
     pos.y = message->GetFloat();
     pos.z = message->GetFloat();
+    use_yrot = message->GetBool();
+    yrot = message->GetFloat();
 
     // Since this message is never sent, we don't adjust the valid flag
 }
@@ -2587,8 +2594,9 @@ csString psNewSectorMessage::ToString(NetBase::AccessPointers* /*accessPointers*
 {
     csString msgtext;
 
-    msgtext.AppendFmt("Old sector: '%s' New sector: '%s' Pos: (%.3f,%.3f,%.3f)",
-                      oldSector.GetDataSafe(), newSector.GetDataSafe(), pos.x, pos.y, pos.z);
+    msgtext.AppendFmt("Old sector: '%s' New sector: '%s' Pos: (%.3f,%.3f,%.3f) use YRot: %d YRot: %.3f",
+                      oldSector.GetDataSafe(), newSector.GetDataSafe(),
+                      pos.x, pos.y, pos.z, use_yrot, yrot);
 
     return msgtext;
 }

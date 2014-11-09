@@ -1782,7 +1782,7 @@ public:
 class psNewSectorMessage : public psMessageCracker
 {
 public:
-    psNewSectorMessage(const csString &oldSector, const csString &newSector, csVector3 pos);
+    psNewSectorMessage(const csString &oldSector, const csString &newSector, csVector3 pos, bool use_yrot = false, float yrot = 0.0);
     psNewSectorMessage(MsgEntry* message);
 
     PSF_DECLARE_MSG_FACTORY();
@@ -1799,6 +1799,8 @@ public:
     /// Holds the options that the window should display.
     csString oldSector, newSector;
     csVector3 pos;
+    float yrot;              ///< Rotation around Y-axis in radians
+    bool use_yrot;           ///< Use the yrot value to set the rotation
 };
 
 //---------------------------------------------------------------------------
