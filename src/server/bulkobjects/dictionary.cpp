@@ -1651,7 +1651,7 @@ bool NpcResponse::ParsePrerequisiteScript(const char* xmlstr,bool insertBeginnin
     return false;
 }
 
-bool NpcResponse::AddPrerequisite(csRef<psQuestPrereqOp> op, bool insertBeginning)
+bool NpcResponse::AddPrerequisite(psQuestPrereqOp* op, bool insertBeginning)
 {
     // Make sure that the first op is an AND list if there are an
     // prerequisite from before.
@@ -2862,7 +2862,7 @@ NpcDialogMenu::NpcDialogMenu()
 {
 }
 
-void NpcDialogMenu::AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, csRef<psQuestPrereqOp> script)
+void NpcDialogMenu::AddTrigger(const csString &menuText, const csString &trigger, psQuest* quest, psQuestPrereqOp* script)
 {
     NpcDialogMenu::DialogTrigger new_trigger;
 
@@ -2918,16 +2918,9 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
 
     for(count=0; count < triggers.GetSize(); count++)
     {
-        csString prereq;
-
         // fetch the prerequisites
         if(triggers[count].quest && !triggers[count].quest->Active() && !IsTesting)
             continue;
-
-        if(triggers[count].prerequisite)
-        {
-            prereq = triggers[count].prerequisite->GetScript();
-        }
 
         if(triggers[count].prerequisite && !IsTesting)
         {
@@ -3011,18 +3004,8 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
     }
 }
 
-void NpcDialogMenu::SetPrerequisiteScript(csRef<psQuestPrereqOp> script)
+void NpcDialogMenu::SetPrerequisiteScript(psQuestPrereqOp* script)
 {
-    csString prereq;
-
-    if(script)
-        prereq = script->GetScript();
-
-    if(!prereq.IsEmpty())
-    {
-        //printf("Setting menu %p to have trigger prereq : %s\n", this, prereq.GetDataSafe());
-    }
-
     // Each item must have its own prequisite script so they can be different when menus are merged
     // even though they appear to all be set the same here.
     for(size_t i=0; i < triggers.GetSize(); i++)
