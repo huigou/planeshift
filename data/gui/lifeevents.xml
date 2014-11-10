@@ -35,15 +35,17 @@
 
         <widget name="Life Event" factory="pawsSelectorBox" >
             <frame x="100" y="145" width="650" height="210" border="no" />
-            <available width="300" rowheight="24" />
-            <selected width="420" rowheight="24" />
-            <widget name="addbutton" factory="pawsButton" id="-100">
+            <available width="300" rowheight="28" />
+            <selected width="420" rowheight="28" />
+            <widget name="addbutton" factory="pawsButton" id="-100" toggle="no" alwaysontop="yes">
                 <frame x="300" y="85" width="25" height="20" />
-                <bgimage resource="arrowRight" />
+                <buttonup resource="arrowRight"/>
+                <buttondown resource="arrowRightDown"/>
             </widget>
-            <widget name="removebutton" factory="pawsButton" id="-200">
+            <widget name="removebutton" factory="pawsButton" id="-200" toggle="no" alwaysontop="yes">
                 <frame x="300" y="123" width="25" height="20" />
-                <bgimage resource="arrowLeft" />
+                <buttonup resource="arrowLeft"/>
+                <buttondown resource="arrowLeftDown"/>
             </widget>
             <highlight resource="Highlight" />
             <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" />
@@ -72,23 +74,26 @@
             <frame x="30" y="550" width="740" height="40" />
             <font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
 
-            <widget name="BackButton" factory="pawsButton" id="6000">
+            <widget name="BackButton" factory="pawsButton" id="6000" changeonmouseover="yes">
                 <frame x="110" y="0" width="100" height="40" />
                 <label text="Prev"/>
                 <bgimage resource="buttonDefault" />
+                <buttondown resource="buttonDefaultHighlight" />
             </widget>
 
             <!-- Randomize button -->
-            <widget name="randomize" factory="pawsButton">
+            <widget name="randomize" factory="pawsButton" changeonmouseover="yes">
                 <frame x="306" y="0" width="130" height="40" />
                 <label text="Randomize"/>
-                <bgimage resource="buttonBrown" />
+                <bgimage resource="buttonDefaultLong" />
+                <buttondown resource="buttonDefaultLongHighlight" />
             </widget>
 
-            <widget name="NextButton" factory="pawsButton" id="5000">
+            <widget name="NextButton" factory="pawsButton" id="5000" changeonmouseover="yes">
                 <frame x="520" y="0" width="100" height="40" />
                 <label text="Next" />
                 <bgimage resource="buttonDefault" />
+                <buttondown resource="buttonDefaultHighlight" />
             </widget>
         </widget>
 

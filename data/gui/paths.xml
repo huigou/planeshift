@@ -14,29 +14,35 @@
         </widget>
 
         <!-- Path Buttons -->
-        <widget name="Path 1" factory="pawsButton" id="1001" toggle="true">
+        <widget name="Path 1" factory="pawsButton" id="1001" toggle="true" changeonmouseover="yes">
             <frame x="65" y="125" width="150" height="50" />
             <bgimage resource="buttonSmallLong" />
+            <buttondown resource="buttonSmallLongHighlight" />
         </widget>
-        <widget name="Path 2" factory="pawsButton" id="1002" toggle="true">
+        <widget name="Path 2" factory="pawsButton" id="1002" toggle="true" changeonmouseover="yes">
             <frame x="215" y="125" width="110" height="50" />
             <bgimage resource="buttonSmallLong" />
+            <buttondown resource="buttonSmallLongHighlight" />
         </widget>
-        <widget name="Path 3" factory="pawsButton" id="1003" toggle="true">
+        <widget name="Path 3" factory="pawsButton" id="1003" toggle="true" changeonmouseover="yes">
             <frame x="325" y="125" width="140" height="50" />
             <bgimage resource="buttonSmallLong" />
+            <buttondown resource="buttonSmallLongHighlight" />
         </widget>
-        <widget name="Path 4" factory="pawsButton" id="1004" toggle="true">
+        <widget name="Path 4" factory="pawsButton" id="1004" toggle="true" changeonmouseover="yes">
             <frame x="465" y="125" width="90" height="50" />
             <bgimage resource="buttonSmallLong" />
+            <buttondown resource="buttonSmallLongHighlight" />
         </widget>
-        <widget name="Path 5" factory="pawsButton" id="1005" toggle="true">
+        <widget name="Path 5" factory="pawsButton" id="1005" toggle="true" changeonmouseover="yes">
             <frame x="555" y="125" width="90" height="50" />
             <bgimage resource="buttonSmallLong" />
+            <buttondown resource="buttonSmallLongHighlight" />
         </widget>
-        <widget name="Path 6" factory="pawsButton" id="1006" toggle="true">
+        <widget name="Path 6" factory="pawsButton" id="1006" toggle="true" changeonmouseover="yes">
             <frame x="645" y="125" width="90" height="50" />
             <bgimage resource="buttonSmallLong" />
+            <buttondown resource="buttonSmallLongHighlight" />
         </widget>
 
         <!-- Path symbol -->
@@ -121,22 +127,25 @@
             <frame x="30" y="550" width="740" height="40" />
             <font name="scurlock.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="no" size="16" resizetoscreen="yes" />
 
-            <widget name="BackButton" factory="pawsButton" id="6000">
+            <widget name="BackButton" factory="pawsButton" id="6000" changeonmouseover="yes">
                 <frame x="110" y="0" width="100" height="40" />
                 <label text="Prev"/>
                 <bgimage resource="buttonDefault" />
+                <buttondown resource="buttonDefaultHighlight" />
             </widget>
 
-            <widget name="RandomButton" factory="pawsButton" id="4000">
+            <widget name="RandomButton" factory="pawsButton" id="4000" changeonmouseover="yes">
                 <frame x="306" y="0" width="130" height="40" />
                 <label text="Random" />
-                <bgimage resource="buttonBrown" />
+                <bgimage resource="buttonDefaultLong" />
+                <buttondown resource="buttonDefaultLongHighlight" />
             </widget>
 
-            <widget name="UploadButton" factory="pawsButton" id="5000">
+            <widget name="UploadButton" factory="pawsButton" id="5000" changeonmouseover="yes">
                 <frame x="520" y="0" width="100" height="40" />
                 <label text="Upload" />
                 <bgimage resource="buttonDefault" />
+                <buttondown resource="buttonDefaultHighlight" />
             </widget>
 
         </widget>
