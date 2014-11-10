@@ -155,26 +155,29 @@
             <font name="scurlock.ttf" r="255" g="255" b="255" size="16" resizetoscreen="yes" />
             <!-- <bgcolour r="200" g="40" b="80" /> -->
 
-            <widget name="quit" factory="pawsButton" id="100" key="Q">
+            <widget name="quit" factory="pawsButton" id="100" key="Q" changeonmouseover="yes">
                 <frame x="0" y="0" width="100" height="40" />
                 <label text="Quit" />
                 <bgimage resource="buttonDefault" />
+                <buttondown resource="buttonDefaultHighlight" />
                 <!-- <bgcolour r="80" g="127" b="128" /> -->
             </widget>
 
             <!-- Credits -->
-            <widget name="credits" factory="pawsButton" id="102" key="C">
+            <widget name="credits" factory="pawsButton" id="102" key="C" changeonmouseover="yes">
                 <frame x="325" y="0" width="90" height="30" />
                 <font name="LiberationSerif-Regular.ttf" r="255" g="255" b="255" size="10"  resizetoscreen="yes" />
                 <label text="Credits" horizAdjust="CENTRE" vertAdjust="CENTRE" />
                 <bgimage resource="buttonDefaultLong" />
+                <buttondown resource="buttonDefaultLongHighlight" />
                 <!--<bgcolour r="80" g="127" b="128" />-->
             </widget>
 
-            <widget name="login" factory="pawsButton" id="101" key="O">
+            <widget name="login" factory="pawsButton" id="101" key="O" changeonmouseover="yes">
                 <frame x="640" y="0" width="100" height="40" />
                 <label text="Login" />
                 <bgimage resource="buttonDefault" />
+                <buttondown resource="buttonDefaultHighlight" />
                 <!--<bgcolour r="80" g="127" b="128" />-->
             </widget>
         </widget>
