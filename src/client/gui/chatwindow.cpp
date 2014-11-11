@@ -212,8 +212,9 @@ bool pawsChatWindow::PostSetup()
     buttonNames.Push("Help Button");
 
     unsigned int ct = 0;
-    int lastX, lastY, increment;
+    int lastX, lastY, increment, incX, incY;
     bool isVertical = false;
+	bool isDoubled = false;
     pawsWidget * tmp;
     for (unsigned int i = 0 ; i < buttonNames.GetSize() ; i++)
     {
@@ -222,6 +223,8 @@ bool pawsChatWindow::PostSetup()
             tmp = pw->FindWidget(buttonNames[i]);
             lastX = tmp->GetDefaultFrame().xmin;
             lastY = tmp->GetDefaultFrame().ymin;
+			incY = tmp->GetDefaultFrame().Height();
+			incX = tmp->GetDefaultFrame().Width();
         }
         if(TABVALUE(settings.tabSetting,i))
         {//this tab is visible
@@ -246,14 +249,55 @@ bool pawsChatWindow::PostSetup()
                 if(thisX == lastX && thisY != lastY)
                 {
                     isVertical = true;
-                    increment = tmp->GetDefaultFrame().Height();
+                    increment = incY;
                 }
                 else
                 {
-                    increment = tmp->GetDefaultFrame().Width();
+                    increment = incX;
                 }
             }
-            if(isVertical)
+			else if(ct == 2)
+			{
+				int thisX, thisY;
+                thisX = tmp->GetDefaultFrame().xmin;
+                thisY = tmp->GetDefaultFrame().ymin;
+				
+				if(isVertical && thisX != lastX && thisY == lastY)
+				{
+					isDoubled = true;
+				}
+				else if(!isVertical && thisX == lastX && thisY != lastY)
+				{
+					isDoubled = true;
+				}
+			}
+
+			if(isDoubled)
+			{
+				if(isVertical)
+				{
+					if((ct % 2) ==1)
+					{
+						tmp->SetRelativeFramePos(lastX+(incX*((ct-1)/2)), lastY + incY);
+					}
+					else
+					{
+						tmp->SetRelativeFramePos(lastX+(incX*(ct/2)), lastY);
+					}
+				}
+				else
+				{
+					if((ct % 2) ==1)
+					{
+						tmp->SetRelativeFramePos(lastX + incX, lastY + (incY*((ct-1)/2)));
+					}
+					else
+					{
+						tmp->SetRelativeFramePos(lastX, lastY + (incY*(ct/2)));
+					}
+				}
+			}
+            else if(isVertical)
             {
                 tmp->SetRelativeFramePos(lastX,lastY+increment*ct);
                 //tmp->MoveDelta(0,increment*ct);
