@@ -190,7 +190,9 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
     size_t    numSpells=incoming.name.GetSize();
     show = !showWindow->GetState() && (buffList->GetSize() < numSpells);
     if(!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
-        ShowBehind();
+    {
+        pawsControlledWindow::Show();
+    }
 
 
     buffList->Clear();
