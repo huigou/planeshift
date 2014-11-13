@@ -47,6 +47,7 @@ pawsButton::pawsButton()
     flashtype = FLASH_REGULAR;
     keybinding = 0;
     changeOnMouseOver = false;
+    showOnMouseOver = false;
     originalFontColour = -1;
     factory = "pawsButton";
 }
@@ -336,9 +337,16 @@ void pawsButton::Draw()
 
 bool pawsButton::OnMouseEnter()
 {
-    if(enabled && changeOnMouseOver)
+    if(enabled )
     {
-        SetState(true, false);
+        if(  changeOnMouseOver)
+        {
+            SetState(true, false);
+        }
+        else if( showOnMouseOver )
+        {
+            pawsWidget::SetBackground(showOnMouseOver_image);
+        }
     }
 
     return pawsWidget::OnMouseEnter();
@@ -346,9 +354,16 @@ bool pawsButton::OnMouseEnter()
 
 bool pawsButton::OnMouseExit()
 {
-    if(enabled && changeOnMouseOver)
+    if(enabled )
     {
-        SetState(false, false);
+        if(  changeOnMouseOver)
+        {
+            SetState(false, false);
+        }
+        else if( showOnMouseOver )
+        {
+            pawsWidget::SetBackground("");
+        }
     }
 
     return pawsWidget::OnMouseExit();
