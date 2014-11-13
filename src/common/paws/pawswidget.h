@@ -361,6 +361,12 @@ protected:
 
     bool ReadDefaultWidgetStyles(iDocumentNode* node);
 
+    /// Stores status of showOnMouseOver
+    bool showOnMouseOver;
+
+    /// Stores the bgimage name if showOnMouseOver is true
+    csString showOnMouseOver_image;
+
 public:
 
     pawsWidget();

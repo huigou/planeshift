@@ -702,6 +702,13 @@ bool pawsWidget::LoadAttributes(iDocumentNode* node)
 
             //alphaMax = alpha;
             fade = bgImageNode->GetAttributeValueAsBool("fading", fade);
+
+            showOnMouseOver = bgImageNode->GetAttributeValueAsBool("showonmouseover", false);
+            if (showOnMouseOver)
+            {
+                showOnMouseOver_image = image;
+                SetBackground("");
+            }
         }
     }
 
