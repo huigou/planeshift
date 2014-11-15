@@ -212,66 +212,88 @@ bool pawsChatWindow::PostSetup()
     buttonNames.Push("Help Button");
 
     unsigned int ct = 0;
+	unsigned int ctt = 0;
     int lastX, lastY, increment, incX, incY;
     bool isVertical = false;
 	bool isDoubled = false;
     pawsWidget * tmp;
     for (unsigned int i = 0 ; i < buttonNames.GetSize() ; i++)
     {
-        if(i == 0)
+       tmp = pw->FindWidget(buttonNames[i]);
+		if(i == 0)
         {
-            tmp = pw->FindWidget(buttonNames[i]);
             lastX = tmp->GetDefaultFrame().xmin;
             lastY = tmp->GetDefaultFrame().ymin;
 			incY = tmp->GetDefaultFrame().Height();
 			incX = tmp->GetDefaultFrame().Width();
         }
+		//sort tab order first if vertical then if Doubled
+
+		if(ctt == 1)
+        {
+            int thisX, thisY;
+            thisX = tmp->GetDefaultFrame().xmin;
+            thisY = tmp->GetDefaultFrame().ymin;
+
+            if(thisX == lastX && thisY != lastY)
+            {
+                isVertical = true;
+				if((thisY - lastY) > incY)
+				{
+					incY = thisY - lastY;
+				}
+				increment = incY;
+            }
+            else
+            {
+                if((thisX - lastX) > incX)
+				{
+					incX = thisX - lastX;
+				}
+				increment = incX;
+					
+            }
+        }
+		else if(ctt == 2)
+		{
+			int thisX, thisY;
+            thisX = tmp->GetDefaultFrame().xmin;
+            thisY = tmp->GetDefaultFrame().ymin;
+				
+			if(isVertical && thisX != lastX && thisY == lastY)
+			{
+				isDoubled = true;
+				if((thisX - lastX) > incX)
+				{
+					incX = thisX - lastX;
+				}
+				increment = incX;
+			}
+			else if(!isVertical && thisX == lastX && thisY != lastY)
+			{
+				isDoubled = true;
+				if((thisY - lastY) > incY)
+				{
+					incY = thisY - lastY;
+				}
+				increment = incY;
+			}
+		}
+
         if(TABVALUE(settings.tabSetting,i))
         {//this tab is visible
             if(ct == 0) 
             {
-                tmp = pw->FindWidget(buttonNames[i]);
                 if(tmp->GetDefaultFrame().xmin != lastX || tmp->GetDefaultFrame().ymin != lastY)
                 {
                     tmp->SetRelativeFramePos(lastX,lastY);
                 }
                 tabs->OnButtonPressed(0,0,tmp);//activate the first tab
                 ct++;
+				ctt++;
                 continue;
             }
-            tmp = pw->FindWidget(buttonNames[i]);
-            if(ct == 1)
-            {
-                int thisX, thisY;
-                thisX = tmp->GetDefaultFrame().xmin;
-                thisY = tmp->GetDefaultFrame().ymin;
-
-                if(thisX == lastX && thisY != lastY)
-                {
-                    isVertical = true;
-                    increment = incY;
-                }
-                else
-                {
-                    increment = incX;
-                }
-            }
-			else if(ct == 2)
-			{
-				int thisX, thisY;
-                thisX = tmp->GetDefaultFrame().xmin;
-                thisY = tmp->GetDefaultFrame().ymin;
-				
-				if(isVertical && thisX != lastX && thisY == lastY)
-				{
-					isDoubled = true;
-				}
-				else if(!isVertical && thisX == lastX && thisY != lastY)
-				{
-					isDoubled = true;
-				}
-			}
-
+                        
 			if(isDoubled)
 			{
 				if(isVertical)
@@ -308,11 +330,12 @@ bool pawsChatWindow::PostSetup()
             }
             tmp->SetVisibility(true);
             ct++;
+			ctt++;
         }
         else
         {
-            tmp = pw->FindWidget(buttonNames[i]);
             tmp->SetVisibility(false);
+			ctt++;
         }
     }
     
