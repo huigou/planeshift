@@ -12,9 +12,9 @@
     // Source versions are listed here and automatically updated in the body.
     // Standard revisions (CSrev) are the ones that are compatible with Laanx.
     // An additional CS revision (CSrev_HEAD) may be specified for the latest version of PS.
-    var CSrev = "39798 + manually apply 39918 as patch to fix startup crashes";  // CS_SOURCE_REV
+    var CSrev = "39798";  // CS_SOURCE_REV
     var CAL3Drev = "507"; // CAL3D_SOURCE_REV
-    var CSrev_HEAD = "39798 + manually apply 39918 as patch to fix startup crashes";  // CS_SOURCE_REV_HEAD
+    var CSrev_HEAD = "39798";  // CS_SOURCE_REV_HEAD
     var CAL3Drev_HEAD = "507"; // CAL3D_SOURCE_REV_HEAD
     var PSStable_Laanx = "HEAD"; //Last revision of ps stable that works with laanx
     var PSStable_latest = "HEAD"; //STABLE HEAD - Set this the same as PSStable_Laanx to hide revision info for stable
@@ -404,11 +404,13 @@ Choose "Developer" if you want to develop on latest code, which is most likely n
         Currently compatible with Laanx:<br />
         <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br />
         <b>CS SVN revision:</b> CS_SOURCE_REV <br />
+		+ for windows only manually apply 39918 as patch to fix startup crashes<br />
     </p>
     <p class="PS">
         Currently compatible with Laanx:<br />
         <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV <br />
         <b>CS SVN revision:</b> CS_SOURCE_REV <br />
+		+ for windows only manually apply 39918 as patch to fix startup crashes<br />
         <b>Planeshift Stable revision:</b> PS_Laanx <br />
     </p>
 </div>
@@ -416,6 +418,7 @@ Choose "Developer" if you want to develop on latest code, which is most likely n
     Currently compatible with trunk of PS:<br />
     <b>CAL3D SVN revision:</b> CAL3D_SOURCE_REV_HEAD <br />
     <b>CS SVN revision:</b> CS_SOURCE_REV_HEAD <br />
+	+ for windows only manually apply 39918 as patch to fix startup crashes<br />
 </p>
 
 <!--************************************************************************************************-->
@@ -1059,12 +1062,12 @@ If you update a repository, you will need to recompile that repository and each 
     <div class="User">
     <p class="commandBox">http://svn.code.sf.net/p/crystal/code/CS/trunk</p>
         Verify the checkout directory is "C:\development\CS", select "Revision", and paste the current
-        CS revision number: CS_SOURCE_REV
+        CS revision number: CS_SOURCE_REV + for windows only manually apply 39918 as patch to fix startup crashes
     </div>
     <div class="Developer">
     <p class="commandBox">http://svn.code.sf.net/p/crystal/code/CS/trunk</p>
         Verify the checkout directory is "C:\development\CS", select "Revision", and paste the current
-        CS revision number: CS_SOURCE_REV_HEAD
+        CS revision number: CS_SOURCE_REV_HEAD + for windows only manually apply 39918 as patch to fix startup crashes
     </div>
     </div>
 
