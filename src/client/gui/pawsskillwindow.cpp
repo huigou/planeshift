@@ -660,6 +660,9 @@ void pawsSkillWindow::BuySkill()
 
 void pawsSkillWindow::Show()
 {
+    psStatDRMessage msg;
+    msg.SendMessage();
+
     pawsControlledWindow::Show();
 
     // Hack set to no when show called because of an incoming skill table.
