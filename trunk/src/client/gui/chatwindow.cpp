@@ -2551,29 +2551,67 @@ void pawsChatWindow::SetAway(const char* text)
     }
 }
 
-void pawsChatWindow::Clear()
+void pawsChatWindow::SelectChatTab(int tab)
 {
-    for(int chattype = 0; chattype < CHAT_END; chattype++)
+    int id = tab + 1000;
+
+    // Select the tab
+    tabs->SetTab(id);
+}
+
+
+void pawsChatWindow::Clear(int mode)
+{
+    switch(mode)
     {
-        csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(CHAT_TYPES[chattype]);
-
-        //if we are dealing with the chatchanneltype we need to add all the sub types
-        if(chattype == CHAT_CHANNEL)
+        case -2: // clear all
         {
-            for(int hotkeyChannel = 1; hotkeyChannel <= 10; hotkeyChannel++)
+            for(int chattype = 0; chattype < CHAT_END; chattype++)
             {
-                csString channelPubName = CHAT_TYPES[chattype];
-                channelPubName += hotkeyChannel;
-                subscribers.MergeSmart(PawsManager::GetSingleton().ListSubscribers(channelPubName));
-            }
+                csArray<iPAWSSubscriber*> subscribers = PawsManager::GetSingleton().ListSubscribers(CHAT_TYPES[chattype]);
 
+                //if we are dealing with the chatchanneltype we need to add all the sub types
+                if(chattype == CHAT_CHANNEL)
+                {
+                    for(int hotkeyChannel = 1; hotkeyChannel <= 10; hotkeyChannel++)
+                    {
+                        csString channelPubName = CHAT_TYPES[chattype];
+                        channelPubName += hotkeyChannel;
+                        subscribers.MergeSmart(PawsManager::GetSingleton().ListSubscribers(channelPubName));
+                    }
+
+                }
+
+                for(size_t i = 0; i < subscribers.GetSize(); i++)
+                {
+                    pawsMessageTextBox* textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
+                    if(textbox)
+                    {
+                        textbox->Clear();
+                    }
+                }
+            }
+            break;
         }
 
-        for(size_t i = 0; i < subscribers.GetSize(); i++)
+        case -1: // clear current tab
         {
-            pawsMessageTextBox* textbox = dynamic_cast<pawsMessageTextBox*>(subscribers[i]);
+            pawsMessageTextBox* textbox = dynamic_cast<pawsMessageTextBox*>(FindWidget(tabs->GetActiveTab()->GetID()));
             if(textbox)
+            {
                 textbox->Clear();
+            }
+            break;
+        }
+
+        default:
+        {
+            int tab = mode + 1100;
+            pawsMessageTextBox* textbox = dynamic_cast<pawsMessageTextBox*>(FindWidget( tab, true));
+            if(textbox)
+            {
+                textbox->Clear();
+            }
         }
     }
 }

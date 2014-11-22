@@ -56,7 +56,6 @@ enum CHAT_COMBAT_FILTERS {
     COMBAT_TOTAL_AMOUNT = 6
 };
 
-
 class pawsMessageTextBox;
 //class pawsEditTextBox;
 class pawsChatHistory;
@@ -176,7 +175,10 @@ public:
     void PerformAction( const char* action );
 
     ///Clear history
-    void Clear();
+    void Clear(int mode = -2); // -2 means "/clear all"
+
+       void SelectChatTab(int tab);
+
 
     void AutoReply(void);
 

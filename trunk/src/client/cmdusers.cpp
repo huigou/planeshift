@@ -649,8 +649,71 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/clear")
     {
-        pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
-        ChatWindow->Clear();
+        int tab = -1;
+        const char* output = "/clear <all|main|channels|npc|whisper|guild|alliance|group|auction|system|help>";
+
+        if(words.GetCount() > 2)
+        {
+            return output;            
+        }
+        else if(words.GetCount() == 2)
+        {
+            if(words[1] == "all")
+            {
+                tab = -2;
+            }
+            else if(words[1] == "main")
+            {
+                tab = 0; // IDs defined in chat.xml
+            }
+            else if(words[1] == "channels" || words[1] == "chat")
+            {
+                tab = 8;
+            }
+            else if(words[1] == "npc")
+            {
+                tab = 2;
+            }
+            else if(words[1] == "whisper" || words[1] == "tell")
+            {
+                tab = 3;
+            }
+            else if(words[1] == "guild")
+            {
+                tab = 4;
+            }
+            else if(words[1] == "group")
+            {
+                tab = 5;
+            }
+            else if(words[1] == "alliance")
+            {
+                tab = 9;
+            }
+            else if(words[1] == "auction")
+            {
+                tab = 6;
+            }
+            else if(words[1] == "system")
+            {
+                tab = 1;
+            }
+            else if(words[1] == "help")
+            {
+                tab = 7;
+            }
+            else
+            {
+                return output;
+            }
+        }
+        else
+        {
+            tab = -1; // current selected tab
+        }
+
+        pawsChatWindow* ChatWindow = dynamic_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
+        ChatWindow->Clear(tab);
     }
 
     else if (words[0] == "/target")
