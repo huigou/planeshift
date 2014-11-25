@@ -3,7 +3,7 @@
     <branch name="START HERE"><Contents><content type="text">Welcome to the PlaneShift Help Guide. In this first section you may find all the tips provided in the tutorial area, covering the basic functions of the game.</content></Contents>
 <topic name="Movement">
 <Contents><content type="text">You can move around by pressing the keys W (forward), S (backward), A (rotate left), D (rotate right), Q (strafe left), E (strafe right), R (run).
-        
+
 If you are left-handed and find these options difficult to use you can change them by opening the 'OPTIONS' window in the toolbar and choosing 'CONTROLS' and then 'KEYS'.
 
 Move this window a bit to the side of the screen, so you will be able to better see your character. Without closing this window, practice moving by using the A, W, S, and D keys.
@@ -40,7 +40,7 @@ You can also talk to an NPC without using the Quest bubbles. To do this, target 
 </topic>
 <topic name="Interacting with Player-Characters">
 <Contents><content type="text">By default, the Chat Window will show you everything said to you, and in your vicinity. You can type directly into the 'Main' tab to TALK to people quite nearby, use the /shout command to yell something to all players in range and use the /tell command (syntax: /tell FirstName Message) to talk to only one player in particular.
-        
+
 To issue a command, begin with the '/' character. Remember that Main chat is used for all IC dialogue and that OOC comments or questions should be kept in square brackets or parentheses in Main chat, limited to Whisper and Group chat, or sent in a /tell.
 
 For example:
@@ -60,9 +60,9 @@ If you type '/me waves' Then everyone else will see 'Eliandrus waves'.
 Just as you may TRADE with NPC merchants, player-characters may also give and/or receive items. Right-click on a player-character and choose the 'TRADE' icon to open an exchange window with two sets of inventory slots. To trade, click on the items or Tria in your Inventory and move them to the left-hand (give) slots. As you are doing this, the other player will be doing the same. You will see the items and Tria they are offering you appear in the right-hand (receive) slots. When you are happy with the trade, click 'Accept' and the items and Tria will be transferred.</content></Contents>
 </topic>
 <topic name="Menus and Windows">
-<Contents><content type="text">At the top of the screen you have a 'toolbar' with a series of 9 icons you can use to access various functions of the game. There are a total of 15 possible icons; the others you can make visible by right- clicking on the blue crystal in the corner of the game window. This will also change the layout of the window. (Mac users should ctrl-click or 2-finger click on the crystal to change the toolbar layout.)</content><content type="pic" src="MiniUp;" padding="0" width="64" height="64"/><content type="text">
+<Contents><content type="text">At the top of the screen you have a 'toolbar' with a series of 16 icons you can use to access various functions of the game. You can the icon order and layout by right-clicking on the blue crystal in the corner of the game window. (Mac users should ctrl-click or 2-finger click on the crystal to change the toolbar layout.)</content><content type="pic" src="MiniUp;" padding="0" width="64" height="64"/><content type="text">
 All Windows/icons can be 'active' or 'inactive'. Clicking on an icon will make it active. Clicking on it again will deactivate it.
-The size of the toolbar (as with many in game windows) can be adjusted by clicking and dragging on the triangle at the bottom left of the toolbar.
+The size of the toolbar (as with many in game windows) can be adjusted by clicking and dragging on the triangle at the bottom right of the toolbar.
 
 1) - Communications.</content><content type="pic" src="ChatButton_over;" padding="130" width="64" height="64"/><content type="text">
 This will open the chat window to allow you to interact with other players and with computer controlled characters (NPCs). When it's active the chat window is already displayed on screen. The initial chat window is divided into 4 tabs out of a possible 10. The others can be displayed by changing the Chat Tabs options (Options menu->Interface-> Chat - tabs).
@@ -71,10 +71,19 @@ If you want your character to speak to other characters, just select the Main ta
 If you want to speak with an NPC, you use the NPC tab the same way.
 If you need help from our staff or volunteers, use the Help tab.
 
-2) - Skills and Stats.</content><content type="pic" src="SkillsButton_over;" padding="130" width="64" height="64"/><content type="text">
+2) - Buddy List.</content><content type="pic" src="BuddyButton_over;" padding="130" width="64" height="64"/><content type="text">
+This window is used to show a list of all of your 'buddies'. Once open you can "Add" new names to the list, "Remove" names from the list, and "Edit" names on the list this final option allows you to add notes after the name so you can store information about the player/character.
+
+3) - Group Stats.</content><content type="pic" src="GroupButton_over;" padding="130" width="64" height="64"/><content type="text">
+When you create a group, or are invited into a group you can use this window to see names and races of all the people in the group. It will also show you the mana, and HP levels for each group member.
+
+4) - Guild</content><content type="pic" src="GuildButton_over;" padding="130" width="64" height="64"/><content type="text">
+This window is where you will be able to see all the details concerning your guild, assuming you have joined one.
+
+5) - Skills and Stats.</content><content type="pic" src="SkillsButton_over;" padding="130" width="64" height="64"/><content type="text">
 Here you can find detailed lists of all of the traits for your character. These include HP (Health Points), Mana (Magic Points), your values for agility, strength, and other stats, and all the levels for all your skills you have built up. Open the skill window to review your skills, then close it by clicking on the small red 'x' on the top right of the skill window.
 
-3) - Inventory.</content><content type="pic" src="InventoryButton_over;" padding="130" width="64" height="64"/><content type="text">
+6) - Inventory.</content><content type="pic" src="InventoryButton_over;" padding="130" width="64" height="64"/><content type="text">
 This window lets you see all the objects you own, hold, wear, and carry. At the moment you don't have many, but you will by the time you finish the tutorial.
 
 With the window open, you can EQUIP objects by clicking on them from the inventory slots and dropping them in the appropriate slots surrounding your avatar.
@@ -83,30 +92,42 @@ You can EAT food by clicking on it from your inventory and dropping it on your a
 
 The money (Tria) you own is displayed in the same window, on the right, where the coin icons are. There are four different types of coins and you should already have some of them to get you started. Be sure to check your inventory often. The NPCs in the tutorial will give you items.
 
-4) - Quests.</content><content type="pic" src="QuestButton_over;" padding="130" width="64" height="64"/><content type="text">
+7) - Quests.</content><content type="pic" src="QuestButton_over;" padding="130" width="64" height="64"/><content type="text">
 This window shows you completed and uncompleted (active) quests. When you click on a quest in the description window you will see auto generated Quest Notes which can help you if you get stuck with a quest.
 
-5) - Spell Book.</content><content type="pic" src="MagicButton_over;" padding="130" width="64" height="64"/><content type="text">
+8) - Spell Book.</content><content type="pic" src="MagicButton_over;" padding="130" width="64" height="64"/><content type="text">
 This window is where you can see all your collected glyphs, and all the spells you have learned. The active spells window shows all 'buffs' and 'debuffs' which are currently active on your character. Research magic lets you purify glyphs by picking one up and dropping it on the purify button.
 Once the glyphs are purified, putting them in the assemble slot(s) and clicking 'Research' will let you find spells.
 
-6) - Information.</content><content type="pic" src="SkillsButton_over;" padding="130" width="64" height="64"/><content type="text">
-This opens a small window which shows compact player data. Your HP and Mana, your target's HP, a selection of attacking stances, and a sliding bar to choose 'spell power' when you use magic.
+9) - Attack Book.</content><content type="pic" src="AttackButton_over;" padding="130" width="64" height="64"/><content type="text">
+This window is where you will be able to see a list of all the special attack you have learned. There are none currently released so for now there is nothing you will use this window for.
 
-7) - Options.</content><content type="pic" src="OptionsButton_over;" padding="130" width="64" height="64"/><content type="text">
+10) - Shortcut list.</content><content type="pic" src="ShortcutButton_over;" padding="130" width="64" height="64"/><content type="text">
+The shortcut window allows you to create any combination of short cut you can think of. For details of the commands you can use in short cuts you should look at the "Commands" section.
+
+11) - Information.</content><content type="pic" src="SkillsButton_over;" padding="130" width="64" height="64"/><content type="text">
+This opens a small window which shows compact player data. Your HP and Mana, your target's HP, a selection of attacking stances, and a sliding bar to choose 'spell power' when you use magic. It also has a series of small boxes which will be your special attack que once special attacks have been released.
+
+12) - Active Effect Bar.</content><content type="pic" src="HotBarButton_over;" padding="130" width="64" height="64"/><content type="text">
+This small window shows all the effects currently active on you. Any spells, magic items, potions, curses, diseases will all be shown here. Any of them that have a timed duration will have a progress bar behind the icon. 
+
+13) - Options.</content><content type="pic" src="OptionsButton_over;" padding="130" width="64" height="64"/><content type="text">
 This opens up the Options window which will let you see, set, and change all the game options. For details on all these options navigate to 'User interface' and then 'Options window' within the In-Game Help for a much more detailed explanation.
 
-8) - Help.</content><content type="pic" src="HelpButton_over;" padding="130" width="64" height="64"/><content type="text">
+14) - Petition window.</content><content type="pic" src="PetitionButton_over;" padding="130" width="64" height="64"/><content type="text">
+If you require help from a Game Master (GM) and you cannot find any online, or if you have bugs to report to the developers then you can make a new petition and essentially leave a message. A GM will either respond to the message and that will be shown in the same window, or will contact you directly in game. Different problems require the player to be online which is why you might get a slower response.
+
+15) - Help.</content><content type="pic" src="HelpButton_over;" padding="130" width="64" height="64"/><content type="text">
 This opens up the Help window.
 
-9) - Exit.</content><content type="pic" src="QuitButton_over;" padding="130" width="64" height="64"/><content type="text">
+16) - Exit.</content><content type="pic" src="QuitButton_over;" padding="130" width="64" height="64"/><content type="text">
 This will open an option box asking if you want to exit the game.
 
-The other 6 toolbar icons can be made visible by right-clicking on the blue crystal in the top corner of the game window. These are explained in  User Interface.</content></Contents>
+</content></Contents>
 </topic>
 <topic name="Trading with NPCs">
 <Contents><content type="text">There are three main ways to GIVE ITEMS to NPCs.
-        
+
 First; when you give an item to an NPC in a quest. To do this you open the quest window by right-clicking on an NPC and clicking the 'TALK/LIPS' icon. If you have an option to give an NPC an item it will appear here, like all quest options. When you click this quest option you will automatically give the item to the NPC.
 
 Second; this is another option during quests. If you try to give an item to an NPC by clicking a quest option (above) and it does not work, you can click on the "give items to npcs" button to open a trade window you can use to manually give items. You will need to move an item from your inventory into one of the give item slots, then once you have selected all the items you want to give you can click the 'ACCEPT TRADE' button. This option will likely be used if you try to use the menu option above, but it does not work. An example of this would be if you have a stack of 4 apples, but need to give an NPC 2. The server cannot take 2 items from a stack of 4 and give them to the NPC for you. So you would have to take 2 items and give them to the NPC manually using this method.
@@ -118,8 +139,8 @@ This is the GIVE button;</content><content type="pic" src="ButtonGive;" padding=
 There are many NPC merchants in the game. To TRADE with an NPC, right-click on the character and choose the 'BUY/SELL' icon. You can then browse the items they will buy from you and the items you can buy from them. Not every merchant will buy or sell every item, so you should search around to find the merchant you need.</content></Contents>
 </topic>
 <topic name="Containers">
-<Contents><content type="text">Containers and crafting containers come in all sorts of shapes and sizes to suit various purposes: sacks, crates and glyph bags for your possessions; furnaces and quench tanks for smithing; ovens, stoves, pots, etc. for cooking and baking; alembics, decanters, athanors, etc. for alchemy; and so on. Once you get close enough to a crafting container, right-click anywhere on it. Four icons will appear, of which 'combine' and 'use' are options you will frequently use if you learn to craft. The option you need to choose first is 'EXAMINE'.
-        
+<Contents><content type="text">Containers and crafting containers come in all sorts of shapes and sizes to suit various purposes: sacks, crates and glyph bags for your possessions; furnaces and quench tanks for smithing; ovens, stoves, pots, etc. for cooking and baking; alembics, decanters, athanors, etc. for alchemy; and so on. Once you get close enough to a crafting container, right-click anywhere on it. Four icons will appear, of which 'combine' and 'use' are options you will frequently use if you learn to craft. 'Use' will only appear on containers which you need to click the 'use' button to use, if they work automatically then then use button will not be visible. The option you need to choose first is 'EXAMINE'.
+
 This is the EXAMINE button;</content><content type="pic" src="ButtonLook;" padding="0" width="64" height="64"/><content type="text">
 
 When you click 'EXAMINE' the container window will open. To place items in the container you will need to move them from your inventory window into the container window. There are two ways to do this, 1 - click the 'Open Inventory' button or, 2 - click the 'Inventory' button in the toolbar. Then you need to find the item you want to move, click it once to pick it up, then move it to the container and click again to drop it in an empty slot.
@@ -144,7 +165,7 @@ In addition, you are free to record your own notes on each quest. To do this, se
 </topic>
 <topic name="Health and Combat Styles">
 <Contents><content type="text">To check your health or the health of your opponent you should enable the 'Information' window, by clicking its icon in the top toolbar. The name and health of the creature you have selected will appear at top of this window. Your health is the largest red bar in the lower part of the window. When you have 0.00% health, you die.
-        
+
 When attacking an opponent you have many different options. In the window there are 6 buttons which make up the 6 different 'stances'. Those determine the level of aggression you use in combat.
 
 The rightmost is the most aggressive, this means that you will attack without caring about defence. Use this one only when the opponent you are facing is weaker than you, or it's already injured. The leftmost button is the 'stop attack' button for when you have had enough and want to stop fighting. BE CAREFUL, this does not stop a creature from continuing to fight you. The button next to this is the most defensive stance, your attack style will be completely focused on avoiding incoming melee hits; it will lower the ability to attack a lot. If you are in danger, running away is always a possible option! Be sure to attack bigger monsters with other friends to make it easier and share the spoils.
@@ -158,7 +179,7 @@ This is the Bloody Attack button.</content><content type="pic" src="ButtonAttack
 </topic>
 <topic name="Stats and Skills">
 <Contents><content type="text">To see your stats and skills click on the "SKILLS" icon on the top toolbar. Here you can see your health and mana (casting energy), along with two stamina indicators. Stamina represents how much energy you have physically and mentally. It goes down when you are performing actions like running or casting spells and it recovers automatically.
-        
+   
 Strength (STR): Measures the muscular power of your body. It's useful when increased as it helps to increase damage dealt in combat, to lift heavy objects, and to break things.
 
 Endurance (END): Expresses the general health of your body. Controls resistance to cold, heat and illness. Affects the speed of regeneration of wounds.
@@ -174,7 +195,7 @@ In the same window you can find the knowledge you have in the various skills, li
 </topic>
 <topic name="Skills Training">
 <Contents><content type="text">Training can be divided between "stats" and "skills".
-        
+
 Training a skill is very simple. All you need to do is perform an action which gives you practice for the skill you want to train. Three examples of this are;
 Casting a spell to practice magic.
 Mining ores and gems to practice mining.
@@ -190,7 +211,7 @@ Experience (and Practice points, 1 Practice Point is 200 experience) is gained b
 </topic>
 <topic name="Magic, Glyphs and Spells">
 <Contents><content type="text">Magic in PlaneShift is divided into six different Ways. To find and cast spells there are three things you need to do.
-        
+
 First, you need to obtain and purify glyphs. A small number of glyphs can be purchased from NPCs, many players sell the more common glyphs, and the best way to get glyphs is to do quests where they are given out as rewards. To purify a glyph you need to open the 'SPELL BOOK' from the main toolbar. Then click on the icon in the bottom right-hand corner of the window, 'RESEARCH MAGIC', to open the glyph window. In this window all the glyphs are divided by Way and you will be able to purify glyphs and research spells.
 
 Research Magic window Button.</content><content type="pic" src="Glyph Magic;" padding="0" width="64" height="64"/><content type="text">
@@ -206,7 +227,7 @@ Cast Spell Button.</content><content type="pic" src="Cast Magic;" padding="0" wi
 </topic>
 <topic name="More Tips: Getting Help">
 <Contents><content type="text">Besides the Welcome Area and In-Game Help, we have a great group of players and GMs (Game Masters) ready to help you whenever you have difficulties.
-        
+
 First of all look at the chat window. If you write /help [question] and then press enter, the players or GMs playing in game may be able to answer your questions. Don't be afraid to use it! Players volunteer for it so please be as clear as possible and wait patiently for an answer.
 
 Another tool you have at your disposal is directly contacting the Game Masters. You can see if any of them are on-line by writing ' /who game master ' in the same chat window and pressing enter. You will get a list of Game Masters online in the 'system tab' and you will be able to contact them by writing /tell [name of the Game Master] [your question] and pressing enter again.
@@ -238,16 +259,22 @@ Every character should have a distinctive appearance. Don't be afraid to start w
 </topic>
 <branch name="User Interface">
 <Contents><content type="text">Here you will find descriptions of PlaneShift windows.</content></Contents>
+<topic name="Active Effects">
+<Contents><content type="text">The active effect window shows all the active effects you have. There are lots of settings for this window which can be changed in the options window.
+
+You can show all effects from items, or items and all 'timed effects' such as spells, curses, poisons, diseases, and indigestion.</content></Contents></topic>
+<topic name="Attack Book">
+<Contents><content type="text">There are currently no special attacks released so this window has no current use.</content></Contents></topic>
 <topic name="Buddy List window">
 <Contents><content type="text">This window allows you to manage your PlaneShift friends list and can be opened and closed by clicking on the 'Interlocked Rings' icon of your toolbar. With the "Add" button you can add new characters to your buddy list. The "Remove" button allows you to remove the currently selected character from your buddy list.
-        
+
 When the character is in game, his or her name changes from red (offline) to green. By clicking on a green character name, you can send that character a /tell (for example /tell Smith hello, how are you?).
 
 With the "Edit" button you can rename an entry in the buddy list. This can be used for example to add information about which guild that character belongs too. These aliases are not saved on the server but your own computer so they won't be available if you login from a different computer.
 Additional Info: All names on your buddy list are available for the tab-completion function in your chat box, meaning that if you type the first few letters of any name on your buddy list and hit the 'tab' key, the whole name will be automatically written into your chat box. (See Chat window->Tab Completion for more.)
 Icon for the Buddy List window.</content><content type="pic" src="BuddyButton_over;" padding="0" width="64" height="64"/></Contents></topic>
 <branch name="Chat window"><Contents><content type="text">The chat window is opened and closed by clicking on the 'Speech Bubble' icon in your toolbar. This is probably the most important window in PlaneShift, because it enables most of the interaction between players. Commands can be executed by typing them in this window.
-        
+
 To configure which tabs are shown (out of a total of 10), go to Options->Interface->Chat - Tabs. You can also configure which messages are sent in the Main tab. The currently selected chat tab is highlighted, and a tab will "flash" when a new, unread message arrives.</content><content type="pic" src="ChatButton_over;" padding="0" width="64" height="64"/></Contents>
             <topic name="Configuring Chat Tabs"><Contents><content type="text">There are a total of 10 different chat tabs.
 
@@ -263,7 +290,7 @@ You can also join and leave additional channels using the commands "/join" and "
 If you are only in one channel, any text you type will automatically be sent to the channel upon pressing return. If you are in more than one channel, you have to start your line with /1 or /2 or /3 etc... this is the same number that you were given when you created/joined the channel and is the same number you have to use when you leave that channel.</content></Contents></topic>
 <topic name="NPC"><Contents><content type="text">This chat tab is for interaction with NPCs (Non-Player-Characters). Though most quests are done with the chat-bubble interface, it's still possible to communicate with NPCs by writing in this chat tab. This tab also allows you to refer to what an NPC told you during a quest in your current play session. Other players cannot see what you type in this tab. You need to have a NPC selected to talk to them.</content></Contents></topic>
 <topic name="Whisper"><Contents><content type="text">This tab is for private one-to-one communication. Whatever you type in this tab will be seen only by the player you send a tell to. There is no range limit -- you can talk to any player on the server. Normally all chat in this tab is OOC but it's accepted to roleplay whispering to other characters with this tab after making clear in the Main chat that your character whispers to another (What is visible for all people nearby).
-                
+
 Be careful when using this tab: Your messages will always be sent to the last person who sent a tell to you, unless you specify the intended recipient. So if you are in a /tell conversation and you get a tell from another person just before completing your current tell and pressing enter, most likely the wrong person (the new person) will get your message. To prevent this you can always send your tells with "/tell CHARNAME" or by pressing the f-key which will start a tell to the person who just sent you one.
 
 You can also double click a name in your buddy list which will open a message box you can use to send messages to one character.</content></Contents></topic>
@@ -274,7 +301,7 @@ You can also double click a name in your buddy list which will open a message bo
 <topic name="System"><Contents><content type="text">The system tab is for system messages like combat damage, crafting progress or the output of some chat commands like /who. Through the Options menu (Options->Interface->Chat-Tabs) you can redirect these messages to Main tab if you like. You can also select which combat messages about yourself or others appear in your system messages (Options->Interface-Advanced->Chat-Filters).</content></Contents></topic>
 <topic name="Help"><Contents><content type="text">The Help chat tab is where you can get help if you are having issues with the game. Everything you type here will be visible to online advisors and GMs. Remember: advisors may be other players, and may not have GM powers. Once an advisor answers, everything you type in the chat is only visible for you and that advisor until the help-session times out. This chat tab is for questions about the game mechanics and how to play the game. No advisor is allowed to give out spoilers like where to find a specific trainer or how to solve a quest. For further information about becoming an advisor yourself, check the documentation of the /advisor chat command.</content></Contents></topic></branch></branch>
 <topic name="Group Stats window"><Contents><content type="text">The names and a representative image of the characters in your current group are shown in this window. Note that the health and mana bars for these characters may not accurately reflect their actual statistics, especially if they are located far away.
-        
+
 Group leaders can invite or dismiss people or disband the whole group by right-clicking the window. The group leader is always shown as the topmost character in the list. If this player logs out, the next one in the list will become group leader.</content><content type="pic" src="GroupButton_over;" padding="0" width="64" height="64"/></Contents></topic>
 <branch name="Guild Info window"><Contents><content type="text">If your character is in a guild, this window allows you to change basic information about the guild. You may need the appropriate permissions in order to use or change some functions. The buttons at the top allow you access to other tabs with more specific information about the guild.</content><content type="pic" src="GuildButton_over;" padding="0" width="64" height="64"/></Contents>
 <topic name="Settings"><Contents><content type="text">The "Guild message of the day" is visible to every guild member from this window. With the "Refresh MOTD" Button you can reload the current message in case someone else in your guild changed it while you had the Guild window open. "Save MOTD" allows you to save your changes to the message and makes them visible for everyone else in the guild.
@@ -284,7 +311,7 @@ By checking the "Secret Guild" option, the guild will become secret. This means 
 
 With the "Change" button next to the website address,  you can change the guild's URL.</content></Contents></topic>
 <topic name="Members"><Contents><content type="text">This is the member list of the guild, displaying the name, details and location of each guild member.
-            
+
 With the "Online only" option you can filter the list to show only characters that are currently in game.
 The "Invite" button allows you to invite new characters to the guild.
 The "Leave" button allows you to leave the guild.
@@ -312,7 +339,7 @@ Permissions:
 - All.Chat / Alliance Chat: If this is enabled, members of this level can write in the alliance chat.
 - Guild Bank: If this is enabled, members of this level have access to the guild banking account at a banking NPC.</content></Contents></topic>
 <topic name="Alliance"><Contents><content type="text">If your guild is part of an alliance, here you can see and manage alliance information.
-            
+
 - Invite: Allows the alliance leader to invite more guilds to the alliance.
 - Disband: Allows the alliance leader to dissolve the alliance.
 - Leave: Allows the guild leader to withdraw their guild from the alliance.
@@ -327,7 +354,7 @@ Leader (The name of the leader of this guild)
 Online (Whether the leader of the guild is online at the moment)</content></Contents></topic></branch>
 <topic name="Help window"><Contents><content type="text">This window displays the In-Game Help.</content><content type="pic" src="HelpButton_over;" padding="0" width="64" height="64"/></Contents></topic>
 <topic name="Information window"><Contents><content type="text">The info window gives you an overview of combat and casting options and several key statistics relevant to your character and your current target, especially in combat situations. When a target is selected, the window displays the character or object name and below it a large red bar showing the current health of the target.
-        
+
 The next line is the current time in Yliakum.
 
 Below the time are several icons for the different stances you can take during combat. Stances represent the combat style of your character in melee. If you are in combat you can click on any of the icons to change to that stance. The first icon stops the attack. Stances from left to right: Fully Defensive, Defensive, Normal, Aggressive, and Bloody.
@@ -335,7 +362,7 @@ Below the time are several icons for the different stances you can take during c
 Below the stances is a slider that allows you to specify how much power you want to channel into casting magic. The more power you channel, the greater the likelihood of the spell failing, but if successful the spell effect will be stronger and its duration longer.
 Below the slider are another 4 bars. The larger red one displays the current health of your character, the smaller red one your current physical stamina. The larger blue bar shows your current mana, the smaller blue one your current mental stamina.</content><content type="pic" src="InfoButton_over;" padding="0" width="64" height="64"/></Contents></topic>
 <topic name="Inventory window"><Contents><content type="text">The Inventory window allows you to manage the belongings of your character and to use, equip, and unequip items.
-        
+
 Surrounding the image of your avatar are equipment slots that hold specific kinds of items. Move your cursor over each slot to find out what it holds. To equip an item or change equipped items, drag them from or to your inventory slot. A system message will alert you if you are trying to equip an item that will not fit.
 
 Hand; Left, and Right: For equipping tools, shields, weapons and all other hand-held items. Please note many crafting techniques require you to hold the tool in your right hand. For roleplay purposes, many items such as food, books or ore may be held.
@@ -362,7 +389,7 @@ To eat or use a items like potions, food, herbal and alchemical items, drag/pick
 There are shortcut keys for taking one item of a stack or taking the whole stack. If you click on a stack of items while holding the shift-key, only one of the items is taken. If you hold the ctrl-key the whole stack is taken. If you left-click on a stack, you will be prompted to specify how many of that item you wish to take.</content><content type="pic" src="InventoryButton_over;" padding="0" width="64" height="64"/></Contents></topic>
 <branch name="Options window"><Contents><content type="text">Here you can change or select game options. In general the options are changed only when you click "Save". The "Reset" button will set everything back to the defaults. If you don't want to change any existing options but also don't want to go back to the defaults, just click on the 'x' icon to close the window.</content><content type="pic" src="OptionsButton_over;" padding="0" width="64" height="64"/></Contents>
 <topic name="Controls/Keys"><Contents><content type="text">Here you can change the keys (and mouse buttons) used to play the game. To assign a new key or button to an action, just use the "Set" button next to the action.
-            
+
 Movements:
 "MouseMove" - Move your character to the position your mouse currently points to.
 "Forward" - Makes your character move forward (available two times to be able to set up two alternative keys for this)
@@ -414,7 +441,7 @@ Game Controls:
 Shortcuts:
 Here you can reassign keys for shortcuts or name the 'Unused' slots (click 'Set' beside an 'Unused' slot) and create your own shortcuts.</content></Contents></topic>
 <topic name="Controls/Mouse"><Contents><content type="text">Here you can change some general mouse settings.
-            
+
 "ContextMenu" - Which mouse button brings up the context menu for game entities.
 "EntitySelect" - Which mouse button selects game entities.
 "EntityDragDrop" - The mouse button that allows you to drag and drop items.
@@ -425,7 +452,7 @@ Settings:
 "HorzSensitivity" - The sensitivity of the mouse in horizontal direction during camera movement. A lower value means the mouse will be less sensitive.
 "VertSensitivity" - The sensitivity of the mouse in vertical direction during camera movement. A lower value means the mouse will be less sensitive.</content></Contents></topic>
 <topic name="Controls/Entities"><Contents><content type="text">Here you can specify what happens for a double-click on different game entities.
-            
+
 "Items" - Action if an item is double-clicked.
 "Players" - Action if a player is double-clicked.
 "Merchants" - Action if an NPC merchant is double-clicked.
@@ -434,7 +461,7 @@ Settings:
 "Pet NPCs" - Action if a pet NPC is double-clicked.
 "Impervious NPCs" - Action if an impervious NPC is double-clicked (usually story NPCs).</content></Contents></topic>
 <topic name="Sound/General"><Contents><content type="text">Here you can enable specific sound sources in PlaneShift and control their volume. If you are not hearing any sounds, first check that sound is enabled in the PlaneShift Launcher (click on 'Settings' and 'Audio' in the Launcher window).
-            
+
 "Master Volume" - Overall volume of all enabled sounds.
 "Background Music" - The theme music of each map.
 "Ambient sounds" - Sounds like birds or water fountains.
@@ -496,10 +523,10 @@ To change the colour of a label just click the "set" button and choose the color
 The "Log Filename" will be appended to your character name and then used as the filename to save in. Several sources can be logged in the same filename. If a "Log Bracket" is specified (e.g. [Guild]), it will be added to the start of every line of that type in the file. When re-reading chat logs, the log bracket can be useful, for example, to indicate whether a line was in Main chat or in Guild chat.</content></Contents></topic>
 <topic name="Interface/Shortcut Bar"><Contents><content type="text">The options here allow you to customise components of the 'Shortcut' window.
 
-Button Height - This slider lets you choose the hight of the shortcut buttons.
+Button Height - This slider lets you choose the height of the shortcut buttons.
 Button Width - This lets you manually set button width, in which case every button will be the same width. Or automatic button width, in which case the minimum width for each button will be chosen based on the button label. Labels with longer names will be much wider than those with shorter names.
 Edit Lock - Prevent All Editing - This will stop you from being able to edit any shortcut in any way until you click the small 'lock icon' to unlock the shortcut bar.
-Edit Lock - Prevent only Drag-n-drop - This option will let you right click a shortcut to edit the content. But if you want to move a shortcut to another position in the list you will need to click the small lock icon to unlock the option. You can then click to pick up a shortcut, and can then drop it on another shortcut to replace it. Be carful as the shortcut you drop it on will be deleted and replaced.
+Edit Lock - Prevent only Drag-n-drop - This option will let you right click a shortcut to edit the content. But if you want to move a shortcut to another position in the list you will need to click the small lock icon to unlock the option. You can then click to pick up a shortcut, and can then drop it on another shortcut to replace it. Be careful as the shortcut you drop it on will be deleted and replaced.
 Scroll Buttons - These options turn on/off certain scroll bar options.
 Font - Allows you to chose the font style for the button labels.
 Text Size - Allows you to set the size of the font in the button labels.
@@ -508,7 +535,7 @@ Show button background - This shows/hides the button background.</content></Cont
 <topic name="Interface/Active Effect Bar"><Contents><content type="text">This Window allows you to customise the Active Effect Bar.
 
 Icon display - This allows you to chose to display only effects with a duration such as spells, or both timed and permanent effects such as spell and item effects.
-Button Height - This option sets the hight of the active effect button.
+Button Height - This option sets the height of the active effect button.
 Button Width - This lets you manually set button width, in which case every button will be the same width. Or automatic button width, in which case the minimum width for each button will be chosen based on the button label. Labels with longer names will be much wider than those with shorter names.
 
 Warn Level - This allows you to set the point at which the effect timer changes colour as an initial warning the effect is coming to an end.
@@ -693,10 +720,19 @@ Without a message 'on' simply turns on the default away message.
 /away off
 /away
 Either of these two commands will turn the away-message off again. Afterwards no automatic reply will be sent.</content></Contents></topic>
-<topic name="/clear"><Contents><content type="text">Use this command to clear the history of the chat window.
+<topic name="/clear"><Contents><content type="text">Use this command to clear the history of all or some of the chat window tabs.
+
 Usage: 
 /clear
-This clears the history of all chat tabs.</content></Contents></topic>
+This clears the history of the currently selected tab.
+
+/clear all
+This clears the history of all tabs.
+
+/clear TabName
+eg.
+/clear main
+Using this you can clear the text history of specific tabs. You can use any of these as the name of the tab to clear - main, channels or chat, npc, whisper or tell, guild, group, alliance, auction, system, help.</content></Contents></topic>
 <branch name="/emote list"><Contents><content type="text">With this command you can see a list of all possible emotes.
 Usage:
 /emote list
