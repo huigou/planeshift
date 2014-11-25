@@ -3275,6 +3275,7 @@ bool psItem::SendContainerContents(Client* client, int containerID)
 
     outgoing.maxContainerSlots = GetContainerMaxSlots();
     outgoing.renameable = GetBaseStats()->GetIsRenameable();
+    outgoing.CanTransform = GetBaseStats()->GetCanTransform();
     FillContainerMsg(client, outgoing);
 
     outgoing.ConstructMsg(psserver->GetCacheManager()->GetMsgStrings());

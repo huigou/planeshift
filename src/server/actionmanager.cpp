@@ -735,7 +735,8 @@ void ActionManager::HandleExamineOperation(psActionLocation* action, Client* cli
         if(realItem->IsConstructible())
             options |= psGUIInteractMessage::CONSTRUCT;
         // All other action location items can be used
-        options |= psGUIInteractMessage::USE;
+        if(!(realItem->GetCanTransform()))
+            options |= psGUIInteractMessage::USE;
     }
     options |= psGUIInteractMessage::CLOSE;
 
