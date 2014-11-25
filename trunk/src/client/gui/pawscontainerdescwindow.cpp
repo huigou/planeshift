@@ -133,7 +133,13 @@ void pawsContainerDescWindow::HandleViewContainer( MsgEntry* me )
         FindWidget("EnableEditName")->Hide();
         FindWidget("SendEditName")->Hide();
     }
-    
+
+    // check whether the CanTransform flag is set, if so, show the use button
+    if(mesg.CanTransform==true){ 
+        FindWidget("UseContainer")->Hide();
+    }else{
+        FindWidget("UseContainer")->Show();
+    }
     // default display configuration for container
     editName->Hide();
     name->Show();

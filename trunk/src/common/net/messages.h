@@ -4401,6 +4401,9 @@ public:
     /// indicates whether the container is renameable or not 
     bool renameable;
 
+    /// indicates whether the container can auto transform or not 
+    bool CanTransform;
+
     /// The destination client for this message.
     int to;
 

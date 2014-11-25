@@ -783,6 +783,7 @@ public:
     bool GetIsArmor();
     bool GetIsShield();
     bool GetIsContainer();
+    bool GetIsAutoTransformContainer();
     bool GetIsTrap();
     bool GetIsConstructible();
     bool GetCanTransform();

@@ -6187,7 +6187,8 @@ psViewContainerDescription::psViewContainerDescription(uint32_t to, const char* 
        sizeof(int32_t)   +   // container ID
        sizeof(int32_t)   +   // slot id 
        sizeof(uint32_t)  +   // stack count
-       sizeof(bool));        // is renameable
+       sizeof(bool)      +   // is renameable
+       sizeof(bool));        // AutoTransform
 }
 
 void psViewContainerDescription::AddContents(const char* name, const char* meshName, const char* materialName, const char* icon, int purifyStatus, int slot, int stack)
@@ -6232,6 +6233,7 @@ void psViewContainerDescription::ConstructMsg(csStringSet* msgstrings)
         msg->Add((uint32_t)contents[n].stackCount);
     }
     msg->Add(renameable);
+    msg->Add(CanTransform);
 }
 
 psViewContainerDescription::psViewContainerDescription(MsgEntry* me, NetBase::AccessPointers* accessPointers)
@@ -6279,6 +6281,7 @@ psViewContainerDescription::psViewContainerDescription(MsgEntry* me, NetBase::Ac
             }
         }
         renameable = me->GetBool();
+        CanTransform = me->GetBool();
     }
 }
 
