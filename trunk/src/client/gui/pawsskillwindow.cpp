@@ -315,6 +315,13 @@ void pawsSkillWindow::HandleMessage( MsgEntry* me )
                         factRequest = false;
                         factions.DeleteAll();
                         factionList->Clear();
+                        FindWidget("BuySkill")->Show();
+                        FindWidget("BuySkillLevel")->Show();
+                    }
+                    if (!train)
+                    {
+                        FindWidget("BuySkill")->Hide();
+                        FindWidget("BuySkillLevel")->Hide();
                     }
 
                     skillString = "no";
