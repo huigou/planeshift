@@ -130,34 +130,42 @@ bool pawsConfigSound::PostSetup()
     soundLocation->NewOption("Player");
     soundLocation->NewOption("Camera");
     
-    generalVol->SetMaxValue(200);
+    generalVol->SetMinValue(0);
+    generalVol->SetMaxValue(100);
     generalVol->SetTickValue(10);
     generalVol->EnableValueLimit(true);
 
+    musicVol->SetMinValue(1);
     musicVol->SetMaxValue(100);
     musicVol->SetTickValue(10);
     musicVol->EnableValueLimit(true);
 
+    ambientVol->SetMinValue(1);
     ambientVol->SetMaxValue(100);
     ambientVol->SetTickValue(10);
     ambientVol->EnableValueLimit(true);
 
+    actionsVol->SetMinValue(1);
     actionsVol->SetMaxValue(100);
     actionsVol->SetTickValue(10);
     actionsVol->EnableValueLimit(true);
 
+    effectsVol->SetMinValue(1);
     effectsVol->SetMaxValue(100);
     effectsVol->SetTickValue(10);
     effectsVol->EnableValueLimit(true);
 
+    guiVol->SetMinValue(1);
     guiVol->SetMaxValue(100);
     guiVol->SetTickValue(10);
     guiVol->EnableValueLimit(true);
 
+    voicesVol->SetMinValue(1);
     voicesVol->SetMaxValue(100);
     voicesVol->SetTickValue(10);
     voicesVol->EnableValueLimit(true);
 
+    instrumentsVol->SetMinValue(1);
     instrumentsVol->SetMaxValue(100);
     instrumentsVol->SetTickValue(10);
     instrumentsVol->EnableValueLimit(true);
@@ -272,58 +280,34 @@ bool pawsConfigSound::OnScroll(int /*scrollDir*/, pawsScrollBar* wdg)
     dirty = true;
     if(wdg == generalVol && loaded)
     {
-        if(generalVol->GetCurrentValue() < 1)
-            generalVol->SetCurrentValue(1,false);
-
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MAIN_SNDCTRL)->SetVolume(generalVol->GetCurrentValue()/100);
     }
     else if(wdg == musicVol && loaded)
     {
-        if(musicVol->GetCurrentValue() < 1)
-            musicVol->SetCurrentValue(1,false);
-
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::MUSIC_SNDCTRL)->SetVolume(musicVol->GetCurrentValue()/100);
     }
     else if(wdg == ambientVol && loaded)
     {
-        if(ambientVol->GetCurrentValue() < 1)
-            ambientVol->SetCurrentValue(1,false);
-
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::AMBIENT_SNDCTRL)->SetVolume(ambientVol->GetCurrentValue()/100);
     }
     else if(wdg == actionsVol && loaded)
     {
-        if(actionsVol->GetCurrentValue() < 1)
-            actionsVol->SetCurrentValue(1,false);
-
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::ACTION_SNDCTRL)->SetVolume(actionsVol->GetCurrentValue()/100);
     }
     else if(wdg == effectsVol && loaded)
     {
-        if(effectsVol->GetCurrentValue() < 1)
-            effectsVol->SetCurrentValue(1,false);
-
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::EFFECT_SNDCTRL)->SetVolume(effectsVol->GetCurrentValue()/100);
     }
     else if(wdg == guiVol && loaded)
     {
-        if(guiVol->GetCurrentValue() < 1)
-            guiVol->SetCurrentValue(1,false);
-
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::GUI_SNDCTRL)->SetVolume(guiVol->GetCurrentValue()/100);
     }
     else if(wdg == voicesVol && loaded)
     {
-        if(voicesVol->GetCurrentValue() < 1)
-            voicesVol->SetCurrentValue(1,false);
-
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::VOICE_SNDCTRL)->SetVolume(voicesVol->GetCurrentValue()/100);
     }
     else if(wdg == instrumentsVol && loaded)
     {
-        if(instrumentsVol->GetCurrentValue() < 1)
-            instrumentsVol->SetCurrentValue(1, false);
-
         psengine->GetSoundManager()->GetSndCtrl(iSoundManager::INSTRUMENT_SNDCTRL)->SetVolume(instrumentsVol->GetCurrentValue() / 100);
     }
     else
