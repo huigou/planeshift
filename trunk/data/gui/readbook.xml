@@ -57,6 +57,17 @@
         <bgimage resource="Scribe" />
     </widget> 
 
+    <pawsTextBox name="PageNum">
+        <frame x="50" y="430" width="290" height="20" />
+        <font name="becker-m.ttf" r="0" g="0" b="0" size="12" />
+        <text horizAdjust="CENTRE" />
+    </pawsTextBox>
+    <pawsTextBox name="PageNumRight">
+        <frame x="380" y="430" width="290" height="20" />
+        <font name="becker-m.ttf" r="0" g="0" b="0" size="12" />
+        <text horizAdjust="CENTRE" />
+    </pawsTextBox>
+
     </widget>
 
 </widget_description>

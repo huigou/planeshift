@@ -60,7 +60,10 @@ public:
     virtual bool OnButtonPressed(int mouseButton, int keyModifier, pawsWidget* widget);
 
 private:
+    void UpdatePageNumbers(bool mode);
     pawsTextBox*            name;
+    pawsTextBox*            pageNum;
+    pawsTextBox*            pageNumRight;
     pawsMultiPageTextBox*   description;
     pawsMultiPageTextBox*   descriptionRight;
     pawsMultiPageTextBox*   descriptionCraft;

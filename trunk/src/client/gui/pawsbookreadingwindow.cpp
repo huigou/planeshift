@@ -82,6 +82,9 @@ bool pawsBookReadingWindow::PostSetup()
     // the same for the craft window, otherwise everything could bug
     descriptionCraftRight = dynamic_cast<pawsMultiPageTextBox*>(FindWidget("ItemDescriptionCraftRight"));
     //if ( !descriptionCraftRight ) return false;
+ 
+    pageNum = dynamic_cast<pawsTextBox*>(FindWidget("PageNum"));
+	pageNumRight = dynamic_cast<pawsTextBox*>(FindWidget("PageNumRight"));
 
     writeButton = FindWidget("WriteButton");
     //if ( !writeButton ) return false;
@@ -162,6 +165,8 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
             //set the background image for the book
             bookBgImage = PawsManager::GetSingleton().GetTextureManager()->GetPawsImage(mesg.backgroundImg);
             usingCraft = false;
+			// set page numbers
+			UpdatePageNumbers(usingCraft);
             break;
         }
         case MSGTYPE_CRAFT_INFO:
@@ -203,9 +208,11 @@ void pawsBookReadingWindow::HandleMessage(MsgEntry* me)
 
                 // show both pages
                 descriptionCraft->Show();
-                descriptionCraftRight->Show();
+                descriptionCraftRight->Show();	
 
                 usingCraft = true;
+                // set page numbers
+                UpdatePageNumbers(usingCraft);
             }
             //name->SetText("You discover you can do the following:");
             name->SetText("");
@@ -244,6 +251,7 @@ void pawsBookReadingWindow::TurnPage(int count)
             }
         }
     }
+	UpdatePageNumbers(usingCraft);
 }
 
 void pawsBookReadingWindow::SetPage(int page)
@@ -273,6 +281,8 @@ void pawsBookReadingWindow::SetPage(int page)
             descriptionCraftRight->SetCurrentPageNum(page+1);
         }
     }
+
+	UpdatePageNumbers(usingCraft);
 }
 
 
@@ -371,13 +381,13 @@ bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
         return true;
     }
 
-    if(widget->GetID() == NEXT)
+    else if(widget->GetID() == nextButton->GetID())
     {
         TurnPage(1);
         return true;
 
     }
-    if(widget->GetID() == PREV)
+    else if(widget->GetID() == prevButton->GetID())
     {
         TurnPage(-1);
         return true;
@@ -387,6 +397,65 @@ bool pawsBookReadingWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifi
     Hide();
     PawsManager::GetSingleton().SetCurrentFocusedWidget(NULL);
     return true;
+}
+
+void pawsBookReadingWindow::UpdatePageNumbers(bool mode)
+{
+	int pageNumber;
+    csString number;
+
+	if(mode)
+	{	    
+		pageNumber = descriptionCraft->GetCurrentPageNum();
+	}
+	else
+	{
+		pageNumber = description->GetCurrentPageNum();
+	}
+	number.Format("%d", pageNumber+1);
+	pageNum->SetText(number);
+	number.Format("%d", pageNumber+2);
+	pageNumRight->SetText(number);
+
+	if(numPages >= 2)
+    {
+        if(numPages & 1)  // uneven
+		{
+            if(pageNumber == numPages-1)
+	        {
+	            nextButton->Hide();
+	        }
+	        else
+	        {
+		        nextButton->Show();
+	        }
+	    }
+		else  // even
+		{
+            if(pageNumber == numPages)
+	        {
+	            nextButton->Hide();
+	        }
+	        else
+	        {
+		        nextButton->Show();
+	        }
+		}
+
+        if(pageNumber == 0)  // first pages
+	    {
+            prevButton->Hide();
+        }
+        else
+        {
+            prevButton->Show();
+        }
+    }
+	else
+	{
+		nextButton->Hide();
+		prevButton->Hide();
+	}
 }
 
 bool pawsBookReadingWindow::isBadChar(char c)
