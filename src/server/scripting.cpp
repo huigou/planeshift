@@ -1531,7 +1531,7 @@ public:
         return "";
     }
     /**
-     * loads new bindingd from the let head and from the body a sub xml script
+     * loads new bindings from the let head and from the body a sub xml script
      * @param node that is a let block
      */
     bool Load(iDocumentNode* node)
@@ -2506,7 +2506,7 @@ public:
             varName = variableName;
 
         if(valueVar)
-            varValue = valueVar->GetString();
+            varValue = valueVar->ToString();
         else //if the variable was not found try getting the value associated directly (not in <let>)
             varValue = variableValue;
 
