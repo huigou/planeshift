@@ -132,7 +132,8 @@ psUserCommands::psUserCommands(ClientMsgHandler* mh,CmdHandler *ch,iObjectRegist
     cmdsource->Subscribe("/unmount",       this);
     cmdsource->Subscribe("/unstick",       this);
     cmdsource->Subscribe("/use",           this);
-    cmdsource->Subscribe("/who",           this); // list players on server
+    cmdsource->Subscribe("/who",           this); // list players on server    
+    cmdsource->Subscribe("/window",        this); // handles extended window options
     cmdsource->Subscribe("/write",         this);
     cmdsource->Subscribe("/yield",         this);
     cmdsource->Subscribe("/takeall",       this); // Take all items from a container
@@ -220,11 +221,12 @@ psUserCommands::~psUserCommands()
     cmdsource->Unsubscribe("/unstick",               this);
     cmdsource->Unsubscribe("/use",                   this);
     cmdsource->Unsubscribe("/who",                   this);
+    cmdsource->Unsubscribe("/window",                this); // handles extended window options
     cmdsource->Unsubscribe("/write",                 this);
     cmdsource->Unsubscribe("/yield",                 this);
     cmdsource->Unsubscribe("/takeall",               this);
     cmdsource->Unsubscribe("/takestackall",          this);
-    cmdsource->Unsubscribe("/attacklist", this); //temp
+    cmdsource->Unsubscribe("/attacklist",            this); //temp
     cmdsource->Unsubscribe("/setdesc",               this);
     cmdsource->Unsubscribe("/setoocdesc",            this);
     cmdsource->Unsubscribe("/loaddesc",              this);
@@ -324,18 +326,152 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     if (words.GetCount() == 0)
         return "";
 
+    int wordCount = words.GetCount();
 
-    if (  words[0] == "/show")
+    //this section handles the over lap between the original /show command and the newer /window [name] show/hide command both are kept to allow legacy use
+    if (words[0] == "/show" || (words[0] == "/window" && wordCount==3 && (words[2] == "show" || words[2] == "hide" )))
     {
-        if (words.GetCount() > 1)
+        if (words[0] == "/show" && wordCount == 2)
         {
             pawsControlWindow* ctrlWindow = dynamic_cast<pawsControlWindow*>(PawsManager::GetSingleton().FindWidget("ControlWindow"));
             if(!ctrlWindow || ctrlWindow->HandleWindowName(words[1]))
+            {
                 return NULL;
-
+            }
             else return "That window cannot be found.";
         }
-        return "You need to specify a window to show";
+        else if (wordCount == 3)
+        {
+           if (words[2] == "show")
+           {
+               pawsControlWindow* ctrlWindow = dynamic_cast<pawsControlWindow*>(PawsManager::GetSingleton().FindWidget("ControlWindow"));
+               if(!ctrlWindow || ctrlWindow->showWindowName(words[1]))
+               {
+                   return NULL;
+               }
+               else
+               {
+                   return "That window cannot be found.";
+               }
+           }
+           if (words[2] == "hide")
+           {
+               pawsControlWindow* ctrlWindow = dynamic_cast<pawsControlWindow*>(PawsManager::GetSingleton().FindWidget("ControlWindow"));
+               if(!ctrlWindow || ctrlWindow->hideWindowName(words[1]))
+               {
+                   return NULL;
+               }
+               else
+               {
+                   return "That window cannot be found.";
+               }
+           }
+        }
+        return "Usage: /[show|window] [windowname] [hide|show]";
+    }
+    else if ( words[0] == "/window" )
+    {
+        if (wordCount == 5 && words[2] == "setposition")
+        {
+            pawsControlWindow* ctrlWindow = dynamic_cast<pawsControlWindow*>(PawsManager::GetSingleton().FindWidget("ControlWindow"));
+            if(!ctrlWindow)
+            {
+                return "Control window could not be found.";
+            }
+            // negative coordinates are relative to the lower right corner
+            int x = atoi(words[3]);
+            int y = atoi(words[4]);
+            if (x < 0)
+            {
+                x = psengine->GetG2D()->GetWidth() + x;
+            }
+            if (y < 0)
+            {
+                y = psengine->GetG2D()->GetHeight() + y;
+            }
+            if(ctrlWindow->setWindowPositionName(words[1], x, y))
+            {
+                return NULL;
+            }
+            else
+            {
+                return "That window cannot be found.";
+            }
+            return "Usage: /window [windowname] setposition [x] [y]";
+        }
+        else if ( wordCount == 3 && words[2] == "getinfo" )
+        {
+            pawsControlWindow* ctrlWindow = dynamic_cast<pawsControlWindow*>(PawsManager::GetSingleton().FindWidget("ControlWindow"));
+            if (!ctrlWindow)
+            {
+                return "Control window could not be found.";
+            }
+
+            pawsChatWindow* chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
+            if(chatWindow)
+            {  
+                csString info=ctrlWindow->getWindowInfo(words[1]);
+
+                if( info.Length() < 1)
+                {
+                    return "That window cannot be found.";
+                }
+                chatWindow->ChatOutput(info);
+                return NULL;
+            }
+            else
+            {
+                return "Could not write window names to Chat";
+            }
+            return "Usage: /window [windowname] getinfo";
+        }
+        else if (wordCount == 5 && words[2] == "setsize")
+        {
+            pawsControlWindow* ctrlWindow = dynamic_cast<pawsControlWindow*>(PawsManager::GetSingleton().FindWidget("ControlWindow"));
+            if(!ctrlWindow)
+            {
+                return "Control window could not be found.";
+            }
+            int x = atoi(words[3]);
+            int y = atoi(words[4]);
+            if( x<1 || y<1 )
+            {
+                return "window size must be greater than 0";
+            }
+            if(ctrlWindow->setWindowSizeName(words[1], x, y))
+            {
+                return NULL;
+            }
+            else
+            {
+                return "That window cannot be found.";
+            }  
+            return "Usage: /window [windowname] setsize [x] [y]";    
+        }
+        else if ( words[1] == "list" )
+        {
+            pawsControlWindow* ctrlWindow = dynamic_cast<pawsControlWindow*>(PawsManager::GetSingleton().FindWidget("ControlWindow"));
+            if (!ctrlWindow)
+            {
+                return "Control window could not be found.";
+            }
+
+            pawsChatWindow* chatWindow = (pawsChatWindow*)PawsManager::GetSingleton().FindWidget("ChatWindow");
+            if(chatWindow)
+            {  
+                chatWindow->ChatOutput(ctrlWindow->getWindowNames());
+                return NULL;
+            }
+            else
+            {
+                return "Could not write window names to Chat";
+            }
+            return "Usage: /window list";
+        }
+        else
+        {
+            return "Usage: /window [list|name|all] [getinfo|setposition|setsize|show|hide] [x] [y]";
+        }
     }
     else if ( words[0] == "/study" )
     {
@@ -345,9 +481,9 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
         return NULL;
     }
-    else if (words[0] == "/equip" || (words[0] == "/use" && words.GetCount() > 1))
+    else if (words[0] == "/equip" || (words[0] == "/use" && wordCount > 1))
     {
-        if ( words.GetCount() < 2 )
+        if ( wordCount < 2 )
             return "Usage: /equip  [stack count] [slot] [item name]";
 
         size_t tail = 1;
@@ -355,7 +491,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if (quantity > 0)
         {
             tail++;
-            if ( tail >= words.GetCount() )
+            if ( tail >= wordCount )
                 return "Usage: /equip  [stack count] [slot] [item name]";
         }
         else
@@ -369,7 +505,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         {
             slotID = toSlot->ID();
             tail++;
-            if ( tail >= words.GetCount() )
+            if ( tail >= wordCount )
                 return "Usage: /equip  [stack count] [slot] [item name]";
         }
 
@@ -381,7 +517,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if ( words[0] == "/dequip" )
     {
-        if ( words.GetCount() < 2 )
+        if ( wordCount < 2 )
             return "Usage: /dequip [item name|slot name]";
 
         pawsInventoryWindow* window = (pawsInventoryWindow*)PawsManager::GetSingleton().FindWidget("InventoryWindow");
@@ -391,7 +527,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if ( words[0] == "/write" )
     {
-        if ( words.GetCount() < 2 )
+        if ( wordCount < 2 )
             return "Usage: /write [item name|slot name]";
 
         pawsInventoryWindow* window = (pawsInventoryWindow*)PawsManager::GetSingleton().FindWidget("InventoryWindow");
@@ -401,7 +537,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/rotate")
     {
-        if ( words.GetCount() < 2 )
+        if ( wordCount < 2 )
             return "Usage: /rotate [target] [x|reset] [y|reset] [z|reset]  or /rotate [target] [x|y|z] [angle]";
 
         bool targetGiven = false;
@@ -441,7 +577,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/sell")
     {
     	csString buff;
-        if (words.GetCount() > 1){
+        if (wordCount > 1){
         csString tail = words.GetTail(1);
             buff.Format("<R TYPE=\"SELL\" TARGET=\"%s\"/>",tail.GetData());
         }
@@ -463,7 +599,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if ( words[0] == "/brightness" )
     {
         const char* usage = "Usage: /brightness [<value>|increase|decrease|reset]";
-        if (words.GetCount() != 2) //if there were no arguments open the buddy window
+        if (wordCount != 2) //if there were no arguments open the buddy window
         {
             return usage;
         }
@@ -514,7 +650,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if ( words[0] == "/buddy" )
     {
-        if (words.GetCount() < 2) //if there were no arguments open the buddy window
+        if (wordCount < 2) //if there were no arguments open the buddy window
         {
             pawsWidget* window     = PawsManager::GetSingleton().FindWidget("BuddyWindow");
             if ( !window )
@@ -531,7 +667,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/buy")
     {
     	csString buff;
-        if (words.GetCount() > 1){
+        if (wordCount > 1){
         csString tail = words.GetTail(1);
             buff.Format("<R TYPE=\"BUY\" TARGET=\"%s\"/>",tail.GetData());
         }
@@ -546,7 +682,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/storage")
     {
     	csString buff;
-        if (words.GetCount() > 1)
+        if (wordCount > 1)
         {
             csString tail = words.GetTail(1);
             buff.Format("<R TYPE=\"STORE\" TARGET=\"%s\"/>",tail.GetData());
@@ -580,7 +716,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if ( !window )
             return "Ignore Window Not Found";
 
-        if (words.GetCount() < 2) //If the player didn't provide arguments just open the ignore window
+        if (wordCount < 2) //If the player didn't provide arguments just open the ignore window
             window->Show();
         else //If the player provided a name apply the setting
         {
@@ -615,13 +751,13 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
     else if (words[0] == "/cast")
     {
-       if (words.GetCount() <= 1)
+       if (wordCount <= 1)
             return "You must specify a spell name";
 
 
        csString spell;
        float KFactor;
-       if (words.GetCount() > 2 && sscanf(words[1], "%f", &KFactor) == 1)
+       if (wordCount > 2 && sscanf(words[1], "%f", &KFactor) == 1)
        {
            spell = words.GetTail(2);
        }
@@ -641,7 +777,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     {
         pawsChatWindow* ChatWindow = (pawsChatWindow*) PawsManager::GetSingleton().FindWidget("ChatWindow");
 
-        if (words.GetCount() > 1)
+        if (wordCount > 1)
             ChatWindow->SetAway( words.GetTail(1) );
         else
             ChatWindow->SetAway("");
@@ -652,11 +788,11 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         int tab = -1;
         const char* output = "/clear <all|main|channels|npc|whisper|guild|alliance|group|auction|system|help>";
 
-        if(words.GetCount() > 2)
+        if(wordCount > 2)
         {
             return output;            
         }
-        else if(words.GetCount() == 2)
+        else if(wordCount == 2)
         {
             if(words[1] == "all")
             {
@@ -840,7 +976,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         //get the chatwindow for use later
         pawsChatWindow* chatWindow = dynamic_cast<pawsChatWindow*>(PawsManager::GetSingleton().FindWidget("ChatWindow"));
 
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
             return "You must enter the text. e.g /Advice [user] <text>";
         csString pPerson( words[1] );
         csString pText(words.GetTail(2));
@@ -857,7 +993,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     {
         const char *errorMsg = "You must enter the text. e.g /pet [petnumber,] <assist|attack|dismiss|follow|guard|name|run|stay|stopattack|summon|target|walk> <options>";
 
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
             return errorMsg;
 
         csString pCommand = words[1];
@@ -865,7 +1001,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
 
         // Check for "," in word 2. This could
         // happen if the pet name is in quotes.
-        if (words.GetCount() > 2 && words[2] == ",")
+        if (wordCount > 2 && words[2] == ",")
         {
             pCommand += ",";
             words.DeleteIndex(2);
@@ -875,7 +1011,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if ( pCommand.FindFirst( ',' ) != (size_t)-1 )
         {
             // Pet name specified
-            if (words.GetCount() < 3)
+            if (wordCount < 3)
                 return errorMsg;
             pCommand = words[2];
             target = words[1];
@@ -1055,7 +1191,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/drop")
     {
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
             return "Usage: /drop  [quantity] (any) (noguard) (inplace) [item name]";
         int quantity;
         csString itemName;
@@ -1120,7 +1256,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if(words[0] == "/emote")
     {
-        if(words.GetCount() < 2 || words[1] == "list")
+        if(wordCount < 2 || words[1] == "list")
         {
             //generate a message
             csString emotelistmsg = "List of emotes:\n";
@@ -1183,7 +1319,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if(words[0] == "/join")
     {
-    	if(words.GetCount() < 2)
+    	if(wordCount < 2)
     	{
     		return "Please specify a channel name to join.";
     	}
@@ -1195,7 +1331,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if(words[0] == "/leave")
     {
-        if(words.GetCount() < 2)
+        if(wordCount < 2)
         {
             return "Please specify a channel hotkey number to leave.";
         }
@@ -1213,7 +1349,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/setdesc")
     {
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
         {
             return "Please specify the description for this character.";
         }
@@ -1229,7 +1365,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/setoocdesc")
     {
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
         {
             return "Please specify the OOC description for this character.";
         }
@@ -1245,7 +1381,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/loaddesc")
     {
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
         {
             return "Please specify the filename of the description to load.";
         }
@@ -1279,7 +1415,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/loadoocdesc")
     {
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
         {
             return "Please specify the filename of the ooc description to load.";
         }
@@ -1314,7 +1450,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if (words[0] == "/loadshortcuts")
     {
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
         {
             return "Please specify the filename of the shortcuts to load.";
         }
@@ -1350,7 +1486,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
     }
     else if(words[0] == "/saveshortcuts")
     {
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
         {
             return "Please specify the filename to save shortcuts into.";
         }
@@ -1390,7 +1526,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         static const char* enabledMessage = "Run mode enabled";
         static const char* disabledMessage = "Run mode disabled";
         
-        if (words.GetCount() < 2)
+        if (wordCount < 2)
         {
             if (psengine->GetCharControl()->GetMovementManager()->ToggleRun())
             {
@@ -1401,7 +1537,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
                 return disabledMessage;
             }
         }
-        else if (words.GetCount() == 2)
+        else if (wordCount == 2)
         {
             if (words[1] == "run")
             {

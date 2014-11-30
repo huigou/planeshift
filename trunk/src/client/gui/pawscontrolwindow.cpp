@@ -59,6 +59,8 @@
 #define ICONS 14
 //////////////////////////////////////////////////////////////////////
 
+// consts
+const char* WINDOWNAMESFILE ="/planeshift/data/gui/windownames.xml";
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -120,6 +122,94 @@ bool pawsControlWindow::PostSetup()
 
     buttonUp = FindWidget("ShowButtonUp");
     buttonDown = FindWidget("ShowButtonDown");
+    
+    //get a list of all controlled windows and their alternative names
+    // first we clean the old array, who knows what was in there before or if this is the second time PostSetup runs
+    controlledWindows.Empty();
+    // then we crate a XML document reader...  
+    csRef<iDocumentSystem> xml = psengine->GetXMLParser ();
+    csRef<iDocument> doc = xml->CreateDocument();
+    csRef<iVFS> vfs =  csQueryRegistry<iVFS > ( PawsManager::GetSingleton().GetObjectRegistry());
+    if (!vfs)
+    {
+       // well, if we got here the question is probably how we got this far at all.
+       Error1("interresting...couldn't load the virtual file system plugin. Something is definitively fishy");
+       return false;
+    }
+    // ...and read the file with the names and alternative names with it...
+    csRef<iDataBuffer> buf(vfs->ReadFile (WINDOWNAMESFILE));
+    if (!buf || !buf->GetSize ())
+    {
+       Error2("Error reading windows name file %s", WINDOWNAMESFILE);
+        return false;
+    }
+    // ..just to hand it over to the XML parser
+    const char* error = doc->Parse( buf );
+    if ( error )
+    {
+        Error2("Error loading windows names file: %s", error);
+        return false;
+    }
+    // now the real work starts...making sense out of the xml file and storing it for later use
+    csRef<iDocumentNode> rootNode = doc->GetRoot();
+    if(!rootNode)
+    {
+        Error2("No XML root in %s", WINDOWNAMESFILE);
+        return false;
+    }
+    csRef<iDocumentNodeIterator> windowsIt = rootNode->GetNodes();
+    // iterate through all nodes
+    while(windowsIt->HasNext())
+    {
+       csRef<iDocumentNode> baseNode = windowsIt->Next();
+       csString baseNodeName (baseNode->GetValue());
+       if (baseNodeName == "windows")
+       {
+           csRef<iDocumentNodeIterator> winIt = baseNode->GetNodes();
+           while(winIt->HasNext())
+           {
+               csRef<iDocumentNode> curNode = winIt->Next();
+               // check if it's a <window> node
+               csString nodeName (curNode->GetValue());
+               if (nodeName == "window")
+               {
+                   // found a <windows> node, lets store it's content
+                   WindowNames windowName;
+                   windowName.name = curNode->GetAttributeValue("name");
+                   if(!windowName.name.Length())
+                   {
+                       // no name given for this window, not good
+                       Error2("Missing window name in  %s", WINDOWNAMESFILE);
+                       return false;
+                   }
+                   // now we also store the alternative names of this window
+                   csRef<iDocumentNodeIterator> altNamesIt = curNode->GetNodes();
+                   while (altNamesIt->HasNext())
+                   {
+                       csRef<iDocumentNode> altNameNode = altNamesIt->Next();
+                       csString nodeAltName (altNameNode->GetValue());
+                       // check if we found a <alternativeName> node
+                       if (nodeAltName == "alternativeName")
+                       {
+                             csString altName = altNameNode->GetAttributeValue("name");
+                             if(!altName.Length())
+                             {                      
+                                 // we got a alternative name node but no "name" attribute...bad
+                                 Error2("Missing alternative window name in  %s", WINDOWNAMESFILE);
+                                 return false;
+                             }
+                             // for alt names we only want lowercase versions
+                             altName.Downcase();
+                             // store all found alternative names
+                             windowName.alternativeNames.Push(altName);
+                       }
+                   }
+                   // last but no least we save the struct for later use
+                   controlledWindows.Push(windowName);
+               }
+           }
+       }    
+    }    
     return true;
 }
 
@@ -296,84 +386,300 @@ bool pawsControlWindow::HandleWindow(csString widgetStr)
 
 bool pawsControlWindow::HandleWindowName(csString widgetStr)
 {
-    csString widget;
-    widgetStr.Downcase();
-    if(widgetStr == "options" )
-        widget = "ConfigWindow";
-    else if(widgetStr == "stats" || widgetStr =="skills")
-        widget = "SkillWindow";
-    else if(widgetStr == "spell book" || widgetStr == "spells")
-        widget = "SpellBookWindow";
-    else if(widgetStr == "inventory" || widgetStr == "inv")
-        widget = "InventoryWindow";
-    else if(widgetStr == "attackwindow")
-        widget = "AttackBookWindow";
-    else if(widgetStr == "help")
-        widget = "HelpWindow";
-    else if(widgetStr == "buddy")
-        widget = "BuddyWindow";
-    else if(widgetStr == "info")
-        widget = "InfoWindow";
-    else if(widgetStr == "petition" || widgetStr == "petitions")
-        widget = "PetitionWindow";
-    else if(widgetStr == "quest")
-        widget = "QuestNotebook";
-    else if(widgetStr == "gm")
-        widget = "GmGUI";
-    else if(widgetStr == "shortcut")
-        widget = "ShortcutMenu";
-    else if(widgetStr == "group")
-        widget = "GroupWindow";
-    else if(widgetStr == "guild")
-        widget = "GuildWindow";
-    else if(widgetStr == "glyph")
-        widget = "GlyphWindow";
-    else if(widgetStr == "sketch")
-        widget = "SketchWindow";
-    else if(widgetStr == "merchant")
-        widget = "MerchantWindow";
-    else if(widgetStr == "loot")
-        widget = "LootWindow";
-    else if(widgetStr == "detail")
-        widget = "DetailWindow";
-    else if(widgetStr == "exchange")
-        widget = "ExchangeWindow";
-    else if(widgetStr == "write")
-        widget = "WritingWindow";
-    else if(widgetStr == "read")
-        widget = "BookReadingWindow";
-    else if(widgetStr == "questreward")
-        widget = "QuestRewardWindow";
-    else if(widgetStr == "craft")
-        widget = "CraftWindow";
-    else if(widgetStr == "ignore")
-        widget = "IgnoreWindow";
-    else if(widgetStr == "bag" || widgetStr == "smallinventory")
-        widget = "SmallInventoryWindow";
-    else if(widgetStr == "talk" || widgetStr == "chat" || widgetStr == "communications")
-        widget = "ChatWindow";
-    else if(widgetStr == "activemagic")
-        widget = "ActiveMagicWindow";
-    else if(widgetStr == "managepetitions")
-        widget = "PetitionGMWindow";
-    else if(widgetStr == "music")
-        widget = "MusicWindow";
-    else if(widgetStr == "quit")
+    // first some special cases
+    csString widget = widgetStr;
+    widget.Downcase();
+    if(widget == "quit")
     {
         HandleQuit();
         return true;
     }
-    else if(widgetStr == "buy")
+    if(widget == "buy")
     {
         psengine->GetCmdHandler()->Execute("/buy");
         return true;
     }
-    if(widget)
+    // now the general window handling
+    // first we translate the given name to the real window name
+    widget = translateWidgetName(widgetStr);
+    // if the translation was successful we "handle" the window
+    if(widget != "")
     {
         HandleWindow(widget);
         return true;
     }
+    // otherwise we return with an error
     else return false;
+}
+ 
+bool pawsControlWindow::showWindow(csString widgetStr)
+{
+    // lets see if we can find the specified window
+    pawsWidget* widget = PawsManager::GetSingleton().FindWidget(widgetStr.GetData());
+    if (!widget)
+    {
+        // doesn't look like it, log and return with an error
+        Error2("%s isn't loaded", widgetStr.GetData());
+        return false;
+    }
+    // if the window was not visible before we show it now.
+    if ( !widget->IsVisible() )
+    {
+       widget->Show();
+    }
+    return true;
+}
+ 
+bool pawsControlWindow::hideWindow(csString widgetStr)
+{
+    // lets see if we can find the specified window
+    pawsWidget* widget = PawsManager::GetSingleton().FindWidget(widgetStr.GetData());
+    if (!widget)
+    {
+        // doesn't look like it, log and return with an error
+        Error2("%s isn't loaded", widgetStr.GetData());
+        return false;
+    }
+    // if the window was not visible before we show it now.
+    if ( widget->IsVisible() )
+    {
+       widget->Hide();
+       // Don't leave focus on us after hiding
+        if ( this->Includes(PawsManager::GetSingleton().GetCurrentFocusedWidget()) )
+       {
+            PawsManager::GetSingleton().SetCurrentFocusedWidget(NULL);
+       }
+    }
+    return true;
+}
+
+bool pawsControlWindow::showWindowName(csString widgetStr)
+{
+    // special window handling
+    csString widget = widgetStr;
+    widget.Downcase();
+    if(widget == "quit")
+    {
+        HandleQuit();
+        return true;
+    }
+    if(widget == "buy")
+    {
+        psengine->GetCmdHandler()->Execute("/buy");
+        return true;
+    }
+    // and the "normal" windows
+    widget = translateWidgetName(widgetStr);
+    if(widget != "")
+    {
+       // if the window was found show it
+        return showWindow(widget);
+    }
+    else return false;
+}
+
+bool pawsControlWindow::hideWindowName(csString widgetStr)
+{
+    // special window handling
+    csString widget = widgetStr;
+    widget.Downcase();
+    if(widget == "quit")
+    {
+        // well, hiding of quit is not supported (and doesn't really make sense)
+        return false;
+    }
+    if(widget == "buy")
+    {
+       // hiding of /buy isn't supported either at the moment
+        return false;
+    }
+    // translate the given name and hide the window if found
+    widget = translateWidgetName(widgetStr);
+    if(widget != "")
+    {
+        return hideWindow(widget);
+    }
+    else return false;
+}
+
+bool pawsControlWindow::setWindowPositionName(csString widgetStr, int x, int y)
+{
+    csString widget = translateWidgetName(widgetStr);
+    
+    // set the new position of the window
+    if(widget != "")
+    {
+       pawsWidget* w = PawsManager::GetSingleton().FindWidget(widget.GetData());
+       if (!w)
+       {
+           Error2("%s isn't loaded", widget.GetData());
+           return false;
+       }
+       w->SetRelativeFramePos(x,y);
+       w->Resize();
+           // needed to prevent some drawing errors...PAWS calls resize for parent widget but not the childern.
+       return true;
+    }
+    return false;
+}
+
+bool pawsControlWindow::setWindowSizeName(csString widgetStr, int width, int height)
+{
+    csString widget = translateWidgetName(widgetStr);
+    
+    // set the new size of the window
+    if(widget != "")
+    {
+       pawsWidget* w = PawsManager::GetSingleton().FindWidget(widget.GetData());
+       if (!w)
+       {
+           Error2("%s isn't loaded", widget.GetData());
+           return false;
+       }
+       // first check if the window is resizeable at all, if not do nothing
+       if (w->IsResizable())
+       {
+           // then we check for the allowed minimum size
+           int minWidth, minHeight;
+           w->GetMinSize(minWidth, minHeight);
+           // if the given size is smaller than that set it to the minimum size
+           if (width < minWidth)
+           {
+               width = minWidth;
+           }
+           if (height < minHeight)
+           {
+               height = minHeight;
+           }
+           // and last but not least set the size
+           w->SetSize(width,height);
+           // needed to prevent some drawing errors...PAWS calls resize for all child widgets but not the parent itself.
+           w->Resize();
+       }
+       return true;
+    }
+    return false;
+}
+
+csString pawsControlWindow::getWindowNames()
+{
+    csString returnNames = "";
+    for (unsigned int i=0; i < controlledWindows.GetSize(); i++)
+    {
+       // add the real window name
+       returnNames.Append(controlledWindows[i].name);
+       for (unsigned int j=0; j<controlledWindows[i].alternativeNames.GetSize(); j++)
+       {
+           // add every found alternative name
+           returnNames.Append(" | ").Append(controlledWindows[i].alternativeNames[j]);
+       }
+       // add a newline after every window type
+       returnNames.Append("\n");
+    }
+    return returnNames;
+}
+
+csString pawsControlWindow::getWindowInfo(csString widgetStr)
+{
+    csString returnPositions = "";
+    // check if all positions are requested or only a specific window
+    csString window = widgetStr;
+    window.Downcase();
+    if (window == "all")
+    {
+        // so we want the positiosn of all windows
+       for (unsigned int i = 0; i < controlledWindows.GetSize(); i++)
+       {
+           pawsWidget* widget = PawsManager::GetSingleton().FindWidget(controlledWindows[i].name.GetData());
+           // error checking...this should only fail if someone messed up the definition file WINDOWNAMESFILE
+           if (!widget)
+           {
+               // window could not be found
+               Error2("%s isn't loaded", widgetStr.GetData());
+               csString errMsg = "Could not find window ";
+               errMsg.Append(controlledWindows[i].name);
+               return errMsg;
+           }
+           else
+           {
+               // get the postion and add it to the string
+               csRect rect = widget->GetScreenFrame();
+               returnPositions.Append(controlledWindows[i].name).Append(" x:").Append(rect.xmin).Append("|").Append(rect.xmin-graphics2D->GetWidth())
+                              .Append(" y:").Append(rect.ymin).Append("|").Append(rect.ymin-graphics2D->GetHeight())
+                              .Append(" width:").Append(rect.Width()).Append(" height:").Append(rect.Height()).Append("\n");
+           }
+       }
+    }
+    else
+    {
+       // specific window
+       window = translateWidgetName(widgetStr);
+       if( window == "" )
+       {
+           // window could not be found
+           Error2("%s Could not be found.", widgetStr.GetData());
+           csString errMsg = "Could not find window ";
+           errMsg.Append(widgetStr);
+           return errMsg;
+       }
+
+       pawsWidget* widget = PawsManager::GetSingleton().FindWidget(window.GetData());
+       if (!widget)
+       {
+           // window could not be found
+           Error2("%s Could not be found.", widgetStr.GetData());
+           csString errMsg = "Could not find window ";
+           errMsg.Append(window);
+           return errMsg;
+       }
+       else
+       {
+           // put the position in the string
+           csRect rect = widget->GetScreenFrame();
+//           returnPositions.Append(window).Append(" x:").Append(rect.xmin).Append("|").Append(rect.xmin-graphics2D->GetWidth())
+//                              .Append(" y:").Append(rect.ymin).Append("|").Append(rect.ymin-graphics2D->GetHeight())
+//                              .Append(" width:").Append(rect.Width()).Append(" height:").Append(rect.Height());
+           returnPositions.Format( "%s  x:%d | %d  y:%d | %d  width:%d  height:%d",
+               window.GetData(),
+               rect.xmin,
+               rect.xmin-graphics2D->GetWidth(),
+               rect.ymin,
+               rect.ymin-graphics2D->GetHeight(),
+               rect.Width(),
+               rect.Height() );
+       }
+    }
+    return returnPositions;
+}
+
+csString pawsControlWindow::translateWidgetName(csString widgetStr)
+{
+    // first we convert to lowercase to be case-insensitive
+    widgetStr.Downcase();
+    csString compareName;
+    // lets check all names and alternative names if the requested window can be found
+    for (unsigned int i=0; i < controlledWindows.GetSize(); i++)
+    {
+       //  convert to lowercase
+       compareName = controlledWindows[i].name;
+       compareName.Downcase();
+       if (widgetStr == compareName)
+       {
+           // real window name was used, return it
+           return controlledWindows[i].name;
+       }
+       // now we check the alternative names of this window..these should be all lowercase already from ::PostSetup()
+       for (unsigned int j=0; j<controlledWindows[i].alternativeNames.GetSize(); j++)
+       {
+           if (widgetStr == controlledWindows[i].alternativeNames[j])
+           {
+               // return the real window name
+               return controlledWindows[i].name;
+           }
+       }
+    }
+    // no window with that name found
+    return "";
 }
 
 void pawsControlWindow::HandleQuit()

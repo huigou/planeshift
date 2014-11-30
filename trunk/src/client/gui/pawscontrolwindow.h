@@ -85,6 +85,58 @@ public:
      * @return TRUE if the toggle was possible, returns FALSE if it was not found.
      */
     bool HandleWindowName(csString widgetStr);
+    
+    /** Used to show a window.
+     * If the window was already shown nothing happens.
+     * @param widgetStr: The window to show
+     * @return FALSE in case of an error otherwise TRUE
+     */
+    bool showWindow(csString widgetStr);
+    /** Used to hide a window.
+     * If the window was already hidden nothing happens.
+     * @param widgetStr: The window to show
+     * @return FALSE in case of an error otherwise TRUE
+     */
+    bool hideWindow(csString widgetStr);
+    /** Used to show a window from a command.
+     * If the window was already shown nothing happens.
+     * @param widgetStr: The window to hide (command form, translated to the actual window name by the function)
+     * @return FALSE in case of an error otherwise TRUE
+     */
+    bool showWindowName(csString widgetStr);
+    /** Used to hide a window from a command.
+     * If the window was already hidden nothing happens.
+     * @param widgetStr: The window to hide (command form, translated to the actual window name by the function)
+     * @return FALSE in case of an error otherwise TRUE
+     */
+    bool hideWindowName(csString widgetStr);
+    
+    /** Used to set the position of windows from a command.
+     *  @param widgetStr: The window to hide (command form, translated to the actual window name by the function)
+     *  @param x: New x postion ofthe window
+     *  @param y: New y postion ofthe window
+     *  @return FALSE in case of an error otherwise TRUE
+     */
+    bool setWindowPositionName(csString widgetStr, int x, int y);
+    
+    /** Used to set the size of windows from a command.
+     *  @param widgetStr: The window to resizehide (command form, translated to the actual window name by the function)
+     *  @param width: New width of the window
+     *  @param height: New height of the window
+     *  @return FALSE in case of an error otherwise TRUE
+     */
+    bool setWindowSizeName(csString widgetStr, int width, int height);
+    
+    /** Used to get all names and alternative names of windows from a command.
+     * @return a string containing all the window names
+     */
+    csString getWindowNames();
+    
+    /** Used to get the size and position of windows from a command.
+     * @param widgetStr: The window that should return its info or "all" 
+     * @return a string containing the requested info
+     */
+    csString getWindowInfo(csString widgetStr);
 
     /** When the quit button is pressed this method displays the yes/no dialog
      * box to confirm that a user really wants to quit.
@@ -146,6 +198,20 @@ public:
     bool Contains( int x, int y );
 
 private:
+    /** helper function for commands to translate to widget names from a more readable form
+     *  This takes the windows names and the alternative names from a file (standard: /planeshift/data/gui/windownames.xml)
+     *  and then returns the "offical" window name for the given parameter
+     *  @param widgetStr: The widget name to be translated
+     *  @return The actual widget name used by the system or an empty string if this widget is unknown to this function
+     */  
+    csString translateWidgetName(csString widgetStr);
+    struct WindowNames
+    {
+       csString name;
+       csArray<csString> alternativeNames;
+    }; // struct to contain the window names and their alternatives
+    csArray<WindowNames> controlledWindows;  // array of all window names that are controllable by commands
+
     unsigned short int style;
     bool hidden;
     csArray<WBName> wbs;

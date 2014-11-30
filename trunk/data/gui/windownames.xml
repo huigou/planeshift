@@ -1,0 +1,124 @@
+<!-- data/gui/windowsnames.xml
+     Definition file for windows controlled by pawsControlWindow
+     Author: Fabian Stock (AiwendilH@googlemail.com)
+     License: GPL
+    
+     This program is free software; you can redistribute it and/or
+     modify it under the terms of the GNU General Public License
+     as published by the Free Software Foundation; either version 2
+     of the License, or (at your option) any later version.
+
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     You should have received a copy of the GNU General Public License
+     along with this program; if not, write to the Free Software
+     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+<windows>
+    <window name="ActiveMagicWindow">
+       <alternativeName name="activemagic"/>
+       <alternativeName name="activeeffect"/>
+       <alternativeName name="activeeffects"/>
+    </window>
+    <window name="AttackBookWindow">
+       <alternativeName name="attack book"/>
+       <alternativeName name="attacks"/>
+    </window>
+    <window name="BookReadingWindow">
+       <alternativeName name="read"/>
+    </window>
+    <window name="BuddyWindow">
+       <alternativeName name="buddy"/>
+    </window>
+    <window name="ChatWindow">
+       <alternativeName name="talk"/>
+       <alternativeName name="chat"/>
+       <alternativeName name="communications"/>
+    </window>
+    <window name="CraftWindow">
+       <alternativeName name="craft"/>
+       <alternativeName name="study"/>
+    </window>
+    <window name="ConfigWindow">
+       <alternativeName name="options"/>
+    </window>
+    <window name="DetailWindow">
+       <alternativeName name="detail"/>
+    </window>
+    <window name="ExchangeWindow">
+       <alternativeName name="exchange"/>
+    </window>
+    <window name="GlyphWindow">
+       <alternativeName name="glyph"/>
+    </window>
+    <window name="GroupWindow">
+       <alternativeName name="group"/>
+    </window>
+    <window name="GuildWindow">
+       <alternativeName name="guild"/>
+    </window>
+    <window name="GmGUI">
+       <alternativeName name="gm"/>
+    </window>
+    <window name="HelpWindow">
+       <alternativeName name="help"/>
+    </window>
+    <window name="InfoWindow">
+       <alternativeName name="info"/>
+    </window>
+    <window name="IgnoreWindow">
+       <alternativeName name="ignore"/>
+    </window>
+    <window name="InventoryWindow">
+       <alternativeName name="inventory"/>
+       <alternativeName name="inv"/>
+    </window>
+    <window name="LootWindow">
+       <alternativeName name="loot"/>
+    </window>
+    <window name="MerchantWindow">
+       <alternativeName name="merchant"/>
+    </window>
+    <window name="MusicWindow">
+       <alternativeName name="music"/>
+    </window>
+    <window name="PetitionGMWindow">
+       <alternativeName name="managepetitions"/>
+    </window>
+    <window name="PetitionWindow">
+       <alternativeName name="petition"/>
+       <alternativeName name="petitions"/>
+    </window>
+    <window name="QuestNotebook">
+       <alternativeName name="quest"/>
+       <alternativeName name="quests"/>
+    </window>
+    <window name="QuestRewardWindow">
+       <alternativeName name="questreward"/>
+    </window>
+    <window name="ShortcutMenu">
+       <alternativeName name="shortcut"/>
+       <alternativeName name="shortcuts"/>
+    </window>
+    <window name="SketchWindow">
+       <alternativeName name="sketch"/>
+    </window>
+    <window name="SkillWindow">
+       <alternativeName name="stats"/>
+       <alternativeName name="skills"/>
+    </window>
+    <window name="SmallInventoryWindow">
+       <alternativeName name="bag"/>
+       <alternativeName name="smallinventory"/>
+    </window>
+    <window name="SpellBookWindow">
+       <alternativeName name="spell book"/>
+       <alternativeName name="spells"/>
+    </window>
+    <window name="WritingWindow">
+       <alternativeName name="write"/>
+    </window>
+</windows>
