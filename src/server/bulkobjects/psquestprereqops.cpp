@@ -758,14 +758,41 @@ csPtr<psQuestPrereqOp> psQuestPrereqOpTimeOfDay::Copy()
 
 bool psQuestPrereqOpVariable::Check(psCharacter* character)
 {
-    return character->HasVariableDefined(variableName);
+    if(!character->HasVariableDefined(variableName))
+        return false;
+    if(!variableValue.IsEmpty())
+    {
+        return variableValue == character->GetVariableValue(variableName);
+    }
+    if(min != 0.0 || max != 0.0)
+    {
+        const char* value = character->GetVariableValue(variableName);
+        char* end;
+        double d = strtod(value, &end);
+
+        if(end == value)
+            return false;
+        if(min == 0.0)
+            return d <= max;
+        if(max == 0.0)
+            return d >= min;
+        return d >= min && d <= max;
+    }
+    return true;
 }
 
 csString psQuestPrereqOpVariable::GetScriptOp()
 {
     csString script;
 
-    script.Format("<variableset name=\"%s\"/>", variableName.GetData());
+    if(!variableValue.IsEmpty())
+        script.Format("<variableset name=\"%s\" value=\"%s\"/>",
+                variableName.GetData(), variableValue.GetData());
+    else if(min != 0.0 || max != 0.0)
+        script.Format("<variableset name=\"%s\" min=\"%g\" max=\"%g\"/>",
+                variableName.GetData(), min, max);
+    else
+        script.Format("<variableset name=\"%s\"/>", variableName.GetData());
 
     return script;
 }
@@ -773,7 +800,7 @@ csString psQuestPrereqOpVariable::GetScriptOp()
 csPtr<psQuestPrereqOp> psQuestPrereqOpVariable::Copy()
 {
     csRef<psQuestPrereqOpVariable> copy;
-    copy.AttachNew(new psQuestPrereqOpVariable(variableName));
+    copy.AttachNew(new psQuestPrereqOpVariable(*this));
     return csPtr<psQuestPrereqOp>(copy);
 }
 
