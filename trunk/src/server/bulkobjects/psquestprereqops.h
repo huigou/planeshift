@@ -1236,6 +1236,8 @@ class psQuestPrereqOpVariable : public psQuestPrereqOp
 {
 protected:
     csString variableName;
+    csString variableValue;
+    double min, max;
 
 public:
 
@@ -1244,7 +1246,23 @@ public:
      *
      * @param variableName The variable to check for assignment.
      */
-    psQuestPrereqOpVariable(const char* variableName):variableName(variableName) {};
+    psQuestPrereqOpVariable(const char* name)
+        : variableName(name), min(0), max(0)
+    {
+    }
+    psQuestPrereqOpVariable(const char* name, const char* value)
+        : variableName(name), variableValue(value), min(0), max(0)
+    {
+    }
+    psQuestPrereqOpVariable(const char* name, double minv, double maxv)
+        : variableName(name), min(minv), max(maxv)
+    {
+    }
+    psQuestPrereqOpVariable(const psQuestPrereqOpVariable& other)
+        : variableName(other.variableName), variableValue(other.variableValue),
+          min(other.min), max(other.max)
+    {
+    }
 
     virtual ~psQuestPrereqOpVariable() {}
 

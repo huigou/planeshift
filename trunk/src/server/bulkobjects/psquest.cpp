@@ -470,14 +470,28 @@ bool LoadPrerequisiteXML(iDocumentNode* topNode, psQuest* self, csRef<psQuestPre
     }
     else if(strcmp(topNode->GetValue(), "variable") == 0)
     {
-        csString name = topNode->GetAttributeValue("name");
-        if(name.IsEmpty())
+        const char* name = topNode->GetAttributeValue("name");
+        if(!name || !*name)
         {
             Error1("No name given for character variable prerequisite operation");
             return false;
         }
 
-        prerequisite.AttachNew(new psQuestPrereqOpVariable(name));
+        csString value = topNode->GetAttributeValue("value");
+        csString min = topNode->GetAttributeValue("min");
+        csString max = topNode->GetAttributeValue("max");
+        if(!value.IsEmpty())
+        {
+            prerequisite.AttachNew(new psQuestPrereqOpVariable(name, value));
+        }
+        else if(!min.IsEmpty() || !max.IsEmpty())
+        {
+            double minv = strtod(min.GetDataSafe(), NULL);
+            double maxv = strtod(max.GetDataSafe(), NULL);
+            prerequisite.AttachNew(new psQuestPrereqOpVariable(name, minv, maxv));
+        }
+        else
+            prerequisite.AttachNew(new psQuestPrereqOpVariable(name));
     }
     else if(strcmp(topNode->GetValue(), "onlinetime") == 0)
     {
