@@ -1856,9 +1856,7 @@ bool CacheManager::freeTradeTransformationsByPatternAndGroup(csHash<csHash<csPDe
 
 bool CacheManager::DescribeTransformation(psTradeTransformations* t, csArray<CraftTransInfo*>* newArray)
 {
-    //    uint32	itemID = t->GetItemId();
-    uint32	processID = t->GetProcessId();
-    //    uint32	resultID = t->GetResultId();
+    uint32 processID = t->GetProcessId();
 
     csArray<psTradeProcesses*>* procArray = GetTradeProcessesByID(processID);
 
@@ -2340,13 +2338,33 @@ csString CacheManager::CreateTransCraftDescription(psTradeTransformations* tran,
     // Create craft message
     //  Example: "Bake with skill 2 waybread dough into a waybread using oven"
     if(tran->GetItemQty() > 1)
-        desc.Format("%s %d %ss into ", proc->GetName().GetData(), tran->GetItemQty(), itemStats->GetName());
+    {
+        const char* N = itemStats->GetName();
+        if( N[strlen(N)-1]=='s' ) 
+        {
+            desc.Format("%s %d %s into ", proc->GetName().GetData(), tran->GetItemQty(), N);
+        }
+        else
+        {
+            desc.Format("%s %d %ss into ", proc->GetName().GetData(), tran->GetItemQty(), N);
+        }
+    }
     else
         desc.Format("%s %s into ", proc->GetName().GetData(), itemStats->GetName());
 
     csString secondHalf;
     if(tran->GetResultQty() > 1)
-        secondHalf.Format("%d %ss using %s", tran->GetResultQty(), resultStats->GetName(), workStats->GetName());
+    {
+        const char* N = resultStats->GetName();
+        if( N[strlen(N)-1]=='s' )
+        {
+            secondHalf.Format("%d %s using %s", tran->GetResultQty(), N, workStats->GetName());
+        }
+        else
+        {
+            secondHalf.Format("%d %ss using %s", tran->GetResultQty(), N, workStats->GetName());
+        }
+    }
     else
         secondHalf.Format("%s using %s", resultStats->GetName(), workStats->GetName());
 
@@ -2406,13 +2424,29 @@ csString CacheManager::CreateComboCraftDescription(Result* currentComb)
             }
             else
             {
-                temp.Format("%d %ss, ", combMinQty, itemStats->GetName());
+                const char* N = itemStats->GetName();
+                if( N[strlen(N)-1]=='s' )
+                {
+                    temp.Format("%d %s, ", combMinQty, N);
+                }
+                else
+                {
+                    temp.Format("%d %ss, ", combMinQty, N);
+                }
                 desc.Append(temp);
             }
         }
         else
         {
-            temp.Format("between %d and %d %ss, ", combMinQty, combMaxQty, itemStats->GetName());
+            const char* N = itemStats->GetName();
+            if( N[strlen(N)-1]=='s' )
+            {
+                temp.Format("between %d and %d %s, ", combMinQty, combMaxQty, N);
+            }
+            else
+            {
+                temp.Format("between %d and %d %ss, ", combMinQty, combMaxQty, N);
+            }
             desc.Append(temp);
         }
     }
@@ -2435,7 +2469,16 @@ csString CacheManager::CreateComboCraftDescription(Result* currentComb)
     }
     else
     {
-        temp.Format("into %d %ss.\n", (*currentComb)[0].GetInt("result_qty"), resultItemStats->GetName());
+        const char* N = resultItemStats->GetName();
+
+        if( N[strlen(N)-1]=='s' )
+        {
+            temp.Format("into %d %s.\n", (*currentComb)[0].GetInt("result_qty"), N);
+        }
+        else
+        {
+            temp.Format("into %d %ss.\n", (*currentComb)[0].GetInt("result_qty"), N);
+        }
         desc.Append(temp);
     }
     return desc;
