@@ -1097,6 +1097,103 @@ protected:
     MathScript* bindings; /// an embedded MathScript containing new bindings
 };
 
+static bool ParseAOps(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, csPDelArray<AppliedOp>& ops);
+
+/**
+ * IfAOp - a way to evaluate MathScript stuff and create new bindings:
+ *
+ * The attribute t is evaluated as a boolean expression and its
+ * result is used to decide which branch (then / else) is to be
+ * executed.
+ *
+ * - Example:
+ * @code
+ * <if t="Roll &lt; 40">
+ *   <then>...</then>
+ *   <else>...</else>
+ * </if>
+ * @endcode
+ *
+ * The "then" branch is required, but an "else" branch is optional.
+ *
+ */
+class IfAOp : public AppliedOp
+{
+public:
+    IfAOp(EntityManager* entitymanager, CacheManager* cachemanager) :
+        AppliedOp(),
+        entitymanager(entitymanager),
+        cachemanager(cachemanager),
+        condition(NULL)
+    {
+    }
+
+    /// deletes the branches and the condition object
+    virtual ~IfAOp()
+    {
+        delete condition;
+    }
+
+    bool Load(iDocumentNode* node)
+    {
+        condition = MathExpression::Create(node->GetAttributeValue("t"));
+        csRef<iDocumentNode> thenNode = node->GetNode("then");
+        csRef<iDocumentNode> elseNode = node->GetNode("else");
+
+        if(!thenNode)
+        {
+            Error1("Missing <then> in <if>.");
+            return false;
+        }
+
+        if(!ParseAOps(entitymanager, cachemanager, thenNode, then_ops))
+        {
+            return false;
+        }
+
+        if(elseNode &&
+           !ParseAOps(entitymanager, cachemanager, elseNode, else_ops))
+        {
+            return false;
+        }
+
+        return condition != NULL;
+    }
+
+    virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
+    {
+        csPDelArray<AppliedOp>::Iterator it =
+            condition->Evaluate(env) != 0.0 ?
+                then_ops.GetIterator() : else_ops.GetIterator();
+        while(it.HasNext())
+        {
+            AppliedOp* op = it.Next();
+            op->Run(env, target, asp);
+        }
+    }
+
+    virtual const csString GetDescription(MathEnvironment* env)
+    {
+        csString descr;
+        csPDelArray<AppliedOp>::Iterator it =
+            condition->Evaluate(env) != 0.0 ?
+                then_ops.GetIterator() : else_ops.GetIterator();
+        while(it.HasNext())
+        {
+            AppliedOp* op = it.Next();
+            descr.Append(op->GetDescription(env));
+        }
+        return descr;
+    }
+
+protected:
+    csPDelArray<AppliedOp> then_ops;
+    csPDelArray<AppliedOp> else_ops;
+    MathExpression* condition; /// an embedded MathExpression - should result in a boolean
+    EntityManager* entitymanager;
+    CacheManager* cachemanager;
+};
+
 //============================================================================
 // Applicative script implementation (progression script applied mode)
 //============================================================================
@@ -1153,30 +1250,8 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
     return Create(entitymanager, cachemanager, top, type, top->GetAttributeValue("name"), top->GetAttributeValue("duration"));
 }
 
-ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration)
+static bool ParseAOps(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, csPDelArray<AppliedOp>& ops)
 {
-    CS_ASSERT(name);
-    ApplicativeScript* script = new ApplicativeScript;
-    if(!script)
-        return NULL;
-
-    script->aim = top->GetAttributeValue("aim");
-    script->name = name;
-    script->type = type;
-    if( top->GetAttributeValue("image")!=NULL )
-    {
-        script->image = top->GetAttributeValue("image");
-    }
-    
-    if(duration)
-        script->duration = MathExpression::Create(duration);
-
-    if(script->aim.IsEmpty() || script->name.IsEmpty() || (duration && !script->duration))
-    {
-        delete script;
-        return NULL;
-    }
-
     csRef<iDocumentNodeIterator> it = top->GetNodes();
     while(it->HasNext())
     {
@@ -1268,25 +1343,56 @@ ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, Cache
         {
             op = new LetAOp;
         }
+        else if(elem == "if")
+        {
+            op = new IfAOp(entitymanager, cachemanager);
+        }
         else
         {
             // complain (shouldn't happen - script should've been validated against the schema)
             Error2("Unknown operation >%s< - validate against the schema!", elem.GetData());
-            delete script;
-            return NULL;
+            return false;
         }
 
         if(op->Load(node))
         {
-            script->ops.Push(op);
+            ops.Push(op);
         }
         else
         {
             delete op;
-            delete script;
-            return NULL;
+            return false;
         }
     }
+    return true;
+}
+
+ApplicativeScript* ApplicativeScript::Create(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, SPELL_TYPE type, const char* name, const char* duration)
+{
+    CS_ASSERT(name);
+    ApplicativeScript* script = new ApplicativeScript;
+    if(!script)
+        return NULL;
+
+    script->aim = top->GetAttributeValue("aim");
+    script->name = name;
+    script->type = type;
+    if( top->GetAttributeValue("image")!=NULL )
+    {
+        script->image = top->GetAttributeValue("image");
+    }
+    
+    if(duration)
+        script->duration = MathExpression::Create(duration);
+
+    if(script->aim.IsEmpty() || script->name.IsEmpty() || (duration && !script->duration))
+    {
+        delete script;
+        return NULL;
+    }
+
+    ParseAOps(entitymanager, cachemanager, top, script->ops);
+
     return script;
 }
 
@@ -1563,7 +1669,7 @@ protected:
 /**
  * IfOp - conditional control flow, based on MathScript.
  * 
- * The attribute t is evaluated as a boolean expression and it's
+ * The attribute t is evaluated as a boolean expression and its
  * result is used to decide which branch (then / else) is to be
  * executed.
  *
