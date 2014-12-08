@@ -222,31 +222,31 @@ void pawsScrollMenu::OnResize()
             leftEdge = 0,
             bottomEdge = 0;
 
-        if(screenFrame.Width() > screenFrame.Height())   //horizontal case
+        // Align buttonHolder to not overwrite the buttons positions
+        if (screenFrame.Width() > screenFrame.Height()) //horizontal case
         {
-            leftEdge = (LeftScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0) \
-                       + (EditLockMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0);
-            edgeSpace = leftEdge + (RightScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0);
-            topSpace = 0;
+            leftEdge = (LeftScrollMode != ScrollMenuOptionDISABLED ? buttonHeight / 2 : 0) + (EditLockMode != ScrollMenuOptionDISABLED ? buttonHeight / 2 : 0);
+            edgeSpace = leftEdge + (RightScrollMode != ScrollMenuOptionDISABLED ? buttonHeight / 2 : 0);
         }
         else //vertical case
         {
-            edgeSpace = 0;
-            topSpace  = (LeftScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0)+(RightScrollMode!=ScrollMenuOptionDISABLED?buttonHeight/2:0);
+            if (LeftScrollMode != ScrollMenuOptionDISABLED || EditLockMode != ScrollMenuOptionDISABLED)
+            {
+                topSpace = buttonHeight;
+            }
+            bottomEdge = topSpace;
+            if (RightScrollMode != ScrollMenuOptionDISABLED)
+            {
+                bottomEdge += buttonHeight / 2;
+            }
         }
-
-        if( GetScreenFrame().xmax > parent->GetScreenFrame().xmax ) 
+        // Adjust bottom edge of Button holder to prevent showing parts of the buttons
+        int modulo = (GetScreenFrame().Height() - bottomEdge - topSpace) % buttonHeight;
+        if ( modulo != 0 && GetScreenFrame().Height() - bottomEdge - topSpace > buttonHeight)
         {
-        //this compensates for an issue that arises due to the scrollmenu extending outside of the shortcutwindow in >=0.6.2 gui/shortcut.xml
-            bottomEdge=(parent->GetScreenFrame().xmax-GetScreenFrame().xmin);
+            bottomEdge += modulo;
         }
-        else
-        {
-            bottomEdge=GetScreenFrame().Height()-(3*topSpace);
-        }
-
-
-        ButtonHolder->SetRelativeFrame(leftEdge, topSpace, GetScreenFrame().Width()-edgeSpace,  bottomEdge );
+        ButtonHolder->SetRelativeFrame(leftEdge, topSpace, GetScreenFrame().Width() - edgeSpace, GetScreenFrame().Height() - bottomEdge);
 
         //if we have buttons then size them properly, show those within the buttonHolder visible area and hide the rest
         if(Buttons.GetSize() >0)
@@ -333,21 +333,6 @@ void pawsScrollMenu::LayoutButtons()
             }
             Buttons[i]->SetRelativeFrame(buttonCol, 4+((buttonRow-1)*buttonHeight), buttonSize-8, buttonHeight-8);
             buttonCol += buttonSize;
-
-            //Hide/Show...this is necessary because text on hidden widgets is *not* hidden as it should be, and masking images aren't clipped properly.
-            if(Buttons[i]->GetScreenFrame().xmin >=ButtonHolder->GetScreenFrame().xmin && ButtonHolder->GetScreenFrame().Width()<=buttonSize)
-            {
-                //special case where a button is wider than the display area; try to show as much as you can...this may be ugly
-                Buttons[i]->Show();
-            }
-            else if(Buttons[i]->GetScreenFrame().xmax <= ButtonHolder->GetScreenFrame().xmin ||  Buttons[i]->GetScreenFrame().xmax > ButtonHolder->GetScreenFrame().xmax || Buttons[i]->GetScreenFrame().ymax >= ButtonHolder->GetScreenFrame().ymax)
-            {
-                //Buttons[i]->Hide();
-            }
-            else
-            {
-                Buttons[i]->Show();
-            }
         }
         ShowScrollButtons();
     }
@@ -474,7 +459,7 @@ bool pawsScrollMenu::ScrollToPosition( float pos )
     int diff = Buttons[ currentButton ]->GetScreenFrame().ymin - ButtonHolder->GetScreenFrame().ymin;
     for(size_t i=0; i<Buttons.GetSize(); i++ )
     {
-        Buttons[ i ]->MoveTo( Buttons[ i ]->GetScreenFrame().xmin, (Buttons[ i ]->GetScreenFrame().ymin-diff)+4 );
+        Buttons[ i ]->MoveTo( Buttons[ i ]->GetScreenFrame().xmin, (Buttons[ i ]->GetScreenFrame().ymin-diff)+BUTTON_PADDING );
     }
     ShowScrollButtons();
 
