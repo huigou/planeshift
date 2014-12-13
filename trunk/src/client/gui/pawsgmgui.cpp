@@ -345,7 +345,7 @@ bool pawsGmGUIWindow::OnButtonReleased(int /*mouseButton*/, int /*keyModifier*/,
             first = NormalizeCharacterName(first);
             last = NormalizeCharacterName(last);
 
-            cmd.Format("/changename %s force %s %s",GetSelectedName(),first.GetData(),last.GetData());
+            cmd.Format("/changename %s %s %s",GetSelectedName(),first.GetData(),last.GetData());
             updateAfter = true;
 
             break;
