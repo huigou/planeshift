@@ -313,11 +313,17 @@ void psChatBubbles::HandleMessage(MsgEntry* msg, Client* /*client*/)
     if (!(type->enabled))
         return;
 
+
+    
+    //Down case the text string to correctly match /me /ME /Me /mE /my /My /MY /mY
+    csString noCasesText = chatMsg.sText;
+    noCasesText.Downcase();
+
     //We don't want /me or /my messages in the chat box, change them to something nice
-    if (chatMsg.sText.StartsWith("/me") || chatMsg.sText.StartsWith("/my"))
+    if (noCasesText.StartsWith("/me") || noCasesText.StartsWith("/my"))
     {
         const BubbleChatType* subType = 0;
-        if(chatMsg.sText.StartsWith("/my")) //we have to add an 's
+        if(noCasesText.StartsWith("/my")) //we have to add an 's
         {
             size_t len = firstName.Length() - 1;
             firstName.Append(firstName.GetAt(len) == 's' ? "'" : "'s");
