@@ -1585,9 +1585,13 @@ void pawsChatWindow::FormatMessage(csString &sText, csString &sPerson, csString 
     //checks how we should colour the name of the person
     //red if it's the player green if it's other players
     csString nameColouringCode = hasCharName ? REDCODE : GREENCODE;
-    if ( sText.StartsWith("/me ") )
+
+    csString noCaseMsg = sText;
+    noCaseMsg.Downcase();
+
+    if ( noCaseMsg.StartsWith("/me ") )
         buff.Format("%s%s" DEFAULTCODE " %s", (const char *) nameColouringCode, (const char *)sPerson, ((const char *)sText)+4);
-    else if ( sText.StartsWith("/my ") )
+    else if ( noCaseMsg.StartsWith("/my ") )
         buff.Format("%s%s's" DEFAULTCODE " %s", (const char *) nameColouringCode, (const char *)sPerson, ((const char *)sText)+4);
     else
     {
@@ -1819,13 +1823,13 @@ void pawsChatWindow::HandleMessage(MsgEntry *me)
 
         case CHAT_TELLSELF:
         {
-            if ( msg.sText.StartsWith("/me ") )
+            if ( noCaseMsg.StartsWith("/me ") )
             {
                 WordArray tName(psengine->GetMainPlayerName());
                 buff.Format("%s %s",tName[0].GetData(),
                             ((const char *)msg.sText)+4);
             }
-            else if ( msg.sText.StartsWith("/my ") )
+            else if ( noCaseMsg.StartsWith("/my ") )
             {
                 WordArray tName(psengine->GetMainPlayerName());
                 buff.Format("%s's %s",tName[0].GetData(),
