@@ -68,7 +68,7 @@ pawsDnDButton::pawsDnDButton() :
     flashMode(0),
     DnDLock(false),
     spellProgress(NULL),
-    lastToolTipTime(9999)
+    lastToolTipTime(999999999)
 {
     factory = "pawsDnDButton";
 }
@@ -192,7 +192,6 @@ void pawsDnDButton::Draw()
 
         if (currentProgress >= 1.0)
         {
-            //pawsButton::Draw();
             castingTime = 0;
             spellProgress->Hide(); //this *shouldn't* be necessary as the server should be pushing out an updated spell list about this time, but we include this in case of missed packets.
             pawsButton::Draw();
@@ -207,8 +206,28 @@ void pawsDnDButton::Draw()
         csTicks remainingTime   = (castingTime-(currentTime-startTime))/1000;
         if( lastToolTipTime > remainingTime ) //only update once per second
         {
-            pawsWidget::FormatToolTip( "%s, %i seconds", baseToolTip.GetData(), remainingTime );
-            spellProgress->FormatToolTip( "%s, %i seconds", baseToolTip.GetData(), remainingTime );
+            if( remainingTime>59 )
+            {
+                unsigned int hours = remainingTime/3600;
+                unsigned int minutes = (remainingTime-(hours*3600))/60;
+                unsigned int seconds = (remainingTime-(hours*3600)-(minutes*60));
+
+                if( hours>0 )
+                {
+                    pawsWidget::FormatToolTip( "%s, %u hrs, %u mins, %u secs", baseToolTip.GetData(), hours, minutes, seconds );
+                    spellProgress->FormatToolTip( "%s, %u hrs, %u mins, %u secs", baseToolTip.GetData(), hours, minutes, seconds );
+                }
+                else
+                {
+                    pawsWidget::FormatToolTip( "%s, %u mins, %u secs", baseToolTip.GetData(), minutes, seconds );
+                    spellProgress->FormatToolTip( "%s, %u mins, %u secs", baseToolTip.GetData(), minutes, seconds );
+                }
+            }
+            else
+            {
+                pawsWidget::FormatToolTip( "%s, %u seconds", baseToolTip.GetData(), remainingTime );
+                spellProgress->FormatToolTip( "%s, %u seconds", baseToolTip.GetData(), remainingTime );
+            }
             lastToolTipTime = remainingTime;
         }
     }
@@ -240,7 +259,7 @@ void pawsDnDButton::Start(csTicks startTicks, csTicks currentTicks, csTicks dura
     spellProgress->SetFlashLevel(flashLevel, warnLow);
     spellProgress->SetFlashRate( 250);
 
-    float currentProgress = (currentTicks-startTicks)/duration;
+    float currentProgress = ((float)(currentTicks-startTicks))/(float)duration;
     spellProgress->SetCurrentValue(currentProgress);
     startTime = csGetTicks()-(currentTicks-startTicks);//note: this must be in terms of the client's ticks, not the server's
     this->castingTime = duration;
