@@ -3,11 +3,10 @@
     <widget name="ConfigGenericTree" factory="pawsConfigGeneric"
             visible="no" savepositions="no" movable="no"
             resizable="no" style="New Standard GUI" >
-        <frame x="225" y="10" width="400" height="300" border="no" />
-        <bgimage resource="Scaling Widget Background" />
+        <frame x="225" y="10" width="440" height="300" border="no" />
         
         <widget factory="pawsMultiLineTextBox" name="config generic text">
-            <frame x="0" y="0" width="300" height="300" border="no" />
+            <frame x="0" y="0" width="440" height="300" border="no" />
             <text string="config generic text"/>
         </widget>
     </widget>
