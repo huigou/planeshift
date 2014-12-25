@@ -2382,7 +2382,10 @@ bool WorkManager::ValidateTarget(Client* client)
         // Check range ignoring Y co-ordinate and ignoring instance
         if(worker->RangeTo(target, true, true) > RANGE_TO_USE)
         {
-            psserver->SendSystemError(clientNum,"You are not in range to use %s.",target->GetItem()->GetName());
+			if (target->GetItem()!=NULL)
+				psserver->SendSystemError(clientNum,"You are not in range to use %s.",target->GetItem()->GetName());
+			else
+				psserver->SendSystemError(clientNum,"You are not in range to use <invalid item>.");
             return false;
         }
 
