@@ -635,13 +635,16 @@ void ServerCharManager::BeginTrading(Client* client, gemObject* target, const cs
 
     ///////////
     // Check preconditions for trading.
-    // Range check is outside TradingCheck to prevent dublicate range checks in gemNPC::SendBehaviorMessage
+    // Range check is outside TradingCheck to prevent duplicate range checks in gemNPC::SendBehaviorMessage
 
     // Check within select range
     if(client->GetActor()->RangeTo(target) > RANGE_TO_SELECT)
     {
-        psserver->SendSystemInfo(clientnum, "You are not in range to trade with %s.", merchant->GetCharName());
-        return;
+		if (merchant != NULL)
+			psserver->SendSystemInfo(clientnum, "You are not in range to trade with %s.", merchant->GetCharName());
+        else 
+			psserver->SendSystemInfo(clientnum, "You are not in range to trade with <invalid target>.");
+		return;
     }
 
     // Check all other preconditions
