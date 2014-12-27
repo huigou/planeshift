@@ -1795,13 +1795,13 @@ bool psItem::GetBuyPersonalise()
 
 const char* psItem::GetName() const
 {
-    //first check if this item was explictly given a special name
+    //first check if this item was explicitly given a special name
     if(!item_name.IsEmpty())
         return item_name.GetData();
 
     //then check if the item modifier overlay gives a name to this item.
     if(itemModifiers->active && !itemModifiers->name.IsEmpty())
-        return itemModifiers->name.GetData();
+        return itemModifiers->name;
 
     // In case current stat isn't set yet just return no item stat.
     if(!current_stats) return "(No item stat)";
