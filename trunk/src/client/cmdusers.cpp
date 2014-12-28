@@ -486,7 +486,7 @@ const char *psUserCommands::HandleCommand(const char *cmd)
         if ( wordCount < 2 )
             return "Usage: /equip  [stack count] [slot] [item name]";
 
-        size_t tail = 1;
+        int tail = 1;
         int quantity = atoi(words[1]);
         if (quantity > 0)
         {
