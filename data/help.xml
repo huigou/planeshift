@@ -1327,6 +1327,10 @@ Loads the description from the file [filename] and sets it as your current OOC d
 Usage:
 /motd
 This will request the server's MOTD and write it to your System chat.</content></Contents></topic>
+<topic name="/picklock"><Contents><content type="text">This command allows you to pick locks of doors and chests. Not yet implemented.
+Usage:
+/picklock
+(Picks the lock of your current target.)</content></Contents></topic>
 <topic name="/ping"><Contents><content type="text">With this command you can get the current latency of your connection.
 Usage:
 /ping
@@ -1450,7 +1454,29 @@ Writes the current version to the system chat tab.</content></Contents></topic>
 Usage:
 /who [filter]
 Lists characters whose name or whose guild contain the expression specified by [filter]. If no [filter] is given, all online characters are listed up to a pre-determined character limit.</content></Contents></topic>
+<topic name="/window"><Contents><content type="text">With this command you can get the current position and size of a window, set window positions, get all window names and positions, and show/hide windows.
 
+Usage
+/window [list|name|all] [getinfo|setposition|setsize|show|hide] [x] [y]
+
+/window list
+This lists all the window names and their alternative names in the system tab.
+
+/window [name] getinfo
+/window all getinfo
+This will list the position and size for the named window, or for all windows
+
+/window [name] setposition x y 
+This sets the position of the named window to the position x y relative to the top left corner of the game screen.
+
+/window [name] setsize x y 
+This sets the size of the named window to the size x y.
+
+/window [name] show
+This shows the named window
+
+/window [name] hide
+This hides the named window.</content></Contents></topic>
 <!--
 <branch name="Unimplemented or Suspended Commands"><Contents><content type="text">The following commands have either yet to be implemented or have been withdrawn.</content></Contents>
 <topic name="/admin"><Contents><content type="text">This command lists the available admin commands for your account. As I assume your are no GM or Dev this won't do anything for you.</content></Contents></topic>
@@ -1465,10 +1491,6 @@ Usage:
 (Introduces your character to the selected target or everyone around if no target is selected.)
 Additional Info:
 In the past there was an introduction system in place that allowed you to see only the names of people you were already acquainted with. All other characters were visible only as generic descriptions e.g. Somebody. Due to flaws, the system was withdrawn for the confusion that ensued when multiple 'unknown' characters were interacting. It might be re-implemented if a way is found to rectify the flaws.</content></Contents></topic>
-<topic name="/picklock"><Contents><content type="text">This command allows you to pick locks of doors and chests. Not yet implemented.
-Usage:
-/picklock
-(Picks the lock of your current target.)</content></Contents></topic>
 <topic name="/tellnpcinternal"><Contents><content type="text"></content></Contents></topic>
 <topic name="/uncombine"><Contents><content type="text">(To be implemented)</content></Contents></topic></branch>
 -->
