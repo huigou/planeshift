@@ -427,11 +427,10 @@ void WorkManager::HandleRepair(gemActor* actor, Client* client, const csString &
     csVector3 dummy = csVector3(0,0,0);
 
     psWorkGameEvent* evt = new psWorkGameEvent(this, client->GetActor(),repairDuration,REPAIR,dummy,NULL,client,repairTarget,repairResult);
-    psserver->GetEventManager()->Push(evt);  // wake me up when repair is done
 
     client->GetActor()->SetTradeWork(evt);
-
     repairTarget->SetInUse(true);
+    psserver->GetEventManager()->Push(evt);  // wake me up when repair is done
 
     psserver->SendSystemInfo(client->GetClientNum(),"You start repairing the %s and continue for %d seconds.",repairTarget->GetName(),repairDuration/1000);
     client->GetActor()->SetMode(PSCHARACTER_MODE_WORK);
@@ -684,9 +683,9 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char* rew
 
     // Queue up game event for success
     psWorkGameEvent* ev = new psWorkGameEvent(this,actor,time_req*1000,PRODUCTION,pos,&resources,client);
-    psserver->GetEventManager()->Push(ev);  // wake me up when digging is done
 
     actor->SetTradeWork(ev);
+    psserver->GetEventManager()->Push(ev);  // wake me up when digging is done
 
     if(client)
     {
@@ -2232,6 +2231,7 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     workEvent->SetProcess(process);
     workEvent->SetKFactor(patternKFactor);
     item->SetTransformationEvent(workEvent);
+    owner->SetTradeWork(workEvent);
 
     // Send render effect to client and nearby people
     if(process && process->GetRenderEffect().Length() > 0)
@@ -3993,6 +3993,7 @@ void WorkManager::StartCleanupEvent(int transType, Client* client, psItem* item,
     workEvent->SetTransformationType(transType);
     workEvent->SetTransformationItem(item);
     item->SetTransformationEvent(workEvent);
+    worker->SetTradeWork(workEvent);
     psserver->GetEventManager()->Push(workEvent);
 
 }
@@ -4091,6 +4092,8 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
         0,
         client,
         item);
+    ev->SetTargetGem(client->GetTargetObject());
+    actor->SetTradeWork(ev);
     psserver->GetEventManager()->Push(ev);
 
     // Crafting time is in seconds, event time is in milliseconds.
@@ -4101,35 +4104,38 @@ void WorkManager::StartLockpick(Client* client,psItem* item)
 
 void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
 {
+    Client* client = workEvent->client;
+
     // Ignore event if it was canceled.
-    if(workEvent->client->GetActor()->GetMode() != PSCHARACTER_MODE_WORK)
+    if(client->GetActor()->GetMode() != PSCHARACTER_MODE_WORK)
         return;
 
-    if( workEvent->object==NULL  )
+    if(workEvent->object == NULL ||
+       workEvent->GetTargetGem() != client->GetTargetObject())
     {
-        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"Lockpick target is no longer valid." );
-        workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
+        psserver->SendSystemInfo(client->GetClientNum(),"Lockpick target is no longer valid." );
+        client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
         return;
     }
 
     if( workEvent->object->GetGemObject()==NULL )
     {
-        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"Lockpick target is no longer valid." );
-        workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
+        psserver->SendSystemInfo(client->GetClientNum(),"Lockpick target is no longer valid." );
+        client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
         return;
     }
 
-    psCharacter* character = workEvent->client->GetCharacterData();
+    psCharacter* character = client->GetCharacterData();
     PSSKILL skill = workEvent->object->GetLockpickSkill();
 
     // Check if player moved too far away from lock.
     // First check if lock (object such as box) is not in inventory.
     // For now, that is never the case, but I can imagine that changing.
     if((PSCHARACTER_SLOT_NONE == workEvent->object->GetLocInParent()) &&
-        (workEvent->client->GetActor()->RangeTo(workEvent->object->GetGemObject()) > RANGE_TO_USE))
+        (client->GetActor()->RangeTo(workEvent->object->GetGemObject()) > RANGE_TO_USE))
     {
         // Send denied message
-        psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt, because you moved away.");
+        psserver->SendSystemInfo(client->GetClientNum(),"You failed your lockpicking attempt, because you moved away.");
     }
     else
     {
@@ -4143,7 +4149,7 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
         if(rank >= (int) workEvent->object->GetLockStrength())
         {
             bool locked = workEvent->object->GetIsLocked();
-            psserver->SendSystemOK(workEvent->client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());
+            psserver->SendSystemOK(client->GetClientNum(), locked ? "You unlocked %s." : "You locked %s.", workEvent->object->GetName());
             workEvent->object->SetIsLocked(!locked);
             workEvent->object->Save(false);
 
@@ -4151,7 +4157,7 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
         else
         {
             // Send denied message
-            psserver->SendSystemInfo(workEvent->client->GetClientNum(),"You failed your lockpicking attempt.");
+            psserver->SendSystemInfo(client->GetClientNum(),"You failed your lockpicking attempt.");
         }
 
         // Calculate practice points.
@@ -4171,7 +4177,7 @@ void WorkManager::LockpickComplete(psWorkGameEvent* workEvent)
             character->CalculateAddExperience(skill, practicePoints, modifier);
         }
     }
-    workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
+    client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
 }
 
 
