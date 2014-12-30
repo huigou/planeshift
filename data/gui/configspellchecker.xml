@@ -19,17 +19,17 @@
         <text string="Enable spell checker in chat window" />
     </widget>
     <widget name="typoColorLabel" factory="pawsTextBox">
-	<frame x="220" y="70" width="250" height="20" />
-	<text string="Color of Typos" />
+    <frame x="220" y="70" width="250" height="20" />
+    <text string="Color of Typos" />
     </widget>
     <widget name="typoColorR" factory="pawsEditTextBox">
-	<frame border="yes" x="220" y="90" width="30" height="20" />
+    <frame border="yes" x="220" y="90" width="30" height="20" />
     </widget>
     <widget name="typoColorG" factory="pawsEditTextBox">
-	<frame border="yes" x="260" y="90" width="30" height="20" />
+    <frame border="yes" x="260" y="90" width="30" height="20" />
     </widget>
     <widget name="typoColorB" factory="pawsEditTextBox">
-	<frame border="yes" x="300" y="90" width="30" height="20" />
+    <frame border="yes" x="300" y="90" width="30" height="20" />
     </widget>
     <widget name="ErrorLabel1" factory="pawsTextBox" style="Header Font" visible="no">
        <frame x="10" y="110" width="420" height="20" />
@@ -41,7 +41,7 @@
     </widget>
     <widget name="ErrorLabel3" factory="pawsTextBox" style="Header Font" visible="no">
        <frame x="10" y="150" width="420" height="20" />
-       <text string="unzip it in &quot;<PlaneShift-Installation-Directory>/data/dict&quot;." />
+       <text string="unzip it in &quot;&lt;PlaneShift-Installation-Directory&gt;/data/dict&quot;." />
     </widget>
 </widget>
 

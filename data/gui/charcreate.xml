@@ -166,14 +166,14 @@
         <!-- Face customization area -->
         <widget name="customization" factory="pawsWidget" >
             <frame x="565" y="170" width="200" height="100"/>
-            <widget name="Custom Choice Set 1 <" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 1 &lt;" factory="pawsButton" toggle="no">
                 <frame x="0" y="0" width="25" height="20"/>
                 <buttonup resource="arrowLeft"/>
                 <buttondown resource="arrowLeftDown"/>
                 <text string="" position="right"/>
             </widget>
 
-            <widget name="Custom Choice Set 1 >" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 1 &gt;" factory="pawsButton" toggle="no">
                 <frame x="35" y="0" width="25" height="20"/>
                 <buttonup resource="arrowRight"/>
                 <buttondown resource="arrowRightDown"/>
@@ -188,13 +188,13 @@
 
 
             <!-- Hair Style customization area -->
-            <widget name="Custom Choice Set 2 <" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 2 &lt;" factory="pawsButton" toggle="no">
                 <frame x="0" y="20" width="25" height="20"/>
                 <buttonup resource="arrowLeft"/>
                 <buttondown resource="arrowLeftDown"/>
             </widget>
 
-            <widget name="Custom Choice Set 2 >" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 2 &gt;" factory="pawsButton" toggle="no">
                 <frame x="35" y="20" width="25" height="20"/>
                 <buttonup resource="arrowRight"/>
                 <buttondown resource="arrowRightDown"/>
@@ -209,13 +209,13 @@
 
 
             <!-- Beard Style customization area -->
-            <widget name="Custom Choice Set 3 <" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 3 &lt;" factory="pawsButton" toggle="no">
                 <frame x="0" y="40" width="25" height="20"/>
                 <buttonup resource="arrowLeft"/>
                 <buttondown resource="arrowLeftDown"/>
             </widget>
 
-            <widget name="Custom Choice Set 3 >" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 3 &gt;" factory="pawsButton" toggle="no">
                 <frame x="35" y="40" width="25" height="20"/>
                 <buttonup resource="arrowRight"/>
                 <buttondown resource="arrowRightDown"/>
@@ -228,13 +228,13 @@
             <!-- END Beard customization area -->
 
             <!-- Hair Colour customization area -->
-            <widget name="Custom Choice Set 4 <" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 4 &lt;" factory="pawsButton" toggle="no">
                 <frame x="0" y="60" width="25" height="20"/>
                 <buttonup resource="arrowLeft"/>
                 <buttondown resource="arrowLeftDown"/>
             </widget>
 
-            <widget name="Custom Choice Set 4 >" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 4 &gt;" factory="pawsButton" toggle="no">
                 <frame x="35" y="60" width="25" height="20"/>
                 <buttonup resource="arrowRight"/>
                 <buttondown resource="arrowRightDown"/>
@@ -247,13 +247,13 @@
             <!-- END Hair Colour customization area -->
 
             <!-- Skin Colour customization area -->
-            <widget name="Custom Choice Set 5 <" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 5 &lt;" factory="pawsButton" toggle="no">
                 <frame x="0" y="80" width="25" height="20"/>
                 <buttonup resource="arrowLeft"/>
                 <buttondown resource="arrowLeftDown"/>
             </widget>
 
-            <widget name="Custom Choice Set 5 >" factory="pawsButton" toggle="no">
+            <widget name="Custom Choice Set 5 &gt;" factory="pawsButton" toggle="no">
                 <frame x="35" y="80" width="25" height="20"/>
                 <buttonup resource="arrowRight"/>
                 <buttondown resource="arrowRightDown"/>
