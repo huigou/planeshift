@@ -72,6 +72,13 @@ void pawsCraftCancelWindow::Draw()
 
 void pawsCraftCancelWindow::Start(csTicks craftTime)
 {
+    if (craftTime == 0)
+    {
+        this->craftTime = 0;
+        Hide();
+        return;
+    }
+
     craftProgress->SetCurrentValue(0.0);
     startTime = csGetTicks();
     this->craftTime = craftTime * 1000;
