@@ -1287,6 +1287,16 @@ bool psCharacterInventory::CanItemAttack(INVENTORY_SLOT_NUMBER slot)
         if(equipment[slot].itemIndexEquipped==0 &&
            (equipment[slot].EquipmentFlags & PSCHARACTER_EQUIPMENTFLAG_ATTACKIFEMPTY))
         {
+            // but not if other hand is holding an item that
+            // requires both hands.
+            INVENTORY_SLOT_NUMBER otherSlot =
+                slot == PSCHARACTER_SLOT_RIGHTHAND ?
+                    PSCHARACTER_SLOT_LEFTHAND : PSCHARACTER_SLOT_RIGHTHAND;
+            if(equipment[otherSlot].itemIndexEquipped==0)
+                return true;
+            psItem* item = inventory[equipment[otherSlot].itemIndexEquipped].item;
+            if(item->FitsInSlot(PSCHARACTER_SLOT_BOTHHANDS))
+                return false;
             return true;
         }
 
