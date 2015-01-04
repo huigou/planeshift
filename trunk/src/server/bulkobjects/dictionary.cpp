@@ -2909,14 +2909,13 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
     psDialogMenuMessage menu;
 
     csString currentQuest;
-    size_t count = 0;
     
     //this->InitializeQuestTitles();
 
     bool IsTesting = client->GetCharacterData()->GetActor()->questtester;
     bool IsGm = client->IsGM();
 
-    for(count=0; count < triggers.GetSize(); count++)
+    for(size_t count=0; count < triggers.GetSize(); count++)
     {
         // fetch the prerequisites
         if(triggers[count].quest && !triggers[count].quest->Active() && !IsTesting)
@@ -2993,7 +2992,7 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
                          trigger);
     }
 
-    if(count)
+    if(menu.responses.GetSize())
     {
         menu.BuildMsg(client->GetClientNum());
         psserver->GetNetManager()->SendMessageDelayed(menu.msg, delay);
