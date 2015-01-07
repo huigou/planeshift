@@ -1323,6 +1323,11 @@ Loads the description from the file [filename] and sets it as your current descr
 Usage:
 /loadOOCDesc [filename]
 Loads the description from the file [filename] and sets it as your current OOC description.</content></Contents></topic>
+<topic name="/loadshortcuts"><Contents><content type="text">With this command you can load a new collection of shortcuts from those saved in your user data folder. The text files for the descriptions must be in the [config-directory]/options folder but don't have to follow the shortcutcommands_[char-name].xml format. 
+
+Usage:
+/loadshortcuts [filename]
+Loads the collection of shortcuts from the file [filename] and sets them as you current shortcuts.</content></Contents></topic>
 <topic name="/motd"><Contents><content type="text">Get the MOTD of the server.
 Usage:
 /motd
@@ -1378,6 +1383,13 @@ If you specify one number after /roll you will roll one die with the sides speci
  By giving two numbers after /roll, you will roll as many dice as specified by the first number with as many sides as specified by the second number. In this case you will roll 2 6 sided dice.
 /roll 2 6 6
 By adding a third number to the command you will get also told how often you scored a result equal to or larger than the last number. In this example you will roll 2 6 sided dice and you will be told how many time a number equal or greater than 6 was scored.</content></Contents></topic>
+<topic name="/saveshortcuts"><Contents><content type="text">This will allow you to save your current collection of shortcuts to a file name which you can then load using another character.
+
+Usage:
+/saveshortcuts [filename]
+
+This will save your current selection of shortcuts to the name you have defined as long as it does not exist. If it does you need to load that shortcut file and then edit it. Edits will automatically be saved to the file you loaded.
+</content></Contents></topic>
 <topic name="/screenshot"><Contents><content type="text">With this command you can take screenshots.
 Usage:
 /screenshot [lossless] [nogui]
