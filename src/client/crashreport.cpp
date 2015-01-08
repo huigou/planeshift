@@ -23,6 +23,9 @@
 #include <csutil/cfgfile.h>
 #include <iutil/vfs.h>
 
+// Set client to use breakpad
+#define USE_BREAKPAD
+
 // Mac uses a different breakpad library. Disabled in Debug.
 #if defined(CS_DEBUG) || defined(CS_PLATFORM_MACOSX)
 #undef USE_BREAKPAD
