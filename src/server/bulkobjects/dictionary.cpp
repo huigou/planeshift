@@ -3000,6 +3000,14 @@ void NpcDialogMenu::ShowMenu(Client* client,csTicks delay, gemNPC* npc)
     else
     {
         psserver->SendSystemError(client->GetClientNum(), "This NPC has no quest for you, but might have other things to say.");
+        // Send an empty message if there are possibly KAs.
+        // This message can be used by clients with NPC dialog bubbles enabled
+        // to display a text input box but not display an empty NPC dialog menu.
+        if(triggers.GetSize())
+        {
+            menu.BuildMsg(client->GetClientNum());
+            psserver->GetNetManager()->SendMessageDelayed(menu.msg, delay);
+        }
     }
 }
 
