@@ -2668,6 +2668,11 @@ void UserManager::ShowNpcMenu(psUserCmdMessage &msg, Client* client)
             psserver->SendSystemError(client->GetClientNum(), "You are too far away from the NPC.");
             return;
         }
+        if(!npc->IsAlive())
+        {
+            psserver->SendSystemError(client->GetClientNum(), "You can't talk to a dead person.");
+            return;
+        }
         npc->ShowPopupMenu(client);
     }
     else
