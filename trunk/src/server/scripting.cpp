@@ -1122,9 +1122,9 @@ class IfAOp : public AppliedOp
 public:
     IfAOp(EntityManager* entitymanager, CacheManager* cachemanager) :
         AppliedOp(),
+        condition(NULL),
         entitymanager(entitymanager),
-        cachemanager(cachemanager),
-        condition(NULL)
+        cachemanager(cachemanager)
     {
     }
 
