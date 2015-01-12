@@ -122,16 +122,7 @@ bool psNPCDialog::Initialize(iDataConnection* db)
     this->db = db;
 
     if(!dict)
-    {
-        dict = new NPCDialogDict;
-
-        if(!dict->Initialize(db))
-        {
-            delete dict;
-            dict=NULL;
-            return false;
-        }
-    }
+        return false;
     return true;
 }
 
@@ -140,16 +131,9 @@ bool psNPCDialog::Initialize(iDataConnection* db, PID NPCID)
 {
     randomgen = psserver->rng;
     this->db = db;
-    // Initialize base dictionary
-    if(!dict.IsValid())
-    {
-        dict.AttachNew(new NPCDialogDict());
 
-        if(!dict->Initialize(db))
-        {
-            return false;
-        }
-    }
+    if(!dict)
+        return false;
 
     return LoadKnowledgeAreas(NPCID);
 }

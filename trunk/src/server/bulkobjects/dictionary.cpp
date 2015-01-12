@@ -75,8 +75,8 @@ extern "C" {
 #include "adminmanager.h"
 #include "scripting.h"
 
-// Global variable exposed from globals.h
-csRef<NPCDialogDict> dict;
+// Global variable exposed from globals.h (set and deleted by psServer)
+NPCDialogDict* dict;
 
 NPCDialogDict::NPCDialogDict()
 {
