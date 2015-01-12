@@ -72,24 +72,13 @@ QuestManager::QuestManager(CacheManager* cachemanager)
 
 QuestManager::~QuestManager()
 {
-    if(dict)
-        delete dict;
 }
 
 
 bool QuestManager::Initialize()
 {
     if(!dict)
-    {
-        dict = new NPCDialogDict;
-
-        if(!dict->Initialize(db))
-        {
-            delete dict;
-            dict=NULL;
-            return false;
-        }
-    }
+        return false;
 
     return LoadQuestScripts();
 }

@@ -48,6 +48,7 @@
 #include "bulkobjects/pscharacterloader.h"
 #include "bulkobjects/psitem.h"
 #include "bulkobjects/psaccountinfo.h"
+#include "bulkobjects/dictionary.h"
 
 //=============================================================================
 // Application Includes
@@ -196,6 +197,7 @@ psServer::~psServer()
     delete minigamemanager;
     delete cachemanager;
     delete questmanager;
+    delete dict;
     delete database;
     delete logcsv;
     delete rng;
@@ -497,8 +499,15 @@ bool psServer::Initialize(iObjectRegistry* object_reg)
 
     marriageManager = new psMarriageManager();
 
-    questmanager = new QuestManager(cachemanager);
+    dict = new NPCDialogDict;
+    if(!dict->Initialize(db))
+    {
+        delete dict;
+        dict = NULL;
+        return false;
+    }
 
+    questmanager = new QuestManager(cachemanager);
     if(!questmanager->Initialize())
         return false;
 

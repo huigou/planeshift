@@ -30,7 +30,7 @@ class NPCDialogDict;
 
 extern psServer* psserver;
 extern iDataConnection* db;
-extern csRef<NPCDialogDict> dict; // Defined in dictionary.cpp
+extern NPCDialogDict* dict; // Defined in dictionary.cpp
 
 #endif
 

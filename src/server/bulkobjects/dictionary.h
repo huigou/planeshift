@@ -71,7 +71,7 @@ public:
     }
 };
 
-class NPCDialogDict : public csRefCount
+class NPCDialogDict
 {
 protected:
     typedef csRedBlackTree<NpcTrigger*, CS::Container::DefaultRedBlackTreeAllocator<NpcTrigger*>, NpcTriggerOrdering> NpcTriggerTree;
