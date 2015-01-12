@@ -93,20 +93,6 @@ const csString &NpcTriggerSentence::GetString()
     return str;
 }
 
-const char* NpcTriggerSentence::GeneralizeTerm(NPCDialogDict* dict,size_t which, size_t depth)
-{
-    if(which >= terms.GetSize())
-    {
-        return NULL;
-    }
-
-    str.Clear();
-
-    return terms[which]->GetInterleavedHypernym(depth);
-}
-
-
-
 
 //----------------------------------------------------------------------------
 
