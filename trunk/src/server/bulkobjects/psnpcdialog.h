@@ -108,7 +108,6 @@ public:
     {
         return terms[i];
     }
-    const char* GeneralizeTerm(NPCDialogDict* dict,size_t which, size_t depth);
 };
 
 
