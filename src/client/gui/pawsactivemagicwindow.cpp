@@ -188,7 +188,7 @@ void pawsActiveMagicWindow::HandleMessage(MsgEntry* me)
 
     csList<csString> rowEntry;
     size_t    numSpells=incoming.name.GetSize();
-    show = !showWindow->GetState() && (buffList->GetSize() < numSpells);
+    show = !showWindow->GetState() && ((size_t)buffList->GetSize() < numSpells);
     if(!IsVisible() && psengine->loadstate == psEngine::LS_DONE && show)
     {
         pawsControlledWindow::Show();
@@ -329,9 +329,7 @@ void pawsActiveMagicWindow::AutoResize()
         bottomEdge = GetScreenFrame().ymax;
 
     int newLeftEdge   = 0,
-        newRightEdge  = 0,
         newTopEdge    = 0,
-        newBottomEdge = 0,
         newHeight     = 0,
         newWidth      = 0,
         tOrientation  = Orientation;
@@ -343,8 +341,7 @@ void pawsActiveMagicWindow::AutoResize()
     int verticalScrollWidth    = 10,
         horizontalScrollHeight = 0;
 
-    int buttonWidth       = buffList->GetButtonWidth(),
-        buttonHeight      = buffList->GetButtonHeight(),
+    int buttonHeight      = buffList->GetButtonHeight(),
         buttonWidestWidth = buffList->GetWidestWidth(),
         buttonsCount      = buffList->GetSize();
 
@@ -416,10 +413,6 @@ void pawsActiveMagicWindow::AutoResize()
     {
         newTopEdge  = ((topEdge <= 0)  ? 0 : topEdge);
     }
-
-    // Calculate bottom right corner coordinates
-    newRightEdge = newLeftEdge + newWidth;
-    newBottomEdge = newTopEdge + newHeight;
 
     SetRelativeFrame( newLeftEdge, newTopEdge, newWidth, newHeight ); 
 
