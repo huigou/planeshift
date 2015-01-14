@@ -2039,6 +2039,8 @@ void GEMClientActor::SetMode(uint8_t mode, bool newactor)
             SetIdleAnimation(psengine->GetCharControl()->GetMovementManager()->GetModeIdleAnim(movementMode));
             break;
         case psModeMessage::SPELL_CASTING:
+            cal3dstate->SetAnimAction("cast", 0.0f, 1.0f);
+            break;
         case psModeMessage::PLAY:
         case psModeMessage::WALK:
         case psModeMessage::RUN:
