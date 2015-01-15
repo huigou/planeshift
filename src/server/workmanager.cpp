@@ -4233,9 +4233,12 @@ void psWorkGameEvent::Interrupt()
             if(object)
                 object->SetInUse(false);
         }
-        psCraftCancelMessage msg;
-        msg.SetCraftTime(0, client->GetClientNum());
-        msg.SendMessage();
+        if(client)
+        {
+            psCraftCancelMessage msg;
+            msg.SetCraftTime(0, client->GetClientNum());
+            msg.SendMessage();
+        }
     }
 }
 
