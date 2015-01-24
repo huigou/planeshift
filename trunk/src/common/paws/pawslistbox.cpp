@@ -760,6 +760,7 @@ bool pawsListBox::SelectByIndex(int index, bool notify)
 
     return true;
 }
+
 void pawsListBox::SetScrollBarMaxValue()
 {
     int horiz = 0;
@@ -789,7 +790,7 @@ void pawsListBox::SetScrollBarMaxValue()
             if(!wdg->IsVisible())
                 continue;
 
-            csString text = wdg->GetText();
+            const char* text = wdg->GetText();
             if(!text)
                 continue;
 
@@ -797,10 +798,9 @@ void pawsListBox::SetScrollBarMaxValue()
             int height = 0; // Can be used for anything?
 
             wdg->GetFont()->GetDimensions(text,width,height);
-            if(rowWidth+width > rows[i]->GetScreenFrame().Width())
-                width = rows[i]->GetScreenFrame().Width() - rowWidth;
 
-            rowWidth += width;
+            rowWidth = width +
+                wdg->GetScreenFrame().xmin - GetScreenFrame().xmin;
 
             if(autoResize && width > wdg->GetScreenFrame().Width())
             {
