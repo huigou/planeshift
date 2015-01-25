@@ -159,6 +159,16 @@ void PlayerGroup::Remove(gemActor* member)
     }
 }
 
+void PlayerGroup::SetLeader(gemActor* member)
+{
+    // Swap enties in the members list to show leader at the top.
+    size_t inx = members.Find(member);
+    assert(inx != (size_t)-1);
+    members[inx] = leader;
+    members[0] = member;
+    leader = member;
+}
+
 void PlayerGroup::ListMembers(gemActor* client)
 {
     int clientnum = client->GetClientID();
@@ -382,6 +392,10 @@ void GroupManager::HandleGroupCommand(MsgEntry* me, Client* client)
     else if(msg.command == "/groupyield")
     {
         Yield(msg,client);
+    }
+    else if(msg.command == "/groupleader")
+    {
+        Leader(msg,client->GetActor());
     }
     else
     {
@@ -628,7 +642,6 @@ void PendingGroupInvite::HandleAnswer(const csString &answer)
         psserver->groupmanager->HandleJoinGroup(this);
 }
 
-
 void GroupManager::Disband(psGroupCmdMessage &msg,gemActor* client)
 {
     csRef<PlayerGroup> group = client->GetGroup();
@@ -649,6 +662,62 @@ void GroupManager::Disband(psGroupCmdMessage &msg,gemActor* client)
     Remove(group);
 
     psserver->SendSystemInfo(client->GetClientID(),"You have disbanded the group.");
+}
+
+void GroupManager::Leader(psGroupCmdMessage &msg,gemActor* client)
+{
+    csRef<PlayerGroup> group = client->GetGroup();
+
+    if(!group)
+    {
+        psserver->SendSystemInfo(client->GetClientID(),"You are not in a group.");
+        return;
+    }
+
+    if(!group->IsLeader(client))
+    {
+        psserver->SendSystemError(client->GetClientID(), "Only the group leader can name a new leader.");
+        return;
+    }
+
+    csString playerName = msg.player;
+    if(playerName.IsEmpty())
+    {
+        psserver->SendSystemError(client->GetClientID(), "Please specify the player name to lead your group.");
+        return;
+    }
+
+    playerName = NormalizeCharacterName(playerName);
+
+    // Check to see if the player is changing leadership to him/herself.
+    if(playerName == client->GetName())
+    {
+        psserver->SendSystemError(client->GetClientID(), "You are already the group leader.");
+        return;
+    }
+
+    // Player must be online in order to be a group member.
+    Client* player = clients->Find(playerName);
+
+    if(!player || !player->GetActor())
+    {
+        psserver->SendSystemError(player->GetClientNum(),"%s is not a member of your group.",
+                                  playerName.GetData());
+        return;
+    }
+
+    csRef<PlayerGroup> playergroup = player->GetActor()->GetGroup();
+    if(playergroup != group)
+    {
+        psserver->SendSystemError(player->GetClientNum(),"%s is not a member of your group.",
+                                  playerName.GetData());
+        return;
+    }
+
+    group->SetLeader(player->GetActor());
+    group->BroadcastMemberList();
+
+    psserver->SendSystemInfo(client->GetClientID(),"You have transferred leadership of the group to %s.", playerName.GetData());
 }
 
 PlayerGroup* GroupManager::FindGroup(int id)

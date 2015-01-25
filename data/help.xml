@@ -1030,6 +1030,10 @@ Functions like the /equip command, allowing your character equip a specified ite
 Usage:
 /disband
 Disbands the current group.</content></Contents></topic>
+<topic name="/groupleader"><Contents><content type="text">With this command you can change the group leader to another member of the group, provided you are the leader of the group.
+Usage:
+/groupleader [char-name]
+Changes the group leader to the group member with the name [char-name].</content></Contents></topic>
 <topic name="/groupremove"><Contents><content type="text">With this command you can remove characters from a group, provided you are the leader of the group.
 Usage:
 /groupremove [char-name]

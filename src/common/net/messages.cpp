@@ -1318,7 +1318,8 @@ psGroupCmdMessage::psGroupCmdMessage(MsgEntry* message)
     WordArray words(message->GetStr());
     command = words[0];
 
-    if(command == "/invite" || command == "/groupremove" || command == "/groupchallenge")
+    if(command == "/invite" || command == "/groupremove" ||
+       command == "/groupchallenge" || command == "/groupleader")
     {
         player = words[1];
         return;
@@ -1339,7 +1340,8 @@ csString psGroupCmdMessage::ToString(NetBase::AccessPointers* /*accessPointers*/
     csString msgtext;
 
     msgtext.AppendFmt("Command: '%s'", command.GetDataSafe());
-    if(command == "/invite" || command == "/groupremove")
+    if(command == "/invite" || command == "/groupremove" ||
+       command == "/groupchallenge" || command == "/groupleader")
     {
         msgtext.AppendFmt("Player: '%s'", player.GetDataSafe());
         return msgtext;

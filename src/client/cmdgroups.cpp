@@ -50,6 +50,7 @@ psGroupCommands::psGroupCommands(ClientMsgHandler* mh,
     cmdsource->Subscribe("/groupmembers",this);  // see list of members (optional level #)
     cmdsource->Subscribe("/groupchallenge",this);// challenges another group (leader only)
     cmdsource->Subscribe("/groupyield",this);    //yields to all the groups in challenge (leader only)
+    cmdsource->Subscribe("/groupleader",this);   //Change group leader (leader only)
 }
 
 psGroupCommands::~psGroupCommands()
@@ -61,6 +62,7 @@ psGroupCommands::~psGroupCommands()
     cmdsource->Unsubscribe("/groupmembers",this);
     cmdsource->Unsubscribe("/groupchallenge",this);
     cmdsource->Unsubscribe("/groupyield",this);
+    cmdsource->Unsubscribe("/groupleader",this);
 }
 
 const char *psGroupCommands::HandleCommand(const char *cmd)
