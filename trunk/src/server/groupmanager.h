@@ -79,6 +79,7 @@ protected:
     void Leave(psGroupCmdMessage &msg,gemActor* client);
     void ListMembers(psGroupCmdMessage &msg,gemActor* client);
     void RemovePlayerFromGroup(psGroupCmdMessage &msg,gemActor* client);
+    void Leader(psGroupCmdMessage &msg,gemActor* client);
 
     /** Handles /groupchallenge and challenges another group after checking all requirements
      *  are in order.

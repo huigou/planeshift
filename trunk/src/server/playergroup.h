@@ -65,6 +65,9 @@ public:
     /// Remove a client from this group.
     void Remove(gemActor* member);
 
+    /// Change the leader of this group.
+    void SetLeader(gemActor* new_leader);
+
     /** Add a new group to the list of those in duel with this.
      *
      *  @param OtherGroup A pointer to the PlayerGroup we are adding in the duel groups.
