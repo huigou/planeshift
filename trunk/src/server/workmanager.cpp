@@ -440,7 +440,7 @@ void WorkManager::HandleRepairEvent(psWorkGameEvent* workEvent)
 {
     psItem* repairTarget = workEvent->object;
 
-    // We're done work, clear the mode
+    // We're done working, clear the mode
     workEvent->client->GetActor()->SetMode(PSCHARACTER_MODE_PEACE);
     repairTarget->SetInUse(false);
     // Check for presence of required tool
@@ -661,7 +661,7 @@ void WorkManager::HandleProduction(gemActor* actor, size_t type, const char* rew
         }
         else
         {
-            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s don't have a good tool to %s with, equipped in your hand.",actor->GetName(),resourcesActions.Get(type));
+            Debug3(LOG_SUPERCLIENT,actor->GetEID().Unbox(),"%s doesn't have a good tool to %s with, equipped in your hand.",actor->GetName(),resourcesActions.Get(type));
         }
         return;
     }
@@ -1836,7 +1836,7 @@ bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, i
                     return false;
                 }
 
-                // Go thru list of transforms
+                // Go through list of transforms
                 for(size_t j=0; j<transArray->GetSize(); j++)
                 {
                     // Get first transform with a 0 process ID this indicates processless any ingredient transform
@@ -2038,7 +2038,7 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
         return TRANSFORM_UNKNOWN_ITEM;
     }
 
-    // Go thru all the trasnformations and check if one is possible
+    // Go through all the transformations and check if one is possible
     if(secure) psserver->SendSystemInfo(clientNum,"Found %u transformations.", transArray->GetSize());
     if(workItem)
     {
@@ -2051,7 +2051,7 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
         transCandidate = transArray->Get(i);
         if(secure) psserver->SendSystemInfo(clientNum,"Testing transformation id %u.", transCandidate->GetId());
 
-        // Go thru all the possable processes and check if one is possible
+        // Go through all the possible processes and check if one is possible
         csArray<psTradeProcesses*>* procArray = cacheManager->GetTradeProcessesByID(
                 transCandidate->GetProcessId());
 
@@ -2082,7 +2082,7 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
                 continue;
             }
 
-            // Check if any equipement is required
+            // Check if any equipment is required
             uint32 equipmentId = procCandidate->GetEquipementId();
             if(equipmentId > 0)
             {
@@ -2145,7 +2145,7 @@ bool WorkManager::IsIngredient(uint32 patternId, uint32 targetId)
         return false;
     }
 
-    // Go thru list
+    // Go through list
     for(size_t i=0; i<itemArray->GetSize(); i++)
     {
         // Check item on ingredient list
@@ -2160,7 +2160,7 @@ bool WorkManager::IsIngredient(uint32 patternId, uint32 targetId)
                 return false;
             }
 
-            // Go thru list of transforms
+            // Go through list of transforms
             for(size_t j=0; j<transArray->GetSize(); j++)
             {
                 // Get first transform with a 0 process ID this indicates processless any ingredient transform
@@ -3507,7 +3507,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         psItem* oldItem = owner->GetCharacterData()->Inventory().GetInventoryItem(slot);
         if(oldItem != workEvent->GetTranformationItem() || (oldItem && oldItem->GetStackCount() != originalQty))
         {
-            psserver->SendSystemOK(clientNum,"You interrupted your work when you moved item.");
+            psserver->SendSystemOK(clientNum,"You interrupted your work when you moved the item.");
             owner->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
             return;
@@ -3521,7 +3521,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         psItem* oldItem = gemTarget->GetCharacterData()->Inventory().GetInventoryItem(slot);
         if(oldItem != workEvent->GetTranformationItem() || (oldItem && oldItem->GetStackCount() != originalQty))
         {
-            psserver->SendSystemOK(clientNum,"You interrupted your transform when your target moved item.");
+            psserver->SendSystemOK(clientNum,"You interrupted your transform when your target moved the item.");
             owner->SetTradeWork(NULL);
             worker->SetMode(PSCHARACTER_MODE_PEACE);
             return;
@@ -3531,6 +3531,20 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
     float startQuality = sourceItem->GetItemQuality();
     if(process)
     {
+        // Check if required equipment is present
+        uint32 equipmentId = process->GetEquipementId();
+        if(equipmentId > 0)
+        {
+            // Check if required equipment is on hand
+            if(!IsOnHand(equipmentId))
+            {
+                psserver->SendSystemOK(clientNum,"You interrupted your work when you moved the tool.");
+                owner->SetTradeWork(NULL);
+                worker->SetMode(PSCHARACTER_MODE_PEACE);
+                return;
+            }
+        }
+
         if(resultItem > 0 && !CalculateQuality(workEvent->GetKFactor(), workEvent->GetTranformationItem(), owner, itemQty == 0, currentQuality, process, trans, workEvent->delayticks) && process->GetGarbageId() != 0)
         {
             resultItem = process->GetGarbageId();
@@ -3745,7 +3759,7 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
 
     }
 
-    // Let the user know the we have done something
+    // Let the user know that we have done something
     if(resultItem <= 0)
     {
         psItemStats* itemStats = cacheManager->GetBasicItemStatsByID(trans->GetItemId());
