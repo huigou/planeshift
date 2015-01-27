@@ -51,6 +51,15 @@
 #include "pscharcontrol.h"
 #include "globals.h"
 
+#ifdef CS_PLATFORM_MACOSX
+#include "sys/utsname.h"
+    struct utsname SYSinfo;
+#elif defined(CS_PLATFORM_UNIX)
+#include "sys/utsname.h"
+    struct utsname SYSinfo;
+#endif
+
+
 
 psAuthenticationClient::psAuthenticationClient(MsgHandler *mymsghandler)
 {
@@ -187,7 +196,6 @@ void psAuthenticationClient::ShowError()
     }
 }
 
-
 void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
 {
 
@@ -208,7 +216,30 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
     iGraphics2D *graphics2D = PawsManager::GetSingleton().GetGraphics3D()->GetDriver2D();
     csString HWRender =  graphics2D->GetHWRenderer();
     csString HWGLVersion =  graphics2D->GetHWGLVersion();
-    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), CS_PLATFORM_NAME "-" CS_PROCESSOR_NAME "(" CS_VER_QUOTE(CS_PROCESSOR_SIZE) ")-" CS_COMPILER_NAME, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe(), "" );
+    char SysString[32];
+#ifdef CS_PLATFORM_MACOSX
+    uname(&SYSinfo);
+    char *s=strstr( SYSinfo.version, "root:" )+5;
+    sprintf( SysString, "%1.1s%9.9s%14.14s-%6.6s", SYSinfo.sysname, SYSinfo.release, s, SYSinfo.machine );
+#elif defined(CS_PLATFORM_UNIX)
+    uname (&SYSinfo);
+    char *s=SYSinfo.version;
+    sprintf( SysString, "%1.1s%9.9s%14.14s-%6.6s", SYSinfo.sysname, SYSinfo.release, s, SYSinfo.machine );
+#elif defined(_WINDOWS)
+    OSVERSIONINFO osvi;
+
+    ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+
+    GetVersionEx(&osvi);
+
+    sprintf(SysString, "Windows rev%d.%d, build=%d", osvi.dwMajorVersion, osvi.dwMinorVersion, osvi.dwBuildNumber);
+#else
+    //default back to old information taken not from the currently executing machine but the client compile env.
+    sprintf( SysString, "%s-%s (%s(%s))-%s", CS_PLATFORM_NAME, CS_PROCESSOR_NAME,CS_VER_QUOTE,CS_PROCESSOR_SIZE,CS_COMPILER_NAME );
+#endif
+    SysString[31]=0;	//just to make sure...
+    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), SysString, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe(), "" );
     
     request.SendMessage();                
 }
