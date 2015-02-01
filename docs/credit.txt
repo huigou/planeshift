@@ -40,7 +40,7 @@ Jerome "Tuux" Ornech, for spells effects and textures.
 
 Maria "Renepolumorfous" Dedevesi, for the new Azure Spirit splash screen.
 
-Alex "Zalk" Constantino, for the molthrir plate armor.
+Alex "Zalk" Constantino, for the nolthrir plate armor.
 
 &3D Art
 
@@ -50,7 +50,7 @@ Jerome "Tuux" Ornech, for new wands geometry and textures.
 
 Arco "Arcooo" Mul, for lava cave model.
 
-Alex "Zalk" Constantino, for the molthrir plate armor.
+Alex "Zalk" Constantino, for the nolthrir plate armor.
 
 &Rules
 
